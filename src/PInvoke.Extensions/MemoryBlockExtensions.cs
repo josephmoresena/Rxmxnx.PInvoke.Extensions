@@ -43,7 +43,7 @@ namespace PInvoke.Extensions
             unsafe
             {
                 return new IntPtr(ReferenceExtensions.GetPointerFromRef(ref MemoryMarshal.GetReference(readonlySpan)));
-            };
+            }
         }
     }
 }

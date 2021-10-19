@@ -194,7 +194,7 @@ namespace PInvoke.Extensions
             unsafe
             {
                 return ref GetPointerFromReference<T>(ptr.ToPointer());
-            };
+            }
         }
 
         /// <summary>
@@ -210,7 +210,7 @@ namespace PInvoke.Extensions
             unsafe
             {
                 return ref GetPointerFromReference<T>(uptr.ToPointer());
-            };
+            }
         }
 
         /// <summary>

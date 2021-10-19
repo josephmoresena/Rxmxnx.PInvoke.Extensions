@@ -22,7 +22,7 @@ namespace PInvoke.Extensions
             unsafe
             {
                 return new IntPtr(GetPointerFromRef(ref refValue));
-            };
+            }
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace PInvoke.Extensions
             unsafe
             {
                 return new UIntPtr(GetPointerFromRef(ref refValue));
-            };
+            }
         }
 
         /// <summary>

@@ -43,6 +43,14 @@ jobs:
         shell: powershell
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"josephmoresena_PInvoke.Extensions" /o:"josephmoresena" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          dotnet build src\
-          dotnet test src\
+          dotnet restore src
+          dotnet build src --configuration release
+          dotnet test "./src/PInvoke.Extensions.Tests/PInvoke.Extensions.Tests.csproj.csproj" `
+              --collect:"XPlat Code Coverage" `           # cross platform code coverage
+              --results-directory TestResults/ `          # Test Result directory
+              --logger "trx;LogFileName=unittests.trx" `  # Use standard trx format for logger output
+              --no-build `
+              --no-restore `
+              --configuration release `
+              -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover # Special open cover data collector
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
