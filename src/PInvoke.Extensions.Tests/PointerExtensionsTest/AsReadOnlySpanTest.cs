@@ -5,7 +5,7 @@ using AutoFixture;
 
 using Xunit;
 
-namespace PInvoke.Extensions.Tests.PointerExtensions
+namespace PInvoke.Extensions.Tests.PointerExtensionsTest
 {
     [ExcludeFromCodeCoverage]
     public class AsReadOnlySpanTest

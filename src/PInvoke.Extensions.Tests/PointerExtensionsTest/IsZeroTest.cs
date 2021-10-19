@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 using Xunit;
 
-namespace PInvoke.Extensions.Tests.PointerExtensions
+namespace PInvoke.Extensions.Tests.PointerExtensionsTest
 {
     [ExcludeFromCodeCoverage]
     public class IsZeroTest
