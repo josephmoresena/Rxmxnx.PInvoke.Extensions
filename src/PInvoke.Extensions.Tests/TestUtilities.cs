@@ -5,6 +5,9 @@ using AutoFixture;
 
 namespace PInvoke.Extensions.Tests
 {
+    internal delegate T GetValue<T>(T value);
+    internal delegate Byte GetByteValue(Byte value);
+
     [ExcludeFromCodeCoverage]
     internal static class TestUtilities
     {
@@ -17,5 +20,8 @@ namespace PInvoke.Extensions.Tests
             result.Register<UIntPtr>(() => new UIntPtr(Environment.Is64BitProcess ? result.Create<UInt64>() : result.Create<UInt32>()));
             return result;
         }
+
+        public static T GetValueMethod<T>(T value) => value;
+        public static Byte GetByteValueMethod(Byte value) => GetValueMethod(value);
     }
 }

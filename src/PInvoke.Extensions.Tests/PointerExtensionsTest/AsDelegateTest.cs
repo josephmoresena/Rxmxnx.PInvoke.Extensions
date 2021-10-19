@@ -11,9 +11,6 @@ namespace PInvoke.Extensions.Tests.PointerExtensionsTest
     [ExcludeFromCodeCoverage]
     public class AsDelegateTest
     {
-        private delegate T GetValue<T>(T value);
-        private delegate Byte GetByteValue(Byte value);
-
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
@@ -39,9 +36,22 @@ namespace PInvoke.Extensions.Tests.PointerExtensionsTest
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
+        internal void IntPtrNormalTest(Boolean useGeneric)
+        {
+            IntPtr intPtr = Marshal.GetFunctionPointerForDelegate<GetByteValue>(TestUtilities.GetByteValueMethod);
+            Byte input = TestUtilities.SharedFixture.Create<Byte>();
+            if (!useGeneric)
+                Assert.Equal(TestUtilities.GetValueMethod(input), intPtr.AsDelegate<GetByteValue>()(input));
+            else
+                Assert.Throws<ArgumentException>(() => intPtr.AsDelegate<GetValue<Byte>>()(input));
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
         internal void UIntPtrNormalTest(Boolean useGeneric)
         {
-            IntPtr intPtr = Marshal.GetFunctionPointerForDelegate<GetByteValue>(GetByteValueMethod);
+            IntPtr intPtr = Marshal.GetFunctionPointerForDelegate<GetByteValue>(TestUtilities.GetByteValueMethod);
             UIntPtr uIntPtr;
             unsafe
             {
@@ -49,25 +59,9 @@ namespace PInvoke.Extensions.Tests.PointerExtensionsTest
             }
             Byte input = TestUtilities.SharedFixture.Create<Byte>();
             if (!useGeneric)
-                Assert.Equal(GetValueMethod(input), uIntPtr.AsDelegate<GetByteValue>()(input));
+                Assert.Equal(TestUtilities.GetValueMethod(input), uIntPtr.AsDelegate<GetByteValue>()(input));
             else
                 Assert.Throws<ArgumentException>(() => uIntPtr.AsDelegate<GetValue<Byte>>()(input));
         }
-
-        [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        internal void IntPtrNormalTest(Boolean useGeneric)
-        {
-            IntPtr intPtr = Marshal.GetFunctionPointerForDelegate<GetByteValue>(GetByteValueMethod);
-            Byte input = TestUtilities.SharedFixture.Create<Byte>();
-            if (!useGeneric)
-                Assert.Equal(GetValueMethod(input), intPtr.AsDelegate<GetByteValue>()(input));
-            else
-                Assert.Throws<ArgumentException>(() => intPtr.AsDelegate<GetValue<Byte>>()(input));
-        }
-
-        private static T GetValueMethod<T>(T value) => value;
-        private static Byte GetByteValueMethod(Byte value) => GetValueMethod(value);
     }
 }
