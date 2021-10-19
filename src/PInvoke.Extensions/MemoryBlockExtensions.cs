@@ -19,11 +19,10 @@ namespace PInvoke.Extensions
         public static IntPtr AsIntPtr<T>(this Span<T> span)
             where T : unmanaged
         {
-            if (span.IsEmpty)
-                return IntPtr.Zero;
             unsafe
             {
-                return new IntPtr(ReferenceExtensions.GetPointerFromRef(ref MemoryMarshal.GetReference(span)));
+                return GetConditionalIntPtrZero(span.IsEmpty) ??
+                    new IntPtr(ReferenceExtensions.GetPointerFromRef(ref MemoryMarshal.GetReference(span)));
             }
         }
 
@@ -38,12 +37,69 @@ namespace PInvoke.Extensions
         public static IntPtr AsIntPtr<T>(this ReadOnlySpan<T> readonlySpan)
             where T : unmanaged
         {
-            if (readonlySpan.IsEmpty)
-                return IntPtr.Zero;
             unsafe
             {
-                return new IntPtr(ReferenceExtensions.GetPointerFromRef(ref MemoryMarshal.GetReference(readonlySpan)));
+                return GetConditionalIntPtrZero(readonlySpan.IsEmpty) ??
+                    new IntPtr(ReferenceExtensions.GetPointerFromRef(ref MemoryMarshal.GetReference(readonlySpan)));
             }
         }
+
+        /// <summary>
+        /// Creates a <see cref="UIntPtr"/> pointer from <see cref="Span{T}"/> instance.
+        /// </summary>
+        /// <typeparam name="T">
+        /// <see cref="ValueType"/> of <see langword="unmanaged"/> values contened into the contiguous region of memory.
+        /// </typeparam>
+        /// <param name="span">The span from which the pointer is retrieved.</param>
+        /// <returns><see cref="UIntPtr"/> pointer.</returns>
+        public static UIntPtr AsUIntPtr<T>(this Span<T> span)
+            where T : unmanaged
+        {
+            unsafe
+            {
+                return GetConditionalUIntPtrZero(span.IsEmpty) ??
+                    new UIntPtr(ReferenceExtensions.GetPointerFromRef(ref MemoryMarshal.GetReference(span)));
+            }
+        }
+
+        /// <summary>
+        /// Creates a <see cref="UIntPtr"/> pointer from <see cref="ReadOnlySpan{T}"/> instance.
+        /// </summary>
+        /// <typeparam name="T">
+        /// <see cref="ValueType"/> of <see langword="unmanaged"/> values contened into the contiguous region of memory.
+        /// </typeparam>
+        /// <param name="readonlySpan">The read-only from which the pointer is retrieved.</param>
+        /// <returns><see cref="UIntPtr"/> pointer.</returns>
+        public static UIntPtr AsUIntPtr<T>(this ReadOnlySpan<T> readonlySpan)
+            where T : unmanaged
+        {
+            unsafe
+            {
+                return GetConditionalUIntPtrZero(readonlySpan.IsEmpty) ??
+                    new UIntPtr(ReferenceExtensions.GetPointerFromRef(ref MemoryMarshal.GetReference(readonlySpan)));
+            }
+        }
+
+        /// <summary>
+        /// Gets a <see cref="Nullable{IntPtr}"/> from a given condition. 
+        /// </summary>
+        /// <param name="condition">Indicates whether the <see cref="IntPtr.Zero"/> must be returned.</param>
+        /// <returns>
+        /// <see cref="IntPtr.Zero"/> if <paramref name="condition"/> is <see langword="true"/>; otherwise,
+        /// <see langword="null"/>.
+        /// </returns>
+        private static IntPtr? GetConditionalIntPtrZero(Boolean condition)
+            => condition ? IntPtr.Zero : default(IntPtr?);
+
+        /// <summary>
+        /// Gets a <see cref="Nullable{UIntPtr}"/> from a given condition. 
+        /// </summary>
+        /// <param name="condition">Indicates whether the <see cref="UIntPtr.Zero"/> must be returned.</param>
+        /// <returns>
+        /// <see cref="UIntPtr.Zero"/> if <paramref name="condition"/> is <see langword="true"/>; otherwise,
+        /// <see langword="null"/>.
+        /// </returns>
+        private static UIntPtr? GetConditionalUIntPtrZero(Boolean condition)
+            => condition ? UIntPtr.Zero : default(UIntPtr?);
     }
 }
