@@ -18,7 +18,6 @@ namespace PInvoke.Extensions
             where T : Delegate
             => delegateInstance != default ? Marshal.GetFunctionPointerForDelegate<T>(delegateInstance) : default;
 
-
         /// <summary>
         /// Creates a <see cref="UIntPtr"/> pointer from a memory reference to a <typeparamref name="T"/> delegate.
         /// </summary>

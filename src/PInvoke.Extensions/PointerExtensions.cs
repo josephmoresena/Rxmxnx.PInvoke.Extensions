@@ -255,7 +255,7 @@ namespace PInvoke.Extensions
         /// <exception cref="ArgumentException"/>
         /// <exception cref="ArgumentOutOfRangeException"/>
         private unsafe static ReadOnlySpan<T> GetReadOnlySpanFromPointer<T>(void* ptr, Int32 length)
-            => new ReadOnlySpan<T>(ptr, length);
+            => new(ptr, length);
 
         /// <summary>
         /// Creates a memory reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value from 

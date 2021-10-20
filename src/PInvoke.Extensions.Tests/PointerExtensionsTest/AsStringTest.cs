@@ -8,7 +8,7 @@ using Xunit;
 namespace PInvoke.Extensions.Tests.PointerExtensionsTest
 {
     [ExcludeFromCodeCoverage]
-    public class AsStringTest
+    public sealed class AsStringTest
     {
         [Theory]
         [InlineData(-1)]

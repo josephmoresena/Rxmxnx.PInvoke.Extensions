@@ -6,11 +6,10 @@ using AutoFixture;
 
 using Xunit;
 
-
 namespace PInvoke.Extensions.Tests.DelegateExtensionsTest
 {
     [ExcludeFromCodeCoverage]
-    public class AsPointerTest
+    public sealed class AsPointerTest
     {
         [Theory]
         [InlineData(false)]

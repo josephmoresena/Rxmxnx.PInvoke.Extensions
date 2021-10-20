@@ -6,7 +6,7 @@ using Xunit;
 namespace PInvoke.Extensions.Tests.PointerExtensionsTest
 {
     [ExcludeFromCodeCoverage]
-    public class OperatorsTest
+    public sealed class OperatorsTest
     {
         [Theory]
         [InlineData(false)]

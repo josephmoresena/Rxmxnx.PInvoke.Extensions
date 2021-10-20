@@ -6,7 +6,7 @@ using Xunit;
 namespace PInvoke.Extensions.Tests.NativeUtilitiesTest
 {
     [ExcludeFromCodeCoverage]
-    public class SizeOfTest
+    public sealed class SizeOfTest
     {
         [Fact]
         internal void BooleanTest() => Assert.Equal(1, NativeUtilities.SizeOf<Boolean>());

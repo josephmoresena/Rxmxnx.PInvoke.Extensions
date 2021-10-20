@@ -27,19 +27,30 @@ namespace PInvoke.Extensions
         /// Provides a high-level API for loading a native library.
         /// </summary>
         /// <param name="libraryName">The name of the native library to be loaded.</param>
-        /// <param name="autoUnload">Indicates whether the native library should auto-unloaded.</param>
         /// <param name="searchPath">The search path.</param>
         /// <returns>The OS handle for the loaded native library.</returns>
-        public static IntPtr? LoadNativeLib(
-            String libraryName, Boolean autoUnload = false, DllImportSearchPath? searchPath = default)
+        public static IntPtr? LoadNativeLib(String libraryName, DllImportSearchPath? searchPath = default)
         {
-            if (NativeLibrary.TryLoad(libraryName, Assembly.GetExecutingAssembly(), searchPath, out IntPtr handle))
-            {
-                if (autoUnload)
-                    AppDomain.CurrentDomain.DomainUnload += (sender, e) => NativeLibrary.Free(handle);
+            if (NativeLibrary.TryLoad(libraryName ?? String.Empty, Assembly.GetExecutingAssembly(), searchPath, out IntPtr handle))
                 return handle;
-            }
             return default;
+        }
+
+        /// <summary>
+        /// Provides a high-level API for loading a native library.
+        /// </summary>
+        /// <param name="libraryName">The name of the native library to be loaded.</param>
+        /// <param name="unloadEvent">
+        /// <see cref="EventHandler"/> delegate to append <see cref="NativeLibrary.Free(IntPtr)"/> invocation.
+        /// </param>
+        /// <param name="searchPath">The search path.</param>
+        /// <returns>The OS handle for the loaded native library.</returns>
+        public static IntPtr? LoadNativeLib(String libraryName, ref EventHandler unloadEvent, DllImportSearchPath? searchPath = default)
+        {
+            IntPtr? handle = LoadNativeLib(libraryName, searchPath);
+            if (handle.HasValue)
+                unloadEvent += (sender, e) => NativeLibrary.Free(handle.Value);
+            return handle;
         }
 
         /// <summary>
@@ -52,7 +63,7 @@ namespace PInvoke.Extensions
         public static T GetNativeMethod<T>(IntPtr handle, String name)
             where T : Delegate
         {
-            if (!handle.IsZero() && !String.IsNullOrEmpty(name) && NativeLibrary.TryGetExport(handle, name, out IntPtr address))
+            if (!handle.IsZero() && NativeLibrary.TryGetExport(handle, name ?? String.Empty, out IntPtr address))
                 return address.AsDelegate<T>();
             return default;
         }

@@ -9,7 +9,7 @@ using Xunit;
 namespace PInvoke.Extensions.Tests.PointerExtensionsTest
 {
     [ExcludeFromCodeCoverage]
-    public class AsReferenceTest
+    public sealed class AsReferenceTest
     {
         [Fact]
         internal void IntPtrTest()
