@@ -14,13 +14,15 @@ namespace PInvoke.Extensions.Tests.NativeUtilitiesTest
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        internal void EmptyTest(Boolean unloadEvent)
+        [InlineData(true, true)]
+        [InlineData(false, true)]
+        internal void EmptyTest(Boolean unloadEvent, Boolean emptyName = false)
         {
             String prefix = TestUtilities.SharedFixture.Create<String>();
             String sufix = TestUtilities.SharedFixture.Create<String>();
             IntPtr? result = default;
             EventHandler eventHandler = default;
-            String libraryName = prefix + TestUtilities.LibraryName + sufix;
+            String libraryName = !emptyName ? prefix + TestUtilities.LibraryName + sufix : default;
             if (unloadEvent)
             {
                 result = NativeUtilities.LoadNativeLib(libraryName, ref eventHandler);
