@@ -31,7 +31,7 @@ namespace PInvoke.Extensions.Tests.NativeUtilitiesTest
             IntPtr handle = !zeroPtr ?
                 !useRealHandle ? TestUtilities.SharedFixture.Create<IntPtr>() : NativeLibrary.Load(TestUtilities.LibraryName)
                 : IntPtr.Zero;
-            String name = !emptyName? prefix + TestUtilities.MethodName + sufix : default;
+            String name = !emptyName ? prefix + TestUtilities.MethodName + sufix : default;
             Delegate result;
             Skip.If(RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && !zeroPtr && !useRealHandle,
                 "Linux aborts the process with fake lib handle.");

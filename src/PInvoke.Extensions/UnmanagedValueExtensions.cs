@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace PInvoke.Extensions
 {
@@ -15,13 +16,6 @@ namespace PInvoke.Extensions
         /// <returns><see cref="Byte"/> array.</returns>
         public static Byte[] AsBytes<T>(this T value)
             where T : unmanaged
-        {
-            Int32 typeSize = NativeUtilities.SizeOf<T>();
-            ref T refValue = ref value;
-            unsafe
-            {
-                return refValue.AsIntPtr().AsReadOnlySpan<Byte>(typeSize).ToArray();
-            }
-        }
+            => Unsafe.AsRef(value).AsIntPtr().AsReadOnlySpan<Byte>(NativeUtilities.SizeOf<T>()).ToArray();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace PInvoke.Extensions
@@ -16,12 +17,7 @@ namespace PInvoke.Extensions
         /// <returns>Size of <typeparamref name="T"/> structure.</returns>
         public static Int32 SizeOf<T>()
             where T : unmanaged
-        {
-            unsafe
-            {
-                return sizeof(T);
-            }
-        }
+            => Unsafe.SizeOf<T>();
 
         /// <summary>
         /// Provides a high-level API for loading a native library.
