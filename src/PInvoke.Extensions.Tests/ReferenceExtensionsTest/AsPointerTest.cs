@@ -15,8 +15,7 @@ namespace PInvoke.Extensions.Tests.ReferenceExtensionsTest
         internal void IntPtrTest()
         {
             Byte value = TestUtilities.SharedFixture.Create<Byte>();
-            ref Byte refValue = ref value;
-            IntPtr result = refValue.AsIntPtr();
+            IntPtr result = Unsafe.AsRef(value).AsIntPtr();
             unsafe
             {
                 ref Byte unsafeRefValue = ref AsReference<Byte>(result.ToPointer());
@@ -30,8 +29,7 @@ namespace PInvoke.Extensions.Tests.ReferenceExtensionsTest
         internal void UIntPtrTest()
         {
             Byte value = TestUtilities.SharedFixture.Create<Byte>();
-            ref Byte refValue = ref value;
-            UIntPtr result = refValue.AsUIntPtr();
+            UIntPtr result = Unsafe.AsRef(value).AsUIntPtr();
             unsafe
             {
                 ref Byte unsafeRefValue = ref AsReference<Byte>(result.ToPointer());

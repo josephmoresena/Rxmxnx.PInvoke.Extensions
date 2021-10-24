@@ -63,5 +63,15 @@ namespace PInvoke.Extensions
                 return address.AsDelegate<T>();
             return default;
         }
+
+        /// <summary>
+        /// Retrieves a <see cref="Byte"/> array from the given <typeparamref name="T"/> value.
+        /// </summary>
+        /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
+        /// <param name="value"><typeparamref name="T"/> value.</param>
+        /// <returns><see cref="Byte"/> array.</returns>
+        public static Byte[] AsBytes<T>(in T value)
+            where T : unmanaged
+            => Unsafe.AsRef(value).AsIntPtr().AsReadOnlySpan<Byte>(NativeUtilities.SizeOf<T>()).ToArray();
     }
 }

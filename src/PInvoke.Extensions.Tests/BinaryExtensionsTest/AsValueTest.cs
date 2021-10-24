@@ -210,7 +210,6 @@ namespace PInvoke.Extensions.Tests.BinaryExtensionsTest
             unsafe
             {
                 ReadOnlySpan<Byte> readOnlySpan = new(Unsafe.AsPointer(ref value), sizeof(T));
-                Byte[] bytes = readOnlySpan.ToArray();
                 Assert.Equal(value, readOnlySpan.ToArray().AsValue<T>());
             }
         }
