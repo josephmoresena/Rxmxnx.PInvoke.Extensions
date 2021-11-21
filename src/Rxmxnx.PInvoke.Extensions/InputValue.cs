@@ -91,7 +91,7 @@ namespace Rxmxnx.PInvoke.Extensions
             Boolean IEquatable<IReferenceable<T>>.Equals(IReferenceable<T>? other)
                 => this._inputValue.Equals(other);
 
-            T IMutableReference<T>.SetInstance(T newValue)
+            void IMutableReference<T>.SetInstance(T newValue)
                 => this._inputValue.SetInstance(newValue);
         }
     }
