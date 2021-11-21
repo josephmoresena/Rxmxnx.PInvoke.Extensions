@@ -76,6 +76,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.InputValueTest
             where T : struct
         {
             Assert.Equal(initialValue, valueInput.GetInstanceValue());
+            Assert.Equal(initialValue, valueInput.GetInstance());
             Assert.True(valueInput.Equals(initialValue));
             Assert.False(Unsafe.AreSame(ref initialValue, ref Unsafe.AsRef(valueInput.Reference)));
             Assert.True(valueInput.Equals(valueInput));
@@ -93,6 +94,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.InputValueTest
             where T : struct
         {
             Assert.Equal(initialValue, valueInput.GetInstanceValue());
+            Assert.Equal(initialValue, valueInput.GetInstance());
             Assert.True(valueInput.Equals(initialValue));
             Assert.False(Unsafe.AreSame(ref initialValue, ref Unsafe.AsRef(valueInput.Reference)));
             Assert.True(valueInput.Equals(valueInput));
