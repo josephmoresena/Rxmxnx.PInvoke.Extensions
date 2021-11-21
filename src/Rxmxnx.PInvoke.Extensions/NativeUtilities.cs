@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace Rxmxnx.PInvoke.Extensions.Tests
+namespace Rxmxnx.PInvoke.Extensions
 {
     /// <summary>
     /// Provides a set of utilities for exchange data within the P/Invoke context.

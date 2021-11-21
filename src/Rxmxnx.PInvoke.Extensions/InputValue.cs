@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Rxmxnx.PInvoke.Extensions
 {
@@ -7,7 +7,7 @@ namespace Rxmxnx.PInvoke.Extensions
     /// Creates an object which contains a single reference to an inmutable <typeparamref name="T"/> object.
     /// </summary>
     /// <typeparam name="T">Type of the referenced object.</typeparam>
-    public abstract record InputValue<T> : IReferenceable<T>
+    internal abstract record InputValue<T> : IReferenceable<T>
     {
         /// <summary>
         /// Internal <typeparamref name="T"/> object.
@@ -27,7 +27,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <see langword="true"/> if the current object is equal to the other parameter; otherwise, <see langword="false"/>.
         /// </returns>
         public Boolean Equals(T? other)
-            => other == null && this._instance == null || (this._instance?.Equals(other) ?? false);
+            => Object.Equals(this._instance, other);
 
         /// <summary>
         /// Indicates whether the current object is equal to <see cref="IReferenceable{T}"/> object.
@@ -37,7 +37,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <see langword="true"/> if the current object is equal to the other parameter; otherwise, <see langword="false"/>.
         /// </returns>
         public Boolean Equals(IReferenceable<T>? other)
-            => other != default && ReferenceEquals(this.Reference, other.Reference);
+            => other != default && Unsafe.AreSame(ref Unsafe.AsRef(this.Reference), ref Unsafe.AsRef(other.Reference));
 
         /// <summary>
         /// Constructor.
@@ -46,54 +46,10 @@ namespace Rxmxnx.PInvoke.Extensions
         protected InputValue(in T instance) => this._instance = instance;
 
         /// <summary>
-        /// Implicit operator. <see cref="InputValue{T}"/> -> <see cref="Nullable{T}"/>.
-        /// </summary>
-        /// <param name="valueInput"><see cref="InputValue{T}"/> object.</param>
-        public static implicit operator T?(InputValue<T> valueInput)
-            => valueInput != default ? valueInput._instance : default;
-
-        /// <summary>
         /// Internal method to set instance object.
         /// </summary>
         /// <param name="newValue">New <typeparamref name="T"/> object to set as instance object.</param>
         internal abstract void SetInstance(in T newValue);
-
-        /// <summary>
-        /// Gets a <see cref="IMutableReference{TValue}"/> object which points to current instance.
-        /// </summary>
-        /// <returns><see cref="IMutableReference{TValue}"/> object.</returns>
-        internal IMutableReference<T> GetMutableReference()
-            => new ReferenceValue(this);
-
-        /// <summary>
-        /// Internal implementation of <see cref="IMutableReference{T}"/> interface.
-        /// </summary>
-        private struct ReferenceValue : IMutableReference<T>
-        {
-            /// <summary>
-            /// Internal <see cref="InputValue{T}"/> object.
-            /// </summary>
-            private readonly InputValue<T> _inputValue;
-
-            /// <summary>
-            /// Constructor.
-            /// </summary>
-            /// <param name="inputValue">Internal <see cref="InputValue{T}"/> object.</param>
-            internal ReferenceValue([DisallowNull] InputValue<T> inputValue)
-                => _inputValue = inputValue;
-
-            ref readonly T IReferenceable<T>.Reference
-                => ref this._inputValue.Reference;
-
-            Boolean IEquatable<T>.Equals(T? other)
-                => this._inputValue.Equals(other);
-
-            Boolean IEquatable<IReferenceable<T>>.Equals(IReferenceable<T>? other)
-                => this._inputValue.Equals(other);
-
-            void IMutableReference<T>.SetInstance(T newValue)
-                => this._inputValue.SetInstance(newValue);
-        }
     }
 
     /// <summary>
@@ -102,51 +58,54 @@ namespace Rxmxnx.PInvoke.Extensions
     public static class InputValue
     {
         /// <summary>
-        /// Creates a new <see cref="InputValue{TValue}"/> object from a <typeparamref name="TValue"/> value.
+        /// Creates a new <see cref="IReferenceable{TValue}"/> object from a <typeparamref name="TValue"/> value.
         /// </summary>
         /// <typeparam name="TValue"><see cref="ValueType"/> of object.</typeparam>
         /// <param name="instance">Instance value.</param>
         /// <returns>
-        /// <see cref="InputValue{TValue}"/> object which instance object is equal to 
+        /// <see cref="IReferenceable{TValue}"/> object which instance object is equal to 
         /// <paramref name="instance"/>.
         /// </returns>
-        public static InputValue<TValue> Create<TValue>(in TValue instance) where TValue : struct
+        public static IReferenceable<TValue> CreateInput<TValue>(in TValue instance) where TValue : struct
             => new ValueInput<TValue>(instance);
 
         /// <summary>
-        /// Creates a new <see cref="InputValue{TValue}"/> object from a 
+        /// Creates a new <see cref="IReferenceable{TValue}"/> object from a 
         /// <see cref="Nullable{TValue}"/> value.
         /// </summary>
         /// <typeparam name="TValue"><see cref="ValueType"/> of nullable object.</typeparam>
         /// <param name="instance">Instance nullable value.</param>
         /// <returns>
-        /// <see cref="InputValue{TValue}"/> object which instance object is equal to 
+        /// <see cref="IReferenceable{TValue}"/> object which instance object is equal to 
         /// <paramref name="instance"/>.
         /// </returns>
-        public static InputValue<TValue?> Create<TValue>(in TValue? instance) where TValue : struct
+        public static IReferenceable<TValue?> CreateInput<TValue>(in TValue? instance) where TValue : struct
             => new NullableInput<TValue>(instance);
 
         /// <summary>
-        /// Gets a <see cref="IMutableReference{TValue}"/> object which points to 
-        /// the given <see cref="InputValue{TValue}"/> object.
+        /// Creates a new <see cref="IMutableReference{TValue}"/> object from a <typeparamref name="TValue"/> value.
         /// </summary>
         /// <typeparam name="TValue"><see cref="ValueType"/> of object.</typeparam>
-        /// <param name="instance"><see cref="InputValue{TValue}"/> object.</param>
-        /// <returns><see cref="IMutableReference{TValue}"/> object.</returns>
-        public static IMutableReference<TValue>? GetReference<TValue>(this InputValue<TValue> instance)
-            where TValue : struct
-            => instance?.GetMutableReference();
+        /// <param name="instance">Instance value.</param>
+        /// <returns>
+        /// <see cref="IMutableReference{TValue}"/> object which instance object is equal to 
+        /// <paramref name="instance"/>.
+        /// </returns>
+        public static IMutableReference<TValue> CreateReference<TValue>(in TValue instance = default) where TValue : struct
+            => new Reference<TValue>(instance);
 
         /// <summary>
-        /// Gets a <see cref="IMutableReference{TValue}"/> object which points to 
-        /// the given <see cref="InputValue{TValue}"/> object.
+        /// Creates a new <see cref="IMutableReference{TValue}"/> object from a 
+        /// <see cref="Nullable{TValue}"/> value.
         /// </summary>
         /// <typeparam name="TValue"><see cref="ValueType"/> of nullable object.</typeparam>
-        /// <param name="instance"><see cref="InputValue{TValue}"/> object.</param>
-        /// <returns><see cref="IMutableReference{TValue}"/> object.</returns>
-        public static IMutableReference<TValue?>? GetReference<TValue>(this InputValue<TValue?> instance)
-            where TValue : struct
-            => instance?.GetMutableReference();
+        /// <param name="instance">Instance nullable value.</param>
+        /// <returns>
+        /// <see cref="IMutableReference{TValue}"/> object which instance object is equal to 
+        /// <paramref name="instance"/>.
+        /// </returns>
+        public static IMutableReference<TValue?> CreateReference<TValue>(in TValue? instance = default) where TValue : struct
+            => new NullableReference<TValue>(instance);
 
         /// <summary>
         /// Retrieves the instance object from an <see cref="IReferenceable{T}"/> object.
@@ -161,11 +120,11 @@ namespace Rxmxnx.PInvoke.Extensions
         /// Internal implementation of <see cref="InputValue{T}"/> for <see cref="ValueType"/> objects.
         /// </summary>
         /// <typeparam name="TValue"><see cref="ValueType"/> of the instance object.</typeparam>
-        private sealed record ValueInput<TValue> : InputValue<TValue>
+        private record ValueInput<TValue> : InputValue<TValue>
             where TValue : struct
         {
             internal override void SetInstance(in TValue newValue)
-                => base._instance = newValue;
+                => throw new NotImplementedException();
 
             /// <summary>
             /// Constructor.
@@ -178,17 +137,73 @@ namespace Rxmxnx.PInvoke.Extensions
         /// Internal implementation of <see cref="InputValue{T}"/> for nullable <see cref="ValueType"/> objects.
         /// </summary>
         /// <typeparam name="TValue"><see cref="ValueType"/> of the instance object.</typeparam>
-        private sealed record NullableInput<TValue> : InputValue<TValue?>
+        private record NullableInput<TValue> : InputValue<TValue?>
             where TValue : struct
         {
             internal override void SetInstance(in TValue? newValue)
-                => base._instance = newValue;
+                => throw new NotImplementedException();
 
             /// <summary>
             /// Constructor.
             /// </summary>
             /// <param name="instance">Initial value.</param>
             internal NullableInput(in TValue? instance) : base(instance) { }
+        }
+
+        /// <summary>
+        /// Internal implementation of mutable <see cref="ValueInput{TValue}"/> object.
+        /// </summary>
+        /// <typeparam name="TValue"><see cref="ValueType"/> of the instance object.</typeparam>
+        private sealed record Reference<TValue> : InputValue<TValue>, IMutableReference<TValue>
+            where TValue : struct
+        {
+            /// <summary>
+            /// Internal lock object.
+            /// </summary>
+            private readonly Object _writeLock = new();
+
+            internal override void SetInstance(in TValue newValue)
+            {
+                lock (this._writeLock)
+                    base._instance = newValue;
+            }
+
+            void IMutableReference<TValue>.SetInstance(TValue newValue)
+                => this.SetInstance(newValue);
+
+            /// <summary>
+            /// Constructor.
+            /// </summary>
+            /// <param name="instance">Initial value.</param>
+            internal Reference(in TValue instance) : base(instance) { }
+        }
+
+        /// <summary>
+        /// Internal implementation of nullable and mutable <see cref="ValueInput{TValue}"/> object.
+        /// </summary>
+        /// <typeparam name="TValue"><see cref="ValueType"/> of the instance object.</typeparam>
+        private sealed record NullableReference<TValue> : NullableInput<TValue>, IMutableReference<TValue?>
+            where TValue : struct
+        {
+            /// <summary>
+            /// Internal lock object.
+            /// </summary>
+            private readonly Object _writeLock = new();
+
+            internal override void SetInstance(in TValue? newValue)
+            {
+                lock (this._writeLock)
+                    base._instance = newValue;
+            }
+
+            void IMutableReference<TValue?>.SetInstance(TValue? newValue)
+                => this.SetInstance(newValue);
+
+            /// <summary>
+            /// Constructor.
+            /// </summary>
+            /// <param name="instance">Initial value.</param>
+            internal NullableReference(in TValue? instance) : base(instance) { }
         }
     }
 }

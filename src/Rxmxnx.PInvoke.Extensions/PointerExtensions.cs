@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace Rxmxnx.PInvoke.Extensions.Tests
+namespace Rxmxnx.PInvoke.Extensions
 {
     /// <summary>
     /// Provides a set of extensions for basic operations with <see cref="IntPtr"/> and <see cref="UIntPtr"/> instances.

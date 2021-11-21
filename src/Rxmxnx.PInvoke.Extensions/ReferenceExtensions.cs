@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace Rxmxnx.PInvoke.Extensions.Tests
+namespace Rxmxnx.PInvoke.Extensions
 {
     /// <summary>
     /// Provides a set of extensions for basic operations with memory references to <see cref="ValueType"/> 

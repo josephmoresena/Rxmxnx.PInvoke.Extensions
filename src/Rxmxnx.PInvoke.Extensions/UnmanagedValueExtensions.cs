@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Linq;
 
-namespace Rxmxnx.PInvoke.Extensions.Tests
+namespace Rxmxnx.PInvoke.Extensions
 {
     /// <summary>
     /// Provides a set of extensions for basic operations with <see cref="ValueType"/> <see langword="unmanaged"/> values.
@@ -29,7 +30,11 @@ namespace Rxmxnx.PInvoke.Extensions.Tests
             where TFrom : unmanaged
             where TTo : unmanaged
         {
-            if (array != default)
+            if (array == default)
+                return default;
+            else if (!array.Any())
+                return Array.Empty<TTo>();
+            else
             {
                 Span<TFrom> initialSpan = array.AsSpan();
                 IntPtr ptr = initialSpan.AsIntPtr();
@@ -37,17 +42,17 @@ namespace Rxmxnx.PInvoke.Extensions.Tests
                 Int32 step = NativeUtilities.SizeOf<TTo>();
                 Int32 count = length / step;
                 Int32 module = length % step;
-                TTo[] values = new TTo[count + (count != 0 ? 1 : 0)];
+                TTo[] values = new TTo[count + (module != 0 ? 1 : 0)];
                 Span<TTo> finalSpan = values.AsSpan();
                 ptr.AsReadOnlySpan<TTo>(count).CopyTo(finalSpan);
                 if (module != 0)
                 {
                     Byte[] missing = new Byte[step];
-                    ptr.AsReadOnlySpan<Byte>(count).Slice(length - module, module).CopyTo(missing);
+                    ptr.AsReadOnlySpan<Byte>(length).Slice(length - module, module).CopyTo(missing);
                     finalSpan[^1] = missing.AsValue<TTo>();
                 }
+                return finalSpan.ToArray();
             }
-            return default;
         }
     }
 }

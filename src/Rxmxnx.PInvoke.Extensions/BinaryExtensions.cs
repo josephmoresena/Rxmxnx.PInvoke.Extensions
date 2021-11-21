@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace Rxmxnx.PInvoke.Extensions.Tests
+namespace Rxmxnx.PInvoke.Extensions
 {
     /// <summary>
     /// Provides a set of extensions for basic operations with <see cref="Byte"/> instances.
