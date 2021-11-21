@@ -75,23 +75,34 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.InputValueTest
         private static void NormalTest<T>(IReferenceable<T> valueInput, T initialValue)
             where T : struct
         {
-            Assert.Equal(initialValue, valueInput.GetInstance());
+            Assert.Equal(initialValue, valueInput.GetInstanceValue());
             Assert.True(valueInput.Equals(initialValue));
             Assert.False(Unsafe.AreSame(ref initialValue, ref Unsafe.AsRef(valueInput.Reference)));
             Assert.True(valueInput.Equals(valueInput));
             Assert.False(valueInput.Equals(InputValue.CreateInput(initialValue)));
             Assert.False(valueInput.Equals(default(IReferenceable<T>)));
+
+            IReferenceable<T> nullInput = default;
+            T? nullValue = nullInput.GetInstanceValue();
+            T? nullInstance = nullInput.GetInstance();
+            Assert.Null(nullValue);
+            Assert.Equal(default(T), nullInstance);
         }
 
         private static void NormalNullableTest<T>(IReferenceable<T?> valueInput, T? initialValue)
             where T : struct
         {
-            Assert.Equal(initialValue, valueInput.GetInstance());
+            Assert.Equal(initialValue, valueInput.GetInstanceValue());
             Assert.True(valueInput.Equals(initialValue));
             Assert.False(Unsafe.AreSame(ref initialValue, ref Unsafe.AsRef(valueInput.Reference)));
             Assert.True(valueInput.Equals(valueInput));
             Assert.False(valueInput.Equals(InputValue.CreateInput(initialValue)));
             Assert.False(valueInput.Equals(default(IReferenceable<T>)));
+
+            IReferenceable<T?> nullInput = default;
+            T? nullValue = nullInput.GetInstanceValue();
+            T? nullInstance = nullInput.GetInstance();
+            Assert.Equal(nullValue, nullInstance);
         }
     }
 }

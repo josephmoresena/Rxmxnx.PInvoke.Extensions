@@ -111,10 +111,30 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <summary>
         /// Retrieves the instance object from an <see cref="IReferenceable{T}"/> object.
         /// </summary>
-        /// <typeparam name="T">Type of internal object.</typeparam>
+        /// <typeparam name="TValue">Type of internal object.</typeparam>
         /// <param name="referenceable"><see cref="IReferenceable{T}"/> object.</param>
-        /// <returns>Instance <see cref="Nullable{T}"/> object.</returns>
-        public static T? GetInstance<T>(this IReferenceable<T> referenceable)
+        /// <returns>Instance <typeparamref name="TValue"/> object.</returns>
+        public static TValue? GetInstance<TValue>(this IReferenceable<TValue> referenceable)
+            => referenceable != default ? referenceable.Reference : default;
+
+        /// <summary>
+        /// Retrieves the instance object from an <see cref="IReferenceable{T}"/> object.
+        /// </summary>
+        /// <typeparam name="TValue">Type of internal value.</typeparam>
+        /// <param name="referenceable"><see cref="IReferenceable{T}"/> object.</param>
+        /// <returns>Instance <see cref="Nullable{T}"/> value.</returns>
+        public static TValue? GetInstanceValue<TValue>(this IReferenceable<TValue> referenceable)
+            where TValue : struct
+            => referenceable != default ? referenceable.Reference : default(TValue?);
+
+        /// <summary>
+        /// Retrieves the instance object from an <see cref="IReferenceable{T}"/> object.
+        /// </summary>
+        /// <typeparam name="TValue">Type of internal value.</typeparam>
+        /// <param name="referenceable"><see cref="IReferenceable{T}"/> object.</param>
+        /// <returns>Instance <see cref="Nullable{T}"/> value.</returns>
+        public static TValue? GetInstanceValue<TValue>(this IReferenceable<TValue?> referenceable)
+            where TValue : struct
             => referenceable != default ? referenceable.Reference : default;
 
         /// <summary>

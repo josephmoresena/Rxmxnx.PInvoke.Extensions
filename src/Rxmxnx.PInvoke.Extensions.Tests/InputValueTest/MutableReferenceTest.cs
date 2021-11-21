@@ -92,7 +92,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.InputValueTest
         private static void NormalTest<T>(IMutableReference<T> reference, T initialValue, T newValue)
             where T : struct
         {
-            Assert.Equal(initialValue, reference.GetInstance());
+            Assert.Equal(initialValue, reference.GetInstanceValue());
             Assert.True(reference.Equals(initialValue));
             Assert.False(Unsafe.AreSame(ref initialValue, ref Unsafe.AsRef(reference.Reference)));
             reference.SetInstance(newValue);
@@ -102,7 +102,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.InputValueTest
         private static void NormalNullableTest<T>(IMutableReference<T?> reference, T? initialValue, T? newValue)
             where T : struct
         {
-            Assert.Equal(initialValue, reference.GetInstance());
+            Assert.Equal(initialValue, reference.GetInstanceValue());
             Assert.True(reference.Equals(initialValue));
             Assert.False(Unsafe.AreSame(ref initialValue, ref Unsafe.AsRef(reference.Reference)));
             reference.SetInstance(newValue);
