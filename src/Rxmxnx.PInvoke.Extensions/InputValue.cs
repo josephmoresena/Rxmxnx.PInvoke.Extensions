@@ -20,11 +20,6 @@ namespace Rxmxnx.PInvoke.Extensions
         public ref readonly T Reference => ref this._instance;
 
         /// <summary>
-        /// Internal property to set instance object.
-        /// </summary>
-        internal abstract T _ { set; }
-
-        /// <summary>
         /// Indicates whether the current object is equal to <typeparamref name="T"/> object.
         /// </summary>
         /// <param name="other">An object to compare with this object.</param>
@@ -56,6 +51,12 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="valueInput"><see cref="InputValue{T}"/> object.</param>
         public static implicit operator T?(InputValue<T> valueInput)
             => valueInput != default ? valueInput._instance : default;
+
+        /// <summary>
+        /// Internal method to set instance object.
+        /// </summary>
+        /// <param name="newValue">New <typeparamref name="T"/> object to set as instance object.</param>
+        internal abstract void SetInstance(in T newValue);
 
         /// <summary>
         /// Gets a <see cref="IMutableReference{TValue}"/> object which points to current instance.
@@ -91,7 +92,7 @@ namespace Rxmxnx.PInvoke.Extensions
                 => this._inputValue.Equals(other);
 
             T IMutableReference<T>.SetInstance(T newValue)
-                => this._inputValue._ = newValue;
+                => this._inputValue.SetInstance(newValue);
         }
     }
 
@@ -163,7 +164,8 @@ namespace Rxmxnx.PInvoke.Extensions
         private sealed record ValueInput<TValue> : InputValue<TValue>
             where TValue : struct
         {
-            internal override TValue _ { set => base._instance = value; }
+            internal override void SetInstance(in TValue newValue)
+                => base._instance = newValue;
 
             /// <summary>
             /// Constructor.
@@ -179,7 +181,8 @@ namespace Rxmxnx.PInvoke.Extensions
         private sealed record NullableInput<TValue> : InputValue<TValue?>
             where TValue : struct
         {
-            internal override TValue? _ { set => base._instance = value; }
+            internal override void SetInstance(in TValue? newValue)
+                => base._instance = newValue;
 
             /// <summary>
             /// Constructor.
