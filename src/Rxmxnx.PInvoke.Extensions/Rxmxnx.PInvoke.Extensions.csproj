@@ -6,8 +6,8 @@
     <DocumentationFile>.\$(AssemblyName).xml</DocumentationFile>
     <ExcludeXmlAssemblyFiles>false</ExcludeXmlAssemblyFiles>
     <IsPackable>true</IsPackable>
-	<Optimize>true</Optimize>
-	<Nullable>enable</Nullable>
+    <Optimize>true</Optimize>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
 </Project>
