@@ -59,10 +59,6 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.InputValueTest
         [InlineData(false)]
         internal void GuidTest(Boolean? nullableInput) => NormalTest<Guid>(nullableInput);
 
-        /// <summary>
-        /// Performs the test for implicit operators and <see cref="NullableValueInput{T}.Instance"/> property.
-        /// </summary>
-        /// <typeparam name="T"><see cref="ValueType"/> of object.</typeparam>
         private static void NormalTest<T>(Boolean? nullableInput)
             where T : struct
         {
@@ -79,7 +75,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.InputValueTest
         private static void NormalTest<T>(IReferenceable<T> valueInput, T initialValue)
             where T : struct
         {
-            Assert.Equal(valueInput.Reference, initialValue);
+            Assert.Equal(initialValue, valueInput.GetInstance());
             Assert.True(valueInput.Equals(initialValue));
             Assert.False(Unsafe.AreSame(ref initialValue, ref Unsafe.AsRef(valueInput.Reference)));
             Assert.True(valueInput.Equals(valueInput));
@@ -90,7 +86,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.InputValueTest
         private static void NormalNullableTest<T>(IReferenceable<T?> valueInput, T? initialValue)
             where T : struct
         {
-            Assert.Equal(valueInput.Reference, initialValue);
+            Assert.Equal(initialValue, valueInput.GetInstance());
             Assert.True(valueInput.Equals(initialValue));
             Assert.False(Unsafe.AreSame(ref initialValue, ref Unsafe.AsRef(valueInput.Reference)));
             Assert.True(valueInput.Equals(valueInput));

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace Rxmxnx.PInvoke.Extensions
@@ -123,8 +124,9 @@ namespace Rxmxnx.PInvoke.Extensions
         private record ValueInput<TValue> : InputValue<TValue>
             where TValue : struct
         {
+            [ExcludeFromCodeCoverage]
             internal override void SetInstance(in TValue newValue)
-                => throw new NotImplementedException();
+                => throw new InvalidOperationException();
 
             /// <summary>
             /// Constructor.
@@ -140,8 +142,9 @@ namespace Rxmxnx.PInvoke.Extensions
         private record NullableInput<TValue> : InputValue<TValue?>
             where TValue : struct
         {
+            [ExcludeFromCodeCoverage]
             internal override void SetInstance(in TValue? newValue)
-                => throw new NotImplementedException();
+                => throw new InvalidOperationException();
 
             /// <summary>
             /// Constructor.
