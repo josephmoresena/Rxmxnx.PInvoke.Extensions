@@ -154,7 +154,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// Internal implementation of mutable <see cref="ValueInput{TValue}"/> object.
         /// </summary>
         /// <typeparam name="TValue"><see cref="ValueType"/> of the instance object.</typeparam>
-        private sealed record Reference<TValue> : InputValue<TValue>, IMutableReference<TValue>
+        private sealed record Reference<TValue> : ValueInput<TValue>, IMutableReference<TValue>
             where TValue : struct
         {
             /// <summary>
