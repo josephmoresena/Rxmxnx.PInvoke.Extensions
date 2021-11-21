@@ -20,7 +20,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests
         {
             Int32 typeSize = NativeUtilities.SizeOf<T>();
             if (array.Length != typeSize)
-                throw new ArgumentException($"The length of parameter {array} must be equals to {typeSize} .");
+                throw new ArgumentException($"The length of parameter {array} must be equals to {typeSize}.");
             unsafe
             {
                 return Unsafe.Read<T>(array.AsSpan<Byte>().AsIntPtr<Byte>().ToPointer());

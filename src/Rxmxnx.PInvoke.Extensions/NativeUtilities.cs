@@ -56,7 +56,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests
         /// <param name="handle">The native library OS handle.</param>
         /// <param name="name">The name of the exported symbol.</param>
         /// <returns><typeparamref name="T"/> delegate.</returns>
-        public static T GetNativeMethod<T>(IntPtr handle, String name)
+        public static T? GetNativeMethod<T>(IntPtr handle, String name)
             where T : Delegate
         {
             if (!handle.IsZero() && NativeLibrary.TryGetExport(handle, name ?? String.Empty, out IntPtr address))

@@ -71,7 +71,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests
         /// </returns>
         /// <exception cref="ArgumentException"/>
         /// <exception cref="ArgumentOutOfRangeException"/>
-        public static String AsString(this IntPtr ptr, Int32 length = 0)
+        public static String? AsString(this IntPtr ptr, Int32 length = 0)
         {
             ValidateLengthParameter(length, nameof(length));
             if (ptr.IsZero())
@@ -97,7 +97,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests
         /// </returns>
         /// <exception cref="ArgumentException"/>
         /// <exception cref="ArgumentOutOfRangeException"/>
-        public static String AsString(this UIntPtr uptr, Int32 length = 0)
+        public static String? AsString(this UIntPtr uptr, Int32 length = 0)
         {
             ValidateLengthParameter(length, nameof(length));
             if (uptr.IsZero())
@@ -167,7 +167,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests
         /// <typeparam name="T">Type of the <see cref="Delegate"/> referenced into the pointer.</typeparam>
         /// <param name="ptr"><see cref="IntPtr"/> pointer.</param>
         /// <returns><typeparamref name="T"/> delegate.</returns>
-        public static T AsDelegate<T>(this IntPtr ptr)
+        public static T? AsDelegate<T>(this IntPtr ptr)
             where T : Delegate
             => !ptr.IsZero() ? Marshal.GetDelegateForFunctionPointer<T>(ptr) : default;
 
@@ -177,7 +177,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests
         /// <typeparam name="T">Type of the <see cref="Delegate"/> referenced into the pointer.</typeparam>
         /// <param name="uptr"><see cref="UIntPtr"/> pointer.</param>
         /// <returns><typeparamref name="T"/> delegate.</returns>
-        public static T AsDelegate<T>(this UIntPtr uptr)
+        public static T? AsDelegate<T>(this UIntPtr uptr)
             where T : Delegate
             => uptr.AsIntPtr().AsDelegate<T>();
 

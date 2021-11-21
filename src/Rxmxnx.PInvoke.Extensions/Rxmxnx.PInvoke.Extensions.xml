@@ -392,5 +392,189 @@
             <param name="value"><typeparamref name="T"/> value.</param>
             <returns><see cref="T:System.Byte"/> array.</returns>
         </member>
+        <member name="M:Rxmxnx.PInvoke.Extensions.Tests.UnmanagedValueExtensions.AsValues``2(``0[])">
+            <summary>
+            Creates an array of <typeparamref name="TTo"/> values from 
+            an array of <typeparamref name="TFrom"/> values. 
+            </summary>
+            <typeparam name="TTo">Destination <see cref="T:System.ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
+            <typeparam name="TFrom">Origin <see cref="T:System.ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
+            <param name="array">Array of <typeparamref name="TFrom"/> values.</param>
+            <returns>Array of <typeparamref name="TTo"/> values.</returns>
+        </member>
+        <member name="T:Rxmxnx.PInvoke.Extensions.IMutableReference`1">
+            <summary>
+            This interface exposes an object which contains a reference to a mutable <typeparamref name="T"/> object.
+            </summary>
+            <typeparam name="T">Type of the referenced object.</typeparam>
+        </member>
+        <member name="M:Rxmxnx.PInvoke.Extensions.IMutableReference`1.SetInstance(`0)">
+            <summary>
+            Sets the instance object.
+            </summary>
+            <param name="newValue">New <typeparamref name="T"/> object to set as instance object.</param>
+        </member>
+        <member name="T:Rxmxnx.PInvoke.Extensions.InputValue`1">
+            <summary>
+            Creates an object which contains a single reference to an inmutable <typeparamref name="T"/> object.
+            </summary>
+            <typeparam name="T">Type of the referenced object.</typeparam>
+        </member>
+        <member name="F:Rxmxnx.PInvoke.Extensions.InputValue`1._instance">
+            <summary>
+            Internal <typeparamref name="T"/> object.
+            </summary>
+        </member>
+        <member name="P:Rxmxnx.PInvoke.Extensions.InputValue`1.Reference">
+            <summary>
+            Reference to instance <typeparamref name="T"/> object.
+            </summary>
+        </member>
+        <member name="P:Rxmxnx.PInvoke.Extensions.InputValue`1._">
+            <summary>
+            Internal property to set instance object.
+            </summary>
+        </member>
+        <member name="M:Rxmxnx.PInvoke.Extensions.InputValue`1.Equals(`0)">
+            <summary>
+            Indicates whether the current object is equal to <typeparamref name="T"/> object.
+            </summary>
+            <param name="other">An object to compare with this object.</param>
+            <returns>
+            <see langword="true"/> if the current object is equal to the other parameter; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Rxmxnx.PInvoke.Extensions.InputValue`1.Equals(Rxmxnx.PInvoke.Extensions.IReferenceable{`0})">
+            <summary>
+            Indicates whether the current object is equal to <see cref="T:Rxmxnx.PInvoke.Extensions.IReferenceable`1"/> object.
+            </summary>
+            <param name="other">An object to compare with this object.</param>
+            <returns>
+            <see langword="true"/> if the current object is equal to the other parameter; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Rxmxnx.PInvoke.Extensions.InputValue`1.#ctor(`0@)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="instance">Initial value.</param>
+        </member>
+        <member name="M:Rxmxnx.PInvoke.Extensions.InputValue`1.op_Implicit(Rxmxnx.PInvoke.Extensions.InputValue{`0})~`0">
+            <summary>
+            Implicit operator. <see cref="T:Rxmxnx.PInvoke.Extensions.InputValue`1"/> -> <see cref="T:System.Nullable`1"/>.
+            </summary>
+            <param name="valueInput"><see cref="T:Rxmxnx.PInvoke.Extensions.InputValue`1"/> object.</param>
+        </member>
+        <member name="M:Rxmxnx.PInvoke.Extensions.InputValue`1.GetMutableReference">
+            <summary>
+            Gets a <see cref="T:Rxmxnx.PInvoke.Extensions.IMutableReference`1"/> object which points to current instance.
+            </summary>
+            <returns><see cref="T:Rxmxnx.PInvoke.Extensions.IMutableReference`1"/> object.</returns>
+        </member>
+        <member name="T:Rxmxnx.PInvoke.Extensions.InputValue`1.ReferenceValue">
+            <summary>
+            Internal implementation of <see cref="T:Rxmxnx.PInvoke.Extensions.IMutableReference`1"/> interface.
+            </summary>
+        </member>
+        <member name="F:Rxmxnx.PInvoke.Extensions.InputValue`1.ReferenceValue._inputValue">
+            <summary>
+            Internal <see cref="T:Rxmxnx.PInvoke.Extensions.InputValue`1"/> object.
+            </summary>
+        </member>
+        <member name="M:Rxmxnx.PInvoke.Extensions.InputValue`1.ReferenceValue.#ctor(Rxmxnx.PInvoke.Extensions.InputValue{`0})">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="inputValue">Internal <see cref="T:Rxmxnx.PInvoke.Extensions.InputValue`1"/> object.</param>
+        </member>
+        <member name="T:Rxmxnx.PInvoke.Extensions.InputValue">
+            <summary>
+            Supports a value type that can be referenced. This class cannot be inherited.
+            </summary>
+        </member>
+        <member name="M:Rxmxnx.PInvoke.Extensions.InputValue.Create``1(``0@)">
+            <summary>
+            Creates a new <see cref="T:Rxmxnx.PInvoke.Extensions.InputValue`1"/> object from a <typeparamref name="TValue"/> value.
+            </summary>
+            <typeparam name="TValue"><see cref="T:System.ValueType"/> of object.</typeparam>
+            <param name="instance">Instance value.</param>
+            <returns>
+            <see cref="T:Rxmxnx.PInvoke.Extensions.InputValue`1"/> object which instance object is equal to 
+            <paramref name="instance"/>.
+            </returns>
+        </member>
+        <member name="M:Rxmxnx.PInvoke.Extensions.InputValue.Create``1(System.Nullable{``0}@)">
+            <summary>
+            Creates a new <see cref="T:Rxmxnx.PInvoke.Extensions.InputValue`1"/> object from a 
+            <see cref="T:System.Nullable`1"/> value.
+            </summary>
+            <typeparam name="TValue"><see cref="T:System.ValueType"/> of nullable object.</typeparam>
+            <param name="instance">Instance nullable value.</param>
+            <returns>
+            <see cref="T:Rxmxnx.PInvoke.Extensions.InputValue`1"/> object which instance object is equal to 
+            <paramref name="instance"/>.
+            </returns>
+        </member>
+        <member name="M:Rxmxnx.PInvoke.Extensions.InputValue.GetReference``1(Rxmxnx.PInvoke.Extensions.InputValue{``0})">
+            <summary>
+            Gets a <see cref="T:Rxmxnx.PInvoke.Extensions.IMutableReference`1"/> object which points to 
+            the given <see cref="T:Rxmxnx.PInvoke.Extensions.InputValue`1"/> object.
+            </summary>
+            <typeparam name="TValue"><see cref="T:System.ValueType"/> of object.</typeparam>
+            <param name="instance"><see cref="T:Rxmxnx.PInvoke.Extensions.InputValue`1"/> object.</param>
+            <returns><see cref="T:Rxmxnx.PInvoke.Extensions.IMutableReference`1"/> object.</returns>
+        </member>
+        <member name="M:Rxmxnx.PInvoke.Extensions.InputValue.GetReference``1(Rxmxnx.PInvoke.Extensions.InputValue{System.Nullable{``0}})">
+            <summary>
+            Gets a <see cref="T:Rxmxnx.PInvoke.Extensions.IMutableReference`1"/> object which points to 
+            the given <see cref="T:Rxmxnx.PInvoke.Extensions.InputValue`1"/> object.
+            </summary>
+            <typeparam name="TValue"><see cref="T:System.ValueType"/> of nullable object.</typeparam>
+            <param name="instance"><see cref="T:Rxmxnx.PInvoke.Extensions.InputValue`1"/> object.</param>
+            <returns><see cref="T:Rxmxnx.PInvoke.Extensions.IMutableReference`1"/> object.</returns>
+        </member>
+        <member name="M:Rxmxnx.PInvoke.Extensions.InputValue.GetInstance``1(Rxmxnx.PInvoke.Extensions.IReferenceable{``0})">
+            <summary>
+            Retrieves the instance object from an <see cref="T:Rxmxnx.PInvoke.Extensions.IReferenceable`1"/> object.
+            </summary>
+            <typeparam name="T">Type of internal object.</typeparam>
+            <param name="referenceable"><see cref="T:Rxmxnx.PInvoke.Extensions.IReferenceable`1"/> object.</param>
+            <returns>Instance <see cref="T:System.Nullable`1"/> object.</returns>
+        </member>
+        <member name="T:Rxmxnx.PInvoke.Extensions.InputValue.ValueInput`1">
+            <summary>
+            Internal implementation of <see cref="T:Rxmxnx.PInvoke.Extensions.InputValue`1"/> for <see cref="T:System.ValueType"/> objects.
+            </summary>
+            <typeparam name="TValue"><see cref="T:System.ValueType"/> of the instance object.</typeparam>
+        </member>
+        <member name="M:Rxmxnx.PInvoke.Extensions.InputValue.ValueInput`1.#ctor(`0@)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="instance">Initial value.</param>
+        </member>
+        <member name="T:Rxmxnx.PInvoke.Extensions.InputValue.NullableInput`1">
+            <summary>
+            Internal implementation of <see cref="T:Rxmxnx.PInvoke.Extensions.InputValue`1"/> for nullable <see cref="T:System.ValueType"/> objects.
+            </summary>
+            <typeparam name="TValue"><see cref="T:System.ValueType"/> of the instance object.</typeparam>
+        </member>
+        <member name="M:Rxmxnx.PInvoke.Extensions.InputValue.NullableInput`1.#ctor(System.Nullable{`0}@)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="instance">Initial value.</param>
+        </member>
+        <member name="T:Rxmxnx.PInvoke.Extensions.IReferenceable`1">
+            <summary>
+            This interface exposes an object which contains a reference to an inmutable <typeparamref name="T"/> object.
+            </summary>
+            <typeparam name="T">Type of the referenced object.</typeparam>
+        </member>
+        <member name="P:Rxmxnx.PInvoke.Extensions.IReferenceable`1.Reference">
+            <summary>
+            Reference to instance <typeparamref name="T"/> object.
+            </summary>
+        </member>
     </members>
 </doc>
