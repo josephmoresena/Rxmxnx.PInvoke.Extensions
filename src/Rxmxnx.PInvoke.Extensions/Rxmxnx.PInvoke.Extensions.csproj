@@ -8,9 +8,8 @@
     <IsPackable>true</IsPackable>
     <Optimize>true</Optimize>
     <Nullable>enable</Nullable>
-    <PackageReadmeFile>LICENSE</PackageReadmeFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
 	<PackageTags>PInvoke;Binary;Reference;Unmanaged;Memory;NativeAOT</PackageTags>
-	<PackageLicenseFile>./../../README.md</PackageLicenseFile>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>
 		Provides a set of extensions and utilites which facilitates the exchange of data from 
