@@ -3,11 +3,25 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>.\$(AssemblyName).xml</DocumentationFile>
+    <DocumentationFile>./$(AssemblyName).xml</DocumentationFile>
     <ExcludeXmlAssemblyFiles>false</ExcludeXmlAssemblyFiles>
     <IsPackable>true</IsPackable>
     <Optimize>true</Optimize>
     <Nullable>enable</Nullable>
+    <PackageReadmeFile>LICENSE</PackageReadmeFile>
+	<PackageTags>PInvoke;Binary;Reference;Unmanaged;Memory;NativeAOT</PackageTags>
+	<PackageLicenseFile>./../../README.md</PackageLicenseFile>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>
+		Provides a set of extensions and utilites which facilitates the exchange of data from 
+		and to .NET P/Invoke methods (or UnmanagedCallersOnly using NativeAOT) avoiding use of 
+		both native pointers and unsafe context.
+	</Description>
   </PropertyGroup>
+
+  <ItemGroup>
+	<None Include="./../../README.md" Pack="true" PackagePath="/"/>
+	<None Include="./../../LICENSE" Pack="true" PackagePath="/"/>
+  </ItemGroup>
 
 </Project>
