@@ -19,8 +19,8 @@ namespace Rxmxnx.PInvoke.Extensions
             => NativeUtilities.AsBytes(value);
 
         /// <summary>
-        /// Creates an array of <typeparamref name="TTo"/> values from 
-        /// an array of <typeparamref name="TFrom"/> values. 
+        /// Creates an array of <typeparamref name="TTo"/> values from an array of 
+        /// <typeparamref name="TFrom"/> values. 
         /// </summary>
         /// <typeparam name="TTo">Destination <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
         /// <typeparam name="TFrom">Origin <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
