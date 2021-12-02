@@ -67,44 +67,33 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.InputValueTest
                 default(T?);
 
             if (!nullableInput.HasValue)
-                NormalTest(InputValue.CreateInput(initialValue.Value), initialValue.Value);
+                NormalValueTest(InputValue.CreateInput(initialValue.Value), initialValue.Value);
             else
                 NormalNullableTest(InputValue.CreateInput(initialValue), initialValue);
         }
 
-        private static void NormalTest<T>(IReferenceable<T> valueInput, T initialValue)
+        private static void NormalValueTest<T>(IReferenceable<T> valueInput, T initialValue)
             where T : struct
         {
-            Assert.Equal(initialValue, valueInput.GetInstanceValue());
-            Assert.Equal(initialValue, valueInput.GetInstance());
-            Assert.True(valueInput.Equals(initialValue));
-            Assert.False(Unsafe.AreSame(ref initialValue, ref Unsafe.AsRef(valueInput.Reference)));
-            Assert.True(valueInput.Equals(valueInput));
+            GeneralTest(valueInput, ref initialValue);
             Assert.False(valueInput.Equals(InputValue.CreateInput(initialValue)));
             Assert.False(valueInput.Equals(default(IReferenceable<T>)));
-
-            IReferenceable<T> nullInput = default;
-            T? nullValue = nullInput.GetInstanceValue();
-            T? nullInstance = nullInput.GetInstance();
-            Assert.Null(nullValue);
-            Assert.Equal(default(T), nullInstance);
         }
 
         private static void NormalNullableTest<T>(IReferenceable<T?> valueInput, T? initialValue)
             where T : struct
         {
-            Assert.Equal(initialValue, valueInput.GetInstanceValue());
-            Assert.Equal(initialValue, valueInput.GetInstance());
+            GeneralTest(valueInput, ref initialValue);
+            Assert.False(valueInput.Equals(InputValue.CreateInput(initialValue)));
+            Assert.False(valueInput.Equals(default(IReferenceable<T?>)));
+        }
+
+        private static void GeneralTest<T>(IReferenceable<T> valueInput, ref T initialValue)
+        {
+            Assert.Equal(initialValue, valueInput.Value);
             Assert.True(valueInput.Equals(initialValue));
             Assert.False(Unsafe.AreSame(ref initialValue, ref Unsafe.AsRef(valueInput.Reference)));
             Assert.True(valueInput.Equals(valueInput));
-            Assert.False(valueInput.Equals(InputValue.CreateInput(initialValue)));
-            Assert.False(valueInput.Equals(default(IReferenceable<T>)));
-
-            IReferenceable<T?> nullInput = default;
-            T? nullValue = nullInput.GetInstanceValue();
-            T? nullInstance = nullInput.GetInstance();
-            Assert.Equal(nullValue, nullInstance);
         }
     }
 }

@@ -84,25 +84,14 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.InputValueTest
             T? newValue = !nullableNew ? TestUtilities.SharedFixture.Create<T>() : default(T?);
 
             if (!nullableInput.HasValue)
-                NormalTest(InputValue.CreateReference(initialValue.Value), initialValue.Value, newValue.Value);
+                GeneralTest(InputValue.CreateReference(initialValue.Value), initialValue.Value, newValue.Value);
             else
-                NormalNullableTest(InputValue.CreateReference(initialValue), initialValue, newValue);
+                GeneralTest(InputValue.CreateReference(initialValue), initialValue, newValue);
         }
 
-        private static void NormalTest<T>(IMutableReference<T> reference, T initialValue, T newValue)
-            where T : struct
+        private static void GeneralTest<T>(IMutableReference<T> reference, T initialValue, T newValue)
         {
-            Assert.Equal(initialValue, reference.GetInstanceValue());
-            Assert.True(reference.Equals(initialValue));
-            Assert.False(Unsafe.AreSame(ref initialValue, ref Unsafe.AsRef(reference.Reference)));
-            reference.SetInstance(newValue);
-            Assert.Equal(newValue, reference.Reference);
-        }
-
-        private static void NormalNullableTest<T>(IMutableReference<T?> reference, T? initialValue, T? newValue)
-            where T : struct
-        {
-            Assert.Equal(initialValue, reference.GetInstanceValue());
+            Assert.Equal(initialValue, reference.Value);
             Assert.True(reference.Equals(initialValue));
             Assert.False(Unsafe.AreSame(ref initialValue, ref Unsafe.AsRef(reference.Reference)));
             reference.SetInstance(newValue);
