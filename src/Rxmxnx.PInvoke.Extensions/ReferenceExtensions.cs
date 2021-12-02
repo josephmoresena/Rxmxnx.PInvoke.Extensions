@@ -21,7 +21,7 @@ namespace Rxmxnx.PInvoke.Extensions
         {
             unsafe
             {
-                return new IntPtr(GetPointerFromRef(ref refValue));
+                return new IntPtr(Unsafe.AsPointer(ref refValue));
             }
         }
 
@@ -37,18 +37,29 @@ namespace Rxmxnx.PInvoke.Extensions
         {
             unsafe
             {
-                return new UIntPtr(GetPointerFromRef(ref refValue));
+                return new UIntPtr(Unsafe.AsPointer(ref refValue));
             }
         }
 
         /// <summary>
-        /// Retrieves the native pointer from a memory reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.
+        /// Creates a memory reference to a <typeparamref name="TDestination"/> <see langword="unmanaged"/> value from 
+        /// an exising memory reference to a <typeparamref name="TSource"/> <see langword="unmanaged"/> value.
         /// </summary>
-        /// <typeparam name="T"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> value.</typeparam>
-        /// <param name="refValue">Memory reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</param>
-        /// <returns>Native pointer.</returns>
-        internal static unsafe void* GetPointerFromRef<T>(ref T refValue)
-            where T : unmanaged
-            => Unsafe.AsPointer<T>(ref refValue);
+        /// <typeparam name="TSource"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> source value.</typeparam>
+        /// <typeparam name="TDestination"><see cref="ValueType"/> of the destination reference.</typeparam>
+        /// <param name="refValue">Memory reference to a <typeparamref name="TSource"/> <see langword="unmanaged"/> value.</param>
+        /// <returns>A memory reference to a <typeparamref name="TDestination"/> <see langword="unmanaged"/> value.</returns>
+        /// <exception cref="InvalidOperationException"/>
+        public static ref TDestination AsReferenceOf<TSource, TDestination>(this ref TSource refValue)
+            where TSource : unmanaged
+            where TDestination : unmanaged
+        {
+            if (NativeUtilities.SizeOf<TDestination>() != NativeUtilities.SizeOf<TSource>())
+                throw new InvalidOperationException("The sizes of both source and destination unmanaged types must be equal.");
+            unsafe
+            {
+                return ref Unsafe.AsRef<TDestination>(Unsafe.AsPointer(ref refValue));
+            }
+        }
     }
 }

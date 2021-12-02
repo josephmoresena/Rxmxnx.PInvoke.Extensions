@@ -193,7 +193,7 @@ namespace Rxmxnx.PInvoke.Extensions
         {
             unsafe
             {
-                return ref GetPointerFromReference<T>(ptr.ToPointer());
+                return ref Unsafe.AsRef<T>(ptr.ToPointer());
             }
         }
 
@@ -209,7 +209,7 @@ namespace Rxmxnx.PInvoke.Extensions
         {
             unsafe
             {
-                return ref GetPointerFromReference<T>(uptr.ToPointer());
+                return ref Unsafe.AsRef<T>(uptr.ToPointer());
             }
         }
 
@@ -256,16 +256,5 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <exception cref="ArgumentOutOfRangeException"/>
         private unsafe static ReadOnlySpan<T> GetReadOnlySpanFromPointer<T>(void* ptr, Int32 length)
             => new(ptr, length);
-
-        /// <summary>
-        /// Creates a memory reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value from 
-        /// a native pointer.
-        /// </summary>
-        /// <typeparam name="T"><see cref="ValueType"/> of the <see langword="unmanaged"/> referenced value.</typeparam>
-        /// <param name="ptr">Native pointer.</param>
-        /// <returns>Memory reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</returns>
-        private static unsafe ref T GetPointerFromReference<T>(void* ptr)
-            where T : unmanaged
-            => ref Unsafe.AsRef<T>(ptr);
     }
 }

@@ -18,7 +18,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.PointerExtensionsTest
             IntPtr refIntPtr;
             unsafe
             {
-                refIntPtr = new IntPtr(GetPointerFromRef(ref value));
+                refIntPtr = new IntPtr(Unsafe.AsPointer(ref value));
             }
             ref Byte refValue = ref refIntPtr.AsReference<Byte>();
             Assert.Equal(value, refValue);
@@ -33,15 +33,12 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.PointerExtensionsTest
             UIntPtr refUIntPtr;
             unsafe
             {
-                refUIntPtr = new UIntPtr(GetPointerFromRef(ref value));
+                refUIntPtr = new UIntPtr(Unsafe.AsPointer(ref value));
             }
             ref Byte refValue = ref refUIntPtr.AsReference<Byte>();
             Assert.Equal(value, refValue);
             refValue = TestUtilities.SharedFixture.Create<Byte>();
             Assert.Equal(value, refValue);
         }
-
-        internal static unsafe void* GetPointerFromRef<T>(ref T refValue)
-            => Unsafe.AsPointer<T>(ref refValue);
     }
 }

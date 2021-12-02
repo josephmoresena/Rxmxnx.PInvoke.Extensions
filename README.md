@@ -60,15 +60,19 @@ Gets a managed reference to a generic unmanaged value from a memory reference.
 ### ref T
 * AsIntPtr&lt;T&gt;()
 Gets a signed pointer to referenced memory by generic managed reference.
+* AsIntPtr&lt;T&gt;()
+Gets a signed pointer to referenced memory by generic managed reference.
 * AsUIntPtr&lt;T&gt;()
 Gets a unsigned pointer to referenced memory by generic managed reference.
+* AsReferenceOf&lt;TSource, TDestination&gt;()
+Creates a memory reference to a TDestination generic type value from an exising memory reference to a TSource generic type value.
 
 ## UnmanagedValueExtensions
 ### T
 * AsBytes&lt;T&gt;()
 Gets the binary data from unmanaged value.
-* AsValues&lt;TFrom, TTo&gt;()
-Creates an array of TTo generic type from an array of TFrom generic type. 
+* AsValues&lt;TSource, TDestination&gt;()
+Creates an array of TDestination generic type from an array of TSource generic type. 
 
 ## InputValue
 Supports a value type that can be referenced.

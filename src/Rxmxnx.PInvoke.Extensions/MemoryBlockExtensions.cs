@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Rxmxnx.PInvoke.Extensions
@@ -22,7 +23,7 @@ namespace Rxmxnx.PInvoke.Extensions
             unsafe
             {
                 return GetConditionalIntPtrZero(span.IsEmpty) ??
-                    new IntPtr(ReferenceExtensions.GetPointerFromRef(ref MemoryMarshal.GetReference(span)));
+                    new IntPtr(Unsafe.AsPointer(ref MemoryMarshal.GetReference(span)));
             }
         }
 
@@ -40,7 +41,7 @@ namespace Rxmxnx.PInvoke.Extensions
             unsafe
             {
                 return GetConditionalIntPtrZero(readonlySpan.IsEmpty) ??
-                    new IntPtr(ReferenceExtensions.GetPointerFromRef(ref MemoryMarshal.GetReference(readonlySpan)));
+                    new IntPtr(Unsafe.AsPointer(ref MemoryMarshal.GetReference(readonlySpan)));
             }
         }
 
@@ -58,7 +59,7 @@ namespace Rxmxnx.PInvoke.Extensions
             unsafe
             {
                 return GetConditionalUIntPtrZero(span.IsEmpty) ??
-                    new UIntPtr(ReferenceExtensions.GetPointerFromRef(ref MemoryMarshal.GetReference(span)));
+                    new UIntPtr(Unsafe.AsPointer(ref MemoryMarshal.GetReference(span)));
             }
         }
 
@@ -76,7 +77,7 @@ namespace Rxmxnx.PInvoke.Extensions
             unsafe
             {
                 return GetConditionalUIntPtrZero(readonlySpan.IsEmpty) ??
-                    new UIntPtr(ReferenceExtensions.GetPointerFromRef(ref MemoryMarshal.GetReference(readonlySpan)));
+                    new UIntPtr(Unsafe.AsPointer(ref MemoryMarshal.GetReference(readonlySpan)));
             }
         }
 
