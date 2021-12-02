@@ -114,6 +114,39 @@ namespace Rxmxnx.PInvoke.Extensions
             => new NullableReference<TValue>(instance);
 
         /// <summary>
+        /// Retrieves the instance object from an <see cref="IReferenceable{T}"/> object.
+        /// </summary>
+        /// <typeparam name="TValue">Type of internal object.</typeparam>
+        /// <param name="referenceable"><see cref="IReferenceable{T}"/> object.</param>
+        /// <returns>Instance <typeparamref name="TValue"/> object.</returns>
+        [Obsolete("Use Value property instead. It is not equivalent when the instance is null and the reference is not nullable.", true)]
+        public static TValue? GetInstance<TValue>(this IReferenceable<TValue> referenceable)
+            => referenceable != default ? referenceable.Reference : default;
+
+        /// <summary>
+        /// Retrieves the instance object from an <see cref="IReferenceable{T}"/> object.
+        /// </summary>
+        /// <typeparam name="TValue">Type of internal value.</typeparam>
+        /// <param name="referenceable"><see cref="IReferenceable{T}"/> object.</param>
+        /// <returns>Instance <see cref="Nullable{T}"/> value.</returns>
+        [Obsolete("Use Value property instead.", true)]
+        public static TValue? GetInstanceValue<TValue>(this IReferenceable<TValue> referenceable)
+            where TValue : struct
+            => referenceable != default ? referenceable.Reference : default(TValue?);
+
+        /// <summary>
+        /// Retrieves the instance object from an <see cref="IReferenceable{T}"/> object.
+        /// </summary>
+        /// <typeparam name="TValue">Type of internal value.</typeparam>
+        /// <param name="referenceable"><see cref="IReferenceable{T}"/> object.</param>
+        /// <returns>Instance <see cref="Nullable{T}"/> value.</returns>
+        [Obsolete("Use Value property instead.", true)]
+        public static TValue? GetInstanceValue<TValue>(this IReferenceable<TValue?> referenceable)
+            where TValue : struct
+            => referenceable != default ? referenceable.Reference : default;
+
+
+        /// <summary>
         /// Internal implementation of <see cref="InputValue{T}"/> for <see cref="ValueType"/> objects.
         /// </summary>
         /// <typeparam name="TValue"><see cref="ValueType"/> of the instance object.</typeparam>
