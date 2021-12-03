@@ -119,7 +119,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <typeparam name="TValue">Type of internal object.</typeparam>
         /// <param name="referenceable"><see cref="IReferenceable{T}"/> object.</param>
         /// <returns>Instance <typeparamref name="TValue"/> object.</returns>
-        [Obsolete("Use Value property instead. It is not equivalent when the instance is null and the reference is not nullable.", true)]
+        [Obsolete("Use Value property instead. It is not equivalent when the instance is null and the reference is not nullable.", true), ExcludeFromCodeCoverage]
         public static TValue? GetInstance<TValue>(this IReferenceable<TValue> referenceable)
             => referenceable != default ? referenceable.Reference : default;
 
@@ -129,7 +129,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <typeparam name="TValue">Type of internal value.</typeparam>
         /// <param name="referenceable"><see cref="IReferenceable{T}"/> object.</param>
         /// <returns>Instance <see cref="Nullable{T}"/> value.</returns>
-        [Obsolete("Use Value property instead.", true)]
+        [Obsolete("Use Value property instead.", true), ExcludeFromCodeCoverage]
         public static TValue? GetInstanceValue<TValue>(this IReferenceable<TValue> referenceable)
             where TValue : struct
             => referenceable != default ? referenceable.Reference : default(TValue?);
@@ -140,7 +140,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <typeparam name="TValue">Type of internal value.</typeparam>
         /// <param name="referenceable"><see cref="IReferenceable{T}"/> object.</param>
         /// <returns>Instance <see cref="Nullable{T}"/> value.</returns>
-        [Obsolete("Use Value property instead.", true)]
+        [Obsolete("Use Value property instead.", true), ExcludeFromCodeCoverage]
         public static TValue? GetInstanceValue<TValue>(this IReferenceable<TValue?> referenceable)
             where TValue : struct
             => referenceable != default ? referenceable.Reference : default;
