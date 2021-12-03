@@ -18,7 +18,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.ReferenceExtensionsTest
             IntPtr result = Unsafe.AsRef(value).AsIntPtr();
             unsafe
             {
-                ref Byte unsafeRefValue = ref AsReference<Byte>(result.ToPointer());
+                ref Byte unsafeRefValue = ref Unsafe.AsRef<Byte>(result.ToPointer());
                 Assert.Equal(unsafeRefValue, value);
                 unsafeRefValue = TestUtilities.SharedFixture.Create<Byte>();
                 Assert.Equal(unsafeRefValue, value);
@@ -32,19 +32,10 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.ReferenceExtensionsTest
             UIntPtr result = Unsafe.AsRef(value).AsUIntPtr();
             unsafe
             {
-                ref Byte unsafeRefValue = ref AsReference<Byte>(result.ToPointer());
+                ref Byte unsafeRefValue = ref Unsafe.AsRef<Byte>(result.ToPointer());
                 Assert.Equal(unsafeRefValue, value);
                 unsafeRefValue = TestUtilities.SharedFixture.Create<Byte>();
                 Assert.Equal(unsafeRefValue, value);
-            }
-        }
-
-        private unsafe static ref T AsReference<T>(void* ptr)
-            where T : unmanaged
-        {
-            unsafe
-            {
-                return ref Unsafe.AsRef<T>(ptr);
             }
         }
     }
