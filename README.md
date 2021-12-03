@@ -60,8 +60,6 @@ Gets a managed reference to a generic unmanaged value from a memory reference.
 ### ref T
 * AsIntPtr&lt;T&gt;()
 Gets a signed pointer to referenced memory by generic managed reference.
-* AsIntPtr&lt;T&gt;()
-Gets a signed pointer to referenced memory by generic managed reference.
 * AsUIntPtr&lt;T&gt;()
 Gets a unsigned pointer to referenced memory by generic managed reference.
 * AsReferenceOf&lt;TSource, TDestination&gt;()
