@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+	
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -8,15 +8,27 @@
     <IsPackable>true</IsPackable>
     <Optimize>true</Optimize>
     <Nullable>enable</Nullable>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
+	<IncludeSymbols>true</IncludeSymbols>
+  </PropertyGroup>
+	
+  <PropertyGroup>
 	<PackageTags>PInvoke;Binary;Reference;Unmanaged;Memory;NativeAOT</PackageTags>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>Provides a set of extensions and utilites which facilitates the exchange of data from and to .NET P/Invoke methods (or UnmanagedCallersOnly using NativeAOT) avoiding use of both native pointers and unsafe context.</Description>
+	<EmbedUntrackedSources>true</EmbedUntrackedSources>
+	<PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>  
+	<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
-
+	
   <ItemGroup>
-	<None Include="./../../README.md" Pack="true" PackagePath="/"/>
-	<None Include="./../../LICENSE" Pack="true" PackagePath="/"/>
+	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
   </ItemGroup>
-
+	
+  <ItemGroup>
+	<None Include="./../../.github/**/*" Pack="false"/>
+	<None Include="./../../README.md" Pack="false"/>
+	<None Include="./../../LICENSE" Pack="false"/>
+  </ItemGroup>
+	
 </Project>
