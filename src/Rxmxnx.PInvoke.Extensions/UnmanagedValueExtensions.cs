@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 
+using Rxmxnx.PInvoke.Extensions.Internal;
+
 namespace Rxmxnx.PInvoke.Extensions
 {
     /// <summary>
@@ -32,27 +34,11 @@ namespace Rxmxnx.PInvoke.Extensions
         {
             if (array == default)
                 return default;
-            else if (!array.Any())
+
+            if (!array.Any())
                 return Array.Empty<TDestination>();
-            else
-            {
-                Span<TSource> initialSpan = array.AsSpan();
-                IntPtr ptr = initialSpan.AsIntPtr();
-                Int32 length = array.Length * NativeUtilities.SizeOf<TSource>();
-                Int32 step = NativeUtilities.SizeOf<TDestination>();
-                Int32 count = length / step;
-                Int32 module = length % step;
-                TDestination[] values = new TDestination[count + (module != 0 ? 1 : 0)];
-                Span<TDestination> finalSpan = values.AsSpan();
-                ptr.AsReadOnlySpan<TDestination>(count).CopyTo(finalSpan);
-                if (module != 0)
-                {
-                    Byte[] missing = new Byte[step];
-                    ptr.AsReadOnlySpan<Byte>(length).Slice(length - module, module).CopyTo(missing);
-                    finalSpan[^1] = missing.AsValue<TDestination>();
-                }
-                return finalSpan.ToArray();
-            }
+
+            return new ArrayValueConversion<TSource, TDestination>(array);
         }
     }
 }

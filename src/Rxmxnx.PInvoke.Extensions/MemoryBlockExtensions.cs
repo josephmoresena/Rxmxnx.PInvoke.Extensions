@@ -33,7 +33,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <typeparam name="T">
         /// <see cref="ValueType"/> of <see langword="unmanaged"/> values contened into the contiguous region of memory.
         /// </typeparam>
-        /// <param name="readonlySpan">The read-only from which the pointer is retrieved.</param>
+        /// <param name="readonlySpan">The read-only span from which the pointer is retrieved.</param>
         /// <returns><see cref="IntPtr"/> pointer.</returns>
         public static IntPtr AsIntPtr<T>(this ReadOnlySpan<T> readonlySpan)
             where T : unmanaged
@@ -69,7 +69,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <typeparam name="T">
         /// <see cref="ValueType"/> of <see langword="unmanaged"/> values contened into the contiguous region of memory.
         /// </typeparam>
-        /// <param name="readonlySpan">The read-only from which the pointer is retrieved.</param>
+        /// <param name="readonlySpan">The read-only span from which the pointer is retrieved.</param>
         /// <returns><see cref="UIntPtr"/> pointer.</returns>
         public static UIntPtr AsUIntPtr<T>(this ReadOnlySpan<T> readonlySpan)
             where T : unmanaged

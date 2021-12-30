@@ -25,13 +25,13 @@
   </PropertyGroup>  
 	
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 	
   <ItemGroup>
-    <None Include="./../../.github/**/*" Pack="false"/>
-    <None Include="./../../README.md" Pack="false"/>
-    <None Include="./../../LICENSE" Pack="false"/>
+    <None Include="./../../.github/**/*" Pack="false" />
+    <None Include="./../../README.md" Pack="false" />
+    <None Include="./../../LICENSE" Pack="false" />
   </ItemGroup>
 	
 </Project>

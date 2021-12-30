@@ -74,6 +74,11 @@ Gets a unsigned pointer to referenced memory by generic managed reference.
 * AsReferenceOf&lt;TSource, TDestination&gt;()
 Creates a memory reference to a TDestination generic type value from an exising memory reference to a TSource generic type value.
 
+## StringExtensions
+### T
+* AsUtf8Span()
+Encodes the UTF-16 text using the UTF-8 charset and retrieves the read-only span which references to the UTF-8 text.
+
 ## UnmanagedValueExtensions
 ### T
 * AsBytes&lt;T&gt;()
