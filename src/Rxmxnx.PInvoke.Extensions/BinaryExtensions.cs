@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+
+using Rxmxnx.PInvoke.Extensions.Internal;
 
 namespace Rxmxnx.PInvoke.Extensions
 {
@@ -34,6 +37,14 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <returns><see cref="String"/> representation of hexadecimal value.</returns>
         public static String AsHexString(this Byte[] bytes)
             => String.Concat(bytes.Select(b => b.AsHexString()));
+
+        /// <summary>
+        /// Concatenates the members of a collection of UTF-8 texts.
+        /// </summary>
+        /// <param name="values">A collection that contains the UTF-8 texts to concatenate.</param>
+        /// <returns>Concatenation with UTF-8 encoding.</returns>
+        public static Byte[]? ConcatUtf8(this IEnumerable<Byte[]> values)
+            => Utf8BinaryConcatenation.Concat(values);
 
         /// <summary>
         /// Gets <see cref="String"/> representation of <see cref="Byte"/> hexadecimal value.

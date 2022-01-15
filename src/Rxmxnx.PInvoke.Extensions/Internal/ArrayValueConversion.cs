@@ -2,9 +2,8 @@
 
 namespace Rxmxnx.PInvoke.Extensions.Internal
 {
-
     /// <summary>
-    /// This class helpers to create a <typeparamref name="TDestination"/> array from
+    /// This class helps to create a <typeparamref name="TDestination"/> array from
     /// a <typeparamref name="TSource"/> array.
     /// </summary>
     /// <typeparam name="TDestination">Destination <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>

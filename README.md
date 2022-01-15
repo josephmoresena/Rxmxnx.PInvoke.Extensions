@@ -17,6 +17,8 @@ Provides a set of extensions for basic operations with Byte instances.
 Gets a value of generic type which length must match to array lenght.
 * AsHexString()
 Gets the String representation of binary data into the array.
+* ConcatUtf8()
+Concatenates the members of a collection of UTF-8 texts.
 ### Byte
 * AsHexString()
 Gets the String representation of byte value.
@@ -78,6 +80,11 @@ Creates a memory reference to a TDestination generic type value from an exising 
 ### String
 * AsUtf8Span()
 Encodes the UTF-16 text using the UTF-8 charset and retrieves the read-only span which references to the UTF-8 text.
+* AsUtf8()
+Encodes the UTF-16 text using the UTF-8 charset and retrieves the Byte array with UTF-8 text.
+### IEnumerable<String>
+* ConcatUtf8()
+Concatenates the members of a collection of String.
 
 ## UnmanagedValueExtensions
 ### T
@@ -115,3 +122,18 @@ Loads a native library and appends its unloading to given EventHandler delegate.
 Gets a generic delegate which points to a exported symbol into native library.
 * AsBytes&lt;T&gt;(in T value)
 Gets the binary data of an input generic value.
+
+#TextUtilites
+Provides a set of utilities for texts.
+* JoinUtf8(String, params String[])
+Concatenates an array of strings, using the specified separator between each member.
+* JoinUtf8(Char, params String[])
+Concatenates an array of strings, using the specified separator between each member.
+* JoinUtf8(String, IEnumerable<String>)
+Concatenates the members of a collection of String, using the specified separator between each member.
+* JoinUtf8(Char, IEnumerable<String>)
+Concatenates the members of a collection of String, using the specified separator between each member.
+* ConcatUtf8(String, params String[])
+Concatenates all text parameters passed to this function.
+* ConcatUtf8(String, params Byte[][])
+Concatenates all UTF-8 text parameters passed to this function.
