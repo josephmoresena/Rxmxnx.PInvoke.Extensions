@@ -4,20 +4,30 @@
     <TargetFramework>net5.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DocumentationFile>./$(AssemblyName).xml</DocumentationFile>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
     <ExcludeXmlAssemblyFiles>false</ExcludeXmlAssemblyFiles>
     <IsPackable>true</IsPackable>
     <Optimize>true</Optimize>
     <Deterministic>true</Deterministic>
     <Nullable>enable</Nullable>
-    <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
 	
   <PropertyGroup>
+    <Authors>Joseph Moreno</Authors>
+    <Product>PInvoke.Extensions</Product> 
+    <Description>Provides a set of extensions and utilites which facilitates exchange of data from and to .NET P/Invoke methods (or UnmanagedCallersOnly using NativeAOT) avoiding use of both native pointers and unsafe context.</Description>
+    <Copyright>Copyright © Joseph Moreno 2021</Copyright>
+    <Summary>Provides a set of extensions and utilites which facilitates exchange of data from and to .NET P/Invoke methods (or UnmanagedCallersOnly using NativeAOT) avoiding use of both native pointers and unsafe context.</Summary>
+	<NeutralLanguage>en-US</NeutralLanguage>
+	<Title>PInvoke.Extensions</Title>
+	<PackageId>Rxmxnx.PInvoke.Extensions</PackageId>
     <PackageTags>PInvoke;Binary;Reference;Unmanaged;Memory;NativeAOT</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Description>Provides a set of extensions and utilites which facilitates the exchange of data from and to .NET P/Invoke methods (or UnmanagedCallersOnly using NativeAOT) avoiding use of both native pointers and unsafe context.</Description>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	<EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 	
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
@@ -30,8 +40,8 @@
 	
   <ItemGroup>
     <None Include="./../../.github/**/*" Pack="false" />
-    <None Include="./../../README.md" Pack="false" />
-    <None Include="./../../LICENSE" Pack="false" />
+    <None Include="./../../README.md" Pack="true" PackagePath="/" />
+    <None Include="./../../LICENSE" Pack="true" PackagePath="LICENSE.md" />
   </ItemGroup>
 	
 </Project>
