@@ -22,7 +22,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// </summary>
         /// <param name="separator">UTF-8 text separator.</param>
         private Utf8BinaryConcatenation(ReadOnlySpan<Byte> separator)
-            : base(PrepareValue(separator).ToArray(), InitalJoin, Concat)
+            : base(!separator.IsEmpty ? separator.ToArray() : default, InitalJoin, Concat)
         {
         }
 
@@ -33,7 +33,8 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         private void Write(IEnumerable<Byte[]> values)
         {
             foreach (Byte[] value in values)
-                Write(PrepareValue(value));
+                if (!this.IsEmpty(value))
+                    Write(PrepareUtf8Text(value));
         }
 
         /// <summary>
@@ -47,7 +48,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         }
 
         protected override Boolean IsEmpty(Byte[]? value)
-            => value != default && value.Any();
+            => value == default || !value.Any();
 
         /// <summary>
         /// Creates an <see cref="Byte"/> array which contains the concatenation of any UTF-8 text passed.
@@ -79,7 +80,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             if (values != null)
             {
                 using Utf8BinaryConcatenation helper = new(separator);
-                helper.Write(initial);
+                helper.Write(PrepareUtf8Text(initial));
                 helper.Write(values);
                 return helper.ToArray();
             }
@@ -114,49 +115,6 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         {
             helper._mem.Write(helper._separator);
             helper._mem.Write(value);
-        }
-
-        /// <summary>
-        /// Prepares a UTF-8 text for concatenation process.
-        /// </summary>
-        /// <param name="span"><see cref="ReadOnlySpan{Byte}"/> to UTF-8 text.</param>
-        /// <returns><see cref="ReadOnlySpan{Byte}"/> to UTF-8 binary data.</returns>
-        private static ReadOnlySpan<Byte> PrepareValue(ReadOnlySpan<Byte> span)
-        {
-            if (!span.IsEmpty)
-            {
-                Int32 iPosition = GetInitialPosition(span);
-                Int32 fLength = GetFinalLength(span, iPosition);
-                return span.Slice(iPosition, fLength);
-            }
-            return span;
-        }
-
-        /// <summary>
-        /// Gets the initial position of the UTF-8 text.
-        /// </summary>
-        /// <param name="span"><see cref="ReadOnlySpan{Byte}"/> to UTF-8 text.</param>
-        /// <returns>Initial position of the UTF-8 text.</returns>
-        private static Int32 GetInitialPosition(ReadOnlySpan<Byte> span)
-        {
-            Int32 iPosition = 0;
-            while (iPosition < span.Length && span[iPosition] != default)
-                iPosition++;
-            return iPosition;
-        }
-
-        /// <summary>
-        /// Gets the final length of the UTF-8 text.
-        /// </summary>
-        /// <param name="span"><see cref="ReadOnlySpan{Byte}"/> to UTF-8 text.</param>
-        /// <param name="iPosition">Initial position of the UTF-8 text.</param>
-        /// <returns>Final length of the UTF-8 text.</returns>
-        private static Int32 GetFinalLength(ReadOnlySpan<Byte> span, Int32 iPosition)
-        {
-            Int32 fPosition = span.Length - 1;
-            while (fPosition > iPosition && span[fPosition] == default)
-                fPosition--;
-            return fPosition - iPosition;
         }
     }
 }

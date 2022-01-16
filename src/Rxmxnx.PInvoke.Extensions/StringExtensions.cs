@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 using Rxmxnx.PInvoke.Extensions.Internal;
 
@@ -36,5 +37,13 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <returns>Concatenation with UTF-8 encoding.</returns>
         public static Byte[]? ConcatUtf8(this IEnumerable<String> values)
             => Utf8StringConcatenation.Concat(values);
+
+        /// <summary>
+        /// Concatenates the members of a collection of <see cref="String"/>.
+        /// </summary>
+        /// <param name="values">A collection that contains the strings to concatenate.</param>
+        /// <returns>Concatenation with UTF-8 encoding.</returns>
+        public static Task<Byte[]?> ConcatUtf8Async(this IEnumerable<String> values)
+            => Utf8StringConcatenation.ConcatAsync(values);
     }
 }

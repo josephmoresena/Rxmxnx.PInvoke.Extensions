@@ -16,7 +16,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.StringExtensions
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public void EmptyTest(Boolean emptyString)
+        internal void EmptyTest(Boolean emptyString)
         {
             String str = emptyString ? String.Empty : default;
             ReadOnlySpan<Byte> result = str.AsUtf8Span();
@@ -26,7 +26,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.StringExtensions
         }
 
         [Fact]
-        public void NormalTest()
+        internal void NormalTest()
         {
             String str = TestUtilities.SharedFixture.Create<String>();
             Byte[] utfEncode = Encoding.UTF8.GetBytes(str);

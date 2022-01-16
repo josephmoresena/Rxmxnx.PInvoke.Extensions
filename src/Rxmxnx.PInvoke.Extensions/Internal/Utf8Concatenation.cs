@@ -62,10 +62,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         public Byte[]? ToArray()
         {
             if (this._mem.Length > 0)
-            {
-                this._mem.WriteByte(default);
-                return this._mem.ToArray();
-            }
+                return this.GetBinaryData();
             return default;
         }
 
@@ -80,6 +77,69 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
                 this._disposed = true;
                 this._mem.Dispose();
             }
+        }
+
+        /// <summary>
+        /// Retrieves a copy of binary data into the buffer.
+        /// </summary>
+        /// <returns>Copy of binary data into the buffer.</returns>
+        private Byte[]? GetBinaryData()
+        {
+            ReadOnlySpan<Byte> span = PrepareUtf8Text(this._mem.GetBuffer());
+            if (!span.IsEmpty)
+                return span.ToArray();
+            return default;
+        }
+
+        /// <summary>
+        /// Prepares a UTF-8 text for concatenation process.
+        /// </summary>
+        /// <param name="span"><see cref="ReadOnlySpan{Byte}"/> to UTF-8 text.</param>
+        /// <returns><see cref="ReadOnlySpan{Byte}"/> to UTF-8 binary data.</returns>
+        protected static ReadOnlySpan<Byte> PrepareUtf8Text(ReadOnlySpan<Byte> span)
+        {
+            if (!span.IsEmpty)
+            {
+                Int32 iPosition = GetInitialPosition(span);
+                Int32 fLength = GetFinalLength(span, iPosition);
+                return span.Slice(iPosition, fLength);
+            }
+            return span;
+        }
+
+        /// <summary>
+        /// Gets the initial position of the UTF-8 text.
+        /// </summary>
+        /// <param name="span"><see cref="ReadOnlySpan{Byte}"/> to UTF-8 text.</param>
+        /// <returns>Initial position of the UTF-8 text.</returns>
+        private static Int32 GetInitialPosition(ReadOnlySpan<Byte> span)
+        {
+            Int32 iPosition = 0;
+            while (iPosition < span.Length && IsNullUtf8Char(span[iPosition]))
+                iPosition++;
+            while (iPosition + 2 < span.Length && IsBOMChar(span[iPosition], span[iPosition + 1], span[iPosition + 2]))
+                iPosition += 3;
+            return iPosition;
+        }
+
+        private static Boolean IsNullUtf8Char(in Byte utf8Char)
+            => utf8Char == default;
+
+        private static Boolean IsBOMChar(in Byte utf8Char1, in Byte utf8Char2, in Byte utf8Char3)
+            => utf8Char1 == 239 && utf8Char2 == 187 && utf8Char3 == 191;
+
+        /// <summary>
+        /// Gets the final length of the UTF-8 text.
+        /// </summary>
+        /// <param name="span"><see cref="ReadOnlySpan{Byte}"/> to UTF-8 text.</param>
+        /// <param name="iPosition">Initial position of the UTF-8 text.</param>
+        /// <returns>Final length of the UTF-8 text.</returns>
+        private static Int32 GetFinalLength(ReadOnlySpan<Byte> span, Int32 iPosition)
+        {
+            Int32 fPosition = span.Length - 1;
+            while (fPosition >= iPosition && IsNullUtf8Char(span[fPosition]))
+                fPosition--;
+            return fPosition - iPosition + 1;
         }
     }
 }
