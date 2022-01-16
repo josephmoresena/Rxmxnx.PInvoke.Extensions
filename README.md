@@ -130,7 +130,7 @@ Gets a generic delegate which points to a exported symbol into native library.
 * AsBytes&lt;T&gt;(in T value)
 Gets the binary data of an input generic value.
 
-#TextUtilites
+##TextUtilites
 Provides a set of utilities for texts.
 * JoinUtf8(String, params String[])
 Concatenates an array of strings, using the specified separator between each member.
