@@ -12,6 +12,9 @@ Provides a set of extensions and utilites which facilitates the exchange of data
 
 ## Binary Extensions
 Provides a set of extensions for basic operations with Byte instances.
+### Byte
+* AsHexString()
+Gets the String representation of byte value.
 ### Byte[]
 * AsValue&lt;T&gt;()
 Gets a value of generic type which length must match to array lenght.
@@ -24,9 +27,6 @@ Concatenates the members of a collection of UTF-8 texts.
 ### IEnumerable<String>
 * ConcatUtf8()
 Concatenates the members of a collection of String.
-### Byte
-* AsHexString()
-Gets the String representation of byte value.
 
 ## MemoryBlockExtensions
 Provides a set of extensions for basic operations with Span&lt;T&gt; and ReadOnlySpan&lt;T&gt; instances.
@@ -138,8 +138,8 @@ Concatenates an array of strings, using the specified separator between each mem
 Concatenates an array of strings, using the specified separator between each member.
 * JoinUtf8(String, IEnumerable<String>)
 Concatenates the members of a collection of String, using the specified separator between each member.
-* ConcatUtf8(String, params String[])
-Concatenates all text parameters passed to this function.
+* JoinUtf8(Char, IEnumerable<String>)
+Concatenates the members of a collection of String, using the specified separator between each member.
 * JoinUtf8(ReadOnlySpan<Byte>, params Byte[][])
 Concatenates an array of UTF-8 texts, using the specified separator between each member.
 * JoinUtf8(Byte, params Byte[][])
@@ -148,5 +148,17 @@ Concatenates an array of UTF-8 texts, using the specified separator between each
 Concatenates the members of a collection of UTF-8 texts, using the specified separator between each member.
 * JoinUtf8(Byte, IEnumerable<Byte>)
 Concatenates the members of a collection of String, using the specified separator between each member.
+* JoinUtf8Async(String, params String[])
+Concatenates an array of strings, using the specified separator between each member.
+* JoinUtf8Async(Char, params String[])
+Concatenates an array of strings, using the specified separator between each member.
+* JoinUtf8Async(String, IEnumerable<String>)
+Concatenates the members of a collection of String, using the specified separator between each member.
+* JoinUtf8Async(Char, IEnumerable<String>)
+Concatenates the members of a collection of String, using the specified separator between each member.
+* ConcatUtf8(String, params String[])
+Concatenates all text parameters passed to this function.
 * ConcatUtf8(Byte[], params Byte[][])
 Concatenates all UTF-8 text parameters passed to this function.
+* ConcatUtf8Async(String, params String[])
+Concatenates all text parameters passed to this function.

@@ -31,6 +31,15 @@ namespace Rxmxnx.PInvoke.Extensions
         }
 
         /// <summary>
+        /// Concatenates the members of a collection of UTF-8 texts.
+        /// </summary>
+        /// <param name="values">A collection that contains the UTF-8 texts to concatenate.</param>
+        /// <returns>Concatenation with UTF-8 encoding.</returns>
+        public static Byte[]? ConcatUtf8(this IEnumerable<Byte[]> values)
+            => Utf8BinaryConcatenation.Concat(values);
+
+        #region AsHexString
+        /// <summary>
         /// Gets <see cref="String"/> representation of <see cref="Byte"/> array hexadecimal value.
         /// </summary>
         /// <param name="bytes"><see cref="Byte"/> array.</param>
@@ -39,19 +48,12 @@ namespace Rxmxnx.PInvoke.Extensions
             => String.Concat(bytes.Select(b => b.AsHexString()));
 
         /// <summary>
-        /// Concatenates the members of a collection of UTF-8 texts.
-        /// </summary>
-        /// <param name="values">A collection that contains the UTF-8 texts to concatenate.</param>
-        /// <returns>Concatenation with UTF-8 encoding.</returns>
-        public static Byte[]? ConcatUtf8(this IEnumerable<Byte[]> values)
-            => Utf8BinaryConcatenation.Concat(values);
-
-        /// <summary>
         /// Gets <see cref="String"/> representation of <see cref="Byte"/> hexadecimal value.
         /// </summary>
         /// <param name="value"><see cref="Byte"/> value.</param>
         /// <returns><see cref="String"/> representation of hexadecimal value.</returns>
         public static String AsHexString(this Byte value)
             => value.ToString("X2").ToLower();
+        #endregion
     }
 }

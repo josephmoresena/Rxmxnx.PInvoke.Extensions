@@ -10,7 +10,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
     /// This class helps to concatenate <see cref="String"/> using UTF-8 encoding..
     /// </summary>
     internal sealed class Utf8StringConcatenation :
-        Utf8Concatenation<String, Utf8StringConcatenation.WriteDelegate>, IDisposable
+        Utf8Concatenation<String, Utf8StringConcatenation.WriteDelegate>
     {
         /// <summary>
         /// Delegate for writing text into the buffer.
@@ -22,7 +22,12 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <summary>
         /// <see cref="StreamWriter"/> used as UTF-8 writer.
         /// </summary>
-        private readonly StreamWriter _writer;
+        private StreamWriter _writer;
+
+        /// <summary>
+        /// Disposed flag.
+        /// </summary>
+        private Boolean _disposed;
 
         /// <summary>
         /// Constructor.
@@ -67,8 +72,38 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
                 await this.WriteAsync(value);
         }
 
-        protected override Boolean IsEmpty(String? value)
-            => String.IsNullOrEmpty(value);
+        protected override Boolean IsEmpty(String? value) => String.IsNullOrEmpty(value);
+
+        protected override void Dispose(Boolean disposing)
+        {
+            if (!this._disposed)
+            {
+                this.DisposeManaged(disposing);
+                this._disposed = true;
+                base.Dispose(disposing);
+            }
+        }
+
+#nullable disable
+        /// <summary>
+        /// Performs the dispose of managed resources of current instance.
+        /// </summary>
+        /// <param name="disposing">Indicates whether the caller method is <see cref="IDisposable.Dispose()"/>.</param>
+        private void DisposeManaged(Boolean disposing)
+        {
+            if (disposing)
+            {
+                try
+                {
+                    this._writer.Dispose();
+                }
+                finally
+                {
+                    this._writer = default;
+                }
+            }
+        }
+#nullable restore
 
         /// <summary>
         /// Creates an <see cref="Byte"/> array which contains the concatenation of any text passed 
@@ -135,13 +170,9 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <returns>Concatenation with UTF-8 encoding.</returns>
         public static Byte[]? Join(String? separator, IEnumerable<String>? values, String? initial = default)
         {
-            if (values != null)
-            {
-                using Utf8StringConcatenation helper = new(separator);
-                Task.Run(() => helper.WriteAsync(initial, values)).Wait();
-                return helper.ToArray();
-            }
-            return default;
+            using Utf8StringConcatenation helper = new(separator);
+            Task.Run(() => helper.WriteAsync(initial, values)).Wait();
+            return helper.ToArray();
         }
 
         /// <summary>
@@ -172,13 +203,6 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         {
             await helper._writer.WriteAsync(helper._separator).ConfigureAwait(false);
             await helper._writer.WriteAsync(value).ConfigureAwait(false);
-        }
-
-        void IDisposable.Dispose()
-        {
-            if (!this._disposed)
-                this._writer.Dispose();
-            base.Dispose();
         }
     }
 }

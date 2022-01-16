@@ -55,7 +55,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.TextUtilitiesTest
             Byte[][] valuesUtf8 = valuesString.Select(x => Encoding.UTF8.GetBytes(x)).ToArray();
 
             String expectedByte = String.Join(Encoding.UTF8.GetString(new[] { separatorByte }), valuesString);
-            String expectedBytes = String.Join(Encoding.UTF8.GetString(separatorBytes ?? new Byte[] { }), valuesString);
+            String expectedBytes = String.Join(Encoding.UTF8.GetString(separatorBytes ?? Array.Empty<Byte>()), valuesString);
             String expectedChar = String.Join(separatorChar, valuesString);
             String expectedString = String.Join(separatorString, valuesString);
 

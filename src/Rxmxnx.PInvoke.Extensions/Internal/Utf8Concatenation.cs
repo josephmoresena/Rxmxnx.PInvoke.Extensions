@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Rxmxnx.PInvoke.Extensions.Internal
@@ -15,20 +16,21 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <summary>
         /// <see cref="MemoryStream"/> used as buffer.
         /// </summary>
-        protected readonly MemoryStream _mem;
+        protected MemoryStream _mem;
         /// <summary>
         /// Text separator.
         /// </summary>
-        protected readonly T? _separator;
+        protected T? _separator;
 
         /// <summary>
         /// Delegate used for write text;
         /// </summary>
         protected TWrite _write;
+
         /// <summary>
         /// Disposed flag.
         /// </summary>
-        protected Boolean _disposed;
+        private Boolean _disposed;
 
         /// <summary>
         /// Constructor.
@@ -40,10 +42,26 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         {
             this._mem = new();
             this._separator = separator;
+            this._write = this.GetInitialWriteMethod(separator, initialJoin, concat);
+        }
+
+        /// <summary>
+        /// Destructor.
+        /// </summary>
+        [ExcludeFromCodeCoverage]
+        ~Utf8Concatenation() => this.Dispose(false);
+
+        /// <summary>
+        /// Gets the initial value for write method delegate.
+        /// </summary>
+        /// <param name="separator"><typeparamref name="T"/> value.</param>
+        /// <param name="initialJoin"><typeparamref name="TWrite"/> delegate for initial concatenation with separator.</param>
+        /// <param name="concat"><typeparamref name="TWrite"/> delegate for concatenation without separator.</param>
+        private TWrite GetInitialWriteMethod(T? separator, TWrite initialJoin, TWrite concat)
+        {
             if (!IsEmpty(separator))
-                this._write = initialJoin;
-            else
-                this._write = concat;
+                return initialJoin;
+            return concat;
         }
 
         /// <summary>
@@ -67,16 +85,12 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         }
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting 
-        /// unmanaged resources.
+        /// Performs the dispose of current instance.
         /// </summary>
         public void Dispose()
         {
-            if (!this._disposed)
-            {
-                this._disposed = true;
-                this._mem.Dispose();
-            }
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -122,9 +136,27 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             return iPosition;
         }
 
+        /// <summary>
+        /// Indicates whether the given <see cref="Byte"/> is UTF-8 null character. 
+        /// </summary>
+        /// <param name="utf8Char">UTF-8 character.</param>
+        /// <returns>
+        /// <see langword="true"/> if <see cref="Byte"/> instance is a null character; otherwise, 
+        /// <see langword="false"/>.
+        /// </returns>
         private static Boolean IsNullUtf8Char(in Byte utf8Char)
             => utf8Char == default;
 
+        /// <summary>
+        /// Indicates whether the given <see cref="Byte"/> sequence is UTF-8 BOM character. 
+        /// </summary>
+        /// <param name="utf8Char1">First UTF-8 character.</param>
+        /// <param name="utf8Char2">Second UTF-8 character.</param>
+        /// <param name="utf8Char3">Third UTF-8 character.</param>
+        /// <returns>
+        /// <see langword="true"/> if <see cref="Byte"/> sequence is a UTF-8 BOM character; otherwise, 
+        /// <see langword="false"/>.
+        /// </returns>
         private static Boolean IsBOMChar(in Byte utf8Char1, in Byte utf8Char2, in Byte utf8Char3)
             => utf8Char1 == 239 && utf8Char2 == 187 && utf8Char3 == 191;
 
@@ -141,5 +173,41 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
                 fPosition--;
             return fPosition - iPosition + 1;
         }
+
+        /// <summary>
+        /// Dispose method.
+        /// </summary>
+        /// <param name="disposing">Indicates whether the caller method is <see cref="IDisposable.Dispose()"/>.</param>
+        protected virtual void Dispose(Boolean disposing)
+        {
+            if (!this._disposed)
+            {
+                this.DisposeManaged(disposing);
+                this._disposed = true;
+            }
+        }
+
+#nullable disable
+        /// <summary>
+        /// Performs the dispose of managed resources of current instance.
+        /// </summary>
+        /// <param name="disposing">Indicates whether the caller method is <see cref="IDisposable.Dispose()"/>.</param>
+        private void DisposeManaged(Boolean disposing)
+        {
+            if (disposing)
+            {
+                try
+                {
+                    this._mem.Dispose();
+                }
+                finally
+                {
+                    this._mem = default;
+                }
+                this._separator = null;
+                this._write = null;
+            }
+        }
+#nullable restore
     }
 }
