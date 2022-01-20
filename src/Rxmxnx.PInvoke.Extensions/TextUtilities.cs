@@ -143,7 +143,10 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </summary>
         /// <param name="separator"><see cref="Char"/> used as text separator.</param>
         /// <param name="values">A collection that contains the strings to concatenate.</param>
-        /// <returns>Concatenation with UTF-8 encoding.</returns>
+        /// <returns>
+        /// A task that represents the asynchronous read operation. The value of the TResult
+        /// parameter contains the concatenation with UTF-8 encoding.
+        /// </returns>
         public static Task<Byte[]?> JoinUtf8Async(Char separator, IEnumerable<String> values)
             => Utf8StringConcatenation.JoinAsync(separator, values);
         #endregion

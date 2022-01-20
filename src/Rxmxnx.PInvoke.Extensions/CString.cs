@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading.Tasks;
 
 using Rxmxnx.PInvoke.Extensions.Internal;
@@ -15,16 +16,27 @@ namespace Rxmxnx.PInvoke.Extensions
     public sealed class CString : ICloneable
     {
         /// <summary>
+        /// Represents the empty UTF-8 byte array. This field is read-only.
+        /// </summary>
+        private static readonly Byte[] empty = new Byte[] { default };
+
+        /// <summary>
         /// Represents the empty UTF-8 string. This field is read-only.
         /// </summary>
-#pragma warning disable CS8601 // Possible null reference assignment.
-        private static readonly CString Empty = new Byte[] { default };
-#pragma warning restore CS8601 // Possible null reference assignment.
+        public static readonly CString Empty = new(empty);
 
         /// <summary>
         /// Internal object data.
         /// </summary>
         private readonly Object _data;
+        /// <summary>
+        /// Indicates Indicates whether the UTF-8 text is null-terminated.
+        /// </summary>
+        private readonly Boolean _isNullTerminated;
+        /// <summary>
+        /// Number of bytes in the current <see cref="CString"/> object.
+        /// </summary>
+        private readonly Int32 _length;
 
         /// <summary>
         /// Internal <see cref="Byte"/> array for internal <see cref="CString"/>.
@@ -39,7 +51,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// Gets the <see cref="Byte"/> object at a specified position in the current <see cref="CString"/>
         /// object.
         /// </summary>
-        /// <param name="index">A position in the current c string.</param>
+        /// <param name="index">A position in the current UTF-8 text.</param>
         /// <returns>The object at position <paramref name="index"/>.</returns>
         /// <exception cref="IndexOutOfRangeException">
         /// <paramref name="index"/> is greater than or equal to the length of this object or less than zero.
@@ -53,7 +65,13 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <returns>
         /// The number of characters in the current string.
         /// </returns>
-        public Int32 Length => this.internalData != default ? this.internalData.Length : this.externalData.Length;
+        public Int32 Length => this._length;
+
+        /// <summary>
+        /// Indicates whether the ending of text in the current <see cref="CString"/> includes 
+        /// a null-termination character.
+        /// </summary>
+        public Boolean IsNullTerminated => this._isNullTerminated;
 
         /// <summary>
         /// Private constructor.
@@ -62,6 +80,8 @@ namespace Rxmxnx.PInvoke.Extensions
         private CString([DisallowNull] Byte[] bytes)
         {
             this._data = bytes;
+            this._isNullTerminated = bytes[bytes.Length - 1] == default;
+            this._length = bytes.Length - (this._isNullTerminated ? 1 : 0);
         }
 
         /// <summary>
@@ -70,7 +90,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </summary>
         /// <param name="c"></param>
         /// <param name="count"></param>
-        public CString(Byte c, Int32 count) : this(Enumerable.Repeat(c, count).ToArray()) { }
+        public CString(Byte c, Int32 count) : this(Enumerable.Repeat(c, count).Concat(empty).ToArray()) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified 
@@ -81,6 +101,8 @@ namespace Rxmxnx.PInvoke.Extensions
         public CString(IntPtr ptr, Int32 length)
         {
             this._data = new NativeArrayReference<Byte>(ptr, length);
+            this._isNullTerminated = this.GetSpan()[length - 1] == default;
+            this._length = length - (this._isNullTerminated ? 1 : 0);
         }
 
         /// <summary>
@@ -98,6 +120,18 @@ namespace Rxmxnx.PInvoke.Extensions
         public Object Clone() => new CString(this.GetSpan().ToArray());
 
         /// <summary>
+        /// Returns a <see cref="String"/> that represents the current instance.
+        /// </summary>
+        /// <returns>A string that represents the current UTF-8 text.</returns>
+        public override String? ToString()
+        {
+            if (this.Length == 0)
+                return String.Empty;
+            else
+                return Encoding.UTF8.GetString(this.GetSpan().Slice(0, this.Length));
+        }
+
+        /// <summary>
         /// Defines an implicit conversion of a given <see cref="Byte"/> array to <see cref="CString"/>.
         /// </summary>
         /// <param name="bytes">A <see cref="Byte"/> array to implicitly convert.</param>
@@ -106,9 +140,10 @@ namespace Rxmxnx.PInvoke.Extensions
         /// Defines an implicit conversion of a given <see cref="String"/> to <see cref="CString"/>.
         /// </summary>
         /// <param name="str">A <see cref="String"/> to implicitly convert.</param>
-#pragma warning disable CS8604 // Possible null reference argument.
-        public static implicit operator CString?(String? str) => !String.IsNullOrEmpty(str) ? new(str.AsUtf8().Concat(Empty.internalData).ToArray()) : default;
-#pragma warning restore CS8604 // Possible null reference argument.
+#pragma warning disable CS8604
+        public static implicit operator CString?(String? str)
+            => !String.IsNullOrEmpty(str) ? new(str.AsUtf8().Concat(empty).ToArray()) : default;
+#pragma warning restore CS8604
         /// <summary>
         /// Defines an implicit conversion of a given <see cref="CString"/> to a read-only span of bytes.
         /// </summary>
@@ -129,23 +164,29 @@ namespace Rxmxnx.PInvoke.Extensions
         /// The <see cref="Stream"/> to which the contents of the current <see cref="CString"/> 
         /// will be copied.
         /// </param>
-        /// <param name="nullTerminated">
-        /// Indicates whether the UTF-8 text must be null-terminated into the <see cref="Stream"/>.
+        /// <param name="writeNullTermination">
+        /// Indicates whether the UTF-8 text must be written with a null-termination character 
+        /// into the <see cref="Stream"/>.
+        /// </param>
+        public async Task WriteAsync(Stream strm, Boolean writeNullTermination)
+        {
+            await GetWriteTask(strm);
+            if (writeNullTermination)
+                await strm.WriteAsync(empty);
+        }
+
+        /// <summary>
+        /// Retrieves the Task for writing the <see cref="CString"/> content into the 
+        /// given <see cref="Stream"/>.
+        /// </summary>
+        /// <param name="strm">
+        /// The <see cref="Stream"/> to which the contents of the current <see cref="CString"/> 
+        /// will be copied.
         /// </param>
         /// <returns>A task that represents the asynchronous write operation.</returns>
-        public Task WriteAsync(Stream strm, Boolean nullTerminated)
-        {
-            Int32 bytesToWrite = this.Length;
-            if (nullTerminated)
-                bytesToWrite--;
-
-            if (this.internalData != default)
-                return strm.WriteAsync(this.internalData, 0, bytesToWrite);
-            else
-                return Task.Run(() =>
-                {
-                    strm.Write(this.externalData.Range(0, bytesToWrite));
-                });
-        }
+        private Task GetWriteTask(Stream strm)
+            => this.internalData != default ?
+            strm.WriteAsync(this.internalData, 0, this.Length)
+            : Task.Run(() => { strm.Write(this.externalData.Range(0, this.Length)); });
     }
 }

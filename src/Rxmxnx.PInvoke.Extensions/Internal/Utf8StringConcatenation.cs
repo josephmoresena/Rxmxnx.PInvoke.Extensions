@@ -111,7 +111,10 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// </summary>
         /// <param name="values">Next values.</param>
         /// <param name="initial">Initial string to concatenate.</param>
-        /// <returns>Concatenation with UTF-8 encoding.</returns>
+        /// <returns>
+        /// A task that represents the asynchronous concat operation. The value of the TResult
+        /// parameter contains the concatenation with UTF-8 encoding.
+        /// </returns>
         public static Task<Byte[]?> ConcatAsync(IEnumerable<String>? values, String? initial = default)
             => JoinAsync(default, values, initial);
 
@@ -121,7 +124,10 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// </summary>
         /// <param name="separator"><see cref="Char"/> used as text separator.</param>
         /// <param name="values">Next values.</param>
-        /// <returns>Concatenation with UTF-8 encoding.</returns>
+        /// <returns>
+        /// A task that represents the asynchronous join operation. The value of the TResult
+        /// parameter contains the concatenation with UTF-8 encoding.
+        /// </returns>
         public static Task<Byte[]?> JoinAsync(Char separator, IEnumerable<String>? values)
             => JoinAsync(separator.ToString(), values);
 
@@ -132,7 +138,10 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <param name="separator"><see cref="String"/> used as text separator.</param>
         /// <param name="values">Next values.</param>
         /// <param name="initial">Initial string to concatenate.</param>
-        /// <returns>Concatenation with UTF-8 encoding.</returns>
+        /// <returns>
+        /// A task that represents the asynchronous read operation. The value of the TResult
+        /// parameter contains the concatenation with UTF-8 encoding.
+        /// </returns>
         public async static Task<Byte[]?> JoinAsync(String? separator, IEnumerable<String>? values, String? initial = default)
         {
             using Utf8StringConcatenation helper = new(separator);
