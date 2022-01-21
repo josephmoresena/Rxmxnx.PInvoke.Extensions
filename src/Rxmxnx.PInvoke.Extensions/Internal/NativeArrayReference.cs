@@ -34,7 +34,6 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             return this;
         }
 
-
         public static implicit operator ReadOnlySpan<T>(in NativeArrayReference<T> externalC) => externalC.AsSpan();
 
         private ReadOnlySpan<T> AsSpan() => this._ptr.AsReadOnlySpan<T>(this._length);

@@ -102,9 +102,18 @@ namespace Rxmxnx.PInvoke.Extensions
         public CString(IntPtr ptr, Int32 length)
         {
             NativeArrayReference<Byte> data = new(ptr, length);
-            this._data = data;
-            this._isNullTerminated = data.Length > 0 && data[^1] == default;
-            this._length = (data.Length > 0 ? length : 0) - (this._isNullTerminated ? 1 : 0);
+            if (data.Length == 0)
+            {
+                this._data = NativeArrayReference<Byte>.Empty;
+                this._isNullTerminated = false;
+                this._length = 0;
+            }
+            else
+            {
+                this._data = data;
+                this._isNullTerminated = data[^1] == default;
+                this._length = length - (this._isNullTerminated ? 1 : 0);
+            }
         }
 
         /// <summary>
