@@ -72,7 +72,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// A task that represents the asynchronous concat operation. The value of the TResult
         /// parameter contains the concatenation with UTF-8 encoding.
         /// </returns>
-        public static Task<Byte[]?> ConcatAsync(IEnumerable<CString>? values, CString? initial = default)
+        public static Task<CString?> ConcatAsync(IEnumerable<CString>? values, CString? initial = default)
             => JoinAsync(default, values, initial);
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// A task that represents the asynchronous join operation. The value of the TResult
         /// parameter contains the concatenation with UTF-8 encoding.
         /// </returns>
-        public static Task<Byte[]?> JoinAsync(Byte separator, IEnumerable<CString>? values)
+        public static Task<CString?> JoinAsync(Byte separator, IEnumerable<CString>? values)
             => JoinAsync(new CString(separator, 1), values);
 
         /// <summary>
@@ -99,11 +99,11 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// A task that represents the asynchronous read operation. The value of the TResult
         /// parameter contains the concatenation with UTF-8 encoding.
         /// </returns>
-        public async static Task<Byte[]?> JoinAsync(CString? separator, IEnumerable<CString>? values, CString? initial = default)
+        public async static Task<CString?> JoinAsync(CString? separator, IEnumerable<CString>? values, CString? initial = default)
         {
             using Utf8CStringConcatenation helper = new(separator);
             await helper.WriteAsync(initial, values);
-            return helper.ToArray();
+            return helper.ToArray(true);
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <param name="values">Next values.</param>
         /// <param name="initial">Initial CString to concatenate.</param>
         /// <returns>Concatenation with UTF-8 encoding.</returns>
-        public static Byte[]? Concat(IEnumerable<CString>? values, CString? initial = default)
+        public static CString? Concat(IEnumerable<CString>? values, CString? initial = default)
             => Join(default, values, initial);
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <param name="separator"><see cref="Byte"/> used as text separator.</param>
         /// <param name="values">Next values.</param>
         /// <returns>Concatenation with UTF-8 encoding.</returns>
-        public static Byte[]? Join(Byte separator, IEnumerable<CString>? values)
+        public static CString? Join(Byte separator, IEnumerable<CString>? values)
             => Join(new CString(separator, 1), values);
 
         /// <summary>
@@ -134,11 +134,11 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <param name="values">Next values.</param>
         /// <param name="initial">Initial CString to concatenate.</param>
         /// <returns>Concatenation with UTF-8 encoding.</returns>
-        public static Byte[]? Join(CString? separator, IEnumerable<CString>? values, CString? initial = default)
+        public static CString? Join(CString? separator, IEnumerable<CString>? values, CString? initial = default)
         {
             using Utf8CStringConcatenation helper = new(separator);
             Task.Run(() => helper.WriteAsync(initial, values)).Wait();
-            return helper.ToArray();
+            return helper.ToArray(true);
         }
 
         /// <summary>

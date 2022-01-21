@@ -46,6 +46,11 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                 Assert.NotNull(cstr3);
                 Assert.NotNull(cstr4);
 
+                Assert.Single((Byte[])cstr1);
+                Assert.Single((Byte[])cstr2);
+                Assert.Empty((Byte[])cstr3);
+                Assert.Empty((Byte[])cstr4);
+
                 Assert.Empty(cstr1.ToString());
                 Assert.Empty(cstr2.ToString());
                 Assert.Empty(cstr3.ToString());
@@ -81,6 +86,9 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
 
             Assert.NotNull(cstr5);
             Assert.NotNull(cstr6);
+
+            Assert.Single((Byte[])cstr5);
+            Assert.Null((Byte[])cstr6);
 
             Assert.Empty(cstr5.ToString());
             Assert.Empty(cstr6.ToString());
@@ -149,6 +157,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             Assert.Equal(cstr1.Length + 1, cstr1.AsSpan().Length);
             Assert.True(cstr1.IsNullTerminated);
             AssertIndex(byt1, cstr1);
+            Assert.NotNull((Byte[])cstr1);
 
             Assert.Equal(str2, cstr2.ToString());
             Assert.Equal(str2.Length, cstr2.Length);
@@ -157,6 +166,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             AssertIndex(byt2, cstr2);
             AssertReference(byt2, cstr2, false);
             AssertReference(byt2, (CString)cstr2.Clone(), true);
+            Assert.NotNull((Byte[])cstr2);
 
             Assert.Equal(str3, cstr3.ToString());
             Assert.Equal(str3.Length, cstr3.Length);
@@ -165,6 +175,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             AssertIndex(byt3, cstr3);
             AssertReference(byt3, cstr3, false);
             AssertReference(byt3, (CString)cstr3.Clone(), true);
+            Assert.NotNull((Byte[])cstr3);
 
             Assert.Equal(str4[0..^1], cstr4.ToString());
             Assert.Equal(str4.Length - 1, cstr4.Length);
@@ -173,6 +184,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             AssertIndex(byt4, cstr4);
             AssertReference(byt4, cstr4, false);
             AssertReference(byt4, (CString)cstr4.Clone(), true);
+            Assert.NotNull((Byte[])cstr4);
 
             Assert.Equal(str5, cstr5.ToString());
             Assert.Equal(str5.Length, cstr5.Length);
@@ -181,6 +193,8 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             AssertIndex(spa5, cstr5);
             AssertReference(spa5, cstr5, false);
             AssertReference(spa5, (CString)cstr5.Clone(), true);
+            Assert.Null((Byte[])cstr5);
+            Assert.NotNull((Byte[])(CString)cstr5.Clone());
 
             Assert.Equal(str6[0..^1], cstr6.ToString());
             Assert.Equal(str6.Length - 1, cstr6.Length);
@@ -189,12 +203,15 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             AssertIndex(spa6, cstr6);
             AssertReference(spa6, cstr6, false);
             AssertReference(spa6, (CString)cstr6.Clone(), true);
+            Assert.Null((Byte[])cstr6);
+            Assert.NotNull((Byte[])(CString)cstr6.Clone());
 
             Assert.Equal(str7, cstr7.ToString());
             Assert.Equal(str7.Length, cstr7.Length);
             Assert.Equal(cstr7.Length + 1, cstr7.AsSpan().Length);
             Assert.True(cstr7.IsNullTerminated);
             AssertIndex(cstr7, cstr7);
+            Assert.NotNull((Byte[])cstr7);
         }
 
         private static void AssertIndex(ReadOnlySpan<Byte> span, CString cstr)

@@ -179,6 +179,12 @@ namespace Rxmxnx.PInvoke.Extensions
         public static implicit operator ReadOnlySpan<Byte>(CString? cString) => cString != default ? cString.AsSpan() : default;
 
         /// <summary>
+        /// Defines an implicit conversion of a given <see cref="CString"/> to a array of bytes.
+        /// </summary>
+        /// <param name="cString">A <see cref="CString"/> to implicitly convert.</param>
+        public static explicit operator Byte[]?(CString? cString) => cString != default ? cString.InternalData : default;
+
+        /// <summary>
         /// Asynchronously writes the sequence of bytes to the given <see cref="Stream"/> and advances
         /// the current position within this stream by the number of bytes written.
         /// </summary>
