@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -41,11 +42,11 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <summary>
         /// Internal <see cref="Byte"/> array for internal <see cref="CString"/>.
         /// </summary>
-        private Byte[]? internalData => this._data as Byte[];
+        private Byte[]? InternalData => this._data as Byte[];
         /// <summary>
         /// <see cref="NativeArrayReference{Byte}"/> object for external <see cref="CString"/>.
         /// </summary>
-        private NativeArrayReference<Byte> externalData => this._data as NativeArrayReference<Byte> ?? NativeArrayReference<Byte>.Empty;
+        private NativeArrayReference<Byte> ExternalData => this._data as NativeArrayReference<Byte> ?? NativeArrayReference<Byte>.Empty;
 
         /// <summary>
         /// Gets the <see cref="Byte"/> object at a specified position in the current <see cref="CString"/>
@@ -57,7 +58,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <paramref name="index"/> is greater than or equal to the length of this object or less than zero.
         /// </exception>
         [IndexerName("Position")]
-        public Byte this[Int32 index] => this.internalData != default ? this.internalData[index] : this.externalData[index];
+        public Byte this[Int32 index] => this.InternalData != default ? this.InternalData[index] : this.ExternalData[index];
 
         /// <summary>
         /// Gets the number of bytes in the current <see cref="CString"/> object.
@@ -80,7 +81,7 @@ namespace Rxmxnx.PInvoke.Extensions
         private CString([DisallowNull] Byte[] bytes)
         {
             this._data = bytes;
-            this._isNullTerminated = bytes[bytes.Length - 1] == default;
+            this._isNullTerminated = bytes.Any() && bytes[^1] == default;
             this._length = bytes.Length - (this._isNullTerminated ? 1 : 0);
         }
 
@@ -100,9 +101,10 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="length">The number of <see cref="Byte"/> within value to use.</param>
         public CString(IntPtr ptr, Int32 length)
         {
-            this._data = new NativeArrayReference<Byte>(ptr, length);
-            this._isNullTerminated = this.GetSpan()[length - 1] == default;
-            this._length = length - (this._isNullTerminated ? 1 : 0);
+            NativeArrayReference<Byte> data = new(ptr, length);
+            this._data = data;
+            this._isNullTerminated = data.Length > 0 && data[^1] == default;
+            this._length = (data.Length > 0 ? length : 0) - (this._isNullTerminated ? 1 : 0);
         }
 
         /// <summary>
@@ -110,14 +112,14 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <see cref="CString"/>.
         /// </summary>
         /// <returns>An enumerator object.</returns>
-        public ReadOnlySpan<Byte>.Enumerator GetEnumerator() => this.GetSpan().GetEnumerator();
+        public ReadOnlySpan<Byte>.Enumerator GetEnumerator() => this.AsSpan().GetEnumerator();
 
         /// <summary>
         /// Returns a reference to this instance of <see cref="CString"/>.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public Object Clone() => new CString(this.GetSpan().ToArray());
+        public Object Clone() => new CString(this.AsSpan().ToArray());
 
         /// <summary>
         /// Returns a <see cref="String"/> that represents the current instance.
@@ -128,8 +130,26 @@ namespace Rxmxnx.PInvoke.Extensions
             if (this.Length == 0)
                 return String.Empty;
             else
-                return Encoding.UTF8.GetString(this.GetSpan().Slice(0, this.Length));
+                return Encoding.UTF8.GetString(this.AsSpan()[0..this.Length]);
         }
+
+        /// <summary>
+        /// Retreives the internal or external information as <see cref="ReadOnlySpan{Byte}"/> object.
+        /// </summary>
+        /// <returns><see cref="ReadOnlySpan{Byte}"/> object.</returns>
+        public ReadOnlySpan<Byte> AsSpan() => this.InternalData != default ? this.InternalData : this.ExternalData;
+
+        /// <summary>
+        /// Indicates whether the specified <see cref="CString"/> is <see langword="null"/> or an 
+        /// empty UTF-8 text.
+        /// </summary>
+        /// <param name="value">The <see cref="CString"/> to test.</param>
+        /// <returns>
+        /// <see langword="true"/> if the value parameter is <see langword="null"/> or an empty UTF-8 text; 
+        /// otherwise, <see langword="false"/>.
+        /// </returns>
+        public static Boolean IsNullOrEmpty([NotNullWhen(false)] CString? value)
+            => value == default || value.Length == 0;
 
         /// <summary>
         /// Defines an implicit conversion of a given <see cref="Byte"/> array to <see cref="CString"/>.
@@ -140,21 +160,14 @@ namespace Rxmxnx.PInvoke.Extensions
         /// Defines an implicit conversion of a given <see cref="String"/> to <see cref="CString"/>.
         /// </summary>
         /// <param name="str">A <see cref="String"/> to implicitly convert.</param>
-#pragma warning disable CS8604
         public static implicit operator CString?(String? str)
-            => !String.IsNullOrEmpty(str) ? new(str.AsUtf8().Concat(empty).ToArray()) : default;
-#pragma warning restore CS8604
+            => str != default ? new(GetUtf8Bytes(str).Concat<byte>(global::Rxmxnx.PInvoke.Extensions.CString.empty).ToArray<byte>()) : default;
+
         /// <summary>
         /// Defines an implicit conversion of a given <see cref="CString"/> to a read-only span of bytes.
         /// </summary>
         /// <param name="cString">A <see cref="CString"/> to implicitly convert.</param>
-        public static implicit operator ReadOnlySpan<Byte>(CString? cString) => cString != default ? cString.GetSpan() : default;
-
-        /// <summary>
-        /// Retreives the internal or external information as <see cref="ReadOnlySpan{Byte}"/> object.
-        /// </summary>
-        /// <returns><see cref="ReadOnlySpan{Byte}"/> object.</returns>
-        private ReadOnlySpan<Byte> GetSpan() => this.internalData != default ? this.internalData : this.externalData;
+        public static implicit operator ReadOnlySpan<Byte>(CString? cString) => cString != default ? cString.AsSpan() : default;
 
         /// <summary>
         /// Asynchronously writes the sequence of bytes to the given <see cref="Stream"/> and advances
@@ -170,10 +183,29 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </param>
         public async Task WriteAsync(Stream strm, Boolean writeNullTermination)
         {
-            await GetWriteTask(strm);
+            await GetWriteTask(strm).ConfigureAwait(false);
             if (writeNullTermination)
                 await strm.WriteAsync(empty);
         }
+
+        /// <summary>
+        /// Concatenates the members of a collection of <see cref="CString"/>.
+        /// </summary>
+        /// <param name="values">A collection that contains the strings to concatenate.</param>
+        /// <returns>Concatenation with UTF-8 encoding.</returns>
+        public static CString? Concat(IEnumerable<CString> values)
+            => Utf8CStringConcatenation.Concat(values);
+
+        /// <summary>
+        /// Concatenates the members of a collection of <see cref="String"/>.
+        /// </summary>
+        /// <param name="values">A collection that contains the strings to concatenate.</param>
+        /// <returns>
+        /// A task that represents the asynchronous concat operation. The value of the TResult
+        /// parameter contains the concatenation with UTF-8 encoding.
+        /// </returns>
+        public static async Task<CString?> ConcatAsync(IEnumerable<CString> values)
+            => await Utf8CStringConcatenation.ConcatAsync(values);
 
         /// <summary>
         /// Retrieves the Task for writing the <see cref="CString"/> content into the 
@@ -185,8 +217,16 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </param>
         /// <returns>A task that represents the asynchronous write operation.</returns>
         private Task GetWriteTask(Stream strm)
-            => this.internalData != default ?
-            strm.WriteAsync(this.internalData, 0, this.Length)
-            : Task.Run(() => { strm.Write(this.externalData.Range(0, this.Length)); });
+            => this.InternalData != default ?
+            strm.WriteAsync(this.InternalData, 0, this.Length)
+            : Task.Run(() => { strm.Write(this.ExternalData.Range(0, this.Length)); });
+
+        /// <summary>
+        /// Encodes the UTF-16 text using the UTF-8 charset and retrieves the <see cref="Byte"/> array with 
+        /// UTF-8 text.
+        /// </summary>
+        /// <param name="str"><see cref="String"/> representation of UTF-16 text.</param>
+        /// <returns><see cref="Byte"/> array with UTF-8 text.</returns>
+        private static Byte[] GetUtf8Bytes(String str) => str.AsUtf8() ?? Array.Empty<Byte>();
     }
 }

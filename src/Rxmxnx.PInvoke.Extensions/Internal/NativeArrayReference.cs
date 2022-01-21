@@ -16,14 +16,12 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         public NativeArrayReference(IntPtr ptr, Int32 length)
         {
             this._ptr = ptr;
-            this._length = length;
+            this._length = !this._ptr.Equals(IntPtr.Zero) ? length : default;
         }
 
         [IndexerName("Position")]
         public ref readonly T this[Int32 index] => ref this.AsSpan()[index];
 
-        public ReadOnlySpan<T>.Enumerator GetEnumerator() => this.AsSpan().GetEnumerator();
-        public T[] ToArray() => this.AsSpan().ToArray();
         public NativeArrayReference<T> Range(Int32 offset, Int32 length)
         {
             if (offset != 0 || length != this.Length)

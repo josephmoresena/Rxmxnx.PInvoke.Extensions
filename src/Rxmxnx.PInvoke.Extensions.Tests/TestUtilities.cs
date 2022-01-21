@@ -21,6 +21,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests
         private const String METHODNAME_WINDOWS = "GetCurrentProcessId";
         private const String METHODNAME_UNIX = "getpid";
 
+        public static readonly Random Random = new();
         public static readonly Fixture SharedFixture = GetFixture();
         public static readonly String LibraryName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? LIBRARYNAME_WINDOWS :
             RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? LIBRARYNAME_OSX : LIBRARYNAME_LINUX;
@@ -36,5 +37,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests
 
         public static T GetValueMethod<T>(T value) => value;
         public static Byte GetByteValueMethod(Byte value) => GetValueMethod(value);
+        public static Byte GetPrintableByte() => Convert.ToByte(Random.Next(32, 128));
+        public static T[] AsArray<T>(params T[] args) => args;
     }
 }
