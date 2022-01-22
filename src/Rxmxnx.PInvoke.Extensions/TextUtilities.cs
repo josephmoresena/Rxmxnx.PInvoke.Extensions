@@ -204,7 +204,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </param>
         /// <param name="values">Next values.</param>
         /// <returns>Concatenation with UTF-8 encoding.</returns>
-        public static CString? JoinUtf8(CString? separator, params CString[] values)
+        public static CString? Join(CString? separator, params CString[] values)
             => Utf8CStringConcatenation.Join(separator, values);
 
         /// <summary>
@@ -217,7 +217,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </param>
         /// <param name="values">Next values.</param>
         /// <returns>Concatenation with UTF-8 encoding.</returns>
-        public static CString? JoinUtf8(Byte separator, params CString[] values)
+        public static CString? Join(Byte separator, params CString[] values)
             => Utf8CStringConcatenation.Join(separator, values);
 
         /// <summary>
@@ -227,7 +227,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="separator">UTF-8 text used as text separator.</param>
         /// <param name="values">A collection that contains the UTF-8 texts to concatenate.</param>
         /// <returns>Concatenation with UTF-8 encoding.</returns>
-        public static CString? JoinUtf8(CString? separator, IEnumerable<CString> values)
+        public static CString? Join(CString? separator, IEnumerable<CString> values)
             => Utf8CStringConcatenation.Join(separator, values);
 
         /// <summary>
@@ -237,7 +237,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="separator"><see cref="Byte"/> used as text separator.</param>
         /// <param name="values">A collection that contains the UTF-8 texts to concatenate.</param>
         /// <returns>Concatenation with UTF-8 encoding.</returns>
-        public static CString? JoinUtf8(Byte separator, IEnumerable<CString> values)
+        public static CString? Join(Byte separator, IEnumerable<CString> values)
             => Utf8CStringConcatenation.Join(separator, values);
         #endregion
 
@@ -299,7 +299,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="initial">Initial <see cref="CString"/> to concatenate.</param>
         /// <param name="values">A collection that contains the <see cref="CString"/> values to concatenate.</param>
         /// <returns>Concatenation with UTF-8 encoding.</returns>
-        public static CString? ConcatUtf8(CString? initial, params CString[] values)
+        public static CString? Concat(CString? initial, params CString[] values)
             => Utf8CStringConcatenation.Concat(values, initial);
         #endregion
 
