@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -27,11 +26,15 @@ namespace Rxmxnx.PInvoke.Extensions
         public static readonly CString Empty = new(empty);
 
         /// <summary>
+        /// Indicates whether the UTF-8 data is local.
+        /// </summary>
+        private readonly Boolean _isLocal;
+        /// <summary>
         /// Internal object data.
         /// </summary>
-        private readonly Object _data;
+        private readonly Object? _data;
         /// <summary>
-        /// Indicates Indicates whether the UTF-8 text is null-terminated.
+        /// Indicates whether the UTF-8 text is null-terminated.
         /// </summary>
         private readonly Boolean _isNullTerminated;
         /// <summary>
@@ -42,7 +45,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <summary>
         /// Internal <see cref="Byte"/> array for internal <see cref="CString"/>.
         /// </summary>
-        private Byte[]? InternalData => this._data as Byte[];
+        private Byte[]? InternalData => this._isLocal ? (Byte[]?)this._data : default;
         /// <summary>
         /// <see cref="NativeArrayReference{Byte}"/> object for external <see cref="CString"/>.
         /// </summary>
@@ -58,7 +61,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <paramref name="index"/> is greater than or equal to the length of this object or less than zero.
         /// </exception>
         [IndexerName("Position")]
-        public Byte this[Int32 index] => this.InternalData != default ? this.InternalData[index] : this.ExternalData[index];
+        public Byte this[Int32 index] => this.InternalData?[index] ?? this.ExternalData[index];
 
         /// <summary>
         /// Gets the number of bytes in the current <see cref="CString"/> object.
@@ -75,11 +78,18 @@ namespace Rxmxnx.PInvoke.Extensions
         public Boolean IsNullTerminated => this._isNullTerminated;
 
         /// <summary>
+        /// Indicates whether the UTF-8 text is referenced by the current <see cref="CString"/> and 
+        /// not contained by.
+        /// </summary>
+        public Boolean IsReference => !this._isLocal;
+
+        /// <summary>
         /// Private constructor.
         /// </summary>
         /// <param name="bytes">Binary internal information.</param>
         private CString([DisallowNull] Byte[] bytes)
         {
+            this._isLocal = true;
             this._data = bytes;
             this._isNullTerminated = bytes.Any() && bytes[^1] == default;
             this._length = bytes.Length - (this._isNullTerminated ? 1 : 0);
@@ -101,10 +111,11 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="length">The number of <see cref="Byte"/> within value to use.</param>
         public CString(IntPtr ptr, Int32 length)
         {
+            this._isLocal = false;
             NativeArrayReference<Byte> data = new(ptr, length);
             if (data.Length == 0)
             {
-                this._data = NativeArrayReference<Byte>.Empty;
+                this._data = default;
                 this._isNullTerminated = false;
                 this._length = 0;
             }
@@ -134,7 +145,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// Returns a <see cref="String"/> that represents the current instance.
         /// </summary>
         /// <returns>A string that represents the current UTF-8 text.</returns>
-        public override String? ToString()
+        public override String ToString()
         {
             if (this.Length == 0)
                 return String.Empty;
@@ -143,10 +154,10 @@ namespace Rxmxnx.PInvoke.Extensions
         }
 
         /// <summary>
-        /// Retreives the internal or external information as <see cref="ReadOnlySpan{Byte}"/> object.
+        /// Copies the UTF-8 text into a new array.
         /// </summary>
-        /// <returns><see cref="ReadOnlySpan{Byte}"/> object.</returns>
-        public ReadOnlySpan<Byte> AsSpan() => this.InternalData != default ? this.InternalData : this.ExternalData;
+        /// <returns>An array containing the data in the current UTF-8 text.</returns>
+        public Byte[] ToArray() => this.AsSpan().ToArray();
 
         /// <summary>
         /// Indicates whether the specified <see cref="CString"/> is <see langword="null"/> or an 
@@ -171,18 +182,11 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="str">A <see cref="String"/> to implicitly convert.</param>
         public static implicit operator CString?(String? str)
             => str != default ? new(GetUtf8Bytes(str).Concat<byte>(global::Rxmxnx.PInvoke.Extensions.CString.empty).ToArray<byte>()) : default;
-
         /// <summary>
         /// Defines an implicit conversion of a given <see cref="CString"/> to a read-only span of bytes.
         /// </summary>
-        /// <param name="cString">A <see cref="CString"/> to implicitly convert.</param>
-        public static implicit operator ReadOnlySpan<Byte>(CString? cString) => cString != default ? cString.AsSpan() : default;
-
-        /// <summary>
-        /// Defines an implicit conversion of a given <see cref="CString"/> to a array of bytes.
-        /// </summary>
-        /// <param name="cString">A <see cref="CString"/> to implicitly convert.</param>
-        public static explicit operator Byte[]?(CString? cString) => cString != default ? cString.InternalData : default;
+        /// <param name="value">A <see cref="CString"/> to implicitly convert.</param>
+        public static implicit operator ReadOnlySpan<Byte>(CString? value) => value != default ? value.AsSpan() : default;
 
         /// <summary>
         /// Asynchronously writes the sequence of bytes to the given <see cref="Stream"/> and advances
@@ -196,7 +200,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// Indicates whether the UTF-8 text must be written with a null-termination character 
         /// into the <see cref="Stream"/>.
         /// </param>
-        public async Task WriteAsync(Stream strm, Boolean writeNullTermination)
+        public async Task WriteAsync([DisallowNull] Stream strm, Boolean writeNullTermination)
         {
             await GetWriteTask(strm).ConfigureAwait(false);
             if (writeNullTermination)
@@ -204,23 +208,24 @@ namespace Rxmxnx.PInvoke.Extensions
         }
 
         /// <summary>
-        /// Concatenates the members of a collection of <see cref="CString"/>.
+        /// Retrieves the internal binary data from a given <see cref="CString"/>.
         /// </summary>
-        /// <param name="values">A collection that contains the strings to concatenate.</param>
-        /// <returns>Concatenation with UTF-8 encoding.</returns>
-        public static CString? Concat(IEnumerable<CString> values)
-            => Utf8CStringConcatenation.Concat(values);
+        /// <param name="value">A non-reference <see cref="CString"/> instance.</param>
+        /// <returns>A <see cref="Byte"/> array with UTF-8 text.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
+        /// <exception cref="InvalidOperationException"><paramref name="value"/> does not contains the UTF-8 text.</exception>
+        public static Byte[] GetBytes([DisallowNull] CString value)
+        {
+            if (value == default)
+                throw new ArgumentNullException(nameof(value));
 
-        /// <summary>
-        /// Concatenates the members of a collection of <see cref="String"/>.
-        /// </summary>
-        /// <param name="values">A collection that contains the strings to concatenate.</param>
-        /// <returns>
-        /// A task that represents the asynchronous concat operation. The value of the TResult
-        /// parameter contains the concatenation with UTF-8 encoding.
-        /// </returns>
-        public static async Task<CString?> ConcatAsync(IEnumerable<CString> values)
-            => await Utf8CStringConcatenation.ConcatAsync(values);
+            if (!value._isLocal)
+                throw new InvalidOperationException(nameof(value) + " does not contains the UTF-8 text.");
+
+#pragma warning disable CS8603
+            return value.InternalData;
+#pragma warning restore CS8603
+        }
 
         /// <summary>
         /// Retrieves the Task for writing the <see cref="CString"/> content into the 
@@ -232,9 +237,15 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </param>
         /// <returns>A task that represents the asynchronous write operation.</returns>
         private Task GetWriteTask(Stream strm)
-            => this.InternalData != default ?
-            strm.WriteAsync(this.InternalData, 0, this.Length)
+            => this.InternalData is Byte[] data ?
+            strm.WriteAsync(data, 0, this.Length)
             : Task.Run(() => { strm.Write(this.ExternalData.Range(0, this.Length)); });
+
+        /// <summary>
+        /// Retreives the internal or external information as <see cref="ReadOnlySpan{Byte}"/> object.
+        /// </summary>
+        /// <returns><see cref="ReadOnlySpan{Byte}"/> object.</returns>
+        private ReadOnlySpan<Byte> AsSpan() => this._isLocal ? this.InternalData : this.ExternalData;
 
         /// <summary>
         /// Encodes the UTF-16 text using the UTF-8 charset and retrieves the <see cref="Byte"/> array with 

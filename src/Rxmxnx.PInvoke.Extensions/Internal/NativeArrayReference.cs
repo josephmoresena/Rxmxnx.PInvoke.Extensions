@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace Rxmxnx.PInvoke.Extensions.Internal
@@ -38,12 +39,13 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
 
         private ReadOnlySpan<T> AsSpan() => this._ptr.AsReadOnlySpan<T>(this._length);
 
+        [ExcludeFromCodeCoverage]
         private void ValidateRange(Int32 offset, Int32 length)
         {
             if (offset > this._length)
-                throw new ArgumentOutOfRangeException(nameof(offset), "");
+                throw new ArgumentOutOfRangeException(nameof(offset));
             if (offset + length > this._length)
-                throw new ArgumentOutOfRangeException(nameof(length), "");
+                throw new ArgumentOutOfRangeException(nameof(length));
         }
     }
 }
