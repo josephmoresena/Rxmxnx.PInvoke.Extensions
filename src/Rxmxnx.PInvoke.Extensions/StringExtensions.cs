@@ -59,7 +59,7 @@ namespace Rxmxnx.PInvoke.Extensions
             => Utf8CStringConcatenation.Concat(values);
 
         /// <summary>
-        /// Concatenates the members of a collection of <see cref="String"/>.
+        /// Concatenates the members of a collection of <see cref="CString"/>.
         /// </summary>
         /// <param name="values">A collection that contains the strings to concatenate.</param>
         /// <returns>

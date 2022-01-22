@@ -195,7 +195,8 @@ namespace Rxmxnx.PInvoke.Extensions
 
         #region Join
         /// <summary>
-        /// Concatenates an array of UTF-8 texts, using the specified separator between each member.
+        /// Concatenates an array of <see cref="CString"/>, using the specified separator between 
+        /// each member.
         /// </summary>
         /// <param name="separator">
         /// The text to use as a separator. separator is included in the returned concatenation
@@ -207,7 +208,8 @@ namespace Rxmxnx.PInvoke.Extensions
             => Utf8CStringConcatenation.Join(separator, values);
 
         /// <summary>
-        /// Concatenates an array of UTF-8 texts, using the specified separator between each member.
+        /// Concatenates an array of <see cref="CString"/>, using the specified separator between 
+        /// each member.
         /// </summary>
         /// <param name="separator">
         /// The Byteacter to use as a separator. separator is included in the returned concatenation
@@ -219,7 +221,7 @@ namespace Rxmxnx.PInvoke.Extensions
             => Utf8CStringConcatenation.Join(separator, values);
 
         /// <summary>
-        /// Concatenates the members of a collection of UTF-8 texts, using the specified 
+        /// Concatenates the members of a collection of <see cref="CString"/>, using the specified 
         /// separator between each member.
         /// </summary>
         /// <param name="separator">UTF-8 text used as text separator.</param>
@@ -229,7 +231,7 @@ namespace Rxmxnx.PInvoke.Extensions
             => Utf8CStringConcatenation.Join(separator, values);
 
         /// <summary>
-        /// Concatenates the members of a collection of UTF-8 texts, using the specified 
+        /// Concatenates the members of a collection of <see cref="CString"/>, using the specified 
         /// separator between each member.
         /// </summary>
         /// <param name="separator"><see cref="Byte"/> used as text separator.</param>
