@@ -13,7 +13,7 @@ namespace Rxmxnx.PInvoke.Extensions
     /// <summary>
     /// Represents text as a sequence of UTF-8 code units.
     /// </summary>
-    public sealed class CString : ICloneable
+    public sealed class CString : ICloneable, IEquatable<CString>
     {
         /// <summary>
         /// Represents the empty UTF-8 byte array. This field is read-only.
@@ -32,7 +32,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <summary>
         /// Internal object data.
         /// </summary>
-        private readonly Object? _data;
+        private readonly ValueRegion<Byte> _data;
         /// <summary>
         /// Indicates whether the UTF-8 text is null-terminated.
         /// </summary>
@@ -41,15 +41,6 @@ namespace Rxmxnx.PInvoke.Extensions
         /// Number of bytes in the current <see cref="CString"/> object.
         /// </summary>
         private readonly Int32 _length;
-
-        /// <summary>
-        /// Internal <see cref="Byte"/> array for internal <see cref="CString"/>.
-        /// </summary>
-        private Byte[]? InternalData => this._isLocal ? (Byte[]?)this._data : default;
-        /// <summary>
-        /// <see cref="NativeArrayReference{Byte}"/> object for external <see cref="CString"/>.
-        /// </summary>
-        private NativeArrayReference<Byte> ExternalData => this._data as NativeArrayReference<Byte> ?? NativeArrayReference<Byte>.Empty;
 
         /// <summary>
         /// Gets the <see cref="Byte"/> object at a specified position in the current <see cref="CString"/>
@@ -61,7 +52,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <paramref name="index"/> is greater than or equal to the length of this object or less than zero.
         /// </exception>
         [IndexerName("Position")]
-        public Byte this[Int32 index] => this.InternalData?[index] ?? this.ExternalData[index];
+        public Byte this[Int32 index] => this._data[index];
 
         /// <summary>
         /// Gets the number of bytes in the current <see cref="CString"/> object.
@@ -90,7 +81,7 @@ namespace Rxmxnx.PInvoke.Extensions
         private CString([DisallowNull] Byte[] bytes)
         {
             this._isLocal = true;
-            this._data = bytes;
+            this._data = ValueRegion<Byte>.Create(bytes);
             this._isNullTerminated = bytes.Any() && bytes[^1] == default;
             this._length = bytes.Length - (this._isNullTerminated ? 1 : 0);
         }
@@ -112,19 +103,36 @@ namespace Rxmxnx.PInvoke.Extensions
         public CString(IntPtr ptr, Int32 length)
         {
             this._isLocal = false;
-            NativeArrayReference<Byte> data = new(ptr, length);
-            if (data.Length == 0)
+            this._data = ValueRegion<Byte>.Create(ptr, length);
+            ReadOnlySpan<Byte> data = this._data;
+            if (data.IsEmpty)
             {
-                this._data = default;
                 this._isNullTerminated = false;
                 this._length = 0;
             }
             else
             {
-                this._data = data;
                 this._isNullTerminated = data[^1] == default;
                 this._length = length - (this._isNullTerminated ? 1 : 0);
             }
+        }
+
+        /// <summary>
+        /// Copies the UTF-8 text into a new array.
+        /// </summary>
+        /// <returns>An array containing the data in the current UTF-8 text.</returns>
+        public Byte[] ToArray() => this._data.ToArray();
+
+        /// <summary>
+        /// Gets <see cref="String"/> representation of the current UTF-8 text as hexadecimal value.
+        /// </summary>
+        /// <returns><see cref="String"/> representation of hexadecimal value.</returns>
+        public String AsHexString()
+        {
+            StringBuilder strBuilder = new();
+            for (Int32 i = 0; i < this.Length; i++)
+                strBuilder.Append(this[i].AsHexString());
+            return strBuilder.ToString();
         }
 
         /// <summary>
@@ -132,14 +140,32 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <see cref="CString"/>.
         /// </summary>
         /// <returns>An enumerator object.</returns>
-        public ReadOnlySpan<Byte>.Enumerator GetEnumerator() => this.AsSpan().GetEnumerator();
+        public ReadOnlySpan<Byte>.Enumerator GetEnumerator() => this._data.GetEnumerator();
 
         /// <summary>
         /// Returns a reference to this instance of <see cref="CString"/>.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public Object Clone() => new CString(this.AsSpan().ToArray());
+        public Object Clone() => new CString(this._data.ToArray());
+
+        /// <summary>
+        /// Indicates whether the current <see cref="CString"/> is equal to another <see cref="CString"/> 
+        /// instance.
+        /// </summary>
+        /// <param name="other">A <see cref="CString"/> to compare with this object.</param>
+        /// <returns>
+        /// <see langword="true"/> if the current <see cref="CString"/> is equal to the <paramref name="other"/> 
+        /// parameter; otherwise, <see langword="false"/>.
+        /// </returns>
+        public Boolean Equals(CString? other)
+        {
+            if (other is CString otherNotNull && this.Length == otherNotNull.Length)
+                return Environment.Is64BitProcess ?
+                    this.Equals<Int64>(otherNotNull) :
+                    this.Equals<Int32>(otherNotNull);
+            return false;
+        }
 
         /// <summary>
         /// Returns a <see cref="String"/> that represents the current instance.
@@ -154,39 +180,53 @@ namespace Rxmxnx.PInvoke.Extensions
         }
 
         /// <summary>
-        /// Copies the UTF-8 text into a new array.
+        /// Determines whether the specified object is equal to the current object.
         /// </summary>
-        /// <returns>An array containing the data in the current UTF-8 text.</returns>
-        public Byte[] ToArray() => this.AsSpan().ToArray();
-
-        /// <summary>
-        /// Indicates whether the specified <see cref="CString"/> is <see langword="null"/> or an 
-        /// empty UTF-8 text.
-        /// </summary>
-        /// <param name="value">The <see cref="CString"/> to test.</param>
+        /// <param name="obj">The object to compare with the current object.</param>
         /// <returns>
-        /// <see langword="true"/> if the value parameter is <see langword="null"/> or an empty UTF-8 text; 
+        /// <see langword="true"/> if the specified object is equal to the current object; 
         /// otherwise, <see langword="false"/>.
         /// </returns>
-        public static Boolean IsNullOrEmpty([NotNullWhen(false)] CString? value)
-            => value == default || value.Length == 0;
+        public override Boolean Equals(Object? obj) => obj is CString && Equals((CString)obj);
 
         /// <summary>
-        /// Defines an implicit conversion of a given <see cref="Byte"/> array to <see cref="CString"/>.
+        /// Serves as the default hash function.
         /// </summary>
-        /// <param name="bytes">A <see cref="Byte"/> array to implicitly convert.</param>
-        public static implicit operator CString?(Byte[]? bytes) => bytes != default ? new(bytes) : default;
+        /// <returns>A hash code for the current object.</returns>
+        public override Int32 GetHashCode() => this.AsHexString().GetHashCode();
+
         /// <summary>
-        /// Defines an implicit conversion of a given <see cref="String"/> to <see cref="CString"/>.
+        /// Indicates whether the current <see cref="CString"/> is equal to another <see cref="CString"/> 
+        /// instance.
         /// </summary>
-        /// <param name="str">A <see cref="String"/> to implicitly convert.</param>
-        public static implicit operator CString?(String? str)
-            => str != default ? new(GetUtf8Bytes(str).Concat<byte>(global::Rxmxnx.PInvoke.Extensions.CString.empty).ToArray<byte>()) : default;
-        /// <summary>
-        /// Defines an implicit conversion of a given <see cref="CString"/> to a read-only span of bytes.
-        /// </summary>
-        /// <param name="value">A <see cref="CString"/> to implicitly convert.</param>
-        public static implicit operator ReadOnlySpan<Byte>(CString? value) => value != default ? value.AsSpan() : default;
+        /// <typeparam name="TInteger"><see cref="ValueType"/> for reduce comparation.</typeparam>
+        /// <param name="other">A <see cref="CString"/> to compare with this object.</param>
+        /// <returns>
+        /// <see langword="true"/> if the current <see cref="CString"/> is equal to the <paramref name="other"/> 
+        /// parameter; otherwise, <see langword="false"/>.
+        /// </returns>
+        private Boolean Equals<TInteger>(CString other)
+            where TInteger : unmanaged
+        {
+            ReadOnlySpan<Byte> thisSpan = this;
+            ReadOnlySpan<Byte> otherSpan = other;
+
+            Int32 sizeofT = NativeUtilities.SizeOf<TInteger>();
+            Int32 offset = this.Length % sizeofT;
+            Int32 count = (this.Length - offset) / sizeofT;
+
+            for (Int32 i = this.Length - offset; i < this.Length; i++)
+                if (!thisSpan[i].Equals(otherSpan[i]))
+                    return false;
+
+            ReadOnlySpan<TInteger> thisTSpan = thisSpan.AsIntPtr().AsReadOnlySpan<TInteger>(count);
+            ReadOnlySpan<TInteger> otherTSpan = otherSpan.AsIntPtr().AsReadOnlySpan<TInteger>(count);
+            for (Int32 i = 0; i < count; i++)
+                if (!thisTSpan[i].Equals(otherTSpan[i]))
+                    return false;
+
+            return true;
+        }
 
         /// <summary>
         /// Asynchronously writes the sequence of bytes to the given <see cref="Stream"/> and advances
@@ -208,6 +248,56 @@ namespace Rxmxnx.PInvoke.Extensions
         }
 
         /// <summary>
+        /// Indicates whether the specified <see cref="CString"/> is <see langword="null"/> or an 
+        /// empty UTF-8 text.
+        /// </summary>
+        /// <param name="value">The <see cref="CString"/> to test.</param>
+        /// <returns>
+        /// <see langword="true"/> if the value parameter is <see langword="null"/> or an empty UTF-8 text; 
+        /// otherwise, <see langword="false"/>.
+        /// </returns>
+        public static Boolean IsNullOrEmpty([NotNullWhen(true)] CString? value)
+            => !(value is CString valueNotNull) || valueNotNull.Length == 0;
+
+        /// <summary>
+        /// Defines an implicit conversion of a given <see cref="Byte"/> array to <see cref="CString"/>.
+        /// </summary>
+        /// <param name="bytes">A <see cref="Byte"/> array to implicitly convert.</param>
+        public static implicit operator CString?(Byte[]? bytes) => bytes != default ? new(bytes) : default;
+        /// <summary>
+        /// Defines an implicit conversion of a given <see cref="String"/> to <see cref="CString"/>.
+        /// </summary>
+        /// <param name="str">A <see cref="String"/> to implicitly convert.</param>
+        public static implicit operator CString?(String? str)
+            => str != default ? new(GetUtf8Bytes(str).Concat<Byte>(empty).ToArray<Byte>()) : default;
+        /// <summary>
+        /// Defines an implicit conversion of a given <see cref="CString"/> to a read-only span of bytes.
+        /// </summary>
+        /// <param name="value">A <see cref="CString"/> to implicitly convert.</param>
+        public static implicit operator ReadOnlySpan<Byte>(CString? value) => value != default ? value.AsSpan() : default;
+
+        /// <summary>
+        /// Determines whether two specified <see cref="CString"/> have the same value.
+        /// </summary>
+        /// <param name="a">The first <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+        /// <param name="b">The second <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+        /// <returns>
+        /// <see langword="true"/> if the value of <paramref name="a"/> is the same as the value 
+        /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
+        /// </returns>
+        public static Boolean operator ==(CString? a, CString? b) => a?.Equals(b) ?? b?.Equals(a) ?? true;
+        /// <summary>
+        /// Determines whether two specified <see cref="CString"/> have different values.
+        /// </summary>
+        /// <param name="a">The first <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+        /// <param name="b">The second <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+        /// <returns>
+        /// <see langword="true"/> if the value of <paramref name="a"/> is different from the value  
+        /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
+        /// </returns>
+        public static Boolean operator !=(CString? a, CString? b) => !(a == b);
+
+        /// <summary>
         /// Retrieves the internal binary data from a given <see cref="CString"/>.
         /// </summary>
         /// <param name="value">A non-reference <see cref="CString"/> instance.</param>
@@ -216,15 +306,13 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <exception cref="InvalidOperationException"><paramref name="value"/> does not contains the UTF-8 text.</exception>
         public static Byte[] GetBytes([DisallowNull] CString value)
         {
-            if (value == default)
+            if (!(value is CString))
                 throw new ArgumentNullException(nameof(value));
 
-            if (!value._isLocal)
+            if ((Byte[]?)value._data is Byte[] array)
+                return array;
+            else
                 throw new InvalidOperationException(nameof(value) + " does not contains the UTF-8 text.");
-
-#pragma warning disable CS8603
-            return value.InternalData;
-#pragma warning restore CS8603
         }
 
         /// <summary>
@@ -237,15 +325,14 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </param>
         /// <returns>A task that represents the asynchronous write operation.</returns>
         private Task GetWriteTask(Stream strm)
-            => this.InternalData is Byte[] data ?
-            strm.WriteAsync(data, 0, this.Length)
-            : Task.Run(() => { strm.Write(this.ExternalData.Range(0, this.Length)); });
+            => (Byte[]?)this._data is Byte[] array ? strm.WriteAsync(array, 0, this.Length) :
+            Task.Run(() => { strm.Write(this.AsSpan()[0..this.Length]); });
 
         /// <summary>
         /// Retreives the internal or external information as <see cref="ReadOnlySpan{Byte}"/> object.
         /// </summary>
         /// <returns><see cref="ReadOnlySpan{Byte}"/> object.</returns>
-        private ReadOnlySpan<Byte> AsSpan() => this._isLocal ? this.InternalData : this.ExternalData;
+        private ReadOnlySpan<Byte> AsSpan() => this._data;
 
         /// <summary>
         /// Encodes the UTF-16 text using the UTF-8 charset and retrieves the <see cref="Byte"/> array with 
