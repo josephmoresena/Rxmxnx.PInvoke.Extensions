@@ -34,7 +34,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <summary>
         /// <see cref="EqualsDelegate"/> delegate for native comparision.
         /// </summary>
-        private static readonly EqualsDelegate equals = Environment.Is64BitProcess ? Equals<Int64> : Equals<Int32>;
+        private static readonly EqualsDelegate equals = GetEquals();
 
         /// <summary>
         /// Represents the empty UTF-8 string. This field is read-only.
@@ -310,6 +310,13 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </summary>
         /// <returns><see cref="ReadOnlySpan{Byte}"/> object.</returns>
         private ReadOnlySpan<Byte> AsSpan() => this._data;
+
+        /// <summary>
+        /// Retrives a <see cref="EqualsDelegate"/> delegate for native comparision.
+        /// </summary>
+        /// <returns><see cref="EqualsDelegate"/> delegate.</returns>
+        [ExcludeFromCodeCoverage]
+        private static EqualsDelegate GetEquals() => Environment.Is64BitProcess ? Equals<Int64> : Equals<Int32>;
 
         /// <summary>
         /// Encodes the UTF-16 text using the UTF-8 charset and retrieves the <see cref="Byte"/> array with 
