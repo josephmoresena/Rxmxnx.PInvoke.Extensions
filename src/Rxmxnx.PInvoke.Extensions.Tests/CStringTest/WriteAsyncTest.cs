@@ -11,7 +11,7 @@ using Xunit;
 namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
 {
     [ExcludeFromCodeCoverage]
-    public sealed class WriteAsyncTest
+    public sealed class WriteAsyncTest : CStringBaseTest
     {
         [Theory]
         [InlineData(false)]
@@ -32,7 +32,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
         {
             Byte[] text = nullEndInput ?
                 Encoding.UTF8.GetBytes(TestUtilities.SharedFixture.Create<String>()) :
-                CString.GetBytes(TestUtilities.SharedFixture.Create<CString>());
+                CreateUtf8StringNulTerminated();
             GCHandle handle = GCHandle.Alloc(text, GCHandleType.Pinned);
             try
             {

@@ -11,7 +11,7 @@ using Xunit;
 namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
 {
     [ExcludeFromCodeCoverage]
-    public sealed class OperatorsTest
+    public sealed class OperatorsTest : CStringBaseTest
     {
         [Theory]
         [InlineData(true)]
@@ -24,6 +24,13 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             CString cstr4 = empty ? Array.Empty<Byte>() : default;
             CString cstr5 = new(empty ? TestUtilities.GetPrintableByte() : default, 0);
             CString cstr6 = new((empty ? Array.Empty<Byte>() : default).AsSpan().AsIntPtr(), 0);
+
+            Assert.Equal(empty, CString.Empty == cstr1);
+            Assert.Equal(empty, CString.Empty == cstr2);
+            Assert.Equal(empty, CString.Empty == cstr3);
+            Assert.Equal(empty, CString.Empty == cstr4);
+            Assert.True(CString.Empty == cstr5);
+            Assert.True(CString.Empty == cstr6);
 
             ReadOnlySpan<Byte> span1 = cstr1;
             ReadOnlySpan<Byte> span2 = cstr2;
@@ -144,9 +151,9 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             String str1 = TestUtilities.SharedFixture.Create<String>();
             Byte[] byt2 = Encoding.UTF8.GetBytes(TestUtilities.SharedFixture.Create<String>());
             Byte[] byt3 = TestUtilities.AsArray(TestUtilities.GetPrintableByte(), TestUtilities.GetPrintableByte());
-            Byte[] byt4 = TestUtilities.AsArray(TestUtilities.GetPrintableByte(), default);
+            Byte[] byt4 = CreateUtf8StringNulTerminated();
             ReadOnlySpan<Byte> spa5 = TestUtilities.AsArray(TestUtilities.GetPrintableByte(), TestUtilities.GetPrintableByte());
-            ReadOnlySpan<Byte> spa6 = TestUtilities.AsArray(TestUtilities.GetPrintableByte(), default);
+            ReadOnlySpan<Byte> spa6 = CreateUtf8StringNulTerminated();
             Byte ccr7 = TestUtilities.GetPrintableByte();
 
             Byte[] byt1 = Encoding.UTF8.GetBytes(str1);
@@ -164,6 +171,13 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             CString cstr5 = new(spa5.AsIntPtr(), spa5.Length);
             CString cstr6 = new(spa6.AsIntPtr(), spa6.Length);
             CString cstr7 = new(ccr7, 3);
+
+            Assert.True(CString.Empty != cstr1);
+            Assert.True(CString.Empty != cstr2);
+            Assert.True(CString.Empty != cstr3);
+            Assert.True(CString.Empty != cstr4);
+            Assert.True(CString.Empty != cstr5);
+            Assert.True(CString.Empty != cstr6);
 
             ReadOnlySpan<Byte> cstrSpan1 = cstr1;
             ReadOnlySpan<Byte> cstrSpan2 = cstr2;
