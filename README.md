@@ -105,6 +105,15 @@ Gets the binary data from unmanaged value.
 * AsValues&lt;TSource, TDestination&gt;()
 Creates an array of TDestination generic type from an array of TSource generic type. 
 
+## CString
+Represents text as a sequence of UTF-8 code units.
+* Empty
+Represents the empty UTF-8 string. This field is read-only.
+* IsNullOrEmpty(CString value)
+Indicates whether the specified CString is null or an empty UTF-8 text.
+* GetBytes(CString value)
+Retrieves the internal binary data from a given <see cref="CString"/>.
+
 ## InputValue
 Supports a value type that can be referenced.
 * CreateInput&lt;TValue&gt;(in TValue instance)
