@@ -25,6 +25,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             CString cstr5 = new(empty ? TestUtilities.GetPrintableByte() : default, 0);
             CString cstr6 = new((empty ? Array.Empty<Byte>() : default).AsSpan().AsIntPtr(), 0);
 
+            Assert.True((null as CString) == null);
             Assert.Equal(empty, CString.Empty == cstr1);
             Assert.Equal(empty, CString.Empty == cstr2);
             Assert.Equal(empty, CString.Empty == cstr3);

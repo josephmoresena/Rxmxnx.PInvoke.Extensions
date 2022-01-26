@@ -84,7 +84,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             Assert.Equal(com3.SequenceEqual(com4), cstr3.Equals(cstr4));
         }
 
-        private IEnumerable<Byte> GetPrintableBytes(Int32 count)
+        private static IEnumerable<Byte> GetPrintableBytes(Int32 count)
         {
             for (Int32 i = 0; i < count; i++)
                 yield return (Byte)TestUtilities.GetPrintableByte();

@@ -168,6 +168,16 @@ namespace Rxmxnx.PInvoke.Extensions
         }
 
         /// <summary>
+        /// Determines whether the specified object is equal to the current object.
+        /// </summary>
+        /// <param name="obj">The object to compare with the current object.</param>
+        /// <returns>
+        /// <see langword="true"/> if the specified object is equal to the current object; 
+        /// otherwise, <see langword="false"/>.
+        /// </returns>
+        public override Boolean Equals(Object? obj) => obj is CString cstr && Equals(cstr);
+
+        /// <summary>
         /// Returns a <see cref="String"/> that represents the current instance.
         /// </summary>
         /// <returns>A string that represents the current UTF-8 text.</returns>
@@ -178,16 +188,6 @@ namespace Rxmxnx.PInvoke.Extensions
             else
                 return Encoding.UTF8.GetString(this.AsSpan()[0..this.Length]);
         }
-
-        /// <summary>
-        /// Determines whether the specified object is equal to the current object.
-        /// </summary>
-        /// <param name="obj">The object to compare with the current object.</param>
-        /// <returns>
-        /// <see langword="true"/> if the specified object is equal to the current object; 
-        /// otherwise, <see langword="false"/>.
-        /// </returns>
-        public override Boolean Equals(Object? obj) => obj is CString && Equals((CString)obj);
 
         /// <summary>
         /// Serves as the default hash function.
@@ -306,7 +306,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <exception cref="InvalidOperationException"><paramref name="value"/> does not contains the UTF-8 text.</exception>
         public static Byte[] GetBytes([DisallowNull] CString value)
         {
-            if (!(value is CString))
+            if (value is null)
                 throw new ArgumentNullException(nameof(value));
 
             if ((Byte[]?)value._data is Byte[] array)
