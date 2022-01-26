@@ -13,8 +13,6 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.TextUtilitiesTest
     [ExcludeFromCodeCoverage]
     public sealed class JoinUtf8Test
     {
-        private static readonly Random random = new();
-
         [Theory]
         [InlineData(true, false)]
         [InlineData(false, false)]
@@ -24,7 +22,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.TextUtilitiesTest
         {
             Char separatorChar = withSeperator ? TestUtilities.SharedFixture.Create<Char>() : default;
             String separatorString = withSeperator ? TestUtilities.SharedFixture.Create<String>() : default;
-            Byte separatorByte = withSeperator ? GetUtf8Separator() : default;
+            Byte separatorByte = withSeperator ? TestUtilities.GetPrintableByte() : default;
             Byte[] separatorBytes = withSeperator ? Encoding.UTF8.GetBytes(separatorString) : default;
 
             IEnumerable<String> valuesString = !emptyData ? Enumerable.Repeat(String.Empty, 3).ToArray() : default;
@@ -46,7 +44,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.TextUtilitiesTest
         [InlineData(false)]
         internal void NormalTest(Boolean withSeperator)
         {
-            Byte separatorByte = withSeperator ? GetUtf8Separator() : default;
+            Byte separatorByte = withSeperator ? TestUtilities.GetPrintableByte() : default;
             Byte[] separatorBytes = withSeperator ? Encoding.UTF8.GetBytes(TestUtilities.SharedFixture.Create<String>()) : default;
             Char separatorChar = withSeperator ? TestUtilities.SharedFixture.Create<Char>() : default;
             String separatorString = withSeperator ? TestUtilities.SharedFixture.Create<String>() : default;
@@ -84,8 +82,5 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.TextUtilitiesTest
             Assert.Equal(resultChar, resultChar);
             Assert.Equal(resultString, resultString);
         }
-
-        private static Byte GetUtf8Separator()
-            => Convert.ToByte(random.Next(32, 128));
     }
 }

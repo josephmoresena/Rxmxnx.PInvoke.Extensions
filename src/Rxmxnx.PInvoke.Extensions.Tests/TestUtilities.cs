@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 using AutoFixture;
 
@@ -21,6 +24,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests
         private const String METHODNAME_WINDOWS = "GetCurrentProcessId";
         private const String METHODNAME_UNIX = "getpid";
 
+        public static readonly Random Random = new();
         public static readonly Fixture SharedFixture = GetFixture();
         public static readonly String LibraryName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? LIBRARYNAME_WINDOWS :
             RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? LIBRARYNAME_OSX : LIBRARYNAME_LINUX;
@@ -31,10 +35,39 @@ namespace Rxmxnx.PInvoke.Extensions.Tests
             Fixture result = new();
             result.Register<IntPtr>(() => Environment.Is64BitProcess ? new IntPtr(result.Create<Int64>()) : new IntPtr(result.Create<Int32>()));
             result.Register<UIntPtr>(() => Environment.Is64BitProcess ? new UIntPtr(result.Create<UInt64>()) : new UIntPtr(result.Create<UInt32>()));
+            result.Register<CString>(() => result.Create<String>());
             return result;
         }
 
         public static T GetValueMethod<T>(T value) => value;
         public static Byte GetByteValueMethod(Byte value) => GetValueMethod(value);
+        public static Byte GetPrintableByte() => Convert.ToByte(Random.Next(32, 128));
+        public static T[] AsArray<T>(params T[] args) => args;
+        public static GCHandle[] Alloc<T>(IEnumerable<T[]> arr)
+            where T : unmanaged
+        {
+            List<GCHandle> result = new();
+            foreach (T[] s in arr)
+                result.Add(GCHandle.Alloc(s, GCHandleType.Pinned));
+            return result.ToArray();
+        }
+        public static void Free(IEnumerable<GCHandle> handles)
+        {
+            foreach (GCHandle handle in handles)
+                handle.Free();
+        }
+        public static CString[] CreateCStrings(IList<Byte[]> bytes, IList<GCHandle> handles)
+        {
+            CString[] result = new CString[bytes.Count];
+            for (Int32 i = 0; i < result.Length; i++)
+                result[i] = new(handles[i].AddrOfPinnedObject(), bytes[i].Length);
+            return result;
+        }
+        public static async Task<Byte[]> GetWritingAsync(CString value, Boolean nullEnd)
+        {
+            using MemoryStream mem = new();
+            await value.WriteAsync(mem, nullEnd);
+            return mem.ToArray();
+        }
     }
 }

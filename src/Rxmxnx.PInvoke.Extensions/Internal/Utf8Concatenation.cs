@@ -76,11 +76,12 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <summary>
         /// Retrieves the binary data of UTF-8 text.
         /// </summary>
+        /// <param name="nullTerminated">Indicates whether the UTF-8 text must be null-terminated.</param>
         /// <returns>Binary data of UTF-8 text</returns>
-        public Byte[]? ToArray()
+        protected Byte[]? ToArray(Boolean nullTerminated = false)
         {
             if (this._mem.Length > 0)
-                return this.GetBinaryData();
+                return this.GetBinaryData(nullTerminated);
             return default;
         }
 
@@ -96,10 +97,12 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <summary>
         /// Retrieves a copy of binary data into the buffer.
         /// </summary>
+        /// <param name="nullTerminated">Indicates whether the UTF-8 text must be null-terminated.</param>
         /// <returns>Copy of binary data into the buffer.</returns>
-        private Byte[]? GetBinaryData()
+        private Byte[]? GetBinaryData(Boolean nullTerminated)
         {
-            ReadOnlySpan<Byte> span = PrepareUtf8Text(this._mem.GetBuffer());
+            this._mem.WriteByte(default);
+            ReadOnlySpan<Byte> span = PrepareUtf8Text(this._mem.GetBuffer(), nullTerminated);
             if (!span.IsEmpty)
                 return span.ToArray();
             return default;
@@ -111,11 +114,20 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <param name="span"><see cref="ReadOnlySpan{Byte}"/> to UTF-8 text.</param>
         /// <returns><see cref="ReadOnlySpan{Byte}"/> to UTF-8 binary data.</returns>
         protected static ReadOnlySpan<Byte> PrepareUtf8Text(ReadOnlySpan<Byte> span)
+            => PrepareUtf8Text(span, false);
+
+        /// <summary>
+        /// Prepares a UTF-8 text for concatenation process.
+        /// </summary>
+        /// <param name="span"><see cref="ReadOnlySpan{Byte}"/> to UTF-8 text.</param>
+        /// <param name="nullTerminated">Indicates whether the UTF-8 text must be null-terminated.</param>
+        /// <returns><see cref="ReadOnlySpan{Byte}"/> to UTF-8 binary data.</returns>
+        private static ReadOnlySpan<Byte> PrepareUtf8Text(ReadOnlySpan<Byte> span, Boolean nullTerminated)
         {
             if (!span.IsEmpty)
             {
                 Int32 iPosition = GetInitialPosition(span);
-                Int32 fLength = GetFinalLength(span, iPosition);
+                Int32 fLength = GetFinalLength(span, iPosition, nullTerminated);
                 return span.Slice(iPosition, fLength);
             }
             return span;
@@ -165,12 +177,15 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// </summary>
         /// <param name="span"><see cref="ReadOnlySpan{Byte}"/> to UTF-8 text.</param>
         /// <param name="iPosition">Initial position of the UTF-8 text.</param>
+        /// <param name="nullTerminated">Indicates whether the UTF-8 text must be null-terminated.</param>
         /// <returns>Final length of the UTF-8 text.</returns>
-        private static Int32 GetFinalLength(ReadOnlySpan<Byte> span, Int32 iPosition)
+        private static Int32 GetFinalLength(ReadOnlySpan<Byte> span, Int32 iPosition, Boolean nullTerminated)
         {
             Int32 fPosition = span.Length - 1;
             while (fPosition >= iPosition && IsNullUtf8Char(span[fPosition]))
                 fPosition--;
+            if (nullTerminated)
+                fPosition++;
             return fPosition - iPosition + 1;
         }
 

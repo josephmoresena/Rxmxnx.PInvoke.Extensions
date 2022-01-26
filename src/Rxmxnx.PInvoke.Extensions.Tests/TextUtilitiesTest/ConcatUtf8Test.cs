@@ -12,8 +12,6 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.TextUtilitiesTest
     [ExcludeFromCodeCoverage]
     public sealed class ConcatUtf8Test
     {
-        private static readonly Random random = new();
-
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
