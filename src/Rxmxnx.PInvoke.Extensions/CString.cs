@@ -16,9 +16,25 @@ namespace Rxmxnx.PInvoke.Extensions
     public sealed class CString : ICloneable, IEquatable<CString>
     {
         /// <summary>
+        /// Delegate. Indicates whether <paramref name="current"/> <see cref="CString"/> is equal to 
+        /// <paramref name="other"/> <see cref="CString"/> 
+        /// </summary>
+        /// <param name="current">A <see cref="CString"/> to compare with <paramref name="other"/>.</param>
+        /// <param name="other">A <see cref="CString"/> to compare with this <paramref name="current"/>.</param>
+        /// <returns>
+        /// <see langword="true"/> if <paramref name="current"/> <see cref="CString"/> is equal to 
+        /// <paramref name="other"/> parameter; otherwise, <see langword="false"/>.
+        /// </returns>
+        private delegate Boolean EqualsDelegate(CString current, CString other);
+
+        /// <summary>
         /// Represents the empty UTF-8 byte array. This field is read-only.
         /// </summary>
         private static readonly Byte[] empty = new Byte[] { default };
+        /// <summary>
+        /// <see cref="EqualsDelegate"/> delegate for native comparision.
+        /// </summary>
+        private static readonly EqualsDelegate equals = Environment.Is64BitProcess ? Equals<Int64> : Equals<Int32>;
 
         /// <summary>
         /// Represents the empty UTF-8 string. This field is read-only.
@@ -159,13 +175,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// parameter; otherwise, <see langword="false"/>.
         /// </returns>
         public Boolean Equals(CString? other)
-        {
-            if (other is CString otherNotNull && this.Length == otherNotNull.Length)
-                return Environment.Is64BitProcess ?
-                    this.Equals<Int64>(otherNotNull) :
-                    this.Equals<Int32>(otherNotNull);
-            return false;
-        }
+            => other is CString otherNotNull && this.Length == otherNotNull.Length && equals(this, other);
 
         /// <summary>
         /// Determines whether the specified object is equal to the current object.
@@ -196,39 +206,6 @@ namespace Rxmxnx.PInvoke.Extensions
         public override Int32 GetHashCode() => this.AsHexString().GetHashCode();
 
         /// <summary>
-        /// Indicates whether the current <see cref="CString"/> is equal to another <see cref="CString"/> 
-        /// instance.
-        /// </summary>
-        /// <typeparam name="TInteger"><see cref="ValueType"/> for reduce comparation.</typeparam>
-        /// <param name="other">A <see cref="CString"/> to compare with this object.</param>
-        /// <returns>
-        /// <see langword="true"/> if the current <see cref="CString"/> is equal to the <paramref name="other"/> 
-        /// parameter; otherwise, <see langword="false"/>.
-        /// </returns>
-        private Boolean Equals<TInteger>(CString other)
-            where TInteger : unmanaged
-        {
-            ReadOnlySpan<Byte> thisSpan = this;
-            ReadOnlySpan<Byte> otherSpan = other;
-
-            Int32 sizeofT = NativeUtilities.SizeOf<TInteger>();
-            Int32 offset = this.Length % sizeofT;
-            Int32 count = (this.Length - offset) / sizeofT;
-
-            for (Int32 i = this.Length - offset; i < this.Length; i++)
-                if (!thisSpan[i].Equals(otherSpan[i]))
-                    return false;
-
-            ReadOnlySpan<TInteger> thisTSpan = thisSpan.AsIntPtr().AsReadOnlySpan<TInteger>(count);
-            ReadOnlySpan<TInteger> otherTSpan = otherSpan.AsIntPtr().AsReadOnlySpan<TInteger>(count);
-            for (Int32 i = 0; i < count; i++)
-                if (!thisTSpan[i].Equals(otherTSpan[i]))
-                    return false;
-
-            return true;
-        }
-
-        /// <summary>
         /// Asynchronously writes the sequence of bytes to the given <see cref="Stream"/> and advances
         /// the current position within this stream by the number of bytes written.
         /// </summary>
@@ -257,7 +234,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// otherwise, <see langword="false"/>.
         /// </returns>
         public static Boolean IsNullOrEmpty([NotNullWhen(true)] CString? value)
-            => !(value is CString valueNotNull) || valueNotNull.Length == 0;
+            => value is not CString valueNotNull || valueNotNull.Length == 0;
 
         /// <summary>
         /// Defines an implicit conversion of a given <see cref="Byte"/> array to <see cref="CString"/>.
@@ -341,5 +318,40 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="str"><see cref="String"/> representation of UTF-16 text.</param>
         /// <returns><see cref="Byte"/> array with UTF-8 text.</returns>
         private static Byte[] GetUtf8Bytes(String str) => str.AsUtf8() ?? Array.Empty<Byte>();
+
+        /// <summary>
+        /// Indicates whether <paramref name="current"/> <see cref="CString"/> is equal to 
+        /// <paramref name="other"/> <see cref="CString"/> 
+        /// instance.
+        /// </summary>
+        /// <typeparam name="TInteger"><see cref="ValueType"/> for reduce comparation.</typeparam>
+        /// <param name="current">A <see cref="CString"/> to compare with <paramref name="other"/>.</param>
+        /// <param name="other">A <see cref="CString"/> to compare with this <paramref name="current"/>.</param>
+        /// <returns>
+        /// <see langword="true"/> if <paramref name="current"/> <see cref="CString"/> is equal to 
+        /// <paramref name="other"/> parameter; otherwise, <see langword="false"/>.
+        /// </returns>
+        private static Boolean Equals<TInteger>(CString current, CString other)
+            where TInteger : unmanaged
+        {
+            ReadOnlySpan<Byte> thisSpan = current;
+            ReadOnlySpan<Byte> otherSpan = other;
+
+            Int32 sizeofT = NativeUtilities.SizeOf<TInteger>();
+            Int32 offset = current.Length % sizeofT;
+            Int32 count = (current.Length - offset) / sizeofT;
+
+            for (Int32 i = current.Length - offset; i < current.Length; i++)
+                if (!thisSpan[i].Equals(otherSpan[i]))
+                    return false;
+
+            ReadOnlySpan<TInteger> thisTSpan = thisSpan.AsIntPtr().AsReadOnlySpan<TInteger>(count);
+            ReadOnlySpan<TInteger> otherTSpan = otherSpan.AsIntPtr().AsReadOnlySpan<TInteger>(count);
+            for (Int32 i = 0; i < count; i++)
+                if (!thisTSpan[i].Equals(otherTSpan[i]))
+                    return false;
+
+            return true;
+        }
     }
 }

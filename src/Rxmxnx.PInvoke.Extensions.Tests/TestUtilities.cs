@@ -46,7 +46,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests
         public static GCHandle[] Alloc<T>(IEnumerable<T[]> arr)
             where T : unmanaged
         {
-            List<GCHandle> result = new List<GCHandle>();
+            List<GCHandle> result = new();
             foreach (T[] s in arr)
                 result.Add(GCHandle.Alloc(s, GCHandleType.Pinned));
             return result.ToArray();

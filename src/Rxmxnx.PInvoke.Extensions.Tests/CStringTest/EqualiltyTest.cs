@@ -47,10 +47,10 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
         internal void SingleTest()
         {
             Byte[] bytes = GetPrintableBytes(4).ToArray();
-            CString a = new CString(bytes[0], 1);
-            CString b = new CString(bytes[1], 1);
-            CString c = new CString(bytes[2], 1);
-            CString d = new CString(bytes[3], 1);
+            CString a = new(bytes[0], 1);
+            CString b = new(bytes[1], 1);
+            CString c = new(bytes[2], 1);
+            CString d = new(bytes[3], 1);
 
             Assert.Equal(bytes[0] == bytes[1], a.Equals(b));
             Assert.Equal(bytes[0] == bytes[2], a.Equals(c));
