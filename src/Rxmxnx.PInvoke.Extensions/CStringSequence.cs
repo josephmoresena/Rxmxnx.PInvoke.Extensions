@@ -6,7 +6,7 @@ using System.Text;
 namespace Rxmxnx.PInvoke.Extensions
 {
     /// <summary>
-    /// Represents a sequence of UTF-8 texts.
+    /// Represents a sequence of null-terminated UTF-8 texts.
     /// </summary>
     public sealed record CStringSequence
     {

@@ -115,7 +115,7 @@ Indicates whether the specified CString is null or an empty UTF-8 text.
 Retrieves the internal binary data from a given <see cref="CString"/>.
 
 ## CStringSequence
-Represents a sequence of UTF-8 texts.
+Represents a sequence of null-terminated UTF-8 texts.
 * AsSpan
 Retrieves the buffer as an ReadOnlySpan<Char> instance and creates a CString array which represents 
 text sequence. The output CString array will remain valid only as long as returned buffer span is on live.
