@@ -152,7 +152,7 @@ namespace Rxmxnx.PInvoke.Extensions
                     foreach (Char c in chars)
                         strBuild.Append(c);
 
-                    pending = chars.Length != desiredSize / sizeOfChar || desiredSize % sizeOfChar != 0;
+                    pending = desiredSize % sizeOfChar != 0;
                     previous = pending && cstr.Length < span.Length ? span[^1] : default;
                 }
             }
