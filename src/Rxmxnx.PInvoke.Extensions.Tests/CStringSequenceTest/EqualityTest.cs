@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 using AutoFixture;
 
@@ -33,6 +34,10 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringSequenceTest
             Assert.Equal(sequence1.GetHashCode(), sequence4.GetHashCode());
             Assert.True(sequence1.Equals(sequence4));
             Assert.True(sequence1.Equals((Object)sequence4));
+
+            ReadOnlySpan<Char> span = sequence1.AsSpan(out CString[] output);
+            Assert.False(sequence1.Equals(default));
+            Assert.False(sequence1.Equals(output.FirstOrDefault()));
         }
     }
 }
