@@ -134,19 +134,13 @@ namespace Rxmxnx.PInvoke.Extensions
         private static String CreateBuffer(Int32[] lengths, CString?[] values)
         {
             Int32 count = lengths.Sum() + lengths.Length - 1;
-            StringBuilder sb = new(count / sizeOfChar + count % sizeOfChar);
-            Boolean first = true;
-            Byte previous = default;
+            StringBuilder strBuild = new(count / sizeOfChar + count % sizeOfChar);
+            Byte? previous = default;
             for (Int32 i = 0; i < lengths.Length; i++)
-                CopyText(sb, values[i], ref first, ref previous);
-            if (previous != default)
-            {
-                Byte[] lastChar = new Byte[sizeOfChar];
-                lastChar[0] = previous;
-                lastChar[1] = default;
-                sb.Append(lastChar.AsValue<Char>());
-            }
-            return sb.ToString();
+                CopyText(strBuild, values[i], ref previous);
+            if (previous.HasValue && previous.Value != default)
+                WriteBytesAsChar(strBuild, previous.Value, default);
+            return strBuild.ToString();
         }
 
         /// <summary>
@@ -154,21 +148,6 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </summary>
         /// <param name="strBuild">Buffer builder.</param>
         /// <param name="cstr">UTF-8 text.</param>
-        /// <param name="first">
-        /// <list type="table">
-        /// <item>
-        /// <term>Input</term>
-        /// <description>
-        /// Indicates whether the current method call should write a pending UTF-8 character from the 
-        /// previous method call.
-        /// </description>
-        /// </item>
-        /// <item>
-        /// <term>Output</term>
-        /// <description>Indicates whether the next call should write a leftover UTF-8 character.</description>
-        /// </item>
-        /// </list>
-        /// </param>
         /// <param name="previous">
         /// <list type="table">
         /// <item>
@@ -181,36 +160,16 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </item>
         /// </list>
         /// </param>
-        private static void CopyText(StringBuilder strBuild, CString? cstr, ref Boolean first, ref Byte previous)
+        private static void CopyText(StringBuilder strBuild, CString? cstr, ref Byte? previous)
         {
             if (!CString.IsNullOrEmpty(cstr))
             {
-                Int32 offset = 0;
+#pragma warning disable CS8604 
+                Int32 offset = WriteFirstChar(strBuild, previous, cstr);
+#pragma warning restore CS8604
                 ReadOnlySpan<Byte> span = cstr;
-
-                if (!first)
-                {
-                    Byte[] firstChar = new Byte[sizeOfChar];
-                    Boolean previousDefault = previous == default;
-                    firstChar[0] = previous;
-                    firstChar[1] = previousDefault ? span[0] : default;
-                    offset = previousDefault ? 1 : 0;
-                    strBuild.Append(firstChar.AsValue<Char>());
-                }
-                else
-                    first = false;
-
-                //if (pending)
-                //{
-                //    Byte[] firstChar = new Byte[sizeOfChar];
-                //    firstChar[0] = previous;
-                //    firstChar[1] = span[0];
-                //    offset = 1;
-                //    strBuild.Append(firstChar.AsValue<Char>());
-                //}
-#pragma warning disable CS8602
                 Int32 desiredSize = cstr.Length - offset;
-#pragma warning restore CS8602
+
                 if (desiredSize > 0)
                 {
                     Int32 charSpanLength = desiredSize / sizeOfChar;
@@ -218,23 +177,43 @@ namespace Rxmxnx.PInvoke.Extensions
                     foreach (Char c in chars)
                         strBuild.Append(c);
 
-                    if (charSpanLength * sizeOfChar != desiredSize)
-                        previous = cstr[^1];
-                    else
-                        previous = default;
-
-                    //pending = charSpanLength * sizeOfChar != desiredSize;
-                    //previous = default;
-                    //if (!pending)
-                    //{
-                    //    Byte[] lastChar = new Byte[sizeOfChar];
-                    //    lastChar[0] = span[^1];
-                    //    lastChar[1] = default;
-                    //    offset = 1;
-                    //    strBuild.Append(lastChar.AsValue<Char>());
-                    //}
+                    previous = charSpanLength % sizeOfChar != 0 ? cstr[^1] : default(Byte);
                 }
             }
+        }
+
+        /// <summary>
+        /// Writes the first character at the beginning of all UTF-8 texts after the first into 
+        /// the buffer builder.
+        /// </summary>
+        /// <param name="strBuild">Buffer builder.</param>
+        /// <param name="previous">Pending UTF-8 character from previous method call.</param>
+        /// <param name="cstr">Current UTF-8 text.</param>
+        /// <returns>Offset for current text writing.</returns>
+        private static Int32 WriteFirstChar(StringBuilder strBuild, Byte? previous, CString cstr)
+        {
+            Int32 result = 0;
+            if (previous.HasValue)
+            {
+                Boolean previousDefault = previous.Value == default;
+                WriteBytesAsChar(strBuild, previous.Value, previousDefault ? cstr[0] : default);
+                result = previousDefault ? 1 : 0;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Writes two UTF-8 characters as single UTF-16 into the buffer builder.
+        /// </summary>
+        /// <param name="strBuild">Buffer builder.</param>
+        /// <param name="previous">Pending UTF-8 character from previous method call.</param>
+        /// <param name="current">Current UTF-8 character.</param>
+        private static void WriteBytesAsChar(StringBuilder strBuild, Byte previous, Byte current)
+        {
+            Byte[] firstChar = new Byte[sizeOfChar];
+            firstChar[0] = previous;
+            firstChar[1] = current;
+            strBuild.Append(firstChar.AsValue<Char>());
         }
     }
 }
