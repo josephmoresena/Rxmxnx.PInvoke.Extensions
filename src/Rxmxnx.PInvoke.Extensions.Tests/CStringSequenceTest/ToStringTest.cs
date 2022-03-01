@@ -23,7 +23,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringSequenceTest
             String toString = sequence.ToString();
             String expectedString = GetExpectedString(cstrs);
             Int32 expectedLength = span.Length * sizeof(Char);
-            CString spanAsCString = new CString(span.AsIntPtr(), expectedLength);
+            CString spanAsCString = new(span.AsIntPtr(), expectedLength);
             CString joinCString = TextUtilities.Join(default(Byte), cstrs);
 
             Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(span[0]), ref Unsafe.AsRef(toString.AsSpan()[0])));

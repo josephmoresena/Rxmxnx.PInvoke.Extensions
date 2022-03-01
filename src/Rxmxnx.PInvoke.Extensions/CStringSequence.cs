@@ -8,7 +8,7 @@ namespace Rxmxnx.PInvoke.Extensions
     /// <summary>
     /// Represents a sequence of null-terminated UTF-8 texts.
     /// </summary>
-    public sealed record CStringSequence
+    public sealed class CStringSequence : ICloneable, IEquatable<CStringSequence>
     {
         /// <summary>
         /// Size of <see cref="Char"/> value.
@@ -35,6 +35,16 @@ namespace Rxmxnx.PInvoke.Extensions
         }
 
         /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="sequence"><see cref="CStringSequence"/> instance.</param>
+        private CStringSequence(CStringSequence sequence)
+        {
+            this._lengths = sequence._lengths.ToArray();
+            this._value = new(sequence._value.ToCharArray());
+        }
+
+        /// <summary>
         /// Retrieves the buffer as an <see cref="ReadOnlySpan{Char}"/> instance and creates a
         /// <see cref="CString"/> array which represents text sequence.
         /// </summary>
@@ -52,10 +62,46 @@ namespace Rxmxnx.PInvoke.Extensions
         }
 
         /// <summary>
+        /// Returns a reference to this instance of <see cref="CStringSequence"/>.
+        /// </summary>
+        /// <returns>A new object that is a copy of this instance.</returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public Object Clone() => new CStringSequence(this);
+
+        /// <summary>
+        /// Indicates whether the current <see cref="CStringSequence"/> is equal to another <see cref="CStringSequence"/> 
+        /// instance.
+        /// </summary>
+        /// <param name="other">A <see cref="CStringSequence"/> to compare with this object.</param>
+        /// <returns>
+        /// <see langword="true"/> if the current <see cref="CStringSequence"/> is equal to the <paramref name="other"/> 
+        /// parameter; otherwise, <see langword="false"/>.
+        /// </returns>
+        public Boolean Equals(CStringSequence? other)
+            => other != default && this._value.Equals(other._value) &&
+            this._lengths.SequenceEqual(other._lengths);
+
+        /// <summary>
+        /// Determines whether the specified object is equal to the current object.
+        /// </summary>
+        /// <param name="obj">The object to compare with the current object.</param>
+        /// <returns>
+        /// <see langword="true"/> if the specified object is equal to the current object; 
+        /// otherwise, <see langword="false"/>.
+        /// </returns>
+        public override Boolean Equals(Object? obj) => obj is CStringSequence cstr && this.Equals(cstr);
+
+        /// <summary>
         /// Returns a <see cref="String"/> that represents the current object.
         /// </summary>
         /// <returns>A <see cref="String"/> that represents the current object.</returns>
         public override String ToString() => this._value;
+
+        /// <summary>
+        /// Serves as the default hash function.
+        /// </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override Int32 GetHashCode() => this._value.GetHashCode();
 
         /// <summary>
         /// Retrieves the sequence of <see cref="CString"/> based on the buffer and lengths.
@@ -89,10 +135,17 @@ namespace Rxmxnx.PInvoke.Extensions
         {
             Int32 count = lengths.Sum() + lengths.Length - 1;
             StringBuilder sb = new(count / sizeOfChar + count % sizeOfChar);
-            Boolean pending = false;
+            Boolean first = true;
             Byte previous = default;
             for (Int32 i = 0; i < lengths.Length; i++)
-                CopyText(sb, values[i], ref pending, ref previous);
+                CopyText(sb, values[i], ref first, ref previous);
+            if (previous != default)
+            {
+                Byte[] lastChar = new Byte[sizeOfChar];
+                lastChar[0] = previous;
+                lastChar[1] = default;
+                sb.Append(lastChar.AsValue<Char>());
+            }
             return sb.ToString();
         }
 
@@ -101,7 +154,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </summary>
         /// <param name="strBuild">Buffer builder.</param>
         /// <param name="cstr">UTF-8 text.</param>
-        /// <param name="pending">
+        /// <param name="first">
         /// <list type="table">
         /// <item>
         /// <term>Input</term>
@@ -128,32 +181,58 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </item>
         /// </list>
         /// </param>
-        private static void CopyText(StringBuilder strBuild, CString? cstr, ref Boolean pending, ref Byte previous)
+        private static void CopyText(StringBuilder strBuild, CString? cstr, ref Boolean first, ref Byte previous)
         {
             if (!CString.IsNullOrEmpty(cstr))
             {
                 Int32 offset = 0;
                 ReadOnlySpan<Byte> span = cstr;
-                if (pending)
+
+                if (!first)
                 {
                     Byte[] firstChar = new Byte[sizeOfChar];
+                    Boolean previousDefault = previous == default;
                     firstChar[0] = previous;
-                    firstChar[1] = span[0];
-                    offset = 1;
+                    firstChar[1] = previousDefault ? span[0] : default;
+                    offset = previousDefault ? 1 : 0;
                     strBuild.Append(firstChar.AsValue<Char>());
                 }
+                else
+                    first = false;
+
+                //if (pending)
+                //{
+                //    Byte[] firstChar = new Byte[sizeOfChar];
+                //    firstChar[0] = previous;
+                //    firstChar[1] = span[0];
+                //    offset = 1;
+                //    strBuild.Append(firstChar.AsValue<Char>());
+                //}
 #pragma warning disable CS8602
-                Int32 desiredSize = cstr.Length + 1 - offset;
+                Int32 desiredSize = cstr.Length - offset;
 #pragma warning restore CS8602
-                if (span.Length - offset > 0)
+                if (desiredSize > 0)
                 {
-                    Int32 charCount = span.Length / sizeOfChar;
-                    ReadOnlySpan<Char> chars = (span.AsIntPtr() + offset).AsReadOnlySpan<Char>(charCount);
+                    Int32 charSpanLength = desiredSize / sizeOfChar;
+                    ReadOnlySpan<Char> chars = (span.AsIntPtr() + offset).AsReadOnlySpan<Char>(charSpanLength);
                     foreach (Char c in chars)
                         strBuild.Append(c);
 
-                    pending = desiredSize % sizeOfChar != 0;
-                    previous = pending && cstr.Length < span.Length ? span[^1] : default;
+                    if (charSpanLength * sizeOfChar != desiredSize)
+                        previous = cstr[^1];
+                    else
+                        previous = default;
+
+                    //pending = charSpanLength * sizeOfChar != desiredSize;
+                    //previous = default;
+                    //if (!pending)
+                    //{
+                    //    Byte[] lastChar = new Byte[sizeOfChar];
+                    //    lastChar[0] = span[^1];
+                    //    lastChar[1] = default;
+                    //    offset = 1;
+                    //    strBuild.Append(lastChar.AsValue<Char>());
+                    //}
                 }
             }
         }
