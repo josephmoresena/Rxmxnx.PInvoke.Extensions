@@ -161,7 +161,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <summary>
         /// Returns a reference to this instance of <see cref="CString"/>.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A new object that is a copy of this instance.</returns>
         /// <exception cref="NotImplementedException"></exception>
         public Object Clone() => new CString(this._data.ToArray());
 

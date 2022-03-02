@@ -53,7 +53,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <summary>
         /// Writes the concatenation of given text collection into the buffer.
         /// </summary>
-        /// <param name="values">Texts collection.</param>
+        /// <param name="values">Text collection.</param>
         private async Task WriteAsync(IEnumerable<CString> values)
         {
             foreach (CString value in values)
