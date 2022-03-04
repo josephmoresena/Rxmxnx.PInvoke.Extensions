@@ -13,7 +13,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <summary>
         /// Size of <see cref="Char"/> value.
         /// </summary>
-        private const Int32 sizeOfChar = sizeof(Char);
+        internal const Int32 sizeOfChar = sizeof(Char);
 
         /// <summary>
         /// Internal buffer.
@@ -23,6 +23,11 @@ namespace Rxmxnx.PInvoke.Extensions
         /// Collection of text length for buffer interpretation.
         /// </summary>
         private readonly Int32[] _lengths;
+
+        /// <summary>
+        /// Gets the number of <see cref="CString"/> contained in <see cref="CStringSequence"/>
+        /// </summary>
+        public Int32 Count => this._lengths.Length;
 
         /// <summary>
         /// Constructor.
@@ -176,8 +181,7 @@ namespace Rxmxnx.PInvoke.Extensions
                     ReadOnlySpan<Char> chars = (span.AsIntPtr() + offset).AsReadOnlySpan<Char>(charSpanLength);
                     foreach (Char c in chars)
                         strBuild.Append(c);
-
-                    previous = charSpanLength % sizeOfChar != 0 ? cstr[^1] : default(Byte);
+                    previous = charSpanLength % sizeOfChar != 0 ? cstr[^1] : default;
                 }
             }
         }

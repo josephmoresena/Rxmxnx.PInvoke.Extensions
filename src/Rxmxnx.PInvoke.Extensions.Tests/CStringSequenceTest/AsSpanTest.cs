@@ -80,6 +80,8 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringSequenceTest
             {
                 Assert.Equal(output[i], output2[i]);
                 Assert.Equal(output[i], output3[i]);
+                Assert.True(output[i].IsNullTerminated);
+                Assert.True(output3[i].IsNullTerminated);
             }
         }
 

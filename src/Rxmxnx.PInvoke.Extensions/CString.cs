@@ -146,7 +146,7 @@ namespace Rxmxnx.PInvoke.Extensions
         public String AsHexString()
         {
             StringBuilder strBuilder = new();
-            for (Int32 i = 0; i < this.Length; i++)
+            for (Int32 i = 0; i < this._length; i++)
                 strBuilder.Append(this[i].AsHexString());
             return strBuilder.ToString();
         }
@@ -175,7 +175,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// parameter; otherwise, <see langword="false"/>.
         /// </returns>
         public Boolean Equals(CString? other)
-            => other is CString otherNotNull && this.Length == otherNotNull.Length && equals(this, other);
+            => other is CString otherNotNull && this._length == otherNotNull._length && equals(this, other);
 
         /// <summary>
         /// Determines whether the specified object is equal to the current object.
@@ -193,17 +193,17 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <returns>A string that represents the current UTF-8 text.</returns>
         public override String ToString()
         {
-            if (this.Length == 0)
+            if (this._length == 0)
                 return String.Empty;
             else
-                return Encoding.UTF8.GetString(this.AsSpan()[0..this.Length]);
+                return Encoding.UTF8.GetString(this.AsSpan()[0..this._length]);
         }
 
         /// <summary>
         /// Serves as the default hash function.
         /// </summary>
         /// <returns>A hash code for the current object.</returns>
-        public override Int32 GetHashCode() => this.AsHexString().GetHashCode();
+        public override Int32 GetHashCode() => this.GetHasCodeLengthNullMatch() ?? new CStringSequence(this).GetHashCode();
 
         /// <summary>
         /// Asynchronously writes the sequence of bytes to the given <see cref="Stream"/> and advances
@@ -234,7 +234,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// otherwise, <see langword="false"/>.
         /// </returns>
         public static Boolean IsNullOrEmpty([NotNullWhen(true)] CString? value)
-            => value is not CString valueNotNull || valueNotNull.Length == 0;
+            => value is not CString valueNotNull || valueNotNull._length == 0;
 
         /// <summary>
         /// Defines an implicit conversion of a given <see cref="Byte"/> array to <see cref="CString"/>.
@@ -293,6 +293,24 @@ namespace Rxmxnx.PInvoke.Extensions
         }
 
         /// <summary>
+        /// Hash calculation for instances whose length and termination allow it to be treated 
+        /// as a sequence of UTF-16 units.
+        /// </summary>
+        /// <returns>A hash code for the current object.</returns>
+        private Int32? GetHasCodeLengthNullMatch()
+        {
+            if ((this._length + 1) % CStringSequence.sizeOfChar == 0 && this.IsNullTerminated)
+            {
+                ReadOnlySpan<Byte> thisSpan = this;
+                IntPtr thisPtr = thisSpan.AsIntPtr();
+                Int32 charCount = (this._length + 1) / CStringSequence.sizeOfChar;
+                ReadOnlySpan<Char> thisCharSpan = thisPtr.AsReadOnlySpan<Char>(charCount);
+                return String.GetHashCode(thisCharSpan);
+            }
+            return default;
+        }
+
+        /// <summary>
         /// Retrieves the Task for writing the <see cref="CString"/> content into the 
         /// given <see cref="Stream"/>.
         /// </summary>
@@ -302,8 +320,8 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </param>
         /// <returns>A task that represents the asynchronous write operation.</returns>
         private Task GetWriteTask(Stream strm)
-            => (Byte[]?)this._data is Byte[] array ? strm.WriteAsync(array, 0, this.Length) :
-            Task.Run(() => { strm.Write(this.AsSpan()[0..this.Length]); });
+            => (Byte[]?)this._data is Byte[] array ? strm.WriteAsync(array, 0, this._length) :
+            Task.Run(() => { strm.Write(this.AsSpan()[0..this._length]); });
 
         /// <summary>
         /// Retreives the internal or external information as <see cref="ReadOnlySpan{Byte}"/> object.
@@ -345,10 +363,10 @@ namespace Rxmxnx.PInvoke.Extensions
             ReadOnlySpan<Byte> otherSpan = other;
 
             Int32 sizeofT = NativeUtilities.SizeOf<TInteger>();
-            Int32 offset = current.Length % sizeofT;
-            Int32 count = (current.Length - offset) / sizeofT;
+            Int32 offset = current._length % sizeofT;
+            Int32 count = (current._length - offset) / sizeofT;
 
-            for (Int32 i = current.Length - offset; i < current.Length; i++)
+            for (Int32 i = current._length - offset; i < current._length; i++)
                 if (!thisSpan[i].Equals(otherSpan[i]))
                     return false;
 

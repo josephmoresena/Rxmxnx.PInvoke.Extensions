@@ -84,6 +84,19 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             Assert.Equal(com3.SequenceEqual(com4), cstr3.Equals(cstr4));
         }
 
+        [Theory]
+        [InlineData(true, true)]
+        [InlineData(true, false)]
+        [InlineData(false, true)]
+        [InlineData(false, false)]
+        internal void HashTest(Boolean matchLength, Boolean nullTerminated)
+        {
+            Byte[] utf8Bytes = GetPrintableBytes(sizeof(Char) + (!matchLength ? 1 : 0))
+                .Concat(nullTerminated ? new Byte[] { default } : Array.Empty<Byte>()).ToArray();
+            CString cstr = utf8Bytes;
+            Assert.True(new CStringSequence(cstr).GetHashCode().Equals(cstr.GetHashCode()));
+        }
+
         private static IEnumerable<Byte> GetPrintableBytes(Int32 count)
         {
             for (Int32 i = 0; i < count; i++)
