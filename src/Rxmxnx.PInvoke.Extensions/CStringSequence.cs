@@ -25,7 +25,7 @@ namespace Rxmxnx.PInvoke.Extensions
         private readonly Int32[] _lengths;
 
         /// <summary>
-        /// Gets the number of <see cref="CString"/> contained in <see cref="CStringSequence"/>
+        /// Gets the number of <see cref="CString"/> contained in <see cref="CStringSequence"/>.
         /// </summary>
         public Int32 Count => this._lengths.Length;
 

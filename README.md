@@ -116,6 +116,8 @@ Retrieves the internal binary data from a given <see cref="CString"/>.
 
 ## CStringSequence
 Represents a sequence of null-terminated UTF-8 texts.
+* Count
+Gets the number of CString contained in CStringSequence.
 * AsSpan
 Retrieves the buffer as an ReadOnlySpan<Char> instance and creates a CString array which represents 
 text sequence. The output CString array will remain valid only as long as returned buffer span is on live.
