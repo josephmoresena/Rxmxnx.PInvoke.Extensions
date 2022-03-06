@@ -21,7 +21,7 @@
 	<NeutralLanguage>en-US</NeutralLanguage>
 	<Title>PInvoke.Extensions</Title>
 	<PackageId>Rxmxnx.PInvoke.Extensions</PackageId>
-    <PackageTags>PInvoke;Binary;Reference;Unmanaged;Memory;NativeAOT</PackageTags>
+    <PackageTags>PInvoke;Binary;Reference;Unmanaged;Memory;NativeAOT;Utf8;CString;Pointer</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
