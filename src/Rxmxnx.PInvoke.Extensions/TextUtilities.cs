@@ -115,7 +115,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// parameter contains the concatenation with UTF-8 encoding.
         /// </returns>
         public static Task<Byte[]?> JoinUtf8Async(String? separator, params String[] values)
-            => Utf8StringConcatenation.JoinAsync(separator, values);
+            => Utf8StringAsyncConcatenation.JoinAsync(separator, values);
 
         /// <summary>
         /// Concatenates an array of strings, using the specified separator between each member.
@@ -130,7 +130,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// parameter contains the concatenation with UTF-8 encoding.
         /// </returns>
         public static Task<Byte[]?> JoinUtf8Async(Char separator, params String[] values)
-            => Utf8StringConcatenation.JoinAsync(separator, values);
+            => Utf8StringAsyncConcatenation.JoinAsync(separator, values);
 
         /// <summary>
         /// Concatenates the members of a collection of <see cref="String"/>, using the specified 
@@ -143,7 +143,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// parameter contains the concatenation with UTF-8 encoding.
         /// </returns>
         public static Task<Byte[]?> JoinUtf8Async(String? separator, IEnumerable<String> values)
-            => Utf8StringConcatenation.JoinAsync(separator, values);
+            => Utf8StringAsyncConcatenation.JoinAsync(separator, values);
 
         /// <summary>
         /// Concatenates the members of a collection of <see cref="String"/>, using the specified 
@@ -156,7 +156,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// parameter contains the concatenation with UTF-8 encoding.
         /// </returns>
         public static Task<Byte[]?> JoinUtf8Async(Char separator, IEnumerable<String> values)
-            => Utf8StringConcatenation.JoinAsync(separator, values);
+            => Utf8StringAsyncConcatenation.JoinAsync(separator, values);
         #endregion
 
         #region ConcatUtf8
@@ -190,7 +190,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// parameter contains the concatenation with UTF-8 encoding.
         /// </returns>
         public static Task<Byte[]?> ConcatUtf8Async(String? initial, params String[] values)
-            => Utf8StringConcatenation.ConcatAsync(values, initial);
+            => Utf8StringAsyncConcatenation.ConcatAsync(values, initial);
         #endregion
 
         #region Join
@@ -253,7 +253,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="values">Next values.</param>
         /// <returns>Concatenation with UTF-8 encoding.</returns>
         public static Task<CString?> JoinAsync(CString? separator, params CString[] values)
-            => Utf8CStringConcatenation.JoinAsync(separator, values);
+            => Utf8CStringAsyncConcatenation.JoinAsync(separator, values);
 
         /// <summary>
         /// Concatenates an array of <see cref="CString"/>, using the specified separator between 
@@ -266,7 +266,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="values">Next values.</param>
         /// <returns>Concatenation with UTF-8 encoding.</returns>
         public static Task<CString?> JoinAsync(Byte separator, params CString[] values)
-            => Utf8CStringConcatenation.JoinAsync(separator, values);
+            => Utf8CStringAsyncConcatenation.JoinAsync(separator, values);
 
         /// <summary>
         /// Concatenates the members of a collection of <see cref="CString"/>, using the specified 
@@ -276,7 +276,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="values">A collection that contains the UTF-8 texts to concatenate.</param>
         /// <returns>Concatenation with UTF-8 encoding.</returns>
         public static Task<CString?> JoinAsync(CString? separator, IEnumerable<CString> values)
-            => Utf8CStringConcatenation.JoinAsync(separator, values);
+            => Utf8CStringAsyncConcatenation.JoinAsync(separator, values);
 
         /// <summary>
         /// Concatenates the members of a collection of <see cref="CString"/>, using the specified 
@@ -289,7 +289,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// parameter contains the concatenation with UTF-8 encoding.
         /// </returns>
         public static Task<CString?> JoinAsync(Byte separator, IEnumerable<CString> values)
-            => Utf8CStringConcatenation.JoinAsync(separator, values);
+            => Utf8CStringAsyncConcatenation.JoinAsync(separator, values);
         #endregion
 
         #region Concat
@@ -314,7 +314,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// parameter contains the concatenation with UTF-8 encoding.
         /// </returns>
         public static Task<CString?> ConcatAsync(CString? initial, params CString[] values)
-            => Utf8CStringConcatenation.ConcatAsync(values, initial);
+            => Utf8CStringAsyncConcatenation.ConcatAsync(values, initial);
         #endregion
     }
 }

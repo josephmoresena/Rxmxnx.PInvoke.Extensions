@@ -13,7 +13,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <summary>
         /// Delegate for writing text into the buffer.
         /// </summary>
-        /// <param name="helper"><see cref="Utf8StringConcatenation"/> object.</param>
+        /// <param name="helper"><see cref="Utf8StringAsyncConcatenation"/> object.</param>
         /// <param name="value"></param>
         internal delegate void WriteDelegate(Utf8BinaryConcatenation helper, ReadOnlySpan<Byte> value);
 

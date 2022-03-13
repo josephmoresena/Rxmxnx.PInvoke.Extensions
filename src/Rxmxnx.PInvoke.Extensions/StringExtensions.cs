@@ -48,7 +48,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// parameter contains the concatenation with UTF-8 encoding.
         /// </returns>
         public static Task<Byte[]?> ConcatUtf8Async(this IEnumerable<String> values)
-            => Utf8StringConcatenation.ConcatAsync(values);
+            => Utf8StringAsyncConcatenation.ConcatAsync(values);
 
         /// <summary>
         /// Concatenates the members of a collection of <see cref="CString"/>.
@@ -67,6 +67,6 @@ namespace Rxmxnx.PInvoke.Extensions
         /// parameter contains the concatenation with UTF-8 encoding.
         /// </returns>
         public static async Task<CString?> ConcatAsync(this IEnumerable<CString> values)
-            => await Utf8CStringConcatenation.ConcatAsync(values);
+            => await Utf8CStringAsyncConcatenation.ConcatAsync(values);
     }
 }
