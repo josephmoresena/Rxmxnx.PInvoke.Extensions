@@ -266,12 +266,14 @@ namespace Rxmxnx.PInvoke.Extensions
         /// Defines an implicit conversion of a given <see cref="Byte"/> array to <see cref="CString"/>.
         /// </summary>
         /// <param name="bytes">A <see cref="Byte"/> array to implicitly convert.</param>
-        public static implicit operator CString?([NotNullIfNotNull("bytes")] Byte[]? bytes) => bytes != default ? new(bytes) : default;
+        [return: NotNullIfNotNull("bytes")]
+        public static implicit operator CString?(Byte[]? bytes) => bytes != default ? new(bytes) : default;
         /// <summary>
         /// Defines an implicit conversion of a given <see cref="String"/> to <see cref="CString"/>.
         /// </summary>
         /// <param name="str">A <see cref="String"/> to implicitly convert.</param>
-        public static implicit operator CString?([NotNullIfNotNull("bytes")] String? str)
+        [return: NotNullIfNotNull("str")]
+        public static implicit operator CString?(String? str)
             => str != default ? new(GetUtf8Bytes(str).Concat<Byte>(empty).ToArray<Byte>()) : default;
         /// <summary>
         /// Defines an implicit conversion of a given <see cref="CString"/> to a read-only span of bytes.
