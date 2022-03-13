@@ -113,6 +113,8 @@ Represents the empty UTF-8 string. This field is read-only.
 Indicates whether the specified CString is null or an empty UTF-8 text.
 * **GetBytes(CString value)**
 Retrieves the internal binary data from a given <see cref="CString"/>.
+* **AsSpan(out CString[] output)**
+Retreives the internal or external information as ReadOnlySpan{Byte} instance.
 
 ## CStringSequence
 Represents a sequence of null-terminated UTF-8 texts.

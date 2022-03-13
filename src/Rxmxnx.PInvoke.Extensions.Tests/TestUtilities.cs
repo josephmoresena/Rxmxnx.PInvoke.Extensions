@@ -63,6 +63,12 @@ namespace Rxmxnx.PInvoke.Extensions.Tests
                 result[i] = new(handles[i].AddrOfPinnedObject(), bytes[i].Length);
             return result;
         }
+        public static Byte[] GetWriting(CString value, Boolean nullEnd)
+        {
+            using MemoryStream mem = new();
+            value.Write(mem, nullEnd);
+            return mem.ToArray();
+        }
         public static async Task<Byte[]> GetWritingAsync(CString value, Boolean nullEnd)
         {
             using MemoryStream mem = new();

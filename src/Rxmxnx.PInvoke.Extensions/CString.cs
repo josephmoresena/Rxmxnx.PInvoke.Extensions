@@ -140,6 +140,12 @@ namespace Rxmxnx.PInvoke.Extensions
         public Byte[] ToArray() => this._data.ToArray();
 
         /// <summary>
+        /// Retreives the internal or external information as <see cref="ReadOnlySpan{Byte}"/> object.
+        /// </summary>
+        /// <returns><see cref="ReadOnlySpan{Byte}"/> instance.</returns>
+        public ReadOnlySpan<Byte> AsSpan() => this._data;
+
+        /// <summary>
         /// Gets <see cref="String"/> representation of the current UTF-8 text as hexadecimal value.
         /// </summary>
         /// <returns><see cref="String"/> representation of hexadecimal value.</returns>
@@ -206,6 +212,25 @@ namespace Rxmxnx.PInvoke.Extensions
         public override Int32 GetHashCode() => this.GetHasCodeLengthNullMatch() ?? new CStringSequence(this).GetHashCode();
 
         /// <summary>
+        /// Writes the sequence of bytes to the given <see cref="Stream"/> and advances
+        /// the current position within this stream by the number of bytes written.
+        /// </summary>
+        /// <param name="strm">
+        /// The <see cref="Stream"/> to which the contents of the current <see cref="CString"/> 
+        /// will be copied.
+        /// </param>
+        /// <param name="writeNullTermination">
+        /// Indicates whether the UTF-8 text must be written with a null-termination character 
+        /// into the <see cref="Stream"/>.
+        /// </param>
+        public void Write([DisallowNull] Stream strm, Boolean writeNullTermination)
+        {
+            strm.Write(this.AsSpan()[..this.Length]);
+            if (writeNullTermination)
+                strm.Write(empty);
+        }
+
+        /// <summary>
         /// Asynchronously writes the sequence of bytes to the given <see cref="Stream"/> and advances
         /// the current position within this stream by the number of bytes written.
         /// </summary>
@@ -217,6 +242,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// Indicates whether the UTF-8 text must be written with a null-termination character 
         /// into the <see cref="Stream"/>.
         /// </param>
+        /// <returns>A task that represents the asynchronous write operation.</returns>
         public async Task WriteAsync([DisallowNull] Stream strm, Boolean writeNullTermination)
         {
             await GetWriteTask(strm).ConfigureAwait(false);
@@ -233,18 +259,20 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <see langword="true"/> if the value parameter is <see langword="null"/> or an empty UTF-8 text; 
         /// otherwise, <see langword="false"/>.
         /// </returns>
-        public static Boolean IsNullOrEmpty([NotNullWhen(true)] CString? value)
+        public static Boolean IsNullOrEmpty([NotNullWhen(false)] CString? value)
             => value is not CString valueNotNull || valueNotNull._length == 0;
 
         /// <summary>
         /// Defines an implicit conversion of a given <see cref="Byte"/> array to <see cref="CString"/>.
         /// </summary>
         /// <param name="bytes">A <see cref="Byte"/> array to implicitly convert.</param>
+        [return: NotNullIfNotNull("bytes")]
         public static implicit operator CString?(Byte[]? bytes) => bytes != default ? new(bytes) : default;
         /// <summary>
         /// Defines an implicit conversion of a given <see cref="String"/> to <see cref="CString"/>.
         /// </summary>
         /// <param name="str">A <see cref="String"/> to implicitly convert.</param>
+        [return: NotNullIfNotNull("str")]
         public static implicit operator CString?(String? str)
             => str != default ? new(GetUtf8Bytes(str).Concat<Byte>(empty).ToArray<Byte>()) : default;
         /// <summary>
@@ -322,12 +350,6 @@ namespace Rxmxnx.PInvoke.Extensions
         private Task GetWriteTask(Stream strm)
             => (Byte[]?)this._data is Byte[] array ? strm.WriteAsync(array, 0, this._length) :
             Task.Run(() => { strm.Write(this.AsSpan()[0..this._length]); });
-
-        /// <summary>
-        /// Retreives the internal or external information as <see cref="ReadOnlySpan{Byte}"/> object.
-        /// </summary>
-        /// <returns><see cref="ReadOnlySpan{Byte}"/> object.</returns>
-        private ReadOnlySpan<Byte> AsSpan() => this._data;
 
         /// <summary>
         /// Retrives a <see cref="EqualsDelegate"/> delegate for native comparision.
