@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Rxmxnx.PInvoke.Extensions.Internal
 {
@@ -30,7 +31,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// </summary>
         /// <param name="initial">Initial CString to concatenate.</param>
         /// <param name="values">Next values.</param>
-        private void Write(CString? initial, IEnumerable<CString>? values)
+        private void Write(CString? initial, IEnumerable<CString?>? values)
         {
             this.Write(initial);
             if (values != default)
@@ -44,22 +45,20 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         private void Write(CString? value)
         {
             if (!IsEmpty(value))
-#pragma warning disable CS8604
                 this._write(this, value);
-#pragma warning restore CS8604
         }
 
         /// <summary>
         /// Writes the concatenation of given text collection into the buffer.
         /// </summary>
         /// <param name="values">Text collection.</param>
-        private void Write(IEnumerable<CString> values)
+        private void Write(IEnumerable<CString?> values)
         {
-            foreach (CString value in values)
+            foreach (CString? value in values)
                 this.Write(value);
         }
 
-        protected override Boolean IsEmpty(CString? value) => CString.IsNullOrEmpty(value);
+        protected override Boolean IsEmpty([NotNullWhen(false)] CString? value) => CString.IsNullOrEmpty(value);
 
         /// <summary>
         /// Creates an <see cref="Byte"/> array which contains the concatenation of any text passed 
@@ -68,7 +67,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <param name="values">Next values.</param>
         /// <param name="initial">Initial CString to concatenate.</param>
         /// <returns>The concatenation with UTF-8 encoding.</returns>
-        public static CString? Concat(IEnumerable<CString>? values, CString? initial = default)
+        public static CString? Concat(IEnumerable<CString?>? values, CString? initial = default)
             => Join(default, values, initial);
 
         /// <summary>
@@ -78,7 +77,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <param name="separator"><see cref="Byte"/> used as text separator.</param>
         /// <param name="values">Next values.</param>
         /// <returns>The concatenation with UTF-8 encoding.</returns>
-        public static CString? Join(Byte separator, IEnumerable<CString>? values)
+        public static CString? Join(Byte separator, IEnumerable<CString?>? values)
             => Join(new CString(separator, 1), values);
 
         /// <summary>
@@ -89,7 +88,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <param name="values">Next values.</param>
         /// <param name="initial">Initial CString to concatenate.</param>
         /// <returns>The concatenation with UTF-8 encoding.</returns>
-        public static CString? Join(CString? separator, IEnumerable<CString>? values, CString? initial = default)
+        public static CString? Join(CString? separator, IEnumerable<CString?>? values, CString? initial = default)
         {
             using Utf8CStringConcatenation helper = new(separator);
             helper.Write(initial, values);
@@ -122,9 +121,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <param name="value">Text to write.</param>
         private static void Join(Utf8CStringConcatenation helper, CString value)
         {
-#pragma warning disable CS8602
-            helper._separator.Write(helper._mem, false);
-#pragma warning restore CS8602
+            helper._separator!.Write(helper._mem, false);
             value.Write(helper._mem, false);
         }
     }

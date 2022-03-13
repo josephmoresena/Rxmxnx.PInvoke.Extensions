@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace Rxmxnx.PInvoke.Extensions.Internal
@@ -31,7 +32,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// </summary>
         /// <param name="initial">Initial CString to concatenate.</param>
         /// <param name="values">Next values.</param>
-        private async Task WriteAsync(CString? initial, IEnumerable<CString>? values)
+        private async Task WriteAsync(CString? initial, IEnumerable<CString?>? values)
         {
             await this.WriteAsync(initial);
             if (values != default)
@@ -45,22 +46,20 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         private async Task WriteAsync(CString? value)
         {
             if (!IsEmpty(value))
-#pragma warning disable CS8604
                 await this._write(this, value);
-#pragma warning restore CS8604
         }
 
         /// <summary>
         /// Writes the concatenation of given text collection into the buffer.
         /// </summary>
         /// <param name="values">Text collection.</param>
-        private async Task WriteAsync(IEnumerable<CString> values)
+        private async Task WriteAsync(IEnumerable<CString?> values)
         {
-            foreach (CString value in values)
+            foreach (CString? value in values)
                 await this.WriteAsync(value);
         }
 
-        protected override Boolean IsEmpty(CString? value) => CString.IsNullOrEmpty(value);
+        protected override Boolean IsEmpty([NotNullWhen(false)] CString? value) => CString.IsNullOrEmpty(value);
 
         /// <summary>
         /// Creates an <see cref="Byte"/> array which contains the concatenation of any text passed 
@@ -72,7 +71,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// A task that represents the asynchronous concat operation. The value of the TResult
         /// parameter contains the concatenation with UTF-8 encoding.
         /// </returns>
-        public static Task<CString?> ConcatAsync(IEnumerable<CString>? values, CString? initial = default)
+        public static Task<CString?> ConcatAsync(IEnumerable<CString?>? values, CString? initial = default)
             => JoinAsync(default, values, initial);
 
         /// <summary>
@@ -85,7 +84,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// A task that represents the asynchronous join operation. The value of the TResult
         /// parameter contains the concatenation with UTF-8 encoding.
         /// </returns>
-        public static Task<CString?> JoinAsync(Byte separator, IEnumerable<CString>? values)
+        public static Task<CString?> JoinAsync(Byte separator, IEnumerable<CString?>? values)
             => JoinAsync(new CString(separator, 1), values);
 
         /// <summary>
@@ -99,7 +98,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// A task that represents the asynchronous read operation. The value of the TResult
         /// parameter contains the concatenation with UTF-8 encoding.
         /// </returns>
-        public async static Task<CString?> JoinAsync(CString? separator, IEnumerable<CString>? values, CString? initial = default)
+        public async static Task<CString?> JoinAsync(CString? separator, IEnumerable<CString?>? values, CString? initial = default)
         {
             using Utf8CStringAsyncConcatenation helper = new(separator);
             await helper.WriteAsync(initial, values);
@@ -113,7 +112,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <param name="value">Text to write.</param>
         private async static Task InitalJoinAsync(Utf8CStringAsyncConcatenation helper, CString value)
         {
-            helper._write = Join;
+            helper._write = Join!;
             await value.WriteAsync(helper._mem, false);
         }
 
@@ -132,9 +131,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <param name="value">Text to write.</param>
         private static async Task Join(Utf8CStringAsyncConcatenation helper, CString value)
         {
-#pragma warning disable CS8602
-            await helper._separator.WriteAsync(helper._mem, false);
-#pragma warning restore CS8602
+            await helper._separator!.WriteAsync(helper._mem, false);
             await value.WriteAsync(helper._mem, false);
         }
     }

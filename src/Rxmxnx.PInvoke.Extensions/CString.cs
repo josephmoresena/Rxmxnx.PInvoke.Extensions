@@ -259,7 +259,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <see langword="true"/> if the value parameter is <see langword="null"/> or an empty UTF-8 text; 
         /// otherwise, <see langword="false"/>.
         /// </returns>
-        public static Boolean IsNullOrEmpty([NotNullWhen(true)] CString? value)
+        public static Boolean IsNullOrEmpty([NotNullWhen(false)] CString? value)
             => value is not CString valueNotNull || valueNotNull._length == 0;
 
         /// <summary>

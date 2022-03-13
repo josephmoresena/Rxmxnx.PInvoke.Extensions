@@ -44,7 +44,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// </summary>
         /// <param name="initial">Initial string to concatenate.</param>
         /// <param name="values">Next values.</param>
-        private void Write(String? initial, IEnumerable<String>? values)
+        private void Write(String? initial, IEnumerable<String?>? values)
         {
             this.Write(initial);
             if (values != default)
@@ -65,9 +65,9 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// Writes the concatenation of given text collection into the buffer.
         /// </summary>
         /// <param name="values">Text collection.</param>
-        private void Write(IEnumerable<String> values)
+        private void Write(IEnumerable<String?> values)
         {
-            foreach (String value in values)
+            foreach (String? value in values)
                 this.Write(value);
         }
 
@@ -83,7 +83,6 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             }
         }
 
-#nullable disable
         /// <summary>
         /// Performs the dispose of managed resources of current instance.
         /// </summary>
@@ -98,11 +97,10 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
                 }
                 finally
                 {
-                    this._writer = default;
+                    this._writer = default!;
                 }
             }
         }
-#nullable restore
 
         /// <summary>
         /// Creates an <see cref="Byte"/> array which contains the concatenation of any text passed 
@@ -111,7 +109,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <param name="values">Next values.</param>
         /// <param name="initial">Initial string to concatenate.</param>
         /// <returns>The concatenation with UTF-8 encoding.</returns>
-        public static Byte[]? Concat(IEnumerable<String>? values, String? initial = default)
+        public static Byte[]? Concat(IEnumerable<String?>? values, String? initial = default)
             => Join(default, values, initial);
 
         /// <summary>
@@ -121,7 +119,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <param name="separator"><see cref="Char"/> used as text separator.</param>
         /// <param name="values">Next values.</param>
         /// <returns>The concatenation with UTF-8 encoding.</returns>
-        public static Byte[]? Join(Char separator, IEnumerable<String>? values)
+        public static Byte[]? Join(Char separator, IEnumerable<String?>? values)
             => Join(separator.ToString(), values);
 
         /// <summary>
@@ -132,7 +130,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <param name="values">Next values.</param>
         /// <param name="initial">Initial string to concatenate.</param>
         /// <returns>The concatenation with UTF-8 encoding.</returns>
-        public static Byte[]? Join(String? separator, IEnumerable<String>? values, String? initial = default)
+        public static Byte[]? Join(String? separator, IEnumerable<String?>? values, String? initial = default)
         {
             using Utf8StringConcatenation helper = new(separator);
             helper.Write(initial, values);

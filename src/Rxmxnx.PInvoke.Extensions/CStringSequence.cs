@@ -169,9 +169,7 @@ namespace Rxmxnx.PInvoke.Extensions
         {
             if (!CString.IsNullOrEmpty(cstr))
             {
-#pragma warning disable CS8604 
                 Int32 offset = WriteFirstChar(strBuild, previous, cstr);
-#pragma warning restore CS8604
                 ReadOnlySpan<Byte> span = cstr;
                 Int32 desiredSize = cstr.Length - offset;
 

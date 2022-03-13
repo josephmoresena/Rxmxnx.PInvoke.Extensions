@@ -202,7 +202,6 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             }
         }
 
-#nullable disable
         /// <summary>
         /// Performs the dispose of managed resources of current instance.
         /// </summary>
@@ -217,12 +216,11 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
                 }
                 finally
                 {
-                    this._mem = default;
+                    this._mem = default!;
                 }
-                this._separator = null;
-                this._write = null;
+                this._separator = default!;
+                this._write = default!;
             }
         }
-#nullable restore
     }
 }

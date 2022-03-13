@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,7 +46,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// </summary>
         /// <param name="initial">Initial string to concatenate.</param>
         /// <param name="values">Next values.</param>
-        private async Task WriteAsync(String? initial, IEnumerable<String>? values)
+        private async Task WriteAsync(String? initial, IEnumerable<String?>? values)
         {
             await this.WriteAsync(initial);
             if (values != default)
@@ -66,13 +67,13 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// Writes the concatenation of given text collection into the buffer.
         /// </summary>
         /// <param name="values">Text collection.</param>
-        private async Task WriteAsync(IEnumerable<String> values)
+        private async Task WriteAsync(IEnumerable<String?> values)
         {
-            foreach (String value in values)
+            foreach (String? value in values)
                 await this.WriteAsync(value);
         }
 
-        protected override Boolean IsEmpty(String? value) => String.IsNullOrEmpty(value);
+        protected override Boolean IsEmpty([NotNullWhen(false)] String? value) => String.IsNullOrEmpty(value);
 
         protected override void Dispose(Boolean disposing)
         {
@@ -84,7 +85,6 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             }
         }
 
-#nullable disable
         /// <summary>
         /// Performs the dispose of managed resources of current instance.
         /// </summary>
@@ -99,11 +99,10 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
                 }
                 finally
                 {
-                    this._writer = default;
+                    this._writer = default!;
                 }
             }
         }
-#nullable restore
 
         /// <summary>
         /// Creates an <see cref="Byte"/> array which contains the concatenation of any text passed 
@@ -115,7 +114,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// A task that represents the asynchronous concat operation. The value of the TResult
         /// parameter contains the concatenation with UTF-8 encoding.
         /// </returns>
-        public static Task<Byte[]?> ConcatAsync(IEnumerable<String>? values, String? initial = default)
+        public static Task<Byte[]?> ConcatAsync(IEnumerable<String?>? values, String? initial = default)
             => JoinAsync(default, values, initial);
 
         /// <summary>
@@ -128,7 +127,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// A task that represents the asynchronous join operation. The value of the TResult
         /// parameter contains the concatenation with UTF-8 encoding.
         /// </returns>
-        public static Task<Byte[]?> JoinAsync(Char separator, IEnumerable<String>? values)
+        public static Task<Byte[]?> JoinAsync(Char separator, IEnumerable<String?>? values)
             => JoinAsync(separator.ToString(), values);
 
         /// <summary>
@@ -142,7 +141,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// A task that represents the asynchronous read operation. The value of the TResult
         /// parameter contains the concatenation with UTF-8 encoding.
         /// </returns>
-        public async static Task<Byte[]?> JoinAsync(String? separator, IEnumerable<String>? values, String? initial = default)
+        public async static Task<Byte[]?> JoinAsync(String? separator, IEnumerable<String?>? values, String? initial = default)
         {
             using Utf8StringAsyncConcatenation helper = new(separator);
             await helper.WriteAsync(initial, values);
