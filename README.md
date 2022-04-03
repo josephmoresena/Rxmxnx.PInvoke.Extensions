@@ -127,19 +127,13 @@ text sequence. The output CString array will remain valid only as long as return
 ## InputValue
 Supports a value type that can be referenced.
 * **CreateInput&lt;TValue&gt;(in TValue instance)**
-Gets a IReferenceable&lt;TValue&gt; object from a generic value.
+Creates a new IReferenceableWrapper&lt;TValue&gt; object from a generic value.
 * **CreateInput&lt;TValue?&gt;(in TValue? instance)**
-Gets a IReferenceable&lt;TValue&gt; object from a generic nullable value.
+Creates a new IReferenceableWrapper&lt;TValue&gt; object from a generic nullable value.
 * **CreateReference&lt;TValue&gt;(in TValue instance = default)**
-Gets a IMutableReference&lt;TValue&gt; object from a generic value.
+Creates a new IMutableReference&lt;TValue&gt; object from a generic value.
 * **CreateReference&lt;TValue?&gt;(in TValue? instance = default)**
-Gets a IMutableReference&lt;TValue&gt; object from a generic nullable value.
-### IReferenceable&lt;TValue&gt;
-* **GetInstanceValue&lt;TValue&gt;()**
-Gets the internal instance value.
-### IReferenceable&lt;TValue?&gt;
-* **GetInstanceValue&lt;TValue?&gt;()**
-Gets the internal instance nullable value.
+Creates a new IMutableReference&lt;TValue&gt; object from a generic nullable value.
 
 ## NativeUtilities
 Provides a set of utilities for exchange data within the P/Invoke context.

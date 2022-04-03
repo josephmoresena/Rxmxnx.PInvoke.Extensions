@@ -9,7 +9,7 @@ using Xunit;
 namespace Rxmxnx.PInvoke.Extensions.Tests.InputValueTest
 {
     [ExcludeFromCodeCoverage]
-    public sealed class ReferenceableTest
+    public sealed class ReferenceableWrapperTest
     {
         [Theory]
         [InlineData(null)]
@@ -72,23 +72,25 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.InputValueTest
                 NormalNullableTest(InputValue.CreateInput(initialValue), initialValue);
         }
 
-        private static void NormalValueTest<T>(IReferenceable<T> valueInput, T initialValue)
+        private static void NormalValueTest<T>(IReferenceableWrapper<T> valueInput, T initialValue)
             where T : struct
         {
             GeneralTest(valueInput, ref initialValue);
             Assert.False(valueInput.Equals(InputValue.CreateInput(initialValue)));
             Assert.False(valueInput.Equals(default(IReferenceable<T>)));
+            Assert.False(valueInput.Equals(default(IWrapper<T>)));
         }
 
-        private static void NormalNullableTest<T>(IReferenceable<T?> valueInput, T? initialValue)
+        private static void NormalNullableTest<T>(IReferenceableWrapper<T?> valueInput, T? initialValue)
             where T : struct
         {
             GeneralTest(valueInput, ref initialValue);
             Assert.False(valueInput.Equals(InputValue.CreateInput(initialValue)));
-            Assert.False(valueInput.Equals(default(IReferenceable<T?>)));
+            Assert.False(valueInput.Equals(default(IReferenceable<T>)));
+            Assert.False(valueInput.Equals(default(IWrapper<T>)));
         }
 
-        private static void GeneralTest<T>(IReferenceable<T> valueInput, ref T initialValue)
+        private static void GeneralTest<T>(IReferenceableWrapper<T> valueInput, ref T initialValue)
         {
             Assert.Equal(initialValue, valueInput.Value);
             Assert.True(valueInput.Equals(initialValue));
