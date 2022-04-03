@@ -3,7 +3,7 @@
 namespace Rxmxnx.PInvoke.Extensions
 {
     /// <summary>
-    /// This interface exposes an object which represents a wrapper of <typeparamref name="T"/> object.
+    /// This interface exposes a wrapper for <typeparamref name="T"/> object.
     /// </summary>
     /// <typeparam name="T">Type of wrapped value.</typeparam>
     public interface IWrapper<T> : IEquatable<T>
@@ -11,6 +11,8 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <summary>
         /// Wrapped <typeparamref name="T"/> object.
         /// </summary>
-        public T Value { get; }
+        public T? Value { get; }
+
+        Boolean IEquatable<T>.Equals(T? other) => Object.Equals(this.Value, other);
     }
 }
