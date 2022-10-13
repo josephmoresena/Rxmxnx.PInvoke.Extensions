@@ -179,7 +179,7 @@ namespace Rxmxnx.PInvoke.Extensions
                     ReadOnlySpan<Char> chars = (span.AsIntPtr() + offset).AsReadOnlySpan<Char>(charSpanLength);
                     foreach (Char c in chars)
                         strBuild.Append(c);
-                    previous = charSpanLength % sizeOfChar != 0 ? cstr[^1] : default;
+                    previous = desiredSize % sizeOfChar != 0 ? cstr[^1] : default;
                 }
             }
         }

@@ -278,10 +278,12 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
 
         private static void AssertReferenceEquality(ReadOnlySpan<Byte> span, CString cstr, Boolean clone)
         {
+            IntPtr ptr = span.AsIntPtr();
             ReadOnlySpan<Byte> cstrSpan = cstr;
+            IntPtr cstrSpanPtr = cstrSpan.AsIntPtr();
             Byte[] bytes = cstr.ToArray();
 
-            Assert.Equal(!clone, span.AsIntPtr().Equals(cstrSpan.AsIntPtr()));
+            Assert.Equal(!clone, ptr.Equals(cstrSpanPtr));
             Assert.Equal(span.Length, cstrSpan.Length);
 
             Int32 index = 0;
