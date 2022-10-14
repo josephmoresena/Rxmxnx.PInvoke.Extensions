@@ -16,8 +16,19 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringSequenceTest
         [Fact]
         internal void NormalTest()
         {
-            CString[] localValues = TestUtilities.SharedFixture.Create<String[]>().Select(x => (CString)x).ToArray();
-            String[] strValue = TestUtilities.SharedFixture.Create<String[]>();
+            Random random = new Random();
+            CString[] localValues = TestUtilities.SharedFixture.CreateMany<String>(100).Select(x =>
+            {
+                Int32 start = random.Next(0, x.Length);
+                Int32 end = random.Next(start, x.Length);
+                return (CString)x[start..end];
+            }).ToArray();
+            String[] strValue = TestUtilities.SharedFixture.CreateMany<String>(100).Select(x =>
+            {
+                Int32 start = random.Next(0, x.Length);
+                Int32 end = random.Next(start, x.Length);
+                return x[start..end];
+            }).ToArray();
             Byte[][] bytes = strValue.Select(x => Encoding.UTF8.GetBytes(x)).ToArray();
             GCHandle[] handles = TestUtilities.Alloc(bytes);
             try
