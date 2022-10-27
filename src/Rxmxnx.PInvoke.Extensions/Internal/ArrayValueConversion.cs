@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace Rxmxnx.PInvoke.Extensions.Internal
 {
@@ -39,8 +40,11 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <param name="input">The read-only span which servers as input.</param>
         public ArrayValueConversion(ReadOnlySpan<TSource> input)
         {
-            this._inputBytes = input.Length * NativeUtilities.SizeOf<TSource>();
-            this._valueSize = NativeUtilities.SizeOf<TDestination>();
+            unsafe
+            {
+                this._inputBytes = input.Length * sizeof(TSource);
+                this._valueSize = sizeof(TDestination);
+            }
             this._readables = this._inputBytes / _valueSize;
             this._offset = this._inputBytes % _valueSize;
             this._values = new TDestination[this._readables + this.GetOverflowElementsCount()];
@@ -52,8 +56,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// Gets the amount of elements which overflows the input length.
         /// </summary>
         /// <returns>The amount of elements which overflows the input length.</returns>
-        private Int32 GetOverflowElementsCount()
-            => this._offset != 0 ? 1 : 0;
+        private Int32 GetOverflowElementsCount() => this._offset != 0 ? 1 : 0;
 
         /// <summary>
         /// Copies the input information to the destination and performs the conversion.
@@ -68,7 +71,11 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             {
                 Byte[] missing = new Byte[this._valueSize];
                 ptr.AsReadOnlySpan<Byte>(this._inputBytes).Slice(this.GetOffsetStart(), this._offset).CopyTo(missing);
-                finalSpan[^1] = missing.AsValue<TDestination>();
+                unsafe
+                {
+                    fixed (void* missingPtr = missing)
+                        finalSpan[^1] = Unsafe.Read<TDestination>(missingPtr);
+                }
             }
         }
 
@@ -76,14 +83,12 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// Gets the start index of byte offset from input.
         /// </summary>
         /// <returns>The start index of byte offset from input..</returns>
-        private Int32 GetOffsetStart()
-            => this._inputBytes - this._offset;
+        private Int32 GetOffsetStart() => this._inputBytes - this._offset;
 
         /// <summary>
         /// Implicit operator. <see cref="ArrayValueConversion{TSource, TDestination}"/> -> <typeparamref name="TDestination"/> array.
         /// </summary>
         /// <param name="conversion"><typeparamref name="TDestination"/> array.</param>
-        public static implicit operator TDestination[](ArrayValueConversion<TSource, TDestination> conversion)
-            => conversion._values;
+        public static implicit operator TDestination[](ArrayValueConversion<TSource, TDestination> conversion) => conversion._values;
     }
 }

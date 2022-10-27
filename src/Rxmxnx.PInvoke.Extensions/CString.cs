@@ -69,6 +69,13 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </exception>
         [IndexerName("Position")]
         public Byte this[Int32 index] => this._data[index];
+        /// <summary>
+        /// Gets a <see cref="CString"/> instance at specified range from current <see cref="CString"/> instace.
+        /// </summary>
+        /// <param name="range"></param>
+        /// <returns><see cref="CString"/> range.</returns>
+        [IndexerName("Position")]
+        public CString this[Range range] => new CString(this, range);
 
         /// <summary>
         /// Gets the number of bytes in the current <see cref="CString"/> object.
@@ -89,6 +96,10 @@ namespace Rxmxnx.PInvoke.Extensions
         /// not contained by.
         /// </summary>
         public Boolean IsReference => !this._isLocal;
+        /// <summary>
+        /// Indicates whether the current instance is segmented.
+        /// </summary>
+        public Boolean IsSegmented => this._isLocal && ((Byte[]?)this._data) is null;
 
         /// <summary>
         /// Private constructor.
@@ -99,6 +110,21 @@ namespace Rxmxnx.PInvoke.Extensions
             this._isLocal = true;
             this._data = ValueRegion<Byte>.Create(bytes);
             this._isNullTerminated = bytes.Any() && bytes[^1] == default;
+            this._length = bytes.Length - (this._isNullTerminated ? 1 : 0);
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="value">A <see cref="CString"/> value.</param>
+        /// <param name="range">Segment <see cref="CString"/> range.</param>
+        private CString(CString value, Range range)
+        {
+            this._isLocal = value._isLocal;
+            this._data = ValueRegion<Byte>.Create(value._data, range);
+
+            ReadOnlySpan<Byte> bytes = this._data;
+            this._isNullTerminated = bytes.Length > 0 && bytes[^1] == default;
             this._length = bytes.Length - (this._isNullTerminated ? 1 : 0);
         }
 
@@ -352,6 +378,22 @@ namespace Rxmxnx.PInvoke.Extensions
             Task.Run(() => { strm.Write(this.AsSpan()[0..this._length]); });
 
         /// <summary>
+        /// Retrieves the equality parameters for current <see cref="CString"/> instance.
+        /// </summary>
+        /// <typeparam name="TInteger">Type used for integer comparision.</typeparam>
+        /// <param name="offset">Output. Calculated offset.</param>
+        /// <param name="count">Output. Calculated count.</param>
+        private void GetEqualityParameters<TInteger>(out Int32 offset, out Int32 count) where TInteger : unmanaged
+        {
+            unsafe
+            {
+                Int32 sizeofT = sizeof(TInteger);
+                offset = this._length % sizeofT;
+                count = (this._length - offset) / sizeofT;
+            }
+        }
+
+        /// <summary>
         /// Retrives a <see cref="EqualsDelegate"/> delegate for native comparision.
         /// </summary>
         /// <returns><see cref="EqualsDelegate"/> delegate.</returns>
@@ -384,9 +426,7 @@ namespace Rxmxnx.PInvoke.Extensions
             ReadOnlySpan<Byte> thisSpan = current;
             ReadOnlySpan<Byte> otherSpan = other;
 
-            Int32 sizeofT = NativeUtilities.SizeOf<TInteger>();
-            Int32 offset = current._length % sizeofT;
-            Int32 count = (current._length - offset) / sizeofT;
+            current.GetEqualityParameters<TInteger>(out Int32 offset, out Int32 count);
 
             for (Int32 i = current._length - offset; i < current._length; i++)
                 if (!thisSpan[i].Equals(otherSpan[i]))

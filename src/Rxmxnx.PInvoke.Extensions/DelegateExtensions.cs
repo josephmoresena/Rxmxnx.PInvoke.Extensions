@@ -14,9 +14,8 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <typeparam name="T">Type of the <see cref="Delegate"/> referenced into the pointer.</typeparam>
         /// <param name="delegateInstance"><typeparamref name="T"/> delegate.</param>
         /// <returns><see cref="IntPtr"/> pointer.</returns>
-        public static IntPtr AsIntPtr<T>(this T delegateInstance)
-            where T : Delegate
-            => delegateInstance != default ? Marshal.GetFunctionPointerForDelegate<T>(delegateInstance) : default;
+        public static IntPtr AsIntPtr<T>(this T delegateInstance) where T : Delegate
+            => delegateInstance != default ? Marshal.GetFunctionPointerForDelegate(delegateInstance) : default;
 
         /// <summary>
         /// Creates a <see cref="UIntPtr"/> pointer from a memory reference to a <typeparamref name="T"/> delegate.
@@ -24,8 +23,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <typeparam name="T">Type of the <see cref="Delegate"/> referenced into the pointer.</typeparam>
         /// <param name="delegateInstance"><typeparamref name="T"/> delegate.</param>
         /// <returns><see cref="UIntPtr"/> pointer.</returns>
-        public static UIntPtr AsUIntPtr<T>(this T delegateInstance)
-            where T : Delegate
+        public static UIntPtr AsUIntPtr<T>(this T delegateInstance) where T : Delegate
             => delegateInstance.AsIntPtr().AsUIntPtr();
     }
 }

@@ -17,8 +17,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </typeparam>
         /// <param name="span">The span from which the pointer is retrieved.</param>
         /// <returns><see cref="IntPtr"/> pointer.</returns>
-        public static IntPtr AsIntPtr<T>(this Span<T> span)
-            where T : unmanaged
+        public static IntPtr AsIntPtr<T>(this Span<T> span) where T : unmanaged
         {
             unsafe
             {
@@ -35,8 +34,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </typeparam>
         /// <param name="readonlySpan">The read-only span from which the pointer is retrieved.</param>
         /// <returns><see cref="IntPtr"/> pointer.</returns>
-        public static IntPtr AsIntPtr<T>(this ReadOnlySpan<T> readonlySpan)
-            where T : unmanaged
+        public static IntPtr AsIntPtr<T>(this ReadOnlySpan<T> readonlySpan) where T : unmanaged
         {
             unsafe
             {
@@ -53,8 +51,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </typeparam>
         /// <param name="span">The span from which the pointer is retrieved.</param>
         /// <returns><see cref="UIntPtr"/> pointer.</returns>
-        public static UIntPtr AsUIntPtr<T>(this Span<T> span)
-            where T : unmanaged
+        public static UIntPtr AsUIntPtr<T>(this Span<T> span) where T : unmanaged
         {
             unsafe
             {
@@ -71,8 +68,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </typeparam>
         /// <param name="readonlySpan">The read-only span from which the pointer is retrieved.</param>
         /// <returns><see cref="UIntPtr"/> pointer.</returns>
-        public static UIntPtr AsUIntPtr<T>(this ReadOnlySpan<T> readonlySpan)
-            where T : unmanaged
+        public static UIntPtr AsUIntPtr<T>(this ReadOnlySpan<T> readonlySpan) where T : unmanaged
         {
             unsafe
             {
@@ -89,8 +85,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <see cref="IntPtr.Zero"/> if <paramref name="condition"/> is <see langword="true"/>; otherwise,
         /// <see langword="null"/>.
         /// </returns>
-        private static IntPtr? GetConditionalIntPtrZero(Boolean condition)
-            => condition ? IntPtr.Zero : default(IntPtr?);
+        private static IntPtr? GetConditionalIntPtrZero(Boolean condition) => condition ? IntPtr.Zero : default(IntPtr?);
 
         /// <summary>
         /// Gets a <see cref="Nullable{UIntPtr}"/> from a given condition. 
@@ -100,7 +95,6 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <see cref="UIntPtr.Zero"/> if <paramref name="condition"/> is <see langword="true"/>; otherwise,
         /// <see langword="null"/>.
         /// </returns>
-        private static UIntPtr? GetConditionalUIntPtrZero(Boolean condition)
-            => condition ? UIntPtr.Zero : default(UIntPtr?);
+        private static UIntPtr? GetConditionalUIntPtrZero(Boolean condition) => condition ? UIntPtr.Zero : default(UIntPtr?);
     }
 }

@@ -9,7 +9,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
     /// <typeparamref name="T"/> values is found.
     /// </summary>
     /// <typeparam name="T">Unmanaged type of sequence item.</typeparam>
-    internal abstract class ValueRegion<T> where T : unmanaged
+    internal abstract partial class ValueRegion<T> where T : unmanaged
     {
         /// <summary>
         /// Gets an item from the memory region at the specified zero-based <paramref name="index"/>.
@@ -55,7 +55,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// Implicit operator. <see cref="ValueRegion{T}"/> -> Array of <typeparamref name="T"/>.
         /// </summary>
         /// <param name="arrayWrapper"><see cref="ValueRegion{T}"/> instance.</param>
-        public static implicit operator T[]?(ValueRegion<T> arrayWrapper) => arrayWrapper.AsArray();
+        public static explicit operator T[]?(ValueRegion<T> arrayWrapper) => arrayWrapper.AsArray();
 
         /// <summary>
         /// Creates a new <see cref="ValueRegion{T}"/> instance from an array of 
@@ -69,84 +69,29 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// the amount of values in sequence.
         /// </summary>
         /// <param name="ptr">Pointer to memory region.</param>
-        /// <param name="count">Amount of values in sequence.</param>
+        /// <param name="length">Amount of values in sequence.</param>
         /// <returns>A new <see cref="ValueRegion{T}"/> instance.</returns>
-        public static ValueRegion<T> Create(IntPtr ptr, Int32 count)
-            => !ptr.IsZero() && count != default ? new NativeRegion(ptr, count) : NativeRegion.Empty;
-
+        public static ValueRegion<T> Create(IntPtr ptr, Int32 length)
+            => !ptr.IsZero() && length != default ? new NativeRegion(ptr, length) : NativeRegion.Empty;
         /// <summary>
-        /// This class represents a memory region in which an array of <typeparamref name="T"/> 
-        /// values is found.
+        /// Creates a new <see cref="ValueRegion{T}"/> instance with the <paramref name="range"/> of
+        /// <paramref name="region"/>.
         /// </summary>
-        private sealed class ManagedRegion : ValueRegion<T>
+        /// <param name="region">A <see cref="ValueRegion{T}"/> instance.</param>
+        /// <param name="range">The range of new instance.</param>
+        /// <returns>A new <see cref="ValueRegion{T}"/> instance.</returns>
+        public static ValueRegion<T> Create(ValueRegion<T> region, Range range)
         {
-            /// <summary>
-            /// Internal <typeparamref name="T"/> array.
-            /// </summary>
-            private readonly T[] _array;
-
-            /// <summary>
-            /// Gets an item from the memory region at the specified zero-based <paramref name="index"/>.
-            /// </summary>
-            /// <param name="index">The zero-based index of the element to get.</param>
-            /// <exception cref="IndexOutOfRangeException">
-            /// <paramref name="index"/> is less then zero or greater than or equal to 
-            /// memory region length.
-            /// </exception>
-            /// <returns>The element from the memory region.</returns>
-            public override T this[Int32 index] => this._array[index];
-
-            /// <summary>
-            /// Constructor.
-            /// </summary>
-            /// <param name="array"><typeparamref name="T"/> array instance.</param>
-            public ManagedRegion([DisallowNull] T[] array) => this._array = array;
-
-            /// <summary>
-            /// Gets an array from this memory region.
-            /// </summary>
-            /// <returns>An array containing the data in the current memory region.</returns>
-            protected override T[] AsArray() => this._array;
-            /// <summary>
-            /// Creates a new read-only span over this memory region.
-            /// </summary>
-            /// <returns>The read-only span representation of the memory region.</returns>
-            protected override ReadOnlySpan<T> AsSpan() => this._array.AsSpan();
-        }
-
-        /// <summary>
-        /// This class represents a native memory region in which a sequence of <typeparamref name="T"/> 
-        /// values is found.
-        /// </summary>
-        private sealed class NativeRegion : ValueRegion<T>
-        {
-            public static readonly NativeRegion Empty = new(IntPtr.Zero, default);
-
-            /// <summary>
-            /// Pointer to native memory region.
-            /// </summary>
-            private readonly IntPtr _ptr;
-            /// <summary>
-            /// Length of <typeparamref name="T"/> sequence.
-            /// </summary>
-            private readonly Int32 _length;
-
-            /// <summary>
-            /// Constructor.
-            /// </summary>
-            /// <param name="ptr">Pointer to native memory region.</param>
-            /// <param name="length">Length of <typeparamref name="T"/> sequence.</param>
-            public NativeRegion(IntPtr ptr, Int32 length)
+            if (region is ManagedRegion managed)
+                return new SegmentedManagedRegion(managed, range);
+            else if (region is SegmentedManagedRegion segmented)
+                return new SegmentedManagedRegion(segmented, range);
+            else
             {
-                this._ptr = ptr;
-                this._length = !this._ptr.Equals(IntPtr.Zero) ? length : default;
+                IntPtr ptr = region.AsSpan().AsIntPtr() + range.Start.Value;
+                Int32 length = range.End.Value - range.Start.Value;
+                return Create(ptr, length);
             }
-
-            /// <summary>
-            /// Creates a new read-only span over this memory region.
-            /// </summary>
-            /// <returns>The read-only span representation of the memory region.</returns>
-            protected override ReadOnlySpan<T> AsSpan() => this._ptr.AsReadOnlySpan<T>(this._length);
         }
     }
 }

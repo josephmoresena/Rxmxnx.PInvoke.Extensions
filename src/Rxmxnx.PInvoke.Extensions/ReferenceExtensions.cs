@@ -16,8 +16,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <typeparam name="T"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> value.</typeparam>
         /// <param name="refValue">Memory reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</param>
         /// <returns><see cref="IntPtr"/> pointer.</returns>
-        public static IntPtr AsIntPtr<T>(ref this T refValue)
-            where T : unmanaged
+        public static IntPtr AsIntPtr<T>(ref this T refValue) where T : unmanaged
         {
             unsafe
             {
@@ -32,8 +31,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <typeparam name="T"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> value.</typeparam>
         /// <param name="refValue">Memory reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</param>
         /// <returns><see cref="UIntPtr"/> pointer.</returns>
-        public static UIntPtr AsUIntPtr<T>(ref this T refValue)
-            where T : unmanaged
+        public static UIntPtr AsUIntPtr<T>(ref this T refValue) where T : unmanaged
         {
             unsafe
             {
@@ -54,11 +52,29 @@ namespace Rxmxnx.PInvoke.Extensions
             where TSource : unmanaged
             where TDestination : unmanaged
         {
-            if (NativeUtilities.SizeOf<TDestination>() != NativeUtilities.SizeOf<TSource>())
-                throw new InvalidOperationException("The sizes of both source and destination unmanaged types must be equal.");
             unsafe
             {
+                if (sizeof(TDestination) != sizeof(TSource))
+                    throw new InvalidOperationException("The sizes of both source and destination unmanaged types must be equal.");
+
                 return ref Unsafe.AsRef<TDestination>(Unsafe.AsPointer(ref refValue));
+            }
+        }
+        /// <summary>
+        /// Creates a <see cref="Span{T}"/> from an exising memory reference to a <typeparamref name="TSource"/> 
+        /// <see langword="unmanaged"/> value.
+        /// </summary>
+        /// <typeparam name="TSource"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> source value.</typeparam>
+        /// <param name="refValue">>Memory reference to a <typeparamref name="TSource"/> <see langword="unmanaged"/> value.</param>
+        /// <returns>
+        /// A <see cref="Span{T}"/> from an exising memory reference to a <typeparamref name="TSource"/> 
+        /// <see langword="unmanaged"/> value.
+        /// </returns>
+        public static Span<Byte> AsBinarySpan<TSource>(this ref TSource refValue) where TSource : unmanaged
+        {
+            unsafe
+            {
+                return new(Unsafe.AsPointer(ref refValue), sizeof(TSource));
             }
         }
     }
