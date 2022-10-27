@@ -18,15 +18,29 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
         /// <param name="array"><see cref="Byte"/> array.</param>
         /// <returns><typeparamref name="T"/> readed value.</returns>
-        public static T AsValue<T>(this Byte[] array) where T : unmanaged
+        public static T AsValue<T>(this Byte[] array) where T : unmanaged => array.AsSpan().AsValue<T>();
+        /// <summary>
+        /// Retrieves a <typeparamref name="T"/> value from the given <see cref="Byte"/> array.
+        /// </summary>
+        /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
+        /// <param name="span"><see cref="Byte"/> span.</param>
+        /// <returns><typeparamref name="T"/> readed value.</returns>
+        public static T AsValue<T>(this Span<Byte> span) where T : unmanaged => AsValue<T>((ReadOnlySpan<Byte>)span);
+        /// <summary>
+        /// Retrieves a <typeparamref name="T"/> value from the given <see cref="Byte"/> array.
+        /// </summary>
+        /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
+        /// <param name="span"><see cref="Byte"/> read-only span.</param>
+        /// <returns><typeparamref name="T"/> readed value.</returns>
+        public static T AsValue<T>(this ReadOnlySpan<Byte> span) where T : unmanaged
         {
             unsafe
             {
                 Int32 typeSize = sizeof(T);
-                if (array.Length != typeSize)
-                    throw new ArgumentException($"The length of parameter {array} must be equals to {typeSize}.");
+                if (span.Length != typeSize)
+                    throw new ArgumentException($"The length of parameter {nameof(span)} must be equals to {typeSize}.");
 
-                fixed (Byte* ptr = array)
+                fixed (Byte* ptr = span)
                     return Unsafe.Read<T>(ptr);
             }
         }
