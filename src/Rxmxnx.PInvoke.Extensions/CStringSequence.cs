@@ -212,7 +212,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="current">Current UTF-8 character.</param>
         private static void WriteBytesAsChar(StringBuilder strBuild, Byte previous, Byte current)
         {
-            Byte[] firstChar = new Byte[sizeOfChar];
+            Span<Byte> firstChar = stackalloc Byte[sizeOfChar];
             firstChar[0] = previous;
             firstChar[1] = current;
             strBuild.Append(firstChar.AsValue<Char>());

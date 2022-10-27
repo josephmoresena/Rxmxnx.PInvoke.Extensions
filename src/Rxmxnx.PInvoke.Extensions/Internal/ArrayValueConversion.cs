@@ -69,7 +69,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             ptr.AsReadOnlySpan<TDestination>(this._readables).CopyTo(finalSpan);
             if (this._offset != 0)
             {
-                Byte[] missing = new Byte[this._valueSize];
+                Span<Byte> missing = this._valueSize < 1024 ? stackalloc Byte[1024] : new Byte[this._valueSize];
                 ptr.AsReadOnlySpan<Byte>(this._inputBytes).Slice(this.GetOffsetStart(), this._offset).CopyTo(missing);
                 unsafe
                 {
