@@ -278,24 +278,31 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
 
         private static void AssertReferenceEquality(ReadOnlySpan<Byte> span, CString cstr, Boolean clone)
         {
-            IntPtr ptr = span.AsIntPtr();
-            ReadOnlySpan<Byte> cstrSpan = cstr;
-            IntPtr cstrSpanPtr = cstrSpan.AsIntPtr();
-            Byte[] bytes = cstr.ToArray();
-
-            Assert.Equal(!clone, ptr.Equals(cstrSpanPtr));
-            Assert.Equal(span.Length, cstrSpan.Length);
-
-            Int32 index = 0;
-            foreach (ref readonly Byte c in cstr)
+            unsafe
             {
-                Assert.Equal(c, span[index]);
-                Assert.Equal(c, bytes[index]);
-                Assert.Equal(!clone, Unsafe.AreSame(ref Unsafe.AsRef(c), ref Unsafe.AsRef(span[index])));
-                Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(c), ref Unsafe.AsRef(bytes[index])));
-                index++;
-                if (index == cstr.Length)
-                    break;
+                fixed (void* rawPtr = span)
+                {
+                    ReadOnlySpan<Byte> cstrSpan = cstr;
+                    fixed (void* rawSpanPtr = cstrSpan)
+                    {
+                        Byte[] bytes = cstr.ToArray();
+
+                        Assert.Equal(!clone, rawPtr == rawSpanPtr);
+                        Assert.Equal(span.Length, cstrSpan.Length);
+
+                        Int32 index = 0;
+                        foreach (ref readonly Byte c in cstr)
+                        {
+                            Assert.Equal(c, span[index]);
+                            Assert.Equal(c, bytes[index]);
+                            Assert.Equal(!clone, Unsafe.AreSame(ref Unsafe.AsRef(c), ref Unsafe.AsRef(span[index])));
+                            Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(c), ref Unsafe.AsRef(bytes[index])));
+                            index++;
+                            if (index == cstr.Length)
+                                break;
+                        }
+                    }
+                }
             }
         }
 
