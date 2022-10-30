@@ -119,12 +119,8 @@ namespace Rxmxnx.PInvoke.Extensions
         public static T[] CreateArray<T, TState>(Int32 length, TState state, SpanAction<T, TState> action) where T : unmanaged
         {
             T[] result = new T[length];
-            unsafe
-            {
-                Span<T> span = result;
-                fixed (T* prt = &MemoryMarshal.GetReference(span))
-                    action(new(prt, result.Length), state);
-            }
+            Span<T> span = result;
+            WriteSpan(span, state, action);
             return result;
         }
 
@@ -138,13 +134,23 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="action">A callback to initialize the string.</param>
         /// <returns>The created string.</returns>
         public static String CreateString<TState>(Int32 length, TState state, SpanAction<Char, TState> action)
-            => String.Create(length, state, (chars, state) =>
+            => String.Create(length, state, (chars, state) => WriteSpan(chars, state, action));
+
+        /// <summary>
+        /// Writes <paramref name="span"/> using <paramref name="state"/> and <paramref name="action"/>.
+        /// </summary>
+        /// <typeparam name="T">Unmanaged type of elements in <paramref name="span"/>.</typeparam>
+        /// <typeparam name="TState">Type of state object.</typeparam>
+        /// <param name="span">A <typeparamref name="TState"/> writable memory block.</param>
+        /// <param name="state">A <typeparamref name="TState"/> instance.</param>
+        /// <param name="action">A <see cref="SpanAction{T, TState}"/> delegate.</param>
+        private static void WriteSpan<T, TState>(Span<T> span, TState state, SpanAction<T, TState> action) where T : unmanaged
+        {
+            unsafe
             {
-                unsafe
-                {
-                    fixed (Char* ptr = &MemoryMarshal.GetReference(chars))
-                        action(new(ptr, length), state);
-                }
-            });
+                fixed (T* prt = &MemoryMarshal.GetReference(span))
+                    action(new(prt, span.Length), state);
+            }
+        }
     }
 }
