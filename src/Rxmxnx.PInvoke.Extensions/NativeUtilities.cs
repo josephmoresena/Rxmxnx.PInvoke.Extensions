@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -104,5 +105,46 @@ namespace Rxmxnx.PInvoke.Extensions
                 new ReadOnlySpan<Byte>(pointer, typeSize).CopyTo(destination[offset..]);
             }
         }
+
+        /// <summary>
+        /// Creates a new <typeparamref name="T"/> array with a specific length and initializes it after 
+        /// creation by using the specified callback.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the array.</typeparam>
+        /// <typeparam name="TState">The type of the element to pass to <paramref name="action"/>.</typeparam>
+        /// <param name="length">The length of the array to create.</param>
+        /// <param name="state">The type of the element to pass to <paramref name="action"/>.</param>
+        /// <param name="action">A callback to initialize the array.</param>
+        /// <returns>The created array.</returns>
+        public static T[] CreateArray<T, TState>(Int32 length, TState state, SpanAction<T, TState> action) where T : unmanaged
+        {
+            T[] result = new T[length];
+            unsafe
+            {
+                Span<T> span = result;
+                fixed (T* prt = &MemoryMarshal.GetReference(span))
+                    action(new(prt, result.Length), state);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a new string with a specific length and initializes it after creation by using 
+        /// the specified callback.
+        /// </summary>
+        /// <typeparam name="TState">The type of the element to pass to <paramref name="action"/>.</typeparam>
+        /// <param name="length">The length of the string to create.</param>
+        /// <param name="state">The type of the element to pass to <paramref name="action"/>.</param>
+        /// <param name="action">A callback to initialize the string.</param>
+        /// <returns>The created string.</returns>
+        public static String CreateString<TState>(Int32 length, TState state, SpanAction<Char, TState> action)
+            => String.Create(length, state, (chars, state) =>
+            {
+                unsafe
+                {
+                    fixed (Char* ptr = &MemoryMarshal.GetReference(chars))
+                        action(new(ptr, length), state);
+                }
+            });
     }
 }

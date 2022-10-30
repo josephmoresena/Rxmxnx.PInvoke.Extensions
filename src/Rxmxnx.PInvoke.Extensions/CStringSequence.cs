@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Runtime.InteropServices;
 
 namespace Rxmxnx.PInvoke.Extensions
 {
@@ -46,7 +46,7 @@ namespace Rxmxnx.PInvoke.Extensions
         private CStringSequence(CStringSequence sequence)
         {
             this._lengths = sequence._lengths.ToArray();
-            this._value = new(sequence._value.ToCharArray());
+            this._value = String.Create(sequence._value.Length, sequence, CopySequence);
         }
 
         /// <summary>
@@ -138,84 +138,53 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </returns>
         private static String CreateBuffer(Int32[] lengths, CString?[] values)
         {
-            Int32 count = lengths.Sum() + lengths.Length - 1;
-            StringBuilder strBuild = new(count / sizeOfChar + count % sizeOfChar);
-            Byte? previous = default;
+            Int32 totalBytes = 0;
             for (Int32 i = 0; i < lengths.Length; i++)
-                CopyText(strBuild, values[i], ref previous);
-            if (previous.HasValue && previous.Value != default)
-                WriteBytesAsChar(strBuild, previous.Value, default);
-            return strBuild.ToString();
+                if (values[i] is CString value && value.Length > 0)
+                    totalBytes += value.Length + 1;
+            Int32 totalChars = (totalBytes / sizeOfChar) + (totalBytes % sizeOfChar);
+            return String.Create(totalChars, values, CopyText);
         }
 
         /// <summary>
-        /// Copy the UTF-8 into the buffer builder.
+        /// Copy the content of <see cref="CString"/> items in <paramref name="values"/> to
+        /// <paramref name="charSpan"/> span.
         /// </summary>
-        /// <param name="strBuild">Buffer builder.</param>
-        /// <param name="cstr">UTF-8 text.</param>
-        /// <param name="previous">
-        /// <list type="table">
-        /// <item>
-        /// <term>Input</term>
-        /// <description>Pending UTF-8 character from previous method call.</description>
-        /// </item>
-        /// <item>
-        /// <term>Output</term>
-        /// <description>Pending UTF-8 character to next method call.</description>
-        /// </item>
-        /// </list>
-        /// </param>
-        private static void CopyText(StringBuilder strBuild, CString? cstr, ref Byte? previous)
+        /// <param name="charSpan">A writable <see cref="Char"/> span.</param>
+        /// <param name="values">A enumeration of <see cref="CString"/> items.</param>
+        private static void CopyText(Span<Char> charSpan, CString?[] values)
         {
-            if (!CString.IsNullOrEmpty(cstr))
+            Int32 position = 0;
+            unsafe
             {
-                Int32 offset = WriteFirstChar(strBuild, previous, cstr);
-                ReadOnlySpan<Byte> span = cstr;
-                Int32 desiredSize = cstr.Length - offset;
-
-                if (desiredSize > 0)
+                fixed (void* charsPtr = &MemoryMarshal.GetReference(charSpan))
                 {
-                    Int32 charSpanLength = desiredSize / sizeOfChar;
-                    ReadOnlySpan<Char> chars = (span.AsIntPtr() + offset).AsReadOnlySpan<Char>(charSpanLength);
-                    foreach (Char c in chars)
-                        strBuild.Append(c);
-                    previous = desiredSize % sizeOfChar != 0 ? cstr[^1] : default;
+                    Span<Byte> byteSpan = new(charsPtr, charSpan.Length * sizeOfChar);
+                    for (Int32 i = 0; i < values.Length; i++)
+                        if (values[i] is CString value && value.Length > 0)
+                        {
+                            ReadOnlySpan<Byte> valueSpan = value.AsSpan();
+                            valueSpan.CopyTo(byteSpan.Slice(position));
+                            position += valueSpan.Length;
+                            if (!value.IsNullTerminated)
+                            {
+                                byteSpan[position] = default;
+                                position++;
+                            }
+                        }
                 }
             }
         }
 
         /// <summary>
-        /// Writes the first character at the beginning of all UTF-8 texts after the first into 
-        /// the buffer builder.
+        /// Copy the content of <paramref name="sequence"/> to <paramref name="charSpan"/>.
         /// </summary>
-        /// <param name="strBuild">Buffer builder.</param>
-        /// <param name="previous">Pending UTF-8 character from previous method call.</param>
-        /// <param name="cstr">Current UTF-8 text.</param>
-        /// <returns>Offset for current text writing.</returns>
-        private static Int32 WriteFirstChar(StringBuilder strBuild, Byte? previous, CString cstr)
+        /// <param name="charSpan">A writable <see cref="Char"/> span.</param>
+        /// <param name="sequence">A <see cref="CStringSequence"/> instance.</param>
+        private static void CopySequence(Span<Char> charSpan, CStringSequence sequence)
         {
-            Int32 result = 0;
-            if (previous.HasValue)
-            {
-                Boolean previousDefault = previous.Value == default;
-                WriteBytesAsChar(strBuild, previous.Value, previousDefault ? cstr[0] : default);
-                result = previousDefault ? 1 : 0;
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Writes two UTF-8 characters as single UTF-16 into the buffer builder.
-        /// </summary>
-        /// <param name="strBuild">Buffer builder.</param>
-        /// <param name="previous">Pending UTF-8 character from previous method call.</param>
-        /// <param name="current">Current UTF-8 character.</param>
-        private static void WriteBytesAsChar(StringBuilder strBuild, Byte previous, Byte current)
-        {
-            Span<Byte> firstChar = stackalloc Byte[sizeOfChar];
-            firstChar[0] = previous;
-            firstChar[1] = current;
-            strBuild.Append(firstChar.AsValue<Char>());
+            ReadOnlySpan<Char> chars = sequence._value;
+            chars.CopyTo(charSpan);
         }
     }
 }
