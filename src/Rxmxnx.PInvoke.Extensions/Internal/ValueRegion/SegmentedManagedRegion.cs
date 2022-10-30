@@ -75,7 +75,6 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             /// <returns>The read-only span representation of the memory region.</returns>
             protected override ReadOnlySpan<T> AsSpan() => this._array.AsSpan()[this._range];
 
-
             /// <summary>
             /// Calculates range for a new <see cref="SegmentedManagedRegion"/> instance.
             /// </summary>

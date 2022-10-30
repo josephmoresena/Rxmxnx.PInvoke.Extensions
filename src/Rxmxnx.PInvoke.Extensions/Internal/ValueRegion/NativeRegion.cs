@@ -10,6 +10,9 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// </summary>
         private sealed class NativeRegion : ValueRegion<T>
         {
+            /// <summary>
+            /// <see cref="NativeRegion"/> empty instance.
+            /// </summary>
             public static readonly NativeRegion Empty = new(IntPtr.Zero, default);
 
             /// <summary>
