@@ -49,7 +49,8 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             {
                 this._array = region.AsArray()!;
                 this._offset = offset;
-                this._end = CalculateEnd(region, this._offset, length, out this._isSegmented);
+                this._end = this._offset + length;
+                this._isSegmented = offset != default || length != region.AsArray()!.Length;
             }
 
             /// <summary>
@@ -62,7 +63,8 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             {
                 this._array = region._array;
                 this._offset = offset + region._offset;
-                this._end = CalculateEnd(region, this._offset, length, out this._isSegmented);
+                this._end = this._offset + length;
+                this._isSegmented = offset != default || length != region._array.Length;
             }
 
             /// <summary>
@@ -76,22 +78,6 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             /// </summary>
             /// <returns>The read-only span representation of the memory region.</returns>
             protected override ReadOnlySpan<T> AsSpan() => this._array[this._offset..this._end];
-
-            /// <summary>
-            /// Calculates end for a new <see cref="SegmentedManagedRegion"/> instance.
-            /// </summary>
-            /// <param name="span">Internal <see cref="ReadOnlySpan{T}"/> instance.</param>
-            /// <param name="offset">Offset for range.</param>
-            /// <param name="length">Length of range.</param>
-            /// <param name="isSegmented">Output. Indicates whether output range represents segment of <paramref name="span"/>.</param>
-            /// <returns>The end for the new <see cref="SegmentedManagedRegion"/> instance.</returns>
-            private static Int32 CalculateEnd(ReadOnlySpan<T> span, Int32 offset, Int32 length, out Boolean isSegmented)
-            {
-                if (span.Length - offset > length && span[offset + length].Equals(default(T)))
-                    length++;
-                isSegmented = (offset != default || length != span.Length);
-                return offset + length;
-            }
         }
     }
 }

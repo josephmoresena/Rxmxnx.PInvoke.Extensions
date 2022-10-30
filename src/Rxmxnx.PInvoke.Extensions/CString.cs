@@ -111,7 +111,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <summary>
         /// Indicates whether the current instance is segmented.
         /// </summary>
-        public Boolean IsSegmented => this._isLocal && ((Byte[]?)this._data) is null && this._length != 0;
+        public Boolean IsSegmented => this._isLocal && ((Byte[]?)this._data) is null;
 
         /// <summary>
         /// Private constructor.
@@ -134,11 +134,11 @@ namespace Rxmxnx.PInvoke.Extensions
         private CString(CString value, Int32 offset, Int32 length)
         {
             this._isLocal = value._isLocal;
-            this._data = ValueRegion<Byte>.Create(value._data, offset, length);
-            this._length = length;
+            this._data = ValueRegion<Byte>.Create(value._data, offset, value.GetDataLength(offset, length));
 
-            ReadOnlySpan<Byte> bytes = this._data;
-            this._isNullTerminated = bytes.Length > 0 && bytes[^1] == default;
+            ReadOnlySpan<Byte> data = this._data;
+            this._isNullTerminated = data.Length > 0 && data[^1] == default;
+            this._length = data.Length - (this._isNullTerminated ? 1 : 0);
         }
 
         /// <summary>
@@ -357,6 +357,23 @@ namespace Rxmxnx.PInvoke.Extensions
                 return array;
             else
                 throw new InvalidOperationException(nameof(value) + " does not contains the UTF-8 text.");
+        }
+
+
+        /// <summary>
+        /// Calculates the data length of a segment of current <see cref="CString"/> whose 
+        /// offset is <paramref name="offset"/> and whose length is <paramref name="length"/>.
+        /// </summary>
+        /// <param name="offset">Offset for segment.</param>
+        /// <param name="length">Initial length for segment.</param>
+        /// <returns>Final length for segment.</returns>
+        private Int32 GetDataLength(Int32 offset, Int32 length)
+        {
+            ReadOnlySpan<Byte> bytes = this._data;
+            bytes = bytes.Slice(offset);
+            if (bytes.Length > length && bytes[length] == default)
+                length++;
+            return length;
         }
 
         /// <summary>

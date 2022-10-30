@@ -359,6 +359,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             {
                 Assert.Equal(seg.IsReference, cstr.IsReference);
                 Assert.Equal(!seg.IsReference && seg.Length != cstr.Length, seg.IsSegmented);
+                AssertSequenceSegment(cstr, seg);
             }
             else
             {
@@ -376,6 +377,34 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
 
             for (Int32 i = start; i < end; i++)
                 Assert.Equal(cstr[i], seg[i - start]);
+        }
+
+        private static void AssertSequenceSegment(CString cstr, CString seg)
+        {
+            CString newJoin = new CStringSequence(cstr, seg).ToCString();
+            ReadOnlySpan<Byte> newJoinBytes = CString.GetBytes(newJoin);
+            CString newJoin2 = new CString(newJoinBytes.AsIntPtr(), newJoinBytes.Length);
+
+            CString newCstr1 = newJoin[..cstr.Length];
+            CString newSeg1 = newJoin[(cstr.Length + 1)..];
+
+            CString newCstr2 = newJoin2[..cstr.Length];
+            CString newSeg2 = newJoin2[(cstr.Length + 1)..];
+
+            Assert.Equal(cstr, newCstr1);
+            Assert.Equal(seg, newSeg1);
+            Assert.Equal(newCstr1, newCstr2);
+            Assert.Equal(newSeg1, newSeg2);
+
+            Assert.True(newCstr1.IsNullTerminated);
+            Assert.True(newSeg1.IsNullTerminated);
+            Assert.False(newCstr1.IsReference);
+            Assert.False(newSeg1.IsReference);
+
+            Assert.True(newCstr2.IsNullTerminated);
+            Assert.True(newSeg2.IsNullTerminated);
+            Assert.True(newCstr2.IsReference);
+            Assert.True(newSeg2.IsReference);
         }
     }
 }
