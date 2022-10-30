@@ -79,12 +79,13 @@ namespace Rxmxnx.PInvoke.Extensions
         {
             get
             {
-                Boolean inRange = range.Start.Value < this._length && range.End.Value < this._length;
+                (Int32 offset, Int32 length) = range.GetOffsetAndLength(this._length);
+                Boolean inRange = offset < this._length && length <= this._length;
                 if (inRange && this._length > 0 && range.End.Value - range.Start.Value == 0)
                     return CString.Empty;
                 else if (!inRange)
                     throw new ArgumentOutOfRangeException(nameof(range));
-                return new(this, range);
+                return new(this, offset, length);
             }
         }
 
@@ -128,15 +129,16 @@ namespace Rxmxnx.PInvoke.Extensions
         /// Constructor.
         /// </summary>
         /// <param name="value">A <see cref="CString"/> value.</param>
-        /// <param name="range">Segment <see cref="CString"/> range.</param>
-        private CString(CString value, Range range)
+        /// <param name="offset">Offset for range.</param>
+        /// <param name="length">Length of range.</param>
+        private CString(CString value, Int32 offset, Int32 length)
         {
             this._isLocal = value._isLocal;
-            this._data = ValueRegion<Byte>.Create(value._data, range);
+            this._data = ValueRegion<Byte>.Create(value._data, offset, length);
+            this._length = length;
 
             ReadOnlySpan<Byte> bytes = this._data;
             this._isNullTerminated = bytes.Length > 0 && bytes[^1] == default;
-            this._length = bytes.Length - (this._isNullTerminated ? 1 : 0);
         }
 
         /// <summary>

@@ -16,9 +16,13 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             /// </summary>
             private readonly T[] _array;
             /// <summary>
-            /// Segment array range.
+            /// Internal offset.
             /// </summary>
-            private readonly Range _range;
+            private readonly Int32 _offset;
+            /// <summary>
+            /// Internal length.
+            /// </summary>
+            private readonly Int32 _end;
             /// <summary>
             /// Indicates whether current instance is segmented.
             /// </summary>
@@ -33,34 +37,32 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             /// memory region length.
             /// </exception>
             /// <returns>The element from the memory region.</returns>
-            public override T this[Int32 index] => this._array[this._range.Start.Value + index];
+            public override T this[Int32 index] => this._array[this._offset + index];
 
             /// <summary>
             /// Constructor.
             /// </summary>
             /// <param name="region"><see cref="ManagedRegion"/> instance.</param>
-            /// <param name="range">Segment array range.</param>
-            public SegmentedManagedRegion([DisallowNull] ManagedRegion region, Range range)
+            /// <param name="offset">Offset for range.</param>
+            /// <param name="length">Length of range.</param>
+            public SegmentedManagedRegion([DisallowNull] ManagedRegion region, Int32 offset, Int32 length)
             {
-                Int32 start = range.Start.Value;
-                Int32 length = range.End.Value - start;
-
                 this._array = region.AsArray()!;
-                this._range = CalculateRange(region, start, length, out this._isSegmented);
+                this._offset = offset;
+                this._end = CalculateEnd(region, this._offset, length, out this._isSegmented);
             }
 
             /// <summary>
             /// Constructor.
             /// </summary>
             /// <param name="region"><see cref="ManagedRegion"/> instance.</param>
-            /// <param name="range">Segment array range.</param>
-            public SegmentedManagedRegion([DisallowNull] SegmentedManagedRegion region, Range range)
+            /// <param name="offset">Offset for range.</param>
+            /// <param name="length">Length of range.</param>
+            public SegmentedManagedRegion([DisallowNull] SegmentedManagedRegion region, Int32 offset, Int32 length)
             {
-                Int32 start = region._range.Start.Value + range.Start.Value;
-                Int32 length = range.End.Value - range.Start.Value;
                 this._array = region._array;
-
-                this._range = CalculateRange(region, start, length, out this._isSegmented);
+                this._offset = offset + region._offset;
+                this._end = CalculateEnd(region, this._offset, length, out this._isSegmented);
             }
 
             /// <summary>
@@ -73,22 +75,22 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             /// Creates a new read-only span over this memory region.
             /// </summary>
             /// <returns>The read-only span representation of the memory region.</returns>
-            protected override ReadOnlySpan<T> AsSpan() => this._array.AsSpan()[this._range];
+            protected override ReadOnlySpan<T> AsSpan() => this._array[this._offset..this._end];
 
             /// <summary>
-            /// Calculates range for a new <see cref="SegmentedManagedRegion"/> instance.
+            /// Calculates end for a new <see cref="SegmentedManagedRegion"/> instance.
             /// </summary>
             /// <param name="span">Internal <see cref="ReadOnlySpan{T}"/> instance.</param>
-            /// <param name="start">Start of requested range.</param>
-            /// <param name="length">Length in requested range.</param>
+            /// <param name="offset">Offset for range.</param>
+            /// <param name="length">Length of range.</param>
             /// <param name="isSegmented">Output. Indicates whether output range represents segment of <paramref name="span"/>.</param>
-            /// <returns>The range for the new <see cref="SegmentedManagedRegion"/> instance.</returns>
-            private static Range CalculateRange(ReadOnlySpan<T> span, Int32 start, Int32 length, out Boolean isSegmented)
+            /// <returns>The end for the new <see cref="SegmentedManagedRegion"/> instance.</returns>
+            private static Int32 CalculateEnd(ReadOnlySpan<T> span, Int32 offset, Int32 length, out Boolean isSegmented)
             {
-                if (span.Length - start > length && span[start + length].Equals(default(T)))
+                if (span.Length - offset > length && span[offset + length].Equals(default(T)))
                     length++;
-                isSegmented = (start != default || length != span.Length);
-                return new(start, start + length);
+                isSegmented = (offset != default || length != span.Length);
+                return offset + length;
             }
         }
     }

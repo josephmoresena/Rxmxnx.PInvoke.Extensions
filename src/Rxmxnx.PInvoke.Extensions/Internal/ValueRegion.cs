@@ -74,24 +74,21 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         public static ValueRegion<T> Create(IntPtr ptr, Int32 length)
             => !ptr.IsZero() && length != default ? new NativeRegion(ptr, length) : NativeRegion.Empty;
         /// <summary>
-        /// Creates a new <see cref="ValueRegion{T}"/> instance with the <paramref name="range"/> of
-        /// <paramref name="region"/>.
+        /// Creates a new <see cref="ValueRegion{T}"/> instance whose offset is <paramref name="offset"/>
+        /// and whose length is <paramref name="length"/>.
         /// </summary>
         /// <param name="region">A <see cref="ValueRegion{T}"/> instance.</param>
-        /// <param name="range">The range of new instance.</param>
+        /// <param name="offset">Offset for range.</param>
+        /// <param name="length">Length of range.</param>
         /// <returns>A new <see cref="ValueRegion{T}"/> instance.</returns>
-        public static ValueRegion<T> Create(ValueRegion<T> region, Range range)
+        public static ValueRegion<T> Create(ValueRegion<T> region, Int32 offset, Int32 length)
         {
             if (region is ManagedRegion managed)
-                return new SegmentedManagedRegion(managed, range);
+                return new SegmentedManagedRegion(managed, offset, length);
             else if (region is SegmentedManagedRegion segmented)
-                return new SegmentedManagedRegion(segmented, range);
+                return new SegmentedManagedRegion(segmented, offset, length);
             else
-            {
-                IntPtr ptr = region.AsSpan().AsIntPtr() + range.Start.Value;
-                Int32 length = range.End.Value - range.Start.Value;
-                return Create(ptr, length);
-            }
+                return Create(region.AsSpan().AsIntPtr() + offset, length);
         }
     }
 }

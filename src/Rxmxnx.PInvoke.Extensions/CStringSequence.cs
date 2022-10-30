@@ -74,6 +74,26 @@ namespace Rxmxnx.PInvoke.Extensions
         public Object Clone() => new CStringSequence(this);
 
         /// <summary>
+        /// Returns a <see cref="CString"/> that represents the current object.
+        /// </summary>
+        /// <returns>A <see cref="CString"/> that represents the current object.</returns>
+        public CString ToCString()
+        {
+            ReadOnlySpan<Char> chars = this.AsSpan(out CString[] output);
+            Int32 finalLength = output.Where(x => x.Length > 0).Select(x => x.Length + 1).Sum();
+            Byte[] result = new Byte[finalLength];
+
+            Int32 offset = 0;
+            foreach (CString value in output)
+            {
+                ReadOnlySpan<Byte> bytes = value.AsSpan();
+                bytes.CopyTo(result.AsSpan().Slice(offset, bytes.Length));
+                offset += bytes.Length;
+            }
+            return result;
+        }
+
+        /// <summary>
         /// Indicates whether the current <see cref="CStringSequence"/> is equal to another <see cref="CStringSequence"/> 
         /// instance.
         /// </summary>
