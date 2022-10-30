@@ -123,6 +123,8 @@ Gets the number of CString contained in CStringSequence.
 * **AsSpan(out CString[] output)**
 Retrieves the buffer as an ReadOnlySpan<Char> instance and creates a CString array which represents 
 text sequence. The output CString array will remain valid only as long as returned buffer span is on live.
+* **ToCString()**
+Returns a CString that represents the current object.
 
 ## InputValue
 Supports a value type that can be referenced.
@@ -147,6 +149,9 @@ Loads a native library and appends its unloading to given EventHandler delegate.
 Gets a generic delegate which points to a exported symbol into native library.
 * **AsBytes&lt;T&gt;(in T value)**
 Gets the binary data of an input generic value.
+* **BinaryCopyTo&lt;T&gt;(in T value, Span&lt;TByte&gt; destination, Int32 offset = default)**
+Preforms a binary copy of value to destination span.
+
 
 ## TextUtilites
 Provides a set of utilities for texts.

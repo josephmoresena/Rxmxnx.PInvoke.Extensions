@@ -60,6 +60,7 @@ namespace Rxmxnx.PInvoke.Extensions
                 return ref Unsafe.AsRef<TDestination>(Unsafe.AsPointer(ref refValue));
             }
         }
+
         /// <summary>
         /// Creates a <see cref="Span{T}"/> from an exising memory reference to a <typeparamref name="TSource"/> 
         /// <see langword="unmanaged"/> value.

@@ -105,22 +105,5 @@ namespace Rxmxnx.PInvoke.Extensions
                 new ReadOnlySpan<Byte>(pointer, typeSize).CopyTo(destination[offset..]);
             }
         }
-
-        /// <summary>
-        /// Writes <paramref name="span"/> using <paramref name="state"/> and <paramref name="action"/>.
-        /// </summary>
-        /// <typeparam name="T">Unmanaged type of elements in <paramref name="span"/>.</typeparam>
-        /// <typeparam name="TState">Type of state object.</typeparam>
-        /// <param name="span">A <typeparamref name="TState"/> writable memory block.</param>
-        /// <param name="state">A <typeparamref name="TState"/> instance.</param>
-        /// <param name="action">A <see cref="SpanAction{T, TState}"/> delegate.</param>
-        private static void WriteSpan<T, TState>(Span<T> span, TState state, SpanAction<T, TState> action) where T : unmanaged
-        {
-            unsafe
-            {
-                fixed (T* prt = &MemoryMarshal.GetReference(span))
-                    action(new(prt, span.Length), state);
-            }
-        }
     }
 }
