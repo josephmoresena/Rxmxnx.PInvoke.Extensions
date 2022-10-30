@@ -305,7 +305,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                         Byte[] bytes = cstr.ToArray();
 
                         Assert.Equal(!clone, rawPtr == rawSpanPtr);
-                        Assert.Equal(span.Length, cstrSpan.Length);
+                        Assert.Equal(!clone || span[^1] == default, span.Length == cstrSpan.Length);
 
                         Int32 index = 0;
                         foreach (ref readonly Byte c in cstr)
@@ -330,7 +330,10 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             {
                 Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
                 CString clone = (CString)cstr.Clone();
-                Assert.Equal(cstr.ToArray(), CString.GetBytes(clone));
+                if (cstr.IsNullTerminated)
+                    Assert.Equal(cstr.ToArray(), CString.GetBytes(clone));
+                else
+                    Assert.Equal(cstr.Length + 1, CString.GetBytes(clone).Length);
                 Assert.False(clone.IsReference);
             }
             else

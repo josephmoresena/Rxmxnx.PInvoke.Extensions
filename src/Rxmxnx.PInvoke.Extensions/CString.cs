@@ -207,8 +207,19 @@ namespace Rxmxnx.PInvoke.Extensions
         /// Returns a reference to this instance of <see cref="CString"/>.
         /// </summary>
         /// <returns>A new object that is a copy of this instance.</returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public Object Clone() => new CString(this._data.ToArray());
+        public Object Clone()
+        {
+            Byte[] bytes;
+            if (this._isNullTerminated)
+                bytes = this._data.ToArray();
+            else
+            {
+                ReadOnlySpan<Byte> data = this._data;
+                bytes = new Byte[this._length + 1];
+                data.CopyTo(bytes);
+            }
+            return new CString(bytes);
+        }
 
         /// <summary>
         /// Indicates whether the current <see cref="CString"/> is equal to another <see cref="CString"/> 
