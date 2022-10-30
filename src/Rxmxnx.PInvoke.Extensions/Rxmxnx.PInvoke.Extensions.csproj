@@ -7,7 +7,7 @@
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>
     <ExcludeXmlAssemblyFiles>false</ExcludeXmlAssemblyFiles>
     <IsPackable>true</IsPackable>
-    <Optimize>true</Optimize>
+    <!--<Optimize>true</Optimize>-->
     <Deterministic>true</Deterministic>
     <Nullable>enable</Nullable>
   </PropertyGroup>

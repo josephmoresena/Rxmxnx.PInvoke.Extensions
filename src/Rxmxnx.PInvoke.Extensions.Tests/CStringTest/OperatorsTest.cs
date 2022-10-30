@@ -95,6 +95,14 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                 Assert.Equal(default, cstr2[0]);
                 Assert.Throws<IndexOutOfRangeException>(() => cstr3[0]);
                 Assert.Throws<IndexOutOfRangeException>(() => cstr4[0]);
+
+                Assert.Throws<ArgumentOutOfRangeException>(() => cstr1[0..]);
+                Assert.Throws<ArgumentOutOfRangeException>(() => cstr2[0..]);
+                Assert.Throws<ArgumentOutOfRangeException>(() => cstr3[0..]);
+                Assert.Throws<ArgumentOutOfRangeException>(() => cstr4[0..]);
+                Assert.Throws<ArgumentOutOfRangeException>(() => cstr5[0..]);
+                Assert.Throws<ArgumentOutOfRangeException>(() => cstr6[0..]);
+
             }
             else
             {
@@ -256,6 +264,14 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             Assert.True(cstr7.IsNullTerminated);
             AssertIndex(cstr7, cstr7);
             AssertReference(cstr7, false);
+
+            AssertSegment(cstr1);
+            AssertSegment(cstr2);
+            AssertSegment(cstr3);
+            AssertSegment(cstr4);
+            AssertSegment(cstr5);
+            AssertSegment(cstr6);
+            AssertSegment(cstr7);
         }
 
         private static void AssertIndex(ReadOnlySpan<Byte> span, CString cstr)
@@ -318,6 +334,36 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             }
             else
                 Assert.Equal(cstr.ToArray(), CString.GetBytes(cstr));
+        }
+
+        private static void AssertSegment(CString cstr)
+        {
+            Int32 start = Random.Shared.Next(0, cstr.Length);
+            Int32 end = Random.Shared.Next(start, cstr.Length);
+            Int32 end2 = Random.Shared.Next(0, end - start);
+
+            CString seg1 = cstr[start..end];
+
+            AssertSegment(cstr, start, end, seg1);
+            if (end == end2)
+                Assert.Throws<ArgumentOutOfRangeException>(() => cstr[..end2]);
+            else
+                AssertSegment(seg1, default, end2, cstr[..end2]);
+        }
+
+        private static void AssertSegment(CString cstr, Int32 start, Int32 end, CString seg)
+        {
+            Assert.Equal(seg.IsReference, cstr.IsReference);
+            Assert.Equal(!seg.IsReference && seg.Length != cstr.Length, seg.IsSegmented);
+            Assert.Equal(cstr.ToString()[start..end], seg.ToString());
+
+            if (seg.IsSegmented || seg.IsReference)
+                Assert.Throws<InvalidOperationException>(() => CString.GetBytes(seg));
+            else
+                Assert.Equal(CString.GetBytes(cstr), CString.GetBytes(seg));
+
+            for (Int32 i = start; i < end; i++)
+                Assert.Equal(cstr[i], seg[i - start]);
         }
     }
 }

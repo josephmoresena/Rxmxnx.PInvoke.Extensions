@@ -75,7 +75,15 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="range"></param>
         /// <returns><see cref="CString"/> range.</returns>
         [IndexerName("Position")]
-        public CString this[Range range] => new CString(this, range);
+        public CString this[Range range]
+        {
+            get
+            {
+                if (range.Start.Value >= this._length || range.End.Value >= this._length)
+                    throw new ArgumentOutOfRangeException(nameof(range));
+                return new(this, range);
+            }
+        }
 
         /// <summary>
         /// Gets the number of bytes in the current <see cref="CString"/> object.

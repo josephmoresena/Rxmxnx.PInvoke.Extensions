@@ -33,7 +33,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             /// memory region length.
             /// </exception>
             /// <returns>The element from the memory region.</returns>
-            public override T this[Int32 index] => this._array[index];
+            public override T this[Int32 index] => this._array[this._range.Start.Value + index];
 
             /// <summary>
             /// Constructor.
