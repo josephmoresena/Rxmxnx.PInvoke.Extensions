@@ -87,7 +87,6 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             {
                 if (span.Length - start > length && span[start + length].Equals(default(T)))
                     length++;
-
                 isSegmented = (start != default || length != span.Length);
                 return new(start, start + length);
             }

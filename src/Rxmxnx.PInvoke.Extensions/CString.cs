@@ -79,7 +79,10 @@ namespace Rxmxnx.PInvoke.Extensions
         {
             get
             {
-                if (range.Start.Value >= this._length || range.End.Value >= this._length)
+                Boolean inRange = range.Start.Value < this._length && range.End.Value < this._length;
+                if (inRange && this._length > 0 && range.End.Value - range.Start.Value == 0)
+                    return CString.Empty;
+                else if (!inRange)
                     throw new ArgumentOutOfRangeException(nameof(range));
                 return new(this, range);
             }
@@ -107,7 +110,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <summary>
         /// Indicates whether the current instance is segmented.
         /// </summary>
-        public Boolean IsSegmented => this._isLocal && ((Byte[]?)this._data) is null;
+        public Boolean IsSegmented => this._isLocal && ((Byte[]?)this._data) is null && this._length != 0;
 
         /// <summary>
         /// Private constructor.

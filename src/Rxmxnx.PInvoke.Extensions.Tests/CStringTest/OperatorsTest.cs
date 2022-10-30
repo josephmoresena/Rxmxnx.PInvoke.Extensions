@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 
 using AutoFixture;
@@ -296,10 +297,10 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
         {
             unsafe
             {
-                fixed (void* rawPtr = span)
+                fixed (void* rawPtr = &MemoryMarshal.GetReference(span))
                 {
                     ReadOnlySpan<Byte> cstrSpan = cstr;
-                    fixed (void* rawSpanPtr = cstrSpan)
+                    fixed (void* rawSpanPtr = &MemoryMarshal.GetReference(cstrSpan))
                     {
                         Byte[] bytes = cstr.ToArray();
 
@@ -345,21 +346,32 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             CString seg1 = cstr[start..end];
 
             AssertSegment(cstr, start, end, seg1);
-            if (end == end2)
-                Assert.Throws<ArgumentOutOfRangeException>(() => cstr[..end2]);
-            else
-                AssertSegment(seg1, default, end2, cstr[..end2]);
+            //if (end == end2)
+            //    Assert.Throws<ArgumentOutOfRangeException>(() => cstr[..end2]);
+            //else 
+            if (seg1.Length > 0)
+                AssertSegment(seg1, default, end2, seg1[..end2]);
         }
 
         private static void AssertSegment(CString cstr, Int32 start, Int32 end, CString seg)
         {
-            Assert.Equal(seg.IsReference, cstr.IsReference);
-            Assert.Equal(!seg.IsReference && seg.Length != cstr.Length, seg.IsSegmented);
+            if (seg.Length > 0)
+            {
+                Assert.Equal(seg.IsReference, cstr.IsReference);
+                Assert.Equal(!seg.IsReference && seg.Length != cstr.Length, seg.IsSegmented);
+            }
+            else
+            {
+                Assert.False(seg.IsReference);
+                Assert.False(seg.IsSegmented);
+            }
             Assert.Equal(cstr.ToString()[start..end], seg.ToString());
 
-            if (seg.IsSegmented || seg.IsReference)
+            if ((seg.IsSegmented || seg.IsReference) && seg.Length != 0)
                 Assert.Throws<InvalidOperationException>(() => CString.GetBytes(seg));
-            else
+            else if (cstr.IsSegmented)
+                Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
+            else if (cstr.Length == seg.Length)
                 Assert.Equal(CString.GetBytes(cstr), CString.GetBytes(seg));
 
             for (Int32 i = start; i < end; i++)
