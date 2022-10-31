@@ -67,6 +67,40 @@ namespace Rxmxnx.PInvoke.Extensions
         }
 
         /// <summary>
+        /// Use current instance as <see cref="ReadOnlySpan{CString}"/> instance and <paramref name="state"/>
+        /// as parameters for <paramref name="action"/> delegate.
+        /// </summary>
+        /// <typeparam name="TState">The type of the element to pass to <paramref name="action"/>.</typeparam>
+        /// <param name="state">The element to pass to <paramref name="action"/>.</param>
+        /// <param name="action">A callback to invoke.</param>
+        public void AsCStringSpan<TState>(TState state, CStringSequenceAction<TState> action)
+        {
+            unsafe
+            {
+                fixed (void* ptr = &MemoryMarshal.GetReference(this.AsSpan(out CString[] output)))
+                    action(output, state);
+            }
+        }
+
+        /// <summary>
+        /// Use current instance as <see cref="ReadOnlySpan{CString}"/> instance and <paramref name="state"/>
+        /// as parameters for <paramref name="func"/> delegate.
+        /// </summary>
+        /// <typeparam name="TState">The type of the element to pass to <paramref name="func"/>.</typeparam>
+        /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
+        /// <param name="state">The element to pass to <paramref name="func"/>.</param>
+        /// <param name="func">A callback to invoke.</param>
+        /// <returns>The result of <paramref name="func"/> execution.</returns>
+        public TResult AsCStringSpan<TState, TResult>(TState state, CStringSequenceFunc<TState, TResult> func)
+        {
+            unsafe
+            {
+                fixed (void* ptr = &MemoryMarshal.GetReference(this.AsSpan(out CString[] output)))
+                    return func(output, state);
+            }
+        }
+
+        /// <summary>
         /// Returns a reference to this instance of <see cref="CStringSequence"/>.
         /// </summary>
         /// <returns>A new object that is a copy of this instance.</returns>
@@ -79,23 +113,10 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <returns>A <see cref="CString"/> that represents the current object.</returns>
         public CString ToCString()
         {
-            unsafe
-            {
-                fixed (void* ptr = &MemoryMarshal.GetReference(this.AsSpan(out CString[] output)))
-                {
-                    Int32 finalLength = output.Where(x => x.Length > 0).Select(x => x.Length + 1).Sum();
-                    Byte[] result = new Byte[finalLength];
-
-                    Int32 offset = 0;
-                    foreach (CString value in output)
-                    {
-                        ReadOnlySpan<Byte> bytes = value.AsSpan();
-                        bytes.CopyTo(result.AsSpan().Slice(offset, bytes.Length));
-                        offset += bytes.Length;
-                    }
-                    return result;
-                }
-            }
+            Int32 cstrLength = this._lengths.Sum(x => x + 1);
+            Byte[] result = new Byte[cstrLength];
+            this.AsCStringSpan(result, BinaryCopyTo);
+            return result;
         }
 
         /// <summary>
@@ -210,6 +231,23 @@ namespace Rxmxnx.PInvoke.Extensions
         {
             ReadOnlySpan<Char> chars = sequence._value;
             chars.CopyTo(charSpan);
+        }
+
+        /// <summary>
+        /// Preforms a binary copy of all non-empty <paramref name="span"/> to 
+        /// <paramref name="destination"/> span.
+        /// </summary>
+        /// <param name="span">A read-only <see cref="CString"/> span instance.</param>
+        /// <param name="destination">The destination binary buffer.</param>
+        private static void BinaryCopyTo(ReadOnlySpan<CString> span, Byte[] destination)
+        {
+            Int32 offset = 0;
+            foreach (CString value in span)
+            {
+                ReadOnlySpan<Byte> bytes = value.AsSpan();
+                bytes.CopyTo(destination.AsSpan().Slice(offset, bytes.Length));
+                offset += bytes.Length;
+            }
         }
     }
 }
