@@ -73,7 +73,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <typeparam name="TState">The type of the element to pass to <paramref name="action"/>.</typeparam>
         /// <param name="state">The element to pass to <paramref name="action"/>.</param>
         /// <param name="action">A callback to invoke.</param>
-        public void AsCStringSpan<TState>(TState state, CStringSequenceAction<TState> action)
+        public void TransformSpan<TState>(TState state, CStringSequenceAction<TState> action)
         {
             unsafe
             {
@@ -91,7 +91,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="state">The element to pass to <paramref name="func"/>.</param>
         /// <param name="func">A callback to invoke.</param>
         /// <returns>The result of <paramref name="func"/> execution.</returns>
-        public TResult AsCStringSpan<TState, TResult>(TState state, CStringSequenceFunc<TState, TResult> func)
+        public TResult TransformSpan<TState, TResult>(TState state, CStringSequenceFunc<TState, TResult> func)
         {
             unsafe
             {
@@ -115,7 +115,7 @@ namespace Rxmxnx.PInvoke.Extensions
         {
             Int32 cstrLength = this._lengths.Sum(x => x + 1);
             Byte[] result = new Byte[cstrLength];
-            this.AsCStringSpan(result, BinaryCopyTo);
+            this.TransformSpan(result, BinaryCopyTo);
             return result;
         }
 

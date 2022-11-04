@@ -120,8 +120,8 @@ namespace Rxmxnx.PInvoke.Extensions
                 Int32 typeSize = sizeof(T);
                 if (destination.Length - offset < typeSize)
                     throw new ArgumentException($"Insufficient available size on {nameof(destination)} to copy {nameof(value)}.");
-                void* pointer = Unsafe.AsPointer(ref Unsafe.AsRef(value));
-                new ReadOnlySpan<Byte>(pointer, typeSize).CopyTo(destination[offset..]);
+                void* ptr = Unsafe.AsPointer(ref Unsafe.AsRef(value));
+                new ReadOnlySpan<Byte>(ptr, typeSize).CopyTo(destination[offset..]);
             }
         }
 
@@ -130,15 +130,15 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </summary>
         /// <typeparam name="T">Unmanaged type of elements in <paramref name="span"/>.</typeparam>
         /// <typeparam name="TArg">Type of state object.</typeparam>
-        /// <param name="span">A <typeparamref name="TArg"/> writable memory block.</param>
+        /// <param name="span">A <typeparamref name="T"/> writable memory block.</param>
         /// <param name="arg">A <typeparamref name="TArg"/> instance.</param>
         /// <param name="action">A <see cref="SpanAction{T, TState}"/> delegate.</param>
         private static void WriteSpan<T, TArg>(Span<T> span, TArg arg, SpanAction<T, TArg> action) where T : unmanaged
         {
             unsafe
             {
-                fixed (T* prt = &MemoryMarshal.GetReference(span))
-                    action(new(prt, span.Length), arg);
+                fixed (T* ptr = &MemoryMarshal.GetReference(span))
+                    action(new(ptr, span.Length), arg);
             }
         }
     }
