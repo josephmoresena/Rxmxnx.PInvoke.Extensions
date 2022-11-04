@@ -87,7 +87,7 @@ namespace Rxmxnx.PInvoke.Extensions
     /// <typeparamref name="TArg"/>.
     /// </summary>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
-    /// <param name="span">A read-only span of objects of type <typeparamref name="T"/>.</param>
+    /// <param name="span">A binary read-only span.</param>
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
     public delegate void BinaryReadOnlySpanTransformAction<in TArg>(ReadOnlySpan<Byte> span, TArg arg);
 
