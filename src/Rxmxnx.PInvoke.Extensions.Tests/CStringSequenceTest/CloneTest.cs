@@ -14,11 +14,10 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringSequenceTest
         [Fact]
         internal void NormalTest()
         {
-            String value = TestUtilities.SharedFixture.Create<String>();
             CStringSequence sequence1 = new(TestUtilities.SharedFixture.Create<String>(), TestUtilities.SharedFixture.Create<String>());
             CStringSequence sequence2 = (CStringSequence)sequence1.Clone();
-            ReadOnlySpan<Char> span1 = sequence1.AsSpan(out CString[] output1);
-            ReadOnlySpan<Char> span2 = sequence2.AsSpan(out CString[] output2);
+            ReadOnlySpan<Char> span1 = sequence1.AsSpan(out CString[] _);
+            ReadOnlySpan<Char> span2 = sequence2.AsSpan(out CString[] _);
 
             Assert.Equal(sequence1, sequence2);
             Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(span1[0]), ref Unsafe.AsRef(span2[0])));

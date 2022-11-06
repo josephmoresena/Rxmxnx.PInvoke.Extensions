@@ -220,7 +220,9 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="arg">A <typeparamref name="TArg"/> instance.</param>
         /// <param name="func">A <see cref="SpanTransfromFunc{TDestination, TArg, TResult}"/> delegate.</param>
         /// <returns>The result of <paramref name="func"/> execution.</returns>
+#pragma warning disable S2436
         public static TResult Transform<TSource, TDestination, TArg, TResult>(this Span<TSource> span, TArg arg, SpanTransfromFunc<TDestination, TArg, TResult> func)
+#pragma warning restore S2436
             where TSource : unmanaged
             where TDestination : unmanaged
         {
@@ -247,7 +249,9 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="arg">A <typeparamref name="TArg"/> instance.</param>
         /// <param name="func">A <see cref="ReadOnlySpanTransfromFunc{TDestination, TArg, TResult}"/> delegate.</param>
         /// <returns>The result of <paramref name="func"/> execution.</returns>
+#pragma warning disable S2436
         public static TResult Transform<TSource, TDestination, TArg, TResult>(this ReadOnlySpan<TSource> span, TArg arg, ReadOnlySpanTransfromFunc<TDestination, TArg, TResult> func)
+#pragma warning restore S2436
             where TSource : unmanaged
             where TDestination : unmanaged
         {

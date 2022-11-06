@@ -380,7 +380,7 @@ namespace Rxmxnx.PInvoke.Extensions
         private Int32 GetDataLength(Int32 offset, Int32 length)
         {
             ReadOnlySpan<Byte> bytes = this._data;
-            bytes = bytes.Slice(offset);
+            bytes = bytes[offset..];
             if (bytes.Length > length && bytes[length] == default)
                 length++;
             return length;
