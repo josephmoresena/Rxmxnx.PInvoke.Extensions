@@ -13,6 +13,16 @@ namespace Rxmxnx.PInvoke.Extensions
 
     /// <summary>
     /// Encapsulates a method that receives a read-only span of <see cref="CString"/> instances and a state 
+    /// object of type <typeparamref name="TArg"/>.
+    /// </summary>
+    /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+    /// <param name="span">A binary span.</param>
+    /// <param name="index">Index of current sequence intem.</param>
+    /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
+    public delegate void CStringSequenceCreationAction<in TArg>(Span<Byte> span, Int32 index, TArg arg);
+
+    /// <summary>
+    /// Encapsulates a method that receives a read-only span of <see cref="CString"/> instances and a state 
     /// object of type <typeparamref name="TArg"/> and returns a value of the type specified by the 
     /// <typeparamref name="TResult"/> parameter.
     /// </summary>
