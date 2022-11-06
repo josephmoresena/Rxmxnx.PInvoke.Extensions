@@ -17,8 +17,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <see langword="true"/> if <see cref="IntPtr"/> instance is a <see langword="null"/> memory reference; 
         /// otherwise, <see langword="false"/>.
         /// </returns>
-        public static Boolean IsZero(this IntPtr ptr)
-            => ptr == IntPtr.Zero;
+        public static Boolean IsZero(this IntPtr ptr) => ptr == IntPtr.Zero;
 
         /// <summary>
         /// Indicates whether the <see cref="UIntPtr"/> pointer is a <see langword="null"/> memory reference.
@@ -28,8 +27,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <see langword="true"/> if <see cref="UIntPtr"/> instance is a <see langword="null"/> memory reference; 
         /// otherwise, <see langword="false"/>.
         /// </returns>
-        public static Boolean IsZero(this UIntPtr uptr)
-            => uptr == UIntPtr.Zero;
+        public static Boolean IsZero(this UIntPtr uptr) => uptr == UIntPtr.Zero;
 
         /// <summary>
         /// Creates a <see cref="UIntPtr"/> value from given <see cref="IntPtr"/> value.
@@ -122,8 +120,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <returns><see cref="ReadOnlySpan{T}"/> instance.</returns>
         /// <exception cref="ArgumentException"/>
         /// <exception cref="ArgumentOutOfRangeException"/>
-        public static ReadOnlySpan<T> AsReadOnlySpan<T>(this IntPtr ptr, Int32 length)
-            where T : unmanaged
+        public static ReadOnlySpan<T> AsReadOnlySpan<T>(this IntPtr ptr, Int32 length) where T : unmanaged
         {
             ValidateLengthParameter(length, nameof(length));
             if (ptr.IsZero())
@@ -148,8 +145,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <returns><see cref="ReadOnlySpan{T}"/> instance.</returns>
         /// <exception cref="ArgumentException"/>
         /// <exception cref="ArgumentOutOfRangeException"/>
-        public static ReadOnlySpan<T> AsReadOnlySpan<T>(this UIntPtr uptr, Int32 length)
-            where T : unmanaged
+        public static ReadOnlySpan<T> AsReadOnlySpan<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
         {
             ValidateLengthParameter(length, nameof(length));
             if (uptr.IsZero())
@@ -167,8 +163,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <typeparam name="T">Type of the <see cref="Delegate"/> referenced into the pointer.</typeparam>
         /// <param name="ptr"><see cref="IntPtr"/> pointer.</param>
         /// <returns><typeparamref name="T"/> delegate.</returns>
-        public static T? AsDelegate<T>(this IntPtr ptr)
-            where T : Delegate
+        public static T? AsDelegate<T>(this IntPtr ptr) where T : Delegate
             => !ptr.IsZero() ? Marshal.GetDelegateForFunctionPointer<T>(ptr) : default;
 
         /// <summary>
@@ -177,8 +172,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <typeparam name="T">Type of the <see cref="Delegate"/> referenced into the pointer.</typeparam>
         /// <param name="uptr"><see cref="UIntPtr"/> pointer.</param>
         /// <returns><typeparamref name="T"/> delegate.</returns>
-        public static T? AsDelegate<T>(this UIntPtr uptr)
-            where T : Delegate
+        public static T? AsDelegate<T>(this UIntPtr uptr) where T : Delegate
             => uptr.AsIntPtr().AsDelegate<T>();
 
         /// <summary>
@@ -188,8 +182,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <typeparam name="T"><see cref="ValueType"/> of the <see langword="unmanaged"/> referenced value.</typeparam>
         /// <param name="ptr"><see cref="IntPtr"/> pointer.</param>
         /// <returns>Memory reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</returns>
-        public static ref T AsReference<T>(this IntPtr ptr)
-            where T : unmanaged
+        public static ref T AsReference<T>(this IntPtr ptr) where T : unmanaged
         {
             unsafe
             {
@@ -204,8 +197,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <typeparam name="T"><see cref="ValueType"/> of the <see langword="unmanaged"/> referenced value.</typeparam>
         /// <param name="uptr"><see cref="UIntPtr"/> pointer.</param>
         /// <returns>Memory reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</returns>
-        public static ref T AsReference<T>(this UIntPtr uptr)
-            where T : unmanaged
+        public static ref T AsReference<T>(this UIntPtr uptr) where T : unmanaged
         {
             unsafe
             {

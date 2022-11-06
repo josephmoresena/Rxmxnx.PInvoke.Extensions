@@ -35,12 +35,48 @@ Provides a set of extensions for basic operations with Span&lt;T&gt; and ReadOnl
 Gets the signed pointer to referenced memory.
 * **AsUIntPtr&lt;T&gt;()**
 Gets the unsigned pointer to referenced memory.
+* **WithSafeFixed&lt;T, TArg&gt;(TArg arg, SpanAction&lt;T, TArg&gt; action)**
+Prevents the garbage collector from relocating the block of memory represented by span and 
+fixes its memory address until action finish.
+* **WithSafeFixed&lt;T, TArg, TResult&gt;(TArg arg, SpanFunc&lt;T, TArg, TResult&gt; func)**
+Prevents the garbage collector from relocating the block of memory represented by span and 
+fixes its memory address until func finish.
+* **Transform&lt;TSource, TDestination, TArg&gt;(TArg arg, SpanTransformAction&lt;TDestination, TArg&gt; action)**
+Transforms span to a Span&lt;TDestination&gt; instance and invokes action.
+* **Transform&lt;TSource, TDestination, TArg, TResult&gt;(TArg arg, SpanTransfromFunc&lt;TDestination, TArg, TResult&gt; func)**
+Transforms span to a Span&lt;TDestination&gt; instance and invokes func.
+* **BinaryTransform&lt;TSource, TArg&gt;(TArg arg, BinarySpanTransformAction&lt;TArg&gt; action)**
+Transforms span to a  Span&lt;Byte&gt; instance instance and invokes action.
 
 ### ReadOnlySpan&lt;T&gt;
 * **AsIntPtr&lt;T&gt;()**
 Gets the signed pointer to referenced memory.
 * **AsUIntPtr&lt;T&gt;()**
 Gets the unsigned pointer to referenced memory.
+* **WithSafeFixed&lt;T, TArg&gt;(TArg arg, ReadOnlySpanAction&lt;T, TArg&gt; action)**
+Prevents the garbage collector from relocating the block of memory represented by read-only span and 
+fixes its memory address until action finish.
+* **WithSafeFixed&lt;T, TArg, TResult&gt;(TArg arg, ReadOnlySpanFunc&lt;T, TArg, TResult&gt; func)**
+Prevents the garbage collector from relocating the block of memory represented by span and 
+fixes its memory address until func finish.
+* **Transform&lt;TSource, TDestination, TArg&gt;(TArg arg, ReadOnlySpanTransformAction&lt;TDestination, TArg&gt; action)**
+Transforms span to a ReadOnlySpan&lt;TDestination&gt; instance and invokes action.
+* **Transform&lt;TSource, TDestination, TArg, TResult&gt;(TArg arg, ReadOnlySpanTransfromFunc&lt;TDestination, TArg, TResult&gt; func)**
+Transforms span to a ReadOnlySpan&lt;TDestination&gt; instance and invokes func.
+* **BinaryTransform&lt;TSource, TArg&gt;(TArg arg, BinaryReadOnlySpanTransformAction&lt;TArg&gt; action)**
+Transforms span to a ReadOnlySpan&lt;Byte&gt; instance instance and invokes action.
+
+### ReadOnlySpan&lt;Byte&gt;
+* **BinaryTransform&lt;TDestination, TArg&gt;(TArg arg, SpanTransformAction&lt;TDestination, TArg&gt; action)**
+Transforms span to a Span&lt;TDestination&gt; instance and invokes action.
+* **BinaryTransform&lt;TDestination, TArg, TResult&gt;(TArg arg, SpanTransformFunc&lt;TDestination, TArg, TResult&gt; func)**
+Transforms span to a Span&lt;TDestination&gt; instance and invokes func.
+
+### ReadOnlySpan&lt;Byte&gt;
+* **BinaryTransform&lt;TDestination, TArg&gt;(TArg arg, ReadOnlySpanTransformAction&lt;TDestination, TArg&gt; action)**
+Transforms span to a ReadOnlySpan&lt;TDestination&gt; instance and invokes action.
+* **BinaryTransform&lt;TDestination, TArg, TResult&gt;(TArg arg, ReadOnlySpanTransformFunc&lt;TDestination, TArg, TResult&gt; func)**
+Transforms span to a ReadOnlySpan&lt;TDestination&gt; instance and invokes func.
 
 ## PointerExtensions
 Provides a set of extensions for basic operations with both signed and unsigned pointers.
@@ -123,6 +159,15 @@ Gets the number of CString contained in CStringSequence.
 * **AsSpan(out CString[] output)**
 Retrieves the buffer as an ReadOnlySpan<Char> instance and creates a CString array which represents 
 text sequence. The output CString array will remain valid only as long as returned buffer span is on live.
+* **ToCString()**
+Returns a CString that represents the current object.
+* **Create&lt;TState&gt;(TState state, CStringSequenceCreationAction&lt;TState&gt; action, params Int32[] lengths)**
+Creates a new UTF-8 text sequence with a specific lengths and initializes each UTF-8 texts into it after 
+creation by using the specified callback.
+* **Transform&lt;TState&gt;(TState state, CStringSequenceAction&lt;TState&gt; action)**
+Use current instance as ReadOnlySpan&lt;CString&gt; instance and state as parameters for action delegate.
+* **Transform<TState, TResult>(TState state, CStringSequenceFunc<TState, TResult> func)**
+Use current instance as ReadOnlySpan&lt;CString&gt; instance and state as parameters for action delegate.
 
 ## InputValue
 Supports a value type that can be referenced.
@@ -147,6 +192,11 @@ Loads a native library and appends its unloading to given EventHandler delegate.
 Gets a generic delegate which points to a exported symbol into native library.
 * **AsBytes&lt;T&gt;(in T value)**
 Gets the binary data of an input generic value.
+* **CreateArray&lt;T, TState&gt;(Int32 length, TState state, SpanAction&lt;T, TState&gt; action)**
+Creates a new T array with a specific length and initializes it after creation by using the specified callback.
+* **BinaryCopyTo&lt;T&gt;(in T value, Span&lt;TByte&gt; destination, Int32 offset = default)**
+Preforms a binary copy of value to destination span.
+
 
 ## TextUtilites
 Provides a set of utilities for texts.

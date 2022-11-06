@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -15,9 +16,13 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </summary>
         /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
         /// <returns>Size of <typeparamref name="T"/> structure.</returns>
-        public static Int32 SizeOf<T>()
-            where T : unmanaged
-            => Unsafe.SizeOf<T>();
+        public static Int32 SizeOf<T>() where T : unmanaged
+        {
+            unsafe
+            {
+                return sizeof(T);
+            }
+        }
 
         /// <summary>
         /// Provides a high-level API for loading a native library.
@@ -56,8 +61,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="handle">The native library OS handle.</param>
         /// <param name="name">The name of the exported symbol.</param>
         /// <returns><typeparamref name="T"/> delegate.</returns>
-        public static T? GetNativeMethod<T>(IntPtr handle, String name)
-            where T : Delegate
+        public static T? GetNativeMethod<T>(IntPtr handle, String name) where T : Delegate
         {
             if (!handle.IsZero() && NativeLibrary.TryGetExport(handle, name ?? String.Empty, out IntPtr address))
                 return address.AsDelegate<T>();
@@ -70,8 +74,72 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
         /// <param name="value"><typeparamref name="T"/> value.</param>
         /// <returns><see cref="Byte"/> array.</returns>
-        public static Byte[] AsBytes<T>(in T value)
-            where T : unmanaged
-            => Unsafe.AsRef(value).AsIntPtr().AsReadOnlySpan<Byte>(NativeUtilities.SizeOf<T>()).ToArray();
+        public static Byte[] AsBytes<T>(in T value) where T : unmanaged
+        {
+            unsafe
+            {
+                Byte[] result = new Byte[sizeof(T)];
+                void* pointer = Unsafe.AsPointer(ref Unsafe.AsRef(value));
+                new ReadOnlySpan<Byte>(pointer, result.Length).CopyTo(result);
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Creates a new <typeparamref name="T"/> array with a specific length and initializes it after 
+        /// creation by using the specified callback.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the array.</typeparam>
+        /// <typeparam name="TState">The type of the element to pass to <paramref name="action"/>.</typeparam>
+        /// <param name="length">The length of the array to create.</param>
+        /// <param name="state">The element to pass to <paramref name="action"/>.</param>
+        /// <param name="action">A callback to initialize the array.</param>
+        /// <returns>The created array.</returns>
+        public static T[] CreateArray<T, TState>(Int32 length, TState state, SpanAction<T, TState> action) where T : unmanaged
+        {
+            T[] result = new T[length];
+            Span<T> span = result;
+            WriteSpan(span, state, action);
+            return result;
+        }
+
+        /// <summary>
+        /// Preforms a binary copy of <paramref name="value"/> to <paramref name="destination"/> span.
+        /// </summary>
+        /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
+        /// <param name="value"><typeparamref name="T"/> value.</param>
+        /// <param name="destination">Destination <see cref="Span{T}"/> instance.</param>
+        /// <param name="offset">
+        /// The offset in <paramref name="destination"/> at which <paramref name="value"/> copying begins.
+        /// </param>
+        /// <exception cref="ArgumentException"/>
+        public static void BinaryCopyTo<T>(in T value, Span<Byte> destination, Int32 offset = 0) where T : unmanaged
+        {
+            unsafe
+            {
+                Int32 typeSize = sizeof(T);
+                if (destination.Length - offset < typeSize)
+                    throw new ArgumentException($"Insufficient available size on {nameof(destination)} to copy {nameof(value)}.");
+                void* ptr = Unsafe.AsPointer(ref Unsafe.AsRef(value));
+                new ReadOnlySpan<Byte>(ptr, typeSize).CopyTo(destination[offset..]);
+            }
+        }
+
+        /// <summary>
+        /// Writes <paramref name="span"/> using <paramref name="arg"/> and <paramref name="action"/>.
+        /// </summary>
+        /// <typeparam name="T">Unmanaged type of elements in <paramref name="span"/>.</typeparam>
+        /// <typeparam name="TArg">Type of state object.</typeparam>
+        /// <param name="span">A <typeparamref name="T"/> writable memory block.</param>
+        /// <param name="arg">A <typeparamref name="TArg"/> instance.</param>
+        /// <param name="action">A <see cref="SpanAction{T, TState}"/> delegate.</param>
+        private static void WriteSpan<T, TArg>(Span<T> span, TArg arg, SpanAction<T, TArg> action) where T : unmanaged
+        {
+            unsafe
+            {
+                fixed (T* ptr = &MemoryMarshal.GetReference(span))
+                    action(new(ptr, span.Length), arg);
+            }
+        }
     }
 }

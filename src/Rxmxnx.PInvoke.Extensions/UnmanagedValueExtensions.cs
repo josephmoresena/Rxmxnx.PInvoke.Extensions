@@ -16,8 +16,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
         /// <param name="value"><typeparamref name="T"/> value.</param>
         /// <returns><see cref="Byte"/> array.</returns>
-        public static Byte[] AsBytes<T>(this T value)
-            where T : unmanaged
+        public static Byte[] AsBytes<T>(this T value) where T : unmanaged
             => NativeUtilities.AsBytes(value);
 
         /// <summary>

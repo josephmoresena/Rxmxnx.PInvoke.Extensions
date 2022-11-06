@@ -67,7 +67,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <param name="values">Next values.</param>
         /// <returns>Concatenation with UTF-8 encoding.</returns>
         public static Byte[]? Join(Byte separator, IEnumerable<Byte[]?>? values)
-            => Join(new[] { separator }, values);
+            => Join(stackalloc Byte[] { separator }, values);
 
         /// <summary>
         /// Creates an <see cref="Byte"/> array which contains the concatenation of any UTF-8 text argument.

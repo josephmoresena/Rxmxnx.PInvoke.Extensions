@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Runtime.InteropServices;
 
 namespace Rxmxnx.PInvoke.Extensions
 {
@@ -46,7 +46,18 @@ namespace Rxmxnx.PInvoke.Extensions
         private CStringSequence(CStringSequence sequence)
         {
             this._lengths = sequence._lengths.ToArray();
-            this._value = new(sequence._value.ToCharArray());
+            this._value = String.Create(sequence._value.Length, sequence, CopySequence);
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="value">Internal buffer.</param>
+        /// <param name="lengths">Collection of text length for buffer interpretation.</param>
+        private CStringSequence(String value, Int32[] lengths)
+        {
+            this._value = value;
+            this._lengths = lengths;
         }
 
         /// <summary>
@@ -67,11 +78,57 @@ namespace Rxmxnx.PInvoke.Extensions
         }
 
         /// <summary>
+        /// Use current instance as <see cref="ReadOnlySpan{CString}"/> instance and <paramref name="state"/>
+        /// as parameters for <paramref name="action"/> delegate.
+        /// </summary>
+        /// <typeparam name="TState">The type of the element to pass to <paramref name="action"/>.</typeparam>
+        /// <param name="state">The element to pass to <paramref name="action"/>.</param>
+        /// <param name="action">A callback to invoke.</param>
+        public void Transform<TState>(TState state, CStringSequenceAction<TState> action)
+        {
+            unsafe
+            {
+                fixed (void* ptr = &MemoryMarshal.GetReference(this.AsSpan(out CString[] output)))
+                    action(output, state);
+            }
+        }
+
+        /// <summary>
+        /// Use current instance as <see cref="ReadOnlySpan{CString}"/> instance and <paramref name="state"/>
+        /// as parameters for <paramref name="func"/> delegate.
+        /// </summary>
+        /// <typeparam name="TState">The type of the element to pass to <paramref name="func"/>.</typeparam>
+        /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
+        /// <param name="state">The element to pass to <paramref name="func"/>.</param>
+        /// <param name="func">A callback to invoke.</param>
+        /// <returns>The result of <paramref name="func"/> execution.</returns>
+        public TResult Transform<TState, TResult>(TState state, CStringSequenceFunc<TState, TResult> func)
+        {
+            unsafe
+            {
+                fixed (void* ptr = &MemoryMarshal.GetReference(this.AsSpan(out CString[] output)))
+                    return func(output, state);
+            }
+        }
+
+        /// <summary>
         /// Returns a reference to this instance of <see cref="CStringSequence"/>.
         /// </summary>
         /// <returns>A new object that is a copy of this instance.</returns>
         /// <exception cref="NotImplementedException"></exception>
         public Object Clone() => new CStringSequence(this);
+
+        /// <summary>
+        /// Returns a <see cref="CString"/> that represents the current object.
+        /// </summary>
+        /// <returns>A <see cref="CString"/> that represents the current object.</returns>
+        public CString ToCString()
+        {
+            Int32 bytesLength = this._lengths.Where(x => x > 0).Sum(x => x + 1);
+            Byte[] result = new Byte[bytesLength];
+            this.Transform(result, BinaryCopyTo);
+            return result;
+        }
 
         /// <summary>
         /// Indicates whether the current <see cref="CStringSequence"/> is equal to another <see cref="CStringSequence"/> 
@@ -109,6 +166,30 @@ namespace Rxmxnx.PInvoke.Extensions
         public override Int32 GetHashCode() => this._value.GetHashCode();
 
         /// <summary>
+        /// Creates a new UTF-8 text sequence with a specific <paramref name="lengths"/> and initializes each
+        /// UTF-8 texts into it after creation by using the specified callback.
+        /// </summary>
+        /// <typeparam name="TState">The type of the element to pass to <paramref name="action"/>.</typeparam>
+        /// <param name="lengths">The lengths of the UTF-8 text sequence to create.</param>
+        /// <param name="state">The element to pass to <paramref name="action"/>.</param>
+        /// <param name="action">A callback to initialize each <see cref="CString"/>.</param>
+        /// <returns>The create UTF-8 text sequence.</returns>
+        public static CStringSequence Create<TState>(TState state, CStringSequenceCreationAction<TState> action, params Int32[] lengths)
+        {
+            Int32 bytesLength = lengths.Where(x => x > 0).Sum(x => x + 1);
+            Int32 length = bytesLength / sizeOfChar + (bytesLength % sizeOfChar);
+            String buffer = String.Create(length, state, (span, state) =>
+            {
+                unsafe
+                {
+                    fixed (void* ptr = &MemoryMarshal.GetReference(span))
+                        CreateCStringSequence(new(ptr), lengths, state, action);
+                }
+            });
+            return new(buffer, lengths);
+        }
+
+        /// <summary>
         /// Retrieves the sequence of <see cref="CString"/> based on the buffer and lengths.
         /// </summary>
         /// <param name="ptr">Buffer pointer.</param>
@@ -138,84 +219,94 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </returns>
         private static String CreateBuffer(Int32[] lengths, CString?[] values)
         {
-            Int32 count = lengths.Sum() + lengths.Length - 1;
-            StringBuilder strBuild = new(count / sizeOfChar + count % sizeOfChar);
-            Byte? previous = default;
+            Int32 totalBytes = 0;
             for (Int32 i = 0; i < lengths.Length; i++)
-                CopyText(strBuild, values[i], ref previous);
-            if (previous.HasValue && previous.Value != default)
-                WriteBytesAsChar(strBuild, previous.Value, default);
-            return strBuild.ToString();
+                if (values[i] is CString value && value.Length > 0)
+                    totalBytes += value.Length + 1;
+            Int32 totalChars = (totalBytes / sizeOfChar) + (totalBytes % sizeOfChar);
+            return String.Create(totalChars, values, CopyText);
         }
 
         /// <summary>
-        /// Copy the UTF-8 into the buffer builder.
+        /// Copy the content of <see cref="CString"/> items in <paramref name="values"/> to
+        /// <paramref name="charSpan"/> span.
         /// </summary>
-        /// <param name="strBuild">Buffer builder.</param>
-        /// <param name="cstr">UTF-8 text.</param>
-        /// <param name="previous">
-        /// <list type="table">
-        /// <item>
-        /// <term>Input</term>
-        /// <description>Pending UTF-8 character from previous method call.</description>
-        /// </item>
-        /// <item>
-        /// <term>Output</term>
-        /// <description>Pending UTF-8 character to next method call.</description>
-        /// </item>
-        /// </list>
-        /// </param>
-        private static void CopyText(StringBuilder strBuild, CString? cstr, ref Byte? previous)
+        /// <param name="charSpan">A writable <see cref="Char"/> span.</param>
+        /// <param name="values">A enumeration of <see cref="CString"/> items.</param>
+        private static void CopyText(Span<Char> charSpan, CString?[] values)
         {
-            if (!CString.IsNullOrEmpty(cstr))
+            Int32 position = 0;
+            unsafe
             {
-                Int32 offset = WriteFirstChar(strBuild, previous, cstr);
-                ReadOnlySpan<Byte> span = cstr;
-                Int32 desiredSize = cstr.Length - offset;
-
-                if (desiredSize > 0)
+                fixed (void* charsPtr = &MemoryMarshal.GetReference(charSpan))
                 {
-                    Int32 charSpanLength = desiredSize / sizeOfChar;
-                    ReadOnlySpan<Char> chars = (span.AsIntPtr() + offset).AsReadOnlySpan<Char>(charSpanLength);
-                    foreach (Char c in chars)
-                        strBuild.Append(c);
-                    previous = desiredSize % sizeOfChar != 0 ? cstr[^1] : default;
+                    Span<Byte> byteSpan = new(charsPtr, charSpan.Length * sizeOfChar);
+                    for (Int32 i = 0; i < values.Length; i++)
+                        if (values[i] is CString value && value.Length > 0)
+                        {
+                            ReadOnlySpan<Byte> valueSpan = value.AsSpan();
+                            valueSpan.CopyTo(byteSpan.Slice(position));
+                            position += valueSpan.Length;
+                            if (!value.IsNullTerminated)
+                            {
+                                byteSpan[position] = default;
+                                position++;
+                            }
+                        }
                 }
             }
         }
 
         /// <summary>
-        /// Writes the first character at the beginning of all UTF-8 texts after the first into 
-        /// the buffer builder.
+        /// Copy the content of <paramref name="sequence"/> to <paramref name="charSpan"/>.
         /// </summary>
-        /// <param name="strBuild">Buffer builder.</param>
-        /// <param name="previous">Pending UTF-8 character from previous method call.</param>
-        /// <param name="cstr">Current UTF-8 text.</param>
-        /// <returns>Offset for current text writing.</returns>
-        private static Int32 WriteFirstChar(StringBuilder strBuild, Byte? previous, CString cstr)
+        /// <param name="charSpan">A writable <see cref="Char"/> span.</param>
+        /// <param name="sequence">A <see cref="CStringSequence"/> instance.</param>
+        private static void CopySequence(Span<Char> charSpan, CStringSequence sequence)
         {
-            Int32 result = 0;
-            if (previous.HasValue)
-            {
-                Boolean previousDefault = previous.Value == default;
-                WriteBytesAsChar(strBuild, previous.Value, previousDefault ? cstr[0] : default);
-                result = previousDefault ? 1 : 0;
-            }
-            return result;
+            ReadOnlySpan<Char> chars = sequence._value;
+            chars.CopyTo(charSpan);
         }
 
         /// <summary>
-        /// Writes two UTF-8 characters as single UTF-16 into the buffer builder.
+        /// Preforms a binary copy of all non-empty <paramref name="span"/> to 
+        /// <paramref name="destination"/> span.
         /// </summary>
-        /// <param name="strBuild">Buffer builder.</param>
-        /// <param name="previous">Pending UTF-8 character from previous method call.</param>
-        /// <param name="current">Current UTF-8 character.</param>
-        private static void WriteBytesAsChar(StringBuilder strBuild, Byte previous, Byte current)
+        /// <param name="span">A read-only <see cref="CString"/> span instance.</param>
+        /// <param name="destination">The destination binary buffer.</param>
+        private static void BinaryCopyTo(ReadOnlySpan<CString> span, Byte[] destination)
         {
-            Byte[] firstChar = new Byte[sizeOfChar];
-            firstChar[0] = previous;
-            firstChar[1] = current;
-            strBuild.Append(firstChar.AsValue<Char>());
+            Int32 offset = 0;
+            foreach (CString value in span)
+                if (value.Length > 0)
+                {
+                    ReadOnlySpan<Byte> bytes = value.AsSpan();
+                    bytes.CopyTo(destination.AsSpan().Slice(offset, bytes.Length));
+                    offset += bytes.Length;
+                }
+        }
+
+        /// <summary>
+        /// Performs the creation of the UTF-8 text sequence with a specific <paramref name="lengths"/> and 
+        /// whose buffer is referenced by <paramref name="bufferPtr"/>. 
+        /// Each UTF-8 text is initialized using the specified callback.
+        /// </summary>
+        /// <typeparam name="TState">The type of the element to pass to <paramref name="action"/>.</typeparam>
+        /// <param name="bufferPtr">Pointer to internal <see cref="CStringSequence"/> buffer.</param>
+        /// <param name="lengths">The lengths of the UTF-8 text sequence to create.</param>
+        /// <param name="state">The element to pass to <paramref name="action"/>.</param>
+        /// <param name="action">A callback to initialize each <see cref="CString"/>.</param>
+        private static unsafe void CreateCStringSequence<TState>(IntPtr bufferPtr, Int32[] lengths, TState state, CStringSequenceCreationAction<TState> action)
+        {
+            Int32 offset = 0;
+            for (Int32 i = 0; i < lengths.Length; i++)
+                if (lengths[i] > 0)
+                {
+                    IntPtr currentPtr = bufferPtr + offset;
+                    Span<Byte> bytes = new(currentPtr.ToPointer(), lengths[i]);
+                    action(bytes, i, state);
+                    offset += lengths[i] + 1;
+                }
         }
     }
 }

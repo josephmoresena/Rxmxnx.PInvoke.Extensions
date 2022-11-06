@@ -117,9 +117,9 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringSequenceTest
             .ToArray();
 
         private static Int32 GetExpectedTextLength(CString[] allValues)
-            => allValues.Where(x => !CString.IsNullOrEmpty(x)).Select(x => x.Length + 1).Sum() - 1;
+            => allValues.Where(x => !CString.IsNullOrEmpty(x)).Select(x => x.Length + 1).Sum();
 
         private static Int32 GetExpectedStringLength(Int32 expectedTextLength)
-            => expectedTextLength / sizeof(Char) + expectedTextLength % sizeof(Char);
+            => (expectedTextLength / sizeof(Char)) + (expectedTextLength % sizeof(Char));
     }
 }

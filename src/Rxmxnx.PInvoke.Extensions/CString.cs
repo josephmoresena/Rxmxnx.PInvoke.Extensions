@@ -69,6 +69,25 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </exception>
         [IndexerName("Position")]
         public Byte this[Int32 index] => this._data[index];
+        /// <summary>
+        /// Gets a <see cref="CString"/> instance at specified range from current <see cref="CString"/> instace.
+        /// </summary>
+        /// <param name="range"></param>
+        /// <returns><see cref="CString"/> range.</returns>
+        [IndexerName("Position")]
+        public CString this[Range range]
+        {
+            get
+            {
+                (Int32 offset, Int32 length) = range.GetOffsetAndLength(this._length);
+                Boolean inRange = offset < this._length && length <= this._length;
+                if (inRange && this._length > 0 && length == 0)
+                    return CString.Empty;
+                else if (!inRange)
+                    throw new ArgumentOutOfRangeException(nameof(range));
+                return new(this, offset, length);
+            }
+        }
 
         /// <summary>
         /// Gets the number of bytes in the current <see cref="CString"/> object.
@@ -89,6 +108,10 @@ namespace Rxmxnx.PInvoke.Extensions
         /// not contained by.
         /// </summary>
         public Boolean IsReference => !this._isLocal;
+        /// <summary>
+        /// Indicates whether the current instance is segmented.
+        /// </summary>
+        public Boolean IsSegmented => this._isLocal && ((Byte[]?)this._data) is null;
 
         /// <summary>
         /// Private constructor.
@@ -100,6 +123,22 @@ namespace Rxmxnx.PInvoke.Extensions
             this._data = ValueRegion<Byte>.Create(bytes);
             this._isNullTerminated = bytes.Any() && bytes[^1] == default;
             this._length = bytes.Length - (this._isNullTerminated ? 1 : 0);
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="value">A <see cref="CString"/> value.</param>
+        /// <param name="offset">Offset for range.</param>
+        /// <param name="length">Length of range.</param>
+        private CString(CString value, Int32 offset, Int32 length)
+        {
+            this._isLocal = value._isLocal;
+            this._data = ValueRegion<Byte>.Create(value._data, offset, value.GetDataLength(offset, length));
+
+            ReadOnlySpan<Byte> data = this._data;
+            this._isNullTerminated = data.Length > 0 && data[^1] == default;
+            this._length = data.Length - (this._isNullTerminated ? 1 : 0);
         }
 
         /// <summary>
@@ -168,8 +207,19 @@ namespace Rxmxnx.PInvoke.Extensions
         /// Returns a reference to this instance of <see cref="CString"/>.
         /// </summary>
         /// <returns>A new object that is a copy of this instance.</returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public Object Clone() => new CString(this._data.ToArray());
+        public Object Clone()
+        {
+            Byte[] bytes;
+            if (this._isNullTerminated)
+                bytes = this._data.ToArray();
+            else
+            {
+                ReadOnlySpan<Byte> data = this._data;
+                bytes = new Byte[this._length + 1];
+                data.CopyTo(bytes);
+            }
+            return new CString(bytes);
+        }
 
         /// <summary>
         /// Indicates whether the current <see cref="CString"/> is equal to another <see cref="CString"/> 
@@ -321,6 +371,22 @@ namespace Rxmxnx.PInvoke.Extensions
         }
 
         /// <summary>
+        /// Calculates the data length of a segment of current <see cref="CString"/> whose 
+        /// offset is <paramref name="offset"/> and whose length is <paramref name="length"/>.
+        /// </summary>
+        /// <param name="offset">Offset for segment.</param>
+        /// <param name="length">Initial length for segment.</param>
+        /// <returns>Final length for segment.</returns>
+        private Int32 GetDataLength(Int32 offset, Int32 length)
+        {
+            ReadOnlySpan<Byte> bytes = this._data;
+            bytes = bytes[offset..];
+            if (bytes.Length > length && bytes[length] == default)
+                length++;
+            return length;
+        }
+
+        /// <summary>
         /// Hash calculation for instances whose length and termination allow it to be treated 
         /// as a sequence of UTF-16 units.
         /// </summary>
@@ -350,6 +416,22 @@ namespace Rxmxnx.PInvoke.Extensions
         private Task GetWriteTask(Stream strm)
             => (Byte[]?)this._data is Byte[] array ? strm.WriteAsync(array, 0, this._length) :
             Task.Run(() => { strm.Write(this.AsSpan()[0..this._length]); });
+
+        /// <summary>
+        /// Retrieves the equality parameters for current <see cref="CString"/> instance.
+        /// </summary>
+        /// <typeparam name="TInteger">Type used for integer comparision.</typeparam>
+        /// <param name="offset">Output. Calculated offset.</param>
+        /// <param name="count">Output. Calculated count.</param>
+        private void GetEqualityParameters<TInteger>(out Int32 offset, out Int32 count) where TInteger : unmanaged
+        {
+            unsafe
+            {
+                Int32 sizeofT = sizeof(TInteger);
+                offset = this._length % sizeofT;
+                count = (this._length - offset) / sizeofT;
+            }
+        }
 
         /// <summary>
         /// Retrives a <see cref="EqualsDelegate"/> delegate for native comparision.
@@ -384,9 +466,7 @@ namespace Rxmxnx.PInvoke.Extensions
             ReadOnlySpan<Byte> thisSpan = current;
             ReadOnlySpan<Byte> otherSpan = other;
 
-            Int32 sizeofT = NativeUtilities.SizeOf<TInteger>();
-            Int32 offset = current._length % sizeofT;
-            Int32 count = (current._length - offset) / sizeofT;
+            current.GetEqualityParameters<TInteger>(out Int32 offset, out Int32 count);
 
             for (Int32 i = current._length - offset; i < current._length; i++)
                 if (!thisSpan[i].Equals(otherSpan[i]))
