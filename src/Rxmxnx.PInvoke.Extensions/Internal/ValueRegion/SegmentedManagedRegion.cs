@@ -50,7 +50,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
                 this._array = region.AsArray()!;
                 this._offset = offset;
                 this._end = this._offset + length;
-                this._isSegmented = offset != default || length != region.AsArray()!.Length;
+                this._isSegmented = offset != default || this._end != region.AsArray()!.Length;
             }
 
             /// <summary>
