@@ -165,7 +165,6 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <returns>A hash code for the current object.</returns>
         public override Int32 GetHashCode() => this._value.GetHashCode();
 
-
         /// <summary>
         /// Creates a new UTF-8 text sequence with a specific <paramref name="lengths"/> and initializes each
         /// UTF-8 texts into it after creation by using the specified callback.

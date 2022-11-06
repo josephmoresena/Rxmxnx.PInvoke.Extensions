@@ -352,7 +352,7 @@ namespace Rxmxnx.PInvoke.Extensions
             where TDestination : unmanaged
         {
             Int32 byteLength = srcInput * sizeof(TSource);
-            Int32 typeSize = sizeof(TSource);
+            Int32 typeSize = sizeof(TDestination);
             Int32 desLength = byteLength / typeSize;
             Int32 resOffset = desLength * typeSize;
             Int32 resLength = byteLength - resOffset;

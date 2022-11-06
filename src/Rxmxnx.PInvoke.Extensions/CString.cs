@@ -370,7 +370,6 @@ namespace Rxmxnx.PInvoke.Extensions
                 throw new InvalidOperationException(nameof(value) + " does not contains the UTF-8 text.");
         }
 
-
         /// <summary>
         /// Calculates the data length of a segment of current <see cref="CString"/> whose 
         /// offset is <paramref name="offset"/> and whose length is <paramref name="length"/>.

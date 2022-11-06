@@ -125,6 +125,9 @@ Retrieves the buffer as an ReadOnlySpan<Char> instance and creates a CString arr
 text sequence. The output CString array will remain valid only as long as returned buffer span is on live.
 * **ToCString()**
 Returns a CString that represents the current object.
+* **Create&lt;TState&gt;(TState state, CStringSequenceCreationAction&lt;TState&gt; action, params Int32[] lengths)**
+Creates a new UTF-8 text sequence with a specific lengths and initializes each UTF-8 texts into it after 
+creation by using the specified callback.
 
 ## InputValue
 Supports a value type that can be referenced.
