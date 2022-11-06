@@ -16,11 +16,6 @@ namespace Rxmxnx.PInvoke.Extensions
         internal const Int32 sizeOfChar = sizeof(Char);
 
         /// <summary>
-        /// Represents an empty UTF-8 string sequence. This field is read-only.
-        /// </summary>
-        public static CStringSequence Empty = new(String.Empty, Array.Empty<Int32>());
-
-        /// <summary>
         /// Internal buffer.
         /// </summary>
         private readonly String _value;
