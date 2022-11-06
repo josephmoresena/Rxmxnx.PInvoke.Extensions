@@ -65,7 +65,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.UnmanagedValueExtensionsTest
             where TTo : unmanaged
         {
             TFrom[] inputArray = input.HasValue ? input.Value ?
-                TestUtilities.SharedFixture.CreateMany<TFrom>(120).ToArray() : Array.Empty<TFrom>() : default;
+                TestUtilities.SharedFixture.CreateMany<TFrom>(220).ToArray() : Array.Empty<TFrom>() : default;
             TTo[] result = inputArray.AsValues<TFrom, TTo>();
             if (!input.HasValue)
                 Assert.Null(result);
