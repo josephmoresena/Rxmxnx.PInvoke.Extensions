@@ -35,12 +35,48 @@ Provides a set of extensions for basic operations with Span&lt;T&gt; and ReadOnl
 Gets the signed pointer to referenced memory.
 * **AsUIntPtr&lt;T&gt;()**
 Gets the unsigned pointer to referenced memory.
+* **WithSafeFixed&lt;T, TArg&gt;(TArg arg, SpanAction&lt;T, TArg&gt; action)**
+Prevents the garbage collector from relocating the block of memory represented by span and 
+fixes its memory address until action finish.
+* **WithSafeFixed&lt;T, TArg&gt;(TArg arg, SpanFunc&lt;T, TArg&gt; func)**
+Prevents the garbage collector from relocating the block of memory represented by span and 
+fixes its memory address until func finish.
+* **Transform&lt;TSource, TDestination, TArg&gt;(TArg arg, SpanTransformAction&lt;TDestination, TArg&gt; action)**
+Transforms span to a Span&lt;TDestination&gt; instance and invokes action.
+* **Transform&lt;TSource, TDestination, TArg, TResult&gt;(TArg arg, SpanTransfromFunc&lt;TDestination, TArg, TResult&gt; func)**
+Transforms span to a Span&lt;TDestination&gt; instance and invokes func.
+* **BinaryTransform&lt;TSource, TArg&gt;(TArg arg, BinarySpanTransformAction&lt;TArg&gt; action)**
+Transforms span to a  Span&lt;Byte&gt; instance instance and invokes action.
 
 ### ReadOnlySpan&lt;T&gt;
 * **AsIntPtr&lt;T&gt;()**
 Gets the signed pointer to referenced memory.
 * **AsUIntPtr&lt;T&gt;()**
 Gets the unsigned pointer to referenced memory.
+* **WithSafeFixed&lt;T, TArg&gt;(TArg arg, ReadOnlySpanAction&lt;T, TArg&gt; action)**
+Prevents the garbage collector from relocating the block of memory represented by read-only span and 
+fixes its memory address until action finish.
+* **WithSafeFixed&lt;T, TArg&gt;(TArg arg, ReadOnlySpanFunc&lt;T, TArg&gt; func)**
+Prevents the garbage collector from relocating the block of memory represented by span and 
+fixes its memory address until func finish.
+* **Transform&lt;TSource, TDestination, TArg&gt;(TArg arg, ReadOnlySpanTransformAction&lt;TDestination, TArg&gt; action)**
+Transforms span to a ReadOnlySpan&lt;TDestination&gt; instance and invokes action.
+* **Transform&lt;TSource, TDestination, TArg, TResult&gt;(TArg arg, ReadOnlySpanTransfromFunc&lt;TDestination, TArg, TResult&gt; func)**
+Transforms span to a ReadOnlySpan&lt;TDestination&gt; instance and invokes func.
+* **BinaryTransform&lt;TSource, TArg&gt;(TArg arg, BinaryReadOnlySpanTransformAction&lt;TArg&gt; action)**
+Transforms span to a ReadOnlySpan&lt;Byte&gt; instance instance and invokes action.
+
+### ReadOnlySpan&lt;Byte&gt;
+* **BinaryTransform&lt;TDestination, TArg&gt;(TArg arg, SpanTransformAction&lt;TDestination, TArg&gt; action)**
+Transforms span to a Span&lt;TDestination&gt; instance and invokes action.
+* **BinaryTransform&lt;TDestination, TArg&gt;(TArg arg, SpanTransformFunc&lt;TDestination, TArg&gt; func)**
+Transforms span to a Span&lt;TDestination&gt; instance and invokes func.
+
+### ReadOnlySpan&lt;Byte&gt;
+* **BinaryTransform&lt;TDestination, TArg&gt;(TArg arg, ReadOnlySpanTransformAction&lt;TDestination, TArg&gt; action)**
+Transforms span to a ReadOnlySpan&lt;TDestination&gt; instance and invokes action.
+* **BinaryTransform&lt;TDestination, TArg&gt;(TArg arg, ReadOnlySpanTransformFunc&lt;TDestination, TArg&gt; func)**
+Transforms span to a ReadOnlySpan&lt;TDestination&gt; instance and invokes func.
 
 ## PointerExtensions
 Provides a set of extensions for basic operations with both signed and unsigned pointers.

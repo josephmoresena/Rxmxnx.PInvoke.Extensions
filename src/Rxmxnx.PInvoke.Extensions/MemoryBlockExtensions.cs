@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -74,6 +75,86 @@ namespace Rxmxnx.PInvoke.Extensions
             {
                 return GetConditionalUIntPtrZero(readonlySpan.IsEmpty) ??
                     new UIntPtr(Unsafe.AsPointer(ref MemoryMarshal.GetReference(readonlySpan)));
+            }
+        }
+
+        /// <summary>
+        /// Prevents the garbage collector from relocating the block of memory represented by 
+        /// <paramref name="span"/> and fixes its memory address until <paramref name="action"/> finish.
+        /// </summary>
+        /// <typeparam name="T">The type of the objects in the span.</typeparam>
+        /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+        /// <param name="span">A span of objects of type <typeparamref name="T"/>.</param>
+        /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
+        /// <param name="action">A <see cref="SpanAction{T, TArg}"/> delegate.</param>
+        public static void WithSafeFixed<T, TArg>(this Span<T> span, TArg arg, SpanAction<T, TArg> action)
+            where T : unmanaged
+        {
+            unsafe
+            {
+                fixed (void* ptr = &MemoryMarshal.GetReference(span))
+                    action(new(ptr, span.Length), arg);
+            }
+        }
+
+        /// <summary>
+        /// Prevents the garbage collector from relocating the block of memory represented by 
+        /// <paramref name="span"/> and fixes its memory address until <paramref name="action"/> finish.
+        /// </summary>
+        /// <typeparam name="T">The type of the objects in the span.</typeparam>
+        /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+        /// <param name="span">A read-only span of objects of type <typeparamref name="T"/>.</param>
+        /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
+        /// <param name="action">A <see cref="ReadOnlySpanAction{T, TArg}"/> delegate.</param>
+        public static void WithSafeFixed<T, TArg>(this ReadOnlySpan<T> span, TArg arg, ReadOnlySpanAction<T, TArg> action)
+            where T : unmanaged
+        {
+            unsafe
+            {
+                fixed (void* ptr = &MemoryMarshal.GetReference(span))
+                    action(new(ptr, span.Length), arg);
+            }
+        }
+
+        /// <summary>
+        /// Prevents the garbage collector from relocating the block of memory represented by 
+        /// <paramref name="span"/> and fixes its memory address until <paramref name="func"/> finish.
+        /// </summary>
+        /// <typeparam name="T">The type of the objects in the span.</typeparam>
+        /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+        /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
+        /// <param name="span">A span of objects of type <typeparamref name="T"/>.</param>
+        /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
+        /// <param name="func">A <see cref="SpanAction{T, TArg}"/> delegate.</param>
+        /// <returns>The result of <paramref name="func"/> execution.</returns>
+        public static TResult WithSafeFixed<T, TArg, TResult>(this Span<T> span, TArg arg, SpanFunc<T, TArg, TResult> func)
+            where T : unmanaged
+        {
+            unsafe
+            {
+                fixed (void* ptr = &MemoryMarshal.GetReference(span))
+                    return func(new(ptr, span.Length), arg);
+            }
+        }
+
+        /// <summary>
+        /// Prevents the garbage collector from relocating the block of memory represented by 
+        /// <paramref name="span"/> and fixes its memory address until <paramref name="func"/> finish.
+        /// </summary>
+        /// <typeparam name="T">The type of the objects in the span.</typeparam>
+        /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+        /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
+        /// <param name="span">A read-only span of objects of type <typeparamref name="T"/>.</param>
+        /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
+        /// <param name="func">A <see cref="SpanAction{T, TArg}"/> delegate.</param>
+        /// <returns>The result of <paramref name="func"/> execution.</returns>
+        public static TResult WithSafeFixed<T, TArg, TResult>(this ReadOnlySpan<T> span, TArg arg, ReadOnlySpanFunc<T, TArg, TResult> func)
+            where T : unmanaged
+        {
+            unsafe
+            {
+                fixed (void* ptr = &MemoryMarshal.GetReference(span))
+                    return func(new(ptr, span.Length), arg);
             }
         }
 

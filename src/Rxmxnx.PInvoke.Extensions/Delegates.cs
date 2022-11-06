@@ -3,6 +3,30 @@
 namespace Rxmxnx.PInvoke.Extensions
 {
     /// <summary>
+    /// Encapsulates a method that receives a span of objects of type <typeparamref name="T"/> and a 
+    /// state object of type <typeparamref name="TArg"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects in the span.</typeparam>
+    /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+    /// <typeparam name="TResult">The type of the return value of the method that this delegate encapsulates.</typeparam>
+    /// <param name="span">A span of objects of type <typeparamref name="T"/>.</param>
+    /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
+    /// <returns>The return value of the method that this delegate encapsulates.</returns>
+    public delegate TResult SpanFunc<T, in TArg, out TResult>(Span<T> span, TArg arg) where T : unmanaged;
+
+    /// <summary>
+    /// Encapsulates a method that receives a read-only span of objects of type <typeparamref name="T"/> and a 
+    /// state object of type <typeparamref name="TArg"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects in the span.</typeparam>
+    /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+    /// <typeparam name="TResult">The type of the return value of the method that this delegate encapsulates.</typeparam>
+    /// <param name="span">A read-only span of objects of type <typeparamref name="T"/>.</param>
+    /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
+    /// <returns>The return value of the method that this delegate encapsulates.</returns>
+    public delegate TResult ReadOnlySpanFunc<T, in TArg, out TResult>(ReadOnlySpan<T> span, TArg arg) where T : unmanaged;
+
+    /// <summary>
     /// Encapsulates a method that receives a read-only span of <see cref="CString"/> instances and a state 
     /// object of type <typeparamref name="TArg"/>.
     /// </summary>
