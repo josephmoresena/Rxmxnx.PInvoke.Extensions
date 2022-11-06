@@ -80,13 +80,14 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.UnmanagedValueExtensionsTest
                     Assert.Equal(inputArray, result.Select(v => v is TFrom from ? from : default).ToArray());
                 }
                 else
-                {
-                    Int32 length = inputArray.Length * NativeUtilities.SizeOf<TFrom>();
-                    Int32 step = NativeUtilities.SizeOf<TTo>();
-                    Int32 count = length / step;
-                    Int32 module = length % step;
-                    Assert.Equal(count + (module != 0 ? 1 : 0), result.Length);
-                }
+                    unsafe
+                    {
+                        Int32 length = inputArray.Length * sizeof(TFrom);
+                        Int32 step = sizeof(TTo);
+                        Int32 count = length / step;
+                        Int32 module = length % step;
+                        Assert.Equal(count + (module != 0 ? 1 : 0), result.Length);
+                    }
             }
         }
     }

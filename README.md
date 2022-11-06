@@ -152,6 +152,8 @@ Loads a native library and appends its unloading to given EventHandler delegate.
 Gets a generic delegate which points to a exported symbol into native library.
 * **AsBytes&lt;T&gt;(in T value)**
 Gets the binary data of an input generic value.
+* **CreateArray&lt;T, TState&gt;(Int32 length, TState state, SpanAction&lt;T, TState&gt; action)**
+Creates a new T array with a specific length and initializes it after creation by using the specified callback.
 * **BinaryCopyTo&lt;T&gt;(in T value, Span&lt;TByte&gt; destination, Int32 offset = default)**
 Preforms a binary copy of value to destination span.
 

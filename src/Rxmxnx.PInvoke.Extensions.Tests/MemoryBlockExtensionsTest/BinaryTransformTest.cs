@@ -1,19 +1,21 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 using Xunit;
 
 namespace Rxmxnx.PInvoke.Extensions.Tests.MemoryBlockExtensionsTest
 {
+    [ExcludeFromCodeCoverage]
     public sealed class BinaryTransformTest
     {
         [Fact]
         internal void NormalTest()
         {
-            //NormalBinarySourceTest<Byte>();
-            //NormalBinarySourceTest<Int16>();
-            //NormalBinarySourceTest<Int32>();
-            //NormalBinarySourceTest<Int64>();
-            //NormalBinarySourceTest<Guid>();
+            NormalBinarySourceTest<Byte>();
+            NormalBinarySourceTest<Int16>();
+            NormalBinarySourceTest<Int32>();
+            NormalBinarySourceTest<Int64>();
+            NormalBinarySourceTest<Guid>();
 
             NormalBinaryDestination<Int16>();
             NormalBinaryDestination<Int32>();

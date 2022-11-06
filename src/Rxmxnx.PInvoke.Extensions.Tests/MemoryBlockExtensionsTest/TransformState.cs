@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 using AutoFixture;
 
@@ -7,6 +8,7 @@ using Xunit;
 
 namespace Rxmxnx.PInvoke.Extensions.Tests.MemoryBlockExtensionsTest
 {
+    [ExcludeFromCodeCoverage]
     internal sealed record TransformState<TDestination> where TDestination : unmanaged
     {
         private readonly List<TDestination> _values = new();
