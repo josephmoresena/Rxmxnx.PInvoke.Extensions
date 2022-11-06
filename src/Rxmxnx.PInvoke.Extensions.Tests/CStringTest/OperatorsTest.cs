@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
 
 using AutoFixture;
@@ -306,32 +305,22 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
 
         private static void AssertReferenceEquality(ReadOnlySpan<Byte> span, CString cstr, Boolean clone)
         {
-            unsafe
+            ReadOnlySpan<Byte> cstrSpan = cstr;
+            Byte[] bytes = cstr.ToArray();
+
+            Assert.Equal(!clone, span.AsIntPtr() == cstrSpan.AsIntPtr());
+            Assert.Equal(!clone || span[^1] == default, span.Length == cstrSpan.Length);
+
+            Int32 index = 0;
+            foreach (ref readonly Byte c in cstr)
             {
-                fixed (void* rawPtr = &MemoryMarshal.GetReference(span))
-                {
-                    ReadOnlySpan<Byte> cstrSpan = cstr;
-                    fixed (void* rawSpanPtr = &MemoryMarshal.GetReference(cstrSpan))
-                    {
-                        Byte[] bytes = cstr.ToArray();
-
-                        if (clone)
-                            Assert.NotEqual(new IntPtr(rawPtr), new IntPtr(rawSpanPtr));
-                        Assert.Equal(!clone || span[^1] == default, span.Length == cstrSpan.Length);
-
-                        Int32 index = 0;
-                        foreach (ref readonly Byte c in cstr)
-                        {
-                            Assert.Equal(c, span[index]);
-                            Assert.Equal(c, bytes[index]);
-                            Assert.Equal(!clone, Unsafe.AreSame(ref Unsafe.AsRef(c), ref Unsafe.AsRef(span[index])));
-                            Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(c), ref Unsafe.AsRef(bytes[index])));
-                            index++;
-                            if (index == cstr.Length)
-                                break;
-                        }
-                    }
-                }
+                Assert.Equal(c, span[index]);
+                Assert.Equal(c, bytes[index]);
+                Assert.Equal(!clone, Unsafe.AreSame(ref Unsafe.AsRef(c), ref Unsafe.AsRef(span[index])));
+                Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(c), ref Unsafe.AsRef(bytes[index])));
+                index++;
+                if (index == cstr.Length)
+                    break;
             }
         }
 
