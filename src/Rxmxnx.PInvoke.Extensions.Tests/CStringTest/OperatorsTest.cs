@@ -350,9 +350,6 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             CString seg1 = cstr[start..end];
 
             AssertSegment(cstr, start, end, seg1);
-            //if (end == end2)
-            //    Assert.Throws<ArgumentOutOfRangeException>(() => cstr[..end2]);
-            //else 
             if (seg1.Length > 0)
                 AssertSegment(seg1, default, end2, seg1[..end2]);
         }
