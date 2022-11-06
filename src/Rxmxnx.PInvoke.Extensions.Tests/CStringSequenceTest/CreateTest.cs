@@ -25,7 +25,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringSequenceTest
             CStringSequence sequence = CStringSequence.Create(
                 strValue, CreateSequence, strValue.Select(x => x.Length).ToArray());
 
-            sequence.TransformSpan(strValue, (s, v) =>
+            sequence.Transform(strValue, (s, v) =>
             {
                 for (Int32 i = 0; i < v.Length; i++)
                 {
@@ -45,7 +45,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringSequenceTest
                     }
                 }
 
-                Assert.Equal(sequence.ToString().AsSpan().AsIntPtr(), sequence.TransformSpan(s.ToArray(), (s2, v2) =>
+                Assert.Equal(sequence.ToString().AsSpan().AsIntPtr(), sequence.Transform(s.ToArray(), (s2, v2) =>
                 {
                     IntPtr? result = default;
                     for (Int32 i = 0; i < s2.Length; i++)
