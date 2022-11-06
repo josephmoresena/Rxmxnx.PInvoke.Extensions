@@ -305,7 +305,7 @@ namespace Rxmxnx.PInvoke.Extensions
                     IntPtr currentPtr = bufferPtr + offset;
                     Span<Byte> bytes = new(currentPtr.ToPointer(), lengths[i]);
                     action(bytes, i, state);
-                    offset += lengths.Length + 1;
+                    offset += lengths[i] + 1;
                 }
         }
     }
