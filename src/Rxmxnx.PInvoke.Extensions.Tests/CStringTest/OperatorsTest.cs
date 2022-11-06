@@ -285,6 +285,38 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             }
         }
 
+        [Fact]
+        internal void NormalRangeTest()
+        {
+            CString cstr = "A-B";
+            CString nonNullTerminated = Encoding.UTF8.GetBytes("A\0B");
+            CString fullSegment = cstr[0..];
+            CString single = cstr[0..1];
+            CString fullnonNullTerminatedSegment = nonNullTerminated[0..];
+            CString fullEmptySegment = nonNullTerminated[1..^1];
+
+            Assert.False(nonNullTerminated.IsReference);
+            Assert.False(nonNullTerminated.IsSegmented);
+            Assert.False(nonNullTerminated.IsReference);
+
+            Assert.Equal(cstr.IsReference, fullSegment.IsReference);
+            Assert.Equal(cstr.IsSegmented, fullSegment.IsSegmented);
+            Assert.Equal(cstr.IsNullTerminated, fullSegment.IsNullTerminated);
+
+            Assert.False(single.IsReference);
+            Assert.True(single.IsSegmented);
+            Assert.False(single.IsNullTerminated);
+
+            Assert.False(fullnonNullTerminatedSegment.IsReference);
+            Assert.False(fullnonNullTerminatedSegment.IsSegmented);
+            Assert.False(fullnonNullTerminatedSegment.IsReference);
+
+            Assert.False(fullEmptySegment.IsReference);
+            Assert.True(fullEmptySegment.IsSegmented);
+            Assert.Equal(0, fullEmptySegment.Length);
+            Assert.True(fullEmptySegment.IsNullTerminated);
+        }
+
         private static void AssertIndex(ReadOnlySpan<Byte> span, CString cstr)
         {
             for (Int32 i = 0; i < span.Length; i++)
@@ -359,7 +391,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
 
         private static void AssertSegment(CString cstr, Int32 start, Int32 end, CString seg)
         {
-            if (seg.Length > 0)
+            if (seg.Length > 0 || !seg.IsNullTerminated)
             {
                 Assert.Equal(seg.IsReference, cstr.IsReference);
                 Assert.Equal(!seg.IsReference && seg.Length != cstr.Length, seg.IsSegmented);
@@ -370,17 +402,25 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                 Assert.False(seg.IsReference);
                 Assert.False(seg.IsSegmented);
             }
-            Assert.Equal(cstr.ToString()[start..end], seg.ToString());
+
+            if (end < cstr.Length)
+            {
+                Assert.Equal(cstr.ToString()[start..end], seg.ToString());
+
+                for (Int32 i = start; i < end; i++)
+                    Assert.Equal(cstr[i], seg[i - start]);
+            }
 
             if ((seg.IsSegmented || seg.IsReference) && seg.Length != 0)
                 Assert.Throws<InvalidOperationException>(() => CString.GetBytes(seg));
             else if (cstr.IsSegmented)
                 Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
             else if (cstr.Length == seg.Length)
-                Assert.Equal(CString.GetBytes(cstr), CString.GetBytes(seg));
+                if (seg.Length != 0 || seg.IsNullTerminated)
+                    Assert.Equal(CString.GetBytes(cstr), CString.GetBytes(seg));
+                else
+                    Assert.Empty(CString.GetBytes(seg));
 
-            for (Int32 i = start; i < end; i++)
-                Assert.Equal(cstr[i], seg[i - start]);
         }
 
         private static void AssertSequenceSegment(CString cstr, CString seg)

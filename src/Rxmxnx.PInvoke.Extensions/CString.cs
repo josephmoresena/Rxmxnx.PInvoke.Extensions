@@ -81,7 +81,7 @@ namespace Rxmxnx.PInvoke.Extensions
             {
                 (Int32 offset, Int32 length) = range.GetOffsetAndLength(this._length);
                 Boolean inRange = offset < this._length && length <= this._length;
-                if (inRange && this._length > 0 && range.End.Value - range.Start.Value == 0)
+                if (inRange && this._length > 0 && length == 0)
                     return CString.Empty;
                 else if (!inRange)
                     throw new ArgumentOutOfRangeException(nameof(range));
