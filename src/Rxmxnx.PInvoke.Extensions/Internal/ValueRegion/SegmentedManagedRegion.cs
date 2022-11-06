@@ -77,7 +77,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             /// Creates a new read-only span over this memory region.
             /// </summary>
             /// <returns>The read-only span representation of the memory region.</returns>
-            protected override ReadOnlySpan<T> AsSpan() => this._array[this._offset..this._end];
+            protected override ReadOnlySpan<T> AsSpan() => this._array.AsSpan()[this._offset..this._end];
         }
     }
 }
