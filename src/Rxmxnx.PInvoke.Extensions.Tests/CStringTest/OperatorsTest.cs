@@ -343,15 +343,18 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
 
         private static void AssertSegment(CString cstr)
         {
-            Int32 start = Random.Shared.Next(0, cstr.Length);
-            Int32 end = Random.Shared.Next(start, cstr.Length);
-            Int32 end2 = Random.Shared.Next(0, end - start);
+            for (Int32 i = 0; i < cstr.Length; i++)
+            {
+                Int32 start = Random.Shared.Next(i, cstr.Length);
+                Int32 end = Random.Shared.Next(start, cstr.Length);
+                Int32 end2 = Random.Shared.Next(0, end - start);
 
-            CString seg1 = cstr[start..end];
+                CString seg1 = cstr[start..end];
 
-            AssertSegment(cstr, start, end, seg1);
-            if (seg1.Length > 0)
-                AssertSegment(seg1, default, end2, seg1[..end2]);
+                AssertSegment(cstr, start, end, seg1);
+                if (seg1.Length > 0)
+                    AssertSegment(seg1, default, end2, seg1[..end2]);
+            }
         }
 
         private static void AssertSegment(CString cstr, Int32 start, Int32 end, CString seg)
