@@ -222,7 +222,7 @@ namespace Rxmxnx.PInvoke.Extensions
             unsafe
             {
                 fixed (void* ptr = &MemoryMarshal.GetReference(span))
-                    action(new(ptr, span.Length / sizeof(TSource)), arg);
+                    action(new(ptr, span.Length * sizeof(TSource)), arg);
             }
         }
 
@@ -241,7 +241,7 @@ namespace Rxmxnx.PInvoke.Extensions
             unsafe
             {
                 fixed (void* ptr = &MemoryMarshal.GetReference(span))
-                    action(new(ptr, span.Length / sizeof(TSource)), arg);
+                    action(new(ptr, span.Length * sizeof(TSource)), arg);
             }
         }
 
@@ -292,7 +292,7 @@ namespace Rxmxnx.PInvoke.Extensions
             unsafe
             {
                 fixed (void* ptr = &MemoryMarshal.GetReference(span))
-                    return func(new(ptr, span.Length / sizeof(TSource)), arg);
+                    return func(new(ptr, span.Length * sizeof(TSource)), arg);
             }
         }
 
@@ -313,7 +313,7 @@ namespace Rxmxnx.PInvoke.Extensions
             unsafe
             {
                 fixed (void* ptr = &MemoryMarshal.GetReference(span))
-                    return func(new(ptr, span.Length / sizeof(TSource)), arg);
+                    return func(new(ptr, span.Length * sizeof(TSource)), arg);
             }
         }
 

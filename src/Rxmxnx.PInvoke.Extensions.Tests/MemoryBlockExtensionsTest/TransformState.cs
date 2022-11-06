@@ -18,10 +18,6 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.MemoryBlockExtensionsTest
         public static void TransformAction<TSource>(Span<TDestination> span, TransformState<TDestination> arg, Span<Byte> residue)
             where TSource : unmanaged
         {
-            Int32 sizeOfTSource = NativeUtilities.SizeOf<TSource>();
-            Int32 sizeOfTDestination = NativeUtilities.SizeOf<TDestination>();
-
-            Assert.Equal(span.Length * sizeOfTDestination / sizeOfTDestination, span.Length);
             foreach (ref TDestination destination in span)
             {
                 destination = TestUtilities.SharedFixture.Create<TDestination>();
