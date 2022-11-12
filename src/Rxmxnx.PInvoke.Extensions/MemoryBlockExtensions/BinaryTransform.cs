@@ -194,6 +194,71 @@ namespace Rxmxnx.PInvoke.Extensions
         /// invokes <paramref name="func"/>.
         /// </summary>
         /// <typeparam name="TDestination">The type of the objects in the destination span.</typeparam>
+        /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
+        /// <param name="span">A binary writable memory block.</param>
+        /// <param name="func">A <see cref="TransformationFunc{TDestination, TResult}"/> delegate.</param>
+        /// <returns>The result of <paramref name="func"/> execution.</returns>
+        public static TResult BinaryTransform<TDestination, TResult>(this Span<Byte> span, TransformationFunc<TDestination, TResult> func)
+            where TDestination : unmanaged
+            => span.Transform(func);
+
+        /// <summary>
+        /// Transforms <paramref name="span"/> to a <see cref="ReadOnlySpan{TDestination}"/> instance and 
+        /// invokes <paramref name="func"/>.
+        /// </summary>
+        /// <typeparam name="TDestination">The type of the objects in the destination span.</typeparam>
+        /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
+        /// <param name="span">A binary read-only memory block.</param>
+        /// <param name="func">A <see cref="ReadOnlyTransformationFunc{TDestination, TResult}"/> delegate.</param>
+        /// <returns>The result of <paramref name="func"/> execution.</returns>
+        public static TResult BinaryTransform<TDestination, TResult>(this ReadOnlySpan<Byte> span, ReadOnlyTransformationFunc<TDestination, TResult> func)
+            where TDestination : unmanaged
+            => span.Transform(func);
+
+        /// <summary>
+        /// Transforms <paramref name="span"/> to a <see cref="Span{Byte}"/> instance and 
+        /// invokes <paramref name="func"/>.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the objects in the source span.</typeparam>
+        /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
+        /// <param name="span">A <typeparamref name="TSource"/> writable memory block.</param>
+        /// <param name="func">A <see cref="FixedFunc{Byte, TResult}"/> delegate.</param>
+        /// <returns>The result of <paramref name="func"/> execution.</returns>
+        public static TResult BinaryTransform<TSource, TResult>(this Span<TSource> span, FixedFunc<Byte, TResult> func)
+            where TSource : unmanaged
+        {
+            unsafe
+            {
+                fixed (void* ptr = &MemoryMarshal.GetReference(span))
+                    return func(new(ptr, span.Length * sizeof(TSource)));
+            }
+        }
+
+        /// <summary>
+        /// Transforms <paramref name="span"/> to a <see cref="ReadOnlySpan{Byte}"/> instance and 
+        /// invokes <paramref name="func"/>.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the objects in the source span.</typeparam>
+        /// <typeparam name="TArg">Type of state object.</typeparam>
+        /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
+        /// <param name="span">A <typeparamref name="TSource"/> read-only memory block.</param>
+        /// <param name="func">A <see cref="ReadOnlyFixedFunc{Byte, TResult}"/> delegate.</param>
+        /// <returns>The result of <paramref name="func"/> execution.</returns>
+        public static TResult BinaryTransform<TSource, TResult>(this ReadOnlySpan<TSource> span, ReadOnlyFixedFunc<Byte, TResult> func)
+            where TSource : unmanaged
+        {
+            unsafe
+            {
+                fixed (void* ptr = &MemoryMarshal.GetReference(span))
+                    return func(new(ptr, span.Length * sizeof(TSource)));
+            }
+        }
+
+        /// <summary>
+        /// Transforms <paramref name="span"/> to a <see cref="Span{TDestination}"/> instance and 
+        /// invokes <paramref name="func"/>.
+        /// </summary>
+        /// <typeparam name="TDestination">The type of the objects in the destination span.</typeparam>
         /// <typeparam name="TArg">Type of state object.</typeparam>
         /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
         /// <param name="span">A binary writable memory block.</param>

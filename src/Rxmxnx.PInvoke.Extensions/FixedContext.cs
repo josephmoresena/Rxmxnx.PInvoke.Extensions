@@ -63,7 +63,7 @@ namespace Rxmxnx.PInvoke.Extensions
     /// </summary>
     /// <typeparam name="T">Type of fixed memory block.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
-    public class FixedContext<T, TArg> : FixedContext<T> where T : unmanaged
+    public sealed class FixedContext<T, TArg> : FixedContext<T> where T : unmanaged
     {
         /// <summary>
         /// Internal object state.

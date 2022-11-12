@@ -72,7 +72,7 @@ namespace Rxmxnx.PInvoke.Extensions
     /// </summary>
     /// <typeparam name="T">Type of fixed memory block.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
-    public class ReadOnlyTransformationContext<T, TArg> : ReadOnlyTransformationContext<T> where T : unmanaged
+    public sealed class ReadOnlyTransformationContext<T, TArg> : ReadOnlyTransformationContext<T> where T : unmanaged
     {
         /// <summary>
         /// A state object of type <typeparamref name="TArg"/>.
