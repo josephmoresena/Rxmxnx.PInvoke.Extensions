@@ -61,6 +61,18 @@ namespace Rxmxnx.PInvoke.Extensions
             }
         }
 
+        /// <summary>
+        /// Transforms <paramref name="span"/> to a <see cref="Span{TDestination}"/> instance and 
+        /// invokes <paramref name="action"/>.
+        /// </summary>
+        /// <typeparam name="TDestination">The type of the objects in the destination span.</typeparam>
+        /// <typeparam name="TArg">Type of state object.</typeparam>
+        /// <param name="span">A binary writable memory block.</param>
+        /// <param name="arg">A <typeparamref name="TArg"/> instance.</param>
+        /// <param name="action">A <see cref="TransformationAction{TDestination, TArg}"/> delegate.</param>
+        public static void BinaryTransform<TDestination, TArg>(this Span<Byte> span, TArg arg, TransformationAction<TDestination, TArg> action)
+            where TDestination : unmanaged
+            => span.Transform(arg, action);
 
         /// <summary>
         /// Transforms <paramref name="span"/> to a <see cref="Span{TDestination}"/> instance and 
@@ -72,6 +84,19 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="arg">A <typeparamref name="TArg"/> instance.</param>
         /// <param name="action">A <see cref="SpanTransformAction{TDestination, TArg}"/> delegate.</param>
         public static void BinaryTransform<TDestination, TArg>(this Span<Byte> span, TArg arg, SpanTransformAction<TDestination, TArg> action)
+            where TDestination : unmanaged
+            => span.Transform(arg, action);
+
+        /// <summary>
+        /// Transforms <paramref name="span"/> to a <see cref="ReadOnlySpan{TDestination}"/> instance and 
+        /// invokes <paramref name="action"/>.
+        /// </summary>
+        /// <typeparam name="TDestination">The type of the objects in the destination span.</typeparam>
+        /// <typeparam name="TArg">Type of state object.</typeparam>
+        /// <param name="span">A binary read-only memory block.</param>
+        /// <param name="arg">A <typeparamref name="TArg"/> instance.</param>
+        /// <param name="action">A <see cref="ReadOnlyTransformationAction{TDestination, TArg}"/> delegate.</param>
+        public static void BinaryTransform<TDestination, TArg>(this ReadOnlySpan<Byte> span, TArg arg, ReadOnlyTransformationAction<TDestination, TArg> action)
             where TDestination : unmanaged
             => span.Transform(arg, action);
 
