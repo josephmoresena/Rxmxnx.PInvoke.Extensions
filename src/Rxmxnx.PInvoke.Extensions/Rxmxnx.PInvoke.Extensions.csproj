@@ -10,6 +10,9 @@
     <Optimize>true</Optimize>
     <Deterministic>true</Deterministic>
     <Nullable>enable</Nullable>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+	<IsTrimmable>true</IsTrimmable>
+	<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
   </PropertyGroup>
 	
   <PropertyGroup>
@@ -21,7 +24,10 @@
 	<NeutralLanguage>en-US</NeutralLanguage>
 	<Title>PInvoke.Extensions</Title>
 	<PackageId>Rxmxnx.PInvoke.Extensions</PackageId>
-    <PackageTags>PInvoke;Binary;Reference;Unmanaged;Memory;NativeAOT;Utf8;CString;Pointer</PackageTags>
+    <PackageTags>
+		PInvoke;Binary;Reference;Unmanaged;Memory;NativeAOT;Utf8;CString;Pointer;Span;
+		ReadOnlySpan;Unsafe;Fixed;Native;FFI;Binary
+	</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>

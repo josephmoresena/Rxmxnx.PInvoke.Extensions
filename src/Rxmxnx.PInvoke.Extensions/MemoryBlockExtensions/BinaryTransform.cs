@@ -10,6 +10,63 @@ namespace Rxmxnx.PInvoke.Extensions
         /// invokes <paramref name="action"/>.
         /// </summary>
         /// <typeparam name="TDestination">The type of the objects in the destination span.</typeparam>
+        /// <param name="span">A binary writable memory block.</param>
+        /// <param name="action">A <see cref="TransformationAction{TDestination}"/> delegate.</param>
+        public static void BinaryTransform<TDestination>(this Span<Byte> span, TransformationAction<TDestination> action)
+            where TDestination : unmanaged
+            => span.Transform(action);
+
+        /// <summary>
+        /// Transforms <paramref name="span"/> to a <see cref="ReadOnlySpan{TDestination}"/> instance and 
+        /// invokes <paramref name="action"/>.
+        /// </summary>
+        /// <typeparam name="TDestination">The type of the objects in the destination span.</typeparam>
+        /// <param name="span">A binary read-only memory block.</param>
+        /// <param name="action">A <see cref="ReadOnlyTransformationAction{TDestination}"/> delegate.</param>
+        public static void BinaryTransform<TDestination>(this ReadOnlySpan<Byte> span, ReadOnlyTransformationAction<TDestination> action)
+            where TDestination : unmanaged
+            => span.Transform(action);
+
+        /// <summary>
+        /// Transforms <paramref name="span"/> to a <see cref="Span{Byte}"/> instance and 
+        /// invokes <paramref name="action"/>.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the objects in the source span.</typeparam>
+        /// <param name="span">A <typeparamref name="TSource"/> writable memory block.</param>
+        /// <param name="action">A <see cref="FixedAction{Byte}"/> delegate.</param>
+        public static void BinaryTransform<TSource>(this Span<TSource> span, FixedAction<Byte> action)
+            where TSource : unmanaged
+        {
+            unsafe
+            {
+                fixed (void* ptr = &MemoryMarshal.GetReference(span))
+                    action(new(ptr, span.Length * sizeof(TSource)));
+            }
+        }
+
+        /// <summary>
+        /// Transforms <paramref name="span"/> to a <see cref="ReadOnlySpan{Byte}"/> instance and 
+        /// invokes <paramref name="action"/>.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the objects in the source span.</typeparam>
+        /// <param name="span">A <typeparamref name="TSource"/> read-only memory block.</param>
+        /// <param name="action">A <see cref="ReadOnlyFixedAction{Byte}"/> delegate.</param>
+        public static void BinaryTransform<TSource>(this ReadOnlySpan<TSource> span, ReadOnlyFixedAction<Byte> action)
+            where TSource : unmanaged
+        {
+            unsafe
+            {
+                fixed (void* ptr = &MemoryMarshal.GetReference(span))
+                    action(new(ptr, span.Length * sizeof(TSource)));
+            }
+        }
+
+
+        /// <summary>
+        /// Transforms <paramref name="span"/> to a <see cref="Span{TDestination}"/> instance and 
+        /// invokes <paramref name="action"/>.
+        /// </summary>
+        /// <typeparam name="TDestination">The type of the objects in the destination span.</typeparam>
         /// <typeparam name="TArg">Type of state object.</typeparam>
         /// <param name="span">A binary writable memory block.</param>
         /// <param name="arg">A <typeparamref name="TArg"/> instance.</param>

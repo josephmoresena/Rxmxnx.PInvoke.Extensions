@@ -222,7 +222,7 @@ namespace Rxmxnx.PInvoke.Extensions
     /// </summary>
     /// <typeparam name="T">Type of the fixed context.</typeparam>
     /// <param name="ctx">Transformation context instance.</param>
-    public delegate void TransformationAction<T>(TransformationContext<T> ctx) where T : unmanaged;
+    public delegate void TransformationAction<T>(in TransformationContext<T> ctx) where T : unmanaged;
 
     /// <summary>
     /// Encapsulates a methtod that receives a <see cref="TransformationContext{T}"/> instance.
@@ -230,14 +230,14 @@ namespace Rxmxnx.PInvoke.Extensions
     /// <typeparam name="T">Type of the fixed context.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <param name="ctx">Transformation context instance.</param>
-    public delegate void TransformationAction<T, TArg>(TransformationContext<T, TArg> ctx) where T : unmanaged;
+    public delegate void TransformationAction<T, TArg>(in TransformationContext<T, TArg> ctx) where T : unmanaged;
 
     /// <summary>
     /// Encapsulates a methtod that receives a <see cref="ReadOnlyTransformationContext{T}"/> instance.
     /// </summary>
     /// <typeparam name="T">Type of the fixed context.</typeparam>
     /// <param name="ctx">Read-only transformation context instance.</param>
-    public delegate void ReadOnlyTransformationAction<T>(ReadOnlyTransformationContext<T> ctx) where T : unmanaged;
+    public delegate void ReadOnlyTransformationAction<T>(in ReadOnlyTransformationContext<T> ctx) where T : unmanaged;
 
     /// <summary>
     /// Encapsulates a methtod that receives a <see cref="ReadOnlyTransformationContext{T}"/> instance.
@@ -245,7 +245,7 @@ namespace Rxmxnx.PInvoke.Extensions
     /// <typeparam name="T">Type of the fixed context.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <param name="ctx">Read-only transformation context instance.</param>
-    public delegate void ReadOnlyTransformationAction<T, TArg>(ReadOnlyTransformationContext<T, TArg> ctx) where T : unmanaged;
+    public delegate void ReadOnlyTransformationAction<T, TArg>(in ReadOnlyTransformationContext<T, TArg> ctx) where T : unmanaged;
 
     /// <summary>
     /// Encapsulates a methtod that receives a <see cref="TransformationContext{T}"/> instance.
