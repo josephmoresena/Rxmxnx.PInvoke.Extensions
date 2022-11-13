@@ -67,6 +67,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="arg">A <typeparamref name="TArg"/> instance.</param>
         /// <param name="func">A <see cref="SpanTransformFunc{TDestination, TArg, TResult}"/> delegate.</param>
         /// <returns>The result of <paramref name="func"/> execution.</returns>
+#pragma warning disable S2436
         public static TResult Transform<TSource, TDestination, TArg, TResult>(this Span<TSource> span, TArg arg, SpanTransformFunc<TDestination, TArg, TResult> func)
             where TSource : unmanaged
             where TDestination : unmanaged
