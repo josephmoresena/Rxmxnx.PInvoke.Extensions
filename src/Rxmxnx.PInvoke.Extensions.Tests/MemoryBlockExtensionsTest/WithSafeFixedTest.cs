@@ -36,7 +36,6 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.MemoryBlockExtensionsTest
 
             await Task.WhenAll(getTasks);
         }
-
         private static void SpanTest<T>(T[] arr) where T : unmanaged
         {
             Span<T> span = arr;
@@ -51,7 +50,6 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.MemoryBlockExtensionsTest
                 }));
             });
         }
-
         private static void ReadOnlySpanTest<T>(T[] arr) where T : unmanaged
         {
             ReadOnlySpan<T> span = arr;
@@ -66,5 +64,6 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.MemoryBlockExtensionsTest
                 }));
             });
         }
+
     }
 }

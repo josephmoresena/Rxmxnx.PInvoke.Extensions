@@ -43,7 +43,7 @@ Prevents the garbage collector from relocating the block of memory represented b
 fixes its memory address until func finish.
 * **Transform&lt;TSource, TDestination, TArg&gt;(TArg arg, SpanTransformAction&lt;TDestination, TArg&gt; action)**
 Transforms span to a Span&lt;TDestination&gt; instance and invokes action.
-* **Transform&lt;TSource, TDestination, TArg, TResult&gt;(TArg arg, SpanTransfromFunc&lt;TDestination, TArg, TResult&gt; func)**
+* **Transform&lt;TSource, TDestination, TArg, TResult&gt;(TArg arg, SpanTransformFunc&lt;TDestination, TArg, TResult&gt; func)**
 Transforms span to a Span&lt;TDestination&gt; instance and invokes func.
 * **BinaryTransform&lt;TSource, TArg&gt;(TArg arg, BinarySpanTransformAction&lt;TArg&gt; action)**
 Transforms span to a  Span&lt;Byte&gt; instance instance and invokes action.
@@ -61,7 +61,7 @@ Prevents the garbage collector from relocating the block of memory represented b
 fixes its memory address until func finish.
 * **Transform&lt;TSource, TDestination, TArg&gt;(TArg arg, ReadOnlySpanTransformAction&lt;TDestination, TArg&gt; action)**
 Transforms span to a ReadOnlySpan&lt;TDestination&gt; instance and invokes action.
-* **Transform&lt;TSource, TDestination, TArg, TResult&gt;(TArg arg, ReadOnlySpanTransfromFunc&lt;TDestination, TArg, TResult&gt; func)**
+* **Transform&lt;TSource, TDestination, TArg, TResult&gt;(TArg arg, ReadOnlySpanTransformFunc&lt;TDestination, TArg, TResult&gt; func)**
 Transforms span to a ReadOnlySpan&lt;TDestination&gt; instance and invokes func.
 * **BinaryTransform&lt;TSource, TArg&gt;(TArg arg, BinaryReadOnlySpanTransformAction&lt;TArg&gt; action)**
 Transforms span to a ReadOnlySpan&lt;Byte&gt; instance instance and invokes action.
