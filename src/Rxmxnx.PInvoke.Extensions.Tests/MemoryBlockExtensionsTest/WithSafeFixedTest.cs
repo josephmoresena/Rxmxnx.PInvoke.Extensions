@@ -126,6 +126,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.MemoryBlockExtensionsTest
             Assert.True(Object.ReferenceEquals(tsrc_ctx.Context, src_ctx));
             Assert.True(tdes_ctx.Context.Equals(des_ctx));
             Assert.True(Object.ReferenceEquals(tdes_ctx.Context, des_ctx));
+            Assert.Equal(tdes_ctx, des_ctx.AsReadOnly().Transformation<TSource>());
 
             if (tsrc_values.Length == 0)
                 Assert.Equal(src_ctx.BinaryValues.AsIntPtr(), tsrc_bytes.AsIntPtr());
@@ -185,6 +186,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.MemoryBlockExtensionsTest
             Assert.False(Object.ReferenceEquals(state, ctx));
             Assert.True(Unsafe.AreSame(ref state.Values[0], ref ctx.Values[0]));
             Assert.Equal(state.BinaryValues.AsIntPtr(), ctx.BinaryValues.AsIntPtr());
+            Assert.Equal(state.GetHashCode(), ctx.GetHashCode());
 
             state.Values[0] = TestUtilities.SharedFixture.Create<T>();
             ctx.Values[^1] = TestUtilities.SharedFixture.Create<T>();
