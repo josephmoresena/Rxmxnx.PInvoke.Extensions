@@ -6,7 +6,8 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
     /// Context from memory block fixing.
     /// </summary>
     /// <typeparam name="T">Type of items on the fixed memory block.</typeparam>
-    internal unsafe sealed class FixedContext<T> : IFixedContext<T>, IReadOnlyFixedContext<T> where T : unmanaged
+    internal unsafe sealed class FixedContext<T> : IFixedContext<T>, IReadOnlyFixedContext<T>, IEquatable<FixedContext<T>>
+        where T : unmanaged
     {
         /// <summary>
         /// Pointer to fixed memory block.
@@ -80,30 +81,51 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             return new(this._ptr, length);
         }
         /// <summary>
-        /// Invalidates current context.
-        /// </summary>
-        public void Unload() => this._isValid = false;
-
-        ITransformationContext<T, TDestination> IFixedContext<T>.Transformation<TDestination>() => this.GetTransformation<TDestination>();
-        IReadOnlyFixedContext<T> IFixedContext<T>.AsReadOnly() => this;
-        IReadOnlyTransformationContext<T, TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>() => this.GetTransformation<TDestination>();
-
-        /// <summary>
-        /// Creates a <see cref="TransformationContext{T, TDestination}"/> instance.
-        /// </summary>
-        /// <typeparam name="TDestination">Type of items on the reinterpreded memory block.</typeparam>
-        /// <returns>A <see cref="TransformationContext{T, TDestination}"/> instance.</returns>
-        private TransformationContext<T, TDestination> GetTransformation<TDestination>() where TDestination : unmanaged => new(this);
-        /// <summary>
         /// Validates any operation over the fixed memory block.
         /// </summary>
         /// <param name="isReadOnly">Indicates whether current operation is read-only one.</param>
-        private void ValidateOperation(Boolean isReadOnly = false)
+        public void ValidateOperation(Boolean isReadOnly = false)
         {
             if (!isReadOnly && this._isReadOnly)
                 throw new InvalidOperationException("The current context is read-only.");
             if (!this._isValid)
                 throw new InvalidOperationException("The current context is not valid.");
+        }
+        /// <summary>
+        /// Invalidates current context.
+        /// </summary>
+        public void Unload() => this._isValid = false;
+
+        /// <inheritdoc/>
+        public override Boolean Equals(Object? obj) => this.Equals(obj as FixedContext<T>);
+        /// <inheritdoc/>
+        public Boolean Equals(FixedContext<T>? ctx)
+            => ctx is not null &&
+            this._ptr == ctx._ptr &&
+            this._binaryLength == ctx._binaryLength &&
+            (this._isReadOnly == ctx._isReadOnly);
+
+        /// <inheritdoc/>
+        public override Int32 GetHashCode() => HashCode.Combine(new IntPtr(this._ptr), this._binaryLength, this._isReadOnly);
+
+        ITransformationContext<T, TDestination> IFixedContext<T>.Transformation<TDestination>() => this.GetTransformation<TDestination>();
+        IReadOnlyFixedContext<T> IFixedContext<T>.AsReadOnly()
+        {
+            this.ValidateOperation();
+            return this;
+        }
+        IReadOnlyTransformationContext<T, TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>() => this.GetTransformation<TDestination>(true);
+
+        /// <summary>
+        /// Creates a <see cref="TransformationContext{T, TDestination}"/> instance.
+        /// </summary>
+        /// <typeparam name="TDestination">Type of items on the reinterpreded memory block.</typeparam>
+        /// <param name="isReadOnly">Indicates whether current operation is read-only one.</param>
+        /// <returns>A <see cref="TransformationContext{T, TDestination}"/> instance.</returns>
+        private TransformationContext<T, TDestination> GetTransformation<TDestination>(Boolean isReadOnly = false) where TDestination : unmanaged
+        {
+            this.ValidateOperation(isReadOnly);
+            return new(this);
         }
     }
 }

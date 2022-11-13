@@ -8,7 +8,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
     /// </summary>
     /// <typeparam name="TSource">Type of items on the fixed memory block.</typeparam>
     /// <typeparam name="TDestination">Type of items on the reinterpreded memory block.</typeparam>
-    internal unsafe sealed class TransformationContext<TSource, TDestination> :
+    internal unsafe sealed record TransformationContext<TSource, TDestination> :
         ITransformationContext<TSource, TDestination>, IReadOnlyTransformationContext<TSource, TDestination>
         where TSource : unmanaged
         where TDestination : unmanaged
@@ -39,6 +39,10 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         Span<Byte> ITransformationContext<TSource, TDestination>.ResidualBytes => (this._ctx as IFixedContext<TSource>)!.BinaryValues.Slice(this._length * sizeof(TDestination));
         ReadOnlySpan<Byte> IReadOnlyTransformationContext<TSource, TDestination>.ResidualBytes
             => (this._ctx as IReadOnlyFixedContext<TSource>)!.BinaryValues.Slice(this._length * sizeof(TDestination));
-        IReadOnlyTransformationContext<TSource, TDestination> ITransformationContext<TSource, TDestination>.AsReadOnly() => this;
+        IReadOnlyTransformationContext<TSource, TDestination> ITransformationContext<TSource, TDestination>.AsReadOnly()
+        {
+            this._ctx.ValidateOperation(true);
+            return this;
+        }
     }
 }
