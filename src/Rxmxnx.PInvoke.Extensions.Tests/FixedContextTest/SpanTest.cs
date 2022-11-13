@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 using AutoFixture;
@@ -40,20 +41,17 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.FixedContextTest
         private static void ContextTest<TSource, TDestination>() where TSource : unmanaged where TDestination : unmanaged
         {
             TSource[] sources = new TSource[primes[Random.Shared.Next(0, primes.Length)]];
+            ReadOnlySpan<TSource> sources2 = TestUtilities.SharedFixture.CreateMany<TSource>(sources.Length).ToArray();
             Span<TSource> span = sources;
+            ReadOnlySpan<TSource> read_sources = sources;
             span.WithSafeFixed(FixedTest);
             span.WithSafeFixed((in IFixedContext<TSource> src_ctx) =>
             {
-                Int32 count = primes[Random.Shared.Next(0, primes.Length)];
                 foreach (ref TSource source in src_ctx.Values)
                     source = TestUtilities.SharedFixture.Create<TSource>();
-                Span<TDestination> destinations = stackalloc TDestination[count];
-                destinations.WithSafeFixed(src_ctx, TransformationTest);
-
-                ReadOnlySpan<TSource> read_sources = sources;
-                ReadOnlySpan<TDestination> read_destinations = destinations;
-
-                read_sources.WithSafeFixed(src_ctx, (in IReadOnlyFixedContext<TSource> rsrc_ctx, IFixedContext<TSource> src_ctx) =>
+                TransformationTest<TSource, TDestination>(src_ctx);
+                ReadOnlySpan<TSource> rSources = sources;
+                rSources.WithSafeFixed(src_ctx, (in IReadOnlyFixedContext<TSource> rsrc_ctx, IFixedContext<TSource> src_ctx) =>
                 {
                     Assert.False(src_ctx.Equals(rsrc_ctx));
                     Assert.Equal(src_ctx.Values.AsIntPtr(), rsrc_ctx.Values.AsIntPtr());
@@ -63,6 +61,35 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.FixedContextTest
                     Assert.Throws<InvalidOperationException>(() => tmp_ctx.Values[0]);
                 });
             });
+            sources2.WithSafeFixed(TransformationTest<TSource, TDestination>);
+        }
+        private static void TransformationTest<TSource, TDestination>(IFixedContext<TSource> src_ctx)
+            where TSource : unmanaged
+            where TDestination : unmanaged
+        {
+            Int32 count = primes[Random.Shared.Next(0, primes.Length)];
+            Span<TDestination> destinations = stackalloc TDestination[count];
+            destinations.WithSafeFixed(src_ctx, TransformationTest);
+            ReadOnlySpan<TDestination> rdestinations = destinations;
+
+            Assert.True(rdestinations.WithSafeFixed((in IReadOnlyFixedContext<TDestination> tdes_ctx) =>
+            {
+                foreach (TDestination destination in tdes_ctx.Values)
+                    return !destination.Equals(default(TDestination));
+                return false;
+            }));
+        }
+        private static void TransformationTest<TSource, TDestination>(in IReadOnlyFixedContext<TSource> src_ctx)
+            where TSource : unmanaged
+            where TDestination : unmanaged
+        {
+            Int32 count = primes[Random.Shared.Next(0, primes.Length)];
+            Span<TDestination> destinations = stackalloc TDestination[count];
+            destinations.WithSafeFixed(src_ctx, TransformationTest);
+            Assert.True(src_ctx.Values.WithSafeFixed(src_ctx.Values.AsIntPtr(), (in IReadOnlyFixedContext<TSource> ctx, IntPtr ptr) =>
+            {
+                return ctx.Values.AsIntPtr() == ptr;
+            }));
         }
         private static unsafe void TransformationTest<TSource, TDestination>(in IFixedContext<TDestination> des_ctx, IFixedContext<TSource> src_ctx)
             where TSource : unmanaged where TDestination : unmanaged
@@ -107,6 +134,63 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.FixedContextTest
             else
             {
                 Span<Byte> s_bytes = src_ctx.BinaryValues;
+                Span<Byte> bytes = des_ctx.BinaryValues;
+                Int32 min_byt = Math.Min(s_bytes.Length, bytes.Length);
+
+                for (Int32 i = 0; i < min_byt; i++)
+                    bytes[i] = s_bytes[i];
+            }
+
+            for (Int32 i = 0; i < min_src; i++)
+            {
+                TSource o_value = src_bytes[i];
+                TSource d_value = tdes_values[i];
+                Assert.Equal(o_value, d_value);
+            }
+        }
+        private static unsafe void TransformationTest<TSource, TDestination>(in IFixedContext<TDestination> des_ctx, IReadOnlyFixedContext<TSource> src_ctx)
+            where TSource : unmanaged where TDestination : unmanaged
+        {
+            Assert.False(src_ctx.Equals(des_ctx));
+
+            IReadOnlyTransformationContext<TSource, TDestination> tsrc_ctx = src_ctx.Transformation<TDestination>();
+            ReadOnlySpan<TDestination> tsrc_values = tsrc_ctx.Values;
+            ReadOnlySpan<Byte> tsrc_bytes = tsrc_ctx.ResidualBytes;
+            Span<TDestination> des_bytes = des_ctx.Values;
+            ITransformationContext<TDestination, TSource> tdes_ctx = des_ctx.Transformation<TSource>();
+
+            ReadOnlySpan<TSource> src_bytes = src_ctx.Values;
+            Span<TSource> tdes_values = tdes_ctx.Values;
+            Span<Byte> tdes_bytes = tdes_ctx.ResidualBytes;
+
+            Assert.Equal(tsrc_values.Length * sizeof(TDestination) + tsrc_bytes.Length, src_ctx.BinaryValues.Length);
+            Assert.Equal(tdes_values.Length * sizeof(TSource) + tdes_bytes.Length, des_ctx.BinaryValues.Length);
+            Assert.Equal(tsrc_ctx.Context, src_ctx);
+            Assert.True(Object.ReferenceEquals(tsrc_ctx.Context, src_ctx));
+            Assert.True(tdes_ctx.Context.Equals(des_ctx));
+            Assert.True(Object.ReferenceEquals(tdes_ctx.Context, des_ctx));
+            Assert.Equal(tdes_ctx, des_ctx.Transformation<TSource>());
+
+            if (tsrc_values.Length == 0)
+                Assert.Equal(src_ctx.BinaryValues.AsIntPtr(), tsrc_bytes.AsIntPtr());
+            else if (tsrc_bytes.Length > 0)
+                Assert.Equal(tsrc_values.AsIntPtr() + tsrc_values.Length * sizeof(TDestination), tsrc_bytes.AsIntPtr());
+
+            if (tdes_values.Length == 0)
+                Assert.Equal(des_ctx.BinaryValues.AsIntPtr(), tdes_bytes.AsIntPtr());
+            else if (tdes_bytes.Length > 0)
+                Assert.Equal(tdes_values.AsIntPtr() + tdes_values.Length * sizeof(TSource), tdes_bytes.AsIntPtr());
+
+            Int32 min_des = Math.Min(tsrc_values.Length, des_bytes.Length);
+            Int32 min_src_transform = Math.Min(src_bytes.Length, tdes_values.Length);
+            Int32 min_src = Math.Min(min_src_transform, min_des * sizeof(TDestination) / sizeof(TSource));
+
+            if (min_des != 0)
+                for (Int32 i = 0; i < min_des; i++)
+                    des_bytes[i] = tsrc_values[i];
+            else
+            {
+                ReadOnlySpan<Byte> s_bytes = src_ctx.BinaryValues;
                 Span<Byte> bytes = des_ctx.BinaryValues;
                 Int32 min_byt = Math.Min(s_bytes.Length, bytes.Length);
 
