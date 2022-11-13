@@ -2,6 +2,8 @@
 using System.Buffers;
 using System.Runtime.InteropServices;
 
+using Rxmxnx.PInvoke.Extensions.Internal;
+
 namespace Rxmxnx.PInvoke.Extensions
 {
     public static partial class MemoryBlockExtensions
@@ -47,7 +49,7 @@ namespace Rxmxnx.PInvoke.Extensions
             {
                 fixed (void* ptr = &MemoryMarshal.GetReference(span))
                 {
-                    ReadOnlyFixedContext<T> ctx = new(ptr, span.Length);
+                    FixedContext<T> ctx = new(ptr, span.Length, true);
                     try
                     {
                         action(ctx);
@@ -76,10 +78,10 @@ namespace Rxmxnx.PInvoke.Extensions
             {
                 fixed (void* ptr = &MemoryMarshal.GetReference(span))
                 {
-                    FixedContext<T, TArg> ctx = new(ptr, span.Length, arg);
+                    FixedContext<T> ctx = new(ptr, span.Length);
                     try
                     {
-                        action(ctx);
+                        action(ctx, arg);
                     }
                     finally
                     {
@@ -124,10 +126,10 @@ namespace Rxmxnx.PInvoke.Extensions
             {
                 fixed (void* ptr = &MemoryMarshal.GetReference(span))
                 {
-                    ReadOnlyFixedContext<T, TArg> ctx = new(ptr, span.Length, arg);
+                    FixedContext<T> ctx = new(ptr, span.Length, true);
                     try
                     {
-                        action(ctx);
+                        action(ctx, arg);
                     }
                     finally
                     {
@@ -201,7 +203,7 @@ namespace Rxmxnx.PInvoke.Extensions
             {
                 fixed (void* ptr = &MemoryMarshal.GetReference(span))
                 {
-                    ReadOnlyFixedContext<T> ctx = new(ptr, span.Length);
+                    FixedContext<T> ctx = new(ptr, span.Length, true);
                     try
                     {
                         return func(ctx);
@@ -232,10 +234,10 @@ namespace Rxmxnx.PInvoke.Extensions
             {
                 fixed (void* ptr = &MemoryMarshal.GetReference(span))
                 {
-                    FixedContext<T, TArg> ctx = new(ptr, span.Length, arg);
+                    FixedContext<T> ctx = new(ptr, span.Length);
                     try
                     {
-                        return func(ctx);
+                        return func(ctx, arg);
                     }
                     finally
                     {
@@ -284,10 +286,10 @@ namespace Rxmxnx.PInvoke.Extensions
             {
                 fixed (void* ptr = &MemoryMarshal.GetReference(span))
                 {
-                    ReadOnlyFixedContext<T, TArg> ctx = new(ptr, span.Length, arg);
+                    FixedContext<T> ctx = new(ptr, span.Length, true);
                     try
                     {
-                        return func(ctx);
+                        return func(ctx, arg);
                     }
                     finally
                     {

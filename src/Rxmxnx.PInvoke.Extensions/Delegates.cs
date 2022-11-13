@@ -3,72 +3,78 @@
 namespace Rxmxnx.PInvoke.Extensions
 {
     /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="FixedContext{T}"/> instance.
+    /// Encapsulates a methtod that receives a <see cref="IFixedContext{T}"/> instance.
     /// </summary>
     /// <typeparam name="T">Type of the fixed context.</typeparam>
     /// <param name="ctx">Fixed context instance.</param>
-    public delegate void FixedAction<T>(in FixedContext<T> ctx) where T : unmanaged;
+    public delegate void FixedAction<T>(in IFixedContext<T> ctx) where T : unmanaged;
 
     /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="FixedContext{T, TArg}"/> instance.
+    /// Encapsulates a methtod that receives a <see cref="IFixedContext{T}"/> instance and a 
+    /// state object of type <typeparamref name="TArg"/>.
     /// </summary>
     /// <typeparam name="T">Type of the fixed context.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <param name="ctx">Fixed context instance.</param>
-    public delegate void FixedAction<T, TArg>(in FixedContext<T, TArg> ctx) where T : unmanaged;
+    /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
+    public delegate void FixedAction<T, TArg>(in IFixedContext<T> ctx, TArg arg) where T : unmanaged;
 
     /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="ReadOnlyFixedContext{T}"/> instance.
+    /// Encapsulates a methtod that receives a <see cref="IReadOnlyFixedContext{T}"/> instance.
     /// </summary>
     /// <typeparam name="T">Type of the fixed context.</typeparam>
     /// <param name="ctx">Read-only fixed context instance.</param>
-    public delegate void ReadOnlyFixedAction<T>(in ReadOnlyFixedContext<T> ctx) where T : unmanaged;
+    public delegate void ReadOnlyFixedAction<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged;
 
     /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="ReadOnlyFixedContext{T, TArg}"/> instance.
+    /// Encapsulates a methtod that receives a <see cref="IReadOnlyFixedContext{T}"/> instance and a 
+    /// state object of type <typeparamref name="TArg"/>.
     /// </summary>
     /// <typeparam name="T">Type of the fixed context.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <param name="ctx">Read-only fixed context instance.</param>
-    public delegate void ReadOnlyFixedAction<T, TArg>(in ReadOnlyFixedContext<T, TArg> ctx) where T : unmanaged;
+    /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
+    public delegate void ReadOnlyFixedAction<T, TArg>(in IReadOnlyFixedContext<T> ctx, TArg arg) where T : unmanaged;
 
     /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="FixedContext{T}"/> instance.
+    /// Encapsulates a methtod that receives a <see cref="IFixedContext{T}"/> instance.
     /// </summary>
     /// <typeparam name="T">Type of the fixed context.</typeparam>
     /// <typeparam name="TResult">The type of the return value of the method that this delegate encapsulates.</typeparam>
     /// <param name="ctx">Fixed context instance.</param>
     /// <returns>The return value of the method that this delegate encapsulates.</returns>
-    public delegate TResult FixedFunc<T, out TResult>(in FixedContext<T> ctx) where T : unmanaged;
+    public delegate TResult FixedFunc<T, out TResult>(in IFixedContext<T> ctx) where T : unmanaged;
 
     /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="FixedContext{T, TArg}"/> instance.
+    /// Encapsulates a methtod that receives a <see cref="IFixedContext{T}"/> instance.
     /// </summary>
     /// <typeparam name="T">Type of the fixed context.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <typeparam name="TResult">The type of the return value of the method that this delegate encapsulates.</typeparam>
     /// <param name="ctx">Fixed context instance.</param>
+    /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
     /// <returns>The return value of the method that this delegate encapsulates.</returns>
-    public delegate TResult FixedFunc<T, TArg, out TResult>(in FixedContext<T, TArg> ctx) where T : unmanaged;
+    public delegate TResult FixedFunc<T, TArg, out TResult>(in IFixedContext<T> ctx, TArg arg) where T : unmanaged;
 
     /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="ReadOnlyFixedContext{T}"/> instance.
+    /// Encapsulates a methtod that receives a <see cref="IReadOnlyFixedContext{T}"/> instance.
     /// </summary>
     /// <typeparam name="T">Type of the fixed context.</typeparam>
     /// <typeparam name="TResult">The type of the return value of the method that this delegate encapsulates.</typeparam>
     /// <param name="ctx">Read-only fixed instance.</param>
     /// <returns>The return value of the method that this delegate encapsulates.</returns>
-    public delegate TResult ReadOnlyFixedFunc<T, out TResult>(in ReadOnlyFixedContext<T> ctx) where T : unmanaged;
+    public delegate TResult ReadOnlyFixedFunc<T, out TResult>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged;
 
     /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="ReadOnlyFixedContext{T, TArg}"/> instance.
+    /// Encapsulates a methtod that receives a <see cref="IReadOnlyFixedContext{T}"/> instance.
     /// </summary>
     /// <typeparam name="T">Type of the fixed context.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <typeparam name="TResult">The type of the return value of the method that this delegate encapsulates.</typeparam>
     /// <param name="ctx">Read-only fixed instance.</param>
+    /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
     /// <returns>The return value of the method that this delegate encapsulates.</returns>
-    public delegate TResult ReadOnlyFixedFunc<T, TArg, out TResult>(in ReadOnlyFixedContext<T, TArg> ctx) where T : unmanaged;
+    public delegate TResult ReadOnlyFixedFunc<T, TArg, out TResult>(in IReadOnlyFixedContext<T> ctx, TArg arg) where T : unmanaged;
 
     /// <summary>
     /// Encapsulates a method that receives a span of objects of type <typeparamref name="T"/> and a 
@@ -148,7 +154,7 @@ namespace Rxmxnx.PInvoke.Extensions
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
     /// <param name="residue">The residual span of bytes.</param>
     /// <returns>The return value of the method that this delegate encapsulates.</returns>
-    public delegate TResult SpanTransfromFunc<T, in TArg, out TResult>(Span<T> span, TArg arg, Span<Byte> residue) where T : unmanaged;
+    public delegate TResult SpanTransformFunc<T, in TArg, out TResult>(Span<T> span, TArg arg, Span<Byte> residue) where T : unmanaged;
 
     /// <summary>
     /// Encapsulates a method that receives a read-only span of <typeparamref name="T"/> values and a state 
@@ -173,7 +179,7 @@ namespace Rxmxnx.PInvoke.Extensions
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
     /// <param name="residue">The residual span of bytes.</param>
     /// <returns>The return value of the method that this delegate encapsulates.</returns>
-    public delegate TResult ReadOnlySpanTransfromFunc<T, in TArg, out TResult>(ReadOnlySpan<T> span, TArg arg, ReadOnlySpan<Byte> residue) where T : unmanaged;
+    public delegate TResult ReadOnlySpanTransformFunc<T, in TArg, out TResult>(ReadOnlySpan<T> span, TArg arg, ReadOnlySpan<Byte> residue) where T : unmanaged;
 
     /// <summary>
     /// Encapsulates a method that receives a binary span and a state object of type 
@@ -203,7 +209,7 @@ namespace Rxmxnx.PInvoke.Extensions
     /// <param name="span">A binary span.</param>
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
     /// <returns>The return value of the method that this delegate encapsulates.</returns>
-    public delegate TResult BinarySpanTransfromFunc<in TArg, out TResult>(Span<Byte> span, TArg arg);
+    public delegate TResult BinarySpanTransformFunc<in TArg, out TResult>(Span<Byte> span, TArg arg);
 
     /// <summary>
     /// Encapsulates a method that receives a binary read-only span and a state object of type 
@@ -215,73 +221,5 @@ namespace Rxmxnx.PInvoke.Extensions
     /// <param name="span">A binary read-only span.</param>
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
     /// <returns>The return value of the method that this delegate encapsulates.</returns>
-    public delegate TResult BinaryReadOnlySpanTransfromFunc<in TArg, out TResult>(ReadOnlySpan<Byte> span, TArg arg);
-
-    /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="TransformationContext{T}"/> instance.
-    /// </summary>
-    /// <typeparam name="T">Type of the fixed context.</typeparam>
-    /// <param name="ctx">Transformation context instance.</param>
-    public delegate void TransformationAction<T>(in TransformationContext<T> ctx) where T : unmanaged;
-
-    /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="TransformationContext{T}"/> instance.
-    /// </summary>
-    /// <typeparam name="T">Type of the fixed context.</typeparam>
-    /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
-    /// <param name="ctx">Transformation context instance.</param>
-    public delegate void TransformationAction<T, TArg>(in TransformationContext<T, TArg> ctx) where T : unmanaged;
-
-    /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="ReadOnlyTransformationContext{T}"/> instance.
-    /// </summary>
-    /// <typeparam name="T">Type of the fixed context.</typeparam>
-    /// <param name="ctx">Read-only transformation context instance.</param>
-    public delegate void ReadOnlyTransformationAction<T>(in ReadOnlyTransformationContext<T> ctx) where T : unmanaged;
-
-    /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="ReadOnlyTransformationContext{T}"/> instance.
-    /// </summary>
-    /// <typeparam name="T">Type of the fixed context.</typeparam>
-    /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
-    /// <param name="ctx">Read-only transformation context instance.</param>
-    public delegate void ReadOnlyTransformationAction<T, TArg>(in ReadOnlyTransformationContext<T, TArg> ctx) where T : unmanaged;
-
-    /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="TransformationContext{T}"/> instance.
-    /// </summary>
-    /// <typeparam name="T">Type of the fixed context.</typeparam>
-    /// <typeparam name="TResult">The type of the return value of the method that this delegate encapsulates.</typeparam>
-    /// <param name="ctx">Transformation context instance.</param>
-    /// <returns>The return value of the method that this delegate encapsulates.</returns>
-    public delegate TResult TransformationFunc<T, out TResult>(in TransformationContext<T> ctx) where T : unmanaged;
-
-    /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="TransformationContext{T, TArg}"/> instance.
-    /// </summary>
-    /// <typeparam name="T">Type of the fixed context.</typeparam>
-    /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
-    /// <typeparam name="TResult">The type of the return value of the method that this delegate encapsulates.</typeparam>
-    /// <param name="ctx">Transformation context instance.</param>
-    /// <returns>The return value of the method that this delegate encapsulates.</returns>
-    public delegate TResult TransformationFunc<T, TArg, out TResult>(in TransformationContext<T, TArg> ctx) where T : unmanaged;
-
-    /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="ReadOnlyTransformationContext{T}"/> instance.
-    /// </summary>
-    /// <typeparam name="T">Type of the fixed context.</typeparam>
-    /// <typeparam name="TResult">The type of the return value of the method that this delegate encapsulates.</typeparam>
-    /// <param name="ctx">Read-only transformation context instance.</param>
-    /// <returns>The return value of the method that this delegate encapsulates.</returns>
-    public delegate TResult ReadOnlyTransformationFunc<T, out TResult>(in ReadOnlyTransformationContext<T> ctx) where T : unmanaged;
-
-    /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="ReadOnlyTransformationContext{T, TArg}"/> instance.
-    /// </summary>
-    /// <typeparam name="T">Type of the fixed context.</typeparam>
-    /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
-    /// <typeparam name="TResult">The type of the return value of the method that this delegate encapsulates.</typeparam>
-    /// <param name="ctx">Read-only transformation context instance.</param>
-    /// <returns>The return value of the method that this delegate encapsulates.</returns>
-    public delegate TResult ReadOnlyTransformationFunc<T, TArg, out TResult>(in ReadOnlyTransformationContext<T, TArg> ctx) where T : unmanaged;
+    public delegate TResult BinaryReadOnlySpanTransformFunc<in TArg, out TResult>(ReadOnlySpan<Byte> span, TArg arg);
 }
