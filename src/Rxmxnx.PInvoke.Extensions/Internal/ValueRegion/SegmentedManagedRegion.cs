@@ -28,15 +28,9 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             /// </summary>
             private readonly Boolean _isSegmented;
 
-            /// <summary>
-            /// Gets an item from the memory region at the specified zero-based <paramref name="index"/>.
-            /// </summary>
-            /// <param name="index">The zero-based index of the element to get.</param>
-            /// <exception cref="IndexOutOfRangeException">
-            /// <paramref name="index"/> is less then zero or greater than or equal to 
-            /// memory region length.
-            /// </exception>
-            /// <returns>The element from the memory region.</returns>
+            /// <inheritdoc/>
+            public override Boolean IsSegmented => this._isSegmented;
+            /// <inheritdoc/>
             public override T this[Int32 index] => this._array[this._offset + index];
 
             /// <summary>

@@ -46,6 +46,10 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </summary>
         private readonly Boolean _isLocal;
         /// <summary>
+        /// Indicates whether the UTF-8 data is a function.
+        /// </summary>
+        private readonly Boolean _isFunction;
+        /// <summary>
         /// Internal object data.
         /// </summary>
         private readonly ValueRegion<Byte> _data;
@@ -108,10 +112,16 @@ namespace Rxmxnx.PInvoke.Extensions
         /// not contained by.
         /// </summary>
         public Boolean IsReference => !this._isLocal;
+
         /// <summary>
         /// Indicates whether the current instance is segmented.
         /// </summary>
-        public Boolean IsSegmented => this._isLocal && ((Byte[]?)this._data) is null;
+        public Boolean IsSegmented => this._data.IsSegmented;
+
+        /// <summary>
+        /// Indicates whether the current instance is a function.
+        /// </summary>
+        public Boolean IsFunction => this._isFunction;
 
         /// <summary>
         /// Private constructor.
@@ -128,12 +138,29 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <summary>
         /// Constructor.
         /// </summary>
+        /// <param name="func"><see cref="ReadOnlySpanFunc{Byte}"/> delegate.</param>
+        /// <param name="isLiteral">Indicates whether returned span is from UTF-8 literal.</param>
+        private CString(ReadOnlySpanFunc<Byte> func, Boolean isLiteral)
+        {
+            this._isLocal = false;
+            this._isFunction = true;
+            this._data = ValueRegion<Byte>.Create(func);
+
+            ReadOnlySpan<Byte> data = func();
+            this._isNullTerminated = isLiteral || (data.Length > 0 && data[^1] == default);
+            this._length = data.Length - (this._isNullTerminated ? 1 : 0);
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         /// <param name="value">A <see cref="CString"/> value.</param>
         /// <param name="offset">Offset for range.</param>
         /// <param name="length">Length of range.</param>
         private CString(CString value, Int32 offset, Int32 length)
         {
             this._isLocal = value._isLocal;
+            this._isFunction = value._isFunction;
             this._data = ValueRegion<Byte>.Create(value._data, offset, value.GetDataLength(offset, length));
 
             ReadOnlySpan<Byte> data = this._data;
@@ -195,6 +222,44 @@ namespace Rxmxnx.PInvoke.Extensions
                 strBuilder.Append(this[i].AsHexString());
             return strBuilder.ToString();
         }
+
+        /// <summary>
+        /// Prevents the garbage collector from relocating the current instance and fixes its memory 
+        /// address until <paramref name="action"/> finish.
+        /// </summary>
+        /// <param name="action">A <see cref="FixedAction{T}"/> delegate.></param>
+        public void WithSafeFixed(ReadOnlyFixedAction<Byte> action) => this.AsSpan().WithSafeFixed(action);
+
+        /// <summary>
+        /// Prevents the garbage collector from relocating the current instance and fixes its memory 
+        /// address until <paramref name="action"/> finish.
+        /// </summary>
+        /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+        /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
+        /// <param name="action">A <see cref="ReadOnlyFixedAction{Byte, TArg}"/> delegate.</param>
+        public void WithSafeFixed<TArg>(TArg arg, ReadOnlyFixedAction<Byte, TArg> action)
+            => this.AsSpan().WithSafeFixed(arg, action);
+
+        /// <summary>
+        /// Prevents the garbage collector from relocating the current instance and fixes its memory 
+        /// address until <paramref name="func"/> finish.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
+        /// <param name="func">A <see cref="FixedFunc{T, TResult}"/> delegate.</param>
+        /// <returns>The result of <paramref name="func"/> execution.</returns>
+        public TResult WithSafeFixed<TResult>(ReadOnlyFixedFunc<Byte, TResult> func) => this.AsSpan().WithSafeFixed(func);
+
+        /// <summary>
+        /// Prevents the garbage collector from relocating the current instance and fixes its memory 
+        /// address until <paramref name="func"/> finish.
+        /// </summary>
+        /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+        /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
+        /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
+        /// <param name="func">A <see cref="FixedFunc{T, TResult}"/> delegate.</param>
+        /// <returns>The result of <paramref name="func"/> execution.</returns>
+        public TResult WithSafeFixed<TArg, TResult>(TArg arg, ReadOnlyFixedFunc<Byte, TArg, TResult> func)
+            => this.AsSpan().WithSafeFixed(arg, func);
 
         /// <summary>
         /// Retrieves an object that can iterate through the individual <see cref="Byte"/> in this 
@@ -317,14 +382,25 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </summary>
         /// <param name="bytes">A <see cref="Byte"/> array to implicitly convert.</param>
         [return: NotNullIfNotNull("bytes")]
-        public static implicit operator CString?(Byte[]? bytes) => bytes != default ? new(bytes) : default;
+        public static implicit operator CString?(Byte[]? bytes) => bytes is not null ? new(bytes) : default;
+
         /// <summary>
         /// Defines an implicit conversion of a given <see cref="String"/> to <see cref="CString"/>.
         /// </summary>
         /// <param name="str">A <see cref="String"/> to implicitly convert.</param>
         [return: NotNullIfNotNull("str")]
         public static implicit operator CString?(String? str)
-            => str != default ? new(GetUtf8Bytes(str).Concat<Byte>(empty).ToArray<Byte>()) : default;
+            => str is not null ? new(GetUtf8Bytes(str).Concat<Byte>(empty).ToArray<Byte>()) : default;
+
+        /// <summary>
+        /// Defines an implicit conversion of a given <see cref="ReadOnlySpanFunc{Bute}"/> to 
+        /// <see cref="CString"/>.
+        /// </summary>
+        /// <param name="func">
+        /// A <see cref="ReadOnlySpanFunc{Byte}"/> delegate that returns a Utf8 string literal.
+        /// </param>
+        public static implicit operator CString(ReadOnlySpanFunc<Byte> func) => new(func, true);
+
         /// <summary>
         /// Defines an implicit conversion of a given <see cref="CString"/> to a read-only span of bytes.
         /// </summary>
@@ -341,6 +417,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
         /// </returns>
         public static Boolean operator ==(CString? a, CString? b) => a?.Equals(b) ?? b?.Equals(a) ?? true;
+
         /// <summary>
         /// Determines whether two specified <see cref="CString"/> have different values.
         /// </summary>
@@ -369,6 +446,13 @@ namespace Rxmxnx.PInvoke.Extensions
             else
                 throw new InvalidOperationException(nameof(value) + " does not contains the UTF-8 text.");
         }
+
+        /// <summary>
+        /// Creates a new <see cref="CString"/> instance from <paramref name="func"/>.
+        /// </summary>
+        /// <param name="func">A <see cref="ReadOnlySpanFunc{Byte}"/> delegate that returns a Utf8 string non-literal.</param>
+        /// <returns>A <see cref="CString"/> instance from <paramref name="func"/>.</returns>
+        public static CString? Create(ReadOnlySpanFunc<Byte>? func) => func is not null ? new(func, false) : default;
 
         /// <summary>
         /// Calculates the data length of a segment of current <see cref="CString"/> whose 

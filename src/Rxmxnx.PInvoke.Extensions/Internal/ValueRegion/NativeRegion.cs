@@ -35,10 +35,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
                 this._length = !this._ptr.Equals(IntPtr.Zero) ? length : default;
             }
 
-            /// <summary>
-            /// Creates a new read-only span over this memory region.
-            /// </summary>
-            /// <returns>The read-only span representation of the memory region.</returns>
+            /// <inheritdoc/>
             protected override ReadOnlySpan<T> AsSpan() => this._ptr.AsReadOnlySpan<T>(this._length);
         }
     }

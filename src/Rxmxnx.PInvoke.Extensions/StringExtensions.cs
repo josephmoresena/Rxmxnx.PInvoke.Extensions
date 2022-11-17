@@ -30,6 +30,122 @@ namespace Rxmxnx.PInvoke.Extensions
         public static Byte[]? AsUtf8(this String? str) => !String.IsNullOrEmpty(str) ? Encoding.UTF8.GetBytes(str) : default;
 
         /// <summary>
+        /// Prevents the garbage collector from relocating <paramref name="str"/> and fixes its memory 
+        /// address until <paramref name="action"/> finish.
+        /// </summary>
+        /// <param name="str">A UTF-16 text instance.</param>
+        /// <param name="action">A <see cref="ReadOnlyFixedAction{Char, TArg}"/> delegate.</param>
+        public static void WithSafeFixed(this String? str, ReadOnlyFixedAction<Char> action)
+        {
+            if (str is not null)
+                unsafe
+                {
+                    fixed (void* ptr = str)
+                    {
+                        FixedContext<Char> ctx = new(ptr, str.Length, true);
+                        try
+                        {
+                            action(ctx);
+                        }
+                        finally
+                        {
+                            ctx.Unload();
+                        }
+                    }
+                }
+        }
+
+        /// <summary>
+        /// Prevents the garbage collector from relocating <paramref name="str"/> and fixes its memory 
+        /// address until <paramref name="action"/> finish.
+        /// </summary>
+        /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+        /// <param name="str">A UTF-16 text instance.</param>
+        /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
+        /// <param name="action">A <see cref="ReadOnlyFixedAction{Char, TArg}"/> delegate.</param>
+        public static void WithSafeFixed<TArg>(this String? str, TArg arg, ReadOnlyFixedAction<Char, TArg> action)
+        {
+            if (str is not null)
+                unsafe
+                {
+                    fixed (void* ptr = str)
+                    {
+                        FixedContext<Char> ctx = new(ptr, str.Length, true);
+                        try
+                        {
+                            action(ctx, arg);
+                        }
+                        finally
+                        {
+                            ctx.Unload();
+                        }
+                    }
+                }
+        }
+
+
+        /// <summary>
+        /// Prevents the garbage collector from relocating <paramref name="str"/> and fixes its memory 
+        /// address until <paramref name="func"/> finish.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
+        /// <param name="str">A UTF-16 text instance.</param>
+        /// <param name="func">A <see cref="ReadOnlyFixedFunc{Char, TResult}"/> delegate.</param>
+        /// <returns>The result of <paramref name="func"/> execution.</returns>
+        public static TResult? WithSafeFixed<TResult>(this String? str, ReadOnlyFixedFunc<Char, TResult> func)
+        {
+            if (str is not null)
+                unsafe
+                {
+                    fixed (void* ptr = str)
+                    {
+                        FixedContext<Char> ctx = new(ptr, str.Length, true);
+                        try
+                        {
+                            return func(ctx);
+                        }
+                        finally
+                        {
+                            ctx.Unload();
+                        }
+                    }
+                }
+            return default;
+        }
+
+        /// <summary>
+        /// Prevents the garbage collector from relocating <paramref name="str"/> and fixes its memory 
+        /// address until <paramref name="func"/> finish.
+        /// </summary>
+        /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+        /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
+        /// <param name="str">A UTF-16 text instance.</param>
+        /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
+        /// <param name="func">A <see cref="ReadOnlyFixedFunc{Char, TArg, TResult}"/> delegate.</param>
+        /// <returns>The result of <paramref name="func"/> execution.</returns>
+        public static TResult? WithSafeFixed<TArg, TResult>(this String? str, TArg arg, ReadOnlyFixedFunc<Char, TArg, TResult> func)
+
+        {
+            if (str is not null)
+                unsafe
+                {
+                    fixed (void* ptr = str)
+                    {
+                        FixedContext<Char> ctx = new(ptr, str.Length, true);
+                        try
+                        {
+                            return func(ctx, arg);
+                        }
+                        finally
+                        {
+                            ctx.Unload();
+                        }
+                    }
+                }
+            return default;
+        }
+
+        /// <summary>
         /// Concatenates the members of a collection of <see cref="String"/>.
         /// </summary>
         /// <param name="values">A collection that contains the strings to concatenate.</param>

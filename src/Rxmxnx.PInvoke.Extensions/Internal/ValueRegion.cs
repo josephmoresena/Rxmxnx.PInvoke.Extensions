@@ -22,6 +22,10 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <returns>The element from the memory region.</returns>
         [IndexerName("Position")]
         public virtual T this[Int32 index] => this.AsSpan()[index];
+        /// <summary>
+        /// Indicates whether current memory region is segmented.
+        /// </summary>
+        public virtual Boolean IsSegmented => false;
 
         /// <summary>
         /// Copies the contents of this memory region into a new array.
@@ -35,6 +39,11 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <returns>An array containing the data in the current memory region.</returns>
         protected virtual T[]? AsArray() => default;
         /// <summary>
+        /// Gets a function from this memory region.
+        /// </summary>
+        /// <returns>A function from this memory region.</returns>
+        protected virtual ReadOnlySpanFunc<T>? AsReadOnlySpanFunc() => default;
+        /// <summary>
         /// Creates a new read-only span over this memory region.
         /// </summary>
         /// <returns>The read-only span representation of the memory region.</returns>
@@ -46,16 +55,12 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// <returns>An enumerator for this memory region.</returns>
         public ReadOnlySpan<T>.Enumerator GetEnumerator() => this.AsSpan().GetEnumerator();
 
-        /// <summary>
-        /// Implicit operator. <see cref="ValueRegion{T}"/> -> <see cref="ReadOnlySpan{T}"/>.
-        /// </summary>
-        /// <param name="arrayWrapper"><see cref="ValueRegion{T}"/> instance.</param>
-        public static implicit operator ReadOnlySpan<T>(ValueRegion<T> arrayWrapper) => arrayWrapper.AsSpan();
-        /// <summary>
-        /// Implicit operator. <see cref="ValueRegion{T}"/> -> Array of <typeparamref name="T"/>.
-        /// </summary>
-        /// <param name="arrayWrapper"><see cref="ValueRegion{T}"/> instance.</param>
-        public static explicit operator T[]?(ValueRegion<T> arrayWrapper) => arrayWrapper.AsArray();
+        /// <inheritdoc/>
+        public static implicit operator ReadOnlySpan<T>(ValueRegion<T> region) => region.AsSpan();
+        /// <inheritdoc/>
+        public static explicit operator T[]?(ValueRegion<T> region) => region.AsArray();
+        /// <inheritdoc/>
+        public static explicit operator ReadOnlySpanFunc<T>?(ValueRegion<T> region) => region.AsReadOnlySpanFunc();
 
         /// <summary>
         /// Creates a new <see cref="ValueRegion{T}"/> instance from an array of 
@@ -74,6 +79,13 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         public static ValueRegion<T> Create(IntPtr ptr, Int32 length)
             => !ptr.IsZero() && length != default ? new NativeRegion(ptr, length) : NativeRegion.Empty;
         /// <summary>
+        /// Creates a new <see cref="ValueRegion{T}"/> instance from a <see cref="ReadOnlySpanFunc{T}"/>
+        /// delegate.
+        /// </summary>
+        /// <param name="func"><see cref="ReadOnlySpanFunc{T}"/> delegate.</param>
+        /// <returns>A new <see cref="ValueRegion{T}"/> instance.</returns>
+        public static ValueRegion<T> Create(ReadOnlySpanFunc<T> func) => new FuncRegion(func);
+        /// <summary>
         /// Creates a new <see cref="ValueRegion{T}"/> instance whose offset is <paramref name="offset"/>
         /// and whose length is <paramref name="length"/>.
         /// </summary>
@@ -87,6 +99,10 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
                 return new SegmentedManagedRegion(managed, offset, length);
             else if (region is SegmentedManagedRegion segmented)
                 return new SegmentedManagedRegion(segmented, offset, length);
+            else if (region is FuncRegion func)
+                return new SegmentedFuncRegion(func, offset, length);
+            else if (region is SegmentedFuncRegion segmentedFunc)
+                return new SegmentedFuncRegion(segmentedFunc, offset, length);
             else
                 return Create(region.AsSpan().AsIntPtr() + offset, length);
         }
