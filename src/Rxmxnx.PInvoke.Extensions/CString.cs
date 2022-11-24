@@ -147,8 +147,9 @@ namespace Rxmxnx.PInvoke.Extensions
             this._data = ValueRegion<Byte>.Create(func);
 
             ReadOnlySpan<Byte> data = func();
-            this._isNullTerminated = isLiteral || (data.Length > 0 && data[^1] == default);
-            this._length = data.Length - (this._isNullTerminated ? 1 : 0);
+            Boolean isNullTerminatedSpan = IsNullTerminatedSpan(data);
+            this._isNullTerminated = isLiteral || isNullTerminatedSpan;
+            this._length = data.Length - (isNullTerminatedSpan ? 1 : 0);
         }
 
         /// <summary>
@@ -164,7 +165,7 @@ namespace Rxmxnx.PInvoke.Extensions
             this._data = ValueRegion<Byte>.Create(value._data, offset, value.GetDataLength(offset, length));
 
             ReadOnlySpan<Byte> data = this._data;
-            this._isNullTerminated = data.Length > 0 && data[^1] == default;
+            this._isNullTerminated = IsNullTerminatedSpan(data);
             this._length = data.Length - (this._isNullTerminated ? 1 : 0);
         }
 
@@ -175,6 +176,12 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="c"></param>
         /// <param name="count"></param>
         public CString(Byte c, Int32 count) : this(Enumerable.Repeat(c, count).Concat(empty).ToArray()) { }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="func"><see cref="ReadOnlySpanFunc{Byte}"/> delegate.</param>
+        public CString(ReadOnlySpanFunc<Byte> func) : this(func, true) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified 
@@ -275,12 +282,15 @@ namespace Rxmxnx.PInvoke.Extensions
         public Object Clone()
         {
             Byte[] bytes;
-            if (this._isNullTerminated)
+            if (this._isNullTerminated && !this._isFunction)
                 bytes = this._data.ToArray();
             else
             {
                 ReadOnlySpan<Byte> data = this._data;
-                bytes = new Byte[this._length + 1];
+                if (!this.IsFunction || data.IsEmpty)
+                    bytes = new Byte[this._length + 1];
+                else
+                    bytes = new Byte[data.Length + (!IsNullTerminatedSpan(data) ? 1 : 0)];
                 data.CopyTo(bytes);
             }
             return new CString(bytes);
@@ -391,15 +401,6 @@ namespace Rxmxnx.PInvoke.Extensions
         [return: NotNullIfNotNull("str")]
         public static implicit operator CString?(String? str)
             => str is not null ? new(GetUtf8Bytes(str).Concat<Byte>(empty).ToArray<Byte>()) : default;
-
-        /// <summary>
-        /// Defines an implicit conversion of a given <see cref="ReadOnlySpanFunc{Bute}"/> to 
-        /// <see cref="CString"/>.
-        /// </summary>
-        /// <param name="func">
-        /// A <see cref="ReadOnlySpanFunc{Byte}"/> delegate that returns a Utf8 string literal.
-        /// </param>
-        public static implicit operator CString(ReadOnlySpanFunc<Byte> func) => new(func, true);
 
         /// <summary>
         /// Defines an implicit conversion of a given <see cref="CString"/> to a read-only span of bytes.
@@ -564,5 +565,16 @@ namespace Rxmxnx.PInvoke.Extensions
 
             return true;
         }
+
+        /// <summary>
+        /// Indicates whether <paramref name="data"/> contains a null-terminated UTF-8 text.
+        /// </summary>
+        /// <param name="data">A read-only byte span containing UTF-8 text.</param>
+        /// <returns>
+        /// <see langword="true"/> if <paramref name="data"/> contains a null-terminated UTF-8 text; 
+        /// otherwise, <see langword="false"/>.
+        /// </returns>
+        private static Boolean IsNullTerminatedSpan(ReadOnlySpan<Byte> data)
+            => !data.IsEmpty && data[^1] == default;
     }
 }
