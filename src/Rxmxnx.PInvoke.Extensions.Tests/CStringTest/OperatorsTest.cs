@@ -285,10 +285,12 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             }
         }
 
-        [Fact]
-        internal void NormalRangeTest()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        internal void NormalRangeTest(Boolean function)
         {
-            CString cstr = "A-B";
+            CString cstr = function ? new CString(() => "A-B"u8) : "A-B";
             CString nonNullTerminated = Encoding.UTF8.GetBytes("A\0B");
             CString fullSegment = cstr[0..];
             CString single = cstr[0..1];

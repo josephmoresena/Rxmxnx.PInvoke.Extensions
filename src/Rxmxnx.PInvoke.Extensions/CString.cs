@@ -111,7 +111,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// Indicates whether the UTF-8 text is referenced by the current <see cref="CString"/> and 
         /// not contained by.
         /// </summary>
-        public Boolean IsReference => !this._isLocal;
+        public Boolean IsReference => !this._isLocal && !this._isFunction;
 
         /// <summary>
         /// Indicates whether the current instance is segmented.
@@ -165,8 +165,10 @@ namespace Rxmxnx.PInvoke.Extensions
             this._data = ValueRegion<Byte>.Create(value._data, offset, value.GetDataLength(offset, length));
 
             ReadOnlySpan<Byte> data = this._data;
-            this._isNullTerminated = IsNullTerminatedSpan(data);
-            this._length = data.Length - (this._isNullTerminated ? 1 : 0);
+            Boolean isNullTerminatedSpan = IsNullTerminatedSpan(data);
+            Boolean isLiteral = value._isFunction && value._isNullTerminated;
+            this._isNullTerminated = isLiteral && value._length - offset == length || isNullTerminatedSpan;
+            this._length = data.Length - (isNullTerminatedSpan ? 1 : 0);
         }
 
         /// <summary>
