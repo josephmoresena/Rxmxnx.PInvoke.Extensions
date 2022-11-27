@@ -68,7 +68,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.TextUtilitiesTest
             GCHandle[] handles = TestUtilities.Alloc(bytes);
             try
             {
-                CString[] values = TestUtilities.CreateCStrings(bytes, handles);
+                CString[] values = TestUtilities.CreateCStrings(handles);
                 NormalTest(separatorByte, separatorString, separatorCString, strValue, values);
             }
             finally

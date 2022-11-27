@@ -16,12 +16,17 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringSequenceTest
         [Fact]
         internal void NormalTest()
         {
-            Random random = new Random();
+            Random random = new();
             CString[] localValues = TestUtilities.SharedFixture.CreateMany<String>(100).Select(x =>
             {
                 Int32 start = random.Next(0, x.Length);
                 Int32 end = random.Next(start, x.Length);
                 return (CString)x[start..end];
+            }).Union(new CString[]
+            {
+                new(()=>"literal utf8"u8),
+                new(()=>"utf8"u8),
+                new(()=>"literal"u8),
             }).ToArray();
             String[] strValue = TestUtilities.SharedFixture.CreateMany<String>(100).Select(x =>
             {
@@ -33,7 +38,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringSequenceTest
             GCHandle[] handles = TestUtilities.Alloc(bytes);
             try
             {
-                ExecuteTest(localValues, TestUtilities.CreateCStrings(bytes, handles));
+                ExecuteTest(localValues, TestUtilities.CreateCStrings(handles));
             }
             finally
             {
@@ -68,7 +73,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringSequenceTest
                 Assert.True(output[i].IsNullTerminated);
                 if (!isNullOrEmpty)
                 {
-                    Assert.True(output[i].IsReference);
+                    Assert.True(output[i].IsReference || output[i].IsFunction);
                     Assert.Equal(expectedValue[i], output[i].ToString());
                 }
                 else
@@ -78,23 +83,38 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringSequenceTest
 
         private static void ConcatTest(CStringSequence sequence)
         {
-            ReadOnlySpan<Char> buffer = sequence.AsSpan(out CString[] output);
-            Int32[] lengths = output.Select(x => x.Length).ToArray();
-            CString join = output.Concat();
-            ReadOnlySpan<Byte> span = join;
-            CString[] output2 = GetCString(span, lengths);
-            CStringSequence sequence2 = new(output2);
-            sequence2.AsSpan(out CString[] output3).WithSafeFixed((in IReadOnlyFixedContext<Char> cCtx) =>
+            unsafe
             {
-                Assert.Equal(sequence, sequence2);
-                for (Int32 i = 0; i < lengths.Length; i++)
+                fixed (Char* sptr = sequence.ToString())
                 {
-                    Assert.Equal(output[i], output2[i]);
-                    Assert.Equal(output[i], output3[i]);
-                    Assert.True(output[i].IsNullTerminated);
-                    Assert.True(output3[i].IsNullTerminated);
+                    _ = sequence.AsSpan(out CString[] output);
+                    Int32[] lengths = output.Select(x => x.Length).ToArray();
+                    CString join = output.Concat();
+                    join.WithSafeFixed((in IReadOnlyFixedContext<Byte> jCtx) =>
+                    {
+                        ReadOnlySpan<Byte> span = join;
+                        CString[] output2 = GetCString(span, lengths);
+                        CStringSequence sequence2 = new(output2);
+                        fixed (Char* cPtr = sequence2.ToString())
+                        {
+                            IntPtr ptr = new(cPtr);
+                            sequence2.AsSpan(out CString[] output3).WithSafeFixed((in IReadOnlyFixedContext<Char> cCtx) =>
+                            {
+                                Assert.Equal(ptr, cCtx.Values.AsIntPtr());
+                                Assert.Equal(sequence, sequence2);
+                                for (Int32 i = 0; i < lengths.Length; i++)
+                                {
+                                    Assert.Equal(output[i], output2[i]);
+                                    Assert.Equal(output[i], output3[i]);
+                                    Assert.True(output[i].IsNullTerminated);
+                                    Assert.True(output3[i].IsNullTerminated);
+                                }
+                            });
+                        }
+
+                    });
                 }
-            });
+            }
         }
 
         private static CString[] GetCString(ReadOnlySpan<Byte> span, Int32[] lengths)

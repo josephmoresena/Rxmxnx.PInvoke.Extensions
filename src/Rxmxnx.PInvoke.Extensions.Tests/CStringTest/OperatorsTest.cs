@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 
 using AutoFixture;
@@ -169,6 +170,9 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
 
             unsafe
             {
+                fixed (void* ptr2 = byt2)
+                fixed (void* ptr3 = byt3)
+                fixed (void* ptr4 = byt4)
                 fixed (void* ptr5 = byt5)
                 fixed (void* ptr6 = byt6)
                 {
@@ -185,102 +189,105 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                     String str7 = Encoding.UTF8.GetString(Enumerable.Repeat(ccr7, 3).ToArray());
 
                     CString cstr1 = str1;
-                    CString cstr2 = byt2;
-                    CString cstr3 = byt3;
-                    CString cstr4 = byt4;
-                    CString cstr5 = new(spa5.AsIntPtr(), spa5.Length);
-                    CString cstr6 = new(spa6.AsIntPtr(), spa6.Length);
-                    CString cstr7 = new(ccr7, 3);
+                    fixed (void* ptr = &MemoryMarshal.GetReference(cstr1.AsSpan()))
+                    {
+                        CString cstr2 = byt2;
+                        CString cstr3 = byt3;
+                        CString cstr4 = byt4;
+                        CString cstr5 = new(spa5.AsIntPtr(), spa5.Length);
+                        CString cstr6 = new(spa6.AsIntPtr(), spa6.Length);
+                        CString cstr7 = new(ccr7, 3);
 
-                    Assert.True(CString.Empty != cstr1);
-                    Assert.True(CString.Empty != cstr2);
-                    Assert.True(CString.Empty != cstr3);
-                    Assert.True(CString.Empty != cstr4);
-                    Assert.True(CString.Empty != cstr5);
-                    Assert.True(CString.Empty != cstr6);
+                        Assert.True(CString.Empty != cstr1);
+                        Assert.True(CString.Empty != cstr2);
+                        Assert.True(CString.Empty != cstr3);
+                        Assert.True(CString.Empty != cstr4);
+                        Assert.True(CString.Empty != cstr5);
+                        Assert.True(CString.Empty != cstr6);
 
-                    ReadOnlySpan<Byte> cstrSpan1 = cstr1;
-                    ReadOnlySpan<Byte> cstrSpan2 = cstr2;
-                    ReadOnlySpan<Byte> cstrSpan3 = cstr3;
-                    ReadOnlySpan<Byte> cstrSpan4 = cstr4;
-                    ReadOnlySpan<Byte> cstrSpan5 = cstr5;
-                    ReadOnlySpan<Byte> cstrSpan6 = cstr6;
-                    ReadOnlySpan<Byte> cstrSpan7 = cstr7;
+                        ReadOnlySpan<Byte> cstrSpan1 = cstr1;
+                        ReadOnlySpan<Byte> cstrSpan2 = cstr2;
+                        ReadOnlySpan<Byte> cstrSpan3 = cstr3;
+                        ReadOnlySpan<Byte> cstrSpan4 = cstr4;
+                        ReadOnlySpan<Byte> cstrSpan5 = cstr5;
+                        ReadOnlySpan<Byte> cstrSpan6 = cstr6;
+                        ReadOnlySpan<Byte> cstrSpan7 = cstr7;
 
-                    Assert.NotNull(cstr1);
-                    Assert.NotNull(cstr2);
-                    Assert.NotNull(cstr3);
-                    Assert.NotNull(cstr4);
-                    Assert.NotNull(cstr5);
-                    Assert.NotNull(cstr6);
-                    Assert.NotNull(cstr7);
+                        Assert.NotNull(cstr1);
+                        Assert.NotNull(cstr2);
+                        Assert.NotNull(cstr3);
+                        Assert.NotNull(cstr4);
+                        Assert.NotNull(cstr5);
+                        Assert.NotNull(cstr6);
+                        Assert.NotNull(cstr7);
 
-                    Assert.Equal(str1, cstr1.ToString());
-                    Assert.Equal(str1.Length, cstr1.Length);
-                    Assert.Equal(cstr1.Length + 1, cstrSpan1.Length);
-                    Assert.True(cstr1.IsNullTerminated);
-                    AssertIndex(byt1, cstr1);
-                    AssertReference(cstr1, false);
+                        Assert.Equal(str1, cstr1.ToString());
+                        Assert.Equal(str1.Length, cstr1.Length);
+                        Assert.Equal(cstr1.Length + 1, cstrSpan1.Length);
+                        Assert.True(cstr1.IsNullTerminated);
+                        AssertIndex(byt1, cstr1);
+                        AssertReference(cstr1, false);
 
-                    Assert.Equal(str2, cstr2.ToString());
-                    Assert.Equal(str2.Length, cstr2.Length);
-                    Assert.Equal(cstr2.Length, cstrSpan2.Length);
-                    Assert.False(cstr2.IsNullTerminated);
-                    AssertIndex(byt2, cstr2);
-                    AssertReferenceEquality(byt2, cstr2, false);
-                    AssertReferenceEquality(byt2, (CString)cstr2.Clone(), true);
-                    AssertReference(cstr2, false);
+                        Assert.Equal(str2, cstr2.ToString());
+                        Assert.Equal(str2.Length, cstr2.Length);
+                        Assert.Equal(cstr2.Length, cstrSpan2.Length);
+                        Assert.False(cstr2.IsNullTerminated);
+                        AssertIndex(byt2, cstr2);
+                        AssertReferenceEquality(byt2, cstr2, false);
+                        AssertReferenceEquality(byt2, (CString)cstr2.Clone(), true);
+                        AssertReference(cstr2, false);
 
-                    Assert.Equal(str3, cstr3.ToString());
-                    Assert.Equal(str3.Length, cstr3.Length);
-                    Assert.Equal(cstr3.Length, cstrSpan3.Length);
-                    Assert.False(cstr3.IsNullTerminated);
-                    AssertIndex(byt3, cstr3);
-                    AssertReferenceEquality(byt3, cstr3, false);
-                    AssertReferenceEquality(byt3, (CString)cstr3.Clone(), true);
-                    AssertReference(cstr3, false);
+                        Assert.Equal(str3, cstr3.ToString());
+                        Assert.Equal(str3.Length, cstr3.Length);
+                        Assert.Equal(cstr3.Length, cstrSpan3.Length);
+                        Assert.False(cstr3.IsNullTerminated);
+                        AssertIndex(byt3, cstr3);
+                        AssertReferenceEquality(byt3, cstr3, false);
+                        AssertReferenceEquality(byt3, (CString)cstr3.Clone(), true);
+                        AssertReference(cstr3, false);
 
-                    Assert.Equal(str4[0..^1], cstr4.ToString());
-                    Assert.Equal(str4.Length - 1, cstr4.Length);
-                    Assert.Equal(cstr4.Length + 1, cstrSpan4.Length);
-                    Assert.True(cstr4.IsNullTerminated);
-                    AssertIndex(byt4, cstr4);
-                    AssertReferenceEquality(byt4, cstr4, false);
-                    AssertReferenceEquality(byt4, (CString)cstr4.Clone(), true);
-                    AssertReference(cstr4, false);
+                        Assert.Equal(str4[0..^1], cstr4.ToString());
+                        Assert.Equal(str4.Length - 1, cstr4.Length);
+                        Assert.Equal(cstr4.Length + 1, cstrSpan4.Length);
+                        Assert.True(cstr4.IsNullTerminated);
+                        AssertIndex(byt4, cstr4);
+                        AssertReferenceEquality(byt4, cstr4, false);
+                        AssertReferenceEquality(byt4, (CString)cstr4.Clone(), true);
+                        AssertReference(cstr4, false);
 
-                    Assert.Equal(str5, cstr5.ToString());
-                    Assert.Equal(str5.Length, cstr5.Length);
-                    Assert.Equal(cstr5.Length, cstrSpan5.Length);
-                    Assert.False(cstr5.IsNullTerminated);
-                    AssertIndex(spa5, cstr5);
-                    AssertReferenceEquality(spa5, cstr5, false);
-                    AssertReferenceEquality(spa5, (CString)cstr5.Clone(), true);
-                    AssertReference(cstr5, true);
+                        Assert.Equal(str5, cstr5.ToString());
+                        Assert.Equal(str5.Length, cstr5.Length);
+                        Assert.Equal(cstr5.Length, cstrSpan5.Length);
+                        Assert.False(cstr5.IsNullTerminated);
+                        AssertIndex(spa5, cstr5);
+                        AssertReferenceEquality(spa5, cstr5, false);
+                        AssertReferenceEquality(spa5, (CString)cstr5.Clone(), true);
+                        AssertReference(cstr5, true);
 
-                    Assert.Equal(str6[0..^1], cstr6.ToString());
-                    Assert.Equal(str6.Length - 1, cstr6.Length);
-                    Assert.Equal(cstr6.Length + 1, cstrSpan6.Length);
-                    Assert.True(cstr6.IsNullTerminated);
-                    AssertIndex(spa6, cstr6);
-                    AssertReferenceEquality(spa6, cstr6, false);
-                    AssertReferenceEquality(spa6, (CString)cstr6.Clone(), true);
-                    AssertReference(cstr6, true);
+                        Assert.Equal(str6[0..^1], cstr6.ToString());
+                        Assert.Equal(str6.Length - 1, cstr6.Length);
+                        Assert.Equal(cstr6.Length + 1, cstrSpan6.Length);
+                        Assert.True(cstr6.IsNullTerminated);
+                        AssertIndex(spa6, cstr6);
+                        AssertReferenceEquality(spa6, cstr6, false);
+                        AssertReferenceEquality(spa6, (CString)cstr6.Clone(), true);
+                        AssertReference(cstr6, true);
 
-                    Assert.Equal(str7, cstr7.ToString());
-                    Assert.Equal(str7.Length, cstr7.Length);
-                    Assert.Equal(cstr7.Length + 1, cstrSpan7.Length);
-                    Assert.True(cstr7.IsNullTerminated);
-                    AssertIndex(cstr7, cstr7);
-                    AssertReference(cstr7, false);
+                        Assert.Equal(str7, cstr7.ToString());
+                        Assert.Equal(str7.Length, cstr7.Length);
+                        Assert.Equal(cstr7.Length + 1, cstrSpan7.Length);
+                        Assert.True(cstr7.IsNullTerminated);
+                        AssertIndex(cstr7, cstr7);
+                        AssertReference(cstr7, false);
 
-                    AssertSegment(cstr1);
-                    AssertSegment(cstr2);
-                    AssertSegment(cstr3);
-                    AssertSegment(cstr4);
-                    AssertSegment(cstr5);
-                    AssertSegment(cstr6);
-                    AssertSegment(cstr7);
+                        AssertSegment(cstr1);
+                        AssertSegment(cstr2);
+                        AssertSegment(cstr3);
+                        AssertSegment(cstr4);
+                        AssertSegment(cstr5);
+                        AssertSegment(cstr6);
+                        AssertSegment(cstr7);
+                    }
                 }
             }
         }
