@@ -40,7 +40,7 @@ namespace Rxmxnx.PInvoke.Extensions
             if (str is not null)
                 unsafe
                 {
-                    fixed (void* ptr = str)
+                    fixed (Char* ptr = str)
                     {
                         FixedContext<Char> ctx = new(ptr, str.Length, true);
                         try
@@ -68,7 +68,7 @@ namespace Rxmxnx.PInvoke.Extensions
             if (str is not null)
                 unsafe
                 {
-                    fixed (void* ptr = str)
+                    fixed (Char* ptr = str)
                     {
                         FixedContext<Char> ctx = new(ptr, str.Length, true);
                         try
@@ -83,7 +83,6 @@ namespace Rxmxnx.PInvoke.Extensions
                 }
         }
 
-
         /// <summary>
         /// Prevents the garbage collector from relocating <paramref name="str"/> and fixes its memory 
         /// address until <paramref name="func"/> finish.
@@ -97,7 +96,7 @@ namespace Rxmxnx.PInvoke.Extensions
             if (str is not null)
                 unsafe
                 {
-                    fixed (void* ptr = str)
+                    fixed (Char* ptr = str)
                     {
                         FixedContext<Char> ctx = new(ptr, str.Length, true);
                         try
@@ -129,7 +128,7 @@ namespace Rxmxnx.PInvoke.Extensions
             if (str is not null)
                 unsafe
                 {
-                    fixed (void* ptr = str)
+                    fixed (Char* ptr = str)
                     {
                         FixedContext<Char> ctx = new(ptr, str.Length, true);
                         try
