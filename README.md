@@ -151,6 +151,11 @@ Indicates whether the specified CString is null or an empty UTF-8 text.
 Retrieves the internal binary data from a given <see cref="CString"/>.
 * **AsSpan(out CString[] output)**
 Retreives the internal or external information as ReadOnlySpan{Byte} instance.
+* **Create(ReadOnlySpanFunc<Byte> func)**
+Creates a new CString instance from func. This method assumes that func's result is a non-literal Utf8 string.
+### C#11 Utf8 Strings Literals
+In order to support [utf8 Strings literals](https://learn.microsoft.com/dotnet/csharp/language-reference/proposals/csharp-11.0/utf8-string-literals) a new CString constructor was added.
+	CString instance = new(() => "this is a UTF-8 hardcoded literal"u8);
 
 ## CStringSequence
 Represents a sequence of null-terminated UTF-8 texts.
