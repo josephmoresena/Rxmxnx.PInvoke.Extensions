@@ -197,6 +197,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                         CString cstr5 = new(spa5.AsIntPtr(), spa5.Length);
                         CString cstr6 = new(spa6.AsIntPtr(), spa6.Length);
                         CString cstr7 = new(ccr7, 3);
+                        CString cstr8 = new(() => "uf8text 1234"u8);
 
                         Assert.True(CString.Empty != cstr1);
                         Assert.True(CString.Empty != cstr2);
@@ -204,6 +205,8 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                         Assert.True(CString.Empty != cstr4);
                         Assert.True(CString.Empty != cstr5);
                         Assert.True(CString.Empty != cstr6);
+                        Assert.True(CString.Empty != cstr7);
+                        Assert.True(CString.Empty != cstr8);
 
                         ReadOnlySpan<Byte> cstrSpan1 = cstr1;
                         ReadOnlySpan<Byte> cstrSpan2 = cstr2;
@@ -212,6 +215,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                         ReadOnlySpan<Byte> cstrSpan5 = cstr5;
                         ReadOnlySpan<Byte> cstrSpan6 = cstr6;
                         ReadOnlySpan<Byte> cstrSpan7 = cstr7;
+                        ReadOnlySpan<Byte> cstrSpan8 = cstr8;
 
                         Assert.NotNull(cstr1);
                         Assert.NotNull(cstr2);
@@ -220,6 +224,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                         Assert.NotNull(cstr5);
                         Assert.NotNull(cstr6);
                         Assert.NotNull(cstr7);
+                        Assert.NotNull(cstr8);
 
                         Assert.Equal(str1, cstr1.ToString());
                         Assert.Equal(str1.Length, cstr1.Length);
@@ -277,8 +282,10 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                         Assert.Equal(str7.Length, cstr7.Length);
                         Assert.Equal(cstr7.Length + 1, cstrSpan7.Length);
                         Assert.True(cstr7.IsNullTerminated);
-                        AssertIndex(cstr7, cstr7);
                         AssertReference(cstr7, false);
+
+                        Assert.True(cstr8.IsNullTerminated);
+                        AssertReference(cstr8, false);
 
                         AssertSegment(cstr1);
                         AssertSegment(cstr2);
@@ -287,6 +294,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                         AssertSegment(cstr5);
                         AssertSegment(cstr6);
                         AssertSegment(cstr7);
+                        AssertSegment(cstr8);
                     }
                 }
             }
@@ -378,6 +386,13 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                     Assert.Equal(cstr.Length + 1, CString.GetBytes(clone).Length);
                 Assert.False(clone.IsReference);
             }
+            else if (cstr.IsFunction)
+            {
+                Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
+                CString clone = (CString)cstr.Clone();
+                Assert.True(clone.IsNullTerminated);
+                Assert.False(clone.IsReference);
+            }
             else
                 Assert.Equal(cstr.ToArray(), CString.GetBytes(cstr));
         }
@@ -421,9 +436,9 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                     Assert.Equal(cstr[i], seg[i - start]);
             }
 
-            if ((seg.IsSegmented || seg.IsReference) && seg.Length != 0)
+            if ((seg.IsSegmented || seg.IsReference || seg.IsFunction) && seg.Length != 0)
                 Assert.Throws<InvalidOperationException>(() => CString.GetBytes(seg));
-            else if (cstr.IsSegmented)
+            else if (cstr.IsSegmented || cstr.IsFunction)
                 Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
             else if (cstr.Length == seg.Length)
                 if (seg.Length != 0 || seg.IsNullTerminated)

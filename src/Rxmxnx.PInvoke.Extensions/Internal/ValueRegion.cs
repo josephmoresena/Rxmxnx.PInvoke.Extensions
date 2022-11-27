@@ -38,11 +38,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// </summary>
         /// <returns>An array containing the data in the current memory region.</returns>
         protected virtual T[]? AsArray() => default;
-        /// <summary>
-        /// Gets a function from this memory region.
-        /// </summary>
-        /// <returns>A function from this memory region.</returns>
-        protected virtual ReadOnlySpanFunc<T>? AsReadOnlySpanFunc() => default;
+
         /// <summary>
         /// Creates a new read-only span over this memory region.
         /// </summary>
@@ -59,8 +55,6 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         public static implicit operator ReadOnlySpan<T>(ValueRegion<T> region) => region.AsSpan();
         /// <inheritdoc/>
         public static explicit operator T[]?(ValueRegion<T> region) => region.AsArray();
-        /// <inheritdoc/>
-        public static explicit operator ReadOnlySpanFunc<T>?(ValueRegion<T> region) => region.AsReadOnlySpanFunc();
 
         /// <summary>
         /// Creates a new <see cref="ValueRegion{T}"/> instance from an array of 

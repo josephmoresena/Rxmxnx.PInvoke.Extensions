@@ -67,7 +67,6 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             /// <inheritdoc/>
             protected override ReadOnlySpan<T> AsSpan() => this._array.AsSpan()[this._offset..this._end];
 
-
             /// <summary>
             /// Indicates whether region is segmented.
             /// </summary>

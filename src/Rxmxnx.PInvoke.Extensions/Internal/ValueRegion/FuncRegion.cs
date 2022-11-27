@@ -24,8 +24,11 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             /// <inheritdoc/>
             protected override ReadOnlySpan<T> AsSpan() => this._func();
 
-            /// <inheritdoc/>
-            protected override ReadOnlySpanFunc<T>? AsReadOnlySpanFunc() => this._func;
+            /// <summary>
+            /// Gets a function from this memory region.
+            /// </summary>
+            /// <returns>A function from this memory region.</returns>
+            public ReadOnlySpanFunc<T>? AsReadOnlySpanFunc() => this._func;
         }
     }
 }

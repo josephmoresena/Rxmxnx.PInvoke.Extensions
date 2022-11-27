@@ -42,7 +42,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
                 this._func = region.AsReadOnlySpanFunc()!;
                 this._offset = offset;
                 this._end = this._offset + length;
-                this._isSegmented = offset != default || length != this._func().Length;
+                this._isSegmented = IsSegmentedRegion(this);
             }
 
             /// <summary>
@@ -56,12 +56,22 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
                 this._func = region._func;
                 this._offset = offset + region._offset;
                 this._end = this._offset + length;
+                this._isSegmented = IsSegmentedRegion(this);
             }
 
             /// <inheritdoc/>
             protected override ReadOnlySpan<T> AsSpan() => this._func()[this._offset..this._end];
-            /// <inheritdoc/>
-            protected override ReadOnlySpanFunc<T>? AsReadOnlySpanFunc() => this._func;
+
+            /// <summary>
+            /// Indicates whether region is segmented.
+            /// </summary>
+            /// <param name="region"><see cref="SegmentedManagedRegion"/> instance.</param>
+            /// <returns>
+            /// <see langword="true"/> if <paramref name="region"/> is segmented; otherwise, 
+            /// <see langword="false"/>.
+            /// </returns>
+            private static Boolean IsSegmentedRegion(SegmentedFuncRegion region)
+                => region._offset != default || region._end != region._func().Length;
         }
     }
 }
