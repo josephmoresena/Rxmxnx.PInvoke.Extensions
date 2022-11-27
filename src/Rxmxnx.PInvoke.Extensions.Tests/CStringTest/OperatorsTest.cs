@@ -25,6 +25,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             CString cstr4 = empty ? Array.Empty<Byte>() : default;
             CString cstr5 = new(empty ? TestUtilities.GetPrintableByte() : default, 0);
             CString cstr6 = new((empty ? Array.Empty<Byte>() : default).AsSpan().AsIntPtr(), 0);
+            CString cstr7 = new[] { default(Byte) };
 
             Assert.True((null as CString) == null);
             Assert.True(cstr1 == cstr2);
@@ -35,6 +36,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             Assert.Equal(empty, CString.Empty == cstr4);
             Assert.True(CString.Empty == cstr5);
             Assert.True(CString.Empty == cstr6);
+            Assert.True(CString.Empty == cstr7);
 
             ReadOnlySpan<Byte> span1 = cstr1;
             ReadOnlySpan<Byte> span2 = cstr2;
@@ -42,6 +44,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             ReadOnlySpan<Byte> span4 = cstr4;
             ReadOnlySpan<Byte> span5 = cstr5;
             ReadOnlySpan<Byte> span6 = cstr6;
+            ReadOnlySpan<Byte> span7 = cstr7;
 
             Assert.Equal(!empty, span1.IsEmpty);
             Assert.Equal(!empty, span2.IsEmpty);
@@ -49,6 +52,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             Assert.True(span4.IsEmpty);
             Assert.False(span5.IsEmpty);
             Assert.True(span6.IsEmpty);
+            Assert.False(span7.IsEmpty);
 
             if (empty)
             {
@@ -135,12 +139,14 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
 
             Assert.True(cstr5.IsNullTerminated);
             Assert.False(cstr6.IsNullTerminated);
+            Assert.True(cstr7.IsNullTerminated);
 
             Assert.Equal(0, cstr5.Length);
             Assert.Equal(0, cstr6.Length);
 
             Assert.Equal(1, span5.Length);
             Assert.Equal(0, span6.Length);
+            Assert.Equal(1, span7.Length);
 
             Assert.Equal(default, cstr5[0]);
 
@@ -155,6 +161,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             Assert.True(CString.IsNullOrEmpty(cstr4));
             Assert.True(CString.IsNullOrEmpty(cstr5));
             Assert.True(CString.IsNullOrEmpty(cstr6));
+            Assert.True(CString.IsNullOrEmpty(cstr7));
         }
 
         [Fact]
