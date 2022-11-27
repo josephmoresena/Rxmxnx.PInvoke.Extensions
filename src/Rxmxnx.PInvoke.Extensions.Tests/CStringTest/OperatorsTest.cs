@@ -198,6 +198,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                         CString cstr6 = new(spa6.AsIntPtr(), spa6.Length);
                         CString cstr7 = new(ccr7, 3);
                         CString cstr8 = new(() => "uf8text 1234"u8);
+                        CString cstr9 = "a"u8.ToArray();
 
                         Assert.True(CString.Empty != cstr1);
                         Assert.True(CString.Empty != cstr2);
@@ -207,6 +208,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                         Assert.True(CString.Empty != cstr6);
                         Assert.True(CString.Empty != cstr7);
                         Assert.True(CString.Empty != cstr8);
+                        Assert.True(CString.Empty != cstr9);
 
                         ReadOnlySpan<Byte> cstrSpan1 = cstr1;
                         ReadOnlySpan<Byte> cstrSpan2 = cstr2;
@@ -216,6 +218,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                         ReadOnlySpan<Byte> cstrSpan6 = cstr6;
                         ReadOnlySpan<Byte> cstrSpan7 = cstr7;
                         ReadOnlySpan<Byte> cstrSpan8 = cstr8;
+                        ReadOnlySpan<Byte> cstrSpan9 = cstr9;
 
                         Assert.NotNull(cstr1);
                         Assert.NotNull(cstr2);
@@ -225,6 +228,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                         Assert.NotNull(cstr6);
                         Assert.NotNull(cstr7);
                         Assert.NotNull(cstr8);
+                        Assert.NotNull(cstr9);
 
                         Assert.Equal(str1, cstr1.ToString());
                         Assert.Equal(str1.Length, cstr1.Length);
@@ -287,6 +291,9 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                         Assert.True(cstr8.IsNullTerminated);
                         AssertReference(cstr8, false);
 
+                        Assert.False(cstr9.IsNullTerminated);
+                        AssertReference(cstr9, false);
+
                         AssertSegment(cstr1);
                         AssertSegment(cstr2);
                         AssertSegment(cstr3);
@@ -295,6 +302,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                         AssertSegment(cstr6);
                         AssertSegment(cstr7);
                         AssertSegment(cstr8);
+                        AssertSegment(cstr9);
                     }
                 }
             }

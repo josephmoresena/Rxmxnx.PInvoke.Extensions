@@ -83,7 +83,7 @@ namespace Rxmxnx.PInvoke.Extensions
         {
             unsafe
             {
-                fixed (void* ptr = this._value)
+                fixed (Char* ptr = this._value)
                 {
                     _ = this.InternalAsSpan(out CString[] output);
                     action(output, state);
@@ -104,7 +104,7 @@ namespace Rxmxnx.PInvoke.Extensions
         {
             unsafe
             {
-                fixed (void* ptr = this._value)
+                fixed (Char* ptr = this._value)
                 {
                     _ = this.InternalAsSpan(out CString[] output);
                     return func(output, state);

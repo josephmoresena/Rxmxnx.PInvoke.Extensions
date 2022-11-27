@@ -37,22 +37,24 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="action">A <see cref="ReadOnlyFixedAction{Char, TArg}"/> delegate.</param>
         public static void WithSafeFixed(this String? str, ReadOnlyFixedAction<Char> action)
         {
-            if (str is not null)
-                unsafe
+            unsafe
+            {
+                fixed (Char* ptr = str)
                 {
-                    fixed (Char* ptr = str)
+                    if (str is null)
+                        return;
+
+                    FixedContext<Char> ctx = new(ptr, str.Length, true);
+                    try
                     {
-                        FixedContext<Char> ctx = new(ptr, str.Length, true);
-                        try
-                        {
-                            action(ctx);
-                        }
-                        finally
-                        {
-                            ctx.Unload();
-                        }
+                        action(ctx);
+                    }
+                    finally
+                    {
+                        ctx.Unload();
                     }
                 }
+            }
         }
 
         /// <summary>
@@ -65,22 +67,24 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="action">A <see cref="ReadOnlyFixedAction{Char, TArg}"/> delegate.</param>
         public static void WithSafeFixed<TArg>(this String? str, TArg arg, ReadOnlyFixedAction<Char, TArg> action)
         {
-            if (str is not null)
-                unsafe
+            unsafe
+            {
+                fixed (Char* ptr = str)
                 {
-                    fixed (Char* ptr = str)
+                    if (str is null)
+                        return;
+
+                    FixedContext<Char> ctx = new(ptr, str.Length, true);
+                    try
                     {
-                        FixedContext<Char> ctx = new(ptr, str.Length, true);
-                        try
-                        {
-                            action(ctx, arg);
-                        }
-                        finally
-                        {
-                            ctx.Unload();
-                        }
+                        action(ctx, arg);
+                    }
+                    finally
+                    {
+                        ctx.Unload();
                     }
                 }
+            }
         }
 
         /// <summary>
@@ -93,23 +97,24 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <returns>The result of <paramref name="func"/> execution.</returns>
         public static TResult? WithSafeFixed<TResult>(this String? str, ReadOnlyFixedFunc<Char, TResult> func)
         {
-            if (str is not null)
-                unsafe
+            unsafe
+            {
+                fixed (Char* ptr = str)
                 {
-                    fixed (Char* ptr = str)
+                    if (str is null)
+                        return default;
+
+                    FixedContext<Char> ctx = new(ptr, str.Length, true);
+                    try
                     {
-                        FixedContext<Char> ctx = new(ptr, str.Length, true);
-                        try
-                        {
-                            return func(ctx);
-                        }
-                        finally
-                        {
-                            ctx.Unload();
-                        }
+                        return func(ctx);
+                    }
+                    finally
+                    {
+                        ctx.Unload();
                     }
                 }
-            return default;
+            }
         }
 
         /// <summary>
@@ -125,23 +130,24 @@ namespace Rxmxnx.PInvoke.Extensions
         public static TResult? WithSafeFixed<TArg, TResult>(this String? str, TArg arg, ReadOnlyFixedFunc<Char, TArg, TResult> func)
 
         {
-            if (str is not null)
-                unsafe
+            unsafe
+            {
+                fixed (Char* ptr = str)
                 {
-                    fixed (Char* ptr = str)
+                    if (str is null)
+                        return default;
+
+                    FixedContext<Char> ctx = new(ptr, str.Length, true);
+                    try
                     {
-                        FixedContext<Char> ctx = new(ptr, str.Length, true);
-                        try
-                        {
-                            return func(ctx, arg);
-                        }
-                        finally
-                        {
-                            ctx.Unload();
-                        }
+                        return func(ctx, arg);
+                    }
+                    finally
+                    {
+                        ctx.Unload();
                     }
                 }
-            return default;
+            }
         }
 
         /// <summary>

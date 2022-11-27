@@ -50,22 +50,24 @@ namespace Rxmxnx.PInvoke.Extensions
         public static void WithSafeFixed<T>(this T[]? array, FixedAction<T> action)
             where T : unmanaged
         {
-            if (array is not null)
-                unsafe
+            unsafe
+            {
+                fixed (T* ptr = array)
                 {
-                    fixed (void* ptr = array)
+                    if (array is null)
+                        return;
+
+                    FixedContext<T> ctx = new(ptr, array.Length);
+                    try
                     {
-                        FixedContext<T> ctx = new(ptr, array.Length);
-                        try
-                        {
-                            action(ctx);
-                        }
-                        finally
-                        {
-                            ctx.Unload();
-                        }
+                        action(ctx);
+                    }
+                    finally
+                    {
+                        ctx.Unload();
                     }
                 }
+            }
         }
 
         /// <summary>
@@ -78,22 +80,24 @@ namespace Rxmxnx.PInvoke.Extensions
         public static void WithSafeFixed<T>(this T[]? array, ReadOnlyFixedAction<T> action)
             where T : unmanaged
         {
-            if (array is not null)
-                unsafe
+            unsafe
+            {
+                fixed (T* ptr = array)
                 {
-                    fixed (void* ptr = array)
+                    if (array is null)
+                        return;
+
+                    FixedContext<T> ctx = new(ptr, array.Length, true);
+                    try
                     {
-                        FixedContext<T> ctx = new(ptr, array.Length, true);
-                        try
-                        {
-                            action(ctx);
-                        }
-                        finally
-                        {
-                            ctx.Unload();
-                        }
+                        action(ctx);
+                    }
+                    finally
+                    {
+                        ctx.Unload();
                     }
                 }
+            }
         }
 
         /// <summary>
@@ -108,22 +112,24 @@ namespace Rxmxnx.PInvoke.Extensions
         public static void WithSafeFixed<T, TArg>(this T[]? array, TArg arg, FixedAction<T, TArg> action)
             where T : unmanaged
         {
-            if (array is not null)
-                unsafe
+            unsafe
+            {
+                fixed (T* ptr = array)
                 {
-                    fixed (void* ptr = array)
+                    if (array is null)
+                        return;
+
+                    FixedContext<T> ctx = new(ptr, array.Length);
+                    try
                     {
-                        FixedContext<T> ctx = new(ptr, array.Length);
-                        try
-                        {
-                            action(ctx, arg);
-                        }
-                        finally
-                        {
-                            ctx.Unload();
-                        }
+                        action(ctx, arg);
+                    }
+                    finally
+                    {
+                        ctx.Unload();
                     }
                 }
+            }
         }
 
         /// <summary>
@@ -138,22 +144,24 @@ namespace Rxmxnx.PInvoke.Extensions
         public static void WithSafeFixed<T, TArg>(this T[]? array, TArg arg, ReadOnlyFixedAction<T, TArg> action)
             where T : unmanaged
         {
-            if (array is not null)
-                unsafe
+            unsafe
+            {
+                fixed (T* ptr = array)
                 {
-                    fixed (void* ptr = array)
+                    if (array is null)
+                        return;
+
+                    FixedContext<T> ctx = new(ptr, array.Length, true);
+                    try
                     {
-                        FixedContext<T> ctx = new(ptr, array.Length, true);
-                        try
-                        {
-                            action(ctx, arg);
-                        }
-                        finally
-                        {
-                            ctx.Unload();
-                        }
+                        action(ctx, arg);
+                    }
+                    finally
+                    {
+                        ctx.Unload();
                     }
                 }
+            }
         }
 
         /// <summary>        
@@ -168,23 +176,24 @@ namespace Rxmxnx.PInvoke.Extensions
         public static TResult? WithSafeFixed<T, TResult>(this T[]? array, FixedFunc<T, TResult> func)
             where T : unmanaged
         {
-            if (array is not null)
-                unsafe
+            unsafe
+            {
+                fixed (T* ptr = array)
                 {
-                    fixed (void* ptr = array)
+                    if (array is null)
+                        return default;
+
+                    FixedContext<T> ctx = new(ptr, array.Length);
+                    try
                     {
-                        FixedContext<T> ctx = new(ptr, array.Length);
-                        try
-                        {
-                            return func(ctx);
-                        }
-                        finally
-                        {
-                            ctx.Unload();
-                        }
+                        return func(ctx);
+                    }
+                    finally
+                    {
+                        ctx.Unload();
                     }
                 }
-            return default;
+            }
         }
 
         /// <summary>
@@ -199,23 +208,24 @@ namespace Rxmxnx.PInvoke.Extensions
         public static TResult? WithSafeFixed<T, TResult>(this T[]? array, ReadOnlyFixedFunc<T, TResult> func)
             where T : unmanaged
         {
-            if (array is not null)
-                unsafe
+            unsafe
+            {
+                fixed (T* ptr = array)
                 {
-                    fixed (void* ptr = array)
+                    if (array is null)
+                        return default;
+
+                    FixedContext<T> ctx = new(ptr, array.Length, true);
+                    try
                     {
-                        FixedContext<T> ctx = new(ptr, array.Length, true);
-                        try
-                        {
-                            return func(ctx);
-                        }
-                        finally
-                        {
-                            ctx.Unload();
-                        }
+                        return func(ctx);
+                    }
+                    finally
+                    {
+                        ctx.Unload();
                     }
                 }
-            return default;
+            }
         }
 
         /// <summary>
@@ -232,23 +242,24 @@ namespace Rxmxnx.PInvoke.Extensions
         public static TResult? WithSafeFixed<T, TArg, TResult>(this T[]? array, TArg arg, FixedFunc<T, TArg, TResult> func)
             where T : unmanaged
         {
-            if (array is not null)
-                unsafe
+            unsafe
+            {
+                fixed (T* ptr = array)
                 {
-                    fixed (void* ptr = array)
+                    if (array is null)
+                        return default;
+
+                    FixedContext<T> ctx = new(ptr, array.Length);
+                    try
                     {
-                        FixedContext<T> ctx = new(ptr, array.Length);
-                        try
-                        {
-                            return func(ctx, arg);
-                        }
-                        finally
-                        {
-                            ctx.Unload();
-                        }
+                        return func(ctx, arg);
+                    }
+                    finally
+                    {
+                        ctx.Unload();
                     }
                 }
-            return default;
+            }
         }
 
         /// <summary>
@@ -265,23 +276,24 @@ namespace Rxmxnx.PInvoke.Extensions
         public static TResult? WithSafeFixed<T, TArg, TResult>(this T[]? array, TArg arg, ReadOnlyFixedFunc<T, TArg, TResult> func)
             where T : unmanaged
         {
-            if (array is not null)
-                unsafe
+            unsafe
+            {
+                fixed (T* ptr = array)
                 {
-                    fixed (void* ptr = array)
+                    if (array is null)
+                        return default;
+
+                    FixedContext<T> ctx = new(ptr, array.Length, true);
+                    try
                     {
-                        FixedContext<T> ctx = new(ptr, array.Length, true);
-                        try
-                        {
-                            return func(ctx, arg);
-                        }
-                        finally
-                        {
-                            ctx.Unload();
-                        }
+                        return func(ctx, arg);
+                    }
+                    finally
+                    {
+                        ctx.Unload();
                     }
                 }
-            return default;
+            }
         }
     }
 }
