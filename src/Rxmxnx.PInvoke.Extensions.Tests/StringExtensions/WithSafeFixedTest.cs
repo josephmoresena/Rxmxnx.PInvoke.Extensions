@@ -59,7 +59,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.StringExtensions
             await Task.WhenAll(tasks).ConfigureAwait(false);
         }
 
-        private void FullTest(in IReadOnlyFixedContext<Char> ctx, String str)
+        private static void FullTest(in IReadOnlyFixedContext<Char> ctx, String str)
         {
             Assert.Equal(ctx.Values.Length, str.Length);
             if (ctx.Values.Length > 0)

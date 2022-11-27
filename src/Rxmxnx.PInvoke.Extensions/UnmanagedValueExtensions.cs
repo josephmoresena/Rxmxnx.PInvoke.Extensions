@@ -156,7 +156,7 @@ namespace Rxmxnx.PInvoke.Extensions
                 }
         }
 
-        /// <summary>
+        /// <summary>        
         /// Prevents the garbage collector from relocating <paramref name="array"/> and fixes its memory 
         /// address until <paramref name="func"/> finish.
         /// </summary>
