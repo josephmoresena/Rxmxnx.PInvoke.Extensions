@@ -393,6 +393,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                 CString seg1 = cstr[start..end];
 
                 AssertSegment(cstr, start, end, seg1);
+                AssertSegment(cstr, 0, cstr.Length, cstr[0..cstr.Length]);
                 if (seg1.Length > 0)
                     AssertSegment(seg1, default, end2, seg1[..end2]);
             }

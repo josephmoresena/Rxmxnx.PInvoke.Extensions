@@ -23,9 +23,13 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             /// Internal length.
             /// </summary>
             private readonly Int32 _end;
+            /// <summary>
+            /// Indicates whether current instance is segmented.
+            /// </summary>
+            private readonly Boolean _isSegmented;
 
             /// <inheritdoc/>
-            public override Boolean IsSegmented => this._offset != default || this._end != this._array.Length;
+            public override Boolean IsSegmented => this._isSegmented;
             /// <inheritdoc/>
             public override T this[Int32 index] => this._array[this._offset + index];
 
@@ -40,6 +44,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
                 this._array = region.AsArray()!;
                 this._offset = offset;
                 this._end = this._offset + length;
+                this._isSegmented = IsSegmentedRegion(this);
             }
 
             /// <summary>
@@ -53,6 +58,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
                 this._array = region._array;
                 this._offset = offset + region._offset;
                 this._end = this._offset + length;
+                this._isSegmented = IsSegmentedRegion(this);
             }
 
             /// <inheritdoc/>
@@ -60,6 +66,18 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
 
             /// <inheritdoc/>
             protected override ReadOnlySpan<T> AsSpan() => this._array.AsSpan()[this._offset..this._end];
+
+
+            /// <summary>
+            /// Indicates whether region is segmented.
+            /// </summary>
+            /// <param name="region"><see cref="SegmentedManagedRegion"/> instance.</param>
+            /// <returns>
+            /// <see langword="true"/> if <paramref name="region"/> is segmented; otherwise, 
+            /// <see langword="false"/>.
+            /// </returns>
+            private static Boolean IsSegmentedRegion(SegmentedManagedRegion region)
+                => region._offset != default || region._end != region._array.Length;
         }
     }
 }
