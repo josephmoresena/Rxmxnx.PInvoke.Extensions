@@ -23,13 +23,9 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             /// Internal length.
             /// </summary>
             private readonly Int32 _end;
-            /// <summary>
-            /// Indicates whether current instance is segmented.
-            /// </summary>
-            private readonly Boolean _isSegmented;
 
             /// <inheritdoc/>
-            public override Boolean IsSegmented => this._isSegmented;
+            public override Boolean IsSegmented => this._offset != default || this._end != this._array.Length;
             /// <inheritdoc/>
             public override T this[Int32 index] => this._array[this._offset + index];
 
@@ -44,7 +40,6 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
                 this._array = region.AsArray()!;
                 this._offset = offset;
                 this._end = this._offset + length;
-                this._isSegmented = offset != default || this._end != region.AsArray()!.Length;
             }
 
             /// <summary>
@@ -58,19 +53,12 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
                 this._array = region._array;
                 this._offset = offset + region._offset;
                 this._end = this._offset + length;
-                this._isSegmented = offset != default || length != region._array.Length;
             }
 
-            /// <summary>
-            /// Gets an array from this memory region.
-            /// </summary>
-            /// <returns>An array containing the data in the current memory region.</returns>
-            protected override T[]? AsArray() => !this._isSegmented ? this._array : default;
+            /// <inheritdoc/>
+            protected override T[]? AsArray() => !this.IsSegmented ? this._array : default;
 
-            /// <summary>
-            /// Creates a new read-only span over this memory region.
-            /// </summary>
-            /// <returns>The read-only span representation of the memory region.</returns>
+            /// <inheritdoc/>
             protected override ReadOnlySpan<T> AsSpan() => this._array.AsSpan()[this._offset..this._end];
         }
     }
