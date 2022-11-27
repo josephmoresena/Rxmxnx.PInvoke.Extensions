@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -96,7 +95,6 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="str">A UTF-16 text instance.</param>
         /// <param name="func">A <see cref="ReadOnlyFixedFunc{Char, TResult}"/> delegate.</param>
         /// <returns>The result of <paramref name="func"/> execution.</returns>
-        [return: NotNullIfNotNull(nameof(str))]
         public static TResult? WithSafeFixed<TResult>(this String? str, ReadOnlyFixedFunc<Char, TResult> func)
         {
             unsafe
@@ -129,7 +127,6 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
         /// <param name="func">A <see cref="ReadOnlyFixedFunc{Char, TArg, TResult}"/> delegate.</param>
         /// <returns>The result of <paramref name="func"/> execution.</returns>
-        [return: NotNullIfNotNull(nameof(str))]
         public static TResult? WithSafeFixed<TArg, TResult>(this String? str, TArg arg, ReadOnlyFixedFunc<Char, TArg, TResult> func)
 
         {

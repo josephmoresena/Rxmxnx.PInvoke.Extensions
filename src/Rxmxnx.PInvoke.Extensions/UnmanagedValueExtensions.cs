@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 using Rxmxnx.PInvoke.Extensions.Internal;
@@ -174,7 +173,6 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="array">An array of objects of type <typeparamref name="T"/>.</param>
         /// <param name="func">A <see cref="FixedFunc{T, TResult}"/> delegate.</param>
         /// <returns>The result of <paramref name="func"/> execution.</returns>
-        [return: NotNullIfNotNull(nameof(array))]
         public static TResult? WithSafeFixed<T, TResult>(this T[]? array, FixedFunc<T, TResult> func)
             where T : unmanaged
         {
@@ -207,7 +205,6 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="array">An array of objects of type <typeparamref name="T"/>.</param>
         /// <param name="func">A <see cref="ReadOnlyFixedFunc{T, TResult}"/> delegate.</param>
         /// <returns>The result of <paramref name="func"/> execution.</returns>
-        [return: NotNullIfNotNull(nameof(array))]
         public static TResult? WithSafeFixed<T, TResult>(this T[]? array, ReadOnlyFixedFunc<T, TResult> func)
             where T : unmanaged
         {
@@ -242,7 +239,6 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
         /// <param name="func">A <see cref="FixedFunc{T, TArg, TResult}"/> delegate.</param>
         /// <returns>The result of <paramref name="func"/> execution.</returns>
-        [return: NotNullIfNotNull(nameof(array))]
         public static TResult? WithSafeFixed<T, TArg, TResult>(this T[]? array, TArg arg, FixedFunc<T, TArg, TResult> func)
             where T : unmanaged
         {
@@ -277,7 +273,6 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
         /// <param name="func">A <see cref="ReadOnlyFixedFunc{T, TArg, TResult}"/> delegate.</param>
         /// <returns>The result of <paramref name="func"/> execution.</returns>
-        [return: NotNullIfNotNull(nameof(array))]
         public static TResult? WithSafeFixed<T, TArg, TResult>(this T[]? array, TArg arg, ReadOnlyFixedFunc<T, TArg, TResult> func)
             where T : unmanaged
         {
