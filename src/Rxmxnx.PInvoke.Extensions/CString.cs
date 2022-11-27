@@ -237,7 +237,8 @@ namespace Rxmxnx.PInvoke.Extensions
         /// address until <paramref name="action"/> finish.
         /// </summary>
         /// <param name="action">A <see cref="FixedAction{T}"/> delegate.></param>
-        public void WithSafeFixed(ReadOnlyFixedAction<Byte> action) => this.AsSpan().WithSafeFixed(action);
+        public void WithSafeFixed(ReadOnlyFixedAction<Byte> action)
+            => this.AsSpan().WithSafeFixed(action);
 
         /// <summary>
         /// Prevents the garbage collector from relocating the current instance and fixes its memory 
@@ -256,7 +257,8 @@ namespace Rxmxnx.PInvoke.Extensions
         /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
         /// <param name="func">A <see cref="FixedFunc{T, TResult}"/> delegate.</param>
         /// <returns>The result of <paramref name="func"/> execution.</returns>
-        public TResult WithSafeFixed<TResult>(ReadOnlyFixedFunc<Byte, TResult> func) => this.AsSpan().WithSafeFixed(func);
+        public TResult WithSafeFixed<TResult>(ReadOnlyFixedFunc<Byte, TResult> func)
+            => this.AsSpan().WithSafeFixed(func);
 
         /// <summary>
         /// Prevents the garbage collector from relocating the current instance and fixes its memory 

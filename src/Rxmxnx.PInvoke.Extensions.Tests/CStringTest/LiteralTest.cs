@@ -48,6 +48,26 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
 
             Assert.Equal(inlineChar, createdChar);
             Assert.Equal(functionChar, createdChar);
+
+            inline.WithSafeFixed((in IReadOnlyFixedContext<Byte> ctx) =>
+            {
+                function.WithSafeFixed(ctx, (in IReadOnlyFixedContext<Byte> ctx2, IReadOnlyFixedContext<Byte> ctx) =>
+                {
+                    Assert.Equal(ctx.Values.Length, ctx2.Values.Length);
+                    Assert.Equal(ctx.Values.AsIntPtr(), ctx2.Values.AsIntPtr());
+                    Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(ctx.Values[0]), ref Unsafe.AsRef(ctx2.Values[0])));
+                });
+                Assert.Equal(ctx.Values.AsIntPtr(), created.WithSafeFixed((in IReadOnlyFixedContext<Byte> ctx2) =>
+                {
+                    return ctx2.Values.AsIntPtr();
+                }));
+                Assert.True(created.WithSafeFixed(ctx, (in IReadOnlyFixedContext<Byte> ctx2, IReadOnlyFixedContext<Byte> ctx) =>
+                {
+                    Assert.Equal(ctx.Values.Length, ctx2.Values.Length);
+                    Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(ctx.Values[0]), ref Unsafe.AsRef(ctx2.Values[0])));
+                    return ctx.Values.AsIntPtr() == ctx2.Values.AsIntPtr();
+                }));
+            });
         }
 
         [Fact]
