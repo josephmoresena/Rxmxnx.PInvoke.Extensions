@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 
 using AutoFixture;
@@ -24,6 +25,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             CString cstr4 = empty ? Array.Empty<Byte>() : default;
             CString cstr5 = new(empty ? TestUtilities.GetPrintableByte() : default, 0);
             CString cstr6 = new((empty ? Array.Empty<Byte>() : default).AsSpan().AsIntPtr(), 0);
+            CString cstr7 = new[] { default(Byte) };
 
             Assert.True((null as CString) == null);
             Assert.True(cstr1 == cstr2);
@@ -34,6 +36,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             Assert.Equal(empty, CString.Empty == cstr4);
             Assert.True(CString.Empty == cstr5);
             Assert.True(CString.Empty == cstr6);
+            Assert.True(CString.Empty == cstr7);
 
             ReadOnlySpan<Byte> span1 = cstr1;
             ReadOnlySpan<Byte> span2 = cstr2;
@@ -41,6 +44,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             ReadOnlySpan<Byte> span4 = cstr4;
             ReadOnlySpan<Byte> span5 = cstr5;
             ReadOnlySpan<Byte> span6 = cstr6;
+            ReadOnlySpan<Byte> span7 = cstr7;
 
             Assert.Equal(!empty, span1.IsEmpty);
             Assert.Equal(!empty, span2.IsEmpty);
@@ -48,6 +52,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             Assert.True(span4.IsEmpty);
             Assert.False(span5.IsEmpty);
             Assert.True(span6.IsEmpty);
+            Assert.False(span7.IsEmpty);
 
             if (empty)
             {
@@ -134,12 +139,14 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
 
             Assert.True(cstr5.IsNullTerminated);
             Assert.False(cstr6.IsNullTerminated);
+            Assert.True(cstr7.IsNullTerminated);
 
             Assert.Equal(0, cstr5.Length);
             Assert.Equal(0, cstr6.Length);
 
             Assert.Equal(1, span5.Length);
             Assert.Equal(0, span6.Length);
+            Assert.Equal(1, span7.Length);
 
             Assert.Equal(default, cstr5[0]);
 
@@ -154,6 +161,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             Assert.True(CString.IsNullOrEmpty(cstr4));
             Assert.True(CString.IsNullOrEmpty(cstr5));
             Assert.True(CString.IsNullOrEmpty(cstr6));
+            Assert.True(CString.IsNullOrEmpty(cstr7));
         }
 
         [Fact]
@@ -169,6 +177,9 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
 
             unsafe
             {
+                fixed (void* ptr2 = byt2)
+                fixed (void* ptr3 = byt3)
+                fixed (void* ptr4 = byt4)
                 fixed (void* ptr5 = byt5)
                 fixed (void* ptr6 = byt6)
                 {
@@ -185,110 +196,131 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                     String str7 = Encoding.UTF8.GetString(Enumerable.Repeat(ccr7, 3).ToArray());
 
                     CString cstr1 = str1;
-                    CString cstr2 = byt2;
-                    CString cstr3 = byt3;
-                    CString cstr4 = byt4;
-                    CString cstr5 = new(spa5.AsIntPtr(), spa5.Length);
-                    CString cstr6 = new(spa6.AsIntPtr(), spa6.Length);
-                    CString cstr7 = new(ccr7, 3);
+                    fixed (void* ptr = &MemoryMarshal.GetReference(cstr1.AsSpan()))
+                    {
+                        CString cstr2 = byt2;
+                        CString cstr3 = byt3;
+                        CString cstr4 = byt4;
+                        CString cstr5 = new(spa5.AsIntPtr(), spa5.Length);
+                        CString cstr6 = new(spa6.AsIntPtr(), spa6.Length);
+                        CString cstr7 = new(ccr7, 3);
+                        CString cstr8 = new(() => "uf8text 1234"u8);
+                        CString cstr9 = "a"u8.ToArray();
 
-                    Assert.True(CString.Empty != cstr1);
-                    Assert.True(CString.Empty != cstr2);
-                    Assert.True(CString.Empty != cstr3);
-                    Assert.True(CString.Empty != cstr4);
-                    Assert.True(CString.Empty != cstr5);
-                    Assert.True(CString.Empty != cstr6);
+                        Assert.True(CString.Empty != cstr1);
+                        Assert.True(CString.Empty != cstr2);
+                        Assert.True(CString.Empty != cstr3);
+                        Assert.True(CString.Empty != cstr4);
+                        Assert.True(CString.Empty != cstr5);
+                        Assert.True(CString.Empty != cstr6);
+                        Assert.True(CString.Empty != cstr7);
+                        Assert.True(CString.Empty != cstr8);
+                        Assert.True(CString.Empty != cstr9);
 
-                    ReadOnlySpan<Byte> cstrSpan1 = cstr1;
-                    ReadOnlySpan<Byte> cstrSpan2 = cstr2;
-                    ReadOnlySpan<Byte> cstrSpan3 = cstr3;
-                    ReadOnlySpan<Byte> cstrSpan4 = cstr4;
-                    ReadOnlySpan<Byte> cstrSpan5 = cstr5;
-                    ReadOnlySpan<Byte> cstrSpan6 = cstr6;
-                    ReadOnlySpan<Byte> cstrSpan7 = cstr7;
+                        ReadOnlySpan<Byte> cstrSpan1 = cstr1;
+                        ReadOnlySpan<Byte> cstrSpan2 = cstr2;
+                        ReadOnlySpan<Byte> cstrSpan3 = cstr3;
+                        ReadOnlySpan<Byte> cstrSpan4 = cstr4;
+                        ReadOnlySpan<Byte> cstrSpan5 = cstr5;
+                        ReadOnlySpan<Byte> cstrSpan6 = cstr6;
+                        ReadOnlySpan<Byte> cstrSpan7 = cstr7;
+                        ReadOnlySpan<Byte> cstrSpan8 = cstr8;
+                        ReadOnlySpan<Byte> cstrSpan9 = cstr9;
 
-                    Assert.NotNull(cstr1);
-                    Assert.NotNull(cstr2);
-                    Assert.NotNull(cstr3);
-                    Assert.NotNull(cstr4);
-                    Assert.NotNull(cstr5);
-                    Assert.NotNull(cstr6);
-                    Assert.NotNull(cstr7);
+                        Assert.NotNull(cstr1);
+                        Assert.NotNull(cstr2);
+                        Assert.NotNull(cstr3);
+                        Assert.NotNull(cstr4);
+                        Assert.NotNull(cstr5);
+                        Assert.NotNull(cstr6);
+                        Assert.NotNull(cstr7);
+                        Assert.NotNull(cstr8);
+                        Assert.NotNull(cstr9);
 
-                    Assert.Equal(str1, cstr1.ToString());
-                    Assert.Equal(str1.Length, cstr1.Length);
-                    Assert.Equal(cstr1.Length + 1, cstrSpan1.Length);
-                    Assert.True(cstr1.IsNullTerminated);
-                    AssertIndex(byt1, cstr1);
-                    AssertReference(cstr1, false);
+                        Assert.Equal(str1, cstr1.ToString());
+                        Assert.Equal(str1.Length, cstr1.Length);
+                        Assert.Equal(cstr1.Length + 1, cstrSpan1.Length);
+                        Assert.True(cstr1.IsNullTerminated);
+                        AssertIndex(byt1, cstr1);
+                        AssertReference(cstr1, false);
 
-                    Assert.Equal(str2, cstr2.ToString());
-                    Assert.Equal(str2.Length, cstr2.Length);
-                    Assert.Equal(cstr2.Length, cstrSpan2.Length);
-                    Assert.False(cstr2.IsNullTerminated);
-                    AssertIndex(byt2, cstr2);
-                    AssertReferenceEquality(byt2, cstr2, false);
-                    AssertReferenceEquality(byt2, (CString)cstr2.Clone(), true);
-                    AssertReference(cstr2, false);
+                        Assert.Equal(str2, cstr2.ToString());
+                        Assert.Equal(str2.Length, cstr2.Length);
+                        Assert.Equal(cstr2.Length, cstrSpan2.Length);
+                        Assert.False(cstr2.IsNullTerminated);
+                        AssertIndex(byt2, cstr2);
+                        AssertReferenceEquality(byt2, cstr2, false);
+                        AssertReferenceEquality(byt2, (CString)cstr2.Clone(), true);
+                        AssertReference(cstr2, false);
 
-                    Assert.Equal(str3, cstr3.ToString());
-                    Assert.Equal(str3.Length, cstr3.Length);
-                    Assert.Equal(cstr3.Length, cstrSpan3.Length);
-                    Assert.False(cstr3.IsNullTerminated);
-                    AssertIndex(byt3, cstr3);
-                    AssertReferenceEquality(byt3, cstr3, false);
-                    AssertReferenceEquality(byt3, (CString)cstr3.Clone(), true);
-                    AssertReference(cstr3, false);
+                        Assert.Equal(str3, cstr3.ToString());
+                        Assert.Equal(str3.Length, cstr3.Length);
+                        Assert.Equal(cstr3.Length, cstrSpan3.Length);
+                        Assert.False(cstr3.IsNullTerminated);
+                        AssertIndex(byt3, cstr3);
+                        AssertReferenceEquality(byt3, cstr3, false);
+                        AssertReferenceEquality(byt3, (CString)cstr3.Clone(), true);
+                        AssertReference(cstr3, false);
 
-                    Assert.Equal(str4[0..^1], cstr4.ToString());
-                    Assert.Equal(str4.Length - 1, cstr4.Length);
-                    Assert.Equal(cstr4.Length + 1, cstrSpan4.Length);
-                    Assert.True(cstr4.IsNullTerminated);
-                    AssertIndex(byt4, cstr4);
-                    AssertReferenceEquality(byt4, cstr4, false);
-                    AssertReferenceEquality(byt4, (CString)cstr4.Clone(), true);
-                    AssertReference(cstr4, false);
+                        Assert.Equal(str4[0..^1], cstr4.ToString());
+                        Assert.Equal(str4.Length - 1, cstr4.Length);
+                        Assert.Equal(cstr4.Length + 1, cstrSpan4.Length);
+                        Assert.True(cstr4.IsNullTerminated);
+                        AssertIndex(byt4, cstr4);
+                        AssertReferenceEquality(byt4, cstr4, false);
+                        AssertReferenceEquality(byt4, (CString)cstr4.Clone(), true);
+                        AssertReference(cstr4, false);
 
-                    Assert.Equal(str5, cstr5.ToString());
-                    Assert.Equal(str5.Length, cstr5.Length);
-                    Assert.Equal(cstr5.Length, cstrSpan5.Length);
-                    Assert.False(cstr5.IsNullTerminated);
-                    AssertIndex(spa5, cstr5);
-                    AssertReferenceEquality(spa5, cstr5, false);
-                    AssertReferenceEquality(spa5, (CString)cstr5.Clone(), true);
-                    AssertReference(cstr5, true);
+                        Assert.Equal(str5, cstr5.ToString());
+                        Assert.Equal(str5.Length, cstr5.Length);
+                        Assert.Equal(cstr5.Length, cstrSpan5.Length);
+                        Assert.False(cstr5.IsNullTerminated);
+                        AssertIndex(spa5, cstr5);
+                        AssertReferenceEquality(spa5, cstr5, false);
+                        AssertReferenceEquality(spa5, (CString)cstr5.Clone(), true);
+                        AssertReference(cstr5, true);
 
-                    Assert.Equal(str6[0..^1], cstr6.ToString());
-                    Assert.Equal(str6.Length - 1, cstr6.Length);
-                    Assert.Equal(cstr6.Length + 1, cstrSpan6.Length);
-                    Assert.True(cstr6.IsNullTerminated);
-                    AssertIndex(spa6, cstr6);
-                    AssertReferenceEquality(spa6, cstr6, false);
-                    AssertReferenceEquality(spa6, (CString)cstr6.Clone(), true);
-                    AssertReference(cstr6, true);
+                        Assert.Equal(str6[0..^1], cstr6.ToString());
+                        Assert.Equal(str6.Length - 1, cstr6.Length);
+                        Assert.Equal(cstr6.Length + 1, cstrSpan6.Length);
+                        Assert.True(cstr6.IsNullTerminated);
+                        AssertIndex(spa6, cstr6);
+                        AssertReferenceEquality(spa6, cstr6, false);
+                        AssertReferenceEquality(spa6, (CString)cstr6.Clone(), true);
+                        AssertReference(cstr6, true);
 
-                    Assert.Equal(str7, cstr7.ToString());
-                    Assert.Equal(str7.Length, cstr7.Length);
-                    Assert.Equal(cstr7.Length + 1, cstrSpan7.Length);
-                    Assert.True(cstr7.IsNullTerminated);
-                    AssertIndex(cstr7, cstr7);
-                    AssertReference(cstr7, false);
+                        Assert.Equal(str7, cstr7.ToString());
+                        Assert.Equal(str7.Length, cstr7.Length);
+                        Assert.Equal(cstr7.Length + 1, cstrSpan7.Length);
+                        Assert.True(cstr7.IsNullTerminated);
+                        AssertReference(cstr7, false);
 
-                    AssertSegment(cstr1);
-                    AssertSegment(cstr2);
-                    AssertSegment(cstr3);
-                    AssertSegment(cstr4);
-                    AssertSegment(cstr5);
-                    AssertSegment(cstr6);
-                    AssertSegment(cstr7);
+                        Assert.True(cstr8.IsNullTerminated);
+                        AssertReference(cstr8, false);
+
+                        Assert.False(cstr9.IsNullTerminated);
+                        AssertReference(cstr9, false);
+
+                        AssertSegment(cstr1);
+                        AssertSegment(cstr2);
+                        AssertSegment(cstr3);
+                        AssertSegment(cstr4);
+                        AssertSegment(cstr5);
+                        AssertSegment(cstr6);
+                        AssertSegment(cstr7);
+                        AssertSegment(cstr8);
+                        AssertSegment(cstr9);
+                    }
                 }
             }
         }
 
-        [Fact]
-        internal void NormalRangeTest()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        internal void NormalRangeTest(Boolean function)
         {
-            CString cstr = "A-B";
+            CString cstr = function ? new CString(() => "A-B"u8) : "A-B";
             CString nonNullTerminated = Encoding.UTF8.GetBytes("A\0B");
             CString fullSegment = cstr[0..];
             CString single = cstr[0..1];
@@ -369,6 +401,13 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                     Assert.Equal(cstr.Length + 1, CString.GetBytes(clone).Length);
                 Assert.False(clone.IsReference);
             }
+            else if (cstr.IsFunction)
+            {
+                Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
+                CString clone = (CString)cstr.Clone();
+                Assert.True(clone.IsNullTerminated);
+                Assert.False(clone.IsReference);
+            }
             else
                 Assert.Equal(cstr.ToArray(), CString.GetBytes(cstr));
         }
@@ -384,6 +423,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                 CString seg1 = cstr[start..end];
 
                 AssertSegment(cstr, start, end, seg1);
+                AssertSegment(cstr, 0, cstr.Length, cstr[0..cstr.Length]);
                 if (seg1.Length > 0)
                     AssertSegment(seg1, default, end2, seg1[..end2]);
             }
@@ -411,9 +451,9 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
                     Assert.Equal(cstr[i], seg[i - start]);
             }
 
-            if ((seg.IsSegmented || seg.IsReference) && seg.Length != 0)
+            if ((seg.IsSegmented || seg.IsReference || seg.IsFunction) && seg.Length != 0)
                 Assert.Throws<InvalidOperationException>(() => CString.GetBytes(seg));
-            else if (cstr.IsSegmented)
+            else if (cstr.IsSegmented || cstr.IsFunction)
                 Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
             else if (cstr.Length == seg.Length)
                 if (seg.Length != 0 || seg.IsNullTerminated)

@@ -9,7 +9,7 @@ using Xunit;
 namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
 {
     [ExcludeFromCodeCoverage]
-    public sealed class ToStringText : CStringBaseTest
+    public sealed class ToStringTest : CStringBaseTest
     {
         [Fact]
         internal void NormalTest()

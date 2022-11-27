@@ -70,12 +70,7 @@ namespace Rxmxnx.PInvoke.Extensions
         /// </remarks>
         /// <param name="output"><see cref="CString"/> array.</param>
         /// <returns>Buffer <see cref="ReadOnlySpan{Char}"/>.</returns>
-        public ReadOnlySpan<Char> AsSpan(out CString[] output)
-        {
-            ReadOnlySpan<Char> result = this._value;
-            output = this.GetValues(result.AsIntPtr()).ToArray();
-            return this._value;
-        }
+        public ReadOnlySpan<Char> AsSpan(out CString[] output) => this.InternalAsSpan(out output);
 
         /// <summary>
         /// Use current instance as <see cref="ReadOnlySpan{CString}"/> instance and <paramref name="state"/>
@@ -88,8 +83,11 @@ namespace Rxmxnx.PInvoke.Extensions
         {
             unsafe
             {
-                fixed (void* ptr = &MemoryMarshal.GetReference(this.AsSpan(out CString[] output)))
+                fixed (Char* ptr = this._value)
+                {
+                    _ = this.InternalAsSpan(out CString[] output);
                     action(output, state);
+                }
             }
         }
 
@@ -106,8 +104,11 @@ namespace Rxmxnx.PInvoke.Extensions
         {
             unsafe
             {
-                fixed (void* ptr = &MemoryMarshal.GetReference(this.AsSpan(out CString[] output)))
+                fixed (Char* ptr = this._value)
+                {
+                    _ = this.InternalAsSpan(out CString[] output);
                     return func(output, state);
+                }
             }
         }
 
@@ -189,6 +190,20 @@ namespace Rxmxnx.PInvoke.Extensions
             return new(buffer, lengths);
         }
 
+
+        /// <summary>
+        /// Retrieves the buffer as an <see cref="ReadOnlySpan{Char}"/> instance and creates a
+        /// <see cref="CString"/> array which represents text sequence.
+        /// </summary>
+        /// <param name="output"><see cref="CString"/> array.</param>
+        /// <returns>Buffer <see cref="ReadOnlySpan{Char}"/>.</returns>
+        private ReadOnlySpan<Char> InternalAsSpan(out CString[] output)
+        {
+            ReadOnlySpan<Char> result = this._value;
+            output = this.GetValues(result.AsIntPtr()).ToArray();
+            return this._value;
+        }
+
         /// <summary>
         /// Retrieves the sequence of <see cref="CString"/> based on the buffer and lengths.
         /// </summary>
@@ -244,14 +259,11 @@ namespace Rxmxnx.PInvoke.Extensions
                     for (Int32 i = 0; i < values.Length; i++)
                         if (values[i] is CString value && value.Length > 0)
                         {
-                            ReadOnlySpan<Byte> valueSpan = value.AsSpan();
-                            valueSpan.CopyTo(byteSpan.Slice(position));
+                            ReadOnlySpan<Byte> valueSpan = value.AsSpan()[..value.Length];
+                            valueSpan.CopyTo(byteSpan[position..]);
                             position += valueSpan.Length;
-                            if (!value.IsNullTerminated)
-                            {
-                                byteSpan[position] = default;
-                                position++;
-                            }
+                            byteSpan[position] = default;
+                            position++;
                         }
                 }
             }

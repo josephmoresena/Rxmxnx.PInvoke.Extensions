@@ -3,14 +3,20 @@
 namespace Rxmxnx.PInvoke.Extensions
 {
     /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="IFixedContext{T}"/> instance.
+    /// Encapsulates a method that has no parameters and returns a <see cref="ReadOnlySpan{T}"/> instance.
+    /// </summary>
+    /// <returns>A <see cref="ReadOnlySpan{T}"/> instance.</returns>
+    public delegate ReadOnlySpan<T> ReadOnlySpanFunc<T>();
+
+    /// <summary>
+    /// Encapsulates a method that receives a <see cref="IFixedContext{T}"/> instance.
     /// </summary>
     /// <typeparam name="T">Type of the fixed context.</typeparam>
     /// <param name="ctx">Fixed context instance.</param>
     public delegate void FixedAction<T>(in IFixedContext<T> ctx) where T : unmanaged;
 
     /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="IFixedContext{T}"/> instance and a 
+    /// Encapsulates a method that receives a <see cref="IFixedContext{T}"/> instance and a 
     /// state object of type <typeparamref name="TArg"/>.
     /// </summary>
     /// <typeparam name="T">Type of the fixed context.</typeparam>
@@ -20,14 +26,14 @@ namespace Rxmxnx.PInvoke.Extensions
     public delegate void FixedAction<T, TArg>(in IFixedContext<T> ctx, TArg arg) where T : unmanaged;
 
     /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="IReadOnlyFixedContext{T}"/> instance.
+    /// Encapsulates a method that receives a <see cref="IReadOnlyFixedContext{T}"/> instance.
     /// </summary>
     /// <typeparam name="T">Type of the fixed context.</typeparam>
     /// <param name="ctx">Read-only fixed context instance.</param>
     public delegate void ReadOnlyFixedAction<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged;
 
     /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="IReadOnlyFixedContext{T}"/> instance and a 
+    /// Encapsulates a method that receives a <see cref="IReadOnlyFixedContext{T}"/> instance and a 
     /// state object of type <typeparamref name="TArg"/>.
     /// </summary>
     /// <typeparam name="T">Type of the fixed context.</typeparam>
@@ -37,7 +43,7 @@ namespace Rxmxnx.PInvoke.Extensions
     public delegate void ReadOnlyFixedAction<T, TArg>(in IReadOnlyFixedContext<T> ctx, TArg arg) where T : unmanaged;
 
     /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="IFixedContext{T}"/> instance.
+    /// Encapsulates a method that receives a <see cref="IFixedContext{T}"/> instance.
     /// </summary>
     /// <typeparam name="T">Type of the fixed context.</typeparam>
     /// <typeparam name="TResult">The type of the return value of the method that this delegate encapsulates.</typeparam>
@@ -46,7 +52,7 @@ namespace Rxmxnx.PInvoke.Extensions
     public delegate TResult FixedFunc<T, out TResult>(in IFixedContext<T> ctx) where T : unmanaged;
 
     /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="IFixedContext{T}"/> instance.
+    /// Encapsulates a method that receives a <see cref="IFixedContext{T}"/> instance.
     /// </summary>
     /// <typeparam name="T">Type of the fixed context.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
@@ -57,7 +63,7 @@ namespace Rxmxnx.PInvoke.Extensions
     public delegate TResult FixedFunc<T, TArg, out TResult>(in IFixedContext<T> ctx, TArg arg) where T : unmanaged;
 
     /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="IReadOnlyFixedContext{T}"/> instance.
+    /// Encapsulates a method that receives a <see cref="IReadOnlyFixedContext{T}"/> instance.
     /// </summary>
     /// <typeparam name="T">Type of the fixed context.</typeparam>
     /// <typeparam name="TResult">The type of the return value of the method that this delegate encapsulates.</typeparam>
@@ -66,7 +72,7 @@ namespace Rxmxnx.PInvoke.Extensions
     public delegate TResult ReadOnlyFixedFunc<T, out TResult>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged;
 
     /// <summary>
-    /// Encapsulates a methtod that receives a <see cref="IReadOnlyFixedContext{T}"/> instance.
+    /// Encapsulates a method that receives a <see cref="IReadOnlyFixedContext{T}"/> instance.
     /// </summary>
     /// <typeparam name="T">Type of the fixed context.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>

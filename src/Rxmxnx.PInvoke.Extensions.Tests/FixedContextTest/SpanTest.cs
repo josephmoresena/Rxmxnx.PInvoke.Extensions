@@ -75,7 +75,8 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.FixedContextTest
             Assert.True(rdestinations.WithSafeFixed((in IReadOnlyFixedContext<TDestination> tdes_ctx) =>
             {
                 foreach (TDestination destination in tdes_ctx.Values)
-                    return !destination.Equals(default(TDestination));
+                    if (!destination.Equals(default))
+                        return true;
                 return false;
             }));
         }

@@ -58,7 +58,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.StringExtensions
             GCHandle[] handles = TestUtilities.Alloc(bytes);
             try
             {
-                CString[] cValues = TestUtilities.CreateCStrings(bytes, handles);
+                CString[] cValues = TestUtilities.CreateCStrings(handles);
                 CString result = await cValues.ConcatAsync();
                 String resultString = Encoding.UTF8.GetString(result);
 

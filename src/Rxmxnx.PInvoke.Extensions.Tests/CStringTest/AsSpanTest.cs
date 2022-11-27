@@ -8,7 +8,7 @@ using Xunit;
 namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
 {
     [ExcludeFromCodeCoverage]
-    public sealed class AsSpanText : CStringBaseTest
+    public sealed class AsSpanTest : CStringBaseTest
     {
         [Fact]
         internal void NormalTest()

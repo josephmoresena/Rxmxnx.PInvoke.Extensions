@@ -18,10 +18,14 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
             ReadOnlySpan<Byte> external = TestUtilities.AsArray(TestUtilities.GetPrintableByte(), TestUtilities.GetPrintableByte(), TestUtilities.GetPrintableByte(), default);
 
             CString clocal = local;
-            CString cexternal = new(external.AsIntPtr(), external.Length);
+
 
             AssertClone(clocal, (CString)clocal.Clone());
-            AssertClone(cexternal, (CString)cexternal.Clone());
+            external.WithSafeFixed((in IReadOnlyFixedContext<Byte> ctx) =>
+            {
+                CString cexternal = new(ctx.Values.AsIntPtr(), ctx.Values.Length);
+                AssertClone(cexternal, (CString)cexternal.Clone());
+            });
         }
 
         private static void AssertClone(CString value, CString valueClone)

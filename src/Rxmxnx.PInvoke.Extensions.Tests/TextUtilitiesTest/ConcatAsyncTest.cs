@@ -61,7 +61,7 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.TextUtilitiesTest
             try
             {
                 CString initialCString = initial;
-                CString[] valuesCString = TestUtilities.CreateCStrings(bytes, handles);
+                CString[] valuesCString = TestUtilities.CreateCStrings(handles);
 
                 await NormalTest(initial, values, initialCString, valuesCString);
             }

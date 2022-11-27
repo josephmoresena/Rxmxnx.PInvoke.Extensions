@@ -3,18 +3,18 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Rxmxnx.PInvoke.Extensions.Internal
 {
-    internal abstract partial class ValueRegion<T>
+    internal partial class ValueRegion<T>
     {
         /// <summary>
-        /// This class represents a memory region in which an segmented array of <typeparamref name="T"/> 
+        /// This class represents a memory region in which an array of <typeparamref name="T"/> 
         /// values is found.
         /// </summary>
-        private sealed class SegmentedManagedRegion : ValueRegion<T>
+        private sealed class SegmentedFuncRegion : ValueRegion<T>
         {
             /// <summary>
-            /// Internal <typeparamref name="T"/> array.
+            /// Internal <see cref="ReadOnlySpanFunc{T}"/> instance. 
             /// </summary>
-            private readonly T[] _array;
+            private readonly ReadOnlySpanFunc<T> _func;
             /// <summary>
             /// Internal offset.
             /// </summary>
@@ -30,18 +30,16 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
 
             /// <inheritdoc/>
             public override Boolean IsSegmented => this._isSegmented;
-            /// <inheritdoc/>
-            public override T this[Int32 index] => this._array[this._offset + index];
 
             /// <summary>
             /// Constructor.
             /// </summary>
-            /// <param name="region"><see cref="ManagedRegion"/> instance.</param>
+            /// <param name="region"><see cref="FuncRegion"/> instance. </param>
             /// <param name="offset">Offset for range.</param>
             /// <param name="length">Length of range.</param>
-            public SegmentedManagedRegion([DisallowNull] ManagedRegion region, Int32 offset, Int32 length)
+            public SegmentedFuncRegion(FuncRegion region, Int32 offset, Int32 length)
             {
-                this._array = region.AsArray()!;
+                this._func = region.AsReadOnlySpanFunc()!;
                 this._offset = offset;
                 this._end = this._offset + length;
                 this._isSegmented = IsSegmentedRegion(this);
@@ -53,19 +51,16 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             /// <param name="region"><see cref="ManagedRegion"/> instance.</param>
             /// <param name="offset">Offset for range.</param>
             /// <param name="length">Length of range.</param>
-            public SegmentedManagedRegion([DisallowNull] SegmentedManagedRegion region, Int32 offset, Int32 length)
+            public SegmentedFuncRegion([DisallowNull] SegmentedFuncRegion region, Int32 offset, Int32 length)
             {
-                this._array = region._array;
+                this._func = region._func;
                 this._offset = offset + region._offset;
                 this._end = this._offset + length;
                 this._isSegmented = IsSegmentedRegion(this);
             }
 
             /// <inheritdoc/>
-            protected override T[]? AsArray() => !this.IsSegmented ? this._array : default;
-
-            /// <inheritdoc/>
-            protected override ReadOnlySpan<T> AsSpan() => this._array.AsSpan()[this._offset..this._end];
+            protected override ReadOnlySpan<T> AsSpan() => this._func()[this._offset..this._end];
 
             /// <summary>
             /// Indicates whether region is segmented.
@@ -75,8 +70,8 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
             /// <see langword="true"/> if <paramref name="region"/> is segmented; otherwise, 
             /// <see langword="false"/>.
             /// </returns>
-            private static Boolean IsSegmentedRegion(SegmentedManagedRegion region)
-                => region._offset != default || region._end != region._array.Length;
+            private static Boolean IsSegmentedRegion(SegmentedFuncRegion region)
+                => region._offset != default || region._end != region._func().Length;
         }
     }
 }

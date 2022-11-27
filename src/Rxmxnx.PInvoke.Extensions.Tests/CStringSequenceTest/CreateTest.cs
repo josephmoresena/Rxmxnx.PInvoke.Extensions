@@ -45,19 +45,23 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringSequenceTest
                     }
                 }
 
-                Assert.Equal(sequence.ToString().AsSpan().AsIntPtr(), sequence.Transform(s.ToArray(), (s2, v2) =>
+                unsafe
                 {
-                    IntPtr? result = default;
-                    for (Int32 i = 0; i < s2.Length; i++)
-                    {
-                        Assert.Equal(s2[i], v2[i]);
-                        Assert.Equal(s2[i].AsSpan().AsIntPtr(), v2[i].AsSpan().AsIntPtr());
+                    fixed (Char* ptr = sequence.ToString())
+                        Assert.Equal(new IntPtr(ptr), sequence.Transform(s.ToArray(), (s2, v2) =>
+                        {
+                            IntPtr? result = default;
+                            for (Int32 i = 0; i < s2.Length; i++)
+                            {
+                                Assert.Equal(s2[i], v2[i]);
+                                Assert.Equal(s2[i].AsSpan().AsIntPtr(), v2[i].AsSpan().AsIntPtr());
 
-                        if (result is null && s2[i].Length > 0)
-                            result = s2[i].AsSpan().AsIntPtr();
-                    }
-                    return result ?? CString.Empty.AsSpan().AsIntPtr();
-                }));
+                                if (result is null && s2[i].Length > 0)
+                                    result = s2[i].AsSpan().AsIntPtr();
+                            }
+                            return result ?? CString.Empty.AsSpan().AsIntPtr();
+                        }));
+                }
             });
         }
 

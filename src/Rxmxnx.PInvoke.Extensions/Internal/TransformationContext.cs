@@ -21,6 +21,10 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         /// Transformation length.
         /// </summary>
         private readonly Int32 _length;
+        /// <summary>
+        /// Transformation offset.
+        /// </summary>
+        private readonly Int32 _offset;
 
         /// <summary>
         /// Constructor.
@@ -30,15 +34,16 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         {
             this._ctx = ctx;
             this._length = ctx.BinaryLength / sizeof(TDestination);
+            this._offset = this._length * sizeof(TDestination);
         }
 
         IFixedContext<TSource> ITransformationContext<TSource, TDestination>.Context => this._ctx;
         IReadOnlyFixedContext<TSource> IReadOnlyTransformationContext<TSource, TDestination>.Context => this._ctx;
         Span<TDestination> ITransformationContext<TSource, TDestination>.Values => this._ctx.CreateSpan<TDestination>(this._length);
         ReadOnlySpan<TDestination> IReadOnlyTransformationContext<TSource, TDestination>.Values => this._ctx.CreateReadOnlySpan<TDestination>(this._length);
-        Span<Byte> ITransformationContext<TSource, TDestination>.ResidualBytes => (this._ctx as IFixedContext<TSource>)!.BinaryValues.Slice(this._length * sizeof(TDestination));
+        Span<Byte> ITransformationContext<TSource, TDestination>.ResidualBytes => (this._ctx as IFixedContext<TSource>)!.BinaryValues[this._offset..];
         ReadOnlySpan<Byte> IReadOnlyTransformationContext<TSource, TDestination>.ResidualBytes
-            => (this._ctx as IReadOnlyFixedContext<TSource>)!.BinaryValues.Slice(this._length * sizeof(TDestination));
+            => (this._ctx as IReadOnlyFixedContext<TSource>)!.BinaryValues[this._offset..];
         IReadOnlyTransformationContext<TSource, TDestination> ITransformationContext<TSource, TDestination>.AsReadOnly()
         {
             this._ctx.ValidateOperation(true);

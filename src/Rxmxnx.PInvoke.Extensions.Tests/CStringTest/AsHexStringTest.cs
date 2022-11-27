@@ -15,13 +15,16 @@ namespace Rxmxnx.PInvoke.Extensions.Tests.CStringTest
         internal void NormalTest()
         {
             String local = TestUtilities.SharedFixture.Create<String>();
-            ReadOnlySpan<Byte> external = CreateUtf8StringNulTerminated();
+            CreateUtf8StringNulTerminated().WithSafeFixed((in IReadOnlyFixedContext<Byte> ctx) =>
+            {
+                ReadOnlySpan<Byte> external = ctx.Values;
 
-            CString clocal = local;
-            CString cexternal = new(external.AsIntPtr(), external.Length);
+                CString clocal = local;
+                CString cexternal = new(external.AsIntPtr(), external.Length);
 
-            Assert.Equal(Encoding.UTF8.GetBytes(local).AsHexString(), clocal.AsHexString());
-            Assert.Equal(external[0..cexternal.Length].ToArray().AsHexString(), cexternal.AsHexString());
+                Assert.Equal(Encoding.UTF8.GetBytes(local).AsHexString(), clocal.AsHexString());
+                Assert.Equal(external[0..cexternal.Length].ToArray().AsHexString(), cexternal.AsHexString());
+            });
         }
     }
 }

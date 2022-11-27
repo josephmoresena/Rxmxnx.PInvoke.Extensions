@@ -51,7 +51,7 @@ namespace Rxmxnx.PInvoke.Extensions.Internal
         {
             this._ptr = ptr;
             this._count = count;
-            this._binaryLength = count * sizeof(Byte);
+            this._binaryLength = count * sizeof(T);
             this._isValid = true;
             this._isReadOnly = isReadOnly;
         }

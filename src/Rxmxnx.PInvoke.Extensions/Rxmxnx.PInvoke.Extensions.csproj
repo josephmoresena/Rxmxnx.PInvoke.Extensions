@@ -24,7 +24,7 @@
 		<PackageId>Rxmxnx.PInvoke.Extensions</PackageId>
 		<PackageTags>
 			PInvoke;Binary;Reference;Unmanaged;Memory;NativeAOT;Utf8;CString;Pointer;Span;
-			ReadOnlySpan;Unsafe;Fixed;Native;FFI;Binary
+			ReadOnlySpan;Unsafe;Fixed;Native;FFI;Binary;u8;Literals
 		</PackageTags>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -37,11 +37,11 @@
 		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
 	</ItemGroup>
 	<ItemGroup>
-		<None Include="./../../.github/**/*" Pack="false"/>
-		<None Include="./../../README.md" Pack="true" PackagePath="/"/>
-		<None Include="./../../LICENSE" Pack="true" PackagePath="LICENSE.md"/>
+		<None Include="./../../.github/**/*" Pack="false" />
+		<None Include="./../../README.md" Pack="true" PackagePath="/" />
+		<None Include="./../../LICENSE" Pack="true" PackagePath="LICENSE.md" />
 	</ItemGroup>
 </Project>

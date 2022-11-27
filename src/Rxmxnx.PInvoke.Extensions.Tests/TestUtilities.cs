@@ -56,11 +56,14 @@ namespace Rxmxnx.PInvoke.Extensions.Tests
             foreach (GCHandle handle in handles)
                 handle.Free();
         }
-        public static CString[] CreateCStrings(IList<Byte[]> bytes, IList<GCHandle> handles)
+        public static CString[] CreateCStrings(IReadOnlyList<GCHandle> handles)
         {
-            CString[] result = new CString[bytes.Count];
-            for (Int32 i = 0; i < result.Length; i++)
-                result[i] = new(handles[i].AddrOfPinnedObject(), bytes[i].Length);
+            CString[] result = new CString[handles.Count];
+            for (Int32 i = 0; i < handles.Count; i++)
+            {
+                Byte[] arr = handles[i].Target as Byte[];
+                result[i] = new(Marshal.UnsafeAddrOfPinnedArrayElement(arr, 0), arr.Length);
+            }
             return result;
         }
         public static Byte[] GetWriting(CString value, Boolean nullEnd)
