@@ -350,3 +350,4 @@ MigrationBackup/
 .ionide/
 /src/PInvoke.Extensions/PInvoke.Extensions.xml
 /src/Rxmxnx.PInvoke.Extensions/Rxmxnx.PInvoke.Extensions.xml
+**/.DS_Store
