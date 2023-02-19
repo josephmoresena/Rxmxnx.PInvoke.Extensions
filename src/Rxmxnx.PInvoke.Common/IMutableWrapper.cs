@@ -35,6 +35,6 @@ public interface IMutableWrapper<T> : IWrapper<T>
     /// <see cref="IMutableWrapper{TValue}"/> object which instance object is equal to 
     /// <paramref name="instance"/>.
     /// </returns>
-    public static new IMutableWrapper<TValue?> Create<TValue>(in TValue? instance = default) where TValue : struct
+    public static new IMutableWrapper<TValue?> CreateNullable<TValue>(in TValue? instance = default) where TValue : struct
         => new NullableReference<TValue>(instance);
 }

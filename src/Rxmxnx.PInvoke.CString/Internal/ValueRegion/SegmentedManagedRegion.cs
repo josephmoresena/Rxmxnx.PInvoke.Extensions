@@ -62,7 +62,7 @@ internal partial class ValueRegion<T>
         protected override T[]? AsArray() => !this.IsSegmented ? this._array : default;
 
         /// <inheritdoc/>
-        protected override ReadOnlySpan<T> AsSpan() => this._array.AsSpan()[this._offset..this._end];
+        internal override ReadOnlySpan<T> AsSpan() => this._array.AsSpan()[this._offset..this._end];
 
         /// <summary>
         /// Indicates whether region is segmented.

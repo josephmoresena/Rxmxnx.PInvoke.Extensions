@@ -39,7 +39,7 @@ internal abstract partial class ValueRegion<T> where T : unmanaged
     /// Creates a new read-only span over this memory region.
     /// </summary>
     /// <returns>The read-only span representation of the memory region.</returns>
-    protected abstract ReadOnlySpan<T> AsSpan();
+    internal abstract ReadOnlySpan<T> AsSpan();
 
     /// <summary>
     /// Returns an enumerator for this memory region.

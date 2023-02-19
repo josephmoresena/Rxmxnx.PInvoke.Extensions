@@ -247,7 +247,7 @@ public sealed class CStringSequence : ICloneable, IEquatable<CStringSequence>
                 for (Int32 i = 0; i < values.Length; i++)
                     if (values[i] is CString value && value.Length > 0)
                     {
-                        ReadOnlySpan<Byte> valueSpan = value.AsSpan()[..value.Length];
+                        ReadOnlySpan<Byte> valueSpan = value.AsSpan();
                         valueSpan.CopyTo(byteSpan[position..]);
                         position += valueSpan.Length;
                         byteSpan[position] = default;
@@ -281,7 +281,7 @@ public sealed class CStringSequence : ICloneable, IEquatable<CStringSequence>
             if (value.Length > 0)
             {
                 ReadOnlySpan<Byte> bytes = value.AsSpan();
-                bytes.CopyTo(destination.AsSpan().Slice(offset, bytes.Length));
+                bytes.CopyTo(destination.AsSpan()[offset..bytes.Length]);
                 offset += bytes.Length;
             }
     }

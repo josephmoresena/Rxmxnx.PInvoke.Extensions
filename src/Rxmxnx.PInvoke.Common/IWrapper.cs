@@ -36,6 +36,6 @@ public interface IWrapper<T> : IEquatable<T>
     /// <see cref="IWrapper{TValue}"/> object which instance object is equal to 
     /// <paramref name="instance"/>.
     /// </returns>
-    public static IWrapper<TValue?> Create<TValue>(in TValue? instance) where TValue : struct
+    public static IWrapper<TValue?> CreateNullable<TValue>(in TValue? instance) where TValue : struct
         => new NullableInput<TValue>(instance);
 }

@@ -20,7 +20,7 @@ internal partial class ValueRegion<T>
         public FuncRegion(ReadOnlySpanFunc<T> func) => this._func = func;
 
         /// <inheritdoc/>
-        protected override ReadOnlySpan<T> AsSpan() => this._func();
+        internal override ReadOnlySpan<T> AsSpan() => this._func();
 
         /// <summary>
         /// Gets a function from this memory region.

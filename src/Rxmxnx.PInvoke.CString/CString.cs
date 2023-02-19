@@ -208,7 +208,7 @@ public sealed class CString : ICloneable, IEquatable<CString>
     /// Retreives the internal or external information as <see cref="ReadOnlySpan{Byte}"/> object.
     /// </summary>
     /// <returns><see cref="ReadOnlySpan{Byte}"/> instance.</returns>
-    public ReadOnlySpan<Byte> AsSpan() => this._data;
+    public ReadOnlySpan<Byte> AsSpan() => this._data.AsSpan()[..this._length];
 
     /// <summary>
     /// Gets <see cref="String"/> representation of the current UTF-8 text as hexadecimal value.
@@ -343,10 +343,7 @@ public sealed class CString : ICloneable, IEquatable<CString>
         else
         {
             ReadOnlySpan<Byte> data = this._data;
-            if (!this.IsFunction || data.IsEmpty)
-                bytes = new Byte[this._length + 1];
-            else
-                bytes = new Byte[data.Length + (!IsNullTerminatedSpan(data) ? 1 : 0)];
+            bytes = new Byte[this._length + 1];
             data.CopyTo(bytes);
         }
         return new CString(bytes);
@@ -383,7 +380,7 @@ public sealed class CString : ICloneable, IEquatable<CString>
         if (this._length == 0)
             return String.Empty;
         else
-            return Encoding.UTF8.GetString(this.AsSpan()[0..this._length]);
+            return Encoding.UTF8.GetString(this.AsSpan());
     }
 
     /// <summary>
@@ -406,7 +403,7 @@ public sealed class CString : ICloneable, IEquatable<CString>
     /// </param>
     public void Write([DisallowNull] Stream strm, Boolean writeNullTermination)
     {
-        strm.Write(this.AsSpan()[..this.Length]);
+        strm.Write(this.AsSpan());
         if (writeNullTermination)
             strm.Write(empty);
     }
@@ -462,7 +459,7 @@ public sealed class CString : ICloneable, IEquatable<CString>
     /// Defines an implicit conversion of a given <see cref="CString"/> to a read-only span of bytes.
     /// </summary>
     /// <param name="value">A <see cref="CString"/> to implicitly convert.</param>
-    public static implicit operator ReadOnlySpan<Byte>(CString? value) => value != default ? value.AsSpan() : default;
+    public static implicit operator ReadOnlySpan<Byte>(CString? value) => value is not null ? value.AsSpan() : default;
 
     /// <summary>
     /// Determines whether two specified <see cref="CString"/> have the same value.
@@ -561,7 +558,7 @@ public sealed class CString : ICloneable, IEquatable<CString>
     /// <returns>A task that represents the asynchronous write operation.</returns>
     private Task GetWriteTask(Stream strm)
         => (Byte[]?)this._data is Byte[] array ? strm.WriteAsync(array, 0, this._length) :
-        Task.Run(() => { strm.Write(this.AsSpan()[0..this._length]); });
+        Task.Run(() => { strm.Write(this.AsSpan()); });
 
     /// <summary>
     /// Retrieves the equality parameters for current <see cref="CString"/> instance.
@@ -596,7 +593,7 @@ public sealed class CString : ICloneable, IEquatable<CString>
 
     /// <summary>
     /// Indicates whether <paramref name="current"/> <see cref="CString"/> is equal to 
-    /// <paramref name="other"/> <see cref="CString"/> 
+    /// <paramref name="other"/> <see cref="CString"/>.
     /// instance.
     /// </summary>
     /// <typeparam name="TInteger"><see cref="ValueType"/> for reduce comparation.</typeparam>
@@ -609,26 +606,48 @@ public sealed class CString : ICloneable, IEquatable<CString>
     private static Boolean Equals<TInteger>(CString current, CString other)
         where TInteger : unmanaged
     {
-        ReadOnlySpan<Byte> thisSpan = current;
+        ReadOnlySpan<Byte> currSpan = current;
         ReadOnlySpan<Byte> otherSpan = other;
 
-        current.GetEqualityParameters<TInteger>(out Int32 offset, out Int32 count);
-
-        for (Int32 i = current._length - offset; i < current._length; i++)
-            if (!thisSpan[i].Equals(otherSpan[i]))
-                return false;
-        unsafe
-        {
-            fixed(void* thisPtr = &MemoryMarshal.GetReference(thisSpan))
-            fixed (void* otherPtr = &MemoryMarshal.GetReference(otherSpan))
+        if(currSpan.Length == otherSpan.Length)
+            unsafe
             {
-                ReadOnlySpan<TInteger> thisTSpan = new(thisPtr, count);
-                ReadOnlySpan<TInteger> otherTSpan = new(otherPtr, count);
-                for (Int32 i = 0; i < count; i++)
-                    if (!thisTSpan[i].Equals(otherTSpan[i]))
-                        return false;
+                fixed (void* currPtr = &MemoryMarshal.GetReference(currSpan))
+                fixed (void* otherPtr = &MemoryMarshal.GetReference(otherSpan))
+                {
+                    IReadOnlyFixedContext<Byte> currCtx = new FixedContext<Byte>(currPtr, current.Length, true);
+                    IReadOnlyFixedContext<Byte> otherCtx = new FixedContext<Byte>(otherPtr, other.Length, true);
+                    return Equals<TInteger>(currCtx, otherCtx);
+                }
             }
-        }
+        return false;
+    }
+
+    /// <summary>
+    /// Indicates whether <paramref name="currCtx"/> <see cref="IReadOnlyFixedContext{Byte}"/> is equal to 
+    /// <paramref name="otherCtx"/> <see cref="IReadOnlyFixedContext{Byte}"/>.
+    /// </summary>
+    /// <typeparam name="TInteger"><see cref="ValueType"/> for reduce comparation.</typeparam>
+    /// <param name="currCtx">A <see cref="IReadOnlyFixedContext{Byte}"/> to compare with <paramref name="otherCtx"/>.</param>
+    /// <param name="otherCtx">A <see cref="IReadOnlyFixedContext{Byte}"/> to compare with this <paramref name="currCtx"/>.</param>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="currCtx"/> <see cref="IReadOnlyFixedContext{Byte}"/> is equal to 
+    /// <paramref name="otherCtx"/> parameter; otherwise, <see langword="false"/>.
+    /// </returns>
+    private static unsafe Boolean Equals<TInteger>(IReadOnlyFixedContext<Byte> currCtx, IReadOnlyFixedContext<Byte> otherCtx) where TInteger : unmanaged
+    {
+        IReadOnlyTransformationContext<Byte, TInteger> thisTx = currCtx.Transformation<TInteger>();
+        IReadOnlyTransformationContext<Byte, TInteger> otherTx = otherCtx.Transformation<TInteger>();
+
+        Int32 iCount = thisTx.Values.Length;
+        Int32 bCount = thisTx.ResidualBytes.Length;
+
+        for (Int32 i = 0; i < iCount; i++)
+            if (!thisTx.Values[i].Equals(otherTx.Values[i]))
+                return false;
+        for (Int32 i = 0; i < bCount; i++)
+            if (!thisTx.ResidualBytes[i].Equals(otherTx.ResidualBytes[i]))
+                return false;
 
         return true;
     }

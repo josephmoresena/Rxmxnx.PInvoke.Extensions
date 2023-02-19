@@ -30,6 +30,6 @@ public interface IReferenceableWrapper<T> : IWrapper<T>, IReferenceable<T>
     /// <see cref="IWrapper{TValue}"/> object which instance object is equal to 
     /// <paramref name="instance"/>.
     /// </returns>
-    public static new IReferenceableWrapper<TValue?> Create<TValue>(in TValue? instance) where TValue : struct
+    public static new IReferenceableWrapper<TValue?> CreateNullable<TValue>(in TValue? instance) where TValue : struct
         => new NullableInput<TValue>(instance);
 }

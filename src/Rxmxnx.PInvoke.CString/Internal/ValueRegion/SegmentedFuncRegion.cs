@@ -57,7 +57,7 @@ internal partial class ValueRegion<T>
         }
 
         /// <inheritdoc/>
-        protected override ReadOnlySpan<T> AsSpan() => this._func()[this._offset..this._end];
+        internal override ReadOnlySpan<T> AsSpan() => this._func()[this._offset..this._end];
 
         /// <summary>
         /// Indicates whether region is segmented.

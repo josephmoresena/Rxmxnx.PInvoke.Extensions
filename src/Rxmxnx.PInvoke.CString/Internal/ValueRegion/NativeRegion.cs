@@ -34,7 +34,7 @@ internal partial class ValueRegion<T>
         }
 
         /// <inheritdoc/>
-        protected override ReadOnlySpan<T> AsSpan()
+        internal override ReadOnlySpan<T> AsSpan()
         {
             unsafe
             {

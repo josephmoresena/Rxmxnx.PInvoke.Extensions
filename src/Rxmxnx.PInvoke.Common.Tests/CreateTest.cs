@@ -53,7 +53,7 @@ public class IWrapperTests
     {
         T? value = !nullInput? fixture.Create<T>() : null;
         T? value2 = fixture.Create<Boolean>() ? fixture.Create<T>() : null;
-        var result = IWrapper<T>.Create(value);
+        var result = IWrapper<T>.CreateNullable(value);
         Assert.NotNull(result);
         Assert.Equal(value, result.Value);
         Assert.Equal(Equals(value, value2), result.Equals(value2));
