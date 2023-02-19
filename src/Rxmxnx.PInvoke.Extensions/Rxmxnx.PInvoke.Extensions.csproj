@@ -49,6 +49,6 @@
 
   <ItemGroup>
     <ProjectReference Condition="'$(PublishPackage)' == ''" Include="..\Rxmxnx.PInvoke.Common\Rxmxnx.PInvoke.Common.csproj" />
-    <PackageReference Condition="'$(PublishPackage)' != ''" Include="Rxmxnx.PInvoke.Common"/>
+    <PackageReference Condition="'$(PublishPackage)' != ''" Include="Rxmxnx.PInvoke.Common" />
   </ItemGroup>
 </Project>
