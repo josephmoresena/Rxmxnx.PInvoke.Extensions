@@ -51,4 +51,12 @@
     <ProjectReference Condition="'$(PublishPackage)' == ''" Include="..\Rxmxnx.PInvoke.Common\Rxmxnx.PInvoke.Common.csproj" />
     <PackageReference Condition="'$(PublishPackage)' != ''" Include="Rxmxnx.PInvoke.Common" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="CString\" />
+    <None Remove="CStringSequence\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CString\" />
+    <Folder Include="CStringSequence\" />
+  </ItemGroup>
 </Project>
