@@ -1,11 +1,10 @@
 ﻿using System.Runtime.CompilerServices;
-using Moq;
 using Rxmxnx.PInvoke.Tests.Internal;
 
 namespace Rxmxnx.PInvoke.Tests;
 
 [ExcludeFromCodeCoverage]
-public sealed class IReferenceableWrapperTests
+public sealed class IMutableReferenceTests
 {
     private static readonly IFixture fixture = new Fixture();
 
@@ -52,7 +51,7 @@ public sealed class IReferenceableWrapperTests
     {
         T value = fixture.Create<T>();
         T value2 = fixture.Create<T>();
-        var result = IReferenceableWrapper<T>.Create(value);
+        var result = IMutableReference<T>.Create(value);
         var result2 = IReferenceableWrapper<T>.Create(value);
         var result3 = new ReferenceableWrapper<T>(result);
         ref readonly T refValue = ref result.Reference;
@@ -66,12 +65,22 @@ public sealed class IReferenceableWrapperTests
         Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref value));
         Assert.False(result.Equals(result2));
         Assert.True(result.Equals(result3));
+
+        result.SetInstance(value2);
+        Assert.Equal(value2, result.Value);
+        Assert.Equal(value2, refValue);
+        Assert.True(result.Equals(value2));
+        Assert.Equal(Equals(value2, value), result.Equals(value));
+        Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref mutableValueRef));
+        Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref value2));
+        Assert.False(result.Equals(result2));
+        Assert.True(result.Equals(result3));
     }
     private static void Nullable<T>(Boolean nullInput) where T : unmanaged
     {
         T? value = !nullInput? fixture.Create<T>() : null;
         T? value2 = fixture.Create<Boolean>() ? fixture.Create<T>() : null;
-        var result = IReferenceableWrapper<T>.CreateNullable(value);
+        var result = IMutableReference<T>.CreateNullable(value);
         var result2 = IReferenceableWrapper<T>.CreateNullable(value);
         var result3 = new ReferenceableWrapper<T?>(result);
         ref readonly T? refValue = ref result.Reference;
@@ -82,6 +91,16 @@ public sealed class IReferenceableWrapperTests
         Assert.Equal(Equals(value, value2), result.Equals(value2));
         Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref mutableValueRef));
         Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref value));
+        Assert.False(result.Equals(result2));
+        Assert.True(result.Equals(result3));
+
+        result.SetInstance(value2);
+        Assert.Equal(value2, result.Value);
+        Assert.Equal(value2, refValue);
+        Assert.True(result.Equals(value2));
+        Assert.Equal(Equals(value2, value), result.Equals(value));
+        Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref mutableValueRef));
+        Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref value2));
         Assert.False(result.Equals(result2));
         Assert.True(result.Equals(result3));
     }

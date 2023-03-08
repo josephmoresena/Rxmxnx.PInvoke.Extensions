@@ -1,7 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests;
 
 [ExcludeFromCodeCoverage]
-public sealed class IWrapperTests
+public sealed class IMutableWrapperTests
 {
     private static readonly IFixture fixture = new Fixture();
 
@@ -48,20 +48,30 @@ public sealed class IWrapperTests
     {
         T value = fixture.Create<T>();
         T value2 = fixture.Create<T>();
-        var result = IWrapper<T>.Create(value);
+        var result = IMutableWrapper<T>.Create(value);
         Assert.NotNull(result);
         Assert.Equal(value, result.Value);
         Assert.True(result.Equals(value));
         Assert.Equal(Equals(value, value2), result.Equals(value2));
+
+        result.SetInstance(value2);
+        Assert.Equal(value2, result.Value);
+        Assert.True(result.Equals(value2));
+        Assert.Equal(Equals(value2, value), result.Equals(value));
     }
     private static void Nullable<T>(Boolean nullInput) where T : unmanaged
     {
         T? value = !nullInput? fixture.Create<T>() : null;
         T? value2 = fixture.Create<Boolean>() ? fixture.Create<T>() : null;
-        var result = IWrapper<T>.CreateNullable(value);
+        var result = IMutableWrapper<T>.CreateNullable(value);
         Assert.NotNull(result);
         Assert.Equal(value, result.Value);
         Assert.Equal(Equals(value, value2), result.Equals(value2));
+
+        result.SetInstance(value2);
+        Assert.Equal(value2, result.Value);
+        Assert.True(result.Equals(value2));
+        Assert.Equal(Equals(value2, value), result.Equals(value));
     }
 }
 
