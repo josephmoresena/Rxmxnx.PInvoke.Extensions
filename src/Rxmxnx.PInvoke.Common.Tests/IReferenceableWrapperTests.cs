@@ -1,7 +1,9 @@
-﻿namespace Rxmxnx.PInvoke.Tests;
+﻿using System.Runtime.CompilerServices;
+
+namespace Rxmxnx.PInvoke.Tests;
 
 [ExcludeFromCodeCoverage]
-public class IWrapperTests
+public sealed class IReferenceableWrapperTests
 {
     private static readonly IFixture fixture = new Fixture();
 
@@ -18,7 +20,13 @@ public class IWrapperTests
     [Fact]
     internal Task Int64TestAsync() => TestAsync<Int64>();
     [Fact]
+    internal Task Int128TestAsync() => TestAsync<Int128>();
+    [Fact]
+    internal Task GuidTestAsync() => TestAsync<Guid>();
+    [Fact]
     internal Task SingleTestAsync() => TestAsync<Single>();
+    [Fact]
+    internal Task HalfTestAsync() => TestAsync<Half>();
     [Fact]
     internal Task DoubleTestAsync() => TestAsync<Double>();
     [Fact]
@@ -42,21 +50,28 @@ public class IWrapperTests
     {
         T value = fixture.Create<T>();
         T value2 = fixture.Create<T>();
-        var result = IWrapper<T>.Create(value);
+        var result = IReferenceableWrapper<T>.Create(value);
+        ref readonly T refValue = ref result.Reference;
+        ref T mutableValueRef = ref Unsafe.AsRef(result.Reference);
         Assert.NotNull(result);
         Assert.Equal(value, result.Value);
+        Assert.Equal(value, refValue);
         Assert.True(result.Equals(value));
         Assert.Equal(Equals(value, value2), result.Equals(value2));
+        Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref mutableValueRef));
     }
-
     private static void Nullable<T>(Boolean nullInput) where T : unmanaged
     {
         T? value = !nullInput? fixture.Create<T>() : null;
         T? value2 = fixture.Create<Boolean>() ? fixture.Create<T>() : null;
-        var result = IWrapper<T>.CreateNullable(value);
+        var result = IReferenceableWrapper<T>.CreateNullable(value);
+        ref readonly T? refValue = ref result.Reference;
+        ref T? mutableValueRef = ref Unsafe.AsRef(result.Reference);
         Assert.NotNull(result);
+        Assert.Equal(value, refValue);
         Assert.Equal(value, result.Value);
         Assert.Equal(Equals(value, value2), result.Equals(value2));
+        Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref mutableValueRef));
     }
 }
 
