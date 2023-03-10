@@ -84,10 +84,10 @@ internal unsafe sealed class FixedContext<T> : IFixedContext<T>, IReadOnlyFixedC
     /// <param name="isReadOnly">Indicates whether current operation is read-only one.</param>
     public void ValidateOperation(Boolean isReadOnly = false)
     {
-        if (!isReadOnly && this._isReadOnly)
-            throw new InvalidOperationException("The current context is read-only.");
         if (!this._isValid)
             throw new InvalidOperationException("The current context is not valid.");
+        if (!isReadOnly && this._isReadOnly)
+            throw new InvalidOperationException("The current context is read-only.");
     }
     /// <summary>
     /// Invalidates current context.
