@@ -39,6 +39,7 @@ public abstract class FixedContextTestsBase
                 actionTest(new(ptr, span.Length, readOnly), values);
         }
     }
+
     /// <summary>
     /// Invokes the action with a created <see cref="FixedContext{T}"/> instantance passed
     /// as parameter.
@@ -47,13 +48,36 @@ public abstract class FixedContextTestsBase
     /// <param name="span">Span over the <see cref="FixedContext{T}"/> instance is created.</param>
     /// <param name="readOnly">Indicates whether the created <see cref="FixedContext{T}"/> instance should be readonly.</param>
     /// <param name="actionTest">Action test to <see cref="FixedContext{T}"/> instance to be used.</param>
-    internal void WithFixed<T>(Span<T> span, Boolean readOnly, Action<FixedContext<T>> actionTest) where T: unmanaged
+    internal static void WithFixed<T, TObj>(ReadOnlySpan<T> span, Boolean readOnly, TObj obj, Action<FixedContext<T>, TObj> actionTest) where T: unmanaged
     {
         unsafe
         {
             fixed (void* ptr = &MemoryMarshal.GetReference(span))
-                actionTest(new(ptr, span.Length, readOnly));
+                actionTest(new(ptr, span.Length, readOnly), obj);
         }
+    }
+
+    /// <summary>
+    /// Indicates whether <see cref="FixedContext{T}"/> instance is read-only.
+    /// </summary>
+    /// <typeparam name="T">Type of <see cref="FixedContext{T}"/> value.</typeparam>
+    /// <param name="ctx"><see cref="FixedContext{T}"/> instance.</param>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="ctx"/> is read-only; otherwise,
+    /// <see langword="false"/>.
+    /// </returns>
+    internal static Boolean IsReadOnly<T>(FixedContext<T> ctx) where T : unmanaged
+    {
+        Boolean isReadOnly = false;
+        try
+        {
+            _ = ctx.CreateSpan<T>(0);
+        }
+        catch (Exception)
+        {
+            isReadOnly = true;
+        }
+        return isReadOnly;
     }
 }
 

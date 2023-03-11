@@ -95,14 +95,14 @@ internal unsafe sealed class FixedContext<T> : IFixedContext<T>, IReadOnlyFixedC
     public void Unload() => this._isValid = false;
 
     /// <inheritdoc/>
-    public override Boolean Equals(Object? obj) => this.Equals(obj as FixedContext<T>);
-    /// <inheritdoc/>
     public Boolean Equals(FixedContext<T>? ctx)
         => ctx is not null && this._ptr == ctx._ptr &&
-        this._binaryLength == ctx._binaryLength && (this._isReadOnly == ctx._isReadOnly);
+        this._binaryLength == ctx._binaryLength && this._isReadOnly == ctx._isReadOnly;
 
     /// <inheritdoc/>
-    public override Int32 GetHashCode() => HashCode.Combine(new IntPtr(this._ptr), this._binaryLength, this._isReadOnly);
+    public override Boolean Equals(Object? obj) => this.Equals(obj as FixedContext<T>);
+    /// <inheritdoc/>
+    public override Int32 GetHashCode() => HashCode.Combine(new IntPtr(this._ptr), this._binaryLength, this._isReadOnly, typeof(T));
 
     ITransformationContext<T, TDestination> IFixedContext<T>.Transformation<TDestination>() => this.GetTransformation<TDestination>();
     IReadOnlyFixedContext<T> IFixedContext<T>.AsReadOnly()
