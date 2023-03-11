@@ -76,13 +76,13 @@ public class GetHashCodeTest : FixedContextTestsBase
             TransformationTest<T, TimeSpan>(ctx, isReadOnly, values.Length);
         }
     }
-    private static unsafe void TransformationTest<T, TInt>(FixedContext<T> ctx, Boolean readOnly, Int32 length)
+    private static unsafe void TransformationTest<T, T2>(FixedContext<T> ctx, Boolean readOnly, Int32 length)
         where T: unmanaged
-        where TInt : unmanaged
+        where T2 : unmanaged
     {
         ReadOnlySpan<T> span = ctx.CreateReadOnlySpan<T>(length);
         void* ptr = Unsafe.AsPointer(ref MemoryMarshal.GetReference(span));
-        ReadOnlySpan<TInt> transformedSpan = new(ptr, length * sizeof(T) / sizeof(TInt));
+        ReadOnlySpan<T2> transformedSpan = new(ptr, length * sizeof(T) / sizeof(T2));
         WithFixed(transformedSpan, readOnly, ctx, Test);
     }
     private static void Test<T, TInt>(FixedContext<TInt> ctx2, FixedContext<T> ctx)
