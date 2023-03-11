@@ -3,7 +3,7 @@ using Rxmxnx.PInvoke.Internal;
 
 namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
 
-public sealed class CreateSpanTests : FixedContextTestsBase
+public sealed class CreateReadOnlySpanTests : FixedContextTestsBase
 {
     [Fact]
     internal void BooleanTest() => Test<Boolean>();
@@ -40,15 +40,14 @@ public sealed class CreateSpanTests : FixedContextTestsBase
     {
         T[] values = fixture.CreateMany<T>().ToArray();
         base.WithFixed(values, false, Test);
-        Exception readOnly = Assert.Throws<InvalidOperationException>(() => base.WithFixed(values, true, Test));
-        Assert.Equal(ReadOnlyError, readOnly.Message);
+        base.WithFixed(values, true, Test);
     }
 
     private static void Test<T>(FixedContext<T> ctx, T[] values) where T : unmanaged
     {
-        Span<T> span = ctx.CreateSpan<T>(values.Length);
+        ReadOnlySpan<T> span = ctx.CreateReadOnlySpan<T>(values.Length);
         Assert.Equal(values.Length, span.Length);
-        Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(values[0]), ref span[0]));
+        Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(values[0]), ref Unsafe.AsRef(span[0])));
 
         ctx.Unload();
         Exception invalid = Assert.Throws<InvalidOperationException>(() => ctx.CreateSpan<T>(values.Length));

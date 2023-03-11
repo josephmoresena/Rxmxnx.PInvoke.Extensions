@@ -39,5 +39,21 @@ public abstract class FixedContextTestsBase
                 actionTest(new(ptr, span.Length, readOnly), values);
         }
     }
+    /// <summary>
+    /// Invokes the action with a created <see cref="FixedContext{T}"/> instantance passed
+    /// as parameter.
+    /// </summary>
+    /// <typeparam name="T">Type of value in <see cref="FixedContext{T}"/>.</typeparam>
+    /// <param name="span">Span over the <see cref="FixedContext{T}"/> instance is created.</param>
+    /// <param name="readOnly">Indicates whether the created <see cref="FixedContext{T}"/> instance should be readonly.</param>
+    /// <param name="actionTest">Action test to <see cref="FixedContext{T}"/> instance to be used.</param>
+    internal void WithFixed<T>(Span<T> span, Boolean readOnly, Action<FixedContext<T>> actionTest) where T: unmanaged
+    {
+        unsafe
+        {
+            fixed (void* ptr = &MemoryMarshal.GetReference(span))
+                actionTest(new(ptr, span.Length, readOnly));
+        }
+    }
 }
 
