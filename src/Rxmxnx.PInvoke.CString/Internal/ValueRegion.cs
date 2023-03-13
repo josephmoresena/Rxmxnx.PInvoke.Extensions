@@ -16,7 +16,6 @@ internal abstract partial class ValueRegion<T> where T : unmanaged
     /// memory region length.
     /// </exception>
     /// <returns>The element from the memory region.</returns>
-    [IndexerName("Position")]
     public virtual T this[Int32 index] => this.AsSpan()[index];
     /// <summary>
     /// Indicates whether current memory region is segmented.
@@ -76,30 +75,30 @@ internal abstract partial class ValueRegion<T> where T : unmanaged
     /// <returns>A new <see cref="ValueRegion{T}"/> instance.</returns>
     public static ValueRegion<T> Create(ReadOnlySpanFunc<T> func) => new FuncRegion(func);
     /// <summary>
-    /// Creates a new <see cref="ValueRegion{T}"/> instance whose offset is <paramref name="offset"/>
+    /// Creates a new <see cref="ValueRegion{T}"/> instance whose offset is <paramref name="startIndex"/>
     /// and whose length is <paramref name="length"/>.
     /// </summary>
     /// <param name="region">A <see cref="ValueRegion{T}"/> instance.</param>
-    /// <param name="offset">Offset for range.</param>
+    /// <param name="startIndex">Offset for range.</param>
     /// <param name="length">Length of range.</param>
     /// <returns>A new <see cref="ValueRegion{T}"/> instance.</returns>
-    public static ValueRegion<T> Create(ValueRegion<T> region, Int32 offset, Int32 length)
+    public static ValueRegion<T> Create(ValueRegion<T> region, Int32 startIndex, Int32 length)
     {
         if (region is ManagedRegion managed)
-            return new SegmentedManagedRegion(managed, offset, length);
+            return new SegmentedManagedRegion(managed, startIndex, length);
         else if (region is SegmentedManagedRegion segmented)
-            return new SegmentedManagedRegion(segmented, offset, length);
+            return new SegmentedManagedRegion(segmented, startIndex, length);
         else if (region is FuncRegion func)
-            return new SegmentedFuncRegion(func, offset, length);
+            return new SegmentedFuncRegion(func, startIndex, length);
         else if (region is SegmentedFuncRegion segmentedFunc)
-            return new SegmentedFuncRegion(segmentedFunc, offset, length);
+            return new SegmentedFuncRegion(segmentedFunc, startIndex, length);
         else
             unsafe
             {
                 ReadOnlySpan<T> regionSpan = region.AsSpan();
                 ref T spanRef = ref MemoryMarshal.GetReference(regionSpan);
                 IntPtr spanPtr = new(Unsafe.AsPointer(ref spanRef));
-                return Create(spanPtr + offset, length);
+                return Create(spanPtr + startIndex, length);
             }
     }
 }

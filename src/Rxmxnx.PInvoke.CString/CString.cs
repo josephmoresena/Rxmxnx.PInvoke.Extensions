@@ -3,20 +3,13 @@
 /// <summary>
 /// Represents text as a sequence of UTF-8 code units.
 /// </summary>
-public sealed partial class CString : ICloneable, IEquatable<CString>
+public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatable<String>
 {
     /// <summary>
     /// Represents the empty UTF-8 string. This field is read-only.
     /// </summary>
     public static readonly CString Empty = new(empty!);
 
-    /// <summary>
-    /// Gets the number of bytes in the current <see cref="CString"/> object.
-    /// </summary>
-    /// <returns>
-    /// The number of characters in the current string.
-    /// </returns>
-    public Int32 Length => this._length;
     /// <summary>
     /// Indicates whether the ending of text in the current <see cref="CString"/> includes 
     /// a null-termination character.
@@ -98,10 +91,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>
     /// <returns>An enumerator object.</returns>
     public ReadOnlySpan<Byte>.Enumerator GetEnumerator() => this._data.GetEnumerator();
 
-    /// <summary>
-    /// Returns a reference to this instance of <see cref="CString"/>.
-    /// </summary>
-    /// <returns>A new object that is a copy of this instance.</returns>
+    /// <inheritdoc/>
     public Object Clone()
     {
         Byte[] bytes;
@@ -116,45 +106,32 @@ public sealed partial class CString : ICloneable, IEquatable<CString>
         return new CString(bytes);
     }
 
-    /// <summary>
-    /// Indicates whether the current <see cref="CString"/> is equal to another <see cref="CString"/> 
-    /// instance.
-    /// </summary>
-    /// <param name="other">A <see cref="CString"/> to compare with this object.</param>
-    /// <returns>
-    /// <see langword="true"/> if the current <see cref="CString"/> is equal to the <paramref name="other"/> 
-    /// parameter; otherwise, <see langword="false"/>.
-    /// </returns>
+    /// <inheritdoc/>
     public Boolean Equals(CString? other)
         => other is CString otherNotNull && this._length == otherNotNull._length && equals(this, other);
 
-    /// <summary>
-    /// Determines whether the specified object is equal to the current object.
-    /// </summary>
-    /// <param name="obj">The object to compare with the current object.</param>
-    /// <returns>
-    /// <see langword="true"/> if the specified object is equal to the current object; 
-    /// otherwise, <see langword="false"/>.
-    /// </returns>
-    public override Boolean Equals(Object? obj) => obj is CString cstr && Equals(cstr);
+    /// <inheritdoc/>
+    public Boolean Equals(String? other)
+        => other is String otherNotNull && this.ToString() == otherNotNull;
 
-    /// <summary>
-    /// Returns a <see cref="String"/> that represents the current instance.
-    /// </summary>
-    /// <returns>A string that represents the current UTF-8 text.</returns>
+    /// <inheritdoc/>
+    public override Boolean Equals(Object? obj) =>
+        obj is String str? this.Equals(str) : obj is CString cstr && Equals(cstr);
+
+    /// <inheritdoc/>
     public override String ToString()
     {
         if (this._length == 0)
             return String.Empty;
         else
-            return Encoding.UTF8.GetString(this.AsSpan());
+        {
+            String result = Encoding.UTF8.GetString(this.AsSpan());
+            return String.IsInterned(result) ?? result;
+        }
     }
 
-    /// <summary>
-    /// Serves as the default hash function.
-    /// </summary>
-    /// <returns>A hash code for the current object.</returns>
-    public override Int32 GetHashCode() => this.GetHashCodeLengthNullMatch() ?? new CStringSequence(this).GetHashCode();
+    /// <inheritdoc/>
+    public override Int32 GetHashCode() => this.ToString().GetHashCode();
 
     /// <summary>
     /// Writes the sequence of bytes to the given <see cref="Stream"/> and advances

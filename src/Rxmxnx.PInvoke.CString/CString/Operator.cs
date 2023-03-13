@@ -14,8 +14,7 @@ public partial class CString
     /// </summary>
     /// <param name="str">A <see cref="String"/> to implicitly convert.</param>
     [return: NotNullIfNotNull(nameof(str))]
-    public static explicit operator CString?(String? str)
-        => str is not null ? new(GetUtf8Bytes(str).Concat<Byte>(empty).ToArray<Byte>()) : default;
+    public static explicit operator CString?(String? str) => str is not null ? new(str) : default;
 
     /// <summary>
     /// Defines an implicit conversion of a given <see cref="CString"/> to a read-only span of bytes.
@@ -32,7 +31,7 @@ public partial class CString
     /// <see langword="true"/> if the value of <paramref name="a"/> is the same as the value 
     /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
     /// </returns>
-    public static Boolean operator ==(CString? a, CString? b) => a?.Equals(b) ?? b?.Equals(a) ?? true;
+    public static Boolean operator ==(CString? a, CString? b) => a?.Equals(b) ?? b is null;
 
     /// <summary>
     /// Determines whether two specified <see cref="CString"/> have different values.
@@ -44,4 +43,52 @@ public partial class CString
     /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
     /// </returns>
     public static Boolean operator !=(CString? a, CString? b) => !(a == b);
+
+    /// <summary>
+    /// Determines whether two specified <see cref="String"/> and <see cref="CString"/>
+    /// have the same value.
+    /// </summary>
+    /// <param name="a">The first <see cref="String"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="b">The second <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <returns>
+    /// <see langword="true"/> if the value of <paramref name="a"/> is the same as the value 
+    /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static Boolean operator ==(String? a, CString? b) => b?.Equals(a) ?? a is null;
+
+    /// <summary>
+    /// Determines whether two specified <see cref="String"/> and <see cref="CString"/>
+    /// have different values.
+    /// </summary>
+    /// <param name="a">The first <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="b">The second <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <returns>
+    /// <see langword="true"/> if the value of <paramref name="a"/> is different from the value  
+    /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static Boolean operator !=(String? a, CString? b) => !(a == b);
+
+    /// <summary>
+    /// Determines whether two specified <see cref="CString"/> and <see cref="String"/>
+    /// have the same value.
+    /// </summary>
+    /// <param name="a">The first <see cref="String"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="b">The second <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <returns>
+    /// <see langword="true"/> if the value of <paramref name="a"/> is the same as the value 
+    /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static Boolean operator ==(CString? a, String? b) => a?.Equals(b) ?? b is null;
+
+    /// <summary>
+    /// Determines whether two specified <see cref="CString"/> and <see cref="String"/>
+    /// have different values.
+    /// </summary>
+    /// <param name="a">The first <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="b">The second <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <returns>
+    /// <see langword="true"/> if the value of <paramref name="a"/> is different from the value  
+    /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static Boolean operator !=(CString? a, String? b) => !(a == b);
 }

@@ -54,9 +54,11 @@
   <ItemGroup>
     <None Remove="CString\" />
     <None Remove="CStringSequence\" />
+    <None Remove="Internal\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CString\" />
     <Folder Include="CStringSequence\" />
+    <Folder Include="Internal\" />
   </ItemGroup>
 </Project>

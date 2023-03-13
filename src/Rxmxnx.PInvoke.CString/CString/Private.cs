@@ -34,32 +34,10 @@ public partial class CString
     {
         ReadOnlySpan<Byte> bytes = this._data;
         bytes = bytes[offset..];
-        if (bytes.Length > length && bytes[length] == default)
+        //Multiple UTF-8 null ending character.
+        while(bytes.Length > length && bytes[length] == default)
             length++;
         return length;
-    }
-
-    /// <summary>
-    /// Hash calculation for instances whose length and termination allow it to be treated 
-    /// as a sequence of UTF-16 units.
-    /// </summary>
-    /// <returns>A hash code for the current object.</returns>
-    private Int32? GetHashCodeLengthNullMatch()
-    {
-        if ((this._length + 1) % CStringSequence.SizeOfChar == 0 && this.IsNullTerminated)
-        {
-            ReadOnlySpan<Byte> thisSpan = this;
-            unsafe
-            {
-                fixed (void* ptr = &MemoryMarshal.GetReference(thisSpan))
-                {
-                    Int32 charCount = (this._length + 1) / CStringSequence.SizeOfChar;
-                    ReadOnlySpan<Char> thisCharSpan = new(ptr, charCount);
-                    return String.GetHashCode(thisCharSpan);
-                }
-            }
-        }
-        return default;
     }
 
     /// <summary>
@@ -74,20 +52,4 @@ public partial class CString
     private Task GetWriteTask(Stream strm)
         => (Byte[]?)this._data is Byte[] array ? strm.WriteAsync(array, 0, this._length) :
         Task.Run(() => { strm.Write(this.AsSpan()); });
-
-    /// <summary>
-    /// Retrieves the equality parameters for current <see cref="CString"/> instance.
-    /// </summary>
-    /// <typeparam name="TInteger">Type used for integer comparision.</typeparam>
-    /// <param name="offset">Output. Calculated offset.</param>
-    /// <param name="count">Output. Calculated count.</param>
-    private void GetEqualityParameters<TInteger>(out Int32 offset, out Int32 count) where TInteger : unmanaged
-    {
-        unsafe
-        {
-            Int32 sizeofT = sizeof(TInteger);
-            offset = this._length % sizeofT;
-            count = (this._length - offset) / sizeofT;
-        }
-    }
 }

@@ -3,16 +3,21 @@
 public partial class CString
 {
     /// <summary>
-    /// Delegate. Indicates whether <paramref name="current"/> <see cref="CString"/> is equal to 
-    /// <paramref name="other"/> <see cref="CString"/> 
+    /// Delegate. Indicates whether <paramref name="current"/>
+    /// <see cref="ReadOnlySpan{Byte}"/> is equal to <paramref name="other"/>
+    /// <see cref="ReadOnlySpan{Byte}"/>. 
     /// </summary>
-    /// <param name="current">A <see cref="CString"/> to compare with <paramref name="other"/>.</param>
-    /// <param name="other">A <see cref="CString"/> to compare with this <paramref name="current"/>.</param>
+    /// <param name="current">
+    /// A <see cref="ReadOnlySpan{Byte}"/> to compare with <paramref name="other"/>.
+    /// </param>
+    /// <param name="other">
+    /// A <see cref="ReadOnlySpan{Byte}"/> to compare with this <paramref name="current"/>.
+    /// </param>
     /// <returns>
-    /// <see langword="true"/> if <paramref name="current"/> <see cref="CString"/> is equal to 
-    /// <paramref name="other"/> parameter; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if <paramref name="current"/> <see cref="ReadOnlySpan{Byte}"/>
+    /// is equal to <paramref name="other"/> parameter; otherwise, <see langword="false"/>.
     /// </returns>
-    private delegate Boolean EqualsDelegate(CString current, CString other);
+    private delegate Boolean EqualsDelegate(ReadOnlySpan<Byte> current, ReadOnlySpan<Byte> other);
 
     /// <summary>
     /// Represents the empty UTF-8 byte array. This field is read-only.

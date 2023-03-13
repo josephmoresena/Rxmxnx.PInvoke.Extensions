@@ -18,8 +18,51 @@ public partial class CString
     private static Byte[] GetUtf8Bytes(String str) => !String.IsNullOrEmpty(str) ? Encoding.UTF8.GetBytes(str) : Array.Empty<Byte>();
 
     /// <summary>
-    /// Indicates whether <paramref name="current"/> <see cref="CString"/> is equal to 
-    /// <paramref name="other"/> <see cref="CString"/>.
+    /// Creates a UTF-16 text which containst the binary information of <paramref name="str"/>
+    /// encoded to UTF-8 text.
+    /// </summary>
+    /// <param name="str"><see cref="String"/> representation of UTF-16 text.</param>
+    /// <returns>UTF-16 text containing the UTF-8 text binary information.</returns>
+    private static String GetUtf8String(String str)
+    {
+        //Encodes String to UTF8 bytes.
+        Byte[] bytes = GetUtf8Bytes(str);
+        //Calculates the final UTF8 String length.
+        Int32 length = GetUtf8StringLength(bytes);
+        //Creates final String.
+        String result = String.Create(bytes.Length, bytes, CopyBytes);
+
+        //Try to fetch internal String
+        return String.IsInterned(result) ?? result;
+    }
+
+    /// <summary>
+    /// Copies the <paramref name="source"/> binary information into
+    /// <paramref name="destination"/> span.
+    /// </summary>
+    /// <param name="destination">Span of <see cref="Char"/> values.</param>
+    /// <param name="source">Array of <see cref="Byte"/> values.</param>
+    private static void CopyBytes(Span<Char> destination, Byte[] source)
+    {
+        //Converts binary span into source char span.
+        ReadOnlySpan<Char> sourceChars = MemoryMarshal.Cast<Byte, Char>(source);
+        //Gets the binary size of source char span.
+        Int32 offset = sourceChars.Length * sizeof(Char);
+        //Creates the remaining bytes from source.
+        ReadOnlySpan<Byte> remSource = source.AsSpan()[offset..];
+        //Gets the remaining binary destination into destination span.
+        Span<Byte> remDestination = MemoryMarshal.Cast<Char, Byte>(destination)[sourceChars.Length..];
+
+        //Copies the source char span into destination span.
+        sourceChars.CopyTo(destination);
+        //Copies the remaining binary span into UTF8 destination span.
+        remSource.CopyTo(remDestination);
+    }
+
+    /// <summary>
+    /// Indicates whether <paramref name="current"/> <see cref="ReadOnlySpan{Byte}"/>
+    /// is equal to 
+    /// <paramref name="other"/> <see cref="ReadOnlySpan{Byte}"/>.
     /// instance.
     /// </summary>
     /// <typeparam name="TInteger"><see cref="ValueType"/> for reduce comparation.</typeparam>
@@ -29,52 +72,46 @@ public partial class CString
     /// <see langword="true"/> if <paramref name="current"/> <see cref="CString"/> is equal to 
     /// <paramref name="other"/> parameter; otherwise, <see langword="false"/>.
     /// </returns>
-    private static Boolean Equals<TInteger>(CString current, CString other)
+    private static unsafe Boolean Equals<TInteger>(ReadOnlySpan<Byte> current, ReadOnlySpan<Byte> other)
         where TInteger : unmanaged
     {
         ReadOnlySpan<Byte> currSpan = current;
         ReadOnlySpan<Byte> otherSpan = other;
 
-        if (currSpan.Length == otherSpan.Length)
-            unsafe
+        if (current.Length == other.Length)
+        {
+            ReadOnlySpan<TInteger> currentIntegers = MemoryMarshal.Cast<Byte, TInteger>(current);
+            ReadOnlySpan<TInteger> otherIntegers = MemoryMarshal.Cast<Byte, TInteger>(other);
+
+            if (SequenceEquals(currentIntegers, otherIntegers))
             {
-                fixed (void* currPtr = &MemoryMarshal.GetReference(currSpan))
-                fixed (void* otherPtr = &MemoryMarshal.GetReference(otherSpan))
-                {
-                    IReadOnlyFixedContext<Byte> currCtx = new FixedContext<Byte>(currPtr, current.Length, true);
-                    IReadOnlyFixedContext<Byte> otherCtx = new FixedContext<Byte>(otherPtr, other.Length, true);
-                    return Equals<TInteger>(currCtx, otherCtx);
-                }
+                Int32 binaryOffset = currentIntegers.Length * sizeof(TInteger);
+                return SequenceEquals(current[binaryOffset..], other[binaryOffset..]);
             }
+        }
+
         return false;
     }
 
     /// <summary>
-    /// Indicates whether <paramref name="currCtx"/> <see cref="IReadOnlyFixedContext{Byte}"/> is equal to 
-    /// <paramref name="otherCtx"/> <see cref="IReadOnlyFixedContext{Byte}"/>.
+    /// Indicates whether <paramref name="current"/> <see cref="ReadOnlySpan{T}"/>
+    /// is equal to 
+    /// <paramref name="other"/> <see cref="ReadOnlySpan{T}"/>.
+    /// instance.
     /// </summary>
-    /// <typeparam name="TInteger"><see cref="ValueType"/> for reduce comparation.</typeparam>
-    /// <param name="currCtx">A <see cref="IReadOnlyFixedContext{Byte}"/> to compare with <paramref name="otherCtx"/>.</param>
-    /// <param name="otherCtx">A <see cref="IReadOnlyFixedContext{Byte}"/> to compare with this <paramref name="currCtx"/>.</param>
+    /// <typeparam name="T"><see cref="ValueType"/> of span.</typeparam>
+    /// <param name="current">A <see cref="ReadOnlySpan{T}"/> to compare with <paramref name="other"/>.</param>
+    /// <param name="other">A <see cref="ReadOnlySpan{T}"/> to compare with this <paramref name="current"/>.</param>
     /// <returns>
-    /// <see langword="true"/> if <paramref name="currCtx"/> <see cref="IReadOnlyFixedContext{Byte}"/> is equal to 
-    /// <paramref name="otherCtx"/> parameter; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if <paramref name="current"/> <see cref="ReadOnlySpan{T}"/> is equal to 
+    /// <paramref name="other"/> parameter; otherwise, <see langword="false"/>.
     /// </returns>
-    private static unsafe Boolean Equals<TInteger>(IReadOnlyFixedContext<Byte> currCtx, IReadOnlyFixedContext<Byte> otherCtx) where TInteger : unmanaged
+    private static Boolean SequenceEquals<T>(ReadOnlySpan<T> current, ReadOnlySpan<T> other)
+        where T : unmanaged
     {
-        IReadOnlyTransformationContext<Byte, TInteger> thisTx = currCtx.Transformation<TInteger>();
-        IReadOnlyTransformationContext<Byte, TInteger> otherTx = otherCtx.Transformation<TInteger>();
-
-        Int32 iCount = thisTx.Values.Length;
-        Int32 bCount = thisTx.ResidualBytes.Length;
-
-        for (Int32 i = 0; i < iCount; i++)
-            if (!thisTx.Values[i].Equals(otherTx.Values[i]))
+        for (Int32 i = 0; i < current.Length; i++)
+            if (!current[i].Equals(other[i]))
                 return false;
-        for (Int32 i = 0; i < bCount; i++)
-            if (!thisTx.ResidualBytes[i].Equals(otherTx.ResidualBytes[i]))
-                return false;
-
         return true;
     }
 
@@ -88,4 +125,18 @@ public partial class CString
     /// </returns>
     private static Boolean IsNullTerminatedSpan(ReadOnlySpan<Byte> data)
         => !data.IsEmpty && data[^1] == default;
+
+    /// <summary>
+    /// Retrieves the UTF8 String length which contains <paramref name="bytes"/>
+    /// information.
+    /// </summary>
+    /// <param name="bytes">UTF8 bytes.</param>
+    /// <returns>UTF8 String length contains <paramref name="bytes"/> information.</returns>
+    private static Int32 GetUtf8StringLength(ReadOnlySpan<Byte> bytes)
+    {
+        Int32 result = (bytes.Length + 1) / sizeof(Char);
+        if (bytes.Length % sizeof(Char) == 0)
+            result++;
+        return result;
+    }
 }

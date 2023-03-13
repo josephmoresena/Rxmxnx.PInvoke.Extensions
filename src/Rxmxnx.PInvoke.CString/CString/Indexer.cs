@@ -11,25 +11,79 @@ public partial class CString
     /// <exception cref="IndexOutOfRangeException">
     /// <paramref name="index"/> is greater than or equal to the length of this object or less than zero.
     /// </exception>
-    [IndexerName("Position")]
+    [IndexerName("Chars")]
     public Byte this[Int32 index] => this._data[index];
+
     /// <summary>
-    /// Gets a <see cref="CString"/> instance at specified range from current <see cref="CString"/> instace.
+    /// Gets the number of bytes in the current <see cref="CString"/> object.
     /// </summary>
-    /// <param name="range"></param>
-    /// <returns><see cref="CString"/> range.</returns>
-    [IndexerName("Position")]
-    public CString this[Range range]
+    /// <returns>
+    /// The number of characters in the current string.
+    /// </returns>
+    public Int32 Length => this._length;
+
+    /// <summary>
+    /// Retrieves a substring from this instance.
+    /// The substring starts at specified character position and continues to the end of the CString.
+    /// </summary>
+    /// <param name="startIndex">
+    /// The zero-based starting character position of a substring in this instance.
+    /// </param>
+    /// <returns>
+    /// A <see cref="CString"/> that is equivalent to the substring that begins at
+    /// <paramref name="startIndex"/> in this instance, or <see cref="CString.Empty"/>
+    /// if <paramref name="startIndex"/> is equal to the length of this instance.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException"/>
+    public CString Slice(Int32 startIndex) => this.Slice(startIndex, this._length - startIndex);
+
+    /// <summary>
+    /// Retrieves a substring from this instance.
+    /// The substring starts at a specified character position and has a specified length.
+    /// </summary>
+    /// <param name="startIndex">
+    /// The zero-based starting character position of a substring in this instance.
+    /// </param>
+    /// <param name="length">The number of characters in the substring.</param>
+    /// <returns>
+    /// A <see cref="CString"/> that is equivalent to the substring of length
+    /// <paramref name="length"/> that begins at <paramref name="startIndex"/> in this
+    /// instance, or <see cref="CString.Empty"/> if <paramref name="startIndex"/> is
+    /// equal to the length of this instance and <paramref name="length"/> is zero.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException"/>
+    public CString Slice(Int32 startIndex, Int32 length)
     {
-        get
-        {
-            (Int32 offset, Int32 length) = range.GetOffsetAndLength(this._length);
-            Boolean inRange = offset < this._length && length <= this._length;
-            if (inRange && this._length > 0 && length == 0)
-                return CString.Empty;
-            else if (!inRange)
-                throw new ArgumentOutOfRangeException(nameof(range));
-            return new(this, offset, length);
-        }
+        this.ThrowSubstringArgumentOutOfRange(startIndex, length);
+        if (length == 0)
+            return CString.Empty;
+
+        if (startIndex == 0 && length == this._length)
+            return this;
+
+        return new(this, startIndex, length);
+    }
+
+    /// <summary>
+    /// Validates the input of the substring function.
+    /// </summary>
+    /// <param name="startIndex">
+    /// The zero-based starting character position of a substring in this instance.
+    /// </param>
+    /// <param name="length">The number of characters in the substring.</param>
+    /// <exception cref="ArgumentOutOfRangeException"/>
+    private void ThrowSubstringArgumentOutOfRange(Int32 startIndex, Int32 length)
+    {
+        if (startIndex < 0)
+            throw new ArgumentOutOfRangeException(nameof(startIndex), "StartIndex cannot be less than zero.");
+
+        if (startIndex > this._length)
+            throw new ArgumentOutOfRangeException(nameof(startIndex), $"{nameof(startIndex)} cannot be larger than length of string.");
+
+        if (length < 0)
+            throw new ArgumentOutOfRangeException(nameof(length), "Length cannot be less than zero.");
+
+        if (startIndex > this._length - length)
+            throw new ArgumentOutOfRangeException(nameof(length), "Index and length must refer to a location within the string.");
     }
 }
