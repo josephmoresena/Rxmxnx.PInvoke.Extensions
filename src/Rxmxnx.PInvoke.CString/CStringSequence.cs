@@ -11,11 +11,6 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
     internal const Int32 SizeOfChar = sizeof(Char);
 
     /// <summary>
-    /// Gets the number of <see cref="CString"/> contained in <see cref="CStringSequence"/>.
-    /// </summary>
-    public Int32 Count => this._lengths.Length;
-
-    /// <summary>
     /// Constructor.
     /// </summary>
     /// <param name="values">Text collection.</param>

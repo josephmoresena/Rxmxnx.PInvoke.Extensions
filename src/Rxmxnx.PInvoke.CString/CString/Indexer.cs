@@ -1,6 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke;
 
-public partial class CString
+public partial class CString : IEnumerableSequence<Byte>
 {
     /// <summary>
     /// Gets the <see cref="Byte"/> object at a specified position in the current <see cref="CString"/>
@@ -63,6 +63,10 @@ public partial class CString
 
         return new(this, startIndex, length);
     }
+
+    Int32 IEnumerableSequence<Byte>.Size() => this._length;
+
+    Byte IEnumerableSequence<Byte>.Item(Int32 index) => this[index];
 
     /// <summary>
     /// Validates the input of the substring function.

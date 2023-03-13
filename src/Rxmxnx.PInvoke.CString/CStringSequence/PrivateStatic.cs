@@ -3,6 +3,11 @@
 public partial class CStringSequence
 {
     /// <summary>
+    /// Empty sequence.
+    /// </summary>
+    private static readonly CStringSequence empty = new(String.Empty, Array.Empty<Int32>());
+
+    /// <summary>
     /// Creates a new UTF-8 text sequence with a specific <paramref name="lengths"/> and initializes each
     /// UTF-8 texts into it after creation by using the specified callback.
     /// </summary>
