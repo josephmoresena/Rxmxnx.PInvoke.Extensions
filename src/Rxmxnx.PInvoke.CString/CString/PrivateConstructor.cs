@@ -58,11 +58,10 @@ public partial class CString
     /// <param name="utf16Text">UTF-16 text.</param>
     private CString(String utf16Text)
     {
-        String utf8String = GetUtf8String(utf16Text);
+        String utf8String = GetUtf8String(utf16Text, out this._length);
         this._isLocal = true;
         this._isFunction = true;
         this._data = ValueRegion<Byte>.Create(() => MemoryMarshal.Cast<Char, Byte>(utf8String));
-        this._length = utf16Text.Length;
         this._isNullTerminated = true;
     }
 }

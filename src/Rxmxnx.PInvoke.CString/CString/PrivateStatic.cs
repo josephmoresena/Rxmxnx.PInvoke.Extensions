@@ -22,17 +22,19 @@ public partial class CString
     /// encoded to UTF-8 text.
     /// </summary>
     /// <param name="str"><see cref="String"/> representation of UTF-16 text.</param>
+    /// <param name="length">Output. Length of UTF-8 text.</param>
     /// <returns>UTF-16 text containing the UTF-8 text binary information.</returns>
-    private static String GetUtf8String(String str)
+    private static String GetUtf8String(String str, out Int32 length)
     {
         //Encodes String to UTF8 bytes.
         Byte[] bytes = GetUtf8Bytes(str);
         //Calculates the final UTF8 String length.
-        Int32 length = GetUtf8StringLength(bytes);
+        Int32 stringLength = GetUtf8StringLength(bytes);
         //Creates final String.
-        String result = String.Create(bytes.Length, bytes, CopyBytes);
+        String result = String.Create(stringLength, bytes, CopyBytes);
 
         //Try to fetch internal String
+        length = bytes.Length;
         return String.IsInterned(result) ?? result;
     }
 
