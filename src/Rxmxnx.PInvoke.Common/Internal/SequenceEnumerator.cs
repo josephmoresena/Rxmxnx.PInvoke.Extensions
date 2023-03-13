@@ -20,14 +20,17 @@ internal sealed class SequenceEnumerator<T> : IEnumerator, IEnumerator<T>
     /// <summary>
     /// Iteration current index.
     /// </summary>
-    private Int32 _index = default;
+    private Int32 _index = -1;
 
     /// <inheritdoc/>
     public T Current
     {
         get
         {
-            ThowIfDisposed();
+            if (this._index < 0)
+                throw new InvalidOperationException("Enumeration has not started. Call MoveNext.");
+            if (this._index >= this._instance.GetSize())
+                throw new InvalidOperationException("Enumeration already finished.");
             return this._current;
         }
     }
@@ -41,39 +44,23 @@ internal sealed class SequenceEnumerator<T> : IEnumerator, IEnumerator<T>
     public SequenceEnumerator(IEnumerableSequence<T> instance)
     {
         this._instance = instance;
-        this._current = instance.Item(this._index);
     }
 
-    void IDisposable.Dispose() => this._index = -1;
+    void IDisposable.Dispose() { }
 
     /// <inheritdoc/>
     public Boolean MoveNext()
     {
-        this.ThowIfDisposed();
-        if (this._index + 1 < this._instance.Size())
+        this._index++;
+        if (this._index < this._instance.GetSize())
         {
-            this._index++;
-            this._current = this._instance.Item(this._index);
+            this._current = this._instance.GetItem(this._index);
             return true;
         }
         return false;
     }
 
     /// <inheritdoc/>
-    public void Reset()
-    {
-        this.ThowIfDisposed();
-        this._index = 0;
-    }
-
-    /// <summary>
-    /// Throws an exception if current instance is disposed.
-    /// </summary>
-    /// <exception cref="InvalidOperationException"/>
-    private void ThowIfDisposed()
-    {
-        if (this._index < 0)
-            throw new InvalidOperationException("Enumerator Ended");
-    }
+    public void Reset() => this._index = -1;
 }
 

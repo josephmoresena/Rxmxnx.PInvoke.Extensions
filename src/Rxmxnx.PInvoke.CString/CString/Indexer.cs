@@ -64,9 +64,9 @@ public partial class CString : IEnumerableSequence<Byte>
         return new(this, startIndex, length);
     }
 
-    Int32 IEnumerableSequence<Byte>.Size() => this._length;
+    Int32 IEnumerableSequence<Byte>.GetSize() => this._length;
 
-    Byte IEnumerableSequence<Byte>.Item(Int32 index) => this[index];
+    Byte IEnumerableSequence<Byte>.GetItem(Int32 index) => this[index];
 
     /// <summary>
     /// Validates the input of the substring function.

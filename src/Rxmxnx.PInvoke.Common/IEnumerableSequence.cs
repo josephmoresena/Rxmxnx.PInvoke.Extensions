@@ -13,13 +13,13 @@ public interface IEnumerableSequence<out T> : IEnumerable, IEnumerable<T>
     /// </summary>
     /// <param name="index">A position in the current instance.</param>
     /// <returns>Element at <paramref name="index"/>.</returns>
-    T Item(Int32 index);
+    T GetItem(Int32 index);
 
     /// <summary>
     /// Retrieves the number of total elements in current instance.
     /// </summary>
     /// <returns>Number of total elements in current instance.</returns>
-    Int32 Size();
+    Int32 GetSize();
 
     IEnumerator<T> IEnumerable<T>.GetEnumerator() =>  this.CreateEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => this.CreateEnumerator();

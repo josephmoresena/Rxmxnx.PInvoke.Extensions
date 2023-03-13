@@ -66,7 +66,7 @@ public partial class CStringSequence : IEnumerableSequence<CString>
         return new SubsequenceHelper(this, startIndex, length).Create();
     }
 
-    Int32 IEnumerableSequence<CString>.Size() => this._lengths.Length;
+    Int32 IEnumerableSequence<CString>.GetSize() => this._lengths.Length;
 
     /// <summary>
     /// Retrieves the binary span for given index.
@@ -83,7 +83,7 @@ public partial class CStringSequence : IEnumerableSequence<CString>
         return MemoryMarshal.Cast<Char, Byte>(this._value)[binaryOffset..binaryLength];
     }
 
-    CString IEnumerableSequence<CString>.Item(Int32 index) => this[index];
+    CString IEnumerableSequence<CString>.GetItem(Int32 index) => this[index];
 
     /// <summary>
     /// Validates the input of the subsequence function.
