@@ -1,5 +1,4 @@
-﻿
-namespace Rxmxnx.PInvoke.Tests.Internal;
+﻿namespace Rxmxnx.PInvoke.Tests.Internal;
 
 public class ReferenceableWrapper<T> : IReferenceable<T>
 {

@@ -13,6 +13,11 @@
     <Using Include="Xunit" />
     <Using Include="AutoFixture" />
     <Using Include="System.Diagnostics.CodeAnalysis" />
+    <Using Include="System.Reflection" />
+    <Using Include="System.Runtime.CompilerServices" />
+    <Using Include="System.Runtime.InteropServices" />
+    <Using Include="Rxmxnx.PInvoke.Tests.Internal" />
+    <Using Include="Rxmxnx.PInvoke.Internal" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,19 +32,9 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="AutoFixture" Version="4.17.0" />
-    <PackageReference Include="Moq" Version="4.18.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Rxmxnx.PInvoke.Common\Rxmxnx.PInvoke.Common.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="AutoFixture" />
-    <None Remove="Internal\" />
-    <None Remove="Internal\FixedContextTests\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Internal\" />
-    <Folder Include="Internal\FixedContextTests\" />
   </ItemGroup>
 </Project>

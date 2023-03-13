@@ -1,7 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Rxmxnx.PInvoke.Internal;
-
-namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
+﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
 
 /// <summary>
 /// Base class for <see cref="FixedContext{T}"/> tests.

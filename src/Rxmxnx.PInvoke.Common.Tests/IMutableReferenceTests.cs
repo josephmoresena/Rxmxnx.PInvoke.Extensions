@@ -1,7 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Rxmxnx.PInvoke.Tests.Internal;
-
-namespace Rxmxnx.PInvoke.Tests;
+﻿namespace Rxmxnx.PInvoke.Tests;
 
 [ExcludeFromCodeCoverage]
 public sealed class IMutableReferenceTests

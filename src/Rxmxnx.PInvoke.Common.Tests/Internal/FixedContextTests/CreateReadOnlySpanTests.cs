@@ -1,40 +1,37 @@
-﻿using System.Runtime.CompilerServices;
-using Rxmxnx.PInvoke.Internal;
-
-namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
+﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
 
 public sealed class CreateReadOnlySpanTests : FixedContextTestsBase
 {
     [Fact]
-    internal void BooleanTest() => Test<Boolean>();
+    internal void BooleanTest() => this.Test<Boolean>();
     [Fact]
-    internal void ByteTest() => Test<Byte>();
+    internal void ByteTest() => this.Test<Byte>();
     [Fact]
-    internal void Int16Test() => Test<Int16>();
+    internal void Int16Test() => this.Test<Int16>();
     [Fact]
-    internal void CharTest() => Test<Char>();
+    internal void CharTest() => this.Test<Char>();
     [Fact]
-    internal void Int32Test() => Test<Int32>();
+    internal void Int32Test() => this.Test<Int32>();
     [Fact]
-    internal void Int64Test() => Test<Int64>();
+    internal void Int64Test() => this.Test<Int64>();
     [Fact]
-    internal void Int128Test() => Test<Int128>();
+    internal void Int128Test() => this.Test<Int128>();
     [Fact]
-    internal void GuidTest() => Test<Guid>();
+    internal void GuidTest() => this.Test<Guid>();
     [Fact]
-    internal void SingleTest() => Test<Single>();
+    internal void SingleTest() => this.Test<Single>();
     [Fact]
-    internal void HalfTest() => Test<Half>();
+    internal void HalfTest() => this.Test<Half>();
     [Fact]
-    internal void DoubleTest() => Test<Double>();
+    internal void DoubleTest() => this.Test<Double>();
     [Fact]
-    internal void DecimalTest() => Test<Decimal>();
+    internal void DecimalTest() => this.Test<Decimal>();
     [Fact]
-    internal void DateTimeTest() => Test<DateTime>();
+    internal void DateTimeTest() => this.Test<DateTime>();
     [Fact]
-    internal void TimeOnlyTest() => Test<TimeOnly>();
+    internal void TimeOnlyTest() => this.Test<TimeOnly>();
     [Fact]
-    internal void TimeSpanTest() => Test<TimeSpan>();
+    internal void TimeSpanTest() => this.Test<TimeSpan>();
 
     private void Test<T>() where T : unmanaged
     {

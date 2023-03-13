@@ -1,6 +1,4 @@
-﻿using Rxmxnx.PInvoke.Tests.Internal;
-
-namespace Rxmxnx.PInvoke.Tests;
+﻿namespace Rxmxnx.PInvoke.Tests;
 
 public sealed class IEnumerableSequenceTests
 {
@@ -9,46 +7,94 @@ public sealed class IEnumerableSequenceTests
     private static readonly IFixture fixture = new Fixture();
 
     [Fact]
-    internal void BooleanTest() => Test<Boolean>();
+    internal Task BooleanTestAsync() => TestAsync<Boolean>();
     [Fact]
-    internal void ByteTest() => Test<Byte>();
+    internal Task ByteTestAsync() => TestAsync<Byte>();
     [Fact]
-    internal void Int16Test() => Test<Int16>();
+    internal Task Int16TestAsync() => TestAsync<Int16>();
     [Fact]
-    internal void CharTest() => Test<Char>();
+    internal Task CharTestAsync() => TestAsync<Char>();
     [Fact]
-    internal void Int32Test() => Test<Int32>();
+    internal Task Int32TestAsync() => TestAsync<Int32>();
     [Fact]
-    internal void Int64Test() => Test<Int64>();
+    internal Task Int64TestAsync() => TestAsync<Int64>();
     [Fact]
-    internal void Int128Test() => Test<Int128>();
+    internal Task Int128TestAsync() => TestAsync<Int128>();
     [Fact]
-    internal void GuidTest() => Test<Guid>();
+    internal Task GuidTestAsync() => TestAsync<Guid>();
     [Fact]
-    internal void SingleTest() => Test<Single>();
+    internal Task SingleTestAsync() => TestAsync<Single>();
     [Fact]
-    internal void HalfTest() => Test<Half>();
+    internal Task HalfTestAsync() => TestAsync<Half>();
     [Fact]
-    internal void DoubleTest() => Test<Double>();
+    internal Task DoubleTestAsync() => TestAsync<Double>();
     [Fact]
-    internal void DecimalTest() => Test<Decimal>();
+    internal Task DecimalTestAsync() => TestAsync<Decimal>();
     [Fact]
-    internal void DateTimeTest() => Test<DateTime>();
+    internal Task DateTimeTestAsync() => TestAsync<DateTime>();
     [Fact]
-    internal void TimeOnlyTest() => Test<TimeOnly>();
+    internal Task TimeOnlyTestAsync() => TestAsync<TimeOnly>();
     [Fact]
-    internal void TimeSpanTest() => Test<TimeSpan>();
+    internal Task TimeSpanTestAsync() => TestAsync<TimeSpan>();
+    [Fact]   
+    internal Task StringTestAsync() => TestAsync<String>();
+    [Fact]   
+    internal Task ObjectTestAsync() => TestAsync<Object>();
+    [Fact]
+    internal Task NullableOBooleanTestAsync() => TestAsync<Boolean?>();
+    [Fact]
+    internal Task NullableOByteTestAsync() => TestAsync<Byte?>();
+    [Fact]
+    internal Task NullableOInt16TestAsync() => TestAsync<Int16?>();
+    [Fact]
+    internal Task NullableOCharTestAsync() => TestAsync<Char?>();
+    [Fact]
+    internal Task NullableOInt32TestAsync() => TestAsync<Int32?>();
+    [Fact]
+    internal Task NullableOInt64TestAsync() => TestAsync<Int64?>();
+    [Fact]
+    internal Task NullableOInt128TestAsync() => TestAsync<Int128?>();
+    [Fact]
+    internal Task NullableOGuidTestAsync() => TestAsync<Guid?>();
+    [Fact]
+    internal Task NullableOSingleTestAsync() => TestAsync<Single?>();
+    [Fact]
+    internal Task NullableOHalfTestAsync() => TestAsync<Half?>();
+    [Fact]
+    internal Task NullableODoubleTestAsync() => TestAsync<Double?>();
+    [Fact]
+    internal Task NullableODecimalTestAsync() => TestAsync<Decimal?>();
+    [Fact]
+    internal Task NullableODateTimeTestAsync() => TestAsync<DateTime?>();
+    [Fact]
+    internal Task NullableOTimeOnlyTestAsync() => TestAsync<TimeOnly?>();
+    [Fact]
+    internal Task NullableOTimeSpanTestAsync() => TestAsync<TimeSpan?>();
+    [Fact]
+    internal Task NullableOStringTestAsync() => TestAsync<String?>();
+    [Fact]
+    internal Task NullableObjectTestAsync() => TestAsync<Object?>();
 
-    private static void Test<T>()
+    private static async Task TestAsync<T>()
     {
         T[] values = fixture.CreateMany<T>().ToArray();
         IEnumerableSequence<T> sequence = new EnumerableSequence<T>(() => values);
-        IEnumerator<T> enumerator = sequence.GetEnumerator();
+        Task enumerableTestTask = Task.Run(() => EnumerableTest(values, sequence));
+        Task enumerationTestTask = Task.Run(() => EnumeratorTest(values, sequence));
+        await Task.WhenAll(enumerableTestTask, enumerationTestTask);
+    }
 
+    private static void EnumerableTest<T>(T[] values, IEnumerableSequence<T> sequence)
+    {
         Assert.Equal(values.Length, sequence.GetSize());
         for (Int32 i = 0; i < values.Length; i++)
             Assert.Equal(values[i], sequence.GetItem(i));
         Assert.Equal(values, sequence);
+    }
+
+    private static void EnumeratorTest<T>(T[] values, IEnumerableSequence<T> sequence)
+    {
+        IEnumerator<T> enumerator = sequence.GetEnumerator();
         TestEnumerator(values, enumerator);
         enumerator.Reset();
         TestEnumerator(values, enumerator);
