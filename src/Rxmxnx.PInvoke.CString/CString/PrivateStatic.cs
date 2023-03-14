@@ -24,7 +24,7 @@ public partial class CString
         //Creates the remaining bytes from source.
         ReadOnlySpan<Byte> remSource = source.AsSpan()[offset..];
         //Gets the remaining binary destination into destination span.
-        Span<Byte> remDestination = MemoryMarshal.AsBytes(destination)[sourceChars.Length..];
+        Span<Byte> remDestination = MemoryMarshal.AsBytes(destination[sourceChars.Length..]);
 
         //Copies the source char span into destination span.
         sourceChars.CopyTo(destination);
