@@ -14,7 +14,7 @@ public sealed class ConstructorTest
 
         await Task.WhenAll(task1, task2, task3, task4);
         for (Int32 i = 0; i < lenght; i++)
-            for (Int32 j = 1; i < 4; j++)
+            for (Int32 j = 1; j < 4; j++)
                 Assert.Equal(cstr[0, i], cstr[j, i]);
     }
 
