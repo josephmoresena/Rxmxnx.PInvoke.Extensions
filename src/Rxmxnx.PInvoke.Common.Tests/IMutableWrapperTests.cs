@@ -61,7 +61,7 @@ public sealed class IMutableWrapperTests
     }
     private static void Nullable<T>(Boolean nullInput) where T : unmanaged
     {
-        T? value = !nullInput? fixture.Create<T>() : null;
+        T? value = !nullInput ? fixture.Create<T>() : null;
         T? value2 = fixture.Create<Boolean>() ? fixture.Create<T>() : null;
         var result = IMutableWrapper<T>.CreateNullable(value);
         Assert.NotNull(result);

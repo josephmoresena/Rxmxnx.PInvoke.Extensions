@@ -28,7 +28,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// Indicates whether the current instance is a function.
     /// </summary>
     public Boolean IsFunction => this._isFunction;
-        
+
     /// <summary>
     /// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified 
     /// UTF-8 character repeated a specified number of times.
@@ -108,7 +108,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 
     /// <inheritdoc/>
     public Boolean Equals(CString? other)
-        => other is CString otherNotNull && this._length == otherNotNull._length && equals(this, other);
+        => other is CString otherNotNull && this._length == otherNotNull._length && equals(this, otherNotNull);
 
     /// <inheritdoc/>
     public Boolean Equals(String? other)
@@ -116,7 +116,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 
     /// <inheritdoc/>
     public override Boolean Equals(Object? obj) =>
-        obj is String str? this.Equals(str) : obj is CString cstr && Equals(cstr);
+        obj is String str ? this.Equals(str) : obj is CString cstr && Equals(cstr);
 
     /// <inheritdoc/>
     public override String ToString()

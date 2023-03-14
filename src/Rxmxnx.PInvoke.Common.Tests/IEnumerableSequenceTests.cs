@@ -36,9 +36,9 @@ public sealed class IEnumerableSequenceTests
     internal Task TimeOnlyTestAsync() => TestAsync<TimeOnly>();
     [Fact]
     internal Task TimeSpanTestAsync() => TestAsync<TimeSpan>();
-    [Fact]   
+    [Fact]
     internal Task StringTestAsync() => TestAsync<String>();
-    [Fact]   
+    [Fact]
     internal Task ObjectTestAsync() => TestAsync<Object>();
     [Fact]
     internal Task NullableOBooleanTestAsync() => TestAsync<Boolean?>();

@@ -21,7 +21,7 @@ public interface IEnumerableSequence<out T> : IEnumerable, IEnumerable<T>
     /// <returns>Number of total elements in current instance.</returns>
     Int32 GetSize();
 
-    IEnumerator<T> IEnumerable<T>.GetEnumerator() =>  this.CreateEnumerator();
+    IEnumerator<T> IEnumerable<T>.GetEnumerator() => this.CreateEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => this.CreateEnumerator();
 
     /// <summary>

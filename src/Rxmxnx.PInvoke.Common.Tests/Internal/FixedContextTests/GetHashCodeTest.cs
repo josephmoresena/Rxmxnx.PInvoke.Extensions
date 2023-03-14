@@ -33,7 +33,7 @@ public class GetHashCodeTest : FixedContextTestsBase
     [Fact]
     internal void TimeSpanTest() => this.Test<TimeSpan>();
 
-    private void Test<T>() where T: unmanaged
+    private void Test<T>() where T : unmanaged
     {
         unsafe
         {
@@ -73,7 +73,7 @@ public class GetHashCodeTest : FixedContextTestsBase
         }
     }
     private static unsafe void TransformationTest<T, T2>(FixedContext<T> ctx, Boolean readOnly, Int32 length)
-        where T: unmanaged
+        where T : unmanaged
         where T2 : unmanaged
     {
         ReadOnlySpan<T> span = ctx.CreateReadOnlySpan<T>(length);

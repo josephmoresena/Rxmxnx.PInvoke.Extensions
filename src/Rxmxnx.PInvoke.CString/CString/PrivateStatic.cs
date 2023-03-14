@@ -10,35 +10,6 @@ public partial class CString
     private static EqualsDelegate GetEquals() => Environment.Is64BitProcess ? Equals<Int64> : Equals<Int32>;
 
     /// <summary>
-    /// Encodes the UTF-16 text using the UTF-8 charset and retrieves the <see cref="Byte"/> array with 
-    /// UTF-8 text.
-    /// </summary>
-    /// <param name="str"><see cref="String"/> representation of UTF-16 text.</param>
-    /// <returns><see cref="Byte"/> array with UTF-8 text.</returns>
-    private static Byte[] GetUtf8Bytes(String str) => !String.IsNullOrEmpty(str) ? Encoding.UTF8.GetBytes(str) : Array.Empty<Byte>();
-
-    /// <summary>
-    /// Creates a UTF-16 text which containst the binary information of <paramref name="str"/>
-    /// encoded to UTF-8 text.
-    /// </summary>
-    /// <param name="str"><see cref="String"/> representation of UTF-16 text.</param>
-    /// <param name="length">Output. Length of UTF-8 text.</param>
-    /// <returns>UTF-16 text containing the UTF-8 text binary information.</returns>
-    private static String GetUtf8String(String str, out Int32 length)
-    {
-        //Encodes String to UTF8 bytes.
-        Byte[] bytes = GetUtf8Bytes(str);
-        //Calculates the final UTF8 String length.
-        Int32 stringLength = GetUtf8StringLength(bytes);
-        //Creates final String.
-        String result = String.Create(stringLength, bytes, CopyBytes);
-
-        //Try to fetch internal String
-        length = bytes.Length;
-        return String.IsInterned(result) ?? result;
-    }
-
-    /// <summary>
     /// Copies the <paramref name="source"/> binary information into
     /// <paramref name="destination"/> span.
     /// </summary>
@@ -127,18 +98,4 @@ public partial class CString
     /// </returns>
     private static Boolean IsNullTerminatedSpan(ReadOnlySpan<Byte> data)
         => !data.IsEmpty && data[^1] == default;
-
-    /// <summary>
-    /// Retrieves the UTF8 String length which contains <paramref name="bytes"/>
-    /// information.
-    /// </summary>
-    /// <param name="bytes">UTF8 bytes.</param>
-    /// <returns>UTF8 String length contains <paramref name="bytes"/> information.</returns>
-    private static Int32 GetUtf8StringLength(ReadOnlySpan<Byte> bytes)
-    {
-        Int32 result = (bytes.Length + 1) / sizeof(Char);
-        if (bytes.Length % sizeof(Char) == 0)
-            result++;
-        return result;
-    }
 }

@@ -65,7 +65,7 @@ public sealed class IReferenceableWrapperTests
     }
     private static void Nullable<T>(Boolean nullInput) where T : unmanaged
     {
-        T? value = !nullInput? fixture.Create<T>() : null;
+        T? value = !nullInput ? fixture.Create<T>() : null;
         T? value2 = fixture.Create<Boolean>() ? fixture.Create<T>() : null;
         var result = IReferenceableWrapper<T>.CreateNullable(value);
         var result2 = IReferenceableWrapper<T>.CreateNullable(value);

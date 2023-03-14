@@ -35,7 +35,7 @@ public partial class CString
         ReadOnlySpan<Byte> bytes = this._data;
         bytes = bytes[offset..];
         //Multiple UTF-8 null ending character.
-        while(bytes.Length > length && bytes[length] == default)
+        while (bytes.Length > length && bytes[length] == default)
             length++;
         return length;
     }

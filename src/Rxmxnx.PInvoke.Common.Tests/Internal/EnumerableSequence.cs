@@ -7,7 +7,7 @@ internal sealed class EnumerableSequence<T> : IEnumerableSequence<T>
     private readonly GetSpanDelegate<T> _getSpan;
 
     public EnumerableSequence(GetSpanDelegate<T> getSpan)
-	{
+    {
         this._getSpan = getSpan;
     }
 

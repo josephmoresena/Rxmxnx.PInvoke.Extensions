@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+
 using Microsoft.CodeAnalysis;
 
 namespace Rxmxnx.PInvoke.Tests.SourceGenerator

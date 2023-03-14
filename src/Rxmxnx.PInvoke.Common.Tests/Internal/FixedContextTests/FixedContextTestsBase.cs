@@ -45,7 +45,7 @@ public abstract class FixedContextTestsBase
     /// <param name="span">Span over the <see cref="FixedContext{T}"/> instance is created.</param>
     /// <param name="readOnly">Indicates whether the created <see cref="FixedContext{T}"/> instance should be readonly.</param>
     /// <param name="actionTest">Action test to <see cref="FixedContext{T}"/> instance to be used.</param>
-    internal static void WithFixed<T, TObj>(ReadOnlySpan<T> span, Boolean readOnly, TObj obj, Action<FixedContext<T>, TObj> actionTest) where T: unmanaged
+    internal static void WithFixed<T, TObj>(ReadOnlySpan<T> span, Boolean readOnly, TObj obj, Action<FixedContext<T>, TObj> actionTest) where T : unmanaged
     {
         unsafe
         {

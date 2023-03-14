@@ -56,7 +56,7 @@ public sealed class IWrapperTests
     }
     private static void Nullable<T>(Boolean nullInput) where T : unmanaged
     {
-        T? value = !nullInput? fixture.Create<T>() : null;
+        T? value = !nullInput ? fixture.Create<T>() : null;
         T? value2 = fixture.Create<Boolean>() ? fixture.Create<T>() : null;
         var result = IWrapper<T>.CreateNullable(value);
         Assert.NotNull(result);
