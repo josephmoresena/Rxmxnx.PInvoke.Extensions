@@ -5,20 +5,15 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Rxmxnx.PInvoke.Tests</RootNamespace>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <Using Include="Xunit" />
     <Using Include="AutoFixture" />
     <Using Include="System.Diagnostics.CodeAnalysis" />
-    <Using Include="System.Reflection" />
-    <Using Include="System.Runtime.CompilerServices" />
-    <Using Include="System.Runtime.InteropServices" />
-    <Using Include="Rxmxnx.PInvoke.Tests.Internal" />
 
-    <Using Include="Rxmxnx.PInvoke.Internal" />
+    <Using Include="Rxmxnx.PInvoke" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,6 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Rxmxnx.PInvoke.Common\Rxmxnx.PInvoke.Common.csproj" />
+    <ProjectReference Include="..\Rxmxnx.PInvoke.CString\Rxmxnx.PInvoke.CString.csproj" />
+    <ProjectReference Include="..\Rxmxnx.PInvoke.CString.Tests.SourceGenerator\Rxmxnx.PInvoke.CString.Tests.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" SetTargetFramework="TargetFramework=netstandard2.0" />
   </ItemGroup>
 </Project>

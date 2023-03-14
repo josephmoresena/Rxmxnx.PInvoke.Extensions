@@ -16,7 +16,7 @@ public partial class CStringSequence : IEnumerableSequence<CString>
         {
             if (index < 0 || index >= this._lengths.Length)
                 throw new ArgumentOutOfRangeException(nameof(index), "Index was outside the bounds of the sequence.");
-            return new CString(() => this.GetBinarySpan(index));
+            return new(() => this.GetBinarySpan(index));
         }
     }
 
