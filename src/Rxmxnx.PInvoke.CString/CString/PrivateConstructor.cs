@@ -91,7 +91,7 @@ public partial class CString
         /// Retrieves the internal read-only span of UTF-8 bytes.
         /// </summary>
         /// <returns>A read-only span of UTF-8 bytes.</returns>
-        private ReadOnlySpan<Byte> GetBytes() => MemoryMarshal.Cast<Char, Byte>(this._utf8String);
+        private ReadOnlySpan<Byte> GetBytes() => MemoryMarshal.AsBytes<Char>(this._utf8String);
 
         /// <summary>
         /// Creates a UTF-16 text which containst the binary information of <paramref name="str"/>

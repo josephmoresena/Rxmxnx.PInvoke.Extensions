@@ -48,9 +48,6 @@ public partial class CString
     private static unsafe Boolean Equals<TInteger>(ReadOnlySpan<Byte> current, ReadOnlySpan<Byte> other)
         where TInteger : unmanaged
     {
-        ReadOnlySpan<Byte> currSpan = current;
-        ReadOnlySpan<Byte> otherSpan = other;
-
         if (current.Length == other.Length)
         {
             ReadOnlySpan<TInteger> currentIntegers = MemoryMarshal.Cast<Byte, TInteger>(current);

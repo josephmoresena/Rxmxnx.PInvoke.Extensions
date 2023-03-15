@@ -40,12 +40,6 @@ internal abstract partial class ValueRegion<T> where T : unmanaged
     /// <returns>The read-only span representation of the memory region.</returns>
     internal abstract ReadOnlySpan<T> AsSpan();
 
-    /// <summary>
-    /// Returns an enumerator for this memory region.
-    /// </summary>
-    /// <returns>An enumerator for this memory region.</returns>
-    public ReadOnlySpan<T>.Enumerator GetEnumerator() => this.AsSpan().GetEnumerator();
-
     /// <inheritdoc/>
     public static implicit operator ReadOnlySpan<T>(ValueRegion<T> region) => region.AsSpan();
     /// <inheritdoc/>

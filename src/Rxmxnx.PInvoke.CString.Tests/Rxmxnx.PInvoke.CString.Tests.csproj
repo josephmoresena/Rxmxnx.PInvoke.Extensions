@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Rxmxnx.PInvoke.Tests</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -12,6 +13,7 @@
     <Using Include="Xunit" />
     <Using Include="AutoFixture" />
     <Using Include="System.Diagnostics.CodeAnalysis" />
+    <Using Include="System.Runtime.CompilerServices" />
 
     <Using Include="Rxmxnx.PInvoke" />
   </ItemGroup>

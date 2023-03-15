@@ -70,7 +70,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// Copies the UTF-8 text into a new array.
     /// </summary>
     /// <returns>An array containing the data in the current UTF-8 text.</returns>
-    public Byte[] ToArray() => this._data.ToArray();
+    public Byte[] ToArray() => this._data.ToArray()[..this._length];
 
     /// <summary>
     /// Retreives the internal or external information as <see cref="ReadOnlySpan{Byte}"/> object.
@@ -82,27 +82,21 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// Gets <see cref="String"/> representation of the current UTF-8 text as hexadecimal value.
     /// </summary>
     /// <returns><see cref="String"/> representation of hexadecimal value.</returns>
-    public String AsHexString() => Convert.ToHexString(this).ToLower();
+    public String ToHexString() => Convert.ToHexString(this).ToLower();
 
     /// <summary>
     /// Retrieves an object that can iterate through the individual <see cref="Byte"/> in this 
     /// <see cref="CString"/>.
     /// </summary>
     /// <returns>An enumerator object.</returns>
-    public ReadOnlySpan<Byte>.Enumerator GetEnumerator() => this._data.GetEnumerator();
+    public ReadOnlySpan<Byte>.Enumerator GetEnumerator() => this.AsSpan().GetEnumerator();
 
     /// <inheritdoc/>
     public Object Clone()
     {
-        Byte[] bytes;
-        if (this._isNullTerminated && !this._isFunction)
-            bytes = this._data.ToArray();
-        else
-        {
-            ReadOnlySpan<Byte> data = this._data;
-            bytes = new Byte[this._length + 1];
-            data.CopyTo(bytes);
-        }
+        ReadOnlySpan<Byte> source = this;
+        Byte[] bytes = new Byte[this._length + 1];
+        source.CopyTo(bytes);
         return new CString(bytes);
     }
 
@@ -207,5 +201,6 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// </summary>
     /// <param name="func">A <see cref="ReadOnlySpanFunc{Byte}"/> delegate that returns a Utf8 string non-literal.</param>
     /// <returns>A <see cref="CString"/> instance from <paramref name="func"/>.</returns>
+    [return: NotNullIfNotNull(nameof(func))]
     public static CString? Create(ReadOnlySpanFunc<Byte>? func) => func is not null ? new(func, false) : default;
 }
