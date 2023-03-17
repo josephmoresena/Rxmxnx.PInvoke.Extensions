@@ -3,13 +3,13 @@
 /// <summary>
 /// Helper class for <see cref="CString"/> concatenation.
 /// </summary>
-internal sealed class CStringConcatenatorHelper : Utf8ConcatenationHelper<CString>
+internal sealed class CStringConcatenator : Utf8ConcatenationHelper<CString>
 {
     /// <summary>
     /// Constructor.
     /// </summary>
     /// <param name="separator"><see cref="CString"/> separator instance.</param>
-    public CStringConcatenatorHelper(CString? separator) :
+    public CStringConcatenator(CString? separator) :
         base(separator, CString.IsNullOrEmpty)
     {
     }

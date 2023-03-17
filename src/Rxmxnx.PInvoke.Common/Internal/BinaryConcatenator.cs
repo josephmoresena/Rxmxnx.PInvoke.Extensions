@@ -3,13 +3,13 @@
 /// <summary>
 /// Helper class for <see cref="CString"/> concatenation.
 /// </summary>
-internal sealed class BinaryConcatenatorHelper : Utf8ConcatenationHelper<Byte?>
+internal sealed class BinaryConcatenator : Utf8ConcatenationHelper<Byte?>
 {
     /// <summary>
     /// Constructor.
     /// </summary>
     /// <param name="separator"><see cref="CString"/> separator instance.</param>
-    public BinaryConcatenatorHelper(Byte separator) :
+    public BinaryConcatenator(Byte separator) :
         base(separator, IsNullByte)
     {
     }
@@ -23,12 +23,11 @@ internal sealed class BinaryConcatenatorHelper : Utf8ConcatenationHelper<Byte?>
         => Task.Run(() => this.Write(value!.Value));
 
     /// <summary>
-    /// Creates a <see cref="CString"/> instance from concatenation.
+    /// Retrieves the binary data of UTF-8 text.
     /// </summary>
-    /// <returns>
-    /// A <see cref="CString"/> instance that represents the UTF-8 concatenation.
-    /// </returns>
-    public CString ToCString() => base.ToArray(true) ?? CString.Empty;
+    /// <param name="nullTerminated">Indicates whether the UTF-8 text must be null-terminated.</param>
+    /// <returns>Binary data of UTF-8 text</returns>
+    public new Byte[]? ToArray(Boolean nullTerminated) => base.ToArray(nullTerminated);
 
     /// <summary>
     /// Indicates whether <paramref name="value"/> is <see langword="null"/>.

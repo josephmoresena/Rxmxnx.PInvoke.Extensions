@@ -19,10 +19,10 @@ public partial class CString
     /// </returns>
     public static CString Join(Byte separator, params CString?[] value)
     {
-        using BinaryConcatenatorHelper helper = new(separator);
+        using BinaryConcatenator helper = new(separator);
         foreach (CString? utf8Text in value)
             helper.Write(utf8Text);
-        return helper.ToCString();
+        return helper.ToArray(true) ?? CString.Empty;
     }
 
     /// <summary>
@@ -44,10 +44,10 @@ public partial class CString
     /// </returns>
     public static CString Join(Byte separator, IEnumerable<CString?> values)
     {
-        using BinaryConcatenatorHelper helper = new(separator);
-        foreach (CString? utf8Text in value)
+        using BinaryConcatenator helper = new(separator);
+        foreach (CString? utf8Text in values)
             helper.Write(utf8Text);
-        return helper.ToCString();
+        return helper.ToArray(true) ?? CString.Empty;
     }
 
     /// <summary>
@@ -69,10 +69,10 @@ public partial class CString
     /// </returns>
     public static CString Join(Byte separator, CString?[] value, Int32 startIndex, Int32 count)
     {
-        using BinaryConcatenatorHelper helper = new(separator);
+        using BinaryConcatenator helper = new(separator);
         foreach (CString? utf8Text in value[startIndex..count])
             helper.Write(utf8Text);
-        return helper.ToCString();
+        return helper.ToArray(true) ?? CString.Empty;
     }
 
     /// <summary>
@@ -183,7 +183,7 @@ public partial class CString
     /// </returns>
     public static CString Join(CString? separator, params CString?[] value)
     {
-        using CStringConcatenatorHelper helper = new(separator);
+        using CStringConcatenator helper = new(separator);
         foreach (CString? utf8Text in value)
             helper.Write(utf8Text);
         return helper.ToCString();
@@ -209,7 +209,7 @@ public partial class CString
     /// </returns>
     public static CString Join(CString? separator, IEnumerable<CString?> values)
     {
-        using CStringConcatenatorHelper helper = new(separator);
+        using CStringConcatenator helper = new(separator);
         foreach (CString? utf8Text in values)
             helper.Write(utf8Text);
         return helper.ToCString();
@@ -239,7 +239,7 @@ public partial class CString
     /// </returns>
     public static CString Join(CString? separator, CString?[] value, Int32 startIndex, Int32 count)
     {
-        using CStringConcatenatorHelper helper = new(separator);
+        using CStringConcatenator helper = new(separator);
         foreach (CString? utf8Text in value[startIndex..count])
             helper.Write(utf8Text);
         return helper.ToCString();
