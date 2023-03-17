@@ -1,6 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke.Internal;
 
-internal partial class Utf8ConcatenationHelper<T>
+internal partial class BinaryConcatenator<T>
 {
     /// <summary>
     /// Delegate. Writes UTF-8 bytes in current instance.
@@ -23,10 +23,6 @@ internal partial class Utf8ConcatenationHelper<T>
     /// Internal memory stream.
     /// </summary>
     private readonly MemoryStream _mem;
-    /// <summary>
-    /// Internal stream writer.
-    /// </summary>
-    private readonly StreamWriter _writer;
     /// <summary>
     /// Separator.
     /// </summary>
@@ -78,24 +74,6 @@ internal partial class Utf8ConcatenationHelper<T>
     /// </summary>
     /// <param name="value">UTF-8 bytes to write.</param>
     private void WriteValue(ReadOnlySpan<Byte> value) => this._mem.Write(value);
-
-    /// <summary>
-    /// Retrieves a copy of binary data into the buffer.
-    /// </summary>
-    /// <param name="nullTerminated">Indicates whether the UTF-8 text must be null-terminated.</param>
-    /// <returns>Copy of binary data into the buffer.</returns>
-    private Byte[]? GetBinaryData(Boolean nullTerminated)
-    {
-        ReadOnlySpan<Byte> span = PrepareUtf8Text(this._mem.GetBuffer());
-        if (!span.IsEmpty)
-        {
-            Int32 resultLength = span.Length + (nullTerminated ? 1 : 0);
-            Byte[] result = new Byte[resultLength];
-            span.CopyTo(result);
-            return result;
-        }
-        return default;
-    }
 
     /// <summary>
     /// Writes <paramref name="value"/> in current instance and
@@ -205,8 +183,7 @@ internal partial class Utf8ConcatenationHelper<T>
         if (!this._isEmpty(value))
         {
             await this.WriteValueAsync(this._separator!);
-            if (this._isEmpty(value))
-                await this.WriteValueAsync(value);
+            await this.WriteValueAsync(value);
         }
     }
 

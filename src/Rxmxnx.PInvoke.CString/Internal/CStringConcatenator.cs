@@ -3,7 +3,7 @@
 /// <summary>
 /// Helper class for <see cref="CString"/> concatenation.
 /// </summary>
-internal sealed class CStringConcatenator : Utf8ConcatenationHelper<CString>
+internal sealed class CStringConcatenator : BinaryConcatenator<CString>
 {
     /// <summary>
     /// Constructor.

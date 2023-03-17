@@ -16,6 +16,7 @@
     <Using Include="System.Reflection" />
     <Using Include="System.Runtime.CompilerServices" />
     <Using Include="System.Runtime.InteropServices" />
+    <Using Include="System.Text" />
     <Using Include="Rxmxnx.PInvoke.Tests.Internal" />
 
     <Using Include="Rxmxnx.PInvoke.Internal" />
@@ -37,5 +38,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Rxmxnx.PInvoke.Common\Rxmxnx.PInvoke.Common.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Internal\BinaryConcatenatorTests\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Internal\BinaryConcatenatorTests\" />
   </ItemGroup>
 </Project>

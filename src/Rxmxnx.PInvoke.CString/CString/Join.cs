@@ -61,6 +61,12 @@ public partial class CString
     /// only if <paramref name="value"/> has more than one element.
     /// </param>
     /// <param name="value">An array of UTF-8 texts to concatenate.</param>
+    /// <param name="startIndex">
+    /// The first element in <paramref name="value"/> to use.
+    /// </param>
+    /// <param name="count">
+    /// The number of element of <paramref name="value"/> to use.
+    /// </param>
     /// <returns>
     /// A UTF-8 text that consists of <paramref name="count"/> elements of
     /// <paramref name="value"/> starting at <paramref name="startIndex"/> delimited by
@@ -103,7 +109,7 @@ public partial class CString
     }
 
     /// <summary>
-    /// Concatenates the members of a constructed <see cref="IEnumerable{out T}"/>
+    /// Concatenates the members of a constructed <see cref="IEnumerable{T}"/>
     /// collection of type <see cref="CString"/>, using the specified separator between
     /// each member.
     /// </summary>
@@ -190,7 +196,7 @@ public partial class CString
     }
 
     /// <summary>
-    /// Concatenates the members of a constructed <see cref="IEnumerable{out T}"/>
+    /// Concatenates the members of a constructed <see cref="IEnumerable{T}"/>
     /// collection of type <see cref="CString"/>, using the specified separator between
     /// each member.
     /// </summary>

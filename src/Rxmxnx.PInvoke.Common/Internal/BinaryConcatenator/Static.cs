@@ -1,6 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke.Internal;
 
-internal partial class Utf8ConcatenationHelper<T>
+internal partial class BinaryConcatenator<T>
 {
     /// <summary>
     /// Prepares a UTF-8 text for concatenation process.
@@ -9,13 +9,9 @@ internal partial class Utf8ConcatenationHelper<T>
     /// <returns><see cref="ReadOnlySpan{Byte}"/> to UTF-8 binary data.</returns>
     private static ReadOnlySpan<Byte> PrepareUtf8Text(ReadOnlySpan<Byte> span)
     {
-        if (!span.IsEmpty)
-        {
-            Int32 iPosition = GetInitialPosition(span);
-            Int32 fLength = GetFinalLength(span, iPosition);
-            return span[iPosition..fLength];
-        }
-        return span;
+        Int32 iPosition = GetInitialPosition(span);
+        Int32 fLength = GetFinalLength(span, iPosition);
+        return span[iPosition..fLength];
     }
 
     /// <summary>
@@ -41,8 +37,7 @@ internal partial class Utf8ConcatenationHelper<T>
     /// <see langword="true"/> if <see cref="Byte"/> instance is a null character; otherwise, 
     /// <see langword="false"/>.
     /// </returns>
-    private static Boolean IsNullUtf8Char(in Byte utf8Char)
-        => utf8Char == default;
+    private static Boolean IsNullUtf8Char(in Byte utf8Char) => utf8Char == default;
 
     /// <summary>
     /// Indicates whether the given <see cref="Byte"/> sequence is UTF-8 BOM character. 

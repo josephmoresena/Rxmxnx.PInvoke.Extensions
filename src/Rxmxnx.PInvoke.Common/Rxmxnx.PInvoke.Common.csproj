@@ -50,10 +50,4 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
-  <ItemGroup>
-    <None Remove="Internal\Utf8ConcatenationHelper\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Internal\Utf8ConcatenationHelper\" />
-  </ItemGroup>
 </Project>

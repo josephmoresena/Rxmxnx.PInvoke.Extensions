@@ -1,6 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
 
-public class GetHashCodeTest : FixedContextTestsBase
+public sealed class GetHashCodeTest : FixedContextTestsBase
 {
     [Fact]
     internal void BooleanTest() => this.Test<Boolean>();

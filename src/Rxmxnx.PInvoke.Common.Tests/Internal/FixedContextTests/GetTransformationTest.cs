@@ -1,6 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
 
-public class GetTransformationTest : FixedContextTestsBase
+public sealed class GetTransformationTest : FixedContextTestsBase
 {
     [Fact]
     internal void BooleanTest() => this.Test<Boolean>();

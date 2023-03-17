@@ -1,6 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
 
-public class EqualsTest : FixedContextTestsBase
+public sealed class EqualsTest : FixedContextTestsBase
 {
     [Fact]
     internal void BooleanTest() => this.Test<Boolean>();
