@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace Rxmxnx.PInvoke;
+﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Exposes the enumerator, which supports a simple iteration over a sequence of a

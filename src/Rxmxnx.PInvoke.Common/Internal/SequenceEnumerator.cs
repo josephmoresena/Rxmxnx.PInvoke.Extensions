@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace Rxmxnx.PInvoke.Internal;
+﻿namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// Internal implmentation of <see cref="IEnumerator{T}"/>.

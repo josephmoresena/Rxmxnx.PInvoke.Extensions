@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Rxmxnx.PInvoke;
+﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Represents a sequence of null-terminated UTF-8 texts.

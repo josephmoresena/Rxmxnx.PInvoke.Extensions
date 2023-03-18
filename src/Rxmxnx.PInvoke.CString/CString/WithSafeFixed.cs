@@ -1,7 +1,4 @@
-﻿using System;
-using static System.Collections.Specialized.BitVector32;
-
-namespace Rxmxnx.PInvoke;
+﻿namespace Rxmxnx.PInvoke;
 
 public partial class CString
 {
