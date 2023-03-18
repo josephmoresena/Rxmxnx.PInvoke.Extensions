@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Rxmxnx.PInvoke.Tests.CStringTests;
+﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
 
 public sealed class BasicTests
 {
