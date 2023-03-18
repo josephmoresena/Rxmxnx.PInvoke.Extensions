@@ -100,7 +100,7 @@ public partial class CStringSequence
             if (value.Length > 0)
             {
                 ReadOnlySpan<Byte> bytes = value.AsSpan();
-                bytes.CopyTo(destination.AsSpan()[offset..bytes.Length]);
+                bytes.CopyTo(destination.AsSpan()[offset..]);
                 offset += bytes.Length;
             }
     }

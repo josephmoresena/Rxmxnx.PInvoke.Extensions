@@ -79,8 +79,8 @@ public partial class CStringSequence : IEnumerableSequence<CString>
     private ReadOnlySpan<Byte> GetBinarySpan(Int32 index, Int32 count = 1)
     {
         Int32 binaryOffset = this._lengths[..index].Sum();
-        Int32 binaryLength = this._lengths[index..count].Sum() + count - 1;
-        return MemoryMarshal.Cast<Char, Byte>(this._value)[binaryOffset..binaryLength];
+        Int32 binaryLength = this._lengths.Skip(index).Take(count).Sum() + count - 1;
+        return MemoryMarshal.Cast<Char, Byte>(this._value).Slice(binaryOffset, binaryLength);
     }
 
     CString IEnumerableSequence<CString>.GetItem(Int32 index) => this[index];
@@ -132,7 +132,7 @@ public partial class CStringSequence : IEnumerableSequence<CString>
         /// <param name="length">The number of UTF-8 strings in the subsequence.</param>
         public SubsequenceHelper(CStringSequence sequence, Int32 startIndex, Int32 length)
         {
-            this._lengths = sequence._lengths[startIndex..length];
+            this._lengths = sequence._lengths.Skip(startIndex).Take(length).ToArray();
             this._function = () => sequence.GetBinarySpan(startIndex, length);
         }
 

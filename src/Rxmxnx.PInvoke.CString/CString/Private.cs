@@ -48,8 +48,10 @@ public partial class CString
     /// The <see cref="Stream"/> to which the contents of the current <see cref="CString"/> 
     /// will be copied.
     /// </param>
+    /// <param name="startIndex">The first byte in current instance to write to.</param>
+    /// <param name="count">The number of bytes of current instance to write to.</param>
     /// <returns>A task that represents the asynchronous write operation.</returns>
-    private Task GetWriteTask(Stream strm)
-        => (Byte[]?)this._data is Byte[] array ? strm.WriteAsync(array, 0, this._length) :
-        Task.Run(() => { strm.Write(this.AsSpan()); });
+    private Task GetWriteTask(Stream strm, Int32 startIndex, Int32 count)
+        => (Byte[]?)this._data is Byte[] array ? strm.WriteAsync(array, startIndex, count) :
+        Task.Run(() => this.Write(strm, startIndex, count));
 }

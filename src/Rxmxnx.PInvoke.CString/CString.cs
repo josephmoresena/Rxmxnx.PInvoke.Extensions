@@ -128,45 +128,6 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     public override Int32 GetHashCode() => this.ToString().GetHashCode();
 
     /// <summary>
-    /// Writes the sequence of bytes to the given <see cref="Stream"/> and advances
-    /// the current position within this stream by the number of bytes written.
-    /// </summary>
-    /// <param name="strm">
-    /// The <see cref="Stream"/> to which the contents of the current <see cref="CString"/> 
-    /// will be copied.
-    /// </param>
-    /// <param name="writeNullTermination">
-    /// Indicates whether the UTF-8 text must be written with a null-termination character 
-    /// into the <see cref="Stream"/>.
-    /// </param>
-    public void Write([DisallowNull] Stream strm, Boolean writeNullTermination)
-    {
-        strm.Write(this.AsSpan());
-        if (writeNullTermination)
-            strm.Write(empty);
-    }
-
-    /// <summary>
-    /// Asynchronously writes the sequence of bytes to the given <see cref="Stream"/> and advances
-    /// the current position within this stream by the number of bytes written.
-    /// </summary>
-    /// <param name="strm">
-    /// The <see cref="Stream"/> to which the contents of the current <see cref="CString"/> 
-    /// will be copied.
-    /// </param>
-    /// <param name="writeNullTermination">
-    /// Indicates whether the UTF-8 text must be written with a null-termination character 
-    /// into the <see cref="Stream"/>.
-    /// </param>
-    /// <returns>A task that represents the asynchronous write operation.</returns>
-    public async Task WriteAsync([DisallowNull] Stream strm, Boolean writeNullTermination)
-    {
-        await this.GetWriteTask(strm).ConfigureAwait(false);
-        if (writeNullTermination)
-            await strm.WriteAsync(empty);
-    }
-
-    /// <summary>
     /// Indicates whether the specified <see cref="CString"/> is <see langword="null"/> or an 
     /// empty UTF-8 text.
     /// </summary>

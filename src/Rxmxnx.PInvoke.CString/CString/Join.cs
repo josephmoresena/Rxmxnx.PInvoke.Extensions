@@ -52,8 +52,9 @@ public partial class CString
 
     /// <summary>
     /// Concatenates an array of UTF-8 texts, using the specified separator between each
-    /// member,
-    /// starting with the element in value located at the startIndex position, and concatenating up to count elements.
+    /// member, starting with the element in value located at the
+    /// <paramref name="startIndex"/> position, and concatenating up to
+    /// <paramref name="count"/> elements.
     /// </summary>
     /// <param name="separator">
     /// The UTF-8 character to use as a separator.
@@ -76,7 +77,7 @@ public partial class CString
     public static CString Join(Byte separator, CString?[] value, Int32 startIndex, Int32 count)
     {
         using BinaryConcatenator helper = new(separator);
-        foreach (CString? utf8Text in value[startIndex..count])
+        foreach (CString? utf8Text in value.Skip(startIndex).Take(count))
             helper.Write(utf8Text);
         return helper.ToArray(true) ?? CString.Empty;
     }
@@ -246,7 +247,7 @@ public partial class CString
     public static CString Join(CString? separator, CString?[] value, Int32 startIndex, Int32 count)
     {
         using CStringConcatenator helper = new(separator);
-        foreach (CString? utf8Text in value[startIndex..count])
+        foreach (CString? utf8Text in value.Skip(startIndex).Take(count))
             helper.Write(utf8Text);
         return helper.ToCString();
     }
