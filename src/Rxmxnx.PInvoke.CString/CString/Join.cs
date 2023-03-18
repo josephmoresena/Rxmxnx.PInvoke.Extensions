@@ -19,6 +19,7 @@ public partial class CString
     /// </returns>
     public static CString Join(Byte separator, params CString?[] value)
     {
+        ArgumentNullException.ThrowIfNull(value);
         using BinaryConcatenator helper = new(separator);
         foreach (CString? utf8Text in value)
             helper.Write(utf8Text);
@@ -44,6 +45,7 @@ public partial class CString
     /// </returns>
     public static CString Join(Byte separator, IEnumerable<CString?> values)
     {
+        ArgumentNullException.ThrowIfNull(values);
         using BinaryConcatenator helper = new(separator);
         foreach (CString? utf8Text in values)
             helper.Write(utf8Text);
@@ -76,6 +78,7 @@ public partial class CString
     /// </returns>
     public static CString Join(Byte separator, CString?[] value, Int32 startIndex, Int32 count)
     {
+        ArgumentNullException.ThrowIfNull(value);
         using BinaryConcatenator helper = new(separator);
         foreach (CString? utf8Text in value.Skip(startIndex).Take(count))
             helper.Write(utf8Text);
@@ -99,6 +102,7 @@ public partial class CString
     /// </returns>
     public static CString Join(ReadOnlySpan<Byte> separator, params CString?[] value)
     {
+        ArgumentNullException.ThrowIfNull(value);
         unsafe
         {
             fixed (void* ptr = &MemoryMarshal.GetReference(separator))
@@ -129,6 +133,7 @@ public partial class CString
     /// </returns>
     public static CString Join(ReadOnlySpan<Byte> separator, IEnumerable<CString?> values)
     {
+        ArgumentNullException.ThrowIfNull(values);
         unsafe
         {
             fixed (void* ptr = &MemoryMarshal.GetReference(separator))
@@ -163,6 +168,7 @@ public partial class CString
     /// </returns>
     public static CString Join(ReadOnlySpan<Byte> separator, CString?[] value, Int32 startIndex, Int32 count)
     {
+        ArgumentNullException.ThrowIfNull(value);
         unsafe
         {
             fixed (void* ptr = &MemoryMarshal.GetReference(separator))
@@ -190,6 +196,7 @@ public partial class CString
     /// </returns>
     public static CString Join(CString? separator, params CString?[] value)
     {
+        ArgumentNullException.ThrowIfNull(value);
         using CStringConcatenator helper = new(separator);
         foreach (CString? utf8Text in value)
             helper.Write(utf8Text);
@@ -216,6 +223,7 @@ public partial class CString
     /// </returns>
     public static CString Join(CString? separator, IEnumerable<CString?> values)
     {
+        ArgumentNullException.ThrowIfNull(values);
         using CStringConcatenator helper = new(separator);
         foreach (CString? utf8Text in values)
             helper.Write(utf8Text);
@@ -246,6 +254,7 @@ public partial class CString
     /// </returns>
     public static CString Join(CString? separator, CString?[] value, Int32 startIndex, Int32 count)
     {
+        ArgumentNullException.ThrowIfNull(value);
         using CStringConcatenator helper = new(separator);
         foreach (CString? utf8Text in value.Skip(startIndex).Take(count))
             helper.Write(utf8Text);

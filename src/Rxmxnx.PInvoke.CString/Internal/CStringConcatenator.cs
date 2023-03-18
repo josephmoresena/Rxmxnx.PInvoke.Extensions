@@ -8,6 +8,11 @@ internal sealed class CStringConcatenator : BinaryConcatenator<CString>
     /// <summary>
     /// Constructor.
     /// </summary>
+    public CStringConcatenator() : this(default) { }
+
+    /// <summary>
+    /// Constructor.
+    /// </summary>
     /// <param name="separator"><see cref="CString"/> separator instance.</param>
     public CStringConcatenator(CString? separator) :
         base(separator, CString.IsNullOrEmpty)

@@ -146,11 +146,9 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// <returns>A <see cref="Byte"/> array with UTF-8 text.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
     /// <exception cref="InvalidOperationException"><paramref name="value"/> does not contains the UTF-8 text.</exception>
-    public static Byte[] GetBytes([DisallowNull] CString value)
+    public static Byte[] GetBytes(CString value)
     {
-        if (value is null)
-            throw new ArgumentNullException(nameof(value));
-
+        ArgumentNullException.ThrowIfNull(value);
         if ((Byte[]?)value._data is Byte[] array)
             return array;
         else

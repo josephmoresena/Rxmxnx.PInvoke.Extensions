@@ -88,6 +88,7 @@ public partial class CString
     /// </returns>
     public static async Task<CString> JoinAsync(CString? separator, params CString?[] value)
     {
+        ArgumentNullException.ThrowIfNull(value);
         using CStringConcatenator helper = new(separator);
         foreach (CString? utf8Text in value)
             await helper.WriteAsync(utf8Text);
@@ -115,6 +116,7 @@ public partial class CString
     /// </returns>
     public static async Task<CString> JoinAsync(CString? separator, IEnumerable<CString?> values)
     {
+        ArgumentNullException.ThrowIfNull(values);
         using CStringConcatenator helper = new(separator);
         foreach (CString? utf8Text in values)
             await helper.WriteAsync(utf8Text);
@@ -146,6 +148,7 @@ public partial class CString
     /// </returns>
     public static async Task<CString> JoinAsync(CString? separator, CString?[] value, Int32 startIndex, Int32 count)
     {
+        ArgumentNullException.ThrowIfNull(value);
         using CStringConcatenator helper = new(separator);
         foreach (CString? utf8Text in value.Skip(startIndex).Take(count))
             await helper.WriteAsync(utf8Text);

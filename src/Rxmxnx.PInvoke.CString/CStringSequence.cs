@@ -1,4 +1,6 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿using System;
+
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Represents a sequence of null-terminated UTF-8 texts.
@@ -19,47 +21,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
         this._lengths = values.Select(c => c?.Length ?? default).ToArray();
         this._value = CreateBuffer(this._lengths, values);
     }
-
-    /// <summary>
-    /// Use current instance as <see cref="ReadOnlySpan{CString}"/> instance and <paramref name="state"/>
-    /// as parameters for <paramref name="action"/> delegate.
-    /// </summary>
-    /// <typeparam name="TState">The type of the element to pass to <paramref name="action"/>.</typeparam>
-    /// <param name="state">The element to pass to <paramref name="action"/>.</param>
-    /// <param name="action">A callback to invoke.</param>
-    public void Transform<TState>(TState state, CStringSequenceAction<TState> action)
-    {
-        unsafe
-        {
-            fixed (Char* ptr = this._value)
-            {
-                _ = this.AsSpanUnsafe(out CString[] output);
-                action(output, state);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Use current instance as <see cref="ReadOnlySpan{CString}"/> instance and <paramref name="state"/>
-    /// as parameters for <paramref name="func"/> delegate.
-    /// </summary>
-    /// <typeparam name="TState">The type of the element to pass to <paramref name="func"/>.</typeparam>
-    /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
-    /// <param name="state">The element to pass to <paramref name="func"/>.</param>
-    /// <param name="func">A callback to invoke.</param>
-    /// <returns>The result of <paramref name="func"/> execution.</returns>
-    public TResult Transform<TState, TResult>(TState state, CStringSequenceFunc<TState, TResult> func)
-    {
-        unsafe
-        {
-            fixed (Char* ptr = this._value)
-            {
-                _ = this.AsSpanUnsafe(out CString[] output);
-                return func(output, state);
-            }
-        }
-    }
-
+    
     /// <summary>
     /// Returns a reference to this instance of <see cref="CStringSequence"/>.
     /// </summary>

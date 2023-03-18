@@ -1,4 +1,7 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿using System;
+using static System.Collections.Specialized.BitVector32;
+
+namespace Rxmxnx.PInvoke;
 
 public partial class CString
 {
@@ -9,6 +12,7 @@ public partial class CString
     /// <param name="action">A <see cref="FixedAction{T}"/> delegate.></param>
     public void WithSafeFixed(ReadOnlyFixedAction<Byte> action)
     {
+        ArgumentNullException.ThrowIfNull(action);
         ReadOnlySpan<Byte> span = this.AsSpan();
         unsafe
         {
@@ -36,6 +40,7 @@ public partial class CString
     /// <param name="action">A <see cref="ReadOnlyFixedAction{Byte, TArg}"/> delegate.</param>
     public void WithSafeFixed<TArg>(TArg arg, ReadOnlyFixedAction<Byte, TArg> action)
     {
+        ArgumentNullException.ThrowIfNull(action);
         ReadOnlySpan<Byte> span = this.AsSpan();
         unsafe
         {
@@ -63,6 +68,7 @@ public partial class CString
     /// <returns>The result of <paramref name="func"/> execution.</returns>
     public TResult WithSafeFixed<TResult>(ReadOnlyFixedFunc<Byte, TResult> func)
     {
+        ArgumentNullException.ThrowIfNull(func);
         ReadOnlySpan<Byte> span = this.AsSpan();
         unsafe
         {
@@ -92,6 +98,7 @@ public partial class CString
     /// <returns>The result of <paramref name="func"/> execution.</returns>
     public TResult WithSafeFixed<TArg, TResult>(TArg arg, ReadOnlyFixedFunc<Byte, TArg, TResult> func)
     {
+        ArgumentNullException.ThrowIfNull(func);
         ReadOnlySpan<Byte> span = this.AsSpan();
         unsafe
         {
