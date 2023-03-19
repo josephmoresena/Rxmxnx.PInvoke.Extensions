@@ -88,9 +88,9 @@ internal unsafe abstract class FixedMemory : IEquatable<FixedMemory>
     public void ValidateOperation(Boolean isReadOnly = false)
     {
         if (!this._isValid.Value)
-            throw new InvalidOperationException("The current context is not valid.");
+            throw new InvalidOperationException("The current instance is not valid.");
         if (!isReadOnly && this._isReadOnly)
-            throw new InvalidOperationException("The current context is read-only.");
+            throw new InvalidOperationException("The current instance is read-only.");
     }
     /// <summary>
     /// Invalidates current context.

@@ -8,11 +8,11 @@ public abstract class FixedContextTestsBase
     /// <summary>
     /// Message when <see cref="FixedContext{T}"/> instance is read-only.
     /// </summary>
-    public static readonly String ReadOnlyError = "The current context is read-only.";
+    public static readonly String ReadOnlyError = "The current instance is read-only.";
     /// <summary>
     /// Message when <see cref="FixedContext{T}"/> instance is invalid.
     /// </summary>
-    public static readonly String InvalidError = "The current context is not valid.";
+    public static readonly String InvalidError = "The current instance is not valid.";
 
     /// <summary>
     /// Fixture instance.
