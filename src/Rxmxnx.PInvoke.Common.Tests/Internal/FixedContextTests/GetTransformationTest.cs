@@ -42,73 +42,62 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 
     private static void Test<T>(FixedContext<T> ctx, T[] values) where T : unmanaged
     {
-        MethodInfo transformMethod = ctx.GetType()
-            .GetMethod("GetTransformation", BindingFlags.NonPublic | BindingFlags.Instance)!;
         Boolean isReadOnly = IsReadOnly(ctx);
 
-        Test<T, Boolean>(ctx, isReadOnly, transformMethod);
-        Test<T, Byte>(ctx, isReadOnly, transformMethod);
-        Test<T, Int16>(ctx, isReadOnly, transformMethod);
-        Test<T, Char>(ctx, isReadOnly, transformMethod);
-        Test<T, Int32>(ctx, isReadOnly, transformMethod);
-        Test<T, Int64>(ctx, isReadOnly, transformMethod);
-        Test<T, Int128>(ctx, isReadOnly, transformMethod);
-        Test<T, Single>(ctx, isReadOnly, transformMethod);
-        Test<T, Half>(ctx, isReadOnly, transformMethod);
-        Test<T, Double>(ctx, isReadOnly, transformMethod);
-        Test<T, Decimal>(ctx, isReadOnly, transformMethod);
-        Test<T, DateTime>(ctx, isReadOnly, transformMethod);
-        Test<T, TimeOnly>(ctx, isReadOnly, transformMethod);
-        Test<T, TimeSpan>(ctx, isReadOnly, transformMethod);
+        Test<T, Boolean>(ctx, isReadOnly);
+        Test<T, Byte>(ctx, isReadOnly);
+        Test<T, Int16>(ctx, isReadOnly);
+        Test<T, Char>(ctx, isReadOnly);
+        Test<T, Int32>(ctx, isReadOnly);
+        Test<T, Int64>(ctx, isReadOnly);
+        Test<T, Int128>(ctx, isReadOnly);
+        Test<T, Single>(ctx, isReadOnly);
+        Test<T, Half>(ctx, isReadOnly);
+        Test<T, Double>(ctx, isReadOnly);
+        Test<T, Decimal>(ctx, isReadOnly);
+        Test<T, DateTime>(ctx, isReadOnly);
+        Test<T, TimeOnly>(ctx, isReadOnly);
+        Test<T, TimeSpan>(ctx, isReadOnly);
 
         ctx.Unload();
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Boolean>(ctx, isReadOnly, transformMethod)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Byte>(ctx, isReadOnly, transformMethod)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Int16>(ctx, isReadOnly, transformMethod)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Char>(ctx, isReadOnly, transformMethod)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Int32>(ctx, isReadOnly, transformMethod)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Int64>(ctx, isReadOnly, transformMethod)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Int128>(ctx, isReadOnly, transformMethod)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Single>(ctx, isReadOnly, transformMethod)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Half>(ctx, isReadOnly, transformMethod)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Double>(ctx, isReadOnly, transformMethod)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Decimal>(ctx, isReadOnly, transformMethod)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, DateTime>(ctx, isReadOnly, transformMethod)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, TimeOnly>(ctx, isReadOnly, transformMethod)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, TimeSpan>(ctx, isReadOnly, transformMethod)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Boolean>(ctx, isReadOnly)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Byte>(ctx, isReadOnly)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Int16>(ctx, isReadOnly)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Char>(ctx, isReadOnly)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Int32>(ctx, isReadOnly)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Int64>(ctx, isReadOnly)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Int128>(ctx, isReadOnly)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Single>(ctx, isReadOnly)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Half>(ctx, isReadOnly)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Double>(ctx, isReadOnly)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Decimal>(ctx, isReadOnly)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, DateTime>(ctx, isReadOnly)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, TimeOnly>(ctx, isReadOnly)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, TimeSpan>(ctx, isReadOnly)).Message);
     }
-    private static void Test<T, T2>(FixedContext<T> ctx, Boolean isReadOnly, MethodInfo transformMethod)
+    private static void Test<T, T2>(FixedContext<T> ctx, Boolean isReadOnly)
         where T : unmanaged
         where T2 : unmanaged
     {
-        MethodInfo invokableTransform = transformMethod.MakeGenericMethod(typeof(T2));
-        Object? result = InvokeTransformationMethod(ctx, invokableTransform, true);
-
-        Assert.IsType<TransformationContext<T, T2>>(result);
+        TransformationContext<T, T2> result = ctx.GetTransformation<T2>(true);
+        Assert.NotNull(result);
+        unsafe
+        {
+            Int32 countT2 = ctx.BinaryLength / sizeof(T2);
+            Int32 offset = countT2 * sizeof(T2);
+            Assert.Equal(offset, result.Offset);
+        }
         if (!isReadOnly)
         {
-            Object? result2 = invokableTransform.Invoke(ctx, new Object?[] { false });
+            Object? result2 = ctx.GetTransformation<T2>(false);
             Assert.IsType<TransformationContext<T, T2>>(result2);
             Assert.Equal(result, result2);
         }
         else
         {
-            Exception readOnly = Assert.Throws<InvalidOperationException>(() => InvokeTransformationMethod(ctx, invokableTransform, false));
+            Exception readOnly = Assert.Throws<InvalidOperationException>(() => ctx.GetTransformation<T2>(false));
             Assert.Equal(ReadOnlyError, readOnly.Message);
         }
     }
-    private static Object? InvokeTransformationMethod<T>(FixedContext<T> ctx, MethodInfo method, Boolean readOnly)
-        where T : unmanaged
-    {
-        try
-        {
-            return method.Invoke(ctx, new Object?[] { readOnly });
-        }
-        catch (TargetInvocationException ex)
-        {
-            throw ex.InnerException!;
-        }
-    }
-
 }
 

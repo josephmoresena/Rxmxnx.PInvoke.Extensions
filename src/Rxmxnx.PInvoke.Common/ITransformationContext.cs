@@ -6,26 +6,24 @@
 /// </summary>
 /// <typeparam name="TSource">Type of items on the fixed memory block.</typeparam>
 /// <typeparam name="TDestination">Type of items on the reinterpreded memory block.</typeparam>
-public interface ITransformationContext<TSource, TDestination>
+public interface ITransformationContext<TSource, TDestination> : IReadOnlyTransformationContext<TSource, TDestination>
     where TSource : unmanaged
     where TDestination : unmanaged
 {
     /// <summary>
     /// Fixed context instance.
     /// </summary>
-    IFixedContext<TSource> Context { get; }
+    new IFixedContext<TSource> Context { get; }
+    /// <summary>
+    /// Fixed transformed context instance.
+    /// </summary>
+    new IFixedContext<TDestination> Transformation { get; }
     /// <summary>
     /// A <typeparamref name="TDestination"/> span over the fixed memory block. 
     /// </summary>
-    Span<TDestination> Values { get; }
+    new Span<TDestination> Values { get; }
     /// <summary>
     /// A binary span over the residual fixed memory block. 
     /// </summary>
-    Span<Byte> ResidualBytes { get; }
-
-    /// <summary>
-    /// Retrieves the current context as read-only fixed memory block transformation context.
-    /// </summary>
-    /// <returns>A <see cref="ITransformationContext{TSource, TDestination}"/> instance.</returns>
-    IReadOnlyTransformationContext<TSource, TDestination> AsReadOnly();
+    new Span<Byte> ResidualBytes { get; }
 }

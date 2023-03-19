@@ -15,6 +15,10 @@ public interface IReadOnlyTransformationContext<TSource, TDestination>
     /// </summary>
     IReadOnlyFixedContext<TSource> Context { get; }
     /// <summary>
+    /// Fixed transformed context instance.
+    /// </summary>
+    IReadOnlyFixedContext<TDestination> Transformation { get; }
+    /// <summary>
     /// A <typeparamref name="TDestination"/> span over the fixed memory block. 
     /// </summary>
     ReadOnlySpan<TDestination> Values { get; }
