@@ -83,9 +83,7 @@ public sealed class GetTransformationTest : FixedContextTestsBase
         Assert.NotNull(result);
         unsafe
         {
-            Int32 countT2 = ctx.BinaryLength / sizeof(T2);
-            Int32 offset = countT2 * sizeof(T2);
-            Assert.Equal(offset, result.Offset);
+            ContextTest(ctx, result);
         }
         if (!isReadOnly)
         {
@@ -98,6 +96,19 @@ public sealed class GetTransformationTest : FixedContextTestsBase
             Exception readOnly = Assert.Throws<InvalidOperationException>(() => ctx.GetTransformation<T2>(false));
             Assert.Equal(ReadOnlyError, readOnly.Message);
         }
+    }
+    private static unsafe void ContextTest<T, T2>(FixedContext<T> ctx, TransformationContext<T, T2> result)
+        where T : unmanaged
+        where T2 : unmanaged
+    {
+        Int32 countT2 = ctx.BinaryLength / sizeof(T2);
+        Int32 offset = countT2 * sizeof(T2);
+        FixedContext<T> ctx0 = result;
+        FixedContext<T2> ctx1 = result;
+        Assert.Equal(offset, result.Offset);
+        Assert.Equal(ctx, ctx0);
+        Assert.Equal(countT2, ctx1.Count);
+        Assert.Equal(ctx.BinaryLength, ctx1.BinaryLength);
     }
 }
 

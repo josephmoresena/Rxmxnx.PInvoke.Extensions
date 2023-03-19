@@ -44,6 +44,7 @@ public sealed class CreateReadOnlySpanTests : FixedContextTestsBase
     {
         ReadOnlySpan<T> span = ctx.CreateReadOnlySpan<T>(values.Length);
         Assert.Equal(values.Length, span.Length);
+        Assert.Equal(values.Length, ctx.Count);
         Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(values[0]), ref Unsafe.AsRef(span[0])));
 
         ctx.Unload();
