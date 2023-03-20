@@ -1,20 +1,12 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// This interface represents a context from read-only memory block fixing.
+/// s
 /// </summary>
 /// <typeparam name="T">Type of items on the read-only fixed memory block.</typeparam>
-public interface IReadOnlyFixedContext<T> where T : unmanaged
+public interface IReadOnlyFixedContext<T> : IReadOnlyFixedMemory<T>
+    where T : unmanaged
 {
-    /// <summary>
-    /// A read-only <typeparamref name="T"/> span over the fixed memory block.
-    /// </summary>
-    ReadOnlySpan<T> Values { get; }
-    /// <summary>
-    /// A read-only binary span over the fixed memory block.
-    /// </summary>
-    ReadOnlySpan<Byte> BinaryValues { get; }
-
     /// <summary>
     /// Performs a reinterpretation of <typeparamref name="T"/> fixed memory block as 
     /// <typeparamref name="TDestination"/> memory block.

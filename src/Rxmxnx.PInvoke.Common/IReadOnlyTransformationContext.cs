@@ -1,12 +1,13 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// This interface represents the reinterpretation of a <typeparamref name="TSource"/> fixed memory 
-/// block as a <typeparamref name="TDestination"/> memory block.
+/// This interface represents the reinterpretation of a read-only
+/// <typeparamref name="TSource"/> fixed memory block as a
+/// read-only <typeparamref name="TDestination"/> memory block.
 /// </summary>
 /// <typeparam name="TSource">Type of items on the fixed memory block.</typeparam>
 /// <typeparam name="TDestination">Type of items on the reinterpreded memory block.</typeparam>
-public interface IReadOnlyTransformationContext<TSource, TDestination>
+public interface IReadOnlyTransformationContext<TSource, TDestination> : IReadOnlyTransformedMemory
     where TSource : unmanaged
     where TDestination : unmanaged
 {
@@ -19,11 +20,7 @@ public interface IReadOnlyTransformationContext<TSource, TDestination>
     /// </summary>
     IReadOnlyFixedContext<TDestination> Transformation { get; }
     /// <summary>
-    /// A <typeparamref name="TDestination"/> span over the fixed memory block. 
+    /// A read-only <typeparamref name="TDestination"/> span over the fixed memory block. 
     /// </summary>
     ReadOnlySpan<TDestination> Values { get; }
-    /// <summary>
-    /// A binary span over the residual fixed memory block. 
-    /// </summary>
-    ReadOnlySpan<Byte> ResidualBytes { get; }
 }

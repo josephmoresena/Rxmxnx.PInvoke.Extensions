@@ -6,9 +6,7 @@
 /// </summary>
 /// <typeparam name="TSource">Type of items on the fixed memory block.</typeparam>
 /// <typeparam name="TDestination">Type of items on the reinterpreded memory block.</typeparam>
-internal unsafe sealed record TransformationContext<TSource, TDestination> :
-    ITransformationContext<TSource, TDestination>,
-    IReadOnlyTransformationContext<TSource, TDestination>
+internal unsafe sealed record TransformationContext<TSource, TDestination> : ITransformationContext<TSource, TDestination>, IReadOnlyTransformationContext<TSource, TDestination>
     where TSource : unmanaged
     where TDestination : unmanaged
 {
@@ -49,8 +47,8 @@ internal unsafe sealed record TransformationContext<TSource, TDestination> :
     IReadOnlyFixedContext<TDestination> IReadOnlyTransformationContext<TSource, TDestination>.Transformation => this._ctx1;
     Span<TDestination> ITransformationContext<TSource, TDestination>.Values => (this._ctx1 as IFixedContext<TDestination>)!.Values;
     ReadOnlySpan<TDestination> IReadOnlyTransformationContext<TSource, TDestination>.Values => (this._ctx1 as IReadOnlyFixedContext<TDestination>)!.Values;
-    Span<Byte> ITransformationContext<TSource, TDestination>.ResidualBytes => (this._ctx0 as IFixedContext<TSource>)!.BinaryValues[this._offset..];
-    ReadOnlySpan<Byte> IReadOnlyTransformationContext<TSource, TDestination>.ResidualBytes => (this._ctx0 as IReadOnlyFixedContext<TSource>)!.BinaryValues[this._offset..];
+    Span<Byte> ITransformedMemory.ResidualBytes => this._ctx0.CreateBinarySpan(this._offset);
+    ReadOnlySpan<Byte> IReadOnlyTransformedMemory.ResidualBytes => this._ctx0.CreateReadOnlyBinarySpan(this._offset);
 
     /// <summary>
     /// Implicit operator. <see cref="TransformationContext{TSource, TDestination}"/> -> <see cref="FixedContext{TSource}"/>.

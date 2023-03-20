@@ -20,10 +20,8 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IR
     /// <inheritdoc/>
     protected override Type Type => typeof(T);
 
-    Span<T> IFixedContext<T>.Values => base.CreateSpan<T>(this._count);
-    Span<Byte> IFixedContext<T>.BinaryValues => base.CreateSpan<Byte>(base.BinaryLength);
-    ReadOnlySpan<T> IReadOnlyFixedContext<T>.Values => base.CreateReadOnlySpan<T>(this._count);
-    ReadOnlySpan<Byte> IReadOnlyFixedContext<T>.BinaryValues => base.CreateReadOnlySpan<Byte>(base.BinaryLength);
+    Span<T> IFixedMemory<T>.Values => base.CreateSpan<T>(this._count);
+    ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => base.CreateReadOnlySpan<T>(this._count);
 
     /// <summary>
     /// Constructor.
@@ -67,7 +65,7 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IR
     public TransformationContext<T, TDestination> GetTransformation<TDestination>(Boolean isReadOnly = false) where TDestination : unmanaged
     {
         this.ValidateOperation(isReadOnly);
-        Int32 count = this.BinaryLength / sizeof(TDestination);
+        Int32 count = this.GetCount<TDestination>();
         Int32 offset = count * sizeof(TDestination);
         return new(this, new(this, count), offset);
     }
