@@ -12,6 +12,8 @@ internal sealed record NullableReference<TValue> : NullableInput<TValue>, IMutab
     /// </summary>
     private readonly Object _writeLock = new();
 
+    ref TValue? IReferenceable<TValue?>.Reference => ref base._instance;
+
     /// <inheritdoc/>
     internal override void SetInstance(in TValue? newValue)
     {

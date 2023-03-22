@@ -5,7 +5,7 @@
 /// referenced.
 /// </summary>
 /// <typeparam name="T">Type of both wrapped and referenced value.</typeparam>
-public interface IReferenceableWrapper<T> : IWrapper<T>, IReferenceable<T>
+public interface IReferenceableWrapper<T> : IWrapper<T>, IReadOnlyReferenceable<T>
 {
     /// <summary>
     /// Creates a new <see cref="IWrapper{TValue}"/> object from a 

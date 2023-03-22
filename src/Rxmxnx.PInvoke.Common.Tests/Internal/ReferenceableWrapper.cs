@@ -1,13 +1,13 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.Internal;
 
-public sealed class ReferenceableWrapper<T> : IReferenceable<T>
+public sealed class ReferenceableWrapper<T> : IReadOnlyReferenceable<T>
 {
-    private readonly IReferenceable<T> _referenceable;
+    private readonly IReadOnlyReferenceable<T> _referenceable;
 
-    public ReferenceableWrapper(IReferenceable<T> referenceable)
+    public ReferenceableWrapper(IReadOnlyReferenceable<T> referenceable)
     {
         this._referenceable = referenceable;
     }
 
-    ref readonly T? IReferenceable<T>.Reference => ref this._referenceable.Reference;
+    ref readonly T? IReadOnlyReferenceable<T>.Reference => ref this._referenceable.Reference;
 }

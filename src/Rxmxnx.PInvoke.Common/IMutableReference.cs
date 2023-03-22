@@ -5,7 +5,7 @@
 /// referenced and whose value can be modified.
 /// </summary>
 /// <typeparam name="T">Type of both wrapped and referenced value.</typeparam>
-public interface IMutableReference<T> : IReferenceableWrapper<T>, IMutableWrapper<T>
+public interface IMutableReference<T> : IReferenceableWrapper<T>, IMutableWrapper<T>, IReferenceable<T>
 {
     /// <summary>
     /// Creates a new <see cref="IMutableWrapper{TValue}"/> object from a <typeparamref name="TValue"/> value.

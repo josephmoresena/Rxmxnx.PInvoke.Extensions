@@ -12,6 +12,8 @@ internal sealed record Reference<TValue> : Input<TValue>, IMutableReference<TVal
     /// </summary>
     private readonly Object _writeLock = new();
 
+    ref TValue IReferenceable<TValue>.Reference => ref base._instance;
+
     /// <inheritdoc/>
     internal override void SetInstance(in TValue newValue)
     {
