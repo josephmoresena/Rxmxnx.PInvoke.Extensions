@@ -6,7 +6,7 @@
 /// </summary>
 /// <typeparam name="TSource">Type of items on the fixed memory block.</typeparam>
 /// <typeparam name="TDestination">Type of items on the reinterpreded memory block.</typeparam>
-public interface ITransformationContext<TSource, TDestination> : IReadOnlyTransformationContext<TSource, TDestination>, ITransformedMemory
+public interface ITransformationContext<TSource, TDestination> : IReadOnlyTransformationContext<TSource, TDestination>, ITransformedMemory<IFixedContext<TDestination>, IReadOnlyFixedContext<TDestination>>
     where TSource : unmanaged
     where TDestination : unmanaged
 {
@@ -14,10 +14,6 @@ public interface ITransformationContext<TSource, TDestination> : IReadOnlyTransf
     /// Fixed context instance.
     /// </summary>
     new IFixedContext<TSource> Context { get; }
-    /// <summary>
-    /// Fixed transformed context instance.
-    /// </summary>
-    new IFixedContext<TDestination> Transformation { get; }
     /// <summary>
     /// A <typeparamref name="TDestination"/> span over the fixed memory block. 
     /// </summary>

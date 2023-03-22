@@ -43,8 +43,8 @@ internal unsafe sealed record TransformationContext<TSource, TDestination> : ITr
 
     IFixedContext<TSource> ITransformationContext<TSource, TDestination>.Context => this._ctx0;
     IReadOnlyFixedContext<TSource> IReadOnlyTransformationContext<TSource, TDestination>.Context => this._ctx0;
-    IFixedContext<TDestination> ITransformationContext<TSource, TDestination>.Transformation => this._ctx1;
-    IReadOnlyFixedContext<TDestination> IReadOnlyTransformationContext<TSource, TDestination>.Transformation => this._ctx1;
+    IFixedContext<TDestination> ITransformedMemory<IFixedContext<TDestination>, IReadOnlyFixedContext<TDestination>>.Transformation => this._ctx1;
+    IReadOnlyFixedContext<TDestination> IReadOnlyTransformedMemory<IReadOnlyFixedContext<TDestination>>.Transformation => this._ctx1;
     Span<TDestination> ITransformationContext<TSource, TDestination>.Values => (this._ctx1 as IFixedContext<TDestination>)!.Values;
     ReadOnlySpan<TDestination> IReadOnlyTransformationContext<TSource, TDestination>.Values => (this._ctx1 as IReadOnlyFixedContext<TDestination>)!.Values;
     Span<Byte> ITransformedMemory.ResidualBytes => this._ctx0.CreateBinarySpan(this._offset);

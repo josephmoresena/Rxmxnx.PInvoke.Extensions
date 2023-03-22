@@ -6,7 +6,7 @@
 /// </summary>
 /// <typeparam name="TSource">Type of the fixed memory reference.</typeparam>
 /// <typeparam name="TDestination">Type of the reinterpreded memory reference.</typeparam>
-public interface ITransformationReference<TSource, TDestination> : IReferenceable<TDestination>, ITransformedMemory
+public interface ITransformationReference<TSource, TDestination> : IReferenceable<TDestination>, ITransformedMemory<IFixedContext<TDestination>, IReadOnlyFixedContext<TDestination>>
     where TSource : unmanaged
     where TDestination : unmanaged
 {
@@ -14,8 +14,4 @@ public interface ITransformationReference<TSource, TDestination> : IReferenceabl
     /// Fixed reference instance.
     /// </summary>
     IFixedReference<TSource> Fixed { get; }
-    /// <summary>
-    /// Fixed transformed reference instance.
-    /// </summary>
-    IFixedContext<TDestination> Transformation { get; }
 }
