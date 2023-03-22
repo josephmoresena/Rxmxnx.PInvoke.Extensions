@@ -140,22 +140,6 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
         => value is not CString valueNotNull || valueNotNull._length == 0;
 
     /// <summary>
-    /// Retrieves the internal binary data from a given <see cref="CString"/>.
-    /// </summary>
-    /// <param name="value">A non-reference <see cref="CString"/> instance.</param>
-    /// <returns>A <see cref="Byte"/> array with UTF-8 text.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
-    /// <exception cref="InvalidOperationException"><paramref name="value"/> does not contains the UTF-8 text.</exception>
-    public static Byte[] GetBytes(CString value)
-    {
-        ArgumentNullException.ThrowIfNull(value);
-        if ((Byte[]?)value._data is Byte[] array)
-            return array;
-        else
-            throw new InvalidOperationException(nameof(value) + " does not contains the UTF-8 text.");
-    }
-
-    /// <summary>
     /// Creates a new <see cref="CString"/> instance from <paramref name="func"/>.
     /// </summary>
     /// <param name="func">A <see cref="ReadOnlySpanFunc{Byte}"/> delegate that returns a Utf8 string non-literal.</param>
