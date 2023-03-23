@@ -12,6 +12,7 @@ public interface IReadOnlyFixedContext<T> : IReadOnlyFixedMemory<T>
     /// <typeparamref name="TDestination"/> memory block.
     /// </summary>
     /// <typeparam name="TDestination">Type of items on the reinterpreded memory block.</typeparam>
-    /// <returns>A <see cref="ITransformationContext{T,TDestination}"/> instance.</returns>
-    IReadOnlyTransformationContext<T, TDestination> Transformation<TDestination>() where TDestination : unmanaged;
+    /// <param name="residual">Output. Residual read-only memory from transformation.</param>
+    /// <returns>A <see cref="IReadOnlyFixedContext{TDestination}"/> instance.</returns>
+    IReadOnlyFixedContext<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual) where TDestination : unmanaged;
 }

@@ -12,16 +12,35 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IR
     /// </summary>
     private readonly Int32 _count;
 
+    /// <inheritdoc/>
+    public override Int32 BinaryOffset => default;
+    /// <inheritdoc/>
+    public override Type? Type => typeof(T);
     /// <summary>
     /// Number of <typeparamref name="T"/> items in memory block.
     /// </summary>
     public Int32 Count => this._count;
 
-    /// <inheritdoc/>
-    protected override Type Type => typeof(T);
-
     Span<T> IFixedMemory<T>.Values => base.CreateSpan<T>(this._count);
     ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => base.CreateReadOnlySpan<T>(this._count);
+    IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IFixedMemory residual)
+    {
+        IFixedContext<TDestination> result = this.GetTransformation<TDestination>(out FixedOffset fixedOffset);
+        residual = fixedOffset;
+        return result;
+    }
+    IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
+    {
+        IReadOnlyFixedContext<TDestination> result = this.GetTransformation<TDestination>(out FixedOffset fixedOffset, true);
+        residual = fixedOffset;
+        return result;
+    }
+    IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
+    {
+        IFixedContext<TDestination> result = this.GetTransformation<TDestination>(out FixedOffset fixedOffset, true);
+        residual = fixedOffset;
+        return result;
+    }
 
     /// <summary>
     /// Constructor.
@@ -53,20 +72,19 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IR
     /// <inheritdoc/>
     public override Int32 GetHashCode() => base.GetHashCode();
 
-    ITransformationContext<T, TDestination> IFixedContext<T>.Transformation<TDestination>() => this.GetTransformation<TDestination>();
-    IReadOnlyTransformationContext<T, TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>() => this.GetTransformation<TDestination>(true);
-
     /// <summary>
-    /// Creates a <see cref="TransformationContext{T, TDestination}"/> instance.
+    /// Creates a <see cref="FixedContext{TDestination}"/> instance.
     /// </summary>
     /// <typeparam name="TDestination">Type of items on the reinterpreded memory block.</typeparam>
+    /// <param name="fixedOffset">Output. <see cref="FixedOffset"/> instance.</param>
     /// <param name="isReadOnly">Indicates whether current operation is read-only one.</param>
-    /// <returns>A <see cref="TransformationContext{T, TDestination}"/> instance.</returns>
-    public TransformationContext<T, TDestination> GetTransformation<TDestination>(Boolean isReadOnly = false) where TDestination : unmanaged
+    /// <returns>A <see cref="FixedContext{TDestination}"/> instance.</returns>
+    public FixedContext<TDestination> GetTransformation<TDestination>(out FixedOffset fixedOffset, Boolean isReadOnly = false) where TDestination : unmanaged
     {
         this.ValidateOperation(isReadOnly);
         Int32 count = this.GetCount<TDestination>();
         Int32 offset = count * sizeof(TDestination);
-        return new(this, new(this, count), offset);
+        fixedOffset = new(this, offset);
+        return new(this, count);
     }
 }

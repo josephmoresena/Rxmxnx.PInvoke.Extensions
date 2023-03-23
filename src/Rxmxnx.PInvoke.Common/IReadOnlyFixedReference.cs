@@ -11,8 +11,9 @@ public interface IReadOnlyFixedReference<T> : IReadOnlyReferenceable<T>, IReadOn
     /// <typeparamref name="TDestination"/> memory reference.
     /// </summary>
     /// <typeparam name="TDestination">Type of the reinterpreded memory reference.</typeparam>
+    /// <param name="residual">Output. Residual read-only memory from transformation.</param>
     /// <returns>
-    /// A <see cref="IReadOnlyTransformationReference{TSource, TDestination}"/> instance.
+    /// A <see cref="IReadOnlyFixedReference{TDestination}"/> instance.
     /// </returns>
-    IReadOnlyTransformationReference<T, TDestination> Transformation<TDestination>() where TDestination : unmanaged;
+    IReadOnlyFixedReference<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual) where TDestination : unmanaged;
 }

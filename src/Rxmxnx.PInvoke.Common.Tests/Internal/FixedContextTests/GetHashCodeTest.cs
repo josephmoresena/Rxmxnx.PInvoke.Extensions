@@ -50,11 +50,22 @@ public sealed class GetHashCodeTest : FixedContextTestsBase
         fixed (T* ptrValue = values)
         {
             Int32 binaryLength = values.Length * sizeof(T);
-            Int32 hash = HashCode.Combine(new IntPtr(ptrValue), binaryLength, false, typeof(T));
-            Int32 hashReadOnly = HashCode.Combine(new IntPtr(ptrValue), binaryLength, true, typeof(T));
+            HashCode hash = new();
+            HashCode hashReadOnly = new();
 
-            Assert.Equal(!isReadOnly, hash.Equals(ctx.GetHashCode()));
-            Assert.Equal(isReadOnly, hashReadOnly.Equals(ctx.GetHashCode()));
+            hash.Add(new IntPtr(ptrValue));
+            hash.Add(0);
+            hash.Add(binaryLength);
+            hash.Add(false);
+            hash.Add(typeof(T));
+            hashReadOnly.Add(new IntPtr(ptrValue));
+            hashReadOnly.Add(0);
+            hashReadOnly.Add(binaryLength);
+            hashReadOnly.Add(true);
+            hashReadOnly.Add(typeof(T));
+
+            Assert.Equal(!isReadOnly, hash.ToHashCode().Equals(ctx.GetHashCode()));
+            Assert.Equal(isReadOnly, hashReadOnly.ToHashCode().Equals(ctx.GetHashCode()));
 
             TransformationTest<T, Boolean>(ctx, isReadOnly, values.Length);
             TransformationTest<T, Byte>(ctx, isReadOnly, values.Length);

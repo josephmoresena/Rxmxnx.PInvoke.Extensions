@@ -11,6 +11,16 @@ public interface IFixedContext<T> : IReadOnlyFixedContext<T>, IFixedMemory<T> wh
     /// <typeparamref name="TDestination"/> memory block.
     /// </summary>
     /// <typeparam name="TDestination">Type of items on the reinterpreded memory block.</typeparam>
-    /// <returns>A <see cref="ITransformationContext{T,TDestination}"/> instance.</returns>
-    new ITransformationContext<T, TDestination> Transformation<TDestination>() where TDestination : unmanaged;
+    /// <param name="residual">Output. Residual memory from transformation.</param>
+    /// <returns>A <see cref="IFixedContext{TDestination}"/> instance.</returns>
+    IFixedContext<TDestination> Transformation<TDestination>(out IFixedMemory residual) where TDestination : unmanaged;
+
+    /// <summary>
+    /// Performs a reinterpretation of <typeparamref name="T"/> fixed memory block as 
+    /// <typeparamref name="TDestination"/> memory block.
+    /// </summary>
+    /// <typeparam name="TDestination">Type of items on the reinterpreded memory block.</typeparam>
+    /// <param name="residual">Output. Residual read-only memory from transformation.</param>
+    /// <returns>A <see cref="IReadOnlyFixedContext{TDestination}"/> instance.</returns>
+    new IFixedContext<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual) where TDestination : unmanaged;
 }

@@ -25,11 +25,15 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
     /// <summary>
     /// Memory type.
     /// </summary>
-    protected abstract Type Type { get; }
+    public abstract Type? Type { get; }
+    /// <summary>
+    /// Memory offset.
+    /// </summary>
+    public abstract Int32 BinaryOffset { get; }
     /// <summary>
     /// Memory block size in bytes.
     /// </summary>
-    public Int32 BinaryLength => this._binaryLength;
+    public Int32 BinaryLength => this._binaryLength - this.BinaryOffset;
 
     Span<Byte> IFixedMemory.Bytes => this.CreateBinarySpan();
     ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => this.CreateReadOnlyBinarySpan();
@@ -73,6 +77,7 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
         this.ValidateReferenceSize<TValue>();
         return ref Unsafe.AsRef<TValue>(this._ptr);
     }
+
     /// <summary>
     /// Creates a read-only reference of a <typeparamref name="TValue"/> value over
     /// the memory block.
@@ -88,6 +93,7 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
         this.ValidateReferenceSize<TValue>();
         return ref Unsafe.AsRef<TValue>(this._ptr);
     }
+
     /// <summary>
     /// Creates a <see cref="Span{TValue}"/> instance over the memory block whose 
     /// length is <paramref name="length"/>.
@@ -100,6 +106,7 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
         this.ValidateOperation();
         return new(this._ptr, length);
     }
+
     /// <summary>
     /// Creates a <see cref="ReadOnlySpan{TValue}"/> instance over the memory block whose 
     /// length is <paramref name="length"/>.
@@ -112,30 +119,29 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
         this.ValidateOperation(true);
         return new(this._ptr, length);
     }
+
     /// <summary>
     /// Creates a <see cref="Span{Byte}"/> instance over the memory block.
     /// </summary>
-    /// <param name="binaryOffset">Offset bytes of the resulting span.</param>
     /// <returns>A <see cref="Span{TValue}"/> instance over the memory block.</returns>
-    public Span<Byte> CreateBinarySpan(Int32 binaryOffset = 0)
+    public Span<Byte> CreateBinarySpan()
     {
         this.ValidateOperation();
-        void* ptr = (new IntPtr(this._ptr) + binaryOffset).ToPointer();
-        Int32 length = this._binaryLength - binaryOffset;
-        return new(ptr, length);
+        void* ptr = this.GetMemoryOffset();
+        return new(ptr, this.BinaryLength);
     }
+
     /// <summary>
     /// Creates a <see cref="ReadOnlySpan{Byte}"/> instance over the memory block.
     /// </summary>
-    /// <param name="binaryOffset">Offset bytes of the resulting span.</param>
     /// <returns>A <see cref="ReadOnlySpan{TValue}"/> instance over the memory block.</returns>
-    public ReadOnlySpan<Byte> CreateReadOnlyBinarySpan(Int32 binaryOffset = 0)
+    public ReadOnlySpan<Byte> CreateReadOnlyBinarySpan()
     {
         this.ValidateOperation(true);
-        void* ptr = (new IntPtr(this._ptr) + binaryOffset).ToPointer();
-        Int32 length = this._binaryLength - binaryOffset;
-        return new(ptr, length);
+        void* ptr = this.GetMemoryOffset();
+        return new(ptr, this.BinaryLength);
     }
+
     /// <summary>
     /// Invalidates current context.
     /// </summary>
@@ -152,6 +158,7 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
         if (!isReadOnly && this._isReadOnly)
             throw new InvalidOperationException("The current instance is read-only.");
     }
+
     /// <summary>
     /// Retrieves the number of <typeparamref name="TValue"/> items that can be
     /// referenced into the fixed memory block.
@@ -166,13 +173,24 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
 
     /// <inheritdoc/>
     public virtual Boolean Equals(FixedMemory? other)
-        => other is not null && this._ptr == other._ptr &&
-        this._binaryLength == other._binaryLength && this._isReadOnly == other._isReadOnly;
+        => other is not null && this.GetMemoryOffset() == other.GetMemoryOffset() &&
+        this.BinaryLength == other.BinaryLength && this._isReadOnly == other._isReadOnly;
+
     /// <inheritdoc/>
     [ExcludeFromCodeCoverage]
     public override Boolean Equals(Object? obj) => this.Equals(obj as FixedMemory);
     /// <inheritdoc/>
-    public override Int32 GetHashCode() => HashCode.Combine(new IntPtr(this._ptr), this._binaryLength, this._isReadOnly, this.Type);
+    public override Int32 GetHashCode()
+    {
+        HashCode result = new();
+        result.Add(new IntPtr(this._ptr));
+        result.Add(this.BinaryOffset);
+        result.Add(this._binaryLength);
+        result.Add(this._isReadOnly);
+        if(this.Type is not null)
+            result.Add(this.Type);
+        return result.ToHashCode();
+    }
 
     /// <summary>
     /// Validates the size of the referenced value type from current instance.
@@ -184,5 +202,15 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
         if (this._binaryLength < sizeofT)
             throw new InsufficientMemoryException($"The memory block size is insufficent to contain a value of {typeof(TValue)} type.");
     }
-}
 
+    /// <summary>
+    /// Retrieves the memory offset for current instance.
+    /// </summary>
+    /// <returns>Pointer to offset memory.</returns>
+    private void* GetMemoryOffset()
+    {
+        IntPtr ptr = new(this._ptr);
+        IntPtr result = ptr + this.BinaryOffset;
+        return result.ToPointer();
+    }
+}
