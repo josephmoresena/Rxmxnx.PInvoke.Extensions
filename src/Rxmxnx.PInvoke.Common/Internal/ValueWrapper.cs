@@ -9,7 +9,7 @@ internal abstract record ValueWrapper<T> : IReferenceableWrapper<T>
     /// <summary>
     /// Internal <typeparamref name="T"/> object.
     /// </summary>
-    protected T _instance;
+    private T _instance;
 
     /// <summary>
     /// Reference to instance <typeparamref name="T"/> object.
@@ -30,7 +30,12 @@ internal abstract record ValueWrapper<T> : IReferenceableWrapper<T>
     /// <summary>
     /// Internal method to set instance object.
     /// </summary>
+    /// <param name="wrapper">A <see cref="ValueWrapper{T}"/> instance.</param>
+    /// <param name="writeLock">Wrapper's write lock.</param>
     /// <param name="newValue">New <typeparamref name="T"/> object to set as instance object.</param>
-    [ExcludeFromCodeCoverage]
-    internal virtual void SetInstance(in T newValue) => throw new InvalidOperationException();
+    protected static void SetInstance(ValueWrapper<T> wrapper, Object writeLock, in T newValue)
+    {
+        lock (writeLock)
+            wrapper._instance = newValue;
+    }
 }

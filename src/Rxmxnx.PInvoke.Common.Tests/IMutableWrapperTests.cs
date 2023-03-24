@@ -44,6 +44,7 @@ public sealed class IMutableWrapperTests
 
         await Task.WhenAll(inputTest, nullTest1, nullTest2);
     }
+
     private static void Value<T>() where T : unmanaged
     {
         T value = fixture.Create<T>();
@@ -54,11 +55,12 @@ public sealed class IMutableWrapperTests
         Assert.True(result.Equals(value));
         Assert.Equal(Equals(value, value2), result.Equals(value2));
 
-        result.SetInstance(value2);
+        result.Value = value2;
         Assert.Equal(value2, result.Value);
         Assert.True(result.Equals(value2));
         Assert.Equal(Equals(value2, value), result.Equals(value));
     }
+
     private static void Nullable<T>(Boolean nullInput) where T : unmanaged
     {
         T? value = !nullInput ? fixture.Create<T>() : null;
@@ -68,7 +70,7 @@ public sealed class IMutableWrapperTests
         Assert.Equal(value, result.Value);
         Assert.Equal(Equals(value, value2), result.Equals(value2));
 
-        result.SetInstance(value2);
+        result.Value = value2;
         Assert.Equal(value2, result.Value);
         Assert.True(result.Equals(value2));
         Assert.Equal(Equals(value2, value), result.Equals(value));

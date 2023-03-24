@@ -8,10 +8,11 @@
 public interface IMutableWrapper<T> : IWrapper<T>
 {
     /// <summary>
-    /// Sets the instance object.
+    /// Wrapped <typeparamref name="T"/> object.
     /// </summary>
-    /// <param name="newValue">New <typeparamref name="T"/> object to set as instance object.</param>
-    void SetInstance(T? newValue);
+    new T? Value { get; set; }
+
+    T? IWrapper<T>.Value => this.Value;
 
     /// <summary>
     /// Creates a new <see cref="IMutableWrapper{TValue}"/> object from a <typeparamref name="TValue"/> value.

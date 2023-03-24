@@ -4,7 +4,7 @@
 /// Context from memory block fixing.
 /// </summary>
 /// <typeparam name="T">Type of items on the fixed memory block.</typeparam>
-internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IReadOnlyFixedContext<T>, IEquatable<FixedContext<T>>
+internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IEquatable<FixedContext<T>>
     where T : unmanaged
 {
     /// <summary>
@@ -23,24 +23,6 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IR
 
     Span<T> IFixedMemory<T>.Values => base.CreateSpan<T>(this._count);
     ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => base.CreateReadOnlySpan<T>(this._count);
-    IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IFixedMemory residual)
-    {
-        IFixedContext<TDestination> result = this.GetTransformation<TDestination>(out FixedOffset fixedOffset);
-        residual = fixedOffset;
-        return result;
-    }
-    IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
-    {
-        IReadOnlyFixedContext<TDestination> result = this.GetTransformation<TDestination>(out FixedOffset fixedOffset, true);
-        residual = fixedOffset;
-        return result;
-    }
-    IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
-    {
-        IFixedContext<TDestination> result = this.GetTransformation<TDestination>(out FixedOffset fixedOffset, true);
-        residual = fixedOffset;
-        return result;
-    }
 
     /// <summary>
     /// Constructor.
@@ -63,14 +45,24 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IR
         this._count = count;
     }
 
-    /// <inheritdoc/>
-    public Boolean Equals(FixedContext<T>? other) => this.Equals(other as FixedMemory);
-    /// <inheritdoc/>
-    public override Boolean Equals(FixedMemory? other) => base.Equals(other as FixedContext<T>);
-    /// <inheritdoc/>
-    public override bool Equals(Object? obj) => base.Equals(obj as FixedContext<T>);
-    /// <inheritdoc/>
-    public override Int32 GetHashCode() => base.GetHashCode();
+    IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IFixedMemory residual)
+    {
+        IFixedContext<TDestination> result = this.GetTransformation<TDestination>(out FixedOffset fixedOffset);
+        residual = fixedOffset;
+        return result;
+    }
+    IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
+    {
+        IReadOnlyFixedContext<TDestination> result = this.GetTransformation<TDestination>(out FixedOffset fixedOffset, true);
+        residual = fixedOffset;
+        return result;
+    }
+    IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
+    {
+        IFixedContext<TDestination> result = this.GetTransformation<TDestination>(out FixedOffset fixedOffset, true);
+        residual = fixedOffset;
+        return result;
+    }
 
     /// <summary>
     /// Creates a <see cref="FixedContext{TDestination}"/> instance.
@@ -87,4 +79,13 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IR
         fixedOffset = new(this, offset);
         return new(this, count);
     }
+
+    /// <inheritdoc/>
+    public Boolean Equals(FixedContext<T>? other) => this.Equals(other as FixedMemory);
+    /// <inheritdoc/>
+    public override Boolean Equals(FixedMemory? other) => base.Equals(other as FixedContext<T>);
+    /// <inheritdoc/>
+    public override Boolean Equals(Object? obj) => base.Equals(obj as FixedContext<T>);
+    /// <inheritdoc/>
+    public override Int32 GetHashCode() => base.GetHashCode();
 }

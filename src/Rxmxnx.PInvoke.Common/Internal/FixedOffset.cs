@@ -1,7 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
-/// Fixed memory offset.
+/// Fixed memory offset class.
 /// </summary>
 internal sealed class FixedOffset : FixedMemory, IEquatable<FixedOffset>
 {
@@ -18,9 +18,9 @@ internal sealed class FixedOffset : FixedMemory, IEquatable<FixedOffset>
     /// <summary>
     /// Constructor.
     /// </summary>
-    /// <param name="ctx"><see cref="FixedMemory"/> instance.</param>
+    /// <param name="mem"><see cref="FixedMemory"/> instance.</param>
     /// <param name="offset">Memory offset.</param>
-    public FixedOffset(FixedMemory ctx, Int32 offset) : base(ctx)
+    public FixedOffset(FixedMemory mem, Int32 offset) : base(mem)
     {
         this._offset = offset;
     }

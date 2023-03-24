@@ -55,13 +55,13 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
     /// <summary>
     /// Constructor.
     /// </summary>
-    /// <param name="ctx">Fixed context of memory block.</param>
-    protected FixedMemory(FixedMemory ctx)
+    /// <param name="mem">Fixed context of memory block.</param>
+    protected FixedMemory(FixedMemory mem)
     {
-        this._ptr = ctx._ptr;
-        this._binaryLength = ctx._binaryLength;
-        this._isValid = ctx._isValid;
-        this._isReadOnly = ctx._isReadOnly;
+        this._ptr = mem._ptr;
+        this._binaryLength = mem._binaryLength;
+        this._isValid = mem._isValid;
+        this._isReadOnly = mem._isReadOnly;
     }
 
     /// <summary>
@@ -145,7 +145,28 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
     /// <summary>
     /// Invalidates current context.
     /// </summary>
-    public void Unload() => this._isValid.SetInstance(false);
+    public void Unload() => this._isValid.Value = false;
+
+    /// <inheritdoc/>
+    public virtual Boolean Equals(FixedMemory? other)
+        => other is not null && this.GetMemoryOffset() == other.GetMemoryOffset() &&
+        this.BinaryLength == other.BinaryLength && this._isReadOnly == other._isReadOnly;
+
+    /// <inheritdoc/>
+    [ExcludeFromCodeCoverage]
+    public override Boolean Equals(Object? obj) => this.Equals(obj as FixedMemory);
+    /// <inheritdoc/>
+    public override Int32 GetHashCode()
+    {
+        HashCode result = new();
+        result.Add(new IntPtr(this._ptr));
+        result.Add(this.BinaryOffset);
+        result.Add(this._binaryLength);
+        result.Add(this._isReadOnly);
+        if(this.Type is not null)
+            result.Add(this.Type);
+        return result.ToHashCode();
+    }
 
     /// <summary>
     /// Validates any operation over the fixed memory block.
@@ -171,32 +192,11 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
     protected Int32 GetCount<TValue>() where TValue : unmanaged
         => this._binaryLength / sizeof(TValue);
 
-    /// <inheritdoc/>
-    public virtual Boolean Equals(FixedMemory? other)
-        => other is not null && this.GetMemoryOffset() == other.GetMemoryOffset() &&
-        this.BinaryLength == other.BinaryLength && this._isReadOnly == other._isReadOnly;
-
-    /// <inheritdoc/>
-    [ExcludeFromCodeCoverage]
-    public override Boolean Equals(Object? obj) => this.Equals(obj as FixedMemory);
-    /// <inheritdoc/>
-    public override Int32 GetHashCode()
-    {
-        HashCode result = new();
-        result.Add(new IntPtr(this._ptr));
-        result.Add(this.BinaryOffset);
-        result.Add(this._binaryLength);
-        result.Add(this._isReadOnly);
-        if(this.Type is not null)
-            result.Add(this.Type);
-        return result.ToHashCode();
-    }
-
     /// <summary>
     /// Validates the size of the referenced value type from current instance.
     /// </summary>
     /// <typeparam name="TValue">Type of the referenced value.</typeparam>
-    private void ValidateReferenceSize<TValue>() where TValue : unmanaged
+    protected void ValidateReferenceSize<TValue>() where TValue : unmanaged
     {
         Int32 sizeofT = sizeof(TValue);
         if (this._binaryLength < sizeofT)

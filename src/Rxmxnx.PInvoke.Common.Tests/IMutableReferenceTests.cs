@@ -63,7 +63,7 @@ public sealed class IMutableReferenceTests
         Assert.False(result.Equals(result2));
         Assert.True(result.Equals(result3));
 
-        result.SetInstance(value2);
+        result.Value = value2;
         Assert.Equal(value2, result.Value);
         Assert.Equal(value2, refValue);
         Assert.True(result.Equals(value2));
@@ -91,7 +91,7 @@ public sealed class IMutableReferenceTests
         Assert.False(result.Equals(result2));
         Assert.True(result.Equals(result3));
 
-        result.SetInstance(value2);
+        result.Value = value2;
         Assert.Equal(value2, result.Value);
         Assert.Equal(value2, refValue);
         Assert.True(result.Equals(value2));
