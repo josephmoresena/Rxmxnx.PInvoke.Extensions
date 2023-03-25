@@ -39,10 +39,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Rxmxnx.PInvoke.Common\Rxmxnx.PInvoke.Common.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Remove="Internal\BinaryConcatenatorTests\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Internal\BinaryConcatenatorTests\" />
-  </ItemGroup>
 </Project>

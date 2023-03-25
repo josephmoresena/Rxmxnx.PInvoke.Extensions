@@ -200,7 +200,7 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
     {
         Int32 sizeofT = sizeof(TValue);
         if (this._binaryLength < sizeofT)
-            throw new InsufficientMemoryException($"The memory block size is insufficent to contain a value of {typeof(TValue)} type.");
+            throw new InsufficientMemoryException($"The current instance is insufficent to contain a value of {typeof(TValue)} type.");
     }
 
     /// <summary>

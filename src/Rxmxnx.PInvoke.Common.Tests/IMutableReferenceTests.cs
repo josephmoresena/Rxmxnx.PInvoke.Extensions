@@ -48,11 +48,12 @@ public sealed class IMutableReferenceTests
     {
         T value = fixture.Create<T>();
         T value2 = fixture.Create<T>();
+        T value3 = fixture.Create<T>();
         var result = IMutableReference<T>.Create(value);
         var result2 = IReferenceableWrapper<T>.Create(value);
         var result3 = new ReferenceableWrapper<T>(result);
         ref readonly T refValue = ref result.Reference;
-        ref T mutableValueRef = ref Unsafe.AsRef(result.Reference);
+        ref T mutableValueRef = ref result.Reference;
         Assert.NotNull(result);
         Assert.Equal(value, result.Value);
         Assert.Equal(value, refValue);
@@ -72,16 +73,21 @@ public sealed class IMutableReferenceTests
         Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref value2));
         Assert.False(result.Equals(result2));
         Assert.True(result.Equals(result3));
+
+        result.Reference = value3;
+        Assert.Equal(value3, result.Value);
+        Assert.Equal(value3, refValue);
     }
     private static void Nullable<T>(Boolean nullInput) where T : unmanaged
     {
         T? value = !nullInput ? fixture.Create<T>() : null;
         T? value2 = fixture.Create<Boolean>() ? fixture.Create<T>() : null;
+        T? value3 = fixture.Create<Boolean>() ? fixture.Create<T>() : null;
         var result = IMutableReference<T>.CreateNullable(value);
         var result2 = IReferenceableWrapper<T>.CreateNullable(value);
         var result3 = new ReferenceableWrapper<T?>(result);
         ref readonly T? refValue = ref result.Reference;
-        ref T? mutableValueRef = ref Unsafe.AsRef(result.Reference);
+        ref T? mutableValueRef = ref result.Reference;
         Assert.NotNull(result);
         Assert.Equal(value, refValue);
         Assert.Equal(value, result.Value);
@@ -100,6 +106,10 @@ public sealed class IMutableReferenceTests
         Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref value2));
         Assert.False(result.Equals(result2));
         Assert.True(result.Equals(result3));
+
+        result.Reference = value3;
+        Assert.Equal(value3, result.Value);
+        Assert.Equal(value3, refValue);
     }
 }
 
