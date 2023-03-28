@@ -60,7 +60,7 @@ internal unsafe sealed class FixedReference<T> : FixedMemory, IFixedReference<T>
     /// <returns>A <see cref="FixedReference{TDestination}"/> instance.</returns>
     public FixedReference<TDestination> GetTransformation<TDestination>(out FixedOffset fixedOffset, Boolean isReadOnly = false) where TDestination : unmanaged
     {
-        this.ValidateOperation(isReadOnly);
+        base.ValidateOperation(isReadOnly);
         base.ValidateReferenceSize<TDestination>();
         fixedOffset = new FixedOffset(this, sizeof(TDestination));
         return new(this);

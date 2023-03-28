@@ -73,7 +73,7 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
     /// <returns>A <see cref="FixedContext{TDestination}"/> instance.</returns>
     public FixedContext<TDestination> GetTransformation<TDestination>(out FixedOffset fixedOffset, Boolean isReadOnly = false) where TDestination : unmanaged
     {
-        this.ValidateOperation(isReadOnly);
+        base.ValidateOperation(isReadOnly);
         Int32 count = this.GetCount<TDestination>();
         Int32 offset = count * sizeof(TDestination);
         fixedOffset = new(this, offset);
