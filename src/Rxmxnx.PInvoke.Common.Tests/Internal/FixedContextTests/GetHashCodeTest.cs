@@ -45,7 +45,7 @@ public sealed class GetHashCodeTest : FixedContextTestsBase
 
     private static unsafe void Test<T>(FixedContext<T> ctx, T[] values) where T : unmanaged
     {
-        Boolean isReadOnly = IsReadOnly(ctx);
+        Boolean isReadOnly = ctx.IsReadOnly;
 
         fixed (T* ptrValue = values)
         {

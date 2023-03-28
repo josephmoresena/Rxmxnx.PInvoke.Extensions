@@ -34,6 +34,10 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
     /// Memory block size in bytes.
     /// </summary>
     public Int32 BinaryLength => this._binaryLength - this.BinaryOffset;
+    /// <summary>
+    /// Indicates whether current instance remains valid.
+    /// </summary>
+    public Boolean IsReadOnly => this._isReadOnly;
 
     Span<Byte> IFixedMemory.Bytes => this.CreateBinarySpan();
     ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => this.CreateReadOnlyBinarySpan();

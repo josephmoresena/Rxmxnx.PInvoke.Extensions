@@ -86,7 +86,7 @@ public sealed class EqualsTest : FixedContextTestsBase
         where T : unmanaged
         where TInt : unmanaged
     {
-        Boolean equal = IsReadOnly(ctx) == IsReadOnly(ctx2) && typeof(TInt) == typeof(T);
+        Boolean equal = ctx.IsReadOnly == ctx2.IsReadOnly && typeof(TInt) == typeof(T);
 
         Assert.Equal(equal, ctx2.Equals(ctx));
         Assert.Equal(equal, ctx2.Equals((Object)ctx));

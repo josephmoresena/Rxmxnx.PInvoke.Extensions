@@ -3,39 +3,21 @@
 /// <summary>
 /// Base class for <see cref="FixedReference{T}"/> tests.
 /// </summary>
-public abstract class FixedReferenceTestsBase
+public abstract class FixedReferenceTestsBase : FixedMemoryTestsBase
 {
-    /// <summary>
-    /// Message when <see cref="FixedReference{T}"/> instance is read-only.
-    /// </summary>
-    public static readonly String ReadOnlyError = "The current instance is read-only.";
-    /// <summary>
-    /// Message when <see cref="FixedReference{T}"/> instance is invalid.
-    /// </summary>
-    public static readonly String InvalidError = "The current instance is not valid.";
-    /// <summary>
-    /// Message when <see cref="FixedReference{T}"/> instance is not enough for hold a reference.
-    /// </summary>
-    public static readonly String InvalidSizeFormat = "The current instance is insufficent to contain a value of {0} type.";
-
-    /// <summary>
-    /// Fixture instance.
-    /// </summary>
-    protected static readonly IFixture fixture = new Fixture();
-
     /// <summary>
     /// Invokes the action with a created <see cref="FixedReference{T}"/> instantance passed
     /// as parameter.
     /// </summary>
     /// <typeparam name="T">Type of value in <see cref="FixedReference{T}"/>.</typeparam>
-    /// <param name="reference">Reference over the <see cref="FixedReference{T}"/> instance is created.</param>
+    /// <param name="refValue">Reference over the <see cref="FixedReference{T}"/> instance is created.</param>
     /// <param name="readOnly">Indicates whether the created <see cref="FixedReference{T}"/> instance should be readonly.</param>
     /// <param name="actionTest">Action test to <see cref="FixedReference{T}"/> instance to be used.</param>
-    internal void WithFixed<T>(ref T reference, Boolean readOnly, Action<FixedReference<T>, IntPtr> actionTest) where T : unmanaged
+    internal void WithFixed<T>(ref T refValue, Boolean readOnly, Action<FixedReference<T>, IntPtr> actionTest) where T : unmanaged
     {
         unsafe
         {
-            fixed (void* ptr = &reference)
+            fixed (void* ptr = &refValue)
                 actionTest(new(ptr, readOnly), new(ptr));
         }
     }

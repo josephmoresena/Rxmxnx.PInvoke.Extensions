@@ -3,22 +3,8 @@
 /// <summary>
 /// Base class for <see cref="FixedContext{T}"/> tests.
 /// </summary>
-public abstract class FixedContextTestsBase
-{
-    /// <summary>
-    /// Message when <see cref="FixedContext{T}"/> instance is read-only.
-    /// </summary>
-    public static readonly String ReadOnlyError = "The current instance is read-only.";
-    /// <summary>
-    /// Message when <see cref="FixedContext{T}"/> instance is invalid.
-    /// </summary>
-    public static readonly String InvalidError = "The current instance is not valid.";
-
-    /// <summary>
-    /// Fixture instance.
-    /// </summary>
-    protected static readonly IFixture fixture = new Fixture();
-
+public abstract class FixedContextTestsBase : FixedMemoryTestsBase
+{    
     /// <summary>
     /// Invokes the action with a created <see cref="FixedContext{T}"/> instantance passed
     /// as parameter.
@@ -52,29 +38,6 @@ public abstract class FixedContextTestsBase
             fixed (void* ptr = &MemoryMarshal.GetReference(span))
                 actionTest(new(ptr, span.Length, readOnly), obj);
         }
-    }
-
-    /// <summary>
-    /// Indicates whether <see cref="FixedContext{T}"/> instance is read-only.
-    /// </summary>
-    /// <typeparam name="T">Type of <see cref="FixedContext{T}"/> value.</typeparam>
-    /// <param name="ctx"><see cref="FixedContext{T}"/> instance.</param>
-    /// <returns>
-    /// <see langword="true"/> if <paramref name="ctx"/> is read-only; otherwise,
-    /// <see langword="false"/>.
-    /// </returns>
-    internal static Boolean IsReadOnly<T>(FixedContext<T> ctx) where T : unmanaged
-    {
-        Boolean isReadOnly = false;
-        try
-        {
-            _ = ctx.CreateSpan<T>(0);
-        }
-        catch (Exception)
-        {
-            isReadOnly = true;
-        }
-        return isReadOnly;
     }
 }
 

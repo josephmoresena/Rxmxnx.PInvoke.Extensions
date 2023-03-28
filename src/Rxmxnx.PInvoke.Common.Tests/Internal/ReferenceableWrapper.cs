@@ -1,6 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.Internal;
 
-public sealed class ReferenceableWrapper<T> : IReadOnlyReferenceable<T>
+public sealed class ReferenceableWrapper<T> : IReadOnlyReferenceable<T>, IReferenceable<T>
 {
     private readonly IReadOnlyReferenceable<T> _referenceable;
 
@@ -10,4 +10,6 @@ public sealed class ReferenceableWrapper<T> : IReadOnlyReferenceable<T>
     }
 
     ref readonly T? IReadOnlyReferenceable<T>.Reference => ref this._referenceable.Reference;
+
+    ref T? IReferenceable<T>.Reference => ref Unsafe.AsRef(this._referenceable.Reference);
 }

@@ -42,7 +42,7 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 
     private static void Test<T>(FixedContext<T> ctx, T[] values) where T : unmanaged
     {
-        Boolean isReadOnly = IsReadOnly(ctx);
+        Boolean isReadOnly = ctx.IsReadOnly;
 
         Test<T, Boolean>(ctx, isReadOnly);
         Test<T, Byte>(ctx, isReadOnly);

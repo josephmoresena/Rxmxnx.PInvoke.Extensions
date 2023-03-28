@@ -63,6 +63,7 @@ public sealed class IMutableReferenceTests
         Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref value));
         Assert.False(result.Equals(result2));
         Assert.True(result.Equals(result3));
+        Assert.True((result as IReadOnlyReferenceable<T>).Equals(result3));
 
         result.Value = value2;
         Assert.Equal(value2, result.Value);
@@ -73,6 +74,7 @@ public sealed class IMutableReferenceTests
         Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref value2));
         Assert.False(result.Equals(result2));
         Assert.True(result.Equals(result3));
+        Assert.True((result as IReadOnlyReferenceable<T>).Equals(result3));
 
         result.Reference = value3;
         Assert.Equal(value3, result.Value);
