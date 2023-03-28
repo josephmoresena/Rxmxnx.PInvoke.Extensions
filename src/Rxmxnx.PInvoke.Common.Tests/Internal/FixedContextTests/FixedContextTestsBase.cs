@@ -4,7 +4,7 @@
 /// Base class for <see cref="FixedContext{T}"/> tests.
 /// </summary>
 public abstract class FixedContextTestsBase : FixedMemoryTestsBase
-{    
+{
     /// <summary>
     /// Invokes the action with a created <see cref="FixedContext{T}"/> instantance passed
     /// as parameter.

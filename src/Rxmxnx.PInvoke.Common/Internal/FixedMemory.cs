@@ -167,7 +167,7 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
         result.Add(this.BinaryOffset);
         result.Add(this._binaryLength);
         result.Add(this._isReadOnly);
-        if(this.Type is not null)
+        if (this.Type is not null)
             result.Add(this.Type);
         return result.ToHashCode();
     }

@@ -77,7 +77,7 @@ public sealed class CreateReferenceTest : FixedReferenceTestsBase
         Int32 size = sizeof(T);
         Int32 size2 = sizeof(T2);
 
-        if(size < size2)
+        if (size < size2)
         {
             Exception invalidSize = Assert.Throws<InsufficientMemoryException>(() => fref.CreateReference<T2>());
             Assert.Equal(String.Format(InvalidSizeFormat, typeof(T2)), invalidSize.Message);

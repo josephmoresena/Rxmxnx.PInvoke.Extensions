@@ -19,7 +19,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
         this._lengths = values.Select(c => c?.Length ?? default).ToArray();
         this._value = CreateBuffer(this._lengths, values);
     }
-    
+
     /// <summary>
     /// Returns a reference to this instance of <see cref="CStringSequence"/>.
     /// </summary>
