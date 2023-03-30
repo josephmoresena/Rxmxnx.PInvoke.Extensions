@@ -7,6 +7,7 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// Encapsulates a method that has no parameters and returns a <see cref="ReadOnlySpan{T}"/> instance.
 /// </summary>
+/// <typeparam name="T">The type of objects in the resulting span.</typeparam>
 /// <returns>A <see cref="ReadOnlySpan{T}"/> instance.</returns>
 public delegate ReadOnlySpan<T> ReadOnlySpanFunc<T>();
 

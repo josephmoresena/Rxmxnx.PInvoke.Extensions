@@ -184,34 +184,8 @@ public partial class CString
     /// </item>
     /// </list>
     /// </returns>
-    private static Int32 TextCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<Char> textB, StringComparison comparisonType = StringComparison.CurrentCulture)
-    {
-        Int32 result = 0;
-        StringComparison? ignoreCaseComparison = default;
-
-        while (!textA.IsEmpty && !textB.IsEmpty && result == 0)
-        {
-            Boolean utf8Decoded = Rune.DecodeFromUtf8(textA, out Rune utf8Rune, out Int32 bytesConsumed) == OperationStatus.Done;
-            Boolean utf16Decoded = Rune.DecodeFromUtf16(textB, out Rune utf16Rune, out Int32 charsConsumed) == OperationStatus.Done;
-
-            if (utf8Decoded && utf16Decoded)
-                result = RuneCompare(utf8Rune, utf16Rune, comparisonType, out ignoreCaseComparison);
-            else
-                result = utf8Decoded ? 1 : 0;
-
-            textA = textA[bytesConsumed..];
-            textB = textB[charsConsumed..];
-        }
-
-        if (ignoreCaseComparison.HasValue)
-        {
-            Int32 resultIgnoreCase = TextCompare(textA, textB, ignoreCaseComparison.Value);
-            if (resultIgnoreCase != 0)
-                result = resultIgnoreCase;
-        }
-
-        return result != 0 || textA.IsEmpty && textB.IsEmpty ? result : !textA.IsEmpty ? 1 : 0;
-    }
+    private static Int32 TextCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<Byte> textB, StringComparison comparisonType = StringComparison.CurrentCulture)
+        => TextCompare(textA, textB, Rune.DecodeFromUtf8, Encoding.UTF8.GetString, comparisonType);
 
     /// <summary>
     /// Compares two specified texts using the specified rules, and returns an integer that indicates their relative position in
@@ -240,33 +214,117 @@ public partial class CString
     /// </item>
     /// </list>
     /// </returns>
-    private static Int32 TextCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<Byte> textB, StringComparison comparisonType = StringComparison.CurrentCulture)
+    private static Int32 TextCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<Char> textB, StringComparison comparisonType = StringComparison.CurrentCulture)
+        => TextCompare(textA, textB, Rune.DecodeFromUtf16, CreateString, comparisonType);
+
+    /// <summary>
+    /// Compares two specified texts using the specified rules, and returns an integer that indicates their relative position in
+    /// the sort order.
+    /// </summary>
+    /// <param name="textA">The first text to compare.</param>
+    /// <param name="textB">The second text instance.</param>
+    /// <param name="decodeRune">Delegate for getting <see cref="Rune"/> instances from <paramref name="textB"/>.</param>
+    /// <param name="getString">Delegate for getting <see cref="String"/> representation of <paramref name="textB"/>.</param>
+    /// <param name="comparisonType">One of the enumeration values that specifies the rules to use in the comparision.</param>
+    /// <returns>
+    /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
+    /// <list type="table">
+    /// <listheader>
+    /// <term>Value</term><description>Condition</description>
+    /// </listheader>
+    /// <item>
+    /// <term>Less than zero</term>
+    /// <description><paramref name="textA"/> precedes <paramref name="textB"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Zero</term>
+    /// <description><paramref name="textA"/> is in the same position as <paramref name="textB"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Greater than zero</term>
+    /// <description><paramref name="textA"/> follows <paramref name="textB"/> in the sort order.</description>
+    /// </item>
+    /// </list>
+    /// </returns>
+    private static Int32 TextCompare<T>(ReadOnlySpan<Byte> textA, ReadOnlySpan<T> textB, DecodeRuneFrom<T> decodeRune, GetStringDelegate<T> getString, StringComparison comparisonType)
+        where T : unmanaged
     {
         Int32 result = 0;
         StringComparison? ignoreCaseComparison = default;
 
         while (!textA.IsEmpty && !textB.IsEmpty && result == 0)
         {
-            Boolean utf8Decoded1 = Rune.DecodeFromUtf8(textA, out Rune utf8Rune1, out Int32 bytesConsumed1) == OperationStatus.Done;
-            Boolean utf8Decoded2 = Rune.DecodeFromUtf8(textB, out Rune utf8Rune2, out Int32 bytesConsumed2) == OperationStatus.Done;
+            Boolean utf8Decoded = Rune.DecodeFromUtf8(textA, out Rune utf8Rune, out Int32 bytesConsumed) == OperationStatus.Done;
+            Boolean utf16Decoded = decodeRune(textB, out Rune utf16Rune, out Int32 charsConsumed) == OperationStatus.Done;
 
-            if (utf8Decoded1 && utf8Decoded2)
-                result = RuneCompare(utf8Rune1, utf8Rune2, comparisonType, out ignoreCaseComparison);
+            if (utf8Decoded && utf16Decoded)
+                result = TextCompare(utf8Rune, utf16Rune, textA, textB, comparisonType, getString, out ignoreCaseComparison);
             else
-                result = utf8Decoded1 ? 1 : 0;
+                result = utf8Decoded ? 1 : 0;
 
-            textA = textA[bytesConsumed1..];
-            textB = textB[bytesConsumed2..];
+            textA = textA[bytesConsumed..];
+            textB = textB[charsConsumed..];
         }
 
         if (ignoreCaseComparison.HasValue)
         {
-            Int32 resultIgnoreCase = TextCompare(textA, textB, ignoreCaseComparison.Value);
+            Int32 resultIgnoreCase = TextCompare(textA, textB, decodeRune, getString, ignoreCaseComparison.Value);
             if (resultIgnoreCase != 0)
                 result = resultIgnoreCase;
         }
 
         return result != 0 || textA.IsEmpty && textB.IsEmpty ? result : !textA.IsEmpty ? 1 : 0;
+    }
+
+    /// <summary>
+    /// Compares two specified texts using the specified rules, and returns an integer that indicates their relative position in
+    /// the sort order.
+    /// </summary>
+    /// <typeparam name="T">Type of chars in <paramref name="textB"/>.</typeparam>
+    /// <param name="runA">First rune in <paramref name="textA"/>.</param>
+    /// <param name="runB">First rune in <paramref name="textB"/>.</param>
+    /// <param name="textA">The first text to compare.</param>
+    /// <param name="textB">The second text instance.</param>
+    /// <param name="comparisonType">One of the enumeration values that specifies the rules to use in the comparision.</param>
+    /// <param name="getString">Delegate for getting <see cref="String"/> representation of <paramref name="textB"/>.</param>
+    /// <param name="ignoreCaseComparison">
+    /// Output. The case insensitive comparison in which <paramref name="runA"/> and <paramref name="runB"/> 
+    /// are in the same position.
+    /// </param>
+    /// <returns>
+    /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
+    /// <list type="table">
+    /// <listheader>
+    /// <term>Value</term><description>Condition</description>
+    /// </listheader>
+    /// <item>
+    /// <term>Less than zero</term>
+    /// <description><paramref name="textA"/> precedes <paramref name="textB"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Zero</term>
+    /// <description><paramref name="textA"/> is in the same position as <paramref name="textB"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Greater than zero</term>
+    /// <description><paramref name="textA"/> follows <paramref name="textB"/> in the sort order.</description>
+    /// </item>
+    /// </list>
+    /// </returns>
+    private static Int32 TextCompare<T>(Rune runA, Rune runB, ReadOnlySpan<Byte> textA, ReadOnlySpan<T> textB, StringComparison comparisonType, GetStringDelegate<T> getString, out StringComparison? ignoreCaseComparison)
+        where T : unmanaged
+    {
+        Boolean different = runA != runB;
+        Boolean unicodeA = different && IsUnicode(runA);
+        Boolean unicodeB = different && IsUnicode(runB);
+
+        if (unicodeA && unicodeB)
+        {
+            ignoreCaseComparison = default;
+            return String.Compare(Encoding.UTF8.GetString(textA), getString(textB), comparisonType);
+        }
+        else
+            return RuneCompare(runA, runB, comparisonType, out ignoreCaseComparison);
     }
 
     /// <summary>
@@ -277,7 +335,8 @@ public partial class CString
     /// <param name="runB">The second <see cref="Rune"/> instance.</param>
     /// <param name="comparisonType">One of the enumeration values that specifies the rules to use in the comparision.</param>
     /// <param name="ignoreCaseComparison">
-    /// The case insensitive comparison in which <paramref name="runA"/> and <paramref name="runB"/> are in the same position.
+    /// Output. The case insensitive comparison in which <paramref name="runA"/> and <paramref name="runB"/> 
+    /// are in the same position.
     /// </param>
     /// <returns>
     /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
@@ -330,6 +389,24 @@ public partial class CString
             StringComparison.Ordinal => StringComparison.InvariantCultureIgnoreCase,
             _ => default(StringComparison?)
         };
+
+    /// <summary>
+    /// Indicates whether <paramref name="rune"/> is unicode.
+    /// </summary>
+    /// <param name="rune"><see cref="Rune"/> instance.</param>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="rune"/> is unicode; otherwise, <see langword="false"/>.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static Boolean IsUnicode(Rune rune) => !rune.IsAscii && rune.IsBmp;
+
+    /// <summary>
+    /// Creates a <see cref="String"/> from the unicode characters indicated in the specified read-only span. 
+    /// </summary>
+    /// <param name="chars">A read-only span of unicode charateres.</param>
+    /// <returns>The <see cref="String"/> representation of <paramref name="chars"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static String CreateString(ReadOnlySpan<Char> chars) => new(chars);
 
     /// <summary>
     /// Indicates whether <paramref name="data"/> contains a null-terminated UTF-8 text.
