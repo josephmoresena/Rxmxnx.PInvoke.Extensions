@@ -188,6 +188,7 @@ public partial class CString
     {
         Int32 result = 0;
         StringComparison? ignoreCaseComparison = default;
+
         while (!textA.IsEmpty && !textB.IsEmpty && result == 0)
         {
             Boolean utf8Decoded = Rune.DecodeFromUtf8(textA, out Rune utf8Rune, out Int32 bytesConsumed) == OperationStatus.Done;
@@ -243,6 +244,7 @@ public partial class CString
     {
         Int32 result = 0;
         StringComparison? ignoreCaseComparison = default;
+
         while (!textA.IsEmpty && !textB.IsEmpty && result == 0)
         {
             Boolean utf8Decoded1 = Rune.DecodeFromUtf8(textA, out Rune utf8Rune1, out Int32 bytesConsumed1) == OperationStatus.Done;
