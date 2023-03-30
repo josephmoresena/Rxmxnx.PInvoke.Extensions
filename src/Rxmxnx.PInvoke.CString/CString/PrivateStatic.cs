@@ -99,7 +99,7 @@ public partial class CString
     /// <param name="comparisonType">One of the enumeration values that specifies how the texts will be compared.</param>
     /// <returns><see langword="true"/> if both texts are equals; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static Boolean TextEquals(ReadOnlySpan<Byte> textA, ReadOnlySpan<Char> textB, StringComparison comparisonType = StringComparison.Ordinal)
+    private static Boolean TextEquals(ReadOnlySpan<Byte> textA, ReadOnlySpan<Char> textB, StringComparison comparisonType = StringComparison.CurrentCulture)
     {
         Boolean result = true;
 
@@ -128,7 +128,7 @@ public partial class CString
     /// <param name="textB">UTF-16 text characteres.</param>
     /// <param name="comparisonType">One of the enumeration values that specifies how the texts will be compared.</param>
     /// <returns><see langword="true"/> if both texts are equals; otherwise, <see langword="false"/>.</returns>
-    private static Boolean TextEquals(ReadOnlySpan<Byte> textA, ReadOnlySpan<Byte> textB, StringComparison comparisonType = StringComparison.Ordinal)
+    private static Boolean TextEquals(ReadOnlySpan<Byte> textA, ReadOnlySpan<Byte> textB, StringComparison comparisonType = StringComparison.CurrentCulture)
     {
         Boolean result = true;
 
@@ -189,7 +189,7 @@ public partial class CString
     /// </item>
     /// </list>
     /// </returns>
-    private static Int32 TextCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<Char> textB, StringComparison comparisonType = StringComparison.Ordinal)
+    private static Int32 TextCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<Char> textB, StringComparison comparisonType = StringComparison.CurrentCulture)
     {
         Int32 result = 0;
         while (!textA.IsEmpty && !textB.IsEmpty && result == 0)
@@ -236,19 +236,19 @@ public partial class CString
     /// </item>
     /// </list>
     /// </returns>
-    private static Int32 TextCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<Byte> textB, StringComparison comparisonType = StringComparison.Ordinal)
+    private static Int32 TextCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<Byte> textB, StringComparison comparisonType = StringComparison.CurrentCulture)
     {
         Int32 result = 0;
         while (!textA.IsEmpty && !textB.IsEmpty && result == 0)
         {
-            Boolean utf8Decoded1 = Rune.DecodeFromUtf8(textA, out Rune utf8Rune, out Int32 bytesConsumed) == OperationStatus.Done;
-            Boolean utf8Decoded2 = Rune.DecodeFromUtf8(textB, out Rune utf16Rune, out Int32 charsConsumed) == OperationStatus.Done;
+            Boolean utf8Decoded1 = Rune.DecodeFromUtf8(textA, out Rune utf8Rune1, out Int32 bytesConsumed1) == OperationStatus.Done;
+            Boolean utf8Decoded2 = Rune.DecodeFromUtf8(textB, out Rune utf8Rune2, out Int32 bytesConsumed2) == OperationStatus.Done;
 
-            textA = textA.Slice(bytesConsumed);
-            textB = textB.Slice(charsConsumed);
+            textA = textA.Slice(bytesConsumed1);
+            textB = textB.Slice(bytesConsumed2);
 
             if (utf8Decoded1 && utf8Decoded2)
-                result = RuneCompare(utf8Rune, utf16Rune, comparisonType);
+                result = RuneCompare(utf8Rune1, utf8Rune2, comparisonType);
             else
                 result = utf8Decoded1 ? 1 : 0;
         }

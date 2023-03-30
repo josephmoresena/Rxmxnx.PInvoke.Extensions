@@ -40,7 +40,7 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </list>
     /// </returns>
     public static Int32 Compare(CString? cstrA, CString? cstrB)
-        => cstrA is null && cstrA is null ? 0 : cstrA is null ? 1 : cstrA is null ? -1 : TextCompare(cstrA, cstrA);
+        => cstrA is null && cstrA is null ? 0 : cstrA is null ? 1 : cstrA is null ? -1 : TextCompare(cstrA, cstrB);
 
     /// <summary>
     /// Compares two specified <see cref="CString"/> objects using the specified rules, and returns an integer that indicates their

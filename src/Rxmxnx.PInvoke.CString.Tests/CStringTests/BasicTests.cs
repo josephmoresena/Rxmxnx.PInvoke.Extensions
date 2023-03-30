@@ -17,7 +17,13 @@ public sealed class BasicTests
         Assert.True(CString.IsNullOrEmpty(CString.Empty));
         Assert.True(CString.IsNullOrEmpty(default));
 
+        Assert.Equal(0, empty.CompareTo(CString.Empty));
+        Assert.Equal(0, empty.CompareTo(String.Empty));
+        Assert.Equal(0, empty.CompareTo((Object)CString.Empty));
+        Assert.Equal(0, empty.CompareTo((Object)String.Empty));
+
         Assert.Throws<ArgumentNullException>(() => CString.GetBytes(default!));
+        Assert.Throws<ArgumentException>(() => empty.CompareTo(new Object()));
     }
 
     [Fact]
@@ -62,9 +68,11 @@ public sealed class BasicTests
                 Assert.Equal(cstr1.GetHashCode(), cstr2.GetHashCode());
                 Assert.Equal(cstr1.ToHexString(), cstr2.ToHexString());
                 Assert.Equal(cstr1.ToArray(), cstr2.ToArray());
+                Assert.Equal(0, cstr1.CompareTo(cstr2));
             }
             AssertFromString(cstr1);
             Assert.True(cstr1.Equals(TestSet.Utf16Text[i]));
+            Assert.Equal(0, cstr1.CompareTo(TestSet.Utf16Text[i]));
             Assert.Equal(TestSet.Utf16Text[i].GetHashCode(), cstr1.GetHashCode());
         }
     }

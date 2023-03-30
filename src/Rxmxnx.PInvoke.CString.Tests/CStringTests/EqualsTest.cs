@@ -7,9 +7,17 @@ public sealed class EqualsTest
     {
         for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
             EqualityTest(i);
+
+        for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
+        {
+            Int32 ix = Random.Shared.Next(0, TestSet.Utf16Text.Count);
+            Int32 iy = Random.Shared.Next(0, TestSet.Utf16Text.Count);
+
+            InequalityTest(ix, iy);
+        }
     }
 
-    private void EqualityTest(Int32 index)
+    private static void EqualityTest(Int32 index)
     {
         String str = TestSet.Utf16Text[index];
         String strLower = TestSet.Utf16TextLower[index];
@@ -22,7 +30,50 @@ public sealed class EqualsTest
         StringTest(cstr, str, strLower, strUpper);
         CStringTest(cstr, str, cstrLower, cstrUpper);
     }
+    private static void InequalityTest(Int32 indexA, Int32 indexB)
+    {
+        String strA = TestSet.Utf16Text[indexA];
+        String strLowerA = TestSet.Utf16TextLower[indexA];
+        String strUpperA = TestSet.Utf16TextUpper[indexA];
 
+        CString cstrA = new(TestSet.Utf8Text[indexA]);
+        CString cstrLowerA = new(TestSet.Utf8TextLower[indexA]);
+        CString cstrUpperA = new(TestSet.Utf8TextUpper[indexA]);
+
+        String strB = TestSet.Utf16Text[indexB];
+        String strLowerB = TestSet.Utf16TextLower[indexB];
+        String strUpperB = TestSet.Utf16TextUpper[indexB];
+
+        CString cstrB = new(TestSet.Utf8Text[indexB]);
+        CString cstrLowerB = new(TestSet.Utf8TextLower[indexB]);
+        CString cstrUpperB = new(TestSet.Utf8TextUpper[indexB]);
+
+        StringTest(cstrA, strA, strB);
+        StringTest(cstrA, strA, strLowerB);
+        StringTest(cstrA, strA, strUpperB);
+
+        StringTest(cstrB, strB, strA);
+        StringTest(cstrB, strB, strLowerA);
+        StringTest(cstrB, strB, strUpperA);
+
+        CStringTest(cstrA, strA, cstrB);
+        CStringTest(cstrA, strA, cstrLowerB);
+        CStringTest(cstrA, strA, cstrUpperB);
+
+        CStringTest(cstrB, strB, cstrA);
+        CStringTest(cstrB, strB, cstrLowerA);
+        CStringTest(cstrB, strB, cstrUpperA);
+    }
+    private static void StringTest(CString cstrA, String strA, String strB)
+    {
+        Assert.Equal(strA.Equals(strB), cstrA.Equals(strB));
+        Assert.Equal(strA.Equals(strB, StringComparison.CurrentCulture), cstrA.Equals(strB, StringComparison.CurrentCulture));
+        Assert.Equal(strA.Equals(strB, StringComparison.CurrentCultureIgnoreCase), cstrA.Equals(strB, StringComparison.CurrentCultureIgnoreCase));
+        Assert.Equal(strA.Equals(strB, StringComparison.InvariantCulture), cstrA.Equals(strB, StringComparison.InvariantCulture));
+        Assert.Equal(strA.Equals(strB, StringComparison.InvariantCultureIgnoreCase), cstrA.Equals(strB, StringComparison.InvariantCultureIgnoreCase));
+        Assert.Equal(strA.Equals(strB, StringComparison.Ordinal), cstrA.Equals(strB, StringComparison.Ordinal));
+        Assert.Equal(strA.Equals(strB, StringComparison.OrdinalIgnoreCase), cstrA.Equals(strB, StringComparison.OrdinalIgnoreCase));
+    }
     private static void StringTest(CString cstr, String str, String strLower, String strUpper)
     {
         Assert.True(cstr.Equals(str, StringComparison.Ordinal));
@@ -32,32 +83,46 @@ public sealed class EqualsTest
         Assert.True(cstr.Equals(str, StringComparison.CurrentCultureIgnoreCase));
         Assert.True(cstr.Equals(str, StringComparison.InvariantCultureIgnoreCase));
 
-        Assert.Equal(str.Equals(strLower), cstr.Equals(strLower, StringComparison.Ordinal));
-        Assert.Equal(str.Equals(strLower), cstr.Equals(strLower, StringComparison.CurrentCulture));
-        Assert.Equal(str.Equals(strLower), cstr.Equals(strLower, StringComparison.InvariantCulture));
+        Assert.Equal(str.Equals(strLower, StringComparison.Ordinal), cstr.Equals(strLower, StringComparison.Ordinal));
+        Assert.Equal(str.Equals(strLower, StringComparison.CurrentCulture), cstr.Equals(strLower, StringComparison.CurrentCulture));
+        Assert.Equal(str.Equals(strLower, StringComparison.InvariantCulture), cstr.Equals(strLower, StringComparison.InvariantCulture));
         Assert.True(cstr.Equals(strLower, StringComparison.OrdinalIgnoreCase));
         Assert.True(cstr.Equals(strLower, StringComparison.CurrentCultureIgnoreCase));
         Assert.True(cstr.Equals(strLower, StringComparison.InvariantCultureIgnoreCase));
 
-        Assert.Equal(str.Equals(strUpper), cstr.Equals(strUpper, StringComparison.Ordinal));
-        Assert.Equal(str.Equals(strUpper), cstr.Equals(strUpper, StringComparison.CurrentCulture));
-        Assert.Equal(str.Equals(strUpper), cstr.Equals(strUpper, StringComparison.InvariantCulture));
+        Assert.Equal(str.Equals(strUpper, StringComparison.Ordinal), cstr.Equals(strUpper, StringComparison.Ordinal));
+        Assert.Equal(str.Equals(strUpper, StringComparison.CurrentCulture), cstr.Equals(strUpper, StringComparison.CurrentCulture));
+        Assert.Equal(str.Equals(strUpper, StringComparison.InvariantCulture), cstr.Equals(strUpper, StringComparison.InvariantCulture));
         Assert.True(cstr.Equals(strUpper, StringComparison.OrdinalIgnoreCase));
         Assert.True(cstr.Equals(strUpper, StringComparison.CurrentCultureIgnoreCase));
         Assert.True(cstr.Equals(strUpper, StringComparison.InvariantCultureIgnoreCase));
     }
+    private static void CStringTest(CString cstrA, String strA, CString cstrB)
+    {
+        String strB = cstrB.ToString();
+        Assert.Equal(strA.Equals(strB), cstrA.Equals(cstrB));
+        Assert.Equal(strA.Equals(strB, StringComparison.CurrentCulture), cstrA.Equals(cstrB, StringComparison.CurrentCulture));
+        Assert.Equal(strA.Equals(strB, StringComparison.CurrentCultureIgnoreCase), cstrA.Equals(cstrB, StringComparison.CurrentCultureIgnoreCase));
+        Assert.Equal(strA.Equals(strB, StringComparison.InvariantCulture), cstrA.Equals(cstrB, StringComparison.InvariantCulture));
+        Assert.Equal(strA.Equals(strB, StringComparison.InvariantCultureIgnoreCase), cstrA.Equals(cstrB, StringComparison.InvariantCultureIgnoreCase));
+        Assert.Equal(strA.Equals(strB, StringComparison.Ordinal), cstrA.Equals(cstrB, StringComparison.Ordinal));
+        Assert.Equal(strA.Equals(strB, StringComparison.OrdinalIgnoreCase), cstrA.Equals(cstrB, StringComparison.OrdinalIgnoreCase));
+    }
     private static void CStringTest(CString cstr, String str, CString cstrLower, CString cstrUpper)
     {
-        Assert.Equal(cstrLower.Equals(str), cstr.Equals(cstrLower, StringComparison.Ordinal));
-        Assert.Equal(cstrLower.Equals(str), cstr.Equals(cstrLower, StringComparison.CurrentCulture));
-        Assert.Equal(cstrLower.Equals(str), cstr.Equals(cstrLower, StringComparison.InvariantCulture));
+        String strLower = cstrLower.ToString();
+        String strUpper = cstrUpper.ToString();
+
+        Assert.Equal(str.Equals(strLower, StringComparison.Ordinal), cstr.Equals(cstrLower, StringComparison.Ordinal));
+        Assert.Equal(str.Equals(strLower, StringComparison.CurrentCulture), cstr.Equals(cstrLower, StringComparison.CurrentCulture));
+        Assert.Equal(str.Equals(strLower, StringComparison.InvariantCulture), cstr.Equals(cstrLower, StringComparison.InvariantCulture));
         Assert.True(cstr.Equals(cstrLower, StringComparison.OrdinalIgnoreCase));
         Assert.True(cstr.Equals(cstrLower, StringComparison.CurrentCultureIgnoreCase));
         Assert.True(cstr.Equals(cstrLower, StringComparison.InvariantCultureIgnoreCase));
 
-        Assert.Equal(cstrUpper.Equals(str), cstr.Equals(cstrUpper, StringComparison.Ordinal));
-        Assert.Equal(cstrUpper.Equals(str), cstr.Equals(cstrUpper, StringComparison.CurrentCulture));
-        Assert.Equal(cstrUpper.Equals(str), cstr.Equals(cstrUpper, StringComparison.InvariantCulture));
+        Assert.Equal(str.Equals(strUpper, StringComparison.Ordinal), cstr.Equals(cstrUpper, StringComparison.Ordinal));
+        Assert.Equal(str.Equals(strUpper, StringComparison.CurrentCulture), cstr.Equals(cstrUpper, StringComparison.CurrentCulture));
+        Assert.Equal(str.Equals(strUpper, StringComparison.InvariantCulture), cstr.Equals(cstrUpper, StringComparison.InvariantCulture));
         Assert.True(cstr.Equals(cstrUpper, StringComparison.OrdinalIgnoreCase));
         Assert.True(cstr.Equals(cstrUpper, StringComparison.CurrentCultureIgnoreCase));
         Assert.True(cstr.Equals(cstrUpper, StringComparison.InvariantCultureIgnoreCase));
