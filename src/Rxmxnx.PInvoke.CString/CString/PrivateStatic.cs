@@ -102,16 +102,15 @@ public partial class CString
 
         while (!textA.IsEmpty && !textB.IsEmpty && result)
         {
-            Int32 bytesConsumed = 0;
             Int32 charsConsumed = 0;
 
             result =
-                Rune.DecodeFromUtf8(textA, out Rune utf8Rune, out bytesConsumed) == OperationStatus.Done &&
+                Rune.DecodeFromUtf8(textA, out Rune utf8Rune, out Int32 bytesConsumed) == OperationStatus.Done &&
                 Rune.DecodeFromUtf16(textB, out Rune utf16Rune, out charsConsumed) == OperationStatus.Done &&
                 RuneEquals(utf8Rune, utf16Rune, comparisonType);
 
-            textA = textA.Slice(bytesConsumed);
-            textB = textB.Slice(charsConsumed);
+            textA = textA[bytesConsumed..];
+            textB = textB[charsConsumed..];
         }
 
         return result && textA.IsEmpty && textB.IsEmpty;
@@ -131,16 +130,15 @@ public partial class CString
 
         while (!textA.IsEmpty && !textB.IsEmpty && result)
         {
-            Int32 bytesConsumed1 = 0;
             Int32 bytesConsumed2 = 0;
 
             result =
-                Rune.DecodeFromUtf8(textA, out Rune utf8Rune, out bytesConsumed1) == OperationStatus.Done &&
+                Rune.DecodeFromUtf8(textA, out Rune utf8Rune, out Int32 bytesConsumed1) == OperationStatus.Done &&
                 Rune.DecodeFromUtf8(textB, out Rune utf16Rune, out bytesConsumed2) == OperationStatus.Done &&
                 RuneEquals(utf8Rune, utf16Rune, comparisonType);
 
-            textA = textA.Slice(bytesConsumed1);
-            textB = textB.Slice(bytesConsumed2);
+            textA = textA[bytesConsumed1..];
+            textB = textB[bytesConsumed2..];
         }
 
         return result && textA.IsEmpty && textB.IsEmpty;
@@ -195,13 +193,13 @@ public partial class CString
             Boolean utf8Decoded = Rune.DecodeFromUtf8(textA, out Rune utf8Rune, out Int32 bytesConsumed) == OperationStatus.Done;
             Boolean utf16Decoded = Rune.DecodeFromUtf16(textB, out Rune utf16Rune, out Int32 charsConsumed) == OperationStatus.Done;
 
-            textA = textA.Slice(bytesConsumed);
-            textB = textB.Slice(charsConsumed);
-
             if (utf8Decoded && utf16Decoded)
                 result = RuneCompare(utf8Rune, utf16Rune, comparisonType, out ignoreCaseComparison);
             else
                 result = utf8Decoded ? 1 : 0;
+
+            textA = textA[bytesConsumed..];
+            textB = textB[charsConsumed..];
         }
 
         if (ignoreCaseComparison.HasValue)
@@ -250,13 +248,13 @@ public partial class CString
             Boolean utf8Decoded1 = Rune.DecodeFromUtf8(textA, out Rune utf8Rune1, out Int32 bytesConsumed1) == OperationStatus.Done;
             Boolean utf8Decoded2 = Rune.DecodeFromUtf8(textB, out Rune utf8Rune2, out Int32 bytesConsumed2) == OperationStatus.Done;
 
-            textA = textA.Slice(bytesConsumed1);
-            textB = textB.Slice(bytesConsumed2);
-
             if (utf8Decoded1 && utf8Decoded2)
                 result = RuneCompare(utf8Rune1, utf8Rune2, comparisonType, out ignoreCaseComparison);
             else
                 result = utf8Decoded1 ? 1 : 0;
+
+            textA = textA[bytesConsumed1..];
+            textB = textB[bytesConsumed2..];
         }
 
         if (ignoreCaseComparison.HasValue)
