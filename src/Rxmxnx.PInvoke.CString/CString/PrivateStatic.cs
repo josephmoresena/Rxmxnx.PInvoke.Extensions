@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace Rxmxnx.PInvoke;
 
@@ -90,77 +91,202 @@ public partial class CString
     }
 
     /// <summary>
-    /// Determines whether the text in <paramref name="utf8Chars"/> and the text in <paramref name="utf16Chars"/> have the same
+    /// Determines whether the text in <paramref name="textA"/> and the text in <paramref name="textB"/> have the same
     /// value. A parameter specifies the culture, case, and sort rules used in the comparison.
     /// </summary>
-    /// <param name="utf8Chars">UTF-8 text characteres.</param>
-    /// <param name="utf16Chars">UTF-16 text characteres.</param>
+    /// <param name="textA">UTF-8 text characteres.</param>
+    /// <param name="textB">UTF-16 text characteres.</param>
     /// <param name="comparisonType">One of the enumeration values that specifies how the texts will be compared.</param>
     /// <returns><see langword="true"/> if both texts are equals; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static Boolean TextEquals(ReadOnlySpan<Byte> utf8Chars, ReadOnlySpan<Char> utf16Chars, StringComparison comparisonType = StringComparison.Ordinal)
+    private static Boolean TextEquals(ReadOnlySpan<Byte> textA, ReadOnlySpan<Char> textB, StringComparison comparisonType = StringComparison.Ordinal)
     {
         Boolean result = true;
 
-        while (!utf8Chars.IsEmpty && !utf16Chars.IsEmpty && result)
+        while (!textA.IsEmpty && !textB.IsEmpty && result)
         {
             Int32 bytesConsumed = 0;
             Int32 charsConsumed = 0;
 
             result =
-                Rune.DecodeFromUtf8(utf8Chars, out Rune utf8Rune, out bytesConsumed) == OperationStatus.Done &&
-                Rune.DecodeFromUtf16(utf16Chars, out Rune utf16Rune, out charsConsumed) == OperationStatus.Done &&
+                Rune.DecodeFromUtf8(textA, out Rune utf8Rune, out bytesConsumed) == OperationStatus.Done &&
+                Rune.DecodeFromUtf16(textB, out Rune utf16Rune, out charsConsumed) == OperationStatus.Done &&
                 RuneEquals(utf8Rune, utf16Rune, comparisonType);
 
-            utf8Chars = utf8Chars.Slice(bytesConsumed);
-            utf16Chars = utf16Chars.Slice(charsConsumed);
+            textA = textA.Slice(bytesConsumed);
+            textB = textB.Slice(charsConsumed);
         }
 
-        return result && utf8Chars.IsEmpty && utf16Chars.IsEmpty;
+        return result && textA.IsEmpty && textB.IsEmpty;
     }
 
-
     /// <summary>
-    /// Determines whether the text in <paramref name="utf8Chars1"/> and the text in <paramref name="utf8Chars2"/> have the same
+    /// Determines whether the text in <paramref name="textA"/> and the text in <paramref name="textB"/> have the same
     /// value. A parameter specifies the culture, case, and sort rules used in the comparison.
     /// </summary>
-    /// <param name="utf8Chars1">UTF-8 text characteres.</param>
-    /// <param name="utf8Chars2">UTF-16 text characteres.</param>
+    /// <param name="textA">UTF-8 text characteres.</param>
+    /// <param name="textB">UTF-16 text characteres.</param>
     /// <param name="comparisonType">One of the enumeration values that specifies how the texts will be compared.</param>
     /// <returns><see langword="true"/> if both texts are equals; otherwise, <see langword="false"/>.</returns>
-    private static Boolean TextEquals(ReadOnlySpan<Byte> utf8Chars1, ReadOnlySpan<Byte> utf8Chars2, StringComparison comparisonType = StringComparison.Ordinal)
+    private static Boolean TextEquals(ReadOnlySpan<Byte> textA, ReadOnlySpan<Byte> textB, StringComparison comparisonType = StringComparison.Ordinal)
     {
         Boolean result = true;
 
-        while (!utf8Chars1.IsEmpty && !utf8Chars2.IsEmpty && result)
+        while (!textA.IsEmpty && !textB.IsEmpty && result)
         {
             Int32 bytesConsumed1 = 0;
-            Int32 charsConsumed2 = 0;
+            Int32 bytesConsumed2 = 0;
 
             result =
-                Rune.DecodeFromUtf8(utf8Chars1, out Rune utf8Rune, out bytesConsumed1) == OperationStatus.Done &&
-                Rune.DecodeFromUtf8(utf8Chars2, out Rune utf16Rune, out charsConsumed2) == OperationStatus.Done &&
+                Rune.DecodeFromUtf8(textA, out Rune utf8Rune, out bytesConsumed1) == OperationStatus.Done &&
+                Rune.DecodeFromUtf8(textB, out Rune utf16Rune, out bytesConsumed2) == OperationStatus.Done &&
                 RuneEquals(utf8Rune, utf16Rune, comparisonType);
 
-            utf8Chars1 = utf8Chars1.Slice(bytesConsumed1);
-            utf8Chars2 = utf8Chars2.Slice(charsConsumed2);
+            textA = textA.Slice(bytesConsumed1);
+            textB = textB.Slice(bytesConsumed2);
         }
 
-        return result && utf8Chars1.IsEmpty && utf8Chars2.IsEmpty;
+        return result && textA.IsEmpty && textB.IsEmpty;
     }
 
     /// <summary>
-    /// Determines whether the character in <paramref name="value1"/> and the character in <paramref name="value2"/> have the same
+    /// Determines whether the character in <paramref name="runA"/> and the character in <paramref name="runB"/> have the same
     /// value. A parameter specifies the culture, case, and sort rules used in the comparison.
     /// </summary>
-    /// <param name="value1"><see cref="Rune"/> instance.</param>
-    /// <param name="value2"><see cref="Rune"/> instance.</param>
+    /// <param name="runA"><see cref="Rune"/> instance.</param>
+    /// <param name="runB"><see cref="Rune"/> instance.</param>
     /// <param name="comparisonType">One of the enumeration values that specifies how the characters will be compared.</param>
     /// <returns><see langword="true"/> if both characters are equals; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static Boolean RuneEquals(Rune value1, Rune value2, StringComparison comparisonType)
-        => comparisonType == StringComparison.Ordinal ? value1 == value2 :
-        Char.ConvertFromUtf32(value1.Value).Equals(Char.ConvertFromUtf32(value2.Value), comparisonType);
+    private static Boolean RuneEquals(Rune runA, Rune runB, StringComparison comparisonType)
+        => comparisonType == StringComparison.Ordinal ? runA == runB :
+        Char.ConvertFromUtf32(runA.Value).Equals(Char.ConvertFromUtf32(runB.Value), comparisonType);
+
+    /// <summary>
+    /// Compares two specified texts using the specified rules, and returns an integer that indicates their relative position in
+    /// the sort order.
+    /// </summary>
+    /// <param name="textA">The first text to compare.</param>
+    /// <param name="textB">The second text instance.</param>
+    /// <param name="comparisonType">One of the enumeration values that specifies the rules to use in the comparision.</param>
+    /// <returns>
+    /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
+    /// <list type="table">
+    /// <listheader>
+    /// <term>Value</term><description>Condition</description>
+    /// </listheader>
+    /// <item>
+    /// <term>Less than zero</term>
+    /// <description><paramref name="textA"/> precedes <paramref name="textB"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Zero</term>
+    /// <description><paramref name="textA"/> is in the same position as <paramref name="textB"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Greater than zero</term>
+    /// <description><paramref name="textA"/> follows <paramref name="textB"/> in the sort order.</description>
+    /// </item>
+    /// </list>
+    /// </returns>
+    private static Int32 TextCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<Char> textB, StringComparison comparisonType = StringComparison.Ordinal)
+    {
+        Int32 result = 0;
+        while (!textA.IsEmpty && !textB.IsEmpty && result == 0)
+        {
+            Boolean utf8Decoded = Rune.DecodeFromUtf8(textA, out Rune utf8Rune, out Int32 bytesConsumed) == OperationStatus.Done;
+            Boolean utf16Decoded = Rune.DecodeFromUtf16(textB, out Rune utf16Rune, out Int32 charsConsumed) == OperationStatus.Done;
+
+            textA = textA.Slice(bytesConsumed);
+            textB = textB.Slice(charsConsumed);
+
+            if (utf8Decoded && utf16Decoded)
+                result = RuneCompare(utf8Rune, utf16Rune, comparisonType);
+            else
+                result = utf8Decoded ? 1 : 0;
+        }
+
+        return result != 0 || textA.IsEmpty && textB.IsEmpty ? result : !textA.IsEmpty ? 1 : 0;
+    }
+
+    /// <summary>
+    /// Compares two specified texts using the specified rules, and returns an integer that indicates their relative position in
+    /// the sort order.
+    /// </summary>
+    /// <param name="textA">The first text to compare.</param>
+    /// <param name="textB">The second text instance.</param>
+    /// <param name="comparisonType">One of the enumeration values that specifies the rules to use in the comparision.</param>
+    /// <returns>
+    /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
+    /// <list type="table">
+    /// <listheader>
+    /// <term>Value</term><description>Condition</description>
+    /// </listheader>
+    /// <item>
+    /// <term>Less than zero</term>
+    /// <description><paramref name="textA"/> precedes <paramref name="textB"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Zero</term>
+    /// <description><paramref name="textA"/> is in the same position as <paramref name="textB"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Greater than zero</term>
+    /// <description><paramref name="textA"/> follows <paramref name="textB"/> in the sort order.</description>
+    /// </item>
+    /// </list>
+    /// </returns>
+    private static Int32 TextCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<Byte> textB, StringComparison comparisonType = StringComparison.Ordinal)
+    {
+        Int32 result = 0;
+        while (!textA.IsEmpty && !textB.IsEmpty && result == 0)
+        {
+            Boolean utf8Decoded1 = Rune.DecodeFromUtf8(textA, out Rune utf8Rune, out Int32 bytesConsumed) == OperationStatus.Done;
+            Boolean utf8Decoded2 = Rune.DecodeFromUtf8(textB, out Rune utf16Rune, out Int32 charsConsumed) == OperationStatus.Done;
+
+            textA = textA.Slice(bytesConsumed);
+            textB = textB.Slice(charsConsumed);
+
+            if (utf8Decoded1 && utf8Decoded2)
+                result = RuneCompare(utf8Rune, utf16Rune, comparisonType);
+            else
+                result = utf8Decoded1 ? 1 : 0;
+        }
+
+        return result != 0 || textA.IsEmpty && textB.IsEmpty ? result : !textA.IsEmpty ? 1 : 0;
+    }
+
+    /// <summary>
+    /// Compares two specified <see cref="Rune"/> objects using the specified rules, and returns an integer that indicates their
+    /// relative position in the sort order.
+    /// </summary>
+    /// <param name="runA">The first <see cref="Rune"/> to compare.</param>
+    /// <param name="runB">The second <see cref="Rune"/> instance.</param>
+    /// <param name="comparisonType">One of the enumeration values that specifies the rules to use in the comparision.</param>
+    /// <returns>
+    /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
+    /// <list type="table">
+    /// <listheader>
+    /// <term>Value</term><description>Condition</description>
+    /// </listheader>
+    /// <item>
+    /// <term>Less than zero</term>
+    /// <description><paramref name="runA"/> precedes <paramref name="runB"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Zero</term>
+    /// <description><paramref name="runA"/> is in the same position as <paramref name="runB"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Greater than zero</term>
+    /// <description><paramref name="runA"/> follows <paramref name="runB"/> in the sort order.</description>
+    /// </item>
+    /// </list>
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static Int32 RuneCompare(Rune runA, Rune runB, StringComparison comparisonType)
+        => comparisonType == StringComparison.Ordinal ? runA.CompareTo(runB)  :
+        String.Compare(Char.ConvertFromUtf32(runA.Value), Char.ConvertFromUtf32(runB.Value), comparisonType);
 
     /// <summary>
     /// Indicates whether <paramref name="data"/> contains a null-terminated UTF-8 text.

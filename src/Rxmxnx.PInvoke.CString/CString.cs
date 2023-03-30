@@ -136,8 +136,8 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
         => value is String valueNotNull && TextEquals(this, valueNotNull, comparisonType);
 
     /// <inheritdoc/>
-    public override Boolean Equals([NotNullWhen(true)] Object? obj) =>
-        obj is String str ? this.Equals(str) : obj is CString cstr && Equals(cstr);
+    public override Boolean Equals([NotNullWhen(true)] Object? obj)
+        => obj is String str ? this.Equals(str) : obj is CString cstr && this.Equals(cstr);
 
     /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
