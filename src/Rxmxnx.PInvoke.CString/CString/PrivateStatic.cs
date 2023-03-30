@@ -201,7 +201,15 @@ public partial class CString
             textB = textB.Slice(charsConsumed);
 
             if (utf8Decoded && utf16Decoded)
-                result = RuneCompare(utf8Rune, utf16Rune, comparisonType);
+            {
+                result = RuneCompare(utf8Rune, utf16Rune, comparisonType, out Boolean equalIgnoreCase);
+                if (equalIgnoreCase)
+                {
+                    Int32 resultIgnoreCase = TextCompare(textA, textB, comparisonType == StringComparison.CurrentCulture ? StringComparison.CurrentCultureIgnoreCase : StringComparison.InvariantCultureIgnoreCase);
+                    if (resultIgnoreCase != 0)
+                        result = resultIgnoreCase;
+                }
+            }
             else
                 result = utf8Decoded ? 1 : 0;
         }
@@ -248,7 +256,15 @@ public partial class CString
             textB = textB.Slice(bytesConsumed2);
 
             if (utf8Decoded1 && utf8Decoded2)
-                result = RuneCompare(utf8Rune1, utf8Rune2, comparisonType);
+            {
+                result = RuneCompare(utf8Rune1, utf8Rune2, comparisonType, out Boolean equalIgnoreCase);
+                if (equalIgnoreCase)
+                {
+                    Int32 resultIgnoreCase = TextCompare(textA, textB, comparisonType == StringComparison.CurrentCulture ? StringComparison.CurrentCultureIgnoreCase : StringComparison.InvariantCultureIgnoreCase);
+                    if (resultIgnoreCase != 0)
+                        result = resultIgnoreCase;
+                }
+            }
             else
                 result = utf8Decoded1 ? 1 : 0;
         }
@@ -263,6 +279,7 @@ public partial class CString
     /// <param name="runA">The first <see cref="Rune"/> to compare.</param>
     /// <param name="runB">The second <see cref="Rune"/> instance.</param>
     /// <param name="comparisonType">One of the enumeration values that specifies the rules to use in the comparision.</param>
+    /// <param name="equalIgnoreCase">Indicates whether in a case insensitive comparison their relative position is equal.</param>
     /// <returns>
     /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
     /// <list type="table">
@@ -284,9 +301,26 @@ public partial class CString
     /// </list>
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static Int32 RuneCompare(Rune runA, Rune runB, StringComparison comparisonType)
-        => comparisonType == StringComparison.Ordinal ? runA.CompareTo(runB)  :
-        String.Compare(Char.ConvertFromUtf32(runA.Value), Char.ConvertFromUtf32(runB.Value), comparisonType);
+    private static Int32 RuneCompare(Rune runA, Rune runB, StringComparison comparisonType, out Boolean equalIgnoreCase)
+    {
+        equalIgnoreCase = false;
+        if (comparisonType == StringComparison.Ordinal)
+            return runA.CompareTo(runB);
+
+        String strA = Char.ConvertFromUtf32(runA.Value);
+        String strB = Char.ConvertFromUtf32(runB.Value);
+        Int32 result = String.Compare(strA, strB, comparisonType);
+
+        if (result != 0)
+            equalIgnoreCase = comparisonType switch
+            {
+                StringComparison.CurrentCulture => String.Compare(strA, strB, StringComparison.CurrentCultureIgnoreCase) == 0,
+                StringComparison.InvariantCulture => String.Compare(strA, strB, StringComparison.InvariantCultureIgnoreCase) == 0,
+                _ => false,
+            };
+
+        return result;
+    }
 
     /// <summary>
     /// Indicates whether <paramref name="data"/> contains a null-terminated UTF-8 text.

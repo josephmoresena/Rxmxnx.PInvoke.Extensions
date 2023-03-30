@@ -8,14 +8,13 @@ public sealed class CompareTest
         for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
             EqualityTest(i);
 
-        //for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
-        //{
-        //    Int32 ix = Random.Shared.Next(0, TestSet.Utf16Text.Count);
-        //    Int32 iy = Random.Shared.Next(0, TestSet.Utf16Text.Count);
+        for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
+        {
+            Int32 ix = Random.Shared.Next(0, TestSet.Utf16Text.Count);
+            Int32 iy = Random.Shared.Next(0, TestSet.Utf16Text.Count);
 
-        //    InequalityTest(ix, iy);
-        //}
-        //InequalityTest(47, 48);
+            InequalityTest(ix, iy);
+        }
     }
 
     private static void EqualityTest(Int32 index)
