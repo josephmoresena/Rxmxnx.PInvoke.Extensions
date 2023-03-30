@@ -76,6 +76,7 @@ internal abstract partial class ValueRegion<T> where T : unmanaged
     /// <param name="startIndex">Offset for range.</param>
     /// <param name="length">Length of range.</param>
     /// <returns>A new <see cref="ValueRegion{T}"/> instance.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ValueRegion<T> Create(ValueRegion<T> region, Int32 startIndex, Int32 length)
     {
         if (region is ManagedRegion managed)

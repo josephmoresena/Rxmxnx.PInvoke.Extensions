@@ -9,6 +9,7 @@ public partial class CString
     /// <returns>A <see cref="Byte"/> array with UTF-8 text.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
     /// <exception cref="InvalidOperationException"><paramref name="value"/> does not contains the UTF-8 text.</exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static Byte[] GetBytes(CString value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -30,6 +31,7 @@ public partial class CString
     /// Indicates whether the UTF-8 text must be written with a null-termination character 
     /// into the <see cref="Stream"/>.
     /// </param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal void Write(Stream strm, Boolean writeNullTermination)
     {
         strm.Write(this.AsSpan());
@@ -48,6 +50,7 @@ public partial class CString
     /// </param>
     /// <param name="startIndex">The first byte in current instance to write to.</param>
     /// <param name="count">The number of bytes of current instance to write to.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal void Write(Stream strm, Int32 startIndex, Int32 count)
         => strm.Write(this.AsSpan().Slice(startIndex, count));
 

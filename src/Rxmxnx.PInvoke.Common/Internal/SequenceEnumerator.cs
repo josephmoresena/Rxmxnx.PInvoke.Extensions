@@ -47,6 +47,7 @@ internal sealed class SequenceEnumerator<T> : IEnumerator, IEnumerator<T>
     void IDisposable.Dispose() { }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Boolean MoveNext()
     {
         this._index++;

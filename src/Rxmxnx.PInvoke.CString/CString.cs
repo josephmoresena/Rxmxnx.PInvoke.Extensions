@@ -92,6 +92,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     public ReadOnlySpan<Byte>.Enumerator GetEnumerator() => this.AsSpan().GetEnumerator();
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Object Clone()
     {
         ReadOnlySpan<Byte> source = this;
@@ -101,18 +102,45 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     }
 
     /// <inheritdoc/>
-    public Boolean Equals(CString? other)
+    public Boolean Equals([NotNullWhen(true)] CString? other)
         => other is CString otherNotNull && this._length == otherNotNull._length && equals(this, otherNotNull);
 
-    /// <inheritdoc/>
-    public Boolean Equals(String? other)
-        => other is String otherNotNull && this.ToString() == otherNotNull;
+    /// <summary>
+    /// Determines whether this <see cref="CString"/> and a specified <see cref="CString"/> object have the same value.
+    /// A parameter specifies the culture, case, and sort rules used in the comparison.
+    /// </summary>
+    /// <param name="value">The string to compare this instance.</param>
+    /// <param name="comparisonType">One of the enumeration values that specifies how the values will be compared.</param>
+    /// <returns>
+    /// <see langword="true"/> if the value of the <paramref name="value"/> parameter is the same as this <see cref="CString"/>;
+    /// otherwise, false.
+    /// </returns>
+    public Boolean Equals([NotNullWhen(true)] CString? value, StringComparison comparisonType)
+        => value is CString valueNotNull && TextEquals(this, valueNotNull, comparisonType);
 
     /// <inheritdoc/>
-    public override Boolean Equals(Object? obj) =>
+    public Boolean Equals([NotNullWhen(true)] String? other)
+        => other is String otherNotNull && TextEquals(this, otherNotNull);
+
+    /// <summary>
+    /// Determines whether this <see cref="CString"/> and a specified <see cref="String"/> object have the same value.
+    /// A parameter specifies the culture, case, and sort rules used in the comparison.
+    /// </summary>
+    /// <param name="value">The string to compare this instance.</param>
+    /// <param name="comparisonType">One of the enumeration values that specifies how the values will be compared.</param>
+    /// <returns>
+    /// <see langword="true"/> if the value of the <paramref name="value"/> parameter is the same as this <see cref="CString"/>;
+    /// otherwise, false.
+    /// </returns>
+    public Boolean Equals([NotNullWhen(true)] String? value, StringComparison comparisonType)
+        => value is String valueNotNull && TextEquals(this, valueNotNull, comparisonType);
+
+    /// <inheritdoc/>
+    public override Boolean Equals([NotNullWhen(true)] Object? obj) =>
         obj is String str ? this.Equals(str) : obj is CString cstr && Equals(cstr);
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override String ToString()
     {
         if (this._length == 0)

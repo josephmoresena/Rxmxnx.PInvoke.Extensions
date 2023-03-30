@@ -16,6 +16,7 @@ public interface IMutableReference<T> : IReferenceableWrapper<T>, IMutableWrappe
     /// <see cref="IMutableWrapper{TValue}"/> object which instance object is equal to 
     /// <paramref name="instance"/>.
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static new IMutableReference<TValue> Create<TValue>(in TValue instance = default) where TValue : struct
         => new Reference<TValue>(instance);
 
@@ -29,6 +30,7 @@ public interface IMutableReference<T> : IReferenceableWrapper<T>, IMutableWrappe
     /// <see cref="IMutableWrapper{TValue}"/> object which instance object is equal to 
     /// <paramref name="instance"/>.
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static new IMutableReference<TValue?> CreateNullable<TValue>(in TValue? instance = default) where TValue : struct
         => new NullableReference<TValue>(instance);
 }

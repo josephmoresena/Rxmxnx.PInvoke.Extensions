@@ -28,11 +28,19 @@ internal abstract record ValueWrapper<T> : IReferenceableWrapper<T>
     protected ValueWrapper(in T instance) => this._instance = instance;
 
     /// <summary>
+    /// Retrieves the reference to <typeparamref name="T"/> object.
+    /// </summary>
+    /// <returns>The reference to <typeparamref name="T"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected ref T GetReference() => ref this._instance;
+
+    /// <summary>
     /// Internal method to set instance object.
     /// </summary>
     /// <param name="wrapper">A <see cref="ValueWrapper{T}"/> instance.</param>
     /// <param name="writeLock">Wrapper's write lock.</param>
     /// <param name="newValue">New <typeparamref name="T"/> object to set as instance object.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected static void SetInstance(ValueWrapper<T> wrapper, Object writeLock, in T newValue)
     {
         lock (writeLock)

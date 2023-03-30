@@ -74,7 +74,7 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
     public FixedContext<TDestination> GetTransformation<TDestination>(out FixedOffset fixedOffset, Boolean isReadOnly = false) where TDestination : unmanaged
     {
         base.ValidateOperation(isReadOnly);
-        Int32 count = this.GetCount<TDestination>();
+        Int32 count = base.GetCount<TDestination>();
         Int32 offset = count * sizeof(TDestination);
         fixedOffset = new(this, offset);
         return new(this, count);

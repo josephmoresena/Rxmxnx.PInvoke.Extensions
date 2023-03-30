@@ -30,6 +30,7 @@ public partial class CString
     /// <param name="offset">Offset for segment.</param>
     /// <param name="length">Initial length for segment.</param>
     /// <returns>Final length for segment.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private Int32 GetDataLength(Int32 offset, Int32 length)
     {
         ReadOnlySpan<Byte> bytes = this._data;
@@ -51,6 +52,7 @@ public partial class CString
     /// <param name="startIndex">The first byte in current instance to write to.</param>
     /// <param name="count">The number of bytes of current instance to write to.</param>
     /// <returns>A task that represents the asynchronous write operation.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private Task GetWriteTask(Stream strm, Int32 startIndex, Int32 count)
         => (Byte[]?)this._data is Byte[] array ? strm.WriteAsync(array, startIndex, count) :
         Task.Run(() => this.Write(strm, startIndex, count));

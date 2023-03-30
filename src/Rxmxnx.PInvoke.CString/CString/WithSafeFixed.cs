@@ -7,6 +7,7 @@ public partial class CString
     /// address until <paramref name="action"/> finish.
     /// </summary>
     /// <param name="action">A <see cref="FixedAction{T}"/> delegate.></param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WithSafeFixed(ReadOnlyFixedAction<Byte> action)
     {
         ArgumentNullException.ThrowIfNull(action);
@@ -35,6 +36,7 @@ public partial class CString
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
     /// <param name="action">A <see cref="ReadOnlyFixedAction{Byte, TArg}"/> delegate.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WithSafeFixed<TArg>(TArg arg, ReadOnlyFixedAction<Byte, TArg> action)
     {
         ArgumentNullException.ThrowIfNull(action);
@@ -63,6 +65,7 @@ public partial class CString
     /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="func">A <see cref="FixedFunc{T, TResult}"/> delegate.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public TResult WithSafeFixed<TResult>(ReadOnlyFixedFunc<Byte, TResult> func)
     {
         ArgumentNullException.ThrowIfNull(func);
@@ -93,6 +96,7 @@ public partial class CString
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
     /// <param name="func">A <see cref="FixedFunc{T, TResult}"/> delegate.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public TResult WithSafeFixed<TArg, TResult>(TArg arg, ReadOnlyFixedFunc<Byte, TArg, TResult> func)
     {
         ArgumentNullException.ThrowIfNull(func);

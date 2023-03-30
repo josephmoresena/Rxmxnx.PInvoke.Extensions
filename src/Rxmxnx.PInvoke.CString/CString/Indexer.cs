@@ -76,6 +76,7 @@ public partial class CString : IEnumerableSequence<Byte>
     /// </param>
     /// <param name="length">The number of characters in the substring.</param>
     /// <exception cref="ArgumentOutOfRangeException"/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void ThrowSubstringArgumentOutOfRange(Int32 startIndex, Int32 length)
     {
         if (startIndex < 0)

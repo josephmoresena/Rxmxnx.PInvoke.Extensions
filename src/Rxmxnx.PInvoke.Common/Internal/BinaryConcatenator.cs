@@ -76,6 +76,7 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
     /// Writes <paramref name="value"/> in current instance.
     /// </summary>
     /// <param name="value">Value to write.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected abstract void WriteValue(T value);
 
     /// <summary>
@@ -83,6 +84,7 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
     /// </summary>
     /// <param name="value">Value to write.</param>
     /// <returns>A taks that represents the asynchronous write operation.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected abstract Task WriteValueAsync(T value);
 
     /// <summary>

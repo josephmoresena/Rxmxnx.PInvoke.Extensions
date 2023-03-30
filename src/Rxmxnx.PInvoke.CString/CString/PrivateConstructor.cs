@@ -128,6 +128,7 @@ public partial class CString
         /// </summary>
         /// <param name="bytes">UTF8 bytes.</param>
         /// <returns>UTF8 String length contains <paramref name="bytes"/> information.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Int32 GetUtf8StringLength(ReadOnlySpan<Byte> bytes)
         {
             Int32 result = (bytes.Length + 1) / sizeof(Char);

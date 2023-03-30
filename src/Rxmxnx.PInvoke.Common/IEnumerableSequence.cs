@@ -26,7 +26,8 @@ public interface IEnumerableSequence<out T> : IEnumerable, IEnumerable<T>
     /// Creates a <see cref="IEnumerator{Byte}"/> for <see cref="IEnumerable{Byte}"/>
     /// implementation.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The default <see cref="IEnumerable{T}"/> instance.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private IEnumerator<T> CreateEnumerator() => new SequenceEnumerator<T>(this);
 }
 

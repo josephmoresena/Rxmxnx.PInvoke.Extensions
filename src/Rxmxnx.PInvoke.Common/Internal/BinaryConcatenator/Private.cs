@@ -52,6 +52,7 @@ internal partial class BinaryConcatenator<T>
     /// <summary>
     /// Initialize current instance delegate.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void InitializeDelegates()
     {
         if (!this._isEmpty(this._separator))
@@ -80,6 +81,7 @@ internal partial class BinaryConcatenator<T>
     /// sets the delegates for separator writing.
     /// </summary>
     /// <param name="value">UTF-8 bytes to write.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void InitialWrite(ReadOnlySpan<Byte> value)
     {
         if (!value.IsEmpty)
@@ -96,6 +98,7 @@ internal partial class BinaryConcatenator<T>
     /// sets the delegates for separator writing.
     /// </summary>
     /// <param name="value">Value to write.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void InitialWrite(T? value)
     {
         if (!this._isEmpty(value))
@@ -112,6 +115,7 @@ internal partial class BinaryConcatenator<T>
     /// the separator.
     /// </summary>
     /// <param name="value">UTF-8 bytes to write.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WriteWithSeparator(ReadOnlySpan<Byte> value)
     {
         if (!value.IsEmpty)
@@ -126,6 +130,7 @@ internal partial class BinaryConcatenator<T>
     /// the separator.
     /// </summary>
     /// <param name="value">Value to write.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WriteWithSeparator(T? value)
     {
         if (!this._isEmpty(value))
@@ -139,6 +144,7 @@ internal partial class BinaryConcatenator<T>
     /// Writes <paramref name="value"/> in current instance.
     /// </summary>
     /// <param name="value">UTF-8 bytes to write.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void FinalWrite(ReadOnlySpan<Byte> value)
     {
         if (!value.IsEmpty)
@@ -149,6 +155,7 @@ internal partial class BinaryConcatenator<T>
     /// Writes <paramref name="value"/> in current instance.
     /// </summary>
     /// <param name="value">UTF-8 bytes to write.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void FinalWrite(T? value)
     {
         if (!this._isEmpty(value))
@@ -161,6 +168,7 @@ internal partial class BinaryConcatenator<T>
     /// </summary>
     /// <param name="value">Value to write.</param>
     /// <returns>A taks that represents the asynchronous write operation.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private async Task InitialWriteAsync(T? value)
     {
         if (!this._isEmpty(value))
@@ -178,6 +186,7 @@ internal partial class BinaryConcatenator<T>
     /// </summary>
     /// <param name="value">Value to write.</param>
     /// <returns>A taks that represents the asynchronous write operation.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private async Task WriteWithSeparatorAsync(T? value)
     {
         if (!this._isEmpty(value))
@@ -191,7 +200,8 @@ internal partial class BinaryConcatenator<T>
     /// Asynchronously writes <paramref name="value"/> in current instance.
     /// </summary>
     /// <param name="value">UTF-8 bytes to write.</param>
-    /// <returns></returns>
+    /// <returns>A taks that represents the asynchronous write operation.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private async Task FinalWriteAsync(T? value)
     {
         if (!this._isEmpty(value))

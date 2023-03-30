@@ -17,6 +17,7 @@ public interface IReferenceableWrapper<T> : IWrapper<T>, IReadOnlyReferenceable<
     /// <see cref="IWrapper{TValue}"/> object which instance object is equal to 
     /// <paramref name="instance"/>.
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static new IReferenceableWrapper<TValue> Create<TValue>(in TValue instance) where TValue : struct
         => new Input<TValue>(instance);
 
@@ -30,6 +31,7 @@ public interface IReferenceableWrapper<T> : IWrapper<T>, IReadOnlyReferenceable<
     /// <see cref="IWrapper{TValue}"/> object which instance object is equal to 
     /// <paramref name="instance"/>.
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static new IReferenceableWrapper<TValue?> CreateNullable<TValue>(in TValue? instance) where TValue : struct
         => new NullableInput<TValue>(instance);
 }

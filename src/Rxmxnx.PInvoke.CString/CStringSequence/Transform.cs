@@ -7,6 +7,7 @@ public partial class CStringSequence
     /// parameter for <paramref name="action"/> delegate.
     /// </summary>
     /// <param name="action">A callback to invoke.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Transform(CStringSequenceAction action)
     {
         ArgumentNullException.ThrowIfNull(action);
@@ -27,6 +28,7 @@ public partial class CStringSequence
     /// <typeparam name="TState">The type of the element to pass to <paramref name="action"/>.</typeparam>
     /// <param name="state">The element to pass to <paramref name="action"/>.</param>
     /// <param name="action">A callback to invoke.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Transform<TState>(TState state, CStringSequenceAction<TState> action)
     {
         ArgumentNullException.ThrowIfNull(action);
@@ -47,6 +49,7 @@ public partial class CStringSequence
     /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="func">A callback to invoke.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public TResult Transform<TResult>(CStringSequenceFunc<TResult> func)
     {
         ArgumentNullException.ThrowIfNull(func);
@@ -69,6 +72,7 @@ public partial class CStringSequence
     /// <param name="state">The element to pass to <paramref name="func"/>.</param>
     /// <param name="func">A callback to invoke.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public TResult Transform<TState, TResult>(TState state, CStringSequenceFunc<TState, TResult> func)
     {
         ArgumentNullException.ThrowIfNull(func);

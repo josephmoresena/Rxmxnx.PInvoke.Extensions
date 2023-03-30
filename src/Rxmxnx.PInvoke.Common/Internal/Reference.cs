@@ -13,7 +13,7 @@ internal sealed record Reference<TValue> : Input<TValue>, IMutableReference<TVal
     private readonly Object _writeLock = new();
 
     TValue IMutableWrapper<TValue>.Value { get => base.Value; set => SetInstance(this, this._writeLock, value); }
-    ref TValue IReferenceable<TValue>.Reference => ref Unsafe.AsRef(base.Reference);
+    ref TValue IReferenceable<TValue>.Reference => ref base.GetReference();
 
     /// <summary>
     /// Constructor.

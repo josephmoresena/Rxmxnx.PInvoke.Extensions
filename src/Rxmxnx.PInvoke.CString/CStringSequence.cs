@@ -25,6 +25,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
     /// </summary>
     /// <returns>A new object that is a copy of this instance.</returns>
     /// <exception cref="NotImplementedException"></exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Object Clone() => new CStringSequence(this);
 
     /// <summary>
@@ -48,6 +49,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
     /// <see langword="true"/> if the current <see cref="CStringSequence"/> is equal to the <paramref name="other"/> 
     /// parameter; otherwise, <see langword="false"/>.
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Boolean Equals(CStringSequence? other)
         => other != default && this._value.Equals(other._value) &&
         this._lengths.SequenceEqual(other._lengths);

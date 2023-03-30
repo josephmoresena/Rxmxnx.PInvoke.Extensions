@@ -11,6 +11,7 @@ public interface IReadOnlyReferenceable<T> : IEquatable<IReadOnlyReferenceable<T
     /// </summary>
     ref readonly T? Reference { get; }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     Boolean IEquatable<IReadOnlyReferenceable<T>>.Equals(IReadOnlyReferenceable<T>? other)
         => other is not null && Unsafe.AreSame(ref Unsafe.AsRef(this.Reference), ref Unsafe.AsRef(other.Reference));
 }

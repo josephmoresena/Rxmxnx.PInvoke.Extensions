@@ -54,6 +54,7 @@ public partial class CStringSequence : IEnumerableSequence<CString>
     /// instance.
     /// </returns>
     /// <exception cref="ArgumentOutOfRangeException"/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public CStringSequence Slice(Int32 startIndex, Int32 length)
     {
         this.ThrowSubsequenceArgumentOutOfRange(startIndex, length);
@@ -76,6 +77,7 @@ public partial class CStringSequence : IEnumerableSequence<CString>
     /// The count of UTF-8 texts contained into the resulting span.
     /// </param>
     /// <returns>Binary span for given index.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private ReadOnlySpan<Byte> GetBinarySpan(Int32 index, Int32 count = 1)
     {
         Int32 binaryOffset = this._lengths[..index].Sum();
@@ -92,6 +94,7 @@ public partial class CStringSequence : IEnumerableSequence<CString>
     /// The zero-based starting UTF-8 string position of a subsequence in this instance.
     /// </param>
     /// <param name="length">The number of UTF-8 strings in the subsequence.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void ThrowSubsequenceArgumentOutOfRange(Int32 startIndex, Int32 length)
     {
         if (startIndex < 0)
@@ -156,6 +159,7 @@ public partial class CStringSequence : IEnumerableSequence<CString>
         /// <param name="helper">
         /// Helper instance which contains the source binary information.
         /// </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void CopyBytes(Span<Char> destination, SubsequenceHelper helper)
         {
             Span<Byte> destinationBytes = MemoryMarshal.AsBytes(destination);
