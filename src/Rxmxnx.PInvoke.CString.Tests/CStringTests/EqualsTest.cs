@@ -3,20 +3,30 @@
 public sealed class EqualsTest
 {
     [Fact]
-    internal void Test()
+    internal async Task TestAsync()
     {
+        CancellationTokenSource source = new();
+        List<Task> testTasks = new();
         for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
-            EqualityTest(i);
+            testTasks.Add(EqualityTestAsync(i, source.Token));
 
         for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
+            for (Int32 j = 0; j < TestSet.Utf16Text.Count; j++)
+                testTasks.Add(InequalityTestAsync(i, j, source.Token));
+
+        try
         {
-            Int32 ix = Random.Shared.Next(0, TestSet.Utf16Text.Count);
-            Int32 iy = Random.Shared.Next(0, TestSet.Utf16Text.Count);
-
-            InequalityTest(ix, iy);
+            await Task.WhenAll(testTasks);
+        }
+        catch (Exception)
+        {
+            source.Cancel();
+            throw;
         }
     }
 
+    private static Task EqualityTestAsync(Int32 index, CancellationToken token) => Task.Run(() => EqualityTest(index), token);
+    private static Task InequalityTestAsync(Int32 indexA, Int32 indexB, CancellationToken token) => Task.Run(() => InequalityTest(indexA, indexB), token);
     private static void EqualityTest(Int32 index)
     {
         String str = TestSet.Utf16Text[index];

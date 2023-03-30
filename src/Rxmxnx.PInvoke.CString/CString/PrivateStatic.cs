@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Xml.Linq;
-
-namespace Rxmxnx.PInvoke;
+﻿namespace Rxmxnx.PInvoke;
 
 public partial class CString
 {
@@ -314,7 +311,7 @@ public partial class CString
         Int32 result = String.Compare(strA, strB, comparisonType);
 
         if (result != 0 && GetIgnoreCaseComparison(comparisonType) is StringComparison ignoreCaseComparisonTmp && String.Compare(strA, strB, ignoreCaseComparisonTmp) == 0)
-            ignoreCaseComparison =  ignoreCaseComparisonTmp;
+            ignoreCaseComparison = ignoreCaseComparisonTmp;
 
         return result;
     }
