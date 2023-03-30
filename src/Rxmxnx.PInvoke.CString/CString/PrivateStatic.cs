@@ -192,6 +192,7 @@ public partial class CString
     private static Int32 TextCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<Char> textB, StringComparison comparisonType = StringComparison.CurrentCulture)
     {
         Int32 result = 0;
+        StringComparison? ignoreCaseComparison = default;
         while (!textA.IsEmpty && !textB.IsEmpty && result == 0)
         {
             Boolean utf8Decoded = Rune.DecodeFromUtf8(textA, out Rune utf8Rune, out Int32 bytesConsumed) == OperationStatus.Done;
@@ -201,17 +202,16 @@ public partial class CString
             textB = textB.Slice(charsConsumed);
 
             if (utf8Decoded && utf16Decoded)
-            {
-                result = RuneCompare(utf8Rune, utf16Rune, comparisonType, out Boolean equalIgnoreCase);
-                if (equalIgnoreCase)
-                {
-                    Int32 resultIgnoreCase = TextCompare(textA, textB, comparisonType == StringComparison.CurrentCulture ? StringComparison.CurrentCultureIgnoreCase : StringComparison.InvariantCultureIgnoreCase);
-                    if (resultIgnoreCase != 0)
-                        result = resultIgnoreCase;
-                }
-            }
+                result = RuneCompare(utf8Rune, utf16Rune, comparisonType, out ignoreCaseComparison);
             else
                 result = utf8Decoded ? 1 : 0;
+        }
+
+        if (ignoreCaseComparison.HasValue)
+        {
+            Int32 resultIgnoreCase = TextCompare(textA, textB, ignoreCaseComparison.Value);
+            if (resultIgnoreCase != 0)
+                result = resultIgnoreCase;
         }
 
         return result != 0 || textA.IsEmpty && textB.IsEmpty ? result : !textA.IsEmpty ? 1 : 0;
@@ -247,6 +247,7 @@ public partial class CString
     private static Int32 TextCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<Byte> textB, StringComparison comparisonType = StringComparison.CurrentCulture)
     {
         Int32 result = 0;
+        StringComparison? ignoreCaseComparison = default;
         while (!textA.IsEmpty && !textB.IsEmpty && result == 0)
         {
             Boolean utf8Decoded1 = Rune.DecodeFromUtf8(textA, out Rune utf8Rune1, out Int32 bytesConsumed1) == OperationStatus.Done;
@@ -256,17 +257,16 @@ public partial class CString
             textB = textB.Slice(bytesConsumed2);
 
             if (utf8Decoded1 && utf8Decoded2)
-            {
-                result = RuneCompare(utf8Rune1, utf8Rune2, comparisonType, out Boolean equalIgnoreCase);
-                if (equalIgnoreCase)
-                {
-                    Int32 resultIgnoreCase = TextCompare(textA, textB, comparisonType == StringComparison.CurrentCulture ? StringComparison.CurrentCultureIgnoreCase : StringComparison.InvariantCultureIgnoreCase);
-                    if (resultIgnoreCase != 0)
-                        result = resultIgnoreCase;
-                }
-            }
+                result = RuneCompare(utf8Rune1, utf8Rune2, comparisonType, out ignoreCaseComparison);
             else
                 result = utf8Decoded1 ? 1 : 0;
+        }
+
+        if (ignoreCaseComparison.HasValue)
+        {
+            Int32 resultIgnoreCase = TextCompare(textA, textB, ignoreCaseComparison.Value);
+            if (resultIgnoreCase != 0)
+                result = resultIgnoreCase;
         }
 
         return result != 0 || textA.IsEmpty && textB.IsEmpty ? result : !textA.IsEmpty ? 1 : 0;
@@ -279,7 +279,9 @@ public partial class CString
     /// <param name="runA">The first <see cref="Rune"/> to compare.</param>
     /// <param name="runB">The second <see cref="Rune"/> instance.</param>
     /// <param name="comparisonType">One of the enumeration values that specifies the rules to use in the comparision.</param>
-    /// <param name="equalIgnoreCase">Indicates whether in a case insensitive comparison their relative position is equal.</param>
+    /// <param name="ignoreCaseComparison">
+    /// The case insensitive comparison in which <paramref name="runA"/> and <paramref name="runB"/> are in the same position.
+    /// </param>
     /// <returns>
     /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
     /// <list type="table">
@@ -301,9 +303,9 @@ public partial class CString
     /// </list>
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static Int32 RuneCompare(Rune runA, Rune runB, StringComparison comparisonType, out Boolean equalIgnoreCase)
+    private static Int32 RuneCompare(Rune runA, Rune runB, StringComparison comparisonType, out StringComparison? ignoreCaseComparison)
     {
-        equalIgnoreCase = false;
+        ignoreCaseComparison = default;
         if (comparisonType == StringComparison.Ordinal)
             return runA.CompareTo(runB);
 
@@ -311,16 +313,26 @@ public partial class CString
         String strB = Char.ConvertFromUtf32(runB.Value);
         Int32 result = String.Compare(strA, strB, comparisonType);
 
-        if (result != 0)
-            equalIgnoreCase = comparisonType switch
-            {
-                StringComparison.CurrentCulture => String.Compare(strA, strB, StringComparison.CurrentCultureIgnoreCase) == 0,
-                StringComparison.InvariantCulture => String.Compare(strA, strB, StringComparison.InvariantCultureIgnoreCase) == 0,
-                _ => false,
-            };
+        if (result != 0 && GetIgnoreCaseComparison(comparisonType) is StringComparison ignoreCaseComparisonTmp && String.Compare(strA, strB, ignoreCaseComparisonTmp) == 0)
+            ignoreCaseComparison =  ignoreCaseComparisonTmp;
 
         return result;
     }
+
+    /// <summary>
+    /// Retrieves the case insensitive <see cref="StringComparison"/> value that corresponds to <paramref name="comparisonType"/>.
+    /// </summary>
+    /// <param name="comparisonType">One of the enumeration values that specifies the rules to use in the comparision.</param>
+    /// <returns>The case insensitive <see cref="StringComparison"/> value that corresponds to <paramref name="comparisonType"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static StringComparison? GetIgnoreCaseComparison(StringComparison comparisonType)
+        => comparisonType switch
+        {
+            StringComparison.CurrentCulture => StringComparison.CurrentCultureIgnoreCase,
+            StringComparison.InvariantCulture => StringComparison.InvariantCultureIgnoreCase,
+            StringComparison.Ordinal => StringComparison.InvariantCultureIgnoreCase,
+            _ => default(StringComparison?)
+        };
 
     /// <summary>
     /// Indicates whether <paramref name="data"/> contains a null-terminated UTF-8 text.
