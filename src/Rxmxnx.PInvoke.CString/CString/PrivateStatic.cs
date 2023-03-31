@@ -255,16 +255,19 @@ public partial class CString
         while (!textA.IsEmpty && !textB.IsEmpty && result == 0)
         {
             Boolean decodedA = Rune.DecodeFromUtf8(textA, out Rune runA, out Int32 consumedA) == OperationStatus.Done;
-            Boolean decocedB = decodeRune(textB, out Rune runB, out Int32 consumedB) == OperationStatus.Done;
+            Boolean decodedB = decodeRune(textB, out Rune runB, out Int32 consumedB) == OperationStatus.Done;
 
-            if (!decodedA || !decocedB)
-                return decodedA ? 1 : decocedB ? -1 : 0;
+            if (!decodedA || !decodedB)
+                return decodedA ? 1 : decodedB ? -1 : 0;
 
-            Int32? tmpResult = TextCompare(runA, runB, textA, textB, comparisonType, getString, out ignoreCaseComparison);
-            if (!tmpResult.HasValue)
-                return 0;
+            if (runA != runB)
+            {
+                Int32? tmpResult = TextCompare(runA, runB, textA, textB, comparisonType, getString, ref ignoreCaseComparison);
+                if (!tmpResult.HasValue)
+                    return 0;
+                result = tmpResult.Value;
+            }
 
-            result = tmpResult.Value;
             textA = textA[consumedA..];
             textB = textB[consumedB..];
         }
@@ -284,14 +287,14 @@ public partial class CString
     /// the sort order.
     /// </summary>
     /// <typeparam name="T">Type of chars in <paramref name="textB"/>.</typeparam>
-    /// <param name="runA">First rune in <paramref name="textA"/>.</param>
-    /// <param name="runB">First rune in <paramref name="textB"/>.</param>
+    /// <param name="runeA">First rune in <paramref name="textA"/>.</param>
+    /// <param name="runeB">First rune in <paramref name="textB"/>.</param>
     /// <param name="textA">The first text to compare.</param>
     /// <param name="textB">The second text instance.</param>
     /// <param name="comparisonType">One of the enumeration values that specifies the rules to use in the comparision.</param>
     /// <param name="getString">Delegate for getting <see cref="String"/> representation of <paramref name="textB"/>.</param>
     /// <param name="ignoreCaseComparison">
-    /// Output. The case insensitive comparison in which <paramref name="runA"/> and <paramref name="runB"/> 
+    /// Output. The case insensitive comparison in which <paramref name="runeA"/> and <paramref name="runeB"/> 
     /// are in the same position.
     /// </param>
     /// <returns>
@@ -307,48 +310,83 @@ public partial class CString
     /// <item>
     /// <term>Less than zero</term>
     /// <description>
-    /// <paramref name="runA"/> precedes <paramref name="runB"/> or <paramref name="textA"/> precedes 
+    /// <paramref name="runeA"/> precedes <paramref name="runeB"/> or <paramref name="textA"/> precedes 
     /// <paramref name="textB"/> in the sort order.</description>
     /// </item>
     /// <item>
     /// <term>Zero</term>
     /// <description>
-    /// <paramref name="runA"/> is in the same position as <paramref name="runB"/> in the sort order.
+    /// <paramref name="runeA"/> is in the same position as <paramref name="runeB"/> in the sort order.
     /// </description>
     /// </item>
     /// <item>
     /// <term>Greater than zero</term>
-    /// <description><paramref name="runA"/> follows <paramref name="runB"/> or <paramref name="textA"/> 
+    /// <description><paramref name="runeA"/> follows <paramref name="runeB"/> or <paramref name="textA"/> 
     /// follows <paramref name="textB"/> in the sort order.</description>
     /// </item>
     /// </list>
     /// </returns>
-    private static Int32? TextCompare<T>(Rune runA, Rune runB, ReadOnlySpan<Byte> textA, ReadOnlySpan<T> textB, StringComparison comparisonType, GetStringDelegate<T> getString, out StringComparison? ignoreCaseComparison)
+    private static Int32? TextCompare<T>(Rune runeA, Rune runeB, ReadOnlySpan<Byte> textA, ReadOnlySpan<T> textB, StringComparison comparisonType, GetStringDelegate<T> getString, ref StringComparison? ignoreCaseComparison)
         where T : unmanaged
     {
-        Boolean different = runA != runB;
-        Boolean unicodeA = different && IsUnicode(runA);
-        Boolean unicodeB = different && IsUnicode(runB);
+        Boolean unicodeA = IsUnicode(runeA);
+        Boolean unicodeB = IsUnicode(runeB);
 
         if (unicodeA && unicodeB)
         {
-            ignoreCaseComparison = default;
-            Int32 result = String.Compare(Encoding.UTF8.GetString(textA), getString(textB), comparisonType);
-            return result != 0 ? result : default(Int32?);
+            String strA = Encoding.UTF8.GetString(textA);
+            String strb = getString(textB);
+
+            return StringCompare(strA, strb, comparisonType);
         }
-        else
-            return RuneCompare(runA, runB, comparisonType, out ignoreCaseComparison);
+
+        return RuneCompare(runeA, runeB, comparisonType, ref ignoreCaseComparison);
+    }
+
+
+    /// <summary>
+    /// Compares two specified <see cref="String"/> objects using the specified rules, and returns an integer that indicates their relative position in
+    /// the sort order.
+    /// </summary>
+    /// <param name="strA">The first text to compare.</param>
+    /// <param name="strB">The second text instance.</param>
+    /// <param name="comparisonType">One of the enumeration values that specifies the rules to use in the comparision.</param>
+    /// <returns>
+    /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
+    /// <list type="table">
+    /// <listheader>
+    /// <term>Value</term><description>Condition</description>
+    /// </listheader>
+    /// <item>
+    /// <term>Less than zero</term>
+    /// <description><paramref name="strA"/> precedes <paramref name="strB"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Null</term>
+    /// <description><paramref name="strA"/> is in the same position as <paramref name="strB"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Greater than zero</term>
+    /// <description><paramref name="strA"/> follows <paramref name="strB"/> in the sort order.</description>
+    /// </item>
+    /// </list>
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static Int32? StringCompare(String strA, String strB, StringComparison comparisonType)
+    {
+        Int32 result = String.Compare(strA, strB, comparisonType);
+        return result != 0 ? result : default(Int32?);
     }
 
     /// <summary>
     /// Compares two specified <see cref="Rune"/> objects using the specified rules, and returns an integer that indicates their
     /// relative position in the sort order.
     /// </summary>
-    /// <param name="runA">The first <see cref="Rune"/> to compare.</param>
-    /// <param name="runB">The second <see cref="Rune"/> instance.</param>
+    /// <param name="runeA">The first <see cref="Rune"/> to compare.</param>
+    /// <param name="runeB">The second <see cref="Rune"/> instance.</param>
     /// <param name="comparisonType">One of the enumeration values that specifies the rules to use in the comparision.</param>
     /// <param name="ignoreCaseComparison">
-    /// Output. The case insensitive comparison in which <paramref name="runA"/> and <paramref name="runB"/> 
+    /// Output. The case insensitive comparison in which <paramref name="runeA"/> and <paramref name="runeB"/> 
     /// are in the same position.
     /// </param>
     /// <returns>
@@ -359,31 +397,33 @@ public partial class CString
     /// </listheader>
     /// <item>
     /// <term>Less than zero</term>
-    /// <description><paramref name="runA"/> precedes <paramref name="runB"/> in the sort order.</description>
+    /// <description><paramref name="runeA"/> precedes <paramref name="runeB"/> in the sort order.</description>
     /// </item>
     /// <item>
     /// <term>Zero</term>
-    /// <description><paramref name="runA"/> is in the same position as <paramref name="runB"/> in the sort order.</description>
+    /// <description><paramref name="runeA"/> is in the same position as <paramref name="runeB"/> in the sort order.</description>
     /// </item>
     /// <item>
     /// <term>Greater than zero</term>
-    /// <description><paramref name="runA"/> follows <paramref name="runB"/> in the sort order.</description>
+    /// <description><paramref name="runeA"/> follows <paramref name="runeB"/> in the sort order.</description>
     /// </item>
     /// </list>
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static Int32 RuneCompare(Rune runA, Rune runB, StringComparison comparisonType, out StringComparison? ignoreCaseComparison)
+    private static Int32 RuneCompare(Rune runeA, Rune runeB, StringComparison comparisonType, ref StringComparison? ignoreCaseComparison)
     {
-        ignoreCaseComparison = default;
-        if (comparisonType == StringComparison.Ordinal)
-            return runA.CompareTo(runB);
-
-        String strA = Char.ConvertFromUtf32(runA.Value);
-        String strB = Char.ConvertFromUtf32(runB.Value);
+        String strA = Char.ConvertFromUtf32(runeA.Value);
+        String strB = Char.ConvertFromUtf32(runeB.Value);
         Int32 result = String.Compare(strA, strB, comparisonType);
 
-        if (result != 0 && GetIgnoreCaseComparison(comparisonType) is StringComparison ignoreCaseComparisonTmp && String.Compare(strA, strB, ignoreCaseComparisonTmp) == 0)
-            ignoreCaseComparison = ignoreCaseComparisonTmp;
+        if (result != 0 && GetIgnoreCaseComparison(comparisonType) is StringComparison ignoreCaseComparisonTmp)
+        {
+            String strANormalizedBase = strA.Normalize(NormalizationForm.FormD)[..1];
+            String strBNormalizedBase = strB.Normalize(NormalizationForm.FormD)[..1];
+
+            if (String.Compare(strANormalizedBase, strBNormalizedBase, ignoreCaseComparisonTmp) == 0)
+                ignoreCaseComparison = ignoreCaseComparisonTmp;
+        }
 
         return result;
     }
@@ -398,8 +438,9 @@ public partial class CString
         => comparisonType switch
         {
             StringComparison.CurrentCulture => StringComparison.CurrentCultureIgnoreCase,
+            StringComparison.CurrentCultureIgnoreCase => StringComparison.CurrentCultureIgnoreCase,
             StringComparison.InvariantCulture => StringComparison.InvariantCultureIgnoreCase,
-            StringComparison.Ordinal => StringComparison.InvariantCultureIgnoreCase,
+            StringComparison.InvariantCultureIgnoreCase => StringComparison.InvariantCultureIgnoreCase,
             _ => default(StringComparison?)
         };
 
