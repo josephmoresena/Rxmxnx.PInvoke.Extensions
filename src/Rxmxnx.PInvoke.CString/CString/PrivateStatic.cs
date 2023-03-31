@@ -185,7 +185,7 @@ public partial class CString
     /// </list>
     /// </returns>
     private static Int32 TextCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<Byte> textB, StringComparison comparisonType = StringComparison.CurrentCulture)
-        => TextCompare(textA, textB, Rune.DecodeFromUtf8, Encoding.UTF8.GetString, comparisonType);
+        => Compare(textA, textB, Rune.DecodeFromUtf8, Encoding.UTF8.GetString, comparisonType);
 
     /// <summary>
     /// Compares two specified texts using the specified rules, and returns an integer that indicates their relative position in
@@ -215,7 +215,7 @@ public partial class CString
     /// </list>
     /// </returns>
     private static Int32 TextCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<Char> textB, StringComparison comparisonType = StringComparison.CurrentCulture)
-        => TextCompare(textA, textB, Rune.DecodeFromUtf16, CreateString, comparisonType);
+        => Compare(textA, textB, Rune.DecodeFromUtf16, CreateString, comparisonType);
 
     /// <summary>
     /// Compares two specified texts using the specified rules, and returns an integer that indicates their relative position in
@@ -246,7 +246,7 @@ public partial class CString
     /// </item>
     /// </list>
     /// </returns>
-    private static Int32 TextCompare<T>(ReadOnlySpan<Byte> textA, ReadOnlySpan<T> textB, DecodeRuneFrom<T> decodeRune, GetStringDelegate<T> getString, StringComparison comparisonType)
+    private static Int32 Compare<T>(ReadOnlySpan<Byte> textA, ReadOnlySpan<T> textB, DecodeRuneFrom<T> decodeRune, GetStringDelegate<T> getString, StringComparison comparisonType)
         where T : unmanaged
     {
         Int32 result = 0;
@@ -262,7 +262,7 @@ public partial class CString
 
             if (runA != runB)
             {
-                Int32? tmpResult = TextCompare(runA, runB, textA, textB, comparisonType, getString, ref ignoreCaseComparison);
+                Int32? tmpResult = Compare(runA, runB, textA, textB, comparisonType, getString, ref ignoreCaseComparison);
                 if (!tmpResult.HasValue)
                     return 0;
                 result = tmpResult.Value;
@@ -274,7 +274,7 @@ public partial class CString
 
         if (ignoreCaseComparison.HasValue)
         {
-            Int32 resultIgnoreCase = TextCompare(textA, textB, decodeRune, getString, ignoreCaseComparison.Value);
+            Int32 resultIgnoreCase = Compare(textA, textB, decodeRune, getString, ignoreCaseComparison.Value);
             if (resultIgnoreCase != 0)
                 result = resultIgnoreCase;
         }
@@ -326,23 +326,22 @@ public partial class CString
     /// </item>
     /// </list>
     /// </returns>
-    private static Int32? TextCompare<T>(Rune runeA, Rune runeB, ReadOnlySpan<Byte> textA, ReadOnlySpan<T> textB, StringComparison comparisonType, GetStringDelegate<T> getString, ref StringComparison? ignoreCaseComparison)
+    private static Int32? Compare<T>(Rune runeA, Rune runeB, ReadOnlySpan<Byte> textA, ReadOnlySpan<T> textB, StringComparison comparisonType, GetStringDelegate<T> getString, ref StringComparison? ignoreCaseComparison)
         where T : unmanaged
     {
         Boolean unicodeA = IsUnicode(runeA);
         Boolean unicodeB = IsUnicode(runeB);
 
-        if (unicodeA && unicodeB)
+        if (unicodeA && unicodeB && !IgnoreCaseEqual(runeA, runeB, comparisonType))
         {
             String strA = Encoding.UTF8.GetString(textA);
             String strb = getString(textB);
 
-            return StringCompare(strA, strb, comparisonType);
+            return Compare(strA, strb, comparisonType);
         }
 
-        return RuneCompare(runeA, runeB, comparisonType, ref ignoreCaseComparison);
+        return Compare(runeA, runeB, comparisonType, ref ignoreCaseComparison);
     }
-
 
     /// <summary>
     /// Compares two specified <see cref="String"/> objects using the specified rules, and returns an integer that indicates their relative position in
@@ -372,7 +371,7 @@ public partial class CString
     /// </list>
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static Int32? StringCompare(String strA, String strB, StringComparison comparisonType)
+    private static Int32? Compare(String strA, String strB, StringComparison comparisonType)
     {
         Int32 result = String.Compare(strA, strB, comparisonType);
         return result != 0 ? result : default(Int32?);
@@ -410,7 +409,7 @@ public partial class CString
     /// </list>
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static Int32 RuneCompare(Rune runeA, Rune runeB, StringComparison comparisonType, ref StringComparison? ignoreCaseComparison)
+    private static Int32 Compare(Rune runeA, Rune runeB, StringComparison comparisonType, ref StringComparison? ignoreCaseComparison)
     {
         String strA = Char.ConvertFromUtf32(runeA.Value);
         String strB = Char.ConvertFromUtf32(runeB.Value);
@@ -443,6 +442,34 @@ public partial class CString
             StringComparison.InvariantCultureIgnoreCase => StringComparison.InvariantCultureIgnoreCase,
             _ => default(StringComparison?)
         };
+
+    /// <summary>
+    /// Indicates whether <paramref name="runeA"/> and <paramref name="runeB"/> are equal ignoring case.
+    /// </summary>
+    /// <param name="runeA"><see cref="Rune"/> instance.</param>
+    /// <param name="runeB"><see cref="Rune"/> instance.</param>
+    /// <param name="comparisonType">
+    /// One of the enumeration values that specifies the rules to use in the comparision.
+    /// </param>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="runeA"/> and <paramref name="runeB"/> are equal ignoring 
+    /// case; otherwise, <see langword="false"/>.
+    /// </returns>
+    private static Boolean IgnoreCaseEqual(Rune runeA, Rune runeB, StringComparison comparisonType)
+    {
+        CultureInfo? culture = GetIgnoreCaseComparison(comparisonType) switch
+        {
+            StringComparison.InvariantCultureIgnoreCase => CultureInfo.InvariantCulture,
+            StringComparison.CurrentCultureIgnoreCase => CultureInfo.CurrentCulture,
+            _ => default,
+        };
+
+        if (culture is null)
+            return false;
+
+        Rune runeAComparable = Rune.IsLower(runeA) ? Rune.ToUpper(runeA, culture) : Rune.ToLower(runeA, culture);
+        return runeAComparable == runeB;
+    }
 
     /// <summary>
     /// Indicates whether <paramref name="rune"/> is unicode.
