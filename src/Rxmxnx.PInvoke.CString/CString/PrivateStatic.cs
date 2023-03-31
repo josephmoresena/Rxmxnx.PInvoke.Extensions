@@ -254,16 +254,19 @@ public partial class CString
 
         while (!textA.IsEmpty && !textB.IsEmpty && result == 0)
         {
-            Boolean utf8Decoded = Rune.DecodeFromUtf8(textA, out Rune utf8Rune, out Int32 bytesConsumed) == OperationStatus.Done;
-            Boolean utf16Decoded = decodeRune(textB, out Rune utf16Rune, out Int32 charsConsumed) == OperationStatus.Done;
+            Boolean decodedA = Rune.DecodeFromUtf8(textA, out Rune runA, out Int32 consumedA) == OperationStatus.Done;
+            Boolean decocedB = decodeRune(textB, out Rune runB, out Int32 consumedB) == OperationStatus.Done;
 
-            if (utf8Decoded && utf16Decoded)
-                result = TextCompare(utf8Rune, utf16Rune, textA, textB, comparisonType, getString, out ignoreCaseComparison);
-            else
-                result = utf8Decoded ? 1 : 0;
+            if (!decodedA || !decocedB)
+                return decodedA ? 1 : decocedB ? -1 : 0;
 
-            textA = textA[bytesConsumed..];
-            textB = textB[charsConsumed..];
+            Int32? tmpResult = TextCompare(runA, runB, textA, textB, comparisonType, getString, out ignoreCaseComparison);
+            if (!tmpResult.HasValue)
+                return 0;
+
+            result = tmpResult.Value;
+            textA = textA[consumedA..];
+            textB = textB[consumedB..];
         }
 
         if (ignoreCaseComparison.HasValue)
@@ -298,20 +301,29 @@ public partial class CString
     /// <term>Value</term><description>Condition</description>
     /// </listheader>
     /// <item>
-    /// <term>Less than zero</term>
-    /// <description><paramref name="textA"/> precedes <paramref name="textB"/> in the sort order.</description>
-    /// </item>
-    /// <item>
-    /// <term>Zero</term>
+    /// <term>Null</term>
     /// <description><paramref name="textA"/> is in the same position as <paramref name="textB"/> in the sort order.</description>
     /// </item>
     /// <item>
+    /// <term>Less than zero</term>
+    /// <description>
+    /// <paramref name="runA"/> precedes <paramref name="runB"/> or <paramref name="textA"/> precedes 
+    /// <paramref name="textB"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Zero</term>
+    /// <description>
+    /// <paramref name="runA"/> is in the same position as <paramref name="runB"/> in the sort order.
+    /// </description>
+    /// </item>
+    /// <item>
     /// <term>Greater than zero</term>
-    /// <description><paramref name="textA"/> follows <paramref name="textB"/> in the sort order.</description>
+    /// <description><paramref name="runA"/> follows <paramref name="runB"/> or <paramref name="textA"/> 
+    /// follows <paramref name="textB"/> in the sort order.</description>
     /// </item>
     /// </list>
     /// </returns>
-    private static Int32 TextCompare<T>(Rune runA, Rune runB, ReadOnlySpan<Byte> textA, ReadOnlySpan<T> textB, StringComparison comparisonType, GetStringDelegate<T> getString, out StringComparison? ignoreCaseComparison)
+    private static Int32? TextCompare<T>(Rune runA, Rune runB, ReadOnlySpan<Byte> textA, ReadOnlySpan<T> textB, StringComparison comparisonType, GetStringDelegate<T> getString, out StringComparison? ignoreCaseComparison)
         where T : unmanaged
     {
         Boolean different = runA != runB;
@@ -321,7 +333,8 @@ public partial class CString
         if (unicodeA && unicodeB)
         {
             ignoreCaseComparison = default;
-            return String.Compare(Encoding.UTF8.GetString(textA), getString(textB), comparisonType);
+            Int32 result = String.Compare(Encoding.UTF8.GetString(textA), getString(textB), comparisonType);
+            return result != 0 ? result : default(Int32?);
         }
         else
             return RuneCompare(runA, runB, comparisonType, out ignoreCaseComparison);
