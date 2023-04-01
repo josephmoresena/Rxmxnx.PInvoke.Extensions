@@ -4,7 +4,7 @@
 /// Base class for UTF-8 text comparator.
 /// </summary>
 /// <typeparam name="TChar">Type of the characters in the compared text.</typeparam>
-internal abstract class Utf8ComparatorBase<TChar> where TChar : unmanaged 
+internal abstract class Utf8ComparatorBase<TChar> where TChar : unmanaged
 {
     /// <summary>
     /// Culture for current comparison.
@@ -29,7 +29,7 @@ internal abstract class Utf8ComparatorBase<TChar> where TChar : unmanaged
     /// <param name="comparisonType">One of the enumeration values that specifies the rules to use in the comparision.</param>
     protected Utf8ComparatorBase(StringComparison comparisonType)
     {
-        switch(comparisonType)
+        switch (comparisonType)
         {
             case StringComparison.CurrentCulture:
                 this._culture = CultureInfo.CurrentCulture;
@@ -99,11 +99,11 @@ internal abstract class Utf8ComparatorBase<TChar> where TChar : unmanaged
     public Int32 Compare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
     {
         Boolean insensitiveCaseComparison = this._ignoreCase;
-        Int32 result = Compare(textA, textB, ref insensitiveCaseComparison);
+        Int32 result = Compare(ref textA, ref textB, ref insensitiveCaseComparison);
 
-        if (!this._ignoreCase && insensitiveCaseComparison)
+        if (result != 0 && !this._ignoreCase && insensitiveCaseComparison)
         {
-            Int32 resultIgnoreCase = Compare(textA, textB, ref insensitiveCaseComparison);
+            Int32 resultIgnoreCase = Compare(ref textA, ref textB, ref insensitiveCaseComparison);
             if (resultIgnoreCase != 0)
                 result = resultIgnoreCase;
         }
@@ -138,20 +138,20 @@ internal abstract class Utf8ComparatorBase<TChar> where TChar : unmanaged
     /// </item>
     /// </list>
     /// </returns>
-    private Int32 Compare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB, ref Boolean caseInsensitive)
+    private Int32 Compare(ref ReadOnlySpan<Byte> textA, ref ReadOnlySpan<TChar> textB, ref Boolean caseInsensitive)
     {
         Int32 result = 0;
         while (!textA.IsEmpty && !textB.IsEmpty && result == 0)
         {
-            Rune? runeA = DecodeRuneFromUtf8(textA,  out Int32 consumedA);
-            Rune? runeB  = this.DecodeRune(textB, out Int32 consumedB);
+            Rune? runeA = DecodeRuneFromUtf8(textA, out Int32 consumedA);
+            Rune? runeB = this.DecodeRune(textB, out Int32 consumedB);
 
             if (!runeA.HasValue || !runeB.HasValue)
                 return runeA.HasValue ? 1 : runeB.HasValue ? -1 : 0;
 
             if (runeA != runeB)
             {
-                Int32? tmpResult = Compare(runeA.Value, runeB.Value, textA, textB, ref caseInsensitive);
+                Int32? tmpResult = Compare(runeA.Value, runeB.Value, ref textA, ref textB, ref caseInsensitive);
                 if (!tmpResult.HasValue)
                     return 0;
                 result = tmpResult.Value;
@@ -207,7 +207,7 @@ internal abstract class Utf8ComparatorBase<TChar> where TChar : unmanaged
     /// </item>
     /// </list>
     /// </returns>
-    private Int32? Compare(Rune runeA, Rune runeB, ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB, ref Boolean caseInsensitive)
+    private Int32? Compare(Rune runeA, Rune runeB, ref ReadOnlySpan<Byte> textA, ref ReadOnlySpan<TChar> textB, ref Boolean caseInsensitive)
     {
         Boolean unicodeA = IsUnicode(runeA);
         Boolean unicodeB = IsUnicode(runeB);
@@ -217,6 +217,8 @@ internal abstract class Utf8ComparatorBase<TChar> where TChar : unmanaged
             ReadOnlySpan<Char> spanA = GetUnicodeSpanFromUtf8(textA);
             ReadOnlySpan<Char> spanB = this.GetUnicodeSpan(textB);
 
+            textA = ReadOnlySpan<Byte>.Empty;
+            textB = ReadOnlySpan<TChar>.Empty;
             return Compare(spanA, spanB, caseInsensitive);
         }
 
@@ -261,7 +263,7 @@ internal abstract class Utf8ComparatorBase<TChar> where TChar : unmanaged
     {
         String strA = Char.ConvertFromUtf32(runeA.Value);
         String strB = Char.ConvertFromUtf32(runeB.Value);
-        Int32 result = this._culture.CompareInfo.Compare(strA, strB, this._options);
+        Int32 result = this._culture.CompareInfo.Compare(strA, strB, this.GetOptions(caseInsensitive));
 
         if (result != 0 && !caseInsensitive && this._options != this._optionsIgnoreCase)
         {
@@ -323,10 +325,16 @@ internal abstract class Utf8ComparatorBase<TChar> where TChar : unmanaged
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private Int32? Compare(ReadOnlySpan<Char> spanA, ReadOnlySpan<Char> spanB, Boolean caseInsensitive)
     {
-        CompareOptions options = !caseInsensitive ? this._options : this._optionsIgnoreCase;
-        Int32 result = this._culture.CompareInfo.Compare(spanA, spanB, options);
+        Int32 result = this._culture.CompareInfo.Compare(spanA, spanB, this.GetOptions(caseInsensitive));
         return result != 0 ? result : default(Int32?);
     }
+
+    /// <summary>
+    /// Retrieves the <see cref="CompareOptions"/> for current comparison.
+    /// </summary>
+    /// <param name="caseInsensitive">Indicates whether current comparision should be case-insensitive.</param>
+    /// <returns><see cref="CompareOptions"/> for current comparison.</returns>
+    private CompareOptions GetOptions(Boolean caseInsensitive) => !caseInsensitive ? this._options : this._optionsIgnoreCase;
 
     /// <summary>
     /// Retrieves <see cref="ReadOnlySpan{Char}"/> representation of <paramref name="source"/>>
@@ -361,7 +369,7 @@ internal abstract class Utf8ComparatorBase<TChar> where TChar : unmanaged
     /// </param>
     /// <returns>Decoded <see cref="Rune"/>.</returns>
     protected static Rune? DecodeRuneFromUtf8(ReadOnlySpan<Byte> source, out Int32 charsConsumed)
-        => Rune.DecodeLastFromUtf8(source, out Rune result, out charsConsumed) == OperationStatus.Done ? result : default(Rune?);
+        => Rune.DecodeFromUtf8(source, out Rune result, out charsConsumed) == OperationStatus.Done ? result : default(Rune?);
 
     /// <summary>
     /// Indicates whether <paramref name="rune"/> is unicode.
