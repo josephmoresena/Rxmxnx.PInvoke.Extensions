@@ -53,4 +53,10 @@
     <ProjectReference Condition="'$(PublishPackage)' == ''" Include="..\Rxmxnx.PInvoke.Common\Rxmxnx.PInvoke.Common.csproj" />
     <PackageReference Condition="'$(PublishPackage)' != ''" Include="Rxmxnx.PInvoke.Common" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Internal\Utf8Comparator\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Internal\Utf8Comparator\" />
+  </ItemGroup>
 </Project>

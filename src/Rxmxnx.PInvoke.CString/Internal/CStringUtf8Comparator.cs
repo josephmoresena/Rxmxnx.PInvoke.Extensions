@@ -3,7 +3,7 @@
 /// <summary>
 /// Comparator class for <see cref="CString"/> instances.
 /// </summary>
-internal sealed class CStringUtf8Comparator : Utf8ComparatorBase<Byte>
+internal sealed class CStringUtf8Comparator : Utf8Comparator<Byte>
 {
     /// <summary>
     /// Constructor.
@@ -15,7 +15,7 @@ internal sealed class CStringUtf8Comparator : Utf8ComparatorBase<Byte>
     }
 
     /// <inheritdoc/>
-    protected override DecodedRune? DecodeRune(ReadOnlySpan<Byte> source) => DecodeRuneFromUtf8(source);
+    protected override DecodedRune? DecodeRune(ref ReadOnlySpan<Byte> source) => DecodeRuneFromUtf8(ref source);
 
     /// <inheritdoc/>
     protected override ReadOnlySpan<Char> GetUnicodeSpan(ReadOnlySpan<Byte> source)

@@ -3,7 +3,7 @@
 /// <summary>
 /// Comparator class for <see cref="CString"/> and <see cref="String"/> instances.
 /// </summary>
-internal sealed class StringUtf8Comparator : Utf8ComparatorBase<Char>
+internal sealed class StringUtf8Comparator : Utf8Comparator<Char>
 {
     /// <summary>
     /// Constructor.
@@ -15,7 +15,13 @@ internal sealed class StringUtf8Comparator : Utf8ComparatorBase<Char>
     }
 
     /// <inheritdoc/>
-    protected override DecodedRune? DecodeRune(ReadOnlySpan<Char> source) => DecodedRune.Decode(source);
+    protected override DecodedRune? DecodeRune(ref ReadOnlySpan<Char> source)
+    {
+        DecodedRune? result = DecodedRune.Decode(source);
+        if (result is not null)
+            source = source[result.CharsConsumed..];
+        return result;
+    }
 
     /// <inheritdoc/>
     protected override ReadOnlySpan<Char> GetUnicodeSpan(ReadOnlySpan<Char> source) => source;
