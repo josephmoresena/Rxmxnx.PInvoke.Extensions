@@ -29,7 +29,7 @@ internal sealed class DecodedRune : IWrapper<Rune>
     /// <summary>
     /// Indicates whether this instance was decoded as a single-byte unit.
     /// </summary>
-    public Boolean IsSingleUnicode => this._value.IsAscii && this._value.IsBmp && this._rawValue < Byte.MaxValue;
+    public Boolean IsSingleUnicode => this._value.IsAscii || this._rawValue < Byte.MaxValue;
 
     /// <summary>
     /// Constructor.
