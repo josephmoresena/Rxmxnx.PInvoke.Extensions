@@ -264,7 +264,7 @@ internal abstract class Utf8ComparatorBase<TChar> where TChar : unmanaged
         String strB = Char.ConvertFromUtf32(runeB.Value);
         Int32 result = this._culture.CompareInfo.Compare(strA, strB, this.GetOptions(caseInsensitive));
 
-        if (result != 0 && !this.IsOrdinalOrIgnoreCase() && caseInsensitive)
+        if (result != 0 && !this.IsOrdinalOrIgnoreCase() && !caseInsensitive)
         {
             String strANormalizedBase = strA.Normalize(NormalizationForm.FormD)[..1];
             String strBNormalizedBase = strB.Normalize(NormalizationForm.FormD)[..1];
