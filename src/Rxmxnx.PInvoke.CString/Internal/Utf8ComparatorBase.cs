@@ -157,8 +157,10 @@ internal abstract class Utf8ComparatorBase<TChar> where TChar : unmanaged
                 result = tmpResult.Value;
             }
 
-            textA = textA[consumedA..];
-            textB = textB[consumedB..];
+            if (!textA.IsEmpty)
+                textA = textA[consumedA..];
+            if (!textB.IsEmpty)
+                textB = textB[consumedB..];
         }
         return result;
     }
@@ -265,7 +267,7 @@ internal abstract class Utf8ComparatorBase<TChar> where TChar : unmanaged
         String strB = Char.ConvertFromUtf32(runeB.Value);
         Int32 result = this._culture.CompareInfo.Compare(strA, strB, this.GetOptions(caseInsensitive));
 
-        if (result != 0 && !caseInsensitive && this._options != this._optionsIgnoreCase)
+        if (result != 0 && !this.IsOrdinalOrIgnoreCase() && caseInsensitive)
         {
             String strANormalizedBase = strA.Normalize(NormalizationForm.FormD)[..1];
             String strBNormalizedBase = strB.Normalize(NormalizationForm.FormD)[..1];
@@ -288,7 +290,7 @@ internal abstract class Utf8ComparatorBase<TChar> where TChar : unmanaged
     /// </returns>
     private Boolean IgnoreCaseEqual(Rune runeA, Rune runeB, Boolean caseInsensitive)
     {
-        if (this._options == this._optionsIgnoreCase)
+        if (this.IsOrdinalOrIgnoreCase() || caseInsensitive)
             return false;
 
         Rune runeAComparable = Rune.IsLower(runeA) ? Rune.ToUpper(runeA, this._culture) : Rune.ToLower(runeA, this._culture);
@@ -335,6 +337,15 @@ internal abstract class Utf8ComparatorBase<TChar> where TChar : unmanaged
     /// <param name="caseInsensitive">Indicates whether current comparision should be case-insensitive.</param>
     /// <returns><see cref="CompareOptions"/> for current comparison.</returns>
     private CompareOptions GetOptions(Boolean caseInsensitive) => !caseInsensitive ? this._options : this._optionsIgnoreCase;
+
+    /// <summary>
+    /// Indicates whether the comparision of current instance is ordinal or case-insensitive.
+    /// </summary>
+    /// <returns>
+    /// <see langword="true"/> if the comparision of current instance is ordinal or case-insensitive; 
+    /// otherwise, <see langword="false"/>.
+    /// </returns>
+    private Boolean IsOrdinalOrIgnoreCase() => this._options == this._optionsIgnoreCase;
 
     /// <summary>
     /// Retrieves <see cref="ReadOnlySpan{Char}"/> representation of <paramref name="source"/>>
