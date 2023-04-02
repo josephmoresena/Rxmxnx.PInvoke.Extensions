@@ -15,8 +15,7 @@ internal sealed class StringUtf8Comparator : Utf8ComparatorBase<Char>
     }
 
     /// <inheritdoc/>
-    protected override Rune? DecodeRune(ReadOnlySpan<Char> source, out Int32 charsConsumed)
-        => Rune.DecodeFromUtf16(source, out Rune result, out charsConsumed) == OperationStatus.Done ? result : default(Rune?);
+    protected override DecodedRune? DecodeRune(ReadOnlySpan<Char> source) => DecodedRune.Decode(source);
 
     /// <inheritdoc/>
     protected override ReadOnlySpan<Char> GetUnicodeSpan(ReadOnlySpan<Char> source) => source;

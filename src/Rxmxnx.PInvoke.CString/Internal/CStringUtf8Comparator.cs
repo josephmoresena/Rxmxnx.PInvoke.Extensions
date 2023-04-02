@@ -15,8 +15,7 @@ internal sealed class CStringUtf8Comparator : Utf8ComparatorBase<Byte>
     }
 
     /// <inheritdoc/>
-    protected override Rune? DecodeRune(ReadOnlySpan<Byte> source, out Int32 charsConsumed)
-        => DecodeRuneFromUtf8(source, out charsConsumed);
+    protected override DecodedRune? DecodeRune(ReadOnlySpan<Byte> source) => DecodeRuneFromUtf8(source);
 
     /// <inheritdoc/>
     protected override ReadOnlySpan<Char> GetUnicodeSpan(ReadOnlySpan<Byte> source)

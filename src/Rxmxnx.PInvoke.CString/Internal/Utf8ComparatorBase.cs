@@ -143,24 +143,24 @@ internal abstract class Utf8ComparatorBase<TChar> where TChar : unmanaged
         Int32 result = 0;
         while (!textA.IsEmpty && !textB.IsEmpty && result == 0)
         {
-            Rune? runeA = DecodeRuneFromUtf8(textA, out Int32 consumedA);
-            Rune? runeB = this.DecodeRune(textB, out Int32 consumedB);
+            DecodedRune? runeA = DecodeRuneFromUtf8(textA);
+            DecodedRune? runeB = this.DecodeRune(textB);
 
-            if (!runeA.HasValue || !runeB.HasValue)
-                return runeA.HasValue ? 1 : runeB.HasValue ? -1 : 0;
+            if (runeA is null || runeB is null)
+                return runeA is not null ? 1 : runeB is not null ? -1 : 0;
 
             if (runeA != runeB)
             {
-                Int32? tmpResult = Compare(runeA.Value, runeB.Value, ref textA, ref textB, ref caseInsensitive);
+                Int32? tmpResult = Compare(runeA, runeB, ref textA, ref textB, ref caseInsensitive);
                 if (!tmpResult.HasValue)
                     return 0;
                 result = tmpResult.Value;
             }
 
-            if (!textA.IsEmpty)
-                textA = textA[consumedA..];
-            if (!textB.IsEmpty)
-                textB = textB[consumedB..];
+            if (!textA.IsEmpty && runeA is not null)
+                textA = textA[runeA.CharsConsumed..];
+            if (!textB.IsEmpty && runeB is not null)
+                textB = textB[runeB.CharsConsumed..];
         }
         return result;
     }
@@ -209,12 +209,9 @@ internal abstract class Utf8ComparatorBase<TChar> where TChar : unmanaged
     /// </item>
     /// </list>
     /// </returns>
-    private Int32? Compare(Rune runeA, Rune runeB, ref ReadOnlySpan<Byte> textA, ref ReadOnlySpan<TChar> textB, ref Boolean caseInsensitive)
+    private Int32? Compare(DecodedRune runeA, DecodedRune runeB, ref ReadOnlySpan<Byte> textA, ref ReadOnlySpan<TChar> textB, ref Boolean caseInsensitive)
     {
-        Boolean unicodeA = IsUnicode(runeA);
-        Boolean unicodeB = IsUnicode(runeB);
-
-        if (unicodeA && unicodeB && !IgnoreCaseEqual(runeA, runeB, caseInsensitive))
+        if (runeA.IsSingleUnicode && runeB.IsSingleUnicode && !IgnoreCaseEqual(runeA, runeB, caseInsensitive))
         {
             ReadOnlySpan<Char> spanA = GetUnicodeSpanFromUtf8(textA);
             ReadOnlySpan<Char> spanB = this.GetUnicodeSpan(textB);
@@ -358,11 +355,8 @@ internal abstract class Utf8ComparatorBase<TChar> where TChar : unmanaged
     /// Decodes the <see cref="Rune"/> at the beginning of the provided unicode source buffer.
     /// </summary>
     /// <param name="source">A read-only span of <see cref="Byte"/> that represents a text.</param>
-    /// <param name="charsConsumed">
-    /// Output. The number of units read to create the resulting <see cref="Rune"/>.
-    /// </param>
     /// <returns>Decoded <see cref="Rune"/>.</returns>
-    protected abstract Rune? DecodeRune(ReadOnlySpan<TChar> source, out Int32 charsConsumed);
+    protected abstract DecodedRune? DecodeRune(ReadOnlySpan<TChar> source);
 
     /// <summary>
     /// Retrieves the <see cref="ReadOnlySpan{Char}"/> representation of <paramref name="source"/>>
@@ -375,21 +369,7 @@ internal abstract class Utf8ComparatorBase<TChar> where TChar : unmanaged
     /// Decodes the <see cref="Rune"/> at the beginning of the provided unicode source buffer.
     /// </summary>
     /// <param name="source">A read-only span of <see cref="Byte"/> that represents a text.</param>
-    /// <param name="charsConsumed">
-    /// Output. The number of units read to create the resulting <see cref="Rune"/>.
-    /// </param>
     /// <returns>Decoded <see cref="Rune"/>.</returns>
-    protected static Rune? DecodeRuneFromUtf8(ReadOnlySpan<Byte> source, out Int32 charsConsumed)
-        => Rune.DecodeFromUtf8(source, out Rune result, out charsConsumed) == OperationStatus.Done ? result : default(Rune?);
-
-    /// <summary>
-    /// Indicates whether <paramref name="rune"/> is unicode.
-    /// </summary>
-    /// <param name="rune"><see cref="Rune"/> instance.</param>
-    /// <returns>
-    /// <see langword="true"/> if <paramref name="rune"/> is unicode; otherwise, <see langword="false"/>.
-    /// </returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static Boolean IsUnicode(Rune rune) => !rune.IsAscii && rune.IsBmp;
+    protected static DecodedRune? DecodeRuneFromUtf8(ReadOnlySpan<Byte> source) => DecodedRune.Decode(source);
 }
 
