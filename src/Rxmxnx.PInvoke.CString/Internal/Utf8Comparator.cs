@@ -59,7 +59,6 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
         }
     }
 
-
     /// <summary>
     /// Compares two specified texts using the specified rules, and returns an integer that indicates their relative position in
     /// the sort order.
@@ -88,16 +87,22 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
     /// </returns>
     public Int32 Compare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
     {
+        //Creates a comparison state instance.
         ComparisonState state = new(this._ignoreCase);
+        //Perform the initial comparison.
         Int32 result = this.Compare(state, ref textA, ref textB);
 
+        //As long as the comparison status indicates that a new comparison is needed, we must perform
+        //a new comparison.
         while (state.Continue)
         {
-            Int32 resultIgnoreCase = this.Compare(state, ref textA, ref textB);
-            if (resultIgnoreCase != 0)
-                result = resultIgnoreCase;
+            Int32 newResult = this.Compare(state, ref textA, ref textB);
+            //Only if both texts are different can the new comparison affect the result.
+            if (newResult != 0)
+                result = newResult;
         }
 
+        //If the result is zero, we must determine if the length of both texts is equal.
         return result != 0 || textA.IsEmpty && textB.IsEmpty ? result : !textA.IsEmpty ? 1 : 0;
     }
 

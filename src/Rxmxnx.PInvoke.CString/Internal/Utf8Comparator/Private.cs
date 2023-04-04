@@ -54,33 +54,42 @@ internal partial class Utf8Comparator<TChar>
     {
         Int32 result = 0;
 
+        //Initialize a new comparison.
         state.InitializeComparison();
         while (!textA.IsEmpty && !textB.IsEmpty && result == 0)
         {
+            //Preserve the original text in comparison.
+            ReadOnlySpan<Byte> textAO = textA;
+            ReadOnlySpan<TChar> textBO = textB;
+
             DecodedRune? runeA = DecodeRuneFromUtf8(ref textA);
             DecodedRune? runeB = this.DecodeRune(ref textB);
 
+            //If at least one rune could not be decoded, the comparison should end.
+            //The result should be determined by the length of the texts.
             if (runeA is null || runeB is null)
                 return runeA is not null ? 1 : runeB is not null ? -1 : 0;
 
+            //If the value of both runes is the same, no further comparison is necessary.
             if (runeA != runeB)
-            {
-                Int32? tmpResult = this.Compare(state, runeA, runeB, ref textA, ref textB);
-                if (!tmpResult.HasValue)
-                    return 0;
-                result = tmpResult.Value;
-            }
+                //If the runes are not comparable to each other a full text comparison will be needed.
+                if (this.AreUncomparable(state, runeA, runeB))
+                {
+                    textA = ReadOnlySpan<Byte>.Empty;
+                    textB = ReadOnlySpan<TChar>.Empty;
+                    return this.Compare(state, textAO, textBO);
+                }
+                else
+                    result = this.Compare(state, runeA, runeB);
         }
         return result;
     }
 
     /// <summary>
-    /// Compares two specified texts using the specified rules, and returns an integer that indicates their relative position in
+    /// Compares two specified <see cref="ReadOnlySpan{Char}"/> using the specified rules, and returns an integer that indicates their relative position in
     /// the sort order.
     /// </summary>
     /// <param name="state">Comparison state.</param>
-    /// <param name="runeA">First rune in <paramref name="textA"/>.</param>
-    /// <param name="runeB">First rune in <paramref name="textB"/>.</param>
     /// <param name="textA">The first text to compare.</param>
     /// <param name="textB">The second text instance.</param>
     /// <returns>
@@ -90,42 +99,40 @@ internal partial class Utf8Comparator<TChar>
     /// <term>Value</term><description>Condition</description>
     /// </listheader>
     /// <item>
+    /// <term>Less than zero</term>
+    /// <description><paramref name="textA"/> precedes <paramref name="textB"/> in the sort order.</description>
+    /// </item>
+    /// <item>
     /// <term>Null</term>
     /// <description><paramref name="textA"/> is in the same position as <paramref name="textB"/> in the sort order.</description>
     /// </item>
     /// <item>
-    /// <term>Less than zero</term>
-    /// <description>
-    /// <paramref name="runeA"/> precedes <paramref name="runeB"/> or <paramref name="textA"/> precedes 
-    /// <paramref name="textB"/> in the sort order.</description>
-    /// </item>
-    /// <item>
-    /// <term>Zero</term>
-    /// <description>
-    /// <paramref name="runeA"/> is in the same position as <paramref name="runeB"/> in the sort order.
-    /// </description>
-    /// </item>
-    /// <item>
     /// <term>Greater than zero</term>
-    /// <description><paramref name="runeA"/> follows <paramref name="runeB"/> or <paramref name="textA"/> 
-    /// follows <paramref name="textB"/> in the sort order.</description>
+    /// <description><paramref name="textA"/> follows <paramref name="textB"/> in the sort order.</description>
     /// </item>
     /// </list>
     /// </returns>
-    private Int32? Compare(ComparisonState state, DecodedRune runeA, DecodedRune runeB, ref ReadOnlySpan<Byte> textA, ref ReadOnlySpan<TChar> textB)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private Int32 Compare(ComparisonState state, ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
     {
-        if (runeA.IsSingleUnicode && runeB.IsSingleUnicode && !this.IgnoreCaseEqual(runeA, runeB, state.IgnoreCase))
-        {
-            ReadOnlySpan<Char> spanA = GetUnicodeSpanFromUtf8(textA);
-            ReadOnlySpan<Char> spanB = this.GetUnicodeSpan(textB);
-
-            textA = ReadOnlySpan<Byte>.Empty;
-            textB = ReadOnlySpan<TChar>.Empty;
-            return this.Compare(spanA, spanB, state.IgnoreCase);
-        }
-
-        return this.Compare(state, runeA, runeB);
+        ReadOnlySpan<Char> spanA = GetUnicodeSpanFromUtf8(textA);
+        ReadOnlySpan<Char> spanB = this.GetUnicodeSpan(textB);
+        return this._culture.CompareInfo.Compare(spanA, spanB, this.GetOptions(state.IgnoreCase));
     }
+
+    /// <summary>
+    /// Indicates whether <paramref name="runeA"/> and <paramref name="runeB"/> are uncomparable in the current comparision.
+    /// </summary>
+    /// <param name="state">Comparison state.</param>
+    /// <param name="runeA">The first <see cref="Rune"/> to compare.</param>
+    /// <param name="runeB">The second <see cref="Rune"/> instance.</param>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="runeA"/> and <paramref name="runeB"/> are uncomparable; otherwise,
+    /// <see langword="false"/>.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private Boolean AreUncomparable(ComparisonState state, DecodedRune runeA, DecodedRune runeB)
+        => (!runeA.IsSingleUnicode || !runeB.IsSingleUnicode) && !this.IgnoreCaseEqual(runeA, runeB, state.IgnoreCase);
 
     /// <summary>
     /// Compares two specified <see cref="Rune"/> objects using the specified rules, and returns an integer that indicates their
@@ -161,11 +168,14 @@ internal partial class Utf8Comparator<TChar>
         String strB = Char.ConvertFromUtf32(runeB.Value);
         Int32 result = this._culture.CompareInfo.Compare(strA, strB, this.GetOptions(state.IgnoreCase));
 
+        //If both runes are different in the current comparison, it is necessary to determine if the base of both
+        //runes is the same.
         if (result != 0 && !this._ordinal)
         {
             String strANormalizedBase = strA.Normalize(NormalizationForm.FormD)[..1];
             String strBNormalizedBase = strB.Normalize(NormalizationForm.FormD)[..1];
 
+            //If the base of both runes is the same, a new comparison is needed to determine an absolute result.
             if (this._culture.CompareInfo.Compare(strANormalizedBase, strBNormalizedBase, this._optionsIgnoreCase) == 0)
                 state.SetContinue();
         }
@@ -183,9 +193,10 @@ internal partial class Utf8Comparator<TChar>
     /// <see langword="true"/> if <paramref name="runeA"/> and <paramref name="runeB"/> are equal ignoring 
     /// case; otherwise, <see langword="false"/>.
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private Boolean IgnoreCaseEqual(Rune runeA, Rune runeB, Boolean caseInsensitive)
     {
-        if (this.IsOrdinalOrIgnoreCase() || caseInsensitive)
+        if (this.IsOrdinalOrIgnoreCase() && caseInsensitive)
             return false;
 
         Rune runeAComparable = Rune.IsLower(runeA) ? Rune.ToUpper(runeA, this._culture) : Rune.ToLower(runeA, this._culture);
@@ -193,44 +204,11 @@ internal partial class Utf8Comparator<TChar>
     }
 
     /// <summary>
-    /// Compares two specified <see cref="ReadOnlySpan{Char}"/> using the specified rules, and returns an integer that indicates their relative position in
-    /// the sort order.
-    /// </summary>
-    /// <param name="spanA">The first text to compare.</param>
-    /// <param name="spanB">The second text instance.</param>
-    /// <param name="caseInsensitive">Indicates whether current comparision should be case-insensitive.</param>
-    /// <returns>
-    /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
-    /// <list type="table">
-    /// <listheader>
-    /// <term>Value</term><description>Condition</description>
-    /// </listheader>
-    /// <item>
-    /// <term>Less than zero</term>
-    /// <description><paramref name="spanA"/> precedes <paramref name="spanB"/> in the sort order.</description>
-    /// </item>
-    /// <item>
-    /// <term>Null</term>
-    /// <description><paramref name="spanA"/> is in the same position as <paramref name="spanB"/> in the sort order.</description>
-    /// </item>
-    /// <item>
-    /// <term>Greater than zero</term>
-    /// <description><paramref name="spanA"/> follows <paramref name="spanB"/> in the sort order.</description>
-    /// </item>
-    /// </list>
-    /// </returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private Int32? Compare(ReadOnlySpan<Char> spanA, ReadOnlySpan<Char> spanB, Boolean caseInsensitive)
-    {
-        Int32 result = this._culture.CompareInfo.Compare(spanA, spanB, this.GetOptions(caseInsensitive));
-        return result != 0 ? result : default(Int32?);
-    }
-
-    /// <summary>
     /// Retrieves the <see cref="CompareOptions"/> for current comparison.
     /// </summary>
     /// <param name="caseInsensitive">Indicates whether current comparision should be case-insensitive.</param>
     /// <returns><see cref="CompareOptions"/> for current comparison.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private CompareOptions GetOptions(Boolean caseInsensitive) => !caseInsensitive ? this._options : this._optionsIgnoreCase;
 
     /// <summary>
@@ -240,5 +218,6 @@ internal partial class Utf8Comparator<TChar>
     /// <see langword="true"/> if the comparision of current instance is ordinal or case-insensitive; 
     /// otherwise, <see langword="false"/>.
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private Boolean IsOrdinalOrIgnoreCase() => this._options == this._optionsIgnoreCase;
 }
