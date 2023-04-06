@@ -8,10 +8,10 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
         throw new ArgumentException("Object must be of type CString.", nameof(other));
 
     /// <inheritdoc/>
-    public Int32 CompareTo(String? other) => other is not String otherNotNull ? 1 : TextCompare(this, otherNotNull);
+    public Int32 CompareTo(String? other) => other is not String otherNotNull ? 1 : StringUtf8Comparator.Create().Compare(this, otherNotNull);
 
     /// <inheritdoc/>
-    public Int32 CompareTo(CString? other) => other is not CString otherNotNull ? 1 : TextCompare(this, otherNotNull);
+    public Int32 CompareTo(CString? other) => other is not CString otherNotNull ? 1 : CStringUtf8Comparator.Create().Compare(this, otherNotNull);
 
     /// <summary>
     /// Compares two specified <see cref="CString"/> objects using the specified rules, and returns an integer that indicates their
@@ -40,7 +40,7 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </list>
     /// </returns>
     public static Int32 Compare(CString? cstrA, CString? cstrB)
-        => cstrA is null && cstrA is null ? 0 : cstrA is null ? 1 : cstrA is null ? -1 : TextCompare(cstrA, cstrB);
+        => cstrA is null && cstrA is null ? 0 : cstrA is null ? 1 : cstrA is null ? -1 : CStringUtf8Comparator.Create().Compare(cstrA, cstrB);
 
     /// <summary>
     /// Compares two specified <see cref="CString"/> objects using the specified rules, and returns an integer that indicates their
@@ -73,7 +73,7 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </returns>
     public static Int32 Compare(CString? cstrA, CString? cstrB, Boolean ignoreCase)
         => cstrA is null && cstrB is null ? 0 : cstrA is null ? 1 : cstrB is null ? -1 :
-        TextCompare(cstrA, cstrB, ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture);
+         CStringUtf8Comparator.Create(ignoreCase).Compare(cstrA, cstrB);
 
     /// <summary>
     /// Compares two specified <see cref="CString"/> objects using the specified rules, and returns an integer that indicates their
@@ -103,7 +103,8 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </list>
     /// </returns>
     public static Int32 Compare(CString? cstrA, CString? cstrB, StringComparison comparisonType)
-        => cstrA is null && cstrB is null ? 0 : cstrA is null ? 1 : cstrB is null ? -1 : TextCompare(cstrA, cstrB, comparisonType);
+        => cstrA is null && cstrB is null ? 0 : cstrA is null ? 1 : cstrB is null ? -1 :
+        CStringUtf8Comparator.Create(comparisonType).Compare(cstrA, cstrB);
 
     /// <summary>
     /// Compares two specified texts using the specified rules, and returns an integer that indicates their
@@ -132,7 +133,8 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </list>
     /// </returns>
     public static Int32 Compare(CString? textA, String? textB)
-        => textA is null && textB is null ? 0 : textA is null ? 1 : textB is null ? -1 : TextCompare(textA, textB);
+        => textA is null && textB is null ? 0 : textA is null ? 1 : textB is null ? -1 :
+        StringUtf8Comparator.Create().Compare(textA, textB);
 
     /// <summary>
     /// Compares two specified texts using the specified rules, and returns an integer that indicates their
@@ -165,7 +167,7 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </returns>
     public static Int32 Compare(CString? textA, String? textB, Boolean ignoreCase)
         => textA is null && textB is null ? 0 : textA is null ? 1 : textB is null ? -1 :
-        TextCompare(textA, textB, ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture);
+        StringUtf8Comparator.Create(ignoreCase).Compare(textA, textB);
 
     /// <summary>
     /// Compares two specified texts using the specified rules, and returns an integer that indicates their
@@ -195,6 +197,7 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </list>
     /// </returns>
     public static Int32 Compare(CString? textA, String? textB, StringComparison comparisonType)
-        => textA is null && textB is null ? 0 : textA is null ? 1 : textB is null ? -1 : TextCompare(textA, textB, comparisonType);
+        => textA is null && textB is null ? 0 : textA is null ? 1 : textB is null ? -1 :
+        StringUtf8Comparator.Create(comparisonType).Compare(textA, textB);
 }
 

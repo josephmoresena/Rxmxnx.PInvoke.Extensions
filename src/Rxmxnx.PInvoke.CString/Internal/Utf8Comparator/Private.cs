@@ -132,7 +132,7 @@ internal partial class Utf8Comparator<TChar>
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private Boolean AreUncomparable(ComparisonState state, DecodedRune runeA, DecodedRune runeB)
-        => (!runeA.IsSingleUnicode || !runeB.IsSingleUnicode) && !this.IgnoreCaseEqual(runeA, runeB, state.IgnoreCase);
+        => !runeA.IsSingleUnicode && !runeB.IsSingleUnicode && !this.IgnoreCaseEqual(runeA, runeB, state.IgnoreCase);
 
     /// <summary>
     /// Compares two specified <see cref="Rune"/> objects using the specified rules, and returns an integer that indicates their
