@@ -77,6 +77,12 @@ public sealed class EqualsTest
     private static void StringTest(CString cstrA, String strA, String strB)
     {
         Assert.Equal(strA.Equals(strB), cstrA.Equals(strB));
+        Assert.True(strA == cstrA);
+        Assert.False(strA != cstrA);
+        Assert.Equal(strA == strB, cstrA == strB);
+        Assert.Equal(strA != strB, cstrA != strB);
+        Assert.Equal(strB == strA, strB == cstrA);
+        Assert.Equal(strB != strA, strB != cstrA);
         Assert.Equal(strA.Equals(strB, StringComparison.CurrentCulture), cstrA.Equals(strB, StringComparison.CurrentCulture));
         Assert.Equal(strA.Equals(strB, StringComparison.CurrentCultureIgnoreCase), cstrA.Equals(strB, StringComparison.CurrentCultureIgnoreCase));
         Assert.Equal(strA.Equals(strB, StringComparison.InvariantCulture), cstrA.Equals(strB, StringComparison.InvariantCulture));
@@ -111,6 +117,12 @@ public sealed class EqualsTest
     {
         String strB = cstrB.ToString();
         Assert.Equal(strA.Equals(strB), cstrA.Equals(cstrB));
+        Assert.True(strA == cstrA);
+        Assert.False(strA != cstrA);
+        Assert.True(strB == cstrB);
+        Assert.False(strB != cstrB);
+        Assert.Equal(strA == strB, cstrA == cstrB);
+        Assert.Equal(strA != strB, cstrA != cstrB);
         Assert.Equal(strA.Equals(strB, StringComparison.CurrentCulture), cstrA.Equals(cstrB, StringComparison.CurrentCulture));
         Assert.Equal(strA.Equals(strB, StringComparison.CurrentCultureIgnoreCase), cstrA.Equals(cstrB, StringComparison.CurrentCultureIgnoreCase));
         Assert.Equal(strA.Equals(strB, StringComparison.InvariantCulture), cstrA.Equals(cstrB, StringComparison.InvariantCulture));
