@@ -14,8 +14,11 @@
     <Using Include="AutoFixture" />
     <Using Include="System.Diagnostics.CodeAnalysis" />
     <Using Include="System.Runtime.CompilerServices" />
+    <Using Include="System.Runtime.InteropServices" />
+    <Using Include="System.Text" />
 
     <Using Include="Rxmxnx.PInvoke" />
+    <Using Include="Rxmxnx.PInvoke.Internal" />
   </ItemGroup>
 
   <ItemGroup>

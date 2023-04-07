@@ -41,13 +41,11 @@ public partial class CString
     {
         this._isLocal = value._isLocal;
         this._isFunction = value._isFunction;
+        this._length = length;
         this._data = ValueRegion<Byte>.Create(value._data, startIndex, value.GetDataLength(startIndex, length));
-
-        ReadOnlySpan<Byte> data = this._data;
-        Boolean isNullTerminatedSpan = IsNullTerminatedSpan(data);
-        Boolean isLiteral = value._isFunction && value._isNullTerminated;
-        this._isNullTerminated = isLiteral && value._length - startIndex == length || isNullTerminatedSpan;
-        this._length = data.Length - (isNullTerminatedSpan ? 1 : 0);
+        this._isNullTerminated =
+            value._isFunction && value._isNullTerminated && value._length - startIndex == length ||
+            IsNullTerminatedSpan(this._data);
     }
 
     /// <summary>

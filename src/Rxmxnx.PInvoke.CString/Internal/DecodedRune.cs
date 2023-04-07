@@ -89,6 +89,48 @@ internal sealed class DecodedRune : IWrapper<Rune>
     }
 
     /// <summary>
+    /// Retrieves the indices from individuals runes decoded in <paramref name="source"/>.
+    /// </summary>
+    /// <param name="source">A read-only span of <see cref="Char"/> that represents a text.</param>
+    /// <returns>The indices from individuals runes decoded in <paramref name="source"/>.</returns>
+    public static IReadOnlyList<Int32> GetIndices(ReadOnlySpan<Char> source)
+    {
+        List<Int32> result = new(source.Length);
+        Int32 length = default;
+
+        while (length < source.Length)
+        {
+            result.Add(length);
+            if (DecodedRune.Decode(source[length..]) is not DecodedRune rune)
+                break;
+            length += rune.CharsConsumed;
+        }
+
+        return result.ToArray();
+    }
+
+    /// <summary>
+    /// Retrieves the indices from individuals runes decoded in <paramref name="source"/>.
+    /// </summary>
+    /// <param name="source">A read-only span of <see cref="Byte"/> that represents a text.</param>
+    /// <returns>The indices from individuals runes decoded in <paramref name="source"/>.</returns>
+    public static IReadOnlyList<Int32> GetIndices(ReadOnlySpan<Byte> source)
+    {
+        List<Int32> result = new(Encoding.UTF8.GetCharCount(source));
+        Int32 length = default;
+
+        while (length < source.Length)
+        {
+            result.Add(length);
+            if (DecodedRune.Decode(source[length..]) is not DecodedRune rune)
+                break;
+            length += rune.CharsConsumed;
+        }
+
+        return result.ToArray();
+    }
+
+    /// <summary>
     /// Copies the raw value from source span.
     /// </summary>
     /// <param name="integerValue"></param>

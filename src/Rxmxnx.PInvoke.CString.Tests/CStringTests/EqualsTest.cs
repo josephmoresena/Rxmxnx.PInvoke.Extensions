@@ -11,8 +11,11 @@ public sealed class EqualsTest
             testTasks.Add(EqualityTestAsync(i, source.Token));
 
         for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
-            for (Int32 j = 0; j < TestSet.Utf16Text.Count; j++)
+            for (Int32 j = i; j < TestSet.Utf16Text.Count; j++)
+            {
                 testTasks.Add(InequalityTestAsync(i, j, source.Token));
+                testTasks.Add(OperatorTestAsync(i, j, source.Token));
+            }
 
         try
         {
@@ -27,6 +30,16 @@ public sealed class EqualsTest
 
     private static Task EqualityTestAsync(Int32 index, CancellationToken token) => Task.Run(() => EqualityTest(index), token);
     private static Task InequalityTestAsync(Int32 indexA, Int32 indexB, CancellationToken token) => Task.Run(() => InequalityTest(indexA, indexB), token);
+    private static Task OperatorTestAsync(Int32 indexA, Int32 indexB, CancellationToken token)
+    {
+        String strA = TestSet.Utf16Text[indexA];
+        String strB = TestSet.Utf16Text[indexB];
+
+        CString cstrA = new(TestSet.Utf8Text[indexA]);
+        CString cstrB = new(TestSet.Utf8Text[indexB]);
+
+        return Task.Run(() => OperatorTest(cstrA, strA, strB, cstrB), token);
+    }
     private static void EqualityTest(Int32 index)
     {
         String str = TestSet.Utf16Text[index];
@@ -38,7 +51,7 @@ public sealed class EqualsTest
         CString cstrUpper = new(TestSet.Utf8TextUpper[index]);
 
         StringTest(cstr, str, strLower, strUpper);
-        CStringTest(cstr, str, cstrLower, cstrUpper);
+        CStringTest(cstr, str, strLower, cstrLower, strUpper, cstrUpper);
     }
     private static void InequalityTest(Int32 indexA, Int32 indexB)
     {
@@ -66,23 +79,17 @@ public sealed class EqualsTest
         StringTest(cstrB, strB, strLowerA);
         StringTest(cstrB, strB, strUpperA);
 
-        CStringTest(cstrA, strA, cstrB);
-        CStringTest(cstrA, strA, cstrLowerB);
-        CStringTest(cstrA, strA, cstrUpperB);
+        CStringTest(cstrA, strA, strB, cstrB);
+        CStringTest(cstrA, strA, strLowerB, cstrLowerB);
+        CStringTest(cstrA, strA, strUpperB, cstrUpperB);
 
-        CStringTest(cstrB, strB, cstrA);
-        CStringTest(cstrB, strB, cstrLowerA);
-        CStringTest(cstrB, strB, cstrUpperA);
+        CStringTest(cstrB, strB, strA, cstrA);
+        CStringTest(cstrB, strB, strLowerA, cstrLowerA);
+        CStringTest(cstrB, strB, strUpperA, cstrUpperA);
     }
     private static void StringTest(CString cstrA, String strA, String strB)
     {
         Assert.Equal(strA.Equals(strB), cstrA.Equals(strB));
-        Assert.True(strA == cstrA);
-        Assert.False(strA != cstrA);
-        Assert.Equal(strA == strB, cstrA == strB);
-        Assert.Equal(strA != strB, cstrA != strB);
-        Assert.Equal(strB == strA, strB == cstrA);
-        Assert.Equal(strB != strA, strB != cstrA);
         Assert.Equal(strA.Equals(strB, StringComparison.CurrentCulture), cstrA.Equals(strB, StringComparison.CurrentCulture));
         Assert.Equal(strA.Equals(strB, StringComparison.CurrentCultureIgnoreCase), cstrA.Equals(strB, StringComparison.CurrentCultureIgnoreCase));
         Assert.Equal(strA.Equals(strB, StringComparison.InvariantCulture), cstrA.Equals(strB, StringComparison.InvariantCulture));
@@ -113,16 +120,9 @@ public sealed class EqualsTest
         Assert.True(cstr.Equals(strUpper, StringComparison.CurrentCultureIgnoreCase));
         Assert.True(cstr.Equals(strUpper, StringComparison.InvariantCultureIgnoreCase));
     }
-    private static void CStringTest(CString cstrA, String strA, CString cstrB)
+    private static void CStringTest(CString cstrA, String strA, String strB, CString cstrB)
     {
-        String strB = cstrB.ToString();
         Assert.Equal(strA.Equals(strB), cstrA.Equals(cstrB));
-        Assert.True(strA == cstrA);
-        Assert.False(strA != cstrA);
-        Assert.True(strB == cstrB);
-        Assert.False(strB != cstrB);
-        Assert.Equal(strA == strB, cstrA == cstrB);
-        Assert.Equal(strA != strB, cstrA != cstrB);
         Assert.Equal(strA.Equals(strB, StringComparison.CurrentCulture), cstrA.Equals(cstrB, StringComparison.CurrentCulture));
         Assert.Equal(strA.Equals(strB, StringComparison.CurrentCultureIgnoreCase), cstrA.Equals(cstrB, StringComparison.CurrentCultureIgnoreCase));
         Assert.Equal(strA.Equals(strB, StringComparison.InvariantCulture), cstrA.Equals(cstrB, StringComparison.InvariantCulture));
@@ -130,11 +130,8 @@ public sealed class EqualsTest
         Assert.Equal(strA.Equals(strB, StringComparison.Ordinal), cstrA.Equals(cstrB, StringComparison.Ordinal));
         Assert.Equal(strA.Equals(strB, StringComparison.OrdinalIgnoreCase), cstrA.Equals(cstrB, StringComparison.OrdinalIgnoreCase));
     }
-    private static void CStringTest(CString cstr, String str, CString cstrLower, CString cstrUpper)
+    private static void CStringTest(CString cstr, String str, String strLower, CString cstrLower, String strUpper, CString cstrUpper)
     {
-        String strLower = cstrLower.ToString();
-        String strUpper = cstrUpper.ToString();
-
         Assert.Equal(str.Equals(strLower, StringComparison.Ordinal), cstr.Equals(cstrLower, StringComparison.Ordinal));
         Assert.Equal(str.Equals(strLower, StringComparison.CurrentCulture), cstr.Equals(cstrLower, StringComparison.CurrentCulture));
         Assert.Equal(str.Equals(strLower, StringComparison.InvariantCulture), cstr.Equals(cstrLower, StringComparison.InvariantCulture));
@@ -149,5 +146,17 @@ public sealed class EqualsTest
         Assert.True(cstr.Equals(cstrUpper, StringComparison.CurrentCultureIgnoreCase));
         Assert.True(cstr.Equals(cstrUpper, StringComparison.InvariantCultureIgnoreCase));
     }
-}
+    private static void OperatorTest(CString cstrA, String strA, String strB, CString cstrB)
+    {
+        Boolean equals = strA == strB;
 
+        Assert.True(strA == cstrA);
+        Assert.True(cstrB == strB);
+        Assert.Equal(equals, cstrA == cstrB);
+        Assert.Equal(equals, strA == cstrB);
+        Assert.Equal(equals, cstrA == strB);
+        Assert.Equal(!equals, cstrA != cstrB);
+        Assert.Equal(!equals, strA != cstrB);
+        Assert.Equal(!equals, cstrA != strB);
+    }
+}
