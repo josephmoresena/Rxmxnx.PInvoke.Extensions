@@ -38,17 +38,17 @@ public sealed class SegmentTests
     }
 
     private static Task SegmentTestAsync(String str, CString cstr, CancellationToken token)
-        => Task.Run(() => SegmentTest(str, cstr), token);
+        => Task.Run(() => Test(str, cstr), token);
     private static Task FixedSegmentAsync(String str, Byte[] bytes, CancellationToken token)
-        => Task.Run(() => FixedSegmentTest(str, bytes), token);
-    private unsafe static void FixedSegmentTest(String str, Byte[] bytes)
+        => Task.Run(() => FixedTest(str, bytes), token);
+    private unsafe static void FixedTest(String str, Byte[] bytes)
     {
         fixed (void* ptr = bytes)
         {
-            SegmentTest(str, new(new IntPtr(ptr), bytes.Length));
+            Test(str, new(new IntPtr(ptr), bytes.Length));
         }
     }
-    private static void SegmentTest(String str, CString cstr)
+    private static void Test(String str, CString cstr)
     {
         IReadOnlyList<Int32> strIndex = DecodedRune.GetIndices(str);
         IReadOnlyList<Int32> cstrIndex = DecodedRune.GetIndices(cstr);
@@ -69,14 +69,14 @@ public sealed class SegmentTests
             CString cstrSeg = cstr[cstrStart..cstrEnd];
 
             Assert.Equal(strSeg, cstrSeg.ToString());
-            SegmentTest(cstr, cstrSeg, cstrStart, cstrEnd);
-            SegmentTest(cstr, cstr.Slice(cstrStart), cstrStart, cstr.Length);
+            Test(cstr, cstrSeg, cstrStart, cstrEnd);
+            Test(cstr, cstr.Slice(cstrStart), cstrStart, cstr.Length);
 
             if (!cstr.IsSegmented && !cstr.IsReference)
-                SegmentTest(strSeg, cstrSeg);
+                Test(strSeg, cstrSeg);
         }
     }
-    private static void SegmentTest(CString cstr, CString cstrSeg, Int32 cstrStart, Int32 cstrEnd)
+    private static void Test(CString cstr, CString cstrSeg, Int32 cstrStart, Int32 cstrEnd)
     {
         if (cstrSeg.Length == 0)
         {

@@ -11,7 +11,7 @@ public sealed class CompareTest
             testTasks.Add(EqualityTestAsync(i, source.Token));
 
         for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
-            for (Int32 j = i; j < TestSet.Utf16Text.Count; j++)
+            for (Int32 j = 0; j < TestSet.Utf16Text.Count; j++)
                 testTasks.Add(InequalityTestAsync(i, j, source.Token));
 
         try
