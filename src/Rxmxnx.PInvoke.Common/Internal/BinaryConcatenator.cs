@@ -96,9 +96,7 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
         if (!this._disposedValue)
         {
             if (disposing)
-            {
                 this._mem.Dispose();
-            }
             this._disposedValue = true;
         }
     }
