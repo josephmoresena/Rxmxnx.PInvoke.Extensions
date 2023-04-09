@@ -51,9 +51,10 @@ public partial class CString
     /// </param>
     /// <param name="startIndex">The first byte in current instance to write to.</param>
     /// <param name="count">The number of bytes of current instance to write to.</param>
+    /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
     /// <returns>A task that represents the asynchronous write operation.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private Task GetWriteTask(Stream strm, Int32 startIndex, Int32 count)
-        => (Byte[]?)this._data is Byte[] array ? strm.WriteAsync(array, startIndex, count) :
-        Task.Run(() => this.Write(strm, startIndex, count));
+    private Task GetWriteTask(Stream strm, Int32 startIndex, Int32 count, CancellationToken cancellationToken)
+        => (Byte[]?)this._data is Byte[] array ? strm.WriteAsync(array, startIndex, count, cancellationToken) :
+        Task.Run(() => this.Write(strm, startIndex, count), cancellationToken);
 }

@@ -8,7 +8,10 @@ internal sealed class BinaryConcatenator : BinaryConcatenator<Byte?>
     /// <summary>
     /// Constructor.
     /// </summary>
-    public BinaryConcatenator() : base(default, IsNullByte)
+    /// <param name="cancellationToken">
+    /// The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.
+    /// </param>
+    public BinaryConcatenator(CancellationToken cancellationToken = default) : base(default, IsNullByte, cancellationToken)
     {
     }
 
@@ -16,7 +19,10 @@ internal sealed class BinaryConcatenator : BinaryConcatenator<Byte?>
     /// Constructor.
     /// </summary>
     /// <param name="separator"><see cref="Byte"/> separator instance.</param>
-    public BinaryConcatenator(Byte separator) : base(separator, IsNullByte)
+    /// <param name="cancellationToken">
+    /// The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.
+    /// </param>
+    public BinaryConcatenator(Byte separator, CancellationToken cancellationToken = default) : base(separator, IsNullByte, cancellationToken)
     {
     }
 
@@ -26,7 +32,7 @@ internal sealed class BinaryConcatenator : BinaryConcatenator<Byte?>
 
     /// <inheritdoc/>
     protected override Task WriteValueAsync(Byte? value)
-        => Task.Run(() => this.Stream.WriteByte(value!.Value));
+        => Task.Run(() => this.Stream.WriteByte(value!.Value), base.CancellationToken);
 
     /// <summary>
     /// Retrieves the binary data of UTF-8 text.

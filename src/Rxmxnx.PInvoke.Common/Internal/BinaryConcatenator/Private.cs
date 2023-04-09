@@ -31,6 +31,10 @@ internal partial class BinaryConcatenator<T>
     /// Delegate for check values.
     /// </summary>
     private readonly IsEmptyDelegate _isEmpty;
+    /// <summary>
+    /// The token for monitor to cancellation requests
+    /// </summary>
+    private readonly CancellationToken _cancellationToken;
 
     /// <summary>
     /// Current binary write delegate.

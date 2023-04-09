@@ -19,6 +19,10 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
     /// Current instance stream.
     /// </summary>
     protected MemoryStream Stream => this._mem;
+    /// <summary>
+    /// The token for monitor to cancellation requests
+    /// </summary>
+    protected CancellationToken CancellationToken => this._cancellationToken;
 
     /// <summary>
     /// Instance separator.
@@ -30,11 +34,13 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
     /// </summary>
     /// <param name="separator">Separator for concatenation.</param>
     /// <param name="isEmpty">Delegate for check <typeparamref name="T"/> value.</param>
-    protected BinaryConcatenator(T? separator, IsEmptyDelegate isEmpty)
+    /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+    protected BinaryConcatenator(T? separator, IsEmptyDelegate isEmpty, CancellationToken cancellationToken)
     {
         this._mem = new();
         this._separator = separator;
         this._isEmpty = isEmpty;
+        this._cancellationToken = cancellationToken;
         this.InitializeDelegates();
     }
 

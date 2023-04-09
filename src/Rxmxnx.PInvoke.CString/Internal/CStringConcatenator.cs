@@ -8,14 +8,20 @@ internal sealed class CStringConcatenator : BinaryConcatenator<CString>
     /// <summary>
     /// Constructor.
     /// </summary>
-    public CStringConcatenator() : this(default) { }
+    /// <param name="cancellationToken">
+    /// The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.
+    /// </param>
+    public CStringConcatenator(CancellationToken cancellationToken = default) : this(default, cancellationToken) { }
 
     /// <summary>
     /// Constructor.
     /// </summary>
     /// <param name="separator"><see cref="CString"/> separator instance.</param>
-    public CStringConcatenator(CString? separator) :
-        base(separator, CString.IsNullOrEmpty)
+    /// <param name="cancellationToken">
+    /// The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.
+    /// </param>
+    public CStringConcatenator(CString? separator, CancellationToken cancellationToken = default) :
+        base(separator, CString.IsNullOrEmpty, cancellationToken)
     {
     }
 
@@ -25,7 +31,7 @@ internal sealed class CStringConcatenator : BinaryConcatenator<CString>
 
     /// <inheritdoc/>
     protected override Task WriteValueAsync(CString value)
-        => value.WriteAsync(base.Stream, false);
+        => value.WriteAsync(base.Stream, false, base.CancellationToken);
 
     /// <summary>
     /// Creates a <see cref="CString"/> instance from concatenation.

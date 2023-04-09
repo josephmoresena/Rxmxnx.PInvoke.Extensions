@@ -66,12 +66,15 @@ public partial class CString
     /// Indicates whether the UTF-8 text must be written with a null-termination character 
     /// into the <see cref="Stream"/>.
     /// </param>
+    /// <param name="cancellationToken">
+    /// The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.
+    /// </param>
     /// <returns>A task that represents the asynchronous write operation.</returns>
-    internal async Task WriteAsync(Stream strm, Boolean writeNullTermination)
+    internal async Task WriteAsync(Stream strm, Boolean writeNullTermination, CancellationToken cancellationToken = default)
     {
-        await this.GetWriteTask(strm, 0, this._length).ConfigureAwait(false);
+        await this.GetWriteTask(strm, 0, this._length, cancellationToken).ConfigureAwait(false);
         if (writeNullTermination)
-            await strm.WriteAsync(empty);
+            await strm.WriteAsync(empty, cancellationToken);
     }
 
     /// <summary>
@@ -85,7 +88,10 @@ public partial class CString
     /// </param>
     /// <param name="startIndex">The first byte in current instance to write to.</param>
     /// <param name="count">The number of bytes of current instance to write to.</param>
+    /// <param name="cancellationToken">
+    /// The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.
+    /// </param>
     /// <returns>A task that represents the asynchronous write operation.</returns>
-    internal async Task WriteAsync(Stream strm, Int32 startIndex, Int32 count)
-        => await this.GetWriteTask(strm, startIndex, count).ConfigureAwait(false);
+    internal async Task WriteAsync(Stream strm, Int32 startIndex, Int32 count, CancellationToken cancellationToken = default)
+        => await this.GetWriteTask(strm, startIndex, count, cancellationToken).ConfigureAwait(false);
 }
