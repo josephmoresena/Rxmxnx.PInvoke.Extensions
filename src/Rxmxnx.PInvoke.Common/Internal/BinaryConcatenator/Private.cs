@@ -28,10 +28,6 @@ internal partial class BinaryConcatenator<T>
     /// </summary>
     private readonly T? _separator;
     /// <summary>
-    /// Delegate for check values.
-    /// </summary>
-    private readonly IsEmptyDelegate _isEmpty;
-    /// <summary>
     /// The token for monitor to cancellation requests
     /// </summary>
     private readonly CancellationToken _cancellationToken;
@@ -59,7 +55,7 @@ internal partial class BinaryConcatenator<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void InitializeDelegates()
     {
-        if (!this._isEmpty(this._separator))
+        if (!this.IsEmpty(this._separator))
         {
             this._binaryWrite = InitialWrite;
             this._write = InitialWrite;
@@ -88,7 +84,7 @@ internal partial class BinaryConcatenator<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void InitialWrite(ReadOnlySpan<Byte> value)
     {
-        if (!value.IsEmpty)
+        if (!this.IsEmpty(value))
         {
             this.WriteValue(value);
             this._binaryWrite = this.WriteWithSeparator;
@@ -105,7 +101,7 @@ internal partial class BinaryConcatenator<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void InitialWrite(T? value)
     {
-        if (!this._isEmpty(value))
+        if (!this.IsEmpty(value))
         {
             this.WriteValue(value);
             this._binaryWrite = this.WriteWithSeparator;
@@ -122,7 +118,7 @@ internal partial class BinaryConcatenator<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WriteWithSeparator(ReadOnlySpan<Byte> value)
     {
-        if (!value.IsEmpty)
+        if (!this.IsEmpty(value))
         {
             this.WriteValue(this._separator!);
             this.WriteValue(value);
@@ -137,7 +133,7 @@ internal partial class BinaryConcatenator<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WriteWithSeparator(T? value)
     {
-        if (!this._isEmpty(value))
+        if (!this.IsEmpty(value))
         {
             this.WriteValue(this._separator!);
             this.WriteValue(value);
@@ -151,7 +147,7 @@ internal partial class BinaryConcatenator<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void FinalWrite(ReadOnlySpan<Byte> value)
     {
-        if (!value.IsEmpty)
+        if (!this.IsEmpty(value))
             this.WriteValue(value);
     }
 
@@ -162,7 +158,7 @@ internal partial class BinaryConcatenator<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void FinalWrite(T? value)
     {
-        if (!this._isEmpty(value))
+        if (!this.IsEmpty(value))
             this.WriteValue(value);
     }
 
@@ -175,7 +171,7 @@ internal partial class BinaryConcatenator<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private async Task InitialWriteAsync(T? value)
     {
-        if (!this._isEmpty(value))
+        if (!this.IsEmpty(value))
         {
             await this.WriteValueAsync(value);
             this._binaryWrite = this.WriteWithSeparator;
@@ -193,7 +189,7 @@ internal partial class BinaryConcatenator<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private async Task WriteWithSeparatorAsync(T? value)
     {
-        if (!this._isEmpty(value))
+        if (!this.IsEmpty(value))
         {
             await this.WriteValueAsync(this._separator!);
             await this.WriteValueAsync(value);
@@ -208,7 +204,7 @@ internal partial class BinaryConcatenator<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private async Task FinalWriteAsync(T? value)
     {
-        if (!this._isEmpty(value))
+        if (!this.IsEmpty(value))
             await this.WriteValueAsync(value);
     }
 }

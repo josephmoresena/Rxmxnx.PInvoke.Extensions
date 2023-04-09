@@ -8,10 +8,10 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
         throw new ArgumentException("Object must be of type CString.", nameof(other));
 
     /// <inheritdoc/>
-    public Int32 CompareTo(String? other) => other is not String otherNotNull ? 1 : StringUtf8Comparator.Create().Compare(this, otherNotNull);
+    public Int32 CompareTo(String? other) => other is null ? 1 : StringUtf8Comparator.Create().Compare(this, other);
 
     /// <inheritdoc/>
-    public Int32 CompareTo(CString? other) => other is not CString otherNotNull ? 1 : CStringUtf8Comparator.Create().Compare(this, otherNotNull);
+    public Int32 CompareTo(CString? other) => other is null ? 1 : CStringUtf8Comparator.Create().Compare(this, other);
 
     /// <summary>
     /// Compares two specified <see cref="CString"/> objects using the specified rules, and returns an integer that indicates their

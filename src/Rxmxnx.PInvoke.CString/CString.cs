@@ -8,7 +8,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// <summary>
     /// Represents the empty UTF-8 string. This field is read-only.
     /// </summary>
-    public static readonly CString Empty = new(new Byte[] { default });
+    public static readonly CString Empty = new(new Byte[] { default }, true);
 
     /// <summary>
     /// Indicates whether the ending of text in the current <see cref="CString"/> includes 
@@ -33,9 +33,9 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified 
     /// UTF-8 character repeated a specified number of times.
     /// </summary>
-    /// <param name="c"></param>
-    /// <param name="count"></param>
-    public CString(Byte c, Int32 count) : this(Enumerable.Repeat(c, count).Concat(empty).ToArray()) { }
+    /// <param name="c">A UTF-8 char.</param>
+    /// <param name="count">The number of the times <paramref name="c"/> occours.</param>
+    public CString(Byte c, Int32 count) : this(CreateRepeatedChar(c, count), true) { }
 
     /// <summary>
     /// Constructor.
@@ -61,8 +61,8 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
         }
         else
         {
-            this._isNullTerminated = data[^1] == default;
-            this._length = length - (this._isNullTerminated ? 1 : 0);
+            this._isNullTerminated = IsNullTerminatedSpan(data, out Int32 textLength);
+            this._length = textLength;
         }
     }
 
@@ -98,7 +98,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
         ReadOnlySpan<Byte> source = this;
         Byte[] bytes = new Byte[this._length + 1];
         source.CopyTo(bytes);
-        return new CString(bytes);
+        return new CString(bytes, true);
     }
 
     /// <inheritdoc/>
@@ -165,7 +165,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// otherwise, <see langword="false"/>.
     /// </returns>
     public static Boolean IsNullOrEmpty([NotNullWhen(false)] CString? value)
-        => value is not CString valueNotNull || valueNotNull._length == 0;
+        => value is null || value.Length == 0;
 
     /// <summary>
     /// Creates a new <see cref="CString"/> instance from <paramref name="func"/>.
@@ -174,4 +174,12 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// <returns>A <see cref="CString"/> instance from <paramref name="func"/>.</returns>
     [return: NotNullIfNotNull(nameof(func))]
     public static CString? Create(ReadOnlySpanFunc<Byte>? func) => func is not null ? new(func, false) : default;
+
+    /// <summary>
+    /// Creates a new <see cref="CString"/> instance from <paramref name="bytes"/>.
+    /// </summary>
+    /// <param name="bytes">Binary internal information.</param>
+    /// <returns>A <see cref="CString"/> instance from <paramref name="bytes"/>.</returns>
+    [return: NotNullIfNotNull(nameof(bytes))]
+    public static CString? Create(Byte[]? bytes) => bytes is not null ? new(bytes, false) : default;
 }

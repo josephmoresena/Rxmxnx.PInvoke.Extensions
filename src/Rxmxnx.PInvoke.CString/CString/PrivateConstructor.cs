@@ -6,12 +6,14 @@ public partial class CString
     /// Private constructor.
     /// </summary>
     /// <param name="bytes">Binary internal information.</param>
-    private CString([DisallowNull] Byte[] bytes)
+    /// <param name="isNullTerminated">Indicates whether <paramref name="bytes"/> is a null-terminated UTF-8 text.</param>
+    private CString(Byte[] bytes, Boolean? isNullTerminated = default)
     {
+        Int32 textLength = bytes.Length;
         this._isLocal = true;
         this._data = ValueRegion<Byte>.Create(bytes);
-        this._isNullTerminated = bytes.Any() && bytes[^1] == default;
-        this._length = bytes.Length - (this._isNullTerminated ? 1 : 0);
+        this._isNullTerminated = !isNullTerminated.HasValue ? IsNullTerminatedSpan(bytes, out textLength) : isNullTerminated.Value;
+        this._length = textLength - (isNullTerminated.GetValueOrDefault() ? 1 : 0);
     }
 
     /// <summary>
@@ -26,9 +28,16 @@ public partial class CString
         this._data = ValueRegion<Byte>.Create(func);
 
         ReadOnlySpan<Byte> data = func();
-        Boolean isNullTerminatedSpan = IsNullTerminatedSpan(data);
-        this._isNullTerminated = isLiteral || isNullTerminatedSpan;
-        this._length = data.Length - (isNullTerminatedSpan ? 1 : 0);
+        if (isLiteral)
+        {
+            this._isNullTerminated = true;
+            this._length = data.Length;
+        }
+        else
+        {
+            this._isNullTerminated = IsNullTerminatedSpan(data, out Int32 textLength);
+            this._length = textLength;
+        }
     }
 
     /// <summary>

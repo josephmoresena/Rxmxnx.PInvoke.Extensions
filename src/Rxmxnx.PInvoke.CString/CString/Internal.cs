@@ -3,6 +3,13 @@
 public partial class CString
 {
     /// <summary>
+    /// Creates a not null-terminated <see cref="CString"/> instance that contains a single <paramref name="c"/> character.
+    /// </summary>
+    /// <param name="c">A UTF-8 char.</param>
+    /// <returns>A not null-terminated <see cref="CString"/> instance that contains a single <paramref name="c"/> character.</returns>
+    internal static CString Create(Byte c) => new(new Byte[] { c }, false);
+
+    /// <summary>
     /// Retrieves the internal binary data from a given <see cref="CString"/>.
     /// </summary>
     /// <param name="value">A non-reference <see cref="CString"/> instance.</param>

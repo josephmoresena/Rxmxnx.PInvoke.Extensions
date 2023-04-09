@@ -6,16 +6,6 @@
 internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDisposable
 {
     /// <summary>
-    /// Delegate. Indicates whether <paramref name="value"/> is empty.
-    /// </summary>
-    /// <param name="value">Value to check.</param>
-    /// <returns>
-    /// <see langword="true"/> if <paramref name="value"/> is empty; otherwise,
-    /// <see langword="false"/>.
-    /// </returns>
-    protected delegate Boolean IsEmptyDelegate([NotNullWhen(false)] T? value);
-
-    /// <summary>
     /// Current instance stream.
     /// </summary>
     protected MemoryStream Stream => this._mem;
@@ -33,13 +23,11 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
     /// Constructor.
     /// </summary>
     /// <param name="separator">Separator for concatenation.</param>
-    /// <param name="isEmpty">Delegate for check <typeparamref name="T"/> value.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
-    protected BinaryConcatenator(T? separator, IsEmptyDelegate isEmpty, CancellationToken cancellationToken)
+    protected BinaryConcatenator(T? separator, CancellationToken cancellationToken)
     {
         this._mem = new();
         this._separator = separator;
-        this._isEmpty = isEmpty;
         this._cancellationToken = cancellationToken;
         this.InitializeDelegates();
     }
@@ -92,6 +80,27 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
     /// <returns>A taks that represents the asynchronous write operation.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected abstract Task WriteValueAsync(T value);
+
+    /// <summary>
+    /// Indicates whether <paramref name="value"/> is empty.
+    /// </summary>
+    /// <param name="value">Value to check.</param>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="value"/> is empty; otherwise,
+    /// <see langword="false"/>.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected abstract Boolean IsEmpty([NotNullWhen(false)] T? value);
+
+    /// <summary>
+    /// Indicates whether <paramref name="value"/> is empty.
+    /// </summary>
+    /// <param name="value">Value to check.</param>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="value"/> is empty; otherwise,
+    /// <see langword="false"/>.
+    /// </returns>
+    protected virtual Boolean IsEmpty(ReadOnlySpan<Byte> value) => value.IsEmpty;
 
     /// <summary>
     /// Releases the resources of current instance.

@@ -41,6 +41,9 @@ public sealed class BasicTests
         Assert.True(String.Empty != default(CString));
         Assert.True(CString.Empty != default(String));
 
+        Assert.Null(CString.Create(default(ReadOnlySpanFunc<Byte>)));
+        Assert.Null(CString.Create(default(Byte[])));
+
         Assert.Throws<ArgumentNullException>(() => CString.GetBytes(default!));
         Assert.Throws<ArgumentException>(() => empty.CompareTo(new Object()));
     }
@@ -161,6 +164,15 @@ public sealed class BasicTests
         Assert.NotEqual(cstr, new CString(rChar, cstr.Length));
 
         Assert.Equal(cstr.Length + 1, CString.GetBytes(cstr).Length);
+
+        CString rawClone = CString.Create(CString.GetBytes(cstr));
+        Assert.False(rawClone.IsFunction);
+        Assert.False(rawClone.IsNullTerminated);
+        Assert.False(rawClone.IsReference);
+        Assert.False(rawClone.IsSegmented);
+        Assert.False(CString.IsNullOrEmpty(rawClone));
+        Assert.NotEqual(cstr, rawClone);
+        Assert.Equal(cstr.Length + 1, rawClone.Length);
     }
     private static void AssertFromBytes(CString cstr)
     {
@@ -174,6 +186,15 @@ public sealed class BasicTests
         AssertFromNullTerminatedBytes((CString)cstr.Clone());
 
         Assert.Equal(cstr.Length, CString.GetBytes(cstr).Length);
+
+        CString rawClone = CString.Create(CString.GetBytes(cstr));
+        Assert.False(rawClone.IsFunction);
+        Assert.False(rawClone.IsNullTerminated);
+        Assert.False(rawClone.IsReference);
+        Assert.False(rawClone.IsSegmented);
+        Assert.False(CString.IsNullOrEmpty(rawClone));
+        Assert.Equal(cstr, rawClone);
+        Assert.Equal(cstr.Length, rawClone.Length);
     }
     private static void AssertFromFunction(CString cstr)
     {

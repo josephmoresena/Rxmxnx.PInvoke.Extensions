@@ -39,7 +39,7 @@ public partial class CString
     /// <paramref name="value"/> has zero elements.
     /// </returns>
     public static Task<CString> JoinAsync(Byte separator, CancellationToken cancellationToken, params CString?[] value)
-        => JoinAsync(new Byte[] { separator }, cancellationToken, value);
+        => JoinAsync(CString.Create(separator), cancellationToken, value);
 
     /// <summary>
     /// Asynchronously concatenates all the elements of a UTF-8 text array, using the
@@ -63,7 +63,7 @@ public partial class CString
     /// <see cref="CString.Empty"/> if <paramref name="values"/> has no elements.
     /// </returns>
     public static Task<CString> JoinAsync(Byte separator, IEnumerable<CString?> values, CancellationToken cancellationToken = default)
-        => JoinAsync(new Byte[] { separator }, values, cancellationToken);
+        => JoinAsync(CString.Create(separator), values, cancellationToken);
 
     /// <summary>
     /// Asynchronously concatenates an array of UTF-8 texts, using the specified separator
@@ -94,7 +94,7 @@ public partial class CString
     /// <see cref="CString.Empty"/> if <paramref name="count"/> is zero.
     /// </returns>
     public static Task<CString> JoinAsync(Byte separator, CString?[] value, Int32 startIndex, Int32 count, CancellationToken cancellationToken = default)
-        => JoinAsync(new Byte[] { separator }, value, startIndex, count, cancellationToken);
+        => JoinAsync(CString.Create(separator), value, startIndex, count, cancellationToken);
 
     /// <summary>
     /// Asynchronously concatenates all the elements of a UTF-8 text array, using the specified separator

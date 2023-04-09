@@ -6,6 +6,11 @@
 internal sealed class CStringConcatenator : BinaryConcatenator<CString>
 {
     /// <summary>
+    /// Indicates whether the empty values must be ignored in the concatenation.
+    /// </summary>
+    private readonly Boolean _ignoreEmpty = false;
+
+    /// <summary>
     /// Constructor.
     /// </summary>
     /// <param name="cancellationToken">
@@ -21,8 +26,9 @@ internal sealed class CStringConcatenator : BinaryConcatenator<CString>
     /// The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.
     /// </param>
     public CStringConcatenator(CString? separator, CancellationToken cancellationToken = default) :
-        base(separator, CString.IsNullOrEmpty, cancellationToken)
+        base(separator, cancellationToken)
     {
+        this._ignoreEmpty = !CString.IsNullOrEmpty(separator);
     }
 
     /// <inheritdoc/>
@@ -32,6 +38,13 @@ internal sealed class CStringConcatenator : BinaryConcatenator<CString>
     /// <inheritdoc/>
     protected override Task WriteValueAsync(CString value)
         => value.WriteAsync(base.Stream, false, base.CancellationToken);
+
+    /// <inheritdoc/>
+    protected override Boolean IsEmpty([NotNullWhen(false)] CString? value)
+        => value is null || value.Length == 0 && !this._ignoreEmpty;
+
+    /// <inheritdoc/>
+    protected override Boolean IsEmpty(ReadOnlySpan<Byte> value) => base.IsEmpty(value) && !this._ignoreEmpty;
 
     /// <summary>
     /// Creates a <see cref="CString"/> instance from concatenation.

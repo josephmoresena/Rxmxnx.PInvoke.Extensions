@@ -168,4 +168,60 @@ public partial class CString
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static Boolean IsNullTerminatedSpan(ReadOnlySpan<Byte> data)
         => !data.IsEmpty && data[^1] == default;
+
+    /// <summary>
+    /// Indicates whether <paramref name="data"/> contains a null-terminated UTF-8 text.
+    /// </summary>
+    /// <param name="data">A read-only byte span containing UTF-8 text.</param>
+    /// <param name="textLength">Output. The length of the UTF-8 text in <paramref name="data"/>.</param>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="data"/> contains a null-terminated UTF-8 text; 
+    /// otherwise, <see langword="false"/>.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static Boolean IsNullTerminatedSpan(ReadOnlySpan<Byte> data, out Int32 textLength)
+    {
+        textLength = data.Length;
+        while (textLength > 0 && data[textLength - 1] == default)
+            textLength--;
+        return textLength < data.Length;
+    }
+
+    /// <summary>
+    /// Creates a null-terminated UTF-8 text that only contains the character <paramref name="c"/>
+    /// <paramref name="count"/> times.
+    /// </summary>
+    /// <param name="c">A UTF-8 char.</param>
+    /// <param name="count">The number of the times <paramref name="c"/> occours.</param>
+    /// <returns>
+    /// A null-terminated UTF-8 text that only contains the character <paramref name="c"/>
+    /// <paramref name="count"/> times.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static Byte[] CreateRepeatedChar(Byte c, Int32 count)
+    {
+        Byte[] result = new Byte[count + 1];
+        for (Int32 i = 0; i < count; i++)
+            result[i] = c;
+        return result;
+    }
+
+    /// <summary>
+    /// Creates a null-terminated UTF-8 text that only contains the sequence <paramref name="seq"/>
+    /// <paramref name="count"/> times.
+    /// </summary>
+    /// <param name="seq">A UTF-8 sequence.</param>
+    /// <param name="count">The number of the times <paramref name="seq"/> occours.</param>
+    /// <returns>
+    /// A null-terminated UTF-8 text that only contains the sequence <paramref name="seq"/>
+    /// <paramref name="count"/> times.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static Byte[] CreateRepeatedSequence(ReadOnlySpan<Byte> seq, Int32 count)
+    {
+        Byte[] result = new Byte[seq.Length * count + 1];
+        for (Int32 i = 0; i < count; i++)
+            seq.CopyTo(result.AsSpan()[(seq.Length * i)..]);
+        return result;
+    }
 }
