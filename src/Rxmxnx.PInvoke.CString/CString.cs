@@ -35,7 +35,57 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// </summary>
     /// <param name="c">A UTF-8 char.</param>
     /// <param name="count">The number of the times <paramref name="c"/> occours.</param>
-    public CString(Byte c, Int32 count) : this(CreateRepeatedChar(c, count), true) { }
+    public CString(Byte c, Int32 count) : this(CreateRepeatedSequence(stackalloc Byte[] { c }, count), true)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified 
+    /// UTF-8 sequence repeated a specified number of times.
+    /// </summary>
+    /// <param name="u0">The first UTF-8 unit.</param>
+    /// <param name="u1">The second UTF-8 unit.</param>
+    /// <param name="count">The number of the times the sequence occours.</param>
+    public CString(Byte u0, Byte u1, Int32 count)
+        : this(CreateRepeatedSequence(stackalloc Byte[] { u0, u1 }, count), true)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified 
+    /// UTF-8 sequence repeated a specified number of times.
+    /// </summary>
+    /// <param name="u0">The first UTF-8 unit.</param>
+    /// <param name="u1">The second UTF-8 unit.</param>
+    /// <param name="u2">The third UTF-8 unit.</param>
+    /// <param name="count">The number of the times the sequence occours.</param>
+    public CString(Byte u0, Byte u1, Byte u2, Int32 count)
+        : this(CreateRepeatedSequence(stackalloc Byte[] { u0, u1, u2 }, count), true)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified 
+    /// UTF-8 sequence repeated a specified number of times.
+    /// </summary>
+    /// <param name="u0">The first UTF-8 unit.</param>
+    /// <param name="u1">The second UTF-8 unit.</param>
+    /// <param name="u2">The third UTF-8 unit.</param>
+    /// <param name="u3">The fourth UTF-8 unit.</param>
+    /// <param name="count">The number of the times the sequence occours.</param>
+    public CString(Byte u0, Byte u1, Byte u2, Byte u3, Int32 count)
+        : this(CreateRepeatedSequence(stackalloc Byte[] { u0, u1, u2, u3 }, count), true)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CString"/> class to the UTF-8 characters indicated in the specified
+    /// read-only span.
+    /// </summary>
+    /// <param name="source">A read-only span of UTF-8 characters.</param>
+    public CString(ReadOnlySpan<Byte> source) : this(CreateRepeatedSequence(source, 1))
+    {
+    }
 
     /// <summary>
     /// Constructor.
@@ -49,22 +99,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// </summary>
     /// <param name="ptr">A pointer to a array of UTF-8 characters.</param>
     /// <param name="length">The number of <see cref="Byte"/> within value to use.</param>
-    public CString(IntPtr ptr, Int32 length)
-    {
-        this._isLocal = false;
-        this._data = ValueRegion<Byte>.Create(ptr, length);
-        ReadOnlySpan<Byte> data = this._data;
-        if (data.IsEmpty)
-        {
-            this._isNullTerminated = false;
-            this._length = 0;
-        }
-        else
-        {
-            this._isNullTerminated = IsNullTerminatedSpan(data, out Int32 textLength);
-            this._length = textLength;
-        }
-    }
+    public CString(IntPtr ptr, Int32 length) : this(ptr, length, false) { }
 
     /// <summary>
     /// Copies the UTF-8 text into a new array.
@@ -166,6 +201,21 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// </returns>
     public static Boolean IsNullOrEmpty([NotNullWhen(false)] CString? value)
         => value is null || value.Length == 0;
+
+    /// <summary>
+    /// Creates a new <see cref="CString"/> instance from <paramref name="ptr"/> and <paramref name="length"/>.
+    /// </summary>
+    /// <param name="ptr">A pointer to a array of UTF-8 characters.</param>
+    /// <param name="length">The number of <see cref="Byte"/> within value to use.</param>
+    /// <returns>A <see cref="CString"/> instance from <paramref name="ptr"/> and <paramref name="length"/>.</returns>
+    public static CString Create(IntPtr ptr, Int32 length) => new(ptr, length, true);
+
+    /// <summary>
+    /// Creates a new <see cref="CString"/> instance from <paramref name="source"/>.
+    /// </summary>
+    /// <param name="source">A read-only span of UTF-8 characters.</param>
+    /// <returns>A <see cref="CString"/> instance from <paramref name="source"/>.</returns>
+    public static CString Create(ReadOnlySpan<Byte> source) => new(source.ToArray(), false);
 
     /// <summary>
     /// Creates a new <see cref="CString"/> instance from <paramref name="func"/>.

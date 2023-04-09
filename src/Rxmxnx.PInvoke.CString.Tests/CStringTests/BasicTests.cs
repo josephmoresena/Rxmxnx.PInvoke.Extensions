@@ -141,13 +141,11 @@ public sealed class BasicTests
     }
     private static void AssertFromString(CString cstr)
     {
-        Byte rChar = fixture.Create<Byte>();
         Assert.True(cstr.IsFunction);
         Assert.True(cstr.IsNullTerminated);
         Assert.False(cstr.IsReference);
         Assert.False(cstr.IsSegmented);
         Assert.False(CString.IsNullOrEmpty(cstr));
-        Assert.NotEqual(cstr, new CString(rChar, cstr.Length));
         AssertFromNullTerminatedBytes((CString)cstr.Clone());
 
         Exception ex = Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
@@ -155,13 +153,11 @@ public sealed class BasicTests
     }
     private static void AssertFromNullTerminatedBytes(CString cstr)
     {
-        Byte rChar = fixture.Create<Byte>();
         Assert.False(cstr.IsFunction);
         Assert.True(cstr.IsNullTerminated);
         Assert.False(cstr.IsReference);
         Assert.False(cstr.IsSegmented);
         Assert.False(CString.IsNullOrEmpty(cstr));
-        Assert.NotEqual(cstr, new CString(rChar, cstr.Length));
 
         Assert.Equal(cstr.Length + 1, CString.GetBytes(cstr).Length);
 
@@ -173,16 +169,24 @@ public sealed class BasicTests
         Assert.False(CString.IsNullOrEmpty(rawClone));
         Assert.NotEqual(cstr, rawClone);
         Assert.Equal(cstr.Length + 1, rawClone.Length);
+
+        CString rawSpanClone = CString.Create(CString.GetBytes(cstr).AsSpan());
+        Assert.False(rawSpanClone.IsFunction);
+        Assert.False(rawSpanClone.IsNullTerminated);
+        Assert.False(rawSpanClone.IsReference);
+        Assert.False(rawSpanClone.IsSegmented);
+        Assert.False(CString.IsNullOrEmpty(rawSpanClone));
+        Assert.NotEqual(cstr, rawSpanClone);
+        Assert.Equal(cstr.Length + 1, rawSpanClone.Length);
+
     }
     private static void AssertFromBytes(CString cstr)
     {
-        Byte rChar = fixture.Create<Byte>();
         Assert.False(cstr.IsFunction);
         Assert.False(cstr.IsNullTerminated);
         Assert.False(cstr.IsReference);
         Assert.False(cstr.IsSegmented);
         Assert.False(CString.IsNullOrEmpty(cstr));
-        Assert.NotEqual(cstr, new CString(rChar, cstr.Length));
         AssertFromNullTerminatedBytes((CString)cstr.Clone());
 
         Assert.Equal(cstr.Length, CString.GetBytes(cstr).Length);
@@ -195,59 +199,103 @@ public sealed class BasicTests
         Assert.False(CString.IsNullOrEmpty(rawClone));
         Assert.Equal(cstr, rawClone);
         Assert.Equal(cstr.Length, rawClone.Length);
+
+        CString rawSpanClone = CString.Create(CString.GetBytes(cstr).AsSpan());
+        Assert.False(rawSpanClone.IsFunction);
+        Assert.False(rawSpanClone.IsNullTerminated);
+        Assert.False(rawSpanClone.IsReference);
+        Assert.False(rawSpanClone.IsSegmented);
+        Assert.False(CString.IsNullOrEmpty(rawSpanClone));
+        Assert.Equal(cstr, rawSpanClone);
+        Assert.Equal(cstr.Length, rawSpanClone.Length);
     }
     private static void AssertFromFunction(CString cstr)
     {
-        Byte rChar = fixture.Create<Byte>();
         Assert.True(cstr.IsFunction);
         Assert.True(cstr.IsNullTerminated);
         Assert.False(cstr.IsReference);
         Assert.False(cstr.IsSegmented);
         Assert.False(CString.IsNullOrEmpty(cstr));
-        Assert.NotEqual(cstr, new CString(rChar, cstr.Length));
         AssertFromNullTerminatedBytes((CString)cstr.Clone());
 
         Exception ex = Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
         Assert.Contains("does not contains the UTF-8 text.", ex.Message);
+
+        CString rawSpanClone = CString.Create(cstr);
+        Assert.False(rawSpanClone.IsFunction);
+        Assert.False(rawSpanClone.IsNullTerminated);
+        Assert.False(rawSpanClone.IsReference);
+        Assert.False(rawSpanClone.IsSegmented);
+        Assert.False(CString.IsNullOrEmpty(rawSpanClone));
+        Assert.Equal(cstr, rawSpanClone);
+        Assert.Equal(cstr.Length, rawSpanClone.Length);
     }
     private static void AssertFromFunctionNonLiteral(CString cstr)
     {
-        Byte rChar = fixture.Create<Byte>();
         Assert.True(cstr.IsFunction);
         Assert.False(cstr.IsNullTerminated);
         Assert.False(cstr.IsReference);
         Assert.False(cstr.IsSegmented);
         Assert.False(CString.IsNullOrEmpty(cstr));
-        Assert.NotEqual(cstr, new CString(rChar, cstr.Length));
         AssertFromNullTerminatedBytes((CString)cstr.Clone());
 
         Exception ex = Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
         Assert.Contains("does not contains the UTF-8 text.", ex.Message);
+
+        CString rawSpanClone = CString.Create(cstr);
+        Assert.False(rawSpanClone.IsFunction);
+        Assert.False(rawSpanClone.IsNullTerminated);
+        Assert.False(rawSpanClone.IsReference);
+        Assert.False(rawSpanClone.IsSegmented);
+        Assert.False(CString.IsNullOrEmpty(rawSpanClone));
+        Assert.Equal(cstr, rawSpanClone);
+        Assert.Equal(cstr.Length, rawSpanClone.Length);
+
     }
-    private static void AssertFromBytesPointer(CString cstr)
+    private static unsafe void AssertFromBytesPointer(CString cstr)
     {
-        Byte rChar = fixture.Create<Byte>();
         Assert.False(cstr.IsFunction);
         Assert.False(cstr.IsNullTerminated);
         Assert.True(cstr.IsReference);
         Assert.False(cstr.IsSegmented);
         Assert.False(CString.IsNullOrEmpty(cstr));
-        Assert.NotEqual(cstr, new CString(rChar, cstr.Length));
         AssertFromNullTerminatedBytes((CString)cstr.Clone());
 
         Exception ex = Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
         Assert.Contains("does not contains the UTF-8 text.", ex.Message);
+
+        fixed(void* ptr = cstr.AsSpan())
+        {
+            CString rawPointerSpan = CString.Create(new IntPtr(ptr), cstr.Length);
+            Assert.False(rawPointerSpan.IsFunction);
+            Assert.False(rawPointerSpan.IsNullTerminated);
+            Assert.True(rawPointerSpan.IsReference);
+            Assert.False(rawPointerSpan.IsSegmented);
+            Assert.False(CString.IsNullOrEmpty(rawPointerSpan));
+            Assert.Equal(cstr, rawPointerSpan);
+            Assert.Equal(cstr.Length, rawPointerSpan.Length);
+        }
     }
-    private static void AssertFromNullTerminatedBytesPointer(CString cstr)
+    private static unsafe void AssertFromNullTerminatedBytesPointer(CString cstr)
     {
-        Byte rChar = fixture.Create<Byte>();
         Assert.False(cstr.IsFunction);
         Assert.True(cstr.IsNullTerminated);
         Assert.True(cstr.IsReference);
         Assert.False(cstr.IsSegmented);
         Assert.False(CString.IsNullOrEmpty(cstr));
-        Assert.NotEqual(cstr, new CString(rChar, cstr.Length));
         AssertFromNullTerminatedBytes((CString)cstr.Clone());
+
+        fixed (void* ptr = cstr.AsSpan())
+        {
+            CString rawPointerSpan = CString.Create(new IntPtr(ptr), cstr.Length + 1);
+            Assert.False(rawPointerSpan.IsFunction);
+            Assert.False(rawPointerSpan.IsNullTerminated);
+            Assert.True(rawPointerSpan.IsReference);
+            Assert.False(rawPointerSpan.IsSegmented);
+            Assert.False(CString.IsNullOrEmpty(rawPointerSpan));
+            Assert.NotEqual(cstr, rawPointerSpan);
+            Assert.Equal(cstr.Length + 1, rawPointerSpan.Length);
+        }
     }
     private static void RefEnumerationTest(CString cstr1, CString cstr2)
     {

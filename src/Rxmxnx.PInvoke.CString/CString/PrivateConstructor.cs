@@ -5,6 +5,34 @@ public partial class CString
     /// <summary>
     /// Private constructor.
     /// </summary>
+    /// <param name="ptr">A pointer to a array of UTF-8 characters.</param>
+    /// <param name="length">The number of <see cref="Byte"/> within value to use.</param>
+    /// <param name="useFullLength">Indicates whether should used the total length.</param>
+    private CString(IntPtr ptr, Int32 length, Boolean useFullLength)
+    {
+        this._isLocal = false;
+        this._data = ValueRegion<Byte>.Create(ptr, length);
+        ReadOnlySpan<Byte> data = this._data;
+        if (data.IsEmpty)
+        {
+            this._isNullTerminated = false;
+            this._length = 0;
+        }
+        else if (useFullLength)
+        {
+            this._isNullTerminated = false;
+            this._length = length;
+        }
+        else
+        {
+            this._isNullTerminated = IsNullTerminatedSpan(data, out Int32 textLength);
+            this._length = textLength;
+        }
+    }
+
+    /// <summary>
+    /// Private constructor.
+    /// </summary>
     /// <param name="bytes">Binary internal information.</param>
     /// <param name="isNullTerminated">Indicates whether <paramref name="bytes"/> is a null-terminated UTF-8 text.</param>
     private CString(Byte[] bytes, Boolean? isNullTerminated = default)

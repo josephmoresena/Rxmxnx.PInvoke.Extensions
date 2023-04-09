@@ -188,25 +188,6 @@ public partial class CString
     }
 
     /// <summary>
-    /// Creates a null-terminated UTF-8 text that only contains the character <paramref name="c"/>
-    /// <paramref name="count"/> times.
-    /// </summary>
-    /// <param name="c">A UTF-8 char.</param>
-    /// <param name="count">The number of the times <paramref name="c"/> occours.</param>
-    /// <returns>
-    /// A null-terminated UTF-8 text that only contains the character <paramref name="c"/>
-    /// <paramref name="count"/> times.
-    /// </returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static Byte[] CreateRepeatedChar(Byte c, Int32 count)
-    {
-        Byte[] result = new Byte[count + 1];
-        for (Int32 i = 0; i < count; i++)
-            result[i] = c;
-        return result;
-    }
-
-    /// <summary>
     /// Creates a null-terminated UTF-8 text that only contains the sequence <paramref name="seq"/>
     /// <paramref name="count"/> times.
     /// </summary>
