@@ -32,16 +32,14 @@ internal sealed class CStringConcatenator : BinaryConcatenator<CString>
     }
 
     /// <inheritdoc/>
-    protected override void WriteValue(CString value)
-        => value.Write(base.Stream, false);
+    protected override void WriteValue([AllowNull] CString value) => value?.Write(base.Stream, false);
 
     /// <inheritdoc/>
-    protected override Task WriteValueAsync(CString value)
-        => value.WriteAsync(base.Stream, false, base.CancellationToken);
+    protected override Task WriteValueAsync([AllowNull] CString value)
+        => value?.WriteAsync(base.Stream, false, base.CancellationToken) ?? Task.CompletedTask;
 
     /// <inheritdoc/>
-    protected override Boolean IsEmpty([NotNullWhen(false)] CString? value)
-        => value is null || value.Length == 0 && !this._ignoreEmpty;
+    protected override Boolean IsEmpty(CString? value) => CString.IsNullOrEmpty(value) && !this._ignoreEmpty;
 
     /// <inheritdoc/>
     protected override Boolean IsEmpty(ReadOnlySpan<Byte> value) => base.IsEmpty(value) && !this._ignoreEmpty;

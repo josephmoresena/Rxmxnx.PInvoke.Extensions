@@ -22,8 +22,7 @@ public partial class CString
         ArgumentNullException.ThrowIfNull(value);
         using BinaryConcatenator helper = new(separator);
         foreach (CString? utf8Text in value)
-            if (utf8Text is not null)
-                helper.Write(utf8Text);
+            helper.Write(utf8Text);
         return helper.ToArray(true) ?? CString.Empty;
     }
 
@@ -49,8 +48,7 @@ public partial class CString
         ArgumentNullException.ThrowIfNull(values);
         using BinaryConcatenator helper = new(separator);
         foreach (CString? utf8Text in values)
-            if (utf8Text is not null)
-                helper.Write(utf8Text);
+            helper.Write(utf8Text);
         return helper.ToArray(true) ?? CString.Empty;
     }
 
@@ -83,8 +81,7 @@ public partial class CString
         ArgumentNullException.ThrowIfNull(value);
         using BinaryConcatenator helper = new(separator);
         foreach (CString? utf8Text in value.Skip(startIndex).Take(count))
-            if (utf8Text is not null)
-                helper.Write(utf8Text);
+            helper.Write(utf8Text);
         return helper.ToArray(true) ?? CString.Empty;
     }
 
