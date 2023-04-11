@@ -60,6 +60,24 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
     }
 
     /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="ignoreCase">
+    /// <see langword="true"/> to ignore case during the comparision; otherwise, <see langword="false"/>.
+    /// </param>
+    /// <param name="culture">
+    /// An object that supplies culture-specific comparision information.
+    /// If <paramref name="culture"/> is <see langword="null"/>, the current culture is used.
+    /// </param>
+    protected Utf8Comparator(Boolean ignoreCase, CultureInfo? culture)
+    {
+        this._culture = culture ?? CultureInfo.CurrentCulture;
+        this._ignoreCase = ignoreCase;
+        this._options = !ignoreCase ? CompareOptions.None : CompareOptions.IgnoreCase;
+        this._optionsIgnoreCase = CompareOptions.IgnoreCase;
+    }
+
+    /// <summary>
     /// Compares two specified texts using the specified rules, and returns an integer that indicates their relative position in
     /// the sort order.
     /// </summary>
@@ -87,6 +105,9 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
     /// </returns>
     public Int32 Compare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
     {
+        if (this.UnsupportedComparison())
+            return this.Compare(new(this._ignoreCase), textA, textB);
+
         //Creates a comparison state instance.
         ComparisonState state = new(this._ignoreCase);
         //Perform the initial comparison.

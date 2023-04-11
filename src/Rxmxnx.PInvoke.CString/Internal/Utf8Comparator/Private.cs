@@ -73,7 +73,7 @@ internal partial class Utf8Comparator<TChar>
             //If the value of both runes is the same, no further comparison is necessary.
             if (runeA != runeB)
                 //If the runes are not comparable to each other a full text comparison will be needed.
-                if (this.AreUncomparable(state, runeA, runeB))
+                if (this.UnsupportedComparison(state, runeA, runeB))
                 {
                     textA = ReadOnlySpan<Byte>.Empty;
                     textB = ReadOnlySpan<TChar>.Empty;
@@ -131,8 +131,24 @@ internal partial class Utf8Comparator<TChar>
     /// <see langword="false"/>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private Boolean AreUncomparable(ComparisonState state, DecodedRune runeA, DecodedRune runeB)
+    private Boolean UnsupportedComparison(ComparisonState state, DecodedRune runeA, DecodedRune runeB)
         => !runeA.IsSingleUnicode && !runeB.IsSingleUnicode && !this.IgnoreCaseEqual(runeA, runeB, state.IgnoreCase);
+
+    /// <summary>
+    /// Indicates whether the current culture comparision is unsupported.
+    /// </summary>
+    /// <returns>
+    /// <see langword="true"/> if the current culture comparision is unsupported; otherwise, <see langword="false"/>.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Boolean UnsupportedComparison()
+        => this._culture.DisplayName switch
+        {
+            "om-KE" => true,
+            "th-TH" => true,
+            "sk-SK" => true,
+            _ => false,
+        };
 
     /// <summary>
     /// Compares two specified <see cref="Rune"/> objects using the specified rules, and returns an integer that indicates their

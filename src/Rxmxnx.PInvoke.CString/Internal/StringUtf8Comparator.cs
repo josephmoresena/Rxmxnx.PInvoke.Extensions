@@ -14,6 +14,21 @@ internal sealed class StringUtf8Comparator : Utf8Comparator<Char>
     {
     }
 
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="ignoreCase">
+    /// <see langword="true"/> to ignore case during the comparision; otherwise, <see langword="false"/>.
+    /// </param>
+    /// <param name="culture">
+    /// An object that supplies culture-specific comparision information.
+    /// If <paramref name="culture"/> is <see langword="null"/>, the current culture is used.
+    /// </param>
+    private StringUtf8Comparator(Boolean ignoreCase, CultureInfo? culture)
+        : base(ignoreCase, culture)
+    {
+    }
+
     /// <inheritdoc/>
     protected override DecodedRune? DecodeRune(ref ReadOnlySpan<Char> source)
     {
@@ -40,8 +55,12 @@ internal sealed class StringUtf8Comparator : Utf8Comparator<Char>
     /// <param name="ignoreCase">
     /// <see langword="true"/> to ignore case during the comparision; otherwise, <see langword="false"/>.
     /// </param>
+    /// <param name="culture">
+    /// An object that supplies culture-specific comparision information.
+    /// If <paramref name="culture"/> is <see langword="null"/>, the current culture is used.
+    /// </param>
     /// <returns>A new <see cref="StringUtf8Comparator"/> instance.</returns>
-    public static StringUtf8Comparator Create(Boolean ignoreCase)
-        => new(ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture);
+    public static StringUtf8Comparator Create(Boolean ignoreCase, CultureInfo? culture = default)
+        => new(ignoreCase, culture);
 }
 
