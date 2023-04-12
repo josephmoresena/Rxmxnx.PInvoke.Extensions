@@ -143,11 +143,12 @@ internal partial class Utf8Comparator<TChar>
     /// <see langword="true"/> if the current culture comparision is unsupported; otherwise, <see langword="false"/>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Boolean UnsupportedComparison()
-        => this._culture.Name.Split('-').FirstOrDefault() switch
+    public Boolean UnsupportedCulture()
+        => this._culture.Name.ToLowerInvariant().Split('-').FirstOrDefault() switch
         {
             "br" => true,
             "cs" => true,
+            "cu" => true,
             "cy" => true,
             "dsb" => true,
             "hsb" => true,
@@ -155,9 +156,12 @@ internal partial class Utf8Comparator<TChar>
             "is" => true,
             "ku" => true,
             "om" => true,
+            "pl" => true,
             "th" => true,
+            "tk" => true,
             "sk" => true,
             "smn" => true,
+            "se" => true,
             "sq" => true,
             "uz" => true,
             "wo" => true,
