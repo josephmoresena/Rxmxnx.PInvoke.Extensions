@@ -1,4 +1,6 @@
-﻿namespace Rxmxnx.PInvoke.Internal;
+﻿using System.Security.Cryptography;
+
+namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class Utf8Comparator<TChar>
 {
@@ -142,11 +144,23 @@ internal partial class Utf8Comparator<TChar>
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Boolean UnsupportedComparison()
-        => this._culture.DisplayName switch
+        => this._culture.Name.Split('-').FirstOrDefault() switch
         {
-            "om-KE" => true,
-            "th-TH" => true,
-            "sk-SK" => true,
+            "br" => true,
+            "cs" => true,
+            "cy" => true,
+            "dsb" => true,
+            "hsb" => true,
+            "ig" => true,
+            "is" => true,
+            "ku" => true,
+            "om" => true,
+            "th" => true,
+            "sk" => true,
+            "smn" => true,
+            "sq" => true,
+            "uz" => true,
+            "wo" => true,
             _ => false,
         };
 
