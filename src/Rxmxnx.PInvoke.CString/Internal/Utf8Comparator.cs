@@ -105,7 +105,7 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
     /// </returns>
     public Int32 Compare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
     {
-        if (this.UnsupportedComparison())
+        if (this.UnsupportedCulture())
             return this.Compare(new(this._ignoreCase), textA, textB);
 
         //Creates a comparison state instance.
