@@ -151,11 +151,11 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// otherwise, false.
     /// </returns>
     public Boolean Equals([NotNullWhen(true)] CString? value, StringComparison comparisonType)
-        => value is CString valueNotNull && TextEquals(this, valueNotNull, comparisonType);
+        => value is CString valueNotNull && CStringUtf8Comparator.Create(comparisonType).TextEquals(this, valueNotNull);
 
     /// <inheritdoc/>
     public Boolean Equals([NotNullWhen(true)] String? other)
-        => other is String otherNotNull && TextEquals(this, otherNotNull);
+        => other is String otherNotNull && StringUtf8Comparator.Create().TextEquals(this, otherNotNull);
 
     /// <summary>
     /// Determines whether this <see cref="CString"/> and a specified <see cref="String"/> object have the same value.
@@ -168,7 +168,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// otherwise, false.
     /// </returns>
     public Boolean Equals([NotNullWhen(true)] String? value, StringComparison comparisonType)
-        => value is String valueNotNull && TextEquals(this, valueNotNull, comparisonType);
+        => value is String valueNotNull && StringUtf8Comparator.Create(comparisonType).TextEquals(this, valueNotNull);
 
     /// <inheritdoc/>
     public override Boolean Equals([NotNullWhen(true)] Object? obj)

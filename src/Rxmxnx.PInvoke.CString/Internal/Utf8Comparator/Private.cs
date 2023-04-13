@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-
-namespace Rxmxnx.PInvoke.Internal;
+﻿namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class Utf8Comparator<TChar>
 {
@@ -134,7 +132,7 @@ internal partial class Utf8Comparator<TChar>
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private Boolean UnsupportedComparison(ComparisonState state, DecodedRune runeA, DecodedRune runeB)
-        => !runeA.IsSingleUnicode && !runeB.IsSingleUnicode && !this.IgnoreCaseEqual(runeA, runeB, state.IgnoreCase);
+        => !state.IsEqualization && !runeA.IsSingleUnicode && !runeB.IsSingleUnicode && !this.IgnoreCaseEqual(runeA, runeB, state.IgnoreCase);
 
     /// <summary>
     /// Indicates whether the current culture comparision is unsupported.
@@ -204,7 +202,7 @@ internal partial class Utf8Comparator<TChar>
 
         //If both runes are different in the current comparison, it is necessary to determine if the base of both
         //runes is the same.
-        if (result != 0 && !this._ordinal)
+        if (result != 0 && !this._ordinal && !state.IsEqualization)
         {
             String strANormalizedBase = strA.Normalize(NormalizationForm.FormD)[..1];
             String strBNormalizedBase = strB.Normalize(NormalizationForm.FormD)[..1];

@@ -12,6 +12,11 @@ internal partial class Utf8Comparator<TChar>
         /// </summary>
         private readonly Boolean _ignoreCase;
         /// <summary>
+        /// Indicates whether the current comparison is for equalization purpose.
+        /// </summary>
+        private readonly Boolean _isEqualization;
+
+        /// <summary>
         /// Count of perfomed comparison.
         /// </summary>
         private Int32 _count;
@@ -28,6 +33,10 @@ internal partial class Utf8Comparator<TChar>
         /// Indicates whether the comparison must be continue.
         /// </summary>
         public Boolean Continue => this._continue;
+        /// <summary>
+        /// Indicates whether the current comparison is for equalization purpose.
+        /// </summary>
+        public Boolean IsEqualization => this._isEqualization;
 
         /// <summary>
         /// Constructor.
@@ -36,6 +45,18 @@ internal partial class Utf8Comparator<TChar>
         public ComparisonState(Boolean ignoreCase)
         {
             this._ignoreCase = ignoreCase;
+            this._isEqualization = false;
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="ignoreCase">Indicates whether the comparison must be continue.</param>
+        /// <param name="isEqualization">Indicates whether the current comparison is for equalization purpose.</param>
+        public ComparisonState(Boolean ignoreCase, Boolean isEqualization)
+        {
+            this._ignoreCase = ignoreCase;
+            this._isEqualization = isEqualization;
         }
 
         /// <summary>
