@@ -153,6 +153,17 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
     }
 
     /// <summary>
+    /// Creates a <typeparamref name="TDelegate"/> instance over the memory block.
+    /// </summary>
+    /// <typeparam name="TDelegate">A <see cref="Delegate"/> type.</typeparam>
+    /// <returns>A <typeparamref name="TDelegate"/> instance over the memory block.</returns>
+    public TDelegate CreateDelegate<TDelegate>() where TDelegate : Delegate
+    {
+        this.ValidateOperation(true);
+        return Marshal.GetDelegateForFunctionPointer<TDelegate>(this.Pointer);
+    }
+
+    /// <summary>
     /// Invalidates current context.
     /// </summary>
     public void Unload() => this._isValid.Value = false;
