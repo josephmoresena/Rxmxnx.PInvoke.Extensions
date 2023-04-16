@@ -1,5 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke.Tests;
 
+[ExcludeFromCodeCoverage]
 internal static partial class TestSet
 {
     private static readonly String[] utf16Text = default!;

@@ -1,6 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests;
 
-public sealed record CulturalComparisonTestResult
+[ExcludeFromCodeCoverage]
+internal sealed record CulturalComparisonTestResult
 {
     private const Int32 count = 10;
     private static readonly CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);

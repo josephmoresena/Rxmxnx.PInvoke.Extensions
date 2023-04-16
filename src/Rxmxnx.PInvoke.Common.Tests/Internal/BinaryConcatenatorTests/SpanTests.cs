@@ -1,5 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.Internal.BinaryConcatenatorTests;
 
+[ExcludeFromCodeCoverage]
 public sealed class SpanTests
 {
     private static readonly IFixture fixture = new Fixture();

@@ -1,5 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke.Tests;
 
+[ExcludeFromCodeCoverage]
 public sealed class IEnumerableSequenceTests
 {
     private const String notStartedError = "Enumeration has not started. Call MoveNext.";

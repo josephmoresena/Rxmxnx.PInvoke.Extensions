@@ -1,5 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
 
+[ExcludeFromCodeCoverage]
 public sealed class ConcatTest
 {
     [Theory]

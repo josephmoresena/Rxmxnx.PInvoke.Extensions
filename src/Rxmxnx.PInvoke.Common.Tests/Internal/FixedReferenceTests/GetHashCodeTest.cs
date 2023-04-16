@@ -1,5 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedReferenceTests;
 
+[ExcludeFromCodeCoverage]
 public sealed class GetHashCodeTest : FixedReferenceTestsBase
 {
     [Fact]

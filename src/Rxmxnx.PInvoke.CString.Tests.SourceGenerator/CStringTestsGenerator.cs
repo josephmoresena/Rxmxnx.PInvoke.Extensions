@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -7,6 +8,7 @@ using Microsoft.CodeAnalysis;
 namespace Rxmxnx.PInvoke.Tests.SourceGenerator
 {
     [Generator]
+    [ExcludeFromCodeCoverage]
     public class CStringTestsGenerator : ISourceGenerator
     {
         void ISourceGenerator.Execute(GeneratorExecutionContext context)

@@ -3,6 +3,7 @@
 /// <summary>
 /// Base class for <see cref="FixedMemory"/> tests.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public abstract class FixedMemoryTestsBase
 {
     /// <summary>

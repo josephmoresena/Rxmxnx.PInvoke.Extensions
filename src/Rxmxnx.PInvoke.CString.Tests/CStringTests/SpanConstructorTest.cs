@@ -1,7 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
 
-namespace Rxmxnx.PInvoke.Tests.CStringTests;
-
+[ExcludeFromCodeCoverage]
 public sealed class SpanConstructorTest
 {
     [Fact]

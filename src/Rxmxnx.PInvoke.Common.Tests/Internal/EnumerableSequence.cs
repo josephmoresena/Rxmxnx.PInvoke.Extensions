@@ -2,6 +2,7 @@
 
 internal delegate ReadOnlySpan<T> GetSpanDelegate<T>();
 
+[ExcludeFromCodeCoverage]
 internal sealed class EnumerableSequence<T> : IEnumerableSequence<T>
 {
     private readonly GetSpanDelegate<T> _getSpan;

@@ -1,6 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests;
 
-public sealed record ComparisonTestResult
+[ExcludeFromCodeCoverage]
+internal sealed record ComparisonTestResult
 {
     public Int32 Normal { get; private init; }
     public Int32 CaseSensitive { get; private init; }

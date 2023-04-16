@@ -1,5 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
 
+[ExcludeFromCodeCoverage]
 public sealed class GetHashCodeTest : FixedContextTestsBase
 {
     [Fact]

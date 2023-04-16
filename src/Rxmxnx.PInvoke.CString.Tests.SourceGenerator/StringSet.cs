@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Rxmxnx.PInvoke.Tests.SourceGenerator
 {
+    [ExcludeFromCodeCoverage]
     internal static class StringSet
     {
         public static readonly String[] Set = new String[]
