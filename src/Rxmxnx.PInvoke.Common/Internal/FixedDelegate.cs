@@ -3,7 +3,7 @@
 /// <summary>
 /// Fixed method class.
 /// </summary>
-/// <typeparam name="T">Type of the fixed method.</typeparam>
+/// <typeparam name="TDelegate">Type of the fixed method.</typeparam>
 internal unsafe sealed class FixedDelegate<TDelegate> : FixedMemory, IFixedMethod<TDelegate> where TDelegate : Delegate
 {
     /// <summary>

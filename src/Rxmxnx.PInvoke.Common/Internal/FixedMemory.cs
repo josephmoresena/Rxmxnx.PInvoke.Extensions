@@ -160,7 +160,7 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
     public TDelegate CreateDelegate<TDelegate>() where TDelegate : Delegate
     {
         this.ValidateOperation(true);
-        return Marshal.GetDelegateForFunctionPointer<TDelegate>(this.Pointer);
+        return Marshal.GetDelegateForFunctionPointer<TDelegate>(new(this._ptr));
     }
 
     /// <summary>

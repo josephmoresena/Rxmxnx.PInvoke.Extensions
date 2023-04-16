@@ -61,13 +61,15 @@ public sealed class CompareTest
         CString cstrLowerB = new(TestSet.Utf8TextLower[indexB]);
         CString cstrUpperB = new(TestSet.Utf8TextUpper[indexB]);
 
-        List<Task> comparisionTasks = new();
         ComparisonTestResult testAB = await ComparisonTestResult.CompareAsync(strA, strB, token).ConfigureAwait(false);
 
-        comparisionTasks.Add(StringTestAsync(testAB, cstrA, strB, token));
-        comparisionTasks.Add(CStringTestAsync(testAB, cstrA, cstrB, token));
-        comparisionTasks.Add(CompleteTestAsync(ComparisonTestResult.CompareAsync(strA, strLowerB, token), cstrA, strLowerB, cstrLowerB, token));
-        comparisionTasks.Add(CompleteTestAsync(ComparisonTestResult.CompareAsync(strA, strUpperB, token), cstrA, strUpperB, cstrUpperB, token));
+        List<Task> comparisionTasks = new(6)
+        {
+            StringTestAsync(testAB, cstrA, strB, token),
+            CStringTestAsync(testAB, cstrA, cstrB, token),
+            CompleteTestAsync(ComparisonTestResult.CompareAsync(strA, strLowerB, token), cstrA, strLowerB, cstrLowerB, token),
+            CompleteTestAsync(ComparisonTestResult.CompareAsync(strA, strUpperB, token), cstrA, strUpperB, cstrUpperB, token),
+        };
 
         if (testAB.Normal != 0)
         {
@@ -102,11 +104,12 @@ public sealed class CompareTest
         CString cstrLowerB = new(TestSet.Utf8TextLower[indexB]);
         CString cstrUpperB = new(TestSet.Utf8TextUpper[indexB]);
 
-        List<Task> tasks = new();
-
-        tasks.Add(CompleteCulturalTestAsync(strA, cstrA, strB, cstrB, token));
-        tasks.Add(CompleteCulturalTestAsync(strA, cstrA, strLowerB, cstrLowerB, token));
-        tasks.Add(CompleteCulturalTestAsync(strA, cstrA, strUpperB, cstrUpperB, token));
+        List<Task> tasks = new(6)
+        {
+            CompleteCulturalTestAsync(strA, cstrA, strB, cstrB, token),
+            CompleteCulturalTestAsync(strA, cstrA, strLowerB, cstrLowerB, token),
+            CompleteCulturalTestAsync(strA, cstrA, strUpperB, cstrUpperB, token),
+        };
 
         if (!Object.ReferenceEquals(strA, strB))
         {
