@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Rxmxnx.PInvoke.Internal;
+﻿namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// Helper class from memory block fixing.

@@ -39,6 +39,7 @@ public partial class CStringSequence
     /// <returns>
     /// <see cref="String"/> instance that contains the binary information of the UTF-8 text sequence.
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static String CreateBuffer(Int32[] lengths, CString?[] values)
     {
         Int32 totalBytes = 0;
@@ -55,6 +56,7 @@ public partial class CStringSequence
     /// </summary>
     /// <param name="charSpan">A writable <see cref="Char"/> span.</param>
     /// <param name="values">A enumeration of <see cref="CString"/> items.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void CopyText(Span<Char> charSpan, CString?[] values)
     {
         Int32 position = 0;
@@ -81,6 +83,7 @@ public partial class CStringSequence
     /// </summary>
     /// <param name="charSpan">A writable <see cref="Char"/> span.</param>
     /// <param name="sequence">A <see cref="CStringSequence"/> instance.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void CopySequence(Span<Char> charSpan, CStringSequence sequence)
     {
         ReadOnlySpan<Char> chars = sequence._value;
@@ -88,15 +91,16 @@ public partial class CStringSequence
     }
 
     /// <summary>
-    /// Preforms a binary copy of all non-empty <paramref name="span"/> to 
+    /// Performs a binary copy of all non-empty <paramref name="seq"/> to 
     /// <paramref name="destination"/> span.
     /// </summary>
-    /// <param name="span">A read-only <see cref="CString"/> span instance.</param>
+    /// <param name="seq">A <see cref="FixedCStringSequence"/> instance.</param>
     /// <param name="destination">The destination binary buffer.</param>
-    private static void BinaryCopyTo(ReadOnlySpan<CString> span, Byte[] destination)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static void BinaryCopyTo(FixedCStringSequence seq, Byte[] destination)
     {
         Int32 offset = 0;
-        foreach (CString value in span)
+        foreach (CString value in seq.Values)
             if (value.Length > 0)
             {
                 ReadOnlySpan<Byte> bytes = value.AsSpan();

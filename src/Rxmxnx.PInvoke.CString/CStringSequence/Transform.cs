@@ -16,7 +16,7 @@ public partial class CStringSequence
             fixed (Char* ptr = this._value)
             {
                 _ = this.AsSpanUnsafe(out CString[] output);
-                action(output);
+                action(new(ptr, this._value.Length * SizeOfChar, output));
             }
         }
     }
@@ -37,7 +37,7 @@ public partial class CStringSequence
             fixed (Char* ptr = this._value)
             {
                 _ = this.AsSpanUnsafe(out CString[] output);
-                action(output, state);
+                action(new(ptr, this._value.Length * SizeOfChar, output), state);
             }
         }
     }
@@ -58,7 +58,7 @@ public partial class CStringSequence
             fixed (Char* ptr = this._value)
             {
                 _ = this.AsSpanUnsafe(out CString[] output);
-                return func(output);
+                return func(new(ptr, this._value.Length * SizeOfChar, output));
             }
         }
     }
@@ -81,7 +81,7 @@ public partial class CStringSequence
             fixed (Char* ptr = this._value)
             {
                 _ = this.AsSpanUnsafe(out CString[] output);
-                return func(output, state);
+                return func(new(ptr, this._value.Length * SizeOfChar, output), state);
             }
         }
     }

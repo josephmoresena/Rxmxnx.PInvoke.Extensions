@@ -54,25 +54,10 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
         => other != default && this._value.Equals(other._value) &&
         this._lengths.SequenceEqual(other._lengths);
 
-    /// <summary>
-    /// Determines whether the specified object is equal to the current object.
-    /// </summary>
-    /// <param name="obj">The object to compare with the current object.</param>
-    /// <returns>
-    /// <see langword="true"/> if the specified object is equal to the current object; 
-    /// otherwise, <see langword="false"/>.
-    /// </returns>
+    /// <inheritdoc/>
     public override Boolean Equals(Object? obj) => obj is CStringSequence cstr && this.Equals(cstr);
-
-    /// <summary>
-    /// Returns a <see cref="String"/> that represents the current object.
-    /// </summary>
-    /// <returns>A <see cref="String"/> that represents the current object.</returns>
+    /// <inheritdoc/>
     public override String ToString() => this._value;
-
-    /// <summary>
-    /// Serves as the default hash function.
-    /// </summary>
-    /// <returns>A hash code for the current object.</returns>
+    /// <inheritdoc/>
     public override Int32 GetHashCode() => this._value.GetHashCode();
 }
