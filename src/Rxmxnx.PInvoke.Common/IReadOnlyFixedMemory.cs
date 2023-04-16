@@ -3,7 +3,7 @@
 /// <summary>
 /// This interface represents a read-only fixed memory block.
 /// </summary>
-public interface IReadOnlyFixedMemory
+public interface IReadOnlyFixedMemory : IFixedPointer
 {
     /// <summary>
     /// A read-only binary span over the fixed memory block.

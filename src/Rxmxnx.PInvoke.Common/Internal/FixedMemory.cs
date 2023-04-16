@@ -1,4 +1,6 @@
-﻿namespace Rxmxnx.PInvoke.Internal;
+﻿using System;
+
+namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// Helper class from memory block fixing.
@@ -39,6 +41,7 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
     /// </summary>
     public Boolean IsReadOnly => this._isReadOnly;
 
+    IntPtr IFixedPointer.Pointer => new(this._ptr);
     Span<Byte> IFixedMemory.Bytes => this.CreateBinarySpan();
     ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => this.CreateReadOnlyBinarySpan();
 
