@@ -50,7 +50,7 @@ internal sealed class DecodedRune : IWrapper<Rune>
         if (ReferenceEquals(this, obj))
             return true;
         else if (obj is DecodedRune decoded)
-            return this.Equals(decoded);
+            return this._value.Equals(decoded._value);
         else if (obj is Rune rune)
             return this._value.Equals(rune);
         return base.Equals(obj);
@@ -145,7 +145,7 @@ internal sealed class DecodedRune : IWrapper<Rune>
     /// Operator. <see cref="DecodedRune"/> -> <see cref="Rune"/>
     /// </summary>
     /// <param name="rune">A <see cref="DecodedRune"/> instance.</param>
-    public static implicit operator Rune(DecodedRune rune) => rune.Value;
+    public static implicit operator Rune(DecodedRune? rune) => rune?.Value ?? default;
 
     /// <summary>
     /// Returns a value that indicates whether two Rune instances have equal values.
@@ -154,7 +154,8 @@ internal sealed class DecodedRune : IWrapper<Rune>
     /// <see langword="true"/> if <paramref name="left"/> and <paramref name="right"/> have the same value;
     /// otherwise, <see langword="false"/>.
     /// </returns>
-    public static Boolean operator ==(DecodedRune left, DecodedRune right) => left._value == right._value;
+    public static Boolean operator ==(DecodedRune? left, DecodedRune? right)
+        => left is not null ? left._value == right?._value : right is null;
 
     /// <summary>
     /// Returns a value that indicates whether two Rune instances have different values.
@@ -163,6 +164,6 @@ internal sealed class DecodedRune : IWrapper<Rune>
     /// <see langword="true"/> if <paramref name="left"/> and <paramref name="right"/> have the different values;
     /// otherwise, <see langword="false"/>.
     /// </returns>
-    public static Boolean operator !=(DecodedRune left, DecodedRune right) => left._value != right._value;
+    public static Boolean operator !=(DecodedRune? left, DecodedRune? right) => !(left == right);
 }
 
