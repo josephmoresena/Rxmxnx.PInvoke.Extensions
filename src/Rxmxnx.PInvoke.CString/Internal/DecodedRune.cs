@@ -100,9 +100,9 @@ internal sealed class DecodedRune : IWrapper<Rune>
 
         while (length < source.Length)
         {
-            result.Add(length);
             if (DecodedRune.Decode(source[length..]) is not DecodedRune rune)
                 break;
+            result.Add(length);
             length += rune.CharsConsumed;
         }
 
@@ -121,9 +121,9 @@ internal sealed class DecodedRune : IWrapper<Rune>
 
         while (length < source.Length)
         {
-            result.Add(length);
             if (DecodedRune.Decode(source[length..]) is not DecodedRune rune)
                 break;
+            result.Add(length);
             length += rune.CharsConsumed;
         }
 
