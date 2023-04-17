@@ -135,6 +135,9 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
     /// <param name="textB">The second text instance.</param>
     public Boolean TextEquals(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
     {
+        if (this.UnsupportedCulture())
+            return this.Compare(new(this._ignoreCase, true), textA, textB) == 0;
+
         //Creates a comparison state instance.
         ComparisonState state = new(this._ignoreCase, true);
         Boolean result = this.Compare(state, ref textA, ref textB) == 0;
