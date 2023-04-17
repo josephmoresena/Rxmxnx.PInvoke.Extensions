@@ -3,7 +3,7 @@
 [ExcludeFromCodeCoverage]
 internal sealed record WritedCString
 {
-	public CString Value { get; private init; }
+    public CString Value { get; private init; }
     public Int32 Start { get; private init; }
     public Int32 Count { get; private init; }
 

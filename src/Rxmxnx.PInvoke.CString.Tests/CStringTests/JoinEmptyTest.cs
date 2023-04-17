@@ -69,7 +69,7 @@ public sealed class JoinEmptyTest
     internal void LocalEmptyTest(Boolean emptyData)
     {
         List<GCHandle> handles = new();
-        CString? separator = !emptyData? CString.Empty : default;
+        CString? separator = !emptyData ? CString.Empty : default;
         CString?[] values = !emptyData ? Enumerable.Repeat(CString.Empty, 3).ToArray() : Array.Empty<CString>();
         try
         {

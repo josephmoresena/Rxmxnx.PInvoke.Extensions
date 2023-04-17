@@ -77,7 +77,7 @@ public sealed class WithSafeFixedTest
             fixed (void* ptr = CString.GetBytes(cstr))
                 return new(ptr);
         }
-        catch(Exception)
+        catch (Exception)
         {
             return default;
         }

@@ -18,6 +18,6 @@ internal unsafe sealed class FixedDelegate<TDelegate> : FixedMemory, IFixedMetho
     /// </summary>
     /// <param name="ptr">Pointer to fixed method.</param>
     public FixedDelegate(IntPtr ptr) : base(ptr.ToPointer(), sizeof(IntPtr), true)
-	{
+    {
     }
 }

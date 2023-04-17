@@ -266,7 +266,7 @@ public sealed class BasicTests
         Exception ex = Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
         Assert.Contains("does not contains the UTF-8 text.", ex.Message);
 
-        fixed(void* ptr = cstr.AsSpan())
+        fixed (void* ptr = cstr.AsSpan())
         {
             CString rawPointerSpan = CString.Create(new IntPtr(ptr), cstr.Length);
             Assert.False(rawPointerSpan.IsFunction);
