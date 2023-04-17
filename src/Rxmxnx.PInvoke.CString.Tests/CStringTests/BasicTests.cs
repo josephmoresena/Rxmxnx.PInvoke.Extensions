@@ -9,6 +9,7 @@ public sealed class BasicTests
     internal void EmptyTest()
     {
         CString empty = new(IntPtr.Zero, 0);
+        Assert.Equal(CString.Null, empty);
         Assert.Equal(CString.Empty, empty);
         Assert.Equal(String.Empty, CString.Empty.ToString());
         Assert.Equal(CString.Empty, (CString)String.Empty);

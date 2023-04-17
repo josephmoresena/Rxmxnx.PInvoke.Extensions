@@ -45,7 +45,7 @@ public partial class CStringSequence
                 offset += this._lengths[i] + 1;
             }
             else
-                yield return CString.Empty;
+                yield return CString.Null;
         }
     }
 }

@@ -6,41 +6,61 @@
 public unsafe readonly ref struct FixedCStringSequence
 {
     /// <summary>
-    /// Pointer to fixed memory.
+    /// <see cref="CString"/> values.
     /// </summary>
-    private readonly void* _ptr;
-    /// <summary>
-    /// Memory size in bytes.
-    /// </summary>
-    private readonly Int32 _length;
+    private readonly CString? _value;
     /// <summary>
     /// <see cref="CString"/> values.
     /// </summary>
     private readonly CString[]? _values;
 
     /// <summary>
-    /// A read-only binary span over the fixed memory block.
-    /// </summary>
-    public ReadOnlySpan<Byte> Bytes => new(this._ptr, this._length);
-    /// <summary>
-    /// Pointer to fixed memory.
-    /// </summary>
-    public IntPtr Pointer => new(this._ptr);
-    /// <summary>
     /// <see cref="CString"/> values.
     /// </summary>
     public IReadOnlyList<CString> Values => this._values ?? Array.Empty<CString>();
 
     /// <summary>
+    /// Gets the element at the given index.
+    /// </summary>
+    /// <param name="index">A position in the current instance.</param>
+    /// <returns>The object at position <paramref name="index"/>.</returns>
+    /// <exception cref="IndexOutOfRangeException">
+    /// <paramref name="index"/> is greater than or equal to the length of this object or less than zero.
+    /// </exception>
+    public IReadOnlyFixedContext<Byte> this[Int32 index]
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get
+        {
+            if (index < 0 || index >= this.Values.Count)
+                throw new ArgumentOutOfRangeException(nameof(index), "Index was outside the bounds of the sequence.");
+            return this.GetFixedCString(index);
+        }
+    }
+
+    /// <summary>
     /// Constructor.
     /// </summary>
-    /// <param name="ptr">Pointer to fixed memory.</param>
-    /// <param name="length">Memory size in bytes.</param>
     /// <param name="values"><see cref="CString"/> values.</param>
-    internal FixedCStringSequence(void* ptr, Int32 length, CString[] values)
+    /// <param name="value">Internal <see cref="CString"/> value.</param>
+    internal FixedCStringSequence(CString[] values, CString value)
     {
-        this._ptr = ptr;
-        this._length = length;
         this._values = values;
+        this._value = value;
     }
+
+    /// <summary>
+    /// Retrieves the <see cref="IFixedContext{Byte}"/> for element at <paramref name="index"/>.
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns><see cref="IFixedContext{Byte}"/> for element at <paramref name="index"/>.</returns>
+    private IReadOnlyFixedContext<Byte> GetFixedCString(Int32 index)
+    {
+        CString cstr = this._values![index];
+        fixed (void* ptr = cstr.AsSpan())
+            return new FixedContext<Byte>(ptr, cstr.Length, true);
+    }
+
+    /// <inheritdoc/>
+    public override String? ToString() => this._value?.ToString();
 }

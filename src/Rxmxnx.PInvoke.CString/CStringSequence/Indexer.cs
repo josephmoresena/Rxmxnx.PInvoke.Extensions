@@ -12,6 +12,7 @@ public partial class CStringSequence : IEnumerableSequence<CString>
     /// </exception>
     public CString this[Int32 index]
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
             if (index < 0 || index >= this._lengths.Length)
@@ -38,6 +39,7 @@ public partial class CStringSequence : IEnumerableSequence<CString>
     /// at <paramref name="startIndex"/> in this instance.
     /// </returns>
     /// <exception cref="ArgumentOutOfRangeException"/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public CStringSequence Slice(Int32 startIndex) => this.Slice(startIndex, this._lengths.Length - startIndex);
 
     /// <summary>
