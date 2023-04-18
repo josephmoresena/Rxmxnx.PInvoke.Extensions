@@ -142,29 +142,7 @@ internal partial class Utf8Comparator<TChar>
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Boolean UnsupportedCulture()
-        => this._culture.Name.ToLowerInvariant().Split('-').FirstOrDefault() switch
-        {
-            "br" => true,
-            "cs" => true,
-            "cu" => true,
-            "cy" => true,
-            "dsb" => true,
-            "hsb" => true,
-            "ig" => true,
-            "is" => true,
-            "ku" => true,
-            "om" => true,
-            "pl" => true,
-            "th" => true,
-            "tk" => true,
-            "sk" => true,
-            "smn" => true,
-            "se" => true,
-            "sq" => true,
-            "uz" => true,
-            "wo" => true,
-            _ => false,
-        };
+        => UnsupportedCultures.Contains(this._culture.Name.ToLowerInvariant().Split('-').FirstOrDefault()!);
 
     /// <summary>
     /// Compares two specified <see cref="Rune"/> objects using the specified rules, and returns an integer that indicates their
