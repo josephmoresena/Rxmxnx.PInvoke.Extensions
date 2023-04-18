@@ -92,6 +92,15 @@ public sealed class SegmentTests
             Assert.Equal(cstr.IsFunction, cstrSeg.IsFunction);
             Assert.Equal(cstr.IsSegmented || !cstr.IsReference && (cstrStart != 0 || cstrEnd != cstr.Length), cstrSeg.IsSegmented);
             Assert.Equal(cstrEnd == cstr.Length && cstr.IsNullTerminated, cstrSeg.IsNullTerminated);
+
+            for (Int32 i = 0; i < cstrSeg.Length; i++)
+                Assert.Equal(cstr[i + cstrStart], cstrSeg[i]);
+
+            if (!cstr.IsSegmented && !cstr.IsFunction && !cstr.IsReference)
+                if (!cstrSeg.IsSegmented)
+                    Assert.Equal(CString.GetBytes(cstr), CString.GetBytes(cstrSeg));
+                else
+                    Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstrSeg));
         }
         CloneTest(cstrSeg);
     }
@@ -99,9 +108,12 @@ public sealed class SegmentTests
     {
         CString cloneSeg = (CString)cstrSeg.Clone();
         Assert.Equal(cstrSeg.ToString(), cloneSeg.ToString());
+        Assert.Equal(cstrSeg.Length, cloneSeg.Length);
         Assert.False(cloneSeg.IsFunction);
         Assert.False(cloneSeg.IsReference);
         Assert.False(cloneSeg.IsSegmented);
         Assert.True(cloneSeg.IsNullTerminated);
+
+        Assert.Equal(cstrSeg.Length + 1, CString.GetBytes(cloneSeg).Length);
     }
 }
