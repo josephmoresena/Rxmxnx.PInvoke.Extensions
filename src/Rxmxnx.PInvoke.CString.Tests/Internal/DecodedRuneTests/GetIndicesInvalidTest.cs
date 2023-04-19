@@ -1,80 +1,9 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal;
+﻿namespace Rxmxnx.PInvoke.Tests.Internal.DecodedRuneTests;
 
 [ExcludeFromCodeCoverage]
-public sealed class DecodedRuneTests
+public sealed class GetIndicesInvalidTest
 {
-    [Theory]
-    [InlineData("Hello")]
-    [InlineData("Привет")]
-    [InlineData("こんにちは")]
-    public void Decode_ReadOnlySpanChar_Success(String input)
-    {
-        var source = input.AsSpan();
-        var decodedRune = DecodedRune.Decode(source);
-        _ = Rune.DecodeFromUtf16(source, out _, out Int32 expectedCharsConsumed);
-
-        Assert.NotNull(decodedRune);
-        Assert.Equal(source[0], decodedRune.Value.ToString()[0]);
-        Assert.Equal(expectedCharsConsumed, decodedRune.CharsConsumed);
-    }
-
-    [Fact]
-    public void Decode_ReadOnlySpanChar_EmptySource()
-    {
-        var source = ReadOnlySpan<Char>.Empty;
-        var decodedRune = DecodedRune.Decode(source);
-
-        Assert.Null(decodedRune);
-    }
-
-    [Theory]
-    [InlineData("Hello")]
-    [InlineData("Привет")]
-    [InlineData("こんにちは")]
-    public void Decode_ReadOnlySpanByte_Success(String input)
-    {
-        var source = Encoding.UTF8.GetBytes(input);
-        var decodedRune = DecodedRune.Decode(source);
-        _ = Rune.DecodeFromUtf8(source, out _, out Int32 expectedCharsConsumed);
-
-        Assert.NotNull(decodedRune);
-        Assert.Equal(input[0], decodedRune.Value.ToString()[0]);
-        Assert.Equal(expectedCharsConsumed, decodedRune.CharsConsumed);
-    }
-
-    [Fact]
-    public void Decode_ReadOnlySpanByte_EmptySource()
-    {
-        var source = ReadOnlySpan<Byte>.Empty;
-        var decodedRune = DecodedRune.Decode(source);
-
-        Assert.Null(decodedRune);
-    }
-
-    [Theory]
-    [InlineData("Hello", new[] { 0, 1, 2, 3, 4 })]
-    [InlineData("Привет", new[] { 0, 1, 2, 3, 4, 5 })]
-    [InlineData("こんにちは", new[] { 0, 1, 2, 3, 4 })]
-    public void GetIndices_ReadOnlySpanChar_Success(String input, Int32[] expectedIndices)
-    {
-        var source = input.AsSpan();
-        var indices = DecodedRune.GetIndices(source);
-
-        Assert.Equal(expectedIndices.Length, indices.Count);
-        for (Int32 i = 0; i < expectedIndices.Length; i++)
-        {
-            Assert.Equal(expectedIndices[i], indices[i]);
-        }
-    }
-
-    [Fact]
-    public void GetIndices_ReadOnlySpanChar_EmptySource()
-    {
-        var source = ReadOnlySpan<Char>.Empty;
-        var indices = DecodedRune.GetIndices(source);
-
-        Assert.Empty(indices);
-    }
+    #region UTF16
 
     [Theory]
     [InlineData(0xD800)]
@@ -1101,39 +1030,16 @@ public sealed class DecodedRuneTests
     [InlineData(0xDBFD)]
     [InlineData(0xDBFE)]
     [InlineData(0xDBFF)]
-    public void GetIndices_ReadOnlySpanChar_Invalid(Char invalidChar)
+    public void Utf16Test(Char invalidChar)
     {
-        var source = new Char[] { invalidChar };
-        var indices = DecodedRune.GetIndices(source);
+        ReadOnlySpan<Char> source = new Char[] { invalidChar };
+        IReadOnlyList<Int32> indices = DecodedRune.GetIndices(source);
 
         Assert.Empty(indices);
     }
+    #endregion
 
-    [Theory]
-    [InlineData("Hello", new[] { 0, 1, 2, 3, 4 })]
-    [InlineData("Привет", new[] { 0, 2, 4, 6, 8, 10 })]
-    [InlineData("こんにちは", new[] { 0, 3, 6, 9, 12 })]
-    public void GetIndices_ReadOnlySpanByte_Success(String input, Int32[] expectedIndices)
-    {
-        var source = Encoding.UTF8.GetBytes(input);
-        var indices = DecodedRune.GetIndices(source);
-
-        Assert.Equal(expectedIndices.Length, indices.Count);
-        for (Int32 i = 0; i < expectedIndices.Length; i++)
-        {
-            Assert.Equal(expectedIndices[i], indices[i]);
-        }
-    }
-
-    [Fact]
-    public void GetIndices_ReadOnlySpanByte_EmptySource()
-    {
-        var source = ReadOnlySpan<Byte>.Empty;
-        var indices = DecodedRune.GetIndices(source);
-
-        Assert.Empty(indices);
-    }
-
+    #region UTF8
     [Theory]
     [InlineData(0x80)]
     [InlineData(0x81)]
@@ -1201,133 +1107,10 @@ public sealed class DecodedRuneTests
     [InlineData(0xBF)]
     public void GetIndices_ReadOnlySpanByte_Invalid(Byte invalidByte)
     {
-        var source = new Byte[] { invalidByte };
-        var indices = DecodedRune.GetIndices(source);
+        ReadOnlySpan<Byte> source = new Byte[] { invalidByte };
+        IReadOnlyList<Int32> indices = DecodedRune.GetIndices(source);
 
         Assert.Empty(indices);
     }
-
-    [Fact]
-    public void Equals_SameInstance_True()
-    {
-        var source = "A".AsSpan();
-        var decodedRune1 = DecodedRune.Decode(source);
-        var decodedRune2 = decodedRune1;
-
-        Assert.True(decodedRune1?.Equals(decodedRune2));
-    }
-
-    [Fact]
-    public void Equals_DifferentInstanceSameValue_True()
-    {
-        var source = "A".AsSpan();
-        var decodedRune1 = DecodedRune.Decode(source);
-        var decodedRune2 = DecodedRune.Decode(source);
-
-        Assert.True(decodedRune1?.Equals(decodedRune2));
-        Assert.True(decodedRune1?.Equals(decodedRune2?.Value));
-    }
-
-    [Fact]
-    public void Equals_DifferentInstanceDifferentValue_False()
-    {
-        var decodedRune1 = DecodedRune.Decode("A".AsSpan());
-        var decodedRune2 = DecodedRune.Decode("B".AsSpan());
-
-        Assert.False(decodedRune1?.Equals(decodedRune2));
-        Assert.False(decodedRune1?.Equals(decodedRune2?.Value));
-    }
-
-    [Fact]
-    public void Equals_Null_False()
-    {
-        var decodedRune = DecodedRune.Decode("A".AsSpan());
-        Assert.False(decodedRune?.Equals(null));
-    }
-
-    [Fact]
-    public void GetHashCode_SameValue_Equal()
-    {
-        var decodedRune1 = DecodedRune.Decode("A".AsSpan());
-        var decodedRune2 = DecodedRune.Decode("A".AsSpan());
-
-        Assert.Equal(decodedRune1?.GetHashCode(), decodedRune2?.GetHashCode());
-    }
-
-    [Fact]
-    public void ToString_ReturnsCorrectValue()
-    {
-        var source = "A".AsSpan();
-        var decodedRune = DecodedRune.Decode(source);
-
-        Assert.Equal(source.ToString(), decodedRune?.ToString());
-    }
-
-    [Fact]
-    public void EqualityOperator_SameInstance_True()
-    {
-        var source = "A".AsSpan();
-        var decodedRune1 = DecodedRune.Decode(source);
-        var decodedRune2 = decodedRune1;
-
-        Assert.True(decodedRune1 == decodedRune2);
-    }
-
-    [Fact]
-    public void EqualityOperator_DifferentInstanceSameValue_True()
-    {
-        var source = "A".AsSpan();
-        var decodedRune1 = DecodedRune.Decode(source);
-        var decodedRune2 = DecodedRune.Decode(source);
-
-        Assert.True(decodedRune1 == decodedRune2);
-    }
-
-    [Fact]
-    public void EqualityOperator_DifferentInstanceDifferentValue_False()
-    {
-        var decodedRune1 = DecodedRune.Decode("A".AsSpan());
-        var decodedRune2 = DecodedRune.Decode("B".AsSpan());
-
-        Assert.False(decodedRune1 == decodedRune2);
-    }
-
-    [Fact]
-    public void InequalityOperator_SameInstance_False()
-    {
-        var source = "A".AsSpan();
-        var decodedRune1 = DecodedRune.Decode(source);
-        var decodedRune2 = decodedRune1;
-
-        Assert.False(decodedRune1 != decodedRune2);
-    }
-
-    [Fact]
-    public void InequalityOperator_DifferentInstanceSameValue_False()
-    {
-        var source = "A".AsSpan();
-        var decodedRune1 = DecodedRune.Decode(source);
-        var decodedRune2 = DecodedRune.Decode(source);
-
-        Assert.False(decodedRune1 != decodedRune2);
-    }
-
-    [Fact]
-    public void InequalityOperator_DifferentInstanceDifferentValue_True()
-    {
-        var decodedRune1 = DecodedRune.Decode("A".AsSpan());
-        var decodedRune2 = DecodedRune.Decode("B".AsSpan());
-
-        Assert.True(decodedRune1 != decodedRune2);
-    }
-
-    [Fact]
-    public void ImplicitConversionOperator_Valid()
-    {
-        var source = "A".AsSpan();
-        var decodedRune = DecodedRune.Decode(source);
-        Rune rune = decodedRune;
-
-        Assert.Equal(decodedRune?.Value, rune);
-    }
+    #endregion
 }
