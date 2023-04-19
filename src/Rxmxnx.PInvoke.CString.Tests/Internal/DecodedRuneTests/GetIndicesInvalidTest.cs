@@ -4,7 +4,6 @@
 public sealed class GetIndicesInvalidTest
 {
     #region UTF16
-
     [Theory]
     [InlineData(0xD800)]
     [InlineData(0xD801)]

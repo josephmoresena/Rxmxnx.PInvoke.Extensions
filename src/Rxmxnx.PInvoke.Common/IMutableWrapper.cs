@@ -12,6 +12,7 @@ public interface IMutableWrapper<T> : IWrapper<T>
     /// </summary>
     new T? Value { get; set; }
 
+    [ExcludeFromCodeCoverage]
     T? IWrapper<T>.Value => this.Value;
 
     /// <summary>

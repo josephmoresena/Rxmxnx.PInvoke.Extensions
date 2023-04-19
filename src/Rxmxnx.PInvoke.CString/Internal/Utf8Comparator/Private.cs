@@ -65,22 +65,17 @@ internal partial class Utf8Comparator<TChar>
             DecodedRune? runeA = DecodeRuneFromUtf8(ref textA);
             DecodedRune? runeB = this.DecodeRune(ref textB);
 
-            //If at least one rune could not be decoded, the comparison should end.
-            //The result should be determined by the length of the texts.
-            if (runeA is null || runeB is null)
-                return runeA is not null ? 1 : runeB is not null ? -1 : 0;
-
+            //If the runes are not comparable to each other a full text comparison will be needed.
+            if (runeA is null || runeB is null || this.UnsupportedComparison(state, runeA, runeB))
+            {
+                textA = ReadOnlySpan<Byte>.Empty;
+                textB = ReadOnlySpan<TChar>.Empty;
+                return this.Compare(state, textAO, textBO);
+            }
             //If the value of both runes is the same, no further comparison is necessary.
-            if (runeA != runeB)
-                //If the runes are not comparable to each other a full text comparison will be needed.
-                if (this.UnsupportedComparison(state, runeA, runeB))
-                {
-                    textA = ReadOnlySpan<Byte>.Empty;
-                    textB = ReadOnlySpan<TChar>.Empty;
-                    return this.Compare(state, textAO, textBO);
-                }
-                else
-                    result = this.Compare(state, runeA, runeB);
+            else if (runeA != runeB)
+                result = this.Compare(state, runeA, runeB);
+
         }
         return result;
     }
@@ -131,8 +126,8 @@ internal partial class Utf8Comparator<TChar>
     /// <see langword="false"/>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private Boolean UnsupportedComparison(ComparisonState state, DecodedRune runeA, DecodedRune runeB)
-        => !state.IsEqualization && !runeA.IsSingleUnicode && !runeB.IsSingleUnicode && !this.IgnoreCaseEqual(runeA, runeB, state.IgnoreCase);
+    private Boolean UnsupportedComparison(ComparisonState state, DecodedRune? runeA, DecodedRune? runeB)
+        => runeA is null || runeB is null || !state.IsEqualization && !runeA.IsSingleUnicode && !runeB.IsSingleUnicode && !this.IgnoreCaseEqual(runeA, runeB, state.IgnoreCase);
 
     /// <summary>
     /// Indicates whether the current culture comparision is unsupported.

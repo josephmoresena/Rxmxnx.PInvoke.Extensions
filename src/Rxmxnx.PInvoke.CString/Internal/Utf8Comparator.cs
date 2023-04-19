@@ -124,7 +124,7 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
         }
 
         //If the result is zero, we must determine if the length of both texts is equal.
-        return result != 0 || textA.IsEmpty && textB.IsEmpty ? result : !textA.IsEmpty ? 1 : 0;
+        return result != 0 || textA.Length == textB.Length ? result : !textA.IsEmpty ? 1 : 0;
     }
 
     /// <summary>

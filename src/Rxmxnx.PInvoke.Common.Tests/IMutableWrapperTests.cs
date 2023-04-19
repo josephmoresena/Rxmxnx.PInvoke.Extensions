@@ -50,15 +50,24 @@ public sealed class IMutableWrapperTests
         T value = fixture.Create<T>();
         T value2 = fixture.Create<T>();
         var result = IMutableWrapper<T>.Create(value);
+        IWrapper<T> wrapper = result;
+
         Assert.NotNull(result);
         Assert.Equal(value, result.Value);
         Assert.True(result.Equals(value));
         Assert.Equal(Equals(value, value2), result.Equals(value2));
+        Assert.NotNull(wrapper);
+        Assert.Equal(value, wrapper.Value);
+        Assert.True(wrapper.Equals(value));
+        Assert.Equal(Equals(value, value2), wrapper.Equals(value2));
 
         result.Value = value2;
         Assert.Equal(value2, result.Value);
         Assert.True(result.Equals(value2));
         Assert.Equal(Equals(value2, value), result.Equals(value));
+        Assert.Equal(value2, wrapper.Value);
+        Assert.True(wrapper.Equals(value2));
+        Assert.Equal(Equals(value2, value), wrapper.Equals(value));
     }
 
     private static void Nullable<T>(Boolean nullInput) where T : unmanaged
@@ -66,14 +75,23 @@ public sealed class IMutableWrapperTests
         T? value = !nullInput ? fixture.Create<T>() : null;
         T? value2 = fixture.Create<Boolean>() ? fixture.Create<T>() : null;
         var result = IMutableWrapper<T>.CreateNullable(value);
+        IWrapper<T?> wrapper = result;
+
         Assert.NotNull(result);
         Assert.Equal(value, result.Value);
         Assert.Equal(Equals(value, value2), result.Equals(value2));
+        Assert.NotNull(wrapper);
+        Assert.Equal(value, wrapper.Value);
+        Assert.True(wrapper.Equals(value));
+        Assert.Equal(Equals(value, value2), wrapper.Equals(value2));
 
         result.Value = value2;
         Assert.Equal(value2, result.Value);
         Assert.True(result.Equals(value2));
         Assert.Equal(Equals(value2, value), result.Equals(value));
+        Assert.Equal(value2, wrapper.Value);
+        Assert.True(wrapper.Equals(value2));
+        Assert.Equal(Equals(value2, value), wrapper.Equals(value));
     }
 }
 

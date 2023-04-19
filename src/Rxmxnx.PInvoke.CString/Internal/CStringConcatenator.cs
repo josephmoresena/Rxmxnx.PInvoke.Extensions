@@ -42,6 +42,7 @@ internal sealed class CStringConcatenator : BinaryConcatenator<CString>
     protected override Boolean IsEmpty(CString? value) => CString.IsNullOrEmpty(value) && !this._ignoreEmpty;
 
     /// <inheritdoc/>
+    [ExcludeFromCodeCoverage]
     protected override Boolean IsEmpty(ReadOnlySpan<Byte> value) => base.IsEmpty(value) && !this._ignoreEmpty;
 
     /// <summary>
