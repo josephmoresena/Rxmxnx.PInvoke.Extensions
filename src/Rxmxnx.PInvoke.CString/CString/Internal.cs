@@ -3,11 +3,6 @@
 public partial class CString
 {
     /// <summary>
-    /// Represents the null UTF-8 string. This field is read-only.
-    /// </summary>
-    internal static readonly CString Null = new(IntPtr.Zero, 0, true);
-
-    /// <summary>
     /// Creates a not null-terminated <see cref="CString"/> instance that contains a single <paramref name="c"/> character.
     /// </summary>
     /// <param name="c">A UTF-8 char.</param>

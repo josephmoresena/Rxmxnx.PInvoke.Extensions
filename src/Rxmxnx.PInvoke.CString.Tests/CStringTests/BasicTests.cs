@@ -9,7 +9,7 @@ public sealed class BasicTests
     internal void EmptyTest()
     {
         CString empty = new(IntPtr.Zero, 0);
-        Assert.Equal(CString.Null, empty);
+        Assert.Equal(CString.Zero, empty);
         Assert.Equal(CString.Empty, empty);
         Assert.Equal(String.Empty, CString.Empty.ToString());
         Assert.Equal(CString.Empty, (CString)String.Empty);
@@ -102,17 +102,14 @@ public sealed class BasicTests
     }
 
     [Fact]
-    internal void Test()
+    internal unsafe void Test()
     {
         Int32 lenght = TestSet.Utf8Bytes.Count;
         for (Int32 i = 0; i < lenght; i++)
         {
             CString cstr1 = new(TestSet.Utf8Text[i]);
-            unsafe
-            {
-                TestBytesPointer(TestSet.Utf8Bytes[i], TestSet.Utf16Text[i], cstr1);
-                TestNullTerminatedBytesPointer(TestSet.Utf8NullTerminatedBytes[i], TestSet.Utf16Text[i], cstr1);
-            }
+            TestBytesPointer(TestSet.Utf8Bytes[i], TestSet.Utf16Text[i], cstr1);
+            TestNullTerminatedBytesPointer(TestSet.Utf8NullTerminatedBytes[i], TestSet.Utf16Text[i], cstr1);
         }
     }
 

@@ -34,14 +34,11 @@ public sealed class EqualsTest : FixedReferenceTestsBase
     [Fact]
     internal void TimeSpanTest() => this.Test<TimeSpan>();
 
-    private void Test<T>() where T : unmanaged
+    private unsafe void Test<T>() where T : unmanaged
     {
-        unsafe
-        {
-            T value = fixture.Create<T>();
-            base.WithFixed(ref Unsafe.AsRef(value), true, Test);
-            base.WithFixed(ref Unsafe.AsRef(value), false, Test);
-        }
+        T value = fixture.Create<T>();
+        base.WithFixed(ref Unsafe.AsRef(value), true, Test);
+        base.WithFixed(ref Unsafe.AsRef(value), false, Test);
     }
 
     private static unsafe void Test<T>(FixedReference<T> fref, IntPtr ptr) where T : unmanaged

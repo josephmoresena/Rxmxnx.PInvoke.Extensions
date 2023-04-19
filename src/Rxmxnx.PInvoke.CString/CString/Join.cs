@@ -100,16 +100,13 @@ public partial class CString
     /// by the separator UTF-8 text. -or- <see cref="CString.Empty"/> if
     /// <paramref name="value"/> has zero elements.
     /// </returns>
-    public static CString Join(ReadOnlySpan<Byte> separator, params CString?[] value)
+    public static unsafe CString Join(ReadOnlySpan<Byte> separator, params CString?[] value)
     {
         ArgumentNullException.ThrowIfNull(value);
-        unsafe
+        fixed (void* ptr = &MemoryMarshal.GetReference(separator))
         {
-            fixed (void* ptr = &MemoryMarshal.GetReference(separator))
-            {
-                CString separatorCstr = new(new IntPtr(ptr), separator.Length);
-                return Join(separatorCstr, value);
-            }
+            CString separatorCstr = new(new IntPtr(ptr), separator.Length);
+            return Join(separatorCstr, value);
         }
     }
 
@@ -131,16 +128,13 @@ public partial class CString
     /// by the <paramref name="separator"/> UTF-8 text. -or- <see cref="CString.Empty"/>
     /// if <paramref name="values"/> has zero elements.
     /// </returns>
-    public static CString Join(ReadOnlySpan<Byte> separator, IEnumerable<CString?> values)
+    public static unsafe CString Join(ReadOnlySpan<Byte> separator, IEnumerable<CString?> values)
     {
         ArgumentNullException.ThrowIfNull(values);
-        unsafe
+        fixed (void* ptr = &MemoryMarshal.GetReference(separator))
         {
-            fixed (void* ptr = &MemoryMarshal.GetReference(separator))
-            {
-                CString separatorCstr = new(new IntPtr(ptr), separator.Length);
-                return Join(separatorCstr, values);
-            }
+            CString separatorCstr = new(new IntPtr(ptr), separator.Length);
+            return Join(separatorCstr, values);
         }
     }
 
@@ -166,16 +160,13 @@ public partial class CString
     /// the <paramref name="separator"/> UTF-8 text. -or- <see cref="CString.Empty"/>
     /// if <paramref name="count"/> is zero.
     /// </returns>
-    public static CString Join(ReadOnlySpan<Byte> separator, CString?[] value, Int32 startIndex, Int32 count)
+    public static unsafe CString Join(ReadOnlySpan<Byte> separator, CString?[] value, Int32 startIndex, Int32 count)
     {
         ArgumentNullException.ThrowIfNull(value);
-        unsafe
+        fixed (void* ptr = &MemoryMarshal.GetReference(separator))
         {
-            fixed (void* ptr = &MemoryMarshal.GetReference(separator))
-            {
-                CString separatorCstr = new(new IntPtr(ptr), separator.Length);
-                return Join(separatorCstr, value, startIndex, count);
-            }
+            CString separatorCstr = new(new IntPtr(ptr), separator.Length);
+            return Join(separatorCstr, value, startIndex, count);
         }
     }
 

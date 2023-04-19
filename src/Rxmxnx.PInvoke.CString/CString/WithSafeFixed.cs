@@ -8,23 +8,20 @@ public partial class CString
     /// </summary>
     /// <param name="action">A <see cref="FixedAction"/> delegate.></param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WithSafeFixed(ReadOnlyFixedAction action)
+    public unsafe void WithSafeFixed(ReadOnlyFixedAction action)
     {
         ArgumentNullException.ThrowIfNull(action);
         ReadOnlySpan<Byte> span = this._data;
-        unsafe
+        fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
-            fixed (void* ptr = &MemoryMarshal.GetReference(span))
+            FixedContext<Byte> ctx = new(ptr, this._length, true);
+            try
             {
-                FixedContext<Byte> ctx = new(ptr, this._length, true);
-                try
-                {
-                    action(ctx);
-                }
-                finally
-                {
-                    ctx.Unload();
-                }
+                action(ctx);
+            }
+            finally
+            {
+                ctx.Unload();
             }
         }
     }
@@ -37,23 +34,20 @@ public partial class CString
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
     /// <param name="action">A <see cref="ReadOnlyFixedAction{TArg}"/> delegate.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WithSafeFixed<TArg>(TArg arg, ReadOnlyFixedAction<TArg> action)
+    public unsafe void WithSafeFixed<TArg>(TArg arg, ReadOnlyFixedAction<TArg> action)
     {
         ArgumentNullException.ThrowIfNull(action);
         ReadOnlySpan<Byte> span = this._data;
-        unsafe
+        fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
-            fixed (void* ptr = &MemoryMarshal.GetReference(span))
+            FixedContext<Byte> ctx = new(ptr, this._length, true);
+            try
             {
-                FixedContext<Byte> ctx = new(ptr, this._length, true);
-                try
-                {
-                    action(ctx, arg);
-                }
-                finally
-                {
-                    ctx.Unload();
-                }
+                action(ctx, arg);
+            }
+            finally
+            {
+                ctx.Unload();
             }
         }
     }
@@ -66,23 +60,20 @@ public partial class CString
     /// <param name="func">A <see cref="FixedFunc{TResult}"/> delegate.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public TResult WithSafeFixed<TResult>(ReadOnlyFixedFunc<TResult> func)
+    public unsafe TResult WithSafeFixed<TResult>(ReadOnlyFixedFunc<TResult> func)
     {
         ArgumentNullException.ThrowIfNull(func);
         ReadOnlySpan<Byte> span = this._data;
-        unsafe
+        fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
-            fixed (void* ptr = &MemoryMarshal.GetReference(span))
+            FixedContext<Byte> ctx = new(ptr, this._length, true);
+            try
             {
-                FixedContext<Byte> ctx = new(ptr, this._length, true);
-                try
-                {
-                    return func(ctx);
-                }
-                finally
-                {
-                    ctx.Unload();
-                }
+                return func(ctx);
+            }
+            finally
+            {
+                ctx.Unload();
             }
         }
     }
@@ -97,23 +88,20 @@ public partial class CString
     /// <param name="func">A <see cref="FixedFunc{TArg, TResult}"/> delegate.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public TResult WithSafeFixed<TArg, TResult>(TArg arg, ReadOnlyFixedFunc<TArg, TResult> func)
+    public unsafe TResult WithSafeFixed<TArg, TResult>(TArg arg, ReadOnlyFixedFunc<TArg, TResult> func)
     {
         ArgumentNullException.ThrowIfNull(func);
         ReadOnlySpan<Byte> span = this._data;
-        unsafe
+        fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
-            fixed (void* ptr = &MemoryMarshal.GetReference(span))
+            FixedContext<Byte> ctx = new(ptr, this._length, true);
+            try
             {
-                FixedContext<Byte> ctx = new(ptr, this._length, true);
-                try
-                {
-                    return func(ctx, arg);
-                }
-                finally
-                {
-                    ctx.Unload();
-                }
+                return func(ctx, arg);
+            }
+            finally
+            {
+                ctx.Unload();
             }
         }
     }

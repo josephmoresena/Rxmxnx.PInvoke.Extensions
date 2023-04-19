@@ -76,16 +76,14 @@ public sealed class GetTransformationTest : FixedContextTestsBase
         Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, TimeOnly>(ctx, isReadOnly)).Message);
         Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, TimeSpan>(ctx, isReadOnly)).Message);
     }
-    private static void Test<T, T2>(FixedContext<T> ctx, Boolean isReadOnly)
+    private static unsafe void Test<T, T2>(FixedContext<T> ctx, Boolean isReadOnly)
         where T : unmanaged
         where T2 : unmanaged
     {
         FixedContext<T2> result = ctx.GetTransformation<T2>(out FixedOffset offset, true);
         Assert.NotNull(result);
-        unsafe
-        {
-            ContextTest(ctx, offset, result, isReadOnly);
-        }
+        ContextTest(ctx, offset, result, isReadOnly);
+
         if (!isReadOnly)
         {
             FixedContext<T2> result2 = ctx.GetTransformation<T2>(out FixedOffset offset2, false);

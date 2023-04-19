@@ -8,16 +8,13 @@ public partial class CStringSequence
     /// </summary>
     /// <param name="action">A callback to invoke.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Transform(CStringSequenceAction action)
+    public unsafe void Transform(CStringSequenceAction action)
     {
         ArgumentNullException.ThrowIfNull(action);
-        unsafe
+        fixed (Char* ptr = this._value)
         {
-            fixed (Char* ptr = this._value)
-            {
-                _ = this.AsSpanUnsafe(out CString[] output);
-                action(new(output, new(new IntPtr(ptr), this._value.Length)));
-            }
+            _ = this.AsSpanUnsafe(out CString[] output);
+            action(new(output, new(new IntPtr(ptr), this._value.Length)));
         }
     }
 
@@ -29,16 +26,13 @@ public partial class CStringSequence
     /// <param name="state">The element to pass to <paramref name="action"/>.</param>
     /// <param name="action">A callback to invoke.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Transform<TState>(TState state, CStringSequenceAction<TState> action)
+    public unsafe void Transform<TState>(TState state, CStringSequenceAction<TState> action)
     {
         ArgumentNullException.ThrowIfNull(action);
-        unsafe
+        fixed (Char* ptr = this._value)
         {
-            fixed (Char* ptr = this._value)
-            {
-                _ = this.AsSpanUnsafe(out CString[] output);
-                action(new(output, new(new IntPtr(ptr), this._value.Length)), state);
-            }
+            _ = this.AsSpanUnsafe(out CString[] output);
+            action(new(output, new(new IntPtr(ptr), this._value.Length)), state);
         }
     }
 
@@ -50,16 +44,13 @@ public partial class CStringSequence
     /// <param name="func">A callback to invoke.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public TResult Transform<TResult>(CStringSequenceFunc<TResult> func)
+    public unsafe TResult Transform<TResult>(CStringSequenceFunc<TResult> func)
     {
         ArgumentNullException.ThrowIfNull(func);
-        unsafe
+        fixed (Char* ptr = this._value)
         {
-            fixed (Char* ptr = this._value)
-            {
-                _ = this.AsSpanUnsafe(out CString[] output);
-                return func(new(output, new(new IntPtr(ptr), this._value.Length)));
-            }
+            _ = this.AsSpanUnsafe(out CString[] output);
+            return func(new(output, new(new IntPtr(ptr), this._value.Length)));
         }
     }
 
@@ -73,16 +64,13 @@ public partial class CStringSequence
     /// <param name="func">A callback to invoke.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public TResult Transform<TState, TResult>(TState state, CStringSequenceFunc<TState, TResult> func)
+    public unsafe TResult Transform<TState, TResult>(TState state, CStringSequenceFunc<TState, TResult> func)
     {
         ArgumentNullException.ThrowIfNull(func);
-        unsafe
+        fixed (Char* ptr = this._value)
         {
-            fixed (Char* ptr = this._value)
-            {
-                _ = this.AsSpanUnsafe(out CString[] output);
-                return func(new(output, new(new IntPtr(ptr), this._value.Length)), state);
-            }
+            _ = this.AsSpanUnsafe(out CString[] output);
+            return func(new(output, new(new IntPtr(ptr), this._value.Length)), state);
         }
     }
 }

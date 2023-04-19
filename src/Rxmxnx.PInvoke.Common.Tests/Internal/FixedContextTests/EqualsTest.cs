@@ -34,14 +34,11 @@ public sealed class EqualsTest : FixedContextTestsBase
     [Fact]
     internal void TimeSpanTest() => this.Test<TimeSpan>();
 
-    private void Test<T>() where T : unmanaged
+    private unsafe void Test<T>() where T : unmanaged
     {
-        unsafe
-        {
-            T[] values = fixture.CreateMany<T>(sizeof(Int128) * 3 / sizeof(T)).ToArray();
-            base.WithFixed(values, true, Test);
-            base.WithFixed(values, false, Test);
-        }
+        T[] values = fixture.CreateMany<T>(sizeof(Int128) * 3 / sizeof(T)).ToArray();
+        base.WithFixed(values, true, Test);
+        base.WithFixed(values, false, Test);
     }
 
     private static unsafe void Test<T>(FixedContext<T> ctx, T[] values) where T : unmanaged

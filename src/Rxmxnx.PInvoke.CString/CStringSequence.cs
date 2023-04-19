@@ -16,8 +16,8 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
     /// <param name="values">Text collection.</param>
     public CStringSequence(params CString?[] values)
     {
-        this._lengths = values.Select(c => c?.Length ?? default).ToArray();
-        this._value = CreateBuffer(this._lengths, values);
+        this._lengths = values.Select(c => GetLength(c)).ToArray();
+        this._value = CreateBuffer(values);
     }
 
     /// <summary>
@@ -34,7 +34,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
     /// <returns>A <see cref="CString"/> that represents the current object.</returns>
     public CString ToCString()
     {
-        Int32 bytesLength = this._lengths.Where(x => x > 0).Sum(x => x + 1);
+        Int32 bytesLength = this._lengths.Where(l => l.GetValueOrDefault() > 0).Sum(l => l.GetValueOrDefault() + 1);
         Byte[] result = new Byte[bytesLength];
         this.Transform(result, BinaryCopyTo);
         return result;
@@ -51,8 +51,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Boolean Equals(CStringSequence? other)
-        => other != default && this._value.Equals(other._value) &&
-        this._lengths.SequenceEqual(other._lengths);
+        => other is not null && this._value.Equals(other._value) && this._lengths.SequenceEqual(other._lengths);
 
     /// <inheritdoc/>
     public override Boolean Equals(Object? obj) => obj is CStringSequence cstr && this.Equals(cstr);

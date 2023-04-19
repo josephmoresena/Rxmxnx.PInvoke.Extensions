@@ -5,7 +5,23 @@ public partial class CStringSequence
     /// <summary>
     /// Empty sequence.
     /// </summary>
-    private static readonly CStringSequence empty = new(String.Empty, Array.Empty<Int32>());
+    private static readonly CStringSequence empty = new(String.Empty, Array.Empty<Int32?>());
+
+    /// <summary>
+    /// Retrieves the length of <paramref name="cstr"/> for the sequence.
+    /// </summary>
+    /// <param name="cstr"><see cref="CString"/> instance.</param>
+    /// <returns>Length of <paramref name="cstr"/> for the sequence.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static Int32? GetLength(CString? cstr)
+    {
+        Int32? result = default;
+
+        if (!CString.IsNullOrEmpty(cstr) || cstr?.IsReference == false)
+            result = cstr.Length;
+
+        return result;
+    }
 
     /// <summary>
     /// Creates a new UTF-8 text sequence with a specific <paramref name="lengths"/> and initializes each
@@ -16,34 +32,26 @@ public partial class CStringSequence
     /// <param name="state">The element to pass to <paramref name="action"/>.</param>
     /// <param name="action">A callback to initialize each <see cref="CString"/>.</param>
     /// <returns>The create UTF-8 text sequence.</returns>
-    public static CStringSequence Create<TState>(TState state, CStringSequenceCreationAction<TState> action, params Int32[] lengths)
+    public static CStringSequence Create<TState>(TState state, CStringSequenceCreationAction<TState> action, params Int32?[] lengths)
     {
-        Int32 bytesLength = lengths.Where(x => x > 0).Sum(x => x + 1);
+        Int32 bytesLength = lengths.Where(l => l.GetValueOrDefault() > 0).Sum(l => l.GetValueOrDefault() + 1);
         Int32 length = bytesLength / SizeOfChar + (bytesLength % SizeOfChar);
-        String buffer = String.Create(length, state, (span, state) =>
-        {
-            unsafe
-            {
-                fixed (void* ptr = &MemoryMarshal.GetReference(span))
-                    CreateCStringSequence(new(ptr), lengths, state, action);
-            }
-        });
+        String buffer = String.Create(length, new SequenceCreationState<TState>(state, action, lengths), CreateCStringSequence);
         return new(buffer, lengths);
     }
 
     /// <summary>
     /// Creates the sequence buffer.
     /// </summary>
-    /// <param name="lengths">Text length collection.</param>
     /// <param name="values">Text collection.</param>
     /// <returns>
     /// <see cref="String"/> instance that contains the binary information of the UTF-8 text sequence.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static String CreateBuffer(Int32[] lengths, CString?[] values)
+    private static String CreateBuffer(CString?[] values)
     {
         Int32 totalBytes = 0;
-        for (Int32 i = 0; i < lengths.Length; i++)
+        for (Int32 i = 0; i < values.Length; i++)
             if (values[i] is CString value && value.Length > 0)
                 totalBytes += value.Length + 1;
         Int32 totalChars = (totalBytes / SizeOfChar) + (totalBytes % SizeOfChar);
@@ -57,24 +65,21 @@ public partial class CStringSequence
     /// <param name="charSpan">A writable <see cref="Char"/> span.</param>
     /// <param name="values">A enumeration of <see cref="CString"/> items.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void CopyText(Span<Char> charSpan, CString?[] values)
+    private static unsafe void CopyText(Span<Char> charSpan, CString?[] values)
     {
         Int32 position = 0;
-        unsafe
+        fixed (void* charsPtr = &MemoryMarshal.GetReference(charSpan))
         {
-            fixed (void* charsPtr = &MemoryMarshal.GetReference(charSpan))
-            {
-                Span<Byte> byteSpan = new(charsPtr, charSpan.Length * SizeOfChar);
-                for (Int32 i = 0; i < values.Length; i++)
-                    if (values[i] is CString value && value.Length > 0)
-                    {
-                        ReadOnlySpan<Byte> valueSpan = value.AsSpan();
-                        valueSpan.CopyTo(byteSpan[position..]);
-                        position += valueSpan.Length;
-                        byteSpan[position] = default;
-                        position++;
-                    }
-            }
+            Span<Byte> byteSpan = new(charsPtr, charSpan.Length * SizeOfChar);
+            for (Int32 i = 0; i < values.Length; i++)
+                if (values[i] is CString value && value.Length > 0)
+                {
+                    ReadOnlySpan<Byte> valueSpan = value.AsSpan();
+                    valueSpan.CopyTo(byteSpan[position..]);
+                    position += valueSpan.Length;
+                    byteSpan[position] = default;
+                    position++;
+                }
         }
     }
 
@@ -110,26 +115,35 @@ public partial class CStringSequence
     }
 
     /// <summary>
-    /// Performs the creation of the UTF-8 text sequence with a specific <paramref name="lengths"/> and 
-    /// whose buffer is referenced by <paramref name="bufferPtr"/>. 
+    /// Performs the creation of the UTF-8 text sequence with a specific <paramref name="state"/>.
     /// Each UTF-8 text is initialized using the specified callback.
     /// </summary>
-    /// <typeparam name="TState">The type of the element to pass to <paramref name="action"/>.</typeparam>
-    /// <param name="bufferPtr">Pointer to internal <see cref="CStringSequence"/> buffer.</param>
-    /// <param name="lengths">The lengths of the UTF-8 text sequence to create.</param>
-    /// <param name="state">The element to pass to <paramref name="action"/>.</param>
-    /// <param name="action">A callback to initialize each <see cref="CString"/>.</param>
-    private static unsafe void CreateCStringSequence<TState>(IntPtr bufferPtr, Int32[] lengths, TState state, CStringSequenceCreationAction<TState> action)
+    /// <typeparam name="TState">The type of the element to pass to state's action.</typeparam>
+    /// <param name="buffer">UTF-16 buffer.</param>
+    /// <param name="state">Creation state object.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static void CreateCStringSequence<TState>(Span<Char> buffer, SequenceCreationState<TState> state)
+        => CreateCStringSequence(MemoryMarshal.AsBytes(buffer), state);
+
+    /// <summary>
+    /// Performs the creation of the UTF-8 text sequence with a specific <paramref name="state"/>.
+    /// Each UTF-8 text is initialized using the specified callback.
+    /// </summary>
+    /// <typeparam name="TState">The type of the element to pass to state's action.</typeparam>
+    /// <param name="buffer">UTF-16 buffer.</param>
+    /// <param name="state">Creation state object.</param>
+    private static void CreateCStringSequence<TState>(Span<Byte> buffer, SequenceCreationState<TState> state)
     {
         Int32 offset = 0;
-        for (Int32 i = 0; i < lengths.Length; i++)
-            if (lengths[i] > 0)
+        for (Int32 i = 0; i < state.Lengths.Length; i++)
+        {
+            Int32? length = state.Lengths[i];
+            if (length.HasValue && length.Value > 0)
             {
-                IntPtr currentPtr = bufferPtr + offset;
-                Span<Byte> bytes = new(currentPtr.ToPointer(), lengths[i]);
-                action(bytes, i, state);
-                offset += lengths[i] + 1;
+                state.InvokeAction(buffer.Slice(offset, length.Value), i);
+                offset += length.Value + 1;
             }
+        }
     }
 }
 

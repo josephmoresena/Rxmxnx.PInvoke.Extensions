@@ -9,7 +9,7 @@ public partial class CStringSequence
     /// <summary>
     /// Collection of text length for buffer interpretation.
     /// </summary>
-    private readonly Int32[] _lengths;
+    private readonly Int32?[] _lengths;
 
     /// <summary>
     /// Retrieves the buffer as an <see cref="ReadOnlySpan{Char}"/> instance and creates a
@@ -17,15 +17,12 @@ public partial class CStringSequence
     /// </summary>
     /// <param name="output"><see cref="CString"/> array.</param>
     /// <returns>Buffer <see cref="ReadOnlySpan{Char}"/>.</returns>
-    private ReadOnlySpan<Char> AsSpanUnsafe(out CString[] output)
+    private unsafe ReadOnlySpan<Char> AsSpanUnsafe(out CString[] output)
     {
         ReadOnlySpan<Char> result = this._value;
         ref Char firstCharRef = ref MemoryMarshal.GetReference(result);
-        unsafe
-        {
-            IntPtr ptr = new(Unsafe.AsPointer(ref firstCharRef));
-            output = this.GetValues(ptr).ToArray();
-        }
+        IntPtr ptr = new(Unsafe.AsPointer(ref firstCharRef));
+        output = this.GetValues(ptr).ToArray();
         return this._value;
     }
 
@@ -39,13 +36,16 @@ public partial class CStringSequence
         Int32 offset = 0;
         for (Int32 i = 0; i < this._lengths.Length; i++)
         {
-            if (this._lengths[i] > 0)
+            Int32? length = this._lengths[i];
+            if (length.HasValue && length.Value > 0)
             {
-                yield return new(ptr + offset, this._lengths[i] + 1);
-                offset += this._lengths[i] + 1;
+                yield return new(ptr + offset, length.Value + 1);
+                offset += length.Value + 1;
             }
+            else if (length.HasValue)
+                yield return CString.Empty;
             else
-                yield return CString.Null;
+                yield return CString.Zero;
         }
     }
 }

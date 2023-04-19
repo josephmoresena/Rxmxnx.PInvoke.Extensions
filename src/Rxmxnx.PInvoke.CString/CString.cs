@@ -9,6 +9,10 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// Represents the empty UTF-8 string. This field is read-only.
     /// </summary>
     public static readonly CString Empty = new(new Byte[] { default }, true);
+    /// <summary>
+    /// Represents the zero UTF-8 string. This field is read-only.
+    /// </summary>
+    public static readonly CString Zero = new(IntPtr.Zero, 0, true);
 
     /// <summary>
     /// Indicates whether the ending of text in the current <see cref="CString"/> includes 

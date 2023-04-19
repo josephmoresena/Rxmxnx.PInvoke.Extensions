@@ -34,13 +34,10 @@ internal partial class ValueRegion<T>
         }
 
         /// <inheritdoc/>
-        internal override ReadOnlySpan<T> AsSpan()
+        internal override unsafe ReadOnlySpan<T> AsSpan()
         {
-            unsafe
-            {
-                void* pointer = this._ptr.ToPointer();
-                return new(pointer, this._length);
-            }
+            void* pointer = this._ptr.ToPointer();
+            return new(pointer, this._length);
         }
     }
 }

@@ -17,7 +17,7 @@ public partial class CStringSequence
     /// </summary>
     /// <param name="value">Internal buffer.</param>
     /// <param name="lengths">Collection of text length for buffer interpretation.</param>
-    private CStringSequence(String value, Int32[] lengths)
+    private CStringSequence(String value, Int32?[] lengths)
     {
         this._value = value;
         this._lengths = lengths;

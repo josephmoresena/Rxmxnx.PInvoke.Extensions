@@ -77,7 +77,7 @@ internal abstract partial class ValueRegion<T> where T : unmanaged
     /// <param name="length">Length of range.</param>
     /// <returns>A new <see cref="ValueRegion{T}"/> instance.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ValueRegion<T> Create(ValueRegion<T> region, Int32 startIndex, Int32 length)
+    public static unsafe ValueRegion<T> Create(ValueRegion<T> region, Int32 startIndex, Int32 length)
     {
         if (region is ManagedRegion managed)
             return new SegmentedManagedRegion(managed, startIndex, length);
@@ -87,13 +87,10 @@ internal abstract partial class ValueRegion<T> where T : unmanaged
             return new SegmentedFuncRegion(func, startIndex, length);
         else if (region is SegmentedFuncRegion segmentedFunc)
             return new SegmentedFuncRegion(segmentedFunc, startIndex, length);
-        else
-            unsafe
-            {
-                ReadOnlySpan<T> regionSpan = region.AsSpan();
-                ref T spanRef = ref MemoryMarshal.GetReference(regionSpan);
-                IntPtr spanPtr = new(Unsafe.AsPointer(ref spanRef));
-                return Create(spanPtr + startIndex, length);
-            }
+
+        ReadOnlySpan<T> regionSpan = region.AsSpan();
+        ref T spanRef = ref MemoryMarshal.GetReference(regionSpan);
+        IntPtr spanPtr = new(Unsafe.AsPointer(ref spanRef));
+        return Create(spanPtr + startIndex, length);
     }
 }

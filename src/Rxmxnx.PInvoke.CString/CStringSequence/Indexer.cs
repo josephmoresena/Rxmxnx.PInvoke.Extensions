@@ -17,6 +17,13 @@ public partial class CStringSequence : IEnumerableSequence<CString>
         {
             if (index < 0 || index >= this._lengths.Length)
                 throw new ArgumentOutOfRangeException(nameof(index), "Index was outside the bounds of the sequence.");
+
+            if (!this._lengths[index].HasValue)
+                return CString.Zero;
+
+            if (this._lengths[index].GetValueOrDefault() == 0)
+                return CString.Empty;
+
             return new(() => this.GetBinarySpan(index));
         }
     }
@@ -60,6 +67,7 @@ public partial class CStringSequence : IEnumerableSequence<CString>
     public CStringSequence Slice(Int32 startIndex, Int32 length)
     {
         this.ThrowSubsequenceArgumentOutOfRange(startIndex, length);
+
         if (length == 0)
             return empty;
 
@@ -82,8 +90,8 @@ public partial class CStringSequence : IEnumerableSequence<CString>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private ReadOnlySpan<Byte> GetBinarySpan(Int32 index, Int32 count = 1)
     {
-        Int32 binaryOffset = this._lengths[..index].Sum();
-        Int32 binaryLength = this._lengths.Skip(index).Take(count).Sum() + count - 1;
+        Int32 binaryOffset = this._lengths[..index].Sum(l => l.GetValueOrDefault());
+        Int32 binaryLength = this._lengths.Skip(index).Take(count).Sum(l => l.GetValueOrDefault()) + count - 1;
         return MemoryMarshal.Cast<Char, Byte>(this._value).Slice(binaryOffset, binaryLength);
     }
 
@@ -120,7 +128,7 @@ public partial class CStringSequence : IEnumerableSequence<CString>
         /// <summary>
         /// Lengths in the subsequence.
         /// </summary>
-        private readonly Int32[] _lengths;
+        private readonly Int32?[] _lengths;
         /// <summary>
         /// Function to binary information of subsequence.
         /// </summary>
@@ -147,7 +155,7 @@ public partial class CStringSequence : IEnumerableSequence<CString>
         /// <returns>A new <see cref="CStringSequence"/> instance from current helper instance.</returns>
         public CStringSequence Create()
         {
-            Int32 binaryLength = this._lengths.Sum() + this._lengths.Length;
+            Int32 binaryLength = this._lengths.Sum(l => l.GetValueOrDefault()) + this._lengths.Length;
             Int32 charLength = binaryLength / SizeOfChar + binaryLength % SizeOfChar;
             String value = String.Create(binaryLength, this, CopyBytes);
             return new(value, this._lengths);
