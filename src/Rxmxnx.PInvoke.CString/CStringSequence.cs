@@ -14,6 +14,23 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
     /// Constructor.
     /// </summary>
     /// <param name="values">Text collection.</param>
+    public CStringSequence(params String?[] values)
+    {
+        List<CString?> cvalues = new(values.Length);
+        this._lengths = new Int32?[values.Length];
+        for (Int32 i = 0; i < values.Length; i++)
+        {
+            CString? cstr = (CString?)values[i];
+            cvalues.Add(cstr);
+            this._lengths[i] = cstr?.Length;
+        }
+        this._value = CreateBuffer(cvalues);
+    }
+
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="values">Text collection.</param>
     public CStringSequence(params CString?[] values)
     {
         this._lengths = values.Select(c => GetLength(c)).ToArray();

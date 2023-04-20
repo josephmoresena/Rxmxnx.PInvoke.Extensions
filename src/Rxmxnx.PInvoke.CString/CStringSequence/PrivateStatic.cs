@@ -48,10 +48,10 @@ public partial class CStringSequence
     /// <see cref="String"/> instance that contains the binary information of the UTF-8 text sequence.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static String CreateBuffer(CString?[] values)
+    private static String CreateBuffer(IReadOnlyList<CString?> values)
     {
         Int32 totalBytes = 0;
-        for (Int32 i = 0; i < values.Length; i++)
+        for (Int32 i = 0; i < values.Count; i++)
             if (values[i] is CString value && value.Length > 0)
                 totalBytes += value.Length + 1;
         Int32 totalChars = (totalBytes / SizeOfChar) + (totalBytes % SizeOfChar);
@@ -65,13 +65,13 @@ public partial class CStringSequence
     /// <param name="charSpan">A writable <see cref="Char"/> span.</param>
     /// <param name="values">A enumeration of <see cref="CString"/> items.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static unsafe void CopyText(Span<Char> charSpan, CString?[] values)
+    private static unsafe void CopyText(Span<Char> charSpan, IReadOnlyList<CString?> values)
     {
         Int32 position = 0;
         fixed (void* charsPtr = &MemoryMarshal.GetReference(charSpan))
         {
             Span<Byte> byteSpan = new(charsPtr, charSpan.Length * SizeOfChar);
-            for (Int32 i = 0; i < values.Length; i++)
+            for (Int32 i = 0; i < values.Count; i++)
                 if (values[i] is CString value && value.Length > 0)
                 {
                     ReadOnlySpan<Byte> valueSpan = value.AsSpan();
