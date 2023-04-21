@@ -1,4 +1,4 @@
-﻿namespace Rxmxnx.PInvoke.Internal.Debug;
+﻿namespace Rxmxnx.PInvoke.Internal.DebugView;
 
 /// <summary>
 /// Debug View class for <see cref="CStringSequence"/>
