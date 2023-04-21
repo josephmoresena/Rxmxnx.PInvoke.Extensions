@@ -3,6 +3,7 @@
 /// <summary>
 /// Represents a sequence of null-terminated UTF-8 texts.
 /// </summary>
+[DebuggerDisplay("Count = {Count}")]
 public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequence>
 {
     /// <summary>
@@ -20,7 +21,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
         this._lengths = new Int32?[values.Length];
         for (Int32 i = 0; i < values.Length; i++)
         {
-            CString? cstr = (CString?)values[i];
+            CString? cstr = GetCString(values[i]);
             cvalues.Add(cstr);
             this._lengths[i] = cstr?.Length;
         }
@@ -33,8 +34,30 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
     /// <param name="values">Text collection.</param>
     public CStringSequence(params CString?[] values)
     {
-        this._lengths = values.Select(c => GetLength(c)).ToArray();
+        this._lengths = values.Select(GetLength).ToArray();
         this._value = CreateBuffer(values);
+    }
+
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="values">Text collection.</param>
+    public CStringSequence(IEnumerable<String?> values)
+    {
+        List<CString?> cvalues = values.Select(GetCString).ToList();
+        this._lengths = cvalues.Select(GetLength).ToArray();
+        this._value = CreateBuffer(cvalues);
+    }
+
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="values">Text collection.</param>
+    public CStringSequence(IEnumerable<CString?> values) : this(values.ToArray())
+    {
+        List<CString?> cvalues = values.ToList();
+        this._lengths = cvalues.Select(GetLength).ToArray();
+        this._value = CreateBuffer(cvalues);
     }
 
     /// <summary>
@@ -51,7 +74,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
     /// <returns>A <see cref="CString"/> that represents the current object.</returns>
     public CString ToCString()
     {
-        Int32 bytesLength = this._lengths.Where(l => l.GetValueOrDefault() > 0).Sum(l => l.GetValueOrDefault() + 1);
+        Int32 bytesLength = this._lengths.Sum(GetSpanLength);
         Byte[] result = new Byte[bytesLength];
         this.Transform(result, BinaryCopyTo);
         return result;

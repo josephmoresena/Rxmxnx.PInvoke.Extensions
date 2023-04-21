@@ -90,9 +90,10 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private ReadOnlySpan<Byte> GetBinarySpan(Int32 index, Int32 count = 1)
     {
-        Int32 binaryOffset = this._lengths[..index].Sum(l => l.GetValueOrDefault());
-        Int32 binaryLength = this._lengths.Skip(index).Take(count).Sum(l => l.GetValueOrDefault()) + count - 1;
-        return MemoryMarshal.Cast<Char, Byte>(this._value).Slice(binaryOffset, binaryLength);
+        ReadOnlySpan<Byte> span = MemoryMarshal.AsBytes<Char>(this._value);
+        Int32 binaryOffset = this._lengths[..index].Sum(GetSpanLength);
+        Int32 binaryLength = this._lengths.Skip(index).Take(count).Sum(GetSpanLength) - 1;
+        return span.Slice(binaryOffset, binaryLength);
     }
 
     CString IEnumerableSequence<CString>.GetItem(Int32 index) => this[index];
@@ -155,7 +156,7 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
         /// <returns>A new <see cref="CStringSequence"/> instance from current helper instance.</returns>
         public CStringSequence Create()
         {
-            Int32 binaryLength = this._lengths.Sum(l => l.GetValueOrDefault()) + this._lengths.Length;
+            Int32 binaryLength = this._lengths.Sum(GetSpanLength);
             Int32 charLength = binaryLength / SizeOfChar + binaryLength % SizeOfChar;
             String value = String.Create(binaryLength, this, CopyBytes);
             return new(value, this._lengths);

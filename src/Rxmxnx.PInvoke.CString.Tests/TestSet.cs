@@ -36,10 +36,10 @@ internal static partial class TestSet
         }
         return result;
     }
-    public static unsafe String? GetString(Int32 index)
+    public static unsafe String? GetString(Int32 index, Boolean nullWhenNullPointer = false)
         => index switch
         {
-            -3 => new((Char*)IntPtr.Zero.ToPointer()),
+            -3 => !nullWhenNullPointer ? new((Char*)IntPtr.Zero.ToPointer()) : default,
             -2 => default,
             -1 => String.Empty,
             _ => TestSet.Utf16Text[index],
