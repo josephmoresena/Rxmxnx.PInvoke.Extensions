@@ -6,17 +6,17 @@ public partial class CString
     /// Concatenates the <see cref="CString"/> representations of two specified
     /// read-only binary spans.
     /// </summary>
-    /// <param name="cstr0">The first read-only binary span.</param>
-    /// <param name="cstr1">The second read-only binary span.</param>
+    /// <param name="span0">The first read-only binary span.</param>
+    /// <param name="span1">The second read-only binary span.</param>
     /// <returns>
     /// The concatenated <see cref="CString"/> representations of the values of
-    /// <paramref name="cstr0"/> and <paramref name="cstr1"/>.
+    /// <paramref name="span0"/> and <paramref name="span1"/>.
     /// </returns>
-    public static CString Concat(ReadOnlySpan<Byte> cstr0, ReadOnlySpan<Byte> cstr1)
+    public static CString Concat(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1)
     {
         using BinaryConcatenator helper = new();
-        helper.Write(cstr0);
-        helper.Write(cstr1);
+        helper.Write(span0);
+        helper.Write(span1);
         return helper.ToArray(true) ?? CString.Empty;
     }
 
@@ -24,19 +24,19 @@ public partial class CString
     /// Concatenates the <see cref="CString"/> representations of three specified
     /// read-only binary spans.
     /// </summary>
-    /// <param name="cstr0">The first read-only binary span.</param>
-    /// <param name="cstr1">The second read-only binary span.</param>
-    /// <param name="cstr2">The third read-only binary span.</param>
+    /// <param name="span0">The first read-only binary span.</param>
+    /// <param name="span1">The second read-only binary span.</param>
+    /// <param name="span2">The third read-only binary span.</param>
     /// <returns>
     /// The concatenated <see cref="CString"/> representations of the values of
-    /// <paramref name="cstr0"/>, <paramref name="cstr1"/> and <paramref name="cstr2"/>.
+    /// <paramref name="span0"/>, <paramref name="span1"/> and <paramref name="span2"/>.
     /// </returns>
-    public static CString Concat(ReadOnlySpan<Byte> cstr0, ReadOnlySpan<Byte> cstr1, ReadOnlySpan<Byte> cstr2)
+    public static CString Concat(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2)
     {
         using BinaryConcatenator helper = new();
-        helper.Write(cstr0);
-        helper.Write(cstr1);
-        helper.Write(cstr2);
+        helper.Write(span0);
+        helper.Write(span1);
+        helper.Write(span2);
         return helper.ToArray(true) ?? CString.Empty;
     }
 
@@ -44,22 +44,22 @@ public partial class CString
     /// Concatenates the <see cref="CString"/> representations of four specified
     /// read-only binary spans.
     /// </summary>
-    /// <param name="cstr0">The first read-only binary span.</param>
-    /// <param name="cstr1">The second read-only binary span.</param>
-    /// <param name="cstr2">The third read-only binary span.</param>
-    /// <param name="cstr3">The fourth read-only binary span.</param>
+    /// <param name="span0">The first read-only binary span.</param>
+    /// <param name="span1">The second read-only binary span.</param>
+    /// <param name="span2">The third read-only binary span.</param>
+    /// <param name="span3">The fourth read-only binary span.</param>
     /// <returns>
     /// The concatenated <see cref="CString"/> representations of the values of
-    /// <paramref name="cstr0"/>, <paramref name="cstr1"/>, <paramref name="cstr2"/>,
-    /// and <paramref name="cstr3"/>.
+    /// <paramref name="span0"/>, <paramref name="span1"/>, <paramref name="span2"/>,
+    /// and <paramref name="span3"/>.
     /// </returns>
-    public static CString Concat(ReadOnlySpan<Byte> cstr0, ReadOnlySpan<Byte> cstr1, ReadOnlySpan<Byte> cstr2, ReadOnlySpan<Byte> cstr3)
+    public static CString Concat(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2, ReadOnlySpan<Byte> span3)
     {
         using BinaryConcatenator helper = new();
-        helper.Write(cstr0);
-        helper.Write(cstr1);
-        helper.Write(cstr2);
-        helper.Write(cstr3);
+        helper.Write(span0);
+        helper.Write(span1);
+        helper.Write(span2);
+        helper.Write(span3);
         return helper.ToArray(true) ?? CString.Empty;
     }
 
@@ -67,24 +67,24 @@ public partial class CString
     /// Concatenates the <see cref="CString"/> representations of five specified
     /// read-only binary spans.
     /// </summary>
-    /// <param name="cstr0">The first read-only binary span.</param>
-    /// <param name="cstr1">The second read-only binary span.</param>
-    /// <param name="cstr2">The third read-only binary span.</param>
-    /// <param name="cstr3">The fourth read-only binary span.</param>
-    /// <param name="cstr4">The fifth read-only binary span.</param>
+    /// <param name="span0">The first read-only binary span.</param>
+    /// <param name="span1">The second read-only binary span.</param>
+    /// <param name="span2">The third read-only binary span.</param>
+    /// <param name="span3">The fourth read-only binary span.</param>
+    /// <param name="span4">The fifth read-only binary span.</param>
     /// <returns>
     /// The concatenated <see cref="CString"/> representations of the values of
-    /// <paramref name="cstr0"/>, <paramref name="cstr1"/>, <paramref name="cstr2"/>,
-    /// <paramref name="cstr3"/> and <paramref name="cstr4"/>.
+    /// <paramref name="span0"/>, <paramref name="span1"/>, <paramref name="span2"/>,
+    /// <paramref name="span3"/> and <paramref name="span4"/>.
     /// </returns>
-    public static CString Concat(ReadOnlySpan<Byte> cstr0, ReadOnlySpan<Byte> cstr1, ReadOnlySpan<Byte> cstr2, ReadOnlySpan<Byte> cstr3, ReadOnlySpan<Byte> cstr4)
+    public static CString Concat(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2, ReadOnlySpan<Byte> span3, ReadOnlySpan<Byte> span4)
     {
         using BinaryConcatenator helper = new();
-        helper.Write(cstr0);
-        helper.Write(cstr1);
-        helper.Write(cstr2);
-        helper.Write(cstr3);
-        helper.Write(cstr4);
+        helper.Write(span0);
+        helper.Write(span1);
+        helper.Write(span2);
+        helper.Write(span3);
+        helper.Write(span4);
         return helper.ToArray(true) ?? CString.Empty;
     }
 
@@ -92,26 +92,26 @@ public partial class CString
     /// Concatenates the <see cref="CString"/> representations of six specified
     /// read-only binary spans.
     /// </summary>
-    /// <param name="cstr0">The first read-only binary span.</param>
-    /// <param name="cstr1">The second read-only binary span.</param>
-    /// <param name="cstr2">The third read-only binary span.</param>
-    /// <param name="cstr3">The fourth read-only binary span.</param>
-    /// <param name="cstr4">The fifth read-only binary span.</param>
-    /// <param name="cstr5">The sixth read-only binary span.</param>
+    /// <param name="span0">The first read-only binary span.</param>
+    /// <param name="span1">The second read-only binary span.</param>
+    /// <param name="span2">The third read-only binary span.</param>
+    /// <param name="span3">The fourth read-only binary span.</param>
+    /// <param name="span4">The fifth read-only binary span.</param>
+    /// <param name="span5">The sixth read-only binary span.</param>
     /// <returns>
     /// The concatenated <see cref="CString"/> representations of the values of
-    /// <paramref name="cstr0"/>, <paramref name="cstr1"/>, <paramref name="cstr2"/>,
-    /// <paramref name="cstr3"/>, <paramref name="cstr4"/> and <paramref name="cstr5"/>.
+    /// <paramref name="span0"/>, <paramref name="span1"/>, <paramref name="span2"/>,
+    /// <paramref name="span3"/>, <paramref name="span4"/> and <paramref name="span5"/>.
     /// </returns>
-    public static CString Concat(ReadOnlySpan<Byte> cstr0, ReadOnlySpan<Byte> cstr1, ReadOnlySpan<Byte> cstr2, ReadOnlySpan<Byte> cstr3, ReadOnlySpan<Byte> cstr4, ReadOnlySpan<Byte> cstr5)
+    public static CString Concat(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2, ReadOnlySpan<Byte> span3, ReadOnlySpan<Byte> span4, ReadOnlySpan<Byte> span5)
     {
         using BinaryConcatenator helper = new();
-        helper.Write(cstr0);
-        helper.Write(cstr1);
-        helper.Write(cstr2);
-        helper.Write(cstr3);
-        helper.Write(cstr4);
-        helper.Write(cstr5);
+        helper.Write(span0);
+        helper.Write(span1);
+        helper.Write(span2);
+        helper.Write(span3);
+        helper.Write(span4);
+        helper.Write(span5);
         return helper.ToArray(true) ?? CString.Empty;
     }
 
@@ -119,29 +119,29 @@ public partial class CString
     /// Concatenates the <see cref="CString"/> representations of seven specified
     /// read-only binary spans.
     /// </summary>
-    /// <param name="cstr0">The first read-only binary span.</param>
-    /// <param name="cstr1">The second read-only binary span.</param>
-    /// <param name="cstr2">The third read-only binary span.</param>
-    /// <param name="cstr3">The fourth read-only binary span.</param>
-    /// <param name="cstr4">The fifth read-only binary span.</param>
-    /// <param name="cstr5">The sixth read-only binary span.</param>
-    /// <param name="cstr6">The seventh read-only binary span.</param>
+    /// <param name="span0">The first read-only binary span.</param>
+    /// <param name="span1">The second read-only binary span.</param>
+    /// <param name="span2">The third read-only binary span.</param>
+    /// <param name="span3">The fourth read-only binary span.</param>
+    /// <param name="span4">The fifth read-only binary span.</param>
+    /// <param name="span5">The sixth read-only binary span.</param>
+    /// <param name="span6">The seventh read-only binary span.</param>
     /// <returns>
     /// The concatenated <see cref="CString"/> representations of the values of
-    /// <paramref name="cstr0"/>, <paramref name="cstr1"/>, <paramref name="cstr2"/>,
-    /// <paramref name="cstr3"/>, <paramref name="cstr4"/>, <paramref name="cstr5"/> 
-    /// and <paramref name="cstr6"/>.
+    /// <paramref name="span0"/>, <paramref name="span1"/>, <paramref name="span2"/>,
+    /// <paramref name="span3"/>, <paramref name="span4"/>, <paramref name="span5"/> 
+    /// and <paramref name="span6"/>.
     /// </returns>
-    public static CString Concat(ReadOnlySpan<Byte> cstr0, ReadOnlySpan<Byte> cstr1, ReadOnlySpan<Byte> cstr2, ReadOnlySpan<Byte> cstr3, ReadOnlySpan<Byte> cstr4, ReadOnlySpan<Byte> cstr5, ReadOnlySpan<Byte> cstr6)
+    public static CString Concat(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2, ReadOnlySpan<Byte> span3, ReadOnlySpan<Byte> span4, ReadOnlySpan<Byte> span5, ReadOnlySpan<Byte> span6)
     {
         using BinaryConcatenator helper = new();
-        helper.Write(cstr0);
-        helper.Write(cstr1);
-        helper.Write(cstr2);
-        helper.Write(cstr3);
-        helper.Write(cstr4);
-        helper.Write(cstr5);
-        helper.Write(cstr6);
+        helper.Write(span0);
+        helper.Write(span1);
+        helper.Write(span2);
+        helper.Write(span3);
+        helper.Write(span4);
+        helper.Write(span5);
+        helper.Write(span6);
         return helper.ToArray(true) ?? CString.Empty;
     }
 
@@ -149,31 +149,31 @@ public partial class CString
     /// Concatenates the <see cref="CString"/> representations of eight specified
     /// read-only binary spans.
     /// </summary>
-    /// <param name="cstr0">The first read-only binary span.</param>
-    /// <param name="cstr1">The second read-only binary span.</param>
-    /// <param name="cstr2">The third read-only binary span.</param>
-    /// <param name="cstr3">The fourth read-only binary span.</param>
-    /// <param name="cstr4">The fifth read-only binary span.</param>
-    /// <param name="cstr5">The sixth read-only binary span.</param>
-    /// <param name="cstr6">The seventh read-only binary span.</param>
-    /// <param name="cstr7">The eighth read-only binary span.</param>
+    /// <param name="span0">The first read-only binary span.</param>
+    /// <param name="span1">The second read-only binary span.</param>
+    /// <param name="span2">The third read-only binary span.</param>
+    /// <param name="span3">The fourth read-only binary span.</param>
+    /// <param name="span4">The fifth read-only binary span.</param>
+    /// <param name="span5">The sixth read-only binary span.</param>
+    /// <param name="span6">The seventh read-only binary span.</param>
+    /// <param name="span7">The eighth read-only binary span.</param>
     /// <returns>
     /// The concatenated <see cref="CString"/> representations of the values of
-    /// <paramref name="cstr0"/>, <paramref name="cstr1"/>, <paramref name="cstr2"/>,
-    /// <paramref name="cstr3"/>, <paramref name="cstr4"/>, <paramref name="cstr5"/>,
-    /// <paramref name="cstr6"/> and <paramref name="cstr7"/>.
+    /// <paramref name="span0"/>, <paramref name="span1"/>, <paramref name="span2"/>,
+    /// <paramref name="span3"/>, <paramref name="span4"/>, <paramref name="span5"/>,
+    /// <paramref name="span6"/> and <paramref name="span7"/>.
     /// </returns>
-    public static CString Concat(ReadOnlySpan<Byte> cstr0, ReadOnlySpan<Byte> cstr1, ReadOnlySpan<Byte> cstr2, ReadOnlySpan<Byte> cstr3, ReadOnlySpan<Byte> cstr4, ReadOnlySpan<Byte> cstr5, ReadOnlySpan<Byte> cstr6, ReadOnlySpan<Byte> cstr7)
+    public static CString Concat(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2, ReadOnlySpan<Byte> span3, ReadOnlySpan<Byte> span4, ReadOnlySpan<Byte> span5, ReadOnlySpan<Byte> span6, ReadOnlySpan<Byte> span7)
     {
         using BinaryConcatenator helper = new();
-        helper.Write(cstr0);
-        helper.Write(cstr1);
-        helper.Write(cstr2);
-        helper.Write(cstr3);
-        helper.Write(cstr4);
-        helper.Write(cstr5);
-        helper.Write(cstr6);
-        helper.Write(cstr7);
+        helper.Write(span0);
+        helper.Write(span1);
+        helper.Write(span2);
+        helper.Write(span3);
+        helper.Write(span4);
+        helper.Write(span5);
+        helper.Write(span6);
+        helper.Write(span7);
         return helper.ToArray(true) ?? CString.Empty;
     }
 
