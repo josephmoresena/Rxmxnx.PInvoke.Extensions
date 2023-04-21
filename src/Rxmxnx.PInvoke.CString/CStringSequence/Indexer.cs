@@ -1,6 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke;
 
-public partial class CStringSequence : IEnumerableSequence<CString>
+public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequence<CString>
 {
     /// <summary>
     /// Gets the element at the given index.
