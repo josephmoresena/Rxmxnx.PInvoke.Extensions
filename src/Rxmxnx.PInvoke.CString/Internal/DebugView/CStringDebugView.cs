@@ -9,17 +9,17 @@ internal sealed record CStringDebugView
     /// <summary>
     /// Internal value.
     /// </summary>
-    private readonly String[] _value;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+    private readonly String _value;
 
     /// <summary>
     /// Value to display.
     /// </summary>
-    [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-    public String[] Display => this._value;
+    public String Value => this._value;
 
     /// <summary>
     /// Constructor.
     /// </summary>
     /// <param name="cstr">A <see cref="CString"/> instance.</param>
-    public CStringDebugView(CString cstr) => this._value = new String[] { cstr.ToString() };
+    public CStringDebugView(CString cstr) => this._value = cstr.ToString();
 }
