@@ -15,7 +15,7 @@ internal sealed record CStringSequenceDebugView
     /// Value to display.
     /// </summary>
     [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-    public String[] Display => this._value;
+    public IReadOnlyList<String> Display => this._value;
 
     /// <summary>
     /// Constructor.
