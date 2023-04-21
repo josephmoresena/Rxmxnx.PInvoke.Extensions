@@ -3,6 +3,9 @@
 /// <summary>
 /// Represents text as a sequence of UTF-8 code units.
 /// </summary>
+[Serializable]
+[DebuggerDisplay("{ToString()}")]
+[DebuggerTypeProxy(typeof(CStringDebugView))]
 public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatable<String>
 {
     /// <summary>

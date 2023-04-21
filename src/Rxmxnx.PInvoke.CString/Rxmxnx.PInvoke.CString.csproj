@@ -27,6 +27,7 @@
     <Using Include="System.Text" />
 
     <Using Include="Rxmxnx.PInvoke.Internal" />
+    <Using Include="Rxmxnx.PInvoke.Internal.Debug" />
   </ItemGroup>
   
   <PropertyGroup>

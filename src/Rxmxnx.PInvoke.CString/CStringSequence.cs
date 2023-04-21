@@ -4,6 +4,7 @@
 /// Represents a sequence of null-terminated UTF-8 texts.
 /// </summary>
 [DebuggerDisplay("Count = {Count}")]
+[DebuggerTypeProxy(typeof(CStringSequenceDebugView))]
 public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequence>
 {
     /// <summary>
