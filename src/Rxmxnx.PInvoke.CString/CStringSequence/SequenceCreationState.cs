@@ -7,7 +7,7 @@ public partial class CStringSequence
     /// </summary>
     /// <typeparam name="TState">The type of the element to pass to creation callback.</typeparam>
 	private sealed record SequenceCreationState<TState>
-	{
+    {
         /// <summary>
         /// The element to pass to <see cref="SequenceCreationState{TState}._action"/>
         /// </summary>

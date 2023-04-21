@@ -1,5 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
 
+[ExcludeFromCodeCoverage]
 public sealed class BasicTests
 {
     [Fact]
@@ -21,6 +22,7 @@ public sealed class BasicTests
             Assert.Equal(seqRef.Count, seq.Count);
             Assert.Equal(seqRef.ToString(), seq.ToString());
             Assert.Equal(seqRef.ToString().GetHashCode(), seq.GetHashCode());
+            Assert.Equal(String.Concat(strings), seq.ToCString().ToString());
 
             AssertSequence(seq, strings, values);
         }

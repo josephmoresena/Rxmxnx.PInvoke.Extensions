@@ -47,7 +47,7 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
     /// </returns>
     /// <exception cref="ArgumentOutOfRangeException"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public CStringSequence Slice(Int32 startIndex) => this.Slice(startIndex, this._lengths.Length - startIndex);
+    public CStringSequence Slice(Int32 startIndex) => this[startIndex..this._lengths.Length];
 
     /// <summary>
     /// Retrieves a substring from this instance.
@@ -133,7 +133,7 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
         /// <summary>
         /// Function to binary information of subsequence.
         /// </summary>
-        private ReadOnlySpanFunc<Byte> _function;
+        private readonly ReadOnlySpanFunc<Byte> _function;
 
         /// <summary>
         /// Constructor.
