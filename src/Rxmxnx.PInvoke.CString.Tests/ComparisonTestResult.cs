@@ -13,23 +13,23 @@ internal sealed record ComparisonTestResult
         this.Comparisons = default!;
     }
 
-    public static async Task<ComparisonTestResult> CompareAsync(String strA, String strB, CancellationToken token)
+    public static ComparisonTestResult Compare(String strA, String strB)
     {
-        Task<Int32> normalTask = Task.Run<Int32>(() => strA.CompareTo(strB), token);
-        Task<Int32> ciTask = Task.Run<Int32>(() => String.Compare(strA, strB, true), token);
-        Task<Int32> csTask = Task.Run<Int32>(() => String.Compare(strA, strB, false), token);
-        Task<Dictionary<StringComparison, Int32>> cTask = GetComparisonsAsync(strA, strB, token);
+        Int32 normal = strA.CompareTo(strB);
+        Int32 caseInsensitive = String.Compare(strA, strB, true);
+        Int32 caseSensitive = String.Compare(strA, strB, false);
+        Dictionary<StringComparison, Int32> cTask = GetComparisons(strA, strB);
 
         return new()
         {
-            Normal = await normalTask.ConfigureAwait(false),
-            CaseInsensitive = await ciTask.ConfigureAwait(false),
-            CaseSensitive = await csTask.ConfigureAwait(false),
-            Comparisons = await cTask.ConfigureAwait(false),
+            Normal = normal,
+            CaseInsensitive = caseInsensitive,
+            CaseSensitive = caseSensitive,
+            Comparisons = GetComparisons(strA, strB),
         };
     }
 
-    private static async Task<Dictionary<StringComparison, Int32>> GetComparisonsAsync(String strA, String strB, CancellationToken token)
+    private static Dictionary<StringComparison, Int32> GetComparisons(String strA, String strB)
     {
         ConcurrentDictionary<StringComparison, Int32> result = new();
         StringComparison[] values = Enum.GetValues<StringComparison>();
@@ -38,10 +38,9 @@ internal sealed record ComparisonTestResult
         for (Int32 i = 0; i < tasks.Length; i++)
         {
             StringComparison comparisonType = values[i];
-            tasks[i] = Task.Run(() => _ = result.TryAdd(comparisonType, String.Compare(strA, strB, comparisonType)), token);
+            result.TryAdd(comparisonType, String.Compare(strA, strB, comparisonType));
         }
 
-        await Task.WhenAll(tasks).ConfigureAwait(false);
         return new(result);
     }
 }

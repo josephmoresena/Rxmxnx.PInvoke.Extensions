@@ -15,21 +15,19 @@ internal sealed record CulturalComparisonTestResult
         this.Culture = culture;
     }
 
-    public static Task<CulturalComparisonTestResult> CompareAsync(String strA, String strB, CancellationToken token)
+    public static CulturalComparisonTestResult Compare(String strA, String strB)
     {
         CultureInfo culture = cultures[Random.Shared.Next(0, cultures.Length)];
-        return CompareAsync(culture, strA, strB, token);
+        return Compare(culture, strA, strB);
     }
-
-    public static async Task<CulturalComparisonTestResult> CompareAsync(CultureInfo culture, String strA, String strB, CancellationToken token)
+    public static CulturalComparisonTestResult Compare(CultureInfo culture, String strA, String strB)
     {
-        Task<Int32> ciTask = Task.Run(() => String.Compare(strA, strB, true, culture), token);
-        Task<Int32> csTask = Task.Run(() => String.Compare(strA, strB, false, culture), token);
-
+        Int32 caseInsensitive = String.Compare(strA, strB, true, culture);
+        Int32 caseSensitive = String.Compare(strA, strB, false, culture);
         return new(culture)
         {
-            CaseInsensitive = await ciTask.ConfigureAwait(false),
-            CaseSensitive = await csTask.ConfigureAwait(false),
+            CaseInsensitive = caseInsensitive,
+            CaseSensitive = caseSensitive,
         };
     }
 }

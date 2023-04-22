@@ -51,17 +51,16 @@ public sealed class BasicTests
     }
 
     [Fact]
-    internal async Task TestAsync()
+    internal void NormalTest()
     {
         Int32 lenght = TestSet.Utf16Text.Count;
         CString[,] cstr = new CString[5, lenght];
-        Task task1 = Task.Run(() => CreateCStringFromString(cstr));
-        Task task2 = Task.Run(() => CreateCStringFromFunction(cstr));
-        Task task3 = Task.Run(() => CreateCStringFromBytes(cstr));
-        Task task4 = Task.Run(() => CreateCStringFromNullTerminatedBytes(cstr));
-        Task task5 = Task.Run(() => CreateCStringFromFunctionNonLiteral(cstr));
+        CreateCStringFromString(cstr);
+        CreateCStringFromFunction(cstr);
+        CreateCStringFromBytes(cstr);
+        CreateCStringFromNullTerminatedBytes(cstr);
+        CreateCStringFromFunctionNonLiteral(cstr);
 
-        await Task.WhenAll(task1, task2, task3, task4);
         for (Int32 i = 0; i < lenght; i++)
         {
             CString cstr1 = cstr[0, i];
@@ -102,7 +101,7 @@ public sealed class BasicTests
     }
 
     [Fact]
-    internal unsafe void Test()
+    internal unsafe void PointerTest()
     {
         Int32 lenght = TestSet.Utf8Bytes.Count;
         for (Int32 i = 0; i < lenght; i++)

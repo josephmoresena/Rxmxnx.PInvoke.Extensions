@@ -4,15 +4,14 @@
 public sealed class SpanConstructorTest
 {
     [Fact]
-    internal async Task TestAsync()
+    internal void Test()
     {
         Int32 lenght = TestSet.Utf16Text.Count;
         CString[,] cstr = new CString[3, lenght];
-        Task task1 = Task.Run(() => CreateCStringFromFunction(cstr));
-        Task task2 = Task.Run(() => CreateCStringFromBytes(cstr));
-        Task task3 = Task.Run(() => CreateCStringFromNullTerminatedBytes(cstr));
+        CreateCStringFromFunction(cstr);
+        CreateCStringFromBytes(cstr);
+        CreateCStringFromNullTerminatedBytes(cstr);
 
-        await Task.WhenAll(task1, task2, task3);
         for (Int32 i = 0; i < lenght; i++)
         {
             CString cstr1 = cstr[0, i];

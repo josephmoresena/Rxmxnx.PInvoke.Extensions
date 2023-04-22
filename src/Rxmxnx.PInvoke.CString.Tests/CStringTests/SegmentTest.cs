@@ -13,43 +13,27 @@ public sealed class SegmentTests
     }
 
     [Fact]
-    internal async Task TestAsync()
+    internal void Test()
     {
-        CancellationTokenSource source = new();
-        List<Task> testTasks = new();
-
         for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
         {
-            testTasks.Add(SegmentTestAsync(TestSet.Utf16Text[i], (CString)TestSet.Utf16Text[i], source.Token));
-            testTasks.Add(SegmentTestAsync(TestSet.Utf16Text[i], new(TestSet.Utf8Text[i]), source.Token));
-            testTasks.Add(SegmentTestAsync(TestSet.Utf16Text[i], TestSet.Utf8Bytes[i], source.Token));
-            testTasks.Add(SegmentTestAsync(TestSet.Utf16Text[i], TestSet.Utf8NullTerminatedBytes[i], source.Token));
-            testTasks.Add(FixedSegmentAsync(TestSet.Utf16Text[i], TestSet.Utf8Bytes[i], source.Token));
-            testTasks.Add(FixedSegmentAsync(TestSet.Utf16Text[i], TestSet.Utf8NullTerminatedBytes[i], source.Token));
-        }
-        try
-        {
-            await Task.WhenAll(testTasks);
-        }
-        catch (Exception)
-        {
-            source.Cancel();
-            throw;
+            SegmentTest(TestSet.Utf16Text[i], (CString)TestSet.Utf16Text[i]);
+            SegmentTest(TestSet.Utf16Text[i], new(TestSet.Utf8Text[i]));
+            SegmentTest(TestSet.Utf16Text[i], TestSet.Utf8Bytes[i]);
+            SegmentTest(TestSet.Utf16Text[i], TestSet.Utf8NullTerminatedBytes[i]);
+            FixedTest(TestSet.Utf16Text[i], TestSet.Utf8Bytes[i]);
+            FixedTest(TestSet.Utf16Text[i], TestSet.Utf8NullTerminatedBytes[i]);
         }
     }
 
-    private static Task SegmentTestAsync(String str, CString cstr, CancellationToken token)
-        => Task.Run(() => Test(str, cstr), token);
-    private static Task FixedSegmentAsync(String str, Byte[] bytes, CancellationToken token)
-        => Task.Run(() => FixedTest(str, bytes), token);
     private unsafe static void FixedTest(String str, Byte[] bytes)
     {
         fixed (void* ptr = bytes)
         {
-            Test(str, new(new IntPtr(ptr), bytes.Length));
+            SegmentTest(str, new(new IntPtr(ptr), bytes.Length));
         }
     }
-    private static void Test(String str, CString cstr)
+    private static void SegmentTest(String str, CString cstr)
     {
         IReadOnlyList<Int32> strIndex = DecodedRune.GetIndices(str);
         IReadOnlyList<Int32> cstrIndex = DecodedRune.GetIndices(cstr);
@@ -70,14 +54,14 @@ public sealed class SegmentTests
             CString cstrSeg = cstr[cstrStart..cstrEnd];
 
             Assert.Equal(strSeg, cstrSeg.ToString());
-            Test(cstr, cstrSeg, cstrStart, cstrEnd);
-            Test(cstr, cstr.Slice(cstrStart), cstrStart, cstr.Length);
+            AssertSegment(cstr, cstrSeg, cstrStart, cstrEnd);
+            AssertSegment(cstr, cstr.Slice(cstrStart), cstrStart, cstr.Length);
 
             if (!cstr.IsSegmented && !cstr.IsReference)
-                Test(strSeg, cstrSeg);
+                SegmentTest(strSeg, cstrSeg);
         }
     }
-    private static void Test(CString cstr, CString cstrSeg, Int32 cstrStart, Int32 cstrEnd)
+    private static void AssertSegment(CString cstr, CString cstrSeg, Int32 cstrStart, Int32 cstrEnd)
     {
         if (cstrSeg.Length == 0)
         {
@@ -102,9 +86,9 @@ public sealed class SegmentTests
                 else
                     Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstrSeg));
         }
-        CloneTest(cstrSeg);
+        AssertClone(cstrSeg);
     }
-    private static void CloneTest(CString cstrSeg)
+    private static void AssertClone(CString cstrSeg)
     {
         CString cloneSeg = (CString)cstrSeg.Clone();
         Assert.Equal(cstrSeg.ToString(), cloneSeg.ToString());

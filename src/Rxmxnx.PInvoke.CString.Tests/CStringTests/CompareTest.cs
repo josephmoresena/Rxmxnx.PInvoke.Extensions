@@ -4,47 +4,22 @@
 public sealed class CompareTest
 {
     [Fact]
-    internal async Task TestAsync()
+    internal void Test()
     {
-        CancellationTokenSource source = new();
-        List<Task> testTasks = new();
-
         for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
             for (Int32 j = 0; j < TestSet.Utf16Text.Count; j++)
-                testTasks.Add(CompleteTestAsync(i, j, source.Token));
-
-        try
-        {
-            await Task.WhenAll(testTasks).ConfigureAwait(false);
-        }
-        catch (Exception)
-        {
-            source.Cancel();
-            throw;
-        }
+                CompleteTest(i, j);
     }
 
     [Fact]
-    internal async Task CulturalTestAsync()
+    internal void CulturalTest()
     {
-        CancellationTokenSource source = new();
-        List<Task> testTasks = new();
-
         for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
             for (Int32 j = i; j < TestSet.Utf16Text.Count; j++)
-                testTasks.Add(CompleteCulturalTestAsync(i, j, source.Token));
-        try
-        {
-            await Task.WhenAll(testTasks).ConfigureAwait(false);
-        }
-        catch (Exception)
-        {
-            source.Cancel();
-            throw;
-        }
+                CompleteCulturalTest(i, j);
     }
 
-    private static async Task CompleteTestAsync(Int32 indexA, Int32 indexB, CancellationToken token)
+    private static void CompleteTest(Int32 indexA, Int32 indexB)
     {
         String strA = TestSet.Utf16Text[indexA];
         String strLowerA = TestSet.Utf16TextLower[indexA];
@@ -62,32 +37,25 @@ public sealed class CompareTest
         CString cstrLowerB = new(TestSet.Utf8TextLower[indexB]);
         CString cstrUpperB = new(TestSet.Utf8TextUpper[indexB]);
 
-        ComparisonTestResult testAB = await ComparisonTestResult.CompareAsync(strA, strB, token).ConfigureAwait(false);
-
-        List<Task> comparisionTasks = new(6)
-        {
-            StringTestAsync(testAB, cstrA, strB, token),
-            CStringTestAsync(testAB, cstrA, cstrB, token),
-            CompleteTestAsync(ComparisonTestResult.CompareAsync(strA, strLowerB, token), cstrA, strLowerB, cstrLowerB, token),
-            CompleteTestAsync(ComparisonTestResult.CompareAsync(strA, strUpperB, token), cstrA, strUpperB, cstrUpperB, token),
-        };
+        ComparisonTestResult testAB = ComparisonTestResult.Compare(strA, strB);
+        StringTest(testAB, cstrA, strB);
+        CStringTest(testAB, cstrA, cstrB);
+        CompleteTest(ComparisonTestResult.Compare(strA, strLowerB), cstrA, strLowerB, cstrLowerB);
+        CompleteTest(ComparisonTestResult.Compare(strA, strUpperB), cstrA, strUpperB, cstrUpperB);
 
         if (testAB.Normal != 0)
         {
-            comparisionTasks.Add(CompleteTestAsync(ComparisonTestResult.CompareAsync(strB, strA, token), cstrB, strA, cstrA, token));
-            comparisionTasks.Add(CompleteTestAsync(ComparisonTestResult.CompareAsync(strB, strLowerA, token), cstrB, strLowerA, cstrLowerA, token));
-            comparisionTasks.Add(CompleteTestAsync(ComparisonTestResult.CompareAsync(strB, strUpperA, token), cstrB, strUpperA, cstrUpperA, token));
+            CompleteTest(ComparisonTestResult.Compare(strB, strA), cstrB, strA, cstrA);
+            CompleteTest(ComparisonTestResult.Compare(strB, strLowerA), cstrB, strLowerA, cstrLowerA);
+            CompleteTest(ComparisonTestResult.Compare(strB, strUpperA), cstrB, strUpperA, cstrUpperA);
         }
-
-        await Task.WhenAll(comparisionTasks).ConfigureAwait(false);
     }
-    private static async Task CompleteTestAsync(Task<ComparisonTestResult> resultsTask, CString cstrA, String strB, CString cstrB, CancellationToken token)
+    private static void CompleteTest(ComparisonTestResult results, CString cstrA, String strB, CString cstrB)
     {
-        ComparisonTestResult result = await resultsTask;
-        await StringTestAsync(result, cstrA, strB, token).ConfigureAwait(false);
-        await CStringTestAsync(result, cstrA, cstrB, token).ConfigureAwait(false);
+        StringTest(results, cstrA, strB);
+        CStringTest(results, cstrA, cstrB);
     }
-    private static async Task CompleteCulturalTestAsync(Int32 indexA, Int32 indexB, CancellationToken token)
+    private static void CompleteCulturalTest(Int32 indexA, Int32 indexB)
     {
         String strA = TestSet.Utf16Text[indexA];
         String strLowerA = TestSet.Utf16TextLower[indexA];
@@ -105,68 +73,58 @@ public sealed class CompareTest
         CString cstrLowerB = new(TestSet.Utf8TextLower[indexB]);
         CString cstrUpperB = new(TestSet.Utf8TextUpper[indexB]);
 
-        List<Task> tasks = new(6)
-        {
-            CompleteCulturalTestAsync(strA, cstrA, strB, cstrB, token),
-            CompleteCulturalTestAsync(strA, cstrA, strLowerB, cstrLowerB, token),
-            CompleteCulturalTestAsync(strA, cstrA, strUpperB, cstrUpperB, token),
-        };
+        CompleteCulturalTest(strA, cstrA, strB, cstrB);
+        CompleteCulturalTest(strA, cstrA, strLowerB, cstrLowerB);
+        CompleteCulturalTest(strA, cstrA, strUpperB, cstrUpperB);
 
         if (!Object.ReferenceEquals(strA, strB))
         {
-            tasks.Add(CompleteCulturalTestAsync(strB, cstrB, strA, cstrA, token));
-            tasks.Add(CompleteCulturalTestAsync(strB, cstrB, strLowerA, cstrLowerA, token));
-            tasks.Add(CompleteCulturalTestAsync(strB, cstrB, strUpperA, cstrUpperA, token));
+            CompleteCulturalTest(strB, cstrB, strA, cstrA);
+            CompleteCulturalTest(strB, cstrB, strLowerA, cstrLowerA);
+            CompleteCulturalTest(strB, cstrB, strUpperA, cstrUpperA);
         }
-
-        await Task.WhenAll(tasks).ConfigureAwait(false);
     }
-    private static async Task CompleteCulturalTestAsync(String strA, CString cstrA, String strB, CString cstrB, CancellationToken token)
+    private static void CompleteCulturalTest(String strA, CString cstrA, String strB, CString cstrB)
     {
-        CulturalComparisonTestResult results = await CulturalComparisonTestResult.CompareAsync(strA, strB, token).ConfigureAwait(false);
-        await StringTestAsync(results, cstrA, strB, token);
-        await CStringTestAsync(results, cstrA, cstrB, token);
+        CulturalComparisonTestResult results = CulturalComparisonTestResult.Compare(strA, strB);
+        StringTest(results, cstrA, strB);
+        CStringTest(results, cstrA, cstrB);
     }
 
-    private static Task StringTestAsync(ComparisonTestResult results, CString cstrA, String strB, CancellationToken token)
-        => Task.WhenAll
-        (
-            Task.Run(() => Assert.Equal(results.Normal, cstrA.CompareTo(strB)), token),
-            Task.Run(() => Assert.Equal(results.Normal, CString.Compare(cstrA, strB)), token),
-            Task.Run(() => Assert.Equal(results.CaseInsensitive, CString.Compare(cstrA, strB, true)), token),
-            Task.Run(() => Assert.Equal(results.CaseSensitive, CString.Compare(cstrA, strB, false)), token),
-            Task.Run(() => Assert.Equal(results.Comparisons[StringComparison.Ordinal], CString.Compare(cstrA, strB, StringComparison.Ordinal)), token),
-            Task.Run(() => Assert.Equal(results.Comparisons[StringComparison.CurrentCulture], CString.Compare(cstrA, strB, StringComparison.CurrentCulture)), token),
-            Task.Run(() => Assert.Equal(results.Comparisons[StringComparison.InvariantCulture], CString.Compare(cstrA, strB, StringComparison.InvariantCulture)), token),
-            Task.Run(() => Assert.Equal(results.Comparisons[StringComparison.OrdinalIgnoreCase], CString.Compare(cstrA, strB, StringComparison.OrdinalIgnoreCase)), token),
-            Task.Run(() => Assert.Equal(results.Comparisons[StringComparison.CurrentCultureIgnoreCase], CString.Compare(cstrA, strB, StringComparison.CurrentCultureIgnoreCase)), token),
-            Task.Run(() => Assert.Equal(results.Comparisons[StringComparison.InvariantCultureIgnoreCase], CString.Compare(cstrA, strB, StringComparison.InvariantCultureIgnoreCase)), token)
-        );
-    private static Task StringTestAsync(CulturalComparisonTestResult results, CString cstrA, String strB, CancellationToken token)
-        => Task.WhenAll
-        (
-            Task.Run(() => Assert.Equal(results.CaseInsensitive, CString.Compare(cstrA, strB, true, results.Culture)), token),
-            Task.Run(() => Assert.Equal(results.CaseSensitive, CString.Compare(cstrA, strB, false, results.Culture)), token)
-        );
-    private static Task CStringTestAsync(ComparisonTestResult results, CString cstrA, CString cstrB, CancellationToken token)
-        => Task.WhenAll
-        (
-            Task.Run(() => Assert.Equal(results.Normal, cstrA.CompareTo(cstrB)), token),
-            Task.Run(() => Assert.Equal(results.Normal, CString.Compare(cstrA, cstrB)), token),
-            Task.Run(() => Assert.Equal(results.CaseInsensitive, CString.Compare(cstrA, cstrB, true)), token),
-            Task.Run(() => Assert.Equal(results.CaseSensitive, CString.Compare(cstrA, cstrB, false)), token),
-            Task.Run(() => Assert.Equal(results.Comparisons[StringComparison.Ordinal], CString.Compare(cstrA, cstrB, StringComparison.Ordinal)), token),
-            Task.Run(() => Assert.Equal(results.Comparisons[StringComparison.CurrentCulture], CString.Compare(cstrA, cstrB, StringComparison.CurrentCulture)), token),
-            Task.Run(() => Assert.Equal(results.Comparisons[StringComparison.InvariantCulture], CString.Compare(cstrA, cstrB, StringComparison.InvariantCulture)), token),
-            Task.Run(() => Assert.Equal(results.Comparisons[StringComparison.OrdinalIgnoreCase], CString.Compare(cstrA, cstrB, StringComparison.OrdinalIgnoreCase)), token),
-            Task.Run(() => Assert.Equal(results.Comparisons[StringComparison.CurrentCultureIgnoreCase], CString.Compare(cstrA, cstrB, StringComparison.CurrentCultureIgnoreCase)), token),
-            Task.Run(() => Assert.Equal(results.Comparisons[StringComparison.InvariantCultureIgnoreCase], CString.Compare(cstrA, cstrB, StringComparison.InvariantCultureIgnoreCase)), token)
-        );
-    private static Task CStringTestAsync(CulturalComparisonTestResult results, CString cstrA, CString cstrB, CancellationToken token)
-        => Task.WhenAll
-        (
-            Task.Run(() => Assert.Equal(results.CaseInsensitive, CString.Compare(cstrA, cstrB, true, results.Culture)), token),
-            Task.Run(() => Assert.Equal(results.CaseSensitive, CString.Compare(cstrA, cstrB, false, results.Culture)), token)
-        );
-
+    private static void StringTest(ComparisonTestResult results, CString cstrA, String strB)
+    {
+        Assert.Equal(results.Normal, cstrA.CompareTo(strB));
+        Assert.Equal(results.Normal, CString.Compare(cstrA, strB));
+        Assert.Equal(results.CaseInsensitive, CString.Compare(cstrA, strB, true));
+        Assert.Equal(results.CaseSensitive, CString.Compare(cstrA, strB, false));
+        Assert.Equal(results.Comparisons[StringComparison.Ordinal], CString.Compare(cstrA, strB, StringComparison.Ordinal));
+        Assert.Equal(results.Comparisons[StringComparison.CurrentCulture], CString.Compare(cstrA, strB, StringComparison.CurrentCulture));
+        Assert.Equal(results.Comparisons[StringComparison.InvariantCulture], CString.Compare(cstrA, strB, StringComparison.InvariantCulture));
+        Assert.Equal(results.Comparisons[StringComparison.OrdinalIgnoreCase], CString.Compare(cstrA, strB, StringComparison.OrdinalIgnoreCase));
+        Assert.Equal(results.Comparisons[StringComparison.CurrentCultureIgnoreCase], CString.Compare(cstrA, strB, StringComparison.CurrentCultureIgnoreCase));
+        Assert.Equal(results.Comparisons[StringComparison.InvariantCultureIgnoreCase], CString.Compare(cstrA, strB, StringComparison.InvariantCultureIgnoreCase));
+    }
+    private static void StringTest(CulturalComparisonTestResult results, CString cstrA, String strB)
+    {
+        Assert.Equal(results.CaseInsensitive, CString.Compare(cstrA, strB, true, results.Culture));
+        Assert.Equal(results.CaseSensitive, CString.Compare(cstrA, strB, false, results.Culture));
+    }
+    private static void CStringTest(ComparisonTestResult results, CString cstrA, CString cstrB)
+    {
+        Assert.Equal(results.Normal, cstrA.CompareTo(cstrB));
+        Assert.Equal(results.Normal, CString.Compare(cstrA, cstrB));
+        Assert.Equal(results.CaseInsensitive, CString.Compare(cstrA, cstrB, true));
+        Assert.Equal(results.CaseSensitive, CString.Compare(cstrA, cstrB, false));
+        Assert.Equal(results.Comparisons[StringComparison.Ordinal], CString.Compare(cstrA, cstrB, StringComparison.Ordinal));
+        Assert.Equal(results.Comparisons[StringComparison.CurrentCulture], CString.Compare(cstrA, cstrB, StringComparison.CurrentCulture));
+        Assert.Equal(results.Comparisons[StringComparison.InvariantCulture], CString.Compare(cstrA, cstrB, StringComparison.InvariantCulture));
+        Assert.Equal(results.Comparisons[StringComparison.OrdinalIgnoreCase], CString.Compare(cstrA, cstrB, StringComparison.OrdinalIgnoreCase));
+        Assert.Equal(results.Comparisons[StringComparison.CurrentCultureIgnoreCase], CString.Compare(cstrA, cstrB, StringComparison.CurrentCultureIgnoreCase));
+        Assert.Equal(results.Comparisons[StringComparison.InvariantCultureIgnoreCase], CString.Compare(cstrA, cstrB, StringComparison.InvariantCultureIgnoreCase));
+    }
+    private static void CStringTest(CulturalComparisonTestResult results, CString cstrA, CString cstrB)
+    {
+        Assert.Equal(results.CaseInsensitive, CString.Compare(cstrA, cstrB, true, results.Culture));
+        Assert.Equal(results.CaseSensitive, CString.Compare(cstrA, cstrB, false, results.Culture));
+    }
 }
