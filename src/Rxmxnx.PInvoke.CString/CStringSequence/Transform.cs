@@ -14,7 +14,15 @@ public partial class CStringSequence
         fixed (Char* ptr = this._value)
         {
             _ = this.AsSpanUnsafe(out CString[] output);
-            action(new(output, new(new IntPtr(ptr), this._value.Length)));
+            FixedCStringSequence fseq = new(output, new(new IntPtr(ptr), this._value.Length));
+            try
+            {
+                action(fseq);
+            }
+            finally
+            {
+                fseq.Unload();
+            }
         }
     }
 
@@ -32,7 +40,15 @@ public partial class CStringSequence
         fixed (Char* ptr = this._value)
         {
             _ = this.AsSpanUnsafe(out CString[] output);
-            action(new(output, new(new IntPtr(ptr), this._value.Length)), state);
+            FixedCStringSequence fseq = new(output, new(new IntPtr(ptr), this._value.Length));
+            try
+            {
+                action(fseq, state);
+            }
+            finally
+            {
+                fseq.Unload();
+            }
         }
     }
 
@@ -50,7 +66,15 @@ public partial class CStringSequence
         fixed (Char* ptr = this._value)
         {
             _ = this.AsSpanUnsafe(out CString[] output);
-            return func(new(output, new(new IntPtr(ptr), this._value.Length)));
+            FixedCStringSequence fseq = new(output, new(new IntPtr(ptr), this._value.Length));
+            try
+            {
+                return func(fseq);
+            }
+            finally
+            {
+                fseq.Unload();
+            }
         }
     }
 
@@ -70,7 +94,15 @@ public partial class CStringSequence
         fixed (Char* ptr = this._value)
         {
             _ = this.AsSpanUnsafe(out CString[] output);
-            return func(new(output, new(new IntPtr(ptr), this._value.Length)), state);
+            FixedCStringSequence fseq = new(output, new(new IntPtr(ptr), this._value.Length));
+            try
+            {
+                return func(fseq, state);
+            }
+            finally
+            {
+                fseq.Unload();
+            }
         }
     }
 }

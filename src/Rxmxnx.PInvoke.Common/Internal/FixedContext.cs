@@ -38,6 +38,18 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
     /// <summary>
     /// Constructor.
     /// </summary>
+    /// <param name="ptr">Pointer to fixed memory block.</param>
+    /// <param name="count">Number of <typeparamref name="T"/> items in memory block.</param>
+    /// <param name="isReadOnly">Indicates whether the memory block is read-only.</param>
+    /// <param name="isValid">Indicates whether current instance remains valid.</param>
+    public FixedContext(void* ptr, Int32 count, Boolean isReadOnly, IMutableWrapper<Boolean> isValid) : base(ptr, count * sizeof(T), isReadOnly, isValid)
+    {
+        this._count = count;
+    }
+
+    /// <summary>
+    /// Constructor.
+    /// </summary>
     /// <param name="ctx">Fixed context of memory block.</param>
     /// <param name="count">Number of <typeparamref name="T"/> items in memory block.</param>
     private FixedContext(FixedMemory ctx, Int32 count) : base(ctx)

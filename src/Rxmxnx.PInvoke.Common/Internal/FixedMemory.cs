@@ -60,6 +60,21 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
     /// <summary>
     /// Constructor.
     /// </summary>
+    /// <param name="ptr">Pointer to fixed memory block.</param>
+    /// <param name="binaryLength">Memory block size in bytes.</param>
+    /// <param name="isReadOnly">Indicates whether the memory block is read-only.</param>
+    /// <param name="isValid">Indicates whether current instance remains valid.</param>
+    protected FixedMemory(void* ptr, Int32 binaryLength, Boolean isReadOnly, IMutableWrapper<Boolean> isValid)
+    {
+        this._ptr = ptr;
+        this._binaryLength = binaryLength;
+        this._isValid = isValid;
+        this._isReadOnly = isReadOnly;
+    }
+
+    /// <summary>
+    /// Constructor.
+    /// </summary>
     /// <param name="mem">Fixed context of memory block.</param>
     protected FixedMemory(FixedMemory mem)
     {

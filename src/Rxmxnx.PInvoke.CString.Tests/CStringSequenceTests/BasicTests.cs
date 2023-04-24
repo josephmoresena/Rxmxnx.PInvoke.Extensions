@@ -21,8 +21,22 @@ public sealed class BasicTests
             Assert.Equal(strings.Select(c => (CString?)c ?? CString.Zero), seq);
             Assert.Equal(seqRef.Count, seq.Count);
             Assert.Equal(seqRef.ToString(), seq.ToString());
+            Assert.NotSame(seqRef.ToString(), seq.ToString());
             Assert.Equal(seqRef.ToString().GetHashCode(), seq.GetHashCode());
             Assert.Equal(String.Concat(strings), seq.ToCString().ToString());
+            Assert.NotSame(seqRef, seq);
+            Assert.False(seqRef.Equals(default));
+            Assert.False(seqRef.Equals(default(Object)));
+            Assert.True(seqRef.Equals(seq));
+            Assert.True(seqRef.Equals((Object)seq));
+
+            Assert.Equal(new CStringSequence(strings.ToList()), seq);
+            Assert.Equal(new CStringSequence(values.ToList()), seq);
+
+            CStringSequence clone = (CStringSequence)seq.Clone();
+            Assert.Equal(seqRef.Count, clone.Count);
+            Assert.Equal(seqRef.ToString(), clone.ToString());
+            Assert.NotSame(seqRef.ToString(), clone.ToString());
 
             AssertSequence(seq, strings, values);
         }

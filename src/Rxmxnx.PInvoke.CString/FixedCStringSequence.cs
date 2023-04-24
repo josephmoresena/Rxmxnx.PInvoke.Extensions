@@ -13,6 +13,10 @@ public unsafe readonly ref struct FixedCStringSequence
     /// <see cref="CString"/> values.
     /// </summary>
     private readonly CString[]? _values;
+    /// <summary>
+    /// Indicates whether current instance remains valid.
+    /// </summary>
+    private readonly IMutableWrapper<Boolean>? _isValid;
 
     /// <summary>
     /// <see cref="CString"/> values.
@@ -27,7 +31,7 @@ public unsafe readonly ref struct FixedCStringSequence
     /// <exception cref="IndexOutOfRangeException">
     /// <paramref name="index"/> is greater than or equal to the length of this object or less than zero.
     /// </exception>
-    public IReadOnlyFixedContext<Byte> this[Int32 index]
+    public IReadOnlyFixedMemory this[Int32 index]
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
@@ -47,7 +51,32 @@ public unsafe readonly ref struct FixedCStringSequence
     {
         this._values = values;
         this._value = value;
+        this._isValid = IMutableWrapper<Boolean>.Create(true);
     }
+
+    /// <summary>
+    /// Creates an array of <see cref="IReadOnlyFixedMemory"/> instances from current instance.
+    /// </summary>
+    /// <returns>An array of <see cref="IReadOnlyFixedMemory"/> instances.</returns>
+    public IReadOnlyFixedMemory[] ToArray()
+    {
+        IReadOnlyFixedMemory[] result = new IReadOnlyFixedMemory[this.Values.Count];
+        for (Int32 i = 0; i < result.Length; i++)
+            result[i] = this[i];
+        return result;
+    }
+
+    /// <summary>
+    /// Invalidates current context.
+    /// </summary>
+    public void Unload()
+    {
+        if (this._isValid is not null)
+            this._isValid.Value = false;
+    }
+
+    /// <inheritdoc/>
+    public override String? ToString() => this._value?.ToString();
 
     /// <summary>
     /// Retrieves the <see cref="IFixedContext{Byte}"/> for element at <paramref name="index"/>.
@@ -58,9 +87,6 @@ public unsafe readonly ref struct FixedCStringSequence
     {
         CString cstr = this._values![index];
         fixed (void* ptr = cstr.AsSpan())
-            return new FixedContext<Byte>(ptr, cstr.Length, true);
+            return new FixedContext<Byte>(ptr, cstr.Length, true, this._isValid!);
     }
-
-    /// <inheritdoc/>
-    public override String? ToString() => this._value?.ToString();
 }
