@@ -100,4 +100,21 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
     public override String ToString() => this._value;
     /// <inheritdoc/>
     public override Int32 GetHashCode() => this._value.GetHashCode();
+
+    /// <summary>
+    /// Creates a new UTF-8 text sequence with a specific <paramref name="lengths"/> and initializes each
+    /// UTF-8 texts into it after creation by using the specified callback.
+    /// </summary>
+    /// <typeparam name="TState">The type of the element to pass to <paramref name="action"/>.</typeparam>
+    /// <param name="lengths">The lengths of the UTF-8 text sequence to create.</param>
+    /// <param name="state">The element to pass to <paramref name="action"/>.</param>
+    /// <param name="action">A callback to initialize each <see cref="CString"/>.</param>
+    /// <returns>The create UTF-8 text sequence.</returns>
+    public static CStringSequence Create<TState>(TState state, CStringSequenceCreationAction<TState> action, params Int32?[] lengths)
+    {
+        Int32 bytesLength = lengths.Sum(GetSpanLength);
+        Int32 length = bytesLength / SizeOfChar + (bytesLength % SizeOfChar);
+        String buffer = String.Create(length, new SequenceCreationState<TState>(state, action, lengths), CreateCStringSequence);
+        return new(buffer, lengths);
+    }
 }
