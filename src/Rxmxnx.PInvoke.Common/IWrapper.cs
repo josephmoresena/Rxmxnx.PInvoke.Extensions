@@ -1,18 +1,10 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// This interface exposes a wrapper for <typeparamref name="T"/> object.
+/// This interface exposes a wrapper object.
 /// </summary>
-/// <typeparam name="T">Type of wrapped value.</typeparam>
-public interface IWrapper<T> : IEquatable<T>
+public interface IWrapper
 {
-    /// <summary>
-    /// Wrapped <typeparamref name="T"/> object.
-    /// </summary>
-    public T? Value { get; }
-
-    Boolean IEquatable<T>.Equals(T? other) => Object.Equals(this.Value, other);
-
     /// <summary>
     /// Creates a new <see cref="IWrapper{TValue}"/> object from a 
     /// <typeparamref name="TValue"/> value.
@@ -40,4 +32,18 @@ public interface IWrapper<T> : IEquatable<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IWrapper<TValue?> CreateNullable<TValue>(in TValue? instance) where TValue : struct
         => new NullableInput<TValue>(instance);
+}
+
+/// <summary>
+/// This interface exposes a wrapper for <typeparamref name="T"/> object.
+/// </summary>
+/// <typeparam name="T">Type of wrapped value.</typeparam>
+public interface IWrapper<T> : IWrapper, IEquatable<T>
+{
+    /// <summary>
+    /// Wrapped <typeparamref name="T"/> object.
+    /// </summary>
+    public T? Value { get; }
+
+    Boolean IEquatable<T>.Equals(T? other) => Object.Equals(this.Value, other);
 }

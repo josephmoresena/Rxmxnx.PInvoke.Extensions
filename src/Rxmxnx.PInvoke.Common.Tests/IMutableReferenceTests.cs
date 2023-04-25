@@ -49,8 +49,8 @@ public sealed class IMutableReferenceTests
         T value = fixture.Create<T>();
         T value2 = fixture.Create<T>();
         T value3 = fixture.Create<T>();
-        var result = IMutableReference<T>.Create(value);
-        var result2 = IReferenceableWrapper<T>.Create(value);
+        var result = IMutableReference.Create(value);
+        var result2 = IReferenceableWrapper.Create(value);
         var result3 = new ReferenceableWrapper<T>(result);
         ref readonly T refValue = ref result.Reference;
         ref T mutableValueRef = ref result.Reference;
@@ -85,8 +85,8 @@ public sealed class IMutableReferenceTests
         T? value = !nullInput ? fixture.Create<T>() : null;
         T? value2 = fixture.Create<Boolean>() ? fixture.Create<T>() : null;
         T? value3 = fixture.Create<Boolean>() ? fixture.Create<T>() : null;
-        var result = IMutableReference<T>.CreateNullable(value);
-        var result2 = IReferenceableWrapper<T>.CreateNullable(value);
+        var result = IMutableReference.CreateNullable(value);
+        var result2 = IReferenceableWrapper.CreateNullable(value);
         var result3 = new ReferenceableWrapper<T?>(result);
         ref readonly T? refValue = ref result.Reference;
         ref T? mutableValueRef = ref result.Reference;

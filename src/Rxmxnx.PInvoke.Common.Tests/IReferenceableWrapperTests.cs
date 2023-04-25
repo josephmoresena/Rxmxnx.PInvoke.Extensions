@@ -48,8 +48,8 @@ public sealed class IReferenceableWrapperTests
     {
         T value = fixture.Create<T>();
         T value2 = fixture.Create<T>();
-        var result = IReferenceableWrapper<T>.Create(value);
-        var result2 = IReferenceableWrapper<T>.Create(value);
+        var result = IReferenceableWrapper.Create(value);
+        var result2 = IReferenceableWrapper.Create(value);
         var result3 = new ReferenceableWrapper<T>(result);
         ref readonly T refValue = ref result.Reference;
         ref T mutableValueRef = ref Unsafe.AsRef(result.Reference);
@@ -62,13 +62,14 @@ public sealed class IReferenceableWrapperTests
         Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref value));
         Assert.False(result.Equals(result2));
         Assert.True(result.Equals(result3));
+        Assert.False(result.Equals(default(IReferenceable<T>)));
     }
     private static void Nullable<T>(Boolean nullInput) where T : unmanaged
     {
         T? value = !nullInput ? fixture.Create<T>() : null;
         T? value2 = fixture.Create<Boolean>() ? fixture.Create<T>() : null;
-        var result = IReferenceableWrapper<T>.CreateNullable(value);
-        var result2 = IReferenceableWrapper<T>.CreateNullable(value);
+        var result = IReferenceableWrapper.CreateNullable(value);
+        var result2 = IReferenceableWrapper.CreateNullable(value);
         var result3 = new ReferenceableWrapper<T?>(result);
         ref readonly T? refValue = ref result.Reference;
         ref T? mutableValueRef = ref Unsafe.AsRef(result.Reference);
@@ -80,6 +81,7 @@ public sealed class IReferenceableWrapperTests
         Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref value));
         Assert.False(result.Equals(result2));
         Assert.True(result.Equals(result3));
+        Assert.False(result.Equals(default(IReferenceable<T?>)));
     }
 }
 

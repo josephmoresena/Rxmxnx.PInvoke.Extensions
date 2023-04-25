@@ -1,11 +1,10 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// This interface exposes a wrapper for <typeparamref name="T"/> object that can be 
-/// referenced and whose value can be modified.
+/// This interface exposes a wrapper for an object that can be referenced and whose value can be modified.
 /// </summary>
 /// <typeparam name="T">Type of both wrapped and referenced value.</typeparam>
-public interface IMutableReference<T> : IReferenceableWrapper<T>, IMutableWrapper<T>, IReferenceable<T>
+public interface IMutableReference : IMutableWrapper
 {
     /// <summary>
     /// Creates a new <see cref="IMutableWrapper{TValue}"/> object from a <typeparamref name="TValue"/> value.
@@ -33,4 +32,13 @@ public interface IMutableReference<T> : IReferenceableWrapper<T>, IMutableWrappe
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static new IMutableReference<TValue?> CreateNullable<TValue>(in TValue? instance = default) where TValue : struct
         => new NullableReference<TValue>(instance);
+}
+
+/// <summary>
+/// This interface exposes a wrapper for <typeparamref name="T"/> object that can be 
+/// referenced and whose value can be modified.
+/// </summary>
+/// <typeparam name="T">Type of both wrapped and referenced value.</typeparam>
+public interface IMutableReference<T> : IReferenceableWrapper<T>, IMutableWrapper<T>, IReferenceable<T>
+{
 }

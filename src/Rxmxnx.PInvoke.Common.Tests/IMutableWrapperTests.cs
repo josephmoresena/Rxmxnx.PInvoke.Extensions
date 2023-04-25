@@ -49,7 +49,7 @@ public sealed class IMutableWrapperTests
     {
         T value = fixture.Create<T>();
         T value2 = fixture.Create<T>();
-        var result = IMutableWrapper<T>.Create(value);
+        var result = IMutableWrapper.Create(value);
         IWrapper<T> wrapper = result;
 
         Assert.NotNull(result);

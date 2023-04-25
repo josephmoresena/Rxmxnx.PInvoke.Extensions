@@ -1,20 +1,10 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// This interface exposes a wrapper for <typeparamref name="T"/> object whose value 
-/// can be modified.
+/// This interface exposes a wrapper for an object whose value can be modified.
 /// </summary>
-/// <typeparam name="T">Type of wrapped value.</typeparam>
-public interface IMutableWrapper<T> : IWrapper<T>
+public interface IMutableWrapper : IWrapper
 {
-    /// <summary>
-    /// Wrapped <typeparamref name="T"/> object.
-    /// </summary>
-    new T? Value { get; set; }
-
-    [ExcludeFromCodeCoverage]
-    T? IWrapper<T>.Value => this.Value;
-
     /// <summary>
     /// Creates a new <see cref="IMutableWrapper{TValue}"/> object from a <typeparamref name="TValue"/> value.
     /// </summary>
@@ -41,4 +31,20 @@ public interface IMutableWrapper<T> : IWrapper<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static new IMutableWrapper<TValue?> CreateNullable<TValue>(in TValue? instance = default) where TValue : struct
         => new NullableReference<TValue>(instance);
+}
+
+/// <summary>
+/// This interface exposes a wrapper for <typeparamref name="T"/> object whose value 
+/// can be modified.
+/// </summary>
+/// <typeparam name="T">Type of wrapped value.</typeparam>
+public interface IMutableWrapper<T> : IMutableWrapper, IWrapper<T>
+{
+    /// <summary>
+    /// Wrapped <typeparamref name="T"/> object.
+    /// </summary>
+    new T? Value { get; set; }
+
+    [ExcludeFromCodeCoverage]
+    T? IWrapper<T>.Value => this.Value;
 }

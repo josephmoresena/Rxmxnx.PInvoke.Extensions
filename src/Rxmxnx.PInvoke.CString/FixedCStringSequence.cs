@@ -55,8 +55,8 @@ public unsafe readonly ref struct FixedCStringSequence
     {
         this._values = values;
         this._value = value;
-        this._isValid = IMutableWrapper<Boolean>.Create(true);
-        this._emptyHandle = IMutableWrapper<GCHandle>.Create(default(GCHandle));
+        this._isValid = IMutableWrapper.Create(true);
+        this._emptyHandle = IMutableWrapper.Create<GCHandle>();
     }
 
     /// <summary>
