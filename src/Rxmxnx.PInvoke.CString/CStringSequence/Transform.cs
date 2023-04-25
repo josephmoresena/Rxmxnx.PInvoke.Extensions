@@ -14,7 +14,7 @@ public partial class CStringSequence
         fixed (Char* ptr = this._value)
         {
             _ = this.AsSpanUnsafe(out CString[] output);
-            FixedCStringSequence fseq = new(output, new(new IntPtr(ptr), this._value.Length));
+            FixedCStringSequence fseq = new(output, CString.Create(new IntPtr(ptr), this._value.Length * SizeOfChar));
             try
             {
                 action(fseq);
@@ -40,7 +40,7 @@ public partial class CStringSequence
         fixed (Char* ptr = this._value)
         {
             _ = this.AsSpanUnsafe(out CString[] output);
-            FixedCStringSequence fseq = new(output, new(new IntPtr(ptr), this._value.Length));
+            FixedCStringSequence fseq = new(output, CString.Create(new IntPtr(ptr), this._value.Length * SizeOfChar));
             try
             {
                 action(fseq, state);
@@ -66,7 +66,7 @@ public partial class CStringSequence
         fixed (Char* ptr = this._value)
         {
             _ = this.AsSpanUnsafe(out CString[] output);
-            FixedCStringSequence fseq = new(output, new(new IntPtr(ptr), this._value.Length));
+            FixedCStringSequence fseq = new(output, CString.Create(new IntPtr(ptr), this._value.Length * SizeOfChar));
             try
             {
                 return func(fseq);
@@ -94,7 +94,7 @@ public partial class CStringSequence
         fixed (Char* ptr = this._value)
         {
             _ = this.AsSpanUnsafe(out CString[] output);
-            FixedCStringSequence fseq = new(output, new(new IntPtr(ptr), this._value.Length));
+            FixedCStringSequence fseq = new(output, CString.Create(new IntPtr(ptr), this._value.Length * SizeOfChar));
             try
             {
                 return func(fseq, state);

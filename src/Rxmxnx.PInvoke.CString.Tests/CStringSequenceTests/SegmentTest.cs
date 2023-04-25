@@ -24,7 +24,7 @@ public sealed class SegmentTest
         String?[] strings = indices.Select(i => TestSet.GetString(i, true)).ToArray();
         try
         {
-            CStringSequence seq = CreateSequence(handles, indices, strings);
+            CStringSequence seq = CreateSequence(handles, indices);
             Int32 count = seq.Count;
             for (Int32 i = 0; i < count; i++)
             {
@@ -50,7 +50,7 @@ public sealed class SegmentTest
         String?[] strings = indices.Select(i => TestSet.GetString(i, true)).ToArray();
         try
         {
-            CStringSequence seq = CreateSequence(handles, indices, strings);
+            CStringSequence seq = CreateSequence(handles, indices);
             Int32 count = seq.Count;
             for (Int32 i = 0; i < count; i++)
             {
@@ -67,9 +67,9 @@ public sealed class SegmentTest
         }
     }
 
-    private static CStringSequence CreateSequence(ICollection<GCHandle> handles, IReadOnlyList<Int32> indices, String?[] strings)
+    private static CStringSequence CreateSequence(ICollection<GCHandle> handles, IReadOnlyList<Int32> indices)
     {
-        CString?[] values = new CString[strings.Length];
+        CString?[] values = new CString[indices.Count];
         for (Int32 i = 0; i < values.Length; i++)
             values[i] = TestSet.GetCString(indices[i], handles);
         CStringSequence seq = new(values);

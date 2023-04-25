@@ -17,6 +17,10 @@ public unsafe readonly ref struct FixedCStringSequence
     /// Indicates whether current instance remains valid.
     /// </summary>
     private readonly IMutableWrapper<Boolean>? _isValid;
+    /// <summary>
+    /// <see cref="CString.Empty"/> handle.
+    /// </summary>
+    private readonly IMutableWrapper<GCHandle>? _emptyHandle;
 
     /// <summary>
     /// <see cref="CString"/> values.
@@ -52,6 +56,7 @@ public unsafe readonly ref struct FixedCStringSequence
         this._values = values;
         this._value = value;
         this._isValid = IMutableWrapper<Boolean>.Create(true);
+        this._emptyHandle = IMutableWrapper<GCHandle>.Create(default(GCHandle));
     }
 
     /// <summary>
@@ -66,17 +71,19 @@ public unsafe readonly ref struct FixedCStringSequence
         return result;
     }
 
+    /// <inheritdoc/>
+    public override String? ToString() => this._value?.ToString();
+
     /// <summary>
     /// Invalidates current context.
     /// </summary>
-    public void Unload()
+    internal void Unload()
     {
         if (this._isValid is not null)
             this._isValid.Value = false;
+        if (this.IsEmptyAllocated())
+            this._emptyHandle!.Value.Free();
     }
-
-    /// <inheritdoc/>
-    public override String? ToString() => this._value?.ToString();
 
     /// <summary>
     /// Retrieves the <see cref="IFixedContext{Byte}"/> for element at <paramref name="index"/>.
@@ -86,7 +93,26 @@ public unsafe readonly ref struct FixedCStringSequence
     private IReadOnlyFixedContext<Byte> GetFixedCString(Int32 index)
     {
         CString cstr = this._values![index];
-        fixed (void* ptr = cstr.AsSpan())
+        ReadOnlySpan<Byte> span = cstr;
+
+        if (!cstr.IsReference)
+        {
+            if (!this.IsEmptyAllocated())
+                this._emptyHandle!.Value = GCHandle.Alloc(CString.GetBytes(CString.Empty));
+            span = (Byte[])this._emptyHandle!.Value.Target!;
+        }
+
+        fixed (void* ptr = &MemoryMarshal.GetReference(span))
             return new FixedContext<Byte>(ptr, cstr.Length, true, this._isValid!);
     }
-}
+
+    /// <summary>
+    /// Indicates whether <see cref="CString.Empty"/> instance is allocated in memory.
+    /// </summary>
+    /// <returns>
+    /// <see langword="true"/> if <see cref="CString.Empty"/> instance is allocated in memory;
+    /// otherwise, <see langword="false"/>.
+    /// </returns>
+    private Boolean IsEmptyAllocated()
+        => this._emptyHandle is not null && (IntPtr) this._emptyHandle.Value != IntPtr.Zero;
+    }
