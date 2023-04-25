@@ -55,10 +55,11 @@ public sealed class SegmentTests
 
             Assert.Equal(strSeg, cstrSeg.ToString());
             AssertSegment(cstr, cstrSeg, cstrStart, cstrEnd);
-            AssertSegment(cstr, cstr.Slice(cstrStart), cstrStart, cstr.Length);
+            AssertSegment(cstr, cstr[cstrStart..], cstrStart, cstr.Length);
 
             if (!cstr.IsSegmented && !cstr.IsReference)
                 SegmentTest(strSeg, cstrSeg);
+            //AssertComparison(str, cstr, strSeg, cstrSeg);
         }
     }
     private static void AssertSegment(CString cstr, CString cstrSeg, Int32 cstrStart, Int32 cstrEnd)
@@ -99,5 +100,20 @@ public sealed class SegmentTests
         Assert.True(cloneSeg.IsNullTerminated);
 
         Assert.Equal(cstrSeg.Length + 1, CString.GetBytes(cloneSeg).Length);
+    }
+    private static void AssertComparison(String str, CString cstr, String strSeg, CString cstrSeg)
+    {
+        Int32 compSeg = String.Compare(str, strSeg, StringComparison.InvariantCulture);
+        Int32 invCompSeg = String.Compare(strSeg, str, StringComparison.InvariantCulture);
+
+        Int32 result1 = CString.Compare(cstr, cstrSeg, StringComparison.InvariantCulture);
+        Int32 result2 = CString.Compare(cstr, strSeg, StringComparison.InvariantCulture);
+        Int32 result3 = CString.Compare(cstrSeg, cstr, StringComparison.InvariantCulture);
+        Int32 result4 = CString.Compare(cstrSeg, str, StringComparison.InvariantCulture);
+
+        Assert.Equal(compSeg, result1);
+        Assert.Equal(compSeg, result2);
+        Assert.Equal(invCompSeg, result3);
+        Assert.Equal(invCompSeg, result4);
     }
 }

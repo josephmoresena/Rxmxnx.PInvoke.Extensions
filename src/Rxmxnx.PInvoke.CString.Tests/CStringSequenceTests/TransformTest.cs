@@ -77,7 +77,7 @@ public sealed class TransformTest
         {
             _ = fseq[-1];
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Assert.IsType<ArgumentOutOfRangeException>(ex);
         }

@@ -53,14 +53,16 @@ internal partial class Utf8Comparator<TChar>
     private Int32 Compare(ComparisonState state, ref ReadOnlySpan<Byte> textA, ref ReadOnlySpan<TChar> textB)
     {
         Int32 result = 0;
+        ReadOnlySpan<Byte> textAO = textA;
+        ReadOnlySpan<TChar> textBO = textB;
 
         //Initialize a new comparison.
         state.InitializeComparison();
         while (!textA.IsEmpty && !textB.IsEmpty && result == 0)
         {
             //Preserve the original text in comparison.
-            ReadOnlySpan<Byte> textAO = textA;
-            ReadOnlySpan<TChar> textBO = textB;
+            textAO = textA;
+            textBO = textB;
 
             DecodedRune? runeA = DecodeRuneFromUtf8(ref textA);
             DecodedRune? runeB = this.DecodeRune(ref textB);
@@ -75,7 +77,6 @@ internal partial class Utf8Comparator<TChar>
             //If the value of both runes is the same, no further comparison is necessary.
             else if (runeA != runeB)
                 result = this.Compare(state, runeA, runeB);
-
         }
         return result;
     }

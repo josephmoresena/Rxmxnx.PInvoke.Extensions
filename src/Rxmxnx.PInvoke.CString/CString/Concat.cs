@@ -17,7 +17,7 @@ public partial class CString
         using BinaryConcatenator helper = new();
         helper.Write(span0);
         helper.Write(span1);
-        return helper.ToArray(true) ?? CString.Empty;
+        return helper.ToArray(true) ?? Empty;
     }
 
     /// <summary>
@@ -37,7 +37,7 @@ public partial class CString
         helper.Write(span0);
         helper.Write(span1);
         helper.Write(span2);
-        return helper.ToArray(true) ?? CString.Empty;
+        return helper.ToArray(true) ?? Empty;
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ public partial class CString
         helper.Write(span1);
         helper.Write(span2);
         helper.Write(span3);
-        return helper.ToArray(true) ?? CString.Empty;
+        return helper.ToArray(true) ?? Empty;
     }
 
     /// <summary>
@@ -85,7 +85,7 @@ public partial class CString
         helper.Write(span2);
         helper.Write(span3);
         helper.Write(span4);
-        return helper.ToArray(true) ?? CString.Empty;
+        return helper.ToArray(true) ?? Empty;
     }
 
     /// <summary>
@@ -112,7 +112,7 @@ public partial class CString
         helper.Write(span3);
         helper.Write(span4);
         helper.Write(span5);
-        return helper.ToArray(true) ?? CString.Empty;
+        return helper.ToArray(true) ?? Empty;
     }
 
     /// <summary>
@@ -142,7 +142,7 @@ public partial class CString
         helper.Write(span4);
         helper.Write(span5);
         helper.Write(span6);
-        return helper.ToArray(true) ?? CString.Empty;
+        return helper.ToArray(true) ?? Empty;
     }
 
     /// <summary>
@@ -174,7 +174,7 @@ public partial class CString
         helper.Write(span5);
         helper.Write(span6);
         helper.Write(span7);
-        return helper.ToArray(true) ?? CString.Empty;
+        return helper.ToArray(true) ?? Empty;
     }
 
     /// <summary>

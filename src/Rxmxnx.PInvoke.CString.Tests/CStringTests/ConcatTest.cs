@@ -107,6 +107,28 @@ public sealed class ConcatTest
                 TestSet.GetSpan(indices[0]), TestSet.GetSpan(indices[1]), TestSet.GetSpan(indices[2]),
                 TestSet.GetSpan(indices[3]), TestSet.GetSpan(indices[4]), TestSet.GetSpan(indices[5]),
                 TestSet.GetSpan(indices[6]), TestSet.GetSpan(indices[7])).ToString());
+
+        Assert.Same(CString.Empty, CString.Concat(
+            ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty));
+        Assert.Same(CString.Empty, CString.Concat(
+            ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty));
+        Assert.Same(CString.Empty, CString.Concat(
+            ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty,
+            ReadOnlySpan<Byte>.Empty));
+        Assert.Same(CString.Empty, CString.Concat(
+            ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty,
+            ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty));
+        Assert.Same(CString.Empty, CString.Concat(
+            ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty,
+            ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty));
+        Assert.Same(CString.Empty, CString.Concat(
+            ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty,
+            ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty,
+            ReadOnlySpan<Byte>.Empty));
+        Assert.Same(CString.Empty, CString.Concat(
+            ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty,
+            ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty,
+            ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty));
     }
 
     [Theory]

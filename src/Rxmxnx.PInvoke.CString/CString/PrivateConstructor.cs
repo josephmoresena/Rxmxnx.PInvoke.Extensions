@@ -40,7 +40,7 @@ public partial class CString
         Int32 textLength = bytes.Length;
         this._isLocal = true;
         this._data = ValueRegion<Byte>.Create(bytes);
-        this._isNullTerminated = !isNullTerminated.HasValue ? IsNullTerminatedSpan(bytes, out textLength) : isNullTerminated.Value;
+        this._isNullTerminated = isNullTerminated ?? IsNullTerminatedSpan(bytes, out textLength);
         this._length = textLength - (isNullTerminated.GetValueOrDefault() ? 1 : 0);
     }
 

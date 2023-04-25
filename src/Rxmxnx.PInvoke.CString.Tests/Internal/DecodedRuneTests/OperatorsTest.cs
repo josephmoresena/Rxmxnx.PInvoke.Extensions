@@ -23,6 +23,9 @@ public sealed class OperatorsTest
 
         Assert.True(decodedRune1 == decodedRune2);
         Assert.False(decodedRune1 != decodedRune2);
+        Assert.False(default == decodedRune1);
+        Assert.False(decodedRune1 == default);
+        Assert.True(default == default(DecodedRune?));
     }
 
     [Fact]
@@ -43,5 +46,6 @@ public sealed class OperatorsTest
         Rune rune = decodedRune;
 
         Assert.Equal(decodedRune?.Value, rune);
+        Assert.Equal(default(Rune), default(DecodedRune?));
     }
 }

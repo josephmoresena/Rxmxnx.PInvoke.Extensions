@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-
-namespace Rxmxnx.PInvoke.Tests.CStringTests;
+﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
 
 [ExcludeFromCodeCoverage]
 public sealed class EqualsTest

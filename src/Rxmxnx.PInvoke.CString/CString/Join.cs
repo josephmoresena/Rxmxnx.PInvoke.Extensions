@@ -14,7 +14,7 @@ public partial class CString
     /// <param name="value">An array that contains the elements to concatenate.</param>
     /// <returns>
     /// A UTF-8 text that consists of the elements in <paramref name="value"/> delimited
-    /// by the separator UTF-8 text. -or- <see cref="CString.Empty"/> if
+    /// by the separator UTF-8 text. -or- <see cref="Empty"/> if
     /// <paramref name="value"/> has zero elements.
     /// </returns>
     public static CString Join(Byte separator, params CString?[] value)
@@ -23,7 +23,7 @@ public partial class CString
         using BinaryConcatenator helper = new(separator);
         foreach (CString? utf8Text in value)
             helper.Write(utf8Text);
-        return helper.ToArray(true) ?? CString.Empty;
+        return helper.ToArray(true) ?? Empty;
     }
 
     /// <summary>
@@ -40,7 +40,7 @@ public partial class CString
     /// </param>
     /// <returns>
     /// A UTF-8 text that consists of the members of <paramref name="values"/> delimited
-    /// by the <paramref name="separator"/> character. -or- <see cref="CString.Empty"/>
+    /// by the <paramref name="separator"/> character. -or- <see cref="Empty"/>
     /// if <paramref name="values"/> has no elements.
     /// </returns>
     public static CString Join(Byte separator, IEnumerable<CString?> values)
@@ -49,7 +49,7 @@ public partial class CString
         using BinaryConcatenator helper = new(separator);
         foreach (CString? utf8Text in values)
             helper.Write(utf8Text);
-        return helper.ToArray(true) ?? CString.Empty;
+        return helper.ToArray(true) ?? Empty;
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ public partial class CString
     /// A UTF-8 text that consists of <paramref name="count"/> elements of
     /// <paramref name="value"/> starting at <paramref name="startIndex"/> delimited by
     /// the <paramref name="separator"/> UTF-8 character. -or-
-    /// <see cref="CString.Empty"/> if <paramref name="count"/> is zero.
+    /// <see cref="Empty"/> if <paramref name="count"/> is zero.
     /// </returns>
     public static CString Join(Byte separator, CString?[] value, Int32 startIndex, Int32 count)
     {
@@ -82,7 +82,7 @@ public partial class CString
         using BinaryConcatenator helper = new(separator);
         foreach (CString? utf8Text in value.Skip(startIndex).Take(count))
             helper.Write(utf8Text);
-        return helper.ToArray(true) ?? CString.Empty;
+        return helper.ToArray(true) ?? Empty;
     }
 
     /// <summary>
@@ -97,7 +97,7 @@ public partial class CString
     /// <param name="value">An array that contains the elements to concatenate.</param>
     /// <returns>
     /// A UTF-8 text that consists of the elements in <paramref name="value"/> delimited
-    /// by the separator UTF-8 text. -or- <see cref="CString.Empty"/> if
+    /// by the separator UTF-8 text. -or- <see cref="Empty"/> if
     /// <paramref name="value"/> has zero elements.
     /// </returns>
     public static unsafe CString Join(ReadOnlySpan<Byte> separator, params CString?[] value)
@@ -125,7 +125,7 @@ public partial class CString
     /// </param>
     /// <returns>
     /// A UTF-8 text that consists of the elements of <paramref name="values"/> delimited
-    /// by the <paramref name="separator"/> UTF-8 text. -or- <see cref="CString.Empty"/>
+    /// by the <paramref name="separator"/> UTF-8 text. -or- <see cref="Empty"/>
     /// if <paramref name="values"/> has zero elements.
     /// </returns>
     public static unsafe CString Join(ReadOnlySpan<Byte> separator, IEnumerable<CString?> values)
@@ -157,7 +157,7 @@ public partial class CString
     /// <returns>
     /// A UTF-8 text that consists of <paramref name="count"/> elements of
     /// <paramref name="value"/> starting at <paramref name="startIndex"/> delimited by
-    /// the <paramref name="separator"/> UTF-8 text. -or- <see cref="CString.Empty"/>
+    /// the <paramref name="separator"/> UTF-8 text. -or- <see cref="Empty"/>
     /// if <paramref name="count"/> is zero.
     /// </returns>
     public static unsafe CString Join(ReadOnlySpan<Byte> separator, CString?[] value, Int32 startIndex, Int32 count)
@@ -182,7 +182,7 @@ public partial class CString
     /// <param name="value">An array that contains the elements to concatenate.</param>
     /// <returns>
     /// A UTF-8 text that consists of the elements in <paramref name="value"/> delimited
-    /// by the separator UTF-8 text. -or- <see cref="CString.Empty"/> if
+    /// by the separator UTF-8 text. -or- <see cref="Empty"/> if
     /// <paramref name="value"/> has zero elements.
     /// </returns>
     public static CString Join(CString? separator, params CString?[] value)
@@ -209,7 +209,7 @@ public partial class CString
     /// </param>
     /// <returns>
     /// A UTF-8 text that consists of the elements of <paramref name="values"/> delimited
-    /// by the <paramref name="separator"/> UTF-8 text. -or- <see cref="CString.Empty"/>
+    /// by the <paramref name="separator"/> UTF-8 text. -or- <see cref="Empty"/>
     /// if <paramref name="values"/> has zero elements.
     /// </returns>
     public static CString Join(CString? separator, IEnumerable<CString?> values)
@@ -240,7 +240,7 @@ public partial class CString
     /// <returns>
     /// A UTF-8 text that consists of <paramref name="count"/> elements of
     /// <paramref name="value"/> starting at <paramref name="startIndex"/> delimited by
-    /// the <paramref name="separator"/> UTF-8 text. -or- <see cref="CString.Empty"/>
+    /// the <paramref name="separator"/> UTF-8 text. -or- <see cref="Empty"/>
     /// if <paramref name="count"/> is zero.
     /// </returns>
     public static CString Join(CString? separator, CString?[] value, Int32 startIndex, Int32 count)

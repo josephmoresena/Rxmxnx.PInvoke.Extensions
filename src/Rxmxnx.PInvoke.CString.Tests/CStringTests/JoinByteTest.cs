@@ -60,6 +60,7 @@ public sealed class JoinByteTest
 
         Assert.Equal(expectedCString, resultCStringCString);
         Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[0..^1]);
+        Assert.Same(CString.Empty, CString.Join(separator, Array.Empty<CString?>()));
     }
     private static void EnumerableTest(Byte separator, String?[] strings, IEnumerable<CString?> values)
     {
@@ -72,6 +73,7 @@ public sealed class JoinByteTest
 
         Assert.Equal(expectedCString, resultCStringCString);
         Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[0..^1]);
+        Assert.Same(CString.Empty, CString.Join(separator, Array.Empty<CString?>().ToList()));
     }
     private static void ArrayRangeTest(Byte separator, String?[] strings, CString?[] values)
     {
@@ -86,6 +88,7 @@ public sealed class JoinByteTest
 
         Assert.Equal(expectedCString, resultCStringCString);
         Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[0..^1]);
+        Assert.Same(CString.Empty, CString.Join(separator, values, 0, 0));
     }
 
     private static async Task ArrayTestAsync(Byte separator, String?[] strings, CString?[] values)

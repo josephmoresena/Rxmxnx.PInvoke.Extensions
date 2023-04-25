@@ -11,7 +11,7 @@ public partial class CStringSequence
     public unsafe void Transform(CStringSequenceAction action)
     {
         ArgumentNullException.ThrowIfNull(action);
-        fixed (Char* ptr = this._value)
+        fixed (Char* ptr = &MemoryMarshal.GetReference<Char>(this._value))
         {
             _ = this.AsSpanUnsafe(out CString[] output);
             FixedCStringSequence fseq = new(output, CString.Create(new IntPtr(ptr), this._value.Length * SizeOfChar));
@@ -37,7 +37,7 @@ public partial class CStringSequence
     public unsafe void Transform<TState>(TState state, CStringSequenceAction<TState> action)
     {
         ArgumentNullException.ThrowIfNull(action);
-        fixed (Char* ptr = this._value)
+        fixed (Char* ptr = &MemoryMarshal.GetReference<Char>(this._value))
         {
             _ = this.AsSpanUnsafe(out CString[] output);
             FixedCStringSequence fseq = new(output, CString.Create(new IntPtr(ptr), this._value.Length * SizeOfChar));
@@ -63,7 +63,7 @@ public partial class CStringSequence
     public unsafe TResult Transform<TResult>(CStringSequenceFunc<TResult> func)
     {
         ArgumentNullException.ThrowIfNull(func);
-        fixed (Char* ptr = this._value)
+        fixed (Char* ptr = &MemoryMarshal.GetReference<Char>(this._value))
         {
             _ = this.AsSpanUnsafe(out CString[] output);
             FixedCStringSequence fseq = new(output, CString.Create(new IntPtr(ptr), this._value.Length * SizeOfChar));
@@ -91,7 +91,7 @@ public partial class CStringSequence
     public unsafe TResult Transform<TState, TResult>(TState state, CStringSequenceFunc<TState, TResult> func)
     {
         ArgumentNullException.ThrowIfNull(func);
-        fixed (Char* ptr = this._value)
+        fixed (Char* ptr = &MemoryMarshal.GetReference<Char>(this._value))
         {
             _ = this.AsSpanUnsafe(out CString[] output);
             FixedCStringSequence fseq = new(output, CString.Create(new IntPtr(ptr), this._value.Length * SizeOfChar));

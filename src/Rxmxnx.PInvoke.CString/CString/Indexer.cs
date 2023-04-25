@@ -35,7 +35,7 @@ public partial class CString : IEnumerableSequence<Byte>
     /// if <paramref name="startIndex"/> is equal to the length of this instance.
     /// </returns>
     /// <exception cref="ArgumentOutOfRangeException"/>
-    public CString Slice(Int32 startIndex) => this.Slice(startIndex, this._length - startIndex);
+    public CString Slice(Int32 startIndex) => this[startIndex..this._length];
 
     /// <summary>
     /// Retrieves a substring from this instance.

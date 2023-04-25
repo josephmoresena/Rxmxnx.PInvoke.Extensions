@@ -114,5 +114,5 @@ public unsafe readonly ref struct FixedCStringSequence
     /// otherwise, <see langword="false"/>.
     /// </returns>
     private Boolean IsEmptyAllocated()
-        => this._emptyHandle is not null && (IntPtr) this._emptyHandle.Value != IntPtr.Zero;
-    }
+        => this._emptyHandle is not null && (IntPtr)this._emptyHandle.Value != IntPtr.Zero;
+}
