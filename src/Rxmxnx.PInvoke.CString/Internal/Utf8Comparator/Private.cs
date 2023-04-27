@@ -53,22 +53,20 @@ internal partial class Utf8Comparator<TChar>
     private Int32 Compare(ComparisonState state, ref ReadOnlySpan<Byte> textA, ref ReadOnlySpan<TChar> textB)
     {
         Int32 result = 0;
-        ReadOnlySpan<Byte> textAO = textA;
-        ReadOnlySpan<TChar> textBO = textB;
 
         //Initialize a new comparison.
         state.InitializeComparison();
         while (!textA.IsEmpty && !textB.IsEmpty && result == 0)
         {
             //Preserve the original text in comparison.
-            textAO = textA;
-            textBO = textB;
+            ReadOnlySpan<Byte> textAO = textA;
+            ReadOnlySpan<TChar> textBO = textB;
 
             DecodedRune? runeA = DecodeRuneFromUtf8(ref textA);
             DecodedRune? runeB = this.DecodeRune(ref textB);
 
             //If the runes are not comparable to each other a full text comparison will be needed.
-            if (runeA is null || runeB is null || this.UnsupportedComparison(state, runeA, runeB))
+            if (this.UnsupportedComparison(state, runeA, runeB))
             {
                 textA = ReadOnlySpan<Byte>.Empty;
                 textB = ReadOnlySpan<TChar>.Empty;
@@ -114,6 +112,47 @@ internal partial class Utf8Comparator<TChar>
         ReadOnlySpan<Char> spanA = GetUnicodeSpanFromUtf8(textA);
         ReadOnlySpan<Char> spanB = this.GetUnicodeSpan(textB);
         return this._culture.CompareInfo.Compare(spanA, spanB, this.GetOptions(state.IgnoreCase));
+    }
+
+    /// <summary>
+    /// Performs the last comparison of the two specified texts using the specified rules, and returns an 
+    /// integer that indicates their relative position in the sort order.
+    /// </summary>
+    /// <param name="textA">The first text to compare.</param>
+    /// <param name="textB">The second text instance.</param>
+    /// <returns>
+    /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
+    /// <list type="table">
+    /// <listheader>
+    /// <term>Value</term><description>Condition</description>
+    /// </listheader>
+    /// <item>
+    /// <term>Less than zero</term>
+    /// <description><paramref name="textA"/> precedes <paramref name="textB"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Zero</term>
+    /// <description><paramref name="textA"/> is in the same position as <paramref name="textB"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Greater than zero</term>
+    /// <description><paramref name="textA"/> follows <paramref name="textB"/> in the sort order.</description>
+    /// </item>
+    /// </list>
+    /// </returns>
+    private Int32 FinalCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
+    {
+        if (this._ordinal)
+        {
+            ReadOnlySpan<Char> spanRuneA = DecodeRuneFromUtf8(ref textA)?.ToString() ?? String.Empty;
+            ReadOnlySpan<Char> spanRuneB = this.DecodeRune(ref textB)?.ToString() ?? String.Empty;
+
+            return this._culture.CompareInfo.Compare(spanRuneA, spanRuneB, this.GetOptions(this._ignoreCase));
+        }
+        else if (!textA.IsEmpty)
+            return 1;
+        else
+            return -1;
     }
 
     /// <summary>

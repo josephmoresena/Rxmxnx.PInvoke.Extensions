@@ -18,8 +18,6 @@ internal sealed record ComparisonTestResult
         Int32 normal = strA.CompareTo(strB);
         Int32 caseInsensitive = String.Compare(strA, strB, true);
         Int32 caseSensitive = String.Compare(strA, strB, false);
-        Dictionary<StringComparison, Int32> cTask = GetComparisons(strA, strB);
-
         return new()
         {
             Normal = normal,
@@ -33,9 +31,7 @@ internal sealed record ComparisonTestResult
     {
         ConcurrentDictionary<StringComparison, Int32> result = new();
         StringComparison[] values = Enum.GetValues<StringComparison>();
-        Task[] tasks = new Task[values.Length];
-
-        for (Int32 i = 0; i < tasks.Length; i++)
+        for (Int32 i = 0; i < values.Length; i++)
         {
             StringComparison comparisonType = values[i];
             result.TryAdd(comparisonType, String.Compare(strA, strB, comparisonType));
