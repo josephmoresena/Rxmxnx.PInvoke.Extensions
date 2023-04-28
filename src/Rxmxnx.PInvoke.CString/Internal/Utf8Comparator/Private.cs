@@ -72,7 +72,7 @@ internal partial class Utf8Comparator<TChar>
             {
                 textA = ReadOnlySpan<Byte>.Empty;
                 textB = ReadOnlySpan<TChar>.Empty;
-                return this.Compare(state, textAO, textBO);
+                return this.Compare(textAO, textBO, state.IgnoreCase);
             }
             //If the value of both runes is the same, no further comparison is necessary.
             else if (runeA != runeB)
@@ -85,9 +85,11 @@ internal partial class Utf8Comparator<TChar>
     /// Compares two specified <see cref="ReadOnlySpan{Char}"/> using the specified rules, and returns an integer that indicates their relative position in
     /// the sort order.
     /// </summary>
-    /// <param name="state">Comparison state.</param>
     /// <param name="textA">The first text to compare.</param>
     /// <param name="textB">The second text instance.</param>
+    /// <param name="ignoreCase">
+    /// <see langword="true"/> to ignore case during the comparision; otherwise, <see langword="false"/>.
+    /// </param>
     /// <returns>
     /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
     /// <list type="table">
@@ -109,11 +111,11 @@ internal partial class Utf8Comparator<TChar>
     /// </list>
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private Int32 Compare(ComparisonState state, ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
+    private Int32 Compare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB, Boolean ignoreCase)
     {
         ReadOnlySpan<Char> spanA = GetUnicodeSpanFromUtf8(textA);
         ReadOnlySpan<Char> spanB = this.GetUnicodeSpan(textB);
-        return this._culture.CompareInfo.Compare(spanA, spanB, this.GetOptions(state.IgnoreCase));
+        return this._culture.CompareInfo.Compare(spanA, spanB, this.GetOptions(ignoreCase));
     }
 
     /// <summary>
@@ -161,6 +163,42 @@ internal partial class Utf8Comparator<TChar>
             return -1;
         else
             return 0;
+    }
+
+    /// <summary>
+    /// Compares two specified <see cref="ReadOnlySpan{Char}"/> valuating the numeric values of the UTF-16 units.
+    /// </summary>
+    /// <param name="textA">The first text to compare.</param>
+    /// <param name="textB">The second text instance.</param>
+    /// <returns>
+    /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
+    /// <list type="table">
+    /// <listheader>
+    /// <term>Value</term><description>Condition</description>
+    /// </listheader>
+    /// <item>
+    /// <term>Less than zero</term>
+    /// <description><paramref name="textA"/> precedes <paramref name="textB"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Null</term>
+    /// <description><paramref name="textA"/> is in the same position as <paramref name="textB"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Greater than zero</term>
+    /// <description><paramref name="textA"/> follows <paramref name="textB"/> in the sort order.</description>
+    /// </item>
+    /// </list>
+    /// </returns>
+    private Int32 OrdinalCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
+    {
+        String strA = new(GetUnicodeSpanFromUtf8(textA));
+        String strB = new(this.GetUnicodeSpan(textB));
+
+        if (!this._ignoreCase)
+            return String.CompareOrdinal(strA, strB);
+        else
+            return String.Compare(strA, strB, StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>
@@ -223,7 +261,7 @@ internal partial class Utf8Comparator<TChar>
 
         //If both runes are different in the current comparison, it is necessary to determine if the base of both
         //runes is the same.
-        if (result != 0 && !this._ordinal && !state.IsEqualization)
+        if (result != 0 && !state.IsEqualization)
         {
             String strANormalizedBase = strA.Normalize(NormalizationForm.FormD)[..1];
             String strBNormalizedBase = strB.Normalize(NormalizationForm.FormD)[..1];

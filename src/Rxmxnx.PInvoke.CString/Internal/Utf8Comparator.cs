@@ -107,8 +107,10 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
     {
         if (textA.IsEmpty || textB.IsEmpty)
             return this.EmptyCompare(textA, textB);
-        if (this.UnsupportedCulture() || this._ordinal)
-            return this.Compare(new(this._ignoreCase), textA, textB);
+        if (this._ordinal)
+            return this.OrdinalCompare(textA, textB);
+        if (this.UnsupportedCulture())
+            return this.Compare(textA, textB, this._ignoreCase);
 
         //Creates a comparison state instance.
         ComparisonState state = new(this._ignoreCase);
@@ -138,7 +140,7 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
     public Boolean TextEquals(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
     {
         if (this.UnsupportedCulture())
-            return this.Compare(new(this._ignoreCase, true), textA, textB) == 0;
+            return this.Compare(textA, textB, this._ignoreCase) == 0;
 
         //Creates a comparison state instance.
         ComparisonState state = new(this._ignoreCase, true);
