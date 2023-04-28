@@ -50,7 +50,7 @@ public sealed class CompareTest
             CompleteTest(ComparisonTestResult.Compare(strB, strUpperA), cstrB, strUpperA, cstrUpperA);
         }
     }
-    private static void CompleteTest(ComparisonTestResult results, CString cstrA, String strB, CString cstrB)
+    internal static void CompleteTest(ComparisonTestResult results, CString cstrA, String strB, CString cstrB)
     {
         StringTest(results, cstrA, strB);
         CStringTest(results, cstrA, cstrB);

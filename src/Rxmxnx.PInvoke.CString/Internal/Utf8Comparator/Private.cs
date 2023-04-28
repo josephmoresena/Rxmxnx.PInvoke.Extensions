@@ -157,8 +157,10 @@ internal partial class Utf8Comparator<TChar>
         }
         else if (!textA.IsEmpty)
             return 1;
-        else
+        else if (!textB.IsEmpty)
             return -1;
+        else
+            return 0;
     }
 
     /// <summary>
