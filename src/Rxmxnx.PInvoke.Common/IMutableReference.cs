@@ -3,7 +3,6 @@
 /// <summary>
 /// This interface exposes a wrapper for an object that can be referenced and whose value can be modified.
 /// </summary>
-/// <typeparam name="T">Type of both wrapped and referenced value.</typeparam>
 public interface IMutableReference : IMutableWrapper
 {
     /// <summary>
