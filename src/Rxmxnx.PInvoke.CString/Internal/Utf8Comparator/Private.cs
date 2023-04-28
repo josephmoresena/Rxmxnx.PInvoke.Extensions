@@ -1,4 +1,6 @@
-﻿namespace Rxmxnx.PInvoke.Internal;
+﻿using System;
+
+namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class Utf8Comparator<TChar>
 {
@@ -115,8 +117,8 @@ internal partial class Utf8Comparator<TChar>
     }
 
     /// <summary>
-    /// Performs the last comparison of the two specified texts using the specified rules, and returns an 
-    /// integer that indicates their relative position in the sort order.
+    /// Performs the comparison of two specified texts (at least one of them empty) using the specified rules and returns an integer 
+    /// indicating their relative position in the sort order.
     /// </summary>
     /// <param name="textA">The first text to compare.</param>
     /// <param name="textB">The second text instance.</param>
@@ -140,14 +142,18 @@ internal partial class Utf8Comparator<TChar>
     /// </item>
     /// </list>
     /// </returns>
-    private Int32 FinalCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
+    private Int32 EmptyCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
     {
         if (this._ordinal)
         {
-            ReadOnlySpan<Char> spanRuneA = DecodeRuneFromUtf8(ref textA)?.ToString() ?? String.Empty;
-            ReadOnlySpan<Char> spanRuneB = this.DecodeRune(ref textB)?.ToString() ?? String.Empty;
-
-            return this._culture.CompareInfo.Compare(spanRuneA, spanRuneB, this.GetOptions(this._ignoreCase));
+            if (!this._ignoreCase)
+            {
+                String strA = DecodeRuneFromUtf8(ref textA)?.ToString() ?? String.Empty;
+                String strB = this.DecodeRune(ref textB)?.ToString() ?? String.Empty;
+                return String.CompareOrdinal(strA, strB);
+            }
+            else
+                return GetUnicodeSpanFromUtf8(textA).Length - this.GetUnicodeSpan(textB).Length;
         }
         else if (!textA.IsEmpty)
             return 1;

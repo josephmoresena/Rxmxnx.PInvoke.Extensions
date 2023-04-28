@@ -105,7 +105,9 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
     /// </returns>
     public Int32 Compare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
     {
-        if (this.UnsupportedCulture())
+        if (textA.IsEmpty || textB.IsEmpty)
+            return this.EmptyCompare(textA, textB);
+        if (this.UnsupportedCulture() || this._ordinal)
             return this.Compare(new(this._ignoreCase), textA, textB);
 
         //Creates a comparison state instance.
@@ -124,7 +126,7 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
         }
 
         //If the result is zero, we must determine if the length of both texts is equal.
-        return result != 0 || textA.Length == textB.Length ? result : this.FinalCompare(textA, textB);
+        return result != 0 || textA.Length == textB.Length ? result : this.EmptyCompare(textA, textB);
     }
 
     /// <summary>
