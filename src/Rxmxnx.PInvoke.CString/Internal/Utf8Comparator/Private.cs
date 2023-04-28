@@ -145,16 +145,7 @@ internal partial class Utf8Comparator<TChar>
     private Int32 EmptyCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
     {
         if (this._ordinal)
-        {
-            if (!this._ignoreCase)
-            {
-                String strA = DecodeRuneFromUtf8(ref textA)?.ToString() ?? String.Empty;
-                String strB = this.DecodeRune(ref textB)?.ToString() ?? String.Empty;
-                return String.CompareOrdinal(strA, strB);
-            }
-            else
-                return GetUnicodeSpanFromUtf8(textA).Length - this.GetUnicodeSpan(textB).Length;
-        }
+            return this.Compare(new(this._ignoreCase), textA, textB);
         else if (!textA.IsEmpty)
             return 1;
         else
