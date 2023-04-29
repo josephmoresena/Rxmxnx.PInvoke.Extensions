@@ -118,9 +118,6 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
     /// <param name="textB">The second text instance.</param>
     public Boolean TextEquals(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
     {
-        //if (this.UnsupportedCulture())
-            //return this.Compare(textA, textB, this._ignoreCase) == 0;
-
         while (!textA.IsEmpty && !textB.IsEmpty)
         {
             //Preserve the original text in comparison.

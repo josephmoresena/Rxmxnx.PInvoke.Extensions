@@ -55,7 +55,7 @@ public sealed class SegmentTests
 
             Assert.Equal(strSeg, cstrSeg.ToString());
             AssertSegment(cstr, cstrSeg, cstrStart, cstrEnd);
-            AssertSegment(cstr, cstr[cstrStart..], cstrStart, cstr.Length);
+            AssertSegment(cstr, cstr.Slice(cstrStart), cstrStart, cstr.Length);
 
             if (!cstr.IsSegmented && !cstr.IsReference)
                 SegmentTest(strSeg, cstrSeg);

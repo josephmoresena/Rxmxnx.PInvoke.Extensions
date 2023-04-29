@@ -26,6 +26,12 @@ public sealed class InvalidTest
 
         Assert.Equal(0, cstrComparator.Compare(invalidCStr, invalidCStr));
         Assert.Equal(0, strComparator.Compare(invalidCStr, invalidStr));
+
+        Assert.Equal(result == 0, cstrComparator.TextEquals(cstr, invalidCStr));
+        Assert.Equal(result == 0, strComparator.TextEquals(cstr, invalidStr));
+
+        Assert.True(cstrComparator.TextEquals(invalidCStr, invalidCStr));
+        Assert.True(strComparator.TextEquals(invalidCStr, invalidStr));
     }
 
     private static CString GetInvalidCstr(CString cstr)

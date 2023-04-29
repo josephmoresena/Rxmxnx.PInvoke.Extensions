@@ -48,6 +48,9 @@ public sealed class BasicTests
 
         Assert.Throws<ArgumentNullException>(() => CString.GetBytes(default!));
         Assert.Throws<ArgumentException>(() => empty.CompareTo(new Object()));
+
+        ReadOnlySpan<Byte> span = default(CString?);
+        Assert.True(span.IsEmpty);
     }
 
     [Fact]

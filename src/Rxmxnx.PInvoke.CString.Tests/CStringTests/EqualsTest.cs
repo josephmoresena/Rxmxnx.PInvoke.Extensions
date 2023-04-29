@@ -37,7 +37,6 @@ public sealed class EqualsTest
         CString cstrLowerB = new(TestSet.Utf8TextLower[indexB]);
         CString cstrUpperB = new(TestSet.Utf8TextUpper[indexB]);
 
-        List<Task> equalizationTasks = new();
         ComparisonTestResult testAB = ComparisonTestResult.Compare(strA, strB);
 
         StringTest(testAB, cstrA, strB);
@@ -82,6 +81,7 @@ public sealed class EqualsTest
 
     private static void StringTest(ComparisonTestResult results, CString cstrA, String strB)
     {
+        Assert.False(cstrA.Equals(default(String)));
         Assert.Equal(results.Normal == 0, cstrA.Equals(strB));
         Assert.Equal(results.Normal == 0, CString.Equals(cstrA, strB));
         Assert.Equal(results.Comparisons[StringComparison.Ordinal] == 0, cstrA.Equals(strB, StringComparison.Ordinal));
@@ -98,6 +98,7 @@ public sealed class EqualsTest
     }
     private static void CStringTest(ComparisonTestResult results, CString cstrA, CString cstrB)
     {
+        Assert.False(cstrA.Equals(default(CString)));
         Assert.Equal(results.Normal == 0, cstrA.Equals(cstrB));
         Assert.Equal(results.Normal == 0, CString.Equals(cstrA, cstrB));
         Assert.Equal(results.Comparisons[StringComparison.Ordinal] == 0, cstrA.Equals(cstrB, StringComparison.Ordinal));

@@ -27,9 +27,9 @@ internal sealed class DecodedRune : IWrapper<Rune>
     /// </summary>
     public Int32 CharsConsumed => this._charsConsumed;
     /// <summary>
-    /// Indicates whether this instance was decoded as a single-byte unit.
+    /// The integer value read at the creation of this instance.
     /// </summary>
-    public Boolean IsSingleUnicode => this._value.IsAscii || this._rawValue < Byte.MaxValue;
+    public Int32 RawValue => this._rawValue;
 
     /// <summary>
     /// Constructor.

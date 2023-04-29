@@ -29,11 +29,14 @@ public sealed class DecodeTest
     {
         ReadOnlySpan<Char> source = input.AsSpan();
         DecodedRune? decodedRune = DecodedRune.Decode(source);
+        Int32 rawValue = default;
         _ = Rune.DecodeFromUtf16(source, out _, out Int32 expectedCharsConsumed);
 
         Assert.NotNull(decodedRune);
         Assert.Equal(source[0], decodedRune.Value.ToString()[0]);
         Assert.Equal(expectedCharsConsumed, decodedRune.CharsConsumed);
+        MemoryMarshal.AsBytes(source[..decodedRune!.CharsConsumed]).CopyTo(MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref rawValue, 1)));
+        Assert.Equal(decodedRune.RawValue, rawValue);
     }
 
     [Theory]
@@ -44,10 +47,13 @@ public sealed class DecodeTest
     {
         ReadOnlySpan<Byte> source = Encoding.UTF8.GetBytes(input);
         DecodedRune? decodedRune = DecodedRune.Decode(source);
+        Int32 rawValue = default;
         _ = Rune.DecodeFromUtf8(source, out _, out Int32 expectedCharsConsumed);
 
         Assert.NotNull(decodedRune);
         Assert.Equal(input[0], decodedRune.Value.ToString()[0]);
         Assert.Equal(expectedCharsConsumed, decodedRune.CharsConsumed);
+        MemoryMarshal.AsBytes(source[..decodedRune!.CharsConsumed]).CopyTo(MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref rawValue, 1)));
+        Assert.Equal(decodedRune.RawValue, rawValue);
     }
 }

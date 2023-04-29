@@ -4,7 +4,7 @@
 public sealed class TransformTest
 {
     [Fact]
-    private void EmptyTest()
+    internal void EmptyTest()
     {
         FixedCStringSequence fseq = default;
         Assert.Empty(fseq.Values);
@@ -18,7 +18,7 @@ public sealed class TransformTest
     }
 
     [Fact]
-    private void BasicTest()
+    internal void BasicTest()
     {
         List<GCHandle> handles = new();
         IReadOnlyList<Int32> indices = TestSet.GetIndices();
@@ -36,7 +36,7 @@ public sealed class TransformTest
     }
 
     [Fact]
-    private void Test()
+    internal void Test()
     {
         List<GCHandle> handles = new();
         IReadOnlyList<Int32> indices = TestSet.GetIndices();
@@ -63,12 +63,11 @@ public sealed class TransformTest
     }
     private static void AssertSequence(FixedCStringSequence fseq, IReadOnlyList<CString?> values)
     {
-        CStringSequence seq = new(fseq.Values);
         for (Int32 i = 0; i < values.Count; i++)
             if (values[i] is CString value)
             {
                 Assert.Equal(value, fseq.Values[i]);
-                Assert.Equal(!fseq.Values[i].IsReference, Object.ReferenceEquals(value, fseq.Values[i]));
+                Assert.Equal(!fseq.Values[i].IsReference, ReferenceEquals(value, fseq.Values[i]));
             }
             else
                 Assert.Equal(0, fseq.Values[i].Length);
