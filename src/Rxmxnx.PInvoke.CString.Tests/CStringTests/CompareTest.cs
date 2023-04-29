@@ -19,6 +19,9 @@ public sealed class CompareTest
                 CompleteCulturalTest(i, j);
     }
 
+    internal static void CompleteTest(String strA, CString cstrA, String strB, CString cstrB)
+        => CompleteTest(ComparisonTestResult.Compare(strA, strB), cstrA, strB, cstrB);
+
     private static void CompleteTest(Int32 indexA, Int32 indexB)
     {
         String strA = TestSet.Utf16Text[indexA];
@@ -50,7 +53,7 @@ public sealed class CompareTest
             CompleteTest(ComparisonTestResult.Compare(strB, strUpperA), cstrB, strUpperA, cstrUpperA);
         }
     }
-    internal static void CompleteTest(ComparisonTestResult results, CString cstrA, String strB, CString cstrB)
+    private static void CompleteTest(ComparisonTestResult results, CString cstrA, String strB, CString cstrB)
     {
         StringTest(results, cstrA, strB);
         CStringTest(results, cstrA, cstrB);

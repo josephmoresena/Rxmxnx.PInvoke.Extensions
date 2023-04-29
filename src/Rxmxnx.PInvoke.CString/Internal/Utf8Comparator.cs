@@ -105,30 +105,9 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
     /// </returns>
     public Int32 Compare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
     {
-        if (textA.IsEmpty || textB.IsEmpty)
-            return this.EmptyCompare(textA, textB);
         if (this._ordinal)
             return this.OrdinalCompare(textA, textB);
-        if (this.UnsupportedCulture())
-            return this.Compare(textA, textB, this._ignoreCase);
-
-        //Creates a comparison state instance.
-        ComparisonState state = new(this._ignoreCase);
-        //Perform the initial comparison.
-        Int32 result = this.Compare(state, ref textA, ref textB);
-
-        //As long as the comparison status indicates that a new comparison is needed, we must perform
-        //a new comparison.
-        while (state.Continue)
-        {
-            Int32 newResult = this.Compare(state, ref textA, ref textB);
-            //Only if both texts are different can the new comparison affect the result.
-            if (newResult != 0)
-                result = newResult;
-        }
-
-        //If the result is zero, we must determine if the length of both texts is equal.
-        return result != 0 || textA.Length == textB.Length ? result : this.EmptyCompare(textA, textB);
+        return this.Compare(textA, textB, this._ignoreCase);
     }
 
     /// <summary>
@@ -139,14 +118,36 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
     /// <param name="textB">The second text instance.</param>
     public Boolean TextEquals(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
     {
-        if (this.UnsupportedCulture())
-            return this.Compare(textA, textB, this._ignoreCase) == 0;
+        //if (this.UnsupportedCulture())
+            //return this.Compare(textA, textB, this._ignoreCase) == 0;
 
-        //Creates a comparison state instance.
-        ComparisonState state = new(this._ignoreCase, true);
-        Boolean result = this.Compare(state, ref textA, ref textB) == 0;
-        //If the result is true, we must determine if the length of both texts is equal.
-        return result && textA.IsEmpty && textB.IsEmpty;
+        while (!textA.IsEmpty && !textB.IsEmpty)
+        {
+            //Preserve the original text in comparison.
+            ReadOnlySpan<Byte> textAO = textA;
+            ReadOnlySpan<TChar> textBO = textB;
+
+            DecodedRune? runeA = DecodeRuneFromUtf8(ref textA);
+            DecodedRune? runeB = this.DecodeRune(ref textB);
+
+            //If the runes are not comparable to each other a full text comparison will be needed.
+            if (runeA is null || runeB is null)
+            {
+                textA = ReadOnlySpan<Byte>.Empty;
+                textB = ReadOnlySpan<TChar>.Empty;
+                return this.Compare(textAO, textBO, this._ignoreCase) == 0;
+            }
+            //If the value of both runes is the same, no further comparison is necessary.
+            else if (runeA != runeB)
+            {
+                ReadOnlySpan<Char> strA = Char.ConvertFromUtf32(runeA.Value.Value);
+                ReadOnlySpan<Char> strB = Char.ConvertFromUtf32(runeB.Value.Value);
+                if (this._culture.CompareInfo.Compare(strA, strB, this.GetOptions(this._ignoreCase)) != 0)
+                    return false;
+            }
+        }
+
+        return true;
     }
 
     /// <summary>

@@ -59,6 +59,8 @@ public sealed class SegmentTests
 
             if (!cstr.IsSegmented && !cstr.IsReference)
                 SegmentTest(strSeg, cstrSeg);
+
+            CompareTest.CompleteTest(str, cstr, strSeg, cstrSeg);
         }
     }
     private static void AssertSegment(CString cstr, CString cstrSeg, Int32 cstrStart, Int32 cstrEnd)
