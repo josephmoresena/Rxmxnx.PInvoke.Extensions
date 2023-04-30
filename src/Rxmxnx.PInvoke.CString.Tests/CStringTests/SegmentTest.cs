@@ -33,6 +33,7 @@ public sealed class SegmentTests
             SegmentTest(str, new(new IntPtr(ptr), bytes.Length));
         }
     }
+    [SuppressMessage("Style", "IDE0057")]
     private static void SegmentTest(String str, CString cstr)
     {
         IReadOnlyList<Int32> strIndex = DecodedRune.GetIndices(str);
@@ -40,6 +41,7 @@ public sealed class SegmentTests
         Int32 count = strIndex.Count;
 
         Assert.Equal(count, cstrIndex.Count);
+
         for (Int32 i = 0; i < count; i++)
         {
             Int32 start = Random.Shared.Next(i, count);

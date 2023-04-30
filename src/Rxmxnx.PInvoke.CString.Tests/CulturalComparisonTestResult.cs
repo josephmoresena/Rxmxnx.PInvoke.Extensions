@@ -3,7 +3,6 @@
 [ExcludeFromCodeCoverage]
 internal sealed record CulturalComparisonTestResult
 {
-    private const Int32 count = 10;
     private static readonly CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
 
     public CultureInfo Culture { get; private init; }

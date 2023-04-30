@@ -43,7 +43,7 @@ public sealed class SpanConstructorTest
         }
     }
 
-    private void AssertFromFunction(CString cstr)
+    private static void AssertFromFunction(CString cstr)
     {
         Assert.False(cstr.IsFunction);
         Assert.True(cstr.IsNullTerminated);
@@ -52,7 +52,7 @@ public sealed class SpanConstructorTest
         Assert.False(CString.IsNullOrEmpty(cstr));
         Assert.Equal(cstr.Length + 1, CString.GetBytes(cstr).Length);
     }
-    private void AssertFromBytes(CString cstr)
+    private static void AssertFromBytes(CString cstr)
     {
         Assert.False(cstr.IsFunction);
         Assert.True(cstr.IsNullTerminated);
@@ -61,7 +61,7 @@ public sealed class SpanConstructorTest
         Assert.False(CString.IsNullOrEmpty(cstr));
         Assert.Equal(cstr.Length + 1, CString.GetBytes(cstr).Length);
     }
-    private void AssertFromNullTerminatedBytes(CString cstr)
+    private static void AssertFromNullTerminatedBytes(CString cstr)
     {
         Assert.False(cstr.IsFunction);
         Assert.True(cstr.IsNullTerminated);

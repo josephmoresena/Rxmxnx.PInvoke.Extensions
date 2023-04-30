@@ -77,13 +77,17 @@ public sealed class EqualsTest
         CulturalComparisonTestResult results = CulturalComparisonTestResult.Compare(strA, strB);
         StringTest(results, cstrA, strB);
         CStringTest(results, cstrA, cstrB);
+
+        Assert.False(cstrA.Equals(results));
+        Assert.False(cstrA.Equals(default(Object)));
     }
 
     private static void StringTest(ComparisonTestResult results, CString cstrA, String strB)
     {
         Assert.False(cstrA.Equals(default(String)));
+        Assert.False(cstrA.Equals(default(String), StringComparison.OrdinalIgnoreCase));
+
         Assert.Equal(results.Normal == 0, cstrA.Equals(strB));
-        Assert.Equal(results.Normal == 0, CString.Equals(cstrA, strB));
         Assert.Equal(results.Comparisons[StringComparison.Ordinal] == 0, cstrA.Equals(strB, StringComparison.Ordinal));
         Assert.Equal(results.Comparisons[StringComparison.CurrentCulture] == 0, cstrA.Equals(strB, StringComparison.CurrentCulture));
         Assert.Equal(results.Comparisons[StringComparison.InvariantCulture] == 0, cstrA.Equals(strB, StringComparison.InvariantCulture));
@@ -99,8 +103,9 @@ public sealed class EqualsTest
     private static void CStringTest(ComparisonTestResult results, CString cstrA, CString cstrB)
     {
         Assert.False(cstrA.Equals(default(CString)));
+        Assert.False(cstrA.Equals(default(CString), StringComparison.OrdinalIgnoreCase));
+
         Assert.Equal(results.Normal == 0, cstrA.Equals(cstrB));
-        Assert.Equal(results.Normal == 0, CString.Equals(cstrA, cstrB));
         Assert.Equal(results.Comparisons[StringComparison.Ordinal] == 0, cstrA.Equals(cstrB, StringComparison.Ordinal));
         Assert.Equal(results.Comparisons[StringComparison.CurrentCulture] == 0, cstrA.Equals(cstrB, StringComparison.CurrentCulture));
         Assert.Equal(results.Comparisons[StringComparison.InvariantCulture] == 0, cstrA.Equals(cstrB, StringComparison.InvariantCulture));

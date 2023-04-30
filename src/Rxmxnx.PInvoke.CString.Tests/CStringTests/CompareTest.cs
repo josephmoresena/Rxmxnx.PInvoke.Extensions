@@ -4,6 +4,19 @@
 public sealed class CompareTest
 {
     [Fact]
+    internal void EmptyTest()
+    {
+        Assert.Equal(0, CString.Compare(default, default(CString)));
+        Assert.Equal(0, CString.Compare(default, default(CString), StringComparison.Ordinal));
+        Assert.Equal(0, CString.Compare(default, default(CString), false));
+        Assert.Equal(0, CString.Compare(default, default(CString), false, default));
+        Assert.Equal(0, CString.Compare(default, default(String)));
+        Assert.Equal(0, CString.Compare(default, default(String), StringComparison.Ordinal));
+        Assert.Equal(0, CString.Compare(default, default(String), false));
+        Assert.Equal(0, CString.Compare(default, default(String), false, default));
+    }
+
+    [Fact]
     internal void Test()
     {
         for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
@@ -98,6 +111,13 @@ public sealed class CompareTest
     private static void StringTest(ComparisonTestResult results, CString cstrA, String strB)
     {
         Assert.Equal(1, cstrA.CompareTo(default(String)));
+        Assert.Equal(1, CString.Compare(cstrA, default(String)));
+        Assert.Equal(1, CString.Compare(cstrA, default(String), StringComparison.Ordinal));
+        Assert.Equal(1, CString.Compare(cstrA, default(String), false));
+        Assert.Equal(-1, CString.Compare(default, strB));
+        Assert.Equal(-1, CString.Compare(default, strB, StringComparison.Ordinal));
+        Assert.Equal(-1, CString.Compare(default, strB, false));
+
         Assert.Equal(results.Normal, cstrA.CompareTo(strB));
         Assert.Equal(results.Normal, CString.Compare(cstrA, strB));
         Assert.Equal(results.CaseInsensitive, CString.Compare(cstrA, strB, true));
@@ -111,12 +131,22 @@ public sealed class CompareTest
     }
     private static void StringTest(CulturalComparisonTestResult results, CString cstrA, String strB)
     {
+        Assert.Equal(1, CString.Compare(cstrA, default(String), false, results.Culture));
+        Assert.Equal(-1, CString.Compare(default, strB, false, results.Culture));
+
         Assert.Equal(results.CaseInsensitive, CString.Compare(cstrA, strB, true, results.Culture));
         Assert.Equal(results.CaseSensitive, CString.Compare(cstrA, strB, false, results.Culture));
     }
     private static void CStringTest(ComparisonTestResult results, CString cstrA, CString cstrB)
     {
         Assert.Equal(1, cstrA.CompareTo(default(CString)));
+        Assert.Equal(1, CString.Compare(cstrA, default(CString)));
+        Assert.Equal(1, CString.Compare(cstrA, default(CString), StringComparison.Ordinal));
+        Assert.Equal(1, CString.Compare(cstrA, default(CString), false));
+        Assert.Equal(-1, CString.Compare(default, cstrB));
+        Assert.Equal(-1, CString.Compare(default, cstrB, StringComparison.Ordinal));
+        Assert.Equal(-1, CString.Compare(default, cstrB, false));
+
         Assert.Equal(results.Normal, cstrA.CompareTo(cstrB));
         Assert.Equal(results.Normal, CString.Compare(cstrA, cstrB));
         Assert.Equal(results.CaseInsensitive, CString.Compare(cstrA, cstrB, true));
@@ -130,6 +160,9 @@ public sealed class CompareTest
     }
     private static void CStringTest(CulturalComparisonTestResult results, CString cstrA, CString cstrB)
     {
+        Assert.Equal(1, CString.Compare(cstrA, default(CString), false, results.Culture));
+        Assert.Equal(-1, CString.Compare(default, cstrB, false, results.Culture));
+
         Assert.Equal(results.CaseInsensitive, CString.Compare(cstrA, cstrB, true, results.Culture));
         Assert.Equal(results.CaseSensitive, CString.Compare(cstrA, cstrB, false, results.Culture));
     }

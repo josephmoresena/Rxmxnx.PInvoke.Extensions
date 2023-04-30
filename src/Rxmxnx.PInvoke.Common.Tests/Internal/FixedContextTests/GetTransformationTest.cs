@@ -122,8 +122,7 @@ public sealed class GetTransformationTest : FixedContextTestsBase
         else
             Assert.Equal(ReadOnlyError, Assert.Throws<InvalidOperationException>(() => offset.CreateBinarySpan()).Message);
 
-        FixedOffset offset2;
-        _ = ctx.GetTransformation<Boolean>(out offset2, true);
+        _ = ctx.GetTransformation<Boolean>(out FixedOffset offset2, true);
         OffsetTest<T2, Boolean>(offset, offset2);
         _ = ctx.GetTransformation<Byte>(out offset2, true);
         OffsetTest<T2, Byte>(offset, offset2);

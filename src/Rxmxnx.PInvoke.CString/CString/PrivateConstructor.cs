@@ -82,7 +82,7 @@ public partial class CString
         this._data = ValueRegion<Byte>.Create(value._data, startIndex, value.GetDataLength(startIndex, length));
         this._isNullTerminated =
             value._isFunction && value._isNullTerminated && value._length - startIndex == length ||
-            IsNullTerminatedSpan(this._data);
+            this._data.AsSpan()[^1] == default;
     }
 
     /// <summary>

@@ -8,7 +8,21 @@ public sealed class BasicTests
     [Fact]
     internal void EmptyTest()
     {
+        ReadOnlySpan<Byte> emptySpan = default(CString?);
+        Byte[] emptyBytes = CString.GetBytes(CString.Empty);
+
+        CString noEmpty1 = CString.Create(emptyBytes);
+        CString noEmpty2 = CString.Create(new Byte[] { default, default });
+        CString noEmpty3 = noEmpty2[..1];
+        CString noEmpty4 = noEmpty2[1..];
+        CString noEmpty5 = new(() => emptyBytes);
+
         CString empty = new(IntPtr.Zero, 0);
+        CString empty2 = (CString)emptyBytes;
+        CString empty3 = noEmpty1[..0];
+        CString empty4 = CString.Create(() => emptyBytes);
+        CString empty5 = new Byte[] { default, default };
+
         Assert.Equal(CString.Zero, empty);
         Assert.Equal(CString.Empty, empty);
         Assert.Equal(String.Empty, CString.Empty.ToString());
@@ -49,8 +63,55 @@ public sealed class BasicTests
         Assert.Throws<ArgumentNullException>(() => CString.GetBytes(default!));
         Assert.Throws<ArgumentException>(() => empty.CompareTo(new Object()));
 
-        ReadOnlySpan<Byte> span = default(CString?);
-        Assert.True(span.IsEmpty);
+        Assert.True(emptySpan.IsEmpty);
+
+        Assert.NotEqual(CString.Empty, noEmpty1);
+        Assert.False(noEmpty1.IsReference);
+        Assert.False(noEmpty1.IsNullTerminated);
+        Assert.False(noEmpty1.IsFunction);
+        Assert.False(noEmpty1.IsSegmented);
+        Assert.Equal(1, noEmpty1.Length);
+        Assert.NotEqual(CString.Empty, noEmpty2);
+        Assert.False(noEmpty2.IsReference);
+        Assert.False(noEmpty2.IsNullTerminated);
+        Assert.False(noEmpty2.IsFunction);
+        Assert.False(noEmpty2.IsSegmented);
+        Assert.Equal(2, noEmpty2.Length);
+        Assert.NotEqual(CString.Empty, noEmpty3);
+        Assert.False(noEmpty3.IsReference);
+        Assert.True(noEmpty3.IsNullTerminated);
+        Assert.False(noEmpty3.IsFunction);
+        Assert.False(noEmpty3.IsSegmented);
+        Assert.Equal(1, noEmpty3.Length);
+        Assert.NotEqual(CString.Empty, noEmpty4);
+        Assert.False(noEmpty4.IsReference);
+        Assert.True(noEmpty4.IsNullTerminated);
+        Assert.False(noEmpty4.IsFunction);
+        Assert.True(noEmpty4.IsSegmented);
+        Assert.Equal(1, noEmpty4.Length);
+        Assert.NotEqual(CString.Empty, noEmpty5);
+        Assert.False(noEmpty5.IsReference);
+        Assert.True(noEmpty5.IsNullTerminated);
+        Assert.True(noEmpty5.IsFunction);
+        Assert.False(noEmpty5.IsSegmented);
+        Assert.Equal(1, noEmpty5.Length);
+
+        Assert.Equal(CString.Empty, empty2);
+        Assert.False(empty2.IsReference);
+        Assert.True(empty2.IsNullTerminated);
+        Assert.False(empty2.IsFunction);
+        Assert.Equal(CString.Empty, empty3);
+        Assert.False(empty3.IsReference);
+        Assert.True(empty3.IsNullTerminated);
+        Assert.False(empty3.IsFunction);
+        Assert.Equal(CString.Empty, empty4);
+        Assert.False(empty4.IsReference);
+        Assert.True(empty4.IsNullTerminated);
+        Assert.True(empty4.IsFunction);
+        Assert.Equal(CString.Empty, empty5);
+        Assert.False(empty4.IsReference);
+        Assert.True(empty5.IsNullTerminated);
+        Assert.False(empty5.IsFunction);
     }
 
     [Fact]

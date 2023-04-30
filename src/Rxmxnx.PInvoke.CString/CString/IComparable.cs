@@ -40,7 +40,8 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </list>
     /// </returns>
     public static Int32 Compare(CString? cstrA, CString? cstrB)
-        => cstrA is null && cstrA is null ? 0 : cstrA is null ? 1 : cstrA is null ? -1 : CStringUtf8Comparator.Create().Compare(cstrA, cstrB);
+        => cstrA is null && cstrB is null ? 0 : cstrA is null ? -1 : cstrB is null ? 1 :
+        CStringUtf8Comparator.Create().Compare(cstrA, cstrB);
 
     /// <summary>
     /// Compares two specified <see cref="CString"/> objects, ignoring or honoring their case, and returns an integer that
@@ -72,7 +73,7 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </list>
     /// </returns>
     public static Int32 Compare(CString? cstrA, CString? cstrB, Boolean ignoreCase)
-        => cstrA is null && cstrB is null ? 0 : cstrA is null ? 1 : cstrB is null ? -1 :
+        => cstrA is null && cstrB is null ? 0 : cstrA is null ? -1 : cstrB is null ? 1 :
          CStringUtf8Comparator.Create(ignoreCase).Compare(cstrA, cstrB);
 
     /// <summary>
@@ -109,7 +110,7 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </list>
     /// </returns>
     public static Int32 Compare(CString? cstrA, CString? cstrB, Boolean ignoreCase, CultureInfo? culture)
-        => cstrA is null && cstrB is null ? 0 : cstrA is null ? 1 : cstrB is null ? -1 :
+        => cstrA is null && cstrB is null ? 0 : cstrA is null ? -1 : cstrB is null ? 1 :
          CStringUtf8Comparator.Create(ignoreCase, culture).Compare(cstrA, cstrB);
 
     /// <summary>
@@ -140,7 +141,7 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </list>
     /// </returns>
     public static Int32 Compare(CString? cstrA, CString? cstrB, StringComparison comparisonType)
-        => cstrA is null && cstrB is null ? 0 : cstrA is null ? 1 : cstrB is null ? -1 :
+        => cstrA is null && cstrB is null ? 0 : cstrA is null ? -1 : cstrB is null ? 1 :
         CStringUtf8Comparator.Create(comparisonType).Compare(cstrA, cstrB);
 
     /// <summary>
@@ -170,7 +171,7 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </list>
     /// </returns>
     public static Int32 Compare(CString? textA, String? textB)
-        => textA is null && textB is null ? 0 : textA is null ? 1 : textB is null ? -1 :
+        => textA is null && textB is null ? 0 : textA is null ? -1 : textB is null ? 1 :
         StringUtf8Comparator.Create().Compare(textA, textB);
 
     /// <summary>
@@ -203,7 +204,7 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </list>
     /// </returns>
     public static Int32 Compare(CString? textA, String? textB, Boolean ignoreCase)
-        => textA is null && textB is null ? 0 : textA is null ? 1 : textB is null ? -1 :
+        => textA is null && textB is null ? 0 : textA is null ? -1 : textB is null ? 1 :
         StringUtf8Comparator.Create(ignoreCase).Compare(textA, textB);
 
     /// <summary>
@@ -240,7 +241,7 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </list>
     /// </returns>
     public static Int32 Compare(CString? textA, String? textB, Boolean ignoreCase, CultureInfo? culture)
-        => textA is null && textB is null ? 0 : textA is null ? 1 : textB is null ? -1 :
+        => textA is null && textB is null ? 0 : textA is null ? -1 : textB is null ? 1 :
         StringUtf8Comparator.Create(ignoreCase, culture).Compare(textA, textB);
 
     /// <summary>
@@ -271,7 +272,7 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </list>
     /// </returns>
     public static Int32 Compare(CString? textA, String? textB, StringComparison comparisonType)
-        => textA is null && textB is null ? 0 : textA is null ? 1 : textB is null ? -1 :
+        => textA is null && textB is null ? 0 : textA is null ? -1 : textB is null ? 1 :
         StringUtf8Comparator.Create(comparisonType).Compare(textA, textB);
 }
 

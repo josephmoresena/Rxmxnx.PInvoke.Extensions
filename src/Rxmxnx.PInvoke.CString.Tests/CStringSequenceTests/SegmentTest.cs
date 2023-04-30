@@ -43,6 +43,7 @@ public sealed class SegmentTest
     }
 
     [Fact]
+    [SuppressMessage("Style", "IDE0057")]
     internal void SliceTest()
     {
         List<GCHandle> handles = new();

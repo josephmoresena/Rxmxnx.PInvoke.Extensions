@@ -91,18 +91,6 @@ public partial class CString
     /// Indicates whether <paramref name="data"/> contains a null-terminated UTF-8 text.
     /// </summary>
     /// <param name="data">A read-only byte span containing UTF-8 text.</param>
-    /// <returns>
-    /// <see langword="true"/> if <paramref name="data"/> contains a null-terminated UTF-8 text; 
-    /// otherwise, <see langword="false"/>.
-    /// </returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static Boolean IsNullTerminatedSpan(ReadOnlySpan<Byte> data)
-        => !data.IsEmpty && data[^1] == default;
-
-    /// <summary>
-    /// Indicates whether <paramref name="data"/> contains a null-terminated UTF-8 text.
-    /// </summary>
-    /// <param name="data">A read-only byte span containing UTF-8 text.</param>
     /// <param name="textLength">Output. The length of the UTF-8 text in <paramref name="data"/>.</param>
     /// <returns>
     /// <see langword="true"/> if <paramref name="data"/> contains a null-terminated UTF-8 text; 
