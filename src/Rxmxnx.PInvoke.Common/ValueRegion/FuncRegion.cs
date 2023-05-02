@@ -1,6 +1,6 @@
-﻿namespace Rxmxnx.PInvoke.Internal;
+﻿namespace Rxmxnx.PInvoke;
 
-internal partial class ValueRegion<T>
+public partial class ValueRegion<T>
 {
     /// <summary>
     /// This class represents a memory region in which an array of <typeparamref name="T"/> 

@@ -1,11 +1,11 @@
-﻿namespace Rxmxnx.PInvoke.Internal;
+﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// This class represents an arbitrary memory region in which a sequence of 
 /// <typeparamref name="T"/> values is found.
 /// </summary>
-/// <typeparam name="T">Unmanaged type of sequence item.</typeparam>
-internal abstract partial class ValueRegion<T> where T : unmanaged
+/// <typeparam name="T">Unmanaged type of the items in the sequence.</typeparam>
+public abstract partial class ValueRegion<T> where T : unmanaged
 {
     /// <summary>
     /// Gets an item from the memory region at the specified zero-based <paramref name="index"/>.
@@ -26,7 +26,7 @@ internal abstract partial class ValueRegion<T> where T : unmanaged
     /// Copies the contents of this memory region into a new array.
     /// </summary>
     /// <returns>An array containing the data in the current memory region.</returns>
-    public virtual T[] ToArray() => this.AsSpan().ToArray();
+    public T[] ToArray() => this.AsSpan().ToArray();
 
     /// <summary>
     /// Gets an array from this memory region.
@@ -87,10 +87,14 @@ internal abstract partial class ValueRegion<T> where T : unmanaged
             return new SegmentedFuncRegion(func, startIndex, length);
         else if (region is SegmentedFuncRegion segmentedFunc)
             return new SegmentedFuncRegion(segmentedFunc, startIndex, length);
+        else if (length == 0)
+            return NativeRegion.Empty;
 
         ReadOnlySpan<T> regionSpan = region.AsSpan();
-        ref T spanRef = ref MemoryMarshal.GetReference(regionSpan);
-        IntPtr spanPtr = new(Unsafe.AsPointer(ref spanRef));
-        return Create(spanPtr + startIndex, length);
+        fixed(void* ptr = &MemoryMarshal.GetReference(regionSpan))
+        {
+            IntPtr spanPtr = new(ptr);
+            return Create(spanPtr + (startIndex * sizeof(T)), length);
+        }
     }
 }

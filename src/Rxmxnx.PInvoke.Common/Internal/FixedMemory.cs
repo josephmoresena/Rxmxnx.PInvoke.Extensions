@@ -182,7 +182,7 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
     /// <summary>
     /// Invalidates current context.
     /// </summary>
-    public void Unload() => this._isValid.Value = false;
+    public virtual void Unload() => this._isValid.Value = false;
 
     /// <inheritdoc/>
     public virtual Boolean Equals(FixedMemory? other)
