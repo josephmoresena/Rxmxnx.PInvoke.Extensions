@@ -93,8 +93,9 @@ public abstract partial class ValueRegion<T> where T : unmanaged
         ReadOnlySpan<T> regionSpan = region.AsSpan();
         fixed(void* ptr = &MemoryMarshal.GetReference(regionSpan))
         {
+            Int32 offset = startIndex * sizeof(T);
             IntPtr spanPtr = new(ptr);
-            return Create(spanPtr + (startIndex * sizeof(T)), length);
+            return Create(spanPtr + offset, length);
         }
     }
 }
