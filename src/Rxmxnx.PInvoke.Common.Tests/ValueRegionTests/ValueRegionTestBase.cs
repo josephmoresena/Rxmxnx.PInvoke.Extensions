@@ -1,11 +1,22 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.ValueRegionTests;
 
+[ExcludeFromCodeCoverage]
 public abstract class ValueRegionTestBase
 {
     /// <summary>
     /// Fixture instance.
     /// </summary>
     protected static readonly IFixture fixture = new Fixture();
+
+    /// <summary>
+    /// Creates a new <see cref="ValueRegion{T}"/> instance from <paramref name="array"/>.
+    /// </summary>
+    /// <typeparam name="T">Unmanaged type of the items in the sequence.</typeparam>
+    /// <param name="array">A <typeparamref name="T"/> array.</param>
+    /// <param name="handles">Collection in which to apend used handle.</param>
+    /// <returns>A new <see cref="ValueRegion{T}"/> instance from <paramref name="array"/>.</returns>
+    protected unsafe static ValueRegion<T> Create<T>(T[] array, ICollection<GCHandle> handles) where T : unmanaged
+        => Create(array, handles, out _);
 
     /// <summary>
     /// Creates a new <see cref="ValueRegion{T}"/> instance from <paramref name="array"/>.

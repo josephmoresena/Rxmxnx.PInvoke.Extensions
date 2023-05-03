@@ -40,18 +40,46 @@ public sealed class SegmentTest : ValueRegionTestBase
         T[] values0 = fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
         T[] values1 = fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
         T[] values2 = fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
+        T[] values3 = fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
 
         try
         {
+            InvalidTest<T>(handles);
+            AssertRegionSegment(values0, handles);
             AssertRegionSegment(values0, handles);
             AssertRegionSegment(values1, handles);
+            AssertRegionSegment(values1, handles);
             AssertRegionSegment(values2, handles);
+            AssertRegionSegment(values2, handles);
+            AssertRegionSegment(values3, handles);
+            AssertRegionSegment(values3, handles);
         }
         finally
         {
             foreach (GCHandle handle in handles)
                 handle.Free();
         }
+    }
+
+    private static void InvalidTest<T>(ICollection<GCHandle> handles) where T : unmanaged
+    {
+        AssertInvalidSegment(Create(Array.Empty<T>(), handles));
+        AssertInvalidSegment(Create(Array.Empty<T>(), handles));
+        AssertInvalidSegment(Create(Array.Empty<T>(), handles));
+        AssertInvalidSegment(Create(Array.Empty<T>(), handles));
+        AssertInvalidSegment(Create(Array.Empty<T>(), handles));
+        AssertInvalidSegment(Create(Array.Empty<T>(), handles));
+    }
+
+    private static void AssertInvalidSegment<T>(ValueRegion<T> emptyRegion) where T : unmanaged
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => emptyRegion.Slice(-1, 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => emptyRegion.Slice(1, 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => emptyRegion.Slice(0, -1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => emptyRegion.Slice(0, 1));
+
+        if ((T[]?)emptyRegion is T[] arr)
+            Assert.Same(emptyRegion.ToArray(), arr);
     }
 
     private static unsafe void AssertRegionSegment<T>(T[] values, ICollection<GCHandle> handles) where T : unmanaged
@@ -67,46 +95,77 @@ public sealed class SegmentTest : ValueRegionTestBase
         {
             Int32 start = Random.Shared.Next(i, length);
             Int32 count = Random.Shared.Next(start, length) - start;
-            ValueRegion<T> segRegion = region.Slice(start, count);
-            ReadOnlySpan<T> span = segRegion;
-            T[]? array = (T[]?)segRegion;
-            T[] newArray = segRegion.ToArray();
+            ValueRegion<T> segment = region.Slice(start, count);
 
-            Assert.Equal(count, span.Length);
-            Assert.Equal(count != length && !isReference || region.IsSegmented, segRegion.IsSegmented);
-
-            for (Int32 j = 0; j < count; j++)
+            AssertSegment(new SegmentedRegionState<T>()
             {
-                Int32 regionOffset = start + j;
-                Int32 absoluteOffset = initial + start + j;
+                Initial = initial,
+                Values = values,
+                Region = region,
+                IsReference = isReference,
+                Length = length,
+                Start = start,
+                Count = count,
+                Segment = segment,
+            });
 
-                Assert.Equal(region[regionOffset], segRegion[j]);
-                Assert.Equal(values[absoluteOffset], segRegion[j]);
-                if (!isReference)
-                    Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(span[j]), ref values[absoluteOffset]));
-                else
-                    Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(span[j]), ref values.AsSpan()[absoluteOffset..][0]));
-            }
-
-            if (segRegion.IsSegmented || isReference)
-                Assert.Null(array);
-            else
-                Assert.Equal((T[]?)segRegion, array);
-
-            if (array is not null)
-            {
-                Assert.Same(values, array);
-                Assert.Same(values, newArray);
-            }
-            else if (isReference && count == 0)
-                fixed (void* ptr = &MemoryMarshal.GetReference(span))
-                    Assert.Equal(IntPtr.Zero, new(ptr));
-
-            Assert.Equal(values.Skip(start + initial).Take(count), newArray);
-
-            if (!region.IsSegmented && !isReference)
-                AssertRegionSegment(values, segRegion, isReference, start);
+            if (!region.IsSegmented)
+                AssertRegionSegment(values, segment, isReference, initial + start);
         }
+
+        AssertSegment(new SegmentedRegionState<T>()
+        {
+            Initial = initial,
+            Values = values,
+            Region = region,
+            IsReference = isReference,
+            Length = length,
+            Start = 0,
+            Count = length,
+            Segment = region.Slice(0),
+        });
+
+    }
+
+    private static unsafe void AssertSegment<T>(SegmentedRegionState<T> state) where T : unmanaged
+    {
+        ReadOnlySpan<T> span = state.Segment;
+        T[]? array = (T[]?)state.Segment;
+        T[] newArray = state.Segment.ToArray();
+
+        Assert.Equal(state.Count, span.Length);
+        Assert.Equal(state.Count != state.Length && !state.IsReference || state.Region.IsSegmented, state.Segment.IsSegmented);
+
+        for (Int32 j = 0; j < state.Count; j++)
+        {
+            Int32 arrayOffset = state.GetArrayOffset(j);
+
+            Assert.Equal(state.Region[state.GetRegionOffset(j)], state.Segment[j]);
+            Assert.Equal(state.Values[arrayOffset], state.Segment[j]);
+            if (!state.IsReference)
+                Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(span[j]), ref state.Values[arrayOffset]));
+            else
+                Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(span[j]), ref state.Values.AsSpan()[arrayOffset..][0]));
+        }
+
+        if (state.Segment.IsSegmented || state.IsReference)
+            Assert.Null(array);
+        else
+            Assert.Equal((T[]?)state.Segment, array);
+
+        if (array is not null)
+        {
+            Assert.Same(state.Values, array);
+            if (state.Values.Length > 0)
+                Assert.NotSame(state.Values, newArray);
+            else
+                Assert.Same(state.Values, newArray);
+        }
+        else if (state.IsReference && state.Count == 0)
+            fixed (void* ptr = &MemoryMarshal.GetReference(span))
+                Assert.Equal(IntPtr.Zero, new(ptr));
+
+        Assert.Equal(state.Values.Skip(state.SkipArray()).Take(state.Count), newArray);
     }
 }
 

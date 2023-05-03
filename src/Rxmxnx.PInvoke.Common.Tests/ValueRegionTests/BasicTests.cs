@@ -40,12 +40,18 @@ public sealed class BasicTests : ValueRegionTestBase
         T[] values0 = fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
         T[] values1 = fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
         T[] values2 = fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
+        T[] values3 = fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
 
         try
         {
             AssertRegion(values0, handles);
+            AssertRegion(values0, handles);
+            AssertRegion(values1, handles);
             AssertRegion(values1, handles);
             AssertRegion(values2, handles);
+            AssertRegion(values2, handles);
+            AssertRegion(values3, handles);
+            AssertRegion(values3, handles);
         }
         finally
         {
@@ -76,6 +82,9 @@ public sealed class BasicTests : ValueRegionTestBase
                 Assert.Equal(IntPtr.Zero, new(ptr));
 
         Assert.Equal(values, newArray);
-        Assert.NotSame(values, newArray);
+        if (values.Length > 0)
+            Assert.NotSame(values, newArray);
+        else
+            Assert.Same(values, newArray);
     }
 }
