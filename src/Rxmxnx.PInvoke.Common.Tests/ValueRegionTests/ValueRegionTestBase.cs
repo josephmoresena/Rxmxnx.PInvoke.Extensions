@@ -13,10 +13,12 @@ public abstract class ValueRegionTestBase
     /// <typeparam name="T">Unmanaged type of the items in the sequence.</typeparam>
     /// <param name="array">A <typeparamref name="T"/> array.</param>
     /// <param name="handles">Collection in which to apend used handle.</param>
+    /// <param name="isReference">Indicates whether the created region is a reference.</param>
     /// <returns>A new <see cref="ValueRegion{T}"/> instance from <paramref name="array"/>.</returns>
-    protected unsafe static ValueRegion<T> Create<T>(T[] array, ICollection<GCHandle> handles) where T : unmanaged
+    protected unsafe static ValueRegion<T> Create<T>(T[] array, ICollection<GCHandle> handles, out Boolean isReference) where T : unmanaged
     {
-        switch(Random.Shared.Next(default, 7))
+        isReference = false;
+        switch (Random.Shared.Next(default, 7))
         {
             case 0:
             case 1:
@@ -25,6 +27,7 @@ public abstract class ValueRegionTestBase
             case 4:
                 return ValueRegion<T>.Create(() => array);
             default:
+                isReference = true;
                 handles.Add(GCHandle.Alloc(array, GCHandleType.Pinned));
                 fixed (void* ptr = array)
                     return ValueRegion<T>.Create(new IntPtr(ptr), array.Length);

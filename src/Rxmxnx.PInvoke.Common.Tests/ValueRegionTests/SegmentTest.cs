@@ -56,10 +56,7 @@ public sealed class SegmentTest : ValueRegionTestBase
 
     private static unsafe void AssertRegionSegment<T>(T[] values, ICollection<GCHandle> handles) where T : unmanaged
     {
-        Int32 initialCount = handles.Count;
-        ValueRegion<T> region = Create(values, handles);
-        Boolean isReference = handles.Count > initialCount;
-
+        ValueRegion<T> region = Create(values, handles, out Boolean isReference);
         AssertRegionSegment(values, region, isReference);
     }
 
@@ -70,7 +67,7 @@ public sealed class SegmentTest : ValueRegionTestBase
         {
             Int32 start = Random.Shared.Next(i, length);
             Int32 count = Random.Shared.Next(start, length) - start;
-            ValueRegion<T> segRegion = ValueRegion<T>.Create(region, start, count);
+            ValueRegion<T> segRegion = region.Slice(start, count);
             ReadOnlySpan<T> span = segRegion;
             T[]? array = (T[]?)segRegion;
             T[] newArray = segRegion.ToArray();
@@ -78,13 +75,18 @@ public sealed class SegmentTest : ValueRegionTestBase
             Assert.Equal(count, span.Length);
             Assert.Equal(count != length && !isReference || region.IsSegmented, segRegion.IsSegmented);
 
-            fixed (void* _ = values)
-                for (Int32 j = 0; j < count; j++)
-                {
-                    Assert.Equal(region[start + j], segRegion[j]);
-                    Assert.Equal(values[initial + start + j], segRegion[j]);
-                    Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(span[j]), ref values[initial + start + j]));
-                }
+            for (Int32 j = 0; j < count; j++)
+            {
+                Int32 regionOffset = start + j;
+                Int32 absoluteOffset = initial + start + j;
+
+                Assert.Equal(region[regionOffset], segRegion[j]);
+                Assert.Equal(values[absoluteOffset], segRegion[j]);
+                if (!isReference)
+                    Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(span[j]), ref values[absoluteOffset]));
+                else
+                    Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(span[j]), ref values.AsSpan()[absoluteOffset..][0]));
+            }
 
             if (segRegion.IsSegmented || isReference)
                 Assert.Null(array);
@@ -102,7 +104,7 @@ public sealed class SegmentTest : ValueRegionTestBase
 
             Assert.Equal(values.Skip(start + initial).Take(count), newArray);
 
-            if (!region.IsSegmented && !isReference) //TODO: Support referenced
+            if (!region.IsSegmented && !isReference)
                 AssertRegionSegment(values, segRegion, isReference, start);
         }
     }

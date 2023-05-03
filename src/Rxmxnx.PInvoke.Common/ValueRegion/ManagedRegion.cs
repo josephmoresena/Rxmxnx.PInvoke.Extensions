@@ -23,8 +23,24 @@ public partial class ValueRegion<T>
         public ManagedRegion([DisallowNull] T[] array) => this._array = array;
 
         /// <inheritdoc/>
-        protected override T[]? AsArray() => this._array;
+        public override ValueRegion<T> Slice(Int32 startIndex)
+            => this.Slice(startIndex, this._array.Length - startIndex);
+
+        /// <inheritdoc/>
+        public override ValueRegion<T> Slice(Int32 startIndex, Int32 length)
+        {
+            ThrowSubregionArgumentOutOfRange(this._array.Length, startIndex, length);
+            return this.RawSlice(startIndex, length);
+        }
+
         /// <inheritdoc/>
         internal override ReadOnlySpan<T> AsSpan() => this._array.AsSpan();
+
+        /// <inheritdoc/>
+        internal override ValueRegion<T> RawSlice(Int32 startIndex, Int32 length)
+            => new SegmentedManagedRegion(this, startIndex, length);
+
+        /// <inheritdoc/>
+        protected override T[]? AsArray() => this._array;
     }
 }

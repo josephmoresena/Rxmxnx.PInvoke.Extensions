@@ -33,11 +33,51 @@ public partial class ValueRegion<T>
             this._length = !this._ptr.Equals(IntPtr.Zero) ? length : default;
         }
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="region"><see cref="NativeRegion"/> instance.</param>
+        /// <param name="offset">Offset for range.</param>
+        /// <param name="length">Length of range.</param>
+        private unsafe NativeRegion(NativeRegion region, Int32 offset, Int32 length)
+        {
+            T* tPtr = region.GetElementPointer(offset);
+            this._ptr = new(tPtr);
+            this._length = length;
+        }
+
+        /// <inheritdoc/>
+        public override ValueRegion<T> Slice(Int32 startIndex)
+            => this.Slice(startIndex, this._length - startIndex);
+
+        /// <inheritdoc/>
+        public override ValueRegion<T> Slice(Int32 startIndex, Int32 length)
+        {
+            ThrowSubregionArgumentOutOfRange(this._length, startIndex, length);
+            return this.RawSlice(startIndex, length);
+        }
+
         /// <inheritdoc/>
         internal override unsafe ReadOnlySpan<T> AsSpan()
         {
             void* pointer = this._ptr.ToPointer();
             return new(pointer, this._length);
+        }
+
+        /// <inheritdoc/>
+        internal override ValueRegion<T> RawSlice(Int32 startIndex, Int32 length)
+            => length != 0 ? new NativeRegion(this, startIndex, length) : Empty;
+
+        /// <summary>
+        /// Retrieves the pointer of the element at given index.
+        /// </summary>
+        /// <param name="index">Elemnt index.</param>
+        /// <returns>The pointer of the element at given index.</returns>
+        private unsafe T* GetElementPointer(Int32 index)
+        {
+            T* tPtr = (T*)this._ptr.ToPointer();
+            tPtr += index;
+            return tPtr;
         }
     }
 }

@@ -50,8 +50,8 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
     public CStringSequence Slice(Int32 startIndex) => this[startIndex..this._lengths.Length];
 
     /// <summary>
-    /// Retrieves a substring from this instance.
-    /// The substring starts at a specified character position and has a specified length.
+    /// Retrieves a subsequence from this instance.
+    /// The subsequence starts at a specified character position and has a specified length.
     /// </summary>
     /// <param name="startIndex">
     /// The zero-based starting UTF-8 string position of a subsequence in this instance.

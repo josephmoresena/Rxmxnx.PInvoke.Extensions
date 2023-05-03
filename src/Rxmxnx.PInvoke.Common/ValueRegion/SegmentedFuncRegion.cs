@@ -57,7 +57,28 @@ public partial class ValueRegion<T>
         }
 
         /// <inheritdoc/>
+        public override ValueRegion<T> Slice(Int32 startIndex)
+        {
+            Int32 regionLength = this._end - this._offset;
+            Int32 length = regionLength - startIndex;
+            ThrowSubregionArgumentOutOfRange(regionLength, startIndex, length);
+            return this.RawSlice(startIndex, length);
+        }
+
+        /// <inheritdoc/>
+        public override ValueRegion<T> Slice(Int32 startIndex, Int32 length)
+        {
+            Int32 regionLength = this._end - this._offset;
+            ThrowSubregionArgumentOutOfRange(regionLength, startIndex, length);
+            return this.RawSlice(startIndex, length);
+        }
+
+        /// <inheritdoc/>
         internal override ReadOnlySpan<T> AsSpan() => this._func()[this._offset..this._end];
+
+        /// <inheritdoc/>
+        internal override ValueRegion<T> RawSlice(Int32 startIndex, Int32 length)
+            => new SegmentedFuncRegion(this, startIndex, length);
 
         /// <summary>
         /// Indicates whether region is segmented.

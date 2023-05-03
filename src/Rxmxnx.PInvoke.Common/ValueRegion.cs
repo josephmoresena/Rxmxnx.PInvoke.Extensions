@@ -29,6 +29,37 @@ public abstract partial class ValueRegion<T> where T : unmanaged
     public T[] ToArray() => this.AsSpan().ToArray();
 
     /// <summary>
+    /// Retrieves a subsequence from this instance.
+    /// The subsequence starts at specified item position and continues to the
+    /// end of the region.
+    /// </summary>
+    /// <param name="startIndex">
+    /// The zero-based starting item position of a subregion in this instance.
+    /// </param>
+    /// <returns>
+    /// A <see cref="ValueRegion{T}"/> that is equivalent to the subregion that begins
+    /// at <paramref name="startIndex"/> in this instance.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException"/>
+    public abstract ValueRegion<T> Slice(Int32 startIndex);
+
+    /// <summary>
+    /// Retrieves a subregion from this instance.
+    /// The subregion starts at a specified item position and has a specified length.
+    /// </summary>
+    /// <param name="startIndex">
+    /// The zero-based starting item position of a subregion in this instance.
+    /// </param>
+    /// <param name="length">The number of items in the subregion.</param>
+    /// <returns>
+    /// A <see cref="ValueRegion{T}"/> that is equivalent to the subregion of length
+    /// <paramref name="length"/> that begins at <paramref name="startIndex"/> in this
+    /// instance.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException"/>
+    public abstract ValueRegion<T> Slice(Int32 startIndex, Int32 length);
+
+    /// <summary>
     /// Gets an array from this memory region.
     /// </summary>
     /// <returns>An array containing the data in the current memory region.</returns>
@@ -39,6 +70,22 @@ public abstract partial class ValueRegion<T> where T : unmanaged
     /// </summary>
     /// <returns>The read-only span representation of the memory region.</returns>
     internal abstract ReadOnlySpan<T> AsSpan();
+
+    /// <summary>
+    /// Retrieves a subregion from this instance.
+    /// The subregion starts at a specified item position and has a specified length.
+    /// </summary>
+    /// <param name="startIndex">
+    /// The zero-based starting item position of a subregion in this instance.
+    /// </param>
+    /// <param name="length">The number of items in the subregion.</param>
+    /// <returns>
+    /// A <see cref="ValueRegion{T}"/> that is equivalent to the subregion of length
+    /// <paramref name="length"/> that begins at <paramref name="startIndex"/> in this
+    /// instance.
+    /// </returns>
+    /// <remarks>This method does not perform any validation.</remarks>
+    internal abstract ValueRegion<T> RawSlice(Int32 startIndex, Int32 length);
 
     /// <inheritdoc/>
     public static implicit operator ReadOnlySpan<T>(ValueRegion<T> region) => region.AsSpan();
@@ -68,34 +115,29 @@ public abstract partial class ValueRegion<T> where T : unmanaged
     /// <param name="func"><see cref="ReadOnlySpanFunc{T}"/> delegate.</param>
     /// <returns>A new <see cref="ValueRegion{T}"/> instance.</returns>
     public static ValueRegion<T> Create(ReadOnlySpanFunc<T> func) => new FuncRegion(func);
-    /// <summary>
-    /// Creates a new <see cref="ValueRegion{T}"/> instance whose offset is <paramref name="startIndex"/>
-    /// and whose length is <paramref name="length"/>.
-    /// </summary>
-    /// <param name="region">A <see cref="ValueRegion{T}"/> instance.</param>
-    /// <param name="startIndex">Offset for range.</param>
-    /// <param name="length">Length of range.</param>
-    /// <returns>A new <see cref="ValueRegion{T}"/> instance.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe ValueRegion<T> Create(ValueRegion<T> region, Int32 startIndex, Int32 length)
-    {
-        if (region is ManagedRegion managed)
-            return new SegmentedManagedRegion(managed, startIndex, length);
-        else if (region is SegmentedManagedRegion segmented)
-            return new SegmentedManagedRegion(segmented, startIndex, length);
-        else if (region is FuncRegion func)
-            return new SegmentedFuncRegion(func, startIndex, length);
-        else if (region is SegmentedFuncRegion segmentedFunc)
-            return new SegmentedFuncRegion(segmentedFunc, startIndex, length);
-        else if (length == 0)
-            return NativeRegion.Empty;
 
-        ReadOnlySpan<T> regionSpan = region.AsSpan();
-        fixed(void* ptr = &MemoryMarshal.GetReference(regionSpan))
-        {
-            Int32 offset = startIndex * sizeof(T);
-            IntPtr spanPtr = new(ptr);
-            return Create(spanPtr + offset, length);
-        }
+    /// <summary>
+    /// Validates the input of the subregion function.
+    /// </summary>
+    /// <param name="regionLength">Length of the region.</param>
+    /// <param name="startIndex">
+    /// The zero-based starting item position of a subregion in the region.
+    /// </param>
+    /// <param name="length">The number of items in the subregion.</param>
+    /// <exception cref="ArgumentOutOfRangeException"/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static void ThrowSubregionArgumentOutOfRange(Int32 regionLength, Int32 startIndex, Int32 length)
+    {
+        if (startIndex < 0)
+            throw new ArgumentOutOfRangeException(nameof(startIndex), "StartIndex cannot be less than zero.");
+
+        if (startIndex > regionLength)
+            throw new ArgumentOutOfRangeException(nameof(startIndex), $"{nameof(startIndex)} cannot be larger than length of region.");
+
+        if (length < 0)
+            throw new ArgumentOutOfRangeException(nameof(length), "Length cannot be less than zero.");
+
+        if (startIndex > regionLength - length)
+            throw new ArgumentOutOfRangeException(nameof(length), "Index and length must refer to a location within the region.");
     }
 }

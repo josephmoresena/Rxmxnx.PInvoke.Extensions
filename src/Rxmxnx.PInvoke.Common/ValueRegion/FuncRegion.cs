@@ -19,13 +19,34 @@ public partial class ValueRegion<T>
         /// <param name="func">Internal <see cref="ReadOnlySpanFunc{T}"/> instance. </param>
         public FuncRegion(ReadOnlySpanFunc<T> func) => this._func = func;
 
-        /// <inheritdoc/>
-        internal override ReadOnlySpan<T> AsSpan() => this._func();
-
         /// <summary>
         /// Gets a function from this memory region.
         /// </summary>
         /// <returns>A function from this memory region.</returns>
         public ReadOnlySpanFunc<T>? AsReadOnlySpanFunc() => this._func;
+
+        /// <inheritdoc/>
+        public override ValueRegion<T> Slice(Int32 startIndex)
+        {
+            Int32 regionLength = this._func().Length;
+            Int32 length = regionLength - startIndex;
+            ThrowSubregionArgumentOutOfRange(regionLength, startIndex, length);
+            return this.RawSlice(startIndex, length);
+        }
+
+        /// <inheritdoc/>
+        public override ValueRegion<T> Slice(Int32 startIndex, Int32 length)
+        {
+            Int32 regionLength = this._func().Length;
+            ThrowSubregionArgumentOutOfRange(regionLength, startIndex, length);
+            return this.RawSlice(startIndex, length);
+        }
+
+        /// <inheritdoc/>
+        internal override ValueRegion<T> RawSlice(Int32 startIndex, Int32 length)
+            => new SegmentedFuncRegion(this, startIndex, length);
+
+        /// <inheritdoc/>
+        internal override ReadOnlySpan<T> AsSpan() => this._func();
     }
 }

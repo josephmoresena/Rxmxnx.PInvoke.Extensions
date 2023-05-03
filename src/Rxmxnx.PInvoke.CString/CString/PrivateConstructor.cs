@@ -79,7 +79,7 @@ public partial class CString
         this._isLocal = value._isLocal;
         this._isFunction = value._isFunction;
         this._length = length;
-        this._data = ValueRegion<Byte>.Create(value._data, startIndex, value.GetDataLength(startIndex, length));
+        this._data = value._data.RawSlice(startIndex, value.GetDataLength(startIndex, length));
         this._isNullTerminated =
             value._isFunction && value._isNullTerminated && value._length - startIndex == length ||
             this._data.AsSpan()[^1] == default;
