@@ -14,6 +14,8 @@ internal sealed class FixedOffset : FixedMemory, IEquatable<FixedOffset>
     public override Int32 BinaryOffset => this._offset;
     /// <inheritdoc/>
     public override Type? Type => default;
+    /// <inheritdoc/>
+    public override Boolean IsFunction => false;
 
     /// <summary>
     /// Constructor.

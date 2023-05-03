@@ -54,7 +54,7 @@ public partial class ValueRegion<T>
         public override ValueRegion<T> Slice(Int32 startIndex, Int32 length)
         {
             ThrowSubregionArgumentOutOfRange(this._length, startIndex, length);
-            return this.RawSlice(startIndex, length);
+            return this.InternalSlice(startIndex, length);
         }
 
         /// <inheritdoc/>
@@ -65,7 +65,7 @@ public partial class ValueRegion<T>
         }
 
         /// <inheritdoc/>
-        internal override ValueRegion<T> RawSlice(Int32 startIndex, Int32 length)
+        internal override ValueRegion<T> InternalSlice(Int32 startIndex, Int32 length)
             => length != 0 ? new NativeRegion(this, startIndex, length) : Empty;
 
         /// <summary>

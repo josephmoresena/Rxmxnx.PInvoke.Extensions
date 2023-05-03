@@ -47,10 +47,17 @@ public sealed class CreateReadOnlySpanTest : FixedContextTestsBase
         Assert.Equal(values.Length, span.Length);
         Assert.Equal(values.Length, ctx.Count);
         Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(values[0]), ref Unsafe.AsRef(span[0])));
+        Assert.False(ctx.IsFunction);
+
+        Exception functionException = Assert.Throws<InvalidOperationException>(() => ctx.CreateDelegate<Action>());
+        Assert.Equal(IsNotFunction, functionException.Message);
 
         ctx.Unload();
         Exception invalid = Assert.Throws<InvalidOperationException>(() => ctx.CreateSpan<T>(values.Length));
         Assert.Equal(InvalidError, invalid.Message);
+
+        Exception functionException2 = Assert.Throws<InvalidOperationException>(() => ctx.CreateDelegate<Action>());
+        Assert.Equal(IsNotFunction, functionException2.Message);
     }
 }
 

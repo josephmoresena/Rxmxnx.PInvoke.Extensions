@@ -49,6 +49,7 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
         Assert.True(Unsafe.AreSame(ref Unsafe.AsRef<T>(ptr.ToPointer()), ref refValue));
         Assert.Equal(sizeof(T), fref.BinaryLength);
         Assert.Equal(0, fref.BinaryOffset);
+        Assert.False(fref.IsFunction);
 
         TestSize<T, Boolean>(fref);
         TestSize<T, Byte>(fref);
@@ -69,6 +70,8 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
         fref.Unload();
         Exception invalid = Assert.Throws<InvalidOperationException>(() => fref.CreateReadOnlyReference<T>());
         Assert.Equal(InvalidError, invalid.Message);
+        Exception functionException = Assert.Throws<InvalidOperationException>(() => fref.CreateDelegate<Action>());
+        Assert.Equal(IsNotFunction, functionException.Message);
     }
 
     private unsafe static void TestSize<T, T2>(FixedReference<T> fref) where T : unmanaged where T2 : unmanaged
@@ -93,6 +96,9 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
             if (typeof(T) == typeof(T2))
                 Assert.Equal((Object)value, (Object)value2);
         }
+
+        Exception functionException = Assert.Throws<InvalidOperationException>(() => fref.CreateDelegate<Action>());
+        Assert.Equal(IsNotFunction, functionException.Message);
     }
 }
 

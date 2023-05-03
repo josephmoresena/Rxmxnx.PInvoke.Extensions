@@ -85,7 +85,7 @@ public abstract partial class ValueRegion<T> where T : unmanaged
     /// instance.
     /// </returns>
     /// <remarks>This method does not perform any validation.</remarks>
-    internal abstract ValueRegion<T> RawSlice(Int32 startIndex, Int32 length);
+    internal abstract ValueRegion<T> InternalSlice(Int32 startIndex, Int32 length);
 
     /// <inheritdoc/>
     public static implicit operator ReadOnlySpan<T>(ValueRegion<T> region) => region.AsSpan();

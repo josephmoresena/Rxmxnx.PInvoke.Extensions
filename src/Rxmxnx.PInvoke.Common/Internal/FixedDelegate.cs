@@ -15,6 +15,8 @@ internal unsafe sealed class FixedDelegate<TDelegate> : FixedMemory, IFixedMetho
     public override Type? Type => typeof(TDelegate);
     /// <inheritdoc/>
     public override Int32 BinaryOffset => default;
+    /// <inheritdoc/>
+    public override Boolean IsFunction => true;
 
     TDelegate IFixedMethod<TDelegate>.Method => base.CreateDelegate<TDelegate>();
 

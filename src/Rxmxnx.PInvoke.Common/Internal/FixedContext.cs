@@ -16,6 +16,8 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
     public override Int32 BinaryOffset => default;
     /// <inheritdoc/>
     public override Type? Type => typeof(T);
+    /// <inheritdoc/>
+    public override Boolean IsFunction => false;
     /// <summary>
     /// Number of <typeparamref name="T"/> items in memory block.
     /// </summary>

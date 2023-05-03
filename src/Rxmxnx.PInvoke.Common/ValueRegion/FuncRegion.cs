@@ -31,7 +31,7 @@ public partial class ValueRegion<T>
             Int32 regionLength = this._func().Length;
             Int32 length = regionLength - startIndex;
             ThrowSubregionArgumentOutOfRange(regionLength, startIndex, length);
-            return this.RawSlice(startIndex, length);
+            return this.InternalSlice(startIndex, length);
         }
 
         /// <inheritdoc/>
@@ -39,11 +39,11 @@ public partial class ValueRegion<T>
         {
             Int32 regionLength = this._func().Length;
             ThrowSubregionArgumentOutOfRange(regionLength, startIndex, length);
-            return this.RawSlice(startIndex, length);
+            return this.InternalSlice(startIndex, length);
         }
 
         /// <inheritdoc/>
-        internal override ValueRegion<T> RawSlice(Int32 startIndex, Int32 length)
+        internal override ValueRegion<T> InternalSlice(Int32 startIndex, Int32 length)
             => new SegmentedFuncRegion(this, startIndex, length);
 
         /// <inheritdoc/>

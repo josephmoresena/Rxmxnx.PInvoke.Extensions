@@ -91,6 +91,7 @@ public sealed class EqualsTest : FixedReferenceTestsBase
         Assert.Equal(equal, fref2.Equals(fref as FixedReference<TInt>));
         Assert.False(fref2.Equals(null));
         Assert.False(fref2.Equals(new Object()));
+        Assert.False(fref2.IsFunction);
     }
 }
 

@@ -31,6 +31,10 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
     /// </summary>
     public abstract Int32 BinaryOffset { get; }
     /// <summary>
+    /// Indicates whether current instance is a function pointer.
+    /// </summary>
+    public abstract Boolean IsFunction { get; }
+    /// <summary>
     /// Memory block size in bytes.
     /// </summary>
     public Int32 BinaryLength => this._binaryLength - this.BinaryOffset;
@@ -175,7 +179,7 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
     /// <returns>A <typeparamref name="TDelegate"/> instance over the memory block.</returns>
     public TDelegate CreateDelegate<TDelegate>() where TDelegate : Delegate
     {
-        this.ValidateOperation(true);
+        this.ValidateFunctionOperation();
         return Marshal.GetDelegateForFunctionPointer<TDelegate>(new(this._ptr));
     }
 
@@ -214,8 +218,9 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void ValidateOperation(Boolean isReadOnly = false)
     {
-        if (!this._isValid.Value)
-            throw new InvalidOperationException("The current instance is not valid.");
+        if (this.IsFunction)
+            throw new InvalidOperationException("The current instance is a function.");
+        this.ThrowIfInvalid();
         if (!isReadOnly && this._isReadOnly)
             throw new InvalidOperationException("The current instance is read-only.");
     }
@@ -243,6 +248,27 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
         Int32 sizeofT = sizeof(TValue);
         if (this._binaryLength < sizeofT)
             throw new InsufficientMemoryException($"The current instance is insufficent to contain a value of {typeof(TValue)} type.");
+    }
+
+    /// <summary>
+    /// Validates any operation over the fixed function pointer.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void ValidateFunctionOperation()
+    {
+        if (!this.IsFunction)
+            throw new InvalidOperationException("The current instance is not a function.");
+        this.ThrowIfInvalid();
+    }
+
+    /// <summary>
+    /// Throws an exception if current instance is invalid.
+    /// </summary>
+    /// <exception cref="InvalidOperationException"/>
+    private void ThrowIfInvalid()
+    {
+        if (!this._isValid.Value)
+            throw new InvalidOperationException("The current instance is not valid.");
     }
 
     /// <summary>

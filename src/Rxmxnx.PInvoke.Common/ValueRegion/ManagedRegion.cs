@@ -30,14 +30,14 @@ public partial class ValueRegion<T>
         public override ValueRegion<T> Slice(Int32 startIndex, Int32 length)
         {
             ThrowSubregionArgumentOutOfRange(this._array.Length, startIndex, length);
-            return this.RawSlice(startIndex, length);
+            return this.InternalSlice(startIndex, length);
         }
 
         /// <inheritdoc/>
         internal override ReadOnlySpan<T> AsSpan() => this._array.AsSpan();
 
         /// <inheritdoc/>
-        internal override ValueRegion<T> RawSlice(Int32 startIndex, Int32 length)
+        internal override ValueRegion<T> InternalSlice(Int32 startIndex, Int32 length)
             => new SegmentedManagedRegion(this, startIndex, length);
 
         /// <inheritdoc/>

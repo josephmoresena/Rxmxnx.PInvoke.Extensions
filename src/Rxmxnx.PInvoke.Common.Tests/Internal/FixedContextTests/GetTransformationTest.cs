@@ -150,6 +150,9 @@ public sealed class GetTransformationTest : FixedContextTestsBase
         OffsetTest<T2, TimeOnly>(offset, offset2);
         _ = ctx.GetTransformation<TimeSpan>(out offset2, true);
         OffsetTest<T2, TimeSpan>(offset, offset2);
+
+        Exception functionException = Assert.Throws<InvalidOperationException>(() => offset.CreateDelegate<Action>());
+        Assert.Equal(IsNotFunction, functionException.Message);
     }
 
     private static unsafe void OffsetTest<T2, T3>(FixedOffset offset1, FixedOffset offset2)
@@ -159,8 +162,12 @@ public sealed class GetTransformationTest : FixedContextTestsBase
         Boolean equal = sizeof(T2) == sizeof(T3) || offset1.BinaryLength == offset2.BinaryLength;
         Assert.Equal(equal, offset1.Equals(offset2));
         Assert.Equal(equal, offset1.Equals((Object)offset2));
+        Assert.False(offset2.IsFunction);
         if (equal)
             Assert.Equal(offset1.CreateReadOnlyBinarySpan().ToArray(), offset2.CreateReadOnlyBinarySpan().ToArray());
+
+        Exception functionException = Assert.Throws<InvalidOperationException>(() => offset2.CreateDelegate<Action>());
+        Assert.Equal(IsNotFunction, functionException.Message);
     }
 }
 

@@ -95,6 +95,7 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
         Assert.Equal(0, status.Fixed.BinaryOffset);
         Assert.True(status.Fixed.IsReadOnly);
         Assert.Equal(typeof(TDelegate), status.Fixed.Type);
+        Assert.True(status.Fixed.IsFunction);
 
         if (!status.IsFunction)
             Assert.Same(status.Delegate, status.Fixed.CreateDelegate<TDelegate>());
@@ -106,6 +107,8 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
         AssertErrorType<TDelegate, GetByteSpanDelegate>(status.Fixed);
         AssertErrorType<TDelegate, VoidDelegate>(status.Fixed);
         AssertErrorType<TDelegate, VoidObjectDelegate>(status.Fixed);
+
+        AssertFunction(status.Fixed);
     }
 
     private static unsafe void AssertUnload<TDelegate>(FixedDelegate<TDelegate> fdel)
@@ -114,6 +117,8 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
         fdel.Unload();
         Exception invalid = Assert.Throws<InvalidOperationException>(() => fdel.CreateDelegate<TDelegate>());
         Assert.Equal(InvalidError, invalid.Message);
+        AssertFunction(fdel);
+
     }
 
     private static void AssertErrorType<TDelegate, TAlien>(FixedDelegate<TDelegate> fdel)
@@ -122,5 +127,23 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
     {
         if (typeof(TDelegate) != typeof(TAlien))
             Assert.Throws<InvalidCastException>(() => fdel.CreateDelegate<TAlien>());
+    }
+
+    private static void AssertFunction<TDelegate>(FixedDelegate<TDelegate> fdel) where TDelegate : Delegate
+    {
+        Exception functionException1 = Assert.Throws<InvalidOperationException>(() => fdel.CreateReadOnlyReference<Int32>());
+        Assert.Equal(IsFunction, functionException1.Message);
+        Exception functionException2 = Assert.Throws<InvalidOperationException>(() => fdel.CreateReadOnlyBinarySpan());
+        Assert.Equal(IsFunction, functionException2.Message);
+        Exception functionException3 = Assert.Throws<InvalidOperationException>(() => fdel.CreateReadOnlySpan<Int32>(0));
+        Assert.Equal(IsFunction, functionException3.Message);
+
+
+        Exception functionException4 = Assert.Throws<InvalidOperationException>(() => fdel.CreateReference<Int32>());
+        Assert.Equal(IsFunction, functionException4.Message);
+        Exception functionException5 = Assert.Throws<InvalidOperationException>(() => fdel.CreateBinarySpan());
+        Assert.Equal(IsFunction, functionException5.Message);
+        Exception functionException6 = Assert.Throws<InvalidOperationException>(() => fdel.CreateSpan<Int32>(0));
+        Assert.Equal(IsFunction, functionException6.Message);
     }
 }

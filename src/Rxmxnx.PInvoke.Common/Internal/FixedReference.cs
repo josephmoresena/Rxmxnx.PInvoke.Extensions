@@ -11,6 +11,8 @@ internal unsafe sealed class FixedReference<T> : FixedMemory, IFixedReference<T>
     public override Type? Type => typeof(T);
     /// <inheritdoc/>
     public override Int32 BinaryOffset => default;
+    /// <inheritdoc/>
+    public override Boolean IsFunction => false;
 
     ref T IReferenceable<T>.Reference => ref base.CreateReference<T>();
     ref readonly T IReadOnlyReferenceable<T>.Reference => ref base.CreateReadOnlyReference<T>();
