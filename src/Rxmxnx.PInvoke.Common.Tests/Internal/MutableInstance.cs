@@ -8,7 +8,7 @@ public class MutableInstance<T> : IMutableWrapper<T>
     T IMutableWrapper<T>.Value { get => this._value; set => this._value = value; }
 
     public MutableInstance()
-	{
+    {
         this._value = default!;
-	}
+    }
 }
