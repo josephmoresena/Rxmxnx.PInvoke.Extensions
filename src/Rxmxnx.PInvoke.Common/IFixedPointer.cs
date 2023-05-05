@@ -8,6 +8,6 @@ public interface IFixedPointer
     /// <summary>
     /// Pointer to fixed memory.
     /// </summary>
-    public IntPtr Pointer { get; }
+    IntPtr Pointer { get; }
 }
 

@@ -9,5 +9,5 @@ public interface IFixedMethod<TDelegate> : IFixedPointer where TDelegate : Deleg
     /// <summary>
     /// Delegate to fixed method.
     /// </summary>
-    public TDelegate Method { get; }
+    TDelegate Method { get; }
 }
