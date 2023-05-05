@@ -6,6 +6,14 @@ public sealed class IMutableWrapperTests
     private static readonly IFixture fixture = new Fixture();
 
     [Fact]
+    internal void InterfaceTest()
+    {
+        IMutableWrapper<String> instance = new MutableInstance<String>();
+        instance.Value = fixture.Create<String>();
+        Assert.Equal(instance.Value, (instance as IWrapper<String>).Value);
+    }
+
+    [Fact]
     internal Task BooleanTestAsync() => TestAsync<Boolean>();
     [Fact]
     internal Task ByteTestAsync() => TestAsync<Byte>();

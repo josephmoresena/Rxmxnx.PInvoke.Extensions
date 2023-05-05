@@ -4,9 +4,9 @@
 /// Internal implementation of <see cref="Input{T}"/> as <see cref="IMutableReference{T}"/>.
 /// </summary>
 /// <typeparam name="T">Type of the referenced object.</typeparam>
-internal record MutableReference<T> : MutableWrapper<T>, IMutableReference<T>
+internal sealed record MutableReference<T> : MutableWrapper<T>, IMutableReference<T>
 {
-    ref T IReferenceable<T>.Reference => ref this.GetReference();
+    ref T IMutableReference<T>.Reference => ref this.GetReference();
 
     /// <summary>
     /// Constructor.

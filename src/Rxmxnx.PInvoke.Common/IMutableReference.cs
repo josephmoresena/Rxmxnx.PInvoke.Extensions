@@ -40,7 +40,12 @@ public interface IMutableReference : IMutableWrapper
 /// <typeparam name="T">Type of both wrapped and referenced value.</typeparam>
 public interface IMutableReference<T> : IReferenceableWrapper<T>, IMutableWrapper<T>, IReferenceable<T>
 {
-    ref readonly T IReadOnlyReferenceable<T>.Reference => ref (this as IReferenceable<T>).Reference;
+    /// <summary>
+    /// Reference to instance <typeparamref name="T"/> object.
+    /// </summary>
+    new ref T Reference { get; }
+
+    ref T IReferenceable<T>.Reference => ref this.Reference;
 
     /// <summary>
     /// Creates a new <see cref="IMutableReference{T}"/> object from a <typeparamref name="T"/> value.

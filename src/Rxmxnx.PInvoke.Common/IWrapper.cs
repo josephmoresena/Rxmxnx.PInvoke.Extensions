@@ -43,7 +43,7 @@ public interface IWrapper<T> : IWrapper, IEquatable<T>
     /// <summary>
     /// Wrapped <typeparamref name="T"/> object.
     /// </summary>
-    public T Value { get; }
+    T Value { get; }
 
     Boolean IEquatable<T>.Equals(T? other) => Object.Equals(this.Value, other);
 
