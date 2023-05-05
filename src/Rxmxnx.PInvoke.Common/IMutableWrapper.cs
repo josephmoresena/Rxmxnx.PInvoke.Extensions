@@ -16,7 +16,7 @@ public interface IMutableWrapper : IWrapper
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static new IMutableWrapper<TValue> Create<TValue>(in TValue instance = default) where TValue : struct
-        => new Reference<TValue>(instance);
+        => IMutableWrapper<TValue>.Create(instance);
 
     /// <summary>
     /// Creates a new <see cref="IMutableWrapper{TValue}"/> object from a 
@@ -30,7 +30,7 @@ public interface IMutableWrapper : IWrapper
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static new IMutableWrapper<TValue?> CreateNullable<TValue>(in TValue? instance = default) where TValue : struct
-        => new NullableReference<TValue>(instance);
+        => IMutableWrapper<TValue?>.Create(instance);
 }
 
 /// <summary>
@@ -43,8 +43,18 @@ public interface IMutableWrapper<T> : IMutableWrapper, IWrapper<T>
     /// <summary>
     /// Wrapped <typeparamref name="T"/> object.
     /// </summary>
-    new T? Value { get; set; }
+    new T Value { get; set; }
 
-    [ExcludeFromCodeCoverage]
-    T? IWrapper<T>.Value => this.Value;
+    T IWrapper<T>.Value => this.Value;
+
+    /// <summary>
+    /// Creates a new <see cref="IMutableWrapper{T}"/> object from a <typeparamref name="T"/> value.
+    /// </summary>
+    /// <param name="instance">Instance value.</param>
+    /// <returns>
+    /// <see cref="IMutableWrapper{T}"/> object which instance object is equal to 
+    /// <paramref name="instance"/>.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static new IMutableWrapper<T> Create(in T instance = default!) => new MutableWrapper<T>(instance);
 }

@@ -6,31 +6,31 @@
 public interface IMutableReference : IMutableWrapper
 {
     /// <summary>
-    /// Creates a new <see cref="IMutableWrapper{TValue}"/> object from a <typeparamref name="TValue"/> value.
+    /// Creates a new <see cref="IMutableReference{TValue}"/> object from a <typeparamref name="TValue"/> value.
     /// </summary>
     /// <typeparam name="TValue"><see cref="ValueType"/> of object.</typeparam>
     /// <param name="instance">Instance value.</param>
     /// <returns>
-    /// <see cref="IMutableWrapper{TValue}"/> object which instance object is equal to 
+    /// <see cref="IMutableReference{TValue}"/> object which instance object is equal to 
     /// <paramref name="instance"/>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static new IMutableReference<TValue> Create<TValue>(in TValue instance = default) where TValue : struct
-        => new Reference<TValue>(instance);
+    public static new IMutableReference<TValue> Create<TValue>(in TValue instance = default!) where TValue : struct
+        => IMutableReference<TValue>.Create(instance);
 
     /// <summary>
-    /// Creates a new <see cref="IMutableWrapper{TValue}"/> object from a 
+    /// Creates a new <see cref="IMutableReference{TValue}"/> object from a 
     /// <see cref="Nullable{TValue}"/> value.
     /// </summary>
     /// <typeparam name="TValue"><see cref="ValueType"/> of nullable object.</typeparam>
     /// <param name="instance">Instance nullable value.</param>
     /// <returns>
-    /// <see cref="IMutableWrapper{TValue}"/> object which instance object is equal to 
+    /// <see cref="IMutableReference{TValue}"/> object which instance object is equal to 
     /// <paramref name="instance"/>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static new IMutableReference<TValue?> CreateNullable<TValue>(in TValue? instance = default) where TValue : struct
-        => new NullableReference<TValue>(instance);
+        => IMutableReference<TValue?>.Create(instance);
 }
 
 /// <summary>
@@ -40,4 +40,16 @@ public interface IMutableReference : IMutableWrapper
 /// <typeparam name="T">Type of both wrapped and referenced value.</typeparam>
 public interface IMutableReference<T> : IReferenceableWrapper<T>, IMutableWrapper<T>, IReferenceable<T>
 {
+    ref readonly T IReadOnlyReferenceable<T>.Reference => ref (this as IReferenceable<T>).Reference;
+
+    /// <summary>
+    /// Creates a new <see cref="IMutableReference{T}"/> object from a <typeparamref name="T"/> value.
+    /// </summary>
+    /// <param name="instance">Instance value.</param>
+    /// <returns>
+    /// <see cref="IMutableReference{T}"/> object which instance object is equal to 
+    /// <paramref name="instance"/>.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static new IMutableReference<T> Create(in T instance = default!) => new MutableReference<T>(instance);
 }

@@ -9,7 +9,7 @@ public interface IReferenceable<T> : IReadOnlyReferenceable<T>, IEquatable<IRefe
     /// <summary>
     /// Reference to instance <typeparamref name="T"/> object.
     /// </summary>
-    new ref T? Reference { get; }
+    new ref T Reference { get; }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     Boolean IEquatable<IReferenceable<T>>.Equals(IReferenceable<T>? other)

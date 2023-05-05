@@ -10,7 +10,7 @@ internal sealed class ReferenceableWrapper<T> : IReadOnlyReferenceable<T>, IRefe
         this._referenceable = referenceable;
     }
 
-    ref readonly T? IReadOnlyReferenceable<T>.Reference => ref this._referenceable.Reference;
+    ref readonly T IReadOnlyReferenceable<T>.Reference => ref this._referenceable.Reference;
 
-    ref T? IReferenceable<T>.Reference => ref Unsafe.AsRef(this._referenceable.Reference);
+    ref T IReferenceable<T>.Reference => ref Unsafe.AsRef(this._referenceable.Reference);
 }

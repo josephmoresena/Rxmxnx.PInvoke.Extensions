@@ -57,7 +57,7 @@ internal unsafe abstract class FixedMemory : IFixedMemory, IEquatable<FixedMemor
     {
         this._ptr = ptr;
         this._binaryLength = binaryLength;
-        this._isValid = new Reference<Boolean>(true);
+        this._isValid = new MutableWrapper<Boolean>(true);
         this._isReadOnly = isReadOnly;
     }
 
