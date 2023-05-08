@@ -4,7 +4,7 @@
 /// Fixed method class.
 /// </summary>
 /// <typeparam name="TDelegate">Type of the fixed method.</typeparam>
-internal unsafe sealed class FixedDelegate<TDelegate> : FixedMemory, IFixedMethod<TDelegate> where TDelegate : Delegate
+internal unsafe sealed class FixedDelegate<TDelegate> : FixedPointer, IFixedMethod<TDelegate> where TDelegate : Delegate
 {
     /// <summary>
     /// Internal <see cref="GCHandle"/> instance.
