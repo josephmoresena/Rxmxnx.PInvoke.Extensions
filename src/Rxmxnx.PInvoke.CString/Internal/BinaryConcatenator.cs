@@ -67,6 +67,14 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
     }
 
     /// <summary>
+    /// Creates a <see cref="CString"/> instance from concatenation.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="CString"/> instance that represents the UTF-8 concatenation.
+    /// </returns>
+    public CString ToCString() => this.ToArray(true) ?? CString.Empty;
+
+    /// <summary>
     /// Writes <paramref name="value"/> in current instance.
     /// </summary>
     /// <param name="value">Value to write.</param>

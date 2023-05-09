@@ -23,11 +23,11 @@ public partial class CString
         using BinaryConcatenator helper = new(separator);
         foreach (CString? utf8Text in value)
             helper.Write(utf8Text);
-        return helper.ToArray(true) ?? Empty;
+        return helper.ToCString();
     }
 
     /// <summary>
-    /// Concatenates all the elements of a UTF-8 text array, using the specified separator
+    /// Concatenates all the elements of a UTF-8 text enumeration, using the specified separator
     /// between each element.
     /// </summary>
     /// <param name="separator">
@@ -49,7 +49,7 @@ public partial class CString
         using BinaryConcatenator helper = new(separator);
         foreach (CString? utf8Text in values)
             helper.Write(utf8Text);
-        return helper.ToArray(true) ?? Empty;
+        return helper.ToCString();
     }
 
     /// <summary>
@@ -82,7 +82,7 @@ public partial class CString
         using BinaryConcatenator helper = new(separator);
         foreach (CString? utf8Text in value.Skip(startIndex).Take(count))
             helper.Write(utf8Text);
-        return helper.ToArray(true) ?? Empty;
+        return helper.ToCString();
     }
 
     /// <summary>

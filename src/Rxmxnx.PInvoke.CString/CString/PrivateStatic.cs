@@ -123,4 +123,21 @@ public partial class CString
             seq.CopyTo(result.AsSpan()[(seq.Length * i)..]);
         return result;
     }
+
+    /// <summary>
+    /// Creates a <see cref="String"/> separator from an UTF-16 character to use as a separator.
+    /// </summary>
+    /// <param name="separator">UTF-16 character to use as a separator.</param>
+    /// <returns>The UTF-16 text to use as a separator.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static String CreateSeparator(Char separator) => String.Create(1, separator, SetSeparator);
+
+    /// <summary>
+    /// Sets the value of <paramref name="separator"/> in a <paramref name="spanSeparator"/> .
+    /// </summary>
+    /// <param name="spanSeparator">The <see cref="String"/> separator span creation.</param>
+    /// <param name="separator">The UTF-16 character to use as a separator.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static void SetSeparator(Span<Char> spanSeparator, Char separator)
+        => spanSeparator[0] = separator;
 }

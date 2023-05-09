@@ -55,8 +55,8 @@ public partial class CString
     {
         ArgumentNullException.ThrowIfNull(values);
         using CStringConcatenator helper = new(cancellationToken);
-        foreach (CString? value in values)
-            await helper.WriteAsync(value);
+        foreach (Byte[]? value in values)
+            await helper.WriteAsync(CString.Create(value));
         return helper.ToCString();
     }
 }

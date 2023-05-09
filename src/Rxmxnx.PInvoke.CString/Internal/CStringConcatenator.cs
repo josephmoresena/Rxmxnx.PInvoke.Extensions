@@ -44,13 +44,5 @@ internal sealed class CStringConcatenator : BinaryConcatenator<CString>
     /// <inheritdoc/>
     [ExcludeFromCodeCoverage]
     protected override Boolean IsEmpty(ReadOnlySpan<Byte> value) => base.IsEmpty(value) && !this._ignoreEmpty;
-
-    /// <summary>
-    /// Creates a <see cref="CString"/> instance from concatenation.
-    /// </summary>
-    /// <returns>
-    /// A <see cref="CString"/> instance that represents the UTF-8 concatenation.
-    /// </returns>
-    public CString ToCString() => base.ToArray(true) ?? CString.Empty;
 }
 

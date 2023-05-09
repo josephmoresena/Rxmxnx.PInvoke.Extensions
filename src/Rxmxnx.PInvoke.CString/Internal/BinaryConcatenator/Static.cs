@@ -11,7 +11,8 @@ internal partial class BinaryConcatenator<T>
     {
         Int32 iPosition = GetInitialPosition(span);
         Int32 fLength = GetFinalLength(span, iPosition);
-        return span[iPosition..fLength];
+        Int32 fPosition = iPosition + fLength;
+        return span[iPosition..fPosition];
     }
 
     /// <summary>
