@@ -135,7 +135,7 @@ public partial class CString
     public static async Task<CString> JoinAsync(String? separator, CancellationToken cancellationToken, params String?[] value)
     {
         ArgumentNullException.ThrowIfNull(value);
-        using StringConcatenator helper = new(separator, cancellationToken);
+        await using StringConcatenator helper = new(separator, cancellationToken);
         foreach (String? utf8Text in value)
             await helper.WriteAsync(utf8Text);
         return helper.ToCString();
@@ -166,7 +166,7 @@ public partial class CString
     public static async Task<CString> JoinAsync(String? separator, IEnumerable<String?> values, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(values);
-        using StringConcatenator helper = new(separator, cancellationToken);
+        await using StringConcatenator helper = new(separator, cancellationToken);
         foreach (String? utf8Text in values)
             await helper.WriteAsync(utf8Text);
         return helper.ToCString();
@@ -201,7 +201,7 @@ public partial class CString
     public static async Task<CString> JoinAsync(String? separator, String?[] value, Int32 startIndex, Int32 count, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(value);
-        using StringConcatenator helper = new(separator, cancellationToken);
+        await using StringConcatenator helper = new(separator, cancellationToken);
         foreach (String? utf8Text in value.Skip(startIndex).Take(count))
             await helper.WriteAsync(utf8Text);
         return helper.ToCString();

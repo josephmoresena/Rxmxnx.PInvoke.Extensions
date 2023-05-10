@@ -40,7 +40,7 @@ public partial class CString
     public static async Task<CString> ConcatAsync(CancellationToken cancellationToken, params String?[] values)
     {
         ArgumentNullException.ThrowIfNull(values);
-        using StringConcatenator helper = new(cancellationToken);
+        await using StringConcatenator helper = new(cancellationToken);
         foreach (String? value in values)
             await helper.WriteAsync(value);
         return helper.ToCString();

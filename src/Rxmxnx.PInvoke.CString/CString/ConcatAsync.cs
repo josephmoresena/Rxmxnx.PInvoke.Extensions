@@ -26,7 +26,7 @@ public partial class CString
     public static async Task<CString> ConcatAsync(CancellationToken cancellationToken, params CString?[] values)
     {
         ArgumentNullException.ThrowIfNull(values);
-        using CStringConcatenator helper = new(cancellationToken);
+        await using CStringConcatenator helper = new(cancellationToken);
         foreach (CString? value in values)
             await helper.WriteAsync(value);
         return helper.ToCString();
@@ -54,7 +54,7 @@ public partial class CString
     public static async Task<CString> ConcatAsync(CancellationToken cancellationToken, params Byte[]?[] values)
     {
         ArgumentNullException.ThrowIfNull(values);
-        using CStringConcatenator helper = new(cancellationToken);
+        await using CStringConcatenator helper = new(cancellationToken);
         foreach (Byte[]? value in values)
             await helper.WriteAsync(CString.Create(value));
         return helper.ToCString();
