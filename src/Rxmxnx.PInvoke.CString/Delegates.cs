@@ -1,6 +1,4 @@
-﻿[assembly: InternalsVisibleTo("Rxmxnx.PInvoke.CString.Tests")]
-
-namespace Rxmxnx.PInvoke;
+﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Encapsulates a method that receives a read-only span of <see cref="CString"/> instances and a state 

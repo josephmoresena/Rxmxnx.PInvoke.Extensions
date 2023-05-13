@@ -18,9 +18,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Using Include="System.Buffers" />
     <Using Include="System.Diagnostics.CodeAnalysis" />
     <Using Include="System.Runtime.CompilerServices" />
     <Using Include="System.Runtime.InteropServices" />
+    <Using Include="System.Reflection" />
     <Using Include="System.Text" />
 
     <Using Include="Rxmxnx.PInvoke.Internal" />
@@ -50,5 +52,11 @@
   <ItemGroup>
     <ProjectReference Condition="'$(PublishPackage)' == ''" Include="..\Rxmxnx.PInvoke.Common\Rxmxnx.PInvoke.Common.csproj" />
     <PackageReference Condition="'$(PublishPackage)' != ''" Include="Rxmxnx.PInvoke.Common" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+    <_Parameter1>Rxmxnx.PInvoke.Extensions.Tests</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
 </Project>

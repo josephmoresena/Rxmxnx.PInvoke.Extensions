@@ -1,8 +1,4 @@
-﻿[assembly: InternalsVisibleTo("Rxmxnx.PInvoke.CString")]
-[assembly: InternalsVisibleTo("Rxmxnx.PInvoke.Extensions")]
-[assembly: InternalsVisibleTo("Rxmxnx.PInvoke.Common.Tests")]
-
-namespace Rxmxnx.PInvoke;
+﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Encapsulates a method that has no parameters and returns a <see cref="ReadOnlySpan{T}"/> instance.

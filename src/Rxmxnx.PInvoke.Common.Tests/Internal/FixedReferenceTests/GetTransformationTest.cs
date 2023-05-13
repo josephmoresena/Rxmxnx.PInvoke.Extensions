@@ -77,7 +77,7 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
         Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, TimeOnly>(fref, isReadOnly, true)).Message);
         Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, TimeSpan>(fref, isReadOnly, true)).Message);
     }
-    private unsafe static void Test<T, T2>(FixedReference<T> fref, Boolean isReadOnly, Boolean unloaded = false)
+    private static unsafe void Test<T, T2>(FixedReference<T> fref, Boolean isReadOnly, Boolean unloaded = false)
         where T : unmanaged
         where T2 : unmanaged
     {

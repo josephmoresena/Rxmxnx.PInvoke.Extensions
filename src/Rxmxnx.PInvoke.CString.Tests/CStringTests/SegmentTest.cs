@@ -26,7 +26,7 @@ public sealed class SegmentTests
         }
     }
 
-    private unsafe static void FixedTest(String str, Byte[] bytes)
+    private static unsafe void FixedTest(String str, Byte[] bytes)
     {
         fixed (void* ptr = bytes)
         {

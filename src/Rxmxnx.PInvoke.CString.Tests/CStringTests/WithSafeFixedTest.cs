@@ -71,7 +71,7 @@ public sealed class WithSafeFixedTest
         if (ptr.HasValue)
             Assert.Equal(fmem.Pointer, ptr);
     }
-    private unsafe static IntPtr? GetPointerFromBytes(CString cstr)
+    private static unsafe IntPtr? GetPointerFromBytes(CString cstr)
     {
         try
         {

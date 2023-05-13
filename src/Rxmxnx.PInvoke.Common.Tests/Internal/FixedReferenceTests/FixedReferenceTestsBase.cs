@@ -28,7 +28,7 @@ public abstract class FixedReferenceTestsBase : FixedMemoryTestsBase
     /// <param name="readOnlyRef">Reference over the <see cref="FixedReference{T}"/> instance is created.</param>
     /// <param name="readOnly">Indicates whether the created <see cref="FixedReference{T}"/> instance should be readonly.</param>
     /// <param name="actionTest">Action test to <see cref="FixedReference{T}"/> instance to be used.</param>
-    internal unsafe static void WithFixed<T, TObj>(in T readOnlyRef, Boolean readOnly, TObj obj, Action<FixedReference<T>, TObj> actionTest) where T : unmanaged
+    internal static unsafe void WithFixed<T, TObj>(in T readOnlyRef, Boolean readOnly, TObj obj, Action<FixedReference<T>, TObj> actionTest) where T : unmanaged
     {
         fixed (void* ptr = &readOnlyRef)
             actionTest(new(ptr, readOnly), obj);

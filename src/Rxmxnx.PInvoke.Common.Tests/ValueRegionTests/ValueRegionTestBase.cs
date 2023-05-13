@@ -15,7 +15,7 @@ public abstract class ValueRegionTestBase
     /// <param name="array">A <typeparamref name="T"/> array.</param>
     /// <param name="handles">Collection in which to apend used handle.</param>
     /// <returns>A new <see cref="ValueRegion{T}"/> instance from <paramref name="array"/>.</returns>
-    protected unsafe static ValueRegion<T> Create<T>(T[] array, ICollection<GCHandle> handles) where T : unmanaged
+    protected static ValueRegion<T> Create<T>(T[] array, ICollection<GCHandle> handles) where T : unmanaged
         => Create(array, handles, out _);
 
     /// <summary>
@@ -26,7 +26,7 @@ public abstract class ValueRegionTestBase
     /// <param name="handles">Collection in which to apend used handle.</param>
     /// <param name="isReference">Indicates whether the created region is a reference.</param>
     /// <returns>A new <see cref="ValueRegion{T}"/> instance from <paramref name="array"/>.</returns>
-    protected unsafe static ValueRegion<T> Create<T>(T[] array, ICollection<GCHandle> handles, out Boolean isReference) where T : unmanaged
+    protected static unsafe ValueRegion<T> Create<T>(T[] array, ICollection<GCHandle> handles, out Boolean isReference) where T : unmanaged
     {
         isReference = false;
         switch (Random.Shared.Next(default, 7))

@@ -42,7 +42,7 @@ public sealed class CreateReferenceTest : FixedReferenceTestsBase
         Assert.Equal(ReadOnlyError, readOnly.Message);
     }
 
-    private unsafe static void Test<T>(FixedReference<T> fref, IntPtr ptr) where T : unmanaged
+    private static unsafe void Test<T>(FixedReference<T> fref, IntPtr ptr) where T : unmanaged
     {
         ref T refValue = ref fref.CreateReference<T>();
         IntPtr ptr2 = new(Unsafe.AsPointer(ref refValue));
@@ -76,7 +76,7 @@ public sealed class CreateReferenceTest : FixedReferenceTestsBase
         Assert.Equal(IsNotFunction, functionException.Message);
     }
 
-    private unsafe static void TestSize<T, T2>(FixedReference<T> fref) where T : unmanaged where T2 : unmanaged
+    private static unsafe void TestSize<T, T2>(FixedReference<T> fref) where T : unmanaged where T2 : unmanaged
     {
         Int32 size = sizeof(T);
         Int32 size2 = sizeof(T2);
