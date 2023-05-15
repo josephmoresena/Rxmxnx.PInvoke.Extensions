@@ -51,7 +51,7 @@ internal sealed class StringConcatenator : BinaryConcatenator<String>, IDisposab
     /// <inheritdoc/>
     protected override void Dispose(Boolean disposing)
     {
-        if(!this._disposedValue)
+        if (!this._disposedValue)
         {
             if (disposing)
                 this._writer.Dispose();

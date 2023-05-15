@@ -61,10 +61,56 @@ public static partial class NativeUtilities
     }
 
     /// <summary>
-    /// Retrieves a <see cref="Byte"/> array from the given <typeparamref name="T"/> value.
+    /// Retrieves an unsafe <see cref="IntPtr"/> pointer from a read-only reference to a <typeparamref name="T"/> 
+    /// <see langword="unmanaged"/> value.
+    /// </summary>
+    /// <typeparam name="T"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> value.</typeparam>
+    /// <param name="value">A read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</param>
+    /// <returns><see cref="IntPtr"/> pointer.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe IntPtr GetIntPtr<T>(in T value) where T : unmanaged
+    {
+        ref T refValue = ref Unsafe.AsRef(value);
+        return refValue.GetIntPtr();
+    }
+
+    /// <summary>
+    /// Retrieves an unsafe <see cref="UIntPtr"/> pointer from a read-only reference to a <typeparamref name="T"/> 
+    /// <see langword="unmanaged"/> value.
+    /// </summary>
+    /// <typeparam name="T"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> value.</typeparam>
+    /// <param name="value">Read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</param>
+    /// <returns><see cref="UIntPtr"/> pointer.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe UIntPtr GetUIntPtr<T>(in T value) where T : unmanaged
+    {
+        ref T refValue = ref Unsafe.AsRef(value);
+        return refValue.GetUIntPtr();
+    }
+
+    /// <summary>
+    /// Creates a read-only reference to a <typeparamref name="TDestination"/> <see langword="unmanaged"/> value from 
+    /// an exising read-only reference to a <typeparamref name="TSource"/> <see langword="unmanaged"/> value.
+    /// </summary>
+    /// <typeparam name="TSource"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> source value.</typeparam>
+    /// <typeparam name="TDestination"><see cref="ValueType"/> of the destination reference.</typeparam>
+    /// <param name="value">A read-only reference to a <typeparamref name="TSource"/> <see langword="unmanaged"/> value.</param>
+    /// <returns>A read-only reference to a <typeparamref name="TDestination"/> <see langword="unmanaged"/> value.</returns>
+    /// <exception cref="InvalidOperationException"/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ref readonly TDestination AsReferenceOf<TSource, TDestination>(in TSource value)
+        where TSource : unmanaged
+        where TDestination : unmanaged
+    {
+        ref TSource refValue = ref Unsafe.AsRef(value);
+        return ref refValue.AsReferenceOf<TSource, TDestination>();
+    }
+
+    /// <summary>
+    /// Retrieves a <see cref="Byte"/> array from a read-only reference to a <typeparamref name="T"/> value.
     /// </summary>
     /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <param name="value"><typeparamref name="T"/> value.</param>
+    /// <param name="value">A read-only reference to <typeparamref name="T"/> value.</param>
     /// <returns><see cref="Byte"/> array.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe Byte[] ToBytes<T>(in T value) where T : unmanaged
@@ -73,6 +119,23 @@ public static partial class NativeUtilities
         ReadOnlySpan<T> intermediateSpan = MemoryMarshal.CreateReadOnlySpan(ref refValue, 1);
         ReadOnlySpan<Byte> bytes = MemoryMarshal.AsBytes(intermediateSpan);
         return bytes.ToArray();
+    }
+
+    /// <summary>
+    /// Creates a <see cref="ReadOnlySpan{Byte}"/> from an exising read-only reference to a 
+    /// <typeparamref name="TSource"/> <see langword="unmanaged"/> value.
+    /// </summary>
+    /// <typeparam name="TSource"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> source value.</typeparam>
+    /// <param name="value">A read-only reference to a <typeparamref name="TSource"/> <see langword="unmanaged"/> value.</param>
+    /// <returns>
+    /// A <see cref="ReadOnlySpan{Byte}"/> from an exising memory reference to a <typeparamref name="TSource"/> 
+    /// <see langword="unmanaged"/> value.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ReadOnlySpan<Byte> AsBytes<TSource>(in TSource value) where TSource : unmanaged
+    {
+        ref TSource refValue = ref Unsafe.AsRef(value);
+        return refValue.AsBytes();
     }
 
     /// <summary>

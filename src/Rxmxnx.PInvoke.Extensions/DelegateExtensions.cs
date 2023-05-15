@@ -13,7 +13,7 @@ public static partial class DelegateExtensions
     /// <returns><see cref="IntPtr"/> pointer.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IntPtr AsIntPtr<T>(this T delegateInstance) where T : Delegate
-        => delegateInstance != default ? Marshal.GetFunctionPointerForDelegate(delegateInstance) : default;
+        => delegateInstance is null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(delegateInstance);
 
     /// <summary>
     /// Creates a <see cref="UIntPtr"/> pointer from a memory reference to a <typeparamref name="T"/> delegate.

@@ -33,7 +33,7 @@ public static partial class PointerExtensions
     /// <param name="ptr"><see cref="IntPtr"/> value.</param>
     /// <returns><see cref="UIntPtr"/> value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe UIntPtr AsUIntPtr(this IntPtr ptr) => new UIntPtr(ptr.ToPointer());
+    public static unsafe UIntPtr AsUIntPtr(this IntPtr ptr) => (UIntPtr)ptr.ToPointer();
 
     /// <summary>
     /// Creates a <see cref="IntPtr"/> value from given <see cref="UIntPtr"/> value.
@@ -41,7 +41,7 @@ public static partial class PointerExtensions
     /// <param name="uptr"><see cref="UIntPtr"/> value.</param>
     /// <returns><see cref="IntPtr"/> value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe IntPtr AsIntPtr(this UIntPtr uptr) => new IntPtr(uptr.ToPointer());
+    public static unsafe IntPtr AsIntPtr(this UIntPtr uptr) => (IntPtr)uptr.ToPointer();
 
     /// <summary>
     /// Creates a <see cref="String"/> instance taking the memory reference of <see cref="IntPtr"/> 

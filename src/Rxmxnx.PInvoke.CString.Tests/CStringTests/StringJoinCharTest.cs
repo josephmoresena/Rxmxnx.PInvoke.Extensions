@@ -69,7 +69,7 @@ public sealed class StringJoinCharTest
 
     private static async Task ArrayTestAsync(Char separator, String?[] strings)
     {
-        String strSeparator = new (new Char[] { separator });
+        String strSeparator = new(new Char[] { separator });
         String expectedCString = String.Join(strSeparator, strings);
         Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
