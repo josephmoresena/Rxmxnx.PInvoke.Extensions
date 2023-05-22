@@ -237,7 +237,7 @@ public static partial class MemoryBlockExtensions
         ArgumentNullException.ThrowIfNull(func);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
-            FixedContext<Byte> ctx = new(ptr, span.Length, true);
+            FixedContext<Byte> ctx = new(ptr, span.Length);
             try
             {
                 return func(ctx, arg);
@@ -265,7 +265,7 @@ public static partial class MemoryBlockExtensions
         ArgumentNullException.ThrowIfNull(func);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
-            FixedContext<Byte> ctx = new(ptr, span.Length, true);
+            FixedContext<Byte> ctx = new(ptr, span.Length);
             try
             {
                 return func(ctx, arg);
