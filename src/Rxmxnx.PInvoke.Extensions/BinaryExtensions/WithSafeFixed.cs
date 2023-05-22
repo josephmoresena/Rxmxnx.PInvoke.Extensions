@@ -209,7 +209,7 @@ public static partial class MemoryBlockExtensions
     {
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
-            FixedContext<Byte> ctx = new(ptr, span.Length);
+            FixedContext<Byte> ctx = new(ptr, span.Length, true);
             try
             {
                 return func(ctx);
