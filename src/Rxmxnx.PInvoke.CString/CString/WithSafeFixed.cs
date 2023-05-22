@@ -6,7 +6,7 @@ public partial class CString
     /// Prevents the garbage collector from relocating the current instance and fixes its memory 
     /// address until <paramref name="action"/> finish.
     /// </summary>
-    /// <param name="action">A <see cref="FixedAction"/> delegate.></param>
+    /// <param name="action">A <see cref="ReadOnlyFixedAction"/> delegate.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public unsafe void WithSafeFixed(ReadOnlyFixedAction action)
     {
@@ -57,7 +57,7 @@ public partial class CString
     /// address until <paramref name="func"/> finish.
     /// </summary>
     /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
-    /// <param name="func">A <see cref="FixedFunc{TResult}"/> delegate.</param>
+    /// <param name="func">A <see cref="ReadOnlyFixedFunc{TResult}"/> delegate.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public unsafe TResult WithSafeFixed<TResult>(ReadOnlyFixedFunc<TResult> func)
@@ -85,7 +85,7 @@ public partial class CString
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
-    /// <param name="func">A <see cref="FixedFunc{TArg, TResult}"/> delegate.</param>
+    /// <param name="func">A <see cref="ReadOnlyFixedFunc{TArg, TResult}"/> delegate.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public unsafe TResult WithSafeFixed<TArg, TResult>(TArg arg, ReadOnlyFixedFunc<TArg, TResult> func)
