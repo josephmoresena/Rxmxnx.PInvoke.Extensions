@@ -22,7 +22,7 @@ internal unsafe sealed class FixedReference<T> : FixedMemory, IFixedReference<T>
     /// </summary>
     /// <param name="ptr">Pointer to fixed memory reference.</param>
     /// <param name="isReadOnly">Indicates whether the memory reference is read-only.</param>
-    public FixedReference(void* ptr, Boolean isReadOnly) : base(ptr, sizeof(T), isReadOnly)
+    public FixedReference(void* ptr, Boolean isReadOnly = false) : base(ptr, sizeof(T), isReadOnly)
     {
     }
 
