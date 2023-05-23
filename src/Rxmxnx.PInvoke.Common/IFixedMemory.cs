@@ -9,6 +9,12 @@ public interface IFixedMemory : IReadOnlyFixedMemory
     /// A binary span over the fixed memory block.
     /// </summary>
     new Span<Byte> Bytes { get; }
+
+    /// <summary>
+    /// Creates a <see cref="IFixedContext{Byte}"/> instance from current instance.
+    /// </summary>
+    /// <returns>A <see cref="IFixedContext{Byte}"/> instance.</returns>
+    new IFixedContext<Byte> AsBinaryContext() => FixedContext<Byte>.CreateBinaryContext(this);
 }
 
 /// <summary>

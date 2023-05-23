@@ -9,6 +9,12 @@ public interface IReadOnlyFixedMemory : IFixedPointer
     /// A read-only binary span over the fixed memory block.
     /// </summary>
     ReadOnlySpan<Byte> Bytes { get; }
+
+    /// <summary>
+    /// Creates a <see cref="IReadOnlyFixedContext{Byte}"/> instance from current instance.
+    /// </summary>
+    /// <returns>A <see cref="IReadOnlyFixedContext{Byte}"/> instance.</returns>
+    IReadOnlyFixedContext<Byte> AsBinaryContext() => FixedContext<Byte>.CreateBinaryContext(this);
 }
 
 /// <summary>
