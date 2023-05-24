@@ -1,4 +1,6 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿using Rxmxnx.PInvoke.Internal;
+
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Represents a <see cref="CStringSequence"/> fixed in memory.
@@ -75,7 +77,19 @@ public unsafe readonly ref struct FixedCStringSequence
     public override String? ToString() => this._value?.ToString();
 
     /// <summary>
-    /// Invalidates current context.
+    /// Implicit operator <see cref="ReadOnlyFixedMemoryList"/> -> <see cref="FixedMemoryList"/>.
+    /// </summary>
+    /// <param name="fseq">A <see cref="FixedCStringSequence"/> instance.</param>
+    public static implicit operator ReadOnlyFixedMemoryList(FixedCStringSequence fseq)
+    {
+        FixedMemory[] memories = new FixedMemory[fseq.Values.Count];
+        for (Int32 i = 0; i < memories.Length; i++)
+            memories[i] = fseq.GetFixedCString(i);
+        return new(memories);
+    }
+
+    /// <summary>
+    /// Invalidates current sequence.
     /// </summary>
     internal void Unload()
     {
@@ -86,11 +100,11 @@ public unsafe readonly ref struct FixedCStringSequence
     }
 
     /// <summary>
-    /// Retrieves the <see cref="IFixedContext{Byte}"/> for element at <paramref name="index"/>.
+    /// Retrieves the <see cref="FixedContext{Byte}"/> for element at <paramref name="index"/>.
     /// </summary>
     /// <param name="index"></param>
-    /// <returns><see cref="IFixedContext{Byte}"/> for element at <paramref name="index"/>.</returns>
-    private IReadOnlyFixedContext<Byte> GetFixedCString(Int32 index)
+    /// <returns><see cref="FixedContext{Byte}"/> for element at <paramref name="index"/>.</returns>
+    private FixedContext<Byte> GetFixedCString(Int32 index)
     {
         CString cstr = this._values![index];
         ReadOnlySpan<Byte> span = cstr;
@@ -103,7 +117,7 @@ public unsafe readonly ref struct FixedCStringSequence
         }
 
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
-            return new FixedContext<Byte>(ptr, cstr.Length, true, this._isValid!);
+            return new(ptr, cstr.Length, true, this._isValid!);
     }
 
     /// <summary>

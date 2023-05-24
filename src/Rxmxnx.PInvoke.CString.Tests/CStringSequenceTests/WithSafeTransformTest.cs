@@ -1,7 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
 
 [ExcludeFromCodeCoverage]
-public sealed class TransformTest
+public sealed class WithSafeTransformTest
 {
     [Fact]
     internal void EmptyTest()
@@ -25,8 +25,8 @@ public sealed class TransformTest
         try
         {
             CStringSequence seq = CreateSequence(handles, indices, out _);
-            seq.Transform(AssertReference);
-            Assert.Equal(seq, seq.Transform(CreateCopy));
+            seq.WithSafeTransform(AssertReference);
+            Assert.Equal(seq, seq.WithSafeTransform(CreateCopy));
         }
         finally
         {
@@ -43,8 +43,8 @@ public sealed class TransformTest
         try
         {
             CStringSequence seq = CreateSequence(handles, indices, out CString?[] values);
-            seq.Transform(values, AssertSequence);
-            Assert.Equal(seq, seq.Transform(seq, CreateCopy));
+            seq.WithSafeTransform(values, AssertSequence);
+            Assert.Equal(seq, seq.WithSafeTransform(seq, CreateCopy));
         }
         finally
         {

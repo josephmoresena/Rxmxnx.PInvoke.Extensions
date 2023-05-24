@@ -281,3 +281,69 @@ public delegate TResult FixedMethodFunc<T, out TResult>(in IFixedMethod<T> fmeth
 /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 /// <returns>The return value of the method that this delegate encapsulates.</returns>
 public delegate TResult FixedMethodFunc<T, TArg, out TResult>(in IFixedMethod<T> fmethod, TArg arg) where T : Delegate;
+
+/// <summary>
+/// Encapsulates a method that receives a <see cref="FixedMemoryList"/> instance.
+/// </summary>
+/// <param name="fml">Fixed memory list.</param>
+public delegate void FixedListAction(FixedMemoryList fml);
+
+/// <summary>
+/// Encapsulates a method that receives a <see cref="FixedMemoryList"/> instance and a 
+/// state object of type <typeparamref name="TArg"/>.
+/// </summary>
+/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+/// <param name="fml">Fixed memory list.</param>
+/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
+public delegate void FixedListAction<TArg>(FixedMemoryList fml, TArg arg);
+
+/// <summary>
+/// Encapsulates a method that receives a <see cref="ReadOnlyFixedMemoryList"/> instance.
+/// </summary>
+/// <param name="fml">Read-only fixed memory list.</param>
+public delegate void ReadOnlyFixedListAction(ReadOnlyFixedMemoryList fml);
+
+/// <summary>
+/// Encapsulates a method that receives a <see cref="ReadOnlyFixedMemoryList"/> instance and a 
+/// state object of type <typeparamref name="TArg"/>.
+/// </summary>
+/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+/// <param name="fml">Read-only fixed memory list.</param>
+/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
+public delegate void ReadOnlyFixedListAction<TArg>(ReadOnlyFixedMemoryList fml, TArg arg);
+
+/// <summary>
+/// Encapsulates a method that receives a <see cref="FixedMemoryList"/> instance.
+/// </summary>
+/// <typeparam name="TResult">The type of the return value of the method that this delegate encapsulates.</typeparam>
+/// <param name="fml">Fixed memory list.</param>
+/// <returns>The return value of the method that this delegate encapsulates.</returns>
+public delegate TResult FixedListFunc<out TResult>(FixedMemoryList fml);
+
+/// <summary>
+/// Encapsulates a method that receives a <see cref="FixedMemoryList"/> instance.
+/// </summary>
+/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+/// <typeparam name="TResult">The type of the return value of the method that this delegate encapsulates.</typeparam>
+/// <param name="fml">Fixed memory list.</param>
+/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
+/// <returns>The return value of the method that this delegate encapsulates.</returns>
+public delegate TResult FixedListFunc<TArg, out TResult>(FixedMemoryList fml, TArg arg);
+
+/// <summary>
+/// Encapsulates a method that receives a <see cref="ReadOnlyFixedMemoryList"/> instance.
+/// </summary>
+/// <typeparam name="TResult">The type of the return value of the method that this delegate encapsulates.</typeparam>
+/// <param name="fml">Read-only fixed memory list.</param>
+/// <returns>The return value of the method that this delegate encapsulates.</returns>
+public delegate TResult ReadOnlyFixedListFunc<out TResult>(ReadOnlyFixedMemoryList fml);
+
+/// <summary>
+/// Encapsulates a method that receives a <see cref="ReadOnlyFixedMemoryList"/> instance.
+/// </summary>
+/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+/// <typeparam name="TResult">The type of the return value of the method that this delegate encapsulates.</typeparam>
+/// <param name="fml">Read-only fixed memory list.</param>
+/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
+/// <returns>The return value of the method that this delegate encapsulates.</returns>
+public delegate TResult ReadOnlyFixedListFunc<TArg, out TResult>(ReadOnlyFixedMemoryList fml, TArg arg);

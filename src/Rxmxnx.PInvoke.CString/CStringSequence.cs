@@ -77,7 +77,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
     {
         Int32 bytesLength = this._lengths.Sum(GetSpanLength);
         Byte[] result = new Byte[bytesLength];
-        this.Transform(result, BinaryCopyTo);
+        this.WithSafeTransform(result, BinaryCopyTo);
         return result;
     }
 
