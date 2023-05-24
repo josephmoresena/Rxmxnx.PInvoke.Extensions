@@ -1,6 +1,4 @@
-﻿using Rxmxnx.PInvoke.Internal;
-
-namespace Rxmxnx.PInvoke;
+﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Represents a <see cref="CStringSequence"/> fixed in memory.
