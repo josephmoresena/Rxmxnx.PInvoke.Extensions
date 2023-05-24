@@ -14,7 +14,10 @@ public unsafe readonly ref struct FixedMemoryList
     /// Gets the total number of elements in the list. 
     /// </summary>
     public Int32 Count => this._values.Count;
-
+    /// <summary>
+    /// Returns a value that indicates the current list is empty.
+    /// </summary>
+    public Boolean IsEmpty => this.Count == 0;
     /// <summary>
     /// Gets the element at the given index.
     /// </summary>

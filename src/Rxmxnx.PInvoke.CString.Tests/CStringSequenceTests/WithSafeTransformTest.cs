@@ -7,9 +7,14 @@ public sealed class WithSafeTransformTest
     internal void EmptyTest()
     {
         FixedCStringSequence fseq = default;
+        ReadOnlyFixedMemoryList fml = fseq;
         Assert.Empty(fseq.Values);
         Assert.Empty(fseq.ToArray());
         Assert.Null(fseq.ToString());
+
+        Assert.Equal(0, fml.Count);
+        Assert.True(fml.IsEmpty);
+        Assert.Empty(fml.ToArray());
 
         fseq.Unload();
         Assert.Empty(fseq.Values);
@@ -26,7 +31,9 @@ public sealed class WithSafeTransformTest
         {
             CStringSequence seq = CreateSequence(handles, indices, out _);
             seq.WithSafeTransform(AssertReference);
+            seq.WithSafeFixed(AssertReference);
             Assert.Equal(seq, seq.WithSafeTransform(CreateCopy));
+            Assert.Equal(seq.Where(c => !CString.IsNullOrEmpty(c)), seq.WithSafeFixed(GetNonEmptyValues));
         }
         finally
         {
@@ -53,6 +60,21 @@ public sealed class WithSafeTransformTest
         }
     }
 
+    private static void AssertReference(ReadOnlyFixedMemoryList fml)
+    {
+        Int32 offset = 0;
+        IntPtr ptr = IntPtr.Zero;
+
+        for(Int32 i = 0; i < fml.Count; i++)
+            if (!fml[i].Bytes.IsEmpty)
+            {
+                if (ptr == IntPtr.Zero)
+                    ptr = fml[i].Pointer;
+
+                Assert.Equal(ptr + offset, fml[i].Pointer);
+                offset += fml[i].Bytes.Length + 1;
+            }
+    }
     private static void AssertReference(FixedCStringSequence fseq)
     {
         IReadOnlyList<CString> values = fseq.Values;
@@ -120,5 +142,13 @@ public sealed class WithSafeTransformTest
             values[i] = TestSet.GetCString(indices[i], handles);
         CStringSequence seq = new(values);
         return seq;
+    }
+    private static IEnumerable<CString> GetNonEmptyValues(ReadOnlyFixedMemoryList fml)
+    {
+        List<CString> result = new();
+        foreach (IReadOnlyFixedMemory fmem in fml)
+            if (!fmem.Bytes.IsEmpty)
+                result.Add(new(fmem.Bytes));
+        return result;
     }
 }
