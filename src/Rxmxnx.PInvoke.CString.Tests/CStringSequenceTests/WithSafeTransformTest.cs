@@ -51,7 +51,9 @@ public sealed class WithSafeTransformTest
         {
             CStringSequence seq = CreateSequence(handles, indices, out CString?[] values);
             seq.WithSafeTransform(values, AssertSequence);
+            seq.WithSafeFixed(seq, AssertSequence);
             Assert.Equal(seq, seq.WithSafeTransform(seq, CreateCopy));
+            Assert.Equal(seq.ToString(), seq.WithSafeFixed(seq, CreateCopy).ToString());
         }
         finally
         {
@@ -60,12 +62,20 @@ public sealed class WithSafeTransformTest
         }
     }
 
+    private static void AssertReference(FixedCStringSequence fseq)
+    {
+        IReadOnlyList<CString> values = fseq.Values;
+        IReadOnlyFixedMemory[] fValues = fseq.ToArray();
+
+        for (Int32 i = 0; i < values.Count; i++)
+            values[i].WithSafeFixed(fValues[i], AssertReference);
+    }
     private static void AssertReference(ReadOnlyFixedMemoryList fml)
     {
         Int32 offset = 0;
         IntPtr ptr = IntPtr.Zero;
 
-        for(Int32 i = 0; i < fml.Count; i++)
+        for (Int32 i = 0; i < fml.Count; i++)
             if (!fml[i].Bytes.IsEmpty)
             {
                 if (ptr == IntPtr.Zero)
@@ -74,14 +84,6 @@ public sealed class WithSafeTransformTest
                 Assert.Equal(ptr + offset, fml[i].Pointer);
                 offset += fml[i].Bytes.Length + 1;
             }
-    }
-    private static void AssertReference(FixedCStringSequence fseq)
-    {
-        IReadOnlyList<CString> values = fseq.Values;
-        IReadOnlyFixedMemory[] fValues = fseq.ToArray();
-
-        for (Int32 i = 0; i < values.Count; i++)
-            values[i].WithSafeFixed(fValues[i], AssertReference);
     }
     private static void AssertSequence(FixedCStringSequence fseq, IReadOnlyList<CString?> values)
     {
@@ -112,6 +114,43 @@ public sealed class WithSafeTransformTest
             Assert.IsType<ArgumentOutOfRangeException>(ex);
         }
     }
+    private static unsafe void AssertSequence(ReadOnlyFixedMemoryList fml, CStringSequence seq)
+    {
+        Int32 offset = 0;
+        IntPtr ptr = IntPtr.Zero;
+
+        for (Int32 i = 0; i < fml.Count; i++)
+            if (!fml[i].Bytes.IsEmpty)
+            {
+                if (ptr == IntPtr.Zero)
+                    ptr = fml[i].Pointer;
+
+                Assert.Equal(seq[i].Length, fml[i].Bytes.Length);
+                fixed (void* ptr2 = &MemoryMarshal.GetReference(seq[i].AsSpan()))
+                    Assert.Equal(new(ptr2), ptr + offset);
+                offset += fml[i].Bytes.Length + 1;
+            }
+            else
+                Assert.True(CString.IsNullOrEmpty(seq[i]));
+
+        try
+        {
+            _ = fml[-1];
+        }
+        catch (Exception ex)
+        {
+            Assert.IsType<ArgumentOutOfRangeException>(ex);
+        }
+
+        try
+        {
+            _ = fml[seq.Count];
+        }
+        catch (Exception ex)
+        {
+            Assert.IsType<ArgumentOutOfRangeException>(ex);
+        }
+    }
     private static void AssertReference(in IReadOnlyFixedMemory fcstr, IReadOnlyFixedMemory fValue)
         => Assert.Equal(fcstr, fValue);
     private static CStringSequence CreateCopy(FixedCStringSequence fseq)
@@ -134,6 +173,29 @@ public sealed class WithSafeTransformTest
             seq[i].WithSafeFixed(fseq[i], AssertReference);
         Assert.Equal(new CString(() => MemoryMarshal.AsBytes<Char>(seq.ToString())).ToString(), fseq.ToString());
         return new(fseq.Values);
+    }
+    private static unsafe CStringSequence CreateCopy(ReadOnlyFixedMemoryList fml, CStringSequence seq)
+    {
+        Int32 offset = 0;
+        IntPtr ptr = IntPtr.Zero;
+
+        List<CString> cstr = new();
+        for (Int32 i = 0; i < fml.Count; i++)
+            if (!fml[i].Bytes.IsEmpty)
+            {
+                if (ptr == IntPtr.Zero)
+                    ptr = fml[i].Pointer;
+
+                Assert.Equal(seq[i].Length, fml[i].Bytes.Length);
+                fixed (void* ptr2 = &MemoryMarshal.GetReference(seq[i].AsSpan()))
+                    Assert.Equal(new(ptr2), ptr + offset);
+                offset += fml[i].Bytes.Length + 1;
+                cstr.Add(new(fml[i].Bytes));
+            }
+            else
+                Assert.True(CString.IsNullOrEmpty(seq[i]));
+
+        return new(cstr);
     }
     private static CStringSequence CreateSequence(ICollection<GCHandle> handles, IReadOnlyList<Int32> indices, out CString?[] values)
     {
