@@ -18,8 +18,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Using Include="System.Buffers" />
     <Using Include="System.Diagnostics.CodeAnalysis" />
     <Using Include="System.Collections" />
+    <Using Include="System.Reflection" />
     <Using Include="System.Runtime.CompilerServices" />
     <Using Include="System.Runtime.InteropServices" />
     <Using Include="System.Text" />
