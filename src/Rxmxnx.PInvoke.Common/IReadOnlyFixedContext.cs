@@ -1,7 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// s
+/// This interface represents a context from read-only memory block fixing.
 /// </summary>
 /// <typeparam name="T">Type of items on the read-only fixed memory block.</typeparam>
 public interface IReadOnlyFixedContext<T> : IReadOnlyFixedMemory<T>

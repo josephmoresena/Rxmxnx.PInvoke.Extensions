@@ -12,7 +12,7 @@ public static partial class MemoryBlockExtensions
     /// <param name="span">Current <typeparamref name="T"/> span.</param>
     /// <param name="action">A <see cref="FixedContextAction{T}"/> delegate.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe static void WithSafeFixed<T>(this Span<T> span, FixedContextAction<T> action)
+    public static unsafe void WithSafeFixed<T>(this Span<T> span, FixedContextAction<T> action)
         where T : unmanaged
     {
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -39,7 +39,7 @@ public static partial class MemoryBlockExtensions
     /// <param name="span">Current <typeparamref name="T"/> span.</param>
     /// <param name="action">A <see cref="ReadOnlyFixedContextAction{T}"/> delegate.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe static void WithSafeFixed<T>(this Span<T> span, ReadOnlyFixedContextAction<T> action)
+    public static unsafe void WithSafeFixed<T>(this Span<T> span, ReadOnlyFixedContextAction<T> action)
         where T : unmanaged
     {
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -66,7 +66,7 @@ public static partial class MemoryBlockExtensions
     /// <param name="span">Current read-only <typeparamref name="T"/> span.</param>
     /// <param name="action">A <see cref="ReadOnlyFixedContextAction{T}"/> delegate.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe static void WithSafeFixed<T>(this ReadOnlySpan<T> span, ReadOnlyFixedContextAction<T> action)
+    public static unsafe void WithSafeFixed<T>(this ReadOnlySpan<T> span, ReadOnlyFixedContextAction<T> action)
         where T : unmanaged
     {
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -95,7 +95,7 @@ public static partial class MemoryBlockExtensions
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
     /// <param name="action">A <see cref="FixedContextAction{T, TArg}"/> delegate.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe static void WithSafeFixed<T, TArg>(this Span<T> span, TArg arg, FixedContextAction<T, TArg> action)
+    public static unsafe void WithSafeFixed<T, TArg>(this Span<T> span, TArg arg, FixedContextAction<T, TArg> action)
         where T : unmanaged
     {
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -124,7 +124,7 @@ public static partial class MemoryBlockExtensions
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
     /// <param name="action">A <see cref="ReadOnlyFixedContextAction{T, TArg}"/> delegate.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe static void WithSafeFixed<T, TArg>(this Span<T> span, TArg arg, ReadOnlyFixedContextAction<T, TArg> action)
+    public static unsafe void WithSafeFixed<T, TArg>(this Span<T> span, TArg arg, ReadOnlyFixedContextAction<T, TArg> action)
         where T : unmanaged
     {
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -153,7 +153,7 @@ public static partial class MemoryBlockExtensions
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
     /// <param name="action">A <see cref="ReadOnlyFixedContextAction{T, TArg}"/> delegate.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe static void WithSafeFixed<T, TArg>(this ReadOnlySpan<T> span, TArg arg, ReadOnlyFixedContextAction<T, TArg> action)
+    public static unsafe void WithSafeFixed<T, TArg>(this ReadOnlySpan<T> span, TArg arg, ReadOnlyFixedContextAction<T, TArg> action)
         where T : unmanaged
     {
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -182,7 +182,7 @@ public static partial class MemoryBlockExtensions
     /// <param name="func">A <see cref="FixedContextFunc{T, TResult}"/> delegate.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe static TResult WithSafeFixed<T, TResult>(this Span<T> span, FixedContextFunc<T, TResult> func)
+    public static unsafe TResult WithSafeFixed<T, TResult>(this Span<T> span, FixedContextFunc<T, TResult> func)
         where T : unmanaged
     {
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -211,7 +211,7 @@ public static partial class MemoryBlockExtensions
     /// <param name="func">A <see cref="ReadOnlyFixedContextFunc{T, TResult}"/> delegate.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe static TResult WithSafeFixed<T, TResult>(this Span<T> span, ReadOnlyFixedContextFunc<T, TResult> func)
+    public static unsafe TResult WithSafeFixed<T, TResult>(this Span<T> span, ReadOnlyFixedContextFunc<T, TResult> func)
         where T : unmanaged
     {
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -240,7 +240,7 @@ public static partial class MemoryBlockExtensions
     /// <param name="func">A <see cref="ReadOnlyFixedContextFunc{T, TResult}"/> delegate.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe static TResult WithSafeFixed<T, TResult>(this ReadOnlySpan<T> span, ReadOnlyFixedContextFunc<T, TResult> func)
+    public static unsafe TResult WithSafeFixed<T, TResult>(this ReadOnlySpan<T> span, ReadOnlyFixedContextFunc<T, TResult> func)
         where T : unmanaged
     {
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -271,7 +271,7 @@ public static partial class MemoryBlockExtensions
     /// <param name="func">A <see cref="FixedContextFunc{T, TArg, TResult}"/> delegate.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe static TResult WithSafeFixed<T, TArg, TResult>(this Span<T> span, TArg arg, FixedContextFunc<T, TArg, TResult> func)
+    public static unsafe TResult WithSafeFixed<T, TArg, TResult>(this Span<T> span, TArg arg, FixedContextFunc<T, TArg, TResult> func)
         where T : unmanaged
     {
         ArgumentNullException.ThrowIfNull(func);
@@ -303,7 +303,7 @@ public static partial class MemoryBlockExtensions
     /// <param name="func">A <see cref="ReadOnlyFixedContextFunc{T, TArg, TResult}"/> delegate.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe static TResult WithSafeFixed<T, TArg, TResult>(this Span<T> span, TArg arg, ReadOnlyFixedContextFunc<T, TArg, TResult> func)
+    public static unsafe TResult WithSafeFixed<T, TArg, TResult>(this Span<T> span, TArg arg, ReadOnlyFixedContextFunc<T, TArg, TResult> func)
         where T : unmanaged
     {
         ArgumentNullException.ThrowIfNull(func);
@@ -335,7 +335,7 @@ public static partial class MemoryBlockExtensions
     /// <param name="func">A <see cref="ReadOnlyFixedContextFunc{T, TArg, TResult}"/> delegate.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe static TResult WithSafeFixed<T, TArg, TResult>(this ReadOnlySpan<T> span, TArg arg, ReadOnlyFixedContextFunc<T, TArg, TResult> func)
+    public static unsafe TResult WithSafeFixed<T, TArg, TResult>(this ReadOnlySpan<T> span, TArg arg, ReadOnlyFixedContextFunc<T, TArg, TResult> func)
         where T : unmanaged
     {
         ArgumentNullException.ThrowIfNull(func);

@@ -14,7 +14,7 @@ public static partial class ReferenceExtensions
     /// <param name="refValue">A reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</param>
     /// <returns><see cref="IntPtr"/> pointer.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe IntPtr GetIntPtr<T>(ref this T refValue) where T : unmanaged
+    public static unsafe IntPtr GetUnsafeIntPtr<T>(ref this T refValue) where T : unmanaged
     {
         void* ptr = Unsafe.AsPointer(ref refValue);
         return (IntPtr)ptr;
@@ -28,7 +28,7 @@ public static partial class ReferenceExtensions
     /// <param name="refValue">A reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</param>
     /// <returns><see cref="UIntPtr"/> pointer.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe UIntPtr GetUIntPtr<T>(ref this T refValue) where T : unmanaged
+    public static unsafe UIntPtr GetUnsafeUIntPtr<T>(ref this T refValue) where T : unmanaged
     {
         void* ptr = Unsafe.AsPointer(ref refValue);
         return (UIntPtr)ptr;
@@ -48,8 +48,7 @@ public static partial class ReferenceExtensions
         where TSource : unmanaged
         where TDestination : unmanaged
     {
-        if (sizeof(TDestination) != sizeof(TSource))
-            throw new InvalidOperationException("The sizes of both source and destination unmanaged types must be equal.");
+        ValidationUtilities.ThrowIfInvalidCastType<TSource, TDestination>();
         return ref Unsafe.As<TSource, TDestination>(ref refValue);
     }
 

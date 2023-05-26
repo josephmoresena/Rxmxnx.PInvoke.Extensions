@@ -115,29 +115,4 @@ public abstract partial class ValueRegion<T> where T : unmanaged
     /// <param name="func"><see cref="ReadOnlySpanFunc{T}"/> delegate.</param>
     /// <returns>A new <see cref="ValueRegion{T}"/> instance.</returns>
     public static ValueRegion<T> Create(ReadOnlySpanFunc<T> func) => new FuncRegion(func);
-
-    /// <summary>
-    /// Validates the input of the subregion function.
-    /// </summary>
-    /// <param name="regionLength">Length of the region.</param>
-    /// <param name="startIndex">
-    /// The zero-based starting item position of a subregion in the region.
-    /// </param>
-    /// <param name="length">The number of items in the subregion.</param>
-    /// <exception cref="ArgumentOutOfRangeException"/>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected static void ThrowSubregionArgumentOutOfRange(Int32 regionLength, Int32 startIndex, Int32 length)
-    {
-        if (startIndex < 0)
-            throw new ArgumentOutOfRangeException(nameof(startIndex), "StartIndex cannot be less than zero.");
-
-        if (startIndex > regionLength)
-            throw new ArgumentOutOfRangeException(nameof(startIndex), $"{nameof(startIndex)} cannot be larger than length of region.");
-
-        if (length < 0)
-            throw new ArgumentOutOfRangeException(nameof(length), "Length cannot be less than zero.");
-
-        if (startIndex > regionLength - length)
-            throw new ArgumentOutOfRangeException(nameof(length), "Index and length must refer to a location within the region.");
-    }
 }

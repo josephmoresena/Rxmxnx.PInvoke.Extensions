@@ -63,7 +63,7 @@ public partial class ValueRegion<T>
         {
             Int32 regionLength = this._end - this._offset;
             Int32 length = regionLength - startIndex;
-            ThrowSubregionArgumentOutOfRange(regionLength, startIndex, length);
+            ValidationUtilities.ThrowIfInvalidSubregion(regionLength, startIndex, length);
             return this.InternalSlice(startIndex, length);
         }
 
@@ -71,7 +71,7 @@ public partial class ValueRegion<T>
         public override ValueRegion<T> Slice(Int32 startIndex, Int32 length)
         {
             Int32 regionLength = this._end - this._offset;
-            ThrowSubregionArgumentOutOfRange(regionLength, startIndex, length);
+            ValidationUtilities.ThrowIfInvalidSubregion(regionLength, startIndex, length);
             return this.InternalSlice(startIndex, length);
         }
 

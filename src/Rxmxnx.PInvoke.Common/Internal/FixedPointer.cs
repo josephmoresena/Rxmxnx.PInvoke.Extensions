@@ -114,6 +114,7 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
     public ref readonly TValue CreateReadOnlyReference<TValue>() where TValue : unmanaged
     {
         this.ValidateOperation(true);
+        ValidationUtilities.ThrowIfInvalidRefTypePointer<TValue>(this._binaryLength);
         this.ValidateReferenceSize<TValue>();
         return ref Unsafe.AsRef<TValue>(this._ptr);
     }
@@ -216,11 +217,9 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void ValidateOperation(Boolean isReadOnly = false)
     {
-        if (this.IsFunction)
-            throw new InvalidOperationException("The current instance is a function.");
-        this.ThrowIfInvalid();
-        if (!isReadOnly && this._isReadOnly)
-            throw new InvalidOperationException("The current instance is read-only.");
+        ValidationUtilities.ThrowIfFunctionPointer(this.IsFunction);
+        ValidationUtilities.ThrowIfInvalidPointer(this._isValid);
+        ValidationUtilities.ThrowIfReadOnlyPointer(isReadOnly, this._isReadOnly);
     }
 
     /// <summary>
@@ -242,11 +241,7 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
     /// <typeparam name="TValue">Type of the referenced value.</typeparam>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void ValidateReferenceSize<TValue>() where TValue : unmanaged
-    {
-        Int32 sizeofT = sizeof(TValue);
-        if (this._binaryLength < sizeofT)
-            throw new InsufficientMemoryException($"The current instance is insufficent to contain a value of {typeof(TValue)} type.");
-    }
+        => ValidationUtilities.ThrowIfInvalidRefTypePointer<TValue>(this._binaryLength);
 
     /// <summary>
     /// Validates any operation over the fixed function pointer.
@@ -254,19 +249,8 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void ValidateFunctionOperation()
     {
-        if (!this.IsFunction)
-            throw new InvalidOperationException("The current instance is not a function.");
-        this.ThrowIfInvalid();
-    }
-
-    /// <summary>
-    /// Throws an exception if current instance is invalid.
-    /// </summary>
-    /// <exception cref="InvalidOperationException"/>
-    private void ThrowIfInvalid()
-    {
-        if (!this._isValid.Value)
-            throw new InvalidOperationException("The current instance is not valid.");
+        ValidationUtilities.ThrowIfNotFunctionPointer(this.IsFunction);
+        ValidationUtilities.ThrowIfInvalidPointer(this._isValid);
     }
 
     /// <summary>

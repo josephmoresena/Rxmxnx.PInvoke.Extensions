@@ -28,8 +28,7 @@ internal readonly struct FixedMemoryListValue : IEnumerableSequence<FixedMemory>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
-            if (index < 0 || index >= this.Count)
-                throw new ArgumentOutOfRangeException(nameof(index), "Index was outside the bounds of the list.");
+            ValidationUtilities.ThrowIfInvalidListIndex(index, this.Count, nameof(index));
             return this._memories![index];
         }
     }

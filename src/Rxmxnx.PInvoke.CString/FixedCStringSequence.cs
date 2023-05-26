@@ -40,8 +40,7 @@ public unsafe readonly ref struct FixedCStringSequence
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
-            if (index < 0 || index >= this.Values.Count)
-                throw new ArgumentOutOfRangeException(nameof(index), "Index was outside the bounds of the sequence.");
+            ValidationUtilities.ThrowIfInvalidSequenceIndex(index, this.Values.Count);
             return this.GetFixedCString(index);
         }
     }

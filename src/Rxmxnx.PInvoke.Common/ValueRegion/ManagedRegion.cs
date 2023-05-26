@@ -29,7 +29,7 @@ public partial class ValueRegion<T>
         /// <inheritdoc/>
         public override ValueRegion<T> Slice(Int32 startIndex, Int32 length)
         {
-            ThrowSubregionArgumentOutOfRange(this._array.Length, startIndex, length);
+            ValidationUtilities.ThrowIfInvalidSubregion(this._array.Length, startIndex, length);
             return this.InternalSlice(startIndex, length);
         }
 

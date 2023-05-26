@@ -23,12 +23,10 @@ internal sealed class SequenceEnumerator<T> : IEnumerator, IEnumerator<T>
     /// <inheritdoc/>
     public T Current
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
-            if (this._index < 0)
-                throw new InvalidOperationException("Enumeration has not started. Call MoveNext.");
-            if (this._index >= this._instance.GetSize())
-                throw new InvalidOperationException("Enumeration already finished.");
+            ValidationUtilities.ThrowIfInvalidIndexEnumerator(this._index, this._instance.GetSize());
             return this._current;
         }
     }
@@ -39,6 +37,7 @@ internal sealed class SequenceEnumerator<T> : IEnumerator, IEnumerator<T>
     /// Constructor.
     /// </summary>
     /// <param name="instance"><see cref="IEnumerableSequence{T}"/> instance.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public SequenceEnumerator(IEnumerableSequence<T> instance)
     {
         this._instance = instance;

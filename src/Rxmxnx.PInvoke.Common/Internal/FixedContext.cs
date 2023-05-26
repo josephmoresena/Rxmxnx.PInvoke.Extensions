@@ -118,7 +118,7 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
     /// <param name="fmem">A <see cref="IReadOnlyFixedMemory"/> instance.</param>
     /// <returns>A new a <see cref="FixedContext{Byte}"/> instance.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe static FixedContext<Byte> CreateBinaryContext(IReadOnlyFixedMemory fmem)
+    public static unsafe FixedContext<Byte> CreateBinaryContext(IReadOnlyFixedMemory fmem)
     {
         if (fmem is FixedMemory mem)
             return new(mem);

@@ -48,7 +48,7 @@ public static partial class BinaryExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ref readonly T AsValue<T>(this ReadOnlySpan<Byte> span) where T : unmanaged
     {
-        ThrowIfInvalidSize<T>(span.Length, nameof(span));
+        ValidationUtilities.ThrowIfInvalidBinarySpanSize<T>(span);
         return ref MemoryMarshal.Cast<Byte, T>(span)[0];
     }
 
@@ -61,7 +61,7 @@ public static partial class BinaryExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ref T AsValue<T>(this Span<Byte> span) where T : unmanaged
     {
-        ThrowIfInvalidSize<T>(span.Length, nameof(span));
+        ValidationUtilities.ThrowIfInvalidBinarySpanSize<T>(span);
         return ref MemoryMarshal.Cast<Byte, T>(span)[0];
     }
 
@@ -80,20 +80,5 @@ public static partial class BinaryExtensions
     /// <returns><see cref="String"/> representation of hexadecimal value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static String AsHexString(this Byte value) => value.ToString("X2").ToLower();
-
-    /// <summary>
-    /// Validates the <paramref name="length"/> in order to read exactly one <typeparamref name="T"/> value.
-    /// </summary>
-    /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <param name="length">Length of a binary span.</param>
-    /// <param name="spanName">Name of the span.</param>
-    /// <exception cref="ArgumentException"/>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static unsafe void ThrowIfInvalidSize<T>(Int32 length, String spanName) where T : unmanaged
-    {
-        Int32 typeSize = sizeof(T);
-        if (length != typeSize)
-            throw new InsufficientMemoryException($"The length of parameter {spanName} must be equals to {typeSize}.");
-    }
 }
 

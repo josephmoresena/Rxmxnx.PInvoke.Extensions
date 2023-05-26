@@ -15,8 +15,7 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
-            if (index < 0 || index >= this._lengths.Length)
-                throw new ArgumentOutOfRangeException(nameof(index), "Index was outside the bounds of the sequence.");
+            ValidationUtilities.ThrowIfInvalidSequenceIndex(index, this._lengths.Length);
 
             if (!this._lengths[index].HasValue)
                 return CString.Zero;
@@ -66,7 +65,7 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public CStringSequence Slice(Int32 startIndex, Int32 length)
     {
-        this.ThrowSubsequenceArgumentOutOfRange(startIndex, length);
+        ValidationUtilities.ThrowIfInvalidSubsequence(this._lengths.Length, startIndex, length);
 
         if (length == 0)
             return empty;
@@ -97,29 +96,6 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
     }
 
     CString IEnumerableSequence<CString>.GetItem(Int32 index) => this[index];
-
-    /// <summary>
-    /// Validates the input of the subsequence function.
-    /// </summary>
-    /// <param name="startIndex">
-    /// The zero-based starting UTF-8 string position of a subsequence in this instance.
-    /// </param>
-    /// <param name="length">The number of UTF-8 strings in the subsequence.</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void ThrowSubsequenceArgumentOutOfRange(Int32 startIndex, Int32 length)
-    {
-        if (startIndex < 0)
-            throw new ArgumentOutOfRangeException(nameof(startIndex), "StartIndex cannot be less than zero.");
-
-        if (startIndex > this._lengths.Length)
-            throw new ArgumentOutOfRangeException(nameof(startIndex), $"{nameof(startIndex)} cannot be larger than length of sequence.");
-
-        if (length < 0)
-            throw new ArgumentOutOfRangeException(nameof(length), "Length cannot be less than zero.");
-
-        if (startIndex > this._lengths.Length - length)
-            throw new ArgumentOutOfRangeException(nameof(length), "Index and length must refer to a location within the sequence.");
-    }
 
     /// <summary>
     /// Helper class for subsequences creation.

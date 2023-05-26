@@ -46,17 +46,17 @@ public static partial class NativeUtilities
     }
 
     /// <summary>
-    /// Gets the <typeparamref name="T"/> delegate of an exported symbol.
+    /// Gets the <typeparamref name="TDelegate"/> delegate of an exported symbol.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TDelegate"></typeparam>
     /// <param name="handle">The native library OS handle.</param>
     /// <param name="name">The name of the exported symbol.</param>
-    /// <returns><typeparamref name="T"/> delegate.</returns>
+    /// <returns><typeparamref name="TDelegate"/> delegate.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T? GetNativeMethod<T>(IntPtr handle, String name) where T : Delegate
+    public static TDelegate? GetNativeMethod<TDelegate>(IntPtr handle, String name) where TDelegate : Delegate
     {
-        if (!handle.IsZero() && NativeLibrary.TryGetExport(handle, name ?? String.Empty, out IntPtr address))
-            return address.AsDelegate<T>();
+        if (handle != IntPtr.Zero && NativeLibrary.TryGetExport(handle, name ?? String.Empty, out IntPtr address))
+            return Marshal.GetDelegateForFunctionPointer<TDelegate>(handle);
         return default;
     }
 
@@ -68,10 +68,10 @@ public static partial class NativeUtilities
     /// <param name="value">A read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</param>
     /// <returns><see cref="IntPtr"/> pointer.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe IntPtr GetIntPtr<T>(in T value) where T : unmanaged
+    public static unsafe IntPtr GetUnsafeIntPtr<T>(in T value) where T : unmanaged
     {
         ref T refValue = ref Unsafe.AsRef(value);
-        return refValue.GetIntPtr();
+        return (IntPtr)Unsafe.AsPointer(ref refValue);
     }
 
     /// <summary>
@@ -82,10 +82,10 @@ public static partial class NativeUtilities
     /// <param name="value">Read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</param>
     /// <returns><see cref="UIntPtr"/> pointer.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe UIntPtr GetUIntPtr<T>(in T value) where T : unmanaged
+    public static unsafe UIntPtr GetUnsafeUIntPtr<T>(in T value) where T : unmanaged
     {
         ref T refValue = ref Unsafe.AsRef(value);
-        return refValue.GetUIntPtr();
+        return (UIntPtr)Unsafe.AsPointer(ref refValue);
     }
 
     /// <summary>
@@ -102,8 +102,9 @@ public static partial class NativeUtilities
         where TSource : unmanaged
         where TDestination : unmanaged
     {
+        ValidationUtilities.ThrowIfInvalidCastType<TSource, TDestination>();
         ref TSource refValue = ref Unsafe.AsRef(value);
-        return ref refValue.AsReferenceOf<TSource, TDestination>();
+        return ref Unsafe.As<TSource, TDestination>(ref refValue);
     }
 
     /// <summary>
@@ -135,7 +136,8 @@ public static partial class NativeUtilities
     public static ReadOnlySpan<Byte> AsBytes<TSource>(in TSource value) where TSource : unmanaged
     {
         ref TSource refValue = ref Unsafe.AsRef(value);
-        return refValue.AsBytes();
+        Span<TSource> span = MemoryMarshal.CreateSpan(ref refValue, 1);
+        return MemoryMarshal.AsBytes(span);
     }
 
     /// <summary>
@@ -170,11 +172,7 @@ public static partial class NativeUtilities
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void CopyBytes<T>(in T value, Span<Byte> destination, Int32 offset = 0) where T : unmanaged
     {
-        ref T refValue = ref Unsafe.AsRef(value);
-        ReadOnlySpan<T> intermediateSpan = MemoryMarshal.CreateReadOnlySpan(ref refValue, 1);
-        ReadOnlySpan<Byte> bytes = MemoryMarshal.AsBytes(intermediateSpan);
-        if (destination.Length - offset < bytes.Length)
-            throw new ArgumentException($"Insufficient available size on {nameof(destination)} to copy {nameof(value)}.");
+        ValidationUtilities.ThrowIfInvalidCopyType<T>(value, destination, offset, out ReadOnlySpan<Byte> bytes);
         bytes.CopyTo(destination[offset..]);
     }
 

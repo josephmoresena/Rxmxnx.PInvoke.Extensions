@@ -60,7 +60,7 @@ public static partial class PointerExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe String? AsString(this IntPtr ptr, Int32 length = 0)
     {
-        ThowIfInvalidLength(length, nameof(length));
+        ValidationUtilities.ThrowIfInvalidMemoryLength(length);
         if (ptr.IsZero())
             return default;
         return GetStringFromCharPointer((Char*)ptr.ToPointer(), length);
@@ -83,10 +83,54 @@ public static partial class PointerExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe String? AsString(this UIntPtr uptr, Int32 length = 0)
     {
-        ThowIfInvalidLength(length, nameof(length));
+        ValidationUtilities.ThrowIfInvalidMemoryLength(length);
         if (uptr.IsZero())
             return default;
         return GetStringFromCharPointer((Char*)uptr.ToPointer(), length);
+    }
+
+    /// <summary>
+    /// Creates a <see cref="Span{T}"/> instance from <see cref="IntPtr"/> pointer.
+    /// </summary>
+    /// <typeparam name="T">
+    /// <see cref="ValueType"/> of <see langword="unmanaged"/> values contened into the contiguous region of memory.
+    /// </typeparam>
+    /// <param name="ptr"><see cref="IntPtr"/> pointer.</param>
+    /// <param name="length">
+    /// Number of <typeparamref name="T"/> <see langword="unmanaged"/> values to retrive form the contiguous region of memory.
+    /// </param>
+    /// <returns><see cref="ReadOnlySpan{T}"/> instance.</returns>
+    /// <exception cref="ArgumentException"/>
+    /// <exception cref="ArgumentOutOfRangeException"/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe Span<T> AsSpan<T>(this IntPtr ptr, Int32 length) where T : unmanaged
+    {
+        ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+        if (ptr.IsZero())
+            return default;
+        return new(ptr.ToPointer(), length);
+    }
+
+    /// <summary>
+    /// Creates a <see cref="Span{T}"/> instance from <see cref="UIntPtr"/> pointer.
+    /// </summary>
+    /// <typeparam name="T">
+    /// <see cref="ValueType"/> of <see langword="unmanaged"/> values contened into the contiguous region of memory.
+    /// </typeparam>
+    /// <param name="uptr"><see cref="UIntPtr"/> pointer.</param>
+    /// <param name="length">
+    /// Number of <typeparamref name="T"/> <see langword="unmanaged"/> values to retrive form the contiguous region of memory.
+    /// </param>
+    /// <returns><see cref="ReadOnlySpan{T}"/> instance.</returns>
+    /// <exception cref="ArgumentException"/>
+    /// <exception cref="ArgumentOutOfRangeException"/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe Span<T> AsSpan<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
+    {
+        ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+        if (uptr.IsZero())
+            return default;
+        return new(uptr.ToPointer(), length);
     }
 
     /// <summary>
@@ -105,10 +149,10 @@ public static partial class PointerExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe ReadOnlySpan<T> AsReadOnlySpan<T>(this IntPtr ptr, Int32 length) where T : unmanaged
     {
-        ThowIfInvalidLength(length, nameof(length));
+        ValidationUtilities.ThrowIfInvalidMemoryLength(length);
         if (ptr.IsZero())
             return default;
-        return GetReadOnlySpanFromPointer<T>(ptr.ToPointer(), length);
+        return new(ptr.ToPointer(), length);
     }
 
     /// <summary>
@@ -127,10 +171,10 @@ public static partial class PointerExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe ReadOnlySpan<T> AsReadOnlySpan<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
     {
-        ThowIfInvalidLength(length, nameof(length));
+        ValidationUtilities.ThrowIfInvalidMemoryLength(length);
         if (uptr.IsZero())
             return default;
-        return GetReadOnlySpanFromPointer<T>(uptr.ToPointer(), length);
+        return new(uptr.ToPointer(), length);
     }
 
     /// <summary>
@@ -176,17 +220,26 @@ public static partial class PointerExtensions
         => ref Unsafe.AsRef<T>(uptr.ToPointer());
 
     /// <summary>
-    /// Validates an memory length parameter.
+    /// Creates a read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value from 
+    /// a <see cref="IntPtr"/> pointer.
     /// </summary>
-    /// <param name="length">Memory length value.</param>
-    /// <param name="lengthParameterName">Name of the memory length parameter.</param>
-    /// <exception cref="ArgumentException"/>
+    /// <typeparam name="T"><see cref="ValueType"/> of the <see langword="unmanaged"/> referenced value.</typeparam>
+    /// <param name="ptr"><see cref="IntPtr"/> pointer.</param>
+    /// <returns>Read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void ThowIfInvalidLength(Int32 length, String lengthParameterName)
-    {
-        if (length < 0)
-            throw new ArgumentException($"The parameter {lengthParameterName} must be zero or positive integer.");
-    }
+    public static unsafe ref readonly T AsReadOnlyReference<T>(this IntPtr ptr) where T : unmanaged
+        => ref Unsafe.AsRef<T>(ptr.ToPointer());
+
+    /// <summary>
+    /// Creates a read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value from 
+    /// a <see cref="UIntPtr"/> pointer.
+    /// </summary>
+    /// <typeparam name="T"><see cref="ValueType"/> of the <see langword="unmanaged"/> referenced value.</typeparam>
+    /// <param name="uptr"><see cref="UIntPtr"/> pointer.</param>
+    /// <returns>Read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe ref readonly T AsReadOnlyReference<T>(this UIntPtr uptr) where T : unmanaged
+        => ref Unsafe.AsRef<T>(uptr.ToPointer());
 
     /// <summary>
     /// Creates a <see cref="String"/> instance taking a <see cref="Char"/> pointer as the UTF-16 text starting point.
@@ -204,21 +257,4 @@ public static partial class PointerExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static unsafe String GetStringFromCharPointer(Char* chrPtr, Int32 length)
         => length == default ? new String(chrPtr) : new ReadOnlySpan<Char>(chrPtr, length).ToString();
-
-    /// <summary>
-    /// Creates a <see cref="ReadOnlySpan{T}"/> instance from a native pointer.
-    /// </summary>
-    /// <typeparam name="T">
-    /// <see cref="ValueType"/> of <see langword="unmanaged"/> values contened into the contiguous region of memory.
-    /// </typeparam>
-    /// <param name="ptr">Native pointer.</param>
-    /// <param name="length">
-    /// Number of <typeparamref name="T"/> <see langword="unmanaged"/> values to retrive form the contiguous region of memory.
-    /// </param>
-    /// <returns><see cref="ReadOnlySpan{T}"/> instance.</returns>
-    /// <exception cref="ArgumentException"/>
-    /// <exception cref="ArgumentOutOfRangeException"/>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static unsafe ReadOnlySpan<T> GetReadOnlySpanFromPointer<T>(void* ptr, Int32 length) where T : unmanaged
-        => new(ptr, length);
 }

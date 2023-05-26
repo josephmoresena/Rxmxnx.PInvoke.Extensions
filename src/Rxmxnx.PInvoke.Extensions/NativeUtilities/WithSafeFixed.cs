@@ -10,7 +10,7 @@ public static partial class NativeUtilities
     /// <param name="value">A <typeparamref name="T"/> read-only reference.</param>
     /// <param name="action">A <see cref="ReadOnlyFixedReferenceAction{T}"/> delegate.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe static void WithSafeFixed<T>(in T value, ReadOnlyFixedReferenceAction<T> action)
+    public static unsafe void WithSafeFixed<T>(in T value, ReadOnlyFixedReferenceAction<T> action)
         where T : unmanaged
     {
         fixed (void* ptr = &value)
@@ -37,7 +37,7 @@ public static partial class NativeUtilities
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
     /// <param name="action">A <see cref="ReadOnlyFixedReferenceAction{T, TArg}"/> delegate.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe static void WithSafeFixed<T, TArg>(in T value, TArg arg, ReadOnlyFixedReferenceAction<T, TArg> action)
+    public static unsafe void WithSafeFixed<T, TArg>(in T value, TArg arg, ReadOnlyFixedReferenceAction<T, TArg> action)
         where T : unmanaged
     {
         fixed (void* ptr = &value)
@@ -64,7 +64,7 @@ public static partial class NativeUtilities
     /// <param name="func">A <see cref="ReadOnlyFixedReferenceFunc{T, TResult}"/> delegate.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe static TResult WithSafeFixed<T, TResult>(in T value, ReadOnlyFixedReferenceFunc<T, TResult> func)
+    public static unsafe TResult WithSafeFixed<T, TResult>(in T value, ReadOnlyFixedReferenceFunc<T, TResult> func)
         where T : unmanaged
     {
         fixed (void* ptr = &value)
@@ -93,7 +93,7 @@ public static partial class NativeUtilities
     /// <param name="func">A <see cref="ReadOnlyFixedReferenceFunc{T, TArg, TResult}"/> delegate.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe static TResult WithSafeFixed<T, TArg, TResult>(in T value, TArg arg, ReadOnlyFixedReferenceFunc<T, TArg, TResult> func)
+    public static unsafe TResult WithSafeFixed<T, TArg, TResult>(in T value, TArg arg, ReadOnlyFixedReferenceFunc<T, TArg, TResult> func)
         where T : unmanaged
     {
         fixed (void* ptr = &value)

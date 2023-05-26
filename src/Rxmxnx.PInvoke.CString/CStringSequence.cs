@@ -65,7 +65,6 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
     /// Returns a reference to this instance of <see cref="CStringSequence"/>.
     /// </summary>
     /// <returns>A new object that is a copy of this instance.</returns>
-    /// <exception cref="NotImplementedException"></exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Object Clone() => new CStringSequence(this);
 

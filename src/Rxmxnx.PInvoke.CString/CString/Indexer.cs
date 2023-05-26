@@ -54,7 +54,7 @@ public partial class CString : IEnumerableSequence<Byte>
     /// <exception cref="ArgumentOutOfRangeException"/>
     public CString Slice(Int32 startIndex, Int32 length)
     {
-        this.ThrowSubstringArgumentOutOfRange(startIndex, length);
+        ValidationUtilities.ThrowIfInvalidSubstring(this._length, startIndex, length);
         if (length == 0)
             return CString.Empty;
 
@@ -67,28 +67,4 @@ public partial class CString : IEnumerableSequence<Byte>
     Int32 IEnumerableSequence<Byte>.GetSize() => this._length;
 
     Byte IEnumerableSequence<Byte>.GetItem(Int32 index) => this[index];
-
-    /// <summary>
-    /// Validates the input of the substring function.
-    /// </summary>
-    /// <param name="startIndex">
-    /// The zero-based starting character position of a substring in this instance.
-    /// </param>
-    /// <param name="length">The number of characters in the substring.</param>
-    /// <exception cref="ArgumentOutOfRangeException"/>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void ThrowSubstringArgumentOutOfRange(Int32 startIndex, Int32 length)
-    {
-        if (startIndex < 0)
-            throw new ArgumentOutOfRangeException(nameof(startIndex), "StartIndex cannot be less than zero.");
-
-        if (startIndex > this._length)
-            throw new ArgumentOutOfRangeException(nameof(startIndex), $"{nameof(startIndex)} cannot be larger than length of string.");
-
-        if (length < 0)
-            throw new ArgumentOutOfRangeException(nameof(length), "Length cannot be less than zero.");
-
-        if (startIndex > this._length - length)
-            throw new ArgumentOutOfRangeException(nameof(length), "Index and length must refer to a location within the string.");
-    }
 }

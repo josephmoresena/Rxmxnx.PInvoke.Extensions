@@ -4,8 +4,15 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 {
     /// <inheritdoc/>
     public Int32 CompareTo(Object? other)
-        => other is null ? 1 : other is String str ? this.CompareTo(str) : other is CString cstr ? this.CompareTo(cstr) :
-        throw new ArgumentException("Object must be of type CString.", nameof(other));
+    {
+        if (other is null)
+            return 1;
+        else if (other is String str)
+            return this.CompareTo(str);
+
+        ValidationUtilities.ThrowIfInvalidCastType<CString>(other, nameof(CString), out CString cstr);
+        return this.CompareTo(cstr);
+    }
 
     /// <inheritdoc/>
     public Int32 CompareTo(String? other) => other is null ? 1 : StringUtf8Comparator.Create().Compare(this, other);

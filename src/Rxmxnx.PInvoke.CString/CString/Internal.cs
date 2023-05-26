@@ -20,10 +20,8 @@ public partial class CString
     internal static Byte[] GetBytes(CString value)
     {
         ArgumentNullException.ThrowIfNull(value);
-        if ((Byte[]?)value._data is Byte[] array)
-            return array;
-        else
-            throw new InvalidOperationException(nameof(value) + " does not contains the UTF-8 text.");
+        ValidationUtilities.ThrowIfInvalidUtf8Region(value._data, nameof(value), out Byte[] result);
+        return result;
     }
 
     /// <summary>
