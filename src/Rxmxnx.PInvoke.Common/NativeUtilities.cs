@@ -20,7 +20,7 @@ public static partial class NativeUtilities
     /// <param name="searchPath">The search path.</param>
     /// <returns>The OS handle for the loaded native library.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IntPtr? LoadNativeLib(String libraryName, DllImportSearchPath? searchPath = default)
+    public static IntPtr? LoadNativeLib(String? libraryName, DllImportSearchPath? searchPath = default)
     {
         if (NativeLibrary.TryLoad(libraryName ?? String.Empty, Assembly.GetExecutingAssembly(), searchPath, out IntPtr handle))
             return handle;
@@ -37,7 +37,7 @@ public static partial class NativeUtilities
     /// <param name="searchPath">The search path.</param>
     /// <returns>The OS handle for the loaded native library.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IntPtr? LoadNativeLib(String libraryName, ref EventHandler unloadEvent, DllImportSearchPath? searchPath = default)
+    public static IntPtr? LoadNativeLib(String? libraryName, ref EventHandler? unloadEvent, DllImportSearchPath? searchPath = default)
     {
         IntPtr? handle = LoadNativeLib(libraryName, searchPath);
         if (handle.HasValue)

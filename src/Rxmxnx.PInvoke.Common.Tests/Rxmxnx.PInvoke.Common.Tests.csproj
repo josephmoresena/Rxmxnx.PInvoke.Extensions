@@ -39,4 +39,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Rxmxnx.PInvoke.Common\Rxmxnx.PInvoke.Common.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="NativeUtilitiesTest\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="NativeUtilitiesTest\" />
+  </ItemGroup>
 </Project>
