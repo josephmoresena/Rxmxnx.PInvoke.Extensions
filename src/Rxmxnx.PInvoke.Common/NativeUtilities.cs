@@ -53,10 +53,10 @@ public static partial class NativeUtilities
     /// <param name="name">The name of the exported symbol.</param>
     /// <returns><typeparamref name="TDelegate"/> delegate.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static TDelegate? GetNativeMethod<TDelegate>(IntPtr handle, String name) where TDelegate : Delegate
+    public static TDelegate? GetNativeMethod<TDelegate>(IntPtr handle, String? name) where TDelegate : Delegate
     {
         if (handle != IntPtr.Zero && NativeLibrary.TryGetExport(handle, name ?? String.Empty, out IntPtr address))
-            return Marshal.GetDelegateForFunctionPointer<TDelegate>(handle);
+            return Marshal.GetDelegateForFunctionPointer<TDelegate>(address);
         return default;
     }
 
