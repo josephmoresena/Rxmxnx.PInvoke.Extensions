@@ -98,7 +98,7 @@ public static partial class NativeUtilities
     /// <returns>A read-only reference to a <typeparamref name="TDestination"/> <see langword="unmanaged"/> value.</returns>
     /// <exception cref="InvalidOperationException"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ref readonly TDestination AsReferenceOf<TSource, TDestination>(in TSource value)
+    public static ref readonly TDestination Transform<TSource, TDestination>(in TSource value)
         where TSource : unmanaged
         where TDestination : unmanaged
     {

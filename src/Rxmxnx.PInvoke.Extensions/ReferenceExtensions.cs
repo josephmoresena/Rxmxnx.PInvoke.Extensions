@@ -44,7 +44,7 @@ public static partial class ReferenceExtensions
     /// <returns>A reference to a <typeparamref name="TDestination"/> <see langword="unmanaged"/> value.</returns>
     /// <exception cref="InvalidOperationException"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe ref TDestination AsReferenceOf<TSource, TDestination>(this ref TSource refValue)
+    public static unsafe ref TDestination Transform<TSource, TDestination>(this ref TSource refValue)
         where TSource : unmanaged
         where TDestination : unmanaged
     {
