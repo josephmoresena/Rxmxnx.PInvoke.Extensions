@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Rxmxnx.PInvoke.CString\Rxmxnx.PInvoke.CString.csproj" />
+    <ProjectReference Include="..\..\Intermediate\Rxmxnx.PInvoke.CString.Intermediate\Rxmxnx.PInvoke.CString.Intermediate.csproj" />
     <ProjectReference Include="..\Rxmxnx.PInvoke.CString.Tests.SourceGenerator\Rxmxnx.PInvoke.CString.Tests.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" SetTargetFramework="TargetFramework=netstandard2.0" />
   </ItemGroup>
 

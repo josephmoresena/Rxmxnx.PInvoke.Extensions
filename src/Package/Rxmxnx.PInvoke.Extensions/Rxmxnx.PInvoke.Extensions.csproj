@@ -18,14 +18,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Using Include="System.Diagnostics.CodeAnalysis" />
-    <Using Include="System.Runtime.CompilerServices" />
-    <Using Include="System.Runtime.InteropServices" />
-    <Using Include="System.Text" />
-
-    <Using Include="Rxmxnx.PInvoke.Internal" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
-  
+
+  <ItemGroup>
+    <Compile Include="..\..\Intermediate\Rxmxnx.PInvoke.Common.Intermediate\**\*.cs">
+        <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\Intermediate\Rxmxnx.PInvoke.CString.Intermediate\**\*.cs">
+        <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate\**\*.cs">
+        <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Remove="..\..\Intermediate\**\obj\**\*.*;..\..\Intermediate\**\bin\**\*.*" />
+    <Compile Include="..\..\Intermediate\**\*.GlobalUsings.g.cs"/>
+  </ItemGroup>
+
   <PropertyGroup>
     <Authors>Joseph Moreno</Authors>
     <Product>Rxmxnx.PInvoke.Extensions</Product>
@@ -40,22 +49,11 @@
     	ReadOnlySpan;Unsafe;Fixed;Native;FFI;Binary;u8;Literals
     </PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseExpression>LGPL</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Condition="'$(PublishPackage)' == ''" Include="..\Rxmxnx.PInvoke.Common\Rxmxnx.PInvoke.Common.csproj" />
-    <PackageReference Condition="'$(PublishPackage)' != ''" Include="Rxmxnx.PInvoke.Common" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-    <_Parameter1>Rxmxnx.PInvoke.Extensions.Tests</_Parameter1>
-    </AssemblyAttribute>
-  </ItemGroup>
 
 </Project>
