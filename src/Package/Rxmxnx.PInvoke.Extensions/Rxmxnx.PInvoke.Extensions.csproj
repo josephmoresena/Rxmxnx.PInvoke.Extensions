@@ -32,7 +32,7 @@
         <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
     <Compile Remove="..\..\Intermediate\**\obj\**\*.*;..\..\Intermediate\**\bin\**\*.*" />
-    <Compile Include="..\..\Intermediate\**\*.GlobalUsings.g.cs"/>
+    <Compile Include="..\..\Intermediate\**\*.GlobalUsings.g.cs" />
   </ItemGroup>
 
   <PropertyGroup>

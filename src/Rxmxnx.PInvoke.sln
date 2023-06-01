@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rxmxnx.PInvoke.CString.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rxmxnx.PInvoke.Extensions", "Package\Rxmxnx.PInvoke.Extensions\Rxmxnx.PInvoke.Extensions.csproj", "{533C4118-E3AD-49C8-AD80-FA189CCDF852}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rxmxnx.PInvoke.Extensions.Tests", "Test\Rxmxnx.PInvoke.Extensions.Tests\Rxmxnx.PInvoke.Extensions.Tests.csproj", "{C437B5BE-9FCA-4485-A4A1-A8C88068DA56}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{533C4118-E3AD-49C8-AD80-FA189CCDF852}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{533C4118-E3AD-49C8-AD80-FA189CCDF852}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{533C4118-E3AD-49C8-AD80-FA189CCDF852}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C437B5BE-9FCA-4485-A4A1-A8C88068DA56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C437B5BE-9FCA-4485-A4A1-A8C88068DA56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C437B5BE-9FCA-4485-A4A1-A8C88068DA56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C437B5BE-9FCA-4485-A4A1-A8C88068DA56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

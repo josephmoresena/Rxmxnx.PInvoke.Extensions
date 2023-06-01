@@ -1,4 +1,4 @@
-﻿namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTest;
+﻿namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
 
 [ExcludeFromCodeCoverage]
 public sealed class TransformTest

@@ -36,7 +36,7 @@ public static partial class BinaryExtensions
         Int32 bytesToCopy = Math.Min(result.Length, span.Length);
 
         span[..bytesToCopy].CopyTo(result);
-        return MemoryMarshal.Read<T>(span);
+        return MemoryMarshal.Read<T>(result);
     }
 
     /// <summary>

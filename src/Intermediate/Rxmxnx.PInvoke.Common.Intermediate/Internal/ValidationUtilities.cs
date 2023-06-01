@@ -109,13 +109,17 @@ public static class ValidationUtilities
     /// <param name="span">Binary span.</param>
     /// <param name="nameofSpan">Name of the span.</param>
     /// <exception cref="InsufficientMemoryException"/>
+    /// <exception cref="InvalidCastException"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void ThrowIfInvalidBinarySpanSize<TValue>(ReadOnlySpan<Byte> span, [CallerArgumentExpression(nameof(span))] String nameofSpan = emptyString)
         where TValue : unmanaged
     {
         Int32 typeSize = sizeof(TValue);
-        if (span.Length != typeSize)
-            throw new InsufficientMemoryException($"The length of parameter {nameofSpan} must be equals to {typeSize}.");
+        String message = $"The length of parameter {nameofSpan} must be equals to {typeSize}.";
+        if (span.Length < typeSize)
+            throw new InsufficientMemoryException(message);
+        else if (span.Length > typeSize)
+            throw new InvalidCastException(message);
     }
 
     /// <summary>
