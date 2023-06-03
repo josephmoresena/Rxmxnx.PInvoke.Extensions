@@ -44,7 +44,7 @@ public sealed class GetSpanTest
 
         T[] input = fixture.CreateMany<T>(10).ToArray();
 
-        fixed(void* p = &MemoryMarshal.GetReference(input.AsSpan()))
+        fixed (void* p = &MemoryMarshal.GetReference(input.AsSpan()))
         {
             IntPtr intPtr = (IntPtr)p;
             UIntPtr uintPtr = (UIntPtr)p;

@@ -42,7 +42,7 @@ public sealed class GetPointerTest
         Span<T> span = values;
         ReadOnlySpan<T> readOnlySpan = span;
 
-        fixed(void* ptr = &MemoryMarshal.GetReference(readOnlySpan))
+        fixed (void* ptr = &MemoryMarshal.GetReference(readOnlySpan))
         {
             IntPtr intPtr = (IntPtr)ptr;
             UIntPtr uintPtr = (UIntPtr)ptr;

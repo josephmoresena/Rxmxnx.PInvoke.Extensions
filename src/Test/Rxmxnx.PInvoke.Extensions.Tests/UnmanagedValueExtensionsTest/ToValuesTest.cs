@@ -67,7 +67,7 @@ public sealed class ToValuesTest
         Byte[] resiudalBytes = spanResidual.ToArray();
 
         Assert.Equal(valuesT2, values.ToValues<T, T2>());
-        Assert.Equal(valuesT2, values.ToValues<T, T2>(out Byte[] residual));
+        Assert.Equal(valuesT2, values.ToValues<T, T2>(out Byte[] residual));
         Assert.Equal(resiudalBytes, residual);
 
         Assert.Equal(Array.Empty<T2>(), Array.Empty<T>().ToValues<T, T2>());

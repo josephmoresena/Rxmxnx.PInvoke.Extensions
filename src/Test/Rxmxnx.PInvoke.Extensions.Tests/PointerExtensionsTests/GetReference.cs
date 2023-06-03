@@ -40,7 +40,7 @@ public sealed class GetReference
     {
         T value = fixture.Create<T>();
         ref T refValue = ref value;
-        fixed(void* p = &refValue)
+        fixed (void* p = &refValue)
         {
             IntPtr intPtr = (IntPtr)p;
             UIntPtr uintPtr = (UIntPtr)p;

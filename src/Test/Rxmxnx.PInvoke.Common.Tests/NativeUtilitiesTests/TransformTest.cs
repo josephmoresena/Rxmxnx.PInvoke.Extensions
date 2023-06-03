@@ -79,7 +79,7 @@ public sealed class TransformTest
                 Assert.Equal(bytes1.ToArray(), bytes2.ToArray());
             }
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Assert.IsType<InvalidOperationException>(ex);
             Assert.NotEqual(sizeof(T), sizeof(T2));
