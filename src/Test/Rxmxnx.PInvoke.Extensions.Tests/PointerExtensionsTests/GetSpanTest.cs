@@ -53,27 +53,33 @@ public sealed class GetSpanTest
             Assert.Equal(input, intPtr.GetReadOnlySpan<T>(input.Length).ToArray());
             Assert.Equal(input, uintPtr.GetSpan<T>(input.Length).ToArray());
             Assert.Equal(input, uintPtr.GetReadOnlySpan<T>(input.Length).ToArray());
+
+            Assert.Equal(input, intPtr.GetArray<T>(input.Length));
+            Assert.Equal(input, uintPtr.GetArray<T>(input.Length));
         }
     }
     private static void EmptyTest<T>(Int32 length) where T : unmanaged
     {
         if (length >= 0)
         {
-            Span<Byte> result = IntPtr.Zero.GetSpan<Byte>(length);
-            ReadOnlySpan<Byte> result2 = IntPtr.Zero.GetReadOnlySpan<Byte>(length);
-            Span<Byte> result3 = UIntPtr.Zero.GetSpan<Byte>(length);
-            ReadOnlySpan<Byte> result4 = UIntPtr.Zero.GetReadOnlySpan<Byte>(length);
+            Span<T> result = IntPtr.Zero.GetSpan<T>(length);
+            ReadOnlySpan<T> result2 = IntPtr.Zero.GetReadOnlySpan<T>(length);
+            Span<T> result3 = UIntPtr.Zero.GetSpan<T>(length);
+            ReadOnlySpan<T> result4 = UIntPtr.Zero.GetReadOnlySpan<T>(length);
             Assert.True(result.IsEmpty);
             Assert.True(result2.IsEmpty);
             Assert.True(result3.IsEmpty);
             Assert.True(result4.IsEmpty);
+
+            Assert.Null(IntPtr.Zero.GetArray<T>(length));
+            Assert.Null(UIntPtr.Zero.GetArray<T>(length));
         }
         else
         {
-            Assert.Throws<ArgumentException>(() => IntPtr.Zero.GetSpan<Byte>(length));
-            Assert.Throws<ArgumentException>(() => IntPtr.Zero.GetReadOnlySpan<Byte>(length));
-            Assert.Throws<ArgumentException>(() => UIntPtr.Zero.GetSpan<Byte>(length));
-            Assert.Throws<ArgumentException>(() => UIntPtr.Zero.GetReadOnlySpan<Byte>(length));
+            Assert.Throws<ArgumentException>(() => IntPtr.Zero.GetSpan<T>(length));
+            Assert.Throws<ArgumentException>(() => IntPtr.Zero.GetReadOnlySpan<T>(length));
+            Assert.Throws<ArgumentException>(() => UIntPtr.Zero.GetSpan<T>(length));
+            Assert.Throws<ArgumentException>(() => UIntPtr.Zero.GetReadOnlySpan<T>(length));
         }
     }
 }

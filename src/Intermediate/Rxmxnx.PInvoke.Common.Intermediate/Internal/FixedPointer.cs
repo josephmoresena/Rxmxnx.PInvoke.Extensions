@@ -43,7 +43,7 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
     /// </summary>
     public Boolean IsReadOnly => this._isReadOnly;
 
-    IntPtr IFixedPointer.Pointer => new(this._ptr);
+    IntPtr IFixedPointer.Pointer => new IntPtr(this._ptr) + this.BinaryOffset;
 
     /// <summary>
     /// Constructor.

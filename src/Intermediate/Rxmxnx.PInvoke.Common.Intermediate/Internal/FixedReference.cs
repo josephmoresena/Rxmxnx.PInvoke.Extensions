@@ -48,7 +48,7 @@ internal unsafe sealed class FixedReference<T> : FixedMemory, IFixedReference<T>
     }
     IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
     {
-        IReadOnlyFixedReference<TDestination> result = this.GetTransformation<TDestination>(out FixedOffset fixedOffset);
+        IReadOnlyFixedReference<TDestination> result = this.GetTransformation<TDestination>(out FixedOffset fixedOffset, true);
         residual = fixedOffset;
         return result;
     }

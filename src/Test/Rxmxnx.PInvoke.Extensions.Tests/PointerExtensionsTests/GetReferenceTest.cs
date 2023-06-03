@@ -1,7 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
 
 [ExcludeFromCodeCoverage]
-public sealed class GetReference
+public sealed class GetReferenceTest
 {
     private static readonly IFixture fixture = new Fixture();
 
@@ -54,11 +54,16 @@ public sealed class GetReference
             Assert.Equal(value, refValue2);
             Assert.Equal(value, refReadOnlyValue1);
             Assert.Equal(value, refReadOnlyValue2);
+            Assert.Equal(value, intPtr.GetValue<T>());
+            Assert.Equal(value, uintPtr.GetValue<T>());
 
             Assert.True(Unsafe.AreSame(ref refValue, ref refValue1));
             Assert.True(Unsafe.AreSame(ref refValue, ref refValue2));
             Assert.True(Unsafe.AreSame(ref refValue, ref Unsafe.AsRef(refReadOnlyValue1)));
             Assert.True(Unsafe.AreSame(ref refValue, ref Unsafe.AsRef(refReadOnlyValue2)));
+
+            Assert.Null(IntPtr.Zero.GetValue<T>());
+            Assert.Null(UIntPtr.Zero.GetValue<T>());
         }
     }
 }

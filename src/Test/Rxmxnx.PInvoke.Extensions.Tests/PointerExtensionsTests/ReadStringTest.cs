@@ -1,7 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
 
 [ExcludeFromCodeCoverage]
-public sealed class GetString
+public sealed class ReadStringTest
 {
     private static readonly IFixture fixture = new Fixture();
 
@@ -13,13 +13,13 @@ public sealed class GetString
     {
         if (length >= 0)
         {
-            Assert.Null(IntPtr.Zero.GetString(length));
-            Assert.Null(UIntPtr.Zero.GetString(length));
+            Assert.Null(IntPtr.Zero.ReadString(length));
+            Assert.Null(UIntPtr.Zero.ReadString(length));
         }
         else
         {
-            Assert.Throws<ArgumentException>(() => IntPtr.Zero.GetString(length));
-            Assert.Throws<ArgumentException>(() => UIntPtr.Zero.GetString(length));
+            Assert.Throws<ArgumentException>(() => IntPtr.Zero.ReadString(length));
+            Assert.Throws<ArgumentException>(() => UIntPtr.Zero.ReadString(length));
         }
     }
 
@@ -34,8 +34,8 @@ public sealed class GetString
             IntPtr intPtr = (IntPtr)p;
             UIntPtr uintPtr = (UIntPtr)p;
 
-            Assert.Equal(input, intPtr.GetString(fixedLength ? input.Length : default));
-            Assert.Equal(input, uintPtr.GetString(fixedLength ? input.Length : default));
+            Assert.Equal(input, intPtr.ReadString(fixedLength ? input.Length : default));
+            Assert.Equal(input, uintPtr.ReadString(fixedLength ? input.Length : default));
         }
     }
 }
