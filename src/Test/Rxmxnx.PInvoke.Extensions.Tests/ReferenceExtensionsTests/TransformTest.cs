@@ -1,10 +1,12 @@
-﻿namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
+﻿namespace Rxmxnx.PInvoke.Tests.ReferenceExtensionsTests;
 
 [ExcludeFromCodeCoverage]
 public sealed class TransformTest
 {
-    private static readonly IFixture fixture = new Fixture();
+    private static IFixture fixture = new Fixture();
 
+    [Fact]
+    internal void BooleanTest() => Test<Boolean>();
     [Fact]
     internal void ByteTest() => Test<Byte>();
     [Fact]
@@ -40,31 +42,32 @@ public sealed class TransformTest
     {
         T value = fixture.Create<T>();
 
-        BinaryTest(value);
-        Test<T, Byte>(value);
-        Test<T, Char>(value);
-        Test<T, DateTime>(value);
-        Test<T, Decimal>(value);
-        Test<T, Double>(value);
-        Test<T, Guid>(value);
-        Test<T, Half>(value);
-        Test<T, Int16>(value);
-        Test<T, Int32>(value);
-        Test<T, Int64>(value);
-        Test<T, SByte>(value);
-        Test<T, Single>(value);
-        Test<T, UInt16>(value);
-        Test<T, UInt32>(value);
-        Test<T, UInt64>(value);
+        BinaryTest(ref value);
+        Test<T, Boolean>(ref value);
+        Test<T, Byte>(ref value);
+        Test<T, Char>(ref value);
+        Test<T, DateTime>(ref value);
+        Test<T, Decimal>(ref value);
+        Test<T, Double>(ref value);
+        Test<T, Guid>(ref value);
+        Test<T, Half>(ref value);
+        Test<T, Int16>(ref value);
+        Test<T, Int32>(ref value);
+        Test<T, Int64>(ref value);
+        Test<T, SByte>(ref value);
+        Test<T, Single>(ref value);
+        Test<T, UInt16>(ref value);
+        Test<T, UInt32>(ref value);
+        Test<T, UInt64>(ref value);
     }
 
-    private static unsafe void Test<T, T2>(in T refValue)
+    private static unsafe void Test<T, T2>(ref T refValue)
         where T : unmanaged
         where T2 : unmanaged
     {
         try
         {
-            ref readonly T2 refValue2 = ref NativeUtilities.Transform<T, T2>(refValue);
+            ref T2 refValue2 = ref refValue.Transform<T, T2>();
             Assert.Equal(sizeof(T), sizeof(T2));
             fixed (void* ptr1 = &refValue)
             fixed (void* ptr2 = &refValue2)
@@ -74,25 +77,24 @@ public sealed class TransformTest
                 Assert.Equal((Object)refValue, refValue2);
             else
             {
-                ReadOnlySpan<Byte> bytes1 = MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(refValue), 1));
-                ReadOnlySpan<Byte> bytes2 = MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(refValue2), 1));
+                Span<Byte> bytes1 = refValue.AsBytes();
+                Span<Byte> bytes2 = refValue2.AsBytes();
                 Assert.Equal(bytes1.ToArray(), bytes2.ToArray());
             }
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Assert.IsType<InvalidOperationException>(ex);
             Assert.NotEqual(sizeof(T), sizeof(T2));
         }
     }
 
-    private static unsafe void BinaryTest<T>(in T refValue) where T : unmanaged
+    private static unsafe void BinaryTest<T>(ref T refValue) where T : unmanaged
     {
         Byte[] bytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(refValue), 1)).ToArray();
-        ReadOnlySpan<Byte> span = NativeUtilities.AsBytes(refValue);
-        ReadOnlySpan<T> spanT = MemoryMarshal.Cast<Byte, T>(span);
+        Span<Byte> span = refValue.AsBytes();
+        Span<T> spanT = MemoryMarshal.Cast<Byte, T>(span);
 
-        Assert.Equal(bytes, NativeUtilities.ToBytes(refValue));
         Assert.Equal(bytes, span.ToArray());
         Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(refValue), ref Unsafe.AsRef(spanT[0])));
     }

@@ -6,26 +6,25 @@
 public static partial class DelegateExtensions
 {
     /// <summary>
-    /// Creates a <see cref="IntPtr"/> pointer from a memory reference to a <typeparamref name="T"/> delegate.
+    /// Creates a <see cref="IntPtr"/> pointer from a memory reference to a <typeparamref name="TDelegate"/> delegate.
     /// </summary>
-    /// <typeparam name="T">Type of the <see cref="Delegate"/> referenced into the pointer.</typeparam>
-    /// <param name="delegateInstance"><typeparamref name="T"/> delegate.</param>
+    /// <typeparam name="TDelegate">Type of the <see cref="Delegate"/> referenced into the pointer.</typeparam>
+    /// <param name="delegateInstance"><typeparamref name="TDelegate"/> delegate.</param>
     /// <returns><see cref="IntPtr"/> pointer.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IntPtr AsIntPtr<T>(this T delegateInstance) where T : Delegate
+    public static IntPtr GetUnsafeIntPtr<TDelegate>(this TDelegate? delegateInstance) where TDelegate : Delegate
         => delegateInstance is null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(delegateInstance);
 
     /// <summary>
-    /// Creates a <see cref="UIntPtr"/> pointer from a memory reference to a <typeparamref name="T"/> delegate.
+    /// Creates a <see cref="UIntPtr"/> pointer from a memory reference to a <typeparamref name="TDelegate"/> delegate.
     /// </summary>
-    /// <typeparam name="T">Type of the <see cref="Delegate"/> referenced into the pointer.</typeparam>
-    /// <param name="delegateInstance"><typeparamref name="T"/> delegate.</param>
+    /// <typeparam name="TDelegate">Type of the <see cref="Delegate"/> referenced into the pointer.</typeparam>
+    /// <param name="delegateInstance"><typeparamref name="TDelegate"/> delegate.</param>
     /// <returns><see cref="UIntPtr"/> pointer.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static UIntPtr AsUIntPtr<T>(this T delegateInstance) where T : Delegate
+    public static unsafe UIntPtr GetUnsafeUIntPtr<TDelegate>(this TDelegate? delegateInstance) where TDelegate : Delegate
     {
-        IntPtr ptr = delegateInstance.AsIntPtr();
-        return Unsafe.As<IntPtr, UIntPtr>(ref ptr);
+        IntPtr ptr = delegateInstance.GetUnsafeIntPtr();
+        return (UIntPtr)ptr.ToPointer();
     }
 }
-

@@ -23,7 +23,7 @@ public static partial class UnmanagedValueExtensions
     /// <returns>A binary array.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(array))]
-    public static Byte[]? ToValues<TSource>(this TSource[]? array) where TSource : unmanaged
+    public static Byte[]? ToBytes<TSource>(this TSource[]? array) where TSource : unmanaged
     {
         if (array is null)
             return default;
