@@ -63,9 +63,21 @@ public sealed class ToValuesTest
         ReadOnlySpan<T2> spanT2 = MemoryMarshal.Cast<Byte, T2>(byteSpan);
         ReadOnlySpan<Byte> spanResidual = byteSpan[(spanT2.Length * sizeof(T2))..];
 
-        Assert.Equal(spanT2.ToArray(), values.ToValues<T, T2>());
-        Assert.Equal(spanT2.ToArray(), values.ToValues<T, T2>(out Byte[] residual));
-        Assert.Equal(spanResidual.ToArray(), residual);
+        T2[] valuesT2 = spanT2.ToArray();
+        Byte[] resiudalBytes = spanResidual.ToArray();
+
+        Assert.Equal(valuesT2, values.ToValues<T, T2>());
+        Assert.Equal(valuesT2, values.ToValues<T, T2>(out Byte[] residual));
+        Assert.Equal(resiudalBytes, residual);
+
+        Assert.Equal(Array.Empty<T2>(), Array.Empty<T>().ToValues<T, T2>());
+        Assert.Equal(Array.Empty<T2>(), Array.Empty<T>().ToValues<T, T2>(out Byte[] residualEmpty));
+        Assert.Equal(Array.Empty<Byte>(), residualEmpty);
+
+        T[]? nullValues = default;
+        Assert.Null(nullValues.ToValues<T, T2>());
+        Assert.Null(nullValues.ToValues<T, T2>(out Byte[]? residualNull));
+        Assert.Null(residualNull);
     }
 }
 

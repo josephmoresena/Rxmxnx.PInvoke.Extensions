@@ -16,9 +16,9 @@ public static partial class MemoryBlockExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe IntPtr GetIntPtr<T>(this Span<T> span) where T : unmanaged
     {
-        if (span.IsEmpty)
-            return IntPtr.Zero;
-        return (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(span));
+        ref T refValue = ref MemoryMarshal.GetReference(span);
+        void* ptr = Unsafe.AsPointer(ref refValue);
+        return (IntPtr)ptr;
     }
 
     /// <summary>
@@ -32,9 +32,9 @@ public static partial class MemoryBlockExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe IntPtr GetIntPtr<T>(this ReadOnlySpan<T> span) where T : unmanaged
     {
-        if (span.IsEmpty)
-            return IntPtr.Zero;
-        return (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(span));
+        ref T refValue = ref MemoryMarshal.GetReference(span);
+        void* ptr = Unsafe.AsPointer(ref refValue);
+        return (IntPtr)ptr;
     }
 
     /// <summary>
@@ -48,9 +48,9 @@ public static partial class MemoryBlockExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe UIntPtr GetUIntPtr<T>(this Span<T> span) where T : unmanaged
     {
-        if (span.IsEmpty)
-            return UIntPtr.Zero;
-        return (UIntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(span));
+        ref T refValue = ref MemoryMarshal.GetReference(span);
+        void* ptr = Unsafe.AsPointer(ref refValue);
+        return (UIntPtr)ptr;
     }
 
     /// <summary>
@@ -64,9 +64,9 @@ public static partial class MemoryBlockExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe UIntPtr GetUIntPtr<T>(this ReadOnlySpan<T> span) where T : unmanaged
     {
-        if (span.IsEmpty)
-            return UIntPtr.Zero;
-        return (UIntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(span));
+        ref T refValue = ref MemoryMarshal.GetReference(span);
+        void* ptr = Unsafe.AsPointer(ref refValue);
+        return (UIntPtr)ptr;
     }
 
     /// <summary>

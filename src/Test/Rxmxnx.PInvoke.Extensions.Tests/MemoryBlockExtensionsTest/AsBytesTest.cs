@@ -1,7 +1,7 @@
-﻿namespace Rxmxnx.PInvoke.Tests.UnmanagedValueExtensionsTest;
+﻿namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
 
 [ExcludeFromCodeCoverage]
-public sealed class ToBytesTest
+public sealed class AsBytesTest
 {
     private static readonly IFixture fixture = new Fixture();
 
@@ -40,22 +40,16 @@ public sealed class ToBytesTest
 
     private static unsafe void Test<T>() where T : unmanaged
     {
-        T value = fixture.Create<T>();
         T[] values = fixture.CreateMany<T>(10).ToArray();
-        Byte[] bytes = GetBytes<T>(ref value);
-        Byte[] bytesValues = MemoryMarshal.AsBytes(values.AsSpan()).ToArray();
+        Span<T> span = values;
+        ReadOnlySpan<T> readOnlySpan = span;
 
-        Assert.Equal(bytes, value.ToBytes());
-        Assert.Equal(bytesValues, values.ToBytes());
-        Assert.Equal(Array.Empty<Byte>(), Array.Empty<T>().ToBytes());
+        Span<Byte> spanBytes = MemoryMarshal.AsBytes(span);
+        Byte[] bytes = spanBytes.ToArray();
 
-        T[]? nullValues = default;
-        Assert.Null(nullValues.ToBytes());
-    }
-    private static unsafe Byte[] GetBytes<T>(ref T refValue) where T : unmanaged
-    {
-        fixed (void* ptr = &refValue)
-            return new ReadOnlySpan<Byte>(ptr, sizeof(T)).ToArray();
+        Assert.Equal(bytes, span.AsBytes().ToArray());
+        Assert.Equal(bytes, readOnlySpan.AsBytes().ToArray());
+        Assert.True(Unsafe.AreSame(ref spanBytes[0], ref MemoryMarshal.GetReference(span.AsBytes())));
+        Assert.True(Unsafe.AreSame(ref spanBytes[0], ref MemoryMarshal.GetReference(readOnlySpan.AsBytes())));
     }
 }
-
