@@ -62,6 +62,16 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
     /// Constructor.
     /// </summary>
     /// <param name="ctx">Fixed context of memory block.</param>
+    /// <param name="offset">Memory offset.</param>
+    private FixedContext(Int32 offset, FixedMemory ctx) : base(ctx, offset)
+    {
+        this._count = this.BinaryLength / sizeof(T);
+    }
+
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="ctx">Fixed context of memory block.</param>
     /// <param name="count">Number of <typeparamref name="T"/> items in memory block.</param>
     private FixedContext(FixedMemory ctx, Int32 count) : base(ctx)
     {
@@ -121,7 +131,7 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
     public static unsafe FixedContext<Byte> CreateBinaryContext(IReadOnlyFixedMemory fmem)
     {
         if (fmem is FixedMemory mem)
-            return new(mem);
+            return new(mem.BinaryOffset, mem);
         else
             fixed (void* ptr = &MemoryMarshal.GetReference(fmem.Bytes))
                 return new(ptr, fmem.Bytes.Length, fmem is not IFixedMemory);

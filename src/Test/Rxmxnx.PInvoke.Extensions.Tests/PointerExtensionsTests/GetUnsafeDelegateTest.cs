@@ -1,7 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
 
 [ExcludeFromCodeCoverage]
-public sealed class GetDelegateTest
+public sealed class GetUnsafeDelegateTest
 {
     private delegate T GetValue<T>(T value);
     private delegate Byte GetByteValue(Byte value);
@@ -15,13 +15,13 @@ public sealed class GetDelegateTest
     {
         if (useGeneric)
         {
-            Assert.Null(IntPtr.Zero.GetDelegate<GetValue<Byte>>());
-            Assert.Null(UIntPtr.Zero.GetDelegate<GetValue<Byte>>());
+            Assert.Null(IntPtr.Zero.GetUnsafeDelegate<GetValue<Byte>>());
+            Assert.Null(UIntPtr.Zero.GetUnsafeDelegate<GetValue<Byte>>());
         }
         else
         {
-            Assert.Null(IntPtr.Zero.GetDelegate<GetByteValue>());
-            Assert.Null(UIntPtr.Zero.GetDelegate<GetByteValue>());
+            Assert.Null(IntPtr.Zero.GetUnsafeDelegate<GetByteValue>());
+            Assert.Null(UIntPtr.Zero.GetUnsafeDelegate<GetByteValue>());
         }
     }
 
@@ -35,13 +35,13 @@ public sealed class GetDelegateTest
         Byte input = fixture.Create<Byte>();
         if (!useGeneric)
         {
-            Assert.Equal(GetByte(input), intPtr.GetDelegate<GetByteValue>()!(input));
-            Assert.Equal(GetByte(input), uIntPtr.GetDelegate<GetByteValue>()!(input));
+            Assert.Equal(GetByte(input), intPtr.GetUnsafeDelegate<GetByteValue>()!(input));
+            Assert.Equal(GetByte(input), uIntPtr.GetUnsafeDelegate<GetByteValue>()!(input));
         }
         else
         {
-            Assert.Throws<ArgumentException>(() => intPtr.GetDelegate<GetValue<Byte>>()!(input));
-            Assert.Throws<ArgumentException>(() => uIntPtr.GetDelegate<GetValue<Byte>>()!(input));
+            Assert.Throws<ArgumentException>(() => intPtr.GetUnsafeDelegate<GetValue<Byte>>()!(input));
+            Assert.Throws<ArgumentException>(() => uIntPtr.GetUnsafeDelegate<GetValue<Byte>>()!(input));
         }
     }
 

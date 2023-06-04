@@ -1,7 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
 
 [ExcludeFromCodeCoverage]
-public sealed class GetReferenceTest
+public sealed class GetUnsafeReferenceTest
 {
     private static readonly IFixture fixture = new Fixture();
 
@@ -45,25 +45,25 @@ public sealed class GetReferenceTest
             IntPtr intPtr = (IntPtr)p;
             UIntPtr uintPtr = (UIntPtr)p;
 
-            ref T refValue1 = ref intPtr.GetReference<T>();
-            ref T refValue2 = ref uintPtr.GetReference<T>();
-            ref readonly T refReadOnlyValue1 = ref intPtr.GetReadOnlyReference<T>();
-            ref readonly T refReadOnlyValue2 = ref uintPtr.GetReadOnlyReference<T>();
+            ref T refValue1 = ref intPtr.GetUnsafeReference<T>();
+            ref T refValue2 = ref uintPtr.GetUnsafeReference<T>();
+            ref readonly T refReadOnlyValue1 = ref intPtr.GetUnsafeReadOnlyReference<T>();
+            ref readonly T refReadOnlyValue2 = ref uintPtr.GetUnsafeReadOnlyReference<T>();
 
             Assert.Equal(value, refValue1);
             Assert.Equal(value, refValue2);
             Assert.Equal(value, refReadOnlyValue1);
             Assert.Equal(value, refReadOnlyValue2);
-            Assert.Equal(value, intPtr.GetValue<T>());
-            Assert.Equal(value, uintPtr.GetValue<T>());
+            Assert.Equal(value, intPtr.GetUnsafeValue<T>());
+            Assert.Equal(value, uintPtr.GetUnsafeValue<T>());
 
             Assert.True(Unsafe.AreSame(ref refValue, ref refValue1));
             Assert.True(Unsafe.AreSame(ref refValue, ref refValue2));
             Assert.True(Unsafe.AreSame(ref refValue, ref Unsafe.AsRef(refReadOnlyValue1)));
             Assert.True(Unsafe.AreSame(ref refValue, ref Unsafe.AsRef(refReadOnlyValue2)));
 
-            Assert.Null(IntPtr.Zero.GetValue<T>());
-            Assert.Null(UIntPtr.Zero.GetValue<T>());
+            Assert.Null(IntPtr.Zero.GetUnsafeValue<T>());
+            Assert.Null(UIntPtr.Zero.GetUnsafeValue<T>());
         }
     }
 }

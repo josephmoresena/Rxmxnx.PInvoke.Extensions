@@ -1,7 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
 
 [ExcludeFromCodeCoverage]
-public sealed class GetSpanTest
+public sealed class GetUnsafeSpanTest
 {
     private static readonly IFixture fixture = new Fixture();
 
@@ -49,37 +49,37 @@ public sealed class GetSpanTest
             IntPtr intPtr = (IntPtr)p;
             UIntPtr uintPtr = (UIntPtr)p;
 
-            Assert.Equal(input, intPtr.GetSpan<T>(input.Length).ToArray());
-            Assert.Equal(input, intPtr.GetReadOnlySpan<T>(input.Length).ToArray());
-            Assert.Equal(input, uintPtr.GetSpan<T>(input.Length).ToArray());
-            Assert.Equal(input, uintPtr.GetReadOnlySpan<T>(input.Length).ToArray());
+            Assert.Equal(input, intPtr.GetUnsafeSpan<T>(input.Length).ToArray());
+            Assert.Equal(input, intPtr.GetUnsafeReadOnlySpan<T>(input.Length).ToArray());
+            Assert.Equal(input, uintPtr.GetUnsafeSpan<T>(input.Length).ToArray());
+            Assert.Equal(input, uintPtr.GetUnsafeReadOnlySpan<T>(input.Length).ToArray());
 
-            Assert.Equal(input, intPtr.GetArray<T>(input.Length));
-            Assert.Equal(input, uintPtr.GetArray<T>(input.Length));
+            Assert.Equal(input, intPtr.GetUnsafeArray<T>(input.Length));
+            Assert.Equal(input, uintPtr.GetUnsafeArray<T>(input.Length));
         }
     }
     private static void EmptyTest<T>(Int32 length) where T : unmanaged
     {
         if (length >= 0)
         {
-            Span<T> result = IntPtr.Zero.GetSpan<T>(length);
-            ReadOnlySpan<T> result2 = IntPtr.Zero.GetReadOnlySpan<T>(length);
-            Span<T> result3 = UIntPtr.Zero.GetSpan<T>(length);
-            ReadOnlySpan<T> result4 = UIntPtr.Zero.GetReadOnlySpan<T>(length);
+            Span<T> result = IntPtr.Zero.GetUnsafeSpan<T>(length);
+            ReadOnlySpan<T> result2 = IntPtr.Zero.GetUnsafeReadOnlySpan<T>(length);
+            Span<T> result3 = UIntPtr.Zero.GetUnsafeSpan<T>(length);
+            ReadOnlySpan<T> result4 = UIntPtr.Zero.GetUnsafeReadOnlySpan<T>(length);
             Assert.True(result.IsEmpty);
             Assert.True(result2.IsEmpty);
             Assert.True(result3.IsEmpty);
             Assert.True(result4.IsEmpty);
 
-            Assert.Null(IntPtr.Zero.GetArray<T>(length));
-            Assert.Null(UIntPtr.Zero.GetArray<T>(length));
+            Assert.Null(IntPtr.Zero.GetUnsafeArray<T>(length));
+            Assert.Null(UIntPtr.Zero.GetUnsafeArray<T>(length));
         }
         else
         {
-            Assert.Throws<ArgumentException>(() => IntPtr.Zero.GetSpan<T>(length));
-            Assert.Throws<ArgumentException>(() => IntPtr.Zero.GetReadOnlySpan<T>(length));
-            Assert.Throws<ArgumentException>(() => UIntPtr.Zero.GetSpan<T>(length));
-            Assert.Throws<ArgumentException>(() => UIntPtr.Zero.GetReadOnlySpan<T>(length));
+            Assert.Throws<ArgumentException>(() => IntPtr.Zero.GetUnsafeSpan<T>(length));
+            Assert.Throws<ArgumentException>(() => IntPtr.Zero.GetUnsafeReadOnlySpan<T>(length));
+            Assert.Throws<ArgumentException>(() => UIntPtr.Zero.GetUnsafeSpan<T>(length));
+            Assert.Throws<ArgumentException>(() => UIntPtr.Zero.GetUnsafeReadOnlySpan<T>(length));
         }
     }
 }

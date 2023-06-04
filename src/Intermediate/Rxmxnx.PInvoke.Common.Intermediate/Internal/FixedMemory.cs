@@ -30,6 +30,13 @@ internal unsafe abstract class FixedMemory : FixedPointer, IFixedMemory, IEquata
     /// <param name="mem">Fixed context of memory block.</param>
     protected FixedMemory(FixedMemory mem) : base(mem) { }
 
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="mem">Fixed context of memory block.</param>
+    /// <param name="offset">Memory offset.</param>
+    protected FixedMemory(FixedMemory mem, Int32 offset) : base(mem, offset) { }
+
     Span<Byte> IFixedMemory.Bytes => base.CreateBinarySpan();
     ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => base.CreateReadOnlyBinarySpan();
 

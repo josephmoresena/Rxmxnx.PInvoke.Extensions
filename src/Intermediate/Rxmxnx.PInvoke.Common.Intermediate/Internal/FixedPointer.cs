@@ -43,7 +43,7 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
     /// </summary>
     public Boolean IsReadOnly => this._isReadOnly;
 
-    IntPtr IFixedPointer.Pointer => new IntPtr(this._ptr) + this.BinaryOffset;
+    IntPtr IFixedPointer.Pointer => (IntPtr)this.GetMemoryOffset();
 
     /// <summary>
     /// Constructor.
@@ -82,6 +82,19 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
     {
         this._ptr = fptr._ptr;
         this._binaryLength = fptr._binaryLength;
+        this._isValid = fptr._isValid;
+        this._isReadOnly = fptr._isReadOnly;
+    }
+
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="fptr">Fixed context of memory block.</param>
+    /// <param name="offset">Memory offset.</param>
+    protected FixedPointer(FixedPointer fptr, Int32 offset)
+    {
+        this._ptr = ((IntPtr)fptr._ptr + offset).ToPointer();
+        this._binaryLength = fptr._binaryLength - offset;
         this._isValid = fptr._isValid;
         this._isReadOnly = fptr._isReadOnly;
     }

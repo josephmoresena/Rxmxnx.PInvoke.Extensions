@@ -48,6 +48,28 @@ public static partial class PointerExtensions
     /// value as the UTF-16 text starting point.
     /// </summary>
     /// <param name="ptr"><see cref="IntPtr"/> pointer to starting point of UTF-16 text.</param>
+    /// <returns><see cref="String"/> representation of UTF-16 text.</returns>
+    /// <exception cref="ArgumentException"/>
+    /// <exception cref="ArgumentOutOfRangeException"/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe String? GetUnsafeString(this IntPtr ptr) => ptr.GetUnsafeString(0);
+
+    /// <summary>
+    /// Creates a <see cref="String"/> instance taking the memory reference of <see cref="UIntPtr"/> 
+    /// value as the UTF-16 text starting point.
+    /// </summary>
+    /// <param name="uptr"><see cref="UIntPtr"/> pointer to starting point of UTF-16 text.</param>
+    /// <returns><see cref="String"/> representation of UTF-16 text.</returns>
+    /// <exception cref="ArgumentException"/>
+    /// <exception cref="ArgumentOutOfRangeException"/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe String? GetUnsafeString(this UIntPtr uptr) => uptr.GetUnsafeString(0);
+
+    /// <summary>
+    /// Creates a <see cref="String"/> instance taking the memory reference of <see cref="IntPtr"/> 
+    /// value as the UTF-16 text starting point.
+    /// </summary>
+    /// <param name="ptr"><see cref="IntPtr"/> pointer to starting point of UTF-16 text.</param>
     /// <param name="length">Optional. Number of <see cref="Char"/> values contained into the UTF-16 text.</param>
     /// <returns>
     /// <see cref="String"/> representation of UTF-16 text.
@@ -58,7 +80,7 @@ public static partial class PointerExtensions
     /// <exception cref="ArgumentException"/>
     /// <exception cref="ArgumentOutOfRangeException"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe String? ReadString(this IntPtr ptr, Int32 length = 0)
+    public static unsafe String? GetUnsafeString(this IntPtr ptr, Int32 length)
     {
         ValidationUtilities.ThrowIfInvalidMemoryLength(length);
         if (ptr.IsZero())
@@ -81,7 +103,7 @@ public static partial class PointerExtensions
     /// <exception cref="ArgumentException"/>
     /// <exception cref="ArgumentOutOfRangeException"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe String? ReadString(this UIntPtr uptr, Int32 length = 0)
+    public static unsafe String? GetUnsafeString(this UIntPtr uptr, Int32 length)
     {
         ValidationUtilities.ThrowIfInvalidMemoryLength(length);
         if (uptr.IsZero())
@@ -102,12 +124,12 @@ public static partial class PointerExtensions
     /// </param>
     /// <returns>A new <typeparamref name="T"/> array.</returns>
     /// <exception cref="ArgumentOutOfRangeException"/>
-    public static unsafe T[]? GetArray<T>(this IntPtr ptr, Int32 length) where T : unmanaged
+    public static unsafe T[]? GetUnsafeArray<T>(this IntPtr ptr, Int32 length) where T : unmanaged
     {
         ValidationUtilities.ThrowIfInvalidMemoryLength(length);
         if (ptr.IsZero())
             return default;
-        return ptr.GetReadOnlySpan<T>(length).ToArray();
+        return ptr.GetUnsafeReadOnlySpan<T>(length).ToArray();
     }
 
     /// <summary>
@@ -123,12 +145,12 @@ public static partial class PointerExtensions
     /// </param>
     /// <returns>A new <typeparamref name="T"/> array.</returns>
     /// <exception cref="ArgumentOutOfRangeException"/>
-    public static unsafe T[]? GetArray<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
+    public static unsafe T[]? GetUnsafeArray<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
     {
         ValidationUtilities.ThrowIfInvalidMemoryLength(length);
         if (uptr.IsZero())
             return default;
-        return uptr.GetReadOnlySpan<T>(length).ToArray();
+        return uptr.GetUnsafeReadOnlySpan<T>(length).ToArray();
     }
 
     /// <summary>
@@ -145,7 +167,7 @@ public static partial class PointerExtensions
     /// <exception cref="ArgumentException"/>
     /// <exception cref="ArgumentOutOfRangeException"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe Span<T> GetSpan<T>(this IntPtr ptr, Int32 length) where T : unmanaged
+    public static unsafe Span<T> GetUnsafeSpan<T>(this IntPtr ptr, Int32 length) where T : unmanaged
     {
         ValidationUtilities.ThrowIfInvalidMemoryLength(length);
         if (ptr.IsZero())
@@ -167,7 +189,7 @@ public static partial class PointerExtensions
     /// <exception cref="ArgumentException"/>
     /// <exception cref="ArgumentOutOfRangeException"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe Span<T> GetSpan<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
+    public static unsafe Span<T> GetUnsafeSpan<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
     {
         ValidationUtilities.ThrowIfInvalidMemoryLength(length);
         if (uptr.IsZero())
@@ -189,7 +211,7 @@ public static partial class PointerExtensions
     /// <exception cref="ArgumentException"/>
     /// <exception cref="ArgumentOutOfRangeException"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe ReadOnlySpan<T> GetReadOnlySpan<T>(this IntPtr ptr, Int32 length) where T : unmanaged
+    public static unsafe ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this IntPtr ptr, Int32 length) where T : unmanaged
     {
         ValidationUtilities.ThrowIfInvalidMemoryLength(length);
         if (ptr.IsZero())
@@ -211,7 +233,7 @@ public static partial class PointerExtensions
     /// <exception cref="ArgumentException"/>
     /// <exception cref="ArgumentOutOfRangeException"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe ReadOnlySpan<T> GetReadOnlySpan<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
+    public static unsafe ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
     {
         ValidationUtilities.ThrowIfInvalidMemoryLength(length);
         if (uptr.IsZero())
@@ -226,7 +248,7 @@ public static partial class PointerExtensions
     /// <param name="ptr"><see cref="IntPtr"/> pointer.</param>
     /// <returns><typeparamref name="T"/> delegate.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T? GetDelegate<T>(this IntPtr ptr) where T : Delegate
+    public static T? GetUnsafeDelegate<T>(this IntPtr ptr) where T : Delegate
         => !ptr.IsZero() ? Marshal.GetDelegateForFunctionPointer<T>(ptr) : default;
 
     /// <summary>
@@ -236,8 +258,8 @@ public static partial class PointerExtensions
     /// <param name="uptr"><see cref="UIntPtr"/> pointer.</param>
     /// <returns><typeparamref name="T"/> delegate.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T? GetDelegate<T>(this UIntPtr uptr) where T : Delegate
-        => uptr.ToIntPtr().GetDelegate<T>();
+    public static T? GetUnsafeDelegate<T>(this UIntPtr uptr) where T : Delegate
+        => uptr.ToIntPtr().GetUnsafeDelegate<T>();
 
     /// <summary>
     /// Creates a memory reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value from 
@@ -247,7 +269,7 @@ public static partial class PointerExtensions
     /// <param name="ptr"><see cref="IntPtr"/> pointer.</param>
     /// <returns>Memory reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe ref T GetReference<T>(this IntPtr ptr) where T : unmanaged
+    public static unsafe ref T GetUnsafeReference<T>(this IntPtr ptr) where T : unmanaged
         => ref Unsafe.AsRef<T>(ptr.ToPointer());
 
     /// <summary>
@@ -258,7 +280,7 @@ public static partial class PointerExtensions
     /// <param name="uptr"><see cref="UIntPtr"/> pointer.</param>
     /// <returns>Memory reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe ref T GetReference<T>(this UIntPtr uptr) where T : unmanaged
+    public static unsafe ref T GetUnsafeReference<T>(this UIntPtr uptr) where T : unmanaged
         => ref Unsafe.AsRef<T>(uptr.ToPointer());
 
     /// <summary>
@@ -269,7 +291,7 @@ public static partial class PointerExtensions
     /// <param name="ptr"><see cref="IntPtr"/> pointer.</param>
     /// <returns>Read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe ref readonly T GetReadOnlyReference<T>(this IntPtr ptr) where T : unmanaged
+    public static unsafe ref readonly T GetUnsafeReadOnlyReference<T>(this IntPtr ptr) where T : unmanaged
         => ref Unsafe.AsRef<T>(ptr.ToPointer());
 
     /// <summary>
@@ -280,7 +302,7 @@ public static partial class PointerExtensions
     /// <param name="uptr"><see cref="UIntPtr"/> pointer.</param>
     /// <returns>Read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe ref readonly T GetReadOnlyReference<T>(this UIntPtr uptr) where T : unmanaged
+    public static unsafe ref readonly T GetUnsafeReadOnlyReference<T>(this UIntPtr uptr) where T : unmanaged
         => ref Unsafe.AsRef<T>(uptr.ToPointer());
 
     /// <summary>
@@ -290,11 +312,11 @@ public static partial class PointerExtensions
     /// <param name="ptr"><see cref="IntPtr"/> pointer.</param>
     /// <returns>A <typeparamref name="T"/> value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe T? GetValue<T>(this IntPtr ptr) where T : unmanaged
+    public static unsafe T? GetUnsafeValue<T>(this IntPtr ptr) where T : unmanaged
     {
         if (ptr.IsZero())
             return default;
-        return ptr.GetReadOnlyReference<T>();
+        return ptr.GetUnsafeReadOnlyReference<T>();
     }
 
     /// <summary>
@@ -304,11 +326,11 @@ public static partial class PointerExtensions
     /// <param name="uptr"><see cref="UIntPtr"/> pointer.</param>
     /// <returns>A <typeparamref name="T"/> value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe T? GetValue<T>(this UIntPtr uptr) where T : unmanaged
+    public static unsafe T? GetUnsafeValue<T>(this UIntPtr uptr) where T : unmanaged
     {
         if (uptr.IsZero())
             return default;
-        return uptr.GetReadOnlyReference<T>();
+        return uptr.GetUnsafeReadOnlyReference<T>();
     }
 
     /// <summary>
