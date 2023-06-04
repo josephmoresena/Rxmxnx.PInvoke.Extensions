@@ -78,12 +78,15 @@ public sealed class FixedMemoryListTest
         NativeUtilities.WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5, ros6, ros7, this, ReadOnlyActionReadOnlyTest);
     }
 
-    private void ActionTest(FixedMemoryList fml) => this.ActionTest(fml, false);
+    private void ActionTest(FixedMemoryList fml) => this.ActionFullTest(fml);
     private void ActionReadOnlyTest(ReadOnlyFixedMemoryList fml) => this.ActionTest(fml, false);
     private void ReadOnlyActionReadOnlyTest(ReadOnlyFixedMemoryList fml) => this.ActionTest(fml, true);
     private void ActionTest(ReadOnlyFixedMemoryList fml, Boolean readOnly)
     {
+        Assert.False(fml.IsEmpty);
+        IReadOnlyFixedMemory[] mems = fml.ToArray();
         for (Int32 i = 0; i < fml.Count; i++)
+        {
             switch (i)
             {
                 case 0: TestArray<Byte>(fml[0], this._array[0], readOnly); break;
@@ -95,6 +98,28 @@ public sealed class FixedMemoryListTest
                 case 6: TestArray<UInt16>(fml[6], this._array[6], readOnly); break;
                 case 7: TestArray<UInt32>(fml[7], this._array[7], readOnly); break;
             }
+            Assert.Equal(fml[i], mems[i]);
+        }
+    }
+    private void ActionFullTest(FixedMemoryList fml)
+    {
+        Assert.False(fml.IsEmpty);
+        IFixedMemory[] mems = fml.ToArray();
+        for (Int32 i = 0; i < fml.Count; i++)
+        {
+            switch (i)
+            {
+                case 0: TestArray<Byte>(fml[0], this._array[0], false); break;
+                case 1: TestArray<Guid>(fml[1], this._array[1], false); break;
+                case 2: TestArray<Int16>(fml[2], this._array[2], false); break;
+                case 3: TestArray<Int32>(fml[3], this._array[3], false); break;
+                case 4: TestArray<Int64>(fml[4], this._array[4], false); break;
+                case 5: TestArray<SByte>(fml[5], this._array[5], false); break;
+                case 6: TestArray<UInt16>(fml[6], this._array[6], false); break;
+                case 7: TestArray<UInt32>(fml[7], this._array[7], false); break;
+            }
+            Assert.Equal(fml[i], mems[i]);
+        }
     }
 
     private static Array[] GetArray()

@@ -18,7 +18,7 @@ public static partial class NativeUtilities
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
         fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
         {
-            FixedMemoryList lst = new
+            ReadOnlyFixedMemoryList lst = new
             (
                 new FixedContext<T0>(ptr0, span0.Length, true),
                 new FixedContext<T1>(ptr1, span1.Length, true)
@@ -52,7 +52,7 @@ public static partial class NativeUtilities
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
         fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
         {
-            FixedMemoryList lst = new
+            ReadOnlyFixedMemoryList lst = new
             (
                 new FixedContext<T0>(ptr0, span0.Length, true),
                 new FixedContext<T1>(ptr1, span1.Length, true)
@@ -87,7 +87,7 @@ public static partial class NativeUtilities
         fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
         fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
         {
-            FixedMemoryList lst = new
+            ReadOnlyFixedMemoryList lst = new
             (
                 new FixedContext<T0>(ptr0, span0.Length, true),
                 new FixedContext<T1>(ptr1, span1.Length, true),
@@ -125,7 +125,7 @@ public static partial class NativeUtilities
         fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
         fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
         {
-            FixedMemoryList lst = new
+            ReadOnlyFixedMemoryList lst = new
             (
                 new FixedContext<T0>(ptr0, span0.Length, true),
                 new FixedContext<T1>(ptr1, span1.Length, true),
@@ -164,7 +164,7 @@ public static partial class NativeUtilities
         fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
         fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
         {
-            FixedMemoryList lst = new
+            ReadOnlyFixedMemoryList lst = new
             (
                 new FixedContext<T0>(ptr0, span0.Length, true),
                 new FixedContext<T1>(ptr1, span1.Length, true),
@@ -206,7 +206,7 @@ public static partial class NativeUtilities
         fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
         fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
         {
-            FixedMemoryList lst = new
+            ReadOnlyFixedMemoryList lst = new
             (
                 new FixedContext<T0>(ptr0, span0.Length, true),
                 new FixedContext<T1>(ptr1, span1.Length, true),
@@ -250,7 +250,7 @@ public static partial class NativeUtilities
         fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
         fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
         {
-            FixedMemoryList lst = new
+            ReadOnlyFixedMemoryList lst = new
             (
                 new FixedContext<T0>(ptr0, span0.Length, true),
                 new FixedContext<T1>(ptr1, span1.Length, true),
@@ -297,7 +297,7 @@ public static partial class NativeUtilities
         fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
         fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
         {
-            FixedMemoryList lst = new
+            ReadOnlyFixedMemoryList lst = new
             (
                 new FixedContext<T0>(ptr0, span0.Length, true),
                 new FixedContext<T1>(ptr1, span1.Length, true),
@@ -346,7 +346,7 @@ public static partial class NativeUtilities
         fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
         fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
         {
-            FixedMemoryList lst = new
+            ReadOnlyFixedMemoryList lst = new
             (
                 new FixedContext<T0>(ptr0, span0.Length, true),
                 new FixedContext<T1>(ptr1, span1.Length, true),
@@ -398,7 +398,7 @@ public static partial class NativeUtilities
         fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
         fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
         {
-            FixedMemoryList lst = new
+            ReadOnlyFixedMemoryList lst = new
             (
                 new FixedContext<T0>(ptr0, span0.Length, true),
                 new FixedContext<T1>(ptr1, span1.Length, true),
@@ -451,7 +451,7 @@ public static partial class NativeUtilities
         fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
         fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
         {
-            FixedMemoryList lst = new
+            ReadOnlyFixedMemoryList lst = new
             (
                 new FixedContext<T0>(ptr0, span0.Length, true),
                 new FixedContext<T1>(ptr1, span1.Length, true),
@@ -507,7 +507,7 @@ public static partial class NativeUtilities
         fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
         fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
         {
-            FixedMemoryList lst = new
+            ReadOnlyFixedMemoryList lst = new
             (
                 new FixedContext<T0>(ptr0, span0.Length, true),
                 new FixedContext<T1>(ptr1, span1.Length, true),
@@ -564,7 +564,7 @@ public static partial class NativeUtilities
         fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
         fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
         {
-            FixedMemoryList lst = new
+            ReadOnlyFixedMemoryList lst = new
             (
                 new FixedContext<T0>(ptr0, span0.Length, true),
                 new FixedContext<T1>(ptr1, span1.Length, true),
@@ -624,7 +624,7 @@ public static partial class NativeUtilities
         fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
         fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
         {
-            FixedMemoryList lst = new
+            ReadOnlyFixedMemoryList lst = new
             (
                 new FixedContext<T0>(ptr0, span0.Length, true),
                 new FixedContext<T1>(ptr1, span1.Length, true),
