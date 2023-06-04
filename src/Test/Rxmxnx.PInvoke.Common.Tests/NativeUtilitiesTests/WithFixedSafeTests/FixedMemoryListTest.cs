@@ -8,6 +8,16 @@ public sealed class FixedMemoryListTest
     private readonly Array[] _array = GetArray();
 
     [Fact]
+    internal void EmptyTest()
+    {
+        FixedMemoryList fml = default;
+
+        Assert.Equal(0, fml.Count);
+        Assert.True(fml.IsEmpty);
+        Assert.Empty(fml.ToArray());
+    }
+
+    [Fact]
     internal void Test()
     {
         Span<Byte> s0 = (Span<Byte>)this._array[0]!;
@@ -272,7 +282,7 @@ public sealed class FixedMemoryListTest
                     ref MemoryMarshal.GetReference(mem.Bytes),
                     ref MemoryMarshal.GetReference(ctxx.Bytes)));
         }
-        else
+        else 
         {
             Assert.Throws<InvalidOperationException>(() => ctxx.Values.ToArray());
             Assert.Throws<InvalidOperationException>(() => ctxx.Bytes.ToArray());
