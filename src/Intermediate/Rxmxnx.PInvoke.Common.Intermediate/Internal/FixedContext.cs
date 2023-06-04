@@ -53,7 +53,8 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
     /// Constructor.
     /// </summary>
     /// <param name="ctx">Fixed context of memory block.</param>
-    private FixedContext(FixedMemory ctx) : base(ctx)
+    /// <param name="offset">Memory offset.</param>
+    public FixedContext(Int32 offset, FixedMemory ctx) : base(ctx, offset)
     {
         this._count = this.BinaryLength / sizeof(T);
     }
@@ -62,8 +63,7 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
     /// Constructor.
     /// </summary>
     /// <param name="ctx">Fixed context of memory block.</param>
-    /// <param name="offset">Memory offset.</param>
-    private FixedContext(Int32 offset, FixedMemory ctx) : base(ctx, offset)
+    private FixedContext(FixedMemory ctx) : base(ctx)
     {
         this._count = this.BinaryLength / sizeof(T);
     }
@@ -96,6 +96,7 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
         residual = fixedOffset;
         return result;
     }
+    IFixedContext<Byte> IFixedMemory.AsBinaryContext() => this.GetTransformation<Byte>(out _);
 
     /// <summary>
     /// Creates a <see cref="FixedContext{TDestination}"/> instance.
@@ -121,21 +122,4 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
     public override Boolean Equals(Object? obj) => base.Equals(obj as FixedContext<T>);
     /// <inheritdoc/>
     public override Int32 GetHashCode() => base.GetHashCode();
-
-    /// <summary>
-    /// Creates a <see cref="FixedContext{Byte}"/> instance from <paramref name="fmem"/>.
-    /// </summary>
-    /// <param name="fmem">A <see cref="IReadOnlyFixedMemory"/> instance.</param>
-    /// <returns>A new a <see cref="FixedContext{Byte}"/> instance.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe FixedContext<Byte> CreateBinaryContext(IReadOnlyFixedMemory fmem)
-    {
-        if (fmem is FixedContext<Byte> ctx)
-            return ctx;
-        if (fmem is FixedMemory mem)
-            return new(mem.BinaryOffset, mem);
-        else
-            fixed (void* ptr = &MemoryMarshal.GetReference(fmem.Bytes))
-                return new(ptr, fmem.Bytes.Length, fmem is not IFixedMemory);
-    }
 }

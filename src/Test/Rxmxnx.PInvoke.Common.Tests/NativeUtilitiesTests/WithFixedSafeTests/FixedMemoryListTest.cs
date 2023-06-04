@@ -1,0 +1,155 @@
+﻿namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests.WithFixedSafeTests;
+
+[ExcludeFromCodeCoverage]
+public sealed class FixedMemoryListTest
+{
+    private static readonly IFixture fixture = new Fixture();
+
+    private readonly Array[] _array = GetArray();
+
+    [Fact]
+    internal void Test()
+    {
+        Span<Byte> s0 = (Span<Byte>)this._array[0]!;
+        Span<Guid> s1 = (Span<Guid>)this._array[1]!;
+        Span<Int16> s2 = (Span<Int16>)this._array[2]!;
+        Span<Int32> s3 = (Span<Int32>)this._array[3]!;
+        Span<Int64> s4 = (Span<Int64>)this._array[4]!;
+        Span<SByte> s5 = (Span<SByte>)this._array[5]!;
+        Span<UInt16> s6 = (Span<UInt16>)this._array[6]!;
+        Span<UInt32> s7 = (Span<UInt32>)this._array[7]!;
+
+        ReadOnlySpan<Byte> ros0 = (ReadOnlySpan<Byte>)this._array[0]!;
+        ReadOnlySpan<Guid> ros1 = (ReadOnlySpan<Guid>)this._array[1]!;
+        ReadOnlySpan<Int16> ros2 = (ReadOnlySpan<Int16>)this._array[2]!;
+        ReadOnlySpan<Int32> ros3 = (ReadOnlySpan<Int32>)this._array[3]!;
+        ReadOnlySpan<Int64> ros4 = (ReadOnlySpan<Int64>)this._array[4]!;
+        ReadOnlySpan<SByte> ros5 = (ReadOnlySpan<SByte>)this._array[5]!;
+        ReadOnlySpan<UInt16> ros6 = (ReadOnlySpan<UInt16>)this._array[6]!;
+        ReadOnlySpan<UInt32> ros7 = (ReadOnlySpan<UInt32>)this._array[7]!;
+
+        NativeUtilities.WithSafeFixed(s0, s1, this.ActionTest);
+        NativeUtilities.WithSafeFixed(s0, s1, this, ActionTest);
+        NativeUtilities.WithSafeReadOnlyFixed(s0, s1, this.ActionReadOnlyTest);
+        NativeUtilities.WithSafeReadOnlyFixed(s0, s1, this, ActionReadOnlyTest);
+        NativeUtilities.WithSafeFixed(ros0, ros1, this.ReadOnlyActionReadOnlyTest);
+        NativeUtilities.WithSafeFixed(ros0, ros1, this, ReadOnlyActionReadOnlyTest);
+
+        NativeUtilities.WithSafeFixed(s0, s1, s2, this.ActionTest);
+        NativeUtilities.WithSafeFixed(s0, s1, s2, this, ActionTest);
+        NativeUtilities.WithSafeReadOnlyFixed(s0, s1, s2, this.ActionReadOnlyTest);
+        NativeUtilities.WithSafeReadOnlyFixed(s0, s1, s2, this, ActionReadOnlyTest);
+        NativeUtilities.WithSafeFixed(ros0, ros1, ros2, this.ReadOnlyActionReadOnlyTest);
+        NativeUtilities.WithSafeFixed(ros0, ros1, ros2, this, ReadOnlyActionReadOnlyTest);
+
+        NativeUtilities.WithSafeFixed(s0, s1, s2, s3, this.ActionTest);
+        NativeUtilities.WithSafeFixed(s0, s1, s2, s3, this, ActionTest);
+        NativeUtilities.WithSafeReadOnlyFixed(s0, s1, s2, s3, this.ActionReadOnlyTest);
+        NativeUtilities.WithSafeReadOnlyFixed(s0, s1, s2, s3, this, ActionReadOnlyTest);
+        NativeUtilities.WithSafeFixed(ros0, ros1, ros2, ros3, this.ReadOnlyActionReadOnlyTest);
+        NativeUtilities.WithSafeFixed(ros0, ros1, ros2, ros3, this, ReadOnlyActionReadOnlyTest);
+
+        NativeUtilities.WithSafeFixed(s0, s1, s2, s3, s4, ActionTest);
+        NativeUtilities.WithSafeFixed(s0, s1, s2, s3, s4, this, ActionTest);
+        NativeUtilities.WithSafeReadOnlyFixed(s0, s1, s2, s3, s4, ActionReadOnlyTest);
+        NativeUtilities.WithSafeReadOnlyFixed(s0, s1, s2, s3, s4, this, ActionReadOnlyTest);
+        NativeUtilities.WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ReadOnlyActionReadOnlyTest);
+        NativeUtilities.WithSafeFixed(ros0, ros1, ros2, ros3, ros4, this, ReadOnlyActionReadOnlyTest);
+
+        NativeUtilities.WithSafeFixed(s0, s1, s2, s3, s4, s5, this.ActionTest);
+        NativeUtilities.WithSafeFixed(s0, s1, s2, s3, s4, s5, this, ActionTest);
+        NativeUtilities.WithSafeReadOnlyFixed(s0, s1, s2, s3, s4, s5, this.ActionReadOnlyTest);
+        NativeUtilities.WithSafeReadOnlyFixed(s0, s1, s2, s3, s4, s5, this, ActionReadOnlyTest);
+        NativeUtilities.WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5, this.ReadOnlyActionReadOnlyTest);
+        NativeUtilities.WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5, this, ReadOnlyActionReadOnlyTest);
+
+        NativeUtilities.WithSafeFixed(s0, s1, s2, s3, s4, s5, s6, this.ActionTest);
+        NativeUtilities.WithSafeFixed(s0, s1, s2, s3, s4, s5, s6, this, ActionTest);
+        NativeUtilities.WithSafeReadOnlyFixed(s0, s1, s2, s3, s4, s5, s6, this.ActionReadOnlyTest);
+        NativeUtilities.WithSafeReadOnlyFixed(s0, s1, s2, s3, s4, s5, s6, this, ActionReadOnlyTest);
+        NativeUtilities.WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5, ros6, this.ReadOnlyActionReadOnlyTest);
+        NativeUtilities.WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5, ros6, this, ReadOnlyActionReadOnlyTest);
+
+        NativeUtilities.WithSafeFixed(s0, s1, s2, s3, s4, s5, s6, s7, this.ActionTest);
+        NativeUtilities.WithSafeFixed(s0, s1, s2, s3, s4, s5, s6, s7, this, ActionTest);
+        NativeUtilities.WithSafeReadOnlyFixed(s0, s1, s2, s3, s4, s5, s6, s7, this.ActionReadOnlyTest);
+        NativeUtilities.WithSafeReadOnlyFixed(s0, s1, s2, s3, s4, s5, s6, s7, this, ActionReadOnlyTest);
+        NativeUtilities.WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5, ros6, ros7, this.ReadOnlyActionReadOnlyTest);
+        NativeUtilities.WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5, ros6, ros7, this, ReadOnlyActionReadOnlyTest);
+    }
+
+    private void ActionTest(FixedMemoryList fml) => this.ActionTest(fml, false);
+    private void ActionReadOnlyTest(ReadOnlyFixedMemoryList fml) => this.ActionTest(fml, false);
+    private void ReadOnlyActionReadOnlyTest(ReadOnlyFixedMemoryList fml) => this.ActionTest(fml, true);
+    private void ActionTest(ReadOnlyFixedMemoryList fml, Boolean readOnly)
+    {
+        for (Int32 i = 0; i < fml.Count; i++)
+            switch (i)
+            {
+                case 0: TestArray<Byte>(fml[0], this._array[0], readOnly); break;
+                case 1: TestArray<Guid>(fml[1], this._array[1], readOnly); break;
+                case 2: TestArray<Int16>(fml[2], this._array[2], readOnly); break;
+                case 3: TestArray<Int32>(fml[3], this._array[3], readOnly); break;
+                case 4: TestArray<Int64>(fml[4], this._array[4], readOnly); break;
+                case 5: TestArray<SByte>(fml[5], this._array[5], readOnly); break;
+                case 6: TestArray<UInt16>(fml[6], this._array[6], readOnly); break;
+                case 7: TestArray<UInt32>(fml[7], this._array[7], readOnly); break;
+            }
+    }
+
+    private static Array[] GetArray()
+    {
+        Array[] arr = new Array[15];
+        for (Int32 i = 0; i < arr.Length; i++)
+            arr[i] = i switch
+            {
+                00 => fixture.CreateMany<Byte>(10).ToArray(),
+                01 => fixture.CreateMany<Guid>(10).ToArray(),
+                02 => fixture.CreateMany<Int16>(10).ToArray(),
+                03 => fixture.CreateMany<Int32>(10).ToArray(),
+                04 => fixture.CreateMany<Int64>(10).ToArray(),
+                05 => fixture.CreateMany<SByte>(10).ToArray(),
+                06 => fixture.CreateMany<UInt16>(10).ToArray(),
+                07 => fixture.CreateMany<UInt32>(10).ToArray(),
+                _ => default!,
+            };
+        return arr;
+    }
+    private static void ActionTest(FixedMemoryList fml, FixedMemoryListTest test) => test.ActionTest(fml, false);
+    private static void ActionReadOnlyTest(ReadOnlyFixedMemoryList fml, FixedMemoryListTest test) => test.ActionTest(fml, false);
+    private static void ReadOnlyActionReadOnlyTest(ReadOnlyFixedMemoryList fml, FixedMemoryListTest test) => test.ActionTest(fml, true);
+    private static unsafe void TestArray<T>(IReadOnlyFixedMemory mem, Array arr, Boolean readOnly)
+        where T : unmanaged
+    {
+        IReadOnlyFixedContext<T> ctx = (IReadOnlyFixedContext<T>)mem;
+        IFixedContext<T> ctxx = (IFixedContext<T>)mem;
+        T[] arrT = (T[])arr;
+
+        Assert.Equal(arrT, ctx.Values.ToArray());
+        Assert.True(
+            Unsafe.AreSame(
+                ref MemoryMarshal.GetReference(arrT.AsSpan()),
+                ref MemoryMarshal.GetReference(ctx.Values)));
+        fixed (void* ptr = arrT)
+            Assert.Equal((IntPtr)ptr, ctx.Pointer);
+
+        if (!readOnly)
+        {
+            Assert.Equal(arrT, ctxx.Values.ToArray());
+            Assert.Equal(mem.Bytes.ToArray(), ctxx.Bytes.ToArray());
+            Assert.True(
+                Unsafe.AreSame(
+                    ref MemoryMarshal.GetReference(arrT.AsSpan()),
+                    ref MemoryMarshal.GetReference(ctxx.Values)));
+            Assert.True(
+                Unsafe.AreSame(
+                    ref MemoryMarshal.GetReference(mem.Bytes),
+                    ref MemoryMarshal.GetReference(ctxx.Bytes)));
+        }
+        else
+        {
+            Assert.Throws<InvalidOperationException>(() => ctxx.Values.ToArray());
+            Assert.Throws<InvalidOperationException>(() => ctxx.Bytes.ToArray());
+        }
+    }
+}

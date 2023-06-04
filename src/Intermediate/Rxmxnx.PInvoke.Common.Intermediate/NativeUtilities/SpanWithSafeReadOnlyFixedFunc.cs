@@ -4,15 +4,17 @@ public static partial class NativeUtilities
 {
     /// <summary>
     /// Prevents the garbage collector from reallocating given spans and fixes their memory
-    /// addresses until <paramref name="action"/> completes.
+    /// addresses until <paramref name="func"/> completes.
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
+    /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
-    /// <param name="action">A <see cref="ReadOnlyFixedListAction"/> delegate.</param>
-    public static unsafe void WithSafeFixed<T0, T1>(Span<T0> span0, Span<T1> span1,
-        ReadOnlyFixedListAction action)
+    /// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
+    /// <returns>The result of <paramref name="func"/> execution.</returns>
+    public static unsafe TResult WithSafeReadOnlyFixed<T0, T1, TResult>(Span<T0> span0, Span<T1> span1,
+        ReadOnlyFixedListFunc<TResult> func)
         where T0 : unmanaged where T1 : unmanaged
     {
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -25,7 +27,7 @@ public static partial class NativeUtilities
             );
             try
             {
-                action(lst);
+                return func(lst);
             }
             finally
             {
@@ -36,17 +38,19 @@ public static partial class NativeUtilities
 
     /// <summary>
     /// Prevents the garbage collector from reallocating given spans and fixes their memory
-    /// addresses until <paramref name="action"/> completes.
+    /// addresses until <paramref name="func"/> completes.
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+    /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
-    /// <param name="action">A <see cref="ReadOnlyFixedListAction{TArg}"/> delegate.</param>
-    public static unsafe void WithSafeFixed<T0, T1, TArg>(Span<T0> span0, Span<T1> span1,
-        TArg arg, ReadOnlyFixedListAction<TArg> action)
+    /// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
+    /// <returns>The result of <paramref name="func"/> execution.</returns>
+    public static unsafe TResult WithSafeReadOnlyFixed<T0, T1, TArg, TResult>(Span<T0> span0, Span<T1> span1,
+        TArg arg, ReadOnlyFixedListFunc<TArg, TResult> func)
         where T0 : unmanaged where T1 : unmanaged
     {
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -59,7 +63,7 @@ public static partial class NativeUtilities
             );
             try
             {
-                action(lst, arg);
+                return func(lst, arg);
             }
             finally
             {
@@ -70,17 +74,19 @@ public static partial class NativeUtilities
 
     /// <summary>
     /// Prevents the garbage collector from reallocating given spans and fixes their memory
-    /// addresses until <paramref name="action"/> completes.
+    /// addresses until <paramref name="func"/> completes.
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
     /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
     /// <param name="span2">3th span.</param>
-    /// <param name="action">A <see cref="ReadOnlyFixedListAction"/> delegate.</param>
-    public static unsafe void WithSafeFixed<T0, T1, T2>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
-        ReadOnlyFixedListAction action)
+    /// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
+    /// <returns>The result of <paramref name="func"/> execution.</returns>
+    public static unsafe TResult WithSafeReadOnlyFixed<T0, T1, T2, TResult>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
+        ReadOnlyFixedListFunc<TResult> func)
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged
     {
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -95,7 +101,7 @@ public static partial class NativeUtilities
             );
             try
             {
-                action(lst);
+                return func(lst);
             }
             finally
             {
@@ -106,19 +112,21 @@ public static partial class NativeUtilities
 
     /// <summary>
     /// Prevents the garbage collector from reallocating given spans and fixes their memory
-    /// addresses until <paramref name="action"/> completes.
+    /// addresses until <paramref name="func"/> completes.
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
     /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+    /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
     /// <param name="span2">3th span.</param>
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
-    /// <param name="action">A <see cref="ReadOnlyFixedListAction{TArg}"/> delegate.</param>
-    public static unsafe void WithSafeFixed<T0, T1, T2, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
-        TArg arg, ReadOnlyFixedListAction<TArg> action)
+    /// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
+    /// <returns>The result of <paramref name="func"/> execution.</returns>
+    public static unsafe TResult WithSafeReadOnlyFixed<T0, T1, T2, TArg, TResult>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
+        TArg arg, ReadOnlyFixedListFunc<TArg, TResult> func)
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged
     {
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -133,7 +141,7 @@ public static partial class NativeUtilities
             );
             try
             {
-                action(lst, arg);
+                return func(lst, arg);
             }
             finally
             {
@@ -144,19 +152,21 @@ public static partial class NativeUtilities
 
     /// <summary>
     /// Prevents the garbage collector from reallocating given spans and fixes their memory
-    /// addresses until <paramref name="action"/> completes.
+    /// addresses until <paramref name="func"/> completes.
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
     /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
+    /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
     /// <param name="span2">3th span.</param>
     /// <param name="span3">4th span.</param>
-    /// <param name="action">A <see cref="ReadOnlyFixedListAction"/> delegate.</param>
-    public static unsafe void WithSafeFixed<T0, T1, T2, T3>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
-        ReadOnlyFixedListAction action)
+    /// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
+    /// <returns>The result of <paramref name="func"/> execution.</returns>
+    public static unsafe TResult WithSafeReadOnlyFixed<T0, T1, T2, T3, TResult>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
+        ReadOnlyFixedListFunc<TResult> func)
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged
     {
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -173,7 +183,7 @@ public static partial class NativeUtilities
             );
             try
             {
-                action(lst);
+                return func(lst);
             }
             finally
             {
@@ -184,21 +194,23 @@ public static partial class NativeUtilities
 
     /// <summary>
     /// Prevents the garbage collector from reallocating given spans and fixes their memory
-    /// addresses until <paramref name="action"/> completes.
+    /// addresses until <paramref name="func"/> completes.
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
     /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+    /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
     /// <param name="span2">3th span.</param>
     /// <param name="span3">4th span.</param>
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
-    /// <param name="action">A <see cref="ReadOnlyFixedListAction{TArg}"/> delegate.</param>
-    public static unsafe void WithSafeFixed<T0, T1, T2, T3, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
-        TArg arg, ReadOnlyFixedListAction<TArg> action)
+    /// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
+    /// <returns>The result of <paramref name="func"/> execution.</returns>
+    public static unsafe TResult WithSafeReadOnlyFixed<T0, T1, T2, T3, TArg, TResult>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
+        TArg arg, ReadOnlyFixedListFunc<TArg, TResult> func)
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged
     {
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -215,7 +227,7 @@ public static partial class NativeUtilities
             );
             try
             {
-                action(lst, arg);
+                return func(lst, arg);
             }
             finally
             {
@@ -226,22 +238,24 @@ public static partial class NativeUtilities
 
     /// <summary>
     /// Prevents the garbage collector from reallocating given spans and fixes their memory
-    /// addresses until <paramref name="action"/> completes.
+    /// addresses until <paramref name="func"/> completes.
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
     /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
+    /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
     /// <param name="span2">3th span.</param>
     /// <param name="span3">4th span.</param>
     /// <param name="span4">5th span.</param>
-    /// <param name="action">A <see cref="ReadOnlyFixedListAction"/> delegate.</param>
-    public static unsafe void WithSafeFixed<T0, T1, T2, T3, T4>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
+    /// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
+    /// <returns>The result of <paramref name="func"/> execution.</returns>
+    public static unsafe TResult WithSafeReadOnlyFixed<T0, T1, T2, T3, T4, TResult>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
         Span<T4> span4,
-        ReadOnlyFixedListAction action)
+        ReadOnlyFixedListFunc<TResult> func)
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged where T4 : unmanaged
     {
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -260,7 +274,7 @@ public static partial class NativeUtilities
             );
             try
             {
-                action(lst);
+                return func(lst);
             }
             finally
             {
@@ -271,7 +285,7 @@ public static partial class NativeUtilities
 
     /// <summary>
     /// Prevents the garbage collector from reallocating given spans and fixes their memory
-    /// addresses until <paramref name="action"/> completes.
+    /// addresses until <paramref name="func"/> completes.
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
@@ -279,16 +293,18 @@ public static partial class NativeUtilities
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+    /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
     /// <param name="span2">3th span.</param>
     /// <param name="span3">4th span.</param>
     /// <param name="span4">5th span.</param>
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
-    /// <param name="action">A <see cref="ReadOnlyFixedListAction{TArg}"/> delegate.</param>
-    public static unsafe void WithSafeFixed<T0, T1, T2, T3, T4, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
+    /// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
+    /// <returns>The result of <paramref name="func"/> execution.</returns>
+    public static unsafe TResult WithSafeReadOnlyFixed<T0, T1, T2, T3, T4, TArg, TResult>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
         Span<T4> span4,
-        TArg arg, ReadOnlyFixedListAction<TArg> action)
+        TArg arg, ReadOnlyFixedListFunc<TArg, TResult> func)
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged where T4 : unmanaged
     {
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -307,7 +323,7 @@ public static partial class NativeUtilities
             );
             try
             {
-                action(lst, arg);
+                return func(lst, arg);
             }
             finally
             {
@@ -318,7 +334,7 @@ public static partial class NativeUtilities
 
     /// <summary>
     /// Prevents the garbage collector from reallocating given spans and fixes their memory
-    /// addresses until <paramref name="action"/> completes.
+    /// addresses until <paramref name="func"/> completes.
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
@@ -326,16 +342,18 @@ public static partial class NativeUtilities
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
     /// <typeparam name="T5">Type of the items in 6th span.</typeparam>
+    /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
     /// <param name="span2">3th span.</param>
     /// <param name="span3">4th span.</param>
     /// <param name="span4">5th span.</param>
     /// <param name="span5">6th span.</param>
-    /// <param name="action">A <see cref="ReadOnlyFixedListAction"/> delegate.</param>
-    public static unsafe void WithSafeFixed<T0, T1, T2, T3, T4, T5>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
+    /// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
+    /// <returns>The result of <paramref name="func"/> execution.</returns>
+    public static unsafe TResult WithSafeReadOnlyFixed<T0, T1, T2, T3, T4, T5, TResult>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
         Span<T4> span4, Span<T5> span5,
-        ReadOnlyFixedListAction action)
+        ReadOnlyFixedListFunc<TResult> func)
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged where T4 : unmanaged
         where T5 : unmanaged
     {
@@ -357,7 +375,7 @@ public static partial class NativeUtilities
             );
             try
             {
-                action(lst);
+                return func(lst);
             }
             finally
             {
@@ -368,7 +386,7 @@ public static partial class NativeUtilities
 
     /// <summary>
     /// Prevents the garbage collector from reallocating given spans and fixes their memory
-    /// addresses until <paramref name="action"/> completes.
+    /// addresses until <paramref name="func"/> completes.
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
@@ -377,6 +395,7 @@ public static partial class NativeUtilities
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
     /// <typeparam name="T5">Type of the items in 6th span.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+    /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
     /// <param name="span2">3th span.</param>
@@ -384,10 +403,11 @@ public static partial class NativeUtilities
     /// <param name="span4">5th span.</param>
     /// <param name="span5">6th span.</param>
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
-    /// <param name="action">A <see cref="ReadOnlyFixedListAction{TArg}"/> delegate.</param>
-    public static unsafe void WithSafeFixed<T0, T1, T2, T3, T4, T5, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
+    /// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
+    /// <returns>The result of <paramref name="func"/> execution.</returns>
+    public static unsafe TResult WithSafeReadOnlyFixed<T0, T1, T2, T3, T4, T5, TArg, TResult>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
         Span<T4> span4, Span<T5> span5,
-        TArg arg, ReadOnlyFixedListAction<TArg> action)
+        TArg arg, ReadOnlyFixedListFunc<TArg, TResult> func)
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged where T4 : unmanaged
         where T5 : unmanaged
     {
@@ -409,7 +429,7 @@ public static partial class NativeUtilities
             );
             try
             {
-                action(lst, arg);
+                return func(lst, arg);
             }
             finally
             {
@@ -420,7 +440,7 @@ public static partial class NativeUtilities
 
     /// <summary>
     /// Prevents the garbage collector from reallocating given spans and fixes their memory
-    /// addresses until <paramref name="action"/> completes.
+    /// addresses until <paramref name="func"/> completes.
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
@@ -429,6 +449,7 @@ public static partial class NativeUtilities
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
     /// <typeparam name="T5">Type of the items in 6th span.</typeparam>
     /// <typeparam name="T6">Type of the items in 7th span.</typeparam>
+    /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
     /// <param name="span2">3th span.</param>
@@ -436,10 +457,11 @@ public static partial class NativeUtilities
     /// <param name="span4">5th span.</param>
     /// <param name="span5">6th span.</param>
     /// <param name="span6">7th span.</param>
-    /// <param name="action">A <see cref="ReadOnlyFixedListAction"/> delegate.</param>
-    public static unsafe void WithSafeFixed<T0, T1, T2, T3, T4, T5, T6>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
+    /// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
+    /// <returns>The result of <paramref name="func"/> execution.</returns>
+    public static unsafe TResult WithSafeReadOnlyFixed<T0, T1, T2, T3, T4, T5, T6, TResult>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
         Span<T4> span4, Span<T5> span5, Span<T6> span6,
-        ReadOnlyFixedListAction action)
+        ReadOnlyFixedListFunc<TResult> func)
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged where T4 : unmanaged
         where T5 : unmanaged where T6 : unmanaged
     {
@@ -463,7 +485,7 @@ public static partial class NativeUtilities
             );
             try
             {
-                action(lst);
+                return func(lst);
             }
             finally
             {
@@ -474,7 +496,7 @@ public static partial class NativeUtilities
 
     /// <summary>
     /// Prevents the garbage collector from reallocating given spans and fixes their memory
-    /// addresses until <paramref name="action"/> completes.
+    /// addresses until <paramref name="func"/> completes.
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
@@ -484,6 +506,7 @@ public static partial class NativeUtilities
     /// <typeparam name="T5">Type of the items in 6th span.</typeparam>
     /// <typeparam name="T6">Type of the items in 7th span.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+    /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
     /// <param name="span2">3th span.</param>
@@ -492,10 +515,11 @@ public static partial class NativeUtilities
     /// <param name="span5">6th span.</param>
     /// <param name="span6">7th span.</param>
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
-    /// <param name="action">A <see cref="ReadOnlyFixedListAction{TArg}"/> delegate.</param>
-    public static unsafe void WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
+    /// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
+    /// <returns>The result of <paramref name="func"/> execution.</returns>
+    public static unsafe TResult WithSafeReadOnlyFixed<T0, T1, T2, T3, T4, T5, T6, TArg, TResult>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
         Span<T4> span4, Span<T5> span5, Span<T6> span6,
-        TArg arg, ReadOnlyFixedListAction<TArg> action)
+        TArg arg, ReadOnlyFixedListFunc<TArg, TResult> func)
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged where T4 : unmanaged
         where T5 : unmanaged where T6 : unmanaged
     {
@@ -519,7 +543,7 @@ public static partial class NativeUtilities
             );
             try
             {
-                action(lst, arg);
+                return func(lst, arg);
             }
             finally
             {
@@ -530,7 +554,7 @@ public static partial class NativeUtilities
 
     /// <summary>
     /// Prevents the garbage collector from reallocating given spans and fixes their memory
-    /// addresses until <paramref name="action"/> completes.
+    /// addresses until <paramref name="func"/> completes.
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
@@ -540,6 +564,7 @@ public static partial class NativeUtilities
     /// <typeparam name="T5">Type of the items in 6th span.</typeparam>
     /// <typeparam name="T6">Type of the items in 7th span.</typeparam>
     /// <typeparam name="T7">Type of the items in 8th span.</typeparam>
+    /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
     /// <param name="span2">3th span.</param>
@@ -548,10 +573,11 @@ public static partial class NativeUtilities
     /// <param name="span5">6th span.</param>
     /// <param name="span6">7th span.</param>
     /// <param name="span7">8th span.</param>
-    /// <param name="action">A <see cref="ReadOnlyFixedListAction"/> delegate.</param>
-    public static unsafe void WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, T7>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
+    /// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
+    /// <returns>The result of <paramref name="func"/> execution.</returns>
+    public static unsafe TResult WithSafeReadOnlyFixed<T0, T1, T2, T3, T4, T5, T6, T7, TResult>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
         Span<T4> span4, Span<T5> span5, Span<T6> span6, Span<T7> span7,
-        ReadOnlyFixedListAction action)
+        ReadOnlyFixedListFunc<TResult> func)
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged where T4 : unmanaged
         where T5 : unmanaged where T6 : unmanaged where T7 : unmanaged
     {
@@ -577,7 +603,7 @@ public static partial class NativeUtilities
             );
             try
             {
-                action(lst);
+                return func(lst);
             }
             finally
             {
@@ -588,7 +614,7 @@ public static partial class NativeUtilities
 
     /// <summary>
     /// Prevents the garbage collector from reallocating given spans and fixes their memory
-    /// addresses until <paramref name="action"/> completes.
+    /// addresses until <paramref name="func"/> completes.
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
@@ -599,6 +625,7 @@ public static partial class NativeUtilities
     /// <typeparam name="T6">Type of the items in 7th span.</typeparam>
     /// <typeparam name="T7">Type of the items in 8th span.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
+    /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
     /// <param name="span2">3th span.</param>
@@ -608,10 +635,11 @@ public static partial class NativeUtilities
     /// <param name="span6">7th span.</param>
     /// <param name="span7">8th span.</param>
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
-    /// <param name="action">A <see cref="ReadOnlyFixedListAction{TArg}"/> delegate.</param>
-    public static unsafe void WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, T7, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
+    /// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
+    /// <returns>The result of <paramref name="func"/> execution.</returns>
+    public static unsafe TResult WithSafeReadOnlyFixed<T0, T1, T2, T3, T4, T5, T6, T7, TArg, TResult>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
         Span<T4> span4, Span<T5> span5, Span<T6> span6, Span<T7> span7,
-        TArg arg, ReadOnlyFixedListAction<TArg> action)
+        TArg arg, ReadOnlyFixedListFunc<TArg, TResult> func)
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged where T4 : unmanaged
         where T5 : unmanaged where T6 : unmanaged where T7 : unmanaged
     {
@@ -637,7 +665,7 @@ public static partial class NativeUtilities
             );
             try
             {
-                action(lst, arg);
+                return func(lst, arg);
             }
             finally
             {

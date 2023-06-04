@@ -14,7 +14,9 @@ public interface IFixedMemory : IReadOnlyFixedMemory
     /// Creates a <see cref="IFixedContext{Byte}"/> instance from current instance.
     /// </summary>
     /// <returns>A <see cref="IFixedContext{Byte}"/> instance.</returns>
-    new IFixedContext<Byte> AsBinaryContext() => FixedContext<Byte>.CreateBinaryContext(this);
+    new IFixedContext<Byte> AsBinaryContext();
+
+    IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
 }
 
 /// <summary>
