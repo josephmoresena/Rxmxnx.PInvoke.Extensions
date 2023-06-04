@@ -130,6 +130,8 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe FixedContext<Byte> CreateBinaryContext(IReadOnlyFixedMemory fmem)
     {
+        if (fmem is FixedContext<Byte> ctx)
+            return ctx;
         if (fmem is FixedMemory mem)
             return new(mem.BinaryOffset, mem);
         else

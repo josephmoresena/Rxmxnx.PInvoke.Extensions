@@ -59,7 +59,12 @@ public sealed class ValueTest
         Assert.Equal(sizeof(T), fRef.Bytes.Length);
         Assert.Equal(bytes, fRef.Bytes.ToArray());
 
-        //TODO: ContextTest
+        IReadOnlyFixedContext<Byte> ctx = fRef.AsBinaryContext();
+
+        Assert.Equal(bytes, ctx.Values.ToArray());
+        Assert.Equal(bytes, ctx.Bytes.ToArray());
+        Assert.Equal(fRef.Pointer, ctx.Pointer);
+
         Test<T, Boolean>(fRef, bytes);
         Test<T, Byte>(fRef, bytes);
         Test<T, Char>(fRef, bytes);
@@ -93,16 +98,27 @@ public sealed class ValueTest
         if (sizeof(T) >= sizeof(T2))
         {
             IReadOnlyFixedReference<T2> fRef2 = fRef.Transformation<T2>(out IReadOnlyFixedMemory residual);
+            IReadOnlyFixedContext<Byte> ctx = fRef2.AsBinaryContext();
+            IReadOnlyFixedContext<Byte> ctxR = residual.AsBinaryContext();
+            Int32 count = bytes.Length / sizeof(T2);
+
             if (typeof(T) == typeof(T2))
                 Assert.Equal((Object)fRef.Reference, fRef2.Reference);
             else if (sizeof(T2) == sizeof(T2))
                 Assert.Equal(bytes, fRef2.Bytes.ToArray());
             else
                 Assert.Equal(bytes, fRef2.Bytes.ToArray().Concat(residual.Bytes.ToArray()));
+
             Assert.Equal(sizeof(T) == sizeof(T2), residual.Bytes.IsEmpty);
+            Assert.Equal(sizeof(T) == sizeof(T2), ctxR.Bytes.IsEmpty);
             Assert.Equal(fRef.Pointer + sizeof(T2), residual.Pointer);
             Assert.Equal(fRef.Pointer, fRef2.Pointer);
-            //TODO: ContextTest
+
+            Assert.Equal(bytes, ctx.Values.ToArray());
+            Assert.Equal(bytes, ctx.Bytes.ToArray());
+            Assert.Equal(fRef2.Pointer, ctx.Pointer);
+            Assert.Equal(bytes[sizeof(T2)..], ctxR.Bytes.ToArray());
+            Assert.Equal(residual.Pointer, ctxR.Pointer);
         }
         else
             Assert.Throws<InsufficientMemoryException>(() => fRef.Transformation<T2>(out _));
