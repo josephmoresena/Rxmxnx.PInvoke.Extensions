@@ -63,15 +63,6 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
     /// Constructor.
     /// </summary>
     /// <param name="ctx">Fixed context of memory block.</param>
-    private FixedContext(FixedMemory ctx) : base(ctx)
-    {
-        this._count = this.BinaryLength / sizeof(T);
-    }
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="ctx">Fixed context of memory block.</param>
     /// <param name="count">Number of <typeparamref name="T"/> items in memory block.</param>
     private FixedContext(FixedMemory ctx, Int32 count) : base(ctx)
     {
@@ -96,7 +87,7 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
         residual = fixedOffset;
         return result;
     }
-    IFixedContext<Byte> IFixedMemory.AsBinaryContext() => this.GetTransformation<Byte>(out _);
+    IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.GetTransformation<Byte>(out _, true);
 
     /// <summary>
     /// Creates a <see cref="FixedContext{TDestination}"/> instance.
@@ -122,4 +113,6 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
     public override Boolean Equals(Object? obj) => base.Equals(obj as FixedContext<T>);
     /// <inheritdoc/>
     public override Int32 GetHashCode() => base.GetHashCode();
+    /// <inheritdoc/>
+    public override IFixedContext<Byte> AsBinaryContext() => this.GetTransformation<Byte>(out _);
 }

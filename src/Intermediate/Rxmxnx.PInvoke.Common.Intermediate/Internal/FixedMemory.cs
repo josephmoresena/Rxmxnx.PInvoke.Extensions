@@ -39,7 +39,6 @@ internal unsafe abstract class FixedMemory : FixedPointer, IFixedMemory, IEquata
 
     Span<Byte> IFixedMemory.Bytes => base.CreateBinarySpan();
     ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => base.CreateReadOnlyBinarySpan();
-    IFixedContext<Byte> IFixedMemory.AsBinaryContext() => new FixedContext<Byte>(this.BinaryOffset, this);
 
     /// <inheritdoc/>
     public virtual Boolean Equals(FixedMemory? other) => this.Equals(other as FixedPointer);
@@ -48,4 +47,8 @@ internal unsafe abstract class FixedMemory : FixedPointer, IFixedMemory, IEquata
     public override Boolean Equals(Object? obj) => base.Equals(obj as FixedMemory);
     /// <inheritdoc/>
     public override Int32 GetHashCode() => base.GetHashCode();
+    /// <inheritdoc/>
+    public virtual IFixedContext<Byte> AsBinaryContext() => new FixedContext<Byte>(this.BinaryOffset, this);
+
+    IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
 }

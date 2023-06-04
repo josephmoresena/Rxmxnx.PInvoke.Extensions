@@ -69,6 +69,8 @@ public sealed class WithSafeTransformTest
 
         for (Int32 i = 0; i < values.Count; i++)
             values[i].WithSafeFixed(fValues[i], AssertReference);
+
+        AssertReference((ReadOnlyFixedMemoryList)fseq);
     }
     private static void AssertReference(ReadOnlyFixedMemoryList fml)
     {
