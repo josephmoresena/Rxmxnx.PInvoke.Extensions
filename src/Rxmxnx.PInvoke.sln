@@ -1,23 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 25.0.1704.5
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rxmxnx.PInvoke.Common.Intermediate", "Intermediate\Rxmxnx.PInvoke.Common.Intermediate\Rxmxnx.PInvoke.Common.Intermediate.csproj", "{28D580AB-F5AF-44F7-8071-5D200C9858AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rxmxnx.PInvoke.Common.Intermediate", "Intermediate\Rxmxnx.PInvoke.Common.Intermediate\Rxmxnx.PInvoke.Common.Intermediate.csproj", "{28D580AB-F5AF-44F7-8071-5D200C9858AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rxmxnx.PInvoke.Extensions.Intermediate", "Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate.csproj", "{788B317D-B5DB-4CFB-BE05-3E410820F306}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rxmxnx.PInvoke.Extensions.Intermediate", "Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate.csproj", "{788B317D-B5DB-4CFB-BE05-3E410820F306}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rxmxnx.PInvoke.CString.Intermediate", "Intermediate\Rxmxnx.PInvoke.CString.Intermediate\Rxmxnx.PInvoke.CString.Intermediate.csproj", "{A92F32C0-A2F5-419A-9AA2-E1DF8E16FDC4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rxmxnx.PInvoke.CString.Intermediate", "Intermediate\Rxmxnx.PInvoke.CString.Intermediate\Rxmxnx.PInvoke.CString.Intermediate.csproj", "{A92F32C0-A2F5-419A-9AA2-E1DF8E16FDC4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rxmxnx.PInvoke.Common.Tests", "Test\Rxmxnx.PInvoke.Common.Tests\Rxmxnx.PInvoke.Common.Tests.csproj", "{CD98BE04-3132-4B29-9236-6A72FC78825C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rxmxnx.PInvoke.Common.Tests", "Test\Rxmxnx.PInvoke.Common.Tests\Rxmxnx.PInvoke.Common.Tests.csproj", "{CD98BE04-3132-4B29-9236-6A72FC78825C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rxmxnx.PInvoke.CString.Tests.SourceGenerator", "Test\Rxmxnx.PInvoke.CString.Tests.SourceGenerator\Rxmxnx.PInvoke.CString.Tests.SourceGenerator.csproj", "{F47599B6-C9C6-4827-B59D-F37CA978F94F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rxmxnx.PInvoke.CString.Tests.SourceGenerator", "Test\Rxmxnx.PInvoke.CString.Tests.SourceGenerator\Rxmxnx.PInvoke.CString.Tests.SourceGenerator.csproj", "{F47599B6-C9C6-4827-B59D-F37CA978F94F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rxmxnx.PInvoke.CString.Tests", "Test\Rxmxnx.PInvoke.CString.Tests\Rxmxnx.PInvoke.CString.Tests.csproj", "{6D46C20D-7631-4082-9661-E566D0C67996}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rxmxnx.PInvoke.CString.Tests", "Test\Rxmxnx.PInvoke.CString.Tests\Rxmxnx.PInvoke.CString.Tests.csproj", "{6D46C20D-7631-4082-9661-E566D0C67996}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rxmxnx.PInvoke.Extensions.Tests", "Test\Rxmxnx.PInvoke.Extensions.Tests\Rxmxnx.PInvoke.Extensions.Tests.csproj", "{C437B5BE-9FCA-4485-A4A1-A8C88068DA56}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rxmxnx.PInvoke.Extensions", "Package\Rxmxnx.PInvoke.Extensions\Rxmxnx.PInvoke.Extensions.csproj", "{533C4118-E3AD-49C8-AD80-FA189CCDF852}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rxmxnx.PInvoke.Extensions.Tests", "Test\Rxmxnx.PInvoke.Extensions.Tests\Rxmxnx.PInvoke.Extensions.Tests.csproj", "{C437B5BE-9FCA-4485-A4A1-A8C88068DA56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,15 +46,11 @@ Global
 		{6D46C20D-7631-4082-9661-E566D0C67996}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6D46C20D-7631-4082-9661-E566D0C67996}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D46C20D-7631-4082-9661-E566D0C67996}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6D46C20D-7631-4082-9661-E566D0C67996}.Release|Any CPU.Build.0 = Release|Any CPUCPU
+		{6D46C20D-7631-4082-9661-E566D0C67996}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C437B5BE-9FCA-4485-A4A1-A8C88068DA56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C437B5BE-9FCA-4485-A4A1-A8C88068DA56}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C437B5BE-9FCA-4485-A4A1-A8C88068DA56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C437B5BE-9FCA-4485-A4A1-A8C88068DA56}.Release|Any CPU.Build.0 = Release|Any CPU
-		{533C4118-E3AD-49C8-AD80-FA189CCDF852}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{533C4118-E3AD-49C8-AD80-FA189CCDF852}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{533C4118-E3AD-49C8-AD80-FA189CCDF852}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{533C4118-E3AD-49C8-AD80-FA189CCDF852}.Release|Any CPU.Build.0 = Release|Any 
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
