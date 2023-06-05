@@ -1,6 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests.WithFixedSafeTests;
 
 [ExcludeFromCodeCoverage]
+[SuppressMessage("csharpsquid", "S2699")]
 public sealed class ValueTest
 {
     private static readonly IFixture fixture = new Fixture();

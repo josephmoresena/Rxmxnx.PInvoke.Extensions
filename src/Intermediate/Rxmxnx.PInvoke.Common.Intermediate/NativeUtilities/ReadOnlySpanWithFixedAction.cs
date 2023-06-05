@@ -1,5 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke;
 
+[SuppressMessage("csharpsquid", "S107")]
 [SuppressMessage("csharpsquid", "S2436")]
 public static partial class NativeUtilities
 {

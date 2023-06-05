@@ -1,6 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
 
 [ExcludeFromCodeCoverage]
+[SuppressMessage("csharpsquid", "S2699")]
 public sealed class GetPointerTest
 {
     private static readonly IFixture fixture = new Fixture();

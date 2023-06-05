@@ -1,6 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests;
 
 [ExcludeFromCodeCoverage]
+[SuppressMessage("csharpsquid", "S2699")]
 public sealed class IEnumerableSequenceTests
 {
     private const String notStartedError = "Enumeration has not started. Call MoveNext.";

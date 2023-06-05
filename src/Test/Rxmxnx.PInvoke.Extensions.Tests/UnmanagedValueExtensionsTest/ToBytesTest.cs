@@ -1,6 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.UnmanagedValueExtensionsTest;
 
 [ExcludeFromCodeCoverage]
+[SuppressMessage("csharpsquid", "S2699")]
 public sealed class ToBytesTest
 {
     private static readonly IFixture fixture = new Fixture();

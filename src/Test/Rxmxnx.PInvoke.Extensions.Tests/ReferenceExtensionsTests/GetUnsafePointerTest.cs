@@ -1,6 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.ReferenceExtensionsTests;
 
 [ExcludeFromCodeCoverage]
+[SuppressMessage("csharpsquid", "S2699")]
 public sealed class GetUnsafePointerTest
 {
     private static readonly IFixture fixture = new Fixture();

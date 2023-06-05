@@ -3,7 +3,7 @@
 /// <summary>
 /// Helper class for <see cref="CString"/> concatenation.
 /// </summary>
-internal sealed class StringConcatenator : BinaryConcatenator<String>, IDisposable
+internal sealed class StringConcatenator : BinaryConcatenator<String>
 {
     /// <summary>
     /// Indicates whether the empty values must be ignored in the concatenation.

@@ -3,14 +3,14 @@
 public partial class CString : IComparable, IComparable<String>, IComparable<CString>
 {
     /// <inheritdoc/>
-    public Int32 CompareTo(Object? other)
+    public Int32 CompareTo(Object? obj)
     {
-        if (other is null)
+        if (obj is null)
             return 1;
-        else if (other is String str)
+        else if (obj is String str)
             return this.CompareTo(str);
 
-        ValidationUtilities.ThrowIfInvalidCastType<CString>(other, nameof(CString), out CString cstr);
+        ValidationUtilities.ThrowIfInvalidCastType<CString>(obj, nameof(CString), out CString cstr);
         return this.CompareTo(cstr);
     }
 

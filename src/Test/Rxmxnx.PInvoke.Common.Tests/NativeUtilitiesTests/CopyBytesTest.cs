@@ -1,6 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
 
 [ExcludeFromCodeCoverage]
+[SuppressMessage("csharpsquid", "S2699")]
 public sealed class CopyBytesTest
 {
     private static readonly IFixture fixture = new Fixture();

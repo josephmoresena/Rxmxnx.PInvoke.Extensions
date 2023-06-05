@@ -134,7 +134,7 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
         {
             Int32 binaryLength = this._lengths.Sum(GetSpanLength);
             Int32 charLength = binaryLength / SizeOfChar + binaryLength % SizeOfChar;
-            String value = String.Create(binaryLength, this, CopyBytes);
+            String value = String.Create(charLength, this, CopyBytes);
             return new(value, this._lengths);
         }
 

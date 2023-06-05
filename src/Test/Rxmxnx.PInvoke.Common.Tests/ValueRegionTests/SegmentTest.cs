@@ -1,6 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.ValueRegionTests;
 
 [ExcludeFromCodeCoverage]
+[SuppressMessage("csharpsquid", "S2699")]
 public sealed class SegmentTest : ValueRegionTestBase
 {
     [Fact]

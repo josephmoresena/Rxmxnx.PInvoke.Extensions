@@ -1,6 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests;
 
 [ExcludeFromCodeCoverage]
+[SuppressMessage("csharpsquid", "S2699")]
 public sealed class IWrapperTests
 {
     private static readonly IFixture fixture = new Fixture();
