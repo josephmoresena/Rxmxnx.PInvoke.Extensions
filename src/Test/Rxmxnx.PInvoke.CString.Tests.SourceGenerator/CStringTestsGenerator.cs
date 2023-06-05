@@ -11,6 +11,7 @@ namespace Rxmxnx.PInvoke.Tests.SourceGenerator
     [ExcludeFromCodeCoverage]
     public class CStringTestsGenerator : ISourceGenerator
     {
+#pragma warning disable
         void ISourceGenerator.Execute(GeneratorExecutionContext context)
         {
             StringBuilder strBuild = new StringBuilder();
@@ -86,5 +87,6 @@ internal static partial class TestSet
             strBuild.AppendLine("\t\t};");
         }
     }
+#pragma warning restore
 }
 

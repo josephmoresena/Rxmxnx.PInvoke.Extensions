@@ -6,6 +6,7 @@ namespace Rxmxnx.PInvoke.Tests.SourceGenerator
     [ExcludeFromCodeCoverage]
     internal static class StringSet
     {
+#pragma warning disable
         public static readonly String[] Set = new String[]
         {
             "Hello, World! 🌍👋" /* English, Length = 15 */,
@@ -315,5 +316,6 @@ namespace Rxmxnx.PInvoke.Tests.SourceGenerator
             "जैविक उपचार नामक विज्ञान हमें वनस्पतियों, जीवों और बाक्टीरिया के उपयोग से दवाओं को बनाना सिखाता है। 🌿💊🧫" /* Hindi, Length = 109 */,
             "En linguistique, la morphologie est l'étude de la formation des mots et de leur structure interne. 🔎📚🗣️" /* French, Length = 90 */,
         };
+#pragma warning restore
     }
 }
