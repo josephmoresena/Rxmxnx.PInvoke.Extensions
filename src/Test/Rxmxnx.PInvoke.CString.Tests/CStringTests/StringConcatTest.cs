@@ -88,17 +88,6 @@ public sealed class StringConcatTest
         Assert.Equal(expectedCString, resultCStringCString);
         Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[0..^1]);
     }
-    private static void NormalTest(String?[] strings, Byte[]?[] values)
-    {
-        String expectedCString = String.Concat(strings);
-        Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
-
-        CString resultCString = CString.Concat(values);
-        String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[0..^1]);
-
-        Assert.Equal(expectedCString, resultCStringCString);
-        Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[0..^1]);
-    }
     private static void EmptyTest(String?[] values)
     {
         CString resultCString = CString.Concat(values);

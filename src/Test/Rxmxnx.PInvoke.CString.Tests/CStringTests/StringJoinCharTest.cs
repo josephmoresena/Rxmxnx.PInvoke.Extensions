@@ -3,7 +3,7 @@
 [ExcludeFromCodeCoverage]
 public sealed class StringJoinCharTest
 {
-    private static IFixture fixture = new Fixture();
+    private static readonly IFixture fixture = new Fixture();
 
     [Fact]
     internal void Test()

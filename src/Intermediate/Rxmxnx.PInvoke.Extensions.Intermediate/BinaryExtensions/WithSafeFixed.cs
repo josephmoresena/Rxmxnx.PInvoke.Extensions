@@ -1,6 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke;
 
-public static partial class MemoryBlockExtensions
+public static partial class BinaryExtensions
 {
     /// <summary>
     /// Prevents the garbage collector from relocating the current span and fixes its memory 

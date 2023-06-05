@@ -10,6 +10,7 @@ public sealed class BasicTests
     {
         ReadOnlySpan<Byte> emptySpan = default(CString?);
         Byte[] emptyBytes = CString.GetBytes(CString.Empty);
+        CString? nullCStr = default(Byte[]);
 
         CString noEmpty1 = CString.Create(emptyBytes);
         CString noEmpty2 = CString.Create(new Byte[] { default, default });
@@ -59,6 +60,7 @@ public sealed class BasicTests
 
         Assert.Null(CString.Create(default(ReadOnlySpanFunc<Byte>)));
         Assert.Null(CString.Create(default(Byte[])));
+        Assert.Null(nullCStr);
 
         Assert.Throws<ArgumentNullException>(() => CString.GetBytes(default!));
         Assert.Throws<ArgumentException>(() => empty.CompareTo(new Object()));

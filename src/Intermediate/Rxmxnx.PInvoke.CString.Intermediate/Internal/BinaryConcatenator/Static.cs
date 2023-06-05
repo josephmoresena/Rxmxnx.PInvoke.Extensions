@@ -20,6 +20,7 @@ internal partial class BinaryConcatenator<T>
     /// </summary>
     /// <param name="span"><see cref="ReadOnlySpan{Byte}"/> to UTF-8 text.</param>
     /// <returns>Initial position of the UTF-8 text.</returns>
+    [ExcludeFromCodeCoverage]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static Int32 GetInitialPosition(ReadOnlySpan<Byte> span)
     {

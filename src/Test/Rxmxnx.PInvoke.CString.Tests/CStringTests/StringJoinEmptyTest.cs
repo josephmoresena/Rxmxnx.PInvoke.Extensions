@@ -8,7 +8,6 @@ public sealed class StringJoinEmptyTest
     [InlineData(false)]
     internal void LocalEmptyTest(Boolean emptyData)
     {
-        List<GCHandle> handles = new();
         String? separator = !emptyData ? String.Empty : default;
         String?[] values = !emptyData ? Enumerable.Repeat(String.Empty, 3).ToArray() : Array.Empty<String>();
         Test(separator, values);
