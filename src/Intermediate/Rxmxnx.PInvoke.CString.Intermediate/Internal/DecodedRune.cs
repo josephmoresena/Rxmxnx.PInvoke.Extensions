@@ -53,7 +53,7 @@ internal sealed class DecodedRune : IWrapper<Rune>
             return this._value.Equals(decoded._value);
         else if (obj is Rune rune)
             return this._value.Equals(rune);
-        return base.Equals(obj);
+        return Equals(obj);
     }
 
     /// <inheritdoc/>
