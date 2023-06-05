@@ -73,7 +73,7 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
         if (startIndex == 0 && length == this._lengths.Length)
             return this;
 
-        return new SubsequenceHelper(this, startIndex, length).Create();
+        return new SubsequenceHelper(this, startIndex, length).CreateSequence();
     }
 
     Int32 IEnumerableSequence<CString>.GetSize() => this._lengths.Length;
@@ -130,7 +130,7 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
         /// Creates a new <see cref="CStringSequence"/> instance from current helper instance.
         /// </summary>
         /// <returns>A new <see cref="CStringSequence"/> instance from current helper instance.</returns>
-        public CStringSequence Create()
+        public CStringSequence CreateSequence()
         {
             Int32 binaryLength = this._lengths.Sum(GetSpanLength);
             Int32 charLength = binaryLength / SizeOfChar + binaryLength % SizeOfChar;

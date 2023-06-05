@@ -121,6 +121,8 @@ public sealed class EqualsTest
     private static void OperatorTest(ComparisonTestResult results, CString cstrA, String strA, CString cstrB, String strB)
     {
         Boolean equals = results.Normal == 0;
+        Boolean lower = results.Normal < 0;
+        Boolean upper = results.Normal > 0;
 
         Assert.True(strA == cstrA);
         Assert.True(cstrB == strB);
@@ -130,5 +132,21 @@ public sealed class EqualsTest
         Assert.Equal(!equals, cstrA != cstrB);
         Assert.Equal(!equals, strA != cstrB);
         Assert.Equal(!equals, cstrA != strB);
+
+        Assert.Equal(lower, strA < cstrB);
+        Assert.Equal(lower, cstrA < cstrB);
+        Assert.Equal(lower, cstrA < strB);
+
+        Assert.Equal(lower || equals, strA <= cstrB);
+        Assert.Equal(lower || equals, cstrA <= cstrB);
+        Assert.Equal(lower || equals, cstrA <= strB);
+
+        Assert.Equal(upper, strA > cstrB);
+        Assert.Equal(upper, cstrA > cstrB);
+        Assert.Equal(upper, cstrA > strB);
+
+        Assert.Equal(upper || equals, strA >= cstrB);
+        Assert.Equal(upper || equals, cstrA >= cstrB);
+        Assert.Equal(upper || equals, cstrA >= strB);
     }
 }

@@ -28,7 +28,7 @@ internal readonly struct FixedMemoryListValue : IEnumerableSequence<FixedMemory>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
-            ValidationUtilities.ThrowIfInvalidListIndex(index, this.Count, nameof(index));
+            ValidationUtilities.ThrowIfInvalidListIndex(index, this.Count);
             return this._memories![index];
         }
     }

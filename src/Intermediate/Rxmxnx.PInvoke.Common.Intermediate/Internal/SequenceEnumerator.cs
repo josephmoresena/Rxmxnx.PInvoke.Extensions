@@ -4,7 +4,7 @@
 /// Internal implmentation of <see cref="IEnumerator{T}"/>.
 /// </summary>
 /// <typeparam name="T">Type of <see cref="IEnumerator"/> item.</typeparam>
-internal sealed class SequenceEnumerator<T> : IEnumerator, IEnumerator<T>
+internal sealed class SequenceEnumerator<T> : IEnumerator<T>
 {
     /// <summary>
     /// <see cref="IEnumerableSequence{T}"/> instance.
@@ -43,7 +43,10 @@ internal sealed class SequenceEnumerator<T> : IEnumerator, IEnumerator<T>
         this._instance = instance;
     }
 
-    void IDisposable.Dispose() { }
+    void IDisposable.Dispose()
+    {
+        // Intentionally left empty. This enumerator does not manage any resources that need disposing.
+    }
 
     /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

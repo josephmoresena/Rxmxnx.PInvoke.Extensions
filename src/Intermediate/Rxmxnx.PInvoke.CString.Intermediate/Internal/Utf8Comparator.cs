@@ -129,11 +129,7 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
 
             //If the runes are not comparable to each other a full text comparison will be needed.
             if (runeA is null || runeB is null)
-            {
-                textA = ReadOnlySpan<Byte>.Empty;
-                textB = ReadOnlySpan<TChar>.Empty;
                 return this.Compare(textAO, textBO, this._ignoreCase) == 0;
-            }
             //If the value of both runes is the same, no further comparison is necessary.
             else if (runeA != runeB)
             {

@@ -4,7 +4,7 @@
 /// Exposes the enumerator, which supports a simple iteration over a sequence of a
 /// specified type.
 /// </summary>
-public interface IEnumerableSequence<out T> : IEnumerable, IEnumerable<T>
+public interface IEnumerableSequence<out T> : IEnumerable<T>
 {
     /// <summary>
     /// Retrieves the element at given index.
