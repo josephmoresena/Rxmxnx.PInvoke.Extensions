@@ -1,6 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
 
 [ExcludeFromCodeCoverage]
+[SuppressMessage("csharpsquid", "S2699")]
 public sealed class JoinEmptyTest
 {
     [Theory]

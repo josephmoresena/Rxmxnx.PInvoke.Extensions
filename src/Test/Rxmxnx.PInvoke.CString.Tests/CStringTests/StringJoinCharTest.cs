@@ -1,6 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
 
 [ExcludeFromCodeCoverage]
+[SuppressMessage("csharpsquid", "S2699")]
 public sealed class StringJoinCharTest
 {
     private static readonly IFixture fixture = new Fixture();

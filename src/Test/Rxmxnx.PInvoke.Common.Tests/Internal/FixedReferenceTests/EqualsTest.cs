@@ -1,6 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedReferenceTests;
 
 [ExcludeFromCodeCoverage]
+[SuppressMessage("csharpsquid", "S2699")]
 public sealed class EqualsTest : FixedReferenceTestsBase
 {
     [Fact]
