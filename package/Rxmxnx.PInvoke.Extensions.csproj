@@ -55,7 +55,7 @@
     	ReadOnlySpan;Unsafe;Fixed;Native;FFI;Binary;u8;Literals
     </PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageLicenseExpression>LGPL</PackageLicenseExpression>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
