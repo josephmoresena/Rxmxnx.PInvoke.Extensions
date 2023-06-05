@@ -3,30 +3,15 @@
 public partial class ValueRegion<T>
 {
     /// <summary>
-    /// This class represents a memory region in which an array of <typeparamref name="T"/> 
-    /// values is found.
+    /// This class represents a function segmended memory region that returns a <see cref="ReadOnlySpan{T}"/>
+    /// instance.
     /// </summary>
-    private sealed class SegmentedFuncRegion : ValueRegion<T>
+    private sealed class SegmentedFuncRegion : SegmentedRegion
     {
         /// <summary>
         /// Internal <see cref="ReadOnlySpanFunc{T}"/> instance. 
         /// </summary>
         private readonly ReadOnlySpanFunc<T> _func;
-        /// <summary>
-        /// Internal offset.
-        /// </summary>
-        private readonly Int32 _offset;
-        /// <summary>
-        /// Internal length.
-        /// </summary>
-        private readonly Int32 _end;
-        /// <summary>
-        /// Indicates whether current instance is segmented.
-        /// </summary>
-        private readonly Boolean _isSegmented;
-
-        /// <inheritdoc/>
-        public override Boolean IsSegmented => this._isSegmented;
 
         /// <summary>
         /// Constructor.
@@ -35,11 +20,9 @@ public partial class ValueRegion<T>
         /// <param name="offset">Offset for range.</param>
         /// <param name="length">Length of range.</param>
         public SegmentedFuncRegion(FuncRegion region, Int32 offset, Int32 length)
+            : base(region.AsReadOnlySpanFunc()!().Length, offset, length)
         {
             this._func = region.AsReadOnlySpanFunc()!;
-            this._offset = offset;
-            this._end = this._offset + length;
-            this._isSegmented = IsSegmentedRegion(this);
         }
 
         /// <summary>
@@ -49,28 +32,9 @@ public partial class ValueRegion<T>
         /// <param name="offset">Offset for range.</param>
         /// <param name="length">Length of range.</param>
         public SegmentedFuncRegion([DisallowNull] SegmentedFuncRegion region, Int32 offset, Int32 length)
+            : base(region._func().Length, offset, length, region._offset)
         {
             this._func = region._func;
-            this._offset = offset + region._offset;
-            this._end = this._offset + length;
-            this._isSegmented = IsSegmentedRegion(this);
-        }
-
-        /// <inheritdoc/>
-        public override ValueRegion<T> Slice(Int32 startIndex)
-        {
-            Int32 regionLength = this._end - this._offset;
-            Int32 length = regionLength - startIndex;
-            ValidationUtilities.ThrowIfInvalidSubregion(regionLength, startIndex, length);
-            return this.InternalSlice(startIndex, length);
-        }
-
-        /// <inheritdoc/>
-        public override ValueRegion<T> Slice(Int32 startIndex, Int32 length)
-        {
-            Int32 regionLength = this._end - this._offset;
-            ValidationUtilities.ThrowIfInvalidSubregion(regionLength, startIndex, length);
-            return this.InternalSlice(startIndex, length);
         }
 
         /// <inheritdoc/>
@@ -79,16 +43,5 @@ public partial class ValueRegion<T>
         /// <inheritdoc/>
         internal override ValueRegion<T> InternalSlice(Int32 startIndex, Int32 length)
             => new SegmentedFuncRegion(this, startIndex, length);
-
-        /// <summary>
-        /// Indicates whether region is segmented.
-        /// </summary>
-        /// <param name="region"><see cref="SegmentedManagedRegion"/> instance.</param>
-        /// <returns>
-        /// <see langword="true"/> if <paramref name="region"/> is segmented; otherwise, 
-        /// <see langword="false"/>.
-        /// </returns>
-        private static Boolean IsSegmentedRegion(SegmentedFuncRegion region)
-            => region._offset != default || region._end != region._func().Length;
     }
 }

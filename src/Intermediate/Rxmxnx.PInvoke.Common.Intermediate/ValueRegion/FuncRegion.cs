@@ -3,8 +3,8 @@
 public partial class ValueRegion<T>
 {
     /// <summary>
-    /// This class represents a memory region in which an array of <typeparamref name="T"/> 
-    /// values is found.
+    /// This class represents a function memory region that returns a <see cref="ReadOnlySpan{T}"/>
+    /// instance.
     /// </summary>
     private sealed class FuncRegion : ValueRegion<T>
     {

@@ -42,11 +42,13 @@ public sealed class WithSafeTransformTest
         }
     }
 
-    [Fact]
-    internal void Test()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    internal void Test(Boolean fixedIndices)
     {
         List<GCHandle> handles = new();
-        IReadOnlyList<Int32> indices = TestSet.GetIndices();
+        IReadOnlyList<Int32> indices = !fixedIndices? TestSet.GetIndices() : GetIndices();
         try
         {
             CStringSequence seq = CreateSequence(handles, indices, out CString?[] values);
@@ -214,5 +216,26 @@ public sealed class WithSafeTransformTest
             if (!fmem.Bytes.IsEmpty)
                 result.Add(new(fmem.Bytes));
         return result;
+    }
+    private static IReadOnlyList<Int32> GetIndices()
+    {
+        Queue<Int32> queue = new(TestSet.GetIndices());
+        List<Int32> result = new();
+        Byte space = 0;
+        while(queue.TryDequeue(out Int32 value))
+        {
+            result.Add(value);
+            if (space == 2)
+                result.Add(-3);
+            else if (space == 13)
+                result.Add(-2);
+            else if (space == 17)
+                result.Add(-1);
+            else if (space > 23)
+                space = 0;
+            else
+                space++;
+        }
+        return result.ToArray();
     }
 }
