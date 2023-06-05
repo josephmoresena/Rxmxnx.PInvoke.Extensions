@@ -38,7 +38,7 @@ public partial class ValueRegion<T>
         }
 
         /// <inheritdoc/>
-        internal override ReadOnlySpan<T> AsSpan() => this._func()[this._offset..this._end];
+        internal override ReadOnlySpan<T> AsSpan() => this._func()[base._offset..base._end];
 
         /// <inheritdoc/>
         internal override ValueRegion<T> InternalSlice(Int32 startIndex, Int32 length)

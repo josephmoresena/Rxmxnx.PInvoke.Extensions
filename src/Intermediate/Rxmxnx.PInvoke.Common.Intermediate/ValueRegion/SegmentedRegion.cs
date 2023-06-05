@@ -31,7 +31,7 @@ public partial class ValueRegion<T>
         /// <param name="offset">Offset for range.</param>
         /// <param name="length">Length of range.</param>
         /// <param name="initialLength">Initial region offset.</param>
-        public SegmentedRegion(Int32 initialLength, Int32 offset, Int32 length, Int32 initalOffset = 0)
+        protected SegmentedRegion(Int32 initialLength, Int32 offset, Int32 length, Int32 initalOffset = 0)
 		{
             this._offset = offset + initalOffset;
             this._end = this._offset + length;

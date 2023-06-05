@@ -14,7 +14,7 @@ public partial class ValueRegion<T>
         private readonly T[] _array;
 
         /// <inheritdoc/>
-        public override T this[Int32 index] => this._array[this._offset + index];
+        public override T this[Int32 index] => this._array[base._offset + index];
 
         /// <summary>
         /// Constructor.
@@ -44,7 +44,7 @@ public partial class ValueRegion<T>
         protected override T[]? AsArray() => !this.IsSegmented ? this._array : default;
 
         /// <inheritdoc/>
-        internal override ReadOnlySpan<T> AsSpan() => this._array.AsSpan()[this._offset..this._end];
+        internal override ReadOnlySpan<T> AsSpan() => this._array.AsSpan()[base._offset..base._end];
 
         /// <inheritdoc/>
         internal override ValueRegion<T> InternalSlice(Int32 startIndex, Int32 length)
