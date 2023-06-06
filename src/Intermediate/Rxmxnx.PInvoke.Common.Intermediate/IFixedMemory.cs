@@ -1,30 +1,30 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// This interface represents a fixed memory block.
+/// Interface representing a fixed block of memory.
 /// </summary>
 public interface IFixedMemory : IReadOnlyFixedMemory
 {
     /// <summary>
-    /// A binary span over the fixed memory block.
+    /// Gets a binary span over the fixed block of memory.
     /// </summary>
     new Span<Byte> Bytes { get; }
 
     /// <summary>
-    /// Creates a <see cref="IFixedContext{Byte}"/> instance from current instance.
+    /// Creates a new instance of <see cref="IFixedContext{Byte}"/> from the current instance.
     /// </summary>
-    /// <returns>A <see cref="IFixedContext{Byte}"/> instance.</returns>
+    /// <returns>An instance of <see cref="IFixedContext{Byte}"/>.</returns>
     new IFixedContext<Byte> AsBinaryContext();
 }
 
 /// <summary>
-/// This interface represents a fixed memory block.
+/// Interface representing a fixed block of memory.
 /// </summary>
-/// <typeparam name="T">Type of fixed memory block.</typeparam>
+/// <typeparam name="T">Type of objects in the fixed memory block.</typeparam>
 public interface IFixedMemory<T> : IFixedMemory, IReadOnlyFixedMemory<T> where T : unmanaged
 {
     /// <summary>
-    /// A <typeparamref name="T"/> span over the fixed memory block.
+    /// Gets a <typeparamref name="T"/> span over the fixed block of memory.
     /// </summary>
     new Span<T> Values { get; }
 }

@@ -1,26 +1,26 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// This interface represents a context from memory block fixing.
+/// Interface representing a context from a block of fixed memory.
 /// </summary>
-/// <typeparam name="T">Type of items on the fixed memory block.</typeparam>
+/// <typeparam name="T">Type of objects in the fixed memory block.</typeparam>
 public interface IFixedContext<T> : IReadOnlyFixedContext<T>, IFixedMemory<T> where T : unmanaged
 {
     /// <summary>
-    /// Performs a reinterpretation of <typeparamref name="T"/> fixed memory block as 
-    /// <typeparamref name="TDestination"/> memory block.
+    /// Reinterprets the <typeparamref name="T"/> fixed memory block as 
+    /// a <typeparamref name="TDestination"/> memory block.
     /// </summary>
-    /// <typeparam name="TDestination">Type of items on the reinterpreded memory block.</typeparam>
-    /// <param name="residual">Output. Residual memory from transformation.</param>
-    /// <returns>A <see cref="IFixedContext{TDestination}"/> instance.</returns>
+    /// <typeparam name="TDestination">Type of objects in the reinterpreted memory block.</typeparam>
+    /// <param name="residual">Output. Residual memory from the transformation.</param>
+    /// <returns>An instance of <see cref="IFixedContext{TDestination}"/>.</returns>
     IFixedContext<TDestination> Transformation<TDestination>(out IFixedMemory residual) where TDestination : unmanaged;
 
     /// <summary>
-    /// Performs a reinterpretation of <typeparamref name="T"/> fixed memory block as 
-    /// <typeparamref name="TDestination"/> memory block.
+    /// Reinterprets the <typeparamref name="T"/> fixed memory block as 
+    /// a <typeparamref name="TDestination"/> memory block.
     /// </summary>
-    /// <typeparam name="TDestination">Type of items on the reinterpreded memory block.</typeparam>
-    /// <param name="residual">Output. Residual read-only memory from transformation.</param>
-    /// <returns>A <see cref="IReadOnlyFixedContext{TDestination}"/> instance.</returns>
+    /// <typeparam name="TDestination">Type of objects in the reinterpreted memory block.</typeparam>
+    /// <param name="residual">Output. Residual read-only memory from the transformation.</param>
+    /// <returns>An instance of <see cref="IReadOnlyFixedContext{TDestination}"/>.</returns>
     new IFixedContext<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual) where TDestination : unmanaged;
 }

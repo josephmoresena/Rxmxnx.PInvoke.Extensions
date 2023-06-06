@@ -1,13 +1,13 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// This interface represents a fixed in memory method.
+/// Interface representing a method that is fixed in memory.
 /// </summary>
-/// <typeparam name="TDelegate">Type of the fixed method.</typeparam>
+/// <typeparam name="TDelegate">Type of the delegate that corresponds to the fixed method.</typeparam>
 public interface IFixedMethod<out TDelegate> : IFixedPointer where TDelegate : Delegate
 {
     /// <summary>
-    /// Delegate to fixed method.
+    /// Gets the delegate that points to the fixed method in memory.
     /// </summary>
     TDelegate Method { get; }
 }

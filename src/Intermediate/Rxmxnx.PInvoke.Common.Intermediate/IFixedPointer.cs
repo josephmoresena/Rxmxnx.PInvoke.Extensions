@@ -1,12 +1,12 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// This interface represents a fixed memory pointer.
+/// Interface representing a pointer to a fixed block of memory.
 /// </summary>
 public interface IFixedPointer
 {
     /// <summary>
-    /// Pointer to fixed memory.
+    /// Gets the pointer to the fixed block of memory.
     /// </summary>
     IntPtr Pointer { get; }
 }
