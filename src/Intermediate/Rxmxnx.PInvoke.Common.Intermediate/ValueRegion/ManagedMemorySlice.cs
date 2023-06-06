@@ -23,7 +23,7 @@ public partial class ValueRegion<T>
         /// <param name="region">A <see cref="ManagedRegion"/> instance.</param>
         /// <param name="offset">The offset for the range.</param>
         /// <param name="length">The length of the range.</param>
-        public ManagedMemorySlice([DisallowNull] ManagedRegion region, Int32 offset, Int32 length)
+        public ManagedMemorySlice(ManagedRegion region, Int32 offset, Int32 length)
             : base(region.AsArray()!.Length, offset, length)
         {
             this._array = region.AsArray()!;
@@ -35,7 +35,7 @@ public partial class ValueRegion<T>
         /// <param name="region">A <see cref="ManagedMemorySlice"/> instance.</param>
         /// <param name="offset">The offset for the range.</param>
         /// <param name="length">The length of the range.</param>
-        public ManagedMemorySlice([DisallowNull] ManagedMemorySlice region, Int32 offset, Int32 length)
+        public ManagedMemorySlice(ManagedMemorySlice region, Int32 offset, Int32 length)
             : base(region._array.Length, offset, length, region._offset)
         {
             this._array = region._array;

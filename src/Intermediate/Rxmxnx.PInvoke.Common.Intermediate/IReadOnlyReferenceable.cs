@@ -1,13 +1,13 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// This interface exposes a read-only reference to <typeparamref name="T"/> object.
+/// This interface exposes a read-only reference to an object of type <typeparamref name="T"/>.
 /// </summary>
-/// <typeparam name="T">Type of the referenced object.</typeparam>
+/// <typeparam name="T">The type of the referenced object.</typeparam>
 public interface IReadOnlyReferenceable<T> : IEquatable<IReadOnlyReferenceable<T>>
 {
     /// <summary>
-    /// Reference to instance <typeparamref name="T"/> object.
+    /// Read-only reference to the instance of an object of type <typeparamref name="T"/>.
     /// </summary>
     ref readonly T Reference { get; }
 

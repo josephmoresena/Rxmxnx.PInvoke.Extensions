@@ -38,6 +38,7 @@ public interface IMutableReference : IMutableWrapper
 /// referenced and whose value can be modified.
 /// </summary>
 /// <typeparam name="T">Type of both wrapped and referenced value.</typeparam>
+/// <remarks>The provided reference is mutable, allowing changes to the value.</remarks>
 public interface IMutableReference<T> : IReferenceableWrapper<T>, IMutableWrapper<T>, IReferenceable<T>
 {
     /// <summary>
@@ -48,13 +49,14 @@ public interface IMutableReference<T> : IReferenceableWrapper<T>, IMutableWrappe
     ref T IReferenceable<T>.Reference => ref this.Reference;
 
     /// <summary>
-    /// Creates a new <see cref="IMutableReference{T}"/> object from a <typeparamref name="T"/> value.
+    /// Creates a new instance of an object that implements <see cref="IMutableReference{T}"/> interface.
     /// </summary>
-    /// <param name="instance">Instance value.</param>
-    /// <returns>
-    /// <see cref="IMutableReference{T}"/> object which instance object is equal to 
+    /// <param name="instance">The value to be wrapped.</param>
+    /// <returns>An instance of an object that implements <see cref="IMutableReference{T}"/> interface.</returns>
+    /// <remarks>
+    /// The newly created object wraps a value of <typeparamref name="T"/> type provided by
     /// <paramref name="instance"/>.
-    /// </returns>
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static new IMutableReference<T> Create(in T instance = default!) => new MutableReference<T>(instance);
 }

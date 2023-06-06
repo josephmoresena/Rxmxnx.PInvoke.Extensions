@@ -110,7 +110,7 @@ public abstract partial class ValueRegion<T> where T : unmanaged
     /// </summary>
     /// <param name="array">Array of <typeparamref name="T"/> values.</param>
     /// <returns>A new <see cref="ValueRegion{T}"/> instance.</returns>
-    public static ValueRegion<T> Create([DisallowNull] T[] array) => new ManagedRegion(array);
+    public static ValueRegion<T> Create(T[] array) => new ManagedRegion(array);
     /// <summary>
     /// Creates a new <see cref="ValueRegion{T}"/> instance from a pointer to a memory region.
     /// </summary>

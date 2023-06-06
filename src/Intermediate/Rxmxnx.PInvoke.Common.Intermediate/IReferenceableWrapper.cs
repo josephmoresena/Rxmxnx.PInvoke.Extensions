@@ -1,34 +1,33 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// This interface exposes a wrapper for an object that can be referenced.
+/// This interface exposes a wrapper for an object that can be referenced and whose value
+/// can be modified.
 /// </summary>
 public interface IReferenceableWrapper : IWrapper
 {
     /// <summary>
-    /// Creates a new <see cref="IReferenceableWrapper{TValue}"/> object from a 
-    /// <typeparamref name="TValue"/> value.
+    /// Creates a new instance of an object that implements <see cref="IReferenceableWrapper{TValue}"/> interface.
     /// </summary>
-    /// <typeparam name="TValue"><see cref="ValueType"/> of object.</typeparam>
-    /// <param name="instance">Instance value.</param>
-    /// <returns>
-    /// <see cref="IReferenceableWrapper{TValue}"/> object which instance object is equal to 
-    /// <paramref name="instance"/>.
-    /// </returns>
+    /// <typeparam name="TValue">The <see cref="ValueType"/> of the object to be wrapped.</typeparam>
+    /// <param name="instance">The value to be wrapped.</param>
+    /// <returns>An instance of an object that implements <see cref="IReferenceableWrapper{TValue}"/> interface.</returns>
+    /// <remarks>
+    /// The newly created object wraps a value of <typeparamref name="TValue"/> type provided by <paramref name="instance"/>.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static new IReferenceableWrapper<TValue> Create<TValue>(in TValue instance) where TValue : struct
         => IReferenceableWrapper<TValue>.Create(instance);
-
     /// <summary>
-    /// Creates a new <see cref="IReferenceableWrapper{TValue}"/> object from a 
-    /// <see cref="Nullable{TValue}"/> value.
+    /// Creates a new instance of an object that implements <see cref="IReferenceableWrapper{TValue}"/> interface.
     /// </summary>
-    /// <typeparam name="TValue"><see cref="ValueType"/> of nullable object.</typeparam>
-    /// <param name="instance">Instance nullable value.</param>
-    /// <returns>
-    /// <see cref="IReferenceableWrapper{TValue}"/> object which instance object is equal to 
+    /// <typeparam name="TValue">The <see cref="ValueType"/> of the nullable object to be wrapped.</typeparam>
+    /// <param name="instance">The nullable value to be wrapped.</param>
+    /// <returns>An instance of an object that implements <see cref="IReferenceableWrapper{TValue}"/> interface.</returns>
+    /// <remarks>
+    /// The newly created object wraps a nullable value of <typeparamref name="TValue"/> type provided by
     /// <paramref name="instance"/>.
-    /// </returns>
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static new IReferenceableWrapper<TValue?> CreateNullable<TValue>(in TValue? instance) where TValue : struct
         => IReferenceableWrapper<TValue?>.Create(instance);
@@ -36,20 +35,21 @@ public interface IReferenceableWrapper : IWrapper
 
 /// <summary>
 /// This interface exposes a wrapper for <typeparamref name="T"/> object that can be 
-/// referenced.
+/// referenced and whose value can be modified. The provided reference is mutable, allowing changes to the value.
 /// </summary>
-/// <typeparam name="T">Type of both wrapped and referenced value.</typeparam>
+/// <typeparam name="T">Type of both the wrapped and referenced value.</typeparam>
+/// <remarks>While the value of the object can be accessed through this reference, it cannot be modified.</remarks>
 public interface IReferenceableWrapper<T> : IReferenceableWrapper, IWrapper<T>, IReadOnlyReferenceable<T>
 {
     /// <summary>
-    /// Creates a new <see cref="IReferenceableWrapper{T}"/> object from a 
-    /// <typeparamref name="T"/> value.
+    /// Creates a new instance of an object that implements <see cref="IReferenceableWrapper{T}"/> interface.
     /// </summary>
-    /// <param name="instance">Instance value.</param>
-    /// <returns>
-    /// <see cref="IReferenceableWrapper{T}"/> object which instance object is equal to 
+    /// <param name="instance">The value to be wrapped.</param>
+    /// <returns>An instance of an object that implements <see cref="IReferenceableWrapper{T}"/> interface.</returns>
+    /// <remarks>
+    /// The newly created object wraps a value of <typeparamref name="T"/> type provided by
     /// <paramref name="instance"/>.
-    /// </returns>
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static new IReferenceableWrapper<T> Create(in T instance) => new InputReference<T>(instance);
 }

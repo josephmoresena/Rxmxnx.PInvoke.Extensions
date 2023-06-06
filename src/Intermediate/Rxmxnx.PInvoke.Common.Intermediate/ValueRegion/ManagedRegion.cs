@@ -20,7 +20,7 @@ public partial class ValueRegion<T>
         /// Initializes a new instance of the <see cref="ManagedRegion"/> class.
         /// </summary>
         /// <param name="array">The array of <typeparamref name="T"/> values.</param>
-        public ManagedRegion([DisallowNull] T[] array)
+        public ManagedRegion(T[] array)
         {
             this._array = array;
         }
@@ -42,6 +42,7 @@ public partial class ValueRegion<T>
             => new ManagedMemorySlice(this, startIndex, length);
 
         /// <inheritdoc/>
+        [return: NotNull]
         protected override T[]? AsArray() => this._array;
     }
 }

@@ -1,19 +1,20 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// Encapsulates a method that has no parameters and returns a <see cref="ReadOnlySpan{T}"/> instance.
+/// Encapsulates a method that has no parameters and returns a <see cref="ReadOnlySpan{T}"/> instance of type
+/// <typeparamref name="T"/>.
 /// </summary>
-/// <typeparam name="T">The type of objects in the resulting span.</typeparam>
+/// <typeparam name="T">The type of the elements in the returned read-only span.</typeparam>
 /// <returns>A <see cref="ReadOnlySpan{T}"/> instance.</returns>
 public delegate ReadOnlySpan<T> ReadOnlySpanFunc<T>();
 
 /// <summary>
 /// Encapsulates a method that receives a span of objects of type <typeparamref name="T"/> and a 
-/// state object of type <typeparamref name="TArg"/>.
+/// state object of type <typeparamref name="TArg"/>, and returns a result of type <typeparamref name="TResult"/>.
 /// </summary>
-/// <typeparam name="T">The type of the objects in the span.</typeparam>
-/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
-/// <typeparam name="TResult">The type of the return value of the method that this delegate encapsulates.</typeparam>
+/// <typeparam name="T">The type of the elements in the span.</typeparam>
+/// <typeparam name="TArg">The type of the state object passed to the method.</typeparam>
+/// <typeparam name="TResult">The type of the result produced by the method that this delegate encapsulates.</typeparam>
 /// <param name="span">A span of objects of type <typeparamref name="T"/>.</param>
 /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 /// <returns>The return value of the method that this delegate encapsulates.</returns>
@@ -21,11 +22,11 @@ public delegate TResult SpanFunc<T, in TArg, out TResult>(Span<T> span, TArg arg
 
 /// <summary>
 /// Encapsulates a method that receives a read-only span of objects of type <typeparamref name="T"/> and a 
-/// state object of type <typeparamref name="TArg"/>.
+/// state object of type <typeparamref name="TArg"/>, and returns a result of type <typeparamref name="TResult"/>.
 /// </summary>
-/// <typeparam name="T">The type of the objects in the span.</typeparam>
-/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
-/// <typeparam name="TResult">The type of the return value of the method that this delegate encapsulates.</typeparam>
+/// <typeparam name="T">The type of the elements in the span.</typeparam>
+/// <typeparam name="TArg">The type of the state object passed to the method.</typeparam>
+/// <typeparam name="TResult">The type of the result produced by the method that this delegate encapsulates.</typeparam>
 /// <param name="span">A read-only span of objects of type <typeparamref name="T"/>.</param>
 /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 /// <returns>The return value of the method that this delegate encapsulates.</returns>

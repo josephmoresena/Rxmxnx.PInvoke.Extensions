@@ -1,61 +1,59 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// This interface exposes a wrapper object.
+/// This interface defines a wrapper object.
 /// </summary>
 public interface IWrapper
 {
     /// <summary>
-    /// Creates a new <see cref="IWrapper{TValue}"/> object from a 
-    /// <typeparamref name="TValue"/> value.
+    /// Creates a new instance of an object that implements <see cref="IWrapper{TValue}"/> interface.
     /// </summary>
-    /// <typeparam name="TValue"><see cref="ValueType"/> of object.</typeparam>
-    /// <param name="instance">Instance value.</param>
-    /// <returns>
-    /// <see cref="IWrapper{TValue}"/> object which instance object is equal to 
-    /// <paramref name="instance"/>.
-    /// </returns>
+    /// <typeparam name="TValue">The <see cref="ValueType"/> of the object to be wrapped.</typeparam>
+    /// <param name="instance">The value to be wrapped.</param>
+    /// <returns>An instance of an object that implements <see cref="IWrapper{TValue}"/> interface.</returns>
+    /// <remarks>
+    /// The newly created object wraps a value of <typeparamref name="TValue"/> type provided by <paramref name="instance"/>.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IWrapper<TValue> Create<TValue>(in TValue instance) where TValue : struct
         => IWrapper<TValue>.Create(instance);
-
     /// <summary>
-    /// Creates a new <see cref="IWrapper{TValue}"/> object from a 
-    /// <see cref="Nullable{TValue}"/> value.
+    /// Creates a new instance of an object that implements <see cref="IWrapper{TValue}"/> interface.
     /// </summary>
-    /// <typeparam name="TValue"><see cref="ValueType"/> of nullable object.</typeparam>
-    /// <param name="instance">Instance nullable value.</param>
-    /// <returns>
-    /// <see cref="IWrapper{TValue}"/> object which instance object is equal to 
+    /// <typeparam name="TValue">The <see cref="ValueType"/> of the nullable object to be wrapped.</typeparam>
+    /// <param name="instance">The nullable value to be wrapped.</param>
+    /// <returns>An instance of an object that implements <see cref="IWrapper{TValue}"/> interface.</returns>
+    /// <remarks>
+    /// The newly created object wraps a nullable value of <typeparamref name="TValue"/> type provided by
     /// <paramref name="instance"/>.
-    /// </returns>
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IWrapper<TValue?> CreateNullable<TValue>(in TValue? instance) where TValue : struct
         => IWrapper<TValue?>.Create(instance);
 }
 
 /// <summary>
-/// This interface exposes a wrapper for <typeparamref name="T"/> object.
+/// This interface defines a wrapper for a <typeparamref name="T"/> object.
 /// </summary>
-/// <typeparam name="T">Type of wrapped value.</typeparam>
+/// <typeparam name="T">The type of value to be wrapped.</typeparam>
 public interface IWrapper<T> : IWrapper, IEquatable<T>
 {
     /// <summary>
-    /// Wrapped <typeparamref name="T"/> object.
+    /// The wrapped <typeparamref name="T"/> object.
     /// </summary>
     T Value { get; }
 
     Boolean IEquatable<T>.Equals(T? other) => Object.Equals(this.Value, other);
 
     /// <summary>
-    /// Creates a new <see cref="IWrapper{T}"/> object from a 
-    /// <typeparamref name="T"/> value.
+    /// Creates a new instance of an object that implements <see cref="IWrapper{T}"/> interface.
     /// </summary>
-    /// <param name="instance">Instance value.</param>
-    /// <returns>
-    /// <see cref="IWrapper{T}"/> object which instance object is equal to 
+    /// <param name="instance">The value to be wrapped.</param>
+    /// <returns>An instance of an object that implements <see cref="IWrapper{T}"/> interface.</returns>
+    /// <remarks>
+    /// The newly created object wraps a value of <typeparamref name="T"/> type provided by
     /// <paramref name="instance"/>.
-    /// </returns>
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IWrapper<T> Create(in T instance) => new Input<T>(instance);
 }

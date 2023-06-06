@@ -1,13 +1,13 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// This interface exposes a reference to <typeparamref name="T"/> object.
+/// This interface exposes a reference to an object of type <typeparamref name="T"/>.
 /// </summary>
-/// <typeparam name="T">Type of the referenced object.</typeparam>
+/// <typeparam name="T">The type of the referenced object.</typeparam>
 public interface IReferenceable<T> : IReadOnlyReferenceable<T>, IEquatable<IReferenceable<T>>
 {
     /// <summary>
-    /// Reference to instance <typeparamref name="T"/> object.
+    /// Reference to the instance of an object of type <typeparamref name="T"/>.
     /// </summary>
     new ref T Reference { get; }
 
