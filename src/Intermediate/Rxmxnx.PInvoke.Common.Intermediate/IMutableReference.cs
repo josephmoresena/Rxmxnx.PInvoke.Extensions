@@ -17,7 +17,6 @@ public interface IMutableReference : IMutableWrapper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static new IMutableReference<TValue> Create<TValue>(in TValue instance = default!) where TValue : struct
         => IMutableReference<TValue>.Create(instance);
-
     /// <summary>
     /// Creates a new <see cref="IMutableReference{TValue}"/> object from a 
     /// <see cref="Nullable{TValue}"/> value.

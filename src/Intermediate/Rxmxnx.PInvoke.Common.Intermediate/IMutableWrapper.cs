@@ -21,7 +21,6 @@ public interface IMutableWrapper : IWrapper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static new IMutableWrapper<TValue> Create<TValue>(in TValue instance = default) where TValue : struct
         => IMutableWrapper<TValue>.Create(instance);
-
     /// <summary>
     /// Creates a new instance of an object that implements the <see cref="IMutableWrapper{TValue}"/> interface.
     /// </summary>
