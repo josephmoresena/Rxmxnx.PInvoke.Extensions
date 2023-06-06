@@ -1,8 +1,11 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// Represents a read-only list of <see cref="IReadOnlyFixedMemory"/> instances.
+/// Represents a list of <see cref="IReadOnlyFixedMemory"/> instances.
 /// </summary>
+/// <remarks>
+/// This list can be used for safe operations with fixed blocks of memory using pointers.
+/// </remarks>
 public unsafe readonly ref struct ReadOnlyFixedMemoryList
 {
     /// <summary>
@@ -11,55 +14,60 @@ public unsafe readonly ref struct ReadOnlyFixedMemoryList
     private readonly FixedMemoryListValue _values;
 
     /// <summary>
-    /// Gets the total number of elements in the list. 
+    /// Gets the total number of elements in the list.
     /// </summary>
+    /// <value>The total number of elements in the list.</value>
     public Int32 Count => this._values.Count;
     /// <summary>
-    /// Returns a value that indicates the current list is empty.
+    /// Indicates whether the current list is empty.
     /// </summary>
+    /// <value><see langword="true"/> if the list is empty; otherwise, <see langword="false"/>.</value>
     public Boolean IsEmpty => this.Count == 0;
     /// <summary>
-    /// Gets the element at the given index.
+    /// Gets the <see cref="IReadOnlyFixedMemory"/> at the specified index.
     /// </summary>
-    /// <param name="index">A position in the current instance.</param>
-    /// <returns>The object at position <paramref name="index"/>.</returns>
+    /// <param name="index">The zero-based index of the element to get.</param>
+    /// <returns>The <see cref="IReadOnlyFixedMemory"/> at the specified index.</returns>
     /// <exception cref="IndexOutOfRangeException">
-    /// <paramref name="index"/> is greater than or equal to the length of this object or less than zero.
+    /// Thrown when the <paramref name="index"/> is out of the range of the list elements.
     /// </exception>
     public IReadOnlyFixedMemory this[Int32 index] => this._values[index];
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="ReadOnlyFixedMemoryList"/> structure.
     /// </summary>
-    /// <param name="memories"><see cref="FixedMemory"/> values.</param>
+    /// <param name="memories">An array of <see cref="FixedMemory"/> instances to be stored in the list.</param>
+    /// <remarks>This constructor initializes the list with the provided fixed memory blocks.</remarks>
     internal ReadOnlyFixedMemoryList(params FixedMemory[] memories)
     {
         this._values = new(memories);
     }
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="ReadOnlyFixedMemoryList"/> structure.
     /// </summary>
-    /// <param name="values">Internal <see cref="FixedMemoryListValue"/> value.</param>
+    /// <param name="values">An instance of the <see cref="FixedMemoryListValue"/> to be stored in the list.</param>
+    /// <remarks>This constructor initializes the list with the provided internal fixed memory list value.</remarks>
     internal ReadOnlyFixedMemoryList(FixedMemoryListValue values)
     {
         this._values = values;
     }
 
     /// <summary>
-    /// Creates an array of <see cref="IReadOnlyFixedMemory"/> instances from current instance.
+    /// Creates an array from the current <see cref="ReadOnlyFixedMemoryList"/> object.
     /// </summary>
-    /// <returns>An array of <see cref="IReadOnlyFixedMemory"/> instances.</returns>
-    public IReadOnlyFixedMemory[] ToArray() => _values.ToArray();
-
+    /// <returns>
+    /// An array that contains all elements of the current <see cref="ReadOnlyFixedMemoryList"/> object.
+    /// </returns>
+    public IReadOnlyFixedMemory[] ToArray() => this._values.ToArray();
     /// <summary>
-    /// Gets an enumerator for this list.
+    /// Returns an enumerator that iterates through the <see cref="ReadOnlyFixedMemoryList"/>.
     /// </summary>
-    /// <returns>Enumerator instance for current list.</returns>
+    /// <returns>An enumerator for the current <see cref="ReadOnlyFixedMemoryList"/> object.</returns>
     public Enumerator GetEnumerator() => new(this._values);
 
     /// <summary>
-    /// Invalidates all elements of the current list.
+    /// Releases all resources used by the <see cref="ReadOnlyFixedMemoryList"/> object.
     /// </summary>
     internal void Unload() => this._values.Unload();
 
@@ -76,6 +84,7 @@ public unsafe readonly ref struct ReadOnlyFixedMemoryList
         /// <summary>
         /// Gets the element at the current position of the enumerator.
         /// </summary>
+        /// <value>The element in the list at the current position of the enumerator.</value>
         public IReadOnlyFixedMemory Current
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -86,7 +95,7 @@ public unsafe readonly ref struct ReadOnlyFixedMemoryList
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="Enumerator"/> structure.
         /// </summary>
         /// <param name="values">A <see cref="FixedMemory"/> enumerable instance.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -96,10 +105,11 @@ public unsafe readonly ref struct ReadOnlyFixedMemoryList
         }
 
         /// <summary>
-        /// Advances the enumerator to the next element of the list.
+        /// Advances the enumerator to the next element of the <see cref="ReadOnlyFixedMemoryList"/>.
         /// </summary>
         /// <returns>
-        /// <see langword="true"/> if the enumerator was able to advance; otherwise, <see langword="false"/>.
+        /// <see langword="true"/> if the enumerator was successfully advanced to the next element;
+        /// <see langword="false"/> if the enumerator has passed the end of the list.
         /// </returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Boolean MoveNext() => this._enumerator.MoveNext();

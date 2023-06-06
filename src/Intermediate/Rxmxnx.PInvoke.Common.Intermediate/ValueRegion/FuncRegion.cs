@@ -16,7 +16,10 @@ public partial class ValueRegion<T>
         /// Constructor.
         /// </summary>
         /// <param name="func">The internal function that provides the memory region.</param>
-        public FuncRegion(ReadOnlySpanFunc<T> func) => this._func = func;
+        public FuncRegion(ReadOnlySpanFunc<T> func)
+        {
+            this._func = func;
+        }
 
         /// <summary>
         /// Gets the memory region provided by the function.
