@@ -3,53 +3,52 @@
 public partial class ValueRegion<T>
 {
     /// <summary>
-    /// This class represents a native memory region in which a sequence of <typeparamref name="T"/> 
-    /// values is found.
+    /// Represents a native memory region in which a sequence of <typeparamref name="T"/> values is stored.
     /// </summary>
     private sealed class NativeRegion : ValueRegion<T>
     {
         /// <summary>
-        /// <see cref="NativeRegion"/> empty instance.
+        /// An empty instance of <see cref="NativeRegion"/>.
         /// </summary>
-        public static readonly NativeRegion Empty = new(IntPtr.Zero, default);
+        public static readonly NativeRegion Empty = new NativeRegion(IntPtr.Zero, 0);
 
         /// <summary>
-        /// Pointer to native memory region.
+        /// The pointer to the native memory region.
         /// </summary>
         private readonly IntPtr _ptr;
         /// <summary>
-        /// Length of <typeparamref name="T"/> sequence.
+        /// The length of the <typeparamref name="T"/> sequence.
         /// </summary>
         private readonly Int32 _length;
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="NativeRegion"/> class.
         /// </summary>
-        /// <param name="ptr">Pointer to native memory region.</param>
-        /// <param name="length">Length of <typeparamref name="T"/> sequence.</param>
+        /// <param name="ptr">The pointer to the native memory region.</param>
+        /// <param name="length">The length of the <typeparamref name="T"/> sequence.</param>
         public NativeRegion(IntPtr ptr, Int32 length)
         {
             this._ptr = ptr;
-            this._length = !this._ptr.Equals(IntPtr.Zero) ? length : default;
+            this._length = this._ptr != IntPtr.Zero ? length : 0;
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="NativeRegion"/> class from a subrange of an existing
+        /// <see cref="NativeRegion"/>.
         /// </summary>
-        /// <param name="region"><see cref="NativeRegion"/> instance.</param>
-        /// <param name="offset">Offset for range.</param>
-        /// <param name="length">Length of range.</param>
+        /// <param name="region">A <see cref="NativeRegion"/> instance.</param>
+        /// <param name="offset">The offset for the range.</param>
+        /// <param name="length">The length of the range.</param>
         private unsafe NativeRegion(NativeRegion region, Int32 offset, Int32 length)
         {
             T* tPtr = region.GetElementPointer(offset);
-            this._ptr = new(tPtr);
+            this._ptr = new IntPtr(tPtr);
             this._length = length;
         }
 
         /// <inheritdoc/>
         public override ValueRegion<T> Slice(Int32 startIndex)
             => this.Slice(startIndex, this._length - startIndex);
-
         /// <inheritdoc/>
         public override ValueRegion<T> Slice(Int32 startIndex, Int32 length)
         {
@@ -61,18 +60,17 @@ public partial class ValueRegion<T>
         internal override unsafe ReadOnlySpan<T> AsSpan()
         {
             void* pointer = this._ptr.ToPointer();
-            return new(pointer, this._length);
+            return new ReadOnlySpan<T>(pointer, this._length);
         }
-
         /// <inheritdoc/>
         internal override ValueRegion<T> InternalSlice(Int32 startIndex, Int32 length)
             => length != 0 ? new NativeRegion(this, startIndex, length) : Empty;
 
         /// <summary>
-        /// Retrieves the pointer of the element at given index.
+        /// Retrieves the pointer of the element at the given index.
         /// </summary>
-        /// <param name="index">Elemnt index.</param>
-        /// <returns>The pointer of the element at given index.</returns>
+        /// <param name="index">The element index.</param>
+        /// <returns>The pointer of the element at the given index.</returns>
         private unsafe T* GetElementPointer(Int32 index)
         {
             T* tPtr = (T*)this._ptr.ToPointer();

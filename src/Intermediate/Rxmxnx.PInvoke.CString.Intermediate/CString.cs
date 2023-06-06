@@ -29,7 +29,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// <summary>
     /// Indicates whether the current instance is segmented.
     /// </summary>
-    public Boolean IsSegmented => this._data.IsSegmented;
+    public Boolean IsSegmented => this._data.IsMemorySlice;
     /// <summary>
     /// Indicates whether the current instance is a function.
     /// </summary>

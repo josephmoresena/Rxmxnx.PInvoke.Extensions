@@ -69,7 +69,7 @@ public sealed class BasicTests : ValueRegionTestBase
         T[]? array = (T[]?)region;
         T[] newArray = region.ToArray();
 
-        Assert.False(region.IsSegmented);
+        Assert.False(region.IsMemorySlice);
         for (Int32 i = 0; i < values.Length; i++)
         {
             Assert.Equal(values[i], region[i]);

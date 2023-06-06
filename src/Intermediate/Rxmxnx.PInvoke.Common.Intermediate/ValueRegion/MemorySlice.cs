@@ -3,10 +3,9 @@
 public partial class ValueRegion<T>
 {
     /// <summary>
-    /// This class represents a segmented memory region in which an array of <typeparamref name="T"/> 
-    /// values is found.
+    /// This class represents a memory slice that contains a sequence of <typeparamref name="T"/> values.
     /// </summary>
-    private abstract class SegmentedRegion : ValueRegion<T>
+    private abstract class MemorySlice : ValueRegion<T>
     {
         /// <summary>
         /// Internal offset.
@@ -17,25 +16,25 @@ public partial class ValueRegion<T>
         /// </summary>
         protected readonly Int32 _end;
         /// <summary>
-        /// Indicates whether current instance is segmented.
+        /// Indicates whether the current instance represents a memory slice extracted from a larger memory region.
         /// </summary>
-        protected readonly Boolean _isSegmented;
+        protected readonly Boolean _slice;
 
         /// <inheritdoc/>
-        public override Boolean IsSegmented => this._isSegmented;
+        public override Boolean IsMemorySlice => this._slice;
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="MemorySlice"/> class.
         /// </summary>
-        /// <param name="initialLength">Initial region length.</param>
-        /// <param name="offset">Offset for range.</param>
-        /// <param name="length">Length of range.</param>
-        /// <param name="initialLength">Initial region offset.</param>
-        protected SegmentedRegion(Int32 initialLength, Int32 offset, Int32 length, Int32 initalOffset = 0)
-		{
-            this._offset = offset + initalOffset;
+        /// <param name="initialLength">The initial length of the memory slice.</param>
+        /// <param name="offset">The offset for the memory slice.</param>
+        /// <param name="length">The length of the memory slice.</param>
+        /// <param name="initialOffset">The initial offset of the memory slice.</param>
+        protected MemorySlice(Int32 initialLength, Int32 offset, Int32 length, Int32 initialOffset = 0)
+        {
+            this._offset = offset + initialOffset;
             this._end = this._offset + length;
-            this._isSegmented = this._offset != default || this._end != initialLength;
+            this._slice = this._offset != 0 || this._end != initialLength;
         }
 
         /// <inheritdoc/>
@@ -46,7 +45,6 @@ public partial class ValueRegion<T>
             ValidationUtilities.ThrowIfInvalidSubregion(regionLength, startIndex, length);
             return this.InternalSlice(startIndex, length);
         }
-
         /// <inheritdoc/>
         public override ValueRegion<T> Slice(Int32 startIndex, Int32 length)
         {

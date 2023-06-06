@@ -110,7 +110,7 @@ public sealed class SegmentTest : ValueRegionTestBase
                 Segment = segment,
             });
 
-            if (!region.IsSegmented)
+            if (!region.IsMemorySlice)
                 AssertRegionSegment(values, segment, isReference, initial + start);
         }
 
@@ -135,7 +135,7 @@ public sealed class SegmentTest : ValueRegionTestBase
         T[] newArray = state.Segment.ToArray();
 
         Assert.Equal(state.Count, span.Length);
-        Assert.Equal(state.Count != state.Length && !state.IsReference || state.Region.IsSegmented, state.Segment.IsSegmented);
+        Assert.Equal(state.Count != state.Length && !state.IsReference || state.Region.IsMemorySlice, state.Segment.IsMemorySlice);
 
         for (Int32 j = 0; j < state.Count; j++)
         {
@@ -149,7 +149,7 @@ public sealed class SegmentTest : ValueRegionTestBase
                 Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(span[j]), ref state.Values.AsSpan()[arrayOffset..][0]));
         }
 
-        if (state.Segment.IsSegmented || state.IsReference)
+        if (state.Segment.IsMemorySlice || state.IsReference)
             Assert.Null(array);
         else
             Assert.Equal((T[]?)state.Segment, array);

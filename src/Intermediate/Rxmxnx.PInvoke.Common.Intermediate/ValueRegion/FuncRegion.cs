@@ -3,27 +3,26 @@
 public partial class ValueRegion<T>
 {
     /// <summary>
-    /// This class represents a function memory region that returns a <see cref="ReadOnlySpan{T}"/>
-    /// instance.
+    /// This class represents a memory region provided by a function.
     /// </summary>
     private sealed class FuncRegion : ValueRegion<T>
     {
         /// <summary>
-        /// Internal <see cref="ReadOnlySpanFunc{T}"/> instance. 
+        /// The internal function that provides the memory region.
         /// </summary>
         private readonly ReadOnlySpanFunc<T> _func;
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="func">Internal <see cref="ReadOnlySpanFunc{T}"/> instance. </param>
+        /// <param name="func">The internal function that provides the memory region.</param>
         public FuncRegion(ReadOnlySpanFunc<T> func) => this._func = func;
 
         /// <summary>
-        /// Gets a function from this memory region.
+        /// Gets the memory region provided by the function.
         /// </summary>
-        /// <returns>A function from this memory region.</returns>
-        public ReadOnlySpanFunc<T>? AsReadOnlySpanFunc() => this._func;
+        /// <returns>The memory region provided by the function.</returns>
+        public ReadOnlySpanFunc<T> AsReadOnlySpanFunc() => this._func;
 
         /// <inheritdoc/>
         public override ValueRegion<T> Slice(Int32 startIndex)
@@ -33,7 +32,6 @@ public partial class ValueRegion<T>
             ValidationUtilities.ThrowIfInvalidSubregion(regionLength, startIndex, length);
             return this.InternalSlice(startIndex, length);
         }
-
         /// <inheritdoc/>
         public override ValueRegion<T> Slice(Int32 startIndex, Int32 length)
         {
@@ -44,9 +42,9 @@ public partial class ValueRegion<T>
 
         /// <inheritdoc/>
         internal override ValueRegion<T> InternalSlice(Int32 startIndex, Int32 length)
-            => new SegmentedFuncRegion(this, startIndex, length);
-
+            => new FuncMemorySlice(this, startIndex, length);
         /// <inheritdoc/>
         internal override ReadOnlySpan<T> AsSpan() => this._func();
     }
+
 }
