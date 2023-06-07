@@ -61,7 +61,6 @@ internal sealed class SequenceEnumerator<T> : IEnumerator<T>
         }
         return false;
     }
-
     /// <inheritdoc/>
     public void Reset() => this._index = -1;
 }

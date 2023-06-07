@@ -1,42 +1,41 @@
 ﻿namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
-/// Creates an object which contains a single reference to an inmutable <typeparamref name="T"/> object.
+/// Encapsulates an immutable <typeparamref name="T"/> object within a record type, allowing for efficient
+/// retrieval and update of its value.
 /// </summary>
-/// <typeparam name="T">Type of the referenced object.</typeparam>
+/// <typeparam name="T">Type of the object being wrapped.</typeparam>
 internal record Input<T> : IWrapper<T>
 {
     /// <summary>
-    /// Internal <typeparamref name="T"/> object.
+    /// The encapsulated <typeparamref name="T"/> object.
     /// </summary>
     private T _instance;
 
     T IWrapper<T>.Value => this._instance;
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="Input{T}"/> record with the specified initial value.
     /// </summary>
-    /// <param name="instance">Initial value.</param>
+    /// <param name="instance">The initial value of the encapsulated object.</param>
     public Input(in T instance) => this._instance = instance;
 
     /// <summary>
-    /// Retrieves the value to <typeparamref name="T"/> object.
+    /// Retrieves the value of the encapsulated <typeparamref name="T"/> object.
     /// </summary>
-    /// <returns>The value to <typeparamref name="T"/> object.</returns>
+    /// <returns>The value of the encapsulated <typeparamref name="T"/> object.</returns>
     protected T GetInstance() => this._instance;
-
     /// <summary>
-    /// Retrieves the reference to <typeparamref name="T"/> object.
+    /// Retrieves the reference to the encapsulated <typeparamref name="T"/> object.
     /// </summary>
-    /// <returns>The reference to <typeparamref name="T"/> object.</returns>
+    /// <returns>The reference to the encapsulated <typeparamref name="T"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected ref T GetReference() => ref this._instance;
-
     /// <summary>
-    /// Internal method to set instance object.
+    /// Updates the encapsulated <typeparamref name="T"/> object.
     /// </summary>
-    /// <param name="writeLock">Wrapper's write lock.</param>
-    /// <param name="newValue">New <typeparamref name="T"/> object to set as instance object.</param>
+    /// <param name="writeLock">The lock object used for write synchronization.</param>
+    /// <param name="newValue">The new <typeparamref name="T"/> object to set as the encapsulated instance.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void SetInstance(Object writeLock, in T newValue)
     {

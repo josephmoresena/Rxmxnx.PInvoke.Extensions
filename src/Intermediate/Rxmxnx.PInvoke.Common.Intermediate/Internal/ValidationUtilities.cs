@@ -171,10 +171,14 @@ public static class ValidationUtilities
     }
 
     /// <summary>
-    /// Throws an exception if memory reference <typeparamref name="TSource"/> cannot be converted to
-    /// reference <typeparamref name="TDestination"/>.
+    /// Validates if <see langword="unmanaged"/> memory reference <typeparamref name="TSource"/> can be safely
+    /// converted to reference <typeparamref name="TDestination"/>. 
     /// </summary>
-    /// <exception cref="InvalidOperationException"/>
+    /// <typeparam name="TSource">Source <see langword="unmanaged"/> type.</typeparam>
+    /// <typeparam name="TDestination">Destination <see langword="unmanaged"/> type.</typeparam>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if the sizes of both source and destination <see langword="unmanaged"/> types are not equal.
+    /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void ThrowIfInvalidCastType<TSource, TDestination>()
         where TSource : unmanaged
@@ -185,15 +189,19 @@ public static class ValidationUtilities
     }
 
     /// <summary>
-    /// Throws an exception if <paramref name="destination"/> is insufficent to contain the binary information of
-    /// <paramref name="value"/>.
+    /// Validates if the binary span <paramref name="destination"/> is sufficient to contain the binary
+    /// information of <paramref name="value"/>. 
+    /// Outputs the value as binary span.
     /// </summary>
-    /// <typeparam name="TValue">Type of the copiable value.</typeparam>
+    /// <typeparam name="TValue">Type of the copiable <see langword="unmanaged"/> value.</typeparam>
     /// <param name="value">Value to copy.</param>
     /// <param name="destination">Binary span destination.</param>
     /// <param name="offset">Offset of copy.</param>
-    /// <param name="bytes">Output. <paramref name="value"/> as binary span.</param>
-    /// <exception cref="ArgumentException"/>
+    /// <param name="bytes">Output parameter. The binary representation of <paramref name="value"/>.</param>
+    /// <exception cref="InsufficientMemoryException">
+    /// Thrown if the destination span does not have enough space to contain the binary representation of the
+    /// <see langword="unmanaged"/> value.
+    /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ThrowIfInvalidCopyType<TValue>(in TValue value, Span<Byte> destination, Int32 offset, out ReadOnlySpan<Byte> bytes)
         where TValue : unmanaged
@@ -206,11 +214,11 @@ public static class ValidationUtilities
     }
 
     /// <summary>
-    /// Throws an exception if the memory length is invalid.
+    /// Validates the memory length.
     /// </summary>
     /// <param name="length">Memory length value.</param>
     /// <param name="nameofLength">Name of the memory length parameter.</param>
-    /// <exception cref="ArgumentException"/>
+    /// <exception cref="ArgumentException">Thrown if <paramref name="length"/> is less than zero.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ThrowIfInvalidMemoryLength(Int32 length, [CallerArgumentExpression(nameof(length))] String nameofLength = emptyString)
     {
@@ -219,12 +227,13 @@ public static class ValidationUtilities
     }
 
     /// <summary>
-    /// Throws an exception if <paramref name="index"/> is invalid in an iteration of an enumerable of
-    /// <paramref name="enumerationSize"/> elements.
+    /// Validates the current index in an iteration of an enumeration.
     /// </summary>
-    /// <param name="index">Iteration current index.</param>
-    /// <param name="enumerationSize">Enumeration size.</param>
-    /// <exception cref="InvalidOperationException"/>
+    /// <param name="index">Current index of iteration.</param>
+    /// <param name="enumerationSize">Total size of the enumeration.</param>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if <paramref name="index"/> is less than zero or greater than or equal to <paramref name="enumerationSize"/>.
+    /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ThrowIfInvalidIndexEnumerator(Int32 index, Int32 enumerationSize)
     {
@@ -235,12 +244,14 @@ public static class ValidationUtilities
     }
 
     /// <summary>
-    /// Throws an exception if <paramref name="region"/> is not a local UTF-8 string.
+    /// Validates if the <paramref name="region"/> is a local UTF-8 string.
     /// </summary>
     /// <param name="region">A <see cref="ValueRegion{Byte}"/> instance.</param>
-    /// <param name="nameofRegion">Name of region.</param>
+    /// <param name="nameofRegion">Name of the region parameter.</param>
     /// <param name="result">Output. Binary information in <paramref name="region"/>.</param>
-    /// <exception cref="InvalidOperationException"/>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if <paramref name="region"/> does not contain UTF-8 text.
+    /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ThrowIfInvalidUtf8Region(ValueRegion<Byte> region, String nameofRegion, out Byte[] result)
     {
@@ -250,7 +261,7 @@ public static class ValidationUtilities
     }
 
     /// <summary>
-    /// Throws an exception if the subregion parameters are invalid.
+    /// Validates the parameters of a subregion.
     /// </summary>
     /// <param name="regionLength">Length of the region.</param>
     /// <param name="startIndex">
@@ -259,7 +270,9 @@ public static class ValidationUtilities
     /// <param name="length">The number of items in the subregion.</param>
     /// <param name="nameofStartIndex">Name of the start index parameter.</param>
     /// <param name="nameofLength">Name of the length parameter.</param>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown if <paramref name="startIndex"/> or <paramref name="length"/> are out of range.
+    /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ThrowIfInvalidSubregion(Int32 regionLength, Int32 startIndex, Int32 length,
         [CallerArgumentExpression(nameof(startIndex))] String nameofStartIndex = emptyString,
@@ -279,7 +292,7 @@ public static class ValidationUtilities
     }
 
     /// <summary>
-    /// Throws an exception if the substring parameters are invalid.
+    /// Validates the parameters of a substring.
     /// </summary>
     /// <param name="stringLength">Length of the string.</param>
     /// <param name="startIndex">
@@ -288,7 +301,9 @@ public static class ValidationUtilities
     /// <param name="length">The number of items in the substring.</param>
     /// <param name="nameofStartIndex">Name of the start index parameter.</param>
     /// <param name="nameofLength">Name of the length parameter.</param>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown if <paramref name="startIndex"/> or <paramref name="length"/> are out of range.
+    /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ThrowIfInvalidSubstring(Int32 stringLength, Int32 startIndex, Int32 length,
         [CallerArgumentExpression(nameof(startIndex))] String nameofStartIndex = emptyString,
@@ -308,7 +323,7 @@ public static class ValidationUtilities
     }
 
     /// <summary>
-    /// Throws an exception if the subsequence parameters are invalid.
+    /// Validates the parameters of a subsequence.
     /// </summary>
     /// <param name="sequenceLength">Length of the subsequence.</param>
     /// <param name="startIndex">
@@ -317,6 +332,9 @@ public static class ValidationUtilities
     /// <param name="length">The number of UTF-8 strings in the subsequence.</param>
     /// <param name="nameofStartIndex">Name of the start index parameter.</param>
     /// <param name="nameofLength">Name of the length parameter.</param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown if <paramref name="startIndex"/> or <paramref name="length"/> are out of range.
+    /// </exception>
     /// <exception cref="ArgumentOutOfRangeException"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ThrowIfInvalidSubsequence(Int32 sequenceLength, Int32 startIndex, Int32 length,
