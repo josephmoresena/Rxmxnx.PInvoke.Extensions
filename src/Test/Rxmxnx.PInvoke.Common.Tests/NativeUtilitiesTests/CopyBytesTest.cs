@@ -9,7 +9,7 @@ public sealed class CopyBytesTest
     [Fact]
     internal void ExceptionTest()
     {
-        Assert.Throws<ArgumentException>(() =>
+        Assert.Throws<InsufficientMemoryException>(() =>
         {
             Span<Byte> bytes = stackalloc Byte[2];
             NativeUtilities.CopyBytes(fixture.Create<Decimal>(), bytes);

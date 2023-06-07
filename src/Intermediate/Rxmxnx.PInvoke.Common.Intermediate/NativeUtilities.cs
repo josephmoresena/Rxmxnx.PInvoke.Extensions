@@ -32,7 +32,8 @@ public static partial class NativeUtilities
     /// </summary>
     /// <param name="libraryName">The name of the native library to be loaded.</param>
     /// <param name="unloadEvent">
-    /// <see cref="EventHandler"/> delegate to append <see cref="NativeLibrary.Free(IntPtr)"/> invocation.
+    /// An optional event handler that is called when the library is unloaded. The handler's invocation includes a call
+    /// to <see cref="NativeLibrary.Free(IntPtr)"/>.
     /// </param>
     /// <param name="searchPath">The search path.</param>
     /// <returns>The OS handle for the loaded native library.</returns>
@@ -48,7 +49,7 @@ public static partial class NativeUtilities
     /// <summary>
     /// Gets the <typeparamref name="TDelegate"/> delegate of an exported symbol.
     /// </summary>
-    /// <typeparam name="TDelegate"></typeparam>
+    /// <typeparam name="TDelegate">Type of the delegate corresponding to the exported symbol.</typeparam>
     /// <param name="handle">The native library OS handle.</param>
     /// <param name="name">The name of the exported symbol.</param>
     /// <returns><typeparamref name="TDelegate"/> delegate.</returns>
@@ -61,9 +62,14 @@ public static partial class NativeUtilities
     }
 
     /// <summary>
-    /// Retrieves an unsafe <see cref="IntPtr"/> pointer from a read-only reference to a <typeparamref name="T"/> 
-    /// <see langword="unmanaged"/> value.
+    /// Retrieves an <see langword="unsafe"/> <see cref="IntPtr"/> pointer from a read-only reference to a
+    /// <typeparamref name="T"/> <see langword="unmanaged"/> value.
     /// </summary>
+    /// <remarks>
+    /// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
+    /// won't be moved or collected by garbage collector. 
+    /// The pointer will point to the address in memory the reference had at the moment this method was called.
+    /// </remarks>
     /// <typeparam name="T"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> value.</typeparam>
     /// <param name="value">A read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</param>
     /// <returns><see cref="IntPtr"/> pointer.</returns>
@@ -75,9 +81,14 @@ public static partial class NativeUtilities
     }
 
     /// <summary>
-    /// Retrieves an unsafe <see cref="UIntPtr"/> pointer from a read-only reference to a <typeparamref name="T"/> 
-    /// <see langword="unmanaged"/> value.
+    /// Retrieves an <see langword="unsafe"/> <see cref="UIntPtr"/> pointer from a read-only reference to a
+    /// <typeparamref name="T"/> <see langword="unmanaged"/> value.
     /// </summary>
+    /// <remarks>
+    /// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
+    /// won't be moved or collected by the garbage collector.
+    /// The pointer will point to the address in memory the reference had at the moment this method was called.
+    /// </remarks>
     /// <typeparam name="T"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> value.</typeparam>
     /// <param name="value">Read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</param>
     /// <returns><see cref="UIntPtr"/> pointer.</returns>
@@ -89,14 +100,15 @@ public static partial class NativeUtilities
     }
 
     /// <summary>
-    /// Creates a read-only reference to a <typeparamref name="TDestination"/> <see langword="unmanaged"/> value from 
-    /// an exising read-only reference to a <typeparamref name="TSource"/> <see langword="unmanaged"/> value.
+    /// Transforms a read-only reference of a <typeparamref name="TSource"/> <see langword="unmanaged"/> value
+    /// into a read-only reference of a <typeparamref name="TDestination"/> <see langword="unmanaged"/> value.
     /// </summary>
     /// <typeparam name="TSource"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> source value.</typeparam>
     /// <typeparam name="TDestination"><see cref="ValueType"/> of the destination reference.</typeparam>
     /// <param name="value">A read-only reference to a <typeparamref name="TSource"/> <see langword="unmanaged"/> value.</param>
     /// <returns>A read-only reference to a <typeparamref name="TDestination"/> <see langword="unmanaged"/> value.</returns>
     /// <exception cref="InvalidOperationException"/>
+    /// <remarks>The transformation occurs at the memory level, without copying or moving data.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ref readonly TDestination Transform<TSource, TDestination>(in TSource value)
         where TSource : unmanaged
@@ -144,7 +156,7 @@ public static partial class NativeUtilities
     /// Creates a new <typeparamref name="T"/> array with a specific length and initializes it after 
     /// creation by using the specified callback.
     /// </summary>
-    /// <typeparam name="T">The type of elements in the array.</typeparam>
+    /// <typeparam name="T">An <see langword="unmanaged"/> type of elements in the array.</typeparam>
     /// <typeparam name="TState">The type of the element to pass to <paramref name="action"/>.</typeparam>
     /// <param name="length">The length of the array to create.</param>
     /// <param name="state">The element to pass to <paramref name="action"/>.</param>
@@ -166,9 +178,12 @@ public static partial class NativeUtilities
     /// <param name="value"><typeparamref name="T"/> value.</param>
     /// <param name="destination">Destination <see cref="Span{T}"/> instance.</param>
     /// <param name="offset">
-    /// The offset in <paramref name="destination"/> at which <paramref name="value"/> copying begins.
+    /// The offset in <paramref name="destination"/> at which <paramref name="value"/> will be copied.
     /// </param>
-    /// <exception cref="ArgumentException"/>
+    /// <exception cref="ArgumentException">
+    /// Throws an exception when the length of <paramref name="destination"/> span minus the offset is less 
+    /// than the size of <typeparamref name="T"/>.
+    /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void CopyBytes<T>(in T value, Span<Byte> destination, Int32 offset = 0) where T : unmanaged
     {

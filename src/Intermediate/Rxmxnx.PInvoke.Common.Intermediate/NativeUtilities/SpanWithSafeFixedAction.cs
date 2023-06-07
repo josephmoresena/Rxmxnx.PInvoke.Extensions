@@ -76,10 +76,10 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
-    /// <param name="span2">3th span.</param>
+    /// <param name="span2">3rd span.</param>
     /// <param name="action">A <see cref="FixedListAction"/> delegate.</param>
     public static unsafe void WithSafeFixed<T0, T1, T2>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
         FixedListAction action)
@@ -112,11 +112,11 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
-    /// <param name="span2">3th span.</param>
+    /// <param name="span2">3rd span.</param>
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
     /// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
     public static unsafe void WithSafeFixed<T0, T1, T2, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
@@ -150,11 +150,11 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
-    /// <param name="span2">3th span.</param>
+    /// <param name="span2">3rd span.</param>
     /// <param name="span3">4th span.</param>
     /// <param name="action">A <see cref="FixedListAction"/> delegate.</param>
     public static unsafe void WithSafeFixed<T0, T1, T2, T3>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
@@ -190,12 +190,12 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
-    /// <param name="span2">3th span.</param>
+    /// <param name="span2">3rd span.</param>
     /// <param name="span3">4th span.</param>
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
     /// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
@@ -232,12 +232,12 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
-    /// <param name="span2">3th span.</param>
+    /// <param name="span2">3rd span.</param>
     /// <param name="span3">4th span.</param>
     /// <param name="span4">5th span.</param>
     /// <param name="action">A <see cref="FixedListAction"/> delegate.</param>
@@ -277,13 +277,13 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
-    /// <param name="span2">3th span.</param>
+    /// <param name="span2">3rd span.</param>
     /// <param name="span3">4th span.</param>
     /// <param name="span4">5th span.</param>
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
@@ -324,13 +324,13 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
     /// <typeparam name="T5">Type of the items in 6th span.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
-    /// <param name="span2">3th span.</param>
+    /// <param name="span2">3rd span.</param>
     /// <param name="span3">4th span.</param>
     /// <param name="span4">5th span.</param>
     /// <param name="span5">6th span.</param>
@@ -374,14 +374,14 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
     /// <typeparam name="T5">Type of the items in 6th span.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
-    /// <param name="span2">3th span.</param>
+    /// <param name="span2">3rd span.</param>
     /// <param name="span3">4th span.</param>
     /// <param name="span4">5th span.</param>
     /// <param name="span5">6th span.</param>
@@ -426,14 +426,14 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
     /// <typeparam name="T5">Type of the items in 6th span.</typeparam>
     /// <typeparam name="T6">Type of the items in 7th span.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
-    /// <param name="span2">3th span.</param>
+    /// <param name="span2">3rd span.</param>
     /// <param name="span3">4th span.</param>
     /// <param name="span4">5th span.</param>
     /// <param name="span5">6th span.</param>
@@ -480,7 +480,7 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
     /// <typeparam name="T5">Type of the items in 6th span.</typeparam>
@@ -488,7 +488,7 @@ public static partial class NativeUtilities
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
-    /// <param name="span2">3th span.</param>
+    /// <param name="span2">3rd span.</param>
     /// <param name="span3">4th span.</param>
     /// <param name="span4">5th span.</param>
     /// <param name="span5">6th span.</param>
@@ -536,7 +536,7 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
     /// <typeparam name="T5">Type of the items in 6th span.</typeparam>
@@ -544,7 +544,7 @@ public static partial class NativeUtilities
     /// <typeparam name="T7">Type of the items in 8th span.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
-    /// <param name="span2">3th span.</param>
+    /// <param name="span2">3rd span.</param>
     /// <param name="span3">4th span.</param>
     /// <param name="span4">5th span.</param>
     /// <param name="span5">6th span.</param>
@@ -594,7 +594,7 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
     /// <typeparam name="T5">Type of the items in 6th span.</typeparam>
@@ -603,7 +603,7 @@ public static partial class NativeUtilities
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <param name="span0">1st span.</param>
     /// <param name="span1">2nd span.</param>
-    /// <param name="span2">3th span.</param>
+    /// <param name="span2">3rd span.</param>
     /// <param name="span3">4th span.</param>
     /// <param name="span4">5th span.</param>
     /// <param name="span5">6th span.</param>

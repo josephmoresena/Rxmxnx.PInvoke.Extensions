@@ -4,9 +4,9 @@ public static partial class NativeUtilities
 {
     /// <summary>
     /// Prevents the garbage collector from relocating a given read-only reference and fixes its memory 
-    /// address until <paramref name="action"/> finish.
+    /// address until <paramref name="action"/> finishes.
     /// </summary>
-    /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
+    /// <typeparam name="T">A <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
     /// <param name="value">A <typeparamref name="T"/> read-only reference.</param>
     /// <param name="action">A <see cref="ReadOnlyFixedReferenceAction{T}"/> delegate.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -29,9 +29,9 @@ public static partial class NativeUtilities
 
     /// <summary>
     /// Prevents the garbage collector from relocating a given read-only reference and fixes its memory 
-    /// address until <paramref name="action"/> finish.
+    /// address until <paramref name="action"/> finishes.
     /// </summary>
-    /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
+    /// <typeparam name="T">A <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <param name="value">A <typeparamref name="T"/> read-only reference.</param>
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
@@ -56,9 +56,9 @@ public static partial class NativeUtilities
 
     /// <summary>
     /// Prevents the garbage collector from relocating a given read-only reference and fixes its memory 
-    /// address until <paramref name="func"/> finish.
+    /// address until <paramref name="func"/> finishes.
     /// </summary>
-    /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
+    /// <typeparam name="T">A <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
     /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="value">A <typeparamref name="T"/> read-only reference.</param>
     /// <param name="func">A <see cref="ReadOnlyFixedReferenceFunc{T, TResult}"/> delegate.</param>
@@ -83,9 +83,9 @@ public static partial class NativeUtilities
 
     /// <summary>
     /// Prevents the garbage collector from relocating a given read-only reference and fixes its memory 
-    /// address until <paramref name="func"/> finish.
+    /// address until <paramref name="func"/> finishes.
     /// </summary>
-    /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
+    /// <typeparam name="T">A <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="value">A <typeparamref name="T"/> read-only reference.</param>
@@ -112,9 +112,9 @@ public static partial class NativeUtilities
 
     /// <summary>
     /// Prevents the garbage collector from relocating a given method delegate and fixes its memory 
-    /// address until <paramref name="action"/> finish.
+    /// address until <paramref name="action"/> finishes.
     /// </summary>
-    /// <typeparam name="TDelegate"><see cref="Delegate"/> type method.</typeparam>
+    /// <typeparam name="TDelegate">A <see cref="Delegate"/> type method.</typeparam>
     /// <param name="del">A <typeparamref name="TDelegate"/> method.</param>
     /// <param name="action">A <see cref="FixedMethodAction{T}"/> delegate.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -134,9 +134,9 @@ public static partial class NativeUtilities
 
     /// <summary>
     /// Prevents the garbage collector from relocating a given method delegate and fixes its memory 
-    /// address until <paramref name="action"/> finish.
+    /// address until <paramref name="action"/> finishes.
     /// </summary>
-    /// <typeparam name="TDelegate"><see cref="Delegate"/> type method.</typeparam>
+    /// <typeparam name="TDelegate">A <see cref="Delegate"/> type method.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <param name="del">A <typeparamref name="TDelegate"/> method.</param>
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
@@ -158,9 +158,9 @@ public static partial class NativeUtilities
 
     /// <summary>
     /// Prevents the garbage collector from relocating a given method delegate and fixes its memory 
-    /// address until <paramref name="func"/> finish.
+    /// address until <paramref name="func"/> finishes.
     /// </summary>
-    /// <typeparam name="TDelegate"><see cref="Delegate"/> type method.</typeparam>
+    /// <typeparam name="TDelegate">A <see cref="Delegate"/> type method.</typeparam>
     /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="del">A <typeparamref name="TDelegate"/> method.</param>
     /// <param name="func">A <see cref="FixedMethodFunc{TDelegate, TResult}"/> delegate.</param>
@@ -182,9 +182,9 @@ public static partial class NativeUtilities
 
     /// <summary>
     /// Prevents the garbage collector from relocating a given method delegate and fixes its memory 
-    /// address until <paramref name="func"/> finish.
+    /// address until <paramref name="func"/> finishes.
     /// </summary>
-    /// <typeparam name="TDelegate"><see cref="Delegate"/> type method.</typeparam>
+    /// <typeparam name="TDelegate">A <see cref="Delegate"/> type method.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="del">A <typeparamref name="TDelegate"/> method.</param>

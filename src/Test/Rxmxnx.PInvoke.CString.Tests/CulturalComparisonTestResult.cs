@@ -16,9 +16,10 @@ internal sealed record CulturalComparisonTestResult
 
     public static CulturalComparisonTestResult Compare(String strA, String strB)
     {
-        CultureInfo culture = cultures[Random.Shared.Next(0, cultures.Length)];
+        CultureInfo culture = GetCulture();
         return Compare(culture, strA, strB);
     }
+
     public static CulturalComparisonTestResult Compare(CultureInfo culture, String strA, String strB)
     {
         Int32 caseInsensitive = String.Compare(strA, strB, true, culture);
@@ -28,5 +29,15 @@ internal sealed record CulturalComparisonTestResult
             CaseInsensitive = caseInsensitive,
             CaseSensitive = caseSensitive,
         };
+    }
+
+    private static CultureInfo GetCulture()
+    {
+        CultureInfo result;
+        do
+            result = cultures[Random.Shared.Next(0, cultures.Length)];
+        // Prevents the use of unsupported cultures.
+        while (result.Name.StartsWith("om"));
+        return result;
     }
 }

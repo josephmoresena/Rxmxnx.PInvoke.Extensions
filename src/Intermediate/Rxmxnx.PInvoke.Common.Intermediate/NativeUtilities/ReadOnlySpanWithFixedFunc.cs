@@ -80,11 +80,11 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st read-only span.</param>
     /// <param name="span1">2nd read-only span.</param>
-    /// <param name="span2">3th read-only span.</param>
+    /// <param name="span2">3rd read-only span.</param>
     /// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
     public static unsafe TResult WithSafeFixed<T0, T1, T2, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2,
@@ -118,12 +118,12 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st read-only span.</param>
     /// <param name="span1">2nd read-only span.</param>
-    /// <param name="span2">3th read-only span.</param>
+    /// <param name="span2">3rd read-only span.</param>
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
     /// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
@@ -158,12 +158,12 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st read-only span.</param>
     /// <param name="span1">2nd read-only span.</param>
-    /// <param name="span2">3th read-only span.</param>
+    /// <param name="span2">3rd read-only span.</param>
     /// <param name="span3">4th read-only span.</param>
     /// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
     /// <returns>The result of <paramref name="func"/> execution.</returns>
@@ -200,13 +200,13 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st read-only span.</param>
     /// <param name="span1">2nd read-only span.</param>
-    /// <param name="span2">3th read-only span.</param>
+    /// <param name="span2">3rd read-only span.</param>
     /// <param name="span3">4th read-only span.</param>
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
     /// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
@@ -244,13 +244,13 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
     /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st read-only span.</param>
     /// <param name="span1">2nd read-only span.</param>
-    /// <param name="span2">3th read-only span.</param>
+    /// <param name="span2">3rd read-only span.</param>
     /// <param name="span3">4th read-only span.</param>
     /// <param name="span4">5th read-only span.</param>
     /// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
@@ -291,14 +291,14 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
     /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
     /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st read-only span.</param>
     /// <param name="span1">2nd read-only span.</param>
-    /// <param name="span2">3th read-only span.</param>
+    /// <param name="span2">3rd read-only span.</param>
     /// <param name="span3">4th read-only span.</param>
     /// <param name="span4">5th read-only span.</param>
     /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
@@ -340,14 +340,14 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
     /// <typeparam name="T5">Type of the items in 6th span.</typeparam>
     /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st read-only span.</param>
     /// <param name="span1">2nd read-only span.</param>
-    /// <param name="span2">3th read-only span.</param>
+    /// <param name="span2">3rd read-only span.</param>
     /// <param name="span3">4th read-only span.</param>
     /// <param name="span4">5th read-only span.</param>
     /// <param name="span5">6th read-only span.</param>
@@ -392,7 +392,7 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
     /// <typeparam name="T5">Type of the items in 6th span.</typeparam>
@@ -400,7 +400,7 @@ public static partial class NativeUtilities
     /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st read-only span.</param>
     /// <param name="span1">2nd read-only span.</param>
-    /// <param name="span2">3th read-only span.</param>
+    /// <param name="span2">3rd read-only span.</param>
     /// <param name="span3">4th read-only span.</param>
     /// <param name="span4">5th read-only span.</param>
     /// <param name="span5">6th read-only span.</param>
@@ -446,7 +446,7 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
     /// <typeparam name="T5">Type of the items in 6th span.</typeparam>
@@ -454,7 +454,7 @@ public static partial class NativeUtilities
     /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st read-only span.</param>
     /// <param name="span1">2nd read-only span.</param>
-    /// <param name="span2">3th read-only span.</param>
+    /// <param name="span2">3rd read-only span.</param>
     /// <param name="span3">4th read-only span.</param>
     /// <param name="span4">5th read-only span.</param>
     /// <param name="span5">6th read-only span.</param>
@@ -502,7 +502,7 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
     /// <typeparam name="T5">Type of the items in 6th span.</typeparam>
@@ -511,7 +511,7 @@ public static partial class NativeUtilities
     /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st read-only span.</param>
     /// <param name="span1">2nd read-only span.</param>
-    /// <param name="span2">3th read-only span.</param>
+    /// <param name="span2">3rd read-only span.</param>
     /// <param name="span3">4th read-only span.</param>
     /// <param name="span4">5th read-only span.</param>
     /// <param name="span5">6th read-only span.</param>
@@ -560,7 +560,7 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
     /// <typeparam name="T5">Type of the items in 6th span.</typeparam>
@@ -569,7 +569,7 @@ public static partial class NativeUtilities
     /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st read-only span.</param>
     /// <param name="span1">2nd read-only span.</param>
-    /// <param name="span2">3th read-only span.</param>
+    /// <param name="span2">3rd read-only span.</param>
     /// <param name="span3">4th read-only span.</param>
     /// <param name="span4">5th read-only span.</param>
     /// <param name="span5">6th read-only span.</param>
@@ -620,7 +620,7 @@ public static partial class NativeUtilities
     /// </summary>
     /// <typeparam name="T0">Type of the items in 1st span.</typeparam>
     /// <typeparam name="T1">Type of the items in 2st span.</typeparam>
-    /// <typeparam name="T2">Type of the items in 3th span.</typeparam>
+    /// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
     /// <typeparam name="T3">Type of the items in 4th span.</typeparam>
     /// <typeparam name="T4">Type of the items in 5th span.</typeparam>
     /// <typeparam name="T5">Type of the items in 6th span.</typeparam>
@@ -630,7 +630,7 @@ public static partial class NativeUtilities
     /// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
     /// <param name="span0">1st read-only span.</param>
     /// <param name="span1">2nd read-only span.</param>
-    /// <param name="span2">3th read-only span.</param>
+    /// <param name="span2">3rd read-only span.</param>
     /// <param name="span3">4th read-only span.</param>
     /// <param name="span4">5th read-only span.</param>
     /// <param name="span5">6th read-only span.</param>

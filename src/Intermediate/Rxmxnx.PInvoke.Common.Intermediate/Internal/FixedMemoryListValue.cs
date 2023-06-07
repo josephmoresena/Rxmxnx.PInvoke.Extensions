@@ -1,27 +1,26 @@
 ﻿namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
-/// Internal <see cref="FixedMemory"/> list.
+/// Represents a list of <see cref="FixedMemory"/> instances.
 /// </summary>
 internal readonly struct FixedMemoryListValue : IEnumerableSequence<FixedMemory>
 {
     /// <summary>
-    /// <see cref="FixedMemory"/> values.
+    /// Array of <see cref="FixedMemory"/> instances.
     /// </summary>
     private readonly FixedMemory[]? _memories;
 
     /// <summary>
-    /// Gets the total number of elements in the list. 
+    /// Gets the total number of elements in the list.
     /// </summary>
     public Int32 Count => this._memories?.Length ?? default;
-
     /// <summary>
-    /// Gets the element at the given index.
+    /// Gets the element at the specified index.
     /// </summary>
-    /// <param name="index">A position in the current instance.</param>
-    /// <returns>The object at position <paramref name="index"/>.</returns>
+    /// <param name="index">The zero-based index of the element to get.</param>
+    /// <returns>The element at the specified index.</returns>
     /// <exception cref="IndexOutOfRangeException">
-    /// <paramref name="index"/> is greater than or equal to the length of this object or less than zero.
+    /// Thrown when <paramref name="index"/> is not a valid index in the list.
     /// </exception>
     public FixedMemory this[Int32 index]
     {
@@ -34,16 +33,16 @@ internal readonly struct FixedMemoryListValue : IEnumerableSequence<FixedMemory>
     }
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="FixedMemoryListValue"/> struct.
     /// </summary>
-    /// <param name="memories"><see cref="FixedMemory"/> array.</param>
+    /// <param name="memories">The array of <see cref="FixedMemory"/> instances.</param>
     public FixedMemoryListValue(FixedMemory[] memories)
     {
         this._memories = memories;
     }
 
     /// <summary>
-    /// Invalidates all elements of the current list.
+    /// Releases all resources used by the <see cref="FixedMemory"/> instances in the list.
     /// </summary>
     public void Unload()
     {

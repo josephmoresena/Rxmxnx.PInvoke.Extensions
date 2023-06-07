@@ -11,12 +11,16 @@ public static class ValidationUtilities
     private const String emptyString = "";
 
     /// <summary>
-    /// Throws an exception if <paramref name="index"/> is invalid for a list of <paramref name="count"/> elements.
+    /// Validates that an index is valid for a list of a specific size.
     /// </summary>
-    /// <param name="index">Requested index.</param>
-    /// <param name="count">Total number of elements in the list.</param>
-    /// <param name="nameofIndex">Name of the index parameter.</param>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <param name="index">The index to validate.</param>
+    /// <param name="count">The total number of elements in the list.</param>
+    /// <param name="nameofIndex">
+    /// The name of the index parameter. Used in the exception message if the index is invalid.
+    /// </param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown if the index is less than zero or greater than or equal to the count.
+    /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ThrowIfInvalidListIndex(Int32 index, Int32 count, [CallerArgumentExpression(nameof(index))] String nameofIndex = emptyString)
     {
@@ -25,12 +29,16 @@ public static class ValidationUtilities
     }
 
     /// <summary>
-    /// Throws an exception if <paramref name="index"/> is invalid for a sequence of <paramref name="count"/> elements.
+    /// Validates if the sequence index is valid for a sequence of a specific size.
     /// </summary>
-    /// <param name="index">Requested index.</param>
-    /// <param name="count">Total number of elements in the sequence.</param>
-    /// <param name="nameofIndex">Name of the index parameter.</param>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <param name="index">The index to validate.</param>
+    /// <param name="count">The total number of elements in the sequence.</param>
+    /// <param name="nameofIndex">
+    /// The name of the index parameter. Used in the exception message if the index is invalid.
+    /// </param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown if the index is less than zero or greater than or equal to the count.
+    /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ThrowIfInvalidSequenceIndex(Int32 index, Int32 count, [CallerArgumentExpression(nameof(index))] String nameofIndex = emptyString)
     {
@@ -39,10 +47,12 @@ public static class ValidationUtilities
     }
 
     /// <summary>
-    /// Throws an exception if the fixed memory pointer instance is invalid.
+    /// Validates if a pointer is fixed in memory and safe to use.
     /// </summary>
-    /// <param name="isValid">Indicates whether the fixed pointer instance is invalid.</param>
-    /// <exception cref="InvalidOperationException"/>
+    /// <param name="isValid">A wrapper that indicates whether the fixed pointer instance is valid.</param>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if the fixed pointer instance is not guaranteed to be safe.
+    /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ThrowIfInvalidPointer(IWrapper<Boolean> isValid)
     {
@@ -51,10 +61,12 @@ public static class ValidationUtilities
     }
 
     /// <summary>
-    /// Throws an exception if the fixed memory pointer instance is not a function.
+    /// Validates if the fixed memory pointer instance is a function.
     /// </summary>
     /// <param name="isFunction">Indicates whether the fixed pointer instance is a function.</param>
-    /// <exception cref="InvalidOperationException"/>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if the fixed pointer instance is not a function.
+    /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ThrowIfNotFunctionPointer(Boolean isFunction)
     {
@@ -63,10 +75,12 @@ public static class ValidationUtilities
     }
 
     /// <summary>
-    /// Throws an exception if the fixed memory pointer instance is a function.
+    /// Validates if the fixed memory pointer instance is not a function.
     /// </summary>
     /// <param name="isFunction">Indicates whether the fixed pointer instance is a function.</param>
-    /// <exception cref="InvalidOperationException"/>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if the fixed pointer instance is a function.
+    /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ThrowIfFunctionPointer(Boolean isFunction)
     {
@@ -75,11 +89,13 @@ public static class ValidationUtilities
     }
 
     /// <summary>
-    /// Throws an exception if the fixed memory pointer instance is read-only and the operation is not read-only.
+    /// Validates that a non-read-only operation is not attempted on a fixed memory pointer instance that is read-only.
     /// </summary>
-    /// <param name="isReadOnlyOperation">Indicates whether the operation is read-only.</param>
+    /// <param name="isReadOnlyOperation">Indicates whether the operation to be performed is read-only.</param>
     /// <param name="isReadOnly">Indicates whether the fixed pointer instance is read-only.</param>
-    /// <exception cref="InvalidOperationException"/>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if a non-read-only operation is attempted on a fixed memory pointer instance that is read-only.
+    /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ThrowIfReadOnlyPointer(Boolean isReadOnlyOperation, Boolean isReadOnly)
     {
@@ -88,12 +104,15 @@ public static class ValidationUtilities
     }
 
     /// <summary>
-    /// Throws an exception if the size of the fixed memory pointer instance is insufficent to contain a
-    /// <typeparamref name="TValue"/> value.
+    /// Validates that the binary size of the fixed memory pointer instance is sufficient to contain at least one 
+    /// value of type <typeparamref name="TValue"/>.
     /// </summary>
     /// <typeparam name="TValue">Type of the referenced value.</typeparam>
-    /// <param name="binaryLength">Size of the fixed memory pointer instance.</param>
-    /// <exception cref="InsufficientMemoryException"/>
+    /// <param name="binaryLength">Binary size of the fixed memory pointer instance.</param>
+    /// <exception cref="InsufficientMemoryException">
+    /// Thrown if the binary size of the fixed memory pointer instance is insufficient to contain at least one 
+    /// value of type <typeparamref name="TValue"/>.
+    /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void ThrowIfInvalidRefTypePointer<TValue>(Int32 binaryLength)
         where TValue : unmanaged
@@ -103,13 +122,17 @@ public static class ValidationUtilities
     }
 
     /// <summary>
-    /// Throws an exception if the size of the binary span is insufficent to contain a <typeparamref name="TValue"/> value.
+    /// Validates that the size of the binary span exactly matches the size of the type <typeparamref name="TValue"/>.
     /// </summary>
     /// <typeparam name="TValue">Type of the referenced value.</typeparam>
     /// <param name="span">Binary span.</param>
     /// <param name="nameofSpan">Name of the span.</param>
-    /// <exception cref="InsufficientMemoryException"/>
-    /// <exception cref="InvalidCastException"/>
+    /// <exception cref="InsufficientMemoryException">
+    /// Thrown if the size of the binary span is less than the size of the type <typeparamref name="TValue"/>.
+    /// </exception>
+    /// <exception cref="InvalidCastException">
+    /// Thrown if the size of the binary span is greater than the size of the type <typeparamref name="TValue"/>.
+    /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void ThrowIfInvalidBinarySpanSize<TValue>(ReadOnlySpan<Byte> span, [CallerArgumentExpression(nameof(span))] String nameofSpan = emptyString)
         where TValue : unmanaged
@@ -123,14 +146,21 @@ public static class ValidationUtilities
     }
 
     /// <summary>
-    /// Throws an exception if <paramref name="obj"/> is not a <typeparamref name="T"/> instance.
+    /// Validates if the object <paramref name="obj"/> is of type <typeparamref name="T"/> and assigns it to the output
+    /// parameter <paramref name="result"/>.
     /// </summary>
-    /// <typeparam name="T">Type of the casted object.</typeparam>
-    /// <param name="obj">Managed object.</param>
-    /// <param name="typeName">Type name.</param>
-    /// <param name="result">Output. Casted value.</param>
-    /// <param name="nameofObj">Name of the object.</param>
-    /// <exception cref="ArgumentException"/>
+    /// <typeparam name="T">The expected type of the object.</typeparam>
+    /// <param name="obj">The object to check and cast.</param>
+    /// <param name="typeName">The name of the expected type.</param>
+    /// <param name="result">
+    /// Output parameter. If the object is of type <typeparamref name="T"/>, this will contain the casted object.
+    /// </param>
+    /// <param name="nameofObj">
+    /// The name of the object parameter. Used in the exception message if the object is not of type <typeparamref name="T"/>.
+    /// </param>
+    /// <exception cref="ArgumentException">
+    /// Thrown if the object <paramref name="obj"/> is not of type <typeparamref name="T"/>.
+    /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ThrowIfInvalidCastType<T>(Object? obj, String typeName, out T result,
         [CallerArgumentExpression(nameof(obj))] String nameofObj = emptyString)
@@ -172,7 +202,7 @@ public static class ValidationUtilities
         ReadOnlySpan<TValue> intermediateSpan = MemoryMarshal.CreateReadOnlySpan(ref refValue, 1);
         bytes = MemoryMarshal.AsBytes(intermediateSpan);
         if (destination.Length - offset < bytes.Length)
-            throw new ArgumentException($"Insufficient available size on {nameof(destination)} to copy {nameof(value)}.");
+            throw new InsufficientMemoryException($"Insufficient available size on {nameof(destination)} to copy {nameof(value)}.");
     }
 
     /// <summary>

@@ -1,22 +1,23 @@
 ﻿namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
-/// Internal implmentation of <see cref="IEnumerator{T}"/>.
+/// Provides a mechanism for iterating through a sequence of elements of type
+/// <typeparamref name="T"/>.
 /// </summary>
-/// <typeparam name="T">Type of <see cref="IEnumerator"/> item.</typeparam>
+/// <typeparam name="T">The type of elements in the sequence.</typeparam>
 internal sealed class SequenceEnumerator<T> : IEnumerator<T>
 {
     /// <summary>
-    /// <see cref="IEnumerableSequence{T}"/> instance.
+    /// The sequence of elements to iterate through.
     /// </summary>
     private readonly IEnumerableSequence<T> _instance;
 
     /// <summary>
-    /// Current enumerator value;
+    /// The current element in the sequence.
     /// </summary>
     private T _current = default!;
     /// <summary>
-    /// Iteration current index.
+    /// The current position in the sequence.
     /// </summary>
     private Int32 _index = -1;
 
@@ -34,9 +35,9 @@ internal sealed class SequenceEnumerator<T> : IEnumerator<T>
     Object IEnumerator.Current => this.Current!;
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="SequenceEnumerator{T}"/> class.
     /// </summary>
-    /// <param name="instance"><see cref="IEnumerableSequence{T}"/> instance.</param>
+    /// <param name="instance">The sequence of elements to iterate through.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public SequenceEnumerator(IEnumerableSequence<T> instance)
     {
@@ -45,7 +46,7 @@ internal sealed class SequenceEnumerator<T> : IEnumerator<T>
 
     void IDisposable.Dispose()
     {
-        // Intentionally left empty. This enumerator does not manage any resources that need disposing.
+        // No unmanaged resources to dispose.
     }
 
     /// <inheritdoc/>

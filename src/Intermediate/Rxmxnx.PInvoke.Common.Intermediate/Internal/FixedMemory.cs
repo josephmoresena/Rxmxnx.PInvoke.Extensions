@@ -6,16 +6,17 @@
 internal unsafe abstract class FixedMemory : FixedPointer, IFixedMemory, IEquatable<FixedMemory>
 {
     /// <summary>
-    /// Constructor.
+    /// Constructs a new <see cref="FixedMemory"/> instance using a pointer to a memory block, its size, and
+    /// a read-only flag.
     /// </summary>
     /// <param name="ptr">Pointer to fixed memory block.</param>
     /// <param name="binaryLength">Memory block size in bytes.</param>
     /// <param name="isReadOnly">Indicates whether the memory block is read-only.</param>
     protected FixedMemory(void* ptr, Int32 binaryLength, Boolean isReadOnly)
         : base(ptr, binaryLength, isReadOnly) { }
-
     /// <summary>
-    /// Constructor.
+    /// Constructs a new <see cref="FixedMemory"/> instance using a pointer to a memory block, its size,
+    /// a read-only flag, and a valid status.
     /// </summary>
     /// <param name="ptr">Pointer to fixed memory block.</param>
     /// <param name="binaryLength">Memory block size in bytes.</param>
@@ -23,22 +24,22 @@ internal unsafe abstract class FixedMemory : FixedPointer, IFixedMemory, IEquata
     /// <param name="isValid">Indicates whether current instance remains valid.</param>
     protected FixedMemory(void* ptr, Int32 binaryLength, Boolean isReadOnly, IMutableWrapper<Boolean> isValid)
         : base(ptr, binaryLength, isReadOnly, isValid) { }
-
     /// <summary>
-    /// Constructor.
+    /// Constructs a new <see cref="FixedMemory"/> instance using another instance as a template.
     /// </summary>
-    /// <param name="mem">Fixed context of memory block.</param>
+    /// <param name="mem">The <see cref="FixedMemory"/> instance to copy data from.</param>
     protected FixedMemory(FixedMemory mem) : base(mem) { }
-
     /// <summary>
-    /// Constructor.
+    /// Constructs a new <see cref="FixedMemory"/> instance using another instance as a template and specifying a
+    /// memory offset.
     /// </summary>
-    /// <param name="mem">Fixed context of memory block.</param>
-    /// <param name="offset">Memory offset.</param>
+    /// <param name="mem">The <see cref="FixedMemory"/> instance to copy data from.</param>
+    /// <param name="offset">The offset to be added to the pointer to the memory block.</param>
     protected FixedMemory(FixedMemory mem, Int32 offset) : base(mem, offset) { }
 
     Span<Byte> IFixedMemory.Bytes => base.CreateBinarySpan();
     ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => base.CreateReadOnlyBinarySpan();
+    IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
 
     /// <inheritdoc/>
     public virtual Boolean Equals(FixedMemory? other) => this.Equals(other as FixedPointer);
@@ -49,6 +50,4 @@ internal unsafe abstract class FixedMemory : FixedPointer, IFixedMemory, IEquata
     public override Int32 GetHashCode() => base.GetHashCode();
     /// <inheritdoc/>
     public virtual IFixedContext<Byte> AsBinaryContext() => new FixedContext<Byte>(this.BinaryOffset, this);
-
-    IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
 }

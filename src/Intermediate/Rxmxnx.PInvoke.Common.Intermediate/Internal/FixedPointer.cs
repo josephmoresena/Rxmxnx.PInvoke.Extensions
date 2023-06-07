@@ -1,16 +1,16 @@
 ﻿namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
-/// Helper class from memory pointer block fixing.
+/// Helper class for managing fixed memory pointer blocks.
 /// </summary>
 internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPointer>
 {
     /// <summary>
-    /// Pointer to fixed memory block.
+    /// Pointer to the fixed memory block.
     /// </summary>
     private readonly void* _ptr;
     /// <summary>
-    /// Memory block size in bytes.
+    /// Size of the memory block in bytes.
     /// </summary>
     private readonly Int32 _binaryLength;
     /// <summary>
@@ -18,39 +18,43 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
     /// </summary>
     private readonly Boolean _isReadOnly;
     /// <summary>
-    /// Indicates whether current instance remains valid.
+    /// Indicates whether the current instance is still valid.
     /// </summary>
     private readonly IMutableWrapper<Boolean> _isValid;
 
     /// <summary>
-    /// Memory type.
+    /// The type of memory.
     /// </summary>
     public abstract Type? Type { get; }
     /// <summary>
-    /// Memory offset.
+    /// The offset of the memory.
     /// </summary>
     public abstract Int32 BinaryOffset { get; }
     /// <summary>
-    /// Indicates whether current instance is a function pointer.
+    /// Indicates whether the current instance is a function pointer.
     /// </summary>
     public abstract Boolean IsFunction { get; }
+
     /// <summary>
-    /// Memory block size in bytes.
+    /// Size of the memory block in bytes.
     /// </summary>
     public Int32 BinaryLength => this._binaryLength - this.BinaryOffset;
     /// <summary>
-    /// Indicates whether current instance remains valid.
+    /// Indicates whether the current instance is still valid.
     /// </summary>
     public Boolean IsReadOnly => this._isReadOnly;
 
     IntPtr IFixedPointer.Pointer => (IntPtr)this.GetMemoryOffset();
 
     /// <summary>
-    /// Constructor.
+    /// Constructs a new FixedPointer instance pointing to a fixed memory block.
     /// </summary>
-    /// <param name="ptr">Pointer to fixed memory block.</param>
-    /// <param name="binaryLength">Memory block size in bytes.</param>
-    /// <param name="isReadOnly">Indicates whether the memory block is read-only.</param>
+    /// <param name="ptr">The pointer to a fixed memory block.</param>
+    /// <param name="binaryLength">The size of the memory block in bytes.</param>
+    /// <param name="isReadOnly">A Boolean value indicating whether the memory block is read-only.</param>
+    /// <remarks>
+    /// This constructor sets the validity of the instance to true by default.
+    /// </remarks>
     protected FixedPointer(void* ptr, Int32 binaryLength, Boolean isReadOnly)
     {
         this._ptr = ptr;
@@ -58,14 +62,18 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
         this._isValid = new MutableWrapper<Boolean>(true);
         this._isReadOnly = isReadOnly;
     }
-
     /// <summary>
-    /// Constructor.
+    /// Constructs a new FixedPointer instance pointing to a fixed memory block, with specified validity.
     /// </summary>
-    /// <param name="ptr">Pointer to fixed memory block.</param>
-    /// <param name="binaryLength">Memory block size in bytes.</param>
-    /// <param name="isReadOnly">Indicates whether the memory block is read-only.</param>
-    /// <param name="isValid">Indicates whether current instance remains valid.</param>
+    /// <param name="ptr">The pointer to a fixed memory block.</param>
+    /// <param name="binaryLength">The size of the memory block in bytes.</param>
+    /// <param name="isReadOnly">A Boolean value indicating whether the memory block is read-only.</param>
+    /// <param name="isValid">
+    /// A mutable wrapper containing a Boolean value indicating whether the current instance
+    /// remains valid.</param>
+    /// <remarks>
+    /// This constructor allows to set the validity of the instance during the construction of the object.
+    /// </remarks>
     protected FixedPointer(void* ptr, Int32 binaryLength, Boolean isReadOnly, IMutableWrapper<Boolean> isValid)
     {
         this._ptr = ptr;
@@ -73,30 +81,36 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
         this._isValid = isValid;
         this._isReadOnly = isReadOnly;
     }
-
     /// <summary>
-    /// Constructor.
+    /// Constructs a new <see cref="FixedPointer"/> instance using another instance as a template.
     /// </summary>
-    /// <param name="fptr">Fixed context of memory block.</param>
-    protected FixedPointer(FixedPointer fptr)
+    /// <param name="pointer">The <see cref="FixedPointer"/> instance to copy data from.</param>
+    /// <remarks>
+    /// This constructor will copy all the properties of the provided <see cref="FixedPointer"/> instance to the
+    /// new instance.
+    /// </remarks>
+    protected FixedPointer(FixedPointer pointer)
     {
-        this._ptr = fptr._ptr;
-        this._binaryLength = fptr._binaryLength;
-        this._isValid = fptr._isValid;
-        this._isReadOnly = fptr._isReadOnly;
+        this._ptr = pointer._ptr;
+        this._binaryLength = pointer._binaryLength;
+        this._isValid = pointer._isValid;
+        this._isReadOnly = pointer._isReadOnly;
     }
-
     /// <summary>
-    /// Constructor.
+    /// Constructs a new <see cref="FixedPointer"/> instance using another instance as a template and specifying a memory offset.
     /// </summary>
-    /// <param name="fptr">Fixed context of memory block.</param>
-    /// <param name="offset">Memory offset.</param>
-    protected FixedPointer(FixedPointer fptr, Int32 offset)
+    /// <param name="pointer">The <see cref="FixedPointer"/> instance to copy data from.</param>
+    /// <param name="offset">The offset to be added to the pointer to the memory block.</param>
+    /// <remarks>
+    /// This constructor will copy all the properties of the provided <see cref="FixedPointer"/> instance to the new instance and
+    /// adjust the pointer and block size according to the provided offset.
+    /// </remarks>
+    protected FixedPointer(FixedPointer pointer, Int32 offset)
     {
-        this._ptr = ((IntPtr)fptr._ptr + offset).ToPointer();
-        this._binaryLength = fptr._binaryLength - offset;
-        this._isValid = fptr._isValid;
-        this._isReadOnly = fptr._isReadOnly;
+        this._ptr = ((IntPtr)pointer._ptr + offset).ToPointer();
+        this._binaryLength = pointer._binaryLength - offset;
+        this._isValid = pointer._isValid;
+        this._isReadOnly = pointer._isReadOnly;
     }
 
     /// <summary>
@@ -113,7 +127,6 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
         this.ValidateReferenceSize<TValue>();
         return ref Unsafe.AsRef<TValue>(this._ptr);
     }
-
     /// <summary>
     /// Creates a read-only reference of a <typeparamref name="TValue"/> value over
     /// the memory block.
@@ -131,7 +144,6 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
         this.ValidateReferenceSize<TValue>();
         return ref Unsafe.AsRef<TValue>(this._ptr);
     }
-
     /// <summary>
     /// Creates a <see cref="Span{TValue}"/> instance over the memory block whose 
     /// length is <paramref name="length"/>.
@@ -145,7 +157,6 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
         this.ValidateOperation();
         return new(this._ptr, length);
     }
-
     /// <summary>
     /// Creates a <see cref="ReadOnlySpan{TValue}"/> instance over the memory block whose 
     /// length is <paramref name="length"/>.
@@ -159,7 +170,6 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
         this.ValidateOperation(true);
         return new(this._ptr, length);
     }
-
     /// <summary>
     /// Creates a <see cref="Span{Byte}"/> instance over the memory block.
     /// </summary>
@@ -171,7 +181,6 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
         void* ptr = this.GetMemoryOffset();
         return new(ptr, this.BinaryLength);
     }
-
     /// <summary>
     /// Creates a <see cref="ReadOnlySpan{Byte}"/> instance over the memory block.
     /// </summary>
@@ -183,7 +192,6 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
         void* ptr = this.GetMemoryOffset();
         return new(ptr, this.BinaryLength);
     }
-
     /// <summary>
     /// Creates a <typeparamref name="TDelegate"/> instance over the memory block.
     /// </summary>
@@ -199,7 +207,6 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
     /// Invalidates current context.
     /// </summary>
     public virtual void Unload() => this._isValid.Value = false;
-
     /// <inheritdoc/>
     public virtual Boolean Equals(FixedPointer? other)
         => other is not null && this.GetMemoryOffset() == other.GetMemoryOffset() &&
@@ -208,7 +215,6 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
     /// <inheritdoc/>
     [ExcludeFromCodeCoverage]
     public override Boolean Equals(Object? obj) => this.Equals(obj as FixedPointer);
-
     /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override Int32 GetHashCode()
@@ -234,7 +240,6 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
         ValidationUtilities.ThrowIfInvalidPointer(this._isValid);
         ValidationUtilities.ThrowIfReadOnlyPointer(isReadOnly, this._isReadOnly);
     }
-
     /// <summary>
     /// Retrieves the number of <typeparamref name="TValue"/> items that can be
     /// referenced into the fixed memory block.
@@ -247,7 +252,6 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected Int32 GetCount<TValue>() where TValue : unmanaged
         => this._binaryLength / sizeof(TValue);
-
     /// <summary>
     /// Validates the size of the referenced value type from current instance.
     /// </summary>
@@ -265,7 +269,6 @@ internal unsafe abstract class FixedPointer : IFixedPointer, IEquatable<FixedPoi
         ValidationUtilities.ThrowIfNotFunctionPointer(this.IsFunction);
         ValidationUtilities.ThrowIfInvalidPointer(this._isValid);
     }
-
     /// <summary>
     /// Retrieves the memory offset for current instance.
     /// </summary>
