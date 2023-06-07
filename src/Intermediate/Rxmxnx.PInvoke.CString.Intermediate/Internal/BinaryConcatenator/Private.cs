@@ -68,14 +68,11 @@ internal partial class BinaryConcatenator<T>
             this._writeAsync = FinalWriteAsync;
         }
     }
-
-
     /// <summary>
     /// Writes <paramref name="value"/> in current instance.
     /// </summary>
     /// <param name="value">UTF-8 bytes to write.</param>
     private void WriteValue(ReadOnlySpan<Byte> value) => this._mem.Write(value);
-
     /// <summary>
     /// Writes <paramref name="value"/> in current instance and
     /// sets the delegates for separator writing.
@@ -92,7 +89,6 @@ internal partial class BinaryConcatenator<T>
             this._writeAsync = this.WriteWithSeparatorAsync;
         }
     }
-
     /// <summary>
     /// Writes <paramref name="value"/> in current instance and
     /// sets the delegates for separator writing.
@@ -109,7 +105,6 @@ internal partial class BinaryConcatenator<T>
             this._writeAsync = this.WriteWithSeparatorAsync;
         }
     }
-
     /// <summary>
     /// Writes <paramref name="value"/> in current instance preceding by
     /// the separator.
@@ -124,7 +119,6 @@ internal partial class BinaryConcatenator<T>
             this.WriteValue(value);
         }
     }
-
     /// <summary>
     /// Writes <paramref name="value"/> in current instance preceding by
     /// the separator.
@@ -139,7 +133,6 @@ internal partial class BinaryConcatenator<T>
             this.WriteValue(value);
         }
     }
-
     /// <summary>
     /// Writes <paramref name="value"/> in current instance.
     /// </summary>
@@ -150,7 +143,6 @@ internal partial class BinaryConcatenator<T>
         if (!this.IsEmpty(value))
             this.WriteValue(value);
     }
-
     /// <summary>
     /// Writes <paramref name="value"/> in current instance.
     /// </summary>
@@ -161,7 +153,6 @@ internal partial class BinaryConcatenator<T>
         if (!this.IsEmpty(value))
             this.WriteValue(value);
     }
-
     /// <summary>
     /// Asynchronously writes <paramref name="value"/> in current instance and
     /// sets the delegates for separator writing.
@@ -179,7 +170,6 @@ internal partial class BinaryConcatenator<T>
             this._writeAsync = this.WriteWithSeparatorAsync;
         }
     }
-
     /// <summary>
     /// Asynchronously writes <paramref name="value"/> in current instance preceding by
     /// the separator.
@@ -195,7 +185,6 @@ internal partial class BinaryConcatenator<T>
             await this.WriteValueAsync(value);
         }
     }
-
     /// <summary>
     /// Asynchronously writes <paramref name="value"/> in current instance.
     /// </summary>

@@ -26,7 +26,6 @@ internal sealed class StringConcatenator : BinaryConcatenator<String>
     /// The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.
     /// </param>
     public StringConcatenator(CancellationToken cancellationToken = default) : this(default, cancellationToken) { }
-
     /// <summary>
     /// Constructor.
     /// </summary>
@@ -43,11 +42,9 @@ internal sealed class StringConcatenator : BinaryConcatenator<String>
 
     /// <inheritdoc/>
     protected override Boolean IsEmpty(String? value) => String.IsNullOrEmpty(value) && !this._ignoreEmpty;
-
     /// <inheritdoc/>
     [ExcludeFromCodeCoverage]
     protected override Boolean IsEmpty(ReadOnlySpan<Byte> value) => base.IsEmpty(value) && !this._ignoreEmpty;
-
     /// <inheritdoc/>
     protected override void Dispose(Boolean disposing)
     {
@@ -59,7 +56,6 @@ internal sealed class StringConcatenator : BinaryConcatenator<String>
         }
         base.Dispose(disposing);
     }
-
     /// <inheritdoc/>
     protected override async ValueTask DisposeAsync(Boolean disposing)
     {
@@ -71,10 +67,8 @@ internal sealed class StringConcatenator : BinaryConcatenator<String>
         }
         await base.DisposeAsync(disposing);
     }
-
     /// <inheritdoc/>
     protected override void WriteValue([AllowNull] String value) => this._writer.Write(value);
-
     /// <inheritdoc/>
     protected override Task WriteValueAsync([AllowNull] String value) => this._writer.WriteAsync(value);
 }

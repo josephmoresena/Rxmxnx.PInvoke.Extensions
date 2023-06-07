@@ -17,7 +17,6 @@ internal sealed class CStringConcatenator : BinaryConcatenator<CString>
     /// The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.
     /// </param>
     public CStringConcatenator(CancellationToken cancellationToken = default) : this(default, cancellationToken) { }
-
     /// <summary>
     /// Constructor.
     /// </summary>
@@ -33,14 +32,11 @@ internal sealed class CStringConcatenator : BinaryConcatenator<CString>
 
     /// <inheritdoc/>
     protected override void WriteValue([AllowNull] CString value) => value?.Write(base.Stream, false);
-
     /// <inheritdoc/>
     protected override Task WriteValueAsync([AllowNull] CString value)
         => value?.WriteAsync(base.Stream, false, base.CancellationToken) ?? Task.CompletedTask;
-
     /// <inheritdoc/>
     protected override Boolean IsEmpty(CString? value) => CString.IsNullOrEmpty(value) && !this._ignoreEmpty;
-
     /// <inheritdoc/>
     [ExcludeFromCodeCoverage]
     protected override Boolean IsEmpty(ReadOnlySpan<Byte> value) => base.IsEmpty(value) && !this._ignoreEmpty;

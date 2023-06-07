@@ -14,7 +14,6 @@ internal partial class BinaryConcatenator<T>
         Int32 fPosition = iPosition + fLength;
         return span[iPosition..fPosition];
     }
-
     /// <summary>
     /// Gets the initial position of the UTF-8 text.
     /// </summary>
@@ -31,7 +30,6 @@ internal partial class BinaryConcatenator<T>
             iPosition += 3;
         return iPosition;
     }
-
     /// <summary>
     /// Indicates whether the given <see cref="Byte"/> is UTF-8 null character. 
     /// </summary>
@@ -41,7 +39,6 @@ internal partial class BinaryConcatenator<T>
     /// <see langword="false"/>.
     /// </returns>
     private static Boolean IsNullUtf8Char(in Byte utf8Char) => utf8Char == default;
-
     /// <summary>
     /// Indicates whether the given <see cref="Byte"/> sequence is UTF-8 BOM character. 
     /// </summary>
@@ -54,7 +51,6 @@ internal partial class BinaryConcatenator<T>
     /// </returns>
     private static Boolean IsBOMChar(in Byte utf8Char1, in Byte utf8Char2, in Byte utf8Char3)
         => utf8Char1 == 239 && utf8Char2 == 187 && utf8Char3 == 191;
-
     /// <summary>
     /// Gets the final length of the UTF-8 text.
     /// </summary>

@@ -3,34 +3,34 @@
 internal partial class Utf8Comparator<TChar>
 {
     /// <summary>
-    /// Culture for current comparison.
+    /// The culture used for the current comparison.
     /// </summary>
     private readonly CultureInfo _culture;
     /// <summary>
-    /// Options for current comparision.
+    /// The options used for the current comparison.
     /// </summary>
     private readonly CompareOptions _options;
     /// <summary>
-    /// Options for current case-insensitive;
+    /// The options used for a case-insensitive comparison.
     /// </summary>
     private readonly CompareOptions _optionsIgnoreCase;
     /// <summary>
-    /// Indicates whether comparison is case-insensitive.
+    /// A value indicating whether the current comparison is case-insensitive.
     /// </summary>
     private readonly Boolean _ignoreCase;
     /// <summary>
-    /// Indicates whether comparison is ordinal.
+    /// A value indicating whether the current comparison is ordinal.
     /// </summary>
     private readonly Boolean _ordinal;
 
     /// <summary>
-    /// Compares two specified <see cref="ReadOnlySpan{Char}"/> using the specified rules, and returns an integer that indicates their relative position in
+    /// Compares two specified <see cref="ReadOnlySpan{Char}"/> instances using the specified rules, and returns an integer that indicates their relative position in
     /// the sort order.
     /// </summary>
     /// <param name="textA">The first text to compare.</param>
-    /// <param name="textB">The second text instance.</param>
+    /// <param name="textB">The second text to compare.</param>
     /// <param name="ignoreCase">
-    /// <see langword="true"/> to ignore case during the comparision; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> to ignore case during the comparison; otherwise, <see langword="false"/>.
     /// </param>
     /// <returns>
     /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
@@ -43,7 +43,7 @@ internal partial class Utf8Comparator<TChar>
     /// <description><paramref name="textA"/> precedes <paramref name="textB"/> in the sort order.</description>
     /// </item>
     /// <item>
-    /// <term>Null</term>
+    /// <term>Zero</term>
     /// <description><paramref name="textA"/> is in the same position as <paramref name="textB"/> in the sort order.</description>
     /// </item>
     /// <item>
@@ -59,12 +59,11 @@ internal partial class Utf8Comparator<TChar>
         ReadOnlySpan<Char> spanB = this.GetUnicodeSpan(textB);
         return this._culture.CompareInfo.Compare(spanA, spanB, this.GetOptions(ignoreCase));
     }
-
     /// <summary>
-    /// Compares two specified <see cref="ReadOnlySpan{Char}"/> valuating the numeric values of the UTF-16 units.
+    /// Compares two specified <see cref="ReadOnlySpan{Char}"/> instances by evaluating the numeric values of the UTF-16 units.
     /// </summary>
     /// <param name="textA">The first text to compare.</param>
-    /// <param name="textB">The second text instance.</param>
+    /// <param name="textB">The second text to compare.</param>
     /// <returns>
     /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
     /// <list type="table">
@@ -76,7 +75,7 @@ internal partial class Utf8Comparator<TChar>
     /// <description><paramref name="textA"/> precedes <paramref name="textB"/> in the sort order.</description>
     /// </item>
     /// <item>
-    /// <term>Null</term>
+    /// <term>Zero</term>
     /// <description><paramref name="textA"/> is in the same position as <paramref name="textB"/> in the sort order.</description>
     /// </item>
     /// <item>
@@ -95,12 +94,11 @@ internal partial class Utf8Comparator<TChar>
         else
             return String.Compare(strA, strB, StringComparison.OrdinalIgnoreCase);
     }
-
     /// <summary>
-    /// Retrieves the <see cref="CompareOptions"/> for current comparison.
+    /// Retrieves the <see cref="CompareOptions"/> for the current comparison.
     /// </summary>
-    /// <param name="caseInsensitive">Indicates whether current comparision should be case-insensitive.</param>
-    /// <returns><see cref="CompareOptions"/> for current comparison.</returns>
+    /// <param name="caseInsensitive">Indicates whether the comparison should be case-insensitive.</param>
+    /// <returns><see cref="CompareOptions"/> for the current comparison.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private CompareOptions GetOptions(Boolean caseInsensitive) => !caseInsensitive ? this._options : this._optionsIgnoreCase;
 }
