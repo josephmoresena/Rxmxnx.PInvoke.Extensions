@@ -27,7 +27,7 @@ public sealed class WithSafeTransformTest
         try
         {
             CStringSequence seq = CreateSequence(handles, indices, out CString?[] values);
-            fixed(void* ptrSeq = seq)
+            fixed (void* ptrSeq = seq)
             {
                 IntPtr ptr = (IntPtr)ptrSeq;
                 for (Int32 i = 0; i < indices.Count; i++)
@@ -97,7 +97,7 @@ public sealed class WithSafeTransformTest
     internal void Test(Boolean fixedIndices)
     {
         List<GCHandle> handles = new();
-        IReadOnlyList<Int32> indices = !fixedIndices? TestSet.GetIndices() : GetIndices();
+        IReadOnlyList<Int32> indices = !fixedIndices ? TestSet.GetIndices() : GetIndices();
         try
         {
             CStringSequence seq = CreateSequence(handles, indices, out CString?[] values);
@@ -271,7 +271,7 @@ public sealed class WithSafeTransformTest
         Queue<Int32> queue = new(TestSet.GetIndices());
         List<Int32> result = new();
         Byte space = 0;
-        while(queue.TryDequeue(out Int32 value))
+        while (queue.TryDequeue(out Int32 value))
         {
             result.Add(value);
             if (space == 2)

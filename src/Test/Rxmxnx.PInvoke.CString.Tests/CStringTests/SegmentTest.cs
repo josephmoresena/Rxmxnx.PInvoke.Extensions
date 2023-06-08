@@ -91,7 +91,7 @@ public sealed class SegmentTests
                     {
                         Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstrSeg));
                     }
-                    catch(Exception)
+                    catch (Exception)
                     {
                         // For some reason sometimes the test fails even though it shouldn't.
                         // The test must be run again so that it does not fail.
