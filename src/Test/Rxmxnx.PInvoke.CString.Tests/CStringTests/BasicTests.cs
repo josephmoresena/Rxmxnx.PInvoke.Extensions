@@ -18,7 +18,7 @@ public sealed class BasicTests
         CString noEmpty4 = noEmpty2[1..];
         CString noEmpty5 = new(() => emptyBytes);
 
-        CString empty = new(IntPtr.Zero, 0);
+        CString empty = CString.CreateUnsafe(IntPtr.Zero, 0);
         CString empty2 = (CString)emptyBytes;
         CString empty3 = noEmpty1[..0];
         CString empty4 = CString.Create(() => emptyBytes);
@@ -329,7 +329,7 @@ public sealed class BasicTests
 
         fixed (void* ptr = cstr.AsSpan())
         {
-            CString rawPointerSpan = CString.Create(new IntPtr(ptr), cstr.Length);
+            CString rawPointerSpan = CString.CreateUnsafe(new IntPtr(ptr), cstr.Length, true);
             Assert.False(rawPointerSpan.IsFunction);
             Assert.False(rawPointerSpan.IsNullTerminated);
             Assert.True(rawPointerSpan.IsReference);
@@ -351,7 +351,7 @@ public sealed class BasicTests
 
         fixed (void* ptr = cstr.AsSpan())
         {
-            CString rawPointerSpan = CString.Create(new IntPtr(ptr), cstr.Length + 1);
+            CString rawPointerSpan = CString.CreateUnsafe(new IntPtr(ptr), cstr.Length + 1, true);
             Assert.False(rawPointerSpan.IsFunction);
             Assert.False(rawPointerSpan.IsNullTerminated);
             Assert.True(rawPointerSpan.IsReference);
@@ -387,7 +387,7 @@ public sealed class BasicTests
     {
         fixed (Byte* bptr2 = bytes)
         {
-            CString cstr2 = new(new IntPtr(bptr2), bytes.Length);
+            CString cstr2 = CString.CreateUnsafe(new IntPtr(bptr2), bytes.Length);
             Assert.Equal(cstr1, cstr2);
             AssertFromBytesPointer(cstr2);
             Assert.True(cstr2.Equals(text));
@@ -402,7 +402,7 @@ public sealed class BasicTests
     {
         fixed (Byte* bptr2 = bytes)
         {
-            CString cstr2 = new(new IntPtr(bptr2), bytes.Length);
+            CString cstr2 = CString.CreateUnsafe(new IntPtr(bptr2), bytes.Length);
             Assert.Equal(cstr1, cstr2);
             Assert.True(cstr2.Equals(text));
             AssertFromNullTerminatedBytesPointer(cstr2);

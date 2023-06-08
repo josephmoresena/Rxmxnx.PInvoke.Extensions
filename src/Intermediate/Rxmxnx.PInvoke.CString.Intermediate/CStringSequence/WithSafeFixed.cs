@@ -14,7 +14,7 @@ public partial class CStringSequence
         fixed (Char* ptr = &MemoryMarshal.GetReference<Char>(this._value))
         {
             _ = this.AsSpanUnsafe(out CString[] output);
-            FixedCStringSequence fseq = new(output, CString.Create(new IntPtr(ptr), this._value.Length * SizeOfChar));
+            FixedCStringSequence fseq = new(output, CString.CreateUnsafe(new IntPtr(ptr), this._value.Length * SizeOfChar, true));
             try
             {
                 action(fseq);
@@ -40,7 +40,7 @@ public partial class CStringSequence
         fixed (Char* ptr = &MemoryMarshal.GetReference<Char>(this._value))
         {
             _ = this.AsSpanUnsafe(out CString[] output);
-            FixedCStringSequence fseq = new(output, CString.Create(new IntPtr(ptr), this._value.Length * SizeOfChar));
+            FixedCStringSequence fseq = new(output, CString.CreateUnsafe(new IntPtr(ptr), this._value.Length * SizeOfChar, true));
             try
             {
                 action(fseq, state);
@@ -66,7 +66,7 @@ public partial class CStringSequence
         fixed (Char* ptr = &MemoryMarshal.GetReference<Char>(this._value))
         {
             _ = this.AsSpanUnsafe(out CString[] output);
-            FixedCStringSequence fseq = new(output, CString.Create(new IntPtr(ptr), this._value.Length * SizeOfChar));
+            FixedCStringSequence fseq = new(output, CString.CreateUnsafe(new IntPtr(ptr), this._value.Length * SizeOfChar, true));
             try
             {
                 return func(fseq);
@@ -94,7 +94,7 @@ public partial class CStringSequence
         fixed (Char* ptr = &MemoryMarshal.GetReference<Char>(this._value))
         {
             _ = this.AsSpanUnsafe(out CString[] output);
-            FixedCStringSequence fseq = new(output, CString.Create(new IntPtr(ptr), this._value.Length * SizeOfChar));
+            FixedCStringSequence fseq = new(output, CString.CreateUnsafe(new IntPtr(ptr), this._value.Length * SizeOfChar, true));
             try
             {
                 return func(fseq, state);

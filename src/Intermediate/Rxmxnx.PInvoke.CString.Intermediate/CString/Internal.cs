@@ -3,26 +3,12 @@
 public partial class CString
 {
     /// <summary>
-    /// Creates a not null-terminated <see cref="CString"/> instance that contains a single <paramref name="c"/> character.
+    /// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified 
+    /// pointer to an array of UTF-8 characters and a length.
     /// </summary>
-    /// <param name="c">A UTF-8 char.</param>
-    /// <returns>A not null-terminated <see cref="CString"/> instance that contains a single <paramref name="c"/> character.</returns>
-    internal static CString Create(Byte c) => new(new Byte[] { c }, false);
-
-    /// <summary>
-    /// Retrieves the internal binary data from a given <see cref="CString"/>.
-    /// </summary>
-    /// <param name="value">A non-reference <see cref="CString"/> instance.</param>
-    /// <returns>A <see cref="Byte"/> array with UTF-8 text.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
-    /// <exception cref="InvalidOperationException"><paramref name="value"/> does not contains the UTF-8 text.</exception>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static Byte[] GetBytes(CString value)
-    {
-        ArgumentNullException.ThrowIfNull(value);
-        ValidationUtilities.ThrowIfInvalidUtf8Region(value._data, nameof(value), out Byte[] result);
-        return result;
-    }
+    /// <param name="ptr">A pointer to a array of UTF-8 characters.</param>
+    /// <param name="length">The number of <see cref="Byte"/> within value to use.</param>
+    internal CString(IntPtr ptr, Int32 length) : this(ptr, length, false) { }
 
     /// <summary>
     /// Writes the sequence of bytes to the given <see cref="Stream"/> and advances
@@ -99,4 +85,26 @@ public partial class CString
     /// <returns>A task that represents the asynchronous write operation.</returns>
     internal async Task WriteAsync(Stream strm, Int32 startIndex, Int32 count, CancellationToken cancellationToken = default)
         => await this.GetWriteTask(strm, startIndex, count, cancellationToken).ConfigureAwait(false);
+
+    /// <summary>
+    /// Creates a not null-terminated <see cref="CString"/> instance that contains a single <paramref name="c"/> character.
+    /// </summary>
+    /// <param name="c">A UTF-8 char.</param>
+    /// <returns>A not null-terminated <see cref="CString"/> instance that contains a single <paramref name="c"/> character.</returns>
+    internal static CString Create(Byte c) => new(new Byte[] { c }, false);
+
+    /// <summary>
+    /// Retrieves the internal binary data from a given <see cref="CString"/>.
+    /// </summary>
+    /// <param name="value">A non-reference <see cref="CString"/> instance.</param>
+    /// <returns>A <see cref="Byte"/> array with UTF-8 text.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
+    /// <exception cref="InvalidOperationException"><paramref name="value"/> does not contains the UTF-8 text.</exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static Byte[] GetBytes(CString value)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+        ValidationUtilities.ThrowIfInvalidUtf8Region(value._data, nameof(value), out Byte[] result);
+        return result;
+    }
 }

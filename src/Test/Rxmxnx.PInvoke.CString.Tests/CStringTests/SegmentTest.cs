@@ -30,9 +30,7 @@ public sealed class SegmentTests
     private static unsafe void FixedTest(String str, Byte[] bytes)
     {
         fixed (void* ptr = bytes)
-        {
-            SegmentTest(str, new(new IntPtr(ptr), bytes.Length));
-        }
+            SegmentTest(str, CString.CreateUnsafe(new IntPtr(ptr), bytes.Length));
     }
     [SuppressMessage("Style", "IDE0057")]
     private static void SegmentTest(String str, CString cstr)

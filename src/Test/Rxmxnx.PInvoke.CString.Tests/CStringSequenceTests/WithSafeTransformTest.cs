@@ -4,6 +4,55 @@
 public sealed class WithSafeTransformTest
 {
     [Fact]
+    internal unsafe void NullFixedTest()
+    {
+        CStringSequence? input = null;
+        fixed (void* ptr = input)
+            Assert.Equal(IntPtr.Zero, (IntPtr)ptr);
+    }
+
+    [Fact]
+    internal unsafe void EmptyFixedTest()
+    {
+        CStringSequence input = new(Array.Empty<CString>());
+        fixed (void* ptr = input)
+            Assert.NotEqual(IntPtr.Zero, (IntPtr)ptr);
+    }
+
+    [Fact]
+    internal unsafe void FixedTest()
+    {
+        List<GCHandle> handles = new();
+        IReadOnlyList<Int32> indices = TestSet.GetIndices();
+        try
+        {
+            CStringSequence seq = CreateSequence(handles, indices, out CString?[] values);
+            fixed(void* ptrSeq = seq)
+            {
+                IntPtr ptr = (IntPtr)ptrSeq;
+                for (Int32 i = 0; i < indices.Count; i++)
+                {
+                    if (!CString.IsNullOrEmpty(values[i]))
+                    {
+                        Assert.Equal(values[i], seq[i]);
+                        Assert.True(Unsafe.AreSame(
+                            ref Unsafe.AsRef<Byte>(ptr.ToPointer()),
+                            ref MemoryMarshal.GetReference(seq[i].AsSpan())));
+                        ptr += seq[i].Length + 1;
+                    }
+                    else
+                        Assert.True(CString.IsNullOrEmpty(seq[i]));
+                }
+            }
+        }
+        finally
+        {
+            foreach (GCHandle handle in handles)
+                handle.Free();
+        }
+    }
+
+    [Fact]
     internal void EmptyTest()
     {
         FixedCStringSequence fseq = default;

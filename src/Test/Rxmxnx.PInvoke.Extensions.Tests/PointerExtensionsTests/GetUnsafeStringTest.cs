@@ -9,7 +9,7 @@ public sealed class GetUnsafeStringTest
     [InlineData(-1)]
     [InlineData(0)]
     [InlineData(1)]
-    internal void IntPtrZeroTest(Int32 length)
+    internal void ZeroTest(Int32 length)
     {
         if (length >= 0)
         {
@@ -26,7 +26,7 @@ public sealed class GetUnsafeStringTest
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    internal unsafe void IntPtrTest(Boolean fixedLength)
+    internal unsafe void Test(Boolean fixedLength)
     {
         String input = fixture.Create<String>();
         fixed (void* p = input)

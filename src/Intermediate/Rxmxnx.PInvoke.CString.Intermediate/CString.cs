@@ -100,12 +100,11 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     public CString(ReadOnlySpanFunc<Byte> func) : this(func, true) { }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified 
-    /// pointer to an array of UTF-8 characters and a length.
+    /// Retruns a reference to the first UTF-8 unit if the <see cref="CString"/>.
     /// </summary>
-    /// <param name="ptr">A pointer to a array of UTF-8 characters.</param>
-    /// <param name="length">The number of <see cref="Byte"/> within value to use.</param>
-    public CString(IntPtr ptr, Int32 length) : this(ptr, length, false) { }
+    /// <remarks>It is required to support the use of a <see cref="CString"/> within a fixed statement.</remarks>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public ref readonly Byte GetPinnableReference() => ref MemoryMarshal.GetReference(this._data.AsSpan());
 
     /// <summary>
     /// Copies the UTF-8 text into a new array.
@@ -209,14 +208,6 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
         => value is null || value.Length == 0;
 
     /// <summary>
-    /// Creates a new <see cref="CString"/> instance from <paramref name="ptr"/> and <paramref name="length"/>.
-    /// </summary>
-    /// <param name="ptr">A pointer to a array of UTF-8 characters.</param>
-    /// <param name="length">The number of <see cref="Byte"/> within value to use.</param>
-    /// <returns>A <see cref="CString"/> instance from <paramref name="ptr"/> and <paramref name="length"/>.</returns>
-    public static CString Create(IntPtr ptr, Int32 length) => new(ptr, length, true);
-
-    /// <summary>
     /// Creates a new <see cref="CString"/> instance from <paramref name="source"/>.
     /// </summary>
     /// <param name="source">A read-only span of UTF-8 characters.</param>
@@ -238,4 +229,13 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// <returns>A <see cref="CString"/> instance from <paramref name="bytes"/>.</returns>
     [return: NotNullIfNotNull(nameof(bytes))]
     public static CString? Create(Byte[]? bytes) => bytes is not null ? new(bytes, false) : default;
+
+    /// <summary>
+    /// Creates a new <see cref="CString"/> instance from <paramref name="ptr"/> and <paramref name="length"/>.
+    /// </summary>
+    /// <param name="ptr">A pointer to a array of UTF-8 characters.</param>
+    /// <param name="length">The number of <see cref="Byte"/> within value to use.</param>
+    /// <param name="useFullLength">Indicates whether should used the total length.</param>
+    /// <returns>A <see cref="CString"/> instance from <paramref name="ptr"/> and <paramref name="length"/>.</returns>
+    public static CString CreateUnsafe(IntPtr ptr, Int32 length, Boolean useFullLength = false) => new(ptr, length, useFullLength);
 }

@@ -62,6 +62,13 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
     }
 
     /// <summary>
+    /// Retruns a reference to the first UTF-8 unit if the <see cref="CStringSequence"/>.
+    /// </summary>
+    /// <remarks>It is required to support the use of a <see cref="CStringSequence"/> within a fixed statement.</remarks>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public ref readonly Byte GetPinnableReference() => ref MemoryMarshal.GetReference(MemoryMarshal.AsBytes(this._value.AsSpan()));
+
+    /// <summary>
     /// Returns a reference to this instance of <see cref="CStringSequence"/>.
     /// </summary>
     /// <returns>A new object that is a copy of this instance.</returns>

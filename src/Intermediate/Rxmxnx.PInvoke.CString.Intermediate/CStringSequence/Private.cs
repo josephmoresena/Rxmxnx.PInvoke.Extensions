@@ -39,7 +39,7 @@ public partial class CStringSequence
             Int32? length = this._lengths[i];
             if (length.HasValue && length.Value > 0)
             {
-                yield return new(ptr + offset, length.Value + 1);
+                yield return CString.CreateUnsafe(ptr + offset, length.Value + 1);
                 offset += length.Value + 1;
             }
             else if (length.HasValue)
