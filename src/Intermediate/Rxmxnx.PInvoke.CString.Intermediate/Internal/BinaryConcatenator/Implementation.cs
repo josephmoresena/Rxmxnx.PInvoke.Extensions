@@ -1,31 +1,37 @@
 ﻿namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
-/// Helper class for Binary concatenation.
+/// A helper class for binary data concatenation.
 /// </summary>
 internal sealed class BinaryConcatenator : BinaryConcatenator<Byte?>
 {
     /// <summary>
-    /// Indicates whether the empty values must be ignored in the concatenation.
+    /// Determines whether empty values should be ignored during
+    /// concatenation.
     /// </summary>
     private readonly Boolean _ignoreEmpty = false;
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="BinaryConcatenator"/> class
+    /// without a specified separator byte.
     /// </summary>
     /// <param name="cancellationToken">
-    /// The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.
+    /// The token to monitor for cancellation requests.
+    /// The default value is <see cref="CancellationToken.None"/>.
     /// </param>
     public BinaryConcatenator(CancellationToken cancellationToken = default) : base(default, cancellationToken)
     {
     }
-
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="BinaryConcatenator"/> class
+    /// with a specified separator byte.
     /// </summary>
-    /// <param name="separator"><see cref="Byte"/> separator instance.</param>
+    /// <param name="separator">
+    /// The byte value to use as a separator in the concatenation.
+    /// </param>
     /// <param name="cancellationToken">
-    /// The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.
+    /// The token to monitor for cancellation requests.
+    /// The default value is <see cref="CancellationToken.None"/>.
     /// </param>
     public BinaryConcatenator(Byte separator, CancellationToken cancellationToken = default) : base(separator, cancellationToken)
     {
@@ -35,19 +41,19 @@ internal sealed class BinaryConcatenator : BinaryConcatenator<Byte?>
     /// <inheritdoc/>
     protected override void WriteValue(Byte? value)
         => this.Stream.WriteByte(value!.Value);
-
     /// <inheritdoc/>
     protected override Task WriteValueAsync(Byte? value)
         => Task.Run(() => this.Stream.WriteByte(value!.Value), base.CancellationToken);
-
     /// <inheritdoc/>
     protected override Boolean IsEmpty([NotNullWhen(false)] Byte? value) => !value.HasValue;
 
     /// <summary>
-    /// Retrieves the binary data of UTF-8 text.
+    /// Retrieves the binary data from the UTF-8 text.
     /// </summary>
-    /// <param name="nullTerminated">Indicates whether the UTF-8 text must be null-terminated.</param>
-    /// <returns>Binary data of UTF-8 text</returns>
+    /// <param name="nullTerminated">
+    /// Specifies whether the UTF-8 text should be null-terminated.
+    /// </param>
+    /// <returns>A byte array containing the binary data from the UTF-8 text.</returns>
     public new Byte[]? ToArray(Boolean nullTerminated) => base.ToArray(nullTerminated);
 
     /// <inheritdoc/>

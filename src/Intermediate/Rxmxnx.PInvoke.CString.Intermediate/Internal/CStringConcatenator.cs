@@ -1,28 +1,35 @@
 ﻿namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
-/// Helper class for <see cref="CString"/> concatenation.
+/// Helper class for concatenating <see cref="CString"/> instances.
 /// </summary>
 internal sealed class CStringConcatenator : BinaryConcatenator<CString>
 {
     /// <summary>
-    /// Indicates whether the empty values must be ignored in the concatenation.
+    /// Indicates whether the empty values should be ignored during the
+    /// concatenation process.
     /// </summary>
     private readonly Boolean _ignoreEmpty = false;
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="CStringConcatenator"/> class
+    /// without a specified separator.
     /// </summary>
     /// <param name="cancellationToken">
-    /// The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.
+    /// The token to monitor for cancellation requests.
+    /// The default value is <see cref="CancellationToken.None"/>.
     /// </param>
     public CStringConcatenator(CancellationToken cancellationToken = default) : this(default, cancellationToken) { }
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="CStringConcatenator"/> class
+    /// with a specified separator.
     /// </summary>
-    /// <param name="separator"><see cref="CString"/> separator instance.</param>
+    /// <param name="separator">
+    /// The <see cref="CString"/> to use as a separator in the concatenation.
+    /// </param>
     /// <param name="cancellationToken">
-    /// The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.
+    /// The token to monitor for cancellation requests.
+    /// The default value is <see cref="CancellationToken.None"/>.
     /// </param>
     public CStringConcatenator(CString? separator, CancellationToken cancellationToken = default) :
         base(separator, cancellationToken)

@@ -1,37 +1,41 @@
 ﻿namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
-/// Helper class for <see cref="CString"/> concatenation.
+/// Helper class for concatenating <see cref="String"/> instances.
 /// </summary>
 internal sealed class StringConcatenator : BinaryConcatenator<String>
 {
     /// <summary>
-    /// Indicates whether the empty values must be ignored in the concatenation.
+    /// Indicates whether the empty values should be ignored during the
+    /// concatenation process.
     /// </summary>
     private readonly Boolean _ignoreEmpty = false;
     /// <summary>
-    /// <see cref="StreamWriter"/> used as UTF-8 writer.
+    /// The <see cref="StreamWriter"/> used for writing UTF-8 encoded data.
     /// </summary>
     private readonly StreamWriter _writer;
 
     /// <summary>
-    /// Indicates whether current instance has been disposed.
+    /// Indicates whether the current instance has been disposed.
     /// </summary>
     private Boolean _disposedValue = false;
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="StringConcatenator"/> class
+    /// without a specified separator.
     /// </summary>
     /// <param name="cancellationToken">
     /// The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.
     /// </param>
     public StringConcatenator(CancellationToken cancellationToken = default) : this(default, cancellationToken) { }
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="StringConcatenator"/> class
+    /// with a specified separator string.
     /// </summary>
-    /// <param name="separator"><see cref="String"/> separator instance.</param>
+    /// <param name="separator">The string to use as a separator in the concatenation.</param>
     /// <param name="cancellationToken">
-    /// The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.
+    /// The token to monitor for cancellation requests.
+    /// The default value is <see cref="CancellationToken.None"/>.
     /// </param>
     public StringConcatenator(String? separator, CancellationToken cancellationToken = default) :
         base(separator, cancellationToken)

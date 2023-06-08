@@ -3,10 +3,15 @@
 internal partial class BinaryConcatenator<T>
 {
     /// <summary>
-    /// Prepares a UTF-8 text for concatenation process.
+    /// Prepares a UTF-8 encoded text for the concatenation process.
     /// </summary>
-    /// <param name="span"><see cref="ReadOnlySpan{Byte}"/> to UTF-8 text.</param>
-    /// <returns><see cref="ReadOnlySpan{Byte}"/> to UTF-8 binary data.</returns>
+    /// <param name="span">
+    /// The <see cref="ReadOnlySpan{Byte}"/> representing the UTF-8 encoded text.
+    /// </param>
+    /// <returns>
+    /// A <see cref="ReadOnlySpan{Byte}"/> that represents the UTF-8 binary data derived from the
+    /// original text, excluding any leading or trailing null or BOM (Byte Order Mark) characters.
+    /// </returns>
     private static ReadOnlySpan<Byte> PrepareUtf8Text(ReadOnlySpan<Byte> span)
     {
         Int32 iPosition = GetInitialPosition(span);
@@ -15,10 +20,16 @@ internal partial class BinaryConcatenator<T>
         return span[iPosition..fPosition];
     }
     /// <summary>
-    /// Gets the initial position of the UTF-8 text.
+    /// Gets the initial position of the UTF-8 encoded text by skipping leading
+    /// null or BOM (Byte Order Mark) characters.
     /// </summary>
-    /// <param name="span"><see cref="ReadOnlySpan{Byte}"/> to UTF-8 text.</param>
-    /// <returns>Initial position of the UTF-8 text.</returns>
+    /// <param name="span">
+    /// The <see cref="ReadOnlySpan{Byte}"/> representing the UTF-8 encoded text.
+    /// </param>
+    /// <returns>
+    /// The initial position in the given <see cref="ReadOnlySpan{Byte}"/> after any
+    /// leading null or BOM characters.
+    /// </returns>
     [ExcludeFromCodeCoverage]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static Int32 GetInitialPosition(ReadOnlySpan<Byte> span)
@@ -31,32 +42,42 @@ internal partial class BinaryConcatenator<T>
         return iPosition;
     }
     /// <summary>
-    /// Indicates whether the given <see cref="Byte"/> is UTF-8 null character. 
+    /// Indicates whether the given <see cref="Byte"/> represents a UTF-8
+    /// null character. 
     /// </summary>
-    /// <param name="utf8Char">UTF-8 character.</param>
+    /// <param name="utf8Char">The byte to be checked.</param>
     /// <returns>
-    /// <see langword="true"/> if <see cref="Byte"/> instance is a null character; otherwise, 
-    /// <see langword="false"/>.
+    /// <see langword="true"/> if the given <see cref="Byte"/> represents a null
+    /// character in UTF-8; otherwise, <see langword="false"/>.
     /// </returns>
     private static Boolean IsNullUtf8Char(in Byte utf8Char) => utf8Char == default;
     /// <summary>
-    /// Indicates whether the given <see cref="Byte"/> sequence is UTF-8 BOM character. 
+    /// Indicates whether the given sequence of bytes represents a UTF-8 BOM
+    /// (Byte Order Mark). 
     /// </summary>
-    /// <param name="utf8Char1">First UTF-8 character.</param>
-    /// <param name="utf8Char2">Second UTF-8 character.</param>
-    /// <param name="utf8Char3">Third UTF-8 character.</param>
+    /// <param name="utf8Char1">The first byte in the sequence.</param>
+    /// <param name="utf8Char2">The second byte in the sequence.</param>
+    /// <param name="utf8Char3">The third byte in the sequence.</param>
     /// <returns>
-    /// <see langword="true"/> if <see cref="Byte"/> sequence is a UTF-8 BOM character; otherwise, 
-    /// <see langword="false"/>.
+    /// <see langword="true"/> if the given sequence of bytes represents a UTF-8 BOM;
+    /// otherwise, <see langword="false"/>.
     /// </returns>
     private static Boolean IsBOMChar(in Byte utf8Char1, in Byte utf8Char2, in Byte utf8Char3)
         => utf8Char1 == 239 && utf8Char2 == 187 && utf8Char3 == 191;
     /// <summary>
-    /// Gets the final length of the UTF-8 text.
+    /// Gets the final length of the UTF-8 text by skipping any trailing null
+    /// characters.
     /// </summary>
-    /// <param name="span"><see cref="ReadOnlySpan{Byte}"/> to UTF-8 text.</param>
-    /// <param name="iPosition">Initial position of the UTF-8 text.</param>
-    /// <returns>Final length of the UTF-8 text.</returns>
+    /// <param name="span">
+    /// The <see cref="ReadOnlySpan{Byte}"/> representing the UTF-8 text.
+    /// </param>
+    /// <param name="iPosition">
+    /// The initial position in the <see cref="ReadOnlySpan{Byte}"/> from which
+    /// to start checking for trailing null characters.
+    /// </param>
+    /// <returns>
+    /// The length of the UTF-8 text after skipping any trailing null characters.
+    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static Int32 GetFinalLength(ReadOnlySpan<Byte> span, Int32 iPosition)
     {

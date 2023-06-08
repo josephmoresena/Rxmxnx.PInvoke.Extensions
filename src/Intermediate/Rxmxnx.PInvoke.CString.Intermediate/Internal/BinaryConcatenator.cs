@@ -33,20 +33,20 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
     }
 
     /// <summary>
-    /// Writes <paramref name="value"/> into the current instance.
+    /// Writes the given <paramref name="value"/> into the current instance.
     /// </summary>
-    /// <param name="value">UTF-8 bytes to write.</param>
+    /// <param name="value">A read-only span of UTF-8 bytes to be written.</param>
     public void Write(ReadOnlySpan<Byte> value) => this._binaryWrite(value);
     /// <summary>
-    /// Writes <paramref name="value"/> into the current instance.
+    /// Writes the given <paramref name="value"/> into the current instance.
     /// </summary>
-    /// <param name="value">Value to write to.</param>
+    /// <param name="value">The value of type T to be written.</param>
     public void Write(T? value) => this._write(value);
     /// <summary>
-    /// Asynchronously writes <paramref name="value"/> into the current instance.
+    /// Asynchronously writes the given <paramref name="value"/> into the current instance.
     /// </summary>
-    /// <param name="value">Value to write to.</param>
-    /// <returns>A taks that represents the asynchronous write operation.</returns>
+    /// <param name="value">The value of type T to be written.</param>
+    /// <returns>A task that represents the asynchronous write operation.</returns>
     public Task WriteAsync(T? value) => this._writeAsync(value);
     /// <inheritdoc/>
     public void Dispose()
@@ -62,50 +62,56 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
         GC.SuppressFinalize(this);
     }
     /// <summary>
-    /// Creates a <see cref="CString"/> instance from concatenation.
+    /// Creates a <see cref="CString"/> instance from the UTF-8 encoded text stored in the
+    /// current instance.
     /// </summary>
     /// <returns>
-    /// A <see cref="CString"/> instance that represents the UTF-8 concatenation.
+    /// A <see cref="CString"/> instance representing the UTF-8 concatenation of the text.
     /// </returns>
     public CString ToCString() => this.ToArray(true) ?? CString.Empty;
 
     /// <summary>
-    /// Writes <paramref name="value"/> in current instance.
+    /// Writes the given <paramref name="value"/> into the current instance.
     /// </summary>
-    /// <param name="value">Value to write.</param>
+    /// <param name="value">The value of type T to be written.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected abstract void WriteValue(T value);
     /// <summary>
-    /// Asynchronously writes <paramref name="value"/> in current instance.
+    /// Asynchronously writes the given <paramref name="value"/> into the current instance.
     /// </summary>
-    /// <param name="value">Value to write.</param>
-    /// <returns>A taks that represents the asynchronous write operation.</returns>
+    /// <param name="value">The value of type T to be written.</param>
+    /// <returns>A task that represents the asynchronous write operation.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected abstract Task WriteValueAsync(T value);
     /// <summary>
-    /// Indicates whether <paramref name="value"/> is empty.
+    /// Determines whether the given <paramref name="value"/> is empty.
     /// </summary>
-    /// <param name="value">Value to check.</param>
+    /// <param name="value">The value of type T to be checked.</param>
     /// <returns>
-    /// <see langword="true"/> if <paramref name="value"/> is empty; otherwise,
+    /// <see langword="true"/> if the <paramref name="value"/> is empty; otherwise,
     /// <see langword="false"/>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected abstract Boolean IsEmpty([NotNullWhen(false)] T? value);
 
     /// <summary>
-    /// Indicates whether <paramref name="value"/> is empty.
+    /// Determines whether the given <paramref name="value"/> of type
+    /// <see cref="ReadOnlySpan{Byte}"/> is empty.
     /// </summary>
-    /// <param name="value">Value to check.</param>
+    /// <param name="value">The <see cref="ReadOnlySpan{Byte}"/> to be checked.</param>
     /// <returns>
-    /// <see langword="true"/> if <paramref name="value"/> is empty; otherwise,
+    /// <see langword="true"/> if the <paramref name="value"/> is empty; otherwise,
     /// <see langword="false"/>.
     /// </returns>
     protected virtual Boolean IsEmpty(ReadOnlySpan<Byte> value) => value.IsEmpty;
     /// <summary>
-    /// Releases the resources of current instance.
+    /// Releases the unmanaged resources used by the <see cref="IDisposable"/> current instance,
+    /// and optionally releases the managed resources.
     /// </summary>
-    /// <param name="disposing">Indicates whether the caller method is <see cref="IDisposable.Dispose()"/>.</param>
+    /// <param name="disposing">
+    /// <see langword="true"/> to release both managed and unmanaged resources; <see langword="false"/> to release only
+    /// unmanaged resources.
+    /// </param>
     protected virtual void Dispose(Boolean disposing)
     {
         if (!this._disposedValue)
@@ -116,10 +122,14 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
         }
     }
     /// <summary>
-    /// Asynchronously releases the resources of current instance.
+    /// Asynchronously releases the unmanaged resources used by the <see cref="IDisposable"/>
+    /// current instance, and optionally releases the managed resources.
     /// </summary>
-    /// <param name="disposing">Indicates whether the caller method is <see cref="IDisposable.Dispose()"/>.</param>
-    /// <returns>A taks that represents the asynchronous dispose operation.</returns>
+    /// <param name="disposing">
+    /// <see langword="true"/> to release both managed and unmanaged resources;
+    /// <see langword="false"/> to release only unmanaged resources.
+    /// </param>
+    /// <returns>A task that represents the asynchronous dispose operation.</returns>
     protected virtual async ValueTask DisposeAsync(Boolean disposing)
     {
         if (!this._disposedValue)
@@ -131,10 +141,16 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
     }
 
     /// <summary>
-    /// Retrieves the binary data of UTF-8 text.
+    /// Retrieves the binary data of the UTF-8 text stored in the current instance.
     /// </summary>
-    /// <param name="nullTerminated">Indicates whether the UTF-8 text must be null-terminated.</param>
-    /// <returns>Binary data of UTF-8 text</returns>
+    /// <param name="nullTerminated">
+    /// Indicates whether the returned array should end with a null (zero) UTF-8 byte,
+    /// often used to indicate the end of a string.
+    /// </param>
+    /// <returns>
+    /// The binary data of the UTF-8 text as a <see cref="Byte"/> array.
+    /// If the text length is 0, returns <see langword="null"/>.
+    /// </returns>
     protected Byte[]? ToArray(Boolean nullTerminated = false)
     {
         Byte[]? result = default;
