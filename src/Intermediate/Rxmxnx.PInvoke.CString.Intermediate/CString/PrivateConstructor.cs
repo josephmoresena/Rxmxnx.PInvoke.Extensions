@@ -3,11 +3,18 @@
 public partial class CString
 {
     /// <summary>
-    /// Private constructor.
+    /// Initializes a new instance of the <see cref="CString"/> class that references a
+    /// specified UTF-8 text.
     /// </summary>
-    /// <param name="ptr">A pointer to a array of UTF-8 characters.</param>
-    /// <param name="length">The number of <see cref="Byte"/> within value to use.</param>
-    /// <param name="useFullLength">Indicates whether should used the total length.</param>
+    /// <param name="ptr">
+    /// A pointer to an array of UTF-8 characters to reference in the new instance.
+    /// </param>
+    /// <param name="length">
+    /// The number of <see cref="Byte"/> in the referenced array to use.
+    /// </param>
+    /// <param name="useFullLength">
+    /// Indicates whether the total length of the referenced array should be used.
+    /// </param>
     private CString(IntPtr ptr, Int32 length, Boolean useFullLength)
     {
         this._isLocal = false;
@@ -29,12 +36,15 @@ public partial class CString
             this._length = textLength;
         }
     }
-
     /// <summary>
-    /// Private constructor.
+    /// Initializes a new instance of the <see cref="CString"/> class using the binary internal
+    /// information given.
     /// </summary>
-    /// <param name="bytes">Binary internal information.</param>
-    /// <param name="isNullTerminated">Indicates whether <paramref name="bytes"/> is a null-terminated UTF-8 text.</param>
+    /// <param name="bytes">Binary internal information representing the UTF-8 string.</param>
+    /// <param name="isNullTerminated">
+    /// Indicates whether <paramref name="bytes"/> is a null-terminated UTF-8 text.
+    /// If this is <see langword="null"/> an internal funtion is used to determine the value.
+    /// </param>
     private CString(Byte[] bytes, Boolean? isNullTerminated = default)
     {
         Int32 textLength = bytes.Length;
@@ -43,11 +53,11 @@ public partial class CString
         this._isNullTerminated = isNullTerminated ?? IsNullTerminatedSpan(bytes, out textLength);
         this._length = textLength - (isNullTerminated.GetValueOrDefault() ? 1 : 0);
     }
-
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="CString"/> class that contains the UTF-8 string
+    /// returned by the specified <see cref="ReadOnlySpanFunc{Byte}"/>.
     /// </summary>
-    /// <param name="func"><see cref="ReadOnlySpanFunc{Byte}"/> delegate.</param>
+    /// <param name="func"><see cref="ReadOnlySpanFunc{Byte}"/> delegate that returns the UTF-8 string.</param>
     /// <param name="isLiteral">Indicates whether returned span is from UTF-8 literal.</param>
     private CString(ReadOnlySpanFunc<Byte> func, Boolean isLiteral)
     {
@@ -67,13 +77,17 @@ public partial class CString
             this._length = textLength;
         }
     }
-
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a
+    /// specified subrange of the <see cref="CString"/> instance.
     /// </summary>
-    /// <param name="value">A <see cref="CString"/> value.</param>
-    /// <param name="startIndex">Offset for range.</param>
-    /// <param name="length">Length of range.</param>
+    /// <param name="value">
+    /// A <see cref="CString"/> value from which the subrange is extracted.
+    /// </param>
+    /// <param name="startIndex">
+    /// The zero-based starting index of the subrange in <paramref name="value"/>.
+    /// </param>
+    /// <param name="length">The length of the subrange.</param>
     private CString(CString value, Int32 startIndex, Int32 length)
     {
         this._isLocal = value._isLocal;
@@ -84,11 +98,11 @@ public partial class CString
             value._isFunction && value._isNullTerminated && value._length - startIndex == length ||
             this._data.AsSpan()[^1] == default;
     }
-
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="CString"/> class to the value
+    /// indicated by a specified UTF-16 text.
     /// </summary>
-    /// <param name="utf16Text">UTF-16 text.</param>
+    /// <param name="utf16Text">The UTF-16 text to convert and assign to the new instance.</param>
     private CString(String utf16Text)
     {
         Utf16ConversionHelper helper = new(utf16Text, out this._length);

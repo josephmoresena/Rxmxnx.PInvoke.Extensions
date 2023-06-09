@@ -3,56 +3,58 @@
 public partial class CString
 {
     /// <summary>
-    /// Indicates whether the UTF-8 data is local.
+    /// Indicates whether the UTF-8 data is locally stored within this instance.
     /// </summary>
     private readonly Boolean _isLocal;
     /// <summary>
-    /// Indicates whether the UTF-8 data is a function.
+    /// Indicates whether the UTF-8 data is retrieved using a function (delegate).
     /// </summary>
     private readonly Boolean _isFunction;
     /// <summary>
-    /// Internal object data.
+    /// Internal object that stores the data for this instance as a series of bytes.
     /// </summary>
     private readonly ValueRegion<Byte> _data;
     /// <summary>
-    /// Indicates whether the UTF-8 text is null-terminated.
+    /// Indicates whether the UTF-8 string represented by this instance is null-terminated.
     /// </summary>
     private readonly Boolean _isNullTerminated;
     /// <summary>
-    /// Number of bytes in the current <see cref="CString"/> object.
+    /// The length, in bytes, of the UTF-8 string represented by this instance.
     /// </summary>
     private readonly Int32 _length;
 
     /// <summary>
-    /// Calculates the data length of a segment of current <see cref="CString"/> whose 
-    /// offset is <paramref name="offset"/> and whose length is <paramref name="length"/>.
+    /// Calculates the final length of a segment of the current <see cref="CString"/>, 
+    /// starting at a given <paramref name="offset"/> and with an initial 
+    /// <paramref name="length"/>. The final length accounts for multiple UTF-8 null 
+    /// ending characters.
     /// </summary>
-    /// <param name="offset">Offset for segment.</param>
-    /// <param name="length">Initial length for segment.</param>
-    /// <returns>Final length for segment.</returns>
+    /// <param name="offset">
+    /// The starting position of the segment within the current <see cref="CString"/>.
+    /// </param>
+    /// <param name="length">The initial length of the segment.</param>
+    /// <returns>The final length of the segment, accounting for any trailing null characters.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private Int32 GetDataLength(Int32 offset, Int32 length)
     {
         ReadOnlySpan<Byte> bytes = this._data;
         bytes = bytes[offset..];
-        //Multiple UTF-8 null ending character.
+        // Account for multiple UTF-8 null ending characters.
         while (bytes.Length > length && bytes[length] == default)
             length++;
         return length;
     }
-
     /// <summary>
-    /// Retrieves the Task for writing the <see cref="CString"/> content into the 
-    /// given <see cref="Stream"/>.
+    /// Retrieves a Task representing the asynchronous operation to write the content of the
+    /// current <see cref="CString"/> into the specified <see cref="Stream"/>.
     /// </summary>
     /// <param name="strm">
-    /// The <see cref="Stream"/> to which the contents of the current <see cref="CString"/> 
-    /// will be copied.
+    /// The <see cref="Stream"/> where the contents of the current <see cref="CString"/> will be written.
     /// </param>
-    /// <param name="startIndex">The first byte in current instance to write to.</param>
-    /// <param name="count">The number of bytes of current instance to write to.</param>
+    /// <param name="startIndex">The index in the current instance where writing begins.</param>
+    /// <param name="count">The number of bytes to write from the current instance.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
-    /// <returns>A task that represents the asynchronous write operation.</returns>
+    /// <returns>A task representing the asynchronous write operation.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private Task GetWriteTask(Stream strm, Int32 startIndex, Int32 count, CancellationToken cancellationToken)
         => (Byte[]?)this._data is Byte[] array ? strm.WriteAsync(array, startIndex, count, cancellationToken) :

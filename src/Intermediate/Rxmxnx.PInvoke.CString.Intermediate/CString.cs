@@ -1,37 +1,38 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// Represents text as a sequence of UTF-8 code units.
+/// Represents a sequence of UTF-8 encoded characters.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
 [DebuggerTypeProxy(typeof(CStringDebugView))]
 public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatable<String>
 {
     /// <summary>
-    /// Represents the empty UTF-8 string. This field is read-only.
+    /// Represents an empty UTF-8 string. This field is read-only.
     /// </summary>
     public static readonly CString Empty = new(new Byte[] { default }, true);
     /// <summary>
-    /// Represents the zero UTF-8 string. This field is read-only.
+    /// Represents an null-pointer UTF-8 string. This field is read-only.
     /// </summary>
     public static readonly CString Zero = new(IntPtr.Zero, 0, true);
 
     /// <summary>
-    /// Indicates whether the ending of text in the current <see cref="CString"/> includes 
-    /// a null-termination character.
+    /// Gets a value indicating whether the text in the current <see cref="CString"/> instance 
+    /// ends with a null-termination character.
     /// </summary>
     public Boolean IsNullTerminated => this._isNullTerminated;
     /// <summary>
-    /// Indicates whether the UTF-8 text is referenced by the current <see cref="CString"/> and 
-    /// not contained by.
+    /// Gets a value indicating whether the UTF-8 text is referenced by, and not contained within, 
+    /// the current <see cref="CString"/> instance.
     /// </summary>
     public Boolean IsReference => !this._isLocal && !this._isFunction;
     /// <summary>
-    /// Indicates whether the current instance is segmented.
+    /// Gets a value indicating whether the current <see cref="CString"/> instance is a segment
+    /// (or slice) of another <see cref="CString"/> instance.
     /// </summary>
     public Boolean IsSegmented => this._data.IsMemorySlice;
     /// <summary>
-    /// Indicates whether the current instance is a function.
+    /// Gets a value indicating whether the current <see cref="CString"/> instance is a function.
     /// </summary>
     public Boolean IsFunction => this._isFunction;
 
@@ -40,23 +41,21 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// UTF-8 character repeated a specified number of times.
     /// </summary>
     /// <param name="c">A UTF-8 char.</param>
-    /// <param name="count">The number of the times <paramref name="c"/> occours.</param>
+    /// <param name="count">The number of times <paramref name="c"/> is repeated to form the UTF-8 string.</param>
     public CString(Byte c, Int32 count) : this(CreateRepeatedSequence(stackalloc Byte[] { c }, count), true)
     {
     }
-
     /// <summary>
     /// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified 
     /// UTF-8 sequence repeated a specified number of times.
     /// </summary>
     /// <param name="u0">The first UTF-8 unit.</param>
     /// <param name="u1">The second UTF-8 unit.</param>
-    /// <param name="count">The number of the times the sequence occours.</param>
+    /// <param name="count">The number of times the sequence is repeated to form the UTF-8 string.</param>
     public CString(Byte u0, Byte u1, Int32 count)
         : this(CreateRepeatedSequence(stackalloc Byte[] { u0, u1 }, count), true)
     {
     }
-
     /// <summary>
     /// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified 
     /// UTF-8 sequence repeated a specified number of times.
@@ -64,12 +63,11 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// <param name="u0">The first UTF-8 unit.</param>
     /// <param name="u1">The second UTF-8 unit.</param>
     /// <param name="u2">The third UTF-8 unit.</param>
-    /// <param name="count">The number of the times the sequence occours.</param>
+    /// <param name="count">The number of times the sequence is repeated to form the UTF-8 string.</param>
     public CString(Byte u0, Byte u1, Byte u2, Int32 count)
         : this(CreateRepeatedSequence(stackalloc Byte[] { u0, u1, u2 }, count), true)
     {
     }
-
     /// <summary>
     /// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified 
     /// UTF-8 sequence repeated a specified number of times.
@@ -78,59 +76,66 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// <param name="u1">The second UTF-8 unit.</param>
     /// <param name="u2">The third UTF-8 unit.</param>
     /// <param name="u3">The fourth UTF-8 unit.</param>
-    /// <param name="count">The number of the times the sequence occours.</param>
+    /// <param name="count">The number of times the sequence is repeated to form the UTF-8 string.</param>
     public CString(Byte u0, Byte u1, Byte u2, Byte u3, Int32 count)
         : this(CreateRepeatedSequence(stackalloc Byte[] { u0, u1, u2, u3 }, count), true)
     {
     }
-
     /// <summary>
-    /// Initializes a new instance of the <see cref="CString"/> class to the UTF-8 characters indicated in the specified
-    /// read-only span.
+    /// Initializes a new instance of the <see cref="CString"/> class using the UTF-8 characters
+    /// indicated in the specified read-only span.
     /// </summary>
-    /// <param name="source">A read-only span of UTF-8 characters.</param>
-    public CString(ReadOnlySpan<Byte> source) : this(CreateRepeatedSequence(source, 1))
-    {
-    }
-
+    /// <param name="source">A read-only span of UTF-8 characters to initialize the new instance.</param>
+    public CString(ReadOnlySpan<Byte> source) : this(CreateRepeatedSequence(source, 1)) { }
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="CString"/> class that contains the UTF-8 string
+    /// returned by the specified <see cref="ReadOnlySpanFunc{Byte}"/>.
     /// </summary>
-    /// <param name="func"><see cref="ReadOnlySpanFunc{Byte}"/> delegate.</param>
+    /// <param name="func">
+    /// <see cref="ReadOnlySpanFunc{Byte}"/> delegate that returns the UTF-8 string to initialize
+    /// the new instance.
+    /// </param>
     public CString(ReadOnlySpanFunc<Byte> func) : this(func, true) { }
 
     /// <summary>
-    /// Retruns a reference to the first UTF-8 unit if the <see cref="CString"/>.
+    /// Returns a reference to the first UTF-8 unit of the <see cref="CString"/>.
     /// </summary>
-    /// <remarks>It is required to support the use of a <see cref="CString"/> within a fixed statement.</remarks>
+    /// <returns>A reference to the first UTF-8 unit of the <see cref="CString"/>.</returns>
+    /// <remarks>
+    /// This method is used to support the use of a <see cref="CString"/> within a fixed statement.
+    /// It should not be used in typical code.
+    /// </remarks>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public ref readonly Byte GetPinnableReference() => ref MemoryMarshal.GetReference(this._data.AsSpan());
-
     /// <summary>
-    /// Copies the UTF-8 text into a new array.
+    /// Copies the UTF-8 text of the current <see cref="CString"/> instance into a new byte array.
     /// </summary>
-    /// <returns>An array containing the data in the current UTF-8 text.</returns>
+    /// <returns>
+    /// A new <see cref="Byte"/> array containing the UTF-8 units of the current <see cref="CString"/>.
+    /// </returns>
     public Byte[] ToArray() => this._data.ToArray()[..this._length];
-
     /// <summary>
-    /// Retreives the internal or external information as <see cref="ReadOnlySpan{Byte}"/> object.
+    /// Retrieves the UTF-8 units of the current <see cref="CString"/> as a read-only span of bytes.
     /// </summary>
-    /// <returns><see cref="ReadOnlySpan{Byte}"/> instance.</returns>
+    /// <returns>
+    /// A read-only span of bytes representing the UTF-8 units of the current <see cref="CString"/>.
+    /// </returns>
     public ReadOnlySpan<Byte> AsSpan() => this._data.AsSpan()[..this._length];
-
     /// <summary>
-    /// Gets <see cref="String"/> representation of the current UTF-8 text as hexadecimal value.
+    /// Returns a <see cref="String"/> that represents the current UTF-8 text as a hexadecimal value.
     /// </summary>
-    /// <returns><see cref="String"/> representation of hexadecimal value.</returns>
+    /// <returns>
+    /// A <see cref="String"/> that represents the hexadecimal value of the current UTF-8 text.
+    /// </returns>
     public String ToHexString() => Convert.ToHexString(this).ToLower();
-
     /// <summary>
-    /// Retrieves an object that can iterate through the individual <see cref="Byte"/> in this 
-    /// <see cref="CString"/>.
+    /// Returns an enumerator that iterates through the UTF-8 units of the current <see cref="CString"/>.
     /// </summary>
-    /// <returns>An enumerator object.</returns>
+    /// <returns>
+    /// An enumerator that can be used to iterate through the UTF-8 units of the current
+    /// <see cref="CString"/>.
+    /// </returns>
     public ReadOnlySpan<Byte>.Enumerator GetEnumerator() => this.AsSpan().GetEnumerator();
-
     /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Object Clone()
@@ -140,37 +145,47 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
         source.CopyTo(bytes);
         return new CString(bytes, true);
     }
-
     /// <inheritdoc/>
     public Boolean Equals([NotNullWhen(true)] CString? other)
         => other is CString otherNotNull && this._length == otherNotNull._length && equals(this, otherNotNull);
-
     /// <summary>
-    /// Determines whether this <see cref="CString"/> and a specified <see cref="CString"/> object have the same value.
+    /// Determines whether the current <see cref="CString"/> and a specified <see cref="CString"/>
+    /// have the same value.
     /// A parameter specifies the culture, case, and sort rules used in the comparison.
     /// </summary>
-    /// <param name="value">The string to compare this instance.</param>
-    /// <param name="comparisonType">One of the enumeration values that specifies how the values will be compared.</param>
+    /// <param name="value">The <see cref="CString"/> to compare to the current instance.</param>
+    /// <param name="comparisonType">
+    /// One of the enumeration values that specifies how the strings will be compared.
+    /// </param>
     /// <returns>
-    /// <see langword="true"/> if the value of the <paramref name="value"/> parameter is the same as this <see cref="CString"/>;
-    /// otherwise, false.
+    /// <see langword="true"/> if the value of the <paramref name="value"/> parameter is the same
+    /// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
     /// </returns>
     public Boolean Equals([NotNullWhen(true)] CString? value, StringComparison comparisonType)
         => value is CString valueNotNull && CStringUtf8Comparator.Create(comparisonType).TextEquals(this, valueNotNull);
-
-    /// <inheritdoc/>
+    /// <summary>
+    /// Determines whether the current <see cref="CString"/> and a specified <see cref="String"/>
+    /// have the same value.
+    /// </summary>
+    /// <param name="other">The <see cref="String"/> to compare to the current instance.</param>
+    /// <returns>
+    /// <see langword="true"/> if the value of the <paramref name="other"/> parameter is the same
+    /// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
+    /// </returns>
     public Boolean Equals([NotNullWhen(true)] String? other)
         => other is String otherNotNull && StringUtf8Comparator.Create().TextEquals(this, otherNotNull);
-
     /// <summary>
-    /// Determines whether this <see cref="CString"/> and a specified <see cref="String"/> object have the same value.
+    /// Determines whether the current <see cref="CString"/> and a specified <see cref="String"/>
+    /// have the same value.
     /// A parameter specifies the culture, case, and sort rules used in the comparison.
     /// </summary>
-    /// <param name="value">The string to compare this instance.</param>
-    /// <param name="comparisonType">One of the enumeration values that specifies how the values will be compared.</param>
+    /// <param name="value">The <see cref="String"/> to compare to the current instance.</param>
+    /// <param name="comparisonType">
+    /// One of the enumeration values that specifies how the strings will be compared.
+    /// </param>
     /// <returns>
-    /// <see langword="true"/> if the value of the <paramref name="value"/> parameter is the same as this <see cref="CString"/>;
-    /// otherwise, false.
+    /// <see langword="true"/> if the value of the <paramref name="value"/> parameter is the same as this
+    /// <see cref="CString"/>, otherwise, <see langword="false"/>.
     /// </returns>
     public Boolean Equals([NotNullWhen(true)] String? value, StringComparison comparisonType)
         => value is String valueNotNull && StringUtf8Comparator.Create(comparisonType).TextEquals(this, valueNotNull);
@@ -178,7 +193,6 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
     /// <inheritdoc/>
     public override Boolean Equals([NotNullWhen(true)] Object? obj)
         => obj is String str ? this.Equals(str) : obj is CString cstr && this.Equals(cstr);
-
     /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override String ToString()
@@ -191,51 +205,58 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
             return String.IsInterned(result) ?? result;
         }
     }
-
     /// <inheritdoc/>
     public override Int32 GetHashCode() => this.ToString().GetHashCode();
 
     /// <summary>
-    /// Indicates whether the specified <see cref="CString"/> is <see langword="null"/> or an 
-    /// empty UTF-8 text.
+    /// Determines whether the specified <see cref="CString"/> is <see langword="null"/>
+    /// or an empty UTF-8 string.
     /// </summary>
     /// <param name="value">The <see cref="CString"/> to test.</param>
     /// <returns>
-    /// <see langword="true"/> if the value parameter is <see langword="null"/> or an empty UTF-8 text; 
+    /// <see langword="true"/> if the value parameter is <see langword="null"/> or an empty UTF-8 string;
     /// otherwise, <see langword="false"/>.
     /// </returns>
     public static Boolean IsNullOrEmpty([NotNullWhen(false)] CString? value)
         => value is null || value.Length == 0;
-
     /// <summary>
-    /// Creates a new <see cref="CString"/> instance from <paramref name="source"/>.
+    /// Constructs a new instance of the <see cref="CString"/> class using the UTF-8 characters provided
+    /// in the specified read-only span.
     /// </summary>
     /// <param name="source">A read-only span of UTF-8 characters.</param>
-    /// <returns>A <see cref="CString"/> instance from <paramref name="source"/>.</returns>
+    /// <returns>A new instance of the <see cref="CString"/> class.</returns>
     public static CString Create(ReadOnlySpan<Byte> source) => new(source.ToArray(), false);
-
     /// <summary>
-    /// Creates a new <see cref="CString"/> instance from <paramref name="func"/>.
+    /// Constructs a new instance of the <see cref="CString"/> class using the
+    /// <see cref="ReadOnlySpanFunc{Byte}"/> delegate provided.
     /// </summary>
-    /// <param name="func">A <see cref="ReadOnlySpanFunc{Byte}"/> delegate that returns a Utf8 string non-literal.</param>
-    /// <returns>A <see cref="CString"/> instance from <paramref name="func"/>.</returns>
+    /// <param name="func">
+    /// A <see cref="ReadOnlySpanFunc{Byte}"/> delegate that returns a Utf8 string non-literal.
+    /// </param>
+    /// <returns>
+    /// A new instance of the <see cref="CString"/> class, if the func is not <see langword="null"/>;
+    /// otherwise, <see langword="null"/>.
+    /// </returns>
     [return: NotNullIfNotNull(nameof(func))]
     public static CString? Create(ReadOnlySpanFunc<Byte>? func) => func is not null ? new(func, false) : default;
-
     /// <summary>
-    /// Creates a new <see cref="CString"/> instance from <paramref name="bytes"/>.
+    /// Constructs a new instance of the <see cref="CString"/> class using the binary internal
+    /// information provided.
     /// </summary>
     /// <param name="bytes">Binary internal information.</param>
-    /// <returns>A <see cref="CString"/> instance from <paramref name="bytes"/>.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="CString"/> class, if the bytes are not <see langword="null"/>;
+    /// otherwise, <see langword="null"/>.
+    /// </returns>
     [return: NotNullIfNotNull(nameof(bytes))]
     public static CString? Create(Byte[]? bytes) => bytes is not null ? new(bytes, false) : default;
-
     /// <summary>
-    /// Creates a new <see cref="CString"/> instance from <paramref name="ptr"/> and <paramref name="length"/>.
+    /// Constructs a new instance of the <see cref="CString"/> class using the pointer to a UTF-8
+    /// character array and length provided.
     /// </summary>
     /// <param name="ptr">A pointer to a array of UTF-8 characters.</param>
     /// <param name="length">The number of <see cref="Byte"/> within value to use.</param>
-    /// <param name="useFullLength">Indicates whether should used the total length.</param>
-    /// <returns>A <see cref="CString"/> instance from <paramref name="ptr"/> and <paramref name="length"/>.</returns>
+    /// <param name="useFullLength">Indicates whether the total length should be used.</param>
+    /// <returns>A new instance of the <see cref="CString"/> class.</returns>
     public static CString CreateUnsafe(IntPtr ptr, Int32 length, Boolean useFullLength = false) => new(ptr, length, useFullLength);
 }

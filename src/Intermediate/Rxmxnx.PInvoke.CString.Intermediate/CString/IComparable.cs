@@ -2,7 +2,38 @@
 
 public partial class CString : IComparable, IComparable<String>, IComparable<CString>
 {
-    /// <inheritdoc/>
+    /// <summary>
+    /// Compares the current instance with another object of the same type or a <see cref="String"/> 
+    /// and returns an integer that indicates whether the current instance precedes, follows, 
+    /// or occurs in the same position in the sort order as the other object.
+    /// </summary>
+    /// <param name="obj">An object to compare with this instance.</param>
+    /// <returns>
+    /// A value that indicates the relative order of the objects being compared. 
+    /// The return value has these meanings:
+    /// <list type="table">
+    /// <listheader>
+    /// <term>Value</term><description>Condition</description>
+    /// </listheader>
+    /// <item>
+    /// <term>Less than zero</term>
+    /// <description>This instance precedes <paramref name="obj"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Zero</term>
+    /// <description>
+    /// This instance occurs in the same position in the sort order as <paramref name="obj"/>.
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <term>Greater than zero</term>
+    /// <description>This instance follows <paramref name="obj"/> in the sort order.</description>
+    /// </item>
+    /// </list>
+    /// </returns>
+    /// <exception cref="ArgumentException">
+    /// <paramref name="obj"/> is neither a <see cref="String"/> nor a <see cref="CString"/> instance.
+    /// </exception>
     public Int32 CompareTo(Object? obj)
     {
         if (obj is null)
@@ -13,19 +44,73 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
         ValidationUtilities.ThrowIfInvalidCastType<CString>(obj, nameof(CString), out CString cstr);
         return this.CompareTo(cstr);
     }
-
-    /// <inheritdoc/>
+    /// <summary>
+    /// Compares the current instance with another <see cref="String"/> instance and returns an 
+    /// integer that indicates whether the current instance precedes, follows, or occurs in the 
+    /// same position in the sort order as the other <see cref="String"/>.
+    /// </summary>
+    /// <param name="other">A string to compare with this instance.</param>
+    /// <returns>
+    /// A value that indicates the relative order of the objects being compared. 
+    /// The return value has these meanings:
+    /// <list type="table">
+    /// <listheader>
+    /// <term>Value</term><description>Condition</description>
+    /// </listheader>
+    /// <item>
+    /// <term>Less than zero</term>
+    /// <description>This instance precedes <paramref name="other"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Zero</term>
+    /// <description>
+    /// This instance occurs in the same position in the sort order as <paramref name="other"/>.
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <term>Greater than zero</term>
+    /// <description>This instance follows <paramref name="other"/> in the sort order.</description>
+    /// </item>
+    /// </list>
+    /// </returns>
     public Int32 CompareTo(String? other) => other is null ? 1 : StringUtf8Comparator.Create().Compare(this, other);
-
-    /// <inheritdoc/>
+    /// <summary>
+    /// Compares the current instance with another <see cref="CString"/> instance and returns an 
+    /// integer that indicates whether the current instance precedes, follows, or occurs in the 
+    /// same position in the sort order as the other <see cref="CString"/>.
+    /// </summary>
+    /// <param name="other">A <see cref="CString"/> to compare with this instance.</param>
+    /// <returns>
+    /// A value that indicates the relative order of the objects being compared.
+    /// The return value has these meanings:
+    /// <list type="table">
+    /// <listheader>
+    /// <term>Value</term><description>Condition</description>
+    /// </listheader>
+    /// <item>
+    /// <term>Less than zero</term>
+    /// <description>This instance precedes <paramref name="other"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Zero</term>
+    /// <description>
+    /// This instance occurs in the same position in the sort order as <paramref name="other"/>.
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <term>Greater than zero</term>
+    /// <description>This instance follows <paramref name="other"/> in the sort order.</description>
+    /// </item>
+    /// </list>
+    /// </returns>
     public Int32 CompareTo(CString? other) => other is null ? 1 : CStringUtf8Comparator.Create().Compare(this, other);
 
     /// <summary>
-    /// Compares two specified <see cref="CString"/> objects using the specified rules, and returns an integer that indicates their
+    /// Compares two specified <see cref="CString"/> instances, and returns an integer that indicates their
     /// relative position in the sort order.
     /// </summary>
-    /// <param name="cstrA">The first <see cref="CString"/> to compare.</param>
-    /// <param name="cstrB">The second <see cref="CString"/> to compare.</param>
+    /// <param name="cstrA">The first <see cref="CString"/> instance to compare.</param>
+    /// <param name="cstrB">The second <see cref="CString"/> instance to compare.</param>
     /// <returns>
     /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
     /// <list type="table">
@@ -38,7 +123,9 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </item>
     /// <item>
     /// <term>Zero</term>
-    /// <description><paramref name="cstrA"/> is in the same position as <paramref name="cstrB"/> in the sort order.</description>
+    /// <description>
+    /// <paramref name="cstrA"/> is in the same position as <paramref name="cstrB"/> in the sort order.
+    /// </description>
     /// </item>
     /// <item>
     /// <term>Greater than zero</term>
@@ -48,15 +135,14 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </returns>
     public static Int32 Compare(CString? cstrA, CString? cstrB)
         => NullCompare(cstrA, cstrB) ?? CStringUtf8Comparator.Create().Compare(cstrA, cstrB);
-
     /// <summary>
-    /// Compares two specified <see cref="CString"/> objects, ignoring or honoring their case, and returns an integer that
-    /// indicates their relative position in the sort order.
+    /// Compares two specified <see cref="CString"/> instances, ignoring or honoring their case, and returns
+    /// an integer that indicates their relative position in the sort order.
     /// </summary>
-    /// <param name="cstrA">The first <see cref="CString"/> to compare.</param>
-    /// <param name="cstrB">The second <see cref="CString"/> to compare.</param>
+    /// <param name="cstrA">The first <see cref="CString"/> instance to compare.</param>
+    /// <param name="cstrB">The second <see cref="CString"/> instance to compare.</param>
     /// <param name="ignoreCase">
-    /// <see langword="true"/> to ignore case during the comparision; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> to ignore case during the comparison; otherwise, <see langword="false"/>.
     /// </param>
     /// <returns>
     /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
@@ -70,7 +156,9 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </item>
     /// <item>
     /// <term>Zero</term>
-    /// <description><paramref name="cstrA"/> is in the same position as <paramref name="cstrB"/> in the sort order.</description>
+    /// <description>
+    /// <paramref name="cstrA"/> is in the same position as <paramref name="cstrB"/> in the sort order.
+    /// </description>
     /// </item>
     /// <item>
     /// <term>Greater than zero</term>
@@ -80,22 +168,22 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </returns>
     public static Int32 Compare(CString? cstrA, CString? cstrB, Boolean ignoreCase)
         => NullCompare(cstrA, cstrB) ?? CStringUtf8Comparator.Create(ignoreCase).Compare(cstrA, cstrB);
-
     /// <summary>
-    /// Compares two specified <see cref="CString"/> objects, ignoring or honoring their case, and returns an integer that
-    /// indicates their relative position in the sort order.
+    /// Compares two specified <see cref="CString"/> objects, ignoring or honoring their case, and using
+    /// culture-specific information to influence the comparison, and returns an integer that indicates
+    /// their relative position in the sort order.
     /// </summary>
     /// <param name="cstrA">The first <see cref="CString"/> to compare.</param>
     /// <param name="cstrB">The second <see cref="CString"/> to compare.</param>
     /// <param name="ignoreCase">
-    /// <see langword="true"/> to ignore case during the comparision; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> to ignore case during the comparison; otherwise, <see langword="false"/>.
     /// </param>
     /// <param name="culture">
-    /// An object that supplies culture-specific comparision information.
+    /// An object that provides culture-specific comparison information.
     /// If <paramref name="culture"/> is <see langword="null"/>, the current culture is used.
     /// </param>
     /// <returns>
-    /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
+    /// A 32-bit signed integer that indicates the lexical relationship between the two strings being compared.
     /// <list type="table">
     /// <listheader>
     /// <term>Value</term><description>Condition</description>
@@ -106,7 +194,9 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </item>
     /// <item>
     /// <term>Zero</term>
-    /// <description><paramref name="cstrA"/> is in the same position as <paramref name="cstrB"/> in the sort order.</description>
+    /// <description>
+    /// <paramref name="cstrA"/> is in the same position as <paramref name="cstrB"/> in the sort order.
+    /// </description>
     /// </item>
     /// <item>
     /// <term>Greater than zero</term>
@@ -116,14 +206,15 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </returns>
     public static Int32 Compare(CString? cstrA, CString? cstrB, Boolean ignoreCase, CultureInfo? culture)
         => NullCompare(cstrA, cstrB) ?? CStringUtf8Comparator.Create(ignoreCase, culture).Compare(cstrA, cstrB);
-
     /// <summary>
-    /// Compares two specified <see cref="CString"/> objects using the specified rules, and returns an integer that indicates their
+    /// Compares two specified <see cref="CString"/> instances using the specified rules, and returns an integer that indicates their
     /// relative position in the sort order.
     /// </summary>
-    /// <param name="cstrA">The first <see cref="CString"/> to compare.</param>
-    /// <param name="cstrB">The second <see cref="CString"/> to compare.</param>
-    /// <param name="comparisonType">One of the enumeration values that specifies the rules to use in the comparision.</param>
+    /// <param name="cstrA">The first <see cref="CString"/> instance to compare.</param>
+    /// <param name="cstrB">The second <see cref="CString"/> instance to compare.</param>
+    /// <param name="comparisonType">
+    /// One of the enumeration values that specifies the rules to use in the comparison.
+    /// </param>
     /// <returns>
     /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
     /// <list type="table">
@@ -146,13 +237,12 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </returns>
     public static Int32 Compare(CString? cstrA, CString? cstrB, StringComparison comparisonType)
         => NullCompare(cstrA, cstrB) ?? CStringUtf8Comparator.Create(comparisonType).Compare(cstrA, cstrB);
-
     /// <summary>
-    /// Compares two specified texts using the specified rules, and returns an integer that indicates their
+    /// Compares two specified text instances using default rules, and returns an integer that indicates their
     /// relative position in the sort order.
     /// </summary>
-    /// <param name="textA">The first text to compare.</param>
-    /// <param name="textB">The second text to compare.</param>
+    /// <param name="textA">The first <see cref="CString"/> instance to compare.</param>
+    /// <param name="textB">The second <see cref="String"/> instance to compare.</param>
     /// <returns>
     /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
     /// <list type="table">
@@ -165,7 +255,9 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </item>
     /// <item>
     /// <term>Zero</term>
-    /// <description><paramref name="textA"/> is in the same position as <paramref name="textB"/> in the sort order.</description>
+    /// <description>
+    /// <paramref name="textA"/> is in the same position as <paramref name="textB"/> in the sort order.
+    /// </description>
     /// </item>
     /// <item>
     /// <term>Greater than zero</term>
@@ -175,15 +267,14 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </returns>
     public static Int32 Compare(CString? textA, String? textB)
         => NullCompare(textA, textB) ?? StringUtf8Comparator.Create().Compare(textA, textB);
-
     /// <summary>
-    /// Compares two specified texts, ignoring or honoring their case, and returns an integer that indicates their
+    /// Compares two specified text instances, ignoring or honoring their case, and returns an integer that indicates their
     /// relative position in the sort order.
     /// </summary>
-    /// <param name="textA">The first text to compare.</param>
-    /// <param name="textB">The second text to compare.</param>
+    /// <param name="textA">The first <see cref="CString"/> instance to compare.</param>
+    /// <param name="textB">The second <see cref="String"/> instance to compare.</param>
     /// <param name="ignoreCase">
-    /// <see langword="true"/> to ignore case during the comparision; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> to ignore case during the comparison; otherwise, <see langword="false"/>.
     /// </param>
     /// <returns>
     /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
@@ -207,18 +298,18 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </returns>
     public static Int32 Compare(CString? textA, String? textB, Boolean ignoreCase)
         => NullCompare(textA, textB) ?? StringUtf8Comparator.Create(ignoreCase).Compare(textA, textB);
-
     /// <summary>
-    /// Compares two specified texts, ignoring or honoring their case, and using culture-specific information to influence
-    /// the comparison, and returns an integer that indicates their relative position in the sort order.
+    /// Compares two specified text instances, ignoring or honoring their case, and using culture-specific
+    /// information to influence the comparison, and returns an integer that indicates their relative position
+    /// in the sort order.
     /// </summary>
-    /// <param name="textA">The first text to compare.</param>
-    /// <param name="textB">The second text to compare.</param>
+    /// <param name="textA">The first <see cref="CString"/> instance to compare.</param>
+    /// <param name="textB">The second <see cref="String"/> instance to compare.</param>
     /// <param name="ignoreCase">
-    /// <see langword="true"/> to ignore case during the comparision; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> to ignore case during the comparison; otherwise, <see langword="false"/>.
     /// </param>
     /// <param name="culture">
-    /// An object that supplies culture-specific comparision information.
+    /// An object that supplies culture-specific comparison information.
     /// If <paramref name="culture"/> is <see langword="null"/>, the current culture is used.
     /// </param>
     /// <returns>
@@ -233,7 +324,9 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </item>
     /// <item>
     /// <term>Zero</term>
-    /// <description><paramref name="textA"/> is in the same position as <paramref name="textB"/> in the sort order.</description>
+    /// <description>
+    /// <paramref name="textA"/> is in the same position as <paramref name="textB"/> in the sort order.
+    /// </description>
     /// </item>
     /// <item>
     /// <term>Greater than zero</term>
@@ -243,14 +336,15 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </returns>
     public static Int32 Compare(CString? textA, String? textB, Boolean ignoreCase, CultureInfo? culture)
         => NullCompare(textA, textB) ?? StringUtf8Comparator.Create(ignoreCase, culture).Compare(textA, textB);
-
     /// <summary>
-    /// Compares two specified texts using the specified rules, and returns an integer that indicates their
+    /// Compares two specified text instances using the specified rules, and returns an integer that indicates their
     /// relative position in the sort order.
     /// </summary>
-    /// <param name="textA">The first text to compare.</param>
-    /// <param name="textB">The second text to compare.</param>
-    /// <param name="comparisonType">One of the enumeration values that specifies the rules to use in the comparision.</param>
+    /// <param name="textA">The first <see cref="CString"/> instance to compare.</param>
+    /// <param name="textB">The second <see cref="String"/> instance to compare.</param>
+    /// <param name="comparisonType">
+    /// One of the enumeration values that specifies the rules to use in the comparison.
+    /// </param>
     /// <returns>
     /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
     /// <list type="table">
@@ -263,7 +357,9 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </item>
     /// <item>
     /// <term>Zero</term>
-    /// <description><paramref name="textA"/> is in the same position as <paramref name="textB"/> in the sort order.</description>
+    /// <description>
+    /// <paramref name="textA"/> is in the same position as <paramref name="textB"/> in the sort order.
+    /// </description>
     /// </item>
     /// <item>
     /// <term>Greater than zero</term>
@@ -273,34 +369,39 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
     /// </returns>
     public static Int32 Compare(CString? textA, String? textB, StringComparison comparisonType)
         => NullCompare(textA, textB) ?? StringUtf8Comparator.Create(comparisonType).Compare(textA, textB);
-
     /// <summary>
-    /// Performs the default comparison between two text instances.
+    /// Compares two text instances for <see langword="null"/> values.
     /// </summary>
-    /// <typeparam name="TString">Type of the second text.</typeparam>
-    /// <param name="cstrA">The first <see cref="CString"/> to compare.</param>
-    /// <param name="tstrB">The second text to compare.</param>
+    /// <typeparam name="TString">Type of the second text instance.</typeparam>
+    /// <param name="cstrA">The first <see cref="CString"/> instance to compare.</param>
+    /// <param name="tstrB">The second text instance to compare.</param>
     /// <returns>
-    /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
+    /// A nullable 32-bit signed integer that indicates the relationship between the two instances.
     /// <list type="table">
     /// <listheader>
     /// <term>Value</term><description>Condition</description>
     /// </listheader>
     /// <item>
-    /// <term>Null</term>
-    /// <description>Neither <paramref name="cstrA"/> nor <paramref name="tstrB"/> are null.</description>
+    /// <term><see langword="null"/></term>
+    /// <description>
+    /// Both <paramref name="cstrA"/> and <paramref name="tstrB"/> are not <see langword="null"/>.
+    /// </description>
     /// </item>
     /// <item>
-    /// <term>Less than zero</term>
-    /// <description><paramref name="cstrA"/> is null.</description>
+    /// <term>Less than zero (-1)</term>
+    /// <description>
+    /// <paramref name="cstrA"/> is <see langword="null"/> and <paramref name="tstrB"/> is not <see langword="null"/>.
+    /// </description>
     /// </item>
     /// <item>
-    /// <term>Zero</term>
-    /// <description>Both <paramref name="cstrA"/> and <paramref name="tstrB"/> are null.</description>
+    /// <term>Zero (0)</term>
+    /// <description>Both <paramref name="cstrA"/> and <paramref name="tstrB"/> are <see langword="null"/>.</description>
     /// </item>
     /// <item>
-    /// <term>Greater than zero</term>
-    /// <description><paramref name="tstrB"/> is null.</description>
+    /// <term>Greater than zero (1)</term>
+    /// <description>
+    /// <paramref name="cstrA"/> is not <see langword="null"/> and <paramref name="tstrB"/> is <see langword="null"/>.
+    /// </description>
     /// </item>
     /// </list>
     /// </returns>

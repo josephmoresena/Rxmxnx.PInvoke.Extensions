@@ -3,18 +3,26 @@
 public partial class CString
 {
     /// <summary>
-    /// Retrives a <see cref="EqualsDelegate"/> delegate for native comparision.
+    /// Retrieves an instance of the <see cref="EqualsDelegate"/> optimized for the current
+    /// process' bitness.
     /// </summary>
-    /// <returns><see cref="EqualsDelegate"/> delegate.</returns>
+    /// <returns>An instance of the <see cref="EqualsDelegate"/>.</returns>
+    /// <remarks>
+    /// This method selects the appropriate version of the Equals method to compare UTF-8
+    /// strings in a manner that is optimized for the current machine's architecture
+    /// (32 or 64 bit).
+    /// </remarks>
     [ExcludeFromCodeCoverage]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static EqualsDelegate GetEquals() => Environment.Is64BitProcess ? Equals<Int64> : Equals<Int32>;
-
     /// <summary>
-    /// Copies the <paramref name="source"/> binary information into
-    /// <paramref name="destination"/> span.
+    /// Copies the byte data from the source array into the destination character span,
+    /// treating the byte data as UTF-8 encoded text.
     /// </summary>
-    /// <param name="destination">Span of <see cref="Char"/> values.</param>
-    /// <param name="source">Array of <see cref="Byte"/> values.</param>
+    /// <param name="destination">
+    /// The destination <see cref="Span{Char}"/> where the byte data will be copied to.
+    /// </param>
+    /// <param name="source">The source byte array from which the data will be copied.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void CopyBytes(Span<Char> destination, Byte[] source)
     {
@@ -32,19 +40,19 @@ public partial class CString
         //Copies the remaining binary span into UTF8 destination span.
         remSource.CopyTo(remDestination);
     }
-
     /// <summary>
-    /// Indicates whether <paramref name="current"/> <see cref="ReadOnlySpan{Byte}"/>
-    /// is equal to 
-    /// <paramref name="other"/> <see cref="ReadOnlySpan{Byte}"/>.
-    /// instance.
+    /// Compares two ReadOnlySpan instances for equality, treating their byte data as
+    /// <typeparamref name="TInteger"/> for faster comparison.
     /// </summary>
-    /// <typeparam name="TInteger"><see cref="ValueType"/> for reduce comparation.</typeparam>
-    /// <param name="current">A <see cref="CString"/> to compare with <paramref name="other"/>.</param>
-    /// <param name="other">A <see cref="CString"/> to compare with this <paramref name="current"/>.</param>
+    /// <typeparam name="TInteger">
+    /// A ValueType which is used to interpret the byte data for comparison, such as
+    /// <see cref="Int32"/> or <see cref="Int64"/>.
+    /// </typeparam>
+    /// <param name="current">The first ReadOnlySpan instance to compare.</param>
+    /// <param name="other">The second ReadOnlySpan instance to compare.</param>
     /// <returns>
-    /// <see langword="true"/> if <paramref name="current"/> <see cref="CString"/> is equal to 
-    /// <paramref name="other"/> parameter; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if both read-only instances have the same length and contain the same
+    /// byte data, otherwise <see langword="false"/>.
     /// </returns>
     private static unsafe Boolean Equals<TInteger>(ReadOnlySpan<Byte> current, ReadOnlySpan<Byte> other)
         where TInteger : unmanaged
@@ -63,19 +71,18 @@ public partial class CString
 
         return false;
     }
-
     /// <summary>
-    /// Indicates whether <paramref name="current"/> <see cref="ReadOnlySpan{T}"/>
-    /// is equal to 
-    /// <paramref name="other"/> <see cref="ReadOnlySpan{T}"/>.
-    /// instance.
+    /// Compares two ReadOnlySpan instances for equality, element by element.
     /// </summary>
-    /// <typeparam name="T"><see cref="ValueType"/> of span.</typeparam>
-    /// <param name="current">A <see cref="ReadOnlySpan{T}"/> to compare with <paramref name="other"/>.</param>
-    /// <param name="other">A <see cref="ReadOnlySpan{T}"/> to compare with this <paramref name="current"/>.</param>
+    /// <typeparam name="T">
+    /// The type of elements in the read-only span instances.
+    /// It must be an <see langword="unmanaged"/> <see cref="ValueType"/>.
+    /// </typeparam>
+    /// <param name="current">The first ReadOnlySpan instance to compare.</param>
+    /// <param name="other">The second ReadOnlySpan instance to compare.</param>
     /// <returns>
-    /// <see langword="true"/> if <paramref name="current"/> <see cref="ReadOnlySpan{T}"/> is equal to 
-    /// <paramref name="other"/> parameter; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if both ReadOnlySpan instances have the same length and contain the same
+    /// elements, otherwise <see langword="false"/>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static Boolean SequenceEquals<T>(ReadOnlySpan<T> current, ReadOnlySpan<T> other)
@@ -86,15 +93,17 @@ public partial class CString
                 return false;
         return true;
     }
-
     /// <summary>
-    /// Indicates whether <paramref name="data"/> contains a null-terminated UTF-8 text.
+    /// Determines if a given read-only span of bytes represents a null-terminated UTF-8 string.
     /// </summary>
-    /// <param name="data">A read-only byte span containing UTF-8 text.</param>
-    /// <param name="textLength">Output. The length of the UTF-8 text in <paramref name="data"/>.</param>
+    /// <param name="data">The read-only span of bytes to check.</param>
+    /// <param name="textLength">
+    /// When this method returns, contains the length of the text within the read-only span, excluding
+    /// the null terminator, if one was found; otherwise, the total length of the read-only span.
+    /// </param>
     /// <returns>
-    /// <see langword="true"/> if <paramref name="data"/> contains a null-terminated UTF-8 text; 
-    /// otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if the read-only span represents a null-terminated UTF-8 string; otherwise,
+    /// <see langword="false"/>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static Boolean IsNullTerminatedSpan(ReadOnlySpan<Byte> data, out Int32 textLength)
@@ -104,16 +113,15 @@ public partial class CString
             textLength--;
         return textLength < data.Length;
     }
-
     /// <summary>
-    /// Creates a null-terminated UTF-8 text that only contains the sequence <paramref name="seq"/>
-    /// <paramref name="count"/> times.
+    /// Creates a null-terminated UTF-8 string that consists of a given ReadOnlySpan of bytes repeated
+    /// a specified number of times.
     /// </summary>
-    /// <param name="seq">A UTF-8 sequence.</param>
-    /// <param name="count">The number of the times <paramref name="seq"/> occours.</param>
+    /// <param name="seq">The read-only span of bytes to repeat.</param>
+    /// <param name="count">The number of times to repeat the read-only span.</param>
     /// <returns>
-    /// A null-terminated UTF-8 text that only contains the sequence <paramref name="seq"/>
-    /// <paramref name="count"/> times.
+    /// A <see cref="Byte"/> array that represents a null-terminated UTF-8 string composed of the
+    /// read-only span repeated the specified number of times.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static Byte[] CreateRepeatedSequence(ReadOnlySpan<Byte> seq, Int32 count)
@@ -123,20 +131,18 @@ public partial class CString
             seq.CopyTo(result.AsSpan()[(seq.Length * i)..]);
         return result;
     }
-
     /// <summary>
-    /// Creates a <see cref="String"/> separator from an UTF-16 character to use as a separator.
+    /// Creates a <see cref="String"/> that consists of a single UTF-16 character.
     /// </summary>
-    /// <param name="separator">UTF-16 character to use as a separator.</param>
-    /// <returns>The UTF-16 text to use as a separator.</returns>
+    /// <param name="separator">The character to make up the <see cref="String"/>.</param>
+    /// <returns>A <see cref="String"/> that consists of a single instance of the specified character.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static String CreateSeparator(Char separator) => String.Create(1, separator, SetSeparator);
-
     /// <summary>
-    /// Sets the value of <paramref name="separator"/> in a <paramref name="spanSeparator"/> .
+    /// Sets the value of the specified UTF-16 character in a Span of characters.
     /// </summary>
-    /// <param name="spanSeparator">The <see cref="String"/> separator span creation.</param>
-    /// <param name="separator">The UTF-16 character to use as a separator.</param>
+    /// <param name="spanSeparator">The span of UTF-16 characteres to set the character value.</param>
+    /// <param name="separator">The UTF-16 character to set.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void SetSeparator(Span<Char> spanSeparator, Char separator)
         => spanSeparator[0] = separator;
