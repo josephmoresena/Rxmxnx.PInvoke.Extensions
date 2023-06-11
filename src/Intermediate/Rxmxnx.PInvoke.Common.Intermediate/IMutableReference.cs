@@ -6,30 +6,42 @@
 public interface IMutableReference : IMutableWrapper
 {
     /// <summary>
-    /// Creates a new <see cref="IMutableReference{TValue}"/> object from a <typeparamref name="TValue"/> value.
+    /// Creates a new instance of an object that implements <see cref="IMutableReference{TValue}"/> interface.
     /// </summary>
-    /// <typeparam name="TValue"><see cref="ValueType"/> of object.</typeparam>
-    /// <param name="instance">Instance value.</param>
-    /// <returns>
-    /// <see cref="IMutableReference{TValue}"/> object which instance object is equal to 
-    /// <paramref name="instance"/>.
-    /// </returns>
+    /// <typeparam name="TValue">The <see cref="ValueType"/> of the object to be wrapped.</typeparam>
+    /// <param name="value">The value to be wrapped.</param>
+    /// <returns>An instance of an object that implements <see cref="IMutableReference{TValue}"/> interface.</returns>
+    /// <remarks>
+    /// The newly created object wraps a value of <typeparamref name="TValue"/> type provided by <paramref name="value"/>.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static new IMutableReference<TValue> Create<TValue>(in TValue instance = default!) where TValue : struct
         => IMutableReference<TValue>.Create(instance);
     /// <summary>
-    /// Creates a new <see cref="IMutableReference{TValue}"/> object from a 
-    /// <see cref="Nullable{TValue}"/> value.
+    /// Creates a new instance of an object that implements <see cref="IMutableReference{TValue}"/> interface.
     /// </summary>
-    /// <typeparam name="TValue"><see cref="ValueType"/> of nullable object.</typeparam>
-    /// <param name="instance">Instance nullable value.</param>
-    /// <returns>
-    /// <see cref="IMutableReference{TValue}"/> object which instance object is equal to 
-    /// <paramref name="instance"/>.
-    /// </returns>
+    /// <typeparam name="TValue">The <see cref="ValueType"/> of the nullable object to be wrapped.</typeparam>
+    /// <param name="value">The nullable value to be wrapped.</param>
+    /// <returns>An instance of an object that implements <see cref="IMutableReference{TValue}"/> interface.</returns>
+    /// <remarks>
+    /// The newly created object wraps a nullable value of <typeparamref name="TValue"/> type provided by
+    /// <paramref name="value"/>.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static new IMutableReference<TValue?> CreateNullable<TValue>(in TValue? instance = default) where TValue : struct
         => IMutableReference<TValue?>.Create(instance);
+    /// <summary>
+    /// Creates a new instance of an object that implements <see cref="IMutableReference{TObject}"/> interface.
+    /// </summary>
+    /// <typeparam name="TObject">The type of the object to be wrapped.</typeparam>
+    /// <param name="instance">The instance to be wrapped.</param>
+    /// <returns>An instance of an object that implements <see cref="IMutableReference{TObject}"/> interface.</returns>
+    /// <remarks>
+    /// The newly created object wraps an object of <typeparamref name="TObject"/> type provided by <paramref name="instance"/>.
+    /// </remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static new IMutableReference<TObject> CreateObject<TObject>(in TObject instance) where TObject : class
+        => IMutableReference<TObject>.Create(instance);
 }
 
 /// <summary>

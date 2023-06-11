@@ -42,8 +42,9 @@ public sealed class IMutableReferenceTests
         Task inputTest = Task.Run(Value<T>);
         Task nullTest1 = Task.Run(() => Nullable<T>(false));
         Task nullTest2 = Task.Run(() => Nullable<T>(true));
+        Task objectTest = Task.Run(Object<T>);
 
-        await Task.WhenAll(inputTest, nullTest1, nullTest2);
+        await Task.WhenAll(inputTest, nullTest1, nullTest2, objectTest);
     }
     private static void Value<T>() where T : unmanaged
     {
@@ -113,6 +114,42 @@ public sealed class IMutableReferenceTests
         result.Reference = value3;
         Assert.Equal(value3, result.Value);
         Assert.Equal(value3, refValue);
+    }
+    private static void Object<T>() where T : unmanaged
+    {
+        T[] array = fixture.CreateMany<T>().ToArray();
+        T[] array2 = fixture.CreateMany<T>().ToArray();
+        T[] array3 = fixture.CreateMany<T>().ToArray();
+        var result = IMutableReference.CreateObject(array);
+        var result2 = IReferenceableWrapper.CreateObject(array);
+        var result3 = new ReferenceableWrapper<T[]>(result);
+        ref readonly T[] refValue = ref result.Reference;
+        ref T[] mutableValueRef = ref result.Reference;
+        Assert.NotNull(result);
+        Assert.Equal(array, result.Value);
+        Assert.Equal(array, refValue);
+        Assert.True(result.Equals(array));
+        Assert.Equal(Equals(array, array2), result.Equals(array2));
+        Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref mutableValueRef));
+        Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref array));
+        Assert.False(result.Equals(result2));
+        Assert.True(result.Equals(result3));
+        Assert.True((result as IReadOnlyReferenceable<T[]>).Equals(result3));
+
+        result.Value = array2;
+        Assert.Equal(array2, result.Value);
+        Assert.Equal(array2, refValue);
+        Assert.True(result.Equals(array2));
+        Assert.Equal(Equals(array2, array), result.Equals(array));
+        Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref mutableValueRef));
+        Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref array2));
+        Assert.False(result.Equals(result2));
+        Assert.True(result.Equals(result3));
+        Assert.True((result as IReadOnlyReferenceable<T[]>).Equals(result3));
+
+        result.Reference = array3;
+        Assert.Equal(array3, result.Value);
+        Assert.Equal(array3, refValue);
     }
 }
 

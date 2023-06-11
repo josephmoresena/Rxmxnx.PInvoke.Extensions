@@ -42,8 +42,9 @@ public sealed class IReferenceableWrapperTests
         Task inputTest = Task.Run(Value<T>);
         Task nullTest1 = Task.Run(() => Nullable<T>(false));
         Task nullTest2 = Task.Run(() => Nullable<T>(true));
+        Task objectTest = Task.Run(Object<T>);
 
-        await Task.WhenAll(inputTest, nullTest1, nullTest2);
+        await Task.WhenAll(inputTest, nullTest1, nullTest2, objectTest);
     }
     private static void Value<T>() where T : unmanaged
     {
@@ -83,6 +84,26 @@ public sealed class IReferenceableWrapperTests
         Assert.False(result.Equals(result2));
         Assert.True(result.Equals(result3));
         Assert.False(result.Equals(default(IReferenceable<T?>)));
+    }
+    private static void Object<T>() where T : unmanaged
+    {
+        T[] array = fixture.CreateMany<T>().ToArray();
+        T[] array2 = fixture.CreateMany<T>().ToArray();
+        var result = IReferenceableWrapper.CreateObject(array);
+        var result2 = IReferenceableWrapper.CreateObject(array);
+        var result3 = new ReferenceableWrapper<T[]>(result);
+        ref readonly T[] refValue = ref result.Reference;
+        ref T[] mutableValueRef = ref Unsafe.AsRef(result.Reference);
+        Assert.NotNull(result);
+        Assert.Equal(array, result.Value);
+        Assert.Equal(array, refValue);
+        Assert.True(result.Equals(array));
+        Assert.Equal(Equals(array, array2), result.Equals(array2));
+        Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref mutableValueRef));
+        Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref array));
+        Assert.False(result.Equals(result2));
+        Assert.True(result.Equals(result3));
+        Assert.False(result.Equals(default(IReferenceable<T>)));
     }
 }
 

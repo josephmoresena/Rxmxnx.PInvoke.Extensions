@@ -1,4 +1,6 @@
-﻿namespace Rxmxnx.PInvoke.Tests;
+﻿using Newtonsoft.Json.Linq;
+
+namespace Rxmxnx.PInvoke.Tests;
 
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
@@ -42,8 +44,9 @@ public sealed class IWrapperTests
         Task inputTest = Task.Run(Value<T>);
         Task nullTest1 = Task.Run(() => Nullable<T>(false));
         Task nullTest2 = Task.Run(() => Nullable<T>(true));
+        Task objectTest = Task.Run(Object<T>);
 
-        await Task.WhenAll(inputTest, nullTest1, nullTest2);
+        await Task.WhenAll(inputTest, nullTest1, nullTest2, objectTest);
     }
     private static void Value<T>() where T : unmanaged
     {
@@ -63,6 +66,16 @@ public sealed class IWrapperTests
         Assert.NotNull(result);
         Assert.Equal(value, result.Value);
         Assert.Equal(Equals(value, value2), result.Equals(value2));
+    }
+    private static void Object<T>() where T : unmanaged
+    {
+        T[] array = fixture.CreateMany<T>().ToArray();
+        T[] array2 = fixture.CreateMany<T>().ToArray();
+        var result = IWrapper.CreateObject(array);
+        Assert.NotNull(result);
+        Assert.Equal(array, result.Value);
+        Assert.True(result.Equals(array));
+        Assert.Equal(Equals(array, array2), result.Equals(array2));
     }
 }
 

@@ -50,8 +50,9 @@ public sealed class IMutableWrapperTests
         Task inputTest = Task.Run(Value<T>);
         Task nullTest1 = Task.Run(() => Nullable<T>(false));
         Task nullTest2 = Task.Run(() => Nullable<T>(true));
+        Task objectTest = Task.Run(Object<T>);
 
-        await Task.WhenAll(inputTest, nullTest1, nullTest2);
+        await Task.WhenAll(inputTest, nullTest1, nullTest2, objectTest);
     }
 
     private static void Value<T>() where T : unmanaged
@@ -101,6 +102,31 @@ public sealed class IMutableWrapperTests
         Assert.Equal(value2, wrapper.Value);
         Assert.True(wrapper.Equals(value2));
         Assert.Equal(Equals(value2, value), wrapper.Equals(value));
+    }
+
+    private static void Object<T>() where T : unmanaged
+    {
+        T[] array = fixture.CreateMany<T>().ToArray();
+        T[] array2 = fixture.CreateMany<T>().ToArray();
+        var result = IMutableWrapper.CreateObject(array);
+        IWrapper<T[]> wrapper = result;
+
+        Assert.NotNull(result);
+        Assert.Equal(array, result.Value);
+        Assert.True(result.Equals(array));
+        Assert.Equal(Equals(array, array2), result.Equals(array2));
+        Assert.NotNull(wrapper);
+        Assert.Equal(array, wrapper.Value);
+        Assert.True(wrapper.Equals(array));
+        Assert.Equal(Equals(array, array2), wrapper.Equals(array2));
+
+        result.Value = array2;
+        Assert.Equal(array2, result.Value);
+        Assert.True(result.Equals(array2));
+        Assert.Equal(Equals(array2, array), result.Equals(array));
+        Assert.Equal(array2, wrapper.Value);
+        Assert.True(wrapper.Equals(array2));
+        Assert.Equal(Equals(array2, array), wrapper.Equals(array));
     }
 }
 
