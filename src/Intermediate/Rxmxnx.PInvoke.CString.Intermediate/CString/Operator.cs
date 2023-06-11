@@ -88,134 +88,126 @@ public partial class CString
     public static Boolean operator !=(CString? left, String? right) => !(left == right);
 
     /// <summary>
-    /// Determines whether <paramref name="a"/> follows to <paramref name="b"/>.
+    /// Determines whether <paramref name="left"/> is greater than <paramref name="right"/>.
     /// </summary>
-    /// <param name="a">The first <see cref="CString"/> to compare, or <see langword="null"/>.</param>
-    /// <param name="b">The second <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="left">The first <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="right">The second <see cref="CString"/> to compare, or <see langword="null"/>.</param>
     /// <returns>
-    /// <see langword="true"/> if the value of <paramref name="a"/> follows to the value  
-    /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if the value of <paramref name="left"/> is greater than the value  
+    /// of <paramref name="right"/>; otherwise, <see langword="false"/>.
     /// </returns>
-    public static Boolean operator >(CString? a, CString? b) => CString.Compare(a, b) > 0;
+    public static Boolean operator >(CString? left, CString? right) => CString.Compare(left, right) > 0;
+    /// <summary>
+    /// Determines whether <paramref name="left"/> is greater than or equal to <paramref name="right"/>.
+    /// </summary>
+    /// <param name="left">The first <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="right">The second <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <returns>
+    /// <see langword="true"/> if the value of <paramref name="left"/> is greater than or equal to the value  
+    /// of <paramref name="right"/>; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static Boolean operator >=(CString? left, CString? right) => CString.Compare(left, right) >= 0;
+    /// <summary>
+    /// Determines whether <paramref name="left"/> is less than or equal to <paramref name="right"/>.
+    /// </summary>
+    /// <param name="left">The first <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="right">The second <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <returns>
+    /// <see langword="true"/> if the value of <paramref name="left"/> is less than or equal to the value  
+    /// of <paramref name="right"/>; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static Boolean operator <=(CString? left, CString? right) => CString.Compare(left, right) <= 0;
+    /// <summary>
+    /// Determines whether <paramref name="left"/> is less than <paramref name="right"/>.
+    /// </summary>
+    /// <param name="left">The first <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="right">The second <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <returns>
+    /// <see langword="true"/> if the value of <paramref name="left"/> is less than the value  
+    /// of <paramref name="right"/>; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static Boolean operator <(CString? left, CString? right) => CString.Compare(left, right) < 0;
+
 
     /// <summary>
-    /// Determines whether <paramref name="a"/> follows or is equal to <paramref name="b"/>.
+    /// Determines whether <paramref name="left"/> is greater than <paramref name="right"/>.
     /// </summary>
-    /// <param name="a">The first <see cref="CString"/> to compare, or <see langword="null"/>.</param>
-    /// <param name="b">The second <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="left">The <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="right">The <see cref="String"/> to compare, or <see langword="null"/>.</param>
     /// <returns>
-    /// <see langword="true"/> if the value of <paramref name="a"/> follows or is equal to the value  
-    /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if the value of <paramref name="left"/> is greater than the value  
+    /// of <paramref name="right"/>; otherwise, <see langword="false"/>.
     /// </returns>
-    public static Boolean operator >=(CString? a, CString? b) => CString.Compare(a, b) >= 0;
+    public static Boolean operator >(CString? left, String? right) => CString.Compare(left, right) > 0;
+    /// <summary>
+    /// Determines whether <paramref name="left"/> is greater than or equal to <paramref name="right"/>.
+    /// </summary>
+    /// <param name="left">The <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="right">The <see cref="String"/> to compare, or <see langword="null"/>.</param>
+    /// <returns>
+    /// <see langword="true"/> if the value of <paramref name="left"/> is greater than or equal to the value  
+    /// of <paramref name="right"/>; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static Boolean operator >=(CString? left, String? right) => CString.Compare(left, right) >= 0;
+    /// <summary>
+    /// Determines whether <paramref name="left"/> is less than or equal to <paramref name="right"/>.
+    /// </summary>
+    /// <param name="left">The <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="right">The <see cref="String"/> to compare, or <see langword="null"/>.</param>
+    /// <returns>
+    /// <see langword="true"/> if the value of <paramref name="left"/> is less than or equal to the value  
+    /// of <paramref name="right"/>; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static Boolean operator <=(CString? left, String? right) => CString.Compare(left, right) <= 0;
+    /// <summary>
+    /// Determines whether <paramref name="left"/> is less than <paramref name="right"/>.
+    /// </summary>
+    /// <param name="left">The <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="right">The <see cref="String"/> to compare, or <see langword="null"/>.</param>
+    /// <returns>
+    /// <see langword="true"/> if the value of <paramref name="left"/> is less than the value  
+    /// of <paramref name="right"/>; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static Boolean operator <(CString? left, String? right) => CString.Compare(left, right) < 0;
 
     /// <summary>
-    /// Determines whether <paramref name="a"/> precedes to <paramref name="b"/>.
+    /// Determines whether <paramref name="left"/> is greater than <paramref name="right"/>.
     /// </summary>
-    /// <param name="a">The first <see cref="CString"/> to compare, or <see langword="null"/>.</param>
-    /// <param name="b">The second <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="left">The <see cref="String"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="right">The <see cref="CString"/> to compare, or <see langword="null"/>.</param>
     /// <returns>
-    /// <see langword="true"/> if the value of <paramref name="a"/> precedes to the value  
-    /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if the value of <paramref name="left"/> is greater than the value  
+    /// of <paramref name="right"/>; otherwise, <see langword="false"/>.
     /// </returns>
-    public static Boolean operator <=(CString? a, CString? b) => CString.Compare(a, b) <= 0;
-
+    public static Boolean operator >(String? left, CString? right) => CString.Compare(right, left) < 0;
     /// <summary>
-    /// Determines whether <paramref name="a"/> precedes or is equal to <paramref name="b"/>.
+    /// Determines whether <paramref name="left"/> is greater than or equal to <paramref name="right"/>.
     /// </summary>
-    /// <param name="a">The first <see cref="CString"/> to compare, or <see langword="null"/>.</param>
-    /// <param name="b">The second <see cref="CString"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="left">The <see cref="String"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="right">The <see cref="CString"/> to compare, or <see langword="null"/>.</param>
     /// <returns>
-    /// <see langword="true"/> if the value of <paramref name="a"/> precedes or is equal to the value  
-    /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if the value of <paramref name="left"/> is greater than or equal to the value  
+    /// of <paramref name="right"/>; otherwise, <see langword="false"/>.
     /// </returns>
-    public static Boolean operator <(CString? a, CString? b) => CString.Compare(a, b) < 0;
-
+    public static Boolean operator >=(String? left, CString? right) => CString.Compare(right, left) <= 0;
     /// <summary>
-    /// Determines whether <paramref name="a"/> follows to <paramref name="b"/>.
+    /// Determines whether <paramref name="left"/> is less than or equal to <paramref name="right"/>.
     /// </summary>
-    /// <param name="a">The first <see cref="CString"/> to compare, or <see langword="null"/>.</param>
-    /// <param name="b">The second <see cref="String"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="left">The <see cref="String"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="right">The <see cref="CString"/> to compare, or <see langword="null"/>.</param>
     /// <returns>
-    /// <see langword="true"/> if the value of <paramref name="a"/> follows to the value  
-    /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if the value of <paramref name="left"/> is less than or equal to the value  
+    /// of <paramref name="right"/>; otherwise, <see langword="false"/>.
     /// </returns>
-    public static Boolean operator >(CString? a, String? b) => CString.Compare(a, b) > 0;
-
+    public static Boolean operator <=(String? left, CString? right) => CString.Compare(right, left) >= 0;
     /// <summary>
-    /// Determines whether <paramref name="a"/> follows or is equal to <paramref name="b"/>.
+    /// Determines whether <paramref name="left"/> is less than <paramref name="right"/>.
     /// </summary>
-    /// <param name="a">The first <see cref="CString"/> to compare, or <see langword="null"/>.</param>
-    /// <param name="b">The second <see cref="String"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="left">The <see cref="String"/> to compare, or <see langword="null"/>.</param>
+    /// <param name="right">The <see cref="CString"/> to compare, or <see langword="null"/>.</param>
     /// <returns>
-    /// <see langword="true"/> if the value of <paramref name="a"/> follows or is equal to the value  
-    /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if the value of <paramref name="left"/> is less than the value  
+    /// of <paramref name="right"/>; otherwise, <see langword="false"/>.
     /// </returns>
-    public static Boolean operator >=(CString? a, String? b) => CString.Compare(a, b) >= 0;
-
-    /// <summary>
-    /// Determines whether <paramref name="a"/> precedes to <paramref name="b"/>.
-    /// </summary>
-    /// <param name="a">The first <see cref="CString"/> to compare, or <see langword="null"/>.</param>
-    /// <param name="b">The second <see cref="String"/> to compare, or <see langword="null"/>.</param>
-    /// <returns>
-    /// <see langword="true"/> if the value of <paramref name="a"/> precedes to the value  
-    /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
-    /// </returns>
-    public static Boolean operator <=(CString? a, String? b) => CString.Compare(a, b) <= 0;
-
-    /// <summary>
-    /// Determines whether <paramref name="a"/> precedes or is equal to <paramref name="b"/>.
-    /// </summary>
-    /// <param name="a">The first <see cref="CString"/> to compare, or <see langword="null"/>.</param>
-    /// <param name="b">The second <see cref="String"/> to compare, or <see langword="null"/>.</param>
-    /// <returns>
-    /// <see langword="true"/> if the value of <paramref name="a"/> precedes or is equal to the value  
-    /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
-    /// </returns>
-    public static Boolean operator <(CString? a, String? b) => CString.Compare(a, b) < 0;
-
-    /// <summary>
-    /// Determines whether <paramref name="a"/> follows to <paramref name="b"/>.
-    /// </summary>
-    /// <param name="a">The first <see cref="String"/> to compare, or <see langword="null"/>.</param>
-    /// <param name="b">The second <see cref="CString"/> to compare, or <see langword="null"/>.</param>
-    /// <returns>
-    /// <see langword="true"/> if the value of <paramref name="a"/> follows to the value  
-    /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
-    /// </returns>
-    public static Boolean operator >(String? a, CString? b) => CString.Compare(b, a) < 0;
-
-    /// <summary>
-    /// Determines whether <paramref name="a"/> follows or is equal to <paramref name="b"/>.
-    /// </summary>
-    /// <param name="a">The first <see cref="CString"/> to compare, or <see langword="null"/>.</param>
-    /// <param name="b">The second <see cref="String"/> to compare, or <see langword="null"/>.</param>
-    /// <returns>
-    /// <see langword="true"/> if the value of <paramref name="a"/> follows or is equal to the value  
-    /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
-    /// </returns>
-    public static Boolean operator >=(String? a, CString? b) => CString.Compare(b, a) <= 0;
-
-    /// <summary>
-    /// Determines whether <paramref name="a"/> precedes to <paramref name="b"/>.
-    /// </summary>
-    /// <param name="a">The first <see cref="CString"/> to compare, or <see langword="null"/>.</param>
-    /// <param name="b">The second <see cref="String"/> to compare, or <see langword="null"/>.</param>
-    /// <returns>
-    /// <see langword="true"/> if the value of <paramref name="a"/> precedes to the value  
-    /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
-    /// </returns>
-    public static Boolean operator <=(String? a, CString? b) => CString.Compare(b, a) >= 0;
-
-    /// <summary>
-    /// Determines whether <paramref name="a"/> precedes or is equal to <paramref name="b"/>.
-    /// </summary>
-    /// <param name="a">The first <see cref="String"/> to compare, or <see langword="null"/>.</param>
-    /// <param name="b">The second <see cref="CString"/> to compare, or <see langword="null"/>.</param>
-    /// <returns>
-    /// <see langword="true"/> if the value of <paramref name="a"/> precedes or is equal to the value  
-    /// of <paramref name="b"/>; otherwise, <see langword="false"/>.
-    /// </returns>
-    public static Boolean operator <(String? a, CString? b) => CString.Compare(b, a) > 0;
+    public static Boolean operator <(String? left, CString? right) => CString.Compare(right, left) > 0;
 }
