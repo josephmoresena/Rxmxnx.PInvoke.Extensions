@@ -17,7 +17,7 @@ public partial class CString : IEnumerableSequence<Byte>
     /// <summary>
     /// Gets the number of bytes in the current <see cref="CString"/> object.
     /// </summary>
-    /// <value>The number of bytes in the current CString.</value>
+    /// <value>The number of bytes in the current <see cref="CString"/>.</value>
     public Int32 Length => this._length;
 
     Int32 IEnumerableSequence<Byte>.GetSize() => this._length;
@@ -31,7 +31,7 @@ public partial class CString : IEnumerableSequence<Byte>
     /// The zero-based starting byte position of a substring in this instance.
     /// </param>
     /// <returns>A <see cref="CString"/> that is equivalent to the substring that begins at 
-    /// <paramref name="startIndex"/> in this instance, or <see cref="CString.Empty"/> if 
+    /// <paramref name="startIndex"/> in this instance, or <see cref="Empty"/> if 
     /// <paramref name="startIndex"/> is equal to the length of this instance.</returns>
     /// <exception cref="ArgumentOutOfRangeException">
     /// <paramref name="startIndex"/> is less than zero or greater than the length of this instance.
@@ -47,7 +47,7 @@ public partial class CString : IEnumerableSequence<Byte>
     /// <param name="length">The number of bytes in the substring.</param>
     /// <returns>A <see cref="CString"/> that is equivalent to the substring of length 
     /// <paramref name="length"/> that begins at <paramref name="startIndex"/> in this
-    /// instance, or <see cref="CString.Empty"/> if <paramref name="startIndex"/> is
+    /// instance, or <see cref="Empty"/> if <paramref name="startIndex"/> is
     /// equal to the length of this instance and <paramref name="length"/> is zero.</returns>
     /// <exception cref="ArgumentOutOfRangeException">
     /// <paramref name="startIndex"/> or <paramref name="length"/> is less than zero, or
@@ -58,7 +58,7 @@ public partial class CString : IEnumerableSequence<Byte>
     {
         ValidationUtilities.ThrowIfInvalidSubstring(this._length, startIndex, length);
         if (length == 0)
-            return CString.Empty;
+            return Empty;
 
         if (startIndex == 0 && length == this._length)
             return this;
