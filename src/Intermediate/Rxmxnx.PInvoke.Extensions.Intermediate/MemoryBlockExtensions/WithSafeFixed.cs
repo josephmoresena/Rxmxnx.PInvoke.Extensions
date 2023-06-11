@@ -71,7 +71,7 @@ public static partial class MemoryBlockExtensions
     {
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
-            FixedContext<T> ctx = new(ptr, span.Length, true);
+            ReadOnlyFixedContext<T> ctx = new(ptr, span.Length);
             try
             {
                 action(ctx);
@@ -158,7 +158,7 @@ public static partial class MemoryBlockExtensions
     {
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
-            FixedContext<T> ctx = new(ptr, span.Length, true);
+            ReadOnlyFixedContext<T> ctx = new(ptr, span.Length);
             try
             {
                 action(ctx, arg);
@@ -245,7 +245,7 @@ public static partial class MemoryBlockExtensions
     {
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
-            FixedContext<T> ctx = new(ptr, span.Length, true);
+            ReadOnlyFixedContext<T> ctx = new(ptr, span.Length);
             try
             {
                 return func(ctx);
@@ -341,7 +341,7 @@ public static partial class MemoryBlockExtensions
         ArgumentNullException.ThrowIfNull(func);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
-            FixedContext<T> ctx = new(ptr, span.Length, true);
+            ReadOnlyFixedContext<T> ctx = new(ptr, span.Length);
             try
             {
                 return func(ctx, arg);

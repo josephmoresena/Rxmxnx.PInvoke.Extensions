@@ -1,29 +1,24 @@
 ﻿namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
-/// Helper class from memory block fixing.
+/// Helper class for managing fixed memory blocks.
 /// </summary>
-internal unsafe abstract class FixedMemory : FixedPointer, IFixedMemory, IEquatable<FixedMemory>
+internal unsafe abstract class FixedMemory : ReadOnlyFixedMemory, IFixedMemory, IEquatable<FixedMemory>
 {
     /// <summary>
-    /// Constructs a new <see cref="FixedMemory"/> instance using a pointer to a memory block, its size, and
-    /// a read-only flag.
+    /// Constructs a new <see cref="FixedMemory"/> instance using a pointer to a memory block, and its size.
     /// </summary>
     /// <param name="ptr">Pointer to fixed memory block.</param>
     /// <param name="binaryLength">Memory block size in bytes.</param>
-    /// <param name="isReadOnly">Indicates whether the memory block is read-only.</param>
-    protected FixedMemory(void* ptr, Int32 binaryLength, Boolean isReadOnly)
-        : base(ptr, binaryLength, isReadOnly) { }
+    protected FixedMemory(void* ptr, Int32 binaryLength) : base(ptr, binaryLength, false) { }
     /// <summary>
     /// Constructs a new <see cref="FixedMemory"/> instance using a pointer to a memory block, its size,
-    /// a read-only flag, and a valid status.
+    /// and a valid status.
     /// </summary>
     /// <param name="ptr">Pointer to fixed memory block.</param>
     /// <param name="binaryLength">Memory block size in bytes.</param>
-    /// <param name="isReadOnly">Indicates whether the memory block is read-only.</param>
     /// <param name="isValid">Indicates whether current instance remains valid.</param>
-    protected FixedMemory(void* ptr, Int32 binaryLength, Boolean isReadOnly, IMutableWrapper<Boolean> isValid)
-        : base(ptr, binaryLength, isReadOnly, isValid) { }
+    protected FixedMemory(void* ptr, Int32 binaryLength, IMutableWrapper<Boolean> isValid) : base(ptr, binaryLength, false, isValid) { }
     /// <summary>
     /// Constructs a new <see cref="FixedMemory"/> instance using another instance as a template.
     /// </summary>
@@ -49,5 +44,5 @@ internal unsafe abstract class FixedMemory : FixedPointer, IFixedMemory, IEquata
     /// <inheritdoc/>
     public override Int32 GetHashCode() => base.GetHashCode();
     /// <inheritdoc/>
-    public virtual IFixedContext<Byte> AsBinaryContext() => new FixedContext<Byte>(this.BinaryOffset, this);
+    public new virtual IFixedContext<Byte> AsBinaryContext() => new FixedContext<Byte>(this.BinaryOffset, this);
 }

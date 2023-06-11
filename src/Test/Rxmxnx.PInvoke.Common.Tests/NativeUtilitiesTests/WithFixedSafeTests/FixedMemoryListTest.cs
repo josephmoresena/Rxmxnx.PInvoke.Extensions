@@ -258,7 +258,6 @@ public sealed class FixedMemoryListTest
         where T : unmanaged
     {
         IReadOnlyFixedContext<T> ctx = (IReadOnlyFixedContext<T>)mem;
-        IFixedContext<T> ctxx = (IFixedContext<T>)mem;
         T[] arrT = (T[])arr;
 
         Assert.Equal(arrT, ctx.Values.ToArray());
@@ -271,6 +270,7 @@ public sealed class FixedMemoryListTest
 
         if (!readOnly)
         {
+            IFixedContext<T> ctxx = (IFixedContext<T>)mem;
             Assert.Equal(arrT, ctxx.Values.ToArray());
             Assert.Equal(mem.Bytes.ToArray(), ctxx.Bytes.ToArray());
             Assert.True(
@@ -283,10 +283,7 @@ public sealed class FixedMemoryListTest
                     ref MemoryMarshal.GetReference(ctxx.Bytes)));
         }
         else
-        {
-            Assert.Throws<InvalidOperationException>(() => ctxx.Values.ToArray());
-            Assert.Throws<InvalidOperationException>(() => ctxx.Bytes.ToArray());
-        }
+            Assert.Throws<InvalidCastException>(() => (IFixedContext<T>)mem);
     }
     private static void ArrayTest<T>(Byte[] bytes, Array arr) where T : unmanaged
     {

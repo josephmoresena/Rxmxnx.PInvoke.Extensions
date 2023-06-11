@@ -15,7 +15,7 @@ public static partial class NativeUtilities
     {
         fixed (void* ptr = &value)
         {
-            FixedReference<T> ctx = new(ptr, true);
+            ReadOnlyFixedReference<T> ctx = new(ptr);
             try
             {
                 action(ctx);
@@ -42,7 +42,7 @@ public static partial class NativeUtilities
     {
         fixed (void* ptr = &value)
         {
-            FixedReference<T> ctx = new(ptr, true);
+            ReadOnlyFixedReference<T> ctx = new(ptr);
             try
             {
                 action(ctx, arg);
@@ -69,7 +69,7 @@ public static partial class NativeUtilities
     {
         fixed (void* ptr = &value)
         {
-            FixedReference<T> ctx = new(ptr, true);
+            ReadOnlyFixedReference<T> ctx = new(ptr);
             try
             {
                 return func(ctx);
@@ -98,7 +98,7 @@ public static partial class NativeUtilities
     {
         fixed (void* ptr = &value)
         {
-            FixedReference<T> ctx = new(ptr, true);
+            ReadOnlyFixedReference<T> ctx = new(ptr);
             try
             {
                 return func(ctx, arg);

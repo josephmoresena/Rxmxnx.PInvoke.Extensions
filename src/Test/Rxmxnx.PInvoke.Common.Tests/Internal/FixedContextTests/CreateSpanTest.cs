@@ -38,8 +38,8 @@ public sealed class CreateSpanTest : FixedContextTestsBase
     private void Test<T>() where T : unmanaged
     {
         T[] values = fixture.CreateMany<T>().ToArray();
-        base.WithFixed(values, false, Test);
-        Exception readOnly = Assert.Throws<InvalidOperationException>(() => base.WithFixed(values, true, Test));
+        base.WithFixed(values, Test);
+        Exception readOnly = Assert.Throws<InvalidOperationException>(() => base.WithFixed(values, ReadOnlyTest));
         Assert.Equal(ReadOnlyError, readOnly.Message);
     }
 
@@ -60,6 +60,11 @@ public sealed class CreateSpanTest : FixedContextTestsBase
 
         Exception functionException2 = Assert.Throws<InvalidOperationException>(() => ctx.CreateDelegate<Action>());
         Assert.Equal(IsNotFunction, functionException2.Message);
+    }
+
+    private static void ReadOnlyTest<T>(ReadOnlyFixedContext<T> ctx, T[] values) where T : unmanaged
+    {
+        _ = ctx.CreateSpan<T>(values.Length);
     }
 }
 

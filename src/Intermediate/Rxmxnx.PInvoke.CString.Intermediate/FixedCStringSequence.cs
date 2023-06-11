@@ -79,7 +79,7 @@ public unsafe readonly ref struct FixedCStringSequence
     /// <param name="fseq">A <see cref="FixedCStringSequence"/> instance.</param>
     public static implicit operator ReadOnlyFixedMemoryList(FixedCStringSequence fseq)
     {
-        FixedMemory[] memories = new FixedMemory[fseq.Values.Count];
+        ReadOnlyFixedMemory[] memories = new ReadOnlyFixedMemory[fseq.Values.Count];
         for (Int32 i = 0; i < memories.Length; i++)
             memories[i] = fseq.GetFixedCString(i);
         return new(memories);
@@ -101,7 +101,7 @@ public unsafe readonly ref struct FixedCStringSequence
     /// </summary>
     /// <param name="index"></param>
     /// <returns><see cref="FixedContext{Byte}"/> for element at <paramref name="index"/>.</returns>
-    private FixedContext<Byte> GetFixedCString(Int32 index)
+    private ReadOnlyFixedContext<Byte> GetFixedCString(Int32 index)
     {
         CString cstr = this._values![index];
         ReadOnlySpan<Byte> span = cstr;
@@ -114,7 +114,7 @@ public unsafe readonly ref struct FixedCStringSequence
         }
 
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
-            return new(ptr, cstr.Length, true, this._isValid!);
+            return new(ptr, cstr.Length, this._isValid!);
     }
 
     /// <summary>

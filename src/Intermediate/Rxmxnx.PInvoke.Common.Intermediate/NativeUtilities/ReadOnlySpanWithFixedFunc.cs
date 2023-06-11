@@ -24,8 +24,8 @@ public static partial class NativeUtilities
         {
             ReadOnlyFixedMemoryList lst = new
             (
-                new FixedContext<T0>(ptr0, span0.Length, true),
-                new FixedContext<T1>(ptr1, span1.Length, true)
+                new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
+                new ReadOnlyFixedContext<T1>(ptr1, span1.Length)
             );
             try
             {
@@ -60,8 +60,8 @@ public static partial class NativeUtilities
         {
             ReadOnlyFixedMemoryList lst = new
             (
-                new FixedContext<T0>(ptr0, span0.Length, true),
-                new FixedContext<T1>(ptr1, span1.Length, true)
+                new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
+                new ReadOnlyFixedContext<T1>(ptr1, span1.Length)
             );
             try
             {
@@ -97,9 +97,9 @@ public static partial class NativeUtilities
         {
             ReadOnlyFixedMemoryList lst = new
             (
-                new FixedContext<T0>(ptr0, span0.Length, true),
-                new FixedContext<T1>(ptr1, span1.Length, true),
-                new FixedContext<T2>(ptr2, span2.Length, true)
+                new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
+                new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
+                new ReadOnlyFixedContext<T2>(ptr2, span2.Length)
             );
             try
             {
@@ -137,9 +137,9 @@ public static partial class NativeUtilities
         {
             ReadOnlyFixedMemoryList lst = new
             (
-                new FixedContext<T0>(ptr0, span0.Length, true),
-                new FixedContext<T1>(ptr1, span1.Length, true),
-                new FixedContext<T2>(ptr2, span2.Length, true)
+                new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
+                new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
+                new ReadOnlyFixedContext<T2>(ptr2, span2.Length)
             );
             try
             {
@@ -178,10 +178,10 @@ public static partial class NativeUtilities
         {
             ReadOnlyFixedMemoryList lst = new
             (
-                new FixedContext<T0>(ptr0, span0.Length, true),
-                new FixedContext<T1>(ptr1, span1.Length, true),
-                new FixedContext<T2>(ptr2, span2.Length, true),
-                new FixedContext<T3>(ptr3, span3.Length, true)
+                new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
+                new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
+                new ReadOnlyFixedContext<T2>(ptr2, span2.Length),
+                new ReadOnlyFixedContext<T3>(ptr3, span3.Length)
             );
             try
             {
@@ -222,10 +222,10 @@ public static partial class NativeUtilities
         {
             ReadOnlyFixedMemoryList lst = new
             (
-                new FixedContext<T0>(ptr0, span0.Length, true),
-                new FixedContext<T1>(ptr1, span1.Length, true),
-                new FixedContext<T2>(ptr2, span2.Length, true),
-                new FixedContext<T3>(ptr3, span3.Length, true)
+                new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
+                new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
+                new ReadOnlyFixedContext<T2>(ptr2, span2.Length),
+                new ReadOnlyFixedContext<T3>(ptr3, span3.Length)
             );
             try
             {
@@ -268,11 +268,11 @@ public static partial class NativeUtilities
         {
             ReadOnlyFixedMemoryList lst = new
             (
-                new FixedContext<T0>(ptr0, span0.Length, true),
-                new FixedContext<T1>(ptr1, span1.Length, true),
-                new FixedContext<T2>(ptr2, span2.Length, true),
-                new FixedContext<T3>(ptr3, span3.Length, true),
-                new FixedContext<T4>(ptr4, span4.Length, true)
+                new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
+                new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
+                new ReadOnlyFixedContext<T2>(ptr2, span2.Length),
+                new ReadOnlyFixedContext<T3>(ptr3, span3.Length),
+                new ReadOnlyFixedContext<T4>(ptr4, span4.Length)
             );
             try
             {
@@ -317,11 +317,11 @@ public static partial class NativeUtilities
         {
             ReadOnlyFixedMemoryList lst = new
             (
-                new FixedContext<T0>(ptr0, span0.Length, true),
-                new FixedContext<T1>(ptr1, span1.Length, true),
-                new FixedContext<T2>(ptr2, span2.Length, true),
-                new FixedContext<T3>(ptr3, span3.Length, true),
-                new FixedContext<T4>(ptr4, span4.Length, true)
+                new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
+                new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
+                new ReadOnlyFixedContext<T2>(ptr2, span2.Length),
+                new ReadOnlyFixedContext<T3>(ptr3, span3.Length),
+                new ReadOnlyFixedContext<T4>(ptr4, span4.Length)
             );
             try
             {
@@ -368,12 +368,12 @@ public static partial class NativeUtilities
         {
             ReadOnlyFixedMemoryList lst = new
             (
-                new FixedContext<T0>(ptr0, span0.Length, true),
-                new FixedContext<T1>(ptr1, span1.Length, true),
-                new FixedContext<T2>(ptr2, span2.Length, true),
-                new FixedContext<T3>(ptr3, span3.Length, true),
-                new FixedContext<T4>(ptr4, span4.Length, true),
-                new FixedContext<T5>(ptr5, span5.Length, true)
+                new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
+                new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
+                new ReadOnlyFixedContext<T2>(ptr2, span2.Length),
+                new ReadOnlyFixedContext<T3>(ptr3, span3.Length),
+                new ReadOnlyFixedContext<T4>(ptr4, span4.Length),
+                new ReadOnlyFixedContext<T5>(ptr5, span5.Length)
             );
             try
             {
@@ -422,12 +422,12 @@ public static partial class NativeUtilities
         {
             ReadOnlyFixedMemoryList lst = new
             (
-                new FixedContext<T0>(ptr0, span0.Length, true),
-                new FixedContext<T1>(ptr1, span1.Length, true),
-                new FixedContext<T2>(ptr2, span2.Length, true),
-                new FixedContext<T3>(ptr3, span3.Length, true),
-                new FixedContext<T4>(ptr4, span4.Length, true),
-                new FixedContext<T5>(ptr5, span5.Length, true)
+                new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
+                new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
+                new ReadOnlyFixedContext<T2>(ptr2, span2.Length),
+                new ReadOnlyFixedContext<T3>(ptr3, span3.Length),
+                new ReadOnlyFixedContext<T4>(ptr4, span4.Length),
+                new ReadOnlyFixedContext<T5>(ptr5, span5.Length)
             );
             try
             {
@@ -477,13 +477,13 @@ public static partial class NativeUtilities
         {
             ReadOnlyFixedMemoryList lst = new
             (
-                new FixedContext<T0>(ptr0, span0.Length, true),
-                new FixedContext<T1>(ptr1, span1.Length, true),
-                new FixedContext<T2>(ptr2, span2.Length, true),
-                new FixedContext<T3>(ptr3, span3.Length, true),
-                new FixedContext<T4>(ptr4, span4.Length, true),
-                new FixedContext<T5>(ptr5, span5.Length, true),
-                new FixedContext<T6>(ptr6, span6.Length, true)
+                new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
+                new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
+                new ReadOnlyFixedContext<T2>(ptr2, span2.Length),
+                new ReadOnlyFixedContext<T3>(ptr3, span3.Length),
+                new ReadOnlyFixedContext<T4>(ptr4, span4.Length),
+                new ReadOnlyFixedContext<T5>(ptr5, span5.Length),
+                new ReadOnlyFixedContext<T6>(ptr6, span6.Length)
             );
             try
             {
@@ -535,13 +535,13 @@ public static partial class NativeUtilities
         {
             ReadOnlyFixedMemoryList lst = new
             (
-                new FixedContext<T0>(ptr0, span0.Length, true),
-                new FixedContext<T1>(ptr1, span1.Length, true),
-                new FixedContext<T2>(ptr2, span2.Length, true),
-                new FixedContext<T3>(ptr3, span3.Length, true),
-                new FixedContext<T4>(ptr4, span4.Length, true),
-                new FixedContext<T5>(ptr5, span5.Length, true),
-                new FixedContext<T6>(ptr6, span6.Length, true)
+                new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
+                new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
+                new ReadOnlyFixedContext<T2>(ptr2, span2.Length),
+                new ReadOnlyFixedContext<T3>(ptr3, span3.Length),
+                new ReadOnlyFixedContext<T4>(ptr4, span4.Length),
+                new ReadOnlyFixedContext<T5>(ptr5, span5.Length),
+                new ReadOnlyFixedContext<T6>(ptr6, span6.Length)
             );
             try
             {
@@ -594,14 +594,14 @@ public static partial class NativeUtilities
         {
             ReadOnlyFixedMemoryList lst = new
             (
-                new FixedContext<T0>(ptr0, span0.Length, true),
-                new FixedContext<T1>(ptr1, span1.Length, true),
-                new FixedContext<T2>(ptr2, span2.Length, true),
-                new FixedContext<T3>(ptr3, span3.Length, true),
-                new FixedContext<T4>(ptr4, span4.Length, true),
-                new FixedContext<T5>(ptr5, span5.Length, true),
-                new FixedContext<T6>(ptr6, span6.Length, true),
-                new FixedContext<T7>(ptr7, span7.Length, true)
+                new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
+                new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
+                new ReadOnlyFixedContext<T2>(ptr2, span2.Length),
+                new ReadOnlyFixedContext<T3>(ptr3, span3.Length),
+                new ReadOnlyFixedContext<T4>(ptr4, span4.Length),
+                new ReadOnlyFixedContext<T5>(ptr5, span5.Length),
+                new ReadOnlyFixedContext<T6>(ptr6, span6.Length),
+                new ReadOnlyFixedContext<T7>(ptr7, span7.Length)
             );
             try
             {
@@ -656,14 +656,14 @@ public static partial class NativeUtilities
         {
             ReadOnlyFixedMemoryList lst = new
             (
-                new FixedContext<T0>(ptr0, span0.Length, true),
-                new FixedContext<T1>(ptr1, span1.Length, true),
-                new FixedContext<T2>(ptr2, span2.Length, true),
-                new FixedContext<T3>(ptr3, span3.Length, true),
-                new FixedContext<T4>(ptr4, span4.Length, true),
-                new FixedContext<T5>(ptr5, span5.Length, true),
-                new FixedContext<T6>(ptr6, span6.Length, true),
-                new FixedContext<T7>(ptr7, span7.Length, true)
+                new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
+                new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
+                new ReadOnlyFixedContext<T2>(ptr2, span2.Length),
+                new ReadOnlyFixedContext<T3>(ptr3, span3.Length),
+                new ReadOnlyFixedContext<T4>(ptr4, span4.Length),
+                new ReadOnlyFixedContext<T5>(ptr5, span5.Length),
+                new ReadOnlyFixedContext<T6>(ptr6, span6.Length),
+                new ReadOnlyFixedContext<T7>(ptr7, span7.Length)
             );
             try
             {

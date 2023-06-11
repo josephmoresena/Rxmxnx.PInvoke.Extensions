@@ -38,8 +38,8 @@ public sealed class GetHashCodeTest : FixedReferenceTestsBase
     private unsafe void Test<T>() where T : unmanaged
     {
         T value = fixture.Create<T>();
-        base.WithFixed(ref Unsafe.AsRef(value), true, Test);
-        base.WithFixed(ref Unsafe.AsRef(value), false, Test);
+        base.WithFixed(ref Unsafe.AsRef(value), Test);
+        base.WithFixed(ref Unsafe.AsRef(value), ReadOnlyTest);
     }
 
     private static unsafe void Test<T>(FixedReference<T> fref, IntPtr ptr) where T : unmanaged
@@ -64,22 +64,59 @@ public sealed class GetHashCodeTest : FixedReferenceTestsBase
         Assert.Equal(!isReadOnly, hash.ToHashCode().Equals(fref.GetHashCode()));
         Assert.Equal(isReadOnly, hashReadOnly.ToHashCode().Equals(fref.GetHashCode()));
 
-        TransformationTest<T, Boolean>(fref, isReadOnly);
-        TransformationTest<T, Byte>(fref, isReadOnly);
-        TransformationTest<T, Int16>(fref, isReadOnly);
-        TransformationTest<T, Char>(fref, isReadOnly);
-        TransformationTest<T, Int32>(fref, isReadOnly);
-        TransformationTest<T, Int64>(fref, isReadOnly);
-        TransformationTest<T, Int128>(fref, isReadOnly);
-        TransformationTest<T, Single>(fref, isReadOnly);
-        TransformationTest<T, Half>(fref, isReadOnly);
-        TransformationTest<T, Double>(fref, isReadOnly);
-        TransformationTest<T, Decimal>(fref, isReadOnly);
-        TransformationTest<T, DateTime>(fref, isReadOnly);
-        TransformationTest<T, TimeOnly>(fref, isReadOnly);
-        TransformationTest<T, TimeSpan>(fref, isReadOnly);
+        TransformationTest<T, Boolean>(fref);
+        TransformationTest<T, Byte>(fref);
+        TransformationTest<T, Int16>(fref);
+        TransformationTest<T, Char>(fref);
+        TransformationTest<T, Int32>(fref);
+        TransformationTest<T, Int64>(fref);
+        TransformationTest<T, Int128>(fref);
+        TransformationTest<T, Single>(fref);
+        TransformationTest<T, Half>(fref);
+        TransformationTest<T, Double>(fref);
+        TransformationTest<T, Decimal>(fref);
+        TransformationTest<T, DateTime>(fref);
+        TransformationTest<T, TimeOnly>(fref);
+        TransformationTest<T, TimeSpan>(fref);
     }
-    private static unsafe void TransformationTest<T, T2>(FixedReference<T> fref, Boolean readOnly)
+    private static unsafe void ReadOnlyTest<T>(ReadOnlyFixedReference<T> fref, IntPtr ptr) where T : unmanaged
+    {
+        Boolean isReadOnly = fref.IsReadOnly;
+
+        Int32 binaryLength = sizeof(T);
+        HashCode hash = new();
+        HashCode hashReadOnly = new();
+
+        hash.Add(ptr);
+        hash.Add(0);
+        hash.Add(binaryLength);
+        hash.Add(false);
+        hash.Add(typeof(T));
+        hashReadOnly.Add(ptr);
+        hashReadOnly.Add(0);
+        hashReadOnly.Add(binaryLength);
+        hashReadOnly.Add(true);
+        hashReadOnly.Add(typeof(T));
+
+        Assert.Equal(!isReadOnly, hash.ToHashCode().Equals(fref.GetHashCode()));
+        Assert.Equal(isReadOnly, hashReadOnly.ToHashCode().Equals(fref.GetHashCode()));
+
+        TransformationTest<T, Boolean>(fref);
+        TransformationTest<T, Byte>(fref);
+        TransformationTest<T, Int16>(fref);
+        TransformationTest<T, Char>(fref);
+        TransformationTest<T, Int32>(fref);
+        TransformationTest<T, Int64>(fref);
+        TransformationTest<T, Int128>(fref);
+        TransformationTest<T, Single>(fref);
+        TransformationTest<T, Half>(fref);
+        TransformationTest<T, Double>(fref);
+        TransformationTest<T, Decimal>(fref);
+        TransformationTest<T, DateTime>(fref);
+        TransformationTest<T, TimeOnly>(fref);
+        TransformationTest<T, TimeSpan>(fref);
+    }
+    private static unsafe void TransformationTest<T, T2>(FixedReference<T> fref)
         where T : unmanaged
         where T2 : unmanaged
     {
@@ -89,9 +126,25 @@ public sealed class GetHashCodeTest : FixedReferenceTestsBase
         ref readonly T valueRef = ref fref.CreateReadOnlyReference<T>();
         void* ptr = Unsafe.AsPointer(ref Unsafe.AsRef(valueRef));
         ref readonly T2 transformedRef = ref Unsafe.AsRef<T2>(ptr);
-        WithFixed(transformedRef, readOnly, fref, Test);
+        WithFixed(transformedRef, fref, Test);
+    }
+    private static unsafe void TransformationTest<T, T2>(ReadOnlyFixedReference<T> fref)
+        where T : unmanaged
+        where T2 : unmanaged
+    {
+        if (sizeof(T2) > fref.BinaryLength)
+            return;
+
+        ref readonly T valueRef = ref fref.CreateReadOnlyReference<T>();
+        void* ptr = Unsafe.AsPointer(ref Unsafe.AsRef(valueRef));
+        ref readonly T2 transformedRef = ref Unsafe.AsRef<T2>(ptr);
+        WithFixed(transformedRef, fref, Test);
     }
     private static void Test<T, TInt>(FixedReference<TInt> fref2, FixedReference<T> fref)
+        where T : unmanaged
+        where TInt : unmanaged
+        => Assert.Equal(typeof(TInt) == typeof(T), fref2.GetHashCode().Equals(fref.GetHashCode()));
+    private static void Test<T, TInt>(ReadOnlyFixedReference<TInt> fref2, ReadOnlyFixedReference<T> fref)
         where T : unmanaged
         where TInt : unmanaged
         => Assert.Equal(typeof(TInt) == typeof(T), fref2.GetHashCode().Equals(fref.GetHashCode()));

@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-
-namespace Rxmxnx.PInvoke.Tests;
+﻿namespace Rxmxnx.PInvoke.Tests;
 
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]

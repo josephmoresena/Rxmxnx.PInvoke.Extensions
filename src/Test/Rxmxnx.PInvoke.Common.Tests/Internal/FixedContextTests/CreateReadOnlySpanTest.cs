@@ -38,11 +38,30 @@ public sealed class CreateReadOnlySpanTest : FixedContextTestsBase
     private void Test<T>() where T : unmanaged
     {
         T[] values = fixture.CreateMany<T>().ToArray();
-        base.WithFixed(values, false, Test);
-        base.WithFixed(values, true, Test);
+        base.WithFixed(values, Test);
+        base.WithFixed(values, ReadOnlyTest);
     }
 
     private static void Test<T>(FixedContext<T> ctx, T[] values) where T : unmanaged
+    {
+        ReadOnlySpan<T> span = ctx.CreateReadOnlySpan<T>(values.Length);
+        Assert.Equal(values.Length, span.Length);
+        Assert.Equal(values.Length, ctx.Count);
+        Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(values[0]), ref Unsafe.AsRef(span[0])));
+        Assert.False(ctx.IsFunction);
+
+        Exception functionException = Assert.Throws<InvalidOperationException>(() => ctx.CreateDelegate<Action>());
+        Assert.Equal(IsNotFunction, functionException.Message);
+
+        ctx.Unload();
+        Exception invalid = Assert.Throws<InvalidOperationException>(() => ctx.CreateSpan<T>(values.Length));
+        Assert.Equal(InvalidError, invalid.Message);
+
+        Exception functionException2 = Assert.Throws<InvalidOperationException>(() => ctx.CreateDelegate<Action>());
+        Assert.Equal(IsNotFunction, functionException2.Message);
+    }
+
+    private static void ReadOnlyTest<T>(ReadOnlyFixedContext<T> ctx, T[] values) where T : unmanaged
     {
         ReadOnlySpan<T> span = ctx.CreateReadOnlySpan<T>(values.Length);
         Assert.Equal(values.Length, span.Length);

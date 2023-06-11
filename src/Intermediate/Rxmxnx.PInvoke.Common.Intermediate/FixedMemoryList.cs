@@ -31,7 +31,7 @@ public unsafe readonly ref struct FixedMemoryList
     /// <exception cref="IndexOutOfRangeException">
     /// Thrown when the <paramref name="index"/> is out of the range of the list elements.
     /// </exception>
-    public IFixedMemory this[Int32 index] => this._values[index];
+    public IFixedMemory this[Int32 index] => (IFixedMemory)this._values[index];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FixedMemoryList"/> structure.
@@ -49,7 +49,7 @@ public unsafe readonly ref struct FixedMemoryList
     /// <returns>
     /// An array that contains all elements of the current <see cref="FixedMemoryList"/> object.
     /// </returns>
-    public IFixedMemory[] ToArray() => this._values.ToArray();
+    public IFixedMemory[] ToArray() => this._values.Cast<IFixedMemory>().ToArray();
     /// <summary>
     /// Returns an enumerator that iterates through the <see cref="ReadOnlyFixedMemoryList"/>.
     /// </summary>
@@ -95,9 +95,9 @@ public unsafe readonly ref struct FixedMemoryList
         /// </summary>
         /// <param name="values">A <see cref="FixedMemory"/> enumerable instance.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal Enumerator(IEnumerable<FixedMemory> values)
+        internal Enumerator(IEnumerable<ReadOnlyFixedMemory> values)
         {
-            this._enumerator = values.GetEnumerator();
+            this._enumerator = values.Cast<FixedMemory>().GetEnumerator();
         }
 
         /// <summary>

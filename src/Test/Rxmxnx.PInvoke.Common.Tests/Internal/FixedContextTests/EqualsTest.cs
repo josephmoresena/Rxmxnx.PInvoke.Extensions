@@ -38,38 +38,63 @@ public sealed class EqualsTest : FixedContextTestsBase
     private unsafe void Test<T>() where T : unmanaged
     {
         T[] values = fixture.CreateMany<T>(sizeof(Int128) * 3 / sizeof(T)).ToArray();
-        base.WithFixed(values, true, Test);
-        base.WithFixed(values, false, Test);
+        base.WithFixed(values, Test);
+        base.WithFixed(values, ReadOnlyTest);
     }
 
     private static unsafe void Test<T>(FixedContext<T> ctx, T[] values) where T : unmanaged
     {
         fixed (T* ptrValue = values)
         {
-            Test(ctx, false, values.Length);
-            Test(ctx, true, values.Length);
+            Test(ctx, values.Length);
             FalseTest(ctx, values, ptrValue);
         }
     }
 
-    private static unsafe void Test<T>(FixedContext<T> ctx, Boolean isReadOnly, Int32 length) where T : unmanaged
+    private static unsafe void ReadOnlyTest<T>(ReadOnlyFixedContext<T> ctx, T[] values) where T : unmanaged
     {
-        TransformationTest<T, Boolean>(ctx, isReadOnly, length);
-        TransformationTest<T, Byte>(ctx, isReadOnly, length);
-        TransformationTest<T, Int16>(ctx, isReadOnly, length);
-        TransformationTest<T, Char>(ctx, isReadOnly, length);
-        TransformationTest<T, Int32>(ctx, isReadOnly, length);
-        TransformationTest<T, Int64>(ctx, isReadOnly, length);
-        TransformationTest<T, Int128>(ctx, isReadOnly, length);
-        TransformationTest<T, Single>(ctx, isReadOnly, length);
-        TransformationTest<T, Half>(ctx, isReadOnly, length);
-        TransformationTest<T, Double>(ctx, isReadOnly, length);
-        TransformationTest<T, Decimal>(ctx, isReadOnly, length);
-        TransformationTest<T, DateTime>(ctx, isReadOnly, length);
-        TransformationTest<T, TimeOnly>(ctx, isReadOnly, length);
-        TransformationTest<T, TimeSpan>(ctx, isReadOnly, length);
+        fixed (T* ptrValue = values)
+        {
+            Test(ctx, values.Length);
+            FalseTest(ctx, values, ptrValue);
+        }
     }
-    private static unsafe void TransformationTest<T, T2>(FixedContext<T> ctx, Boolean readOnly, Int32 length)
+
+    private static unsafe void Test<T>(FixedContext<T> ctx, Int32 length) where T : unmanaged
+    {
+        TransformationTest<T, Boolean>(ctx, length);
+        TransformationTest<T, Byte>(ctx, length);
+        TransformationTest<T, Int16>(ctx, length);
+        TransformationTest<T, Char>(ctx, length);
+        TransformationTest<T, Int32>(ctx, length);
+        TransformationTest<T, Int64>(ctx, length);
+        TransformationTest<T, Int128>(ctx, length);
+        TransformationTest<T, Single>(ctx, length);
+        TransformationTest<T, Half>(ctx, length);
+        TransformationTest<T, Double>(ctx, length);
+        TransformationTest<T, Decimal>(ctx, length);
+        TransformationTest<T, DateTime>(ctx, length);
+        TransformationTest<T, TimeOnly>(ctx, length);
+        TransformationTest<T, TimeSpan>(ctx, length);
+    }
+    private static unsafe void Test<T>(ReadOnlyFixedContext<T> ctx, Int32 length) where T : unmanaged
+    {
+        TransformationTest<T, Boolean>(ctx, length);
+        TransformationTest<T, Byte>(ctx, length);
+        TransformationTest<T, Int16>(ctx, length);
+        TransformationTest<T, Char>(ctx, length);
+        TransformationTest<T, Int32>(ctx, length);
+        TransformationTest<T, Int64>(ctx, length);
+        TransformationTest<T, Int128>(ctx, length);
+        TransformationTest<T, Single>(ctx, length);
+        TransformationTest<T, Half>(ctx, length);
+        TransformationTest<T, Double>(ctx, length);
+        TransformationTest<T, Decimal>(ctx, length);
+        TransformationTest<T, DateTime>(ctx, length);
+        TransformationTest<T, TimeOnly>(ctx, length);
+        TransformationTest<T, TimeSpan>(ctx, length);
+    }
+    private static unsafe void TransformationTest<T, T2>(FixedContext<T> ctx, Int32 length)
         where T : unmanaged
         where T2 : unmanaged
     {
@@ -79,7 +104,19 @@ public sealed class EqualsTest : FixedContextTestsBase
         ReadOnlySpan<T2> transformedSpan = new(ptr, binaryLength / sizeof(T2));
 
         Assert.Equal(binaryLength, ctx.BinaryLength);
-        WithFixed(transformedSpan, readOnly, ctx, Test);
+        WithFixed(transformedSpan, ctx, Test);
+    }
+    private static unsafe void TransformationTest<T, T2>(ReadOnlyFixedContext<T> ctx, Int32 length)
+        where T : unmanaged
+        where T2 : unmanaged
+    {
+        ReadOnlySpan<T> span = ctx.CreateReadOnlySpan<T>(length);
+        void* ptr = Unsafe.AsPointer(ref MemoryMarshal.GetReference(span));
+        Int32 binaryLength = length * sizeof(T);
+        ReadOnlySpan<T2> transformedSpan = new(ptr, binaryLength / sizeof(T2));
+
+        Assert.Equal(binaryLength, ctx.BinaryLength);
+        WithFixed(transformedSpan, ctx, Test);
     }
     private static void Test<T, TInt>(FixedContext<TInt> ctx2, FixedContext<T> ctx)
         where T : unmanaged
@@ -93,12 +130,42 @@ public sealed class EqualsTest : FixedContextTestsBase
         Assert.False(ctx2.Equals(null));
         Assert.False(ctx2.Equals(new Object()));
     }
+    private static void Test<T, TInt>(ReadOnlyFixedContext<TInt> ctx2, ReadOnlyFixedContext<T> ctx)
+        where T : unmanaged
+        where TInt : unmanaged
+    {
+        Boolean equal = ctx.IsReadOnly == ctx2.IsReadOnly && typeof(TInt) == typeof(T);
+
+        Assert.Equal(equal, ctx2.Equals(ctx));
+        Assert.Equal(equal, ctx2.Equals((Object)ctx));
+        Assert.Equal(equal, ctx2.Equals(ctx as ReadOnlyFixedContext<TInt>));
+        Assert.False(ctx2.Equals(null));
+        Assert.False(ctx2.Equals(new Object()));
+    }
     private static unsafe void FalseTest<T>(FixedContext<T> ctx, T[] values, T* ptrValue) where T : unmanaged
     {
-        FixedContext<T> ctx1 = new(ptrValue, values.Length - 1, true);
-        FixedContext<T> ctx2 = new(ptrValue, values.Length - 1, false);
-        FixedContext<T> ctx3 = new(ptrValue + 1, values.Length - 1, true);
-        FixedContext<T> ctx4 = new(ptrValue + 1, values.Length - 1, false);
+        ReadOnlyFixedContext<T> ctx1 = new(ptrValue, values.Length - 1);
+        FixedContext<T> ctx2 = new(ptrValue, values.Length - 1);
+        ReadOnlyFixedContext<T> ctx3 = new(ptrValue + 1, values.Length - 1);
+        FixedContext<T> ctx4 = new(ptrValue + 1, values.Length - 1);
+
+        Assert.False(ctx.Equals(ctx1));
+        Assert.False(ctx.Equals(ctx2));
+        Assert.False(ctx.Equals(ctx3));
+        Assert.False(ctx.Equals(ctx4));
+        Assert.False(ctx1.Equals(ctx2));
+        Assert.False(ctx1.Equals(ctx3));
+        Assert.False(ctx1.Equals(ctx4));
+        Assert.False(ctx2.Equals(ctx3));
+        Assert.False(ctx2.Equals(ctx4));
+        Assert.False(ctx3.Equals(ctx4));
+    }
+    private static unsafe void FalseTest<T>(ReadOnlyFixedContext<T> ctx, T[] values, T* ptrValue) where T : unmanaged
+    {
+        ReadOnlyFixedContext<T> ctx1 = new(ptrValue, values.Length - 1);
+        FixedContext<T> ctx2 = new(ptrValue, values.Length - 1);
+        ReadOnlyFixedContext<T> ctx3 = new(ptrValue + 1, values.Length - 1);
+        FixedContext<T> ctx4 = new(ptrValue + 1, values.Length - 1);
 
         Assert.False(ctx.Equals(ctx1));
         Assert.False(ctx.Equals(ctx2));

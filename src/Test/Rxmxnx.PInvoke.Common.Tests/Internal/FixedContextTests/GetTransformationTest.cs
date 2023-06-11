@@ -38,67 +38,107 @@ public sealed class GetTransformationTest : FixedContextTestsBase
     private void Test<T>() where T : unmanaged
     {
         T[] values = fixture.CreateMany<T>().ToArray();
-        base.WithFixed(values, false, Test);
-        base.WithFixed(values, true, Test);
+        base.WithFixed(values, Test);
+        base.WithFixed(values, ReadOnlyTest);
     }
 
-    private static void Test<T>(FixedContext<T> ctx, T[] values) where T : unmanaged
+    private static void Test<T>(FixedContext<T> ctx, T[] _) where T : unmanaged
     {
         Boolean isReadOnly = ctx.IsReadOnly;
 
-        Test<T, Boolean>(ctx, isReadOnly);
-        Test<T, Byte>(ctx, isReadOnly);
-        Test<T, Int16>(ctx, isReadOnly);
-        Test<T, Char>(ctx, isReadOnly);
-        Test<T, Int32>(ctx, isReadOnly);
-        Test<T, Int64>(ctx, isReadOnly);
-        Test<T, Int128>(ctx, isReadOnly);
-        Test<T, Single>(ctx, isReadOnly);
-        Test<T, Half>(ctx, isReadOnly);
-        Test<T, Double>(ctx, isReadOnly);
-        Test<T, Decimal>(ctx, isReadOnly);
-        Test<T, DateTime>(ctx, isReadOnly);
-        Test<T, TimeOnly>(ctx, isReadOnly);
-        Test<T, TimeSpan>(ctx, isReadOnly);
+        Test<T, Boolean>(ctx);
+        Test<T, Byte>(ctx);
+        Test<T, Int16>(ctx);
+        Test<T, Char>(ctx);
+        Test<T, Int32>(ctx);
+        Test<T, Int64>(ctx);
+        Test<T, Int128>(ctx);
+        Test<T, Single>(ctx);
+        Test<T, Half>(ctx);
+        Test<T, Double>(ctx);
+        Test<T, Decimal>(ctx);
+        Test<T, DateTime>(ctx);
+        Test<T, TimeOnly>(ctx);
+        Test<T, TimeSpan>(ctx);
 
         ctx.Unload();
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Boolean>(ctx, isReadOnly)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Byte>(ctx, isReadOnly)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Int16>(ctx, isReadOnly)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Char>(ctx, isReadOnly)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Int32>(ctx, isReadOnly)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Int64>(ctx, isReadOnly)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Int128>(ctx, isReadOnly)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Single>(ctx, isReadOnly)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Half>(ctx, isReadOnly)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Double>(ctx, isReadOnly)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Decimal>(ctx, isReadOnly)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, DateTime>(ctx, isReadOnly)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, TimeOnly>(ctx, isReadOnly)).Message);
-        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, TimeSpan>(ctx, isReadOnly)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Boolean>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Byte>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Int16>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Char>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Int32>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Int64>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Int128>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Single>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Half>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Double>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Decimal>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, DateTime>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, TimeOnly>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, TimeSpan>(ctx)).Message);
     }
-    private static unsafe void Test<T, T2>(FixedContext<T> ctx, Boolean isReadOnly)
+    private static void ReadOnlyTest<T>(ReadOnlyFixedContext<T> ctx, T[] _) where T : unmanaged
+    {
+        Boolean isReadOnly = ctx.IsReadOnly;
+
+        Test<T, Boolean>(ctx);
+        Test<T, Byte>(ctx);
+        Test<T, Int16>(ctx);
+        Test<T, Char>(ctx);
+        Test<T, Int32>(ctx);
+        Test<T, Int64>(ctx);
+        Test<T, Int128>(ctx);
+        Test<T, Single>(ctx);
+        Test<T, Half>(ctx);
+        Test<T, Double>(ctx);
+        Test<T, Decimal>(ctx);
+        Test<T, DateTime>(ctx);
+        Test<T, TimeOnly>(ctx);
+        Test<T, TimeSpan>(ctx);
+
+        ctx.Unload();
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Boolean>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Byte>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Int16>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Char>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Int32>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Int64>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Int128>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Single>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Half>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Double>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, Decimal>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, DateTime>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, TimeOnly>(ctx)).Message);
+        Assert.Equal(InvalidError, Assert.Throws<InvalidOperationException>(() => Test<T, TimeSpan>(ctx)).Message);
+    }
+    private static unsafe void Test<T, T2>(FixedContext<T> ctx)
         where T : unmanaged
         where T2 : unmanaged
     {
         FixedContext<T2> result = ctx.GetTransformation<T2>(out FixedOffset offset, true);
         Assert.NotNull(result);
-        ContextTest(ctx, offset, result, isReadOnly);
+        ContextTest(ctx, offset, result);
 
-        if (!isReadOnly)
-        {
-            FixedContext<T2> result2 = ctx.GetTransformation<T2>(out FixedOffset offset2, false);
-            Assert.NotNull(result2);
-            Assert.Equal(offset, offset2);
-            Assert.Equal(result, result2);
-        }
-        else
-        {
-            Exception readOnly = Assert.Throws<InvalidOperationException>(() => ctx.GetTransformation<T2>(out FixedOffset offset2, false));
-            Assert.Equal(ReadOnlyError, readOnly.Message);
-        }
+        FixedContext<T2> result2 = ctx.GetTransformation<T2>(out FixedOffset offset2, false);
+        Assert.NotNull(result2);
+        Assert.Equal(offset, offset2);
+        Assert.Equal(result, result2);
     }
-    private static unsafe void ContextTest<T, T2>(FixedContext<T> ctx, FixedOffset offset, FixedContext<T2> result, Boolean isReadOnly)
+    private static unsafe void Test<T, T2>(ReadOnlyFixedContext<T> ctx)
+        where T : unmanaged
+        where T2 : unmanaged
+    {
+        ReadOnlyFixedContext<T2> result = ctx.GetTransformation<T2>(out ReadOnlyFixedOffset offset);
+        Assert.NotNull(result);
+        ContextTest(ctx, offset, result);
+
+        ReadOnlyFixedContext<T2> result2 = ctx.GetTransformation<T2>(out ReadOnlyFixedOffset offset2);
+        Assert.NotNull(result2);
+        Assert.Equal(offset, offset2);
+        Assert.Equal(result, result2);
+    }
+    private static unsafe void ContextTest<T, T2>(FixedContext<T> ctx, FixedOffset offset, FixedContext<T2> result)
         where T : unmanaged
         where T2 : unmanaged
     {
@@ -108,7 +148,7 @@ public sealed class GetTransformationTest : FixedContextTestsBase
         hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref Unsafe.AsRef(ctx.CreateReadOnlyReference<Byte>()))));
         hashResidual.Add(offsetT2);
         hashResidual.Add(ctx.BinaryLength);
-        hashResidual.Add(isReadOnly);
+        hashResidual.Add(false);
 
         Assert.Equal(countT2, result.Count);
         Assert.Equal(0, ctx.BinaryOffset);
@@ -118,10 +158,7 @@ public sealed class GetTransformationTest : FixedContextTestsBase
         Assert.Equal(ctx.BinaryLength, offset.BinaryLength + offset.BinaryOffset);
         Assert.Equal(hashResidual.ToHashCode(), offset.GetHashCode());
 
-        if (!isReadOnly)
-            Assert.Equal(ctx.CreateBinarySpan()[offset.BinaryOffset..].ToArray(), offset.CreateBinarySpan().ToArray());
-        else
-            Assert.Equal(ReadOnlyError, Assert.Throws<InvalidOperationException>(() => offset.CreateBinarySpan()).Message);
+        Assert.Equal(ctx.CreateBinarySpan()[offset.BinaryOffset..].ToArray(), offset.CreateBinarySpan().ToArray());
 
         _ = ctx.GetTransformation<Boolean>(out FixedOffset offset2, true);
         OffsetTest<T2, Boolean>(offset, offset2);
@@ -155,8 +192,76 @@ public sealed class GetTransformationTest : FixedContextTestsBase
         Exception functionException = Assert.Throws<InvalidOperationException>(() => offset.CreateDelegate<Action>());
         Assert.Equal(IsNotFunction, functionException.Message);
     }
+    private static unsafe void ContextTest<T, T2>(ReadOnlyFixedContext<T> ctx, ReadOnlyFixedOffset offset, ReadOnlyFixedContext<T2> result)
+        where T : unmanaged
+        where T2 : unmanaged
+    {
+        Int32 countT2 = ctx.BinaryLength / sizeof(T2);
+        Int32 offsetT2 = countT2 * sizeof(T2);
+        HashCode hashResidual = new();
+        hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref Unsafe.AsRef(ctx.CreateReadOnlyReference<Byte>()))));
+        hashResidual.Add(offsetT2);
+        hashResidual.Add(ctx.BinaryLength);
+        hashResidual.Add(true);
+
+        Assert.Equal(countT2, result.Count);
+        Assert.Equal(0, ctx.BinaryOffset);
+        Assert.Equal(offsetT2, offset.BinaryOffset);
+        Assert.Equal(ctx.CreateReadOnlyBinarySpan()[offset.BinaryOffset..].ToArray(), offset.CreateReadOnlyBinarySpan().ToArray());
+        Assert.Equal(ctx.BinaryLength, result.BinaryLength);
+        Assert.Equal(ctx.BinaryLength, offset.BinaryLength + offset.BinaryOffset);
+        Assert.Equal(hashResidual.ToHashCode(), offset.GetHashCode());
+
+        Assert.Equal(ReadOnlyError, Assert.Throws<InvalidOperationException>(() => offset.CreateBinarySpan()).Message);
+
+        _ = ctx.GetTransformation<Boolean>(out ReadOnlyFixedOffset offset2);
+        OffsetTest<T2, Boolean>(offset, offset2);
+        _ = ctx.GetTransformation<Byte>(out offset2);
+        OffsetTest<T2, Byte>(offset, offset2);
+        _ = ctx.GetTransformation<Int16>(out offset2);
+        OffsetTest<T2, Int16>(offset, offset2);
+        _ = ctx.GetTransformation<Char>(out offset2);
+        OffsetTest<T2, Char>(offset, offset2);
+        _ = ctx.GetTransformation<Int32>(out offset2);
+        OffsetTest<T2, Int32>(offset, offset2);
+        _ = ctx.GetTransformation<Int64>(out offset2);
+        OffsetTest<T2, Int64>(offset, offset2);
+        _ = ctx.GetTransformation<Int128>(out offset2);
+        OffsetTest<T2, Int128>(offset, offset2);
+        _ = ctx.GetTransformation<Single>(out offset2);
+        OffsetTest<T2, Single>(offset, offset2);
+        _ = ctx.GetTransformation<Half>(out offset2);
+        OffsetTest<T2, Half>(offset, offset2);
+        _ = ctx.GetTransformation<Double>(out offset2);
+        OffsetTest<T2, Double>(offset, offset2);
+        _ = ctx.GetTransformation<Decimal>(out offset2);
+        OffsetTest<T2, Decimal>(offset, offset2);
+        _ = ctx.GetTransformation<DateTime>(out offset2);
+        OffsetTest<T2, DateTime>(offset, offset2);
+        _ = ctx.GetTransformation<TimeOnly>(out offset2);
+        OffsetTest<T2, TimeOnly>(offset, offset2);
+        _ = ctx.GetTransformation<TimeSpan>(out offset2);
+        OffsetTest<T2, TimeSpan>(offset, offset2);
+
+        Exception functionException = Assert.Throws<InvalidOperationException>(() => offset.CreateDelegate<Action>());
+        Assert.Equal(IsNotFunction, functionException.Message);
+    }
 
     private static unsafe void OffsetTest<T2, T3>(FixedOffset offset1, FixedOffset offset2)
+        where T2 : unmanaged
+        where T3 : unmanaged
+    {
+        Boolean equal = sizeof(T2) == sizeof(T3) || offset1.BinaryLength == offset2.BinaryLength;
+        Assert.Equal(equal, offset1.Equals(offset2));
+        Assert.Equal(equal, offset1.Equals((Object)offset2));
+        Assert.False(offset2.IsFunction);
+        if (equal)
+            Assert.Equal(offset1.CreateReadOnlyBinarySpan().ToArray(), offset2.CreateReadOnlyBinarySpan().ToArray());
+
+        Exception functionException = Assert.Throws<InvalidOperationException>(() => offset2.CreateDelegate<Action>());
+        Assert.Equal(IsNotFunction, functionException.Message);
+    }
+    private static unsafe void OffsetTest<T2, T3>(ReadOnlyFixedOffset offset1, ReadOnlyFixedOffset offset2)
         where T2 : unmanaged
         where T3 : unmanaged
     {

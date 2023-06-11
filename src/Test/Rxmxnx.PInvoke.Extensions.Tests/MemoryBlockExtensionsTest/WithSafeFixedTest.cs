@@ -102,8 +102,6 @@ public sealed class WithSafeFixedTest
     {
         IReadOnlyFixedContext<Byte> bctx = ctx.AsBinaryContext();
         T[] arr = (T[])_array!;
-        IFixedContext<Byte> bctx2 = (IFixedContext<Byte>)ctx.AsBinaryContext();
-        IFixedContext<T> ctx2 = (IFixedContext<T>)ctx;
 
         Assert.Equal(ctx.Pointer, bctx.Pointer);
         Assert.Equal(bctx, ctx.AsBinaryContext());
@@ -118,6 +116,8 @@ public sealed class WithSafeFixedTest
 
         if (!readOnly)
         {
+            IFixedContext<Byte> bctx2 = (IFixedContext<Byte>)ctx.AsBinaryContext();
+            IFixedContext<T> ctx2 = (IFixedContext<T>)ctx;
             Assert.Equal(bctx2, ctx2.AsBinaryContext());
             Assert.Equal(ctx.Bytes.ToArray(), ctx2.Bytes.ToArray());
             Assert.Equal(arr, ctx2.Values.ToArray());
@@ -129,11 +129,7 @@ public sealed class WithSafeFixedTest
                 ref MemoryMarshal.GetReference(ctx2.Values)));
         }
         else
-        {
-            Assert.Throws<InvalidOperationException>(() => bctx2.Bytes.ToArray());
-            Assert.Throws<InvalidOperationException>(() => ctx2.Bytes.ToArray());
-            Assert.Throws<InvalidOperationException>(() => bctx2.Values.ToArray());
-        }
+            Assert.Throws<InvalidCastException>(() => (IFixedContext<Byte>)ctx.AsBinaryContext());
 
         Test<T, Boolean>(ctx);
         Test<T, Byte>(ctx);

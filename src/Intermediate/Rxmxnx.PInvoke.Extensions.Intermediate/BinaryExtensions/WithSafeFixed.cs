@@ -59,7 +59,7 @@ public static partial class BinaryExtensions
     {
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
-            FixedContext<Byte> ctx = new(ptr, span.Length, true);
+            ReadOnlyFixedContext<Byte> ctx = new(ptr, span.Length);
             try
             {
                 action(ctx);
@@ -134,7 +134,7 @@ public static partial class BinaryExtensions
     {
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
-            FixedContext<Byte> ctx = new(ptr, span.Length, true);
+            ReadOnlyFixedContext<Byte> ctx = new(ptr, span.Length);
             try
             {
                 action(ctx, arg);
@@ -209,7 +209,7 @@ public static partial class BinaryExtensions
     {
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
-            FixedContext<Byte> ctx = new(ptr, span.Length, true);
+            ReadOnlyFixedContext<Byte> ctx = new(ptr, span.Length);
             try
             {
                 return func(ctx);
@@ -293,7 +293,7 @@ public static partial class BinaryExtensions
         ArgumentNullException.ThrowIfNull(func);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
-            FixedContext<Byte> ctx = new(ptr, span.Length, true);
+            ReadOnlyFixedContext<Byte> ctx = new(ptr, span.Length);
             try
             {
                 return func(ctx, arg);

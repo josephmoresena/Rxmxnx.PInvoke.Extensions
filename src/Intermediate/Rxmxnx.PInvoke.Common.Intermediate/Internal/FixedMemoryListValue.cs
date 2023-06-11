@@ -3,12 +3,12 @@
 /// <summary>
 /// Represents a list of <see cref="FixedMemory"/> instances.
 /// </summary>
-internal readonly struct FixedMemoryListValue : IEnumerableSequence<FixedMemory>
+internal readonly struct FixedMemoryListValue : IEnumerableSequence<ReadOnlyFixedMemory>
 {
     /// <summary>
-    /// Array of <see cref="FixedMemory"/> instances.
+    /// Array of <see cref="ReadOnlyFixedMemory"/> instances.
     /// </summary>
-    private readonly FixedMemory[]? _memories;
+    private readonly ReadOnlyFixedMemory[]? _memories;
 
     /// <summary>
     /// Gets the total number of elements in the list.
@@ -22,7 +22,7 @@ internal readonly struct FixedMemoryListValue : IEnumerableSequence<FixedMemory>
     /// <exception cref="IndexOutOfRangeException">
     /// Thrown when <paramref name="index"/> is not a valid index in the list.
     /// </exception>
-    public FixedMemory this[Int32 index]
+    public ReadOnlyFixedMemory this[Int32 index]
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
@@ -35,22 +35,22 @@ internal readonly struct FixedMemoryListValue : IEnumerableSequence<FixedMemory>
     /// <summary>
     /// Initializes a new instance of the <see cref="FixedMemoryListValue"/> struct.
     /// </summary>
-    /// <param name="memories">The array of <see cref="FixedMemory"/> instances.</param>
-    public FixedMemoryListValue(FixedMemory[] memories)
+    /// <param name="memories">The array of <see cref="ReadOnlyFixedMemory"/> instances.</param>
+    public FixedMemoryListValue(ReadOnlyFixedMemory[] memories)
     {
         this._memories = memories;
     }
 
     /// <summary>
-    /// Releases all resources used by the <see cref="FixedMemory"/> instances in the list.
+    /// Releases all resources used by the <see cref="ReadOnlyFixedMemory"/> instances in the list.
     /// </summary>
     public void Unload()
     {
         if (this._memories is not null)
-            foreach (FixedMemory mem in this._memories)
+            foreach (ReadOnlyFixedMemory mem in this._memories)
                 mem.Unload();
     }
 
-    FixedMemory IEnumerableSequence<FixedMemory>.GetItem(Int32 index) => this[index];
-    Int32 IEnumerableSequence<FixedMemory>.GetSize() => this.Count;
+    ReadOnlyFixedMemory IEnumerableSequence<ReadOnlyFixedMemory>.GetItem(Int32 index) => this[index];
+    Int32 IEnumerableSequence<ReadOnlyFixedMemory>.GetSize() => this.Count;
 }

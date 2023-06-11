@@ -38,8 +38,8 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
     private void Test<T>() where T : unmanaged
     {
         T value = fixture.Create<T>();
-        base.WithFixed(ref Unsafe.AsRef(value), false, Test);
-        base.WithFixed(ref Unsafe.AsRef(value), true, Test);
+        base.WithFixed(ref Unsafe.AsRef(value), Test);
+        base.WithFixed(ref Unsafe.AsRef(value), ReadOnlyTest);
     }
 
     private static unsafe void Test<T>(FixedReference<T> fref, IntPtr ptr) where T : unmanaged
@@ -74,8 +74,66 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
         Exception functionException = Assert.Throws<InvalidOperationException>(() => fref.CreateDelegate<Action>());
         Assert.Equal(IsNotFunction, functionException.Message);
     }
+    private static unsafe void ReadOnlyTest<T>(ReadOnlyFixedReference<T> fref, IntPtr ptr) where T : unmanaged
+    {
+        ref T refValue = ref Unsafe.AsRef(fref.CreateReadOnlyReference<T>());
+        IntPtr ptr2 = new(Unsafe.AsPointer(ref refValue));
+        Assert.Equal(ptr2, ptr);
+        Assert.True(Unsafe.AreSame(ref Unsafe.AsRef<T>(ptr.ToPointer()), ref refValue));
+        Assert.Equal(sizeof(T), fref.BinaryLength);
+        Assert.Equal(0, fref.BinaryOffset);
+        Assert.False(fref.IsFunction);
+
+        TestSize<T, Boolean>(fref);
+        TestSize<T, Byte>(fref);
+        TestSize<T, Int16>(fref);
+        TestSize<T, Char>(fref);
+        TestSize<T, Int32>(fref);
+        TestSize<T, Int64>(fref);
+        TestSize<T, Int128>(fref);
+        TestSize<T, Guid>(fref);
+        TestSize<T, Single>(fref);
+        TestSize<T, Half>(fref);
+        TestSize<T, Double>(fref);
+        TestSize<T, Decimal>(fref);
+        TestSize<T, DateTime>(fref);
+        TestSize<T, TimeOnly>(fref);
+        TestSize<T, TimeSpan>(fref);
+
+        fref.Unload();
+        Exception invalid = Assert.Throws<InvalidOperationException>(() => fref.CreateReadOnlyReference<T>());
+        Assert.Equal(InvalidError, invalid.Message);
+        Exception functionException = Assert.Throws<InvalidOperationException>(() => fref.CreateDelegate<Action>());
+        Assert.Equal(IsNotFunction, functionException.Message);
+    }
 
     private static unsafe void TestSize<T, T2>(FixedReference<T> fref) where T : unmanaged where T2 : unmanaged
+    {
+        Int32 size = sizeof(T);
+        Int32 size2 = sizeof(T2);
+
+        if (size < size2)
+        {
+            Exception invalidSize = Assert.Throws<InsufficientMemoryException>(() => fref.CreateReadOnlyReference<T2>());
+            Assert.Equal(String.Format(InvalidSizeFormat, typeof(T2)), invalidSize.Message);
+        }
+        else
+        {
+            ref T value = ref Unsafe.AsRef(fref.CreateReadOnlyReference<T>());
+            ref T2 value2 = ref Unsafe.AsRef(fref.CreateReadOnlyReference<T2>());
+            Byte[] bytes1 = new ReadOnlySpan<Byte>(Unsafe.AsPointer(ref value), size).ToArray();
+            Byte[] bytes2 = new ReadOnlySpan<Byte>(Unsafe.AsPointer(ref value), size2).ToArray();
+
+            Assert.Equal(bytes1[..size2], bytes2);
+
+            if (typeof(T) == typeof(T2))
+                Assert.Equal((Object)value, (Object)value2);
+        }
+
+        Exception functionException = Assert.Throws<InvalidOperationException>(() => fref.CreateDelegate<Action>());
+        Assert.Equal(IsNotFunction, functionException.Message);
+    }
+    private static unsafe void TestSize<T, T2>(ReadOnlyFixedReference<T> fref) where T : unmanaged where T2 : unmanaged
     {
         Int32 size = sizeof(T);
         Int32 size2 = sizeof(T2);

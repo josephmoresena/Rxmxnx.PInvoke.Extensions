@@ -46,6 +46,16 @@ public unsafe readonly ref struct ReadOnlyFixedMemoryList
     /// <summary>
     /// Initializes a new instance of the <see cref="ReadOnlyFixedMemoryList"/> structure.
     /// </summary>
+    /// <param name="memories">An array of <see cref="ReadOnlyFixedMemory"/> instances to be stored in the list.</param>
+    /// <remarks>This constructor initializes the list with the provided fixed memory blocks.</remarks>
+    internal ReadOnlyFixedMemoryList(params ReadOnlyFixedMemory[] memories)
+    {
+        this._values = new(memories);
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReadOnlyFixedMemoryList"/> structure.
+    /// </summary>
     /// <param name="values">An instance of the <see cref="FixedMemoryListValue"/> to be stored in the list.</param>
     /// <remarks>This constructor initializes the list with the provided internal fixed memory list value.</remarks>
     internal ReadOnlyFixedMemoryList(FixedMemoryListValue values)
@@ -79,7 +89,7 @@ public unsafe readonly ref struct ReadOnlyFixedMemoryList
         /// <summary>
         /// Internal enumerator.
         /// </summary>
-        private readonly IEnumerator<FixedMemory> _enumerator;
+        private readonly IEnumerator<ReadOnlyFixedMemory> _enumerator;
 
         /// <summary>
         /// Gets the element at the current position of the enumerator.
@@ -99,7 +109,7 @@ public unsafe readonly ref struct ReadOnlyFixedMemoryList
         /// </summary>
         /// <param name="values">A <see cref="FixedMemory"/> enumerable instance.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal Enumerator(IEnumerable<FixedMemory> values)
+        internal Enumerator(IEnumerable<ReadOnlyFixedMemory> values)
         {
             this._enumerator = values.GetEnumerator();
         }

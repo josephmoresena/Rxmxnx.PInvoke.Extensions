@@ -3,7 +3,9 @@
 /// <summary>
 /// Represents a fixed memory block for a specific type.
 /// </summary>
-/// <typeparam name="T">The type of the items in the fixed memory block. Must be unmanaged.</typeparam>
+/// <typeparam name="T">
+/// The type of the items in the fixed memory block. Must be <see langword="unmanaged"/>.
+/// </typeparam>
 internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IEquatable<FixedContext<T>>
     where T : unmanaged
 {
@@ -48,24 +50,24 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
 
     /// <summary>
     /// Constructs a new <see cref="FixedContext{T}"/> instance using a pointer to a fixed memory block,
-    /// a count of items, and an optional read-only flag.
+    /// and a count of items.
     /// </summary>
     /// <param name="ptr">The pointer to the fixed memory block.</param>
     /// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
     /// <param name="isReadOnly">A value that indicates whether the memory block is read-only.</param>
-    public FixedContext(void* ptr, Int32 count, Boolean isReadOnly = false) : base(ptr, count * sizeof(T), isReadOnly)
+    public FixedContext(void* ptr, Int32 count) : base(ptr, count * sizeof(T))
     {
         this._count = count;
     }
     /// <summary>
     /// Constructs a new <see cref="FixedContext{T}"/> instance using a pointer to a fixed memory block,
-    /// a count of items, a read-only flag, and a validity wrapper.
+    /// a count of items, and a validity wrapper.
     /// </summary>
     /// <param name="ptr">The pointer to the fixed memory block.</param>
     /// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
     /// <param name="isReadOnly">A value that indicates whether the memory block is read-only.</param>
     /// <param name="isValid">A mutable wrapper that indicates whether the current instance remains valid.</param>
-    public FixedContext(void* ptr, Int32 count, Boolean isReadOnly, IMutableWrapper<Boolean> isValid) : base(ptr, count * sizeof(T), isReadOnly, isValid)
+    public FixedContext(void* ptr, Int32 count, IMutableWrapper<Boolean> isValid) : base(ptr, count * sizeof(T), isValid)
     {
         this._count = count;
     }
@@ -98,10 +100,6 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
     /// Output. Provides a fixed offset that represents the remaining portion of memory that is not included in the new context.
     /// This is calculated based on the size of the new type compared to the size of the original memory block.
     /// </param>
-    /// <param name="isReadOnly">
-    /// Indicates whether the transformation operation should be performed as a read-only operation.
-    /// </param>
-    /// <returns>
     /// A new instance of FixedContext for the destination type, which represents a fixed memory context of the new type.
     /// </returns>
     /// <remarks>
