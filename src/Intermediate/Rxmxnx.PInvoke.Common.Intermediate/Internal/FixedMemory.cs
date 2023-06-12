@@ -12,14 +12,6 @@ internal unsafe abstract class FixedMemory : ReadOnlyFixedMemory, IFixedMemory, 
     /// <param name="binaryLength">Memory block size in bytes.</param>
     protected FixedMemory(void* ptr, Int32 binaryLength) : base(ptr, binaryLength, false) { }
     /// <summary>
-    /// Constructs a new <see cref="FixedMemory"/> instance using a pointer to a memory block, its size,
-    /// and a valid status.
-    /// </summary>
-    /// <param name="ptr">Pointer to fixed memory block.</param>
-    /// <param name="binaryLength">Memory block size in bytes.</param>
-    /// <param name="isValid">Indicates whether current instance remains valid.</param>
-    protected FixedMemory(void* ptr, Int32 binaryLength, IMutableWrapper<Boolean> isValid) : base(ptr, binaryLength, false, isValid) { }
-    /// <summary>
     /// Constructs a new <see cref="FixedMemory"/> instance using another instance as a template.
     /// </summary>
     /// <param name="mem">The <see cref="FixedMemory"/> instance to copy data from.</param>

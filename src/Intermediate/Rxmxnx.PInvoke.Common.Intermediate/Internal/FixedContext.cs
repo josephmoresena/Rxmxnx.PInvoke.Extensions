@@ -60,18 +60,6 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
         this._count = count;
     }
     /// <summary>
-    /// Constructs a new <see cref="FixedContext{T}"/> instance using a pointer to a fixed memory block,
-    /// a count of items, and a validity wrapper.
-    /// </summary>
-    /// <param name="ptr">The pointer to the fixed memory block.</param>
-    /// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
-    /// <param name="isReadOnly">A value that indicates whether the memory block is read-only.</param>
-    /// <param name="isValid">A mutable wrapper that indicates whether the current instance remains valid.</param>
-    public FixedContext(void* ptr, Int32 count, IMutableWrapper<Boolean> isValid) : base(ptr, count * sizeof(T), isValid)
-    {
-        this._count = count;
-    }
-    /// <summary>
     /// Constructs a new <see cref="FixedContext{T}"/> instance using an offset and a fixed memory instance.
     /// </summary>
     /// <param name="offset">The offset in the memory block.</param>

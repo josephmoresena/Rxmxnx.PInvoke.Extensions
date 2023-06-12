@@ -33,7 +33,6 @@ internal unsafe sealed class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IRea
         residual = fixedOffset;
         return result;
     }
-    IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.GetTransformation<Byte>(out _);
 
     /// <summary>
     /// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a pointer to a fixed memory block,
