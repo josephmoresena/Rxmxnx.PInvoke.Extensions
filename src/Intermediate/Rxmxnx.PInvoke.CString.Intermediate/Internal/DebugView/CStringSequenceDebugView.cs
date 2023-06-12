@@ -1,33 +1,46 @@
 ﻿namespace Rxmxnx.PInvoke.Internal.DebugView;
 
 /// <summary>
-/// Debug View class for <see cref="CStringSequence"/>
+/// Provides a debug view for the <see cref="CStringSequence"/> and <see cref="FixedCStringSequence"/> classes.
 /// </summary>
+/// <remarks>
+/// This class helps to visualize the content of a <see cref="CStringSequence"/> or  <see cref="FixedCStringSequence"/> instance,
+/// displaying each CString as a part of a sequence.
+/// </remarks>
 [ExcludeFromCodeCoverage]
 internal sealed record CStringSequenceDebugView
 {
     /// <summary>
-    /// Internal value.
+    /// Internal array representation of the sequence for debugging.
     /// </summary>
-    private readonly String[] _value;
+    private readonly CString[] _values;
 
     /// <summary>
-    /// Value to display.
+    /// Provides a readable representation of the sequence for debugging.
     /// </summary>
     [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-    public IReadOnlyList<String> Display => this._value;
+    public IReadOnlyList<CString> Display => this._values;
+    /// <summary>
+    /// Provides the number of items in the sequence for debugging.
+    /// </summary>
+    public Int32 Count => this._values.Length;
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="CStringSequenceDebugView"/> class with the
+    /// specified <see cref="CStringSequence"/> instance.
     /// </summary>
-    /// <param name="seq">A <see cref="CStringSequence"/> instance.</param>
+    /// <param name="seq">The CStringSequence instance to provide a debug view for.</param>
     public CStringSequenceDebugView(CStringSequence seq)
-        => this._value = seq.Select(c => c.ToString()).ToArray();
-
+    {
+        this._values = seq.ToArray();
+    }
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="CStringSequenceDebugView"/> class with the
+    /// specified <see cref="FixedCStringSequence"/> instance.
     /// </summary>
-    /// <param name="fseq">A <see cref="FixedCStringSequence"/> instance.</param>
+    /// <param name="fseq">The FixedCStringSequence instance to provide a debug view for.</param>
     public CStringSequenceDebugView(FixedCStringSequence fseq)
-        => this._value = fseq.Values.Select(c => c.ToString()).ToArray();
+    {
+        this._values = fseq.Values.ToArray();
+    }
 }

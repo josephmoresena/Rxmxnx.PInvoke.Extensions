@@ -3,6 +3,7 @@
 /// <summary>
 /// Represents a <see cref="CStringSequence"/> that is fixed in memory.
 /// </summary>
+[DebuggerTypeProxy(typeof(CStringSequenceDebugView))]
 public unsafe readonly ref struct FixedCStringSequence
 {
     /// <summary>
