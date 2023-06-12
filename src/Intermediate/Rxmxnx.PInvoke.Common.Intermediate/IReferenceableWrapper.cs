@@ -42,7 +42,7 @@ public interface IReferenceableWrapper : IWrapper
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static new IReferenceableWrapper<TObject> CreateObject<TObject>(in TObject instance) where TObject : class
-        => IReferenceableWrapper<TObject>.Create(instance);
+        => IReferenceableWrapper<TObject>.Create(instance)!;
 }
 
 /// <summary>
@@ -63,5 +63,5 @@ public interface IReferenceableWrapper<T> : IReferenceableWrapper, IWrapper<T>, 
     /// <paramref name="instance"/>.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static new IReferenceableWrapper<T> Create(in T instance) => new InputReference<T>(instance);
+    public static new IReferenceableWrapper<T?> Create(in T? instance) => new InputReference<T?>(instance);
 }

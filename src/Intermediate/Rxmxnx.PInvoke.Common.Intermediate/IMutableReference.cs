@@ -41,7 +41,7 @@ public interface IMutableReference : IMutableWrapper
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static new IMutableReference<TObject> CreateObject<TObject>(in TObject instance) where TObject : class
-        => IMutableReference<TObject>.Create(instance);
+        => IMutableReference<TObject>.Create(instance)!;
 }
 
 /// <summary>
@@ -69,5 +69,5 @@ public interface IMutableReference<T> : IReferenceableWrapper<T>, IMutableWrappe
     /// <paramref name="instance"/>.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static new IMutableReference<T> Create(in T instance = default!) => new MutableReference<T>(instance);
+    public static new IMutableReference<T?> Create(in T? instance = default) => new MutableReference<T?>(instance);
 }

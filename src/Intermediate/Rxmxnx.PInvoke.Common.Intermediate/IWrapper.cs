@@ -41,7 +41,7 @@ public interface IWrapper
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IWrapper<TObject> CreateObject<TObject>(in TObject instance) where TObject : class
-        => IWrapper<TObject>.Create(instance);
+        => IWrapper<TObject>.Create(instance)!;
 }
 
 /// <summary>
@@ -67,5 +67,5 @@ public interface IWrapper<T> : IWrapper, IEquatable<T>
     /// <paramref name="instance"/>.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IWrapper<T> Create(in T instance) => new Input<T>(instance);
+    public static IWrapper<T?> Create(in T? instance) => new Input<T?>(instance);
 }
