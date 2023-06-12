@@ -41,6 +41,9 @@ internal readonly struct FixedMemoryListValue : IEnumerableSequence<ReadOnlyFixe
         this._memories = memories;
     }
 
+    ReadOnlyFixedMemory IEnumerableSequence<ReadOnlyFixedMemory>.GetItem(Int32 index) => this[index];
+    Int32 IEnumerableSequence<ReadOnlyFixedMemory>.GetSize() => this.Count;
+
     /// <summary>
     /// Releases all resources used by the <see cref="ReadOnlyFixedMemory"/> instances in the list.
     /// </summary>
@@ -50,7 +53,4 @@ internal readonly struct FixedMemoryListValue : IEnumerableSequence<ReadOnlyFixe
             foreach (ReadOnlyFixedMemory mem in this._memories)
                 mem.Unload();
     }
-
-    ReadOnlyFixedMemory IEnumerableSequence<ReadOnlyFixedMemory>.GetItem(Int32 index) => this[index];
-    Int32 IEnumerableSequence<ReadOnlyFixedMemory>.GetSize() => this.Count;
 }

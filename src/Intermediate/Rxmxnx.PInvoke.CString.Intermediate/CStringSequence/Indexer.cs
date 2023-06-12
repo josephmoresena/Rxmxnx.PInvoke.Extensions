@@ -3,12 +3,12 @@
 public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequence<CString>
 {
     /// <summary>
-    /// Gets the element at the given index.
+    /// Gets the <see cref="CString"/> at the specified index.
     /// </summary>
-    /// <param name="index">A position in the current instance.</param>
-    /// <returns>The object at position <paramref name="index"/>.</returns>
+    /// <param name="index">The zero-based index of the element to get.</param>
+    /// <returns>The <see cref="CString"/> at the specified index.</returns>
     /// <exception cref="IndexOutOfRangeException">
-    /// <paramref name="index"/> is greater than or equal to the length of this object or less than zero.
+    /// <paramref name="index"/> is outside the bounds of the <see cref="CStringSequence"/>.
     /// </exception>
     public CString this[Int32 index]
     {
@@ -26,42 +26,33 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
             return new(() => this.GetBinarySpan(index));
         }
     }
-
     /// <summary>
-    /// Gets the number of <see cref="CString"/> contained in <see cref="CStringSequence"/>.
+    /// Gets the number of <see cref="CString"/> instances contained in this <see cref="CStringSequence"/>.
     /// </summary>
     public Int32 Count => this._lengths.Length;
 
     /// <summary>
-    /// Retrieves a subsequence from this instance.
-    /// The subsequence starts at specified UTF-8 string position and continues to the
-    /// end of the sequence.
+    /// Retrieves a subsequence from this instance, starting from the specified index and extending to the end
+    /// of the sequence.
     /// </summary>
     /// <param name="startIndex">
-    /// The zero-based starting UTF-8 string position of a subsequence in this instance.
+    /// The zero-based index at which the subsequence starts.
     /// </param>
-    /// <returns>
-    /// A <see cref="CStringSequence"/> that is equivalent to the subsequence that begins
-    /// at <paramref name="startIndex"/> in this instance.
-    /// </returns>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <returns>A <see cref="CStringSequence"/> that is a subsequence of this instance.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="length"/> is out of range.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public CStringSequence Slice(Int32 startIndex) => this[startIndex..this._lengths.Length];
-
     /// <summary>
-    /// Retrieves a subsequence from this instance.
-    /// The subsequence starts at a specified character position and has a specified length.
+    /// Retrieves a subsequence from this instance, starting from a specified index and having a specified length.
     /// </summary>
     /// <param name="startIndex">
-    /// The zero-based starting UTF-8 string position of a subsequence in this instance.
+    /// The zero-based index at which the subsequence starts.
     /// </param>
-    /// <param name="length">The number of UTF-8 strings in the subsequence.</param>
-    /// <returns>
-    /// A <see cref="CStringSequence"/> that is equivalent to the subsequence of length
-    /// <paramref name="length"/> that begins at <paramref name="startIndex"/> in this
-    /// instance.
-    /// </returns>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <param name="length">The number of elements in the subsequence.</param>
+    /// <returns>A <see cref="CStringSequence"/> that is a subsequence of this instance.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown if <paramref name="startIndex"/> or <paramref name="length"/> are out of range.
+    /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public CStringSequence Slice(Int32 startIndex, Int32 length)
     {
@@ -75,17 +66,14 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 
         return new SubsequenceHelper(this, startIndex, length).CreateSequence();
     }
-
-    Int32 IEnumerableSequence<CString>.GetSize() => this._lengths.Length;
-
     /// <summary>
-    /// Retrieves the binary span for given index.
+    /// Retrieves the binary span for the given index.
     /// </summary>
-    /// <param name="index">A position in the current instance.</param>
+    /// <param name="index">The zero-based index of the element to get.</param>
     /// <param name="count">
-    /// The count of UTF-8 texts contained into the resulting span.
+    /// The number of UTF-8 strings included in the resulting span.
     /// </param>
-    /// <returns>Binary span for given index.</returns>
+    /// <returns>The binary span for the specified index.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private ReadOnlySpan<Byte> GetBinarySpan(Int32 index, Int32 count = 1)
     {
@@ -95,41 +83,40 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
         return span.Slice(binaryOffset, binaryLength);
     }
 
+    Int32 IEnumerableSequence<CString>.GetSize() => this._lengths.Length;
     CString IEnumerableSequence<CString>.GetItem(Int32 index) => this[index];
 
     /// <summary>
-    /// Helper class for subsequences creation.
+    /// A helper class used to create subsequences from a parent <see cref="CStringSequence"/>.
     /// </summary>
     private sealed class SubsequenceHelper
     {
         /// <summary>
-        /// Lengths in the subsequence.
+        /// The lengths of the strings in the subsequence.
         /// </summary>
         private readonly Int32?[] _lengths;
         /// <summary>
-        /// Function to binary information of subsequence.
+        /// A function that returns the binary representation of the subsequence.
         /// </summary>
         private readonly ReadOnlySpanFunc<Byte> _function;
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="SubsequenceHelper"/> class.
         /// </summary>
-        /// <param name="sequence">Parent sequence.</param>
+        /// <param name="sequence">The parent sequence from which to create the subsequence.</param>
         /// <param name="startIndex">
-        /// The zero-based starting UTF-8 string position of a subsequence in
-        /// <paramref name="sequence"/>.
+        /// The zero-based index in the parent sequence at which the subsequence begins.
         /// </param>
-        /// <param name="length">The number of UTF-8 strings in the subsequence.</param>
+        /// <param name="length">The number of strings in the subsequence.</param>
         public SubsequenceHelper(CStringSequence sequence, Int32 startIndex, Int32 length)
         {
             this._lengths = sequence._lengths.Skip(startIndex).Take(length).ToArray();
             this._function = () => sequence.GetBinarySpan(startIndex, length);
         }
-
         /// <summary>
-        /// Creates a new <see cref="CStringSequence"/> instance from current helper instance.
+        /// Creates a new <see cref="CStringSequence"/> instance using the data stored in this helper.
         /// </summary>
-        /// <returns>A new <see cref="CStringSequence"/> instance from current helper instance.</returns>
+        /// <returns>A new <see cref="CStringSequence"/> that contains the subsequence.</returns>
         public CStringSequence CreateSequence()
         {
             Int32 binaryLength = this._lengths.Sum(GetSpanLength);
@@ -139,12 +126,12 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
         }
 
         /// <summary>
-        /// Copies the source binary information from <paramref name="helper"/> into
-        /// <paramref name="destination"/> span.
+        /// Copies the binary data of the subsequence from <paramref name="helper"/> to 
+        /// <paramref name="destination"/>.
         /// </summary>
-        /// <param name="destination">Span of <see cref="Char"/> values.</param>
+        /// <param name="destination">The destination buffer where the data should be copied.</param>
         /// <param name="helper">
-        /// Helper instance which contains the source binary information.
+        /// The helper instance that contains the binary data of the subsequence.
         /// </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void CopyBytes(Span<Char> destination, SubsequenceHelper helper)

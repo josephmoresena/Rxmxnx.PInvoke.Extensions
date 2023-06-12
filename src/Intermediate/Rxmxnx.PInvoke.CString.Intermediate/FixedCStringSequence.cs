@@ -1,39 +1,38 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// Represents a <see cref="CStringSequence"/> fixed in memory.
+/// Represents a <see cref="CStringSequence"/> that is fixed in memory.
 /// </summary>
 public unsafe readonly ref struct FixedCStringSequence
 {
     /// <summary>
-    /// <see cref="CString"/> values.
+    /// The <see cref="CString"/> representation of UTF-8 sequence.
     /// </summary>
     private readonly CString? _value;
     /// <summary>
-    /// <see cref="CString"/> values.
+    /// Array of <see cref="CString"/> values.
     /// </summary>
     private readonly CString[]? _values;
     /// <summary>
-    /// Indicates whether current instance remains valid.
+    /// Indicates whether the current instance remains valid.
     /// </summary>
     private readonly IMutableWrapper<Boolean>? _isValid;
     /// <summary>
-    /// <see cref="CString.Empty"/> handle.
+    /// Handle for <see cref="CString.Empty"/>.
     /// </summary>
     private readonly IMutableWrapper<GCHandle>? _emptyHandle;
 
     /// <summary>
-    /// <see cref="CString"/> values.
+    /// Gets the list of <see cref="CString"/> values in the sequence.
     /// </summary>
     public IReadOnlyList<CString> Values => this._values ?? Array.Empty<CString>();
-
     /// <summary>
-    /// Gets the element at the given index.
+    /// Gets the element at the given index in the sequence.
     /// </summary>
     /// <param name="index">A position in the current instance.</param>
     /// <returns>The object at position <paramref name="index"/>.</returns>
     /// <exception cref="IndexOutOfRangeException">
-    /// <paramref name="index"/> is greater than or equal to the length of this object or less than zero.
+    /// Thrown when <paramref name="index"/> is greater than or equal to the length of this object or less than zero.
     /// </exception>
     public IReadOnlyFixedMemory this[Int32 index]
     {
@@ -46,10 +45,10 @@ public unsafe readonly ref struct FixedCStringSequence
     }
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="FixedCStringSequence"/> struct.
     /// </summary>
-    /// <param name="values"><see cref="CString"/> values.</param>
-    /// <param name="value">Internal <see cref="CString"/> value.</param>
+    /// <param name="values">Array of <see cref="CString"/> values.</param>
+    /// <param name="value">The <see cref="CString"/> representation of UTF-8 sequence.</param>
     internal FixedCStringSequence(CString[] values, CString value)
     {
         this._values = values;
@@ -59,7 +58,7 @@ public unsafe readonly ref struct FixedCStringSequence
     }
 
     /// <summary>
-    /// Creates an array of <see cref="IReadOnlyFixedMemory"/> instances from current instance.
+    /// Creates an array of <see cref="IReadOnlyFixedMemory"/> instances from the current instance.
     /// </summary>
     /// <returns>An array of <see cref="IReadOnlyFixedMemory"/> instances.</returns>
     public IReadOnlyFixedMemory[] ToArray()
@@ -74,7 +73,7 @@ public unsafe readonly ref struct FixedCStringSequence
     public override String? ToString() => this._value?.ToString();
 
     /// <summary>
-    /// Implicit operator <see cref="ReadOnlyFixedMemoryList"/> -> <see cref="FixedMemoryList"/>.
+    /// Implicitly converts a <see cref="FixedCStringSequence"/> to a <see cref="ReadOnlyFixedMemoryList"/>.
     /// </summary>
     /// <param name="fseq">A <see cref="FixedCStringSequence"/> instance.</param>
     public static implicit operator ReadOnlyFixedMemoryList(FixedCStringSequence fseq)
@@ -86,7 +85,7 @@ public unsafe readonly ref struct FixedCStringSequence
     }
 
     /// <summary>
-    /// Invalidates current sequence.
+    /// Invalidates the current sequence.
     /// </summary>
     internal void Unload()
     {
@@ -97,10 +96,10 @@ public unsafe readonly ref struct FixedCStringSequence
     }
 
     /// <summary>
-    /// Retrieves the <see cref="FixedContext{Byte}"/> for element at <paramref name="index"/>.
+    /// Retrieves the <see cref="ReadOnlyFixedContext{Byte}"/> for the element at the specified <paramref name="index"/>.
     /// </summary>
-    /// <param name="index"></param>
-    /// <returns><see cref="FixedContext{Byte}"/> for element at <paramref name="index"/>.</returns>
+    /// <param name="index">The index of the element to retrieve.</param>
+    /// <returns>A <see cref="ReadOnlyFixedContext{Byte}"/> for the element at the specified <paramref name="index"/>.</returns>
     private ReadOnlyFixedContext<Byte> GetFixedCString(Int32 index)
     {
         CString cstr = this._values![index];
@@ -116,12 +115,11 @@ public unsafe readonly ref struct FixedCStringSequence
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
             return new(ptr, cstr.Length, this._isValid!);
     }
-
     /// <summary>
-    /// Indicates whether <see cref="CString.Empty"/> instance is allocated in memory.
+    /// Indicates whether a <see cref="CString.Empty"/> instance is allocated in memory.
     /// </summary>
     /// <returns>
-    /// <see langword="true"/> if <see cref="CString.Empty"/> instance is allocated in memory;
+    /// <see langword="true"/> if a <see cref="CString.Empty"/> instance is allocated in memory;
     /// otherwise, <see langword="false"/>.
     /// </returns>
     private Boolean IsEmptyAllocated()

@@ -6,14 +6,13 @@
 public static class PointerCStringExtensions
 {
     /// <summary>
-    /// Creates a <see cref="String"/> instance taking the memory reference of <see cref="IntPtr"/> 
-    /// value as the UTF-8 text starting point.
+    /// Creates a <see cref="CString"/> instance using the memory reference pointed to by the 
+    /// given <see cref="IntPtr"/>, considering it as the start of a UTF-8 encoded string.
     /// </summary>
-    /// <param name="ptr"><see cref="IntPtr"/> pointer to starting point of UTF-8 text.</param>
-    /// <param name="length">Number of <see cref="Byte"/> values contained into the UTF-8 text.</param>
-    /// <returns><see cref="CString"/> representation of UTF-8 text.</returns>
-    /// <exception cref="ArgumentException"/>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <param name="ptr">An <see cref="IntPtr"/> pointing to the start of the UTF-8 text.</param>
+    /// <param name="length">The number of <see cref="Byte"/> elements in the UTF-8 text.</param>
+    /// <returns>A <see cref="CString"/> representation of the UTF-8 text.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the provided length is negative.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static CString GetUnsafeCString(this IntPtr ptr, Int32 length)
     {
@@ -22,16 +21,14 @@ public static class PointerCStringExtensions
             return CString.Zero;
         return (CString)CString.CreateUnsafe(ptr, length).Clone();
     }
-
     /// <summary>
-    /// Creates a <see cref="String"/> instance taking the memory reference of <see cref="UIntPtr"/> 
-    /// value as the UTF-8 text starting point.
+    /// Creates a <see cref="CString"/> instance using the memory reference pointed to by the 
+    /// given <see cref="UIntPtr"/>, considering it as the start of a UTF-8 encoded string.
     /// </summary>
-    /// <param name="uptr"><see cref="UIntPtr"/> pointer to starting point of UTF-8 text.</param>
-    /// <param name="length">Number of <see cref="Byte"/> values contained into the UTF-8 text.</param>
-    /// <returns><see cref="CString"/> representation of UTF-8 text.</returns>
-    /// <exception cref="ArgumentException"/>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <param name="uptr">An <see cref="UIntPtr"/> pointing to the start of the UTF-8 text.</param>
+    /// <param name="length">The number of <see cref="Byte"/> elements in the UTF-8 text.</param>
+    /// <returns>A <see cref="CString"/> representation of the UTF-8 text.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the provided length is negative.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe CString GetUnsafeCString(this UIntPtr uptr, Int32 length)
     {

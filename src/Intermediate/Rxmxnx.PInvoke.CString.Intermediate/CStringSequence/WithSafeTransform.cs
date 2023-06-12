@@ -13,7 +13,7 @@ public partial class CStringSequence
         ArgumentNullException.ThrowIfNull(action);
         fixed (Char* ptr = &MemoryMarshal.GetReference<Char>(this._value))
         {
-            _ = this.AsSpanUnsafe(out CString[] output);
+            _ = this.AsUnsafeSpan(out CString[] output);
             FixedCStringSequence fseq = new(output, CString.CreateUnsafe(new IntPtr(ptr), this._value.Length * SizeOfChar, true));
             try
             {
@@ -39,7 +39,7 @@ public partial class CStringSequence
         ArgumentNullException.ThrowIfNull(action);
         fixed (Char* ptr = &MemoryMarshal.GetReference<Char>(this._value))
         {
-            _ = this.AsSpanUnsafe(out CString[] output);
+            _ = this.AsUnsafeSpan(out CString[] output);
             FixedCStringSequence fseq = new(output, CString.CreateUnsafe(new IntPtr(ptr), this._value.Length * SizeOfChar, true));
             try
             {
@@ -65,7 +65,7 @@ public partial class CStringSequence
         ArgumentNullException.ThrowIfNull(func);
         fixed (Char* ptr = &MemoryMarshal.GetReference<Char>(this._value))
         {
-            _ = this.AsSpanUnsafe(out CString[] output);
+            _ = this.AsUnsafeSpan(out CString[] output);
             FixedCStringSequence fseq = new(output, CString.CreateUnsafe(new IntPtr(ptr), this._value.Length * SizeOfChar, true));
             try
             {
@@ -93,7 +93,7 @@ public partial class CStringSequence
         ArgumentNullException.ThrowIfNull(func);
         fixed (Char* ptr = &MemoryMarshal.GetReference<Char>(this._value))
         {
-            _ = this.AsSpanUnsafe(out CString[] output);
+            _ = this.AsUnsafeSpan(out CString[] output);
             FixedCStringSequence fseq = new(output, CString.CreateUnsafe(new IntPtr(ptr), this._value.Length * SizeOfChar, true));
             try
             {

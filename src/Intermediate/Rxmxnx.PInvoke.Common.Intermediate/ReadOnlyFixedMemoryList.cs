@@ -42,7 +42,6 @@ public unsafe readonly ref struct ReadOnlyFixedMemoryList
     {
         this._values = new(memories);
     }
-
     /// <summary>
     /// Initializes a new instance of the <see cref="ReadOnlyFixedMemoryList"/> structure.
     /// </summary>
@@ -52,7 +51,6 @@ public unsafe readonly ref struct ReadOnlyFixedMemoryList
     {
         this._values = new(memories);
     }
-
     /// <summary>
     /// Initializes a new instance of the <see cref="ReadOnlyFixedMemoryList"/> structure.
     /// </summary>

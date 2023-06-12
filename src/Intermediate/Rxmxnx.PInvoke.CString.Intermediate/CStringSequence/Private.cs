@@ -3,21 +3,23 @@
 public partial class CStringSequence
 {
     /// <summary>
-    /// Internal buffer.
+    /// Internal buffer representing the combined null-terminated UTF-8 texts.
     /// </summary>
     private readonly String _value;
     /// <summary>
-    /// Collection of text length for buffer interpretation.
+    /// Collection of lengths for each text in the buffer. Used for interpreting the buffer content.
     /// </summary>
     private readonly Int32?[] _lengths;
 
     /// <summary>
-    /// Retrieves the buffer as an <see cref="ReadOnlySpan{Char}"/> instance and creates a
-    /// <see cref="CString"/> array which represents text sequence.
+    /// Retrieves the internal buffer as a <see cref="ReadOnlySpan{Char}"/> instance and creates a
+    /// <see cref="CString"/> array representing the sequence of texts.
     /// </summary>
-    /// <param name="output"><see cref="CString"/> array.</param>
-    /// <returns>Buffer <see cref="ReadOnlySpan{Char}"/>.</returns>
-    private unsafe ReadOnlySpan<Char> AsSpanUnsafe(out CString[] output)
+    /// <param name="output">
+    /// Output <see cref="CString"/> array that represents the sequence of texts.
+    /// </param>
+    /// <returns>A <see cref="ReadOnlySpan{Char}"/> representing the internal buffer.</returns>
+    private unsafe ReadOnlySpan<Char> AsUnsafeSpan(out CString[] output)
     {
         ReadOnlySpan<Char> result = this._value;
         ref Char firstCharRef = ref MemoryMarshal.GetReference(result);
@@ -25,12 +27,11 @@ public partial class CStringSequence
         output = this.GetValues(ptr).ToArray();
         return this._value;
     }
-
     /// <summary>
-    /// Retrieves the sequence of <see cref="CString"/> based on the buffer and lengths.
+    /// Retrieves a sequence of <see cref="CString"/> based on the buffer and lengths of the texts.
     /// </summary>
-    /// <param name="ptr">Buffer pointer.</param>
-    /// <returns>Collection of <see cref="CString"/>.</returns>
+    /// <param name="ptr">Pointer to the start of the buffer.</param>
+    /// <returns>An <see cref="IEnumerable{CString}"/> representing the sequence of texts.</returns>
     private IEnumerable<CString> GetValues(IntPtr ptr)
     {
         Int32 offset = 0;

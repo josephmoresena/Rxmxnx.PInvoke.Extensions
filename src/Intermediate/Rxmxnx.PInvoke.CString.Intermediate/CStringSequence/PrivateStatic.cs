@@ -3,15 +3,15 @@
 public partial class CStringSequence
 {
     /// <summary>
-    /// Empty sequence.
+    /// Represents an empty sequence.
     /// </summary>
     private static readonly CStringSequence empty = new(String.Empty, Array.Empty<Int32?>());
 
     /// <summary>
-    /// Retrieves the length of <paramref name="cstr"/> for the sequence.
+    /// Determines the length of the given <see cref="CString"/> instance for the sequence.
     /// </summary>
-    /// <param name="cstr"><see cref="CString"/> instance.</param>
-    /// <returns>Length of <paramref name="cstr"/> for the sequence.</returns>
+    /// <param name="cstr">The <see cref="CString"/> instance whose length is to be retrieved.</param>
+    /// <returns>The length of the <paramref name="cstr"/> for the sequence.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static Int32? GetLength(CString? cstr)
     {
@@ -22,13 +22,12 @@ public partial class CStringSequence
 
         return result;
     }
-
     /// <summary>
-    /// Creates the sequence buffer.
+    /// Constructs a sequence buffer from the provided text collection.
     /// </summary>
-    /// <param name="values">Text collection.</param>
+    /// <param name="values">The collection of text.</param>
     /// <returns>
-    /// <see cref="String"/> instance that contains the binary information of the UTF-8 text sequence.
+    /// A <see cref="String"/> instance that contains the binary information of the UTF-8 text sequence.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static String CreateBuffer(IReadOnlyList<CString?> values)
@@ -40,13 +39,16 @@ public partial class CStringSequence
         Int32 totalChars = (totalBytes / SizeOfChar) + (totalBytes % SizeOfChar);
         return String.Create(totalChars, values, CopyText);
     }
-
     /// <summary>
-    /// Copy the content of <see cref="CString"/> items in <paramref name="values"/> to
-    /// <paramref name="charSpan"/> span.
+    /// Copies the content of <see cref="CString"/> items from the provided <paramref name="values"/>
+    /// to the given <paramref name="charSpan"/>.
     /// </summary>
-    /// <param name="charSpan">A writable <see cref="Char"/> span.</param>
-    /// <param name="values">A enumeration of <see cref="CString"/> items.</param>
+    /// <param name="charSpan">
+    /// The writable <see cref="Char"/> span that is the destination of the copy operation.
+    /// </param>
+    /// <param name="values">
+    /// The collection of <see cref="CString"/> items whose contents are to be copied.
+    /// </param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void CopyText(Span<Char> charSpan, IReadOnlyList<CString?> values)
     {
@@ -62,12 +64,16 @@ public partial class CStringSequence
                 position++;
             }
     }
-
     /// <summary>
-    /// Copy the content of <paramref name="sequence"/> to <paramref name="charSpan"/>.
+    /// Copies the content of the specified <paramref name="sequence"/> to the given
+    /// <paramref name="charSpan"/>.
     /// </summary>
-    /// <param name="charSpan">A writable <see cref="Char"/> span.</param>
-    /// <param name="sequence">A <see cref="CStringSequence"/> instance.</param>
+    /// <param name="charSpan">
+    /// The writable <see cref="Char"/> span that is the destination of the copy operation.
+    /// </param>
+    /// <param name="sequence">
+    /// The <see cref="CStringSequence"/> instance whose content is to be copied.
+    /// </param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void CopySequence(Span<Char> charSpan, CStringSequence sequence)
     {
@@ -76,11 +82,11 @@ public partial class CStringSequence
     }
 
     /// <summary>
-    /// Performs a binary copy of all non-empty <paramref name="seq"/> to 
-    /// <paramref name="destination"/> span.
+    /// Performs a binary copy of all non-empty CString values in <paramref name="seq"/> to 
+    /// the <paramref name="destination"/> byte array.
     /// </summary>
-    /// <param name="seq">A <see cref="FixedCStringSequence"/> instance.</param>
-    /// <param name="destination">The destination binary buffer.</param>
+    /// <param name="seq">The source <see cref="FixedCStringSequence"/> instance.</param>
+    /// <param name="destination">The destination byte array.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void BinaryCopyTo(FixedCStringSequence seq, Byte[] destination)
     {
@@ -93,25 +99,23 @@ public partial class CStringSequence
                 offset += bytes.Length;
             }
     }
-
     /// <summary>
-    /// Performs the creation of the UTF-8 text sequence with a specific <paramref name="state"/>.
-    /// Each UTF-8 text is initialized using the specified callback.
+    /// Creates a UTF-8 text sequence using the given <paramref name="state"/>,
+    /// with each UTF-8 text being initialized using the specified callback.
     /// </summary>
-    /// <typeparam name="TState">The type of the element to pass to state's action.</typeparam>
-    /// <param name="buffer">UTF-16 buffer.</param>
-    /// <param name="state">Creation state object.</param>
+    /// <typeparam name="TState">The type of the element to pass to the action of the state.</typeparam>
+    /// <param name="buffer">The UTF-16 buffer where the sequence is created.</param>
+    /// <param name="state">The state object used for creation.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void CreateCStringSequence<TState>(Span<Char> buffer, SequenceCreationState<TState> state)
         => CreateCStringSequence(MemoryMarshal.AsBytes(buffer), state);
-
     /// <summary>
-    /// Performs the creation of the UTF-8 text sequence with a specific <paramref name="state"/>.
-    /// Each UTF-8 text is initialized using the specified callback.
+    /// Creates a UTF-8 text sequence using the given <paramref name="state"/>,
+    /// with each UTF-8 text being initialized using the specified callback.
     /// </summary>
-    /// <typeparam name="TState">The type of the element to pass to state's action.</typeparam>
-    /// <param name="buffer">UTF-16 buffer.</param>
-    /// <param name="state">Creation state object.</param>
+    /// <typeparam name="TState">The type of the element to pass to the action of the state.</typeparam>
+    /// <param name="buffer">The byte buffer where the sequence is created.</param>
+    /// <param name="state">The state object used for creation.</param>
     private static void CreateCStringSequence<TState>(Span<Byte> buffer, SequenceCreationState<TState> state)
     {
         Int32 offset = 0;
@@ -125,24 +129,23 @@ public partial class CStringSequence
             }
         }
     }
-
     /// <summary>
-    /// Retrieves a <see cref="CString"/> instance from <paramref name="str"/>.
+    /// Converts the given <paramref name="str"/> to a <see cref="CString"/> instance.
     /// </summary>
-    /// <param name="str"><see cref="String"/> instance.</param>
-    /// <returns>A <see cref="CString"/> instance from <paramref name="str"/>.</returns>
+    /// <param name="str">The <see cref="String"/> instance to be converted.</param>
+    /// <returns>
+    /// A <see cref="CString"/> instance equivalent to <paramref name="str"/>, or <see langword="null"/> if
+    /// <paramref name="str"/> is <see langword="null"/>.</returns>
     [return: NotNullIfNotNull(nameof(str))]
     private static CString? GetCString(String? str)
         => str is not null ? CString.Create(Encoding.UTF8.GetBytes(str)) : default;
-
     /// <summary>
-    /// Retrieves the length of the <see cref="ReadOnlySpan{Byte}"/> of a <see cref="CString"/> of
-    /// <paramref name="length"/> length.
+    /// Gets the length of the byte span representing a <see cref="CString"/> of the given <paramref name="length"/>.
     /// </summary>
-    /// <param name="length"><see cref="CString"/> length.</param>
+    /// <param name="length">The length of the <see cref="CString"/>.</param>
     /// <returns>
-    /// Length of the <see cref="ReadOnlySpan{Byte}"/> of a <see cref="CString"/> of
-    /// <paramref name="length"/> length.
+    /// The length of the byte span representing a <see cref="CString"/> of <paramref name="length"/> length,
+    /// or 0 if <paramref name="length"/> is <see langword="null"/> or non-positive.
     /// </returns>
     private static Int32 GetSpanLength(Int32? length)
         => length.HasValue && length.Value > 0 ? length.Value + 1 : 0;
