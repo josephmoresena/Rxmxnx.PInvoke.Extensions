@@ -13,6 +13,11 @@ public static class PointerCStringExtensions
     /// <param name="length">The number of <see cref="Byte"/> elements in the UTF-8 text.</param>
     /// <returns>A <see cref="CString"/> representation of the UTF-8 text.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the provided length is negative.</exception>
+    /// <remarks>
+    /// The validity and safety of the obtained <see cref="CString"/> depends on the lifetime and validity of the pointer during the
+    /// usage of the <see cref="CString"/>. 
+    /// The <see cref="CString"/> does not own the memory it points to, it's merely a projection over the existing memory.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static CString GetUnsafeCString(this IntPtr ptr, Int32 length)
     {
@@ -29,6 +34,11 @@ public static class PointerCStringExtensions
     /// <param name="length">The number of <see cref="Byte"/> elements in the UTF-8 text.</param>
     /// <returns>A <see cref="CString"/> representation of the UTF-8 text.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the provided length is negative.</exception>
+    /// <remarks>
+    /// The validity and safety of the obtained <see cref="CString"/> depends on the lifetime and validity of the pointer during the
+    /// usage of the <see cref="CString"/>. 
+    /// The <see cref="CString"/> does not own the memory it points to, it's merely a projection over the existing memory.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe CString GetUnsafeCString(this UIntPtr uptr, Int32 length)
     {

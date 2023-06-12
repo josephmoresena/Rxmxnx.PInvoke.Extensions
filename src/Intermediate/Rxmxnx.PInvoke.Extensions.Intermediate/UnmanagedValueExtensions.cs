@@ -6,21 +6,28 @@
 public static partial class UnmanagedValueExtensions
 {
     /// <summary>
-    /// Retrieves a <see cref="Byte"/> array from the given <typeparamref name="T"/> value.
+    /// Converts a given <see langword="unmanaged"/> value of type <typeparamref name="T"/> into an array of <see cref="Byte"/>.
     /// </summary>
-    /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <param name="value"><typeparamref name="T"/> value.</param>
-    /// <returns><see cref="Byte"/> array.</returns>
+    /// <typeparam name="T">The type of value. This must be an <see langword="unmanaged"/> value type.</typeparam>
+    /// <param name="value">The value to convert.</param>
+    /// <returns>An array of bytes that represent the input value.</returns>
+    /// <remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe Byte[] ToBytes<T>(this T value) where T : unmanaged
         => NativeUtilities.ToBytes(value);
-
     /// <summary>
-    /// Creates a binary array from an array of <typeparamref name="TSource"/> values. 
+    /// Converts an array of <see langword="unmanaged"/> values of type <typeparamref name="TSource"/> into an array
+    /// of <see cref="Byte"/>.
     /// </summary>
-    /// <typeparam name="TSource">Origin <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <param name="array">Array of <typeparamref name="TSource"/> values.</param>
-    /// <returns>A binary array.</returns>
+    /// <typeparam name="TSource">
+    /// The type of values in the input array. This must be an <see langword="unmanaged"/> value type.
+    /// </typeparam>
+    /// <param name="array">The array of values to convert.</param>
+    /// <returns>An array of bytes that represent the input array of values.</returns>
+    /// <remarks>
+    /// If the input array is <see langword="null"/>, the method returns <see langword="null"/>.
+    /// If the input array is empty, the method returns an empty array.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(array))]
     public static Byte[]? ToBytes<TSource>(this TSource[]? array) where TSource : unmanaged
@@ -34,13 +41,23 @@ public static partial class UnmanagedValueExtensions
     }
 
     /// <summary>
-    /// Creates an array of <typeparamref name="TDestination"/> values from an array of 
-    /// <typeparamref name="TSource"/> values. 
+    /// Converts an array of <see langword="unmanaged"/> values of type <typeparamref name="TSource"/> into an array
+    /// of another <see langword="unmanaged"/> value type <typeparamref name="TDestination"/>.
     /// </summary>
-    /// <typeparam name="TDestination">Destination <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <typeparam name="TSource">Origin <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <param name="array">Array of <typeparamref name="TSource"/> values.</param>
-    /// <returns>Array of <typeparamref name="TDestination"/> values.</returns>
+    /// <typeparam name="TDestination">
+    /// The destination type for the conversion. This must be an <see langword="unmanaged"/> value type.
+    /// </typeparam>
+    /// <typeparam name="TSource">
+    /// The type of values in the input array. This must be an <see langword="unmanaged"/> value type.
+    /// </typeparam>
+    /// <param name="array">The array of values to convert.</param>
+    /// <returns>
+    /// An array of values of type <typeparamref name="TDestination"/> that represent the input array of values.
+    /// </returns>
+    /// <remarks>
+    /// If the input array is <see langword="null"/>, the method returns <see langword="null"/>.
+    /// If the input array is empty, the method returns an empty array.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(array))]
     public static TDestination[]? ToValues<TSource, TDestination>(this TSource[]? array)
@@ -54,16 +71,27 @@ public static partial class UnmanagedValueExtensions
 
         return array.AsSpan().AsValues<TSource, TDestination>().ToArray();
     }
-
     /// <summary>
-    /// Creates an array of <typeparamref name="TDestination"/> values from an array of 
-    /// <typeparamref name="TSource"/> values. 
+    /// Converts an array of <see langword="unmanaged"/> values of type <typeparamref name="TSource"/> into an array
+    /// of another <see langword="unmanaged"/> value type <typeparamref name="TDestination"/>.
     /// </summary>
-    /// <typeparam name="TDestination">Destination <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <typeparam name="TSource">Origin <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <param name="array">Array of <typeparamref name="TSource"/> values.</param>
+    /// <typeparam name="TDestination">
+    /// The destination type for the conversion. This must be an <see langword="unmanaged"/> value type.
+    /// </typeparam>
+    /// <typeparam name="TSource">
+    /// The type of values in the input array. This must be an <see langword="unmanaged"/> value type.
+    /// </typeparam>
+    /// <param name="array">The array of values to convert.</param>
     /// <param name="residual">The residual binary array of the reinterpretation.</param>
-    /// <returns>Array of <typeparamref name="TDestination"/> values.</returns>
+    /// <returns>
+    /// An array of values of type <typeparamref name="TDestination"/> that represent the input array of values.
+    /// </returns>
+    /// <remarks>
+    /// If the input array is <see langword="null"/>, the method returns <see langword="null"/> and sets
+    /// <paramref name="residual"/> to <see langword="null"/>.
+    /// If the input array is empty, the method returns an empty array and sets
+    /// <paramref name="residual"/> to an empty array.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(array))]
     public static TDestination[]? ToValues<TSource, TDestination>(this TSource[]? array, [NotNullIfNotNull(nameof(array))] out Byte[]? residual)

@@ -6,29 +6,27 @@
 public static partial class BinaryExtensions
 {
     /// <summary>
-    /// Retrieves a <typeparamref name="T"/> value from the given <see cref="Byte"/> array.
+    /// Retrieves a <typeparamref name="T"/> value from the given byte array.
     /// </summary>
-    /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <param name="array"><see cref="Byte"/> array.</param>
-    /// <returns><typeparamref name="T"/> value read.</returns>
+    /// <typeparam name="T">The type of the value to be retrieved.</typeparam>
+    /// <param name="array">The source byte array.</param>
+    /// <returns>The <typeparamref name="T"/> value read from the array.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T ToValue<T>(this Byte[] array) where T : unmanaged => array.AsSpan().ToValue<T>();
-
     /// <summary>
-    /// Retrieves a <typeparamref name="T"/> value from the given <see cref="Byte"/> array.
+    /// Retrieves a <typeparamref name="T"/> value from the given byte span.
     /// </summary>
-    /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <param name="span"><see cref="Byte"/> span.</param>
-    /// <returns><typeparamref name="T"/> value read.</returns>
+    /// <typeparam name="T">The type of the value to be retrieved.</typeparam>
+    /// <param name="span">The source byte span.</param>
+    /// <returns>The <typeparamref name="T"/> value read from the span.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T ToValue<T>(this Span<Byte> span) where T : unmanaged => ToValue<T>((ReadOnlySpan<Byte>)span);
-
     /// <summary>
-    /// Retrieves a <typeparamref name="T"/> value from the given <see cref="Byte"/> array.
+    /// Retrieves a <typeparamref name="T"/> value from the given read-only byte span.
     /// </summary>
-    /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <param name="span"><see cref="Byte"/> read-only span.</param>
-    /// <returns><typeparamref name="T"/> value read.</returns>
+    /// <typeparam name="T">The type of the value to be retrieved.</typeparam>
+    /// <param name="span">The source read-only byte span.</param>
+    /// <returns>The <typeparamref name="T"/> value read from the span.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe T ToValue<T>(this ReadOnlySpan<Byte> span) where T : unmanaged
     {
@@ -38,26 +36,36 @@ public static partial class BinaryExtensions
         span[..bytesToCopy].CopyTo(result);
         return MemoryMarshal.Read<T>(result);
     }
-
     /// <summary>
-    /// Retrieves a <typeparamref name="T"/> read-only reference from <paramref name="span"/>.
+    /// Retrieves a read-only reference to a <typeparamref name="T"/> value from the given read-only byte span.
     /// </summary>
-    /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <param name="span"><see cref="Byte"/> read-only span.</param>
-    /// <returns><typeparamref name="T"/> read-only reference.</returns>
+    /// <typeparam name="T">The type of the value to be referenced.</typeparam>
+    /// <param name="span">The source read-only byte span.</param>
+    /// <returns>A read-only reference to the <typeparamref name="T"/> value.</returns>
+    /// <exception cref="InsufficientMemoryException">
+    /// Thrown if the size of the binary span is less than the size of the type <typeparamref name="TValue"/>.
+    /// </exception>
+    /// <exception cref="InvalidCastException">
+    /// Thrown if the size of the binary span is greater than the size of the type <typeparamref name="TValue"/>.
+    /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ref readonly T AsValue<T>(this ReadOnlySpan<Byte> span) where T : unmanaged
     {
         ValidationUtilities.ThrowIfInvalidBinarySpanSize<T>(span);
         return ref MemoryMarshal.Cast<Byte, T>(span)[0];
     }
-
     /// <summary>
-    /// Retrieves a <typeparamref name="T"/> reference from <paramref name="span"/>.
+    /// Retrieves a reference to a <typeparamref name="T"/> value from the given byte span.
     /// </summary>
-    /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <param name="span"><see cref="Byte"/> span.</param>
-    /// <returns><typeparamref name="T"/> reference.</returns>
+    /// <typeparam name="T">The type of the value to be referenced.</typeparam>
+    /// <param name="span">The source byte span.</param>
+    /// <returns>A reference to the <typeparamref name="T"/> value.</returns>
+    /// <exception cref="InsufficientMemoryException">
+    /// Thrown if the size of the binary span is less than the size of the type <typeparamref name="TValue"/>.
+    /// </exception>
+    /// <exception cref="InvalidCastException">
+    /// Thrown if the size of the binary span is greater than the size of the type <typeparamref name="TValue"/>.
+    /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ref T AsValue<T>(this Span<Byte> span) where T : unmanaged
     {
@@ -66,18 +74,17 @@ public static partial class BinaryExtensions
     }
 
     /// <summary>
-    /// Gets <see cref="String"/> representation of <see cref="Byte"/> array hexadecimal value.
+    /// Gets the hexadecimal string representation of a byte array.
     /// </summary>
-    /// <param name="bytes"><see cref="Byte"/> array.</param>
-    /// <returns><see cref="String"/> representation of hexadecimal value.</returns>
+    /// <param name="bytes">The source byte array.</param>
+    /// <returns>The hexadecimal string representation of the byte array.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static String AsHexString(this Byte[] bytes) => String.Concat(bytes.Select(b => b.AsHexString()));
-
     /// <summary>
-    /// Gets <see cref="String"/> representation of <see cref="Byte"/> hexadecimal value.
+    /// Gets the hexadecimal string representation of a byte.
     /// </summary>
-    /// <param name="value"><see cref="Byte"/> value.</param>
-    /// <returns><see cref="String"/> representation of hexadecimal value.</returns>
+    /// <param name="value">The source byte.</param>
+    /// <returns>The hexadecimal string representation of the byte.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static String AsHexString(this Byte value) => value.ToString("X2").ToLower();
 }

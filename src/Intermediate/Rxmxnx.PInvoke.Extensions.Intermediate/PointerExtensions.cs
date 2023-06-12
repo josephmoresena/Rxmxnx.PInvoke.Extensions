@@ -6,79 +6,77 @@
 public static partial class PointerExtensions
 {
     /// <summary>
-    /// Indicates whether the <see cref="IntPtr"/> pointer is a <see langword="null"/> memory reference.
+    /// Indicates whether the <see cref="IntPtr"/> instance is zero.
     /// </summary>
-    /// <param name="ptr"><see cref="IntPtr"/> pointer.</param>
+    /// <param name="ptr">The <see cref="IntPtr"/> instance to check.</param>
     /// <returns>
-    /// <see langword="true"/> if <see cref="IntPtr"/> instance is a <see langword="null"/> memory reference; 
+    /// <see langword="true"/> if the <see cref="IntPtr"/> instance equals <see cref="IntPtr.Zero"/>; 
     /// otherwise, <see langword="false"/>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Boolean IsZero(this IntPtr ptr) => ptr == IntPtr.Zero;
-
     /// <summary>
-    /// Indicates whether the <see cref="UIntPtr"/> pointer is a <see langword="null"/> memory reference.
+    /// Indicates whether the <see cref="UIntPtr"/> instance is zero.
     /// </summary>
-    /// <param name="uptr"><see cref="UIntPtr"/> pointer.</param>
+    /// <param name="uptr">The <see cref="UIntPtr"/> instance to check.</param>
     /// <returns>
-    /// <see langword="true"/> if <see cref="UIntPtr"/> instance is a <see langword="null"/> memory reference; 
+    /// <see langword="true"/> if the <see cref="UIntPtr"/> instance equals <see cref="UIntPtr.Zero"/>; 
     /// otherwise, <see langword="false"/>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Boolean IsZero(this UIntPtr uptr) => uptr == UIntPtr.Zero;
-
     /// <summary>
-    /// Creates a <see cref="UIntPtr"/> value from given <see cref="IntPtr"/> value.
+    /// Converts a given <see cref="IntPtr"/> instance to a <see cref="UIntPtr"/> instance.
     /// </summary>
-    /// <param name="ptr"><see cref="IntPtr"/> value.</param>
-    /// <returns><see cref="UIntPtr"/> value.</returns>
+    /// <param name="ptr">The <see cref="IntPtr"/> instance to convert.</param>
+    /// <returns>The <see cref="UIntPtr"/> instance that represents the same pointer as this instance.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe UIntPtr ToUIntPtr(this IntPtr ptr) => (UIntPtr)ptr.ToPointer();
-
     /// <summary>
-    /// Creates a <see cref="IntPtr"/> value from given <see cref="UIntPtr"/> value.
+    /// Converts a given <see cref="UIntPtr"/> instance to a <see cref="IntPtr"/> instance.
     /// </summary>
-    /// <param name="uptr"><see cref="UIntPtr"/> value.</param>
-    /// <returns><see cref="IntPtr"/> value.</returns>
+    /// <param name="uptr">The <see cref="UIntPtr"/> instance to convert.</param>
+    /// <returns>The <see cref="IntPtr"/> instance that represents the same pointer as this instance.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe IntPtr ToIntPtr(this UIntPtr uptr) => (IntPtr)uptr.ToPointer();
 
     /// <summary>
-    /// Creates a <see cref="String"/> instance taking the memory reference of <see cref="IntPtr"/> 
-    /// value as the UTF-16 text starting point.
+    /// Creates a <see cref="String"/> instance from the memory at the given <see cref="IntPtr"/>, 
+    /// interpreting the contents as UTF-16 text.
     /// </summary>
-    /// <param name="ptr"><see cref="IntPtr"/> pointer to starting point of UTF-16 text.</param>
-    /// <returns><see cref="String"/> representation of UTF-16 text.</returns>
-    /// <exception cref="ArgumentException"/>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <param name="ptr">The <see cref="IntPtr"/> pointing to the start of UTF-16 text in memory.</param>
+    /// <returns>A <see cref="String"/> representation of the UTF-16 text in memory.</returns>
+    /// <remarks>
+    /// The validity and safety of the obtained information depends on the lifetime and validity of the pointer at the time
+    /// of method invocation.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe String? GetUnsafeString(this IntPtr ptr) => ptr.GetUnsafeString(0);
-
     /// <summary>
-    /// Creates a <see cref="String"/> instance taking the memory reference of <see cref="UIntPtr"/> 
-    /// value as the UTF-16 text starting point.
+    /// Creates a <see cref="String"/> instance from the memory at the given <see cref="UIntPtr"/>, 
+    /// interpreting the contents as UTF-16 text.
     /// </summary>
-    /// <param name="uptr"><see cref="UIntPtr"/> pointer to starting point of UTF-16 text.</param>
-    /// <returns><see cref="String"/> representation of UTF-16 text.</returns>
-    /// <exception cref="ArgumentException"/>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <param name="uptr">The <see cref="UIntPtr"/> pointing to the start of UTF-16 text in memory.</param>
+    /// <returns>A <see cref="String"/> representation of the UTF-16 text in memory.</returns>
+    /// <remarks>
+    /// The validity and safety of the obtained information depends on the lifetime and validity of the pointer at the time
+    /// of method invocation.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe String? GetUnsafeString(this UIntPtr uptr) => uptr.GetUnsafeString(0);
-
     /// <summary>
-    /// Creates a <see cref="String"/> instance taking the memory reference of <see cref="IntPtr"/> 
-    /// value as the UTF-16 text starting point.
+    /// Creates a <see cref="String"/> instance from the memory at the given <see cref="IntPtr"/>, 
+    /// interpreting the contents as UTF-16 text.
     /// </summary>
-    /// <param name="ptr"><see cref="IntPtr"/> pointer to starting point of UTF-16 text.</param>
-    /// <param name="length">Optional. Number of <see cref="Char"/> values contained into the UTF-16 text.</param>
-    /// <returns>
-    /// <see cref="String"/> representation of UTF-16 text.
-    /// If the <paramref name="length"/> value is great than zero the lenght of the resulting <see cref="String"/> instance 
-    /// will equal to this value; otherwise, will be equal to the distance between the starting point of UTF-16 text and the
-    /// first null character (\0) position.
-    /// </returns>
-    /// <exception cref="ArgumentException"/>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <param name="ptr">The <see cref="IntPtr"/> pointing to the start of UTF-16 text in memory.</param>
+    /// <param name="length">The number of <see cref="Char"/> elements to include in the resulting string, 
+    /// starting from the pointer. If this value is zero, the function reads until the first null character.</param>
+    /// <returns>A <see cref="String"/> representation of the UTF-16 text in memory.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
+    /// <remarks>
+    /// The validity and safety of the obtained information depends on the lifetime and validity of the pointer at the time
+    /// of method invocation.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe String? GetUnsafeString(this IntPtr ptr, Int32 length)
     {
@@ -87,21 +85,18 @@ public static partial class PointerExtensions
             return default;
         return GetStringFromCharPointer((Char*)ptr.ToPointer(), length);
     }
-
     /// <summary>
-    /// Creates a <see cref="String"/> instance taking the memory reference of <see cref="UIntPtr"/> 
-    /// value as the UTF-16 text starting point.
+    /// Creates a <see cref="String"/> instance from a <see cref="Char"/> pointer, interpreting the contents as UTF-16 text.
     /// </summary>
-    /// <param name="uptr"><see cref="UIntPtr"/> pointer to starting point of UTF-16 text.</param>
-    /// <param name="length">Optional. Number of <see cref="Char"/> values contained into the UTF-16 text.</param>
-    /// <returns>
-    /// <see cref="String"/> representation of UTF-16 text.
-    /// If the <paramref name="length"/> value is great than zero the lenght of the resulting <see cref="String"/> instance 
-    /// will equal to this value; otherwise, will be equal to the distance between the starting point of UTF-16 text and the
-    /// first null character (\0) position.
-    /// </returns>
-    /// <exception cref="ArgumentException"/>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <param name="chrPtr">A pointer to the first character of the UTF-16 text in memory.</param>
+    /// <param name="length">The number of <see cref="Char"/> elements to include in the resulting string, 
+    /// starting from the pointer. If this value is zero, the function reads until the first null character.</param>
+    /// <returns>A <see cref="String"/> representation of the UTF-16 text in memory.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
+    /// <remarks>
+    /// The validity and safety of the obtained information depends on the lifetime and validity of the pointer at the time
+    /// of method invocation.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe String? GetUnsafeString(this UIntPtr uptr, Int32 length)
     {
@@ -112,18 +107,20 @@ public static partial class PointerExtensions
     }
 
     /// <summary>
-    /// Creates a <typeparamref name="T"/> array taking the memory reference of <see cref="IntPtr"/> 
-    /// value as the array starting point.
+    /// Creates a <typeparamref name="T"/> array by copying values from memory starting at the location referenced by an
+    /// <see cref="IntPtr"/>.
     /// </summary>
-    /// <typeparam name="T">
-    /// <see cref="ValueType"/> of <see langword="unmanaged"/> values contened into the contiguous region of memory.
-    /// </typeparam>
-    /// <param name="ptr"><see cref="IntPtr"/> pointer.</param>
-    /// <param name="length">
-    /// Number of <typeparamref name="T"/> <see langword="unmanaged"/> values to read from the contiguous region of memory.
+    /// <typeparam name="T">The type of <see langword="unmanaged"/> values in memory.</typeparam>
+    /// <param name="ptr">
+    /// The <see cref="IntPtr"/> pointing to the start of a series of <typeparamref name="T"/> values in memory.
     /// </param>
-    /// <returns>A new <typeparamref name="T"/> array.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <param name="length">The number of <typeparamref name="T"/> values to include in the array.</param>
+    /// <returns>A new array of <typeparamref name="T"/>, or  <see langword="null"/> if the pointer is zero.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
+    /// <remarks>
+    /// The validity and safety of the obtained information depends on the lifetime and validity of the pointer at the time
+    /// of method invocation.
+    /// </remarks>
     public static unsafe T[]? GetUnsafeArray<T>(this IntPtr ptr, Int32 length) where T : unmanaged
     {
         ValidationUtilities.ThrowIfInvalidMemoryLength(length);
@@ -131,20 +128,17 @@ public static partial class PointerExtensions
             return default;
         return ptr.GetUnsafeReadOnlySpan<T>(length).ToArray();
     }
-
     /// <summary>
-    /// Creates a <typeparamref name="T"/> array taking the memory reference of <see cref="UIntPtr"/> 
-    /// value as the array starting point.
+    /// Creates a <typeparamref name="T"/> array by copying values from memory starting at the location referenced by a
+    /// <see cref="UIntPtr"/>.
     /// </summary>
-    /// <typeparam name="T">
-    /// <see cref="ValueType"/> of <see langword="unmanaged"/> values contened into the contiguous region of memory.
-    /// </typeparam>
-    /// <param name="uptr"><see cref="UIntPtr"/> pointer.</param>
-    /// <param name="length">
-    /// Number of <typeparamref name="T"/> <see langword="unmanaged"/> values to read from the contiguous region of memory.
+    /// <typeparam name="T">The type of <see langword="unmanaged"/> values in memory.</typeparam>
+    /// <param name="uptr">
+    /// The <see cref="UIntPtr"/> pointing to the start of a series of <typeparamref name="T"/> values in memory.
     /// </param>
-    /// <returns>A new <typeparamref name="T"/> array.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <param name="length">The number of <typeparamref name="T"/> values to include in the array.</param>
+    /// <returns>A new array of <typeparamref name="T"/>, or <see langword="null"/> if the pointer is zero.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
     public static unsafe T[]? GetUnsafeArray<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
     {
         ValidationUtilities.ThrowIfInvalidMemoryLength(length);
@@ -154,18 +148,20 @@ public static partial class PointerExtensions
     }
 
     /// <summary>
-    /// Creates a <see cref="Span{T}"/> instance from <see cref="IntPtr"/> pointer.
+    /// Creates a <see cref="Span{T}"/> instance from a <see cref="IntPtr"/>, treating the memory at the location as a
+    /// series of <see langword="unmanaged"/> values.
     /// </summary>
-    /// <typeparam name="T">
-    /// <see cref="ValueType"/> of <see langword="unmanaged"/> values contened into the contiguous region of memory.
-    /// </typeparam>
-    /// <param name="ptr"><see cref="IntPtr"/> pointer.</param>
-    /// <param name="length">
-    /// Number of <typeparamref name="T"/> <see langword="unmanaged"/> values to retrive from the contiguous region of memory.
+    /// <typeparam name="T">The type of <see langword="unmanaged"/> values in memory.</typeparam>
+    /// <param name="ptr">
+    /// The <see cref="IntPtr"/> pointing to the start of a series of <typeparamref name="T"/> values in memory.
     /// </param>
-    /// <returns><see cref="ReadOnlySpan{T}"/> instance.</returns>
-    /// <exception cref="ArgumentException"/>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <param name="length">The number of <typeparamref name="T"/> values to include in the span.</param>
+    /// <returns>A <see cref="Span{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
+    /// <remarks>
+    /// The validity and safety of the obtained span depends on the lifetime and validity of the pointer during the usage of the span. 
+    /// The span does not own the memory it points to, it's merely a projection over the existing memory.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe Span<T> GetUnsafeSpan<T>(this IntPtr ptr, Int32 length) where T : unmanaged
     {
@@ -174,20 +170,21 @@ public static partial class PointerExtensions
             return default;
         return new(ptr.ToPointer(), length);
     }
-
     /// <summary>
-    /// Creates a <see cref="Span{T}"/> instance from <see cref="UIntPtr"/> pointer.
+    /// Creates a <see cref="Span{T}"/> instance from a <see cref="UIntPtr"/>, treating the memory at the location as a
+    /// series of <see langword="unmanaged"/> values.
     /// </summary>
-    /// <typeparam name="T">
-    /// <see cref="ValueType"/> of <see langword="unmanaged"/> values contened into the contiguous region of memory.
-    /// </typeparam>
-    /// <param name="uptr"><see cref="UIntPtr"/> pointer.</param>
-    /// <param name="length">
-    /// Number of <typeparamref name="T"/> <see langword="unmanaged"/> values to retrive from the contiguous region of memory.
+    /// <typeparam name="T">The type of <see langword="unmanaged"/> values in memory.</typeparam>
+    /// <param name="uptr">
+    /// The <see cref="UIntPtr"/> pointing to the start of a series of <typeparamref name="T"/> values in memory.
     /// </param>
-    /// <returns><see cref="ReadOnlySpan{T}"/> instance.</returns>
-    /// <exception cref="ArgumentException"/>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <param name="length">The number of <typeparamref name="T"/> values to include in the span.</param>
+    /// <returns>A <see cref="Span{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
+    /// <remarks>
+    /// The validity and safety of the obtained span depends on the lifetime and validity of the pointer during the usage of the span. 
+    /// The span does not own the memory it points to, it's merely a projection over the existing memory.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe Span<T> GetUnsafeSpan<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
     {
@@ -196,20 +193,21 @@ public static partial class PointerExtensions
             return default;
         return new(uptr.ToPointer(), length);
     }
-
     /// <summary>
-    /// Creates a <see cref="ReadOnlySpan{T}"/> instance from <see cref="IntPtr"/> pointer.
+    /// Creates a <see cref="ReadOnlySpan{T}"/> instance from a <see cref="IntPtr"/>, treating the memory at the location as a
+    /// series of <see langword="unmanaged"/> values.
     /// </summary>
-    /// <typeparam name="T">
-    /// <see cref="ValueType"/> of <see langword="unmanaged"/> values contened into the contiguous region of memory.
-    /// </typeparam>
-    /// <param name="ptr"><see cref="IntPtr"/> pointer.</param>
-    /// <param name="length">
-    /// Number of <typeparamref name="T"/> <see langword="unmanaged"/> values to retrive from the contiguous region of memory.
-    /// </param>
-    /// <returns><see cref="ReadOnlySpan{T}"/> instance.</returns>
-    /// <exception cref="ArgumentException"/>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <typeparam name="T">The type of <see langword="unmanaged"/> values in memory.</typeparam>
+    /// <param name="ptr">
+    /// The <see cref="IntPtr"/> pointing to the start of a series of <typeparamref name="T"/> values in memory
+    /// .</param>
+    /// <param name="length">The number of <typeparamref name="T"/> values to include in the span.</param>
+    /// <returns>A <see cref="ReadOnlySpan{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
+    /// <remarks>
+    /// The validity and safety of the obtained span depends on the lifetime and validity of the pointer during the usage of the span. 
+    /// The span does not own the memory it points to, it's merely a projection over the existing memory.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this IntPtr ptr, Int32 length) where T : unmanaged
     {
@@ -218,20 +216,21 @@ public static partial class PointerExtensions
             return default;
         return new(ptr.ToPointer(), length);
     }
-
     /// <summary>
-    /// Creates a <see cref="ReadOnlySpan{T}"/> instance from <see cref="UIntPtr"/> pointer.
+    /// Creates a <see cref="ReadOnlySpan{T}"/> instance from a <see cref="UIntPtr"/>, treating the memory at the location as a
+    /// series of <see langword="unmanaged"/> values.
     /// </summary>
-    /// <typeparam name="T">
-    /// <see cref="ValueType"/> of <see langword="unmanaged"/> values contened into the contiguous region of memory.
-    /// </typeparam>
-    /// <param name="uptr"><see cref="UIntPtr"/> pointer.</param>
-    /// <param name="length">
-    /// Number of <typeparamref name="T"/> <see langword="unmanaged"/> values to retrive from the contiguous region of memory.
+    /// <typeparam name="T">The type of <see langword="unmanaged"/> values in memory.</typeparam>
+    /// <param name="uptr">
+    /// The <see cref="UIntPtr"/> pointing to the start of a series of <typeparamref name="T"/> values in memory.
     /// </param>
-    /// <returns><see cref="ReadOnlySpan{T}"/> instance.</returns>
-    /// <exception cref="ArgumentException"/>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <param name="length">The number of <typeparamref name="T"/> values to include in the span.</param>
+    /// <returns>A <see cref="ReadOnlySpan{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
+    /// <remarks>
+    /// The validity and safety of the obtained span depends on the lifetime and validity of the pointer during the usage of the span. 
+    /// The span does not own the memory it points to, it's merely a projection over the existing memory.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
     {
@@ -242,75 +241,105 @@ public static partial class PointerExtensions
     }
 
     /// <summary>
-    /// Creates an <typeparamref name="T"/> delegate from from <see cref="IntPtr"/> pointer.
+    /// Creates a delegate of type <typeparamref name="T"/> from an <see cref="IntPtr"/>.
     /// </summary>
-    /// <typeparam name="T">Type of the <see cref="Delegate"/> referenced into the pointer.</typeparam>
-    /// <param name="ptr"><see cref="IntPtr"/> pointer.</param>
-    /// <returns><typeparamref name="T"/> delegate.</returns>
+    /// <typeparam name="T">The type of the delegate.</typeparam>
+    /// <param name="ptr">The <see cref="IntPtr"/> referencing the delegate in memory.</param>
+    /// <returns>A delegate of type <typeparamref name="T"/>, or <see langword="null"/> if the pointer is zero.</returns>
+    /// <remarks>
+    /// The validity and safety of the obtained delegate depends on the lifetime and validity of the pointer. 
+    /// If the function the delegate represents is moved or deallocated, invoking the delegate can cause unexpected behavior or
+    /// application crashes.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T? GetUnsafeDelegate<T>(this IntPtr ptr) where T : Delegate
         => !ptr.IsZero() ? Marshal.GetDelegateForFunctionPointer<T>(ptr) : default;
-
     /// <summary>
-    /// Creates an <typeparamref name="T"/> delegate from from <see cref="UIntPtr"/> pointer.
+    /// Creates a delegate of type <typeparamref name="T"/> from an <see cref="UIntPtr"/>.
     /// </summary>
-    /// <typeparam name="T">Type of the <see cref="Delegate"/> referenced into the pointer.</typeparam>
-    /// <param name="uptr"><see cref="UIntPtr"/> pointer.</param>
-    /// <returns><typeparamref name="T"/> delegate.</returns>
+    /// <typeparam name="T">The type of the delegate.</typeparam>
+    /// <param name="uptr">The <see cref="UIntPtr"/> referencing the delegate in memory.</param>
+    /// <returns>A delegate of type <typeparamref name="T"/>, or <see langword="null"/> if the pointer is zero.</returns>
+    /// <remarks>
+    /// The validity and safety of the obtained delegate depends on the lifetime and validity of the pointer. 
+    /// If the function the delegate represents is moved or deallocated, invoking the delegate can cause unexpected behavior or
+    /// application crashes.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T? GetUnsafeDelegate<T>(this UIntPtr uptr) where T : Delegate
         => uptr.ToIntPtr().GetUnsafeDelegate<T>();
 
     /// <summary>
-    /// Creates a memory reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value from 
-    /// a <see cref="IntPtr"/> pointer.
+    /// Creates a memory reference to an <see langword="unmanaged"/> value of type <typeparamref name="T"/> from
+    /// an <see cref="IntPtr"/>.
     /// </summary>
-    /// <typeparam name="T"><see cref="ValueType"/> of the <see langword="unmanaged"/> referenced value.</typeparam>
-    /// <param name="ptr"><see cref="IntPtr"/> pointer.</param>
-    /// <returns>Memory reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</returns>
+    /// <typeparam name="T">The <see langword="unmanaged"/> value type.</typeparam>
+    /// <param name="ptr">The <see cref="IntPtr"/> pointer.</param>
+    /// <returns>A memory reference to an <see langword="unmanaged"/> value of type <typeparamref name="T"/>.</returns>
+    /// <remarks>
+    /// The validity and safety of the returned reference depends on the lifetime and validity of the pointer. 
+    /// If the data the reference represents is moved or deallocated, accessing the reference can cause unexpected behavior
+    /// or application crashes.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe ref T GetUnsafeReference<T>(this IntPtr ptr) where T : unmanaged
         => ref Unsafe.AsRef<T>(ptr.ToPointer());
-
     /// <summary>
-    /// Creates a memory reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value from 
-    /// a <see cref="UIntPtr"/> pointer.
+    /// Creates a memory reference to an <see langword="unmanaged"/> value of type <typeparamref name="T"/> from
+    /// an <see cref="UIntPtr"/>.
     /// </summary>
-    /// <typeparam name="T"><see cref="ValueType"/> of the <see langword="unmanaged"/> referenced value.</typeparam>
-    /// <param name="uptr"><see cref="UIntPtr"/> pointer.</param>
-    /// <returns>Memory reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</returns>
+    /// <typeparam name="T">The <see langword="unmanaged"/> value type.</typeparam>
+    /// <param name="uptr">The <see cref="UIntPtr"/> pointer.</param>
+    /// <returns>A memory reference to an <see langword="unmanaged"/> value of type <typeparamref name="T"/>.</returns>
+    /// <remarks>
+    /// The validity and safety of the returned reference depends on the lifetime and validity of the pointer. 
+    /// If the data the reference represents is moved or deallocated, accessing the reference can cause unexpected behavior
+    /// or application crashes.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe ref T GetUnsafeReference<T>(this UIntPtr uptr) where T : unmanaged
         => ref Unsafe.AsRef<T>(uptr.ToPointer());
-
     /// <summary>
-    /// Creates a read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value from 
-    /// a <see cref="IntPtr"/> pointer.
+    /// Creates a read-only memory reference to an <see langword="unmanaged"/> value of type <typeparamref name="T"/>
+    /// from an <see cref="IntPtr"/>.
     /// </summary>
-    /// <typeparam name="T"><see cref="ValueType"/> of the <see langword="unmanaged"/> referenced value.</typeparam>
-    /// <param name="ptr"><see cref="IntPtr"/> pointer.</param>
-    /// <returns>Read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</returns>
+    /// <typeparam name="T">The <see langword="unmanaged"/> value type.</typeparam>
+    /// <param name="ptr">The <see cref="IntPtr"/> pointer.</param>
+    /// <returns>A read-only memory reference to an <see langword="unmanaged"/> value of type <typeparamref name="T"/>.</returns>
+    /// <remarks>
+    /// The validity and safety of the returned reference depends on the lifetime and validity of the pointer. 
+    /// If the data the reference represents is moved or deallocated, accessing the reference can cause unexpected behavior
+    /// or application crashes.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe ref readonly T GetUnsafeReadOnlyReference<T>(this IntPtr ptr) where T : unmanaged
         => ref Unsafe.AsRef<T>(ptr.ToPointer());
-
     /// <summary>
-    /// Creates a read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value from 
-    /// a <see cref="UIntPtr"/> pointer.
+    /// Creates a read-only memory reference to an <see langword="unmanaged"/> value of type <typeparamref name="T"/>
+    /// from an <see cref="UIntPtr"/>.
     /// </summary>
-    /// <typeparam name="T"><see cref="ValueType"/> of the <see langword="unmanaged"/> referenced value.</typeparam>
-    /// <param name="uptr"><see cref="UIntPtr"/> pointer.</param>
-    /// <returns>Read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</returns>
+    /// <typeparam name="T">The <see langword="unmanaged"/> value type.</typeparam>
+    /// <param name="uptr">The <see cref="UIntPtr"/> pointer.</param>
+    /// <returns>A read-only memory reference to an <see langword="unmanaged"/> value of type <typeparamref name="T"/>.</returns>
+    /// <remarks>
+    /// The validity and safety of the returned reference depends on the lifetime and validity of the pointer. 
+    /// If the data the reference represents is moved or deallocated, accessing the reference can cause unexpected behavior
+    /// or application crashes.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe ref readonly T GetUnsafeReadOnlyReference<T>(this UIntPtr uptr) where T : unmanaged
         => ref Unsafe.AsRef<T>(uptr.ToPointer());
 
     /// <summary>
-    /// Creates a <typeparamref name="T"/> value from a <see cref="IntPtr"/> pointer.
+    /// Creates an <see langword="unmanaged"/> value of type <typeparamref name="T"/> from an <see cref="IntPtr"/> pointer.
     /// </summary>
-    /// <typeparam name="T"><see cref="ValueType"/> of the <see langword="unmanaged"/> referenced value.</typeparam>
-    /// <param name="ptr"><see cref="IntPtr"/> pointer.</param>
-    /// <returns>A <typeparamref name="T"/> value.</returns>
+    /// <typeparam name="T">The <see langword="unmanaged"/> value type.</typeparam>
+    /// <param name="ptr">The <see cref="IntPtr"/> pointer.</param>
+    /// <returns>An <see langword="unmanaged"/> value of type <typeparamref name="T"/>.</returns>
+    /// <remarks>
+    /// The validity and safety of the obtained information depends on the lifetime and validity of the pointer at the time
+    /// of method invocation.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe T? GetUnsafeValue<T>(this IntPtr ptr) where T : unmanaged
     {
@@ -318,13 +347,16 @@ public static partial class PointerExtensions
             return default;
         return ptr.GetUnsafeReadOnlyReference<T>();
     }
-
     /// <summary>
-    /// Creates a <typeparamref name="T"/> value from a <see cref="UIntPtr"/> pointer.
+    /// Creates an <see langword="unmanaged"/> value of type <typeparamref name="T"/> from an <see cref="UIntPtr"/> pointer.
     /// </summary>
-    /// <typeparam name="T"><see cref="ValueType"/> of the <see langword="unmanaged"/> referenced value.</typeparam>
-    /// <param name="uptr"><see cref="UIntPtr"/> pointer.</param>
-    /// <returns>A <typeparamref name="T"/> value.</returns>
+    /// <typeparam name="T">The <see langword="unmanaged"/> value type.</typeparam>
+    /// <param name="uptr">The <see cref="UIntPtr"/> pointer.</param>
+    /// <returns>An <see langword="unmanaged"/> value of type <typeparamref name="T"/>.</returns>
+    /// <remarks>
+    /// The validity and safety of the obtained information depends on the lifetime and validity of the pointer at the time
+    /// of method invocation.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe T? GetUnsafeValue<T>(this UIntPtr uptr) where T : unmanaged
     {
@@ -334,18 +366,17 @@ public static partial class PointerExtensions
     }
 
     /// <summary>
-    /// Creates a <see cref="String"/> instance taking a <see cref="Char"/> pointer as the UTF-16 text starting point.
+    /// Creates a <see cref="String"/> instance from a <see cref="Char"/> pointer, interpreting the contents as UTF-16 text.
     /// </summary>
-    /// <param name="chrPtr"><see cref="Char"/> pointer.</param>
-    /// <param name="length">Number of <see cref="Char"/> values contained into the UTF-16 text.</param>
-    /// <see cref="String"/> representation of UTF-16 text.
-    /// <returns>
-    /// If the <paramref name="length"/> value is great than zero the lenght of the resulting <see cref="String"/> instance 
-    /// will equal to this value; otherwise, will be equal to the distance between the starting point of UTF-16 text and the
-    /// first null character (\0) position.
-    /// </returns>
-    /// <exception cref="ArgumentException"/>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <param name="chrPtr">A pointer to the first character of the UTF-16 text in memory.</param>
+    /// <param name="length">The number of <see cref="Char"/> elements to include in the resulting string, 
+    /// starting from the pointer. If this value is zero, the function reads until the first null character.</param>
+    /// <returns>A <see cref="String"/> representation of the UTF-16 text in memory.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
+    /// <remarks>
+    /// The validity and safety of the obtained information depends on the lifetime and validity of the pointer at the time
+    /// of method invocation.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static unsafe String GetStringFromCharPointer(Char* chrPtr, Int32 length)
         => length == default ? new String(chrPtr) : new(new ReadOnlySpan<Char>(chrPtr, length));

@@ -9,28 +9,37 @@ public static partial class MemoryBlockExtensions
     /// Retrieves an unsafe <see cref="IntPtr"/> pointer from <see cref="Span{T}"/> instance.
     /// </summary>
     /// <typeparam name="T">
-    /// <see cref="ValueType"/> of <see langword="unmanaged"/> values contened into the contiguous region of memory.
+    /// The type of <see langword="unmanaged"/> values contained in the contiguous region of memory.
     /// </typeparam>
     /// <param name="span">The span from which the pointer is retrieved.</param>
-    /// <returns><see cref="IntPtr"/> pointer.</returns>
+    /// <returns>An <see cref="IntPtr"/> pointer.</returns>
+    /// <remarks>
+    /// The pointer obtained is "unsafe" as it doesn't guarantee that the span won't be moved or
+    /// collected by garbage collector. 
+    /// The pointer will point to the address in memory the span had at the moment this method was called.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe IntPtr GetIntPtr<T>(this Span<T> span) where T : unmanaged
+    public static unsafe IntPtr GetUnsafeIntPtr<T>(this Span<T> span) where T : unmanaged
     {
         ref T refValue = ref MemoryMarshal.GetReference(span);
         void* ptr = Unsafe.AsPointer(ref refValue);
         return (IntPtr)ptr;
     }
-
     /// <summary>
     /// Retrieves an unsafe <see cref="IntPtr"/> pointer from <see cref="ReadOnlySpan{T}"/> instance.
     /// </summary>
     /// <typeparam name="T">
-    /// <see cref="ValueType"/> of <see langword="unmanaged"/> values contened into the contiguous region of memory.
+    /// The type of <see langword="unmanaged"/> values contained in the contiguous region of memory.
     /// </typeparam>
     /// <param name="span">The read-only span from which the pointer is retrieved.</param>
-    /// <returns><see cref="IntPtr"/> pointer.</returns>
+    /// <returns>An <see cref="IntPtr"/> pointer.</returns>
+    /// <remarks>
+    /// The pointer obtained is "unsafe" as it doesn't guarantee that the span won't be moved or
+    /// collected by garbage collector. 
+    /// The pointer will point to the address in memory the span had at the moment this method was called.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe IntPtr GetIntPtr<T>(this ReadOnlySpan<T> span) where T : unmanaged
+    public static unsafe IntPtr GetUnsafeIntPtr<T>(this ReadOnlySpan<T> span) where T : unmanaged
     {
         ref T refValue = ref MemoryMarshal.GetReference(span);
         void* ptr = Unsafe.AsPointer(ref refValue);
@@ -41,28 +50,37 @@ public static partial class MemoryBlockExtensions
     /// Retrieves an unsafe <see cref="UIntPtr"/> pointer from <see cref="Span{T}"/> instance.
     /// </summary>
     /// <typeparam name="T">
-    /// <see cref="ValueType"/> of <see langword="unmanaged"/> values contened into the contiguous region of memory.
+    /// The type of <see langword="unmanaged"/> values contained in the contiguous region of memory.
     /// </typeparam>
     /// <param name="span">The span from which the pointer is retrieved.</param>
-    /// <returns><see cref="UIntPtr"/> pointer.</returns>
+    /// <returns>An <see cref="UIntPtr"/> pointer.</returns>
+    /// <remarks>
+    /// The pointer obtained is "unsafe" as it doesn't guarantee that the span won't be moved or
+    /// collected by garbage collector. 
+    /// The pointer will point to the address in memory the span had at the moment this method was called.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe UIntPtr GetUIntPtr<T>(this Span<T> span) where T : unmanaged
+    public static unsafe UIntPtr GetUnsafeUIntPtr<T>(this Span<T> span) where T : unmanaged
     {
         ref T refValue = ref MemoryMarshal.GetReference(span);
         void* ptr = Unsafe.AsPointer(ref refValue);
         return (UIntPtr)ptr;
     }
-
     /// <summary>
     /// Retrieves an unsafe <see cref="UIntPtr"/> pointer from <see cref="ReadOnlySpan{T}"/> instance.
     /// </summary>
     /// <typeparam name="T">
-    /// <see cref="ValueType"/> of <see langword="unmanaged"/> values contened into the contiguous region of memory.
+    /// The type of <see langword="unmanaged"/> values contained in the contiguous region of memory.
     /// </typeparam>
     /// <param name="span">The read-only span from which the pointer is retrieved.</param>
-    /// <returns><see cref="UIntPtr"/> pointer.</returns>
+    /// <returns>An <see cref="UIntPtr"/> pointer.</returns>
+    /// <remarks>
+    /// The pointer obtained is "unsafe" as it doesn't guarantee that the span won't be moved or
+    /// collected by garbage collector. 
+    /// The pointer will point to the address in memory the span had at the moment this method was called.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe UIntPtr GetUIntPtr<T>(this ReadOnlySpan<T> span) where T : unmanaged
+    public static unsafe UIntPtr GetUnsafeUIntPtr<T>(this ReadOnlySpan<T> span) where T : unmanaged
     {
         ref T refValue = ref MemoryMarshal.GetReference(span);
         void* ptr = Unsafe.AsPointer(ref refValue);
@@ -70,59 +88,58 @@ public static partial class MemoryBlockExtensions
     }
 
     /// <summary>
-    /// Reinterprets a <paramref name="span"/> as binary span.
+    /// Reinterprets <paramref name="span"/> as binary span.
     /// </summary>
-    /// <typeparam name="TSource">Origin <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <param name="span">A <typeparamref name="TSource"/> span.</param>
+    /// <typeparam name="TSource">The type of the <see langword="unmanaged"/> value.</typeparam>
+    /// <param name="span">A span of <typeparamref name="TSource"/>.</param>
     /// <returns>A binary span.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Span<Byte> AsBytes<TSource>(this Span<TSource> span) where TSource : unmanaged
         => MemoryMarshal.AsBytes(span);
-
     /// <summary>
-    /// Reinterprets a <paramref name="span"/> as binary read-only span.
+    /// Reinterprets <paramref name="span"/> as binary span.
     /// </summary>
-    /// <typeparam name="TSource">Origin <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <param name="span">A <typeparamref name="TSource"/> span.</param>
-    /// <returns>A binary read-only span.</returns>
+    /// <typeparam name="TSource">The type of the <see langword="unmanaged"/> value.</typeparam>
+    /// <param name="span">A read-only span of <typeparamref name="TSource"/>.</param>
+    /// <returns>A binary span.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ReadOnlySpan<Byte> AsBytes<TSource>(this ReadOnlySpan<TSource> span) where TSource : unmanaged
         => MemoryMarshal.AsBytes(span);
 
     /// <summary>
-    /// Reinterprets a <paramref name="span"/> as <typeparamref name="TDestination"/> span.
+    /// Reinterprets <paramref name="span"/> as a span of <typeparamref name="TDestination"/>.
     /// </summary>
-    /// <typeparam name="TDestination">Destination <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <typeparam name="TSource">Origin <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <param name="span">A <typeparamref name="TSource"/> span.</param>
-    /// <returns>A <typeparamref name="TDestination"/> span.</returns>
+    /// <typeparam name="TDestination">The destination type of the <see langword="unmanaged"/> value.</typeparam>
+    /// <typeparam name="TSource">The origin type of the <see langword="unmanaged"/> value.</typeparam>
+    /// <param name="span">A span of <typeparamref name="TSource"/>.</param>
+    /// <returns>A span of <typeparamref name="TDestination"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Span<TDestination> AsValues<TSource, TDestination>(this Span<TSource> span)
         where TSource : unmanaged
         where TDestination : unmanaged
         => MemoryMarshal.Cast<TSource, TDestination>(span);
-
     /// <summary>
-    /// Reinterprets a <paramref name="span"/> as <typeparamref name="TDestination"/> read-only span.
+    /// Reinterprets <paramref name="span"/> as a read-only span of <typeparamref name="TDestination"/>.
     /// </summary>
-    /// <typeparam name="TDestination">Destination <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <typeparam name="TSource">Origin <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <param name="span">A <typeparamref name="TSource"/> read-only span.</param>
-    /// <returns>A <typeparamref name="TDestination"/> read-only span.</returns>
+    /// <typeparam name="TDestination">The destination type of the <see langword="unmanaged"/> value.</typeparam>
+    /// <typeparam name="TSource">The origin type of the <see langword="unmanaged"/> value.</typeparam>
+    /// <param name="span">A read-only span of <typeparamref name="TSource"/>.</param>
+    /// <returns>A read-only span of <typeparamref name="TDestination"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ReadOnlySpan<TDestination> AsValues<TSource, TDestination>(this ReadOnlySpan<TSource> span)
         where TSource : unmanaged
         where TDestination : unmanaged
         => MemoryMarshal.Cast<TSource, TDestination>(span);
-
     /// <summary>
-    /// Reinterprets a <paramref name="span"/> as <typeparamref name="TDestination"/> span.
+    /// Reinterprets <paramref name="span"/> as a span of <typeparamref name="TDestination"/>.
     /// </summary>
-    /// <typeparam name="TDestination">Destination <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <typeparam name="TSource">Origin <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <param name="span">A <typeparamref name="TSource"/> span.</param>
-    /// <param name="residual">The residual binary span of the reinterpretation.</param>
-    /// <returns>A <typeparamref name="TDestination"/> span.</returns>
+    /// <typeparam name="TDestination">The destination type of the <see langword="unmanaged"/> value.</typeparam>
+    /// <typeparam name="TSource">The origin type of the <see langword="unmanaged"/> value.</typeparam>
+    /// <param name="span">A span of <typeparamref name="TSource"/>.</param>
+    /// <param name="residual">
+    /// Output parameter that holds the residual binary data that could not be converted into <typeparamref name="TDestination"/>.
+    /// </param>
+    /// <returns>A span of <typeparamref name="TDestination"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe Span<TDestination> AsValues<TSource, TDestination>(this Span<TSource> span, out Span<Byte> residual)
         where TSource : unmanaged
@@ -133,15 +150,16 @@ public static partial class MemoryBlockExtensions
         residual = MemoryMarshal.AsBytes(span[offset..]);
         return result;
     }
-
     /// <summary>
-    /// Reinterprets a <paramref name="span"/> as <typeparamref name="TDestination"/> read-only span.
+    /// Reinterprets <paramref name="span"/> as a read-only span of <typeparamref name="TDestination"/>.
     /// </summary>
-    /// <typeparam name="TDestination">Destination <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <typeparam name="TSource">Origin <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <param name="span">A <typeparamref name="TSource"/> span.</param>
-    /// <param name="residual">The residual binary read-only span of the reinterpretation.</param>
-    /// <returns>A <typeparamref name="TDestination"/> read-only span.</returns>
+    /// <typeparam name="TDestination">The destination type of the <see langword="unmanaged"/> value.</typeparam>
+    /// <typeparam name="TSource">The origin type of the <see langword="unmanaged"/> value.</typeparam>
+    /// <param name="span">A span of <typeparamref name="TSource"/>.</param>
+    /// <param name="residual">
+    /// Output parameter that holds the residual binary data that could not be converted into <typeparamref name="TDestination"/>.
+    /// </param>
+    /// <returns>A read-only span of <typeparamref name="TDestination"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe ReadOnlySpan<TDestination> AsValues<TSource, TDestination>(this Span<TSource> span, out ReadOnlySpan<Byte> residual)
         where TSource : unmanaged
@@ -152,15 +170,16 @@ public static partial class MemoryBlockExtensions
         residual = MemoryMarshal.AsBytes(span[offset..]);
         return result;
     }
-
     /// <summary>
-    /// Reinterprets a <paramref name="span"/> as <typeparamref name="TDestination"/> read-only span.
+    /// Reinterprets <paramref name="span"/> as a read-only span of <typeparamref name="TDestination"/>.
     /// </summary>
-    /// <typeparam name="TDestination">Destination <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <typeparam name="TSource">Origin <see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-    /// <param name="span">A <typeparamref name="TSource"/> read-only span.</param>
-    /// <param name="residual">The residual binary read-only span of the reinterpretation.</param>
-    /// <returns>A <typeparamref name="TDestination"/> read-only span.</returns>
+    /// <typeparam name="TDestination">The destination type of the <see langword="unmanaged"/> value.</typeparam>
+    /// <typeparam name="TSource">The origin type of the <see langword="unmanaged"/> value.</typeparam>
+    /// <param name="span">A read-only span of <typeparamref name="TSource"/>.</param>
+    /// <param name="residual">
+    /// Output parameter that holds the residual binary data that could not be converted into <typeparamref name="TDestination"/>.
+    /// </param>
+    /// <returns>A read-only span of <typeparamref name="TDestination"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe ReadOnlySpan<TDestination> AsValues<TSource, TDestination>(this ReadOnlySpan<TSource> span, out ReadOnlySpan<Byte> residual)
         where TSource : unmanaged
