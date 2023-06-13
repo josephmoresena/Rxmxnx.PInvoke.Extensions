@@ -51,7 +51,7 @@ The `Rxmxnx.PInvoke.IReferenceableWrapper<T>` interface represents a referenceab
 
 #### Static
 
-- `Create<T>(T? value)`: Creates a new instance of `IReferenceableWrapper<T?>` with the specified value.
+- `Create(T? value)`: Creates a new instance of `IReferenceableWrapper<T?>` with the specified value.
 
 ### Rxmxnx.PInvoke.IMutableWrapper
 
@@ -71,7 +71,7 @@ The `Rxmxnx.PInvoke.IMutableWrapper<T>` interface represents a mutable wrapper f
 
 #### Static
 
-- `Create<T>(T? value)`: Creates a new instance of `IMutableWrapper<T?>` with the specified value.
+- `Create(T? value)`: Creates a new instance of `IMutableWrapper<T?>` with the specified value.
 
 ### Rxmxnx.PInvoke.IMutableReference
 
@@ -92,7 +92,7 @@ The `Rxmxnx.PInvoke.IMutableReference<T>` interface represents a mutable referen
 
 #### Static
 
-- `Create<T>(T? value)`: Creates a new instance of `IMutableReference<T?>` with the specified value.
+- `Create(T? value)`: Creates a new instance of `IMutableReference<T?>` with the specified value.
 
 ### Rxmxnx.PInvoke.ValueRegion<T>
 
