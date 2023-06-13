@@ -52,6 +52,7 @@ public static partial class ReferenceExtensions
             }
         }
     }
+
     /// <summary>
     /// Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a
     /// provided action along with an argument.
@@ -161,6 +162,7 @@ public static partial class ReferenceExtensions
             }
         }
     }
+
     /// <summary>
     /// Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a
     /// provided function along with an argument. 
