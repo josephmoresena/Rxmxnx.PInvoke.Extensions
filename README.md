@@ -9,8 +9,8 @@
 
 ## Description
 
-Rxmxnx.PInvoke.Extensions is a library that provides a set of extensions and utilities that make it easy to exchange data to and from .NET P/Invoke methods without the need for native pointers, memory fixes, and in general any operations that require unsafe compilation.
-Additionally it provides native handling for UTF-8 strings residing in both managed and unmanaged memory.
+Rxmxnx.PInvoke.Extensions is a library that provides a set of extensions and utilities that simplify the process of data exchange to and from .NET P/Invoke methods, eliminating the necessity for native pointers, memory fixes, and operations that require unsafe compilation. 
+This library also includes native handling for UTF-8 strings in both managed and unmanaged memory.
 
 ## Types
 
@@ -134,7 +134,7 @@ The `Rxmxnx.PInvoke.CString` class represents a UTF-8 string.
 - `WithSafeFixed<TArg, TResult>(TArg, ReadOnlyFixedFunc<TArg, TResult>)`: Executes the specified function with a fixed list of `Byte` values and the specified argument, and returns the result.
 - `WithSafeFixed<TArg>(TArg, ReadOnlyFixedAction<TArg>)`: Executes the specified action with a fixed list of `Byte` values and the specified argument.
 
-### Constructors
+#### Constructors
 
 - `CString(Byte, Int32)`: Initializes a new instance of the `CString` class with a single character repeated for the specified length.
 - `CString(Byte, Byte, Int32)`: Initializes a new instance of the `CString` class with two characters repeated in alternating positions for the specified length.
