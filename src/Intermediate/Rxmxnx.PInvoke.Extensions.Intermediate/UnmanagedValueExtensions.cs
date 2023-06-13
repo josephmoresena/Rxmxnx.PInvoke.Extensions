@@ -11,7 +11,6 @@ public static partial class UnmanagedValueExtensions
     /// <typeparam name="T">The type of value. This must be an <see langword="unmanaged"/> value type.</typeparam>
     /// <param name="value">The value to convert.</param>
     /// <returns>An array of bytes that represent the input value.</returns>
-    /// <remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe Byte[] ToBytes<T>(this T value) where T : unmanaged
         => NativeUtilities.ToBytes(value);

@@ -42,8 +42,10 @@ internal unsafe sealed class ReadOnlyFixedReference<T> : ReadOnlyFixedMemory, IR
     /// Transforms the current memory reference into a different type and provides a fixed offset that represents the remaining portion of memory not included in the newly formed reference.
     /// </summary>
     /// <typeparam name="TDestination">The type into which the current memory reference should be transformed.</typeparam>
-    /// <param name="fixedOffset">Output. Provides a fixed offset that represents the remaining portion of memory that is not included in the new reference. This is calculated based on the size of the new type compared to the size of the original reference.</param>
-    /// <param name="isReadOnly">Indicates whether the transformation operation should be performed as a read-only operation.</param>
+    /// <param name="fixedOffset">
+    /// Output. Provides a fixed offset that represents the remaining portion of memory that is not included in the new reference.
+    /// This is calculated based on the size of the new type compared to the size of the original reference.
+    /// </param>
     /// <returns>A new instance of FixedReference for the destination type, which represents a fixed memory reference of the new type.</returns>
     /// <exception cref="InsufficientMemoryException">Thrown when the size of the current reference is not sufficient to accommodate the new type. For example, if an attempt is made to transform a 2-byte reference into a 4-byte type.</exception>
     public ReadOnlyFixedReference<TDestination> GetTransformation<TDestination>(out ReadOnlyFixedOffset fixedOffset) where TDestination : unmanaged

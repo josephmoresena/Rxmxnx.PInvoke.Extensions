@@ -247,10 +247,13 @@ public delegate TResult ReadOnlyFixedReferenceFunc<T, in TArg, out TResult>(in I
 /// <param name="method">An instance of the fixed method delegate.</param>
 public delegate void FixedMethodAction<T>(in IFixedMethod<T> method) where T : Delegate;
 /// <summary>
-/// Encapsulates a method that takes an instance of <see cref="IFixedMethod{T}"/>.
+/// Encapsulates a method that takes an instance of <see cref="IFixedMethod{T}"/> and a state object of type
+/// <typeparamref name="TArg"/>.
 /// </summary>
 /// <typeparam name="T">The type of the fixed method delegate.</typeparam>
+/// <typeparam name="TArg">The type of the state object.</typeparam>
 /// <param name="method">An instance of the fixed method delegate.</param>
+/// <param name="arg">A state object of type TArg.</param>
 public delegate void FixedMethodAction<T, in TArg>(in IFixedMethod<T> method, TArg arg) where T : Delegate;
 
 /// <summary>

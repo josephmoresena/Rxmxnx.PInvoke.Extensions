@@ -40,7 +40,7 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
     /// The zero-based index at which the subsequence starts.
     /// </param>
     /// <returns>A <see cref="CStringSequence"/> that is a subsequence of this instance.</returns>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="length"/> is out of range.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="startIndex"/> is out of range.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public CStringSequence Slice(Int32 startIndex) => this[startIndex..this._lengths.Length];
     /// <summary>

@@ -54,7 +54,6 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
     /// </summary>
     /// <param name="ptr">The pointer to the fixed memory block.</param>
     /// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
-    /// <param name="isReadOnly">A value that indicates whether the memory block is read-only.</param>
     public FixedContext(void* ptr, Int32 count) : base(ptr, count * sizeof(T))
     {
         this._count = count;
@@ -88,6 +87,8 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
     /// Output. Provides a fixed offset that represents the remaining portion of memory that is not included in the new context.
     /// This is calculated based on the size of the new type compared to the size of the original memory block.
     /// </param>
+    /// <param name="isReadOnly">Indicates whether the transformation operation should be performed as a read-only operation.</param>
+    /// <returns>
     /// A new instance of FixedContext for the destination type, which represents a fixed memory context of the new type.
     /// </returns>
     /// <remarks>

@@ -88,7 +88,7 @@ public static partial class PointerExtensions
     /// <summary>
     /// Creates a <see cref="String"/> instance from a <see cref="Char"/> pointer, interpreting the contents as UTF-16 text.
     /// </summary>
-    /// <param name="chrPtr">A pointer to the first character of the UTF-16 text in memory.</param>
+    /// <param name="uptr">A pointer to the first character of the UTF-16 text in memory.</param>
     /// <param name="length">The number of <see cref="Char"/> elements to include in the resulting string, 
     /// starting from the pointer. If this value is zero, the function reads until the first null character.</param>
     /// <returns>A <see cref="String"/> representation of the UTF-16 text in memory.</returns>

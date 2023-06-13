@@ -13,7 +13,7 @@ public partial class CString
     /// If any element within <paramref name="values"/> is <see langword="null"/>, it is ignored
     /// during concatenation.
     /// </remarks>
-    /// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
     public static CString Concat(params String?[] values)
     {
         ArgumentNullException.ThrowIfNull(values);
@@ -36,7 +36,7 @@ public partial class CString
     /// and concatenates each element into a single <see cref="CString"/> instance.
     /// If any element within <paramref name="values"/> is <see langword="null"/>, it is ignored during concatenation.
     /// </remarks>
-    /// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
     public static Task<CString> ConcatAsync(params String?[] values) => ConcatAsync(CancellationToken.None, values);
     /// <summary>
     /// Asynchronously concatenates the elements of a specified <see cref="String"/>
@@ -55,7 +55,7 @@ public partial class CString
     /// If any element within <paramref name="values"/> is <see langword="null"/>, it is ignored during concatenation.
     /// The operation can be cancelled at any time by triggering the <paramref name="cancellationToken"/>.
     /// </remarks>
-    /// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
     public static async Task<CString> ConcatAsync(CancellationToken cancellationToken, params String?[] values)
     {
         ArgumentNullException.ThrowIfNull(values);

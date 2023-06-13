@@ -74,7 +74,7 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
         this._optionsIgnoreCase = CompareOptions.IgnoreCase;
     }
 
-    // <summary>
+    /// <summary>
     /// Compares two specified texts using the specified rules and returns an integer that indicates their relative position in
     /// the sort order.
     /// </summary>

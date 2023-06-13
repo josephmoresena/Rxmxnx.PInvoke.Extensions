@@ -15,8 +15,8 @@ public interface IMutableReference : IMutableWrapper
     /// The newly created object wraps a value of <typeparamref name="TValue"/> type provided by <paramref name="value"/>.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static new IMutableReference<TValue> Create<TValue>(in TValue instance = default!) where TValue : struct
-        => IMutableReference<TValue>.Create(instance);
+    public static new IMutableReference<TValue> Create<TValue>(in TValue value = default!) where TValue : struct
+        => IMutableReference<TValue>.Create(value);
     /// <summary>
     /// Creates a new instance of an object that implements <see cref="IMutableReference{TValue}"/> interface.
     /// </summary>
@@ -28,20 +28,20 @@ public interface IMutableReference : IMutableWrapper
     /// <paramref name="value"/>.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static new IMutableReference<TValue?> CreateNullable<TValue>(in TValue? instance = default) where TValue : struct
-        => IMutableReference<TValue?>.Create(instance);
+    public static new IMutableReference<TValue?> CreateNullable<TValue>(in TValue? value = default) where TValue : struct
+        => IMutableReference<TValue?>.Create(value);
     /// <summary>
     /// Creates a new instance of an object that implements <see cref="IMutableReference{TObject}"/> interface.
     /// </summary>
     /// <typeparam name="TObject">The type of the object to be wrapped.</typeparam>
-    /// <param name="instance">The instance to be wrapped.</param>
+    /// <param name="value">The instance to be wrapped.</param>
     /// <returns>An instance of an object that implements <see cref="IMutableReference{TObject}"/> interface.</returns>
     /// <remarks>
-    /// The newly created object wraps an object of <typeparamref name="TObject"/> type provided by <paramref name="instance"/>.
+    /// The newly created object wraps an object of <typeparamref name="TObject"/> type provided by <paramref name="value"/>.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static new IMutableReference<TObject> CreateObject<TObject>(TObject instance) where TObject : class
-        => IMutableReference<TObject>.Create(instance)!;
+    public static new IMutableReference<TObject> CreateObject<TObject>(TObject value) where TObject : class
+        => IMutableReference<TObject>.Create(value)!;
 }
 
 /// <summary>

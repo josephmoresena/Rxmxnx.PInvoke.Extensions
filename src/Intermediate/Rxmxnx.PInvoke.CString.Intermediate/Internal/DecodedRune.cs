@@ -146,11 +146,12 @@ internal sealed class DecodedRune : IWrapper<Rune>
     }
 
     /// <summary>
-    /// Returns a value that indicates whether two <see cref="DecodedRune"/> instances have the same <see cref="Rune"/> value.
+    /// Defines an implicit conversion from a nullable <see cref="DecodedRune"/> to a <see cref="Rune"/>.
     /// </summary>
+    /// <param name="rune">The nullable <see cref="DecodedRune"/> value to convert.</param>
     /// <returns>
-    /// <see langword="true"/> if the <see cref="Rune"/> value of <paramref name="left"/> and <paramref name="right"/> is the same;
-    /// otherwise, <see langword="false"/>.
+    /// The converted <see cref="Rune"/> value if the input <paramref name="rune"/> is not <see langword="null"/>;
+    /// otherwise, returns the default value of <see cref="Rune"/>.
     /// </returns>
     public static implicit operator Rune(DecodedRune? rune) => rune?.Value ?? default;
 

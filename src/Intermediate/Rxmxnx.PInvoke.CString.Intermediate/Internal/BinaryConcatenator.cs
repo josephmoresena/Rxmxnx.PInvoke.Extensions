@@ -19,7 +19,7 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
     /// </summary>
     public T? Separator => this._separator;
 
-    //// <summary>
+    /// <summary>
     /// Constructs a new instance of the BinaryConcatenator class.
     /// </summary>
     /// <param name="separator">The separator for the concatenation.</param>
