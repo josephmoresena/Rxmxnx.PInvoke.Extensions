@@ -13,7 +13,7 @@ internal sealed record CStringDebugView
     /// Enumeration of the flags used in the <see cref="CString"/> class for debugging purposes.
     /// </summary>
     [Flags]
-    public enum CStringFeature : Byte
+    public enum CStringFeatures : Byte
     {
         None = 0,
         NullTerminated = 1,
@@ -37,7 +37,7 @@ internal sealed record CStringDebugView
     /// Flags that represent the properties of the current <see cref="CString"/> instance for debugging.
     /// </summary>
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private readonly CStringFeature _flags;
+    private readonly CStringFeatures _flags;
 
     /// <summary>
     /// Provides a readable string representation of the <see cref="CString"/> value for debugging.
@@ -50,7 +50,7 @@ internal sealed record CStringDebugView
     /// <summary>
     /// Provides the debug flags associated with the <see cref="CString"/> instance.
     /// </summary>
-    public CStringFeature Flags => _flags;
+    public CStringFeatures Flags => _flags;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CStringDebugView"/> class with the specified
@@ -61,16 +61,16 @@ internal sealed record CStringDebugView
     {
         this._value = cstr.ToString();
         this._utf8Length = cstr.Length;
-        this._flags = cstr.IsNullTerminated ? CStringFeature.NullTerminated : CStringFeature.None;
+        this._flags = cstr.IsNullTerminated ? CStringFeatures.NullTerminated : CStringFeatures.None;
 
         if (cstr.IsReference)
-            this._flags |= CStringFeature.Unmanaged;
+            this._flags |= CStringFeatures.Unmanaged;
         else if (cstr.IsFunction)
-            this._flags |= CStringFeature.Function;
+            this._flags |= CStringFeatures.Function;
         else
-            this._flags |= CStringFeature.Managed;
+            this._flags |= CStringFeatures.Managed;
 
         if (cstr.IsSegmented)
-            this._flags |= CStringFeature.Slice;
+            this._flags |= CStringFeatures.Slice;
     }
 }
