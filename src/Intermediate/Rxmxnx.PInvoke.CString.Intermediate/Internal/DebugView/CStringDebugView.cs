@@ -13,9 +13,9 @@ internal sealed record CStringDebugView
     /// Enumeration of the flags used in the <see cref="CString"/> class for debugging purposes.
     /// </summary>
     [Flags]
-    public enum CStringFlags : Byte
+    public enum CStringFeature : Byte
     {
-        Empty = 0,
+        None = 0,
         NullTerminated = 1,
         Managed = 2,
         Unmanaged = 4,
@@ -37,7 +37,7 @@ internal sealed record CStringDebugView
     /// Flags that represent the properties of the current <see cref="CString"/> instance for debugging.
     /// </summary>
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private readonly CStringFlags _flags;
+    private readonly CStringFeature _flags;
 
     /// <summary>
     /// Provides a readable string representation of the <see cref="CString"/> value for debugging.
@@ -50,7 +50,7 @@ internal sealed record CStringDebugView
     /// <summary>
     /// Provides the debug flags associated with the <see cref="CString"/> instance.
     /// </summary>
-    public CStringFlags Flags => _flags;
+    public CStringFeature Flags => _flags;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CStringDebugView"/> class with the specified
@@ -61,16 +61,16 @@ internal sealed record CStringDebugView
     {
         this._value = cstr.ToString();
         this._utf8Length = cstr.Length;
-        this._flags = cstr.IsNullTerminated ? CStringFlags.NullTerminated : CStringFlags.Empty;
+        this._flags = cstr.IsNullTerminated ? CStringFeature.NullTerminated : CStringFeature.None;
 
         if (cstr.IsReference)
-            this._flags |= CStringFlags.Unmanaged;
+            this._flags |= CStringFeature.Unmanaged;
         else if (cstr.IsFunction)
-            this._flags |= CStringFlags.Function;
+            this._flags |= CStringFeature.Function;
         else
-            this._flags |= CStringFlags.Managed;
+            this._flags |= CStringFeature.Managed;
 
         if (cstr.IsSegmented)
-            this._flags |= CStringFlags.Slice;
+            this._flags |= CStringFeature.Slice;
     }
 }
