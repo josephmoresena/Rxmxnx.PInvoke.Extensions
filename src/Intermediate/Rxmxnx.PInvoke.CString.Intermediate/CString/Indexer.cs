@@ -12,7 +12,7 @@ public partial class CString : IEnumerableSequence<Byte>
     /// <paramref name="index"/> is less than zero or greater than or equal to the length of this
     /// <see cref="CString"/>.
     /// </exception>
-    [IndexerName("Chars")]
+    [IndexerName("Unit")]
     public Byte this[Int32 index] => this._data[index];
     /// <summary>
     /// Gets the number of bytes in the current <see cref="CString"/> object.

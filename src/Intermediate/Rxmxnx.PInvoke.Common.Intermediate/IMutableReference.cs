@@ -40,7 +40,7 @@ public interface IMutableReference : IMutableWrapper
     /// The newly created object wraps an object of <typeparamref name="TObject"/> type provided by <paramref name="instance"/>.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static new IMutableReference<TObject> CreateObject<TObject>(in TObject instance) where TObject : class
+    public static new IMutableReference<TObject> CreateObject<TObject>(TObject instance) where TObject : class
         => IMutableReference<TObject>.Create(instance)!;
 }
 
@@ -69,5 +69,5 @@ public interface IMutableReference<T> : IReferenceableWrapper<T>, IMutableWrappe
     /// <paramref name="instance"/>.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static new IMutableReference<T?> Create(in T? instance = default) => new MutableReference<T?>(instance);
+    public static new IMutableReference<T?> Create(T? instance = default) => new MutableReference<T?>(instance);
 }

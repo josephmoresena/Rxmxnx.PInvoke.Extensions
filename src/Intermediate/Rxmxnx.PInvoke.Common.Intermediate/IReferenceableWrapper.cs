@@ -41,7 +41,7 @@ public interface IReferenceableWrapper : IWrapper
     /// The newly created object wraps an object of <typeparamref name="TObject"/> type provided by <paramref name="instance"/>.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static new IReferenceableWrapper<TObject> CreateObject<TObject>(in TObject instance) where TObject : class
+    public static new IReferenceableWrapper<TObject> CreateObject<TObject>(TObject instance) where TObject : class
         => IReferenceableWrapper<TObject>.Create(instance)!;
 }
 
@@ -63,5 +63,5 @@ public interface IReferenceableWrapper<T> : IReferenceableWrapper, IWrapper<T>, 
     /// <paramref name="instance"/>.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static new IReferenceableWrapper<T?> Create(in T? instance) => new InputReference<T?>(instance);
+    public static new IReferenceableWrapper<T?> Create(T? instance) => new InputReference<T?>(instance);
 }

@@ -51,7 +51,7 @@ public interface IMutableWrapper : IWrapper
     /// <paramref name="instance"/>.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static new IMutableWrapper<TObject> CreateObject<TObject>(in TObject instance) where TObject : class
+    public static new IMutableWrapper<TObject> CreateObject<TObject>(TObject instance) where TObject : class
         => IMutableWrapper<TObject>.Create(instance)!;
 }
 
@@ -81,5 +81,5 @@ public interface IMutableWrapper<T> : IMutableWrapper, IWrapper<T>
     /// <paramref name="instance"/>.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static new IMutableWrapper<T?> Create(in T? instance = default) => new MutableWrapper<T?>(instance);
+    public static new IMutableWrapper<T?> Create(T? instance = default) => new MutableWrapper<T?>(instance);
 }

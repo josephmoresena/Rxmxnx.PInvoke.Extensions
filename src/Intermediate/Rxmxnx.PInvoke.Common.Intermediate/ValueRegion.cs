@@ -19,6 +19,7 @@ public abstract partial class ValueRegion<T> where T : unmanaged
     /// the length of the memory region.
     /// </exception>
     /// <returns>The element at the specified index within the memory region.</returns>
+    [IndexerName("Item")]
     public virtual T this[Int32 index] => this.AsSpan()[index];
     /// <summary>
     /// Indicates whether the current instance represents a subregion of a memory region.

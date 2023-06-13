@@ -40,7 +40,7 @@ public interface IWrapper
     /// The newly created object wraps an object of <typeparamref name="TObject"/> type provided by <paramref name="instance"/>.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IWrapper<TObject> CreateObject<TObject>(in TObject instance) where TObject : class
+    public static IWrapper<TObject> CreateObject<TObject>(TObject instance) where TObject : class
         => IWrapper<TObject>.Create(instance)!;
 }
 
@@ -67,5 +67,5 @@ public interface IWrapper<T> : IWrapper, IEquatable<T>
     /// <paramref name="instance"/>.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IWrapper<T?> Create(in T? instance) => new Input<T?>(instance);
+    public static IWrapper<T?> Create(T? instance) => new Input<T?>(instance);
 }

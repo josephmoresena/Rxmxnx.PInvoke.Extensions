@@ -10,6 +10,7 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
     /// <exception cref="IndexOutOfRangeException">
     /// <paramref name="index"/> is outside the bounds of the <see cref="CStringSequence"/>.
     /// </exception>
+    [IndexerName("Item")]
     public CString this[Int32 index]
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
