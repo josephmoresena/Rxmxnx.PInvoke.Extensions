@@ -133,6 +133,15 @@ The `Rxmxnx.PInvoke.CString` class represents a UTF-8 string.
 - `WithSafeFixed<TArg, TResult>(TArg, ReadOnlyFixedFunc<TArg, TResult>)`: Executes the specified function with a fixed list of `Byte` values and the specified argument, and returns the result.
 - `WithSafeFixed<TArg>(TArg, ReadOnlyFixedAction<TArg>)`: Executes the specified action with a fixed list of `Byte` values and the specified argument.
 
+### Constructors
+
+- `CString(Byte, Int32)`: Initializes a new instance of the `CString` class with a single character repeated for the specified length.
+- `CString(Byte, Byte, Int32)`: Initializes a new instance of the `CString` class with two characters repeated in alternating positions for the specified length.
+- `CString(Byte, Byte, Byte, Int32)`: Initializes a new instance of the `CString` class with three characters repeated in a cyclic pattern for the specified length.
+- `CString(Byte, Byte, Byte, Byte, Int32)`: Initializes a new instance of the `CString` class with four characters repeated in a cyclic pattern for the specified length.
+- `CString(ReadOnlySpan<Byte>)`: Initializes a new instance of the `CString` class with the contents of a `ReadOnlySpan<Byte>`.
+- `CString(ReadOnlySpanFunc<Byte>)`: Initializes a new instance of the `CString` class with the specified function delegate to get the content. This constructor is specialized for UTF-8 literals support.
+
 #### Operators
 
 - `==`: Determines whether two `CString` objects are equal.
