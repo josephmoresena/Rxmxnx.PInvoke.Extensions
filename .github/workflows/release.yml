@@ -18,9 +18,9 @@ jobs:
     - name: Compile intermediate
       working-directory: ./src/Intermediate
       run: |
-      dotnet build -c Release ./Rxmxnx.PInvoke.Common.Intermediate 
-      dotnet build -c Release ./Rxmxnx.PInvoke.CString.Intermediate 
-      dotnet build -c Release ./Rxmxnx.PInvoke.Extensions.Intermediate
+          dotnet build -c Release ./Rxmxnx.PInvoke.Common.Intermediate 
+          dotnet build -c Release ./Rxmxnx.PInvoke.CString.Intermediate 
+          dotnet build -c Release ./Rxmxnx.PInvoke.Extensions.Intermediate
     - name: Create NuGet Package
       working-directory: ./package
       run: dotnet pack -c Release /p:Version=${{ github.event.release.tag_name }} /p:PackageReleaseNotes="See https://github.com/josephmoresena/Rxmxnx.PInvoke.Extensions/releases/tag/${{ github.event.release.tag_name }}"
