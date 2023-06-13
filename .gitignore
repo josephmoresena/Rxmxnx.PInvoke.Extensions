@@ -348,5 +348,6 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
-/src/PInvoke.Extensions/PInvoke.Extensions.xml
-/src/Rxmxnx.PInvoke.Extensions/Rxmxnx.PInvoke.Extensions.xml
+**/.vscode
+**/.DS_Store
+**/Rxmxnx.PInvoke*.xml

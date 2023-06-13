@@ -10,13 +10,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Setup .NET
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 6.x
+    - name: Compile intermediate
+      working-directory: ./src/Intermediate
+      run: dotnet build -c Release ./Rxmxnx.PInvoke.Common.Intermediate
+      run: dotnet build -c Release ./Rxmxnx.PInvoke.CString.Intermediate
+      run: dotnet build -c Release ./Rxmxnx.PInvoke.Extensions.Intermediate
     - name: Create NuGet Package
-      working-directory: ./src/Rxmxnx.PInvoke.Extensions
+      working-directory: ./package
       run: dotnet pack -c Release /p:Version=${{ github.event.release.tag_name }} /p:PackageReleaseNotes="See https://github.com/josephmoresena/Rxmxnx.PInvoke.Extensions/releases/tag/${{ github.event.release.tag_name }}"
     - name: Push NuGet Package
       run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json

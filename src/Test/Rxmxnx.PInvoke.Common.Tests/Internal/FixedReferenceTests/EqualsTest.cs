@@ -1,0 +1,147 @@
+﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedReferenceTests;
+
+[ExcludeFromCodeCoverage]
+[SuppressMessage("csharpsquid", "S2699")]
+public sealed class EqualsTest : FixedReferenceTestsBase
+{
+    [Fact]
+    internal void BooleanTest() => this.Test<Boolean>();
+    [Fact]
+    internal void ByteTest() => this.Test<Byte>();
+    [Fact]
+    internal void Int16Test() => this.Test<Int16>();
+    [Fact]
+    internal void CharTest() => this.Test<Char>();
+    [Fact]
+    internal void Int32Test() => this.Test<Int32>();
+    [Fact]
+    internal void Int64Test() => this.Test<Int64>();
+    [Fact]
+    internal void Int128Test() => this.Test<Int128>();
+    [Fact]
+    internal void GuidTest() => this.Test<Guid>();
+    [Fact]
+    internal void SingleTest() => this.Test<Single>();
+    [Fact]
+    internal void HalfTest() => this.Test<Half>();
+    [Fact]
+    internal void DoubleTest() => this.Test<Double>();
+    [Fact]
+    internal void DecimalTest() => this.Test<Decimal>();
+    [Fact]
+    internal void DateTimeTest() => this.Test<DateTime>();
+    [Fact]
+    internal void TimeOnlyTest() => this.Test<TimeOnly>();
+    [Fact]
+    internal void TimeSpanTest() => this.Test<TimeSpan>();
+
+    private unsafe void Test<T>() where T : unmanaged
+    {
+        T value = fixture.Create<T>();
+        base.WithFixed(ref Unsafe.AsRef(value), Test);
+        base.WithFixed(ref Unsafe.AsRef(value), ReadOnlyTest);
+    }
+
+    private static unsafe void Test<T>(FixedReference<T> fref, IntPtr _) where T : unmanaged
+    {
+        Test(fref);
+    }
+    private static unsafe void ReadOnlyTest<T>(ReadOnlyFixedReference<T> fref, IntPtr _) where T : unmanaged
+    {
+        Test(fref);
+    }
+
+    private static unsafe void Test<T>(FixedReference<T> fref) where T : unmanaged
+    {
+        TransformationTest<T, Boolean>(fref);
+        TransformationTest<T, Byte>(fref);
+        TransformationTest<T, Int16>(fref);
+        TransformationTest<T, Char>(fref);
+        TransformationTest<T, Int32>(fref);
+        TransformationTest<T, Int64>(fref);
+        TransformationTest<T, Int128>(fref);
+        TransformationTest<T, Single>(fref);
+        TransformationTest<T, Half>(fref);
+        TransformationTest<T, Double>(fref);
+        TransformationTest<T, Decimal>(fref);
+        TransformationTest<T, DateTime>(fref);
+        TransformationTest<T, TimeOnly>(fref);
+        TransformationTest<T, TimeSpan>(fref);
+    }
+    private static unsafe void Test<T>(ReadOnlyFixedReference<T> fref) where T : unmanaged
+    {
+        TransformationTest<T, Boolean>(fref);
+        TransformationTest<T, Byte>(fref);
+        TransformationTest<T, Int16>(fref);
+        TransformationTest<T, Char>(fref);
+        TransformationTest<T, Int32>(fref);
+        TransformationTest<T, Int64>(fref);
+        TransformationTest<T, Int128>(fref);
+        TransformationTest<T, Single>(fref);
+        TransformationTest<T, Half>(fref);
+        TransformationTest<T, Double>(fref);
+        TransformationTest<T, Decimal>(fref);
+        TransformationTest<T, DateTime>(fref);
+        TransformationTest<T, TimeOnly>(fref);
+        TransformationTest<T, TimeSpan>(fref);
+    }
+    private static unsafe void TransformationTest<T, T2>(FixedReference<T> fref)
+        where T : unmanaged
+        where T2 : unmanaged
+    {
+        ref readonly T valueRef = ref fref.CreateReadOnlyReference<T>();
+        void* ptr = Unsafe.AsPointer(ref Unsafe.AsRef(valueRef));
+        Int32 binaryLength = sizeof(T);
+
+        if (binaryLength >= sizeof(T2))
+        {
+            ref readonly T2 transformedRef = ref Unsafe.AsRef<T2>(ptr);
+
+            Assert.Equal(binaryLength, fref.BinaryLength);
+            WithFixed(transformedRef, fref, Test);
+        }
+    }
+    private static unsafe void TransformationTest<T, T2>(ReadOnlyFixedReference<T> fref)
+        where T : unmanaged
+        where T2 : unmanaged
+    {
+        ref readonly T valueRef = ref fref.CreateReadOnlyReference<T>();
+        void* ptr = Unsafe.AsPointer(ref Unsafe.AsRef(valueRef));
+        Int32 binaryLength = sizeof(T);
+
+        if (binaryLength >= sizeof(T2))
+        {
+            ref readonly T2 transformedRef = ref Unsafe.AsRef<T2>(ptr);
+
+            Assert.Equal(binaryLength, fref.BinaryLength);
+            WithFixed(transformedRef, fref, Test);
+        }
+    }
+    private static void Test<T, TInt>(FixedReference<TInt> fref2, FixedReference<T> fref)
+        where T : unmanaged
+        where TInt : unmanaged
+    {
+        Boolean equal = fref.IsReadOnly == fref2.IsReadOnly && typeof(TInt) == typeof(T);
+
+        Assert.Equal(equal, fref2.Equals(fref));
+        Assert.Equal(equal, fref2.Equals((Object)fref));
+        Assert.Equal(equal, fref2.Equals(fref as FixedReference<TInt>));
+        Assert.False(fref2.Equals(null));
+        Assert.False(fref2.Equals(new Object()));
+        Assert.False(fref2.IsFunction);
+    }
+    private static void Test<T, TInt>(ReadOnlyFixedReference<TInt> fref2, ReadOnlyFixedReference<T> fref)
+        where T : unmanaged
+        where TInt : unmanaged
+    {
+        Boolean equal = fref.IsReadOnly == fref2.IsReadOnly && typeof(TInt) == typeof(T);
+
+        Assert.Equal(equal, fref2.Equals(fref));
+        Assert.Equal(equal, fref2.Equals((Object)fref));
+        Assert.Equal(equal, fref2.Equals(fref as ReadOnlyFixedReference<TInt>));
+        Assert.False(fref2.Equals(null));
+        Assert.False(fref2.Equals(new Object()));
+        Assert.False(fref2.IsFunction);
+    }
+}
+

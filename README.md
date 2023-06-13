@@ -7,239 +7,402 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
 [![NuGet](https://img.shields.io/nuget/v/Rxmxnx.PInvoke.Extensions)](https://www.nuget.org/packages/Rxmxnx.PInvoke.Extensions/)
 
-# Description
-Provides a set of extensions and utilites which facilitates the exchange of data from and to .NET P/Invoke methods (or UnmanagedCallersOnly using NativeAOT) avoiding use of both native pointers and unsafe context.
+## Description
 
-## Binary Extensions
-Provides a set of extensions for basic operations with Byte instances.
-### Byte
-* AsHexString()
-Gets the String representation of byte value.
-### Byte[]
-* **AsValue&lt;T&gt;()** 
-Gets a value of generic type which length must match to array lenght.
-* **AsHexString()**
-Gets the String representation of binary data into the array.
-* **ConcatUtf8()**
-Concatenates the members of a collection of UTF-8 texts.
-* **ConcatUtf8Async()**
-Concatenates the members of a collection of UTF-8 texts.
-### IEnumerable<String>
-* **ConcatUtf8()**
-Concatenates the members of a collection of String.
+Rxmxnx.PInvoke.Extensions is a library that provides a set of extensions and utilities that simplify the process of data exchange to and from .NET P/Invoke methods, eliminating the necessity for native pointers, memory fixes, and operations that require unsafe compilation. 
+This library also includes native handling for UTF-8 strings in both managed and unmanaged memory.
 
-## MemoryBlockExtensions
-Provides a set of extensions for basic operations with Span&lt;T&gt; and ReadOnlySpan&lt;T&gt; instances.
-### Span&lt;T&gt;
-* **AsIntPtr&lt;T&gt;()**
-Gets the signed pointer to referenced memory.
-* **AsUIntPtr&lt;T&gt;()**
-Gets the unsigned pointer to referenced memory.
-* **WithSafeFixed&lt;T, TArg&gt;(TArg arg, SpanAction&lt;T, TArg&gt; action)**
-Prevents the garbage collector from relocating the block of memory represented by span and 
-fixes its memory address until action finish.
-* **WithSafeFixed&lt;T, TArg, TResult&gt;(TArg arg, SpanFunc&lt;T, TArg, TResult&gt; func)**
-Prevents the garbage collector from relocating the block of memory represented by span and 
-fixes its memory address until func finish.
-* **Transform&lt;TSource, TDestination, TArg&gt;(TArg arg, SpanTransformAction&lt;TDestination, TArg&gt; action)**
-Transforms span to a Span&lt;TDestination&gt; instance and invokes action.
-* **Transform&lt;TSource, TDestination, TArg, TResult&gt;(TArg arg, SpanTransformFunc&lt;TDestination, TArg, TResult&gt; func)**
-Transforms span to a Span&lt;TDestination&gt; instance and invokes func.
-* **BinaryTransform&lt;TSource, TArg&gt;(TArg arg, BinarySpanTransformAction&lt;TArg&gt; action)**
-Transforms span to a  Span&lt;Byte&gt; instance instance and invokes action.
+## Types
 
-### ReadOnlySpan&lt;T&gt;
-* **AsIntPtr&lt;T&gt;()**
-Gets the signed pointer to referenced memory.
-* **AsUIntPtr&lt;T&gt;()**
-Gets the unsigned pointer to referenced memory.
-* **WithSafeFixed&lt;T, TArg&gt;(TArg arg, ReadOnlySpanAction&lt;T, TArg&gt; action)**
-Prevents the garbage collector from relocating the block of memory represented by read-only span and 
-fixes its memory address until action finish.
-* **WithSafeFixed&lt;T, TArg, TResult&gt;(TArg arg, ReadOnlySpanFunc&lt;T, TArg, TResult&gt; func)**
-Prevents the garbage collector from relocating the block of memory represented by span and 
-fixes its memory address until func finish.
-* **Transform&lt;TSource, TDestination, TArg&gt;(TArg arg, ReadOnlySpanTransformAction&lt;TDestination, TArg&gt; action)**
-Transforms span to a ReadOnlySpan&lt;TDestination&gt; instance and invokes action.
-* **Transform&lt;TSource, TDestination, TArg, TResult&gt;(TArg arg, ReadOnlySpanTransformFunc&lt;TDestination, TArg, TResult&gt; func)**
-Transforms span to a ReadOnlySpan&lt;TDestination&gt; instance and invokes func.
-* **BinaryTransform&lt;TSource, TArg&gt;(TArg arg, BinaryReadOnlySpanTransformAction&lt;TArg&gt; action)**
-Transforms span to a ReadOnlySpan&lt;Byte&gt; instance instance and invokes action.
+### Rxmxnx.PInvoke.IWrapper
 
-### ReadOnlySpan&lt;Byte&gt;
-* **BinaryTransform&lt;TDestination, TArg&gt;(TArg arg, SpanTransformAction&lt;TDestination, TArg&gt; action)**
-Transforms span to a Span&lt;TDestination&gt; instance and invokes action.
-* **BinaryTransform&lt;TDestination, TArg, TResult&gt;(TArg arg, SpanTransformFunc&lt;TDestination, TArg, TResult&gt; func)**
-Transforms span to a Span&lt;TDestination&gt; instance and invokes func.
+The `Rxmxnx.PInvoke.IWrapper` interface represents a wrapper for a value. It provides methods for creating instances of the wrapper.
 
-### ReadOnlySpan&lt;Byte&gt;
-* **BinaryTransform&lt;TDestination, TArg&gt;(TArg arg, ReadOnlySpanTransformAction&lt;TDestination, TArg&gt; action)**
-Transforms span to a ReadOnlySpan&lt;TDestination&gt; instance and invokes action.
-* **BinaryTransform&lt;TDestination, TArg, TResult&gt;(TArg arg, ReadOnlySpanTransformFunc&lt;TDestination, TArg, TResult&gt; func)**
-Transforms span to a ReadOnlySpan&lt;TDestination&gt; instance and invokes func.
+#### Static
+- `Create<TValue>(in TValue value)`: Creates a new instance of `IWrapper<TValue>` with the specified value.
+- `CreateNullable<TValue>(in TValue? value)`: Creates a new instance of `IWrapper<TValue?>` with the specified nullable value.
+- `CreateObject<TObject>(TObject obj)`: Creates a new instance of `IWrapper<TObject>` with the specified object.
 
-## PointerExtensions
-Provides a set of extensions for basic operations with both signed and unsigned pointers.
-### IntPtr
-* **IsZero()**
-Indicates whether the pointer is a null memory reference.
-* **AsUIntPtr()**
-Gets the memory reference as an unsigned pointer.
-* **AsString(Int32 length = 0)**
-Gets a String instance taking the memory reference as the UTF-16 text starting point.
-* **AsReadOnlySpan&lt;T&gt;(Int32 length)**
-Gets a ReadOnlySpan&lt;T&gt; instance from memory reference.
-* **AsDelegate&lt;T&gt;()**
-Gets a generic delegate from from memory reference.
-* **AsReference&lt;T&gt;()**
-Gets a managed reference to a generic unmanaged value from a memory reference.
+### Rxmxnx.PInvoke.IWrapper<T>
 
-### UIntPtr
-* **IsZero()**
-Indicates whether the pointer is a null memory reference.
-* **AsIntPtr()**
-Gets the memory reference as an signed pointer.
-* **AsString(Int32 length = 0)**
-Gets a String instance taking the memory reference as the UTF-16 text starting point.
-* **AsReadOnlySpan&lt;T&gt;(Int32 length)**
-Gets a ReadOnlySpan&lt;T&gt; instance from memory reference.
-* **AsDelegate&lt;T&gt;()**
-Gets a generic delegate from from memory reference.
-* **AsReference&lt;T&gt;()**
-Gets a managed reference to a generic unmanaged value from a memory reference.
+The `Rxmxnx.PInvoke.IWrapper<T>` interface represents a generic wrapper for a value of type `T`. 
 
-## ReferenceExtensions
-### ref T
-* **AsIntPtr&lt;T&gt;()**
-Gets a signed pointer to referenced memory by generic managed reference.
-* **AsUIntPtr&lt;T&gt;()**
-Gets a unsigned pointer to referenced memory by generic managed reference.
-* **AsReferenceOf&lt;TSource, TDestination&gt;()**
-Creates a memory reference to a TDestination generic type value from an exising memory reference to a TSource generic type value.
+- `Value`: Gets the value stored in the `IWrapper<T>`.
 
-## StringExtensions
-### String
-* **AsUtf8Span()**
-Encodes the UTF-16 text using the UTF-8 charset and retrieves the read-only span which references to the UTF-8 text.
-* **AsUtf8()**
-Encodes the UTF-16 text using the UTF-8 charset and retrieves the Byte array with UTF-8 text.
-### IEnumerable<String>
-* **ConcatUtf8()**
-Concatenates the members of a collection of String.
-* **ConcatUtf8Async()**
-Concatenates the members of a collection of String.
-### IEnumerable<CString>
-* **Concat()**
-Concatenates the members of a collection of CString.
-* **ConcatAsync()**
-Concatenates the members of a collection of CString.
+#### Static
+- `Create(T? value)`: Creates a new instance of `IWrapper<T?>` with the specified value.
 
-## UnmanagedValueExtensions
-### T
-* **AsBytes&lt;T&gt;()**
-Gets the binary data from unmanaged value.
-* **AsValues&lt;TSource, TDestination&gt;()**
-Creates an array of TDestination generic type from an array of TSource generic type. 
+### Rxmxnx.PInvoke.IReferenceableWrapper
 
-## CString
-Represents text as a sequence of UTF-8 code units.
-* **Empty**
-Represents the empty UTF-8 string. This field is read-only.
-* **IsNullOrEmpty(CString value)**
-Indicates whether the specified CString is null or an empty UTF-8 text.
-* **GetBytes(CString value)**
-Retrieves the internal binary data from a given <see cref="CString"/>.
-* **AsSpan(out CString[] output)**
-Retreives the internal or external information as ReadOnlySpan{Byte} instance.
-* **Create(ReadOnlySpanFunc<Byte> func)**
-Creates a new CString instance from func. This method assumes that func's result is a non-literal Utf8 string.
-### C#11 Utf8 Strings Literals
-In order to support [utf8 Strings literals](https://learn.microsoft.com/dotnet/csharp/language-reference/proposals/csharp-11.0/utf8-string-literals) a new CString constructor was added.
+The `Rxmxnx.PInvoke.IReferenceableWrapper` interface represents a referenceable wrapper for a value. It provides methods for creating instances of the wrapper.
 
-	CString instance = new(() => "this is a UTF-8 hardcoded literal"u8);
+#### Static
 
-## CStringSequence
-Represents a sequence of null-terminated UTF-8 texts.
-* **Count**
-Gets the number of CString contained in CStringSequence.
-* **AsSpan(out CString[] output)**
-Retrieves the buffer as an ReadOnlySpan<Char> instance and creates a CString array which represents 
-text sequence. The output CString array will remain valid only as long as returned buffer span is on live.
-* **ToCString()**
-Returns a CString that represents the current object.
-* **Create&lt;TState&gt;(TState state, CStringSequenceCreationAction&lt;TState&gt; action, params Int32[] lengths)**
-Creates a new UTF-8 text sequence with a specific lengths and initializes each UTF-8 texts into it after 
-creation by using the specified callback.
-* **Transform&lt;TState&gt;(TState state, CStringSequenceAction&lt;TState&gt; action)**
-Use current instance as ReadOnlySpan&lt;CString&gt; instance and state as parameters for action delegate.
-* **Transform<TState, TResult>(TState state, CStringSequenceFunc<TState, TResult> func)**
-Use current instance as ReadOnlySpan&lt;CString&gt; instance and state as parameters for action delegate.
+- `Create<TValue>(in TValue value)`: Creates a new instance of `IReferenceableWrapper<TValue>` with the specified value.
+- `CreateNullable<TValue>(in TValue? value)`: Creates a new instance of `IReferenceableWrapper<TValue?>` with the specified nullable value.
+- `CreateObject<TObject>(TObject obj)`: Creates a new instance of `IReferenceableWrapper<TObject>` with the specified object.
 
-## InputValue
-Supports a value type that can be referenced.
-* **CreateInput&lt;TValue&gt;(in TValue instance)**
-Creates a new IReferenceableWrapper&lt;TValue&gt; object from a generic value.
-* **CreateInput&lt;TValue?&gt;(in TValue? instance)**
-Creates a new IReferenceableWrapper&lt;TValue&gt; object from a generic nullable value.
-* **CreateReference&lt;TValue&gt;(in TValue instance = default)**
-Creates a new IMutableReference&lt;TValue&gt; object from a generic value.
-* **CreateReference&lt;TValue?&gt;(in TValue? instance = default)**
-Creates a new IMutableReference&lt;TValue&gt; object from a generic nullable value.
+### Rxmxnx.PInvoke.IReferenceableWrapper<T>
 
-## NativeUtilities
-Provides a set of utilities for exchange data within the P/Invoke context.
-* **SizeOf&lt;T&gt;()**
-Retrieves the size of the generic  structure type.
-* **LoadNativeLib(String libraryName, DllImportSearchPath? searchPath = default)**
-Loads a native library.
-* **LoadNativeLib(String libraryName, ref EventHandler unloadEvent, DllImportSearchPath? searchPath = default)**
-Loads a native library and appends its unloading to given EventHandler delegate.
-* **GetNativeMethod&lt;T&gt;(IntPtr handle, String name)**
-Gets a generic delegate which points to a exported symbol into native library.
-* **AsBytes&lt;T&gt;(in T value)**
-Gets the binary data of an input generic value.
-* **CreateArray&lt;T, TState&gt;(Int32 length, TState state, SpanAction&lt;T, TState&gt; action)**
-Creates a new T array with a specific length and initializes it after creation by using the specified callback.
-* **BinaryCopyTo&lt;T&gt;(in T value, Span&lt;TByte&gt; destination, Int32 offset = default)**
-Preforms a binary copy of value to destination span.
+The `Rxmxnx.PInvoke.IReferenceableWrapper<T>` interface represents a referenceable wrapper for a value of type `T`. 
+
+- `Reference`: Gets a read-only reference to the value of type `T`.
+- `Value`: Gets the value stored in the `IWrapper<T>`.
+
+#### Static
+
+- `Create(T? value)`: Creates a new instance of `IReferenceableWrapper<T?>` with the specified value.
+
+### Rxmxnx.PInvoke.IMutableWrapper
+
+The `Rxmxnx.PInvoke.IMutableWrapper` interface represents a mutable wrapper for a value. It provides methods for creating instances of the wrapper.
+
+#### Static
+
+- `Create<TValue>(in TValue)`: Creates an instance of the `IMutableWrapper<TValue>` with the specified value.
+- `CreateNullable<TValue>(in TValue?)`: Creates an instance of the `IMutableWrapper<TValue?>` with the specified nullable value.
+- `CreateObject<TObject>(TObject)`: Creates an instance of the `IMutableWrapper<TObject>` with the specified object.
+
+### Rxmxnx.PInvoke.IMutableWrapper<T>
+
+The `Rxmxnx.PInvoke.IMutableWrapper<T>` interface represents a mutable wrapper for a value of type `T`. 
+
+- `Value`: Gets or sets the value of type `T`.
+
+#### Static
+
+- `Create(T? value)`: Creates a new instance of `IMutableWrapper<T?>` with the specified value.
+
+### Rxmxnx.PInvoke.IMutableReference
+
+The `Rxmxnx.PInvoke.IMutableReference` interface represents a mutable reference. It provides methods for creating instances of the wrapper.
+
+#### Static
+
+- `Create<TValue>(in TValue)`: Creates an instance of the `IMutableReference<TValue>` with the specified value.
+- `CreateNullable<TValue>(in TValue?)`: Creates an instance of the `IMutableReference<TValue?>` with the specified nullable value.
+- `CreateObject<TObject>(TObject)`: Creates an instance of the `IMutableReference<TObject>` with the specified object.
+
+### Rxmxnx.PInvoke.IMutableReference<T>
+
+The `Rxmxnx.PInvoke.IMutableReference<T>` interface represents a mutable reference to a value of type `T`. 
+
+- `Reference`: Gets the reference to the value of type `T`.
+- `Value`: Gets or sets the value of type `T`.
+
+#### Static
+
+- `Create(T? value)`: Creates a new instance of `IMutableReference<T?>` with the specified value.
+
+### Rxmxnx.PInvoke.ValueRegion<T>
+
+`Rxmxnx.PInvoke.ValueRegion<T>` is a class representing a region of values.
+
+- `IsMemorySlice`: Gets a value indicating whether the value region represents a memory slice.
+- `Item(Int32)`: Gets the value at the specified index. This property is an indexer.
+- `ToArray()`: Converts the value region to an array of values.
+- `Slice(Int32, Int32)`: Creates a slice of the value region with the specified range.
+- `Slice(Int32)`: Creates a slice of the value region starting from the specified index.
+
+#### Static
+- `Create(ReadOnlySpanFunc<T> func)`: Creates a new `ValueRegion<T>` instance by invoking the specified `ReadOnlySpanFunc<T>` delegate.
+- `Create(T[] array)`: Creates a new `ValueRegion<T>` instance from the specified array.
+- `Create(IntPtr pointer, Int32 length)`: Creates a new `ValueRegion<T>` instance from the memory pointed to by the specified pointer with the specified length.
 
 
-## TextUtilites
-Provides a set of utilities for texts.
-* **Join(CString separator, params CString[] values)** / **Join(Byte separator, params CString[] values)**
-Concatenates an array of CString, using the specified separator between each member.
-* **Join(CString separator, IEnumerable<CString> values)** / **Join(Byte separator, IEnumerable<CString> values)**
-Concatenates the members of a collection of CString, using the specified separator between each member.
+### Rxmxnx.PInvoke.CString
 
-* **JoinUtf8(CString separator, params String[] values)** / **JoinUtf8(Char separator, params String[] values)**
-Concatenates an array of strings, using the specified separator between each member.
-* **JoinUtf8(String separator, IEnumerable<String> values)** / **JoinUtf8(Char separator, IEnumerable<String> values)**
-Concatenates the members of a collection of String, using the specified separator between each member.
-* **JoinUtf8(ReadOnlySpan<Byte> separator, params Byte[][] values)** / **JoinUtf8(Byte separator, params Byte[][] values)**
-Concatenates an array of UTF-8 texts, using the specified separator between each member.
-* **JoinUtf8(ReadOnlySpan<Byte> separator, IEnumerable<Byte[]> values)** / **JoinUtf8(Byte separator, IEnumerable<Byte> values)**
-Concatenates the members of a collection of UTF-8 texts, using the specified separator between each member.
+The `Rxmxnx.PInvoke.CString` class represents a UTF-8 string. 
 
-* **JoinAsync(CString separator, params CString[] values)** / **JoinAsync(Byte separator, params CString[] values)**
-Concatenates an array of CString, using the specified separator between each member.
-* **JoinAsync(CString separator, IEnumerable<CString> values)** / **JoinAsync(Byte separator, IEnumerable<String> values)**
-Concatenates the members of a collection of CString, using the specified separator between each member.
+- `Unit(Int32)`: Gets the UTF-8 unit at the specified index. This property is an indexer.
+- `IsFunction`: Gets a value indicating whether the `CString` represents a function.
+- `IsNullTerminated`: Gets a value indicating whether the `CString` is null-terminated.
+- `IsReference`: Gets a value indicating whether the `CString` is a reference.
+- `IsSegmented`: Gets a value indicating whether the `CString` is segmented.
+- `Length`: Gets the length of the `CString`.
+- `Clone()`: Creates a new object that is a copy of the current instance.
+- `CompareTo(string)`: Compares the current instance with the specified string and returns an integer that indicates their relative position in the sort order.
+- `CompareTo(CString)`: Compares the current instance with the specified `CString` object and returns an integer that indicates their relative position in the sort order.
+- `CompareTo(Object)`: Compares the current instance with the specified object and returns an integer that indicates their relative position in the sort order.
+- `Slice(Int32, Int32)`: Returns a new `CString` that represents a slice of the current string starting from the specified index with the specified length.
+- `Slice(Int32)`: Returns a new `CString` that represents a slice of the current string starting from the specified index.
+- `ToArray()`: Converts the `CString` to an array of `Byte` values.
+- `ToHexString()`: Converts the `CString` to a hexadecimal string.
+- `ToString()`: Returns a string that represents the current instance.
+- `WithSafeFixed<TResult>(ReadOnlyFixedFunc<TResult>)`: Executes the specified function with a fixed list of `Byte` values and returns the result.
+- `WithSafeFixed(ReadOnlyFixedAction)`: Executes the specified action with a fixed list of `Byte` values.
+- `WithSafeFixed<TArg, TResult>(TArg, ReadOnlyFixedFunc<TArg, TResult>)`: Executes the specified function with a fixed list of `Byte` values and the specified argument, and returns the result.
+- `WithSafeFixed<TArg>(TArg, ReadOnlyFixedAction<TArg>)`: Executes the specified action with a fixed list of `Byte` values and the specified argument.
 
-* **JoinUtf8Async(String separator, params String[] values)** / **JoinUtf8Async(Char separator, params String[] values)**
-Concatenates an array of strings, using the specified separator between each member.
-* **JoinUtf8Async(String separator, IEnumerable<String> values)** / **JoinUtf8Async(Char separator, IEnumerable<String> values)**
-Concatenates the members of a collection of String, using the specified separator between each member.
+#### Constructors
 
-* **Concat(CString initial, params CString[] values)**
-Concatenates all CString parameters passed to this function.
+- `CString(Byte, Int32)`: Initializes a new instance of the `CString` class with a single character repeated for the specified length.
+- `CString(Byte, Byte, Int32)`: Initializes a new instance of the `CString` class with two characters repeated in alternating positions for the specified length.
+- `CString(Byte, Byte, Byte, Int32)`: Initializes a new instance of the `CString` class with three characters repeated in a cyclic pattern for the specified length.
+- `CString(Byte, Byte, Byte, Byte, Int32)`: Initializes a new instance of the `CString` class with four characters repeated in a cyclic pattern for the specified length.
+- `CString(ReadOnlySpan<Byte>)`: Initializes a new instance of the `CString` class with the contents of a `ReadOnlySpan<Byte>`.
+- `CString(ReadOnlySpanFunc<Byte>)`: Initializes a new instance of the `CString` class with the specified function delegate to get the content. This constructor is specialized for UTF-8 literals support.
 
-* **ConcatUtf8(String initial, params String[] values)**
-Concatenates all text parameters passed to this function.
-* **ConcatUtf8(Byte[] initial, params Byte[][] values)**
-Concatenates all UTF-8 text parameters passed to this function.
+#### Operators
 
-* **ConcatAsync(CString initial, params CString[] values)**
-Concatenates all CString parameters passed to this function.
+- `==`: Determines whether two `CString` objects are equal.
+- `!=`: Determines whether two `CString` objects are not equal.
+- `<`: Determines whether one `CString` object is less than another.
+- `>`: Determines whether one `CString` object is greater than another.
+- `<=`: Determines whether one `CString` object is less than or equal to another.
+- `>=`: Determines whether one `CString` object is greater than or equal to another.
+- `explicit operator CString(String)`: Converts a string to a `CString` object.
+- `implicit operator CString(Byte[])`: Converts a `Byte` array to a `CString` object.
+- `implicit operator ReadOnlySpan<Byte>(CString)`: Converts a `CString` object to a `ReadOnlySpan<Byte>`.
 
-* **ConcatUtf8Async(String initial, params String[] values)**
-Concatenates all text parameters passed to this function.
+#### Static
+
+- `Empty`: Represents an empty `CString` object.
+- `Zero`: Represents a `CString` object pointing to null.
+- `Create(ReadOnlySpanFunc<Byte>)`: Creates a new instance of the `CString` class by invoking the specified function to generate the content.
+- `Create(ReadOnlySpan<Byte>)`: Creates a new instance of the `CString` class with the contents of a `ReadOnlySpan<Byte>`.
+
+- `Compare(CString, CString)`: Compares two `CString` objects and returns an integer that indicates their relative position in the sort order.
+- `Compare(CString, CString, Boolean)`: Compares two `CString` objects and returns an integer that indicates their relative position in the sort order, optionally ignoring case.
+- `Compare(CString, CString, Boolean, CultureInfo)`: Compares two `CString` objects using a specified `CultureInfo` and returns an integer that indicates their relative position in the sort order, optionally ignoring case.
+- `Compare(CString, String, StringComparison)`: Compares a `CString` object with a string using a specified `StringComparison` and returns an integer that indicates their relative position in the sort order.
+- `Compare(CString, String, Boolean, CultureInfo)`: Compares a `CString` object with a string using a specified `CultureInfo` and returns an integer that indicates their relative position in the sort order, optionally ignoring case.
+- `Compare(CString, String, Boolean)`: Compares a `CString` object with a string and returns an integer that indicates their relative position in the sort order, optionally ignoring case.
+- `Compare(CString, String)`: Compares a `CString` object with a string and returns an integer that indicates their relative position in the sort order.
+- `Compare(CString, CString, StringComparison)`: Compares two `CString` objects using a specified `StringComparison` and returns an integer that indicates their relative position in the sort order.
+
+- `Concat(String[])`: Concatenates an array of strings into a single `CString` object.
+- `Concat(Byte[][])`: Concatenates an array of byte arrays into a single `CString` object.
+
+- `Join(Char, String[], Int32, Int32)`: Concatenates an array of strings, using the specified separator character, starting from the specified index and including the specified number of elements, into a single `CString` object.
+- `Join(Byte, CString[])`: Concatenates an array of `CString` objects, using the specified byte separator, into a single `CString` object.
+- `Join(Byte, IEnumerable<CString>)`: Concatenates a sequence of `CString` objects, using the specified byte separator, into a single `CString` object.
+- `Join(Byte, CString[], Int32, Int32)`: Concatenates a specified number of `CString` objects, using the specified byte separator, starting from the specified index, into a single `CString` object.
+- `Join(Char, String[])`: Concatenates an array of strings, using the specified separator character, into a single `CString` object.
+- `Join(ReadOnlySpan<Byte>, IEnumerable<CString>)`: Concatenates a sequence of `CString` objects, using the specified byte separator, into a single `CString` object.
+- `Join(ReadOnlySpan<Byte>, CString[], Int32, Int32)`: Concatenates a specified number of `CString` objects, using the specified byte separator, starting from the specified index, into a single `CString` object.
+- `Join(CString, CString[])`: Concatenates an array of `CString` objects, using the specified `CString` separator, into a single `CString` object.
+- `Join(CString, IEnumerable<CString>)`: Concatenates a sequence of `CString` objects, using the specified `CString` separator, into a single `CString` object.
+- `Join(CString, CString[], Int32, Int32)`: Concatenates a specified number of `CString` objects, using the specified `CString` separator, starting from the specified index, into a single `CString` object.
+- `Join(String, String[])`: Concatenates an array of strings, using the specified separator string, into a single `CString` object.
+- `Join(String, IEnumerable<String>)`: Concatenates a sequence of strings, using the specified separator string, into a single `CString` object.
+
+- `ConcatAsync(CString[])`: Asynchronously concatenates an array of `CString` objects into a single `CString` object.
+- `ConcatAsync(CancellationToken, CString[])`: Asynchronously concatenates an array of `CString` objects into a single `CString` object, while observing a cancellation token.
+- `ConcatAsync(Byte[][])`: Asynchronously concatenates an array of byte arrays into a single `CString` object.
+- `ConcatAsync(CancellationToken, Byte[][])`: Asynchronously concatenates an array of byte arrays into a single `CString` object, while observing a cancellation token.
+- `ConcatAsync(String[])`: Concatenates multiple strings asynchronously and returns a `Task<CString>` representing the result.
+- `ConcatAsync(CancellationToken, String[])`: Asynchronously concatenates an array of strings into a single `CString` object, while observing a cancellation token.
+
+- `JoinAsync(CString, CancellationToken, CString[])`: Asynchronously concatenates an array of `CString` objects, using the specified `CString` separator, into a single `CString` object, while observing a cancellation token.
+- `JoinAsync(CString, IEnumerable<CString>, CancellationToken)`: Asynchronously concatenates a sequence of `CString` objects, using the specified `CString` separator, into a single `CString` object, while observing a cancellation token.
+- `JoinAsync(CString, CString[], Int32, Int32, CancellationToken)`: Asynchronously concatenates a specified number of `CString` objects, using the specified `CString` separator, starting from the specified index, into a single `CString` object, while observing a cancellation token.
+- `JoinAsync(Byte, CString[])`: Asynchronously concatenates an array of `CString` objects, using the specified byte separator, into a single `CString` object.
+- `JoinAsync(Byte, CancellationToken, CString[])`: Asynchronously concatenates an array of `CString` objects, using the specified byte separator, into a single `CString` object, while observing a cancellation token.
+- `JoinAsync(Byte, IEnumerable<CString>, CancellationToken)`: Asynchronously concatenates a sequence of `CString` objects, using the specified byte separator, into a single `CString` object, while observing a cancellation token.
+- `JoinAsync(Byte, CString[], Int32, Int32, CancellationToken)`: Asynchronously concatenates a specified number of `CString` objects, using the specified byte separator, starting from the specified index, into a single `CString` object, while observing a cancellation token.
+- `JoinAsync(String, String[], Int32, Int32, CancellationToken)`: Asynchronously concatenates a specified number of strings, using the specified separator string, starting from the specified index, into a single `CString` object, while observing a cancellation token.
+- `JoinAsync(String, IEnumerable<String>, CancellationToken)`: Asynchronously concatenates a sequence of strings, using the specified separator string, into a single `CString` object, while observing a cancellation token.
+- `JoinAsync(String, CancellationToken, String[])`: Asynchronously concatenates an array of strings, using the specified separator string, into a single `CString` object, while observing a cancellation token.
+- `JoinAsync(Char, String[], Int32, Int32, CancellationToken)`: Asynchronously concatenates a specified number of strings, using the specified separator character, starting from the specified index, into a single `CString` object, while observing a cancellation token.
+- `JoinAsync(Char, IEnumerable<String>, CancellationToken)`: Asynchronously concatenates a sequence of strings, using the specified separator character, into a single `CString` object, while observing a cancellation token.
+- `JoinAsync(Char, CancellationToken, String[])`: Asynchronously concatenates an array of strings, using the specified separator character, into a single `CString` object, while observing a cancellation token.
+- `JoinAsync(CString, String[], Int32, Int32, CancellationToken)`: Asynchronously concatenates a specified number of `CString` objects, using the specified `CString` separator, starting from the specified index, into a single `CString` object, while observing a cancellation token.
+- `JoinAsync(CString, IEnumerable<CString>, CancellationToken)`: Asynchronously concatenates a sequence of `CString` objects, using the specified `CString` separator, into a single `CString` object, while observing a cancellation token.
+- `JoinAsync(CString, CancellationToken, CString[])`: Asynchronously concatenates an array of `CString` objects, using the specified `CString` separator, into a single `CString` object, while observing a cancellation token.
+
+### Rxmxnx.PInvoke.CStringSequence
+
+The `Rxmxnx.PInvoke.CStringSequence` class represents a sequence of `CString` objects. 
+
+- `Count`: Gets the number of elements in the `CStringSequence`.
+- `Item(Int32)`: Gets the `CString` at the specified index in the `CStringSequence`. This property is an indexer.
+- `Clone()`: Creates a new object that is a copy of the current instance.
+- `Equals(CStringSequence)`: Determines whether the specified `CStringSequence` is equal to the current instance.
+- `Equals(Object)`: Determines whether the specified object is equal to the current instance.
+- `Slice(Int32)`: Returns a new `CStringSequence` that represents a slice of the current sequence starting from the specified index.
+- `Slice(Int32, Int32)`: Returns a new `CStringSequence` that represents a slice of the current sequence starting from the specified index with the specified length.
+- `ToCString()`: Converts the `CStringSequence` to a single `CString` object.
+- `WithSafeFixed<TState, TResult>(TState, ReadOnlyFixedListFunc<TState, TResult>)`: Executes the specified function with a fixed list of `CString` objects and returns the result.
+- `WithSafeFixed(ReadOnlyFixedListAction)`: Executes the specified action with a fixed list of `CString` objects.
+- `WithSafeFixed<TState>(TState, ReadOnlyFixedListAction<TState>)`: Executes the specified action with a fixed list of `CString` objects.
+- `WithSafeFixed<TResult>(ReadOnlyFixedListFunc<TResult>)`: Executes the specified function with a fixed list of `CString` objects and returns the result.
+- `WithSafeTransform(CStringSequenceAction)`: Executes the specified action with the `CStringSequence` object.
+- `WithSafeTransform<TState>(TState, CStringSequenceAction<TState>)`: Executes the specified action with the `CStringSequence` object and additional state.
+- `WithSafeTransform<TResult>(CStringSequenceFunc<TResult>)`: Executes the specified function with the `CStringSequence` object and returns the result.
+- `WithSafeTransform<TState, TResult>(TState, CStringSequenceFunc<TState, TResult>)`: Executes the specified function with the `CStringSequence` object and additional state.
+
+#### Constructors
+
+- `CStringSequence(CString[])`: Initializes a new instance of the `CStringSequence` class with an array of `CString` objects.
+- `CStringSequence(IEnumerable<String>)`: Initializes a new instance of the `CStringSequence` class with an enumerable collection of strings.
+- `CStringSequence(IEnumerable<CString>)`: Initializes a new instance of the `CStringSequence` class with an enumerable collection of `CString` objects.
+- `CStringSequence(String[])`: Initializes a new instance of the `CStringSequence` class with an array of strings.
+
+#### Static
+
+- `Create<TState>(TState, CStringSequenceCreationAction<TState>, Nullable<Int32>[]?)`: Creates an instance of `CStringSequence` using the specified creation action and optional array of nullable integers.
+
+
+## Extensions
+
+### Rxmxnx.PInvoke.BinaryExtensions
+
+`Rxmxnx.PInvoke.BinaryExtensions` is an extension methods class that provides a set of useful methods when working with bytes and byte arrays in a PInvoke context.
+
+- `AsHexString(Byte[])`: Returns a hexadecimal string representation of a byte array.
+- `AsHexString(Byte)`: Returns a hexadecimal string representation of a single byte.
+- `AsValue<T>(ReadOnlySpan<Byte>)`: Transforms the byte span into a value of the provided value type.
+- `ToValue<T>(ReadOnlySpan<Byte>)`: Creates a new value of the provided type from a byte span.
+- `WithSafeFixed(Span<Byte>, FixedAction)`: Performs a fixed action on a span of bytes.
+- `WithSafeFixed(ReadOnlySpan<Byte>, ReadOnlyFixedAction)`: Performs a fixed action on a readonly span of bytes.
+- `WithSafeFixed<TArg>(Span<Byte>, TArg, FixedAction<TArg>)`: Performs a fixed action on a span of bytes with an additional argument.
+- `WithSafeFixed<TArg>(ReadOnlySpan<Byte>, TArg, ReadOnlyFixedAction<TArg>)`: Performs a fixed action on a readonly span of bytes with an additional argument.
+- `WithSafeFixed<TResult>(Span<Byte>, FixedFunc<TResult>)`: Performs a fixed function on a span of bytes and returns a value.
+- `WithSafeFixed<TResult>(ReadOnlySpan<Byte>, ReadOnlyFixedFunc<TResult>)`: Performs a fixed function on a readonly span of bytes and returns a value.
+- `WithSafeFixed<TArg, TResult>(Span<Byte>, TArg, FixedFunc<TArg, TResult>)`: Performs a fixed function on a span of bytes with an additional argument and returns a value.
+- `WithSafeFixed<TArg, TResult>(ReadOnlySpan<Byte>, TArg, ReadOnlyFixedFunc<TArg, TResult>)`: Performs a fixed function on a readonly span of bytes with an additional argument and returns a value.
+
+### Rxmxnx.PInvoke.DelegateExtensions
+
+`Rxmxnx.PInvoke.DelegateExtensions` is an extension methods class that provides additional functionality for working with delegates.
+
+- `GetUnsafeIntPtr<TDelegate>(TDelegate)`: Returns the unmanaged IntPtr representation of the specified delegate.
+- `GetUnsafeUIntPtr<TDelegate>(TDelegate)`: Returns the unmanaged UIntPtr representation of the specified delegate.
+- `WithSafeFixed<TDelegate, TArg>(TDelegate, TArg, FixedMethodAction<TDelegate, TArg>)`: Performs a fixed method action on the specified delegate and an additional argument.
+- `WithSafeFixed<TDelegate, TResult>(TDelegate, FixedMethodFunc<TDelegate, TResult>)`: Performs a fixed method function on the specified delegate and returns a value.
+- `WithSafeFixed<TDelegate, TArg, TResult>(TDelegate, TArg, FixedMethodFunc<TDelegate, TArg, TResult>)`: Performs a fixed method function on the specified delegate with an additional argument and returns a value.
+- `WithSafeFixed<TDelegate>(TDelegate, FixedMethodAction<TDelegate>)`: Performs a fixed method action on the specified delegate.
+
+### Rxmxnx.PInvoke.MemoryBlockExtensions
+
+`Rxmxnx.PInvoke.MemoryBlockExtensions` is an extension methods class that provides additional functionality for working with memory blocks.
+
+- `AsBytes<TSource>(Span<TSource>)`: Returns a span of bytes representing the memory block.
+- `AsBytes<TSource>(ReadOnlySpan<TSource>)`: Returns a readonly span of bytes representing the memory block.
+- `AsValues<TSource, TDestination>(ReadOnlySpan<TSource>)`: Converts the memory block to a readonly span of values of the specified destination type.
+- `AsValues<TSource, TDestination>(Span<TSource>, Span<byte>&)`: Converts the memory block to a span of values of the specified destination type, also returning the underlying byte span.
+- `AsValues<TSource, TDestination>(Span<TSource>, ReadOnlySpan<byte>&)`: Converts the memory block to a readonly span of values of the specified destination type, also returning the underlying byte span.
+- `AsValues<TSource, TDestination>(ReadOnlySpan<TSource>, ReadOnlySpan<byte>&)`: Converts the memory block to a readonly span of values of the specified destination type, also returning the underlying byte span.
+- `GetUnsafeIntPtr<T>(ReadOnlySpan<T>)`: Returns the unmanaged IntPtr representation of the specified memory block.
+- `GetUnsafeIntPtr<T>(Span<T>)`: Returns the unmanaged IntPtr representation of the specified memory block.
+- `GetUnsafeUIntPtr<T>(Span<T>)`: Returns the unmanaged UIntPtr representation of the specified memory block.
+- `GetUnsafeUIntPtr<T>(ReadOnlySpan<T>)`: Returns the unmanaged UIntPtr representation of the specified memory block.
+- `WithSafeFixed<T>(Span<T>, FixedContextAction<T>)`: Performs a fixed context action on the specified memory block.
+- `WithSafeFixed<T>(Span<T>, ReadOnlyFixedContextAction<T>)`: Performs a readonly fixed context action on the specified memory block.
+- `WithSafeFixed<T>(ReadOnlySpan<T>, ReadOnlyFixedContextAction<T>)`: Performs a readonly fixed context action on the specified memory block.
+- `WithSafeFixed<T, TArg>(Span<T>, TArg, FixedContextAction<T, TArg>)`: Performs a fixed context action on the specified memory block with an additional argument.
+- `WithSafeFixed<T, TArg>(Span<T>, TArg, ReadOnlyFixedContextAction<T, TArg>)`: Performs a readonly fixed context action on the specified memory block with an additional argument.
+- `WithSafeFixed<T, TArg>(ReadOnlySpan<T>, TArg, ReadOnlyFixedContextAction<T, TArg>)`: Performs a readonly fixed context action on the specified memory block with an additional argument.
+- `WithSafeFixed<T, TResult>(Span<T>, FixedContextFunc<T, TResult>)`: Performs a fixed context function on the specified memory block and returns a value.
+- `WithSafeFixed<T, TResult>(Span<T>, ReadOnlyFixedContextFunc<T, TResult>)`: Performs a readonly fixed context function on the specified memory block and returns a value.
+- `WithSafeFixed<T, TResult>(ReadOnlySpan<T>, ReadOnlyFixedContextFunc<T, TResult>)`: Performs a readonly fixed context function on the specified memory block and returns a value.
+- `WithSafeFixed<T, TArg, TResult>(Span<T>, TArg, FixedContextFunc<T, TArg, TResult>)`: Performs a fixed context function on the specified memory block with an additional argument and returns a value.
+- `WithSafeFixed<T, TArg, TResult>(Span<T>, TArg, ReadOnlyFixedContextFunc<T, TArg, TResult>)`: Performs a readonly fixed context function on the specified memory block with an additional argument and returns a value.
+- `WithSafeFixed<T, TArg, TResult>(ReadOnlySpan<T>, TArg, ReadOnlyFixedContextFunc<T, TArg, TResult>)`: Performs a readonly fixed context function on the specified memory block with an additional argument and returns a value.
+
+### Rxmxnx.PInvoke.PointerExtensions
+
+`Rxmxnx.PInvoke.PointerExtensions` is an extension methods class that provides additional functionality for working with pointers.
+
+- `GetUnsafeArray<T>(IntPtr, Int32)`: Returns an array of type `T` from the specified memory pointer and length.
+- `GetUnsafeArray<T>(UIntPtr, Int32)`: Returns an array of type `T` from the specified memory pointer and length.
+- `GetUnsafeDelegate<T>(IntPtr)`: Returns a delegate of type `T` from the specified function pointer.
+- `GetUnsafeDelegate<T>(UIntPtr)`: Returns a delegate of type `T` from the specified function pointer.
+- `GetUnsafeReadOnlyReference<T>(UInt32)`: Returns a readonly reference of type `T` from the specified memory pointer.
+- `GetUnsafeReadOnlyReference<T>(Int32)`: Returns a readonly reference of type `T` from the specified memory pointer.
+- `GetUnsafeReadOnlySpan<T>(UIntPtr, Int32)`: Returns a readonly span of type `T` from the specified memory pointer and length.
+- `GetUnsafeReadOnlySpan<T>(IntPtr, Int32)`: Returns a readonly span of type `T` from the specified memory pointer and length.
+- `GetUnsafeReference<T>(UInt32)`: Returns a reference of type `T` from the specified memory pointer.
+- `GetUnsafeReference<T>(Int32)`: Returns a reference of type `T` from the specified memory pointer.
+- `GetUnsafeSpan<T>(UIntPtr, Int32)`: Returns a span of type `T` from the specified memory pointer and length.
+- `GetUnsafeSpan<T>(IntPtr, Int32)`: Returns a span of type `T` from the specified memory pointer and length.
+- `GetUnsafeString(Int32, Int32)`: Returns a string from the specified memory pointer and length.
+- `GetUnsafeString(UInt32)`: Returns a string from the specified memory pointer.
+- `GetUnsafeString(Int32)`: Returns a string from the specified memory pointer.
+- `GetUnsafeString(UInt32, Int32)`: Returns a string from the specified memory pointer and length.
+- `GetUnsafeValue<T>(IntPtr)`: Returns a nullable value of type `T` from the specified memory pointer.
+- `GetUnsafeValue<T>(UIntPtr)`: Returns a nullable value of type `T` from the specified memory pointer.
+- `IsZero(UInt32)`: Checks if the specified memory pointer is zero.
+- `IsZero(Int32)`: Checks if the specified memory pointer is zero.
+- `ToIntPtr(UInt32)`: Converts the specified unsigned integer memory pointer to a signed integer memory pointer.
+- `ToUIntPtr(Int32)`: Converts the specified signed integer memory pointer to an unsigned integer memory pointer.
+
+### Rxmxnx.PInvoke.PointerCStringExtensions
+
+`Rxmxnx.PInvoke.PointerCStringExtensions` is an extension methods class that provides additional functionality for working with UTF-8 encoded strings represented by pointers.
+
+- `GetUnsafeCString(UInt32, Int32)`: Retrieves a UTF-8 encoded string from the specified pointer and length.
+- `GetUnsafeCString(Int32, Int32)`: Retrieves a UTF-8 encoded string from the specified pointer and length.
+
+### Rxmxnx.PInvoke.ReferenceExtensions
+
+`Rxmxnx.PInvoke.ReferenceExtensions` is an extension methods class that provides additional functionality for working with references.
+
+- `AsBytes<TSource>(ref TSource)`: Returns a span of bytes from the specified reference.
+- `GetUnsafeIntPtr<T>(ref T)`: Returns the unsafe IntPtr representation of the specified reference.
+- `GetUnsafeUIntPtr<T>(ref T)`: Returns the unsafe UIntPtr representation of the specified reference.
+- `Transform<TSource, TDestination>(ref TSource)`: Transforms the specified reference to a reference of type `TDestination`.
+- `WithSafeFixed<T>(ref T, FixedReferenceAction<T>)`: Executes a fixed reference action on the specified reference.
+- `WithSafeFixed<T>(ref T, ReadOnlyFixedReferenceAction<T>)`: Executes a readonly fixed reference action on the specified reference.
+- `WithSafeFixed<T, TArg>(ref T, TArg, FixedReferenceAction<T, TArg>)`: Executes a fixed reference action with an additional argument on the specified reference.
+- `WithSafeFixed<T, TArg>(ref T, TArg, ReadOnlyFixedReferenceAction<T, TArg>)`: Executes a readonly fixed reference action with an additional argument on the specified reference.
+- `WithSafeFixed<T, TResult>(ref T, FixedReferenceFunc<T, TResult>)`: Executes a fixed reference function on the specified reference and returns a value.
+- `WithSafeFixed<T, TResult>(ref T, ReadOnlyFixedReferenceFunc<T, TResult>)`: Executes a readonly fixed reference function on the specified reference and returns a value.
+- `WithSafeFixed<T, TArg, TResult>(ref T, TArg, FixedReferenceFunc<T, TArg, TResult>)`: Executes a fixed reference function with an additional argument on the specified reference and returns a value.
+- `WithSafeFixed<T, TArg, TResult>(ref T, TArg, ReadOnlyFixedReferenceFunc<T, TArg, TResult>)`: Executes a readonly fixed reference function with an additional argument on the specified reference and returns a value.
+
+### Rxmxnx.PInvoke.UnmanagedValueExtensions
+
+`Rxmxnx.PInvoke.UnmanagedValueExtensions` is an extension methods class that provides additional functionality for working with unmanaged values.
+
+- `ToBytes<TSource>(TSource[])`: Converts an array of values to a byte array representation.
+- `ToBytes<T>(T)`: Converts a single value to a byte array representation.
+- `ToValues<TSource, TDestination>(TSource[], Byte[])`: Converts an array of source values to an array of destination values using a byte array as an intermediary.
+- `ToValues<TSource, TDestination>(TSource[])`: Converts an array of source values to an array of destination values.
+
+### Rxmxnx.PInvoke.StreamCStringExtensions
+
+`Rxmxnx.PInvoke.StreamCStringExtensions` is an extension methods class that provides additional functionality for working with UTF-8 encoded strings in streams.
+
+- `Write(Stream, CString, Int32, Int32)`: Writes a portion of the UTF-8 encoded string to the specified stream.
+- `Write(Stream, CString, Boolean)`: Writes the UTF-8 encoded string to the specified stream, optionally including the null terminator.
+- `WriteAsync(Stream, CString, Boolean, CancellationToken)`: Asynchronously writes the UTF-8 encoded string to the specified stream, optionally including the null terminator, and allows cancellation.
+- `WriteAsync(Stream, CString, Int32, Int32, CancellationToken)`: Asynchronously writes a portion of the UTF-8 encoded string to the specified stream and allows cancellation.
+- `WriteAsync(Stream, CString, CancellationToken)`: Asynchronously writes the UTF-8 encoded string to the specified stream and allows cancellation.
+
+## Utilities
+
+### Rxmxnx.PInvoke.NativeUtilities
+
+`Rxmxnx.PInvoke.NativeUtilities` is a utility class that provides various methods for working with native code.
+
+- `AsBytes<T>(in T)`: Retrieves the bytes representing the specified value.
+- `CopyBytes<T>(in T, Span<Byte>, Int32)`: Copies the bytes from the specified span to the specified value.
+- `CreateArray<T, TState>(Int32, TState, SpanAction<T, TState>)`: Creates an array of the specified type and size, applying the specified action for each element.
+- `GetNativeMethod<TDelegate>(IntPtr, String)`: Retrieves a native method as a delegate of the specified type.
+- `GetUnsafeIntPtr<T>(in T)`: Retrieves the pointer value from the specified reference.
+- `GetUnsafeUIntPtr<T>(in T)`: Retrieves the unsigned pointer value from the specified reference.
+- `LoadNativeLib(String, DllImportSearchPath?)`: Loads a native library and returns the handle.
+- `LoadNativeLib(String, ref EventHandler?, DllImportSearchPath?)`: Loads a native library and returns the handle, raising an event upon load or failure.
+- `SizeOf<T>()`: Retrieves the size, in bytes, of the specified value type.
+- `ToBytes<T>(in T)`: Retrieves the bytes representing the specified value.
+- `Transform<TSource, TDestination>(in TSource)`: Converts the specified value from the source type to the destination type.
+
+- `WithSafeFixed<T0..T7>(Span<T0>...Span<T7>, FixedListAction)`: Executes the specified action with the specified fixed spans.
+- `WithSafeFixed<T0..T7, TArg>(Span<T0>...Span<T7>, FixedListAction)`: Executes the specified action with the specified fixed spans and an additional argument.
+
+- `WithSafeFixed<T0..T7>(ReadOnlySpan<T0>...ReadOnlySpan<T7>, ReadOnlyFixedListAction)`: Executes the specified action with the specified fixed spans.
+- `WithSafeFixed<T0..T7, TArg>(ReadOnlySpan<T0>...ReadOnlySpan<T7>, ReadOnlyFixedListAction)`: Executes the specified action with the specified fixed spans and an additional argument.
+
+- `WithSafeReadOnlyFixed<T0..T7>(Span<T0>...Span<T7>, ReadOnlyFixedListAction)`: Executes the specified action with the specified fixed spans.
+- `WithSafeReadOnlyFixed<T0..T7, TArg>(Span<T0>...Span<T7>, ReadOnlyFixedListAction)`: Executes the specified action with the specified fixed spans and an additional argument.
+
+- `WithSafeFixed<T0..T7>(Span<T0>...Span<T7>, FixedListFunc)`: Executes the specified function with the specified fixed spans.
+- `WithSafeFixed<T0..T7, TArg>(Span<T0>...Span<T7>, FixedListFunc)`: Executes the specified function with the specified fixed spans and an additional argument.
+
+- `WithSafeFixed<T0..T7>(ReadOnlySpan<T0>...ReadOnlySpan<T7>, ReadOnlyFixedListFunc)`: Executes the specified function with the specified fixed spans.
+- `WithSafeFixed<T0..T7, TArg>(ReadOnlySpan<T0>...ReadOnlySpan<T7>, ReadOnlyFixedListFunc)`: Executes the specified function with the specified fixed spans and an additional argument.
+
+- `WithSafeReadOnlyFixed<T0..T7>(Span<T0>...Span<T7>, ReadOnlyFixedListFunc)`: Executes the specified function with the specified fixed spans.
+- `WithSafeReadOnlyFixed<T0..T7, TArg>(Span<T0>...Span<T7>, ReadOnlyFixedListFunc)`: Executes the specified function with the specified fixed spans and an additional argument.
