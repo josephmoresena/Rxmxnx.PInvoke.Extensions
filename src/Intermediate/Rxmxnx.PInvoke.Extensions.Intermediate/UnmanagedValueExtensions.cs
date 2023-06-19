@@ -3,6 +3,7 @@
 /// <summary>
 /// Provides a set of extensions for basic operations with <see cref="ValueType"/> <see langword="unmanaged"/> values.
 /// </summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static partial class UnmanagedValueExtensions
 {
     /// <summary>

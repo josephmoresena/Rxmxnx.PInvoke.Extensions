@@ -125,6 +125,36 @@ public static partial class NativeUtilities
         return ref Unsafe.As<TSource, TDestination>(ref refValue);
     }
     /// <summary>
+    /// Transforms a reference of an <see langword="unmanaged"/> value of type <typeparamref name="TSource"/> into a
+    /// reference of an <see langword="unmanaged"/> value of type <typeparamref name="TDestination"/>.
+    /// </summary>
+    /// <typeparam name="TSource">
+    /// The type of the source value being referenced. This must be an <see langword="unmanaged"/> value type.
+    /// </typeparam>
+    /// <typeparam name="TDestination">
+    /// The type of the destination value to which to create a reference. This must be an <see langword="unmanaged"/> value type.
+    /// </typeparam>
+    /// <param name="refValue">
+    /// The reference to the source value from which to create the destination reference.
+    /// </param>
+    /// <returns>A reference to an <see langword="unmanaged"/> value of type <typeparamref name="TDestination"/>.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when <typeparamref name="TSource"/> and <typeparamref name="TDestination"/> do not have the same memory size.
+    /// </exception>
+    /// <remarks>
+    /// The transformation occurs at the memory level, without copying or moving data.
+    /// This transformation can be performed between <typeparamref name="TSource"/> and <typeparamref name="TDestination"/> types
+    /// that have the same size in memory. 
+    /// </remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ref TDestination TransformReference<TSource, TDestination>(ref TSource refValue)
+        where TSource : unmanaged
+        where TDestination : unmanaged
+    {
+        ValidationUtilities.ThrowIfInvalidCastType<TSource, TDestination>();
+        return ref Unsafe.As<TSource, TDestination>(ref refValue);
+    }
+    /// <summary>
     /// Retrieves a <see cref="Byte"/> array from a read-only reference to a <typeparamref name="T"/> value.
     /// </summary>
     /// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
@@ -152,6 +182,22 @@ public static partial class NativeUtilities
     public static ReadOnlySpan<Byte> AsBytes<TSource>(in TSource value) where TSource : unmanaged
     {
         ref TSource refValue = ref Unsafe.AsRef(value);
+        ReadOnlySpan<TSource> span = MemoryMarshal.CreateSpan(ref refValue, 1);
+        return MemoryMarshal.AsBytes(span);
+    }
+    /// <summary>
+    /// Creates a <see cref="Span{Byte}"/> from an exising reference to a 
+    /// <typeparamref name="TSource"/> <see langword="unmanaged"/> value.
+    /// </summary>
+    /// <typeparam name="TSource"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> source value.</typeparam>
+    /// <param name="refValue">A read-only reference to a <typeparamref name="TSource"/> <see langword="unmanaged"/> value.</param>
+    /// <returns>
+    /// A <see cref="ReadOnlySpan{Byte}"/> from an exising memory reference to a <typeparamref name="TSource"/> 
+    /// <see langword="unmanaged"/> value.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Span<Byte> AsBinarySpan<TSource>(ref TSource refValue) where TSource : unmanaged
+    {
         Span<TSource> span = MemoryMarshal.CreateSpan(ref refValue, 1);
         return MemoryMarshal.AsBytes(span);
     }

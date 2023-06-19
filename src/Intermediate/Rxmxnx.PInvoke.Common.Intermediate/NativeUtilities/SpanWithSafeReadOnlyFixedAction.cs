@@ -1,4 +1,6 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿using System;
+
+namespace Rxmxnx.PInvoke;
 
 [SuppressMessage("csharpsquid", "S107")]
 [SuppressMessage("csharpsquid", "S2436")]
@@ -17,6 +19,7 @@ public static partial class NativeUtilities
         ReadOnlyFixedListAction action)
         where T0 : unmanaged where T1 : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
         fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
         {
@@ -51,6 +54,7 @@ public static partial class NativeUtilities
         TArg arg, ReadOnlyFixedListAction<TArg> action)
         where T0 : unmanaged where T1 : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
         fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
         {
@@ -85,6 +89,7 @@ public static partial class NativeUtilities
         ReadOnlyFixedListAction action)
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
         fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
         fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -123,6 +128,7 @@ public static partial class NativeUtilities
         TArg arg, ReadOnlyFixedListAction<TArg> action)
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
         fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
         fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -161,6 +167,7 @@ public static partial class NativeUtilities
         ReadOnlyFixedListAction action)
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
         fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
         fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -203,6 +210,7 @@ public static partial class NativeUtilities
         TArg arg, ReadOnlyFixedListAction<TArg> action)
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
         fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
         fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -246,6 +254,7 @@ public static partial class NativeUtilities
         ReadOnlyFixedListAction action)
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged where T4 : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
         fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
         fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -293,6 +302,7 @@ public static partial class NativeUtilities
         TArg arg, ReadOnlyFixedListAction<TArg> action)
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged where T4 : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
         fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
         fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -341,6 +351,7 @@ public static partial class NativeUtilities
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged where T4 : unmanaged
         where T5 : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
         fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
         fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -393,6 +404,7 @@ public static partial class NativeUtilities
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged where T4 : unmanaged
         where T5 : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
         fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
         fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -445,6 +457,7 @@ public static partial class NativeUtilities
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged where T4 : unmanaged
         where T5 : unmanaged where T6 : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
         fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
         fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -501,6 +514,7 @@ public static partial class NativeUtilities
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged where T4 : unmanaged
         where T5 : unmanaged where T6 : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
         fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
         fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -557,6 +571,7 @@ public static partial class NativeUtilities
         where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged where T4 : unmanaged
         where T5 : unmanaged where T6 : unmanaged where T7 : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
         fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
         fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))

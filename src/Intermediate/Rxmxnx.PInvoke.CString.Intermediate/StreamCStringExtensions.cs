@@ -3,6 +3,7 @@
 /// <summary>
 /// <see cref="CString"/> extensions for <see cref="Stream"/> class.
 /// </summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static class StreamCStringExtensions
 {
     /// <summary>

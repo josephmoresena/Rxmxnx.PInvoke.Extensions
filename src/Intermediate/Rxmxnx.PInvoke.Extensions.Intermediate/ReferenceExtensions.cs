@@ -4,6 +4,7 @@
 /// Provides a set of extensions for basic operations with references to <see cref="ValueType"/> 
 /// <see langword="unmanaged"/> values.
 /// </summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static partial class ReferenceExtensions
 {
     /// <summary>
@@ -71,10 +72,7 @@ public static partial class ReferenceExtensions
     public static unsafe ref TDestination Transform<TSource, TDestination>(this ref TSource refValue)
         where TSource : unmanaged
         where TDestination : unmanaged
-    {
-        ValidationUtilities.ThrowIfInvalidCastType<TSource, TDestination>();
-        return ref Unsafe.As<TSource, TDestination>(ref refValue);
-    }
+        => ref NativeUtilities.TransformReference<TSource, TDestination>(ref refValue);
     /// <summary>
     /// Creates a <see cref="Span{Byte}"/> from a reference to an <see langword="unmanaged"/> value of
     /// type <typeparamref name="TSource"/>.
@@ -86,8 +84,5 @@ public static partial class ReferenceExtensions
     /// <returns>A <see cref="Span{Byte}"/> that represents the referenced <see langword="unmanaged"/> value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Span<Byte> AsBytes<TSource>(this ref TSource refValue) where TSource : unmanaged
-    {
-        Span<TSource> span = MemoryMarshal.CreateSpan(ref refValue, 1);
-        return MemoryMarshal.AsBytes(span);
-    }
+        => NativeUtilities.AsBinarySpan<TSource>(ref refValue);
 }

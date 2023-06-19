@@ -13,20 +13,7 @@ public static partial class ReferenceExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void WithSafeFixed<T>(this ref T refValue, FixedReferenceAction<T> action)
         where T : unmanaged
-    {
-        fixed (void* ptr = &refValue)
-        {
-            FixedReference<T> ctx = new(ptr);
-            try
-            {
-                action(ctx);
-            }
-            finally
-            {
-                ctx.Unload();
-            }
-        }
-    }
+        => NativeUtilities.WithSafeFixed(ref refValue, action);
     /// <summary>
     /// Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes
     /// a provided read-only action.
@@ -38,20 +25,7 @@ public static partial class ReferenceExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void WithSafeFixed<T>(this ref T refValue, ReadOnlyFixedReferenceAction<T> action)
         where T : unmanaged
-    {
-        fixed (void* ptr = &refValue)
-        {
-            FixedReference<T> ctx = new(ptr);
-            try
-            {
-                action(ctx);
-            }
-            finally
-            {
-                ctx.Unload();
-            }
-        }
-    }
+        => NativeUtilities.WithSafeReadOnlyFixed(ref refValue, action);
 
     /// <summary>
     /// Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a
@@ -66,20 +40,7 @@ public static partial class ReferenceExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void WithSafeFixed<T, TArg>(this ref T refValue, TArg arg, FixedReferenceAction<T, TArg> action)
         where T : unmanaged
-    {
-        fixed (void* ptr = &refValue)
-        {
-            FixedReference<T> ctx = new(ptr);
-            try
-            {
-                action(ctx, arg);
-            }
-            finally
-            {
-                ctx.Unload();
-            }
-        }
-    }
+        => NativeUtilities.WithSafeFixed(ref refValue, arg, action);
     /// <summary>
     /// Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a
     /// provided read-only action along with an argument. 
@@ -93,20 +54,7 @@ public static partial class ReferenceExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void WithSafeFixed<T, TArg>(this ref T refValue, TArg arg, ReadOnlyFixedReferenceAction<T, TArg> action)
         where T : unmanaged
-    {
-        fixed (void* ptr = &refValue)
-        {
-            FixedReference<T> ctx = new(ptr);
-            try
-            {
-                action(ctx, arg);
-            }
-            finally
-            {
-                ctx.Unload();
-            }
-        }
-    }
+        => NativeUtilities.WithSafeReadOnlyFixed(ref refValue, arg, action);
 
     /// <summary>
     /// Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a
@@ -121,20 +69,7 @@ public static partial class ReferenceExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe TResult WithSafeFixed<T, TResult>(this ref T refValue, FixedReferenceFunc<T, TResult> func)
         where T : unmanaged
-    {
-        fixed (void* ptr = &refValue)
-        {
-            FixedReference<T> ctx = new(ptr);
-            try
-            {
-                return func(ctx);
-            }
-            finally
-            {
-                ctx.Unload();
-            }
-        }
-    }
+        => NativeUtilities.WithSafeFixed(ref refValue, func);
     /// <summary>
     /// Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a
     /// provided read-only function. 
@@ -148,20 +83,7 @@ public static partial class ReferenceExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe TResult WithSafeFixed<T, TResult>(this ref T refValue, ReadOnlyFixedReferenceFunc<T, TResult> func)
         where T : unmanaged
-    {
-        fixed (void* ptr = &refValue)
-        {
-            FixedReference<T> ctx = new(ptr);
-            try
-            {
-                return func(ctx);
-            }
-            finally
-            {
-                ctx.Unload();
-            }
-        }
-    }
+        => NativeUtilities.WithSafeReadOnlyFixed(ref refValue, func);
 
     /// <summary>
     /// Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a
@@ -178,20 +100,7 @@ public static partial class ReferenceExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe TResult WithSafeFixed<T, TArg, TResult>(this ref T refValue, TArg arg, FixedReferenceFunc<T, TArg, TResult> func)
         where T : unmanaged
-    {
-        fixed (void* ptr = &refValue)
-        {
-            FixedReference<T> ctx = new(ptr);
-            try
-            {
-                return func(ctx, arg);
-            }
-            finally
-            {
-                ctx.Unload();
-            }
-        }
-    }
+        => NativeUtilities.WithSafeFixed(ref refValue, arg, func);
     /// <summary>
     /// Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a
     /// provided read-only function along with an argument. 
@@ -207,18 +116,5 @@ public static partial class ReferenceExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe TResult WithSafeFixed<T, TArg, TResult>(this ref T refValue, TArg arg, ReadOnlyFixedReferenceFunc<T, TArg, TResult> func)
         where T : unmanaged
-    {
-        fixed (void* ptr = &refValue)
-        {
-            FixedReference<T> ctx = new(ptr);
-            try
-            {
-                return func(ctx, arg);
-            }
-            finally
-            {
-                ctx.Unload();
-            }
-        }
-    }
+        => NativeUtilities.WithSafeReadOnlyFixed(ref refValue, arg, func);
 }

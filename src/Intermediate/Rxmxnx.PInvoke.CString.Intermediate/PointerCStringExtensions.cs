@@ -3,6 +3,7 @@
 /// <summary>
 /// Provides a set of extensions for <see cref="CString"/> operations with <see cref="IntPtr"/> and <see cref="UIntPtr"/> instances.
 /// </summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static class PointerCStringExtensions
 {
     /// <summary>

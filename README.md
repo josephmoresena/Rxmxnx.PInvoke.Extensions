@@ -360,6 +360,14 @@ The `Rxmxnx.PInvoke.CStringSequence` class represents a sequence of `CString` ob
 - `ToBytes<T>(T)`: Converts a single value to a byte array representation.
 - `ToValues<TSource, TDestination>(TSource[], Byte[])`: Converts an array of source values to an array of destination values using a byte array as an intermediary.
 - `ToValues<TSource, TDestination>(TSource[])`: Converts an array of source values to an array of destination values.
+- `WithSafeFixed<T>(T[], FixedContextAction<T>)`: Performs a fixed context action on the specified memory block.
+- `WithSafeFixed<T>(T[], ReadOnlyFixedContextAction<T>)`: Performs a readonly fixed context action on the specified memory block.
+- `WithSafeFixed<T, TArg>(T[], TArg, FixedContextAction<T, TArg>)`: Performs a fixed context action on the specified memory block with an additional argument.
+- `WithSafeFixed<T, TArg>(T[], TArg, ReadOnlyFixedContextAction<T, TArg>)`: Performs a readonly fixed context action on the specified memory block with an additional argument.
+- `WithSafeFixed<T, TResult>(T[], FixedContextFunc<T, TResult>)`: Performs a fixed context function on the specified memory block and returns a value.
+- `WithSafeFixed<T, TResult>(T[], ReadOnlyFixedContextFunc<T, TResult>)`: Performs a readonly fixed context function on the specified memory block and returns a value.
+- `WithSafeFixed<T, TArg, TResult>(T[], TArg, FixedContextFunc<T, TArg, TResult>)`: Performs a fixed context function on the specified memory block with an additional argument and returns a value.
+- `WithSafeFixed<T, TArg, TResult>(T[], TArg, ReadOnlyFixedContextFunc<T, TArg, TResult>)`: Performs a readonly fixed context function on the specified memory block with an additional argument and returns a value.
 
 ### Rxmxnx.PInvoke.StreamCStringExtensions
 
@@ -371,6 +379,14 @@ The `Rxmxnx.PInvoke.CStringSequence` class represents a sequence of `CString` ob
 - `WriteAsync(Stream, CString, Int32, Int32, CancellationToken)`: Asynchronously writes a portion of the UTF-8 encoded string to the specified stream and allows cancellation.
 - `WriteAsync(Stream, CString, CancellationToken)`: Asynchronously writes the UTF-8 encoded string to the specified stream and allows cancellation.
 
+### Rxmxnx.PInvoke.StringExtensions
+`Rxmxnx.PInvoke.MemoryBlockExtensions` is an extension methods class that provides additional functionality for working with strings.
+
+- `WithSafeFixed<T>(T[], ReadOnlyFixedContextAction<T>)`: Performs a readonly fixed context action on the specified memory block.
+- `WithSafeFixed<T, TArg>(T[], TArg, ReadOnlyFixedContextAction<T, TArg>)`: Performs a readonly fixed context action on the specified memory block with an additional argument.
+- `WithSafeFixed<T, TResult>(T[], ReadOnlyFixedContextFunc<T, TResult>)`: Performs a readonly fixed context function on the specified memory block and returns a value.
+- `WithSafeFixed<T, TArg, TResult>(T[], TArg, ReadOnlyFixedContextFunc<T, TArg, TResult>)`: Performs a readonly fixed context function on the specified memory block with an additional argument and returns a value.
+
 ## Utilities
 
 ### Rxmxnx.PInvoke.NativeUtilities
@@ -378,6 +394,7 @@ The `Rxmxnx.PInvoke.CStringSequence` class represents a sequence of `CString` ob
 `Rxmxnx.PInvoke.NativeUtilities` is a utility class that provides various methods for working with native code.
 
 - `AsBytes<T>(in T)`: Retrieves the bytes representing the specified value.
+- `AsBinarySpan<T>(ref T)`: Converts the specified reference to a span of bytes.
 - `CopyBytes<T>(in T, Span<Byte>, Int32)`: Copies the bytes from the specified span to the specified value.
 - `CreateArray<T, TState>(Int32, TState, SpanAction<T, TState>)`: Creates an array of the specified type and size, applying the specified action for each element.
 - `GetNativeMethod<TDelegate>(IntPtr, String)`: Retrieves a native method as a delegate of the specified type.
@@ -388,6 +405,7 @@ The `Rxmxnx.PInvoke.CStringSequence` class represents a sequence of `CString` ob
 - `SizeOf<T>()`: Retrieves the size, in bytes, of the specified value type.
 - `ToBytes<T>(in T)`: Retrieves the bytes representing the specified value.
 - `Transform<TSource, TDestination>(in TSource)`: Converts the specified value from the source type to the destination type.
+- `TransformReference<TSource, TDestination>(ref TSource)`: Converts the specified reference from the source type to the destination type.
 
 - `WithSafeFixed<T0..T7>(Span<T0>...Span<T7>, FixedListAction)`: Executes the specified action with the specified fixed spans.
 - `WithSafeFixed<T0..T7, TArg>(Span<T0>...Span<T7>, FixedListAction)`: Executes the specified action with the specified fixed spans and an additional argument.

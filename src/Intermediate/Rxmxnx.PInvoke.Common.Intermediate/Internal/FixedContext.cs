@@ -49,6 +49,14 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
     IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.GetTransformation<Byte>(out _, true);
 
     /// <summary>
+    /// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a pointer to a
+    /// <see langword="null"/> memory.
+    /// </summary>
+    public FixedContext() : base(IntPtr.Zero.ToPointer(), 0)
+    {
+        this._count = 0;
+    }
+    /// <summary>
     /// Constructs a new <see cref="FixedContext{T}"/> instance using a pointer to a fixed memory block,
     /// and a count of items.
     /// </summary>

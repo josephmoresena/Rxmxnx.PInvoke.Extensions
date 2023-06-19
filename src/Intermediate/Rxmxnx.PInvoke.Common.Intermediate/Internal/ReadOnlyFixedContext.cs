@@ -35,6 +35,14 @@ internal unsafe sealed class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IRea
     }
 
     /// <summary>
+    /// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a pointer to a
+    /// <see langword="null"/> memory.
+    /// </summary>
+    public ReadOnlyFixedContext() : base(IntPtr.Zero.ToPointer(), 0, true)
+    {
+        this._count = 0;
+    }
+    /// <summary>
     /// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a pointer to a fixed memory block,
     /// and a count of items.
     /// </summary>
