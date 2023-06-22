@@ -17,7 +17,7 @@ public static class StringExtensions
     {
         ArgumentNullException.ThrowIfNull(action);
         if (str is not null)        
-            fixed (void* ptr = str)
+            fixed (void* ptr = &MemoryMarshal.GetReference(str.AsSpan()))
             {
                 ReadOnlyFixedContext<Char> ctx = new(ptr, str.Length);
                 try
@@ -46,7 +46,7 @@ public static class StringExtensions
     {
         ArgumentNullException.ThrowIfNull(action);
         if (str is not null)
-            fixed (void* ptr = str)
+            fixed (void* ptr = &MemoryMarshal.GetReference(str.AsSpan()))
             {
                 ReadOnlyFixedContext<Char> ctx = new(ptr, str.Length);
                 try
@@ -75,7 +75,7 @@ public static class StringExtensions
     {
         ArgumentNullException.ThrowIfNull(func);
         if (str is not null)
-            fixed (void* ptr = str)
+            fixed (void* ptr = &MemoryMarshal.GetReference(str.AsSpan()))
             {
                 ReadOnlyFixedContext<Char> ctx = new(ptr, str.Length);
                 try
@@ -106,7 +106,7 @@ public static class StringExtensions
     {
         ArgumentNullException.ThrowIfNull(func);
         if (str is not null)
-            fixed (void* ptr = str)
+            fixed (void* ptr = &MemoryMarshal.GetReference(str.AsSpan()))
             {
                 ReadOnlyFixedContext<Char> ctx = new(ptr, str.Length);
                 try

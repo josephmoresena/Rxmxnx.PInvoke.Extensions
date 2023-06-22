@@ -17,7 +17,7 @@ public partial class UnmanagedValueExtensions
     {
         ArgumentNullException.ThrowIfNull(action);
         if (arr is not null)
-            fixed (void* ptr = arr)
+            fixed (void* ptr = &MemoryMarshal.GetReference(arr.AsSpan()))
             {
                 FixedContext<T> ctx = new(ptr, arr.Length);
                 try
@@ -47,7 +47,7 @@ public partial class UnmanagedValueExtensions
     {
         ArgumentNullException.ThrowIfNull(action);
         if (arr is not null)
-            fixed (void* ptr = arr)
+            fixed (void* ptr = &MemoryMarshal.GetReference(arr.AsSpan()))
             {
                 FixedContext<T> ctx = new(ptr, arr.Length);
                 try
@@ -80,7 +80,7 @@ public partial class UnmanagedValueExtensions
     {
         ArgumentNullException.ThrowIfNull(action);
         if (arr is not null)
-            fixed (void* ptr = arr)
+            fixed (void* ptr = &MemoryMarshal.GetReference(arr.AsSpan()))
             {
                 FixedContext<T> ctx = new(ptr, arr.Length);
                 try
@@ -112,7 +112,7 @@ public partial class UnmanagedValueExtensions
     {
         ArgumentNullException.ThrowIfNull(action);
         if (arr is not null)
-            fixed (void* ptr = arr)
+            fixed (void* ptr = &MemoryMarshal.GetReference(arr.AsSpan()))
             {
                 FixedContext<T> ctx = new(ptr, arr.Length);
                 try
@@ -145,7 +145,7 @@ public partial class UnmanagedValueExtensions
     {
         ArgumentNullException.ThrowIfNull(func);
         if (arr is not null)
-            fixed (void* ptr = arr)
+            fixed (void* ptr = &MemoryMarshal.GetReference(arr.AsSpan()))
             {
                 FixedContext<T> ctx = new(ptr, arr.Length);
                 try
@@ -177,7 +177,7 @@ public partial class UnmanagedValueExtensions
     {
         ArgumentNullException.ThrowIfNull(func);
         if (arr is not null)
-            fixed (void* ptr = arr)
+            fixed (void* ptr = &MemoryMarshal.GetReference(arr.AsSpan()))
             {
                 FixedContext<T> ctx = new(ptr, arr.Length);
                 try
@@ -212,7 +212,7 @@ public partial class UnmanagedValueExtensions
     {
         ArgumentNullException.ThrowIfNull(func);
         if (arr is not null)
-            fixed (void* ptr = arr)
+            fixed (void* ptr = &MemoryMarshal.GetReference(arr.AsSpan()))
             {
                 FixedContext<T> ctx = new(ptr, arr.Length);
                 try
@@ -246,7 +246,7 @@ public partial class UnmanagedValueExtensions
     {
         ArgumentNullException.ThrowIfNull(func);
         if (arr is not null)
-            fixed (void* ptr = arr)
+            fixed (void* ptr = &MemoryMarshal.GetReference(arr.AsSpan()))
             {
                 FixedContext<T> ctx = new(ptr, arr.Length);
                 try

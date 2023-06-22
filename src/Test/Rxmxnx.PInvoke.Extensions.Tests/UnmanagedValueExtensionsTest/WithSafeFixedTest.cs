@@ -56,8 +56,22 @@ public sealed class WithSafeFixedTest
         Assert.Equal(values, values.WithSafeFixed(this, FuncTest));
         Assert.Equal(values, values.WithSafeFixed(this, FuncReadOnlyTest));
 
-        values = default;
 
+        values = Array.Empty<T>();
+        _array = values;
+        values.WithSafeFixed(this.ActionTest);
+        values.WithSafeFixed(this.ActionReadOnlyTest);
+
+        values.WithSafeFixed(this, ActionTest);
+        values.WithSafeFixed(this, ActionReadOnlyTest);
+
+        Assert.Equal(values, values.WithSafeFixed(this.FuncTest));
+        Assert.Equal(values, values.WithSafeFixed(this.FuncReadOnlyTest));
+
+        Assert.Equal(values, values.WithSafeFixed(this, FuncTest));
+        Assert.Equal(values, values.WithSafeFixed(this, FuncReadOnlyTest));
+
+        values = default;
         values.WithSafeFixed(this.NullActionTest);
         values.WithSafeFixed(this.NullActionReadOnlyTest);
 
@@ -157,6 +171,7 @@ public sealed class WithSafeFixedTest
         return ctx.Values.ToArray();
     }
 
+    [SuppressMessage("Performance", "CA1822:Mark members as static")]
     private void NullActionTest<T>(in IFixedContext<T> ctx) where T : unmanaged
     {
         Assert.Equal(0, ctx.Bytes.Length);
