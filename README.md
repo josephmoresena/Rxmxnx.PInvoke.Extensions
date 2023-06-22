@@ -382,10 +382,10 @@ The `Rxmxnx.PInvoke.CStringSequence` class represents a sequence of `CString` ob
 ### Rxmxnx.PInvoke.StringExtensions
 `Rxmxnx.PInvoke.MemoryBlockExtensions` is an extension methods class that provides additional functionality for working with strings.
 
-- `WithSafeFixed<T>(T[], ReadOnlyFixedContextAction<T>)`: Performs a readonly fixed context action on the specified memory block.
-- `WithSafeFixed<T, TArg>(T[], TArg, ReadOnlyFixedContextAction<T, TArg>)`: Performs a readonly fixed context action on the specified memory block with an additional argument.
-- `WithSafeFixed<T, TResult>(T[], ReadOnlyFixedContextFunc<T, TResult>)`: Performs a readonly fixed context function on the specified memory block and returns a value.
-- `WithSafeFixed<T, TArg, TResult>(T[], TArg, ReadOnlyFixedContextFunc<T, TArg, TResult>)`: Performs a readonly fixed context function on the specified memory block with an additional argument and returns a value.
+- `WithSafeFixed<T>(String, ReadOnlyFixedContextAction<T>)`: Performs a readonly fixed context action on the specified memory block.
+- `WithSafeFixed<T, TArg>(String, TArg, ReadOnlyFixedContextAction<T, TArg>)`: Performs a readonly fixed context action on the specified memory block with an additional argument.
+- `WithSafeFixed<T, TResult>(String, ReadOnlyFixedContextFunc<T, TResult>)`: Performs a readonly fixed context function on the specified memory block and returns a value.
+- `WithSafeFixed<T, TArg, TResult>(String, TArg, ReadOnlyFixedContextFunc<T, TArg, TResult>)`: Performs a readonly fixed context function on the specified memory block with an additional argument and returns a value.
 
 ## Utilities
 
