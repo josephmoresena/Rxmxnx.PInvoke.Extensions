@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Rxmxnx.PInvoke;
+﻿namespace Rxmxnx.PInvoke;
 
 public static partial class MemoryBlockExtensions
 {

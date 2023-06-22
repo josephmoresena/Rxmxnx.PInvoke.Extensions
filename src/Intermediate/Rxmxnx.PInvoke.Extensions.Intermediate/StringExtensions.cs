@@ -16,7 +16,7 @@ public static class StringExtensions
     public static unsafe void WithSafeFixed(this String? str, ReadOnlyFixedContextAction<Char> action)
     {
         ArgumentNullException.ThrowIfNull(action);
-        if (str is not null)        
+        if (str is not null)
             fixed (void* ptr = &MemoryMarshal.GetReference(str.AsSpan()))
             {
                 ReadOnlyFixedContext<Char> ctx = new(ptr, str.Length);
@@ -88,7 +88,7 @@ public static class StringExtensions
                 }
             }
         else
-           return func(ReadOnlyFixedContext<Char>.Empty);
+            return func(ReadOnlyFixedContext<Char>.Empty);
     }
 
     /// <summary>

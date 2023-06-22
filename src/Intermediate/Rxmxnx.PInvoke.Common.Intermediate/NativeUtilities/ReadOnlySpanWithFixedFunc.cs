@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Rxmxnx.PInvoke;
+﻿namespace Rxmxnx.PInvoke;
 
 [SuppressMessage("csharpsquid", "S107")]
 [SuppressMessage("csharpsquid", "S2436")]
