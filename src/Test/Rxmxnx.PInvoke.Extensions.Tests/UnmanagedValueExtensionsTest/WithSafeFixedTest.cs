@@ -41,7 +41,7 @@ public sealed class WithSafeFixedTest
 
     private void Test<T>() where T : unmanaged
     {
-        T[] values = fixture.CreateMany<T>(10).ToArray();
+        T[]? values = fixture.CreateMany<T>(10).ToArray();
 
         _array = values;
         values.WithSafeFixed(this.ActionTest);
@@ -55,6 +55,17 @@ public sealed class WithSafeFixedTest
 
         Assert.Equal(values, values.WithSafeFixed(this, FuncTest));
         Assert.Equal(values, values.WithSafeFixed(this, FuncReadOnlyTest));
+
+        values = default;
+
+        values.WithSafeFixed(this.NullActionTest);
+        values.WithSafeFixed(this.NullActionReadOnlyTest);
+
+        values.WithSafeFixed(this, NullActionTest);
+        values.WithSafeFixed(this, NullActionReadOnlyTest);
+
+        Assert.Equal(values.WithSafeFixed(this.NullFuncTest), values.WithSafeFixed(this.NullFuncReadOnlyTest));
+        Assert.Equal(values.WithSafeFixed(this, NullFuncTest), values.WithSafeFixed(this, NullFuncReadOnlyTest));
     }
     private void ActionTest<T>(in IFixedContext<T> ctx) where T : unmanaged
     {
@@ -146,6 +157,22 @@ public sealed class WithSafeFixedTest
         return ctx.Values.ToArray();
     }
 
+    private void NullActionTest<T>(in IFixedContext<T> ctx) where T : unmanaged
+    {
+        Assert.Equal(0, ctx.Bytes.Length);
+        Assert.Equal(0, ctx.Values.Length);
+        Assert.Equal(IntPtr.Zero, ctx.Pointer);
+    }
+    private void NullActionReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged
+        => NullActionTest((IFixedContext<T>)ctx);
+    private IFixedContext<T> NullFuncTest<T>(in IFixedContext<T> ctx) where T : unmanaged
+    {
+        this.NullActionTest(ctx);
+        return ctx;
+    }
+    private IReadOnlyFixedContext<T> NullFuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged
+        => NullFuncTest((IFixedContext<T>)ctx);
+
     private static unsafe void Test<T, T2>(IFixedContext<T> ctx)
         where T : unmanaged where T2 : unmanaged
     {
@@ -186,4 +213,13 @@ public sealed class WithSafeFixedTest
         => test.FuncTest(ctx);
     private static T[] FuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx, WithSafeFixedTest test) where T : unmanaged
         => test.FuncReadOnlyTest(ctx);
+
+    private static void NullActionTest<T>(in IFixedContext<T> ctx, WithSafeFixedTest test) where T : unmanaged
+        => test.NullActionTest(ctx);
+    private static void NullActionReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx, WithSafeFixedTest test) where T : unmanaged
+        => test.NullActionReadOnlyTest(ctx);
+    private static IFixedContext<T> NullFuncTest<T>(in IFixedContext<T> ctx, WithSafeFixedTest test) where T : unmanaged
+        => test.NullFuncTest(ctx);
+    private static IReadOnlyFixedContext<T> NullFuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx, WithSafeFixedTest test) where T : unmanaged
+        => test.NullFuncReadOnlyTest(ctx);
 }

@@ -10,6 +10,11 @@ internal unsafe sealed class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IRea
     where T : unmanaged
 {
     /// <summary>
+    /// An empty instance of <see cref="ReadOnlyFixedContext{T}"/>.
+    /// </summary>
+    public static readonly ReadOnlyFixedContext<T> Empty = new();
+
+    /// <summary>
     /// The number of items of type <typeparamref name="T"/> in the memory block.
     /// </summary>
     private readonly Int32 _count;
@@ -38,7 +43,7 @@ internal unsafe sealed class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IRea
     /// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a pointer to a
     /// <see langword="null"/> memory.
     /// </summary>
-    public ReadOnlyFixedContext() : base(IntPtr.Zero.ToPointer(), 0, true)
+    private ReadOnlyFixedContext() : base(IntPtr.Zero.ToPointer(), 0, true)
     {
         this._count = 0;
     }

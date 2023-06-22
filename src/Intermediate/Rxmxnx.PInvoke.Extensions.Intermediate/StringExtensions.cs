@@ -30,7 +30,7 @@ public static class StringExtensions
                 }
             }
         else
-            action(new ReadOnlyFixedContext<Char>());
+            action(ReadOnlyFixedContext<Char>.Empty);
     }
 
     /// <summary>
@@ -59,7 +59,7 @@ public static class StringExtensions
                 }
             }
         else
-            action(new ReadOnlyFixedContext<Char>(), arg);
+            action(ReadOnlyFixedContext<Char>.Empty, arg);
     }
 
     /// <summary>
@@ -88,7 +88,7 @@ public static class StringExtensions
                 }
             }
         else
-           return func(new ReadOnlyFixedContext<Char>());
+           return func(ReadOnlyFixedContext<Char>.Empty);
     }
 
     /// <summary>
@@ -119,7 +119,7 @@ public static class StringExtensions
                 }
             }
         else
-            return func(new ReadOnlyFixedContext<Char>(), arg);
+            return func(ReadOnlyFixedContext<Char>.Empty, arg);
     }
 }
 

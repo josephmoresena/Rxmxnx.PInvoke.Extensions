@@ -10,6 +10,11 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
     where T : unmanaged
 {
     /// <summary>
+    /// An empty instance of <see cref="FixedContext{T}"/>.
+    /// </summary>
+    public static readonly FixedContext<T> Empty = new();
+
+    /// <summary>
     /// The number of items of type <typeparamref name="T"/> in the memory block.
     /// </summary>
     private readonly Int32 _count;
@@ -52,7 +57,7 @@ internal unsafe sealed class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
     /// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a pointer to a
     /// <see langword="null"/> memory.
     /// </summary>
-    public FixedContext() : base(IntPtr.Zero.ToPointer(), 0)
+    private FixedContext() : base(IntPtr.Zero.ToPointer(), 0)
     {
         this._count = 0;
     }

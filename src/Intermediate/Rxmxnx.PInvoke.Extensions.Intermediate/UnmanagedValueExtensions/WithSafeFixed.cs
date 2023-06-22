@@ -30,7 +30,7 @@ public partial class UnmanagedValueExtensions
                 }
             }
         else
-            action(new FixedContext<T>());
+            action(FixedContext<T>.Empty);
     }
     /// <summary>
     /// Prevents the garbage collector from relocating the current array by pinning its memory 
@@ -60,7 +60,7 @@ public partial class UnmanagedValueExtensions
                 }
             }
         else
-            action(new FixedContext<T>());
+            action(FixedContext<T>.Empty);
     }
 
     /// <summary>
@@ -93,7 +93,7 @@ public partial class UnmanagedValueExtensions
                 }
             }
         else
-            action(new FixedContext<T>(), arg);
+            action(FixedContext<T>.Empty, arg);
     }
     /// <summary>
     /// Prevents the garbage collector from relocating the current array by pinning its memory 
@@ -125,7 +125,7 @@ public partial class UnmanagedValueExtensions
                 }
             }
         else
-            action(new FixedContext<T>(), arg);
+            action(FixedContext<T>.Empty, arg);
     }
 
     /// <summary>
@@ -158,7 +158,7 @@ public partial class UnmanagedValueExtensions
                 }
             }
         else
-            return func(new FixedContext<T>());
+            return func(FixedContext<T>.Empty);
     }
     /// <summary>
     /// Prevents the garbage collector from relocating the current array by pinning its memory 
@@ -190,7 +190,7 @@ public partial class UnmanagedValueExtensions
                 }
             }
         else
-            return func(new FixedContext<T>());
+            return func(FixedContext<T>.Empty);
     }
 
     /// <summary>
@@ -225,7 +225,7 @@ public partial class UnmanagedValueExtensions
                 }
             }
         else
-            return func(new FixedContext<T>(), arg);
+            return func(FixedContext<T>.Empty, arg);
     }
     /// <summary>
     /// Prevents the garbage collector from relocating the current array by pinning its memory 
@@ -259,7 +259,7 @@ public partial class UnmanagedValueExtensions
                 }
             }
         else
-            return func(new FixedContext<T>(), arg);
+            return func(FixedContext<T>.Empty, arg);
     }
 }
 
