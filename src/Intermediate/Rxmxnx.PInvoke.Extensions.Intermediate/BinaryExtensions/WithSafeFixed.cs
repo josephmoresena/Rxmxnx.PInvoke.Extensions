@@ -11,6 +11,7 @@ public static partial class BinaryExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void WithSafeFixed(this Span<Byte> span, FixedAction action)
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
             FixedContext<Byte> ctx = new(ptr, span.Length);
@@ -33,6 +34,7 @@ public static partial class BinaryExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void WithSafeFixed(this Span<Byte> span, ReadOnlyFixedAction action)
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
             FixedContext<Byte> ctx = new(ptr, span.Length);
@@ -55,6 +57,7 @@ public static partial class BinaryExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void WithSafeFixed(this ReadOnlySpan<Byte> span, ReadOnlyFixedAction action)
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
             ReadOnlyFixedContext<Byte> ctx = new(ptr, span.Length);
@@ -80,6 +83,7 @@ public static partial class BinaryExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void WithSafeFixed<TArg>(this Span<Byte> span, TArg arg, FixedAction<TArg> action)
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
             FixedContext<Byte> ctx = new(ptr, span.Length);
@@ -104,6 +108,7 @@ public static partial class BinaryExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void WithSafeFixed<TArg>(this Span<Byte> span, TArg arg, ReadOnlyFixedAction<TArg> action)
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
             FixedContext<Byte> ctx = new(ptr, span.Length);
@@ -128,6 +133,7 @@ public static partial class BinaryExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void WithSafeFixed<TArg>(this ReadOnlySpan<Byte> span, TArg arg, ReadOnlyFixedAction<TArg> action)
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
             ReadOnlyFixedContext<Byte> ctx = new(ptr, span.Length);
@@ -153,6 +159,7 @@ public static partial class BinaryExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe TResult WithSafeFixed<TResult>(this Span<Byte> span, FixedFunc<TResult> func)
     {
+        ArgumentNullException.ThrowIfNull(func);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
             FixedContext<Byte> ctx = new(ptr, span.Length);
@@ -177,6 +184,7 @@ public static partial class BinaryExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe TResult WithSafeFixed<TResult>(this Span<Byte> span, ReadOnlyFixedFunc<TResult> func)
     {
+        ArgumentNullException.ThrowIfNull(func);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
             FixedContext<Byte> ctx = new(ptr, span.Length);
@@ -201,6 +209,7 @@ public static partial class BinaryExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe TResult WithSafeFixed<TResult>(this ReadOnlySpan<Byte> span, ReadOnlyFixedFunc<TResult> func)
     {
+        ArgumentNullException.ThrowIfNull(func);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
             ReadOnlyFixedContext<Byte> ctx = new(ptr, span.Length);

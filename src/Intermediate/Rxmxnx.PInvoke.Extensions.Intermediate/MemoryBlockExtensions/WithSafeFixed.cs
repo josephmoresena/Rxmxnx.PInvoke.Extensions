@@ -15,6 +15,7 @@ public static partial class MemoryBlockExtensions
     public static unsafe void WithSafeFixed<T>(this Span<T> span, FixedContextAction<T> action)
         where T : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
             FixedContext<T> ctx = new(ptr, span.Length);
@@ -41,6 +42,7 @@ public static partial class MemoryBlockExtensions
     public static unsafe void WithSafeFixed<T>(this Span<T> span, ReadOnlyFixedContextAction<T> action)
         where T : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
             FixedContext<T> ctx = new(ptr, span.Length);
@@ -67,6 +69,7 @@ public static partial class MemoryBlockExtensions
     public static unsafe void WithSafeFixed<T>(this ReadOnlySpan<T> span, ReadOnlyFixedContextAction<T> action)
         where T : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
             ReadOnlyFixedContext<T> ctx = new(ptr, span.Length);
@@ -96,6 +99,7 @@ public static partial class MemoryBlockExtensions
     public static unsafe void WithSafeFixed<T, TArg>(this Span<T> span, TArg arg, FixedContextAction<T, TArg> action)
         where T : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
             FixedContext<T> ctx = new(ptr, span.Length);
@@ -124,6 +128,7 @@ public static partial class MemoryBlockExtensions
     public static unsafe void WithSafeFixed<T, TArg>(this Span<T> span, TArg arg, ReadOnlyFixedContextAction<T, TArg> action)
         where T : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
             FixedContext<T> ctx = new(ptr, span.Length);
@@ -152,6 +157,7 @@ public static partial class MemoryBlockExtensions
     public static unsafe void WithSafeFixed<T, TArg>(this ReadOnlySpan<T> span, TArg arg, ReadOnlyFixedContextAction<T, TArg> action)
         where T : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(action);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
             ReadOnlyFixedContext<T> ctx = new(ptr, span.Length);
@@ -181,6 +187,7 @@ public static partial class MemoryBlockExtensions
     public static unsafe TResult WithSafeFixed<T, TResult>(this Span<T> span, FixedContextFunc<T, TResult> func)
         where T : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(func);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
             FixedContext<T> ctx = new(ptr, span.Length);
@@ -209,6 +216,7 @@ public static partial class MemoryBlockExtensions
     public static unsafe TResult WithSafeFixed<T, TResult>(this Span<T> span, ReadOnlyFixedContextFunc<T, TResult> func)
         where T : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(func);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
             FixedContext<T> ctx = new(ptr, span.Length);
@@ -237,6 +245,7 @@ public static partial class MemoryBlockExtensions
     public static unsafe TResult WithSafeFixed<T, TResult>(this ReadOnlySpan<T> span, ReadOnlyFixedContextFunc<T, TResult> func)
         where T : unmanaged
     {
+        ArgumentNullException.ThrowIfNull(func);
         fixed (void* ptr = &MemoryMarshal.GetReference(span))
         {
             ReadOnlyFixedContext<T> ctx = new(ptr, span.Length);

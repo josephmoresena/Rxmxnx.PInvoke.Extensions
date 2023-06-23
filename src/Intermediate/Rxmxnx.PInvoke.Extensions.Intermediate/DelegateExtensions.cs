@@ -3,6 +3,7 @@
 /// <summary>
 /// Provides a set of extensions for basic operations with <see cref="Delegate"/> instances.
 /// </summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static partial class DelegateExtensions
 {
     /// <summary>
