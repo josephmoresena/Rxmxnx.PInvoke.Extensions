@@ -77,10 +77,8 @@ public sealed class ToValueTest
 	private static unsafe T GetValue<T>(ReadOnlySpan<Byte> bytes) where T : unmanaged
 	{
 		if (bytes.Length >= sizeof(T))
-		{
 			fixed (void* ptr = &MemoryMarshal.GetReference(bytes))
 				return Unsafe.Read<T>(ptr);
-		}
 		Span<Byte> result = stackalloc Byte[sizeof(T)];
 		bytes.CopyTo(result);
 		fixed (void* ptr = &MemoryMarshal.GetReference(result))

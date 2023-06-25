@@ -16,17 +16,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="System.ComponentModel" />
-        <Using Include="System.Diagnostics.CodeAnalysis" />
-        <Using Include="System.Runtime.CompilerServices" />
-        <Using Include="System.Runtime.InteropServices" />
-        <Using Include="System.Text" />
+        <Using Include="System.ComponentModel"/>
+        <Using Include="System.Diagnostics.CodeAnalysis"/>
+        <Using Include="System.Runtime.CompilerServices"/>
+        <Using Include="System.Runtime.InteropServices"/>
+        <Using Include="System.Text"/>
 
-        <Using Include="Rxmxnx.PInvoke.Internal" />
+        <Using Include="Rxmxnx.PInvoke.Internal"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Rxmxnx.PInvoke.Common.Intermediate\Rxmxnx.PInvoke.Common.Intermediate.csproj" />
+        <ProjectReference Include="..\Rxmxnx.PInvoke.Common.Intermediate\Rxmxnx.PInvoke.Common.Intermediate.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

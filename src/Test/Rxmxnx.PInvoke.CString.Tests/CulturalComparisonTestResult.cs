@@ -32,8 +32,10 @@ internal sealed record CulturalComparisonTestResult
 	{
 		CultureInfo result;
 		do
+		{
 			result = CulturalComparisonTestResult.cultures[
 				Random.Shared.Next(0, CulturalComparisonTestResult.cultures.Length)];
+		}
 		// Prevents the use of unsupported cultures.
 		while (result.Name.StartsWith("om"));
 		return result;

@@ -65,19 +65,19 @@ public sealed class IMutableWrapperTests
 		Assert.NotNull(result);
 		Assert.Equal(value, result.Value);
 		Assert.True(result.Equals(value));
-		Assert.Equal(object.Equals(value, value2), result.Equals(value2));
+		Assert.Equal(Equals(value, value2), result.Equals(value2));
 		Assert.NotNull(wrapper);
 		Assert.Equal(value, wrapper.Value);
 		Assert.True(wrapper.Equals(value));
-		Assert.Equal(object.Equals(value, value2), wrapper.Equals(value2));
+		Assert.Equal(Equals(value, value2), wrapper.Equals(value2));
 
 		result.Value = value2;
 		Assert.Equal(value2, result.Value);
 		Assert.True(result.Equals(value2));
-		Assert.Equal(object.Equals(value2, value), result.Equals(value));
+		Assert.Equal(Equals(value2, value), result.Equals(value));
 		Assert.Equal(value2, wrapper.Value);
 		Assert.True(wrapper.Equals(value2));
-		Assert.Equal(object.Equals(value2, value), wrapper.Equals(value));
+		Assert.Equal(Equals(value2, value), wrapper.Equals(value));
 	}
 
 	private static void Nullable<T>(Boolean nullInput) where T : unmanaged
@@ -89,19 +89,19 @@ public sealed class IMutableWrapperTests
 
 		Assert.NotNull(result);
 		Assert.Equal(value, result.Value);
-		Assert.Equal(object.Equals(value, value2), result.Equals(value2));
+		Assert.Equal(Equals(value, value2), result.Equals(value2));
 		Assert.NotNull(wrapper);
 		Assert.Equal(value, wrapper.Value);
 		Assert.True(wrapper.Equals(value));
-		Assert.Equal(object.Equals(value, value2), wrapper.Equals(value2));
+		Assert.Equal(Equals(value, value2), wrapper.Equals(value2));
 
 		result.Value = value2;
 		Assert.Equal(value2, result.Value);
 		Assert.True(result.Equals(value2));
-		Assert.Equal(object.Equals(value2, value), result.Equals(value));
+		Assert.Equal(Equals(value2, value), result.Equals(value));
 		Assert.Equal(value2, wrapper.Value);
 		Assert.True(wrapper.Equals(value2));
-		Assert.Equal(object.Equals(value2, value), wrapper.Equals(value));
+		Assert.Equal(Equals(value2, value), wrapper.Equals(value));
 	}
 
 	private static void Object<T>() where T : unmanaged
@@ -114,18 +114,18 @@ public sealed class IMutableWrapperTests
 		Assert.NotNull(result);
 		Assert.Equal(array, result.Value);
 		Assert.True(result.Equals(array));
-		Assert.Equal(object.Equals(array, array2), result.Equals(array2));
+		Assert.Equal(Equals(array, array2), result.Equals(array2));
 		Assert.NotNull(wrapper);
 		Assert.Equal(array, wrapper.Value);
 		Assert.True(wrapper.Equals(array));
-		Assert.Equal(object.Equals(array, array2), wrapper.Equals(array2));
+		Assert.Equal(Equals(array, array2), wrapper.Equals(array2));
 
 		result.Value = array2;
 		Assert.Equal(array2, result.Value);
 		Assert.True(result.Equals(array2));
-		Assert.Equal(object.Equals(array2, array), result.Equals(array));
+		Assert.Equal(Equals(array2, array), result.Equals(array));
 		Assert.Equal(array2, wrapper.Value);
 		Assert.True(wrapper.Equals(array2));
-		Assert.Equal(object.Equals(array2, array), wrapper.Equals(array));
+		Assert.Equal(Equals(array2, array), wrapper.Equals(array));
 	}
 }
