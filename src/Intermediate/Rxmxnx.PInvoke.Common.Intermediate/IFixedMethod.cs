@@ -6,8 +6,8 @@
 /// <typeparam name="TDelegate">Type of the delegate that corresponds to the fixed method.</typeparam>
 public interface IFixedMethod<out TDelegate> : IFixedPointer where TDelegate : Delegate
 {
-    /// <summary>
-    /// Gets the delegate that points to the fixed method in memory.
-    /// </summary>
-    TDelegate Method { get; }
+	/// <summary>
+	/// Gets the delegate that points to the fixed method in memory.
+	/// </summary>
+	TDelegate Method { get; }
 }

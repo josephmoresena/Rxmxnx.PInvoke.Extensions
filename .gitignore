@@ -351,3 +351,4 @@ MigrationBackup/
 **/.vscode
 **/.DS_Store
 **/Rxmxnx.PInvoke*.xml
+**/.idea

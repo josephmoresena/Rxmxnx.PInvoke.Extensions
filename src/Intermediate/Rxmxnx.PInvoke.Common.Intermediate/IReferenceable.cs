@@ -7,16 +7,16 @@
 /// <typeparam name="T">The type of the object that the reference points to.</typeparam>
 public interface IReferenceable<T> : IReadOnlyReferenceable<T>, IEquatable<IReferenceable<T>>
 {
-    /// <summary>
-    /// Gets the reference to the instance of an object of type <typeparamref name="T"/>.
-    /// </summary>
-    /// <remarks>This reference can be used to modify the object.</remarks>
-    new ref T Reference { get; }
+	/// <summary>
+	/// Gets the reference to the instance of an object of type <typeparamref name="T"/>.
+	/// </summary>
+	/// <remarks>This reference can be used to modify the object.</remarks>
+	new ref T Reference { get; }
 
-    ref readonly T IReadOnlyReferenceable<T>.Reference => ref this.Reference;
+	[ExcludeFromCodeCoverage]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	Boolean IEquatable<IReferenceable<T>>.Equals(IReferenceable<T>? other)
+		=> other is not null && Unsafe.AreSame(ref this.Reference, ref other.Reference);
 
-    [ExcludeFromCodeCoverage]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    Boolean IEquatable<IReferenceable<T>>.Equals(IReferenceable<T>? other)
-        => other is not null && Unsafe.AreSame(ref this.Reference, ref other.Reference);
+	ref readonly T IReadOnlyReferenceable<T>.Reference => ref this.Reference;
 }
