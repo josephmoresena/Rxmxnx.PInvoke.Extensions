@@ -26,7 +26,7 @@ public abstract class FixedMemoryTestsBase
 	/// Message when <see cref="FixedReference{T}"/> instance is not enough for hold a reference.
 	/// </summary>
 	public static readonly String InvalidSizeFormat =
-		"The current instance is insufficent to contain a value of {0} type.";
+		"The current instance is insufficient to contain a value of {0} type.";
 
 	/// <summary>
 	/// Fixture instance.
