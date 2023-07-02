@@ -48,4 +48,15 @@ public partial class CStringSequence
 				yield return CString.Zero;
 		}
 	}
+
+	/// <summary>
+	/// Creates a <see cref="FixedCStringSequence"/> instance from the current instance and a pointer to the buffer.
+	/// </summary>
+	/// <param name="ptr">Pointer to the UTF-8 sequence buffer.</param>
+	/// <returns>A <see cref="FixedCStringSequence"/> instance.</returns>
+	private unsafe FixedCStringSequence GetFixedSequence(Char* ptr)
+	{
+		_ = this.AsUnsafeSpan(out CString[] output);
+		return new(output, CString.CreateUnsafe(new(ptr), this._value.Length * CStringSequence.SizeOfChar, true));
+	}
 }

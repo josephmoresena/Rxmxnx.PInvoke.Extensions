@@ -140,7 +140,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	
 	/// <inheritdoc/>
 	public Boolean Equals([NotNullWhen(true)] CString? other)
-		=> other is CString && this._length == other._length && CString.equals(this, other);
+		=> other is not null && this._length == other._length && CString.equals(this, other);
 	/// <summary>
 	/// Determines whether the current <see cref="CString"/> and a specified <see cref="String"/>
 	/// have the same value.
@@ -151,7 +151,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
 	/// </returns>
 	public Boolean Equals([NotNullWhen(true)] String? other)
-		=> other is String && StringUtf8Comparator.Create().TextEquals(this, other);
+		=> other is not null && StringUtf8Comparator.Create().TextEquals(this, other);
 	/// <summary>
 	/// Determines whether the current <see cref="CString"/> and a specified <see cref="CString"/>
 	/// have the same value.
@@ -166,7 +166,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
 	/// </returns>
 	public Boolean Equals([NotNullWhen(true)] CString? value, StringComparison comparisonType)
-		=> value is CString && CStringUtf8Comparator.Create(comparisonType).TextEquals(this, value);
+		=> value is not null && CStringUtf8Comparator.Create(comparisonType).TextEquals(this, value);
 	/// <summary>
 	/// Determines whether the current <see cref="CString"/> and a specified <see cref="String"/>
 	/// have the same value.
@@ -181,7 +181,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <see cref="CString"/>, otherwise, <see langword="false"/>.
 	/// </returns>
 	public Boolean Equals([NotNullWhen(true)] String? value, StringComparison comparisonType)
-		=> value is String && StringUtf8Comparator.Create(comparisonType).TextEquals(this, value);
+		=> value is not null && StringUtf8Comparator.Create(comparisonType).TextEquals(this, value);
 
 	/// <inheritdoc/>
 	public override Boolean Equals([NotNullWhen(true)] Object? obj)

@@ -66,18 +66,6 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// <returns>A new object that is a copy of this instance.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Object Clone() => new CStringSequence(this);
-	/// <summary>
-	/// Determines whether the current <see cref="CStringSequence"/> is equal to another
-	/// <see cref="CStringSequence"/> instance.
-	/// </summary>
-	/// <param name="other">The <see cref="CStringSequence"/> to compare with this object.</param>
-	/// <returns>
-	/// <see langword="true"/> if the current <see cref="CStringSequence"/> is equal to the
-	/// <paramref name="other"/> parameter; otherwise, <see langword="false"/>.
-	/// </returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public Boolean Equals(CStringSequence? other)
-		=> other is not null && this._value.Equals(other._value) && this._lengths.SequenceEqual(other._lengths);
 
 	/// <summary>
 	/// Returns a reference to the first UTF-8 byte of the <see cref="CStringSequence"/>.
@@ -100,6 +88,18 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		this.WithSafeTransform(result, CStringSequence.BinaryCopyTo);
 		return result;
 	}
+	/// <summary>
+	/// Determines whether the current <see cref="CStringSequence"/> is equal to another
+	/// <see cref="CStringSequence"/> instance.
+	/// </summary>
+	/// <param name="other">The <see cref="CStringSequence"/> to compare with this object.</param>
+	/// <returns>
+	/// <see langword="true"/> if the current <see cref="CStringSequence"/> is equal to the
+	/// <paramref name="other"/> parameter; otherwise, <see langword="false"/>.
+	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public Boolean Equals(CStringSequence? other)
+		=> other is not null && this._value.Equals(other._value) && this._lengths.SequenceEqual(other._lengths);
 
 	/// <inheritdoc/>
 	public override Boolean Equals(Object? obj) => obj is CStringSequence cstr && this.Equals(cstr);

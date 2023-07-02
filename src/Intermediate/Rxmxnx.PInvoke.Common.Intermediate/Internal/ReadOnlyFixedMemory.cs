@@ -39,12 +39,12 @@ internal abstract unsafe class ReadOnlyFixedMemory : FixedPointer, IReadOnlyFixe
 
 	ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => this.CreateReadOnlyBinarySpan();
 	IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
-
-	/// <inheritdoc/>
-	public virtual Boolean Equals(ReadOnlyFixedMemory? other) => this.Equals(other as FixedPointer);
+	
 	/// <inheritdoc cref="IReadOnlyFixedMemory.AsBinaryContext()"/>
 	public virtual IReadOnlyFixedContext<Byte> AsBinaryContext() 
 		=> new ReadOnlyFixedContext<Byte>(this.BinaryOffset, this);
+	/// <inheritdoc/>
+	public virtual Boolean Equals(ReadOnlyFixedMemory? other) => this.Equals(other as FixedPointer);
 	
 	/// <inheritdoc/>
 	[ExcludeFromCodeCoverage]
