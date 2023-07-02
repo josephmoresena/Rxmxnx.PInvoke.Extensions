@@ -7,26 +7,24 @@
 internal sealed unsafe class ReadOnlyFixedReference<T> : ReadOnlyFixedMemory, IReadOnlyFixedReference<T>,
 	IEquatable<ReadOnlyFixedReference<T>> where T : unmanaged
 {
+	/// <inheritdoc/>
+	public override Type Type => typeof(T);
+	/// <inheritdoc/>
+	public override Int32 BinaryOffset => default;
+	/// <inheritdoc/>
+	public override Boolean IsFunction => false;
+	
 	/// <summary>
 	/// Constructor that takes a pointer to a fixed memory reference.
 	/// </summary>
 	/// <param name="ptr">Pointer to the fixed memory reference.</param>
 	public ReadOnlyFixedReference(void* ptr) : base(ptr, sizeof(T), true) { }
-
+	
 	/// <summary>
 	/// Constructor that takes a <see cref="FixedMemory"/> instance.
 	/// </summary>
 	/// <param name="mem">Instance of <see cref="FixedMemory"/> to be referenced.</param>
 	private ReadOnlyFixedReference(ReadOnlyFixedMemory mem) : base(mem) { }
-	/// <inheritdoc/>
-	public override Type? Type => typeof(T);
-	/// <inheritdoc/>
-	public override Int32 BinaryOffset => default;
-	/// <inheritdoc/>
-	public override Boolean IsFunction => false;
-
-	/// <inheritdoc/>
-	public Boolean Equals(ReadOnlyFixedReference<T>? other) => this.Equals(other as ReadOnlyFixedMemory);
 
 	ref readonly T IReadOnlyReferenceable<T>.Reference => ref this.CreateReadOnlyReference<T>();
 	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(
@@ -64,6 +62,10 @@ internal sealed unsafe class ReadOnlyFixedReference<T> : ReadOnlyFixedMemory, IR
 		fixedOffset = new(this, sizeof(TDestination));
 		return new(this);
 	}
+
+	/// <inheritdoc/>
+	public Boolean Equals(ReadOnlyFixedReference<T>? other) => this.Equals(other as ReadOnlyFixedMemory);
+	
 	/// <inheritdoc/>
 	public override Boolean Equals(ReadOnlyFixedMemory? other) => base.Equals(other as ReadOnlyFixedReference<T>);
 	/// <inheritdoc/>

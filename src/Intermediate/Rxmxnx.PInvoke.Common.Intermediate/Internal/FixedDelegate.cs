@@ -19,14 +19,15 @@ internal sealed unsafe class FixedDelegate<TDelegate> : FixedPointer, IFixedMeth
 	public FixedDelegate(TDelegate method) : this(
 		FixedDelegate<TDelegate>.GetMethodPointer(method, out GCHandle handle))
 		=> this._handle = handle;
+	
 	/// <summary>
 	/// Constructor that takes a pointer to a method.
 	/// </summary>
 	/// <param name="ptr">Pointer to the method to be fixed.</param>
-	public FixedDelegate(void* ptr) : base(ptr, sizeof(IntPtr), true) { }
+	private FixedDelegate(void* ptr) : base(ptr, sizeof(IntPtr), true) { }
 
 	/// <inheritdoc/>
-	public override Type? Type => typeof(TDelegate);
+	public override Type Type => typeof(TDelegate);
 	/// <inheritdoc/>
 	public override Int32 BinaryOffset => default;
 	/// <inheritdoc/>

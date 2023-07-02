@@ -7,6 +7,13 @@
 internal sealed unsafe class FixedReference<T> : FixedMemory, IFixedReference<T>, IEquatable<FixedReference<T>>
 	where T : unmanaged
 {
+	/// <inheritdoc/>
+	public override Type Type => typeof(T);
+	/// <inheritdoc/>
+	public override Int32 BinaryOffset => default;
+	/// <inheritdoc/>
+	public override Boolean IsFunction => false;
+	
 	/// <summary>
 	/// Constructor that takes a pointer to a fixed memory reference.
 	/// </summary>
@@ -18,15 +25,6 @@ internal sealed unsafe class FixedReference<T> : FixedMemory, IFixedReference<T>
 	/// </summary>
 	/// <param name="mem">Instance of <see cref="FixedMemory"/> to be referenced.</param>
 	private FixedReference(FixedMemory mem) : base(mem) { }
-	/// <inheritdoc/>
-	public override Type? Type => typeof(T);
-	/// <inheritdoc/>
-	public override Int32 BinaryOffset => default;
-	/// <inheritdoc/>
-	public override Boolean IsFunction => false;
-
-	/// <inheritdoc/>
-	public Boolean Equals(FixedReference<T>? other) => this.Equals(other as FixedMemory);
 
 	ref T IReferenceable<T>.Reference => ref this.CreateReference<T>();
 	ref readonly T IReadOnlyReferenceable<T>.Reference => ref this.CreateReadOnlyReference<T>();
@@ -78,6 +76,9 @@ internal sealed unsafe class FixedReference<T> : FixedMemory, IFixedReference<T>
 		fixedOffset = new(this, sizeof(TDestination));
 		return new(this);
 	}
+	/// <inheritdoc/>
+	public Boolean Equals(FixedReference<T>? other) => this.Equals(other as FixedMemory);
+	
 	/// <inheritdoc/>
 	public override Boolean Equals(FixedMemory? other) => base.Equals(other as FixedReference<T>);
 	/// <inheritdoc/>

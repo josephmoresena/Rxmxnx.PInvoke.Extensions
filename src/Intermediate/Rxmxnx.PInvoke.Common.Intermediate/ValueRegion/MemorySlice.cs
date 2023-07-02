@@ -3,25 +3,37 @@
 public partial class ValueRegion<T>
 {
 	/// <summary>
-	/// This class represents a memory slice that contains a sequence of <typeparamref name="T"/> values.
+	/// This class represents a memory slice that contains a sequence of values.
 	/// </summary>
 	private abstract class MemorySlice : ValueRegion<T>
 	{
 		/// <summary>
 		/// Internal length.
 		/// </summary>
-		protected readonly Int32 _end;
+		private readonly Int32 _end;
 		/// <summary>
 		/// Internal offset.
 		/// </summary>
-		protected readonly Int32 _offset;
+		private readonly Int32 _offset;
 		/// <summary>
 		/// Indicates whether the current instance represents a memory slice extracted from a larger memory region.
 		/// </summary>
-		protected readonly Boolean _slice;
+		private readonly Boolean _slice;
+
+		/// <inheritdoc/>
+		public override Boolean IsMemorySlice => this._slice;
+		
+		/// <summary>
+		/// Internal length.
+		/// </summary>
+		protected Int32 End => this._end;
+		/// <summary>
+		/// Internal offset.
+		/// </summary>
+		protected Int32 Offset => this._offset;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MemorySlice"/> class.
+		/// Initializes a new instance of the <see cref="ValueRegion{T}.MemorySlice"/> class.
 		/// </summary>
 		/// <param name="initialLength">The initial length of the memory slice.</param>
 		/// <param name="offset">The offset for the memory slice.</param>
@@ -33,9 +45,6 @@ public partial class ValueRegion<T>
 			this._end = this._offset + length;
 			this._slice = this._offset != 0 || this._end != initialLength;
 		}
-
-		/// <inheritdoc/>
-		public override Boolean IsMemorySlice => this._slice;
 
 		/// <inheritdoc/>
 		public override ValueRegion<T> Slice(Int32 startIndex)

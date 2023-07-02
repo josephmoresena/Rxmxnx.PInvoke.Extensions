@@ -32,12 +32,7 @@ public partial class CStringSequence
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static String CreateBuffer(IReadOnlyList<CString?> values)
 	{
-		Int32 totalBytes = 0;
-		for (Int32 i = 0; i < values.Count; i++)
-		{
-			if (values[i] is CString value && value.Length > 0)
-				totalBytes += value.Length + 1;
-		}
+		Int32 totalBytes = values.Where(value => value is not null && value.Length > 0).Sum(value => value!.Length + 1);
 		Int32 totalChars = totalBytes / CStringSequence.SizeOfChar + totalBytes % CStringSequence.SizeOfChar;
 		return String.Create(totalChars, values, CStringSequence.CopyText);
 	}
@@ -56,16 +51,13 @@ public partial class CStringSequence
 	{
 		Int32 position = 0;
 		Span<Byte> byteSpan = MemoryMarshal.AsBytes(charSpan);
-		for (Int32 i = 0; i < values.Count; i++)
+		foreach (CString value in values.Where(value => value is not null && value.Length > 0).Cast<CString>())
 		{
-			if (values[i] is CString value && value.Length > 0)
-			{
-				ReadOnlySpan<Byte> valueSpan = value.AsSpan();
-				valueSpan.CopyTo(byteSpan[position..]);
-				position += valueSpan.Length;
-				byteSpan[position] = default;
-				position++;
-			}
+			ReadOnlySpan<Byte> valueSpan = value.AsSpan();
+			valueSpan.CopyTo(byteSpan[position..]);
+			position += valueSpan.Length;
+			byteSpan[position] = default;
+			position++;
 		}
 	}
 	/// <summary>
@@ -128,11 +120,10 @@ public partial class CStringSequence
 		for (Int32 i = 0; i < state.Lengths.Length; i++)
 		{
 			Int32? length = state.Lengths[i];
-			if (length.HasValue && length.Value > 0)
-			{
-				state.InvokeAction(buffer.Slice(offset, length.Value), i);
-				offset += length.Value + 1;
-			}
+			if (length is not > 0) 
+				continue;
+			state.InvokeAction(buffer.Slice(offset, length.Value), i);
+			offset += length.Value + 1;
 		}
 	}
 	/// <summary>
@@ -154,5 +145,16 @@ public partial class CStringSequence
 	/// The length of the byte span representing a <see cref="CString"/> of <paramref name="length"/> length,
 	/// or 0 if <paramref name="length"/> is <see langword="null"/> or non-positive.
 	/// </returns>
-	private static Int32 GetSpanLength(Int32? length) => length.HasValue && length.Value > 0 ? length.Value + 1 : 0;
+	private static Int32 GetSpanLength(Int32? length) => length is > 0 ? length.Value + 1 : 0;
+	/// <summary>
+	/// Creates an array of <see cref="CString"/> values from given enumeration.
+	/// </summary>
+	/// <param name="values">Enumeration of <see cref="CString"/> instances.</param>
+	/// <param name="array">Output. Resulting array as output parameter.</param>
+	/// <returns>Resulting array.</returns>
+	private static CString?[] FromArray(IEnumerable<CString?> values, out CString?[] array)
+	{
+		array = values.ToArray();
+		return array;
+	}
 }

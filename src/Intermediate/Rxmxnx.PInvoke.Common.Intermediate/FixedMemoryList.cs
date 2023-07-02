@@ -38,7 +38,7 @@ public readonly ref struct FixedMemoryList
 	/// </summary>
 	/// <param name="memories">An array of <see cref="FixedMemory"/> instances to be stored in the list.</param>
 	/// <remarks>This constructor initializes the list with the provided fixed memory blocks.</remarks>
-	internal FixedMemoryList(params FixedMemory[] memories) => this._values = new(memories);
+	internal FixedMemoryList(params FixedMemory[] memories) => this._values = new(memories.Cast<ReadOnlyFixedMemory>());
 
 	/// <summary>
 	/// Creates an array from the current <see cref="FixedMemoryList"/> object.

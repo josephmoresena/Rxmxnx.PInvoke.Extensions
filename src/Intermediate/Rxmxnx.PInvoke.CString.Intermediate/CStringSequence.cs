@@ -19,15 +19,15 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// <param name="values">The collection of strings.</param>
 	public CStringSequence(params String?[] values)
 	{
-		List<CString?> cvalues = new(values.Length);
+		List<CString?> list = new(values.Length);
 		this._lengths = new Int32?[values.Length];
 		for (Int32 i = 0; i < values.Length; i++)
 		{
 			CString? cstr = CStringSequence.GetCString(values[i]);
-			cvalues.Add(cstr);
+			list.Add(cstr);
 			this._lengths[i] = cstr?.Length;
 		}
-		this._value = CStringSequence.CreateBuffer(cvalues);
+		this._value = CStringSequence.CreateBuffer(list);
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from a
@@ -46,20 +46,20 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// <param name="values">The enumerable collection of strings.</param>
 	public CStringSequence(IEnumerable<String?> values)
 	{
-		List<CString?> cvalues = values.Select(CStringSequence.GetCString).ToList();
-		this._lengths = cvalues.Select(CStringSequence.GetLength).ToArray();
-		this._value = CStringSequence.CreateBuffer(cvalues);
+		List<CString?> list = values.Select(CStringSequence.GetCString).ToList();
+		this._lengths = list.Select(CStringSequence.GetLength).ToArray();
+		this._value = CStringSequence.CreateBuffer(list);
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from an
 	/// enumerable collection of <see cref="CString"/> instances.
 	/// </summary>
 	/// <param name="values">The enumerable collection of <see cref="CString"/> instances.</param>
-	public CStringSequence(IEnumerable<CString?> values) : this(values.ToArray())
+	public CStringSequence(IEnumerable<CString?> values) : 
+		this(CStringSequence.FromArray(values, out CString?[] arr))
 	{
-		List<CString?> cvalues = values.ToList();
-		this._lengths = cvalues.Select(CStringSequence.GetLength).ToArray();
-		this._value = CStringSequence.CreateBuffer(cvalues);
+		this._lengths = arr.Select(CStringSequence.GetLength).ToArray();
+		this._value = CStringSequence.CreateBuffer(arr);
 	}
 	/// <summary>
 	/// Creates a copy of this instance of <see cref="CStringSequence"/>.

@@ -20,10 +20,17 @@ internal sealed unsafe class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IRea
 	private readonly Int32 _count;
 
 	/// <summary>
-	/// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a pointer to a
-	/// <see langword="null"/> memory.
+	/// Gets the number of items of type <typeparamref name="T"/> in the memory block.
 	/// </summary>
-	private ReadOnlyFixedContext() : base(IntPtr.Zero.ToPointer(), 0, true) => this._count = 0;
+	public Int32 Count => this._count;
+
+	/// <inheritdoc/>
+	public override Int32 BinaryOffset => default;
+	/// <inheritdoc/>
+	public override Type Type => typeof(T);
+	/// <inheritdoc/>
+	public override Boolean IsFunction => false;
+
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a pointer to a fixed memory block,
 	/// and a count of items.
@@ -48,6 +55,12 @@ internal sealed unsafe class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IRea
 	/// <param name="ctx">The fixed memory instance.</param>
 	public ReadOnlyFixedContext(Int32 offset, ReadOnlyFixedMemory ctx) : base(ctx, offset)
 		=> this._count = this.BinaryLength / sizeof(T);
+	
+	/// <summary>
+	/// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a pointer to a
+	/// <see langword="null"/> memory.
+	/// </summary>
+	private ReadOnlyFixedContext() : base(IntPtr.Zero.ToPointer(), 0, true) => this._count = 0;
 
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a fixed memory instance and a count of items.
@@ -55,21 +68,6 @@ internal sealed unsafe class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IRea
 	/// <param name="ctx">The fixed memory instance.</param>
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
 	private ReadOnlyFixedContext(ReadOnlyFixedMemory ctx, Int32 count) : base(ctx) => this._count = count;
-
-	/// <inheritdoc/>
-	public override Int32 BinaryOffset => default;
-	/// <inheritdoc/>
-	public override Type? Type => typeof(T);
-	/// <inheritdoc/>
-	public override Boolean IsFunction => false;
-
-	/// <summary>
-	/// Gets the number of items of type <typeparamref name="T"/> in the memory block.
-	/// </summary>
-	public Int32 Count => this._count;
-
-	/// <inheritdoc/>
-	public Boolean Equals(ReadOnlyFixedContext<T>? other) => this.Equals(other as ReadOnlyFixedMemory);
 
 	ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => this.CreateReadOnlySpan<T>(this._count);
 	IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(
@@ -80,8 +78,6 @@ internal sealed unsafe class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IRea
 		residual = fixedOffset;
 		return result;
 	}
-	/// <inheritdoc/>
-	public override IReadOnlyFixedContext<Byte> AsBinaryContext() => this.GetTransformation<Byte>(out _);
 
 	/// <summary>
 	/// Transforms the current memory context into a different type, and provides a fixed offset that represents the
@@ -112,9 +108,14 @@ internal sealed unsafe class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IRea
 		return new(this, count);
 	}
 	/// <inheritdoc/>
+	public Boolean Equals(ReadOnlyFixedContext<T>? other) => this.Equals(other as ReadOnlyFixedMemory);
+	
+	/// <inheritdoc/>
 	public override Boolean Equals(ReadOnlyFixedMemory? other) => base.Equals(other as ReadOnlyFixedContext<T>);
 	/// <inheritdoc/>
 	public override Boolean Equals(Object? obj) => base.Equals(obj as ReadOnlyFixedContext<T>);
 	/// <inheritdoc/>
 	public override Int32 GetHashCode() => base.GetHashCode();
+	/// <inheritdoc cref="IReadOnlyFixedMemory.AsBinaryContext()"/>
+	public override IReadOnlyFixedContext<Byte> AsBinaryContext() => this.GetTransformation<Byte>(out _);
 }

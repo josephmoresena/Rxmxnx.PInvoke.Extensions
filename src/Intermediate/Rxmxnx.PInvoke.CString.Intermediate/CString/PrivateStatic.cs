@@ -143,7 +143,7 @@ public partial class CString
 	/// <summary>
 	/// Sets the value of the specified UTF-16 character in a Span of characters.
 	/// </summary>
-	/// <param name="spanSeparator">The span of UTF-16 characteres to set the character value.</param>
+	/// <param name="spanSeparator">The span of UTF-16 characters to set the character value.</param>
 	/// <param name="separator">The UTF-16 character to set.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static void SetSeparator(Span<Char> spanSeparator, Char separator) => spanSeparator[0] = separator;

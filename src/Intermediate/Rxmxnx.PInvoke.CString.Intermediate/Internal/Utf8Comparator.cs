@@ -1,7 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
-/// The abstract Utf8Comparator class provides a means for efficiently and customizably
+/// The abstract Utf8Comparator class provides a means for efficiently and customizable
 /// comparing two UTF-8 texts.
 /// </summary>
 /// <typeparam name="TChar">The type of characters in the text being compared.</typeparam>
@@ -121,14 +121,14 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
 		while (!textA.IsEmpty && !textB.IsEmpty)
 		{
 			//Preserve the original text in comparison.
-			ReadOnlySpan<Byte> textAO = textA;
-			ReadOnlySpan<TChar> textBO = textB;
+			ReadOnlySpan<Byte> textA0 = textA;
+			ReadOnlySpan<TChar> textB0 = textB;
 
 			DecodedRune? runeA = Utf8Comparator<TChar>.DecodeRuneFromUtf8(ref textA);
 			DecodedRune? runeB = this.DecodeRune(ref textB);
 
 			//If the runes are not comparable to each other a full text comparison will be needed.
-			if (runeA is null || runeB is null) return this.Compare(textAO, textBO, this._ignoreCase) == 0;
+			if (runeA is null || runeB is null) return this.Compare(textA0, textB0, this._ignoreCase) == 0;
 			//If the value of both runes is the same, no further comparison is necessary.
 			if (runeA != runeB)
 			{

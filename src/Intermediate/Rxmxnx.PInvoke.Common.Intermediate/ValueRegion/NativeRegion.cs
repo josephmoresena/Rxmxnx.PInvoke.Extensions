@@ -3,16 +3,16 @@
 public partial class ValueRegion<T>
 {
 	/// <summary>
-	/// Represents a native memory region in which a sequence of <typeparamref name="T"/> values is stored.
+	/// Represents a native memory region in which a sequence of values is stored.
 	/// </summary>
 	private sealed class NativeRegion : ValueRegion<T>
 	{
 		/// <summary>
-		/// An empty instance of <see cref="NativeRegion"/>.
+		/// An empty instance of <see cref="ValueRegion{T}.NativeRegion"/>.
 		/// </summary>
 		public static readonly NativeRegion Empty = new(IntPtr.Zero, 0);
 		/// <summary>
-		/// The length of the <typeparamref name="T"/> sequence.
+		/// The length of the sequence.
 		/// </summary>
 		private readonly Int32 _length;
 
@@ -22,10 +22,10 @@ public partial class ValueRegion<T>
 		private readonly IntPtr _ptr;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="NativeRegion"/> class.
+		/// Initializes a new instance of the <see cref="ValueRegion{T}.NativeRegion"/> class.
 		/// </summary>
 		/// <param name="ptr">The pointer to the native memory region.</param>
-		/// <param name="length">The length of the <typeparamref name="T"/> sequence.</param>
+		/// <param name="length">The length of the sequence.</param>
 		public NativeRegion(IntPtr ptr, Int32 length)
 		{
 			this._ptr = ptr;
@@ -33,10 +33,10 @@ public partial class ValueRegion<T>
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="NativeRegion"/> class from a subrange of an existing
-		/// <see cref="NativeRegion"/>.
+		/// Initializes a new instance of the <see cref="ValueRegion{T}.NativeRegion"/> class from a sub-range
+		/// of an existing <see cref="ValueRegion{T}.NativeRegion"/>.
 		/// </summary>
-		/// <param name="region">A <see cref="NativeRegion"/> instance.</param>
+		/// <param name="region">A <see cref="ValueRegion{T}.NativeRegion"/> instance.</param>
 		/// <param name="offset">The offset for the range.</param>
 		/// <param name="length">The length of the range.</param>
 		private unsafe NativeRegion(NativeRegion region, Int32 offset, Int32 length)

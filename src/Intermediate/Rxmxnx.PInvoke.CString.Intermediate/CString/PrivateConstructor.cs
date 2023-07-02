@@ -43,7 +43,7 @@ public partial class CString
 	/// <param name="bytes">Binary internal information representing the UTF-8 string.</param>
 	/// <param name="isNullTerminated">
 	/// Indicates whether <paramref name="bytes"/> is a null-terminated UTF-8 text.
-	/// If this is <see langword="null"/> an internal funtion is used to determine the value.
+	/// If this is <see langword="null"/> an internal function is used to determine the value.
 	/// </param>
 	private CString(Byte[] bytes, Boolean? isNullTerminated = default)
 	{
@@ -79,15 +79,15 @@ public partial class CString
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a
-	/// specified subrange of the <see cref="CString"/> instance.
+	/// specified sub-range of the <see cref="CString"/> instance.
 	/// </summary>
 	/// <param name="value">
-	/// A <see cref="CString"/> value from which the subrange is extracted.
+	/// A <see cref="CString"/> value from which the sub-range is extracted.
 	/// </param>
 	/// <param name="startIndex">
-	/// The zero-based starting index of the subrange in <paramref name="value"/>.
+	/// The zero-based starting index of the sub-range in <paramref name="value"/>.
 	/// </param>
-	/// <param name="length">The length of the subrange.</param>
+	/// <param name="length">The length of the sub-range.</param>
 	private CString(CString value, Int32 startIndex, Int32 length)
 	{
 		this._isLocal = value._isLocal;
@@ -95,7 +95,7 @@ public partial class CString
 		this._length = length;
 		this._data = value._data.InternalSlice(startIndex, value.GetDataLength(startIndex, length));
 		this._isNullTerminated =
-			(value._isFunction && value._isNullTerminated && value._length - startIndex == length) ||
+			(value is { _isFunction: true, _isNullTerminated: true } && value._length - startIndex == length) ||
 			this._data.AsSpan()[^1] == default;
 	}
 	/// <summary>
@@ -143,7 +143,7 @@ public partial class CString
 		private ReadOnlySpan<Byte> GetUtf8Bytes() => MemoryMarshal.AsBytes<Char>(this._utf8String);
 
 		/// <summary>
-		/// Creates a UTF-16 text which containst the binary information of <paramref name="str"/>
+		/// Creates a UTF-16 text which contains the binary information of <paramref name="str"/>
 		/// encoded to UTF-8 text.
 		/// </summary>
 		/// <param name="str"><see cref="String"/> representation of UTF-16 text.</param>

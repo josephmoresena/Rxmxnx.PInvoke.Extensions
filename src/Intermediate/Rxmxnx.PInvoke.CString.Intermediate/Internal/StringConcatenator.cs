@@ -72,7 +72,7 @@ internal sealed class StringConcatenator : BinaryConcatenator<String>
 		await base.DisposeAsync(disposing);
 	}
 	/// <inheritdoc/>
-	protected override void WriteValue([AllowNull] String value) => this._writer.Write(value);
+	protected override void WriteValue(String? value) => this._writer.Write(value);
 	/// <inheritdoc/>
-	protected override Task WriteValueAsync([AllowNull] String value) => this._writer.WriteAsync(value);
+	protected override Task WriteValueAsync(String? value) => this._writer.WriteAsync(value);
 }

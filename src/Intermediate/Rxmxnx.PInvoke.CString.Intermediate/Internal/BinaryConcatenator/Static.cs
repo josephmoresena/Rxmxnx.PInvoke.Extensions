@@ -38,7 +38,7 @@ internal partial class BinaryConcatenator<T>
 		while (iPosition < span.Length && BinaryConcatenator<T>.IsNullUtf8Char(span[iPosition]))
 			iPosition++;
 		while (iPosition + 2 < span.Length &&
-		       BinaryConcatenator<T>.IsBOMChar(span[iPosition], span[iPosition + 1], span[iPosition + 2]))
+		       BinaryConcatenator<T>.IsBomChar(span[iPosition], span[iPosition + 1], span[iPosition + 2]))
 			iPosition += 3;
 		return iPosition;
 	}
@@ -63,7 +63,7 @@ internal partial class BinaryConcatenator<T>
 	/// <see langword="true"/> if the given sequence of bytes represents a UTF-8 BOM;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
-	private static Boolean IsBOMChar(in Byte utf8Char1, in Byte utf8Char2, in Byte utf8Char3)
+	private static Boolean IsBomChar(in Byte utf8Char1, in Byte utf8Char2, in Byte utf8Char3)
 		=> utf8Char1 == 239 && utf8Char2 == 187 && utf8Char3 == 191;
 	/// <summary>
 	/// Gets the final length of the UTF-8 text by skipping any trailing null

@@ -33,6 +33,11 @@ internal readonly struct FixedMemoryListValue : IEnumerableSequence<ReadOnlyFixe
 	}
 
 	/// <summary>
+	/// Initializes a new instance of the <see cref="FixedMemory"/> struct.
+	/// </summary>
+	/// <param name="memories">The array of <see cref="FixedMemory"/> instances.</param>
+	public FixedMemoryListValue(IEnumerable<ReadOnlyFixedMemory> memories) => this._memories = memories.ToArray();
+	/// <summary>
 	/// Initializes a new instance of the <see cref="FixedMemoryListValue"/> struct.
 	/// </summary>
 	/// <param name="memories">The array of <see cref="ReadOnlyFixedMemory"/> instances.</param>

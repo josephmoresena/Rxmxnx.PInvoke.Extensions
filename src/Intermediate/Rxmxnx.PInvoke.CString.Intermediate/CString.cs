@@ -98,21 +98,6 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 		source.CopyTo(bytes);
 		return new CString(bytes, true);
 	}
-	/// <inheritdoc/>
-	public Boolean Equals([NotNullWhen(true)] CString? other)
-		=> other is CString otherNotNull && this._length == otherNotNull._length && CString.equals(this, otherNotNull);
-	/// <summary>
-	/// Determines whether the current <see cref="CString"/> and a specified <see cref="String"/>
-	/// have the same value.
-	/// </summary>
-	/// <param name="other">The <see cref="String"/> to compare to the current instance.</param>
-	/// <returns>
-	/// <see langword="true"/> if the value of the <paramref name="other"/> parameter is the same
-	/// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
-	/// </returns>
-	public Boolean Equals([NotNullWhen(true)] String? other)
-		=> other is String otherNotNull && StringUtf8Comparator.Create().TextEquals(this, otherNotNull);
-
 	/// <summary>
 	/// Returns a reference to the first UTF-8 unit of the <see cref="CString"/>.
 	/// </summary>
@@ -152,6 +137,21 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <see cref="CString"/>.
 	/// </returns>
 	public ReadOnlySpan<Byte>.Enumerator GetEnumerator() => this.AsSpan().GetEnumerator();
+	
+	/// <inheritdoc/>
+	public Boolean Equals([NotNullWhen(true)] CString? other)
+		=> other is CString && this._length == other._length && CString.equals(this, other);
+	/// <summary>
+	/// Determines whether the current <see cref="CString"/> and a specified <see cref="String"/>
+	/// have the same value.
+	/// </summary>
+	/// <param name="other">The <see cref="String"/> to compare to the current instance.</param>
+	/// <returns>
+	/// <see langword="true"/> if the value of the <paramref name="other"/> parameter is the same
+	/// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
+	/// </returns>
+	public Boolean Equals([NotNullWhen(true)] String? other)
+		=> other is String && StringUtf8Comparator.Create().TextEquals(this, other);
 	/// <summary>
 	/// Determines whether the current <see cref="CString"/> and a specified <see cref="CString"/>
 	/// have the same value.
@@ -166,7 +166,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
 	/// </returns>
 	public Boolean Equals([NotNullWhen(true)] CString? value, StringComparison comparisonType)
-		=> value is CString valueNotNull && CStringUtf8Comparator.Create(comparisonType).TextEquals(this, valueNotNull);
+		=> value is CString && CStringUtf8Comparator.Create(comparisonType).TextEquals(this, value);
 	/// <summary>
 	/// Determines whether the current <see cref="CString"/> and a specified <see cref="String"/>
 	/// have the same value.
@@ -181,7 +181,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <see cref="CString"/>, otherwise, <see langword="false"/>.
 	/// </returns>
 	public Boolean Equals([NotNullWhen(true)] String? value, StringComparison comparisonType)
-		=> value is String valueNotNull && StringUtf8Comparator.Create(comparisonType).TextEquals(this, valueNotNull);
+		=> value is String && StringUtf8Comparator.Create(comparisonType).TextEquals(this, value);
 
 	/// <inheritdoc/>
 	public override Boolean Equals([NotNullWhen(true)] Object? obj)

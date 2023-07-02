@@ -120,7 +120,7 @@ internal static class ValidationUtilities
 	{
 		if (binaryLength < sizeof(TValue))
 			throw new InsufficientMemoryException(
-				$"The current instance is insufficent to contain a value of {typeof(TValue)} type.");
+				$"The current instance is insufficient to contain a value of {typeof(TValue)} type.");
 	}
 
 	/// <summary>

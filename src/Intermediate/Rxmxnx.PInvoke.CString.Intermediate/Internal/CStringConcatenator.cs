@@ -36,9 +36,9 @@ internal sealed class CStringConcatenator : BinaryConcatenator<CString>
 		=> this._ignoreEmpty = !CString.IsNullOrEmpty(separator);
 
 	/// <inheritdoc/>
-	protected override void WriteValue([AllowNull] CString value) => value?.Write(this.Stream, false);
+	protected override void WriteValue(CString? value) => value?.Write(this.Stream, false);
 	/// <inheritdoc/>
-	protected override Task WriteValueAsync([AllowNull] CString value)
+	protected override Task WriteValueAsync(CString? value)
 		=> value?.WriteAsync(this.Stream, false, this.CancellationToken) ?? Task.CompletedTask;
 	/// <inheritdoc/>
 	protected override Boolean IsEmpty(CString? value) => CString.IsNullOrEmpty(value) && !this._ignoreEmpty;
