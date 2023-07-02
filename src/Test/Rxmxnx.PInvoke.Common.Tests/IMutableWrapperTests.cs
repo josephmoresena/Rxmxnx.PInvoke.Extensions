@@ -50,7 +50,7 @@ public sealed class IMutableWrapperTests
 		Task inputTest = Task.Run(IMutableWrapperTests.Value<T>);
 		Task nullTest1 = Task.Run(() => IMutableWrapperTests.Nullable<T>(false));
 		Task nullTest2 = Task.Run(() => IMutableWrapperTests.Nullable<T>(true));
-		Task objectTest = Task.Run(IMutableWrapperTests.Object<T>);
+		Task objectTest = Task.Run(IMutableWrapperTests.ObjectTest<T>);
 
 		await Task.WhenAll(inputTest, nullTest1, nullTest2, objectTest);
 	}
@@ -104,7 +104,7 @@ public sealed class IMutableWrapperTests
 		Assert.Equal(Object.Equals(value2, value), wrapper.Equals(value));
 	}
 
-	private static void Object<T>() where T : unmanaged
+	private static void ObjectTest<T>() where T : unmanaged
 	{
 		T[] array = IMutableWrapperTests.fixture.CreateMany<T>().ToArray();
 		T[] array2 = IMutableWrapperTests.fixture.CreateMany<T>().ToArray();

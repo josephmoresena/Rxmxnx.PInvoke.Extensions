@@ -42,7 +42,7 @@ public sealed class IWrapperTests
 		Task inputTest = Task.Run(IWrapperTests.Value<T>);
 		Task nullTest1 = Task.Run(() => IWrapperTests.Nullable<T>(false));
 		Task nullTest2 = Task.Run(() => IWrapperTests.Nullable<T>(true));
-		Task objectTest = Task.Run(IWrapperTests.Object<T>);
+		Task objectTest = Task.Run(IWrapperTests.ObjectTest<T>);
 
 		await Task.WhenAll(inputTest, nullTest1, nullTest2, objectTest);
 	}
@@ -65,7 +65,7 @@ public sealed class IWrapperTests
 		Assert.Equal(value, result.Value);
 		Assert.Equal(Object.Equals(value, value2), result.Equals(value2));
 	}
-	private static void Object<T>() where T : unmanaged
+	private static void ObjectTest<T>() where T : unmanaged
 	{
 		T[] array = IWrapperTests.fixture.CreateMany<T>().ToArray();
 		T[] array2 = IWrapperTests.fixture.CreateMany<T>().ToArray();

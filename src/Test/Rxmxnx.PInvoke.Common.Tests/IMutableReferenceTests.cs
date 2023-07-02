@@ -42,7 +42,7 @@ public sealed class IMutableReferenceTests
 		Task inputTest = Task.Run(IMutableReferenceTests.Value<T>);
 		Task nullTest1 = Task.Run(() => IMutableReferenceTests.Nullable<T>(false));
 		Task nullTest2 = Task.Run(() => IMutableReferenceTests.Nullable<T>(true));
-		Task objectTest = Task.Run(IMutableReferenceTests.Object<T>);
+		Task objectTest = Task.Run(IMutableReferenceTests.ObjectTest<T>);
 
 		await Task.WhenAll(inputTest, nullTest1, nullTest2, objectTest);
 	}
@@ -119,7 +119,7 @@ public sealed class IMutableReferenceTests
 		Assert.Equal(value3, result.Value);
 		Assert.Equal(value3, refValue);
 	}
-	private static void Object<T>() where T : unmanaged
+	private static void ObjectTest<T>() where T : unmanaged
 	{
 		T[] array = IMutableReferenceTests.fixture.CreateMany<T>().ToArray();
 		T[] array2 = IMutableReferenceTests.fixture.CreateMany<T>().ToArray();

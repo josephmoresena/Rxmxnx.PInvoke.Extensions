@@ -544,6 +544,8 @@ with strings.
 
 `Rxmxnx.PInvoke.NativeUtilities` is a utility class that provides various methods for working with native code.
 
+- `PointerSize`: Size in bytes of a memory pointer.
+
 - `AsBytes<T>(in T)`: Retrieves the bytes representing the specified value.
 - `AsBinarySpan<T>(ref T)`: Converts the specified reference to a span of bytes.
 - `CopyBytes<T>(in T, Span<Byte>, Int32)`: Copies the bytes from the specified span to the specified value.

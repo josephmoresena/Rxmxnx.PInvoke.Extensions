@@ -42,7 +42,7 @@ public sealed class IReferenceableWrapperTests
 		Task inputTest = Task.Run(IReferenceableWrapperTests.Value<T>);
 		Task nullTest1 = Task.Run(() => IReferenceableWrapperTests.Nullable<T>(false));
 		Task nullTest2 = Task.Run(() => IReferenceableWrapperTests.Nullable<T>(true));
-		Task objectTest = Task.Run(IReferenceableWrapperTests.Object<T>);
+		Task objectTest = Task.Run(IReferenceableWrapperTests.ObjectTest<T>);
 
 		await Task.WhenAll(inputTest, nullTest1, nullTest2, objectTest);
 	}
@@ -87,7 +87,7 @@ public sealed class IReferenceableWrapperTests
 		Assert.True(result.Equals(result3));
 		Assert.False(result.Equals(default(IReferenceable<T?>)));
 	}
-	private static void Object<T>() where T : unmanaged
+	private static void ObjectTest<T>() where T : unmanaged
 	{
 		T[] array = IReferenceableWrapperTests.fixture.CreateMany<T>().ToArray();
 		T[] array2 = IReferenceableWrapperTests.fixture.CreateMany<T>().ToArray();

@@ -26,7 +26,11 @@ public sealed class SizeOfTest
 	[Fact]
 	internal void Int64Test() => Assert.Equal(8, NativeUtilities.SizeOf<Int64>());
 	[Fact]
-	internal void IntPtrTest() => Assert.Equal(Environment.Is64BitProcess ? 8 : 4, NativeUtilities.SizeOf<IntPtr>());
+	internal void IntPtrTest()
+	{
+		Assert.Equal(Environment.Is64BitProcess ? 8 : 4, NativeUtilities.SizeOf<IntPtr>());
+		Assert.Equal(NativeUtilities.SizeOf<IntPtr>(), NativeUtilities.PointerSize);
+	}
 	[Fact]
 	internal void SByteTest() => Assert.Equal(1, NativeUtilities.SizeOf<SByte>());
 	[Fact]

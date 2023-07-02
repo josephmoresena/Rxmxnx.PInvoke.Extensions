@@ -6,6 +6,11 @@
 public static partial class NativeUtilities
 {
 	/// <summary>
+	/// Size in bytes of a memory pointer.
+	/// </summary>
+	public static readonly unsafe Int32 PointerSize = sizeof(IntPtr);
+
+	/// <summary>
 	/// Retrieves the size of <typeparamref name="T"/> structure.
 	/// </summary>
 	/// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
