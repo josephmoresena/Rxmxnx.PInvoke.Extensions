@@ -19,7 +19,7 @@ internal sealed unsafe class FixedDelegate<TDelegate> : FixedPointer, IFixedMeth
 	public FixedDelegate(TDelegate method) : this(
 		FixedDelegate<TDelegate>.GetMethodPointer(method, out GCHandle handle))
 		=> this._handle = handle;
-	
+
 	/// <summary>
 	/// Constructor that takes a pointer to a method.
 	/// </summary>

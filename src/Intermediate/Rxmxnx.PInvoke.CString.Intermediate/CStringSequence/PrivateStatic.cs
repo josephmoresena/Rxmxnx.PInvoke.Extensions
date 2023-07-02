@@ -120,7 +120,7 @@ public partial class CStringSequence
 		for (Int32 i = 0; i < state.Lengths.Length; i++)
 		{
 			Int32? length = state.Lengths[i];
-			if (length is not > 0) 
+			if (length is not > 0)
 				continue;
 			state.InvokeAction(buffer.Slice(offset, length.Value), i);
 			offset += length.Value + 1;

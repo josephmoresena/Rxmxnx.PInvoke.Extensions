@@ -22,7 +22,7 @@ public partial class ValueRegion<T>
 		public FuncMemorySlice(FuncRegion region, Int32 offset, Int32 length) : base(
 			region.AsReadOnlySpanFunc()().Length, offset, length)
 			=> this._func = region.AsReadOnlySpanFunc();
-		
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ValueRegion{T}.FuncMemorySlice"/> class from a sub-range of an
 		/// existing <see cref="ValueRegion{T}.FuncMemorySlice"/>.

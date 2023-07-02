@@ -1,5 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke;
 
+[SuppressMessage("csharpsquid", "S107")]
 public partial class CString
 {
 	/// <summary>

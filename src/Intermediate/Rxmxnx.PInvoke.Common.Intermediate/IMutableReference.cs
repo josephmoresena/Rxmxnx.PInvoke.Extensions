@@ -51,7 +51,8 @@ public interface IMutableReference : IMutableWrapper
 /// </summary>
 /// <typeparam name="T">Type of both wrapped and referenced value.</typeparam>
 /// <remarks>The provided reference is mutable, allowing changes to the value.</remarks>
-public interface IMutableReference<T> : IMutableReference, IReferenceableWrapper<T>, IMutableWrapper<T>, IReferenceable<T>
+public interface IMutableReference<T> : IMutableReference, IReferenceableWrapper<T>, IMutableWrapper<T>,
+	IReferenceable<T>
 {
 	/// <summary>
 	/// Reference to instance <typeparamref name="T"/> object.

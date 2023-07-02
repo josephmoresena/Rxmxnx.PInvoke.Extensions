@@ -95,7 +95,7 @@ public partial class CString
 		this._length = length;
 		this._data = value._data.InternalSlice(startIndex, value.GetDataLength(startIndex, length));
 		this._isNullTerminated =
-			(value is { _isFunction: true, _isNullTerminated: true } && value._length - startIndex == length) ||
+			(value is { _isFunction: true, _isNullTerminated: true, } && value._length - startIndex == length) ||
 			this._data.AsSpan()[^1] == default;
 	}
 	/// <summary>

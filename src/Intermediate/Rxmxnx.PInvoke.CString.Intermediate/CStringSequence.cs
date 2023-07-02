@@ -55,8 +55,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// enumerable collection of <see cref="CString"/> instances.
 	/// </summary>
 	/// <param name="values">The enumerable collection of <see cref="CString"/> instances.</param>
-	public CStringSequence(IEnumerable<CString?> values) : 
-		this(CStringSequence.FromArray(values, out CString?[] arr))
+	public CStringSequence(IEnumerable<CString?> values) : this(CStringSequence.FromArray(values, out CString?[] arr))
 	{
 		this._lengths = arr.Select(CStringSequence.GetLength).ToArray();
 		this._value = CStringSequence.CreateBuffer(arr);
