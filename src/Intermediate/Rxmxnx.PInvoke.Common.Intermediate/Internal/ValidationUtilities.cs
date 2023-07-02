@@ -3,7 +3,7 @@
 /// <summary>
 /// Utility class for argument validation.
 /// </summary>
-public static class ValidationUtilities
+internal static class ValidationUtilities
 {
 	/// <summary>
 	/// Empty <see cref="String"/> for <see cref="CallerArgumentExpressionAttribute"/> default value.

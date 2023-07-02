@@ -149,7 +149,7 @@ public sealed class WithSafeTransformTest
 			if (values[i] is CString value)
 			{
 				Assert.Equal(value, fseq.Values[i]);
-				Assert.Equal(!fseq.Values[i].IsReference, ReferenceEquals(value, fseq.Values[i]));
+				Assert.Equal(!fseq.Values[i].IsReference, Object.ReferenceEquals(value, fseq.Values[i]));
 			}
 			else
 			{

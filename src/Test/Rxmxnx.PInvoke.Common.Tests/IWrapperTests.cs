@@ -54,7 +54,7 @@ public sealed class IWrapperTests
 		Assert.NotNull(result);
 		Assert.Equal(value, result.Value);
 		Assert.True(result.Equals(value));
-		Assert.Equal(Equals(value, value2), result.Equals(value2));
+		Assert.Equal(Object.Equals(value, value2), result.Equals(value2));
 	}
 	private static void Nullable<T>(Boolean nullInput) where T : unmanaged
 	{
@@ -63,7 +63,7 @@ public sealed class IWrapperTests
 		IWrapper<T?> result = IWrapper.CreateNullable(value);
 		Assert.NotNull(result);
 		Assert.Equal(value, result.Value);
-		Assert.Equal(Equals(value, value2), result.Equals(value2));
+		Assert.Equal(Object.Equals(value, value2), result.Equals(value2));
 	}
 	private static void Object<T>() where T : unmanaged
 	{
@@ -73,6 +73,6 @@ public sealed class IWrapperTests
 		Assert.NotNull(result);
 		Assert.Equal(array, result.Value);
 		Assert.True(result.Equals(array));
-		Assert.Equal(Equals(array, array2), result.Equals(array2));
+		Assert.Equal(Object.Equals(array, array2), result.Equals(array2));
 	}
 }

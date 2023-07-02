@@ -55,13 +55,13 @@ internal sealed class DecodedRune : IWrapper<Rune>
 	/// <inheritdoc/>
 	public override Boolean Equals(Object? obj)
 	{
-		if (ReferenceEquals(this, obj))
+		if (Object.ReferenceEquals(this, obj))
 			return true;
 		if (obj is DecodedRune decoded)
 			return this._value.Equals(decoded._value);
 		if (obj is Rune rune)
 			return this._value.Equals(rune);
-		return Equals(this, obj);
+		return Object.Equals(this, obj);
 	}
 	/// <inheritdoc/>
 	public override Int32 GetHashCode() => this._value.GetHashCode();

@@ -95,7 +95,7 @@ public sealed class CompareTest
 		CompareTest.CompleteCulturalTest(strA, cstrA, strLowerB, cstrLowerB);
 		CompareTest.CompleteCulturalTest(strA, cstrA, strUpperB, cstrUpperB);
 
-		if (!ReferenceEquals(strA, strB))
+		if (!Object.ReferenceEquals(strA, strB))
 		{
 			CompareTest.CompleteCulturalTest(strB, cstrB, strA, cstrA);
 			CompareTest.CompleteCulturalTest(strB, cstrB, strLowerA, cstrLowerA);

@@ -59,7 +59,7 @@ public sealed class IReferenceableWrapperTests
 		Assert.Equal(value, result.Value);
 		Assert.Equal(value, refValue);
 		Assert.True(result.Equals(value));
-		Assert.Equal(Equals(value, value2), result.Equals(value2));
+		Assert.Equal(Object.Equals(value, value2), result.Equals(value2));
 		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref mutableValueRef));
 		Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref value));
 		Assert.False(result.Equals(result2));
@@ -80,7 +80,7 @@ public sealed class IReferenceableWrapperTests
 		Assert.NotNull(result);
 		Assert.Equal(value, refValue);
 		Assert.Equal(value, result.Value);
-		Assert.Equal(Equals(value, value2), result.Equals(value2));
+		Assert.Equal(Object.Equals(value, value2), result.Equals(value2));
 		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref mutableValueRef));
 		Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref value));
 		Assert.False(result.Equals(result2));
@@ -100,7 +100,7 @@ public sealed class IReferenceableWrapperTests
 		Assert.Equal(array, result.Value);
 		Assert.Equal(array, refValue);
 		Assert.True(result.Equals(array));
-		Assert.Equal(Equals(array, array2), result.Equals(array2));
+		Assert.Equal(Object.Equals(array, array2), result.Equals(array2));
 		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref mutableValueRef));
 		Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(result.Reference), ref array));
 		Assert.False(result.Equals(result2));
