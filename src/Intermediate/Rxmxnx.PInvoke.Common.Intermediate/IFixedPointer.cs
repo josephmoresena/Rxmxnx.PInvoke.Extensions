@@ -5,9 +5,8 @@
 /// </summary>
 public interface IFixedPointer
 {
-    /// <summary>
-    /// Gets the pointer to the fixed block of memory.
-    /// </summary>
-    IntPtr Pointer { get; }
+	/// <summary>
+	/// Gets the pointer to the fixed block of memory.
+	/// </summary>
+	IntPtr Pointer { get; }
 }
-
