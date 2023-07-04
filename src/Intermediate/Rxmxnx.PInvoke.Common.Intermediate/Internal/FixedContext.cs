@@ -112,7 +112,7 @@ internal sealed unsafe class FixedContext<T> : FixedMemory, IFixedContext<T>, IE
 	}
 	/// <inheritdoc/>
 	public Boolean Equals(FixedContext<T>? other) => this.Equals(other as FixedMemory);
-	
+
 	/// <inheritdoc/>
 	public override Boolean Equals(FixedMemory? other) => base.Equals(other as FixedContext<T>);
 	/// <inheritdoc/>

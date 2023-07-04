@@ -32,7 +32,7 @@ internal abstract unsafe class FixedMemory : ReadOnlyFixedMemory, IFixedMemory, 
 	public new virtual IFixedContext<Byte> AsBinaryContext() => new FixedContext<Byte>(this.BinaryOffset, this);
 	/// <inheritdoc/>
 	public virtual Boolean Equals(FixedMemory? other) => this.Equals(other as FixedPointer);
-	
+
 	/// <inheritdoc/>
 	[ExcludeFromCodeCoverage]
 	public override Boolean Equals(Object? obj) => base.Equals(obj as FixedMemory);

@@ -13,7 +13,7 @@ internal sealed unsafe class FixedReference<T> : FixedMemory, IFixedReference<T>
 	public override Int32 BinaryOffset => default;
 	/// <inheritdoc/>
 	public override Boolean IsFunction => false;
-	
+
 	/// <summary>
 	/// Constructor that takes a pointer to a fixed memory reference.
 	/// </summary>
@@ -78,7 +78,7 @@ internal sealed unsafe class FixedReference<T> : FixedMemory, IFixedReference<T>
 	}
 	/// <inheritdoc/>
 	public Boolean Equals(FixedReference<T>? other) => this.Equals(other as FixedMemory);
-	
+
 	/// <inheritdoc/>
 	public override Boolean Equals(FixedMemory? other) => base.Equals(other as FixedReference<T>);
 	/// <inheritdoc/>

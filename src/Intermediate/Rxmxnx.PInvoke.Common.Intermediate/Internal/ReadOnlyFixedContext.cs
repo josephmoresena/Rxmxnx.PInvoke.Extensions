@@ -109,7 +109,7 @@ internal sealed unsafe class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IRea
 	}
 	/// <inheritdoc/>
 	public Boolean Equals(ReadOnlyFixedContext<T>? other) => this.Equals(other as ReadOnlyFixedMemory);
-	
+
 	/// <inheritdoc/>
 	public override Boolean Equals(ReadOnlyFixedMemory? other) => base.Equals(other as ReadOnlyFixedContext<T>);
 	/// <inheritdoc/>
