@@ -48,7 +48,6 @@ public partial class CStringSequence
 				yield return CString.Zero;
 		}
 	}
-
 	/// <summary>
 	/// Creates a <see cref="FixedCStringSequence"/> instance from the current instance and a pointer to the buffer.
 	/// </summary>
@@ -58,5 +57,25 @@ public partial class CStringSequence
 	{
 		_ = this.AsUnsafeSpan(out CString[] output);
 		return new(output, CString.CreateUnsafe(new(ptr), this._value.Length * CStringSequence.SizeOfChar, true));
+	}
+	/// <summary>
+	/// Calculates the offset and length for the indicated sub-range.
+	/// </summary>
+	/// <param name="index">Starting index of the sub-range.</param>
+	/// <param name="count">Number of items in the sub-range.</param>
+	/// <param name="binaryOffset">Output: Binary offset for the given sub-range.</param>
+	/// <param name="binaryLength">Output: Binary length for the given sub-range.</param>
+	private void CalculateSubRange(Int32 index, Int32 count, out Int32 binaryOffset, out Int32 binaryLength)
+	{
+		binaryOffset = 0;
+		binaryLength = - 1;
+		for (Int32 i = 0; i < index + count; i++)
+		{
+			Int32 spanLength = CStringSequence.GetSpanLength(this._lengths[i]);
+			if (i < index)
+				binaryOffset += spanLength;
+			else
+				binaryLength += spanLength;
+		}
 	}
 }

@@ -82,8 +82,7 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 	private ReadOnlySpan<Byte> GetBinarySpan(Int32 index, Int32 count = 1)
 	{
 		ReadOnlySpan<Byte> span = MemoryMarshal.AsBytes<Char>(this._value);
-		Int32 binaryOffset = this._lengths[..index].Sum(CStringSequence.GetSpanLength);
-		Int32 binaryLength = this._lengths.Skip(index).Take(count).Sum(CStringSequence.GetSpanLength) - 1;
+		this.CalculateSubRange(index, count, out Int32 binaryOffset, out Int32 binaryLength);
 		return span.Slice(binaryOffset, binaryLength);
 	}
 
