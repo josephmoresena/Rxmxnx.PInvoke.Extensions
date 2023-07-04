@@ -55,7 +55,7 @@ internal sealed unsafe class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IRea
 	/// <param name="ctx">The fixed memory instance.</param>
 	public ReadOnlyFixedContext(Int32 offset, ReadOnlyFixedMemory ctx) : base(ctx, offset)
 		=> this._count = this.BinaryLength / sizeof(T);
-	
+
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a pointer to a
 	/// <see langword="null"/> memory.

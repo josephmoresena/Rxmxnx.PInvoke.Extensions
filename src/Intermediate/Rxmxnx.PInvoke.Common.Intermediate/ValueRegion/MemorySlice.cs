@@ -22,7 +22,7 @@ public partial class ValueRegion<T>
 
 		/// <inheritdoc/>
 		public override Boolean IsMemorySlice => this._slice;
-		
+
 		/// <summary>
 		/// Internal length.
 		/// </summary>

@@ -27,7 +27,7 @@ public partial class ValueRegion<T>
 			region.AsArray().Length, offset, length)
 			=> this._array = region.AsArray();
 #nullable restore
-		
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ValueRegion{T}.ManagedMemorySlice"/> class from a sub-range of an
 		/// existing <see cref="ValueRegion{T}.ManagedMemorySlice"/>.

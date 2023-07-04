@@ -68,7 +68,7 @@ public partial class CStringSequence
 	private void CalculateSubRange(Int32 index, Int32 count, out Int32 binaryOffset, out Int32 binaryLength)
 	{
 		binaryOffset = 0;
-		binaryLength = - 1;
+		binaryLength = -1;
 		for (Int32 i = 0; i < index + count; i++)
 		{
 			Int32 spanLength = CStringSequence.GetSpanLength(this._lengths[i]);

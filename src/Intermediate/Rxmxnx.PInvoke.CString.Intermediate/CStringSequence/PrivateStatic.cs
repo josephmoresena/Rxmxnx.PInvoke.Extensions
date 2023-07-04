@@ -6,7 +6,7 @@ public partial class CStringSequence
 	/// Size of <see cref="Char"/> value in bytes.
 	/// </summary>
 	private const Int32 sizeOfChar = sizeof(Char);
-	
+
 	/// <summary>
 	/// Represents an empty sequence.
 	/// </summary>

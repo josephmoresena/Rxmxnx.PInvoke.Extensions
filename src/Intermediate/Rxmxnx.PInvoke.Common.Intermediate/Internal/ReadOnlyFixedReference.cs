@@ -13,13 +13,13 @@ internal sealed unsafe class ReadOnlyFixedReference<T> : ReadOnlyFixedMemory, IR
 	public override Int32 BinaryOffset => default;
 	/// <inheritdoc/>
 	public override Boolean IsFunction => false;
-	
+
 	/// <summary>
 	/// Constructor that takes a pointer to a fixed memory reference.
 	/// </summary>
 	/// <param name="ptr">Pointer to the fixed memory reference.</param>
 	public ReadOnlyFixedReference(void* ptr) : base(ptr, sizeof(T), true) { }
-	
+
 	/// <summary>
 	/// Constructor that takes a <see cref="FixedMemory"/> instance.
 	/// </summary>
@@ -65,7 +65,7 @@ internal sealed unsafe class ReadOnlyFixedReference<T> : ReadOnlyFixedMemory, IR
 
 	/// <inheritdoc/>
 	public Boolean Equals(ReadOnlyFixedReference<T>? other) => this.Equals(other as ReadOnlyFixedMemory);
-	
+
 	/// <inheritdoc/>
 	public override Boolean Equals(ReadOnlyFixedMemory? other) => base.Equals(other as ReadOnlyFixedReference<T>);
 	/// <inheritdoc/>

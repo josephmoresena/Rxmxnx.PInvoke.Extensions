@@ -32,7 +32,7 @@ public partial class ValueRegion<T>
 		}
 		/// <inheritdoc/>
 		protected override T[] AsArray() => this._array;
-		
+
 		/// <inheritdoc/>
 		internal override ReadOnlySpan<T> AsSpan() => this._array.AsSpan();
 		/// <inheritdoc/>
