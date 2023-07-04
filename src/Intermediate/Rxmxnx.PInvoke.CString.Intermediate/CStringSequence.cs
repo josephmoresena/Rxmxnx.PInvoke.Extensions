@@ -8,11 +8,6 @@
 public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequence>
 {
 	/// <summary>
-	/// Size of <see cref="Char"/> value in bytes.
-	/// </summary>
-	internal const Int32 SizeOfChar = sizeof(Char);
-
-	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
 	/// from a collection of strings.
 	/// </summary>
@@ -36,7 +31,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// <param name="values">The collection of <see cref="CString"/> instances.</param>
 	public CStringSequence(params CString?[] values)
 	{
-		this._lengths = values.Select(CStringSequence.GetLength).ToArray();
+		this._lengths = CStringSequence.GetLengthArray(values);
 		this._value = CStringSequence.CreateBuffer(values);
 	}
 	/// <summary>
@@ -47,7 +42,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	public CStringSequence(IEnumerable<String?> values)
 	{
 		List<CString?> list = values.Select(CStringSequence.GetCString).ToList();
-		this._lengths = list.Select(CStringSequence.GetLength).ToArray();
+		this._lengths = CStringSequence.GetLengthArray(list);
 		this._value = CStringSequence.CreateBuffer(list);
 	}
 	/// <summary>
@@ -57,7 +52,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// <param name="values">The enumerable collection of <see cref="CString"/> instances.</param>
 	public CStringSequence(IEnumerable<CString?> values) : this(CStringSequence.FromArray(values, out CString?[] arr))
 	{
-		this._lengths = arr.Select(CStringSequence.GetLength).ToArray();
+		this._lengths = CStringSequence.GetLengthArray(arr);
 		this._value = CStringSequence.CreateBuffer(arr);
 	}
 	/// <summary>
@@ -121,7 +116,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		params Int32?[] lengths)
 	{
 		Int32 bytesLength = lengths.Sum(CStringSequence.GetSpanLength);
-		Int32 length = bytesLength / CStringSequence.SizeOfChar + bytesLength % CStringSequence.SizeOfChar;
+		Int32 length = bytesLength / CStringSequence.sizeOfChar + bytesLength % CStringSequence.sizeOfChar;
 		String buffer = String.Create(length, new SequenceCreationState<TState>(state, action, lengths),
 		                              CStringSequence.CreateCStringSequence);
 		return new(buffer, lengths);

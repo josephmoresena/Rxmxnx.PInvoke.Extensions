@@ -3,6 +3,11 @@
 public partial class CStringSequence
 {
 	/// <summary>
+	/// Size of <see cref="Char"/> value in bytes.
+	/// </summary>
+	private const Int32 sizeOfChar = sizeof(Char);
+	
+	/// <summary>
 	/// Represents an empty sequence.
 	/// </summary>
 	private static readonly CStringSequence empty = new(String.Empty, Array.Empty<Int32?>());
@@ -33,7 +38,7 @@ public partial class CStringSequence
 	private static String CreateBuffer(IReadOnlyList<CString?> values)
 	{
 		Int32 totalBytes = values.Where(value => value is not null && value.Length > 0).Sum(value => value!.Length + 1);
-		Int32 totalChars = totalBytes / CStringSequence.SizeOfChar + totalBytes % CStringSequence.SizeOfChar;
+		Int32 totalChars = totalBytes / CStringSequence.sizeOfChar + totalBytes % CStringSequence.sizeOfChar;
 		return String.Create(totalChars, values, CStringSequence.CopyText);
 	}
 	/// <summary>
@@ -156,5 +161,17 @@ public partial class CStringSequence
 	{
 		array = values.ToArray();
 		return array;
+	}
+	/// <summary>
+	/// Retrieves the length array for a given collection of UTF-8 texts.
+	/// </summary>
+	/// <param name="list">A collection of UTF-8 texts.</param>
+	/// <returns>An array representing the length of each UTF-8 text in the collection.</returns>
+	private static Int32?[] GetLengthArray(IReadOnlyList<CString?> list)
+	{
+		Int32?[] result = new Int32?[list.Count];
+		for (Int32 i = 0; i < result.Length; i++)
+			result[i] = CStringSequence.GetLength(list[i]);
+		return result;
 	}
 }

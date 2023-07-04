@@ -120,7 +120,7 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 		public CStringSequence CreateSequence()
 		{
 			Int32 binaryLength = this._lengths.Sum(CStringSequence.GetSpanLength);
-			Int32 charLength = binaryLength / CStringSequence.SizeOfChar + binaryLength % CStringSequence.SizeOfChar;
+			Int32 charLength = binaryLength / CStringSequence.sizeOfChar + binaryLength % CStringSequence.sizeOfChar;
 			String value = String.Create(charLength, this, SubsequenceHelper.CopyBytes);
 			return new(value, this._lengths);
 		}

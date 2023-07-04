@@ -56,7 +56,7 @@ public partial class CStringSequence
 	private unsafe FixedCStringSequence GetFixedSequence(Char* ptr)
 	{
 		_ = this.AsUnsafeSpan(out CString[] output);
-		return new(output, CString.CreateUnsafe(new(ptr), this._value.Length * CStringSequence.SizeOfChar, true));
+		return new(output, CString.CreateUnsafe(new(ptr), this._value.Length * CStringSequence.sizeOfChar, true));
 	}
 	/// <summary>
 	/// Calculates the offset and length for the indicated sub-range.
