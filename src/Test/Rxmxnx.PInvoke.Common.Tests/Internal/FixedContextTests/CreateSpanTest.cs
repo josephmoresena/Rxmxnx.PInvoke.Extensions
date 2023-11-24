@@ -49,7 +49,7 @@ public sealed class CreateSpanTest : FixedContextTestsBase
 		Span<T> span = ctx.CreateSpan<T>(values.Length);
 		Assert.Equal(values.Length, span.Length);
 		Assert.Equal(values.Length, ctx.Count);
-		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(values[0]), ref span[0]));
+		Assert.True(Unsafe.AreSame(ref values[0], ref span[0]));
 		Assert.False(ctx.IsFunction);
 
 		Exception functionException = Assert.Throws<InvalidOperationException>(() => ctx.CreateDelegate<Action>());

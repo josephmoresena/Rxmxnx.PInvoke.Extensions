@@ -91,11 +91,11 @@ public sealed class TransformTest
 
 	private static void BinaryTest<T>(ref T refValue) where T : unmanaged
 	{
-		Byte[] bytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(refValue), 1)).ToArray();
+		Byte[] bytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref refValue, 1)).ToArray();
 		Span<Byte> span = refValue.AsBytes();
 		Span<T> spanT = MemoryMarshal.Cast<Byte, T>(span);
 
 		Assert.Equal(bytes, span.ToArray());
-		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(refValue), ref Unsafe.AsRef(spanT[0])));
+		Assert.True(Unsafe.AreSame(ref refValue, ref spanT[0]));
 	}
 }

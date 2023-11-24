@@ -38,8 +38,8 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 	private void Test<T>() where T : unmanaged
 	{
 		T value = FixedMemoryTestsBase.fixture.Create<T>();
-		this.WithFixed(ref Unsafe.AsRef(value), EqualsTest.Test);
-		this.WithFixed(ref Unsafe.AsRef(value), EqualsTest.ReadOnlyTest);
+		this.WithFixed(ref value, EqualsTest.Test);
+		this.WithFixed(ref value, EqualsTest.ReadOnlyTest);
 	}
 
 	private static void Test<T>(FixedReference<T> fref, IntPtr _) where T : unmanaged { EqualsTest.Test(fref); }
@@ -86,7 +86,7 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 		where T : unmanaged where T2 : unmanaged
 	{
 		ref readonly T valueRef = ref fref.CreateReadOnlyReference<T>();
-		void* ptr = Unsafe.AsPointer(ref Unsafe.AsRef(valueRef));
+		void* ptr = Unsafe.AsPointer(ref Unsafe.AsRef(in valueRef));
 		Int32 binaryLength = sizeof(T);
 
 		if (binaryLength >= sizeof(T2))
@@ -101,7 +101,7 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 		where T : unmanaged where T2 : unmanaged
 	{
 		ref readonly T valueRef = ref fref.CreateReadOnlyReference<T>();
-		void* ptr = Unsafe.AsPointer(ref Unsafe.AsRef(valueRef));
+		void* ptr = Unsafe.AsPointer(ref Unsafe.AsRef(in valueRef));
 		Int32 binaryLength = sizeof(T);
 
 		if (binaryLength >= sizeof(T2))

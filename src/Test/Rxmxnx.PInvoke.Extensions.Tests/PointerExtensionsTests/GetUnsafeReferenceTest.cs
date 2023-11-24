@@ -60,8 +60,8 @@ public sealed class GetUnsafeReferenceTest
 
 			Assert.True(Unsafe.AreSame(ref refValue, ref refValue1));
 			Assert.True(Unsafe.AreSame(ref refValue, ref refValue2));
-			Assert.True(Unsafe.AreSame(ref refValue, ref Unsafe.AsRef(refReadOnlyValue1)));
-			Assert.True(Unsafe.AreSame(ref refValue, ref Unsafe.AsRef(refReadOnlyValue2)));
+			Assert.True(Unsafe.AreSame(ref refValue, ref Unsafe.AsRef(in refReadOnlyValue1)));
+			Assert.True(Unsafe.AreSame(ref refValue, ref Unsafe.AsRef(in refReadOnlyValue2)));
 
 			Assert.Null(IntPtr.Zero.GetUnsafeValue<T>());
 			Assert.Null(UIntPtr.Zero.GetUnsafeValue<T>());

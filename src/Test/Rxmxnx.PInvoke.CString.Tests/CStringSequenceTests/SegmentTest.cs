@@ -6,13 +6,14 @@ public sealed class SegmentTest
 	[Fact]
 	internal void EmptyTest()
 	{
+		const Int32 negativeOne = 1;
 		CStringSequence seq = new(Array.Empty<CString>());
 		Assert.Empty(seq);
 		Assert.Throws<ArgumentOutOfRangeException>(() => seq[-1]);
 		Assert.Throws<ArgumentOutOfRangeException>(() => seq[1]);
-		Assert.Throws<ArgumentOutOfRangeException>(() => seq[-1..]);
+		Assert.Throws<ArgumentOutOfRangeException>(() => seq[negativeOne..]);
 		Assert.Throws<ArgumentOutOfRangeException>(() => seq[1..]);
-		Assert.Throws<ArgumentOutOfRangeException>(() => seq[..-1]);
+		Assert.Throws<ArgumentOutOfRangeException>(() => seq[..negativeOne]);
 		Assert.Throws<ArgumentOutOfRangeException>(() => seq[..1]);
 	}
 
@@ -21,7 +22,6 @@ public sealed class SegmentTest
 	{
 		List<GCHandle> handles = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
-		String?[] strings = indices.Select(i => TestSet.GetString(i, true)).ToArray();
 		try
 		{
 			CStringSequence seq = SegmentTest.CreateSequence(handles, indices);
@@ -48,7 +48,6 @@ public sealed class SegmentTest
 	{
 		List<GCHandle> handles = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
-		String?[] strings = indices.Select(i => TestSet.GetString(i, true)).ToArray();
 		try
 		{
 			CStringSequence seq = SegmentTest.CreateSequence(handles, indices);
