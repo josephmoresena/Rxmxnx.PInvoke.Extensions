@@ -7,20 +7,12 @@
 /// This class is used to work with fixed read-only memory blocks by providing an additional offset for precise memory
 /// management.
 /// </remarks>
-internal sealed class ReadOnlyFixedOffset : ReadOnlyFixedMemory, IEquatable<ReadOnlyFixedOffset>
+internal sealed partial class ReadOnlyFixedOffset : ReadOnlyFixedMemory, IEquatable<ReadOnlyFixedOffset>
 {
 	/// <summary>
 	/// The offset from the start of the fixed memory block.
 	/// </summary>
 	private readonly Int32 _offset;
-
-	/// <summary>
-	/// Constructs a new <see cref="FixedOffset"/> instance using a <see cref="ReadOnlyFixedMemory"/> instance and
-	/// an offset.
-	/// </summary>
-	/// <param name="mem">The <see cref="ReadOnlyFixedMemory"/> instance to use.</param>
-	/// <param name="offset">The offset from the start of the fixed memory block.</param>
-	public ReadOnlyFixedOffset(ReadOnlyFixedMemory mem, Int32 offset) : base(mem) => this._offset = offset;
 
 	/// <summary>
 	/// Gets the offset from the start of the fixed memory block.
@@ -30,6 +22,14 @@ internal sealed class ReadOnlyFixedOffset : ReadOnlyFixedMemory, IEquatable<Read
 	public override Type? Type => default;
 	/// <inheritdoc/>
 	public override Boolean IsFunction => false;
+
+	/// <summary>
+	/// Constructs a new <see cref="FixedOffset"/> instance using a <see cref="ReadOnlyFixedMemory"/> instance and
+	/// an offset.
+	/// </summary>
+	/// <param name="mem">The <see cref="ReadOnlyFixedMemory"/> instance to use.</param>
+	/// <param name="offset">The offset from the start of the fixed memory block.</param>
+	public ReadOnlyFixedOffset(ReadOnlyFixedMemory mem, Int32 offset) : base(mem) => this._offset = offset;
 
 	/// <inheritdoc/>
 	public Boolean Equals(ReadOnlyFixedOffset? other) => this.Equals(other as ReadOnlyFixedMemory);

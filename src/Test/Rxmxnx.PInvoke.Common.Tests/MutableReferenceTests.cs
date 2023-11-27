@@ -85,12 +85,8 @@ public sealed class MutableReferenceTests
 	private static void Nullable<T>(Boolean nullInput) where T : unmanaged
 	{
 		T? value = !nullInput ? MutableReferenceTests.fixture.Create<T>() : null;
-		T? value2 = MutableReferenceTests.fixture.Create<Boolean>() ?
-			MutableReferenceTests.fixture.Create<T>() :
-			null;
-		T? value3 = MutableReferenceTests.fixture.Create<Boolean>() ?
-			MutableReferenceTests.fixture.Create<T>() :
-			null;
+		T? value2 = MutableReferenceTests.fixture.Create<Boolean>() ? MutableReferenceTests.fixture.Create<T>() : null;
+		T? value3 = MutableReferenceTests.fixture.Create<Boolean>() ? MutableReferenceTests.fixture.Create<T>() : null;
 		IMutableReference<T?> result = IMutableReference.CreateNullable(value);
 		IReferenceableWrapper<T?> result2 = IReferenceableWrapper.CreateNullable(value);
 		ReferenceableWrapper<T?> result3 = new(result);

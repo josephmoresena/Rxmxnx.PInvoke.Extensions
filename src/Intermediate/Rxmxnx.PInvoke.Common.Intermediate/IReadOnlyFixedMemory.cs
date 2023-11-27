@@ -15,6 +15,16 @@ public interface IReadOnlyFixedMemory : IFixedPointer
 	/// </summary>
 	/// <returns>An instance of <see cref="IReadOnlyFixedContext{Byte}"/>.</returns>
 	IReadOnlyFixedContext<Byte> AsBinaryContext();
+
+	/// <summary>
+	/// Interface representing a <see cref="IDisposable"/> <see cref="IReadOnlyFixedMemory"/> object.
+	/// </summary>
+	public new interface IDisposable : IReadOnlyFixedMemory, IFixedPointer.IDisposable
+	{
+		IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
+		/// <inheritdoc cref="IReadOnlyFixedMemory.AsBinaryContext()"/>
+		new IReadOnlyFixedContext<Byte>.IDisposable AsBinaryContext();
+	}
 }
 
 /// <summary>
@@ -27,4 +37,9 @@ public interface IReadOnlyFixedMemory<T> : IReadOnlyFixedMemory where T : unmana
 	/// Gets a read-only <typeparamref name="T"/> span over the fixed block of memory.
 	/// </summary>
 	ReadOnlySpan<T> Values { get; }
+
+	/// <summary>
+	/// Interface representing a <see cref="IDisposable"/> <see cref="IReadOnlyFixedMemory{T}"/> object.
+	/// </summary>
+	public new interface IDisposable : IReadOnlyFixedMemory<T>, IReadOnlyFixedMemory.IDisposable { }
 }

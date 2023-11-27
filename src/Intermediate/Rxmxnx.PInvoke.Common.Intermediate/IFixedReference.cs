@@ -29,4 +29,36 @@ public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference
 	/// </returns>
 	new IFixedReference<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 		where TDestination : unmanaged;
+
+	/// <summary>
+	/// Interface representing a <see cref="IDisposable"/> <see cref="IFixedReference{T}"/> object.
+	/// </summary>
+	public new interface IDisposable : IFixedReference<T>, IReadOnlyFixedReference<T>.IDisposable, IFixedMemory.IDisposable
+	{
+		IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IFixedMemory residual)
+			=> this.Transformation<TDestination>(out residual);
+		IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
+			=> this.Transformation<TDestination>(out residual);
+		/// <inheritdoc cref="IReadOnlyFixedReference{T}.Transformation{TDestination}(out IReadOnlyFixedMemory)"/>
+		new IFixedReference<TDestination>.IDisposable Transformation<TDestination>(out IFixedMemory residual)
+			where TDestination : unmanaged
+		{
+			IFixedReference<TDestination>.IDisposable result =
+				this.Transformation<TDestination>(out IFixedMemory.IDisposable disposableResidual);
+			residual = disposableResidual;
+			return result;
+		}
+		/// <inheritdoc cref="IReadOnlyFixedReference{T}.Transformation{TDestination}(out IReadOnlyFixedMemory)"/>
+		new IFixedReference<TDestination>.IDisposable Transformation<TDestination>(out IReadOnlyFixedMemory residual)
+			where TDestination : unmanaged
+		{
+			IFixedReference<TDestination>.IDisposable result =
+				this.Transformation<TDestination>(out IFixedMemory.IDisposable disposableResidual);
+			residual = disposableResidual;
+			return result;
+		}
+		/// <inheritdoc cref="IReadOnlyFixedReference{T}.Transformation{TDestination}(out IReadOnlyFixedMemory)"/>
+		IFixedReference<TDestination>.IDisposable Transformation<TDestination>(out IFixedMemory.IDisposable residual)
+			where TDestination : unmanaged;
+	}
 }

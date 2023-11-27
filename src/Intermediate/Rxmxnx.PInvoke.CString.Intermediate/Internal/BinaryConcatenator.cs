@@ -6,18 +6,6 @@
 internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDisposable
 {
 	/// <summary>
-	/// Constructs a new instance of the BinaryConcatenator class.
-	/// </summary>
-	/// <param name="separator">The separator for the concatenation.</param>
-	/// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
-	protected BinaryConcatenator(T? separator, CancellationToken cancellationToken)
-	{
-		this._mem = new();
-		this._separator = separator;
-		this._cancellationToken = cancellationToken;
-		this.InitializeDelegates();
-	}
-	/// <summary>
 	/// Gets the current instance's memory stream.
 	/// </summary>
 	protected MemoryStream Stream => this._mem;
@@ -30,6 +18,18 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 	/// Gets the separator instance.
 	/// </summary>
 	public T? Separator => this._separator;
+	/// <summary>
+	/// Constructs a new instance of the BinaryConcatenator class.
+	/// </summary>
+	/// <param name="separator">The separator for the concatenation.</param>
+	/// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+	protected BinaryConcatenator(T? separator, CancellationToken cancellationToken)
+	{
+		this._mem = new();
+		this._separator = separator;
+		this._cancellationToken = cancellationToken;
+		this.InitializeDelegates();
+	}
 	/// <inheritdoc/>
 	public async ValueTask DisposeAsync()
 	{

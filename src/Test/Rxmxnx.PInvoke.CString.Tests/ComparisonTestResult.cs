@@ -3,11 +3,11 @@
 [ExcludeFromCodeCoverage]
 internal sealed record ComparisonTestResult
 {
-	private ComparisonTestResult() => this.Comparisons = default!;
 	public Int32 Normal { get; private init; }
 	public Int32 CaseSensitive { get; private init; }
 	public Int32 CaseInsensitive { get; private init; }
 	public IReadOnlyDictionary<StringComparison, Int32> Comparisons { get; private init; }
+	private ComparisonTestResult() => this.Comparisons = default!;
 
 	public static ComparisonTestResult Compare(String strA, String strB)
 	{

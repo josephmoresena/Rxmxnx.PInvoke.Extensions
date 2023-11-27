@@ -12,6 +12,13 @@ internal sealed unsafe class FixedDelegate<TDelegate> : FixedPointer, IFixedMeth
 	/// <remarks>It prevents the delegate from being collected by the garbage collector.</remarks>
 	private readonly GCHandle? _handle;
 
+	/// <inheritdoc/>
+	public override Type Type => typeof(TDelegate);
+	/// <inheritdoc/>
+	public override Int32 BinaryOffset => default;
+	/// <inheritdoc/>
+	public override Boolean IsFunction => true;
+
 	/// <summary>
 	/// Constructor that takes a method delegate and stores a pointer to it.
 	/// </summary>
@@ -25,13 +32,6 @@ internal sealed unsafe class FixedDelegate<TDelegate> : FixedPointer, IFixedMeth
 	/// </summary>
 	/// <param name="ptr">Pointer to the method to be fixed.</param>
 	private FixedDelegate(void* ptr) : base(ptr, sizeof(IntPtr), true) { }
-
-	/// <inheritdoc/>
-	public override Type Type => typeof(TDelegate);
-	/// <inheritdoc/>
-	public override Int32 BinaryOffset => default;
-	/// <inheritdoc/>
-	public override Boolean IsFunction => true;
 
 	TDelegate IFixedMethod<TDelegate>.Method => this.CreateDelegate<TDelegate>();
 

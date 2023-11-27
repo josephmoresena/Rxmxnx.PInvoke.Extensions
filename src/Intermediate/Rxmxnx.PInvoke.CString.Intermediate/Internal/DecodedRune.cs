@@ -21,6 +21,14 @@ internal sealed class DecodedRune : IWrapper<Rune>
 	/// The <see cref="Rune"/> instance decoded from the input.
 	/// </summary>
 	private readonly Rune _value;
+	/// <summary>
+	/// The number of code units that were consumed from the input to decode the Rune.
+	/// </summary>
+	public Int32 CharsConsumed => this._charsConsumed;
+	/// <summary>
+	/// The raw integer value that was read from the input to form the Rune.
+	/// </summary>
+	public Int32 RawValue => this._rawValue;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="DecodedRune"/> class.
@@ -38,14 +46,6 @@ internal sealed class DecodedRune : IWrapper<Rune>
 		this._charsConsumed = charsConsumed;
 		DecodedRune.CopyRawValue(ref this._rawValue, source);
 	}
-	/// <summary>
-	/// The number of code units that were consumed from the input to decode the Rune.
-	/// </summary>
-	public Int32 CharsConsumed => this._charsConsumed;
-	/// <summary>
-	/// The raw integer value that was read from the input to form the Rune.
-	/// </summary>
-	public Int32 RawValue => this._rawValue;
 
 	/// <summary>
 	/// The <see cref="Rune"/> instance decoded from the input.

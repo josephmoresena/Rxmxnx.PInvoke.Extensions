@@ -3,10 +3,10 @@
 [ExcludeFromCodeCoverage]
 internal sealed record WritedCString
 {
-	private WritedCString(CString value) => this.Value = value;
 	public CString Value { get; }
 	public Int32 Start { get; private init; }
 	public Int32 Count { get; private init; }
+	private WritedCString(CString value) => this.Value = value;
 
 	[return: NotNullIfNotNull(nameof(value))]
 	public static WritedCString? Create(CString? value, Boolean writeAllBytes = true)
@@ -17,11 +17,7 @@ internal sealed record WritedCString
 		Int32 start = writeAllBytes ? 0 : Random.Shared.Next(0, value.Length);
 		Int32 count = writeAllBytes ? value.Length : Random.Shared.Next(0, value.Length - start);
 
-		return new(value)
-		{
-			Start = start,
-			Count = count,
-		};
+		return new(value) { Start = start, Count = count, };
 	}
 
 	public static void AssertWrite(MemoryStream strm, IReadOnlyList<WritedCString> values, Boolean writeNullTermination)

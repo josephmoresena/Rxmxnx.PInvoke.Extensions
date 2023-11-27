@@ -17,6 +17,26 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	public static readonly CString Zero = new(IntPtr.Zero, 0, true);
 
 	/// <summary>
+	/// Gets a value indicating whether the text in the current <see cref="CString"/> instance
+	/// ends with a null-termination character.
+	/// </summary>
+	public Boolean IsNullTerminated => this._isNullTerminated;
+	/// <summary>
+	/// Gets a value indicating whether the UTF-8 text is referenced by, and not contained within,
+	/// the current <see cref="CString"/> instance.
+	/// </summary>
+	public Boolean IsReference => !this._isLocal && !this._isFunction;
+	/// <summary>
+	/// Gets a value indicating whether the current <see cref="CString"/> instance is a segment
+	/// (or slice) of another <see cref="CString"/> instance.
+	/// </summary>
+	public Boolean IsSegmented => this._data.IsMemorySlice;
+	/// <summary>
+	/// Gets a value indicating whether the current <see cref="CString"/> instance is a function.
+	/// </summary>
+	public Boolean IsFunction => this._isFunction;
+
+	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified
 	/// UTF-8 character repeated a specified number of times.
 	/// </summary>
@@ -69,26 +89,6 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// the new instance.
 	/// </param>
 	public CString(ReadOnlySpanFunc<Byte> func) : this(func, true) { }
-
-	/// <summary>
-	/// Gets a value indicating whether the text in the current <see cref="CString"/> instance
-	/// ends with a null-termination character.
-	/// </summary>
-	public Boolean IsNullTerminated => this._isNullTerminated;
-	/// <summary>
-	/// Gets a value indicating whether the UTF-8 text is referenced by, and not contained within,
-	/// the current <see cref="CString"/> instance.
-	/// </summary>
-	public Boolean IsReference => !this._isLocal && !this._isFunction;
-	/// <summary>
-	/// Gets a value indicating whether the current <see cref="CString"/> instance is a segment
-	/// (or slice) of another <see cref="CString"/> instance.
-	/// </summary>
-	public Boolean IsSegmented => this._data.IsMemorySlice;
-	/// <summary>
-	/// Gets a value indicating whether the current <see cref="CString"/> instance is a function.
-	/// </summary>
-	public Boolean IsFunction => this._isFunction;
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Object Clone()
@@ -98,6 +98,21 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 		source.CopyTo(bytes);
 		return new CString(bytes, true);
 	}
+
+	/// <inheritdoc/>
+	public Boolean Equals([NotNullWhen(true)] CString? other)
+		=> other is not null && this._length == other._length && CString.equals(this, other);
+	/// <summary>
+	/// Determines whether the current <see cref="CString"/> and a specified <see cref="String"/>
+	/// have the same value.
+	/// </summary>
+	/// <param name="other">The <see cref="String"/> to compare to the current instance.</param>
+	/// <returns>
+	/// <see langword="true"/> if the value of the <paramref name="other"/> parameter is the same
+	/// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
+	/// </returns>
+	public Boolean Equals([NotNullWhen(true)] String? other)
+		=> other is not null && StringUtf8Comparator.Create().TextEquals(this, other);
 	/// <summary>
 	/// Returns a reference to the first UTF-8 unit of the <see cref="CString"/>.
 	/// </summary>
@@ -137,21 +152,6 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <see cref="CString"/>.
 	/// </returns>
 	public ReadOnlySpan<Byte>.Enumerator GetEnumerator() => this.AsSpan().GetEnumerator();
-	
-	/// <inheritdoc/>
-	public Boolean Equals([NotNullWhen(true)] CString? other)
-		=> other is not null && this._length == other._length && CString.equals(this, other);
-	/// <summary>
-	/// Determines whether the current <see cref="CString"/> and a specified <see cref="String"/>
-	/// have the same value.
-	/// </summary>
-	/// <param name="other">The <see cref="String"/> to compare to the current instance.</param>
-	/// <returns>
-	/// <see langword="true"/> if the value of the <paramref name="other"/> parameter is the same
-	/// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
-	/// </returns>
-	public Boolean Equals([NotNullWhen(true)] String? other)
-		=> other is not null && StringUtf8Comparator.Create().TextEquals(this, other);
 	/// <summary>
 	/// Determines whether the current <see cref="CString"/> and a specified <see cref="CString"/>
 	/// have the same value.

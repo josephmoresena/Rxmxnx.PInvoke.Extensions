@@ -5,11 +5,11 @@ internal sealed record CulturalComparisonTestResult
 {
 	private static readonly CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
 
-	private CulturalComparisonTestResult(CultureInfo culture) => this.Culture = culture;
-
 	public CultureInfo Culture { get; private init; }
 	public Int32 CaseSensitive { get; private init; }
 	public Int32 CaseInsensitive { get; private init; }
+
+	private CulturalComparisonTestResult(CultureInfo culture) => this.Culture = culture;
 
 	public static CulturalComparisonTestResult Compare(String strA, String strB)
 	{
@@ -21,11 +21,7 @@ internal sealed record CulturalComparisonTestResult
 	{
 		Int32 caseInsensitive = String.Compare(strA, strB, true, culture);
 		Int32 caseSensitive = String.Compare(strA, strB, false, culture);
-		return new(culture)
-		{
-			CaseInsensitive = caseInsensitive,
-			CaseSensitive = caseSensitive,
-		};
+		return new(culture) { CaseInsensitive = caseInsensitive, CaseSensitive = caseSensitive, };
 	}
 
 	private static CultureInfo GetCulture()

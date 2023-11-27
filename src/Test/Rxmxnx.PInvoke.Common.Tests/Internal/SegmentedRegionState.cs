@@ -3,12 +3,6 @@
 [ExcludeFromCodeCoverage]
 internal sealed record SegmentedRegionState<T> where T : unmanaged
 {
-	public SegmentedRegionState()
-	{
-		this.Values = default!;
-		this.Region = default!;
-		this.Segment = default!;
-	}
 	public Int32 Initial { get; init; }
 	public T[] Values { get; init; }
 	public ValueRegion<T> Region { get; init; }
@@ -17,6 +11,12 @@ internal sealed record SegmentedRegionState<T> where T : unmanaged
 	public Int32 Start { get; init; }
 	public Int32 Count { get; init; }
 	public ValueRegion<T> Segment { get; init; }
+	public SegmentedRegionState()
+	{
+		this.Values = default!;
+		this.Region = default!;
+		this.Segment = default!;
+	}
 
 	public Int32 GetRegionOffset(Int32 index) => this.Start + index;
 	public Int32 GetArrayOffset(Int32 index) => this.Initial + this.Start + index;

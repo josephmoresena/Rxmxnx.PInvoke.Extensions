@@ -22,6 +22,11 @@ public partial class CStringSequence
 		private readonly TState _state;
 
 		/// <summary>
+		/// Gets an array containing the lengths of each UTF-8 text in the sequence to be created.
+		/// </summary>
+		public Int32?[] Lengths => this._lengths;
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="SequenceCreationState{TState}"/> class.
 		/// </summary>
 		/// <param name="state">The state object to pass to <paramref name="action"/>.</param>
@@ -33,11 +38,6 @@ public partial class CStringSequence
 			this._action = action;
 			this._lengths = lengths;
 		}
-
-		/// <summary>
-		/// Gets an array containing the lengths of each UTF-8 text in the sequence to be created.
-		/// </summary>
-		public Int32?[] Lengths => this._lengths;
 
 		/// <summary>
 		/// Invokes the specified action for UTF-8 text creation.

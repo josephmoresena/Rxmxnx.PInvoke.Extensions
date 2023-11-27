@@ -17,6 +17,16 @@ internal sealed record CStringSequenceDebugView
 	private readonly CString[] _values;
 
 	/// <summary>
+	/// Provides a readable representation of the sequence for debugging.
+	/// </summary>
+	[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+	public IReadOnlyList<CString> Display => this._values;
+	/// <summary>
+	/// Provides the number of items in the sequence for debugging.
+	/// </summary>
+	public Int32 Count => this._values.Length;
+
+	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequenceDebugView"/> class with the
 	/// specified <see cref="CStringSequence"/> instance.
 	/// </summary>
@@ -28,14 +38,4 @@ internal sealed record CStringSequenceDebugView
 	/// </summary>
 	/// <param name="fseq">The FixedCStringSequence instance to provide a debug view for.</param>
 	public CStringSequenceDebugView(FixedCStringSequence fseq) => this._values = fseq.Values.ToArray();
-
-	/// <summary>
-	/// Provides a readable representation of the sequence for debugging.
-	/// </summary>
-	[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-	public IReadOnlyList<CString> Display => this._values;
-	/// <summary>
-	/// Provides the number of items in the sequence for debugging.
-	/// </summary>
-	public Int32 Count => this._values.Length;
 }
