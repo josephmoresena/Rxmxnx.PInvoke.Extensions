@@ -6,7 +6,7 @@
 /// <typeparam name="T">
 /// The type of the items in the fixed memory block. Must be <see langword="unmanaged"/>.
 /// </typeparam>
-internal sealed unsafe class FixedContext<T> : FixedMemory, IFixedContext<T>, IEquatable<FixedContext<T>>
+internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContext<T>, IEquatable<FixedContext<T>>
 	where T : unmanaged
 {
 	/// <summary>

@@ -1,6 +1,6 @@
 namespace Rxmxnx.PInvoke.Internal;
 
-internal partial class ReadOnlyFixedOffset : IDisposableConvertible<IReadOnlyFixedMemory.IDisposable>
+internal partial class ReadOnlyFixedOffset : IConvertibleDisposable<IReadOnlyFixedMemory.IDisposable>
 {
 	/// <inheritdoc/>
 	public IReadOnlyFixedMemory.IDisposable ToDisposable(IDisposable disposable) => this.CreateDisposable(disposable);
@@ -23,8 +23,8 @@ internal partial class ReadOnlyFixedOffset : IDisposableConvertible<IReadOnlyFix
 		IntPtr IFixedPointer.Pointer => (this.Value as IFixedPointer).Pointer;
 		ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => (this.Value as IReadOnlyFixedMemory).Bytes;
 
-		public IReadOnlyFixedContext<Byte>.IDisposable AsBinaryContext()
-			=> (this.Value.AsBinaryContext() as IDisposableConvertible<IReadOnlyFixedContext<Byte>.IDisposable>)!
+		IReadOnlyFixedContext<Byte>.IDisposable IReadOnlyFixedMemory.IDisposable.AsBinaryContext()
+			=> (this.Value.AsBinaryContext() as IConvertibleDisposable<IReadOnlyFixedContext<Byte>.IDisposable>)!
 				.ToDisposable(this.Disposable);
 	}
 }

@@ -32,6 +32,8 @@ public interface IFixedContext<T> : IReadOnlyFixedContext<T>, IFixedMemory<T> wh
 	{
 		IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IFixedMemory residual)
 			=> this.Transformation<TDestination>(out residual);
+		IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
+			=> this.Transformation<TDestination>(out residual);
 		IReadOnlyFixedContext<TDestination>.IDisposable IReadOnlyFixedContext<T>.IDisposable.
 			Transformation<TDestination>(out IReadOnlyFixedMemory.IDisposable residual)
 		{
@@ -42,6 +44,15 @@ public interface IFixedContext<T> : IReadOnlyFixedContext<T>, IFixedMemory<T> wh
 		}
 		/// <inheritdoc cref="IFixedContext{T}.Transformation{TDestination}(out IFixedMemory)"/>
 		new IFixedContext<TDestination>.IDisposable Transformation<TDestination>(out IFixedMemory residual)
+			where TDestination : unmanaged
+		{
+			IFixedContext<TDestination>.IDisposable result =
+				this.Transformation<TDestination>(out IFixedMemory.IDisposable disposableResidual);
+			residual = disposableResidual;
+			return result;
+		}
+		/// <inheritdoc cref="IFixedContext{T}.Transformation{TDestination}(out IReadOnlyFixedMemory)"/>
+		new IFixedContext<TDestination>.IDisposable Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 			where TDestination : unmanaged
 		{
 			IFixedContext<TDestination>.IDisposable result =

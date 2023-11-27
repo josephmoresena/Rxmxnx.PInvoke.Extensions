@@ -1,6 +1,6 @@
 namespace Rxmxnx.PInvoke.Internal;
 
-internal partial class ReadOnlyFixedContext<T> : IDisposableConvertible<IReadOnlyFixedContext<T>.IDisposable>
+internal partial class ReadOnlyFixedContext<T> : IConvertibleDisposable<IReadOnlyFixedContext<T>.IDisposable>
 {
 	/// <inheritdoc/>
 	public IReadOnlyFixedContext<T>.IDisposable ToDisposable(IDisposable disposable)
@@ -28,7 +28,7 @@ internal partial class ReadOnlyFixedContext<T> : IDisposableConvertible<IReadOnl
 		ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => (this.Value as IReadOnlyFixedMemory<T>).Values;
 
 		IReadOnlyFixedContext<Byte>.IDisposable IReadOnlyFixedMemory.IDisposable.AsBinaryContext()
-			=> (this.Value.AsBinaryContext() as IDisposableConvertible<IReadOnlyFixedContext<Byte>.IDisposable>)!
+			=> (this.Value.AsBinaryContext() as IConvertibleDisposable<IReadOnlyFixedContext<Byte>.IDisposable>)!
 				.ToDisposable(this.Disposable);
 
 		/// <inheritdoc/>
