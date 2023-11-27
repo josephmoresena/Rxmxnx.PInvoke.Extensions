@@ -3,7 +3,7 @@ namespace Rxmxnx.PInvoke.Internal;
 internal partial class ReadOnlyFixedContext<T> : IConvertibleDisposable<IReadOnlyFixedContext<T>.IDisposable>
 {
 	/// <inheritdoc/>
-	public IReadOnlyFixedContext<T>.IDisposable ToDisposable(IDisposable disposable)
+	public IReadOnlyFixedContext<T>.IDisposable ToDisposable(IDisposable? disposable)
 		=> this.CreateDisposable(disposable);
 
 	/// <summary>
@@ -11,7 +11,7 @@ internal partial class ReadOnlyFixedContext<T> : IConvertibleDisposable<IReadOnl
 	/// </summary>
 	/// <param name="disposable">A <see cref="IDisposable"/> instance.</param>
 	/// <returns>A <see cref="Disposable"/> instance.</returns>
-	private Disposable CreateDisposable(IDisposable disposable) => new(this, disposable);
+	private Disposable CreateDisposable(IDisposable? disposable) => new(this, disposable);
 
 	/// <summary>
 	/// Disposable implementation.

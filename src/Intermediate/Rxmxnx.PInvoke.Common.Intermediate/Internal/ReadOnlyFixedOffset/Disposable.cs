@@ -3,14 +3,14 @@ namespace Rxmxnx.PInvoke.Internal;
 internal partial class ReadOnlyFixedOffset : IConvertibleDisposable<IReadOnlyFixedMemory.IDisposable>
 {
 	/// <inheritdoc/>
-	public IReadOnlyFixedMemory.IDisposable ToDisposable(IDisposable disposable) => this.CreateDisposable(disposable);
+	public IReadOnlyFixedMemory.IDisposable ToDisposable(IDisposable? disposable) => this.CreateDisposable(disposable);
 
 	/// <summary>
 	/// Creates a <see cref="Disposable"/> instance from current instance.
 	/// </summary>
 	/// <param name="disposable">A <see cref="IDisposable"/> instance.</param>
 	/// <returns>A <see cref="Disposable"/> instance.</returns>
-	private Disposable CreateDisposable(IDisposable disposable) => new(this, disposable);
+	private Disposable CreateDisposable(IDisposable? disposable) => new(this, disposable);
 
 	/// <summary>
 	/// Disposable implementation.

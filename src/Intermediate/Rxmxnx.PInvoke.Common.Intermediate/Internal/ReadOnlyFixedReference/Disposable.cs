@@ -3,7 +3,7 @@ namespace Rxmxnx.PInvoke.Internal;
 internal partial class ReadOnlyFixedReference<T> : IConvertibleDisposable<IReadOnlyFixedReference<T>.IDisposable>
 {
 	/// <inheritdoc/>
-	public IReadOnlyFixedReference<T>.IDisposable ToDisposable(IDisposable disposable)
+	public IReadOnlyFixedReference<T>.IDisposable ToDisposable(IDisposable? disposable)
 		=> this.CreateDisposable(disposable);
 
 	/// <summary>
@@ -20,7 +20,7 @@ internal partial class ReadOnlyFixedReference<T> : IConvertibleDisposable<IReadO
 		IReadOnlyFixedReference<T>.IDisposable
 	{
 		/// <inheritdoc/>
-		public Disposable(ReadOnlyFixedReference<T> fixedPointer, IDisposable disposable) : base(
+		public Disposable(ReadOnlyFixedReference<T> fixedPointer, IDisposable? disposable) : base(
 			fixedPointer, disposable) { }
 
 		ref readonly T IReadOnlyReferenceable<T>.Reference => ref (this.Value as IReadOnlyFixedReference<T>).Reference;
