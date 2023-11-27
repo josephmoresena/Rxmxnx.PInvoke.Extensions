@@ -18,7 +18,7 @@ internal partial class FixedReference<T> : IConvertibleDisposable<IFixedReferenc
 	private sealed record Disposable : DisposableFixedPointer<FixedReference<T>>, IFixedReference<T>.IDisposable
 	{
 		/// <inheritdoc/>
-		public Disposable(FixedReference<T> fixedPointer, IDisposable disposable) : base(fixedPointer, disposable) { }
+		public Disposable(FixedReference<T> fixedPointer, IDisposable? disposable) : base(fixedPointer, disposable) { }
 
 		ref T IReferenceable<T>.Reference => ref (this.Value as IReferenceable<T>).Reference;
 		ref readonly T IReadOnlyReferenceable<T>.Reference => ref (this.Value as IReadOnlyFixedReference<T>).Reference;

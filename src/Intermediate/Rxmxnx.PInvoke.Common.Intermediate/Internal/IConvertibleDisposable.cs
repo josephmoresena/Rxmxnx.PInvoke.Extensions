@@ -13,5 +13,5 @@ internal interface IConvertibleDisposable<out TDisposable> where TDisposable : I
 	/// A <see cref="IDisposable"/> to dispose in <see cref="IDisposable.Dispose()"/> call.
 	/// </param>
 	/// <returns>A <typeparamref name="TDisposable"/> instance.</returns>
-	TDisposable ToDisposable(IDisposable disposable);
+	TDisposable ToDisposable(IDisposable? disposable);
 }

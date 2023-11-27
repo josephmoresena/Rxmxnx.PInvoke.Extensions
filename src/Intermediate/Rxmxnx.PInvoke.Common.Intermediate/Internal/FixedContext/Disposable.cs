@@ -18,7 +18,7 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 	private sealed record Disposable : DisposableFixedPointer<FixedContext<T>>, IFixedContext<T>.IDisposable
 	{
 		/// <inheritdoc/>
-		public Disposable(FixedContext<T> fixedPointer, IDisposable disposable) : base(fixedPointer, disposable) { }
+		public Disposable(FixedContext<T> fixedPointer, IDisposable? disposable) : base(fixedPointer, disposable) { }
 
 		IntPtr IFixedPointer.Pointer => (this.Value as IFixedPointer).Pointer;
 		Span<Byte> IFixedMemory.Bytes => (this.Value as IFixedMemory).Bytes;

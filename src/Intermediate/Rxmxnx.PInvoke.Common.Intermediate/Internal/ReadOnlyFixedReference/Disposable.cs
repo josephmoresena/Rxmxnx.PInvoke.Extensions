@@ -11,7 +11,7 @@ internal partial class ReadOnlyFixedReference<T> : IConvertibleDisposable<IReadO
 	/// </summary>
 	/// <param name="disposable">A <see cref="IDisposable"/> instance.</param>
 	/// <returns>A <see cref="Disposable"/> instance.</returns>
-	private Disposable CreateDisposable(IDisposable disposable) => new(this, disposable);
+	private Disposable CreateDisposable(IDisposable? disposable) => new(this, disposable);
 
 	/// <summary>
 	/// Disposable implementation.

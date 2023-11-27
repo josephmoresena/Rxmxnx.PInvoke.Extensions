@@ -7,20 +7,23 @@ namespace Rxmxnx.PInvoke.Internal;
 internal abstract record DisposableFixedPointer<TFixed> : IWrapper<TFixed>, IDisposable where TFixed : FixedPointer
 {
 	/// <inheritdoc cref="DisposableFixedPointer{TFixed}.Disposable"/>
-	private readonly IDisposable _disposable;
+	private readonly IDisposable? _disposable;
 	/// <inheritdoc cref="DisposableFixedPointer{TFixed}.Value"/>
 	private readonly TFixed _fixed;
+
 	/// <summary>
 	/// Internal <see cref="IDisposable"/> instance.
 	/// </summary>
-	public IDisposable Disposable => this._disposable;
+	public IDisposable? Disposable => this._disposable;
+	/// <inheritdoc/>
+	public TFixed Value => this._fixed;
 
 	/// <summary>
 	/// Constructor.
 	/// </summary>
 	/// <param name="fixedPointer">Current <typeparamref name="TFixed"/> instance.</param>
 	/// <param name="disposable"><see cref="IDisposable"/> instance.</param>
-	protected DisposableFixedPointer(TFixed fixedPointer, IDisposable disposable)
+	protected DisposableFixedPointer(TFixed fixedPointer, IDisposable? disposable)
 	{
 		this._fixed = fixedPointer;
 		this._disposable = disposable;
@@ -31,9 +34,6 @@ internal abstract record DisposableFixedPointer<TFixed> : IWrapper<TFixed>, IDis
 	{
 		if (!this._fixed.IsValid) return;
 		this._fixed.Unload();
-		this._disposable.Dispose();
+		this._disposable?.Dispose();
 	}
-
-	/// <inheritdoc/>
-	public TFixed Value => this._fixed;
 }

@@ -18,7 +18,7 @@ internal partial class FixedOffset : IConvertibleDisposable<IFixedMemory.IDispos
 	private sealed record Disposable : DisposableFixedPointer<FixedOffset>, IFixedMemory.IDisposable
 	{
 		/// <inheritdoc/>
-		public Disposable(FixedOffset fixedPointer, IDisposable disposable) : base(fixedPointer, disposable) { }
+		public Disposable(FixedOffset fixedPointer, IDisposable? disposable) : base(fixedPointer, disposable) { }
 
 		IntPtr IFixedPointer.Pointer => (this.Value as IFixedPointer).Pointer;
 		Span<Byte> IFixedMemory.Bytes => (this.Value as IFixedMemory).Bytes;
