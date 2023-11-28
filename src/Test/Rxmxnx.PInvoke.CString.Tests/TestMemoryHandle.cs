@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.Tests;
 
+[ExcludeFromCodeCoverage]
 internal sealed record TestMemoryHandle : IDisposable
 {
 	private readonly List<MemoryHandle> _handles = new();
