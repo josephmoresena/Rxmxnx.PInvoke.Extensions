@@ -6,27 +6,15 @@ public sealed class WriteAsyncTest
 	[Fact]
 	internal async Task BasicTestAsync()
 	{
-		List<GCHandle> handles = new();
-		try
-		{
-			List<WritedCString> values = new();
-			using MemoryStream strm = new();
-			foreach (Int32 index in TestSet.GetIndices(10))
-			{
-				if (WritedCString.Create(TestSet.GetCString(index, handles)) is WritedCString writed)
-				{
-					values.Add(writed);
-					await strm.WriteAsync(writed.Value);
-				}
-			}
+		using TestMemoryHandle handle = new();
+		List<WrittenCString> values = new();
+		using MemoryStream strm = new();
+		foreach (Task task in TestSet.GetIndices(10)
+		                             .Select(i => WriteAsyncTest.AppendWrittenTask(
+			                                     WrittenCString.Create(TestSet.GetCString(i, handle)), values, strm)))
+			await task;
 
-			WritedCString.AssertWrite(strm, values, false);
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		WrittenCString.AssertWrite(strm, values, false);
 	}
 
 	[Theory]
@@ -34,52 +22,46 @@ public sealed class WriteAsyncTest
 	[InlineData(false)]
 	internal async Task TestAsync(Boolean writeNullTermination)
 	{
-		List<GCHandle> handles = new();
-		try
-		{
-			List<WritedCString> values = new();
-			using MemoryStream strm = new();
-			foreach (Int32 index in TestSet.GetIndices(10))
-			{
-				if (WritedCString.Create(TestSet.GetCString(index, handles)) is WritedCString writed)
-				{
-					values.Add(writed);
-					await strm.WriteAsync(writed.Value, writeNullTermination);
-				}
-			}
+		using TestMemoryHandle handle = new();
+		List<WrittenCString> values = new();
+		using MemoryStream strm = new();
+		foreach (Task task in TestSet.GetIndices(10)
+		                             .Select(i => WriteAsyncTest.AppendWrittenTask(
+			                                     WrittenCString.Create(TestSet.GetCString(i, handle)), values, strm,
+			                                     writeNullTermination)))
+			await task;
 
-			WritedCString.AssertWrite(strm, values, writeNullTermination);
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		WrittenCString.AssertWrite(strm, values, writeNullTermination);
 	}
 
 	[Fact]
 	internal async Task RangeTestAsync()
 	{
-		List<GCHandle> handles = new();
-		try
-		{
-			List<WritedCString> values = new();
-			using MemoryStream strm = new();
-			foreach (Int32 index in TestSet.GetIndices(10))
-			{
-				if (WritedCString.Create(TestSet.GetCString(index, handles), false) is WritedCString writed)
-				{
-					values.Add(writed);
-					await strm.WriteAsync(writed.Value, writed.Start, writed.Count);
-				}
-			}
+		using TestMemoryHandle handle = new();
+		List<WrittenCString> values = new();
+		using MemoryStream strm = new();
+		foreach (Task task in TestSet.GetIndices(10)
+		                             .Select(i => WriteAsyncTest.AppendWrittenTask(
+			                                     WrittenCString.Create(TestSet.GetCString(i, handle), false), values,
+			                                     strm, null)))
+			await task;
 
-			WritedCString.AssertWrite(strm, values, false);
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		WrittenCString.AssertWrite(strm, values, false);
+	}
+
+	private static Task AppendWrittenTask(WrittenCString? written, List<WrittenCString> values, MemoryStream strm)
+	{
+		if (written is null) return Task.CompletedTask;
+		values.Add(written);
+		return strm.WriteAsync(written.Value);
+	}
+	private static Task AppendWrittenTask(WrittenCString? written, ICollection<WrittenCString> values, Stream strm,
+		Boolean? writeNullTermination)
+	{
+		if (written is null) return Task.CompletedTask;
+		values.Add(written);
+		return writeNullTermination.HasValue ?
+			strm.WriteAsync(written.Value, writeNullTermination.Value) :
+			strm.WriteAsync(written.Value, written.Start, written.Count);
 	}
 }

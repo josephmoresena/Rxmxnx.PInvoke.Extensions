@@ -20,25 +20,17 @@ public sealed class SegmentTest
 	[Fact]
 	internal void Test()
 	{
-		List<GCHandle> handles = new();
+		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
-		try
+		CStringSequence seq = SegmentTest.CreateSequence(handle, indices);
+		Int32 count = seq.Count;
+		for (Int32 i = 0; i < count; i++)
 		{
-			CStringSequence seq = SegmentTest.CreateSequence(handles, indices);
-			Int32 count = seq.Count;
-			for (Int32 i = 0; i < count; i++)
-			{
-				Int32 start = Random.Shared.Next(i, count);
-				Int32 end = Random.Shared.Next(start, count + 1);
-				CStringSequence subSeq = seq[start..end];
-				for (Int32 j = 0; j < subSeq.Count; j++)
-					Assert.Equal(seq[j + start], subSeq[j]);
-			}
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
+			Int32 start = Random.Shared.Next(i, count);
+			Int32 end = Random.Shared.Next(start, count + 1);
+			CStringSequence subSeq = seq[start..end];
+			for (Int32 j = 0; j < subSeq.Count; j++)
+				Assert.Equal(seq[j + start], subSeq[j]);
 		}
 	}
 
@@ -46,32 +38,22 @@ public sealed class SegmentTest
 	[SuppressMessage("Style", "IDE0057")]
 	internal void SliceTest()
 	{
-		List<GCHandle> handles = new();
+		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
-		try
+		CStringSequence seq = SegmentTest.CreateSequence(handle, indices);
+		Int32 count = seq.Count;
+		for (Int32 i = 0; i < count; i++)
 		{
-			CStringSequence seq = SegmentTest.CreateSequence(handles, indices);
-			Int32 count = seq.Count;
-			for (Int32 i = 0; i < count; i++)
-			{
-				Int32 start = Random.Shared.Next(i);
-				CStringSequence subSeq = seq.Slice(start);
-				for (Int32 j = 0; j < subSeq.Count; j++)
-					Assert.Equal(seq[j + start], subSeq[j]);
-			}
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
+			Int32 start = Random.Shared.Next(i);
+			CStringSequence subSeq = seq.Slice(start);
+			for (Int32 j = 0; j < subSeq.Count; j++)
+				Assert.Equal(seq[j + start], subSeq[j]);
 		}
 	}
 
-	private static CStringSequence CreateSequence(ICollection<GCHandle> handles, IReadOnlyList<Int32> indices)
+	private static CStringSequence CreateSequence(TestMemoryHandle handle, IReadOnlyList<Int32> indices)
 	{
-		CString?[] values = new CString[indices.Count];
-		for (Int32 i = 0; i < values.Length; i++)
-			values[i] = TestSet.GetCString(indices[i], handles);
+		CString?[] values = TestSet.GetValues(indices, handle);
 		CStringSequence seq = new(values);
 		return seq;
 	}

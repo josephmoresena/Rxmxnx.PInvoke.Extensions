@@ -22,34 +22,26 @@ public sealed class WithSafeTransformTest
 	[Fact]
 	internal unsafe void FixedTest()
 	{
-		List<GCHandle> handles = new();
+		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
-		try
+		CStringSequence seq = WithSafeTransformTest.CreateSequence(handle, indices, out CString?[] values);
+		fixed (void* ptrSeq = seq)
 		{
-			CStringSequence seq = WithSafeTransformTest.CreateSequence(handles, indices, out CString?[] values);
-			fixed (void* ptrSeq = seq)
+			IntPtr ptr = (IntPtr)ptrSeq;
+			for (Int32 i = 0; i < indices.Count; i++)
 			{
-				IntPtr ptr = (IntPtr)ptrSeq;
-				for (Int32 i = 0; i < indices.Count; i++)
+				if (!CString.IsNullOrEmpty(values[i]))
 				{
-					if (!CString.IsNullOrEmpty(values[i]))
-					{
-						Assert.Equal(values[i], seq[i]);
-						Assert.True(Unsafe.AreSame(ref Unsafe.AsRef<Byte>(ptr.ToPointer()),
-						                           ref MemoryMarshal.GetReference(seq[i].AsSpan())));
-						ptr += seq[i].Length + 1;
-					}
-					else
-					{
-						Assert.True(CString.IsNullOrEmpty(seq[i]));
-					}
+					Assert.Equal(values[i], seq[i]);
+					Assert.True(Unsafe.AreSame(ref Unsafe.AsRef<Byte>(ptr.ToPointer()),
+					                           ref MemoryMarshal.GetReference(seq[i].AsSpan())));
+					ptr += seq[i].Length + 1;
+				}
+				else
+				{
+					Assert.True(CString.IsNullOrEmpty(seq[i]));
 				}
 			}
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
 		}
 	}
 
@@ -75,22 +67,14 @@ public sealed class WithSafeTransformTest
 	[Fact]
 	internal void BasicTest()
 	{
-		List<GCHandle> handles = new();
+		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
-		try
-		{
-			CStringSequence seq = WithSafeTransformTest.CreateSequence(handles, indices, out _);
-			seq.WithSafeTransform(WithSafeTransformTest.AssertReference);
-			seq.WithSafeFixed(WithSafeTransformTest.AssertReference);
-			Assert.Equal(seq, seq.WithSafeTransform(WithSafeTransformTest.CreateCopy));
-			Assert.Equal(seq.Where(c => !CString.IsNullOrEmpty(c)),
-			             seq.WithSafeFixed(WithSafeTransformTest.GetNonEmptyValues));
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		CStringSequence seq = WithSafeTransformTest.CreateSequence(handle, indices, out _);
+		seq.WithSafeTransform(WithSafeTransformTest.AssertReference);
+		seq.WithSafeFixed(WithSafeTransformTest.AssertReference);
+		Assert.Equal(seq, seq.WithSafeTransform(WithSafeTransformTest.CreateCopy));
+		Assert.Equal(seq.Where(c => !CString.IsNullOrEmpty(c)),
+		             seq.WithSafeFixed(WithSafeTransformTest.GetNonEmptyValues));
 	}
 
 	[Theory]
@@ -98,21 +82,13 @@ public sealed class WithSafeTransformTest
 	[InlineData(false)]
 	internal void Test(Boolean fixedIndices)
 	{
-		List<GCHandle> handles = new();
+		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = !fixedIndices ? TestSet.GetIndices() : WithSafeTransformTest.GetIndices();
-		try
-		{
-			CStringSequence seq = WithSafeTransformTest.CreateSequence(handles, indices, out CString?[] values);
-			seq.WithSafeTransform(values, WithSafeTransformTest.AssertSequence);
-			seq.WithSafeFixed(seq, WithSafeTransformTest.AssertSequence);
-			Assert.Equal(seq, seq.WithSafeTransform(seq, WithSafeTransformTest.CreateCopy));
-			Assert.Equal(seq.ToString(), seq.WithSafeFixed(seq, WithSafeTransformTest.CreateCopy).ToString());
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		CStringSequence seq = WithSafeTransformTest.CreateSequence(handle, indices, out CString?[] values);
+		seq.WithSafeTransform(values, WithSafeTransformTest.AssertSequence);
+		seq.WithSafeFixed(seq, WithSafeTransformTest.AssertSequence);
+		Assert.Equal(seq, seq.WithSafeTransform(seq, WithSafeTransformTest.CreateCopy));
+		Assert.Equal(seq.ToString(), seq.WithSafeFixed(seq, WithSafeTransformTest.CreateCopy).ToString());
 	}
 
 	private static void AssertReference(FixedCStringSequence fseq)
@@ -145,17 +121,7 @@ public sealed class WithSafeTransformTest
 	private static void AssertSequence(FixedCStringSequence fseq, IReadOnlyList<CString?> values)
 	{
 		for (Int32 i = 0; i < values.Count; i++)
-		{
-			if (values[i] is CString value)
-			{
-				Assert.Equal(value, fseq.Values[i]);
-				Assert.Equal(!fseq.Values[i].IsReference, Object.ReferenceEquals(value, fseq.Values[i]));
-			}
-			else
-			{
-				Assert.Equal(0, fseq.Values[i].Length);
-			}
-		}
+			WithSafeTransformTest.AssertValue(fseq, values[i], i);
 
 		try
 		{
@@ -173,6 +139,18 @@ public sealed class WithSafeTransformTest
 		catch (Exception ex)
 		{
 			Assert.IsType<ArgumentOutOfRangeException>(ex);
+		}
+	}
+	private static void AssertValue(FixedCStringSequence fseq, CString? value, Int32 i)
+	{
+		if (value is not null)
+		{
+			Assert.Equal(value, fseq.Values[i]);
+			Assert.Equal(!fseq.Values[i].IsReference, Object.ReferenceEquals(value, fseq.Values[i]));
+		}
+		else
+		{
+			Assert.Equal(0, fseq.Values[i].Length);
 		}
 	}
 	private static unsafe void AssertSequence(ReadOnlyFixedMemoryList fml, CStringSequence seq)
@@ -266,12 +244,12 @@ public sealed class WithSafeTransformTest
 
 		return new(cstr);
 	}
-	private static CStringSequence CreateSequence(ICollection<GCHandle> handles, IReadOnlyList<Int32> indices,
+	private static CStringSequence CreateSequence(TestMemoryHandle handle, IReadOnlyList<Int32> indices,
 		out CString?[] values)
 	{
 		values = new CString[indices.Count];
 		for (Int32 i = 0; i < values.Length; i++)
-			values[i] = TestSet.GetCString(indices[i], handles);
+			values[i] = TestSet.GetCString(indices[i], handle);
 		CStringSequence seq = new(values);
 		return seq;
 	}

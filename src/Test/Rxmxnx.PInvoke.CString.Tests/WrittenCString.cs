@@ -1,15 +1,15 @@
 ﻿namespace Rxmxnx.PInvoke.Tests;
 
 [ExcludeFromCodeCoverage]
-internal sealed record WritedCString
+internal sealed record WrittenCString
 {
 	public CString Value { get; }
 	public Int32 Start { get; private init; }
 	public Int32 Count { get; private init; }
-	private WritedCString(CString value) => this.Value = value;
+	private WrittenCString(CString value) => this.Value = value;
 
 	[return: NotNullIfNotNull(nameof(value))]
-	public static WritedCString? Create(CString? value, Boolean writeAllBytes = true)
+	public static WrittenCString? Create(CString? value, Boolean writeAllBytes = true)
 	{
 		if (value is null)
 			return default;
@@ -20,7 +20,8 @@ internal sealed record WritedCString
 		return new(value) { Start = start, Count = count, };
 	}
 
-	public static void AssertWrite(MemoryStream strm, IReadOnlyList<WritedCString> values, Boolean writeNullTermination)
+	public static void AssertWrite(MemoryStream strm, IReadOnlyList<WrittenCString> values,
+		Boolean writeNullTermination)
 	{
 		Byte[] result = strm.ToArray();
 		Int32 offset = 0;

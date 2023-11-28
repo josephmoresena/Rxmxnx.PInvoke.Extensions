@@ -7,47 +7,27 @@ public sealed class JoinCStringTest
 	[Fact]
 	internal void Test()
 	{
-		List<GCHandle> handles = new();
+		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
 		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
-		try
-		{
-			CString?[] values = new CString[strings.Length];
-			for (Int32 i = 0; i < values.Length; i++)
-				values[i] = TestSet.GetCString(indices[i], handles);
+		CString?[] values = TestSet.GetValues(indices, handle);
 
-			JoinCStringTest.ArrayTest(JoinCStringTest.GetCStringSeparator(handles), strings, values);
-			JoinCStringTest.ArrayRangeTest(JoinCStringTest.GetCStringSeparator(handles), strings, values);
-			JoinCStringTest.EnumerableTest(JoinCStringTest.GetCStringSeparator(handles), strings, values);
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		JoinCStringTest.ArrayTest(JoinCStringTest.GetCStringSeparator(handle), strings, values);
+		JoinCStringTest.ArrayRangeTest(JoinCStringTest.GetCStringSeparator(handle), strings, values);
+		JoinCStringTest.EnumerableTest(JoinCStringTest.GetCStringSeparator(handle), strings, values);
 	}
 
 	[Fact]
 	internal async Task TestAsync()
 	{
-		List<GCHandle> handles = new();
+		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
 		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
-		try
-		{
-			CString?[] values = new CString[strings.Length];
-			for (Int32 i = 0; i < values.Length; i++)
-				values[i] = TestSet.GetCString(indices[i], handles);
+		CString?[] values = TestSet.GetValues(indices, handle);
 
-			await JoinCStringTest.ArrayTestAsync(JoinCStringTest.GetCStringSeparator(handles), strings, values);
-			await JoinCStringTest.ArrayRangeTestAsync(JoinCStringTest.GetCStringSeparator(handles), strings, values);
-			await JoinCStringTest.EnumerableTestAsync(JoinCStringTest.GetCStringSeparator(handles), strings, values);
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		await JoinCStringTest.ArrayTestAsync(JoinCStringTest.GetCStringSeparator(handle), strings, values);
+		await JoinCStringTest.ArrayRangeTestAsync(JoinCStringTest.GetCStringSeparator(handle), strings, values);
+		await JoinCStringTest.EnumerableTestAsync(JoinCStringTest.GetCStringSeparator(handle), strings, values);
 	}
 
 	private static void ArrayTest(CString? separator, String?[] strings, CString?[] values)
@@ -127,9 +107,9 @@ public sealed class JoinCStringTest
 		Assert.Equal(expectedCString, resultCStringCString);
 		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
 	}
-	private static CString? GetCStringSeparator(ICollection<GCHandle> handles)
+	private static CString? GetCStringSeparator(TestMemoryHandle handle)
 	{
 		Int32 result = Random.Shared.Next(-3, TestSet.Utf16Text.Count);
-		return TestSet.GetCString(result, handles);
+		return TestSet.GetCString(result, handle);
 	}
 }

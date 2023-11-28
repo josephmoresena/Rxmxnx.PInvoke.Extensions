@@ -8,52 +8,35 @@ public sealed class WriteTest
 	[InlineData(false)]
 	internal void Test(Boolean writeNullTermination)
 	{
-		List<GCHandle> handles = new();
-		try
-		{
-			List<WritedCString> values = new();
-			using MemoryStream strm = new();
-			foreach (Int32 index in TestSet.GetIndices(10))
-			{
-				if (WritedCString.Create(TestSet.GetCString(index, handles)) is WritedCString writed)
-				{
-					values.Add(writed);
-					strm.Write(writed.Value, writeNullTermination);
-				}
-			}
-
-			WritedCString.AssertWrite(strm, values, writeNullTermination);
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		using TestMemoryHandle handle = new();
+		List<WrittenCString> values = new();
+		using MemoryStream strm = new();
+		TestSet.GetIndices(10)
+		       .ForEach(i => WriteTest.AppendWritten(WrittenCString.Create(TestSet.GetCString(i, handle)), values, strm,
+		                                             writeNullTermination));
+		WrittenCString.AssertWrite(strm, values, writeNullTermination);
 	}
 
 	[Fact]
 	internal void RangeTest()
 	{
-		List<GCHandle> handles = new();
-		try
-		{
-			List<WritedCString> values = new();
-			using MemoryStream strm = new();
-			foreach (Int32 index in TestSet.GetIndices(10))
-			{
-				if (WritedCString.Create(TestSet.GetCString(index, handles), false) is WritedCString writed)
-				{
-					values.Add(writed);
-					strm.Write(writed.Value, writed.Start, writed.Count);
-				}
-			}
+		using TestMemoryHandle handle = new();
+		List<WrittenCString> values = new();
+		using MemoryStream strm = new();
+		TestSet.GetIndices(10)
+		       .ForEach(i => WriteTest.AppendWritten(WrittenCString.Create(TestSet.GetCString(i, handle), false),
+		                                             values, strm));
+		WrittenCString.AssertWrite(strm, values, false);
+	}
 
-			WritedCString.AssertWrite(strm, values, false);
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+	private static void AppendWritten(WrittenCString? written, ICollection<WrittenCString> values, Stream strm,
+		Boolean? writeNullTermination = default)
+	{
+		if (written is null) return;
+		values.Add(written);
+		if (writeNullTermination.HasValue)
+			strm.Write(written.Value, writeNullTermination.Value);
+		else
+			strm.Write(written.Value, written.Start, written.Count);
 	}
 }

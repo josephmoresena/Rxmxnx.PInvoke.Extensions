@@ -7,47 +7,27 @@ public sealed class JoinByteTest
 	[Fact]
 	internal void Test()
 	{
-		List<GCHandle> handles = new();
+		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
 		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
-		try
-		{
-			CString?[] values = new CString[strings.Length];
-			for (Int32 i = 0; i < values.Length; i++)
-				values[i] = TestSet.GetCString(indices[i], handles);
+		CString?[] values = TestSet.GetValues(indices, handle);
 
-			JoinByteTest.ArrayTest(JoinByteTest.GetByteSeparator(), strings, values);
-			JoinByteTest.ArrayRangeTest(JoinByteTest.GetByteSeparator(), strings, values);
-			JoinByteTest.EnumerableTest(JoinByteTest.GetByteSeparator(), strings, values);
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		JoinByteTest.ArrayTest(JoinByteTest.GetByteSeparator(), strings, values);
+		JoinByteTest.ArrayRangeTest(JoinByteTest.GetByteSeparator(), strings, values);
+		JoinByteTest.EnumerableTest(JoinByteTest.GetByteSeparator(), strings, values);
 	}
 
 	[Fact]
 	internal async Task TestAsync()
 	{
-		List<GCHandle> handles = new();
+		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
 		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
-		try
-		{
-			CString?[] values = new CString[strings.Length];
-			for (Int32 i = 0; i < values.Length; i++)
-				values[i] = TestSet.GetCString(indices[i], handles);
+		CString?[] values = TestSet.GetValues(indices, handle);
 
-			await JoinByteTest.ArrayTestAsync(JoinByteTest.GetByteSeparator(), strings, values);
-			await JoinByteTest.ArrayRangeTestAsync(JoinByteTest.GetByteSeparator(), strings, values);
-			await JoinByteTest.EnumerableTestAsync(JoinByteTest.GetByteSeparator(), strings, values);
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		await JoinByteTest.ArrayTestAsync(JoinByteTest.GetByteSeparator(), strings, values);
+		await JoinByteTest.ArrayRangeTestAsync(JoinByteTest.GetByteSeparator(), strings, values);
+		await JoinByteTest.EnumerableTestAsync(JoinByteTest.GetByteSeparator(), strings, values);
 	}
 
 	private static void ArrayTest(Byte separator, String?[] strings, CString?[] values)

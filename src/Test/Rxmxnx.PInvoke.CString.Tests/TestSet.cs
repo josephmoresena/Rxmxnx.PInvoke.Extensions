@@ -25,13 +25,13 @@ internal static partial class TestSet
 	public static IReadOnlyList<String> Utf16TextUpper => TestSet.utf16TextUpper;
 	public static IReadOnlyList<ReadOnlySpanFunc<Byte>> Utf8TextUpper => TestSet.utf8TextUpper;
 
-	public static IReadOnlyList<Int32> GetIndices(Int32? length = default)
+	public static List<Int32> GetIndices(Int32? length = default)
 	{
 		length ??= 2 * TestSet.Utf16Text.Count + Random.Shared.Next(3, 10);
-		Int32[] result = new Int32[length.Value];
+		List<Int32> result = new(length.Value);
 		while (length > 0)
 		{
-			result[length.Value - 1] = Random.Shared.Next(-3, TestSet.Utf16Text.Count);
+			result.Add(Random.Shared.Next(-3, TestSet.Utf16Text.Count));
 			length--;
 		}
 		return result;
@@ -52,40 +52,43 @@ internal static partial class TestSet
 			-1 => CString.Empty,
 			_ => TestSet.Utf8Text[index](),
 		};
-	public static unsafe CString? GetCString(Int32 index, ICollection<GCHandle> handles)
+	public static CString?[] GetValues(IReadOnlyList<Int32> indices, TestMemoryHandle handle)
 	{
-		switch (index)
+		CString?[] values = new CString[indices.Count];
+		for (Int32 i = 0; i < values.Length; i++)
+			values[i] = TestSet.GetCString(indices[i], handle);
+		return values;
+	}
+	public static CString? GetCString(Int32 index, TestMemoryHandle handle)
+		=> index switch
 		{
-			case -3:
-				return new(IntPtr.Zero, default);
-			case -2:
-				return default;
-			case -1:
-				return CString.Empty;
+			-3 => new(IntPtr.Zero, default),
+			-2 => default,
+			-1 => CString.Empty,
+			_ => TestSet.GetCStringWithHandle(index, handle),
+		};
+	private static unsafe CString GetCStringWithHandle(Int32 index, TestMemoryHandle handle)
+	{
+		switch (Random.Shared.Next(default, 9))
+		{
+			case 0:
+			case 1:
+			case 2:
+				return new(TestSet.Utf8Text[index]);
+			case 4:
+				return TestSet.Utf8Bytes[index];
+			case 5:
+				return TestSet.Utf8NullTerminatedBytes[index];
+			case 6:
+				MemoryHandle utf8Handle = TestSet.Utf8Bytes[index].AsMemory().Pin();
+				handle.Add(utf8Handle);
+				return new(new IntPtr(utf8Handle.Pointer), TestSet.Utf8Bytes[index].Length);
+			case 7:
+				MemoryHandle nullTerminatedUtf8Handle = TestSet.Utf8NullTerminatedBytes[index].AsMemory().Pin();
+				handle.Add(nullTerminatedUtf8Handle);
+				return new(new IntPtr(nullTerminatedUtf8Handle.Pointer), TestSet.Utf8NullTerminatedBytes[index].Length);
 			default:
-				switch (Random.Shared.Next(default, 9))
-				{
-					case 0:
-					case 1:
-					case 2:
-						return new(TestSet.Utf8Text[index]);
-					case 4:
-						return TestSet.Utf8Bytes[index];
-					case 5:
-						return TestSet.Utf8NullTerminatedBytes[index];
-					case 6:
-						handles.Add(GCHandle.Alloc(TestSet.Utf8Bytes[index], GCHandleType.Pinned));
-						fixed (void* ptr = TestSet.Utf8Bytes[index])
-							return new(new IntPtr(ptr), TestSet.Utf8Bytes[index].Length);
-					case 7:
-						handles.Add(GCHandle.Alloc(TestSet.Utf8NullTerminatedBytes[index], GCHandleType.Pinned));
-						fixed (void* ptr = TestSet.Utf8NullTerminatedBytes[index])
-							return new(new IntPtr(ptr), TestSet.Utf8NullTerminatedBytes[index].Length);
-					default:
-						return (CString)TestSet.Utf16Text[index];
-				}
-				;
+				return (CString)TestSet.Utf16Text[index];
 		}
-		;
 	}
 }
