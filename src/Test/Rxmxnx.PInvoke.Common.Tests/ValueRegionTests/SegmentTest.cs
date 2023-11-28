@@ -147,7 +147,8 @@ public sealed class SegmentTest : ValueRegionTestBase
 			if (!state.IsReference)
 				Assert.True(Unsafe.AreSame(ref UnsafeLegacy.AsRef(in span[j]), ref state.Values[arrayOffset]));
 			else
-				Assert.True(Unsafe.AreSame(ref UnsafeLegacy.AsRef(in span[j]), ref state.Values.AsSpan()[arrayOffset..][0]));
+				Assert.True(Unsafe.AreSame(ref UnsafeLegacy.AsRef(in span[j]),
+				                           ref state.Values.AsSpan()[arrayOffset..][0]));
 		}
 
 		if (state.Segment.IsMemorySlice || state.IsReference)

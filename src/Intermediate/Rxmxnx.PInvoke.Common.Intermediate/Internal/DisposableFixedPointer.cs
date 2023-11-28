@@ -11,12 +11,12 @@ internal abstract record DisposableFixedPointer<TFixed> : IWrapper<TFixed>, IDis
 	/// <inheritdoc cref="DisposableFixedPointer{TFixed}.Value"/>
 	private readonly TFixed _fixed;
 
+	/// <inheritdoc/>
+	public TFixed Value => this._fixed;
 	/// <summary>
 	/// Internal <see cref="IDisposable"/> instance.
 	/// </summary>
 	public IDisposable? Disposable => this._disposable;
-	/// <inheritdoc/>
-	public TFixed Value => this._fixed;
 
 	/// <summary>
 	/// Constructor.

@@ -9,7 +9,7 @@
         <IsPackable>false</IsPackable>
         <Optimize>true</Optimize>
     </PropertyGroup>
-    
+
     <ItemGroup>
         <Using Include="System.Diagnostics.CodeAnalysis"/>
         <Using Include="System.Runtime.CompilerServices"/>

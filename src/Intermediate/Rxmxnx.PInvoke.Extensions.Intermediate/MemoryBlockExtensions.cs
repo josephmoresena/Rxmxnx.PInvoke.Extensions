@@ -190,4 +190,37 @@ public static partial class MemoryBlockExtensions
 		residual = MemoryMarshal.AsBytes(span[offset..]);
 		return result;
 	}
+	/// <summary>
+	/// Creates a <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance from current
+	/// <see cref="ReadOnlyMemory{T}"/> instance.
+	/// </summary>
+	/// <typeparam name="T">
+	/// The <see langword="unmanaged"/> type from which the contiguous region of memory will be read.
+	/// </typeparam>
+	/// <param name="mem">A <see cref="ReadOnlyMemory{T}"/> instance.</param>
+	/// <returns>A <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance.</returns>
+	public static unsafe IReadOnlyFixedContext<T>.IDisposable GetFixedContext<T>(this ReadOnlyMemory<T> mem)
+		where T : unmanaged
+	{
+		MemoryHandle handle = mem.Pin();
+		return 
+			MemoryMarshal.TryGetMemoryManager<T, MemoryManager<T>>(mem, out _) || 
+			MemoryMarshal.TryGetArray(mem, out _) ?
+			new FixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle) :
+			new ReadOnlyFixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);
+	}
+	/// <summary>
+	/// Creates a <see cref="IFixedContext{T}.IDisposable"/> instance from current
+	/// <see cref="Memory{T}"/> instance.
+	/// </summary>
+	/// <typeparam name="T">
+	/// The <see langword="unmanaged"/> type items in the <see cref="Memory{T}"/>.
+	/// </typeparam>
+	/// <param name="mem">A <see cref="Memory{T}"/> instance.</param>
+	/// <returns>A <see cref="IFixedContext{T}.IDisposable"/> instance.</returns>
+	public static unsafe IFixedContext<T>.IDisposable GetFixedContext<T>(this Memory<T> mem) where T : unmanaged
+	{
+		MemoryHandle handle = mem.Pin();
+		return new FixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);
+	}
 }

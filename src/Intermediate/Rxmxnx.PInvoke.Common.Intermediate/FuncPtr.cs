@@ -8,14 +8,14 @@ public readonly unsafe struct FuncPtr<T> : IEquatable<FuncPtr<T>>, IComparable, 
 	ISpanFormattable, ISerializable where T : Delegate
 {
 	/// <summary>
-	/// Internal pointer.
-	/// </summary>
-	private readonly void* _value;
-
-	/// <summary>
 	/// A read-only field that represents a pointer that has been initialized to zero.
 	/// </summary>
 	public static readonly FuncPtr<T> Zero = default;
+
+	/// <summary>
+	/// Internal pointer.
+	/// </summary>
+	private readonly void* _value;
 
 	/// <summary>
 	/// Internal pointer.
@@ -35,18 +35,6 @@ public readonly unsafe struct FuncPtr<T> : IEquatable<FuncPtr<T>>, IComparable, 
 	/// </summary>
 	/// <param name="value">Unsafe pointer.</param>
 	private FuncPtr(void* value) => this._value = value;
-
-	/// <summary>
-	/// Defines an explicit conversion of a given <see cref="IntPtr"/> to a read-only value pointer.
-	/// </summary>
-	/// <param name="ptr">A <see cref="IntPtr"/> to explicitly convert.</param>
-	public static explicit operator FuncPtr<T>(IntPtr ptr) => new(ptr.ToPointer());
-	/// <summary>
-	/// Defines an implicit conversion of a given <see cref="FuncPtr{T}"/> to a pointer.
-	/// </summary>
-	/// <param name="valPtr">A <see cref="FuncPtr{T}"/> to implicitly convert.</param>
-	public static implicit operator IntPtr(FuncPtr<T> valPtr) => new(valPtr._value);
-
 	/// <summary>
 	/// Serialization constructor.
 	/// </summary>
@@ -70,6 +58,60 @@ public readonly unsafe struct FuncPtr<T> : IEquatable<FuncPtr<T>>, IComparable, 
 		info.AddValue("value", (Int64)this._value);
 	}
 
+	/// <inheritdoc/>
+	public Int32 CompareTo(Object? value)
+		=> value switch
+		{
+			null => 1,
+			FuncPtr<T> f => this.Pointer.CompareTo(f.Pointer),
+			_ => throw new ArgumentException($"Object must be of type {nameof(FuncPtr<T>)}."),
+		};
+
+	/// <inheritdoc/>
+	public Int32 CompareTo(FuncPtr<T> value) => this.Pointer.CompareTo(value.Pointer);
+	/// <inheritdoc/>
+	public Boolean Equals(FuncPtr<T> other) => this.Pointer == other.Pointer;
+
+	/// <inheritdoc/>
+	public override Boolean Equals([NotNullWhen(true)] Object? obj)
+		=> obj is FuncPtr<T> other && this._value == other._value;
+	/// <inheritdoc/>
+	public override Int32 GetHashCode() => new IntPtr(this._value).GetHashCode();
+	/// <inheritdoc/>
+	public override String ToString() => this.Pointer.ToString();
+
+	/// <summary>
+	/// Converts the numeric value of the current <see cref="FuncPtr{T}"/> object to its equivalent
+	/// <see cref="String"/> representation.
+	/// </summary>
+	/// <param name="format">
+	/// A format specification that governs how the current <see cref="FuncPtr{T}"/> object is converted.
+	/// </param>
+	/// <returns>
+	/// The <see cref="String"/> representation of the value of the current <see cref="FuncPtr{T}"/> object.
+	/// </returns>
+	/// <exception cref="FormatException"><paramref name="format"/> is invalid or not supported.</exception>
+	public String ToString(String? format) => this.Pointer.ToString(format);
+	/// <inheritdoc cref="IntPtr.ToString(IFormatProvider?)"/>
+	public String ToString(IFormatProvider? provider) => this.Pointer.ToString(provider);
+	/// <inheritdoc/>
+	public String ToString(String? format, IFormatProvider? provider) => this.Pointer.ToString(format, provider);
+	/// <inheritdoc/>
+	public Boolean TryFormat(Span<Char> destination, out Int32 charsWritten, ReadOnlySpan<Char> format = default,
+		IFormatProvider? provider = default)
+		=> this.Pointer.TryFormat(destination, out charsWritten, format, provider);
+
+	/// <summary>
+	/// Defines an explicit conversion of a given <see cref="IntPtr"/> to a read-only value pointer.
+	/// </summary>
+	/// <param name="ptr">A <see cref="IntPtr"/> to explicitly convert.</param>
+	public static explicit operator FuncPtr<T>(IntPtr ptr) => new(ptr.ToPointer());
+	/// <summary>
+	/// Defines an implicit conversion of a given <see cref="FuncPtr{T}"/> to a pointer.
+	/// </summary>
+	/// <param name="valPtr">A <see cref="FuncPtr{T}"/> to implicitly convert.</param>
+	public static implicit operator IntPtr(FuncPtr<T> valPtr) => new(valPtr._value);
+
 	/// <summary>
 	/// Determines whether two specified instances of <see cref="FuncPtr{T}"/> are equal.
 	/// </summary>
@@ -91,43 +133,6 @@ public readonly unsafe struct FuncPtr<T> : IEquatable<FuncPtr<T>>, IComparable, 
 	/// </returns>
 	/// <inheritdoc cref="IntPtr.op_Inequality(IntPtr, IntPtr)"/>
 	public static Boolean operator !=(FuncPtr<T> value1, FuncPtr<T> value2) => value1._value != value2._value;
-
-	/// <inheritdoc/>
-	public Int32 CompareTo(Object? value)
-		=> value switch
-		{
-			null => 1,
-			FuncPtr<T> f => this.Pointer.CompareTo(f.Pointer),
-			_ => throw new ArgumentException($"Object must be of type {nameof(FuncPtr<T>)}."),
-		};
-
-	/// <inheritdoc/>
-	public Int32 CompareTo(FuncPtr<T> value) => this.Pointer.CompareTo(value.Pointer);
-	/// <inheritdoc/>
-	public Boolean Equals(FuncPtr<T> other) => this.Pointer == other.Pointer;
-
-	/// <inheritdoc/>
-	public override String ToString() => this.Pointer.ToString();
-	/// <summary>
-	/// Converts the numeric value of the current <see cref="FuncPtr{T}"/> object to its equivalent
-	/// <see cref="String"/> representation.
-	/// </summary>
-	/// <param name="format">
-	/// A format specification that governs how the current <see cref="FuncPtr{T}"/> object is converted.
-	/// </param>
-	/// <returns>
-	/// The <see cref="String"/> representation of the value of the current <see cref="FuncPtr{T}"/> object.
-	/// </returns>
-	/// <exception cref="FormatException"><paramref name="format"/> is invalid or not supported.</exception>
-	public String ToString(String? format) => this.Pointer.ToString(format);
-	/// <inheritdoc cref="IntPtr.ToString(IFormatProvider?)"/>
-	public String ToString(IFormatProvider? provider) => this.Pointer.ToString(provider);
-	/// <inheritdoc/>
-	public String ToString(String? format, IFormatProvider? provider) => this.Pointer.ToString(format, provider);
-	/// <inheritdoc/>
-	public Boolean TryFormat(Span<Char> destination, out Int32 charsWritten, ReadOnlySpan<Char> format = default,
-		IFormatProvider? provider = default)
-		=> this.Pointer.TryFormat(destination, out charsWritten, format, provider);
 
 	/// <inheritdoc cref="IntPtr.Parse(String)"/>
 	public static FuncPtr<T> Parse(String s) => (FuncPtr<T>)IntPtr.Parse(s);
@@ -169,10 +174,4 @@ public readonly unsafe struct FuncPtr<T> : IEquatable<FuncPtr<T>>, IComparable, 
 		Unsafe.SkipInit(out result);
 		return IntPtr.TryParse(s, style, provider, out Unsafe.As<FuncPtr<T>, IntPtr>(ref result));
 	}
-
-	/// <inheritdoc/>
-	public override Boolean Equals([NotNullWhen(true)] Object? obj)
-		=> obj is FuncPtr<T> other && this._value == other._value;
-	/// <inheritdoc/>
-	public override Int32 GetHashCode() => new IntPtr(this._value).GetHashCode();
 }
