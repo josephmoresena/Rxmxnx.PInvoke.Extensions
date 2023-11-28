@@ -76,9 +76,9 @@ public sealed class TransformTest
 			else
 			{
 				ReadOnlySpan<Byte> bytes1 =
-					MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(in refValue), 1));
+					MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref UnsafeLegacy.AsRef(in refValue), 1));
 				ReadOnlySpan<Byte> bytes2 =
-					MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(in refValue2), 1));
+					MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref UnsafeLegacy.AsRef(in refValue2), 1));
 				Assert.Equal(bytes1.ToArray(), bytes2.ToArray());
 			}
 		}
@@ -91,13 +91,13 @@ public sealed class TransformTest
 
 	private static void BinaryTest<T>(in T refValue) where T : unmanaged
 	{
-		Byte[] bytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(in refValue), 1))
+		Byte[] bytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref UnsafeLegacy.AsRef(in refValue), 1))
 		                            .ToArray();
 		ReadOnlySpan<Byte> span = NativeUtilities.AsBytes(refValue);
 		ReadOnlySpan<T> spanT = MemoryMarshal.Cast<Byte, T>(span);
 
 		Assert.Equal(bytes, NativeUtilities.ToBytes(refValue));
 		Assert.Equal(bytes, span.ToArray());
-		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in refValue), ref Unsafe.AsRef(in spanT[0])));
+		Assert.True(Unsafe.AreSame(ref UnsafeLegacy.AsRef(in refValue), ref UnsafeLegacy.AsRef(in spanT[0])));
 	}
 }

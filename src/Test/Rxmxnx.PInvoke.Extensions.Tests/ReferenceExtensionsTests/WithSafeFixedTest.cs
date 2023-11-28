@@ -42,9 +42,9 @@ public sealed class WithSafeFixedTest
 	private void Test<T>() where T : unmanaged
 	{
 		IReferenceableWrapper<T> value = IReferenceableWrapper.Create(WithSafeFixedTest.fixture.Create<T>());
-		Byte[] bytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref Unsafe.AsRef(in value.Reference), 1))
+		Byte[] bytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref UnsafeLegacy.AsRef(in value.Reference), 1))
 		                            .ToArray();
-		ref T refValue = ref Unsafe.AsRef(in value.Reference);
+		ref T refValue = ref UnsafeLegacy.AsRef(in value.Reference);
 
 		this._wraper = value;
 
