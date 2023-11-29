@@ -21,7 +21,9 @@ public interface IFixedMemory : IReadOnlyFixedMemory
 	/// </summary>
 	public new interface IDisposable : IFixedMemory, IReadOnlyFixedMemory.IDisposable
 	{
+		[ExcludeFromCodeCoverage]
 		IFixedContext<Byte> IFixedMemory.AsBinaryContext() => this.AsBinaryContext();
+		[ExcludeFromCodeCoverage]
 		IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
 		/// <inheritdoc cref="IReadOnlyFixedMemory.AsBinaryContext()"/>
 		new IFixedContext<Byte>.IDisposable AsBinaryContext();

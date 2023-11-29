@@ -21,6 +21,7 @@ public interface IReadOnlyFixedContext<T> : IReadOnlyFixedMemory<T> where T : un
 	/// </summary>
 	public new interface IDisposable : IReadOnlyFixedContext<T>, IReadOnlyFixedMemory<T>.IDisposable
 	{
+		[ExcludeFromCodeCoverage]
 		IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(
 			out IReadOnlyFixedMemory residual)
 			=> this.Transformation<TDestination>(out residual);
@@ -28,9 +29,10 @@ public interface IReadOnlyFixedContext<T> : IReadOnlyFixedMemory<T> where T : un
 		new IReadOnlyFixedContext<TDestination>.IDisposable Transformation<TDestination>(
 			out IReadOnlyFixedMemory residual) where TDestination : unmanaged
 		{
+			Unsafe.SkipInit(out residual);
 			IReadOnlyFixedContext<TDestination>.IDisposable result =
-				this.Transformation<TDestination>(out IReadOnlyFixedMemory.IDisposable disposableResidual);
-			residual = disposableResidual;
+				this.Transformation<TDestination>(
+					out Unsafe.As<IReadOnlyFixedMemory, IReadOnlyFixedMemory.IDisposable>(ref residual));
 			return result;
 		}
 		/// <inheritdoc cref="IReadOnlyFixedContext{T}.Transformation{TDestination}(out IReadOnlyFixedMemory)"/>

@@ -4,6 +4,8 @@ namespace Rxmxnx.PInvoke;
 /// A platform-specific type that is used to represent a pointer to a read-only <typeparamref name="T"/> value.
 /// </summary>
 /// <typeparam name="T">A <see langword="unmanaged"/> <see cref="ValueType"/>.</typeparam>
+[Serializable]
+[StructLayout(LayoutKind.Sequential)]
 public readonly unsafe struct ReadOnlyValPtr<T> : IEquatable<ReadOnlyValPtr<T>>, IComparable,
 	IComparable<ReadOnlyValPtr<T>>, ISpanFormattable, ISerializable where T : unmanaged
 {
@@ -47,6 +49,7 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IEquatable<ReadOnlyValPtr<T>>,
 	/// <param name="info">A <see cref="SerializationInfo"/> instance.</param>
 	/// <param name="context">A <see cref="StreamingContext"/> instance.</param>
 	/// <exception cref="ArgumentException">If invalid pointer value.</exception>
+	[ExcludeFromCodeCoverage]
 	private ReadOnlyValPtr(SerializationInfo info, StreamingContext context)
 	{
 		Int64 l = info.GetInt64("value");
@@ -56,6 +59,7 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IEquatable<ReadOnlyValPtr<T>>,
 		this._value = (void*)l;
 	}
 
+	[ExcludeFromCodeCoverage]
 	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 	{
 		if (info == null)
@@ -73,7 +77,6 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IEquatable<ReadOnlyValPtr<T>>,
 			ValPtr<T> v => this.Pointer.CompareTo(v.Pointer),
 			_ => throw new ArgumentException($"Object must be of type {nameof(ReadOnlyValPtr<T>)}."),
 		};
-
 	/// <inheritdoc/>
 	public Int32 CompareTo(ReadOnlyValPtr<T> value) => this.Pointer.CompareTo(value.Pointer);
 	/// <inheritdoc/>
@@ -81,8 +84,12 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IEquatable<ReadOnlyValPtr<T>>,
 
 	/// <inheritdoc/>
 	public override Boolean Equals([NotNullWhen(true)] Object? obj)
-		=> (obj is ReadOnlyValPtr<T> other && this._value == other._value) ||
-			(obj is ValPtr<T> otherV && this.Pointer == otherV.Pointer);
+		=> obj switch
+		{
+			ReadOnlyValPtr<T> r => this._value == r._value,
+			ValPtr<T> v => this.Pointer == v.Pointer,
+			_ => false,
+		};
 	/// <inheritdoc/>
 	public override Int32 GetHashCode() => new IntPtr(this._value).GetHashCode();
 	/// <inheritdoc/>
@@ -177,12 +184,24 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IEquatable<ReadOnlyValPtr<T>>,
 	public static ReadOnlyValPtr<T> operator +(ReadOnlyValPtr<T> pointer, Int32 offset)
 		=> (ReadOnlyValPtr<T>)(pointer.Pointer + offset * sizeof(T));
 	/// <summary>
+	/// Adds an offset of one <typeparamref name="T"/> unit to the value of a pointer.
+	/// </summary>
+	/// <param name="pointer">The pointer to add the offset to.</param>
+	public static ReadOnlyValPtr<T> operator ++(ReadOnlyValPtr<T> pointer)
+		=> (ReadOnlyValPtr<T>)(pointer.Pointer + sizeof(T));
+	/// <summary>
 	/// Subtracts an offset in <typeparamref name="T"/> units from the value of a pointer.
 	/// </summary>
 	/// <param name="pointer">The pointer to subtract the offset form.</param>
 	/// <param name="offset">The offset in <typeparamref name="T"/> units to subtract.</param>
 	public static ReadOnlyValPtr<T> operator -(ReadOnlyValPtr<T> pointer, Int32 offset)
-		=> (ReadOnlyValPtr<T>)(pointer.Pointer - offset);
+		=> (ReadOnlyValPtr<T>)(pointer.Pointer - offset * sizeof(T));
+	/// <summary>
+	/// Subtracts an offset of one <typeparamref name="T"/> unit from the value of a pointer.
+	/// </summary>
+	/// <param name="pointer">The pointer to subtract the offset form.</param>
+	public static ReadOnlyValPtr<T> operator --(ReadOnlyValPtr<T> pointer)
+		=> (ReadOnlyValPtr<T>)(pointer.Pointer - sizeof(T));
 
 	/// <summary>
 	/// Adds an offset in <typeparamref name="T"/> units to the value of a pointer.
@@ -198,28 +217,36 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IEquatable<ReadOnlyValPtr<T>>,
 	/// <param name="offset">The offset in <typeparamref name="T"/> units to subtract.</param>
 	public static ReadOnlyValPtr<T> Subtract(ReadOnlyValPtr<T> pointer, Int32 offset)
 		=> (ReadOnlyValPtr<T>)(pointer.Pointer - offset * sizeof(T));
+	
 	/// <inheritdoc cref="IntPtr.Parse(String)"/>
+	[ExcludeFromCodeCoverage]
 	public static ReadOnlyValPtr<T> Parse(String s) => (ReadOnlyValPtr<T>)IntPtr.Parse(s);
 	/// <inheritdoc cref="IntPtr.Parse(String, NumberStyles)"/>
+	[ExcludeFromCodeCoverage]
 	public static ReadOnlyValPtr<T> Parse(String s, NumberStyles style) => (ReadOnlyValPtr<T>)IntPtr.Parse(s, style);
 	/// <inheritdoc cref="IntPtr.Parse(String, IFormatProvider)"/>
+	[ExcludeFromCodeCoverage]
 	public static ReadOnlyValPtr<T> Parse(String s, IFormatProvider? provider)
 		=> (ReadOnlyValPtr<T>)IntPtr.Parse(s, provider);
 	/// <inheritdoc cref="IntPtr.Parse(String, NumberStyles, IFormatProvider)"/>
+	[ExcludeFromCodeCoverage]
 	public static ReadOnlyValPtr<T> Parse(String s, NumberStyles style, IFormatProvider? provider)
 		=> (ReadOnlyValPtr<T>)IntPtr.Parse(s, style, provider);
 	/// <inheritdoc cref="IntPtr.Parse(ReadOnlySpan{Char}, NumberStyles, IFormatProvider)"/>
+	[ExcludeFromCodeCoverage]
 	public static ReadOnlyValPtr<T> Parse(ReadOnlySpan<Char> s, NumberStyles style = NumberStyles.Integer,
 		IFormatProvider? provider = null)
 		=> (ReadOnlyValPtr<T>)IntPtr.Parse(s, style, provider);
 
 	/// <inheritdoc cref="IntPtr.TryParse(String?, out IntPtr)"/>
+	[ExcludeFromCodeCoverage]
 	public static Boolean TryParse([NotNullWhen(true)] String? s, out ReadOnlyValPtr<T> result)
 	{
 		Unsafe.SkipInit(out result);
 		return IntPtr.TryParse(s, out Unsafe.As<ReadOnlyValPtr<T>, IntPtr>(ref result));
 	}
 	/// <inheritdoc cref="IntPtr.TryParse(String?, NumberStyles, IFormatProvider?, out IntPtr)"/>
+	[ExcludeFromCodeCoverage]
 	public static Boolean TryParse([NotNullWhen(true)] String? s, NumberStyles style, IFormatProvider? provider,
 		out ReadOnlyValPtr<T> result)
 	{
@@ -227,12 +254,14 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IEquatable<ReadOnlyValPtr<T>>,
 		return IntPtr.TryParse(s, style, provider, out Unsafe.As<ReadOnlyValPtr<T>, IntPtr>(ref result));
 	}
 	/// <inheritdoc cref="IntPtr.TryParse(ReadOnlySpan{Char}, out IntPtr)"/>
+	[ExcludeFromCodeCoverage]
 	public static Boolean TryParse(ReadOnlySpan<Char> s, out ReadOnlyValPtr<T> result)
 	{
 		Unsafe.SkipInit(out result);
 		return IntPtr.TryParse(s, out Unsafe.As<ReadOnlyValPtr<T>, IntPtr>(ref result));
 	}
 	/// <inheritdoc cref="IntPtr.TryParse(ReadOnlySpan{Char}, NumberStyles, IFormatProvider?, out IntPtr)"/>
+	[ExcludeFromCodeCoverage]
 	public static Boolean TryParse(ReadOnlySpan<Char> s, NumberStyles style, IFormatProvider? provider,
 		out ReadOnlyValPtr<T> result)
 	{

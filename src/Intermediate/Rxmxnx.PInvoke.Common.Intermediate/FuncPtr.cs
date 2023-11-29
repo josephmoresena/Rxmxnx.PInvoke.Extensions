@@ -4,6 +4,8 @@ namespace Rxmxnx.PInvoke;
 /// A platform-specific type that is used to represent a pointer to a read-only <typeparamref name="T"/> value.
 /// </summary>
 /// <typeparam name="T">A <see langword="unmanaged"/> <see cref="ValueType"/>.</typeparam>
+[Serializable]
+[StructLayout(LayoutKind.Sequential)]
 public readonly unsafe struct FuncPtr<T> : IEquatable<FuncPtr<T>>, IComparable, IComparable<FuncPtr<T>>,
 	ISpanFormattable, ISerializable where T : Delegate
 {
@@ -41,6 +43,7 @@ public readonly unsafe struct FuncPtr<T> : IEquatable<FuncPtr<T>>, IComparable, 
 	/// <param name="info">A <see cref="SerializationInfo"/> instance.</param>
 	/// <param name="context">A <see cref="StreamingContext"/> instance.</param>
 	/// <exception cref="ArgumentException">If invalid pointer value.</exception>
+	[ExcludeFromCodeCoverage]
 	private FuncPtr(SerializationInfo info, StreamingContext context)
 	{
 		Int64 l = info.GetInt64("value");
@@ -50,6 +53,7 @@ public readonly unsafe struct FuncPtr<T> : IEquatable<FuncPtr<T>>, IComparable, 
 		this._value = (void*)l;
 	}
 
+	[ExcludeFromCodeCoverage]
 	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 	{
 		if (info == null)
@@ -66,7 +70,6 @@ public readonly unsafe struct FuncPtr<T> : IEquatable<FuncPtr<T>>, IComparable, 
 			FuncPtr<T> f => this.Pointer.CompareTo(f.Pointer),
 			_ => throw new ArgumentException($"Object must be of type {nameof(FuncPtr<T>)}."),
 		};
-
 	/// <inheritdoc/>
 	public Int32 CompareTo(FuncPtr<T> value) => this.Pointer.CompareTo(value.Pointer);
 	/// <inheritdoc/>
@@ -135,26 +138,33 @@ public readonly unsafe struct FuncPtr<T> : IEquatable<FuncPtr<T>>, IComparable, 
 	public static Boolean operator !=(FuncPtr<T> value1, FuncPtr<T> value2) => value1._value != value2._value;
 
 	/// <inheritdoc cref="IntPtr.Parse(String)"/>
+	[ExcludeFromCodeCoverage]
 	public static FuncPtr<T> Parse(String s) => (FuncPtr<T>)IntPtr.Parse(s);
 	/// <inheritdoc cref="IntPtr.Parse(String, NumberStyles)"/>
+	[ExcludeFromCodeCoverage]
 	public static FuncPtr<T> Parse(String s, NumberStyles style) => (FuncPtr<T>)IntPtr.Parse(s, style);
 	/// <inheritdoc cref="IntPtr.Parse(String, IFormatProvider)"/>
+	[ExcludeFromCodeCoverage]
 	public static FuncPtr<T> Parse(String s, IFormatProvider? provider) => (FuncPtr<T>)IntPtr.Parse(s, provider);
 	/// <inheritdoc cref="IntPtr.Parse(String, NumberStyles, IFormatProvider)"/>
+	[ExcludeFromCodeCoverage]
 	public static FuncPtr<T> Parse(String s, NumberStyles style, IFormatProvider? provider)
 		=> (FuncPtr<T>)IntPtr.Parse(s, style, provider);
 	/// <inheritdoc cref="IntPtr.Parse(ReadOnlySpan{Char}, NumberStyles, IFormatProvider)"/>
+	[ExcludeFromCodeCoverage]
 	public static FuncPtr<T> Parse(ReadOnlySpan<Char> s, NumberStyles style = NumberStyles.Integer,
 		IFormatProvider? provider = null)
 		=> (FuncPtr<T>)IntPtr.Parse(s, style, provider);
 
 	/// <inheritdoc cref="IntPtr.TryParse(String?, out IntPtr)"/>
+	[ExcludeFromCodeCoverage]
 	public static Boolean TryParse([NotNullWhen(true)] String? s, out FuncPtr<T> result)
 	{
 		Unsafe.SkipInit(out result);
 		return IntPtr.TryParse(s, out Unsafe.As<FuncPtr<T>, IntPtr>(ref result));
 	}
 	/// <inheritdoc cref="IntPtr.TryParse(String?, NumberStyles, IFormatProvider?, out IntPtr)"/>
+	[ExcludeFromCodeCoverage]
 	public static Boolean TryParse([NotNullWhen(true)] String? s, NumberStyles style, IFormatProvider? provider,
 		out FuncPtr<T> result)
 	{
@@ -162,12 +172,14 @@ public readonly unsafe struct FuncPtr<T> : IEquatable<FuncPtr<T>>, IComparable, 
 		return IntPtr.TryParse(s, style, provider, out Unsafe.As<FuncPtr<T>, IntPtr>(ref result));
 	}
 	/// <inheritdoc cref="IntPtr.TryParse(ReadOnlySpan{Char}, out IntPtr)"/>
+	[ExcludeFromCodeCoverage]
 	public static Boolean TryParse(ReadOnlySpan<Char> s, out FuncPtr<T> result)
 	{
 		Unsafe.SkipInit(out result);
 		return IntPtr.TryParse(s, out Unsafe.As<FuncPtr<T>, IntPtr>(ref result));
 	}
 	/// <inheritdoc cref="IntPtr.TryParse(ReadOnlySpan{Char}, NumberStyles, IFormatProvider?, out IntPtr)"/>
+	[ExcludeFromCodeCoverage]
 	public static Boolean TryParse(ReadOnlySpan<Char> s, NumberStyles style, IFormatProvider? provider,
 		out FuncPtr<T> result)
 	{

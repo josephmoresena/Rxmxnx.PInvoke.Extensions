@@ -30,34 +30,41 @@ public interface IFixedContext<T> : IReadOnlyFixedContext<T>, IFixedMemory<T> wh
 	/// </summary>
 	public new interface IDisposable : IFixedContext<T>, IFixedMemory<T>.IDisposable, IReadOnlyFixedContext<T>.IDisposable
 	{
+		[ExcludeFromCodeCoverage]
 		IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IFixedMemory residual)
 			=> this.Transformation<TDestination>(out residual);
+		[ExcludeFromCodeCoverage]
 		IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 			=> this.Transformation<TDestination>(out residual);
+		[ExcludeFromCodeCoverage]
 		IReadOnlyFixedContext<TDestination>.IDisposable IReadOnlyFixedContext<T>.IDisposable.
 			Transformation<TDestination>(out IReadOnlyFixedMemory.IDisposable residual)
 		{
+			Unsafe.SkipInit(out residual);
 			IFixedContext<TDestination>.IDisposable result =
-				this.Transformation<TDestination>(out IFixedMemory.IDisposable disposableResidual);
-			residual = disposableResidual;
+				this.Transformation<TDestination>(
+					out Unsafe.As<IReadOnlyFixedMemory.IDisposable, IFixedMemory.IDisposable>(ref residual));
 			return result;
 		}
 		/// <inheritdoc cref="IFixedContext{T}.Transformation{TDestination}(out IFixedMemory)"/>
 		new IFixedContext<TDestination>.IDisposable Transformation<TDestination>(out IFixedMemory residual)
 			where TDestination : unmanaged
 		{
+			Unsafe.SkipInit(out residual);
 			IFixedContext<TDestination>.IDisposable result =
-				this.Transformation<TDestination>(out IFixedMemory.IDisposable disposableResidual);
-			residual = disposableResidual;
+				this.Transformation<TDestination>(
+					out Unsafe.As<IFixedMemory, IFixedMemory.IDisposable>(ref residual));
 			return result;
 		}
 		/// <inheritdoc cref="IFixedContext{T}.Transformation{TDestination}(out IReadOnlyFixedMemory)"/>
+		[ExcludeFromCodeCoverage]
 		new IFixedContext<TDestination>.IDisposable Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 			where TDestination : unmanaged
 		{
+			Unsafe.SkipInit(out residual);
 			IFixedContext<TDestination>.IDisposable result =
-				this.Transformation<TDestination>(out IFixedMemory.IDisposable disposableResidual);
-			residual = disposableResidual;
+				this.Transformation<TDestination>(
+					out Unsafe.As<IReadOnlyFixedMemory, IFixedMemory.IDisposable>(ref residual));
 			return result;
 		}
 		/// <inheritdoc cref="IFixedContext{T}.Transformation{TDestination}(out IFixedMemory)"/>

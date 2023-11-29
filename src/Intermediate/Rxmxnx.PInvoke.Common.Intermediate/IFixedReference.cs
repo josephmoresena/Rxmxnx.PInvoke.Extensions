@@ -35,26 +35,31 @@ public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference
 	/// </summary>
 	public new interface IDisposable : IFixedReference<T>, IReadOnlyFixedReference<T>.IDisposable, IFixedMemory.IDisposable
 	{
+		[ExcludeFromCodeCoverage]
 		IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IFixedMemory residual)
 			=> this.Transformation<TDestination>(out residual);
+		[ExcludeFromCodeCoverage]
 		IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 			=> this.Transformation<TDestination>(out residual);
 		/// <inheritdoc cref="IReadOnlyFixedReference{T}.Transformation{TDestination}(out IReadOnlyFixedMemory)"/>
 		new IFixedReference<TDestination>.IDisposable Transformation<TDestination>(out IFixedMemory residual)
 			where TDestination : unmanaged
 		{
+			Unsafe.SkipInit(out residual);
 			IFixedReference<TDestination>.IDisposable result =
-				this.Transformation<TDestination>(out IFixedMemory.IDisposable disposableResidual);
-			residual = disposableResidual;
+				this.Transformation<TDestination>(
+					out Unsafe.As<IFixedMemory, IFixedMemory.IDisposable>(ref residual));
 			return result;
 		}
 		/// <inheritdoc cref="IReadOnlyFixedReference{T}.Transformation{TDestination}(out IReadOnlyFixedMemory)"/>
+		[ExcludeFromCodeCoverage]
 		new IFixedReference<TDestination>.IDisposable Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 			where TDestination : unmanaged
 		{
+			Unsafe.SkipInit(out residual);
 			IFixedReference<TDestination>.IDisposable result =
-				this.Transformation<TDestination>(out IFixedMemory.IDisposable disposableResidual);
-			residual = disposableResidual;
+				this.Transformation<TDestination>(
+					out Unsafe.As<IReadOnlyFixedMemory, IFixedMemory.IDisposable>(ref residual));
 			return result;
 		}
 		/// <inheritdoc cref="IReadOnlyFixedReference{T}.Transformation{TDestination}(out IReadOnlyFixedMemory)"/>

@@ -63,22 +63,22 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 	ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => this.CreateReadOnlySpan<T>(this._count);
 	IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IFixedMemory residual)
 	{
-		IFixedContext<TDestination> result = this.GetTransformation<TDestination>(out FixedOffset fixedOffset);
-		residual = fixedOffset;
+		Unsafe.SkipInit(out residual);
+		IFixedContext<TDestination> result = this.GetTransformation<TDestination>(out Unsafe.As<IFixedMemory, FixedOffset>(ref residual));
 		return result;
 	}
 	IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
 	{
+		Unsafe.SkipInit(out residual);
 		IReadOnlyFixedContext<TDestination> result =
-			this.GetTransformation<TDestination>(out FixedOffset fixedOffset, true);
-		residual = fixedOffset;
+			this.GetTransformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, FixedOffset>(ref residual), true);
 		return result;
 	}
 	IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 	{
-		IFixedContext<TDestination> result = this.GetTransformation<TDestination>(out FixedOffset fixedOffset, true);
-		residual = fixedOffset;
+		Unsafe.SkipInit(out residual);
+		IFixedContext<TDestination> result = this.GetTransformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, FixedOffset>(ref residual), true);
 		return result;
 	}
 	IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.GetTransformation<Byte>(out _, true);
