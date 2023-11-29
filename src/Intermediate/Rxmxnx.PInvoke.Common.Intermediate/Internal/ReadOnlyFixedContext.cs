@@ -77,7 +77,8 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	{
 		Unsafe.SkipInit(out residual);
 		IReadOnlyFixedContext<TDestination> result =
-			this.GetTransformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, ReadOnlyFixedOffset>(ref residual));
+			this.GetTransformation<TDestination>(
+				out Unsafe.As<IReadOnlyFixedMemory, ReadOnlyFixedOffset>(ref residual));
 		return result;
 	}
 	/// <inheritdoc cref="IReadOnlyFixedMemory.AsBinaryContext()"/>

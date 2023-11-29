@@ -47,8 +47,7 @@ public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference
 		{
 			Unsafe.SkipInit(out residual);
 			IFixedReference<TDestination>.IDisposable result =
-				this.Transformation<TDestination>(
-					out Unsafe.As<IFixedMemory, IFixedMemory.IDisposable>(ref residual));
+				this.Transformation<TDestination>(out Unsafe.As<IFixedMemory, IFixedMemory.IDisposable>(ref residual));
 			return result;
 		}
 		/// <inheritdoc cref="IReadOnlyFixedReference{T}.Transformation{TDestination}(out IReadOnlyFixedMemory)"/>

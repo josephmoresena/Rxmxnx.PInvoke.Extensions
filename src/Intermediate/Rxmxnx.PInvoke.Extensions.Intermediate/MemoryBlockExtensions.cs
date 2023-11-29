@@ -203,11 +203,10 @@ public static partial class MemoryBlockExtensions
 		where T : unmanaged
 	{
 		MemoryHandle handle = mem.Pin();
-		return 
-			MemoryMarshal.TryGetMemoryManager<T, MemoryManager<T>>(mem, out _) || 
+		return MemoryMarshal.TryGetMemoryManager<T, MemoryManager<T>>(mem, out _) ||
 			MemoryMarshal.TryGetArray(mem, out _) ?
-			new FixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle) :
-			new ReadOnlyFixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);
+				new FixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle) :
+				new ReadOnlyFixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);
 	}
 	/// <summary>
 	/// Creates a <see cref="IFixedContext{T}.IDisposable"/> instance from current

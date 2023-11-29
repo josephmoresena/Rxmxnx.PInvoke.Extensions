@@ -217,7 +217,7 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IEquatable<ReadOnlyValPtr<T>>,
 	/// <param name="offset">The offset in <typeparamref name="T"/> units to subtract.</param>
 	public static ReadOnlyValPtr<T> Subtract(ReadOnlyValPtr<T> pointer, Int32 offset)
 		=> (ReadOnlyValPtr<T>)(pointer.Pointer - offset * sizeof(T));
-	
+
 	/// <inheritdoc cref="IntPtr.Parse(String)"/>
 	[ExcludeFromCodeCoverage]
 	public static ReadOnlyValPtr<T> Parse(String s) => (ReadOnlyValPtr<T>)IntPtr.Parse(s);

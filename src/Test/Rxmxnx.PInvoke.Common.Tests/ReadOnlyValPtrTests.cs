@@ -5,9 +5,9 @@ namespace Rxmxnx.PInvoke.Tests;
 public sealed class ReadOnlyValPtrTests
 {
 	private static readonly CultureInfo[] allCultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-	private static readonly String[] formats = {"", "b", "B", "D", "d", "E", "e", "G", "g", "X", "x", };
+	private static readonly String[] formats = { "", "b", "B", "D", "d", "E", "e", "G", "g", "X", "x", };
 	private static readonly IFixture fixture = new Fixture();
-	
+
 	[Fact]
 	internal void BooleanTest() => ReadOnlyValPtrTests.Test<Boolean>();
 	[Fact]
@@ -55,20 +55,20 @@ public sealed class ReadOnlyValPtrTests
 		Assert.Throws<NullReferenceException>(() => ReadOnlyValPtr<T>.Zero.Reference);
 		Assert.True(empty.IsZero);
 		Assert.True(ReadOnlyValPtr<T>.Zero.IsZero);
-		
+
 		Assert.True(ReadOnlyValPtr<T>.Zero.Equals(empty));
 		Assert.True(ReadOnlyValPtr<T>.Zero.Equals((Object)ValPtr<T>.Zero));
 		Assert.False(ReadOnlyValPtr<T>.Zero.Equals(null));
 		Assert.False(ReadOnlyValPtr<T>.Zero.Equals(empty.Pointer));
-		
+
 		Assert.Equal(1, valPtr.CompareTo(null));
 		Assert.Throws<ArgumentException>(() => valPtr.CompareTo(valPtr.Pointer));
-		
+
 		ReadOnlyValPtrTests.FormatTest(ReadOnlyValPtr<T>.Zero);
 
 		ReadOnlyValPtr<T> ptrI;
 		for (Int32 i = 0; i < span.Length; i++)
-		{ 
+		{
 			Int32 binaryOffset = sizeof(T) * i;
 			ReadOnlyValPtr<T> ptrIAdd = ReadOnlyValPtr<T>.Add(valPtr, i);
 			ptrI = valPtr + i;
@@ -78,27 +78,27 @@ public sealed class ReadOnlyValPtrTests
 			Assert.True(Unsafe.AreSame(ref UnsafeLegacy.AsRef(in ptrI.Reference), ref UnsafeLegacy.AsRef(in span[i])));
 			Assert.Equal(valPtr.Pointer, ptrI.Pointer - binaryOffset);
 			Assert.False(ptrI.IsZero);
-			
+
 			ReadOnlyValPtrTests.ReferenceTest(ptrI, ref UnsafeLegacy.AsRef(in span[i]));
 
 			if (i <= 0) continue;
 
 			ValPtr<T> ptrIAdd2 = Unsafe.As<ReadOnlyValPtr<T>, ValPtr<T>>(ref UnsafeLegacy.AsRef(in ptrIAdd));
-			
+
 			Assert.Equal(1, ptrI.CompareTo(valPtr));
 			Assert.Equal(0, ptrI.CompareTo(ptrIAdd));
 			Assert.Equal(0, valPtr.CompareTo(ptrI - i));
-				
+
 			Assert.Equal(1, ptrI.CompareTo((Object)valPtr));
 			Assert.Equal(0, ptrI.CompareTo((Object)ptrIAdd2));
 			Assert.Equal(1, ptrI.CompareTo(null));
 			Assert.Throws<ArgumentException>(() => ptrI.CompareTo(ptrI.Pointer));
-			
+
 			Assert.False(ptrI.Equals((Object)valPtr));
 			Assert.True(ptrI.Equals((Object)ptrIAdd2));
 			Assert.False(ptrI.Equals(null));
 			Assert.False(ptrI.Equals(ptrI.Pointer));
-			
+
 			ReadOnlyValPtrTests.FormatTest(ptrI);
 		}
 
@@ -119,12 +119,13 @@ public sealed class ReadOnlyValPtrTests
 		using IReadOnlyFixedContext<T>.IDisposable ctx = valPtr.GetUnsafeFixedContext(span.Length);
 		Assert.Equal(ctx.Values.Length, span.Length);
 		Assert.Equal(valPtr.Pointer, ctx.Pointer);
-		Assert.True(ctx.AsBinaryContext().Values.SequenceEqual(new(valPtr.Pointer.ToPointer(), span.Length * sizeof(T))));
+		Assert.True(
+			ctx.AsBinaryContext().Values.SequenceEqual(new(valPtr.Pointer.ToPointer(), span.Length * sizeof(T))));
 
 		ReadOnlySpan<T> span2 = ctx.Values;
 		for (Int32 i = 0; i < span.Length; i++)
 			Assert.True(Unsafe.AreSame(ref UnsafeLegacy.AsRef(in span[i]), ref UnsafeLegacy.AsRef(in span2[i])));
-		
+
 		ReadOnlyValPtrTests.ContextTransformTest<T, Byte>(ctx);
 		ReadOnlyValPtrTests.ContextTransformTest<T, Int16>(ctx);
 		ReadOnlyValPtrTests.ContextTransformTest<T, Int32>(ctx);
@@ -145,7 +146,8 @@ public sealed class ReadOnlyValPtrTests
 	}
 	private static void FormatTest<T>(ReadOnlyValPtr<T> valPtr) where T : unmanaged
 	{
-		CultureInfo culture = ReadOnlyValPtrTests.allCultures[Random.Shared.Next(0, ReadOnlyValPtrTests.allCultures.Length)];
+		CultureInfo culture =
+			ReadOnlyValPtrTests.allCultures[Random.Shared.Next(0, ReadOnlyValPtrTests.allCultures.Length)];
 		Assert.Equal(valPtr.Pointer.GetHashCode(), valPtr.GetHashCode());
 		Assert.Equal(valPtr.Pointer.ToString(), valPtr.ToString());
 		Assert.Equal(valPtr.Pointer.ToString(culture), valPtr.ToString(culture));
@@ -154,11 +156,11 @@ public sealed class ReadOnlyValPtrTests
 		Span<Char> span2 = stackalloc Char[20];
 		Boolean res1 = valPtr.Pointer.TryFormat(span1, out Int32 pC, "X", culture);
 		Boolean res2 = valPtr.TryFormat(span2, out Int32 vC, "X", culture);
-		
+
 		Assert.Equal(res1, res2);
 		Assert.Equal(pC, vC);
 		Assert.True(span1.SequenceEqual(span2));
-		
+
 		foreach (String format in ReadOnlyValPtrTests.formats)
 		{
 			culture = ReadOnlyValPtrTests.allCultures[Random.Shared.Next(0, ReadOnlyValPtrTests.allCultures.Length)];
@@ -166,9 +168,8 @@ public sealed class ReadOnlyValPtrTests
 			Assert.Equal(valPtr.Pointer.ToString(format, culture), valPtr.ToString(format, culture));
 		}
 	}
-	private static unsafe void ReferenceTransformTest<T, TDestination>(ReadOnlyValPtr<T> ptrI, IReadOnlyFixedReference<T>.IDisposable fRef) 
-		where T : unmanaged
-		where TDestination : unmanaged
+	private static unsafe void ReferenceTransformTest<T, TDestination>(ReadOnlyValPtr<T> ptrI,
+		IReadOnlyFixedReference<T>.IDisposable fRef) where T : unmanaged where TDestination : unmanaged
 	{
 		if (sizeof(TDestination) > sizeof(T)) return;
 		IReadOnlyReferenceable<TDestination> fRef2 = fRef.Transformation<TDestination>(out IReadOnlyFixedMemory offset);
@@ -176,7 +177,8 @@ public sealed class ReadOnlyValPtrTests
 		                           ref Unsafe.AsRef<TDestination>(ptrI.Pointer.ToPointer())));
 		Assert.Equal(sizeof(T) - sizeof(TDestination), offset.Bytes.Length);
 	}
-	private static unsafe void ContextTransformTest<T, TDestination>(IReadOnlyFixedContext<T>.IDisposable ctx) where T: unmanaged where TDestination : unmanaged
+	private static unsafe void ContextTransformTest<T, TDestination>(IReadOnlyFixedContext<T>.IDisposable ctx)
+		where T : unmanaged where TDestination : unmanaged
 	{
 		IReadOnlyFixedContext<TDestination> ctx2 = ctx.Transformation<TDestination>(out IReadOnlyFixedMemory offset);
 		Assert.Equal(ctx2.Values.Length, ctx.Bytes.Length / sizeof(TDestination));

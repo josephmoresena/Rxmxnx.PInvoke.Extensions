@@ -5,9 +5,9 @@ namespace Rxmxnx.PInvoke.Tests;
 public sealed class ValPtrTests
 {
 	private static readonly CultureInfo[] allCultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-	private static readonly String[] formats = {"", "b", "B", "D", "d", "E", "e", "G", "g", "X", "x", };
+	private static readonly String[] formats = { "", "b", "B", "D", "d", "E", "e", "G", "g", "X", "x", };
 	private static readonly IFixture fixture = new Fixture();
-	
+
 	[Fact]
 	internal void BooleanTest() => ValPtrTests.Test<Boolean>();
 	[Fact]
@@ -55,20 +55,20 @@ public sealed class ValPtrTests
 		Assert.Throws<NullReferenceException>(() => ValPtr<T>.Zero.Reference);
 		Assert.True(empty.IsZero);
 		Assert.True(ValPtr<T>.Zero.IsZero);
-		
+
 		Assert.True(ValPtr<T>.Zero.Equals(empty));
 		Assert.True(ValPtr<T>.Zero.Equals((Object)ValPtr<T>.Zero));
 		Assert.False(ValPtr<T>.Zero.Equals(null));
 		Assert.False(ValPtr<T>.Zero.Equals(empty.Pointer));
-		
+
 		Assert.Equal(1, valPtr.CompareTo(null));
 		Assert.Throws<ArgumentException>(() => valPtr.CompareTo(valPtr.Pointer));
-		
+
 		ValPtrTests.FormatTest(ValPtr<T>.Zero);
 
 		ValPtr<T> ptrI;
 		for (Int32 i = 0; i < span.Length; i++)
-		{ 
+		{
 			Int32 binaryOffset = sizeof(T) * i;
 			ValPtr<T> ptrIAdd = ValPtr<T>.Add(valPtr, i);
 			ptrI = valPtr + i;
@@ -78,27 +78,27 @@ public sealed class ValPtrTests
 			Assert.True(Unsafe.AreSame(ref ptrI.Reference, ref span[i]));
 			Assert.Equal(valPtr.Pointer, ptrI.Pointer - binaryOffset);
 			Assert.False(ptrI.IsZero);
-			
+
 			ValPtrTests.ReferenceTest(ptrI, ref span[i]);
 
 			if (i <= 0) continue;
 
 			ReadOnlyValPtr<T> ptrIAdd2 = ptrIAdd;
-			
+
 			Assert.Equal(1, ptrI.CompareTo(valPtr));
 			Assert.Equal(0, ptrI.CompareTo(ptrIAdd));
 			Assert.Equal(0, valPtr.CompareTo(ptrI - i));
-				
+
 			Assert.Equal(1, ptrI.CompareTo((Object)valPtr));
 			Assert.Equal(0, ptrI.CompareTo(ptrIAdd2));
 			Assert.Equal(1, ptrI.CompareTo(null));
 			Assert.Throws<ArgumentException>(() => ptrI.CompareTo(ptrI.Pointer));
-			
+
 			Assert.False(ptrI.Equals((Object)valPtr));
 			Assert.True(ptrI.Equals(ptrIAdd2));
 			Assert.False(ptrI.Equals(null));
 			Assert.False(ptrI.Equals(ptrI.Pointer));
-			
+
 			ValPtrTests.FormatTest(ptrI);
 		}
 
@@ -119,12 +119,13 @@ public sealed class ValPtrTests
 		using IFixedContext<T>.IDisposable ctx = valPtr.GetUnsafeFixedContext(span.Length);
 		Assert.Equal(ctx.Values.Length, span.Length);
 		Assert.Equal(valPtr.Pointer, ctx.Pointer);
-		Assert.True(ctx.AsBinaryContext().Values.SequenceEqual(new(valPtr.Pointer.ToPointer(), span.Length * sizeof(T))));
+		Assert.True(
+			ctx.AsBinaryContext().Values.SequenceEqual(new(valPtr.Pointer.ToPointer(), span.Length * sizeof(T))));
 
 		Span<T> span2 = ctx.Values;
 		for (Int32 i = 0; i < span.Length; i++)
 			Assert.True(Unsafe.AreSame(ref span[i], ref span2[i]));
-		
+
 		ValPtrTests.ContextTransformTest<T, Byte>(ctx);
 		ValPtrTests.ContextTransformTest<T, Int16>(ctx);
 		ValPtrTests.ContextTransformTest<T, Int32>(ctx);
@@ -154,11 +155,11 @@ public sealed class ValPtrTests
 		Span<Char> span2 = stackalloc Char[20];
 		Boolean res1 = valPtr.Pointer.TryFormat(span1, out Int32 pC, "X", culture);
 		Boolean res2 = valPtr.TryFormat(span2, out Int32 vC, "X", culture);
-		
+
 		Assert.Equal(res1, res2);
 		Assert.Equal(pC, vC);
 		Assert.True(span1.SequenceEqual(span2));
-		
+
 		foreach (String format in ValPtrTests.formats)
 		{
 			culture = ValPtrTests.allCultures[Random.Shared.Next(0, ValPtrTests.allCultures.Length)];
@@ -166,17 +167,16 @@ public sealed class ValPtrTests
 			Assert.Equal(valPtr.Pointer.ToString(format, culture), valPtr.ToString(format, culture));
 		}
 	}
-	private static unsafe void ReferenceTransformTest<T, TDestination>(ValPtr<T> ptrI, IFixedReference<T>.IDisposable fRef) 
-		where T : unmanaged
-		where TDestination : unmanaged
+	private static unsafe void ReferenceTransformTest<T, TDestination>(ValPtr<T> ptrI,
+		IFixedReference<T>.IDisposable fRef) where T : unmanaged where TDestination : unmanaged
 	{
 		if (sizeof(TDestination) > sizeof(T)) return;
 		IReferenceable<TDestination> fRef2 = fRef.Transformation<TDestination>(out IFixedMemory offset);
-		Assert.True(Unsafe.AreSame(ref fRef2.Reference,
-		                           ref Unsafe.AsRef<TDestination>(ptrI.Pointer.ToPointer())));
+		Assert.True(Unsafe.AreSame(ref fRef2.Reference, ref Unsafe.AsRef<TDestination>(ptrI.Pointer.ToPointer())));
 		Assert.Equal(sizeof(T) - sizeof(TDestination), offset.Bytes.Length);
 	}
-	private static unsafe void ContextTransformTest<T, TDestination>(IFixedContext<T>.IDisposable ctx) where T: unmanaged where TDestination : unmanaged
+	private static unsafe void ContextTransformTest<T, TDestination>(IFixedContext<T>.IDisposable ctx)
+		where T : unmanaged where TDestination : unmanaged
 	{
 		IFixedContext<TDestination> ctx2 = ctx.Transformation<TDestination>(out IFixedMemory offset);
 		Assert.Equal(ctx2.Values.Length, ctx.Bytes.Length / sizeof(TDestination));

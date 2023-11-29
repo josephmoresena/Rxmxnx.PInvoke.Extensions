@@ -52,8 +52,7 @@ public interface IFixedContext<T> : IReadOnlyFixedContext<T>, IFixedMemory<T> wh
 		{
 			Unsafe.SkipInit(out residual);
 			IFixedContext<TDestination>.IDisposable result =
-				this.Transformation<TDestination>(
-					out Unsafe.As<IFixedMemory, IFixedMemory.IDisposable>(ref residual));
+				this.Transformation<TDestination>(out Unsafe.As<IFixedMemory, IFixedMemory.IDisposable>(ref residual));
 			return result;
 		}
 		/// <inheritdoc cref="IFixedContext{T}.Transformation{TDestination}(out IReadOnlyFixedMemory)"/>

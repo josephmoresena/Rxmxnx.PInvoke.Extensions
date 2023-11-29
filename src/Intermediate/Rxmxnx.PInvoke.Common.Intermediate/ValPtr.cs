@@ -190,20 +190,19 @@ public readonly unsafe struct ValPtr<T> : IEquatable<ValPtr<T>>, IComparable, IC
 	/// Adds an offset of one <typeparamref name="T"/> unit to the value of a pointer.
 	/// </summary>
 	/// <param name="pointer">The pointer to add the offset to.</param>
-	public static ValPtr<T> operator ++(ValPtr<T> pointer)
-		=> (ValPtr<T>)(pointer.Pointer + sizeof(T));
+	public static ValPtr<T> operator ++(ValPtr<T> pointer) => (ValPtr<T>)(pointer.Pointer + sizeof(T));
 	/// <summary>
 	/// Subtracts an offset in <typeparamref name="T"/> units from the value of a pointer.
 	/// </summary>
 	/// <param name="pointer">The pointer to subtract the offset form.</param>
 	/// <param name="offset">The offset in <typeparamref name="T"/> units to subtract.</param>
-	public static ValPtr<T> operator -(ValPtr<T> pointer, Int32 offset) => (ValPtr<T>)(pointer.Pointer - offset * sizeof(T));
+	public static ValPtr<T> operator -(ValPtr<T> pointer, Int32 offset)
+		=> (ValPtr<T>)(pointer.Pointer - offset * sizeof(T));
 	/// <summary>
 	/// Subtracts an offset of one <typeparamref name="T"/> unit from the value of a pointer.
 	/// </summary>
 	/// <param name="pointer">The pointer to subtract the offset form.</param>
-	public static ValPtr<T> operator --(ValPtr<T> pointer)
-		=> (ValPtr<T>)(pointer.Pointer - sizeof(T));
+	public static ValPtr<T> operator --(ValPtr<T> pointer) => (ValPtr<T>)(pointer.Pointer - sizeof(T));
 
 	/// <summary>
 	/// Adds an offset in <typeparamref name="T"/> units to the value of a pointer.

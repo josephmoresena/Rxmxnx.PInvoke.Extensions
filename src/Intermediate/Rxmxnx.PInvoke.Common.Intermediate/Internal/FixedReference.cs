@@ -33,13 +33,15 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IFixedMemory residual)
 	{
 		Unsafe.SkipInit(out residual);
-		IFixedReference<TDestination> result = this.GetTransformation<TDestination>(out Unsafe.As<IFixedMemory, FixedOffset>(ref residual));
+		IFixedReference<TDestination> result =
+			this.GetTransformation<TDestination>(out Unsafe.As<IFixedMemory, FixedOffset>(ref residual));
 		return result;
 	}
 	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 	{
 		Unsafe.SkipInit(out residual);
-		IFixedReference<TDestination> result = this.GetTransformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, FixedOffset>(ref residual));
+		IFixedReference<TDestination> result =
+			this.GetTransformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, FixedOffset>(ref residual));
 		return result;
 	}
 	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(

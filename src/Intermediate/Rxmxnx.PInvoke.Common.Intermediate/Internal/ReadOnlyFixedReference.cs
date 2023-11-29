@@ -35,7 +35,8 @@ internal sealed unsafe partial class ReadOnlyFixedReference<T> : ReadOnlyFixedMe
 	{
 		Unsafe.SkipInit(out residual);
 		IReadOnlyFixedReference<TDestination> result =
-			this.GetTransformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, ReadOnlyFixedOffset>(ref residual));
+			this.GetTransformation<TDestination>(
+				out Unsafe.As<IReadOnlyFixedMemory, ReadOnlyFixedOffset>(ref residual));
 		return result;
 	}
 
