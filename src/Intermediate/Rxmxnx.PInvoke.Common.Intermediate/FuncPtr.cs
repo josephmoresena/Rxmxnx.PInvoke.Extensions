@@ -6,8 +6,7 @@ namespace Rxmxnx.PInvoke;
 /// <typeparam name="T">A <see langword="unmanaged"/> <see cref="ValueType"/>.</typeparam>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
-public readonly unsafe struct FuncPtr<T> : IEquatable<FuncPtr<T>>, IComparable, IComparable<FuncPtr<T>>,
-	ISpanFormattable, ISerializable where T : Delegate
+public readonly unsafe struct FuncPtr<T> : IEquatable<FuncPtr<T>>, ISpanFormattable, ISerializable where T : Delegate
 {
 	/// <summary>
 	/// A read-only field that represents a pointer that has been initialized to zero.
@@ -62,16 +61,6 @@ public readonly unsafe struct FuncPtr<T> : IEquatable<FuncPtr<T>>, IComparable, 
 		info.AddValue("value", (Int64)this._value);
 	}
 
-	/// <inheritdoc/>
-	public Int32 CompareTo(Object? value)
-		=> value switch
-		{
-			null => 1,
-			FuncPtr<T> f => this.Pointer.CompareTo(f.Pointer),
-			_ => throw new ArgumentException($"Object must be of type {nameof(FuncPtr<T>)}."),
-		};
-	/// <inheritdoc/>
-	public Int32 CompareTo(FuncPtr<T> value) => this.Pointer.CompareTo(value.Pointer);
 	/// <inheritdoc/>
 	public Boolean Equals(FuncPtr<T> other) => this.Pointer == other.Pointer;
 
