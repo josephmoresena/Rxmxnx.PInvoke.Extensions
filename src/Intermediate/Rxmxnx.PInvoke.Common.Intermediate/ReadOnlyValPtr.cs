@@ -6,7 +6,7 @@ namespace Rxmxnx.PInvoke;
 /// <typeparam name="T">A <see langword="unmanaged"/> <see cref="ValueType"/>.</typeparam>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
-public readonly unsafe struct ReadOnlyValPtr<T> : IEquatable<ReadOnlyValPtr<T>>, IComparable,
+public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<ReadOnlyValPtr<T>>, IComparable,
 	IComparable<ReadOnlyValPtr<T>>, ISpanFormattable, ISerializable where T : unmanaged
 {
 	/// <summary>
@@ -58,6 +58,8 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IEquatable<ReadOnlyValPtr<T>>,
 				"An IntPtr or UIntPtr with an eight byte value cannot be deserialized on a machine with a four byte word size.");
 		this._value = (void*)l;
 	}
+
+	IntPtr IWrapper<IntPtr>.Value => this.Pointer;
 
 	[ExcludeFromCodeCoverage]
 	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)

@@ -66,6 +66,17 @@ public interface IFixedContext<T> : IReadOnlyFixedContext<T>, IFixedMemory<T> wh
 					out Unsafe.As<IReadOnlyFixedMemory, IFixedMemory.IDisposable>(ref residual));
 			return result;
 		}
+		/// <inheritdoc cref="IFixedContext{T}.Transformation{TDestination}(out IReadOnlyFixedMemory)"/>
+		[ExcludeFromCodeCoverage]
+		new IFixedContext<TDestination>.IDisposable Transformation<TDestination>(
+			out IReadOnlyFixedMemory.IDisposable residual) where TDestination : unmanaged
+		{
+			Unsafe.SkipInit(out residual);
+			IFixedContext<TDestination>.IDisposable result =
+				this.Transformation<TDestination>(
+					out Unsafe.As<IReadOnlyFixedMemory.IDisposable, IFixedMemory.IDisposable>(ref residual));
+			return result;
+		}
 		/// <inheritdoc cref="IFixedContext{T}.Transformation{TDestination}(out IFixedMemory)"/>
 		IFixedContext<TDestination>.IDisposable Transformation<TDestination>(out IFixedMemory.IDisposable residual)
 			where TDestination : unmanaged;

@@ -26,6 +26,7 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 		ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => (this.Value as IReadOnlyFixedMemory).Bytes;
 		ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => (this.Value as IReadOnlyFixedMemory<T>).Values;
 
+		[ExcludeFromCodeCoverage]
 		IReadOnlyFixedContext<Byte>.IDisposable IReadOnlyFixedMemory.IDisposable.AsBinaryContext()
 			=> (this.Value.AsBinaryContext() as IConvertibleDisposable<IReadOnlyFixedContext<Byte>.IDisposable>)!
 				.ToDisposable(this.Disposable);
@@ -45,12 +46,13 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 			return result;
 		}
 		/// <inheritdoc/>
-		public IReadOnlyFixedContext<TDestination>.IDisposable Transformation<TDestination>(
+		public IFixedContext<TDestination>.IDisposable Transformation<TDestination>(
 			out IReadOnlyFixedMemory.IDisposable residual) where TDestination : unmanaged
 		{
-			IReadOnlyFixedContext<TDestination>.IDisposable result =
-				this.Transformation<TDestination>(out IFixedMemory.IDisposable disposableResidual);
-			residual = disposableResidual;
+			Unsafe.SkipInit(out residual);
+			IFixedContext<TDestination>.IDisposable result =
+				this.Transformation<TDestination>(
+					out Unsafe.As<IReadOnlyFixedMemory.IDisposable, IFixedMemory.IDisposable>(ref residual));
 			return result;
 		}
 	}

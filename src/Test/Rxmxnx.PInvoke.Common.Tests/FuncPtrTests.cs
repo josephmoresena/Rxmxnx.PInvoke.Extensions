@@ -47,6 +47,7 @@ public sealed class FuncPtrTests
 		Assert.False(funcPtr == FuncPtr<TDelegate>.Zero);
 		Assert.True(empty != funcPtr);
 		Assert.False(funcPtr != (FuncPtr<TDelegate>)funcPtr.Pointer);
+		Assert.Equal(funcPtr.Pointer, (funcPtr as IWrapper<IntPtr>).Value);
 
 		FuncPtrTests.FormatTest(funcPtr);
 	}

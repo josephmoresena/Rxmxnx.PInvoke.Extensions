@@ -6,7 +6,8 @@ namespace Rxmxnx.PInvoke;
 /// <typeparam name="T">A <see langword="unmanaged"/> <see cref="ValueType"/>.</typeparam>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
-public readonly unsafe struct FuncPtr<T> : IEquatable<FuncPtr<T>>, ISpanFormattable, ISerializable where T : Delegate
+public readonly unsafe struct FuncPtr<T> : IWrapper<IntPtr>, IEquatable<FuncPtr<T>>, ISpanFormattable, ISerializable
+	where T : Delegate
 {
 	/// <summary>
 	/// A read-only field that represents a pointer that has been initialized to zero.
@@ -51,6 +52,8 @@ public readonly unsafe struct FuncPtr<T> : IEquatable<FuncPtr<T>>, ISpanFormatta
 				"An IntPtr or UIntPtr with an eight byte value cannot be deserialized on a machine with a four byte word size.");
 		this._value = (void*)l;
 	}
+
+	IntPtr IWrapper<IntPtr>.Value => this.Pointer;
 
 	[ExcludeFromCodeCoverage]
 	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
