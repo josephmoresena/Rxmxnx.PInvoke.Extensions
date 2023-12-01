@@ -42,8 +42,7 @@ internal partial class FixedReference<T> : IConvertibleDisposable<IFixedReferenc
 		{
 			IFixedReference<TDestination>.IDisposable result = this.Value
 			                                                       .GetTransformation<TDestination>(
-				                                                       out FixedOffset offset)
-			                                                       .CreateDisposable(this);
+				                                                       out FixedOffset offset).CreateDisposable(this);
 			residual = offset.ToDisposable(this);
 			return result;
 		}

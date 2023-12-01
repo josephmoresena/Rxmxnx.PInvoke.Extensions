@@ -8,15 +8,12 @@ internal partial class FixedPointer
 	/// <typeparam name="TFixed">A <see cref="FixedPointer"/> type.</typeparam>
 	protected abstract record Disposable<TFixed> : IWrapper<TFixed>, IDisposable where TFixed : FixedPointer
 	{
-		/// <inheritdoc cref="Disposable{TFixed}.Value"/>
-		private readonly TFixed _fixed;
 		/// <summary>
 		/// Internal <see cref="IDisposable"/> instance.
 		/// </summary>
 		private readonly IDisposable? _disposable;
-
-		/// <inheritdoc/>
-		public TFixed Value => this._fixed;
+		/// <inheritdoc cref="Disposable{TFixed}.Value"/>
+		private readonly TFixed _fixed;
 
 		/// <summary>
 		/// Constructor.
@@ -29,8 +26,6 @@ internal partial class FixedPointer
 			this._disposable = disposable;
 		}
 
-		~Disposable() { this.Dispose(false); }
-
 		/// <inheritdoc/>
 		public void Dispose()
 		{
@@ -38,11 +33,16 @@ internal partial class FixedPointer
 			GC.SuppressFinalize(this);
 		}
 
+		/// <inheritdoc/>
+		public TFixed Value => this._fixed;
+
+		~Disposable() { this.Dispose(false); }
+
 		/// <inheritdoc cref="IDisposable.Dispose()"/>
 		/// <param name="disposing">Indicates whether current call is from <see cref="IDisposable.Dispose()"/>.</param>
 		private void Dispose(Boolean disposing)
 		{
-			if (!this._fixed.IsValid || !disposing && this._disposable is IFixedPointer.IDisposable) return;
+			if (!this._fixed.IsValid || (!disposing && this._disposable is IFixedPointer.IDisposable)) return;
 			this._fixed.Unload();
 			this._disposable?.Dispose();
 		}

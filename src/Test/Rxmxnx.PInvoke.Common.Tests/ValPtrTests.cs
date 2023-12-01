@@ -90,7 +90,7 @@ public sealed class ValPtrTests
 			Assert.True(valPtr < ptrI);
 
 			ReadOnlyValPtr<T> ptrIAdd2 = ptrIAdd;
-			
+
 			Assert.Equal(1, ptrI.CompareTo(valPtr));
 			Assert.Equal(0, ptrI.CompareTo(ptrIAdd));
 			Assert.Equal(0, valPtr.CompareTo(ptrI - i));
