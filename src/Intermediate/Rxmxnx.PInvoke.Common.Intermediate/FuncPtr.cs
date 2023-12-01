@@ -6,6 +6,7 @@ namespace Rxmxnx.PInvoke;
 /// <typeparam name="T">A <see langword="unmanaged"/> <see cref="ValueType"/>.</typeparam>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("csharpsquid", "S6640")]
 public readonly unsafe struct FuncPtr<T> : IWrapper<IntPtr>, IEquatable<FuncPtr<T>>, ISpanFormattable, ISerializable
 	where T : Delegate
 {
@@ -81,6 +82,7 @@ public readonly unsafe struct FuncPtr<T> : IWrapper<IntPtr>, IEquatable<FuncPtr<
 	public String ToString(String? format, IFormatProvider? formatProvider)
 		=> this.Pointer.ToString(format, formatProvider);
 	/// <inheritdoc/>
+	[SuppressMessage("csharpsquid", "S1006")]
 	public Boolean TryFormat(Span<Char> destination, out Int32 charsWritten, ReadOnlySpan<Char> format = default,
 		IFormatProvider? provider = default)
 		=> this.Pointer.TryFormat(destination, out charsWritten, format, provider);
@@ -135,7 +137,7 @@ public readonly unsafe struct FuncPtr<T> : IWrapper<IntPtr>, IEquatable<FuncPtr<
 	/// <inheritdoc cref="IntPtr.Parse(ReadOnlySpan{Char}, NumberStyles, IFormatProvider)"/>
 	[ExcludeFromCodeCoverage]
 	public static FuncPtr<T> Parse(ReadOnlySpan<Char> s, NumberStyles style = NumberStyles.Integer,
-		IFormatProvider? provider = null)
+		IFormatProvider? provider = default)
 		=> (FuncPtr<T>)IntPtr.Parse(s, style, provider);
 
 	/// <inheritdoc cref="IntPtr.TryParse(String?, out IntPtr)"/>

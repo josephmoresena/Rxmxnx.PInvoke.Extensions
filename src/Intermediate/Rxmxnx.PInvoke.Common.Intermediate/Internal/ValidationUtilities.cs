@@ -64,6 +64,56 @@ internal static unsafe class ValidationUtilities
 	}
 
 	/// <summary>
+	/// Throws an exception if <paramref name="info"/> contains an invalid <see langword="unmanaged"/> pointer.
+	/// </summary>
+	/// <param name="info">A <see cref="SerializationInfo"/> instance.</param>
+	/// <returns>Deserialized <see langword="unmanaged"/> pointer.</returns>
+	/// <exception cref="ArgumentException">
+	/// Throws an exception if <paramref name="info"/> contains an invalid <see langword="unmanaged"/> pointer.
+	/// </exception>
+	[ExcludeFromCodeCoverage]
+	public static void* ThrowIfInvalidPointer(SerializationInfo info)
+	{
+		Int64 l = info.GetInt64("value");
+		if (IntPtr.Size == 4 && l is > Int32.MaxValue or < Int32.MinValue)
+			throw new ArgumentException(
+				"An IntPtr or UIntPtr with an eight byte value cannot be deserialized on a machine with a four byte word size.");
+		return (void*)l;
+	}
+	/// <summary>
+	/// Throws an exception if <paramref name="info"/> is <see langword="null"/>.
+	/// </summary>
+	/// <param name="info">A <see cref="SerializationInfo"/> instance.</param>
+	/// <param name="ptr">An <see langword="unmanaged"/> pointer.</param>
+	/// <exception cref="ArgumentNullException">
+	/// Throws an exception if <paramref name="info"/> is <see langword="null"/>.
+	/// </exception>
+	[ExcludeFromCodeCoverage]
+	public static void ThrowIfInvalidSerialization(SerializationInfo info, void* ptr)
+	{
+		if (info == null)
+			throw new ArgumentNullException(nameof(info));
+		info.AddValue("value", (Int64)ptr);
+	}
+	/// <summary>
+	/// Throws an exception if <paramref name="obj"/> is not a value pointer.
+	/// </summary>
+	/// <param name="obj">A <see cref="Object"/> instance.</param>
+	/// <param name="ptr">A <see cref="IntPtr"/> value.</param>
+	/// <param name="nameofPtr">Name of value pointer type.</param>
+	/// <typeparam name="T">Type of referenced value.</typeparam>
+	/// <returns>A <see cref="Int32"/> value that indicates the relative order of the objects being compared.</returns>
+	/// <exception cref="ArgumentException">Throws an exception if <paramref name="obj"/> is not a value pointer.</exception>
+	public static Int32 ThrowIfInvalidValuePointer<T>(Object? obj, IntPtr ptr, String nameofPtr) where T : unmanaged
+		=> obj switch
+		{
+			null => 1,
+			ValPtr<T> v => ptr.CompareTo(v.Pointer),
+			ReadOnlyValPtr<T> r => ptr.CompareTo(r.Pointer),
+			_ => throw new ArgumentException($"Object must be of type {nameofPtr}."),
+		};
+
+	/// <summary>
 	/// Validates if the fixed memory pointer instance is a function.
 	/// </summary>
 	/// <param name="isFunction">Indicates whether the fixed pointer instance is a function.</param>
@@ -365,54 +415,4 @@ internal static unsafe class ValidationUtilities
 			throw new ArgumentOutOfRangeException(nameofLength,
 			                                      "Index and length must refer to a location within the sequence.");
 	}
-
-	/// <summary>
-	/// Throws an exception if <paramref name="info"/> contains an invalid <see langword="unmanaged"/> pointer.
-	/// </summary>
-	/// <param name="info">A <see cref="SerializationInfo"/> instance.</param>
-	/// <returns>Deserialized <see langword="unmanaged"/> pointer.</returns>
-	/// <exception cref="ArgumentException">
-	/// Throws an exception if <paramref name="info"/> contains an invalid <see langword="unmanaged"/> pointer.
-	/// </exception>
-	[ExcludeFromCodeCoverage]
-	public static void* ThrowIfInvalidPointer(SerializationInfo info)
-	{
-		Int64 l = info.GetInt64("value");
-		if (IntPtr.Size == 4 && l is > Int32.MaxValue or < Int32.MinValue)
-			throw new ArgumentException(
-				"An IntPtr or UIntPtr with an eight byte value cannot be deserialized on a machine with a four byte word size.");
-		return (void*)l;
-	}
-	/// <summary>
-	/// Throws an exception if <paramref name="info"/> is <see langword="null"/>.
-	/// </summary>
-	/// <param name="info">A <see cref="SerializationInfo"/> instance.</param>
-	/// <param name="ptr">An <see langword="unmanaged"/> pointer.</param>
-	/// <exception cref="ArgumentNullException">
-	/// Throws an exception if <paramref name="info"/> is <see langword="null"/>.
-	/// </exception>
-	[ExcludeFromCodeCoverage]
-	public static void ThrowIfInvalidSerialization(SerializationInfo info, void* ptr)
-	{
-		if (info == null)
-			throw new ArgumentNullException(nameof(info));
-		info.AddValue("value", (Int64)ptr);
-	}
-	/// <summary>
-	/// Throws an exception if <paramref name="obj"/> is not a value pointer.
-	/// </summary>
-	/// <param name="obj">A <see cref="Object"/> instance.</param>
-	/// <param name="ptr">A <see cref="IntPtr"/> value.</param>
-	/// <param name="nameofPtr">Name of value pointer type.</param>
-	/// <typeparam name="T">Type of referenced value.</typeparam>
-	/// <returns>A <see cref="Int32"/> value that indicates the relative order of the objects being compared.</returns>
-	/// <exception cref="ArgumentException">Throws an exception if <paramref name="obj"/> is not a value pointer.</exception>
-	public static Int32 ThrowIfInvalidValPtr<T>(Object? obj, IntPtr ptr, String nameofPtr) where T : unmanaged
-		=> obj switch
-		{
-			null => 1,
-			ValPtr<T> v => ptr.CompareTo(v.Pointer),
-			ReadOnlyValPtr<T> r => ptr.CompareTo(r.Pointer),
-			_ => throw new ArgumentException($"Object must be of type {nameofPtr}."),
-		};
 }

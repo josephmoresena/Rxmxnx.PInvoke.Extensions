@@ -4,6 +4,7 @@
 /// Provides a set of extensions for basic operations with <see cref="String"/> instances.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
+[SuppressMessage("csharpsquid", "S6640")]
 public static unsafe class StringExtensions
 {
 	/// <summary>

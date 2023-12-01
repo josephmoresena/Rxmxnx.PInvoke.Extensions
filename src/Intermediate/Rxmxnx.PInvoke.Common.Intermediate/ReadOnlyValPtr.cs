@@ -6,6 +6,7 @@ namespace Rxmxnx.PInvoke;
 /// <typeparam name="T">A <see langword="unmanaged"/> <see cref="ValueType"/>.</typeparam>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("csharpsquid", "S6640")]
 public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<ReadOnlyValPtr<T>>, IComparable,
 	IComparable<ReadOnlyValPtr<T>>, ISpanFormattable, ISerializable where T : unmanaged
 {
@@ -53,7 +54,7 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 
 	/// <inheritdoc/>
 	public Int32 CompareTo(Object? obj)
-		=> ValidationUtilities.ThrowIfInvalidValPtr<T>(obj, this.Pointer, nameof(ValPtr<T>));
+		=> ValidationUtilities.ThrowIfInvalidValuePointer<T>(obj, this.Pointer, nameof(ValPtr<T>));
 	/// <inheritdoc/>
 	public Int32 CompareTo(ReadOnlyValPtr<T> value) => this.Pointer.CompareTo(value.Pointer);
 	/// <inheritdoc/>
@@ -90,6 +91,7 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	public String ToString(String? format, IFormatProvider? formatProvider)
 		=> this.Pointer.ToString(format, formatProvider);
 	/// <inheritdoc/>
+	[SuppressMessage("csharpsquid", "S1006")]
 	public Boolean TryFormat(Span<Char> destination, out Int32 charsWritten, ReadOnlySpan<Char> format = default,
 		IFormatProvider? provider = default)
 		=> this.Pointer.TryFormat(destination, out charsWritten, format, provider);
@@ -239,7 +241,7 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// <inheritdoc cref="IntPtr.Parse(ReadOnlySpan{Char}, NumberStyles, IFormatProvider)"/>
 	[ExcludeFromCodeCoverage]
 	public static ReadOnlyValPtr<T> Parse(ReadOnlySpan<Char> s, NumberStyles style = NumberStyles.Integer,
-		IFormatProvider? provider = null)
+		IFormatProvider? provider = default)
 		=> (ReadOnlyValPtr<T>)IntPtr.Parse(s, style, provider);
 
 	/// <inheritdoc cref="IntPtr.TryParse(String?, out IntPtr)"/>
