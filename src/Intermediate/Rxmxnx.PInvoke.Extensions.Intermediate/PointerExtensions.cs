@@ -85,9 +85,7 @@ public static unsafe class PointerExtensions
 	public static String? GetUnsafeString(this IntPtr ptr, Int32 length)
 	{
 		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
-		if (ptr.IsZero())
-			return default;
-		return PointerExtensions.GetStringFromCharPointer((Char*)ptr.ToPointer(), length);
+		return ptr.IsZero() ? default : PointerExtensions.GetStringFromCharPointer((Char*)ptr.ToPointer(), length);
 	}
 	/// <summary>
 	/// Creates a <see cref="String"/> instance from a <see cref="Char"/> pointer, interpreting the contents as UTF-16 text.
@@ -107,9 +105,7 @@ public static unsafe class PointerExtensions
 	public static String? GetUnsafeString(this UIntPtr uptr, Int32 length)
 	{
 		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
-		if (uptr.IsZero())
-			return default;
-		return PointerExtensions.GetStringFromCharPointer((Char*)uptr.ToPointer(), length);
+		return uptr.IsZero() ? default : PointerExtensions.GetStringFromCharPointer((Char*)uptr.ToPointer(), length);
 	}
 
 	/// <summary>
@@ -130,9 +126,7 @@ public static unsafe class PointerExtensions
 	public static T[]? GetUnsafeArray<T>(this IntPtr ptr, Int32 length) where T : unmanaged
 	{
 		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
-		if (ptr.IsZero())
-			return default;
-		return ptr.GetUnsafeReadOnlySpan<T>(length).ToArray();
+		return ptr.IsZero() ? default : ptr.GetUnsafeReadOnlySpan<T>(length).ToArray();
 	}
 	/// <summary>
 	/// Creates a <typeparamref name="T"/> array by copying values from memory starting at the location referenced by a
@@ -148,9 +142,7 @@ public static unsafe class PointerExtensions
 	public static T[]? GetUnsafeArray<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
 	{
 		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
-		if (uptr.IsZero())
-			return default;
-		return uptr.GetUnsafeReadOnlySpan<T>(length).ToArray();
+		return uptr.IsZero() ? default : uptr.GetUnsafeReadOnlySpan<T>(length).ToArray();
 	}
 
 	/// <summary>
@@ -354,12 +346,8 @@ public static unsafe class PointerExtensions
 	/// of method invocation.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static T? GetUnsafeValue<T>(this IntPtr ptr) where T : unmanaged
-	{
-		if (ptr.IsZero())
-			return default;
-		return ptr.GetUnsafeReadOnlyReference<T>();
-	}
+	public static T? GetUnsafeValue<T>(this IntPtr ptr) where T : unmanaged 
+		=> ptr.IsZero() ? default(T?) : ptr.GetUnsafeReadOnlyReference<T>();
 	/// <summary>
 	/// Creates an <see langword="unmanaged"/> value of type <typeparamref name="T"/> from an <see cref="UIntPtr"/> pointer.
 	/// </summary>
@@ -371,12 +359,8 @@ public static unsafe class PointerExtensions
 	/// of method invocation.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static T? GetUnsafeValue<T>(this UIntPtr uptr) where T : unmanaged
-	{
-		if (uptr.IsZero())
-			return default;
-		return uptr.GetUnsafeReadOnlyReference<T>();
-	}
+	public static T? GetUnsafeValue<T>(this UIntPtr uptr) where T : unmanaged 
+		=> uptr.IsZero() ? default(T?) : uptr.GetUnsafeReadOnlyReference<T>();
 
 	/// <summary>
 	/// Creates a <see cref="String"/> instance from a <see cref="Char"/> pointer, interpreting the contents as UTF-16 text.

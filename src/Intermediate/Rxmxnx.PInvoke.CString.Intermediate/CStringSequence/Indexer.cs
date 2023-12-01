@@ -23,10 +23,7 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 			if (!this._lengths[index].HasValue)
 				return CString.Zero;
 
-			if (this._lengths[index].GetValueOrDefault() == 0)
-				return CString.Empty;
-
-			return new(() => this.GetBinarySpan(index));
+			return this._lengths[index].GetValueOrDefault() == 0 ? CString.Empty : new(() => this.GetBinarySpan(index));
 		}
 	}
 	/// <summary>

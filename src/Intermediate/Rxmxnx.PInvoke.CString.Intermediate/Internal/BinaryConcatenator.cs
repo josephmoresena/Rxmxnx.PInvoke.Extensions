@@ -113,12 +113,10 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 	/// </param>
 	protected virtual void Dispose(Boolean disposing)
 	{
-		if (!this._disposedValue)
-		{
-			if (disposing)
-				this._mem.Dispose();
-			this._disposedValue = true;
-		}
+		if (this._disposedValue) return;
+		if (disposing)
+			this._mem.Dispose();
+		this._disposedValue = true;
 	}
 	/// <summary>
 	/// Asynchronously releases the unmanaged resources used by the <see cref="IDisposable"/>
@@ -153,16 +151,12 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 	protected Byte[]? ToArray(Boolean nullTerminated = false)
 	{
 		Byte[]? result = default;
-		if (this._mem.Length > 0)
-		{
-			ReadOnlySpan<Byte> span = BinaryConcatenator<T>.PrepareUtf8Text(this._mem.GetBuffer());
-			if (!span.IsEmpty)
-			{
-				Int32 resultLength = span.Length + (nullTerminated ? 1 : 0);
-				result = new Byte[resultLength];
-				span.CopyTo(result);
-			}
-		}
+		if (this._mem.Length <= 0) return result;
+		ReadOnlySpan<Byte> span = BinaryConcatenator<T>.PrepareUtf8Text(this._mem.GetBuffer());
+		if (span.IsEmpty) return result;
+		Int32 resultLength = span.Length + (nullTerminated ? 1 : 0);
+		result = new Byte[resultLength];
+		span.CopyTo(result);
 		return result;
 	}
 }

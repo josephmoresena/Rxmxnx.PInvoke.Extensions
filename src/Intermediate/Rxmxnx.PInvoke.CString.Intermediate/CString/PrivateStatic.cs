@@ -58,19 +58,13 @@ public partial class CString
 	private static unsafe Boolean Equals<TInteger>(ReadOnlySpan<Byte> current, ReadOnlySpan<Byte> other)
 		where TInteger : unmanaged
 	{
-		if (current.Length == other.Length)
-		{
-			ReadOnlySpan<TInteger> currentIntegers = MemoryMarshal.Cast<Byte, TInteger>(current);
-			ReadOnlySpan<TInteger> otherIntegers = MemoryMarshal.Cast<Byte, TInteger>(other);
+		if (current.Length != other.Length) return false;
+		ReadOnlySpan<TInteger> currentIntegers = MemoryMarshal.Cast<Byte, TInteger>(current);
+		ReadOnlySpan<TInteger> otherIntegers = MemoryMarshal.Cast<Byte, TInteger>(other);
 
-			if (CString.SequenceEquals(currentIntegers, otherIntegers))
-			{
-				Int32 binaryOffset = currentIntegers.Length * sizeof(TInteger);
-				return CString.SequenceEquals(current[binaryOffset..], other[binaryOffset..]);
-			}
-		}
-
-		return false;
+		if (!CString.SequenceEquals(currentIntegers, otherIntegers)) return false;
+		Int32 binaryOffset = currentIntegers.Length * sizeof(TInteger);
+		return CString.SequenceEquals(current[binaryOffset..], other[binaryOffset..]);
 	}
 	/// <summary>
 	/// Compares two ReadOnlySpan instances for equality, element by element.

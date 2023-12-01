@@ -40,8 +40,7 @@ internal sealed unsafe class FixedDelegate<TDelegate> : FixedPointer, IFixedMeth
 	public override void Unload()
 	{
 		base.Unload();
-		if (this._handle.HasValue)
-			this._handle.Value.Free();
+		this._handle?.Free();
 	}
 
 	/// <summary>

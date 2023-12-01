@@ -70,13 +70,11 @@ internal partial class BinaryConcatenator<T>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void InitialWrite(ReadOnlySpan<Byte> value)
 	{
-		if (!this.IsEmpty(value))
-		{
-			this.WriteValue(value);
-			this._binaryWrite = this.WriteWithSeparator;
-			this._write = this.WriteWithSeparator;
-			this._writeAsync = this.WriteWithSeparatorAsync;
-		}
+		if (this.IsEmpty(value)) return;
+		this.WriteValue(value);
+		this._binaryWrite = this.WriteWithSeparator;
+		this._write = this.WriteWithSeparator;
+		this._writeAsync = this.WriteWithSeparatorAsync;
 	}
 	/// <summary>
 	/// Writes the <paramref name="value"/> to the current instance and updates the writing delegates
@@ -87,13 +85,11 @@ internal partial class BinaryConcatenator<T>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void InitialWrite(T? value)
 	{
-		if (!this.IsEmpty(value))
-		{
-			this.WriteValue(value);
-			this._binaryWrite = this.WriteWithSeparator;
-			this._write = this.WriteWithSeparator;
-			this._writeAsync = this.WriteWithSeparatorAsync;
-		}
+		if (this.IsEmpty(value)) return;
+		this.WriteValue(value);
+		this._binaryWrite = this.WriteWithSeparator;
+		this._write = this.WriteWithSeparator;
+		this._writeAsync = this.WriteWithSeparatorAsync;
 	}
 	/// <summary>
 	/// Writes the <paramref name="value"/> to the current instance preceded by the separator.
@@ -103,11 +99,9 @@ internal partial class BinaryConcatenator<T>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void WriteWithSeparator(ReadOnlySpan<Byte> value)
 	{
-		if (!this.IsEmpty(value))
-		{
-			this.WriteValue(this._separator!);
-			this.WriteValue(value);
-		}
+		if (this.IsEmpty(value)) return;
+		this.WriteValue(this._separator!);
+		this.WriteValue(value);
 	}
 	/// <summary>
 	/// Writes the <paramref name="value"/> to the current instance, preceded by the separator.
@@ -117,11 +111,9 @@ internal partial class BinaryConcatenator<T>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void WriteWithSeparator(T? value)
 	{
-		if (!this.IsEmpty(value))
-		{
-			this.WriteValue(this._separator!);
-			this.WriteValue(value);
-		}
+		if (this.IsEmpty(value)) return;
+		this.WriteValue(this._separator!);
+		this.WriteValue(value);
 	}
 	/// <summary>
 	/// Writes the <paramref name="value"/> to the current instance.

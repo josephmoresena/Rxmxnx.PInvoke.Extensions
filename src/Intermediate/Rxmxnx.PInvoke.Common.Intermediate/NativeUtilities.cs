@@ -27,10 +27,8 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IntPtr? LoadNativeLib(String? libraryName, DllImportSearchPath? searchPath = default)
 	{
-		if (NativeLibrary.TryLoad(libraryName ?? String.Empty, Assembly.GetExecutingAssembly(), searchPath,
-		                          out IntPtr handle))
-			return handle;
-		return default;
+		return NativeLibrary.TryLoad(libraryName ?? String.Empty, Assembly.GetExecutingAssembly(), searchPath,
+		                             out IntPtr handle) ? handle : default(IntPtr?);
 	}
 	/// <summary>
 	/// Provides a high-level API for loading a native library.
@@ -48,7 +46,7 @@ public static unsafe partial class NativeUtilities
 	{
 		IntPtr? handle = NativeUtilities.LoadNativeLib(libraryName, searchPath);
 		if (handle.HasValue)
-			unloadEvent += (sender, e) => NativeLibrary.Free(handle.Value);
+			unloadEvent += (_, _) => NativeLibrary.Free(handle.Value);
 		return handle;
 	}
 	/// <summary>

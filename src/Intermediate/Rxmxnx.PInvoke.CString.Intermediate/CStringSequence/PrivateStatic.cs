@@ -94,12 +94,10 @@ public partial class CStringSequence
 		Int32 offset = 0;
 		foreach (CString value in seq.Values)
 		{
-			if (value.Length > 0)
-			{
-				ReadOnlySpan<Byte> bytes = value.AsSpan();
-				bytes.CopyTo(destination.AsSpan()[offset..]);
-				offset += bytes.Length;
-			}
+			if (value.Length <= 0) continue;
+			ReadOnlySpan<Byte> bytes = value.AsSpan();
+			bytes.CopyTo(destination.AsSpan()[offset..]);
+			offset += bytes.Length;
 		}
 	}
 	/// <summary>
