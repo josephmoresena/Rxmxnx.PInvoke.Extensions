@@ -90,7 +90,9 @@ internal partial class Utf8Comparator<TChar>
 		String strA = new(Utf8Comparator<TChar>.GetUnicodeSpanFromUtf8(textA));
 		String strB = new(this.GetUnicodeSpan(textB));
 
-		return !this._ignoreCase ? String.CompareOrdinal(strA, strB) : String.Compare(strA, strB, StringComparison.OrdinalIgnoreCase);
+		return !this._ignoreCase ?
+			String.CompareOrdinal(strA, strB) :
+			String.Compare(strA, strB, StringComparison.OrdinalIgnoreCase);
 	}
 	/// <summary>
 	/// Retrieves the <see cref="CompareOptions"/> for the current comparison.

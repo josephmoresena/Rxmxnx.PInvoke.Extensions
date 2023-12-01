@@ -346,7 +346,7 @@ public static unsafe class PointerExtensions
 	/// of method invocation.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static T? GetUnsafeValue<T>(this IntPtr ptr) where T : unmanaged 
+	public static T? GetUnsafeValue<T>(this IntPtr ptr) where T : unmanaged
 		=> ptr.IsZero() ? default(T?) : ptr.GetUnsafeReadOnlyReference<T>();
 	/// <summary>
 	/// Creates an <see langword="unmanaged"/> value of type <typeparamref name="T"/> from an <see cref="UIntPtr"/> pointer.
@@ -359,7 +359,7 @@ public static unsafe class PointerExtensions
 	/// of method invocation.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static T? GetUnsafeValue<T>(this UIntPtr uptr) where T : unmanaged 
+	public static T? GetUnsafeValue<T>(this UIntPtr uptr) where T : unmanaged
 		=> uptr.IsZero() ? default(T?) : uptr.GetUnsafeReadOnlyReference<T>();
 
 	/// <summary>

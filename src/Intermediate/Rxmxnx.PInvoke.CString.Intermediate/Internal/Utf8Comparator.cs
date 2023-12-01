@@ -101,8 +101,8 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
 	///     </item>
 	/// </list>
 	/// </returns>
-	public Int32 Compare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB) => 
-		this._ordinal ? this.OrdinalCompare(textA, textB) : this.Compare(textA, textB, this._ignoreCase);
+	public Int32 Compare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
+		=> this._ordinal ? this.OrdinalCompare(textA, textB) : this.Compare(textA, textB, this._ignoreCase);
 	/// <summary>
 	/// Determines whether the text in <paramref name="textA"/> and the text in <paramref name="textB"/> are equivalent,
 	/// using specified culture, case, and sorting rules during the comparison.

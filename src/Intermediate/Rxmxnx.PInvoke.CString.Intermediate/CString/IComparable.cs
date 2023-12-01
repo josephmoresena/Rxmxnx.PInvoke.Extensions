@@ -411,11 +411,11 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	///     </item>
 	/// </list>
 	/// </returns>
-	private static Int32? NullCompare<TString>(CString? cstrA, TString? tstrB) where TString : class 
+	private static Int32? NullCompare<TString>(CString? cstrA, TString? tstrB) where TString : class
 		=> cstrA switch
 		{
 			null when tstrB is null => 0,
 			null => -1,
-			_ => tstrB is null ? 1 : default(Int32?)
+			_ => tstrB is null ? 1 : default(Int32?),
 		};
 }

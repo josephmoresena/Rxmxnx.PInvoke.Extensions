@@ -61,7 +61,7 @@ internal sealed class DecodedRune : IWrapper<Rune>
 		{
 			DecodedRune decoded => this._value.Equals(decoded._value),
 			Rune rune => this._value.Equals(rune),
-			_ => Object.Equals(this, obj)
+			_ => Object.Equals(this, obj),
 		};
 	}
 	/// <inheritdoc/>
