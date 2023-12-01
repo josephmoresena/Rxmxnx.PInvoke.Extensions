@@ -112,7 +112,8 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// <inheritdoc cref="IntPtr.ToString(IFormatProvider?)"/>
 	public String ToString(IFormatProvider? formatProvider) => this.Pointer.ToString(formatProvider);
 	/// <inheritdoc/>
-	public String ToString(String? format, IFormatProvider? formatProvider) => this.Pointer.ToString(format, formatProvider);
+	public String ToString(String? format, IFormatProvider? formatProvider)
+		=> this.Pointer.ToString(format, formatProvider);
 	/// <inheritdoc/>
 	public Boolean TryFormat(Span<Char> destination, out Int32 charsWritten, ReadOnlySpan<Char> format = default,
 		IFormatProvider? provider = default)
@@ -205,24 +206,30 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	public static ReadOnlyValPtr<T> operator --(ReadOnlyValPtr<T> pointer)
 		=> (ReadOnlyValPtr<T>)(pointer.Pointer - sizeof(T));
 	/// <summary>Compares two values to determine which is less.</summary>
-	/// <param name="left">The value to compare with <paramref name="right" />.</param>
-	/// <param name="right">The value to compare with <paramref name="left" />.</param>
-	/// <returns><c>true</c> if <paramref name="left" /> is less than <paramref name="right" />; otherwise, <c>false</c>.</returns>
+	/// <param name="left">The value to compare with <paramref name="right"/>.</param>
+	/// <param name="right">The value to compare with <paramref name="left"/>.</param>
+	/// <returns><c>true</c> if <paramref name="left"/> is less than <paramref name="right"/>; otherwise, <c>false</c>.</returns>
 	public static Boolean operator <(ReadOnlyValPtr<T> left, ReadOnlyValPtr<T> right) => left.CompareTo(right) < 0;
 	/// <summary>Compares two values to determine which is less or equal.</summary>
-	/// <param name="left">The value to compare with <paramref name="right" />.</param>
-	/// <param name="right">The value to compare with <paramref name="left" />.</param>
-	/// <returns><c>true</c> if <paramref name="left" /> is less than or equal to <paramref name="right" />; otherwise, <c>false</c>.</returns>
+	/// <param name="left">The value to compare with <paramref name="right"/>.</param>
+	/// <param name="right">The value to compare with <paramref name="left"/>.</param>
+	/// <returns>
+	/// <c>true</c> if <paramref name="left"/> is less than or equal to <paramref name="right"/>; otherwise,
+	/// <c>false</c>.
+	/// </returns>
 	public static Boolean operator <=(ReadOnlyValPtr<T> left, ReadOnlyValPtr<T> right) => left.CompareTo(right) <= 0;
 	/// <summary>Compares two values to determine which is greater.</summary>
-	/// <param name="left">The value to compare with <paramref name="right" />.</param>
-	/// <param name="right">The value to compare with <paramref name="left" />.</param>
-	/// <returns><c>true</c> if <paramref name="left" /> is greater than <paramref name="right" />; otherwise, <c>false</c>.</returns>
+	/// <param name="left">The value to compare with <paramref name="right"/>.</param>
+	/// <param name="right">The value to compare with <paramref name="left"/>.</param>
+	/// <returns><c>true</c> if <paramref name="left"/> is greater than <paramref name="right"/>; otherwise, <c>false</c>.</returns>
 	public static Boolean operator >(ReadOnlyValPtr<T> left, ReadOnlyValPtr<T> right) => left.CompareTo(right) > 0;
 	/// <summary>Compares two values to determine which is greater or equal.</summary>
-	/// <param name="left">The value to compare with <paramref name="right" />.</param>
-	/// <param name="right">The value to compare with <paramref name="left" />.</param>
-	/// <returns><c>true</c> if <paramref name="left" /> is greater than or equal to <paramref name="right" />; otherwise, <c>false</c>.</returns>
+	/// <param name="left">The value to compare with <paramref name="right"/>.</param>
+	/// <param name="right">The value to compare with <paramref name="left"/>.</param>
+	/// <returns>
+	/// <c>true</c> if <paramref name="left"/> is greater than or equal to <paramref name="right"/>; otherwise,
+	/// <c>false</c>.
+	/// </returns>
 	public static Boolean operator >=(ReadOnlyValPtr<T> left, ReadOnlyValPtr<T> right) => left.CompareTo(right) >= 0;
 
 	/// <summary>
