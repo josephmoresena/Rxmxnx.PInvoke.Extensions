@@ -115,7 +115,7 @@ public partial class CString
 	/// <summary>
 	/// Helper class for UTF-16 to UTF-8 conversion.
 	/// </summary>
-	private sealed record Utf16ConversionHelper
+	private sealed class Utf16ConversionHelper
 	{
 		/// <summary>
 		/// Internal UTF-16 text which serves as buffer.

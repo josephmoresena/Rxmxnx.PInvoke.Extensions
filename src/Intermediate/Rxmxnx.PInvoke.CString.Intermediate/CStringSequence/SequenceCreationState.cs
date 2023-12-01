@@ -6,7 +6,7 @@ public partial class CStringSequence
 	/// Represents the state object used during the creation of a <see cref="CStringSequence"/>.
 	/// </summary>
 	/// <typeparam name="TState">The type of the element to pass to the creation callback.</typeparam>
-	private sealed record SequenceCreationState<TState>
+	private sealed class SequenceCreationState<TState>
 	{
 		/// <summary>
 		/// The state element that is passed to creation method.

@@ -5,7 +5,7 @@
 /// implementing <see cref="IMutableReference{T}"/>.
 /// </summary>
 /// <typeparam name="T">Type of the encapsulated object.</typeparam>
-internal sealed record MutableReference<T> : MutableWrapper<T>, IMutableReference<T>
+internal sealed class MutableReference<T> : MutableWrapper<T>, IMutableReference<T>
 {
 	/// <summary>
 	/// Initializes a new instance of the <see cref="MutableReference{T}"/> record with the

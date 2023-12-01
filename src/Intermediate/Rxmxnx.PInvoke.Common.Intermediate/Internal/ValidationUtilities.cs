@@ -374,6 +374,7 @@ internal static unsafe class ValidationUtilities
 	/// <exception cref="ArgumentException">
 	/// Throws an exception if <paramref name="info"/> contains an invalid <see langword="unmanaged"/> pointer.
 	/// </exception>
+	[ExcludeFromCodeCoverage]
 	public static void* ThrowIfInvalidPointer(SerializationInfo info)
 	{
 		Int64 l = info.GetInt64("value");
@@ -390,6 +391,7 @@ internal static unsafe class ValidationUtilities
 	/// <exception cref="ArgumentNullException">
 	/// Throws an exception if <paramref name="info"/> is <see langword="null"/>.
 	/// </exception>
+	[ExcludeFromCodeCoverage]
 	public static void ThrowIfInvalidSerialization(SerializationInfo info, void* ptr)
 	{
 		if (info == null)

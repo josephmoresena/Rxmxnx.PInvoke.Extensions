@@ -5,7 +5,7 @@
 /// retrieval and update of its value.
 /// </summary>
 /// <typeparam name="T">Type of the object being wrapped.</typeparam>
-internal record Input<T> : IWrapper<T>
+internal class Input<T> : IWrapper<T>
 {
 	/// <summary>
 	/// The encapsulated <typeparamref name="T"/> object.
