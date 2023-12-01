@@ -7,9 +7,10 @@ public sealed class SegmentTests
 	[Fact]
 	internal void InvalidTest()
 	{
-		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[-1..]);
+		const Int32 negativeOne = 1;
+		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[negativeOne..]);
 		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[1..]);
-		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[..-1]);
+		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[..negativeOne]);
 		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[..1]);
 	}
 
