@@ -39,8 +39,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="span">The current span of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T>(this Span<T> span, ReadOnlyFixedContextAction<T> action)
-		where T : unmanaged
+	public static void WithSafeFixed<T>(this Span<T> span, ReadOnlyFixedContextAction<T> action) where T : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -125,8 +124,8 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="arg">An object representing the state, of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T, TArg>(this Span<T> span, TArg arg,
-		ReadOnlyFixedContextAction<T, TArg> action) where T : unmanaged
+	public static void WithSafeFixed<T, TArg>(this Span<T> span, TArg arg, ReadOnlyFixedContextAction<T, TArg> action)
+		where T : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))

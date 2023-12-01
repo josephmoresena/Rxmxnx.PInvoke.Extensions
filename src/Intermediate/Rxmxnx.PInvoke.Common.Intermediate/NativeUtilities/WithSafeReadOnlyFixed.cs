@@ -11,8 +11,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="value">A <typeparamref name="T"/> reference.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedReferenceAction{T}"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeReadOnlyFixed<T>(ref T value, ReadOnlyFixedReferenceAction<T> action)
-		where T : unmanaged
+	public static void WithSafeReadOnlyFixed<T>(ref T value, ReadOnlyFixedReferenceAction<T> action) where T : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &value)
@@ -67,8 +66,8 @@ public static unsafe partial class NativeUtilities
 	/// <param name="func">A <see cref="ReadOnlyFixedReferenceFunc{T, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static TResult WithSafeReadOnlyFixed<T, TResult>(ref T value,
-		ReadOnlyFixedReferenceFunc<T, TResult> func) where T : unmanaged
+	public static TResult WithSafeReadOnlyFixed<T, TResult>(ref T value, ReadOnlyFixedReferenceFunc<T, TResult> func)
+		where T : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &value)

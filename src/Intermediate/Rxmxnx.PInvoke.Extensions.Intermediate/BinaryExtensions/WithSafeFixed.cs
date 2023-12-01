@@ -132,8 +132,7 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="arg">An object of type <typeparamref name="TArg"/> that represents the state.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedAction{TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TArg>(this ReadOnlySpan<Byte> span, TArg arg,
-		ReadOnlyFixedAction<TArg> action)
+	public static void WithSafeFixed<TArg>(this ReadOnlySpan<Byte> span, TArg arg, ReadOnlyFixedAction<TArg> action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -237,8 +236,7 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="func">A delegate of type <see cref="FixedFunc{TArg, TResult}"/>.</param>
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static TResult WithSafeFixed<TArg, TResult>(this Span<Byte> span, TArg arg,
-		FixedFunc<TArg, TResult> func)
+	public static TResult WithSafeFixed<TArg, TResult>(this Span<Byte> span, TArg arg, FixedFunc<TArg, TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))

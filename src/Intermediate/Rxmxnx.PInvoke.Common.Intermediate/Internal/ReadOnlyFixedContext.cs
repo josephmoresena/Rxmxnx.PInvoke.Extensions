@@ -70,6 +70,16 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
 	private ReadOnlyFixedContext(ReadOnlyFixedMemory ctx, Int32 count) : base(ctx) => this._count = count;
 
+	/// <inheritdoc/>
+	public Boolean Equals(ReadOnlyFixedContext<T>? other) => this.Equals(other as ReadOnlyFixedMemory);
+
+	/// <inheritdoc/>
+	public override Boolean Equals(ReadOnlyFixedMemory? other) => base.Equals(other as ReadOnlyFixedContext<T>);
+	/// <inheritdoc/>
+	public override Boolean Equals(Object? obj) => base.Equals(obj as ReadOnlyFixedContext<T>);
+	/// <inheritdoc/>
+	public override Int32 GetHashCode() => base.GetHashCode();
+
 	ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => this.CreateReadOnlySpan<T>(this._count);
 	IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
@@ -111,14 +121,4 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 		fixedOffset = new(this, offset);
 		return new(this, count);
 	}
-	
-	/// <inheritdoc/>
-	public Boolean Equals(ReadOnlyFixedContext<T>? other) => this.Equals(other as ReadOnlyFixedMemory);
-
-	/// <inheritdoc/>
-	public override Boolean Equals(ReadOnlyFixedMemory? other) => base.Equals(other as ReadOnlyFixedContext<T>);
-	/// <inheritdoc/>
-	public override Boolean Equals(Object? obj) => base.Equals(obj as ReadOnlyFixedContext<T>);
-	/// <inheritdoc/>
-	public override Int32 GetHashCode() => base.GetHashCode();
 }

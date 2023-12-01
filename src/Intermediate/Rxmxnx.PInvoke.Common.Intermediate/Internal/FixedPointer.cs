@@ -119,6 +119,28 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer, IEquatable<
 		this._isReadOnly = pointer._isReadOnly;
 	}
 
+	/// <inheritdoc/>
+	public virtual Boolean Equals(FixedPointer? other)
+		=> other is not null && this.GetMemoryOffset() == other.GetMemoryOffset() &&
+			this.BinaryLength == other.BinaryLength && this._isReadOnly == other._isReadOnly;
+
+	/// <inheritdoc/>
+	[ExcludeFromCodeCoverage]
+	public override Boolean Equals(Object? obj) => this.Equals(obj as FixedPointer);
+	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public override Int32 GetHashCode()
+	{
+		HashCode result = new();
+		result.Add(new IntPtr(this._ptr));
+		result.Add(this.BinaryOffset);
+		result.Add(this._binaryLength);
+		result.Add(this._isReadOnly);
+		if (this.Type is not null)
+			result.Add(this.Type);
+		return result.ToHashCode();
+	}
+
 	IntPtr IFixedPointer.Pointer => (IntPtr)this.GetMemoryOffset();
 
 	/// <summary>
@@ -215,28 +237,6 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer, IEquatable<
 	/// Invalidates current context.
 	/// </summary>
 	public virtual void Unload() => this._isValid.Value = false;
-
-	/// <inheritdoc/>
-	public virtual Boolean Equals(FixedPointer? other)
-		=> other is not null && this.GetMemoryOffset() == other.GetMemoryOffset() &&
-			this.BinaryLength == other.BinaryLength && this._isReadOnly == other._isReadOnly;
-	
-	/// <inheritdoc/>
-	[ExcludeFromCodeCoverage]
-	public override Boolean Equals(Object? obj) => this.Equals(obj as FixedPointer);
-	/// <inheritdoc/>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public override Int32 GetHashCode()
-	{
-		HashCode result = new();
-		result.Add(new IntPtr(this._ptr));
-		result.Add(this.BinaryOffset);
-		result.Add(this._binaryLength);
-		result.Add(this._isReadOnly);
-		if (this.Type is not null)
-			result.Add(this.Type);
-		return result.ToHashCode();
-	}
 
 	/// <summary>
 	/// Validates any operation over the fixed memory block.

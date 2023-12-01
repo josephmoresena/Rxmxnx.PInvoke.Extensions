@@ -9,7 +9,7 @@ public static unsafe partial class NativeUtilities
 	/// <summary>
 	/// Size in bytes of a memory pointer.
 	/// </summary>
-	public static readonly unsafe Int32 PointerSize = sizeof(IntPtr);
+	public static readonly Int32 PointerSize = sizeof(IntPtr);
 
 	/// <summary>
 	/// Retrieves the size of <typeparamref name="T"/> structure.
@@ -258,8 +258,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A <typeparamref name="TArg"/> instance.</param>
 	/// <param name="action">A <see cref="SpanAction{T, TState}"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void WriteSpan<T, TArg>(Span<T> span, TArg arg, SpanAction<T, TArg> action)
-		where T : unmanaged
+	private static void WriteSpan<T, TArg>(Span<T> span, TArg arg, SpanAction<T, TArg> action) where T : unmanaged
 	{
 		fixed (T* ptr = &MemoryMarshal.GetReference(span))
 			action(new(ptr, span.Length), arg);

@@ -49,8 +49,8 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
-	public static TResult WithSafeFixed<T0, T1, TArg, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
-		TArg arg, ReadOnlyFixedListFunc<TArg, TResult> func) where T0 : unmanaged where T1 : unmanaged
+	public static TResult WithSafeFixed<T0, T1, TArg, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, TArg arg,
+		ReadOnlyFixedListFunc<TArg, TResult> func) where T0 : unmanaged where T1 : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -120,9 +120,10 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
-	public static TResult WithSafeFixed<T0, T1, T2, TArg, TResult>(ReadOnlySpan<T0> span0,
-		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, TArg arg, ReadOnlyFixedListFunc<TArg, TResult> func)
-		where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged
+	public static TResult WithSafeFixed<T0, T1, T2, TArg, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
+		ReadOnlySpan<T2> span2, TArg arg, ReadOnlyFixedListFunc<TArg, TResult> func) where T0 : unmanaged
+		where T1 : unmanaged
+		where T2 : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -202,12 +203,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
-	public static TResult WithSafeFixed<T0, T1, T2, T3, TArg, TResult>(ReadOnlySpan<T0> span0,
-		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, TArg arg,
-		ReadOnlyFixedListFunc<TArg, TResult> func) where T0 : unmanaged
-		where T1 : unmanaged
-		where T2 : unmanaged
-		where T3 : unmanaged
+	public static TResult WithSafeFixed<T0, T1, T2, T3, TArg, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
+		ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, TArg arg, ReadOnlyFixedListFunc<TArg, TResult> func)
+		where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -247,13 +245,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span4">5th read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
-	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, TResult>(ReadOnlySpan<T0> span0,
-		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4,
-		ReadOnlyFixedListFunc<TResult> func) where T0 : unmanaged
-		where T1 : unmanaged
-		where T2 : unmanaged
-		where T3 : unmanaged
-		where T4 : unmanaged
+	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
+		ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4, ReadOnlyFixedListFunc<TResult> func)
+		where T0 : unmanaged where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged where T4 : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -347,9 +341,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span5">6th read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
-	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, TResult>(ReadOnlySpan<T0> span0,
-		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4,
-		ReadOnlySpan<T5> span5, ReadOnlyFixedListFunc<TResult> func) where T0 : unmanaged
+	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
+		ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4, ReadOnlySpan<T5> span5,
+		ReadOnlyFixedListFunc<TResult> func) where T0 : unmanaged
 		where T1 : unmanaged
 		where T2 : unmanaged
 		where T3 : unmanaged

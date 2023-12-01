@@ -143,8 +143,8 @@ public static unsafe partial class MemoryBlockExtensions
 	/// </param>
 	/// <returns>A span of <typeparamref name="TDestination"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static Span<TDestination> AsValues<TSource, TDestination>(this Span<TSource> span,
-		out Span<Byte> residual) where TSource : unmanaged where TDestination : unmanaged
+	public static Span<TDestination> AsValues<TSource, TDestination>(this Span<TSource> span, out Span<Byte> residual)
+		where TSource : unmanaged where TDestination : unmanaged
 	{
 		Span<TDestination> result = MemoryMarshal.Cast<TSource, TDestination>(span);
 		Int32 offset = result.Length * sizeof(TDestination) / sizeof(TSource);

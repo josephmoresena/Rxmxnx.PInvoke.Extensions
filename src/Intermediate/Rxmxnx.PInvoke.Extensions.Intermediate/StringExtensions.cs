@@ -43,8 +43,7 @@ public static unsafe class StringExtensions
 	/// <param name="arg">An object of type <typeparamref name="TArg"/> that represents the state.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{Char, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TArg>(this String? str, TArg arg,
-		ReadOnlyFixedContextAction<Char, TArg> action)
+	public static void WithSafeFixed<TArg>(this String? str, TArg arg, ReadOnlyFixedContextAction<Char, TArg> action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		if (str is not null)

@@ -58,6 +58,16 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
 	private FixedContext(FixedMemory ctx, Int32 count) : base(ctx) => this._count = count;
 
+	/// <inheritdoc/>
+	public Boolean Equals(FixedContext<T>? other) => this.Equals(other as FixedMemory);
+
+	/// <inheritdoc/>
+	public override Boolean Equals(FixedMemory? other) => base.Equals(other as FixedContext<T>);
+	/// <inheritdoc/>
+	public override Boolean Equals(Object? obj) => base.Equals(obj as FixedContext<T>);
+	/// <inheritdoc/>
+	public override Int32 GetHashCode() => base.GetHashCode();
+
 	Span<T> IFixedMemory<T>.Values => this.CreateSpan<T>(this._count);
 	ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => this.CreateReadOnlySpan<T>(this._count);
 	IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IFixedMemory residual)
@@ -115,14 +125,4 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 		fixedOffset = new(this, offset);
 		return new(this, count);
 	}
-
-	/// <inheritdoc/>
-	public Boolean Equals(FixedContext<T>? other) => this.Equals(other as FixedMemory);
-
-	/// <inheritdoc/>
-	public override Boolean Equals(FixedMemory? other) => base.Equals(other as FixedContext<T>);
-	/// <inheritdoc/>
-	public override Boolean Equals(Object? obj) => base.Equals(obj as FixedContext<T>);
-	/// <inheritdoc/>
-	public override Int32 GetHashCode() => base.GetHashCode();
 }

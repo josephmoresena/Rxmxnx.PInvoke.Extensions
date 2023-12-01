@@ -106,8 +106,8 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="arg">An object representing the state, of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T, TArg>(this T[]? arr, TArg arg,
-		ReadOnlyFixedContextAction<T, TArg> action) where T : unmanaged
+	public static void WithSafeFixed<T, TArg>(this T[]? arr, TArg arg, ReadOnlyFixedContextAction<T, TArg> action)
+		where T : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		if (arr is not null)

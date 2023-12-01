@@ -35,8 +35,7 @@ public static unsafe partial class DelegateExtensions
 	/// the GC.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static UIntPtr GetUnsafeUIntPtr<TDelegate>(this TDelegate? delegateInstance)
-		where TDelegate : Delegate
+	public static UIntPtr GetUnsafeUIntPtr<TDelegate>(this TDelegate? delegateInstance) where TDelegate : Delegate
 	{
 		IntPtr ptr = delegateInstance.GetUnsafeIntPtr();
 		return (UIntPtr)ptr.ToPointer();
