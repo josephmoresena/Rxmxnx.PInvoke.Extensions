@@ -43,6 +43,9 @@ internal sealed class BinaryConcatenator : BinaryConcatenator<Byte?>
 	/// <inheritdoc/>
 	protected override Boolean IsEmpty([NotNullWhen(false)] Byte? value) => !value.HasValue;
 
+	/// <inheritdoc/>
+	protected override Boolean IsEmpty(ReadOnlySpan<Byte> value) => base.IsEmpty(value) && !this._ignoreEmpty;
+
 	/// <summary>
 	/// Retrieves the binary data from the UTF-8 text.
 	/// </summary>
@@ -51,7 +54,4 @@ internal sealed class BinaryConcatenator : BinaryConcatenator<Byte?>
 	/// </param>
 	/// <returns>A byte array containing the binary data from the UTF-8 text.</returns>
 	public new Byte[]? ToArray(Boolean nullTerminated) => base.ToArray(nullTerminated);
-
-	/// <inheritdoc/>
-	protected override Boolean IsEmpty(ReadOnlySpan<Byte> value) => base.IsEmpty(value) && !this._ignoreEmpty;
 }
