@@ -40,7 +40,7 @@ internal partial class FixedPointer
 
 		/// <inheritdoc cref="IDisposable.Dispose()"/>
 		/// <param name="disposing">Indicates whether current call is from <see cref="IDisposable.Dispose()"/>.</param>
-		private void Dispose(Boolean disposing)
+		protected virtual void Dispose(Boolean disposing)
 		{
 			if (!this._fixed.IsValid || (!disposing && this._disposable is IFixedPointer.IDisposable)) return;
 			this._fixed.Unload();

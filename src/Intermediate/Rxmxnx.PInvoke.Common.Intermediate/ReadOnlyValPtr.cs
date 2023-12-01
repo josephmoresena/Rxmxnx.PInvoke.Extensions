@@ -28,15 +28,7 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// </summary>
 	public Boolean IsZero => IntPtr.Zero == (IntPtr)this._value;
 	/// <inheritdoc cref="IReadOnlyReferenceable{T}.Reference"/>
-	public ref readonly T Reference
-	{
-		get
-		{
-			if (!this.IsZero)
-				return ref Unsafe.AsRef<T>(this._value);
-			throw new NullReferenceException();
-		}
-	}
+	public ref readonly T Reference => ref Unsafe.AsRef<T>(this._value);
 
 	/// <summary>
 	/// Private constructor.

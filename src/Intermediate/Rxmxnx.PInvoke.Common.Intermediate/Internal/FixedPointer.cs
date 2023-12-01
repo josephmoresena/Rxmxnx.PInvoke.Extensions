@@ -117,10 +117,6 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer, IEquatable<
 		this._isValid = pointer._isValid;
 		this._isReadOnly = pointer._isReadOnly;
 	}
-	/// <inheritdoc/>
-	public virtual Boolean Equals(FixedPointer? other)
-		=> other is not null && this.GetMemoryOffset() == other.GetMemoryOffset() &&
-			this.BinaryLength == other.BinaryLength && this._isReadOnly == other._isReadOnly;
 
 	IntPtr IFixedPointer.Pointer => (IntPtr)this.GetMemoryOffset();
 
@@ -219,6 +215,11 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer, IEquatable<
 	/// </summary>
 	public virtual void Unload() => this._isValid.Value = false;
 
+	/// <inheritdoc/>
+	public virtual Boolean Equals(FixedPointer? other)
+		=> other is not null && this.GetMemoryOffset() == other.GetMemoryOffset() &&
+			this.BinaryLength == other.BinaryLength && this._isReadOnly == other._isReadOnly;
+	
 	/// <inheritdoc/>
 	[ExcludeFromCodeCoverage]
 	public override Boolean Equals(Object? obj) => this.Equals(obj as FixedPointer);
