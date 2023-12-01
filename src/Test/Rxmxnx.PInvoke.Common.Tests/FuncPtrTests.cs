@@ -25,8 +25,8 @@ public sealed class FuncPtrTests
 		FuncPtr<TDelegate> empty = (FuncPtr<TDelegate>)IntPtr.Zero;
 		Assert.Equal(empty, FuncPtr<TDelegate>.Zero);
 		Assert.Equal(empty.Pointer, FuncPtr<TDelegate>.Zero.Pointer);
-		Assert.Throws<NullReferenceException>(() => empty.Invoke);
-		Assert.Throws<NullReferenceException>(() => FuncPtr<TDelegate>.Zero.Invoke);
+		Assert.Null(empty.Invoke);
+		Assert.Null(FuncPtr<TDelegate>.Zero.Invoke);
 		Assert.True(empty.IsZero);
 		Assert.True(FuncPtr<TDelegate>.Zero.IsZero);
 

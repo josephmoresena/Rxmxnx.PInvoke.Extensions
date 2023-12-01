@@ -32,6 +32,7 @@ internal sealed partial class FixedOffset : FixedMemory, IEquatable<FixedOffset>
 
 	/// <inheritdoc/>
 	public Boolean Equals(FixedOffset? other) => this.Equals(other as FixedMemory);
+
 	/// <inheritdoc/>
 	public override Boolean Equals(FixedMemory? other) => base.Equals(other as FixedOffset);
 	/// <inheritdoc/>

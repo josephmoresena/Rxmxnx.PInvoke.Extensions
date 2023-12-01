@@ -36,8 +36,6 @@ internal abstract unsafe class ReadOnlyFixedMemory : FixedPointer, IReadOnlyFixe
 	/// <param name="mem">The <see cref="ReadOnlyFixedMemory"/> instance to copy data from.</param>
 	/// <param name="offset">The offset to be added to the pointer to the memory block.</param>
 	protected ReadOnlyFixedMemory(ReadOnlyFixedMemory mem, Int32 offset) : base(mem, offset) { }
-	/// <inheritdoc/>
-	public virtual Boolean Equals(ReadOnlyFixedMemory? other) => this.Equals(other as FixedPointer);
 
 	ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => this.CreateReadOnlyBinarySpan();
 	IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
@@ -45,6 +43,9 @@ internal abstract unsafe class ReadOnlyFixedMemory : FixedPointer, IReadOnlyFixe
 	/// <inheritdoc cref="IReadOnlyFixedMemory.AsBinaryContext()"/>
 	public virtual IReadOnlyFixedContext<Byte> AsBinaryContext()
 		=> new ReadOnlyFixedContext<Byte>(this.BinaryOffset, this);
+
+	/// <inheritdoc/>
+	public virtual Boolean Equals(ReadOnlyFixedMemory? other) => this.Equals(other as FixedPointer);
 
 	/// <inheritdoc/>
 	[ExcludeFromCodeCoverage]

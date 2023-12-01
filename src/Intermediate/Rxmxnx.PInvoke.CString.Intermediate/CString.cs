@@ -99,20 +99,6 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 		return new CString(bytes, true);
 	}
 
-	/// <inheritdoc/>
-	public Boolean Equals([NotNullWhen(true)] CString? other)
-		=> other is not null && this._length == other._length && CString.equals(this, other);
-	/// <summary>
-	/// Determines whether the current <see cref="CString"/> and a specified <see cref="String"/>
-	/// have the same value.
-	/// </summary>
-	/// <param name="other">The <see cref="String"/> to compare to the current instance.</param>
-	/// <returns>
-	/// <see langword="true"/> if the value of the <paramref name="other"/> parameter is the same
-	/// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
-	/// </returns>
-	public Boolean Equals([NotNullWhen(true)] String? other)
-		=> other is not null && StringUtf8Comparator.Create().TextEquals(this, other);
 	/// <summary>
 	/// Returns a reference to the first UTF-8 unit of the <see cref="CString"/>.
 	/// </summary>
@@ -144,6 +130,21 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// A <see cref="String"/> that represents the hexadecimal value of the current UTF-8 text.
 	/// </returns>
 	public String ToHexString() => Convert.ToHexString(this).ToLower();
+	
+	/// <inheritdoc/>
+	public Boolean Equals([NotNullWhen(true)] CString? other)
+		=> other is not null && this._length == other._length && CString.equals(this, other);
+	/// <summary>
+	/// Determines whether the current <see cref="CString"/> and a specified <see cref="String"/>
+	/// have the same value.
+	/// </summary>
+	/// <param name="other">The <see cref="String"/> to compare to the current instance.</param>
+	/// <returns>
+	/// <see langword="true"/> if the value of the <paramref name="other"/> parameter is the same
+	/// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
+	/// </returns>
+	public Boolean Equals([NotNullWhen(true)] String? other)
+		=> other is not null && StringUtf8Comparator.Create().TextEquals(this, other);
 	/// <summary>
 	/// Returns an enumerator that iterates through the UTF-8 units of the current <see cref="CString"/>.
 	/// </summary>

@@ -136,13 +136,13 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// <exception cref="FormatException"><paramref name="format"/> is invalid or not supported.</exception>
 	public String ToString(String? format) => this.Pointer.ToString(format);
 	/// <inheritdoc cref="IntPtr.ToString(IFormatProvider?)"/>
-	public String ToString(IFormatProvider? provider) => this.Pointer.ToString(provider);
+	public String ToString(IFormatProvider? formatProvider) => this.Pointer.ToString(formatProvider);
 	/// <inheritdoc/>
-	public String ToString(String? format, IFormatProvider? provider) => this.Pointer.ToString(format, provider);
+	public String ToString(String? format, IFormatProvider? formatProvider) => this.Pointer.ToString(format, formatProvider);
 	/// <inheritdoc/>
 	public Boolean TryFormat(Span<Char> destination, out Int32 charsWritten, ReadOnlySpan<Char> format = default,
-		IFormatProvider? provider = default)
-		=> this.Pointer.TryFormat(destination, out charsWritten, format, provider);
+		IFormatProvider? formatProvider = default)
+		=> this.Pointer.TryFormat(destination, out charsWritten, format, formatProvider);
 
 	/// <summary>
 	/// Defines an explicit conversion of a given <see cref="IntPtr"/> to a read-only value pointer.

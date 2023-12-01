@@ -26,9 +26,6 @@ internal sealed unsafe partial class ReadOnlyFixedReference<T> : ReadOnlyFixedMe
 	/// <param name="mem">Instance of <see cref="FixedMemory"/> to be referenced.</param>
 	private ReadOnlyFixedReference(ReadOnlyFixedMemory mem) : base(mem) { }
 
-	/// <inheritdoc/>
-	public Boolean Equals(ReadOnlyFixedReference<T>? other) => this.Equals(other as ReadOnlyFixedMemory);
-
 	ref readonly T IReadOnlyReferenceable<T>.Reference => ref this.CreateReadOnlyReference<T>();
 	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
@@ -66,6 +63,9 @@ internal sealed unsafe partial class ReadOnlyFixedReference<T> : ReadOnlyFixedMe
 		fixedOffset = new(this, sizeof(TDestination));
 		return new(this);
 	}
+
+	/// <inheritdoc/>
+	public Boolean Equals(ReadOnlyFixedReference<T>? other) => this.Equals(other as ReadOnlyFixedMemory);
 
 	/// <inheritdoc/>
 	public override Boolean Equals(ReadOnlyFixedMemory? other) => base.Equals(other as ReadOnlyFixedReference<T>);
