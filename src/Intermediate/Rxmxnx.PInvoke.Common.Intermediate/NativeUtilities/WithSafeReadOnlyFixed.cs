@@ -1,6 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke;
 
-public static partial class NativeUtilities
+[SuppressMessage("csharpsquid", "S6640")]
+public static unsafe partial class NativeUtilities
 {
 	/// <summary>
 	/// Prevents the garbage collector from relocating a given reference and fixes its memory
@@ -10,7 +11,7 @@ public static partial class NativeUtilities
 	/// <param name="value">A <typeparamref name="T"/> reference.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedReferenceAction{T}"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe void WithSafeReadOnlyFixed<T>(ref T value, ReadOnlyFixedReferenceAction<T> action)
+	public static void WithSafeReadOnlyFixed<T>(ref T value, ReadOnlyFixedReferenceAction<T> action)
 		where T : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(action);
@@ -38,7 +39,7 @@ public static partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedReferenceAction{T, TArg}"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe void WithSafeReadOnlyFixed<T, TArg>(ref T value, TArg arg,
+	public static void WithSafeReadOnlyFixed<T, TArg>(ref T value, TArg arg,
 		ReadOnlyFixedReferenceAction<T, TArg> action) where T : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(action);
@@ -66,7 +67,7 @@ public static partial class NativeUtilities
 	/// <param name="func">A <see cref="ReadOnlyFixedReferenceFunc{T, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe TResult WithSafeReadOnlyFixed<T, TResult>(ref T value,
+	public static TResult WithSafeReadOnlyFixed<T, TResult>(ref T value,
 		ReadOnlyFixedReferenceFunc<T, TResult> func) where T : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(func);
@@ -96,7 +97,7 @@ public static partial class NativeUtilities
 	/// <param name="func">A <see cref="ReadOnlyFixedReferenceFunc{T, TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe TResult WithSafeReadOnlyFixed<T, TArg, TResult>(ref T value, TArg arg,
+	public static TResult WithSafeReadOnlyFixed<T, TArg, TResult>(ref T value, TArg arg,
 		ReadOnlyFixedReferenceFunc<T, TArg, TResult> func) where T : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(func);

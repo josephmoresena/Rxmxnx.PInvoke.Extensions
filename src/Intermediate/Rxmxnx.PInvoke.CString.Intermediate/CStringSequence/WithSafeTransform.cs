@@ -1,6 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke;
 
-public partial class CStringSequence
+[SuppressMessage("csharpsquid", "S6640")]
+public unsafe partial class CStringSequence
 {
 	/// <summary>
 	/// Executes a specified action using the current instance treated as a <see cref="FixedCStringSequence"/>.
@@ -12,7 +13,7 @@ public partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the action execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public unsafe void WithSafeTransform(CStringSequenceAction action)
+	public void WithSafeTransform(CStringSequenceAction action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (Char* ptr = &MemoryMarshal.GetReference<Char>(this._value))
@@ -41,7 +42,7 @@ public partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the action execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public unsafe void WithSafeTransform<TState>(TState state, CStringSequenceAction<TState> action)
+	public void WithSafeTransform<TState>(TState state, CStringSequenceAction<TState> action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (Char* ptr = &MemoryMarshal.GetReference<Char>(this._value))
@@ -69,7 +70,7 @@ public partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the function execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public unsafe TResult WithSafeTransform<TResult>(CStringSequenceFunc<TResult> func)
+	public TResult WithSafeTransform<TResult>(CStringSequenceFunc<TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (Char* ptr = &MemoryMarshal.GetReference<Char>(this._value))
@@ -100,7 +101,7 @@ public partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the function execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public unsafe TResult WithSafeTransform<TState, TResult>(TState state, CStringSequenceFunc<TState, TResult> func)
+	public TResult WithSafeTransform<TState, TResult>(TState state, CStringSequenceFunc<TState, TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (Char* ptr = &MemoryMarshal.GetReference<Char>(this._value))

@@ -44,24 +44,13 @@ public readonly unsafe struct FuncPtr<T> : IWrapper<IntPtr>, IEquatable<FuncPtr<
 	/// <exception cref="ArgumentException">If invalid pointer value.</exception>
 	[ExcludeFromCodeCoverage]
 	private FuncPtr(SerializationInfo info, StreamingContext context)
-	{
-		Int64 l = info.GetInt64("value");
-		if (IntPtr.Size == 4 && l is > Int32.MaxValue or < Int32.MinValue)
-			throw new ArgumentException(
-				"An IntPtr or UIntPtr with an eight byte value cannot be deserialized on a machine with a four byte word size.");
-		this._value = (void*)l;
-	}
+		=> this._value = ValidationUtilities.ThrowIfInvalidPointer(info);
 
 	IntPtr IWrapper<IntPtr>.Value => this.Pointer;
 
 	[ExcludeFromCodeCoverage]
 	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-	{
-		if (info == null)
-			throw new ArgumentNullException(nameof(info));
-
-		info.AddValue("value", (Int64)this._value);
-	}
+		=> ValidationUtilities.ThrowIfInvalidSerialization(info, this._value);
 
 	/// <inheritdoc/>
 	public Boolean Equals(FuncPtr<T> other) => this.Pointer == other.Pointer;

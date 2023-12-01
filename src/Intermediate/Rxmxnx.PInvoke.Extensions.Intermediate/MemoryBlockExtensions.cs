@@ -5,7 +5,8 @@
 /// instances.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
-public static partial class MemoryBlockExtensions
+[SuppressMessage("csharpsquid", "S6640")]
+public static unsafe partial class MemoryBlockExtensions
 {
 	/// <summary>
 	/// Retrieves an unsafe <see cref="IntPtr"/> pointer from <see cref="Span{T}"/> instance.
@@ -21,7 +22,7 @@ public static partial class MemoryBlockExtensions
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe IntPtr GetUnsafeIntPtr<T>(this Span<T> span) where T : unmanaged
+	public static IntPtr GetUnsafeIntPtr<T>(this Span<T> span) where T : unmanaged
 	{
 		ref T refValue = ref MemoryMarshal.GetReference(span);
 		void* ptr = Unsafe.AsPointer(ref refValue);
@@ -41,7 +42,7 @@ public static partial class MemoryBlockExtensions
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe IntPtr GetUnsafeIntPtr<T>(this ReadOnlySpan<T> span) where T : unmanaged
+	public static IntPtr GetUnsafeIntPtr<T>(this ReadOnlySpan<T> span) where T : unmanaged
 	{
 		ref T refValue = ref MemoryMarshal.GetReference(span);
 		void* ptr = Unsafe.AsPointer(ref refValue);
@@ -62,7 +63,7 @@ public static partial class MemoryBlockExtensions
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe UIntPtr GetUnsafeUIntPtr<T>(this Span<T> span) where T : unmanaged
+	public static UIntPtr GetUnsafeUIntPtr<T>(this Span<T> span) where T : unmanaged
 	{
 		ref T refValue = ref MemoryMarshal.GetReference(span);
 		void* ptr = Unsafe.AsPointer(ref refValue);
@@ -82,7 +83,7 @@ public static partial class MemoryBlockExtensions
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe UIntPtr GetUnsafeUIntPtr<T>(this ReadOnlySpan<T> span) where T : unmanaged
+	public static UIntPtr GetUnsafeUIntPtr<T>(this ReadOnlySpan<T> span) where T : unmanaged
 	{
 		ref T refValue = ref MemoryMarshal.GetReference(span);
 		void* ptr = Unsafe.AsPointer(ref refValue);
@@ -142,7 +143,7 @@ public static partial class MemoryBlockExtensions
 	/// </param>
 	/// <returns>A span of <typeparamref name="TDestination"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe Span<TDestination> AsValues<TSource, TDestination>(this Span<TSource> span,
+	public static Span<TDestination> AsValues<TSource, TDestination>(this Span<TSource> span,
 		out Span<Byte> residual) where TSource : unmanaged where TDestination : unmanaged
 	{
 		Span<TDestination> result = MemoryMarshal.Cast<TSource, TDestination>(span);
@@ -162,7 +163,7 @@ public static partial class MemoryBlockExtensions
 	/// </param>
 	/// <returns>A read-only span of <typeparamref name="TDestination"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe ReadOnlySpan<TDestination> AsValues<TSource, TDestination>(this Span<TSource> span,
+	public static ReadOnlySpan<TDestination> AsValues<TSource, TDestination>(this Span<TSource> span,
 		out ReadOnlySpan<Byte> residual) where TSource : unmanaged where TDestination : unmanaged
 	{
 		ReadOnlySpan<TDestination> result = MemoryMarshal.Cast<TSource, TDestination>(span);
@@ -182,7 +183,7 @@ public static partial class MemoryBlockExtensions
 	/// </param>
 	/// <returns>A read-only span of <typeparamref name="TDestination"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe ReadOnlySpan<TDestination> AsValues<TSource, TDestination>(this ReadOnlySpan<TSource> span,
+	public static ReadOnlySpan<TDestination> AsValues<TSource, TDestination>(this ReadOnlySpan<TSource> span,
 		out ReadOnlySpan<Byte> residual) where TSource : unmanaged where TDestination : unmanaged
 	{
 		ReadOnlySpan<TDestination> result = MemoryMarshal.Cast<TSource, TDestination>(span);
@@ -199,7 +200,7 @@ public static partial class MemoryBlockExtensions
 	/// </typeparam>
 	/// <param name="mem">A <see cref="ReadOnlyMemory{T}"/> instance.</param>
 	/// <returns>A <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance.</returns>
-	public static unsafe IReadOnlyFixedContext<T>.IDisposable GetFixedContext<T>(this ReadOnlyMemory<T> mem)
+	public static IReadOnlyFixedContext<T>.IDisposable GetFixedContext<T>(this ReadOnlyMemory<T> mem)
 		where T : unmanaged
 	{
 		MemoryHandle handle = mem.Pin();
@@ -217,7 +218,7 @@ public static partial class MemoryBlockExtensions
 	/// </typeparam>
 	/// <param name="mem">A <see cref="Memory{T}"/> instance.</param>
 	/// <returns>A <see cref="IFixedContext{T}.IDisposable"/> instance.</returns>
-	public static unsafe IFixedContext<T>.IDisposable GetFixedContext<T>(this Memory<T> mem) where T : unmanaged
+	public static IFixedContext<T>.IDisposable GetFixedContext<T>(this Memory<T> mem) where T : unmanaged
 	{
 		MemoryHandle handle = mem.Pin();
 		return new FixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);

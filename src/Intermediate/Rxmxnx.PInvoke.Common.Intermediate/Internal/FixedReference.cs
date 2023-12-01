@@ -4,6 +4,7 @@
 /// Fixed memory reference class, used to hold a fixed memory reference of a specific type.
 /// </summary>
 /// <typeparam name="T">Type of the fixed memory reference.</typeparam>
+[SuppressMessage("csharpsquid", "S6640")]
 internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedReference<T>, IEquatable<FixedReference<T>>
 	where T : unmanaged
 {

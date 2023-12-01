@@ -3,6 +3,7 @@
 /// <summary>
 /// Helper class for managing fixed memory pointer blocks.
 /// </summary>
+[SuppressMessage("csharpsquid", "S6640")]
 internal abstract unsafe partial class FixedPointer : IFixedPointer, IEquatable<FixedPointer>
 {
 	/// <summary>

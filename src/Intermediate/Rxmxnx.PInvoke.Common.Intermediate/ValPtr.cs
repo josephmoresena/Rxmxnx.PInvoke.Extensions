@@ -43,34 +43,17 @@ public readonly unsafe struct ValPtr<T> : IWrapper<IntPtr>, IEquatable<ValPtr<T>
 	/// <exception cref="ArgumentException">If invalid pointer value.</exception>
 	[ExcludeFromCodeCoverage]
 	private ValPtr(SerializationInfo info, StreamingContext context)
-	{
-		Int64 l = info.GetInt64("value");
-		if (IntPtr.Size == 4 && l is > Int32.MaxValue or < Int32.MinValue)
-			throw new ArgumentException(
-				"An IntPtr or UIntPtr with an eight byte value cannot be deserialized on a machine with a four byte word size.");
-		this._value = (void*)l;
-	}
+		=> this._value = ValidationUtilities.ThrowIfInvalidPointer(info);
 
 	IntPtr IWrapper<IntPtr>.Value => this.Pointer;
 
 	[ExcludeFromCodeCoverage]
 	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-	{
-		if (info == null)
-			throw new ArgumentNullException(nameof(info));
-
-		info.AddValue("value", (Int64)this._value);
-	}
+		=> ValidationUtilities.ThrowIfInvalidSerialization(info, this._value);
 
 	/// <inheritdoc/>
 	public Int32 CompareTo(Object? obj)
-		=> obj switch
-		{
-			null => 1,
-			ValPtr<T> v => this.Pointer.CompareTo(v.Pointer),
-			ReadOnlyValPtr<T> r => this.Pointer.CompareTo(r.Pointer),
-			_ => throw new ArgumentException($"Object must be of type {nameof(ValPtr<T>)}."),
-		};
+		=> ValidationUtilities.ThrowIfInvalidValPtr<T>(obj, this.Pointer, nameof(ValPtr<T>));
 	/// <inheritdoc/>
 	public Int32 CompareTo(ValPtr<T> value) => this.Pointer.CompareTo(value.Pointer);
 	/// <inheritdoc/>

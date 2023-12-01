@@ -3,6 +3,7 @@
 /// <summary>
 /// Helper class for managing fixed read-only memory blocks.
 /// </summary>
+[SuppressMessage("csharpsquid", "S6640")]
 internal abstract unsafe class ReadOnlyFixedMemory : FixedPointer, IReadOnlyFixedMemory, IEquatable<ReadOnlyFixedMemory>
 {
 	/// <summary>

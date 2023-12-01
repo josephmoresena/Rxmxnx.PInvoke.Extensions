@@ -1,6 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke;
 
-public partial class CString
+[SuppressMessage("csharpsquid", "S6640")]
+public unsafe partial class CString
 {
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current instance and fixes its memory
@@ -11,7 +12,7 @@ public partial class CString
 	/// The action operates on a read-only fixed memory instance.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public unsafe void WithSafeFixed(ReadOnlyFixedAction action)
+	public void WithSafeFixed(ReadOnlyFixedAction action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		ReadOnlySpan<Byte> span = this._data;
@@ -39,7 +40,7 @@ public partial class CString
 	/// The action operates on a read-only fixed memory instance using an additional state object.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public unsafe void WithSafeFixed<TArg>(TArg arg, ReadOnlyFixedAction<TArg> action)
+	public void WithSafeFixed<TArg>(TArg arg, ReadOnlyFixedAction<TArg> action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		ReadOnlySpan<Byte> span = this._data;
@@ -67,7 +68,7 @@ public partial class CString
 	/// The function operates on a read-only fixed memory instance.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public unsafe TResult WithSafeFixed<TResult>(ReadOnlyFixedFunc<TResult> func)
+	public TResult WithSafeFixed<TResult>(ReadOnlyFixedFunc<TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		ReadOnlySpan<Byte> span = this._data;
@@ -97,7 +98,7 @@ public partial class CString
 	/// The function operates on a read-only fixed memory instance using an additional state object.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public unsafe TResult WithSafeFixed<TArg, TResult>(TArg arg, ReadOnlyFixedFunc<TArg, TResult> func)
+	public TResult WithSafeFixed<TArg, TResult>(TArg arg, ReadOnlyFixedFunc<TArg, TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		ReadOnlySpan<Byte> span = this._data;

@@ -3,7 +3,8 @@
 /// <summary>
 /// Utility class for argument validation.
 /// </summary>
-internal static class ValidationUtilities
+[SuppressMessage("csharpsquid", "S6640")]
+internal static unsafe class ValidationUtilities
 {
 	/// <summary>
 	/// Empty <see cref="String"/> for <see cref="CallerArgumentExpressionAttribute"/> default value.
@@ -116,7 +117,7 @@ internal static class ValidationUtilities
 	/// value of type <typeparamref name="TValue"/>.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe void ThrowIfInvalidRefTypePointer<TValue>(Int32 binaryLength) where TValue : unmanaged
+	public static void ThrowIfInvalidRefTypePointer<TValue>(Int32 binaryLength) where TValue : unmanaged
 	{
 		if (binaryLength < sizeof(TValue))
 			throw new InsufficientMemoryException(
@@ -136,7 +137,7 @@ internal static class ValidationUtilities
 	/// Thrown if the size of the binary span is greater than the size of the type <typeparamref name="TValue"/>.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe void ThrowIfInvalidBinarySpanSize<TValue>(ReadOnlySpan<Byte> span,
+	public static void ThrowIfInvalidBinarySpanSize<TValue>(ReadOnlySpan<Byte> span,
 		[CallerArgumentExpression(nameof(span))] String nameofSpan = ValidationUtilities.emptyString)
 		where TValue : unmanaged
 	{
@@ -183,7 +184,7 @@ internal static class ValidationUtilities
 	/// Thrown if the sizes of both source and destination <see langword="unmanaged"/> types are not equal.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe void ThrowIfInvalidCastType<TSource, TDestination>()
+	public static void ThrowIfInvalidCastType<TSource, TDestination>()
 		where TSource : unmanaged where TDestination : unmanaged
 	{
 		if (sizeof(TDestination) != sizeof(TSource))
@@ -364,4 +365,52 @@ internal static class ValidationUtilities
 			throw new ArgumentOutOfRangeException(nameofLength,
 			                                      "Index and length must refer to a location within the sequence.");
 	}
+
+	/// <summary>
+	/// Throws an exception if <paramref name="info"/> contains an invalid <see langword="unmanaged"/> pointer.
+	/// </summary>
+	/// <param name="info">A <see cref="SerializationInfo"/> instance.</param>
+	/// <returns>Deserialized <see langword="unmanaged"/> pointer.</returns>
+	/// <exception cref="ArgumentException">
+	/// Throws an exception if <paramref name="info"/> contains an invalid <see langword="unmanaged"/> pointer.
+	/// </exception>
+	public static void* ThrowIfInvalidPointer(SerializationInfo info)
+	{
+		Int64 l = info.GetInt64("value");
+		if (IntPtr.Size == 4 && l is > Int32.MaxValue or < Int32.MinValue)
+			throw new ArgumentException(
+				"An IntPtr or UIntPtr with an eight byte value cannot be deserialized on a machine with a four byte word size.");
+		return (void*)l;
+	}
+	/// <summary>
+	/// Throws an exception if <paramref name="info"/> is <see langword="null"/>.
+	/// </summary>
+	/// <param name="info">A <see cref="SerializationInfo"/> instance.</param>
+	/// <param name="ptr">An <see langword="unmanaged"/> pointer.</param>
+	/// <exception cref="ArgumentNullException">
+	/// Throws an exception if <paramref name="info"/> is <see langword="null"/>.
+	/// </exception>
+	public static void ThrowIfInvalidSerialization(SerializationInfo info, void* ptr)
+	{
+		if (info == null)
+			throw new ArgumentNullException(nameof(info));
+		info.AddValue("value", (Int64)ptr);
+	}
+	/// <summary>
+	/// Throws an exception if <paramref name="obj"/> is not a value pointer.
+	/// </summary>
+	/// <param name="obj">A <see cref="Object"/> instance.</param>
+	/// <param name="ptr">A <see cref="IntPtr"/> value.</param>
+	/// <param name="nameofPtr">Name of value pointer type.</param>
+	/// <typeparam name="T">Type of referenced value.</typeparam>
+	/// <returns>A <see cref="Int32"/> value that indicates the relative order of the objects being compared.</returns>
+	/// <exception cref="ArgumentException">Throws an exception if <paramref name="obj"/> is not a value pointer.</exception>
+	public static Int32 ThrowIfInvalidValPtr<T>(Object? obj, IntPtr ptr, String nameofPtr) where T : unmanaged
+		=> obj switch
+		{
+			null => 1,
+			ValPtr<T> v => ptr.CompareTo(v.Pointer),
+			ReadOnlyValPtr<T> r => ptr.CompareTo(r.Pointer),
+			_ => throw new ArgumentException($"Object must be of type {nameofPtr}."),
+		};
 }
