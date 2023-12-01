@@ -15,7 +15,7 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 	/// <summary>
 	/// Disposable implementation.
 	/// </summary>
-	private sealed record Disposable : DisposableFixedPointer<FixedContext<T>>, IFixedContext<T>.IDisposable
+	private sealed record Disposable : Disposable<FixedContext<T>>, IFixedContext<T>.IDisposable
 	{
 		/// <inheritdoc/>
 		public Disposable(FixedContext<T> fixedPointer, IDisposable? disposable) : base(fixedPointer, disposable) { }
@@ -29,10 +29,10 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 		[ExcludeFromCodeCoverage]
 		IReadOnlyFixedContext<Byte>.IDisposable IReadOnlyFixedMemory.IDisposable.AsBinaryContext()
 			=> (this.Value.AsBinaryContext() as IConvertibleDisposable<IReadOnlyFixedContext<Byte>.IDisposable>)!
-				.ToDisposable(this.Disposable);
+				.ToDisposable(this);
 		IFixedContext<Byte>.IDisposable IFixedMemory.IDisposable.AsBinaryContext()
 			=> (this.Value.AsBinaryContext() as IConvertibleDisposable<IFixedContext<Byte>.IDisposable>)!.ToDisposable(
-				this.Disposable);
+				this);
 
 		/// <inheritdoc/>
 		public IFixedContext<TDestination>.IDisposable Transformation<TDestination>(
@@ -41,8 +41,8 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 			IFixedContext<TDestination>.IDisposable result = this.Value
 			                                                     .GetTransformation<TDestination>(
 				                                                     out FixedOffset offset)
-			                                                     .CreateDisposable(this.Disposable);
-			residual = offset.ToDisposable(this.Disposable);
+			                                                     .CreateDisposable(this);
+			residual = offset.ToDisposable(this);
 			return result;
 		}
 		/// <inheritdoc/>

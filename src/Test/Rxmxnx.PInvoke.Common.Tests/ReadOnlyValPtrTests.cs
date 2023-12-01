@@ -81,8 +81,13 @@ public sealed class ReadOnlyValPtrTests
 			Assert.Equal(ptrI.Pointer, (ptrI as IWrapper<IntPtr>).Value);
 
 			ReadOnlyValPtrTests.ReferenceTest(ptrI, ref UnsafeLegacy.AsRef(in span[i]));
+			
+			Assert.True(ptrI >= valPtr);
+			Assert.True(valPtr <= ptrI);
 
 			if (i <= 0) continue;
+			Assert.True(ptrI > valPtr);
+			Assert.True(valPtr < ptrI);
 
 			ValPtr<T> ptrIAdd2 = Unsafe.As<ReadOnlyValPtr<T>, ValPtr<T>>(ref UnsafeLegacy.AsRef(in ptrIAdd));
 

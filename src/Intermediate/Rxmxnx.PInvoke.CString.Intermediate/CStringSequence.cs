@@ -74,6 +74,13 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	public Boolean Equals(CStringSequence? other)
 		=> other is not null && this._value.Equals(other._value) && this._lengths.SequenceEqual(other._lengths);
 
+	/// <inheritdoc/>
+	public override Boolean Equals(Object? obj) => obj is CStringSequence cstr && this.Equals(cstr);
+	/// <inheritdoc/>
+	public override String ToString() => this._value;
+	/// <inheritdoc/>
+	public override Int32 GetHashCode() => this._value.GetHashCode();
+
 	/// <summary>
 	/// Returns a reference to the first UTF-8 byte of the <see cref="CStringSequence"/>.
 	/// </summary>
@@ -95,13 +102,6 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		this.WithSafeTransform(result, CStringSequence.BinaryCopyTo);
 		return result;
 	}
-
-	/// <inheritdoc/>
-	public override Boolean Equals(Object? obj) => obj is CStringSequence cstr && this.Equals(cstr);
-	/// <inheritdoc/>
-	public override String ToString() => this._value;
-	/// <inheritdoc/>
-	public override Int32 GetHashCode() => this._value.GetHashCode();
 
 	/// <summary>
 	/// Creates a new UTF-8 text sequence with specific lengths, and initializes each

@@ -15,7 +15,7 @@ internal partial class FixedOffset : IConvertibleDisposable<IFixedMemory.IDispos
 	/// <summary>
 	/// Disposable implementation.
 	/// </summary>
-	private sealed record Disposable : DisposableFixedPointer<FixedOffset>, IFixedMemory.IDisposable
+	private sealed record Disposable : Disposable<FixedOffset>, IFixedMemory.IDisposable
 	{
 		/// <inheritdoc/>
 		public Disposable(FixedOffset fixedPointer, IDisposable? disposable) : base(fixedPointer, disposable) { }
@@ -27,9 +27,9 @@ internal partial class FixedOffset : IConvertibleDisposable<IFixedMemory.IDispos
 		[ExcludeFromCodeCoverage]
 		IReadOnlyFixedContext<Byte>.IDisposable IReadOnlyFixedMemory.IDisposable.AsBinaryContext()
 			=> (this.Value.AsBinaryContext() as IConvertibleDisposable<IReadOnlyFixedContext<Byte>.IDisposable>)!
-				.ToDisposable(this.Disposable);
+				.ToDisposable(this);
 		IFixedContext<Byte>.IDisposable IFixedMemory.IDisposable.AsBinaryContext()
 			=> (this.Value.AsBinaryContext() as IConvertibleDisposable<IFixedContext<Byte>.IDisposable>)!.ToDisposable(
-				this.Disposable);
+				this);
 	}
 }

@@ -130,6 +130,14 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// A <see cref="String"/> that represents the hexadecimal value of the current UTF-8 text.
 	/// </returns>
 	public String ToHexString() => Convert.ToHexString(this).ToLower();
+	/// <summary>
+	/// Returns an enumerator that iterates through the UTF-8 units of the current <see cref="CString"/>.
+	/// </summary>
+	/// <returns>
+	/// An enumerator that can be used to iterate through the UTF-8 units of the current
+	/// <see cref="CString"/>.
+	/// </returns>
+	public ReadOnlySpan<Byte>.Enumerator GetEnumerator() => this.AsSpan().GetEnumerator();
 	
 	/// <inheritdoc/>
 	public Boolean Equals([NotNullWhen(true)] CString? other)
@@ -145,14 +153,6 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// </returns>
 	public Boolean Equals([NotNullWhen(true)] String? other)
 		=> other is not null && StringUtf8Comparator.Create().TextEquals(this, other);
-	/// <summary>
-	/// Returns an enumerator that iterates through the UTF-8 units of the current <see cref="CString"/>.
-	/// </summary>
-	/// <returns>
-	/// An enumerator that can be used to iterate through the UTF-8 units of the current
-	/// <see cref="CString"/>.
-	/// </returns>
-	public ReadOnlySpan<Byte>.Enumerator GetEnumerator() => this.AsSpan().GetEnumerator();
 	/// <summary>
 	/// Determines whether the current <see cref="CString"/> and a specified <see cref="CString"/>
 	/// have the same value.

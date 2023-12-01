@@ -3,7 +3,7 @@
 /// <summary>
 /// Helper class for managing fixed memory pointer blocks.
 /// </summary>
-internal abstract unsafe class FixedPointer : IFixedPointer, IEquatable<FixedPointer>
+internal abstract unsafe partial class FixedPointer : IFixedPointer, IEquatable<FixedPointer>
 {
 	/// <summary>
 	/// Size of the memory block in bytes.

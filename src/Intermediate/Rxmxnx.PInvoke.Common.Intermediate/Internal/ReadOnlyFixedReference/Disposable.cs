@@ -16,7 +16,7 @@ internal partial class ReadOnlyFixedReference<T> : IConvertibleDisposable<IReadO
 	/// <summary>
 	/// Disposable implementation.
 	/// </summary>
-	private sealed record Disposable : DisposableFixedPointer<ReadOnlyFixedReference<T>>,
+	private sealed record Disposable : Disposable<ReadOnlyFixedReference<T>>,
 		IReadOnlyFixedReference<T>.IDisposable
 	{
 		/// <inheritdoc/>
@@ -29,7 +29,7 @@ internal partial class ReadOnlyFixedReference<T> : IConvertibleDisposable<IReadO
 
 		IReadOnlyFixedContext<Byte>.IDisposable IReadOnlyFixedMemory.IDisposable.AsBinaryContext()
 			=> (this.Value.AsBinaryContext() as IConvertibleDisposable<IReadOnlyFixedContext<Byte>.IDisposable>)!
-				.ToDisposable(this.Disposable);
+				.ToDisposable(this);
 
 		/// <inheritdoc/>
 		public IReadOnlyFixedReference<TDestination>.IDisposable Transformation<TDestination>(
@@ -38,8 +38,8 @@ internal partial class ReadOnlyFixedReference<T> : IConvertibleDisposable<IReadO
 			IReadOnlyFixedReference<TDestination>.IDisposable result = this.Value
 			                                                               .GetTransformation<TDestination>(
 				                                                               out ReadOnlyFixedOffset offset)
-			                                                               .CreateDisposable(this.Disposable);
-			residual = offset.ToDisposable(this.Disposable);
+			                                                               .CreateDisposable(this);
+			residual = offset.ToDisposable(this);
 			return result;
 		}
 	}

@@ -49,7 +49,7 @@ public sealed class WriteAsyncTest
 		WrittenCString.AssertWrite(strm, values, false);
 	}
 
-	private static Task AppendWrittenTask(WrittenCString? written, List<WrittenCString> values, MemoryStream strm)
+	private static Task AppendWrittenTask(WrittenCString? written, ICollection<WrittenCString> values, MemoryStream strm)
 	{
 		if (written is null) return Task.CompletedTask;
 		values.Add(written);

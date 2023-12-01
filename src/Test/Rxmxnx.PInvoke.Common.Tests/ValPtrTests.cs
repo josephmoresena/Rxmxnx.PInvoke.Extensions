@@ -82,10 +82,15 @@ public sealed class ValPtrTests
 
 			ValPtrTests.ReferenceTest(ptrI, ref span[i]);
 
+			Assert.True(ptrI >= valPtr);
+			Assert.True(valPtr <= ptrI);
+
 			if (i <= 0) continue;
+			Assert.True(ptrI > valPtr);
+			Assert.True(valPtr < ptrI);
 
 			ReadOnlyValPtr<T> ptrIAdd2 = ptrIAdd;
-
+			
 			Assert.Equal(1, ptrI.CompareTo(valPtr));
 			Assert.Equal(0, ptrI.CompareTo(ptrIAdd));
 			Assert.Equal(0, valPtr.CompareTo(ptrI - i));

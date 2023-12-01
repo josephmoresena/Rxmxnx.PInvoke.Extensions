@@ -71,8 +71,8 @@ public readonly unsafe struct ValPtr<T> : IWrapper<IntPtr>, IEquatable<ValPtr<T>
 	}
 
 	/// <inheritdoc/>
-	public Int32 CompareTo(Object? value)
-		=> value switch
+	public Int32 CompareTo(Object? obj)
+		=> obj switch
 		{
 			null => 1,
 			ValPtr<T> v => this.Pointer.CompareTo(v.Pointer),
@@ -115,8 +115,8 @@ public readonly unsafe struct ValPtr<T> : IWrapper<IntPtr>, IEquatable<ValPtr<T>
 	public String ToString(String? format, IFormatProvider? formatProvider) => this.Pointer.ToString(format, formatProvider);
 	/// <inheritdoc/>
 	public Boolean TryFormat(Span<Char> destination, out Int32 charsWritten, ReadOnlySpan<Char> format = default,
-		IFormatProvider? formatProvider = default)
-		=> this.Pointer.TryFormat(destination, out charsWritten, format, formatProvider);
+		IFormatProvider? provider = default)
+		=> this.Pointer.TryFormat(destination, out charsWritten, format, provider);
 
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="IFixedReference{T}.IDisposable"/> instance from
@@ -205,6 +205,26 @@ public readonly unsafe struct ValPtr<T> : IWrapper<IntPtr>, IEquatable<ValPtr<T>
 	/// </summary>
 	/// <param name="pointer">The pointer to subtract the offset form.</param>
 	public static ValPtr<T> operator --(ValPtr<T> pointer) => (ValPtr<T>)(pointer.Pointer - sizeof(T));
+	/// <summary>Compares two values to determine which is less.</summary>
+	/// <param name="left">The value to compare with <paramref name="right" />.</param>
+	/// <param name="right">The value to compare with <paramref name="left" />.</param>
+	/// <returns><c>true</c> if <paramref name="left" /> is less than <paramref name="right" />; otherwise, <c>false</c>.</returns>
+	public static Boolean operator <(ValPtr<T> left, ValPtr<T> right) => left.CompareTo(right) < 0;
+	/// <summary>Compares two values to determine which is less or equal.</summary>
+	/// <param name="left">The value to compare with <paramref name="right" />.</param>
+	/// <param name="right">The value to compare with <paramref name="left" />.</param>
+	/// <returns><c>true</c> if <paramref name="left" /> is less than or equal to <paramref name="right" />; otherwise, <c>false</c>.</returns>
+	public static Boolean operator <=(ValPtr<T> left, ValPtr<T> right) => left.CompareTo(right) <= 0;
+	/// <summary>Compares two values to determine which is greater.</summary>
+	/// <param name="left">The value to compare with <paramref name="right" />.</param>
+	/// <param name="right">The value to compare with <paramref name="left" />.</param>
+	/// <returns><c>true</c> if <paramref name="left" /> is greater than <paramref name="right" />; otherwise, <c>false</c>.</returns>
+	public static Boolean operator >(ValPtr<T> left, ValPtr<T> right) => left.CompareTo(right) > 0;
+	/// <summary>Compares two values to determine which is greater or equal.</summary>
+	/// <param name="left">The value to compare with <paramref name="right" />.</param>
+	/// <param name="right">The value to compare with <paramref name="left" />.</param>
+	/// <returns><c>true</c> if <paramref name="left" /> is greater than or equal to <paramref name="right" />; otherwise, <c>false</c>.</returns>
+	public static Boolean operator >=(ValPtr<T> left, ValPtr<T> right) => left.CompareTo(right) >= 0;
 
 	/// <summary>
 	/// Adds an offset in <typeparamref name="T"/> units to the value of a pointer.

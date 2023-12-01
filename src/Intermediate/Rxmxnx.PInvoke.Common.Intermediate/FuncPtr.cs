@@ -92,8 +92,8 @@ public readonly unsafe struct FuncPtr<T> : IWrapper<IntPtr>, IEquatable<FuncPtr<
 	public String ToString(String? format, IFormatProvider? formatProvider) => this.Pointer.ToString(format, formatProvider);
 	/// <inheritdoc/>
 	public Boolean TryFormat(Span<Char> destination, out Int32 charsWritten, ReadOnlySpan<Char> format = default,
-		IFormatProvider? formatProvider = default)
-		=> this.Pointer.TryFormat(destination, out charsWritten, format, formatProvider);
+		IFormatProvider? provider = default)
+		=> this.Pointer.TryFormat(destination, out charsWritten, format, provider);
 
 	/// <summary>
 	/// Defines an explicit conversion of a given <see cref="IntPtr"/> to a read-only value pointer.
@@ -136,7 +136,7 @@ public readonly unsafe struct FuncPtr<T> : IWrapper<IntPtr>, IEquatable<FuncPtr<
 	public static FuncPtr<T> Parse(String s, NumberStyles style) => (FuncPtr<T>)IntPtr.Parse(s, style);
 	/// <inheritdoc cref="IntPtr.Parse(String, IFormatProvider)"/>
 	[ExcludeFromCodeCoverage]
-	public static FuncPtr<T> Parse(String s, IFormatProvider? provider) => (FuncPtr<T>)IntPtr.Parse(s, provider);
+	public static FuncPtr<T> Parse(String s, IFormatProvider? formatProvider) => (FuncPtr<T>)IntPtr.Parse(s, formatProvider);
 	/// <inheritdoc cref="IntPtr.Parse(String, NumberStyles, IFormatProvider)"/>
 	[ExcludeFromCodeCoverage]
 	public static FuncPtr<T> Parse(String s, NumberStyles style, IFormatProvider? provider)

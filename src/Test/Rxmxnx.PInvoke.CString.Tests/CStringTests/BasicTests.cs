@@ -370,15 +370,13 @@ public sealed class BasicTests
 			i++;
 		}
 	}
-	private static void EnumerationTest(IEnumerable<Byte> cstr1, IEnumerable<Byte> cstr2)
+	private static void EnumerationTest(CString cstr1, IEnumerable<Byte> cstr2)
 	{
-		Int32 i = 0;
-		IEnumerator<Byte> enumerator1 = cstr1.GetEnumerator();
+		using IEnumerator<Byte> enumerator1 = (cstr1 as IEnumerable<Byte>).GetEnumerator();
 		foreach (Byte utf8Char in cstr2)
 		{
 			enumerator1.MoveNext();
 			Assert.Equal(enumerator1.Current, utf8Char);
-			i++;
 		}
 	}
 	private static unsafe void TestBytesPointer(Byte[] bytes, String text, CString cstr1)

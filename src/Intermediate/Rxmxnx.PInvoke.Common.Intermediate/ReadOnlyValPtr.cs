@@ -71,8 +71,8 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	}
 
 	/// <inheritdoc/>
-	public Int32 CompareTo(Object? value)
-		=> value switch
+	public Int32 CompareTo(Object? obj)
+		=> obj switch
 		{
 			null => 1,
 			ReadOnlyValPtr<T> r => this.Pointer.CompareTo(r.Pointer),
@@ -96,6 +96,27 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	public override Int32 GetHashCode() => new IntPtr(this._value).GetHashCode();
 	/// <inheritdoc/>
 	public override String ToString() => this.Pointer.ToString();
+
+	/// <summary>
+	/// Converts the numeric value of the current <see cref="ReadOnlyValPtr{T}"/> object to its equivalent
+	/// <see cref="String"/> representation.
+	/// </summary>
+	/// <param name="format">
+	/// A format specification that governs how the current <see cref="ReadOnlyValPtr{T}"/> object is converted.
+	/// </param>
+	/// <returns>
+	/// The <see cref="String"/> representation of the value of the current <see cref="ReadOnlyValPtr{T}"/> object.
+	/// </returns>
+	/// <exception cref="FormatException"><paramref name="format"/> is invalid or not supported.</exception>
+	public String ToString(String? format) => this.Pointer.ToString(format);
+	/// <inheritdoc cref="IntPtr.ToString(IFormatProvider?)"/>
+	public String ToString(IFormatProvider? formatProvider) => this.Pointer.ToString(formatProvider);
+	/// <inheritdoc/>
+	public String ToString(String? format, IFormatProvider? formatProvider) => this.Pointer.ToString(format, formatProvider);
+	/// <inheritdoc/>
+	public Boolean TryFormat(Span<Char> destination, out Int32 charsWritten, ReadOnlySpan<Char> format = default,
+		IFormatProvider? provider = default)
+		=> this.Pointer.TryFormat(destination, out charsWritten, format, provider);
 
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="IReadOnlyFixedReference{T}.IDisposable"/> instance from
@@ -122,27 +143,6 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// </remarks>
 	public IReadOnlyFixedContext<T>.IDisposable GetUnsafeFixedContext(Int32 count, IDisposable? disposable = default)
 		=> new ReadOnlyFixedContext<T>(this._value, count).ToDisposable(disposable);
-
-	/// <summary>
-	/// Converts the numeric value of the current <see cref="ReadOnlyValPtr{T}"/> object to its equivalent
-	/// <see cref="String"/> representation.
-	/// </summary>
-	/// <param name="format">
-	/// A format specification that governs how the current <see cref="ReadOnlyValPtr{T}"/> object is converted.
-	/// </param>
-	/// <returns>
-	/// The <see cref="String"/> representation of the value of the current <see cref="ReadOnlyValPtr{T}"/> object.
-	/// </returns>
-	/// <exception cref="FormatException"><paramref name="format"/> is invalid or not supported.</exception>
-	public String ToString(String? format) => this.Pointer.ToString(format);
-	/// <inheritdoc cref="IntPtr.ToString(IFormatProvider?)"/>
-	public String ToString(IFormatProvider? formatProvider) => this.Pointer.ToString(formatProvider);
-	/// <inheritdoc/>
-	public String ToString(String? format, IFormatProvider? formatProvider) => this.Pointer.ToString(format, formatProvider);
-	/// <inheritdoc/>
-	public Boolean TryFormat(Span<Char> destination, out Int32 charsWritten, ReadOnlySpan<Char> format = default,
-		IFormatProvider? formatProvider = default)
-		=> this.Pointer.TryFormat(destination, out charsWritten, format, formatProvider);
 
 	/// <summary>
 	/// Defines an explicit conversion of a given <see cref="IntPtr"/> to a read-only value pointer.
@@ -204,6 +204,26 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// <param name="pointer">The pointer to subtract the offset form.</param>
 	public static ReadOnlyValPtr<T> operator --(ReadOnlyValPtr<T> pointer)
 		=> (ReadOnlyValPtr<T>)(pointer.Pointer - sizeof(T));
+	/// <summary>Compares two values to determine which is less.</summary>
+	/// <param name="left">The value to compare with <paramref name="right" />.</param>
+	/// <param name="right">The value to compare with <paramref name="left" />.</param>
+	/// <returns><c>true</c> if <paramref name="left" /> is less than <paramref name="right" />; otherwise, <c>false</c>.</returns>
+	public static Boolean operator <(ReadOnlyValPtr<T> left, ReadOnlyValPtr<T> right) => left.CompareTo(right) < 0;
+	/// <summary>Compares two values to determine which is less or equal.</summary>
+	/// <param name="left">The value to compare with <paramref name="right" />.</param>
+	/// <param name="right">The value to compare with <paramref name="left" />.</param>
+	/// <returns><c>true</c> if <paramref name="left" /> is less than or equal to <paramref name="right" />; otherwise, <c>false</c>.</returns>
+	public static Boolean operator <=(ReadOnlyValPtr<T> left, ReadOnlyValPtr<T> right) => left.CompareTo(right) <= 0;
+	/// <summary>Compares two values to determine which is greater.</summary>
+	/// <param name="left">The value to compare with <paramref name="right" />.</param>
+	/// <param name="right">The value to compare with <paramref name="left" />.</param>
+	/// <returns><c>true</c> if <paramref name="left" /> is greater than <paramref name="right" />; otherwise, <c>false</c>.</returns>
+	public static Boolean operator >(ReadOnlyValPtr<T> left, ReadOnlyValPtr<T> right) => left.CompareTo(right) > 0;
+	/// <summary>Compares two values to determine which is greater or equal.</summary>
+	/// <param name="left">The value to compare with <paramref name="right" />.</param>
+	/// <param name="right">The value to compare with <paramref name="left" />.</param>
+	/// <returns><c>true</c> if <paramref name="left" /> is greater than or equal to <paramref name="right" />; otherwise, <c>false</c>.</returns>
+	public static Boolean operator >=(ReadOnlyValPtr<T> left, ReadOnlyValPtr<T> right) => left.CompareTo(right) >= 0;
 
 	/// <summary>
 	/// Adds an offset in <typeparamref name="T"/> units to the value of a pointer.

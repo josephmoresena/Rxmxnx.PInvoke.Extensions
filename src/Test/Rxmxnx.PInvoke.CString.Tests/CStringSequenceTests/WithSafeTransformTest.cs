@@ -263,7 +263,7 @@ public sealed class WithSafeTransformTest
 		}
 		return result;
 	}
-	private static IReadOnlyList<Int32> GetIndices()
+	private static Int32[] GetIndices()
 	{
 		Queue<Int32> queue = new(TestSet.GetIndices());
 		List<Int32> result = new();
