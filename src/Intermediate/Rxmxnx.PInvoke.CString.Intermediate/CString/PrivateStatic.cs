@@ -56,7 +56,7 @@ public partial class CString
 	/// byte data, otherwise <see langword="false"/>.
 	/// </returns>
 	private static unsafe Boolean Equals<TInteger>(ReadOnlySpan<Byte> current, ReadOnlySpan<Byte> other)
-		where TInteger : unmanaged
+		where TInteger : unmanaged, IEquatable<TInteger>
 	{
 		if (current.Length != other.Length) return false;
 		ReadOnlySpan<TInteger> currentIntegers = MemoryMarshal.Cast<Byte, TInteger>(current);
@@ -80,7 +80,7 @@ public partial class CString
 	/// elements, otherwise <see langword="false"/>.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static Boolean SequenceEquals<T>(ReadOnlySpan<T> current, ReadOnlySpan<T> other) where T : unmanaged
+	private static Boolean SequenceEquals<T>(ReadOnlySpan<T> current, ReadOnlySpan<T> other) where T : unmanaged, IEquatable<T>
 	{
 		for (Int32 i = 0; i < current.Length; i++)
 		{
