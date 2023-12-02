@@ -23,10 +23,10 @@ the wrapper.
 
 #### Static
 
-- `Create<TValue>(in TValue value)`: Creates a new instance of `IWrapper<TValue>` with the specified value.
-- `CreateNullable<TValue>(in TValue? value)`: Creates a new instance of `IWrapper<TValue?>` with the specified nullable
+- `Create<TValue>(in TValue)`: Creates a new instance of `IWrapper<TValue>` with the specified value.
+- `CreateNullable<TValue>(in TValue?)`: Creates a new instance of `IWrapper<TValue?>` with the specified nullable
   value.
-- `CreateObject<TObject>(TObject obj)`: Creates a new instance of `IWrapper<TObject>` with the specified object.
+- `CreateObject<TObject>(TObject)`: Creates a new instance of `IWrapper<TObject>` with the specified object.
 
 ### Rxmxnx.PInvoke.IWrapper<T>
 
@@ -36,7 +36,7 @@ The `Rxmxnx.PInvoke.IWrapper<T>` interface represents a generic wrapper for a va
 
 #### Static
 
-- `Create(T? value)`: Creates a new instance of `IWrapper<T?>` with the specified value.
+- `Create(T?)`: Creates a new instance of `IWrapper<T?>` with the specified value.
 
 ### Rxmxnx.PInvoke.IReferenceableWrapper
 
@@ -45,10 +45,10 @@ for creating instances of the wrapper.
 
 #### Static
 
-- `Create<TValue>(in TValue value)`: Creates a new instance of `IReferenceableWrapper<TValue>` with the specified value.
-- `CreateNullable<TValue>(in TValue? value)`: Creates a new instance of `IReferenceableWrapper<TValue?>` with the
+- `Create<TValue>(in TValue)`: Creates a new instance of `IReferenceableWrapper<TValue>` with the specified value.
+- `CreateNullable<TValue>(in TValue?)`: Creates a new instance of `IReferenceableWrapper<TValue?>` with the
   specified nullable value.
-- `CreateObject<TObject>(TObject obj)`: Creates a new instance of `IReferenceableWrapper<TObject>` with the specified
+- `CreateObject<TObject>(TObject)`: Creates a new instance of `IReferenceableWrapper<TObject>` with the specified
   object.
 
 ### Rxmxnx.PInvoke.IReferenceableWrapper<T>
@@ -60,7 +60,7 @@ The `Rxmxnx.PInvoke.IReferenceableWrapper<T>` interface represents a referenceab
 
 #### Static
 
-- `Create(T? value)`: Creates a new instance of `IReferenceableWrapper<T?>` with the specified value.
+- `Create(T?)`: Creates a new instance of `IReferenceableWrapper<T?>` with the specified value.
 
 ### Rxmxnx.PInvoke.IMutableWrapper
 
@@ -82,7 +82,7 @@ The `Rxmxnx.PInvoke.IMutableWrapper<T>` interface represents a mutable wrapper f
 
 #### Static
 
-- `Create(T? value)`: Creates a new instance of `IMutableWrapper<T?>` with the specified value.
+- `Create(T?)`: Creates a new instance of `IMutableWrapper<T?>` with the specified value.
 
 ### Rxmxnx.PInvoke.IMutableReference
 
@@ -105,7 +105,7 @@ The `Rxmxnx.PInvoke.IMutableReference<T>` interface represents a mutable referen
 
 #### Static
 
-- `Create(T? value)`: Creates a new instance of `IMutableReference<T?>` with the specified value.
+- `Create(T?)`: Creates a new instance of `IMutableReference<T?>` with the specified value.
 
 ### Rxmxnx.PInvoke.ValueRegion<T>
 
@@ -119,11 +119,62 @@ The `Rxmxnx.PInvoke.IMutableReference<T>` interface represents a mutable referen
 
 #### Static
 
-- `Create(ReadOnlySpanFunc<T> func)`: Creates a new `ValueRegion<T>` instance by invoking the
+- `Create(ReadOnlySpanFunc<T>)`: Creates a new `ValueRegion<T>` instance by invoking the
   specified `ReadOnlySpanFunc<T>` delegate.
-- `Create(T[] array)`: Creates a new `ValueRegion<T>` instance from the specified array.
-- `Create(IntPtr pointer, Int32 length)`: Creates a new `ValueRegion<T>` instance from the memory pointed to by the
+- `Create(T[])`: Creates a new `ValueRegion<T>` instance from the specified array.
+- `Create(IntPtr, Int32)`: Creates a new `ValueRegion<T>` instance from the memory pointed to by the
   specified pointer with the specified length.
+
+### Rxmxnx.PInvoke.FuncPtr<TDelegate>
+
+`Rxmxnx.PInvoke.FuncPtr<TDelegate>` is a value representing a pointer to a function of type TDelegate.
+
+- `IsZero`: Indicates whether current pointer is zero.
+- `Pointer`: Internal pointer.
+- `Invoke`: Function delegate.
+
+#### Operators
+
+- `==`: Determines whether two `FuncPtr<TDelegate>` objects are equal.
+- `!=`: Determines whether two `FuncPtr<TDelegate>` objects are not equal.
+
+### Rxmxnx.PInvoke.ReadOnlyValPtr<T>
+
+`Rxmxnx.PInvoke.ReadOnlyValPtr<T>` is a value representing a pointer to a read-only value of type T.
+
+- `IsZero`: Indicates whether current pointer is zero.
+- `Pointer`: Internal pointer.
+- `Reference`: The read-only referenced T value.
+- `GetUnsafeFixedReference(IDisposable?)`: Creates a read-only unsafe disposable fixed reference instance from current pointer.
+- `GetUnsafeFixedContext(Int32, IDisposable?)`: Creates a read-only unsafe disposable fixed context instance from current pointer.
+
+#### Operators
+
+- `==`: Determines whether two `ReadOnlyValPtr<TDelegate>` objects are equal.
+- `!=`: Determines whether two `ReadOnlyValPtr<TDelegate>` objects are not equal.
+- `<`: Determines whether one `ReadOnlyValPtr<TDelegate>` object is less than another.
+- `>`: Determines whether one `ReadOnlyValPtr<TDelegate>` object is greater than another.
+- `<=`: Determines whether one `ReadOnlyValPtr<TDelegate>` object is less than or equal to another.
+- `>=`: Determines whether one `ReadOnlyValPtr<TDelegate>` object is greater than or equal to another.
+
+### Rxmxnx.PInvoke.ValPtr<T>
+
+`Rxmxnx.PInvoke.ValPtr<T>` is a value representing a pointer to a value of type T.
+
+- `IsZero`: Indicates whether current pointer is zero.
+- `Pointer`: Internal pointer.
+- `Reference`: The referenced T value.
+- `GetUnsafeFixedReference(IDisposable?)`: Creates an unsafe disposable fixed reference instance from current pointer.
+- `GetUnsafeFixedContext(Int32, IDisposable?)`: Creates an unsafe disposable fixed context instance from current pointer.
+
+#### Operators
+
+- `==`: Determines whether two `ValPtr<TDelegate>` objects are equal.
+- `!=`: Determines whether two `ValPtr<TDelegate>` objects are not equal.
+- `<`: Determines whether one `ValPtr<TDelegate>` object is less than another.
+- `>`: Determines whether one `ValPtr<TDelegate>` object is greater than another.
+- `<=`: Determines whether one `ValPtr<TDelegate>` object is less than or equal to another.
+- `>=`: Determines whether one `ValPtr<TDelegate>` object is greater than or equal to another.
 
 ### Rxmxnx.PInvoke.CString
 
@@ -395,6 +446,8 @@ with memory blocks.
 - `GetUnsafeIntPtr<T>(Span<T>)`: Returns the unmanaged IntPtr representation of the specified memory block.
 - `GetUnsafeUIntPtr<T>(Span<T>)`: Returns the unmanaged UIntPtr representation of the specified memory block.
 - `GetUnsafeUIntPtr<T>(ReadOnlySpan<T>)`: Returns the unmanaged UIntPtr representation of the specified memory block.
+- `GetFixedContext<T>(ReadOnlyMemory<T>)`: Creates a disposable read-only fixed context instance by pinning the current read-only memory instance.
+- `GetFixedContext<T>(Memory<T>)`: Creates a disposable fixed context  instance by pinning the current memory instance.
 - `WithSafeFixed<T>(Span<T>, FixedContextAction<T>)`: Performs a fixed context action on the specified memory block.
 - `WithSafeFixed<T>(Span<T>, ReadOnlyFixedContextAction<T>)`: Performs a readonly fixed context action on the specified
   memory block.

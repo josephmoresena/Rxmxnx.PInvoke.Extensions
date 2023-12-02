@@ -1,19 +1,19 @@
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// A platform-specific type that is used to represent a pointer to a read-only <typeparamref name="T"/> value.
+/// A platform-specific type that is used to represent a pointer to a <typeparamref name="TDelegate"/> function.
 /// </summary>
-/// <typeparam name="T">A <see langword="unmanaged"/> <see cref="ValueType"/>.</typeparam>
+/// <typeparam name="TDelegate">A <see cref="Delegate"/> type.</typeparam>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
 [SuppressMessage("csharpsquid", "S6640")]
-public readonly unsafe struct FuncPtr<T> : IWrapper<IntPtr>, IEquatable<FuncPtr<T>>, ISpanFormattable, ISerializable
-	where T : Delegate
+public readonly unsafe struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<FuncPtr<TDelegate>>, ISpanFormattable, ISerializable
+	where TDelegate : Delegate
 {
 	/// <summary>
 	/// A read-only field that represents a pointer that has been initialized to zero.
 	/// </summary>
-	public static readonly FuncPtr<T> Zero = default;
+	public static readonly FuncPtr<TDelegate> Zero = default;
 
 	/// <summary>
 	/// Internal pointer.
@@ -30,7 +30,7 @@ public readonly unsafe struct FuncPtr<T> : IWrapper<IntPtr>, IEquatable<FuncPtr<
 	public Boolean IsZero => IntPtr.Zero == (IntPtr)this._value;
 
 	/// <inheritdoc cref="IFixedMethod{T}.Method"/>
-	public T Invoke => !this.IsZero ? Marshal.GetDelegateForFunctionPointer<T>(this.Pointer) : default!;
+	public TDelegate Invoke => !this.IsZero ? Marshal.GetDelegateForFunctionPointer<TDelegate>(this.Pointer) : default!;
 
 	/// <summary>
 	/// Private constructor.
@@ -54,11 +54,11 @@ public readonly unsafe struct FuncPtr<T> : IWrapper<IntPtr>, IEquatable<FuncPtr<
 		=> ValidationUtilities.ThrowIfInvalidSerialization(info, this._value);
 
 	/// <inheritdoc/>
-	public Boolean Equals(FuncPtr<T> other) => this.Pointer == other.Pointer;
+	public Boolean Equals(FuncPtr<TDelegate> other) => this.Pointer == other.Pointer;
 
 	/// <inheritdoc/>
 	public override Boolean Equals([NotNullWhen(true)] Object? obj)
-		=> obj is FuncPtr<T> other && this._value == other._value;
+		=> obj is FuncPtr<TDelegate> other && this._value == other._value;
 	/// <inheritdoc/>
 	public override Int32 GetHashCode() => new IntPtr(this._value).GetHashCode();
 	/// <inheritdoc/>
@@ -91,12 +91,12 @@ public readonly unsafe struct FuncPtr<T> : IWrapper<IntPtr>, IEquatable<FuncPtr<
 	/// Defines an explicit conversion of a given <see cref="IntPtr"/> to a read-only value pointer.
 	/// </summary>
 	/// <param name="ptr">A <see cref="IntPtr"/> to explicitly convert.</param>
-	public static explicit operator FuncPtr<T>(IntPtr ptr) => new(ptr.ToPointer());
+	public static explicit operator FuncPtr<TDelegate>(IntPtr ptr) => new(ptr.ToPointer());
 	/// <summary>
 	/// Defines an implicit conversion of a given <see cref="FuncPtr{T}"/> to a pointer.
 	/// </summary>
 	/// <param name="valPtr">A <see cref="FuncPtr{T}"/> to implicitly convert.</param>
-	public static implicit operator IntPtr(FuncPtr<T> valPtr) => new(valPtr._value);
+	public static implicit operator IntPtr(FuncPtr<TDelegate> valPtr) => new(valPtr._value);
 
 	/// <summary>
 	/// Determines whether two specified instances of <see cref="FuncPtr{T}"/> are equal.
@@ -107,7 +107,7 @@ public readonly unsafe struct FuncPtr<T> : IWrapper<IntPtr>, IEquatable<FuncPtr<
 	/// <see langword="true"/> if <paramref name="value1"/> equals <paramref name="value2"/>;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
-	public static Boolean operator ==(FuncPtr<T> value1, FuncPtr<T> value2) => value1._value == value2._value;
+	public static Boolean operator ==(FuncPtr<TDelegate> value1, FuncPtr<TDelegate> value2) => value1._value == value2._value;
 	/// <summary>
 	/// Determines whether two specified instances of <see cref="FuncPtr{T}"/> are not equal.
 	/// </summary>
@@ -118,56 +118,56 @@ public readonly unsafe struct FuncPtr<T> : IWrapper<IntPtr>, IEquatable<FuncPtr<
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
 	/// <inheritdoc cref="IntPtr.op_Inequality(IntPtr, IntPtr)"/>
-	public static Boolean operator !=(FuncPtr<T> value1, FuncPtr<T> value2) => value1._value != value2._value;
+	public static Boolean operator !=(FuncPtr<TDelegate> value1, FuncPtr<TDelegate> value2) => value1._value != value2._value;
 
 	/// <inheritdoc cref="IntPtr.Parse(String)"/>
 	[ExcludeFromCodeCoverage]
-	public static FuncPtr<T> Parse(String s) => (FuncPtr<T>)IntPtr.Parse(s);
+	public static FuncPtr<TDelegate> Parse(String s) => (FuncPtr<TDelegate>)IntPtr.Parse(s);
 	/// <inheritdoc cref="IntPtr.Parse(String, NumberStyles)"/>
 	[ExcludeFromCodeCoverage]
-	public static FuncPtr<T> Parse(String s, NumberStyles style) => (FuncPtr<T>)IntPtr.Parse(s, style);
+	public static FuncPtr<TDelegate> Parse(String s, NumberStyles style) => (FuncPtr<TDelegate>)IntPtr.Parse(s, style);
 	/// <inheritdoc cref="IntPtr.Parse(String, IFormatProvider)"/>
 	[ExcludeFromCodeCoverage]
-	public static FuncPtr<T> Parse(String s, IFormatProvider? formatProvider)
-		=> (FuncPtr<T>)IntPtr.Parse(s, formatProvider);
+	public static FuncPtr<TDelegate> Parse(String s, IFormatProvider? formatProvider)
+		=> (FuncPtr<TDelegate>)IntPtr.Parse(s, formatProvider);
 	/// <inheritdoc cref="IntPtr.Parse(String, NumberStyles, IFormatProvider)"/>
 	[ExcludeFromCodeCoverage]
-	public static FuncPtr<T> Parse(String s, NumberStyles style, IFormatProvider? provider)
-		=> (FuncPtr<T>)IntPtr.Parse(s, style, provider);
+	public static FuncPtr<TDelegate> Parse(String s, NumberStyles style, IFormatProvider? provider)
+		=> (FuncPtr<TDelegate>)IntPtr.Parse(s, style, provider);
 	/// <inheritdoc cref="IntPtr.Parse(ReadOnlySpan{Char}, NumberStyles, IFormatProvider)"/>
 	[ExcludeFromCodeCoverage]
-	public static FuncPtr<T> Parse(ReadOnlySpan<Char> s, NumberStyles style = NumberStyles.Integer,
+	public static FuncPtr<TDelegate> Parse(ReadOnlySpan<Char> s, NumberStyles style = NumberStyles.Integer,
 		IFormatProvider? provider = default)
-		=> (FuncPtr<T>)IntPtr.Parse(s, style, provider);
+		=> (FuncPtr<TDelegate>)IntPtr.Parse(s, style, provider);
 
 	/// <inheritdoc cref="IntPtr.TryParse(String?, out IntPtr)"/>
 	[ExcludeFromCodeCoverage]
-	public static Boolean TryParse([NotNullWhen(true)] String? s, out FuncPtr<T> result)
+	public static Boolean TryParse([NotNullWhen(true)] String? s, out FuncPtr<TDelegate> result)
 	{
 		Unsafe.SkipInit(out result);
-		return IntPtr.TryParse(s, out Unsafe.As<FuncPtr<T>, IntPtr>(ref result));
+		return IntPtr.TryParse(s, out Unsafe.As<FuncPtr<TDelegate>, IntPtr>(ref result));
 	}
 	/// <inheritdoc cref="IntPtr.TryParse(String?, NumberStyles, IFormatProvider?, out IntPtr)"/>
 	[ExcludeFromCodeCoverage]
 	public static Boolean TryParse([NotNullWhen(true)] String? s, NumberStyles style, IFormatProvider? provider,
-		out FuncPtr<T> result)
+		out FuncPtr<TDelegate> result)
 	{
 		Unsafe.SkipInit(out result);
-		return IntPtr.TryParse(s, style, provider, out Unsafe.As<FuncPtr<T>, IntPtr>(ref result));
+		return IntPtr.TryParse(s, style, provider, out Unsafe.As<FuncPtr<TDelegate>, IntPtr>(ref result));
 	}
 	/// <inheritdoc cref="IntPtr.TryParse(ReadOnlySpan{Char}, out IntPtr)"/>
 	[ExcludeFromCodeCoverage]
-	public static Boolean TryParse(ReadOnlySpan<Char> s, out FuncPtr<T> result)
+	public static Boolean TryParse(ReadOnlySpan<Char> s, out FuncPtr<TDelegate> result)
 	{
 		Unsafe.SkipInit(out result);
-		return IntPtr.TryParse(s, out Unsafe.As<FuncPtr<T>, IntPtr>(ref result));
+		return IntPtr.TryParse(s, out Unsafe.As<FuncPtr<TDelegate>, IntPtr>(ref result));
 	}
 	/// <inheritdoc cref="IntPtr.TryParse(ReadOnlySpan{Char}, NumberStyles, IFormatProvider?, out IntPtr)"/>
 	[ExcludeFromCodeCoverage]
 	public static Boolean TryParse(ReadOnlySpan<Char> s, NumberStyles style, IFormatProvider? provider,
-		out FuncPtr<T> result)
+		out FuncPtr<TDelegate> result)
 	{
 		Unsafe.SkipInit(out result);
-		return IntPtr.TryParse(s, style, provider, out Unsafe.As<FuncPtr<T>, IntPtr>(ref result));
+		return IntPtr.TryParse(s, style, provider, out Unsafe.As<FuncPtr<TDelegate>, IntPtr>(ref result));
 	}
 }

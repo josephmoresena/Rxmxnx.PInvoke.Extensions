@@ -192,7 +192,7 @@ public static unsafe partial class MemoryBlockExtensions
 		return result;
 	}
 	/// <summary>
-	/// Creates a <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance from current
+	/// Creates a <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance by pinning the current
 	/// <see cref="ReadOnlyMemory{T}"/> instance.
 	/// </summary>
 	/// <typeparam name="T">
@@ -210,7 +210,7 @@ public static unsafe partial class MemoryBlockExtensions
 				new ReadOnlyFixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);
 	}
 	/// <summary>
-	/// Creates a <see cref="IFixedContext{T}.IDisposable"/> instance from current
+	/// Creates a <see cref="IFixedContext{T}.IDisposable"/> instance by pinning the current
 	/// <see cref="Memory{T}"/> instance.
 	/// </summary>
 	/// <typeparam name="T">
