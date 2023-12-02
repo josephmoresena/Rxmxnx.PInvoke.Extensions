@@ -36,13 +36,16 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	/// </exception>
 	public Int32 CompareTo(Object? obj)
 	{
-		if (obj is null)
-			return 1;
-		if (obj is String str)
-			return this.CompareTo(str);
-
-		ValidationUtilities.ThrowIfInvalidCastType(obj, nameof(CString), out CString cstr);
-		return this.CompareTo(cstr);
+		switch (obj)
+		{
+			case null:
+				return 1;
+			case String str:
+				return this.CompareTo(str);
+			default:
+				ValidationUtilities.ThrowIfInvalidCastType(obj, nameof(CString), out CString cstr);
+				return this.CompareTo(cstr);
+		}
 	}
 	/// <summary>
 	/// Compares the current instance with another <see cref="CString"/> instance and returns an
@@ -409,14 +412,10 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	/// </list>
 	/// </returns>
 	private static Int32? NullCompare<TString>(CString? cstrA, TString? tstrB) where TString : class
-	{
-		if (cstrA is null && tstrB is null)
-			return 0;
-		if (cstrA is null)
-			return -1;
-		if (tstrB is null)
-			return 1;
-
-		return default;
-	}
+		=> cstrA switch
+		{
+			null when tstrB is null => 0,
+			null => -1,
+			_ => tstrB is null ? 1 : default(Int32?),
+		};
 }

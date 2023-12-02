@@ -4,6 +4,7 @@
 /// Fixed method class, used to hold a fixed pointer to a method delegate.
 /// </summary>
 /// <typeparam name="TDelegate">Type of the method delegate which is being fixed.</typeparam>
+[SuppressMessage("csharpsquid", "S6640")]
 internal sealed unsafe class FixedDelegate<TDelegate> : FixedPointer, IFixedMethod<TDelegate> where TDelegate : Delegate
 {
 	/// <summary>
@@ -11,6 +12,13 @@ internal sealed unsafe class FixedDelegate<TDelegate> : FixedPointer, IFixedMeth
 	/// </summary>
 	/// <remarks>It prevents the delegate from being collected by the garbage collector.</remarks>
 	private readonly GCHandle? _handle;
+
+	/// <inheritdoc/>
+	public override Type Type => typeof(TDelegate);
+	/// <inheritdoc/>
+	public override Int32 BinaryOffset => default;
+	/// <inheritdoc/>
+	public override Boolean IsFunction => true;
 
 	/// <summary>
 	/// Constructor that takes a method delegate and stores a pointer to it.
@@ -26,21 +34,13 @@ internal sealed unsafe class FixedDelegate<TDelegate> : FixedPointer, IFixedMeth
 	/// <param name="ptr">Pointer to the method to be fixed.</param>
 	private FixedDelegate(void* ptr) : base(ptr, sizeof(IntPtr), true) { }
 
-	/// <inheritdoc/>
-	public override Type Type => typeof(TDelegate);
-	/// <inheritdoc/>
-	public override Int32 BinaryOffset => default;
-	/// <inheritdoc/>
-	public override Boolean IsFunction => true;
-
 	TDelegate IFixedMethod<TDelegate>.Method => this.CreateDelegate<TDelegate>();
 
 	/// <inheritdoc/>
 	public override void Unload()
 	{
 		base.Unload();
-		if (this._handle.HasValue)
-			this._handle.Value.Free();
+		this._handle?.Free();
 	}
 
 	/// <summary>

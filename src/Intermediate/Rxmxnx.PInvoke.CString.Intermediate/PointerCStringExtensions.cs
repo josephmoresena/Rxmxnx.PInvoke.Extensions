@@ -5,7 +5,8 @@
 /// instances.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
-public static class PointerCStringExtensions
+[SuppressMessage("csharpsquid", "S6640")]
+public static unsafe class PointerCStringExtensions
 {
 	/// <summary>
 	/// Creates a <see cref="CString"/> instance using the memory reference pointed to by the
@@ -44,7 +45,7 @@ public static class PointerCStringExtensions
 	/// The <see cref="CString"/> does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe CString GetUnsafeCString(this UIntPtr uptr, Int32 length)
+	public static CString GetUnsafeCString(this UIntPtr uptr, Int32 length)
 	{
 		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
 		if (uptr == UIntPtr.Zero)

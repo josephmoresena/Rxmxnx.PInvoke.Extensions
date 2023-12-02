@@ -73,7 +73,7 @@ public sealed class BasicTests : ValueRegionTestBase
 		for (Int32 i = 0; i < values.Length; i++)
 		{
 			Assert.Equal(values[i], region[i]);
-			Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(span[i]), ref values[i]));
+			Assert.True(Unsafe.AreSame(ref UnsafeLegacy.AsRef(in span[i]), ref values[i]));
 		}
 
 		if (array is not null)

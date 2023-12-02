@@ -101,11 +101,7 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
 	/// </list>
 	/// </returns>
 	public Int32 Compare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
-	{
-		if (this._ordinal)
-			return this.OrdinalCompare(textA, textB);
-		return this.Compare(textA, textB, this._ignoreCase);
-	}
+		=> this._ordinal ? this.OrdinalCompare(textA, textB) : this.Compare(textA, textB, this._ignoreCase);
 	/// <summary>
 	/// Determines whether the text in <paramref name="textA"/> and the text in <paramref name="textB"/> are equivalent,
 	/// using specified culture, case, and sorting rules during the comparison.
@@ -130,13 +126,11 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
 			//If the runes are not comparable to each other a full text comparison will be needed.
 			if (runeA is null || runeB is null) return this.Compare(textA0, textB0, this._ignoreCase) == 0;
 			//If the value of both runes is the same, no further comparison is necessary.
-			if (runeA != runeB)
-			{
-				ReadOnlySpan<Char> strA = Char.ConvertFromUtf32(runeA.Value.Value);
-				ReadOnlySpan<Char> strB = Char.ConvertFromUtf32(runeB.Value.Value);
-				if (this._culture.CompareInfo.Compare(strA, strB, this.GetOptions(this._ignoreCase)) != 0)
-					return false;
-			}
+			if (runeA == runeB) continue;
+			ReadOnlySpan<Char> strA = Char.ConvertFromUtf32(runeA.Value.Value);
+			ReadOnlySpan<Char> strB = Char.ConvertFromUtf32(runeB.Value.Value);
+			if (this._culture.CompareInfo.Compare(strA, strB, this.GetOptions(this._ignoreCase)) != 0)
+				return false;
 		}
 
 		return true;

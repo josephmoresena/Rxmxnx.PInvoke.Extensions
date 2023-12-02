@@ -7,10 +7,19 @@ public sealed class SegmentTests
 	[Fact]
 	internal void InvalidTest()
 	{
-		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[-1..]);
-		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[1..]);
-		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[..-1]);
-		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[..1]);
+		const Int32 zero = 0;
+		Int32 varIndex = 1;
+		
+		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[varIndex..]);
+		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[..varIndex]);
+
+		varIndex = -1;
+		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[varIndex..]);
+		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[..varIndex]);
+
+		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(varIndex, zero));
+		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(zero,1));
+		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(varIndex,1));
 	}
 
 	[Fact]

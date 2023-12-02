@@ -41,6 +41,8 @@ public sealed class WithSafeFixedTest
 
 	private void Test<T>() where T : unmanaged
 	{
+		IntPtr ptr = default;
+		Boolean a = ptr >= IntPtr.Zero;
 		T[] values = WithSafeFixedTest.fixture.CreateMany<T>(10).ToArray();
 		Span<T> span = values;
 		ReadOnlySpan<T> readOnlySpan = span;

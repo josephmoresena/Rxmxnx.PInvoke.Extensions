@@ -38,8 +38,8 @@ public sealed class GetHashCodeTest : FixedReferenceTestsBase
 	private void Test<T>() where T : unmanaged
 	{
 		T value = FixedMemoryTestsBase.fixture.Create<T>();
-		this.WithFixed(ref Unsafe.AsRef(value), GetHashCodeTest.Test);
-		this.WithFixed(ref Unsafe.AsRef(value), GetHashCodeTest.ReadOnlyTest);
+		this.WithFixed(ref value, GetHashCodeTest.Test);
+		this.WithFixed(ref value, GetHashCodeTest.ReadOnlyTest);
 	}
 
 	private static unsafe void Test<T>(FixedReference<T> fref, IntPtr ptr) where T : unmanaged
@@ -123,7 +123,7 @@ public sealed class GetHashCodeTest : FixedReferenceTestsBase
 			return;
 
 		ref readonly T valueRef = ref fref.CreateReadOnlyReference<T>();
-		void* ptr = Unsafe.AsPointer(ref Unsafe.AsRef(valueRef));
+		void* ptr = Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in valueRef));
 		ref readonly T2 transformedRef = ref Unsafe.AsRef<T2>(ptr);
 		FixedReferenceTestsBase.WithFixed(transformedRef, fref, GetHashCodeTest.Test);
 	}
@@ -134,7 +134,7 @@ public sealed class GetHashCodeTest : FixedReferenceTestsBase
 			return;
 
 		ref readonly T valueRef = ref fref.CreateReadOnlyReference<T>();
-		void* ptr = Unsafe.AsPointer(ref Unsafe.AsRef(valueRef));
+		void* ptr = Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in valueRef));
 		ref readonly T2 transformedRef = ref Unsafe.AsRef<T2>(ptr);
 		FixedReferenceTestsBase.WithFixed(transformedRef, fref, GetHashCodeTest.Test);
 	}

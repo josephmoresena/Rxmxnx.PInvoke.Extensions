@@ -4,7 +4,8 @@
 /// Provides a set of extensions for basic operations with <see cref="Delegate"/> instances.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
-public static partial class DelegateExtensions
+[SuppressMessage("csharpsquid", "S6640")]
+public static unsafe partial class DelegateExtensions
 {
 	/// <summary>
 	/// Creates an <see cref="IntPtr"/> from a memory reference to a <typeparamref name="TDelegate"/> delegate instance.
@@ -34,8 +35,7 @@ public static partial class DelegateExtensions
 	/// the GC.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe UIntPtr GetUnsafeUIntPtr<TDelegate>(this TDelegate? delegateInstance)
-		where TDelegate : Delegate
+	public static UIntPtr GetUnsafeUIntPtr<TDelegate>(this TDelegate? delegateInstance) where TDelegate : Delegate
 	{
 		IntPtr ptr = delegateInstance.GetUnsafeIntPtr();
 		return (UIntPtr)ptr.ToPointer();

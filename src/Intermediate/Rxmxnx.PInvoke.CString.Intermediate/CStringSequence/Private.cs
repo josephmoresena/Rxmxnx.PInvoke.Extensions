@@ -43,9 +43,13 @@ public partial class CStringSequence
 				offset += length.Value + 1;
 			}
 			else if (length.HasValue)
+			{
 				yield return CString.Empty;
+			}
 			else
+			{
 				yield return CString.Zero;
+			}
 		}
 	}
 	/// <summary>

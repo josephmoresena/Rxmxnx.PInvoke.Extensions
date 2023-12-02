@@ -57,7 +57,7 @@ public partial class CString
 	/// <returns>A task representing the asynchronous write operation.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private Task GetWriteTask(Stream strm, Int32 startIndex, Int32 count, CancellationToken cancellationToken)
-		=> (Byte[]?)this._data is Byte[] array ?
+		=> (Byte[]?)this._data is { } array ?
 			strm.WriteAsync(array, startIndex, count, cancellationToken) :
 			Task.Run(() => this.Write(strm, startIndex, count), cancellationToken);
 }

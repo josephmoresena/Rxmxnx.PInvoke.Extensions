@@ -5,7 +5,8 @@
 /// <see langword="unmanaged"/> values.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
-public static partial class ReferenceExtensions
+[SuppressMessage("csharpsquid", "S6640")]
+public static unsafe partial class ReferenceExtensions
 {
 	/// <summary>
 	/// Retrieves an unsafe pointer of type <see cref="IntPtr"/> from a reference to an
@@ -22,7 +23,7 @@ public static partial class ReferenceExtensions
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe IntPtr GetUnsafeIntPtr<T>(ref this T refValue) where T : unmanaged
+	public static IntPtr GetUnsafeIntPtr<T>(ref this T refValue) where T : unmanaged
 	{
 		void* ptr = Unsafe.AsPointer(ref refValue);
 		return (IntPtr)ptr;
@@ -42,7 +43,7 @@ public static partial class ReferenceExtensions
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe UIntPtr GetUnsafeUIntPtr<T>(ref this T refValue) where T : unmanaged
+	public static UIntPtr GetUnsafeUIntPtr<T>(ref this T refValue) where T : unmanaged
 	{
 		void* ptr = Unsafe.AsPointer(ref refValue);
 		return (UIntPtr)ptr;

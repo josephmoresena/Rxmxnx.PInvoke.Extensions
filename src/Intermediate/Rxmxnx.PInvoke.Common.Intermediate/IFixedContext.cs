@@ -24,4 +24,17 @@ public interface IFixedContext<T> : IReadOnlyFixedContext<T>, IFixedMemory<T> wh
 	/// <returns>An instance of <see cref="IReadOnlyFixedContext{TDestination}"/>.</returns>
 	new IFixedContext<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 		where TDestination : unmanaged;
+	
+	/// <summary>
+	/// Interface representing a disposable <see cref="IFixedContext{T}"/> object for a context
+	/// of a fixed memory block with a specific type.
+	/// This interface is used for managing fixed memory blocks that require explicit resource cleanup.
+	/// </summary>
+	/// <remarks>
+	/// Implementing this interface allows for the encapsulation of unmanaged memory resources,
+	/// ensuring that they are properly disposed of when no longer needed. It is crucial to call
+	/// <see cref="System.IDisposable.Dispose"/> to release these unmanaged resources and avoid memory leaks.
+	/// </remarks>
+	public new interface IDisposable : IFixedContext<T>, IFixedMemory<T>.IDisposable,
+		IReadOnlyFixedContext<T>.IDisposable { }
 }

@@ -41,6 +41,19 @@ internal sealed record CStringDebugView
 	private readonly String _value;
 
 	/// <summary>
+	/// Provides a readable string representation of the <see cref="CString"/> value for debugging.
+	/// </summary>
+	public String Value => this._value;
+	/// <summary>
+	/// Provides the count of UTF-8 units for debugging.
+	/// </summary>
+	public Int32 Utf8Length => this._utf8Length;
+	/// <summary>
+	/// Provides the debug flags associated with the <see cref="CString"/> instance.
+	/// </summary>
+	public CStringFeatures Flags => this._flags;
+
+	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringDebugView"/> class with the specified
 	/// <see cref="CString"/> instance.
 	/// </summary>
@@ -61,17 +74,4 @@ internal sealed record CStringDebugView
 		if (cstr.IsSegmented)
 			this._flags |= CStringFeatures.Slice;
 	}
-
-	/// <summary>
-	/// Provides a readable string representation of the <see cref="CString"/> value for debugging.
-	/// </summary>
-	public String Value => this._value;
-	/// <summary>
-	/// Provides the count of UTF-8 units for debugging.
-	/// </summary>
-	public Int32 Utf8Length => this._utf8Length;
-	/// <summary>
-	/// Provides the debug flags associated with the <see cref="CString"/> instance.
-	/// </summary>
-	public CStringFeatures Flags => this._flags;
 }

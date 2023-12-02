@@ -38,8 +38,8 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 	private void Test<T>() where T : unmanaged
 	{
 		T value = FixedMemoryTestsBase.fixture.Create<T>();
-		this.WithFixed(ref Unsafe.AsRef(value), GetTransformationTest.Test);
-		this.WithFixed(ref Unsafe.AsRef(value), GetTransformationTest.ReadOnlyTest);
+		this.WithFixed(ref value, GetTransformationTest.Test);
+		this.WithFixed(ref value, GetTransformationTest.ReadOnlyTest);
 	}
 
 	private static void Test<T>(FixedReference<T> fref, IntPtr ptr) where T : unmanaged
@@ -206,7 +206,7 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 		FixedReference<T2> result) where T : unmanaged where T2 : unmanaged
 	{
 		HashCode hashResidual = new();
-		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref Unsafe.AsRef(fref.CreateReadOnlyReference<Byte>()))));
+		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in fref.CreateReadOnlyReference<Byte>()))));
 		hashResidual.Add(sizeof(T2));
 		hashResidual.Add(fref.BinaryLength);
 		hashResidual.Add(false);
@@ -299,7 +299,7 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 		ReadOnlyFixedReference<T2> result) where T : unmanaged where T2 : unmanaged
 	{
 		HashCode hashResidual = new();
-		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref Unsafe.AsRef(fref.CreateReadOnlyReference<Byte>()))));
+		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in fref.CreateReadOnlyReference<Byte>()))));
 		hashResidual.Add(sizeof(T2));
 		hashResidual.Add(fref.BinaryLength);
 		hashResidual.Add(true);

@@ -4,7 +4,8 @@
 /// Fixed memory reference class, used to hold a fixed read-only memory reference of a specific type.
 /// </summary>
 /// <typeparam name="T">Type of the fixed memory reference.</typeparam>
-internal sealed unsafe class ReadOnlyFixedReference<T> : ReadOnlyFixedMemory, IReadOnlyFixedReference<T>,
+[SuppressMessage("csharpsquid", "S6640")]
+internal sealed unsafe partial class ReadOnlyFixedReference<T> : ReadOnlyFixedMemory, IReadOnlyFixedReference<T>,
 	IEquatable<ReadOnlyFixedReference<T>> where T : unmanaged
 {
 	/// <inheritdoc/>
@@ -26,13 +27,24 @@ internal sealed unsafe class ReadOnlyFixedReference<T> : ReadOnlyFixedMemory, IR
 	/// <param name="mem">Instance of <see cref="FixedMemory"/> to be referenced.</param>
 	private ReadOnlyFixedReference(ReadOnlyFixedMemory mem) : base(mem) { }
 
+	/// <inheritdoc/>
+	public Boolean Equals(ReadOnlyFixedReference<T>? other) => this.Equals(other as ReadOnlyFixedMemory);
+
+	/// <inheritdoc/>
+	public override Boolean Equals(ReadOnlyFixedMemory? other) => base.Equals(other as ReadOnlyFixedReference<T>);
+	/// <inheritdoc/>
+	public override Boolean Equals(Object? obj) => base.Equals(obj as ReadOnlyFixedReference<T>);
+	/// <inheritdoc/>
+	public override Int32 GetHashCode() => base.GetHashCode();
+
 	ref readonly T IReadOnlyReferenceable<T>.Reference => ref this.CreateReadOnlyReference<T>();
 	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
 	{
+		Unsafe.SkipInit(out residual);
 		IReadOnlyFixedReference<TDestination> result =
-			this.GetTransformation<TDestination>(out ReadOnlyFixedOffset fixedOffset);
-		residual = fixedOffset;
+			this.GetTransformation<TDestination>(
+				out Unsafe.As<IReadOnlyFixedMemory, ReadOnlyFixedOffset>(ref residual));
 		return result;
 	}
 
@@ -62,14 +74,4 @@ internal sealed unsafe class ReadOnlyFixedReference<T> : ReadOnlyFixedMemory, IR
 		fixedOffset = new(this, sizeof(TDestination));
 		return new(this);
 	}
-
-	/// <inheritdoc/>
-	public Boolean Equals(ReadOnlyFixedReference<T>? other) => this.Equals(other as ReadOnlyFixedMemory);
-
-	/// <inheritdoc/>
-	public override Boolean Equals(ReadOnlyFixedMemory? other) => base.Equals(other as ReadOnlyFixedReference<T>);
-	/// <inheritdoc/>
-	public override Boolean Equals(Object? obj) => base.Equals(obj as ReadOnlyFixedReference<T>);
-	/// <inheritdoc/>
-	public override Int32 GetHashCode() => base.GetHashCode();
 }

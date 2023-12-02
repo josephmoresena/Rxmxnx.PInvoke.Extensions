@@ -2,7 +2,7 @@
 
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
-public sealed class IMutableWrapperTests
+public sealed class MutableWrapperTests
 {
 	private static readonly IFixture fixture = new Fixture();
 
@@ -10,55 +10,55 @@ public sealed class IMutableWrapperTests
 	internal void InterfaceTest()
 	{
 		IMutableWrapper<String> instance = new MutableInstance<String>();
-		instance.Value = IMutableWrapperTests.fixture.Create<String>();
+		instance.Value = MutableWrapperTests.fixture.Create<String>();
 		Assert.Equal(instance.Value, (instance as IWrapper<String>).Value);
 	}
 
 	[Fact]
-	internal Task BooleanTestAsync() => IMutableWrapperTests.TestAsync<Boolean>();
+	internal Task BooleanTestAsync() => MutableWrapperTests.TestAsync<Boolean>();
 	[Fact]
-	internal Task ByteTestAsync() => IMutableWrapperTests.TestAsync<Byte>();
+	internal Task ByteTestAsync() => MutableWrapperTests.TestAsync<Byte>();
 	[Fact]
-	internal Task Int16TestAsync() => IMutableWrapperTests.TestAsync<Int16>();
+	internal Task Int16TestAsync() => MutableWrapperTests.TestAsync<Int16>();
 	[Fact]
-	internal Task CharTestAsync() => IMutableWrapperTests.TestAsync<Char>();
+	internal Task CharTestAsync() => MutableWrapperTests.TestAsync<Char>();
 	[Fact]
-	internal Task Int32TestAsync() => IMutableWrapperTests.TestAsync<Int32>();
+	internal Task Int32TestAsync() => MutableWrapperTests.TestAsync<Int32>();
 	[Fact]
-	internal Task Int64TestAsync() => IMutableWrapperTests.TestAsync<Int64>();
+	internal Task Int64TestAsync() => MutableWrapperTests.TestAsync<Int64>();
 	[Fact]
-	internal Task Int128TestAsync() => IMutableWrapperTests.TestAsync<Int128>();
+	internal Task Int128TestAsync() => MutableWrapperTests.TestAsync<Int128>();
 	[Fact]
-	internal Task GuidTestAsync() => IMutableWrapperTests.TestAsync<Guid>();
+	internal Task GuidTestAsync() => MutableWrapperTests.TestAsync<Guid>();
 	[Fact]
-	internal Task SingleTestAsync() => IMutableWrapperTests.TestAsync<Single>();
+	internal Task SingleTestAsync() => MutableWrapperTests.TestAsync<Single>();
 	[Fact]
-	internal Task HalfTestAsync() => IMutableWrapperTests.TestAsync<Half>();
+	internal Task HalfTestAsync() => MutableWrapperTests.TestAsync<Half>();
 	[Fact]
-	internal Task DoubleTestAsync() => IMutableWrapperTests.TestAsync<Double>();
+	internal Task DoubleTestAsync() => MutableWrapperTests.TestAsync<Double>();
 	[Fact]
-	internal Task DecimalTestAsync() => IMutableWrapperTests.TestAsync<Decimal>();
+	internal Task DecimalTestAsync() => MutableWrapperTests.TestAsync<Decimal>();
 	[Fact]
-	internal Task DateTimeTestAsync() => IMutableWrapperTests.TestAsync<DateTime>();
+	internal Task DateTimeTestAsync() => MutableWrapperTests.TestAsync<DateTime>();
 	[Fact]
-	internal Task TimeOnlyTestAsync() => IMutableWrapperTests.TestAsync<TimeOnly>();
+	internal Task TimeOnlyTestAsync() => MutableWrapperTests.TestAsync<TimeOnly>();
 	[Fact]
-	internal Task TimeSpanTestAsync() => IMutableWrapperTests.TestAsync<TimeSpan>();
+	internal Task TimeSpanTestAsync() => MutableWrapperTests.TestAsync<TimeSpan>();
 
 	private static async Task TestAsync<T>() where T : unmanaged
 	{
-		Task inputTest = Task.Run(IMutableWrapperTests.Value<T>);
-		Task nullTest1 = Task.Run(() => IMutableWrapperTests.Nullable<T>(false));
-		Task nullTest2 = Task.Run(() => IMutableWrapperTests.Nullable<T>(true));
-		Task objectTest = Task.Run(IMutableWrapperTests.ObjectTest<T>);
+		Task inputTest = Task.Run(MutableWrapperTests.Value<T>);
+		Task nullTest1 = Task.Run(() => MutableWrapperTests.Nullable<T>(false));
+		Task nullTest2 = Task.Run(() => MutableWrapperTests.Nullable<T>(true));
+		Task objectTest = Task.Run(MutableWrapperTests.ObjectTest<T>);
 
 		await Task.WhenAll(inputTest, nullTest1, nullTest2, objectTest);
 	}
 
 	private static void Value<T>() where T : unmanaged
 	{
-		T value = IMutableWrapperTests.fixture.Create<T>();
-		T value2 = IMutableWrapperTests.fixture.Create<T>();
+		T value = MutableWrapperTests.fixture.Create<T>();
+		T value2 = MutableWrapperTests.fixture.Create<T>();
 		IMutableWrapper<T> result = IMutableWrapper.Create(value);
 		IWrapper<T> wrapper = result;
 
@@ -82,8 +82,8 @@ public sealed class IMutableWrapperTests
 
 	private static void Nullable<T>(Boolean nullInput) where T : unmanaged
 	{
-		T? value = !nullInput ? IMutableWrapperTests.fixture.Create<T>() : null;
-		T? value2 = IMutableWrapperTests.fixture.Create<Boolean>() ? IMutableWrapperTests.fixture.Create<T>() : null;
+		T? value = !nullInput ? MutableWrapperTests.fixture.Create<T>() : null;
+		T? value2 = MutableWrapperTests.fixture.Create<Boolean>() ? MutableWrapperTests.fixture.Create<T>() : null;
 		IMutableWrapper<T?> result = IMutableWrapper.CreateNullable(value);
 		IWrapper<T?> wrapper = result;
 
@@ -106,8 +106,8 @@ public sealed class IMutableWrapperTests
 
 	private static void ObjectTest<T>() where T : unmanaged
 	{
-		T[] array = IMutableWrapperTests.fixture.CreateMany<T>().ToArray();
-		T[] array2 = IMutableWrapperTests.fixture.CreateMany<T>().ToArray();
+		T[] array = MutableWrapperTests.fixture.CreateMany<T>().ToArray();
+		T[] array2 = MutableWrapperTests.fixture.CreateMany<T>().ToArray();
 		IMutableWrapper<T[]> result = IMutableWrapper.CreateObject(array);
 		IWrapper<T[]> wrapper = result;
 

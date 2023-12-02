@@ -5,7 +5,7 @@
 /// implementing <see cref="IReferenceableWrapper{T}"/>.
 /// </summary>
 /// <typeparam name="T">Type of the referenced object.</typeparam>
-internal sealed record InputReference<T> : Input<T>, IReferenceableWrapper<T>
+internal sealed class InputReference<T> : Input<T>, IReferenceableWrapper<T>
 {
 	/// <summary>
 	/// Initializes a new instance of the <see cref="InputReference{T}"/> record with

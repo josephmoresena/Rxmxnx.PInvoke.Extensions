@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>Rxmxnx.PInvoke.Tests</RootNamespace>
@@ -12,6 +12,7 @@
     <ItemGroup>
         <Using Include="Xunit"/>
         <Using Include="AutoFixture"/>
+        <Using Include="System.Buffers"/>
         <Using Include="System.Diagnostics.CodeAnalysis"/>
         <Using Include="System.Reflection"/>
         <Using Include="System.Runtime.CompilerServices"/>
@@ -37,6 +38,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Rxmxnx.PInvoke.Tests.Base\Rxmxnx.PInvoke.Tests.Base.csproj"/>
         <ProjectReference Include="..\..\Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate.csproj"/>
     </ItemGroup>
 

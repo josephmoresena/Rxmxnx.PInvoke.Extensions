@@ -36,46 +36,23 @@ public sealed class ConcatTest
 	[Fact]
 	internal void Test()
 	{
-		List<GCHandle> handles = new();
+		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
 		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
-		try
-		{
-			CString?[] values = new CString[strings.Length];
-			for (Int32 i = 0; i < values.Length; i++)
-				values[i] = TestSet.GetCString(indices[i], handles);
+		CString?[] values = TestSet.GetValues(indices, handle);
 
-			ConcatTest.NormalTest(strings, values);
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		ConcatTest.NormalTest(strings, values);
 	}
 
 	[Fact]
 	internal void BinaryTest()
 	{
-		List<GCHandle> handles = new();
+		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
 		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
-		try
-		{
-			Byte[]?[] values = new Byte[]?[strings.Length];
-			for (Int32 i = 0; i < values.Length; i++)
-			{
-				if (TestSet.GetCString(indices[i], handles) is CString cstr)
-					values[i] = cstr.ToArray();
-			}
+		Byte[]?[] values = indices.Select(i => TestSet.GetCString(i, handle)?.ToArray()).ToArray();
 
-			ConcatTest.NormalTest(strings, values);
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		ConcatTest.NormalTest(strings, values);
 	}
 
 	[Fact]
@@ -165,46 +142,23 @@ public sealed class ConcatTest
 	[Fact]
 	internal async Task TestAsync()
 	{
-		List<GCHandle> handles = new();
+		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
 		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
-		try
-		{
-			CString?[] values = new CString[strings.Length];
-			for (Int32 i = 0; i < values.Length; i++)
-				values[i] = TestSet.GetCString(indices[i], handles);
+		CString?[] values = TestSet.GetValues(indices, handle);
 
-			await ConcatTest.NormalTestAsync(strings, values);
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		await ConcatTest.NormalTestAsync(strings, values);
 	}
 
 	[Fact]
 	internal async Task BinaryTestAsync()
 	{
-		List<GCHandle> handles = new();
+		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
 		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
-		try
-		{
-			Byte[]?[] values = new Byte[]?[strings.Length];
-			for (Int32 i = 0; i < values.Length; i++)
-			{
-				if (TestSet.GetCString(indices[i], handles) is CString cstr)
-					values[i] = cstr.ToArray();
-			}
+		Byte[]?[] values = indices.Select(i => TestSet.GetCString(i, handle)?.ToArray()).ToArray();
 
-			await ConcatTest.NormalTestAsync(strings, values);
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		await ConcatTest.NormalTestAsync(strings, values);
 	}
 
 	private static async Task NormalTestAsync(String?[] strings, CString?[] values)

@@ -3,7 +3,8 @@
 /// <summary>
 /// Helper class for managing fixed memory pointer blocks.
 /// </summary>
-internal abstract unsafe class FixedPointer : IFixedPointer, IEquatable<FixedPointer>
+[SuppressMessage("csharpsquid", "S6640")]
+internal abstract unsafe partial class FixedPointer : IFixedPointer, IEquatable<FixedPointer>
 {
 	/// <summary>
 	/// Size of the memory block in bytes.
@@ -40,9 +41,13 @@ internal abstract unsafe class FixedPointer : IFixedPointer, IEquatable<FixedPoi
 	/// </summary>
 	public Int32 BinaryLength => this._binaryLength - this.BinaryOffset;
 	/// <summary>
-	/// Indicates whether the current instance is still valid.
+	/// Indicates whether the current instance is read-only.
 	/// </summary>
 	public Boolean IsReadOnly => this._isReadOnly;
+	/// <summary>
+	/// Indicates whether the current instance is still valid.
+	/// </summary>
+	public Boolean IsValid => this._isValid.Value;
 
 	/// <summary>
 	/// Constructs a new FixedPointer instance pointing to a fixed memory block.
@@ -112,6 +117,28 @@ internal abstract unsafe class FixedPointer : IFixedPointer, IEquatable<FixedPoi
 		this._binaryLength = pointer._binaryLength - offset;
 		this._isValid = pointer._isValid;
 		this._isReadOnly = pointer._isReadOnly;
+	}
+
+	/// <inheritdoc/>
+	public virtual Boolean Equals(FixedPointer? other)
+		=> other is not null && this.GetMemoryOffset() == other.GetMemoryOffset() &&
+			this.BinaryLength == other.BinaryLength && this._isReadOnly == other._isReadOnly;
+
+	/// <inheritdoc/>
+	[ExcludeFromCodeCoverage]
+	public override Boolean Equals(Object? obj) => this.Equals(obj as FixedPointer);
+	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public override Int32 GetHashCode()
+	{
+		HashCode result = new();
+		result.Add(new IntPtr(this._ptr));
+		result.Add(this.BinaryOffset);
+		result.Add(this._binaryLength);
+		result.Add(this._isReadOnly);
+		if (this.Type is not null)
+			result.Add(this.Type);
+		return result.ToHashCode();
 	}
 
 	IntPtr IFixedPointer.Pointer => (IntPtr)this.GetMemoryOffset();
@@ -210,27 +237,6 @@ internal abstract unsafe class FixedPointer : IFixedPointer, IEquatable<FixedPoi
 	/// Invalidates current context.
 	/// </summary>
 	public virtual void Unload() => this._isValid.Value = false;
-	/// <inheritdoc/>
-	public virtual Boolean Equals(FixedPointer? other)
-		=> other is not null && this.GetMemoryOffset() == other.GetMemoryOffset() &&
-			this.BinaryLength == other.BinaryLength && this._isReadOnly == other._isReadOnly;
-
-	/// <inheritdoc/>
-	[ExcludeFromCodeCoverage]
-	public override Boolean Equals(Object? obj) => this.Equals(obj as FixedPointer);
-	/// <inheritdoc/>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public override Int32 GetHashCode()
-	{
-		HashCode result = new();
-		result.Add(new IntPtr(this._ptr));
-		result.Add(this.BinaryOffset);
-		result.Add(this._binaryLength);
-		result.Add(this._isReadOnly);
-		if (this.Type is not null)
-			result.Add(this.Type);
-		return result.ToHashCode();
-	}
 
 	/// <summary>
 	/// Validates any operation over the fixed memory block.

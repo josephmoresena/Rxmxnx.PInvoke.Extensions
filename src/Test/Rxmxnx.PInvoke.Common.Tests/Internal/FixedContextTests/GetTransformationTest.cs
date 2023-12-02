@@ -44,8 +44,6 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 
 	private static void Test<T>(FixedContext<T> ctx, T[] _) where T : unmanaged
 	{
-		Boolean isReadOnly = ctx.IsReadOnly;
-
 		GetTransformationTest.Test<T, Boolean>(ctx);
 		GetTransformationTest.Test<T, Byte>(ctx);
 		GetTransformationTest.Test<T, Int16>(ctx);
@@ -101,8 +99,6 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 	}
 	private static void ReadOnlyTest<T>(ReadOnlyFixedContext<T> ctx, T[] _) where T : unmanaged
 	{
-		Boolean isReadOnly = ctx.IsReadOnly;
-
 		GetTransformationTest.Test<T, Boolean>(ctx);
 		GetTransformationTest.Test<T, Byte>(ctx);
 		GetTransformationTest.Test<T, Int16>(ctx);
@@ -184,7 +180,7 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 		Int32 countT2 = ctx.BinaryLength / sizeof(T2);
 		Int32 offsetT2 = countT2 * sizeof(T2);
 		HashCode hashResidual = new();
-		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref Unsafe.AsRef(ctx.CreateReadOnlyReference<Byte>()))));
+		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in ctx.CreateReadOnlyReference<Byte>()))));
 		hashResidual.Add(offsetT2);
 		hashResidual.Add(ctx.BinaryLength);
 		hashResidual.Add(false);
@@ -238,7 +234,7 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 		Int32 countT2 = ctx.BinaryLength / sizeof(T2);
 		Int32 offsetT2 = countT2 * sizeof(T2);
 		HashCode hashResidual = new();
-		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref Unsafe.AsRef(ctx.CreateReadOnlyReference<Byte>()))));
+		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in ctx.CreateReadOnlyReference<Byte>()))));
 		hashResidual.Add(offsetT2);
 		hashResidual.Add(ctx.BinaryLength);
 		hashResidual.Add(true);

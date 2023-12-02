@@ -17,6 +17,26 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	public static readonly CString Zero = new(IntPtr.Zero, 0, true);
 
 	/// <summary>
+	/// Gets a value indicating whether the text in the current <see cref="CString"/> instance
+	/// ends with a null-termination character.
+	/// </summary>
+	public Boolean IsNullTerminated => this._isNullTerminated;
+	/// <summary>
+	/// Gets a value indicating whether the UTF-8 text is referenced by, and not contained within,
+	/// the current <see cref="CString"/> instance.
+	/// </summary>
+	public Boolean IsReference => !this._isLocal && !this._isFunction;
+	/// <summary>
+	/// Gets a value indicating whether the current <see cref="CString"/> instance is a segment
+	/// (or slice) of another <see cref="CString"/> instance.
+	/// </summary>
+	public Boolean IsSegmented => this._data.IsMemorySlice;
+	/// <summary>
+	/// Gets a value indicating whether the current <see cref="CString"/> instance is a function.
+	/// </summary>
+	public Boolean IsFunction => this._isFunction;
+
+	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified
 	/// UTF-8 character repeated a specified number of times.
 	/// </summary>
@@ -69,26 +89,6 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// the new instance.
 	/// </param>
 	public CString(ReadOnlySpanFunc<Byte> func) : this(func, true) { }
-
-	/// <summary>
-	/// Gets a value indicating whether the text in the current <see cref="CString"/> instance
-	/// ends with a null-termination character.
-	/// </summary>
-	public Boolean IsNullTerminated => this._isNullTerminated;
-	/// <summary>
-	/// Gets a value indicating whether the UTF-8 text is referenced by, and not contained within,
-	/// the current <see cref="CString"/> instance.
-	/// </summary>
-	public Boolean IsReference => !this._isLocal && !this._isFunction;
-	/// <summary>
-	/// Gets a value indicating whether the current <see cref="CString"/> instance is a segment
-	/// (or slice) of another <see cref="CString"/> instance.
-	/// </summary>
-	public Boolean IsSegmented => this._data.IsMemorySlice;
-	/// <summary>
-	/// Gets a value indicating whether the current <see cref="CString"/> instance is a function.
-	/// </summary>
-	public Boolean IsFunction => this._isFunction;
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Object Clone()
@@ -98,46 +98,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 		source.CopyTo(bytes);
 		return new CString(bytes, true);
 	}
-	/// <summary>
-	/// Returns a reference to the first UTF-8 unit of the <see cref="CString"/>.
-	/// </summary>
-	/// <returns>A reference to the first UTF-8 unit of the <see cref="CString"/>.</returns>
-	/// <remarks>
-	/// This method is used to support the use of a <see cref="CString"/> within a fixed statement.
-	/// It should not be used in typical code.
-	/// </remarks>
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	public ref readonly Byte GetPinnableReference() => ref MemoryMarshal.GetReference(this._data.AsSpan());
-	/// <summary>
-	/// Copies the UTF-8 text of the current <see cref="CString"/> instance into a new byte array.
-	/// </summary>
-	/// <returns>
-	/// A new <see cref="Byte"/> array containing the UTF-8 units of the current <see cref="CString"/>.
-	/// </returns>
-	public Byte[] ToArray() => this._data.ToArray()[..this._length];
-	/// <summary>
-	/// Retrieves the UTF-8 units of the current <see cref="CString"/> as a read-only span of bytes.
-	/// </summary>
-	/// <returns>
-	/// A read-only span of bytes representing the UTF-8 units of the current <see cref="CString"/>.
-	/// </returns>
-	public ReadOnlySpan<Byte> AsSpan() => this._data.AsSpan()[..this._length];
-	/// <summary>
-	/// Returns a <see cref="String"/> that represents the current UTF-8 text as a hexadecimal value.
-	/// </summary>
-	/// <returns>
-	/// A <see cref="String"/> that represents the hexadecimal value of the current UTF-8 text.
-	/// </returns>
-	public String ToHexString() => Convert.ToHexString(this).ToLower();
-	/// <summary>
-	/// Returns an enumerator that iterates through the UTF-8 units of the current <see cref="CString"/>.
-	/// </summary>
-	/// <returns>
-	/// An enumerator that can be used to iterate through the UTF-8 units of the current
-	/// <see cref="CString"/>.
-	/// </returns>
-	public ReadOnlySpan<Byte>.Enumerator GetEnumerator() => this.AsSpan().GetEnumerator();
-	
+
 	/// <inheritdoc/>
 	public Boolean Equals([NotNullWhen(true)] CString? other)
 		=> other is not null && this._length == other._length && CString.equals(this, other);
@@ -196,6 +157,46 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	}
 	/// <inheritdoc/>
 	public override Int32 GetHashCode() => this.ToString().GetHashCode();
+
+	/// <summary>
+	/// Returns a reference to the first UTF-8 unit of the <see cref="CString"/>.
+	/// </summary>
+	/// <returns>A reference to the first UTF-8 unit of the <see cref="CString"/>.</returns>
+	/// <remarks>
+	/// This method is used to support the use of a <see cref="CString"/> within a fixed statement.
+	/// It should not be used in typical code.
+	/// </remarks>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	public ref readonly Byte GetPinnableReference() => ref MemoryMarshal.GetReference(this._data.AsSpan());
+	/// <summary>
+	/// Copies the UTF-8 text of the current <see cref="CString"/> instance into a new byte array.
+	/// </summary>
+	/// <returns>
+	/// A new <see cref="Byte"/> array containing the UTF-8 units of the current <see cref="CString"/>.
+	/// </returns>
+	public Byte[] ToArray() => this._data.ToArray()[..this._length];
+	/// <summary>
+	/// Retrieves the UTF-8 units of the current <see cref="CString"/> as a read-only span of bytes.
+	/// </summary>
+	/// <returns>
+	/// A read-only span of bytes representing the UTF-8 units of the current <see cref="CString"/>.
+	/// </returns>
+	public ReadOnlySpan<Byte> AsSpan() => this._data.AsSpan()[..this._length];
+	/// <summary>
+	/// Returns a <see cref="String"/> that represents the current UTF-8 text as a hexadecimal value.
+	/// </summary>
+	/// <returns>
+	/// A <see cref="String"/> that represents the hexadecimal value of the current UTF-8 text.
+	/// </returns>
+	public String ToHexString() => Convert.ToHexString(this).ToLower();
+	/// <summary>
+	/// Returns an enumerator that iterates through the UTF-8 units of the current <see cref="CString"/>.
+	/// </summary>
+	/// <returns>
+	/// An enumerator that can be used to iterate through the UTF-8 units of the current
+	/// <see cref="CString"/>.
+	/// </returns>
+	public ReadOnlySpan<Byte>.Enumerator GetEnumerator() => this.AsSpan().GetEnumerator();
 
 	/// <summary>
 	/// Determines whether the specified <see cref="CString"/> is <see langword="null"/>

@@ -2,6 +2,8 @@
 
 public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequence<CString>
 {
+	Int32 IEnumerableSequence<CString>.GetSize() => this._lengths.Length;
+	CString IEnumerableSequence<CString>.GetItem(Int32 index) => this[index];
 	/// <summary>
 	/// Gets the <see cref="CString"/> at the specified index.
 	/// </summary>
@@ -21,19 +23,13 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 			if (!this._lengths[index].HasValue)
 				return CString.Zero;
 
-			if (this._lengths[index].GetValueOrDefault() == 0)
-				return CString.Empty;
-
-			return new(() => this.GetBinarySpan(index));
+			return this._lengths[index].GetValueOrDefault() == 0 ? CString.Empty : new(() => this.GetBinarySpan(index));
 		}
 	}
 	/// <summary>
 	/// Gets the number of <see cref="CString"/> instances contained in this <see cref="CStringSequence"/>.
 	/// </summary>
 	public Int32 Count => this._lengths.Length;
-	
-	Int32 IEnumerableSequence<CString>.GetSize() => this._lengths.Length;
-	CString IEnumerableSequence<CString>.GetItem(Int32 index) => this[index];
 
 	/// <summary>
 	/// Retrieves a subsequence from this instance, starting from the specified index and extending to the end

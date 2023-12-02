@@ -5,7 +5,7 @@
 /// implementing <see cref="IMutableWrapper{T}"/>.
 /// </summary>
 /// <typeparam name="T">Type of the encapsulated object.</typeparam>
-internal record MutableWrapper<T> : Input<T>, IMutableWrapper<T>
+internal class MutableWrapper<T> : Input<T>, IMutableWrapper<T>
 {
 	/// <summary>
 	/// Lock object used for synchronization of write operations.

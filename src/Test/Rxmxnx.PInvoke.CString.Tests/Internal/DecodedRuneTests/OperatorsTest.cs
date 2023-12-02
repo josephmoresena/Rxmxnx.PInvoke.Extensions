@@ -46,6 +46,6 @@ public sealed class OperatorsTest
 		Rune rune = decodedRune;
 
 		Assert.Equal(decodedRune?.Value, rune);
-		Assert.Equal(default(Rune), default(DecodedRune?));
+		Assert.Equal(default(DecodedRune?), default(Rune));
 	}
 }

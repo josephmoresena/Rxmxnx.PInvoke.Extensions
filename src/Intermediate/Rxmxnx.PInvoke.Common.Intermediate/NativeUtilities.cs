@@ -3,12 +3,13 @@
 /// <summary>
 /// Provides a set of utilities for exchange data within the P/Invoke context.
 /// </summary>
-public static partial class NativeUtilities
+[SuppressMessage("csharpsquid", "S6640")]
+public static unsafe partial class NativeUtilities
 {
 	/// <summary>
 	/// Size in bytes of a memory pointer.
 	/// </summary>
-	public static readonly unsafe Int32 PointerSize = sizeof(IntPtr);
+	public static readonly Int32 PointerSize = sizeof(IntPtr);
 
 	/// <summary>
 	/// Retrieves the size of <typeparamref name="T"/> structure.
@@ -16,7 +17,7 @@ public static partial class NativeUtilities
 	/// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
 	/// <returns>Size of <typeparamref name="T"/> structure.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe Int32 SizeOf<T>() where T : unmanaged => sizeof(T);
+	public static Int32 SizeOf<T>() where T : unmanaged => sizeof(T);
 	/// <summary>
 	/// Provides a high-level API for loading a native library.
 	/// </summary>
@@ -25,12 +26,10 @@ public static partial class NativeUtilities
 	/// <returns>The OS handle for the loaded native library.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IntPtr? LoadNativeLib(String? libraryName, DllImportSearchPath? searchPath = default)
-	{
-		if (NativeLibrary.TryLoad(libraryName ?? String.Empty, Assembly.GetExecutingAssembly(), searchPath,
-		                          out IntPtr handle))
-			return handle;
-		return default;
-	}
+		=> NativeLibrary.TryLoad(libraryName ?? String.Empty, Assembly.GetExecutingAssembly(), searchPath,
+		                         out IntPtr handle) ?
+			handle :
+			default(IntPtr?);
 	/// <summary>
 	/// Provides a high-level API for loading a native library.
 	/// </summary>
@@ -47,7 +46,7 @@ public static partial class NativeUtilities
 	{
 		IntPtr? handle = NativeUtilities.LoadNativeLib(libraryName, searchPath);
 		if (handle.HasValue)
-			unloadEvent += (sender, e) => NativeLibrary.Free(handle.Value);
+			unloadEvent += (_, _) => NativeLibrary.Free(handle.Value);
 		return handle;
 	}
 	/// <summary>
@@ -77,7 +76,7 @@ public static partial class NativeUtilities
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe IntPtr GetUnsafeIntPtr<T>(in T value) where T : unmanaged
+	public static IntPtr GetUnsafeIntPtr<T>(in T value) where T : unmanaged
 	{
 		ref T refValue = ref Unsafe.AsRef(value);
 		return (IntPtr)Unsafe.AsPointer(ref refValue);
@@ -95,7 +94,7 @@ public static partial class NativeUtilities
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe UIntPtr GetUnsafeUIntPtr<T>(in T value) where T : unmanaged
+	public static UIntPtr GetUnsafeUIntPtr<T>(in T value) where T : unmanaged
 	{
 		ref T refValue = ref Unsafe.AsRef(value);
 		return (UIntPtr)Unsafe.AsPointer(ref refValue);
@@ -257,8 +256,7 @@ public static partial class NativeUtilities
 	/// <param name="arg">A <typeparamref name="TArg"/> instance.</param>
 	/// <param name="action">A <see cref="SpanAction{T, TState}"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe void WriteSpan<T, TArg>(Span<T> span, TArg arg, SpanAction<T, TArg> action)
-		where T : unmanaged
+	private static void WriteSpan<T, TArg>(Span<T> span, TArg arg, SpanAction<T, TArg> action) where T : unmanaged
 	{
 		fixed (T* ptr = &MemoryMarshal.GetReference(span))
 			action(new(ptr, span.Length), arg);

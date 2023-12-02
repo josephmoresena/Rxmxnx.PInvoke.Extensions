@@ -365,19 +365,18 @@ public sealed class BasicTests
 		foreach (ref readonly Byte utf8Char in cstr2)
 		{
 			Assert.Equal(cstr1[i], utf8Char);
-			Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(cstr2.AsSpan()[i]), ref Unsafe.AsRef(utf8Char)));
+			Assert.True(Unsafe.AreSame(ref UnsafeLegacy.AsRef(in cstr2.AsSpan()[i]),
+			                           ref UnsafeLegacy.AsRef(in utf8Char)));
 			i++;
 		}
 	}
-	private static void EnumerationTest(IEnumerable<Byte> cstr1, IEnumerable<Byte> cstr2)
+	private static void EnumerationTest(CString cstr1, IEnumerable<Byte> cstr2)
 	{
-		Int32 i = 0;
-		IEnumerator<Byte> enumerator1 = cstr1.GetEnumerator();
+		using IEnumerator<Byte> enumerator1 = (cstr1 as IEnumerable<Byte>).GetEnumerator();
 		foreach (Byte utf8Char in cstr2)
 		{
 			enumerator1.MoveNext();
 			Assert.Equal(enumerator1.Current, utf8Char);
-			i++;
 		}
 	}
 	private static unsafe void TestBytesPointer(Byte[] bytes, String text, CString cstr1)

@@ -6,27 +6,18 @@ public sealed class WithSafeFixedTest
 	[Fact]
 	internal void Test()
 	{
-		List<GCHandle> handles = new();
-		IReadOnlyList<Int32> indices = TestSet.GetIndices();
+		using TestMemoryHandle handle = new();
+		List<Int32> indices = TestSet.GetIndices();
+		indices.ForEach(i => WithSafeFixedTest.ExecuteTest(TestSet.GetCString(i, handle)));
+	}
 
-		try
-		{
-			for (Int32 i = 0; i < indices.Count; i++)
-			{
-				if (TestSet.GetCString(indices[i], handles) is CString value)
-				{
-					value.WithSafeFixed(WithSafeFixedTest.ActionMethod);
-					value.WithSafeFixed(value, WithSafeFixedTest.ActionMethod);
-					Assert.Equal(value, value.WithSafeFixed(WithSafeFixedTest.FunctionMethod));
-					Assert.Equal(value, value.WithSafeFixed(value, WithSafeFixedTest.FunctionMethod));
-				}
-			}
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+	private static void ExecuteTest(CString? value)
+	{
+		if (value is null) return;
+		value.WithSafeFixed(WithSafeFixedTest.ActionMethod);
+		value.WithSafeFixed(value, WithSafeFixedTest.ActionMethod);
+		Assert.Equal(value, value.WithSafeFixed(WithSafeFixedTest.FunctionMethod));
+		Assert.Equal(value, value.WithSafeFixed(value, WithSafeFixedTest.FunctionMethod));
 	}
 
 	private static unsafe void ActionMethod(in IReadOnlyFixedMemory fmem)

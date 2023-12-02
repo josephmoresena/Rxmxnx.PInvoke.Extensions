@@ -5,7 +5,8 @@ public partial class ValueRegion<T>
 	/// <summary>
 	/// Represents a native memory region in which a sequence of values is stored.
 	/// </summary>
-	private sealed class NativeRegion : ValueRegion<T>
+	[SuppressMessage("csharpsquid", "S6640")]
+	private sealed unsafe class NativeRegion : ValueRegion<T>
 	{
 		/// <summary>
 		/// An empty instance of <see cref="ValueRegion{T}.NativeRegion"/>.
@@ -39,7 +40,7 @@ public partial class ValueRegion<T>
 		/// <param name="region">A <see cref="ValueRegion{T}.NativeRegion"/> instance.</param>
 		/// <param name="offset">The offset for the range.</param>
 		/// <param name="length">The length of the range.</param>
-		private unsafe NativeRegion(NativeRegion region, Int32 offset, Int32 length)
+		private NativeRegion(NativeRegion region, Int32 offset, Int32 length)
 		{
 			T* tPtr = region.GetElementPointer(offset);
 			this._ptr = new(tPtr);
@@ -56,7 +57,7 @@ public partial class ValueRegion<T>
 		}
 
 		/// <inheritdoc/>
-		internal override unsafe ReadOnlySpan<T> AsSpan()
+		internal override ReadOnlySpan<T> AsSpan()
 		{
 			void* pointer = this._ptr.ToPointer();
 			return new(pointer, this._length);
@@ -70,7 +71,7 @@ public partial class ValueRegion<T>
 		/// </summary>
 		/// <param name="index">The element index.</param>
 		/// <returns>The pointer of the element at the given index.</returns>
-		private unsafe T* GetElementPointer(Int32 index)
+		private T* GetElementPointer(Int32 index)
 		{
 			T* tPtr = (T*)this._ptr.ToPointer();
 			tPtr += index;

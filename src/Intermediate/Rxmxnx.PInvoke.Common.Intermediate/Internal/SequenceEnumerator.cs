@@ -51,12 +51,9 @@ internal sealed class SequenceEnumerator<T> : IEnumerator<T>
 	public Boolean MoveNext()
 	{
 		this._index++;
-		if (this._index < this._instance.GetSize())
-		{
-			this._current = this._instance.GetItem(this._index);
-			return true;
-		}
-		return false;
+		if (this._index >= this._instance.GetSize()) return false;
+		this._current = this._instance.GetItem(this._index);
+		return true;
 	}
 	/// <inheritdoc/>
 	public void Reset() => this._index = -1;

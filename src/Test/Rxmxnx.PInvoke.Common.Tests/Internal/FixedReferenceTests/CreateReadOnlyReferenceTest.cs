@@ -38,13 +38,13 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 	private void Test<T>() where T : unmanaged
 	{
 		T value = FixedMemoryTestsBase.fixture.Create<T>();
-		this.WithFixed(ref Unsafe.AsRef(value), CreateReadOnlyReferenceTest.Test);
-		this.WithFixed(ref Unsafe.AsRef(value), CreateReadOnlyReferenceTest.ReadOnlyTest);
+		this.WithFixed(ref value, CreateReadOnlyReferenceTest.Test);
+		this.WithFixed(ref value, CreateReadOnlyReferenceTest.ReadOnlyTest);
 	}
 
 	private static unsafe void Test<T>(FixedReference<T> fref, IntPtr ptr) where T : unmanaged
 	{
-		ref T refValue = ref Unsafe.AsRef(fref.CreateReadOnlyReference<T>());
+		ref T refValue = ref UnsafeLegacy.AsRef(in fref.CreateReadOnlyReference<T>());
 		IntPtr ptr2 = new(Unsafe.AsPointer(ref refValue));
 		Assert.Equal(ptr2, ptr);
 		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef<T>(ptr.ToPointer()), ref refValue));
@@ -76,7 +76,7 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 	}
 	private static unsafe void ReadOnlyTest<T>(ReadOnlyFixedReference<T> fref, IntPtr ptr) where T : unmanaged
 	{
-		ref T refValue = ref Unsafe.AsRef(fref.CreateReadOnlyReference<T>());
+		ref T refValue = ref UnsafeLegacy.AsRef(in fref.CreateReadOnlyReference<T>());
 		IntPtr ptr2 = new(Unsafe.AsPointer(ref refValue));
 		Assert.Equal(ptr2, ptr);
 		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef<T>(ptr.ToPointer()), ref refValue));
@@ -120,8 +120,8 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 		}
 		else
 		{
-			ref T value = ref Unsafe.AsRef(fref.CreateReadOnlyReference<T>());
-			ref T2 value2 = ref Unsafe.AsRef(fref.CreateReadOnlyReference<T2>());
+			ref T value = ref UnsafeLegacy.AsRef(in fref.CreateReadOnlyReference<T>());
+			ref T2 value2 = ref UnsafeLegacy.AsRef(in fref.CreateReadOnlyReference<T2>());
 			Byte[] bytes1 = new ReadOnlySpan<Byte>(Unsafe.AsPointer(ref value), size).ToArray();
 			Byte[] bytes2 = new ReadOnlySpan<Byte>(Unsafe.AsPointer(ref value), size2).ToArray();
 
@@ -147,8 +147,8 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 		}
 		else
 		{
-			ref T value = ref Unsafe.AsRef(fref.CreateReadOnlyReference<T>());
-			ref T2 value2 = ref Unsafe.AsRef(fref.CreateReadOnlyReference<T2>());
+			ref T value = ref UnsafeLegacy.AsRef(in fref.CreateReadOnlyReference<T>());
+			ref T2 value2 = ref UnsafeLegacy.AsRef(in fref.CreateReadOnlyReference<T2>());
 			Byte[] bytes1 = new ReadOnlySpan<Byte>(Unsafe.AsPointer(ref value), size).ToArray();
 			Byte[] bytes2 = new ReadOnlySpan<Byte>(Unsafe.AsPointer(ref value), size2).ToArray();
 

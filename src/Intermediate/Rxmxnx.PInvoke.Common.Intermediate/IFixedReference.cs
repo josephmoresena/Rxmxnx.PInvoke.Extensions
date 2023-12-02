@@ -29,4 +29,17 @@ public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference
 	/// </returns>
 	new IFixedReference<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 		where TDestination : unmanaged;
+
+	/// <summary>
+	/// Interface representing a disposable <see cref="IFixedReference{T}"/> object for a fixed memory
+	/// reference with a specific type.
+	/// This interface is used for managing fixed memory blocks that require explicit resource cleanup.
+	/// </summary>
+	/// <remarks>
+	/// Implementing this interface allows for the encapsulation of unmanaged memory resources,
+	/// ensuring that they are properly disposed of when no longer needed. It is crucial to call
+	/// <see cref="System.IDisposable.Dispose"/> to release these unmanaged resources and avoid memory leaks.
+	/// </remarks>
+	public new interface IDisposable : IFixedReference<T>, IReadOnlyFixedReference<T>.IDisposable,
+		IFixedMemory.IDisposable { }
 }

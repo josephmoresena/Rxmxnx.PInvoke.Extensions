@@ -6,7 +6,8 @@
 /// <typeparam name="T">
 /// The type of the items in the fixed memory block. Must be <see langword="unmanaged"/>.
 /// </typeparam>
-internal sealed unsafe class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IReadOnlyFixedContext<T>,
+[SuppressMessage("csharpsquid", "S6640")]
+internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IReadOnlyFixedContext<T>,
 	IEquatable<ReadOnlyFixedContext<T>> where T : unmanaged
 {
 	/// <summary>
@@ -69,15 +70,28 @@ internal sealed unsafe class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IRea
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
 	private ReadOnlyFixedContext(ReadOnlyFixedMemory ctx, Int32 count) : base(ctx) => this._count = count;
 
+	/// <inheritdoc/>
+	public Boolean Equals(ReadOnlyFixedContext<T>? other) => this.Equals(other as ReadOnlyFixedMemory);
+
+	/// <inheritdoc/>
+	public override Boolean Equals(ReadOnlyFixedMemory? other) => base.Equals(other as ReadOnlyFixedContext<T>);
+	/// <inheritdoc/>
+	public override Boolean Equals(Object? obj) => base.Equals(obj as ReadOnlyFixedContext<T>);
+	/// <inheritdoc/>
+	public override Int32 GetHashCode() => base.GetHashCode();
+
 	ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => this.CreateReadOnlySpan<T>(this._count);
 	IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
 	{
+		Unsafe.SkipInit(out residual);
 		IReadOnlyFixedContext<TDestination> result =
-			this.GetTransformation<TDestination>(out ReadOnlyFixedOffset fixedOffset);
-		residual = fixedOffset;
+			this.GetTransformation<TDestination>(
+				out Unsafe.As<IReadOnlyFixedMemory, ReadOnlyFixedOffset>(ref residual));
 		return result;
 	}
+	/// <inheritdoc cref="IReadOnlyFixedMemory.AsBinaryContext()"/>
+	public override IReadOnlyFixedContext<Byte> AsBinaryContext() => this.GetTransformation<Byte>(out _);
 
 	/// <summary>
 	/// Transforms the current memory context into a different type, and provides a fixed offset that represents the
@@ -107,15 +121,4 @@ internal sealed unsafe class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IRea
 		fixedOffset = new(this, offset);
 		return new(this, count);
 	}
-	/// <inheritdoc/>
-	public Boolean Equals(ReadOnlyFixedContext<T>? other) => this.Equals(other as ReadOnlyFixedMemory);
-
-	/// <inheritdoc/>
-	public override Boolean Equals(ReadOnlyFixedMemory? other) => base.Equals(other as ReadOnlyFixedContext<T>);
-	/// <inheritdoc/>
-	public override Boolean Equals(Object? obj) => base.Equals(obj as ReadOnlyFixedContext<T>);
-	/// <inheritdoc/>
-	public override Int32 GetHashCode() => base.GetHashCode();
-	/// <inheritdoc cref="IReadOnlyFixedMemory.AsBinaryContext()"/>
-	public override IReadOnlyFixedContext<Byte> AsBinaryContext() => this.GetTransformation<Byte>(out _);
 }

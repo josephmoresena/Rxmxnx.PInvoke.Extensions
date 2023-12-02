@@ -4,7 +4,8 @@
 /// Provides a set of extensions for basic operations with <see cref="Byte"/> instances.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
-public static partial class BinaryExtensions
+[SuppressMessage("csharpsquid", "S6640")]
+public static unsafe partial class BinaryExtensions
 {
 	/// <summary>
 	/// Retrieves a <typeparamref name="T"/> value from the given byte array.
@@ -29,7 +30,7 @@ public static partial class BinaryExtensions
 	/// <param name="span">The source read-only byte span.</param>
 	/// <returns>The <typeparamref name="T"/> value read from the span.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static unsafe T ToValue<T>(this ReadOnlySpan<Byte> span) where T : unmanaged
+	public static T ToValue<T>(this ReadOnlySpan<Byte> span) where T : unmanaged
 	{
 		Span<Byte> result = stackalloc Byte[sizeof(T)];
 		Int32 bytesToCopy = Math.Min(result.Length, span.Length);

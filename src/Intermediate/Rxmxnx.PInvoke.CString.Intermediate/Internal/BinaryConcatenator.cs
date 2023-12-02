@@ -6,18 +6,6 @@
 internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDisposable
 {
 	/// <summary>
-	/// Constructs a new instance of the BinaryConcatenator class.
-	/// </summary>
-	/// <param name="separator">The separator for the concatenation.</param>
-	/// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
-	protected BinaryConcatenator(T? separator, CancellationToken cancellationToken)
-	{
-		this._mem = new();
-		this._separator = separator;
-		this._cancellationToken = cancellationToken;
-		this.InitializeDelegates();
-	}
-	/// <summary>
 	/// Gets the current instance's memory stream.
 	/// </summary>
 	protected MemoryStream Stream => this._mem;
@@ -30,6 +18,18 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 	/// Gets the separator instance.
 	/// </summary>
 	public T? Separator => this._separator;
+	/// <summary>
+	/// Constructs a new instance of the BinaryConcatenator class.
+	/// </summary>
+	/// <param name="separator">The separator for the concatenation.</param>
+	/// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+	protected BinaryConcatenator(T? separator, CancellationToken cancellationToken)
+	{
+		this._mem = new();
+		this._separator = separator;
+		this._cancellationToken = cancellationToken;
+		this.InitializeDelegates();
+	}
 	/// <inheritdoc/>
 	public async ValueTask DisposeAsync()
 	{
@@ -113,12 +113,10 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 	/// </param>
 	protected virtual void Dispose(Boolean disposing)
 	{
-		if (!this._disposedValue)
-		{
-			if (disposing)
-				this._mem.Dispose();
-			this._disposedValue = true;
-		}
+		if (this._disposedValue) return;
+		if (disposing)
+			this._mem.Dispose();
+		this._disposedValue = true;
 	}
 	/// <summary>
 	/// Asynchronously releases the unmanaged resources used by the <see cref="IDisposable"/>
@@ -153,16 +151,12 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 	protected Byte[]? ToArray(Boolean nullTerminated = false)
 	{
 		Byte[]? result = default;
-		if (this._mem.Length > 0)
-		{
-			ReadOnlySpan<Byte> span = BinaryConcatenator<T>.PrepareUtf8Text(this._mem.GetBuffer());
-			if (!span.IsEmpty)
-			{
-				Int32 resultLength = span.Length + (nullTerminated ? 1 : 0);
-				result = new Byte[resultLength];
-				span.CopyTo(result);
-			}
-		}
+		if (this._mem.Length <= 0) return result;
+		ReadOnlySpan<Byte> span = BinaryConcatenator<T>.PrepareUtf8Text(this._mem.GetBuffer());
+		if (span.IsEmpty) return result;
+		Int32 resultLength = span.Length + (nullTerminated ? 1 : 0);
+		result = new Byte[resultLength];
+		span.CopyTo(result);
 		return result;
 	}
 }

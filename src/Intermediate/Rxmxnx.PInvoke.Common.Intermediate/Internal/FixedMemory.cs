@@ -3,6 +3,7 @@
 /// <summary>
 /// Helper class for managing fixed memory blocks.
 /// </summary>
+[SuppressMessage("csharpsquid", "S6640")]
 internal abstract unsafe class FixedMemory : ReadOnlyFixedMemory, IFixedMemory, IEquatable<FixedMemory>
 {
 	/// <summary>
@@ -24,12 +25,6 @@ internal abstract unsafe class FixedMemory : ReadOnlyFixedMemory, IFixedMemory, 
 	/// <param name="offset">The offset to be added to the pointer to the memory block.</param>
 	protected FixedMemory(FixedMemory mem, Int32 offset) : base(mem, offset) { }
 
-	Span<Byte> IFixedMemory.Bytes => this.CreateBinarySpan();
-	ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => this.CreateReadOnlyBinarySpan();
-	IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
-
-	/// <inheritdoc/>
-	public new virtual IFixedContext<Byte> AsBinaryContext() => new FixedContext<Byte>(this.BinaryOffset, this);
 	/// <inheritdoc/>
 	public virtual Boolean Equals(FixedMemory? other) => this.Equals(other as FixedPointer);
 
@@ -38,4 +33,11 @@ internal abstract unsafe class FixedMemory : ReadOnlyFixedMemory, IFixedMemory, 
 	public override Boolean Equals(Object? obj) => base.Equals(obj as FixedMemory);
 	/// <inheritdoc/>
 	public override Int32 GetHashCode() => base.GetHashCode();
+
+	Span<Byte> IFixedMemory.Bytes => this.CreateBinarySpan();
+	ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => this.CreateReadOnlyBinarySpan();
+	IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
+
+	/// <inheritdoc/>
+	public new virtual IFixedContext<Byte> AsBinaryContext() => new FixedContext<Byte>(this.BinaryOffset, this);
 }
