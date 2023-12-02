@@ -192,14 +192,20 @@ public static unsafe partial class MemoryBlockExtensions
 		return result;
 	}
 	/// <summary>
-	/// Creates a <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance by pinning the current
-	/// <see cref="ReadOnlyMemory{T}"/> instance.
+	/// Creates an <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance by pinning the current
+	/// <see cref="ReadOnlyMemory{T}"/> instance, providing a safe context for accessing the fixed memory.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> type from which the contiguous region of memory will be read.
+	/// The unmanaged type from which the contiguous region of memory will be read.
 	/// </typeparam>
 	/// <param name="mem">A <see cref="ReadOnlyMemory{T}"/> instance.</param>
-	/// <returns>A <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance.</returns>
+	/// <returns>An <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance representing the pinned memory.</returns>
+	/// <remarks>
+	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
+	/// operations on unmanaged memory.
+	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
+	/// and avoid memory leaks.
+	/// </remarks>
 	public static IReadOnlyFixedContext<T>.IDisposable GetFixedContext<T>(this ReadOnlyMemory<T> mem)
 		where T : unmanaged
 	{
@@ -210,14 +216,20 @@ public static unsafe partial class MemoryBlockExtensions
 				new ReadOnlyFixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);
 	}
 	/// <summary>
-	/// Creates a <see cref="IFixedContext{T}.IDisposable"/> instance by pinning the current
-	/// <see cref="Memory{T}"/> instance.
+	/// Creates an <see cref="IFixedContext{T}.IDisposable"/> instance by pinning the current
+	/// <see cref="Memory{T}"/> instance, allowing safe access to the fixed memory region.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> type items in the <see cref="Memory{T}"/>.
+	/// The unmanaged type of items in the <see cref="Memory{T}"/>.
 	/// </typeparam>
 	/// <param name="mem">A <see cref="Memory{T}"/> instance.</param>
-	/// <returns>A <see cref="IFixedContext{T}.IDisposable"/> instance.</returns>
+	/// <returns>An <see cref="IFixedContext{T}.IDisposable"/> instance representing the pinned memory.</returns>
+	/// <remarks>
+	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
+	/// operations on unmanaged memory.
+	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
+	/// and avoid memory leaks.
+	/// </remarks>
 	public static IFixedContext<T>.IDisposable GetFixedContext<T>(this Memory<T> mem) where T : unmanaged
 	{
 		MemoryHandle handle = mem.Pin();

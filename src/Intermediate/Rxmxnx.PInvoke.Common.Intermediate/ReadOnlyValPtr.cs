@@ -1,9 +1,9 @@
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// A platform-specific type that is used to represent a pointer to a read-only <typeparamref name="T"/> value.
+/// Represents a platform-specific type used to manage a pointer to a read-only value of type <typeparamref name="T"/>.
 /// </summary>
-/// <typeparam name="T">A <see langword="unmanaged"/> <see cref="ValueType"/>.</typeparam>
+/// <typeparam name="T">An <see langword="unmanaged"/> <see cref="ValueType"/>.</typeparam>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
 [SuppressMessage("csharpsquid", "S6640")]
@@ -11,24 +11,26 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	IComparable<ReadOnlyValPtr<T>>, ISpanFormattable, ISerializable where T : unmanaged
 {
 	/// <summary>
-	/// A read-only field that represents a pointer that has been initialized to zero.
+	/// A read-only field representing a null-initialized pointer to a value of type <typeparamref name="T"/>.
 	/// </summary>
 	public static readonly ReadOnlyValPtr<T> Zero = default;
 
 	/// <summary>
-	/// Internal pointer.
+	/// The internal pointer value.
 	/// </summary>
 	private readonly void* _value;
 
 	/// <summary>
-	/// Internal pointer.
+	/// Internal pointer as an <see cref="IntPtr"/>.
 	/// </summary>
 	public IntPtr Pointer => new(this._value);
 	/// <summary>
-	/// Indicates whether current pointer is zero.
+	/// Indicates whether the current pointer is <see langword="null"/>.
 	/// </summary>
 	public Boolean IsZero => IntPtr.Zero == (IntPtr)this._value;
-	/// <inheritdoc cref="IReadOnlyReferenceable{T}.Reference"/>
+	/// <summary>
+	/// A read-only reference to the value pointed to by this instance.
+	/// </summary>
 	public ref readonly T Reference => ref Unsafe.AsRef<T>(this._value);
 
 	/// <summary>
@@ -100,11 +102,13 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// Retrieves an <see langword="unsafe"/> <see cref="IReadOnlyFixedReference{T}.IDisposable"/> instance from
 	/// current read-only reference pointer.
 	/// </summary>
-	/// <param name="disposable">Object to dispose in order to free <see langword="unmanaged"/> resources.</param>
-	/// <returns>A <see cref="IReadOnlyFixedReference{T}.IDisposable"/> instance.</returns>
+	/// <param name="disposable">Optional object to dispose in order to free unmanaged resources.</param>
+	/// <returns>An <see cref="IReadOnlyFixedReference{T}.IDisposable"/> instance representing a fixed reference.</returns>
 	/// <remarks>
 	/// The instance obtained is "unsafe" as it doesn't guarantee that the referenced value
 	/// won't be moved or collected by garbage collector.
+	/// The <paramref name="disposable"/> parameter allows for custom management of resource cleanup.
+	/// If provided, this object will be disposed of when the fixed reference is disposed.
 	/// </remarks>
 	public IReadOnlyFixedReference<T>.IDisposable GetUnsafeFixedReference(IDisposable? disposable = default)
 		=> new ReadOnlyFixedReference<T>(this._value).ToDisposable(disposable);
@@ -118,6 +122,8 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// <remarks>
 	/// The instance obtained is "unsafe" as it doesn't guarantee that the referenced values
 	/// won't be moved or collected by garbage collector.
+	/// The <paramref name="disposable"/> parameter allows for custom management of resource cleanup.
+	/// If provided, this object will be disposed of when the fixed reference is disposed.
 	/// </remarks>
 	public IReadOnlyFixedContext<T>.IDisposable GetUnsafeFixedContext(Int32 count, IDisposable? disposable = default)
 		=> new ReadOnlyFixedContext<T>(this._value, count).ToDisposable(disposable);

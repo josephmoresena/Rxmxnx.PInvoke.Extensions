@@ -1,9 +1,9 @@
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// A platform-specific type that is used to represent a pointer to a <typeparamref name="TDelegate"/> function.
+/// Represents a platform-specific type used to handle a pointer to a function of type <typeparamref name="TDelegate"/>.
 /// </summary>
-/// <typeparam name="TDelegate">A <see cref="Delegate"/> type.</typeparam>
+/// <typeparam name="TDelegate">The type of delegate that the function pointer represents.</typeparam>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
 [SuppressMessage("csharpsquid", "S6640")]
@@ -11,22 +11,22 @@ public readonly unsafe struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<
 	where TDelegate : Delegate
 {
 	/// <summary>
-	/// A read-only field that represents a pointer that has been initialized to zero.
+	/// A read-only field representing a null-initialized function pointer.
 	/// </summary>
 	public static readonly FuncPtr<TDelegate> Zero = default;
 
 	/// <summary>
-	/// Internal pointer.
+	/// The internal pointer value.
 	/// </summary>
 	private readonly void* _value;
 
 	/// <summary>
-	/// Internal pointer.
+	/// Internal pointer as an <see cref="IntPtr"/>.
 	/// </summary>
 	public IntPtr Pointer => new(this._value);
-	/// <summary>
-	/// Indicates whether current pointer is zero.
-	/// </summary>
+    /// <summary>
+    /// Indicates whether the current pointer is <see langword="null"/>.
+    /// </summary>
 	public Boolean IsZero => IntPtr.Zero == (IntPtr)this._value;
 
 	/// <inheritdoc cref="IFixedMethod{T}.Method"/>

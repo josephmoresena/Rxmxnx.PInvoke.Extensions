@@ -127,26 +127,26 @@ The `Rxmxnx.PInvoke.IMutableReference<T>` interface represents a mutable referen
 
 ### Rxmxnx.PInvoke.FuncPtr<TDelegate>
 
-`Rxmxnx.PInvoke.FuncPtr<TDelegate>` is a value representing a pointer to a function of type TDelegate.
+`Rxmxnx.PInvoke.FuncPtr<TDelegate>` is a value type representing a pointer to a function of type TDelegate. It is used for interop scenarios where a function pointer is required.
 
-- `IsZero`: Indicates whether current pointer is zero.
-- `Pointer`: Internal pointer.
-- `Invoke`: Function delegate.
+- `IsZero`: Indicates whether the current pointer is zero (null).
+- `Pointer`: Gets the internal pointer as an `IntPtr`.
+- `Invoke`: Gets a delegate of type `TDelegate` for the function pointer.
 
 #### Operators
 
-- `==`: Determines whether two `FuncPtr<TDelegate>` objects are equal.
-- `!=`: Determines whether two `FuncPtr<TDelegate>` objects are not equal.
+- `==`: Determines whether two `FuncPtr<TDelegate>` instances are equal.
+- `!=`: Determines whether two `FuncPtr<TDelegate>` instances are not equal.
 
 ### Rxmxnx.PInvoke.ReadOnlyValPtr<T>
 
-`Rxmxnx.PInvoke.ReadOnlyValPtr<T>` is a value representing a pointer to a read-only value of type T.
+`Rxmxnx.PInvoke.ReadOnlyValPtr<T>` is a value type representing a pointer to a read-only value of type T. It is used for interop scenarios where a read-only T pointer is required.
 
-- `IsZero`: Indicates whether current pointer is zero.
-- `Pointer`: Internal pointer.
-- `Reference`: The read-only referenced T value.
-- `GetUnsafeFixedReference(IDisposable?)`: Creates a read-only unsafe disposable fixed reference instance from current pointer.
-- `GetUnsafeFixedContext(Int32, IDisposable?)`: Creates a read-only unsafe disposable fixed context instance from current pointer.
+- `IsZero`: Indicates whether the current pointer is zero (null).
+- `Pointer`: Gets the internal pointer as an `IntPtr`.
+- `Reference`: Gets a read-only reference to the pointed T value.
+- `GetUnsafeFixedReference(IDisposable?)`: Creates an unsafe `IReadOnlyFixedReference<T>` instance from the current pointer. It is designed to be used when you have a guarantee that the memory being referenced is already fixed and immovable. This method does not pin the memory itself; it only provides a way to work with memory that is assumed to be already pinned.
+- `GetUnsafeFixedContext(Int32, IDisposable?)`: Creates an unsafe `IReadOnlyFixedContext<T>` instance with the specified number of items in the memory block from the current pointer. It is designed to be used when you have a guarantee that the memory being referenced is already fixed and immovable. This method does not pin the memory itself; it only provides a way to work with memory that is assumed to be already pinned.
 
 #### Operators
 
@@ -159,13 +159,13 @@ The `Rxmxnx.PInvoke.IMutableReference<T>` interface represents a mutable referen
 
 ### Rxmxnx.PInvoke.ValPtr<T>
 
-`Rxmxnx.PInvoke.ValPtr<T>` is a value representing a pointer to a value of type T.
+`Rxmxnx.PInvoke.ValPtr<T>` is a value type representing a pointer to a value of type T. It is used for interop scenarios where a T pointer is required.
 
-- `IsZero`: Indicates whether current pointer is zero.
-- `Pointer`: Internal pointer.
-- `Reference`: The referenced T value.
-- `GetUnsafeFixedReference(IDisposable?)`: Creates an unsafe disposable fixed reference instance from current pointer.
-- `GetUnsafeFixedContext(Int32, IDisposable?)`: Creates an unsafe disposable fixed context instance from current pointer.
+- `IsZero`: Indicates whether the current pointer is zero (null).
+- `Pointer`: Gets the internal pointer as an `IntPtr`.
+- `Reference`: Gets a reference to the pointed T value.
+- `GetUnsafeFixedReference(IDisposable?)`: Creates an unsafe `IFixedReference<T>` instance from the current pointer. It is designed to be used when you have a guarantee that the memory being referenced is already fixed and immovable. This method does not pin the memory itself; it only provides a way to work with memory that is assumed to be already pinned.
+- `GetUnsafeFixedContext(Int32, IDisposable?)`: Creates an unsafe `IFixedContext<T>` instance with the specified number of items in the memory block from the current pointer. It is designed to be used when you have a guarantee that the memory being referenced is already fixed and immovable. This method does not pin the memory itself; it only provides a way to work with memory that is assumed to be already pinned.
 
 #### Operators
 
@@ -446,8 +446,8 @@ with memory blocks.
 - `GetUnsafeIntPtr<T>(Span<T>)`: Returns the unmanaged IntPtr representation of the specified memory block.
 - `GetUnsafeUIntPtr<T>(Span<T>)`: Returns the unmanaged UIntPtr representation of the specified memory block.
 - `GetUnsafeUIntPtr<T>(ReadOnlySpan<T>)`: Returns the unmanaged UIntPtr representation of the specified memory block.
-- `GetFixedContext<T>(ReadOnlyMemory<T>)`: Creates a disposable read-only fixed context instance by pinning the current read-only memory instance.
-- `GetFixedContext<T>(Memory<T>)`: Creates a disposable fixed context  instance by pinning the current memory instance.
+- `GetFixedContext<T>(ReadOnlyMemory<T>)`: This method creates a disposable, read-only fixed context instance by pinning the provided `ReadOnlyMemory<T>` instance. It ensures that the memory block referenced by `ReadOnlyMemory<T>` is fixed (immovable) in memory, allowing for safe direct access.
+- `GetFixedContext<T>(Memory<T>)`: This method creates a disposable, fixed context instance by pinning the provided `Memory<T>` instance. It ensures that the memory block referenced by `Memory<T>` is fixed (immovable) in memory, allowing for safe direct access.
 - `WithSafeFixed<T>(Span<T>, FixedContextAction<T>)`: Performs a fixed context action on the specified memory block.
 - `WithSafeFixed<T>(Span<T>, ReadOnlyFixedContextAction<T>)`: Performs a readonly fixed context action on the specified
   memory block.
