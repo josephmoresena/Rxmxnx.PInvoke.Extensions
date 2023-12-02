@@ -150,12 +150,12 @@ The `Rxmxnx.PInvoke.IMutableReference<T>` interface represents a mutable referen
 
 #### Operators
 
-- `==`: Determines whether two `ReadOnlyValPtr<TDelegate>` objects are equal.
-- `!=`: Determines whether two `ReadOnlyValPtr<TDelegate>` objects are not equal.
-- `<`: Determines whether one `ReadOnlyValPtr<TDelegate>` object is less than another.
-- `>`: Determines whether one `ReadOnlyValPtr<TDelegate>` object is greater than another.
-- `<=`: Determines whether one `ReadOnlyValPtr<TDelegate>` object is less than or equal to another.
-- `>=`: Determines whether one `ReadOnlyValPtr<TDelegate>` object is greater than or equal to another.
+- `==`: Determines whether two `ReadOnlyValPtr<T>` objects are equal.
+- `!=`: Determines whether two `ReadOnlyValPtr<T>` objects are not equal.
+- `<`: Determines whether one `ReadOnlyValPtr<T>` object is less than another.
+- `>`: Determines whether one `ReadOnlyValPtr<T>` object is greater than another.
+- `<=`: Determines whether one `ReadOnlyValPtr<T>` object is less than or equal to another.
+- `>=`: Determines whether one `ReadOnlyValPtr<T>` object is greater than or equal to another.
 
 ### Rxmxnx.PInvoke.ValPtr<T>
 
@@ -169,12 +169,12 @@ The `Rxmxnx.PInvoke.IMutableReference<T>` interface represents a mutable referen
 
 #### Operators
 
-- `==`: Determines whether two `ValPtr<TDelegate>` objects are equal.
-- `!=`: Determines whether two `ValPtr<TDelegate>` objects are not equal.
-- `<`: Determines whether one `ValPtr<TDelegate>` object is less than another.
-- `>`: Determines whether one `ValPtr<TDelegate>` object is greater than another.
-- `<=`: Determines whether one `ValPtr<TDelegate>` object is less than or equal to another.
-- `>=`: Determines whether one `ValPtr<TDelegate>` object is greater than or equal to another.
+- `==`: Determines whether two `ValPtr<T>` objects are equal.
+- `!=`: Determines whether two `ValPtr<T>` objects are not equal.
+- `<`: Determines whether one `ValPtr<T>` object is less than another.
+- `>`: Determines whether one `ValPtr<T>` object is greater than another.
+- `<=`: Determines whether one `ValPtr<T>` object is less than or equal to another.
+- `>=`: Determines whether one `ValPtr<T>` object is greater than or equal to another.
 
 ### Rxmxnx.PInvoke.CString
 
