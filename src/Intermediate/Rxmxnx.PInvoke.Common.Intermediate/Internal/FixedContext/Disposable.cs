@@ -27,31 +27,37 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 		ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => (this.Value as IReadOnlyFixedMemory<T>).Values;
 
 		[ExcludeFromCodeCoverage]
-		IReadOnlyFixedContext<Byte>.IDisposable IReadOnlyFixedMemory.IDisposable.AsBinaryContext()
-			=> (this.Value.AsBinaryContext() as IConvertibleDisposable<IReadOnlyFixedContext<Byte>.IDisposable>)!
-				.ToDisposable(this);
-		IFixedContext<Byte>.IDisposable IFixedMemory.IDisposable.AsBinaryContext()
+		IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
+		[ExcludeFromCodeCoverage]
+		IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual) 
+		{
+			Unsafe.SkipInit(out residual);
+			IReadOnlyFixedContext<TDestination> result =
+				this.Transformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual));
+			return result;
+		}
+		[ExcludeFromCodeCoverage]
+		IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual) 
+		{
+			Unsafe.SkipInit(out residual);
+			IFixedContext<TDestination> result =
+				this.Transformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual));
+			return result;
+		}
+		
+		/// <inheritdoc/>
+		public IFixedContext<Byte> AsBinaryContext()
 			=> (this.Value.AsBinaryContext() as IConvertibleDisposable<IFixedContext<Byte>.IDisposable>)!.ToDisposable(
-				this);
+				this.GetDisposableParent());
 
 		/// <inheritdoc/>
-		public IFixedContext<TDestination>.IDisposable Transformation<TDestination>(
-			out IFixedMemory.IDisposable residual) where TDestination : unmanaged
+		public IFixedContext<TDestination> Transformation<TDestination>(
+			out IFixedMemory residual) where TDestination : unmanaged
 		{
 			IFixedContext<TDestination>.IDisposable result = this.Value
 			                                                     .GetTransformation<TDestination>(
-				                                                     out FixedOffset offset).CreateDisposable(this);
-			residual = offset.ToDisposable(this);
-			return result;
-		}
-		/// <inheritdoc/>
-		public IFixedContext<TDestination>.IDisposable Transformation<TDestination>(
-			out IReadOnlyFixedMemory.IDisposable residual) where TDestination : unmanaged
-		{
-			Unsafe.SkipInit(out residual);
-			IFixedContext<TDestination>.IDisposable result =
-				this.Transformation<TDestination>(
-					out Unsafe.As<IReadOnlyFixedMemory.IDisposable, IFixedMemory.IDisposable>(ref residual));
+				                                                     out FixedOffset offset).CreateDisposable(this.GetDisposableParent());
+			residual = offset.ToDisposable(this.GetDisposableParent());
 			return result;
 		}
 	}

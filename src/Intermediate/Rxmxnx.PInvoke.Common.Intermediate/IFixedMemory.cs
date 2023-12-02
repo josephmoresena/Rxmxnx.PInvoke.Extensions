@@ -19,15 +19,7 @@ public interface IFixedMemory : IReadOnlyFixedMemory
 	/// <summary>
 	/// Interface representing a <see cref="IDisposable"/> <see cref="IFixedMemory"/> object.
 	/// </summary>
-	public new interface IDisposable : IFixedMemory, IReadOnlyFixedMemory.IDisposable
-	{
-		[ExcludeFromCodeCoverage]
-		IFixedContext<Byte> IFixedMemory.AsBinaryContext() => this.AsBinaryContext();
-		[ExcludeFromCodeCoverage]
-		IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
-		/// <inheritdoc cref="IReadOnlyFixedMemory.AsBinaryContext()"/>
-		new IFixedContext<Byte>.IDisposable AsBinaryContext();
-	}
+	public new interface IDisposable : IFixedMemory, IReadOnlyFixedMemory.IDisposable { }
 }
 
 /// <summary>

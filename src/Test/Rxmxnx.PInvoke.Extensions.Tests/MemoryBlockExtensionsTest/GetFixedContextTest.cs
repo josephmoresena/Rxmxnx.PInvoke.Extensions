@@ -11,10 +11,6 @@ public sealed class GetFixedContextTest
 	{
 		String value = GetFixedContextTest.fixture.Create<String>();
 		GetFixedContextTest.ReadOnlyTest(value.AsMemory());
-		GetFixedContextTest.ReadOnlyTransformDisposeTest<Char, Byte>(value.AsMemory().GetFixedContext());
-		GetFixedContextTest.ReadOnlyTransformDisposeTest<Char, Int16>(value.AsMemory().GetFixedContext());
-		GetFixedContextTest.ReadOnlyTransformDisposeTest<Char, Int32>(value.AsMemory().GetFixedContext());
-		GetFixedContextTest.ReadOnlyTransformDisposeTest<Char, Int64>(value.AsMemory().GetFixedContext());
 	}
 	[Fact]
 	internal void ByteTest() => GetFixedContextTest.ArrayTest<Byte>();
@@ -54,11 +50,6 @@ public sealed class GetFixedContextTest
 		GetFixedContextTest.ReadOnlyTest<T>(arr.AsMemory());
 		GetFixedContextTest.Test(arr.AsMemory(), arr2);
 		Assert.Equal(arr, arr2);
-
-		GetFixedContextTest.TransformDisposeTest<T, Byte>(arr2.AsMemory().GetFixedContext());
-		GetFixedContextTest.TransformDisposeTest<T, Int16>(arr2.AsMemory().GetFixedContext());
-		GetFixedContextTest.TransformDisposeTest<T, Int32>(arr2.AsMemory().GetFixedContext());
-		GetFixedContextTest.TransformDisposeTest<T, Int64>(arr2.AsMemory().GetFixedContext());
 	}
 	private static unsafe void ReadOnlyTest<T>(ReadOnlyMemory<T> mem) where T : unmanaged
 	{
@@ -126,34 +117,5 @@ public sealed class GetFixedContextTest
 		Assert.Equal(ctx.Bytes.Length - offset, residual.Bytes.Length);
 		Assert.Equal(ctx.Pointer + offset, residual.Pointer);
 		Assert.Equal(ctx.Bytes.Length - offset, residual.AsBinaryContext().Bytes.Length);
-	}
-	private static void ReadOnlyTransformDisposeTest<T, TDestination>(IReadOnlyFixedContext<T>.IDisposable ctx)
-		where T : unmanaged where TDestination : unmanaged
-	{
-		IReadOnlyFixedContext<TDestination> ctx2 =
-			ctx.Transformation<TDestination>(out IReadOnlyFixedMemory.IDisposable residual);
-		residual.Dispose();
-		Assert.Throws<InvalidOperationException>(() => ctx.Values.Length);
-		Assert.Throws<InvalidOperationException>(() => ctx2.Values.Length);
-		Assert.Throws<InvalidOperationException>(() => residual.Bytes.Length);
-		Assert.Throws<InvalidOperationException>(() => residual.AsBinaryContext().Bytes.Length);
-	}
-	private static void TransformDisposeTest<T, TDestination>(IFixedContext<T>.IDisposable ctx)
-		where T : unmanaged where TDestination : unmanaged
-	{
-		IFixedContext<TDestination> ctx2 =
-			ctx.Transformation<TDestination>(out IReadOnlyFixedMemory.IDisposable residualR);
-		_ = ctx.Transformation<TDestination>(out IFixedMemory.IDisposable residual);
-
-		Assert.Equal(residualR.Pointer, residual.Pointer);
-		Assert.True(residualR.Bytes.SequenceEqual(residual.Bytes));
-		residualR.Dispose();
-
-		Assert.Throws<InvalidOperationException>(() => ctx.Values.Length);
-		Assert.Throws<InvalidOperationException>(() => ctx2.Values.Length);
-		Assert.Throws<InvalidOperationException>(() => residual.Bytes.Length);
-		Assert.Throws<InvalidOperationException>(() => residual.AsBinaryContext().Bytes.Length);
-
-		residual.Dispose();
 	}
 }

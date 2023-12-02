@@ -6,15 +6,23 @@ public sealed class SegmentTest
 	[Fact]
 	internal void EmptyTest()
 	{
-		const Int32 negativeOne = 1;
+		const Int32 zero = 0;
+		Int32 varIndex = 1;
 		CStringSequence seq = new(Array.Empty<CString>());
+		
 		Assert.Empty(seq);
-		Assert.Throws<ArgumentOutOfRangeException>(() => seq[-1]);
-		Assert.Throws<ArgumentOutOfRangeException>(() => seq[1]);
-		Assert.Throws<ArgumentOutOfRangeException>(() => seq[negativeOne..]);
-		Assert.Throws<ArgumentOutOfRangeException>(() => seq[1..]);
-		Assert.Throws<ArgumentOutOfRangeException>(() => seq[..negativeOne]);
-		Assert.Throws<ArgumentOutOfRangeException>(() => seq[..1]);
+		Assert.Throws<ArgumentOutOfRangeException>(() => seq[varIndex]);
+		Assert.Throws<ArgumentOutOfRangeException>(() => seq[varIndex..]);
+		Assert.Throws<ArgumentOutOfRangeException>(() => seq[..varIndex]);
+
+		varIndex = -1;
+		Assert.Throws<ArgumentOutOfRangeException>(() => seq[varIndex]);
+		Assert.Throws<ArgumentOutOfRangeException>(() => seq[varIndex..]);
+		Assert.Throws<ArgumentOutOfRangeException>(() => seq[..varIndex]);
+
+		Assert.Throws<ArgumentOutOfRangeException>(() => seq.Slice(varIndex, zero));
+		Assert.Throws<ArgumentOutOfRangeException>(() => seq.Slice(zero,1));
+		Assert.Throws<ArgumentOutOfRangeException>(() => seq.Slice(varIndex,1));
 	}
 
 	[Fact]

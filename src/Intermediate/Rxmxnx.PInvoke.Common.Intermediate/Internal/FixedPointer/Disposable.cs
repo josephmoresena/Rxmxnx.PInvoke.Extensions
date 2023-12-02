@@ -39,6 +39,13 @@ internal partial class FixedPointer
 
 		~Disposable() { this.Dispose(false); }
 
+		/// <summary>
+		/// Retrieves the <see cref="IDisposable"/> parent object.
+		/// </summary>
+		/// <returns>A <see cref="IDisposable"/> instance.</returns>
+		protected IDisposable GetDisposableParent() 
+			=> this._disposable is IFixedPointer.IDisposable ? this._disposable : this;
+
 		/// <inheritdoc cref="IDisposable.Dispose()"/>
 		/// <param name="disposing">Indicates whether current call is from <see cref="IDisposable.Dispose()"/>.</param>
 		private void Dispose(Boolean disposing)

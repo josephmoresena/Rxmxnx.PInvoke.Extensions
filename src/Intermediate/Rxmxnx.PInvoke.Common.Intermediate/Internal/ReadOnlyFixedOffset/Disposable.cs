@@ -24,8 +24,9 @@ internal partial class ReadOnlyFixedOffset : IConvertibleDisposable<IReadOnlyFix
 		IntPtr IFixedPointer.Pointer => (this.Value as IFixedPointer).Pointer;
 		ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => (this.Value as IReadOnlyFixedMemory).Bytes;
 
-		IReadOnlyFixedContext<Byte>.IDisposable IReadOnlyFixedMemory.IDisposable.AsBinaryContext()
+		/// <inheritdoc/>
+		public IReadOnlyFixedContext<Byte> AsBinaryContext()
 			=> (this.Value.AsBinaryContext() as IConvertibleDisposable<IReadOnlyFixedContext<Byte>.IDisposable>)!
-				.ToDisposable(this);
+				.ToDisposable(this.GetDisposableParent());
 	}
 }

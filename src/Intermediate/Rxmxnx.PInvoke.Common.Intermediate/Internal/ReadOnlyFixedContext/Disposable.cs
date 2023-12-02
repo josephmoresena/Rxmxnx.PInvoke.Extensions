@@ -26,19 +26,20 @@ internal partial class ReadOnlyFixedContext<T> : IConvertibleDisposable<IReadOnl
 		ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => (this.Value as IReadOnlyFixedMemory).Bytes;
 		ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => (this.Value as IReadOnlyFixedMemory<T>).Values;
 
-		IReadOnlyFixedContext<Byte>.IDisposable IReadOnlyFixedMemory.IDisposable.AsBinaryContext()
+		/// <inheritdoc/>
+		public IReadOnlyFixedContext<Byte> AsBinaryContext()
 			=> (this.Value.AsBinaryContext() as IConvertibleDisposable<IReadOnlyFixedContext<Byte>.IDisposable>)!
-				.ToDisposable(this);
+				.ToDisposable(this.GetDisposableParent());
 
 		/// <inheritdoc/>
-		public IReadOnlyFixedContext<TDestination>.IDisposable Transformation<TDestination>(
-			out IReadOnlyFixedMemory.IDisposable residual) where TDestination : unmanaged
+		public IReadOnlyFixedContext<TDestination> Transformation<TDestination>(
+			out IReadOnlyFixedMemory residual) where TDestination : unmanaged
 		{
-			IReadOnlyFixedContext<TDestination>.IDisposable result = this.Value
+			IReadOnlyFixedContext<TDestination> result = this.Value
 			                                                             .GetTransformation<TDestination>(
 				                                                             out ReadOnlyFixedOffset offset)
-			                                                             .CreateDisposable(this);
-			residual = offset.ToDisposable(this);
+			                                                             .CreateDisposable(this.GetDisposableParent());
+			residual = offset.ToDisposable(this.GetDisposableParent());
 			return result;
 		}
 	}
