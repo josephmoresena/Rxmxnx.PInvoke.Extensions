@@ -64,6 +64,24 @@ public static unsafe partial class NativeUtilities
 		return default;
 	}
 	/// <summary>
+	/// Retrieves an <see langword="unsafe"/> <see cref="ReadOnlyValPtr{T}"/> pointer from a read-only reference to a
+	/// <typeparamref name="T"/> <see langword="unmanaged"/> value.
+	/// </summary>
+	/// <typeparam name="T"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> value.</typeparam>
+	/// <param name="value">A read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</param>
+	/// <returns><see cref="ReadOnlyValPtr{T}"/> pointer.</returns>
+	/// <remarks>
+	/// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
+	/// won't be moved or collected by garbage collector.
+	/// The pointer will point to the address in memory the reference had at the moment this method was called.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static ReadOnlyValPtr<T> GetUnsafeValPtr<T>(in T value) where T : unmanaged
+	{
+		ref T refValue = ref Unsafe.AsRef(value);
+		return new(Unsafe.AsPointer(ref refValue));
+	}
+	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="IntPtr"/> pointer from a read-only reference to a
 	/// <typeparamref name="T"/> <see langword="unmanaged"/> value.
 	/// </summary>

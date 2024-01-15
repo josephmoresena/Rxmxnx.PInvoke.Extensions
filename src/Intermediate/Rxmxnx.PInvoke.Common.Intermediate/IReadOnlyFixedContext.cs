@@ -26,5 +26,5 @@ public interface IReadOnlyFixedContext<T> : IReadOnlyFixedMemory<T> where T : un
 	/// ensuring that they are properly disposed of when no longer needed. It is crucial to call
 	/// <see cref="System.IDisposable.Dispose"/> to release these unmanaged resources and avoid memory leaks.
 	/// </remarks>
-	public new interface IDisposable : IReadOnlyFixedContext<T>, IReadOnlyFixedMemory<T>.IDisposable { }
+	public new interface IDisposable : IReadOnlyFixedContext<T>, IReadOnlyFixedMemory<T>.IDisposable;
 }

@@ -50,8 +50,10 @@ public sealed class GetPointerTest
 
 			Assert.Equal(intPtr, span.GetUnsafeIntPtr());
 			Assert.Equal(uintPtr, span.GetUnsafeUIntPtr());
+			Assert.Equal((ValPtr<T>)intPtr, span.GetUnsafeValPtr());
 			Assert.Equal(intPtr, readOnlySpan.GetUnsafeIntPtr());
 			Assert.Equal(uintPtr, readOnlySpan.GetUnsafeUIntPtr());
+			Assert.Equal((ReadOnlyValPtr<T>)intPtr, readOnlySpan.GetUnsafeValPtr());
 		}
 	}
 }

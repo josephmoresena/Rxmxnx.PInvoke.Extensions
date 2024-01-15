@@ -19,5 +19,5 @@ public interface IFixedPointer
 	/// ensuring that they are properly disposed of when no longer needed. It is crucial to call
 	/// <see cref="System.IDisposable.Dispose"/> to release these unmanaged resources and avoid memory leaks.
 	/// </remarks>
-	public interface IDisposable : IFixedPointer, System.IDisposable { }
+	public interface IDisposable : IFixedPointer, System.IDisposable;
 }

@@ -28,7 +28,16 @@ public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference
 	/// A <see cref="IReadOnlyFixedReference{TDestination}"/> instance.
 	/// </returns>
 	new IFixedReference<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual)
-		where TDestination : unmanaged;
+		where TDestination : unmanaged
+	{
+		Unsafe.SkipInit(out residual);
+		return this.Transformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual));
+	}
+
+	ref readonly T IReadOnlyReferenceable<T>.Reference => ref this.Reference;
+	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(
+		out IReadOnlyFixedMemory residual)
+		=> this.Transformation<TDestination>(out residual);
 
 	/// <summary>
 	/// Interface representing a disposable <see cref="IFixedReference{T}"/> object for a fixed memory
@@ -40,6 +49,5 @@ public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference
 	/// ensuring that they are properly disposed of when no longer needed. It is crucial to call
 	/// <see cref="System.IDisposable.Dispose"/> to release these unmanaged resources and avoid memory leaks.
 	/// </remarks>
-	public new interface IDisposable : IFixedReference<T>, IReadOnlyFixedReference<T>.IDisposable,
-		IFixedMemory.IDisposable { }
+	public new interface IDisposable : IFixedReference<T>, IReadOnlyFixedReference<T>.IDisposable, IFixedMemory.IDisposable;
 }

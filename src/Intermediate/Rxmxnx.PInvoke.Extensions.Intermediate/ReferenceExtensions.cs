@@ -9,6 +9,26 @@
 public static unsafe partial class ReferenceExtensions
 {
 	/// <summary>
+	/// Retrieves an unsafe pointer of type <see cref="ValPtr{T}"/> from a reference to an
+	/// <see langword="unmanaged"/> value of type <typeparamref name="T"/>.
+	/// </summary>
+	/// <typeparam name="T">
+	/// The type of value being referenced. This must be an <see langword="unmanaged"/> value type.
+	/// </typeparam>
+	/// <param name="refValue">The reference to the value from which to retrieve the pointer.</param>
+	/// <returns>An unsafe pointer of type <see cref="ValPtr{T}"/> pointing to the referenced value.</returns>
+	/// <remarks>
+	/// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
+	/// won't be moved or collected by garbage collector.
+	/// The pointer will point to the address in memory the reference had at the moment this method was called.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static ValPtr<T> GetUnsafeValPtr<T>(ref this T refValue) where T : unmanaged
+	{
+		void* ptr = Unsafe.AsPointer(ref refValue);
+		return new(ptr);
+	}
+	/// <summary>
 	/// Retrieves an unsafe pointer of type <see cref="IntPtr"/> from a reference to an
 	/// <see langword="unmanaged"/> value of type <typeparamref name="T"/>.
 	/// </summary>

@@ -37,7 +37,8 @@ public readonly unsafe struct ValPtr<T> : IWrapper<IntPtr>, IEquatable<ValPtr<T>
 	/// Private constructor.
 	/// </summary>
 	/// <param name="value">Unsafe pointer.</param>
-	private ValPtr(void* value) => this._value = value;
+	internal ValPtr(void* value) => this._value = value;
+
 	/// <summary>
 	/// Serialization constructor.
 	/// </summary>

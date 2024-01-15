@@ -8,6 +8,25 @@
 public static unsafe partial class DelegateExtensions
 {
 	/// <summary>
+	/// Creates an <see cref="FuncPtr{TDelegate}"/> from a memory reference to a <typeparamref name="TDelegate"/> delegate
+	/// instance.
+	/// </summary>
+	/// <typeparam name="TDelegate">Type of the <see cref="Delegate"/> to be referenced by the pointer.</typeparam>
+	/// <param name="delegateInstance">Instance of the <typeparamref name="TDelegate"/> delegate.</param>
+	/// <returns>An <see cref="FuncPtr{TDelegate}"/> pointer.</returns>
+	/// <remarks>
+	/// The pointer will point to the address in memory where the delegate instance was located at the moment this method was
+	/// called.
+	/// To ensure that the pointer remains valid, the delegate instance must be kept alive and not allowed to be collected by
+	/// the GC.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static FuncPtr<TDelegate> GetUnsafeFuncPtr<TDelegate>(this TDelegate? delegateInstance)
+		where TDelegate : Delegate
+		=> delegateInstance is null ?
+			FuncPtr<TDelegate>.Zero :
+			(FuncPtr<TDelegate>)Marshal.GetFunctionPointerForDelegate(delegateInstance);
+	/// <summary>
 	/// Creates an <see cref="IntPtr"/> from a memory reference to a <typeparamref name="TDelegate"/> delegate instance.
 	/// </summary>
 	/// <typeparam name="TDelegate">Type of the <see cref="Delegate"/> to be referenced by the pointer.</typeparam>

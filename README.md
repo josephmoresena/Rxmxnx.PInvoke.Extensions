@@ -417,6 +417,7 @@ bytes and byte arrays in a PInvoke context.
 `Rxmxnx.PInvoke.DelegateExtensions` is an extension methods class that provides additional functionality for working
 with delegates.
 
+- `GetUnsafeFuncPtr<TDelegate>(TDelegate)`: Returns the unmanaged FuncPtr<TDelegate> representation of the specified delegate.
 - `GetUnsafeIntPtr<TDelegate>(TDelegate)`: Returns the unmanaged IntPtr representation of the specified delegate.
 - `GetUnsafeUIntPtr<TDelegate>(TDelegate)`: Returns the unmanaged UIntPtr representation of the specified delegate.
 - `WithSafeFixed<TDelegate, TArg>(TDelegate, TArg, FixedMethodAction<TDelegate, TArg>)`: Performs a fixed method action
@@ -443,6 +444,8 @@ with memory blocks.
   values of the specified destination type, also returning the underlying byte span.
 - `AsValues<TSource, TDestination>(ReadOnlySpan<TSource>, ReadOnlySpan<byte>&)`: Converts the memory block to a readonly
   span of values of the specified destination type, also returning the underlying byte span.
+- `GetUnsafeValPtr<T>(ReadOnlySpan<T>)`: Returns the unmanaged ReadOnlyValPtr<T> representation of the specified memory block.
+- `GetUnsafeValPtr<T>(Span<T>)`: Returns the unmanaged ValPtr<T> representation of the specified memory block.
 - `GetUnsafeIntPtr<T>(ReadOnlySpan<T>)`: Returns the unmanaged IntPtr representation of the specified memory block.
 - `GetUnsafeIntPtr<T>(Span<T>)`: Returns the unmanaged IntPtr representation of the specified memory block.
 - `GetUnsafeUIntPtr<T>(Span<T>)`: Returns the unmanaged UIntPtr representation of the specified memory block.
@@ -517,6 +520,7 @@ working with UTF-8 encoded strings represented by pointers.
 with references.
 
 - `AsBytes<TSource>(ref TSource)`: Returns a span of bytes from the specified reference.
+- `GetUnsafeValPtr<T>(ref T)`: Returns the unsafe ValPtr<T> representation of the specified reference.
 - `GetUnsafeIntPtr<T>(ref T)`: Returns the unsafe IntPtr representation of the specified reference.
 - `GetUnsafeUIntPtr<T>(ref T)`: Returns the unsafe UIntPtr representation of the specified reference.
 - `Transform<TSource, TDestination>(ref TSource)`: Transforms the specified reference to a reference of
@@ -606,6 +610,7 @@ with strings.
 - `CreateArray<T, TState>(Int32, TState, SpanAction<T, TState>)`: Creates an array of the specified type and size,
   applying the specified action for each element.
 - `GetNativeMethod<TDelegate>(IntPtr, String)`: Retrieves a native method as a delegate of the specified type.
+- `GetUnsafeValPtr<T>(in T)`: Retrieves the read-only value pointer value from the specified reference.
 - `GetUnsafeIntPtr<T>(in T)`: Retrieves the pointer value from the specified reference.
 - `GetUnsafeUIntPtr<T>(in T)`: Retrieves the unsigned pointer value from the specified reference.
 - `LoadNativeLib(String, DllImportSearchPath?)`: Loads a native library and returns the handle.
