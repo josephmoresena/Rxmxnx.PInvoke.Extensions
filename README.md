@@ -610,7 +610,7 @@ with strings.
 - `CreateArray<T, TState>(Int32, TState, SpanAction<T, TState>)`: Creates an array of the specified type and size,
   applying the specified action for each element.
 - `GetNativeMethod<TDelegate>(IntPtr, String)`: Retrieves a native method as a delegate of the specified type.
-- `GetUnsafeValPtr<T>(in T)`: Retrieves the read-only value pointer value from the specified reference.
+- `GetUnsafeValPtr<T>(in T)`: Retrieves the read-only value pointer from the specified reference.
 - `GetUnsafeIntPtr<T>(in T)`: Retrieves the pointer value from the specified reference.
 - `GetUnsafeUIntPtr<T>(in T)`: Retrieves the unsigned pointer value from the specified reference.
 - `LoadNativeLib(String, DllImportSearchPath?)`: Loads a native library and returns the handle.
