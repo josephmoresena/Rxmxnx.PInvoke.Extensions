@@ -1,6 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.Internal.DecodedRuneTests;
 
 [ExcludeFromCodeCoverage]
+[SuppressMessage("roslyn", "CA1861")]
 public sealed class GetIndicesTest
 {
 	[Fact]
