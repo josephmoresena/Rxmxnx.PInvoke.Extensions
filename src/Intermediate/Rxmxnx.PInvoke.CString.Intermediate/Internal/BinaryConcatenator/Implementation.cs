@@ -36,7 +36,11 @@ internal sealed class BinaryConcatenator : BinaryConcatenator<Byte?>
 		=> this._ignoreEmpty = true;
 
 	/// <inheritdoc/>
-	protected override void WriteValue(Byte? value) => this.Stream.WriteByte(value!.Value);
+	protected override void WriteValue(Byte? value)
+	{
+		if (value.HasValue)
+			this.Stream.WriteByte(value.Value);
+	}
 	/// <inheritdoc/>
 	protected override Task WriteValueAsync(Byte? value)
 		=> Task.Run(() => this.Stream.WriteByte(value!.Value), this.CancellationToken);
