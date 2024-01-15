@@ -70,6 +70,7 @@ internal partial class BinaryConcatenator<T>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void InitialWrite(ReadOnlySpan<Byte> value)
 	{
+		if (this.IsEmpty(value)) return;
 		this.WriteValue(value);
 		this._binaryWrite = this.WriteWithSeparator;
 		this._write = this.WriteWithSeparator;
@@ -82,8 +83,9 @@ internal partial class BinaryConcatenator<T>
 	/// <param name="value">The value to write.</param>
 	/// <remarks>This method is used when the separator is not empty.</remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private void InitialWrite(T value)
+	private void InitialWrite(T? value)
 	{
+		if (this.IsEmpty(value)) return;
 		this.WriteValue(value);
 		this._binaryWrite = this.WriteWithSeparator;
 		this._write = this.WriteWithSeparator;
@@ -97,6 +99,7 @@ internal partial class BinaryConcatenator<T>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void WriteWithSeparator(ReadOnlySpan<Byte> value)
 	{
+		if (this.IsEmpty(value)) return;
 		this.WriteValue(this._separator!);
 		this.WriteValue(value);
 	}
@@ -106,8 +109,9 @@ internal partial class BinaryConcatenator<T>
 	/// </summary>
 	/// <param name="value">The value to write.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private void WriteWithSeparator(T value)
+	private void WriteWithSeparator(T? value)
 	{
+		if (this.IsEmpty(value)) return;
 		this.WriteValue(this._separator!);
 		this.WriteValue(value);
 	}
