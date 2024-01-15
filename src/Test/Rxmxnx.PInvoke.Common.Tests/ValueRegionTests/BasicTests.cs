@@ -63,7 +63,6 @@ public sealed class BasicTests : ValueRegionTestBase
 
 	private static unsafe void AssertRegion<T>(T[] values, ICollection<GCHandle> handles) where T : unmanaged
 	{
-		Int32 initialCount = handles.Count;
 		ValueRegion<T> region = ValueRegionTestBase.Create(values, handles, out Boolean isReference);
 		ReadOnlySpan<T> span = region;
 		T[]? array = (T[]?)region;

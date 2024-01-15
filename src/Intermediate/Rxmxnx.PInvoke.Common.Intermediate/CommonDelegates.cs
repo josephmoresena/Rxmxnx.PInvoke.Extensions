@@ -9,6 +9,16 @@
 public delegate ReadOnlySpan<T> ReadOnlySpanFunc<T>();
 
 /// <summary>
+/// Encapsulates a method that has no parameters and returns a <see cref="ReadOnlySpan{T}"/> instance of type
+/// <typeparamref name="T"/>.
+/// </summary>
+/// <typeparam name="T">The type of the elements in the returned read-only span.</typeparam>
+/// <typeparam name="TState">The type of the state object passed to the method.</typeparam>
+/// <param name="arg">A state object of type <typeparamref name="TState"/>.</param>
+/// <returns>A <see cref="ReadOnlySpan{T}"/> instance.</returns>
+public delegate ReadOnlySpan<T> ReadOnlySpanFunc<T, in TState>(TState arg);
+
+/// <summary>
 /// Encapsulates a method that receives a span of objects of type <typeparamref name="T"/> and a
 /// state object of type <typeparamref name="TArg"/>, and returns a result of type <typeparamref name="TResult"/>.
 /// </summary>

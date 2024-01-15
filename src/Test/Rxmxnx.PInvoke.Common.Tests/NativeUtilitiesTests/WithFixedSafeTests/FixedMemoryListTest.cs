@@ -17,6 +17,7 @@ public sealed class FixedMemoryListTest
 		Assert.Equal(0, fml.Count);
 		Assert.True(fml.IsEmpty);
 		Assert.Empty(fml.ToArray());
+		fml.Unload();
 	}
 
 	[Fact]
@@ -261,14 +262,6 @@ public sealed class FixedMemoryListTest
 			result[i] = fml[i].Bytes.ToArray();
 		return result;
 	}
-	private Byte[][] FuncFullTest(FixedMemoryList fml)
-	{
-		this.ActionTest(fml);
-		Byte[][] result = new Byte[fml.Count][];
-		for (Int32 i = 0; i < fml.Count; i++)
-			result[i] = fml[i].Bytes.ToArray();
-		return result;
-	}
 	private void ArrayTest(Byte[][] bytes)
 	{
 		for (Int32 i = 0; i < bytes.Length; i++)
@@ -371,6 +364,7 @@ public sealed class FixedMemoryListTest
 	private static void EnumeratorTest(ReadOnlyFixedMemoryList fml)
 	{
 		IEnumerator arrEnumerator = fml.ToArray().GetEnumerator();
+		using IDisposable? unknown = arrEnumerator as IDisposable;
 		ReadOnlyFixedMemoryList.Enumerator fmlEnumerator = fml.GetEnumerator();
 
 		while (fmlEnumerator.MoveNext() && arrEnumerator.MoveNext())
@@ -379,6 +373,7 @@ public sealed class FixedMemoryListTest
 	private static void EnumeratorTest(FixedMemoryList fml)
 	{
 		IEnumerator arrEnumerator = fml.ToArray().GetEnumerator();
+		using IDisposable? unknown = arrEnumerator as IDisposable;
 		FixedMemoryList.Enumerator fmlEnumerator = fml.GetEnumerator();
 
 		while (fmlEnumerator.MoveNext() && arrEnumerator.MoveNext())

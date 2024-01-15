@@ -172,4 +172,11 @@ public partial class CStringSequence
 			result[i] = CStringSequence.GetLength(list[i]);
 		return result;
 	}
+	/// <summary>
+	/// Creates cache for <paramref name="lengths"/>.
+	/// </summary>
+	/// <param name="lengths">The lengths of the UTF-8 text sequence.</param>
+	/// <returns></returns>
+	private static ConcurrentDictionary<Int32, WeakReference<CString>>? CreateCache(IEnumerable<Int32?> lengths)
+		=> lengths.Any(l => l is > 0) ? new ConcurrentDictionary<Int32, WeakReference<CString>>() : default;
 }

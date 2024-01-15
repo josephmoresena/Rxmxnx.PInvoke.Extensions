@@ -355,6 +355,7 @@ The `Rxmxnx.PInvoke.CStringSequence` class represents a sequence of `CString` ob
 - `Slice(Int32, Int32)`: Returns a new `CStringSequence` that represents a slice of the current sequence starting from
   the specified index with the specified length.
 - `ToCString()`: Converts the `CStringSequence` to a single `CString` object.
+- `GetFixedPointer()`: This method creates a disposable, read-only fixed pointer instance by pinning current instance. It ensures that the memory block referenced by this sequence is fixed (immovable) in memory, allowing for safe direct access.
 - `WithSafeFixed<TState, TResult>(TState, ReadOnlyFixedListFunc<TState, TResult>)`: Executes the specified function with
   a fixed list of `CString` objects and returns the result.
 - `WithSafeFixed(ReadOnlyFixedListAction)`: Executes the specified action with a fixed list of `CString` objects.

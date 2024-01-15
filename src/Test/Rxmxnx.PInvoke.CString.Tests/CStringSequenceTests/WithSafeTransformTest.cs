@@ -46,6 +46,30 @@ public sealed class WithSafeTransformTest
 	}
 
 	[Fact]
+	internal unsafe void FixedPointerTest()
+	{
+		using TestMemoryHandle handle = new();
+		IReadOnlyList<Int32> indices = TestSet.GetIndices();
+		CStringSequence seq = WithSafeTransformTest.CreateSequence(handle, indices, out CString?[] values);
+		using IFixedPointer.IDisposable fPtr = seq.GetFixedPointer();
+		IntPtr ptr = fPtr.Pointer;
+		for (Int32 i = 0; i < indices.Count; i++)
+		{
+			if (!CString.IsNullOrEmpty(values[i]))
+			{
+				Assert.Equal(values[i], seq[i]);
+				Assert.True(Unsafe.AreSame(ref Unsafe.AsRef<Byte>(ptr.ToPointer()),
+				                           ref MemoryMarshal.GetReference(seq[i].AsSpan())));
+				ptr += seq[i].Length + 1;
+			}
+			else
+			{
+				Assert.True(CString.IsNullOrEmpty(seq[i]));
+			}
+		}
+	}
+
+	[Fact]
 	internal void EmptyTest()
 	{
 		FixedCStringSequence fseq = default;

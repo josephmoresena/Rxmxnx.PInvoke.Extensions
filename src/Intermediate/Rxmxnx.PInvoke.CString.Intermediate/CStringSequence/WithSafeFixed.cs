@@ -4,6 +4,23 @@
 public unsafe partial class CStringSequence
 {
 	/// <summary>
+	/// Creates an <see cref="IFixedPointer.IDisposable"/> instance by pinning the current
+	/// instance, allowing safe access to the fixed memory region.
+	/// </summary>
+	/// <returns>An <see cref="IFixedPointer.IDisposable"/> instance representing the pinned memory.</returns>
+	/// <remarks>
+	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
+	/// operations on unmanaged memory.
+	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
+	/// and avoid memory leaks.
+	/// </remarks>
+	public IFixedPointer.IDisposable GetFixedPointer()
+	{
+		ReadOnlyMemory<Char> mem = this._value.AsMemory();
+		MemoryHandle handle = mem.Pin();
+		return new FixedContext<Char>(handle.Pointer, mem.Length).ToDisposable(handle);
+	}
+	/// <summary>
 	/// Executes a specified action using the current instance treated as a <see cref="ReadOnlyFixedMemoryList"/>.
 	/// </summary>
 	/// <param name="action">The action to execute on the <see cref="ReadOnlyFixedMemoryList"/>.</param>

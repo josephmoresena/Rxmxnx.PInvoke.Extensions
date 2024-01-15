@@ -23,9 +23,10 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 			if (!this._lengths[index].HasValue)
 				return CString.Zero;
 
-			return this._lengths[index].GetValueOrDefault() == 0 ? CString.Empty : new(() => this.GetBinarySpan(index));
+			return this._lengths[index].GetValueOrDefault() == 0 ? CString.Empty : this.GetCString(index);
 		}
 	}
+
 	/// <summary>
 	/// Gets the number of <see cref="CString"/> instances contained in this <see cref="CStringSequence"/>.
 	/// </summary>
@@ -66,6 +67,7 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 
 		return new SubsequenceHelper(this, startIndex, length).CreateSequence();
 	}
+
 	/// <summary>
 	/// Retrieves the binary span for the given index.
 	/// </summary>
@@ -81,6 +83,36 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 		this.CalculateSubRange(index, count, out Int32 binaryOffset, out Int32 binaryLength);
 		return span.Slice(binaryOffset, binaryLength);
 	}
+	/// <summary>
+	/// Retrieves <see cref="CString"/> instance at the specified index.
+	/// </summary>
+	/// <param name="index">The zero-based index of the element to get.</param>
+	/// <returns>The <see cref="CString"/> at the specified index.</returns>
+	private CString GetCString(Int32 index)
+	{
+		CString? result;
+		if (!this._cache!.TryGetValue(index, out WeakReference<CString>? wRef))
+		{
+			result = new(this, index);
+			this._cache.TryAdd(index, new(result));
+		}
+		else if (!wRef.TryGetTarget(out result))
+		{
+			result = new(this, index);
+			this._cache[index].SetTarget(result);
+		}
+		return result;
+	}
+
+	/// <summary>
+	/// Retrieves the binary span for the given index in <paramref name="sequence"/>.
+	/// </summary>
+	/// <param name="sequence">A <see cref="CStringSequence"/> instance.</param>
+	/// <param name="index">The zero-based index of the element to get.</param>
+	/// <returns>The binary span for the specified index.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static ReadOnlySpan<Byte> GetItemSpan(CStringSequence sequence, Int32 index)
+		=> sequence.GetBinarySpan(index);
 
 	/// <summary>
 	/// A helper class used to create subsequences from a parent <see cref="CStringSequence"/>.
