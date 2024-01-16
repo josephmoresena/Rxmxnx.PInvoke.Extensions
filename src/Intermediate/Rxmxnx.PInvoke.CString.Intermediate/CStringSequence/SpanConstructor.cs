@@ -243,9 +243,11 @@ public unsafe partial class CStringSequence
 		Span<Byte> bytes = MemoryMarshal.AsBytes(charSpan);
 		for (Int32 i = 0; i < pointers.Length; i++)
 		{
-			ReadOnlySpan<Byte> utf8Text = new(pointers[i].ToPointer(), info.Lengths[i].GetValueOrDefault());
+			Int32 textLength = info.Lengths[i].GetValueOrDefault();
+			if (textLength < 1) continue;
+			ReadOnlySpan<Byte> utf8Text = new(pointers[i].ToPointer(), textLength);
 			utf8Text.CopyTo(bytes[offset..]);
-			offset += utf8Text.Length;
+			offset += utf8Text.Length + 1;
 		}
 	}
 
