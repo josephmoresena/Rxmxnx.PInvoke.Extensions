@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke;
 
+[SuppressMessage("csharpsquid", "S107")]
 [SuppressMessage("csharpsquid", "S6640")]
 public unsafe partial class CStringSequence
 {
@@ -97,7 +98,7 @@ public unsafe partial class CStringSequence
 	/// <param name="span1">2nd UTF-8 span.</param>
 	/// <param name="span2">3rd UTF-8 span.</param>
 	/// <param name="span3">4th UTF-8 span.</param>
-	/// <param name="span4">5th span.</param>
+	/// <param name="span4">5th UTF-8 span.</param>
 	public CStringSequence(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2,
 		ReadOnlySpan<Byte> span3, ReadOnlySpan<Byte> span4)
 	{
@@ -128,8 +129,8 @@ public unsafe partial class CStringSequence
 	/// <param name="span1">2nd UTF-8 span.</param>
 	/// <param name="span2">3rd UTF-8 span.</param>
 	/// <param name="span3">4th UTF-8 span.</param>
-	/// <param name="span4">5th span.</param>
-	/// <param name="span5">6th span.</param>
+	/// <param name="span4">5th UTF-8 span.</param>
+	/// <param name="span5">6th UTF-8 span.</param>
 	public CStringSequence(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2,
 		ReadOnlySpan<Byte> span3, ReadOnlySpan<Byte> span4, ReadOnlySpan<Byte> span5)
 	{
@@ -160,9 +161,9 @@ public unsafe partial class CStringSequence
 	/// <param name="span1">2nd UTF-8 span.</param>
 	/// <param name="span2">3rd UTF-8 span.</param>
 	/// <param name="span3">4th UTF-8 span.</param>
-	/// <param name="span4">5th span.</param>
-	/// <param name="span5">6th span.</param>
-	/// <param name="span6">7th span.</param>
+	/// <param name="span4">5th UTF-8 span.</param>
+	/// <param name="span5">6th UTF-8 span.</param>
+	/// <param name="span6">7th UTF-8 span.</param>
 	public CStringSequence(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2,
 		ReadOnlySpan<Byte> span3, ReadOnlySpan<Byte> span4, ReadOnlySpan<Byte> span5, ReadOnlySpan<Byte> span6)
 	{
@@ -196,10 +197,10 @@ public unsafe partial class CStringSequence
 	/// <param name="span1">2nd UTF-8 span.</param>
 	/// <param name="span2">3rd UTF-8 span.</param>
 	/// <param name="span3">4th UTF-8 span.</param>
-	/// <param name="span4">5th span.</param>
-	/// <param name="span5">6th span.</param>
-	/// <param name="span6">7th span.</param>
-	/// <param name="span7">8th span.</param>
+	/// <param name="span4">5th UTF-8 span.</param>
+	/// <param name="span5">6th UTF-8 span.</param>
+	/// <param name="span6">7th UTF-8 span.</param>
+	/// <param name="span7">8th UTF-8 span.</param>
 	public CStringSequence(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2,
 		ReadOnlySpan<Byte> span3, ReadOnlySpan<Byte> span4, ReadOnlySpan<Byte> span5, ReadOnlySpan<Byte> span6,
 		ReadOnlySpan<Byte> span7)
