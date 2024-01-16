@@ -41,10 +41,7 @@ internal sealed class SequenceEnumerator<T> : IEnumerator<T>
 
 	Object IEnumerator.Current => this.Current!;
 
-	void IDisposable.Dispose()
-	{
-		// No unmanaged resources to dispose.
-	}
+	void IDisposable.Dispose() => IEnumerableSequence<T>.DisposeEnumeration(this._instance);
 
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -22,6 +22,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 			list.Add(cstr);
 			this._lengths[i] = cstr?.Length;
 		}
+		this._cache = CStringSequence.CreateCache(this._lengths);
 		this._value = CStringSequence.CreateBuffer(list);
 	}
 	/// <summary>

@@ -5,7 +5,7 @@ public partial class CStringSequence
 	/// <summary>
 	/// Instance cache.
 	/// </summary>
-	private readonly IDictionary<Int32, WeakReference<CString>>? _cache;
+	private readonly IList<CString?> _cache;
 	/// <summary>
 	/// Collection of lengths for each text in the buffer. Used for interpreting the buffer content.
 	/// </summary>

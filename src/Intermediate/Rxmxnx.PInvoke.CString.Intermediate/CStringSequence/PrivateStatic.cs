@@ -176,9 +176,63 @@ public partial class CStringSequence
 	/// Creates cache for <paramref name="lengths"/>.
 	/// </summary>
 	/// <param name="lengths">The lengths of the UTF-8 text sequence.</param>
-	/// <returns></returns>
-	private static ConcurrentDictionary<Int32, WeakReference<CString>>? CreateCache(IEnumerable<Int32?> lengths)
-		=> lengths.Any(l => l is > 0) ? new ConcurrentDictionary<Int32, WeakReference<CString>>() : default;
+	/// <returns>Instance cache.</returns>
+	private static IList<CString?> CreateCache(IReadOnlyList<Int32?> lengths)
+	{
+		List<Int32> emptyIndices =
+			CStringSequence.GetEmptyIndexList(lengths, out Int32 count, out Int32 lastNonEmpty, out Int32 skipLast);
+
+		// All elements are empty, the cache is an empty array.
+		if (emptyIndices.Count == lengths.Count) return Array.Empty<CString>();
+
+		// There is no empty elements or there are only at the end of the list
+		if (emptyIndices.Count == 0 || (emptyIndices.Count - skipLast == 1 && lastNonEmpty + 1 == emptyIndices[0]))
+			return lengths.Count switch
+			{
+				<= 32 => new CString?[count],
+				<= 256 => FixedCache.Create(count, ImmutableHashSet<Int32>.Empty),
+				_ => new DynamicCache(),
+			};
+
+		// Otherwise
+		return lengths.Count switch
+		{
+			<= 256 => FixedCache.Create(count, emptyIndices.SkipLast(skipLast).ToImmutableHashSet()),
+			_ => new DynamicCache(),
+		};
+	}
+	/// <summary>
+	/// Retrieves the gaps list from <paramref name="lengths"/>.
+	/// </summary>
+	/// <param name="lengths">Length of each UTF-8 text in the sequence.</param>
+	/// <param name="totalNonEmpty">Output. Count of non-empty UTF-8 texts.</param>
+	/// <param name="lastNonEmpty">Output. Index of last non-empty UTF-8 text.</param>
+	/// <param name="skipLast">Output. Count of useless elements at the end of resulting list.</param>
+	/// <returns>A list containing the indices of all empty UTF-8 in the sequence.</returns>
+	private static List<Int32> GetEmptyIndexList(IReadOnlyList<Int32?> lengths, out Int32 totalNonEmpty,
+		out Int32 lastNonEmpty, out Int32 skipLast)
+	{
+		List<Int32> result = new(lengths.Count);
+		lastNonEmpty = -1;
+		// Fills gaps list and determines latest non-empty element.
+		for (Int32 i = 0; i < lengths.Count; i++)
+		{
+			if (lengths[i].GetValueOrDefault() != 0)
+				lastNonEmpty = i;
+			else
+				result.Add(i);
+		}
+		// Determines total non-empty elements.
+		totalNonEmpty = lengths.Count - result.Count;
+		// Determines how many items can be skipped to the end of the list.
+		skipLast = 0;
+		for (Int32 i = result.Count - 1; i > 0; i--)
+		{
+			if (result[i] - 1 != result[i - 1] || result[^1] != lengths.Count - 1) break;
+			skipLast++;
+		}
+		return result;
+	}
 	/// <summary>
 	/// Calculates buffer's length.
 	/// </summary>

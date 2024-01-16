@@ -20,6 +20,11 @@ public interface IEnumerableSequence<out T> : IEnumerable<T>
 	Int32 GetSize();
 
 	/// <summary>
+	/// Method to call when <see cref="IEnumerator{T}"/> is disposing.
+	/// </summary>
+	protected void DisposeEnumeration() { }
+
+	/// <summary>
 	/// Creates an enumerator that iterates through the sequence.
 	/// </summary>
 	/// <returns>
@@ -27,4 +32,10 @@ public interface IEnumerableSequence<out T> : IEnumerable<T>
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private IEnumerator<T> CreateEnumerator() => new SequenceEnumerator<T>(this);
+
+	/// <summary>
+	/// Calls internal dispose method.
+	/// </summary>
+	/// <param name="instance">A <see cref="IEnumerableSequence{T}"/> instance.</param>
+	internal static void DisposeEnumeration(IEnumerableSequence<T> instance) => instance.DisposeEnumeration();
 }

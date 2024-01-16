@@ -3,15 +3,24 @@
 [ExcludeFromCodeCoverage]
 public sealed class CreateTest
 {
-	[Fact]
-	internal void Test()
+	[Theory]
+	[InlineData(null)]
+	[InlineData(8)]
+	[InlineData(32)]
+	[InlineData(256)]
+	[InlineData(300)]
+	[InlineData(1000)]
+	internal void Test(Int32? length)
 	{
 		using TestMemoryHandle handle = new();
-		IReadOnlyList<Int32> indices = TestSet.GetIndices();
+		IReadOnlyList<Int32> indices = TestSet.GetIndices(length);
 		CString?[] values = TestSet.GetValues(indices, handle);
 		CStringSequence seq =
 			CStringSequence.Create(values, CreateTest.CreationMethod, values.Select(x => x?.Length).ToArray());
 		CreateTest.AssertSequence(seq, values);
+		Assert.Equal(seq, values.Select(c => c ?? CString.Zero));
+		GC.Collect();
+		Assert.Equal(seq.Where(c => !CString.IsNullOrEmpty(c)), values.Where(c => !CString.IsNullOrEmpty(c)));
 	}
 	[Theory]
 	[InlineData(true)]
@@ -42,6 +51,15 @@ public sealed class CreateTest
 		CreateTest.AssertSequence(seq5, values);
 		CreateTest.AssertSequence(seq6, values);
 		CreateTest.AssertSequence(seq7, values);
+
+		Assert.Equal(seq0, values.Take(1));
+		Assert.Equal(seq1, values.Take(2));
+		Assert.Equal(seq2, values.Take(3));
+		Assert.Equal(seq3, values.Take(4));
+		Assert.Equal(seq4, values.Take(5));
+		Assert.Equal(seq5, values.Take(6));
+		Assert.Equal(seq6, values.Take(7));
+		Assert.Equal(seq7, values);
 	}
 
 	private static void CreationMethod(Span<Byte> span, Int32 index, IReadOnlyList<CString?> values)
@@ -52,7 +70,7 @@ public sealed class CreateTest
 
 		value.AsSpan().CopyTo(span);
 	}
-	private static void AssertSequence(CStringSequence seq, CString?[] values)
+	private static void AssertSequence(CStringSequence seq, IReadOnlyList<CString?> values)
 	{
 		for (Int32 i = 0; i < seq.Count; i++)
 		{

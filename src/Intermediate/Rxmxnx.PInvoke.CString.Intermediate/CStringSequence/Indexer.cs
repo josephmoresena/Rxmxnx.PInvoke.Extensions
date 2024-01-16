@@ -4,6 +4,11 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 {
 	Int32 IEnumerableSequence<CString>.GetSize() => this._lengths.Length;
 	CString IEnumerableSequence<CString>.GetItem(Int32 index) => this[index];
+	void IEnumerableSequence<CString>.DisposeEnumeration()
+	{
+		if (!this._cache.IsReadOnly) this._cache.Clear();
+	}
+
 	/// <summary>
 	/// Gets the <see cref="CString"/> at the specified index.
 	/// </summary>
@@ -88,21 +93,7 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 	/// </summary>
 	/// <param name="index">The zero-based index of the element to get.</param>
 	/// <returns>The <see cref="CString"/> at the specified index.</returns>
-	private CString GetCString(Int32 index)
-	{
-		CString? result;
-		if (!this._cache!.TryGetValue(index, out WeakReference<CString>? wRef))
-		{
-			result = new(this, index);
-			this._cache.TryAdd(index, new(result));
-		}
-		else if (!wRef.TryGetTarget(out result))
-		{
-			result = new(this, index);
-			this._cache[index].SetTarget(result);
-		}
-		return result;
-	}
+	private CString GetCString(Int32 index) => this._cache[index] ??= new(this, index);
 
 	/// <summary>
 	/// Retrieves the binary span for the given index in <paramref name="sequence"/>.

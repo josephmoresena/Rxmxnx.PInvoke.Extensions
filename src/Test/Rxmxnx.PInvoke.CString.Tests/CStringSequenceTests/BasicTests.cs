@@ -3,11 +3,24 @@
 [ExcludeFromCodeCoverage]
 public sealed class BasicTests
 {
-	[Fact]
-	internal void Test()
+	[Theory]
+	[InlineData(null)]
+	[InlineData(8)]
+	[InlineData(32)]
+	[InlineData(256)]
+	[InlineData(300)]
+	[InlineData(1000)]
+	[InlineData(null, true)]
+	[InlineData(8, true)]
+	[InlineData(32, true)]
+	[InlineData(256, true)]
+	[InlineData(300, true)]
+	[InlineData(1000, true)]
+	internal void Test(Int32? length, Boolean endWithEmpty = false)
 	{
 		using TestMemoryHandle handle = new();
-		IReadOnlyList<Int32> indices = TestSet.GetIndices();
+		List<Int32> indices = TestSet.GetIndices(length);
+		if (endWithEmpty) indices.AddRange([-1, -2, -3,]);
 		String?[] strings = indices.Select(i => TestSet.GetString(i, true)).ToArray();
 		CStringSequence seqRef = new(strings);
 		CString?[] values = TestSet.GetValues(indices, handle);
@@ -34,10 +47,21 @@ public sealed class BasicTests
 		Assert.Equal(seqRef.ToString(), clone.ToString());
 		Assert.NotSame(seqRef.ToString(), clone.ToString());
 
+		IEnumerator<CString> enumerator = (seq as IEnumerable<CString>).GetEnumerator();
+		enumerator.MoveNext();
 		BasicTests.AssertSequence(seq, strings, values);
+		Assert.Equal(seq, values.Select(c => c ?? CString.Zero));
+		GC.Collect();
+		Assert.Equal(seq.Where(c => !CString.IsNullOrEmpty(c)), values.Where(c => !CString.IsNullOrEmpty(c)));
+		GC.Collect();
+		enumerator.MoveNext();
+		enumerator.MoveNext();
+		GC.Collect();
+		enumerator.Dispose();
 	}
 
-	private static unsafe void AssertSequence(CStringSequence seq, String?[] strings, CString?[] values)
+	private static unsafe void AssertSequence(CStringSequence seq, IReadOnlyList<String?> strings,
+		IReadOnlyList<CString?> values)
 	{
 		for (Int32 i = 0; i < seq.Count; i++)
 		{
