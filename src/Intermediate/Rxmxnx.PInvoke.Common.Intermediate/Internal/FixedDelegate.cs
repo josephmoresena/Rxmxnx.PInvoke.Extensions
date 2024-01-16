@@ -11,7 +11,7 @@ internal sealed unsafe class FixedDelegate<TDelegate> : FixedPointer, IFixedMeth
 	/// Internal instance of <see cref="GCHandle"/>.
 	/// </summary>
 	/// <remarks>It prevents the delegate from being collected by the garbage collector.</remarks>
-	private readonly GCHandle? _handle;
+	private GCHandle _handle;
 
 	/// <inheritdoc/>
 	public override Type Type => typeof(TDelegate);
@@ -24,15 +24,9 @@ internal sealed unsafe class FixedDelegate<TDelegate> : FixedPointer, IFixedMeth
 	/// Constructor that takes a method delegate and stores a pointer to it.
 	/// </summary>
 	/// <param name="method">Delegate of the method to be fixed.</param>
-	public FixedDelegate(TDelegate method) : this(
-		FixedDelegate<TDelegate>.GetMethodPointer(method, out GCHandle handle))
+	public FixedDelegate(TDelegate method) : base(
+		FixedDelegate<TDelegate>.GetMethodPointer(method, out GCHandle handle), sizeof(IntPtr), true)
 		=> this._handle = handle;
-
-	/// <summary>
-	/// Constructor that takes a pointer to a method.
-	/// </summary>
-	/// <param name="ptr">Pointer to the method to be fixed.</param>
-	private FixedDelegate(void* ptr) : base(ptr, sizeof(IntPtr), true) { }
 
 	TDelegate IFixedMethod<TDelegate>.Method => this.CreateDelegate<TDelegate>();
 
@@ -40,7 +34,7 @@ internal sealed unsafe class FixedDelegate<TDelegate> : FixedPointer, IFixedMeth
 	public override void Unload()
 	{
 		base.Unload();
-		this._handle?.Free();
+		this._handle.Free();
 	}
 
 	/// <summary>
