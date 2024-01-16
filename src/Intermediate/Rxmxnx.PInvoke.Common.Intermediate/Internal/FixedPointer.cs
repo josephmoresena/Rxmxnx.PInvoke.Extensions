@@ -119,6 +119,8 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer, IEquatable<
 		this._isReadOnly = pointer._isReadOnly;
 	}
 
+	IntPtr IFixedPointer.Pointer => (IntPtr)this.GetMemoryOffset();
+
 	/// <inheritdoc/>
 	public virtual Boolean Equals(FixedPointer? other)
 		=> other is not null && this.GetMemoryOffset() == other.GetMemoryOffset() &&
@@ -140,8 +142,6 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer, IEquatable<
 			result.Add(this.Type);
 		return result.ToHashCode();
 	}
-
-	IntPtr IFixedPointer.Pointer => (IntPtr)this.GetMemoryOffset();
 
 	/// <summary>
 	/// Creates a reference of a <typeparamref name="TValue"/> value over the memory block.

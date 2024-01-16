@@ -100,8 +100,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	}
 
 	/// <inheritdoc/>
-	public Boolean Equals([NotNullWhen(true)] CString? other)
-		=> other is not null && this._length == other._length && CString.equals(this, other);
+	public Boolean Equals([NotNullWhen(true)] CString? other) => other is not null && CString.equals(this, other);
 	/// <summary>
 	/// Determines whether the current <see cref="CString"/> and a specified <see cref="String"/>
 	/// have the same value.

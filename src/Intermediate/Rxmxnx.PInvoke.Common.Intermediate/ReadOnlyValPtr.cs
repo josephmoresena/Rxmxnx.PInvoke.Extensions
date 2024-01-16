@@ -37,7 +37,8 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// Private constructor.
 	/// </summary>
 	/// <param name="value">Unsafe pointer.</param>
-	private ReadOnlyValPtr(void* value) => this._value = value;
+	internal ReadOnlyValPtr(void* value) => this._value = value;
+
 	/// <summary>
 	/// Serialization constructor.
 	/// </summary>

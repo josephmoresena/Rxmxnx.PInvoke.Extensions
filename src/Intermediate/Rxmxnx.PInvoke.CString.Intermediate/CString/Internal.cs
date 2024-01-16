@@ -9,6 +9,22 @@ public partial class CString
 	/// <param name="ptr">A pointer to an array of UTF-8 characters.</param>
 	/// <param name="length">The number of <see cref="Byte"/> units within the pointed array to be used.</param>
 	internal CString(IntPtr ptr, Int32 length) : this(ptr, length, false) { }
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CString"/> class which lives inside
+	/// <paramref name="sequence"/> with <paramref name="index"/> as index element.
+	/// </summary>
+	/// <param name="sequence">The <see cref="CStringSequence"/> containing current UTF-8 text.</param>
+	/// <param name="index">Index element of current UTF-8 text into <paramref name="sequence"/>.</param>
+	internal CString(CStringSequence sequence, Int32 index)
+	{
+		this._isLocal = false;
+		this._isFunction = true;
+		this._data = ValueRegion<Byte>.Create(new SequenceItemState(sequence, index), SequenceItemState.GetSpan);
+
+		ReadOnlySpan<Byte> data = CStringSequence.GetItemSpan(sequence, index);
+		this._isNullTerminated = true;
+		this._length = data.Length;
+	}
 
 	/// <summary>
 	/// Writes the sequence of bytes to the provided <see cref="Stream"/> and advances

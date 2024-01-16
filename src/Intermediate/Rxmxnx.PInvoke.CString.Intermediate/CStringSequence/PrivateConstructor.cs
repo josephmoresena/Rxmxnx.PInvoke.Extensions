@@ -11,6 +11,7 @@ public partial class CStringSequence
 	{
 		this._lengths = sequence._lengths.ToArray();
 		this._value = String.Create(sequence._value.Length, sequence, CStringSequence.CopySequence);
+		this._cache = CStringSequence.CreateCache(this._lengths);
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class with a predefined
@@ -24,5 +25,6 @@ public partial class CStringSequence
 	{
 		this._value = value;
 		this._lengths = lengths;
+		this._cache = CStringSequence.CreateCache(this._lengths);
 	}
 }

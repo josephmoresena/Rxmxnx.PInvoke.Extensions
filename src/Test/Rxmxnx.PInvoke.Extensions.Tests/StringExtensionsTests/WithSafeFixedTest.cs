@@ -45,9 +45,7 @@ public sealed class WithSafeFixedTest
 	private static String? EmptyFuncTest(in IReadOnlyFixedContext<Char> ctx)
 	{
 		WithSafeFixedTest.EmptyActionTest(ctx);
-		if (ctx.Pointer != IntPtr.Zero)
-			return String.Empty;
-		return default;
+		return ctx.Pointer != IntPtr.Zero ? String.Empty : default;
 	}
 	private static String? EmptyFuncTest(in IReadOnlyFixedContext<Char> ctx, String? value)
 	{

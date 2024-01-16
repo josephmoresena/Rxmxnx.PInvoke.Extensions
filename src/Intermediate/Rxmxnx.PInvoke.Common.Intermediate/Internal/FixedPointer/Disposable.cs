@@ -43,7 +43,7 @@ internal partial class FixedPointer
 		/// Retrieves the <see cref="IDisposable"/> parent object.
 		/// </summary>
 		/// <returns>A <see cref="IDisposable"/> instance.</returns>
-		protected IDisposable GetDisposableParent() 
+		protected IDisposable GetDisposableParent()
 			=> this._disposable is IFixedPointer.IDisposable ? this._disposable : this;
 
 		/// <inheritdoc cref="IDisposable.Dispose()"/>

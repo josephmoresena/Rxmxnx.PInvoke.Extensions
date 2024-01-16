@@ -33,6 +33,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	{
 		this._lengths = CStringSequence.GetLengthArray(values);
 		this._value = CStringSequence.CreateBuffer(values);
+		this._cache = CStringSequence.CreateCache(this._lengths);
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from an
@@ -44,6 +45,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		List<CString?> list = values.Select(CStringSequence.GetCString).ToList();
 		this._lengths = CStringSequence.GetLengthArray(list);
 		this._value = CStringSequence.CreateBuffer(list);
+		this._cache = CStringSequence.CreateCache(this._lengths);
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from an
@@ -54,6 +56,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	{
 		this._lengths = CStringSequence.GetLengthArray(arr);
 		this._value = CStringSequence.CreateBuffer(arr);
+		this._cache = CStringSequence.CreateCache(this._lengths);
 	}
 	/// <summary>
 	/// Creates a copy of this instance of <see cref="CStringSequence"/>.
@@ -89,6 +92,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// It should not be used in typical code.
 	/// </remarks>
 	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Browsable(false)]
 	public ref readonly Byte GetPinnableReference()
 		=> ref MemoryMarshal.GetReference(MemoryMarshal.AsBytes(this._value.AsSpan()));
 	/// <summary>
@@ -115,8 +119,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	public static CStringSequence Create<TState>(TState state, CStringSequenceCreationAction<TState> action,
 		params Int32?[] lengths)
 	{
-		Int32 bytesLength = lengths.Sum(CStringSequence.GetSpanLength);
-		Int32 length = bytesLength / CStringSequence.sizeOfChar + bytesLength % CStringSequence.sizeOfChar;
+		Int32 length = CStringSequence.GetBufferLength(lengths);
 		String buffer = String.Create(length, new SequenceCreationState<TState>(state, action, lengths),
 		                              CStringSequence.CreateCStringSequence);
 		return new(buffer, lengths);

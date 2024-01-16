@@ -5,6 +5,7 @@
 /// instances.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
+[Browsable(false)]
 [SuppressMessage("csharpsquid", "S6640")]
 public static unsafe class PointerCStringExtensions
 {

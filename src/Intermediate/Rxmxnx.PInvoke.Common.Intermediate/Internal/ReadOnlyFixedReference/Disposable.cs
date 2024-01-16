@@ -31,8 +31,8 @@ internal partial class ReadOnlyFixedReference<T> : IConvertibleDisposable<IReadO
 			=> (this.Value.AsBinaryContext() as IConvertibleDisposable<IReadOnlyFixedContext<Byte>.IDisposable>)!
 				.ToDisposable(this.GetDisposableParent());
 		/// <inheritdoc/>
-		public IReadOnlyFixedReference<TDestination> Transformation<TDestination>(
-			out IReadOnlyFixedMemory residual) where TDestination : unmanaged
+		public IReadOnlyFixedReference<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual)
+			where TDestination : unmanaged
 		{
 			IReadOnlyFixedReference<TDestination>.IDisposable result = this.Value
 			                                                               .GetTransformation<TDestination>(

@@ -29,6 +29,10 @@ public interface IFixedMemory : IReadOnlyFixedMemory
 public interface IFixedMemory<T> : IFixedMemory, IReadOnlyFixedMemory<T> where T : unmanaged
 {
 	/// <summary>
+	/// Gets the value pointer to the fixed block of memory.
+	/// </summary>
+	new ValPtr<T> ValuePointer => (ValPtr<T>)this.Pointer;
+	/// <summary>
 	/// Gets a <typeparamref name="T"/> span over the fixed block of memory.
 	/// </summary>
 	new Span<T> Values { get; }
@@ -43,5 +47,5 @@ public interface IFixedMemory<T> : IFixedMemory, IReadOnlyFixedMemory<T> where T
 	/// ensuring that they are properly disposed of when no longer needed. It is crucial to call
 	/// <see cref="System.IDisposable.Dispose"/> to release these unmanaged resources and avoid memory leaks.
 	/// </remarks>
-	public new interface IDisposable : IFixedMemory<T>, IFixedMemory.IDisposable, IReadOnlyFixedMemory<T>.IDisposable { }
+	public new interface IDisposable : IFixedMemory<T>, IFixedMemory.IDisposable, IReadOnlyFixedMemory<T>.IDisposable;
 }

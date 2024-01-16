@@ -7,8 +7,8 @@ namespace Rxmxnx.PInvoke;
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
 [SuppressMessage("csharpsquid", "S6640")]
-public readonly unsafe struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<FuncPtr<TDelegate>>, ISpanFormattable, ISerializable
-	where TDelegate : Delegate
+public readonly unsafe struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<FuncPtr<TDelegate>>, ISpanFormattable,
+	ISerializable where TDelegate : Delegate
 {
 	/// <summary>
 	/// A read-only field representing a null-initialized function pointer.
@@ -24,9 +24,9 @@ public readonly unsafe struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<
 	/// Internal pointer as an <see cref="IntPtr"/>.
 	/// </summary>
 	public IntPtr Pointer => new(this._value);
-    /// <summary>
-    /// Indicates whether the current pointer is <see langword="null"/>.
-    /// </summary>
+	/// <summary>
+	/// Indicates whether the current pointer is <see langword="null"/>.
+	/// </summary>
 	public Boolean IsZero => IntPtr.Zero == (IntPtr)this._value;
 
 	/// <inheritdoc cref="IFixedMethod{T}.Method"/>
@@ -107,7 +107,8 @@ public readonly unsafe struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<
 	/// <see langword="true"/> if <paramref name="value1"/> equals <paramref name="value2"/>;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
-	public static Boolean operator ==(FuncPtr<TDelegate> value1, FuncPtr<TDelegate> value2) => value1._value == value2._value;
+	public static Boolean operator ==(FuncPtr<TDelegate> value1, FuncPtr<TDelegate> value2)
+		=> value1._value == value2._value;
 	/// <summary>
 	/// Determines whether two specified instances of <see cref="FuncPtr{T}"/> are not equal.
 	/// </summary>
@@ -118,7 +119,8 @@ public readonly unsafe struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
 	/// <inheritdoc cref="IntPtr.op_Inequality(IntPtr, IntPtr)"/>
-	public static Boolean operator !=(FuncPtr<TDelegate> value1, FuncPtr<TDelegate> value2) => value1._value != value2._value;
+	public static Boolean operator !=(FuncPtr<TDelegate> value1, FuncPtr<TDelegate> value2)
+		=> value1._value != value2._value;
 
 	/// <inheritdoc cref="IntPtr.Parse(String)"/>
 	[ExcludeFromCodeCoverage]

@@ -60,6 +60,7 @@ public interface IMutableReference<T> : IMutableReference, IReferenceableWrapper
 	new ref T Reference { get; }
 
 	ref T IReferenceable<T>.Reference => ref this.Reference;
+	ref readonly T IReadOnlyReferenceable<T>.Reference => ref this.Reference;
 
 	/// <summary>
 	/// Creates a new instance of an object that implements <see cref="IMutableReference{T}"/> interface.

@@ -30,7 +30,7 @@ public abstract class ValueRegionTestBase
 		where T : unmanaged
 	{
 		isReference = false;
-		switch (Random.Shared.Next(default, 7))
+		switch (Random.Shared.Next(default, 8))
 		{
 			case 0:
 			case 1:
@@ -38,6 +38,9 @@ public abstract class ValueRegionTestBase
 			case 2:
 			case 4:
 				return ValueRegion<T>.Create(() => array);
+			case 3:
+			case 7:
+				return ValueRegion<T>.Create(array, a => a.AsSpan());
 			default:
 				isReference = true;
 				handles.Add(GCHandle.Alloc(array, GCHandleType.Pinned));

@@ -32,13 +32,13 @@ internal partial class ReadOnlyFixedContext<T> : IConvertibleDisposable<IReadOnl
 				.ToDisposable(this.GetDisposableParent());
 
 		/// <inheritdoc/>
-		public IReadOnlyFixedContext<TDestination> Transformation<TDestination>(
-			out IReadOnlyFixedMemory residual) where TDestination : unmanaged
+		public IReadOnlyFixedContext<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual)
+			where TDestination : unmanaged
 		{
 			IReadOnlyFixedContext<TDestination> result = this.Value
-			                                                             .GetTransformation<TDestination>(
-				                                                             out ReadOnlyFixedOffset offset)
-			                                                             .CreateDisposable(this.GetDisposableParent());
+			                                                 .GetTransformation<TDestination>(
+				                                                 out ReadOnlyFixedOffset offset)
+			                                                 .CreateDisposable(this.GetDisposableParent());
 			residual = offset.ToDisposable(this.GetDisposableParent());
 			return result;
 		}

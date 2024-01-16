@@ -47,6 +47,7 @@ public sealed class GetUnsafePointerTest
 		{
 			Assert.Equal((IntPtr)ptr, NativeUtilities.GetUnsafeIntPtr(value));
 			Assert.Equal((UIntPtr)ptr, NativeUtilities.GetUnsafeUIntPtr(value));
+			Assert.Equal((ReadOnlyValPtr<T>)(IntPtr)ptr, NativeUtilities.GetUnsafeValPtr(value));
 		}
 	}
 }

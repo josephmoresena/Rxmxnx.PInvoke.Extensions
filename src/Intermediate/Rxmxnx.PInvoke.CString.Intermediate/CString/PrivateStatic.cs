@@ -80,7 +80,8 @@ public partial class CString
 	/// elements, otherwise <see langword="false"/>.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static Boolean SequenceEquals<T>(ReadOnlySpan<T> current, ReadOnlySpan<T> other) where T : unmanaged, IEquatable<T>
+	private static Boolean SequenceEquals<T>(ReadOnlySpan<T> current, ReadOnlySpan<T> other)
+		where T : unmanaged, IEquatable<T>
 	{
 		for (Int32 i = 0; i < current.Length; i++)
 		{

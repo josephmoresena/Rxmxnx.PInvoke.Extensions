@@ -40,6 +40,5 @@ public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference
 	/// ensuring that they are properly disposed of when no longer needed. It is crucial to call
 	/// <see cref="System.IDisposable.Dispose"/> to release these unmanaged resources and avoid memory leaks.
 	/// </remarks>
-	public new interface IDisposable : IFixedReference<T>, IReadOnlyFixedReference<T>.IDisposable,
-		IFixedMemory.IDisposable { }
+	public new interface IDisposable : IFixedReference<T>, IReadOnlyFixedReference<T>.IDisposable, IFixedMemory.IDisposable;
 }

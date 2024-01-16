@@ -31,12 +31,12 @@ internal partial class FixedReference<T> : IConvertibleDisposable<IFixedReferenc
 		[ExcludeFromCodeCoverage]
 		IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
 		[ExcludeFromCodeCoverage]
-		IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
+		IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(
+			out IReadOnlyFixedMemory residual)
 		{
 			Unsafe.SkipInit(out residual);
 			IReadOnlyFixedReference<TDestination> result =
-				this.Transformation<TDestination>(
-					out Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual));
+				this.Transformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual));
 			return result;
 		}
 		[ExcludeFromCodeCoverage]
@@ -44,22 +44,22 @@ internal partial class FixedReference<T> : IConvertibleDisposable<IFixedReferenc
 		{
 			Unsafe.SkipInit(out residual);
 			IFixedReference<TDestination> result =
-				this.Transformation<TDestination>(
-					out Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual));
+				this.Transformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual));
 			return result;
 		}
-		
+
 		/// <inheritdoc/>
 		public IFixedContext<Byte> AsBinaryContext()
 			=> (this.Value.AsBinaryContext() as IConvertibleDisposable<IFixedContext<Byte>.IDisposable>)!.ToDisposable(
 				this.GetDisposableParent());
 		/// <inheritdoc/>
-		public IFixedReference<TDestination> Transformation<TDestination>(
-			out IFixedMemory residual) where TDestination : unmanaged
+		public IFixedReference<TDestination> Transformation<TDestination>(out IFixedMemory residual)
+			where TDestination : unmanaged
 		{
 			IFixedReference<TDestination>.IDisposable result = this.Value
 			                                                       .GetTransformation<TDestination>(
-				                                                       out FixedOffset offset).CreateDisposable(this.GetDisposableParent());
+				                                                       out FixedOffset offset)
+			                                                       .CreateDisposable(this.GetDisposableParent());
 			residual = offset.ToDisposable(this.GetDisposableParent());
 			return result;
 		}

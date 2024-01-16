@@ -158,10 +158,8 @@ public sealed class WithSafeFixedTest
 			Assert.Equal(residual, residual2);
 			if (typeof(T) == typeof(T2))
 				Assert.Equal((Object)fRef.Reference, fRef2.Reference);
-			else if (sizeof(T2) == sizeof(T2))
-				Assert.Equal(bytes, fRef2.Bytes.ToArray());
 			else
-				Assert.Equal(bytes, fRef2.Bytes.ToArray().Concat(residual.Bytes.ToArray()));
+				Assert.Equal(bytes, fRef2.Bytes.ToArray());
 
 			Assert.Equal(sizeof(T) == sizeof(T2), residual.Bytes.IsEmpty);
 			Assert.Equal(sizeof(T) == sizeof(T2), ctxR.Bytes.IsEmpty);
@@ -192,10 +190,8 @@ public sealed class WithSafeFixedTest
 
 			if (typeof(T) == typeof(T2))
 				Assert.Equal((Object)fRef.Reference, fRef2.Reference);
-			else if (sizeof(T2) == sizeof(T2))
-				Assert.Equal(bytes, fRef2.Bytes.ToArray());
 			else
-				Assert.Equal(bytes, fRef2.Bytes.ToArray().Concat(residual.Bytes.ToArray()));
+				Assert.Equal(bytes, fRef2.Bytes.ToArray());
 
 			Assert.Equal(sizeof(T) == sizeof(T2), residual.Bytes.IsEmpty);
 			Assert.Equal(sizeof(T) == sizeof(T2), ctxR.Bytes.IsEmpty);

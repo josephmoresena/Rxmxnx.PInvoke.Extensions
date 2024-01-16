@@ -5,9 +5,51 @@
 /// instances.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
+[Browsable(false)]
 [SuppressMessage("csharpsquid", "S6640")]
 public static unsafe partial class MemoryBlockExtensions
 {
+	/// <summary>
+	/// Retrieves an unsafe <see cref="ValPtr{T}"/> pointer from <see cref="Span{T}"/> instance.
+	/// </summary>
+	/// <typeparam name="T">
+	/// The type of <see langword="unmanaged"/> values contained in the contiguous region of memory.
+	/// </typeparam>
+	/// <param name="span">The span from which the pointer is retrieved.</param>
+	/// <returns>An <see cref="ValPtr{T}"/> pointer.</returns>
+	/// <remarks>
+	/// The pointer obtained is "unsafe" as it doesn't guarantee that the span won't be moved or
+	/// collected by garbage collector.
+	/// The pointer will point to the address in memory the span had at the moment this method was called.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static ValPtr<T> GetUnsafeValPtr<T>(this Span<T> span) where T : unmanaged
+	{
+		ref T refValue = ref MemoryMarshal.GetReference(span);
+		void* ptr = Unsafe.AsPointer(ref refValue);
+		return new(ptr);
+	}
+	/// <summary>
+	/// Retrieves an unsafe <see cref="ReadOnlyValPtr{T}"/> pointer from <see cref="ReadOnlySpan{T}"/> instance.
+	/// </summary>
+	/// <typeparam name="T">
+	/// The type of <see langword="unmanaged"/> values contained in the contiguous region of memory.
+	/// </typeparam>
+	/// <param name="span">The read-only span from which the pointer is retrieved.</param>
+	/// <returns>An <see cref="ReadOnlyValPtr{T}"/> pointer.</returns>
+	/// <remarks>
+	/// The pointer obtained is "unsafe" as it doesn't guarantee that the span won't be moved or
+	/// collected by garbage collector.
+	/// The pointer will point to the address in memory the span had at the moment this method was called.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static ReadOnlyValPtr<T> GetUnsafeValPtr<T>(this ReadOnlySpan<T> span) where T : unmanaged
+	{
+		ref T refValue = ref MemoryMarshal.GetReference(span);
+		void* ptr = Unsafe.AsPointer(ref refValue);
+		return new(ptr);
+	}
+
 	/// <summary>
 	/// Retrieves an unsafe <see cref="IntPtr"/> pointer from <see cref="Span{T}"/> instance.
 	/// </summary>

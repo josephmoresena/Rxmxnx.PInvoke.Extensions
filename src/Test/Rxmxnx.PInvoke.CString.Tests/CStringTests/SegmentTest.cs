@@ -9,7 +9,7 @@ public sealed class SegmentTests
 	{
 		const Int32 zero = 0;
 		Int32 varIndex = 1;
-		
+
 		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[varIndex..]);
 		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[..varIndex]);
 
@@ -18,8 +18,8 @@ public sealed class SegmentTests
 		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[..varIndex]);
 
 		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(varIndex, zero));
-		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(zero,1));
-		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(varIndex,1));
+		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(zero, 1));
+		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(varIndex, 1));
 	}
 
 	[Fact]
