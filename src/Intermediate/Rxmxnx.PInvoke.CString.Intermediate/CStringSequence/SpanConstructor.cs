@@ -15,12 +15,9 @@ public unsafe partial class CStringSequence
 		this._cache = CStringSequence.CreateCache(this._lengths);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptrSpan = &MemoryMarshal.GetReference(stackalloc IntPtr[] { (IntPtr)ptr0, }))
-		{
-			this._value = String.Create(CStringSequence.GetBufferLength(this._lengths),
-			                            new SpanCreationInfo { Pointers = ptrSpan, Lengths = this._lengths, },
-			                            CStringSequence.CreateBuffer);
-		}
+			this._value = CStringSequence.CreateBuffer(ptrSpan, this._lengths);
 	}
+
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
 	/// using UTF-8 texts contained in given read-only spans.
@@ -34,11 +31,7 @@ public unsafe partial class CStringSequence
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptrSpan = &MemoryMarshal.GetReference(stackalloc IntPtr[] { (IntPtr)ptr0, (IntPtr)ptr1, }))
-		{
-			this._value = String.Create(CStringSequence.GetBufferLength(this._lengths),
-			                            new SpanCreationInfo { Pointers = ptrSpan, Lengths = this._lengths, },
-			                            CStringSequence.CreateBuffer);
-		}
+			this._value = CStringSequence.CreateBuffer(ptrSpan, this._lengths);
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
@@ -84,11 +77,7 @@ public unsafe partial class CStringSequence
 			       {
 				       (IntPtr)ptr0, (IntPtr)ptr1, (IntPtr)ptr2, (IntPtr)ptr3,
 			       }))
-		{
-			this._value = String.Create(CStringSequence.GetBufferLength(this._lengths),
-			                            new SpanCreationInfo { Pointers = ptrSpan, Lengths = this._lengths, },
-			                            CStringSequence.CreateBuffer);
-		}
+			this._value = CStringSequence.CreateBuffer(ptrSpan, this._lengths);
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
@@ -115,11 +104,7 @@ public unsafe partial class CStringSequence
 				       (IntPtr)ptr0, (IntPtr)ptr1, (IntPtr)ptr2, (IntPtr)ptr3,
 				       (IntPtr)ptr4,
 			       }))
-		{
-			this._value = String.Create(CStringSequence.GetBufferLength(this._lengths),
-			                            new SpanCreationInfo { Pointers = ptrSpan, Lengths = this._lengths, },
-			                            CStringSequence.CreateBuffer);
-		}
+			this._value = CStringSequence.CreateBuffer(ptrSpan, this._lengths);
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
@@ -147,11 +132,7 @@ public unsafe partial class CStringSequence
 			       (IntPtr)ptr0, (IntPtr)ptr1, (IntPtr)ptr2,
 			       (IntPtr)ptr3, (IntPtr)ptr4, (IntPtr)ptr5,
 		       }))
-		{
-			this._value = String.Create(CStringSequence.GetBufferLength(this._lengths),
-			                            new SpanCreationInfo { Pointers = ptrSpan, Lengths = this._lengths, },
-			                            CStringSequence.CreateBuffer);
-		}
+			this._value = CStringSequence.CreateBuffer(ptrSpan, this._lengths);
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
@@ -183,11 +164,7 @@ public unsafe partial class CStringSequence
 			       (IntPtr)ptr3, (IntPtr)ptr4, (IntPtr)ptr5,
 			       (IntPtr)ptr6,
 		       }))
-		{
-			this._value = String.Create(CStringSequence.GetBufferLength(this._lengths),
-			                            new SpanCreationInfo { Pointers = ptrSpan, Lengths = this._lengths, },
-			                            CStringSequence.CreateBuffer);
-		}
+			this._value = CStringSequence.CreateBuffer(ptrSpan, this._lengths);
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
@@ -225,13 +202,21 @@ public unsafe partial class CStringSequence
 			       (IntPtr)ptr3, (IntPtr)ptr4, (IntPtr)ptr5,
 			       (IntPtr)ptr6, (IntPtr)ptr7,
 		       }))
-		{
-			this._value = String.Create(CStringSequence.GetBufferLength(this._lengths),
-			                            new SpanCreationInfo { Pointers = ptrSpan, Lengths = this._lengths, },
-			                            CStringSequence.CreateBuffer);
-		}
+			this._value = CStringSequence.CreateBuffer(ptrSpan, this._lengths);
 	}
 
+	/// <summary>
+	/// Creates buffer using <paramref name="ptrSpan"/> and <paramref name="lengths"/>.
+	/// </summary>
+	/// <param name="ptrSpan">Pointer to pointer span.</param>
+	/// <param name="lengths">UTF-8 text lengths.</param>
+	/// <returns>Created buffer.</returns>
+	private static String CreateBuffer(void* ptrSpan, Int32?[] lengths)
+	{
+		Int32 bufferLength = CStringSequence.GetBufferLength(lengths);
+		SpanCreationInfo info = new() { Pointers = ptrSpan, Lengths = lengths, };
+		return String.Create(bufferLength, info, CStringSequence.CreateBuffer);
+	}
 	/// <summary>
 	/// Create buffer using <paramref name="info"/>.
 	/// </summary>
