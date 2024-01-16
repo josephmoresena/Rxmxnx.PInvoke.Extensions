@@ -41,7 +41,7 @@ public partial class CStringSequence
 		/// <param name="count">Non-empty entries count.</param>
 		/// <param name="emptyIndices">Empty caps.</param>
 		/// <returns>A <see cref="FixedCache"/> instance.</returns>
-		public static FixedCache Create(Int32 count, IImmutableSet<Int32> emptyIndices)
+		public static FixedCache CreateFixedCache(Int32 count, IImmutableSet<Int32> emptyIndices)
 			=> count <= 32 ? new CStringCache(count, emptyIndices) : new WeakCache(count, emptyIndices);
 
 		/// <summary>

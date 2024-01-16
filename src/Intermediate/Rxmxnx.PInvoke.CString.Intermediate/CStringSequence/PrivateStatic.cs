@@ -190,14 +190,14 @@ public partial class CStringSequence
 			return lengths.Count switch
 			{
 				<= 32 => new CString?[count],
-				<= 256 => FixedCache.Create(count, ImmutableHashSet<Int32>.Empty),
+				<= 256 => FixedCache.CreateFixedCache(count, ImmutableHashSet<Int32>.Empty),
 				_ => new DynamicCache(),
 			};
 
 		// Otherwise
 		return lengths.Count switch
 		{
-			<= 256 => FixedCache.Create(count, emptyIndices.SkipLast(skipLast).ToImmutableHashSet()),
+			<= 256 => FixedCache.CreateFixedCache(count, emptyIndices.SkipLast(skipLast).ToImmutableHashSet()),
 			_ => new DynamicCache(),
 		};
 	}

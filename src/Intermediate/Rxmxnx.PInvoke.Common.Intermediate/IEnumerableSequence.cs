@@ -22,7 +22,10 @@ public interface IEnumerableSequence<out T> : IEnumerable<T>
 	/// <summary>
 	/// Method to call when <see cref="IEnumerator{T}"/> is disposing.
 	/// </summary>
-	protected void DisposeEnumeration() { }
+	protected void DisposeEnumeration()
+	{
+		// By default no resources to dispose.
+	}
 
 	/// <summary>
 	/// Creates an enumerator that iterates through the sequence.
