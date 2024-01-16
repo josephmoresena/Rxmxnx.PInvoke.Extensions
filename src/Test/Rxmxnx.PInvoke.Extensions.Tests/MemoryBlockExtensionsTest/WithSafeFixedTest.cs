@@ -41,8 +41,6 @@ public sealed class WithSafeFixedTest
 
 	private void Test<T>() where T : unmanaged
 	{
-		IntPtr ptr = default;
-		Boolean a = ptr >= IntPtr.Zero;
 		T[] values = WithSafeFixedTest.fixture.CreateMany<T>(10).ToArray();
 		Span<T> span = values;
 		ReadOnlySpan<T> readOnlySpan = span;
@@ -76,6 +74,9 @@ public sealed class WithSafeFixedTest
 		                           ref MemoryMarshal.GetReference(bctx.Values)));
 		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(arr.AsSpan()),
 		                           ref MemoryMarshal.GetReference(ctx.Values)));
+
+		Assert.True(Unsafe.AreSame(ref ctx.ValuePointer.Reference, ref MemoryMarshal.GetReference(arr.AsSpan())));
+		Assert.True(Unsafe.AreSame(ref bctx.ValuePointer.Reference, ref MemoryMarshal.GetReference(ctx.Bytes)));
 
 		WithSafeFixedTest.Test<T, Boolean>(ctx);
 		WithSafeFixedTest.Test<T, Byte>(ctx);
@@ -127,6 +128,9 @@ public sealed class WithSafeFixedTest
 		else
 		{
 			Assert.Throws<InvalidCastException>(() => (IFixedContext<Byte>)ctx.AsBinaryContext());
+
+			Assert.True(Unsafe.AreSame(in ctx.ValuePointer.Reference, ref MemoryMarshal.GetReference(arr.AsSpan())));
+			Assert.True(Unsafe.AreSame(in bctx.ValuePointer.Reference, ref MemoryMarshal.GetReference(ctx.Bytes)));
 		}
 
 		WithSafeFixedTest.Test<T, Boolean>(ctx);
