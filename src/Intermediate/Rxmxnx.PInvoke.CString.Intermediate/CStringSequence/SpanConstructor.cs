@@ -49,11 +49,7 @@ public unsafe partial class CStringSequence
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		fixed (void* ptrSpan =
 			       &MemoryMarshal.GetReference(stackalloc IntPtr[] { (IntPtr)ptr0, (IntPtr)ptr1, (IntPtr)ptr2, }))
-		{
-			this._value = String.Create(CStringSequence.GetBufferLength(this._lengths),
-			                            new SpanCreationInfo { Pointers = ptrSpan, Lengths = this._lengths, },
-			                            CStringSequence.CreateBuffer);
-		}
+			this._value = CStringSequence.CreateBuffer(ptrSpan, this._lengths);
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
