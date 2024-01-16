@@ -380,6 +380,8 @@ The `Rxmxnx.PInvoke.CStringSequence` class represents a sequence of `CString` ob
 - `CStringSequence(IEnumerable<CString>)`: Initializes a new instance of the `CStringSequence` class with an enumerable
   collection of `CString` objects.
 - `CStringSequence(String[])`: Initializes a new instance of the `CStringSequence` class with an array of strings.
+- `CStringSequence(ReadOnlySpan<Byte>...)`: Initializes a new instance of the `CStringSequence` class with UTF-8
+  read-only spans.
 
 #### Static
 
