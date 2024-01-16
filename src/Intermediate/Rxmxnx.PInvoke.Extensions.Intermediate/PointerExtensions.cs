@@ -4,6 +4,7 @@
 /// Provides a set of extensions for basic operations with <see cref="IntPtr"/> and <see cref="UIntPtr"/> instances.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
+[Browsable(false)]
 [SuppressMessage("csharpsquid", "S6640")]
 public static unsafe class PointerExtensions
 {

@@ -92,6 +92,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// It should not be used in typical code.
 	/// </remarks>
 	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Browsable(false)]
 	public ref readonly Byte GetPinnableReference()
 		=> ref MemoryMarshal.GetReference(MemoryMarshal.AsBytes(this._value.AsSpan()));
 	/// <summary>

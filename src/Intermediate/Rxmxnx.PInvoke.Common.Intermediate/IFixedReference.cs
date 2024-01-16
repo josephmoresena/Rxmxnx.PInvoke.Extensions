@@ -28,16 +28,7 @@ public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference
 	/// A <see cref="IReadOnlyFixedReference{TDestination}"/> instance.
 	/// </returns>
 	new IFixedReference<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual)
-		where TDestination : unmanaged
-	{
-		Unsafe.SkipInit(out residual);
-		return this.Transformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual));
-	}
-
-	ref readonly T IReadOnlyReferenceable<T>.Reference => ref this.Reference;
-	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(
-		out IReadOnlyFixedMemory residual)
-		=> this.Transformation<TDestination>(out residual);
+		where TDestination : unmanaged;
 
 	/// <summary>
 	/// Interface representing a disposable <see cref="IFixedReference{T}"/> object for a fixed memory

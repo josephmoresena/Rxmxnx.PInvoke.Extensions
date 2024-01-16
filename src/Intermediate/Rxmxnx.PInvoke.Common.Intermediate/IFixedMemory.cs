@@ -16,9 +16,6 @@ public interface IFixedMemory : IReadOnlyFixedMemory
 	/// <returns>An instance of <see cref="IFixedContext{Byte}"/>.</returns>
 	new IFixedContext<Byte> AsBinaryContext();
 
-	ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => this.Bytes;
-	IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
-
 	/// <summary>
 	/// Interface representing a <see cref="IDisposable"/> <see cref="IFixedMemory"/> object.
 	/// </summary>
@@ -39,9 +36,6 @@ public interface IFixedMemory<T> : IFixedMemory, IReadOnlyFixedMemory<T> where T
 	/// Gets a <typeparamref name="T"/> span over the fixed block of memory.
 	/// </summary>
 	new Span<T> Values { get; }
-
-	ReadOnlyValPtr<T> IReadOnlyFixedMemory<T>.ValuePointer => this.ValuePointer;
-	ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => this.Values;
 
 	/// <summary>
 	/// Interface representing a disposable <see cref="IFixedMemory{T}"/> object for a

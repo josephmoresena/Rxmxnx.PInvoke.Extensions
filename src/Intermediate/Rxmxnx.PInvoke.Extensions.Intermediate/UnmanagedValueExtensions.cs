@@ -4,11 +4,12 @@
 /// Provides a set of extensions for basic operations with <see cref="ValueType"/> <see langword="unmanaged"/> values.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
+[Browsable(false)]
 public static partial class UnmanagedValueExtensions
 {
 	/// <summary>
-	/// Converts a given <see langword="unmanaged"/> value of type <typeparamref name="T"/> into an array of <see cref="Byte"/>
-	/// .
+	/// Converts a given <see langword="unmanaged"/> value of type <typeparamref name="T"/> into an array of
+	/// <see cref="Byte"/>.
 	/// </summary>
 	/// <typeparam name="T">The type of value. This must be an <see langword="unmanaged"/> value type.</typeparam>
 	/// <param name="value">The value to convert.</param>

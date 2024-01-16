@@ -23,15 +23,7 @@ public interface IFixedContext<T> : IReadOnlyFixedContext<T>, IFixedMemory<T> wh
 	/// <param name="residual">Output. Residual read-only memory from the transformation.</param>
 	/// <returns>An instance of <see cref="IReadOnlyFixedContext{TDestination}"/>.</returns>
 	new IFixedContext<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual)
-		where TDestination : unmanaged
-	{
-		Unsafe.SkipInit(out residual);
-		return this.Transformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual));
-	}
-
-	IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.
-		Transformation<TDestination>(out IReadOnlyFixedMemory residual)
-		=> this.Transformation<TDestination>(out residual);
+		where TDestination : unmanaged;
 
 	/// <summary>
 	/// Interface representing a disposable <see cref="IFixedContext{T}"/> object for a context

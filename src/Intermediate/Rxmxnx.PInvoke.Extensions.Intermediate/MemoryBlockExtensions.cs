@@ -5,6 +5,7 @@
 /// instances.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
+[Browsable(false)]
 [SuppressMessage("csharpsquid", "S6640")]
 public static unsafe partial class MemoryBlockExtensions
 {
@@ -48,7 +49,7 @@ public static unsafe partial class MemoryBlockExtensions
 		void* ptr = Unsafe.AsPointer(ref refValue);
 		return new(ptr);
 	}
-	
+
 	/// <summary>
 	/// Retrieves an unsafe <see cref="IntPtr"/> pointer from <see cref="Span{T}"/> instance.
 	/// </summary>

@@ -4,6 +4,7 @@
 /// <see cref="CString"/> extensions for <see cref="Stream"/> class.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
+[Browsable(false)]
 public static class StreamCStringExtensions
 {
 	/// <summary>

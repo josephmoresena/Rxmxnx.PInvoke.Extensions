@@ -5,6 +5,7 @@
 /// <see langword="unmanaged"/> values.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
+[Browsable(false)]
 [SuppressMessage("csharpsquid", "S6640")]
 public static unsafe partial class ReferenceExtensions
 {
