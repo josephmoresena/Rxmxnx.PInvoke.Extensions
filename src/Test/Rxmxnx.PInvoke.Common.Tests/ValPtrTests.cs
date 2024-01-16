@@ -182,7 +182,7 @@ public sealed class ValPtrTests
 			(fRef as IReadOnlyFixedReference<T>).Transformation<TDestination>(out IReadOnlyFixedMemory offset2);
 		Assert.True(Unsafe.AreSame(ref fRef2.Reference, ref Unsafe.AsRef<TDestination>(ptrI.Pointer.ToPointer())));
 		Assert.Equal(sizeof(T) - sizeof(TDestination), offset.Bytes.Length);
-		Assert.True(Unsafe.AreSame(ref fRef2.Reference, ref UnsafeLegacy.AsRef(in fRef3.Reference)));
+		Assert.True(Unsafe.AreSame(ref fRef2.Reference, in fRef3.Reference));
 	}
 	private static unsafe void ContextTransformTest<T, TDestination>(IFixedContext<T>.IDisposable ctx)
 		where T : unmanaged where TDestination : unmanaged

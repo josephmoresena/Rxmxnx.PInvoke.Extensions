@@ -365,8 +365,7 @@ public sealed class BasicTests
 		foreach (ref readonly Byte utf8Char in cstr2)
 		{
 			Assert.Equal(cstr1[i], utf8Char);
-			Assert.True(Unsafe.AreSame(ref UnsafeLegacy.AsRef(in cstr2.AsSpan()[i]),
-			                           ref UnsafeLegacy.AsRef(in utf8Char)));
+			Assert.True(Unsafe.AreSame(in cstr2.AsSpan()[i], in utf8Char));
 			i++;
 		}
 	}

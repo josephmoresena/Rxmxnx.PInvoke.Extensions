@@ -75,7 +75,7 @@ public sealed class ReadOnlyValPtrTests
 			Assert.Equal(ptrI, ptrIAdd);
 			Assert.Equal(valPtr, ReadOnlyValPtr<T>.Subtract(ptrI, i));
 			Assert.True(ptrI == valPtr.Pointer + binaryOffset);
-			Assert.True(Unsafe.AreSame(ref UnsafeLegacy.AsRef(in ptrI.Reference), ref UnsafeLegacy.AsRef(in span[i])));
+			Assert.True(Unsafe.AreSame(in ptrI.Reference, ref UnsafeLegacy.AsRef(in span[i])));
 			Assert.Equal(valPtr.Pointer, ptrI.Pointer - binaryOffset);
 			Assert.False(ptrI.IsZero);
 			Assert.Equal(ptrI.Pointer, (ptrI as IWrapper<IntPtr>).Value);

@@ -46,7 +46,7 @@ public sealed class AsValueTest
 		ref T refValue = ref bytes.AsValue<T>();
 		ref readonly T refReadOnlyValue = ref readOnlyBytes.AsValue<T>();
 
-		Assert.True(Unsafe.AreSame(ref refValue, ref UnsafeLegacy.AsRef(in refReadOnlyValue)));
+		Assert.True(Unsafe.AreSame(ref refValue, in refReadOnlyValue));
 		Assert.Equal(expected, refValue);
 
 		Assert.Throws<InsufficientMemoryException>(() => AsValueTest.InvalidTest<T>(true));

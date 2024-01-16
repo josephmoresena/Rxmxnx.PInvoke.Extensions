@@ -56,8 +56,7 @@ public sealed class GetFixedContextTest
 		using IReadOnlyFixedContext<T>.IDisposable ctx = mem.GetFixedContext();
 		for (Int32 i = 0; i < mem.Length; i++)
 		{
-			Assert.True(
-				Unsafe.AreSame(ref UnsafeLegacy.AsRef(in mem.Span[i]), ref UnsafeLegacy.AsRef(in ctx.Values[i])));
+			Assert.True(Unsafe.AreSame(in mem.Span[i], in ctx.Values[i]));
 			Assert.Equal(mem.Span[i], ctx.Bytes.Slice(i * sizeof(T), sizeof(T)).ToValue<T>());
 		}
 		GetFixedContextTest.ReadOnlyTransformTest<T, Byte>(ctx);

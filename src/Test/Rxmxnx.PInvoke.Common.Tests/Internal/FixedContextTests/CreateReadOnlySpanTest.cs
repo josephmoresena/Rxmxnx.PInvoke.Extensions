@@ -47,7 +47,7 @@ public sealed class CreateReadOnlySpanTest : FixedContextTestsBase
 		ReadOnlySpan<T> span = ctx.CreateReadOnlySpan<T>(values.Length);
 		Assert.Equal(values.Length, span.Length);
 		Assert.Equal(values.Length, ctx.Count);
-		Assert.True(Unsafe.AreSame(ref values[0], ref UnsafeLegacy.AsRef(in span[0])));
+		Assert.True(Unsafe.AreSame(ref values[0], in span[0]));
 		Assert.False(ctx.IsFunction);
 
 		Exception functionException = Assert.Throws<InvalidOperationException>(() => ctx.CreateDelegate<Action>());
@@ -66,7 +66,7 @@ public sealed class CreateReadOnlySpanTest : FixedContextTestsBase
 		ReadOnlySpan<T> span = ctx.CreateReadOnlySpan<T>(values.Length);
 		Assert.Equal(values.Length, span.Length);
 		Assert.Equal(values.Length, ctx.Count);
-		Assert.True(Unsafe.AreSame(ref values[0], ref UnsafeLegacy.AsRef(in span[0])));
+		Assert.True(Unsafe.AreSame(ref values[0], in span[0]));
 		Assert.False(ctx.IsFunction);
 
 		Exception functionException = Assert.Throws<InvalidOperationException>(() => ctx.CreateDelegate<Action>());
