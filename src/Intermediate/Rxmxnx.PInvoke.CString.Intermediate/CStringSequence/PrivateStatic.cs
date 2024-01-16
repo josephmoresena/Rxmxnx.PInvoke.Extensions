@@ -179,4 +179,15 @@ public partial class CStringSequence
 	/// <returns></returns>
 	private static ConcurrentDictionary<Int32, WeakReference<CString>>? CreateCache(IEnumerable<Int32?> lengths)
 		=> lengths.Any(l => l is > 0) ? new ConcurrentDictionary<Int32, WeakReference<CString>>() : default;
+	/// <summary>
+	/// Calculates buffer's length.
+	/// </summary>
+	/// <param name="lengths">The lengths of the UTF-8 text sequence to create.</param>
+	/// <returns><see cref="String"/> buffer length.</returns>
+	private static Int32 GetBufferLength(IEnumerable<Int32?> lengths)
+	{
+		Int32 bytesLength = lengths.Sum(CStringSequence.GetSpanLength);
+		Int32 length = bytesLength / CStringSequence.sizeOfChar + bytesLength % CStringSequence.sizeOfChar;
+		return length;
+	}
 }

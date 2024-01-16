@@ -119,8 +119,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	public static CStringSequence Create<TState>(TState state, CStringSequenceCreationAction<TState> action,
 		params Int32?[] lengths)
 	{
-		Int32 bytesLength = lengths.Sum(CStringSequence.GetSpanLength);
-		Int32 length = bytesLength / CStringSequence.sizeOfChar + bytesLength % CStringSequence.sizeOfChar;
+		Int32 length = CStringSequence.GetBufferLength(lengths);
 		String buffer = String.Create(length, new SequenceCreationState<TState>(state, action, lengths),
 		                              CStringSequence.CreateCStringSequence);
 		return new(buffer, lengths);
