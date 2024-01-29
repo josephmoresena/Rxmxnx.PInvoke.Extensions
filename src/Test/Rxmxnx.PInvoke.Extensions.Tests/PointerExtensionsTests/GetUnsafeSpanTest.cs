@@ -100,5 +100,12 @@ public sealed class GetUnsafeSpanTest
 			Assert.Equal(readOnlySpan[i], arr[i]);
 			Assert.True(Unsafe.AreSame(ref span[i], ref arr[i]));
 		}
+
+		MemoryHandle defaultHandle = default;
+		Span<T> defaultSpan = defaultHandle.GetUnsafeSpan<T>(objMem.Length);
+		ReadOnlySpan<T> defaultReadOnlySpan = defaultHandle.GetUnsafeReadOnlySpan<T>(objMem.Length);
+
+		Assert.True(defaultSpan.IsEmpty);
+		Assert.True(defaultReadOnlySpan.IsEmpty);
 	}
 }
