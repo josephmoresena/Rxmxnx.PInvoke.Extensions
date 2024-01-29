@@ -58,6 +58,8 @@ public sealed class GetUnsafeSpanTest
 			Assert.Equal(input, intPtr.GetUnsafeArray<T>(input.Length));
 			Assert.Equal(input, uintPtr.GetUnsafeArray<T>(input.Length));
 		}
+
+		GetUnsafeSpanTest.MemoryTest(input);
 	}
 	private static void EmptyTest<T>(Int32 length) where T : unmanaged
 	{
@@ -82,5 +84,18 @@ public sealed class GetUnsafeSpanTest
 			Assert.Throws<ArgumentException>(() => UIntPtr.Zero.GetUnsafeSpan<T>(length));
 			Assert.Throws<ArgumentException>(() => UIntPtr.Zero.GetUnsafeReadOnlySpan<T>(length));
 		}
+	}
+	private static void MemoryTest<T>(T[] arr) where T : unmanaged
+	{
+		Memory<T> objMem = arr.AsMemory();
+		using MemoryHandle handle = objMem.Pin();
+		Span<T> span = handle.GetUnsafeSpan<T>(objMem.Length);
+		ReadOnlySpan<T> readOnlySpan = handle.GetUnsafeReadOnlySpan<T>(objMem.Length);
+
+		Assert.True(readOnlySpan.SequenceEqual(span));
+		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(span), ref MemoryMarshal.GetReference(arr.AsSpan())));
+
+		for (Int32 i = 0; i < arr.Length; i++)
+			Assert.Equal(readOnlySpan[i], arr[i]);
 	}
 }

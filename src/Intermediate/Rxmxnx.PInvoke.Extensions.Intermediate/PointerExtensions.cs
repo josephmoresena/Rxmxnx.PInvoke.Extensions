@@ -195,6 +195,30 @@ public static unsafe class PointerExtensions
 		return new(uptr.ToPointer(), length);
 	}
 	/// <summary>
+	/// Creates a <see cref="Span{T}"/> instance from a <see cref="MemoryHandle"/>, treating the memory at the location as a
+	/// series of <see langword="unmanaged"/> values.
+	/// </summary>
+	/// <typeparam name="T">The type of <see langword="unmanaged"/> values in memory.</typeparam>
+	/// <param name="handle">
+	/// The <see cref="MemoryHandle"/> pointing to the start of a series of <typeparamref name="T"/> values in memory.
+	/// </param>
+	/// <param name="length">The number of <typeparamref name="T"/> values to include in the span.</param>
+	/// <returns>A <see cref="Span{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
+	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
+	/// <remarks>
+	/// The validity and safety of the obtained span depends on the lifetime and validity of the handle during the usage of
+	/// the span.
+	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Span<T> GetUnsafeSpan<T>(this MemoryHandle handle, Int32 length) where T : unmanaged
+	{
+		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		if (handle.Pointer == default)
+			return default;
+		return new(handle.Pointer, length);
+	}
+	/// <summary>
 	/// Creates a <see cref="ReadOnlySpan{T}"/> instance from a <see cref="IntPtr"/>, treating the memory at the location as a
 	/// series of <see langword="unmanaged"/> values.
 	/// </summary>
@@ -244,6 +268,32 @@ public static unsafe class PointerExtensions
 		if (uptr.IsZero())
 			return default;
 		return new(uptr.ToPointer(), length);
+	}
+	/// <summary>
+	/// Creates a <see cref="ReadOnlySpan{T}"/> instance from a <see cref="MemoryHandle"/>, treating the memory at the
+	/// location as a series of <see langword="unmanaged"/> values.
+	/// </summary>
+	/// <typeparam name="T">The type of <see langword="unmanaged"/> values in memory.</typeparam>
+	/// <param name="handle">
+	/// The <see cref="MemoryHandle"/> pointing to the start of a series of <typeparamref name="T"/> values in memory
+	/// .
+	/// </param>
+	/// <param name="length">The number of <typeparamref name="T"/> values to include in the span.</param>
+	/// <returns>A <see cref="ReadOnlySpan{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
+	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
+	/// <remarks>
+	/// The validity and safety of the obtained span depends on the lifetime and validity of the handle during the usage of
+	/// the span.
+	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	[SuppressMessage("csharpsquid", "S4144")]
+	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this MemoryHandle handle, Int32 length) where T : unmanaged
+	{
+		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		if (handle.Pointer == default)
+			return default;
+		return new(handle.Pointer, length);
 	}
 
 	/// <summary>

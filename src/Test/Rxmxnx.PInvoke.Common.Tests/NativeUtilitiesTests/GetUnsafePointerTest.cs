@@ -1,10 +1,47 @@
-﻿namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
+﻿using System.Diagnostics;
+
+namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
 
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class GetUnsafePointerTest
 {
 	private static readonly IFixture fixture = new Fixture();
+
+	[Fact]
+	internal void DelegateTest()
+	{
+		FuncPtr<GetProcessDelegate> getCurrentProcessPtr =
+			NativeUtilities.GetUnsafeFuncPtr<GetProcessDelegate>(Process.GetCurrentProcess);
+		FuncPtr<GetNativeMethodTest.GetInt32> getProcessIdPtr =
+			NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetInt32>(GetProcessIdFunc);
+		FuncPtr<GetNativeMethodTest.GetInt32> getProcessStaticIdPtr =
+			NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetInt32>(GetProcessIdStaticFunc);
+
+		Assert.Equal(getProcessStaticIdPtr.Invoke(), getCurrentProcessPtr.Invoke().Id);
+		Assert.Equal(getCurrentProcessPtr,
+		             NativeUtilities.GetUnsafeFuncPtr<GetProcessDelegate>(Process.GetCurrentProcess));
+		Assert.NotEqual(getProcessIdPtr,
+		                NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetInt32>(GetProcessIdFunc));
+		Assert.Equal(getProcessStaticIdPtr,
+		             NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetInt32>(GetProcessIdStaticFunc));
+
+		Assert.Throws<ArgumentException>(
+			() => NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetT<Int32>>(Thread.GetCurrentProcessorId));
+		Assert.Throws<ArgumentException>(
+			() => NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetT<Int32>>(GetProcessIdStaticFunc));
+		Assert.Throws<ArgumentException>(
+			() => NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetT<Int32>>(GetProcessIdFunc));
+
+		Assert.Equal(getCurrentProcessPtr.Invoke, Process.GetCurrentProcess);
+		Assert.Equal(getProcessIdPtr.Invoke, GetProcessIdFunc);
+		Assert.Equal(getProcessStaticIdPtr.Invoke, GetProcessIdStaticFunc);
+
+		return;
+
+		Int32 GetProcessIdFunc() => Environment.ProcessId;
+		static Int32 GetProcessIdStaticFunc() => Environment.ProcessId;
+	}
 
 	[Fact]
 	internal void BooleanTest() => GetUnsafePointerTest.Test<Boolean>();
@@ -50,4 +87,5 @@ public sealed class GetUnsafePointerTest
 			Assert.Equal((ReadOnlyValPtr<T>)(IntPtr)ptr, NativeUtilities.GetUnsafeValPtr(value));
 		}
 	}
+	private delegate Process GetProcessDelegate();
 }
