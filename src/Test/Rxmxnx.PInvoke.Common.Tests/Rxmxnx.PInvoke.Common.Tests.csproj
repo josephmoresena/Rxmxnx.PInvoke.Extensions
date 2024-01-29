@@ -12,6 +12,7 @@
     <ItemGroup>
         <Using Include="Xunit"/>
         <Using Include="AutoFixture"/>
+        <Using Include="System.Diagnostics"/>
         <Using Include="System.Diagnostics.CodeAnalysis"/>
         <Using Include="System.Globalization"/>
         <Using Include="System.Reflection"/>

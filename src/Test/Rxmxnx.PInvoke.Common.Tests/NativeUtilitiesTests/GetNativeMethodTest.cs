@@ -60,5 +60,5 @@ public sealed class GetNativeMethodTest
 		NativeLibrary.Free(handle);
 	}
 	internal delegate Int32 GetInt32();
-	internal delegate T GetT<T>();
+	internal delegate T GetT<out T>();
 }
