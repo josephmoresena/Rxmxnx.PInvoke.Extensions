@@ -492,11 +492,12 @@ pointers.
 - `GetUnsafeReadOnlySpan<T>(UIntPtr, Int32)`: Returns a readonly span of type `T` from the specified memory pointer and
   length.
 - `GetUnsafeReadOnlySpan<T>(IntPtr, Int32)`: Returns a readonly span of type `T` from the specified memory pointer and
-  length.
+- `GetUnsafeReadOnlySpan<T>(MemoryHandle, Int32)`: Returns a readonly span of type `T` from the specified memory handle and length.
 - `GetUnsafeReference<T>(UInt32)`: Returns a reference of type `T` from the specified memory pointer.
 - `GetUnsafeReference<T>(Int32)`: Returns a reference of type `T` from the specified memory pointer.
 - `GetUnsafeSpan<T>(UIntPtr, Int32)`: Returns a span of type `T` from the specified memory pointer and length.
 - `GetUnsafeSpan<T>(IntPtr, Int32)`: Returns a span of type `T` from the specified memory pointer and length.
+- `GetUnsafeSpan<T>(MemoryHandle, Int32)`: Returns a span of type `T` from the specified memory handle and length.
 - `GetUnsafeString(Int32, Int32)`: Returns a string from the specified memory pointer and length.
 - `GetUnsafeString(UInt32)`: Returns a string from the specified memory pointer.
 - `GetUnsafeString(Int32)`: Returns a string from the specified memory pointer.
@@ -615,6 +616,7 @@ with strings.
 - `GetUnsafeValPtr<T>(in T)`: Retrieves the read-only value pointer from the specified reference.
 - `GetUnsafeIntPtr<T>(in T)`: Retrieves the pointer value from the specified reference.
 - `GetUnsafeUIntPtr<T>(in T)`: Retrieves the unsigned pointer value from the specified reference.
+- `GetUnsafeFuncPtr<TDelegate>(TDelegate)`: Returns the unmanaged FuncPtr<TDelegate> representation of the specified delegate. 
 - `LoadNativeLib(String, DllImportSearchPath?)`: Loads a native library and returns the handle.
 - `LoadNativeLib(String, ref EventHandler?, DllImportSearchPath?)`: Loads a native library and returns the handle,
   raising an event upon load or failure.

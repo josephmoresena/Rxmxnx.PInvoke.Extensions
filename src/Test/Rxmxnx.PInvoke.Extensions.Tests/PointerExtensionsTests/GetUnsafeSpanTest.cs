@@ -96,6 +96,9 @@ public sealed class GetUnsafeSpanTest
 		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(span), ref MemoryMarshal.GetReference(arr.AsSpan())));
 
 		for (Int32 i = 0; i < arr.Length; i++)
+		{
 			Assert.Equal(readOnlySpan[i], arr[i]);
+			Assert.True(Unsafe.AreSame(ref span[i], ref arr[i]));
+		}
 	}
 }

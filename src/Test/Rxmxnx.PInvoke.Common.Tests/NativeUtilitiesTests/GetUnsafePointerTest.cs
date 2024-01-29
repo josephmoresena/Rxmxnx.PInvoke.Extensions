@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
+﻿namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
 
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
