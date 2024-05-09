@@ -8,7 +8,10 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    
+    env:
+      SNK_BASE64: ${{ secrets.SN_KEY }}
+    
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
@@ -21,6 +24,9 @@ jobs:
           dotnet build -c Release ./Rxmxnx.PInvoke.Common.Intermediate 
           dotnet build -c Release ./Rxmxnx.PInvoke.CString.Intermediate 
           dotnet build -c Release ./Rxmxnx.PInvoke.Extensions.Intermediate
+    - name: Extract public key
+      working-directory: ./package
+      run: echo "${SNK_BASE64}" | base64 -d > Rxmxnx.PInvoke.snk
     - name: Create NuGet Package
       working-directory: ./package
       run: dotnet pack -c Release /p:Version=${{ github.event.release.tag_name }} /p:PackageReleaseNotes="See https://github.com/josephmoresena/Rxmxnx.PInvoke.Extensions/releases/tag/${{ github.event.release.tag_name }}"
