@@ -18,6 +18,11 @@
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
+    <PropertyGroup Condition="Exists('Rxmxnx.PInvoke.snk')">
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>Rxmxnx.PInvoke.snk</AssemblyOriginatorKeyFile>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
     </ItemGroup>
