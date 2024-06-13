@@ -313,7 +313,13 @@ public unsafe partial class CStringSequence
 			}
 			bufferSpan = bufferSpan[1..];
 		} while (bufferSpan[0] == default);
-		isParsable = bufferSpan.Length != sourceChars.Length * CStringSequence.sizeOfChar || bufferSpan[^1] == default;
+		while (bufferSpan.Length > 3 && bufferSpan[^3] == default)
+		{
+			if (bufferSpan[^2] != default || bufferSpan[^1] != default)
+				break;
+			bufferSpan = bufferSpan[..^1];
+		}
+		isParsable = bufferSpan.Length != sourceChars.Length * CStringSequence.sizeOfChar || bufferSpan[^1] != default;
 		return bufferSpan;
 	}
 	/// <summary>
