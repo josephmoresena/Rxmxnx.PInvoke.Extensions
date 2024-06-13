@@ -304,22 +304,20 @@ public unsafe partial class CStringSequence
 	private static ReadOnlySpan<Byte> GetSourceBuffer(ReadOnlySpan<Char> sourceChars, out Boolean isParsable)
 	{
 		ReadOnlySpan<Byte> bufferSpan = MemoryMarshal.AsBytes(sourceChars);
-		do
+		Int32 bufferLength = bufferSpan.Length;
+		if (bufferSpan.Length == 0)
 		{
-			if (bufferSpan.Length == 0)
-			{
-				isParsable = true;
-				return bufferSpan;
-			}
-			bufferSpan = bufferSpan[1..];
-		} while (bufferSpan[0] == default);
+			isParsable = true;
+			return bufferSpan;
+		}
+		while (bufferSpan[0] == default) bufferSpan = bufferSpan[1..];
 		while (bufferSpan.Length > 3 && bufferSpan[^3] == default)
 		{
 			if (bufferSpan[^2] != default || bufferSpan[^1] != default)
 				break;
 			bufferSpan = bufferSpan[..^1];
 		}
-		isParsable = bufferSpan.Length != sourceChars.Length * CStringSequence.sizeOfChar || bufferSpan[^1] != default;
+		isParsable = bufferSpan.Length != bufferLength || bufferSpan[^1] != default;
 		return bufferSpan;
 	}
 	/// <summary>
