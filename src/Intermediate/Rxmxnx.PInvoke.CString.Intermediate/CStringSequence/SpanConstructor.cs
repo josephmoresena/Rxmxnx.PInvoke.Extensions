@@ -1,7 +1,7 @@
 namespace Rxmxnx.PInvoke;
 
-[SuppressMessage("csharpsquid", "S107")]
-[SuppressMessage("csharpsquid", "S6640")]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS107)]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 public unsafe partial class CStringSequence
 {
 	/// <summary>
@@ -17,7 +17,6 @@ public unsafe partial class CStringSequence
 		fixed (void* ptrSpan = &MemoryMarshal.GetReference(stackalloc IntPtr[] { (IntPtr)ptr0, }))
 			this._value = CStringSequence.CreateBuffer(ptrSpan, this._lengths);
 	}
-
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
 	/// using UTF-8 texts contained in given read-only spans.
@@ -199,52 +198,5 @@ public unsafe partial class CStringSequence
 			       (IntPtr)ptr6, (IntPtr)ptr7,
 		       }))
 			this._value = CStringSequence.CreateBuffer(ptrSpan, this._lengths);
-	}
-
-	/// <summary>
-	/// Creates buffer using <paramref name="ptrSpan"/> and <paramref name="lengths"/>.
-	/// </summary>
-	/// <param name="ptrSpan">Pointer to pointer span.</param>
-	/// <param name="lengths">UTF-8 text lengths.</param>
-	/// <returns>Created buffer.</returns>
-	private static String CreateBuffer(void* ptrSpan, Int32?[] lengths)
-	{
-		Int32 bufferLength = CStringSequence.GetBufferLength(lengths);
-		SpanCreationInfo info = new() { Pointers = ptrSpan, Lengths = lengths, };
-		return String.Create(bufferLength, info, CStringSequence.CreateBuffer);
-	}
-	/// <summary>
-	/// Create buffer using <paramref name="info"/>.
-	/// </summary>
-	/// <param name="charSpan">A <see cref="Span{Char}"/> instance.</param>
-	/// <param name="info">A <see cref="SpanCreationInfo"/> value.</param>
-	private static void CreateBuffer(Span<Char> charSpan, SpanCreationInfo info)
-	{
-		Int32 offset = 0;
-		ReadOnlySpan<IntPtr> pointers = new(info.Pointers, info.Lengths.Length);
-		Span<Byte> bytes = MemoryMarshal.AsBytes(charSpan);
-		for (Int32 i = 0; i < pointers.Length; i++)
-		{
-			Int32 textLength = info.Lengths[i].GetValueOrDefault();
-			if (textLength < 1) continue;
-			ReadOnlySpan<Byte> utf8Text = new(pointers[i].ToPointer(), textLength);
-			utf8Text.CopyTo(bytes[offset..]);
-			offset += utf8Text.Length + 1;
-		}
-	}
-
-	/// <summary>
-	/// Information for span creation.
-	/// </summary>
-	private readonly struct SpanCreationInfo
-	{
-		/// <summary>
-		/// Pointer to pointers' span.
-		/// </summary>
-		public void* Pointers { get; init; }
-		/// <summary>
-		/// UTF-8 lengths.
-		/// </summary>
-		public Int32?[] Lengths { get; init; }
 	}
 }

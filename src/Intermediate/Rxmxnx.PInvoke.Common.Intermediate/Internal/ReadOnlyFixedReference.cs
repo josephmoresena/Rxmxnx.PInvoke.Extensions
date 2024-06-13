@@ -4,7 +4,7 @@
 /// Fixed memory reference class, used to hold a fixed read-only memory reference of a specific type.
 /// </summary>
 /// <typeparam name="T">Type of the fixed memory reference.</typeparam>
-[SuppressMessage("csharpsquid", "S6640")]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 internal sealed unsafe partial class ReadOnlyFixedReference<T> : ReadOnlyFixedMemory, IReadOnlyFixedReference<T>
 	where T : unmanaged
 {

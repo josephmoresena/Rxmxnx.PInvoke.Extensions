@@ -1,5 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke;
 
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 public partial class CStringSequence
 {
 	/// <summary>

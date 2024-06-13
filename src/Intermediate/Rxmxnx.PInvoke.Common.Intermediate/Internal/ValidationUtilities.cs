@@ -3,7 +3,7 @@
 /// <summary>
 /// Utility class for argument validation.
 /// </summary>
-[SuppressMessage("csharpsquid", "S6640")]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 internal static unsafe class ValidationUtilities
 {
 	/// <summary>
@@ -225,9 +225,7 @@ internal static unsafe class ValidationUtilities
 
 	/// <summary>
 	/// Validates if <see langword="unmanaged"/> memory reference of <paramref name="sourceSize"/> can be safely
-	/// converted to reference
-	/// <param name="destinationSize"/>
-	/// .
+	/// converted to <paramref name="destinationSize"/> reference.
 	/// </summary>
 	/// <param name="destinationSize">Source type size.</param>
 	/// <param name="sourceSize">Destination type size.</param>

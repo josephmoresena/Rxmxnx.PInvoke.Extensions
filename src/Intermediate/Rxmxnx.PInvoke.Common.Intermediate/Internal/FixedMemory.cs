@@ -3,7 +3,7 @@
 /// <summary>
 /// Helper class for managing fixed memory blocks.
 /// </summary>
-[SuppressMessage("csharpsquid", "S6640")]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 internal abstract unsafe partial class FixedMemory : ReadOnlyFixedMemory, IFixedMemory, IEquatable<FixedMemory>
 {
 	/// <summary>

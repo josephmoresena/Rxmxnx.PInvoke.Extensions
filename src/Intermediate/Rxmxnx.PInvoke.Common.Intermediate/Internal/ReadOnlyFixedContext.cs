@@ -6,7 +6,7 @@
 /// <typeparam name="T">
 /// The type of the items in the fixed memory block. Must be <see langword="unmanaged"/>.
 /// </typeparam>
-[SuppressMessage("csharpsquid", "S6640")]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IReadOnlyFixedContext<T>
 	where T : unmanaged
 {

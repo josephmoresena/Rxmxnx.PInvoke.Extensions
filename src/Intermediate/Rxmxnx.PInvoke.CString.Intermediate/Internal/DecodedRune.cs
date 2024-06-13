@@ -76,9 +76,10 @@ internal readonly struct DecodedRune : IWrapper<Rune>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static DecodedRune? Decode(ReadOnlySpan<Byte> source)
 	{
-		if (Rune.DecodeFromUtf8(source, out Rune result, out Int32 charsConsumed) == OperationStatus.Done)
-			return new(result, charsConsumed, source[..charsConsumed]);
-		return default;
+		if (Rune.DecodeFromUtf8(source, out Rune result, out Int32 charsConsumed) != OperationStatus.Done)
+			return default;
+		DecodedRune decoded = new(result, charsConsumed, source[..charsConsumed]);
+		return decoded;
 	}
 	/// <summary>
 	/// Decodes the <see cref="Rune"/> at the beginning of the provided unicode source buffer and
@@ -89,9 +90,10 @@ internal readonly struct DecodedRune : IWrapper<Rune>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static DecodedRune? Decode(ReadOnlySpan<Char> source)
 	{
-		if (Rune.DecodeFromUtf16(source, out Rune result, out Int32 charsConsumed) == OperationStatus.Done)
-			return new(result, charsConsumed, MemoryMarshal.AsBytes(source[..charsConsumed]));
-		return default;
+		if (Rune.DecodeFromUtf16(source, out Rune result, out Int32 charsConsumed) != OperationStatus.Done)
+			return default;
+		DecodedRune decoded = new(result, charsConsumed, MemoryMarshal.AsBytes(source[..charsConsumed]));
+		return decoded;
 	}
 	/// <summary>
 	/// Retrieves the starting positions of individual runes decoded from the <paramref name="source"/>.

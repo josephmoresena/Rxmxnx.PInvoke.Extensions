@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.Internal;
 
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 internal unsafe partial class FixedPointer : IEquatable<FixedPointer>
 {
 	/// <inheritdoc/>

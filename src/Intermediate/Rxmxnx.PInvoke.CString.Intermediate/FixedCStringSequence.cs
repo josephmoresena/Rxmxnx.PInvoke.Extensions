@@ -4,7 +4,7 @@
 /// Represents a <see cref="CStringSequence"/> that is fixed in memory.
 /// </summary>
 [DebuggerTypeProxy(typeof(CStringSequenceDebugView))]
-[SuppressMessage("csharpsquid", "S6640")]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 public readonly unsafe ref struct FixedCStringSequence
 {
 	/// <summary>
