@@ -43,6 +43,53 @@ public unsafe partial class CStringSequence
 		return String.Create(totalChars, values, CStringSequence.CopyText);
 	}
 	/// <summary>
+	/// Creates a UTF-8 text sequence using the given <paramref name="state"/>,
+	/// with each UTF-8 text being initialized using the specified callback.
+	/// </summary>
+	/// <param name="buffer">The UTF-16 buffer where the sequence is created.</param>
+	/// <param name="state">The state object used for creation.</param>
+	private static void CreateBuffer(Span<Char> buffer, SequenceCreationState state)
+	{
+		Span<Byte> destination = MemoryMarshal.AsBytes(buffer);
+		ReadOnlySpan<Byte> sourceSpan = new(state.Pointer, state.Length);
+		for (Int32 i = 0; i < sourceSpan.Length; i++)
+		{
+			destination[i] = sourceSpan[i];
+			if (destination[i] == default) state.NullChars.Add(i);
+		}
+	}
+	/// <summary>
+	/// Creates buffer using <paramref name="ptrSpan"/> and <paramref name="lengths"/>.
+	/// </summary>
+	/// <param name="ptrSpan">Pointer to pointer span.</param>
+	/// <param name="lengths">UTF-8 text lengths.</param>
+	/// <returns>Created buffer.</returns>
+	private static String CreateBuffer(void* ptrSpan, Int32?[] lengths)
+	{
+		Int32 bufferLength = CStringSequence.GetBufferLength(lengths);
+		SpanCreationInfo info = new() { Pointers = ptrSpan, Lengths = lengths, };
+		return String.Create(bufferLength, info, CStringSequence.CreateBuffer);
+	}
+	/// <summary>
+	/// Create buffer using <paramref name="info"/>.
+	/// </summary>
+	/// <param name="charSpan">A <see cref="Span{Char}"/> instance.</param>
+	/// <param name="info">A <see cref="SpanCreationInfo"/> value.</param>
+	private static void CreateBuffer(Span<Char> charSpan, SpanCreationInfo info)
+	{
+		Int32 offset = 0;
+		ReadOnlySpan<IntPtr> pointers = new(info.Pointers, info.Lengths.Length);
+		Span<Byte> bytes = MemoryMarshal.AsBytes(charSpan);
+		for (Int32 i = 0; i < pointers.Length; i++)
+		{
+			Int32 textLength = info.Lengths[i].GetValueOrDefault();
+			if (textLength < 1) continue;
+			ReadOnlySpan<Byte> utf8Text = new(pointers[i].ToPointer(), textLength);
+			utf8Text.CopyTo(bytes[offset..]);
+			offset += utf8Text.Length + 1;
+		}
+	}
+	/// <summary>
 	/// Copies the content of <see cref="CString"/> items from the provided <paramref name="values"/>
 	/// to the given <paramref name="charSpan"/>.
 	/// </summary>
@@ -305,53 +352,6 @@ public unsafe partial class CStringSequence
 		}
 		Int32?[] lengths = CStringSequence.GetLengths(CollectionsMarshal.AsSpan(nulls));
 		return new(buffer, lengths);
-	}
-	/// <summary>
-	/// Creates a UTF-8 text sequence using the given <paramref name="state"/>,
-	/// with each UTF-8 text being initialized using the specified callback.
-	/// </summary>
-	/// <param name="buffer">The UTF-16 buffer where the sequence is created.</param>
-	/// <param name="state">The state object used for creation.</param>
-	private static void CreateBuffer(Span<Char> buffer, SequenceCreationState state)
-	{
-		Span<Byte> destination = MemoryMarshal.AsBytes(buffer);
-		ReadOnlySpan<Byte> sourceSpan = new(state.Pointer, state.Length);
-		for (Int32 i = 0; i < sourceSpan.Length; i++)
-		{
-			destination[i] = sourceSpan[i];
-			if (destination[i] == default) state.NullChars.Add(i);
-		}
-	}
-	/// <summary>
-	/// Creates buffer using <paramref name="ptrSpan"/> and <paramref name="lengths"/>.
-	/// </summary>
-	/// <param name="ptrSpan">Pointer to pointer span.</param>
-	/// <param name="lengths">UTF-8 text lengths.</param>
-	/// <returns>Created buffer.</returns>
-	private static String CreateBuffer(void* ptrSpan, Int32?[] lengths)
-	{
-		Int32 bufferLength = CStringSequence.GetBufferLength(lengths);
-		SpanCreationInfo info = new() { Pointers = ptrSpan, Lengths = lengths, };
-		return String.Create(bufferLength, info, CStringSequence.CreateBuffer);
-	}
-	/// <summary>
-	/// Create buffer using <paramref name="info"/>.
-	/// </summary>
-	/// <param name="charSpan">A <see cref="Span{Char}"/> instance.</param>
-	/// <param name="info">A <see cref="SpanCreationInfo"/> value.</param>
-	private static void CreateBuffer(Span<Char> charSpan, SpanCreationInfo info)
-	{
-		Int32 offset = 0;
-		ReadOnlySpan<IntPtr> pointers = new(info.Pointers, info.Lengths.Length);
-		Span<Byte> bytes = MemoryMarshal.AsBytes(charSpan);
-		for (Int32 i = 0; i < pointers.Length; i++)
-		{
-			Int32 textLength = info.Lengths[i].GetValueOrDefault();
-			if (textLength < 1) continue;
-			ReadOnlySpan<Byte> utf8Text = new(pointers[i].ToPointer(), textLength);
-			utf8Text.CopyTo(bytes[offset..]);
-			offset += utf8Text.Length + 1;
-		}
 	}
 	/// <summary>
 	/// Retrieves the sequence lengths array from <paramref name="nulls"/>.
