@@ -124,11 +124,11 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
 			DecodedRune? runeB = this.DecodeRune(ref textB);
 
 			//If the runes are not comparable to each other a full text comparison will be needed.
-			if (runeA is null || runeB is null) return this.Compare(textA0, textB0, this._ignoreCase) == 0;
+			if (!runeA.HasValue || !runeB.HasValue) return this.Compare(textA0, textB0, this._ignoreCase) == 0;
 			//If the value of both runes is the same, no further comparison is necessary.
 			if (runeA == runeB) continue;
-			ReadOnlySpan<Char> strA = Char.ConvertFromUtf32(runeA.Value.Value);
-			ReadOnlySpan<Char> strB = Char.ConvertFromUtf32(runeB.Value.Value);
+			ReadOnlySpan<Char> strA = Char.ConvertFromUtf32(runeA.Value.Value.Value);
+			ReadOnlySpan<Char> strB = Char.ConvertFromUtf32(runeB.Value.Value.Value);
 			if (this._culture.CompareInfo.Compare(strA, strB, this.GetOptions(this._ignoreCase)) != 0)
 				return false;
 		}
@@ -166,8 +166,8 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
 	protected static DecodedRune? DecodeRuneFromUtf8(ref ReadOnlySpan<Byte> source)
 	{
 		DecodedRune? result = DecodedRune.Decode(source);
-		if (result is not null)
-			source = source[result.CharsConsumed..];
+		if (result.HasValue)
+			source = source[result.Value.CharsConsumed..];
 		return result;
 	}
 }

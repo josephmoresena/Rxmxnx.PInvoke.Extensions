@@ -90,8 +90,11 @@ public partial class CString
 	{
 		ArgumentNullException.ThrowIfNull(value);
 		using StringConcatenator helper = new(separator);
-		foreach (String? utf8Text in value)
+		for (Int32 index = 0; index < value.Length; index++)
+		{
+			String? utf8Text = value[index];
 			helper.Write(utf8Text);
+		}
 		return helper.ToCString();
 	}
 	/// <summary>
@@ -151,8 +154,12 @@ public partial class CString
 	{
 		ArgumentNullException.ThrowIfNull(value);
 		using StringConcatenator helper = new(separator);
-		foreach (String? utf8Text in value.Skip(startIndex).Take(count))
-			helper.Write(utf8Text);
+		Int32 limit = count + startIndex;
+		for (Int32 index = startIndex; index < limit && index < value.Length; index++)
+		{
+			String? utf16Text = value[index];
+			helper.Write(utf16Text);
+		}
 		return helper.ToCString();
 	}
 }

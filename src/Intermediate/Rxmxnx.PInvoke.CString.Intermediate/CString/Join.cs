@@ -15,8 +15,11 @@ public partial class CString
 	{
 		ArgumentNullException.ThrowIfNull(value);
 		using BinaryConcatenator helper = new(separator);
-		foreach (CString? utf8Text in value)
+		for (Int32 index = 0; index < value.Length; index++)
+		{
+			CString? utf8Text = value[index];
 			helper.Write(utf8Text);
+		}
 		return helper.ToCString();
 	}
 	/// <summary>
@@ -55,8 +58,12 @@ public partial class CString
 	{
 		ArgumentNullException.ThrowIfNull(value);
 		using BinaryConcatenator helper = new(separator);
-		foreach (CString? utf8Text in value.Skip(startIndex).Take(count))
+		Int32 limit = count + startIndex;
+		for (Int32 index = startIndex; index < limit; index++)
+		{
+			CString? utf8Text = value[index];
 			helper.Write(utf8Text);
+		}
 		return helper.ToCString();
 	}
 	/// <summary>
@@ -132,8 +139,11 @@ public partial class CString
 	{
 		ArgumentNullException.ThrowIfNull(value);
 		using CStringConcatenator helper = new(separator);
-		foreach (CString? utf8Text in value)
+		for (Int32 index = 0; index < value.Length; index++)
+		{
+			CString? utf8Text = value[index];
 			helper.Write(utf8Text);
+		}
 		return helper.ToCString();
 	}
 	/// <summary>
@@ -172,8 +182,12 @@ public partial class CString
 	{
 		ArgumentNullException.ThrowIfNull(value);
 		using CStringConcatenator helper = new(separator);
-		foreach (CString? utf8Text in value.Skip(startIndex).Take(count))
+		Int32 limit = count + startIndex;
+		for (Int32 index = startIndex; index < limit && index < value.Length; index++)
+		{
+			CString? utf8Text = value[index];
 			helper.Write(utf8Text);
+		}
 		return helper.ToCString();
 	}
 }

@@ -145,8 +145,11 @@ public partial class CString
 	{
 		ArgumentNullException.ThrowIfNull(value);
 		await using StringConcatenator helper = new(separator, cancellationToken);
-		foreach (String? utf8Text in value)
+		for (Int32 index = 0; index < value.Length; index++)
+		{
+			String? utf8Text = value[index];
 			await helper.WriteAsync(utf8Text);
+		}
 		return helper.ToCString();
 	}
 	/// <summary>
@@ -216,8 +219,12 @@ public partial class CString
 	{
 		ArgumentNullException.ThrowIfNull(value);
 		await using StringConcatenator helper = new(separator, cancellationToken);
-		foreach (String? utf8Text in value.Skip(startIndex).Take(count))
-			await helper.WriteAsync(utf8Text);
+		Int32 limit = count + startIndex;
+		for (Int32 index = startIndex; index < limit && index < value.Length; index++)
+		{
+			String? utf16Text = value[index];
+			await helper.WriteAsync(utf16Text);
+		}
 		return helper.ToCString();
 	}
 }

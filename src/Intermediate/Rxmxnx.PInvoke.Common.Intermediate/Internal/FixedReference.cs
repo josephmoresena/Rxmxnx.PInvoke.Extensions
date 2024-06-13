@@ -5,8 +5,7 @@
 /// </summary>
 /// <typeparam name="T">Type of the fixed memory reference.</typeparam>
 [SuppressMessage("csharpsquid", "S6640")]
-internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedReference<T>, IEquatable<FixedReference<T>>
-	where T : unmanaged
+internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedReference<T> where T : unmanaged
 {
 	/// <inheritdoc/>
 	public override Type Type => typeof(T);
@@ -26,16 +25,6 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 	/// </summary>
 	/// <param name="mem">Instance of <see cref="FixedMemory"/> to be referenced.</param>
 	private FixedReference(FixedMemory mem) : base(mem) { }
-
-	/// <inheritdoc/>
-	public Boolean Equals(FixedReference<T>? other) => this.Equals(other as FixedMemory);
-
-	/// <inheritdoc/>
-	public override Boolean Equals(FixedMemory? other) => base.Equals(other as FixedReference<T>);
-	/// <inheritdoc/>
-	public override Boolean Equals(Object? obj) => base.Equals(obj as FixedReference<T>);
-	/// <inheritdoc/>
-	public override Int32 GetHashCode() => base.GetHashCode();
 
 	ref T IReferenceable<T>.Reference => ref this.CreateReference<T>();
 	ref readonly T IReadOnlyReferenceable<T>.Reference => ref this.CreateReadOnlyReference<T>();
@@ -85,7 +74,7 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 		Boolean isReadOnly = false) where TDestination : unmanaged
 	{
 		this.ValidateOperation(isReadOnly);
-		this.ValidateReferenceSize<TDestination>();
+		this.ValidateReferenceSize(typeof(TDestination), sizeof(TDestination));
 		fixedOffset = new(this, sizeof(TDestination));
 		return new(this);
 	}

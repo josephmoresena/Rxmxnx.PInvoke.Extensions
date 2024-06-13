@@ -28,8 +28,8 @@ internal sealed class StringUtf8Comparator : Utf8Comparator<Char>
 	protected override DecodedRune? DecodeRune(ref ReadOnlySpan<Char> source)
 	{
 		DecodedRune? result = DecodedRune.Decode(source);
-		if (result is not null)
-			source = source[result.CharsConsumed..];
+		if (result.HasValue)
+			source = source[result.Value.CharsConsumed..];
 		return result;
 	}
 	/// <inheritdoc/>

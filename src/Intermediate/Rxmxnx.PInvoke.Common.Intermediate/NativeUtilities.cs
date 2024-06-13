@@ -162,7 +162,7 @@ public static unsafe partial class NativeUtilities
 	public static ref readonly TDestination Transform<TSource, TDestination>(in TSource value)
 		where TSource : unmanaged where TDestination : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidCastType<TSource, TDestination>();
+		ValidationUtilities.ThrowIfInvalidCastType(sizeof(TDestination), sizeof(TSource));
 		ref TSource refValue = ref Unsafe.AsRef(value);
 		return ref Unsafe.As<TSource, TDestination>(ref refValue);
 	}
@@ -194,7 +194,7 @@ public static unsafe partial class NativeUtilities
 	public static ref TDestination TransformReference<TSource, TDestination>(ref TSource refValue)
 		where TSource : unmanaged where TDestination : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidCastType<TSource, TDestination>();
+		ValidationUtilities.ThrowIfInvalidCastType(sizeof(TDestination), sizeof(TSource));
 		return ref Unsafe.As<TSource, TDestination>(ref refValue);
 	}
 	/// <summary>

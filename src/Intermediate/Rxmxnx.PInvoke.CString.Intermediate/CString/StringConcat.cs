@@ -18,8 +18,11 @@ public partial class CString
 	{
 		ArgumentNullException.ThrowIfNull(values);
 		using StringConcatenator helper = new();
-		foreach (String? value in values)
+		for (Int32 index = 0; index < values.Length; index++)
+		{
+			String? value = values[index];
 			helper.Write(value);
+		}
 		return helper.ToCString();
 	}
 	/// <summary>
@@ -61,8 +64,11 @@ public partial class CString
 	{
 		ArgumentNullException.ThrowIfNull(values);
 		await using StringConcatenator helper = new(cancellationToken);
-		foreach (String? value in values)
+		for (Int32 index = 0; index < values.Length; index++)
+		{
+			String? value = values[index];
 			await helper.WriteAsync(value);
+		}
 		return helper.ToCString();
 	}
 }

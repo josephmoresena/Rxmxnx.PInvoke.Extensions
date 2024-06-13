@@ -7,7 +7,7 @@
 /// Contains additional information about the decoded rune, including the number of units consumed
 /// during decoding and the raw value read.
 /// </remarks>
-internal sealed class DecodedRune : IWrapper<Rune>
+internal readonly struct DecodedRune : IWrapper<Rune>
 {
 	/// <summary>
 	/// The number of code units that were consumed from the input to decode the Rune.
@@ -55,13 +55,11 @@ internal sealed class DecodedRune : IWrapper<Rune>
 	/// <inheritdoc/>
 	public override Boolean Equals(Object? obj)
 	{
-		if (Object.ReferenceEquals(this, obj))
-			return true;
 		return obj switch
 		{
 			DecodedRune decoded => this._value.Equals(decoded._value),
 			Rune rune => this._value.Equals(rune),
-			_ => Object.Equals(this, obj),
+			_ => false,
 		};
 	}
 	/// <inheritdoc/>
@@ -108,10 +106,9 @@ internal sealed class DecodedRune : IWrapper<Rune>
 		while (length < source.Length)
 		{
 			DecodedRune? rune = DecodedRune.Decode(source[length..]);
-			if (rune is null)
-				break;
+			if (!rune.HasValue) break;
 			result.Add(length);
-			length += rune.CharsConsumed;
+			length += rune.Value.CharsConsumed;
 		}
 
 		return result.ToArray();
@@ -129,10 +126,9 @@ internal sealed class DecodedRune : IWrapper<Rune>
 		while (length < source.Length)
 		{
 			DecodedRune? rune = DecodedRune.Decode(source[length..]);
-			if (rune is null)
-				break;
+			if (!rune.HasValue) break;
 			result.Add(length);
-			length += rune.CharsConsumed;
+			length += rune.Value.CharsConsumed;
 		}
 
 		return result.ToArray();
@@ -168,7 +164,7 @@ internal sealed class DecodedRune : IWrapper<Rune>
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
 	public static Boolean operator ==(DecodedRune? left, DecodedRune? right)
-		=> left is not null ? left._value == right?._value : right is null;
+		=> left.HasValue ? left.Value._value == right?._value : !right.HasValue;
 	/// <summary>
 	/// Checks if two <see cref="DecodedRune"/> instances have different values.
 	/// </summary>

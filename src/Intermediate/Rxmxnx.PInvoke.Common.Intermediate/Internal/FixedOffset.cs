@@ -6,7 +6,7 @@
 /// <remarks>
 /// This class is used to work with fixed memory blocks by providing an additional offset for precise memory management.
 /// </remarks>
-internal sealed partial class FixedOffset : FixedMemory, IEquatable<FixedOffset>
+internal sealed partial class FixedOffset : FixedMemory
 {
 	/// <summary>
 	/// The offset from the start of the fixed memory block.
@@ -29,14 +29,4 @@ internal sealed partial class FixedOffset : FixedMemory, IEquatable<FixedOffset>
 	/// <param name="mem">The <see cref="FixedMemory"/> instance to use.</param>
 	/// <param name="offset">The offset from the start of the fixed memory block.</param>
 	public FixedOffset(FixedMemory mem, Int32 offset) : base(mem) => this._offset = offset;
-
-	/// <inheritdoc/>
-	public Boolean Equals(FixedOffset? other) => this.Equals(other as FixedMemory);
-
-	/// <inheritdoc/>
-	public override Boolean Equals(FixedMemory? other) => base.Equals(other as FixedOffset);
-	/// <inheritdoc/>
-	public override Boolean Equals(Object? obj) => base.Equals(obj as FixedOffset);
-	/// <inheritdoc/>
-	public override Int32 GetHashCode() => base.GetHashCode();
 }

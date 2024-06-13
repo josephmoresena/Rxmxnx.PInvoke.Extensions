@@ -56,9 +56,11 @@ public partial class CStringSequence
 	{
 		Int32 position = 0;
 		Span<Byte> byteSpan = MemoryMarshal.AsBytes(charSpan);
-		foreach (CString value in values.Where(value => value is not null && value.Length > 0).Cast<CString>())
+		for (Int32 index = 0; index < values.Count; index++)
 		{
-			ReadOnlySpan<Byte> valueSpan = value.AsSpan();
+			CString? value = values[index];
+			if (value is null || value.Length == 0) continue;
+			ReadOnlySpan<Byte> valueSpan = value;
 			valueSpan.CopyTo(byteSpan[position..]);
 			position += valueSpan.Length;
 			byteSpan[position] = default;
@@ -92,8 +94,9 @@ public partial class CStringSequence
 	private static void BinaryCopyTo(FixedCStringSequence seq, Byte[] destination)
 	{
 		Int32 offset = 0;
-		foreach (CString value in seq.Values)
+		for (Int32 index = 0; index < seq.Values.Count; index++)
 		{
+			CString value = seq.Values[index];
 			if (value.Length <= 0) continue;
 			ReadOnlySpan<Byte> bytes = value.AsSpan();
 			bytes.CopyTo(destination.AsSpan()[offset..]);
@@ -243,5 +246,96 @@ public partial class CStringSequence
 		Int32 bytesLength = lengths.Sum(CStringSequence.GetSpanLength);
 		Int32 length = bytesLength / CStringSequence.sizeOfChar + bytesLength % CStringSequence.sizeOfChar;
 		return length;
+	}
+	/// <summary>
+	/// Retrieves usable UTF-8 buffer from <paramref name="sourceChars"/>.
+	/// </summary>
+	/// <param name="sourceChars">A buffer of a UTF-8 sequence.</param>
+	/// <param name="isParsable">Indicates whether resulting buffer is parsable.</param>
+	/// <returns>A UTF-8 buffer.</returns>
+	private static ReadOnlySpan<Byte> GetSourceBuffer(ReadOnlySpan<Char> sourceChars, out Boolean isParsable)
+	{
+		ReadOnlySpan<Byte> bufferSpan = MemoryMarshal.AsBytes(sourceChars);
+		do
+		{
+			if (bufferSpan.Length == 0)
+			{
+				isParsable = true;
+				return bufferSpan;
+			}
+			bufferSpan = bufferSpan[1..];
+		} while (bufferSpan[0] == default);
+		isParsable = bufferSpan.Length != sourceChars.Length * CStringSequence.sizeOfChar || bufferSpan[^1] == default;
+		return bufferSpan;
+	}
+	/// <summary>
+	/// Creates a new <see cref="CStringSequence"/> instance from <paramref name="buffer"/>.
+	/// </summary>
+	/// <param name="buffer">A buffer of a UTF-8 sequence.</param>
+	/// <returns>A new <see cref="CStringSequence"/> instance.</returns>
+	private static unsafe CStringSequence CreateFrom(ReadOnlySpan<Byte> buffer)
+	{
+		if (buffer.Length == 0) return CStringSequence.empty;
+		Int32 sequenceBufferLength = buffer.Length + (buffer[^1] == default ? 0 : 1);
+		ReadOnlySpan<Int32> nulls;
+		String sequenceBuffer;
+		fixed (Byte* ptr = &MemoryMarshal.GetReference(buffer))
+		{
+			SequenceCreationState state = new() { Pointer = ptr, Length = buffer.Length, NullChars = [], };
+			sequenceBuffer = String.Create(sequenceBufferLength, state, CStringSequence.CreateBuffer);
+			nulls = CollectionsMarshal.AsSpan(state.NullChars);
+		}
+		Int32?[] lengths = CStringSequence.GetLengths(nulls);
+		return new(sequenceBuffer, lengths);
+	}
+	/// <summary>
+	/// Creates a new <see cref="CStringSequence"/> instance from <paramref name="buffer"/>.
+	/// </summary>
+	/// <param name="buffer">A buffer of a UTF-8 sequence.</param>
+	/// <returns>A new <see cref="CStringSequence"/> instance.</returns>
+	private static CStringSequence CreateFrom(String buffer)
+	{
+		List<Int32> nulls = [];
+		ReadOnlySpan<Byte> span = MemoryMarshal.AsBytes(buffer.AsSpan());
+		for (Int32 i = 0; i < buffer.Length; i++)
+		{
+			if (span[i] == default)
+				nulls.Add(i);
+		}
+		Int32?[] lengths = CStringSequence.GetLengths(CollectionsMarshal.AsSpan(nulls));
+		return new(buffer, lengths);
+	}
+	/// <summary>
+	/// Creates a UTF-8 text sequence using the given <paramref name="state"/>,
+	/// with each UTF-8 text being initialized using the specified callback.
+	/// </summary>
+	/// <param name="buffer">The UTF-16 buffer where the sequence is created.</param>
+	/// <param name="state">The state object used for creation.</param>
+	private static unsafe void CreateBuffer(Span<Char> buffer, SequenceCreationState state)
+	{
+		Span<Byte> destination = MemoryMarshal.AsBytes(buffer);
+		ReadOnlySpan<Byte> sourceSpan = new(state.Pointer, state.Length);
+		for (Int32 i = 0; i < sourceSpan.Length; i++)
+		{
+			destination[i] = sourceSpan[i];
+			if (destination[i] == default) state.NullChars.Add(i);
+		}
+	}
+	/// <summary>
+	/// Retrieves the sequence lengths array from <paramref name="nulls"/>.
+	/// </summary>
+	/// <param name="nulls">Collection of the indices UTF-8 null-character in buffer.</param>
+	/// <returns>Sequence lengths array.</returns>
+	private static Int32?[] GetLengths(ReadOnlySpan<Int32> nulls)
+	{
+		Int32?[] lengths = new Int32?[nulls.Length];
+		Int32 offset = 0;
+		for (Int32 i = 0; i < lengths.Length; i++)
+		{
+			Int32 length = nulls[i] - offset;
+			lengths[i] = length;
+			offset += length + 1;
+		}
+		return lengths;
 	}
 }

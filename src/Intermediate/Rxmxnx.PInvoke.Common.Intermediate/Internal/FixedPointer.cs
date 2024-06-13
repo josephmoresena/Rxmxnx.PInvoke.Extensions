@@ -4,7 +4,7 @@
 /// Helper class for managing fixed memory pointer blocks.
 /// </summary>
 [SuppressMessage("csharpsquid", "S6640")]
-internal abstract unsafe partial class FixedPointer : IFixedPointer, IEquatable<FixedPointer>
+internal abstract unsafe partial class FixedPointer : IFixedPointer
 {
 	/// <summary>
 	/// Size of the memory block in bytes.
@@ -121,28 +121,6 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer, IEquatable<
 
 	IntPtr IFixedPointer.Pointer => (IntPtr)this.GetMemoryOffset();
 
-	/// <inheritdoc/>
-	public virtual Boolean Equals(FixedPointer? other)
-		=> other is not null && this.GetMemoryOffset() == other.GetMemoryOffset() &&
-			this.BinaryLength == other.BinaryLength && this._isReadOnly == other._isReadOnly;
-
-	/// <inheritdoc/>
-	[ExcludeFromCodeCoverage]
-	public override Boolean Equals(Object? obj) => this.Equals(obj as FixedPointer);
-	/// <inheritdoc/>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public override Int32 GetHashCode()
-	{
-		HashCode result = new();
-		result.Add(new IntPtr(this._ptr));
-		result.Add(this.BinaryOffset);
-		result.Add(this._binaryLength);
-		result.Add(this._isReadOnly);
-		if (this.Type is not null)
-			result.Add(this.Type);
-		return result.ToHashCode();
-	}
-
 	/// <summary>
 	/// Creates a reference of a <typeparamref name="TValue"/> value over the memory block.
 	/// </summary>
@@ -154,7 +132,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer, IEquatable<
 	public ref TValue CreateReference<TValue>() where TValue : unmanaged
 	{
 		this.ValidateOperation();
-		this.ValidateReferenceSize<TValue>();
+		this.ValidateReferenceSize(typeof(TValue), sizeof(TValue));
 		return ref Unsafe.AsRef<TValue>(this._ptr);
 	}
 	/// <summary>
@@ -170,8 +148,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer, IEquatable<
 	public ref readonly TValue CreateReadOnlyReference<TValue>() where TValue : unmanaged
 	{
 		this.ValidateOperation(true);
-		ValidationUtilities.ThrowIfInvalidRefTypePointer<TValue>(this._binaryLength);
-		this.ValidateReferenceSize<TValue>();
+		this.ValidateReferenceSize(typeof(TValue), sizeof(TValue));
 		return ref Unsafe.AsRef<TValue>(this._ptr);
 	}
 	/// <summary>
@@ -250,23 +227,24 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer, IEquatable<
 		ValidationUtilities.ThrowIfReadOnlyPointer(isReadOnly, this._isReadOnly);
 	}
 	/// <summary>
-	/// Retrieves the number of <typeparamref name="TValue"/> items that can be
+	/// Retrieves the number of <paramref name="sizeOf"/> items that can be
 	/// referenced into the fixed memory block.
 	/// </summary>
-	/// <typeparam name="TValue">The type of the objects referenced.</typeparam>
+	/// <param name="sizeOf">Type size in bytes.</param>
 	/// <returns>
-	/// The number of <typeparamref name="TValue"/> items that can be referenced into the
+	/// The number of <paramref name="sizeOf"/> items that can be referenced into the
 	/// fixed memory block.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	protected Int32 GetCount<TValue>() where TValue : unmanaged => this._binaryLength / sizeof(TValue);
+	protected Int32 GetCount(Int32 sizeOf) => this._binaryLength / sizeOf;
 	/// <summary>
 	/// Validates the size of the referenced value type from current instance.
 	/// </summary>
-	/// <typeparam name="TValue">Type of the referenced value.</typeparam>
+	/// <param name="typeOf">CLR Type.</param>
+	/// <param name="sizeOf">Type size in bytes.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	protected void ValidateReferenceSize<TValue>() where TValue : unmanaged
-		=> ValidationUtilities.ThrowIfInvalidRefTypePointer<TValue>(this._binaryLength);
+	protected void ValidateReferenceSize(Type typeOf, Int32 sizeOf)
+		=> ValidationUtilities.ThrowIfInvalidRefTypePointer(this._binaryLength, typeOf, sizeOf);
 
 	/// <summary>
 	/// Validates any operation over the fixed function pointer.

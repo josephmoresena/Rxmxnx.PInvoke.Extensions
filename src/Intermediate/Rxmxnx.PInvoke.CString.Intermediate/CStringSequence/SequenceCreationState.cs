@@ -5,39 +5,40 @@ public partial class CStringSequence
 	/// <summary>
 	/// Represents the state object used during the creation of a <see cref="CStringSequence"/>.
 	/// </summary>
-	/// <typeparam name="TState">The type of the element to pass to the creation callback.</typeparam>
-	private sealed class SequenceCreationState<TState>
+	private readonly unsafe struct SequenceCreationState
 	{
 		/// <summary>
-		/// The state element that is passed to creation method.
+		/// Pointer to byte buffer.
 		/// </summary>
-		private readonly CStringSequenceCreationAction<TState> _action;
+		public Byte* Pointer { get; init; }
 		/// <summary>
-		/// An array containing the lengths of each UTF-8 text in the sequence to be created.
+		/// Byte buffer length.
 		/// </summary>
-		private readonly Int32?[] _lengths;
+		public Int32 Length { get; init; }
 		/// <summary>
-		/// The state element that is passed to creation method.
+		/// List to hold the lengths of each UTF-8 text in the sequence.
 		/// </summary>
-		private readonly TState _state;
+		public List<Int32> NullChars { get; init; }
+	}
 
+	/// <summary>
+	/// Represents the state object used during the creation of a <see cref="CStringSequence"/>.
+	/// </summary>
+	/// <typeparam name="TState">The type of the element to pass to the creation callback.</typeparam>
+	private readonly struct SequenceCreationState<TState>
+	{
 		/// <summary>
-		/// Gets an array containing the lengths of each UTF-8 text in the sequence to be created.
+		/// Creation method.
 		/// </summary>
-		public Int32?[] Lengths => this._lengths;
-
+		public CStringSequenceCreationAction<TState> Action { get; init; }
 		/// <summary>
-		/// Initializes a new instance of the <see cref="SequenceCreationState{TState}"/> class.
+		/// State element that is passed to creation method.
 		/// </summary>
-		/// <param name="state">The state object to pass to <paramref name="action"/>.</param>
-		/// <param name="action">A callback used to initialize each <see cref="CString"/>.</param>
-		/// <param name="lengths">An array containing the lengths of each UTF-8 text in the sequence to be created.</param>
-		public SequenceCreationState(TState state, CStringSequenceCreationAction<TState> action, Int32?[] lengths)
-		{
-			this._state = state;
-			this._action = action;
-			this._lengths = lengths;
-		}
+		public TState State { get; init; }
+		/// <summary>
+		/// Array containing the lengths of each UTF-8 text in the sequence to be created.
+		/// </summary>
+		public Int32?[] Lengths { get; init; }
 
 		/// <summary>
 		/// Invokes the specified action for UTF-8 text creation.
@@ -45,6 +46,6 @@ public partial class CStringSequence
 		/// <param name="span">The buffer used for the UTF-8 text.</param>
 		/// <param name="index">The index of the current text in the sequence.</param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void InvokeAction(Span<Byte> span, Int32 index) => this._action(span, index, this._state);
+		public void InvokeAction(Span<Byte> span, Int32 index) => this.Action(span, index, this.State);
 	}
 }
