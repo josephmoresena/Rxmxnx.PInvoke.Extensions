@@ -121,8 +121,8 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		params Int32?[] lengths)
 	{
 		Int32 length = CStringSequence.GetBufferLength(lengths);
-		SequenceCreationState<TState> cState = new() { State = state, Action = action, Lengths = lengths, };
-		String buffer = String.Create(length, cState, CStringSequence.CreateCStringSequence);
+		SequenceCreationHelper<TState> helper = new() { State = state, Action = action, Lengths = lengths, };
+		String buffer = String.Create(length, helper, CStringSequence.CreateCStringSequence);
 		return new(buffer, lengths);
 	}
 	/// <summary>
@@ -144,55 +144,26 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	public static CStringSequence? Parse(String? value)
 	{
 		if (value is null) return default;
-		ReadOnlySpan<Byte> bufferSpan = CStringSequence.GetSourceBuffer(value, out Boolean newBuffer);
-		return newBuffer ? CStringSequence.CreateFrom(bufferSpan) : CStringSequence.CreateFrom(value);
+		ReadOnlySpan<Byte> bufferSpan = CStringSequence.GetSourceBuffer(value, out Boolean isParsable);
+		return !isParsable ? CStringSequence.CreateFrom(bufferSpan) : CStringSequence.CreateFrom(value);
 	}
 	/// <summary>
 	/// Converts the buffer of a UTF-8 sequence to a <see cref="CStringSequence"/> instance.
 	/// </summary>
 	/// <param name="value">A buffer of a UTF-8 sequence.</param>
-	/// <param name="newBuffer">Output. Indicates whether resulting instance creates a new buffer..</param>
+	/// <param name="sameInstance">
+	/// Output. Indicates whether resulting instance uses <paramref name="value"/> as buffer.
+	/// </param>
 	/// <returns>A <see cref="CStringSequence"/> instance.</returns>
 	[return: NotNullIfNotNull(nameof(value))]
-	public static CStringSequence? Parse(String? value, out Boolean newBuffer)
+	public static CStringSequence? Parse(String? value, out Boolean sameInstance)
 	{
 		if (value is null)
 		{
-			newBuffer = false;
+			sameInstance = true;
 			return default;
 		}
-		ReadOnlySpan<Byte> bufferSpan = CStringSequence.GetSourceBuffer(value, out newBuffer);
-		return newBuffer ? CStringSequence.CreateFrom(bufferSpan) : CStringSequence.CreateFrom(value);
-	}
-
-	/// <summary>
-	/// Retrieves a String representation from <paramref name="sequence"/>.
-	/// </summary>
-	/// <param name="sequence">A <see cref="CStringSequence"/> instance.</param>
-	/// <returns>String representation from <paramref name="sequence"/>.</returns>
-	[return: NotNullIfNotNull(nameof(sequence))]
-	public static String? GetPrintable(CStringSequence? sequence)
-		=> CStringSequence.GetPrintableBuffer(sequence?._value);
-	/// <summary>
-	/// Retrieves a String representation from <paramref name="buffer"/>.
-	/// </summary>
-	/// <param name="buffer">A buffer of a UTF-8 sequence.</param>
-	/// <returns>String representation from <paramref name="buffer"/>.</returns>
-	[return: NotNullIfNotNull(nameof(buffer))]
-	public static String? GetPrintableBuffer(String? buffer)
-	{
-		if (String.IsNullOrEmpty(buffer)) return buffer;
-		return buffer[^1] != default ? buffer : @$"{buffer.AsSpan()[..^1]}\0";
-	}
-	/// <summary>
-	/// Retrieves a String representation from <paramref name="buffer"/>.
-	/// </summary>
-	/// <param name="buffer">A buffer of a UTF-8 sequence.</param>
-	/// <returns>String representation from <paramref name="buffer"/>.</returns>
-	[return: NotNullIfNotNull(nameof(buffer))]
-	public static String? GetPrintableBuffer(ReadOnlySpan<Char> buffer)
-	{
-		if (buffer.Length == 0) return String.Empty;
-		return buffer[^1] != default ? $"{buffer}" : @$"{buffer[..^1]}\0";
+		ReadOnlySpan<Byte> bufferSpan = CStringSequence.GetSourceBuffer(value, out sameInstance);
+		return !sameInstance ? CStringSequence.CreateFrom(bufferSpan) : CStringSequence.CreateFrom(value);
 	}
 }
