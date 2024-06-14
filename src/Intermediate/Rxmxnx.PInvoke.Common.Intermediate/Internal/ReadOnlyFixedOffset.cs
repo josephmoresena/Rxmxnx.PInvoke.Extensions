@@ -7,7 +7,7 @@
 /// This class is used to work with fixed read-only memory blocks by providing an additional offset for precise memory
 /// management.
 /// </remarks>
-internal sealed partial class ReadOnlyFixedOffset : ReadOnlyFixedMemory, IEquatable<ReadOnlyFixedOffset>
+internal sealed partial class ReadOnlyFixedOffset : ReadOnlyFixedMemory
 {
 	/// <summary>
 	/// The offset from the start of the fixed memory block.
@@ -30,13 +30,4 @@ internal sealed partial class ReadOnlyFixedOffset : ReadOnlyFixedMemory, IEquata
 	/// <param name="mem">The <see cref="ReadOnlyFixedMemory"/> instance to use.</param>
 	/// <param name="offset">The offset from the start of the fixed memory block.</param>
 	public ReadOnlyFixedOffset(ReadOnlyFixedMemory mem, Int32 offset) : base(mem) => this._offset = offset;
-
-	/// <inheritdoc/>
-	public Boolean Equals(ReadOnlyFixedOffset? other) => this.Equals(other as ReadOnlyFixedMemory);
-	/// <inheritdoc/>
-	public override Boolean Equals(ReadOnlyFixedMemory? other) => base.Equals(other as ReadOnlyFixedOffset);
-	/// <inheritdoc/>
-	public override Boolean Equals(Object? obj) => base.Equals(obj as ReadOnlyFixedOffset);
-	/// <inheritdoc/>
-	public override Int32 GetHashCode() => base.GetHashCode();
 }

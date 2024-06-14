@@ -3,8 +3,8 @@
 /// <summary>
 /// Helper class for managing fixed read-only memory blocks.
 /// </summary>
-[SuppressMessage("csharpsquid", "S6640")]
-internal abstract unsafe class ReadOnlyFixedMemory : FixedPointer, IReadOnlyFixedMemory, IEquatable<ReadOnlyFixedMemory>
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+internal abstract unsafe partial class ReadOnlyFixedMemory : FixedPointer, IReadOnlyFixedMemory
 {
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedMemory"/> instance using a pointer to a memory block, its size, and
@@ -37,15 +37,6 @@ internal abstract unsafe class ReadOnlyFixedMemory : FixedPointer, IReadOnlyFixe
 	/// <param name="mem">The <see cref="ReadOnlyFixedMemory"/> instance to copy data from.</param>
 	/// <param name="offset">The offset to be added to the pointer to the memory block.</param>
 	protected ReadOnlyFixedMemory(ReadOnlyFixedMemory mem, Int32 offset) : base(mem, offset) { }
-
-	/// <inheritdoc/>
-	public virtual Boolean Equals(ReadOnlyFixedMemory? other) => this.Equals(other as FixedPointer);
-
-	/// <inheritdoc/>
-	[ExcludeFromCodeCoverage]
-	public override Boolean Equals(Object? obj) => base.Equals(obj as FixedMemory);
-	/// <inheritdoc/>
-	public override Int32 GetHashCode() => base.GetHashCode();
 
 	ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => this.CreateReadOnlyBinarySpan();
 	IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();

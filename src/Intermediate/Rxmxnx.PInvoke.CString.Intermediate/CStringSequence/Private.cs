@@ -39,20 +39,23 @@ public partial class CStringSequence
 	private IEnumerable<CString> GetValues(IntPtr ptr)
 	{
 		Int32 offset = 0;
-		foreach (Int32? length in this._lengths)
+		for (Int32 index = 0; index < this._lengths.Length; index++)
 		{
-			if (length is > 0)
+			Int32? length = this._lengths[index];
+			switch (length)
 			{
-				yield return CString.CreateUnsafe(ptr + offset, length.Value + 1);
-				offset += length.Value + 1;
-			}
-			else if (length.HasValue)
-			{
-				yield return CString.Empty;
-			}
-			else
-			{
-				yield return CString.Zero;
+				case > 0:
+					yield return CString.CreateUnsafe(ptr + offset, length.Value + 1);
+					offset += length.Value + 1;
+					break;
+				default:
+				{
+					if (length.HasValue)
+						yield return CString.Empty;
+					else
+						yield return CString.Zero;
+					break;
+				}
 			}
 		}
 	}

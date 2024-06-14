@@ -142,4 +142,13 @@ public partial class CString
 	/// <param name="separator">The UTF-16 character to set.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static void SetSeparator(Span<Char> spanSeparator, Char separator) => spanSeparator[0] = separator;
+	/// <summary>
+	/// Calls to <see cref="CString.Write(Stream, Int32, Int32)"/> in async context.
+	/// </summary>
+	/// <param name="state">A <see cref="SyncAsyncWriter"/> value.</param>
+	private static void WriteSyncAsync(Object? state)
+	{
+		SyncAsyncWriter writer = (SyncAsyncWriter)state!;
+		writer.Write();
+	}
 }

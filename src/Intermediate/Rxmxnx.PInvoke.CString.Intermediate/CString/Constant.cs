@@ -5,7 +5,7 @@ public partial class CString
 	/// <summary>
 	/// Represents an empty UTF-8 byte array. This field is read-only.
 	/// </summary>
-	private static readonly Byte[] empty = { default, };
+	private static readonly Byte[] empty = [default,];
 	/// <summary>
 	/// An instance of <see cref="EqualsDelegate"/> for native comparison.
 	/// Optimized for either 32 or 64-bit processes.

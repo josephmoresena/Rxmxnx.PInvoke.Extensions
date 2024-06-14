@@ -4,7 +4,7 @@
 /// Fixed method class, used to hold a fixed pointer to a method delegate.
 /// </summary>
 /// <typeparam name="TDelegate">Type of the method delegate which is being fixed.</typeparam>
-[SuppressMessage("csharpsquid", "S6640")]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 internal sealed unsafe class FixedDelegate<TDelegate> : FixedPointer, IFixedMethod<TDelegate> where TDelegate : Delegate
 {
 	/// <summary>

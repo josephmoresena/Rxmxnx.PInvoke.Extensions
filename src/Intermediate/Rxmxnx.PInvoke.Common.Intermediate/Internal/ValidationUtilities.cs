@@ -3,7 +3,7 @@
 /// <summary>
 /// Utility class for argument validation.
 /// </summary>
-[SuppressMessage("csharpsquid", "S6640")]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 internal static unsafe class ValidationUtilities
 {
 	/// <summary>
@@ -158,44 +158,43 @@ internal static unsafe class ValidationUtilities
 
 	/// <summary>
 	/// Validates that the binary size of the fixed memory pointer instance is sufficient to contain at least one
-	/// value of type <typeparamref name="TValue"/>.
+	/// <paramref name="typeOf"/> value.
 	/// </summary>
-	/// <typeparam name="TValue">Type of the referenced value.</typeparam>
 	/// <param name="binaryLength">Binary size of the fixed memory pointer instance.</param>
+	/// <param name="typeOf">CLR Type.</param>
+	/// <param name="sizeOf">Type size in bytes.</param>
 	/// <exception cref="InsufficientMemoryException">
 	/// Thrown if the binary size of the fixed memory pointer instance is insufficient to contain at least one
-	/// value of type <typeparamref name="TValue"/>.
+	/// <paramref name="typeOf"/> value.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void ThrowIfInvalidRefTypePointer<TValue>(Int32 binaryLength) where TValue : unmanaged
+	public static void ThrowIfInvalidRefTypePointer(Int32 binaryLength, Type typeOf, Int32 sizeOf)
 	{
-		if (binaryLength < sizeof(TValue))
+		if (binaryLength < sizeOf)
 			throw new InsufficientMemoryException(
-				$"The current instance is insufficient to contain a value of {typeof(TValue)} type.");
+				$"The current instance is insufficient to contain a value of {typeOf} type.");
 	}
 
 	/// <summary>
-	/// Validates that the size of the binary span exactly matches the size of the type <typeparamref name="TValue"/>.
+	/// Validates that the size of the binary span exactly matches with <paramref name="sizeOf"/>.
 	/// </summary>
-	/// <typeparam name="TValue">Type of the referenced value.</typeparam>
 	/// <param name="span">Binary span.</param>
 	/// <param name="nameofSpan">Name of the span.</param>
+	/// <param name="sizeOf">Type size in bytes.</param>
 	/// <exception cref="InsufficientMemoryException">
-	/// Thrown if the size of the binary span is less than the size of the type <typeparamref name="TValue"/>.
+	/// Thrown if the size of the binary span is less than <paramref name="sizeOf"/>.
 	/// </exception>
 	/// <exception cref="InvalidCastException">
-	/// Thrown if the size of the binary span is greater than the size of the type <typeparamref name="TValue"/>.
+	/// Thrown if the size of the binary span is greater than <paramref name="sizeOf"/>.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void ThrowIfInvalidBinarySpanSize<TValue>(ReadOnlySpan<Byte> span,
+	public static void ThrowIfInvalidBinarySpanSize(ReadOnlySpan<Byte> span, Int32 sizeOf,
 		[CallerArgumentExpression(nameof(span))] String nameofSpan = ValidationUtilities.emptyString)
-		where TValue : unmanaged
 	{
-		Int32 typeSize = sizeof(TValue);
-		String message = $"The length of parameter {nameofSpan} must be equals to {typeSize}.";
-		if (span.Length < typeSize)
+		String message = $"The length of parameter {nameofSpan} must be equals to {sizeOf}.";
+		if (span.Length < sizeOf)
 			throw new InsufficientMemoryException(message);
-		if (span.Length > typeSize)
+		if (span.Length > sizeOf)
 			throw new InvalidCastException(message);
 	}
 
@@ -225,19 +224,18 @@ internal static unsafe class ValidationUtilities
 	}
 
 	/// <summary>
-	/// Validates if <see langword="unmanaged"/> memory reference <typeparamref name="TSource"/> can be safely
-	/// converted to reference <typeparamref name="TDestination"/>.
+	/// Validates if <see langword="unmanaged"/> memory reference of <paramref name="sourceSize"/> can be safely
+	/// converted to <paramref name="destinationSize"/> reference.
 	/// </summary>
-	/// <typeparam name="TSource">Source <see langword="unmanaged"/> type.</typeparam>
-	/// <typeparam name="TDestination">Destination <see langword="unmanaged"/> type.</typeparam>
+	/// <param name="destinationSize">Source type size.</param>
+	/// <param name="sourceSize">Destination type size.</param>
 	/// <exception cref="InvalidOperationException">
 	/// Thrown if the sizes of both source and destination <see langword="unmanaged"/> types are not equal.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void ThrowIfInvalidCastType<TSource, TDestination>()
-		where TSource : unmanaged where TDestination : unmanaged
+	public static void ThrowIfInvalidCastType(Int32 destinationSize, Int32 sourceSize)
 	{
-		if (sizeof(TDestination) != sizeof(TSource))
+		if (destinationSize != sourceSize)
 			throw new InvalidOperationException(
 				"The sizes of both source and destination unmanaged types must be equal.");
 	}

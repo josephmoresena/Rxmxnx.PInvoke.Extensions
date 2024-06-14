@@ -121,8 +121,48 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		params Int32?[] lengths)
 	{
 		Int32 length = CStringSequence.GetBufferLength(lengths);
-		String buffer = String.Create(length, new SequenceCreationState<TState>(state, action, lengths),
-		                              CStringSequence.CreateCStringSequence);
+		SequenceCreationHelper<TState> helper = new() { State = state, Action = action, Lengths = lengths, };
+		String buffer = String.Create(length, helper, CStringSequence.CreateCStringSequence);
 		return new(buffer, lengths);
+	}
+	/// <summary>
+	/// Creates a new <see cref="CStringSequence"/> instance from <paramref name="value"/> UTF-8 buffer.
+	/// </summary>
+	/// <param name="value">A buffer of a UTF-8 sequence.</param>
+	/// <returns>A new <see cref="CStringSequence"/> instance.</returns>
+	/// <list type="bullet">
+	///     <item>Any UTF-8 null characters at the beginning or end of the buffer will be ignored.</item>
+	///     <item>Any non-consecutive UTF-8 null character will be considered an element separator.</item>
+	///     <item>Any consecutive UTF-8 null characters will be considered part of the next element.</item>
+	/// </list>
+	public static CStringSequence Create(ReadOnlySpan<Char> value)
+	{
+		Boolean isParsable = false;
+		ReadOnlySpan<Byte> bufferSpan = CStringSequence.GetSourceBuffer(value, ref isParsable);
+		return CStringSequence.CreateFrom(bufferSpan);
+	}
+	/// <summary>
+	/// Converts the buffer of a UTF-8 sequence to a <see cref="CStringSequence"/> instance.
+	/// </summary>
+	/// <param name="value">A buffer of a UTF-8 sequence.</param>
+	/// <returns>A <see cref="CStringSequence"/> instance.</returns>
+	/// <remarks>
+	///     <list type="bullet">
+	///         <item>Any UTF-8 null characters at the beginning or end of the buffer will be ignored.</item>
+	///         <item>Any non-consecutive UTF-8 null character will be considered an element separator.</item>
+	///         <item>Any consecutive UTF-8 null characters will be considered part of the next element.</item>
+	///         <item>
+	///         <paramref name="value"/> will be used as a buffer if and only if it does not start with UTF-8 null
+	///         characters and if it ends with at least one UTF-8 null character.
+	///         </item>
+	///     </list>
+	/// </remarks>
+	[return: NotNullIfNotNull(nameof(value))]
+	public static CStringSequence? Parse(String? value)
+	{
+		if (value is null) return default;
+		Boolean isParsable = true;
+		ReadOnlySpan<Byte> bufferSpan = CStringSequence.GetSourceBuffer(value, ref isParsable);
+		return !isParsable ? CStringSequence.CreateFrom(bufferSpan) : CStringSequence.CreateFrom(value);
 	}
 }

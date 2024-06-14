@@ -1,6 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke;
 
-[SuppressMessage("csharpsquid", "S6640")]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 public unsafe partial class CString
 {
 	/// <summary>

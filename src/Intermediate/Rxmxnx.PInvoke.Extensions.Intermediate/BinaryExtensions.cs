@@ -5,7 +5,7 @@
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
 [Browsable(false)]
-[SuppressMessage("csharpsquid", "S6640")]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 public static unsafe partial class BinaryExtensions
 {
 	/// <summary>
@@ -54,7 +54,7 @@ public static unsafe partial class BinaryExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ref readonly TValue AsValue<TValue>(this ReadOnlySpan<Byte> span) where TValue : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidBinarySpanSize<TValue>(span);
+		ValidationUtilities.ThrowIfInvalidBinarySpanSize(span, sizeof(TValue));
 		return ref MemoryMarshal.Cast<Byte, TValue>(span)[0];
 	}
 	/// <summary>
@@ -72,7 +72,7 @@ public static unsafe partial class BinaryExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ref TValue AsValue<TValue>(this Span<Byte> span) where TValue : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidBinarySpanSize<TValue>(span);
+		ValidationUtilities.ThrowIfInvalidBinarySpanSize(span, sizeof(TValue));
 		return ref MemoryMarshal.Cast<Byte, TValue>(span)[0];
 	}
 

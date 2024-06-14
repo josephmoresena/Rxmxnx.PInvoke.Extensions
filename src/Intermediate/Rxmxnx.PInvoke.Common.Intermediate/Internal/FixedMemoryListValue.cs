@@ -52,7 +52,10 @@ internal readonly struct FixedMemoryListValue : IEnumerableSequence<ReadOnlyFixe
 	public void Unload()
 	{
 		if (this._memories is null) return;
-		foreach (ReadOnlyFixedMemory mem in this._memories)
+		for (Int32 index = 0; index < this._memories.Length; index++)
+		{
+			ReadOnlyFixedMemory mem = this._memories[index];
 			mem.Unload();
+		}
 	}
 }

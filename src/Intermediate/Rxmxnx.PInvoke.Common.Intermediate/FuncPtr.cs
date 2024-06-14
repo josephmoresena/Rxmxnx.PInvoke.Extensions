@@ -6,7 +6,7 @@ namespace Rxmxnx.PInvoke;
 /// <typeparam name="TDelegate">The type of delegate that the function pointer represents.</typeparam>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
-[SuppressMessage("csharpsquid", "S6640")]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 public readonly unsafe struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<FuncPtr<TDelegate>>, ISpanFormattable,
 	ISerializable where TDelegate : Delegate
 {
@@ -82,7 +82,7 @@ public readonly unsafe struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<
 	public String ToString(String? format, IFormatProvider? formatProvider)
 		=> this.Pointer.ToString(format, formatProvider);
 	/// <inheritdoc/>
-	[SuppressMessage("csharpsquid", "S1006")]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, "S1006")]
 	public Boolean TryFormat(Span<Char> destination, out Int32 charsWritten, ReadOnlySpan<Char> format = default,
 		IFormatProvider? provider = default)
 		=> this.Pointer.TryFormat(destination, out charsWritten, format, provider);

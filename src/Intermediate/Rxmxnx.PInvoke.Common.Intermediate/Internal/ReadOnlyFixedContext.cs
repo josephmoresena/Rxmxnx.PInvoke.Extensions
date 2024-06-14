@@ -6,9 +6,9 @@
 /// <typeparam name="T">
 /// The type of the items in the fixed memory block. Must be <see langword="unmanaged"/>.
 /// </typeparam>
-[SuppressMessage("csharpsquid", "S6640")]
-internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IReadOnlyFixedContext<T>,
-	IEquatable<ReadOnlyFixedContext<T>> where T : unmanaged
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IReadOnlyFixedContext<T>
+	where T : unmanaged
 {
 	/// <summary>
 	/// An empty instance of <see cref="ReadOnlyFixedContext{T}"/>.
@@ -70,16 +70,6 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
 	private ReadOnlyFixedContext(ReadOnlyFixedMemory ctx, Int32 count) : base(ctx) => this._count = count;
 
-	/// <inheritdoc/>
-	public Boolean Equals(ReadOnlyFixedContext<T>? other) => this.Equals(other as ReadOnlyFixedMemory);
-
-	/// <inheritdoc/>
-	public override Boolean Equals(ReadOnlyFixedMemory? other) => base.Equals(other as ReadOnlyFixedContext<T>);
-	/// <inheritdoc/>
-	public override Boolean Equals(Object? obj) => base.Equals(obj as ReadOnlyFixedContext<T>);
-	/// <inheritdoc/>
-	public override Int32 GetHashCode() => base.GetHashCode();
-
 	ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => this.CreateReadOnlySpan<T>(this._count);
 	IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
@@ -116,8 +106,9 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 		where TDestination : unmanaged
 	{
 		this.ValidateOperation(true);
-		Int32 count = this.GetCount<TDestination>();
-		Int32 offset = count * sizeof(TDestination);
+		Int32 sizeOf = sizeof(TDestination);
+		Int32 count = this.GetCount(sizeOf);
+		Int32 offset = count * sizeOf;
 		fixedOffset = new(this, offset);
 		return new(this, count);
 	}

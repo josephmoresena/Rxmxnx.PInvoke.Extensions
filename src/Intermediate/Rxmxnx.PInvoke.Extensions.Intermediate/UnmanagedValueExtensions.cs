@@ -35,7 +35,7 @@ public static partial class UnmanagedValueExtensions
 	{
 		if (array is null)
 			return default;
-		return !array.Any() ? Array.Empty<Byte>() : array.AsSpan().AsBytes().ToArray();
+		return array.Length > 0 ? array.AsSpan().AsBytes().ToArray() : [];
 	}
 
 	/// <summary>
@@ -63,7 +63,7 @@ public static partial class UnmanagedValueExtensions
 	{
 		if (array is null)
 			return default;
-		return !array.Any() ? Array.Empty<TDestination>() : array.AsSpan().AsValues<TSource, TDestination>().ToArray();
+		return array.Length > 0 ? array.AsSpan().AsValues<TSource, TDestination>().ToArray() : [];
 	}
 	/// <summary>
 	/// Converts an array of <see langword="unmanaged"/> values of type <typeparamref name="TSource"/> into an array
@@ -96,10 +96,11 @@ public static partial class UnmanagedValueExtensions
 			residual = default;
 			return default;
 		}
-		if (!array.Any())
+
+		if (array.Length <= 0)
 		{
-			residual = Array.Empty<Byte>();
-			return Array.Empty<TDestination>();
+			residual = [];
+			return [];
 		}
 
 		TDestination[] result = array.AsSpan().AsValues<TSource, TDestination>(out Span<Byte> rSpan).ToArray();

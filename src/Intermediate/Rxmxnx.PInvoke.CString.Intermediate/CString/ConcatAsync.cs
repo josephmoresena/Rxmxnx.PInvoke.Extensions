@@ -37,8 +37,11 @@ public partial class CString
 	{
 		ArgumentNullException.ThrowIfNull(values);
 		await using CStringConcatenator helper = new(cancellationToken);
-		foreach (CString? value in values)
+		for (Int32 index = 0; index < values.Length; index++)
+		{
+			CString? value = values[index];
 			await helper.WriteAsync(value);
+		}
 		return helper.ToCString();
 	}
 	/// <summary>
@@ -76,8 +79,11 @@ public partial class CString
 	{
 		ArgumentNullException.ThrowIfNull(values);
 		await using CStringConcatenator helper = new(cancellationToken);
-		foreach (Byte[]? value in values)
+		for (Int32 index = 0; index < values.Length; index++)
+		{
+			Byte[]? value = values[index];
 			await helper.WriteAsync(CString.Create(value));
+		}
 		return helper.ToCString();
 	}
 }

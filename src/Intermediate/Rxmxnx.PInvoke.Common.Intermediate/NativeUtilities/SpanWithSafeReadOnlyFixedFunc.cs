@@ -1,8 +1,8 @@
 ﻿namespace Rxmxnx.PInvoke;
 
-[SuppressMessage("csharpsquid", "S107")]
-[SuppressMessage("csharpsquid", "S2436")]
-[SuppressMessage("csharpsquid", "S6640")]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS107)]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 public static unsafe partial class NativeUtilities
 {
 	/// <summary>

@@ -7,7 +7,7 @@
 /// Contains additional information about the decoded rune, including the number of units consumed
 /// during decoding and the raw value read.
 /// </remarks>
-internal sealed class DecodedRune : IWrapper<Rune>
+internal readonly struct DecodedRune : IWrapper<Rune>
 {
 	/// <summary>
 	/// The number of code units that were consumed from the input to decode the Rune.
@@ -55,13 +55,11 @@ internal sealed class DecodedRune : IWrapper<Rune>
 	/// <inheritdoc/>
 	public override Boolean Equals(Object? obj)
 	{
-		if (Object.ReferenceEquals(this, obj))
-			return true;
 		return obj switch
 		{
 			DecodedRune decoded => this._value.Equals(decoded._value),
 			Rune rune => this._value.Equals(rune),
-			_ => Object.Equals(this, obj),
+			_ => false,
 		};
 	}
 	/// <inheritdoc/>
@@ -78,9 +76,10 @@ internal sealed class DecodedRune : IWrapper<Rune>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static DecodedRune? Decode(ReadOnlySpan<Byte> source)
 	{
-		if (Rune.DecodeFromUtf8(source, out Rune result, out Int32 charsConsumed) == OperationStatus.Done)
-			return new(result, charsConsumed, source[..charsConsumed]);
-		return default;
+		if (Rune.DecodeFromUtf8(source, out Rune result, out Int32 charsConsumed) != OperationStatus.Done)
+			return default;
+		DecodedRune decoded = new(result, charsConsumed, source[..charsConsumed]);
+		return decoded;
 	}
 	/// <summary>
 	/// Decodes the <see cref="Rune"/> at the beginning of the provided unicode source buffer and
@@ -91,9 +90,10 @@ internal sealed class DecodedRune : IWrapper<Rune>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static DecodedRune? Decode(ReadOnlySpan<Char> source)
 	{
-		if (Rune.DecodeFromUtf16(source, out Rune result, out Int32 charsConsumed) == OperationStatus.Done)
-			return new(result, charsConsumed, MemoryMarshal.AsBytes(source[..charsConsumed]));
-		return default;
+		if (Rune.DecodeFromUtf16(source, out Rune result, out Int32 charsConsumed) != OperationStatus.Done)
+			return default;
+		DecodedRune decoded = new(result, charsConsumed, MemoryMarshal.AsBytes(source[..charsConsumed]));
+		return decoded;
 	}
 	/// <summary>
 	/// Retrieves the starting positions of individual runes decoded from the <paramref name="source"/>.
@@ -108,10 +108,9 @@ internal sealed class DecodedRune : IWrapper<Rune>
 		while (length < source.Length)
 		{
 			DecodedRune? rune = DecodedRune.Decode(source[length..]);
-			if (rune is null)
-				break;
+			if (!rune.HasValue) break;
 			result.Add(length);
-			length += rune.CharsConsumed;
+			length += rune.Value.CharsConsumed;
 		}
 
 		return result.ToArray();
@@ -129,10 +128,9 @@ internal sealed class DecodedRune : IWrapper<Rune>
 		while (length < source.Length)
 		{
 			DecodedRune? rune = DecodedRune.Decode(source[length..]);
-			if (rune is null)
-				break;
+			if (!rune.HasValue) break;
 			result.Add(length);
-			length += rune.CharsConsumed;
+			length += rune.Value.CharsConsumed;
 		}
 
 		return result.ToArray();
@@ -168,7 +166,7 @@ internal sealed class DecodedRune : IWrapper<Rune>
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
 	public static Boolean operator ==(DecodedRune? left, DecodedRune? right)
-		=> left is not null ? left._value == right?._value : right is null;
+		=> left.HasValue ? left.Value._value == right?._value : !right.HasValue;
 	/// <summary>
 	/// Checks if two <see cref="DecodedRune"/> instances have different values.
 	/// </summary>

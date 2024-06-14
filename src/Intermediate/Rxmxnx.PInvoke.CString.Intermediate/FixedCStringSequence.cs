@@ -4,7 +4,7 @@
 /// Represents a <see cref="CStringSequence"/> that is fixed in memory.
 /// </summary>
 [DebuggerTypeProxy(typeof(CStringSequenceDebugView))]
-[SuppressMessage("csharpsquid", "S6640")]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 public readonly unsafe ref struct FixedCStringSequence
 {
 	/// <summary>
@@ -27,7 +27,7 @@ public readonly unsafe ref struct FixedCStringSequence
 	/// <summary>
 	/// Gets the list of <see cref="CString"/> values in the sequence.
 	/// </summary>
-	public IReadOnlyList<CString> Values => this._values ?? Array.Empty<CString>();
+	public IReadOnlyList<CString> Values => this._values ?? [];
 	/// <summary>
 	/// Gets the element at the given index in the sequence.
 	/// </summary>
