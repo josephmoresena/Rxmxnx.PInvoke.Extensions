@@ -126,10 +126,10 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		return new(buffer, lengths);
 	}
 	/// <summary>
-	/// Converts the buffer of a UTF-8 sequence to a <see cref="CStringSequence"/> instance.
+	/// Creates a new <see cref="CStringSequence"/> instance from <paramref name="value"/> UTF-8 buffer.
 	/// </summary>
 	/// <param name="value">A buffer of a UTF-8 sequence.</param>
-	/// <returns>A <see cref="CStringSequence"/> instance.</returns>
+	/// <returns>A new <see cref="CStringSequence"/> instance.</returns>
 	public static CStringSequence Create(ReadOnlySpan<Char> value)
 	{
 		ReadOnlySpan<Byte> bufferSpan = CStringSequence.GetSourceBuffer(value, out _);
