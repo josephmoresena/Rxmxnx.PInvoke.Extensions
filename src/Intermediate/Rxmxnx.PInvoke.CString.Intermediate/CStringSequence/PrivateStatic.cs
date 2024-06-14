@@ -303,7 +303,7 @@ public unsafe partial class CStringSequence
 	/// <param name="sourceChars">A buffer of a UTF-8 sequence.</param>
 	/// <param name="isParsable">Indicates whether resulting buffer is parsable.</param>
 	/// <returns>A UTF-8 buffer.</returns>
-	private static ReadOnlySpan<Byte> GetSourceBuffer(ReadOnlySpan<Char> sourceChars, out Boolean isParsable)
+	private static ReadOnlySpan<Byte> GetSourceBuffer(ReadOnlySpan<Char> sourceChars, ref Boolean isParsable)
 	{
 		ReadOnlySpan<Byte> bufferSpan = MemoryMarshal.AsBytes(sourceChars);
 		Int32 bufferLength = bufferSpan.Length;
@@ -312,9 +312,12 @@ public unsafe partial class CStringSequence
 			isParsable = false;
 			return bufferSpan;
 		}
-		while (bufferSpan[0] == default) bufferSpan = bufferSpan[1..];
-		while (bufferSpan.Length > 3 && bufferSpan[^3] == default)
+		while (bufferSpan.Length > 0 && bufferSpan[0] == default)
+			bufferSpan = bufferSpan[1..]; // Any UTF-8 null-character at beginning is ignored.
+		isParsable &= bufferSpan.Length == bufferLength;
+		while (!isParsable && bufferSpan.Length > 3 && bufferSpan[^3] == default)
 		{
+			// If not parsable buffer, unnecessary UTF-8 null-characters at the end will be removed.
 			if (bufferSpan[^2] != default || bufferSpan[^1] != default)
 				break;
 			bufferSpan = bufferSpan[..^1];

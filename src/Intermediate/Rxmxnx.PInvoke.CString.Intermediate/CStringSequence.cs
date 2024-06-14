@@ -130,9 +130,15 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// </summary>
 	/// <param name="value">A buffer of a UTF-8 sequence.</param>
 	/// <returns>A new <see cref="CStringSequence"/> instance.</returns>
+	/// <list type="bullet">
+	///     <item>Any UTF-8 null characters at the beginning or end of the buffer will be ignored.</item>
+	///     <item>Any non-consecutive UTF-8 null character will be considered an element separator.</item>
+	///     <item>Any consecutive UTF-8 null characters will be considered part of the next element.</item>
+	/// </list>
 	public static CStringSequence Create(ReadOnlySpan<Char> value)
 	{
-		ReadOnlySpan<Byte> bufferSpan = CStringSequence.GetSourceBuffer(value, out _);
+		Boolean isParsable = false;
+		ReadOnlySpan<Byte> bufferSpan = CStringSequence.GetSourceBuffer(value, ref isParsable);
 		return CStringSequence.CreateFrom(bufferSpan);
 	}
 	/// <summary>
@@ -140,30 +146,23 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// </summary>
 	/// <param name="value">A buffer of a UTF-8 sequence.</param>
 	/// <returns>A <see cref="CStringSequence"/> instance.</returns>
+	/// <remarks>
+	///     <list type="bullet">
+	///         <item>Any UTF-8 null characters at the beginning or end of the buffer will be ignored.</item>
+	///         <item>Any non-consecutive UTF-8 null character will be considered an element separator.</item>
+	///         <item>Any consecutive UTF-8 null characters will be considered part of the next element.</item>
+	///         <item>
+	///         <paramref name="value"/> will be used as a buffer if and only if it does not start with UTF-8 null
+	///         characters and if it ends with at least one UTF-8 null character.
+	///         </item>
+	///     </list>
+	/// </remarks>
 	[return: NotNullIfNotNull(nameof(value))]
 	public static CStringSequence? Parse(String? value)
 	{
 		if (value is null) return default;
-		ReadOnlySpan<Byte> bufferSpan = CStringSequence.GetSourceBuffer(value, out Boolean isParsable);
+		Boolean isParsable = true;
+		ReadOnlySpan<Byte> bufferSpan = CStringSequence.GetSourceBuffer(value, ref isParsable);
 		return !isParsable ? CStringSequence.CreateFrom(bufferSpan) : CStringSequence.CreateFrom(value);
-	}
-	/// <summary>
-	/// Converts the buffer of a UTF-8 sequence to a <see cref="CStringSequence"/> instance.
-	/// </summary>
-	/// <param name="value">A buffer of a UTF-8 sequence.</param>
-	/// <param name="sameInstance">
-	/// Output. Indicates whether resulting instance uses <paramref name="value"/> as buffer.
-	/// </param>
-	/// <returns>A <see cref="CStringSequence"/> instance.</returns>
-	[return: NotNullIfNotNull(nameof(value))]
-	public static CStringSequence? Parse(String? value, out Boolean sameInstance)
-	{
-		if (value is null)
-		{
-			sameInstance = true;
-			return default;
-		}
-		ReadOnlySpan<Byte> bufferSpan = CStringSequence.GetSourceBuffer(value, out sameInstance);
-		return !sameInstance ? CStringSequence.CreateFrom(bufferSpan) : CStringSequence.CreateFrom(value);
 	}
 }

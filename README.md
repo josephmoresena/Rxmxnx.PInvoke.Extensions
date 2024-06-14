@@ -389,7 +389,6 @@ The `Rxmxnx.PInvoke.CStringSequence` class represents a sequence of `CString` ob
   of `CStringSequence` using the specified creation action and optional array of nullable integers.
 - `Create(ReadOnlySpan<Char>)`: Creates an instance of `CStringSequence` using the specified buffer of a UTF-8 sequence.
 - `Parse(String?)`: Creates an instance of `CStringSequence` using the specified buffer of a UTF-8 sequence.
-- `Parse(String?, out Boolean)`: Creates an instance of `CStringSequence` using the specified buffer of a UTF-8 sequence.
 
 ## Extensions
 
