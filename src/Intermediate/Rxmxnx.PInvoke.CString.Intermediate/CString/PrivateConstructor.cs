@@ -169,8 +169,7 @@ public partial class CString
 		/// </summary>
 		/// <param name="str"><see cref="String"/> representation of UTF-16 text.</param>
 		/// <returns><see cref="Byte"/> array with UTF-8 text.</returns>
-		private static Byte[] GetUtf8Bytes(String str)
-			=> !String.IsNullOrEmpty(str) ? Encoding.UTF8.GetBytes(str) : Array.Empty<Byte>();
+		private static Byte[] GetUtf8Bytes(String str) => !String.IsNullOrEmpty(str) ? Encoding.UTF8.GetBytes(str) : [];
 
 		/// <summary>
 		/// Retrieves the UTF8 String length which contains <paramref name="bytes"/>
