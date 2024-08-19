@@ -20,8 +20,9 @@ internal sealed class ArrayMemoryManager<T>(Array array) : MemoryManager<T>
 	/// <inheritdoc/>
 	public override Span<T> GetSpan()
 	{
-		T managedRef = this.GetArrayDataReference();
-		return MemoryMarshal.CreateSpan(ref managedRef, this._array.Length);
+		ref T managedRef = ref this.GetArrayDataReference();
+		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, this._array.Length);
+		return span;
 	}
 	/// <inheritdoc/>
 	public override unsafe MemoryHandle Pin(Int32 elementIndex = 0)
