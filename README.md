@@ -479,6 +479,8 @@ with memory blocks.
   fixed context function on the specified memory block with an additional argument and returns a value.
 - `WithSafeFixed<T, TArg, TResult>(ReadOnlySpan<T>, TArg, ReadOnlyFixedContextFunc<T, TArg, TResult>)`: Performs a
   readonly fixed context function on the specified memory block with an additional argument and returns a value.
+- `AsSpan<T>(T[,..])`: Creates a new span over a target array.
+- `AsMemory<T>(T[,..])`: Creates a new memory region over the target array.
 
 ### Rxmxnx.PInvoke.PointerExtensions
 

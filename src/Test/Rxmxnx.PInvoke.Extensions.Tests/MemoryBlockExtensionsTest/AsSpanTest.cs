@@ -2,16 +2,19 @@ namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
 
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
-public class AsMemoryTest
+public class AsSpanTest
 {
 	private static readonly IFixture fixture = new Fixture();
 	private static readonly Type extensionsType = typeof(MemoryBlockExtensions);
-	private static readonly IReadOnlyDictionary<Int32, MethodInfo> asMemories = AsMemoryTest.extensionsType
-		.GetMethods(BindingFlags.Public | BindingFlags.Static).Where(m => m.Name == "AsMemory")
+	private static readonly IReadOnlyDictionary<Int32, MethodInfo> asSpans = AsSpanTest.extensionsType
+		.GetMethods(BindingFlags.Public | BindingFlags.Static).Where(m => m.Name == "AsSpan")
 		.ToImmutableDictionary(m => m.GetParameters()[0].ParameterType.GetArrayRank(), m => m);
+	private static readonly MethodInfo genericArrayTest =
+		typeof(AsSpanTest).GetMethod(nameof(AsSpanTest.GenericArrayTest),
+		                             BindingFlags.NonPublic | BindingFlags.Static)!;
 
 	[Fact]
-	internal void AsMemoryCountTest() => Assert.Equal(31, AsMemoryTest.asMemories.Count);
+	internal void AsSpanCountTest() => Assert.Equal(31, AsSpanTest.asSpans.Count);
 	[Theory]
 	[InlineData(2)]
 	[InlineData(3)]
@@ -44,7 +47,7 @@ public class AsMemoryTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-	internal void ByteTest(Int32 dimension) => AsMemoryTest.GenericTest<Byte>(dimension);
+	internal void ByteTest(Int32 dimension) => AsSpanTest.GenericTest<Byte>(dimension);
 	[Theory]
 	[InlineData(2)]
 	[InlineData(3)]
@@ -77,7 +80,7 @@ public class AsMemoryTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-	internal void Int32Test(Int32 dimension) => AsMemoryTest.GenericTest<Int32>(dimension);
+	internal void Int32Test(Int32 dimension) => AsSpanTest.GenericTest<Int32>(dimension);
 	[Theory]
 	[InlineData(2)]
 	[InlineData(3)]
@@ -110,7 +113,7 @@ public class AsMemoryTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-	internal void StringTest(Int32 dimension) => AsMemoryTest.GenericTest<String>(dimension);
+	internal void StringTest(Int32 dimension) => AsSpanTest.GenericTest<String>(dimension);
 	[Theory]
 	[InlineData(2)]
 	[InlineData(3)]
@@ -143,43 +146,40 @@ public class AsMemoryTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-	internal void ObjectTest(Int32 dimension) => AsMemoryTest.GenericTest<Object>(dimension);
+	internal void ObjectTest(Int32 dimension) => AsSpanTest.GenericTest<Object>(dimension);
 
-	private static unsafe void GenericTest<T>(Int32 count)
+	private static void GenericTest<T>(Int32 count)
 	{
 		Int32[] lengths = Enumerable.Range(0, count).Select(_ => Random.Shared.Next(1, 3)).ToArray();
-		Array arr = AsMemoryTest.CreateArray<T>(lengths);
-		MethodInfo method = AsMemoryTest.asMemories[arr.Rank];
-		Memory<T> emptyMemory = Assert.IsType<Memory<T>>(method.MakeGenericMethod(typeof(T)).Invoke(null, [null,]));
-		Memory<T> memory = Assert.IsType<Memory<T>>(method.MakeGenericMethod(typeof(T)).Invoke(null, [arr,]));
-		Assert.Equal(Memory<T>.Empty, emptyMemory);
-		Assert.Equal(memory.Length, arr.Length);
+		Array arr = AsSpanTest.CreateArray<T>(lengths);
+		AsSpanTest.genericArrayTest.MakeGenericMethod(typeof(T), arr.GetType()).Invoke(null, [arr,]);
+	}
+	private static void GenericArrayTest<T, TArray>(Array arr) where TArray : class
+	{
+		MethodInfo method = AsSpanTest.asSpans[arr.Rank];
+		GetSpanDelegate<T, TArray> func = method.MakeGenericMethod(typeof(T))
+		                                        .CreateDelegate<GetSpanDelegate<T, TArray>>();
+		Span<T> emptySpan = func(default);
+		Span<T> span = func(arr as TArray);
+		Assert.True(emptySpan.IsEmpty);
+		Assert.Equal(span.Length, arr.Length);
 		IEnumerator enumerator = arr.GetEnumerator();
-		foreach (T value in memory.Span)
+		foreach (T value in span)
 		{
 			enumerator.MoveNext();
 			Assert.Equal(value, enumerator.Current);
 		}
-		if (!typeof(T).IsValueType)
-		{
-			Assert.Throws<ArgumentException>(() => memory.Pin());
-			return;
-		}
-		using MemoryHandle handle = memory.Pin();
-		ref T first = ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetArrayDataReference(arr));
-		for (Int32 i = 0; i < arr.Length; i++)
-		{
-			Assert.True(Unsafe.AreSame(ref Unsafe.Add(ref first, i),
-			                           ref Unsafe.Add(ref Unsafe.AsRef<T>(handle.Pointer), i)));
-		}
 	}
+
 	private static Array CreateArray<T>(Int32[] lengths)
 	{
 		Array arr = Array.CreateInstance(typeof(T), lengths);
 		Span<T> span = MemoryMarshal.CreateSpan(ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetArrayDataReference(arr)),
 		                                        arr.Length);
-		T[] data = AsMemoryTest.fixture.CreateMany<T>(arr.Length).ToArray();
+		T[] data = AsSpanTest.fixture.CreateMany<T>(arr.Length).ToArray();
 		data.CopyTo(span);
 		return arr;
 	}
+	private delegate Span<T> GetSpanDelegate<T>(Array? array);
+	private delegate Span<T> GetSpanDelegate<T, in TArray>(TArray? array);
 }
