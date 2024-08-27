@@ -43,7 +43,7 @@ internal sealed class ArrayMemoryManager<T> : MemoryManager<T>
 
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	protected override void Dispose(Boolean _) => this.Unpin();
+	protected override void Dispose(Boolean disposing) => this.Unpin();
 
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
