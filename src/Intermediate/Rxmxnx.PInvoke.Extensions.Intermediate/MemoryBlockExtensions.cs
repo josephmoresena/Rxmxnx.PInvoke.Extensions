@@ -278,6 +278,27 @@ public static unsafe partial class MemoryBlockExtensions
 		return new FixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);
 	}
 	/// <summary>
+	/// Creates an <see cref="IReadOnlyFixedMemory.IDisposable"/> instance by pinning the current
+	/// <see cref="ReadOnlyMemory{T}"/> instance, providing a safe context for accessing the fixed memory.
+	/// </summary>
+	/// <typeparam name="T">
+	/// The unmanaged type from which the contiguous region of memory will be read.
+	/// </typeparam>
+	/// <param name="mem">A <see cref="ReadOnlyMemory{T}"/> instance.</param>
+	/// <returns>An <see cref="IReadOnlyFixedMemory.IDisposable"/> instance representing the pinned memory.</returns>
+	/// <exception cref="ArgumentException">An instance with non-primitive (non-blittable) members cannot be pinned.</exception>
+	/// <remarks>
+	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
+	/// operations on unmanaged memory.
+	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
+	/// and avoid memory leaks.
+	/// </remarks>
+	public static IReadOnlyFixedMemory.IDisposable GetFixedMemory<T>(this ReadOnlyMemory<T> mem)
+	{
+		MemoryHandle handle = mem.Pin();
+		return new ReadOnlyFixedContext<Byte>(handle.Pointer, mem.Length * Unsafe.SizeOf<T>()).ToDisposable(handle);
+	}
+	/// <summary>
 	/// Creates an <see cref="IFixedMemory.IDisposable"/> instance by pinning the current
 	/// <see cref="Memory{T}"/> instance, allowing safe access to the fixed memory region.
 	/// </summary>
@@ -286,6 +307,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// </typeparam>
 	/// <param name="mem">A <see cref="Memory{T}"/> instance.</param>
 	/// <returns>An <see cref="IFixedMemory.IDisposable"/> instance representing the pinned memory.</returns>
+	/// <exception cref="ArgumentException">An instance with non-primitive (non-blittable) members cannot be pinned.</exception>
 	/// <remarks>
 	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
 	/// operations on unmanaged memory.
