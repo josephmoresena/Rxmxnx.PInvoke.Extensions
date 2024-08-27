@@ -95,7 +95,7 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ReadOnlyValPtr<T> GetUnsafeValPtr<T>(in T value) where T : unmanaged
 	{
-		ref T refValue = ref Unsafe.AsRef(value);
+		ref T refValue = ref Unsafe.AsRef(in value);
 		return new(Unsafe.AsPointer(ref refValue));
 	}
 	/// <summary>
@@ -113,7 +113,7 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IntPtr GetUnsafeIntPtr<T>(in T value) where T : unmanaged
 	{
-		ref T refValue = ref Unsafe.AsRef(value);
+		ref T refValue = ref Unsafe.AsRef(in value);
 		return (IntPtr)Unsafe.AsPointer(ref refValue);
 	}
 	/// <summary>
@@ -131,7 +131,7 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static UIntPtr GetUnsafeUIntPtr<T>(in T value) where T : unmanaged
 	{
-		ref T refValue = ref Unsafe.AsRef(value);
+		ref T refValue = ref Unsafe.AsRef(in value);
 		return (UIntPtr)Unsafe.AsPointer(ref refValue);
 	}
 	/// <summary>
@@ -163,7 +163,7 @@ public static unsafe partial class NativeUtilities
 		where TSource : unmanaged where TDestination : unmanaged
 	{
 		ValidationUtilities.ThrowIfInvalidCastType(sizeof(TDestination), sizeof(TSource));
-		ref TSource refValue = ref Unsafe.AsRef(value);
+		ref TSource refValue = ref Unsafe.AsRef(in value);
 		return ref Unsafe.As<TSource, TDestination>(ref refValue);
 	}
 	/// <summary>
@@ -206,7 +206,7 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Byte[] ToBytes<T>(in T value) where T : unmanaged
 	{
-		ref T refValue = ref Unsafe.AsRef(value);
+		ref T refValue = ref Unsafe.AsRef(in value);
 		ReadOnlySpan<T> intermediateSpan = MemoryMarshal.CreateReadOnlySpan(ref refValue, 1);
 		ReadOnlySpan<Byte> bytes = MemoryMarshal.AsBytes(intermediateSpan);
 		return bytes.ToArray();
@@ -224,7 +224,7 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ReadOnlySpan<Byte> AsBytes<TSource>(in TSource value) where TSource : unmanaged
 	{
-		ref TSource refValue = ref Unsafe.AsRef(value);
+		ref TSource refValue = ref Unsafe.AsRef(in value);
 		ReadOnlySpan<TSource> span = MemoryMarshal.CreateSpan(ref refValue, 1);
 		return MemoryMarshal.AsBytes(span);
 	}

@@ -258,7 +258,7 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfInvalidCopyType<TValue>(in TValue value, Span<Byte> destination, Int32 offset,
 		out ReadOnlySpan<Byte> bytes) where TValue : unmanaged
 	{
-		ref TValue refValue = ref Unsafe.AsRef(value);
+		ref TValue refValue = ref Unsafe.AsRef(in value);
 		ReadOnlySpan<TValue> intermediateSpan = MemoryMarshal.CreateReadOnlySpan(ref refValue, 1);
 		bytes = MemoryMarshal.AsBytes(intermediateSpan);
 		if (destination.Length - offset < bytes.Length)
