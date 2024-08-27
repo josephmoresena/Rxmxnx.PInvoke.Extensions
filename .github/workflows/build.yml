@@ -18,6 +18,8 @@ jobs:
             arch: x86
           - os: macos-latest
             arch: x86
+          - os: macos-latest
+            arch: arm
           - os: windows-latest
             arch: arm
       fail-fast: false
