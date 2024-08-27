@@ -277,4 +277,24 @@ public static unsafe partial class MemoryBlockExtensions
 		MemoryHandle handle = mem.Pin();
 		return new FixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);
 	}
+	/// <summary>
+	/// Creates an <see cref="IFixedMemory.IDisposable"/> instance by pinning the current
+	/// <see cref="Memory{T}"/> instance, allowing safe access to the fixed memory region.
+	/// </summary>
+	/// <typeparam name="T">
+	/// The type of items in the <see cref="Memory{T}"/>.
+	/// </typeparam>
+	/// <param name="mem">A <see cref="Memory{T}"/> instance.</param>
+	/// <returns>An <see cref="IFixedMemory.IDisposable"/> instance representing the pinned memory.</returns>
+	/// <remarks>
+	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
+	/// operations on unmanaged memory.
+	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
+	/// and avoid memory leaks.
+	/// </remarks>
+	public static IFixedMemory.IDisposable GetFixedMemory<T>(this Memory<T> mem)
+	{
+		MemoryHandle handle = mem.Pin();
+		return new FixedContext<Byte>(handle.Pointer, mem.Length * Unsafe.SizeOf<T>()).ToDisposable(handle);
+	}
 }

@@ -1,3 +1,6 @@
+using INonGenericEnumerator = System.Collections.IEnumerator;
+using INonGenericEnumerable = System.Collections.IEnumerable;
+
 namespace Rxmxnx.PInvoke;
 
 public partial class CStringSequence
@@ -25,6 +28,6 @@ public partial class CStringSequence
 		[ExcludeFromCodeCoverage]
 		IEnumerator<CString?> IEnumerable<CString?>.GetEnumerator() => throw new NotImplementedException();
 		[ExcludeFromCodeCoverage]
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => throw new NotImplementedException();
+		INonGenericEnumerator INonGenericEnumerable.GetEnumerator() => throw new NotImplementedException();
 	}
 }

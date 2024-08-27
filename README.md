@@ -456,6 +456,7 @@ with memory blocks.
 - `GetUnsafeUIntPtr<T>(ReadOnlySpan<T>)`: Returns the unmanaged UIntPtr representation of the specified memory block.
 - `GetFixedContext<T>(ReadOnlyMemory<T>)`: This method creates a disposable, read-only fixed context instance by pinning the provided `ReadOnlyMemory<T>` instance. It ensures that the memory block referenced by `ReadOnlyMemory<T>` is fixed (immovable) in memory, allowing for safe direct access.
 - `GetFixedContext<T>(Memory<T>)`: This method creates a disposable, fixed context instance by pinning the provided `Memory<T>` instance. It ensures that the memory block referenced by `Memory<T>` is fixed (immovable) in memory, allowing for safe direct access.
+- `GetFixedMemory<T>(Memory<T>)`: This method creates a disposable, fixed memory instance by pinning the provided `Memory<T>` instance. It ensures that the memory block referenced by `Memory<T>` is fixed (immovable) in memory, allowing for safe direct access.
 - `WithSafeFixed<T>(Span<T>, FixedContextAction<T>)`: Performs a fixed context action on the specified memory block.
 - `WithSafeFixed<T>(Span<T>, ReadOnlyFixedContextAction<T>)`: Performs a readonly fixed context action on the specified
   memory block.
