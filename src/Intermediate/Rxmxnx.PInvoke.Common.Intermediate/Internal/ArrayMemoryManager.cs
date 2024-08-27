@@ -20,7 +20,6 @@ internal sealed class ArrayMemoryManager<T> : MemoryManager<T>
 	/// <summary>
 	/// <see cref="MemoryManager{T}"/> Implementation for abstract array.
 	/// </summary>
-	/// <typeparam name="T">The type of the array.</typeparam>
 	private ArrayMemoryManager(Array array) => this._array = array;
 
 	/// <inheritdoc/>
