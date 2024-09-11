@@ -8,6 +8,7 @@ public partial class CString
 	/// <param name="sequence">A <see cref="CStringSequence"/> instance.</param>
 	/// <param name="index">The zero-based index of the element into the sequence.</param>
 	private readonly struct SequenceItemState(CStringSequence sequence, Int32 index)
+		: IUtf8FunctionState<SequenceItemState>
 	{
 		/// <summary>
 		/// Internal sequence.
@@ -18,6 +19,9 @@ public partial class CString
 		/// </summary>
 		private readonly Int32 _index = index;
 
+		[ExcludeFromCodeCoverage]
+		Boolean IUtf8FunctionState<SequenceItemState>.IsNullTerminated => true;
+
 		/// <summary>
 		/// Retrieves the span from <paramref name="state"/>.
 		/// </summary>
@@ -25,5 +29,12 @@ public partial class CString
 		/// <returns>The binary span for the specified state.</returns>
 		public static ReadOnlySpan<Byte> GetSpan(SequenceItemState state)
 			=> CStringSequence.GetItemSpan(state._sequence, state._index);
+
+		[ExcludeFromCodeCoverage]
+#if NET6_0
+		[RequiresPreviewFeatures]
+#endif
+		static ReadOnlySpan<Byte> IUtf8FunctionState<SequenceItemState>.GetSpan(SequenceItemState state)
+			=> SequenceItemState.GetSpan(state);
 	}
 }

@@ -10,9 +10,9 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <summary>
 	/// Represents an empty UTF-8 string. This field is read-only.
 	/// </summary>
-	public static readonly CString Empty = new(new Byte[] { default, }, true);
+	public static readonly CString Empty = new([default,], true);
 	/// <summary>
-	/// Represents an null-pointer UTF-8 string. This field is read-only.
+	/// Represents a null-pointer UTF-8 string. This field is read-only.
 	/// </summary>
 	public static readonly CString Zero = new(IntPtr.Zero, 0, true);
 
@@ -239,10 +239,25 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	[return: NotNullIfNotNull(nameof(bytes))]
 	public static CString? Create(Byte[]? bytes) => bytes is not null ? new(bytes, false) : default;
 	/// <summary>
+	/// Constructs a new instance of the <see cref="CString"/> class using <paramref name="state"/>.
+	/// </summary>
+	/// <param name="state">Function state parameter.</param>
+	/// <returns>
+	/// A new instance of the <see cref="CString"/> class.
+	/// </returns>
+#pragma warning disable CA2252
+	public static CString Create<TState>(TState state) where TState : struct, IUtf8FunctionState<TState>
+	{
+		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, TState.GetSpan);
+		Int32 length = TState.GetLength(state);
+		return new(data, true, state.IsNullTerminated, length);
+	}
+#pragma warning restore CA2252
+	/// <summary>
 	/// Constructs a new instance of the <see cref="CString"/> class using the pointer to a UTF-8
 	/// character array and length provided.
 	/// </summary>
-	/// <param name="ptr">A pointer to a array of UTF-8 characters.</param>
+	/// <param name="ptr">A pointer to an array of UTF-8 characters.</param>
 	/// <param name="length">The number of <see cref="Byte"/> within value to use.</param>
 	/// <param name="useFullLength">Indicates whether the total length should be used.</param>
 	/// <returns>A new instance of the <see cref="CString"/> class.</returns>

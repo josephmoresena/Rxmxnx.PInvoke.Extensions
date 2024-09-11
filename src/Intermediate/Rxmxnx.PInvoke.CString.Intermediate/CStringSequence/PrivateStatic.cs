@@ -36,11 +36,17 @@ public unsafe partial class CStringSequence
 	/// A <see cref="String"/> instance that contains the binary information of the UTF-8 text sequence.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static String CreateBuffer(IReadOnlyList<CString?> values)
+	private static String CreateBuffer(ReadOnlySpan<CString?> values)
 	{
 		Int32 totalBytes = CStringSequence.GetTotalBytes(values);
 		Int32 totalChars = totalBytes / CStringSequence.sizeOfChar + totalBytes % CStringSequence.sizeOfChar;
-		return String.Create(totalChars, values, CStringSequence.CopyText);
+#pragma warning disable CS8500
+		fixed (CString?* valuesPtr = values)
+		{
+			CStringSpanState state = new() { Ptr = valuesPtr, Length = values.Length, };
+			return String.Create(totalChars, state, CStringSequence.CopyText);
+		}
+#pragma warning restore CS8500
 	}
 	/// <summary>
 	/// Creates buffer using <paramref name="ptrSpan"/> and <paramref name="lengths"/>.
@@ -74,23 +80,24 @@ public unsafe partial class CStringSequence
 		}
 	}
 	/// <summary>
-	/// Copies the content of <see cref="CString"/> items from the provided <paramref name="values"/>
+	/// Copies the content of <see cref="CString"/> items from the provided <paramref name="state"/>
 	/// to the given <paramref name="charSpan"/>.
 	/// </summary>
 	/// <param name="charSpan">
 	/// The writable <see cref="Char"/> span that is the destination of the copy operation.
 	/// </param>
-	/// <param name="values">
+	/// <param name="state">
 	/// The collection of <see cref="CString"/> items whose contents are to be copied.
 	/// </param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void CopyText(Span<Char> charSpan, IReadOnlyList<CString?> values)
+	private static void CopyText(Span<Char> charSpan, CStringSpanState state)
 	{
 		Int32 position = 0;
+		ReadOnlySpan<CString?> values =
+			MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<CString?>(state.Ptr), state.Length);
 		Span<Byte> byteSpan = MemoryMarshal.AsBytes(charSpan);
-		for (Int32 index = 0; index < values.Count; index++)
+		foreach (CString? value in values)
 		{
-			CString? value = values[index];
 			if (value is null || value.Length == 0) continue;
 			ReadOnlySpan<Byte> valueSpan = value;
 			valueSpan.CopyTo(byteSpan[position..]);
@@ -192,7 +199,7 @@ public unsafe partial class CStringSequence
 	/// </returns>
 	[return: NotNullIfNotNull(nameof(str))]
 	private static CString? GetCString(String? str)
-		=> str is not null ? CString.Create(Encoding.UTF8.GetBytes(str)) : default;
+		=> str is not null ? CString.Create(new CStringStringState(str)) : default;
 	/// <summary>
 	/// Gets the length of the byte span representing a <see cref="CString"/> of the given <paramref name="length"/>.
 	/// </summary>
@@ -203,24 +210,13 @@ public unsafe partial class CStringSequence
 	/// </returns>
 	private static Int32 GetSpanLength(Int32? length) => length is > 0 ? length.Value + 1 : 0;
 	/// <summary>
-	/// Creates an array of <see cref="CString"/> values from given enumeration.
-	/// </summary>
-	/// <param name="values">Enumeration of <see cref="CString"/> instances.</param>
-	/// <param name="array">Output. Resulting array as output parameter.</param>
-	/// <returns>Resulting array.</returns>
-	private static CString?[] FromArray(IEnumerable<CString?> values, out CString?[] array)
-	{
-		array = values.ToArray();
-		return array;
-	}
-	/// <summary>
 	/// Retrieves the length array for a given collection of UTF-8 texts.
 	/// </summary>
 	/// <param name="list">A collection of UTF-8 texts.</param>
 	/// <returns>An array representing the length of each UTF-8 text in the collection.</returns>
-	private static Int32?[] GetLengthArray(IReadOnlyList<CString?> list)
+	private static Int32?[] GetLengthArray(ReadOnlySpan<CString?> list)
 	{
-		Int32?[] result = new Int32?[list.Count];
+		Int32?[] result = new Int32?[list.Length];
 		for (Int32 i = 0; i < result.Length; i++)
 			result[i] = CStringSequence.GetLength(list[i]);
 		return result;
@@ -386,12 +382,11 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	/// <param name="values">The collection of text.</param>
 	/// <returns>Number of required bytes</returns>
-	private static Int32 GetTotalBytes(IReadOnlyList<CString?> values)
+	private static Int32 GetTotalBytes(ReadOnlySpan<CString?> values)
 	{
 		Int32 totalBytes = 0;
-		for (Int32 index = 0; index < values.Count; index++)
+		foreach (CString? value in values)
 		{
-			CString? value = values[index];
 			if (value is not null && value.Length > 0)
 				totalBytes += value.Length + 1;
 		}
