@@ -138,6 +138,16 @@ public readonly unsafe struct ValPtr<T> : IWrapper<IntPtr>, IEquatable<ValPtr<T>
 	/// Defines an implicit conversion of a given <see cref="ValPtr{T}"/> to a pointer.
 	/// </summary>
 	/// <param name="valPtr">A <see cref="ValPtr{T}"/> to implicitly convert.</param>
+	public static implicit operator void*(ValPtr<T> valPtr) => valPtr._value;
+	/// <summary>
+	/// Defines an implicit conversion of a given <see cref="ValPtr{T}"/> to a pointer.
+	/// </summary>
+	/// <param name="valPtr">A <see cref="ValPtr{T}"/> to implicitly convert.</param>
+	public static implicit operator T*(ValPtr<T> valPtr) => (T*)valPtr._value;
+	/// <summary>
+	/// Defines an implicit conversion of a given <see cref="ValPtr{T}"/> to a pointer.
+	/// </summary>
+	/// <param name="valPtr">A <see cref="ValPtr{T}"/> to implicitly convert.</param>
 	public static implicit operator IntPtr(ValPtr<T> valPtr) => new(valPtr._value);
 	/// <summary>
 	/// Defines an implicit conversion of a given <see cref="ValPtr{T}"/> to a read-only pointer.

@@ -97,6 +97,11 @@ public readonly unsafe struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<
 	/// </summary>
 	/// <param name="valPtr">A <see cref="FuncPtr{T}"/> to implicitly convert.</param>
 	public static implicit operator IntPtr(FuncPtr<TDelegate> valPtr) => new(valPtr._value);
+	/// <summary>
+	/// Defines an implicit conversion of a given <see cref="FuncPtr{T}"/> to a pointer.
+	/// </summary>
+	/// <param name="valPtr">A <see cref="FuncPtr{T}"/> to implicitly convert.</param>
+	public static implicit operator void*(FuncPtr<TDelegate> valPtr) => valPtr._value;
 
 	/// <summary>
 	/// Determines whether two specified instances of <see cref="FuncPtr{T}"/> are equal.

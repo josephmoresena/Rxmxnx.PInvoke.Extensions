@@ -139,6 +139,16 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// </summary>
 	/// <param name="valPtr">A <see cref="ReadOnlyValPtr{T}"/> to implicitly convert.</param>
 	public static implicit operator IntPtr(ReadOnlyValPtr<T> valPtr) => new(valPtr._value);
+	/// <summary>
+	/// Defines an implicit conversion of a given <see cref="ReadOnlyValPtr{T}"/> to a pointer.
+	/// </summary>
+	/// <param name="valPtr">A <see cref="ReadOnlyValPtr{T}"/> to implicitly convert.</param>
+	public static implicit operator void*(ReadOnlyValPtr<T> valPtr) => valPtr._value;
+	/// <summary>
+	/// Defines an implicit conversion of a given <see cref="ReadOnlyValPtr{T}"/> to a pointer.
+	/// </summary>
+	/// <param name="valPtr">A <see cref="ReadOnlyValPtr{T}"/> to implicitly convert.</param>
+	public static implicit operator T*(ReadOnlyValPtr<T> valPtr) => (T*)valPtr._value;
 
 	/// <summary>
 	/// Determines whether two specified instances of <see cref="ReadOnlyValPtr{T}"/> are equal.
