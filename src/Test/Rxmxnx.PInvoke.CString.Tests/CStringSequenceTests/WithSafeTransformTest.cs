@@ -226,7 +226,7 @@ public sealed class WithSafeTransformTest
 		IReadOnlyFixedMemory[] fmems = fseq.ToArray();
 
 		for (Int32 i = 0; i < seq.Count; i++)
-			Assert.Equal(seq[i], fmems[i].Bytes.ToArray());
+			Assert.Equal(seq[i].AsSpan(), fmems[i].Bytes);
 
 		fseq.Unload();
 		foreach (IReadOnlyFixedMemory mem in fmems)
