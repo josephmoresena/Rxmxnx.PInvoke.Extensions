@@ -5,7 +5,7 @@ namespace Rxmxnx.PInvoke.Tests;
 public sealed class FuncPtrTests
 {
 	private static readonly CultureInfo[] allCultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-	private static readonly String[] formats = { "", "b", "B", "D", "d", "E", "e", "G", "g", "X", "x", };
+	private static readonly String[] formats = ["", "b", "B", "D", "d", "E", "e", "G", "g", "X", "x",];
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
@@ -18,17 +18,19 @@ public sealed class FuncPtrTests
 	[Fact]
 	internal void VoidTest() => FuncPtrTests.TestDelegate<VoidDelegate>(() => Console.WriteLine(String.Empty));
 	[Fact]
-	internal void VoidObjectTest() => FuncPtrTests.TestDelegate<VoidObjectDelegate>(o => Console.WriteLine(o));
+	internal void VoidObjectTest() => FuncPtrTests.TestDelegate<VoidObjectDelegate>(Console.WriteLine);
 
-	private static void TestDelegate<TDelegate>(TDelegate del) where TDelegate : Delegate
+	private static unsafe void TestDelegate<TDelegate>(TDelegate del) where TDelegate : Delegate
 	{
 		FuncPtr<TDelegate> empty = (FuncPtr<TDelegate>)IntPtr.Zero;
+		FuncPtr<TDelegate> emptyPtr = (FuncPtr<TDelegate>)IntPtr.Zero.ToPointer();
 		Assert.Equal(empty, FuncPtr<TDelegate>.Zero);
 		Assert.Equal(empty.Pointer, FuncPtr<TDelegate>.Zero.Pointer);
 		Assert.Null(empty.Invoke);
 		Assert.Null(FuncPtr<TDelegate>.Zero.Invoke);
 		Assert.True(empty.IsZero);
 		Assert.True(FuncPtr<TDelegate>.Zero.IsZero);
+		Assert.True(emptyPtr == IntPtr.Zero.ToPointer());
 
 		Assert.True(FuncPtr<TDelegate>.Zero.Equals(empty));
 		Assert.True(FuncPtr<TDelegate>.Zero.Equals((Object)FuncPtr<TDelegate>.Zero));
@@ -41,12 +43,15 @@ public sealed class FuncPtrTests
 		FuncPtr<TDelegate> funcPtr = (FuncPtr<TDelegate>)ptr;
 		Assert.NotNull(funcPtr.Invoke);
 		IntPtr ptr2 = funcPtr;
+		void* ptr3 = funcPtr;
 
 		Assert.Equal(ptr, ptr2);
+		Assert.True(ptr.ToPointer() == ptr3);
 		Assert.True(empty == FuncPtr<TDelegate>.Zero);
 		Assert.False(funcPtr == FuncPtr<TDelegate>.Zero);
 		Assert.True(empty != funcPtr);
 		Assert.False(funcPtr != (FuncPtr<TDelegate>)funcPtr.Pointer);
+		Assert.False(funcPtr != (FuncPtr<TDelegate>)funcPtr.Pointer.ToPointer());
 		Assert.Equal(funcPtr.Pointer, (funcPtr as IWrapper<IntPtr>).Value);
 
 		FuncPtrTests.FormatTest(funcPtr);

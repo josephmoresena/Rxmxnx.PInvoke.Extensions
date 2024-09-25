@@ -135,10 +135,30 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// <param name="ptr">A <see cref="IntPtr"/> to explicitly convert.</param>
 	public static explicit operator ReadOnlyValPtr<T>(IntPtr ptr) => new(ptr.ToPointer());
 	/// <summary>
+	/// Defines an explicit conversion of a given pointer to a read-only value pointer.
+	/// </summary>
+	/// <param name="ptr">A pointer to explicitly convert.</param>
+	public static explicit operator ReadOnlyValPtr<T>(void* ptr) => new(ptr);
+	/// <summary>
+	/// Defines an implicit conversion of a given pointer to a read-only value pointer.
+	/// </summary>
+	/// <param name="ptr">A pointer to implicitly convert.</param>
+	public static implicit operator ReadOnlyValPtr<T>(T* ptr) => new(ptr);
+	/// <summary>
 	/// Defines an implicit conversion of a given <see cref="ReadOnlyValPtr{T}"/> to a pointer.
 	/// </summary>
 	/// <param name="valPtr">A <see cref="ReadOnlyValPtr{T}"/> to implicitly convert.</param>
 	public static implicit operator IntPtr(ReadOnlyValPtr<T> valPtr) => new(valPtr._value);
+	/// <summary>
+	/// Defines an implicit conversion of a given <see cref="ReadOnlyValPtr{T}"/> to a pointer.
+	/// </summary>
+	/// <param name="valPtr">A <see cref="ReadOnlyValPtr{T}"/> to implicitly convert.</param>
+	public static implicit operator void*(ReadOnlyValPtr<T> valPtr) => valPtr._value;
+	/// <summary>
+	/// Defines an implicit conversion of a given <see cref="ReadOnlyValPtr{T}"/> to a pointer.
+	/// </summary>
+	/// <param name="valPtr">A <see cref="ReadOnlyValPtr{T}"/> to implicitly convert.</param>
+	public static implicit operator T*(ReadOnlyValPtr<T> valPtr) => (T*)valPtr._value;
 
 	/// <summary>
 	/// Determines whether two specified instances of <see cref="ReadOnlyValPtr{T}"/> are equal.

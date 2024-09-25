@@ -5,7 +5,7 @@ namespace Rxmxnx.PInvoke.Tests;
 public sealed class ValPtrTests
 {
 	private static readonly CultureInfo[] allCultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-	private static readonly String[] formats = { "", "b", "B", "D", "d", "E", "e", "G", "g", "X", "x", };
+	private static readonly String[] formats = ["", "b", "B", "D", "d", "E", "e", "G", "g", "X", "x",];
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
@@ -49,16 +49,20 @@ public sealed class ValPtrTests
 	private static unsafe void Test<T>(ValPtr<T> valPtr, Span<T> span) where T : unmanaged
 	{
 		ValPtr<T> empty = (ValPtr<T>)IntPtr.Zero;
+		ValPtr<T> emptyPtr = (ValPtr<T>)IntPtr.Zero.ToPointer();
+		ValPtr<T> emptyPtr2 = (T*)IntPtr.Zero.ToPointer();
 		Assert.Equal(empty, ValPtr<T>.Zero);
 		Assert.Equal(empty.Pointer, ValPtr<T>.Zero.Pointer);
 		Assert.Throws<NullReferenceException>(() => empty.Reference);
 		Assert.Throws<NullReferenceException>(() => ValPtr<T>.Zero.Reference);
 		Assert.True(empty.IsZero);
 		Assert.True(ValPtr<T>.Zero.IsZero);
+		Assert.True(emptyPtr == IntPtr.Zero.ToPointer());
+		Assert.True(emptyPtr2 == IntPtr.Zero.ToPointer());
 
 		Assert.True(ValPtr<T>.Zero.Equals(empty));
 		Assert.True(ValPtr<T>.Zero.Equals((Object)ValPtr<T>.Zero));
-		Assert.False(ValPtr<T>.Zero.Equals(null));
+		Assert.False(ValPtr<T>.Zero.Equals((Object?)null));
 		Assert.False(ValPtr<T>.Zero.Equals(empty.Pointer));
 
 		Assert.Equal(1, valPtr.CompareTo(null));
@@ -102,10 +106,15 @@ public sealed class ValPtrTests
 
 			Assert.False(ptrI.Equals((Object)valPtr));
 			Assert.True(ptrI.Equals(ptrIAdd2));
-			Assert.False(ptrI.Equals(null));
+			Assert.False(ptrI.Equals((Object?)null));
 			Assert.False(ptrI.Equals(ptrI.Pointer));
 
 			ValPtrTests.FormatTest(ptrI);
+
+			void* ptrI2 = ptrI;
+			T* ptrI3 = ptrI;
+
+			Assert.True(ptrI2 == ptrI3);
 		}
 
 		if (span.Length <= 0) return;
@@ -179,7 +188,7 @@ public sealed class ValPtrTests
 		if (sizeof(TDestination) > sizeof(T)) return;
 		IReferenceable<TDestination> fRef2 = fRef.Transformation<TDestination>(out IFixedMemory offset);
 		IReadOnlyReferenceable<TDestination> fRef3 =
-			(fRef as IReadOnlyFixedReference<T>).Transformation<TDestination>(out IReadOnlyFixedMemory offset2);
+			(fRef as IReadOnlyFixedReference<T>).Transformation<TDestination>(out IReadOnlyFixedMemory _);
 		Assert.True(Unsafe.AreSame(ref fRef2.Reference, ref Unsafe.AsRef<TDestination>(ptrI.Pointer.ToPointer())));
 		Assert.Equal(sizeof(T) - sizeof(TDestination), offset.Bytes.Length);
 		Assert.True(Unsafe.AreSame(ref fRef2.Reference, in fRef3.Reference));

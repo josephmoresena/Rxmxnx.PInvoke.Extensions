@@ -12,53 +12,54 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// from a collection of strings.
 	/// </summary>
 	/// <param name="values">The collection of strings.</param>
-	public CStringSequence(params String?[] values)
-	{
-		List<CString?> list = new(values.Length);
-		this._lengths = new Int32?[values.Length];
-		for (Int32 i = 0; i < values.Length; i++)
-		{
-			CString? cstr = CStringSequence.GetCString(values[i]);
-			list.Add(cstr);
-			this._lengths[i] = cstr?.Length;
-		}
-		this._cache = CStringSequence.CreateCache(this._lengths);
-		this._value = CStringSequence.CreateBuffer(list);
-	}
+	public CStringSequence(params String?[] values) : this(values.AsSpan()) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from a
 	/// collection of <see cref="CString"/> instances.
 	/// </summary>
 	/// <param name="values">The collection of <see cref="CString"/> instances.</param>
-	public CStringSequence(params CString?[] values)
+	public CStringSequence(params CString?[] values) : this(values.AsSpan()) { }
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CStringSequence"/> class from a
+	/// collection of <see cref="CString"/> instances.
+	/// </summary>
+	/// <param name="values">The collection of <see cref="CString"/> instances.</param>
+	public CStringSequence(ReadOnlySpan<CString?> values)
 	{
 		this._lengths = CStringSequence.GetLengthArray(values);
 		this._value = CStringSequence.CreateBuffer(values);
 		this._cache = CStringSequence.CreateCache(this._lengths);
 	}
 	/// <summary>
+	/// Initializes a new instance of the <see cref="CStringSequence"/> class
+	/// from a collection of strings.
+	/// </summary>
+	/// <param name="values">The collection of strings.</param>
+	public CStringSequence(ReadOnlySpan<String?> values)
+	{
+		CString?[] list = new CString?[values.Length];
+		this._lengths = new Int32?[values.Length];
+		for (Int32 i = 0; i < values.Length; i++)
+		{
+			CString? cstr = CStringSequence.GetCString(values[i]);
+			list[i] = cstr;
+			this._lengths[i] = cstr?.Length;
+		}
+		this._cache = CStringSequence.CreateCache(this._lengths);
+		this._value = CStringSequence.CreateBuffer(list);
+	}
+	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from an
 	/// enumerable collection of strings.
 	/// </summary>
 	/// <param name="values">The enumerable collection of strings.</param>
-	public CStringSequence(IEnumerable<String?> values)
-	{
-		List<CString?> list = values.Select(CStringSequence.GetCString).ToList();
-		this._lengths = CStringSequence.GetLengthArray(list);
-		this._value = CStringSequence.CreateBuffer(list);
-		this._cache = CStringSequence.CreateCache(this._lengths);
-	}
+	public CStringSequence(IEnumerable<String?> values) : this(values.Select(CStringSequence.GetCString).ToArray()) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from an
 	/// enumerable collection of <see cref="CString"/> instances.
 	/// </summary>
 	/// <param name="values">The enumerable collection of <see cref="CString"/> instances.</param>
-	public CStringSequence(IEnumerable<CString?> values) : this(CStringSequence.FromArray(values, out CString?[] arr))
-	{
-		this._lengths = CStringSequence.GetLengthArray(arr);
-		this._value = CStringSequence.CreateBuffer(arr);
-		this._cache = CStringSequence.CreateCache(this._lengths);
-	}
+	public CStringSequence(IEnumerable<CString?> values) : this(values.ToArray()) { }
 	/// <summary>
 	/// Creates a copy of this instance of <see cref="CStringSequence"/>.
 	/// </summary>

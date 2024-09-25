@@ -111,6 +111,23 @@ public partial class CString
 		this._data = helper.AsRegion();
 		this._isNullTerminated = true;
 	}
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CString"/> class to the value
+	/// indicated by <paramref name="data"/>
+	/// </summary>
+	/// <param name="data">Internal instance data.</param>
+	/// <param name="isFunction">Indicates whether the UTF-8 data is retrieved using a function.</param>
+	/// <param name="isNullTerminated">Indicates whether the UTF-8 text is null-terminated.</param>
+	/// <param name="length">UTF-8 text length.</param>
+	private CString(ValueRegion<Byte> data, Boolean isFunction, Boolean isNullTerminated, Int32 length)
+	{
+		this._isLocal = false;
+		this._isFunction = isFunction;
+		this._data = data;
+
+		this._isNullTerminated = isNullTerminated;
+		this._length = length;
+	}
 
 	/// <summary>
 	/// Helper class for UTF-16 to UTF-8 conversion.
