@@ -93,6 +93,11 @@ public readonly unsafe struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<
 	/// <param name="ptr">A <see cref="IntPtr"/> to explicitly convert.</param>
 	public static explicit operator FuncPtr<TDelegate>(IntPtr ptr) => new(ptr.ToPointer());
 	/// <summary>
+	/// Defines an explicit conversion of a given <see cref="IntPtr"/> to a read-only value pointer.
+	/// </summary>
+	/// <param name="ptr">A pointer to explicitly convert.</param>
+	public static explicit operator FuncPtr<TDelegate>(void* ptr) => new(ptr);
+	/// <summary>
 	/// Defines an implicit conversion of a given <see cref="FuncPtr{T}"/> to a pointer.
 	/// </summary>
 	/// <param name="valPtr">A <see cref="FuncPtr{T}"/> to implicitly convert.</param>

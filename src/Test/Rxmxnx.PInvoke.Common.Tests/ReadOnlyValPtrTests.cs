@@ -5,7 +5,7 @@ namespace Rxmxnx.PInvoke.Tests;
 public sealed class ReadOnlyValPtrTests
 {
 	private static readonly CultureInfo[] allCultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-	private static readonly String[] formats = { "", "b", "B", "D", "d", "E", "e", "G", "g", "X", "x", };
+	private static readonly String[] formats = ["", "b", "B", "D", "d", "E", "e", "G", "g", "X", "x",];
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
@@ -49,16 +49,20 @@ public sealed class ReadOnlyValPtrTests
 	private static unsafe void Test<T>(ReadOnlyValPtr<T> valPtr, ReadOnlySpan<T> span) where T : unmanaged
 	{
 		ReadOnlyValPtr<T> empty = (ReadOnlyValPtr<T>)IntPtr.Zero;
+		ReadOnlyValPtr<T> emptyPtr = (ReadOnlyValPtr<T>)IntPtr.Zero.ToPointer();
+		ReadOnlyValPtr<T> emptyPtr2 = (T*)IntPtr.Zero.ToPointer();
 		Assert.Equal(empty, ReadOnlyValPtr<T>.Zero);
 		Assert.Equal(empty.Pointer, ReadOnlyValPtr<T>.Zero.Pointer);
 		Assert.Throws<NullReferenceException>(() => empty.Reference);
 		Assert.Throws<NullReferenceException>(() => ReadOnlyValPtr<T>.Zero.Reference);
 		Assert.True(empty.IsZero);
 		Assert.True(ReadOnlyValPtr<T>.Zero.IsZero);
+		Assert.True(emptyPtr == IntPtr.Zero.ToPointer());
+		Assert.True(emptyPtr2 == IntPtr.Zero.ToPointer());
 
 		Assert.True(ReadOnlyValPtr<T>.Zero.Equals(empty));
 		Assert.True(ReadOnlyValPtr<T>.Zero.Equals((Object)ValPtr<T>.Zero));
-		Assert.False(ReadOnlyValPtr<T>.Zero.Equals(null));
+		Assert.False(ReadOnlyValPtr<T>.Zero.Equals((Object?)null));
 		Assert.False(ReadOnlyValPtr<T>.Zero.Equals(empty.Pointer));
 
 		Assert.Equal(1, valPtr.CompareTo(null));
@@ -102,10 +106,15 @@ public sealed class ReadOnlyValPtrTests
 
 			Assert.False(ptrI.Equals((Object)valPtr));
 			Assert.True(ptrI.Equals((Object)ptrIAdd2));
-			Assert.False(ptrI.Equals(null));
+			Assert.False(ptrI.Equals((Object?)null));
 			Assert.False(ptrI.Equals(ptrI.Pointer));
 
 			ReadOnlyValPtrTests.FormatTest(ptrI);
+
+			void* ptrI2 = ptrI;
+			T* ptrI3 = ptrI;
+
+			Assert.True(ptrI2 == ptrI3);
 		}
 
 		if (span.Length <= 0) return;
