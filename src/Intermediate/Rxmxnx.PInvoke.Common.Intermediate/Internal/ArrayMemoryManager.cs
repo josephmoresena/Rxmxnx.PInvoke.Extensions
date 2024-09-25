@@ -42,6 +42,7 @@ internal sealed class ArrayMemoryManager<T> : MemoryManager<T>
 	}
 
 	/// <inheritdoc/>
+	[ExcludeFromCodeCoverage]
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected override void Dispose(Boolean disposing) => this.Unpin();
 
