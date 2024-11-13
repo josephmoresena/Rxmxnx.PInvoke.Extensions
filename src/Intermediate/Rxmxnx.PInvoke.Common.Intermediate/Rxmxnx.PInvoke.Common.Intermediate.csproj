@@ -34,10 +34,11 @@
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
             <_Parameter1>Rxmxnx.PInvoke.CString.Intermediate</_Parameter1>
         </AssemblyAttribute>
-    </ItemGroup>
-    <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
             <_Parameter1>Rxmxnx.PInvoke.Extensions.Intermediate</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>Rxmxnx.PInvoke.Buffers.Intermediate</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
     <ItemGroup>
@@ -49,6 +50,9 @@
         </AssemblyAttribute>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
             <_Parameter1>Rxmxnx.PInvoke.Extensions.Tests</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>Rxmxnx.PInvoke.Buffers.Tests</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
 

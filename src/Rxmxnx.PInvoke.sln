@@ -23,6 +23,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Intermediate", "Intermediat
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{36897245-7D3A-4774-A7CE-4F9D0A86D3C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rxmxnx.PInvoke.Buffers.Intermediate", "Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate.csproj", "{A3765D6C-8B1C-4852-B502-6CE353DDA47C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{D4679878-0F81-4EDE-935C-AD36D7DAC93A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +65,14 @@ Global
 		{0DD5850A-EEF6-4C33-AEA8-3E3713E311D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DD5850A-EEF6-4C33-AEA8-3E3713E311D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DD5850A-EEF6-4C33-AEA8-3E3713E311D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3765D6C-8B1C-4852-B502-6CE353DDA47C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3765D6C-8B1C-4852-B502-6CE353DDA47C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3765D6C-8B1C-4852-B502-6CE353DDA47C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3765D6C-8B1C-4852-B502-6CE353DDA47C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4679878-0F81-4EDE-935C-AD36D7DAC93A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4679878-0F81-4EDE-935C-AD36D7DAC93A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4679878-0F81-4EDE-935C-AD36D7DAC93A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4679878-0F81-4EDE-935C-AD36D7DAC93A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,5 +89,6 @@ Global
 		{F47599B6-C9C6-4827-B59D-F37CA978F94F} = {36897245-7D3A-4774-A7CE-4F9D0A86D3C7}
 		{C437B5BE-9FCA-4485-A4A1-A8C88068DA56} = {36897245-7D3A-4774-A7CE-4F9D0A86D3C7}
 		{0DD5850A-EEF6-4C33-AEA8-3E3713E311D1} = {36897245-7D3A-4774-A7CE-4F9D0A86D3C7}
+		{A3765D6C-8B1C-4852-B502-6CE353DDA47C} = {7471F0F0-581A-4D38-BD0B-C3B44FA8ABC8}
 	EndGlobalSection
 EndGlobal

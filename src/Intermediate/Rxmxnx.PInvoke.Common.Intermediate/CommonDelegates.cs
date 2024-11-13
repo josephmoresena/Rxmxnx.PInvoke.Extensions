@@ -28,7 +28,7 @@ public delegate ReadOnlySpan<T> ReadOnlySpanFunc<T, in TState>(TState arg);
 /// <param name="span">A span of objects of type <typeparamref name="T"/>.</param>
 /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 /// <returns>The return value of the method that this delegate encapsulates.</returns>
-public delegate TResult SpanFunc<T, in TArg, out TResult>(Span<T> span, TArg arg) where T : unmanaged;
+public delegate TResult SpanFunc<T, in TArg, out TResult>(Span<T> span, TArg arg);
 
 /// <summary>
 /// Encapsulates a method that receives a read-only span of objects of type <typeparamref name="T"/> and a
@@ -40,7 +40,7 @@ public delegate TResult SpanFunc<T, in TArg, out TResult>(Span<T> span, TArg arg
 /// <param name="span">A read-only span of objects of type <typeparamref name="T"/>.</param>
 /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 /// <returns>The return value of the method that this delegate encapsulates.</returns>
-public delegate TResult ReadOnlySpanFunc<T, in TArg, out TResult>(ReadOnlySpan<T> span, TArg arg) where T : unmanaged;
+public delegate TResult ReadOnlySpanFunc<T, in TArg, out TResult>(ReadOnlySpan<T> span, TArg arg);
 
 /// <summary>
 /// Represents an action that operates on a fixed memory instance.
