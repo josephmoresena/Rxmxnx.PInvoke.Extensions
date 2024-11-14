@@ -10,6 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <RdXmlFile Include="rd.xml" />
         <ProjectReference Include="..\Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate.csproj"/>
     </ItemGroup>
 
