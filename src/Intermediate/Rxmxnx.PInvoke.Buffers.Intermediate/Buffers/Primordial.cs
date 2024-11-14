@@ -15,5 +15,7 @@ public struct Primordial<T> : IAllocatedBuffer<T>
 
 	/// <inheritdoc/>
 	public static Int32 Capacity => 1;
+
+	static void IAllocatedBuffer<T>.AppendComponent(IDictionary<UInt16, IBufferTypeMetadata<T>> component) { }
 }
 #pragma warning restore CA2252

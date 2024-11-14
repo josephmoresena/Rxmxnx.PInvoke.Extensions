@@ -91,6 +91,19 @@ public static partial class AllocatedBuffer
 			return AllocatedBuffer.AllocHeap(count, state, func);
 		}
 	}
+	/// <summary>
+	/// Registers object buffer.
+	/// </summary>
+	/// <typeparam name="TBuffer">Type of object buffer.</typeparam>
+	public static void Register<TBuffer>() where TBuffer : struct, IAllocatedBuffer<Object>
+		=> MetadataCache<Object>.RegisterBuffer<TBuffer>();
+	/// <summary>
+	/// Registers <typeparamref name="T"/> buffer.
+	/// </summary>
+	/// <typeparam name="T">Type of items in the buffer.</typeparam>
+	/// <typeparam name="TBuffer">Type of object buffer.</typeparam>
+	public static void Register<T, TBuffer>() where TBuffer : struct, IAllocatedBuffer<T> where T : struct
+		=> MetadataCache<T>.RegisterBuffer<TBuffer>();
 }
 #pragma warning restore CA2252
 

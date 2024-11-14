@@ -9,10 +9,11 @@ internal class BufferTypeMetadata<TBuffer, T> : IBufferTypeMetadata<T> where TBu
 	public UInt16 Size { get; } = (UInt16)TBuffer.Capacity;
 
 	/// <inheritdoc/>
-	public IBufferTypeMetadata<T> Compose(IBufferTypeMetadata<T> otherBuffer) => otherBuffer.Compose<TBuffer>();
+	public IBufferTypeMetadata<T>? Compose(IBufferTypeMetadata<T> otherBuffer) => otherBuffer.Compose<TBuffer>();
+
 	/// <inheritdoc/>
-	public IBufferTypeMetadata<T> Compose<TOther>() where TOther : struct, IAllocatedBuffer<T>
-		=> new BufferTypeMetadata<Composed<TBuffer, TOther, T>, T>();
+	public IBufferTypeMetadata<T>? Compose<TOther>() where TOther : struct, IAllocatedBuffer<T>
+		=> AllocatedBuffer.MetadataCache<T>.Get<TBuffer, TOther>();
 
 	/// <inheritdoc/>
 	public void Execute(AllocatedBufferAction<T> action)

@@ -13,4 +13,14 @@ public interface IAllocatedBuffer<T>
 	/// Buffer capacity.
 	/// </summary>
 	internal static abstract Int32 Capacity { get; }
+	internal static abstract void AppendComponent(IDictionary<UInt16, IBufferTypeMetadata<T>> component);
+
+	private protected static void AppendComponent<TBuffer>(IDictionary<UInt16, IBufferTypeMetadata<T>> component)
+		where TBuffer : struct, IAllocatedBuffer<T>
+	{
+		UInt16 key = (UInt16)TBuffer.Capacity;
+		if (component.ContainsKey(key)) return;
+		component.Add(key, new BufferTypeMetadata<TBuffer, T>());
+		TBuffer.AppendComponent(component);
+	}
 }

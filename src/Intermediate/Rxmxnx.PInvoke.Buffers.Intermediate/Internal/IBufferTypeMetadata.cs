@@ -16,7 +16,7 @@ internal interface IBufferTypeMetadata<T>
 	/// </summary>
 	/// <param name="otherBuffer">A <see cref="IBufferTypeMetadata{T}"/> instance.</param>
 	/// <returns>A composed <see cref="IBufferTypeMetadata{T}"/>.</returns>
-	IBufferTypeMetadata<T> Compose(IBufferTypeMetadata<T> otherBuffer);
+	IBufferTypeMetadata<T>? Compose(IBufferTypeMetadata<T> otherBuffer);
 	/// <summary>
 	/// Composes a new buffer using current buffer type and <typeparamref name="TBuffer"/>.
 	/// </summary>
@@ -25,12 +25,12 @@ internal interface IBufferTypeMetadata<T>
 #if NET6_0
 	[RequiresPreviewFeatures]
 #endif
-	IBufferTypeMetadata<T> Compose<TBuffer>() where TBuffer : struct, IAllocatedBuffer<T>;
+	IBufferTypeMetadata<T>? Compose<TBuffer>() where TBuffer : struct, IAllocatedBuffer<T>;
 	/// <summary>
 	/// Composes a new buffer using twice the current buffer type.
 	/// </summary>
 	/// <returns>A composed <see cref="IBufferTypeMetadata{T}"/>.</returns>
-	IBufferTypeMetadata<T> Double() => this.Compose(this);
+	IBufferTypeMetadata<T>? Double() => this.Compose(this);
 
 	/// <summary>
 	/// Executes <paramref name="action"/> using a buffer of current type.

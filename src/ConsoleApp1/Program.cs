@@ -4,6 +4,12 @@ public static class Program
 {
 	public static void Main(String[] args)
 	{
+		AllocatedBuffer
+			.Register<Composed<Composed<Primordial<Object>, Primordial<Object>, Object>, Composed<
+				Composed<Composed<Primordial<Object>, Primordial<Object>, Object>,
+					Composed<Primordial<Object>, Primordial<Object>, Object>, Object>,
+				Composed<Composed<Primordial<Object>, Primordial<Object>, Object>,
+					Composed<Primordial<Object>, Primordial<Object>, Object>, Object>, Object>, Object>>();
 		Console.Write("Size: ");
 		Int32 count = Int32.Parse(Console.ReadLine()!);
 		AllocatedBuffer.Alloc<String?>((UInt16)count, Program.UseStringSpan);

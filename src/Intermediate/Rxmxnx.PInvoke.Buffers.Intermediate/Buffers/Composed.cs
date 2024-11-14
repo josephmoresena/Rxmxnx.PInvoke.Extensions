@@ -22,5 +22,11 @@ public struct Composed<TBufferA, TBufferB, T> : IAllocatedBuffer<T> where TBuffe
 
 	/// <inheritdoc/>
 	public static Int32 Capacity => TBufferA.Capacity + TBufferB.Capacity;
+
+	static void IAllocatedBuffer<T>.AppendComponent(IDictionary<UInt16, IBufferTypeMetadata<T>> component)
+	{
+		IAllocatedBuffer<T>.AppendComponent<TBufferA>(component);
+		IAllocatedBuffer<T>.AppendComponent<TBufferB>(component);
+	}
 }
 #pragma warning restore CA2252
