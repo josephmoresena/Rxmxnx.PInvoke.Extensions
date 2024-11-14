@@ -10,17 +10,20 @@ namespace Rxmxnx.PInvoke.Buffers;
 public interface IAllocatedBuffer<T>
 {
 	/// <summary>
-	/// Buffer capacity.
+	/// Buffer metadata.
 	/// </summary>
-	internal static abstract Int32 Capacity { get; }
+	private protected static abstract IBufferTypeMetadata<T> Metadata { get; }
+
 	internal static abstract void AppendComponent(IDictionary<UInt16, IBufferTypeMetadata<T>> component);
 
 	private protected static void AppendComponent<TBuffer>(IDictionary<UInt16, IBufferTypeMetadata<T>> component)
 		where TBuffer : struct, IAllocatedBuffer<T>
 	{
-		UInt16 key = (UInt16)TBuffer.Capacity;
-		if (component.ContainsKey(key)) return;
-		component.Add(key, new BufferTypeMetadata<TBuffer, T>());
-		TBuffer.AppendComponent(component);
+		UInt16 key = TBuffer.Metadata.Size;
+		if (component.TryAdd(key, TBuffer.Metadata))
+			TBuffer.AppendComponent(component);
 	}
+
+	internal static IBufferTypeMetadata<T> GetMetadata<TBuffer>() where TBuffer : struct, IAllocatedBuffer<T>
+		=> TBuffer.Metadata;
 }

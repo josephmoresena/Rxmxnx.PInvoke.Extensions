@@ -3,11 +3,28 @@ namespace Rxmxnx.PInvoke.Buffers;
 #pragma warning disable CA2252
 public static partial class AllocatedBuffer
 {
-	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
-	private static readonly Type typeofComposed = typeof(Composed<,,>);
-	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
-	private static readonly Type typeofMetadata = typeof(BufferTypeMetadata<,>);
+	/// <summary>
+	/// Name of <see cref="IAllocatedBuffer{Object}.GetMetadata{TBuffer}()"/> method.
+	/// </summary>
+	private const String getMetadataName = nameof(IAllocatedBuffer<Object>.GetMetadata);
+	/// <summary>
+	/// Flags of <see cref="IAllocatedBuffer{Object}.GetMetadata{TBuffer}"/> method.
+	/// </summary>
+	private const BindingFlags getMetadataFlags = BindingFlags.NonPublic | BindingFlags.Static;
 
+	/// <summary>
+	/// Type of <see cref="Composed{TBufferA,TBufferB,T}"/>.
+	/// </summary>
+	private static readonly Type typeofComposed = typeof(Composed<,,>);
+	/// <summary>
+	/// Flag to check if reflection is disabled.
+	/// </summary>
+	private static readonly Boolean disabledReflection = !typeof(String).ToString().Contains(nameof(String));
+
+	/// <summary>
+	/// Metadata cache.
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
 	internal static class MetadataCache<T>
 	{
 		/// <summary>
@@ -19,6 +36,10 @@ public static partial class AllocatedBuffer
 		/// </summary>
 		private static readonly Dictionary<UInt16, IBufferTypeMetadata<T>> cache = new();
 		/// <summary>
+		/// <see cref="MethodInfo"/> of buffer metadata.
+		/// </summary>
+		private static readonly MethodInfo? getMetadataInfo;
+		/// <summary>
 		/// Maximum double space.
 		/// </summary>
 		private static UInt16 maxSpace = 2;
@@ -26,17 +47,33 @@ public static partial class AllocatedBuffer
 		/// <summary>
 		/// Static constructor.
 		/// </summary>
+		[ExcludeFromCodeCoverage]
 		static MetadataCache()
 		{
+			try
+			{
+				if (!AllocatedBuffer.disabledReflection)
+					MetadataCache<T>.getMetadataInfo = MetadataCache<T>.ReflectGetMetadataMethod();
+			}
+			catch (Exception)
+			{
+				// ignored
+			}
 			lock (MetadataCache<T>.lockObject)
 			{
-				MetadataCache<T>.cache.TryAdd(1, new BufferTypeMetadata<Primordial<T>, T>());
+				MetadataCache<T>.cache.TryAdd(1, IAllocatedBuffer<T>.GetMetadata<Primordial<T>>());
 				MetadataCache<T>.cache.TryAdd(
-					2, new BufferTypeMetadata<Composed<Primordial<T>, Primordial<T>, T>, T>());
+					2, IAllocatedBuffer<T>.GetMetadata<Composed<Primordial<T>, Primordial<T>, T>>());
 				MetadataCache<T>.cache.TryAdd(
 					3,
-					new BufferTypeMetadata<Composed<Primordial<T>, Composed<Primordial<T>, Primordial<T>, T>, T>, T>());
+					IAllocatedBuffer<T>
+						.GetMetadata<Composed<Primordial<T>, Composed<Primordial<T>, Primordial<T>, T>, T>>());
 			}
+		}
+		private static MethodInfo? ReflectGetMetadataMethod()
+		{
+			Type typeofT = typeof(IAllocatedBuffer<T>);
+			return typeofT.GetMethod(AllocatedBuffer.getMetadataName, AllocatedBuffer.getMetadataFlags)!;
 		}
 
 		/// <summary>
@@ -88,31 +125,30 @@ public static partial class AllocatedBuffer
 
 		[UnconditionalSuppressMessage("AOT", "IL2055",
 		                              Justification = SuppressMessageConstants.AvoidableReflectionUseJustification)]
+		[UnconditionalSuppressMessage("AOT", "IL2060",
+		                              Justification = SuppressMessageConstants.AvoidableReflectionUseJustification)]
 		[UnconditionalSuppressMessage("AOT", "IL3050",
 		                              Justification = SuppressMessageConstants.AvoidableReflectionUseJustification)]
 		public static IBufferTypeMetadata<T>? Get<TBufferA, TBufferB>() where TBufferA : struct, IAllocatedBuffer<T>
 			where TBufferB : struct, IAllocatedBuffer<T>
 		{
-			UInt16 key = (UInt16)(TBufferA.Capacity + TBufferB.Capacity);
-			lock (MetadataCache<T>.lockObject)
+			if (MetadataCache<T>.getMetadataInfo is null) return default;
+			try
 			{
-				if (MetadataCache<T>.cache.TryGetValue(key, out IBufferTypeMetadata<T>? result))
-					return result;
-				try
-				{
-					Type genericType =
-						AllocatedBuffer.typeofComposed.MakeGenericType(typeof(TBufferA), typeof(TBufferB), typeof(T));
-					Type genericMetadataType = AllocatedBuffer.typeofMetadata.MakeGenericType(genericType, typeof(T));
-					result = (IBufferTypeMetadata<T>)Activator.CreateInstance(genericMetadataType)!;
-					MetadataCache<T>.cache.TryAdd(key, result);
-					while (AllocatedBuffer.GetMaxValue(MetadataCache<T>.maxSpace) < result.Size)
-						MetadataCache<T>.maxSpace *= 2;
-					return result;
-				}
-				catch (Exception)
-				{
-					return default;
-				}
+				Type genericType =
+					AllocatedBuffer.typeofComposed.MakeGenericType(typeof(TBufferA), typeof(TBufferB), typeof(T));
+				MethodInfo getGenericMetadataInfo = MetadataCache<T>.getMetadataInfo.MakeGenericMethod(genericType);
+				Func<IBufferTypeMetadata<T>> getGenericMetadata =
+					getGenericMetadataInfo.CreateDelegate<Func<IBufferTypeMetadata<T>>>();
+				IBufferTypeMetadata<T> result = getGenericMetadata();
+				MetadataCache<T>.cache.TryAdd(result.Size, result);
+				while (AllocatedBuffer.GetMaxValue(MetadataCache<T>.maxSpace) < result.Size)
+					MetadataCache<T>.maxSpace *= 2;
+				return result;
+			}
+			catch (Exception)
+			{
+				return default;
 			}
 		}
 		/// <summary>
@@ -121,11 +157,11 @@ public static partial class AllocatedBuffer
 		/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 		public static void RegisterBuffer<TBuffer>() where TBuffer : struct, IAllocatedBuffer<T>
 		{
+			IBufferTypeMetadata<T> metadata = IAllocatedBuffer<T>.GetMetadata<TBuffer>();
 			lock (MetadataCache<T>.lockObject)
 			{
-				if (MetadataCache<T>.cache.ContainsKey((UInt16)TBuffer.Capacity)) return;
-				MetadataCache<T>.cache[(UInt16)TBuffer.Capacity] = new BufferTypeMetadata<TBuffer, T>();
-				while (AllocatedBuffer.GetMaxValue(MetadataCache<T>.maxSpace) < TBuffer.Capacity)
+				if (!MetadataCache<T>.cache.TryAdd(metadata.Size, metadata)) return;
+				while (AllocatedBuffer.GetMaxValue(MetadataCache<T>.maxSpace) < metadata.Size)
 					MetadataCache<T>.maxSpace *= 2;
 				TBuffer.AppendComponent(MetadataCache<T>.cache);
 			}

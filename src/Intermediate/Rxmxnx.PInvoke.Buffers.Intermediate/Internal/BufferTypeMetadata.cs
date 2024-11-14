@@ -3,10 +3,11 @@ namespace Rxmxnx.PInvoke.Internal;
 #if NET6_0
 [RequiresPreviewFeatures]
 #endif
-internal class BufferTypeMetadata<TBuffer, T> : IBufferTypeMetadata<T> where TBuffer : struct, IAllocatedBuffer<T>
+internal class BufferTypeMetadata<TBuffer, T>(Int32 capacity)
+	: IBufferTypeMetadata<T> where TBuffer : struct, IAllocatedBuffer<T>
 {
 	/// <inheritdoc/>
-	public UInt16 Size { get; } = (UInt16)TBuffer.Capacity;
+	public UInt16 Size { get; } = (UInt16)capacity;
 
 	/// <inheritdoc/>
 	public IBufferTypeMetadata<T>? Compose(IBufferTypeMetadata<T> otherBuffer) => otherBuffer.Compose<TBuffer>();

@@ -9,13 +9,16 @@ namespace Rxmxnx.PInvoke.Buffers;
 public struct Primordial<T> : IAllocatedBuffer<T>
 {
 	/// <summary>
+	/// Internal metadata.
+	/// </summary>
+	private static readonly IBufferTypeMetadata<T> metadata = new BufferTypeMetadata<Primordial<T>, T>(1);
+
+	/// <summary>
 	/// Internal value.
 	/// </summary>
 	private T _val0;
 
-	/// <inheritdoc/>
-	public static Int32 Capacity => 1;
-
+	static IBufferTypeMetadata<T> IAllocatedBuffer<T>.Metadata => Primordial<T>.metadata;
 	static void IAllocatedBuffer<T>.AppendComponent(IDictionary<UInt16, IBufferTypeMetadata<T>> component) { }
 }
 #pragma warning restore CA2252

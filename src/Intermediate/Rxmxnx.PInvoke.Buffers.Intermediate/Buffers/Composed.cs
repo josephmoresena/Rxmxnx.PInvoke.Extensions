@@ -12,6 +12,12 @@ public struct Composed<TBufferA, TBufferB, T> : IAllocatedBuffer<T> where TBuffe
 	where TBufferB : struct, IAllocatedBuffer<T>
 {
 	/// <summary>
+	/// Internal metadata.
+	/// </summary>
+	private static readonly IBufferTypeMetadata<T> metadata =
+		new BufferTypeMetadata<Composed<TBufferA, TBufferB, T>, T>(TBufferA.Metadata.Size + TBufferB.Metadata.Size);
+
+	/// <summary>
 	/// Low buffer.
 	/// </summary>
 	private TBufferA _buff0;
@@ -20,8 +26,7 @@ public struct Composed<TBufferA, TBufferB, T> : IAllocatedBuffer<T> where TBuffe
 	/// </summary>
 	private TBufferB _buff1;
 
-	/// <inheritdoc/>
-	public static Int32 Capacity => TBufferA.Capacity + TBufferB.Capacity;
+	static IBufferTypeMetadata<T> IAllocatedBuffer<T>.Metadata => Composed<TBufferA, TBufferB, T>.metadata;
 
 	static void IAllocatedBuffer<T>.AppendComponent(IDictionary<UInt16, IBufferTypeMetadata<T>> component)
 	{
