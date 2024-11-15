@@ -27,7 +27,7 @@ internal sealed class BufferTypeMetadata<TBuffer, T>(Int32 capacity)
 		action(allocated);
 	}
 	/// <inheritdoc/>
-	public void Execute<TState>(TState state, AllocatedBufferAction<T, TState> action)
+	public void Execute<TState>(in TState state, AllocatedBufferAction<T, TState> action)
 	{
 		TBuffer buffer = new();
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
@@ -45,7 +45,7 @@ internal sealed class BufferTypeMetadata<TBuffer, T>(Int32 capacity)
 		return func(allocated);
 	}
 	/// <inheritdoc/>
-	public TResult Execute<TState, TResult>(TState state, AllocatedBufferFunc<T, TState, TResult> func)
+	public TResult Execute<TState, TResult>(in TState state, AllocatedBufferFunc<T, TState, TResult> func)
 	{
 		TBuffer buffer = new();
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);

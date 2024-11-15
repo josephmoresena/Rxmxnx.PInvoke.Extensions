@@ -40,7 +40,7 @@ public static partial class AllocatedBuffer
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
-	public static void Alloc<T, TState>(UInt16 count, TState state, AllocatedBufferAction<T, TState> action,
+	public static void Alloc<T, TState>(UInt16 count, in TState state, AllocatedBufferAction<T, TState> action,
 		Boolean isMinimumCount = false)
 	{
 		try
@@ -93,7 +93,7 @@ public static partial class AllocatedBuffer
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
 	/// <returns><paramref name="func"/> result.</returns>
-	public static TResult Alloc<T, TState, TResult>(UInt16 count, TState state,
+	public static TResult Alloc<T, TState, TResult>(UInt16 count, in TState state,
 		AllocatedBufferFunc<T, TState, TResult> func, Boolean isMinimumCount = false)
 	{
 		try

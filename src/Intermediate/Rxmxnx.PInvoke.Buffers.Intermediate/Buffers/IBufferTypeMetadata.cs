@@ -39,7 +39,7 @@ public interface IBufferTypeMetadata<T>
 	/// <typeparam name="TState">Type of state object.</typeparam>
 	/// <param name="state">State object.</param>
 	/// <param name="action">A <see cref="AllocatedBufferAction{T, TState}"/> delegate.</param>
-	void Execute<TState>(TState state, AllocatedBufferAction<T, TState> action);
+	void Execute<TState>(in TState state, AllocatedBufferAction<T, TState> action);
 	/// <summary>
 	/// Executes <paramref name="func"/> using a buffer of current type.
 	/// </summary>
@@ -53,6 +53,6 @@ public interface IBufferTypeMetadata<T>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
 	/// <param name="state">State object.</param>
 	/// <param name="func">A <see cref="AllocatedBufferFunc{T, TState, TResult}"/> delegate.</param>
-	TResult Execute<TState, TResult>(TState state, AllocatedBufferFunc<T, TState, TResult> func);
+	TResult Execute<TState, TResult>(in TState state, AllocatedBufferFunc<T, TState, TResult> func);
 }
 #pragma warning restore CA2252
