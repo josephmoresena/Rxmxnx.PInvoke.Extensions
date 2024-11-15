@@ -11,7 +11,7 @@ public static partial class AllocatedBuffer
 	/// <summary>
 	/// Flags of <see cref="IAllocatedBuffer{Object}.GetMetadata{TBuffer}"/> method.
 	/// </summary>
-	private const BindingFlags getMetadataFlags = BindingFlags.NonPublic | BindingFlags.Static;
+	private const BindingFlags getMetadataFlags = BindingFlags.Public |BindingFlags.NonPublic | BindingFlags.Static;
 
 	/// <summary>
 	/// Type of <see cref="Composed{TBufferA,TBufferB,T}"/>.
