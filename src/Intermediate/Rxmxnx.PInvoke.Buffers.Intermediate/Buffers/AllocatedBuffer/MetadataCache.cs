@@ -26,17 +26,11 @@ public static partial class AllocatedBuffer
 					// Auxiliary metadata not found. Use minimal.
 					if (aux is null)
 						return MetadataCache<T>.cache.GetMinimal(count);
-					try
-					{
-						result = result.Compose(aux);
-						if (result is null) break;
-						MetadataCache<T>.cache.Add(result);
-					}
-					catch (Exception)
-					{
+					result = result.Compose(aux);
+					if (result is null)
 						// Unable to create composed metadata. Use minimal.
 						return MetadataCache<T>.cache.GetMinimal(count);
-					}
+					MetadataCache<T>.cache.Add(result);
 				}
 			}
 			return result;

@@ -32,7 +32,7 @@ public static partial class AllocatedBuffer
 	{
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
 		Span<T> span = arr.AsSpan()[..count];
-		AllocatedBuffer<T> buffer = new(span, true);
+		AllocatedBuffer<T> buffer = new(span, true, arr.Length);
 		action(buffer);
 	}
 	/// <summary>
@@ -47,7 +47,7 @@ public static partial class AllocatedBuffer
 	{
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
 		Span<T> span = arr.AsSpan()[..count];
-		AllocatedBuffer<T> buffer = new(span, true);
+		AllocatedBuffer<T> buffer = new(span, true, arr.Length);
 		action(buffer, state);
 	}
 	/// <summary>
@@ -62,7 +62,7 @@ public static partial class AllocatedBuffer
 	{
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
 		Span<T> span = arr.AsSpan()[..count];
-		AllocatedBuffer<T> buffer = new(span, true);
+		AllocatedBuffer<T> buffer = new(span, true, arr.Length);
 		return func(buffer);
 	}
 	/// <summary>
@@ -80,7 +80,7 @@ public static partial class AllocatedBuffer
 	{
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
 		Span<T> span = arr.AsSpan()[..count];
-		AllocatedBuffer<T> buffer = new(span, true);
+		AllocatedBuffer<T> buffer = new(span, true, arr.Length);
 		return func(buffer, state);
 	}
 	/// <summary>
@@ -100,8 +100,8 @@ public static partial class AllocatedBuffer
 			AllocatedBuffer.AllocHeap(count, action);
 			return;
 		}
-		ActionState<T> stateT = new(action);
-		metadata.Execute(stateT, ActionState<T>.Execute);
+		TransformationState<T> stateT = new(action);
+		metadata.Execute(stateT, TransformationState<T>.Execute, count);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
@@ -123,8 +123,7 @@ public static partial class AllocatedBuffer
 			AllocatedBuffer.AllocHeap(count, state, action);
 			return;
 		}
-		ActionState<T, TState> stateT = new(action, state);
-		metadata.Execute(stateT, ActionState<T, TState>.Execute);
+		metadata.Execute(state, action, count);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
@@ -143,8 +142,8 @@ public static partial class AllocatedBuffer
 		IBufferTypeMetadata<Object>? metadata = MetadataCache<Object>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
 			return AllocatedBuffer.AllocHeap(count, func);
-		FunctionState<T, TResult> stateT = new(func);
-		return metadata.Execute(stateT, FunctionState<T, TResult>.Execute);
+		TransformationState<T, TResult> stateT = new(func);
+		return metadata.Execute(stateT, TransformationState<T, TResult>.Execute, count);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
@@ -165,8 +164,7 @@ public static partial class AllocatedBuffer
 		IBufferTypeMetadata<Object>? metadata = MetadataCache<Object>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
 			return AllocatedBuffer.AllocHeap(count, state, func);
-		FunctionState<T, TState, TResult> stateT = new(func, state);
-		return metadata.Execute(stateT, FunctionState<T, TState, TResult>.Execute);
+		return metadata.Execute(state, func, count);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
@@ -185,7 +183,7 @@ public static partial class AllocatedBuffer
 			AllocatedBuffer.AllocHeap(count, action);
 			return;
 		}
-		metadata.Execute(action);
+		metadata.Execute(action, count);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
@@ -207,7 +205,7 @@ public static partial class AllocatedBuffer
 			AllocatedBuffer.AllocHeap(count, state, action);
 			return;
 		}
-		metadata.Execute(state, action);
+		metadata.Execute<TState>(state, action, count);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
@@ -226,7 +224,7 @@ public static partial class AllocatedBuffer
 		IBufferTypeMetadata<T>? metadata = MetadataCache<T>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
 			return AllocatedBuffer.AllocHeap(count, func);
-		return metadata.Execute(func);
+		return metadata.Execute(func, count);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
@@ -247,7 +245,7 @@ public static partial class AllocatedBuffer
 		IBufferTypeMetadata<T>? metadata = MetadataCache<T>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
 			return AllocatedBuffer.AllocHeap(count, state, func);
-		return metadata.Execute(state, func);
+		return metadata.Execute<TState, TResult>(state, func, count);
 	}
 	/// <summary>
 	/// Retrieves the maximum value in the given binary space.

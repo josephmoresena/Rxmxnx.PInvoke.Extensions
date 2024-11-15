@@ -149,21 +149,27 @@ public readonly ref struct AllocatedBuffer<T>
 	/// Indicates whether current buffer is stack allocated.
 	/// </summary>
 	public Boolean InStack => !this._heapAllocated;
+	/// <summary>
+	/// Allocated buffer full length.
+	/// </summary>
+	public Int32 FullLength { get; }
 
 	/// <summary>
 	/// Constructor.
 	/// </summary>
 	/// <param name="span">Buffer span.</param>
 	/// <param name="heapAllocated">Indicates whether current buffer is heap allocated.</param>
-	internal AllocatedBuffer(Span<T> span, Boolean heapAllocated = false)
+	/// <param name="fullLength">Allocated buffer full length.</param>
+	internal AllocatedBuffer(Span<T> span, Boolean heapAllocated, Int32 fullLength)
 	{
 		this.Span = span;
 		this._heapAllocated = heapAllocated;
+		this.FullLength = fullLength;
 	}
 
 	/// <summary>
 	/// Defines an implicit conversion of a given span to <see cref="AllocatedBuffer{T}"/>.
 	/// </summary>
 	/// <param name="span">A <typeparamref name="T"/> span to implicitly convert.</param>
-	public static implicit operator AllocatedBuffer<T>(Span<T> span) => new(span, true);
+	public static implicit operator AllocatedBuffer<T>(Span<T> span) => new(span, true, span.Length);
 }
