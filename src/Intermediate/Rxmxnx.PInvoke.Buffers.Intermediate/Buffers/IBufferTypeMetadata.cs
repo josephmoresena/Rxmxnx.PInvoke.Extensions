@@ -1,16 +1,16 @@
-namespace Rxmxnx.PInvoke.Internal;
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// This interface exposes a buffer type metadata.
 /// </summary>
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
-internal interface IBufferTypeMetadata<T>
+#pragma warning disable CA2252
+public interface IBufferTypeMetadata<T>
 {
 	/// <summary>
 	/// Buffer capacity.
 	/// </summary>
 	UInt16 Size { get; }
-
 	/// <summary>
 	/// Composes a new buffer using current buffer type and <paramref name="otherBuffer"/>.
 	/// </summary>
@@ -22,16 +22,12 @@ internal interface IBufferTypeMetadata<T>
 	/// </summary>
 	/// <typeparam name="TBuffer">Other buffer type.</typeparam>
 	/// <returns>A composed <see cref="IBufferTypeMetadata{T}"/>.</returns>
-#if NET6_0
-	[RequiresPreviewFeatures]
-#endif
 	IBufferTypeMetadata<T>? Compose<TBuffer>() where TBuffer : struct, IAllocatedBuffer<T>;
 	/// <summary>
 	/// Composes a new buffer using twice the current buffer type.
 	/// </summary>
 	/// <returns>A composed <see cref="IBufferTypeMetadata{T}"/>.</returns>
-	IBufferTypeMetadata<T>? Double() => this.Compose(this);
-
+	internal IBufferTypeMetadata<T>? Double() => this.Compose(this);
 	/// <summary>
 	/// Executes <paramref name="action"/> using a buffer of current type.
 	/// </summary>
@@ -59,3 +55,4 @@ internal interface IBufferTypeMetadata<T>
 	/// <param name="func">A <see cref="AllocatedBufferFunc{T, TState, TResult}"/> delegate.</param>
 	TResult Execute<TState, TResult>(TState state, AllocatedBufferFunc<T, TState, TResult> func);
 }
+#pragma warning restore CA2252

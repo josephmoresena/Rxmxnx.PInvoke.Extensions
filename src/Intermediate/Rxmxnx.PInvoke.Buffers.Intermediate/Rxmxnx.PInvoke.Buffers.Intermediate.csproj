@@ -44,8 +44,4 @@
         </AssemblyAttribute>
     </ItemGroup>
 
-    <ItemGroup>
-        <Folder Include="Buffers\AllocatedBuffer\MetadataCache\"/>
-    </ItemGroup>
-
 </Project>

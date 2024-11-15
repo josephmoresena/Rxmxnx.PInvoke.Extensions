@@ -166,6 +166,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// It should not be used in typical code.
 	/// </remarks>
 	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Browsable(false)]
 	public ref readonly Byte GetPinnableReference() => ref MemoryMarshal.GetReference(this._data.AsSpan());
 	/// <summary>
 	/// Copies the UTF-8 text of the current <see cref="CString"/> instance into a new byte array.

@@ -12,14 +12,17 @@ public static partial class AllocatedBuffer
 	/// <typeparam name="T">Type of items in allocated buffer.</typeparam>
 	/// <param name="count">Number of element in allocated buffer.</param>
 	/// <param name="action">Action to perform with allocated buffer.</param>
-	public static void Alloc<T>(UInt16 count, AllocatedBufferAction<T> action)
+	/// <param name="isMinimumCount">
+	/// Indicates whether <paramref name="count"/> is just the minimum limit.
+	/// </param>
+	public static void Alloc<T>(UInt16 count, AllocatedBufferAction<T> action, Boolean isMinimumCount = false)
 	{
 		try
 		{
 			if (typeof(T).IsValueType)
-				AllocatedBuffer.AllocValue(count, action);
+				AllocatedBuffer.AllocValue(count, action, isMinimumCount);
 			else
-				AllocatedBuffer.AllocObject(count, action);
+				AllocatedBuffer.AllocObject(count, action, isMinimumCount);
 		}
 		catch (Exception)
 		{
@@ -34,14 +37,18 @@ public static partial class AllocatedBuffer
 	/// <param name="count">Number of element in allocated buffer.</param>
 	/// <param name="state">State object.</param>
 	/// <param name="action">Action to perform with allocated buffer.</param>
-	public static void Alloc<T, TState>(UInt16 count, TState state, AllocatedBufferAction<T, TState> action)
+	/// <param name="isMinimumCount">
+	/// Indicates whether <paramref name="count"/> is just the minimum limit.
+	/// </param>
+	public static void Alloc<T, TState>(UInt16 count, TState state, AllocatedBufferAction<T, TState> action,
+		Boolean isMinimumCount = false)
 	{
 		try
 		{
 			if (typeof(T).IsValueType)
-				AllocatedBuffer.AllocValue(count, state, action);
+				AllocatedBuffer.AllocValue(count, state, action, isMinimumCount);
 			else
-				AllocatedBuffer.AllocObject(count, state, action);
+				AllocatedBuffer.AllocObject(count, state, action, isMinimumCount);
 		}
 		catch (Exception)
 		{
@@ -55,13 +62,18 @@ public static partial class AllocatedBuffer
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
 	/// <param name="count">Number of element in allocated buffer.</param>
 	/// <param name="func">Function to execute with allocated buffer.</param>
-	public static TResult Alloc<T, TResult>(UInt16 count, AllocatedBufferFunc<T, TResult> func)
+	/// <param name="isMinimumCount">
+	/// Indicates whether <paramref name="count"/> is just the minimum limit.
+	/// </param>
+	/// <returns><paramref name="func"/> result.</returns>
+	public static TResult Alloc<T, TResult>(UInt16 count, AllocatedBufferFunc<T, TResult> func,
+		Boolean isMinimumCount = false)
 	{
 		try
 		{
 			return typeof(T).IsValueType ?
-				AllocatedBuffer.AllocValue(count, func) :
-				AllocatedBuffer.AllocObject(count, func);
+				AllocatedBuffer.AllocValue(count, func, isMinimumCount) :
+				AllocatedBuffer.AllocObject(count, func, isMinimumCount);
 		}
 		catch (Exception)
 		{
@@ -77,14 +89,18 @@ public static partial class AllocatedBuffer
 	/// <param name="count">Number of element in allocated buffer.</param>
 	/// <param name="state">State object.</param>
 	/// <param name="func">Function to execute with allocated buffer.</param>
+	/// <param name="isMinimumCount">
+	/// Indicates whether <paramref name="count"/> is just the minimum limit.
+	/// </param>
+	/// <returns><paramref name="func"/> result.</returns>
 	public static TResult Alloc<T, TState, TResult>(UInt16 count, TState state,
-		AllocatedBufferFunc<T, TState, TResult> func)
+		AllocatedBufferFunc<T, TState, TResult> func, Boolean isMinimumCount = false)
 	{
 		try
 		{
 			return typeof(T).IsValueType ?
-				AllocatedBuffer.AllocValue(count, state, func) :
-				AllocatedBuffer.AllocObject(count, state, func);
+				AllocatedBuffer.AllocValue(count, state, func, isMinimumCount) :
+				AllocatedBuffer.AllocObject(count, state, func, isMinimumCount);
 		}
 		catch (Exception)
 		{
@@ -104,6 +120,13 @@ public static partial class AllocatedBuffer
 	/// <typeparam name="TBuffer">Type of object buffer.</typeparam>
 	public static void Register<T, TBuffer>() where TBuffer : struct, IAllocatedBuffer<T> where T : struct
 		=> MetadataCache<T>.RegisterBuffer<TBuffer>();
+	/// <summary>
+	/// Registers <typeparamref name="T"/> buffer.
+	/// </summary>
+	/// <typeparam name="T">Type of nullable items in the buffer.</typeparam>
+	/// <typeparam name="TBuffer">Type of object buffer.</typeparam>
+	public static void RegisterNullable<T, TBuffer>() where TBuffer : struct, IAllocatedBuffer<T?> where T : struct
+		=> MetadataCache<T?>.RegisterBuffer<TBuffer>();
 }
 #pragma warning restore CA2252
 
@@ -137,4 +160,10 @@ public readonly ref struct AllocatedBuffer<T>
 		this.Span = span;
 		this._heapAllocated = heapAllocated;
 	}
+
+	/// <summary>
+	/// Defines an implicit conversion of a given span to <see cref="AllocatedBuffer{T}"/>.
+	/// </summary>
+	/// <param name="span">A <typeparamref name="T"/> span to implicitly convert.</param>
+	public static implicit operator AllocatedBuffer<T>(Span<T> span) => new(span, true);
 }

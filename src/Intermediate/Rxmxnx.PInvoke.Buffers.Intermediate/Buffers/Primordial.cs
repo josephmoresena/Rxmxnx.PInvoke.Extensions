@@ -19,6 +19,6 @@ public struct Primordial<T> : IAllocatedBuffer<T>
 	private T _val0;
 
 	static IBufferTypeMetadata<T> IAllocatedBuffer<T>.Metadata => Primordial<T>.metadata;
-	static void IAllocatedBuffer<T>.AppendComponent(IDictionary<UInt16, IBufferTypeMetadata<T>> component) { }
+	static void IAllocatedBuffer<T>.AppendComponent(IDictionary<UInt16, IBufferTypeMetadata<T>> components) { }
 }
 #pragma warning restore CA2252

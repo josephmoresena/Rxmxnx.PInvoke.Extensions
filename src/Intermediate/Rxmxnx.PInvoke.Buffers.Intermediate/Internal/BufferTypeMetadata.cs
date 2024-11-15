@@ -1,21 +1,22 @@
 namespace Rxmxnx.PInvoke.Internal;
 
-#if NET6_0
-[RequiresPreviewFeatures]
-#endif
-internal class BufferTypeMetadata<TBuffer, T>(Int32 capacity)
+/// <summary>
+/// Internal implementation of <see cref="IBufferTypeMetadata{T}"/>.
+/// </summary>
+/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
+/// <typeparam name="T">Type of items in the buffer.</typeparam>
+/// <param name="capacity">Buffer's capacity.</param>
+#pragma warning disable CA2252
+internal sealed class BufferTypeMetadata<TBuffer, T>(Int32 capacity)
 	: IBufferTypeMetadata<T> where TBuffer : struct, IAllocatedBuffer<T>
 {
 	/// <inheritdoc/>
 	public UInt16 Size { get; } = (UInt16)capacity;
-
 	/// <inheritdoc/>
 	public IBufferTypeMetadata<T>? Compose(IBufferTypeMetadata<T> otherBuffer) => otherBuffer.Compose<TBuffer>();
-
 	/// <inheritdoc/>
 	public IBufferTypeMetadata<T>? Compose<TOther>() where TOther : struct, IAllocatedBuffer<T>
-		=> AllocatedBuffer.MetadataCache<T>.Get<TBuffer, TOther>();
-
+		=> AllocatedBuffer.MetadataCache<T>.CreateComposedWithReflection<TBuffer, TOther>();
 	/// <inheritdoc/>
 	public void Execute(AllocatedBufferAction<T> action)
 	{
@@ -53,3 +54,4 @@ internal class BufferTypeMetadata<TBuffer, T>(Int32 capacity)
 		return func(allocated, state);
 	}
 }
+#pragma warning restore CA2252

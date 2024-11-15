@@ -10,6 +10,7 @@ public static class Program
 					Composed<Primordial<Object>, Primordial<Object>, Object>, Object>,
 				Composed<Composed<Primordial<Object>, Primordial<Object>, Object>,
 					Composed<Primordial<Object>, Primordial<Object>, Object>, Object>, Object>, Object>>();
+		AllocatedBuffer.RegisterNullable<Byte, Composed<Primordial<Byte?>, Primordial<Byte?>, Byte?>>();
 		Console.Write("Size: ");
 		Int32 count = Int32.Parse(Console.ReadLine()!);
 		AllocatedBuffer.Alloc<String?>((UInt16)count, Program.UseStringSpan);
