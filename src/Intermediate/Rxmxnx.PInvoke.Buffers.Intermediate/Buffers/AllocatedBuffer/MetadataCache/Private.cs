@@ -5,21 +5,10 @@ public static partial class AllocatedBuffer
 {
 	internal static partial class MetadataCache<T>
 	{
-		private static readonly Cache cache = new();
-
 		/// <summary>
-		/// Static constructor.
+		/// Internal cache.
 		/// </summary>
-		[ExcludeFromCodeCoverage]
-		static MetadataCache()
-		{
-			MetadataCache<T>.cache.Add(IAllocatedBuffer<T>.GetMetadata<Primordial<T>>());
-			MetadataCache<T>.cache.Add(IAllocatedBuffer<T>.GetMetadata<Composed<Primordial<T>, Primordial<T>, T>>());
-			MetadataCache<T>.cache.Add(IAllocatedBuffer<T>
-				                           .GetMetadata<
-					                           Composed<Primordial<T>, Composed<Primordial<T>, Primordial<T>, T>,
-						                           T>>());
-		}
+		private static readonly Cache cache = new();
 
 		/// <summary>
 		/// Retrieves the fundamental metadata for a buffer with <paramref name="count"/> items.
@@ -30,11 +19,11 @@ public static partial class AllocatedBuffer
 		{
 			lock (MetadataCache<T>.cache.LockObject)
 			{
-				if (MetadataCache<T>.cache.Metadatas.TryGetValue(count, out IBufferTypeMetadata<T>? metadata))
+				if (MetadataCache<T>.cache.Buffers.TryGetValue(count, out IBufferTypeMetadata<T>? metadata))
 					return metadata;
 				UInt16 space = MetadataCache<T>.cache.MaxSpace;
 				while (count < space) space /= 2;
-				IBufferTypeMetadata<T>? result = MetadataCache<T>.cache.Metadatas[space];
+				IBufferTypeMetadata<T>? result = MetadataCache<T>.cache.Buffers[space];
 				while (AllocatedBuffer.GetMaxValue(result.Size) < count)
 				{
 					result = result.Double();

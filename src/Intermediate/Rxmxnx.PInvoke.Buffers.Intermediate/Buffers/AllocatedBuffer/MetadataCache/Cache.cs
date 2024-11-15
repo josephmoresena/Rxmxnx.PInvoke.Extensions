@@ -19,9 +19,9 @@ public static partial class AllocatedBuffer
 			/// </summary>
 			public Object LockObject { get; } = new();
 			/// <summary>
-			/// Metadata dictionary.
+			/// Buffers dictionary.
 			/// </summary>
-			public IDictionary<UInt16, IBufferTypeMetadata<T>> Metadatas => this._cache;
+			public IDictionary<UInt16, IBufferTypeMetadata<T>> Buffers => this._cache;
 			/// <summary>
 			/// <see cref="MethodInfo"/> of buffer metadata.
 			/// </summary>
@@ -29,12 +29,13 @@ public static partial class AllocatedBuffer
 			/// <summary>
 			/// Maximum binary space size.
 			/// </summary>
-			public UInt16 MaxSpace { get; set; } = 2;
+			public UInt16 MaxSpace { get; set; } = 1;
 			/// <summary>
 			/// Constructor.
 			/// </summary>
 			public Cache()
 			{
+				this._cache.Add(1, IAllocatedBuffer<T>.GetMetadata<Primordial<T>>());
 				try
 				{
 					if (!AllocatedBuffer.disabledReflection)
