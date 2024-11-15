@@ -87,7 +87,7 @@ public static partial class AllocatedBuffer
 			IBufferTypeMetadata<T> metadata = IAllocatedBuffer<T>.GetMetadata<TBuffer>();
 			lock (MetadataCache<T>.cache.LockObject)
 			{
-				if (!MetadataCache<T>.cache.Add(metadata)) return;
+				if (!MetadataCache<T>.cache.Add(metadata) || !TBuffer.IsBinary) return;
 				while (AllocatedBuffer.GetMaxValue(MetadataCache<T>.cache.MaxSpace) < metadata.Size)
 					MetadataCache<T>.cache.MaxSpace *= 2;
 				TBuffer.AppendComponent(MetadataCache<T>.cache.Metadatas);

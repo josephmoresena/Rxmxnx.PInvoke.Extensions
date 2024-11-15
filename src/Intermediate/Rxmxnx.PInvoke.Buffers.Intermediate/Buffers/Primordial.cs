@@ -18,6 +18,7 @@ public struct Primordial<T> : IAllocatedBuffer<T>
 	/// </summary>
 	private T _val0;
 
+	static Boolean IAllocatedBuffer<T>.IsBinary => true;
 	static IBufferTypeMetadata<T> IAllocatedBuffer<T>.Metadata => Primordial<T>.metadata;
 	static void IAllocatedBuffer<T>.AppendComponent(IDictionary<UInt16, IBufferTypeMetadata<T>> components) { }
 }

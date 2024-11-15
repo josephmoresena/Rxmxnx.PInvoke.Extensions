@@ -10,6 +10,10 @@ namespace Rxmxnx.PInvoke.Buffers;
 public interface IAllocatedBuffer<T>
 {
 	/// <summary>
+	/// Indicates whether current type is binary space.
+	/// </summary>
+	internal static abstract Boolean IsBinary { get; }
+	/// <summary>
 	/// Buffer metadata.
 	/// </summary>
 	private protected static abstract IBufferTypeMetadata<T> Metadata { get; }
@@ -39,7 +43,7 @@ public interface IAllocatedBuffer<T>
 		where TBuffer : struct, IAllocatedBuffer<T>
 	{
 		UInt16 key = TBuffer.Metadata.Size;
-		if (components.TryAdd(key, TBuffer.Metadata))
+		if (TBuffer.IsBinary && components.TryAdd(key, TBuffer.Metadata))
 			TBuffer.AppendComponent(components);
 	}
 }
