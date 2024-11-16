@@ -11,6 +11,8 @@ internal sealed class BufferTypeMetadata<TBuffer, T>(Int32 capacity)
 	: IBufferTypeMetadata<T> where TBuffer : struct, IAllocatedBuffer<T>
 {
 	/// <inheritdoc/>
+	public IBufferTypeMetadata<T>[] Components { get; } = TBuffer.Components;
+	/// <inheritdoc/>
 	public UInt16 Size { get; } = (UInt16)capacity;
 	/// <inheritdoc/>
 	public IBufferTypeMetadata<T>? Compose(IBufferTypeMetadata<T> otherBuffer) => otherBuffer.Compose<TBuffer>();

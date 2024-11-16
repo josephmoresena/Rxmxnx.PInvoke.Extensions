@@ -127,6 +127,26 @@ public static partial class AllocatedBuffer
 	/// <typeparam name="TBuffer">Type of object buffer.</typeparam>
 	public static void RegisterNullable<T, TBuffer>() where TBuffer : struct, IAllocatedBuffer<T?> where T : struct
 		=> MetadataCache<T?>.RegisterBuffer<TBuffer>();
+	/// <summary>
+	/// Registers object space.
+	/// </summary>
+	/// <typeparam name="TSpace">Type of object buffer.</typeparam>
+	public static void RegisterSpace<TSpace>() where TSpace : struct, IAllocatedBuffer<Object>
+		=> MetadataCache<Object>.RegisterBufferSpace<TSpace>();
+	/// <summary>
+	/// Registers <typeparamref name="T"/> space.
+	/// </summary>
+	/// <typeparam name="T">Type of items in the buffer.</typeparam>
+	/// <typeparam name="TBuffer">Type of object buffer.</typeparam>
+	public static void RegisterSpace<T, TBuffer>() where TBuffer : struct, IAllocatedBuffer<T> where T : struct
+		=> MetadataCache<T>.RegisterBufferSpace<TBuffer>();
+	/// <summary>
+	/// Registers <typeparamref name="T"/> space.
+	/// </summary>
+	/// <typeparam name="T">Type of nullable items in the space.</typeparam>
+	/// <typeparam name="TBuffer">Type of object space.</typeparam>
+	public static void RegisterNullableSpace<T, TBuffer>() where TBuffer : struct, IAllocatedBuffer<T?> where T : struct
+		=> MetadataCache<T?>.RegisterBufferSpace<TBuffer>();
 }
 #pragma warning restore CA2252
 

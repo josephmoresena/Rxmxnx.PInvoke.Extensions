@@ -87,6 +87,16 @@ public static partial class AllocatedBuffer
 				TBuffer.AppendComponent(MetadataCache<T>.cache.Buffers);
 			}
 		}
+		/// <summary>
+		/// Registers space type.
+		/// </summary>
+		/// <typeparam name="TSpace">Type of the space.</typeparam>
+		public static void RegisterBufferSpace<TSpace>() where TSpace : struct, IAllocatedBuffer<T>
+		{
+			MetadataCache<T>.RegisterBuffer<TSpace>();
+			lock (MetadataCache<T>.cache.LockObject)
+				TSpace.Append<TSpace>(MetadataCache<T>.cache.Buffers);
+		}
 	}
 }
 #pragma warning restore CA2252

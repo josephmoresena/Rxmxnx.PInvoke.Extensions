@@ -21,5 +21,11 @@ public struct Primordial<T> : IAllocatedBuffer<T>
 	static Boolean IAllocatedBuffer<T>.IsBinary => true;
 	static IBufferTypeMetadata<T> IAllocatedBuffer<T>.Metadata => Primordial<T>.metadata;
 	static void IAllocatedBuffer<T>.AppendComponent(IDictionary<UInt16, IBufferTypeMetadata<T>> components) { }
+	static void IAllocatedBuffer<T>.Append<TBuffer>(IDictionary<UInt16, IBufferTypeMetadata<T>> components)
+	{
+		UInt16 initialSize = TBuffer.Metadata.Size;
+		components.TryAdd(initialSize, TBuffer.Metadata);
+	}
+	static IBufferTypeMetadata<T>[] IAllocatedBuffer<T>.Components => [];
 }
 #pragma warning restore CA2252

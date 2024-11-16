@@ -7,9 +7,14 @@ public static class Program
 {
 	private static readonly Boolean?[] values =
 		[true, false, null, null, false, null, true, true, null, false, true, true, null, true, false, false, null,];
-	private static Boolean inStack;
+	private static Boolean inStack = true;
 	public static void Main(String[] args)
 	{
+		// AllocatedBuffer
+		// 	.RegisterSpace<Composed<
+		// 		Composed<Composed<PObject, PObject, Object>, Composed<PObject, PObject, Object>, Object>,
+		// 		Composed<Composed<PObject, PObject, Object>, Composed<PObject, PObject, Object>, Object>, Object>>();
+
 		AllocatedBuffer
 			.Register<Composed<Composed<PObject, PObject, Object>, Composed<
 					Composed<Composed<PObject, PObject, Object>, Composed<PObject, PObject, Object>, Object>,
@@ -39,6 +44,7 @@ public static class Program
 	}
 	private static void StringTest(AllocatedBuffer<String?> buff)
 	{
+		if (!Program.inStack && !buff.InStack) return;
 		Program.inStack = buff.InStack;
 		Console.WriteLine("String? In stack: " + buff.InStack + " Allocated: " + buff.FullLength);
 		for (Int32 i = 0; i < buff.Span.Length; i++)

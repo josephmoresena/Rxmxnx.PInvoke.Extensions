@@ -33,5 +33,12 @@ public struct Composed<TBufferA, TBufferB, T> : IAllocatedBuffer<T> where TBuffe
 		IAllocatedBuffer<T>.AppendComponent<TBufferA>(components);
 		IAllocatedBuffer<T>.AppendComponent<TBufferB>(components);
 	}
+	static void IAllocatedBuffer<T>.Append<TBuffer>(IDictionary<UInt16, IBufferTypeMetadata<T>> components)
+	{
+		TBufferB.Append<Composed<TBufferB, TBuffer, T>>(components);
+		TBufferB.Append<TBuffer>(components);
+		TBufferA.Append<TBufferB>(components);
+	}
+	static IBufferTypeMetadata<T>[] IAllocatedBuffer<T>.Components => [TBufferA.Metadata, TBufferB.Metadata,];
 }
 #pragma warning restore CA2252

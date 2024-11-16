@@ -17,12 +17,23 @@ public interface IAllocatedBuffer<T>
 	/// Buffer metadata.
 	/// </summary>
 	private protected static abstract IBufferTypeMetadata<T> Metadata { get; }
+	/// <summary>
+	/// Current type components.
+	/// </summary>
+	internal static abstract IBufferTypeMetadata<T>[] Components { get; }
 
 	/// <summary>
 	/// Appends all components from current type.
 	/// </summary>
 	/// <param name="components">A dictionary of components.</param>
 	internal static abstract void AppendComponent(IDictionary<UInt16, IBufferTypeMetadata<T>> components);
+	/// <summary>
+	/// Appends a composed buffer.
+	/// </summary>
+	/// <typeparam name="TBuffer">Type of the composed buffer.</typeparam>
+	/// <param name="components">A dictionary of components.</param>
+	internal static abstract void Append<TBuffer>(IDictionary<UInt16, IBufferTypeMetadata<T>> components)
+		where TBuffer : struct, IAllocatedBuffer<T>;
 
 	/// <summary>
 	/// Retrieves the <see cref="IBufferTypeMetadata{T}"/> instance from <typeparamref name="TBuffer"/>.
@@ -42,8 +53,20 @@ public interface IAllocatedBuffer<T>
 	private protected static void AppendComponent<TBuffer>(IDictionary<UInt16, IBufferTypeMetadata<T>> components)
 		where TBuffer : struct, IAllocatedBuffer<T>
 	{
-		UInt16 key = TBuffer.Metadata.Size;
-		if (TBuffer.IsBinary && components.TryAdd(key, TBuffer.Metadata))
-			TBuffer.AppendComponent(components);
+		if (TBuffer.IsBinary)
+			IAllocatedBuffer<T>.AppendComponent(TBuffer.Metadata, components);
+	}
+
+	/// <summary>
+	/// Appends all components from <paramref name="component"/> instance.
+	/// </summary>
+	/// <param name="component">A <see cref="IBufferTypeMetadata{T}"/> instance.</param>
+	/// <param name="components">A dictionary of components.</param>
+	private static void AppendComponent(IBufferTypeMetadata<T> component,
+		IDictionary<UInt16, IBufferTypeMetadata<T>> components)
+	{
+		if (!components.TryAdd(component.Size, component)) return;
+		foreach (IBufferTypeMetadata<T> metadataComponent in component.Components.AsSpan())
+			IAllocatedBuffer<T>.AppendComponent(metadataComponent, components);
 	}
 }

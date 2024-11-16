@@ -8,6 +8,10 @@ namespace Rxmxnx.PInvoke;
 public interface IBufferTypeMetadata<T>
 {
 	/// <summary>
+	/// Current buffer components.
+	/// </summary>
+	IBufferTypeMetadata<T>[] Components { get; }
+	/// <summary>
 	/// Buffer capacity.
 	/// </summary>
 	UInt16 Size { get; }
