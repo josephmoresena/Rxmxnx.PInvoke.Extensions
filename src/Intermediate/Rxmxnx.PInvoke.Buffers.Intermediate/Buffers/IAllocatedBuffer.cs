@@ -14,13 +14,14 @@ public interface IAllocatedBuffer<T>
 	/// </summary>
 	internal static abstract Boolean IsBinary { get; }
 	/// <summary>
-	/// Buffer metadata.
-	/// </summary>
-	private protected static abstract IBufferTypeMetadata<T> Metadata { get; }
-	/// <summary>
 	/// Current type components.
 	/// </summary>
 	internal static abstract IBufferTypeMetadata<T>[] Components { get; }
+
+	/// <summary>
+	/// Buffer metadata.
+	/// </summary>
+	private protected static abstract IBufferTypeMetadata<T> Metadata { get; }
 
 	/// <summary>
 	/// Appends all components from current type.
@@ -36,16 +37,6 @@ public interface IAllocatedBuffer<T>
 		where TBuffer : struct, IAllocatedBuffer<T>;
 
 	/// <summary>
-	/// Retrieves the <see cref="IBufferTypeMetadata{T}"/> instance from <typeparamref name="TBuffer"/>.
-	/// </summary>
-	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
-	/// <returns>The <see cref="IBufferTypeMetadata{T}"/> instance from <typeparamref name="TBuffer"/>.</returns>
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Browsable(false)]
-	public static IBufferTypeMetadata<T> GetMetadata<TBuffer>() where TBuffer : struct, IAllocatedBuffer<T>
-		=> TBuffer.Metadata;
-
-	/// <summary>
 	/// Appends all components from <typeparamref name="TBuffer"/> type.
 	/// </summary>
 	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
@@ -56,6 +47,16 @@ public interface IAllocatedBuffer<T>
 		if (TBuffer.IsBinary)
 			IAllocatedBuffer<T>.AppendComponent(TBuffer.Metadata, components);
 	}
+
+	/// <summary>
+	/// Retrieves the <see cref="IBufferTypeMetadata{T}"/> instance from <typeparamref name="TBuffer"/>.
+	/// </summary>
+	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
+	/// <returns>The <see cref="IBufferTypeMetadata{T}"/> instance from <typeparamref name="TBuffer"/>.</returns>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Browsable(false)]
+	public static IBufferTypeMetadata<T> GetMetadata<TBuffer>() where TBuffer : struct, IAllocatedBuffer<T>
+		=> TBuffer.Metadata;
 
 	/// <summary>
 	/// Appends all components from <paramref name="component"/> instance.
