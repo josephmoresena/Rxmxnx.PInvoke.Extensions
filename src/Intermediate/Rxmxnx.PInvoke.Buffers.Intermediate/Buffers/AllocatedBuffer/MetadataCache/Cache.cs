@@ -66,9 +66,10 @@ public static partial class AllocatedBuffer
 					this._cache.Keys.GetEnumerator();
 				while (enumerator.MoveNext())
 				{
-					if (enumerator.Current < count) continue;
-					if (enumerator.Current >= 2 * count) break;
-					return this._cache[enumerator.Current];
+					UInt16 current = enumerator.Current;
+					if (current < count) continue;
+					if (current >= 2 * count) break;
+					return this._cache[current];
 				}
 				return default;
 			}
