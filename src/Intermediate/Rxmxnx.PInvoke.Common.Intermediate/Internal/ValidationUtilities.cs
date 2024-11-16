@@ -413,4 +413,17 @@ internal static unsafe class ValidationUtilities
 			throw new ArgumentOutOfRangeException(nameofLength,
 			                                      "Index and length must refer to a location within the sequence.");
 	}
+	/// <summary>
+	/// Throws an exception if buffer is not a space.
+	/// </summary>
+	/// <param name="isPure">Indicates whether buffer is pure.</param>
+	/// <param name="bufferSize">Buffer size.</param>
+	/// <param name="type">CLR type of buffer.</param>
+	/// <exception cref="InvalidOperationException">Throws an exception if buffer is not a space.</exception>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNotSpace(Boolean isPure, UInt16 bufferSize, Type type)
+	{
+		if (!isPure)
+			throw new InvalidOperationException($"{type} type with size is not an space. Size: {bufferSize}");
+	}
 }

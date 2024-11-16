@@ -26,8 +26,10 @@ public struct Composed<TBufferA, TBufferB, T> : IAllocatedBuffer<T> where TBuffe
 	/// </summary>
 	private TBufferB _buff1;
 
+	static Boolean IAllocatedBuffer<T>.IsPure => TBufferA.IsBinary && typeof(TBufferA) == typeof(TBufferB);
 	static Boolean IAllocatedBuffer<T>.IsBinary => TBufferA.IsBinary && TBufferB.IsBinary;
 	static IBufferTypeMetadata<T> IAllocatedBuffer<T>.Metadata => Composed<TBufferA, TBufferB, T>.metadata;
+
 	static void IAllocatedBuffer<T>.AppendComponent(IDictionary<UInt16, IBufferTypeMetadata<T>> components)
 	{
 		IAllocatedBuffer<T>.AppendComponent<TBufferA>(components);

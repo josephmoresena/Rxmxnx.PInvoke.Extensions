@@ -10,6 +10,10 @@ namespace Rxmxnx.PInvoke.Buffers;
 public interface IAllocatedBuffer<T>
 {
 	/// <summary>
+	/// Indicates whether current type is pure.
+	/// </summary>
+	internal static abstract Boolean IsPure { get; }
+	/// <summary>
 	/// Indicates whether current type is binary space.
 	/// </summary>
 	internal static abstract Boolean IsBinary { get; }
@@ -17,11 +21,10 @@ public interface IAllocatedBuffer<T>
 	/// Current type components.
 	/// </summary>
 	internal static abstract IBufferTypeMetadata<T>[] Components { get; }
-
 	/// <summary>
 	/// Buffer metadata.
 	/// </summary>
-	private protected static abstract IBufferTypeMetadata<T> Metadata { get; }
+	internal static abstract IBufferTypeMetadata<T> Metadata { get; }
 
 	/// <summary>
 	/// Appends all components from current type.

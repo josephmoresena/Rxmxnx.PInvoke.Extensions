@@ -1,29 +1,32 @@
 ﻿using Rxmxnx.PInvoke.Buffers;
 
-using PObject = Rxmxnx.PInvoke.Buffers.Primordial<System.Object>;
-using PNBoolean = Rxmxnx.PInvoke.Buffers.Primordial<System.Boolean?>;
-
 public static class Program
 {
 	private static readonly Boolean?[] values =
 		[true, false, null, null, false, null, true, true, null, false, true, true, null, true, false, false, null,];
+
 	private static Boolean inStack = true;
+
 	public static void Main(String[] args)
 	{
 		// AllocatedBuffer
 		// 	.RegisterSpace<Composed<
-		// 		Composed<Composed<PObject, PObject, Object>, Composed<PObject, PObject, Object>, Object>,
-		// 		Composed<Composed<PObject, PObject, Object>, Composed<PObject, PObject, Object>, Object>, Object>>();
+		// 		Composed<Composed<Primordial<Object>, Primordial<Object>, Object>,
+		// 			Composed<Primordial<Object>, Primordial<Object>, Object>, Object>, Composed<
+		// 			Composed<Primordial<Object>, Primordial<Object>, Object>,
+		// 			Composed<Primordial<Object>, Primordial<Object>, Object>, Object>, Object>>();
 
 		AllocatedBuffer
-			.Register<Composed<Composed<PObject, PObject, Object>, Composed<
-					Composed<Composed<PObject, PObject, Object>, Composed<PObject, PObject, Object>, Object>,
-					Composed<Composed<PObject, PObject, Object>, Composed<PObject, PObject, Object>, Object>, Object>,
-				Object>>();
+			.Register<Composed<Composed<Primordial<Object>, Primordial<Object>, Object>, Composed<
+				Composed<Composed<Primordial<Object>, Primordial<Object>, Object>,
+					Composed<Primordial<Object>, Primordial<Object>, Object>, Object>,
+				Composed<Composed<Primordial<Object>, Primordial<Object>, Object>,
+					Composed<Primordial<Object>, Primordial<Object>, Object>, Object>, Object>, Object>>();
 		AllocatedBuffer
-			.RegisterNullable<Boolean, Composed<Composed<PNBoolean, Composed<PNBoolean, PNBoolean, Boolean?>, Boolean?>,
-				Composed<Composed<PNBoolean, PNBoolean, Boolean?>, Composed<PNBoolean, PNBoolean, Boolean?>, Boolean?>,
-				Boolean?>>();
+			.RegisterNullable<Boolean, Composed<
+				Composed<Primordial<Boolean?>, Composed<Primordial<Boolean?>, Primordial<Boolean?>, Boolean?>, Boolean?>
+				, Composed<Composed<Primordial<Boolean?>, Primordial<Boolean?>, Boolean?>,
+					Composed<Primordial<Boolean?>, Primordial<Boolean?>, Boolean?>, Boolean?>, Boolean?>>();
 
 		Console.Write("Size: ");
 		Int32 count = Int32.Parse(Console.ReadLine()!);
@@ -31,7 +34,7 @@ public static class Program
 
 		if (!Program.inStack)
 		{
-			Console.WriteLine("Minimal buffer.");
+			Console.Write("Minimal buffer ");
 			AllocatedBuffer.Alloc<String?>((UInt16)count, Program.StringTest, true);
 		}
 
@@ -44,7 +47,11 @@ public static class Program
 	}
 	private static void StringTest(AllocatedBuffer<String?> buff)
 	{
-		if (!Program.inStack && !buff.InStack) return;
+		if (!Program.inStack && !buff.InStack)
+		{
+			Console.WriteLine(" not available.");
+			return;
+		}
 		Program.inStack = buff.InStack;
 		Console.WriteLine("String? In stack: " + buff.InStack + " Allocated: " + buff.FullLength);
 		for (Int32 i = 0; i < buff.Span.Length; i++)

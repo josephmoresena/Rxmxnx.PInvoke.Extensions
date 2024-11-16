@@ -93,6 +93,7 @@ public static partial class AllocatedBuffer
 		/// <typeparam name="TSpace">Type of the space.</typeparam>
 		public static void RegisterBufferSpace<TSpace>() where TSpace : struct, IAllocatedBuffer<T>
 		{
+			ValidationUtilities.ThrowIfNotSpace(TSpace.IsPure, TSpace.Metadata.Size, typeof(TSpace));
 			MetadataCache<T>.RegisterBuffer<TSpace>();
 			lock (MetadataCache<T>.cache.LockObject)
 				TSpace.Append<TSpace>(MetadataCache<T>.cache.Buffers);
