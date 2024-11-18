@@ -13,14 +13,14 @@ public static partial class AllocatedBuffer
 		/// Retrieves metadata required for a buffer with <paramref name="count"/> items.
 		/// </summary>
 		/// <param name="count">Amount of items in required buffer.</param>
-		/// <returns>A <see cref="IBufferTypeMetadata{T}"/> instance.</returns>
-		public static IBufferTypeMetadata<T>? GetMetadata(UInt16 count)
+		/// <returns>A <see cref="ManagedBufferMetadata{T}"/> instance.</returns>
+		public static ManagedBufferMetadata<T>? GetMetadata(UInt16 count)
 		{
-			IBufferTypeMetadata<T>? result = MetadataCache<T>.GetFundamental(count);
+			ManagedBufferMetadata<T>? result = MetadataCache<T>.GetFundamental(count);
 			if (result is null) return result;
 			while (count - result.Size > 0)
 			{
-				IBufferTypeMetadata<T>? aux = MetadataCache<T>.GetMetadata((UInt16)(count - result.Size));
+				ManagedBufferMetadata<T>? aux = MetadataCache<T>.GetMetadata((UInt16)(count - result.Size));
 				lock (MetadataCache<T>.cache.LockObject)
 				{
 					// Auxiliary metadata not found. Use minimal.
@@ -36,12 +36,12 @@ public static partial class AllocatedBuffer
 			return result;
 		}
 		/// <summary>
-		/// Creates <see cref="IBufferTypeMetadata{T}"/> for <see cref="Composed{TBufferA,TBufferB,T}"/>.
+		/// Creates <see cref="ManagedBufferMetadata{T}"/> for <see cref="Composed{TBufferA,TBufferB,T}"/>.
 		/// </summary>
-		/// <typeparam name="TBufferA">The type of low buffer.</typeparam>
-		/// <typeparam name="TBufferB">The type of high buffer.</typeparam>
+		/// <param name="typeofA">The type of low buffer.</param>
+		/// <param name="typeofB">The type of high buffer.</param>
 		/// <returns>
-		/// The <see cref="IBufferTypeMetadata{T}"/> for <see cref="Composed{TBufferA,TBufferB,T}"/> buffer.
+		/// The <see cref="ManagedBufferMetadata{T}"/> for <see cref="Composed{TBufferA,TBufferB,T}"/> buffer.
 		/// </returns>
 		[UnconditionalSuppressMessage("AOT", "IL2055",
 		                              Justification = SuppressMessageConstants.AvoidableReflectionUseJustification)]
@@ -49,19 +49,17 @@ public static partial class AllocatedBuffer
 		                              Justification = SuppressMessageConstants.AvoidableReflectionUseJustification)]
 		[UnconditionalSuppressMessage("AOT", "IL3050",
 		                              Justification = SuppressMessageConstants.AvoidableReflectionUseJustification)]
-		public static IBufferTypeMetadata<T>? CreateComposedWithReflection<TBufferA, TBufferB>()
-			where TBufferA : struct, IAllocatedBuffer<T> where TBufferB : struct, IAllocatedBuffer<T>
+		public static ManagedBufferMetadata<T>? CreateComposedWithReflection(Type typeofA, Type typeofB)
 		{
 			if (MetadataCache<T>.cache.GetMetadataInfo is null) return default;
 			try
 			{
-				Type genericType =
-					AllocatedBuffer.typeofComposed.MakeGenericType(typeof(TBufferA), typeof(TBufferB), typeof(T));
+				Type genericType = AllocatedBuffer.typeofComposed.MakeGenericType(typeofA, typeofB, typeof(T));
 				MethodInfo getGenericMetadataInfo =
 					MetadataCache<T>.cache.GetMetadataInfo.MakeGenericMethod(genericType);
-				Func<IBufferTypeMetadata<T>> getGenericMetadata =
-					getGenericMetadataInfo.CreateDelegate<Func<IBufferTypeMetadata<T>>>();
-				IBufferTypeMetadata<T> result = getGenericMetadata();
+				Func<ManagedBufferMetadata<T>> getGenericMetadata =
+					getGenericMetadataInfo.CreateDelegate<Func<ManagedBufferMetadata<T>>>();
+				ManagedBufferMetadata<T> result = getGenericMetadata();
 				MetadataCache<T>.cache.Add(result);
 				while (AllocatedBuffer.GetMaxValue(MetadataCache<T>.cache.MaxSpace) < result.Size)
 					MetadataCache<T>.cache.MaxSpace *= 2;
@@ -76,9 +74,9 @@ public static partial class AllocatedBuffer
 		/// Registers buffer type.
 		/// </summary>
 		/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
-		public static void RegisterBuffer<TBuffer>() where TBuffer : struct, IAllocatedBuffer<T>
+		public static void RegisterBuffer<TBuffer>() where TBuffer : struct, IManagedBuffer<T>
 		{
-			IBufferTypeMetadata<T> metadata = IAllocatedBuffer<T>.GetMetadata<TBuffer>();
+			ManagedBufferMetadata<T> metadata = IManagedBuffer<T>.GetMetadata<TBuffer>();
 			lock (MetadataCache<T>.cache.LockObject)
 			{
 				if (!MetadataCache<T>.cache.Add(metadata) || !TBuffer.IsBinary) return;
@@ -91,7 +89,7 @@ public static partial class AllocatedBuffer
 		/// Registers space type.
 		/// </summary>
 		/// <typeparam name="TSpace">Type of the space.</typeparam>
-		public static void RegisterBufferSpace<TSpace>() where TSpace : struct, IAllocatedBuffer<T>
+		public static void RegisterBufferSpace<TSpace>() where TSpace : struct, IManagedBuffer<T>
 		{
 			ValidationUtilities.ThrowIfNotSpace(TSpace.IsPure, TSpace.Metadata.Size, typeof(TSpace));
 			MetadataCache<T>.RegisterBuffer<TSpace>();

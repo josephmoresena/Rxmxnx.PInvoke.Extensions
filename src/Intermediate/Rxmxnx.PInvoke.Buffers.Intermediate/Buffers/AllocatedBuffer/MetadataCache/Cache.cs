@@ -13,7 +13,7 @@ public static partial class AllocatedBuffer
 			/// <summary>
 			/// Dictionary.
 			/// </summary>
-			private readonly SortedDictionary<UInt16, IBufferTypeMetadata<T>> _cache = new();
+			private readonly SortedDictionary<UInt16, ManagedBufferMetadata<T>> _cache = new();
 			/// <summary>
 			/// Lock object.
 			/// </summary>
@@ -21,7 +21,7 @@ public static partial class AllocatedBuffer
 			/// <summary>
 			/// Buffers dictionary.
 			/// </summary>
-			public IDictionary<UInt16, IBufferTypeMetadata<T>> Buffers => this._cache;
+			public IDictionary<UInt16, ManagedBufferMetadata<T>> Buffers => this._cache;
 			/// <summary>
 			/// <see cref="MethodInfo"/> of buffer metadata.
 			/// </summary>
@@ -35,7 +35,7 @@ public static partial class AllocatedBuffer
 			/// </summary>
 			public Cache()
 			{
-				this._cache.Add(1, IAllocatedBuffer<T>.GetMetadata<Primordial<T>>());
+				this._cache.Add(1, IManagedBuffer<T>.GetMetadata<Primordial<T>>());
 				try
 				{
 					if (!AllocatedBuffer.disabledReflection)
@@ -49,20 +49,20 @@ public static partial class AllocatedBuffer
 			/// <summary>
 			/// Adds metadata to current cache.
 			/// </summary>
-			/// <param name="metadata">A <see cref="IBufferTypeMetadata{T}"/> instance.</param>
+			/// <param name="metadata">A <see cref="ManagedBufferMetadata{T}"/> instance.</param>
 			/// <returns>
 			/// <see langword="true"/> if <paramref name="metadata"/> was successfully added; otherwise,
 			/// <see langword="false"/>.
 			/// </returns>
-			public Boolean Add(IBufferTypeMetadata<T> metadata) => this._cache.TryAdd(metadata.Size, metadata);
+			public Boolean Add(ManagedBufferMetadata<T> metadata) => this._cache.TryAdd(metadata.Size, metadata);
 			/// <summary>
 			/// Retrieves the minimal buffer metadata registered to hold at least <paramref name="count"/> items.
 			/// </summary>
 			/// <param name="count">Minimal elements items in buffer.</param>
-			/// <returns>A <see cref="IBufferTypeMetadata{T}"/> instance.</returns>
-			public IBufferTypeMetadata<T>? GetMinimal(UInt16 count)
+			/// <returns>A <see cref="ManagedBufferMetadata{T}"/> instance.</returns>
+			public ManagedBufferMetadata<T>? GetMinimal(UInt16 count)
 			{
-				using SortedDictionary<UInt16, IBufferTypeMetadata<T>>.KeyCollection.Enumerator enumerator =
+				using SortedDictionary<UInt16, ManagedBufferMetadata<T>>.KeyCollection.Enumerator enumerator =
 					this._cache.Keys.GetEnumerator();
 				while (enumerator.MoveNext())
 				{
@@ -74,12 +74,12 @@ public static partial class AllocatedBuffer
 				return default;
 			}
 			/// <summary>
-			/// Retrieves the reflected <see cref="IAllocatedBuffer{T}.GetMetadata{TBuffer}()"/> method.
+			/// Retrieves the reflected <see cref="IManagedBuffer{T}.GetMetadata{TBuffer}()"/> method.
 			/// </summary>
 			/// <returns>A <see cref="MethodInfo"/> instance.</returns>
 			private static MethodInfo ReflectGetMetadataMethod()
 			{
-				Type typeofT = typeof(IAllocatedBuffer<T>);
+				Type typeofT = typeof(IManagedBuffer<T>);
 				return typeofT.GetMethod(AllocatedBuffer.getMetadataName, AllocatedBuffer.getMetadataFlags)!;
 			}
 		}

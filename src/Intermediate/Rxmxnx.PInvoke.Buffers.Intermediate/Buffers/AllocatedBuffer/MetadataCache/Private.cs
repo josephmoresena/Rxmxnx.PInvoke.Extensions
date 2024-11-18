@@ -14,16 +14,16 @@ public static partial class AllocatedBuffer
 		/// Retrieves the fundamental metadata for a buffer with <paramref name="count"/> items.
 		/// </summary>
 		/// <param name="count">Amount of items in required buffer.</param>
-		/// <returns>A <see cref="IBufferTypeMetadata{T}"/> instance.</returns>
-		private static IBufferTypeMetadata<T>? GetFundamental(UInt16 count)
+		/// <returns>A <see cref="ManagedBufferMetadata{T}"/> instance.</returns>
+		private static ManagedBufferMetadata<T>? GetFundamental(UInt16 count)
 		{
 			lock (MetadataCache<T>.cache.LockObject)
 			{
-				if (MetadataCache<T>.cache.Buffers.TryGetValue(count, out IBufferTypeMetadata<T>? metadata))
+				if (MetadataCache<T>.cache.Buffers.TryGetValue(count, out ManagedBufferMetadata<T>? metadata))
 					return metadata;
 				UInt16 space = MetadataCache<T>.cache.MaxSpace;
 				while (count < space) space /= 2;
-				IBufferTypeMetadata<T>? result = MetadataCache<T>.cache.Buffers[space];
+				ManagedBufferMetadata<T>? result = MetadataCache<T>.cache.Buffers[space];
 				while (AllocatedBuffer.GetMaxValue(result.Size) < count)
 				{
 					result = result.Double();

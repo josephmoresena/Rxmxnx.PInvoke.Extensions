@@ -8,13 +8,13 @@ namespace Rxmxnx.PInvoke.Buffers;
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
 #pragma warning disable CA2252
 [StructLayout(LayoutKind.Sequential)]
-public struct Composed<TBufferA, TBufferB, T> : IAllocatedBuffer<T> where TBufferA : struct, IAllocatedBuffer<T>
-	where TBufferB : struct, IAllocatedBuffer<T>
+public struct Composed<TBufferA, TBufferB, T> : IManagedBuffer<T> where TBufferA : struct, IManagedBuffer<T>
+	where TBufferB : struct, IManagedBuffer<T>
 {
 	/// <summary>
 	/// Internal metadata.
 	/// </summary>
-	private static readonly IBufferTypeMetadata<T> metadata =
+	private static readonly ManagedBufferMetadata<T> metadata =
 		new BufferTypeMetadata<Composed<TBufferA, TBufferB, T>, T>(TBufferA.Metadata.Size + TBufferB.Metadata.Size);
 
 	/// <summary>
@@ -26,21 +26,21 @@ public struct Composed<TBufferA, TBufferB, T> : IAllocatedBuffer<T> where TBuffe
 	/// </summary>
 	private TBufferB _buff1;
 
-	static Boolean IAllocatedBuffer<T>.IsPure => TBufferA.IsBinary && typeof(TBufferA) == typeof(TBufferB);
-	static Boolean IAllocatedBuffer<T>.IsBinary => TBufferA.IsBinary && TBufferB.IsBinary;
-	static IBufferTypeMetadata<T> IAllocatedBuffer<T>.Metadata => Composed<TBufferA, TBufferB, T>.metadata;
+	static Boolean IManagedBuffer<T>.IsPure => TBufferA.IsBinary && typeof(TBufferA) == typeof(TBufferB);
+	static Boolean IManagedBuffer<T>.IsBinary => TBufferA.IsBinary && TBufferB.IsBinary;
+	static ManagedBufferMetadata<T> IManagedBuffer<T>.Metadata => Composed<TBufferA, TBufferB, T>.metadata;
+	static ManagedBufferMetadata<T>[] IManagedBuffer<T>.Components => [TBufferA.Metadata, TBufferB.Metadata,];
 
-	static void IAllocatedBuffer<T>.AppendComponent(IDictionary<UInt16, IBufferTypeMetadata<T>> components)
+	static void IManagedBuffer<T>.AppendComponent(IDictionary<UInt16, ManagedBufferMetadata<T>> components)
 	{
-		IAllocatedBuffer<T>.AppendComponent<TBufferA>(components);
-		IAllocatedBuffer<T>.AppendComponent<TBufferB>(components);
+		IManagedBuffer<T>.AppendComponent<TBufferA>(components);
+		IManagedBuffer<T>.AppendComponent<TBufferB>(components);
 	}
-	static void IAllocatedBuffer<T>.Append<TBuffer>(IDictionary<UInt16, IBufferTypeMetadata<T>> components)
+	static void IManagedBuffer<T>.Append<TBuffer>(IDictionary<UInt16, ManagedBufferMetadata<T>> components)
 	{
 		TBufferB.Append<Composed<TBufferB, TBuffer, T>>(components);
 		TBufferB.Append<TBuffer>(components);
 		TBufferA.Append<TBufferB>(components);
 	}
-	static IBufferTypeMetadata<T>[] IAllocatedBuffer<T>.Components => [TBufferA.Metadata, TBufferB.Metadata,];
 }
 #pragma warning restore CA2252

@@ -1,26 +1,27 @@
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
-/// Internal implementation of <see cref="IBufferTypeMetadata{T}"/>.
+/// Internal implementation of <see cref="ManagedBufferMetadata{T}"/>.
 /// </summary>
 /// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 /// <typeparam name="T">Type of items in the buffer.</typeparam>
 /// <param name="capacity">Buffer's capacity.</param>
 #pragma warning disable CA2252
 internal sealed class BufferTypeMetadata<TBuffer, T>(Int32 capacity)
-	: IBufferTypeMetadata<T> where TBuffer : struct, IAllocatedBuffer<T>
+	: ManagedBufferMetadata<T> where TBuffer : struct, IManagedBuffer<T>
 {
 	/// <inheritdoc/>
-	public IBufferTypeMetadata<T>[] Components { get; } = TBuffer.Components;
+	public override ManagedBufferMetadata<T>[] Components { get; } = TBuffer.Components;
 	/// <inheritdoc/>
-	public UInt16 Size { get; } = (UInt16)capacity;
+	public override UInt16 Size { get; } = (UInt16)capacity;
 	/// <inheritdoc/>
-	public IBufferTypeMetadata<T>? Compose(IBufferTypeMetadata<T> otherBuffer) => otherBuffer.Compose<TBuffer>();
+	public override ManagedBufferMetadata<T>? Compose(ManagedBufferMetadata<T> otherBuffer)
+		=> otherBuffer.Compose<TBuffer>();
 	/// <inheritdoc/>
-	public IBufferTypeMetadata<T>? Compose<TOther>() where TOther : struct, IAllocatedBuffer<T>
-		=> AllocatedBuffer.MetadataCache<T>.CreateComposedWithReflection<TBuffer, TOther>();
+	public override ManagedBufferMetadata<T>? Compose<TOther>()
+		=> AllocatedBuffer.MetadataCache<T>.CreateComposedWithReflection(typeof(TBuffer), typeof(TOther));
 	/// <inheritdoc/>
-	public void Execute(AllocatedBufferAction<T> action, Int32 spanLength)
+	public override void Execute(AllocatedBufferAction<T> action, Int32 spanLength)
 	{
 		TBuffer buffer = new();
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
@@ -29,7 +30,7 @@ internal sealed class BufferTypeMetadata<TBuffer, T>(Int32 capacity)
 		action(allocated);
 	}
 	/// <inheritdoc/>
-	public void Execute<TState>(in TState state, AllocatedBufferAction<T, TState> action, Int32 spanLength)
+	public override void Execute<TState>(in TState state, AllocatedBufferAction<T, TState> action, Int32 spanLength)
 	{
 		TBuffer buffer = new();
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
@@ -38,7 +39,7 @@ internal sealed class BufferTypeMetadata<TBuffer, T>(Int32 capacity)
 		action(allocated, state);
 	}
 	/// <inheritdoc/>
-	public TResult Execute<TResult>(AllocatedBufferFunc<T, TResult> func, Int32 spanLength)
+	public override TResult Execute<TResult>(AllocatedBufferFunc<T, TResult> func, Int32 spanLength)
 	{
 		TBuffer buffer = new();
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
@@ -47,7 +48,7 @@ internal sealed class BufferTypeMetadata<TBuffer, T>(Int32 capacity)
 		return func(allocated);
 	}
 	/// <inheritdoc/>
-	public TResult Execute<TState, TResult>(in TState state, AllocatedBufferFunc<T, TState, TResult> func,
+	public override TResult Execute<TState, TResult>(in TState state, AllocatedBufferFunc<T, TState, TResult> func,
 		Int32 spanLength)
 	{
 		TBuffer buffer = new();
@@ -56,7 +57,9 @@ internal sealed class BufferTypeMetadata<TBuffer, T>(Int32 capacity)
 		AllocatedBuffer<T> allocated = new(memMarshal, false, this.Size);
 		return func(allocated, state);
 	}
-	void IBufferTypeMetadata<T>.Execute<TU, TState>(in TState state, AllocatedBufferAction<TU, TState> action,
+
+	/// <inheritdoc/>
+	internal override void Execute<TU, TState>(in TState state, AllocatedBufferAction<TU, TState> action,
 		Int32 spanLength)
 	{
 		TBuffer buffer = new();
@@ -65,7 +68,8 @@ internal sealed class BufferTypeMetadata<TBuffer, T>(Int32 capacity)
 		AllocatedBuffer<TU> allocated = new(memMarshal, false, this.Size);
 		action(allocated, state);
 	}
-	TResult IBufferTypeMetadata<T>.Execute<TU, TState, TResult>(in TState state,
+	/// <inheritdoc/>
+	internal override TResult Execute<TU, TState, TResult>(in TState state,
 		AllocatedBufferFunc<TU, TState, TResult> func, Int32 spanLength)
 	{
 		TBuffer buffer = new();
