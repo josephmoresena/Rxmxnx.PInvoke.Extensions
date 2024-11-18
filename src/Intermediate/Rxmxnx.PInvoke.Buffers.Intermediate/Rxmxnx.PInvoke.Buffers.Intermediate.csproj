@@ -39,6 +39,12 @@
     </ItemGroup>
 
     <ItemGroup>
+        <EmbeddedResource Include="ILLink\ILLink.Substitutions.xml">
+            <LogicalName>ILLink.Substitutions.xml</LogicalName>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
             <_Parameter1>Rxmxnx.PInvoke.Buffers.Tests</_Parameter1>
         </AssemblyAttribute>

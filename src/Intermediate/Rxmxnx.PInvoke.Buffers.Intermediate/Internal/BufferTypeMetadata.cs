@@ -19,7 +19,9 @@ internal sealed class BufferTypeMetadata<TBuffer, T>(Int32 capacity)
 		=> otherBuffer.Compose<TBuffer>();
 	/// <inheritdoc/>
 	public override ManagedBufferMetadata<T>? Compose<TOther>()
-		=> AllocatedBuffer.MetadataCache<T>.CreateComposedWithReflection(typeof(TBuffer), typeof(TOther));
+		=> AllocatedBuffer.BufferAutoCompositionEnabled ?
+			AllocatedBuffer.MetadataCache<T>.CreateComposedWithReflection(typeof(TBuffer), typeof(TOther)) :
+			default;
 	/// <inheritdoc/>
 	public override void Execute(AllocatedBufferAction<T> action, Int32 spanLength)
 	{
@@ -57,7 +59,6 @@ internal sealed class BufferTypeMetadata<TBuffer, T>(Int32 capacity)
 		AllocatedBuffer<T> allocated = new(memMarshal, false, this.Size);
 		return func(allocated, state);
 	}
-
 	/// <inheritdoc/>
 	internal override void Execute<TU, TState>(in TState state, AllocatedBufferAction<TU, TState> action,
 		Int32 spanLength)

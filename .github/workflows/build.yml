@@ -52,3 +52,10 @@ jobs:
           dotnet build src --configuration release 
           dotnet test src --verbosity detailed --collect:"XPlat Code Coverage" --results-directory TestResults/  --logger "trx;verbosity=detailed" --no-build --no-restore --configuration release -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover 
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          
+      - name: Patch Buffers ILLink.Substitutions
+        working-directory: ./src/Intermediate/Rxmxnx.PInvoke.Buffers.Intermediate/ILLink
+        run: sed -i -z 's/Rxmxnx.PInvoke.Buffers.Intermediate/Rxmxnx.PInvoke.Extensions/g;' ILLink.Substitutions.xml
+      - name: Pack assembly
+        working-directory: ./package
+        run: dotnet pack -c Release /p:Version=9999.99.99.99-tmp

@@ -24,6 +24,9 @@ jobs:
           dotnet build -c Release ./Rxmxnx.PInvoke.Common.Intermediate 
           dotnet build -c Release ./Rxmxnx.PInvoke.CString.Intermediate 
           dotnet build -c Release ./Rxmxnx.PInvoke.Extensions.Intermediate
+    - name: Patch Buffers ILLink.Substitutions
+        working-directory: ./src/Intermediate/Rxmxnx.PInvoke.Buffers.Intermediate/ILLink
+        run: sed -i -z 's/Rxmxnx.PInvoke.Buffers.Intermediate/Rxmxnx.PInvoke.Extensions/g;' ILLink.Substitutions.xml
     - name: Extract public key
       working-directory: ./package
       run: echo "${SNK_BASE64}" | base64 -d > Rxmxnx.PInvoke.snk

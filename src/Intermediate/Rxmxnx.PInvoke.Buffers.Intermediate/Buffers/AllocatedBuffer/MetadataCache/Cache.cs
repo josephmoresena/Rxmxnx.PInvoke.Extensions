@@ -38,7 +38,7 @@ public static partial class AllocatedBuffer
 				this._cache.Add(1, IManagedBuffer<T>.GetMetadata<Primordial<T>>());
 				try
 				{
-					if (!AllocatedBuffer.disabledReflection)
+					if (AllocatedBuffer.BufferAutoCompositionEnabled)
 						this.GetMetadataInfo = Cache.ReflectGetMetadataMethod();
 				}
 				catch (Exception)

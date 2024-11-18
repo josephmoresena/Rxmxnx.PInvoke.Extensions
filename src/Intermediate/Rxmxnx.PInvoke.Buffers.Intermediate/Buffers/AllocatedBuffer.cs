@@ -10,13 +10,7 @@ public static partial class AllocatedBuffer
 	/// Indicates whether metadata for any required buffer is auto-composed.
 	/// </summary>
 	[ExcludeFromCodeCoverage]
-	public static Boolean BufferAutoCompositionEnabled
-	{
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get
-			=> !AllocatedBuffer.disabledReflection && // In reflection-free mode this feature is unavailable.
-				(!AppContext.TryGetSwitch("PInvoke.DisableBufferAutoComposition", out Boolean disable) || !disable);
-	}
+	public static Boolean BufferAutoCompositionEnabled => !AllocatedBuffer.disabledReflection;
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="action"/>.
 	/// </summary>
