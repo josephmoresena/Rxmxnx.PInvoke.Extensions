@@ -45,6 +45,9 @@
         <Compile Include="..\src\Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate\**\*.cs">
             <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
         </Compile>
+        <Compile Include="..\src\Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate\**\*.cs">
+            <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+        </Compile>
         <Compile Remove="..\src\Intermediate\**\obj\**\*.*;..\..\Intermediate\**\bin\**\*.*" />
         <Compile Include="..\src\Intermediate\**\*.GlobalUsings.g.cs" />
     </ItemGroup>
