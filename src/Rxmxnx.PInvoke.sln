@@ -25,8 +25,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{36897245
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rxmxnx.PInvoke.Buffers.Intermediate", "Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate.csproj", "{A3765D6C-8B1C-4852-B502-6CE353DDA47C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{D4679878-0F81-4EDE-935C-AD36D7DAC93A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,10 +67,6 @@ Global
 		{A3765D6C-8B1C-4852-B502-6CE353DDA47C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3765D6C-8B1C-4852-B502-6CE353DDA47C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3765D6C-8B1C-4852-B502-6CE353DDA47C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D4679878-0F81-4EDE-935C-AD36D7DAC93A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D4679878-0F81-4EDE-935C-AD36D7DAC93A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D4679878-0F81-4EDE-935C-AD36D7DAC93A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D4679878-0F81-4EDE-935C-AD36D7DAC93A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
