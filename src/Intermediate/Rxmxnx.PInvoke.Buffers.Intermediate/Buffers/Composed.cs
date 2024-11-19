@@ -8,6 +8,7 @@ namespace Rxmxnx.PInvoke.Buffers;
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
 #pragma warning disable CA2252
 [StructLayout(LayoutKind.Sequential)]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 public struct Composed<TBufferA, TBufferB, T> : IManagedBuffer<T> where TBufferA : struct, IManagedBuffer<T>
 	where TBufferB : struct, IManagedBuffer<T>
 {

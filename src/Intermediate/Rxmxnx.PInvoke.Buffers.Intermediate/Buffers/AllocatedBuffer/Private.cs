@@ -1,5 +1,7 @@
 namespace Rxmxnx.PInvoke.Buffers;
 
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3011,
+                 Justification = SuppressMessageConstants.ReflectionPrivateUseJustification)]
 public static partial class AllocatedBuffer
 {
 	/// <summary>

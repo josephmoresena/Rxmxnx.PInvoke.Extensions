@@ -27,7 +27,7 @@
                             [System.Object, System.Private.CoreLib]],
                         [System.Object, System.Private.CoreLib]],
                     [System.Object, System.Private.CoreLib]]" Dynamic="Required All"/>
-            <Type Name="Rxmxnx.PInvoke.Buffers.IAllocatedBuffer`1[[System.Object, System.Private.CoreLib]]">
+            <Type Name="Rxmxnx.PInvoke.Buffers.IManagedBuffer`1[[System.Object, System.Private.CoreLib]]">
                 <Method Name="GetMetadata">
                     <GenericArgument Name="Rxmxnx.PInvoke.Buffers.Composed`3[
                                     Rxmxnx.PInvoke.Buffers.Primordial`1[[System.Object, System.Private.CoreLib]],

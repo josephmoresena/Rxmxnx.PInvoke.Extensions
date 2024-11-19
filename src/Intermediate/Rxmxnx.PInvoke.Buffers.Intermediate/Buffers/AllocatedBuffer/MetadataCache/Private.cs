@@ -8,7 +8,9 @@ public static partial class AllocatedBuffer
 		/// <summary>
 		/// Internal cache.
 		/// </summary>
+#pragma warning disable S2743
 		private static readonly Cache cache = new();
+#pragma warning restore S2743
 
 		/// <summary>
 		/// Retrieves the fundamental metadata for a buffer with <paramref name="count"/> items.

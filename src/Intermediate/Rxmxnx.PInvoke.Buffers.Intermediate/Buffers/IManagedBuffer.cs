@@ -7,6 +7,8 @@ namespace Rxmxnx.PInvoke.Buffers;
 #if NET6_0
 [RequiresPreviewFeatures]
 #endif
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2743,
+                 Justification = SuppressMessageConstants.StaticAbstractPropertyUseJustification)]
 public interface IManagedBuffer<T>
 {
 	/// <summary>
