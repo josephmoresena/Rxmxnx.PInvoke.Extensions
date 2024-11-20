@@ -104,7 +104,7 @@ internal static unsafe class ValidationUtilities
 	/// <typeparam name="T">Type of referenced value.</typeparam>
 	/// <returns>A <see cref="Int32"/> value that indicates the relative order of the objects being compared.</returns>
 	/// <exception cref="ArgumentException">Throws an exception if <paramref name="obj"/> is not a value pointer.</exception>
-	public static Int32 ThrowIfInvalidValuePointer<T>(Object? obj, IntPtr ptr, String nameofPtr) where T : unmanaged
+	public static Int32 ThrowIfInvalidValuePointer<T>(Object? obj, IntPtr ptr, String nameofPtr)
 		=> obj switch
 		{
 			null => 1,
@@ -425,5 +425,49 @@ internal static unsafe class ValidationUtilities
 	{
 		if (!isPure)
 			throw new InvalidOperationException($"{type} type with size is not an space. Size: {bufferSize}");
+	}
+	/// <summary>
+	/// Throws an exception if <paramref name="type"/> is not unmanaged.
+	/// </summary>
+	/// <param name="type">CLR type.</param>
+	/// <param name="isUnmanaged">Indicates whether <paramref name="type"/> is unmanaged.</param>
+	/// <exception cref="InvalidOperationException">
+	/// Throws an exception if <paramref name="type"/> is not a value type.
+	/// </exception>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNotUnmanagedType(Type? type, Boolean isUnmanaged)
+	{
+		if (type is not null && !type.IsValueType)
+			throw new InvalidOperationException($"{type} is not a value type.");
+	}
+	/// <summary>
+	/// Throws an exception if transformation from <paramref name="sourceType"/> to
+	/// <paramref name="destinationType"/> is not allowed.
+	/// </summary>
+	/// <param name="sourceType">Source type.</param>
+	/// <param name="unmanagedSource">Indicates whether <paramref name="sourceType"/> is unmanaged.</param>
+	/// <param name="destinationType">Destination type.</param>
+	/// <param name="unmanagedDestination">Indicates whether <paramref name="destinationType"/> is unmanaged.</param>
+	/// <exception cref="InvalidOperationException">
+	/// Throws an exception if transformation from <paramref name="sourceType"/> to
+	/// <paramref name="destinationType"/> is not allowed.
+	/// </exception>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfInvalidTransformation(Type? sourceType, Boolean unmanagedSource, Type destinationType,
+		Boolean unmanagedDestination)
+	{
+		if (!destinationType.IsValueType)
+		{
+			if (sourceType is null || destinationType.IsValueType)
+				throw new InvalidOperationException($"{destinationType} is not a value type.");
+		}
+		else if (!unmanagedSource)
+		{
+			throw new InvalidOperationException($"{sourceType ?? typeof(Byte)} is not a unmanaged type.");
+		}
+		else if (!unmanagedDestination)
+		{
+			throw new InvalidOperationException($"{destinationType} is not a unmanaged type.");
+		}
 	}
 }

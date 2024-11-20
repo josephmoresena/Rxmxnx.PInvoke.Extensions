@@ -33,7 +33,6 @@ internal partial class ReadOnlyFixedContext<T> : IConvertibleDisposable<IReadOnl
 
 		/// <inheritdoc/>
 		public IReadOnlyFixedContext<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual)
-			where TDestination : unmanaged
 		{
 			IReadOnlyFixedContext<TDestination> result = this.Value
 			                                                 .GetTransformation<TDestination>(

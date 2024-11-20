@@ -5,28 +5,28 @@ namespace Rxmxnx.PInvoke;
 /// </summary>
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
 #pragma warning disable CA2252
-public abstract class ManagedBufferMetadata<T>
+public abstract class BufferTypeMetadata<T>
 {
 	/// <summary>
 	/// Current buffer components.
 	/// </summary>
-	public abstract ManagedBufferMetadata<T>[] Components { get; }
+	public abstract BufferTypeMetadata<T>[] Components { get; }
 	/// <summary>
 	/// Buffer capacity.
 	/// </summary>
 	public abstract UInt16 Size { get; }
 	/// <summary>
-	/// Composes a new buffer using current buffer type and <paramref name="otherBuffer"/>.
+	/// Composes a new buffer using current buffer type and <paramref name="otherMetadata"/>.
 	/// </summary>
-	/// <param name="otherBuffer">A <see cref="ManagedBufferMetadata{T}"/> instance.</param>
-	/// <returns>A composed <see cref="ManagedBufferMetadata{T}"/>.</returns>
-	public abstract ManagedBufferMetadata<T>? Compose(ManagedBufferMetadata<T> otherBuffer);
+	/// <param name="otherMetadata">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
+	/// <returns>A composed <see cref="BufferTypeMetadata{T}"/>.</returns>
+	public abstract BufferTypeMetadata<T>? Compose(BufferTypeMetadata<T> otherMetadata);
 	/// <summary>
 	/// Composes a new buffer using current buffer type and <typeparamref name="TBuffer"/>.
 	/// </summary>
 	/// <typeparam name="TBuffer">Other buffer type.</typeparam>
-	/// <returns>A composed <see cref="ManagedBufferMetadata{T}"/>.</returns>
-	public abstract ManagedBufferMetadata<T>? Compose<TBuffer>() where TBuffer : struct, IManagedBuffer<T>;
+	/// <returns>A composed <see cref="BufferTypeMetadata{T}"/>.</returns>
+	public abstract BufferTypeMetadata<T>? Compose<TBuffer>() where TBuffer : struct, IManagedBuffer<T>;
 	/// <summary>
 	/// Executes <paramref name="action"/> using a buffer of current type.
 	/// </summary>
@@ -61,8 +61,8 @@ public abstract class ManagedBufferMetadata<T>
 	/// <summary>
 	/// Composes a new buffer using twice the current buffer type.
 	/// </summary>
-	/// <returns>A composed <see cref="ManagedBufferMetadata{T}"/>.</returns>
-	internal virtual ManagedBufferMetadata<T>? Double() => this.Compose(this);
+	/// <returns>A composed <see cref="BufferTypeMetadata{T}"/>.</returns>
+	internal virtual BufferTypeMetadata<T>? Double() => this.Compose(this);
 	/// <summary>
 	/// Executes <paramref name="action"/> using a buffer of current type and given state object.
 	/// </summary>

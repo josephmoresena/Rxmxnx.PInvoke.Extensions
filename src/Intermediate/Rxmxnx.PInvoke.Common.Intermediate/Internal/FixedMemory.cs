@@ -30,5 +30,9 @@ internal abstract unsafe partial class FixedMemory : ReadOnlyFixedMemory, IFixed
 	IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
 
 	/// <inheritdoc/>
-	public new virtual IFixedContext<Byte> AsBinaryContext() => new FixedContext<Byte>(this.BinaryOffset, this);
+	public new virtual IFixedContext<Byte> AsBinaryContext()
+	{
+		this.ValidateUnmanagedOperation();
+		return new FixedContext<Byte>(this.BinaryOffset, this);
+	}
 }

@@ -54,7 +54,6 @@ internal partial class FixedReference<T> : IConvertibleDisposable<IFixedReferenc
 				this.GetDisposableParent());
 		/// <inheritdoc/>
 		public IFixedReference<TDestination> Transformation<TDestination>(out IFixedMemory residual)
-			where TDestination : unmanaged
 		{
 			IFixedReference<TDestination>.IDisposable result = this.Value
 			                                                       .GetTransformation<TDestination>(

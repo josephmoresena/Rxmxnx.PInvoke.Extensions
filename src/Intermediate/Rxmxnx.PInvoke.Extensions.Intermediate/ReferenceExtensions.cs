@@ -25,10 +25,7 @@ public static unsafe partial class ReferenceExtensions
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ValPtr<T> GetUnsafeValPtr<T>(ref this T refValue) where T : unmanaged
-	{
-		void* ptr = Unsafe.AsPointer(ref refValue);
-		return new(ptr);
-	}
+		=> NativeUtilities.GetUnsafeValPtrFromRef(ref refValue);
 	/// <summary>
 	/// Retrieves an unsafe pointer of type <see cref="IntPtr"/> from a reference to an
 	/// <see langword="unmanaged"/> value of type <typeparamref name="T"/>.

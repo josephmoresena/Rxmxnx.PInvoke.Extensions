@@ -33,7 +33,7 @@ public interface IReadOnlyFixedMemory : IFixedPointer
 /// Interface representing a read-only fixed block of memory for a specific type.
 /// </summary>
 /// <typeparam name="T">Type of objects in the fixed memory block.</typeparam>
-public interface IReadOnlyFixedMemory<T> : IReadOnlyFixedMemory where T : unmanaged
+public interface IReadOnlyFixedMemory<T> : IReadOnlyFixedMemory
 {
 	/// <summary>
 	/// Gets the value pointer to the read-only fixed block of memory.

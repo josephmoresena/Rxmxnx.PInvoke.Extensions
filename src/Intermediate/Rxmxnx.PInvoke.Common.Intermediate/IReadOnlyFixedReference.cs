@@ -4,7 +4,7 @@
 /// This interface represents a read-only reference to a fixed memory location.
 /// </summary>
 /// <typeparam name="T">Type of the value referenced in memory.</typeparam>
-public interface IReadOnlyFixedReference<T> : IReadOnlyReferenceable<T>, IReadOnlyFixedMemory where T : unmanaged
+public interface IReadOnlyFixedReference<T> : IReadOnlyReferenceable<T>, IReadOnlyFixedMemory
 {
 	/// <summary>
 	/// Reinterprets the <typeparamref name="T"/> fixed memory reference as a

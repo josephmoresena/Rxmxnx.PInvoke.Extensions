@@ -1,16 +1,16 @@
-namespace Rxmxnx.PInvoke.Buffers;
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// This class allows to allocate buffers on stack if possible.
 /// </summary>
 #pragma warning disable CA2252
-public static partial class AllocatedBuffer
+public static partial class BufferManager
 {
 	/// <summary>
 	/// Indicates whether metadata for any required buffer is auto-composed.
 	/// </summary>
 	[ExcludeFromCodeCoverage]
-	public static Boolean BufferAutoCompositionEnabled => !AllocatedBuffer.disabledReflection;
+	public static Boolean BufferAutoCompositionEnabled => !BufferManager.disabledReflection;
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="action"/>.
 	/// </summary>
@@ -25,13 +25,13 @@ public static partial class AllocatedBuffer
 		try
 		{
 			if (typeof(T).IsValueType)
-				AllocatedBuffer.AllocValue(count, action, isMinimumCount);
+				BufferManager.AllocValue(count, action, isMinimumCount);
 			else
-				AllocatedBuffer.AllocObject(count, action, isMinimumCount);
+				BufferManager.AllocObject(count, action, isMinimumCount);
 		}
 		catch (Exception)
 		{
-			AllocatedBuffer.AllocHeap(count, action);
+			BufferManager.AllocHeap(count, action);
 		}
 	}
 	/// <summary>
@@ -51,13 +51,13 @@ public static partial class AllocatedBuffer
 		try
 		{
 			if (typeof(T).IsValueType)
-				AllocatedBuffer.AllocValue(count, state, action, isMinimumCount);
+				BufferManager.AllocValue(count, state, action, isMinimumCount);
 			else
-				AllocatedBuffer.AllocObject(count, state, action, isMinimumCount);
+				BufferManager.AllocObject(count, state, action, isMinimumCount);
 		}
 		catch (Exception)
 		{
-			AllocatedBuffer.AllocHeap(count, state, action);
+			BufferManager.AllocHeap(count, state, action);
 		}
 	}
 	/// <summary>
@@ -77,12 +77,12 @@ public static partial class AllocatedBuffer
 		try
 		{
 			return typeof(T).IsValueType ?
-				AllocatedBuffer.AllocValue(count, func, isMinimumCount) :
-				AllocatedBuffer.AllocObject(count, func, isMinimumCount);
+				BufferManager.AllocValue(count, func, isMinimumCount) :
+				BufferManager.AllocObject(count, func, isMinimumCount);
 		}
 		catch (Exception)
 		{
-			return AllocatedBuffer.AllocHeap(count, func);
+			return BufferManager.AllocHeap(count, func);
 		}
 	}
 	/// <summary>
@@ -104,12 +104,12 @@ public static partial class AllocatedBuffer
 		try
 		{
 			return typeof(T).IsValueType ?
-				AllocatedBuffer.AllocValue(count, state, func, isMinimumCount) :
-				AllocatedBuffer.AllocObject(count, state, func, isMinimumCount);
+				BufferManager.AllocValue(count, state, func, isMinimumCount) :
+				BufferManager.AllocObject(count, state, func, isMinimumCount);
 		}
 		catch (Exception)
 		{
-			return AllocatedBuffer.AllocHeap(count, state, func);
+			return BufferManager.AllocHeap(count, state, func);
 		}
 	}
 	/// <summary>
@@ -117,84 +117,40 @@ public static partial class AllocatedBuffer
 	/// </summary>
 	/// <typeparam name="TBuffer">Type of object buffer.</typeparam>
 	public static void Register<TBuffer>() where TBuffer : struct, IManagedBuffer<Object>
-		=> MetadataCache<Object>.RegisterBuffer<TBuffer>();
+		=> MetadataManager<Object>.RegisterBuffer<TBuffer>();
 	/// <summary>
 	/// Registers <typeparamref name="T"/> buffer.
 	/// </summary>
 	/// <typeparam name="T">Type of items in the buffer.</typeparam>
 	/// <typeparam name="TBuffer">Type of object buffer.</typeparam>
 	public static void Register<T, TBuffer>() where TBuffer : struct, IManagedBuffer<T> where T : struct
-		=> MetadataCache<T>.RegisterBuffer<TBuffer>();
+		=> MetadataManager<T>.RegisterBuffer<TBuffer>();
 	/// <summary>
 	/// Registers <typeparamref name="T"/> buffer.
 	/// </summary>
 	/// <typeparam name="T">Type of nullable items in the buffer.</typeparam>
 	/// <typeparam name="TBuffer">Type of object buffer.</typeparam>
 	public static void RegisterNullable<T, TBuffer>() where TBuffer : struct, IManagedBuffer<T?> where T : struct
-		=> MetadataCache<T?>.RegisterBuffer<TBuffer>();
+		=> MetadataManager<T?>.RegisterBuffer<TBuffer>();
 	/// <summary>
 	/// Registers object space.
 	/// </summary>
 	/// <typeparam name="TSpace">Type of object buffer.</typeparam>
 	public static void RegisterSpace<TSpace>() where TSpace : struct, IManagedBuffer<Object>
-		=> MetadataCache<Object>.RegisterBufferSpace<TSpace>();
+		=> MetadataManager<Object>.RegisterBufferSpace<TSpace>();
 	/// <summary>
 	/// Registers <typeparamref name="T"/> space.
 	/// </summary>
 	/// <typeparam name="T">Type of items in the buffer.</typeparam>
-	/// <typeparam name="TBuffer">Type of object buffer.</typeparam>
-	public static void RegisterSpace<T, TBuffer>() where TBuffer : struct, IManagedBuffer<T> where T : struct
-		=> MetadataCache<T>.RegisterBufferSpace<TBuffer>();
+	/// <typeparam name="TSpace">Type of object buffer.</typeparam>
+	public static void RegisterSpace<T, TSpace>() where TSpace : struct, IManagedBuffer<T> where T : struct
+		=> MetadataManager<T>.RegisterBufferSpace<TSpace>();
 	/// <summary>
 	/// Registers <typeparamref name="T"/> space.
 	/// </summary>
 	/// <typeparam name="T">Type of nullable items in the space.</typeparam>
-	/// <typeparam name="TBuffer">Type of object space.</typeparam>
-	public static void RegisterNullableSpace<T, TBuffer>() where TBuffer : struct, IManagedBuffer<T?> where T : struct
-		=> MetadataCache<T?>.RegisterBufferSpace<TBuffer>();
+	/// <typeparam name="TSpace">Type of object space.</typeparam>
+	public static void RegisterNullableSpace<T, TSpace>() where TSpace : struct, IManagedBuffer<T?> where T : struct
+		=> MetadataManager<T?>.RegisterBufferSpace<TSpace>();
 }
 #pragma warning restore CA2252
-
-/// <summary>
-/// Provides a safe representation of allocated buffer of type <typeparamref name="T"/>.
-/// </summary>
-/// <typeparam name="T">The type of items in the buffer.</typeparam>
-public readonly ref struct AllocatedBuffer<T>
-{
-	/// <summary>
-	/// Indicates whether current buffer is heap allocated.
-	/// </summary>
-	private readonly Boolean _heapAllocated;
-
-	/// <summary>
-	/// Current buffer span.
-	/// </summary>
-	public Span<T> Span { get; }
-	/// <summary>
-	/// Indicates whether current buffer is stack allocated.
-	/// </summary>
-	public Boolean InStack => !this._heapAllocated;
-	/// <summary>
-	/// Allocated buffer full length.
-	/// </summary>
-	public Int32 FullLength { get; }
-
-	/// <summary>
-	/// Constructor.
-	/// </summary>
-	/// <param name="span">Buffer span.</param>
-	/// <param name="heapAllocated">Indicates whether current buffer is heap allocated.</param>
-	/// <param name="fullLength">Allocated buffer full length.</param>
-	internal AllocatedBuffer(Span<T> span, Boolean heapAllocated, Int32 fullLength)
-	{
-		this.Span = span;
-		this._heapAllocated = heapAllocated;
-		this.FullLength = fullLength;
-	}
-
-	/// <summary>
-	/// Defines an implicit conversion of a given span to <see cref="AllocatedBuffer{T}"/>.
-	/// </summary>
-	/// <param name="span">A <typeparamref name="T"/> span to implicitly convert.</param>
-	public static implicit operator AllocatedBuffer<T>(Span<T> span) => new(span, true, span.Length);
-}

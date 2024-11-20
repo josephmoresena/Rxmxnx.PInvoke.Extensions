@@ -157,6 +157,9 @@ The `Rxmxnx.PInvoke.IMutableReference<T>` interface represents a mutable referen
 - `<=`: Determines whether one `ReadOnlyValPtr<T>` object is less than or equal to another.
 - `>=`: Determines whether one `ReadOnlyValPtr<T>` object is greater than or equal to another.
 
+#### Static
+- `IsUnmanaged`: Indicates whether the type of the pointer is unmanaged.
+
 ### Rxmxnx.PInvoke.ValPtr<T>
 
 `Rxmxnx.PInvoke.ValPtr<T>` is a value type representing a pointer to a value of type T. It is used for interop scenarios where a T pointer is required.
@@ -175,6 +178,9 @@ The `Rxmxnx.PInvoke.IMutableReference<T>` interface represents a mutable referen
 - `>`: Determines whether one `ValPtr<T>` object is greater than another.
 - `<=`: Determines whether one `ValPtr<T>` object is less than or equal to another.
 - `>=`: Determines whether one `ValPtr<T>` object is greater than or equal to another.
+
+#### Static
+- `IsUnmanaged`: Indicates whether the type of the pointer is unmanaged.
 
 ### Rxmxnx.PInvoke.CString
 
@@ -604,6 +610,27 @@ with strings.
 - `WithSafeFixed<T, TArg, TResult>(String, TArg, ReadOnlyFixedContextFunc<T, TArg, TResult>)`: Performs a readonly fixed
   context function on the specified memory block with an additional argument and returns a value.
 
+## Buffers
+
+### Rxmxnx.PInvoke.AllocatedBuffer
+
+`Rxmxnx.PInvoke.BufferManager` is a utility class that provides various methods for working with managed buffers.
+
+- `BufferAutoCompositionEnabled`: Indicates whether metadata for any required buffer is auto-composed.
+
+- `Alloc<T>(UInt16, AllocatedBufferAction<T>, Boolean)`: Allocates a buffer with enough size to hold the given number of elements and executes the delegate.
+- `Alloc<T, TState>(UInt16, in TState, AllocatedBufferAction<T, TState>, Boolean)`: Allocates a buffer with enough size to hold the given number of elements and executes the delegate.
+- `Alloc<T, TResult>(UInt16, AllocatedBufferFunc<T, TResult>, Boolean)`: Allocates a buffer with enough size to hold the given number of elements and returns the result of delegate execution.
+- `Alloc<T, TState, TResult>(UInt16, AllocatedBufferFunc<T, TState, TResult>, Boolean)`: Allocates a buffer with enough size to hold the given number of elements and returns the result of delegate execution.
+
+- `Register<TBuffer>()`: Registers the buffer type to hold n objects. If the buffer type is composite, it also registers each of the binary spaces that make up the buffer.
+- `Register<TBuffer, T>()`: Registers the buffer type to hold n T values. If the buffer type is composite, it also registers each of the binary spaces that make up the buffer.
+- `RegisterNullable<TBuffer, T>()`: Registers the buffer type to hold n T nullable values. If the buffer type is composite, it also registers each of the binary spaces that make up the buffer.
+
+- `RegisterSpace<TSpace>()`: Registers the buffer types to hold 1 to n (2^p) objects. The buffer type must be a binary space of n elements.
+- `RegisterSpace<TSpace, T>()`: Registers the buffer types to hold 1 to n (2^p) values. The buffer type must be a binary space of n elements.
+- `RegisterNullableSpace<TSpace, T>()`: Registers the buffer types to hold 1 to n (2^p) nullable values. The buffer type must be a binary space of n elements.
+
 ## Utilities
 
 ### Rxmxnx.PInvoke.NativeUtilities
@@ -619,6 +646,7 @@ with strings.
   applying the specified action for each element.
 - `GetNativeMethod<TDelegate>(IntPtr, String)`: Retrieves a native method as a delegate of the specified type.
 - `GetUnsafeValPtr<T>(in T)`: Retrieves the read-only value pointer from the specified reference.
+- `GetUnsafeValPtrFromRef<T>(ref T)`: Retrieves the value pointer from the specified reference.
 - `GetUnsafeIntPtr<T>(in T)`: Retrieves the pointer value from the specified reference.
 - `GetUnsafeUIntPtr<T>(in T)`: Retrieves the unsigned pointer value from the specified reference.
 - `GetUnsafeFuncPtr<TDelegate>(TDelegate)`: Returns the unmanaged FuncPtr<TDelegate> representation of the specified delegate. 

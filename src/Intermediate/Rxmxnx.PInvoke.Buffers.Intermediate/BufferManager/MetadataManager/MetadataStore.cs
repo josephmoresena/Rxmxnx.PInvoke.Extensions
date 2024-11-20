@@ -1,19 +1,19 @@
-namespace Rxmxnx.PInvoke.Buffers;
+namespace Rxmxnx.PInvoke;
 
 #pragma warning disable CA2252
-public static partial class AllocatedBuffer
+public static partial class BufferManager
 {
-	internal static partial class MetadataCache<T>
+	internal static partial class MetadataManager<T>
 	{
 		/// <summary>
-		/// Internal cache object.
+		/// Class to store metadata buffer types.
 		/// </summary>
-		private sealed class Cache
+		private sealed class MetadataStore
 		{
 			/// <summary>
-			/// Dictionary.
+			/// Internal dictionary.
 			/// </summary>
-			private readonly SortedDictionary<UInt16, ManagedBufferMetadata<T>> _cache = new();
+			private readonly SortedDictionary<UInt16, BufferTypeMetadata<T>> _cache = new();
 			/// <summary>
 			/// Lock object.
 			/// </summary>
@@ -21,7 +21,7 @@ public static partial class AllocatedBuffer
 			/// <summary>
 			/// Buffers dictionary.
 			/// </summary>
-			public IDictionary<UInt16, ManagedBufferMetadata<T>> Buffers => this._cache;
+			public IDictionary<UInt16, BufferTypeMetadata<T>> Buffers => this._cache;
 			/// <summary>
 			/// <see cref="MethodInfo"/> of buffer metadata.
 			/// </summary>
@@ -33,13 +33,13 @@ public static partial class AllocatedBuffer
 			/// <summary>
 			/// Constructor.
 			/// </summary>
-			public Cache()
+			public MetadataStore()
 			{
-				this._cache.Add(1, IManagedBuffer<T>.GetMetadata<Primordial<T>>());
+				this._cache.Add(1, IManagedBuffer<T>.GetMetadata<Atomic<T>>());
 				try
 				{
-					if (AllocatedBuffer.BufferAutoCompositionEnabled)
-						this.GetMetadataInfo = Cache.ReflectGetMetadataMethod();
+					if (BufferManager.BufferAutoCompositionEnabled)
+						this.GetMetadataInfo = MetadataStore.ReflectGetMetadataMethod();
 				}
 				catch (Exception)
 				{
@@ -49,20 +49,21 @@ public static partial class AllocatedBuffer
 			/// <summary>
 			/// Adds metadata to current cache.
 			/// </summary>
-			/// <param name="metadata">A <see cref="ManagedBufferMetadata{T}"/> instance.</param>
+			/// <param name="typeMetadata">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
 			/// <returns>
-			/// <see langword="true"/> if <paramref name="metadata"/> was successfully added; otherwise,
+			/// <see langword="true"/> if <paramref name="typeMetadata"/> was successfully added; otherwise,
 			/// <see langword="false"/>.
 			/// </returns>
-			public Boolean Add(ManagedBufferMetadata<T> metadata) => this._cache.TryAdd(metadata.Size, metadata);
+			public Boolean Add(BufferTypeMetadata<T> typeMetadata)
+				=> this._cache.TryAdd(typeMetadata.Size, typeMetadata);
 			/// <summary>
 			/// Retrieves the minimal buffer metadata registered to hold at least <paramref name="count"/> items.
 			/// </summary>
 			/// <param name="count">Minimal elements items in buffer.</param>
-			/// <returns>A <see cref="ManagedBufferMetadata{T}"/> instance.</returns>
-			public ManagedBufferMetadata<T>? GetMinimal(UInt16 count)
+			/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+			public BufferTypeMetadata<T>? GetMinimal(UInt16 count)
 			{
-				using SortedDictionary<UInt16, ManagedBufferMetadata<T>>.KeyCollection.Enumerator enumerator =
+				using SortedDictionary<UInt16, BufferTypeMetadata<T>>.KeyCollection.Enumerator enumerator =
 					this._cache.Keys.GetEnumerator();
 				while (enumerator.MoveNext())
 				{
@@ -80,7 +81,7 @@ public static partial class AllocatedBuffer
 			private static MethodInfo ReflectGetMetadataMethod()
 			{
 				Type typeofT = typeof(IManagedBuffer<T>);
-				return typeofT.GetMethod(AllocatedBuffer.getMetadataName, AllocatedBuffer.getMetadataFlags)!;
+				return typeofT.GetMethod(BufferManager.getMetadataName, BufferManager.getMetadataFlags)!;
 			}
 		}
 	}

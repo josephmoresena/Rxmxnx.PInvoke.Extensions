@@ -82,10 +82,10 @@ public static unsafe partial class NativeUtilities
 		=> (FuncPtr<TDelegate>)Marshal.GetFunctionPointerForDelegate(delegateInstance);
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="ReadOnlyValPtr{T}"/> pointer from a read-only reference to a
-	/// <typeparamref name="T"/> <see langword="unmanaged"/> value.
+	/// <typeparamref name="T"/> value.
 	/// </summary>
-	/// <typeparam name="T"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> value.</typeparam>
-	/// <param name="value">A read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</param>
+	/// <typeparam name="T">The type of the managed reference.</typeparam>
+	/// <param name="value">A read-only reference to a <typeparamref name="T"/> value.</param>
 	/// <returns><see cref="ReadOnlyValPtr{T}"/> pointer.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
@@ -93,11 +93,30 @@ public static unsafe partial class NativeUtilities
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static ReadOnlyValPtr<T> GetUnsafeValPtr<T>(in T value) where T : unmanaged
+	public static ReadOnlyValPtr<T> GetUnsafeValPtr<T>(in T value)
 	{
 		ref T refValue = ref Unsafe.AsRef(in value);
 		return new(Unsafe.AsPointer(ref refValue));
 	}
+	/// <summary>
+	/// Retrieves an unsafe pointer of type <see cref="ValPtr{T}"/> from a reference to a value of type
+	/// <typeparamref name="T"/>.
+	/// </summary>
+	/// <typeparam name="T">The type of the managed reference.</typeparam>
+	/// <param name="refValue">The reference to the value from which to retrieve the pointer.</param>
+	/// <returns>An unsafe pointer of type <see cref="ValPtr{T}"/> pointing to the referenced value.</returns>
+	/// <remarks>
+	/// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
+	/// won't be moved or collected by garbage collector.
+	/// The pointer will point to the address in memory the reference had at the moment this method was called.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static ValPtr<T> GetUnsafeValPtrFromRef<T>(ref T refValue)
+	{
+		void* ptr = Unsafe.AsPointer(ref refValue);
+		return new(ptr);
+	}
+
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="IntPtr"/> pointer from a read-only reference to a
 	/// <typeparamref name="T"/> <see langword="unmanaged"/> value.
@@ -248,7 +267,7 @@ public static unsafe partial class NativeUtilities
 	/// Creates a new <typeparamref name="T"/> array with a specific length and initializes it after
 	/// creation by using the specified callback.
 	/// </summary>
-	/// <typeparam name="T">An <see langword="unmanaged"/> type of elements in the array.</typeparam>
+	/// <typeparam name="T">A type of elements in the array.</typeparam>
 	/// <typeparam name="TState">The type of the element to pass to <paramref name="action"/>.</typeparam>
 	/// <param name="length">The length of the array to create.</param>
 	/// <param name="state">The element to pass to <paramref name="action"/>.</param>
@@ -256,7 +275,6 @@ public static unsafe partial class NativeUtilities
 	/// <returns>The created array.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static T[] CreateArray<T, TState>(Int32 length, TState state, SpanAction<T, TState> action)
-		where T : unmanaged
 	{
 		T[] result = new T[length];
 		Span<T> span = result;
@@ -284,6 +302,34 @@ public static unsafe partial class NativeUtilities
 	}
 
 	/// <summary>
+	/// Indicates whether <typeparamref name="T"/> is <see langword="unmanaged"/>.
+	/// </summary>
+	/// <typeparam name="T">Type to check.</typeparam>
+	/// <returns>
+	/// <see langword="true"/> if <typeparamref name="T"/> is a <see langword="unmanaged"/> type; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+	/// <remarks>
+	/// This method tries to pin an empty array of <typeparamref name="T"/> elements, when the pin fails
+	/// <typeparamref name="T"/> is not <see langword="unmanaged"/>. <br/>
+	/// This method relies on the occurrence of an exception when attempting to create a pinned
+	/// <see cref="GCHandle"/> for an empty array of <typeparamref name="T"/> elements.
+	/// </remarks>
+	internal static Boolean IsUnmanaged<T>()
+	{
+		if (!typeof(T).IsValueType) return false;
+		try
+		{
+			GCHandle.Alloc(Array.Empty<T>(), GCHandleType.Pinned).Free();
+			return true;
+		}
+		catch (Exception)
+		{
+			return false;
+		}
+	}
+
+	/// <summary>
 	/// Writes <paramref name="span"/> using <paramref name="arg"/> and <paramref name="action"/>.
 	/// </summary>
 	/// <typeparam name="T">Unmanaged type of elements in <paramref name="span"/>.</typeparam>
@@ -292,9 +338,11 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A <typeparamref name="TArg"/> instance.</param>
 	/// <param name="action">A <see cref="SpanAction{T, TState}"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void WriteSpan<T, TArg>(Span<T> span, TArg arg, SpanAction<T, TArg> action) where T : unmanaged
+	private static void WriteSpan<T, TArg>(Span<T> span, TArg arg, SpanAction<T, TArg> action)
 	{
-		fixed (T* ptr = &MemoryMarshal.GetReference(span))
+#pragma warning disable CS8500
+		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#pragma warning restore CS8500
 			action(new(ptr, span.Length), arg);
 	}
 }

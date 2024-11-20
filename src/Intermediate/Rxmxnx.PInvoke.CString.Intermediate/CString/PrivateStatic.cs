@@ -62,33 +62,9 @@ public partial class CString
 		ReadOnlySpan<TInteger> currentIntegers = MemoryMarshal.Cast<Byte, TInteger>(current);
 		ReadOnlySpan<TInteger> otherIntegers = MemoryMarshal.Cast<Byte, TInteger>(other);
 
-		if (!CString.SequenceEquals(currentIntegers, otherIntegers)) return false;
+		if (!currentIntegers.SequenceEqual(otherIntegers)) return false;
 		Int32 binaryOffset = currentIntegers.Length * sizeof(TInteger);
-		return CString.SequenceEquals(current[binaryOffset..], other[binaryOffset..]);
-	}
-	/// <summary>
-	/// Compares two ReadOnlySpan instances for equality, element by element.
-	/// </summary>
-	/// <typeparam name="T">
-	/// The type of elements in the read-only span instances.
-	/// It must be an <see langword="unmanaged"/> <see cref="ValueType"/>.
-	/// </typeparam>
-	/// <param name="current">The first ReadOnlySpan instance to compare.</param>
-	/// <param name="other">The second ReadOnlySpan instance to compare.</param>
-	/// <returns>
-	/// <see langword="true"/> if both ReadOnlySpan instances have the same length and contain the same
-	/// elements, otherwise <see langword="false"/>.
-	/// </returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static Boolean SequenceEquals<T>(ReadOnlySpan<T> current, ReadOnlySpan<T> other)
-		where T : unmanaged, IEquatable<T>
-	{
-		for (Int32 i = 0; i < current.Length; i++)
-		{
-			if (!current[i].Equals(other[i]))
-				return false;
-		}
-		return true;
+		return current[binaryOffset..].SequenceEqual(other[binaryOffset..]);
 	}
 	/// <summary>
 	/// Determines if a given read-only span of bytes represents a null-terminated UTF-8 string.

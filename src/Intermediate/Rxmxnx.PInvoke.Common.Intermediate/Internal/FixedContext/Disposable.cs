@@ -53,7 +53,6 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 
 		/// <inheritdoc/>
 		public IFixedContext<TDestination> Transformation<TDestination>(out IFixedMemory residual)
-			where TDestination : unmanaged
 		{
 			IFixedContext<TDestination>.IDisposable result = this.Value
 			                                                     .GetTransformation<TDestination>(

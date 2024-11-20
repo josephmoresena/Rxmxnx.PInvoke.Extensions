@@ -19,14 +19,14 @@ public interface IFixedMemory : IReadOnlyFixedMemory
 	/// <summary>
 	/// Interface representing a <see cref="IDisposable"/> <see cref="IFixedMemory"/> object.
 	/// </summary>
-	public new interface IDisposable : IFixedMemory, IReadOnlyFixedMemory.IDisposable { }
+	public new interface IDisposable : IFixedMemory, IReadOnlyFixedMemory.IDisposable;
 }
 
 /// <summary>
 /// Interface representing a fixed block of memory for a specific type.
 /// </summary>
 /// <typeparam name="T">Type of objects in the fixed memory block.</typeparam>
-public interface IFixedMemory<T> : IFixedMemory, IReadOnlyFixedMemory<T> where T : unmanaged
+public interface IFixedMemory<T> : IFixedMemory, IReadOnlyFixedMemory<T>
 {
 	/// <summary>
 	/// Gets the value pointer to the fixed block of memory.

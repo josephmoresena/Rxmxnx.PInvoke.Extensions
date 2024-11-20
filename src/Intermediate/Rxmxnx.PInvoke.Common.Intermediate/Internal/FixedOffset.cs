@@ -18,6 +18,8 @@ internal sealed partial class FixedOffset : FixedMemory
 	/// </summary>
 	public override Int32 BinaryOffset => this._offset;
 	/// <inheritdoc/>
+	public override Boolean IsUnmanaged => true;
+	/// <inheritdoc/>
 	public override Type? Type => default;
 	/// <inheritdoc/>
 	public override Boolean IsFunction => false;

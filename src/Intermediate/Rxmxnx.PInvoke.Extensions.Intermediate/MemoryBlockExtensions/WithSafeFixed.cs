@@ -1,6 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#pragma warning disable CS8500
 public static unsafe partial class MemoryBlockExtensions
 {
 	/// <summary>
@@ -8,12 +9,12 @@ public static unsafe partial class MemoryBlockExtensions
 	/// address until the action specified in <paramref name="action"/> has completed.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> value type that is contained in the contiguous region of memory.
+	/// The type that is contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <param name="span">The current span of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A delegate of type <see cref="FixedContextAction{T}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T>(this Span<T> span, FixedContextAction<T> action) where T : unmanaged
+	public static void WithSafeFixed<T>(this Span<T> span, FixedContextAction<T> action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -34,12 +35,12 @@ public static unsafe partial class MemoryBlockExtensions
 	/// address until the action specified in <paramref name="action"/> has completed.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> value type that is contained in the contiguous region of memory.
+	/// The type that is contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <param name="span">The current span of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T>(this Span<T> span, ReadOnlyFixedContextAction<T> action) where T : unmanaged
+	public static void WithSafeFixed<T>(this Span<T> span, ReadOnlyFixedContextAction<T> action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -60,13 +61,12 @@ public static unsafe partial class MemoryBlockExtensions
 	/// address until the action specified in <paramref name="action"/> has completed.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> value type that is contained in the contiguous region of memory.
+	/// The type that is contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <param name="span">The current read-only span of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T>(this ReadOnlySpan<T> span, ReadOnlyFixedContextAction<T> action)
-		where T : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -82,13 +82,12 @@ public static unsafe partial class MemoryBlockExtensions
 			}
 		}
 	}
-
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
 	/// address until the action specified in <paramref name="action"/> has completed.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> value type that is contained in the contiguous region of memory.
+	/// The type that is contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
 	/// <param name="span">The current span of type <typeparamref name="T"/>.</param>
@@ -96,7 +95,6 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="action">A delegate of type <see cref="FixedContextAction{T, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(this Span<T> span, TArg arg, FixedContextAction<T, TArg> action)
-		where T : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -117,7 +115,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// address until the action specified in <paramref name="action"/> has completed.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> value type that is contained in the contiguous region of memory.
+	/// The type that is contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
 	/// <param name="span">The current span of type <typeparamref name="T"/>.</param>
@@ -125,7 +123,6 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(this Span<T> span, TArg arg, ReadOnlyFixedContextAction<T, TArg> action)
-		where T : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -146,7 +143,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// address until the action specified in <paramref name="action"/> has completed.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> value type that is contained in the contiguous region of memory.
+	/// The type that is contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
 	/// <param name="span">The current read-only span of type <typeparamref name="T"/>.</param>
@@ -154,7 +151,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(this ReadOnlySpan<T> span, TArg arg,
-		ReadOnlyFixedContextAction<T, TArg> action) where T : unmanaged
+		ReadOnlyFixedContextAction<T, TArg> action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -170,13 +167,12 @@ public static unsafe partial class MemoryBlockExtensions
 			}
 		}
 	}
-
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
 	/// address until the function specified in <paramref name="func"/> has completed.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> value type that is contained in the contiguous region of memory.
+	/// The type that is contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <typeparam name="TResult">The type of the value returned by the function <paramref name="func"/>.</typeparam>
 	/// <param name="span">The current span of type <typeparamref name="T"/>.</param>
@@ -184,7 +180,6 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TResult>(this Span<T> span, FixedContextFunc<T, TResult> func)
-		where T : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -205,7 +200,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// address until the function specified in <paramref name="func"/> has completed.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> value type that is contained in the contiguous region of memory.
+	/// The type that is contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <typeparam name="TResult">The type of the value returned by the function <paramref name="func"/>.</typeparam>
 	/// <param name="span">The current span of type <typeparamref name="T"/>.</param>
@@ -213,7 +208,6 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TResult>(this Span<T> span, ReadOnlyFixedContextFunc<T, TResult> func)
-		where T : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -234,7 +228,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// address until the function specified in <paramref name="func"/> has completed.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> value type that is contained in the contiguous region of memory.
+	/// The type that is contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <typeparam name="TResult">The type of the value returned by the function <paramref name="func"/>.</typeparam>
 	/// <param name="span">The current read-only span of type <typeparamref name="T"/>.</param>
@@ -242,7 +236,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TResult>(this ReadOnlySpan<T> span,
-		ReadOnlyFixedContextFunc<T, TResult> func) where T : unmanaged
+		ReadOnlyFixedContextFunc<T, TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -258,13 +252,12 @@ public static unsafe partial class MemoryBlockExtensions
 			}
 		}
 	}
-
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
 	/// address until the function specified by <paramref name="func"/> has completed.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> value type that is contained in the contiguous region of memory.
+	/// The type that is contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
 	/// <typeparam name="TResult">The type of the value returned by the function <paramref name="func"/>.</typeparam>
@@ -274,7 +267,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TArg, TResult>(this Span<T> span, TArg arg,
-		FixedContextFunc<T, TArg, TResult> func) where T : unmanaged
+		FixedContextFunc<T, TArg, TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -295,7 +288,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// address until the function specified by <paramref name="func"/> has completed.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> value type that is contained in the contiguous region of memory.
+	/// The type that is contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
 	/// <typeparam name="TResult">The type of the value returned by the function <paramref name="func"/>.</typeparam>
@@ -305,7 +298,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TArg, TResult>(this Span<T> span, TArg arg,
-		ReadOnlyFixedContextFunc<T, TArg, TResult> func) where T : unmanaged
+		ReadOnlyFixedContextFunc<T, TArg, TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -326,7 +319,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// address until the function specified by <paramref name="func"/> has completed.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> value type that is contained in the contiguous region of memory.
+	/// The type that is contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
 	/// <typeparam name="TResult">The type of the value returned by the function <paramref name="func"/>.</typeparam>
@@ -336,7 +329,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TArg, TResult>(this ReadOnlySpan<T> span, TArg arg,
-		ReadOnlyFixedContextFunc<T, TArg, TResult> func) where T : unmanaged
+		ReadOnlyFixedContextFunc<T, TArg, TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -353,3 +346,4 @@ public static unsafe partial class MemoryBlockExtensions
 		}
 	}
 }
+#pragma warning restore CS8500

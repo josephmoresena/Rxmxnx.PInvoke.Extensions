@@ -9,14 +9,15 @@ namespace Rxmxnx.PInvoke.Buffers;
 #pragma warning disable CA2252
 [StructLayout(LayoutKind.Sequential)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
-public struct Composed<TBufferA, TBufferB, T> : IManagedBuffer<T> where TBufferA : struct, IManagedBuffer<T>
+public struct Composite<TBufferA, TBufferB, T> : IManagedBuffer<T> where TBufferA : struct, IManagedBuffer<T>
 	where TBufferB : struct, IManagedBuffer<T>
 {
 	/// <summary>
 	/// Internal metadata.
 	/// </summary>
-	private static readonly ManagedBufferMetadata<T> metadata =
-		new BufferTypeMetadata<Composed<TBufferA, TBufferB, T>, T>(TBufferA.Metadata.Size + TBufferB.Metadata.Size);
+	private static readonly BufferTypeMetadata<T> typeMetadata =
+		new BufferTypeMetadata<Composite<TBufferA, TBufferB, T>, T>(
+			TBufferA.TypeMetadata.Size + TBufferB.TypeMetadata.Size);
 
 	/// <summary>
 	/// Low buffer.
@@ -29,17 +30,17 @@ public struct Composed<TBufferA, TBufferB, T> : IManagedBuffer<T> where TBufferA
 
 	static Boolean IManagedBuffer<T>.IsPure => TBufferA.IsBinary && typeof(TBufferA) == typeof(TBufferB);
 	static Boolean IManagedBuffer<T>.IsBinary => TBufferA.IsBinary && TBufferB.IsBinary;
-	static ManagedBufferMetadata<T> IManagedBuffer<T>.Metadata => Composed<TBufferA, TBufferB, T>.metadata;
-	static ManagedBufferMetadata<T>[] IManagedBuffer<T>.Components => [TBufferA.Metadata, TBufferB.Metadata,];
+	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => Composite<TBufferA, TBufferB, T>.typeMetadata;
+	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [TBufferA.TypeMetadata, TBufferB.TypeMetadata,];
 
-	static void IManagedBuffer<T>.AppendComponent(IDictionary<UInt16, ManagedBufferMetadata<T>> components)
+	static void IManagedBuffer<T>.AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components)
 	{
 		IManagedBuffer<T>.AppendComponent<TBufferA>(components);
 		IManagedBuffer<T>.AppendComponent<TBufferB>(components);
 	}
-	static void IManagedBuffer<T>.Append<TBuffer>(IDictionary<UInt16, ManagedBufferMetadata<T>> components)
+	static void IManagedBuffer<T>.Append<TBuffer>(IDictionary<UInt16, BufferTypeMetadata<T>> components)
 	{
-		TBufferB.Append<Composed<TBufferB, TBuffer, T>>(components);
+		TBufferB.Append<Composite<TBufferB, TBuffer, T>>(components);
 		TBufferB.Append<TBuffer>(components);
 		TBufferA.Append<TBufferB>(components);
 	}

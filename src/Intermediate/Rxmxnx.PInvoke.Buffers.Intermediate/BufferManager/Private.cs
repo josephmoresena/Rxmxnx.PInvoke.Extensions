@@ -1,8 +1,8 @@
-namespace Rxmxnx.PInvoke.Buffers;
+namespace Rxmxnx.PInvoke;
 
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3011,
                  Justification = SuppressMessageConstants.ReflectionPrivateUseJustification)]
-public static partial class AllocatedBuffer
+public static partial class BufferManager
 {
 	/// <summary>
 	/// Name of <see cref="IManagedBuffer{T}.GetMetadata{TBuffer}()"/> method.
@@ -16,9 +16,9 @@ public static partial class AllocatedBuffer
 	private const BindingFlags getMetadataFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
 	/// <summary>
-	/// Type of <see cref="Composed{TBufferA,TBufferB,T}"/>.
+	/// Type of <see cref="Composite{TBufferA,TBufferB,T}"/>.
 	/// </summary>
-	private static readonly Type typeofComposed = typeof(Composed<,,>);
+	private static readonly Type typeofComposite = typeof(Composite<,,>);
 	/// <summary>
 	/// Flag to check if reflection is disabled.
 	/// </summary>
@@ -34,7 +34,7 @@ public static partial class AllocatedBuffer
 	{
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
 		Span<T> span = arr.AsSpan()[..count];
-		AllocatedBuffer<T> buffer = new(span, true, arr.Length);
+		ScopedBuffer<T> buffer = new(span, true, arr.Length);
 		action(buffer);
 	}
 	/// <summary>
@@ -49,7 +49,7 @@ public static partial class AllocatedBuffer
 	{
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
 		Span<T> span = arr.AsSpan()[..count];
-		AllocatedBuffer<T> buffer = new(span, true, arr.Length);
+		ScopedBuffer<T> buffer = new(span, true, arr.Length);
 		action(buffer, state);
 	}
 	/// <summary>
@@ -64,7 +64,7 @@ public static partial class AllocatedBuffer
 	{
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
 		Span<T> span = arr.AsSpan()[..count];
-		AllocatedBuffer<T> buffer = new(span, true, arr.Length);
+		ScopedBuffer<T> buffer = new(span, true, arr.Length);
 		return func(buffer);
 	}
 	/// <summary>
@@ -82,7 +82,7 @@ public static partial class AllocatedBuffer
 	{
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
 		Span<T> span = arr.AsSpan()[..count];
-		AllocatedBuffer<T> buffer = new(span, true, arr.Length);
+		ScopedBuffer<T> buffer = new(span, true, arr.Length);
 		return func(buffer, state);
 	}
 	/// <summary>
@@ -96,10 +96,10 @@ public static partial class AllocatedBuffer
 	/// </param>
 	private static void AllocObject<T>(UInt16 count, AllocatedBufferAction<T> action, Boolean isMinimumCount)
 	{
-		ManagedBufferMetadata<Object>? metadata = MetadataCache<Object>.GetMetadata(count);
+		BufferTypeMetadata<Object>? metadata = MetadataManager<Object>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
 		{
-			AllocatedBuffer.AllocHeap(count, action);
+			BufferManager.AllocHeap(count, action);
 			return;
 		}
 		TransformationState<T> stateT = new(action);
@@ -119,10 +119,10 @@ public static partial class AllocatedBuffer
 	private static void AllocObject<T, TState>(UInt16 count, in TState state, AllocatedBufferAction<T, TState> action,
 		Boolean isMinimumCount)
 	{
-		ManagedBufferMetadata<Object>? metadata = MetadataCache<Object>.GetMetadata(count);
+		BufferTypeMetadata<Object>? metadata = MetadataManager<Object>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
 		{
-			AllocatedBuffer.AllocHeap(count, state, action);
+			BufferManager.AllocHeap(count, state, action);
 			return;
 		}
 		metadata.Execute(state, action, count);
@@ -141,9 +141,9 @@ public static partial class AllocatedBuffer
 	private static TResult AllocObject<T, TResult>(UInt16 count, AllocatedBufferFunc<T, TResult> func,
 		Boolean isMinimumCount)
 	{
-		ManagedBufferMetadata<Object>? metadata = MetadataCache<Object>.GetMetadata(count);
+		BufferTypeMetadata<Object>? metadata = MetadataManager<Object>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
-			return AllocatedBuffer.AllocHeap(count, func);
+			return BufferManager.AllocHeap(count, func);
 		TransformationState<T, TResult> stateT = new(func);
 		return metadata.Execute(stateT, TransformationState<T, TResult>.Execute, count);
 	}
@@ -163,9 +163,9 @@ public static partial class AllocatedBuffer
 	private static TResult AllocObject<T, TState, TResult>(UInt16 count, in TState state,
 		AllocatedBufferFunc<T, TState, TResult> func, Boolean isMinimumCount)
 	{
-		ManagedBufferMetadata<Object>? metadata = MetadataCache<Object>.GetMetadata(count);
+		BufferTypeMetadata<Object>? metadata = MetadataManager<Object>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
-			return AllocatedBuffer.AllocHeap(count, state, func);
+			return BufferManager.AllocHeap(count, state, func);
 		return metadata.Execute(state, func, count);
 	}
 	/// <summary>
@@ -179,10 +179,10 @@ public static partial class AllocatedBuffer
 	/// </param>
 	private static void AllocValue<T>(UInt16 count, AllocatedBufferAction<T> action, Boolean isMinimumCount)
 	{
-		ManagedBufferMetadata<T>? metadata = MetadataCache<T>.GetMetadata(count);
+		BufferTypeMetadata<T>? metadata = MetadataManager<T>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
 		{
-			AllocatedBuffer.AllocHeap(count, action);
+			BufferManager.AllocHeap(count, action);
 			return;
 		}
 		metadata.Execute(action, count);
@@ -201,10 +201,10 @@ public static partial class AllocatedBuffer
 	private static void AllocValue<T, TState>(UInt16 count, in TState state, AllocatedBufferAction<T, TState> action,
 		Boolean isMinimumCount)
 	{
-		ManagedBufferMetadata<T>? metadata = MetadataCache<T>.GetMetadata(count);
+		BufferTypeMetadata<T>? metadata = MetadataManager<T>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
 		{
-			AllocatedBuffer.AllocHeap(count, state, action);
+			BufferManager.AllocHeap(count, state, action);
 			return;
 		}
 		metadata.Execute<TState>(state, action, count);
@@ -223,9 +223,9 @@ public static partial class AllocatedBuffer
 	private static TResult AllocValue<T, TResult>(UInt16 count, AllocatedBufferFunc<T, TResult> func,
 		Boolean isMinimumCount)
 	{
-		ManagedBufferMetadata<T>? metadata = MetadataCache<T>.GetMetadata(count);
+		BufferTypeMetadata<T>? metadata = MetadataManager<T>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
-			return AllocatedBuffer.AllocHeap(count, func);
+			return BufferManager.AllocHeap(count, func);
 		return metadata.Execute(func, count);
 	}
 	/// <summary>
@@ -244,9 +244,9 @@ public static partial class AllocatedBuffer
 	private static TResult AllocValue<T, TState, TResult>(UInt16 count, in TState state,
 		AllocatedBufferFunc<T, TState, TResult> func, Boolean isMinimumCount)
 	{
-		ManagedBufferMetadata<T>? metadata = MetadataCache<T>.GetMetadata(count);
+		BufferTypeMetadata<T>? metadata = MetadataManager<T>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
-			return AllocatedBuffer.AllocHeap(count, state, func);
+			return BufferManager.AllocHeap(count, state, func);
 		return metadata.Execute<TState, TResult>(state, func, count);
 	}
 	/// <summary>

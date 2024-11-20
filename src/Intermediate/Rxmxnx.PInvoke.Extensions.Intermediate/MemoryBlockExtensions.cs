@@ -13,7 +13,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// Retrieves an unsafe <see cref="ValPtr{T}"/> pointer from <see cref="Span{T}"/> instance.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The type of <see langword="unmanaged"/> values contained in the contiguous region of memory.
+	/// The type of values contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <param name="span">The span from which the pointer is retrieved.</param>
 	/// <returns>An <see cref="ValPtr{T}"/> pointer.</returns>
@@ -23,7 +23,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static ValPtr<T> GetUnsafeValPtr<T>(this Span<T> span) where T : unmanaged
+	public static ValPtr<T> GetUnsafeValPtr<T>(this Span<T> span)
 	{
 		ref T refValue = ref MemoryMarshal.GetReference(span);
 		void* ptr = Unsafe.AsPointer(ref refValue);
@@ -33,7 +33,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// Retrieves an unsafe <see cref="ReadOnlyValPtr{T}"/> pointer from <see cref="ReadOnlySpan{T}"/> instance.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The type of <see langword="unmanaged"/> values contained in the contiguous region of memory.
+	/// The type of values contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <param name="span">The read-only span from which the pointer is retrieved.</param>
 	/// <returns>An <see cref="ReadOnlyValPtr{T}"/> pointer.</returns>
@@ -43,7 +43,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static ReadOnlyValPtr<T> GetUnsafeValPtr<T>(this ReadOnlySpan<T> span) where T : unmanaged
+	public static ReadOnlyValPtr<T> GetUnsafeValPtr<T>(this ReadOnlySpan<T> span)
 	{
 		ref T refValue = ref MemoryMarshal.GetReference(span);
 		void* ptr = Unsafe.AsPointer(ref refValue);
@@ -54,7 +54,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// Retrieves an unsafe <see cref="IntPtr"/> pointer from <see cref="Span{T}"/> instance.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The type of <see langword="unmanaged"/> values contained in the contiguous region of memory.
+	/// The type of values contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <param name="span">The span from which the pointer is retrieved.</param>
 	/// <returns>An <see cref="IntPtr"/> pointer.</returns>
@@ -64,7 +64,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static IntPtr GetUnsafeIntPtr<T>(this Span<T> span) where T : unmanaged
+	public static IntPtr GetUnsafeIntPtr<T>(this Span<T> span)
 	{
 		ref T refValue = ref MemoryMarshal.GetReference(span);
 		void* ptr = Unsafe.AsPointer(ref refValue);
@@ -74,7 +74,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// Retrieves an unsafe <see cref="IntPtr"/> pointer from <see cref="ReadOnlySpan{T}"/> instance.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The type of <see langword="unmanaged"/> values contained in the contiguous region of memory.
+	/// The type of  values contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <param name="span">The read-only span from which the pointer is retrieved.</param>
 	/// <returns>An <see cref="IntPtr"/> pointer.</returns>
@@ -84,7 +84,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static IntPtr GetUnsafeIntPtr<T>(this ReadOnlySpan<T> span) where T : unmanaged
+	public static IntPtr GetUnsafeIntPtr<T>(this ReadOnlySpan<T> span)
 	{
 		ref T refValue = ref MemoryMarshal.GetReference(span);
 		void* ptr = Unsafe.AsPointer(ref refValue);
@@ -105,7 +105,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static UIntPtr GetUnsafeUIntPtr<T>(this Span<T> span) where T : unmanaged
+	public static UIntPtr GetUnsafeUIntPtr<T>(this Span<T> span)
 	{
 		ref T refValue = ref MemoryMarshal.GetReference(span);
 		void* ptr = Unsafe.AsPointer(ref refValue);
@@ -125,7 +125,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static UIntPtr GetUnsafeUIntPtr<T>(this ReadOnlySpan<T> span) where T : unmanaged
+	public static UIntPtr GetUnsafeUIntPtr<T>(this ReadOnlySpan<T> span)
 	{
 		ref T refValue = ref MemoryMarshal.GetReference(span);
 		void* ptr = Unsafe.AsPointer(ref refValue);
@@ -249,7 +249,6 @@ public static unsafe partial class MemoryBlockExtensions
 	/// and avoid memory leaks.
 	/// </remarks>
 	public static IReadOnlyFixedContext<T>.IDisposable GetFixedContext<T>(this ReadOnlyMemory<T> mem)
-		where T : unmanaged
 	{
 		MemoryHandle handle = mem.Pin();
 		return MemoryMarshal.TryGetMemoryManager<T, MemoryManager<T>>(mem, out _) ||
@@ -272,7 +271,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
-	public static IFixedContext<T>.IDisposable GetFixedContext<T>(this Memory<T> mem) where T : unmanaged
+	public static IFixedContext<T>.IDisposable GetFixedContext<T>(this Memory<T> mem)
 	{
 		MemoryHandle handle = mem.Pin();
 		return new FixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);
@@ -296,7 +295,7 @@ public static unsafe partial class MemoryBlockExtensions
 	public static IReadOnlyFixedMemory.IDisposable GetFixedMemory<T>(this ReadOnlyMemory<T> mem)
 	{
 		MemoryHandle handle = mem.Pin();
-		return new ReadOnlyFixedContext<Byte>(handle.Pointer, mem.Length * Unsafe.SizeOf<T>()).ToDisposable(handle);
+		return new ReadOnlyFixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);
 	}
 	/// <summary>
 	/// Creates an <see cref="IFixedMemory.IDisposable"/> instance by pinning the current
@@ -317,6 +316,6 @@ public static unsafe partial class MemoryBlockExtensions
 	public static IFixedMemory.IDisposable GetFixedMemory<T>(this Memory<T> mem)
 	{
 		MemoryHandle handle = mem.Pin();
-		return new FixedContext<Byte>(handle.Pointer, mem.Length * Unsafe.SizeOf<T>()).ToDisposable(handle);
+		return new FixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);
 	}
 }

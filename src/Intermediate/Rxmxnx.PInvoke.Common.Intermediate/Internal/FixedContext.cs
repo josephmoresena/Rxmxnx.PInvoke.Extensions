@@ -3,11 +3,9 @@
 /// <summary>
 /// Represents a fixed memory block for a specific type.
 /// </summary>
-/// <typeparam name="T">
-/// The type of the items in the fixed memory block. Must be <see langword="unmanaged"/>.
-/// </typeparam>
+/// <typeparam name="T">The type of the items in the fixed memory block.</typeparam>
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
-internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContext<T> where T : unmanaged
+internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContext<T>
 {
 	/// <summary>
 	/// An empty instance of <see cref="FixedContext{T}"/>.
@@ -27,6 +25,8 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 	/// <inheritdoc/>
 	public override Int32 BinaryOffset => default;
 	/// <inheritdoc/>
+	public override Boolean IsUnmanaged => ReadOnlyValPtr<T>.IsUnmanaged;
+	/// <inheritdoc/>
 	public override Type Type => typeof(T);
 	/// <inheritdoc/>
 	public override Boolean IsFunction => false;
@@ -37,14 +37,14 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 	/// </summary>
 	/// <param name="ptr">The pointer to the fixed memory block.</param>
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
-	public FixedContext(void* ptr, Int32 count) : base(ptr, count * sizeof(T)) => this._count = count;
+	public FixedContext(void* ptr, Int32 count) : base(ptr, count * Unsafe.SizeOf<T>()) => this._count = count;
 	/// <summary>
 	/// Constructs a new <see cref="FixedContext{T}"/> instance using an offset and a fixed memory instance.
 	/// </summary>
 	/// <param name="offset">The offset in the memory block.</param>
 	/// <param name="ctx">The fixed memory instance.</param>
 	public FixedContext(Int32 offset, FixedMemory ctx) : base(ctx, offset)
-		=> this._count = this.BinaryLength / sizeof(T);
+		=> this._count = this.BinaryLength / Unsafe.SizeOf<T>();
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a pointer to a
 	/// <see langword="null"/> memory.
@@ -109,10 +109,11 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 	/// <paramref name="fixedOffset"/> will represent the remaining memory not included in the new context.
 	/// </remarks>
 	public FixedContext<TDestination> GetTransformation<TDestination>(out FixedOffset fixedOffset,
-		Boolean isReadOnly = false) where TDestination : unmanaged
+		Boolean isReadOnly = false)
 	{
 		this.ValidateOperation(isReadOnly);
-		Int32 sizeOf = sizeof(TDestination);
+		this.ValidateTransformation(typeof(TDestination), ReadOnlyValPtr<T>.IsUnmanaged);
+		Int32 sizeOf = Unsafe.SizeOf<TDestination>();
 		Int32 count = this.GetCount(sizeOf);
 		Int32 offset = count * sizeOf;
 		fixedOffset = new(this, offset);

@@ -1,6 +1,6 @@
-namespace Rxmxnx.PInvoke.Buffers;
+namespace Rxmxnx.PInvoke;
 
-public static partial class AllocatedBuffer
+public static partial class BufferManager
 {
 	/// <summary>
 	/// State for transformation object.
@@ -19,12 +19,12 @@ public static partial class AllocatedBuffer
 		/// </summary>
 		/// <param name="buffer">Object buffer.</param>
 		/// <param name="state">State object.</param>
-		public static void Execute(AllocatedBuffer<Object> buffer, in TransformationState<T> state)
+		public static void Execute(ScopedBuffer<Object> buffer, in TransformationState<T> state)
 		{
 			Span<T> span =
 				MemoryMarshal.CreateSpan(ref Unsafe.As<Object, T>(ref MemoryMarshal.GetReference(buffer.Span)),
 				                         buffer.Span.Length);
-			AllocatedBuffer<T> bufferT = new(span, !buffer.InStack, buffer.FullLength);
+			ScopedBuffer<T> bufferT = new(span, !buffer.InStack, buffer.FullLength);
 			state._action(bufferT);
 		}
 	}
@@ -47,12 +47,12 @@ public static partial class AllocatedBuffer
 		/// </summary>
 		/// <param name="buffer">Object buffer.</param>
 		/// <param name="state">State object.</param>
-		public static TResult Execute(AllocatedBuffer<Object> buffer, in TransformationState<T, TResult> state)
+		public static TResult Execute(ScopedBuffer<Object> buffer, in TransformationState<T, TResult> state)
 		{
 			Span<T> span =
 				MemoryMarshal.CreateSpan(ref Unsafe.As<Object, T>(ref MemoryMarshal.GetReference(buffer.Span)),
 				                         buffer.Span.Length);
-			AllocatedBuffer<T> bufferT = new(span, !buffer.InStack, buffer.FullLength);
+			ScopedBuffer<T> bufferT = new(span, !buffer.InStack, buffer.FullLength);
 			return state._func(bufferT);
 		}
 	}

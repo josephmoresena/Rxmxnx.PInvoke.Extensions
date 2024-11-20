@@ -3,17 +3,22 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// Represents a platform-specific type used to manage a pointer to a mutable value of type <typeparamref name="T"/>.
 /// </summary>
-/// <typeparam name="T">An <see langword="unmanaged"/> <see cref="ValueType"/>.</typeparam>
+/// <typeparam name="T">Type of pointer.</typeparam>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 public readonly unsafe struct ValPtr<T> : IWrapper<IntPtr>, IEquatable<ValPtr<T>>, IComparable, IComparable<ValPtr<T>>,
-	ISpanFormattable, ISerializable where T : unmanaged
+	ISpanFormattable, ISerializable
 {
 	/// <summary>
 	/// A read-only field that represents a pointer that has been initialized to zero.
 	/// </summary>
 	public static readonly ValPtr<T> Zero = default;
+
+	/// <summary>
+	/// Indicates if <typeparamref name="T"/> is a <see langword="unmanaged"/> type.
+	/// </summary>
+	public static Boolean IsUnmanaged => ReadOnlyValPtr<T>.IsUnmanaged;
 
 	/// <summary>
 	/// The internal pointer value.
@@ -143,7 +148,9 @@ public readonly unsafe struct ValPtr<T> : IWrapper<IntPtr>, IEquatable<ValPtr<T>
 	/// Defines an implicit conversion of a given pointer to a value pointer.
 	/// </summary>
 	/// <param name="ptr">A pointer to implicitly convert.</param>
+#pragma warning disable CS8500
 	public static implicit operator ValPtr<T>(T* ptr) => new(ptr);
+#pragma warning restore CS8500
 	/// <summary>
 	/// Defines an implicit conversion of a given <see cref="ValPtr{T}"/> to a pointer.
 	/// </summary>
@@ -153,7 +160,9 @@ public readonly unsafe struct ValPtr<T> : IWrapper<IntPtr>, IEquatable<ValPtr<T>
 	/// Defines an implicit conversion of a given <see cref="ValPtr{T}"/> to a pointer.
 	/// </summary>
 	/// <param name="valPtr">A <see cref="ValPtr{T}"/> to implicitly convert.</param>
+#pragma warning disable CS8500
 	public static implicit operator T*(ValPtr<T> valPtr) => (T*)valPtr._value;
+#pragma warning restore CS8500
 	/// <summary>
 	/// Defines an implicit conversion of a given <see cref="ValPtr{T}"/> to a pointer.
 	/// </summary>
@@ -192,24 +201,24 @@ public readonly unsafe struct ValPtr<T> : IWrapper<IntPtr>, IEquatable<ValPtr<T>
 	/// <param name="pointer">The pointer to add the offset to.</param>
 	/// <param name="offset">The offset in <typeparamref name="T"/> units to add.</param>
 	public static ValPtr<T> operator +(ValPtr<T> pointer, Int32 offset)
-		=> (ValPtr<T>)(pointer.Pointer + offset * sizeof(T));
+		=> (ValPtr<T>)(pointer.Pointer + offset * Unsafe.SizeOf<T>());
 	/// <summary>
 	/// Adds an offset of one <typeparamref name="T"/> unit to the value of a pointer.
 	/// </summary>
 	/// <param name="pointer">The pointer to add the offset to.</param>
-	public static ValPtr<T> operator ++(ValPtr<T> pointer) => (ValPtr<T>)(pointer.Pointer + sizeof(T));
+	public static ValPtr<T> operator ++(ValPtr<T> pointer) => (ValPtr<T>)(pointer.Pointer + Unsafe.SizeOf<T>());
 	/// <summary>
 	/// Subtracts an offset in <typeparamref name="T"/> units from the value of a pointer.
 	/// </summary>
 	/// <param name="pointer">The pointer to subtract the offset form.</param>
 	/// <param name="offset">The offset in <typeparamref name="T"/> units to subtract.</param>
 	public static ValPtr<T> operator -(ValPtr<T> pointer, Int32 offset)
-		=> (ValPtr<T>)(pointer.Pointer - offset * sizeof(T));
+		=> (ValPtr<T>)(pointer.Pointer - offset * Unsafe.SizeOf<T>());
 	/// <summary>
 	/// Subtracts an offset of one <typeparamref name="T"/> unit from the value of a pointer.
 	/// </summary>
 	/// <param name="pointer">The pointer to subtract the offset form.</param>
-	public static ValPtr<T> operator --(ValPtr<T> pointer) => (ValPtr<T>)(pointer.Pointer - sizeof(T));
+	public static ValPtr<T> operator --(ValPtr<T> pointer) => (ValPtr<T>)(pointer.Pointer - Unsafe.SizeOf<T>());
 	/// <summary>Compares two values to determine which is less.</summary>
 	/// <param name="left">The value to compare with <paramref name="right"/>.</param>
 	/// <param name="right">The value to compare with <paramref name="left"/>.</param>
@@ -242,14 +251,15 @@ public readonly unsafe struct ValPtr<T> : IWrapper<IntPtr>, IEquatable<ValPtr<T>
 	/// </summary>
 	/// <param name="pointer">The pointer to add the offset to.</param>
 	/// <param name="offset">The offset in <typeparamref name="T"/> units to add.</param>
-	public static ValPtr<T> Add(ValPtr<T> pointer, Int32 offset) => (ValPtr<T>)(pointer.Pointer + offset * sizeof(T));
+	public static ValPtr<T> Add(ValPtr<T> pointer, Int32 offset)
+		=> (ValPtr<T>)(pointer.Pointer + offset * Unsafe.SizeOf<T>());
 	/// <summary>
 	/// Subtracts an offset in <typeparamref name="T"/> units to the value of a pointer.
 	/// </summary>
 	/// <param name="pointer">The pointer to subtract the offset to.</param>
 	/// <param name="offset">The offset in <typeparamref name="T"/> units to subtract.</param>
 	public static ValPtr<T> Subtract(ValPtr<T> pointer, Int32 offset)
-		=> (ValPtr<T>)(pointer.Pointer - offset * sizeof(T));
+		=> (ValPtr<T>)(pointer.Pointer - offset * Unsafe.SizeOf<T>());
 
 	/// <inheritdoc cref="IntPtr.Parse(String)"/>
 	[ExcludeFromCodeCoverage]

@@ -4,7 +4,7 @@
 /// Interface representing a context from a read-only block of fixed memory.
 /// </summary>
 /// <typeparam name="T">Type of objects in the read-only fixed memory block.</typeparam>
-public interface IReadOnlyFixedContext<T> : IReadOnlyFixedMemory<T> where T : unmanaged
+public interface IReadOnlyFixedContext<T> : IReadOnlyFixedMemory<T>
 {
 	/// <summary>
 	/// Reinterprets the <typeparamref name="T"/> fixed memory block as
@@ -13,8 +13,7 @@ public interface IReadOnlyFixedContext<T> : IReadOnlyFixedMemory<T> where T : un
 	/// <typeparam name="TDestination">Type of objects in the reinterpreted memory block.</typeparam>
 	/// <param name="residual">Output. Residual read-only memory from the transformation.</param>
 	/// <returns>An instance of <see cref="IReadOnlyFixedContext{TDestination}"/>.</returns>
-	IReadOnlyFixedContext<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual)
-		where TDestination : unmanaged;
+	IReadOnlyFixedContext<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual);
 
 	/// <summary>
 	/// Interface representing a disposable <see cref="IReadOnlyFixedReference{T}"/> object for a context

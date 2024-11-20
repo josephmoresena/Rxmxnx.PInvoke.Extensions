@@ -1,6 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#pragma warning disable CS8500
 public unsafe partial class UnmanagedValueExtensions
 {
 	/// <summary>
@@ -8,12 +9,12 @@ public unsafe partial class UnmanagedValueExtensions
 	/// address until the action specified in <paramref name="action"/> has completed.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> value type that is contained in the contiguous region of memory.
+	/// The type that is contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <param name="arr">The current array of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A delegate of type <see cref="FixedContextAction{T}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T>(this T[]? arr, FixedContextAction<T> action) where T : unmanaged
+	public static void WithSafeFixed<T>(this T[]? arr, FixedContextAction<T> action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		if (arr is not null)
@@ -37,12 +38,12 @@ public unsafe partial class UnmanagedValueExtensions
 	/// address until the action specified in <paramref name="action"/> has completed.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> value type that is contained in the contiguous region of memory.
+	/// The type that is contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <param name="arr">The current array of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T>(this T[]? arr, ReadOnlyFixedContextAction<T> action) where T : unmanaged
+	public static void WithSafeFixed<T>(this T[]? arr, ReadOnlyFixedContextAction<T> action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		if (arr is not null)
@@ -61,13 +62,12 @@ public unsafe partial class UnmanagedValueExtensions
 		else
 			action(FixedContext<T>.Empty);
 	}
-
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current array by pinning its memory
 	/// address until the action specified in <paramref name="action"/> has completed.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> value type that is contained in the contiguous region of memory.
+	/// The type that is contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
 	/// <param name="arr">The current array of type <typeparamref name="T"/>.</param>
@@ -75,7 +75,6 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="action">A delegate of type <see cref="FixedContextAction{T, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(this T[]? arr, TArg arg, FixedContextAction<T, TArg> action)
-		where T : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		if (arr is not null)
@@ -99,7 +98,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// address until the action specified in <paramref name="action"/> has completed.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> value type that is contained in the contiguous region of memory.
+	/// The type that is contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
 	/// <param name="arr">The current array of type <typeparamref name="T"/>.</param>
@@ -107,7 +106,6 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(this T[]? arr, TArg arg, ReadOnlyFixedContextAction<T, TArg> action)
-		where T : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		if (arr is not null)
@@ -126,13 +124,12 @@ public unsafe partial class UnmanagedValueExtensions
 		else
 			action(FixedContext<T>.Empty, arg);
 	}
-
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current array by pinning its memory
 	/// address until the function specified in <paramref name="func"/> has completed.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> value type that is contained in the contiguous region of memory.
+	/// The type that is contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <typeparam name="TResult">The type of the value returned by the function <paramref name="func"/>.</typeparam>
 	/// <param name="arr">The current array of type <typeparamref name="T"/>.</param>
@@ -140,7 +137,6 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TResult>(this T[]? arr, FixedContextFunc<T, TResult> func)
-		where T : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		if (arr is not null)
@@ -163,7 +159,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// address until the function specified in <paramref name="func"/> has completed.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> value type that is contained in the contiguous region of memory.
+	/// The type that is contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <typeparam name="TResult">The type of the value returned by the function <paramref name="func"/>.</typeparam>
 	/// <param name="arr">The current array of type <typeparamref name="T"/>.</param>
@@ -171,7 +167,6 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TResult>(this T[]? arr, ReadOnlyFixedContextFunc<T, TResult> func)
-		where T : unmanaged
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		if (arr is not null)
@@ -189,13 +184,12 @@ public unsafe partial class UnmanagedValueExtensions
 			}
 		return func(FixedContext<T>.Empty);
 	}
-
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current array by pinning its memory
 	/// address until the function specified by <paramref name="func"/> has completed.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> value type that is contained in the contiguous region of memory.
+	/// The type that is contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
 	/// <typeparam name="TResult">The type of the value returned by the function <paramref name="func"/>.</typeparam>
@@ -205,7 +199,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TArg, TResult>(this T[]? arr, TArg arg,
-		FixedContextFunc<T, TArg, TResult> func) where T : unmanaged
+		FixedContextFunc<T, TArg, TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		if (arr is not null)
@@ -228,7 +222,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// address until the function specified by <paramref name="func"/> has completed.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The <see langword="unmanaged"/> value type that is contained in the contiguous region of memory.
+	/// The type that is contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
 	/// <typeparam name="TResult">The type of the value returned by the function <paramref name="func"/>.</typeparam>
@@ -238,7 +232,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TArg, TResult>(this T[]? arr, TArg arg,
-		ReadOnlyFixedContextFunc<T, TArg, TResult> func) where T : unmanaged
+		ReadOnlyFixedContextFunc<T, TArg, TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		if (arr is not null)
@@ -257,3 +251,4 @@ public unsafe partial class UnmanagedValueExtensions
 		return func(FixedContext<T>.Empty, arg);
 	}
 }
+#pragma warning restore CS8500

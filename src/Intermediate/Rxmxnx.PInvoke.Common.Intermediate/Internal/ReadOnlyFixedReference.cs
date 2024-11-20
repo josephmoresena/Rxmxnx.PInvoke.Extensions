@@ -6,8 +6,9 @@
 /// <typeparam name="T">Type of the fixed memory reference.</typeparam>
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 internal sealed unsafe partial class ReadOnlyFixedReference<T> : ReadOnlyFixedMemory, IReadOnlyFixedReference<T>
-	where T : unmanaged
 {
+	/// <inheritdoc/>
+	public override Boolean IsUnmanaged => ReadOnlyValPtr<T>.IsUnmanaged;
 	/// <inheritdoc/>
 	public override Type Type => typeof(T);
 	/// <inheritdoc/>
@@ -19,7 +20,7 @@ internal sealed unsafe partial class ReadOnlyFixedReference<T> : ReadOnlyFixedMe
 	/// Constructor that takes a pointer to a fixed memory reference.
 	/// </summary>
 	/// <param name="ptr">Pointer to the fixed memory reference.</param>
-	public ReadOnlyFixedReference(void* ptr) : base(ptr, sizeof(T), true) { }
+	public ReadOnlyFixedReference(void* ptr) : base(ptr, Unsafe.SizeOf<T>(), true) { }
 
 	/// <summary>
 	/// Constructor that takes a <see cref="FixedMemory"/> instance.
@@ -57,11 +58,12 @@ internal sealed unsafe partial class ReadOnlyFixedReference<T> : ReadOnlyFixedMe
 	/// accommodate the new type. For example, if an attempt is made to transform a 2-byte reference into a 4-byte type.
 	/// </exception>
 	public ReadOnlyFixedReference<TDestination> GetTransformation<TDestination>(out ReadOnlyFixedOffset fixedOffset)
-		where TDestination : unmanaged
 	{
 		this.ValidateOperation(true);
-		this.ValidateReferenceSize(typeof(TDestination), sizeof(TDestination));
-		fixedOffset = new(this, sizeof(TDestination));
+		this.ValidateTransformation(typeof(TDestination), ReadOnlyValPtr<T>.IsUnmanaged);
+		Int32 sizeOf = Unsafe.SizeOf<TDestination>();
+		this.ValidateReferenceSize(typeof(TDestination), sizeOf);
+		fixedOffset = new(this, sizeOf);
 		return new(this);
 	}
 }
