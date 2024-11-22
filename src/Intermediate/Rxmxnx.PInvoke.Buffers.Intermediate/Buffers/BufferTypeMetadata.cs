@@ -4,7 +4,6 @@ namespace Rxmxnx.PInvoke;
 /// This interface exposes a buffer type metadata.
 /// </summary>
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
-#pragma warning disable CA2252
 public abstract class BufferTypeMetadata<T>
 {
 	/// <summary>
@@ -85,4 +84,3 @@ public abstract class BufferTypeMetadata<T>
 	internal abstract TResult Execute<TU, TState, TResult>(in TState state,
 		AllocatedBufferFunc<TU, TState, TResult> func, Int32 spanLength);
 }
-#pragma warning restore CA2252

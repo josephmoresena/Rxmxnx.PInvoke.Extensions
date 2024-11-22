@@ -1,6 +1,5 @@
 namespace Rxmxnx.PInvoke;
 
-#pragma warning disable CA2252
 public static partial class BufferManager
 {
 	internal static partial class MetadataManager<T>
@@ -33,6 +32,7 @@ public static partial class BufferManager
 			/// <summary>
 			/// Constructor.
 			/// </summary>
+#pragma warning disable CA2252
 			public MetadataStore()
 			{
 				this._cache.Add(1, IManagedBuffer<T>.GetMetadata<Atomic<T>>());
@@ -46,6 +46,7 @@ public static partial class BufferManager
 					// ignored
 				}
 			}
+#pragma warning restore CA2252
 			/// <summary>
 			/// Adds metadata to current cache.
 			/// </summary>

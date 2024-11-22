@@ -103,6 +103,7 @@ public static partial class BufferManager
 			return;
 		}
 		TransformationState<T> stateT = new(action);
+		MetadataManager<Object>.PrintMetadata();
 		metadata.Execute(stateT, TransformationState<T>.Execute, count);
 	}
 	/// <summary>

@@ -96,6 +96,17 @@ public static partial class BufferManager
 			lock (MetadataManager<T>.store.LockObject)
 				TSpace.Append<TSpace>(MetadataManager<T>.store.Buffers);
 		}
+		/// <summary>
+		/// Prints metadata dictionary.
+		/// </summary>
+		public static void PrintMetadata()
+		{
+			foreach (UInt16 key in MetadataManager<T>.store.Buffers.Keys)
+			{
+				BufferTypeMetadata<T> meta = MetadataManager<T>.store.Buffers[key];
+				Console.WriteLine(key + ": " + String.Join(", ", meta.Components.Select(k => k.Size)));
+			}
+		}
 	}
 }
 #pragma warning restore CA2252

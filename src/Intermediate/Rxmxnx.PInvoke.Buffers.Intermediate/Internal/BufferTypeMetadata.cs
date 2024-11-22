@@ -6,12 +6,13 @@ namespace Rxmxnx.PInvoke.Internal;
 /// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 /// <typeparam name="T">Type of items in the buffer.</typeparam>
 /// <param name="capacity">Buffer's capacity.</param>
-#pragma warning disable CA2252
 internal sealed class BufferTypeMetadata<TBuffer, T>(Int32 capacity)
 	: BufferTypeMetadata<T> where TBuffer : struct, IManagedBuffer<T>
 {
 	/// <inheritdoc/>
+#pragma warning disable CA2252
 	public override BufferTypeMetadata<T>[] Components { get; } = TBuffer.Components;
+#pragma warning restore CA2252
 	/// <inheritdoc/>
 	public override UInt16 Size { get; } = (UInt16)capacity;
 	/// <inheritdoc/>
@@ -80,4 +81,3 @@ internal sealed class BufferTypeMetadata<TBuffer, T>(Int32 capacity)
 		return func(scoped, state);
 	}
 }
-#pragma warning restore CA2252

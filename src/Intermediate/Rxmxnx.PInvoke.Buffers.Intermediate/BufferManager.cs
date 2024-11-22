@@ -3,7 +3,6 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// This class allows to allocate buffers on stack if possible.
 /// </summary>
-#pragma warning disable CA2252
 public static partial class BufferManager
 {
 	/// <summary>
@@ -153,4 +152,3 @@ public static partial class BufferManager
 	public static void RegisterNullableSpace<T, TSpace>() where TSpace : struct, IManagedBuffer<T?> where T : struct
 		=> MetadataManager<T?>.RegisterBufferSpace<TSpace>();
 }
-#pragma warning restore CA2252
