@@ -103,7 +103,9 @@ public static partial class BufferManager
 			return;
 		}
 		TransformationState<T> stateT = new(action);
+#if !PACKAGE
 		MetadataManager<Object>.PrintMetadata();
+#endif
 		metadata.Execute(stateT, TransformationState<T>.Execute, count);
 	}
 	/// <summary>
@@ -126,6 +128,9 @@ public static partial class BufferManager
 			BufferManager.AllocHeap(count, state, action);
 			return;
 		}
+#if !PACKAGE
+		MetadataManager<Object>.PrintMetadata();
+#endif
 		metadata.Execute(state, action, count);
 	}
 	/// <summary>
@@ -146,6 +151,9 @@ public static partial class BufferManager
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
 			return BufferManager.AllocHeap(count, func);
 		TransformationState<T, TResult> stateT = new(func);
+#if !PACKAGE
+		MetadataManager<Object>.PrintMetadata();
+#endif
 		return metadata.Execute(stateT, TransformationState<T, TResult>.Execute, count);
 	}
 	/// <summary>
@@ -167,6 +175,9 @@ public static partial class BufferManager
 		BufferTypeMetadata<Object>? metadata = MetadataManager<Object>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
 			return BufferManager.AllocHeap(count, state, func);
+#if !PACKAGE
+		MetadataManager<Object>.PrintMetadata();
+#endif
 		return metadata.Execute(state, func, count);
 	}
 	/// <summary>
@@ -186,6 +197,9 @@ public static partial class BufferManager
 			BufferManager.AllocHeap(count, action);
 			return;
 		}
+#if !PACKAGE
+		MetadataManager<Object>.PrintMetadata();
+#endif
 		metadata.Execute(action, count);
 	}
 	/// <summary>
@@ -208,6 +222,9 @@ public static partial class BufferManager
 			BufferManager.AllocHeap(count, state, action);
 			return;
 		}
+#if !PACKAGE
+		MetadataManager<Object>.PrintMetadata();
+#endif
 		metadata.Execute<TState>(state, action, count);
 	}
 	/// <summary>
@@ -227,6 +244,9 @@ public static partial class BufferManager
 		BufferTypeMetadata<T>? metadata = MetadataManager<T>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
 			return BufferManager.AllocHeap(count, func);
+#if !PACKAGE
+		MetadataManager<Object>.PrintMetadata();
+#endif
 		return metadata.Execute(func, count);
 	}
 	/// <summary>
@@ -248,6 +268,9 @@ public static partial class BufferManager
 		BufferTypeMetadata<T>? metadata = MetadataManager<T>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
 			return BufferManager.AllocHeap(count, state, func);
+#if !PACKAGE
+		MetadataManager<Object>.PrintMetadata();
+#endif
 		return metadata.Execute<TState, TResult>(state, func, count);
 	}
 	/// <summary>

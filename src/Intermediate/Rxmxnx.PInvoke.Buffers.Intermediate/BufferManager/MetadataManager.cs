@@ -79,7 +79,7 @@ public static partial class BufferManager
 			BufferTypeMetadata<T> typeMetadata = IManagedBuffer<T>.GetMetadata<TBuffer>();
 			lock (MetadataManager<T>.store.LockObject)
 			{
-				if (!MetadataManager<T>.store.Add(typeMetadata) || !TBuffer.IsBinary) return;
+				if (!MetadataManager<T>.store.Add(typeMetadata) || !typeMetadata.IsBinary) return;
 				while (BufferManager.GetMaxValue(MetadataManager<T>.store.MaxSpace) < typeMetadata.Size)
 					MetadataManager<T>.store.MaxSpace *= 2;
 				TBuffer.AppendComponent(MetadataManager<T>.store.Buffers);
@@ -91,11 +91,15 @@ public static partial class BufferManager
 		/// <typeparam name="TSpace">Type of the space.</typeparam>
 		public static void RegisterBufferSpace<TSpace>() where TSpace : struct, IManagedBuffer<T>
 		{
-			ValidationUtilities.ThrowIfNotSpace(TSpace.IsPure, TSpace.TypeMetadata.Size, typeof(TSpace));
+			BufferTypeMetadata<T> typeMetadata = IManagedBuffer<T>.GetMetadata<TSpace>();
+			Boolean isBinary = typeMetadata.IsBinary;
+			Span<UInt16> sizes = MetadataManager<T>.WriteSizes(typeMetadata, stackalloc UInt16[3]);
+			ValidationUtilities.ThrowIfNotSpace(isBinary, sizes, typeof(TSpace));
 			MetadataManager<T>.RegisterBuffer<TSpace>();
 			lock (MetadataManager<T>.store.LockObject)
 				TSpace.Append<TSpace>(MetadataManager<T>.store.Buffers);
 		}
+#if !PACKAGE
 		/// <summary>
 		/// Prints metadata dictionary.
 		/// </summary>
@@ -103,10 +107,12 @@ public static partial class BufferManager
 		{
 			foreach (UInt16 key in MetadataManager<T>.store.Buffers.Keys)
 			{
-				BufferTypeMetadata<T> meta = MetadataManager<T>.store.Buffers[key];
-				Console.WriteLine(key + ": " + String.Join(", ", meta.Components.Select(k => k.Size)));
+				BufferTypeMetadata<T> m = MetadataManager<T>.store.Buffers[key];
+				Console.WriteLine(
+					$"{typeof(T)} {key}({String.Join(", ", m.Components.Select(k => k.Size))}): {m.IsBinary}.");
 			}
 		}
+#endif
 	}
 }
 #pragma warning restore CA2252

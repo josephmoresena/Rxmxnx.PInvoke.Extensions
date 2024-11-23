@@ -17,7 +17,7 @@ public struct Composite<TBufferA, TBufferB, T> : IManagedBuffer<T> where TBuffer
 	/// </summary>
 	private static readonly BufferTypeMetadata<T> typeMetadata =
 		new BufferTypeMetadata<Composite<TBufferA, TBufferB, T>, T>(
-			TBufferA.TypeMetadata.Size + TBufferB.TypeMetadata.Size);
+			TBufferA.TypeMetadata.Size + TBufferB.TypeMetadata.Size, Composite<TBufferA, TBufferB, T>.IsBinary());
 
 	/// <summary>
 	/// Low buffer.
@@ -28,8 +28,6 @@ public struct Composite<TBufferA, TBufferB, T> : IManagedBuffer<T> where TBuffer
 	/// </summary>
 	private TBufferB _buff1;
 
-	static Boolean IManagedBuffer<T>.IsPure => TBufferA.IsBinary && typeof(TBufferA) == typeof(TBufferB);
-	static Boolean IManagedBuffer<T>.IsBinary => TBufferA.IsBinary && TBufferB.IsBinary;
 	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => Composite<TBufferA, TBufferB, T>.typeMetadata;
 	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [TBufferA.TypeMetadata, TBufferB.TypeMetadata,];
 
@@ -43,6 +41,24 @@ public struct Composite<TBufferA, TBufferB, T> : IManagedBuffer<T> where TBuffer
 		TBufferB.Append<Composite<TBufferB, TBuffer, T>>(components);
 		TBufferB.Append<TBuffer>(components);
 		TBufferA.Append<TBufferB>(components);
+	}
+
+	/// <summary>
+	/// Indicates whether current buffer type is binary.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if current buffer type is binary; otherwise, <see langword="false"/>.
+	/// </returns>
+	private static Boolean IsBinary()
+	{
+		if (!TBufferA.TypeMetadata.IsBinary || !TBufferB.TypeMetadata.IsBinary)
+			return false;
+		if (TBufferB.TypeMetadata.Components.Length != 0 &&
+		    TBufferB.TypeMetadata.Components[0] != TBufferB.TypeMetadata.Components[^1])
+			return false;
+		UInt16 sizeB = TBufferB.TypeMetadata.Size;
+		Int32 diff = sizeB - TBufferA.TypeMetadata.Size;
+		return diff >= 0 && diff <= sizeB;
 	}
 }
 #pragma warning restore CA2252

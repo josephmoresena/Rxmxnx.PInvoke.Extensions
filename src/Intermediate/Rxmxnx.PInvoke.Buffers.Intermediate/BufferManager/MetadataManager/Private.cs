@@ -35,5 +35,19 @@ public static partial class BufferManager
 				return result;
 			}
 		}
+		/// <summary>
+		/// Writes on <paramref name="sizes"/> the sizes of <paramref name="metadata"/>.
+		/// </summary>
+		/// <param name="metadata">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
+		/// <param name="sizes">Buffer to write.</param>
+		/// <returns>Written buffer.</returns>
+		private static Span<UInt16> WriteSizes(BufferTypeMetadata<T> metadata, Span<UInt16> sizes)
+		{
+			sizes[0] = metadata.Size;
+			if (metadata.Components.Length != 2) return sizes;
+			sizes[1] = metadata.Components[1].Size;
+			sizes[2] = metadata.Components[0].Size;
+			return sizes;
+		}
 	}
 }

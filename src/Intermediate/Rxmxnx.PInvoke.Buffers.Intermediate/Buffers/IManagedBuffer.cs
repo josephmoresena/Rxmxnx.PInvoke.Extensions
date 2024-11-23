@@ -9,20 +9,6 @@ namespace Rxmxnx.PInvoke.Buffers;
 public interface IManagedBuffer<T>
 {
 	/// <summary>
-	/// Indicates whether current type is pure.
-	/// </summary>
-#if NET6_0
-	[RequiresPreviewFeatures]
-#endif
-	internal static abstract Boolean IsPure { get; }
-	/// <summary>
-	/// Indicates whether current type is binary space.
-	/// </summary>
-#if NET6_0
-	[RequiresPreviewFeatures]
-#endif
-	internal static abstract Boolean IsBinary { get; }
-	/// <summary>
 	/// Current type components.
 	/// </summary>
 #if NET6_0
@@ -67,7 +53,7 @@ public interface IManagedBuffer<T>
 	private protected static void AppendComponent<TBuffer>(IDictionary<UInt16, BufferTypeMetadata<T>> components)
 		where TBuffer : struct, IManagedBuffer<T>
 	{
-		if (TBuffer.IsBinary)
+		if (TBuffer.TypeMetadata.IsBinary)
 			IManagedBuffer<T>.AppendComponent(TBuffer.TypeMetadata, components);
 	}
 
@@ -76,13 +62,12 @@ public interface IManagedBuffer<T>
 	/// </summary>
 	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 	/// <returns>The <see cref="BufferTypeMetadata{T}"/> instance from <typeparamref name="TBuffer"/>.</returns>
-#if NET6_0
-	[RequiresPreviewFeatures]
-#endif
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Browsable(false)]
 	public static BufferTypeMetadata<T> GetMetadata<TBuffer>() where TBuffer : struct, IManagedBuffer<T>
+#pragma warning disable CA2252
 		=> TBuffer.TypeMetadata;
+#pragma warning restore CA2252
 
 	/// <summary>
 	/// Appends all components from <paramref name="component"/> instance.

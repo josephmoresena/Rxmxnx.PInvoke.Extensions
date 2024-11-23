@@ -18,8 +18,6 @@ public struct Atomic<T> : IManagedBuffer<T>
 	/// </summary>
 	private T _val0;
 
-	static Boolean IManagedBuffer<T>.IsPure => true;
-	static Boolean IManagedBuffer<T>.IsBinary => true;
 	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => Atomic<T>.typeMetadata;
 	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [];
 

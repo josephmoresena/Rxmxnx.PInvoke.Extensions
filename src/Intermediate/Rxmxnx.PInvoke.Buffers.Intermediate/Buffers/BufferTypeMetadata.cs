@@ -7,6 +7,10 @@ namespace Rxmxnx.PInvoke;
 public abstract class BufferTypeMetadata<T>
 {
 	/// <summary>
+	/// Indicates whether current type is binary space.
+	/// </summary>
+	public abstract Boolean IsBinary { get; }
+	/// <summary>
 	/// Current buffer components.
 	/// </summary>
 	public abstract BufferTypeMetadata<T>[] Components { get; }
@@ -57,11 +61,12 @@ public abstract class BufferTypeMetadata<T>
 	/// <param name="spanLength">Required span length.</param>
 	public abstract TResult Execute<TState, TResult>(in TState state, AllocatedBufferFunc<T, TState, TResult> func,
 		Int32 spanLength);
+
 	/// <summary>
 	/// Composes a new buffer using twice the current buffer type.
 	/// </summary>
 	/// <returns>A composed <see cref="BufferTypeMetadata{T}"/>.</returns>
-	internal virtual BufferTypeMetadata<T>? Double() => this.Compose(this);
+	internal BufferTypeMetadata<T>? Double() => this.Compose(this);
 	/// <summary>
 	/// Executes <paramref name="action"/> using a buffer of current type and given state object.
 	/// </summary>

@@ -6,9 +6,12 @@ namespace Rxmxnx.PInvoke.Internal;
 /// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 /// <typeparam name="T">Type of items in the buffer.</typeparam>
 /// <param name="capacity">Buffer's capacity.</param>
-internal sealed class BufferTypeMetadata<TBuffer, T>(Int32 capacity)
+/// <param name="isBinary">Indicates if current buffer is binary.</param>
+internal sealed class BufferTypeMetadata<TBuffer, T>(Int32 capacity, Boolean isBinary = true)
 	: BufferTypeMetadata<T> where TBuffer : struct, IManagedBuffer<T>
 {
+	/// <inheritdoc/>
+	public override Boolean IsBinary { get; } = isBinary;
 	/// <inheritdoc/>
 #pragma warning disable CA2252
 	public override BufferTypeMetadata<T>[] Components { get; } = TBuffer.Components;

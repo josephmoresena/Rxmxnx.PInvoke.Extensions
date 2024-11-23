@@ -416,15 +416,16 @@ internal static unsafe class ValidationUtilities
 	/// <summary>
 	/// Throws an exception if buffer is not a space.
 	/// </summary>
-	/// <param name="isPure">Indicates whether buffer is pure.</param>
-	/// <param name="bufferSize">Buffer size.</param>
+	/// <param name="isBinary">Indicates whether buffer is binary.</param>
+	/// <param name="bufferSize">Buffer sizes.</param>
 	/// <param name="type">CLR type of buffer.</param>
 	/// <exception cref="InvalidOperationException">Throws an exception if buffer is not a space.</exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void ThrowIfNotSpace(Boolean isPure, UInt16 bufferSize, Type type)
+	public static void ThrowIfNotSpace(Boolean isBinary, Span<UInt16> bufferSize, Type type)
 	{
-		if (!isPure)
-			throw new InvalidOperationException($"{type} type with size is not an space. Size: {bufferSize}");
+		if (!isBinary || bufferSize[0] != 2 * bufferSize[1] || bufferSize[1] != 1 + bufferSize[2])
+			throw new InvalidOperationException(
+				$"{type} is not an space. Size: {bufferSize[0]} ({bufferSize[2]}, {bufferSize[1]}).");
 	}
 	/// <summary>
 	/// Throws an exception if <paramref name="type"/> is not unmanaged.
