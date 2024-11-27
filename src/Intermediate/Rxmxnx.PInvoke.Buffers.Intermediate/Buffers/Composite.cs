@@ -1,7 +1,7 @@
 namespace Rxmxnx.PInvoke.Buffers;
 
 /// <summary>
-/// Primordial buffer.
+/// Composite buffer.
 /// </summary>
 /// <typeparam name="TBufferA">The type of low buffer.</typeparam>
 /// <typeparam name="TBufferB">The type of high buffer.</typeparam>
@@ -35,12 +35,6 @@ public struct Composite<TBufferA, TBufferB, T> : IManagedBuffer<T> where TBuffer
 	{
 		IManagedBuffer<T>.AppendComponent<TBufferA>(components);
 		IManagedBuffer<T>.AppendComponent<TBufferB>(components);
-	}
-	static void IManagedBuffer<T>.Append<TBuffer>(IDictionary<UInt16, BufferTypeMetadata<T>> components)
-	{
-		TBufferB.Append<Composite<TBufferB, TBuffer, T>>(components);
-		TBufferB.Append<TBuffer>(components);
-		TBufferA.Append<TBufferB>(components);
 	}
 
 	/// <summary>

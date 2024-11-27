@@ -9,15 +9,34 @@ public abstract class BufferTypeMetadata<T>
 	/// <summary>
 	/// Indicates whether current type is binary space.
 	/// </summary>
-	public abstract Boolean IsBinary { get; }
+	public Boolean IsBinary { get; }
 	/// <summary>
 	/// Current buffer components.
 	/// </summary>
-	public abstract BufferTypeMetadata<T>[] Components { get; }
+	public BufferTypeMetadata<T>[] Components { get; }
 	/// <summary>
 	/// Buffer capacity.
 	/// </summary>
-	public abstract UInt16 Size { get; }
+	public UInt16 Size { get; }
+	/// <summary>
+	/// Indicates whether current type is pure.
+	/// </summary>
+	public Boolean IsPure { get; }
+
+	/// <summary>
+	/// Constructor.
+	/// </summary>
+	/// <param name="isBinary">Indicates if current buffer is binary.</param>
+	/// <param name="components">Buffer's components.</param>
+	/// <param name="capacity">Buffer's capacity.</param>
+	private protected BufferTypeMetadata(Boolean isBinary, BufferTypeMetadata<T>[] components, UInt16 capacity)
+	{
+		this.IsBinary = isBinary;
+		this.Components = components;
+		this.Size = capacity;
+		this.IsPure = isBinary && (components.Length == 0 || components[0].Size == components[^1].Size);
+	}
+
 	/// <summary>
 	/// Composes a new buffer using current buffer type and <paramref name="otherMetadata"/>.
 	/// </summary>
@@ -88,4 +107,22 @@ public abstract class BufferTypeMetadata<T>
 	/// <param name="spanLength">Required span length.</param>
 	internal abstract TResult Execute<TU, TState, TResult>(in TState state,
 		AllocatedBufferFunc<TU, TState, TResult> func, Int32 spanLength);
+
+	/// <summary>
+	/// Calculates if <paramref name="typeMetadata"/> is binary appendable to
+	/// current type.
+	/// </summary>
+	/// <param name="typeMetadata">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
+	/// <returns>
+	/// <see langword="true"/> if <paramref name="typeMetadata"/> is appendable to current type; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+	public Boolean IsBinaryAppendableTo(BufferTypeMetadata<T> typeMetadata)
+	{
+		if (!this.IsBinary || !typeMetadata.IsBinary) return false;
+		if (this.Size < typeMetadata.Size) return false;
+		if (this.Components.Length == 0) return typeMetadata.Size == 1;
+		if (this.Components[0].Size == this.Components[^1].Size) return true;
+		return typeMetadata.Size < this.Components[0].Size;
+	}
 }

@@ -5,19 +5,19 @@ namespace Rxmxnx.PInvoke.Internal;
 /// </summary>
 /// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 /// <typeparam name="T">Type of items in the buffer.</typeparam>
-/// <param name="capacity">Buffer's capacity.</param>
-/// <param name="isBinary">Indicates if current buffer is binary.</param>
-internal sealed class BufferTypeMetadata<TBuffer, T>(Int32 capacity, Boolean isBinary = true)
-	: BufferTypeMetadata<T> where TBuffer : struct, IManagedBuffer<T>
+internal sealed class BufferTypeMetadata<TBuffer, T> : BufferTypeMetadata<T> where TBuffer : struct, IManagedBuffer<T>
 {
-	/// <inheritdoc/>
-	public override Boolean IsBinary { get; } = isBinary;
-	/// <inheritdoc/>
+	/// <summary>
+	/// Internal implementation of <see cref="BufferTypeMetadata{T}"/>.
+	/// </summary>
+	/// <param name="capacity">Buffer's capacity.</param>
+	/// <param name="isBinary">Indicates if current buffer is binary.</param>
 #pragma warning disable CA2252
-	public override BufferTypeMetadata<T>[] Components { get; } = TBuffer.Components;
+	public BufferTypeMetadata(Int32 capacity, Boolean isBinary = true) : base(
+		isBinary, TBuffer.Components, (UInt16)capacity)
 #pragma warning restore CA2252
-	/// <inheritdoc/>
-	public override UInt16 Size { get; } = (UInt16)capacity;
+	{ }
+
 	/// <inheritdoc/>
 	public override BufferTypeMetadata<T>? Compose(BufferTypeMetadata<T> otherMetadata)
 		=> otherMetadata.Compose<TBuffer>();

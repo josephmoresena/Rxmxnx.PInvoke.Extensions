@@ -1,7 +1,7 @@
 namespace Rxmxnx.PInvoke.Buffers;
 
 /// <summary>
-/// Primordial buffer.
+/// Atomic buffer.
 /// </summary>
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
 #pragma warning disable CA2252
@@ -22,10 +22,5 @@ public struct Atomic<T> : IManagedBuffer<T>
 	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [];
 
 	static void IManagedBuffer<T>.AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components) { }
-	static void IManagedBuffer<T>.Append<TBuffer>(IDictionary<UInt16, BufferTypeMetadata<T>> components)
-	{
-		UInt16 initialSize = TBuffer.TypeMetadata.Size;
-		components.TryAdd(initialSize, TBuffer.TypeMetadata);
-	}
 }
 #pragma warning restore CA2252

@@ -14,14 +14,14 @@ public interface IManagedBuffer<T>
 #if NET6_0
 	[RequiresPreviewFeatures]
 #endif
-	internal static abstract BufferTypeMetadata<T>[] Components { get; }
+	protected internal static abstract BufferTypeMetadata<T>[] Components { get; }
 	/// <summary>
 	/// Buffer metadata.
 	/// </summary>
 #if NET6_0
 	[RequiresPreviewFeatures]
 #endif
-	internal static abstract BufferTypeMetadata<T> TypeMetadata { get; }
+	protected static abstract BufferTypeMetadata<T> TypeMetadata { get; }
 
 	/// <summary>
 	/// Appends all components from current type.
@@ -31,16 +31,6 @@ public interface IManagedBuffer<T>
 	[RequiresPreviewFeatures]
 #endif
 	internal static abstract void AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components);
-	/// <summary>
-	/// Appends a composed buffer.
-	/// </summary>
-	/// <typeparam name="TBuffer">Type of the composed buffer.</typeparam>
-	/// <param name="components">A dictionary of components.</param>
-#if NET6_0
-	[RequiresPreviewFeatures]
-#endif
-	internal static abstract void Append<TBuffer>(IDictionary<UInt16, BufferTypeMetadata<T>> components)
-		where TBuffer : struct, IManagedBuffer<T>;
 
 	/// <summary>
 	/// Appends all components from <typeparamref name="TBuffer"/> type.
@@ -74,11 +64,35 @@ public interface IManagedBuffer<T>
 	/// </summary>
 	/// <param name="component">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
 	/// <param name="components">A dictionary of components.</param>
-	private static void AppendComponent(BufferTypeMetadata<T> component,
+	protected static void AppendComponent(BufferTypeMetadata<T> component,
 		IDictionary<UInt16, BufferTypeMetadata<T>> components)
 	{
 		if (!components.TryAdd(component.Size, component)) return;
 		foreach (BufferTypeMetadata<T> metadataComponent in component.Components.AsSpan())
 			IManagedBuffer<T>.AppendComponent(metadataComponent, components);
+	}
+	/// <summary>
+	/// Indicates whether at least one append is required.
+	/// </summary>
+	/// <param name="aSize">Lower component size.</param>
+	/// <param name="bSize">Upper pure component size.</param>
+	/// <param name="components">A dictionary of components.</param>
+	/// <returns>
+	/// <see langword="true"/> if at least one append is required; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+	protected static Boolean IsAppendRequired(UInt16 aSize, UInt16 bSize,
+		IDictionary<UInt16, BufferTypeMetadata<T>> components)
+	{
+		UInt16 acc = 0;
+		aSize /= 2;
+		while (aSize > 0)
+		{
+			if (!components.ContainsKey((UInt16)(bSize + aSize))) return true;
+			acc += aSize;
+			if (acc != aSize && !components.ContainsKey((UInt16)(bSize + acc))) return true;
+			aSize /= 2;
+		}
+		return false;
 	}
 }

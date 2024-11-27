@@ -423,7 +423,7 @@ internal static unsafe class ValidationUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfNotSpace(Boolean isBinary, Span<UInt16> bufferSize, Type type)
 	{
-		if (!isBinary || bufferSize[0] + 1 != 2 * bufferSize[1] || bufferSize[1] != 1 + bufferSize[2])
+		if (!isBinary || bufferSize[0] != 2 * bufferSize[1] || bufferSize[1] != bufferSize[2])
 			throw new InvalidOperationException(
 				$"{type} is not an space. Size: {bufferSize[0]} ({bufferSize[2]}, {bufferSize[1]}).");
 	}
