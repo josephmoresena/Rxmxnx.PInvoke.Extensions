@@ -85,6 +85,30 @@ public static partial class BufferManager
 				TBuffer.AppendComponent(MetadataManager<T>.store.Buffers);
 			}
 		}
+		/// <summary>
+		/// Registers space type.
+		/// </summary>
+		/// <typeparam name="TSpace">Type of the space.</typeparam>
+		public static void RegisterBufferSpace<TSpace>() where TSpace : struct, IManagedBuffer<T>
+		{
+			BufferTypeMetadata<T> typeMetadata = IManagedBuffer<T>.GetMetadata<TSpace>();
+			Boolean isBinary = typeMetadata.IsBinary;
+			Span<UInt16> sizes = MetadataManager<T>.WriteSizes(typeMetadata, stackalloc UInt16[3]);
+			ValidationUtilities.ThrowIfNotSpace(isBinary, sizes, typeof(TSpace));
+			MetadataManager<T>.RegisterBuffer<TSpace>();
+			lock (MetadataManager<T>.store.LockObject)
+			{
+				using StaticCompositionHelper<T> helper = new(sizes[0]);
+				try
+				{
+					TSpace.StaticCompose<TSpace>(helper);
+				}
+				finally
+				{
+					helper.Append(MetadataManager<T>.store.Buffers);
+				}
+			}
+		}
 #if !PACKAGE
 		/// <summary>
 		/// Prints metadata dictionary.

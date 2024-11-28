@@ -115,6 +115,7 @@ public static partial class BufferManager
 	/// Registers object buffer.
 	/// </summary>
 	/// <typeparam name="TBuffer">Type of object buffer.</typeparam>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void Register<TBuffer>() where TBuffer : struct, IManagedBuffer<Object>
 		=> MetadataManager<Object>.RegisterBuffer<TBuffer>();
 	/// <summary>
@@ -122,6 +123,7 @@ public static partial class BufferManager
 	/// </summary>
 	/// <typeparam name="T">Type of items in the buffer.</typeparam>
 	/// <typeparam name="TBuffer">Type of <typeparamref name="T"/> buffer.</typeparam>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void Register<T, TBuffer>() where TBuffer : struct, IManagedBuffer<T> where T : struct
 		=> MetadataManager<T>.RegisterBuffer<TBuffer>();
 	/// <summary>
@@ -129,26 +131,30 @@ public static partial class BufferManager
 	/// </summary>
 	/// <typeparam name="T">Type of nullable items in the buffer.</typeparam>
 	/// <typeparam name="TBuffer">Type of <see name="Nullable{T}"/> buffer.</typeparam>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void RegisterNullable<T, TBuffer>() where TBuffer : struct, IManagedBuffer<T?> where T : struct
 		=> MetadataManager<T?>.RegisterBuffer<TBuffer>();
-	// /// <summary>
-	// /// Registers object space.
-	// /// </summary>
-	// /// <typeparam name="TSpace">Type of object space.</typeparam>
-	// public static void RegisterSpace<TSpace>() where TSpace : struct, IManagedBuffer<Object>
-	// 	=> MetadataManager<Object>.RegisterBufferSpace<TSpace>();
-	// /// <summary>
-	// /// Registers <typeparamref name="T"/> space.
-	// /// </summary>
-	// /// <typeparam name="T">Type of items in the buffer.</typeparam>
-	// /// <typeparam name="TSpace">Type of <typeparamref name="T"/> buffer.</typeparam>
-	// public static void RegisterSpace<T, TSpace>() where TSpace : struct, IManagedBuffer<T> where T : struct
-	// 	=> MetadataManager<T>.RegisterBufferSpace<TSpace>();
-	// /// <summary>
-	// /// Registers <typeparamref name="T"/> space.
-	// /// </summary>
-	// /// <typeparam name="T">Type of nullable items in the space.</typeparam>
-	// /// <typeparam name="TSpace">Type of <see name="Nullable{T}"/> space.</typeparam>
-	// public static void RegisterNullableSpace<T, TSpace>() where TSpace : struct, IManagedBuffer<T?> where T : struct
-	// 	=> MetadataManager<T?>.RegisterBufferSpace<TSpace>();
+	/// <summary>
+	/// Registers object space.
+	/// </summary>
+	/// <typeparam name="TSpace">Type of object space.</typeparam>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void RegisterSpace<TSpace>() where TSpace : struct, IManagedBuffer<Object>
+		=> MetadataManager<Object>.RegisterBufferSpace<TSpace>();
+	/// <summary>
+	/// Registers <typeparamref name="T"/> space.
+	/// </summary>
+	/// <typeparam name="T">Type of items in the buffer.</typeparam>
+	/// <typeparam name="TSpace">Type of <typeparamref name="T"/> buffer.</typeparam>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void RegisterSpace<T, TSpace>() where TSpace : struct, IManagedBuffer<T> where T : struct
+		=> MetadataManager<T>.RegisterBufferSpace<TSpace>();
+	/// <summary>
+	/// Registers <typeparamref name="T"/> space.
+	/// </summary>
+	/// <typeparam name="T">Type of nullable items in the space.</typeparam>
+	/// <typeparam name="TSpace">Type of <see name="Nullable{T}"/> space.</typeparam>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void RegisterNullableSpace<T, TSpace>() where TSpace : struct, IManagedBuffer<T?> where T : struct
+		=> MetadataManager<T?>.RegisterBufferSpace<TSpace>();
 }

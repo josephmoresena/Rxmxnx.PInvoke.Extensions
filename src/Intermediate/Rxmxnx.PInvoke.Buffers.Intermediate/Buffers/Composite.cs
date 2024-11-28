@@ -9,7 +9,7 @@ namespace Rxmxnx.PInvoke.Buffers;
 #pragma warning disable CA2252
 [StructLayout(LayoutKind.Sequential)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
-public struct Composite<TBufferA, TBufferB, T> : IManagedBuffer<T> where TBufferA : struct, IManagedBuffer<T>
+public partial struct Composite<TBufferA, TBufferB, T> : IManagedBuffer<T> where TBufferA : struct, IManagedBuffer<T>
 	where TBufferB : struct, IManagedBuffer<T>
 {
 	/// <summary>
