@@ -33,9 +33,16 @@ public static partial class BufferManager
 	private static void AllocHeap<T>(UInt16 count, AllocatedBufferAction<T> action)
 	{
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
-		Span<T> span = arr.AsSpan()[..count];
-		ScopedBuffer<T> buffer = new(span, true, arr.Length);
-		action(buffer);
+		try
+		{
+			Span<T> span = arr.AsSpan()[..count];
+			ScopedBuffer<T> buffer = new(span, true, arr.Length);
+			action(buffer);
+		}
+		finally
+		{
+			ArrayPool<T>.Shared.Return(arr, true);
+		}
 	}
 	/// <summary>
 	/// Allocates a heap buffer of size of <paramref name="count"/> elements.
@@ -48,9 +55,16 @@ public static partial class BufferManager
 	private static void AllocHeap<T, TState>(UInt16 count, in TState state, AllocatedBufferAction<T, TState> action)
 	{
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
-		Span<T> span = arr.AsSpan()[..count];
-		ScopedBuffer<T> buffer = new(span, true, arr.Length);
-		action(buffer, state);
+		try
+		{
+			Span<T> span = arr.AsSpan()[..count];
+			ScopedBuffer<T> buffer = new(span, true, arr.Length);
+			action(buffer, state);
+		}
+		finally
+		{
+			ArrayPool<T>.Shared.Return(arr, true);
+		}
 	}
 	/// <summary>
 	/// Allocates a heap buffer of size of <paramref name="count"/> elements.
@@ -63,9 +77,16 @@ public static partial class BufferManager
 	private static TResult AllocHeap<T, TResult>(UInt16 count, AllocatedBufferFunc<T, TResult> func)
 	{
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
-		Span<T> span = arr.AsSpan()[..count];
-		ScopedBuffer<T> buffer = new(span, true, arr.Length);
-		return func(buffer);
+		try
+		{
+			Span<T> span = arr.AsSpan()[..count];
+			ScopedBuffer<T> buffer = new(span, true, arr.Length);
+			return func(buffer);
+		}
+		finally
+		{
+			ArrayPool<T>.Shared.Return(arr, true);
+		}
 	}
 	/// <summary>
 	/// Allocates a heap buffer of size of <paramref name="count"/> elements.
@@ -81,9 +102,16 @@ public static partial class BufferManager
 		AllocatedBufferFunc<T, TState, TResult> func)
 	{
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
-		Span<T> span = arr.AsSpan()[..count];
-		ScopedBuffer<T> buffer = new(span, true, arr.Length);
-		return func(buffer, state);
+		try
+		{
+			Span<T> span = arr.AsSpan()[..count];
+			ScopedBuffer<T> buffer = new(span, true, arr.Length);
+			return func(buffer, state);
+		}
+		finally
+		{
+			ArrayPool<T>.Shared.Return(arr, true);
+		}
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
