@@ -121,6 +121,7 @@ public static partial class BufferManager
 				Trace.WriteLine(
 					$"{typeof(T)} {key}({String.Join(", ", m.Components.Select(k => k.Size))}): {m.IsBinary}.");
 			}
+			Trace.WriteLine($"{typeof(T)}: {MetadataManager<T>.store.Buffers.Count}");
 		}
 #endif
 	}
