@@ -13,22 +13,17 @@ public partial struct Composite<TBufferA, TBufferB, T>
 
 		if (typeof(TBufferB) == typeof(Atomic<T>))
 		{
-			Boolean t = helper.Add(tMetadata);
+			helper.Add(tMetadata);
 		}
 		else
 		{
-			if (helper.IsCompositionRequired(bMetadata.Size, bMetadata.Size))
-				TBufferB.StaticCompose<TBufferB>(helper);
 			if (helper.IsCompositionRequired(bMetadata.Size, tMetadata.Size) &&
 			    tMetadata.IsBinaryAppendableTo(bMetadata))
 				TBufferB.StaticCompose<T0>(helper);
-			if (btMetadata.IsBinaryAppendableTo(bMetadata))
-				TBufferB.StaticCompose<Composite<TBufferB, T0, T>>(helper);
-
 			if (tMetadata.IsPure && tMetadata.Size > bMetadata.Size + bMetadata.Size / 2)
 				TBufferB.StaticCompose<T0, TBufferB>(tMetadata.Size, bMetadata.Size, helper);
 		}
-		Boolean bt = helper.Add(btMetadata);
+		helper.Add(btMetadata);
 	}
 	static void IManagedBuffer<T>.StaticCompose<T0, T1>(UInt16 s0, UInt16 s1, StaticCompositionHelper<T> helper)
 	{

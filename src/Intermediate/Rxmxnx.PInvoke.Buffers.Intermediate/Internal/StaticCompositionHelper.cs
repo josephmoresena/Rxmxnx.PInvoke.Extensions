@@ -5,11 +5,11 @@ internal sealed class StaticCompositionHelper<T>(UInt16 size) : IDisposable
 	/// <summary>
 	/// Internal flags.
 	/// </summary>
-	private readonly BufferTypeMetadata<T>?[] _arr = ArrayPool<BufferTypeMetadata<T>?>.Shared.Rent(2 * (size - 1));
+	private readonly BufferTypeMetadata<T>?[] _arr = ArrayPool<BufferTypeMetadata<T>?>.Shared.Rent(size + 1);
 	/// <summary>
 	/// Array length.
 	/// </summary>
-	private readonly Int32 _length = 2 * (size - 1);
+	private readonly Int32 _length = size + 1;
 
 	/// <inheritdoc/>
 	public void Dispose() { ArrayPool<BufferTypeMetadata<T>?>.Shared.Return(this._arr, true); }
@@ -23,7 +23,7 @@ internal sealed class StaticCompositionHelper<T>(UInt16 size) : IDisposable
 	/// </returns>
 	public Boolean Add(BufferTypeMetadata<T> bufferTypeMetadata)
 	{
-		Int32 index = bufferTypeMetadata.Size - 2;
+		Int32 index = bufferTypeMetadata.Size - size;
 		if (this._arr[index] is not null) return false;
 		this._arr[index] = bufferTypeMetadata;
 		return true;
@@ -57,10 +57,12 @@ internal sealed class StaticCompositionHelper<T>(UInt16 size) : IDisposable
 	/// <param name="components">A dictionary of components.</param>
 	public void Append(IDictionary<UInt16, BufferTypeMetadata<T>> components)
 	{
-		foreach (BufferTypeMetadata<T>? bufferMetadata in this._arr.AsSpan()[..this._length])
+		for (Int32 i = size; i > 0; i--)
 		{
-			if (bufferMetadata is not null)
-				components.TryAdd(bufferMetadata.Size, bufferMetadata);
+			BufferTypeMetadata<T>? bufferMetadata = this._arr[i - 1];
+			if (bufferMetadata is null) continue; // TODO: Remove when 2^15-1
+			components.TryAdd(bufferMetadata.Size, bufferMetadata);
+			components.TryAdd(bufferMetadata.Components[0].Size, bufferMetadata.Components[0]);
 		}
 	}
 }

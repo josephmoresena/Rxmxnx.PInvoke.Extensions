@@ -95,7 +95,6 @@ public static partial class BufferManager
 			Boolean isBinary = typeMetadata.IsBinary;
 			Span<UInt16> sizes = MetadataManager<T>.WriteSizes(typeMetadata, stackalloc UInt16[3]);
 			ValidationUtilities.ThrowIfNotSpace(isBinary, sizes, typeof(TSpace));
-			MetadataManager<T>.RegisterBuffer<TSpace>();
 			lock (MetadataManager<T>.store.LockObject)
 			{
 				using StaticCompositionHelper<T> helper = new(sizes[0]);
@@ -106,6 +105,8 @@ public static partial class BufferManager
 				finally
 				{
 					helper.Append(MetadataManager<T>.store.Buffers);
+					if (MetadataManager<T>.store.MaxSpace < sizes[0])
+						MetadataManager<T>.store.MaxSpace = sizes[0];
 				}
 			}
 		}
