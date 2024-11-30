@@ -5,7 +5,6 @@ internal partial class StaticCompositionHelper<T>
 	/// <summary>
 	/// Creates new <see cref="StaticCompositionHelper{T}"/> instance for <typeparamref name="TBuffer"/>.
 	/// </summary>
-	/// "
 	/// <typeparam name="TBuffer">A <see cref="IManagedBuffer{T}"/> type.</typeparam>
 	/// <returns>A new <see cref="StaticCompositionHelper{T}"/> instance for <typeparamref name="TBuffer"/>.</returns>
 	public static StaticCompositionHelper<T> Create<TBuffer>() where TBuffer : struct, IManagedBuffer<T>
