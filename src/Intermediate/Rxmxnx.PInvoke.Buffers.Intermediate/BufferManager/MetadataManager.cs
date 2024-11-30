@@ -100,6 +100,7 @@ public static partial class BufferManager
 				using StaticCompositionHelper<T> helper = new(sizes[0]);
 				try
 				{
+					helper.Add(typeMetadata);
 					TSpace.StaticCompose<TSpace>(helper);
 				}
 				finally
