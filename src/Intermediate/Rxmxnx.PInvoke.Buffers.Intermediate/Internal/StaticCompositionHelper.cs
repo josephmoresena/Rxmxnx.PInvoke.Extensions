@@ -6,10 +6,6 @@ internal sealed class StaticCompositionHelper<T>(UInt16 size) : IDisposable
 	/// Internal flags.
 	/// </summary>
 	private readonly BufferTypeMetadata<T>?[] _arr = ArrayPool<BufferTypeMetadata<T>?>.Shared.Rent(size + 1);
-	/// <summary>
-	/// Array length.
-	/// </summary>
-	private readonly Int32 _length = size + 1;
 
 	/// <inheritdoc/>
 	public void Dispose() { ArrayPool<BufferTypeMetadata<T>?>.Shared.Return(this._arr, true); }
