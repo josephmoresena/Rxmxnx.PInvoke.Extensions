@@ -71,28 +71,4 @@ public partial interface IManagedBuffer<T>
 		foreach (BufferTypeMetadata<T> metadataComponent in component.Components.AsSpan())
 			IManagedBuffer<T>.AppendComponent(metadataComponent, components);
 	}
-	/// <summary>
-	/// Indicates whether at least one append is required.
-	/// </summary>
-	/// <param name="aSize">Lower component size.</param>
-	/// <param name="bSize">Upper pure component size.</param>
-	/// <param name="components">A dictionary of components.</param>
-	/// <returns>
-	/// <see langword="true"/> if at least one append is required; otherwise,
-	/// <see langword="false"/>.
-	/// </returns>
-	protected static Boolean IsAppendRequired(UInt16 aSize, UInt16 bSize,
-		IDictionary<UInt16, BufferTypeMetadata<T>> components)
-	{
-		UInt16 acc = 0;
-		aSize /= 2;
-		while (aSize > 0)
-		{
-			if (!components.ContainsKey((UInt16)(bSize + aSize))) return true;
-			acc += aSize;
-			if (acc != aSize && !components.ContainsKey((UInt16)(bSize + acc))) return true;
-			aSize /= 2;
-		}
-		return false;
-	}
 }
