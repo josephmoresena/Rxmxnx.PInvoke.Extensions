@@ -11,7 +11,8 @@ public partial struct Composite<TBufferA, TBufferB, T>
 		BufferTypeMetadata<T> tMetadata = T0.TypeMetadata;
 		BufferTypeMetadata<T> bMetadata = TBufferB.TypeMetadata;
 
-		if (!helper.Add(btMetadata) || typeof(TBufferB) == typeof(Atomic<T>) ||
+		Boolean next = helper.Add(btMetadata);
+		if (!next || typeof(TBufferB) == typeof(Atomic<T>) ||
 		    tMetadata.Size <= bMetadata.Size + bMetadata.Size / 2) return;
 
 		TBufferB.StaticCompose<T0>(helper);
