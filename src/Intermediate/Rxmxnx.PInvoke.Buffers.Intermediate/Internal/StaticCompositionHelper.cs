@@ -4,7 +4,7 @@ namespace Rxmxnx.PInvoke.Internal;
 /// Helper class to compose statically managed spaces metadata.
 /// </summary>
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
-internal sealed class StaticCompositionHelper<T> : IDisposable
+internal abstract partial class StaticCompositionHelper<T> : IDisposable
 {
 	/// <summary>
 	/// Internal flags.

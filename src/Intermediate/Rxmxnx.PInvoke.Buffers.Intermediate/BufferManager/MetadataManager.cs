@@ -97,10 +97,9 @@ public static partial class BufferManager
 			ValidationUtilities.ThrowIfNotSpace(isBinary, sizes, typeof(TSpace));
 			lock (MetadataManager<T>.store.LockObject)
 			{
-				using StaticCompositionHelper<T> helper = new(sizes[0]);
+				using StaticCompositionHelper<T> helper = StaticCompositionHelper<T>.Create<TSpace>();
 				try
 				{
-					helper.Add(typeMetadata);
 					TSpace.StaticCompose<TSpace>(helper);
 				}
 				finally
