@@ -18,9 +18,8 @@ internal abstract partial class StaticCompositionHelper<T> : IDisposable
 	/// <summary>
 	/// Helper class to compose statically managed spaces metadata.
 	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer.</typeparam>
 	/// <param name="size">Size of space.</param>
-	public StaticCompositionHelper(UInt16 size)
+	private StaticCompositionHelper(UInt16 size)
 	{
 		this._size = size;
 		this._arr = ArrayPool<BufferTypeMetadata<T>?>.Shared.Rent(size + 1);
