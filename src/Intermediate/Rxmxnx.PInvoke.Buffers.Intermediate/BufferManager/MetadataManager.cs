@@ -100,7 +100,7 @@ public static partial class BufferManager
 				using StaticCompositionHelper<T> helper = StaticCompositionHelper<T>.Create<TSpace>();
 				try
 				{
-					TSpace.StaticCompose<TSpace>(helper);
+					TSpace.StaticCompose<TSpace>(sizes[0], helper);
 				}
 				finally
 				{

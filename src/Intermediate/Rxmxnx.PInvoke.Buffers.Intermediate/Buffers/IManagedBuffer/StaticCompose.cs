@@ -6,11 +6,12 @@ public partial interface IManagedBuffer<T>
 	/// Compose statically all buffers in current space.
 	/// </summary>
 	/// <typeparam name="T0">Buffer space type.</typeparam>
+	/// <param name="s0"></param>
 	/// <param name="helper">A <see cref="StaticCompositionHelper{T}"/> instance.</param>
 #if NET6_0
 	[RequiresPreviewFeatures]
 #endif
-	internal static abstract void StaticCompose<T0>(StaticCompositionHelper<T> helper)
+	internal static abstract void StaticCompose<T0>(UInt16 s0, StaticCompositionHelper<T> helper)
 		where T0 : struct, IManagedBuffer<T>;
 	/// <summary>
 	/// Compose statically all buffers in current space.

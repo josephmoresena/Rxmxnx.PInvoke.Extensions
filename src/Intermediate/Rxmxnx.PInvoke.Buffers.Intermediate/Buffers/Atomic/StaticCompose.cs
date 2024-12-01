@@ -3,7 +3,7 @@ namespace Rxmxnx.PInvoke.Buffers;
 #pragma warning disable CA2252
 public partial struct Atomic<T>
 {
-	static void IManagedBuffer<T>.StaticCompose<T0>(StaticCompositionHelper<T> helper) { }
+	static void IManagedBuffer<T>.StaticCompose<T0>(UInt16 s0, StaticCompositionHelper<T> helper) { }
 	static void IManagedBuffer<T>.StaticCompose<T0, T1>(UInt16 s0, UInt16 s1, StaticCompositionHelper<T> helper) { }
 	static void IManagedBuffer<T>.StaticCompose<T0, T1, T2>(UInt16 s0, UInt16 s1, UInt16 s2,
 		StaticCompositionHelper<T> helper) { }
