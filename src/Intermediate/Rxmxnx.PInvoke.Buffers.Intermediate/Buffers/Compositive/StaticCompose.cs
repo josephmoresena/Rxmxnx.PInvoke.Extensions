@@ -54,10 +54,10 @@ public partial struct Composite<TBufferA, TBufferB, T>
 		if (typeof(TBufferB) != typeof(Atomic<T>))
 			TBufferB.StaticCompose<T0, T1, T2, T3>(s0, s1, s2, s3, helper);
 
-		BufferTypeMetadata<T> _3210Metadata = IManagedBuffer<T>
+		BufferTypeMetadata<T> m = IManagedBuffer<T>
 			.GetMetadata<Composite<Composite<Composite<Composite<TBufferB, T3, T>, T2, T>, T1, T>, T0, T>>();
 
-		if (!helper.Add(_3210Metadata) || typeof(TBufferB) == typeof(Atomic<T>)) return;
+		if (!helper.Add(m) || typeof(TBufferB) == typeof(Atomic<T>)) return;
 
 		UInt16 bSize = TBufferB.TypeMetadata.Size;
 		TBufferB.StaticCompose<T0, T1, T2, T3, TBufferB>(s0, s1, s2, s3, bSize, helper);

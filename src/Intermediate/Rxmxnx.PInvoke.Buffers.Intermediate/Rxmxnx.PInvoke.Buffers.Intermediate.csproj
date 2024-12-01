@@ -13,7 +13,6 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <ExcludeXmlAssemblyFiles>false</ExcludeXmlAssemblyFiles>
         <LangVersion>latest</LangVersion>
-        <EnablePreviewFeatures>true</EnablePreviewFeatures>
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
     </PropertyGroup>
 
