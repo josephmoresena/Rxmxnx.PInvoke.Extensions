@@ -7,7 +7,7 @@ namespace Rxmxnx.PInvoke.Buffers;
 public interface IManagedBinaryBuffer<T> : IManagedBuffer<T>
 {
 	/// <inheritdoc cref="IManagedBuffer{T}.TypeMetadata"/>
-	internal BufferTypeMetadata<T> Metadata { get; }
+	BufferTypeMetadata<T> Metadata { get; }
 
 	/// <summary>
 	/// Retrieves the <see cref="BufferTypeMetadata{T}"/> instance from <paramref name="bufferType"/>.
@@ -18,6 +18,7 @@ public interface IManagedBinaryBuffer<T> : IManagedBuffer<T>
 	/// This method allocates in heap a <paramref name="bufferType"/> instance to retrieve the
 	/// <see cref="BufferTypeMetadata{T}"/> instance.
 	/// </remarks>
+	[ExcludeFromCodeCoverage]
 	internal static BufferTypeMetadata<T>? GetMetadata(
 		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type? bufferType)
 	{
