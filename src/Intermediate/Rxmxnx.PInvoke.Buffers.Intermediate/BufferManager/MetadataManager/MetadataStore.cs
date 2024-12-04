@@ -40,10 +40,10 @@ public static partial class BufferManager
 			public MetadataStore()
 			{
 				this._binaryCache.Add(1, IManagedBuffer<T>.GetMetadata<Atomic<T>>());
+				if (!BufferManager.BufferAutoCompositionEnabled) return;
 				try
 				{
-					if (BufferManager.BufferAutoCompositionEnabled)
-						this.GetMetadataInfo = MetadataStore.ReflectGetMetadataMethod();
+					this.GetMetadataInfo = MetadataStore.ReflectGetMetadataMethod();
 				}
 				catch (Exception)
 				{
@@ -88,7 +88,7 @@ public static partial class BufferManager
 			private static MethodInfo ReflectGetMetadataMethod()
 			{
 				Type typeofT = typeof(IManagedBuffer<T>);
-				return typeofT.GetMethod(BufferManager.getMetadataName, BufferManager.getMetadataFlags)!;
+				return typeofT.GetMethod(BufferManager.GetMetadataName, BufferManager.GetMetadataFlags)!;
 			}
 			/// <summary>
 			/// Retrieves the minimal buffer metadata registered to hold at least <paramref name="count"/> items.

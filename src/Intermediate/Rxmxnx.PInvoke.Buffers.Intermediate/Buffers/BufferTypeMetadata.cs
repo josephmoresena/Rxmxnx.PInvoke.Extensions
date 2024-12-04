@@ -52,33 +52,33 @@ public abstract class BufferTypeMetadata<T>
 	/// <summary>
 	/// Executes <paramref name="action"/> using a buffer of current type.
 	/// </summary>
-	/// <param name="action">A <see cref="AllocatedBufferAction{T}"/> delegate.</param>
+	/// <param name="action">A <see cref="ScopedBufferAction{T}"/> delegate.</param>
 	/// <param name="spanLength">Required span length.</param>
-	public abstract void Execute(AllocatedBufferAction<T> action, Int32 spanLength);
+	public abstract void Execute(ScopedBufferAction<T> action, Int32 spanLength);
 	/// <summary>
 	/// Executes <paramref name="action"/> using a buffer of current type and given state object.
 	/// </summary>
 	/// <typeparam name="TState">Type of state object.</typeparam>
 	/// <param name="state">State object.</param>
-	/// <param name="action">A <see cref="AllocatedBufferAction{T, TState}"/> delegate.</param>
+	/// <param name="action">A <see cref="ScopedBufferAction{T,TArg}"/> delegate.</param>
 	/// <param name="spanLength">Required span length.</param>
-	public abstract void Execute<TState>(in TState state, AllocatedBufferAction<T, TState> action, Int32 spanLength);
+	public abstract void Execute<TState>(in TState state, ScopedBufferAction<T, TState> action, Int32 spanLength);
 	/// <summary>
 	/// Executes <paramref name="func"/> using a buffer of current type.
 	/// </summary>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="func">A <see cref="AllocatedBufferFunc{T, TResult}"/> delegate.</param>
+	/// <param name="func">A <see cref="ScopedBufferFunc{T,TResult}"/> delegate.</param>
 	/// <param name="spanLength">Required span length.</param>
-	public abstract TResult Execute<TResult>(AllocatedBufferFunc<T, TResult> func, Int32 spanLength);
+	public abstract TResult Execute<TResult>(ScopedBufferFunc<T, TResult> func, Int32 spanLength);
 	/// <summary>
 	/// Executes <paramref name="func"/> using a buffer of current type and given state object.
 	/// </summary>
 	/// <typeparam name="TState">Type of state object.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
 	/// <param name="state">State object.</param>
-	/// <param name="func">A <see cref="AllocatedBufferFunc{T, TState, TResult}"/> delegate.</param>
+	/// <param name="func">A <see cref="ScopedBufferFunc{T,TArg,TResult}"/> delegate.</param>
 	/// <param name="spanLength">Required span length.</param>
-	public abstract TResult Execute<TState, TResult>(in TState state, AllocatedBufferFunc<T, TState, TResult> func,
+	public abstract TResult Execute<TState, TResult>(in TState state, ScopedBufferFunc<T, TState, TResult> func,
 		Int32 spanLength);
 
 	/// <summary>
@@ -92,9 +92,9 @@ public abstract class BufferTypeMetadata<T>
 	/// <typeparam name="TU">Type of transformation state object.</typeparam>
 	/// <typeparam name="TState">Type of state object.</typeparam>
 	/// <param name="state">State object.</param>
-	/// <param name="action">A <see cref="AllocatedBufferAction{T, TState}"/> delegate.</param>
+	/// <param name="action">A <see cref="ScopedBufferAction{T,TArg}"/> delegate.</param>
 	/// <param name="spanLength">Required span length.</param>
-	internal abstract void Execute<TU, TState>(in TState state, AllocatedBufferAction<TU, TState> action,
+	internal abstract void Execute<TU, TState>(in TState state, ScopedBufferAction<TU, TState> action,
 		Int32 spanLength);
 	/// <summary>
 	/// Executes <paramref name="func"/> using a buffer of current type and given state object.
@@ -103,8 +103,8 @@ public abstract class BufferTypeMetadata<T>
 	/// <typeparam name="TState">Type of state object.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
 	/// <param name="state">State object.</param>
-	/// <param name="func">A <see cref="AllocatedBufferFunc{T, TState, TResult}"/> delegate.</param>
+	/// <param name="func">A <see cref="ScopedBufferFunc{T,TArg,TResult}"/> delegate.</param>
 	/// <param name="spanLength">Required span length.</param>
-	internal abstract TResult Execute<TU, TState, TResult>(in TState state,
-		AllocatedBufferFunc<TU, TState, TResult> func, Int32 spanLength);
+	internal abstract TResult Execute<TU, TState, TResult>(in TState state, ScopedBufferFunc<TU, TState, TResult> func,
+		Int32 spanLength);
 }

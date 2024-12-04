@@ -7,12 +7,12 @@ public static partial class BufferManager
 	/// </summary>
 	/// <typeparam name="T">Type of transformation object.</typeparam>
 	/// <param name="action">Action to execute.</param>
-	private readonly struct TransformationState<T>(AllocatedBufferAction<T> action)
+	private readonly struct TransformationState<T>(ScopedBufferAction<T> action)
 	{
 		/// <summary>
 		/// Action to execute.
 		/// </summary>
-		private readonly AllocatedBufferAction<T> _action = action;
+		private readonly ScopedBufferAction<T> _action = action;
 
 		/// <summary>
 		/// Executes <paramref name="state"/> internal method.
@@ -35,12 +35,12 @@ public static partial class BufferManager
 	/// <typeparam name="T">Type of transformation object.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
 	/// <param name="func">Function to execute.</param>
-	private readonly struct TransformationState<T, TResult>(AllocatedBufferFunc<T, TResult> func)
+	private readonly struct TransformationState<T, TResult>(ScopedBufferFunc<T, TResult> func)
 	{
 		/// <summary>
 		/// Function to execute.
 		/// </summary>
-		private readonly AllocatedBufferFunc<T, TResult> _func = func;
+		private readonly ScopedBufferFunc<T, TResult> _func = func;
 
 		/// <summary>
 		/// Executes <paramref name="state"/> internal method.

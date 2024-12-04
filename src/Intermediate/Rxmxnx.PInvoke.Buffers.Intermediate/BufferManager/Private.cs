@@ -8,12 +8,12 @@ public static partial class BufferManager
 	/// Name of <see cref="IManagedBuffer{T}.GetMetadata{TBuffer}()"/> method.
 	/// </summary>
 #pragma warning disable CA2252
-	private const String getMetadataName = nameof(IManagedBuffer<Object>.GetMetadata);
+	private const String GetMetadataName = nameof(IManagedBuffer<Object>.GetMetadata);
 #pragma warning restore CA2252
 	/// <summary>
 	/// Flags of <see cref="IManagedBuffer{T}.GetMetadata{TBuffer}"/> method.
 	/// </summary>
-	private const BindingFlags getMetadataFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+	private const BindingFlags GetMetadataFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
 	/// <summary>
 	/// Type of <see cref="Composite{TBufferA,TBufferB,T}"/>.
@@ -30,7 +30,7 @@ public static partial class BufferManager
 	/// <typeparam name="T">The type of items in the buffer.</typeparam>
 	/// <param name="count">Required buffer size.</param>
 	/// <param name="action">Method to execute.</param>
-	private static void AllocHeap<T>(UInt16 count, AllocatedBufferAction<T> action)
+	private static void AllocHeap<T>(UInt16 count, ScopedBufferAction<T> action)
 	{
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
 		try
@@ -52,7 +52,7 @@ public static partial class BufferManager
 	/// <param name="count">Required buffer size.</param>
 	/// <param name="state">State object.</param>
 	/// <param name="action">Method to execute.</param>
-	private static void AllocHeap<T, TState>(UInt16 count, in TState state, AllocatedBufferAction<T, TState> action)
+	private static void AllocHeap<T, TState>(UInt16 count, in TState state, ScopedBufferAction<T, TState> action)
 	{
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
 		try
@@ -74,7 +74,7 @@ public static partial class BufferManager
 	/// <param name="count">Required buffer size.</param>
 	/// <param name="func">Function to execute.</param>
 	/// <returns><paramref name="func"/> result.</returns>
-	private static TResult AllocHeap<T, TResult>(UInt16 count, AllocatedBufferFunc<T, TResult> func)
+	private static TResult AllocHeap<T, TResult>(UInt16 count, ScopedBufferFunc<T, TResult> func)
 	{
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
 		try
@@ -99,7 +99,7 @@ public static partial class BufferManager
 	/// <param name="func">Function to execute.</param>
 	/// <returns><paramref name="func"/> result.</returns>
 	private static TResult AllocHeap<T, TState, TResult>(UInt16 count, in TState state,
-		AllocatedBufferFunc<T, TState, TResult> func)
+		ScopedBufferFunc<T, TState, TResult> func)
 	{
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
 		try
@@ -122,7 +122,7 @@ public static partial class BufferManager
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
-	private static void AllocObject<T>(UInt16 count, AllocatedBufferAction<T> action, Boolean isMinimumCount)
+	private static void AllocObject<T>(UInt16 count, ScopedBufferAction<T> action, Boolean isMinimumCount)
 	{
 		BufferTypeMetadata<Object>? metadata = MetadataManager<Object>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
@@ -147,7 +147,7 @@ public static partial class BufferManager
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
-	private static void AllocObject<T, TState>(UInt16 count, in TState state, AllocatedBufferAction<T, TState> action,
+	private static void AllocObject<T, TState>(UInt16 count, in TState state, ScopedBufferAction<T, TState> action,
 		Boolean isMinimumCount)
 	{
 		BufferTypeMetadata<Object>? metadata = MetadataManager<Object>.GetMetadata(count);
@@ -172,7 +172,7 @@ public static partial class BufferManager
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
 	/// <returns><paramref name="func"/> result.</returns>
-	private static TResult AllocObject<T, TResult>(UInt16 count, AllocatedBufferFunc<T, TResult> func,
+	private static TResult AllocObject<T, TResult>(UInt16 count, ScopedBufferFunc<T, TResult> func,
 		Boolean isMinimumCount)
 	{
 		BufferTypeMetadata<Object>? metadata = MetadataManager<Object>.GetMetadata(count);
@@ -198,7 +198,7 @@ public static partial class BufferManager
 	/// </param>
 	/// <returns><paramref name="func"/> result.</returns>
 	private static TResult AllocObject<T, TState, TResult>(UInt16 count, in TState state,
-		AllocatedBufferFunc<T, TState, TResult> func, Boolean isMinimumCount)
+		ScopedBufferFunc<T, TState, TResult> func, Boolean isMinimumCount)
 	{
 		BufferTypeMetadata<Object>? metadata = MetadataManager<Object>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
@@ -217,7 +217,7 @@ public static partial class BufferManager
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
-	private static void AllocValue<T>(UInt16 count, AllocatedBufferAction<T> action, Boolean isMinimumCount)
+	private static void AllocValue<T>(UInt16 count, ScopedBufferAction<T> action, Boolean isMinimumCount)
 	{
 		BufferTypeMetadata<T>? metadata = MetadataManager<T>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
@@ -241,7 +241,7 @@ public static partial class BufferManager
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
-	private static void AllocValue<T, TState>(UInt16 count, in TState state, AllocatedBufferAction<T, TState> action,
+	private static void AllocValue<T, TState>(UInt16 count, in TState state, ScopedBufferAction<T, TState> action,
 		Boolean isMinimumCount)
 	{
 		BufferTypeMetadata<T>? metadata = MetadataManager<T>.GetMetadata(count);
@@ -266,7 +266,7 @@ public static partial class BufferManager
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
 	/// <returns><paramref name="func"/> result.</returns>
-	private static TResult AllocValue<T, TResult>(UInt16 count, AllocatedBufferFunc<T, TResult> func,
+	private static TResult AllocValue<T, TResult>(UInt16 count, ScopedBufferFunc<T, TResult> func,
 		Boolean isMinimumCount)
 	{
 		BufferTypeMetadata<T>? metadata = MetadataManager<T>.GetMetadata(count);
@@ -291,7 +291,7 @@ public static partial class BufferManager
 	/// </param>
 	/// <returns><paramref name="func"/> result.</returns>
 	private static TResult AllocValue<T, TState, TResult>(UInt16 count, in TState state,
-		AllocatedBufferFunc<T, TState, TResult> func, Boolean isMinimumCount)
+		ScopedBufferFunc<T, TState, TResult> func, Boolean isMinimumCount)
 	{
 		BufferTypeMetadata<T>? metadata = MetadataManager<T>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))

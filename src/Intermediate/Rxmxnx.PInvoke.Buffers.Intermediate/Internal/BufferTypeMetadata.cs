@@ -23,11 +23,14 @@ internal sealed class BufferTypeMetadata<TBuffer, T> : BufferTypeMetadata<T> whe
 		=> otherMetadata.Compose<TBuffer>();
 	/// <inheritdoc/>
 	public override BufferTypeMetadata<T>? Compose<TOther>()
-		=> this.IsBinary && BufferManager.BufferAutoCompositionEnabled ?
+	{
+		if (!BufferManager.BufferAutoCompositionEnabled) return default;
+		return this.IsBinary ?
 			BufferManager.MetadataManager<T>.ComposeWithReflection(typeof(TBuffer), typeof(TOther)) :
 			default;
+	}
 	/// <inheritdoc/>
-	public override void Execute(AllocatedBufferAction<T> action, Int32 spanLength)
+	public override void Execute(ScopedBufferAction<T> action, Int32 spanLength)
 	{
 		TBuffer buffer = new();
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
@@ -36,7 +39,7 @@ internal sealed class BufferTypeMetadata<TBuffer, T> : BufferTypeMetadata<T> whe
 		action(scoped);
 	}
 	/// <inheritdoc/>
-	public override void Execute<TState>(in TState state, AllocatedBufferAction<T, TState> action, Int32 spanLength)
+	public override void Execute<TState>(in TState state, ScopedBufferAction<T, TState> action, Int32 spanLength)
 	{
 		TBuffer buffer = new();
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
@@ -45,7 +48,7 @@ internal sealed class BufferTypeMetadata<TBuffer, T> : BufferTypeMetadata<T> whe
 		action(scoped, state);
 	}
 	/// <inheritdoc/>
-	public override TResult Execute<TResult>(AllocatedBufferFunc<T, TResult> func, Int32 spanLength)
+	public override TResult Execute<TResult>(ScopedBufferFunc<T, TResult> func, Int32 spanLength)
 	{
 		TBuffer buffer = new();
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
@@ -54,7 +57,7 @@ internal sealed class BufferTypeMetadata<TBuffer, T> : BufferTypeMetadata<T> whe
 		return func(scoped);
 	}
 	/// <inheritdoc/>
-	public override TResult Execute<TState, TResult>(in TState state, AllocatedBufferFunc<T, TState, TResult> func,
+	public override TResult Execute<TState, TResult>(in TState state, ScopedBufferFunc<T, TState, TResult> func,
 		Int32 spanLength)
 	{
 		TBuffer buffer = new();
@@ -64,8 +67,7 @@ internal sealed class BufferTypeMetadata<TBuffer, T> : BufferTypeMetadata<T> whe
 		return func(scoped, state);
 	}
 	/// <inheritdoc/>
-	internal override void Execute<TU, TState>(in TState state, AllocatedBufferAction<TU, TState> action,
-		Int32 spanLength)
+	internal override void Execute<TU, TState>(in TState state, ScopedBufferAction<TU, TState> action, Int32 spanLength)
 	{
 		TBuffer buffer = new();
 		ref TU valRef = ref Unsafe.As<TBuffer, TU>(ref buffer);
@@ -74,8 +76,8 @@ internal sealed class BufferTypeMetadata<TBuffer, T> : BufferTypeMetadata<T> whe
 		action(scoped, state);
 	}
 	/// <inheritdoc/>
-	internal override TResult Execute<TU, TState, TResult>(in TState state,
-		AllocatedBufferFunc<TU, TState, TResult> func, Int32 spanLength)
+	internal override TResult Execute<TU, TState, TResult>(in TState state, ScopedBufferFunc<TU, TState, TResult> func,
+		Int32 spanLength)
 	{
 		TBuffer buffer = new();
 		ref TU valRef = ref Unsafe.As<TBuffer, TU>(ref buffer);
