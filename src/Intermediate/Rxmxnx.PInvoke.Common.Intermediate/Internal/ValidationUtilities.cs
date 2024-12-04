@@ -9,7 +9,7 @@ internal static unsafe class ValidationUtilities
 	/// <summary>
 	/// Empty <see cref="String"/> for <see cref="CallerArgumentExpressionAttribute"/> default value.
 	/// </summary>
-	private const String emptyString = "";
+	private const String EmptyString = "";
 
 	/// <summary>
 	/// Validates that an index is valid for a list of a specific size.
@@ -24,7 +24,7 @@ internal static unsafe class ValidationUtilities
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidListIndex(Int32 index, Int32 count,
-		[CallerArgumentExpression(nameof(index))] String nameofIndex = ValidationUtilities.emptyString)
+		[CallerArgumentExpression(nameof(index))] String nameofIndex = ValidationUtilities.EmptyString)
 	{
 		if (index < 0 || index >= count)
 			throw new ArgumentOutOfRangeException(nameofIndex, "Index was outside the bounds of the list.");
@@ -43,7 +43,7 @@ internal static unsafe class ValidationUtilities
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidSequenceIndex(Int32 index, Int32 count,
-		[CallerArgumentExpression(nameof(index))] String nameofIndex = ValidationUtilities.emptyString)
+		[CallerArgumentExpression(nameof(index))] String nameofIndex = ValidationUtilities.EmptyString)
 	{
 		if (index < 0 || index >= count)
 			throw new ArgumentOutOfRangeException(nameofIndex, "Index was outside the bounds of the sequence.");
@@ -189,7 +189,7 @@ internal static unsafe class ValidationUtilities
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidBinarySpanSize(ReadOnlySpan<Byte> span, Int32 sizeOf,
-		[CallerArgumentExpression(nameof(span))] String nameofSpan = ValidationUtilities.emptyString)
+		[CallerArgumentExpression(nameof(span))] String nameofSpan = ValidationUtilities.EmptyString)
 	{
 		String message = $"The length of parameter {nameofSpan} must be equals to {sizeOf}.";
 		if (span.Length < sizeOf)
@@ -216,7 +216,7 @@ internal static unsafe class ValidationUtilities
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidCastType<T>(Object? obj, String typeName, out T result,
-		[CallerArgumentExpression(nameof(obj))] String nameofObj = ValidationUtilities.emptyString)
+		[CallerArgumentExpression(nameof(obj))] String nameofObj = ValidationUtilities.EmptyString)
 	{
 		if (obj is not T value)
 			throw new ArgumentException($"Object must be of type {typeName}.", nameofObj);
@@ -274,7 +274,7 @@ internal static unsafe class ValidationUtilities
 	/// <exception cref="ArgumentException">Thrown if <paramref name="length"/> is less than zero.</exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidMemoryLength(Int32 length,
-		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.emptyString)
+		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.EmptyString)
 	{
 		if (length < 0)
 			throw new ArgumentException($"The parameter {nameofLength} must be zero or positive integer.");
@@ -329,8 +329,8 @@ internal static unsafe class ValidationUtilities
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidSubregion(Int32 regionLength, Int32 startIndex, Int32 length,
-		[CallerArgumentExpression(nameof(startIndex))] String nameofStartIndex = ValidationUtilities.emptyString,
-		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.emptyString)
+		[CallerArgumentExpression(nameof(startIndex))] String nameofStartIndex = ValidationUtilities.EmptyString,
+		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.EmptyString)
 	{
 		if (startIndex < 0)
 			throw new ArgumentOutOfRangeException(nameofStartIndex, "StartIndex cannot be less than zero.");
@@ -362,8 +362,8 @@ internal static unsafe class ValidationUtilities
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidSubstring(Int32 stringLength, Int32 startIndex, Int32 length,
-		[CallerArgumentExpression(nameof(startIndex))] String nameofStartIndex = ValidationUtilities.emptyString,
-		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.emptyString)
+		[CallerArgumentExpression(nameof(startIndex))] String nameofStartIndex = ValidationUtilities.EmptyString,
+		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.EmptyString)
 	{
 		if (startIndex < 0)
 			throw new ArgumentOutOfRangeException(nameofStartIndex, "StartIndex cannot be less than zero.");
@@ -396,8 +396,8 @@ internal static unsafe class ValidationUtilities
 	/// <exception cref="ArgumentOutOfRangeException"/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidSubsequence(Int32 sequenceLength, Int32 startIndex, Int32 length,
-		[CallerArgumentExpression(nameof(startIndex))] String nameofStartIndex = ValidationUtilities.emptyString,
-		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.emptyString)
+		[CallerArgumentExpression(nameof(startIndex))] String nameofStartIndex = ValidationUtilities.EmptyString,
+		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.EmptyString)
 	{
 		if (startIndex < 0)
 			throw new ArgumentOutOfRangeException(nameofStartIndex, "StartIndex cannot be less than zero.");
@@ -470,5 +470,30 @@ internal static unsafe class ValidationUtilities
 		{
 			throw new InvalidOperationException($"{destinationType} is not a unmanaged type.");
 		}
+	}
+	/// <summary>
+	/// Throws an exception if <paramref name="arrayType"/> can't hold <paramref name="itemType"/> instances.
+	/// </summary>
+	/// <param name="itemType">CLR item type.</param>
+	/// <param name="isItemUnmanaged">Indicates whether <paramref name="itemType"/> is unmanaged.</param>
+	/// <param name="arrayType">CLR array type.</param>
+	/// <param name="isArrayUnmanaged">Indicates whether <paramref name="arrayType"/> is unmanaged.</param>
+	/// <exception cref="InvalidOperationException">
+	/// Throws an exception if <paramref name="arrayType"/> can't hold <paramref name="itemType"/> instances.
+	/// </exception>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNotUnmanagedBuffer(Type itemType, Boolean isItemUnmanaged, Type arrayType,
+		Boolean isArrayUnmanaged)
+	{
+		String? message = isItemUnmanaged switch
+		{
+			false when isArrayUnmanaged => itemType.IsValueType ?
+				$"{itemType} contains references but {arrayType} is unmanaged type." :
+				$"{itemType} is a reference type but {arrayType} is unmanaged type.",
+			true when !isArrayUnmanaged => $"{itemType} is an unmanaged type but {arrayType} contains references.",
+			_ => default,
+		};
+		if (!String.IsNullOrEmpty(message))
+			throw new InvalidOperationException(message);
 	}
 }

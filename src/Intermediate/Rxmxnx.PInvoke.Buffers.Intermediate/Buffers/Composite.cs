@@ -1,11 +1,18 @@
 namespace Rxmxnx.PInvoke.Buffers;
 
 /// <summary>
-/// Composite buffer.
+/// Composite binary buffer.
 /// </summary>
 /// <typeparam name="TBufferA">The type of low buffer.</typeparam>
 /// <typeparam name="TBufferB">The type of high buffer.</typeparam>
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
+/// <remarks>
+/// Use this type to perform the binary combinations required to create any binary buffer type. <br/>
+/// <typeparamref name="TBufferA"/> must have a smaller capacity than <typeparamref name="TBufferB"/>.<br/>
+/// <typeparamref name="TBufferB"/> must have a capacity that is a power of two.<br/>
+/// If the current type has a capacity that is a power of two, <typeparamref name="TBufferA"/> and
+/// <typeparamref name="TBufferB"/> must be the same.
+/// </remarks>
 #pragma warning disable CA2252
 [StructLayout(LayoutKind.Sequential)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
