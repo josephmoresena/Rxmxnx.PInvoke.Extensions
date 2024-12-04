@@ -10,9 +10,13 @@ public static partial class BufferManager
 		private sealed class MetadataStore
 		{
 			/// <summary>
-			/// Internal dictionary.
+			/// Internal binary metadata dictionary.
 			/// </summary>
-			private readonly SortedDictionary<UInt16, BufferTypeMetadata<T>> _cache = new();
+			private readonly SortedDictionary<UInt16, BufferTypeMetadata<T>> _binaryCache = new();
+			/// <summary>
+			/// Internal non-binary metadata dictionary.
+			/// </summary>
+			private readonly SortedDictionary<UInt16, BufferTypeMetadata<T>> _nonBinaryCache = new();
 			/// <summary>
 			/// Lock object.
 			/// </summary>
@@ -20,7 +24,7 @@ public static partial class BufferManager
 			/// <summary>
 			/// Buffers dictionary.
 			/// </summary>
-			public IDictionary<UInt16, BufferTypeMetadata<T>> Buffers => this._cache;
+			public IDictionary<UInt16, BufferTypeMetadata<T>> BinaryBuffers => this._binaryCache;
 			/// <summary>
 			/// <see cref="MethodInfo"/> of buffer metadata.
 			/// </summary>
@@ -35,7 +39,7 @@ public static partial class BufferManager
 #pragma warning disable CA2252
 			public MetadataStore()
 			{
-				this._cache.Add(1, IManagedBuffer<T>.GetMetadata<Atomic<T>>());
+				this._binaryCache.Add(1, IManagedBuffer<T>.GetMetadata<Atomic<T>>());
 				try
 				{
 					if (BufferManager.BufferAutoCompositionEnabled)
@@ -56,25 +60,27 @@ public static partial class BufferManager
 			/// <see langword="false"/>.
 			/// </returns>
 			public Boolean Add(BufferTypeMetadata<T> typeMetadata)
-				=> this._cache.TryAdd(typeMetadata.Size, typeMetadata);
+			{
+				SortedDictionary<UInt16, BufferTypeMetadata<T>> buffers =
+					typeMetadata.IsBinary ? this._binaryCache : this._nonBinaryCache;
+				return buffers.TryAdd(typeMetadata.Size, typeMetadata);
+			}
 			/// <summary>
 			/// Retrieves the minimal buffer metadata registered to hold at least <paramref name="count"/> items.
 			/// </summary>
-			/// <param name="count">Minimal elements items in buffer.</param>
+			/// <param name="count">Minimal number of items in buffer.</param>
 			/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 			public BufferTypeMetadata<T>? GetMinimal(UInt16 count)
-			{
-				using SortedDictionary<UInt16, BufferTypeMetadata<T>>.KeyCollection.Enumerator enumerator =
-					this._cache.Keys.GetEnumerator();
-				while (enumerator.MoveNext())
-				{
-					UInt16 current = enumerator.Current;
-					if (current < count) continue;
-					if (current >= 2 * count) break;
-					return this._cache[current];
-				}
-				return default;
-			}
+				=> MetadataStore.GetMinimal(this._nonBinaryCache, count) ??
+					MetadataStore.GetMinimal(this._binaryCache, count);
+			/// <summary>
+			/// Retrieves the buffer metadata registered to hold exact <paramref name="count"/> items.
+			/// </summary>
+			/// <param name="count">Number of items in buffer.</param>
+			/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+			public BufferTypeMetadata<T>? GetNonBinaryBuffer(UInt16 count)
+				=> this._nonBinaryCache.GetValueOrDefault(count);
+
 			/// <summary>
 			/// Retrieves the reflected <see cref="IManagedBuffer{T}.GetMetadata{TBuffer}()"/> method.
 			/// </summary>
@@ -83,6 +89,26 @@ public static partial class BufferManager
 			{
 				Type typeofT = typeof(IManagedBuffer<T>);
 				return typeofT.GetMethod(BufferManager.getMetadataName, BufferManager.getMetadataFlags)!;
+			}
+			/// <summary>
+			/// Retrieves the minimal buffer metadata registered to hold at least <paramref name="count"/> items.
+			/// </summary>
+			/// <param name="cache">Buffer type metadata cache.</param>
+			/// <param name="count">Minimal elements items in buffer.</param>
+			/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+			private static BufferTypeMetadata<T>? GetMinimal(SortedDictionary<UInt16, BufferTypeMetadata<T>> cache,
+				UInt16 count)
+			{
+				using SortedDictionary<UInt16, BufferTypeMetadata<T>>.KeyCollection.Enumerator enumerator =
+					cache.Keys.GetEnumerator();
+				while (enumerator.MoveNext())
+				{
+					UInt16 current = enumerator.Current;
+					if (current < count) continue;
+					if (current >= 2 * count) break;
+					return cache[current];
+				}
+				return default;
 			}
 		}
 	}

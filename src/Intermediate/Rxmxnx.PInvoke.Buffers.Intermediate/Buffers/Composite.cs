@@ -44,6 +44,7 @@ public partial struct Composite<TBufferA, TBufferB, T> : IManagedBinaryBuffer<Co
 	/// <returns>
 	/// <see langword="true"/> if current buffer type is binary; otherwise, <see langword="false"/>.
 	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Boolean IsBinary()
 	{
 		if (!TBufferA.TypeMetadata.IsBinary || !TBufferB.TypeMetadata.IsBinary)

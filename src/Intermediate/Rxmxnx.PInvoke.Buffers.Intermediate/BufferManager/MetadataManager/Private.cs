@@ -12,6 +12,34 @@ public static partial class BufferManager
 #pragma warning restore S2743
 
 		/// <summary>
+		/// Retrieves binary metadata required for a buffer with <paramref name="count"/> items.
+		/// </summary>
+		/// <param name="count">Amount of items in required buffer.</param>
+		/// <param name="allowMinimal">Allow to return minimal buffer.</param>
+		/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+		private static BufferTypeMetadata<T>? GetBinaryMetadata(UInt16 count, Boolean allowMinimal)
+		{
+			BufferTypeMetadata<T>? result = MetadataManager<T>.GetFundamental(count);
+			if (result is null) return result;
+			while (count - result.Size > 0)
+			{
+				UInt16 diff = (UInt16)(count - result.Size);
+				BufferTypeMetadata<T>? aux = MetadataManager<T>.GetBinaryMetadata(diff, false);
+				lock (MetadataManager<T>.store.LockObject)
+				{
+					// Auxiliary metadata not found. Use minimal.
+					if (aux is null)
+						return allowMinimal ? MetadataManager<T>.store.GetMinimal(count) : default;
+					result = result.Compose(aux);
+					if (result is null)
+						// Unable to create composed metadata. Use minimal.
+						return allowMinimal ? MetadataManager<T>.store.GetMinimal(count) : default;
+					MetadataManager<T>.store.Add(result);
+				}
+			}
+			return result;
+		}
+		/// <summary>
 		/// Retrieves the fundamental metadata for a buffer with <paramref name="count"/> items.
 		/// </summary>
 		/// <param name="count">Amount of items in required buffer.</param>
@@ -20,11 +48,11 @@ public static partial class BufferManager
 		{
 			lock (MetadataManager<T>.store.LockObject)
 			{
-				if (MetadataManager<T>.store.Buffers.TryGetValue(count, out BufferTypeMetadata<T>? metadata))
+				if (MetadataManager<T>.store.BinaryBuffers.TryGetValue(count, out BufferTypeMetadata<T>? metadata))
 					return metadata;
 				UInt16 space = MetadataManager<T>.store.MaxSpace;
 				while (count < space) space /= 2;
-				BufferTypeMetadata<T>? result = MetadataManager<T>.store.Buffers[space];
+				BufferTypeMetadata<T>? result = MetadataManager<T>.store.BinaryBuffers[space];
 				while (BufferManager.GetMaxValue(result.Size) < count)
 				{
 					result = result.Double();

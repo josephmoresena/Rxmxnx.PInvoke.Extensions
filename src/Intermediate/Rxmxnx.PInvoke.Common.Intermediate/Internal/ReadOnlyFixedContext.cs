@@ -7,6 +7,7 @@
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IReadOnlyFixedContext<T>
 {
+#pragma warning disable CS8500
 	/// <summary>
 	/// An empty instance of <see cref="ReadOnlyFixedContext{T}"/>.
 	/// </summary>
@@ -37,8 +38,7 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	/// </summary>
 	/// <param name="ptr">The pointer to the fixed memory block.</param>
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
-	public ReadOnlyFixedContext(void* ptr, Int32 count) : base(ptr, count * Unsafe.SizeOf<T>(), true)
-		=> this._count = count;
+	public ReadOnlyFixedContext(void* ptr, Int32 count) : base(ptr, count * sizeof(T), true) => this._count = count;
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a pointer to a fixed memory block,
 	/// a count of items, and a validity wrapper.
@@ -47,7 +47,7 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
 	/// <param name="isValid">A mutable wrapper that indicates whether the current instance remains valid.</param>
 	public ReadOnlyFixedContext(void* ptr, Int32 count, IMutableWrapper<Boolean> isValid) : base(
-		ptr, count * Unsafe.SizeOf<T>(), true, isValid)
+		ptr, count * sizeof(T), true, isValid)
 		=> this._count = count;
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using an offset and a fixed memory instance.
@@ -55,7 +55,7 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	/// <param name="offset">The offset in the memory block.</param>
 	/// <param name="ctx">The fixed memory instance.</param>
 	public ReadOnlyFixedContext(Int32 offset, ReadOnlyFixedMemory ctx) : base(ctx, offset)
-		=> this._count = this.BinaryLength / Unsafe.SizeOf<T>();
+		=> this._count = this.BinaryLength / sizeof(T);
 
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a pointer to a
@@ -106,10 +106,11 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	{
 		this.ValidateOperation(true);
 		this.ValidateTransformation(typeof(TDestination), ReadOnlyValPtr<T>.IsUnmanaged);
-		Int32 sizeOf = Unsafe.SizeOf<TDestination>();
+		Int32 sizeOf = sizeof(TDestination);
 		Int32 count = this.GetCount(sizeOf);
 		Int32 offset = count * sizeOf;
 		fixedOffset = new(this, offset);
 		return new(this, count);
 	}
+#pragma warning restore CS8500
 }

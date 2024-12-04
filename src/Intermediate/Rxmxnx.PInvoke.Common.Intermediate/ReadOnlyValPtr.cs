@@ -10,6 +10,7 @@ namespace Rxmxnx.PInvoke;
 public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<ReadOnlyValPtr<T>>, IComparable,
 	IComparable<ReadOnlyValPtr<T>>, ISpanFormattable, ISerializable
 {
+#pragma warning disable CS8500
 	/// <summary>
 	/// Indicates if <typeparamref name="T"/> is a <see langword="unmanaged"/> type.
 	/// </summary>
@@ -147,9 +148,7 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// Defines an implicit conversion of a given pointer to a read-only value pointer.
 	/// </summary>
 	/// <param name="ptr">A pointer to implicitly convert.</param>
-#pragma warning disable CS8500
 	public static implicit operator ReadOnlyValPtr<T>(T* ptr) => new(ptr);
-#pragma warning restore CS8500
 	/// <summary>
 	/// Defines an implicit conversion of a given <see cref="ReadOnlyValPtr{T}"/> to a pointer.
 	/// </summary>
@@ -164,9 +163,7 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// Defines an implicit conversion of a given <see cref="ReadOnlyValPtr{T}"/> to a pointer.
 	/// </summary>
 	/// <param name="valPtr">A <see cref="ReadOnlyValPtr{T}"/> to implicitly convert.</param>
-#pragma warning disable CS8500
 	public static implicit operator T*(ReadOnlyValPtr<T> valPtr) => (T*)valPtr._value;
-#pragma warning restore CS8500
 
 	/// <summary>
 	/// Determines whether two specified instances of <see cref="ReadOnlyValPtr{T}"/> are equal.
@@ -197,26 +194,26 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// <param name="pointer">The pointer to add the offset to.</param>
 	/// <param name="offset">The offset in <typeparamref name="T"/> units to add.</param>
 	public static ReadOnlyValPtr<T> operator +(ReadOnlyValPtr<T> pointer, Int32 offset)
-		=> (ReadOnlyValPtr<T>)(pointer.Pointer + offset * Unsafe.SizeOf<T>());
+		=> (ReadOnlyValPtr<T>)(pointer.Pointer + offset * sizeof(T));
 	/// <summary>
 	/// Adds an offset of one <typeparamref name="T"/> unit to the value of a pointer.
 	/// </summary>
 	/// <param name="pointer">The pointer to add the offset to.</param>
 	public static ReadOnlyValPtr<T> operator ++(ReadOnlyValPtr<T> pointer)
-		=> (ReadOnlyValPtr<T>)(pointer.Pointer + Unsafe.SizeOf<T>());
+		=> (ReadOnlyValPtr<T>)(pointer.Pointer + sizeof(T));
 	/// <summary>
 	/// Subtracts an offset in <typeparamref name="T"/> units from the value of a pointer.
 	/// </summary>
 	/// <param name="pointer">The pointer to subtract the offset form.</param>
 	/// <param name="offset">The offset in <typeparamref name="T"/> units to subtract.</param>
 	public static ReadOnlyValPtr<T> operator -(ReadOnlyValPtr<T> pointer, Int32 offset)
-		=> (ReadOnlyValPtr<T>)(pointer.Pointer - offset * Unsafe.SizeOf<T>());
+		=> (ReadOnlyValPtr<T>)(pointer.Pointer - offset * sizeof(T));
 	/// <summary>
 	/// Subtracts an offset of one <typeparamref name="T"/> unit from the value of a pointer.
 	/// </summary>
 	/// <param name="pointer">The pointer to subtract the offset form.</param>
 	public static ReadOnlyValPtr<T> operator --(ReadOnlyValPtr<T> pointer)
-		=> (ReadOnlyValPtr<T>)(pointer.Pointer - Unsafe.SizeOf<T>());
+		=> (ReadOnlyValPtr<T>)(pointer.Pointer - sizeof(T));
 	/// <summary>Compares two values to determine which is less.</summary>
 	/// <param name="left">The value to compare with <paramref name="right"/>.</param>
 	/// <param name="right">The value to compare with <paramref name="left"/>.</param>
@@ -250,14 +247,14 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// <param name="pointer">The pointer to add the offset to.</param>
 	/// <param name="offset">The offset in <typeparamref name="T"/> units to add.</param>
 	public static ReadOnlyValPtr<T> Add(ReadOnlyValPtr<T> pointer, Int32 offset)
-		=> (ReadOnlyValPtr<T>)(pointer.Pointer + offset * Unsafe.SizeOf<T>());
+		=> (ReadOnlyValPtr<T>)(pointer.Pointer + offset * sizeof(T));
 	/// <summary>
 	/// Subtracts an offset in <typeparamref name="T"/> units to the value of a pointer.
 	/// </summary>
 	/// <param name="pointer">The pointer to subtract the offset to.</param>
 	/// <param name="offset">The offset in <typeparamref name="T"/> units to subtract.</param>
 	public static ReadOnlyValPtr<T> Subtract(ReadOnlyValPtr<T> pointer, Int32 offset)
-		=> (ReadOnlyValPtr<T>)(pointer.Pointer - offset * Unsafe.SizeOf<T>());
+		=> (ReadOnlyValPtr<T>)(pointer.Pointer - offset * sizeof(T));
 
 	/// <inheritdoc cref="IntPtr.Parse(String)"/>
 	[ExcludeFromCodeCoverage]
@@ -309,4 +306,5 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 		Unsafe.SkipInit(out result);
 		return IntPtr.TryParse(s, style, provider, out Unsafe.As<ReadOnlyValPtr<T>, IntPtr>(ref result));
 	}
+#pragma warning restore CS8500
 }

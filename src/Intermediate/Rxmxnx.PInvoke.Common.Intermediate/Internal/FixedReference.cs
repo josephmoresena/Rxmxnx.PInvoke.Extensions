@@ -7,6 +7,7 @@
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedReference<T>
 {
+#pragma warning disable CS8500
 	/// <inheritdoc/>
 	public override Boolean IsUnmanaged => ReadOnlyValPtr<T>.IsUnmanaged;
 	/// <inheritdoc/>
@@ -20,7 +21,7 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 	/// Constructor that takes a pointer to a fixed memory reference.
 	/// </summary>
 	/// <param name="ptr">Pointer to the fixed memory reference.</param>
-	public FixedReference(void* ptr) : base(ptr, Unsafe.SizeOf<T>()) { }
+	public FixedReference(void* ptr) : base(ptr, sizeof(T)) { }
 
 	/// <summary>
 	/// Constructor that takes a <see cref="FixedMemory"/> instance.
@@ -77,9 +78,10 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 	{
 		this.ValidateOperation(isReadOnly);
 		this.ValidateTransformation(typeof(TDestination), ReadOnlyValPtr<T>.IsUnmanaged);
-		Int32 sizeOf = Unsafe.SizeOf<TDestination>();
+		Int32 sizeOf = sizeof(TDestination);
 		this.ValidateReferenceSize(typeof(TDestination), sizeOf);
 		fixedOffset = new(this, sizeOf);
 		return new(this);
 	}
+#pragma warning restore CS8500
 }

@@ -6,6 +6,7 @@
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 internal abstract unsafe partial class FixedPointer : IFixedPointer
 {
+#pragma warning disable CS8500
 	/// <summary>
 	/// Size of the memory block in bytes.
 	/// </summary>
@@ -136,7 +137,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	public ref T CreateReference<T>()
 	{
 		this.ValidateOperation();
-		this.ValidateReferenceSize(typeof(T), Unsafe.SizeOf<T>());
+		this.ValidateReferenceSize(typeof(T), sizeof(T));
 		return ref Unsafe.AsRef<T>(this._ptr);
 	}
 	/// <summary>
@@ -152,7 +153,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	public ref readonly T CreateReadOnlyReference<T>()
 	{
 		this.ValidateOperation(true);
-		this.ValidateReferenceSize(typeof(T), Unsafe.SizeOf<T>());
+		this.ValidateReferenceSize(typeof(T), sizeof(T));
 		return ref Unsafe.AsRef<T>(this._ptr);
 	}
 	/// <summary>
@@ -291,4 +292,5 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		IntPtr result = ptr + this.BinaryOffset;
 		return result.ToPointer();
 	}
+#pragma warning restore CS8500
 }

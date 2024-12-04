@@ -16,24 +16,12 @@ public static partial class BufferManager
 		/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 		public static BufferTypeMetadata<T>? GetMetadata(UInt16 count)
 		{
-			BufferTypeMetadata<T>? result = MetadataManager<T>.GetFundamental(count);
-			if (result is null) return result;
-			while (count - result.Size > 0)
+			lock (MetadataManager<T>.store.LockObject)
 			{
-				BufferTypeMetadata<T>? aux = MetadataManager<T>.GetMetadata((UInt16)(count - result.Size));
-				lock (MetadataManager<T>.store.LockObject)
-				{
-					// Auxiliary metadata not found. Use minimal.
-					if (aux is null)
-						return MetadataManager<T>.store.GetMinimal(count);
-					result = result.Compose(aux);
-					if (result is null)
-						// Unable to create composed metadata. Use minimal.
-						return MetadataManager<T>.store.GetMinimal(count);
-					MetadataManager<T>.store.Add(result);
-				}
+				BufferTypeMetadata<T>? nonBinary = MetadataManager<T>.store.GetNonBinaryBuffer(count);
+				if (nonBinary is not null) return nonBinary;
 			}
-			return result;
+			return MetadataManager<T>.GetBinaryMetadata(count, true);
 		}
 		/// <summary>
 		/// Creates <see cref="BufferTypeMetadata{T}"/> for <see cref="Composite{TBufferA,TBufferB,T}"/>.
@@ -82,7 +70,7 @@ public static partial class BufferManager
 				if (!MetadataManager<T>.store.Add(typeMetadata) || !typeMetadata.IsBinary) return;
 				while (BufferManager.GetMaxValue(MetadataManager<T>.store.MaxSpace) < typeMetadata.Size)
 					MetadataManager<T>.store.MaxSpace *= 2;
-				TBuffer.AppendComponent(MetadataManager<T>.store.Buffers);
+				TBuffer.AppendComponent(MetadataManager<T>.store.BinaryBuffers);
 			}
 		}
 		/// <summary>
@@ -104,7 +92,7 @@ public static partial class BufferManager
 				}
 				finally
 				{
-					helper.Append(MetadataManager<T>.store.Buffers);
+					helper.Append(MetadataManager<T>.store.BinaryBuffers);
 					if (MetadataManager<T>.store.MaxSpace < sizes[0])
 						MetadataManager<T>.store.MaxSpace = sizes[0];
 				}
@@ -116,13 +104,13 @@ public static partial class BufferManager
 		/// </summary>
 		public static void PrintMetadata()
 		{
-			foreach (UInt16 key in MetadataManager<T>.store.Buffers.Keys)
+			foreach (UInt16 key in MetadataManager<T>.store.BinaryBuffers.Keys)
 			{
-				BufferTypeMetadata<T> m = MetadataManager<T>.store.Buffers[key];
+				BufferTypeMetadata<T> m = MetadataManager<T>.store.BinaryBuffers[key];
 				Trace.WriteLine(
 					$"{typeof(T)} {key}({String.Join(", ", m.Components.Select(k => k.Size))}): {m.IsBinary}.");
 			}
-			Trace.WriteLine($"{typeof(T)}: {MetadataManager<T>.store.Buffers.Count}");
+			Trace.WriteLine($"{typeof(T)}: {MetadataManager<T>.store.BinaryBuffers.Count}");
 		}
 #endif
 	}
