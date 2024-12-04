@@ -42,6 +42,7 @@ public interface IManagedBinaryBuffer<T> : IManagedBuffer<T>
 /// </summary>
 /// <typeparam name="TBuffer">The type of buffer.</typeparam>
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS107)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 public interface IManagedBinaryBuffer<
 	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] TBuffer,
