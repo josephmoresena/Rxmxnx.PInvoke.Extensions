@@ -77,5 +77,19 @@ public static partial class BufferManager
 			sizes[2] = metadata.Components[0].Size;
 			return sizes;
 		}
+		/// <summary>
+		/// Adds <paramref name="typeMetadata"/> to binary cache.
+		/// </summary>
+		/// <param name="typeMetadata">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
+		/// <returns><paramref name="typeMetadata"/>.</returns>
+		[return: NotNullIfNotNull(nameof(typeMetadata))]
+		private static BufferTypeMetadata<T>? AddBinaryMetadata(BufferTypeMetadata<T>? typeMetadata)
+		{
+			if (typeMetadata is null) return typeMetadata;
+			MetadataManager<T>.store.Add(typeMetadata);
+			while (BufferManager.GetMaxValue(MetadataManager<T>.store.MaxSpace) < typeMetadata.Size)
+				MetadataManager<T>.store.MaxSpace *= 2;
+			return typeMetadata;
+		}
 	}
 }

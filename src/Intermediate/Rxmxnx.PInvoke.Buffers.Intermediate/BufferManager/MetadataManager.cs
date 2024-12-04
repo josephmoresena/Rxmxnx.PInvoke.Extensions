@@ -37,26 +37,28 @@ public static partial class BufferManager
 		                              Justification = SuppressMessageConstants.AvoidableReflectionUseJustification)]
 		[UnconditionalSuppressMessage("AOT", "IL3050",
 		                              Justification = SuppressMessageConstants.AvoidableReflectionUseJustification)]
+		[UnconditionalSuppressMessage("AOT", "IL2077",
+		                              Justification = SuppressMessageConstants.AvoidableReflectionUseJustification)]
 		public static BufferTypeMetadata<T>? ComposeWithReflection(Type typeofA, Type typeofB)
 		{
 			if (MetadataManager<T>.store.GetMetadataInfo is null) return default;
+			Type? genericType = default;
+			BufferTypeMetadata<T>? result;
 			try
 			{
-				Type genericType = BufferManager.typeofComposite.MakeGenericType(typeofA, typeofB, typeof(T));
+				genericType = BufferManager.typeofComposite.MakeGenericType(typeofA, typeofB, typeof(T));
 				MethodInfo getGenericMetadataInfo =
 					MetadataManager<T>.store.GetMetadataInfo.MakeGenericMethod(genericType);
 				Func<BufferTypeMetadata<T>> getGenericMetadata =
 					getGenericMetadataInfo.CreateDelegate<Func<BufferTypeMetadata<T>>>();
-				BufferTypeMetadata<T> result = getGenericMetadata();
-				MetadataManager<T>.store.Add(result);
-				while (BufferManager.GetMaxValue(MetadataManager<T>.store.MaxSpace) < result.Size)
-					MetadataManager<T>.store.MaxSpace *= 2;
-				return result;
+				result = getGenericMetadata();
 			}
 			catch (Exception)
 			{
-				return default;
+				// This may never be called.
+				result = IManagedBinaryBuffer<T>.GetMetadata(genericType);
 			}
+			return MetadataManager<T>.AddBinaryMetadata(result);
 		}
 		/// <summary>
 		/// Registers buffer type.
