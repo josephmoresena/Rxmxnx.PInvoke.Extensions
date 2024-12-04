@@ -10,6 +10,12 @@ public static unsafe partial class NativeUtilities
 	/// Size in bytes of a memory pointer.
 	/// </summary>
 	public static readonly Int32 PointerSize = sizeof(IntPtr);
+	/// <summary>
+	/// Indicates whether the current runtime might be Ahead-of-Time compiled.
+	/// </summary>
+#pragma warning disable CA2012
+	public static readonly Boolean MightBeAot = AotDetectorHelper.IsTrimmedOrAotAsync().Result;
+#pragma warning restore CA2012
 
 	/// <summary>
 	/// Retrieves the size of <typeparamref name="T"/> structure.

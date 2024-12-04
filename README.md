@@ -127,7 +127,8 @@ The `Rxmxnx.PInvoke.IMutableReference<T>` interface represents a mutable referen
 
 ### Rxmxnx.PInvoke.FuncPtr<TDelegate>
 
-`Rxmxnx.PInvoke.FuncPtr<TDelegate>` is a value type representing a pointer to a function of type TDelegate. It is used for interop scenarios where a function pointer is required.
+`Rxmxnx.PInvoke.FuncPtr<TDelegate>` is a value type representing a pointer to a function of type TDelegate. It is used
+for interop scenarios where a function pointer is required.
 
 - `IsZero`: Indicates whether the current pointer is zero (null).
 - `Pointer`: Gets the internal pointer as an `IntPtr`.
@@ -140,13 +141,20 @@ The `Rxmxnx.PInvoke.IMutableReference<T>` interface represents a mutable referen
 
 ### Rxmxnx.PInvoke.ReadOnlyValPtr<T>
 
-`Rxmxnx.PInvoke.ReadOnlyValPtr<T>` is a value type representing a pointer to a read-only value of type T. It is used for interop scenarios where a read-only T pointer is required.
+`Rxmxnx.PInvoke.ReadOnlyValPtr<T>` is a value type representing a pointer to a read-only value of type T. It is used for
+interop scenarios where a read-only T pointer is required.
 
 - `IsZero`: Indicates whether the current pointer is zero (null).
 - `Pointer`: Gets the internal pointer as an `IntPtr`.
 - `Reference`: Gets a read-only reference to the pointed T value.
-- `GetUnsafeFixedReference(IDisposable?)`: Creates an unsafe `IReadOnlyFixedReference<T>` instance from the current pointer. It is designed to be used when you have a guarantee that the memory being referenced is already fixed and immovable. This method does not pin the memory itself; it only provides a way to work with memory that is assumed to be already pinned.
-- `GetUnsafeFixedContext(Int32, IDisposable?)`: Creates an unsafe `IReadOnlyFixedContext<T>` instance with the specified number of items in the memory block from the current pointer. It is designed to be used when you have a guarantee that the memory being referenced is already fixed and immovable. This method does not pin the memory itself; it only provides a way to work with memory that is assumed to be already pinned.
+- `GetUnsafeFixedReference(IDisposable?)`: Creates an unsafe `IReadOnlyFixedReference<T>` instance from the current
+  pointer. It is designed to be used when you have a guarantee that the memory being referenced is already fixed and
+  immovable. This method does not pin the memory itself; it only provides a way to work with memory that is assumed to
+  be already pinned.
+- `GetUnsafeFixedContext(Int32, IDisposable?)`: Creates an unsafe `IReadOnlyFixedContext<T>` instance with the specified
+  number of items in the memory block from the current pointer. It is designed to be used when you have a guarantee that
+  the memory being referenced is already fixed and immovable. This method does not pin the memory itself; it only
+  provides a way to work with memory that is assumed to be already pinned.
 
 #### Operators
 
@@ -158,17 +166,25 @@ The `Rxmxnx.PInvoke.IMutableReference<T>` interface represents a mutable referen
 - `>=`: Determines whether one `ReadOnlyValPtr<T>` object is greater than or equal to another.
 
 #### Static
+
 - `IsUnmanaged`: Indicates whether the type of the pointer is unmanaged.
 
 ### Rxmxnx.PInvoke.ValPtr<T>
 
-`Rxmxnx.PInvoke.ValPtr<T>` is a value type representing a pointer to a value of type T. It is used for interop scenarios where a T pointer is required.
+`Rxmxnx.PInvoke.ValPtr<T>` is a value type representing a pointer to a value of type T. It is used for interop scenarios
+where a T pointer is required.
 
 - `IsZero`: Indicates whether the current pointer is zero (null).
 - `Pointer`: Gets the internal pointer as an `IntPtr`.
 - `Reference`: Gets a reference to the pointed T value.
-- `GetUnsafeFixedReference(IDisposable?)`: Creates an unsafe `IFixedReference<T>` instance from the current pointer. It is designed to be used when you have a guarantee that the memory being referenced is already fixed and immovable. This method does not pin the memory itself; it only provides a way to work with memory that is assumed to be already pinned.
-- `GetUnsafeFixedContext(Int32, IDisposable?)`: Creates an unsafe `IFixedContext<T>` instance with the specified number of items in the memory block from the current pointer. It is designed to be used when you have a guarantee that the memory being referenced is already fixed and immovable. This method does not pin the memory itself; it only provides a way to work with memory that is assumed to be already pinned.
+- `GetUnsafeFixedReference(IDisposable?)`: Creates an unsafe `IFixedReference<T>` instance from the current pointer. It
+  is designed to be used when you have a guarantee that the memory being referenced is already fixed and immovable. This
+  method does not pin the memory itself; it only provides a way to work with memory that is assumed to be already
+  pinned.
+- `GetUnsafeFixedContext(Int32, IDisposable?)`: Creates an unsafe `IFixedContext<T>` instance with the specified number
+  of items in the memory block from the current pointer. It is designed to be used when you have a guarantee that the
+  memory being referenced is already fixed and immovable. This method does not pin the memory itself; it only provides a
+  way to work with memory that is assumed to be already pinned.
 
 #### Operators
 
@@ -180,6 +196,7 @@ The `Rxmxnx.PInvoke.IMutableReference<T>` interface represents a mutable referen
 - `>=`: Determines whether one `ValPtr<T>` object is greater than or equal to another.
 
 #### Static
+
 - `IsUnmanaged`: Indicates whether the type of the pointer is unmanaged.
 
 ### Rxmxnx.PInvoke.CString
@@ -361,7 +378,9 @@ The `Rxmxnx.PInvoke.CStringSequence` class represents a sequence of `CString` ob
 - `Slice(Int32, Int32)`: Returns a new `CStringSequence` that represents a slice of the current sequence starting from
   the specified index with the specified length.
 - `ToCString()`: Converts the `CStringSequence` to a single `CString` object.
-- `GetFixedPointer()`: This method creates a disposable, read-only fixed pointer instance by pinning current instance. It ensures that the memory block referenced by this sequence is fixed (immovable) in memory, allowing for safe direct access.
+- `GetFixedPointer()`: This method creates a disposable, read-only fixed pointer instance by pinning current instance.
+  It ensures that the memory block referenced by this sequence is fixed (immovable) in memory, allowing for safe direct
+  access.
 - `WithSafeFixed<TState, TResult>(TState, ReadOnlyFixedListFunc<TState, TResult>)`: Executes the specified function with
   a fixed list of `CString` objects and returns the result.
 - `WithSafeFixed(ReadOnlyFixedListAction)`: Executes the specified action with a fixed list of `CString` objects.
@@ -427,7 +446,8 @@ bytes and byte arrays in a PInvoke context.
 `Rxmxnx.PInvoke.DelegateExtensions` is an extension methods class that provides additional functionality for working
 with delegates.
 
-- `GetUnsafeFuncPtr<TDelegate>(TDelegate)`: Returns the unmanaged FuncPtr<TDelegate> representation of the specified delegate.
+- `GetUnsafeFuncPtr<TDelegate>(TDelegate)`: Returns the unmanaged FuncPtr<TDelegate> representation of the specified
+  delegate.
 - `GetUnsafeIntPtr<TDelegate>(TDelegate)`: Returns the unmanaged IntPtr representation of the specified delegate.
 - `GetUnsafeUIntPtr<TDelegate>(TDelegate)`: Returns the unmanaged UIntPtr representation of the specified delegate.
 - `WithSafeFixed<TDelegate, TArg>(TDelegate, TArg, FixedMethodAction<TDelegate, TArg>)`: Performs a fixed method action
@@ -454,15 +474,22 @@ with memory blocks.
   values of the specified destination type, also returning the underlying byte span.
 - `AsValues<TSource, TDestination>(ReadOnlySpan<TSource>, ReadOnlySpan<byte>&)`: Converts the memory block to a readonly
   span of values of the specified destination type, also returning the underlying byte span.
-- `GetUnsafeValPtr<T>(ReadOnlySpan<T>)`: Returns the unmanaged ReadOnlyValPtr<T> representation of the specified memory block.
+- `GetUnsafeValPtr<T>(ReadOnlySpan<T>)`: Returns the unmanaged ReadOnlyValPtr<T> representation of the specified memory
+  block.
 - `GetUnsafeValPtr<T>(Span<T>)`: Returns the unmanaged ValPtr<T> representation of the specified memory block.
 - `GetUnsafeIntPtr<T>(ReadOnlySpan<T>)`: Returns the unmanaged IntPtr representation of the specified memory block.
 - `GetUnsafeIntPtr<T>(Span<T>)`: Returns the unmanaged IntPtr representation of the specified memory block.
 - `GetUnsafeUIntPtr<T>(Span<T>)`: Returns the unmanaged UIntPtr representation of the specified memory block.
 - `GetUnsafeUIntPtr<T>(ReadOnlySpan<T>)`: Returns the unmanaged UIntPtr representation of the specified memory block.
-- `GetFixedContext<T>(ReadOnlyMemory<T>)`: This method creates a disposable, read-only fixed context instance by pinning the provided `ReadOnlyMemory<T>` instance. It ensures that the memory block referenced by `ReadOnlyMemory<T>` is fixed (immovable) in memory, allowing for safe direct access.
-- `GetFixedContext<T>(Memory<T>)`: This method creates a disposable, fixed context instance by pinning the provided `Memory<T>` instance. It ensures that the memory block referenced by `Memory<T>` is fixed (immovable) in memory, allowing for safe direct access.
-- `GetFixedMemory<T>(Memory<T>)`: This method creates a disposable, fixed memory instance by pinning the provided `Memory<T>` instance. It ensures that the memory block referenced by `Memory<T>` is fixed (immovable) in memory, allowing for safe direct access.
+- `GetFixedContext<T>(ReadOnlyMemory<T>)`: This method creates a disposable, read-only fixed context instance by pinning
+  the provided `ReadOnlyMemory<T>` instance. It ensures that the memory block referenced by `ReadOnlyMemory<T>` is
+  fixed (immovable) in memory, allowing for safe direct access.
+- `GetFixedContext<T>(Memory<T>)`: This method creates a disposable, fixed context instance by pinning the provided
+  `Memory<T>` instance. It ensures that the memory block referenced by `Memory<T>` is fixed (immovable) in memory,
+  allowing for safe direct access.
+- `GetFixedMemory<T>(Memory<T>)`: This method creates a disposable, fixed memory instance by pinning the provided
+  `Memory<T>` instance. It ensures that the memory block referenced by `Memory<T>` is fixed (immovable) in memory,
+  allowing for safe direct access.
 - `WithSafeFixed<T>(Span<T>, FixedContextAction<T>)`: Performs a fixed context action on the specified memory block.
 - `WithSafeFixed<T>(Span<T>, ReadOnlyFixedContextAction<T>)`: Performs a readonly fixed context action on the specified
   memory block.
@@ -503,7 +530,8 @@ pointers.
 - `GetUnsafeReadOnlySpan<T>(UIntPtr, Int32)`: Returns a readonly span of type `T` from the specified memory pointer and
   length.
 - `GetUnsafeReadOnlySpan<T>(IntPtr, Int32)`: Returns a readonly span of type `T` from the specified memory pointer and
-- `GetUnsafeReadOnlySpan<T>(MemoryHandle, Int32)`: Returns a readonly span of type `T` from the specified memory handle and length.
+- `GetUnsafeReadOnlySpan<T>(MemoryHandle, Int32)`: Returns a readonly span of type `T` from the specified memory handle
+  and length.
 - `GetUnsafeReference<T>(UInt32)`: Returns a reference of type `T` from the specified memory pointer.
 - `GetUnsafeReference<T>(Int32)`: Returns a reference of type `T` from the specified memory pointer.
 - `GetUnsafeSpan<T>(UIntPtr, Int32)`: Returns a span of type `T` from the specified memory pointer and length.
@@ -618,18 +646,28 @@ with strings.
 
 - `BufferAutoCompositionEnabled`: Indicates whether metadata for any required buffer is auto-composed.
 
-- `Alloc<T>(UInt16, AllocatedBufferAction<T>, Boolean)`: Allocates a buffer with enough size to hold the given number of elements and executes the delegate.
-- `Alloc<T, TState>(UInt16, in TState, AllocatedBufferAction<T, TState>, Boolean)`: Allocates a buffer with enough size to hold the given number of elements and executes the delegate.
-- `Alloc<T, TResult>(UInt16, AllocatedBufferFunc<T, TResult>, Boolean)`: Allocates a buffer with enough size to hold the given number of elements and returns the result of delegate execution.
-- `Alloc<T, TState, TResult>(UInt16, AllocatedBufferFunc<T, TState, TResult>, Boolean)`: Allocates a buffer with enough size to hold the given number of elements and returns the result of delegate execution.
+- `Alloc<T>(UInt16, AllocatedBufferAction<T>, Boolean)`: Allocates a buffer with enough size to hold the given number of
+  elements and executes the delegate.
+- `Alloc<T, TState>(UInt16, in TState, AllocatedBufferAction<T, TState>, Boolean)`: Allocates a buffer with enough size
+  to hold the given number of elements and executes the delegate.
+- `Alloc<T, TResult>(UInt16, AllocatedBufferFunc<T, TResult>, Boolean)`: Allocates a buffer with enough size to hold the
+  given number of elements and returns the result of delegate execution.
+- `Alloc<T, TState, TResult>(UInt16, AllocatedBufferFunc<T, TState, TResult>, Boolean)`: Allocates a buffer with enough
+  size to hold the given number of elements and returns the result of delegate execution.
 
-- `Register<TBuffer>()`: Registers the buffer type to hold n objects. If the buffer type is composite, it also registers each of the binary spaces that make up the buffer.
-- `Register<TBuffer, T>()`: Registers the buffer type to hold n T values. If the buffer type is composite, it also registers each of the binary spaces that make up the buffer.
-- `RegisterNullable<TBuffer, T>()`: Registers the buffer type to hold n T nullable values. If the buffer type is composite, it also registers each of the binary spaces that make up the buffer.
+- `Register<TBuffer>()`: Registers the buffer type to hold n objects. If the buffer type is composite, it also registers
+  each of the binary spaces that make up the buffer.
+- `Register<TBuffer, T>()`: Registers the buffer type to hold n T values. If the buffer type is composite, it also
+  registers each of the binary spaces that make up the buffer.
+- `RegisterNullable<TBuffer, T>()`: Registers the buffer type to hold n T nullable values. If the buffer type is
+  composite, it also registers each of the binary spaces that make up the buffer.
 
-- `RegisterSpace<TSpace>()`: Registers the buffer types to hold 1 to n (2^p) objects. The buffer type must be a binary space of n elements.
-- `RegisterSpace<TSpace, T>()`: Registers the buffer types to hold 1 to n (2^p) values. The buffer type must be a binary space of n elements.
-- `RegisterNullableSpace<TSpace, T>()`: Registers the buffer types to hold 1 to n (2^p) nullable values. The buffer type must be a binary space of n elements.
+- `RegisterSpace<TSpace>()`: Registers the buffer types to hold 1 to n (2^p) objects. The buffer type must be a binary
+  space of n elements.
+- `RegisterSpace<TSpace, T>()`: Registers the buffer types to hold 1 to n (2^p) values. The buffer type must be a binary
+  space of n elements.
+- `RegisterNullableSpace<TSpace, T>()`: Registers the buffer types to hold 1 to n (2^p) nullable values. The buffer type
+  must be a binary space of n elements.
 
 ## Utilities
 
@@ -638,6 +676,7 @@ with strings.
 `Rxmxnx.PInvoke.NativeUtilities` is a utility class that provides various methods for working with native code.
 
 - `PointerSize`: Size in bytes of a memory pointer.
+- `MightBeAot`: Indicates whether the current runtime might be Ahead-of-Time compiled.
 
 - `AsBytes<T>(in T)`: Retrieves the bytes representing the specified value.
 - `AsBinarySpan<T>(ref T)`: Converts the specified reference to a span of bytes.
@@ -649,7 +688,8 @@ with strings.
 - `GetUnsafeValPtrFromRef<T>(ref T)`: Retrieves the value pointer from the specified reference.
 - `GetUnsafeIntPtr<T>(in T)`: Retrieves the pointer value from the specified reference.
 - `GetUnsafeUIntPtr<T>(in T)`: Retrieves the unsigned pointer value from the specified reference.
-- `GetUnsafeFuncPtr<TDelegate>(TDelegate)`: Returns the unmanaged FuncPtr<TDelegate> representation of the specified delegate. 
+- `GetUnsafeFuncPtr<TDelegate>(TDelegate)`: Returns the unmanaged FuncPtr<TDelegate> representation of the specified
+  delegate.
 - `LoadNativeLib(String, DllImportSearchPath?)`: Loads a native library and returns the handle.
 - `LoadNativeLib(String, ref EventHandler?, DllImportSearchPath?)`: Loads a native library and returns the handle,
   raising an event upon load or failure.
