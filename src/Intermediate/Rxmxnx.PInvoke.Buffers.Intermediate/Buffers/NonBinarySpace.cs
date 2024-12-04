@@ -10,10 +10,10 @@ namespace Rxmxnx.PInvoke.Buffers;
 #pragma warning disable CA2252
 public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray : struct
 {
-#pragma warning disable CS8500
 	/// <summary>
 	/// Buffer type metadata.
 	/// </summary>
+#pragma warning disable CS8500
 	private static readonly BufferTypeMetadata<NonBinarySpace<TArray, T>, T> typeMetadata =
 		new(sizeof(TArray) / sizeof(T), false);
 #pragma warning disable CS8500
