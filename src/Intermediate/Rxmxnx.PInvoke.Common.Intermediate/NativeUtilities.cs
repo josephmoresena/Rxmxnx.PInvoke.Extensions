@@ -13,8 +13,12 @@ public static unsafe partial class NativeUtilities
 	/// <summary>
 	/// Indicates whether the current runtime might be Ahead-of-Time compiled.
 	/// </summary>
+	/// <remarks>
+	/// Consider the cost and impact of this function, as it extensively uses reflection to attempt to
+	/// detect whether the current environment is JIT or AOT.
+	/// </remarks>
 #pragma warning disable CA2012
-	public static readonly Boolean MightBeAot = AotDetectorHelper.IsTrimmedOrAotAsync().Result;
+	public static Boolean MightBeAot => AotDetectorHelper.IsTrimmedOrAotAsync().Result;
 #pragma warning restore CA2012
 
 	/// <summary>
