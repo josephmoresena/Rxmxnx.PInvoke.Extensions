@@ -1,9 +1,11 @@
 namespace Rxmxnx.PInvoke.Internal;
 
+#if BINARY_SPACES
 /// <summary>
 /// Helper class to compose statically managed spaces metadata.
 /// </summary>
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3881)]
 internal abstract partial class StaticCompositionHelper<T> : IDisposable
 {
 	/// <summary>
@@ -52,9 +54,10 @@ internal abstract partial class StaticCompositionHelper<T> : IDisposable
 		for (Int32 i = this._size; i > 0; i--)
 		{
 			BufferTypeMetadata<T>? bufferMetadata = this._arr[i - 1];
-			if (bufferMetadata is null) continue; // TODO: Remove when 2^15-1
+			if (bufferMetadata is null) continue;
 			components.TryAdd(bufferMetadata.Size, bufferMetadata);
 			components.TryAdd(bufferMetadata.Components[0].Size, bufferMetadata.Components[0]);
 		}
 	}
 }
+#endif

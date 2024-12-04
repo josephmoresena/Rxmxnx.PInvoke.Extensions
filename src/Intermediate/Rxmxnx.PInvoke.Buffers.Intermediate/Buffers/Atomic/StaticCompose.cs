@@ -1,6 +1,7 @@
 namespace Rxmxnx.PInvoke.Buffers;
 
 #pragma warning disable CA2252
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 public partial struct Atomic<T>
 {
 #if BINARY_SPACES

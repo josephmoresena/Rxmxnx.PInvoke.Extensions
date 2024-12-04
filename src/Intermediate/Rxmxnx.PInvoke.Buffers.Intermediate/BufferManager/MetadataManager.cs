@@ -104,6 +104,7 @@ public static partial class BufferManager
 		/// <summary>
 		/// Prints metadata dictionary.
 		/// </summary>
+		[UnconditionalSuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6670)]
 		public static void PrintMetadata()
 		{
 			foreach (UInt16 key in MetadataManager<T>.store.BinaryBuffers.Keys)

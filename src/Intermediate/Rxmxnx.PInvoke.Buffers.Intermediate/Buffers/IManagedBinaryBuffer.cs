@@ -4,6 +4,7 @@ namespace Rxmxnx.PInvoke.Buffers;
 /// This interfaces exposes a managed buffer.
 /// </summary>
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 public interface IManagedBinaryBuffer<T> : IManagedBuffer<T>
 {
 	/// <inheritdoc cref="IManagedBuffer{T}.TypeMetadata"/>
