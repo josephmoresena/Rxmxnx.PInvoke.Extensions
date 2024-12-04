@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+        <PublishAot>true</PublishAot>
+        <IlcGenerateMstatFile>true</IlcGenerateMstatFile>
+        <IlcGenerateDgmlFile>true</IlcGenerateDgmlFile>
+        <TrimMode>full</TrimMode>
+        <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!--<RdXmlFile Include="rd.xml"/>-->
+    </ItemGroup>
+
+    <ItemGroup>
+        <RuntimeHostConfigurationOption Condition="'$(DISABLE_AUTOCOMPOSITION)' == 'true'" Include="PInvoke.DisableBufferAutoComposition" Value="true" Trim="true"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate.csproj" />
+    </ItemGroup>
+
+</Project>

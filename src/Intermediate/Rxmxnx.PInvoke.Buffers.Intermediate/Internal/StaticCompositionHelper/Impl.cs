@@ -7,14 +7,15 @@ internal partial class StaticCompositionHelper<T>
 	/// </summary>
 	/// <typeparam name="TBuffer">A <see cref="IManagedBuffer{T}"/> type.</typeparam>
 	/// <returns>A new <see cref="StaticCompositionHelper{T}"/> instance for <typeparamref name="TBuffer"/>.</returns>
-	public static StaticCompositionHelper<T> Create<TBuffer>() where TBuffer : struct, IManagedBuffer<T>
+	public static StaticCompositionHelper<T> Create<TBuffer>() where TBuffer : struct, IManagedBinaryBuffer<TBuffer, T>
 		=> new Impl<TBuffer>();
 
 	/// <summary>
 	/// Generic implementation of <see cref="StaticCompositionHelper{T}"/>
 	/// </summary>
 	/// <typeparam name="TBuffer">A <see cref="IManagedBuffer{T}"/> type.</typeparam>
-	private sealed class Impl<TBuffer> : StaticCompositionHelper<T> where TBuffer : struct, IManagedBuffer<T>
+	private sealed class Impl<TBuffer> : StaticCompositionHelper<T>
+		where TBuffer : struct, IManagedBinaryBuffer<TBuffer, T>
 	{
 		/// <summary>
 		/// Buffer type metadata.

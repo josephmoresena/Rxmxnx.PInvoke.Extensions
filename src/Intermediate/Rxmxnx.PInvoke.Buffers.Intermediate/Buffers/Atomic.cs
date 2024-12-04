@@ -6,7 +6,7 @@ namespace Rxmxnx.PInvoke.Buffers;
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
 #pragma warning disable CA2252
 [StructLayout(LayoutKind.Sequential)]
-public partial struct Atomic<T> : IManagedBuffer<T>
+public partial struct Atomic<T> : IManagedBinaryBuffer<Atomic<T>, T>
 {
 	/// <summary>
 	/// Internal metadata.

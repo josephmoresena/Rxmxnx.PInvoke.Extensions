@@ -6,7 +6,7 @@ namespace Rxmxnx.PInvoke.Buffers;
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2743,
                  Justification = SuppressMessageConstants.StaticAbstractPropertyUseJustification)]
-public partial interface IManagedBuffer<T>
+public interface IManagedBuffer<T>
 {
 	/// <summary>
 	/// Current type components.

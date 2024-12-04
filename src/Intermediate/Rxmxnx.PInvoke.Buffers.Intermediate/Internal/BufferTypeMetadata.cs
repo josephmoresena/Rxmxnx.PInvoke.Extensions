@@ -23,7 +23,7 @@ internal sealed class BufferTypeMetadata<TBuffer, T> : BufferTypeMetadata<T> whe
 		=> otherMetadata.Compose<TBuffer>();
 	/// <inheritdoc/>
 	public override BufferTypeMetadata<T>? Compose<TOther>()
-		=> BufferManager.BufferAutoCompositionEnabled ?
+		=> this.IsBinary && BufferManager.BufferAutoCompositionEnabled ?
 			BufferManager.MetadataManager<T>.ComposeWithReflection(typeof(TBuffer), typeof(TOther)) :
 			default;
 	/// <inheritdoc/>

@@ -1,7 +1,14 @@
 namespace Rxmxnx.PInvoke.Buffers;
 
-public partial interface IManagedBuffer<T>
+/// <summary>
+/// This interfaces exposes an allocated buffer.
+/// </summary>
+/// <typeparam name="TBuffer">The type of buffer.</typeparam>
+/// <typeparam name="T">The type of items in the buffer.</typeparam>
+public interface IManagedBinaryBuffer<TBuffer, T> : IManagedBuffer<T>
+	where TBuffer : struct, IManagedBinaryBuffer<TBuffer, T>
 {
+#if BINARY_SPACES
 	/// <summary>
 	/// Compose statically all buffers in current space.
 	/// </summary>
@@ -12,7 +19,7 @@ public partial interface IManagedBuffer<T>
 	[RequiresPreviewFeatures]
 #endif
 	internal static abstract void StaticCompose<T0>(UInt16 s0, StaticCompositionHelper<T> helper)
-		where T0 : struct, IManagedBuffer<T>;
+		where T0 : struct, IManagedBinaryBuffer<T0, T>;
 	/// <summary>
 	/// Compose statically all buffers in current space.
 	/// </summary>
@@ -25,7 +32,8 @@ public partial interface IManagedBuffer<T>
 	[RequiresPreviewFeatures]
 #endif
 	private protected static abstract void StaticCompose<T0, T1>(UInt16 s0, UInt16 s1,
-		StaticCompositionHelper<T> helper) where T0 : struct, IManagedBuffer<T> where T1 : struct, IManagedBuffer<T>;
+		StaticCompositionHelper<T> helper) where T0 : struct, IManagedBinaryBuffer<T0, T>
+		where T1 : struct, IManagedBinaryBuffer<T1, T>;
 	/// <summary>
 	/// Compose statically all buffers in current space.
 	/// </summary>
@@ -40,9 +48,9 @@ public partial interface IManagedBuffer<T>
 	[RequiresPreviewFeatures]
 #endif
 	private protected static abstract void StaticCompose<T0, T1, T2>(UInt16 s0, UInt16 s1, UInt16 s2,
-		StaticCompositionHelper<T> helper) where T0 : struct, IManagedBuffer<T>
-		where T1 : struct, IManagedBuffer<T>
-		where T2 : struct, IManagedBuffer<T>;
+		StaticCompositionHelper<T> helper) where T0 : struct, IManagedBinaryBuffer<T0, T>
+		where T1 : struct, IManagedBinaryBuffer<T1, T>
+		where T2 : struct, IManagedBinaryBuffer<T2, T>;
 	/// <summary>
 	/// Compose statically all buffers in current space.
 	/// </summary>
@@ -59,10 +67,10 @@ public partial interface IManagedBuffer<T>
 	[RequiresPreviewFeatures]
 #endif
 	private protected static abstract void StaticCompose<T0, T1, T2, T3>(UInt16 s0, UInt16 s1, UInt16 s2, UInt16 s3,
-		StaticCompositionHelper<T> helper) where T0 : struct, IManagedBuffer<T>
-		where T1 : struct, IManagedBuffer<T>
-		where T2 : struct, IManagedBuffer<T>
-		where T3 : struct, IManagedBuffer<T>;
+		StaticCompositionHelper<T> helper) where T0 : struct, IManagedBinaryBuffer<T0, T>
+		where T1 : struct, IManagedBinaryBuffer<T1, T>
+		where T2 : struct, IManagedBinaryBuffer<T2, T>
+		where T3 : struct, IManagedBinaryBuffer<T3, T>;
 	/// <summary>
 	/// Compose statically all buffers in current space.
 	/// </summary>
@@ -81,11 +89,11 @@ public partial interface IManagedBuffer<T>
 	[RequiresPreviewFeatures]
 #endif
 	private protected static abstract void StaticCompose<T0, T1, T2, T3, T4>(UInt16 s0, UInt16 s1, UInt16 s2, UInt16 s3,
-		UInt16 s4, StaticCompositionHelper<T> helper) where T0 : struct, IManagedBuffer<T>
-		where T1 : struct, IManagedBuffer<T>
-		where T2 : struct, IManagedBuffer<T>
-		where T3 : struct, IManagedBuffer<T>
-		where T4 : struct, IManagedBuffer<T>;
+		UInt16 s4, StaticCompositionHelper<T> helper) where T0 : struct, IManagedBinaryBuffer<T0, T>
+		where T1 : struct, IManagedBinaryBuffer<T1, T>
+		where T2 : struct, IManagedBinaryBuffer<T2, T>
+		where T3 : struct, IManagedBinaryBuffer<T3, T>
+		where T4 : struct, IManagedBinaryBuffer<T4, T>;
 	/// <summary>
 	/// Compose statically all buffers in current space.
 	/// </summary>
@@ -106,12 +114,13 @@ public partial interface IManagedBuffer<T>
 	[RequiresPreviewFeatures]
 #endif
 	private protected static abstract void StaticCompose<T0, T1, T2, T3, T4, T5>(UInt16 s0, UInt16 s1, UInt16 s2,
-		UInt16 s3, UInt16 s4, UInt16 s5, StaticCompositionHelper<T> helper) where T0 : struct, IManagedBuffer<T>
-		where T1 : struct, IManagedBuffer<T>
-		where T2 : struct, IManagedBuffer<T>
-		where T3 : struct, IManagedBuffer<T>
-		where T4 : struct, IManagedBuffer<T>
-		where T5 : struct, IManagedBuffer<T>;
+		UInt16 s3, UInt16 s4, UInt16 s5, StaticCompositionHelper<T> helper)
+		where T0 : struct, IManagedBinaryBuffer<T0, T>
+		where T1 : struct, IManagedBinaryBuffer<T1, T>
+		where T2 : struct, IManagedBinaryBuffer<T2, T>
+		where T3 : struct, IManagedBinaryBuffer<T3, T>
+		where T4 : struct, IManagedBinaryBuffer<T4, T>
+		where T5 : struct, IManagedBinaryBuffer<T5, T>;
 	/// <summary>
 	/// Compose statically all buffers in current space.
 	/// </summary>
@@ -135,13 +144,13 @@ public partial interface IManagedBuffer<T>
 #endif
 	private protected static abstract void StaticCompose<T0, T1, T2, T3, T4, T5, T6>(UInt16 s0, UInt16 s1, UInt16 s2,
 		UInt16 s3, UInt16 s4, UInt16 s5, UInt16 s6, StaticCompositionHelper<T> helper)
-		where T0 : struct, IManagedBuffer<T>
-		where T1 : struct, IManagedBuffer<T>
-		where T2 : struct, IManagedBuffer<T>
-		where T3 : struct, IManagedBuffer<T>
-		where T4 : struct, IManagedBuffer<T>
-		where T5 : struct, IManagedBuffer<T>
-		where T6 : struct, IManagedBuffer<T>;
+		where T0 : struct, IManagedBinaryBuffer<T0, T>
+		where T1 : struct, IManagedBinaryBuffer<T1, T>
+		where T2 : struct, IManagedBinaryBuffer<T2, T>
+		where T3 : struct, IManagedBinaryBuffer<T3, T>
+		where T4 : struct, IManagedBinaryBuffer<T4, T>
+		where T5 : struct, IManagedBinaryBuffer<T5, T>
+		where T6 : struct, IManagedBinaryBuffer<T6, T>;
 	/// <summary>
 	/// Compose statically all buffers in current space.
 	/// </summary>
@@ -167,14 +176,14 @@ public partial interface IManagedBuffer<T>
 #endif
 	private protected static abstract void StaticCompose<T0, T1, T2, T3, T4, T5, T6, T7>(UInt16 s0, UInt16 s1,
 		UInt16 s2, UInt16 s3, UInt16 s4, UInt16 s5, UInt16 s6, UInt16 s7, StaticCompositionHelper<T> helper)
-		where T0 : struct, IManagedBuffer<T>
-		where T1 : struct, IManagedBuffer<T>
-		where T2 : struct, IManagedBuffer<T>
-		where T3 : struct, IManagedBuffer<T>
-		where T4 : struct, IManagedBuffer<T>
-		where T5 : struct, IManagedBuffer<T>
-		where T6 : struct, IManagedBuffer<T>
-		where T7 : struct, IManagedBuffer<T>;
+		where T0 : struct, IManagedBinaryBuffer<T0, T>
+		where T1 : struct, IManagedBinaryBuffer<T1, T>
+		where T2 : struct, IManagedBinaryBuffer<T2, T>
+		where T3 : struct, IManagedBinaryBuffer<T3, T>
+		where T4 : struct, IManagedBinaryBuffer<T4, T>
+		where T5 : struct, IManagedBinaryBuffer<T5, T>
+		where T6 : struct, IManagedBinaryBuffer<T6, T>
+		where T7 : struct, IManagedBinaryBuffer<T7, T>;
 	/// <summary>
 	/// Compose statically all buffers in current space.
 	/// </summary>
@@ -202,15 +211,15 @@ public partial interface IManagedBuffer<T>
 #endif
 	private protected static abstract void StaticCompose<T0, T1, T2, T3, T4, T5, T6, T7, T8>(UInt16 s0, UInt16 s1,
 		UInt16 s2, UInt16 s3, UInt16 s4, UInt16 s5, UInt16 s6, UInt16 s7, UInt16 s8, StaticCompositionHelper<T> helper)
-		where T0 : struct, IManagedBuffer<T>
-		where T1 : struct, IManagedBuffer<T>
-		where T2 : struct, IManagedBuffer<T>
-		where T3 : struct, IManagedBuffer<T>
-		where T4 : struct, IManagedBuffer<T>
-		where T5 : struct, IManagedBuffer<T>
-		where T6 : struct, IManagedBuffer<T>
-		where T7 : struct, IManagedBuffer<T>
-		where T8 : struct, IManagedBuffer<T>;
+		where T0 : struct, IManagedBinaryBuffer<T0, T>
+		where T1 : struct, IManagedBinaryBuffer<T1, T>
+		where T2 : struct, IManagedBinaryBuffer<T2, T>
+		where T3 : struct, IManagedBinaryBuffer<T3, T>
+		where T4 : struct, IManagedBinaryBuffer<T4, T>
+		where T5 : struct, IManagedBinaryBuffer<T5, T>
+		where T6 : struct, IManagedBinaryBuffer<T6, T>
+		where T7 : struct, IManagedBinaryBuffer<T7, T>
+		where T8 : struct, IManagedBinaryBuffer<T8, T>;
 	/// <summary>
 	/// Compose statically all buffers in current space.
 	/// </summary>
@@ -240,16 +249,16 @@ public partial interface IManagedBuffer<T>
 #endif
 	private protected static abstract void StaticCompose<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(UInt16 s0, UInt16 s1,
 		UInt16 s2, UInt16 s3, UInt16 s4, UInt16 s5, UInt16 s6, UInt16 s7, UInt16 s8, UInt16 s9,
-		StaticCompositionHelper<T> helper) where T0 : struct, IManagedBuffer<T>
-		where T1 : struct, IManagedBuffer<T>
-		where T2 : struct, IManagedBuffer<T>
-		where T3 : struct, IManagedBuffer<T>
-		where T4 : struct, IManagedBuffer<T>
-		where T5 : struct, IManagedBuffer<T>
-		where T6 : struct, IManagedBuffer<T>
-		where T7 : struct, IManagedBuffer<T>
-		where T8 : struct, IManagedBuffer<T>
-		where T9 : struct, IManagedBuffer<T>;
+		StaticCompositionHelper<T> helper) where T0 : struct, IManagedBinaryBuffer<T0, T>
+		where T1 : struct, IManagedBinaryBuffer<T1, T>
+		where T2 : struct, IManagedBinaryBuffer<T2, T>
+		where T3 : struct, IManagedBinaryBuffer<T3, T>
+		where T4 : struct, IManagedBinaryBuffer<T4, T>
+		where T5 : struct, IManagedBinaryBuffer<T5, T>
+		where T6 : struct, IManagedBinaryBuffer<T6, T>
+		where T7 : struct, IManagedBinaryBuffer<T7, T>
+		where T8 : struct, IManagedBinaryBuffer<T8, T>
+		where T9 : struct, IManagedBinaryBuffer<T9, T>;
 	/// <summary>
 	/// Compose statically all buffers in current space.
 	/// </summary>
@@ -281,17 +290,17 @@ public partial interface IManagedBuffer<T>
 #endif
 	private protected static abstract void StaticCompose<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(UInt16 s0,
 		UInt16 s1, UInt16 s2, UInt16 s3, UInt16 s4, UInt16 s5, UInt16 s6, UInt16 s7, UInt16 s8, UInt16 s9, UInt16 s10,
-		StaticCompositionHelper<T> helper) where T0 : struct, IManagedBuffer<T>
-		where T1 : struct, IManagedBuffer<T>
-		where T2 : struct, IManagedBuffer<T>
-		where T3 : struct, IManagedBuffer<T>
-		where T4 : struct, IManagedBuffer<T>
-		where T5 : struct, IManagedBuffer<T>
-		where T6 : struct, IManagedBuffer<T>
-		where T7 : struct, IManagedBuffer<T>
-		where T8 : struct, IManagedBuffer<T>
-		where T9 : struct, IManagedBuffer<T>
-		where T10 : struct, IManagedBuffer<T>;
+		StaticCompositionHelper<T> helper) where T0 : struct, IManagedBinaryBuffer<T0, T>
+		where T1 : struct, IManagedBinaryBuffer<T1, T>
+		where T2 : struct, IManagedBinaryBuffer<T2, T>
+		where T3 : struct, IManagedBinaryBuffer<T3, T>
+		where T4 : struct, IManagedBinaryBuffer<T4, T>
+		where T5 : struct, IManagedBinaryBuffer<T5, T>
+		where T6 : struct, IManagedBinaryBuffer<T6, T>
+		where T7 : struct, IManagedBinaryBuffer<T7, T>
+		where T8 : struct, IManagedBinaryBuffer<T8, T>
+		where T9 : struct, IManagedBinaryBuffer<T9, T>
+		where T10 : struct, IManagedBinaryBuffer<T10, T>;
 	/// <summary>
 	/// Compose statically all buffers in current space.
 	/// </summary>
@@ -325,18 +334,18 @@ public partial interface IManagedBuffer<T>
 #endif
 	private protected static abstract void StaticCompose<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(UInt16 s0,
 		UInt16 s1, UInt16 s2, UInt16 s3, UInt16 s4, UInt16 s5, UInt16 s6, UInt16 s7, UInt16 s8, UInt16 s9, UInt16 s10,
-		UInt16 s11, StaticCompositionHelper<T> helper) where T0 : struct, IManagedBuffer<T>
-		where T1 : struct, IManagedBuffer<T>
-		where T2 : struct, IManagedBuffer<T>
-		where T3 : struct, IManagedBuffer<T>
-		where T4 : struct, IManagedBuffer<T>
-		where T5 : struct, IManagedBuffer<T>
-		where T6 : struct, IManagedBuffer<T>
-		where T7 : struct, IManagedBuffer<T>
-		where T8 : struct, IManagedBuffer<T>
-		where T9 : struct, IManagedBuffer<T>
-		where T10 : struct, IManagedBuffer<T>
-		where T11 : struct, IManagedBuffer<T>;
+		UInt16 s11, StaticCompositionHelper<T> helper) where T0 : struct, IManagedBinaryBuffer<T0, T>
+		where T1 : struct, IManagedBinaryBuffer<T1, T>
+		where T2 : struct, IManagedBinaryBuffer<T2, T>
+		where T3 : struct, IManagedBinaryBuffer<T3, T>
+		where T4 : struct, IManagedBinaryBuffer<T4, T>
+		where T5 : struct, IManagedBinaryBuffer<T5, T>
+		where T6 : struct, IManagedBinaryBuffer<T6, T>
+		where T7 : struct, IManagedBinaryBuffer<T7, T>
+		where T8 : struct, IManagedBinaryBuffer<T8, T>
+		where T9 : struct, IManagedBinaryBuffer<T9, T>
+		where T10 : struct, IManagedBinaryBuffer<T10, T>
+		where T11 : struct, IManagedBinaryBuffer<T11, T>;
 	/// <summary>
 	/// Compose statically all buffers in current space.
 	/// </summary>
@@ -373,19 +382,19 @@ public partial interface IManagedBuffer<T>
 	private protected static abstract void
 		StaticCompose<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(UInt16 s0, UInt16 s1, UInt16 s2, UInt16 s3,
 			UInt16 s4, UInt16 s5, UInt16 s6, UInt16 s7, UInt16 s8, UInt16 s9, UInt16 s10, UInt16 s11, UInt16 s12,
-			StaticCompositionHelper<T> helper) where T0 : struct, IManagedBuffer<T>
-		where T1 : struct, IManagedBuffer<T>
-		where T2 : struct, IManagedBuffer<T>
-		where T3 : struct, IManagedBuffer<T>
-		where T4 : struct, IManagedBuffer<T>
-		where T5 : struct, IManagedBuffer<T>
-		where T6 : struct, IManagedBuffer<T>
-		where T7 : struct, IManagedBuffer<T>
-		where T8 : struct, IManagedBuffer<T>
-		where T9 : struct, IManagedBuffer<T>
-		where T10 : struct, IManagedBuffer<T>
-		where T11 : struct, IManagedBuffer<T>
-		where T12 : struct, IManagedBuffer<T>;
+			StaticCompositionHelper<T> helper) where T0 : struct, IManagedBinaryBuffer<T0, T>
+		where T1 : struct, IManagedBinaryBuffer<T1, T>
+		where T2 : struct, IManagedBinaryBuffer<T2, T>
+		where T3 : struct, IManagedBinaryBuffer<T3, T>
+		where T4 : struct, IManagedBinaryBuffer<T4, T>
+		where T5 : struct, IManagedBinaryBuffer<T5, T>
+		where T6 : struct, IManagedBinaryBuffer<T6, T>
+		where T7 : struct, IManagedBinaryBuffer<T7, T>
+		where T8 : struct, IManagedBinaryBuffer<T8, T>
+		where T9 : struct, IManagedBinaryBuffer<T9, T>
+		where T10 : struct, IManagedBinaryBuffer<T10, T>
+		where T11 : struct, IManagedBinaryBuffer<T11, T>
+		where T12 : struct, IManagedBinaryBuffer<T12, T>;
 	/// <summary>
 	/// Compose statically all buffers in current space.
 	/// </summary>
@@ -425,18 +434,19 @@ public partial interface IManagedBuffer<T>
 		StaticCompose<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(UInt16 s0, UInt16 s1, UInt16 s2,
 			UInt16 s3, UInt16 s4, UInt16 s5, UInt16 s6, UInt16 s7, UInt16 s8, UInt16 s9, UInt16 s10, UInt16 s11,
 			UInt16 s12,
-			UInt16 s13, StaticCompositionHelper<T> helper) where T0 : struct, IManagedBuffer<T>
-		where T1 : struct, IManagedBuffer<T>
-		where T2 : struct, IManagedBuffer<T>
-		where T3 : struct, IManagedBuffer<T>
-		where T4 : struct, IManagedBuffer<T>
-		where T5 : struct, IManagedBuffer<T>
-		where T6 : struct, IManagedBuffer<T>
-		where T7 : struct, IManagedBuffer<T>
-		where T8 : struct, IManagedBuffer<T>
-		where T9 : struct, IManagedBuffer<T>
-		where T10 : struct, IManagedBuffer<T>
-		where T11 : struct, IManagedBuffer<T>
-		where T12 : struct, IManagedBuffer<T>
-		where T13 : struct, IManagedBuffer<T>;
+			UInt16 s13, StaticCompositionHelper<T> helper) where T0 : struct, IManagedBinaryBuffer<T0, T>
+		where T1 : struct, IManagedBinaryBuffer<T1, T>
+		where T2 : struct, IManagedBinaryBuffer<T2, T>
+		where T3 : struct, IManagedBinaryBuffer<T3, T>
+		where T4 : struct, IManagedBinaryBuffer<T4, T>
+		where T5 : struct, IManagedBinaryBuffer<T5, T>
+		where T6 : struct, IManagedBinaryBuffer<T6, T>
+		where T7 : struct, IManagedBinaryBuffer<T7, T>
+		where T8 : struct, IManagedBinaryBuffer<T8, T>
+		where T9 : struct, IManagedBinaryBuffer<T9, T>
+		where T10 : struct, IManagedBinaryBuffer<T10, T>
+		where T11 : struct, IManagedBinaryBuffer<T11, T>
+		where T12 : struct, IManagedBinaryBuffer<T12, T>
+		where T13 : struct, IManagedBinaryBuffer<T13, T>;
+#endif
 }
