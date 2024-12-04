@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.Internal;
 
+#if BINARY_SPACES
 internal partial class StaticCompositionHelper<T>
 {
 	/// <summary>
@@ -28,3 +29,4 @@ internal partial class StaticCompositionHelper<T>
 		public Impl() : base(Impl<TBuffer>.metadata.Size) => this.Add(Impl<TBuffer>.metadata);
 	}
 }
+#endif
