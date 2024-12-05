@@ -35,6 +35,11 @@ public sealed class EqualsTest : FixedContextTestsBase
 	internal void TimeOnlyTest() => this.Test<TimeOnly>();
 	[Fact]
 	internal void TimeSpanTest() => this.Test<TimeSpan>();
+	[Fact]
+	internal void ManagedStructTest() => this.Test<ManagedStruct>();
+	[Fact]
+	internal void StringTest() => this.Test<String>();
+	
 	private unsafe void Test<T>()
 	{
 		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>(sizeof(Int128) * 3 / sizeof(T)).ToArray();
