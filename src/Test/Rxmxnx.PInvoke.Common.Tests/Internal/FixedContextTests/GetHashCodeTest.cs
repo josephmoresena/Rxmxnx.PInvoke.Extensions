@@ -2,6 +2,7 @@
 
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
+#pragma warning disable CS8500
 public sealed class GetHashCodeTest : FixedContextTestsBase
 {
 	[Fact]
@@ -34,18 +35,18 @@ public sealed class GetHashCodeTest : FixedContextTestsBase
 	internal void TimeOnlyTest() => this.Test<TimeOnly>();
 	[Fact]
 	internal void TimeSpanTest() => this.Test<TimeSpan>();
-
-	private unsafe void Test<T>() where T : unmanaged
+	[Fact]
+	internal void ManagedStructTest() => this.Test<ManagedStruct>();
+	[Fact]
+	internal void StringTest() => this.Test<String>();
+	private unsafe void Test<T>()
 	{
 		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>(sizeof(Int128) * 3 / sizeof(T)).ToArray();
 		this.WithFixed(values, GetHashCodeTest.Test);
 		this.WithFixed(values, GetHashCodeTest.ReadOnlyTest);
 	}
-
-	private static unsafe void Test<T>(FixedContext<T> ctx, T[] values) where T : unmanaged
+	private static unsafe void Test<T>(FixedContext<T> ctx, T[] values)
 	{
-		Boolean isReadOnly = ctx.IsReadOnly;
-
 		fixed (T* ptrValue = values)
 		{
 			Int32 binaryLength = values.Length * sizeof(T);
@@ -66,26 +67,57 @@ public sealed class GetHashCodeTest : FixedContextTestsBase
 			Assert.True(hash.ToHashCode().Equals(ctx.GetHashCode()));
 			Assert.False(hashReadOnly.ToHashCode().Equals(ctx.GetHashCode()));
 
-			GetHashCodeTest.TransformationTest<T, Boolean>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, Byte>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, Int16>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, Char>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, Int32>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, Int64>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, Int128>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, Single>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, Half>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, Double>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, Decimal>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, DateTime>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, TimeOnly>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, TimeSpan>(ctx, values.Length);
+			try
+			{
+				GCHandle.Alloc(values, GCHandleType.Pinned).Free();
+
+				GetHashCodeTest.TransformationTest<T, Boolean>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, Byte>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, Int16>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, Char>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, Int32>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, Int64>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, Int128>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, Single>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, Half>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, Double>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, Decimal>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, DateTime>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, TimeOnly>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, TimeSpan>(ctx, values.Length);
+
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Boolean>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Byte>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Int16>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Char>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Int32>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Int64>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Int128>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Single>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Half>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Double>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Decimal>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<DateTime>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<TimeOnly>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<TimeSpan>>(ctx, values.Length);
+			}
+			catch (Exception)
+			{
+				if (typeof(T).IsValueType)
+				{
+					GetHashCodeTest.TransformationTest<T, ManagedStruct>(ctx, values.Length);
+					GetHashCodeTest.TransformationTest<T, WrapperStruct<ManagedStruct>>(ctx, values.Length);
+				}
+				else
+				{
+					GetHashCodeTest.TransformationTest<T, String>(ctx, values.Length);
+					GetHashCodeTest.TransformationTest<T, Object>(ctx, values.Length);
+				}
+			}
 		}
 	}
-	private static unsafe void ReadOnlyTest<T>(ReadOnlyFixedContext<T> ctx, T[] values) where T : unmanaged
+	private static unsafe void ReadOnlyTest<T>(ReadOnlyFixedContext<T> ctx, T[] values)
 	{
-		Boolean isReadOnly = ctx.IsReadOnly;
-
 		fixed (T* ptrValue = values)
 		{
 			Int32 binaryLength = values.Length * sizeof(T);
@@ -106,42 +138,76 @@ public sealed class GetHashCodeTest : FixedContextTestsBase
 			Assert.False(hash.ToHashCode().Equals(ctx.GetHashCode()));
 			Assert.True(hashReadOnly.ToHashCode().Equals(ctx.GetHashCode()));
 
-			GetHashCodeTest.TransformationTest<T, Boolean>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, Byte>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, Int16>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, Char>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, Int32>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, Int64>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, Int128>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, Single>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, Half>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, Double>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, Decimal>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, DateTime>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, TimeOnly>(ctx, values.Length);
-			GetHashCodeTest.TransformationTest<T, TimeSpan>(ctx, values.Length);
+			try
+			{
+				GCHandle.Alloc(values, GCHandleType.Pinned).Free();
+
+				GetHashCodeTest.TransformationTest<T, Boolean>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, Byte>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, Int16>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, Char>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, Int32>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, Int64>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, Int128>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, Single>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, Half>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, Double>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, Decimal>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, DateTime>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, TimeOnly>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, TimeSpan>(ctx, values.Length);
+
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Boolean>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Byte>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Int16>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Char>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Int32>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Int64>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Int128>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Single>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Half>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Double>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<Decimal>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<DateTime>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<TimeOnly>>(ctx, values.Length);
+				GetHashCodeTest.TransformationTest<T, WrapperStruct<TimeSpan>>(ctx, values.Length);
+			}
+			catch (Exception)
+			{
+				if (typeof(T).IsValueType)
+				{
+					GetHashCodeTest.TransformationTest<T, ManagedStruct>(ctx, values.Length);
+					GetHashCodeTest.TransformationTest<T, WrapperStruct<ManagedStruct>>(ctx, values.Length);
+				}
+				else
+				{
+					GetHashCodeTest.TransformationTest<T, String>(ctx, values.Length);
+					GetHashCodeTest.TransformationTest<T, Object>(ctx, values.Length);
+				}
+			}
 		}
 	}
 	private static unsafe void TransformationTest<T, T2>(FixedContext<T> ctx, Int32 length)
-		where T : unmanaged where T2 : unmanaged
 	{
 		ReadOnlySpan<T> span = ctx.CreateReadOnlySpan<T>(length);
 		void* ptr = Unsafe.AsPointer(ref MemoryMarshal.GetReference(span));
-		ReadOnlySpan<T2> transformedSpan = new(ptr, length * sizeof(T) / sizeof(T2));
+		ref T2 refValue = ref Unsafe.AsRef<T2>(ptr);
+		ReadOnlySpan<T2> transformedSpan =
+			MemoryMarshal.CreateReadOnlySpan(ref refValue, length * sizeof(T) / sizeof(T2));
 		FixedContextTestsBase.WithFixed(transformedSpan, ctx, GetHashCodeTest.Test);
 	}
 	private static unsafe void TransformationTest<T, T2>(ReadOnlyFixedContext<T> ctx, Int32 length)
-		where T : unmanaged where T2 : unmanaged
 	{
 		ReadOnlySpan<T> span = ctx.CreateReadOnlySpan<T>(length);
 		void* ptr = Unsafe.AsPointer(ref MemoryMarshal.GetReference(span));
-		ReadOnlySpan<T2> transformedSpan = new(ptr, length * sizeof(T) / sizeof(T2));
+		ref T2 refValue = ref Unsafe.AsRef<T2>(ptr);
+		ReadOnlySpan<T2> transformedSpan =
+			MemoryMarshal.CreateReadOnlySpan(ref refValue, length * sizeof(T) / sizeof(T2));
 		FixedContextTestsBase.WithFixed(transformedSpan, ctx, GetHashCodeTest.Test);
 	}
 	private static void Test<T, TInt>(FixedContext<TInt> ctx2, FixedContext<T> ctx)
-		where T : unmanaged where TInt : unmanaged
 		=> Assert.Equal(typeof(TInt) == typeof(T), ctx2.GetHashCode().Equals(ctx.GetHashCode()));
 	private static void Test<T, TInt>(ReadOnlyFixedContext<TInt> ctx2, ReadOnlyFixedContext<T> ctx)
-		where T : unmanaged where TInt : unmanaged
 		=> Assert.Equal(typeof(TInt) == typeof(T), ctx2.GetHashCode().Equals(ctx.GetHashCode()));
 }
+#pragma warning restore CS8500

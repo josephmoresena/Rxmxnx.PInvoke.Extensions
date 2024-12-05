@@ -39,7 +39,6 @@ public sealed class EqualsTest : FixedContextTestsBase
 	internal void ManagedStructTest() => this.Test<ManagedStruct>();
 	[Fact]
 	internal void StringTest() => this.Test<String>();
-	
 	private unsafe void Test<T>()
 	{
 		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>(sizeof(Int128) * 3 / sizeof(T)).ToArray();
@@ -246,12 +245,6 @@ public sealed class EqualsTest : FixedContextTestsBase
 		Assert.False(ctx2.Equals(ctx3));
 		Assert.False(ctx2.Equals(ctx4));
 		Assert.False(ctx3.Equals(ctx4));
-	}
-
-	[StructLayout(LayoutKind.Sequential)]
-	private readonly struct WrapperStruct<T>
-	{
-		public T Value { get; init; }
 	}
 }
 #pragma warning restore CS8500
