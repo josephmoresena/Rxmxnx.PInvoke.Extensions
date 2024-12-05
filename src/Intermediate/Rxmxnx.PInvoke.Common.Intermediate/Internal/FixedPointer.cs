@@ -167,7 +167,8 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	public Span<TValue> CreateSpan<TValue>(Int32 length)
 	{
 		this.ValidateOperation();
-		return new(this._ptr, length);
+		ref TValue refValue = ref Unsafe.AsRef<TValue>(this._ptr);
+		return MemoryMarshal.CreateSpan(ref refValue, length);
 	}
 	/// <summary>
 	/// Creates a <see cref="ReadOnlySpan{TValue}"/> instance over the memory block whose
@@ -180,8 +181,8 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	public ReadOnlySpan<TValue> CreateReadOnlySpan<TValue>(Int32 length)
 	{
 		this.ValidateOperation(true);
-		this.ValidateUnmanagedOperation();
-		return new(this._ptr, length);
+		ref TValue refValue = ref Unsafe.AsRef<TValue>(this._ptr);
+		return MemoryMarshal.CreateReadOnlySpan(ref refValue, length);
 	}
 	/// <summary>
 	/// Creates a <see cref="Span{Byte}"/> instance over the memory block.

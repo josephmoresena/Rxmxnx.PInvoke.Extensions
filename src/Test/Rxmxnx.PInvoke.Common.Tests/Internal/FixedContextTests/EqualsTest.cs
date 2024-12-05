@@ -37,7 +37,7 @@ public sealed class EqualsTest : FixedContextTestsBase
 
 	private unsafe void Test<T>() where T : unmanaged
 	{
-		T[] values = FixedMemoryTestsBase.fixture.CreateMany<T>(sizeof(Int128) * 3 / sizeof(T)).ToArray();
+		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>(sizeof(Int128) * 3 / sizeof(T)).ToArray();
 		this.WithFixed(values, EqualsTest.Test);
 		this.WithFixed(values, EqualsTest.ReadOnlyTest);
 	}

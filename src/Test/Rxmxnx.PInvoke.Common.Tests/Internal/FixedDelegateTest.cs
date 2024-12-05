@@ -6,10 +6,10 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
 	[Fact]
 	internal void Test()
 	{
-		String str1 = FixedMemoryTestsBase.fixture.Create<String>();
-		String str2 = FixedMemoryTestsBase.fixture.Create<String>();
-		Byte[] bytes = FixedMemoryTestsBase.fixture.Create<Byte[]>();
-		Guid[] guids = FixedMemoryTestsBase.fixture.CreateMany<Guid>(10).ToArray();
+		String str1 = FixedMemoryTestsBase.Fixture.Create<String>();
+		String str2 = FixedMemoryTestsBase.Fixture.Create<String>();
+		Byte[] bytes = FixedMemoryTestsBase.Fixture.Create<Byte[]>();
+		Guid[] guids = FixedMemoryTestsBase.Fixture.CreateMany<Guid>(10).ToArray();
 		Object obj = new();
 		Boolean called = false;
 
@@ -77,7 +77,7 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
 		status.Status4.Delegate();
 		Assert.False(togle);
 		status.Status5.Fixed.CreateDelegate<VoidObjectDelegate>()(obj);
-		obj = FixedMemoryTestsBase.fixture.Create<String>();
+		obj = FixedMemoryTestsBase.Fixture.Create<String>();
 		Assert.ThrowsAny<Exception>(() => status.Status5.Fixed.CreateDelegate<VoidObjectDelegate>()(initObj));
 		status.Status5.Fixed.CreateDelegate<VoidObjectDelegate>()(obj);
 		Assert.True(Unsafe.AreSame(ref guids[0], ref status.Status6.Fixed.CreateDelegate<GetGuidSpanDelegate>()()[0]));

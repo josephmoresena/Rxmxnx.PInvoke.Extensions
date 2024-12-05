@@ -37,7 +37,7 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 
 	private void Test<T>() where T : unmanaged
 	{
-		T value = FixedMemoryTestsBase.fixture.Create<T>();
+		T value = FixedMemoryTestsBase.Fixture.Create<T>();
 		this.WithFixed(ref value, CreateReadOnlyReferenceTest.Test);
 		this.WithFixed(ref value, CreateReadOnlyReferenceTest.ReadOnlyTest);
 	}

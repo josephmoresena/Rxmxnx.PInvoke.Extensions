@@ -37,7 +37,7 @@ public sealed class CreateSpanTest : FixedContextTestsBase
 
 	private void Test<T>() where T : unmanaged
 	{
-		T[] values = FixedMemoryTestsBase.fixture.CreateMany<T>().ToArray();
+		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>().ToArray();
 		this.WithFixed(values, CreateSpanTest.Test);
 		Exception readOnly =
 			Assert.Throws<InvalidOperationException>(() => this.WithFixed(values, CreateSpanTest.ReadOnlyTest));
