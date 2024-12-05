@@ -251,6 +251,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected void ValidateTransformation(Type type, Boolean unmanagedType)
 	{
+		if (type == this.Type) return;
 		ValidationUtilities.ThrowIfInvalidTransformation(this.Type, this.IsUnmanaged, type, unmanagedType);
 	}
 	/// <summary>

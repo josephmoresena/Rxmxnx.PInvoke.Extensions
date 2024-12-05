@@ -34,8 +34,12 @@ public sealed class CreateSpanTest : FixedContextTestsBase
 	internal void TimeOnlyTest() => this.Test<TimeOnly>();
 	[Fact]
 	internal void TimeSpanTest() => this.Test<TimeSpan>();
+	[Fact]
+	internal void ManagedStructTest() => this.Test<ManagedStruct>();
+	[Fact]
+	internal void StringTest() => this.Test<String>();
 
-	private void Test<T>() where T : unmanaged
+	private void Test<T>()
 	{
 		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>().ToArray();
 		this.WithFixed(values, CreateSpanTest.Test);
@@ -44,7 +48,7 @@ public sealed class CreateSpanTest : FixedContextTestsBase
 		Assert.Equal(FixedMemoryTestsBase.ReadOnlyError, readOnly.Message);
 	}
 
-	private static void Test<T>(FixedContext<T> ctx, T[] values) where T : unmanaged
+	private static void Test<T>(FixedContext<T> ctx, T[] values)
 	{
 		Span<T> span = ctx.CreateSpan<T>(values.Length);
 		Assert.Equal(values.Length, span.Length);
@@ -52,18 +56,18 @@ public sealed class CreateSpanTest : FixedContextTestsBase
 		Assert.True(Unsafe.AreSame(ref values[0], ref span[0]));
 		Assert.False(ctx.IsFunction);
 
-		Exception functionException = Assert.Throws<InvalidOperationException>(() => ctx.CreateDelegate<Action>());
+		Exception functionException = Assert.Throws<InvalidOperationException>(ctx.CreateDelegate<Action>);
 		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 
 		ctx.Unload();
 		Exception invalid = Assert.Throws<InvalidOperationException>(() => ctx.CreateSpan<T>(values.Length));
 		Assert.Equal(FixedMemoryTestsBase.InvalidError, invalid.Message);
 
-		Exception functionException2 = Assert.Throws<InvalidOperationException>(() => ctx.CreateDelegate<Action>());
+		Exception functionException2 = Assert.Throws<InvalidOperationException>(ctx.CreateDelegate<Action>);
 		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException2.Message);
 	}
 
-	private static void ReadOnlyTest<T>(ReadOnlyFixedContext<T> ctx, T[] values) where T : unmanaged
+	private static void ReadOnlyTest<T>(ReadOnlyFixedContext<T> ctx, T[] values)
 	{
 		_ = ctx.CreateSpan<T>(values.Length);
 	}

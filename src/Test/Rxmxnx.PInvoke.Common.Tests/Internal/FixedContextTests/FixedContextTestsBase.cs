@@ -20,7 +20,6 @@ public abstract class FixedContextTestsBase : FixedMemoryTestsBase
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 			actionTest(new(ptr, span.Length), values);
 	}
-
 	/// <summary>
 	/// Invokes the action with a created <see cref="ReadOnlyFixedContext{T}"/> instantance passed
 	/// as parameter.
@@ -34,7 +33,6 @@ public abstract class FixedContextTestsBase : FixedMemoryTestsBase
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 			actionTest(new(ptr, span.Length), values);
 	}
-
 	/// <summary>
 	/// Invokes the action with a created <see cref="FixedContext{T}"/> instantance passed
 	/// as parameter.
@@ -50,7 +48,6 @@ public abstract class FixedContextTestsBase : FixedMemoryTestsBase
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 			actionTest(new(ptr, span.Length), obj);
 	}
-
 	/// <summary>
 	/// Invokes the action with a created <see cref="ReadOnlyFixedContext{T}"/> instantance passed
 	/// as parameter.
@@ -61,7 +58,7 @@ public abstract class FixedContextTestsBase : FixedMemoryTestsBase
 	/// <param name="obj">Object state.</param>
 	/// <param name="actionTest">Action test to <see cref="ReadOnlyFixedContext{T}"/> instance to be used.</param>
 	internal static unsafe void WithFixed<T, TObj>(ReadOnlySpan<T> span, TObj obj,
-		Action<ReadOnlyFixedContext<T>, TObj> actionTest) where T : unmanaged
+		Action<ReadOnlyFixedContext<T>, TObj> actionTest)
 	{
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 			actionTest(new(ptr, span.Length), obj);
