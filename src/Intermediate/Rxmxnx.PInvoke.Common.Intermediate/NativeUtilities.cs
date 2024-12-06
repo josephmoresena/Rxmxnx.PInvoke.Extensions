@@ -18,13 +18,12 @@ public static unsafe partial class NativeUtilities
 	/// This function may cause overhead as it uses reflection to attempt to throw a
 	/// <see cref="NotSupportedException"/> exception due to missing native code or metadata.
 	/// </remarks>
+	[ExcludeFromCodeCoverage]
 	public static Boolean MightBeAot
 	{
 		get
 		{
-			ValueTask<Boolean> valueTask = AotDetectorHelper.IsTrimmedOrAotAsync();
-			if (valueTask.IsCompleted) return valueTask.Result;
-			Task<Boolean> task = valueTask.AsTask();
+			Task<Boolean> task = AotDetectorHelper.IsTrimmedOrAotAsync().AsTask();
 			return task.Result;
 		}
 	}
