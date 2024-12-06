@@ -85,6 +85,6 @@ public sealed class BasicTests : ValueRegionTestBase
 		if (values.Length > 0)
 			Assert.NotSame(values, newArray);
 		else
-			Assert.Same(values, newArray);
+			Assert.Same(Array.Empty<T>(), newArray);
 	}
 }

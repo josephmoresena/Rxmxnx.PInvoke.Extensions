@@ -287,6 +287,9 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 		Assert.Equal(ctx.BinaryLength, offset.BinaryLength + offset.BinaryOffset);
 		Assert.Equal(hashResidual.ToHashCode(), offset.GetHashCode());
 
+		Exception functionException = Assert.Throws<InvalidOperationException>(offset.CreateDelegate<Action>);
+		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
+
 		try
 		{
 			GCHandle.Alloc(Array.Empty<T>(), GCHandleType.Pinned).Free();
@@ -329,9 +332,6 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 		GetTransformationTest.OffsetTest<T2, TimeOnly>(offset, offset2);
 		_ = ctx.GetTransformation<TimeSpan>(out offset2, true);
 		GetTransformationTest.OffsetTest<T2, TimeSpan>(offset, offset2);
-
-		Exception functionException = Assert.Throws<InvalidOperationException>(offset.CreateDelegate<Action>);
-		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
 	private static unsafe void ContextTest<T, T2>(ReadOnlyFixedContext<T> ctx, ReadOnlyFixedOffset offset,
 		ReadOnlyFixedContext<T2> result)
@@ -350,6 +350,9 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 		Assert.Equal(ctx.BinaryLength, result.BinaryLength);
 		Assert.Equal(ctx.BinaryLength, offset.BinaryLength + offset.BinaryOffset);
 		Assert.Equal(hashResidual.ToHashCode(), offset.GetHashCode());
+
+		Exception functionException = Assert.Throws<InvalidOperationException>(offset.CreateDelegate<Action>);
+		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 
 		try
 		{
@@ -395,9 +398,6 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 		GetTransformationTest.OffsetTest<T2, TimeOnly>(offset, offset2);
 		_ = ctx.GetTransformation<TimeSpan>(out offset2);
 		GetTransformationTest.OffsetTest<T2, TimeSpan>(offset, offset2);
-
-		Exception functionException = Assert.Throws<InvalidOperationException>(offset.CreateDelegate<Action>);
-		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
 	private static unsafe void OffsetTest<T2, T3>(FixedOffset offset1, FixedOffset offset2)
 	{

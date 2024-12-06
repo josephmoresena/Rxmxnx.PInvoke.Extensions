@@ -2,6 +2,7 @@
 
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
+#pragma warning disable CS8500
 public sealed class EqualsTest : FixedReferenceTestsBase
 {
 	[Fact]
@@ -34,21 +35,15 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 	internal void TimeOnlyTest() => EqualsTest.Test<TimeOnly>();
 	[Fact]
 	internal void TimeSpanTest() => EqualsTest.Test<TimeSpan>();
-
-	private static void Test<T>() where T : unmanaged
+	private static void Test<T>()
 	{
 		T value = FixedMemoryTestsBase.Fixture.Create<T>();
 		FixedReferenceTestsBase.WithFixed(ref value, EqualsTest.Test);
 		FixedReferenceTestsBase.WithFixed(ref value, EqualsTest.ReadOnlyTest);
 	}
-
-	private static void Test<T>(FixedReference<T> fref, IntPtr _) where T : unmanaged { EqualsTest.Test(fref); }
-	private static void ReadOnlyTest<T>(ReadOnlyFixedReference<T> fref, IntPtr _) where T : unmanaged
-	{
-		EqualsTest.Test(fref);
-	}
-
-	private static void Test<T>(FixedReference<T> fref) where T : unmanaged
+	private static void Test<T>(FixedReference<T> fref, IntPtr _) { EqualsTest.Test(fref); }
+	private static void ReadOnlyTest<T>(ReadOnlyFixedReference<T> fref, IntPtr _) { EqualsTest.Test(fref); }
+	private static void Test<T>(FixedReference<T> fref)
 	{
 		EqualsTest.TransformationTest<T, Boolean>(fref);
 		EqualsTest.TransformationTest<T, Byte>(fref);
@@ -65,7 +60,7 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 		EqualsTest.TransformationTest<T, TimeOnly>(fref);
 		EqualsTest.TransformationTest<T, TimeSpan>(fref);
 	}
-	private static void Test<T>(ReadOnlyFixedReference<T> fref) where T : unmanaged
+	private static void Test<T>(ReadOnlyFixedReference<T> fref)
 	{
 		EqualsTest.TransformationTest<T, Boolean>(fref);
 		EqualsTest.TransformationTest<T, Byte>(fref);
@@ -82,8 +77,7 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 		EqualsTest.TransformationTest<T, TimeOnly>(fref);
 		EqualsTest.TransformationTest<T, TimeSpan>(fref);
 	}
-	private static unsafe void TransformationTest<T, T2>(FixedReference<T> fref)
-		where T : unmanaged where T2 : unmanaged
+	private static unsafe void TransformationTest<T, T2>(FixedReference<T> fref) where T2 : unmanaged
 	{
 		ref readonly T valueRef = ref fref.CreateReadOnlyReference<T>();
 		void* ptr = Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in valueRef));
@@ -95,8 +89,7 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 		Assert.Equal(binaryLength, fref.BinaryLength);
 		FixedReferenceTestsBase.WithFixed(transformedRef, fref, EqualsTest.Test);
 	}
-	private static unsafe void TransformationTest<T, T2>(ReadOnlyFixedReference<T> fref)
-		where T : unmanaged where T2 : unmanaged
+	private static unsafe void TransformationTest<T, T2>(ReadOnlyFixedReference<T> fref) where T2 : unmanaged
 	{
 		ref readonly T valueRef = ref fref.CreateReadOnlyReference<T>();
 		void* ptr = Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in valueRef));
@@ -109,7 +102,7 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 		FixedReferenceTestsBase.WithFixed(transformedRef, fref, EqualsTest.Test);
 	}
 	private static void Test<T, TInt>(FixedReference<TInt> fref2, FixedReference<T> fref)
-		where T : unmanaged where TInt : unmanaged
+
 	{
 		Boolean equal = fref.IsReadOnly == fref2.IsReadOnly && typeof(TInt) == typeof(T);
 
@@ -121,7 +114,6 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 		Assert.False(fref2.IsFunction);
 	}
 	private static void Test<T, TInt>(ReadOnlyFixedReference<TInt> fref2, ReadOnlyFixedReference<T> fref)
-		where T : unmanaged where TInt : unmanaged
 	{
 		Boolean equal = fref.IsReadOnly == fref2.IsReadOnly && typeof(TInt) == typeof(T);
 
@@ -133,3 +125,4 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 		Assert.False(fref2.IsFunction);
 	}
 }
+#pragma warning restore CS8500

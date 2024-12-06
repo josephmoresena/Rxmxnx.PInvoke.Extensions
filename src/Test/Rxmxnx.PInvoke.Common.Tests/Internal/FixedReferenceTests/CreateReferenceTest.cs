@@ -164,15 +164,15 @@ public sealed class CreateReferenceTest : FixedReferenceTestsBase
 			CreateReferenceTest.TestSize<T, TimeSpan>(fref);
 
 			if (sizeof(T) < sizeof(ManagedStruct))
+			{
 				CreateReferenceTest.TestSize<T, ManagedStruct>(fref);
+			}
 			else
+			{
 				Assert.Throws<InvalidOperationException>(() => CreateReferenceTest.TestSize<T, ManagedStruct>(fref));
-
-			if (sizeof(T) < sizeof(WrapperStruct<ManagedStruct>))
-				CreateReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref);
-			else
 				Assert.Throws<InvalidOperationException>(
 					() => CreateReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref));
+			}
 
 			if (sizeof(T) < IntPtr.Size)
 			{
