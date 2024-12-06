@@ -61,7 +61,7 @@ internal sealed unsafe partial class ReadOnlyFixedReference<T> : ReadOnlyFixedMe
 	public ReadOnlyFixedReference<TDestination> GetTransformation<TDestination>(out ReadOnlyFixedOffset fixedOffset)
 	{
 		this.ValidateOperation(true);
-		this.ValidateTransformation(typeof(TDestination), ReadOnlyValPtr<T>.IsUnmanaged);
+		this.ValidateTransformation(typeof(TDestination), ReadOnlyValPtr<TDestination>.IsUnmanaged);
 		Int32 sizeOf = sizeof(TDestination);
 		this.ValidateReferenceSize(typeof(TDestination), sizeOf);
 		fixedOffset = new(this, sizeOf);

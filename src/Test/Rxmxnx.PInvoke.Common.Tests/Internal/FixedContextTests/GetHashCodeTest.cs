@@ -42,8 +42,8 @@ public sealed class GetHashCodeTest : FixedContextTestsBase
 	private unsafe void Test<T>()
 	{
 		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>(sizeof(Int128) * 3 / sizeof(T)).ToArray();
-		this.WithFixed(values, GetHashCodeTest.Test);
-		this.WithFixed(values, GetHashCodeTest.ReadOnlyTest);
+		FixedContextTestsBase.WithFixed(values, GetHashCodeTest.Test);
+		FixedContextTestsBase.WithFixed(values, GetHashCodeTest.ReadOnlyTest);
 	}
 	private static unsafe void Test<T>(FixedContext<T> ctx, T[] values)
 	{

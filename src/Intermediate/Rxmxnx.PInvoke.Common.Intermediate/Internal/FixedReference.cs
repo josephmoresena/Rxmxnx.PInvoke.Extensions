@@ -77,7 +77,7 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 		Boolean isReadOnly = false)
 	{
 		this.ValidateOperation(isReadOnly);
-		this.ValidateTransformation(typeof(TDestination), ReadOnlyValPtr<T>.IsUnmanaged);
+		this.ValidateTransformation(typeof(TDestination), ReadOnlyValPtr<TDestination>.IsUnmanaged);
 		Int32 sizeOf = sizeof(TDestination);
 		this.ValidateReferenceSize(typeof(TDestination), sizeOf);
 		fixedOffset = new(this, sizeOf);

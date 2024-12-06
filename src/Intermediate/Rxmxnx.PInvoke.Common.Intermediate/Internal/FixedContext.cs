@@ -113,7 +113,7 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 		Boolean isReadOnly = false)
 	{
 		this.ValidateOperation(isReadOnly);
-		this.ValidateTransformation(typeof(TDestination), ReadOnlyValPtr<T>.IsUnmanaged);
+		this.ValidateTransformation(typeof(TDestination), ReadOnlyValPtr<TDestination>.IsUnmanaged);
 		Int32 sizeOf = sizeof(TDestination);
 		Int32 count = this.GetCount(sizeOf);
 		Int32 offset = count * sizeOf;

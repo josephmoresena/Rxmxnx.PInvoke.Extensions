@@ -459,7 +459,7 @@ internal static unsafe class ValidationUtilities
 	{
 		if (!destinationType.IsValueType)
 		{
-			if (sourceType is null || destinationType.IsValueType)
+			if (sourceType is null || sourceType.IsValueType)
 				throw new InvalidOperationException($"{destinationType} is not a value type.");
 		}
 		else if (!unmanagedSource)

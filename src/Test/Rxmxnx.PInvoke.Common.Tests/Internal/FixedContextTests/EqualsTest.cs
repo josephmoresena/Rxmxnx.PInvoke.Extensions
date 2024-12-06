@@ -65,8 +65,8 @@ public sealed class EqualsTest : FixedContextTestsBase
 				readonlyAction = (c, a) => EqualsTest.ReferenceTypeTest(c, a.Length);
 			}
 		}
-		this.WithFixed(values, action);
-		this.WithFixed(values, readonlyAction);
+		FixedContextTestsBase.WithFixed(values, action);
+		FixedContextTestsBase.WithFixed(values, readonlyAction);
 	}
 	private static void Test<T, T2>(FixedContext<T2> ctx2, FixedContext<T> ctx)
 	{

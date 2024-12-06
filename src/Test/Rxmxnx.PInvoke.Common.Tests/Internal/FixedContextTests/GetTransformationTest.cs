@@ -2,62 +2,109 @@
 
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
+#pragma warning disable CS8500
 public sealed class GetTransformationTest : FixedContextTestsBase
 {
 	[Fact]
-	internal void BooleanTest() => this.Test<Boolean>();
+	internal void BooleanTest() => GetTransformationTest.Test<Boolean>();
 	[Fact]
-	internal void ByteTest() => this.Test<Byte>();
+	internal void ByteTest() => GetTransformationTest.Test<Byte>();
 	[Fact]
-	internal void Int16Test() => this.Test<Int16>();
+	internal void Int16Test() => GetTransformationTest.Test<Int16>();
 	[Fact]
-	internal void CharTest() => this.Test<Char>();
+	internal void CharTest() => GetTransformationTest.Test<Char>();
 	[Fact]
-	internal void Int32Test() => this.Test<Int32>();
+	internal void Int32Test() => GetTransformationTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => this.Test<Int64>();
+	internal void Int64Test() => GetTransformationTest.Test<Int64>();
 	[Fact]
-	internal void Int128Test() => this.Test<Int128>();
+	internal void Int128Test() => GetTransformationTest.Test<Int128>();
 	[Fact]
-	internal void GuidTest() => this.Test<Guid>();
+	internal void GuidTest() => GetTransformationTest.Test<Guid>();
 	[Fact]
-	internal void SingleTest() => this.Test<Single>();
+	internal void SingleTest() => GetTransformationTest.Test<Single>();
 	[Fact]
-	internal void HalfTest() => this.Test<Half>();
+	internal void HalfTest() => GetTransformationTest.Test<Half>();
 	[Fact]
-	internal void DoubleTest() => this.Test<Double>();
+	internal void DoubleTest() => GetTransformationTest.Test<Double>();
 	[Fact]
-	internal void DecimalTest() => this.Test<Decimal>();
+	internal void DecimalTest() => GetTransformationTest.Test<Decimal>();
 	[Fact]
-	internal void DateTimeTest() => this.Test<DateTime>();
+	internal void DateTimeTest() => GetTransformationTest.Test<DateTime>();
 	[Fact]
-	internal void TimeOnlyTest() => this.Test<TimeOnly>();
+	internal void TimeOnlyTest() => GetTransformationTest.Test<TimeOnly>();
 	[Fact]
-	internal void TimeSpanTest() => this.Test<TimeSpan>();
-
-	private void Test<T>() where T : unmanaged
+	internal void TimeSpanTest() => GetTransformationTest.Test<TimeSpan>();
+	[Fact]
+	internal void ManagedStructTest() => GetTransformationTest.Test<ManagedStruct>();
+	[Fact]
+	internal void StringTest() => GetTransformationTest.Test<String>();
+	private static void Test<T>()
 	{
 		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>().ToArray();
-		this.WithFixed(values, GetTransformationTest.Test);
-		this.WithFixed(values, GetTransformationTest.ReadOnlyTest);
+		FixedContextTestsBase.WithFixed(values, GetTransformationTest.Test);
+		FixedContextTestsBase.WithFixed<T>(values, GetTransformationTest.ReadOnlyTest);
 	}
-
-	private static void Test<T>(FixedContext<T> ctx, T[] _) where T : unmanaged
+	private static void Test<T>(FixedContext<T> ctx, T[] arr)
 	{
-		GetTransformationTest.Test<T, Boolean>(ctx);
-		GetTransformationTest.Test<T, Byte>(ctx);
-		GetTransformationTest.Test<T, Int16>(ctx);
-		GetTransformationTest.Test<T, Char>(ctx);
-		GetTransformationTest.Test<T, Int32>(ctx);
-		GetTransformationTest.Test<T, Int64>(ctx);
-		GetTransformationTest.Test<T, Int128>(ctx);
-		GetTransformationTest.Test<T, Single>(ctx);
-		GetTransformationTest.Test<T, Half>(ctx);
-		GetTransformationTest.Test<T, Double>(ctx);
-		GetTransformationTest.Test<T, Decimal>(ctx);
-		GetTransformationTest.Test<T, DateTime>(ctx);
-		GetTransformationTest.Test<T, TimeOnly>(ctx);
-		GetTransformationTest.Test<T, TimeSpan>(ctx);
+		try
+		{
+			GCHandle.Alloc(arr, GCHandleType.Pinned).Free();
+			GetTransformationTest.Test<T, Boolean>(ctx);
+			GetTransformationTest.Test<T, Byte>(ctx);
+			GetTransformationTest.Test<T, Int16>(ctx);
+			GetTransformationTest.Test<T, Char>(ctx);
+			GetTransformationTest.Test<T, Int32>(ctx);
+			GetTransformationTest.Test<T, Int64>(ctx);
+			GetTransformationTest.Test<T, Int128>(ctx);
+			GetTransformationTest.Test<T, Single>(ctx);
+			GetTransformationTest.Test<T, Half>(ctx);
+			GetTransformationTest.Test<T, Double>(ctx);
+			GetTransformationTest.Test<T, Decimal>(ctx);
+			GetTransformationTest.Test<T, DateTime>(ctx);
+			GetTransformationTest.Test<T, TimeOnly>(ctx);
+			GetTransformationTest.Test<T, TimeSpan>(ctx);
+
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, ManagedStruct>(ctx));
+			Assert.Throws<InvalidOperationException>(
+				() => GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, String>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Object>(ctx));
+		}
+		catch (Exception)
+		{
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Boolean>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Byte>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int16>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Char>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int32>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int64>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int128>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Single>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Half>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Double>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Decimal>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, DateTime>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeOnly>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeSpan>(ctx));
+
+			Assert.Throws<InvalidOperationException>(
+				() => GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(ctx));
+
+			if (typeof(T).IsValueType)
+			{
+				GetTransformationTest.Test<T, ManagedStruct>(ctx);
+
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, String>(ctx));
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Object>(ctx));
+			}
+			else
+			{
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, ManagedStruct>(ctx));
+				GetTransformationTest.Test<T, String>(ctx);
+				GetTransformationTest.Test<T, Object>(ctx);
+			}
+		}
 
 		ctx.Unload();
 		Assert.Equal(FixedMemoryTestsBase.InvalidError,
@@ -97,22 +144,66 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 		             Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeSpan>(ctx))
 		                   .Message);
 	}
-	private static void ReadOnlyTest<T>(ReadOnlyFixedContext<T> ctx, T[] _) where T : unmanaged
+	private static void ReadOnlyTest<T>(ReadOnlyFixedContext<T> ctx, T[] arr)
 	{
-		GetTransformationTest.Test<T, Boolean>(ctx);
-		GetTransformationTest.Test<T, Byte>(ctx);
-		GetTransformationTest.Test<T, Int16>(ctx);
-		GetTransformationTest.Test<T, Char>(ctx);
-		GetTransformationTest.Test<T, Int32>(ctx);
-		GetTransformationTest.Test<T, Int64>(ctx);
-		GetTransformationTest.Test<T, Int128>(ctx);
-		GetTransformationTest.Test<T, Single>(ctx);
-		GetTransformationTest.Test<T, Half>(ctx);
-		GetTransformationTest.Test<T, Double>(ctx);
-		GetTransformationTest.Test<T, Decimal>(ctx);
-		GetTransformationTest.Test<T, DateTime>(ctx);
-		GetTransformationTest.Test<T, TimeOnly>(ctx);
-		GetTransformationTest.Test<T, TimeSpan>(ctx);
+		try
+		{
+			GCHandle.Alloc(arr, GCHandleType.Pinned).Free();
+			GetTransformationTest.Test<T, Boolean>(ctx);
+			GetTransformationTest.Test<T, Byte>(ctx);
+			GetTransformationTest.Test<T, Int16>(ctx);
+			GetTransformationTest.Test<T, Char>(ctx);
+			GetTransformationTest.Test<T, Int32>(ctx);
+			GetTransformationTest.Test<T, Int64>(ctx);
+			GetTransformationTest.Test<T, Int128>(ctx);
+			GetTransformationTest.Test<T, Single>(ctx);
+			GetTransformationTest.Test<T, Half>(ctx);
+			GetTransformationTest.Test<T, Double>(ctx);
+			GetTransformationTest.Test<T, Decimal>(ctx);
+			GetTransformationTest.Test<T, DateTime>(ctx);
+			GetTransformationTest.Test<T, TimeOnly>(ctx);
+			GetTransformationTest.Test<T, TimeSpan>(ctx);
+
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, ManagedStruct>(ctx));
+			Assert.Throws<InvalidOperationException>(
+				() => GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, String>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Object>(ctx));
+		}
+		catch (Exception)
+		{
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Boolean>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Byte>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int16>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Char>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int32>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int64>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int128>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Single>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Half>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Double>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Decimal>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, DateTime>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeOnly>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeSpan>(ctx));
+
+			Assert.Throws<InvalidOperationException>(
+				() => GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(ctx));
+
+			if (typeof(T).IsValueType)
+			{
+				GetTransformationTest.Test<T, ManagedStruct>(ctx);
+
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, String>(ctx));
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Object>(ctx));
+			}
+			else
+			{
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, ManagedStruct>(ctx));
+				GetTransformationTest.Test<T, String>(ctx);
+				GetTransformationTest.Test<T, Object>(ctx);
+			}
+		}
 
 		ctx.Unload();
 		Assert.Equal(FixedMemoryTestsBase.InvalidError,
@@ -152,7 +243,7 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 		             Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeSpan>(ctx))
 		                   .Message);
 	}
-	private static void Test<T, T2>(FixedContext<T> ctx) where T : unmanaged where T2 : unmanaged
+	private static void Test<T, T2>(FixedContext<T> ctx)
 	{
 		FixedContext<T2> result = ctx.GetTransformation<T2>(out FixedOffset offset, true);
 		Assert.NotNull(result);
@@ -163,7 +254,7 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 		Assert.Equal(offset, offset2);
 		Assert.Equal(result, result2);
 	}
-	private static void Test<T, T2>(ReadOnlyFixedContext<T> ctx) where T : unmanaged where T2 : unmanaged
+	private static void Test<T, T2>(ReadOnlyFixedContext<T> ctx)
 	{
 		ReadOnlyFixedContext<T2> result = ctx.GetTransformation<T2>(out ReadOnlyFixedOffset offset);
 		Assert.NotNull(result);
@@ -175,12 +266,11 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 		Assert.Equal(result, result2);
 	}
 	private static unsafe void ContextTest<T, T2>(FixedContext<T> ctx, FixedOffset offset, FixedContext<T2> result)
-		where T : unmanaged where T2 : unmanaged
 	{
 		Int32 countT2 = ctx.BinaryLength / sizeof(T2);
 		Int32 offsetT2 = countT2 * sizeof(T2);
 		HashCode hashResidual = new();
-		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in ctx.CreateReadOnlyReference<Byte>()))));
+		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in ctx.CreateReadOnlyReference<T>()))));
 		hashResidual.Add(offsetT2);
 		hashResidual.Add(ctx.BinaryLength);
 		hashResidual.Add(false);
@@ -188,12 +278,23 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 		Assert.Equal(countT2, result.Count);
 		Assert.Equal(0, ctx.BinaryOffset);
 		Assert.Equal(offsetT2, offset.BinaryOffset);
-		Assert.Equal(ctx.CreateReadOnlyBinarySpan()[offset.BinaryOffset..].ToArray(),
-		             offset.CreateReadOnlyBinarySpan().ToArray());
+
 		Assert.Equal(ctx.BinaryLength, result.BinaryLength);
 		Assert.Equal(ctx.BinaryLength, offset.BinaryLength + offset.BinaryOffset);
 		Assert.Equal(hashResidual.ToHashCode(), offset.GetHashCode());
 
+		try
+		{
+			GCHandle.Alloc(Array.Empty<T>(), GCHandleType.Pinned).Free();
+		}
+		catch (Exception)
+		{
+			// Managed types
+			return;
+		}
+
+		Assert.Equal(ctx.CreateReadOnlyBinarySpan()[offset.BinaryOffset..].ToArray(),
+		             offset.CreateReadOnlyBinarySpan().ToArray());
 		Assert.Equal(ctx.CreateBinarySpan()[offset.BinaryOffset..].ToArray(), offset.CreateBinarySpan().ToArray());
 
 		_ = ctx.GetTransformation<Boolean>(out FixedOffset offset2, true);
@@ -229,12 +330,12 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
 	private static unsafe void ContextTest<T, T2>(ReadOnlyFixedContext<T> ctx, ReadOnlyFixedOffset offset,
-		ReadOnlyFixedContext<T2> result) where T : unmanaged where T2 : unmanaged
+		ReadOnlyFixedContext<T2> result)
 	{
 		Int32 countT2 = ctx.BinaryLength / sizeof(T2);
 		Int32 offsetT2 = countT2 * sizeof(T2);
 		HashCode hashResidual = new();
-		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in ctx.CreateReadOnlyReference<Byte>()))));
+		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in ctx.CreateReadOnlyReference<T>()))));
 		hashResidual.Add(offsetT2);
 		hashResidual.Add(ctx.BinaryLength);
 		hashResidual.Add(true);
@@ -242,11 +343,22 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 		Assert.Equal(countT2, result.Count);
 		Assert.Equal(0, ctx.BinaryOffset);
 		Assert.Equal(offsetT2, offset.BinaryOffset);
-		Assert.Equal(ctx.CreateReadOnlyBinarySpan()[offset.BinaryOffset..].ToArray(),
-		             offset.CreateReadOnlyBinarySpan().ToArray());
 		Assert.Equal(ctx.BinaryLength, result.BinaryLength);
 		Assert.Equal(ctx.BinaryLength, offset.BinaryLength + offset.BinaryOffset);
 		Assert.Equal(hashResidual.ToHashCode(), offset.GetHashCode());
+
+		try
+		{
+			GCHandle.Alloc(Array.Empty<T>(), GCHandleType.Pinned).Free();
+		}
+		catch (Exception)
+		{
+			// Managed types
+			return;
+		}
+
+		Assert.Equal(ctx.CreateReadOnlyBinarySpan()[offset.BinaryOffset..].ToArray(),
+		             offset.CreateReadOnlyBinarySpan().ToArray());
 
 		Assert.Equal(FixedMemoryTestsBase.ReadOnlyError,
 		             Assert.Throws<InvalidOperationException>(() => offset.CreateBinarySpan()).Message);
@@ -283,9 +395,7 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 		Exception functionException = Assert.Throws<InvalidOperationException>(offset.CreateDelegate<Action>);
 		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
-
 	private static unsafe void OffsetTest<T2, T3>(FixedOffset offset1, FixedOffset offset2)
-		where T2 : unmanaged where T3 : unmanaged
 	{
 		Boolean equal = sizeof(T2) == sizeof(T3) || offset1.BinaryLength == offset2.BinaryLength;
 		Assert.Equal(equal, offset1.Equals(offset2));
@@ -298,7 +408,6 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
 	private static unsafe void OffsetTest<T2, T3>(ReadOnlyFixedOffset offset1, ReadOnlyFixedOffset offset2)
-		where T2 : unmanaged where T3 : unmanaged
 	{
 		Boolean equal = sizeof(T2) == sizeof(T3) || offset1.BinaryLength == offset2.BinaryLength;
 		Assert.Equal(equal, offset1.Equals(offset2));
@@ -311,3 +420,4 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
 }
+#pragma warning restore CS8500
