@@ -138,6 +138,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	{
 		this.ValidateOperation();
 		this.ValidateReferenceSize(typeof(T), sizeof(T));
+		this.ValidateTransformation(typeof(T), ReadOnlyValPtr<T>.IsUnmanaged);
 		return ref Unsafe.AsRef<T>(this._ptr);
 	}
 	/// <summary>
@@ -154,6 +155,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	{
 		this.ValidateOperation(true);
 		this.ValidateReferenceSize(typeof(T), sizeof(T));
+		this.ValidateTransformation(typeof(T), ReadOnlyValPtr<T>.IsUnmanaged);
 		return ref Unsafe.AsRef<T>(this._ptr);
 	}
 	/// <summary>

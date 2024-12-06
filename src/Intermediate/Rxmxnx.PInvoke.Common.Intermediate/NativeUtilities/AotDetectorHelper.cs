@@ -5,6 +5,8 @@ public static partial class NativeUtilities
 	/// <summary>
 	/// Aot runtime detector helper class.
 	/// </summary>
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3011,
+	                 Justification = SuppressMessageConstants.ReflectionPrivateUseJustification)]
 	private static class AotDetectorHelper
 	{
 		/// <summary>

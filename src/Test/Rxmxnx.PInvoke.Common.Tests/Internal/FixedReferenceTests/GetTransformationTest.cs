@@ -5,47 +5,45 @@
 public sealed class GetTransformationTest : FixedReferenceTestsBase
 {
 	[Fact]
-	internal void BooleanTest() => this.Test<Boolean>();
+	internal void BooleanTest() => GetTransformationTest.Test<Boolean>();
 	[Fact]
-	internal void ByteTest() => this.Test<Byte>();
+	internal void ByteTest() => GetTransformationTest.Test<Byte>();
 	[Fact]
-	internal void Int16Test() => this.Test<Int16>();
+	internal void Int16Test() => GetTransformationTest.Test<Int16>();
 	[Fact]
-	internal void CharTest() => this.Test<Char>();
+	internal void CharTest() => GetTransformationTest.Test<Char>();
 	[Fact]
-	internal void Int32Test() => this.Test<Int32>();
+	internal void Int32Test() => GetTransformationTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => this.Test<Int64>();
+	internal void Int64Test() => GetTransformationTest.Test<Int64>();
 	[Fact]
-	internal void Int128Test() => this.Test<Int128>();
+	internal void Int128Test() => GetTransformationTest.Test<Int128>();
 	[Fact]
-	internal void GuidTest() => this.Test<Guid>();
+	internal void GuidTest() => GetTransformationTest.Test<Guid>();
 	[Fact]
-	internal void SingleTest() => this.Test<Single>();
+	internal void SingleTest() => GetTransformationTest.Test<Single>();
 	[Fact]
-	internal void HalfTest() => this.Test<Half>();
+	internal void HalfTest() => GetTransformationTest.Test<Half>();
 	[Fact]
-	internal void DoubleTest() => this.Test<Double>();
+	internal void DoubleTest() => GetTransformationTest.Test<Double>();
 	[Fact]
-	internal void DecimalTest() => this.Test<Decimal>();
+	internal void DecimalTest() => GetTransformationTest.Test<Decimal>();
 	[Fact]
-	internal void DateTimeTest() => this.Test<DateTime>();
+	internal void DateTimeTest() => GetTransformationTest.Test<DateTime>();
 	[Fact]
-	internal void TimeOnlyTest() => this.Test<TimeOnly>();
+	internal void TimeOnlyTest() => GetTransformationTest.Test<TimeOnly>();
 	[Fact]
-	internal void TimeSpanTest() => this.Test<TimeSpan>();
+	internal void TimeSpanTest() => GetTransformationTest.Test<TimeSpan>();
 
-	private void Test<T>() where T : unmanaged
+	private static void Test<T>() where T : unmanaged
 	{
 		T value = FixedMemoryTestsBase.Fixture.Create<T>();
-		this.WithFixed(ref value, GetTransformationTest.Test);
-		this.WithFixed(ref value, GetTransformationTest.ReadOnlyTest);
+		FixedReferenceTestsBase.WithFixed(ref value, GetTransformationTest.Test);
+		FixedReferenceTestsBase.WithFixed(ref value, GetTransformationTest.ReadOnlyTest);
 	}
 
 	private static void Test<T>(FixedReference<T> fref, IntPtr ptr) where T : unmanaged
 	{
-		Boolean isReadOnly = fref.IsReadOnly;
-
 		GetTransformationTest.Test<T, Boolean>(fref);
 		GetTransformationTest.Test<T, Byte>(fref);
 		GetTransformationTest.Test<T, Int16>(fref);
@@ -107,8 +105,6 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 	}
 	private static void ReadOnlyTest<T>(ReadOnlyFixedReference<T> fref, IntPtr ptr) where T : unmanaged
 	{
-		Boolean isReadOnly = fref.IsReadOnly;
-
 		GetTransformationTest.Test<T, Boolean>(fref);
 		GetTransformationTest.Test<T, Byte>(fref);
 		GetTransformationTest.Test<T, Int16>(fref);

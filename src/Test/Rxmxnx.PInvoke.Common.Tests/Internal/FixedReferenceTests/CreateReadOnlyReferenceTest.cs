@@ -5,41 +5,41 @@
 public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 {
 	[Fact]
-	internal void BooleanTest() => this.Test<Boolean>();
+	internal void BooleanTest() => CreateReadOnlyReferenceTest.Test<Boolean>();
 	[Fact]
-	internal void ByteTest() => this.Test<Byte>();
+	internal void ByteTest() => CreateReadOnlyReferenceTest.Test<Byte>();
 	[Fact]
-	internal void Int16Test() => this.Test<Int16>();
+	internal void Int16Test() => CreateReadOnlyReferenceTest.Test<Int16>();
 	[Fact]
-	internal void CharTest() => this.Test<Char>();
+	internal void CharTest() => CreateReadOnlyReferenceTest.Test<Char>();
 	[Fact]
-	internal void Int32Test() => this.Test<Int32>();
+	internal void Int32Test() => CreateReadOnlyReferenceTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => this.Test<Int64>();
+	internal void Int64Test() => CreateReadOnlyReferenceTest.Test<Int64>();
 	[Fact]
-	internal void Int128Test() => this.Test<Int128>();
+	internal void Int128Test() => CreateReadOnlyReferenceTest.Test<Int128>();
 	[Fact]
-	internal void GuidTest() => this.Test<Guid>();
+	internal void GuidTest() => CreateReadOnlyReferenceTest.Test<Guid>();
 	[Fact]
-	internal void SingleTest() => this.Test<Single>();
+	internal void SingleTest() => CreateReadOnlyReferenceTest.Test<Single>();
 	[Fact]
-	internal void HalfTest() => this.Test<Half>();
+	internal void HalfTest() => CreateReadOnlyReferenceTest.Test<Half>();
 	[Fact]
-	internal void DoubleTest() => this.Test<Double>();
+	internal void DoubleTest() => CreateReadOnlyReferenceTest.Test<Double>();
 	[Fact]
-	internal void DecimalTest() => this.Test<Decimal>();
+	internal void DecimalTest() => CreateReadOnlyReferenceTest.Test<Decimal>();
 	[Fact]
-	internal void DateTimeTest() => this.Test<DateTime>();
+	internal void DateTimeTest() => CreateReadOnlyReferenceTest.Test<DateTime>();
 	[Fact]
-	internal void TimeOnlyTest() => this.Test<TimeOnly>();
+	internal void TimeOnlyTest() => CreateReadOnlyReferenceTest.Test<TimeOnly>();
 	[Fact]
-	internal void TimeSpanTest() => this.Test<TimeSpan>();
+	internal void TimeSpanTest() => CreateReadOnlyReferenceTest.Test<TimeSpan>();
 
-	private void Test<T>() where T : unmanaged
+	private static void Test<T>() where T : unmanaged
 	{
 		T value = FixedMemoryTestsBase.Fixture.Create<T>();
-		this.WithFixed(ref value, CreateReadOnlyReferenceTest.Test);
-		this.WithFixed(ref value, CreateReadOnlyReferenceTest.ReadOnlyTest);
+		FixedReferenceTestsBase.WithFixed(ref value, CreateReadOnlyReferenceTest.Test);
+		FixedReferenceTestsBase.WithFixed(ref value, CreateReadOnlyReferenceTest.ReadOnlyTest);
 	}
 
 	private static unsafe void Test<T>(FixedReference<T> fref, IntPtr ptr) where T : unmanaged

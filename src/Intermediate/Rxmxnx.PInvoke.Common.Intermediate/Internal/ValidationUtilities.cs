@@ -464,7 +464,10 @@ internal static unsafe class ValidationUtilities
 		}
 		else if (!unmanagedSource)
 		{
-			throw new InvalidOperationException($"{sourceType ?? typeof(Byte)} is not a unmanaged type.");
+			if (unmanagedDestination)
+				throw new InvalidOperationException($"{sourceType ?? typeof(Byte)} is not a unmanaged type.");
+			if (destinationType != sourceType)
+				throw new InvalidOperationException($"{sourceType ?? typeof(Byte)} is not {destinationType}.");
 		}
 		else if (!unmanagedDestination)
 		{

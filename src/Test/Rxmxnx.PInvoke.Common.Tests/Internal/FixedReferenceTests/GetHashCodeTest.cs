@@ -5,41 +5,41 @@
 public sealed class GetHashCodeTest : FixedReferenceTestsBase
 {
 	[Fact]
-	internal void BooleanTest() => this.Test<Boolean>();
+	internal void BooleanTest() => GetHashCodeTest.Test<Boolean>();
 	[Fact]
-	internal void ByteTest() => this.Test<Byte>();
+	internal void ByteTest() => GetHashCodeTest.Test<Byte>();
 	[Fact]
-	internal void Int16Test() => this.Test<Int16>();
+	internal void Int16Test() => GetHashCodeTest.Test<Int16>();
 	[Fact]
-	internal void CharTest() => this.Test<Char>();
+	internal void CharTest() => GetHashCodeTest.Test<Char>();
 	[Fact]
-	internal void Int32Test() => this.Test<Int32>();
+	internal void Int32Test() => GetHashCodeTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => this.Test<Int64>();
+	internal void Int64Test() => GetHashCodeTest.Test<Int64>();
 	[Fact]
-	internal void Int128Test() => this.Test<Int128>();
+	internal void Int128Test() => GetHashCodeTest.Test<Int128>();
 	[Fact]
-	internal void GuidTest() => this.Test<Guid>();
+	internal void GuidTest() => GetHashCodeTest.Test<Guid>();
 	[Fact]
-	internal void SingleTest() => this.Test<Single>();
+	internal void SingleTest() => GetHashCodeTest.Test<Single>();
 	[Fact]
-	internal void HalfTest() => this.Test<Half>();
+	internal void HalfTest() => GetHashCodeTest.Test<Half>();
 	[Fact]
-	internal void DoubleTest() => this.Test<Double>();
+	internal void DoubleTest() => GetHashCodeTest.Test<Double>();
 	[Fact]
-	internal void DecimalTest() => this.Test<Decimal>();
+	internal void DecimalTest() => GetHashCodeTest.Test<Decimal>();
 	[Fact]
-	internal void DateTimeTest() => this.Test<DateTime>();
+	internal void DateTimeTest() => GetHashCodeTest.Test<DateTime>();
 	[Fact]
-	internal void TimeOnlyTest() => this.Test<TimeOnly>();
+	internal void TimeOnlyTest() => GetHashCodeTest.Test<TimeOnly>();
 	[Fact]
-	internal void TimeSpanTest() => this.Test<TimeSpan>();
+	internal void TimeSpanTest() => GetHashCodeTest.Test<TimeSpan>();
 
-	private void Test<T>() where T : unmanaged
+	private static void Test<T>() where T : unmanaged
 	{
 		T value = FixedMemoryTestsBase.Fixture.Create<T>();
-		this.WithFixed(ref value, GetHashCodeTest.Test);
-		this.WithFixed(ref value, GetHashCodeTest.ReadOnlyTest);
+		FixedReferenceTestsBase.WithFixed(ref value, GetHashCodeTest.Test);
+		FixedReferenceTestsBase.WithFixed(ref value, GetHashCodeTest.ReadOnlyTest);
 	}
 
 	private static unsafe void Test<T>(FixedReference<T> fref, IntPtr ptr) where T : unmanaged

@@ -5,41 +5,41 @@
 public sealed class CreateReadOnlySpanTest : FixedContextTestsBase
 {
 	[Fact]
-	internal void BooleanTest() => this.Test<Boolean>();
+	internal void BooleanTest() => CreateReadOnlySpanTest.Test<Boolean>();
 	[Fact]
-	internal void ByteTest() => this.Test<Byte>();
+	internal void ByteTest() => CreateReadOnlySpanTest.Test<Byte>();
 	[Fact]
-	internal void Int16Test() => this.Test<Int16>();
+	internal void Int16Test() => CreateReadOnlySpanTest.Test<Int16>();
 	[Fact]
-	internal void CharTest() => this.Test<Char>();
+	internal void CharTest() => CreateReadOnlySpanTest.Test<Char>();
 	[Fact]
-	internal void Int32Test() => this.Test<Int32>();
+	internal void Int32Test() => CreateReadOnlySpanTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => this.Test<Int64>();
+	internal void Int64Test() => CreateReadOnlySpanTest.Test<Int64>();
 	[Fact]
-	internal void Int128Test() => this.Test<Int128>();
+	internal void Int128Test() => CreateReadOnlySpanTest.Test<Int128>();
 	[Fact]
-	internal void GuidTest() => this.Test<Guid>();
+	internal void GuidTest() => CreateReadOnlySpanTest.Test<Guid>();
 	[Fact]
-	internal void SingleTest() => this.Test<Single>();
+	internal void SingleTest() => CreateReadOnlySpanTest.Test<Single>();
 	[Fact]
-	internal void HalfTest() => this.Test<Half>();
+	internal void HalfTest() => CreateReadOnlySpanTest.Test<Half>();
 	[Fact]
-	internal void DoubleTest() => this.Test<Double>();
+	internal void DoubleTest() => CreateReadOnlySpanTest.Test<Double>();
 	[Fact]
-	internal void DecimalTest() => this.Test<Decimal>();
+	internal void DecimalTest() => CreateReadOnlySpanTest.Test<Decimal>();
 	[Fact]
-	internal void DateTimeTest() => this.Test<DateTime>();
+	internal void DateTimeTest() => CreateReadOnlySpanTest.Test<DateTime>();
 	[Fact]
-	internal void TimeOnlyTest() => this.Test<TimeOnly>();
+	internal void TimeOnlyTest() => CreateReadOnlySpanTest.Test<TimeOnly>();
 	[Fact]
-	internal void TimeSpanTest() => this.Test<TimeSpan>();
+	internal void TimeSpanTest() => CreateReadOnlySpanTest.Test<TimeSpan>();
 	[Fact]
-	internal void ManagedStructTest() => this.Test<ManagedStruct>();
+	internal void ManagedStructTest() => CreateReadOnlySpanTest.Test<ManagedStruct>();
 	[Fact]
-	internal void StringTest() => this.Test<String>();
+	internal void StringTest() => CreateReadOnlySpanTest.Test<String>();
 
-	private void Test<T>()
+	private static void Test<T>()
 	{
 		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>().ToArray();
 		FixedContextTestsBase.WithFixed(values, CreateReadOnlySpanTest.Test);

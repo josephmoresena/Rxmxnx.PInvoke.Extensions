@@ -90,6 +90,8 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 
 			Assert.Throws<InvalidOperationException>(
 				() => GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<String>>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<Object>>(ctx));
 
 			if (typeof(T).IsValueType)
 			{
@@ -189,6 +191,8 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 
 			Assert.Throws<InvalidOperationException>(
 				() => GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<String>>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<Object>>(ctx));
 
 			if (typeof(T).IsValueType)
 			{

@@ -18,9 +18,16 @@ public static unsafe partial class NativeUtilities
 	/// This function may cause overhead as it uses reflection to attempt to throw a
 	/// <see cref="NotSupportedException"/> exception due to missing native code or metadata.
 	/// </remarks>
-#pragma warning disable CA2012
-	public static Boolean MightBeAot => AotDetectorHelper.IsTrimmedOrAotAsync().Result;
-#pragma warning restore CA2012
+	public static Boolean MightBeAot
+	{
+		get
+		{
+			ValueTask<Boolean> valueTask = AotDetectorHelper.IsTrimmedOrAotAsync();
+			if (valueTask.IsCompleted) return valueTask.Result;
+			Task<Boolean> task = valueTask.AsTask();
+			return task.Result;
+		}
+	}
 
 	/// <summary>
 	/// Retrieves the size of <typeparamref name="T"/> structure.
