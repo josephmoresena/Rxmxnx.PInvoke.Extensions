@@ -236,11 +236,8 @@ public partial class CString
 	{
 		ArgumentNullException.ThrowIfNull(values);
 		using CStringConcatenator helper = new();
-		for (Int32 index = 0; index < values.Length; index++)
-		{
-			CString? value = values[index];
+		foreach (CString? value in values.AsSpan())
 			helper.Write(value);
-		}
 		return helper.ToCString();
 	}
 	/// <summary>
@@ -258,11 +255,8 @@ public partial class CString
 	{
 		ArgumentNullException.ThrowIfNull(values);
 		using BinaryConcatenator helper = new();
-		for (Int32 index = 0; index < values.Length; index++)
-		{
-			Byte[]? value = values[index];
+		foreach (Byte[]? value in values.AsSpan())
 			helper.Write(value);
-		}
 		return helper.ToCString();
 	}
 }

@@ -7,7 +7,7 @@ public sealed class WriteAsyncTest
 	internal async Task BasicTestAsync()
 	{
 		using TestMemoryHandle handle = new();
-		List<WrittenCString> values = new();
+		List<WrittenCString> values = [];
 		using MemoryStream strm = new();
 		foreach (Task task in TestSet.GetIndices(10)
 		                             .Select(i => WriteAsyncTest.AppendWrittenTask(
@@ -23,7 +23,7 @@ public sealed class WriteAsyncTest
 	internal async Task TestAsync(Boolean writeNullTermination)
 	{
 		using TestMemoryHandle handle = new();
-		List<WrittenCString> values = new();
+		List<WrittenCString> values = [];
 		using MemoryStream strm = new();
 		foreach (Task task in TestSet.GetIndices(10)
 		                             .Select(i => WriteAsyncTest.AppendWrittenTask(
@@ -38,7 +38,7 @@ public sealed class WriteAsyncTest
 	internal async Task RangeTestAsync()
 	{
 		using TestMemoryHandle handle = new();
-		List<WrittenCString> values = new();
+		List<WrittenCString> values = [];
 		using MemoryStream strm = new();
 		foreach (Task task in TestSet.GetIndices(10)
 		                             .Select(i => WriteAsyncTest.AppendWrittenTask(

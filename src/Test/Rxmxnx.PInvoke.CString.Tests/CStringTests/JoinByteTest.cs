@@ -41,7 +41,7 @@ public sealed class JoinByteTest
 
 		Assert.Equal(expectedCString, resultCStringCString);
 		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
-		Assert.Same(CString.Empty, CString.Join(separator, Array.Empty<CString?>()));
+		Assert.Same(CString.Empty, CString.Join(separator));
 	}
 	private static void EnumerableTest(Byte separator, String?[] strings, IEnumerable<CString?> values)
 	{

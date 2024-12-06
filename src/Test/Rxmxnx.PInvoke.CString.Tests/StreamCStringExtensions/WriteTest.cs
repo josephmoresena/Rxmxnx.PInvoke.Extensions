@@ -9,7 +9,7 @@ public sealed class WriteTest
 	internal void Test(Boolean writeNullTermination)
 	{
 		using TestMemoryHandle handle = new();
-		List<WrittenCString> values = new();
+		List<WrittenCString> values = [];
 		using MemoryStream strm = new();
 		TestSet.GetIndices(10)
 		       .ForEach(i => WriteTest.AppendWritten(WrittenCString.Create(TestSet.GetCString(i, handle)), values, strm,
@@ -21,7 +21,7 @@ public sealed class WriteTest
 	internal void RangeTest()
 	{
 		using TestMemoryHandle handle = new();
-		List<WrittenCString> values = new();
+		List<WrittenCString> values = [];
 		using MemoryStream strm = new();
 		TestSet.GetIndices(10)
 		       .ForEach(i => WriteTest.AppendWritten(WrittenCString.Create(TestSet.GetCString(i, handle), false),

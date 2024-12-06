@@ -6,7 +6,7 @@ public class AsMemoryTest
 {
 	private static readonly IFixture fixture = new Fixture();
 	private static readonly Type extensionsType = typeof(MemoryBlockExtensions);
-	private static readonly IReadOnlyDictionary<Int32, MethodInfo> asMemories = AsMemoryTest.extensionsType
+	private static readonly ImmutableDictionary<Int32, MethodInfo> asMemories = AsMemoryTest.extensionsType
 		.GetMethods(BindingFlags.Public | BindingFlags.Static).Where(m => m.Name == "AsMemory")
 		.ToImmutableDictionary(m => m.GetParameters()[0].ParameterType.GetArrayRank(), m => m);
 

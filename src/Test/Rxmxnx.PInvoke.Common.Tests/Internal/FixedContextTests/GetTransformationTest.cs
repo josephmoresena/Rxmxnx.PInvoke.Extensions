@@ -43,7 +43,7 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 	{
 		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>().ToArray();
 		FixedContextTestsBase.WithFixed(values, GetTransformationTest.Test);
-		FixedContextTestsBase.WithFixed<T>(values, GetTransformationTest.ReadOnlyTest);
+		FixedContextTestsBase.WithFixed(values, GetTransformationTest.ReadOnlyTest);
 	}
 	private static void Test<T>(FixedContext<T> ctx, T[] arr)
 	{

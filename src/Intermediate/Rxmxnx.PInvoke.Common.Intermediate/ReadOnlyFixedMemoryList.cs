@@ -59,12 +59,21 @@ public readonly ref struct ReadOnlyFixedMemoryList
 	/// <returns>
 	/// An array that contains all elements of the current <see cref="ReadOnlyFixedMemoryList"/> object.
 	/// </returns>
-	public IReadOnlyFixedMemory[] ToArray() => this._values.Cast<IReadOnlyFixedMemory>().ToArray();
+	public IReadOnlyFixedMemory[] ToArray()
+	{
+		if (this._values.Count <= 0) return [];
+
+		IReadOnlyFixedMemory[] result = new IReadOnlyFixedMemory[this._values.Count];
+		ref ReadOnlyFixedMemory refI = ref Unsafe.As<IReadOnlyFixedMemory, ReadOnlyFixedMemory>(ref result[0]);
+		Span<ReadOnlyFixedMemory> span = MemoryMarshal.CreateSpan(ref refI, result.Length);
+		this._values.AsSpan().CopyTo(span);
+		return result;
+	}
 	/// <summary>
 	/// Returns an enumerator that iterates through the <see cref="ReadOnlyFixedMemoryList"/>.
 	/// </summary>
 	/// <returns>An enumerator for the current <see cref="ReadOnlyFixedMemoryList"/> object.</returns>
-	public Enumerator GetEnumerator() => new(this._values);
+	public Enumerator GetEnumerator() => new(this._values.AsSpan());
 
 	/// <summary>
 	/// Releases all resources used by the <see cref="ReadOnlyFixedMemoryList"/> object.
@@ -74,12 +83,12 @@ public readonly ref struct ReadOnlyFixedMemoryList
 	/// <summary>
 	/// Enumerates the elements of a <see cref="ReadOnlyFixedMemoryList"/>.
 	/// </summary>
-	public readonly ref struct Enumerator
+	public ref struct Enumerator
 	{
 		/// <summary>
 		/// Internal enumerator.
 		/// </summary>
-		private readonly IEnumerator<ReadOnlyFixedMemory> _enumerator;
+		private ReadOnlySpan<ReadOnlyFixedMemory>.Enumerator _enumerator;
 
 		/// <summary>
 		/// Gets the element at the current position of the enumerator.
@@ -96,7 +105,7 @@ public readonly ref struct ReadOnlyFixedMemoryList
 		/// </summary>
 		/// <param name="values">A <see cref="FixedMemory"/> enumerable instance.</param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal Enumerator(IEnumerable<ReadOnlyFixedMemory> values) => this._enumerator = values.GetEnumerator();
+		internal Enumerator(ReadOnlySpan<ReadOnlyFixedMemory> values) => this._enumerator = values.GetEnumerator();
 
 		/// <summary>
 		/// Advances the enumerator to the next element of the <see cref="ReadOnlyFixedMemoryList"/>.

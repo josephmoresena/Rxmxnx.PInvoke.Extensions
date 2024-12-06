@@ -152,7 +152,6 @@ public sealed class WithSafeFixedTest
 			IFixedReference<T2> fRef2 = fRef.Transformation<T2>(out IFixedMemory residual);
 			IFixedContext<Byte> ctx = fRef2.AsBinaryContext();
 			IFixedContext<Byte> ctxR = residual.AsBinaryContext();
-			Int32 count = bytes.Length / sizeof(T2);
 
 			Assert.Equal(fRef2, fRef.Transformation<T2>(out IReadOnlyFixedMemory residual2));
 			Assert.Equal(residual, residual2);
@@ -186,7 +185,6 @@ public sealed class WithSafeFixedTest
 			IReadOnlyFixedReference<T2> fRef2 = fRef.Transformation<T2>(out IReadOnlyFixedMemory residual);
 			IReadOnlyFixedContext<Byte> ctx = fRef2.AsBinaryContext();
 			IReadOnlyFixedContext<Byte> ctxR = residual.AsBinaryContext();
-			Int32 count = bytes.Length / sizeof(T2);
 
 			if (typeof(T) == typeof(T2))
 				Assert.Equal((Object)fRef.Reference, fRef2.Reference);

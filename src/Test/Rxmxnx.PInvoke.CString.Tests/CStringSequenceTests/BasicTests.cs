@@ -60,8 +60,7 @@ public sealed class BasicTests
 		enumerator.Dispose();
 	}
 
-	private static unsafe void AssertSequence(CStringSequence seq, IReadOnlyList<String?> strings,
-		IReadOnlyList<CString?> values)
+	private static unsafe void AssertSequence(CStringSequence seq, String?[] strings, IReadOnlyList<CString?> values)
 	{
 		for (Int32 i = 0; i < seq.Count; i++)
 		{

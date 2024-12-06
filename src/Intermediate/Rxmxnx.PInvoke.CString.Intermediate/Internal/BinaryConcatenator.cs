@@ -8,7 +8,7 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 	/// <summary>
 	/// Gets the current instance's memory stream.
 	/// </summary>
-	protected MemoryStream Stream => this._mem;
+	protected MemoryStream Stream { get; }
 	/// <summary>
 	/// Gets the cancellation token to monitor for cancellation requests.
 	/// </summary>
@@ -25,7 +25,7 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 	/// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
 	protected BinaryConcatenator(T? separator, CancellationToken cancellationToken)
 	{
-		this._mem = new();
+		this.Stream = new();
 		this._separator = separator;
 		this._cancellationToken = cancellationToken;
 		this.InitializeDelegates();
@@ -115,7 +115,7 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 	{
 		if (this._disposedValue) return;
 		if (disposing)
-			this._mem.Dispose();
+			this.Stream.Dispose();
 		this._disposedValue = true;
 	}
 	/// <summary>
@@ -132,7 +132,7 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 		if (!this._disposedValue)
 		{
 			if (disposing)
-				await this._mem.DisposeAsync();
+				await this.Stream.DisposeAsync();
 			this._disposedValue = true;
 		}
 	}
@@ -151,8 +151,8 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 	protected Byte[]? ToArray(Boolean nullTerminated = false)
 	{
 		Byte[]? result = default;
-		if (this._mem.Length <= 0) return result;
-		ReadOnlySpan<Byte> span = BinaryConcatenator<T>.PrepareUtf8Text(this._mem.GetBuffer());
+		if (this.Stream.Length <= 0) return result;
+		ReadOnlySpan<Byte> span = BinaryConcatenator<T>.PrepareUtf8Text(this.Stream.GetBuffer());
 		if (span.IsEmpty) return result;
 		Int32 resultLength = span.Length + (nullTerminated ? 1 : 0);
 		result = new Byte[resultLength];

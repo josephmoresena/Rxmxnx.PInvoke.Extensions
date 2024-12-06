@@ -90,11 +90,8 @@ public partial class CString
 	{
 		ArgumentNullException.ThrowIfNull(value);
 		using StringConcatenator helper = new(separator);
-		for (Int32 index = 0; index < value.Length; index++)
-		{
-			String? utf8Text = value[index];
+		foreach (String? utf8Text in value.AsSpan())
 			helper.Write(utf8Text);
-		}
 		return helper.ToCString();
 	}
 	/// <summary>

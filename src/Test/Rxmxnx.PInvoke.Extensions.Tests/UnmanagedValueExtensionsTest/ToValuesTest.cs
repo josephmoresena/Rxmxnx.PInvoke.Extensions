@@ -70,8 +70,8 @@ public sealed class ToValuesTest
 		Assert.Equal(valuesT2, values.ToValues<T, T2>(out Byte[] residual));
 		Assert.Equal(resiudalBytes, residual);
 
-		Assert.Equal(Array.Empty<T2>(), Array.Empty<T>().ToValues<T, T2>());
-		Assert.Equal(Array.Empty<T2>(), Array.Empty<T>().ToValues<T, T2>(out Byte[] residualEmpty));
+		Assert.Equal([], Array.Empty<T>().ToValues<T, T2>());
+		Assert.Equal([], Array.Empty<T>().ToValues<T, T2>(out Byte[] residualEmpty));
 		Assert.Equal(Array.Empty<Byte>(), residualEmpty);
 
 		T[]? nullValues = default;

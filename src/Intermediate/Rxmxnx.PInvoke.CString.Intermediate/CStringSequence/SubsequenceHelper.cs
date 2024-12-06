@@ -36,7 +36,7 @@ public partial class CStringSequence
 		public CStringSequence CreateSequence()
 		{
 			Int32 binaryLength = this._lengths.Sum(CStringSequence.GetSpanLength);
-			Int32 charLength = binaryLength / CStringSequence.sizeOfChar + binaryLength % CStringSequence.sizeOfChar;
+			Int32 charLength = binaryLength / sizeof(Char) + binaryLength % sizeof(Char);
 			String value = String.Create(charLength, this, SubsequenceHelper.CopyBytes);
 			return new(value, this._lengths);
 		}

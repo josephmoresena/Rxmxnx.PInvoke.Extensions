@@ -18,11 +18,8 @@ public partial class CString
 	{
 		ArgumentNullException.ThrowIfNull(values);
 		using StringConcatenator helper = new();
-		for (Int32 index = 0; index < values.Length; index++)
-		{
-			String? value = values[index];
+		foreach (String? value in values.AsSpan())
 			helper.Write(value);
-		}
 		return helper.ToCString();
 	}
 	/// <summary>

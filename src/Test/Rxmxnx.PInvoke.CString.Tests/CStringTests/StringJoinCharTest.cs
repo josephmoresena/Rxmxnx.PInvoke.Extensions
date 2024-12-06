@@ -37,7 +37,7 @@ public sealed class StringJoinCharTest
 
 		Assert.Equal(expectedCString, resultCStringCString);
 		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
-		Assert.Same(CString.Empty, CString.Join(separator, Array.Empty<String?>()));
+		Assert.Same(CString.Empty, CString.Join(separator));
 	}
 	private static void EnumerableTest(Char separator, IEnumerable<String?> strings)
 	{

@@ -67,7 +67,7 @@ public sealed class SegmentTests
 			SegmentTests.AssertSegment(cstr, cstrSeg, cstrStart, cstrEnd);
 			SegmentTests.AssertSegment(cstr, cstr.Slice(cstrStart), cstrStart, cstr.Length);
 
-			if (!cstr.IsSegmented && !cstr.IsReference)
+			if (cstr is { IsSegmented: false, IsReference: false, })
 				SegmentTests.SegmentTest(strSeg, cstrSeg);
 
 			CompareTest.CompleteTest(str, cstr, strSeg, cstrSeg);
@@ -93,7 +93,7 @@ public sealed class SegmentTests
 			for (Int32 i = 0; i < cstrSeg.Length; i++)
 				Assert.Equal(cstr[i + cstrStart], cstrSeg[i]);
 
-			if (!cstr.IsSegmented && !cstr.IsFunction && !cstr.IsReference)
+			if (cstr is { IsSegmented: false, IsFunction: false, IsReference: false, })
 				if (!cstrSeg.IsSegmented)
 					Assert.Equal(CString.GetBytes(cstr), CString.GetBytes(cstrSeg));
 				else

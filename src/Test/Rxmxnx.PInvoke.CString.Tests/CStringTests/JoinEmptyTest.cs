@@ -9,19 +9,10 @@ public sealed class JoinEmptyTest
 	[InlineData(false)]
 	internal void LocalEmptySpanTest(Boolean emptyData)
 	{
-		List<GCHandle> handles = new();
 		ReadOnlySpan<Byte> separator = default;
-		CString?[] values = !emptyData ? Enumerable.Repeat(CString.Empty, 3).ToArray() : Array.Empty<CString>();
-		try
-		{
-			JoinEmptyTest.Test(separator, values);
-			JoinEmptyTest.Test(separator, values.ToList());
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		CString?[] values = !emptyData ? Enumerable.Repeat(CString.Empty, 3).ToArray() : [];
+		JoinEmptyTest.Test(separator, values);
+		JoinEmptyTest.Test(separator, values.ToList());
 	}
 
 	[Theory]
@@ -51,19 +42,10 @@ public sealed class JoinEmptyTest
 	[InlineData(false)]
 	internal void NullEmptySpanTest(Boolean emptyData)
 	{
-		List<GCHandle> handles = new();
 		ReadOnlySpan<Byte> separator = default;
-		CString?[] values = !emptyData ? Enumerable.Repeat<CString?>(default, 3).ToArray() : Array.Empty<CString>();
-		try
-		{
-			JoinEmptyTest.Test(separator, values);
-			JoinEmptyTest.Test(separator, values.ToList());
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		CString?[] values = !emptyData ? Enumerable.Repeat<CString?>(default, 3).ToArray() : [];
+		JoinEmptyTest.Test(separator, values);
+		JoinEmptyTest.Test(separator, values.ToList());
 	}
 
 	[Theory]
@@ -71,19 +53,10 @@ public sealed class JoinEmptyTest
 	[InlineData(false)]
 	internal void LocalEmptyTest(Boolean emptyData)
 	{
-		List<GCHandle> handles = new();
 		CString? separator = !emptyData ? CString.Empty : default;
-		CString?[] values = !emptyData ? Enumerable.Repeat(CString.Empty, 3).ToArray() : Array.Empty<CString>();
-		try
-		{
-			JoinEmptyTest.Test(separator, values);
-			JoinEmptyTest.Test(separator, values.ToList());
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		CString?[] values = !emptyData ? Enumerable.Repeat(CString.Empty, 3).ToArray() : [];
+		JoinEmptyTest.Test(separator, values);
+		JoinEmptyTest.Test(separator, values.ToList());
 	}
 
 	[Theory]
@@ -91,21 +64,10 @@ public sealed class JoinEmptyTest
 	[InlineData(false)]
 	internal void ReferenceEmptyTest(Boolean emptyData)
 	{
-		List<GCHandle> handles = new();
 		CString? separator = !emptyData ? CString.Empty : default;
-		CString?[] values = !emptyData ?
-			Enumerable.Repeat<CString>(new(IntPtr.Zero, default), 3).ToArray() :
-			Array.Empty<CString>();
-		try
-		{
-			JoinEmptyTest.Test(separator, values);
-			JoinEmptyTest.Test(separator, values.ToList());
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		CString?[] values = !emptyData ? Enumerable.Repeat<CString>(new(IntPtr.Zero, default), 3).ToArray() : [];
+		JoinEmptyTest.Test(separator, values);
+		JoinEmptyTest.Test(separator, values.ToList());
 	}
 
 	[Theory]
@@ -113,19 +75,10 @@ public sealed class JoinEmptyTest
 	[InlineData(false)]
 	internal void NullEmptyTest(Boolean emptyData)
 	{
-		List<GCHandle> handles = new();
 		CString? separator = !emptyData ? CString.Empty : default;
-		CString?[] values = !emptyData ? Enumerable.Repeat<CString?>(default, 3).ToArray() : Array.Empty<CString>();
-		try
-		{
-			JoinEmptyTest.Test(separator, values);
-			JoinEmptyTest.Test(separator, values.ToList());
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		CString?[] values = !emptyData ? Enumerable.Repeat<CString?>(default, 3).ToArray() : [];
+		JoinEmptyTest.Test(separator, values);
+		JoinEmptyTest.Test(separator, values.ToList());
 	}
 
 	[Theory]
@@ -133,19 +86,10 @@ public sealed class JoinEmptyTest
 	[InlineData(false)]
 	internal async Task LocalEmptyTestAsync(Boolean emptyData)
 	{
-		List<GCHandle> handles = new();
 		CString? separator = !emptyData ? CString.Empty : default;
-		CString?[] values = !emptyData ? Enumerable.Repeat(CString.Empty, 3).ToArray() : Array.Empty<CString>();
-		try
-		{
-			await JoinEmptyTest.TestAsync(separator, values);
-			await JoinEmptyTest.TestAsync(separator, values.ToList());
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		CString?[] values = !emptyData ? Enumerable.Repeat(CString.Empty, 3).ToArray() : [];
+		await JoinEmptyTest.TestAsync(separator, values);
+		await JoinEmptyTest.TestAsync(separator, values.ToList());
 	}
 
 	[Theory]
@@ -153,21 +97,10 @@ public sealed class JoinEmptyTest
 	[InlineData(false)]
 	internal async Task ReferenceEmptyTestAsync(Boolean emptyData)
 	{
-		List<GCHandle> handles = new();
 		CString? separator = !emptyData ? CString.Empty : default;
-		CString?[] values = !emptyData ?
-			Enumerable.Repeat<CString>(new(IntPtr.Zero, default), 3).ToArray() :
-			Array.Empty<CString>();
-		try
-		{
-			await JoinEmptyTest.TestAsync(separator, values);
-			await JoinEmptyTest.TestAsync(separator, values.ToList());
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		CString?[] values = !emptyData ? Enumerable.Repeat<CString>(new(IntPtr.Zero, default), 3).ToArray() : [];
+		await JoinEmptyTest.TestAsync(separator, values);
+		await JoinEmptyTest.TestAsync(separator, values.ToList());
 	}
 
 	[Theory]
@@ -175,19 +108,10 @@ public sealed class JoinEmptyTest
 	[InlineData(false)]
 	internal async Task NullEmptyTestAsync(Boolean emptyData)
 	{
-		List<GCHandle> handles = new();
 		CString? separator = !emptyData ? CString.Empty : default;
-		CString?[] values = !emptyData ? Enumerable.Repeat<CString?>(default, 3).ToArray() : Array.Empty<CString>();
-		try
-		{
-			await JoinEmptyTest.TestAsync(separator, values);
-			await JoinEmptyTest.TestAsync(separator, values.ToList());
-		}
-		finally
-		{
-			foreach (GCHandle handle in handles)
-				handle.Free();
-		}
+		CString?[] values = !emptyData ? Enumerable.Repeat<CString?>(default, 3).ToArray() : [];
+		await JoinEmptyTest.TestAsync(separator, values);
+		await JoinEmptyTest.TestAsync(separator, values.ToList());
 	}
 
 	private static void Test(ReadOnlySpan<Byte> separator, CString?[] values)

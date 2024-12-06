@@ -6,7 +6,7 @@ public class AsSpanTest
 {
 	private static readonly IFixture fixture = new Fixture();
 	private static readonly Type extensionsType = typeof(MemoryBlockExtensions);
-	private static readonly IReadOnlyDictionary<Int32, MethodInfo> asSpans = AsSpanTest.extensionsType
+	private static readonly ImmutableDictionary<Int32, MethodInfo> asSpans = AsSpanTest.extensionsType
 		.GetMethods(BindingFlags.Public | BindingFlags.Static).Where(m => m.Name == "AsSpan")
 		.ToImmutableDictionary(m => m.GetParameters()[0].ParameterType.GetArrayRank(), m => m);
 	private static readonly MethodInfo genericArrayTest =
@@ -180,6 +180,5 @@ public class AsSpanTest
 		data.CopyTo(span);
 		return arr;
 	}
-	private delegate Span<T> GetSpanDelegate<T>(Array? array);
 	private delegate Span<T> GetSpanDelegate<T, in TArray>(TArray? array);
 }

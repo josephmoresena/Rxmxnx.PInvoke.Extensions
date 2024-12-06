@@ -7,12 +7,8 @@
 /// Contains additional information about the decoded rune, including the number of units consumed
 /// during decoding and the raw value read.
 /// </remarks>
-internal readonly struct DecodedRune : IWrapper<Rune>
+internal readonly struct DecodedRune : IWrapper<Rune>, IEquatable<DecodedRune>
 {
-	/// <summary>
-	/// The number of code units that were consumed from the input to decode the Rune.
-	/// </summary>
-	private readonly Int32 _charsConsumed;
 	/// <summary>
 	/// The raw integer value that was read from the input to form the Rune.
 	/// </summary>
@@ -21,14 +17,19 @@ internal readonly struct DecodedRune : IWrapper<Rune>
 	/// The <see cref="Rune"/> instance decoded from the input.
 	/// </summary>
 	private readonly Rune _value;
+
 	/// <summary>
 	/// The number of code units that were consumed from the input to decode the Rune.
 	/// </summary>
-	public Int32 CharsConsumed => this._charsConsumed;
+	public Int32 CharsConsumed { get; }
 	/// <summary>
 	/// The raw integer value that was read from the input to form the Rune.
 	/// </summary>
 	public Int32 RawValue => this._rawValue;
+	/// <summary>
+	/// The <see cref="Rune"/> instance decoded from the input.
+	/// </summary>
+	public Rune Value => this._value;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="DecodedRune"/> class.
@@ -43,15 +44,15 @@ internal readonly struct DecodedRune : IWrapper<Rune>
 	private DecodedRune(Rune value, Int32 charsConsumed, ReadOnlySpan<Byte> source)
 	{
 		this._value = value;
-		this._charsConsumed = charsConsumed;
+		this.CharsConsumed = charsConsumed;
 		DecodedRune.CopyRawValue(ref this._rawValue, source);
 	}
 
-	/// <summary>
-	/// The <see cref="Rune"/> instance decoded from the input.
-	/// </summary>
-	public Rune Value => this._value;
-
+	/// <inheritdoc/>
+	[ExcludeFromCodeCoverage]
+	public Boolean Equals(DecodedRune other)
+		=> this.CharsConsumed == other.CharsConsumed && this._rawValue == other._rawValue &&
+			this._value.Equals(other._value);
 	/// <inheritdoc/>
 	public override Boolean Equals(Object? obj)
 	{

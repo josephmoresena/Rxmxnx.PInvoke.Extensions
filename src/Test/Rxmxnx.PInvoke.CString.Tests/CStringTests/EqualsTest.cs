@@ -23,12 +23,7 @@ public sealed class EqualsTest
 	private static void CompleteTest(Int32 indexA, Int32 indexB)
 	{
 		String strA = TestSet.Utf16Text[indexA];
-		String strLowerA = TestSet.Utf16TextLower[indexA];
-		String strUpperA = TestSet.Utf16TextUpper[indexA];
-
 		CString cstrA = new(TestSet.Utf8Text[indexA]);
-		CString cstrLowerA = new(TestSet.Utf8TextLower[indexA]);
-		CString cstrUpperA = new(TestSet.Utf8TextUpper[indexA]);
 
 		String strB = TestSet.Utf16Text[indexB];
 		String strLowerB = TestSet.Utf16TextLower[indexB];
@@ -38,11 +33,11 @@ public sealed class EqualsTest
 		CString cstrLowerB = new(TestSet.Utf8TextLower[indexB]);
 		CString cstrUpperB = new(TestSet.Utf8TextUpper[indexB]);
 
-		ComparisonTestResult testAB = ComparisonTestResult.Compare(strA, strB);
+		ComparisonTestResult testAb = ComparisonTestResult.Compare(strA, strB);
 
-		EqualsTest.StringTest(testAB, cstrA, strB);
-		EqualsTest.CStringTest(testAB, cstrA, cstrB);
-		EqualsTest.OperatorTest(testAB, cstrA, strA, cstrB, strB);
+		EqualsTest.StringTest(testAb, cstrA, strB);
+		EqualsTest.CStringTest(testAb, cstrA, cstrB);
+		EqualsTest.OperatorTest(testAb, cstrA, strA, cstrB, strB);
 		EqualsTest.CompleteTest(ComparisonTestResult.Compare(strA, strLowerB), cstrA, strLowerB, cstrLowerB);
 		EqualsTest.CompleteTest(ComparisonTestResult.Compare(strA, strUpperB), cstrA, strUpperB, cstrUpperB);
 	}

@@ -11,23 +11,11 @@ public sealed class OperatorsTest
 	{
 		IntPtr inputValue = input.HasValue ? input.Value ? IntPtr.MaxValue : IntPtr.MinValue : IntPtr.Zero;
 		if (!input.HasValue)
-		{
 			Assert.Equal(UIntPtr.Zero, inputValue.ToUIntPtr());
-		}
 		else if (Environment.Is64BitProcess)
-		{
-			if (input.Value)
-				Assert.Equal(Int64.MaxValue, (Int64)inputValue.ToUIntPtr().ToUInt64());
-			else
-				Assert.Equal(Int64.MinValue, (Int64)inputValue.ToUIntPtr().ToUInt64());
-		}
+			Assert.Equal(input.Value ? Int64.MaxValue : Int64.MinValue, (Int64)inputValue.ToUIntPtr().ToUInt64());
 		else
-		{
-			if (input.Value)
-				Assert.Equal(Int32.MaxValue, (Int32)inputValue.ToUIntPtr().ToUInt32());
-			else
-				Assert.Equal(Int32.MinValue, (Int32)inputValue.ToUIntPtr().ToUInt32());
-		}
+			Assert.Equal(input.Value ? Int32.MaxValue : Int32.MinValue, (Int32)inputValue.ToUIntPtr().ToUInt32());
 	}
 
 	[Theory]

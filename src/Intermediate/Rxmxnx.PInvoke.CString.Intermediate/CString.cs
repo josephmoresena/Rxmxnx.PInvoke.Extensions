@@ -25,7 +25,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// Gets a value indicating whether the UTF-8 text is referenced by, and not contained within,
 	/// the current <see cref="CString"/> instance.
 	/// </summary>
-	public Boolean IsReference => !this._isLocal && !this._isFunction;
+	public Boolean IsReference => !this._isLocal && !this.IsFunction;
 	/// <summary>
 	/// Gets a value indicating whether the current <see cref="CString"/> instance is a segment
 	/// (or slice) of another <see cref="CString"/> instance.
@@ -34,7 +34,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <summary>
 	/// Gets a value indicating whether the current <see cref="CString"/> instance is a function.
 	/// </summary>
-	public Boolean IsFunction => this._isFunction;
+	public Boolean IsFunction { get; }
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified
@@ -94,7 +94,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	public Object Clone()
 	{
 		ReadOnlySpan<Byte> source = this;
-		Byte[] bytes = new Byte[this._length + 1];
+		Byte[] bytes = new Byte[this.Length + 1];
 		source.CopyTo(bytes);
 		return new CString(bytes, true);
 	}
@@ -150,7 +150,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override String ToString()
 	{
-		if (this._length == 0) return String.Empty;
+		if (this.Length == 0) return String.Empty;
 		String result = Encoding.UTF8.GetString(this.AsSpan());
 		return String.IsInterned(result) ?? result;
 	}
@@ -174,14 +174,14 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <returns>
 	/// A new <see cref="Byte"/> array containing the UTF-8 units of the current <see cref="CString"/>.
 	/// </returns>
-	public Byte[] ToArray() => this._data.ToArray()[..this._length];
+	public Byte[] ToArray() => this._data.ToArray()[..this.Length];
 	/// <summary>
 	/// Retrieves the UTF-8 units of the current <see cref="CString"/> as a read-only span of bytes.
 	/// </summary>
 	/// <returns>
 	/// A read-only span of bytes representing the UTF-8 units of the current <see cref="CString"/>.
 	/// </returns>
-	public ReadOnlySpan<Byte> AsSpan() => this._data.AsSpan()[..this._length];
+	public ReadOnlySpan<Byte> AsSpan() => this._data.AsSpan()[..this.Length];
 	/// <summary>
 	/// Returns a <see cref="String"/> that represents the current UTF-8 text as a hexadecimal value.
 	/// </summary>

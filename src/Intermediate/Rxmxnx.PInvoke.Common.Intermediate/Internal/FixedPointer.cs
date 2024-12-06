@@ -12,10 +12,6 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// </summary>
 	private readonly Int32 _binaryLength;
 	/// <summary>
-	/// Indicates whether the memory block is read-only.
-	/// </summary>
-	private readonly Boolean _isReadOnly;
-	/// <summary>
 	/// Indicates whether the current instance is still valid.
 	/// </summary>
 	private readonly IMutableWrapper<Boolean> _isValid;
@@ -48,7 +44,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// <summary>
 	/// Indicates whether the current instance is read-only.
 	/// </summary>
-	public Boolean IsReadOnly => this._isReadOnly;
+	public Boolean IsReadOnly { get; }
 	/// <summary>
 	/// Indicates whether the current instance is still valid.
 	/// </summary>
@@ -68,7 +64,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		this._ptr = ptr;
 		this._binaryLength = binaryLength;
 		this._isValid = new MutableWrapper<Boolean>(true);
-		this._isReadOnly = isReadOnly;
+		this.IsReadOnly = isReadOnly;
 	}
 	/// <summary>
 	/// Constructs a new FixedPointer instance pointing to a fixed memory block, with specified validity.
@@ -88,7 +84,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		this._ptr = ptr;
 		this._binaryLength = binaryLength;
 		this._isValid = isValid;
-		this._isReadOnly = isReadOnly;
+		this.IsReadOnly = isReadOnly;
 	}
 	/// <summary>
 	/// Constructs a new <see cref="FixedPointer"/> instance using another instance as a template.
@@ -103,7 +99,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		this._ptr = pointer._ptr;
 		this._binaryLength = pointer._binaryLength;
 		this._isValid = pointer._isValid;
-		this._isReadOnly = pointer._isReadOnly;
+		this.IsReadOnly = pointer.IsReadOnly;
 	}
 	/// <summary>
 	/// Constructs a new <see cref="FixedPointer"/> instance using another instance as a template and specifying a memory
@@ -121,7 +117,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		this._ptr = ((IntPtr)pointer._ptr + offset).ToPointer();
 		this._binaryLength = pointer._binaryLength - offset;
 		this._isValid = pointer._isValid;
-		this._isReadOnly = pointer._isReadOnly;
+		this.IsReadOnly = pointer.IsReadOnly;
 	}
 
 	IntPtr IFixedPointer.Pointer => (IntPtr)this.GetMemoryOffset();
@@ -235,7 +231,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	{
 		ValidationUtilities.ThrowIfFunctionPointer(this.IsFunction);
 		ValidationUtilities.ThrowIfInvalidPointer(this._isValid);
-		ValidationUtilities.ThrowIfReadOnlyPointer(isReadOnly, this._isReadOnly);
+		ValidationUtilities.ThrowIfReadOnlyPointer(isReadOnly, this.IsReadOnly);
 	}
 	/// <summary>
 	/// Validates any operation over the fixed value type memory block.

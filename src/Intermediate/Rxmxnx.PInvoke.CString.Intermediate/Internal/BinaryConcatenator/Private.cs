@@ -9,10 +9,6 @@ internal partial class BinaryConcatenator<T>
 	private readonly CancellationToken _cancellationToken;
 
 	/// <summary>
-	/// Represents an internal memory stream used for manipulation of binary data.
-	/// </summary>
-	private readonly MemoryStream _mem;
-	/// <summary>
 	/// The separator value to use between elements when writing.
 	/// </summary>
 	private readonly T? _separator;
@@ -60,7 +56,7 @@ internal partial class BinaryConcatenator<T>
 	/// Writes the <paramref name="value"/> to the current instance.
 	/// </summary>
 	/// <param name="value">The UTF-8 bytes to write.</param>
-	private void WriteValue(ReadOnlySpan<Byte> value) => this._mem.Write(value);
+	private void WriteValue(ReadOnlySpan<Byte> value) => this.Stream.Write(value);
 	/// <summary>
 	/// Writes the <paramref name="value"/> to the current instance and updates the writing
 	/// delegates for subsequent writes with a separator.

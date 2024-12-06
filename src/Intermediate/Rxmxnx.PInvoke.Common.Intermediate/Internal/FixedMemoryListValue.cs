@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a list of <see cref="FixedMemory"/> instances.
 /// </summary>
-internal readonly struct FixedMemoryListValue : IEnumerableSequence<ReadOnlyFixedMemory>
+internal readonly struct FixedMemoryListValue
 {
 	/// <summary>
 	/// Array of <see cref="ReadOnlyFixedMemory"/> instances.
@@ -43,8 +43,11 @@ internal readonly struct FixedMemoryListValue : IEnumerableSequence<ReadOnlyFixe
 	/// <param name="memories">The array of <see cref="ReadOnlyFixedMemory"/> instances.</param>
 	public FixedMemoryListValue(ReadOnlyFixedMemory[] memories) => this._memories = memories;
 
-	ReadOnlyFixedMemory IEnumerableSequence<ReadOnlyFixedMemory>.GetItem(Int32 index) => this[index];
-	Int32 IEnumerableSequence<ReadOnlyFixedMemory>.GetSize() => this.Count;
+	/// <summary>
+	/// Retrieves read-only span from current instance.
+	/// </summary>
+	/// <returns>A read-only span from current instance.</returns>
+	public ReadOnlySpan<ReadOnlyFixedMemory> AsSpan() => this._memories;
 
 	/// <summary>
 	/// Releases all resources used by the <see cref="ReadOnlyFixedMemory"/> instances in the list.
@@ -52,10 +55,7 @@ internal readonly struct FixedMemoryListValue : IEnumerableSequence<ReadOnlyFixe
 	public void Unload()
 	{
 		if (this._memories is null) return;
-		for (Int32 index = 0; index < this._memories.Length; index++)
-		{
-			ReadOnlyFixedMemory mem = this._memories[index];
+		foreach (ReadOnlyFixedMemory mem in this._memories.AsSpan())
 			mem.Unload();
-		}
 	}
 }

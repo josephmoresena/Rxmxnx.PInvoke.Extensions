@@ -37,11 +37,11 @@ public sealed class SegmentTest : ValueRegionTestBase
 
 	private static void Test<T>() where T : unmanaged
 	{
-		List<GCHandle> handles = new();
-		T[] values0 = ValueRegionTestBase.fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
-		T[] values1 = ValueRegionTestBase.fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
-		T[] values2 = ValueRegionTestBase.fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
-		T[] values3 = ValueRegionTestBase.fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
+		List<GCHandle> handles = [];
+		T[] values0 = ValueRegionTestBase.Fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
+		T[] values1 = ValueRegionTestBase.Fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
+		T[] values2 = ValueRegionTestBase.Fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
+		T[] values3 = ValueRegionTestBase.Fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
 
 		try
 		{
@@ -79,7 +79,7 @@ public sealed class SegmentTest : ValueRegionTestBase
 		Assert.Throws<ArgumentOutOfRangeException>(() => emptyRegion.Slice(0, -1));
 		Assert.Throws<ArgumentOutOfRangeException>(() => emptyRegion.Slice(0, 1));
 
-		if ((T[]?)emptyRegion is T[] arr)
+		if ((T[]?)emptyRegion is { } arr)
 			Assert.Same(emptyRegion.ToArray(), arr);
 	}
 
@@ -144,10 +144,9 @@ public sealed class SegmentTest : ValueRegionTestBase
 
 			Assert.Equal(state.Region[state.GetRegionOffset(j)], state.Segment[j]);
 			Assert.Equal(state.Values[arrayOffset], state.Segment[j]);
-			if (!state.IsReference)
-				Assert.True(Unsafe.AreSame(in span[j], ref state.Values[arrayOffset]));
-			else
-				Assert.True(Unsafe.AreSame(in span[j], ref state.Values.AsSpan()[arrayOffset..][0]));
+			Assert.True(!state.IsReference ?
+				            Unsafe.AreSame(in span[j], ref state.Values[arrayOffset]) :
+				            Unsafe.AreSame(in span[j], ref state.Values.AsSpan()[arrayOffset..][0]));
 		}
 
 		if (state.Segment.IsMemorySlice || state.IsReference)
@@ -163,7 +162,7 @@ public sealed class SegmentTest : ValueRegionTestBase
 			else
 				Assert.Same(state.Values, newArray);
 		}
-		else if (state.IsReference && state.Count == 0)
+		else if (state is { IsReference: true, Count: 0, })
 		{
 			fixed (void* ptr = &MemoryMarshal.GetReference(span))
 				Assert.Equal(IntPtr.Zero, new(ptr));

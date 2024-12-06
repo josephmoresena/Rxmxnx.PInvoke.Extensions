@@ -71,7 +71,7 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 		fref.Unload();
 		Exception invalid = Assert.Throws<InvalidOperationException>(() => fref.CreateReadOnlyReference<T>());
 		Assert.Equal(FixedMemoryTestsBase.InvalidError, invalid.Message);
-		Exception functionException = Assert.Throws<InvalidOperationException>(() => fref.CreateDelegate<Action>());
+		Exception functionException = Assert.Throws<InvalidOperationException>(fref.CreateDelegate<Action>);
 		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
 	private static unsafe void ReadOnlyTest<T>(ReadOnlyFixedReference<T> fref, IntPtr ptr) where T : unmanaged
@@ -103,7 +103,7 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 		fref.Unload();
 		Exception invalid = Assert.Throws<InvalidOperationException>(() => fref.CreateReadOnlyReference<T>());
 		Assert.Equal(FixedMemoryTestsBase.InvalidError, invalid.Message);
-		Exception functionException = Assert.Throws<InvalidOperationException>(() => fref.CreateDelegate<Action>());
+		Exception functionException = Assert.Throws<InvalidOperationException>(fref.CreateDelegate<Action>);
 		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
 
@@ -131,7 +131,7 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 				Assert.Equal(value, (Object)value2);
 		}
 
-		Exception functionException = Assert.Throws<InvalidOperationException>(() => fref.CreateDelegate<Action>());
+		Exception functionException = Assert.Throws<InvalidOperationException>(fref.CreateDelegate<Action>);
 		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
 	private static unsafe void TestSize<T, T2>(ReadOnlyFixedReference<T> fref) where T : unmanaged where T2 : unmanaged
@@ -158,7 +158,7 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 				Assert.Equal(value, (Object)value2);
 		}
 
-		Exception functionException = Assert.Throws<InvalidOperationException>(() => fref.CreateDelegate<Action>());
+		Exception functionException = Assert.Throws<InvalidOperationException>(fref.CreateDelegate<Action>);
 		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
 }

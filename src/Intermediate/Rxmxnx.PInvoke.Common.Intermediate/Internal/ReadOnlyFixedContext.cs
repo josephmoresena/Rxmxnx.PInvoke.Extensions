@@ -13,17 +13,13 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	/// </summary>
 	public static readonly ReadOnlyFixedContext<T> Empty = new();
 
-	/// <summary>
-	/// The number of items of type <typeparamref name="T"/> in the memory block.
-	/// </summary>
-	private readonly Int32 _count;
 	/// <inheritdoc/>
 	public override Boolean IsUnmanaged => ReadOnlyValPtr<T>.IsUnmanaged;
 
 	/// <summary>
 	/// Gets the number of items of type <typeparamref name="T"/> in the memory block.
 	/// </summary>
-	public Int32 Count => this._count;
+	public Int32 Count { get; }
 
 	/// <inheritdoc/>
 	public override Int32 BinaryOffset => default;
@@ -38,7 +34,7 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	/// </summary>
 	/// <param name="ptr">The pointer to the fixed memory block.</param>
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
-	public ReadOnlyFixedContext(void* ptr, Int32 count) : base(ptr, count * sizeof(T), true) => this._count = count;
+	public ReadOnlyFixedContext(void* ptr, Int32 count) : base(ptr, count * sizeof(T), true) => this.Count = count;
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a pointer to a fixed memory block,
 	/// a count of items, and a validity wrapper.
@@ -48,29 +44,29 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	/// <param name="isValid">A mutable wrapper that indicates whether the current instance remains valid.</param>
 	public ReadOnlyFixedContext(void* ptr, Int32 count, IMutableWrapper<Boolean> isValid) : base(
 		ptr, count * sizeof(T), true, isValid)
-		=> this._count = count;
+		=> this.Count = count;
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using an offset and a fixed memory instance.
 	/// </summary>
 	/// <param name="offset">The offset in the memory block.</param>
 	/// <param name="ctx">The fixed memory instance.</param>
 	public ReadOnlyFixedContext(Int32 offset, ReadOnlyFixedMemory ctx) : base(ctx, offset)
-		=> this._count = this.BinaryLength / sizeof(T);
+		=> this.Count = this.BinaryLength / sizeof(T);
 
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a pointer to a
 	/// <see langword="null"/> memory.
 	/// </summary>
-	private ReadOnlyFixedContext() : base(IntPtr.Zero.ToPointer(), 0, true) => this._count = 0;
+	private ReadOnlyFixedContext() : base(IntPtr.Zero.ToPointer(), 0, true) => this.Count = 0;
 
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a fixed memory instance and a count of items.
 	/// </summary>
 	/// <param name="ctx">The fixed memory instance.</param>
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
-	private ReadOnlyFixedContext(ReadOnlyFixedMemory ctx, Int32 count) : base(ctx) => this._count = count;
+	private ReadOnlyFixedContext(ReadOnlyFixedMemory ctx, Int32 count) : base(ctx) => this.Count = count;
 
-	ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => this.CreateReadOnlySpan<T>(this._count);
+	ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => this.CreateReadOnlySpan<T>(this.Count);
 	IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
 	{

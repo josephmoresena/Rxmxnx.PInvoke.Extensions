@@ -438,7 +438,7 @@ internal static unsafe class ValidationUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfNotUnmanagedType(Type? type, Boolean isUnmanaged)
 	{
-		if (type is not null && !type.IsValueType)
+		if (type is not null && (!type.IsValueType || !isUnmanaged))
 			throw new InvalidOperationException($"{type} is not a value type.");
 	}
 	/// <summary>

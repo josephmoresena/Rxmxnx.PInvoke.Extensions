@@ -24,11 +24,6 @@ internal sealed record CStringDebugView
 	}
 
 	/// <summary>
-	/// Flags that represent the properties of the current <see cref="CString"/> instance for debugging.
-	/// </summary>
-	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-	private readonly CStringFeatures _flags;
-	/// <summary>
 	/// Length of the UTF-8 string for debugging.
 	/// </summary>
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -51,7 +46,7 @@ internal sealed record CStringDebugView
 	/// <summary>
 	/// Provides the debug flags associated with the <see cref="CString"/> instance.
 	/// </summary>
-	public CStringFeatures Flags => this._flags;
+	public CStringFeatures Flags { get; }
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringDebugView"/> class with the specified
@@ -62,16 +57,16 @@ internal sealed record CStringDebugView
 	{
 		this._value = cstr.ToString();
 		this._utf8Length = cstr.Length;
-		this._flags = cstr.IsNullTerminated ? CStringFeatures.NullTerminated : CStringFeatures.None;
+		this.Flags = cstr.IsNullTerminated ? CStringFeatures.NullTerminated : CStringFeatures.None;
 
 		if (cstr.IsReference)
-			this._flags |= CStringFeatures.Unmanaged;
+			this.Flags |= CStringFeatures.Unmanaged;
 		else if (cstr.IsFunction)
-			this._flags |= CStringFeatures.Function;
+			this.Flags |= CStringFeatures.Function;
 		else
-			this._flags |= CStringFeatures.Managed;
+			this.Flags |= CStringFeatures.Managed;
 
 		if (cstr.IsSegmented)
-			this._flags |= CStringFeatures.Slice;
+			this.Flags |= CStringFeatures.Slice;
 	}
 }

@@ -3,8 +3,6 @@
 [ExcludeFromCodeCoverage]
 public sealed class BasicTests
 {
-	private static readonly IFixture fixture = new Fixture();
-
 	[Fact]
 	internal void EmptyTest()
 	{
@@ -130,7 +128,7 @@ public sealed class BasicTests
 		for (Int32 i = 0; i < lenght; i++)
 		{
 			CString cstr1 = cstr[0, i];
-			for (Int32 j = 1; j < 4; j++)
+			for (Int32 j = 1; j <= 4; j++)
 			{
 				CString cstr2 = cstr[j, i];
 				Assert.Equal(cstr1, cstr2);

@@ -18,7 +18,7 @@ public unsafe partial class CString
 		ReadOnlySpan<Byte> span = this._data;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 		{
-			ReadOnlyFixedContext<Byte> ctx = new(ptr, this._length);
+			ReadOnlyFixedContext<Byte> ctx = new(ptr, this.Length);
 			try
 			{
 				action(ctx);
@@ -46,7 +46,7 @@ public unsafe partial class CString
 		ReadOnlySpan<Byte> span = this._data;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 		{
-			ReadOnlyFixedContext<Byte> ctx = new(ptr, this._length);
+			ReadOnlyFixedContext<Byte> ctx = new(ptr, this.Length);
 			try
 			{
 				action(ctx, arg);
@@ -74,7 +74,7 @@ public unsafe partial class CString
 		ReadOnlySpan<Byte> span = this._data;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 		{
-			ReadOnlyFixedContext<Byte> ctx = new(ptr, this._length);
+			ReadOnlyFixedContext<Byte> ctx = new(ptr, this.Length);
 			try
 			{
 				return func(ctx);
@@ -104,7 +104,7 @@ public unsafe partial class CString
 		ReadOnlySpan<Byte> span = this._data;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 		{
-			ReadOnlyFixedContext<Byte> ctx = new(ptr, this._length);
+			ReadOnlyFixedContext<Byte> ctx = new(ptr, this.Length);
 			try
 			{
 				return func(ctx, arg);

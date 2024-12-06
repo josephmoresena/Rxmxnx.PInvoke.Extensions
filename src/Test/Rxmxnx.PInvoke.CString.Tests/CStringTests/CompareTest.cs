@@ -54,13 +54,13 @@ public sealed class CompareTest
 		CString cstrLowerB = new(TestSet.Utf8TextLower[indexB]);
 		CString cstrUpperB = new(TestSet.Utf8TextUpper[indexB]);
 
-		ComparisonTestResult testAB = ComparisonTestResult.Compare(strA, strB);
-		CompareTest.StringTest(testAB, cstrA, strB);
-		CompareTest.CStringTest(testAB, cstrA, cstrB);
+		ComparisonTestResult testAb = ComparisonTestResult.Compare(strA, strB);
+		CompareTest.StringTest(testAb, cstrA, strB);
+		CompareTest.CStringTest(testAb, cstrA, cstrB);
 		CompareTest.CompleteTest(ComparisonTestResult.Compare(strA, strLowerB), cstrA, strLowerB, cstrLowerB);
 		CompareTest.CompleteTest(ComparisonTestResult.Compare(strA, strUpperB), cstrA, strUpperB, cstrUpperB);
 
-		if (testAB.Normal != 0)
+		if (testAb.Normal != 0)
 		{
 			CompareTest.CompleteTest(ComparisonTestResult.Compare(strB, strA), cstrB, strA, cstrA);
 			CompareTest.CompleteTest(ComparisonTestResult.Compare(strB, strLowerA), cstrB, strLowerA, cstrLowerA);
@@ -95,12 +95,10 @@ public sealed class CompareTest
 		CompareTest.CompleteCulturalTest(strA, cstrA, strLowerB, cstrLowerB);
 		CompareTest.CompleteCulturalTest(strA, cstrA, strUpperB, cstrUpperB);
 
-		if (!Object.ReferenceEquals(strA, strB))
-		{
-			CompareTest.CompleteCulturalTest(strB, cstrB, strA, cstrA);
-			CompareTest.CompleteCulturalTest(strB, cstrB, strLowerA, cstrLowerA);
-			CompareTest.CompleteCulturalTest(strB, cstrB, strUpperA, cstrUpperA);
-		}
+		if (Object.ReferenceEquals(strA, strB)) return;
+		CompareTest.CompleteCulturalTest(strB, cstrB, strA, cstrA);
+		CompareTest.CompleteCulturalTest(strB, cstrB, strLowerA, cstrLowerA);
+		CompareTest.CompleteCulturalTest(strB, cstrB, strUpperA, cstrUpperA);
 	}
 	private static void CompleteCulturalTest(String strA, CString cstrA, String strB, CString cstrB)
 	{

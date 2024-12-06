@@ -288,7 +288,7 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 			GetTransformationTest.OffsetTest<T2, TimeSpan>(offset, offset2);
 		}
 
-		Exception functionException = Assert.Throws<InvalidOperationException>(() => offset.CreateDelegate<Action>());
+		Exception functionException = Assert.Throws<InvalidOperationException>(offset.CreateDelegate<Action>);
 		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
 	private static unsafe void ReferenceTest<T, T2>(ReadOnlyFixedReference<T> fref, ReadOnlyFixedOffset offset,
@@ -381,7 +381,7 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 			GetTransformationTest.OffsetTest<T2, TimeSpan>(offset, offset2);
 		}
 
-		Exception functionException = Assert.Throws<InvalidOperationException>(() => offset.CreateDelegate<Action>());
+		Exception functionException = Assert.Throws<InvalidOperationException>(offset.CreateDelegate<Action>);
 		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
 	private static unsafe void OffsetTest<T2, T3>(FixedOffset offset1, FixedOffset offset2)
@@ -394,7 +394,7 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 		if (equal)
 			Assert.Equal(offset1.CreateReadOnlyBinarySpan().ToArray(), offset2.CreateReadOnlyBinarySpan().ToArray());
 
-		Exception functionException = Assert.Throws<InvalidOperationException>(() => offset2.CreateDelegate<Action>());
+		Exception functionException = Assert.Throws<InvalidOperationException>(offset2.CreateDelegate<Action>);
 		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
 	private static unsafe void OffsetTest<T2, T3>(ReadOnlyFixedOffset offset1, ReadOnlyFixedOffset offset2)
@@ -407,7 +407,7 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 		if (equal)
 			Assert.Equal(offset1.CreateReadOnlyBinarySpan().ToArray(), offset2.CreateReadOnlyBinarySpan().ToArray());
 
-		Exception functionException = Assert.Throws<InvalidOperationException>(() => offset2.CreateDelegate<Action>());
+		Exception functionException = Assert.Throws<InvalidOperationException>(offset2.CreateDelegate<Action>);
 		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
 }

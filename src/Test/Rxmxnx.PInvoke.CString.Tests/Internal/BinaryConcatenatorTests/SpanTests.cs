@@ -47,7 +47,7 @@ public sealed class SpanTests
 		Assert.Equal(outputBytes1.Length, outputBytes2.Length - 1);
 		Assert.Equal(default, outputBytes2.Last());
 
-		Assert.Equal(separatorInBytes, outputBytes1!.Any(b => b == helper.Separator));
+		Assert.Equal(separatorInBytes, outputBytes1.Any(b => b == helper.Separator));
 	}
 
 	private static void MultipleSpanAssert(Byte[] sourceBytes1, Byte[] sourceBytes2, BinaryConcatenator helper)
@@ -59,10 +59,10 @@ public sealed class SpanTests
 
 		Assert.NotNull(outputBytes1);
 		Assert.NotNull(outputBytes2);
-		Assert.Equal(sourceBytes1, outputBytes1![..sourceBytes1.Length]);
+		Assert.Equal(sourceBytes1, outputBytes1[..sourceBytes1.Length]);
 		if (helper.Separator.HasValue)
-			Assert.Equal(helper.Separator, outputBytes1![sourceBytes1.Length]);
-		Assert.Equal(sourceBytes2, outputBytes1![output2Start..]);
+			Assert.Equal(helper.Separator, outputBytes1[sourceBytes1.Length]);
+		Assert.Equal(sourceBytes2, outputBytes1[output2Start..]);
 		if (helper.Separator.HasValue)
 			Assert.Contains(helper.Separator.Value, outputBytes1);
 

@@ -66,7 +66,7 @@ public sealed class ToValueTest
 		Assert.Equal(expected, byteSpan.ToValue<T>());
 		Assert.Equal(expected, readOnlyBytes.ToValue<T>());
 
-		bytes = Array.Empty<Byte>();
+		bytes = [];
 		byteSpan = bytes;
 		readOnlyBytes = bytes;
 

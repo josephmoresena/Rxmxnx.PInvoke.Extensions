@@ -14,14 +14,9 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 	public static readonly FixedContext<T> Empty = new();
 
 	/// <summary>
-	/// The number of items of type <typeparamref name="T"/> in the memory block.
-	/// </summary>
-	private readonly Int32 _count;
-
-	/// <summary>
 	/// Gets the number of items of type <typeparamref name="T"/> in the memory block.
 	/// </summary>
-	public Int32 Count => this._count;
+	public Int32 Count { get; }
 
 	/// <inheritdoc/>
 	public override Int32 BinaryOffset => default;
@@ -38,28 +33,28 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 	/// </summary>
 	/// <param name="ptr">The pointer to the fixed memory block.</param>
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
-	public FixedContext(void* ptr, Int32 count) : base(ptr, count * sizeof(T)) => this._count = count;
+	public FixedContext(void* ptr, Int32 count) : base(ptr, count * sizeof(T)) => this.Count = count;
 	/// <summary>
 	/// Constructs a new <see cref="FixedContext{T}"/> instance using an offset and a fixed memory instance.
 	/// </summary>
 	/// <param name="offset">The offset in the memory block.</param>
 	/// <param name="ctx">The fixed memory instance.</param>
 	public FixedContext(Int32 offset, FixedMemory ctx) : base(ctx, offset)
-		=> this._count = this.BinaryLength / sizeof(T);
+		=> this.Count = this.BinaryLength / sizeof(T);
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a pointer to a
 	/// <see langword="null"/> memory.
 	/// </summary>
-	private FixedContext() : base(IntPtr.Zero.ToPointer(), 0) => this._count = 0;
+	private FixedContext() : base(IntPtr.Zero.ToPointer(), 0) => this.Count = 0;
 	/// <summary>
 	/// Constructs a new <see cref="FixedContext{T}"/> instance using a fixed memory instance and a count of items.
 	/// </summary>
 	/// <param name="ctx">The fixed memory instance.</param>
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
-	private FixedContext(FixedMemory ctx, Int32 count) : base(ctx) => this._count = count;
+	private FixedContext(FixedMemory ctx, Int32 count) : base(ctx) => this.Count = count;
 
-	Span<T> IFixedMemory<T>.Values => this.CreateSpan<T>(this._count);
-	ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => this.CreateReadOnlySpan<T>(this._count);
+	Span<T> IFixedMemory<T>.Values => this.CreateSpan<T>(this.Count);
+	ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => this.CreateReadOnlySpan<T>(this.Count);
 	IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IFixedMemory residual)
 	{
 		Unsafe.SkipInit(out residual);

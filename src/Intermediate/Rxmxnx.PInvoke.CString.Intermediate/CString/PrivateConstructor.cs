@@ -23,17 +23,17 @@ public partial class CString
 		if (data.IsEmpty)
 		{
 			this._isNullTerminated = false;
-			this._length = 0;
+			this.Length = 0;
 		}
 		else if (useFullLength)
 		{
 			this._isNullTerminated = false;
-			this._length = length;
+			this.Length = length;
 		}
 		else
 		{
 			this._isNullTerminated = CString.IsNullTerminatedSpan(data, out Int32 textLength);
-			this._length = textLength;
+			this.Length = textLength;
 		}
 	}
 	/// <summary>
@@ -51,7 +51,7 @@ public partial class CString
 		this._isLocal = true;
 		this._data = ValueRegion<Byte>.Create(bytes);
 		this._isNullTerminated = isNullTerminated ?? CString.IsNullTerminatedSpan(bytes, out textLength);
-		this._length = textLength - (isNullTerminated.GetValueOrDefault() ? 1 : 0);
+		this.Length = textLength - (isNullTerminated.GetValueOrDefault() ? 1 : 0);
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class that contains the UTF-8 string
@@ -62,19 +62,19 @@ public partial class CString
 	private CString(ReadOnlySpanFunc<Byte> func, Boolean isLiteral)
 	{
 		this._isLocal = false;
-		this._isFunction = true;
+		this.IsFunction = true;
 		this._data = ValueRegion<Byte>.Create(func);
 
 		ReadOnlySpan<Byte> data = func();
 		if (isLiteral)
 		{
 			this._isNullTerminated = true;
-			this._length = data.Length;
+			this.Length = data.Length;
 		}
 		else
 		{
 			this._isNullTerminated = CString.IsNullTerminatedSpan(data, out Int32 textLength);
-			this._length = textLength;
+			this.Length = textLength;
 		}
 	}
 	/// <summary>
@@ -91,11 +91,11 @@ public partial class CString
 	private CString(CString value, Int32 startIndex, Int32 length)
 	{
 		this._isLocal = value._isLocal;
-		this._isFunction = value._isFunction;
-		this._length = length;
+		this.IsFunction = value.IsFunction;
+		this.Length = length;
 		this._data = value._data.InternalSlice(startIndex, value.GetDataLength(startIndex, length));
 		this._isNullTerminated =
-			(value is { _isFunction: true, _isNullTerminated: true, } && value._length - startIndex == length) ||
+			(value is { IsFunction: true, _isNullTerminated: true, } && value.Length - startIndex == length) ||
 			this._data.AsSpan()[^1] == default;
 	}
 	/// <summary>
@@ -105,9 +105,10 @@ public partial class CString
 	/// <param name="utf16Text">The UTF-16 text to convert and assign to the new instance.</param>
 	private CString(String utf16Text)
 	{
-		Utf16ConversionHelper helper = new(utf16Text, out this._length);
+		Utf16ConversionHelper helper = new(utf16Text, out Int32 length);
+		this.Length = length;
 		this._isLocal = true;
-		this._isFunction = true;
+		this.IsFunction = true;
 		this._data = helper.AsRegion();
 		this._isNullTerminated = true;
 	}
@@ -122,11 +123,11 @@ public partial class CString
 	private CString(ValueRegion<Byte> data, Boolean isFunction, Boolean isNullTerminated, Int32 length)
 	{
 		this._isLocal = false;
-		this._isFunction = isFunction;
+		this.IsFunction = isFunction;
 		this._data = data;
 
 		this._isNullTerminated = isNullTerminated;
-		this._length = length;
+		this.Length = length;
 	}
 
 	/// <summary>

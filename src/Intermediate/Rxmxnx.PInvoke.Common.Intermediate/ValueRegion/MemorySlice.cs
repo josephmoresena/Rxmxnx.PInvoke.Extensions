@@ -8,14 +8,6 @@ public partial class ValueRegion<T>
 	private abstract class MemorySlice : ValueRegion<T>
 	{
 		/// <summary>
-		/// Internal length.
-		/// </summary>
-		private readonly Int32 _end;
-		/// <summary>
-		/// Internal offset.
-		/// </summary>
-		private readonly Int32 _offset;
-		/// <summary>
 		/// Indicates whether the current instance represents a memory slice extracted from a larger memory region.
 		/// </summary>
 		private readonly Boolean _slice;
@@ -26,11 +18,11 @@ public partial class ValueRegion<T>
 		/// <summary>
 		/// Internal length.
 		/// </summary>
-		protected Int32 End => this._end;
+		protected Int32 End { get; }
 		/// <summary>
 		/// Internal offset.
 		/// </summary>
-		protected Int32 Offset => this._offset;
+		protected Int32 Offset { get; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ValueRegion{T}.MemorySlice"/> class.
@@ -41,15 +33,15 @@ public partial class ValueRegion<T>
 		/// <param name="initialOffset">The initial offset of the memory slice.</param>
 		protected MemorySlice(Int32 initialLength, Int32 offset, Int32 length, Int32 initialOffset = 0)
 		{
-			this._offset = offset + initialOffset;
-			this._end = this._offset + length;
-			this._slice = this._offset != 0 || this._end != initialLength;
+			this.Offset = offset + initialOffset;
+			this.End = this.Offset + length;
+			this._slice = this.Offset != 0 || this.End != initialLength;
 		}
 
 		/// <inheritdoc/>
 		public override ValueRegion<T> Slice(Int32 startIndex)
 		{
-			Int32 regionLength = this._end - this._offset;
+			Int32 regionLength = this.End - this.Offset;
 			Int32 length = regionLength - startIndex;
 			ValidationUtilities.ThrowIfInvalidSubregion(regionLength, startIndex, length);
 			return this.InternalSlice(startIndex, length);
@@ -57,7 +49,7 @@ public partial class ValueRegion<T>
 		/// <inheritdoc/>
 		public override ValueRegion<T> Slice(Int32 startIndex, Int32 length)
 		{
-			Int32 regionLength = this._end - this._offset;
+			Int32 regionLength = this.End - this.Offset;
 			ValidationUtilities.ThrowIfInvalidSubregion(regionLength, startIndex, length);
 			return this.InternalSlice(startIndex, length);
 		}

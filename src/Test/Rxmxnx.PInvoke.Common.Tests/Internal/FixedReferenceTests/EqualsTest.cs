@@ -89,13 +89,11 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 		void* ptr = Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in valueRef));
 		Int32 binaryLength = sizeof(T);
 
-		if (binaryLength >= sizeof(T2))
-		{
-			ref readonly T2 transformedRef = ref Unsafe.AsRef<T2>(ptr);
+		if (binaryLength < sizeof(T2)) return;
+		ref readonly T2 transformedRef = ref Unsafe.AsRef<T2>(ptr);
 
-			Assert.Equal(binaryLength, fref.BinaryLength);
-			FixedReferenceTestsBase.WithFixed(transformedRef, fref, EqualsTest.Test);
-		}
+		Assert.Equal(binaryLength, fref.BinaryLength);
+		FixedReferenceTestsBase.WithFixed(transformedRef, fref, EqualsTest.Test);
 	}
 	private static unsafe void TransformationTest<T, T2>(ReadOnlyFixedReference<T> fref)
 		where T : unmanaged where T2 : unmanaged
@@ -104,13 +102,11 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 		void* ptr = Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in valueRef));
 		Int32 binaryLength = sizeof(T);
 
-		if (binaryLength >= sizeof(T2))
-		{
-			ref readonly T2 transformedRef = ref Unsafe.AsRef<T2>(ptr);
+		if (binaryLength < sizeof(T2)) return;
+		ref readonly T2 transformedRef = ref Unsafe.AsRef<T2>(ptr);
 
-			Assert.Equal(binaryLength, fref.BinaryLength);
-			FixedReferenceTestsBase.WithFixed(transformedRef, fref, EqualsTest.Test);
-		}
+		Assert.Equal(binaryLength, fref.BinaryLength);
+		FixedReferenceTestsBase.WithFixed(transformedRef, fref, EqualsTest.Test);
 	}
 	private static void Test<T, TInt>(FixedReference<TInt> fref2, FixedReference<T> fref)
 		where T : unmanaged where TInt : unmanaged

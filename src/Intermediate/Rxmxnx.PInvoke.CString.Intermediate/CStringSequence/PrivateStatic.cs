@@ -4,14 +4,9 @@
 public unsafe partial class CStringSequence
 {
 	/// <summary>
-	/// Size of <see cref="Char"/> value in bytes.
-	/// </summary>
-	private const Int32 sizeOfChar = sizeof(Char);
-
-	/// <summary>
 	/// Represents an empty sequence.
 	/// </summary>
-	private static readonly CStringSequence empty = new(String.Empty, Array.Empty<Int32?>());
+	private static readonly CStringSequence empty = new(String.Empty, []);
 
 	/// <summary>
 	/// Determines the length of the given <see cref="CString"/> instance for the sequence.
@@ -39,7 +34,7 @@ public unsafe partial class CStringSequence
 	private static String CreateBuffer(ReadOnlySpan<CString?> values)
 	{
 		Int32 totalBytes = CStringSequence.GetTotalBytes(values);
-		Int32 totalChars = totalBytes / CStringSequence.sizeOfChar + totalBytes % CStringSequence.sizeOfChar;
+		Int32 totalChars = totalBytes / sizeof(Char) + totalBytes % sizeof(Char);
 #pragma warning disable CS8500
 		fixed (CString?* valuesPtr = values)
 		{
@@ -151,10 +146,9 @@ public unsafe partial class CStringSequence
 	private static void BinaryCopyTo(FixedCStringSequence seq, Byte[] destination)
 	{
 		Int32 offset = 0;
-		for (Int32 index = 0; index < seq.Values.Count; index++)
+		foreach (CString? value in seq)
 		{
-			CString value = seq.Values[index];
-			if (value.Length <= 0) continue;
+			if (value is null || value.Length <= 0) continue;
 			ReadOnlySpan<Byte> bytes = value.AsSpan();
 			bytes.CopyTo(destination.AsSpan()[offset..]);
 			offset += bytes.Length;
@@ -290,7 +284,7 @@ public unsafe partial class CStringSequence
 	private static Int32 GetBufferLength(IEnumerable<Int32?> lengths)
 	{
 		Int32 bytesLength = lengths.Sum(CStringSequence.GetSpanLength);
-		Int32 length = bytesLength / CStringSequence.sizeOfChar + bytesLength % CStringSequence.sizeOfChar;
+		Int32 length = bytesLength / sizeof(Char) + bytesLength % sizeof(Char);
 		return length;
 	}
 	/// <summary>
@@ -330,7 +324,7 @@ public unsafe partial class CStringSequence
 	{
 		if (buffer.Length == 0) return CStringSequence.empty;
 		Int32 totalBytes = buffer.Length + (buffer[^1] == default ? 0 : 1);
-		Int32 totalChars = totalBytes / CStringSequence.sizeOfChar;
+		Int32 totalChars = totalBytes / sizeof(Char);
 		ReadOnlySpan<Int32> nulls;
 		String sequenceBuffer;
 		fixed (Byte* ptr = &MemoryMarshal.GetReference(buffer))

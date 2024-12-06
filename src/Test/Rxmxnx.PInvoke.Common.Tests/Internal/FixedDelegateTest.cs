@@ -116,7 +116,7 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
 	private static void AssertUnload<TDelegate>(FixedDelegate<TDelegate> fdel) where TDelegate : Delegate
 	{
 		fdel.Unload();
-		Exception invalid = Assert.Throws<InvalidOperationException>(() => fdel.CreateDelegate<TDelegate>());
+		Exception invalid = Assert.Throws<InvalidOperationException>(fdel.CreateDelegate<TDelegate>);
 		Assert.Equal(FixedMemoryTestsBase.InvalidError, invalid.Message);
 		FixedDelegateTest.AssertFunction(fdel);
 	}
@@ -125,7 +125,7 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
 		where TDelegate : Delegate where TAlien : Delegate
 	{
 		if (typeof(TDelegate) != typeof(TAlien))
-			Assert.Throws<InvalidCastException>(() => fdel.CreateDelegate<TAlien>());
+			Assert.Throws<InvalidCastException>(fdel.CreateDelegate<TAlien>);
 	}
 
 	private static void AssertFunction<TDelegate>(FixedDelegate<TDelegate> fdel) where TDelegate : Delegate

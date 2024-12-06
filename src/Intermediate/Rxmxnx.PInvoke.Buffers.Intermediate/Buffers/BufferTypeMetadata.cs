@@ -18,10 +18,6 @@ public abstract class BufferTypeMetadata<T>
 	/// Buffer capacity.
 	/// </summary>
 	public UInt16 Size { get; }
-	/// <summary>
-	/// Indicates whether current type is pure.
-	/// </summary>
-	public Boolean IsPure { get; }
 
 	/// <summary>
 	/// Constructor.
@@ -34,7 +30,6 @@ public abstract class BufferTypeMetadata<T>
 		this.IsBinary = isBinary;
 		this.Components = components;
 		this.Size = capacity;
-		this.IsPure = isBinary && (components.Length == 0 || components[0].Size == components[^1].Size);
 	}
 
 	/// <summary>

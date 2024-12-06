@@ -4,8 +4,8 @@
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class EnumerableSequenceTests
 {
-	private const String notStartedError = "Enumeration has not started. Call MoveNext.";
-	private const String finishedError = "Enumeration already finished.";
+	private const String NotStartedError = "Enumeration has not started. Call MoveNext.";
+	private const String FinishedError = "Enumeration already finished.";
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
@@ -104,7 +104,7 @@ public sealed class EnumerableSequenceTests
 
 	private static void TestEnumerator<T>(T[] values, IEnumerator<T> enumerator)
 	{
-		Assert.Equal(EnumerableSequenceTests.notStartedError,
+		Assert.Equal(EnumerableSequenceTests.NotStartedError,
 		             Assert.Throws<InvalidOperationException>(() => enumerator.Current).Message);
 		Int32 index = -1;
 		while (enumerator.MoveNext())
@@ -113,7 +113,7 @@ public sealed class EnumerableSequenceTests
 			Assert.Equal(values[index], enumerator.Current);
 		}
 		Assert.Equal(values.Length, index + 1);
-		Assert.Equal(EnumerableSequenceTests.finishedError,
+		Assert.Equal(EnumerableSequenceTests.FinishedError,
 		             Assert.Throws<InvalidOperationException>(() => enumerator.Current).Message);
 	}
 }

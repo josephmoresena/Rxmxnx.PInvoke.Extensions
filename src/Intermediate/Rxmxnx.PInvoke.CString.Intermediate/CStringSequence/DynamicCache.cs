@@ -36,10 +36,10 @@ public partial class CStringSequence
 		void ICollection<CString?>.Clear()
 		{
 			Int32[] keys = this._cache.Keys.ToArray();
-			for (Int32 i = 0; i < keys.Length; i++)
+			foreach (Int32 key in keys.AsSpan())
 			{
-				if (!this._cache[keys[i]].TryGetTarget(out _))
-					this._cache.TryRemove(keys[i], out _);
+				if (!this._cache[key].TryGetTarget(out _))
+					this._cache.TryRemove(key, out _);
 			}
 		}
 

@@ -7,10 +7,6 @@ public partial class CString
 	/// </summary>
 	private readonly ValueRegion<Byte> _data;
 	/// <summary>
-	/// Indicates whether the UTF-8 data is retrieved using a function (delegate).
-	/// </summary>
-	private readonly Boolean _isFunction;
-	/// <summary>
 	/// Indicates whether the UTF-8 data is locally stored within this instance.
 	/// </summary>
 	private readonly Boolean _isLocal;
@@ -18,10 +14,6 @@ public partial class CString
 	/// Indicates whether the UTF-8 string represented by this instance is null-terminated.
 	/// </summary>
 	private readonly Boolean _isNullTerminated;
-	/// <summary>
-	/// The length, in bytes, of the UTF-8 string represented by this instance.
-	/// </summary>
-	private readonly Int32 _length;
 
 	/// <summary>
 	/// Calculates the final length of a segment of the current <see cref="CString"/>,

@@ -46,12 +46,21 @@ public readonly ref struct FixedMemoryList
 	/// <returns>
 	/// An array that contains all elements of the current <see cref="FixedMemoryList"/> object.
 	/// </returns>
-	public IFixedMemory[] ToArray() => this._values.Cast<IFixedMemory>().ToArray();
+	public IFixedMemory[] ToArray()
+	{
+		if (this._values.Count <= 0) return [];
+
+		IFixedMemory[] result = new IFixedMemory[this._values.Count];
+		ref ReadOnlyFixedMemory refI = ref Unsafe.As<IFixedMemory, ReadOnlyFixedMemory>(ref result[0]);
+		Span<ReadOnlyFixedMemory> span = MemoryMarshal.CreateSpan(ref refI, result.Length);
+		this._values.AsSpan().CopyTo(span);
+		return result;
+	}
 	/// <summary>
 	/// Returns an enumerator that iterates through the <see cref="ReadOnlyFixedMemoryList"/>.
 	/// </summary>
 	/// <returns>An enumerator for the current <see cref="ReadOnlyFixedMemoryList"/> object.</returns>
-	public Enumerator GetEnumerator() => new(this._values);
+	public Enumerator GetEnumerator() => new(this._values.AsSpan());
 
 	/// <summary>
 	/// Releases all resources used by the <see cref="ReadOnlyFixedMemoryList"/> object.
@@ -67,12 +76,12 @@ public readonly ref struct FixedMemoryList
 	/// <summary>
 	/// Enumerates the elements of a <see cref="FixedMemoryList"/>.
 	/// </summary>
-	public readonly ref struct Enumerator
+	public ref struct Enumerator
 	{
 		/// <summary>
 		/// Internal enumerator.
 		/// </summary>
-		private readonly IEnumerator<FixedMemory> _enumerator;
+		private ReadOnlySpan<FixedMemory>.Enumerator _enumerator;
 
 		/// <summary>
 		/// Gets the element at the current position of the enumerator.
@@ -89,8 +98,12 @@ public readonly ref struct FixedMemoryList
 		/// </summary>
 		/// <param name="values">A <see cref="FixedMemory"/> enumerable instance.</param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal Enumerator(IEnumerable<ReadOnlyFixedMemory> values)
-			=> this._enumerator = values.Cast<FixedMemory>().GetEnumerator();
+		internal Enumerator(ReadOnlySpan<ReadOnlyFixedMemory> values)
+		{
+			if (values.Length <= 0) return;
+			ref FixedMemory refMem = ref Unsafe.As<ReadOnlyFixedMemory, FixedMemory>(ref Unsafe.AsRef(in values[0]));
+			this._enumerator = MemoryMarshal.CreateReadOnlySpan(ref refMem, values.Length).GetEnumerator();
+		}
 
 		/// <summary>
 		/// Advances the enumerator to the next element of the <see cref="ReadOnlyFixedMemoryList"/>.

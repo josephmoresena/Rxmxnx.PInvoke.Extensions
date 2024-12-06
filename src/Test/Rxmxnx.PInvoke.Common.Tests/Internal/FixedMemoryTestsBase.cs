@@ -21,7 +21,7 @@ public abstract class FixedMemoryTestsBase
 	/// <summary>
 	/// Message when <see cref="FixedMemory"/> instance is a function.
 	/// </summary>
-	public const String IsFunction = "The current instance is a function.";
+	protected const String IsFunction = "The current instance is a function.";
 	/// <summary>
 	/// Message when <see cref="FixedReference{T}"/> instance is not enough for hold a reference.
 	/// </summary>

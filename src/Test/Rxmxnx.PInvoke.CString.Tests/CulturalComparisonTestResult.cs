@@ -17,7 +17,7 @@ internal sealed record CulturalComparisonTestResult
 		return CulturalComparisonTestResult.Compare(culture, strA, strB);
 	}
 
-	public static CulturalComparisonTestResult Compare(CultureInfo culture, String strA, String strB)
+	private static CulturalComparisonTestResult Compare(CultureInfo culture, String strA, String strB)
 	{
 		Int32 caseInsensitive = String.Compare(strA, strB, true, culture);
 		Int32 caseSensitive = String.Compare(strA, strB, false, culture);

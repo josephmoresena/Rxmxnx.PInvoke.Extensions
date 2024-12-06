@@ -27,19 +27,11 @@ public sealed class BinaryTest
 	{
 		Byte[] sourceBytes = Encoding.UTF8.GetBytes(BinaryTest.fixture.Create<String>());
 		Byte? separator = !nullSeparator ? BinaryTest.fixture.Create<Byte>() : default(Byte?);
-		using BinaryConcatenator helper = separator.HasValue ? new(separator.Value) : new();
+		await using BinaryConcatenator helper = separator.HasValue ? new(separator.Value) : new();
+		foreach (Byte b in sourceBytes)
+			await helper.WriteAsync(b);
 
-		try
-		{
-			foreach (Byte b in sourceBytes)
-				await helper.WriteAsync(b);
-
-			BinaryTest.AssertTest(helper, sourceBytes);
-		}
-		finally
-		{
-			await helper.DisposeAsync();
-		}
+		BinaryTest.AssertTest(helper, sourceBytes);
 	}
 
 	private static void AssertTest(BinaryConcatenator helper, Byte[] sourceBytes)

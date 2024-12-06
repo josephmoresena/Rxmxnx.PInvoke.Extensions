@@ -19,7 +19,7 @@ public sealed class Utf8ConstructorTest
 	{
 		Int32 count = Random.Shared.Next(0, 10);
 		CString cstr = new(character, count);
-		Utf8ConstructorTest.Test(stackalloc Byte[] { character, }, count, cstr);
+		Utf8ConstructorTest.Test([character,], count, cstr);
 	}
 
 	[Theory]
@@ -37,7 +37,7 @@ public sealed class Utf8ConstructorTest
 	{
 		Int32 count = Random.Shared.Next(0, 10);
 		CString cstr = new(u0, u1, count);
-		Utf8ConstructorTest.Test(stackalloc Byte[] { u0, u1, }, count, cstr);
+		Utf8ConstructorTest.Test([u0, u1,], count, cstr);
 	}
 
 	[Theory]
@@ -55,7 +55,7 @@ public sealed class Utf8ConstructorTest
 	{
 		Int32 count = Random.Shared.Next(0, 10);
 		CString cstr = new(u0, u1, u2, count);
-		Utf8ConstructorTest.Test(stackalloc Byte[] { u0, u1, u2, }, count, cstr);
+		Utf8ConstructorTest.Test([u0, u1, u2,], count, cstr);
 	}
 
 	[Theory]
@@ -73,7 +73,7 @@ public sealed class Utf8ConstructorTest
 	{
 		Int32 count = Random.Shared.Next(0, 10);
 		CString cstr = new(u0, u1, u2, u3, count);
-		Utf8ConstructorTest.Test(stackalloc Byte[] { u0, u1, u2, u3, }, count, cstr);
+		Utf8ConstructorTest.Test([u0, u1, u2, u3,], count, cstr);
 	}
 
 	private static void Test(ReadOnlySpan<Byte> seq, Int32 count, CString cstr)
