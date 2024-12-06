@@ -56,7 +56,7 @@ public sealed class ConcatTest
 	[Fact]
 	internal void SpanTest()
 	{
-		IReadOnlyList<Int32> indices = TestSet.GetIndices(8);
+		List<Int32> indices = TestSet.GetIndices(8);
 		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
 
 		Assert.Equal(String.Concat(strings[..2]),

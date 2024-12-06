@@ -52,7 +52,6 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
 				this._ignoreCase = true;
 				this._ordinal = true;
 				break;
-			case StringComparison.Ordinal:
 			default:
 				this._culture = CultureInfo.InvariantCulture;
 				this._options = CompareOptions.Ordinal;
