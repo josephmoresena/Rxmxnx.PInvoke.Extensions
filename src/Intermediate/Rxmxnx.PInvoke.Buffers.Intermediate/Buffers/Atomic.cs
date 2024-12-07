@@ -21,7 +21,7 @@ public partial struct Atomic<T> : IManagedBinaryBuffer<Atomic<T>, T>
 
 	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => Atomic<T>.typeMetadata;
 	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [];
-
+	[ExcludeFromCodeCoverage]
 	static void IManagedBuffer<T>.AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components) { }
 }
 #pragma warning restore CA2252
