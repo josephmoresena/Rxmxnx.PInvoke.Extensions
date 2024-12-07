@@ -7,6 +7,7 @@ public static partial class NativeUtilities
 	/// </summary>
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3011,
 	                 Justification = SuppressMessageConstants.ReflectionPrivateUseJustification)]
+	[ExcludeFromCodeCoverage]
 	private static class AotDetectorHelper
 	{
 		/// <summary>

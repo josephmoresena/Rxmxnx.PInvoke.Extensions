@@ -32,7 +32,6 @@ internal partial class ReadOnlyFixedReference<T> : IConvertibleDisposable<IReadO
 				.ToDisposable(this.GetDisposableParent());
 		/// <inheritdoc/>
 		public IReadOnlyFixedReference<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual)
-			where TDestination : unmanaged
 		{
 			IReadOnlyFixedReference<TDestination>.IDisposable result = this.Value
 			                                                               .GetTransformation<TDestination>(

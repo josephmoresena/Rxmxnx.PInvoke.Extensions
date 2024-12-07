@@ -420,6 +420,7 @@ internal static unsafe class ValidationUtilities
 	/// <param name="bufferSize">Buffer sizes.</param>
 	/// <param name="type">CLR type of buffer.</param>
 	/// <exception cref="InvalidOperationException">Throws an exception if buffer is not a space.</exception>
+	[ExcludeFromCodeCoverage]
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfNotSpace(Boolean isBinary, Span<UInt16> bufferSize, Type type)
 	{
@@ -485,7 +486,7 @@ internal static unsafe class ValidationUtilities
 	/// Throws an exception if <paramref name="arrayType"/> can't hold <paramref name="itemType"/> instances.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void ThrowIfNotUnmanagedBuffer(Type itemType, Boolean isItemUnmanaged, Type arrayType,
+	public static void ThrowIfInvalidBuffer(Type itemType, Boolean isItemUnmanaged, Type arrayType,
 		Boolean isArrayUnmanaged)
 	{
 		String? message = isItemUnmanaged switch

@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.Tests;
 
+[ExcludeFromCodeCoverage]
 [StructLayout(LayoutKind.Sequential)]
 internal readonly struct ManagedStruct
 {

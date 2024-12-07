@@ -39,6 +39,7 @@ internal sealed class SequenceEnumerator<T> : IEnumerator<T>
 		}
 	}
 
+	[ExcludeFromCodeCoverage]
 	Object IEnumerator.Current => this.Current!;
 
 	void IDisposable.Dispose() => IEnumerableSequence<T>.DisposeEnumeration(this._instance);

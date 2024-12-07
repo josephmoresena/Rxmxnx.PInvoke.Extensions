@@ -38,7 +38,7 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 	{
 		Boolean isItemUnmanaged = ReadOnlyValPtr<T>.IsUnmanaged;
 		Boolean isArrayUnmanaged = ReadOnlyValPtr<TArray>.IsUnmanaged;
-		ValidationUtilities.ThrowIfNotUnmanagedBuffer(typeof(T), isItemUnmanaged, typeof(TArray), isArrayUnmanaged);
+		ValidationUtilities.ThrowIfInvalidBuffer(typeof(T), isItemUnmanaged, typeof(TArray), isArrayUnmanaged);
 #pragma warning disable CS8500
 		return new(sizeof(TArray) / sizeof(T), false);
 #pragma warning restore CS8500

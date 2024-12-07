@@ -2,12 +2,12 @@ namespace Rxmxnx.PInvoke.Tests;
 
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
+#pragma warning disable CS8500
 public sealed class ValPtrTests
 {
 	private static readonly CultureInfo[] allCultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
 	private static readonly String[] formats = ["", "b", "B", "D", "d", "E", "e", "G", "g", "X", "x",];
-	private static readonly IFixture fixture = new Fixture();
-
+	private static readonly IFixture fixture = ManagedStruct.Register(new Fixture());
 	[Fact]
 	internal void BooleanTest() => ValPtrTests.Test<Boolean>();
 	[Fact]
@@ -38,15 +38,27 @@ public sealed class ValPtrTests
 	internal void TimeOnlyTest() => ValPtrTests.Test<TimeOnly>();
 	[Fact]
 	internal void TimeSpanTest() => ValPtrTests.Test<TimeSpan>();
-
-	private static unsafe void Test<T>() where T : unmanaged
+	[Fact]
+	internal void ManagedStructTest() => ValPtrTests.Test<ManagedStruct>();
+	[Fact]
+	internal void StringTest() => ValPtrTests.Test<String>();
+	private static unsafe void Test<T>()
 	{
 		T[] arr = ValPtrTests.fixture.CreateMany<T>(10).ToArray();
+		try
+		{
+			GCHandle.Alloc(arr, GCHandleType.Pinned).Free();
+			Assert.True(ValPtr<T>.IsUnmanaged);
+		}
+		catch (Exception)
+		{
+			Assert.False(ValPtr<T>.IsUnmanaged);
+		}
 		Span<T> span = arr;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 			ValPtrTests.Test((ValPtr<T>)new IntPtr(ptr), span);
 	}
-	private static unsafe void Test<T>(ValPtr<T> valPtr, Span<T> span) where T : unmanaged
+	private static unsafe void Test<T>(ValPtr<T> valPtr, Span<T> span)
 	{
 		ValPtr<T> empty = (ValPtr<T>)IntPtr.Zero;
 		ValPtr<T> emptyPtr = (ValPtr<T>)IntPtr.Zero.ToPointer();
@@ -129,11 +141,17 @@ public sealed class ValPtrTests
 
 		ValPtrTests.ContextTest(valPtr, span);
 	}
-	private static unsafe void ContextTest<T>(ValPtr<T> valPtr, Span<T> span) where T : unmanaged
+	private static unsafe void ContextTest<T>(ValPtr<T> valPtr, Span<T> span)
 	{
 		using IFixedContext<T>.IDisposable ctx = valPtr.GetUnsafeFixedContext(span.Length);
 		Assert.Equal(ctx.Values.Length, span.Length);
 		Assert.Equal(valPtr.Pointer, ctx.Pointer);
+		if (!ReadOnlyValPtr<T>.IsUnmanaged)
+		{
+			Assert.Throws<InvalidOperationException>(ctx.AsBinaryContext);
+			Assert.Throws<InvalidOperationException>(() => ctx.Transformation<Byte>(out IFixedMemory _));
+			return;
+		}
 		Assert.True(
 			ctx.AsBinaryContext().Values.SequenceEqual(new(valPtr.Pointer.ToPointer(), span.Length * sizeof(T))));
 
@@ -146,11 +164,19 @@ public sealed class ValPtrTests
 		ValPtrTests.ContextTransformTest<T, Int32>(ctx);
 		ValPtrTests.ContextTransformTest<T, Int64>(ctx);
 	}
-	private static unsafe void ReferenceTest<T>(ValPtr<T> ptrI, ref T reference) where T : unmanaged
+	private static unsafe void ReferenceTest<T>(ValPtr<T> ptrI, ref T reference)
 	{
 		using IFixedReference<T>.IDisposable fixedReference = ptrI.GetUnsafeFixedReference();
 		Assert.True(Unsafe.AreSame(ref fixedReference.Reference, ref reference));
 		Assert.Equal(ptrI.Pointer, fixedReference.Pointer);
+		if (!ReadOnlyValPtr<T>.IsUnmanaged)
+		{
+			Assert.Throws<InvalidOperationException>(() => fixedReference.Bytes.ToArray());
+			Assert.Throws<InvalidOperationException>(fixedReference.AsBinaryContext);
+			Assert.Throws<InvalidOperationException>(() => fixedReference.Transformation<Byte>(out IFixedMemory _));
+			return;
+		}
+
 		Assert.True(fixedReference.Bytes.SequenceEqual(new(ptrI.Pointer.ToPointer(), sizeof(T))));
 		Assert.True(fixedReference.AsBinaryContext().Values.SequenceEqual(new(ptrI.Pointer.ToPointer(), sizeof(T))));
 
@@ -159,7 +185,7 @@ public sealed class ValPtrTests
 		ValPtrTests.ReferenceTransformTest<T, Int32>(ptrI, fixedReference);
 		ValPtrTests.ReferenceTransformTest<T, Int64>(ptrI, fixedReference);
 	}
-	private static void FormatTest<T>(ValPtr<T> valPtr) where T : unmanaged
+	private static void FormatTest<T>(ValPtr<T> valPtr)
 	{
 		CultureInfo culture = ValPtrTests.allCultures[Random.Shared.Next(0, ValPtrTests.allCultures.Length)];
 		Assert.Equal(valPtr.Pointer.GetHashCode(), valPtr.GetHashCode());
@@ -183,7 +209,7 @@ public sealed class ValPtrTests
 		}
 	}
 	private static unsafe void ReferenceTransformTest<T, TDestination>(ValPtr<T> ptrI,
-		IFixedReference<T>.IDisposable fRef) where T : unmanaged where TDestination : unmanaged
+		IFixedReference<T>.IDisposable fRef)
 	{
 		if (sizeof(TDestination) > sizeof(T)) return;
 		IReferenceable<TDestination> fRef2 = fRef.Transformation<TDestination>(out IFixedMemory offset);
@@ -194,10 +220,10 @@ public sealed class ValPtrTests
 		Assert.True(Unsafe.AreSame(ref fRef2.Reference, in fRef3.Reference));
 	}
 	private static unsafe void ContextTransformTest<T, TDestination>(IFixedContext<T>.IDisposable ctx)
-		where T : unmanaged where TDestination : unmanaged
 	{
 		IFixedContext<TDestination> ctx2 = ctx.Transformation<TDestination>(out IFixedMemory offset);
 		Assert.Equal(ctx2.Values.Length, ctx.Bytes.Length / sizeof(TDestination));
 		Assert.Equal(offset.Bytes.Length, ctx.Bytes.Length - ctx2.Values.Length * sizeof(TDestination));
 	}
 }
+#pragma warning restore CS8500

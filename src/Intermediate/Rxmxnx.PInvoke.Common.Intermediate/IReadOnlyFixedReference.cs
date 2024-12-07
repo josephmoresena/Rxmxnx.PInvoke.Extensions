@@ -15,8 +15,7 @@ public interface IReadOnlyFixedReference<T> : IReadOnlyReferenceable<T>, IReadOn
 	/// <returns>
 	/// A <see cref="IReadOnlyFixedReference{TDestination}"/> instance.
 	/// </returns>
-	IReadOnlyFixedReference<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual)
-		where TDestination : unmanaged;
+	IReadOnlyFixedReference<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual);
 
 	/// <summary>
 	/// Interface representing a disposable <see cref="IReadOnlyFixedReference{T}"/> object for a read-only

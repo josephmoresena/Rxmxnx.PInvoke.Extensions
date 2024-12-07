@@ -2,10 +2,10 @@
 
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
+#pragma warning disable CS8500
 public sealed class GetUnsafePointerTest
 {
-	private static readonly IFixture fixture = new Fixture();
-
+	private static readonly IFixture fixture = ManagedStruct.Register(new Fixture());
 	[Fact]
 	internal void DelegateTest()
 	{
@@ -40,41 +40,43 @@ public sealed class GetUnsafePointerTest
 		Int32 GetProcessIdFunc() => Environment.ProcessId;
 		static Int32 GetProcessIdStaticFunc() => Environment.ProcessId;
 	}
-
 	[Fact]
-	internal void BooleanTest() => GetUnsafePointerTest.Test<Boolean>();
+	internal void BooleanTest() => GetUnsafePointerTest.UnmanagedTest<Boolean>();
 	[Fact]
-	internal void ByteTest() => GetUnsafePointerTest.Test<Byte>();
+	internal void ByteTest() => GetUnsafePointerTest.UnmanagedTest<Byte>();
 	[Fact]
-	internal void CharTest() => GetUnsafePointerTest.Test<Char>();
+	internal void CharTest() => GetUnsafePointerTest.UnmanagedTest<Char>();
 	[Fact]
-	internal void DateTimeTest() => GetUnsafePointerTest.Test<DateTime>();
+	internal void DateTimeTest() => GetUnsafePointerTest.UnmanagedTest<DateTime>();
 	[Fact]
-	internal void DecimalTest() => GetUnsafePointerTest.Test<Decimal>();
+	internal void DecimalTest() => GetUnsafePointerTest.UnmanagedTest<Decimal>();
 	[Fact]
-	internal void DoubleTest() => GetUnsafePointerTest.Test<Double>();
+	internal void DoubleTest() => GetUnsafePointerTest.UnmanagedTest<Double>();
 	[Fact]
-	internal void GuidTest() => GetUnsafePointerTest.Test<Guid>();
+	internal void GuidTest() => GetUnsafePointerTest.UnmanagedTest<Guid>();
 	[Fact]
-	internal void HalfTest() => GetUnsafePointerTest.Test<Half>();
+	internal void HalfTest() => GetUnsafePointerTest.UnmanagedTest<Half>();
 	[Fact]
-	internal void Int16Test() => GetUnsafePointerTest.Test<Int16>();
+	internal void Int16Test() => GetUnsafePointerTest.UnmanagedTest<Int16>();
 	[Fact]
-	internal void Int32Test() => GetUnsafePointerTest.Test<Int32>();
+	internal void Int32Test() => GetUnsafePointerTest.UnmanagedTest<Int32>();
 	[Fact]
-	internal void Int64Test() => GetUnsafePointerTest.Test<Int64>();
+	internal void Int64Test() => GetUnsafePointerTest.UnmanagedTest<Int64>();
 	[Fact]
-	internal void SByteTest() => GetUnsafePointerTest.Test<SByte>();
+	internal void SByteTest() => GetUnsafePointerTest.UnmanagedTest<SByte>();
 	[Fact]
-	internal void SingleTest() => GetUnsafePointerTest.Test<Single>();
+	internal void SingleTest() => GetUnsafePointerTest.UnmanagedTest<Single>();
 	[Fact]
-	internal void UInt16Test() => GetUnsafePointerTest.Test<UInt16>();
+	internal void UInt16Test() => GetUnsafePointerTest.UnmanagedTest<UInt16>();
 	[Fact]
-	internal void UInt32Test() => GetUnsafePointerTest.Test<UInt32>();
+	internal void UInt32Test() => GetUnsafePointerTest.UnmanagedTest<UInt32>();
 	[Fact]
-	internal void UInt64Test() => GetUnsafePointerTest.Test<UInt64>();
-
-	private static unsafe void Test<T>() where T : unmanaged
+	internal void UInt64Test() => GetUnsafePointerTest.UnmanagedTest<UInt64>();
+	[Fact]
+	internal void ManagedStructTest() => GetUnsafePointerTest.ManagedTest<ManagedStruct>();
+	[Fact]
+	internal void StringTest() => GetUnsafePointerTest.ManagedTest<String>();
+	private static unsafe void UnmanagedTest<T>() where T : unmanaged
 	{
 		T value = GetUnsafePointerTest.fixture.Create<T>();
 		ref readonly T refValue = ref value;
@@ -83,7 +85,19 @@ public sealed class GetUnsafePointerTest
 			Assert.Equal((IntPtr)ptr, NativeUtilities.GetUnsafeIntPtr(value));
 			Assert.Equal((UIntPtr)ptr, NativeUtilities.GetUnsafeUIntPtr(value));
 			Assert.Equal((ReadOnlyValPtr<T>)(IntPtr)ptr, NativeUtilities.GetUnsafeValPtr(value));
+			Assert.Equal((ValPtr<T>)(IntPtr)ptr, NativeUtilities.GetUnsafeValPtrFromRef(ref value));
+		}
+	}
+	private static unsafe void ManagedTest<T>()
+	{
+		T value = GetUnsafePointerTest.fixture.Create<T>();
+		ref T refValue = ref value;
+		fixed (void* ptr = &refValue)
+		{
+			Assert.Equal((ReadOnlyValPtr<T>)(IntPtr)ptr, NativeUtilities.GetUnsafeValPtr(value));
+			Assert.Equal((ValPtr<T>)(IntPtr)ptr, NativeUtilities.GetUnsafeValPtrFromRef(ref value));
 		}
 	}
 	private delegate Process GetProcessDelegate();
 }
+#pragma warning restore CS8500
