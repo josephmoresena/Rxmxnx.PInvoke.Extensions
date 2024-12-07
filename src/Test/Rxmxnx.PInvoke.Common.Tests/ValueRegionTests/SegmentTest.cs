@@ -160,7 +160,7 @@ public sealed class SegmentTest : ValueRegionTestBase
 			if (state.Values.Length > 0)
 				Assert.NotSame(state.Values, newArray);
 			else
-				Assert.Same(state.Values, newArray);
+				Assert.Same(Array.Empty<T>(), newArray);
 		}
 		else if (state is { IsReference: true, Count: 0, })
 		{
