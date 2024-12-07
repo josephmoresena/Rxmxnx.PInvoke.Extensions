@@ -5,6 +5,7 @@ namespace Rxmxnx.PInvoke.Internal;
 /// Helper class to compose statically managed spaces metadata.
 /// </summary>
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
+[ExcludeFromCodeCoverage]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3881)]
 internal abstract partial class StaticCompositionHelper<T> : IDisposable
 {

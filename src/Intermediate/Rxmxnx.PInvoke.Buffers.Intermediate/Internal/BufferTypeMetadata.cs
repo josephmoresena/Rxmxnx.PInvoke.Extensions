@@ -24,65 +24,72 @@ internal sealed class BufferTypeMetadata<TBuffer, T> : BufferTypeMetadata<T> whe
 	/// <inheritdoc/>
 	public override BufferTypeMetadata<T>? Compose<TOther>()
 	{
-		if (!BufferManager.BufferAutoCompositionEnabled) return default;
-		return this.IsBinary ?
-			BufferManager.MetadataManager<T>.ComposeWithReflection(typeof(TBuffer), typeof(TOther)) :
-			default;
+		if (!BufferManager.BufferAutoCompositionEnabled || !this.IsBinary ||
+		    !IManagedBuffer<T>.GetMetadata<TOther>().IsBinary) return default;
+		return BufferManager.MetadataManager<T>.ComposeWithReflection(typeof(TBuffer), typeof(TOther));
 	}
 	/// <inheritdoc/>
-	public override void Execute(ScopedBufferAction<T> action, Int32 spanLength)
+	public override void Execute(ScopedBufferAction<T> action, Int32 spanLength, out Boolean allocated)
 	{
 		TBuffer buffer = new();
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
 		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
 		ScopedBuffer<T> scoped = new(memMarshal, false, this.Size);
+		allocated = true;
 		action(scoped);
 	}
 	/// <inheritdoc/>
-	public override void Execute<TState>(in TState state, ScopedBufferAction<T, TState> action, Int32 spanLength)
+	public override void Execute<TState>(in TState state, ScopedBufferAction<T, TState> action, Int32 spanLength,
+		out Boolean allocated)
 	{
 		TBuffer buffer = new();
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
 		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
 		ScopedBuffer<T> scoped = new(memMarshal, false, this.Size);
+		allocated = true;
 		action(scoped, state);
 	}
 	/// <inheritdoc/>
-	public override TResult Execute<TResult>(ScopedBufferFunc<T, TResult> func, Int32 spanLength)
+	public override TResult Execute<TResult>(ScopedBufferFunc<T, TResult> func, Int32 spanLength, out Boolean allocated)
 	{
 		TBuffer buffer = new();
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
 		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
 		ScopedBuffer<T> scoped = new(memMarshal, false, this.Size);
+		allocated = true;
 		return func(scoped);
 	}
 	/// <inheritdoc/>
 	public override TResult Execute<TState, TResult>(in TState state, ScopedBufferFunc<T, TState, TResult> func,
-		Int32 spanLength)
+		Int32 spanLength, out Boolean allocated)
 	{
 		TBuffer buffer = new();
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
 		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
 		ScopedBuffer<T> scoped = new(memMarshal, false, this.Size);
+		allocated = true;
 		return func(scoped, state);
 	}
 	/// <inheritdoc/>
-	internal override void Execute<TU, TState>(in TState state, ScopedBufferAction<TU, TState> action, Int32 spanLength)
+	internal override void Execute<TU, TState>(in TState state, ScopedBufferAction<TU, TState> action, Int32 spanLength,
+		out Boolean allocated)
 	{
 		TBuffer buffer = new();
 		ref TU valRef = ref Unsafe.As<TBuffer, TU>(ref buffer);
 		Span<TU> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
 		ScopedBuffer<TU> scoped = new(memMarshal, false, this.Size);
+		allocated = true;
 		action(scoped, state);
 	}
 	/// <inheritdoc/>
 	internal override TResult Execute<TU, TState, TResult>(in TState state, ScopedBufferFunc<TU, TState, TResult> func,
-		Int32 spanLength)
+		Int32 spanLength, out Boolean allocated)
 	{
 		TBuffer buffer = new();
 		ref TU valRef = ref Unsafe.As<TBuffer, TU>(ref buffer);
 		Span<TU> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
 		ScopedBuffer<TU> scoped = new(memMarshal, false, this.Size);
+		allocated = true;
 		return func(scoped, state);
 	}
 }

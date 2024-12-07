@@ -10,6 +10,7 @@ public static partial class BufferManager
 	/// </summary>
 	[ExcludeFromCodeCoverage]
 	public static Boolean BufferAutoCompositionEnabled => !BufferManager.disabledReflection;
+
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="action"/>.
 	/// </summary>
@@ -21,16 +22,19 @@ public static partial class BufferManager
 	/// </param>
 	public static void Alloc<T>(UInt16 count, ScopedBufferAction<T> action, Boolean isMinimumCount = false)
 	{
+		Boolean noTryHeapAllocation = false;
 		try
 		{
 			if (typeof(T).IsValueType)
-				BufferManager.AllocValue(count, action, isMinimumCount);
+				BufferManager.AllocValue(count, action, isMinimumCount, ref noTryHeapAllocation);
 			else
-				BufferManager.AllocObject(count, action, isMinimumCount);
+				BufferManager.AllocObject(count, action, isMinimumCount, ref noTryHeapAllocation);
 		}
 		catch (Exception)
 		{
-			BufferManager.AllocHeap(count, action);
+			if (!noTryHeapAllocation)
+				BufferManager.AllocHeap(count, action);
+			throw;
 		}
 	}
 	/// <summary>
@@ -47,16 +51,19 @@ public static partial class BufferManager
 	public static void Alloc<T, TState>(UInt16 count, in TState state, ScopedBufferAction<T, TState> action,
 		Boolean isMinimumCount = false)
 	{
+		Boolean noTryHeapAllocation = false;
 		try
 		{
 			if (typeof(T).IsValueType)
-				BufferManager.AllocValue(count, state, action, isMinimumCount);
+				BufferManager.AllocValue(count, state, action, isMinimumCount, ref noTryHeapAllocation);
 			else
-				BufferManager.AllocObject(count, state, action, isMinimumCount);
+				BufferManager.AllocObject(count, state, action, isMinimumCount, ref noTryHeapAllocation);
 		}
 		catch (Exception)
 		{
-			BufferManager.AllocHeap(count, state, action);
+			if (!noTryHeapAllocation)
+				BufferManager.AllocHeap(count, state, action);
+			throw;
 		}
 	}
 	/// <summary>
@@ -73,15 +80,18 @@ public static partial class BufferManager
 	public static TResult Alloc<T, TResult>(UInt16 count, ScopedBufferFunc<T, TResult> func,
 		Boolean isMinimumCount = false)
 	{
+		Boolean noTryHeapAllocation = false;
 		try
 		{
 			return typeof(T).IsValueType ?
-				BufferManager.AllocValue(count, func, isMinimumCount) :
-				BufferManager.AllocObject(count, func, isMinimumCount);
+				BufferManager.AllocValue(count, func, isMinimumCount, ref noTryHeapAllocation) :
+				BufferManager.AllocObject(count, func, isMinimumCount, ref noTryHeapAllocation);
 		}
 		catch (Exception)
 		{
-			return BufferManager.AllocHeap(count, func);
+			if (!noTryHeapAllocation)
+				return BufferManager.AllocHeap(count, func);
+			throw;
 		}
 	}
 	/// <summary>
@@ -100,15 +110,18 @@ public static partial class BufferManager
 	public static TResult Alloc<T, TState, TResult>(UInt16 count, in TState state,
 		ScopedBufferFunc<T, TState, TResult> func, Boolean isMinimumCount = false)
 	{
+		Boolean noTryHeapAllocation = false;
 		try
 		{
 			return typeof(T).IsValueType ?
-				BufferManager.AllocValue(count, state, func, isMinimumCount) :
-				BufferManager.AllocObject(count, state, func, isMinimumCount);
+				BufferManager.AllocValue(count, state, func, isMinimumCount, ref noTryHeapAllocation) :
+				BufferManager.AllocObject(count, state, func, isMinimumCount, ref noTryHeapAllocation);
 		}
 		catch (Exception)
 		{
-			return BufferManager.AllocHeap(count, state, func);
+			if (!noTryHeapAllocation)
+				return BufferManager.AllocHeap(count, state, func);
+			throw;
 		}
 	}
 	/// <summary>

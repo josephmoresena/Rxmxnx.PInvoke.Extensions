@@ -33,6 +33,11 @@ public abstract class BufferTypeMetadata<T>
 	}
 
 	/// <summary>
+	/// Composes a new buffer using twice the current buffer type.
+	/// </summary>
+	/// <returns>A composed <see cref="BufferTypeMetadata{T}"/>.</returns>
+	internal BufferTypeMetadata<T>? Double() => this.Compose(this);
+	/// <summary>
 	/// Composes a new buffer using current buffer type and <paramref name="otherMetadata"/>.
 	/// </summary>
 	/// <param name="otherMetadata">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
@@ -49,7 +54,8 @@ public abstract class BufferTypeMetadata<T>
 	/// </summary>
 	/// <param name="action">A <see cref="ScopedBufferAction{T}"/> delegate.</param>
 	/// <param name="spanLength">Required span length.</param>
-	public abstract void Execute(ScopedBufferAction<T> action, Int32 spanLength);
+	/// <param name="allocated">Output. Indicates whether current buffer was allocated.</param>
+	public abstract void Execute(ScopedBufferAction<T> action, Int32 spanLength, out Boolean allocated);
 	/// <summary>
 	/// Executes <paramref name="action"/> using a buffer of current type and given state object.
 	/// </summary>
@@ -57,14 +63,19 @@ public abstract class BufferTypeMetadata<T>
 	/// <param name="state">State object.</param>
 	/// <param name="action">A <see cref="ScopedBufferAction{T,TArg}"/> delegate.</param>
 	/// <param name="spanLength">Required span length.</param>
-	public abstract void Execute<TState>(in TState state, ScopedBufferAction<T, TState> action, Int32 spanLength);
+	/// <param name="allocated">Output. Indicates whether current buffer was allocated.</param>
+	public abstract void Execute<TState>(in TState state, ScopedBufferAction<T, TState> action, Int32 spanLength,
+		out Boolean allocated);
 	/// <summary>
 	/// Executes <paramref name="func"/> using a buffer of current type.
 	/// </summary>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
 	/// <param name="func">A <see cref="ScopedBufferFunc{T,TResult}"/> delegate.</param>
 	/// <param name="spanLength">Required span length.</param>
-	public abstract TResult Execute<TResult>(ScopedBufferFunc<T, TResult> func, Int32 spanLength);
+	/// <param name="allocated">Output. Indicates whether current buffer was allocated.</param>
+	/// <returns><paramref name="func"/> result.</returns>
+	public abstract TResult Execute<TResult>(ScopedBufferFunc<T, TResult> func, Int32 spanLength,
+		out Boolean allocated);
 	/// <summary>
 	/// Executes <paramref name="func"/> using a buffer of current type and given state object.
 	/// </summary>
@@ -73,14 +84,10 @@ public abstract class BufferTypeMetadata<T>
 	/// <param name="state">State object.</param>
 	/// <param name="func">A <see cref="ScopedBufferFunc{T,TArg,TResult}"/> delegate.</param>
 	/// <param name="spanLength">Required span length.</param>
+	/// <param name="allocated">Output. Indicates whether current buffer was allocated.</param>
+	/// <returns><paramref name="func"/> result.</returns>
 	public abstract TResult Execute<TState, TResult>(in TState state, ScopedBufferFunc<T, TState, TResult> func,
-		Int32 spanLength);
-
-	/// <summary>
-	/// Composes a new buffer using twice the current buffer type.
-	/// </summary>
-	/// <returns>A composed <see cref="BufferTypeMetadata{T}"/>.</returns>
-	internal BufferTypeMetadata<T>? Double() => this.Compose(this);
+		Int32 spanLength, out Boolean allocated);
 	/// <summary>
 	/// Executes <paramref name="action"/> using a buffer of current type and given state object.
 	/// </summary>
@@ -89,8 +96,9 @@ public abstract class BufferTypeMetadata<T>
 	/// <param name="state">State object.</param>
 	/// <param name="action">A <see cref="ScopedBufferAction{T,TArg}"/> delegate.</param>
 	/// <param name="spanLength">Required span length.</param>
-	internal abstract void Execute<TU, TState>(in TState state, ScopedBufferAction<TU, TState> action,
-		Int32 spanLength);
+	/// <param name="allocated">Output. Indicates whether current buffer was allocated.</param>
+	internal abstract void Execute<TU, TState>(in TState state, ScopedBufferAction<TU, TState> action, Int32 spanLength,
+		out Boolean allocated);
 	/// <summary>
 	/// Executes <paramref name="func"/> using a buffer of current type and given state object.
 	/// </summary>
@@ -100,6 +108,8 @@ public abstract class BufferTypeMetadata<T>
 	/// <param name="state">State object.</param>
 	/// <param name="func">A <see cref="ScopedBufferFunc{T,TArg,TResult}"/> delegate.</param>
 	/// <param name="spanLength">Required span length.</param>
+	/// <param name="allocated">Output. Indicates whether current buffer was allocated.</param>
+	/// <returns><paramref name="func"/> result.</returns>
 	internal abstract TResult Execute<TU, TState, TResult>(in TState state, ScopedBufferFunc<TU, TState, TResult> func,
-		Int32 spanLength);
+		Int32 spanLength, out Boolean allocated);
 }
