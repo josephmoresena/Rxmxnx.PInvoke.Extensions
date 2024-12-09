@@ -146,7 +146,7 @@ public sealed class ValPtrTests
 		using IFixedContext<T>.IDisposable ctx = valPtr.GetUnsafeFixedContext(span.Length);
 		Assert.Equal(ctx.Values.Length, span.Length);
 		Assert.Equal(valPtr.Pointer, ctx.Pointer);
-		if (!ReadOnlyValPtr<T>.IsUnmanaged)
+		if (!ValPtr<T>.IsUnmanaged)
 		{
 			Assert.Throws<InvalidOperationException>(ctx.AsBinaryContext);
 			Assert.Throws<InvalidOperationException>(() => ctx.Transformation<Byte>(out IFixedMemory _));
@@ -169,7 +169,7 @@ public sealed class ValPtrTests
 		using IFixedReference<T>.IDisposable fixedReference = ptrI.GetUnsafeFixedReference();
 		Assert.True(Unsafe.AreSame(ref fixedReference.Reference, ref reference));
 		Assert.Equal(ptrI.Pointer, fixedReference.Pointer);
-		if (!ReadOnlyValPtr<T>.IsUnmanaged)
+		if (!ValPtr<T>.IsUnmanaged)
 		{
 			Assert.Throws<InvalidOperationException>(() => fixedReference.Bytes.ToArray());
 			Assert.Throws<InvalidOperationException>(fixedReference.AsBinaryContext);

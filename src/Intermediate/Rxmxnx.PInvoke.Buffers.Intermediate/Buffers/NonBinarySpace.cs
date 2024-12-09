@@ -37,8 +37,8 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 	/// <returns>The <see cref="BufferTypeMetadata{T}"/> instance for current type.</returns>
 	private static BufferTypeMetadata<NonBinarySpace<TArray, T>, T> GetMetadata()
 	{
-		Boolean isItemUnmanaged = ReadOnlyValPtr<T>.IsUnmanaged;
-		Boolean isArrayUnmanaged = ReadOnlyValPtr<TArray>.IsUnmanaged;
+		Boolean isItemUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>();
+		Boolean isArrayUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<TArray>();
 		ValidationUtilities.ThrowIfInvalidBuffer(typeof(T), isItemUnmanaged, typeof(TArray), isArrayUnmanaged);
 #pragma warning disable CS8500
 		return new(sizeof(TArray) / sizeof(T), false);

@@ -14,7 +14,7 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// <summary>
 	/// Indicates if <typeparamref name="T"/> is a <see langword="unmanaged"/> type.
 	/// </summary>
-	public static readonly Boolean IsUnmanaged = NativeUtilities.IsUnmanaged<T>();
+	public static Boolean IsUnmanaged => !RuntimeHelpers.IsReferenceOrContainsReferences<T>();
 	/// <summary>
 	/// A read-only field representing a null-initialized pointer to a value of type <typeparamref name="T"/>.
 	/// </summary>

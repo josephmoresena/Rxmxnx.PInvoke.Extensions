@@ -320,20 +320,6 @@ public static unsafe partial class NativeUtilities
 		ValidationUtilities.ThrowIfInvalidCopyType(value, destination, offset, out ReadOnlySpan<Byte> bytes);
 		bytes.CopyTo(destination[offset..]);
 	}
-	/// <summary>
-	/// Indicates whether <typeparamref name="T"/> is <see langword="unmanaged"/>.
-	/// </summary>
-	/// <typeparam name="T">Type to check.</typeparam>
-	/// <returns>
-	/// <see langword="true"/> if <typeparamref name="T"/> is a <see langword="unmanaged"/> type; otherwise,
-	/// <see langword="false"/>.
-	/// </returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static Boolean IsUnmanaged<T>()
-	{
-		if (!typeof(T).IsValueType) return false;
-		return !RuntimeHelpers.IsReferenceOrContainsReferences<T>();
-	}
 
 	/// <summary>
 	/// Writes <paramref name="span"/> using <paramref name="arg"/> and <paramref name="action"/>.

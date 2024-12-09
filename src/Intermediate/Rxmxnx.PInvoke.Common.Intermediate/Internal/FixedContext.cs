@@ -21,7 +21,7 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 	/// <inheritdoc/>
 	public override Int32 BinaryOffset => default;
 	/// <inheritdoc/>
-	public override Boolean IsUnmanaged => ReadOnlyValPtr<T>.IsUnmanaged;
+	public override Boolean IsUnmanaged => !RuntimeHelpers.IsReferenceOrContainsReferences<T>();
 	/// <inheritdoc/>
 	public override Type Type => typeof(T);
 	/// <inheritdoc/>
@@ -108,7 +108,8 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 		Boolean isReadOnly = false)
 	{
 		this.ValidateOperation(isReadOnly);
-		this.ValidateTransformation(typeof(TDestination), ReadOnlyValPtr<TDestination>.IsUnmanaged);
+		this.ValidateTransformation(typeof(TDestination),
+		                            !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>());
 		Int32 sizeOf = sizeof(TDestination);
 		Int32 count = this.GetCount(sizeOf);
 		Int32 offset = count * sizeOf;

@@ -14,7 +14,7 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	public static readonly ReadOnlyFixedContext<T> Empty = new();
 
 	/// <inheritdoc/>
-	public override Boolean IsUnmanaged => ReadOnlyValPtr<T>.IsUnmanaged;
+	public override Boolean IsUnmanaged => !RuntimeHelpers.IsReferenceOrContainsReferences<T>();
 
 	/// <summary>
 	/// Gets the number of items of type <typeparamref name="T"/> in the memory block.
@@ -101,7 +101,8 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	public ReadOnlyFixedContext<TDestination> GetTransformation<TDestination>(out ReadOnlyFixedOffset fixedOffset)
 	{
 		this.ValidateOperation(true);
-		this.ValidateTransformation(typeof(TDestination), ReadOnlyValPtr<TDestination>.IsUnmanaged);
+		this.ValidateTransformation(typeof(TDestination),
+		                            !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>());
 		Int32 sizeOf = sizeof(TDestination);
 		Int32 count = this.GetCount(sizeOf);
 		Int32 offset = count * sizeOf;

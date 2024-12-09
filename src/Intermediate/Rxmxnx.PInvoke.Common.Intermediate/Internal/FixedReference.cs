@@ -9,7 +9,7 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 {
 #pragma warning disable CS8500
 	/// <inheritdoc/>
-	public override Boolean IsUnmanaged => ReadOnlyValPtr<T>.IsUnmanaged;
+	public override Boolean IsUnmanaged => !RuntimeHelpers.IsReferenceOrContainsReferences<T>();
 	/// <inheritdoc/>
 	public override Type Type => typeof(T);
 	/// <inheritdoc/>
@@ -77,7 +77,8 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 		Boolean isReadOnly = false)
 	{
 		this.ValidateOperation(isReadOnly);
-		this.ValidateTransformation(typeof(TDestination), ReadOnlyValPtr<TDestination>.IsUnmanaged);
+		this.ValidateTransformation(typeof(TDestination),
+		                            !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>());
 		Int32 sizeOf = sizeof(TDestination);
 		this.ValidateReferenceSize(typeof(TDestination), sizeOf);
 		fixedOffset = new(this, sizeOf);
