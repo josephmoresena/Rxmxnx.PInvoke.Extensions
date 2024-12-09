@@ -22,20 +22,10 @@ public static partial class BufferManager
 	/// </param>
 	public static void Alloc<T>(UInt16 count, ScopedBufferAction<T> action, Boolean isMinimumCount = false)
 	{
-		Boolean noTryHeapAllocation = false;
-		try
-		{
-			if (typeof(T).IsValueType)
-				BufferManager.AllocValue(count, action, isMinimumCount, ref noTryHeapAllocation);
-			else
-				BufferManager.AllocObject(count, action, isMinimumCount, ref noTryHeapAllocation);
-		}
-		catch (Exception)
-		{
-			if (!noTryHeapAllocation)
-				BufferManager.AllocHeap(count, action);
-			throw;
-		}
+		if (typeof(T).IsValueType)
+			BufferManager.AllocValue(count, action, isMinimumCount);
+		else
+			BufferManager.AllocObject(count, action, isMinimumCount);
 	}
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="action"/>.
@@ -54,20 +44,10 @@ public static partial class BufferManager
 		where TState : allows ref struct
 #endif
 	{
-		Boolean noTryHeapAllocation = false;
-		try
-		{
-			if (typeof(T).IsValueType)
-				BufferManager.AllocValue(count, state, action, isMinimumCount, ref noTryHeapAllocation);
-			else
-				BufferManager.AllocObject(count, state, action, isMinimumCount, ref noTryHeapAllocation);
-		}
-		catch (Exception)
-		{
-			if (!noTryHeapAllocation)
-				BufferManager.AllocHeap(count, state, action);
-			throw;
-		}
+		if (typeof(T).IsValueType)
+			BufferManager.AllocValue(count, state, action, isMinimumCount);
+		else
+			BufferManager.AllocObject(count, state, action, isMinimumCount);
 	}
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="func"/>.
@@ -82,21 +62,9 @@ public static partial class BufferManager
 	/// <returns><paramref name="func"/> result.</returns>
 	public static TResult Alloc<T, TResult>(UInt16 count, ScopedBufferFunc<T, TResult> func,
 		Boolean isMinimumCount = false)
-	{
-		Boolean noTryHeapAllocation = false;
-		try
-		{
-			return typeof(T).IsValueType ?
-				BufferManager.AllocValue(count, func, isMinimumCount, ref noTryHeapAllocation) :
-				BufferManager.AllocObject(count, func, isMinimumCount, ref noTryHeapAllocation);
-		}
-		catch (Exception)
-		{
-			if (!noTryHeapAllocation)
-				return BufferManager.AllocHeap(count, func);
-			throw;
-		}
-	}
+		=> typeof(T).IsValueType ?
+			BufferManager.AllocValue(count, func, isMinimumCount) :
+			BufferManager.AllocObject(count, func, isMinimumCount);
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="func"/>.
 	/// </summary>
@@ -115,21 +83,10 @@ public static partial class BufferManager
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
 #endif
-	{
-		Boolean noTryHeapAllocation = false;
-		try
-		{
-			return typeof(T).IsValueType ?
-				BufferManager.AllocValue(count, state, func, isMinimumCount, ref noTryHeapAllocation) :
-				BufferManager.AllocObject(count, state, func, isMinimumCount, ref noTryHeapAllocation);
-		}
-		catch (Exception)
-		{
-			if (!noTryHeapAllocation)
-				return BufferManager.AllocHeap(count, state, func);
-			throw;
-		}
-	}
+		=> typeof(T).IsValueType ?
+			BufferManager.AllocValue(count, state, func, isMinimumCount) :
+			BufferManager.AllocObject(count, state, func, isMinimumCount);
+
 	/// <summary>
 	/// Registers object buffer.
 	/// </summary>

@@ -320,7 +320,6 @@ public static unsafe partial class NativeUtilities
 		ValidationUtilities.ThrowIfInvalidCopyType(value, destination, offset, out ReadOnlySpan<Byte> bytes);
 		bytes.CopyTo(destination[offset..]);
 	}
-
 	/// <summary>
 	/// Indicates whether <typeparamref name="T"/> is <see langword="unmanaged"/>.
 	/// </summary>
@@ -329,24 +328,11 @@ public static unsafe partial class NativeUtilities
 	/// <see langword="true"/> if <typeparamref name="T"/> is a <see langword="unmanaged"/> type; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
-	/// <remarks>
-	/// This method tries to pin an empty array of <typeparamref name="T"/> elements, when the pin fails
-	/// <typeparamref name="T"/> is not <see langword="unmanaged"/>. <br/>
-	/// This method relies on the occurrence of an exception when attempting to create a pinned
-	/// <see cref="GCHandle"/> for an empty array of <typeparamref name="T"/> elements.
-	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static Boolean IsUnmanaged<T>()
 	{
 		if (!typeof(T).IsValueType) return false;
-		try
-		{
-			GCHandle.Alloc(Array.Empty<T>(), GCHandleType.Pinned).Free();
-			return true;
-		}
-		catch (Exception)
-		{
-			return false;
-		}
+		return !RuntimeHelpers.IsReferenceOrContainsReferences<T>();
 	}
 
 	/// <summary>

@@ -99,8 +99,8 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// </summary>
 	/// <param name="action">A <see cref="ScopedBufferAction{T}"/> delegate.</param>
 	/// <param name="spanLength">Required span length.</param>
-	/// <param name="allocated">Output. Indicates whether current buffer was allocated.</param>
-	internal abstract void Execute(ScopedBufferAction<T> action, Int32 spanLength, out Boolean allocated);
+	[MethodImpl(MethodImplOptions.NoInlining)]
+	internal abstract void Execute(ScopedBufferAction<T> action, Int32 spanLength);
 	/// <summary>
 	/// Executes <paramref name="action"/> using a buffer of current type and given state object.
 	/// </summary>
@@ -108,9 +108,8 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <param name="state">State object.</param>
 	/// <param name="action">A <see cref="ScopedBufferAction{T,TArg}"/> delegate.</param>
 	/// <param name="spanLength">Required span length.</param>
-	/// <param name="allocated">Output. Indicates whether current buffer was allocated.</param>
-	internal abstract void Execute<TState>(TState state, ScopedBufferAction<T, TState> action, Int32 spanLength,
-			out Boolean allocated)
+	[MethodImpl(MethodImplOptions.NoInlining)]
+	internal abstract void Execute<TState>(TState state, ScopedBufferAction<T, TState> action, Int32 spanLength)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
 #endif
@@ -121,10 +120,9 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
 	/// <param name="func">A <see cref="ScopedBufferFunc{T,TResult}"/> delegate.</param>
 	/// <param name="spanLength">Required span length.</param>
-	/// <param name="allocated">Output. Indicates whether current buffer was allocated.</param>
 	/// <returns><paramref name="func"/> result.</returns>
-	internal abstract TResult Execute<TResult>(ScopedBufferFunc<T, TResult> func, Int32 spanLength,
-		out Boolean allocated);
+	[MethodImpl(MethodImplOptions.NoInlining)]
+	internal abstract TResult Execute<TResult>(ScopedBufferFunc<T, TResult> func, Int32 spanLength);
 	/// <summary>
 	/// Executes <paramref name="func"/> using a buffer of current type and given state object.
 	/// </summary>
@@ -133,10 +131,10 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <param name="state">State object.</param>
 	/// <param name="func">A <see cref="ScopedBufferFunc{T,TArg,TResult}"/> delegate.</param>
 	/// <param name="spanLength">Required span length.</param>
-	/// <param name="allocated">Output. Indicates whether current buffer was allocated.</param>
 	/// <returns><paramref name="func"/> result.</returns>
+	[MethodImpl(MethodImplOptions.NoInlining)]
 	internal abstract TResult Execute<TState, TResult>(TState state, ScopedBufferFunc<T, TState, TResult> func,
-			Int32 spanLength, out Boolean allocated)
+			Int32 spanLength)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
 #endif
@@ -149,9 +147,8 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <param name="state">State object.</param>
 	/// <param name="action">A <see cref="ScopedBufferAction{T,TArg}"/> delegate.</param>
 	/// <param name="spanLength">Required span length.</param>
-	/// <param name="allocated">Output. Indicates whether current buffer was allocated.</param>
-	internal abstract void Execute<TU, TState>(TState state, ScopedBufferAction<TU, TState> action, Int32 spanLength,
-			out Boolean allocated)
+	[MethodImpl(MethodImplOptions.NoInlining)]
+	internal abstract void Execute<TU, TState>(TState state, ScopedBufferAction<TU, TState> action, Int32 spanLength)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
 #endif
@@ -165,10 +162,10 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <param name="state">State object.</param>
 	/// <param name="func">A <see cref="ScopedBufferFunc{T,TArg,TResult}"/> delegate.</param>
 	/// <param name="spanLength">Required span length.</param>
-	/// <param name="allocated">Output. Indicates whether current buffer was allocated.</param>
 	/// <returns><paramref name="func"/> result.</returns>
+	[MethodImpl(MethodImplOptions.NoInlining)]
 	internal abstract TResult Execute<TU, TState, TResult>(TState state, ScopedBufferFunc<TU, TState, TResult> func,
-			Int32 spanLength, out Boolean allocated)
+			Int32 spanLength)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
 #endif

@@ -132,11 +132,7 @@ public static partial class BufferManager
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
-	/// <param name="executed">
-	/// Indicates whether delegate was executed is just the minimum limit.
-	/// </param>
-	private static void AllocObject<T>(UInt16 count, ScopedBufferAction<T> action, Boolean isMinimumCount,
-		ref Boolean executed)
+	private static void AllocObject<T>(UInt16 count, ScopedBufferAction<T> action, Boolean isMinimumCount)
 	{
 		BufferTypeMetadata<Object>? metadata = MetadataManager<Object>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
@@ -148,7 +144,7 @@ public static partial class BufferManager
 #if !PACKAGE
 		MetadataManager<Object>.PrintMetadata();
 #endif
-		metadata.Execute(stateT, TransformationState<T>.Execute, count, out executed);
+		metadata.Execute(stateT, TransformationState<T>.Execute, count);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
@@ -161,11 +157,8 @@ public static partial class BufferManager
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
-	/// <param name="executed">
-	/// Indicates whether delegate was executed is just the minimum limit.
-	/// </param>
 	private static void AllocObject<T, TState>(UInt16 count, TState state, ScopedBufferAction<T, TState> action,
-		Boolean isMinimumCount, ref Boolean executed)
+		Boolean isMinimumCount)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
 #endif
@@ -179,7 +172,7 @@ public static partial class BufferManager
 #if !PACKAGE
 		MetadataManager<Object>.PrintMetadata();
 #endif
-		metadata.Execute(state, action, count, out executed);
+		metadata.Execute(state, action, count);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
@@ -191,12 +184,9 @@ public static partial class BufferManager
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
-	/// <param name="executed">
-	/// Indicates whether delegate was executed is just the minimum limit.
-	/// </param>
 	/// <returns><paramref name="func"/> result.</returns>
 	private static TResult AllocObject<T, TResult>(UInt16 count, ScopedBufferFunc<T, TResult> func,
-		Boolean isMinimumCount, ref Boolean executed)
+		Boolean isMinimumCount)
 	{
 		BufferTypeMetadata<Object>? metadata = MetadataManager<Object>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
@@ -205,7 +195,7 @@ public static partial class BufferManager
 #if !PACKAGE
 		MetadataManager<Object>.PrintMetadata();
 #endif
-		return metadata.Execute(stateT, TransformationState<T, TResult>.Execute, count, out executed);
+		return metadata.Execute(stateT, TransformationState<T, TResult>.Execute, count);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
@@ -219,12 +209,9 @@ public static partial class BufferManager
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
-	/// <param name="executed">
-	/// Indicates whether delegate was executed is just the minimum limit.
-	/// </param>
 	/// <returns><paramref name="func"/> result.</returns>
 	private static TResult AllocObject<T, TState, TResult>(UInt16 count, TState state,
-		ScopedBufferFunc<T, TState, TResult> func, Boolean isMinimumCount, ref Boolean executed)
+		ScopedBufferFunc<T, TState, TResult> func, Boolean isMinimumCount)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
 #endif
@@ -235,7 +222,7 @@ public static partial class BufferManager
 #if !PACKAGE
 		MetadataManager<Object>.PrintMetadata();
 #endif
-		return metadata.Execute(state, func, count, out executed);
+		return metadata.Execute(state, func, count);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
@@ -246,11 +233,7 @@ public static partial class BufferManager
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
-	/// <param name="executed">
-	/// Indicates whether delegate was executed is just the minimum limit.
-	/// </param>
-	private static void AllocValue<T>(UInt16 count, ScopedBufferAction<T> action, Boolean isMinimumCount,
-		ref Boolean executed)
+	private static void AllocValue<T>(UInt16 count, ScopedBufferAction<T> action, Boolean isMinimumCount)
 	{
 		BufferTypeMetadata<T>? metadata = MetadataManager<T>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
@@ -261,7 +244,7 @@ public static partial class BufferManager
 #if !PACKAGE
 		MetadataManager<T>.PrintMetadata();
 #endif
-		metadata.Execute(action, count, out executed);
+		metadata.Execute(action, count);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
@@ -274,11 +257,8 @@ public static partial class BufferManager
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
-	/// <param name="executed">
-	/// Indicates whether delegate was executed is just the minimum limit.
-	/// </param>
 	private static void AllocValue<T, TState>(UInt16 count, TState state, ScopedBufferAction<T, TState> action,
-		Boolean isMinimumCount, ref Boolean executed)
+		Boolean isMinimumCount)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
 #endif
@@ -292,7 +272,7 @@ public static partial class BufferManager
 #if !PACKAGE
 		MetadataManager<T>.PrintMetadata();
 #endif
-		metadata.Execute<TState>(state, action, count, out executed);
+		metadata.Execute<TState>(state, action, count);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
@@ -304,12 +284,9 @@ public static partial class BufferManager
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
-	/// <param name="executed">
-	/// Indicates whether delegate was executed is just the minimum limit.
-	/// </param>
 	/// <returns><paramref name="func"/> result.</returns>
 	private static TResult AllocValue<T, TResult>(UInt16 count, ScopedBufferFunc<T, TResult> func,
-		Boolean isMinimumCount, ref Boolean executed)
+		Boolean isMinimumCount)
 	{
 		BufferTypeMetadata<T>? metadata = MetadataManager<T>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
@@ -317,7 +294,7 @@ public static partial class BufferManager
 #if !PACKAGE
 		MetadataManager<T>.PrintMetadata();
 #endif
-		return metadata.Execute(func, count, out executed);
+		return metadata.Execute(func, count);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
@@ -331,12 +308,9 @@ public static partial class BufferManager
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
-	/// <param name="executed">
-	/// Indicates whether delegate was executed is just the minimum limit.
-	/// </param>
 	/// <returns><paramref name="func"/> result.</returns>
 	private static TResult AllocValue<T, TState, TResult>(UInt16 count, TState state,
-		ScopedBufferFunc<T, TState, TResult> func, Boolean isMinimumCount, ref Boolean executed)
+		ScopedBufferFunc<T, TState, TResult> func, Boolean isMinimumCount)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
 #endif
@@ -347,7 +321,7 @@ public static partial class BufferManager
 #if !PACKAGE
 		MetadataManager<T>.PrintMetadata();
 #endif
-		return metadata.Execute<TState, TResult>(state, func, count, out executed);
+		return metadata.Execute<TState, TResult>(state, func, count);
 	}
 	/// <summary>
 	/// Retrieves the maximum value in the given binary space.
