@@ -42,7 +42,7 @@ internal sealed class BufferTypeMetadata<TBuffer, T> : BufferTypeMetadata<T> whe
 		action(scoped);
 	}
 	/// <inheritdoc/>
-	internal override void Execute<TState>(in TState state, ScopedBufferAction<T, TState> action, Int32 spanLength,
+	internal override void Execute<TState>(TState state, ScopedBufferAction<T, TState> action, Int32 spanLength,
 		out Boolean allocated)
 	{
 		TBuffer buffer = new();
@@ -64,7 +64,7 @@ internal sealed class BufferTypeMetadata<TBuffer, T> : BufferTypeMetadata<T> whe
 		return func(scoped);
 	}
 	/// <inheritdoc/>
-	internal override TResult Execute<TState, TResult>(in TState state, ScopedBufferFunc<T, TState, TResult> func,
+	internal override TResult Execute<TState, TResult>(TState state, ScopedBufferFunc<T, TState, TResult> func,
 		Int32 spanLength, out Boolean allocated)
 	{
 		TBuffer buffer = new();
@@ -75,7 +75,7 @@ internal sealed class BufferTypeMetadata<TBuffer, T> : BufferTypeMetadata<T> whe
 		return func(scoped, state);
 	}
 	/// <inheritdoc/>
-	internal override void Execute<TU, TState>(in TState state, ScopedBufferAction<TU, TState> action, Int32 spanLength,
+	internal override void Execute<TU, TState>(TState state, ScopedBufferAction<TU, TState> action, Int32 spanLength,
 		out Boolean allocated)
 	{
 		TBuffer buffer = new();
@@ -86,7 +86,7 @@ internal sealed class BufferTypeMetadata<TBuffer, T> : BufferTypeMetadata<T> whe
 		action(scoped, state);
 	}
 	/// <inheritdoc/>
-	internal override TResult Execute<TU, TState, TResult>(in TState state, ScopedBufferFunc<TU, TState, TResult> func,
+	internal override TResult Execute<TU, TState, TResult>(TState state, ScopedBufferFunc<TU, TState, TResult> func,
 		Int32 spanLength, out Boolean allocated)
 	{
 		TBuffer buffer = new();

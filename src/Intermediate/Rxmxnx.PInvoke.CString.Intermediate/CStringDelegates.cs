@@ -8,7 +8,11 @@
 /// <param name="span">A span of bytes.</param>
 /// <param name="index">Index of current sequence item.</param>
 /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
-public delegate void CStringSequenceCreationAction<in TArg>(Span<Byte> span, Int32 index, TArg arg);
+public delegate void CStringSequenceCreationAction<in TArg>(Span<Byte> span, Int32 index, TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Encapsulates a method that operates on a <see cref="FixedCStringSequence"/> instance.
@@ -23,7 +27,11 @@ public delegate void CStringSequenceAction(FixedCStringSequence seq);
 /// <typeparam name="TArg">The type of the state object.</typeparam>
 /// <param name="seq">The <see cref="FixedCStringSequence"/> instance to operate on.</param>
 /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
-public delegate void CStringSequenceAction<in TArg>(FixedCStringSequence seq, TArg arg);
+public delegate void CStringSequenceAction<in TArg>(FixedCStringSequence seq, TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Encapsulates a method that operates on a <see cref="FixedCStringSequence"/> instance and returns
@@ -44,4 +52,8 @@ public delegate TResult CStringSequenceFunc<out TResult>(FixedCStringSequence se
 /// <param name="seq">The <see cref="FixedCStringSequence"/> instance to operate on.</param>
 /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 /// <returns>The result of the method.</returns>
-public delegate TResult CStringSequenceFunc<in TArg, out TResult>(FixedCStringSequence seq, TArg arg);
+public delegate TResult CStringSequenceFunc<in TArg, out TResult>(FixedCStringSequence seq, TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;

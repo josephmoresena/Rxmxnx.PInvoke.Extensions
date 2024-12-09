@@ -19,7 +19,7 @@ public static partial class BufferManager
 		/// </summary>
 		/// <param name="buffer">Object buffer.</param>
 		/// <param name="state">State object.</param>
-		public static void Execute(ScopedBuffer<Object> buffer, in TransformationState<T> state)
+		public static void Execute(ScopedBuffer<Object> buffer, TransformationState<T> state)
 		{
 			Span<T> span =
 				MemoryMarshal.CreateSpan(ref Unsafe.As<Object, T>(ref MemoryMarshal.GetReference(buffer.Span)),
@@ -47,7 +47,7 @@ public static partial class BufferManager
 		/// </summary>
 		/// <param name="buffer">Object buffer.</param>
 		/// <param name="state">State object.</param>
-		public static TResult Execute(ScopedBuffer<Object> buffer, in TransformationState<T, TResult> state)
+		public static TResult Execute(ScopedBuffer<Object> buffer, TransformationState<T, TResult> state)
 		{
 			Span<T> span =
 				MemoryMarshal.CreateSpan(ref Unsafe.As<Object, T>(ref MemoryMarshal.GetReference(buffer.Span)),

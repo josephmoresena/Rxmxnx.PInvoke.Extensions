@@ -292,6 +292,9 @@ public static unsafe partial class NativeUtilities
 	/// <returns>The created array.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static T[] CreateArray<T, TState>(Int32 length, TState state, SpanAction<T, TState> action)
+#if NET9_0_OR_GREATER
+		where TState : allows ref struct
+#endif
 	{
 		T[] result = new T[length];
 		Span<T> span = result;
@@ -356,6 +359,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="SpanAction{T, TState}"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static void WriteSpan<T, TArg>(Span<T> span, TArg arg, SpanAction<T, TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 #pragma warning disable CS8500
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))

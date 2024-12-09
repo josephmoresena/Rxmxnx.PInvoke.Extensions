@@ -48,8 +48,11 @@ public static partial class BufferManager
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
-	public static void Alloc<T, TState>(UInt16 count, in TState state, ScopedBufferAction<T, TState> action,
+	public static void Alloc<T, TState>(UInt16 count, TState state, ScopedBufferAction<T, TState> action,
 		Boolean isMinimumCount = false)
+#if NET9_0_OR_GREATER
+		where TState : allows ref struct
+#endif
 	{
 		Boolean noTryHeapAllocation = false;
 		try
@@ -107,8 +110,11 @@ public static partial class BufferManager
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
 	/// <returns><paramref name="func"/> result.</returns>
-	public static TResult Alloc<T, TState, TResult>(UInt16 count, in TState state,
+	public static TResult Alloc<T, TState, TResult>(UInt16 count, TState state,
 		ScopedBufferFunc<T, TState, TResult> func, Boolean isMinimumCount = false)
+#if NET9_0_OR_GREATER
+		where TState : allows ref struct
+#endif
 	{
 		Boolean noTryHeapAllocation = false;
 		try

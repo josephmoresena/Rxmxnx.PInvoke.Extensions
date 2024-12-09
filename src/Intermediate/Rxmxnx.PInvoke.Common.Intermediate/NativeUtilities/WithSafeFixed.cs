@@ -63,6 +63,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="ReadOnlyFixedReferenceAction{T, TArg}"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(in T value, TArg arg, ReadOnlyFixedReferenceAction<T, TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &value)
@@ -89,6 +92,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedReferenceAction{T, TArg}"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(ref T value, TArg arg, FixedReferenceAction<T, TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &value)
@@ -170,6 +176,9 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TArg, TResult>(in T value, TArg arg,
 		ReadOnlyFixedReferenceFunc<T, TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &value)
@@ -199,6 +208,9 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TArg, TResult>(ref T value, TArg arg,
 		FixedReferenceFunc<T, TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &value)
@@ -248,6 +260,9 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TDelegate, TArg>(TDelegate del, TArg arg,
 		FixedMethodAction<TDelegate, TArg> action) where TDelegate : Delegate
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		FixedDelegate<TDelegate> fdel = new(del);
@@ -298,6 +313,9 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<TDelegate, TArg, TResult>(TDelegate del, TArg arg,
 		FixedMethodFunc<TDelegate, TArg, TResult> func) where TDelegate : Delegate
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		FixedDelegate<TDelegate> fdel = new(del);

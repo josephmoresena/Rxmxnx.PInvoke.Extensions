@@ -75,6 +75,9 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="action">A delegate of type <see cref="FixedContextAction{T, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(this T[]? arr, TArg arg, FixedContextAction<T, TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		if (arr is not null)
@@ -106,6 +109,9 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(this T[]? arr, TArg arg, ReadOnlyFixedContextAction<T, TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		if (arr is not null)
@@ -200,6 +206,9 @@ public unsafe partial class UnmanagedValueExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TArg, TResult>(this T[]? arr, TArg arg,
 		FixedContextFunc<T, TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		if (arr is not null)
@@ -233,6 +242,9 @@ public unsafe partial class UnmanagedValueExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TArg, TResult>(this T[]? arr, TArg arg,
 		ReadOnlyFixedContextFunc<T, TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		if (arr is not null)

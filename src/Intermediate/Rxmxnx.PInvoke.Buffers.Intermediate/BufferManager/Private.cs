@@ -54,7 +54,10 @@ public static partial class BufferManager
 	/// <param name="state">State object.</param>
 	/// <param name="action">Method to execute.</param>
 	[ExcludeFromCodeCoverage]
-	private static void AllocHeap<T, TState>(UInt16 count, in TState state, ScopedBufferAction<T, TState> action)
+	private static void AllocHeap<T, TState>(UInt16 count, TState state, ScopedBufferAction<T, TState> action)
+#if NET9_0_OR_GREATER
+		where TState : allows ref struct
+#endif
 	{
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
 		try
@@ -102,8 +105,11 @@ public static partial class BufferManager
 	/// <param name="func">Function to execute.</param>
 	/// <returns><paramref name="func"/> result.</returns>
 	[ExcludeFromCodeCoverage]
-	private static TResult AllocHeap<T, TState, TResult>(UInt16 count, in TState state,
+	private static TResult AllocHeap<T, TState, TResult>(UInt16 count, TState state,
 		ScopedBufferFunc<T, TState, TResult> func)
+#if NET9_0_OR_GREATER
+		where TState : allows ref struct
+#endif
 	{
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
 		try
@@ -158,8 +164,11 @@ public static partial class BufferManager
 	/// <param name="executed">
 	/// Indicates whether delegate was executed is just the minimum limit.
 	/// </param>
-	private static void AllocObject<T, TState>(UInt16 count, in TState state, ScopedBufferAction<T, TState> action,
+	private static void AllocObject<T, TState>(UInt16 count, TState state, ScopedBufferAction<T, TState> action,
 		Boolean isMinimumCount, ref Boolean executed)
+#if NET9_0_OR_GREATER
+		where TState : allows ref struct
+#endif
 	{
 		BufferTypeMetadata<Object>? metadata = MetadataManager<Object>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
@@ -214,8 +223,11 @@ public static partial class BufferManager
 	/// Indicates whether delegate was executed is just the minimum limit.
 	/// </param>
 	/// <returns><paramref name="func"/> result.</returns>
-	private static TResult AllocObject<T, TState, TResult>(UInt16 count, in TState state,
+	private static TResult AllocObject<T, TState, TResult>(UInt16 count, TState state,
 		ScopedBufferFunc<T, TState, TResult> func, Boolean isMinimumCount, ref Boolean executed)
+#if NET9_0_OR_GREATER
+		where TState : allows ref struct
+#endif
 	{
 		BufferTypeMetadata<Object>? metadata = MetadataManager<Object>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
@@ -265,8 +277,11 @@ public static partial class BufferManager
 	/// <param name="executed">
 	/// Indicates whether delegate was executed is just the minimum limit.
 	/// </param>
-	private static void AllocValue<T, TState>(UInt16 count, in TState state, ScopedBufferAction<T, TState> action,
+	private static void AllocValue<T, TState>(UInt16 count, TState state, ScopedBufferAction<T, TState> action,
 		Boolean isMinimumCount, ref Boolean executed)
+#if NET9_0_OR_GREATER
+		where TState : allows ref struct
+#endif
 	{
 		BufferTypeMetadata<T>? metadata = MetadataManager<T>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))
@@ -320,8 +335,11 @@ public static partial class BufferManager
 	/// Indicates whether delegate was executed is just the minimum limit.
 	/// </param>
 	/// <returns><paramref name="func"/> result.</returns>
-	private static TResult AllocValue<T, TState, TResult>(UInt16 count, in TState state,
+	private static TResult AllocValue<T, TState, TResult>(UInt16 count, TState state,
 		ScopedBufferFunc<T, TState, TResult> func, Boolean isMinimumCount, ref Boolean executed)
+#if NET9_0_OR_GREATER
+		where TState : allows ref struct
+#endif
 	{
 		BufferTypeMetadata<T>? metadata = MetadataManager<T>.GetMetadata(count);
 		if (metadata is null || (!isMinimumCount && metadata.Size != count))

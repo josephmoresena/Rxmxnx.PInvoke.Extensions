@@ -95,6 +95,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="action">A delegate of type <see cref="FixedContextAction{T, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(this Span<T> span, TArg arg, FixedContextAction<T, TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -123,6 +126,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(this Span<T> span, TArg arg, ReadOnlyFixedContextAction<T, TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -152,6 +158,9 @@ public static unsafe partial class MemoryBlockExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(this ReadOnlySpan<T> span, TArg arg,
 		ReadOnlyFixedContextAction<T, TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -268,6 +277,9 @@ public static unsafe partial class MemoryBlockExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TArg, TResult>(this Span<T> span, TArg arg,
 		FixedContextFunc<T, TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -299,6 +311,9 @@ public static unsafe partial class MemoryBlockExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TArg, TResult>(this Span<T> span, TArg arg,
 		ReadOnlyFixedContextFunc<T, TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -330,6 +345,9 @@ public static unsafe partial class MemoryBlockExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TArg, TResult>(this ReadOnlySpan<T> span, TArg arg,
 		ReadOnlyFixedContextFunc<T, TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))

@@ -47,6 +47,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="ReadOnlyFixedListAction{TArg}"/> delegate.</param>
 	public static void WithSafeFixed<T0, T1, TArg>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, TArg arg,
 		ReadOnlyFixedListAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -111,6 +114,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="ReadOnlyFixedListAction{TArg}"/> delegate.</param>
 	public static void WithSafeFixed<T0, T1, T2, TArg>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
 		ReadOnlySpan<T2> span2, TArg arg, ReadOnlyFixedListAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -183,6 +189,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="ReadOnlyFixedListAction{TArg}"/> delegate.</param>
 	public static void WithSafeFixed<T0, T1, T2, T3, TArg>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
 		ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, TArg arg, ReadOnlyFixedListAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -264,6 +273,9 @@ public static unsafe partial class NativeUtilities
 	public static void WithSafeFixed<T0, T1, T2, T3, T4, TArg>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
 		ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4, TArg arg,
 		ReadOnlyFixedListAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -354,6 +366,9 @@ public static unsafe partial class NativeUtilities
 	public static void WithSafeFixed<T0, T1, T2, T3, T4, T5, TArg>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
 		ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4, ReadOnlySpan<T5> span5, TArg arg,
 		ReadOnlyFixedListAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -452,6 +467,9 @@ public static unsafe partial class NativeUtilities
 	public static void WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, TArg>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
 		ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4, ReadOnlySpan<T5> span5,
 		ReadOnlySpan<T6> span6, TArg arg, ReadOnlyFixedListAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -559,6 +577,9 @@ public static unsafe partial class NativeUtilities
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4,
 		ReadOnlySpan<T5> span5, ReadOnlySpan<T6> span6, ReadOnlySpan<T7> span7, TArg arg,
 		ReadOnlyFixedListAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))

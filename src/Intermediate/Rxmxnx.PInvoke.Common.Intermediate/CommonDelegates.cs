@@ -16,7 +16,11 @@ public delegate ReadOnlySpan<T> ReadOnlySpanFunc<T>();
 /// <typeparam name="TState">The type of the state object passed to the method.</typeparam>
 /// <param name="arg">A state object of type <typeparamref name="TState"/>.</param>
 /// <returns>A <see cref="ReadOnlySpan{T}"/> instance.</returns>
-public delegate ReadOnlySpan<T> ReadOnlySpanFunc<T, in TState>(TState arg);
+public delegate ReadOnlySpan<T> ReadOnlySpanFunc<T, in TState>(TState arg)
+#if NET9_0_OR_GREATER
+	where TState : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Encapsulates a method that receives a span of objects of type <typeparamref name="T"/> and a
@@ -28,7 +32,11 @@ public delegate ReadOnlySpan<T> ReadOnlySpanFunc<T, in TState>(TState arg);
 /// <param name="span">A span of objects of type <typeparamref name="T"/>.</param>
 /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 /// <returns>The return value of the method that this delegate encapsulates.</returns>
-public delegate TResult SpanFunc<T, in TArg, out TResult>(Span<T> span, TArg arg);
+public delegate TResult SpanFunc<T, in TArg, out TResult>(Span<T> span, TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Encapsulates a method that receives a read-only span of objects of type <typeparamref name="T"/> and a
@@ -40,7 +48,11 @@ public delegate TResult SpanFunc<T, in TArg, out TResult>(Span<T> span, TArg arg
 /// <param name="span">A read-only span of objects of type <typeparamref name="T"/>.</param>
 /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 /// <returns>The return value of the method that this delegate encapsulates.</returns>
-public delegate TResult ReadOnlySpanFunc<T, in TArg, out TResult>(ReadOnlySpan<T> span, TArg arg);
+public delegate TResult ReadOnlySpanFunc<T, in TArg, out TResult>(ReadOnlySpan<T> span, TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Represents an action that operates on a fixed memory instance.
@@ -54,7 +66,11 @@ public delegate void FixedAction(in IFixedMemory fixedMemory);
 /// <typeparam name="TArg">The type of the state object.</typeparam>
 /// <param name="fixedMemory">The fixed memory instance to operate on.</param>
 /// <param name="arg">The state object used by the action.</param>
-public delegate void FixedAction<in TArg>(in IFixedMemory fixedMemory, TArg arg);
+public delegate void FixedAction<in TArg>(in IFixedMemory fixedMemory, TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Represents an action that operates on a read-only fixed memory instance.
@@ -68,7 +84,11 @@ public delegate void ReadOnlyFixedAction(in IReadOnlyFixedMemory readOnlyFixedMe
 /// <typeparam name="TArg">The type of the state object.</typeparam>
 /// <param name="readOnlyFixedMemory">The read-only fixed memory instance to operate on.</param>
 /// <param name="arg">The state object used by the action.</param>
-public delegate void ReadOnlyFixedAction<in TArg>(in IReadOnlyFixedMemory readOnlyFixedMemory, TArg arg);
+public delegate void ReadOnlyFixedAction<in TArg>(in IReadOnlyFixedMemory readOnlyFixedMemory, TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Represents a function that operates on a fixed memory instance.
@@ -86,7 +106,11 @@ public delegate TResult FixedFunc<out TResult>(in IFixedMemory fixedMemory);
 /// <param name="fixedMemory">The fixed memory instance to operate on.</param>
 /// <param name="arg">The state object used by the function.</param>
 /// <returns>The return value of the function.</returns>
-public delegate TResult FixedFunc<in TArg, out TResult>(in IFixedMemory fixedMemory, TArg arg);
+public delegate TResult FixedFunc<in TArg, out TResult>(in IFixedMemory fixedMemory, TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Represents a function that operates on a read-only fixed memory instance.
@@ -104,7 +128,11 @@ public delegate TResult ReadOnlyFixedFunc<out TResult>(in IReadOnlyFixedMemory r
 /// <param name="readOnlyFixedMemory">The read-only fixed memory instance to operate on.</param>
 /// <param name="arg">The state object used by the function.</param>
 /// <returns>The return value of the function.</returns>
-public delegate TResult ReadOnlyFixedFunc<in TArg, out TResult>(in IReadOnlyFixedMemory readOnlyFixedMemory, TArg arg);
+public delegate TResult ReadOnlyFixedFunc<in TArg, out TResult>(in IReadOnlyFixedMemory readOnlyFixedMemory, TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Encapsulates a method that receives an instance of <see cref="IFixedContext{T}"/>.
@@ -121,7 +149,11 @@ public delegate void FixedContextAction<T>(in IFixedContext<T> context);
 /// <typeparam name="TArg">The type of the state object.</typeparam>
 /// <param name="context">The fixed context instance.</param>
 /// <param name="arg">The state object.</param>
-public delegate void FixedContextAction<T, in TArg>(in IFixedContext<T> context, TArg arg);
+public delegate void FixedContextAction<T, in TArg>(in IFixedContext<T> context, TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Encapsulates a method that receives a read-only instance of <see cref="IReadOnlyFixedContext{T}"/>.
@@ -138,7 +170,11 @@ public delegate void ReadOnlyFixedContextAction<T>(in IReadOnlyFixedContext<T> c
 /// <typeparam name="TArg">The type of the state object.</typeparam>
 /// <param name="context">The read-only fixed context instance.</param>
 /// <param name="arg">The state object.</param>
-public delegate void ReadOnlyFixedContextAction<T, in TArg>(in IReadOnlyFixedContext<T> context, TArg arg);
+public delegate void ReadOnlyFixedContextAction<T, in TArg>(in IReadOnlyFixedContext<T> context, TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Encapsulates a method that receives an instance of <see cref="IFixedContext{T}"/> and returns a value of
@@ -160,7 +196,11 @@ public delegate TResult FixedContextFunc<T, out TResult>(in IFixedContext<T> con
 /// <param name="context">The fixed context instance.</param>
 /// <param name="arg">The state object.</param>
 /// <returns>The return value of the encapsulated method.</returns>
-public delegate TResult FixedContextFunc<T, in TArg, out TResult>(in IFixedContext<T> context, TArg arg);
+public delegate TResult FixedContextFunc<T, in TArg, out TResult>(in IFixedContext<T> context, TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Encapsulates a method that receives a read-only instance of <see cref="IReadOnlyFixedContext{T}"/> and
@@ -182,8 +222,11 @@ public delegate TResult ReadOnlyFixedContextFunc<T, out TResult>(in IReadOnlyFix
 /// <param name="context">The read-only fixed context instance.</param>
 /// <param name="arg">The state object.</param>
 /// <returns>The return value of the encapsulated method.</returns>
-public delegate TResult
-	ReadOnlyFixedContextFunc<T, in TArg, out TResult>(in IReadOnlyFixedContext<T> context, TArg arg);
+public delegate TResult ReadOnlyFixedContextFunc<T, in TArg, out TResult>(in IReadOnlyFixedContext<T> context, TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Encapsulates a method that takes in an instance of <see cref="IFixedReference{T}"/>.
@@ -200,7 +243,11 @@ public delegate void FixedReferenceAction<T>(in IFixedReference<T> reference);
 /// <typeparam name="TArg">The type of the state object.</typeparam>
 /// <param name="reference">An instance of the fixed reference.</param>
 /// <param name="arg">A state object of type TArg.</param>
-public delegate void FixedReferenceAction<T, in TArg>(in IFixedReference<T> reference, TArg arg);
+public delegate void FixedReferenceAction<T, in TArg>(in IFixedReference<T> reference, TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Encapsulates a method that accepts a read-only instance of <see cref="IReadOnlyFixedReference{T}"/>.
@@ -217,7 +264,11 @@ public delegate void ReadOnlyFixedReferenceAction<T>(in IReadOnlyFixedReference<
 /// <typeparam name="TArg">The type of the state object.</typeparam>
 /// <param name="reference">A read-only instance of the fixed reference.</param>
 /// <param name="arg">A state object of type TArg.</param>
-public delegate void ReadOnlyFixedReferenceAction<T, in TArg>(in IReadOnlyFixedReference<T> reference, TArg arg);
+public delegate void ReadOnlyFixedReferenceAction<T, in TArg>(in IReadOnlyFixedReference<T> reference, TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Encapsulates a method that receives an instance of <see cref="IFixedReference{T}"/> and returns a value of
@@ -239,7 +290,11 @@ public delegate TResult FixedReferenceFunc<T, out TResult>(in IFixedReference<T>
 /// <param name="reference">An instance of the fixed reference.</param>
 /// <param name="arg">A state object of type TArg.</param>
 /// <returns>The return value from the encapsulated method.</returns>
-public delegate TResult FixedReferenceFunc<T, in TArg, out TResult>(in IFixedReference<T> reference, TArg arg);
+public delegate TResult FixedReferenceFunc<T, in TArg, out TResult>(in IFixedReference<T> reference, TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Encapsulates a method that takes in a read-only instance of <see cref="IReadOnlyFixedReference{T}"/> and
@@ -262,7 +317,11 @@ public delegate TResult ReadOnlyFixedReferenceFunc<T, out TResult>(in IReadOnlyF
 /// <param name="arg">A state object of type TArg.</param>
 /// <returns>The return value from the encapsulated method.</returns>
 public delegate TResult ReadOnlyFixedReferenceFunc<T, in TArg, out TResult>(in IReadOnlyFixedReference<T> reference,
-	TArg arg);
+		TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Encapsulates a method that takes an instance of <see cref="IFixedMethod{T}"/>.
@@ -279,7 +338,11 @@ public delegate void FixedMethodAction<T>(in IFixedMethod<T> method) where T : D
 /// <typeparam name="TArg">The type of the state object.</typeparam>
 /// <param name="method">An instance of the fixed method delegate.</param>
 /// <param name="arg">A state object of type TArg.</param>
-public delegate void FixedMethodAction<T, in TArg>(in IFixedMethod<T> method, TArg arg) where T : Delegate;
+public delegate void FixedMethodAction<T, in TArg>(in IFixedMethod<T> method, TArg arg) where T : Delegate
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+;
 
 /// <summary>
 /// Encapsulates a method that takes an instance of <see cref="IFixedMethod{T}"/> and returns a value
@@ -301,8 +364,11 @@ public delegate TResult FixedMethodFunc<T, out TResult>(in IFixedMethod<T> metho
 /// <param name="method">An instance of the fixed method delegate.</param>
 /// <param name="arg">The state object.</param>
 /// <returns>The return value of the encapsulated method.</returns>
-public delegate TResult FixedMethodFunc<T, in TArg, out TResult>(in IFixedMethod<T> method, TArg arg)
-	where T : Delegate;
+public delegate TResult FixedMethodFunc<T, in TArg, out TResult>(in IFixedMethod<T> method, TArg arg) where T : Delegate
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+;
 
 /// <summary>
 /// Represents a method that takes an instance of <see cref="FixedMemoryList"/>.
@@ -317,7 +383,11 @@ public delegate void FixedListAction(FixedMemoryList memoryList);
 /// <typeparam name="TArg">The type of the state object.</typeparam>
 /// <param name="memoryList">The <see cref="FixedMemoryList"/> instance.</param>
 /// <param name="arg">The state object of type <typeparamref name="TArg"/>.</param>
-public delegate void FixedListAction<in TArg>(FixedMemoryList memoryList, TArg arg);
+public delegate void FixedListAction<in TArg>(FixedMemoryList memoryList, TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Represents a method that takes an instance of <see cref="ReadOnlyFixedMemoryList"/>.
@@ -332,7 +402,11 @@ public delegate void ReadOnlyFixedListAction(ReadOnlyFixedMemoryList memoryList)
 /// <typeparam name="TArg">The type of the state object.</typeparam>
 /// <param name="memoryList">The <see cref="ReadOnlyFixedMemoryList"/> instance.</param>
 /// <param name="arg">The state object of type <typeparamref name="TArg"/>.</param>
-public delegate void ReadOnlyFixedListAction<in TArg>(ReadOnlyFixedMemoryList memoryList, TArg arg);
+public delegate void ReadOnlyFixedListAction<in TArg>(ReadOnlyFixedMemoryList memoryList, TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Represents a method that takes an instance of <see cref="FixedMemoryList"/> and returns a result.
@@ -351,7 +425,11 @@ public delegate TResult FixedListFunc<out TResult>(FixedMemoryList memoryList);
 /// <param name="memoryList">The <see cref="FixedMemoryList"/> instance.</param>
 /// <param name="arg">The state object of type <typeparamref name="TArg"/>.</param>
 /// <returns>The result of the method.</returns>
-public delegate TResult FixedListFunc<in TArg, out TResult>(FixedMemoryList memoryList, TArg arg);
+public delegate TResult FixedListFunc<in TArg, out TResult>(FixedMemoryList memoryList, TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Represents a method that takes an instance of <see cref="ReadOnlyFixedMemoryList"/> and returns a result.
@@ -370,4 +448,8 @@ public delegate TResult ReadOnlyFixedListFunc<out TResult>(ReadOnlyFixedMemoryLi
 /// <param name="memoryList">The <see cref="ReadOnlyFixedMemoryList"/> instance.</param>
 /// <param name="arg">The state object of type <typeparamref name="TArg"/>.</param>
 /// <returns>The result of the method.</returns>
-public delegate TResult ReadOnlyFixedListFunc<in TArg, out TResult>(ReadOnlyFixedMemoryList memoryList, TArg arg);
+public delegate TResult ReadOnlyFixedListFunc<in TArg, out TResult>(ReadOnlyFixedMemoryList memoryList, TArg arg)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
+	;

@@ -45,6 +45,9 @@ public static unsafe class StringExtensions
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{Char, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TArg>(this String? str, TArg arg, ReadOnlyFixedContextAction<Char, TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		if (str is not null)
@@ -105,6 +108,9 @@ public static unsafe class StringExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<TArg, TResult>(this String? str, TArg arg,
 		ReadOnlyFixedContextFunc<Char, TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		if (str is not null)

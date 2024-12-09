@@ -60,6 +60,9 @@ public unsafe partial class CStringSequence
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void WithSafeFixed<TState>(TState state, ReadOnlyFixedListAction<TState> action)
+#if NET9_0_OR_GREATER
+		where TState : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (Char* ptr = &MemoryMarshal.GetReference<Char>(this._value))
@@ -119,6 +122,9 @@ public unsafe partial class CStringSequence
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public TResult WithSafeFixed<TState, TResult>(TState state, ReadOnlyFixedListFunc<TState, TResult> func)
+#if NET9_0_OR_GREATER
+		where TState : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (Char* ptr = &MemoryMarshal.GetReference<Char>(this._value))

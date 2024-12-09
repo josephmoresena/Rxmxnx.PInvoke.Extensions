@@ -41,6 +41,9 @@ public unsafe partial class CString
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void WithSafeFixed<TArg>(TArg arg, ReadOnlyFixedAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		ReadOnlySpan<Byte> span = this._data;
@@ -99,6 +102,9 @@ public unsafe partial class CString
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public TResult WithSafeFixed<TArg, TResult>(TArg arg, ReadOnlyFixedFunc<TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		ReadOnlySpan<Byte> span = this._data;

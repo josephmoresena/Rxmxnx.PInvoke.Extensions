@@ -27,6 +27,9 @@ public static partial class DelegateExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TDelegate, TArg>(this TDelegate del, TArg arg,
 		FixedMethodAction<TDelegate, TArg> action) where TDelegate : Delegate
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 		=> NativeUtilities.WithSafeFixed(del, arg, action);
 
 	/// <summary>
@@ -58,5 +61,8 @@ public static partial class DelegateExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<TDelegate, TArg, TResult>(this TDelegate del, TArg arg,
 		FixedMethodFunc<TDelegate, TArg, TResult> func) where TDelegate : Delegate
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 		=> NativeUtilities.WithSafeFixed(del, arg, func);
 }

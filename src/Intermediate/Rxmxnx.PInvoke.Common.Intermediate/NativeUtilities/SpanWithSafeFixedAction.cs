@@ -46,6 +46,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
 	public static void WithSafeFixed<T0, T1, TArg>(Span<T0> span0, Span<T1> span1, TArg arg,
 		FixedListAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -109,6 +112,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
 	public static void WithSafeFixed<T0, T1, T2, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2, TArg arg,
 		FixedListAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -181,6 +187,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
 	public static void WithSafeFixed<T0, T1, T2, T3, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
 		Span<T3> span3, TArg arg, FixedListAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -261,6 +270,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
 	public static void WithSafeFixed<T0, T1, T2, T3, T4, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
 		Span<T3> span3, Span<T4> span4, TArg arg, FixedListAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -349,6 +361,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
 	public static void WithSafeFixed<T0, T1, T2, T3, T4, T5, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
 		Span<T3> span3, Span<T4> span4, Span<T5> span5, TArg arg, FixedListAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -550,6 +565,9 @@ public static unsafe partial class NativeUtilities
 	public static void WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, T7, TArg>(Span<T0> span0, Span<T1> span1,
 		Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6, Span<T7> span7, TArg arg,
 		FixedListAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))

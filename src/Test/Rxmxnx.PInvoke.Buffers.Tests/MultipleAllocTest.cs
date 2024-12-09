@@ -79,10 +79,11 @@ public sealed unsafe class MultipleAllocTest
 		UInt16 count = (UInt16)(Math.Pow(2, Random.Shared.Next(2, 4)) - 1);
 		Span<IntPtr> span0 = stackalloc IntPtr[5];
 		span0[0] = (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(span0));
+		ValPtr<IntPtr> ptrPtr = NativeUtilities.GetUnsafeValPtrFromRef(ref span0[0]);
 		BufferManager.Alloc<T>(count, MultipleAllocTest.Do);
-		BufferManager.Alloc<T, IntPtr>(count, in span0[0], MultipleAllocTest.Do);
+		BufferManager.Alloc<T, ValPtr<IntPtr>>(count, ptrPtr, MultipleAllocTest.Do);
 		Boolean inStack = BufferManager.Alloc<T, Boolean>(count, MultipleAllocTest.Get);
-		Assert.Equal(default, BufferManager.Alloc<T, IntPtr, T>(count, in span0[0], MultipleAllocTest.Get));
+		Assert.Equal(default, BufferManager.Alloc<T, ValPtr<IntPtr>, T>(count, ptrPtr, MultipleAllocTest.Get));
 		Assert.True(inStack);
 
 		Exception exception = new();
@@ -98,9 +99,9 @@ public sealed unsafe class MultipleAllocTest
 		return;
 
 		void ThrowDo(ScopedBuffer<T> buffer) => throw exception;
-		void ThrowDoEx(ScopedBuffer<T> buffer, in Exception ex) => throw ex;
+		void ThrowDoEx(ScopedBuffer<T> buffer, Exception ex) => throw ex;
 		T ThrowGet(ScopedBuffer<T> buffer) => throw exception;
-		T ThrowGetEx(ScopedBuffer<T> buffer, in Exception ex) => throw ex;
+		T ThrowGetEx(ScopedBuffer<T> buffer, Exception ex) => throw ex;
 	}
 	private static void Do<T>(ScopedBuffer<T> buffer)
 	{
@@ -117,19 +118,19 @@ public sealed unsafe class MultipleAllocTest
 		Assert.Equal(buffer.Span.Length, buffer.BufferMetadata.Size);
 		Assert.InRange(buffer.BufferMetadata.ComponentCount, 0, 2);
 	}
-	private static void Do<T>(ScopedBuffer<T> buffer, in IntPtr ptr)
+	private static void Do<T>(ScopedBuffer<T> buffer, ValPtr<IntPtr> ptrPtr)
 	{
 		MultipleAllocTest.Do(buffer);
-		Assert.True(Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in ptr)) == ptr.ToPointer());
+		Assert.True(ptrPtr.Pointer == ptrPtr.Reference);
 	}
 	private static Boolean Get<T>(ScopedBuffer<T> buffer)
 	{
 		MultipleAllocTest.Do(buffer);
 		return buffer.InStack;
 	}
-	private static T Get<T>(ScopedBuffer<T> buffer, in IntPtr ptr)
+	private static T Get<T>(ScopedBuffer<T> buffer, ValPtr<IntPtr> ptrPtr)
 	{
-		MultipleAllocTest.Do(buffer, in ptr);
+		MultipleAllocTest.Do(buffer, ptrPtr);
 		return buffer.Span[0];
 	}
 }

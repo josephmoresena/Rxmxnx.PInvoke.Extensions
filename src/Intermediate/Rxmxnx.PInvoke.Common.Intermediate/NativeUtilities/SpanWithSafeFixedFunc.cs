@@ -50,6 +50,9 @@ public static unsafe partial class NativeUtilities
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 	public static TResult WithSafeFixed<T0, T1, TArg, TResult>(Span<T0> span0, Span<T1> span1, TArg arg,
 		FixedListFunc<TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -118,6 +121,9 @@ public static unsafe partial class NativeUtilities
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 	public static TResult WithSafeFixed<T0, T1, T2, TArg, TResult>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
 		TArg arg, FixedListFunc<TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -194,6 +200,9 @@ public static unsafe partial class NativeUtilities
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 	public static TResult WithSafeFixed<T0, T1, T2, T3, TArg, TResult>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
 		Span<T3> span3, TArg arg, FixedListFunc<TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -278,6 +287,9 @@ public static unsafe partial class NativeUtilities
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, TArg, TResult>(Span<T0> span0, Span<T1> span1,
 		Span<T2> span2, Span<T3> span3, Span<T4> span4, TArg arg, FixedListFunc<TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -370,6 +382,9 @@ public static unsafe partial class NativeUtilities
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, TArg, TResult>(Span<T0> span0, Span<T1> span1,
 		Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5, TArg arg, FixedListFunc<TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -471,6 +486,9 @@ public static unsafe partial class NativeUtilities
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, TArg, TResult>(Span<T0> span0, Span<T1> span1,
 		Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6, TArg arg,
 		FixedListFunc<TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
@@ -581,6 +599,9 @@ public static unsafe partial class NativeUtilities
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, T7, TArg, TResult>(Span<T0> span0, Span<T1> span1,
 		Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6, Span<T7> span7, TArg arg,
 		FixedListFunc<TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))

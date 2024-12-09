@@ -43,10 +43,11 @@ public sealed unsafe class UnitAllocTest
 	{
 		Span<IntPtr> span0 = stackalloc IntPtr[5];
 		span0[0] = (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(span0));
+		ValPtr<IntPtr> ptrPtr = NativeUtilities.GetUnsafeValPtrFromRef(ref span0[0]);
 		BufferManager.Alloc<T>(1, UnitAllocTest.Do);
-		BufferManager.Alloc<T, IntPtr>(1, in span0[0], UnitAllocTest.Do);
+		BufferManager.Alloc<T, ValPtr<IntPtr>>(1, ptrPtr, UnitAllocTest.Do);
 		IntPtr addOfT = BufferManager.Alloc<T, IntPtr>(1, UnitAllocTest.Get);
-		Assert.Equal(default, BufferManager.Alloc<T, IntPtr, T>(1, in span0[0], UnitAllocTest.Get));
+		Assert.Equal(default, BufferManager.Alloc<T, ValPtr<IntPtr>, T>(1, ptrPtr, UnitAllocTest.Get));
 
 		Assert.True(Math.Abs(addOfT.ToInt64() - span0[0].ToInt64()) < 0x10000);
 	}
@@ -63,19 +64,19 @@ public sealed unsafe class UnitAllocTest
 		Assert.Equal(1, buffer.BufferMetadata.Size);
 		Assert.Equal(0, buffer.BufferMetadata.ComponentCount);
 	}
-	private static void Do<T>(ScopedBuffer<T> buffer, in IntPtr ptr)
+	private static void Do<T>(ScopedBuffer<T> buffer, ValPtr<IntPtr> ptrPtr)
 	{
 		UnitAllocTest.Do(buffer);
-		Assert.True(Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in ptr)) == ptr.ToPointer());
+		Assert.True(ptrPtr.Pointer == ptrPtr.Reference);
 	}
 	private static IntPtr Get<T>(ScopedBuffer<T> buffer)
 	{
 		UnitAllocTest.Do(buffer);
 		return (IntPtr)Unsafe.AsPointer(ref buffer.Span[0]);
 	}
-	private static T Get<T>(ScopedBuffer<T> buffer, in IntPtr ptr)
+	private static T Get<T>(ScopedBuffer<T> buffer, ValPtr<IntPtr> ptrPtr)
 	{
-		UnitAllocTest.Do(buffer, in ptr);
+		UnitAllocTest.Do(buffer, ptrPtr);
 		return buffer.Span[0];
 	}
 }

@@ -40,6 +40,9 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeReadOnlyFixed<T, TArg>(ref T value, TArg arg,
 		ReadOnlyFixedReferenceAction<T, TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &value)
@@ -95,6 +98,9 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeReadOnlyFixed<T, TArg, TResult>(ref T value, TArg arg,
 		ReadOnlyFixedReferenceFunc<T, TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &value)

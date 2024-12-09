@@ -83,6 +83,9 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="action">A delegate of type <see cref="FixedAction{TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TArg>(this Span<Byte> span, TArg arg, FixedAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -108,6 +111,9 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedAction{TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TArg>(this Span<Byte> span, TArg arg, ReadOnlyFixedAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -133,6 +139,9 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedAction{TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TArg>(this ReadOnlySpan<Byte> span, TArg arg, ReadOnlyFixedAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -237,6 +246,9 @@ public static unsafe partial class BinaryExtensions
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<TArg, TResult>(this Span<Byte> span, TArg arg, FixedFunc<TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -265,6 +277,9 @@ public static unsafe partial class BinaryExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<TArg, TResult>(this Span<Byte> span, TArg arg,
 		ReadOnlyFixedFunc<TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -293,6 +308,9 @@ public static unsafe partial class BinaryExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<TArg, TResult>(this ReadOnlySpan<Byte> span, TArg arg,
 		ReadOnlyFixedFunc<TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
