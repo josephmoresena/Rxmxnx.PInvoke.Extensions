@@ -1,5 +1,3 @@
-using Rxmxnx.PInvoke.Buffers;
-
 namespace Rxmxnx.PInvoke.Tests;
 
 [ExcludeFromCodeCoverage]
@@ -13,6 +11,10 @@ public sealed class RegisterTest
 	                                                  .GetMethods(BindingFlags.Public | BindingFlags.Static)
 	                                                  .First(m => m.Name == nameof(BufferManager.Register) &&
 		                                                         m.GetGenericArguments().Length == 2);
+	private static readonly MethodInfo registerNullableInfo = typeof(BufferManager)
+	                                                          .GetMethods(BindingFlags.Public | BindingFlags.Static)
+	                                                          .First(m => m.Name ==
+		                                                                 nameof(BufferManager.RegisterNullable));
 
 	[Fact]
 	internal void BooleanTest() => RegisterTest.StructTest<Boolean>();
@@ -35,9 +37,12 @@ public sealed class RegisterTest
 		Int32 pow = Random.Shared.Next(2, 10);
 		_ = RegisterTest.GetCompositeType<Object>(pow, out Int32 sizeofT, out Type resultType);
 		Int32 sizeOfResultType = RegisterTest.sizeOfInfo.MakeGenericMethod(resultType).CreateDelegate<Func<Int32>>()();
+		IManagedBinaryBuffer<Object>? buffer = (IManagedBinaryBuffer<Object>?)Activator.CreateInstance(resultType);
 		registerObjectInfo.MakeGenericMethod(resultType).CreateDelegate<Action>()();
-		Assert.Equal(sizeOfResultType / sizeofT,
-		             ((IManagedBinaryBuffer<Object>)Activator.CreateInstance(resultType)!).Metadata.Size);
+		Assert.NotNull(buffer);
+		Assert.Equal(sizeOfResultType / sizeofT, buffer.Metadata.Size);
+		Assert.True(buffer.Metadata.IsBinary);
+		Assert.Equal(buffer.Metadata.Size != 1 ? 2 : 0, buffer.Metadata.ComponentCount);
 	}
 
 	private static void StructTest<T>() where T : struct
@@ -45,15 +50,21 @@ public sealed class RegisterTest
 		Int32 pow = Random.Shared.Next(2, 10);
 		Type typeofT = RegisterTest.GetCompositeType<T>(pow, out Int32 sizeofT, out Type resultType);
 		Int32 sizeOfResultType = RegisterTest.sizeOfInfo.MakeGenericMethod(resultType).CreateDelegate<Func<Int32>>()();
+		IManagedBinaryBuffer<T>? buffer = (IManagedBinaryBuffer<T>?)Activator.CreateInstance(resultType);
+		Assert.NotNull(buffer);
+		Assert.Equal(sizeOfResultType / sizeofT, buffer.Metadata.Size);
+		Assert.True(buffer.Metadata.IsBinary);
+		Assert.Equal(buffer.Metadata.Size != 1 ? 2 : 0, buffer.Metadata.ComponentCount);
 		RegisterTest.registerInfo.MakeGenericMethod(typeofT, resultType).CreateDelegate<Action>()();
-		Assert.Equal(sizeOfResultType / sizeofT,
-		             ((IManagedBinaryBuffer<T>)Activator.CreateInstance(resultType)!).Metadata.Size);
 
-		typeofT = RegisterTest.GetCompositeType<T>(pow, out sizeofT, out resultType);
+		_ = RegisterTest.GetCompositeType<T?>(pow, out sizeofT, out resultType);
 		sizeOfResultType = RegisterTest.sizeOfInfo.MakeGenericMethod(resultType).CreateDelegate<Func<Int32>>()();
-		RegisterTest.registerInfo.MakeGenericMethod(typeofT, resultType).CreateDelegate<Action>()();
-		Assert.Equal(sizeOfResultType / sizeofT,
-		             ((IManagedBinaryBuffer<T>)Activator.CreateInstance(resultType)!).Metadata.Size);
+		IManagedBinaryBuffer<T?>? nullableBuffer = (IManagedBinaryBuffer<T?>?)Activator.CreateInstance(resultType);
+		RegisterTest.registerNullableInfo.MakeGenericMethod(typeofT, resultType).CreateDelegate<Action>()();
+		Assert.NotNull(nullableBuffer);
+		Assert.Equal(sizeOfResultType / sizeofT, nullableBuffer.Metadata.Size);
+		Assert.True(nullableBuffer.Metadata.IsBinary);
+		Assert.Equal(nullableBuffer.Metadata.Size != 1 ? 2 : 0, nullableBuffer.Metadata.ComponentCount);
 	}
 
 	private static Type GetCompositeType<T>(Int32 pow, out Int32 sizeofT, out Type resultType)

@@ -23,6 +23,10 @@ public readonly ref struct ScopedBuffer<T>
 	/// Allocated buffer full length.
 	/// </summary>
 	public Int32 FullLength { get; }
+	/// <summary>
+	/// Metadata used for allocation.
+	/// </summary>
+	public BufferTypeMetadata? BufferMetadata { get; }
 
 	/// <summary>
 	/// Constructor.
@@ -30,16 +34,12 @@ public readonly ref struct ScopedBuffer<T>
 	/// <param name="span">Buffer span.</param>
 	/// <param name="heapAllocated">Indicates whether current buffer is heap allocated.</param>
 	/// <param name="fullLength">Allocated buffer full length.</param>
-	internal ScopedBuffer(Span<T> span, Boolean heapAllocated, Int32 fullLength)
+	/// <param name="metadata">Allocated buffer metadata.</param>
+	internal ScopedBuffer(Span<T> span, Boolean heapAllocated, Int32 fullLength, BufferTypeMetadata? metadata = default)
 	{
 		this.Span = span;
 		this._heapAllocated = heapAllocated;
 		this.FullLength = fullLength;
+		this.BufferMetadata = metadata;
 	}
-
-	/// <summary>
-	/// Defines an implicit conversion of a given span to <see cref="ScopedBuffer{T}"/>.
-	/// </summary>
-	/// <param name="span">A <typeparamref name="T"/> span to implicitly convert.</param>
-	public static implicit operator ScopedBuffer<T>(Span<T> span) => new(span, true, span.Length);
 }

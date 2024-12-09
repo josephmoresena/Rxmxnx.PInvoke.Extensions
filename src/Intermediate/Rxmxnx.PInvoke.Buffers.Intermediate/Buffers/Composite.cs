@@ -56,7 +56,7 @@ public partial struct Composite<TBufferA, TBufferB, T> : IManagedBinaryBuffer<Co
 	{
 		if (!TBufferA.TypeMetadata.IsBinary || !TBufferB.TypeMetadata.IsBinary)
 			return false;
-		if (TBufferB.TypeMetadata.Components.Length != 0 &&
+		if (TBufferB.TypeMetadata.Components.Length == 2 &&
 		    TBufferB.TypeMetadata.Components[0] != TBufferB.TypeMetadata.Components[^1])
 			return false;
 		UInt16 sizeB = TBufferB.TypeMetadata.Size;

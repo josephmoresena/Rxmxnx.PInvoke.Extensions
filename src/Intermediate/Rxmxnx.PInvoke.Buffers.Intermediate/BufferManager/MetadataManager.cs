@@ -80,6 +80,7 @@ public static partial class BufferManager
 		/// Registers space type.
 		/// </summary>
 		/// <typeparam name="TSpace">Type of the space.</typeparam>
+		[ExcludeFromCodeCoverage]
 		public static void RegisterBufferSpace<TSpace>() where TSpace : struct, IManagedBinaryBuffer<TSpace, T>
 		{
 			BufferTypeMetadata<T> typeMetadata = IManagedBuffer<T>.GetMetadata<TSpace>();

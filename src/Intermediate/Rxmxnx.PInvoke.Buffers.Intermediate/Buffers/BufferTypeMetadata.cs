@@ -3,21 +3,69 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// This interface exposes a buffer type metadata.
 /// </summary>
-/// <typeparam name="T">The type of items in the buffer.</typeparam>
-public abstract class BufferTypeMetadata<T>
+public abstract class BufferTypeMetadata : IEnumerableSequence<BufferTypeMetadata>
 {
 	/// <summary>
 	/// Indicates whether current type is binary space.
 	/// </summary>
 	public Boolean IsBinary { get; }
 	/// <summary>
-	/// Current buffer components.
-	/// </summary>
-	public BufferTypeMetadata<T>[] Components { get; }
-	/// <summary>
 	/// Buffer capacity.
 	/// </summary>
 	public UInt16 Size { get; }
+	/// <summary>
+	/// Number of components.
+	/// </summary>
+	public abstract Int32 ComponentCount { get; }
+	/// <summary>
+	/// Buffer type.
+	/// </summary>
+	public abstract Type BufferType { get; }
+	/// <summary>
+	/// Retrieves a component from current metadata at the specified zero-based <paramref name="index"/>.
+	/// </summary>
+	/// <param name="index">The zero-based index of the component to retrieve.</param>
+	/// <exception cref="IndexOutOfRangeException">
+	/// Thrown when <paramref name="index"/> is less than zero or greater than or equal to
+	/// the count of the components.
+	/// </exception>
+	/// <returns>The component at the specified index within the buffer metadata.</returns>
+	[ExcludeFromCodeCoverage]
+	[IndexerName("Item")]
+	public abstract BufferTypeMetadata this[Int32 index] { get; }
+
+	/// <summary>
+	/// Constructor.
+	/// </summary>
+	/// <param name="isBinary">Indicates if current buffer is binary.</param>
+	/// <param name="capacity">Buffer's capacity.</param>
+	private protected BufferTypeMetadata(Boolean isBinary, UInt16 capacity)
+	{
+		this.IsBinary = isBinary;
+		this.Size = capacity;
+	}
+
+	[ExcludeFromCodeCoverage]
+	BufferTypeMetadata IEnumerableSequence<BufferTypeMetadata>.GetItem(Int32 index) => this[index];
+	[ExcludeFromCodeCoverage]
+	Int32 IEnumerableSequence<BufferTypeMetadata>.GetSize() => this.ComponentCount;
+}
+
+/// <summary>
+/// This interface exposes a buffer type metadata.
+/// </summary>
+/// <typeparam name="T">The type of items in the buffer.</typeparam>
+public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
+{
+	/// <summary>
+	/// Current buffer components.
+	/// </summary>
+	internal BufferTypeMetadata<T>[] Components { get; }
+
+	/// <inheritdoc/>
+	public override BufferTypeMetadata this[Int32 index] => this.Components[index];
+	/// <inheritdoc/>
+	public override Int32 ComponentCount => this.Components.Length;
 
 	/// <summary>
 	/// Constructor.
@@ -25,12 +73,9 @@ public abstract class BufferTypeMetadata<T>
 	/// <param name="isBinary">Indicates if current buffer is binary.</param>
 	/// <param name="components">Buffer's components.</param>
 	/// <param name="capacity">Buffer's capacity.</param>
-	private protected BufferTypeMetadata(Boolean isBinary, BufferTypeMetadata<T>[] components, UInt16 capacity)
-	{
-		this.IsBinary = isBinary;
-		this.Components = components;
-		this.Size = capacity;
-	}
+	private protected BufferTypeMetadata(Boolean isBinary, BufferTypeMetadata<T>[] components, UInt16 capacity) :
+		base(isBinary, capacity)
+		=> this.Components = components;
 
 	/// <summary>
 	/// Composes a new buffer using twice the current buffer type.
@@ -42,20 +87,20 @@ public abstract class BufferTypeMetadata<T>
 	/// </summary>
 	/// <param name="otherMetadata">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
 	/// <returns>A composed <see cref="BufferTypeMetadata{T}"/>.</returns>
-	public abstract BufferTypeMetadata<T>? Compose(BufferTypeMetadata<T> otherMetadata);
+	internal abstract BufferTypeMetadata<T>? Compose(BufferTypeMetadata<T> otherMetadata);
 	/// <summary>
 	/// Composes a new buffer using current buffer type and <typeparamref name="TBuffer"/>.
 	/// </summary>
 	/// <typeparam name="TBuffer">Other buffer type.</typeparam>
 	/// <returns>A composed <see cref="BufferTypeMetadata{T}"/>.</returns>
-	public abstract BufferTypeMetadata<T>? Compose<TBuffer>() where TBuffer : struct, IManagedBuffer<T>;
+	internal abstract BufferTypeMetadata<T>? Compose<TBuffer>() where TBuffer : struct, IManagedBuffer<T>;
 	/// <summary>
 	/// Executes <paramref name="action"/> using a buffer of current type.
 	/// </summary>
 	/// <param name="action">A <see cref="ScopedBufferAction{T}"/> delegate.</param>
 	/// <param name="spanLength">Required span length.</param>
 	/// <param name="allocated">Output. Indicates whether current buffer was allocated.</param>
-	public abstract void Execute(ScopedBufferAction<T> action, Int32 spanLength, out Boolean allocated);
+	internal abstract void Execute(ScopedBufferAction<T> action, Int32 spanLength, out Boolean allocated);
 	/// <summary>
 	/// Executes <paramref name="action"/> using a buffer of current type and given state object.
 	/// </summary>
@@ -64,7 +109,7 @@ public abstract class BufferTypeMetadata<T>
 	/// <param name="action">A <see cref="ScopedBufferAction{T,TArg}"/> delegate.</param>
 	/// <param name="spanLength">Required span length.</param>
 	/// <param name="allocated">Output. Indicates whether current buffer was allocated.</param>
-	public abstract void Execute<TState>(in TState state, ScopedBufferAction<T, TState> action, Int32 spanLength,
+	internal abstract void Execute<TState>(in TState state, ScopedBufferAction<T, TState> action, Int32 spanLength,
 		out Boolean allocated);
 	/// <summary>
 	/// Executes <paramref name="func"/> using a buffer of current type.
@@ -74,7 +119,7 @@ public abstract class BufferTypeMetadata<T>
 	/// <param name="spanLength">Required span length.</param>
 	/// <param name="allocated">Output. Indicates whether current buffer was allocated.</param>
 	/// <returns><paramref name="func"/> result.</returns>
-	public abstract TResult Execute<TResult>(ScopedBufferFunc<T, TResult> func, Int32 spanLength,
+	internal abstract TResult Execute<TResult>(ScopedBufferFunc<T, TResult> func, Int32 spanLength,
 		out Boolean allocated);
 	/// <summary>
 	/// Executes <paramref name="func"/> using a buffer of current type and given state object.
@@ -86,7 +131,7 @@ public abstract class BufferTypeMetadata<T>
 	/// <param name="spanLength">Required span length.</param>
 	/// <param name="allocated">Output. Indicates whether current buffer was allocated.</param>
 	/// <returns><paramref name="func"/> result.</returns>
-	public abstract TResult Execute<TState, TResult>(in TState state, ScopedBufferFunc<T, TState, TResult> func,
+	internal abstract TResult Execute<TState, TResult>(in TState state, ScopedBufferFunc<T, TState, TResult> func,
 		Int32 spanLength, out Boolean allocated);
 	/// <summary>
 	/// Executes <paramref name="action"/> using a buffer of current type and given state object.

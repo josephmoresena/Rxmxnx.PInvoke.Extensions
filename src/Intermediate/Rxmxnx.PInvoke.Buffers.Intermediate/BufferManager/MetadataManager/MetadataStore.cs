@@ -33,13 +33,16 @@ public static partial class BufferManager
 			/// Maximum binary space size.
 			/// </summary>
 			public UInt16 MaxSpace { get; set; } = 1;
+
 			/// <summary>
 			/// Constructor.
 			/// </summary>
-#pragma warning disable CA2252
+			[ExcludeFromCodeCoverage]
 			public MetadataStore()
 			{
+#pragma warning disable CA2252
 				this._binaryCache.Add(1, IManagedBuffer<T>.GetMetadata<Atomic<T>>());
+#pragma warning restore CA2252
 				if (!BufferManager.BufferAutoCompositionEnabled) return;
 				try
 				{
@@ -50,7 +53,6 @@ public static partial class BufferManager
 					// ignored
 				}
 			}
-#pragma warning restore CA2252
 			/// <summary>
 			/// Adds metadata to current cache.
 			/// </summary>
@@ -70,6 +72,7 @@ public static partial class BufferManager
 			/// </summary>
 			/// <param name="count">Minimal number of items in buffer.</param>
 			/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+			[ExcludeFromCodeCoverage]
 			public BufferTypeMetadata<T>? GetMinimal(UInt16 count)
 				=> MetadataStore.GetMinimal(this._nonBinaryCache, count) ??
 					MetadataStore.GetMinimal(this._binaryCache, count);
@@ -96,6 +99,7 @@ public static partial class BufferManager
 			/// <param name="cache">Buffer type metadata cache.</param>
 			/// <param name="count">Minimal elements items in buffer.</param>
 			/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+			[ExcludeFromCodeCoverage]
 			private static BufferTypeMetadata<T>? GetMinimal(SortedDictionary<UInt16, BufferTypeMetadata<T>> cache,
 				UInt16 count)
 			{

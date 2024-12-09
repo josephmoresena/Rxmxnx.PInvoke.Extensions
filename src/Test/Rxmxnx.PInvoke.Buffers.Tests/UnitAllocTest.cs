@@ -56,21 +56,21 @@ public sealed unsafe class UnitAllocTest
 		Assert.Equal(1, buffer.Span.Length);
 		Assert.Equal(1, buffer.FullLength);
 		Assert.Equal(default, buffer.Span[0]);
+		Assert.NotNull(buffer.BufferMetadata);
+		Assert.Equal(typeof(T).IsValueType ? typeof(Atomic<T>) : typeof(Atomic<Object>),
+		             buffer.BufferMetadata.BufferType);
+		Assert.True(buffer.BufferMetadata.IsBinary);
+		Assert.Equal(1, buffer.BufferMetadata.Size);
+		Assert.Equal(0, buffer.BufferMetadata.ComponentCount);
 	}
 	private static void Do<T>(ScopedBuffer<T> buffer, in IntPtr ptr)
 	{
-		Assert.True(buffer.InStack);
-		Assert.Equal(1, buffer.Span.Length);
-		Assert.Equal(1, buffer.FullLength);
-		Assert.Equal(default, buffer.Span[0]);
+		UnitAllocTest.Do(buffer);
 		Assert.True(Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in ptr)) == ptr.ToPointer());
 	}
 	private static IntPtr Get<T>(ScopedBuffer<T> buffer)
 	{
-		Assert.True(buffer.InStack);
-		Assert.Equal(1, buffer.Span.Length);
-		Assert.Equal(1, buffer.FullLength);
-		Assert.Equal(default, buffer.Span[0]);
+		UnitAllocTest.Do(buffer);
 		return (IntPtr)Unsafe.AsPointer(ref buffer.Span[0]);
 	}
 	private static T Get<T>(ScopedBuffer<T> buffer, in IntPtr ptr)

@@ -24,7 +24,7 @@ public static partial class BufferManager
 			Span<T> span =
 				MemoryMarshal.CreateSpan(ref Unsafe.As<Object, T>(ref MemoryMarshal.GetReference(buffer.Span)),
 				                         buffer.Span.Length);
-			ScopedBuffer<T> bufferT = new(span, !buffer.InStack, buffer.FullLength);
+			ScopedBuffer<T> bufferT = new(span, !buffer.InStack, buffer.FullLength, buffer.BufferMetadata);
 			state._action(bufferT);
 		}
 	}
@@ -52,7 +52,7 @@ public static partial class BufferManager
 			Span<T> span =
 				MemoryMarshal.CreateSpan(ref Unsafe.As<Object, T>(ref MemoryMarshal.GetReference(buffer.Span)),
 				                         buffer.Span.Length);
-			ScopedBuffer<T> bufferT = new(span, !buffer.InStack, buffer.FullLength);
+			ScopedBuffer<T> bufferT = new(span, !buffer.InStack, buffer.FullLength, buffer.BufferMetadata);
 			return state._func(bufferT);
 		}
 	}
