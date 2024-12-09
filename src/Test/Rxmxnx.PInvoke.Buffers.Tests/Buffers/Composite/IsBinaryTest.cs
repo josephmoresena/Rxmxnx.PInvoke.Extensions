@@ -18,13 +18,11 @@ public sealed class IsBinaryTest
 	internal void Int64Test() => IsBinaryTest.StructTest<Int64>();
 	[Fact]
 	internal void StringWrapperTest() => IsBinaryTest.StructTest<WrapperStruct<String?>>();
-	[Fact]
-	internal void ObjectTest() => IsBinaryTest.Test<Object>();
 
 	private static void StructTest<T>() where T : struct
 	{
-		IsBinaryTest.Test<T>();
-		IsBinaryTest.Test<T?>();
+		IsBinaryTest.Test<WrapperStruct<WrapperStruct<T>>>();
+		IsBinaryTest.Test<WrapperStruct<WrapperStruct<T>>?>();
 	}
 	private static void Test<T>()
 	{

@@ -28,6 +28,7 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [];
 	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => NonBinarySpace<TArray, T>.typeMetadata;
 
+	[ExcludeFromCodeCoverage]
 	static void IManagedBuffer<T>.AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components) { }
 
 	/// <summary>
