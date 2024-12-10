@@ -1,7 +1,6 @@
 namespace Rxmxnx.PInvoke;
 
-[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3011,
-                 Justification = SuppressMessageConstants.ReflectionPrivateUseJustification)]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3011)]
 public static partial class BufferManager
 {
 	/// <summary>

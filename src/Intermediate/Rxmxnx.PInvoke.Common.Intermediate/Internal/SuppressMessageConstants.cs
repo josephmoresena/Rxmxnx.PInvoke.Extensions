@@ -14,11 +14,5 @@ internal static class SuppressMessageConstants
 	public const String CheckIdS2743 = "S2743";
 	public const String CheckIdS3011 = "S3011";
 	public const String CheckIdS6670 = "S6670";
-
-	public const String AvoidableReflectionUseJustification =
-		"There are alternatives that avoid the use of reflection.";
-	public const String StaticAbstractPropertyUseJustification =
-		"There is no static field, but abstract/virtual property.";
-	public const String ReflectionPrivateUseJustification =
-		"Reflection use is limited privately and is used only to avoid infinity recursive initialization type.";
+	public const String CheckIdS1006 = "S1006";
 }

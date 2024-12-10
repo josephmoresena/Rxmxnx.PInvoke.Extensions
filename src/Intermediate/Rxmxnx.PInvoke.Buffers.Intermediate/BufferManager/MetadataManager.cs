@@ -31,14 +31,10 @@ public static partial class BufferManager
 		/// <returns>
 		/// The <see cref="BufferTypeMetadata{T}"/> for <see cref="Composite{TBufferA,TBufferB,T}"/> buffer.
 		/// </returns>
-		[UnconditionalSuppressMessage("AOT", "IL2055",
-		                              Justification = SuppressMessageConstants.AvoidableReflectionUseJustification)]
-		[UnconditionalSuppressMessage("AOT", "IL2060",
-		                              Justification = SuppressMessageConstants.AvoidableReflectionUseJustification)]
-		[UnconditionalSuppressMessage("AOT", "IL3050",
-		                              Justification = SuppressMessageConstants.AvoidableReflectionUseJustification)]
-		[UnconditionalSuppressMessage("AOT", "IL2077",
-		                              Justification = SuppressMessageConstants.AvoidableReflectionUseJustification)]
+		[UnconditionalSuppressMessage("AOT", "IL2055")]
+		[UnconditionalSuppressMessage("AOT", "IL2060")]
+		[UnconditionalSuppressMessage("AOT", "IL3050")]
+		[UnconditionalSuppressMessage("AOT", "IL2077")]
 		public static BufferTypeMetadata<T>? ComposeWithReflection(Type typeofA, Type typeofB)
 		{
 			if (MetadataManager<T>.store.GetMetadataInfo is null) return default;
@@ -107,7 +103,7 @@ public static partial class BufferManager
 		/// <summary>
 		/// Prints metadata dictionary.
 		/// </summary>
-		[UnconditionalSuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6670)]
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6670)]
 		public static void PrintMetadata()
 		{
 			foreach (UInt16 key in MetadataManager<T>.store.BinaryBuffers.Keys)
