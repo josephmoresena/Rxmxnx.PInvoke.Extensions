@@ -3,6 +3,7 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 /// <summary>
 /// Italian (Italiano) message resource.
 /// </summary>
+[ExcludeFromCodeCoverage]
 internal sealed class ItalianMessageResource : IMessageResource
 {
 	/// <inheritdoc cref="IMessageResource.Instance"/>

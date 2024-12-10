@@ -86,7 +86,7 @@ internal partial interface IMessageResource
 	/// <summary>
 	/// Message for invalid pointer value exception.
 	/// </summary>
-	String InvalidType(String nameofPtr);
+	String InvalidType(String requiredTypeName);
 	/// <summary>
 	/// Message for invalid ref type pointer exception.
 	/// </summary>

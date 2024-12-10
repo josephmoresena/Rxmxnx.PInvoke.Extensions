@@ -3,6 +3,7 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 /// <summary>
 /// French (français) message resource.
 /// </summary>
+[ExcludeFromCodeCoverage]
 internal sealed class FrenchMessageResource : IMessageResource
 {
 	/// <inheritdoc cref="IMessageResource.Instance"/>

@@ -3,6 +3,7 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 /// <summary>
 /// Arabic (العربية) message resource.
 /// </summary>
+[ExcludeFromCodeCoverage]
 internal sealed class ArabicMessageResource : IMessageResource
 {
 	/// <inheritdoc cref="IMessageResource.Instance"/>

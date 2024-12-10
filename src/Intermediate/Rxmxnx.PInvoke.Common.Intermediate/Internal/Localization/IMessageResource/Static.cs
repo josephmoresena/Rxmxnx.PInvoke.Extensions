@@ -7,6 +7,7 @@ internal partial interface IMessageResource
 	/// Retrieves internal resource objects.
 	/// </summary>
 	/// <returns>Resource resource object.</returns>
+	[ExcludeFromCodeCoverage]
 	public static IMessageResource GetInstance()
 		=> IMessageResource.GetLangCode() switch
 		{

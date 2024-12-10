@@ -3,6 +3,7 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 /// <summary>
 /// Default (English) message resource.
 /// </summary>
+[ExcludeFromCodeCoverage]
 internal sealed class DefaultMessageResource : IMessageResource
 {
 	/// <inheritdoc cref="IMessageResource.Instance"/>

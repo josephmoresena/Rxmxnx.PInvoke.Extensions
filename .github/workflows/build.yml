@@ -60,7 +60,6 @@ jobs:
         run: dotnet pack -c Release /p:Version=9999.99.99.99-tmp
         
   run-tests:
-    name: Cross-platform tests
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -84,4 +83,4 @@ jobs:
         run: |
           dotnet restore src 
           dotnet build src --configuration release 
-          dotnet test src"
+          dotnet test src
