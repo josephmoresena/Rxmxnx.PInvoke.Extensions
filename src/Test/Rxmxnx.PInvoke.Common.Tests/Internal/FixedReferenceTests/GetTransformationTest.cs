@@ -95,7 +95,10 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int16>(fref));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Char>(fref));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int32>(fref));
-			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int64>(fref));
+			if (sizeof(T) < sizeof(Int64))
+				GetTransformationTest.Test<T, Int64>(fref);
+			else
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int64>(fref));
 			if (sizeof(T) < sizeof(Int128))
 				GetTransformationTest.Test<T, Int128>(fref);
 			else
@@ -231,7 +234,10 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int16>(fref));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Char>(fref));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int32>(fref));
-			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int64>(fref));
+			if (sizeof(T) < sizeof(Int64))
+				GetTransformationTest.Test<T, Int64>(fref);
+			else
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int64>(fref));
 			if (sizeof(T) < sizeof(Int128))
 				GetTransformationTest.Test<T, Int128>(fref);
 			else
