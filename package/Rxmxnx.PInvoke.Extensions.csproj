@@ -15,6 +15,7 @@
         <IsTrimmable Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0'))">true</IsTrimmable>
         <IsTrimmable Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">true</IsTrimmable>
         <IsTrimmable Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">true</IsTrimmable>
+        <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
         <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
         <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
         <LangVersion>latest</LangVersion>
@@ -61,16 +62,18 @@
     <PropertyGroup>
         <Authors>Joseph Moreno</Authors>
         <Product>Rxmxnx.PInvoke.Extensions</Product>
-        <Description>Provides a set of extensions and utilites which facilitates exchange of data from and to .NET P/Invoke methods (or UnmanagedCallersOnly using NativeAOT) avoiding use of both native pointers and unsafe context.</Description>
+        <Description>Rxmxnx.PInvoke.Extensions is a comprehensive library designed to streamline and enhance the 
+interaction between .NET and native P/Invoke methods.</Description>
         <Copyright>Copyright © Joseph Moreno 2023</Copyright>
-        <Summary>Provides a set of extensions and utilites which facilitates exchange of data from and to .NET P/Invoke methods (or UnmanagedCallersOnly using NativeAOT) avoiding use of both native pointers and unsafe context.</Summary>
+        <Summary>Rxmxnx.PInvoke.Extensions is a comprehensive library designed to streamline and enhance the 
+interaction between .NET and native P/Invoke methods.</Summary>
         <NeutralLanguage>en-US</NeutralLanguage>
         <Title>Rxmxnx.PInvoke.Extensions</Title>
         <PackageId>Rxmxnx.PInvoke.Extensions</PackageId>
         <PackageTags>
             PInvoke;Binary;Reference;Unmanaged;Memory;NativeAOT;Utf8;CString;Pointer;Span;
             ReadOnlySpan;Unsafe;Fixed;Native;FFI;Binary;u8;Literals;StackAlloc;LocalBuffer;
-            ObjectBuffer;
+            ObjectBuffer;ScopedBuffer;ManagedBuffer;
         </PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>

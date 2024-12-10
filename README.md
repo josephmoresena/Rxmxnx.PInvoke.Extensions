@@ -9,10 +9,12 @@
 
 ## Description
 
-Rxmxnx.PInvoke.Extensions is a library that provides a set of extensions and utilities that simplify the process of data
-exchange to and from .NET P/Invoke methods, eliminating the necessity for native pointers, memory fixes, and operations
-that require unsafe compilation.
-This library also includes native handling for UTF-8 strings in both managed and unmanaged memory.
+Rxmxnx.PInvoke.Extensions is a comprehensive library designed to streamline and enhance the 
+interaction between .NET and native P/Invoke methods.
+
+The provided APIs eliminate the need for direct manipulation of native pointers, memory fixes, and unsafe code. 
+They offer robust and efficient utilities for developers working with interop scenarios, including native handling for 
+UTF-8/ASCII strings, as well as managed buffers that simplify the dynamic allocation of object references on the stack.
 
 ## Types
 
