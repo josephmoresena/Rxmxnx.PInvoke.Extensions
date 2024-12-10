@@ -67,39 +67,11 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
-    - name: linux-x64 tests
+    - name: linux tests
       run: |
-          dotnet restore src --runtime linux-x64 
-          dotnet build src/Test/Rxmxnx.PInvoke.Common.Tests --configuration release --runtime linux-x64
-          dotnet build src/Test/Rxmxnx.PInvoke.Buffers.Tests --configuration release --runtime linux-x64
-          dotnet build src/Test/Rxmxnx.PInvoke.CString.Tests --configuration release --runtime linux-x64
-          dotnet build src/Test/Rxmxnx.PInvoke.Extensions.Tests --configuration release --runtime linux-x64
-          dotnet test src/Test/Rxmxnx.PInvoke.Common.Tests --runtime linux-x64
-          dotnet test src/Test/Rxmxnx.PInvoke.Buffers.Tests --runtime linux-x64
-          dotnet test src/Test/Rxmxnx.PInvoke.CString.Tests --runtime linux-x64
-          dotnet test src/Test/Rxmxnx.PInvoke.Extensions.Tests --runtime linux-x64
-    - name: linux-arm64 tests
-      run: |
-          dotnet restore src --runtime linux-arm64 
-          dotnet build src/Test/Rxmxnx.PInvoke.Buffers.Tests --configuration release --runtime linux-arm64
-          dotnet build src/Test/Rxmxnx.PInvoke.Common.Tests --configuration release --runtime linux-arm64
-          dotnet build src/Test/Rxmxnx.PInvoke.CString.Tests --configuration release --runtime linux-arm64
-          dotnet build src/Test/Rxmxnx.PInvoke.Extensions.Tests --configuration release --runtime linux-arm64
-          dotnet test src/Test/Rxmxnx.PInvoke.Common.Tests --runtime linux-arm64
-          dotnet test src/Test/Rxmxnx.PInvoke.Buffers.Tests --runtime linux-arm64
-          dotnet test src/Test/Rxmxnx.PInvoke.CString.Tests --runtime linux-arm64
-          dotnet test src/Test/Rxmxnx.PInvoke.Extensions.Tests --runtime linux-arm64
-    - name: linux-arm32 tests
-      run: |
-          dotnet restore src --runtime linux-arm 
-          dotnet build src/Test/Rxmxnx.PInvoke.Buffers.Tests --configuration release --runtime linux-arm
-          dotnet build src/Test/Rxmxnx.PInvoke.Common.Tests --configuration release --runtime linux-arm
-          dotnet build src/Test/Rxmxnx.PInvoke.CString.Tests --configuration release --runtime linux-arm
-          dotnet build src/Test/Rxmxnx.PInvoke.Extensions.Tests --configuration release --runtime linux-arm
-          dotnet test src/Test/Rxmxnx.PInvoke.Common.Tests --runtime linux-arm
-          dotnet test src/Test/Rxmxnx.PInvoke.Buffers.Tests --runtime linux-arm
-          dotnet test src/Test/Rxmxnx.PInvoke.CString.Tests --runtime linux-arm
-          dotnet test src/Test/Rxmxnx.PInvoke.Extensions.Tests --runtime linux-arm
+          dotnet restore src 
+          dotnet build src --configuration release 
+          dotnet test src --no-build --no-restore --configuration release
           
   run-macOS:
     runs-on: macos-latest
@@ -109,28 +81,11 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
-    - name: osx-x64 tests
+    - name: osx tests
       run: |
-          dotnet restore src --runtime osx-x64 
-          dotnet build src/Test/Rxmxnx.PInvoke.Common.Tests --configuration release --runtime osx-x64
-          dotnet build src/Test/Rxmxnx.PInvoke.Buffers.Tests --configuration release --runtime osx-x64
-          dotnet build src/Test/Rxmxnx.PInvoke.CString.Tests --configuration release --runtime osx-x64
-          dotnet build src/Test/Rxmxnx.PInvoke.Extensions.Tests --configuration release --runtime osx-x64
-          dotnet test src/Test/Rxmxnx.PInvoke.Common.Tests --runtime osx-x64
-          dotnet test src/Test/Rxmxnx.PInvoke.Buffers.Tests --runtime osx-x64
-          dotnet test src/Test/Rxmxnx.PInvoke.CString.Tests --runtime osx-x64
-          dotnet test src/Test/Rxmxnx.PInvoke.Extensions.Tests --runtime osx-x64
-    - name: osx-arm64 tests
-      run: |
-          dotnet restore src --runtime osx-arm64 
-          dotnet build src/Test/Rxmxnx.PInvoke.Buffers.Tests --configuration release --runtime osx-arm64
-          dotnet build src/Test/Rxmxnx.PInvoke.Common.Tests --configuration release --runtime osx-arm64
-          dotnet build src/Test/Rxmxnx.PInvoke.CString.Tests --configuration release --runtime osx-arm64
-          dotnet build src/Test/Rxmxnx.PInvoke.Extensions.Tests --configuration release --runtime osx-arm64
-          dotnet test src/Test/Rxmxnx.PInvoke.Common.Tests --runtime osx-arm64
-          dotnet test src/Test/Rxmxnx.PInvoke.Buffers.Tests --runtime osx-arm64
-          dotnet test src/Test/Rxmxnx.PInvoke.CString.Tests --runtime osx-arm64
-          dotnet test src/Test/Rxmxnx.PInvoke.Extensions.Tests --runtime osx-arm64
+          dotnet restore src 
+          dotnet build src --configuration release 
+          dotnet test src --no-build --no-restore --configuration release
         
   run-windows:
     runs-on: windows-latest
@@ -147,10 +102,10 @@ jobs:
           dotnet build src/Test/Rxmxnx.PInvoke.Buffers.Tests --configuration release --runtime win-x64
           dotnet build src/Test/Rxmxnx.PInvoke.CString.Tests --configuration release --runtime win-x64
           dotnet build src/Test/Rxmxnx.PInvoke.Extensions.Tests --configuration release --runtime win-x64
-          dotnet test src/Test/Rxmxnx.PInvoke.Common.Tests --runtime win-x64
-          dotnet test src/Test/Rxmxnx.PInvoke.Buffers.Tests --runtime win-x64
-          dotnet test src/Test/Rxmxnx.PInvoke.CString.Tests --runtime win-x64
-          dotnet test src/Test/Rxmxnx.PInvoke.Extensions.Tests --runtime win-x64
+          dotnet test src/Test/Rxmxnx.PInvoke.Common.Tests --verbosity detailed --no-build --no-restore --configuration release --runtime win-x64
+          dotnet test src/Test/Rxmxnx.PInvoke.Buffers.Tests --verbosity detailed --no-build --no-restore --configuration release --runtime win-x64
+          dotnet test src/Test/Rxmxnx.PInvoke.CString.Tests --verbosity detailed --no-build --no-restore --configuration release --runtime win-x64
+          dotnet test src/Test/Rxmxnx.PInvoke.Extensions.Tests --verbosity detailed --no-build --no-restore --configuration release --runtime win-x64
     - name: win-x86 tests
       run: |
           dotnet restore src --runtime win-x86 
@@ -158,18 +113,7 @@ jobs:
           dotnet build src\Test\Rxmxnx.PInvoke.Buffers.Tests --configuration release --runtime win-x86
           dotnet build src\Test\Rxmxnx.PInvoke.CString.Tests --configuration release --runtime win-x86
           dotnet build src\Test\Rxmxnx.PInvoke.Extensions.Tests --configuration release --runtime win-x86
-          dotnet test src\Test\Rxmxnx.PInvoke.Common.Tests --runtime win-x86
-          dotnet test src\Test\Rxmxnx.PInvoke.Buffers.Tests --runtime win-x86
-          dotnet test src\Test\Rxmxnx.PInvoke.CString.Tests --runtime win-x86
-          dotnet test src\Test\Rxmxnx.PInvoke.Extensions.Tests --runtime win-x86
-    - name: win-arm64 tests
-      run: |
-          dotnet restore src --runtime win-arm64 
-          dotnet build src\Test\Rxmxnx.PInvoke.Common.Tests --configuration release --runtime win-arm64
-          dotnet build src\Test\Rxmxnx.PInvoke.Buffers.Tests --configuration release --runtime win-arm64
-          dotnet build src\Test\Rxmxnx.PInvoke.CString.Tests --configuration release --runtime win-arm64
-          dotnet build src\Test\Rxmxnx.PInvoke.Extensions.Tests --configuration release --runtime win-arm64
-          dotnet test src\Test\Rxmxnx.PInvoke.Common.Tests --runtime win-arm64
-          dotnet test src\Test\Rxmxnx.PInvoke.Buffers.Tests --runtime win-arm64
-          dotnet test src\Test\Rxmxnx.PInvoke.CString.Tests --runtime win-arm64
-          dotnet test src\Test\Rxmxnx.PInvoke.Extensions.Tests --runtime win-arm64
+          dotnet test src\Test\Rxmxnx.PInvoke.Common.Tests --verbosity detailed --no-build --no-restore --configuration release --runtime win-x86
+          dotnet test src\Test\Rxmxnx.PInvoke.Buffers.Tests --verbosity detailed --no-build --no-restore --configuration release --runtime win-x86
+          dotnet test src\Test\Rxmxnx.PInvoke.CString.Tests --verbosity detailed --no-build --no-restore --configuration release --runtime win-x86
+          dotnet test src\Test\Rxmxnx.PInvoke.Extensions.Tests --verbosity detailed --no-build --no-restore --configuration release --runtime win-x86
