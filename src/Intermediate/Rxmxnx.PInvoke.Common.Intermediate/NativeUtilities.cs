@@ -12,23 +12,6 @@ public static unsafe partial class NativeUtilities
 	public static readonly Int32 PointerSize = sizeof(IntPtr);
 
 	/// <summary>
-	/// Indicates whether the current runtime might be Ahead-of-Time compiled.
-	/// </summary>
-	/// <remarks>
-	/// This function may cause overhead as it uses reflection to attempt to throw a
-	/// <see cref="NotSupportedException"/> exception due to missing native code or metadata.
-	/// </remarks>
-	[ExcludeFromCodeCoverage]
-	public static Boolean MightBeAot
-	{
-		get
-		{
-			Task<Boolean> task = AotDetectorHelper.IsTrimmedOrAotAsync().AsTask();
-			return task.Result;
-		}
-	}
-
-	/// <summary>
 	/// Retrieves the size of <typeparamref name="T"/> structure.
 	/// </summary>
 	/// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>

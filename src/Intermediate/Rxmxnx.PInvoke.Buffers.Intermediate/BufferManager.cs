@@ -9,7 +9,7 @@ public static partial class BufferManager
 	/// Indicates whether metadata for any required buffer is auto-composed.
 	/// </summary>
 	[ExcludeFromCodeCoverage]
-	public static Boolean BufferAutoCompositionEnabled => !BufferManager.disabledReflection;
+	public static Boolean BufferAutoCompositionEnabled => !AotInfo.IsReflectionDisabled;
 
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="action"/>.

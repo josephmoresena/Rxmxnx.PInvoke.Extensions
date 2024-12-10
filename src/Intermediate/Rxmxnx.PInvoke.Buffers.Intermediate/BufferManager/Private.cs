@@ -19,10 +19,6 @@ public static partial class BufferManager
 	/// Type of <see cref="Composite{TBufferA,TBufferB,T}"/>.
 	/// </summary>
 	private static readonly Type typeofComposite = typeof(Composite<,,>);
-	/// <summary>
-	/// Flag to check if reflection is disabled.
-	/// </summary>
-	private static readonly Boolean disabledReflection = !typeof(String).ToString().Contains(nameof(String));
 
 	/// <summary>
 	/// Allocates a heap buffer of size of <paramref name="count"/> elements.

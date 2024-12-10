@@ -671,12 +671,18 @@ with strings.
 
 ## Utilities
 
+### Rxmxnx.PInvoke.AotInfo
+
+`Rxmxnx.PInvoke.AotInfo` is a utility class that provides information about AOT compilation.
+
+- `IsReflectionDisabled`: Indicates whether the current runtime is Reflection-Free mode compiled.
+- `IsNativeAot`: Indicates whether the current runtime is Ahead-of-Time compiled.
+
 ### Rxmxnx.PInvoke.NativeUtilities
 
 `Rxmxnx.PInvoke.NativeUtilities` is a utility class that provides various methods for working with native code.
 
 - `PointerSize`: Size in bytes of a memory pointer.
-- `MightBeAot`: Indicates whether the current runtime might be Ahead-of-Time compiled.
 
 - `AsBytes<T>(in T)`: Retrieves the bytes representing the specified value.
 - `AsBinarySpan<T>(ref T)`: Converts the specified reference to a span of bytes.
