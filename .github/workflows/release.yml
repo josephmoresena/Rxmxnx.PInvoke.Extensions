@@ -22,8 +22,9 @@ jobs:
       working-directory: ./src/Intermediate
       run: |
           dotnet build -c Release ./Rxmxnx.PInvoke.Common.Intermediate 
+          dotnet build -c Release ./Rxmxnx.PInvoke.Buffers.Intermediate 
           dotnet build -c Release ./Rxmxnx.PInvoke.CString.Intermediate 
-          dotnet build -c Release ./Rxmxnx.PInvoke.Extensions.Intermediate
+          dotnet build -c Release ./Rxmxnx.PInvoke.Extensions.Intermediate 
     - name: Patch Buffers ILLink.Substitutions
       working-directory: ./src/Intermediate/Rxmxnx.PInvoke.Buffers.Intermediate/ILLink
       run: sed -i -z 's/Rxmxnx.PInvoke.Buffers.Intermediate/Rxmxnx.PInvoke.Extensions/g;' ILLink.Substitutions.xml
