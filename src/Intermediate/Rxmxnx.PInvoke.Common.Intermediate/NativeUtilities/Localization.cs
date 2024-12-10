@@ -7,6 +7,7 @@ public partial class NativeUtilities
 	/// </summary>
 	/// <param name="culture">A <see cref="CultureInfo"/> instance.</param>
 	/// <returns>A <see cref="Iso639P1"/> enum value.</returns>
+	[ExcludeFromCodeCoverage]
 	internal static Iso639P1 GetIso639P1(CultureInfo culture)
 	{
 		try
