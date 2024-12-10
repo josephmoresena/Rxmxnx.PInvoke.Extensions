@@ -59,6 +59,7 @@ jobs:
         working-directory: ./package
         run: dotnet pack -c Release /p:Version=9999.99.99.99-tmp
         
+  run-tests:
     name: Cross-platform tests
     runs-on: ${{ matrix.os }}
     strategy:
