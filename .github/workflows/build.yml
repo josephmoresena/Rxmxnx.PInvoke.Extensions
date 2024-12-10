@@ -71,7 +71,7 @@ jobs:
       run: |
           dotnet restore src 
           dotnet build src --configuration release 
-          dotnet test src --no-build --no-restore --configuration release
+          dotnet test src --verbosity detailed --no-build --no-restore --configuration release
           
   run-macOS:
     runs-on: macos-latest
@@ -85,7 +85,7 @@ jobs:
       run: |
           dotnet restore src 
           dotnet build src --configuration release 
-          dotnet test src --no-build --no-restore --configuration release
+          dotnet test src --verbosity detailed --no-build --no-restore --configuration release
         
   run-windows:
     runs-on: windows-latest
