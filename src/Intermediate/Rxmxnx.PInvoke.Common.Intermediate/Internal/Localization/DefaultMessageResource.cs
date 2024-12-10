@@ -24,8 +24,8 @@ internal sealed class DefaultMessageResource : IMessageResource
 	String IMessageResource.InvalidInstance => "The current instance is not valid.";
 	String IMessageResource.InvalidPointerSerialization
 		=> "An IntPtr or UIntPtr with an eight byte value cannot be deserialized on a machine with a four byte word size.";
-	String IMessageResource.NotFunction => "The current instance is not a function.";
-	String IMessageResource.Function => "The current instance is a function.";
+	String IMessageResource.IsNotFunction => "The current instance is not a function.";
+	String IMessageResource.IsFunction => "The current instance is a function.";
 	String IMessageResource.ReadOnlyInstance => "The current instance is read-only.";
 	String IMessageResource.InvalidUnmanagedCast
 		=> "The sizes of both source and destination unmanaged types must be equal.";

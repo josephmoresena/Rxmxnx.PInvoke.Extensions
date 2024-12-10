@@ -9,23 +9,28 @@ public abstract class FixedMemoryTestsBase
 	/// <summary>
 	/// Message when <see cref="FixedMemory"/> instance is read-only.
 	/// </summary>
-	protected const String ReadOnlyError = "The current instance is read-only.";
+	protected static readonly String ReadOnlyError = IMessageResource.GetInstance().ReadOnlyInstance;
 	/// <summary>
 	/// Message when <see cref="FixedMemory"/> instance is invalid.
 	/// </summary>
-	protected const String InvalidError = "The current instance is not valid.";
+	protected static readonly String InvalidError = IMessageResource.GetInstance().InvalidInstance;
 	/// <summary>
 	/// Message when <see cref="FixedMemory"/> instance is not a function.
 	/// </summary>
-	protected const String IsNotFunction = "The current instance is not a function.";
+	protected static readonly String IsNotFunction = IMessageResource.GetInstance().IsNotFunction;
 	/// <summary>
 	/// Message when <see cref="FixedMemory"/> instance is a function.
 	/// </summary>
-	protected const String IsFunction = "The current instance is a function.";
+	protected static readonly String IsFunction = IMessageResource.GetInstance().IsFunction;
 	/// <summary>
 	/// Message when <see cref="FixedReference{T}"/> instance is not enough for hold a reference.
 	/// </summary>
-	protected const String InvalidSizeFormat = "The current instance is insufficient to contain a value of {0} type.";
+	protected static readonly String InvalidSizeFormat = IMessageResource.GetInstance()
+	                                                                     .InvalidRefTypePointer(
+		                                                                     typeof(FixedMemoryTestsBase))
+	                                                                     .Replace(
+		                                                                     typeof(FixedMemoryTestsBase).ToString(),
+		                                                                     "{0}");
 
 	/// <summary>
 	/// Fixture instance.

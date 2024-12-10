@@ -34,11 +34,11 @@ internal partial interface IMessageResource
 	/// <summary>
 	/// Message for not function exception.
 	/// </summary>
-	String NotFunction { get; }
+	String IsNotFunction { get; }
 	/// <summary>
 	/// Message for function exception.
 	/// </summary>
-	String Function { get; }
+	String IsFunction { get; }
 	/// <summary>
 	/// Message for read-only instance exception.
 	/// </summary>

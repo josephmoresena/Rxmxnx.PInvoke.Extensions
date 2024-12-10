@@ -24,8 +24,8 @@ internal sealed class ItalianMessageResource : IMessageResource
 	String IMessageResource.InvalidInstance => "L'istanza corrente non è valida.";
 	String IMessageResource.InvalidPointerSerialization
 		=> "Un IntPtr o UIntPtr con un valore di otto byte non può essere deserializzato su una macchina con una dimensione di parola di quattro byte.";
-	String IMessageResource.NotFunction => "L'istanza corrente non è una funzione.";
-	String IMessageResource.Function => "L'istanza corrente è una funzione.";
+	String IMessageResource.IsNotFunction => "L'istanza corrente non è una funzione.";
+	String IMessageResource.IsFunction => "L'istanza corrente è una funzione.";
 	String IMessageResource.ReadOnlyInstance => "L'istanza corrente è di sola lettura.";
 	String IMessageResource.InvalidUnmanagedCast
 		=> "Le dimensioni dei tipi non gestiti di origine e destinazione devono essere uguali.";

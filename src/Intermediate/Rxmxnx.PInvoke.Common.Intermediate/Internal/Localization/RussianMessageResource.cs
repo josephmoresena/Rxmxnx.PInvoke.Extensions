@@ -24,8 +24,8 @@ internal sealed class RussianMessageResource : IMessageResource
 	String IMessageResource.InvalidInstance => "Текущий экземпляр недействителен.";
 	String IMessageResource.InvalidPointerSerialization
 		=> "IntPtr или UIntPtr с восьмибайтовым значением не может быть десериализован на машине с четырехбайтовым размером слова.";
-	String IMessageResource.NotFunction => "Текущий экземпляр не является функцией.";
-	String IMessageResource.Function => "Текущий экземпляр является функцией.";
+	String IMessageResource.IsNotFunction => "Текущий экземпляр не является функцией.";
+	String IMessageResource.IsFunction => "Текущий экземпляр является функцией.";
 	String IMessageResource.ReadOnlyInstance => "Текущий экземпляр доступен только для чтения.";
 	String IMessageResource.InvalidUnmanagedCast
 		=> "Размеры исходного и целевого неуправляемых типов должны быть равны.";

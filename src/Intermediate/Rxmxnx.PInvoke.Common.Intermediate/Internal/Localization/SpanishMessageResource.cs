@@ -24,8 +24,8 @@ internal sealed class SpanishMessageResource : IMessageResource
 	String IMessageResource.InvalidInstance => "La instancia actual no es válida.";
 	String IMessageResource.InvalidPointerSerialization
 		=> "Un IntPtr o UIntPtr con un valor de ocho bytes no se puede deserializar en una máquina con un tamaño de palabra de cuatro bytes.";
-	String IMessageResource.NotFunction => "La instancia actual no es una función.";
-	String IMessageResource.Function => "La instancia actual es una función.";
+	String IMessageResource.IsNotFunction => "La instancia actual no es una función.";
+	String IMessageResource.IsFunction => "La instancia actual es una función.";
 	String IMessageResource.ReadOnlyInstance => "La instancia actual es de sólo lectura.";
 	String IMessageResource.InvalidUnmanagedCast
 		=> "Los tamaños de los tipos no administrados de origen y destino deben ser iguales.";

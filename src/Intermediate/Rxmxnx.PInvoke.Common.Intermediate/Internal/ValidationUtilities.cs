@@ -126,7 +126,7 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfNotFunctionPointer(Boolean isFunction)
 	{
 		if (isFunction) return;
-		String message = IMessageResource.GetInstance().NotFunction;
+		String message = IMessageResource.GetInstance().IsNotFunction;
 		throw new InvalidOperationException(message);
 	}
 
@@ -141,7 +141,7 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfFunctionPointer(Boolean isFunction)
 	{
 		if (!isFunction) return;
-		String message = IMessageResource.GetInstance().Function;
+		String message = IMessageResource.GetInstance().IsFunction;
 		throw new InvalidOperationException(message);
 	}
 

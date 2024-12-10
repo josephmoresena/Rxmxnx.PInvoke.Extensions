@@ -24,8 +24,8 @@ internal sealed class ArabicMessageResource : IMessageResource
 	String IMessageResource.InvalidInstance => "المثال الحالي غير صالح.";
 	String IMessageResource.InvalidPointerSerialization
 		=> "لا يمكن إلغاء تسلسل IntPtr أو UIntPtr بقيمة ثمانية بايتات على جهاز بحجم كلمة أربعة بايتات.";
-	String IMessageResource.NotFunction => "المثال الحالي ليس دالة.";
-	String IMessageResource.Function => "المثال الحالي هو دالة.";
+	String IMessageResource.IsNotFunction => "المثال الحالي ليس دالة.";
+	String IMessageResource.IsFunction => "المثال الحالي هو دالة.";
 	String IMessageResource.ReadOnlyInstance => "المثال الحالي للقراءة فقط.";
 	String IMessageResource.InvalidUnmanagedCast => "يجب أن تكون أحجام النوعين غير المُدار المصدر والوجهة متساوية.";
 	String IMessageResource.NotStartedEnumerable => "لم يتم بدء التعداد. اتصل بـ MoveNext.";

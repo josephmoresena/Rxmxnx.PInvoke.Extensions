@@ -24,8 +24,8 @@ internal sealed class FrenchMessageResource : IMessageResource
 	String IMessageResource.InvalidInstance => "L'instance actuelle n'est pas valide.";
 	String IMessageResource.InvalidPointerSerialization
 		=> "Un IntPtr ou UIntPtr avec une valeur de huit octets ne peut pas être désérialisé sur une machine avec une taille de mot de quatre octets.";
-	String IMessageResource.NotFunction => "L'instance actuelle n'est pas une fonction.";
-	String IMessageResource.Function => "L'instance actuelle est une fonction.";
+	String IMessageResource.IsNotFunction => "L'instance actuelle n'est pas une fonction.";
+	String IMessageResource.IsFunction => "L'instance actuelle est une fonction.";
 	String IMessageResource.ReadOnlyInstance => "L'instance actuelle est en lecture seule.";
 	String IMessageResource.InvalidUnmanagedCast
 		=> "Les tailles des types non gérés source et destination doivent être égales.";

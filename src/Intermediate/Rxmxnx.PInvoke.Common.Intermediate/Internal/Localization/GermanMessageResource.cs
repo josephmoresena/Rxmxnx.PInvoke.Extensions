@@ -24,8 +24,8 @@ internal sealed class GermanMessageResource : IMessageResource
 	String IMessageResource.InvalidInstance => "Die aktuelle Instanz ist ungültig.";
 	String IMessageResource.InvalidPointerSerialization
 		=> "Ein IntPtr oder UIntPtr mit einem Wert von acht Bytes kann auf einer Maschine mit einer Wortgröße von vier Bytes nicht deserialisiert werden.";
-	String IMessageResource.NotFunction => "Die aktuelle Instanz ist keine Funktion.";
-	String IMessageResource.Function => "Die aktuelle Instanz ist eine Funktion.";
+	String IMessageResource.IsNotFunction => "Die aktuelle Instanz ist keine Funktion.";
+	String IMessageResource.IsFunction => "Die aktuelle Instanz ist eine Funktion.";
 	String IMessageResource.ReadOnlyInstance => "Die aktuelle Instanz ist schreibgeschützt.";
 	String IMessageResource.InvalidUnmanagedCast => "Die Größen von Quell- und Zieltypen müssen gleich sein.";
 	String IMessageResource.NotStartedEnumerable => "Die Enumeration wurde nicht gestartet. Rufen Sie MoveNext auf.";

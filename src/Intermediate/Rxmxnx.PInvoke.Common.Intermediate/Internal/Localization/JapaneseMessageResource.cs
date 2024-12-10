@@ -24,8 +24,8 @@ internal sealed class JapaneseMessageResource : IMessageResource
 	String IMessageResource.InvalidInstance => "現在のインスタンスは無効です。";
 	String IMessageResource.InvalidPointerSerialization
 		=> "8バイトの値を持つ IntPtr または UIntPtr は、4バイトのワードサイズのマシンでデシリアライズできません。";
-	String IMessageResource.NotFunction => "現在のインスタンスは関数ではありません。";
-	String IMessageResource.Function => "現在のインスタンスは関数です。";
+	String IMessageResource.IsNotFunction => "現在のインスタンスは関数ではありません。";
+	String IMessageResource.IsFunction => "現在のインスタンスは関数です。";
 	String IMessageResource.ReadOnlyInstance => "現在のインスタンスは読み取り専用です。";
 	String IMessageResource.InvalidUnmanagedCast => "ソースおよびターゲットの非管理型のサイズは等しくなければなりません。";
 	String IMessageResource.NotStartedEnumerable => "列挙が開始されていません。MoveNext を呼び出してください。";

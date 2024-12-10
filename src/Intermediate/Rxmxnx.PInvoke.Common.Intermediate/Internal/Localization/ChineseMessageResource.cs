@@ -23,8 +23,8 @@ internal sealed class ChineseMessageResource : IMessageResource
 	String IMessageResource.InvalidSequenceIndex => "索引超出了序列的范围。";
 	String IMessageResource.InvalidInstance => "当前实例无效。";
 	String IMessageResource.InvalidPointerSerialization => "具有八字节值的 IntPtr 或 UIntPtr 无法在四字节字大小的机器上反序列化。";
-	String IMessageResource.NotFunction => "当前实例不是函数。";
-	String IMessageResource.Function => "当前实例是一个函数。";
+	String IMessageResource.IsNotFunction => "当前实例不是函数。";
+	String IMessageResource.IsFunction => "当前实例是一个函数。";
 	String IMessageResource.ReadOnlyInstance => "当前实例是只读的。";
 	String IMessageResource.InvalidUnmanagedCast => "源和目标非托管类型的大小必须相等。";
 	String IMessageResource.NotStartedEnumerable => "枚举尚未开始。调用 MoveNext。";
