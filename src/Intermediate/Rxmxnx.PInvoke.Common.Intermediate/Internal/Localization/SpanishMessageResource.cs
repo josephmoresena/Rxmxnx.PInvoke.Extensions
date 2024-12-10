@@ -42,7 +42,7 @@ internal sealed class SpanishMessageResource : IMessageResource
 	String IMessageResource.IndexOutOfSequence
 		=> "El índice y la longitud deben hacer referencia a una ubicación dentro de la secuencia.";
 
-	String IMessageResource.InvalidType(String nameofPtr) => $"El objeto debe ser del tipo {nameofPtr}.";
+	String IMessageResource.InvalidType(String requiredTypeName) => $"El objeto debe ser del tipo {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)
 		=> $"La instancia actual es insuficiente para contener un valor del tipo {typeOf}.";
 	String IMessageResource.InvalidBinarySpanSize(String nameofSpan, Int32 sizeOf)
