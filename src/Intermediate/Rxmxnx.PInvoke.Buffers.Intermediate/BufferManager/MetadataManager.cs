@@ -106,13 +106,16 @@ public static partial class BufferManager
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6670)]
 		public static void PrintMetadata()
 		{
-			foreach (UInt16 key in MetadataManager<T>.store.BinaryBuffers.Keys)
+			lock (MetadataManager<T>.store.LockObject)
 			{
-				BufferTypeMetadata<T> m = MetadataManager<T>.store.BinaryBuffers[key];
-				Trace.WriteLine(
-					$"{typeof(T)} {key}({String.Join(", ", m.Components.Select(k => k.Size))}): {m.IsBinary}.");
+				foreach (UInt16 key in MetadataManager<T>.store.BinaryBuffers.Keys)
+				{
+					BufferTypeMetadata<T> m = MetadataManager<T>.store.BinaryBuffers[key];
+					Trace.WriteLine(
+						$"{typeof(T)} {key}({String.Join(", ", m.Components.Select(k => k.Size))}): {m.IsBinary}.");
+				}
+				Trace.WriteLine($"{typeof(T)}: {MetadataManager<T>.store.BinaryBuffers.Count}");
 			}
-			Trace.WriteLine($"{typeof(T)}: {MetadataManager<T>.store.BinaryBuffers.Count}");
 		}
 #endif
 	}
