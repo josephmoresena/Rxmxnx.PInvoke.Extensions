@@ -26,8 +26,9 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfInvalidListIndex(Int32 index, Int32 count,
 		[CallerArgumentExpression(nameof(index))] String nameofIndex = ValidationUtilities.EmptyString)
 	{
-		if (index < 0 || index >= count)
-			throw new ArgumentOutOfRangeException(nameofIndex, "Index was outside the bounds of the list.");
+		if (index >= 0 && index < count) return;
+		String message = IMessageResource.GetInstance().InvalidListIndexMessage;
+		throw new ArgumentOutOfRangeException(nameofIndex, message);
 	}
 
 	/// <summary>
@@ -45,8 +46,9 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfInvalidSequenceIndex(Int32 index, Int32 count,
 		[CallerArgumentExpression(nameof(index))] String nameofIndex = ValidationUtilities.EmptyString)
 	{
-		if (index < 0 || index >= count)
-			throw new ArgumentOutOfRangeException(nameofIndex, "Index was outside the bounds of the sequence.");
+		if (index >= 0 && index < count) return;
+		String message = IMessageResource.GetInstance().InvalidSequenceIndex;
+		throw new ArgumentOutOfRangeException(nameofIndex, message);
 	}
 
 	/// <summary>
@@ -59,8 +61,9 @@ internal static unsafe class ValidationUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidPointer(IWrapper<Boolean> isValid)
 	{
-		if (!isValid.Value)
-			throw new InvalidOperationException("The current instance is not valid.");
+		if (isValid.Value) return;
+		String message = IMessageResource.GetInstance().InvalidInstance;
+		throw new InvalidOperationException(message);
 	}
 
 	/// <summary>
@@ -75,10 +78,9 @@ internal static unsafe class ValidationUtilities
 	public static void* ThrowIfInvalidPointer(SerializationInfo info)
 	{
 		Int64 l = info.GetInt64("value");
-		if (IntPtr.Size == 4 && l is > Int32.MaxValue or < Int32.MinValue)
-			throw new ArgumentException(
-				"An IntPtr or UIntPtr with an eight byte value cannot be deserialized on a machine with a four byte word size.");
-		return (void*)l;
+		if (IntPtr.Size != 4 || l is <= Int32.MaxValue and >= Int32.MinValue) return (void*)l;
+		String message = IMessageResource.GetInstance().InvalidPointerSerialization;
+		throw new ArgumentException(message);
 	}
 	/// <summary>
 	/// Throws an exception if <paramref name="info"/> is <see langword="null"/>.
@@ -110,7 +112,7 @@ internal static unsafe class ValidationUtilities
 			null => 1,
 			ValPtr<T> v => ptr.CompareTo(v.Pointer),
 			ReadOnlyValPtr<T> r => ptr.CompareTo(r.Pointer),
-			_ => throw new ArgumentException($"Object must be of type {nameofPtr}."),
+			_ => throw new ArgumentException(IMessageResource.GetInstance().InvalidType(nameofPtr)),
 		};
 
 	/// <summary>
@@ -123,8 +125,9 @@ internal static unsafe class ValidationUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfNotFunctionPointer(Boolean isFunction)
 	{
-		if (!isFunction)
-			throw new InvalidOperationException("The current instance is not a function.");
+		if (isFunction) return;
+		String message = IMessageResource.GetInstance().NotFunction;
+		throw new InvalidOperationException(message);
 	}
 
 	/// <summary>
@@ -137,8 +140,9 @@ internal static unsafe class ValidationUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfFunctionPointer(Boolean isFunction)
 	{
-		if (isFunction)
-			throw new InvalidOperationException("The current instance is a function.");
+		if (!isFunction) return;
+		String message = IMessageResource.GetInstance().Function;
+		throw new InvalidOperationException(message);
 	}
 
 	/// <summary>
@@ -152,8 +156,9 @@ internal static unsafe class ValidationUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfReadOnlyPointer(Boolean isReadOnlyOperation, Boolean isReadOnly)
 	{
-		if (!isReadOnlyOperation && isReadOnly)
-			throw new InvalidOperationException("The current instance is read-only.");
+		if (isReadOnlyOperation || !isReadOnly) return;
+		String message = IMessageResource.GetInstance().ReadOnlyInstance;
+		throw new InvalidOperationException(message);
 	}
 
 	/// <summary>
@@ -170,9 +175,9 @@ internal static unsafe class ValidationUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidRefTypePointer(Int32 binaryLength, Type typeOf, Int32 sizeOf)
 	{
-		if (binaryLength < sizeOf)
-			throw new InsufficientMemoryException(
-				$"The current instance is insufficient to contain a value of {typeOf} type.");
+		if (binaryLength >= sizeOf) return;
+		String message = IMessageResource.GetInstance().InvalidRefTypePointer(typeOf);
+		throw new InsufficientMemoryException(message);
 	}
 
 	/// <summary>
@@ -191,7 +196,7 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfInvalidBinarySpanSize(ReadOnlySpan<Byte> span, Int32 sizeOf,
 		[CallerArgumentExpression(nameof(span))] String nameofSpan = ValidationUtilities.EmptyString)
 	{
-		String message = $"The length of parameter {nameofSpan} must be equals to {sizeOf}.";
+		String message = IMessageResource.GetInstance().InvalidBinarySpanSize(nameofSpan, sizeOf);
 		if (span.Length < sizeOf)
 			throw new InsufficientMemoryException(message);
 		if (span.Length > sizeOf)
@@ -219,7 +224,7 @@ internal static unsafe class ValidationUtilities
 		[CallerArgumentExpression(nameof(obj))] String nameofObj = ValidationUtilities.EmptyString)
 	{
 		if (obj is not T value)
-			throw new ArgumentException($"Object must be of type {typeName}.", nameofObj);
+			throw new ArgumentException(IMessageResource.GetInstance().InvalidType(typeName), nameofObj);
 		result = value;
 	}
 
@@ -235,9 +240,9 @@ internal static unsafe class ValidationUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidCastType(Int32 destinationSize, Int32 sourceSize)
 	{
-		if (destinationSize != sourceSize)
-			throw new InvalidOperationException(
-				"The sizes of both source and destination unmanaged types must be equal.");
+		if (destinationSize == sourceSize) return;
+		String message = IMessageResource.GetInstance().InvalidUnmanagedCast;
+		throw new InvalidOperationException(message);
 	}
 
 	/// <summary>
@@ -261,9 +266,9 @@ internal static unsafe class ValidationUtilities
 		ref TValue refValue = ref Unsafe.AsRef(in value);
 		ReadOnlySpan<TValue> intermediateSpan = MemoryMarshal.CreateReadOnlySpan(ref refValue, 1);
 		bytes = MemoryMarshal.AsBytes(intermediateSpan);
-		if (destination.Length - offset < bytes.Length)
-			throw new InsufficientMemoryException(
-				$"Insufficient available size on {nameof(destination)} to copy {nameof(value)}.");
+		if (destination.Length - offset >= bytes.Length) return;
+		String message = IMessageResource.GetInstance().InvalidCopyUnmanagedType(nameof(destination), nameof(value));
+		throw new InsufficientMemoryException(message);
 	}
 
 	/// <summary>
@@ -276,8 +281,9 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfInvalidMemoryLength(Int32 length,
 		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.EmptyString)
 	{
-		if (length < 0)
-			throw new ArgumentException($"The parameter {nameofLength} must be zero or positive integer.");
+		if (length >= 0) return;
+		String message = IMessageResource.GetInstance().InvalidLength(nameofLength);
+		throw new ArgumentException(message);
 	}
 
 	/// <summary>
@@ -291,10 +297,11 @@ internal static unsafe class ValidationUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidIndexEnumerator(Int32 index, Int32 enumerationSize)
 	{
+		IMessageResource resource = IMessageResource.GetInstance();
 		if (index < 0)
-			throw new InvalidOperationException("Enumeration has not started. Call MoveNext.");
+			throw new InvalidOperationException(resource.NotStartedEnumerable);
 		if (index >= enumerationSize)
-			throw new InvalidOperationException("Enumeration already finished.");
+			throw new InvalidOperationException(resource.FinishedEnumerable);
 	}
 
 	/// <summary>
@@ -311,7 +318,10 @@ internal static unsafe class ValidationUtilities
 	{
 		result = (Byte[])region!;
 		if (result is null)
-			throw new InvalidOperationException($"{nameofRegion} does not contains the UTF-8 text.");
+		{
+			String message = IMessageResource.GetInstance().InvalidUtf8Region(nameofRegion);
+			throw new InvalidOperationException(message);
+		}
 	}
 
 	/// <summary>
@@ -332,19 +342,18 @@ internal static unsafe class ValidationUtilities
 		[CallerArgumentExpression(nameof(startIndex))] String nameofStartIndex = ValidationUtilities.EmptyString,
 		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.EmptyString)
 	{
+		IMessageResource resource = IMessageResource.GetInstance();
 		if (startIndex < 0)
-			throw new ArgumentOutOfRangeException(nameofStartIndex, "StartIndex cannot be less than zero.");
+			throw new ArgumentOutOfRangeException(nameofStartIndex, resource.LessThanZero);
 
 		if (startIndex > regionLength)
-			throw new ArgumentOutOfRangeException(nameofStartIndex,
-			                                      $"{nameofStartIndex} cannot be larger than length of region.");
+			throw new ArgumentOutOfRangeException(nameofStartIndex, resource.LargerThanRegionLength);
 
 		if (length < 0)
-			throw new ArgumentOutOfRangeException(nameofLength, "Length cannot be less than zero.");
+			throw new ArgumentOutOfRangeException(nameofLength, resource.LessThanZero);
 
 		if (startIndex > regionLength - length)
-			throw new ArgumentOutOfRangeException(nameofLength,
-			                                      "Index and length must refer to a location within the region.");
+			throw new ArgumentOutOfRangeException(nameofLength, resource.IndexOutOfRegion);
 	}
 
 	/// <summary>
@@ -365,19 +374,18 @@ internal static unsafe class ValidationUtilities
 		[CallerArgumentExpression(nameof(startIndex))] String nameofStartIndex = ValidationUtilities.EmptyString,
 		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.EmptyString)
 	{
+		IMessageResource resource = IMessageResource.GetInstance();
 		if (startIndex < 0)
-			throw new ArgumentOutOfRangeException(nameofStartIndex, "StartIndex cannot be less than zero.");
+			throw new ArgumentOutOfRangeException(nameofStartIndex, resource.LessThanZero);
 
 		if (startIndex > stringLength)
-			throw new ArgumentOutOfRangeException(nameofStartIndex,
-			                                      $"{nameofStartIndex} cannot be larger than length of string.");
+			throw new ArgumentOutOfRangeException(nameofStartIndex, resource.LargerThanStringLength);
 
 		if (length < 0)
-			throw new ArgumentOutOfRangeException(nameofLength, "Length cannot be less than zero.");
+			throw new ArgumentOutOfRangeException(nameofLength, resource.LessThanZero);
 
 		if (startIndex > stringLength - length)
-			throw new ArgumentOutOfRangeException(nameofLength,
-			                                      "Index and length must refer to a location within the string.");
+			throw new ArgumentOutOfRangeException(nameofLength, resource.IndexOutOfString);
 	}
 
 	/// <summary>
@@ -399,34 +407,18 @@ internal static unsafe class ValidationUtilities
 		[CallerArgumentExpression(nameof(startIndex))] String nameofStartIndex = ValidationUtilities.EmptyString,
 		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.EmptyString)
 	{
+		IMessageResource resource = IMessageResource.GetInstance();
 		if (startIndex < 0)
-			throw new ArgumentOutOfRangeException(nameofStartIndex, "StartIndex cannot be less than zero.");
+			throw new ArgumentOutOfRangeException(nameofStartIndex, resource.LessThanZero);
 
 		if (startIndex > sequenceLength)
-			throw new ArgumentOutOfRangeException(nameofStartIndex,
-			                                      $"{nameofStartIndex} cannot be larger than length of sequence.");
+			throw new ArgumentOutOfRangeException(nameofStartIndex, resource.LargerThanSequenceLength);
 
 		if (length < 0)
-			throw new ArgumentOutOfRangeException(nameofLength, "Length cannot be less than zero.");
+			throw new ArgumentOutOfRangeException(nameofLength, resource.LessThanZero);
 
 		if (startIndex > sequenceLength - length)
-			throw new ArgumentOutOfRangeException(nameofLength,
-			                                      "Index and length must refer to a location within the sequence.");
-	}
-	/// <summary>
-	/// Throws an exception if buffer is not a space.
-	/// </summary>
-	/// <param name="isBinary">Indicates whether buffer is binary.</param>
-	/// <param name="bufferSize">Buffer sizes.</param>
-	/// <param name="type">CLR type of buffer.</param>
-	/// <exception cref="InvalidOperationException">Throws an exception if buffer is not a space.</exception>
-	[ExcludeFromCodeCoverage]
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void ThrowIfNotSpace(Boolean isBinary, Span<UInt16> bufferSize, Type type)
-	{
-		if (!isBinary || bufferSize[0] != 2 * bufferSize[1] || bufferSize[1] != bufferSize[2])
-			throw new InvalidOperationException(
-				$"{type} is not an space. Size: {bufferSize[0]} ({bufferSize[2]}, {bufferSize[1]}).");
+			throw new ArgumentOutOfRangeException(nameofLength, resource.IndexOutOfSequence);
 	}
 	/// <summary>
 	/// Throws an exception if <paramref name="type"/> is not unmanaged.
@@ -439,8 +431,9 @@ internal static unsafe class ValidationUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfNotUnmanagedType(Type? type, Boolean isUnmanaged)
 	{
-		if (type is not null && (!type.IsValueType || !isUnmanaged))
-			throw new InvalidOperationException($"{type} is not a value type.");
+		if (type is null || (type.IsValueType && isUnmanaged)) return;
+		String message = IMessageResource.GetInstance().NotUnmanagedType(type);
+		throw new InvalidOperationException(message);
 	}
 	/// <summary>
 	/// Throws an exception if transformation from <paramref name="sourceType"/> to
@@ -458,21 +451,23 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfInvalidTransformation(Type? sourceType, Boolean unmanagedSource, Type destinationType,
 		Boolean unmanagedDestination)
 	{
+		IMessageResource resource = IMessageResource.GetInstance();
 		if (!destinationType.IsValueType)
 		{
 			if (sourceType is null || sourceType.IsValueType)
-				throw new InvalidOperationException($"{destinationType} is not a value type.");
+				throw new InvalidOperationException(resource.NotValueType(destinationType));
 		}
 		else if (!unmanagedSource)
 		{
+			sourceType ??= typeof(Byte);
 			if (unmanagedDestination)
-				throw new InvalidOperationException($"{sourceType ?? typeof(Byte)} is not a unmanaged type.");
+				throw new InvalidOperationException(resource.NotUnmanagedType(sourceType));
 			if (destinationType != sourceType)
-				throw new InvalidOperationException($"{sourceType ?? typeof(Byte)} is not {destinationType}.");
+				throw new InvalidOperationException(resource.NotType(sourceType, destinationType));
 		}
 		else if (!unmanagedDestination)
 		{
-			throw new InvalidOperationException($"{destinationType} is not a unmanaged type.");
+			throw new InvalidOperationException(resource.NotUnmanagedType(destinationType));
 		}
 	}
 	/// <summary>
@@ -489,15 +484,33 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfInvalidBuffer(Type itemType, Boolean isItemUnmanaged, Type arrayType,
 		Boolean isArrayUnmanaged)
 	{
+		IMessageResource resource = IMessageResource.GetInstance();
 		String? message = isItemUnmanaged switch
 		{
 			false when isArrayUnmanaged => itemType.IsValueType ?
-				$"{itemType} contains references but {arrayType} is unmanaged type." :
-				$"{itemType} is a reference type but {arrayType} is unmanaged type.",
-			true when !isArrayUnmanaged => $"{itemType} is an unmanaged type but {arrayType} contains references.",
+				resource.ContainsReferencesButUnmanaged(itemType, arrayType) :
+				resource.ReferencesTypeButUnmanaged(itemType, arrayType),
+			true when !isArrayUnmanaged => resource.UnmanagedTypeButContainsReferences(itemType, arrayType),
 			_ => default,
 		};
 		if (!String.IsNullOrEmpty(message))
 			throw new InvalidOperationException(message);
 	}
+#if BINARY_SPACES
+	/// <summary>
+	/// Throws an exception if buffer is not a space.
+	/// </summary>
+	/// <param name="isBinary">Indicates whether buffer is binary.</param>
+	/// <param name="bufferSize">Buffer sizes.</param>
+	/// <param name="type">CLR type of buffer.</param>
+	/// <exception cref="InvalidOperationException">Throws an exception if buffer is not a space.</exception>
+	[ExcludeFromCodeCoverage]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNotSpace(Boolean isBinary, Span<UInt16> bufferSize, Type type)
+	{
+		if (!isBinary || bufferSize[0] != 2 * bufferSize[1] || bufferSize[1] != bufferSize[2])
+			throw new InvalidOperationException(
+				$"{type} is not an space. Size: {bufferSize[0]} ({bufferSize[2]}, {bufferSize[1]}).");
+	}
+#endif
 }

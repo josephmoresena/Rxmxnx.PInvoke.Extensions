@@ -14,6 +14,7 @@
         <ExcludeXmlAssemblyFiles>false</ExcludeXmlAssemblyFiles>
         <LangVersion>latest</LangVersion>
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
+        <DefineConstants Condition="'$(DISABLE_BINARY_SPACES)' != 'true'">$(DefineConstants);BINARY_SPACES</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>
@@ -27,9 +28,12 @@
         <Using Include="System.Runtime.CompilerServices"/>
         <Using Include="System.Runtime.InteropServices"/>
         <Using Include="System.Runtime.Serialization"/>
+        <Using Include="System.Runtime.Versioning"/>
         <Using Include="System.Text"/>
 
         <Using Include="Rxmxnx.PInvoke.Internal"/>
+        <Using Include="Rxmxnx.PInvoke.Internal.Localization"/>
+        <Using Include="Rxmxnx.PInvoke.Localization"/>
     </ItemGroup>
 
     <ItemGroup>
