@@ -22,6 +22,7 @@
 
         <Using Include="Rxmxnx.PInvoke"/>
         <Using Include="Rxmxnx.PInvoke.Internal"/>
+        <Using Include="Rxmxnx.PInvoke.Internal.Localization"/>
     </ItemGroup>
 
     <ItemGroup>

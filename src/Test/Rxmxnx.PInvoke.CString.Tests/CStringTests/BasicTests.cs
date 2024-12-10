@@ -3,6 +3,8 @@
 [ExcludeFromCodeCoverage]
 public sealed class BasicTests
 {
+	private static readonly String[] texts = IMessageResource.GetInstance().InvalidUtf8Region("|").Split('|');
+
 	[Fact]
 	internal void EmptyTest()
 	{
@@ -211,7 +213,8 @@ public sealed class BasicTests
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
 
 		Exception ex = BasicTests.AssertGetBytesException(cstr);
-		Assert.Contains("does not contains the UTF-8 text.", ex.Message);
+		foreach (String text in BasicTests.texts)
+			Assert.Contains(text, ex.Message);
 	}
 	private static void AssertFromNullTerminatedBytes(CString cstr)
 	{
@@ -280,7 +283,8 @@ public sealed class BasicTests
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
 
 		Exception ex = BasicTests.AssertGetBytesException(cstr);
-		Assert.Contains("does not contains the UTF-8 text.", ex.Message);
+		foreach (String text in BasicTests.texts)
+			Assert.Contains(text, ex.Message);
 
 		CString rawSpanClone = CString.Create(cstr);
 		Assert.False(rawSpanClone.IsFunction);
@@ -301,7 +305,8 @@ public sealed class BasicTests
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
 
 		Exception ex = BasicTests.AssertGetBytesException(cstr);
-		Assert.Contains("does not contains the UTF-8 text.", ex.Message);
+		foreach (String text in BasicTests.texts)
+			Assert.Contains(text, ex.Message);
 
 		CString rawSpanClone = CString.Create(cstr);
 		Assert.False(rawSpanClone.IsFunction);
@@ -321,7 +326,8 @@ public sealed class BasicTests
 		Assert.False(CString.IsNullOrEmpty(cstr));
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
 		Exception ex = BasicTests.AssertGetBytesException(cstr);
-		Assert.Contains("does not contains the UTF-8 text.", ex.Message);
+		foreach (String text in BasicTests.texts)
+			Assert.Contains(text, ex.Message);
 
 		fixed (void* ptr = cstr.AsSpan())
 		{
