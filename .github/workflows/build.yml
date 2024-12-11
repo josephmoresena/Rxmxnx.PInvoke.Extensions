@@ -108,4 +108,4 @@ jobs:
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release --settings src\Test\x86.runsettings
     - name: Windows x64 tests
       run: |
-          dotnet test src --verbosity detailed --no-build --no-restore --configuration release --arch x64
+          dotnet test src --verbosity detailed --no-build --no-restore --configuration release 
