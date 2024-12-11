@@ -100,7 +100,7 @@ jobs:
           dotnet restore src 
           dotnet build src --configuration release 
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release
-    name: Setup .NET x86
+    - name: Setup .NET x86
       run: |
           winget install Microsoft.DotNet.SDK.9 --architecture x86
     - name: Windows x86 tets
