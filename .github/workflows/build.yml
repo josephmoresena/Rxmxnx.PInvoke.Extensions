@@ -67,7 +67,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
-    - name: linux tests
+    - name: Linux tests
       run: |
           dotnet restore src 
           dotnet build src --configuration release 
@@ -81,11 +81,11 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
-    - name: osx tests
+    - name: MacOS tests
       run: |
           dotnet restore src 
           dotnet build src --configuration release 
-          dotnet test src --verbosity detailed --no-build --no-restore --configuration release
+          dotnet test src --verbosity detailed --no-build --no-restore --configuration release 
         
   run-windows:
     runs-on: windows-latest
@@ -95,25 +95,25 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
-    - name: win-x64 tests
+    - name: Build test
       run: |
-          dotnet restore src --runtime win-x64 
-          dotnet build src/Test/Rxmxnx.PInvoke.Common.Tests --configuration release --runtime win-x64
-          dotnet build src/Test/Rxmxnx.PInvoke.Buffers.Tests --configuration release --runtime win-x64
-          dotnet build src/Test/Rxmxnx.PInvoke.CString.Tests --configuration release --runtime win-x64
-          dotnet build src/Test/Rxmxnx.PInvoke.Extensions.Tests --configuration release --runtime win-x64
-          dotnet test src/Test/Rxmxnx.PInvoke.Common.Tests --verbosity detailed --no-build --no-restore --configuration release --runtime win-x64
-          dotnet test src/Test/Rxmxnx.PInvoke.Buffers.Tests --verbosity detailed --no-build --no-restore --configuration release --runtime win-x64
-          dotnet test src/Test/Rxmxnx.PInvoke.CString.Tests --verbosity detailed --no-build --no-restore --configuration release --runtime win-x64
-          dotnet test src/Test/Rxmxnx.PInvoke.Extensions.Tests --verbosity detailed --no-build --no-restore --configuration release --runtime win-x64
-    - name: win-x86 tests
+          dotnet restore src 
+          dotnet build src --configuration release 
+    - name: Win-x64 tests
       run: |
-          dotnet restore src --runtime win-x86 
-          dotnet build src\Test\Rxmxnx.PInvoke.Common.Tests --configuration release --runtime win-x86
-          dotnet build src\Test\Rxmxnx.PInvoke.Buffers.Tests --configuration release --runtime win-x86
-          dotnet build src\Test\Rxmxnx.PInvoke.CString.Tests --configuration release --runtime win-x86
-          dotnet build src\Test\Rxmxnx.PInvoke.Extensions.Tests --configuration release --runtime win-x86
-          dotnet test src\Test\Rxmxnx.PInvoke.Common.Tests --verbosity detailed --no-build --no-restore --configuration release --runtime win-x86
-          dotnet test src\Test\Rxmxnx.PInvoke.Buffers.Tests --verbosity detailed --no-build --no-restore --configuration release --runtime win-x86
-          dotnet test src\Test\Rxmxnx.PInvoke.CString.Tests --verbosity detailed --no-build --no-restore --configuration release --runtime win-x86
-          dotnet test src\Test\Rxmxnx.PInvoke.Extensions.Tests --verbosity detailed --no-build --no-restore --configuration release --runtime win-x86
+          dotnet test src --verbosity detailed --no-build --no-restore --configuration release 
+    - name: Create x86.runsettings
+      run: |
+        $filePath = "$(Get-Location)\x86.runsettings"
+        $runSettingsContent = @"
+<RunSettings>
+  <RunConfiguration>
+    <TargetPlatform>x86</TargetPlatform>
+  </RunConfiguration>
+</RunSettings>
+"@
+        Set-Content -Path $filePath -Value $runSettingsContent -Force 
+      shell: pwsh
+    - name: Win-x86 tests
+      run: |
+          dotnet test src --verbosity detailed --no-build --no-restore --configuration release --settings x86.runsettings 
