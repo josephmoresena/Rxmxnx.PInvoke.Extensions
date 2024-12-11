@@ -86,6 +86,7 @@ jobs:
           dotnet restore src 
           dotnet build src --configuration release 
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release
+          dotnet restore src --runtime osx-x64
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release --settings src/Test/x64.runsettings
         
   run-windows:
@@ -101,4 +102,5 @@ jobs:
           dotnet restore src 
           dotnet build src --configuration release 
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release
+          dotnet restore src --runtime win-x86
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release --settings src/Test/x86.runsettings
