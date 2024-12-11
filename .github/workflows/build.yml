@@ -99,5 +99,7 @@ jobs:
       run: |
           dotnet restore src 
           dotnet build src --configuration release 
-          dotnet test src --verbosity detailed --no-build --no-restore --configuration release --arch x86
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release
+    - name: Windows x86 tests
+      run: |
+          dotnet test src --verbosity detailed --no-build --no-restore --configuration release --arch x86
