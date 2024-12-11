@@ -95,17 +95,17 @@ jobs:
       uses: Cyberboss/install-winget@v1
     - name: Setup .NET x86
       run: |
-          winget install Microsoft.DotNet.SDK.9 --architecture x86 --disable-interactivity --accept-source-agreements
+          winget install Microsoft.DotNet.SDK.9 --architecture x86 --scope machine --silent --disable-interactivity --accept-source-agreements
     - name: Setup .NET x64
       run: |
-          winget install Microsoft.DotNet.SDK.9 --architecture x64 --force --disable-interactivity --accept-source-agreements
+          winget install Microsoft.DotNet.SDK.9 --architecture x64 --scope machine --silent --force --disable-interactivity --accept-source-agreements
     - name: Build tests
       run: |
           dotnet restore src 
           dotnet build src --configuration release 
     - name: Windows x86 tests
       run: |
-          dotnet test src --verbosity detailed --no-build --no-restore --configuration release --arch x86
+          dotnet test src --verbosity detailed --no-build --no-restore --configuration release --settings src\Test\x86.runsettings
     - name: Windows x64 tests
       run: |
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release --arch x64
