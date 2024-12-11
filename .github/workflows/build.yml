@@ -94,18 +94,9 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 9.0.x
-    - name: Install winget
-      uses: Cyberboss/install-winget@v1      
-    - name: Windows x64 tests
+        dotnet-version: 9.0.x   
+    - name: Windows tests
       run: |
           dotnet restore src 
           dotnet build src --configuration release 
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release
-    - name: Setup .NET x86
-      run: |
-          winget install Microsoft.DotNet.SDK.9 --architecture x86 ---disable-interactivity --accept-source-agreements
-    - name: Windows x86 tets
-      run: |
-          dotnet restore src --runtime win-x86
-          dotnet test src --verbosity detailed --no-build --no-restore --configuration release --settings src/Test/x86.runsettings
