@@ -104,7 +104,7 @@ jobs:
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release
     - name: Setup .NET x86
       run: |
-          winget install Microsoft.DotNet.SDK.9 --architecture x86 --accept-package-agreements --silent
+          winget install Microsoft.DotNet.SDK.9 --architecture x86 ---disable-interactivity --accept-source-agreements
     - name: Windows x86 tets
       run: |
           dotnet restore src --runtime win-x86
