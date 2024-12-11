@@ -105,14 +105,26 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int128>(fref));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Single>(fref));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Half>(fref));
-			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Double>(fref));
+			if (sizeof(T) < sizeof(Double))
+				GetTransformationTest.Test<T, Double>(fref);
+			else
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Double>(fref));
 			if (sizeof(T) < sizeof(Decimal))
 				GetTransformationTest.Test<T, Decimal>(fref);
 			else
 				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Decimal>(fref));
-			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, DateTime>(fref));
-			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeOnly>(fref));
-			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeSpan>(fref));
+			if (sizeof(T) < sizeof(DateTime))
+				GetTransformationTest.Test<T, DateTime>(fref);
+			else
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, DateTime>(fref));
+			if (sizeof(T) < sizeof(TimeOnly))
+				GetTransformationTest.Test<T, TimeOnly>(fref);
+			else
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeOnly>(fref));
+			if (sizeof(T) < sizeof(TimeSpan))
+				GetTransformationTest.Test<T, TimeSpan>(fref);
+			else
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeSpan>(fref));
 
 			if (sizeof(T) < sizeof(ManagedStruct))
 				GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(fref);
@@ -244,14 +256,26 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int128>(fref));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Single>(fref));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Half>(fref));
-			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Double>(fref));
+			if (sizeof(T) < sizeof(Double))
+				GetTransformationTest.Test<T, Double>(fref);
+			else
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Double>(fref));
 			if (sizeof(T) < sizeof(Decimal))
 				GetTransformationTest.Test<T, Decimal>(fref);
 			else
 				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Decimal>(fref));
-			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, DateTime>(fref));
-			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeOnly>(fref));
-			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeSpan>(fref));
+			if (sizeof(T) < sizeof(DateTime))
+				GetTransformationTest.Test<T, DateTime>(fref);
+			else
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, DateTime>(fref));
+			if (sizeof(T) < sizeof(TimeOnly))
+				GetTransformationTest.Test<T, TimeOnly>(fref);
+			else
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeOnly>(fref));
+			if (sizeof(T) < sizeof(TimeSpan))
+				GetTransformationTest.Test<T, TimeSpan>(fref);
+			else
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeSpan>(fref));
 
 			if (sizeof(T) < sizeof(ManagedStruct))
 				GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(fref);
