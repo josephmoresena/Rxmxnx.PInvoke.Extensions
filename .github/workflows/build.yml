@@ -85,7 +85,8 @@ jobs:
       run: |
           dotnet restore src 
           dotnet build src --configuration release 
-          dotnet test src --verbosity detailed --no-build --no-restore --configuration release 
+          dotnet test src --verbosity detailed --no-build --no-restore --configuration release
+          dotnet test src --verbosity detailed --no-build --no-restore --configuration release --settings src/Test/x64.runsettings
         
   run-windows:
     runs-on: windows-latest
@@ -95,25 +96,9 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
-    - name: Build test
+    - name: Windows tests
       run: |
           dotnet restore src 
           dotnet build src --configuration release 
-    - name: Win-x64 tests
-      run: |
-          dotnet test src --verbosity detailed --no-build --no-restore --configuration release 
-    - name: Create x86.runsettings
-      run: |
-        $filePath = "$(Get-Location)\x86.runsettings"
-        $runSettingsContent = @"
-<RunSettings>
-  <RunConfiguration>
-    <TargetPlatform>x86</TargetPlatform>
-  </RunConfiguration>
-</RunSettings>
-"@
-        Set-Content -Path $filePath -Value $runSettingsContent -Force 
-      shell: pwsh
-    - name: Win-x86 tests
-      run: |
-          dotnet test src --verbosity detailed --no-build --no-restore --configuration release --settings x86.runsettings 
+          dotnet test src --verbosity detailed --no-build --no-restore --configuration release
+          dotnet test src --verbosity detailed --no-build --no-restore --configuration release --settings src/Test/x86.runsettings
