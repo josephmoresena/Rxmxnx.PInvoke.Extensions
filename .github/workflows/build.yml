@@ -86,8 +86,6 @@ jobs:
           dotnet restore src 
           dotnet build src --configuration release 
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release
-          dotnet restore src --runtime osx-x64
-          dotnet test src --verbosity detailed --no-build --no-restore --configuration release --settings src/Test/x64.runsettings
         
   run-windows:
     runs-on: windows-latest
@@ -97,10 +95,15 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
-    - name: Windows tests
+    - name: Windows x64 tests
       run: |
           dotnet restore src 
           dotnet build src --configuration release 
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release
+    name: Setup .NET x86
+      run: |
+          winget install Microsoft.DotNet.SDK.9 --architecture x86
+    - name: Windows x86 tets
+      run: |
           dotnet restore src --runtime win-x86
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release --settings src/Test/x86.runsettings
