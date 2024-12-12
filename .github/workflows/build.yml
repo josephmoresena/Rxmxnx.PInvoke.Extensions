@@ -57,7 +57,10 @@ jobs:
         run: sed -i -z 's/Rxmxnx.PInvoke.Buffers.Intermediate/Rxmxnx.PInvoke.Extensions/g;' ILLink.Substitutions.xml
       - name: Pack assembly
         working-directory: ./package
-        run: dotnet pack -c Release /p:Version=9999.99.99.99-tmp
+        run: |
+          dotnet pack -c Release /p:Version=9999.99.99.99-tmp
+          ls -sh bin/Release/net*/Rxmxnx.PInvoke.Extensions.dll
+          ls -sh bin/Release/Rxmxnx.PInvoke.Extensions*.*nupkg
         
   run-linux:
     runs-on: ubuntu-latest
