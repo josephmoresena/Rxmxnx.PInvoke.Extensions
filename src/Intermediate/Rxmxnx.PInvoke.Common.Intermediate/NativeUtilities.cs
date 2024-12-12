@@ -319,8 +319,8 @@ public static unsafe partial class NativeUtilities
 #endif
 	{
 #pragma warning disable CS8500
-		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+		fixed (void* _ = &MemoryMarshal.GetReference(span))
 #pragma warning restore CS8500
-			action(new(ptr, span.Length), arg);
+			action(span, arg);
 	}
 }
