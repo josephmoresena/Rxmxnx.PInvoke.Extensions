@@ -7,8 +7,8 @@
 public interface IReadOnlyFixedReference<T> : IReadOnlyReferenceable<T>, IReadOnlyFixedMemory
 {
 	/// <summary>
-	/// Reinterprets the <typeparamref name="T"/> fixed memory reference as a
-	/// <typeparamref name="TDestination"/> memory reference.
+	/// Reinterprets the read-only <typeparamref name="T"/> fixed memory reference as a
+	/// read-only <typeparamref name="TDestination"/> memory reference.
 	/// </summary>
 	/// <typeparam name="TDestination">Type of the reinterpreted memory reference.</typeparam>
 	/// <param name="residual">Output. Residual read-only memory left after the transformation.</param>
