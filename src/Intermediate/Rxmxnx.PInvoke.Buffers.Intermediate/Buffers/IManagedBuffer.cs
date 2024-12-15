@@ -13,14 +13,14 @@ public interface IManagedBuffer<T>
 #if NET6_0
 	[RequiresPreviewFeatures]
 #endif
-	protected internal static abstract BufferTypeMetadata<T>[] Components { get; }
+	internal static abstract BufferTypeMetadata<T>[] Components { get; }
 	/// <summary>
-	/// Buffer metadata.
+	/// Buffer type metadata.
 	/// </summary>
 #if NET6_0
 	[RequiresPreviewFeatures]
 #endif
-	protected static abstract BufferTypeMetadata<T> TypeMetadata { get; }
+	private protected static abstract BufferTypeMetadata<T> TypeMetadata { get; }
 
 	/// <summary>
 	/// Appends all components from current type.
@@ -63,7 +63,7 @@ public interface IManagedBuffer<T>
 	/// </summary>
 	/// <param name="component">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
 	/// <param name="components">A dictionary of components.</param>
-	protected static void AppendComponent(BufferTypeMetadata<T> component,
+	private static void AppendComponent(BufferTypeMetadata<T> component,
 		IDictionary<UInt16, BufferTypeMetadata<T>> components)
 	{
 		if (!components.TryAdd(component.Size, component)) return;

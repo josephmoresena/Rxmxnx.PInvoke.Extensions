@@ -25,7 +25,7 @@ public interface IEnumerableSequence<out T> : IEnumerable<T>
 	/// </summary>
 	protected void DisposeEnumeration()
 	{
-		// By default no resources to dispose.
+		// By default, no resources to dispose.
 	}
 
 	/// <summary>

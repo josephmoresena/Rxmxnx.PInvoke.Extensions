@@ -1,7 +1,7 @@
 namespace Rxmxnx.PInvoke.Buffers;
 
 /// <summary>
-/// This interfaces exposes a managed buffer.
+/// This interfaces exposes a binary managed buffer.
 /// </summary>
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
 public interface IManagedBinaryBuffer<T> : IManagedBuffer<T>
@@ -38,7 +38,7 @@ public interface IManagedBinaryBuffer<T> : IManagedBuffer<T>
 }
 
 /// <summary>
-/// This interfaces exposes a managed buffer.
+/// This interfaces exposes a binary managed buffer.
 /// </summary>
 /// <typeparam name="TBuffer">The type of buffer.</typeparam>
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
