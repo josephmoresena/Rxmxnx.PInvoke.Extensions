@@ -1,7 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// Encapsulates a method that has no parameters and returns a <see cref="ReadOnlySpan{T}"/> instance of type
+/// Encapsulates a method that has no parameters and returns a read-only span of type
 /// <typeparamref name="T"/>.
 /// </summary>
 /// <typeparam name="T">The type of the elements in the returned read-only span.</typeparam>
@@ -9,8 +9,8 @@
 public delegate ReadOnlySpan<T> ReadOnlySpanFunc<T>();
 
 /// <summary>
-/// Encapsulates a method that has no parameters and returns a <see cref="ReadOnlySpan{T}"/> instance of type
-/// <typeparamref name="T"/>.
+/// Encapsulates a method that has a <typeparamref name="TState"/> parameter and returns a
+/// read-only span of type <typeparamref name="T"/>.
 /// </summary>
 /// <typeparam name="T">The type of the elements in the returned read-only span.</typeparam>
 /// <typeparam name="TState">The type of the state object passed to the method.</typeparam>
@@ -23,13 +23,13 @@ public delegate ReadOnlySpan<T> ReadOnlySpanFunc<T, in TState>(TState arg)
 	;
 
 /// <summary>
-/// Encapsulates a method that receives a span of objects of type <typeparamref name="T"/> and a
+/// Encapsulates a method that receives a span of type <typeparamref name="T"/> and a
 /// state object of type <typeparamref name="TArg"/>, and returns a result of type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="T">The type of the elements in the span.</typeparam>
 /// <typeparam name="TArg">The type of the state object passed to the method.</typeparam>
 /// <typeparam name="TResult">The type of the result produced by the method that this delegate encapsulates.</typeparam>
-/// <param name="span">A span of objects of type <typeparamref name="T"/>.</param>
+/// <param name="span">A span of type <typeparamref name="T"/>.</param>
 /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 /// <returns>The return value of the method that this delegate encapsulates.</returns>
 public delegate TResult SpanFunc<T, in TArg, out TResult>(Span<T> span, TArg arg)
@@ -39,13 +39,13 @@ public delegate TResult SpanFunc<T, in TArg, out TResult>(Span<T> span, TArg arg
 	;
 
 /// <summary>
-/// Encapsulates a method that receives a read-only span of objects of type <typeparamref name="T"/> and a
+/// Encapsulates a method that receives a read-only span of type <typeparamref name="T"/> and a
 /// state object of type <typeparamref name="TArg"/>, and returns a result of type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="T">The type of the elements in the span.</typeparam>
 /// <typeparam name="TArg">The type of the state object passed to the method.</typeparam>
 /// <typeparam name="TResult">The type of the result produced by the method that this delegate encapsulates.</typeparam>
-/// <param name="span">A read-only span of objects of type <typeparamref name="T"/>.</param>
+/// <param name="span">A read-only span of type <typeparamref name="T"/>.</param>
 /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 /// <returns>The return value of the method that this delegate encapsulates.</returns>
 public delegate TResult ReadOnlySpanFunc<T, in TArg, out TResult>(ReadOnlySpan<T> span, TArg arg)
@@ -156,14 +156,14 @@ public delegate void FixedContextAction<T, in TArg>(in IFixedContext<T> context,
 	;
 
 /// <summary>
-/// Encapsulates a method that receives a read-only instance of <see cref="IReadOnlyFixedContext{T}"/>.
+/// Encapsulates a method that receives an instance of <see cref="IReadOnlyFixedContext{T}"/>.
 /// </summary>
 /// <typeparam name="T">Type of the fixed context.</typeparam>
 /// <param name="context">The read-only fixed context instance.</param>
 public delegate void ReadOnlyFixedContextAction<T>(in IReadOnlyFixedContext<T> context);
 
 /// <summary>
-/// Encapsulates a method that receives a read-only instance of <see cref="IReadOnlyFixedContext{T}"/> and a state
+/// Encapsulates a method that receives an instance of <see cref="IReadOnlyFixedContext{T}"/> and a state
 /// object of type <typeparamref name="TArg"/>.
 /// </summary>
 /// <typeparam name="T">Type of the fixed context.</typeparam>
@@ -203,7 +203,7 @@ public delegate TResult FixedContextFunc<T, in TArg, out TResult>(in IFixedConte
 	;
 
 /// <summary>
-/// Encapsulates a method that receives a read-only instance of <see cref="IReadOnlyFixedContext{T}"/> and
+/// Encapsulates a method that receives an instance of <see cref="IReadOnlyFixedContext{T}"/> and
 /// returns a value of type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="T">Type of the fixed context.</typeparam>
@@ -213,7 +213,7 @@ public delegate TResult FixedContextFunc<T, in TArg, out TResult>(in IFixedConte
 public delegate TResult ReadOnlyFixedContextFunc<T, out TResult>(in IReadOnlyFixedContext<T> context);
 
 /// <summary>
-/// Encapsulates a method that receives a read-only instance of <see cref="IReadOnlyFixedContext{T}"/>, a
+/// Encapsulates a method that receives an instance of <see cref="IReadOnlyFixedContext{T}"/>, a
 /// state object of type <typeparamref name="TArg"/>, and returns a value of type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="T">Type of the fixed context.</typeparam>
@@ -229,14 +229,14 @@ public delegate TResult ReadOnlyFixedContextFunc<T, in TArg, out TResult>(in IRe
 	;
 
 /// <summary>
-/// Encapsulates a method that takes in an instance of <see cref="IFixedReference{T}"/>.
+/// Encapsulates a method that receives an  instance of <see cref="IFixedReference{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type of the fixed reference.</typeparam>
 /// <param name="reference">An instance of the fixed reference.</param>
 public delegate void FixedReferenceAction<T>(in IFixedReference<T> reference);
 
 /// <summary>
-/// Encapsulates a method that takes in an instance of <see cref="IFixedReference{T}"/> and a state object of
+/// Encapsulates a method that receives an  instance of <see cref="IFixedReference{T}"/> and a state object of
 /// type <typeparamref name="TArg"/>.
 /// </summary>
 /// <typeparam name="T">The type of the fixed reference.</typeparam>
@@ -250,14 +250,14 @@ public delegate void FixedReferenceAction<T, in TArg>(in IFixedReference<T> refe
 	;
 
 /// <summary>
-/// Encapsulates a method that accepts a read-only instance of <see cref="IReadOnlyFixedReference{T}"/>.
+/// Encapsulates a method that receives an instance of <see cref="IReadOnlyFixedReference{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type of the fixed reference.</typeparam>
 /// <param name="reference">A read-only instance of the fixed reference.</param>
 public delegate void ReadOnlyFixedReferenceAction<T>(in IReadOnlyFixedReference<T> reference);
 
 /// <summary>
-/// Encapsulates a method that accepts a read-only instance of <see cref="IReadOnlyFixedReference{T}"/> and a
+/// Encapsulates a method that receives an instance of <see cref="IReadOnlyFixedReference{T}"/> and a
 /// state object of type <typeparamref name="TArg"/>.
 /// </summary>
 /// <typeparam name="T">The type of the fixed reference.</typeparam>
@@ -281,7 +281,7 @@ public delegate void ReadOnlyFixedReferenceAction<T, in TArg>(in IReadOnlyFixedR
 public delegate TResult FixedReferenceFunc<T, out TResult>(in IFixedReference<T> reference);
 
 /// <summary>
-/// Encapsulates a method that accepts an instance of <see cref="IFixedReference{T}"/>, a state object of
+/// Encapsulates a method that receives an instance of <see cref="IFixedReference{T}"/>, a state object of
 /// type <typeparamref name="TArg"/>, and returns a value of type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="T">The type of the fixed reference.</typeparam>
@@ -297,7 +297,7 @@ public delegate TResult FixedReferenceFunc<T, in TArg, out TResult>(in IFixedRef
 	;
 
 /// <summary>
-/// Encapsulates a method that takes in a read-only instance of <see cref="IReadOnlyFixedReference{T}"/> and
+/// Encapsulates a method that receives an instance of <see cref="IReadOnlyFixedReference{T}"/> and
 /// returns a value of type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="T">The type of the fixed reference.</typeparam>
@@ -307,7 +307,7 @@ public delegate TResult FixedReferenceFunc<T, in TArg, out TResult>(in IFixedRef
 public delegate TResult ReadOnlyFixedReferenceFunc<T, out TResult>(in IReadOnlyFixedReference<T> reference);
 
 /// <summary>
-/// Encapsulates a method that receives a read-only instance of <see cref="IReadOnlyFixedReference{T}"/>, a
+/// Encapsulates a method that receives an instance of <see cref="IReadOnlyFixedReference{T}"/>, a
 /// state object of type <typeparamref name="TArg"/>, and returns a value of type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="T">The type of the fixed reference.</typeparam>
@@ -324,14 +324,14 @@ public delegate TResult ReadOnlyFixedReferenceFunc<T, in TArg, out TResult>(in I
 	;
 
 /// <summary>
-/// Encapsulates a method that takes an instance of <see cref="IFixedMethod{T}"/>.
+/// Encapsulates a method that receives an instance of <see cref="IFixedMethod{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type of the fixed method delegate.</typeparam>
 /// <param name="method">An instance of the fixed method delegate.</param>
 public delegate void FixedMethodAction<T>(in IFixedMethod<T> method) where T : Delegate;
 
 /// <summary>
-/// Encapsulates a method that takes an instance of <see cref="IFixedMethod{T}"/> and a state object of type
+/// Encapsulates a method that receives an instance of <see cref="IFixedMethod{T}"/> and a state object of type
 /// <typeparamref name="TArg"/>.
 /// </summary>
 /// <typeparam name="T">The type of the fixed method delegate.</typeparam>
@@ -345,7 +345,7 @@ public delegate void FixedMethodAction<T, in TArg>(in IFixedMethod<T> method, TA
 ;
 
 /// <summary>
-/// Encapsulates a method that takes an instance of <see cref="IFixedMethod{T}"/> and returns a value
+/// Encapsulates a method that receives an instance of <see cref="IFixedMethod{T}"/> and returns a value
 /// of type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="T">The type of the fixed method delegate.</typeparam>
@@ -355,7 +355,7 @@ public delegate void FixedMethodAction<T, in TArg>(in IFixedMethod<T> method, TA
 public delegate TResult FixedMethodFunc<T, out TResult>(in IFixedMethod<T> method) where T : Delegate;
 
 /// <summary>
-/// Encapsulates a method that takes an instance of <see cref="IFixedMethod{T}"/>, a state object of type
+/// Encapsulates a method that receives an instance of <see cref="IFixedMethod{T}"/>, a state object of type
 /// <typeparamref name="TArg"/>, and returns a value of type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="T">The type of the fixed method delegate.</typeparam>
@@ -371,13 +371,13 @@ public delegate TResult FixedMethodFunc<T, in TArg, out TResult>(in IFixedMethod
 ;
 
 /// <summary>
-/// Represents a method that takes an instance of <see cref="FixedMemoryList"/>.
+/// Encapsulates a method that receives an instance of <see cref="FixedMemoryList"/>.
 /// </summary>
 /// <param name="memoryList">The <see cref="FixedMemoryList"/> instance.</param>
 public delegate void FixedListAction(FixedMemoryList memoryList);
 
 /// <summary>
-/// Represents a method that takes an instance of <see cref="FixedMemoryList"/> and a
+/// Encapsulates a method that receives an instance of <see cref="FixedMemoryList"/> and a
 /// state object of type <typeparamref name="TArg"/>.
 /// </summary>
 /// <typeparam name="TArg">The type of the state object.</typeparam>
@@ -390,13 +390,13 @@ public delegate void FixedListAction<in TArg>(FixedMemoryList memoryList, TArg a
 	;
 
 /// <summary>
-/// Represents a method that takes an instance of <see cref="ReadOnlyFixedMemoryList"/>.
+/// Encapsulates a method that receives an instance of <see cref="ReadOnlyFixedMemoryList"/>.
 /// </summary>
 /// <param name="memoryList">The <see cref="ReadOnlyFixedMemoryList"/> instance.</param>
 public delegate void ReadOnlyFixedListAction(ReadOnlyFixedMemoryList memoryList);
 
 /// <summary>
-/// Represents a method that takes an instance of <see cref="ReadOnlyFixedMemoryList"/> and a
+/// Encapsulates a method that receives an instance of <see cref="ReadOnlyFixedMemoryList"/> and a
 /// state object of type <typeparamref name="TArg"/>.
 /// </summary>
 /// <typeparam name="TArg">The type of the state object.</typeparam>
@@ -409,7 +409,7 @@ public delegate void ReadOnlyFixedListAction<in TArg>(ReadOnlyFixedMemoryList me
 	;
 
 /// <summary>
-/// Represents a method that takes an instance of <see cref="FixedMemoryList"/> and returns a result.
+/// Encapsulates a method that receives an instance of <see cref="FixedMemoryList"/> and returns a result.
 /// </summary>
 /// <typeparam name="TResult">The type of the return value.</typeparam>
 /// <param name="memoryList">The <see cref="FixedMemoryList"/> instance.</param>
@@ -417,7 +417,7 @@ public delegate void ReadOnlyFixedListAction<in TArg>(ReadOnlyFixedMemoryList me
 public delegate TResult FixedListFunc<out TResult>(FixedMemoryList memoryList);
 
 /// <summary>
-/// Represents a method that takes an instance of <see cref="FixedMemoryList"/> and a
+/// Encapsulates a method that receives an instance of <see cref="FixedMemoryList"/> and a
 /// state object of type <typeparamref name="TArg"/>, and returns a result.
 /// </summary>
 /// <typeparam name="TArg">The type of the state object.</typeparam>
@@ -432,7 +432,7 @@ public delegate TResult FixedListFunc<in TArg, out TResult>(FixedMemoryList memo
 	;
 
 /// <summary>
-/// Represents a method that takes an instance of <see cref="ReadOnlyFixedMemoryList"/> and returns a result.
+/// Encapsulates a method that receives an instance of <see cref="ReadOnlyFixedMemoryList"/> and returns a result.
 /// </summary>
 /// <typeparam name="TResult">The type of the return value.</typeparam>
 /// <param name="memoryList">The <see cref="ReadOnlyFixedMemoryList"/> instance.</param>
@@ -440,7 +440,7 @@ public delegate TResult FixedListFunc<in TArg, out TResult>(FixedMemoryList memo
 public delegate TResult ReadOnlyFixedListFunc<out TResult>(ReadOnlyFixedMemoryList memoryList);
 
 /// <summary>
-/// Represents a method that takes an instance of <see cref="ReadOnlyFixedMemoryList"/> and a
+/// Encapsulates a method that receives an instance of <see cref="ReadOnlyFixedMemoryList"/> and a
 /// state object of type <typeparamref name="TArg"/>, and returns a result.
 /// </summary>
 /// <typeparam name="TArg">The type of the state object.</typeparam>
