@@ -31,6 +31,7 @@ public readonly ref struct ReadOnlyFixedMemoryList
 	/// <exception cref="IndexOutOfRangeException">
 	/// Thrown when the <paramref name="index"/> is out of the range of the list elements.
 	/// </exception>
+	[IndexerName("Item")]
 	public IReadOnlyFixedMemory this[Int32 index] => this._values[index];
 
 	/// <summary>
@@ -54,10 +55,10 @@ public readonly ref struct ReadOnlyFixedMemoryList
 	internal ReadOnlyFixedMemoryList(FixedMemoryListValue values) => this._values = values;
 
 	/// <summary>
-	/// Creates an array from the current <see cref="ReadOnlyFixedMemoryList"/> object.
+	/// Creates an array from the current <see cref="ReadOnlyFixedMemoryList"/> instance.
 	/// </summary>
 	/// <returns>
-	/// An array that contains all elements of the current <see cref="ReadOnlyFixedMemoryList"/> object.
+	/// An array that contains all elements of the current <see cref="ReadOnlyFixedMemoryList"/> instance.
 	/// </returns>
 	public IReadOnlyFixedMemory[] ToArray()
 	{
@@ -72,11 +73,13 @@ public readonly ref struct ReadOnlyFixedMemoryList
 	/// <summary>
 	/// Returns an enumerator that iterates through the <see cref="ReadOnlyFixedMemoryList"/>.
 	/// </summary>
-	/// <returns>An enumerator for the current <see cref="ReadOnlyFixedMemoryList"/> object.</returns>
+	/// <returns>An enumerator for the current <see cref="ReadOnlyFixedMemoryList"/> instance.</returns>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Browsable(false)]
 	public Enumerator GetEnumerator() => new(this._values.AsSpan());
 
 	/// <summary>
-	/// Releases all resources used by the <see cref="ReadOnlyFixedMemoryList"/> object.
+	/// Releases all resources used by the <see cref="ReadOnlyFixedMemoryList"/> instance.
 	/// </summary>
 	internal void Unload() => this._values.Unload();
 

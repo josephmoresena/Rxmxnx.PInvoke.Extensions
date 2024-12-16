@@ -1,9 +1,9 @@
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// Represents a platform-specific type used to handle a pointer to a function of type <typeparamref name="TDelegate"/>.
+/// Represents a platform-specific type used to handle a pointer to a method of type <typeparamref name="TDelegate"/>.
 /// </summary>
-/// <typeparam name="TDelegate">The type of delegate that the function pointer represents.</typeparam>
+/// <typeparam name="TDelegate">The type of delegate that the method pointer represents.</typeparam>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
@@ -29,7 +29,9 @@ public readonly unsafe struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<
 	/// </summary>
 	public Boolean IsZero => IntPtr.Zero == (IntPtr)this._value;
 
-	/// <inheritdoc cref="IFixedMethod{T}.Method"/>
+	/// <summary>
+	/// A managed delegate using the method address pointed to by this instance.
+	/// </summary>
 	public TDelegate Invoke => !this.IsZero ? Marshal.GetDelegateForFunctionPointer<TDelegate>(this.Pointer) : default!;
 
 	/// <summary>

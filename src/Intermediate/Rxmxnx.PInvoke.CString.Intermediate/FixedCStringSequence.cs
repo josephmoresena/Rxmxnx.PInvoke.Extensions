@@ -36,6 +36,7 @@ public readonly unsafe ref struct FixedCStringSequence
 	/// <exception cref="IndexOutOfRangeException">
 	/// Thrown when <paramref name="index"/> is greater than or equal to the length of this object or less than zero.
 	/// </exception>
+	[IndexerName("Item")]
 	public IReadOnlyFixedMemory this[Int32 index]
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
