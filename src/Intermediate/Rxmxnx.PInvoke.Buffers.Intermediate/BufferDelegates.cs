@@ -22,7 +22,7 @@ public delegate void ScopedBufferAction<T, in TArg>(ScopedBuffer<T> buffer, TArg
 	;
 
 /// <summary>
-/// Encapsulates a method that receives a buffer of objects of type <typeparamref name="T"/> and
+/// Encapsulates a function that receives a buffer of objects of type <typeparamref name="T"/> and
 /// returns a result of type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="T">The type of the objects in the buffer.</typeparam>
@@ -32,8 +32,8 @@ public delegate void ScopedBufferAction<T, in TArg>(ScopedBuffer<T> buffer, TArg
 public delegate TResult ScopedBufferFunc<T, out TResult>(ScopedBuffer<T> buffer);
 
 /// <summary>
-/// Encapsulates a method that receives a buffer of objects of type <typeparamref name="T"/> and a
-/// state object of type <typeparamref name="TArg"/>, and returns a result of type <typeparamref name="TResult"/>.
+/// Encapsulates a function that receives a buffer of objects of type <typeparamref name="T"/> a
+/// state object of type <typeparamref name="TArg"/> and returns a result of type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="T">The type of the elements in the buffer.</typeparam>
 /// <typeparam name="TArg">The type of the state object passed to the method.</typeparam>

@@ -23,8 +23,8 @@ public delegate ReadOnlySpan<T> ReadOnlySpanFunc<T, in TState>(TState arg)
 	;
 
 /// <summary>
-/// Encapsulates a method that receives a span of type <typeparamref name="T"/> and a
-/// state object of type <typeparamref name="TArg"/>, and returns a result of type <typeparamref name="TResult"/>.
+/// Encapsulates a method that receives a span of type <typeparamref name="T"/>, a
+/// state object of type <typeparamref name="TArg"/> and returns a result of type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="T">The type of the elements in the span.</typeparam>
 /// <typeparam name="TArg">The type of the state object passed to the method.</typeparam>
@@ -39,8 +39,8 @@ public delegate TResult SpanFunc<T, in TArg, out TResult>(Span<T> span, TArg arg
 	;
 
 /// <summary>
-/// Encapsulates a method that receives a read-only span of type <typeparamref name="T"/> and a
-/// state object of type <typeparamref name="TArg"/>, and returns a result of type <typeparamref name="TResult"/>.
+/// Encapsulates a method that receives a read-only span of type <typeparamref name="T"/>, a
+/// state object of type <typeparamref name="TArg"/> and returns a result of type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="T">The type of the elements in the span.</typeparam>
 /// <typeparam name="TArg">The type of the state object passed to the method.</typeparam>

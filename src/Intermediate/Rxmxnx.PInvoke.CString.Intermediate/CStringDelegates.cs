@@ -34,8 +34,8 @@ public delegate void CStringSequenceAction<in TArg>(FixedCStringSequence seq, TA
 	;
 
 /// <summary>
-/// Encapsulates a method that operates on a <see cref="FixedCStringSequence"/> instance and returns
-/// a value of the type specified by the <typeparamref name="TResult"/> parameter.
+/// Encapsulates a method that operates on a <see cref="FixedCStringSequence"/> instance and returns a value of
+/// type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="TResult">The type of the return value.</typeparam>
 /// <param name="seq">The <see cref="FixedCStringSequence"/> instance to operate on.</param>
@@ -43,9 +43,9 @@ public delegate void CStringSequenceAction<in TArg>(FixedCStringSequence seq, TA
 public delegate TResult CStringSequenceFunc<out TResult>(FixedCStringSequence seq);
 
 /// <summary>
-/// Encapsulates a method that operates on a <see cref="FixedCStringSequence"/> instance and a state
-/// object of type <typeparamref name="TArg"/>, and returns a value of the type specified by the
-/// <typeparamref name="TResult"/> parameter.
+/// Encapsulates a method that operates on a <see cref="FixedCStringSequence"/> instance, a state
+/// object of type <typeparamref name="TArg"/> and returns a value of
+/// type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="TArg">The type of the state object.</typeparam>
 /// <typeparam name="TResult">The type of the return value.</typeparam>
