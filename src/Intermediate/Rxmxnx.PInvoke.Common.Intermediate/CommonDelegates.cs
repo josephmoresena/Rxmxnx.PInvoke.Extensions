@@ -409,7 +409,8 @@ public delegate void ReadOnlyFixedListAction<in TArg>(ReadOnlyFixedMemoryList me
 	;
 
 /// <summary>
-/// Encapsulates a method that receives an instance of <see cref="FixedMemoryList"/> and returns a result.
+/// Encapsulates a method that receives an instance of <see cref="FixedMemoryList"/> and returns a value of type
+/// <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="TResult">The type of the return value.</typeparam>
 /// <param name="memoryList">The <see cref="FixedMemoryList"/> instance.</param>
@@ -418,7 +419,7 @@ public delegate TResult FixedListFunc<out TResult>(FixedMemoryList memoryList);
 
 /// <summary>
 /// Encapsulates a method that receives an instance of <see cref="FixedMemoryList"/> and a
-/// state object of type <typeparamref name="TArg"/>, and returns a result.
+/// state object of type <typeparamref name="TArg"/>, and returns a value of type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="TArg">The type of the state object.</typeparam>
 /// <typeparam name="TResult">The type of the return value.</typeparam>
@@ -432,7 +433,8 @@ public delegate TResult FixedListFunc<in TArg, out TResult>(FixedMemoryList memo
 	;
 
 /// <summary>
-/// Encapsulates a method that receives an instance of <see cref="ReadOnlyFixedMemoryList"/> and returns a result.
+/// Encapsulates a method that receives an instance of <see cref="ReadOnlyFixedMemoryList"/> and returns a value of
+/// type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="TResult">The type of the return value.</typeparam>
 /// <param name="memoryList">The <see cref="ReadOnlyFixedMemoryList"/> instance.</param>
@@ -441,7 +443,7 @@ public delegate TResult ReadOnlyFixedListFunc<out TResult>(ReadOnlyFixedMemoryLi
 
 /// <summary>
 /// Encapsulates a method that receives an instance of <see cref="ReadOnlyFixedMemoryList"/> and a
-/// state object of type <typeparamref name="TArg"/>, and returns a result.
+/// state object of type <typeparamref name="TArg"/>, and returns a value of type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="TArg">The type of the state object.</typeparam>
 /// <typeparam name="TResult">The type of the return value.</typeparam>
