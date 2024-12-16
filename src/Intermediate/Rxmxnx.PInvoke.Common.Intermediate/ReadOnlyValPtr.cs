@@ -12,7 +12,7 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 {
 #pragma warning disable CS8500
 	/// <summary>
-	/// Indicates if <typeparamref name="T"/> is a <see langword="unmanaged"/> type.
+	/// Indicates if <typeparamref name="T"/> is an <see langword="unmanaged"/> type.
 	/// </summary>
 	public static Boolean IsUnmanaged => !RuntimeHelpers.IsReferenceOrContainsReferences<T>();
 	/// <summary>

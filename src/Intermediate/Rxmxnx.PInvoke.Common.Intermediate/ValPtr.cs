@@ -17,7 +17,7 @@ public readonly unsafe struct ValPtr<T> : IWrapper<IntPtr>, IEquatable<ValPtr<T>
 	public static readonly ValPtr<T> Zero = default;
 
 	/// <summary>
-	/// Indicates if <typeparamref name="T"/> is a <see langword="unmanaged"/> type.
+	/// Indicates if <typeparamref name="T"/> is an <see langword="unmanaged"/> type.
 	/// </summary>
 	public static Boolean IsUnmanaged => ReadOnlyValPtr<T>.IsUnmanaged;
 
