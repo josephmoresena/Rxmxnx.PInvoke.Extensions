@@ -101,8 +101,8 @@ public readonly ref struct FixedMemoryList
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal Enumerator(ReadOnlySpan<ReadOnlyFixedMemory> values)
 		{
-			if (values.Length <= 0) return;
-			ref FixedMemory refMem = ref Unsafe.As<ReadOnlyFixedMemory, FixedMemory>(ref Unsafe.AsRef(in values[0]));
+			ref ReadOnlyFixedMemory refRoMem = ref MemoryMarshal.GetReference(values);
+			ref FixedMemory refMem = ref Unsafe.As<ReadOnlyFixedMemory, FixedMemory>(ref refRoMem);
 			this._enumerator = MemoryMarshal.CreateReadOnlySpan(ref refMem, values.Length).GetEnumerator();
 		}
 

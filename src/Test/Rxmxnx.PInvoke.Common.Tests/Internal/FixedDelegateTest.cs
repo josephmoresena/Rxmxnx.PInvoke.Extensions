@@ -146,5 +146,7 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
 		Assert.Equal(FixedMemoryTestsBase.IsFunction, functionException5.Message);
 		Exception functionException6 = Assert.Throws<InvalidOperationException>(() => fdel.CreateSpan<Int32>(0));
 		Assert.Equal(FixedMemoryTestsBase.IsFunction, functionException6.Message);
+		Exception functionException7 = Assert.Throws<InvalidOperationException>(() => fdel.CreateObjectSpan());
+		Assert.Equal(FixedMemoryTestsBase.IsFunction, functionException7.Message);
 	}
 }

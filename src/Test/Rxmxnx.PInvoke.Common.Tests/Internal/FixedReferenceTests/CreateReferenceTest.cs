@@ -101,7 +101,7 @@ public sealed class CreateReferenceTest : FixedReferenceTestsBase
 				Assert.Throws<InvalidOperationException>(() => CreateReferenceTest.TestSize<T, String>(fref));
 			}
 		}
-		catch (Exception)
+		catch (ArgumentException)
 		{
 			if (sizeof(T) < sizeof(WrapperStruct<ManagedStruct>))
 				CreateReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref);
@@ -185,7 +185,7 @@ public sealed class CreateReferenceTest : FixedReferenceTestsBase
 				Assert.Throws<InvalidOperationException>(() => CreateReferenceTest.TestSize<T, String>(fref));
 			}
 		}
-		catch (Exception)
+		catch (ArgumentException)
 		{
 			if (sizeof(T) < sizeof(WrapperStruct<ManagedStruct>))
 				CreateReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref);

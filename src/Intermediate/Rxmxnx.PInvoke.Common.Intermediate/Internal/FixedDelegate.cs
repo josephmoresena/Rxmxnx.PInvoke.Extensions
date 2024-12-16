@@ -14,6 +14,7 @@ internal sealed unsafe class FixedDelegate<TDelegate> : FixedPointer, IFixedMeth
 	private GCHandle _handle;
 
 	/// <inheritdoc/>
+	[ExcludeFromCodeCoverage]
 	public override Boolean IsUnmanaged => false;
 	/// <inheritdoc/>
 	public override Type Type => typeof(TDelegate);

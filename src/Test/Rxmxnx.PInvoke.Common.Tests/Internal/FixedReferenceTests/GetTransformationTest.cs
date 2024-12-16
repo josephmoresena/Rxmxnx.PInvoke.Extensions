@@ -88,7 +88,7 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Object>(fref));
 			}
 		}
-		catch (Exception)
+		catch (ArgumentException)
 		{
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Boolean>(fref));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Byte>(fref));
@@ -239,7 +239,7 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Object>(fref));
 			}
 		}
-		catch (Exception)
+		catch (ArgumentException)
 		{
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Boolean>(fref));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Byte>(fref));
@@ -399,14 +399,23 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 		{
 			GCHandle.Alloc(Array.Empty<T>(), GCHandleType.Pinned).Free();
 		}
-		catch (Exception)
+		catch (ArgumentException)
 		{
 			// Managed types
+			Assert.True(fref.CreateBinarySpan().IsEmpty);
+			Assert.True(fref.CreateReadOnlyBinarySpan().IsEmpty);
+			Assert.Equal(typeof(T).IsValueType || fref.IsNullOrEmpty, fref.CreateReadOnlyObjectSpan().IsEmpty);
+			Assert.Equal(typeof(T).IsValueType || fref.IsNullOrEmpty, fref.CreateObjectSpan().IsEmpty);
 			return;
 		}
 
 		Assert.Equal(fref.CreateReadOnlyBinarySpan()[offset.BinaryOffset..].ToArray(),
 		             offset.CreateReadOnlyBinarySpan().ToArray());
+		Assert.True(fref.CreateReadOnlyObjectSpan().IsEmpty);
+		Assert.True(offset.CreateReadOnlyObjectSpan().IsEmpty);
+		Assert.Equal(fref.CreateBinarySpan()[offset.BinaryOffset..].ToArray(), offset.CreateBinarySpan().ToArray());
+		Assert.True(fref.CreateObjectSpan().IsEmpty);
+		Assert.True(offset.CreateObjectSpan().IsEmpty);
 
 		FixedOffset offset2;
 		if (fref.BinaryLength >= sizeof(Boolean))
@@ -506,13 +515,16 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 		{
 			GCHandle.Alloc(Array.Empty<T>(), GCHandleType.Pinned).Free();
 		}
-		catch (Exception)
+		catch (ArgumentException)
 		{
 			// Managed types
+			Assert.True(fref.CreateReadOnlyBinarySpan().IsEmpty);
+			Assert.Equal(typeof(T).IsValueType || fref.IsNullOrEmpty, fref.CreateReadOnlyObjectSpan().IsEmpty);
 			return;
 		}
 		Assert.Equal(fref.CreateReadOnlyBinarySpan()[offset.BinaryOffset..].ToArray(),
 		             offset.CreateReadOnlyBinarySpan().ToArray());
+		Assert.True(fref.CreateReadOnlyObjectSpan().IsEmpty);
 
 		ReadOnlyFixedOffset offset2;
 		if (fref.BinaryLength >= sizeof(Boolean))

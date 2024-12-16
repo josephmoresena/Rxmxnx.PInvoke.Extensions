@@ -50,7 +50,7 @@ public sealed class ValPtrTests
 			GCHandle.Alloc(arr, GCHandleType.Pinned).Free();
 			Assert.True(ValPtr<T>.IsUnmanaged);
 		}
-		catch (Exception)
+		catch (ArgumentException)
 		{
 			Assert.False(ValPtr<T>.IsUnmanaged);
 		}
@@ -150,10 +150,28 @@ public sealed class ValPtrTests
 		{
 			Assert.Throws<InvalidOperationException>(ctx.AsBinaryContext);
 			Assert.Throws<InvalidOperationException>(() => ctx.Transformation<Byte>(out IFixedMemory _));
+
+			if (typeof(T).IsValueType)
+			{
+				Assert.Throws<InvalidOperationException>(ctx.AsObjectContext);
+				Assert.True(ctx.Objects.IsEmpty);
+			}
+			else
+			{
+				Span<T>.Enumerator enumerator = span.GetEnumerator();
+				foreach (ref Object refObj in ctx.AsObjectContext().Values)
+				{
+					if (!enumerator.MoveNext()) break;
+					Assert.True(Unsafe.AreSame(ref enumerator.Current, ref Unsafe.As<Object, T>(ref refObj)));
+				}
+				Assert.Equal(typeof(T).IsValueType || ctx.IsNullOrEmpty, ctx.Objects.IsEmpty);
+			}
 			return;
 		}
+
 		Assert.True(
 			ctx.AsBinaryContext().Values.SequenceEqual(new(valPtr.Pointer.ToPointer(), span.Length * sizeof(T))));
+		Assert.Throws<InvalidOperationException>(ctx.AsObjectContext);
 
 		Span<T> span2 = ctx.Values;
 		for (Int32 i = 0; i < span.Length; i++)
@@ -169,14 +187,29 @@ public sealed class ValPtrTests
 		using IFixedReference<T>.IDisposable fixedReference = ptrI.GetUnsafeFixedReference();
 		Assert.True(Unsafe.AreSame(ref fixedReference.Reference, ref reference));
 		Assert.Equal(ptrI.Pointer, fixedReference.Pointer);
+		Assert.Equal(ptrI.IsZero, fixedReference.IsNullOrEmpty);
 		if (!ValPtr<T>.IsUnmanaged)
 		{
-			Assert.Throws<InvalidOperationException>(() => fixedReference.Bytes.ToArray());
+			Assert.True(fixedReference.Bytes.IsEmpty);
+			Assert.Equal(ptrI.IsZero || typeof(T).IsValueType, fixedReference.Objects.IsEmpty);
 			Assert.Throws<InvalidOperationException>(fixedReference.AsBinaryContext);
+			if (typeof(T).IsValueType)
+			{
+				Assert.Throws<InvalidOperationException>(fixedReference.AsObjectContext);
+				Assert.True(fixedReference.Objects.IsEmpty);
+			}
+			else
+			{
+				Assert.True(Unsafe.AreSame(in fixedReference.Reference,
+				                           ref Unsafe.As<Object, T>(
+					                           ref UnsafeLegacy.AsRef(in fixedReference.AsObjectContext().Values[0]))));
+				Assert.Equal(typeof(T).IsValueType || fixedReference.IsNullOrEmpty, fixedReference.Objects.IsEmpty);
+			}
 			Assert.Throws<InvalidOperationException>(() => fixedReference.Transformation<Byte>(out IFixedMemory _));
 			return;
 		}
-
+		Assert.True(fixedReference.Objects.IsEmpty);
+		Assert.Throws<InvalidOperationException>(fixedReference.AsObjectContext);
 		Assert.True(fixedReference.Bytes.SequenceEqual(new(ptrI.Pointer.ToPointer(), sizeof(T))));
 		Assert.True(fixedReference.AsBinaryContext().Values.SequenceEqual(new(ptrI.Pointer.ToPointer(), sizeof(T))));
 

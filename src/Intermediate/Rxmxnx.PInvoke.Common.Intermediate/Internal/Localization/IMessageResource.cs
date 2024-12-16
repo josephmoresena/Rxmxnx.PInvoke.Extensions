@@ -116,6 +116,10 @@ internal partial interface IMessageResource
 	/// </summary>
 	String NotValueType(Type type);
 	/// <summary>
+	/// Message for not reference type exception.
+	/// </summary>
+	String NotReferenceType(Type type);
+	/// <summary>
 	/// Message for not type equality exception.
 	/// </summary>
 	String NotType(Type sourceType, Type destinationType);

@@ -426,13 +426,27 @@ internal static unsafe class ValidationUtilities
 	/// <param name="type">CLR type.</param>
 	/// <param name="isUnmanaged">Indicates whether <paramref name="type"/> is unmanaged.</param>
 	/// <exception cref="InvalidOperationException">
-	/// Throws an exception if <paramref name="type"/> is not a value type.
+	/// Throws an exception if <paramref name="type"/> is not a unmanaged type.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfNotUnmanagedType(Type? type, Boolean isUnmanaged)
 	{
 		if (type is null || (type.IsValueType && isUnmanaged)) return;
 		String message = IMessageResource.GetInstance().NotUnmanagedType(type);
+		throw new InvalidOperationException(message);
+	}
+	/// <summary>
+	/// Throws an exception if <paramref name="type"/> is not reference type.
+	/// </summary>
+	/// <param name="type">CLR type.</param>
+	/// <exception cref="InvalidOperationException">
+	/// Throws an exception if <paramref name="type"/> is not a reference type.
+	/// </exception>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNotReferenceType(Type? type)
+	{
+		if (type is not null && !type.IsValueType) return;
+		String message = IMessageResource.GetInstance().NotReferenceType(type ?? typeof(Byte));
 		throw new InvalidOperationException(message);
 	}
 	/// <summary>

@@ -101,7 +101,7 @@ public sealed class GetHashCodeTest : FixedContextTestsBase
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<TimeOnly>>(ctx, values.Length);
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<TimeSpan>>(ctx, values.Length);
 			}
-			catch (Exception)
+			catch (ArgumentException)
 			{
 				if (typeof(T).IsValueType)
 				{
@@ -172,7 +172,7 @@ public sealed class GetHashCodeTest : FixedContextTestsBase
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<TimeOnly>>(ctx, values.Length);
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<TimeSpan>>(ctx, values.Length);
 			}
-			catch (Exception)
+			catch (ArgumentException)
 			{
 				if (typeof(T).IsValueType)
 				{

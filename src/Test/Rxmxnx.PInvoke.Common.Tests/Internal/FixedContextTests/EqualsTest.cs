@@ -51,7 +51,7 @@ public sealed class EqualsTest : FixedContextTestsBase
 			action = EqualsTest.UnmanagedTest;
 			readonlyAction = EqualsTest.UnmanagedReadOnlyTest;
 		}
-		catch (Exception)
+		catch (ArgumentException)
 		{
 			// Managed type
 			if (typeof(T).IsValueType)

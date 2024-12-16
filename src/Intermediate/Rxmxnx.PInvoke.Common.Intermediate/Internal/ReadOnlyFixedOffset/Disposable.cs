@@ -22,11 +22,17 @@ internal partial class ReadOnlyFixedOffset : IConvertibleDisposable<IReadOnlyFix
 			base(fixedPointer, disposable) { }
 
 		IntPtr IFixedPointer.Pointer => (this.Value as IFixedPointer).Pointer;
+		Boolean IReadOnlyFixedMemory.IsNullOrEmpty => (this.Value as IReadOnlyFixedMemory).IsNullOrEmpty;
 		ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => (this.Value as IReadOnlyFixedMemory).Bytes;
+		ReadOnlySpan<Object> IReadOnlyFixedMemory.Objects => (this.Value as IReadOnlyFixedMemory).Objects;
 
 		/// <inheritdoc/>
 		public IReadOnlyFixedContext<Byte> AsBinaryContext()
 			=> (this.Value.AsBinaryContext() as IConvertibleDisposable<IReadOnlyFixedContext<Byte>.IDisposable>)!
+				.ToDisposable(this.GetDisposableParent());
+		/// <inheritdoc/>
+		public IReadOnlyFixedContext<Object> AsObjectContext()
+			=> (this.Value.AsObjectContext() as IConvertibleDisposable<IReadOnlyFixedContext<Object>.IDisposable>)!
 				.ToDisposable(this.GetDisposableParent());
 	}
 }

@@ -71,7 +71,7 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, String>(ctx));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Object>(ctx));
 		}
-		catch (Exception)
+		catch (ArgumentException)
 		{
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Boolean>(ctx));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Byte>(ctx));
@@ -172,7 +172,7 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, String>(ctx));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Object>(ctx));
 		}
-		catch (Exception)
+		catch (ArgumentException)
 		{
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Boolean>(ctx));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Byte>(ctx));
@@ -294,15 +294,23 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 		{
 			GCHandle.Alloc(Array.Empty<T>(), GCHandleType.Pinned).Free();
 		}
-		catch (Exception)
+		catch (ArgumentException)
 		{
 			// Managed types
+			Assert.True(ctx.CreateBinarySpan().IsEmpty);
+			Assert.True(ctx.CreateReadOnlyBinarySpan().IsEmpty);
+			Assert.Equal(typeof(T).IsValueType || ctx.IsNullOrEmpty, ctx.CreateReadOnlyObjectSpan().IsEmpty);
+			Assert.Equal(typeof(T).IsValueType || ctx.IsNullOrEmpty, ctx.CreateObjectSpan().IsEmpty);
 			return;
 		}
 
 		Assert.Equal(ctx.CreateReadOnlyBinarySpan()[offset.BinaryOffset..].ToArray(),
 		             offset.CreateReadOnlyBinarySpan().ToArray());
+		Assert.True(ctx.CreateReadOnlyObjectSpan().IsEmpty);
+		Assert.True(offset.CreateReadOnlyObjectSpan().IsEmpty);
 		Assert.Equal(ctx.CreateBinarySpan()[offset.BinaryOffset..].ToArray(), offset.CreateBinarySpan().ToArray());
+		Assert.True(ctx.CreateObjectSpan().IsEmpty);
+		Assert.True(offset.CreateObjectSpan().IsEmpty);
 
 		_ = ctx.GetTransformation<Boolean>(out FixedOffset offset2, true);
 		GetTransformationTest.OffsetTest<T2, Boolean>(offset, offset2);
@@ -358,17 +366,22 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 		{
 			GCHandle.Alloc(Array.Empty<T>(), GCHandleType.Pinned).Free();
 		}
-		catch (Exception)
+		catch (ArgumentException)
 		{
 			// Managed types
+			Assert.True(ctx.CreateReadOnlyBinarySpan().IsEmpty);
+			Assert.Equal(typeof(T).IsValueType || ctx.IsNullOrEmpty, ctx.CreateReadOnlyObjectSpan().IsEmpty);
 			return;
 		}
 
 		Assert.Equal(ctx.CreateReadOnlyBinarySpan()[offset.BinaryOffset..].ToArray(),
 		             offset.CreateReadOnlyBinarySpan().ToArray());
+		Assert.True(ctx.CreateReadOnlyObjectSpan().IsEmpty);
 
 		Assert.Equal(FixedMemoryTestsBase.ReadOnlyError,
 		             Assert.Throws<InvalidOperationException>(() => offset.CreateBinarySpan()).Message);
+		Assert.Equal(FixedMemoryTestsBase.ReadOnlyError,
+		             Assert.Throws<InvalidOperationException>(() => offset.CreateObjectSpan()).Message);
 
 		_ = ctx.GetTransformation<Boolean>(out ReadOnlyFixedOffset offset2);
 		GetTransformationTest.OffsetTest<T2, Boolean>(offset, offset2);

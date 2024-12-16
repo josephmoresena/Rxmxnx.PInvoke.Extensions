@@ -172,6 +172,9 @@ public class AsMemoryTest
 			Assert.True(Unsafe.AreSame(ref Unsafe.Add(ref first, i),
 			                           ref Unsafe.Add(ref Unsafe.AsRef<T>(handle.Pointer), i)));
 		}
+		MemoryHandle handle2 = memory.Pin();
+		handle2.Dispose();
+		handle2.Dispose();
 	}
 	private static Array CreateArray<T>(Int32[] lengths)
 	{

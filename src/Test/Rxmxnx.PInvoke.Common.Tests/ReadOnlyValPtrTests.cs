@@ -7,7 +7,7 @@ public sealed class ReadOnlyValPtrTests
 {
 	private static readonly CultureInfo[] allCultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
 	private static readonly String[] formats = ["", "b", "B", "D", "d", "E", "e", "G", "g", "X", "x",];
-	private static readonly IFixture fixture = new Fixture();
+	private static readonly IFixture fixture = ManagedStruct.Register(new Fixture());
 	[Fact]
 	internal void BooleanTest() => ReadOnlyValPtrTests.Test<Boolean>();
 	[Fact]
@@ -38,6 +38,10 @@ public sealed class ReadOnlyValPtrTests
 	internal void TimeOnlyTest() => ReadOnlyValPtrTests.Test<TimeOnly>();
 	[Fact]
 	internal void TimeSpanTest() => ReadOnlyValPtrTests.Test<TimeSpan>();
+	[Fact]
+	internal void ManagedStructTest() => ReadOnlyValPtrTests.Test<ManagedStruct>();
+	[Fact]
+	internal void StringTest() => ReadOnlyValPtrTests.Test<String>();
 	private static unsafe void Test<T>()
 	{
 		T[] arr = ReadOnlyValPtrTests.fixture.CreateMany<T>(10).ToArray();
@@ -46,7 +50,7 @@ public sealed class ReadOnlyValPtrTests
 			GCHandle.Alloc(arr, GCHandleType.Pinned).Free();
 			Assert.True(ReadOnlyValPtr<T>.IsUnmanaged);
 		}
-		catch (Exception)
+		catch (ArgumentException)
 		{
 			Assert.False(ReadOnlyValPtr<T>.IsUnmanaged);
 		}
@@ -146,10 +150,29 @@ public sealed class ReadOnlyValPtrTests
 		{
 			Assert.Throws<InvalidOperationException>(ctx.AsBinaryContext);
 			Assert.Throws<InvalidOperationException>(() => ctx.Transformation<Byte>(out _));
+
+			if (typeof(T).IsValueType)
+			{
+				Assert.Throws<InvalidOperationException>(ctx.AsObjectContext);
+				Assert.True(ctx.Objects.IsEmpty);
+			}
+			else
+			{
+				ReadOnlySpan<T>.Enumerator enumerator = span.GetEnumerator();
+				foreach (ref readonly Object refObj in ctx.AsObjectContext().Values)
+				{
+					if (!enumerator.MoveNext()) break;
+					Assert.True(Unsafe.AreSame(in enumerator.Current,
+					                           ref Unsafe.As<Object, T>(ref UnsafeLegacy.AsRef(in refObj))));
+				}
+				Assert.Equal(typeof(T).IsValueType || ctx.IsNullOrEmpty, ctx.Objects.IsEmpty);
+			}
+
 			return;
 		}
 		Assert.True(
 			ctx.AsBinaryContext().Values.SequenceEqual(new(valPtr.Pointer.ToPointer(), span.Length * sizeof(T))));
+		Assert.Throws<InvalidOperationException>(ctx.AsObjectContext);
 
 		ReadOnlySpan<T> span2 = ctx.Values;
 		for (Int32 i = 0; i < span.Length; i++)
@@ -165,13 +188,29 @@ public sealed class ReadOnlyValPtrTests
 		using IReadOnlyFixedReference<T>.IDisposable fixedReference = ptrI.GetUnsafeFixedReference();
 		Assert.True(Unsafe.AreSame(ref UnsafeLegacy.AsRef(in fixedReference.Reference), ref reference));
 		Assert.Equal(ptrI.Pointer, fixedReference.Pointer);
+		Assert.Equal(ptrI.IsZero, fixedReference.IsNullOrEmpty);
 		if (!ReadOnlyValPtr<T>.IsUnmanaged)
 		{
-			Assert.Throws<InvalidOperationException>(() => fixedReference.Bytes.ToArray());
+			Assert.True(fixedReference.Bytes.IsEmpty);
+			Assert.Equal(ptrI.IsZero || typeof(T).IsValueType, fixedReference.Objects.IsEmpty);
+			if (typeof(T).IsValueType)
+			{
+				Assert.Throws<InvalidOperationException>(fixedReference.AsObjectContext);
+				Assert.True(fixedReference.Objects.IsEmpty);
+			}
+			else
+			{
+				Assert.True(Unsafe.AreSame(in fixedReference.Reference,
+				                           ref Unsafe.As<Object, T>(
+					                           ref UnsafeLegacy.AsRef(in fixedReference.AsObjectContext().Values[0]))));
+				Assert.Equal(typeof(T).IsValueType || fixedReference.IsNullOrEmpty, fixedReference.Objects.IsEmpty);
+			}
 			Assert.Throws<InvalidOperationException>(fixedReference.AsBinaryContext);
 			Assert.Throws<InvalidOperationException>(() => fixedReference.Transformation<Byte>(out _));
 			return;
 		}
+		Assert.True(fixedReference.Objects.IsEmpty);
+		Assert.Throws<InvalidOperationException>(fixedReference.AsObjectContext);
 		Assert.True(fixedReference.Bytes.SequenceEqual(new(ptrI.Pointer.ToPointer(), sizeof(T))));
 		Assert.True(fixedReference.AsBinaryContext().Values.SequenceEqual(new(ptrI.Pointer.ToPointer(), sizeof(T))));
 

@@ -26,7 +26,9 @@ internal abstract unsafe partial class FixedMemory : ReadOnlyFixedMemory, IFixed
 	protected FixedMemory(FixedMemory mem, Int32 offset) : base(mem, offset) { }
 
 	Span<Byte> IFixedMemory.Bytes => this.CreateBinarySpan();
+	Span<Object> IFixedMemory.Objects => this.CreateObjectSpan();
 	ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => this.CreateReadOnlyBinarySpan();
+	ReadOnlySpan<Object> IReadOnlyFixedMemory.Objects => this.CreateReadOnlyObjectSpan();
 	IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
 
 	/// <inheritdoc/>
@@ -34,5 +36,11 @@ internal abstract unsafe partial class FixedMemory : ReadOnlyFixedMemory, IFixed
 	{
 		this.ValidateUnmanagedOperation();
 		return new FixedContext<Byte>(this.BinaryOffset, this);
+	}
+	/// <inheritdoc/>
+	public new virtual IFixedContext<Object> AsObjectContext()
+	{
+		this.ValidateReferenceOperation();
+		return new FixedContext<Object>(this.BinaryOffset, this);
 	}
 }

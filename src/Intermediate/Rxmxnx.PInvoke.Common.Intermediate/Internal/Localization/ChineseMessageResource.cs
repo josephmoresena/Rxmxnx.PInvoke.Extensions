@@ -47,6 +47,7 @@ internal sealed class ChineseMessageResource : IMessageResource
 	String IMessageResource.InvalidUtf8Region(String nameofRegion) => $"{nameofRegion} 不包含 UTF-8 文本。";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} 不是非托管类型。";
 	String IMessageResource.NotValueType(Type type) => $"{type} 不是值类型。";
+	String IMessageResource.NotReferenceType(Type type) => $"{type} 不是引用类型。";
 	String IMessageResource.NotType(Type sourceType, Type destinationType) => $"{sourceType} 不是 {destinationType}。";
 	String IMessageResource.ContainsReferencesButUnmanaged(Type itemType, Type arrayType)
 		=> $"{itemType} 包含引用，但 {arrayType} 是非托管类型。";

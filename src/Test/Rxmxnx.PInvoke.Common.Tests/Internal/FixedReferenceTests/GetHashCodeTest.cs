@@ -101,7 +101,7 @@ public sealed class GetHashCodeTest : FixedReferenceTestsBase
 			GetHashCodeTest.TransformationTest<T, WrapperStruct<TimeOnly>>(fref);
 			GetHashCodeTest.TransformationTest<T, WrapperStruct<TimeSpan>>(fref);
 		}
-		catch (Exception)
+		catch (ArgumentException)
 		{
 			if (typeof(T).IsValueType)
 			{

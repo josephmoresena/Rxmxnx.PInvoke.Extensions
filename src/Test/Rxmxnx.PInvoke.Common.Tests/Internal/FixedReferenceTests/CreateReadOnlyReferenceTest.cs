@@ -95,7 +95,7 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, String>(fref));
 			}
 		}
-		catch (Exception)
+		catch (ArgumentException)
 		{
 			if (sizeof(T) < sizeof(WrapperStruct<ManagedStruct>))
 				CreateReadOnlyReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref);
@@ -179,7 +179,7 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, String>(fref));
 			}
 		}
-		catch (Exception)
+		catch (ArgumentException)
 		{
 			if (sizeof(T) < sizeof(WrapperStruct<ManagedStruct>))
 				CreateReadOnlyReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref);

@@ -9,12 +9,21 @@ public interface IFixedMemory : IReadOnlyFixedMemory
 	/// Gets a binary span over the fixed block of memory.
 	/// </summary>
 	new Span<Byte> Bytes { get; }
+	/// <summary>
+	/// Gets an object span over the fixed block of memory.
+	/// </summary>
+	new Span<Object> Objects { get; }
 
 	/// <summary>
 	/// Creates a new instance of <see cref="IFixedContext{Byte}"/> from the current instance.
 	/// </summary>
 	/// <returns>An instance of <see cref="IFixedContext{Byte}"/>.</returns>
 	new IFixedContext<Byte> AsBinaryContext();
+	/// <summary>
+	/// Creates a new instance of <see cref="IFixedContext{Object}"/> from the current instance.
+	/// </summary>
+	/// <returns>An instance of <see cref="IFixedContext{Object}"/>.</returns>
+	new IFixedContext<Object> AsObjectContext();
 
 	/// <summary>
 	/// Interface representing a <see cref="IDisposable"/> <see cref="IFixedMemory"/> object.

@@ -52,6 +52,7 @@ internal sealed class DefaultMessageResource : IMessageResource
 		=> $"{nameofRegion} does not contains the UTF-8 text.";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} is not an unmanaged type.";
 	String IMessageResource.NotValueType(Type type) => $"{type} is not a value type.";
+	String IMessageResource.NotReferenceType(Type type) => $"{type} is not a reference type.";
 	String IMessageResource.NotType(Type sourceType, Type destinationType) => $"{sourceType} is not {destinationType}.";
 	String IMessageResource.ContainsReferencesButUnmanaged(Type itemType, Type arrayType)
 		=> $"{itemType} contains references but {arrayType} is unmanaged type.";

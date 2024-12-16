@@ -54,6 +54,7 @@ internal sealed class PortugueseMessageResource : IMessageResource
 	String IMessageResource.InvalidUtf8Region(String nameofRegion) => $"{nameofRegion} não contém texto UTF-8.";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} não é um tipo não gerenciado.";
 	String IMessageResource.NotValueType(Type type) => $"{type} não é um tipo de valor.";
+	String IMessageResource.NotReferenceType(Type type) => $"{type} não é um tipo de referência.";
 	String IMessageResource.NotType(Type sourceType, Type destinationType) => $"{sourceType} não é {destinationType}.";
 	String IMessageResource.ContainsReferencesButUnmanaged(Type itemType, Type arrayType)
 		=> $"{itemType} contém referências, mas {arrayType} é um tipo não gerenciado.";

@@ -53,6 +53,7 @@ internal sealed class RussianMessageResource : IMessageResource
 		=> $"{nameofRegion} не содержит текста в формате UTF-8.";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} не является неуправляемым типом.";
 	String IMessageResource.NotValueType(Type type) => $"{type} не является значимым типом.";
+	String IMessageResource.NotReferenceType(Type type) => $"{type} не является ссылочным типом.";
 	String IMessageResource.NotType(Type sourceType, Type destinationType)
 		=> $"{sourceType} не является {destinationType}.";
 	String IMessageResource.ContainsReferencesButUnmanaged(Type itemType, Type arrayType)

@@ -24,12 +24,18 @@ internal partial class FixedReference<T> : IConvertibleDisposable<IFixedReferenc
 		[ExcludeFromCodeCoverage]
 		ref readonly T IReadOnlyReferenceable<T>.Reference => ref (this.Value as IReadOnlyFixedReference<T>).Reference;
 		IntPtr IFixedPointer.Pointer => (this.Value as IFixedPointer).Pointer;
+		Boolean IReadOnlyFixedMemory.IsNullOrEmpty => (this.Value as IReadOnlyFixedMemory).IsNullOrEmpty;
 		Span<Byte> IFixedMemory.Bytes => (this.Value as IFixedMemory).Bytes;
+		Span<Object> IFixedMemory.Objects => (this.Value as IFixedMemory).Objects;
+		[ExcludeFromCodeCoverage]
+		ReadOnlySpan<Object> IReadOnlyFixedMemory.Objects => (this.Value as IReadOnlyFixedMemory).Objects;
 		[ExcludeFromCodeCoverage]
 		ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => (this.Value as IReadOnlyFixedMemory).Bytes;
 
 		[ExcludeFromCodeCoverage]
 		IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
+		[ExcludeFromCodeCoverage]
+		IReadOnlyFixedContext<Object> IReadOnlyFixedMemory.AsObjectContext() => this.AsObjectContext();
 		[ExcludeFromCodeCoverage]
 		IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(
 			out IReadOnlyFixedMemory residual)
@@ -52,6 +58,10 @@ internal partial class FixedReference<T> : IConvertibleDisposable<IFixedReferenc
 		public IFixedContext<Byte> AsBinaryContext()
 			=> (this.Value.AsBinaryContext() as IConvertibleDisposable<IFixedContext<Byte>.IDisposable>)!.ToDisposable(
 				this.GetDisposableParent());
+		/// <inheritdoc/>
+		public IFixedContext<Object> AsObjectContext()
+			=> (this.Value.AsObjectContext() as IConvertibleDisposable<IFixedContext<Object>.IDisposable>)!
+				.ToDisposable(this.GetDisposableParent());
 		/// <inheritdoc/>
 		public IFixedReference<TDestination> Transformation<TDestination>(out IFixedMemory residual)
 		{

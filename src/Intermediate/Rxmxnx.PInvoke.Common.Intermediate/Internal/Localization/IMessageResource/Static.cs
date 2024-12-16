@@ -33,6 +33,7 @@ internal partial interface IMessageResource
 	/// Retrieves the ISO 639-1 code for the language of the current UI.
 	/// </summary>
 	/// <returns>The ISO 639-1 code for the language of the current UI.</returns>
+	[ExcludeFromCodeCoverage]
 	private static Iso639P1 GetLangCode()
 	{
 		try

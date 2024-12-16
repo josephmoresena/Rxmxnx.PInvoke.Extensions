@@ -50,6 +50,7 @@ internal sealed class ArabicMessageResource : IMessageResource
 	String IMessageResource.InvalidUtf8Region(String nameofRegion) => $"{nameofRegion} لا يحتوي على نص UTF-8.";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} ليس نوعًا غير مُدار.";
 	String IMessageResource.NotValueType(Type type) => $"{type} ليس نوعًا قيمًا.";
+	String IMessageResource.NotReferenceType(Type type) => $"{type} ليس نوعًا مرجعيًا.";
 	String IMessageResource.NotType(Type sourceType, Type destinationType) => $"{sourceType} ليس {destinationType}.";
 	String IMessageResource.ContainsReferencesButUnmanaged(Type itemType, Type arrayType)
 		=> $"{itemType} يحتوي على مراجع لكن {arrayType} هو نوع غير مُدار.";
