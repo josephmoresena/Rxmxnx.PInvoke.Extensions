@@ -69,6 +69,7 @@ public abstract partial class ValueRegion<T> where T : unmanaged
 	/// </summary>
 	/// <returns>A read-only span representation of the memory region.</returns>
 	internal abstract ReadOnlySpan<T> AsSpan();
+	
 	/// <summary>
 	/// Retrieves a subregion from this instance.
 	/// The subregion starts at a specified item position and has a specified length.
@@ -92,7 +93,7 @@ public abstract partial class ValueRegion<T> where T : unmanaged
 	/// An array containing the data from the current memory region if the region is contained in an array;
 	/// otherwise, returns <see langword="null"/>.
 	/// </returns>
-	protected virtual T[]? AsArray() => default;
+	private protected virtual T[]? AsArray() => default;
 
 	/// <summary>
 	/// Converts the value of the current <see cref="ValueRegion{T}"/> to its equivalent read-only span representation.
@@ -118,7 +119,7 @@ public abstract partial class ValueRegion<T> where T : unmanaged
 	/// <returns>A new <see cref="ValueRegion{T}"/> instance.</returns>
 	public static ValueRegion<T> Create(T[] array) => new ManagedRegion(array);
 	/// <summary>
-	/// Creates a new <see cref="ValueRegion{T}"/> instance from a pointer to a memory region.
+	/// Creates a new <see cref="ValueRegion{T}"/> instance from a pointer to a native memory region.
 	/// </summary>
 	/// <param name="ptr">Pointer to memory region.</param>
 	/// <param name="length">Amount of values in sequence.</param>
@@ -131,15 +132,14 @@ public abstract partial class ValueRegion<T> where T : unmanaged
 		=> ptr != IntPtr.Zero && length != default ? new(ptr, length) : NativeRegion.Empty;
 	/// <summary>
 	/// Creates a new <see cref="ValueRegion{T}"/> instance from a <see cref="ReadOnlySpanFunc{T}"/>
-	/// delegate.
+	/// function.
 	/// </summary>
 	/// <param name="func"><see cref="ReadOnlySpanFunc{T}"/> delegate.</param>
 	/// <returns>A new <see cref="ValueRegion{T}"/> instance.</returns>
 	public static ValueRegion<T> Create(ReadOnlySpanFunc<T> func) => new FuncRegion(func);
 	/// <summary>
 	/// Creates a new <see cref="ValueRegion{T}"/> instance from a <see cref="ReadOnlySpanFunc{T, TState}"/>
-	/// function and <typeparamref name="TState"/> state.
-	/// delegate.
+	/// function and a <typeparamref name="TState"/> instance.
 	/// </summary>
 	/// <param name="state">Function state.</param>
 	/// <param name="func"><see cref="ReadOnlySpanFunc{T, TState}"/> delegate.</param>

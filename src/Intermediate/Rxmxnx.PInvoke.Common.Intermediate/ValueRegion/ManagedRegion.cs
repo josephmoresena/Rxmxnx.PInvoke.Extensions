@@ -31,7 +31,7 @@ public partial class ValueRegion<T>
 			return this.InternalSlice(startIndex, length);
 		}
 		/// <inheritdoc/>
-		protected override T[] AsArray() => this._array;
+		private protected override T[] AsArray() => this._array;
 
 		/// <inheritdoc/>
 		internal override ReadOnlySpan<T> AsSpan() => this._array.AsSpan();

@@ -1,7 +1,7 @@
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// This interface exposes a buffer type metadata.
+/// Represents the metadata of a managed buffer type.
 /// </summary>
 public abstract class BufferTypeMetadata : IEnumerableSequence<BufferTypeMetadata>
 {
@@ -52,7 +52,7 @@ public abstract class BufferTypeMetadata : IEnumerableSequence<BufferTypeMetadat
 }
 
 /// <summary>
-/// This interface exposes a buffer type metadata.
+/// Represents the metadata of a managed buffer type.
 /// </summary>
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
 public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
