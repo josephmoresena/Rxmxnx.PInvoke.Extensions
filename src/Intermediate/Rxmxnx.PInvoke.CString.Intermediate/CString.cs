@@ -209,14 +209,14 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// </returns>
 	public static Boolean IsNullOrEmpty([NotNullWhen(false)] CString? value) => value is null || value.Length == 0;
 	/// <summary>
-	/// Constructs a new instance of the <see cref="CString"/> class using the UTF-8 characters provided
+	/// Creates a new instance of the <see cref="CString"/> class using the UTF-8 characters provided
 	/// in the specified read-only span.
 	/// </summary>
 	/// <param name="source">A read-only span of UTF-8 characters.</param>
 	/// <returns>A new instance of the <see cref="CString"/> class.</returns>
 	public static CString Create(ReadOnlySpan<Byte> source) => new(source.ToArray(), false);
 	/// <summary>
-	/// Constructs a new instance of the <see cref="CString"/> class using the
+	/// Creates a new instance of the <see cref="CString"/> class using the
 	/// <see cref="ReadOnlySpanFunc{Byte}"/> delegate provided.
 	/// </summary>
 	/// <param name="func">
@@ -229,7 +229,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	[return: NotNullIfNotNull(nameof(func))]
 	public static CString? Create(ReadOnlySpanFunc<Byte>? func) => func is not null ? new(func, false) : default;
 	/// <summary>
-	/// Constructs a new instance of the <see cref="CString"/> class using the binary internal
+	/// Creates a new instance of the <see cref="CString"/> class using the binary internal
 	/// information provided.
 	/// </summary>
 	/// <param name="bytes">Binary internal information.</param>
@@ -240,22 +240,23 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	[return: NotNullIfNotNull(nameof(bytes))]
 	public static CString? Create(Byte[]? bytes) => bytes is not null ? new(bytes, false) : default;
 	/// <summary>
-	/// Constructs a new instance of the <see cref="CString"/> class using <paramref name="state"/>.
+	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
 	/// </summary>
+	/// <typeparam name="TState">A <see cref="IUtf8FunctionState{TState}"/> type.</typeparam>
 	/// <param name="state">Function state parameter.</param>
 	/// <returns>
 	/// A new instance of the <see cref="CString"/> class.
 	/// </returns>
-#pragma warning disable CA2252
 	public static CString Create<TState>(TState state) where TState : struct, IUtf8FunctionState<TState>
 	{
+#pragma warning disable CA2252
 		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, TState.GetSpan);
 		Int32 length = TState.GetLength(state);
 		return new(data, true, state.IsNullTerminated, length);
-	}
 #pragma warning restore CA2252
+	}
 	/// <summary>
-	/// Constructs a new instance of the <see cref="CString"/> class using the pointer to a UTF-8
+	/// Creates a new instance of the <see cref="CString"/> class using the pointer to a UTF-8
 	/// character array and length provided.
 	/// </summary>
 	/// <param name="ptr">A pointer to an array of UTF-8 characters.</param>
