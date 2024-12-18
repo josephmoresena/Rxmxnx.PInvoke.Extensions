@@ -6,7 +6,7 @@ public unsafe partial class UnmanagedValueExtensions
 {
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current array by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The type that is contained in the contiguous region of memory.
@@ -35,7 +35,7 @@ public unsafe partial class UnmanagedValueExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current array by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The type that is contained in the contiguous region of memory.
@@ -64,7 +64,7 @@ public unsafe partial class UnmanagedValueExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current array by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The type that is contained in the contiguous region of memory.
@@ -98,7 +98,7 @@ public unsafe partial class UnmanagedValueExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current array by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The type that is contained in the contiguous region of memory.
@@ -132,7 +132,7 @@ public unsafe partial class UnmanagedValueExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current array by pinning its memory
-	/// address until the function specified in <paramref name="func"/> has completed.
+	/// address until the specified function has completed.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The type that is contained in the contiguous region of memory.
@@ -162,7 +162,7 @@ public unsafe partial class UnmanagedValueExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current array by pinning its memory
-	/// address until the function specified in <paramref name="func"/> has completed.
+	/// address until the specified function has completed.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The type that is contained in the contiguous region of memory.
@@ -192,7 +192,7 @@ public unsafe partial class UnmanagedValueExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current array by pinning its memory
-	/// address until the function specified by <paramref name="func"/> has completed.
+	/// address until the specified function has completed.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The type that is contained in the contiguous region of memory.
@@ -228,7 +228,7 @@ public unsafe partial class UnmanagedValueExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current array by pinning its memory
-	/// address until the function specified by <paramref name="func"/> has completed.
+	/// address until the specified function has completed.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The type that is contained in the contiguous region of memory.

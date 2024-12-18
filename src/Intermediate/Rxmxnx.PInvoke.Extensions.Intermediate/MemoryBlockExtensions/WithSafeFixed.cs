@@ -6,7 +6,7 @@ public static unsafe partial class MemoryBlockExtensions
 {
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The type that is contained in the contiguous region of memory.
@@ -32,7 +32,7 @@ public static unsafe partial class MemoryBlockExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The type that is contained in the contiguous region of memory.
@@ -58,7 +58,7 @@ public static unsafe partial class MemoryBlockExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current read-only span by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The type that is contained in the contiguous region of memory.
@@ -84,7 +84,7 @@ public static unsafe partial class MemoryBlockExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The type that is contained in the contiguous region of memory.
@@ -115,7 +115,7 @@ public static unsafe partial class MemoryBlockExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The type that is contained in the contiguous region of memory.
@@ -146,7 +146,7 @@ public static unsafe partial class MemoryBlockExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current read-only span by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The type that is contained in the contiguous region of memory.
@@ -178,7 +178,7 @@ public static unsafe partial class MemoryBlockExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the function specified in <paramref name="func"/> has completed.
+	/// address until the specified function has completed.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The type that is contained in the contiguous region of memory.
@@ -206,7 +206,7 @@ public static unsafe partial class MemoryBlockExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the function specified in <paramref name="func"/> has completed.
+	/// address until the specified function has completed.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The type that is contained in the contiguous region of memory.
@@ -234,7 +234,7 @@ public static unsafe partial class MemoryBlockExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current read-only span by pinning its memory
-	/// address until the function specified in <paramref name="func"/> has completed.
+	/// address until the specified function has completed.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The type that is contained in the contiguous region of memory.

@@ -5,7 +5,7 @@ public static unsafe partial class BinaryExtensions
 {
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <param name="span">The current binary span.</param>
 	/// <param name="action">A <see cref="FixedAction"/> delegate.</param>
@@ -28,7 +28,7 @@ public static unsafe partial class BinaryExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <param name="span">The current binary span.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedAction"/> delegate.</param>
@@ -51,7 +51,7 @@ public static unsafe partial class BinaryExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current read-only span by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <param name="span">The current read-only binary span.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedAction"/> delegate.</param>
@@ -75,7 +75,7 @@ public static unsafe partial class BinaryExtensions
 
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
 	/// <param name="span">The current binary span.</param>
@@ -103,7 +103,7 @@ public static unsafe partial class BinaryExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
 	/// <param name="span">The current binary span.</param>
@@ -131,7 +131,7 @@ public static unsafe partial class BinaryExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current read-only span by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
 	/// <param name="span">The current read-only binary span.</param>
@@ -160,7 +160,7 @@ public static unsafe partial class BinaryExtensions
 
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the function specified in <paramref name="func"/> has completed.
+	/// address until the specified function has completed.
 	/// </summary>
 	/// <typeparam name="TResult">The type of the result returned by <paramref name="func"/>.</typeparam>
 	/// <param name="span">The current binary span.</param>
@@ -185,7 +185,7 @@ public static unsafe partial class BinaryExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the function specified in <paramref name="func"/> has completed.
+	/// address until the specified function has completed.
 	/// </summary>
 	/// <typeparam name="TResult">The type of the result returned by <paramref name="func"/>.</typeparam>
 	/// <param name="span">The current binary span.</param>
@@ -210,7 +210,7 @@ public static unsafe partial class BinaryExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current read-only span by pinning its memory
-	/// address until the function specified in <paramref name="func"/> has completed.
+	/// address until the specified function has completed.
 	/// </summary>
 	/// <typeparam name="TResult">The type of the result returned by <paramref name="func"/>.</typeparam>
 	/// <param name="span">The current read-only binary span.</param>
@@ -236,7 +236,7 @@ public static unsafe partial class BinaryExtensions
 
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the function specified in <paramref name="func"/> has completed.
+	/// address until the specified function has completed.
 	/// </summary>
 	/// <typeparam name="TArg">The type of the object representing the state.</typeparam>
 	/// <typeparam name="TResult">The type of the result returned by <paramref name="func"/>.</typeparam>
@@ -266,7 +266,7 @@ public static unsafe partial class BinaryExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the function specified in <paramref name="func"/> has completed.
+	/// address until the specified function has completed.
 	/// </summary>
 	/// <typeparam name="TArg">The type of the object representing the state.</typeparam>
 	/// <typeparam name="TResult">The type of the result returned by <paramref name="func"/>.</typeparam>
@@ -297,7 +297,7 @@ public static unsafe partial class BinaryExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current read-only span by pinning its memory
-	/// address until the function specified in <paramref name="func"/> has completed.
+	/// address until the specified function has completed.
 	/// </summary>
 	/// <typeparam name="TArg">The type of the object representing the state.</typeparam>
 	/// <typeparam name="TResult">The type of the result returned by <paramref name="func"/>.</typeparam>

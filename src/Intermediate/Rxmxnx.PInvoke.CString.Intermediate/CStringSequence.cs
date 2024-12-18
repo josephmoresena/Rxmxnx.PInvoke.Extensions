@@ -142,7 +142,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	public static CStringSequence Create<TState>(TState state, CStringSequenceCreationAction<TState> action,
 		params Int32?[] lengths)
 #if NET9_0_OR_GREATER
-	where TArg : allows ref struct
+	where TState : allows ref struct
 #endif
 	{
 		Int32 length = CStringSequence.GetBufferLength(lengths);

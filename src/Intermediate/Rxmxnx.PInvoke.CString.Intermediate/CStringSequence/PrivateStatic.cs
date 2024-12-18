@@ -159,7 +159,7 @@ public unsafe partial class CStringSequence
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static void CreateCStringSequence<TState>(Span<Char> buffer, SequenceCreationHelper<TState> helper)
 #if NET9_0_OR_GREATER
-	where TArg : allows ref struct
+	where TState : allows ref struct
 #endif
 		=> CStringSequence.CreateCStringSequence(MemoryMarshal.AsBytes(buffer), helper);
 	/// <summary>
@@ -171,7 +171,7 @@ public unsafe partial class CStringSequence
 	/// <param name="helper">The state object used for creation.</param>
 	private static void CreateCStringSequence<TState>(Span<Byte> buffer, SequenceCreationHelper<TState> helper)
 #if NET9_0_OR_GREATER
-	where TArg : allows ref struct
+	where TState : allows ref struct
 #endif
 	{
 		Int32 offset = 0;

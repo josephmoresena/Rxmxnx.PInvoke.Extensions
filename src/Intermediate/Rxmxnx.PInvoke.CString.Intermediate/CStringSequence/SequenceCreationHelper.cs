@@ -12,7 +12,7 @@ public partial class CStringSequence
 #endif
 		struct SequenceCreationHelper<TState>
 #if NET9_0_OR_GREATER
-	where TArg : allows ref struct
+	where TState : allows ref struct
 #endif
 	{
 		/// <summary>
