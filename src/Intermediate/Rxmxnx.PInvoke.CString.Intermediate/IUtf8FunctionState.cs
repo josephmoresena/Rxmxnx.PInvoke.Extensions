@@ -4,7 +4,7 @@ namespace Rxmxnx.PInvoke;
 /// Interface representing a value state for functional <see cref="CString"/> creation.
 /// </summary>
 /// <typeparam name="TSelf">Current state type.</typeparam>
-public interface IUtf8FunctionState<in TSelf> where TSelf : struct, IUtf8FunctionState<TSelf>
+public interface IUtf8FunctionState<TSelf> where TSelf : struct, IUtf8FunctionState<TSelf>
 {
 	/// <summary>
 	/// Indicates whether resulting UTF-8 text is null-terminated.
@@ -29,5 +29,5 @@ public interface IUtf8FunctionState<in TSelf> where TSelf : struct, IUtf8Functio
 #if NET6_0
 	[RequiresPreviewFeatures]
 #endif
-	static virtual Int32 GetLength(TSelf state) => TSelf.GetSpan(state).Length;
+	static virtual Int32 GetLength(in TSelf state) => TSelf.GetSpan(state).Length;
 }
