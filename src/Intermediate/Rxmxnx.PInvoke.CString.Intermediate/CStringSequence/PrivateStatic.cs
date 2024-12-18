@@ -158,6 +158,9 @@ public unsafe partial class CStringSequence
 	/// <param name="helper">The state object used for creation.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static void CreateCStringSequence<TState>(Span<Char> buffer, SequenceCreationHelper<TState> helper)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
 		=> CStringSequence.CreateCStringSequence(MemoryMarshal.AsBytes(buffer), helper);
 	/// <summary>
 	/// Creates a UTF-8 text sequence using the given <paramref name="helper"/>,
@@ -167,6 +170,9 @@ public unsafe partial class CStringSequence
 	/// <param name="buffer">The byte buffer where the sequence is created.</param>
 	/// <param name="helper">The state object used for creation.</param>
 	private static void CreateCStringSequence<TState>(Span<Byte> buffer, SequenceCreationHelper<TState> helper)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
 	{
 		Int32 offset = 0;
 		for (Int32 i = 0; i < helper.Lengths.Length; i++)

@@ -141,6 +141,9 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// <returns>The created UTF-8 text sequence.</returns>
 	public static CStringSequence Create<TState>(TState state, CStringSequenceCreationAction<TState> action,
 		params Int32?[] lengths)
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
 	{
 		Int32 length = CStringSequence.GetBufferLength(lengths);
 		SequenceCreationHelper<TState> helper = new() { State = state, Action = action, Lengths = lengths, };
@@ -148,7 +151,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		return new(buffer, lengths);
 	}
 	/// <summary>
-	/// Creates a new <see cref="CStringSequence"/> instance from <paramref name="value"/> UTF-8 buffer.
+	/// Creates a new <see cref="CStringSequence"/> instance from a UTF-8 buffer.
 	/// </summary>
 	/// <param name="value">A buffer of a UTF-8 sequence.</param>
 	/// <returns>A new <see cref="CStringSequence"/> instance.</returns>

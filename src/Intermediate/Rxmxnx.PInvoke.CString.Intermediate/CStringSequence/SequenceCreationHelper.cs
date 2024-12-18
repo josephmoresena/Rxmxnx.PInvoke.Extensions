@@ -11,6 +11,9 @@ public partial class CStringSequence
 		ref
 #endif
 		struct SequenceCreationHelper<TState>
+#if NET9_0_OR_GREATER
+	where TArg : allows ref struct
+#endif
 	{
 		/// <summary>
 		/// Creation method.
