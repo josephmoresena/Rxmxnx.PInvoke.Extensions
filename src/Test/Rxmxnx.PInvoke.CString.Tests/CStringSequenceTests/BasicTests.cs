@@ -3,6 +3,13 @@
 [ExcludeFromCodeCoverage]
 public sealed class BasicTests
 {
+	[Fact]
+	internal void EmptyTest()
+	{
+		Assert.Empty(CStringSequence.Empty);
+		Assert.Equal(String.Empty, CStringSequence.Empty.ToString());
+	}
+
 	[Theory]
 	[InlineData(null)]
 	[InlineData(8)]

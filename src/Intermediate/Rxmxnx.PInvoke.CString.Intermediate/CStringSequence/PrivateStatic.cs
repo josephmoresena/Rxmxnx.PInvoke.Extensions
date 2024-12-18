@@ -4,11 +4,6 @@
 public unsafe partial class CStringSequence
 {
 	/// <summary>
-	/// Represents an empty sequence.
-	/// </summary>
-	private static readonly CStringSequence empty = new(String.Empty, []);
-
-	/// <summary>
 	/// Determines the length of the given <see cref="CString"/> instance for the sequence.
 	/// </summary>
 	/// <param name="cstr">The <see cref="CString"/> instance whose length is to be retrieved.</param>
@@ -322,7 +317,7 @@ public unsafe partial class CStringSequence
 	/// <returns>A new <see cref="CStringSequence"/> instance.</returns>
 	private static CStringSequence CreateFrom(ReadOnlySpan<Byte> buffer)
 	{
-		if (buffer.Length == 0) return CStringSequence.empty;
+		if (buffer.Length == 0) return CStringSequence.Empty;
 		Int32 totalBytes = buffer.Length + (buffer[^1] == default ? 0 : 1);
 		Int32 totalChars = totalBytes / sizeof(Char);
 		ReadOnlySpan<Int32> nulls;

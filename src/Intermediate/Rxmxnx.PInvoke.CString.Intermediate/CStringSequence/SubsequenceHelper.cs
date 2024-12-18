@@ -5,7 +5,11 @@ public partial class CStringSequence
 	/// <summary>
 	/// A helper class used to create subsequences from a parent <see cref="CStringSequence"/>.
 	/// </summary>
-	private readonly struct SubsequenceHelper
+	private readonly
+#if NET9_0_OR_GREATER
+		ref
+#endif
+		struct SubsequenceHelper
 	{
 		/// <summary>
 		/// A function that returns the binary representation of the subsequence.

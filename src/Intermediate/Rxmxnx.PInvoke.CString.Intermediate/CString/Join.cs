@@ -3,19 +3,53 @@
 public partial class CString
 {
 	/// <summary>
-	/// Concatenates UTF-8 text array elements with a specified byte separator.
+	/// Concatenates all the elements of a UTF-8 text array, using the specified separator
+	/// between each element.
 	/// </summary>
-	/// <param name="separator">Byte to use as a separator between concatenated elements.</param>
-	/// <param name="value">Array of UTF-8 text elements to concatenate.</param>
+	/// <param name="separator">
+	/// The UTF-8 character to use as a separator.
+	/// <paramref name="separator"/> is included in the returned <see cref="CString"/>
+	/// only if <paramref name="value"/> has more than one element.
+	/// </param>
+	/// <param name="value">An array that contains the elements to concatenate.</param>
 	/// <returns>
-	/// Concatenated UTF-8 text with separators or an empty <see cref="CString"/> if the input array is empty.
+	/// A UTF-8 text that consists of the elements in <paramref name="value"/> delimited
+	/// by the <paramref name="separator"/> character. -or- <see cref="Empty"/> if
+	/// <paramref name="value"/> has zero elements.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
-	public static CString Join(Byte separator, params CString?[] value)
+	public static CString Join(Byte separator,
+#if !NET9_0_OR_GREATER
+		params
+#endif
+			CString?[] value)
 	{
 		ArgumentNullException.ThrowIfNull(value);
+		return CString.Join(separator, value.AsSpan());
+	}
+	/// <summary>
+	/// Concatenates all the elements of a read-only span UTF-8 text, using the specified separator
+	/// between each element.
+	/// </summary>
+	/// <param name="separator">
+	/// The UTF-8 character to use as a separator.
+	/// <paramref name="separator"/> is included in the returned <see cref="CString"/>
+	/// only if <paramref name="value"/> has more than one element.
+	/// </param>
+	/// <param name="value">A read-only that contains the elements to concatenate.</param>
+	/// <returns>
+	/// A UTF-8 text that consists of the elements in <paramref name="value"/> delimited
+	/// by the <paramref name="separator"/> character. -or- <see cref="Empty"/> if
+	/// <paramref name="value"/> has zero elements.
+	/// </returns>
+	public static CString Join(Byte separator,
+#if NET9_0_OR_GREATER
+		params
+#endif
+		ReadOnlySpan<CString?> value)
+	{
 		using BinaryConcatenator helper = new(separator);
-		foreach (CString? utf8Text in value.AsSpan())
+		foreach (CString? utf8Text in value)
 			helper.Write(utf8Text);
 		return helper.ToCString();
 	}
@@ -54,27 +88,55 @@ public partial class CString
 	public static CString Join(Byte separator, CString?[] value, Int32 startIndex, Int32 count)
 	{
 		ArgumentNullException.ThrowIfNull(value);
-		using BinaryConcatenator helper = new(separator);
-		Int32 limit = count + startIndex;
-		for (Int32 index = startIndex; index < limit; index++)
-		{
-			CString? utf8Text = value[index];
-			helper.Write(utf8Text);
-		}
-		return helper.ToCString();
+		ReadOnlySpan<CString?> span = value.AsSpan();
+		return CString.Join(separator, span[startIndex..(startIndex + count)]);
 	}
 	/// <summary>
-	/// Concatenates UTF-8 text array elements with a specified text separator.
+	/// Concatenates all the elements of a UTF-8 text array, using the specified separator
+	/// between each element.
 	/// </summary>
-	/// <param name="separator">Text to use as a separator between concatenated elements.</param>
-	/// <param name="value">Array of UTF-8 text elements to concatenate.</param>
+	/// <param name="separator">
+	/// The UTF-8 text to use as a separator.
+	/// <paramref name="separator"/> is included in the returned <see cref="CString"/>
+	/// only if <paramref name="value"/> has more than one element.
+	/// </param>
+	/// <param name="value">An array that contains the elements to concatenate.</param>
 	/// <returns>
-	/// Concatenated UTF-8 text with separators or an empty <see cref="CString"/> if the input array is empty.
+	/// A UTF-8 text that consists of the elements in <paramref name="value"/> delimited
+	/// by the separator UTF-8 text. -or- <see cref="Empty"/> if
+	/// <paramref name="value"/> has zero elements.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
-	public static unsafe CString Join(ReadOnlySpan<Byte> separator, params CString?[] value)
+	public static CString Join(ReadOnlySpan<Byte> separator,
+#if !NET9_0_OR_GREATER
+		params
+#endif
+			CString?[] value)
 	{
 		ArgumentNullException.ThrowIfNull(value);
+		return CString.Join(separator, value.AsSpan());
+	}
+	/// <summary>
+	/// Concatenates all the elements of a UTF-8 text read-only span, using the specified separator
+	/// between each element.
+	/// </summary>
+	/// <param name="separator">
+	/// The UTF-8 text to use as a separator.
+	/// <paramref name="separator"/> is included in the returned <see cref="CString"/>
+	/// only if <paramref name="value"/> has more than one element.
+	/// </param>
+	/// <param name="value">A read-only span that contains the elements to concatenate.</param>
+	/// <returns>
+	/// A UTF-8 text that consists of the elements in <paramref name="value"/> delimited
+	/// by the separator UTF-8 text. -or- <see cref="Empty"/> if
+	/// <paramref name="value"/> has zero elements.
+	/// </returns>
+	public static unsafe CString Join(ReadOnlySpan<Byte> separator,
+#if NET9_0_OR_GREATER
+		params
+#endif
+		ReadOnlySpan<CString?> value)
+	{
 		fixed (void* ptr = &MemoryMarshal.GetReference(separator))
 		{
 			CString separatorCstr = new(new IntPtr(ptr), separator.Length);
@@ -100,43 +162,85 @@ public partial class CString
 		}
 	}
 	/// <summary>
-	/// Concatenates a specific number of UTF-8 text array elements starting from a given index with a specified text
-	/// separator.
+	/// Concatenates the specified elements of a UTF-8 text array, using the specified
+	/// separator between each element.
 	/// </summary>
-	/// <param name="separator">Text to use as a separator between concatenated elements.</param>
-	/// <param name="value">Array of UTF-8 text elements to concatenate.</param>
-	/// <param name="startIndex">Index of the first element in the array to be used in concatenation.</param>
-	/// <param name="count">Number of elements from the array to use in concatenation.</param>
+	/// <param name="separator">
+	/// The UTF-8 text to use as a separator.
+	/// <paramref name="separator"/> is included in the returned <see cref="CString"/>
+	/// only if <paramref name="value"/> has more than one element.
+	/// </param>
+	/// <param name="value">An array that contains the elements to concatenate.</param>
+	/// <param name="startIndex">
+	/// The first element in <paramref name="value"/> to use.
+	/// </param>
+	/// <param name="count">
+	/// The number of elements from <paramref name="value"/> to use.
+	/// </param>
 	/// <returns>
-	/// Concatenated UTF-8 text with separators or an empty <see cref="CString"/> if count is zero.
+	/// A UTF-8 text that consists of <paramref name="count"/> elements of
+	/// <paramref name="value"/> starting at <paramref name="startIndex"/> delimited by
+	/// the <paramref name="separator"/> UTF-8 text. -or- <see cref="Empty"/>
+	/// if <paramref name="count"/> is zero.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
 	/// <exception cref="ArgumentOutOfRangeException">
 	/// Thrown if <paramref name="startIndex"/> or <paramref name="count"/> is out of range.
 	/// </exception>
-	public static unsafe CString Join(ReadOnlySpan<Byte> separator, CString?[] value, Int32 startIndex, Int32 count)
+	public static CString Join(ReadOnlySpan<Byte> separator, CString?[] value, Int32 startIndex, Int32 count)
 	{
 		ArgumentNullException.ThrowIfNull(value);
-		fixed (void* ptr = &MemoryMarshal.GetReference(separator))
-		{
-			CString separatorCstr = new(new IntPtr(ptr), separator.Length);
-			return CString.Join(separatorCstr, value, startIndex, count);
-		}
+		ReadOnlySpan<CString?> span = value.AsSpan();
+		return CString.Join(separator, span[startIndex..(startIndex + count)]);
 	}
 	/// <summary>
-	/// Concatenates UTF-8 text array elements with a specified text separator.
+	/// Concatenates all the elements of a UTF-8 text array, using the specified separator
+	/// between each element.
 	/// </summary>
-	/// <param name="separator">Text to use as a separator between concatenated elements.</param>
-	/// <param name="value">Array of UTF-8 text elements to concatenate.</param>
+	/// <param name="separator">
+	/// The UTF-8 text to use as a separator.
+	/// <paramref name="separator"/> is included in the returned <see cref="CString"/>
+	/// only if <paramref name="value"/> has more than one element.
+	/// </param>
+	/// <param name="value">An array that contains the elements to concatenate.</param>
 	/// <returns>
-	/// Concatenated UTF-8 text with separators or an empty <see cref="CString"/> if count is zero.
+	/// A UTF-8 text that consists of the elements in <paramref name="value"/> delimited
+	/// by the separator UTF-8 text. -or- <see cref="Empty"/> if
+	/// <paramref name="value"/> has zero elements.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
-	public static CString Join(CString? separator, params CString?[] value)
+	public static CString Join(CString? separator,
+#if !NET9_0_OR_GREATER
+		params
+#endif
+			CString?[] value)
 	{
 		ArgumentNullException.ThrowIfNull(value);
+		return CString.Join(separator, value.AsSpan());
+	}
+	/// <summary>
+	/// Concatenates all the elements of a UTF-8 text read-only span, using the specified separator
+	/// between each element.
+	/// </summary>
+	/// <param name="separator">
+	/// The UTF-8 text to use as a separator.
+	/// <paramref name="separator"/> is included in the returned <see cref="CString"/>
+	/// only if <paramref name="value"/> has more than one element.
+	/// </param>
+	/// <param name="value">A read-only span that contains the elements to concatenate.</param>
+	/// <returns>
+	/// A UTF-8 text that consists of the elements in <paramref name="value"/> delimited
+	/// by the separator UTF-8 text. -or- <see cref="Empty"/> if
+	/// <paramref name="value"/> has zero elements.
+	/// </returns>
+	public static CString Join(CString? separator,
+#if NET9_0_OR_GREATER
+		params
+#endif
+		ReadOnlySpan<CString?> value)
+	{
 		using CStringConcatenator helper = new(separator);
-		foreach (CString? utf8Text in value.AsSpan())
+		foreach (CString? utf8Text in value)
 			helper.Write(utf8Text);
 		return helper.ToCString();
 	}
@@ -158,15 +262,26 @@ public partial class CString
 		return helper.ToCString();
 	}
 	/// <summary>
-	/// Concatenates a specific number of UTF-8 text array elements starting from a given index with a specified text
-	/// separator.
+	/// Concatenates the specified elements of a UTF-8 text array, using the specified
+	/// separator between each element.
 	/// </summary>
-	/// <param name="separator">Text to use as a separator between concatenated elements.</param>
-	/// <param name="value">Array of UTF-8 text elements to concatenate.</param>
-	/// <param name="startIndex">Index of the first element in the array to be used in concatenation.</param>
-	/// <param name="count">Number of elements from the array to use in concatenation.</param>
+	/// <param name="separator">
+	/// The UTF-8 text to use as a separator.
+	/// <paramref name="separator"/> is included in the returned <see cref="CString"/>
+	/// only if <paramref name="value"/> has more than one element.
+	/// </param>
+	/// <param name="value">An array that contains the elements to concatenate.</param>
+	/// <param name="startIndex">
+	/// The first element in <paramref name="value"/> to use.
+	/// </param>
+	/// <param name="count">
+	/// The number of elements from <paramref name="value"/> to use.
+	/// </param>
 	/// <returns>
-	/// Concatenated UTF-8 text with separators or an empty <see cref="CString"/> if count is zero.
+	/// A UTF-8 text that consists of <paramref name="count"/> elements of
+	/// <paramref name="value"/> starting at <paramref name="startIndex"/> delimited by
+	/// the <paramref name="separator"/> UTF-8 text. -or- <see cref="Empty"/>
+	/// if <paramref name="count"/> is zero.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
 	/// <exception cref="ArgumentOutOfRangeException">
@@ -175,13 +290,7 @@ public partial class CString
 	public static CString Join(CString? separator, CString?[] value, Int32 startIndex, Int32 count)
 	{
 		ArgumentNullException.ThrowIfNull(value);
-		using CStringConcatenator helper = new(separator);
-		Int32 limit = count + startIndex;
-		for (Int32 index = startIndex; index < limit && index < value.Length; index++)
-		{
-			CString? utf8Text = value[index];
-			helper.Write(utf8Text);
-		}
-		return helper.ToCString();
+		ReadOnlySpan<CString?> span = value.AsSpan();
+		return CString.Join(separator, span[startIndex..(startIndex + count)]);
 	}
 }

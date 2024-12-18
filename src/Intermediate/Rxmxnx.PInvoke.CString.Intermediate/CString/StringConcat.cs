@@ -14,11 +14,34 @@ public partial class CString
 	/// during concatenation.
 	/// </remarks>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
-	public static CString Concat(params String?[] values)
+	public static CString Concat(
+#if !NET9_0_OR_GREATER
+		params
+#endif
+			String?[] values)
 	{
 		ArgumentNullException.ThrowIfNull(values);
+		return CString.Concat(values.AsSpan());
+	}
+	/// <summary>
+	/// Concatenates the elements of a specified read-only <see cref="String"/>.
+	/// </summary>
+	/// <param name="values">An array of <see cref="String"/> instances.</param>
+	/// <returns>The concatenated elements of <paramref name="values"/>, as a UTF-8 text.</returns>
+	/// <remarks>
+	/// This method takes an array of <see cref="String"/> instances represented by <paramref name="values"/>,
+	/// and concatenates each element into a single <see cref="CString"/> instance.
+	/// If any element within <paramref name="values"/> is <see langword="null"/>, it is ignored
+	/// during concatenation.
+	/// </remarks>
+	public static CString Concat(
+#if NET9_0_OR_GREATER
+		params
+#endif
+		ReadOnlySpan<String?> values)
+	{
 		using StringConcatenator helper = new();
-		foreach (String? value in values.AsSpan())
+		foreach (String? value in values)
 			helper.Write(value);
 		return helper.ToCString();
 	}

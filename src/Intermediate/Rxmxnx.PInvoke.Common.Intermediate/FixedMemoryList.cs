@@ -34,12 +34,25 @@ public readonly ref struct FixedMemoryList
 	[IndexerName("Item")]
 	public IFixedMemory this[Int32 index] => (IFixedMemory)this._values[index];
 
+#if !NET9_0_OR_GREATER
 	/// <summary>
 	/// Initializes a new instance of the <see cref="FixedMemoryList"/> structure.
 	/// </summary>
 	/// <param name="memories">An array of <see cref="FixedMemory"/> instances to be stored in the list.</param>
 	/// <remarks>This constructor initializes the list with the provided fixed memory blocks.</remarks>
-	internal FixedMemoryList(params FixedMemory[] memories) => this._values = new(memories.Cast<ReadOnlyFixedMemory>());
+	internal FixedMemoryList(params FixedMemory[] memories) : this(memories.AsSpan()) { }
+#endif
+	/// <summary>
+	/// Initializes a new instance of the <see cref="FixedMemoryList"/> structure.
+	/// </summary>
+	/// <param name="memories">A read-only of <see cref="FixedMemory"/> instances to be stored in the list.</param>
+	/// <remarks>This constructor initializes the list with the provided fixed memory blocks.</remarks>
+	internal FixedMemoryList(
+#if NET9_0_OR_GREATER
+		params
+#endif
+		ReadOnlySpan<FixedMemory> memories)
+		=> this._values = FixedMemoryListValue.Create(memories);
 
 	/// <summary>
 	/// Creates an array from the current <see cref="FixedMemoryList"/> instance.

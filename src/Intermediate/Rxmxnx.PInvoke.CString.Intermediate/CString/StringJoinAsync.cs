@@ -220,7 +220,7 @@ public partial class CString
 		ArgumentNullException.ThrowIfNull(value);
 		await using StringConcatenator helper = new(separator, cancellationToken);
 		Int32 limit = count + startIndex;
-		for (Int32 index = startIndex; index < limit && index < value.Length; index++)
+		for (Int32 index = startIndex; index < limit; index++)
 		{
 			String? utf16Text = value[index];
 			await helper.WriteAsync(utf16Text);

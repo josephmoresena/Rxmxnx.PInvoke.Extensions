@@ -16,11 +16,7 @@ public delegate ReadOnlySpan<T> ReadOnlySpanFunc<T>();
 /// <typeparam name="TState">The type of the state object passed to the method.</typeparam>
 /// <param name="arg">A state object of type <typeparamref name="TState"/>.</param>
 /// <returns>A <see cref="ReadOnlySpan{T}"/> instance.</returns>
-public delegate ReadOnlySpan<T> ReadOnlySpanFunc<T, in TState>(TState arg)
-#if NET9_0_OR_GREATER
-	where TState : allows ref struct
-#endif
-	;
+public delegate ReadOnlySpan<T> ReadOnlySpanFunc<T, in TState>(TState arg);
 
 /// <summary>
 /// Encapsulates a method that receives a span of type <typeparamref name="T"/>, a
