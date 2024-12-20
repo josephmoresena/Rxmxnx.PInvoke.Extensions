@@ -138,7 +138,7 @@ public readonly unsafe struct ValPtr<T> : IWrapper<IntPtr>, IEquatable<ValPtr<T>
 	/// <summary>
 	/// Defines an explicit conversion of a given <see cref="IntPtr"/> to a value pointer.
 	/// </summary>
-	/// <param name="ptr">A <see cref="IntPtr"/> to explicitly convert.</param>
+	/// <param name="ptr">An <see cref="IntPtr"/> to explicitly convert.</param>
 	public static explicit operator ValPtr<T>(IntPtr ptr) => new(ptr.ToPointer());
 	/// <summary>
 	/// Defines an explicit conversion of a given pointer to a value pointer.

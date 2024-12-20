@@ -137,7 +137,7 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// <summary>
 	/// Defines an explicit conversion of a given <see cref="IntPtr"/> to a read-only value pointer.
 	/// </summary>
-	/// <param name="ptr">A <see cref="IntPtr"/> to explicitly convert.</param>
+	/// <param name="ptr">An <see cref="IntPtr"/> to explicitly convert.</param>
 	public static explicit operator ReadOnlyValPtr<T>(IntPtr ptr) => new(ptr.ToPointer());
 	/// <summary>
 	/// Defines an explicit conversion of a given pointer to a read-only value pointer.

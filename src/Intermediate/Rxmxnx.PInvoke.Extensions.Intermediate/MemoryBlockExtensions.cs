@@ -244,6 +244,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// </typeparam>
 	/// <param name="mem">A <see cref="ReadOnlyMemory{T}"/> instance.</param>
 	/// <returns>An <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance representing the pinned memory.</returns>
+	/// <exception cref="ArgumentException">A read-only memory with non-unmanaged items cannot be pinned.</exception>
 	/// <remarks>
 	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
 	/// operations on unmanaged memory.
@@ -267,6 +268,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// </typeparam>
 	/// <param name="mem">A <see cref="Memory{T}"/> instance.</param>
 	/// <returns>An <see cref="IFixedContext{T}.IDisposable"/> instance representing the pinned memory.</returns>
+	/// <exception cref="ArgumentException">A memory with non-unmanaged items cannot be pinned.</exception>
 	/// <remarks>
 	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
 	/// operations on unmanaged memory.
@@ -287,7 +289,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// </typeparam>
 	/// <param name="mem">A <see cref="ReadOnlyMemory{T}"/> instance.</param>
 	/// <returns>An <see cref="IReadOnlyFixedMemory.IDisposable"/> instance representing the pinned memory.</returns>
-	/// <exception cref="ArgumentException">An instance with non-primitive (non-blittable) members cannot be pinned.</exception>
+	/// <exception cref="ArgumentException">A read-only memory with non-unmanaged items cannot be pinned.</exception>
 	/// <remarks>
 	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
 	/// operations on unmanaged memory.
@@ -305,7 +307,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// </typeparam>
 	/// <param name="mem">A <see cref="Memory{T}"/> instance.</param>
 	/// <returns>An <see cref="IFixedMemory.IDisposable"/> instance representing the pinned memory.</returns>
-	/// <exception cref="ArgumentException">An instance with non-primitive (non-blittable) members cannot be pinned.</exception>
+	/// <exception cref="ArgumentException">A memory with non-unmanaged items cannot be pinned.</exception>
 	/// <remarks>
 	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
 	/// operations on unmanaged memory.

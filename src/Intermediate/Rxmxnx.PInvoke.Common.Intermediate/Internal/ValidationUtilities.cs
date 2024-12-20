@@ -101,7 +101,7 @@ internal static unsafe class ValidationUtilities
 	/// Throws an exception if <paramref name="obj"/> is not a value pointer.
 	/// </summary>
 	/// <param name="obj">A <see cref="Object"/> instance.</param>
-	/// <param name="ptr">A <see cref="IntPtr"/> value.</param>
+	/// <param name="ptr">An <see cref="IntPtr"/> value.</param>
 	/// <param name="nameofPtr">Name of value pointer type.</param>
 	/// <typeparam name="T">Type of referenced value.</typeparam>
 	/// <returns>A <see cref="Int32"/> value that indicates the relative order of the objects being compared.</returns>

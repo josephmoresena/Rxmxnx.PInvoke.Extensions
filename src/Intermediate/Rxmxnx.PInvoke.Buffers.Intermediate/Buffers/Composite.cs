@@ -46,7 +46,7 @@ public partial struct Composite<TBufferA, TBufferB, T> : IManagedBinaryBuffer<Co
 	}
 
 	/// <summary>
-	/// Indicates whether current buffer type is binary.
+	/// Determines if current buffer type is binary.
 	/// </summary>
 	/// <returns>
 	/// <see langword="true"/> if current buffer type is binary; otherwise, <see langword="false"/>.

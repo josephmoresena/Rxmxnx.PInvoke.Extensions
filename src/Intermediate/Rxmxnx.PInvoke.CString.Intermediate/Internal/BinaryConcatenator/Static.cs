@@ -43,7 +43,7 @@ internal partial class BinaryConcatenator<T>
 		return iPosition;
 	}
 	/// <summary>
-	/// Indicates whether the given <see cref="Byte"/> represents a UTF-8
+	/// Determines if the given <see cref="Byte"/> represents a UTF-8
 	/// null character.
 	/// </summary>
 	/// <param name="utf8Char">The byte to be checked.</param>
@@ -53,7 +53,7 @@ internal partial class BinaryConcatenator<T>
 	/// </returns>
 	private static Boolean IsNullUtf8Char(in Byte utf8Char) => utf8Char == default;
 	/// <summary>
-	/// Indicates whether the given sequence of bytes represents a UTF-8 BOM
+	/// Determines if the given sequence of bytes represents a UTF-8 BOM
 	/// (Byte Order Mark).
 	/// </summary>
 	/// <param name="utf8Char1">The first byte in the sequence.</param>
