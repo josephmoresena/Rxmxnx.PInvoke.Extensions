@@ -133,7 +133,7 @@ public static unsafe partial class MemoryBlockExtensions
 	}
 
 	/// <summary>
-	/// Reinterprets <paramref name="span"/> as binary span.
+	/// Reinterprets the span of <typeparamref name="TSource"/> as a binary span.
 	/// </summary>
 	/// <typeparam name="TSource">The type of the <see langword="unmanaged"/> value.</typeparam>
 	/// <param name="span">A span of <typeparamref name="TSource"/>.</param>
@@ -142,7 +142,7 @@ public static unsafe partial class MemoryBlockExtensions
 	public static Span<Byte> AsBytes<TSource>(this Span<TSource> span) where TSource : unmanaged
 		=> MemoryMarshal.AsBytes(span);
 	/// <summary>
-	/// Reinterprets <paramref name="span"/> as binary span.
+	/// Reinterprets the read-only span of <typeparamref name="TSource"/> as a read-only binary span.
 	/// </summary>
 	/// <typeparam name="TSource">The type of the <see langword="unmanaged"/> value.</typeparam>
 	/// <param name="span">A read-only span of <typeparamref name="TSource"/>.</param>
@@ -152,7 +152,7 @@ public static unsafe partial class MemoryBlockExtensions
 		=> MemoryMarshal.AsBytes(span);
 
 	/// <summary>
-	/// Reinterprets <paramref name="span"/> as a span of <typeparamref name="TDestination"/>.
+	/// Reinterprets the span of <typeparamref name="TSource"/> as a span of <typeparamref name="TDestination"/>.
 	/// </summary>
 	/// <typeparam name="TDestination">The destination type of the <see langword="unmanaged"/> value.</typeparam>
 	/// <typeparam name="TSource">The origin type of the <see langword="unmanaged"/> value.</typeparam>
@@ -163,7 +163,8 @@ public static unsafe partial class MemoryBlockExtensions
 		where TSource : unmanaged where TDestination : unmanaged
 		=> MemoryMarshal.Cast<TSource, TDestination>(span);
 	/// <summary>
-	/// Reinterprets <paramref name="span"/> as a read-only span of <typeparamref name="TDestination"/>.
+	/// Reinterprets the read-only span of <typeparamref name="TSource"/> as a read-only span of
+	/// <typeparamref name="TDestination"/>.
 	/// </summary>
 	/// <typeparam name="TDestination">The destination type of the <see langword="unmanaged"/> value.</typeparam>
 	/// <typeparam name="TSource">The origin type of the <see langword="unmanaged"/> value.</typeparam>
@@ -174,7 +175,7 @@ public static unsafe partial class MemoryBlockExtensions
 		where TSource : unmanaged where TDestination : unmanaged
 		=> MemoryMarshal.Cast<TSource, TDestination>(span);
 	/// <summary>
-	/// Reinterprets <paramref name="span"/> as a span of <typeparamref name="TDestination"/>.
+	/// Reinterprets the span of <typeparamref name="TSource"/> as a span of <typeparamref name="TDestination"/>.
 	/// </summary>
 	/// <typeparam name="TDestination">The destination type of the <see langword="unmanaged"/> value.</typeparam>
 	/// <typeparam name="TSource">The origin type of the <see langword="unmanaged"/> value.</typeparam>
@@ -194,7 +195,7 @@ public static unsafe partial class MemoryBlockExtensions
 		return result;
 	}
 	/// <summary>
-	/// Reinterprets <paramref name="span"/> as a read-only span of <typeparamref name="TDestination"/>.
+	/// Reinterprets the span of <typeparamref name="TSource"/> as a read-only span of <typeparamref name="TDestination"/>.
 	/// </summary>
 	/// <typeparam name="TDestination">The destination type of the <see langword="unmanaged"/> value.</typeparam>
 	/// <typeparam name="TSource">The origin type of the <see langword="unmanaged"/> value.</typeparam>
@@ -214,7 +215,8 @@ public static unsafe partial class MemoryBlockExtensions
 		return result;
 	}
 	/// <summary>
-	/// Reinterprets <paramref name="span"/> as a read-only span of <typeparamref name="TDestination"/>.
+	/// Reinterprets the read-only span of <typeparamref name="TSource"/> as a read-only span of
+	/// <typeparamref name="TDestination"/>.
 	/// </summary>
 	/// <typeparam name="TDestination">The destination type of the <see langword="unmanaged"/> value.</typeparam>
 	/// <typeparam name="TSource">The origin type of the <see langword="unmanaged"/> value.</typeparam>
@@ -235,7 +237,7 @@ public static unsafe partial class MemoryBlockExtensions
 	}
 	/// <summary>
 	/// Creates an <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance by pinning the current
-	/// <see cref="ReadOnlyMemory{T}"/> instance, providing a safe context for accessing the fixed memory.
+	/// <see cref="ReadOnlyMemory{T}"/> instance, ensuring a safe context for accessing the fixed memory.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The unmanaged type from which the contiguous region of memory will be read.
@@ -257,8 +259,8 @@ public static unsafe partial class MemoryBlockExtensions
 				new ReadOnlyFixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);
 	}
 	/// <summary>
-	/// Creates an <see cref="IFixedContext{T}.IDisposable"/> instance by pinning the current
-	/// <see cref="Memory{T}"/> instance, allowing safe access to the fixed memory region.
+	/// Creates an <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance by pinning the current
+	/// <see cref="Memory{T}"/> instance, ensuring a safe context for accessing the fixed memory.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The unmanaged type of items in the <see cref="Memory{T}"/>.
@@ -278,7 +280,7 @@ public static unsafe partial class MemoryBlockExtensions
 	}
 	/// <summary>
 	/// Creates an <see cref="IReadOnlyFixedMemory.IDisposable"/> instance by pinning the current
-	/// <see cref="ReadOnlyMemory{T}"/> instance, providing a safe context for accessing the fixed memory.
+	/// <see cref="ReadOnlyMemory{T}"/> instance, ensuring a safe context for accessing the fixed memory.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The unmanaged type from which the contiguous region of memory will be read.
@@ -293,13 +295,10 @@ public static unsafe partial class MemoryBlockExtensions
 	/// and avoid memory leaks.
 	/// </remarks>
 	public static IReadOnlyFixedMemory.IDisposable GetFixedMemory<T>(this ReadOnlyMemory<T> mem)
-	{
-		MemoryHandle handle = mem.Pin();
-		return new ReadOnlyFixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);
-	}
+		=> mem.GetFixedContext();
 	/// <summary>
 	/// Creates an <see cref="IFixedMemory.IDisposable"/> instance by pinning the current
-	/// <see cref="Memory{T}"/> instance, allowing safe access to the fixed memory region.
+	/// <see cref="Memory{T}"/> instance, ensuring a safe context for accessing the fixed memory.
 	/// </summary>
 	/// <typeparam name="T">
 	/// The type of items in the <see cref="Memory{T}"/>.
@@ -313,9 +312,5 @@ public static unsafe partial class MemoryBlockExtensions
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
-	public static IFixedMemory.IDisposable GetFixedMemory<T>(this Memory<T> mem)
-	{
-		MemoryHandle handle = mem.Pin();
-		return new FixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);
-	}
+	public static IFixedMemory.IDisposable GetFixedMemory<T>(this Memory<T> mem) => mem.GetFixedContext();
 }
