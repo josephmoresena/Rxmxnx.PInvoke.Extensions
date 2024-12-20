@@ -82,6 +82,14 @@ public static unsafe class PointerExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static String? GetUnsafeString(this UIntPtr uptr) => uptr.GetUnsafeString(0);
 	/// <summary>
+	/// Generates a <see cref="String"/> instance from the memory at the given <see cref="MemoryHandle"/>,
+	/// interpreting the contents as UTF-16 text.
+	/// </summary>
+	/// <param name="handle">The <see cref="UIntPtr"/> pointing to the start of UTF-16 text in memory.</param>
+	/// <returns>A <see cref="String"/> representation of the UTF-16 text in memory.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static String? GetUnsafeString(this MemoryHandle handle) => handle.GetUnsafeString(0);
+	/// <summary>
 	/// Generates a <see cref="String"/> instance from the memory at the given <see cref="IntPtr"/>,
 	/// interpreting the contents as UTF-16 text.
 	/// </summary>
@@ -103,7 +111,8 @@ public static unsafe class PointerExtensions
 		return ptr.IsZero() ? default : PointerExtensions.GetStringFromCharPointer((Char*)ptr.ToPointer(), length);
 	}
 	/// <summary>
-	/// Generates a <see cref="String"/> instance from a <see cref="Char"/> pointer, interpreting the contents as UTF-16 text.
+	/// Generates a <see cref="String"/> instance from the memory at the given <see cref="UIntPtr"/>,
+	/// interpreting the contents as UTF-16 text.
 	/// </summary>
 	/// <param name="uptr">A pointer to the first character of the UTF-16 text in memory.</param>
 	/// <param name="length">
@@ -121,6 +130,25 @@ public static unsafe class PointerExtensions
 	{
 		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
 		return uptr.IsZero() ? default : PointerExtensions.GetStringFromCharPointer((Char*)uptr.ToPointer(), length);
+	}
+	/// <summary>
+	/// Generates a <see cref="String"/> instance from the memory at the given <see cref="MemoryHandle"/>,
+	/// interpreting the contents as UTF-16 text.
+	/// </summary>
+	/// <param name="handle">A pointer to the first character of the UTF-16 text in memory.</param>
+	/// <param name="length">
+	/// The number of <see cref="Char"/> elements to include in the resulting string,
+	/// starting from the pointer. If this value is zero, the function reads until the first null character.
+	/// </param>
+	/// <returns>A <see cref="String"/> representation of the UTF-16 text in memory.</returns>
+	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static String? GetUnsafeString(this MemoryHandle handle, Int32 length)
+	{
+		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		return handle.Pointer == default ?
+			default :
+			PointerExtensions.GetStringFromCharPointer((Char*)handle.Pointer, length);
 	}
 
 	/// <summary>
@@ -158,6 +186,22 @@ public static unsafe class PointerExtensions
 	{
 		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
 		return uptr.IsZero() ? default : uptr.GetUnsafeReadOnlySpan<T>(length).ToArray();
+	}
+	/// <summary>
+	/// Generates a <typeparamref name="T"/> array by copying values from memory starting at the location referenced by a
+	/// <see cref="MemoryHandle"/>.
+	/// </summary>
+	/// <typeparam name="T">The type of <see langword="unmanaged"/> values in memory.</typeparam>
+	/// <param name="handle">
+	/// The <see cref="MemoryHandle"/> pointing to the start of a series of <typeparamref name="T"/> values in memory.
+	/// </param>
+	/// <param name="length">The number of <typeparamref name="T"/> values to include in the array.</param>
+	/// <returns>A new array of <typeparamref name="T"/>, or <see langword="null"/> if the pointer is zero.</returns>
+	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
+	public static T[]? GetUnsafeArray<T>(this MemoryHandle handle, Int32 length) where T : unmanaged
+	{
+		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		return handle.Pointer == default ? default : handle.ToIntPtr().GetUnsafeReadOnlySpan<T>(length).ToArray();
 	}
 
 	/// <summary>
@@ -235,13 +279,11 @@ public static unsafe class PointerExtensions
 	}
 	/// <summary>
 	/// Generates a <see cref="ReadOnlySpan{T}"/> instance from an <see cref="IntPtr"/>, interpreting the memory at the
-	/// specified
-	/// location as a sequence of <see langword="unmanaged"/> values.
+	/// specified location as a sequence of <see langword="unmanaged"/> values.
 	/// </summary>
 	/// <typeparam name="T">The type of <see langword="unmanaged"/> values in memory.</typeparam>
 	/// <param name="ptr">
-	/// The <see cref="IntPtr"/> pointing to the start of a series of <typeparamref name="T"/> values in memory
-	/// .
+	/// The <see cref="IntPtr"/> pointing to the start of a series of <typeparamref name="T"/> values in memory.
 	/// </param>
 	/// <param name="length">The number of <typeparamref name="T"/> values to include in the span.</param>
 	/// <returns>A <see cref="ReadOnlySpan{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
@@ -262,8 +304,7 @@ public static unsafe class PointerExtensions
 	}
 	/// <summary>
 	/// Generates a <see cref="ReadOnlySpan{T}"/> instance from a <see cref="UIntPtr"/>, interpreting the memory at the
-	/// specified
-	/// location as a sequence of <see langword="unmanaged"/> values.
+	/// specified location as a sequence of <see langword="unmanaged"/> values.
 	/// </summary>
 	/// <typeparam name="T">The type of <see langword="unmanaged"/> values in memory.</typeparam>
 	/// <param name="uptr">
@@ -288,13 +329,11 @@ public static unsafe class PointerExtensions
 	}
 	/// <summary>
 	/// Generates a <see cref="ReadOnlySpan{T}"/> instance from a <see cref="MemoryHandle"/>, interpreting the memory at the
-	/// specified
-	/// location as a sequence of <see langword="unmanaged"/> values.
+	/// specified location as a sequence of <see langword="unmanaged"/> values.
 	/// </summary>
 	/// <typeparam name="T">The type of <see langword="unmanaged"/> values in memory.</typeparam>
 	/// <param name="handle">
-	/// The <see cref="MemoryHandle"/> pointing to the start of a series of <typeparamref name="T"/> values in memory
-	/// .
+	/// The <see cref="MemoryHandle"/> pointing to the start of a series of <typeparamref name="T"/> values in memory.
 	/// </param>
 	/// <param name="length">The number of <typeparamref name="T"/> values to include in the span.</param>
 	/// <returns>A <see cref="ReadOnlySpan{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
@@ -315,33 +354,33 @@ public static unsafe class PointerExtensions
 	}
 
 	/// <summary>
-	/// Generates a delegate of type <typeparamref name="T"/> from an <see cref="IntPtr"/>.
+	/// Generates a delegate of type <typeparamref name="TDelegate"/> from an <see cref="IntPtr"/>.
 	/// </summary>
-	/// <typeparam name="T">The type of the delegate.</typeparam>
+	/// <typeparam name="TDelegate">The type of the delegate.</typeparam>
 	/// <param name="ptr">The <see cref="IntPtr"/> referencing the delegate in memory.</param>
-	/// <returns>A delegate of type <typeparamref name="T"/>, or <see langword="null"/> if the pointer is zero.</returns>
+	/// <returns>A delegate of type <typeparamref name="TDelegate"/>, or <see langword="null"/> if the pointer is zero.</returns>
 	/// <remarks>
 	/// The safety and validity of the obtained delegate depends on the lifetime and validity of the pointer.
 	/// If the function the delegate represents is moved or deallocated, invoking the delegate can cause unexpected behavior or
 	/// application crashes.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static T? GetUnsafeDelegate<T>(this IntPtr ptr) where T : Delegate
-		=> !ptr.IsZero() ? Marshal.GetDelegateForFunctionPointer<T>(ptr) : default;
+	public static TDelegate? GetUnsafeDelegate<TDelegate>(this IntPtr ptr) where TDelegate : Delegate
+		=> !ptr.IsZero() ? Marshal.GetDelegateForFunctionPointer<TDelegate>(ptr) : default;
 	/// <summary>
-	/// Generates a delegate of type <typeparamref name="T"/> from a <see cref="UIntPtr"/>.
+	/// Generates a delegate of type <typeparamref name="TDelegate"/> from a <see cref="UIntPtr"/>.
 	/// </summary>
-	/// <typeparam name="T">The type of the delegate.</typeparam>
+	/// <typeparam name="TDelegate">The type of the delegate.</typeparam>
 	/// <param name="uptr">The <see cref="UIntPtr"/> referencing the delegate in memory.</param>
-	/// <returns>A delegate of type <typeparamref name="T"/>, or <see langword="null"/> if the pointer is zero.</returns>
+	/// <returns>A delegate of type <typeparamref name="TDelegate"/>, or <see langword="null"/> if the pointer is zero.</returns>
 	/// <remarks>
 	/// The safety and validity of the obtained delegate depends on the lifetime and validity of the pointer.
 	/// If the function the delegate represents is moved or deallocated, invoking the delegate can cause unexpected behavior or
 	/// application crashes.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static T? GetUnsafeDelegate<T>(this UIntPtr uptr) where T : Delegate
-		=> uptr.ToIntPtr().GetUnsafeDelegate<T>();
+	public static TDelegate? GetUnsafeDelegate<TDelegate>(this UIntPtr uptr) where TDelegate : Delegate
+		=> uptr.ToIntPtr().GetUnsafeDelegate<TDelegate>();
 
 	/// <summary>
 	/// Generates a memory reference to an <see langword="unmanaged"/> value of type <typeparamref name="T"/> from
