@@ -1,8 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// Provides a set of extensions for basic operations with references to <see cref="ValueType"/>
-/// <see langword="unmanaged"/> values.
+/// Provides a set of extensions for basic operations with references to <see langword="unmanaged"/> values.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
 [Browsable(false)]
@@ -19,7 +18,8 @@ public static unsafe partial class ReferenceExtensions
 	/// <param name="refValue">The reference to the value from which to retrieve the pointer.</param>
 	/// <returns>An unsafe pointer of type <see cref="ValPtr{T}"/> pointing to the referenced value.</returns>
 	/// <remarks>
-	/// The obtained pointer is "unsafe" because it does not guarantee that the referenced value will remain in memory or unaffected by garbage collection.
+	/// The obtained pointer is "unsafe" because it does not guarantee that the referenced value will remain in memory or
+	/// unaffected by garbage collection.
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -36,7 +36,8 @@ public static unsafe partial class ReferenceExtensions
 	/// <param name="refValue">The reference to the value from which to retrieve the pointer.</param>
 	/// <returns>An unsafe pointer of type <see cref="IntPtr"/> pointing to the referenced value.</returns>
 	/// <remarks>
-	/// The obtained pointer is "unsafe" because it does not guarantee that the referenced value will remain in memory or unaffected by garbage collection.
+	/// The obtained pointer is "unsafe" because it does not guarantee that the referenced value will remain in memory or
+	/// unaffected by garbage collection.
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -56,7 +57,8 @@ public static unsafe partial class ReferenceExtensions
 	/// <param name="refValue">The reference to the value from which to retrieve the pointer.</param>
 	/// <returns>An unsafe pointer of type <see cref="UIntPtr"/> pointing to the referenced value.</returns>
 	/// <remarks>
-	/// The obtained pointer is "unsafe" because it does not guarantee that the referenced value will remain in memory or unaffected by garbage collection.
+	/// The obtained pointer is "unsafe" because it does not guarantee that the referenced value will remain in memory or
+	/// unaffected by garbage collection.
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
