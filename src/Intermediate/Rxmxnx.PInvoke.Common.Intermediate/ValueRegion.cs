@@ -69,7 +69,7 @@ public abstract partial class ValueRegion<T> where T : unmanaged
 	/// </summary>
 	/// <returns>A read-only span representation of the memory region.</returns>
 	internal abstract ReadOnlySpan<T> AsSpan();
-	
+
 	/// <summary>
 	/// Retrieves a subregion from this instance.
 	/// The subregion starts at a specified item position and has a specified length.
