@@ -6,734 +6,2569 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
 [![NuGet](https://img.shields.io/nuget/v/Rxmxnx.PInvoke.Extensions)](https://www.nuget.org/packages/Rxmxnx.PInvoke.Extensions/)
+[![fuget.org](https://www.fuget.org/packages/Rxmxnx.PInvoke.Extensions/badge.svg)](https://www.fuget.org/packages/Rxmxnx.PInvoke.Extensions)
 
 ## Description
 
-Rxmxnx.PInvoke.Extensions is a comprehensive library designed to streamline and enhance the 
+`Rxmxnx.PInvoke.Extensions` is a comprehensive library designed to streamline and enhance the
 interaction between .NET and native P/Invoke methods.
 
-The provided APIs eliminate the need for direct manipulation of native pointers, memory fixes, and unsafe code. 
-They offer robust and efficient utilities for developers working with interop scenarios, including native handling for 
-UTF-8/ASCII strings, as well as managed buffers that simplify the dynamic allocation of object references on the stack.
+### Features
 
-## Types
+- **UTF-8/ASCII String Handling**: Seamlessly work with UTF-8 encoded strings in interop contexts.
+- **Managed Buffers**: Dynamically allocate object references on the stack with minimal effort.
+- **Safe Memory Manipulation**: Eliminate direct pointer manipulation and unsafe code requirements.
 
-### Rxmxnx.PInvoke.IWrapper
+## Getting Started
 
-The `Rxmxnx.PInvoke.IWrapper` interface represents a wrapper for a value. It provides methods for creating instances of
-the wrapper.
+### Installation
 
-#### Static
+Install the library via NuGet:
 
-- `Create<TValue>(in TValue)`: Creates a new instance of `IWrapper<TValue>` with the specified value.
-- `CreateNullable<TValue>(in TValue?)`: Creates a new instance of `IWrapper<TValue?>` with the specified nullable
-  value.
-- `CreateObject<TObject>(TObject)`: Creates a new instance of `IWrapper<TObject>` with the specified object.
+```cmd
+dotnet add package Rxmxnx.PInvoke.Extensions
+```
 
-### Rxmxnx.PInvoke.IWrapper<T>
+## Abstractions
 
-The `Rxmxnx.PInvoke.IWrapper<T>` interface represents a generic wrapper for a value of type `T`.
+`Rxmxnx.PInvoke.Extensions` provides abstractions for managed handling of references and
+fixed memory segments.
 
-- `Value`: Gets the value stored in the `IWrapper<T>`.
+### Reference Interfaces
 
-#### Static
+These interfaces represent a safe way to access a managed reference of a specific type.
 
-- `Create(T?)`: Creates a new instance of `IWrapper<T?>` with the specified value.
+<details>
+  <summary>IReadOnlyReferenceable&lt;T&gt;</summary>
 
-### Rxmxnx.PInvoke.IReferenceableWrapper
+This interface exposes a read-only reference to an object of type T, allowing the object
+to be used without modification.
 
-The `Rxmxnx.PInvoke.IReferenceableWrapper` interface represents a referenceable wrapper for a value. It provides methods
-for creating instances of the wrapper.
+**Note:** This interface inherits from `IEquatable<T>`. This type allows public implementation or inheritance.
 
-#### Static
+##### Properties:
 
-- `Create<TValue>(in TValue)`: Creates a new instance of `IReferenceableWrapper<TValue>` with the specified value.
-- `CreateNullable<TValue>(in TValue?)`: Creates a new instance of `IReferenceableWrapper<TValue?>` with the
-  specified nullable value.
-- `CreateObject<TObject>(TObject)`: Creates a new instance of `IReferenceableWrapper<TObject>` with the specified
-  object.
+- <details>
+  <summary>Reference</summary>
+  Gets the read-only reference to the instance of an object of type T.
+  </details>
 
-### Rxmxnx.PInvoke.IReferenceableWrapper<T>
+</details>
 
-The `Rxmxnx.PInvoke.IReferenceableWrapper<T>` interface represents a referenceable wrapper for a value of type `T`.
+<details>
+  <summary>
+    IReferenceable&lt;T&gt;
+  </summary>
 
-- `Reference`: Gets a read-only reference to the value of type `T`.
-- `Value`: Gets the value stored in the `IWrapper<T>`.
+This interface exposes a reference to an object of type T,
+allowing the object to be used and potentially modified.
 
-#### Static
+**Note:** This interface inherits from `IReadOnlyReferenceable<T>`. This type allows public implementation or
+inheritance.
 
-- `Create(T?)`: Creates a new instance of `IReferenceableWrapper<T?>` with the specified value.
+##### Properties:
 
-### Rxmxnx.PInvoke.IMutableWrapper
+- <details>
+  <summary>Reference</summary>
+  Gets the reference to the instance of an object of type T.
+  </details>
 
-The `Rxmxnx.PInvoke.IMutableWrapper` interface represents a mutable wrapper for a value. It provides methods for
-creating instances of the wrapper.
+</details>
 
-#### Static
+### Wrapper Interfaces
 
-- `Create<TValue>(in TValue)`: Creates an instance of the `IMutableWrapper<TValue>` with the specified value.
-- `CreateNullable<TValue>(in TValue?)`: Creates an instance of the `IMutableWrapper<TValue?>` with the specified
-  nullable value.
-- `CreateObject<TObject>(TObject)`: Creates an instance of the `IMutableWrapper<TObject>` with the specified object.
+These interfaces represent a safe way to access a value or managed object of a specific type.
 
-### Rxmxnx.PInvoke.IMutableWrapper<T>
+<details>
+  <summary>IWrapper&lt;T&gt;</summary>
 
-The `Rxmxnx.PInvoke.IMutableWrapper<T>` interface represents a mutable wrapper for a value of type `T`.
+This interface defines a wrapper for a T object.
 
-- `Value`: Gets or sets the value of type `T`.
+**Note:** This interface inherits from `IEquatable<T>`. This type allows public implementation or inheritance.
 
-#### Static
+##### Properties:
 
-- `Create(T?)`: Creates a new instance of `IMutableWrapper<T?>` with the specified value.
+- <details>
+  <summary>Value</summary>
+  The wrapped T object.
+  </details>
 
-### Rxmxnx.PInvoke.IMutableReference
+##### Static Methods:
 
-The `Rxmxnx.PInvoke.IMutableReference` interface represents a mutable reference. It provides methods for creating
-instances of the wrapper.
+- <details>
+  <summary>Create(T?)</summary>
+  Creates a new instance of an object that implements IWrapper&lt;T&gt; interface.
+  </details>
 
-#### Static
+##### Non-generic interface
 
-- `Create<TValue>(in TValue)`: Creates an instance of the `IMutableReference<TValue>` with the specified value.
-- `CreateNullable<TValue>(in TValue?)`: Creates an instance of the `IMutableReference<TValue?>` with the specified
-  nullable value.
-- `CreateObject<TObject>(TObject)`: Creates an instance of the `IMutableReference<TObject>` with the specified object.
+`IWrapper` is a non-generic interface that exposes static methods for creating specific types of
+`IWrapper<T>` for concrete cases of value types, nullable values, and non-nullable reference types.
 
-### Rxmxnx.PInvoke.IMutableReference<T>
+###### Static Methods:
 
-The `Rxmxnx.PInvoke.IMutableReference<T>` interface represents a mutable reference to a value of type `T`.
+- <details>
+  <summary>Create&lt;TValue&gt;(TValue)</summary>
+  Creates a new instance of an object that implements IWrapper&lt;TValue&gt; interface.
 
-- `Reference`: Gets the reference to the value of type `T`.
-- `Value`: Gets or sets the value of type `T`.
+  **Note:** `TValue` generic type is `struct`.
+  </details>
+- <details>
+  <summary>CreateNullable&lt;TValue&gt;(TValue?)</summary>
+  Creates a new instance of an object that implements IWrapper&lt;TValue?&gt; interface.
 
-#### Static
+  **Note:** `TValue` generic type is `struct`.
+  </details>
+- <details>
+  <summary>CreateObject&lt;TObject&gt;(TObject)</summary>
+  Creates a new instance of an object that implements IWrapper&lt;TObject&gt; interface.
 
-- `Create(T?)`: Creates a new instance of `IMutableReference<T?>` with the specified value.
+  **Note:** `TObject` generic type is a `reference type`.
+  </details>
 
-### Rxmxnx.PInvoke.ValueRegion<T>
+</details>
 
-`Rxmxnx.PInvoke.ValueRegion<T>` is a class representing a region of values.
+<details>
+  <summary>IMutableWrapper&lt;T&gt;</summary>
 
-- `IsMemorySlice`: Gets a value indicating whether the value region represents a memory slice.
-- `Item(Int32)`: Gets the value at the specified index. This property is an indexer.
-- `ToArray()`: Converts the value region to an array of values.
-- `Slice(Int32, Int32)`: Creates a slice of the value region with the specified range.
-- `Slice(Int32)`: Creates a slice of the value region starting from the specified index.
-
-#### Static
-
-- `Create(ReadOnlySpanFunc<T>)`: Creates a new `ValueRegion<T>` instance by invoking the
-  specified `ReadOnlySpanFunc<T>` delegate.
-- `Create(T[])`: Creates a new `ValueRegion<T>` instance from the specified array.
-- `Create(IntPtr, Int32)`: Creates a new `ValueRegion<T>` instance from the memory pointed to by the
-  specified pointer with the specified length.
-
-### Rxmxnx.PInvoke.FuncPtr<TDelegate>
-
-`Rxmxnx.PInvoke.FuncPtr<TDelegate>` is a value type representing a pointer to a function of type TDelegate. It is used
-for interop scenarios where a function pointer is required.
-
-- `IsZero`: Indicates whether the current pointer is zero (null).
-- `Pointer`: Gets the internal pointer as an `IntPtr`.
-- `Invoke`: Gets a delegate of type `TDelegate` for the function pointer.
-
-#### Operators
-
-- `==`: Determines whether two `FuncPtr<TDelegate>` instances are equal.
-- `!=`: Determines whether two `FuncPtr<TDelegate>` instances are not equal.
-
-### Rxmxnx.PInvoke.ReadOnlyValPtr<T>
-
-`Rxmxnx.PInvoke.ReadOnlyValPtr<T>` is a value type representing a pointer to a read-only value of type T. It is used for
-interop scenarios where a read-only T pointer is required.
-
-- `IsZero`: Indicates whether the current pointer is zero (null).
-- `Pointer`: Gets the internal pointer as an `IntPtr`.
-- `Reference`: Gets a read-only reference to the pointed T value.
-- `GetUnsafeFixedReference(IDisposable?)`: Creates an unsafe `IReadOnlyFixedReference<T>` instance from the current
-  pointer. It is designed to be used when you have a guarantee that the memory being referenced is already fixed and
-  immovable. This method does not pin the memory itself; it only provides a way to work with memory that is assumed to
-  be already pinned.
-- `GetUnsafeFixedContext(Int32, IDisposable?)`: Creates an unsafe `IReadOnlyFixedContext<T>` instance with the specified
-  number of items in the memory block from the current pointer. It is designed to be used when you have a guarantee that
-  the memory being referenced is already fixed and immovable. This method does not pin the memory itself; it only
-  provides a way to work with memory that is assumed to be already pinned.
-
-#### Operators
-
-- `==`: Determines whether two `ReadOnlyValPtr<T>` objects are equal.
-- `!=`: Determines whether two `ReadOnlyValPtr<T>` objects are not equal.
-- `<`: Determines whether one `ReadOnlyValPtr<T>` object is less than another.
-- `>`: Determines whether one `ReadOnlyValPtr<T>` object is greater than another.
-- `<=`: Determines whether one `ReadOnlyValPtr<T>` object is less than or equal to another.
-- `>=`: Determines whether one `ReadOnlyValPtr<T>` object is greater than or equal to another.
-
-#### Static
-
-- `IsUnmanaged`: Indicates whether the type of the pointer is unmanaged.
-
-### Rxmxnx.PInvoke.ValPtr<T>
-
-`Rxmxnx.PInvoke.ValPtr<T>` is a value type representing a pointer to a value of type T. It is used for interop scenarios
-where a T pointer is required.
-
-- `IsZero`: Indicates whether the current pointer is zero (null).
-- `Pointer`: Gets the internal pointer as an `IntPtr`.
-- `Reference`: Gets a reference to the pointed T value.
-- `GetUnsafeFixedReference(IDisposable?)`: Creates an unsafe `IFixedReference<T>` instance from the current pointer. It
-  is designed to be used when you have a guarantee that the memory being referenced is already fixed and immovable. This
-  method does not pin the memory itself; it only provides a way to work with memory that is assumed to be already
-  pinned.
-- `GetUnsafeFixedContext(Int32, IDisposable?)`: Creates an unsafe `IFixedContext<T>` instance with the specified number
-  of items in the memory block from the current pointer. It is designed to be used when you have a guarantee that the
-  memory being referenced is already fixed and immovable. This method does not pin the memory itself; it only provides a
-  way to work with memory that is assumed to be already pinned.
-
-#### Operators
-
-- `==`: Determines whether two `ValPtr<T>` objects are equal.
-- `!=`: Determines whether two `ValPtr<T>` objects are not equal.
-- `<`: Determines whether one `ValPtr<T>` object is less than another.
-- `>`: Determines whether one `ValPtr<T>` object is greater than another.
-- `<=`: Determines whether one `ValPtr<T>` object is less than or equal to another.
-- `>=`: Determines whether one `ValPtr<T>` object is greater than or equal to another.
-
-#### Static
-
-- `IsUnmanaged`: Indicates whether the type of the pointer is unmanaged.
-
-### Rxmxnx.PInvoke.CString
-
-The `Rxmxnx.PInvoke.CString` class represents a UTF-8 string.
-
-- `Unit(Int32)`: Gets the UTF-8 unit at the specified index. This property is an indexer.
-- `IsFunction`: Gets a value indicating whether the `CString` represents a function.
-- `IsNullTerminated`: Gets a value indicating whether the `CString` is null-terminated.
-- `IsReference`: Gets a value indicating whether the `CString` is a reference.
-- `IsSegmented`: Gets a value indicating whether the `CString` is segmented.
-- `Length`: Gets the length of the `CString`.
-- `Clone()`: Creates a new object that is a copy of the current instance.
-- `CompareTo(string)`: Compares the current instance with the specified string and returns an integer that indicates
-  their relative position in the sort order.
-- `CompareTo(CString)`: Compares the current instance with the specified `CString` object and returns an integer that
-  indicates their relative position in the sort order.
-- `CompareTo(Object)`: Compares the current instance with the specified object and returns an integer that indicates
-  their relative position in the sort order.
-- `Slice(Int32, Int32)`: Returns a new `CString` that represents a slice of the current string starting from the
-  specified index with the specified length.
-- `Slice(Int32)`: Returns a new `CString` that represents a slice of the current string starting from the specified
-  index.
-- `ToArray()`: Converts the `CString` to an array of `Byte` values.
-- `ToHexString()`: Converts the `CString` to a hexadecimal string.
-- `ToString()`: Returns a string that represents the current instance.
-- `WithSafeFixed<TResult>(ReadOnlyFixedFunc<TResult>)`: Executes the specified function with a fixed list of `Byte`
-  values and returns the result.
-- `WithSafeFixed(ReadOnlyFixedAction)`: Executes the specified action with a fixed list of `Byte` values.
-- `WithSafeFixed<TArg, TResult>(TArg, ReadOnlyFixedFunc<TArg, TResult>)`: Executes the specified function with a fixed
-  list of `Byte` values and the specified argument, and returns the result.
-- `WithSafeFixed<TArg>(TArg, ReadOnlyFixedAction<TArg>)`: Executes the specified action with a fixed list of `Byte`
-  values and the specified argument.
-
-#### Constructors
-
-- `CString(Byte, Int32)`: Initializes a new instance of the `CString` class with a single character repeated for the
-  specified length.
-- `CString(Byte, Byte, Int32)`: Initializes a new instance of the `CString` class with two characters repeated in
-  alternating positions for the specified length.
-- `CString(Byte, Byte, Byte, Int32)`: Initializes a new instance of the `CString` class with three characters repeated
-  in a cyclic pattern for the specified length.
-- `CString(Byte, Byte, Byte, Byte, Int32)`: Initializes a new instance of the `CString` class with four characters
-  repeated in a cyclic pattern for the specified length.
-- `CString(ReadOnlySpan<Byte>)`: Initializes a new instance of the `CString` class with the contents of
-  a `ReadOnlySpan<Byte>`.
-- `CString(ReadOnlySpanFunc<Byte>)`: Initializes a new instance of the `CString` class with the specified function
-  delegate to get the content. This constructor is specialized for UTF-8 literals support.
-
-#### Operators
-
-- `==`: Determines whether two `CString` objects are equal.
-- `!=`: Determines whether two `CString` objects are not equal.
-- `<`: Determines whether one `CString` object is less than another.
-- `>`: Determines whether one `CString` object is greater than another.
-- `<=`: Determines whether one `CString` object is less than or equal to another.
-- `>=`: Determines whether one `CString` object is greater than or equal to another.
-- `explicit operator CString(String)`: Converts a string to a `CString` object.
-- `implicit operator CString(Byte[])`: Converts a `Byte` array to a `CString` object.
-- `implicit operator ReadOnlySpan<Byte>(CString)`: Converts a `CString` object to a `ReadOnlySpan<Byte>`.
-
-#### Static
-
-- `Empty`: Represents an empty `CString` object.
-- `Zero`: Represents a `CString` object pointing to null.
-- `Create(ReadOnlySpanFunc<Byte>)`: Creates a new instance of the `CString` class by invoking the specified function to
-  generate the content.
-- `Create(ReadOnlySpan<Byte>)`: Creates a new instance of the `CString` class with the contents of
-  a `ReadOnlySpan<Byte>`.
-
-- `Compare(CString, CString)`: Compares two `CString` objects and returns an integer that indicates their relative
-  position in the sort order.
-- `Compare(CString, CString, Boolean)`: Compares two `CString` objects and returns an integer that indicates their
-  relative position in the sort order, optionally ignoring case.
-- `Compare(CString, CString, Boolean, CultureInfo)`: Compares two `CString` objects using a specified `CultureInfo` and
-  returns an integer that indicates their relative position in the sort order, optionally ignoring case.
-- `Compare(CString, String, StringComparison)`: Compares a `CString` object with a string using a
-  specified `StringComparison` and returns an integer that indicates their relative position in the sort order.
-- `Compare(CString, String, Boolean, CultureInfo)`: Compares a `CString` object with a string using a
-  specified `CultureInfo` and returns an integer that indicates their relative position in the sort order, optionally
-  ignoring case.
-- `Compare(CString, String, Boolean)`: Compares a `CString` object with a string and returns an integer that indicates
-  their relative position in the sort order, optionally ignoring case.
-- `Compare(CString, String)`: Compares a `CString` object with a string and returns an integer that indicates their
-  relative position in the sort order.
-- `Compare(CString, CString, StringComparison)`: Compares two `CString` objects using a specified `StringComparison` and
-  returns an integer that indicates their relative position in the sort order.
-
-- `Concat(String[])`: Concatenates an array of strings into a single `CString` object.
-- `Concat(Byte[][])`: Concatenates an array of byte arrays into a single `CString` object.
-
-- `Join(Char, String[], Int32, Int32)`: Concatenates an array of strings, using the specified separator character,
-  starting from the specified index and including the specified number of elements, into a single `CString` object.
-- `Join(Byte, CString[])`: Concatenates an array of `CString` objects, using the specified byte separator, into a
-  single `CString` object.
-- `Join(Byte, IEnumerable<CString>)`: Concatenates a sequence of `CString` objects, using the specified byte separator,
-  into a single `CString` object.
-- `Join(Byte, CString[], Int32, Int32)`: Concatenates a specified number of `CString` objects, using the specified byte
-  separator, starting from the specified index, into a single `CString` object.
-- `Join(Char, String[])`: Concatenates an array of strings, using the specified separator character, into a
-  single `CString` object.
-- `Join(ReadOnlySpan<Byte>, IEnumerable<CString>)`: Concatenates a sequence of `CString` objects, using the specified
-  byte separator, into a single `CString` object.
-- `Join(ReadOnlySpan<Byte>, CString[], Int32, Int32)`: Concatenates a specified number of `CString` objects, using the
-  specified byte separator, starting from the specified index, into a single `CString` object.
-- `Join(CString, CString[])`: Concatenates an array of `CString` objects, using the specified `CString` separator, into
-  a single `CString` object.
-- `Join(CString, IEnumerable<CString>)`: Concatenates a sequence of `CString` objects, using the specified `CString`
-  separator, into a single `CString` object.
-- `Join(CString, CString[], Int32, Int32)`: Concatenates a specified number of `CString` objects, using the
-  specified `CString` separator, starting from the specified index, into a single `CString` object.
-- `Join(String, String[])`: Concatenates an array of strings, using the specified separator string, into a
-  single `CString` object.
-- `Join(String, IEnumerable<String>)`: Concatenates a sequence of strings, using the specified separator string, into a
-  single `CString` object.
-
-- `ConcatAsync(CString[])`: Asynchronously concatenates an array of `CString` objects into a single `CString` object.
-- `ConcatAsync(CancellationToken, CString[])`: Asynchronously concatenates an array of `CString` objects into a
-  single `CString` object, while observing a cancellation token.
-- `ConcatAsync(Byte[][])`: Asynchronously concatenates an array of byte arrays into a single `CString` object.
-- `ConcatAsync(CancellationToken, Byte[][])`: Asynchronously concatenates an array of byte arrays into a
-  single `CString` object, while observing a cancellation token.
-- `ConcatAsync(String[])`: Concatenates multiple strings asynchronously and returns a `Task<CString>` representing the
-  result.
-- `ConcatAsync(CancellationToken, String[])`: Asynchronously concatenates an array of strings into a single `CString`
-  object, while observing a cancellation token.
-
-- `JoinAsync(CString, CancellationToken, CString[])`: Asynchronously concatenates an array of `CString` objects, using
-  the specified `CString` separator, into a single `CString` object, while observing a cancellation token.
-- `JoinAsync(CString, IEnumerable<CString>, CancellationToken)`: Asynchronously concatenates a sequence of `CString`
-  objects, using the specified `CString` separator, into a single `CString` object, while observing a cancellation
-  token.
-- `JoinAsync(CString, CString[], Int32, Int32, CancellationToken)`: Asynchronously concatenates a specified number
-  of `CString` objects, using the specified `CString` separator, starting from the specified index, into a
-  single `CString` object, while observing a cancellation token.
-- `JoinAsync(Byte, CString[])`: Asynchronously concatenates an array of `CString` objects, using the specified byte
-  separator, into a single `CString` object.
-- `JoinAsync(Byte, CancellationToken, CString[])`: Asynchronously concatenates an array of `CString` objects, using the
-  specified byte separator, into a single `CString` object, while observing a cancellation token.
-- `JoinAsync(Byte, IEnumerable<CString>, CancellationToken)`: Asynchronously concatenates a sequence of `CString`
-  objects, using the specified byte separator, into a single `CString` object, while observing a cancellation token.
-- `JoinAsync(Byte, CString[], Int32, Int32, CancellationToken)`: Asynchronously concatenates a specified number
-  of `CString` objects, using the specified byte separator, starting from the specified index, into a single `CString`
-  object, while observing a cancellation token.
-- `JoinAsync(String, String[], Int32, Int32, CancellationToken)`: Asynchronously concatenates a specified number of
-  strings, using the specified separator string, starting from the specified index, into a single `CString` object,
-  while observing a cancellation token.
-- `JoinAsync(String, IEnumerable<String>, CancellationToken)`: Asynchronously concatenates a sequence of strings, using
-  the specified separator string, into a single `CString` object, while observing a cancellation token.
-- `JoinAsync(String, CancellationToken, String[])`: Asynchronously concatenates an array of strings, using the specified
-  separator string, into a single `CString` object, while observing a cancellation token.
-- `JoinAsync(Char, String[], Int32, Int32, CancellationToken)`: Asynchronously concatenates a specified number of
-  strings, using the specified separator character, starting from the specified index, into a single `CString` object,
-  while observing a cancellation token.
-- `JoinAsync(Char, IEnumerable<String>, CancellationToken)`: Asynchronously concatenates a sequence of strings, using
-  the specified separator character, into a single `CString` object, while observing a cancellation token.
-- `JoinAsync(Char, CancellationToken, String[])`: Asynchronously concatenates an array of strings, using the specified
-  separator character, into a single `CString` object, while observing a cancellation token.
-- `JoinAsync(CString, String[], Int32, Int32, CancellationToken)`: Asynchronously concatenates a specified number
-  of `CString` objects, using the specified `CString` separator, starting from the specified index, into a
-  single `CString` object, while observing a cancellation token.
-- `JoinAsync(CString, IEnumerable<CString>, CancellationToken)`: Asynchronously concatenates a sequence of `CString`
-  objects, using the specified `CString` separator, into a single `CString` object, while observing a cancellation
-  token.
-- `JoinAsync(CString, CancellationToken, CString[])`: Asynchronously concatenates an array of `CString` objects, using
-  the specified `CString` separator, into a single `CString` object, while observing a cancellation token.
-
-### Rxmxnx.PInvoke.CStringSequence
-
-The `Rxmxnx.PInvoke.CStringSequence` class represents a sequence of `CString` objects.
-
-- `Count`: Gets the number of elements in the `CStringSequence`.
-- `Item(Int32)`: Gets the `CString` at the specified index in the `CStringSequence`. This property is an indexer.
-- `Clone()`: Creates a new object that is a copy of the current instance.
-- `Equals(CStringSequence)`: Determines whether the specified `CStringSequence` is equal to the current instance.
-- `Equals(Object)`: Determines whether the specified object is equal to the current instance.
-- `Slice(Int32)`: Returns a new `CStringSequence` that represents a slice of the current sequence starting from the
-  specified index.
-- `Slice(Int32, Int32)`: Returns a new `CStringSequence` that represents a slice of the current sequence starting from
-  the specified index with the specified length.
-- `ToCString()`: Converts the `CStringSequence` to a single `CString` object.
-- `GetFixedPointer()`: This method creates a disposable, read-only fixed pointer instance by pinning current instance.
-  It ensures that the memory block referenced by this sequence is fixed (immovable) in memory, allowing for safe direct
-  access.
-- `WithSafeFixed<TState, TResult>(TState, ReadOnlyFixedListFunc<TState, TResult>)`: Executes the specified function with
-  a fixed list of `CString` objects and returns the result.
-- `WithSafeFixed(ReadOnlyFixedListAction)`: Executes the specified action with a fixed list of `CString` objects.
-- `WithSafeFixed<TState>(TState, ReadOnlyFixedListAction<TState>)`: Executes the specified action with a fixed list
-  of `CString` objects.
-- `WithSafeFixed<TResult>(ReadOnlyFixedListFunc<TResult>)`: Executes the specified function with a fixed list
-  of `CString` objects and returns the result.
-- `WithSafeTransform(CStringSequenceAction)`: Executes the specified action with the `CStringSequence` object.
-- `WithSafeTransform<TState>(TState, CStringSequenceAction<TState>)`: Executes the specified action with
-  the `CStringSequence` object and additional state.
-- `WithSafeTransform<TResult>(CStringSequenceFunc<TResult>)`: Executes the specified function with the `CStringSequence`
-  object and returns the result.
-- `WithSafeTransform<TState, TResult>(TState, CStringSequenceFunc<TState, TResult>)`: Executes the specified function
-  with the `CStringSequence` object and additional state.
-
-#### Constructors
-
-- `CStringSequence(CString[])`: Initializes a new instance of the `CStringSequence` class with an array of `CString`
-  objects.
-- `CStringSequence(IEnumerable<String>)`: Initializes a new instance of the `CStringSequence` class with an enumerable
-  collection of strings.
-- `CStringSequence(IEnumerable<CString>)`: Initializes a new instance of the `CStringSequence` class with an enumerable
-  collection of `CString` objects.
-- `CStringSequence(String[])`: Initializes a new instance of the `CStringSequence` class with an array of strings.
-- `CStringSequence(ReadOnlySpan<Byte>...)`: Initializes a new instance of the `CStringSequence` class with UTF-8
-  read-only spans.
-
-#### Static
-
-- `Create<TState>(TState, CStringSequenceCreationAction<TState>, Nullable<Int32>[]?)`: Creates an instance
-  of `CStringSequence` using the specified creation action and optional array of nullable integers.
-- `Create(ReadOnlySpan<Char>)`: Creates an instance of `CStringSequence` using the specified buffer of a UTF-8 sequence.
-- `Parse(String?)`: Creates an instance of `CStringSequence` using the specified buffer of a UTF-8 sequence.
+This interface defines a wrapper for an object whose value can be modified.
+
+**Note:** This interface inherits from `IWrapper<T>`. This type allows public implementation or inheritance.
+
+##### Properties:
+
+- <details>
+  <summary>Value</summary>
+  The wrapped T object.
+  </details>
+
+##### Static Methods:
+
+- <details>
+  <summary>Create(T?)</summary>
+  Creates a new instance of an object that implements IMutableWrapper&lt;T&gt; interface.
+  </details>
+
+##### Non-generic interface
+
+`IMutableWrapper` is a non-generic interface that exposes static methods for creating specific types of
+`IMutableWrapper<T>` for concrete cases of value types, nullable values, and non-nullable reference types.
+
+###### Static Methods:
+
+- <details>
+  <summary>Create&lt;TValue&gt;(TValue)</summary>
+  Creates a new instance of an object that implements IMutableWrapper&lt;TValue&gt; interface.
+
+  **Note:** `TValue` generic type is `struct`.
+  </details>
+- <details>
+  <summary>CreateNullable&lt;TValue&gt;(TValue?)</summary>
+  Creates a new instance of an object that implements IMutableWrapper&lt;TValue?&gt; interface.
+
+  **Note:** `TValue` generic type is `struct`.
+  </details>
+- <details>
+  <summary>CreateObject&lt;TObject&gt;(TObject)</summary>
+  Creates a new instance of an object that implements IMutableWrapper&lt;TObject&gt; interface.
+
+  **Note:** `TObject` generic type is a `reference type`.
+  </details>
+
+</details>
+
+<details>
+  <summary>IMutableReference&lt;T&gt;</summary>
+
+This interface exposes a wrapper for T object that can be referenced and whose value can be modified.
+
+**Note:** This interface inherits from `IMutableWrapper<T>` and `IReferenceable<T>`. This type allows public
+implementation or
+inheritance.
+
+##### Properties:
+
+- <details>
+  <summary>Reference</summary>
+  Reference to T wrapped instance.
+  </details>
+
+##### Static Methods:
+
+- <details>
+  <summary>Create(T?)</summary>
+  Creates a new instance of an object that implements IMutableReference&lt;T&gt; interface.
+  </details>
+
+##### Non-generic interface
+
+`IMutableReference` is a non-generic interface that exposes static methods for creating specific types of
+`IMutableReference<T>` for concrete cases of value types, nullable values, and non-nullable reference types.
+
+###### Static Methods:
+
+- <details>
+  <summary>Create&lt;TValue&gt;(TValue)</summary>
+  Creates a new instance of an object that implements IMutableReference&lt;TValue&gt; interface.
+
+  **Note:** `TValue` generic type is `struct`.
+  </details>
+- <details>
+  <summary>CreateNullable&lt;TValue&gt;(TValue?)</summary>
+  Creates a new instance of an object that implements IMutableReference&lt;TValue?&gt; interface.
+
+  **Note:** `TValue` generic type is `struct`.
+  </details>
+- <details>
+  <summary>CreateObject&lt;TObject&gt;(TObject)</summary>
+  Creates a new instance of an object that implements IMutableReference&lt;TObject&gt; interface.
+
+  **Note:** `TObject` generic type is a `reference type`.
+  </details>
+
+</details>
+
+### Fixed memory Interfaces
+
+These interfaces represent a safe way to access a fixed address of native or managed memory.
+
+<details>
+  <summary>IFixedPointer</summary>
+
+Interface representing a pointer to a fixed block of memory.
+
+**Note:** This type allows public implementation or inheritance.
+
+##### Properties:
+
+- <details>
+  <summary>Pointer</summary>
+  Gets the pointer to the fixed block of memory.
+  </details>
+
+##### Disposable interface
+
+`IFixedPointer.IDisposable` representing a disposable `IFixedPointer` object.
+This interface is used for managing fixed memory blocks that require explicit resource cleanup.
+
+**Note:** This interface inherits from `IFixedPointer` and `System.IDisposable`. This type allows public implementation
+or
+inheritance.
+
+</details>
+
+<details>
+  <summary>IFixedMethod&lt;TMethod&gt;</summary>
+
+Interface representing a method whose memory address is fixed in memory.
+
+**Note:** This interface inherits from `IFixedPointer`. This type allows public implementation or inheritance.
+
+##### Properties:
+
+- <details>
+  <summary>Method</summary>
+   Gets the delegate that points to the fixed method in memory.
+  </details>
+
+</details>
+
+<details>
+  <summary>IReadOnlyFixedMemory</summary>
+
+Interface representing a read-only fixed block of memory.
+
+**Note:** This interface inherits from `IFixedPointer`. This type allows public implementation or inheritance.
+
+##### Properties:
+
+- <details>
+  <summary>Bytes</summary>
+   Gets a read-only binary span over the fixed block of memory.
+  </details>
+- <details>
+  <summary>Objects</summary>
+   Gets a read-only object span over the fixed block of memory.
+  </details>
+
+##### Methods:
+
+- <details>
+  <summary>AsBinaryContext()</summary>
+   Creates a new instance of IReadOnlyFixedContext&lt;Byte&gt; from the current instance.
+  </details>
+- <details>
+  <summary>AsObjectContext()</summary>
+   Creates a new instance of IReadOnlyFixedContext&lt;Object&gt; from the current instance.
+  </details>
+
+##### Disposable interface
+
+`IReadOnlyFixedMemory.IDisposable` representing a disposable `IReadOnlyFixedMemory` object.
+This interface is used for managing fixed memory blocks that require explicit resource cleanup.
+
+**Note:** This interface inherits from `IReadOnlyFixedMemory` and `IFixedPointer.IDisposable`. This type allows public
+implementation or inheritance.
+
+</details>
+
+<details>
+  <summary>IReadOnlyFixedMemory&lt;T&gt;</summary>
+
+Interface representing a read-only fixed block of memory for a specific type.
+
+**Note:** This interface inherits from `IReadOnlyFixedMemory`. This type allows public implementation or inheritance.
+
+##### Properties:
+
+- <details>
+  <summary>ValuePointer</summary>
+   Gets the value pointer to the read-only fixed block of memory.
+  </details>
+
+- <details>
+  <summary>Values</summary>
+   Gets a read-only T span over the fixed block of memory.
+  </details>
+
+##### Disposable interface
+
+`IReadOnlyFixedMemory<T>.IDisposable` representing a disposable `IReadOnlyFixedMemory<T>` object.
+This interface is used for managing fixed memory blocks that require explicit resource cleanup.
+
+**Note:** This interface inherits from `IReadOnlyFixedMemory<T>` and `IReadOnlyFixedMemory.IDisposable`. This type
+allows
+public implementation or inheritance.
+
+</details>
+
+<details>
+  <summary>IFixedMemory</summary>
+
+Interface representing a fixed block of memory.
+
+**Note:** This interface inherits from `IReadOnlyFixedMemory`. This type allows public implementation or inheritance.
+
+##### Properties:
+
+- <details>
+  <summary>Bytes</summary>
+   Gets a binary span over the fixed block of memory.
+  </details>
+- <details>
+  <summary>Objects</summary>
+   Gets an object span over the fixed block of memory.
+  </details>
+
+##### Methods:
+
+- <details>
+  <summary>AsBinaryContext()</summary>
+   Creates a new instance of IFixedContext&lt;Byte&gt; from the current instance.
+  </details>
+- <details>
+  <summary>AsObjectContext()</summary>
+   Creates a new instance of IFixedContext&lt;Object&gt; from the current instance.
+  </details>
+
+##### Disposable interface
+
+`IFixedMemory.IDisposable` representing a disposable `IFixedMemory` object.
+This interface is used for managing fixed memory blocks that require explicit resource cleanup.
+
+**Note:** This interface inherits from `IFixedMemory` and `IReadOnlyFixedMemory.IDisposable`. This type allows public
+implementation or inheritance.
+
+</details>
+
+<details>
+  <summary>IFixedMemory&lt;T&gt;</summary>
+
+Interface representing a fixed block of memory for a specific type.
+
+**Note:** This interface inherits from `IReadOnlyFixedMemory<T>` and `IFixedMemory<T>`. This type allows public
+implementation
+or inheritance.
+
+##### Properties:
+
+- <details>
+  <summary>ValuePointer</summary>
+   Gets the value pointer to the fixed block of memory.
+  </details>
+
+- <details>
+  <summary>Values</summary>
+   Gets a T span over the fixed block of memory.
+  </details>
+
+##### Disposable interface
+
+`IFixedMemory<T>.IDisposable` representing a disposable `IFixedMemory<T>` object.
+This interface is used for managing fixed memory blocks that require explicit resource cleanup.
+
+**Note:** This interface inherits from `IReadOnlyFixedMemory<T>` and `IFixedMemory.IDisposable`. This type allows public
+implementation or inheritance.
+
+</details>
+
+<details>
+  <summary>IReadOnlyFixedReference&lt;T&gt;</summary>
+
+This interface exposes a read-only reference to an object of type T, allowing the object to be used without
+modification.
+
+**Note:** This interface inherits from `IReadOnlyReferenceable<T>` and `IReadOnlyFixedMemory`. This type allows public
+implementation or inheritance.
+
+##### Methods:
+
+- <details>
+  <summary>Transformation(out IReadOnlyFixedMemory)</summary>
+   Reinterprets the read-only T fixed memory reference as a read-only TDestination memory reference.
+  </details>
+
+##### Disposable interface
+
+`IReadOnlyFixedReference<T>.IDisposable` representing a disposable `IReadOnlyFixedReference<T>` object.
+This interface is used for managing fixed memory blocks that require explicit resource cleanup.
+
+**Note:** This interface inherits from `IReadOnlyFixedReference<T>` and `IReadOnlyFixedMemory.IDisposable`. This type
+allows
+public implementation or inheritance.
+
+</details>
+
+<details>
+  <summary>IFixedReference&lt;T&gt;</summary>
+
+This interface represents a mutable reference to a fixed memory location.
+
+**Note:** This interface inherits from `IReferenceable<T>`, `IReadOnlyFixedReference<T>` and `IFixedMemory`. This type
+allows
+public implementation or inheritance.
+
+##### Methods:
+
+- <details>
+  <summary>Transformation(out IFixedMemory)</summary>
+   Reinterprets the T fixed memory reference as a TDestination memory reference.
+  </details>
+
+- <details>
+  <summary>Transformation(out IReadOnlyFixedMemory)</summary>
+   Reinterprets the T fixed memory reference as a TDestination memory reference.
+  </details>
+
+##### Disposable interface
+
+`IFixedReference<T>.IDisposable` representing a disposable `IFixedReference<T>` object.
+This interface is used for managing fixed memory blocks that require explicit resource cleanup.
+
+**Note:** This interface inherits from `IFixedReference<T>` and `IReadOnlyFixedReference<T>.IDisposable`. This type
+allows
+public implementation or inheritance.
+
+</details>
+
+<details>
+  <summary>IReadOnlyFixedContext&lt;T&gt;</summary>
+
+Interface representing a context from a read-only block of fixed memory.
+
+**Note:** This interface inherits from `IReadOnlyFixedMemory<T>`. This type allows public implementation or inheritance.
+
+##### Methods:
+
+- <details>
+  <summary>Transformation(out IReadOnlyFixedMemory)</summary>
+   Reinterprets the T fixed memory block as TDestination memory block.
+  </details>
+
+##### Disposable interface
+
+`IReadOnlyFixedContext<T>.IDisposable` representing a disposable `IReadOnlyFixedContext<T>` object.
+This interface is used for managing fixed memory blocks that require explicit resource cleanup.
+
+**Note:** This interface inherits from `IReadOnlyFixedContext<T>` and `IReadOnlyFixedMemory<T>.IDisposable`. This type
+allows
+public implementation or inheritance.
+
+</details>
+
+<details>
+  <summary>IFixedContext&lt;T&gt;</summary>
+
+Interface representing a context from a block of fixed memory.
+
+**Note:** This interface inherits from `IReadOnlyFixedContext<T>` and `IFixedMemory<T>`. This type allows public
+implementation
+or inheritance.
+
+##### Methods:
+
+- <details>
+  <summary>Transformation(out IFixedMemory)</summary>
+   Reinterprets the T fixed memory block as a TDestination memory block.
+  </details>
+
+- <details>
+  <summary>Transformation(out IReadOnlyFixedMemory)</summary>
+   Reinterprets the T fixed memory block as a TDestination memory block.
+  </details>
+
+##### Disposable interface
+
+`IFixedContext<T>.IDisposable` representing a disposable `IFixedContext<T>` object.
+This interface is used for managing fixed memory blocks that require explicit resource cleanup.
+
+**Note:** This interface inherits from `IFixedContext<T>` and `IFixedMemory<T>.IDisposable`. This type allows public
+implementation or inheritance.
+
+</details>
+
+### Functional Interfaces
+
+These interfaces expose functionalities for internal types or default functional implementations.
+
+<details>
+  <summary>IEnumerableSequence&lt;T&gt;</summary>
+
+Defines methods to support a simple iteration over a sequence of a specified type.
+
+**Note:** This interface inherits from `IEnumerable<T>`. This type allows public implementation or inheritance.
+
+##### Methods:
+
+- <details>
+  <summary>GetItem(Int32)</summary>
+   Retrieves the element at the specified index.
+  </details>
+
+- <details>
+  <summary>GetSize()</summary>
+   Retrieves the total number of elements in the sequence.
+  </details>
+
+##### Protected Methods:
+
+- <details>
+  <summary>DisposeEnumeration(Int32)</summary>
+   Method to call when IEnumerator&lt;T&gt; is disposing.
+  </details>
+
+</details>
+
+<details>
+  <summary>IUtf8FunctionState&lt;TSelf&gt;</summary>
+
+Interface representing a value state for functional CString creation.
+
+**Note:** `TSelf` generic type is `struct`. This type allows public implementation or inheritance.
+
+##### Properties:
+
+- <details>
+  <summary>IsNullTerminated</summary>
+   Indicates whether resulting UTF-8 text is null-terminated.
+  </details>
+
+##### Static Abstract/Virtual Methods:
+
+- <details>
+  <summary>GetSpan(TSelf)</summary>
+   Retrieves the span from state.
+  </details>
+
+- <details>
+  <summary>GetLength(in TSelf)</summary>
+   Retrieves the span length from state.
+  </details>
+
+</details>
+
+<details>
+  <summary>IManagedBuffer&lt;T&gt;</summary>
+
+This interfaces exposes a managed buffer.
+
+**Note:** This type not allow public implementation or inheritance.
+
+##### Static Methods:
+
+- <details>
+  <summary>GetMetadata&lt;TBuffer&gt;()</summary>
+   Retrieves the BufferTypeMetadata&lt;T&gt; instance from TBuffer.
+  </details>
+
+</details>
+
+<details>
+  <summary>IManagedBinaryBuffer&lt;T&gt;</summary>
+
+This interfaces exposes a binary managed buffer.
+
+**Note:** This interface inherits from `IManagedBuffer<T>`. This type not allow public implementation or inheritance.
+
+##### Properties:
+
+- <details>
+  <summary>Metadata&lt;TBuffer&gt;()</summary>
+   Retrieves the BufferTypeMetadata&lt;T&gt; instance from current instance.
+  </details>
+
+</details>
+
+<details>
+  <summary>IManagedBinaryBuffer&lt;TBuffer, T&gt;</summary>
+
+This interfaces exposes a binary managed buffer.
+
+**Note:** `TBuffer` generic type is `struct`. This interface inherits from `IManagedBinaryBuffer<T>`. This type not
+allow
+public implementation or inheritance.
+
+</details>
+
+### Span Delegates
+
+These delegates encapsulate methods that operate with Span<T> instances.
+
+<details>
+  <summary>ReadOnlySpan&lt;T&gt; ReadOnlySpanFunc&lt;T&gt;()</summary>
+
+Encapsulates a method that has no parameters and returns a read-only span of type `T`.
+
+</details>
+
+<details>
+  <summary>ReadOnlySpan&lt;T&gt; ReadOnlySpanFunc&lt;T, in TState&gt;(TState)</summary>
+
+Encapsulates a method that has a `TState` parameter and returns a read-only span of type T.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+<details>
+  <summary>TResult SpanFunc&lt;T, in TArg, out TResult&gt;(Span&lt;T&gt;, TArg)</summary>
+
+Encapsulates a method that receives a span of type `T`, a state object of type `TArg` and returns a result of type
+`TResult`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+<details>
+  <summary>TResult ReadOnlySpanFunc&lt;T, in TArg, out TResult&gt;(Span&lt;T&gt;, TArg)</summary>
+
+Encapsulates a method that receives a read-only span of type `T`, a state object of type `TArg` and returns a result
+of type `TResult`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+### Fixed memory Delegates
+
+These delegates encapsulate methods that operate with fixed memory blocks.
+
+<details>
+  <summary>void FixedAction(in IFixedMemory)</summary>
+
+Represents an action that operates on a fixed memory instance.
+
+</details>
+
+<details>
+  <summary>void FixedAction&lt;in TArg&gt;(in IFixedMemory, TArg)</summary>
+
+Represents an action that operates on a fixed memory instance using an additional state object.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+<details>
+  <summary>void ReadOnlyFixedAction(in IReadOnlyFixedMemory)</summary>
+
+Represents an action that operates on a read-only fixed memory instance.
+
+</details>
+
+<details>
+  <summary>void ReadOnlyFixedAction&lt;in TArg&gt;(in IReadOnlyFixedMemory, TArg)</summary>
+
+Represents an action that operates on a read-only fixed memory instance using an additional state object.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+<details>
+  <summary>TResult FixedFunc&lt;out TResult&gt;(in IFixedMemory)</summary>
+
+Represents a function that operates on a fixed memory instance.
+
+</details>
+
+<details>
+  <summary>TResult FixedFunc&lt;in TArg, out TResult&gt;(in IFixedMemory, TArg)</summary>
+
+Represents a function that operates on a fixed memory instance using an additional state object.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+<details>
+  <summary>TResult ReadOnlyFixedFunc&lt;out TResult&gt;(in IReadOnlyFixedMemory&lt;T&gt;)</summary>
+
+Represents a function that operates on a read-only fixed memory instance.
+
+</details>
+
+<details>
+  <summary>TResult ReadOnlyFixedFunc&lt;in TArg, out TResult&gt;(in IReadOnlyFixedMemory&lt;T&gt;, TArg)</summary>
+
+Represents a function that operates on a read-only fixed memory instance using an additional state object.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+### Fixed memory context Delegates
+
+These delegates encapsulate methods that operate on fixed memory blocks of a specific type.
+
+<details>
+  <summary>void FixedContextAction&lt;T&gt;(in IFixedContext&lt;T&gt;)</summary>
+
+Encapsulates a method that receives an instance of `IFixedContext<T>`.
+
+</details>
+
+<details>
+  <summary>void FixedContextAction&lt;T, in TArg,&gt;(in IFixedContext&lt;T&gt;, TArg)</summary>
+
+Encapsulates a method that receives an instance of `IFixedContext<T>` and a state object of type `TArg`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+<details>
+  <summary>void ReadOnlyFixedContextAction&lt;T&gt;(in IReadOnlyFixedContext&lt;T&gt;)</summary>
+
+Encapsulates a method that receives an instance of `IReadOnlyFixedContext<T>`.
+
+</details>
+
+<details>
+  <summary>void ReadOnlyFixedContextAction&lt;T, in TArg,&gt;(in IFixedContext&lt;T&gt;, TArg)</summary>
+
+Encapsulates a method that receives an instance of `IReadOnlyFixedContext<T>` and a state object of type `TArg`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+<details>
+  <summary>TResult FixedContextFunc&lt;T, out TResult&gt;(in IFixedContext&lt;T&gt;)</summary>
+
+Encapsulates a method that receives an instance of `IFixedContext<T>` and returns a value of type `TResult`.
+
+</details>
+
+<details>
+  <summary>TResult FixedContextFunc&lt;T, in TArg, out TResult&gt;(in IFixedContext&lt;T&gt;, TArg)</summary>
+
+Encapsulates a method that receives an instance of `IFixedContext<T>` and returns a value of type `TResult`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+<details>
+  <summary>TResult ReadOnlyFixedContextFunc&lt;T, out TResult&gt;(in IReadOnlyFixedContext&lt;T&gt;)</summary>
+
+Encapsulates a method that receives an instance of `IReadOnlyFixedContext<T>` and returns a value of type `TResult`.
+
+</details>
+
+<details>
+  <summary>TResult FixedContextFunc&lt;T, in TArg, out TResult&gt;(in IReadOnlyFixedContext&lt;T&gt;, TArg)</summary>
+
+Encapsulates a method that receives an instance of `IReadOnlyFixedContext<T>` and returns a value of type `TResult`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+### Fixed memory reference Delegates
+
+These delegates encapsulate methods that operate on fixed memory references of a specific type.
+
+<details>
+  <summary>void FixedReferenceAction&lt;T&gt;(in IFixedReference&lt;T&gt;)</summary>
+
+Encapsulates a method that receives an instance of `IFixedReference<T>`.
+
+</details>
+
+<details>
+  <summary>void FixedReferenceAction&lt;T, in TArg,&gt;(in IFixedReference&lt;T&gt;, TArg)</summary>
+
+Encapsulates a method that receives an instance of `IFixedReference<T>` and a state object of type `TArg`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+<details>
+  <summary>void ReadOnlyFixedReferenceAction&lt;T&gt;(in IReadOnlyFixedReference&lt;T&gt;)</summary>
+
+Encapsulates a method that receives an instance of `IReadOnlyFixedReference<T>`.
+
+</details>
+
+<details>
+  <summary>void ReadOnlyFixedReferenceAction&lt;T, in TArg,&gt;(in IFixedReference&lt;T&gt;, TArg)</summary>
+
+Encapsulates a method that receives an instance of `IReadOnlyFixedReference<T>` and a state object of type `TArg`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+<details>
+  <summary>TResult FixedReferenceFunc&lt;T, out TResult&gt;(in IFixedReference&lt;T&gt;)</summary>
+
+Encapsulates a method that receives an instance of `IFixedReference<T>` and returns a value of type `TResult`.
+
+</details>
+
+<details>
+  <summary>TResult FixedReferenceFunc&lt;T, in TArg, out TResult&gt;(in IFixedReference&lt;T&gt;, TArg)</summary>
+
+Encapsulates a method that receives an instance of `IFixedReference<T>` and returns a value of type `TResult`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+<details>
+  <summary>TResult ReadOnlyFixedReferenceFunc&lt;T, out TResult&gt;(in IReadOnlyFixedReference&lt;T&gt;)</summary>
+
+Encapsulates a method that receives an instance of `IReadOnlyFixedReference<T>` and returns a value of type `TResult`.
+
+</details>
+
+<details>
+  <summary>TResult FixedReferenceFunc&lt;T, in TArg, out TResult&gt;(in IReadOnlyFixedReference&lt;T&gt;, TArg)</summary>
+
+Encapsulates a method that receives an instance of `IReadOnlyFixedReference<T>` and returns a value of type `TResult`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+### Fixed address method Delegates
+
+These delegates encapsulate methods that operate on methods with a fixed memory address.
+
+<details>
+  <summary>void FixedMethodAction&lt;T&gt;(in IFixedMethod&lt;T&gt;)</summary>
+
+Encapsulates a method that receives an instance of `IFixedMethod<T>`.
+
+</details>
+
+<details>
+  <summary>void FixedMethodAction&lt;T, in TArg,&gt;(in IFixedMethod&lt;T&gt;, TArg)</summary>
+
+Encapsulates a method that receives an instance of `IFixedMethod<T>` and a state object of type `TArg`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+<details>
+  <summary>TResult FixedMethodFunc&lt;T, out TResult&gt;(in IFixedMethod&lt;T&gt;)</summary>
+
+Encapsulates a method that receives an instance of `IFixedMethod<T>` and returns a value of type `TResult`.
+
+</details>
+
+<details>
+  <summary>TResult FixedMethodFunc&lt;T, in TArg, out TResult&gt;(in IFixedMethod&lt;T&gt;, TArg)</summary>
+
+Encapsulates a method that receives an instance of `IFixedMethod<T>` and returns a value of type `TResult`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+### Fixed memory list Delegates
+
+These delegates encapsulate methods that operate on a list of fixed memory blocks.
+
+<details>
+  <summary>void FixedListAction(FixedMemoryList)</summary>
+
+Encapsulates a method that receives an instance of `FixedMemoryList`.
+
+</details>
+
+<details>
+  <summary>void FixedListAction&lt;in TArg,&gt;(FixedMemoryList, TArg)</summary>
+
+Encapsulates a method that receives an instance of `FixedMemoryList` and a state object of type `TArg`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+<details>
+  <summary>void ReadOnlyFixedListAction(ReadOnlyFixedMemoryList)</summary>
+
+Encapsulates a method that receives an instance of `ReadOnlyFixedMemoryList`.
+
+</details>
+
+<details>
+  <summary>void ReadOnlyFixedListAction&lt;in TArg,&gt;(FixedMemoryList, TArg)</summary>
+
+Encapsulates a method that receives an instance of `ReadOnlyFixedMemoryList` and a state object of type `TArg`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+<details>
+  <summary>TResult FixedListFunc&lt;out TResult&gt;(FixedMemoryList)</summary>
+
+Encapsulates a method that receives an instance of `FixedMemoryList` and returns a value of type `TResult`.
+
+</details>
+
+<details>
+  <summary>TResult FixedListFunc&lt;in TArg, out TResult&gt;(FixedMemoryList, TArg)</summary>
+
+Encapsulates a method that receives an instance of `FixedMemoryList` and returns a value of type `TResult`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+<details>
+  <summary>TResult ReadOnlyFixedListFunc&lt;out TResult&gt;(ReadOnlyFixedMemoryList)</summary>
+
+Encapsulates a method that receives an instance of `ReadOnlyFixedMemoryList` and returns a value of type `TResult`.
+
+</details>
+
+<details>
+  <summary>TResult FixedListFunc&lt;in TArg, out TResult&gt;(ReadOnlyFixedMemoryList, TArg)</summary>
+
+Encapsulates a method that receives an instance of `ReadOnlyFixedMemoryList` and returns a value of type `TResult`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+### UTF-8/ASCII Delegates
+
+These delegates encapsulate methods that allow creating and operating with UTF-8/ASCII text.
+
+<details>
+  <summary>void CStringSequenceCreationAction&lt;in TArg&gt;(Span&lt;Byte&lt;, Int32, TArg)</summary>
+
+Encapsulates a method that receives a span of bytes, an index and a state object of type `TArg`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+<details>
+  <summary>void CStringSequenceAction(FixedCStringSequence)</summary>
+
+Encapsulates a method that operates on a `FixedCStringSequence` instance.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+<details>
+  <summary>void CStringSequenceAction&lt;in TArg&gt;(FixedCStringSequence, TArg)</summary>
+
+Encapsulates a method that operates on a `FixedCStringSequence` instance and a state object of type `TArg`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+<details>
+  <summary>TResult CStringSequenceFunc&lt;out TResult&gt;(FixedCStringSequence)</summary>
+
+Encapsulates a method that operates on a `FixedCStringSequence` instance and returns a value of type `TResult`.
+
+</details>
+
+<details>
+  <summary>TResult CStringSequenceFunc&lt;in TArg, out TResult&gt;(FixedCStringSequence, TArg)</summary>
+
+
+Encapsulates a method that operates on a `FixedCStringSequence` instance, a state object of type `TArg` and returns a
+value of type `TResult`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+### Buffers Delegates
+
+These delegates encapsulate methods that operate on instances of managed buffers.
+
+<details>
+  <summary>void ScopedBufferAction&lt;T&gt;(ScopedBuffer)</summary>
+
+Encapsulates a method that receives a buffer of objects of type `T`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+<details>
+  <summary>void ScopedBufferAction&lt;T, in TArg&gt;(ScopedBuffer, TArg)</summary>
+
+Encapsulates a method that receives a buffer of objects of type `T` and a state object of type `TArg`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+<details>
+  <summary>TResult ScopedBufferFunc&lt;T, out TResult&gt;(ScopedBuffer)</summary>
+
+Encapsulates a function that receives a buffer of objects of type `T` and returns a result of type `TResult`.
+</details>
+
+<details>
+  <summary>TResult ScopedBufferFunc&lt;T, in TArg, out TResult&gt;(ScopedBuffer, TArg)</summary>
+
+
+Encapsulates a method that receives a buffer of objects of type `T`, a state object of type `TArg` and returns a value
+of type `TResult`.
+
+**Note:** In .NET 9.0+ `TState` allows `ref struct`.
+
+</details>
+
+## Structs
+
+### Pointers
+
+These structures safely represent memory addresses for references or methods of a specific type.
+
+<details>
+  <summary>ReadOnlyValPtr&lt;T&gt;</summary>
+
+Represents a platform-specific type used to manage a pointer to a read-only value of type `T`.
+
+**Note:** This struct implements `IComparable`, `ISpanFormattable`, `ISerializable`, `IWrapper<IntPtr>`,
+`IEquatable<ReadOnlyValPtr<T>>` and `IComparable<ReadOnlyValPtr<T>>` interfaces.
+
+##### Static Properties:
+
+- <details>
+  <summary>Zero</summary>
+  A read-only field that represents a pointer that has been initialized to zero.
+  </details>
+- <details>
+  <summary>IsUnmanaged</summary>
+  Indicates if T type is an unmanaged type.
+  </details>
+
+##### Properties:
+
+- <details>
+  <summary>Pointer</summary>
+  Internal pointer as an IntPtr.
+  </details>
+- <details>
+  <summary>IsZero</summary>
+  Indicates whether the current pointer is null.
+  </details>
+- <details>
+  <summary>Reference</summary>
+  A read-only reference to the value pointed to by this instance.
+  </details>
+
+##### Methods:
+
+- <details>
+  <summary>GetUnsafeFixedReference(IDisposable?)</summary>
+  Retrieves an unsafe IReadOnlyFixedReference&lt;T&gt;.IDisposable instance from current read-only reference pointer.
+  </details>
+- <details>
+  <summary>GetUnsafeFixedContext(IDisposable?)</summary>
+  Retrieves an unsafe IReadOnlyFixedContext&lt;T&gt;.IDisposable instance from current read-only reference pointer.
+  </details>
+
+</details>
+
+<details>
+  <summary>ValPtr&lt;T&gt;</summary>
+
+Represents a platform-specific type used to manage a pointer to a mutable value of type `T`.
+
+**Note:** This struct implements `IComparable`, `ISpanFormattable`, `ISerializable`, `IWrapper<IntPtr>`,
+`IEquatable<ValPtr<T>>` and `IComparable<ValPtr<T>>` interfaces.
+
+##### Static Properties:
+
+- <details>
+  <summary>Zero</summary>
+  A read-only field that represents a pointer that has been initialized to zero.
+  </details>
+- <details>
+  <summary>IsUnmanaged</summary>
+  Indicates if T type is an unmanaged type.
+  </details>
+
+##### Properties:
+
+- <details>
+  <summary>Pointer</summary>
+  Internal pointer as an IntPtr.
+  </details>
+- <details>
+  <summary>IsZero</summary>
+  Indicates whether the current pointer is null.
+  </details>
+- <details>
+  <summary>Reference</summary>
+  A reference to the value pointed to by this instance.
+  </details>
+
+##### Methods:
+
+- <details>
+  <summary>GetUnsafeFixedReference(IDisposable?)</summary>
+  Retrieves an unsafe IReadOnlyFixedReference&lt;T&gt;.IDisposable instance from current reference pointer.
+  </details>
+- <details>
+  <summary>GetUnsafeFixedContext(IDisposable?)</summary>
+  Retrieves an unsafe IReadOnlyFixedContext&lt;T&gt;.IDisposable instance from current reference pointer.
+  </details>
+
+</details>
+
+<details>
+  <summary>FuncPtr&lt;TDelegate&gt;</summary>
+
+Represents a platform-specific type used to handle a pointer to a method of type <typeparamref name="TDelegate"/>.
+
+**Note:** This struct implements `ISpanFormattable`, `ISerializable`, `IWrapper<IntPtr>` and `IEquatable<FuncPtr<T>>`
+interfaces.
+
+##### Static Properties:
+
+- <details>
+  <summary>Zero</summary>
+  A read-only field representing a null-initialized function pointer.
+  </details>
+
+##### Properties:
+
+- <details>
+  <summary>Pointer</summary>
+  Internal pointer as an IntPtr.
+  </details>
+- <details>
+  <summary>IsZero</summary>
+  Indicates whether the current pointer is null.
+  </details>
+- <details>
+  <summary>Invoke</summary>
+  A managed delegate using the method address pointed to by this instance.
+  </details>
+
+</details>
+
+### Fixed memory lists
+
+These structures represent lists of fixed memory block addresses.
+
+<details>
+  <summary>ReadOnlyFixedMemoryList</summary>
+
+Represents a list of `IReadOnlyFixedMemory` instances.
+
+**Note:** This type is a `ref struct`. Instances of current type can be used with `foreach`.
+
+##### Properties:
+
+- <details>
+  <summary>Count</summary>
+  Gets the total number of elements in the list.
+  </details>
+- <details>
+  <summary>IsEmpty</summary>
+  Indicates whether the current list is empty.
+  </details>
+
+##### Indexer:
+
+- <details>
+  <summary>Item</summary>
+  Gets the IReadOnlyFixedMemory at the specified index.
+  </details>
+
+##### Methods:
+
+- <details>
+  <summary>ToArray()</summary>
+  Creates an array from the current ReadOnlyFixedMemoryList instance.
+  </details>
+
+</details>
+
+<details>
+  <summary>FixedMemoryList</summary>
+
+Represents a list of `IFixedMemory` instances.
+
+**Note:** This type is a `ref struct`. Instances of current type can be used with `foreach`.
+
+##### Properties:
+
+- <details>
+  <summary>Count</summary>
+  Gets the total number of elements in the list.
+  </details>
+- <details>
+  <summary>IsEmpty</summary>
+  Indicates whether the current list is empty.
+  </details>
+
+##### Indexer:
+
+- <details>
+  <summary>Item</summary>
+  Gets the IFixedMemory at the specified index.
+  </details>
+
+##### Methods:
+
+- <details>
+  <summary>ToArray()</summary>
+  Creates an array from the current FixedMemoryList instance.
+  </details>
+
+</details>
+
+<details>
+  <summary>FixedCStringSequence</summary>
+
+Represents a `CStringSequence` that is fixed in memory.
+
+**Note:** This type is a `ref struct`. Instances of current type can be used with `foreach`.
+
+##### Properties:
+
+- <details>
+  <summary>Values</summary>
+  Gets the list of CString values in the sequence.
+  </details>
+
+##### Indexer:
+
+- <details>
+  <summary>Item</summary>
+  Gets the element at the given index in the sequence.
+  </details>
+
+##### Methods:
+
+- <details>
+  <summary>ToArray()</summary>
+  Creates an array of IReadOnlyFixedMemory instances from the current instance.
+  </details>
+
+</details>
+
+### Managed buffer types
+
+These structures represent managed buffers that can be stored on the stack.
+
+<details>
+  <summary>Atomic&lt;T&gt;</summary>
+
+Atomic binary buffer.
+
+**Note:** This type represents the binary unit 2<sup>0</sup> space.
+
+</details>
+
+<details>
+  <summary>Composite&lt;TBufferA, TBufferB,T&gt;</summary>
+
+Composite binary buffer.
+
+**Notes:**
+
+- This type represents a composite binary buffer of size A + B.
+- `TBufferA` and `TBufferB` must be binary buffers.
+- `TBufferB` must always be a space of 2<sup>n</sup>.
+- `TBufferA` must be a buffer smaller than or equal to `TBufferB`.
+- If `TBufferA` and `TBufferB` are equal, the current type will represent a binary space of 2<sup>n + 1</sup>.
+
+</details>
+
+<details>
+  <summary>NonBinarySpace&lt;TArray, T&gt;</summary>
+
+Non-binary buffer space.
+
+**Notes:**
+
+- This type represents a non-binary buffer based on a custom structure `TArray`.
+- `TArray` and `T` must be compatible.
+- The size of this space is the amount of elements of type `T` can be stored in a `TArray` instance.
+
+</details>
+
+## Classes
+
+<details>
+  <summary>ValueRegion&lt;T&gt;</summary>
+
+This class represents a region of memory that contains a sequence of `T` values.
+
+**Note:** `T` must be `unmanaged`. This type not allow public inheritance.
+
+#### Properties:
+
+- <details>
+  <summary>IsMemorySlice</summary>
+  Indicates whether the current instance represents a subregion of a memory region.
+  </details>
+
+#### Indexer:
+
+- <details>
+  <summary>Item</summary>
+  Retrieves an item from the memory region at the specified zero-based index.
+  </details>
+
+#### Methods:
+
+- <details>
+  <summary>ToArray()</summary>
+  Copies the contents of this memory region into a new array.
+  </details>
+
+#### Operators:
+
+- <details>
+  <summary>ReadOnlySpan&lt;T&gt;(ValueRegion&lt;T&gt;)</summary>
+  Converts the value of the current ValueRegion&lt;T&gt; to its equivalent read-only span representation.
+  </details>
+- <details>
+  <summary>T[]?(ValueRegion&lt;T&gt;)</summary>
+  Converts the value of the current ValueRegion&lt;T&gt; to its equivalent array representation.
+  </details>
+
+#### Static Methods:
+
+- <details>
+  <summary>Create(T[])</summary>
+  Creates a new ValueRegion&lt;T&gt; instance from an array of T values.
+  </details>
+- <details>
+  <summary>Create(IntPtr, Int32)</summary>
+  Creates a new ValueRegion&lt;T&gt; instance from a pointer to a native memory region.
+  </details>
+- <details>
+  <summary>Create(ReadOnlySpanFunc&lt;T&gt;)</summary>
+  Creates a new ValueRegion&lt;T&gt; instance from a ReadOnlySpanFunc&lt;T&gt; function.
+  </details>
+- <details>
+  <summary>Create&lt;TState&gt;(TState, ReadOnlySpanFunc&lt;T, TState&gt;)</summary>
+  Creates a new ValueRegion&lt;T&gt; instance from a ReadOnlySpanFunc&lt;T, TState&gt; function and TState instance.
+  </details>
+
+</details>
+
+<details>
+  <summary>BufferTypeMetadata</summary>
+
+Represents the metadata of a managed buffer type.
+
+**Note:** Implements `IEnumerableSequence<BufferTypeMetadata>`. This type not allow public inheritance.
+
+#### Properties:
+
+- <details>
+  <summary>IsBinary</summary>
+  Indicates whether current type is binary space.
+  </details>
+- <details>
+  <summary>Size</summary>
+  Buffer capacity.
+  </details>
+- <details>
+  <summary>IsBinary</summary>
+  Number of components.
+  </details>
+- <details>
+  <summary>BufferType</summary>
+  Buffer type.
+  </details>
+
+#### Indexer:
+
+- <details>
+  <summary>Item</summary>
+  Retrieves a component from current metadata at the specified zero-based index.
+  </details>
+
+#### Generic class
+
+`BufferTypeMetadata<T>` representing a generic `BufferTypeMetadata` object.
+
+**Note:** Inherits from `BufferTypeMetadata`. This type not allow public inheritance.
+
+</details>
+
+<details>
+  <summary>CString</summary>
+
+Represents a sequence of UTF-8 encoded characters.
+
+**Notes:**
+
+- Implements `ICloneable`, `IComparable`, `IComparable<CString>`, `IComparable<String>`, `IEquatable<CString>`,
+  `IEquatable<String>` and `IEnumerableSequence<Byte>`.
+- This type is sealed.
+- Instances of this type can be fixed but not pinned.
+- Instances of this type can be iterated using both `IEnumerable<Byte>` and `ReadOnlySpan<Byte>.Enumerator`.
+- Range operations can be used on instances of this type.
+- This type exposes APIs to Join, Concat and Compare `CString` instances.
+- This type exposes operators of comparison and equality of `CString` and `String` instances.
+- In .NET 9.0+ `params` is used with `ReadOnlySpan<>` arguments instead of `[]` arguments.
+
+#### Static Fields:
+
+- <details>
+  <summary>Empty</summary>
+  Represents an empty UTF-8 string. This field is read-only.
+  </details>
+- <details>
+  <summary>Zero</summary>
+  Represents a null-pointer UTF-8 string. This field is read-only.
+  </details>
+
+#### Properties:
+
+- <details>
+  <summary>IsNullTerminated</summary>
+  Gets a value indicating whether the text in the current CString instance ends with a null-termination character.
+  </details>
+- <details>
+  <summary>IsReference</summary>
+  Gets a value indicating whether the UTF-8 text is referenced by, and not contained within, the current CString instance.
+  </details>
+- <details>
+  <summary>IsSegmented</summary>
+  Gets a value indicating whether the current CString instance is a segment (or slice) of another CString instance.
+  </details>
+- <details>
+  <summary>IsFunction</summary>
+  Gets a value indicating whether the current CString instance is a function.
+  </details>
+
+#### Indexer:
+
+- <details>
+  <summary>Item</summary>
+  Gets the Byte value at a specified position in the current CString object.
+  </details>
+
+#### Constructors:
+
+- <details>
+  <summary>CString(Byte, Int32)</summary>
+  Initializes a new instance of the CString class to the value indicated by a specified UTF-8 character repeated a specified number of times.
+  </details>
+- <details>
+  <summary>CString(Byte, Byte, Int32)</summary>
+   Initializes a new instance of the CString class to the value indicated by a specified UTF-8 sequence repeated a specified number of times.
+  </details>
+- <details>
+  <summary>CString(Byte, Byte, Byte, Int32)</summary>
+   Initializes a new instance of the CString class to the value indicated by a specified UTF-8 sequence repeated a specified number of times.
+  </details>
+- <details>
+  <summary>CString(Byte, Byte, Byte, Byte, Int32)</summary>
+   Initializes a new instance of the CString class to the value indicated by a specified UTF-8 sequence repeated a specified number of times.
+  </details>
+- <details>
+  <summary>CString(ReadOnlySpan&lt;Byte&gt;)</summary>
+   Initializes a new instance of the CString class using the UTF-8 characters indicated in the specified read-only span.
+  </details>
+- <details>
+  <summary>CString(ReadOnlySpanFunc&lt;Byte&gt;)</summary>
+   Initializes a new instance of the CString class that contains the UTF-8 string returned by the specified ReadOnlySpanFunc&lt;Byte&gt;.
+  </details>
+
+#### Methods:
+
+- <details>
+  <summary>ToArray()</summary>
+  Copies the UTF-8 text of the current CString instance into a new byte array.
+  </details>
+- <details>
+  <summary>AsSpan()</summary>
+  Retrieves the UTF-8 units of the current CString as a read-only span of bytes.
+  </details>
+- <details>
+  <summary>ToHexString()</summary>
+  Returns a String that represents the current UTF-8 text as a hexadecimal value.
+  </details>
+
+#### Operators:
+
+- <details>
+  <summary>CString?(Byte[]?)</summary>
+  Defines an implicit conversion of a given Byte array to CString.
+  </details>
+- <details>
+  <summary>CString?(String?)</summary>
+  Defines an explicit conversion of a given String to CString.
+  </details>
+- <details>
+  <summary>ReadOnlySpan&lt;Byte&gt;(CString?)</summary>
+  Defines an implicit conversion of a given CString to a read-only span of bytes.
+  </details>
+
+#### Static Methods:
+
+- <details>
+  <summary>IsNullOrEmpty(CString?)</summary>
+  Determines whether the specified CString is null or an empty UTF-8 string.
+  </details>
+- <details>
+  <summary>Create(ReadOnlySpan&lt;Byte&gt;)</summary>
+  Creates a new instance of the CString class using the UTF-8 characters provided in the specified read-only span.
+  </details>
+- <details>
+  <summary>Create(ReadOnlySpanFunc&lt;Byte&gt;?)</summary>
+  Creates a new instance of the CString class using the ReadOnlySpanFunc&lt;Byte&gt; delegate provided.
+  </details>
+- <details>
+  <summary>Create(Byte[]?)</summary>
+  Creates a new instance of the CString class using the binary internal information provided.
+  </details>
+- <details>
+  <summary>CreateCreate&lt;TState&gt;(TState)</summary>
+  Creates a new instance of the CString class using a TState instance.
+  </details>
+- <details>
+  <summary>CreateUnsafe(IntPtr, Int32, useFullLength)</summary>
+  Creates a new instance of the CString class using the pointer to a UTF-8 character array and length provided.
+  </details>
+
+</details>
+
+<details>
+  <summary>CStringSequence</summary>
+
+Represents a sequence of null-terminated UTF-8 text strings.
+
+**Notes:**
+
+- Implements `ICloneable`, `IEquatable<CString>`, `IComparable<CStringSequence>`, `IReadOnlyList<CString>` and
+  `IEnumerableSequence<CString>`.
+- This type is sealed.
+- The instances of this type can be fixed but not pinned.
+- Range operations can be used on instances of this type.
+- This type exposes constructors to create sequences from up to 8 instances of `ReadOnlySpan<Byte>` in order to optimize
+  memory usage.
+- In .NET 9.0+ `params` is used with `ReadOnlySpan<>` arguments instead of `[]` arguments.
+
+#### Static Properties:
+
+- <details>
+  <summary>Empty</summary>
+  Represents an empty sequence.
+  </details>
+
+#### Properties:
+
+- <details>
+  <summary>Count</summary>
+  Gets the number of CString instances contained in this CStringSequence.
+  </details>
+
+#### Indexer:
+
+- <details>
+  <summary>Item</summary>
+  Gets the CString at the specified index.
+  </details>
+
+#### Constructors:
+
+- <details>
+  <summary>CStringSequence(params String?[])</summary>
+  Initializes a new instance of the CStringSequence class from a collection of strings.
+  </details>
+- <details>
+  <summary>CStringSequence(params CString?[])</summary>
+  Initializes a new instance of the CStringSequence class from a collection of UTF-8 strings.
+  </details>
+- <details>
+  <summary>CStringSequence(ReadOnlySpan&lt;CString&gt;)</summary>
+   Initializes a new instance of the CStringSequence class from a read-only span of UTF-8 strings.
+  </details>
+- <details>
+  <summary>CStringSequence(ReadOnlySpan&lt;String&gt;)</summary>
+   Initializes a new instance of the CStringSequence class from a read-only span of strings.
+  </details>
+- <details>
+  <summary>CStringSequence(IReadOnlySpan&lt;String?&gt;)</summary>
+  Initializes a new instance of the CStringSequence class from a collection of strings.
+  </details>
+- <details>
+  <summary>CStringSequence(IReadOnlySpan&lt;CString?&gt;)</summary>
+  Initializes a new instance of the CStringSequence class from a collection of UTF-8 strings.
+  </details>
+
+#### Methods:
+
+- <details>
+  <summary>ToCString()</summary>
+  Returns a CString that represents the current sequence.
+  </details>
+- <details>
+  <summary>GetFixedPointer()</summary>
+  Creates an IFixedPointer.IDisposable instance by pinning the current instance, allowing safe access to the fixed memory region.
+  </details>
+- <details>
+  <summary>WithSafeTransform(CStringSequenceAction)</summary>
+  Executes a specified action using the current instance treated as a FixedCStringSequence.
+  </details>
+- <details>
+  <summary>WithSafeTransform&lt;TState&gt;(TState, CStringSequenceAction)</summary>
+  Executes a specified action on the current instance treated as a FixedCStringSequence, using an additional parameter passed to the action.
+  </details>
+- <details>
+  <summary>WithSafeTransform&lt;TResult&gt;(CStringSequenceFunc&lt;TResult&gt;)</summary>
+  Executes a specified function using the current instance treated as a FixedCStringSequence.
+  </details>
+- <details>
+  <summary>WithSafeTransform&lt;TState, TResult&gt;(TState, CStringSequenceFunc&lt;TResult&gt;)</summary>
+  Executes a specified function using the current instance treated as a FixedCStringSequence, and an additional parameter passed to the function.
+  </details>
+
+#### Operators:
+
+- <details>
+  <summary>CString?(Byte[]?)</summary>
+  Defines an implicit conversion of a given Byte array to CString.
+  </details>
+- <details>
+  <summary>CString?(String?)</summary>
+  Defines an explicit conversion of a given String to CString.
+  </details>
+- <details>
+  <summary>ReadOnlySpan&lt;Byte&gt;(CString?)</summary>
+  Defines an implicit conversion of a given CString to a read-only span of bytes.
+  </details>
+- <details>
+  <summary>ReadOnlySpan&lt;Byte&gt;(CString?)</summary>
+  Defines an implicit conversion of a given CString to a read-only span of bytes.
+  </details>
+
+#### Static Methods:
+
+- <details>
+  <summary>Create&lt;TState&gt;(TState, CStringSequenceCreationAction&lt;TState&gt;, params Int32?[])</summary>
+  Creates a new UTF-8 text sequence with specific lengths, and initializes each UTF-8 text string in it after creation using the specified callback.
+  </details>
+- <details>
+  <summary>Create(ReadOnlySpan&lt;Char&gt;)</summary>
+  Creates a new CStringSequence instance from a UTF-8 buffer.
+  </details>
+- <details>
+  <summary>Parse(String?)</summary>
+  Converts the buffer of a UTF-8 sequence to a CStringSequence instance.
+  </details>
+
+</details>
 
 ## Extensions
 
-### Rxmxnx.PInvoke.BinaryExtensions
+<details>
+  <summary>BinaryExtensions</summary>
 
-`Rxmxnx.PInvoke.BinaryExtensions` is an extension methods class that provides a set of useful methods when working with
-bytes and byte arrays in a PInvoke context.
+Set of useful methods when working with bytes, byte arrays, and byte spans in a PInvoke context.
 
-- `AsHexString(Byte[])`: Returns a hexadecimal string representation of a byte array.
-- `AsHexString(Byte)`: Returns a hexadecimal string representation of a single byte.
-- `AsValue<T>(ReadOnlySpan<Byte>)`: Transforms the byte span into a value of the provided value type.
-- `ToValue<T>(ReadOnlySpan<Byte>)`: Creates a new value of the provided type from a byte span.
-- `WithSafeFixed(Span<Byte>, FixedAction)`: Performs a fixed action on a span of bytes.
-- `WithSafeFixed(ReadOnlySpan<Byte>, ReadOnlyFixedAction)`: Performs a fixed action on a readonly span of bytes.
-- `WithSafeFixed<TArg>(Span<Byte>, TArg, FixedAction<TArg>)`: Performs a fixed action on a span of bytes with an
-  additional argument.
-- `WithSafeFixed<TArg>(ReadOnlySpan<Byte>, TArg, ReadOnlyFixedAction<TArg>)`: Performs a fixed action on a readonly span
-  of bytes with an additional argument.
-- `WithSafeFixed<TResult>(Span<Byte>, FixedFunc<TResult>)`: Performs a fixed function on a span of bytes and returns a
-  value.
-- `WithSafeFixed<TResult>(ReadOnlySpan<Byte>, ReadOnlyFixedFunc<TResult>)`: Performs a fixed function on a readonly span
-  of bytes and returns a value.
-- `WithSafeFixed<TArg, TResult>(Span<Byte>, TArg, FixedFunc<TArg, TResult>)`: Performs a fixed function on a span of
-  bytes with an additional argument and returns a value.
-- `WithSafeFixed<TArg, TResult>(ReadOnlySpan<Byte>, TArg, ReadOnlyFixedFunc<TArg, TResult>)`: Performs a fixed function
-  on a readonly span of bytes with an additional argument and returns a value.
+- <details>
+  <summary>ToValue&lt;T&gt;(this Byte[])</summary>
+  Retrieves a T value from the given byte array. 
 
-### Rxmxnx.PInvoke.DelegateExtensions
+  **Note:** ´T´ is ´unmanaged´.
+  </details>
+- <details>
+  <summary>ToValue&lt;T&gt;(this Span&lt;Byte&gt;)</summary>
+  Retrieves a T value from the given byte span. 
 
-`Rxmxnx.PInvoke.DelegateExtensions` is an extension methods class that provides additional functionality for working
-with delegates.
+  **Note:** ´T´ is ´unmanaged´.
+  </details>
+- <details>
+  <summary>ToValue&lt;T&gt;(this ReadOnlySpan&lt;Byte&gt;)</summary>
+  Retrieves a T value from the given read-only byte span. 
 
-- `GetUnsafeFuncPtr<TDelegate>(TDelegate)`: Returns the unmanaged FuncPtr<TDelegate> representation of the specified
-  delegate.
-- `GetUnsafeIntPtr<TDelegate>(TDelegate)`: Returns the unmanaged IntPtr representation of the specified delegate.
-- `GetUnsafeUIntPtr<TDelegate>(TDelegate)`: Returns the unmanaged UIntPtr representation of the specified delegate.
-- `WithSafeFixed<TDelegate, TArg>(TDelegate, TArg, FixedMethodAction<TDelegate, TArg>)`: Performs a fixed method action
-  on the specified delegate and an additional argument.
-- `WithSafeFixed<TDelegate, TResult>(TDelegate, FixedMethodFunc<TDelegate, TResult>)`: Performs a fixed method function
-  on the specified delegate and returns a value.
-- `WithSafeFixed<TDelegate, TArg, TResult>(TDelegate, TArg, FixedMethodFunc<TDelegate, TArg, TResult>)`: Performs a
-  fixed method function on the specified delegate with an additional argument and returns a value.
-- `WithSafeFixed<TDelegate>(TDelegate, FixedMethodAction<TDelegate>)`: Performs a fixed method action on the specified
-  delegate.
+  **Note:** ´T´ is ´unmanaged´.
+  </details>
+- <details>
+  <summary>AsValue&lt;T&gt;(this ReadOnlySpan&lt;Byte&gt;)</summary>
+  Retrieves a read-only reference to a T value from the given read-only byte span. 
 
-### Rxmxnx.PInvoke.MemoryBlockExtensions
+  **Note:** ´T´ is ´unmanaged´.
+  </details>
+- <details>
+  <summary>AsValue&lt;T&gt;(this Span&lt;Byte&gt;)</summary>
+  Retrieves a reference to a T value from the given byte span. 
 
-`Rxmxnx.PInvoke.MemoryBlockExtensions` is an extension methods class that provides additional functionality for working
-with memory blocks.
+  **Note:** ´T´ is ´unmanaged´.
+  </details>
+- <details>
+  <summary>AsHexString(this Byte[])</summary>
+  Gets the hexadecimal string representation of a byte array.
+  </details>
+- <details>
+  <summary>AsHexString(this Byte)</summary>
+  Gets the hexadecimal string representation of a byte.
+  </details>
+- <details>
+  <summary>WithSafeFixed(this Span&lt;Byte&gt;, FixedAction)</summary>
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified action has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed(this Span&lt;Byte&gt;, ReadOnlyFixedAction)</summary>
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified action has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed(this ReadOnlySpan&lt;Byte&gt;, ReadOnlyFixedAction)</summary>
+  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the specified action has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TArg&gt;(this Span&lt;Byte&gt;, FixedAction&lt;TArg&gt;)</summary>
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified action has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TArg&gt;(this Span&lt;Byte&gt;, ReadOnlyFixedAction&lt;TArg&gt;)</summary>
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified action has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TArg&gt;(this ReadOnlySpan&lt;Byte&gt;, ReadOnlyFixedAction&lt;TArg&gt;)</summary>
+  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the specified action has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TResult&gt;(this Span&lt;Byte&gt;, FixedFunc&lt;TResult&gt;)</summary>
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified function has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TResult&gt;(this Span&lt;Byte&gt;, ReadOnlyFixedFunc&lt;TResult&gt;)</summary>
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified function has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TResult&gt;(this ReadOnlySpan&lt;Byte&gt;, ReadOnlyFixedFunc&lt;TResult&gt;)</summary>
+  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the specified function has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TArg, TResult&gt;(this Span&lt;Byte&gt;, TArg, FixedFunc&lt;TArg, TResult&gt;)</summary>
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified function has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TArg, TResult&gt;(this Span&lt;Byte&gt;, TArg, ReadOnlyFixedFunc&lt;TArg, TResult&gt;)</summary>
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified function has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TArg, TResult&gt;(this ReadOnlySpan&lt;Byte&gt;, TArg, ReadOnlyFixedFunc&lt;TArg, TResult&gt;)</summary>
+  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the specified function has completed.
+  </details>
 
-- `AsBytes<TSource>(Span<TSource>)`: Returns a span of bytes representing the memory block.
-- `AsBytes<TSource>(ReadOnlySpan<TSource>)`: Returns a readonly span of bytes representing the memory block.
-- `AsValues<TSource, TDestination>(ReadOnlySpan<TSource>)`: Converts the memory block to a readonly span of values of
-  the specified destination type.
-- `AsValues<TSource, TDestination>(Span<TSource>, Span<byte>&)`: Converts the memory block to a span of values of the
-  specified destination type, also returning the underlying byte span.
-- `AsValues<TSource, TDestination>(Span<TSource>, ReadOnlySpan<byte>&)`: Converts the memory block to a readonly span of
-  values of the specified destination type, also returning the underlying byte span.
-- `AsValues<TSource, TDestination>(ReadOnlySpan<TSource>, ReadOnlySpan<byte>&)`: Converts the memory block to a readonly
-  span of values of the specified destination type, also returning the underlying byte span.
-- `GetUnsafeValPtr<T>(ReadOnlySpan<T>)`: Returns the unmanaged ReadOnlyValPtr<T> representation of the specified memory
-  block.
-- `GetUnsafeValPtr<T>(Span<T>)`: Returns the unmanaged ValPtr<T> representation of the specified memory block.
-- `GetUnsafeIntPtr<T>(ReadOnlySpan<T>)`: Returns the unmanaged IntPtr representation of the specified memory block.
-- `GetUnsafeIntPtr<T>(Span<T>)`: Returns the unmanaged IntPtr representation of the specified memory block.
-- `GetUnsafeUIntPtr<T>(Span<T>)`: Returns the unmanaged UIntPtr representation of the specified memory block.
-- `GetUnsafeUIntPtr<T>(ReadOnlySpan<T>)`: Returns the unmanaged UIntPtr representation of the specified memory block.
-- `GetFixedContext<T>(ReadOnlyMemory<T>)`: This method creates a disposable, read-only fixed context instance by pinning
-  the provided `ReadOnlyMemory<T>` instance. It ensures that the memory block referenced by `ReadOnlyMemory<T>` is
-  fixed (immovable) in memory, allowing for safe direct access.
-- `GetFixedContext<T>(Memory<T>)`: This method creates a disposable, fixed context instance by pinning the provided
-  `Memory<T>` instance. It ensures that the memory block referenced by `Memory<T>` is fixed (immovable) in memory,
-  allowing for safe direct access.
-- `GetFixedMemory<T>(Memory<T>)`: This method creates a disposable, fixed memory instance by pinning the provided
-  `Memory<T>` instance. It ensures that the memory block referenced by `Memory<T>` is fixed (immovable) in memory,
-  allowing for safe direct access.
-- `WithSafeFixed<T>(Span<T>, FixedContextAction<T>)`: Performs a fixed context action on the specified memory block.
-- `WithSafeFixed<T>(Span<T>, ReadOnlyFixedContextAction<T>)`: Performs a readonly fixed context action on the specified
-  memory block.
-- `WithSafeFixed<T>(ReadOnlySpan<T>, ReadOnlyFixedContextAction<T>)`: Performs a readonly fixed context action on the
-  specified memory block.
-- `WithSafeFixed<T, TArg>(Span<T>, TArg, FixedContextAction<T, TArg>)`: Performs a fixed context action on the specified
-  memory block with an additional argument.
-- `WithSafeFixed<T, TArg>(Span<T>, TArg, ReadOnlyFixedContextAction<T, TArg>)`: Performs a readonly fixed context action
-  on the specified memory block with an additional argument.
-- `WithSafeFixed<T, TArg>(ReadOnlySpan<T>, TArg, ReadOnlyFixedContextAction<T, TArg>)`: Performs a readonly fixed
-  context action on the specified memory block with an additional argument.
-- `WithSafeFixed<T, TResult>(Span<T>, FixedContextFunc<T, TResult>)`: Performs a fixed context function on the specified
-  memory block and returns a value.
-- `WithSafeFixed<T, TResult>(Span<T>, ReadOnlyFixedContextFunc<T, TResult>)`: Performs a readonly fixed context function
-  on the specified memory block and returns a value.
-- `WithSafeFixed<T, TResult>(ReadOnlySpan<T>, ReadOnlyFixedContextFunc<T, TResult>)`: Performs a readonly fixed context
-  function on the specified memory block and returns a value.
-- `WithSafeFixed<T, TArg, TResult>(Span<T>, TArg, FixedContextFunc<T, TArg, TResult>)`: Performs a fixed context
-  function on the specified memory block with an additional argument and returns a value.
-- `WithSafeFixed<T, TArg, TResult>(Span<T>, TArg, ReadOnlyFixedContextFunc<T, TArg, TResult>)`: Performs a readonly
-  fixed context function on the specified memory block with an additional argument and returns a value.
-- `WithSafeFixed<T, TArg, TResult>(ReadOnlySpan<T>, TArg, ReadOnlyFixedContextFunc<T, TArg, TResult>)`: Performs a
-  readonly fixed context function on the specified memory block with an additional argument and returns a value.
-- `AsSpan<T>(T[,..])`: Creates a new span over a target array.
-- `AsMemory<T>(T[,..])`: Creates a new memory region over the target array.
+</details>
 
-### Rxmxnx.PInvoke.PointerExtensions
+<details>
+  <summary>DelegateExtensions</summary>
 
-`Rxmxnx.PInvoke.PointerExtensions` is an extension methods class that provides additional functionality for working with
-pointers.
+Additional functionality for working with delegates.
 
-- `GetUnsafeArray<T>(IntPtr, Int32)`: Returns an array of type `T` from the specified memory pointer and length.
-- `GetUnsafeArray<T>(UIntPtr, Int32)`: Returns an array of type `T` from the specified memory pointer and length.
-- `GetUnsafeDelegate<T>(IntPtr)`: Returns a delegate of type `T` from the specified function pointer.
-- `GetUnsafeDelegate<T>(UIntPtr)`: Returns a delegate of type `T` from the specified function pointer.
-- `GetUnsafeReadOnlyReference<T>(UInt32)`: Returns a readonly reference of type `T` from the specified memory pointer.
-- `GetUnsafeReadOnlyReference<T>(Int32)`: Returns a readonly reference of type `T` from the specified memory pointer.
-- `GetUnsafeReadOnlySpan<T>(UIntPtr, Int32)`: Returns a readonly span of type `T` from the specified memory pointer and
-  length.
-- `GetUnsafeReadOnlySpan<T>(IntPtr, Int32)`: Returns a readonly span of type `T` from the specified memory pointer and
-- `GetUnsafeReadOnlySpan<T>(MemoryHandle, Int32)`: Returns a readonly span of type `T` from the specified memory handle
-  and length.
-- `GetUnsafeReference<T>(UInt32)`: Returns a reference of type `T` from the specified memory pointer.
-- `GetUnsafeReference<T>(Int32)`: Returns a reference of type `T` from the specified memory pointer.
-- `GetUnsafeSpan<T>(UIntPtr, Int32)`: Returns a span of type `T` from the specified memory pointer and length.
-- `GetUnsafeSpan<T>(IntPtr, Int32)`: Returns a span of type `T` from the specified memory pointer and length.
-- `GetUnsafeSpan<T>(MemoryHandle, Int32)`: Returns a span of type `T` from the specified memory handle and length.
-- `GetUnsafeString(Int32, Int32)`: Returns a string from the specified memory pointer and length.
-- `GetUnsafeString(UInt32)`: Returns a string from the specified memory pointer.
-- `GetUnsafeString(Int32)`: Returns a string from the specified memory pointer.
-- `GetUnsafeString(UInt32, Int32)`: Returns a string from the specified memory pointer and length.
-- `GetUnsafeValue<T>(IntPtr)`: Returns a nullable value of type `T` from the specified memory pointer.
-- `GetUnsafeValue<T>(UIntPtr)`: Returns a nullable value of type `T` from the specified memory pointer.
-- `IsZero(UInt32)`: Checks if the specified memory pointer is zero.
-- `IsZero(Int32)`: Checks if the specified memory pointer is zero.
-- `ToIntPtr(UInt32)`: Converts the specified unsigned integer memory pointer to a signed integer memory pointer.
-- `ToUIntPtr(Int32)`: Converts the specified signed integer memory pointer to an unsigned integer memory pointer.
+- <details>
+  <summary>GetUnsafeFuncPtr&lt;TDelegate&gt;(this TDelegate)</summary>
+  Creates a FuncPtr&lt;TDelegate&gt; from a memory reference to a TDelegate delegate instance.
+  </details>
+- <details>
+  <summary>GetUnsafeIntPtr&lt;TDelegate&gt;(this TDelegate)</summary>
+  Retrieves an IntPtr from a memory reference to a TDelegate delegate instance.
+  </details>
+- <details>
+  <summary>GetUnsafeUIntPtr&lt;TDelegate&gt;(this TDelegate)</summary>
+  Retrieves a UIntPtr from a memory reference to a TDelegate delegate instance.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TDelegate&gt;(this TDelegate, FixedMethodAction&lt;TDelegate&gt;)</summary>
+  Prevents the garbage collector from relocating a delegate in memory and fixes its address while an action is being performed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TDelegate, TArg&gt;(this TDelegate, TArg, FixedMethodAction&lt;TDelegate, TArg&gt;)</summary>
+  Prevents the garbage collector from relocating a delegate in memory and fixes its address while an action is being performed, passing an additional argument to the action.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TDelegate, TResult&gt;(this TDelegate, TArg, FixedMethodFunc&lt;TDelegate, TResult&gt;)</summary>
+  Prevents the garbage collector from relocating a delegate in memory, fixes its address, and invokes the function that returns a TResult value.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TDelegate, TArg, TResult&gt;(this TDelegate, TArg, FixedMethodFunc&lt;TDelegate, TArg, TResult&gt;)</summary>
+  Prevents the garbage collector from relocating a delegate in memory, fixes its address, invokes the function that returns a TResult value, passing an additional argument to the function.
+  </details>
 
-### Rxmxnx.PInvoke.PointerCStringExtensions
+</details>
 
-`Rxmxnx.PInvoke.PointerCStringExtensions` is an extension methods class that provides additional functionality for
-working with UTF-8 encoded strings represented by pointers.
+<details>
+  <summary>MemoryBlockExtensions</summary>
 
-- `GetUnsafeCString(UInt32, Int32)`: Retrieves a UTF-8 encoded string from the specified pointer and length.
-- `GetUnsafeCString(Int32, Int32)`: Retrieves a UTF-8 encoded string from the specified pointer and length.
+Additional functionality for working with memory blocks.
 
-### Rxmxnx.PInvoke.ReferenceExtensions
+- <details>
+  <summary>GetUnsafeValPtr&lt;T&gt;(this Span&lt;T&gt;)</summary>
+  Retrieves an unsafe ValPtr&lt;T&gt; pointer from Span&lt;T&gt; instance.
+  </details>
+- <details>
+  <summary>GetUnsafeValPtr&lt;T&gt;(this ReadOnlySpan&lt;T&gt;)</summary>
+  Retrieves an unsafe ValPtr&lt;T&gt; pointer from ReadOnlySpan&lt;T&gt; instance.
+  </details>
+- <details>
+  <summary>GetUnsafePtr&lt;T&gt;(this Span&lt;T&gt;)</summary>
+  Retrieves an unsafe IntPtr pointer from Span&lt;T&gt; instance.
+  </details>
+- <details>
+  <summary>GetUnsafePtr&lt;T&gt;(this ReadOnlySpan&lt;T&gt;)</summary>
+  Retrieves an unsafe IntPtr pointer from ReadOnlySpan&lt;T&gt; instance.
+  </details>
+- <details>
+  <summary>GetUnsafeUIntPtr&lt;T&gt;(this Span&lt;T&gt;)</summary>
+  Retrieves an unsafe UIntPtr pointer from Span&lt;T&gt; instance.
+  </details>
+- <details>
+  <summary>GetUnsafeUIntPtr&lt;T&gt;(this ReadOnlySpan&lt;T&gt;)</summary>
+  Retrieves an unsafe UIntPtr pointer from ReadOnlySpan&lt;T&gt; instance.
+  </details>
+- <details>
+  <summary>AsBytes&lt;TSource&gt;(this Span&lt;TSource&gt;)</summary>
+  Reinterprets the span of TSource as a binary span. 
 
-`Rxmxnx.PInvoke.ReferenceExtensions` is an extension methods class that provides additional functionality for working
-with references.
+  **Note:** `T` is `unmanaged`.
+  </details>
+- <details>
+  <summary>AsBytes&lt;TSource&gt;(this ReadOnlySpan&lt;TSource&gt;)</summary>
+  Reinterprets the read-only span of TSource as a read-only binary span. 
 
-- `AsBytes<TSource>(ref TSource)`: Returns a span of bytes from the specified reference.
-- `GetUnsafeValPtr<T>(ref T)`: Returns the unsafe ValPtr<T> representation of the specified reference.
-- `GetUnsafeIntPtr<T>(ref T)`: Returns the unsafe IntPtr representation of the specified reference.
-- `GetUnsafeUIntPtr<T>(ref T)`: Returns the unsafe UIntPtr representation of the specified reference.
-- `Transform<TSource, TDestination>(ref TSource)`: Transforms the specified reference to a reference of
-  type `TDestination`.
-- `WithSafeFixed<T>(ref T, FixedReferenceAction<T>)`: Executes a fixed reference action on the specified reference.
-- `WithSafeFixed<T>(ref T, ReadOnlyFixedReferenceAction<T>)`: Executes a readonly fixed reference action on the
-  specified reference.
-- `WithSafeFixed<T, TArg>(ref T, TArg, FixedReferenceAction<T, TArg>)`: Executes a fixed reference action with an
-  additional argument on the specified reference.
-- `WithSafeFixed<T, TArg>(ref T, TArg, ReadOnlyFixedReferenceAction<T, TArg>)`: Executes a readonly fixed reference
-  action with an additional argument on the specified reference.
-- `WithSafeFixed<T, TResult>(ref T, FixedReferenceFunc<T, TResult>)`: Executes a fixed reference function on the
-  specified reference and returns a value.
-- `WithSafeFixed<T, TResult>(ref T, ReadOnlyFixedReferenceFunc<T, TResult>)`: Executes a readonly fixed reference
-  function on the specified reference and returns a value.
-- `WithSafeFixed<T, TArg, TResult>(ref T, TArg, FixedReferenceFunc<T, TArg, TResult>)`: Executes a fixed reference
-  function with an additional argument on the specified reference and returns a value.
-- `WithSafeFixed<T, TArg, TResult>(ref T, TArg, ReadOnlyFixedReferenceFunc<T, TArg, TResult>)`: Executes a readonly
-  fixed reference function with an additional argument on the specified reference and returns a value.
+  **Note:** `T` is `unmanaged`.
+  </details>
+- <details>
+  <summary>AsValues&lt;TSource, TDestination&gt;(this Span&lt;TSource&gt;)</summary>
+  Reinterprets the span of TSource as a span of TDestination. 
 
-### Rxmxnx.PInvoke.UnmanagedValueExtensions
+  **Note:** `T` is `unmanaged`.
+  </details>
+- <details>
+  <summary>AsValues&lt;TSource, TDestination&gt;(this ReadOnlySpan&lt;TSource&gt;)</summary>
+  Reinterprets the read-only span of TSource as a read-only span of TDestination. 
 
-`Rxmxnx.PInvoke.UnmanagedValueExtensions` is an extension methods class that provides additional functionality for
-working with unmanaged values.
+  **Note:** `T` is `unmanaged`.
+  </details>
+- <details>
+  <summary>AsValues&lt;TSource, TDestination&gt;(this Span&lt;TSource&gt;, Span&lt;Byte&gt;)</summary>
+  Reinterprets the span of TSource as a span of TDestination. 
 
-- `ToBytes<TSource>(TSource[])`: Converts an array of values to a byte array representation.
-- `ToBytes<T>(T)`: Converts a single value to a byte array representation.
-- `ToValues<TSource, TDestination>(TSource[], Byte[])`: Converts an array of source values to an array of destination
-  values using a byte array as an intermediary.
-- `ToValues<TSource, TDestination>(TSource[])`: Converts an array of source values to an array of destination values.
-- `WithSafeFixed<T>(T[], FixedContextAction<T>)`: Performs a fixed context action on the specified memory block.
-- `WithSafeFixed<T>(T[], ReadOnlyFixedContextAction<T>)`: Performs a readonly fixed context action on the specified
-  memory block.
-- `WithSafeFixed<T, TArg>(T[], TArg, FixedContextAction<T, TArg>)`: Performs a fixed context action on the specified
-  memory block with an additional argument.
-- `WithSafeFixed<T, TArg>(T[], TArg, ReadOnlyFixedContextAction<T, TArg>)`: Performs a readonly fixed context action on
-  the specified memory block with an additional argument.
-- `WithSafeFixed<T, TResult>(T[], FixedContextFunc<T, TResult>)`: Performs a fixed context function on the specified
-  memory block and returns a value.
-- `WithSafeFixed<T, TResult>(T[], ReadOnlyFixedContextFunc<T, TResult>)`: Performs a readonly fixed context function on
-  the specified memory block and returns a value.
-- `WithSafeFixed<T, TArg, TResult>(T[], TArg, FixedContextFunc<T, TArg, TResult>)`: Performs a fixed context function on
-  the specified memory block with an additional argument and returns a value.
-- `WithSafeFixed<T, TArg, TResult>(T[], TArg, ReadOnlyFixedContextFunc<T, TArg, TResult>)`: Performs a readonly fixed
-  context function on the specified memory block with an additional argument and returns a value.
+  **Note:** `T` is `unmanaged`.
+  </details>
+- <details>
+  <summary>AsValues&lt;TSource, TDestination&gt;(this Span&lt;TSource&gt;, ReadOnlySpan&lt;Byte&gt;)</summary>
+  Reinterprets the span of TSource as a read-only span of TDestination. 
 
-### Rxmxnx.PInvoke.StreamCStringExtensions
+  **Note:** `T` is `unmanaged`.
+  </details>
+- <details>
+  <summary>AsValues&lt;TSource, TDestination&gt;(this ReadOnlySpan&lt;TSource&gt;, ReadOnlySpan&lt;Byte&gt;)</summary>
+  Reinterprets the read-only span of TSource as a read-only span of TDestination. 
 
-`Rxmxnx.PInvoke.StreamCStringExtensions` is an extension methods class that provides additional functionality for
-working with UTF-8 encoded strings in streams.
+  **Note:** `T` is `unmanaged`.
+  </details>
+- <details>
+  <summary>GetFixedContext&lt;T&gt;(this ReadOnlyMemory&lt;T&gt;)</summary>
+  Creates an IReadOnlyFixedContext&lt;T&gt;.IDisposable instance by pinning the current ReadOnlyMemory&lt;T&gt; instance, ensuring a safe context for accessing the fixed memory. 
 
-- `Write(Stream, CString, Int32, Int32)`: Writes a portion of the UTF-8 encoded string to the specified stream.
-- `Write(Stream, CString, Boolean)`: Writes the UTF-8 encoded string to the specified stream, optionally including the
-  null terminator.
-- `WriteAsync(Stream, CString, Boolean, CancellationToken)`: Asynchronously writes the UTF-8 encoded string to the
-  specified stream, optionally including the null terminator, and allows cancellation.
-- `WriteAsync(Stream, CString, Int32, Int32, CancellationToken)`: Asynchronously writes a portion of the UTF-8 encoded
-  string to the specified stream and allows cancellation.
-- `WriteAsync(Stream, CString, CancellationToken)`: Asynchronously writes the UTF-8 encoded string to the specified
-  stream and allows cancellation.
+  **Note:** `T` is `unmanaged`.
+  </details>
+- <details>
+  <summary>GetFixedContext&lt;T&gt;(this Memory&lt;T&gt;)</summary>
+  Creates an IFixedContext&lt;T&gt;.IDisposable instance by pinning the current Memory&lt;T&gt; instance, ensuring a safe context for accessing the fixed memory. 
 
-### Rxmxnx.PInvoke.StringExtensions
+  **Note:** `T` is `unmanaged`.
+  </details>
+- <details>
+  <summary>GetFixedMemory&lt;T&gt;(this ReadOnlyMemory&lt;T&gt;)</summary>
+  Creates an IReadOnlyFixedMemory&lt;T&gt;.IDisposable instance by pinning the current ReadOnlyMemory&lt;T&gt; instance, ensuring a safe context for accessing the fixed memory. 
 
-`Rxmxnx.PInvoke.MemoryBlockExtensions` is an extension methods class that provides additional functionality for working
-with strings.
+  **Note:** `T` is `unmanaged`.
+  </details>
+- <details>
+  <summary>GetFixedMemory&lt;T&gt;(this Memory&lt;T&gt;)</summary>
+  Creates an IFixedMemory&lt;T&gt;.IDisposable instance by pinning the current Memory&lt;T&gt; instance, ensuring a safe context for accessing the fixed memory. 
 
-- `WithSafeFixed<T>(String, ReadOnlyFixedContextAction<T>)`: Performs a readonly fixed context action on the specified
-  memory block.
-- `WithSafeFixed<T, TArg>(String, TArg, ReadOnlyFixedContextAction<T, TArg>)`: Performs a readonly fixed context action
-  on the specified memory block with an additional argument.
-- `WithSafeFixed<T, TResult>(String, ReadOnlyFixedContextFunc<T, TResult>)`: Performs a readonly fixed context function
-  on the specified memory block and returns a value.
-- `WithSafeFixed<T, TArg, TResult>(String, TArg, ReadOnlyFixedContextFunc<T, TArg, TResult>)`: Performs a readonly fixed
-  context function on the specified memory block with an additional argument and returns a value.
+  **Note:** `T` is `unmanaged`.
+  </details>
+- <details>
+  <summary>AsMemory&lt;T&gt;(this T[...])</summary>
+  Creates a new memory region over the target array.
+  </details>
+- <details>
+  <summary>AsSpan&lt;T&gt;(this T[...])</summary>
+  Creates a new span over a target array.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T&gt;(this Span&lt;T&gt;, FixedContextAction&lt;T&gt;)</summary>
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified action has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T&gt;(this Span&lt;T&gt;, ReadOnlyFixedContextAction&lt;T&gt;)</summary>
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified action has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T&gt;(this ReadOnlySpan&lt;T&gt;, ReadOnlyFixedContextAction&lt;T&gt;)</summary>
+  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the specified action has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TArg&gt;(this Span&lt;T&gt;, FixedContextAction&lt;T, TArg&gt;)</summary>
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified action has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TArg&gt;(this Span&lt;T&gt;, ReadOnlyFixedContextAction&lt;T, TArg&gt;)</summary>
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified action has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TArg&gt;(this ReadOnlySpan&lt;T&gt;, ReadOnlyFixedContextAction&lt;T, TArg&gt;)</summary>
+  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the specified action has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TResult&gt;(this Span&lt;T&gt;, FixedContextFunc&lt;T, TResult&gt;)</summary>
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified function has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TResult&gt;(this Span&lt;T&gt;, ReadOnlyFixedContextFunc&lt;T, TResult&gt;)</summary>
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified function has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TResult&gt;(this ReadOnlySpan&lt;T&gt;, ReadOnlyFixedContextFunc&lt;T, TResult&gt;)</summary>
+  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the specified function has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TArg, TResult&gt;(this Span&lt;T&gt;, TArg, FixedContextFunc&lt;T, TArg, TResult&gt;)</summary>
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified function has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TArg, TResult&gt;(this Span&lt;T&gt;, TArg, ReadOnlyFixedContextFunc&lt;T, TArg, TResult&gt;)</summary>
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified function has completed.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TArg, TResult&gt;(this ReadOnlySpan&lt;T&gt;, TArg, ReadOnlyFixedContextFunc&lt;T, TArg, TResult&gt;)</summary>
+  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the specified function has completed.
+  </details>
 
-## Buffers
+</details>
 
-### Rxmxnx.PInvoke.AllocatedBuffer
+<details>
+  <summary>PointerExtensions</summary>
 
-`Rxmxnx.PInvoke.BufferManager` is a utility class that provides various methods for working with managed buffers.
+Set of extensions for basic operations with `IntPtr` and `UIntPtr` instances.
 
-- `BufferAutoCompositionEnabled`: Indicates whether metadata for any required buffer is auto-composed.
+- <details>
+  <summary>IsZero(this IntPtr)</summary>
+  Determines if the IntPtr instance is zero.
+  </details>
+- <details>
+  <summary>IsZero(this UIntPtr)</summary>
+  Determines if the UIntPtr instance is zero.
+  </details>
+- <details>
+  <summary>ToUIntPtr(this IntPtr)</summary>
+  Converts the specified IntPtr instance to a UIntPtr instance.
+  </details>
+- <details>
+  <summary>ToUIntPtr(this MemoryHandle)</summary>
+  Converts the specified MemoryHandle instance to a UIntPtr instance.
+  </details>
+- <details>
+  <summary>ToIntPtr(this UIntPtr)</summary>
+  Converts the specified UIntPtr instance to a IntPtr instance.
+  </details>
+- <details>
+  <summary>ToIntPtr(this MemoryHandle)</summary>
+  Converts the specified MemoryHandle instance to a IntPtr instance.
+  </details>
+- <details>
+  <summary>GetUnsafeString(this IntPtr)</summary>
+  Generates a String instance from the memory at the given IntPtr, interpreting the contents as UTF-16 text.
+  </details>
+- <details>
+  <summary>GetUnsafeString(this UIntPtr)</summary>
+  Generates a String instance from the memory at the given UIntPtr, interpreting the contents as UTF-16 text.
+  </details>
+- <details>
+  <summary>GetUnsafeString(this MemoryHandle)</summary>
+  Generates a String instance from the memory at the given MemoryHandle, interpreting the contents as UTF-16 text.
+  </details>
+- <details>
+  <summary>GetUnsafeString(this IntPtr, Int32)</summary>
+  Generates a String instance from the memory at the given IntPtr, interpreting the contents as UTF-16 text.
+  </details>
+- <details>
+  <summary>GetUnsafeString(this UIntPtr, Int32)</summary>
+  Generates a String instance from the memory at the given UIntPtr, interpreting the contents as UTF-16 text.
+  </details>
+- <details>
+  <summary>GetUnsafeString(this MemoryHandle, Int32)</summary>
+  Generates a String instance from the memory at the given MemoryHandle, interpreting the contents as UTF-16 text.
+  </details>
+- <details>
+  <summary>GetUnsafeArray&lt;T&gt;(this IntPtr, Int32)</summary>
+  Generates a T array by copying values from memory starting at the location referenced by an IntPtr. 
 
-- `Alloc<T>(UInt16, AllocatedBufferAction<T>, Boolean)`: Allocates a buffer with enough size to hold the given number of
-  elements and executes the delegate.
-- `Alloc<T, TState>(UInt16, in TState, AllocatedBufferAction<T, TState>, Boolean)`: Allocates a buffer with enough size
-  to hold the given number of elements and executes the delegate.
-- `Alloc<T, TResult>(UInt16, AllocatedBufferFunc<T, TResult>, Boolean)`: Allocates a buffer with enough size to hold the
-  given number of elements and returns the result of delegate execution.
-- `Alloc<T, TState, TResult>(UInt16, AllocatedBufferFunc<T, TState, TResult>, Boolean)`: Allocates a buffer with enough
-  size to hold the given number of elements and returns the result of delegate execution.
+  **Note:** ´T´ is ´unmanaged´.
+  </details>
+- <details>
+  <summary>GetUnsafeArray&lt;T&gt;(this UIntPtr, Int32)</summary>
+  Generates a T array by copying values from memory starting at the location referenced by a UIntPtr. 
 
-- `Register<TBuffer>()`: Registers the buffer type to hold n objects. If the buffer type is composite, it also registers
-  each of the binary spaces that make up the buffer.
-- `Register<TBuffer, T>()`: Registers the buffer type to hold n T values. If the buffer type is composite, it also
-  registers each of the binary spaces that make up the buffer.
-- `RegisterNullable<TBuffer, T>()`: Registers the buffer type to hold n T nullable values. If the buffer type is
-  composite, it also registers each of the binary spaces that make up the buffer.
+  **Note:** ´T´ is ´unmanaged´.
+  </details>
+- <details>
+  <summary>GetUnsafeArray&lt;T&gt;(this MemoryHandle, Int32)</summary>
+  Generates a T array by copying values from memory starting at the location referenced by a MemoryHandle. 
 
-- `RegisterSpace<TSpace>()`: Registers the buffer types to hold 1 to n (2^p) objects. The buffer type must be a binary
-  space of n elements.
-- `RegisterSpace<TSpace, T>()`: Registers the buffer types to hold 1 to n (2^p) values. The buffer type must be a binary
-  space of n elements.
-- `RegisterNullableSpace<TSpace, T>()`: Registers the buffer types to hold 1 to n (2^p) nullable values. The buffer type
-  must be a binary space of n elements.
+  **Note:** ´T´ is ´unmanaged´.
+  </details>
+- <details>
+  <summary>GetUnsafeSpan&lt;T&gt;(this IntPtr, Int32)</summary>
+  Generates a Span&lt;T&gt; instance from an IntPtr, interpreting the memory at the specified location as a sequence of unmanaged values. 
+
+  **Note:** ´T´ is ´unmanaged´.
+  </details>
+- <details>
+  <summary>GetUnsafeSpan&lt;T&gt;(this UIntPtr, Int32)</summary>
+  Generates a Span&lt;T&gt; instance from a UIntPtr, interpreting the memory at the specified location as a sequence of unmanaged values. 
+
+  **Note:** ´T´ is ´unmanaged´.
+  </details>
+- <details>
+  <summary>GetUnsafeSpan&lt;T&gt;(this MemoryHandle, Int32)</summary>
+  Generates a Span&lt;T&gt; instance from a MemoryHandle, interpreting the memory at the specified location as a sequence of unmanaged values. 
+
+  **Note:** ´T´ is ´unmanaged´.
+  </details>
+- <details>
+  <summary>GetUnsafeReadOnlySpan&lt;T&gt;(this IntPtr, Int32)</summary>
+  Generates a ReadOnlySpan&lt;T&gt; instance from an IntPtr, interpreting the memory at the specified location as a sequence of unmanaged values. 
+
+  **Note:** ´T´ is ´unmanaged´.
+  </details>
+- <details>
+  <summary>GetUnsafeReadOnlySpan&lt;T&gt;(this UIntPtr, Int32)</summary>
+  Generates a ReadOnlySpan&lt;T&gt; instance from a UIntPtr, interpreting the memory at the specified location as a sequence of unmanaged values. 
+
+  **Note:** ´T´ is ´unmanaged´.
+  </details>
+- <details>
+  <summary>GetUnsafeReadOnlySpan&lt;T&gt;(this MemoryHandle, Int32)</summary>
+  Generates a ReadOnlySpan&lt;T&gt; instance from a MemoryHandle, interpreting the memory at the specified location as a sequence of unmanaged values. 
+
+  **Note:** ´T´ is ´unmanaged´.
+  </details>
+- <details>
+  <summary>GetUnsafeDelegate&lt;TDelegate&gt;(this IntPtr)</summary>
+  Generates a delegate of type TDelegate from an IntPtr.
+  </details>
+- <details>
+  <summary>GetUnsafeDelegate&lt;TDelegate&gt;(this UIntPtr)</summary>
+  Creates a delegate of type TDelegate from a UIntPtr.
+  </details>
+- <details>
+  <summary>GetUnsafeReference&lt;T&gt;(this IntPtr)</summary>
+  Generates a memory reference to an unmanaged value of type T from IntPtr.
+  </details>
+- <details>
+  <summary>GetUnsafeReference&lt;T&gt;(this UIntPtr)</summary>
+  Generates a memory reference to an unmanaged value of type T from UIntPtr.
+  </details>
+- <details>
+  <summary>GetUnsafeReadOnlyReference&lt;T&gt;(this IntPtr)</summary>
+  Generates a read-only memory reference to an unmanaged value of type T from IntPtr.
+  </details>
+- <details>
+  <summary>GetUnsafeReadOnlyReference&lt;T&gt;(this UIntPtr)</summary>
+  Generates a read-only memory reference to an unmanaged value of type T from UIntPtr.
+  </details>
+
+</details>
+
+<details>
+  <summary>PointerCStringExtensions</summary>
+
+Set of extensions for `CString` operations with `IntPtr` and `UIntPtr` instances.
+
+- <details>
+  <summary>GetUnsafeCString(this IntPtr, Int32)</summary>
+  Generates a CString instance using the memory reference pointed to by the given IntPtr, considering it as the start of a UTF-8 encoded string.
+  </details>
+- <details>
+  <summary>GetUnsafeCString(this UIntPtr, Int32)</summary>
+  Generates a CString instance using the memory reference pointed to by the given UIntPtr, considering it as the start of a UTF-8 encoded string.
+  </details>
+- <details>
+  <summary>GetUnsafeCString(this MemoryHandle, Int32)</summary>
+  Generates a CString instance using the memory reference pointed to by the given MemoryHandle, considering it as the start of a UTF-8 encoded string.
+  </details>
+
+</details>
+
+<details>
+  <summary>ReferenceExtensions</summary>
+
+Set of extensions for basic operations with references to `unmanaged` values.
+
+- <details>
+  <summary>GetUnsafeValPtr&lt;T&gt;(ref this T)</summary>
+  Obtains an unsafe pointer of type ValPtr&lt;T&gt; from a reference to an unmanaged value of type T.
+  </details>
+- <details>
+  <summary>GetUnsafeIntPtr&lt;T&gt;(ref this T)</summary>
+  Obtains an unsafe pointer of type IntPtr from a reference to an unmanaged value of type T.
+  </details>
+- <details>
+  <summary>GetUnsafeUIntPtr&lt;T&gt;(ref this T)</summary>
+  Obtains an unsafe pointer of type UIntPtr from a reference to an unmanaged value of type T.
+  </details>
+- <details>
+  <summary>Transform&lt;TSource, TDestination&gt;(ref this TSource)</summary>
+  Generates a reference for an unmanaged value of type TDestination from an existing reference to an unmanaged value of type TSource.
+  </details>
+- <details>
+  <summary>AsBytes&lt;TSource&gt;(ref this TSource)</summary>
+  Creates a Span&lt;Byte&gt; from a reference to an unmanaged value of type TSource.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T&gt;(ref this T, FixedReferenceAction&lt;T&gt;)</summary>
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided action.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T&gt;(ref this T, ReadOnlyFixedReferenceAction&lt;T&gt;)</summary>
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided read-only action.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TArg&gt;(ref this T, TArg, FixedReferenceAction&lt;T, TArg&gt;)</summary>
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided action along with an argument.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TArg&gt;(ref this T, TArg, ReadOnlyFixedReferenceAction&lt;T, TArg&gt;)</summary>
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided read-only action along with an argument.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TResult&gt;(ref this T, FixedReferenceFunc&lt;T, TResult&gt;)</summary>
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided function.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TResult&gt;(ref this T, ReadOnlyFixedReferenceFunc&lt;T, TResult&gt;)</summary>
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided read-only function.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TArg, TResult&gt;(ref this T, TArg, FixedReferenceFunc&lt;T, TArg, TResult&gt;)</summary>
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided function along with an argument.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TArg, TResult&gt;(ref this T, TArg, ReadOnlyFixedReferenceFunc&lt;T, TArg, TResult&gt;)</summary>
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided read-only function along with an argument.
+  </details>
+
+</details>
+
+<details>
+  <summary>StringExtensions</summary>
+
+Set of extensions for basic operations with `String` instances.
+
+- <details>
+  <summary>WithSafeFixed(this String?, ReadOnlyFixedContextAction&lt;Char&gt;)</summary>
+  Pins the current string to prevent the garbage collector from relocating its memory address during the execution of the specified action.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TArg&gt;(this String?, TArg, ReadOnlyFixedContextAction&lt;Char, TArg&gt;)</summary>
+  Pins the current string to prevent the garbage collector from relocating its memory address during the execution of the specified action along with an argument.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TResult&gt;(this String?, ReadOnlyFixedContextFunc&lt;Char, TResult&gt;)</summary>
+  Pins the current string to prevent the garbage collector from relocating its memory address during the execution of the specified function.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TArg, TResult&gt;(this String?, TArg, ReadOnlyFixedContextFunc&lt;Char, TArg, TResult&gt;)</summary>
+  Pins the current string to prevent the garbage collector from relocating its memory address during the execution of the specified function along with an argument.
+  </details>
+
+</details>
+
+<details>
+  <summary>UnmanagedValueExtensions</summary>
+
+Set of extensions for basic operations with `unmanaged` values.
+
+- <details>
+  <summary>ToBytes&lt;T&gt;(this T)</summary>
+  Converts a given unmanaged value of type T into an array of Byte.
+  </details>
+- <details>
+  <summary>ToBytes&lt;TSource&gt;(this TSource[]?)</summary>
+  Converts an array of unmanaged values of type TSource into an array of Byte.
+  </details>
+- <details>
+  <summary>ToValues&lt;TSource, TDestination&gt;(this TSource[]?)</summary>
+  Converts an array of unmanaged values of type TSource into an array of another unmanaged value type TDestination.
+  </details>
+- <details>
+  <summary>ToValues&lt;TSource, TDestination&gt;(this TSource[]?, out Byte[]?)</summary>
+  Converts an array of unmanaged values of type TSource into an array of another unmanaged value type TDestination and provides the residual binary array of the reinterpretation.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T&gt;(ref this T, FixedReferenceAction&lt;T&gt;)</summary>
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided action.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T&gt;(ref this T, ReadOnlyFixedReferenceAction&lt;T&gt;)</summary>
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided read-only action.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TArg&gt;(ref this T, TArg, FixedReferenceAction&lt;T, TArg&gt;)</summary>
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided action along with an argument.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TArg&gt;(ref this T, TArg, ReadOnlyFixedReferenceAction&lt;T, TArg&gt;)</summary>
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided read-only action along with an argument.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TResult&gt;(ref this T, FixedReferenceFunc&lt;T, TResult&gt;)</summary>
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided function.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TResult&gt;(ref this T, ReadOnlyFixedReferenceFunc&lt;T, TResult&gt;)</summary>
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided read-only function.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TArg, TResult&gt;(ref this T, TArg, FixedReferenceFunc&lt;T, TArg, TResult&gt;)</summary>
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided function along with an argument.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TArg, TResult&gt;(ref this T, TArg, ReadOnlyFixedReferenceFunc&lt;T, TArg, TResult&gt;)</summary>
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided read-only function along with an argument.
+  </details>
+
+</details>
 
 ## Utilities
 
-### Rxmxnx.PInvoke.AotInfo
+<details>
+  <summary>AotInfo</summary>
 
-`Rxmxnx.PInvoke.AotInfo` is a utility class that provides information about AOT compilation.
+Provides information about the Ahead-of-Time compilation.
 
-- `IsReflectionDisabled`: Indicates whether the current runtime is Reflection-Free mode compiled.
-- `IsNativeAot`: Indicates whether the current runtime is Ahead-of-Time compiled.
+##### Static Properties:
 
-### Rxmxnx.PInvoke.NativeUtilities
+- <details>
+  <summary>IsReflectionDisabled</summary>
+  Indicates whether runtime reflection is disabled.
+  </details>
+- <details>
+  <summary>IsNativeAot</summary>
+  Indicates whether the current runtime is NativeAOT.
+  </details>
 
-`Rxmxnx.PInvoke.NativeUtilities` is a utility class that provides various methods for working with native code.
+</details>
 
-- `PointerSize`: Size in bytes of a memory pointer.
+<details>
+  <summary>BufferManager</summary>
 
-- `AsBytes<T>(in T)`: Retrieves the bytes representing the specified value.
-- `AsBinarySpan<T>(ref T)`: Converts the specified reference to a span of bytes.
-- `CopyBytes<T>(in T, Span<Byte>, Int32)`: Copies the bytes from the specified span to the specified value.
-- `CreateArray<T, TState>(Int32, TState, SpanAction<T, TState>)`: Creates an array of the specified type and size,
-  applying the specified action for each element.
-- `GetNativeMethod<TDelegate>(IntPtr, String)`: Retrieves a native method as a delegate of the specified type.
-- `GetUnsafeValPtr<T>(in T)`: Retrieves the read-only value pointer from the specified reference.
-- `GetUnsafeValPtrFromRef<T>(ref T)`: Retrieves the value pointer from the specified reference.
-- `GetUnsafeIntPtr<T>(in T)`: Retrieves the pointer value from the specified reference.
-- `GetUnsafeUIntPtr<T>(in T)`: Retrieves the unsigned pointer value from the specified reference.
-- `GetUnsafeFuncPtr<TDelegate>(TDelegate)`: Returns the unmanaged FuncPtr<TDelegate> representation of the specified
-  delegate.
-- `LoadNativeLib(String, DllImportSearchPath?)`: Loads a native library and returns the handle.
-- `LoadNativeLib(String, ref EventHandler?, DllImportSearchPath?)`: Loads a native library and returns the handle,
-  raising an event upon load or failure.
-- `SizeOf<T>()`: Retrieves the size, in bytes, of the specified value type.
-- `ToBytes<T>(in T)`: Retrieves the bytes representing the specified value.
-- `Transform<TSource, TDestination>(in TSource)`: Converts the specified value from the source type to the destination
-  type.
-- `TransformReference<TSource, TDestination>(ref TSource)`: Converts the specified reference from the source type to the
-  destination type.
+This class allows to allocate buffers on stack if possible.
 
-- `WithSafeFixed<T0..T7>(Span<T0>...Span<T7>, FixedListAction)`: Executes the specified action with the specified fixed
-  spans.
-- `WithSafeFixed<T0..T7, TArg>(Span<T0>...Span<T7>, FixedListAction)`: Executes the specified action with the specified
-  fixed spans and an additional argument.
+##### Static Properties:
 
-- `WithSafeFixed<T0..T7>(ReadOnlySpan<T0>...ReadOnlySpan<T7>, ReadOnlyFixedListAction)`: Executes the specified action
-  with the specified fixed spans.
-- `WithSafeFixed<T0..T7, TArg>(ReadOnlySpan<T0>...ReadOnlySpan<T7>, ReadOnlyFixedListAction)`: Executes the specified
-  action with the specified fixed spans and an additional argument.
+- <details>
+  <summary>BufferAutoCompositionEnabled</summary>
+  Indicates whether metadata for any required buffer is auto-composed.
+  </details>
 
-- `WithSafeReadOnlyFixed<T0..T7>(Span<T0>...Span<T7>, ReadOnlyFixedListAction)`: Executes the specified action with the
-  specified fixed spans.
-- `WithSafeReadOnlyFixed<T0..T7, TArg>(Span<T0>...Span<T7>, ReadOnlyFixedListAction)`: Executes the specified action
-  with the specified fixed spans and an additional argument.
+##### Static Methods:
 
-- `WithSafeFixed<T0..T7>(Span<T0>...Span<T7>, FixedListFunc)`: Executes the specified function with the specified fixed
-  spans.
-- `WithSafeFixed<T0..T7, TArg>(Span<T0>...Span<T7>, FixedListFunc)`: Executes the specified function with the specified
-  fixed spans and an additional argument.
+- <details>
+  <summary>Alloc&lt;T&gt;(UInt16, ScopedBufferAction&lt;T&gt;, Boolean)</summary>
+  Allocates a buffer with `count` elements and executes `action`.
+  </details>
+- <details>
+  <summary>Alloc&lt;T, TState&gt;(UInt16, TState, ScopedBufferAction&lt;T, TState&gt;, Boolean)</summary>
+  Allocates a buffer with `count` elements and executes `action`.
+  </details>
+- <details>
+  <summary>Alloc&lt;T, TResult&gt;(UInt16, ScopedBufferFunc&lt;T, TResult&gt;, Boolean)</summary>
+  Allocates a buffer with `count` elements and executes `func`.
+  </details>
+- <details>
+  <summary>Alloc&lt;T, TState, TResult&gt;(UInt16, TState, ScopedBufferFunc&lt;T, TState, TResult&gt;, Boolean)</summary>
+  Allocates a buffer with `count` elements and executes `func`.
+  </details>
+- <details>
+  <summary>Register&lt;TBuffer&gt;()</summary>
+  Registers object buffer.
 
-- `WithSafeFixed<T0..T7>(ReadOnlySpan<T0>...ReadOnlySpan<T7>, ReadOnlyFixedListFunc)`: Executes the specified function
-  with the specified fixed spans.
-- `WithSafeFixed<T0..T7, TArg>(ReadOnlySpan<T0>...ReadOnlySpan<T7>, ReadOnlyFixedListFunc)`: Executes the specified
-  function with the specified fixed spans and an additional argument.
+  **Note:** `TBuffer` generic type is `IManagedBuffer<Object>`.
+  </details>
+- <details>
+  <summary>Register&lt;T, TBuffer&gt;()</summary>
+  Registers T buffer.
 
-- `WithSafeReadOnlyFixed<T0..T7>(Span<T0>...Span<T7>, ReadOnlyFixedListFunc)`: Executes the specified function with the
-  specified fixed spans.
-- `WithSafeReadOnlyFixed<T0..T7, TArg>(Span<T0>...Span<T7>, ReadOnlyFixedListFunc)`: Executes the specified function
-  with the specified fixed spans and an additional argument.
+  **Note:** `T` is `struct`. `TBuffer` generic type is `IManagedBuffer<T>`.
+  </details>
+- <details>
+  <summary>RegisterNullable&lt;T, TBuffer&gt;()</summary>
+  Registers T? buffer.
+
+  **Note:** `T` is `struct`. `TBuffer` generic type is `IManagedBuffer<T?>`.
+  </details>
+
+</details>
+
+<details>
+  <summary>NativeUtilities</summary>
+
+Set of utilities for exchange data within the P/Invoke context.
+
+##### Static Fields:
+
+- <details>
+  <summary>PointerSize</summary>
+  Size in bytes of a memory pointer.
+  </details>
+
+##### Static Methods:
+
+- <details>
+  <summary>SizeOf&lt;T&gt;()</summary>
+  Gets the memory size of T structure.
+
+  **Note:** `T` is `unmanaged`.
+  </details>
+- <details>
+  <summary>LoadNativeLib(String?, DllImportSearchPath?)</summary>
+  Provides a high-level API for loading a native library.
+  </details>
+- <details>
+  <summary>LoadNativeLib(String?, ref EventHandler?, DllImportSearchPath?)</summary>
+  Provides a high-level API for loading a native library.
+  </details>
+- <details>
+  <summary>GetNativeMethod&lt;TDelegate&gt;(IntPtr, String?)</summary>
+  Gets the TDelegate delegate of an exported symbol. 
+  </details>
+- <details>
+  <summary>GetUnsafeFuncPtr&lt;TDelegate&gt;(TDelegate)</summary>
+  Creates an FuncPtr&lt;TDelegate&gt; from a memory reference to a TDelegate delegate instance.
+  </details>
+- <details>
+  <summary>GetUnsafeValPtr&lt;T&gt;(in T)</summary>
+  Retrieves an unsafe ReadOnlyValPtr&lt;T&gt; pointer from a read-only reference to a T value.
+  </details>
+- <details>
+  <summary>GetUnsafeValPtrFromRef&lt;T&gt;(ref T)</summary>
+  Retrieves an unsafe pointer of type ValPtr&lt;T&gt; from a reference to a value of type T.
+  </details>
+- <details>
+  <summary>GetUnsafeIntPtr&lt;T&gt;(in T)</summary>
+  Retrieves an unsafe IntPtr pointer from a read-only reference to a T unmanaged value.
+  </details>
+- <details>
+  <summary>GetUnsafeUIntPtr&lt;T&gt;(in T)</summary>
+  Retrieves an unsafe UIntPtr pointer from a read-only reference to a T unmanaged value.
+  </details>
+- <details>
+  <summary>Transform&lt;TSource, TDestination&gt;(in TSource)</summary>
+  Transforms a read-only reference of an unmanaged value of type TSource into a read-only reference of an unmanaged value of type TDestination.
+  </details>
+- <details>
+  <summary>TransformReference&lt;TSource, TDestination&gt;(ref TSource)</summary>
+  Transforms a reference of an unmanaged value of type TSource into a reference of an unmanaged value of type TDestination.
+  </details>
+- <details>
+  <summary>ToBytes&lt;T&gt;(in TSource)</summary>
+  Retrieves a Byte array from a read-only reference to a TSource value.
+
+  **Note:** `TSource` is `unmanaged`.
+  </details>
+- <details>
+  <summary>AsBytes&lt;TSource&gt;(in TSource)</summary>
+  Creates a ReadOnlySpan&lt;Byte&gt; from an exising read-only reference to a TSource unmanaged value.
+  </details>
+- <details>
+  <summary>AsBinarySpan&lt;TSource&gt;(ref TSource)</summary>
+  Creates a Span&lt;Byte&gt; from an exising reference to a TSource value. 
+
+  **Note:** `TSource` is `unmanaged`.
+  </details>
+- <details>
+  <summary>CreateArray&lt;T, TState&gt;(Int32, TState, SpanAction&lt;T, TState&gt;)</summary>
+  Creates a new T array with a specific length and initializes it after creation by using the specified callback.
+
+  **Note:** `T` is `unmanaged`.
+  </details>
+- <details>
+  <summary>CopyBytes&lt;T&gt;(in TSource, Span&lt;Byte&gt;, Int32)</summary>
+  Performs a binary copy of the given TSource to the destination span.
+
+  **Note:** `TSource` is `unmanaged`.
+  </details>
+
+- <details>
+  <summary>WithSafeReadOnlyFixed&lt;T&gt;(ref T, ReadOnlyFixedReferenceAction&lt;T&gt;)</summary>
+  Prevents the garbage collector from relocating a given reference and fixes its memory address until action finishes.
+  </details>
+- <details>
+  <summary>WithSafeReadOnlyFixed&lt;T, TArg&gt;(ref T, TArg, ReadOnlyFixedReferenceAction&lt;T, TArg&gt;)</summary>
+  Prevents the garbage collector from relocating a given reference and fixes its memory address until action finishes.
+  </details>
+- <details>
+  <summary>WithSafeReadOnlyFixed&lt;T, TResult&gt;(ref T, ReadOnlyFixedReferenceFunc&lt;T, TResult&gt;)</summary>
+  Prevents the garbage collector from relocating a given reference and fixes its memory address until func finishes.
+  </details>
+- <details>
+  <summary>WithSafeReadOnlyFixed&lt;T, TArg, TResult&gt;(ref T, TArg, ReadOnlyFixedReferenceFunc&lt;T, TArg, TResult&gt;)</summary>
+  Prevents the garbage collector from relocating a given reference and fixes its memory address until func finishes.
+  </details>
+
+- <details>
+  <summary>WithSafeFixed&lt;T&gt;(in T, ReadOnlyFixedReferenceAction&lt;T&gt;)</summary>
+  Prevents the garbage collector from relocating a given read-only reference and fixes its memory address until action finishes.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T&gt;(ref T, FixedReferenceAction&lt;T&gt;)</summary>
+  Prevents the garbage collector from relocating a given reference and fixes its memory address until action finishes.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TArg&gt;(in T, TArg, ReadOnlyFixedReferenceAction&lt;T, TArg&gt;)</summary>
+  Prevents the garbage collector from relocating a given read-only reference and fixes its memory address until action finishes.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TArg&gt;(ref T, TArg, FixedReferenceAction&lt;T, TArg&gt;)</summary>
+  Prevents the garbage collector from relocating a given reference and fixes its memory address until action finishes.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TResult&gt;(in T, ReadOnlyFixedReferenceFunc&lt;T, TResult&gt;)</summary>
+  Prevents the garbage collector from relocating a given read-only reference and fixes its memory address until func finishes.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TResult&gt;(ref T, FixedReferenceFunc&lt;T, TResult&gt;)</summary>
+  Prevents the garbage collector from relocating a given reference and fixes its memory address until func finishes.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TArg, TResult&gt;(in T, TArg, ReadOnlyFixedReferenceFunc&lt;T, TArg, TResult&gt;)</summary>
+  Prevents the garbage collector from relocating a given read-only reference and fixes its memory address until func finishes.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T, TArg, TResult&gt;(ref T, TArg, FixedReferenceFunc&lt;T, TArg, TResult&gt;)</summary>
+  Prevents the garbage collector from relocating a given reference and fixes its memory address until func finishes.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TDelegate&gt;(TDelegate, FixedMethodAction&lt;TDelegate&gt;)</summary>
+  Prevents the garbage collector from relocating a given method delegate and fixes its memory address until action finishes.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TDelegate, TArg&gt;(TDelegate, TArg, FixedMethodAction&lt;TDelegate, TArg&gt;)</summary>
+  Prevents the garbage collector from relocating a given method delegate and fixes its memory address until action finishes.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TDelegate, TResult&gt;(TDelegate, FixedMethodFunc&lt;TDelegate, TResult&gt;)</summary>
+  Prevents the garbage collector from relocating a given method delegate and fixes its memory address until func finishes.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TDelegate, TArg, TResult&gt;(TDelegate, TArg, FixedMethodFunc&lt;TDelegate, TArg, TResult&gt;)</summary>
+  Prevents the garbage collector from relocating a given method delegate and fixes its memory address until func finishes.
+  </details>
+
+- <details>
+  <summary>WithSafeFixed&lt;T0, ..., T7&gt;(Span&lt;T0&gt;, ..., Span&lt;T7&gt;, FixedListAction)</summary>
+  Prevents the garbage collector from reallocating given spans and fixes their memory addresses until action completes.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T0, ..., T7, TArg&gt;(Span&lt;T0&gt;, ..., Span&lt;T7&gt;, TArg, FixedListAction&lt;TArg&gt;)</summary>
+  Prevents the garbage collector from reallocating given spans and fixes their memory addresses until action completes.
+  </details>
+
+- <details>
+  <summary>WithSafeFixed&lt;T0, ..., T7&gt;(ReadOnlySpan&lt;T0&gt;, ..., ReadOnlySpan&lt;T7&gt;, ReadOnlyFixedListAction)</summary>
+  Prevents the garbage collector from reallocating given spans and fixes their memory addresses until action completes.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T0, ..., T7, TArg&gt;(ReadOnlySpan&lt;T0&gt;, ..., ReadOnlySpan&lt;T7&gt;, TArg, ReadOnlyFixedListAction&lt;TArg&gt;)</summary>
+  Prevents the garbage collector from reallocating given spans and fixes their memory addresses until action completes.
+  </details>
+
+- <details>
+  <summary>WithSafeFixed&lt;T0, ..., T7, TResult&gt;(Span&lt;T0&gt;, ..., Span&lt;T7&gt;, FixedListFunc&lt;TResult&gt;)</summary>
+  Prevents the garbage collector from reallocating given spans and fixes their memory addresses until func completes.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T0, ..., T7, TArg, TResult&gt;(Span&lt;T0&gt;, ..., Span&lt;T7&gt;, TArg, FixedListFunc&lt;TArg, TResult&gt;)</summary>
+  Prevents the garbage collector from reallocating given spans and fixes their memory addresses until func completes.
+  </details>
+
+- <details>
+  <summary>WithSafeFixed&lt;T0, ..., T7, TResult&gt;(ReadOnlySpan&lt;T0&gt;, ..., ReadOnlySpan&lt;T7&gt;, ReadOnlyFixedListFunc&lt;TResult&gt;)</summary>
+  Prevents the garbage collector from reallocating given spans and fixes their memory addresses until func completes.
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;T0, ..., T7, TArg, TResult&gt;(Span&lt;T0&gt;, ..., Span&lt;T7&gt;, TArg, ReadOnlyFixedListFunc&lt;TArg, TResult&gt;)</summary>
+  Prevents the garbage collector from reallocating given spans and fixes their memory addresses until func completes.
+  </details>
+
+- <details>
+  <summary>WithSafeReadOnlyFixed&lt;T0, ..., T7&gt;(Span&lt;T0&gt;, ..., Span&lt;T7&gt;, ReadOnlyFixedListAction)</summary>
+  Prevents the garbage collector from reallocating given spans and fixes their memory addresses until action completes.
+  </details>
+- <details>
+  <summary>WithSafeReadOnlyFixed&lt;T0, ..., T7, TArg&gt;(Span&lt;T0&gt;, ..., Span&lt;T7&gt;, TArg, ReadOnlyFixedListAction&lt;TArg&gt;)</summary>
+  Prevents the garbage collector from reallocating given spans and fixes their memory addresses until action completes.
+  </details>
+
+- <details>
+  <summary>WithSafeReadOnlyFixed&lt;T0, ..., T7, TResult&gt;(Span&lt;T0&gt;, ..., Span&lt;T7&gt;, ReadOnlyFixedListFunc&lt;TResult&gt;)</summary>
+  Prevents the garbage collector from reallocating given spans and fixes their memory addresses until func completes.
+  </details>
+- <details>
+  <summary>WithSafeReadOnlyFixed&lt;T0, ..., T7, TArg, TResult&gt;(Span&lt;T0&gt;, ..., Span&lt;T7&gt;, TArg, ReadOnlyFixedListFunc&lt;TArg, TResult&gt;)</summary>
+  Prevents the garbage collector from reallocating given spans and fixes their memory addresses until func completes.
+  </details>
+
+</details>
