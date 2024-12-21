@@ -1,7 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// Provides a set of extensions for basic operations with <see cref="ValueType"/> <see langword="unmanaged"/> values.
+/// Provides a set of extensions for basic operations with <see langword="unmanaged"/> values.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
 [Browsable(false)]
