@@ -8,6 +8,42 @@
 [![NuGet](https://img.shields.io/nuget/v/Rxmxnx.PInvoke.Extensions)](https://www.nuget.org/packages/Rxmxnx.PInvoke.Extensions/)
 [![fuget.org](https://www.fuget.org/packages/Rxmxnx.PInvoke.Extensions/badge.svg)](https://www.fuget.org/packages/Rxmxnx.PInvoke.Extensions)
 
+# Table of Contents
+
+- [Description](#description)
+    - [Features](#features)
+- [Getting Started](#getting-started)
+    - [Installation](#installation)
+- [Abstractions](#abstractions)
+    - [Reference Interfaces](#reference-interfaces)
+    - [Wrapper Interfaces](#wrapper-interfaces)
+    - [Fixed memory Interfaces](#fixed-memory-interfaces)
+    - [Functional Interfaces](#functional-interfaces)
+    - [Span Delegates](#span-delegates)
+    - [Fixed memory Delegates](#fixed-memory-delegates)
+    - [Fixed memory context Delegates](#fixed-memory-context-delegates)
+    - [Fixed memory reference Delegates](#fixed-memory-reference-delegates)
+    - [Fixed address method Delegates](#fixed-address-method-delegates)
+    - [Fixed memory list Delegates](#fixed-memory-list-delegates)
+    - [UTF-8/ASCII Delegates](#utf-8ascii-delegates)
+    - [Buffers Delegates](#buffers-delegates)
+- [Structs](#structs)
+    - [Pointers](#pointers)
+    - [Fixed memory lists](#fixed-memory-lists)
+    - [Managed buffer types](#managed-buffer-types)
+- [Classes](#classes)
+- [Extensions](#extensions)
+- [Utilities](#utilities)
+- [License](#license)
+    - [Key Highlights](#key-highlights)
+    - [Disclaimer](#disclaimer)
+- [Contributing](#contributing)
+    - [Reporting Issues](#reporting-issues)
+    - [Proposing Improvements](#proposing-improvements)
+    - [Contributing Code](#contributing-code)
+    - [Translations](#translations)
+    - [Collaboration Guidelines](#collaboration-guidelines)
+
 ## Description
 
 `Rxmxnx.PInvoke.Extensions` is a comprehensive library designed to streamline and enhance the
@@ -28,6 +64,9 @@ Install the library via NuGet:
 ```cmd
 dotnet add package Rxmxnx.PInvoke.Extensions
 ```
+
+**Note:** This package currently supports .NET 6 and higher. Ensure your project targets a compatible framework before
+installing.
 
 ## Abstractions
 
@@ -2575,3 +2614,71 @@ Set of utilities for exchange data within the P/Invoke context.
   </details>
 
 </details>
+
+## License
+
+This project is licensed under the **MIT License**, one of the most permissive and widely-used open-source licenses.
+
+### Key Highlights:
+
+- **Freedom of Use**: The package can be used in both open-source and closed-source projects without restrictions.
+- **Modification and Distribution**: You are free to modify, distribute, and even sublicense the software as needed.
+- **Attribution**: The only requirement is to include the original copyright notice and license text in any copies or
+  substantial portions of the software.
+
+### Disclaimer:
+
+> The software is provided "as is," without warranty of any kind. The authors are not liable for any damages or issues
+> that may arise from its use.
+
+For more details, refer to the full license text included in the [LICENSE](LICENSE) file.
+
+## Contributing
+
+We warmly welcome contributions to this open-source project! Whether you're here to report issues, propose enhancements,
+or contribute directly to the codebase, your help is greatly appreciated. Below are some ways you can get involved:
+
+### Reporting Issues
+
+If you encounter a bug, experience unexpected behavior, or have suggestions for improvement, feel free to open an issue.
+Please include as much detail as possible, such as:
+
+- Steps to reproduce the problem
+- Your environment (e.g., OS, software version)
+- Any relevant logs or screenshots
+
+### Proposing Improvements
+
+Have an idea for a new feature or enhancement? Open an issue with a clear description of your proposal and why you think
+it would benefit the project.
+
+### Contributing Code
+
+You can directly contribute to the project by:
+
+- Fixing bugs
+- Adding new features
+- Improving existing functionality
+- Enhancing documentation
+
+To contribute code:
+
+1. Fork the repository.
+2. Create a new branch for your changes.
+3. Make your changes and commit them with clear and concise messages.
+4. Submit a pull request for review.
+
+Feel free to discuss your ideas or changes in an issue or pull request to align with the project's goals.
+
+### Translations
+
+We currently support only a few languages, but we are open to adding more! If you'd like to help with translations,
+please open an issue or reach out to us. Your contributions to expanding the project's accessibility are highly valued.
+
+### Collaboration Guidelines
+
+When contributing, please be respectful and constructive. We aim to create an inclusive and welcoming environment for
+everyone.
+
+Thank you for considering contributing to this project! Your involvement, whether through reporting, coding, or
+translating, helps make this project better for everyone. 🚀
