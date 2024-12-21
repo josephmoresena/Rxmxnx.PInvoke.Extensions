@@ -2321,6 +2321,9 @@ This class allows to allocate buffers on stack if possible.
 - <details>
   <summary>BufferAutoCompositionEnabled</summary>
   Indicates whether metadata for any required buffer is auto-composed.
+
+  **Note:** This property will always be false if compiled with `IlcDisableReflection=true` or if the
+  `PInvoke.DisableBufferAutoComposition` feature switch is disabled.
   </details>
 
 ##### Static Methods:
@@ -2345,19 +2348,19 @@ This class allows to allocate buffers on stack if possible.
   <summary>Register&lt;TBuffer&gt;()</summary>
   Registers object buffer.
 
-  **Note:** `TBuffer` generic type is `IManagedBuffer<Object>`.
+  **Note:** `TBuffer` is `struct` and `IManagedBuffer<Object>`.
   </details>
 - <details>
   <summary>Register&lt;T, TBuffer&gt;()</summary>
   Registers T buffer.
 
-  **Note:** `T` is `struct`. `TBuffer` generic type is `IManagedBuffer<T>`.
+  **Note:** `T` is `struct`. `TBuffer` is `struct` and `IManagedBuffer<T>`.
   </details>
 - <details>
   <summary>RegisterNullable&lt;T, TBuffer&gt;()</summary>
   Registers T? buffer.
 
-  **Note:** `T` is `struct`. `TBuffer` generic type is `IManagedBuffer<T?>`.
+  **Note:** `T` is `struct`. `TBuffer` is `struct` and `IManagedBuffer<T?>`.
   </details>
 
 </details>
