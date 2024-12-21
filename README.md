@@ -8,6 +8,8 @@
 [![NuGet](https://img.shields.io/nuget/v/Rxmxnx.PInvoke.Extensions)](https://www.nuget.org/packages/Rxmxnx.PInvoke.Extensions/)
 [![fuget.org](https://www.fuget.org/packages/Rxmxnx.PInvoke.Extensions/badge.svg)](https://www.fuget.org/packages/Rxmxnx.PInvoke.Extensions)
 
+---
+
 # Table of Contents
 
 - [Description](#description)
@@ -43,21 +45,26 @@
     - [Contributing Code](#contributing-code)
     - [Translations](#translations)
     - [Collaboration Guidelines](#collaboration-guidelines)
+    -
 
-## Description
+---
+
+# Description
 
 `Rxmxnx.PInvoke.Extensions` is a comprehensive library designed to streamline and enhance the
 interaction between .NET and native P/Invoke methods.
 
-### Features
+## Features
 
 - **UTF-8/ASCII String Handling**: Seamlessly work with UTF-8 encoded strings in interop contexts.
 - **Managed Buffers**: Dynamically allocate object references on the stack with minimal effort.
 - **Safe Memory Manipulation**: Eliminate direct pointer manipulation and unsafe code requirements.
 
-## Getting Started
+---
 
-### Installation
+# Getting Started
+
+## Installation
 
 Install the library via NuGet:
 
@@ -68,12 +75,14 @@ dotnet add package Rxmxnx.PInvoke.Extensions
 **Note:** This package currently supports .NET 6 and higher. Ensure your project targets a compatible framework before
 installing.
 
-## Abstractions
+---
+
+# Abstractions
 
 `Rxmxnx.PInvoke.Extensions` provides abstractions for managed handling of references and
 fixed memory segments.
 
-### Reference Interfaces
+## Reference Interfaces
 
 These interfaces represent a safe way to access a managed reference of a specific type.
 
@@ -85,7 +94,7 @@ to be used without modification.
 
 **Note:** This interface inherits from `IEquatable<T>`. This type allows public implementation or inheritance.
 
-##### Properties:
+#### Properties:
 
 - <details>
   <summary>Reference</summary>
@@ -105,7 +114,7 @@ allowing the object to be used and potentially modified.
 **Note:** This interface inherits from `IReadOnlyReferenceable<T>`. This type allows public implementation or
 inheritance.
 
-##### Properties:
+#### Properties:
 
 - <details>
   <summary>Reference</summary>
@@ -114,7 +123,7 @@ inheritance.
 
 </details>
 
-### Wrapper Interfaces
+## Wrapper Interfaces
 
 These interfaces represent a safe way to access a value or managed object of a specific type.
 
@@ -125,26 +134,26 @@ This interface defines a wrapper for a T object.
 
 **Note:** This interface inherits from `IEquatable<T>`. This type allows public implementation or inheritance.
 
-##### Properties:
+#### Properties:
 
 - <details>
   <summary>Value</summary>
   The wrapped T object.
   </details>
 
-##### Static Methods:
+#### Static Methods:
 
 - <details>
   <summary>Create(T?)</summary>
   Creates a new instance of an object that implements IWrapper&lt;T&gt; interface.
   </details>
 
-##### Non-generic interface
+#### Non-generic interface
 
 `IWrapper` is a non-generic interface that exposes static methods for creating specific types of
 `IWrapper<T>` for concrete cases of value types, nullable values, and non-nullable reference types.
 
-###### Static Methods:
+##### Static Methods:
 
 - <details>
   <summary>Create&lt;TValue&gt;(TValue)</summary>
@@ -174,26 +183,26 @@ This interface defines a wrapper for an object whose value can be modified.
 
 **Note:** This interface inherits from `IWrapper<T>`. This type allows public implementation or inheritance.
 
-##### Properties:
+#### Properties:
 
 - <details>
   <summary>Value</summary>
   The wrapped T object.
   </details>
 
-##### Static Methods:
+#### Static Methods:
 
 - <details>
   <summary>Create(T?)</summary>
   Creates a new instance of an object that implements IMutableWrapper&lt;T&gt; interface.
   </details>
 
-##### Non-generic interface
+#### Non-generic interface
 
 `IMutableWrapper` is a non-generic interface that exposes static methods for creating specific types of
 `IMutableWrapper<T>` for concrete cases of value types, nullable values, and non-nullable reference types.
 
-###### Static Methods:
+##### Static Methods:
 
 - <details>
   <summary>Create&lt;TValue&gt;(TValue)</summary>
@@ -225,26 +234,26 @@ This interface exposes a wrapper for T object that can be referenced and whose v
 implementation or
 inheritance.
 
-##### Properties:
+#### Properties:
 
 - <details>
   <summary>Reference</summary>
   Reference to T wrapped instance.
   </details>
 
-##### Static Methods:
+#### Static Methods:
 
 - <details>
   <summary>Create(T?)</summary>
   Creates a new instance of an object that implements IMutableReference&lt;T&gt; interface.
   </details>
 
-##### Non-generic interface
+#### Non-generic interface
 
 `IMutableReference` is a non-generic interface that exposes static methods for creating specific types of
 `IMutableReference<T>` for concrete cases of value types, nullable values, and non-nullable reference types.
 
-###### Static Methods:
+##### Static Methods:
 
 - <details>
   <summary>Create&lt;TValue&gt;(TValue)</summary>
@@ -267,7 +276,7 @@ inheritance.
 
 </details>
 
-### Fixed memory Interfaces
+## Fixed memory Interfaces
 
 These interfaces represent a safe way to access a fixed address of native or managed memory.
 
@@ -278,14 +287,14 @@ Interface representing a pointer to a fixed block of memory.
 
 **Note:** This type allows public implementation or inheritance.
 
-##### Properties:
+#### Properties:
 
 - <details>
   <summary>Pointer</summary>
   Gets the pointer to the fixed block of memory.
   </details>
 
-##### Disposable interface
+#### Disposable interface
 
 `IFixedPointer.IDisposable` representing a disposable `IFixedPointer` object.
 This interface is used for managing fixed memory blocks that require explicit resource cleanup.
@@ -303,7 +312,7 @@ Interface representing a method whose memory address is fixed in memory.
 
 **Note:** This interface inherits from `IFixedPointer`. This type allows public implementation or inheritance.
 
-##### Properties:
+#### Properties:
 
 - <details>
   <summary>Method</summary>
@@ -319,7 +328,7 @@ Interface representing a read-only fixed block of memory.
 
 **Note:** This interface inherits from `IFixedPointer`. This type allows public implementation or inheritance.
 
-##### Properties:
+#### Properties:
 
 - <details>
   <summary>Bytes</summary>
@@ -330,7 +339,7 @@ Interface representing a read-only fixed block of memory.
    Gets a read-only object span over the fixed block of memory.
   </details>
 
-##### Methods:
+#### Methods:
 
 - <details>
   <summary>AsBinaryContext()</summary>
@@ -341,7 +350,7 @@ Interface representing a read-only fixed block of memory.
    Creates a new instance of IReadOnlyFixedContext&lt;Object&gt; from the current instance.
   </details>
 
-##### Disposable interface
+#### Disposable interface
 
 `IReadOnlyFixedMemory.IDisposable` representing a disposable `IReadOnlyFixedMemory` object.
 This interface is used for managing fixed memory blocks that require explicit resource cleanup.
@@ -358,7 +367,7 @@ Interface representing a read-only fixed block of memory for a specific type.
 
 **Note:** This interface inherits from `IReadOnlyFixedMemory`. This type allows public implementation or inheritance.
 
-##### Properties:
+#### Properties:
 
 - <details>
   <summary>ValuePointer</summary>
@@ -370,7 +379,7 @@ Interface representing a read-only fixed block of memory for a specific type.
    Gets a read-only T span over the fixed block of memory.
   </details>
 
-##### Disposable interface
+#### Disposable interface
 
 `IReadOnlyFixedMemory<T>.IDisposable` representing a disposable `IReadOnlyFixedMemory<T>` object.
 This interface is used for managing fixed memory blocks that require explicit resource cleanup.
@@ -388,7 +397,7 @@ Interface representing a fixed block of memory.
 
 **Note:** This interface inherits from `IReadOnlyFixedMemory`. This type allows public implementation or inheritance.
 
-##### Properties:
+#### Properties:
 
 - <details>
   <summary>Bytes</summary>
@@ -399,7 +408,7 @@ Interface representing a fixed block of memory.
    Gets an object span over the fixed block of memory.
   </details>
 
-##### Methods:
+#### Methods:
 
 - <details>
   <summary>AsBinaryContext()</summary>
@@ -410,7 +419,7 @@ Interface representing a fixed block of memory.
    Creates a new instance of IFixedContext&lt;Object&gt; from the current instance.
   </details>
 
-##### Disposable interface
+#### Disposable interface
 
 `IFixedMemory.IDisposable` representing a disposable `IFixedMemory` object.
 This interface is used for managing fixed memory blocks that require explicit resource cleanup.
@@ -429,7 +438,7 @@ Interface representing a fixed block of memory for a specific type.
 implementation
 or inheritance.
 
-##### Properties:
+#### Properties:
 
 - <details>
   <summary>ValuePointer</summary>
@@ -441,7 +450,7 @@ or inheritance.
    Gets a T span over the fixed block of memory.
   </details>
 
-##### Disposable interface
+#### Disposable interface
 
 `IFixedMemory<T>.IDisposable` representing a disposable `IFixedMemory<T>` object.
 This interface is used for managing fixed memory blocks that require explicit resource cleanup.
@@ -460,14 +469,14 @@ modification.
 **Note:** This interface inherits from `IReadOnlyReferenceable<T>` and `IReadOnlyFixedMemory`. This type allows public
 implementation or inheritance.
 
-##### Methods:
+#### Methods:
 
 - <details>
   <summary>Transformation(out IReadOnlyFixedMemory)</summary>
    Reinterprets the read-only T fixed memory reference as a read-only TDestination memory reference.
   </details>
 
-##### Disposable interface
+#### Disposable interface
 
 `IReadOnlyFixedReference<T>.IDisposable` representing a disposable `IReadOnlyFixedReference<T>` object.
 This interface is used for managing fixed memory blocks that require explicit resource cleanup.
@@ -487,7 +496,7 @@ This interface represents a mutable reference to a fixed memory location.
 allows
 public implementation or inheritance.
 
-##### Methods:
+#### Methods:
 
 - <details>
   <summary>Transformation(out IFixedMemory)</summary>
@@ -499,7 +508,7 @@ public implementation or inheritance.
    Reinterprets the T fixed memory reference as a TDestination memory reference.
   </details>
 
-##### Disposable interface
+#### Disposable interface
 
 `IFixedReference<T>.IDisposable` representing a disposable `IFixedReference<T>` object.
 This interface is used for managing fixed memory blocks that require explicit resource cleanup.
@@ -517,14 +526,14 @@ Interface representing a context from a read-only block of fixed memory.
 
 **Note:** This interface inherits from `IReadOnlyFixedMemory<T>`. This type allows public implementation or inheritance.
 
-##### Methods:
+#### Methods:
 
 - <details>
   <summary>Transformation(out IReadOnlyFixedMemory)</summary>
    Reinterprets the T fixed memory block as TDestination memory block.
   </details>
 
-##### Disposable interface
+#### Disposable interface
 
 `IReadOnlyFixedContext<T>.IDisposable` representing a disposable `IReadOnlyFixedContext<T>` object.
 This interface is used for managing fixed memory blocks that require explicit resource cleanup.
@@ -544,7 +553,7 @@ Interface representing a context from a block of fixed memory.
 implementation
 or inheritance.
 
-##### Methods:
+#### Methods:
 
 - <details>
   <summary>Transformation(out IFixedMemory)</summary>
@@ -556,7 +565,7 @@ or inheritance.
    Reinterprets the T fixed memory block as a TDestination memory block.
   </details>
 
-##### Disposable interface
+#### Disposable interface
 
 `IFixedContext<T>.IDisposable` representing a disposable `IFixedContext<T>` object.
 This interface is used for managing fixed memory blocks that require explicit resource cleanup.
@@ -566,7 +575,7 @@ implementation or inheritance.
 
 </details>
 
-### Functional Interfaces
+## Functional Interfaces
 
 These interfaces expose functionalities for internal types or default functional implementations.
 
@@ -577,7 +586,7 @@ Defines methods to support a simple iteration over a sequence of a specified typ
 
 **Note:** This interface inherits from `IEnumerable<T>`. This type allows public implementation or inheritance.
 
-##### Methods:
+#### Methods:
 
 - <details>
   <summary>GetItem(Int32)</summary>
@@ -589,7 +598,7 @@ Defines methods to support a simple iteration over a sequence of a specified typ
    Retrieves the total number of elements in the sequence.
   </details>
 
-##### Protected Methods:
+#### Protected Methods:
 
 - <details>
   <summary>DisposeEnumeration(Int32)</summary>
@@ -605,14 +614,14 @@ Interface representing a value state for functional CString creation.
 
 **Note:** `TSelf` generic type is `struct`. This type allows public implementation or inheritance.
 
-##### Properties:
+#### Properties:
 
 - <details>
   <summary>IsNullTerminated</summary>
    Indicates whether resulting UTF-8 text is null-terminated.
   </details>
 
-##### Static Abstract/Virtual Methods:
+#### Static Abstract/Virtual Methods:
 
 - <details>
   <summary>GetSpan(TSelf)</summary>
@@ -633,7 +642,7 @@ This interfaces exposes a managed buffer.
 
 **Note:** This type not allow public implementation or inheritance.
 
-##### Static Methods:
+#### Static Methods:
 
 - <details>
   <summary>GetMetadata&lt;TBuffer&gt;()</summary>
@@ -649,7 +658,7 @@ This interfaces exposes a binary managed buffer.
 
 **Note:** This interface inherits from `IManagedBuffer<T>`. This type not allow public implementation or inheritance.
 
-##### Properties:
+#### Properties:
 
 - <details>
   <summary>Metadata&lt;TBuffer&gt;()</summary>
@@ -669,7 +678,7 @@ public implementation or inheritance.
 
 </details>
 
-### Span Delegates
+## Span Delegates
 
 These delegates encapsulate methods that operate with Span<T> instances.
 
@@ -709,7 +718,7 @@ of type `TResult`.
 
 </details>
 
-### Fixed memory Delegates
+## Fixed memory Delegates
 
 These delegates encapsulate methods that operate with fixed memory blocks.
 
@@ -777,7 +786,7 @@ Represents a function that operates on a read-only fixed memory instance using a
 
 </details>
 
-### Fixed memory context Delegates
+## Fixed memory context Delegates
 
 These delegates encapsulate methods that operate on fixed memory blocks of a specific type.
 
@@ -845,7 +854,7 @@ Encapsulates a method that receives an instance of `IReadOnlyFixedContext<T>` an
 
 </details>
 
-### Fixed memory reference Delegates
+## Fixed memory reference Delegates
 
 These delegates encapsulate methods that operate on fixed memory references of a specific type.
 
@@ -913,7 +922,7 @@ Encapsulates a method that receives an instance of `IReadOnlyFixedReference<T>` 
 
 </details>
 
-### Fixed address method Delegates
+## Fixed address method Delegates
 
 These delegates encapsulate methods that operate on methods with a fixed memory address.
 
@@ -949,7 +958,7 @@ Encapsulates a method that receives an instance of `IFixedMethod<T>` and returns
 
 </details>
 
-### Fixed memory list Delegates
+## Fixed memory list Delegates
 
 These delegates encapsulate methods that operate on a list of fixed memory blocks.
 
@@ -1017,7 +1026,7 @@ Encapsulates a method that receives an instance of `ReadOnlyFixedMemoryList` and
 
 </details>
 
-### UTF-8/ASCII Delegates
+## UTF-8/ASCII Delegates
 
 These delegates encapsulate methods that allow creating and operating with UTF-8/ASCII text.
 
@@ -1066,7 +1075,7 @@ value of type `TResult`.
 
 </details>
 
-### Buffers Delegates
+## Buffers Delegates
 
 These delegates encapsulate methods that operate on instances of managed buffers.
 
@@ -1105,9 +1114,11 @@ of type `TResult`.
 
 </details>
 
-## Structs
+---
 
-### Pointers
+# Structs
+
+## Pointers
 
 These structures safely represent memory addresses for references or methods of a specific type.
 
@@ -1119,7 +1130,7 @@ Represents a platform-specific type used to manage a pointer to a read-only valu
 **Note:** This struct implements `IComparable`, `ISpanFormattable`, `ISerializable`, `IWrapper<IntPtr>`,
 `IEquatable<ReadOnlyValPtr<T>>` and `IComparable<ReadOnlyValPtr<T>>` interfaces.
 
-##### Static Properties:
+#### Static Properties:
 
 - <details>
   <summary>Zero</summary>
@@ -1130,7 +1141,7 @@ Represents a platform-specific type used to manage a pointer to a read-only valu
   Indicates if T type is an unmanaged type.
   </details>
 
-##### Properties:
+#### Properties:
 
 - <details>
   <summary>Pointer</summary>
@@ -1145,7 +1156,7 @@ Represents a platform-specific type used to manage a pointer to a read-only valu
   A read-only reference to the value pointed to by this instance.
   </details>
 
-##### Methods:
+#### Methods:
 
 - <details>
   <summary>GetUnsafeFixedReference(IDisposable?)</summary>
@@ -1166,7 +1177,7 @@ Represents a platform-specific type used to manage a pointer to a mutable value 
 **Note:** This struct implements `IComparable`, `ISpanFormattable`, `ISerializable`, `IWrapper<IntPtr>`,
 `IEquatable<ValPtr<T>>` and `IComparable<ValPtr<T>>` interfaces.
 
-##### Static Properties:
+#### Static Properties:
 
 - <details>
   <summary>Zero</summary>
@@ -1177,7 +1188,7 @@ Represents a platform-specific type used to manage a pointer to a mutable value 
   Indicates if T type is an unmanaged type.
   </details>
 
-##### Properties:
+#### Properties:
 
 - <details>
   <summary>Pointer</summary>
@@ -1192,7 +1203,7 @@ Represents a platform-specific type used to manage a pointer to a mutable value 
   A reference to the value pointed to by this instance.
   </details>
 
-##### Methods:
+#### Methods:
 
 - <details>
   <summary>GetUnsafeFixedReference(IDisposable?)</summary>
@@ -1213,14 +1224,14 @@ Represents a platform-specific type used to handle a pointer to a method of type
 **Note:** This struct implements `ISpanFormattable`, `ISerializable`, `IWrapper<IntPtr>` and `IEquatable<FuncPtr<T>>`
 interfaces.
 
-##### Static Properties:
+#### Static Properties:
 
 - <details>
   <summary>Zero</summary>
   A read-only field representing a null-initialized function pointer.
   </details>
 
-##### Properties:
+#### Properties:
 
 - <details>
   <summary>Pointer</summary>
@@ -1237,7 +1248,7 @@ interfaces.
 
 </details>
 
-### Fixed memory lists
+## Fixed memory lists
 
 These structures represent lists of fixed memory block addresses.
 
@@ -1248,7 +1259,7 @@ Represents a list of `IReadOnlyFixedMemory` instances.
 
 **Note:** This type is a `ref struct`. Instances of current type can be used with `foreach`.
 
-##### Properties:
+#### Properties:
 
 - <details>
   <summary>Count</summary>
@@ -1259,14 +1270,14 @@ Represents a list of `IReadOnlyFixedMemory` instances.
   Indicates whether the current list is empty.
   </details>
 
-##### Indexer:
+#### Indexer:
 
 - <details>
   <summary>Item</summary>
   Gets the IReadOnlyFixedMemory at the specified index.
   </details>
 
-##### Methods:
+#### Methods:
 
 - <details>
   <summary>ToArray()</summary>
@@ -1282,7 +1293,7 @@ Represents a list of `IFixedMemory` instances.
 
 **Note:** This type is a `ref struct`. Instances of current type can be used with `foreach`.
 
-##### Properties:
+#### Properties:
 
 - <details>
   <summary>Count</summary>
@@ -1293,14 +1304,14 @@ Represents a list of `IFixedMemory` instances.
   Indicates whether the current list is empty.
   </details>
 
-##### Indexer:
+#### Indexer:
 
 - <details>
   <summary>Item</summary>
   Gets the IFixedMemory at the specified index.
   </details>
 
-##### Methods:
+#### Methods:
 
 - <details>
   <summary>ToArray()</summary>
@@ -1316,21 +1327,21 @@ Represents a `CStringSequence` that is fixed in memory.
 
 **Note:** This type is a `ref struct`. Instances of current type can be used with `foreach`.
 
-##### Properties:
+#### Properties:
 
 - <details>
   <summary>Values</summary>
   Gets the list of CString values in the sequence.
   </details>
 
-##### Indexer:
+#### Indexer:
 
 - <details>
   <summary>Item</summary>
   Gets the element at the given index in the sequence.
   </details>
 
-##### Methods:
+#### Methods:
 
 - <details>
   <summary>ToArray()</summary>
@@ -1339,7 +1350,7 @@ Represents a `CStringSequence` that is fixed in memory.
 
 </details>
 
-### Managed buffer types
+## Managed buffer types
 
 These structures represent managed buffers that can be stored on the stack.
 
@@ -1380,7 +1391,9 @@ Non-binary buffer space.
 
 </details>
 
-## Classes
+---
+
+# Classes
 
 <details>
   <summary>ValueRegion&lt;T&gt;</summary>
@@ -1389,28 +1402,28 @@ This class represents a region of memory that contains a sequence of `T` values.
 
 **Note:** `T` must be `unmanaged`. This type not allow public inheritance.
 
-#### Properties:
+### Properties:
 
 - <details>
   <summary>IsMemorySlice</summary>
   Indicates whether the current instance represents a subregion of a memory region.
   </details>
 
-#### Indexer:
+### Indexer:
 
 - <details>
   <summary>Item</summary>
   Retrieves an item from the memory region at the specified zero-based index.
   </details>
 
-#### Methods:
+### Methods:
 
 - <details>
   <summary>ToArray()</summary>
   Copies the contents of this memory region into a new array.
   </details>
 
-#### Operators:
+### Operators:
 
 - <details>
   <summary>ReadOnlySpan&lt;T&gt;(ValueRegion&lt;T&gt;)</summary>
@@ -1421,7 +1434,7 @@ This class represents a region of memory that contains a sequence of `T` values.
   Converts the value of the current ValueRegion&lt;T&gt; to its equivalent array representation.
   </details>
 
-#### Static Methods:
+### Static Methods:
 
 - <details>
   <summary>Create(T[])</summary>
@@ -1449,7 +1462,7 @@ Represents the metadata of a managed buffer type.
 
 **Note:** Implements `IEnumerableSequence<BufferTypeMetadata>`. This type not allow public inheritance.
 
-#### Properties:
+### Properties:
 
 - <details>
   <summary>IsBinary</summary>
@@ -1468,14 +1481,14 @@ Represents the metadata of a managed buffer type.
   Buffer type.
   </details>
 
-#### Indexer:
+### Indexer:
 
 - <details>
   <summary>Item</summary>
   Retrieves a component from current metadata at the specified zero-based index.
   </details>
 
-#### Generic class
+### Generic class
 
 `BufferTypeMetadata<T>` representing a generic `BufferTypeMetadata` object.
 
@@ -1500,7 +1513,7 @@ Represents a sequence of UTF-8 encoded characters.
 - This type exposes operators of comparison and equality of `CString` and `String` instances.
 - In .NET 9.0+ `params` is used with `ReadOnlySpan<>` arguments instead of `[]` arguments.
 
-#### Static Fields:
+### Static Fields:
 
 - <details>
   <summary>Empty</summary>
@@ -1511,7 +1524,7 @@ Represents a sequence of UTF-8 encoded characters.
   Represents a null-pointer UTF-8 string. This field is read-only.
   </details>
 
-#### Properties:
+### Properties:
 
 - <details>
   <summary>IsNullTerminated</summary>
@@ -1530,14 +1543,14 @@ Represents a sequence of UTF-8 encoded characters.
   Gets a value indicating whether the current CString instance is a function.
   </details>
 
-#### Indexer:
+### Indexer:
 
 - <details>
   <summary>Item</summary>
   Gets the Byte value at a specified position in the current CString object.
   </details>
 
-#### Constructors:
+### Constructors:
 
 - <details>
   <summary>CString(Byte, Int32)</summary>
@@ -1564,7 +1577,7 @@ Represents a sequence of UTF-8 encoded characters.
    Initializes a new instance of the CString class that contains the UTF-8 string returned by the specified ReadOnlySpanFunc&lt;Byte&gt;.
   </details>
 
-#### Methods:
+### Methods:
 
 - <details>
   <summary>ToArray()</summary>
@@ -1579,7 +1592,7 @@ Represents a sequence of UTF-8 encoded characters.
   Returns a String that represents the current UTF-8 text as a hexadecimal value.
   </details>
 
-#### Operators:
+### Operators:
 
 - <details>
   <summary>CString?(Byte[]?)</summary>
@@ -1594,7 +1607,7 @@ Represents a sequence of UTF-8 encoded characters.
   Defines an implicit conversion of a given CString to a read-only span of bytes.
   </details>
 
-#### Static Methods:
+### Static Methods:
 
 - <details>
   <summary>IsNullOrEmpty(CString?)</summary>
@@ -1639,28 +1652,28 @@ Represents a sequence of null-terminated UTF-8 text strings.
   memory usage.
 - In .NET 9.0+ `params` is used with `ReadOnlySpan<>` arguments instead of `[]` arguments.
 
-#### Static Properties:
+### Static Properties:
 
 - <details>
   <summary>Empty</summary>
   Represents an empty sequence.
   </details>
 
-#### Properties:
+### Properties:
 
 - <details>
   <summary>Count</summary>
   Gets the number of CString instances contained in this CStringSequence.
   </details>
 
-#### Indexer:
+### Indexer:
 
 - <details>
   <summary>Item</summary>
   Gets the CString at the specified index.
   </details>
 
-#### Constructors:
+### Constructors:
 
 - <details>
   <summary>CStringSequence(params String?[])</summary>
@@ -1687,7 +1700,7 @@ Represents a sequence of null-terminated UTF-8 text strings.
   Initializes a new instance of the CStringSequence class from a collection of UTF-8 strings.
   </details>
 
-#### Methods:
+### Methods:
 
 - <details>
   <summary>ToCString()</summary>
@@ -1714,7 +1727,7 @@ Represents a sequence of null-terminated UTF-8 text strings.
   Executes a specified function using the current instance treated as a FixedCStringSequence, and an additional parameter passed to the function.
   </details>
 
-#### Operators:
+### Operators:
 
 - <details>
   <summary>CString?(Byte[]?)</summary>
@@ -1733,7 +1746,7 @@ Represents a sequence of null-terminated UTF-8 text strings.
   Defines an implicit conversion of a given CString to a read-only span of bytes.
   </details>
 
-#### Static Methods:
+### Static Methods:
 
 - <details>
   <summary>Create&lt;TState&gt;(TState, CStringSequenceCreationAction&lt;TState&gt;, params Int32?[])</summary>
@@ -1750,7 +1763,9 @@ Represents a sequence of null-terminated UTF-8 text strings.
 
 </details>
 
-## Extensions
+---
+
+# Extensions
 
 <details>
   <summary>BinaryExtensions</summary>
@@ -2330,14 +2345,16 @@ Set of extensions for basic operations with `unmanaged` values.
 
 </details>
 
-## Utilities
+---
+
+# Utilities
 
 <details>
   <summary>AotInfo</summary>
 
 Provides information about the Ahead-of-Time compilation.
 
-##### Static Properties:
+#### Static Properties:
 
 - <details>
   <summary>IsReflectionDisabled</summary>
@@ -2355,7 +2372,7 @@ Provides information about the Ahead-of-Time compilation.
 
 This class allows to allocate buffers on stack if possible.
 
-##### Static Properties:
+#### Static Properties:
 
 - <details>
   <summary>BufferAutoCompositionEnabled</summary>
@@ -2365,7 +2382,7 @@ This class allows to allocate buffers on stack if possible.
   `PInvoke.DisableBufferAutoComposition` feature switch is disabled.
   </details>
 
-##### Static Methods:
+#### Static Methods:
 
 - <details>
   <summary>Alloc&lt;T&gt;(UInt16, ScopedBufferAction&lt;T&gt;, Boolean)</summary>
@@ -2409,14 +2426,14 @@ This class allows to allocate buffers on stack if possible.
 
 Set of utilities for exchange data within the P/Invoke context.
 
-##### Static Fields:
+#### Static Fields:
 
 - <details>
   <summary>PointerSize</summary>
   Size in bytes of a memory pointer.
   </details>
 
-##### Static Methods:
+#### Static Methods:
 
 - <details>
   <summary>SizeOf&lt;T&gt;()</summary>
@@ -2615,30 +2632,34 @@ Set of utilities for exchange data within the P/Invoke context.
 
 </details>
 
-## License
+---
+
+# License
 
 This project is licensed under the **MIT License**, one of the most permissive and widely-used open-source licenses.
 
-### Key Highlights:
+## Key Highlights:
 
 - **Freedom of Use**: The package can be used in both open-source and closed-source projects without restrictions.
 - **Modification and Distribution**: You are free to modify, distribute, and even sublicense the software as needed.
 - **Attribution**: The only requirement is to include the original copyright notice and license text in any copies or
   substantial portions of the software.
 
-### Disclaimer:
+## Disclaimer:
 
 > The software is provided "as is," without warranty of any kind. The authors are not liable for any damages or issues
 > that may arise from its use.
 
 For more details, refer to the full license text included in the [LICENSE](LICENSE) file.
 
-## Contributing
+---
+
+# Contributing
 
 We warmly welcome contributions to this open-source project! Whether you're here to report issues, propose enhancements,
 or contribute directly to the codebase, your help is greatly appreciated. Below are some ways you can get involved:
 
-### Reporting Issues
+## Reporting Issues
 
 If you encounter a bug, experience unexpected behavior, or have suggestions for improvement, feel free to open an issue.
 Please include as much detail as possible, such as:
@@ -2647,12 +2668,12 @@ Please include as much detail as possible, such as:
 - Your environment (e.g., OS, software version)
 - Any relevant logs or screenshots
 
-### Proposing Improvements
+## Proposing Improvements
 
 Have an idea for a new feature or enhancement? Open an issue with a clear description of your proposal and why you think
 it would benefit the project.
 
-### Contributing Code
+## Contributing Code
 
 You can directly contribute to the project by:
 
@@ -2670,12 +2691,12 @@ To contribute code:
 
 Feel free to discuss your ideas or changes in an issue or pull request to align with the project's goals.
 
-### Translations
+## Translations
 
 We currently support only a few languages, but we are open to adding more! If you'd like to help with translations,
 please open an issue or reach out to us. Your contributions to expanding the project's accessibility are highly valued.
 
-### Collaboration Guidelines
+## Collaboration Guidelines
 
 When contributing, please be respectful and constructive. We aim to create an inclusive and welcoming environment for
 everyone.
