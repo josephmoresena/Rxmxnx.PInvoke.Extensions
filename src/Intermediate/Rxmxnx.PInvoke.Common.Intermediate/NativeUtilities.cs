@@ -12,7 +12,7 @@ public static unsafe partial class NativeUtilities
 	public static readonly Int32 PointerSize = sizeof(IntPtr);
 
 	/// <summary>
-	/// Retrieves the size of <typeparamref name="T"/> structure.
+	/// Gets the memory size of <typeparamref name="T"/> structure.
 	/// </summary>
 	/// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
 	/// <returns>Size of <typeparamref name="T"/> structure.</returns>
@@ -217,16 +217,16 @@ public static unsafe partial class NativeUtilities
 		return ref Unsafe.As<TSource, TDestination>(ref refValue);
 	}
 	/// <summary>
-	/// Retrieves a <see cref="Byte"/> array from a read-only reference to a <typeparamref name="T"/> value.
+	/// Retrieves a <see cref="Byte"/> array from a read-only reference to a <typeparamref name="TSource"/> value.
 	/// </summary>
-	/// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-	/// <param name="value">A read-only reference to <typeparamref name="T"/> value.</param>
+	/// <typeparam name="TSource"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
+	/// <param name="value">A read-only reference to <typeparamref name="TSource"/> value.</param>
 	/// <returns><see cref="Byte"/> array.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static Byte[] ToBytes<T>(in T value) where T : unmanaged
+	public static Byte[] ToBytes<TSource>(in TSource value) where TSource : unmanaged
 	{
-		ref T refValue = ref Unsafe.AsRef(in value);
-		ReadOnlySpan<T> intermediateSpan = MemoryMarshal.CreateReadOnlySpan(ref refValue, 1);
+		ref TSource refValue = ref Unsafe.AsRef(in value);
+		ReadOnlySpan<TSource> intermediateSpan = MemoryMarshal.CreateReadOnlySpan(ref refValue, 1);
 		ReadOnlySpan<Byte> bytes = MemoryMarshal.AsBytes(intermediateSpan);
 		return bytes.ToArray();
 	}
@@ -285,20 +285,21 @@ public static unsafe partial class NativeUtilities
 		return result;
 	}
 	/// <summary>
-	/// Preforms a binary copy of <paramref name="value"/> to <paramref name="destination"/> span.
+	/// Performs a binary copy of the given <typeparamref name="TSource"/> to the <paramref name="destination"/> span.
 	/// </summary>
-	/// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-	/// <param name="value"><typeparamref name="T"/> value.</param>
+	/// <typeparam name="TSource"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
+	/// <param name="value"><typeparamref name="TSource"/> value.</param>
 	/// <param name="destination">Destination <see cref="Span{T}"/> instance.</param>
 	/// <param name="offset">
 	/// The offset in <paramref name="destination"/> at which <paramref name="value"/> will be copied.
 	/// </param>
 	/// <exception cref="ArgumentException">
 	/// Throws an exception when the length of <paramref name="destination"/> span minus the offset is less
-	/// than the size of <typeparamref name="T"/>.
+	/// than the size of <typeparamref name="TSource"/>.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void CopyBytes<T>(in T value, Span<Byte> destination, Int32 offset = 0) where T : unmanaged
+	public static void CopyBytes<TSource>(in TSource value, Span<Byte> destination, Int32 offset = 0)
+		where TSource : unmanaged
 	{
 		ValidationUtilities.ThrowIfInvalidCopyType(value, destination, offset, out ReadOnlySpan<Byte> bytes);
 		bytes.CopyTo(destination[offset..]);
