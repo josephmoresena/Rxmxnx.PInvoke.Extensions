@@ -45,7 +45,6 @@
     - [Contributing Code](#contributing-code)
     - [Translations](#translations)
     - [Collaboration Guidelines](#collaboration-guidelines)
-    -
 
 ---
 
