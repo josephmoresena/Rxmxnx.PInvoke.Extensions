@@ -5,6 +5,25 @@ namespace Rxmxnx.PInvoke.Tests.Buffers;
 public sealed class NonBinarySpaceTests
 {
 	[Fact]
+	internal void InvalidTest()
+	{
+		Assert.IsType<InvalidOperationException>(
+			Assert.Throws<TypeInitializationException>(BufferManager
+				                                           .Register<Int32,
+					                                           NonBinarySpace<InternalStruct<Object>, Int32>>)
+			      .InnerException);
+		Assert.IsType<InvalidOperationException>(
+			Assert.Throws<TypeInitializationException>(BufferManager
+				                                           .Register<NonBinarySpace<InternalStruct<Int32>, Object>>)
+			      .InnerException);
+		Assert.IsType<InvalidOperationException>(Assert.Throws<TypeInitializationException>(
+			                                         BufferManager
+				                                         .Register<WrapperStruct<Object>,
+					                                         NonBinarySpace<InternalStruct<Int32>,
+						                                         WrapperStruct<Object>>>).InnerException);
+	}
+
+	[Fact]
 	internal void BooleanTest() => NonBinarySpaceTests.Test<Boolean>();
 	[Fact]
 	internal void ByteTest() => NonBinarySpaceTests.Test<Byte>();
@@ -83,6 +102,12 @@ public sealed class NonBinarySpaceTests
 	{
 		NonBinarySpaceTests.Do(buffer, ptrPtr);
 		return buffer.Span[0].Value.Value.Value;
+	}
+
+	[InlineArray(10)]
+	private struct InternalStruct<T>
+	{
+		private T _val;
 	}
 
 	[InlineArray(100)]
