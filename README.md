@@ -1118,6 +1118,9 @@ of type `TResult`.
 
 # Structs
 
+`Rxmxnx.PInvoke.Extensions` provides value types for the managed handling of references, fixed memory segments, and
+stack-allocated buffers
+
 ## Pointers
 
 These structures safely represent memory addresses for references or methods of a specific type.
@@ -1394,6 +1397,9 @@ Non-binary buffer space.
 ---
 
 # Classes
+
+`Rxmxnx.PInvoke.Extensions` provides reference types for the managed handling of UTF8/ASCII texts, memory regions, and
+metadata for stack-allocated buffer management.
 
 <details>
   <summary>ValueRegion&lt;T&gt;</summary>
@@ -1766,6 +1772,9 @@ Represents a sequence of null-terminated UTF-8 text strings.
 ---
 
 # Extensions
+
+`Rxmxnx.PInvoke.Extensions` provides static classes that expose APIs to facilitate the management of managed memory,
+pointer usage, and this package's internal resources.
 
 <details>
   <summary>BinaryExtensions</summary>
@@ -2348,6 +2357,9 @@ Set of extensions for basic operations with `unmanaged` values.
 ---
 
 # Utilities
+
+`Rxmxnx.PInvoke.Extensions` provides static classes that complement the APIs facilitating the management of read-only
+managed memory, enable interaction with the runtime environment, and allow the use of the package's internal resources.
 
 <details>
   <summary>AotInfo</summary>
