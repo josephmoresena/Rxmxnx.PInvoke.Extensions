@@ -88,7 +88,7 @@ These interfaces represent a safe way to access a managed reference of a specifi
 <details>
   <summary>IReadOnlyReferenceable&lt;T&gt;</summary>
 
-This interface exposes a read-only reference to an object of type T, allowing the object
+This interface exposes a read-only reference to an object of type `T`, allowing the object
 to be used without modification.
 
 **Note:** This interface inherits from `IEquatable<T>`. This type allows public implementation or inheritance.
@@ -97,7 +97,8 @@ to be used without modification.
 
 - <details>
   <summary>Reference</summary>
-  Gets the read-only reference to the instance of an object of type T.
+  
+  Gets the read-only reference to the instance of an object of type `T`.
   </details>
 
 </details>
@@ -107,7 +108,7 @@ to be used without modification.
     IReferenceable&lt;T&gt;
   </summary>
 
-This interface exposes a reference to an object of type T,
+This interface exposes a reference to an object of type `T`,
 allowing the object to be used and potentially modified.
 
 **Note:** This interface inherits from `IReadOnlyReferenceable<T>`. This type allows public implementation or
@@ -117,7 +118,8 @@ inheritance.
 
 - <details>
   <summary>Reference</summary>
-  Gets the reference to the instance of an object of type T.
+  
+  Gets the reference to the instance of an object of type `T`.
   </details>
 
 </details>
@@ -129,7 +131,7 @@ These interfaces represent a safe way to access a value or managed object of a s
 <details>
   <summary>IWrapper&lt;T&gt;</summary>
 
-This interface defines a wrapper for a T object.
+This interface defines a wrapper for a `T` object.
 
 **Note:** This interface inherits from `IEquatable<T>`. This type allows public implementation or inheritance.
 
@@ -137,14 +139,16 @@ This interface defines a wrapper for a T object.
 
 - <details>
   <summary>Value</summary>
-  The wrapped T object.
+  
+  The wrapped `T` object.
   </details>
 
 #### Static Methods:
 
 - <details>
   <summary>Create(T?)</summary>
-  Creates a new instance of an object that implements IWrapper&lt;T&gt; interface.
+  
+  Creates a new instance of an object that implements `IWrapper<T>` interface.
   </details>
 
 #### Non-generic interface
