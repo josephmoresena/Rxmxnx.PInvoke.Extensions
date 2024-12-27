@@ -1179,11 +1179,13 @@ Represents a platform-specific type used to manage a pointer to a read-only valu
 
 - <details>
   <summary>Pointer</summary>
-  Internal pointer as an IntPtr.
+  
+  Internal pointer as an `IntPtr`.
   </details>
 - <details>
   <summary>IsZero</summary>
-  Indicates whether the current pointer is null.
+  
+  Indicates whether the current pointer is `null`.
   </details>
 - <details>
   <summary>Reference</summary>
@@ -1229,11 +1231,12 @@ Represents a platform-specific type used to manage a pointer to a mutable value 
 
 - <details>
   <summary>Pointer</summary>
-  Internal pointer as an IntPtr.
+  
+  Internal pointer as an `IntPtr`.
   </details>
 - <details>
   <summary>IsZero</summary>
-  Indicates whether the current pointer is null.
+  Indicates whether the current pointer is `null`.
   </details>
 - <details>
   <summary>Reference</summary>
@@ -1274,11 +1277,12 @@ interfaces.
 
 - <details>
   <summary>Pointer</summary>
-  Internal pointer as an IntPtr.
+  
+  Internal pointer as an `IntPtr`.
   </details>
 - <details>
   <summary>IsZero</summary>
-  Indicates whether the current pointer is null.
+  Indicates whether the current pointer is `null`.
   </details>
 - <details>
   <summary>Invoke</summary>
