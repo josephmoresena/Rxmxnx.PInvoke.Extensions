@@ -1172,7 +1172,7 @@ Represents a platform-specific type used to manage a pointer to a read-only valu
 - <details>
   <summary>IsUnmanaged</summary>
 
-  Indicates if `T` type is an unmanaged type.
+  Indicates if `T` type is an `unmanaged` type.
   </details>
 
 #### Properties:
@@ -1224,7 +1224,7 @@ Represents a platform-specific type used to manage a pointer to a mutable value 
 - <details>
   <summary>IsUnmanaged</summary>
 
-  Indicates if `T` type is an unmanaged type.
+  Indicates if `T` type is an `unmanaged` type.
   </details>
 
 #### Properties:
@@ -1816,7 +1816,9 @@ Represents a sequence of null-terminated UTF-8 text strings.
   </details>
 - <details>
   <summary>WithSafeTransform&lt;TState&gt;(TState, CStringSequenceAction)</summary>
-  Executes a specified action on the current instance treated as a `FixedCStringSequence`, using an additional parameter passed to the action.
+
+  Executes a specified action on the current instance treated as a `FixedCStringSequence`, using an additional parameter
+  passed to the action.
   </details>
 - <details>
   <summary>WithSafeTransform&lt;TResult&gt;(CStringSequenceFunc&lt;TResult&gt;)</summary>
@@ -2285,7 +2287,7 @@ Set of extensions for basic operations with `IntPtr` and `UIntPtr` instances.
   <summary>GetUnsafeSpan&lt;T&gt;(this IntPtr, Int32)</summary>
 
   Generates a `Span<T>` instance from an `IntPtr`, interpreting the memory at the specified location as a sequence of
-  unmanaged values.
+  `unmanaged` values.
 
   **Note:** ´T´ is ´unmanaged´.
   </details>
@@ -2293,7 +2295,7 @@ Set of extensions for basic operations with `IntPtr` and `UIntPtr` instances.
   <summary>GetUnsafeSpan&lt;T&gt;(this UIntPtr, Int32)</summary>
 
   Generates a `Span<T>` instance from a `UIntPtr`, interpreting the memory at the specified location as a sequence of
-  unmanaged values.
+  `unmanaged` values.
 
   **Note:** ´T´ is ´unmanaged´.
   </details>
@@ -2301,7 +2303,7 @@ Set of extensions for basic operations with `IntPtr` and `UIntPtr` instances.
   <summary>GetUnsafeSpan&lt;T&gt;(this MemoryHandle, Int32)</summary>
 
   Generates a `Span<T>` instance from a `MemoryHandle`, interpreting the memory at the specified location as a sequence
-  of unmanaged values.
+  of `unmanaged` values.
 
   **Note:** ´T´ is ´unmanaged´.
   </details>
@@ -2309,7 +2311,7 @@ Set of extensions for basic operations with `IntPtr` and `UIntPtr` instances.
   <summary>GetUnsafeReadOnlySpan&lt;T&gt;(this IntPtr, Int32)</summary>
 
   Generates a `ReadOnlySpan<T>` instance from an `IntPtr`, interpreting the memory at the specified location as a
-  sequence of unmanaged values.
+  sequence of `unmanaged` values.
 
   **Note:** ´T´ is ´unmanaged´.
   </details>
@@ -2317,7 +2319,7 @@ Set of extensions for basic operations with `IntPtr` and `UIntPtr` instances.
   <summary>GetUnsafeReadOnlySpan&lt;T&gt;(this UIntPtr, Int32)</summary>
 
   Generates a `ReadOnlySpan<T>` instance from a `UIntPtr`, interpreting the memory at the specified location as a
-  sequence of unmanaged values.
+  sequence of `unmanaged` values.
 
   **Note:** ´T´ is ´unmanaged´.
   </details>
@@ -2325,7 +2327,7 @@ Set of extensions for basic operations with `IntPtr` and `UIntPtr` instances.
   <summary>GetUnsafeReadOnlySpan&lt;T&gt;(this MemoryHandle, Int32)</summary>
 
   Generates a `ReadOnlySpan<T>` instance from a `MemoryHandle`, interpreting the memory at the specified location as a
-  sequence of unmanaged values.
+  sequence of `unmanaged` values.
 
   **Note:** ´T´ is ´unmanaged´.
   </details>
@@ -2342,22 +2344,22 @@ Set of extensions for basic operations with `IntPtr` and `UIntPtr` instances.
 - <details>
   <summary>GetUnsafeReference&lt;T&gt;(this IntPtr)</summary>
 
-  Generates a memory reference to an unmanaged value of type `T` from `IntPtr`.
+  Generates a memory reference to an `unmanaged` value of type `T` from `IntPtr`.
   </details>
 - <details>
   <summary>GetUnsafeReference&lt;T&gt;(this UIntPtr)</summary>
 
-  Generates a memory reference to an unmanaged value of type `T` from `UIntPtr`.
+  Generates a memory reference to an `unmanaged` value of type `T` from `UIntPtr`.
   </details>
 - <details>
   <summary>GetUnsafeReadOnlyReference&lt;T&gt;(this IntPtr)</summary>
 
-  Generates a read-only memory reference to an unmanaged value of type `T` from `IntPtr`.
+  Generates a read-only memory reference to an `unmanaged` value of type `T` from `IntPtr`.
   </details>
 - <details>
   <summary>GetUnsafeReadOnlyReference&lt;T&gt;(this UIntPtr)</summary>
 
-  Generates a read-only memory reference to an unmanaged value of type `T` from `UIntPtr`.
+  Generates a read-only memory reference to an `unmanaged` value of type `T` from `UIntPtr`.
   </details>
 
 </details>
@@ -2396,28 +2398,29 @@ Set of extensions for basic operations with references to `unmanaged` values.
 - <details>
   <summary>GetUnsafeValPtr&lt;T&gt;(ref this T)</summary>
 
-  Obtains an unsafe pointer of type `ValPtr<T>` from a reference to an unmanaged value of type `T`.
+  Obtains an unsafe pointer of type `ValPtr<T>` from a reference to an `unmanaged` value of type `T`.
   </details>
 - <details>
   <summary>GetUnsafeIntPtr&lt;T&gt;(ref this T)</summary>
 
-  Obtains an unsafe pointer of type `IntPtr` from a reference to an unmanaged value of type `T`.
+  Obtains an unsafe pointer of type `IntPtr` from a reference to an `unmanaged` value of type `T`.
   </details>
 - <details>
   <summary>GetUnsafeUIntPtr&lt;T&gt;(ref this T)</summary>
 
-  Obtains an unsafe pointer of type `UIntPtr` from a reference to an unmanaged value of type `T`.
+  Obtains an unsafe pointer of type `UIntPtr` from a reference to an `unmanaged` value of type `T`.
   </details>
 - <details>
   <summary>Transform&lt;TSource, TDestination&gt;(ref this TSource)</summary>
 
-  Generates a reference for an unmanaged value of type `TDestination` from an existing reference to an unmanaged value
+  Generates a reference for an `unmanaged` value of type `TDestination` from an existing reference to an `unmanaged`
+  value
   of type `TSource`.
   </details>
 - <details>
   <summary>AsBytes&lt;TSource&gt;(ref this TSource)</summary>
 
-  Creates a `Span<Byte>` from a reference to an unmanaged value of type `TSource`.
+  Creates a `Span<Byte>` from a reference to an `unmanaged` value of type `TSource`.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T&gt;(ref this T, FixedReferenceAction&lt;T&gt;)</summary>
@@ -2486,22 +2489,24 @@ Set of extensions for basic operations with `unmanaged` values.
 - <details>
   <summary>ToBytes&lt;T&gt;(this T)</summary>
 
-  Converts a given unmanaged value of type `T` into an array of `Byte`.
+  Converts a given `unmanaged` value of type `T` into an array of `Byte`.
   </details>
 - <details>
   <summary>ToBytes&lt;TSource&gt;(this TSource[]?)</summary>
 
-  Converts an array of unmanaged values of type `TSource` into an array of `Byte`.
+  Converts an array of `unmanaged` values of type `TSource` into an array of `Byte`.
   </details>
 - <details>
   <summary>ToValues&lt;TSource, TDestination&gt;(this TSource[]?)</summary>
 
-  Converts an array of unmanaged values of type `TSource` into an array of another unmanaged value type `TDestination`.
+  Converts an array of `unmanaged` values of type `TSource` into an array of another `unmanaged` value type
+  `TDestination`.
   </details>
 - <details>
   <summary>ToValues&lt;TSource, TDestination&gt;(this TSource[]?, out Byte[]?)</summary>
 
-  Converts an array of unmanaged values of type `TSource` into an array of another unmanaged value type `TDestination`
+  Converts an array of `unmanaged` values of type `TSource` into an array of another `unmanaged` value type
+  `TDestination`
   and provides the residual binary array of the reinterpretation.
   </details>
 - <details>
@@ -2675,23 +2680,24 @@ Set of utilities for exchange data within the P/Invoke context.
 - <details>
   <summary>GetUnsafeIntPtr&lt;T&gt;(in T)</summary>
 
-  Retrieves an unsafe `IntPtr` pointer from a read-only reference to a `T` unmanaged value.
+  Retrieves an unsafe `IntPtr` pointer from a read-only reference to a `T` `unmanaged` value.
   </details>
 - <details>
   <summary>GetUnsafeUIntPtr&lt;T&gt;(in T)</summary>
 
-  Retrieves an unsafe `UIntPtr` pointer from a read-only reference to a `T` unmanaged value.
+  Retrieves an unsafe `UIntPtr` pointer from a read-only reference to a `T` `unmanaged` value.
   </details>
 - <details>
   <summary>Transform&lt;TSource, TDestination&gt;(in TSource)</summary>
 
-  Transforms a read-only reference of an unmanaged value of type `TSource` into a read-only reference of an unmanaged
+  Transforms a read-only reference of an `unmanaged` value of type `TSource` into a read-only reference of an
+  `unmanaged`
   value of type `TDestination`.
   </details>
 - <details>
   <summary>TransformReference&lt;TSource, TDestination&gt;(ref TSource)</summary>
 
-  Transforms a reference of an unmanaged value of type `TSource` into a reference of an unmanaged value of type
+  Transforms a reference of an `unmanaged` value of type `TSource` into a reference of an `unmanaged` value of type
   `TDestination`.
   </details>
 - <details>
@@ -2704,7 +2710,7 @@ Set of utilities for exchange data within the P/Invoke context.
 - <details>
   <summary>AsBytes&lt;TSource&gt;(in TSource)</summary>
 
-  Creates a `ReadOnlySpan<Byte>` from an exising read-only reference to a `TSource` unmanaged value.
+  Creates a `ReadOnlySpan<Byte>` from an exising read-only reference to a `TSource` `unmanaged` value.
   </details>
 - <details>
   <summary>AsBinarySpan&lt;TSource&gt;(ref TSource)</summary>

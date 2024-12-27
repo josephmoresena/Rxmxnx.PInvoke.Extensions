@@ -6,5 +6,10 @@
               featurevalue="true">
             <method signature="System.Boolean get_BufferAutoCompositionEnabled()" body="stub" value="false"/>
         </type>
+        <type fullname="Rxmxnx.PInvoke.Internal.Localization.IMessageResource"
+              feature="System.Globalization.Invariant"
+              featurevalue="true">
+            <method signature="System.Boolean get_IsInvariantCulture()" body="stub" value="true"/>
+        </type>
     </assembly>
 </linker>

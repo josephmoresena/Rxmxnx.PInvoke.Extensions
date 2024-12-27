@@ -4,12 +4,21 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 internal partial interface IMessageResource
 {
 	/// <summary>
+	/// Indicates whether globalization-invariant switch is enabled.
+	/// </summary>
+	private static Boolean IsInvariantCulture => false;
+
+	/// <summary>
 	/// Retrieves internal resource objects.
 	/// </summary>
 	/// <returns>Resource resource object.</returns>
 	[ExcludeFromCodeCoverage]
 	public static IMessageResource GetInstance()
-		=> IMessageResource.GetLangCode() switch
+	{
+		IMessageResource result = IMessageResource.GetInstance<DefaultMessageResource>();
+		if (IMessageResource.IsInvariantCulture) return result;
+
+		return IMessageResource.GetLangCode() switch
 		{
 			Iso639P1.Es => IMessageResource.GetInstance<SpanishMessageResource>(),
 			Iso639P1.Fr => IMessageResource.GetInstance<FrenchMessageResource>(),
@@ -20,8 +29,9 @@ internal partial interface IMessageResource
 			Iso639P1.Ar => IMessageResource.GetInstance<ArabicMessageResource>(),
 			Iso639P1.Pt => IMessageResource.GetInstance<PortugueseMessageResource>(),
 			Iso639P1.It => IMessageResource.GetInstance<ItalianMessageResource>(),
-			_ => IMessageResource.GetInstance<DefaultMessageResource>(),
+			_ => result,
 		};
+	}
 
 	/// <summary>
 	/// Retrieves internal resource objects.

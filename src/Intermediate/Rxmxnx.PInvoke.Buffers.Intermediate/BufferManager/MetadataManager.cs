@@ -33,8 +33,8 @@ public static partial class BufferManager
 		/// </returns>
 		[UnconditionalSuppressMessage("AOT", "IL2055")]
 		[UnconditionalSuppressMessage("AOT", "IL2060")]
-		[UnconditionalSuppressMessage("AOT", "IL3050")]
 		[UnconditionalSuppressMessage("AOT", "IL2077")]
+		[UnconditionalSuppressMessage("AOT", "IL3050")]
 		public static BufferTypeMetadata<T>? ComposeWithReflection(Type typeofA, Type typeofB)
 		{
 			if (MetadataManager<T>.store.GetMetadataInfo is null) return default;
