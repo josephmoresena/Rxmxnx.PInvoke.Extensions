@@ -1179,12 +1179,12 @@ Represents a platform-specific type used to manage a pointer to a read-only valu
 
 - <details>
   <summary>Pointer</summary>
-  
+
   Internal pointer as an `IntPtr`.
   </details>
 - <details>
   <summary>IsZero</summary>
-  
+
   Indicates whether the current pointer is `null`.
   </details>
 - <details>
@@ -1231,7 +1231,7 @@ Represents a platform-specific type used to manage a pointer to a mutable value 
 
 - <details>
   <summary>Pointer</summary>
-  
+
   Internal pointer as an `IntPtr`.
   </details>
 - <details>
@@ -1277,7 +1277,7 @@ interfaces.
 
 - <details>
   <summary>Pointer</summary>
-  
+
   Internal pointer as an `IntPtr`.
   </details>
 - <details>
@@ -1586,110 +1586,140 @@ Represents a sequence of UTF-8 encoded characters.
 
 - <details>
   <summary>IsNullTerminated</summary>
-  Gets a value indicating whether the text in the current CString instance ends with a null-termination character.
+
+  Gets a value indicating whether the text in the current `CString` instance ends with a null-termination character.
   </details>
 - <details>
   <summary>IsReference</summary>
-  Gets a value indicating whether the UTF-8 text is referenced by, and not contained within, the current CString instance.
+
+  Gets a value indicating whether the UTF-8 text is referenced by, and not contained within, the current `CString`
+  instance.
   </details>
 - <details>
   <summary>IsSegmented</summary>
-  Gets a value indicating whether the current CString instance is a segment (or slice) of another CString instance.
+
+  Gets a value indicating whether the current `CString` instance is a segment (or slice) of another `CString` instance.
   </details>
 - <details>
   <summary>IsFunction</summary>
-  Gets a value indicating whether the current CString instance is a function.
+
+  Gets a value indicating whether the current `CString` instance is a function.
   </details>
 
 ### Indexer:
 
 - <details>
   <summary>Item</summary>
-  Gets the Byte value at a specified position in the current CString object.
+
+  Gets the `Byte` value at a specified position in the current `CString` object.
   </details>
 
 ### Constructors:
 
 - <details>
   <summary>CString(Byte, Int32)</summary>
-  Initializes a new instance of the CString class to the value indicated by a specified UTF-8 character repeated a specified number of times.
+
+  Initializes a new instance of the `CString` class to the value indicated by a specified UTF-8 character repeated a
+  specified number of times.
   </details>
 - <details>
   <summary>CString(Byte, Byte, Int32)</summary>
-   Initializes a new instance of the CString class to the value indicated by a specified UTF-8 sequence repeated a specified number of times.
+
+  Initializes a new instance of the `CString` class to the value indicated by a specified UTF-8 sequence repeated a
+  specified number of times.
   </details>
 - <details>
   <summary>CString(Byte, Byte, Byte, Int32)</summary>
-   Initializes a new instance of the CString class to the value indicated by a specified UTF-8 sequence repeated a specified number of times.
+
+  Initializes a new instance of the `CString` class to the value indicated by a specified UTF-8 sequence repeated a
+  specified number of times.
   </details>
 - <details>
   <summary>CString(Byte, Byte, Byte, Byte, Int32)</summary>
-   Initializes a new instance of the CString class to the value indicated by a specified UTF-8 sequence repeated a specified number of times.
+
+  Initializes a new instance of the `CString` class to the value indicated by a specified UTF-8 sequence repeated a
+  specified number of times.
   </details>
 - <details>
   <summary>CString(ReadOnlySpan&lt;Byte&gt;)</summary>
-   Initializes a new instance of the CString class using the UTF-8 characters indicated in the specified read-only span.
+
+  Initializes a new instance of the `CString` class using the UTF-8 characters indicated in the specified read-only
+  span.
   </details>
 - <details>
   <summary>CString(ReadOnlySpanFunc&lt;Byte&gt;)</summary>
-   Initializes a new instance of the CString class that contains the UTF-8 string returned by the specified ReadOnlySpanFunc&lt;Byte&gt;.
+
+  Initializes a new instance of the `CString` class that contains the UTF-8 string returned by the specified
+  `ReadOnlySpanFunc<Byte>`.
   </details>
 
 ### Methods:
 
 - <details>
   <summary>ToArray()</summary>
-  Copies the UTF-8 text of the current CString instance into a new byte array.
+
+  Copies the UTF-8 text of the current `CString` instance into a new byte array.
   </details>
 - <details>
   <summary>AsSpan()</summary>
-  Retrieves the UTF-8 units of the current CString as a read-only span of bytes.
+
+  Retrieves the UTF-8 units of the current `CString` as a read-only span of bytes.
   </details>
 - <details>
   <summary>ToHexString()</summary>
-  Returns a String that represents the current UTF-8 text as a hexadecimal value.
+
+  Returns a `String` that represents the current UTF-8 text as a hexadecimal value.
   </details>
 
 ### Operators:
 
 - <details>
   <summary>CString?(Byte[]?)</summary>
-  Defines an implicit conversion of a given Byte array to CString.
+
+  Defines an implicit conversion of a given `Byte` array to `CString`.
   </details>
 - <details>
   <summary>CString?(String?)</summary>
-  Defines an explicit conversion of a given String to CString.
+
+  Defines an explicit conversion of a given `String` to `CString`.
   </details>
 - <details>
   <summary>ReadOnlySpan&lt;Byte&gt;(CString?)</summary>
-  Defines an implicit conversion of a given CString to a read-only span of bytes.
+
+  Defines an implicit conversion of a given `CString` to a read-only span of bytes.
   </details>
 
 ### Static Methods:
 
 - <details>
   <summary>IsNullOrEmpty(CString?)</summary>
-  Determines whether the specified CString is null or an empty UTF-8 string.
+
+  Determines whether the specified `CString` is `null` or an empty UTF-8 string.
   </details>
 - <details>
   <summary>Create(ReadOnlySpan&lt;Byte&gt;)</summary>
-  Creates a new instance of the CString class using the UTF-8 characters provided in the specified read-only span.
+
+  Creates a new instance of the `CString` class using the UTF-8 characters provided in the specified read-only span.
   </details>
 - <details>
   <summary>Create(ReadOnlySpanFunc&lt;Byte&gt;?)</summary>
-  Creates a new instance of the CString class using the ReadOnlySpanFunc&lt;Byte&gt; delegate provided.
+
+  Creates a new instance of the `CString` class using the `ReadOnlySpanFunc<Byte>` delegate provided.
   </details>
 - <details>
   <summary>Create(Byte[]?)</summary>
-  Creates a new instance of the CString class using the binary internal information provided.
+
+  Creates a new instance of the `CString` class using the binary internal information provided.
   </details>
 - <details>
   <summary>CreateCreate&lt;TState&gt;(TState)</summary>
-  Creates a new instance of the CString class using a TState instance.
+
+  Creates a new instance of the `CString` class using a `TState` instance.
   </details>
 - <details>
   <summary>CreateUnsafe(IntPtr, Int32, useFullLength)</summary>
-  Creates a new instance of the CString class using the pointer to a UTF-8 character array and length provided.
+
+  Creates a new instance of the `CString` class using the pointer to a UTF-8 character array and length provided.
   </details>
 
 </details>
@@ -1721,87 +1751,106 @@ Represents a sequence of null-terminated UTF-8 text strings.
 
 - <details>
   <summary>Count</summary>
-  Gets the number of CString instances contained in this CStringSequence.
+
+  Gets the number of `CString` instances contained in this `CStringSequence`.
   </details>
 
 ### Indexer:
 
 - <details>
   <summary>Item</summary>
-  Gets the CString at the specified index.
+
+  Gets the `CString` at the specified index.
   </details>
 
 ### Constructors:
 
 - <details>
   <summary>CStringSequence(params String?[])</summary>
-  Initializes a new instance of the CStringSequence class from a collection of strings.
+
+  Initializes a new instance of the `CStringSequence` class from a collection of strings.
   </details>
 - <details>
   <summary>CStringSequence(params CString?[])</summary>
-  Initializes a new instance of the CStringSequence class from a collection of UTF-8 strings.
+
+  Initializes a new instance of the `CStringSequence` class from a collection of UTF-8 strings.
   </details>
 - <details>
   <summary>CStringSequence(ReadOnlySpan&lt;CString&gt;)</summary>
-   Initializes a new instance of the CStringSequence class from a read-only span of UTF-8 strings.
+
+  Initializes a new instance of the `CStringSequence` class from a read-only span of UTF-8 strings.
   </details>
 - <details>
   <summary>CStringSequence(ReadOnlySpan&lt;String&gt;)</summary>
-   Initializes a new instance of the CStringSequence class from a read-only span of strings.
+
+  Initializes a new instance of the `CStringSequence` class from a read-only span of strings.
   </details>
 - <details>
   <summary>CStringSequence(IReadOnlySpan&lt;String?&gt;)</summary>
-  Initializes a new instance of the CStringSequence class from a collection of strings.
+
+  Initializes a new instance of the `CStringSequence` class from a collection of strings.
   </details>
 - <details>
   <summary>CStringSequence(IReadOnlySpan&lt;CString?&gt;)</summary>
-  Initializes a new instance of the CStringSequence class from a collection of UTF-8 strings.
+
+  Initializes a new instance of the `CStringSequence` class from a collection of UTF-8 strings.
   </details>
 
 ### Methods:
 
 - <details>
   <summary>ToCString()</summary>
-  Returns a CString that represents the current sequence.
+
+  Returns a `CString` that represents the current sequence.
   </details>
 - <details>
   <summary>GetFixedPointer()</summary>
-  Creates an IFixedPointer.IDisposable instance by pinning the current instance, allowing safe access to the fixed memory region.
+
+  Creates an `IFixedPointer.IDisposable` instance by pinning the current instance, allowing safe access to the fixed
+  memory region.
   </details>
 - <details>
   <summary>WithSafeTransform(CStringSequenceAction)</summary>
-  Executes a specified action using the current instance treated as a FixedCStringSequence.
+
+  Executes a specified action using the current instance treated as a `FixedCStringSequence`.
   </details>
 - <details>
   <summary>WithSafeTransform&lt;TState&gt;(TState, CStringSequenceAction)</summary>
-  Executes a specified action on the current instance treated as a FixedCStringSequence, using an additional parameter passed to the action.
+  Executes a specified action on the current instance treated as a `FixedCStringSequence`, using an additional parameter passed to the action.
   </details>
 - <details>
   <summary>WithSafeTransform&lt;TResult&gt;(CStringSequenceFunc&lt;TResult&gt;)</summary>
-  Executes a specified function using the current instance treated as a FixedCStringSequence.
+
+  Executes a specified function using the current instance treated as a `FixedCStringSequence`.
   </details>
 - <details>
   <summary>WithSafeTransform&lt;TState, TResult&gt;(TState, CStringSequenceFunc&lt;TResult&gt;)</summary>
-  Executes a specified function using the current instance treated as a FixedCStringSequence, and an additional parameter passed to the function.
+
+  Executes a specified function using the current instance treated as a `FixedCStringSequence`, and an additional
+  parameter passed to the function.
   </details>
 
 ### Operators:
 
 - <details>
   <summary>CString?(Byte[]?)</summary>
-  Defines an implicit conversion of a given Byte array to CString.
+
+  Defines an implicit conversion of a given `Byte` array to `CString`.
   </details>
 - <details>
   <summary>CString?(String?)</summary>
-  Defines an explicit conversion of a given String to CString.
+
+  Defines an explicit conversion of a given `String` to `CString`.
   </details>
 - <details>
   <summary>ReadOnlySpan&lt;Byte&gt;(CString?)</summary>
-  Defines an implicit conversion of a given CString to a read-only span of bytes.
+
+  Defines an implicit conversion of a given `CString` to a read-only span of bytes.
   </details>
 - <details>
   <summary>ReadOnlySpan&lt;Byte&gt;(CString?)</summary>
-  Defines an implicit conversion of a given CString to a read-only span of bytes.
+
+  Defines an implicit conversion of a given `CString` to a read-only span of bytes.
   </details>
 
 ### Static Methods:
@@ -1812,11 +1861,13 @@ Represents a sequence of null-terminated UTF-8 text strings.
   </details>
 - <details>
   <summary>Create(ReadOnlySpan&lt;Char&gt;)</summary>
-  Creates a new CStringSequence instance from a UTF-8 buffer.
+
+  Creates a new `CStringSequence` instance from a UTF-8 buffer.
   </details>
 - <details>
   <summary>Parse(String?)</summary>
-  Converts the buffer of a UTF-8 sequence to a CStringSequence instance.
+
+  Converts the buffer of a UTF-8 sequence to a `CStringSequence` instance.
   </details>
 
 </details>
@@ -1835,31 +1886,36 @@ Set of useful methods when working with bytes, byte arrays, and byte spans in a 
 
 - <details>
   <summary>ToValue&lt;T&gt;(this Byte[])</summary>
-  Retrieves a T value from the given byte array. 
+
+  Retrieves a `T` value from the given byte array.
 
   **Note:** ´T´ is ´unmanaged´.
   </details>
 - <details>
   <summary>ToValue&lt;T&gt;(this Span&lt;Byte&gt;)</summary>
-  Retrieves a T value from the given byte span. 
+
+  Retrieves a `T` value from the given byte span.
 
   **Note:** ´T´ is ´unmanaged´.
   </details>
 - <details>
   <summary>ToValue&lt;T&gt;(this ReadOnlySpan&lt;Byte&gt;)</summary>
-  Retrieves a T value from the given read-only byte span. 
+
+  Retrieves a `T` value from the given read-only byte span.
 
   **Note:** ´T´ is ´unmanaged´.
   </details>
 - <details>
   <summary>AsValue&lt;T&gt;(this ReadOnlySpan&lt;Byte&gt;)</summary>
-  Retrieves a read-only reference to a T value from the given read-only byte span. 
+
+  Retrieves a read-only reference to a `T` value from the given read-only byte span.
 
   **Note:** ´T´ is ´unmanaged´.
   </details>
 - <details>
   <summary>AsValue&lt;T&gt;(this Span&lt;Byte&gt;)</summary>
-  Retrieves a reference to a T value from the given byte span. 
+
+  Retrieves a reference to a `T` value from the given byte span.
 
   **Note:** ´T´ is ´unmanaged´.
   </details>
@@ -1929,15 +1985,18 @@ Additional functionality for working with delegates.
 
 - <details>
   <summary>GetUnsafeFuncPtr&lt;TDelegate&gt;(this TDelegate)</summary>
-  Creates a FuncPtr&lt;TDelegate&gt; from a memory reference to a TDelegate delegate instance.
+
+  Creates a `FuncPtr<TDelegate>` from a memory reference to a `TDelegate` delegate instance.
   </details>
 - <details>
   <summary>GetUnsafeIntPtr&lt;TDelegate&gt;(this TDelegate)</summary>
-  Retrieves an IntPtr from a memory reference to a TDelegate delegate instance.
+
+  Retrieves an `IntPtr` from a memory reference to a `TDelegate` delegate instance.
   </details>
 - <details>
   <summary>GetUnsafeUIntPtr&lt;TDelegate&gt;(this TDelegate)</summary>
-  Retrieves a UIntPtr from a memory reference to a TDelegate delegate instance.
+
+  Retrieves a `UIntPtr` from a memory reference to a `TDelegate` delegate instance.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TDelegate&gt;(this TDelegate, FixedMethodAction&lt;TDelegate&gt;)</summary>
@@ -1949,11 +2008,15 @@ Additional functionality for working with delegates.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TDelegate, TResult&gt;(this TDelegate, TArg, FixedMethodFunc&lt;TDelegate, TResult&gt;)</summary>
-  Prevents the garbage collector from relocating a delegate in memory, fixes its address, and invokes the function that returns a TResult value.
+
+  Prevents the garbage collector from relocating a delegate in memory, fixes its address, and invokes the function that
+  returns a `TResult` value.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TDelegate, TArg, TResult&gt;(this TDelegate, TArg, FixedMethodFunc&lt;TDelegate, TArg, TResult&gt;)</summary>
-  Prevents the garbage collector from relocating a delegate in memory, fixes its address, invokes the function that returns a TResult value, passing an additional argument to the function.
+
+  Prevents the garbage collector from relocating a delegate in memory, fixes its address, invokes the function that
+  returns a `TResult` value, passing an additional argument to the function.
   </details>
 
 </details>
@@ -1965,91 +2028,112 @@ Additional functionality for working with memory blocks.
 
 - <details>
   <summary>GetUnsafeValPtr&lt;T&gt;(this Span&lt;T&gt;)</summary>
-  Retrieves an unsafe ValPtr&lt;T&gt; pointer from Span&lt;T&gt; instance.
+
+  Retrieves an unsafe `ValPtr<T>` pointer from `Span<T>` instance.
   </details>
 - <details>
   <summary>GetUnsafeValPtr&lt;T&gt;(this ReadOnlySpan&lt;T&gt;)</summary>
-  Retrieves an unsafe ValPtr&lt;T&gt; pointer from ReadOnlySpan&lt;T&gt; instance.
+
+  Retrieves an unsafe `ValPtr<T>` pointer from `ReadOnlySpan<T>` instance.
   </details>
 - <details>
   <summary>GetUnsafePtr&lt;T&gt;(this Span&lt;T&gt;)</summary>
-  Retrieves an unsafe IntPtr pointer from Span&lt;T&gt; instance.
+
+  Retrieves an unsafe `IntPtr` pointer from `Span<TZ` instance.
   </details>
 - <details>
   <summary>GetUnsafePtr&lt;T&gt;(this ReadOnlySpan&lt;T&gt;)</summary>
-  Retrieves an unsafe IntPtr pointer from ReadOnlySpan&lt;T&gt; instance.
+
+  Retrieves an unsafe `IntPtr` pointer from `ReadOnlySpan<T>` instance.
   </details>
 - <details>
   <summary>GetUnsafeUIntPtr&lt;T&gt;(this Span&lt;T&gt;)</summary>
-  Retrieves an unsafe UIntPtr pointer from Span&lt;T&gt; instance.
+
+  Retrieves an unsafe `UIntPtr` pointer from `Span<T>` instance.
   </details>
 - <details>
   <summary>GetUnsafeUIntPtr&lt;T&gt;(this ReadOnlySpan&lt;T&gt;)</summary>
-  Retrieves an unsafe UIntPtr pointer from ReadOnlySpan&lt;T&gt; instance.
+
+  Retrieves an unsafe `UIntPtr` pointer from `ReadOnlySpan<T>` instance.
   </details>
 - <details>
   <summary>AsBytes&lt;TSource&gt;(this Span&lt;TSource&gt;)</summary>
-  Reinterprets the span of TSource as a binary span. 
 
-  **Note:** `T` is `unmanaged`.
+  Reinterprets the span of `TSource` as a binary span.
+
+  **Note:** `TSource` is `unmanaged`.
   </details>
 - <details>
   <summary>AsBytes&lt;TSource&gt;(this ReadOnlySpan&lt;TSource&gt;)</summary>
-  Reinterprets the read-only span of TSource as a read-only binary span. 
 
-  **Note:** `T` is `unmanaged`.
+  Reinterprets the read-only span of `TSource` as a read-only binary span.
+
+  **Note:** `TSource` is `unmanaged`.
   </details>
 - <details>
   <summary>AsValues&lt;TSource, TDestination&gt;(this Span&lt;TSource&gt;)</summary>
-  Reinterprets the span of TSource as a span of TDestination. 
 
-  **Note:** `T` is `unmanaged`.
+  Reinterprets the span of `TSource` as a span of `TDestination`.
+
+  **Note:** `TSource` is `unmanaged`. `TDestination` is `unmanaged`.
   </details>
 - <details>
   <summary>AsValues&lt;TSource, TDestination&gt;(this ReadOnlySpan&lt;TSource&gt;)</summary>
-  Reinterprets the read-only span of TSource as a read-only span of TDestination. 
 
-  **Note:** `T` is `unmanaged`.
+  Reinterprets the read-only span of `TSource` as a read-only span of `TDestination`.
+
+  **Note:** `TSource` is `unmanaged`. `TDestination` is `unmanaged`.
   </details>
 - <details>
   <summary>AsValues&lt;TSource, TDestination&gt;(this Span&lt;TSource&gt;, Span&lt;Byte&gt;)</summary>
-  Reinterprets the span of TSource as a span of TDestination. 
 
-  **Note:** `T` is `unmanaged`.
+  Reinterprets the span of `TSource` as a span of `TDestination`.
+
+  **Note:** `TSource` is `unmanaged`. `TDestination` is `unmanaged`.
   </details>
 - <details>
   <summary>AsValues&lt;TSource, TDestination&gt;(this Span&lt;TSource&gt;, ReadOnlySpan&lt;Byte&gt;)</summary>
-  Reinterprets the span of TSource as a read-only span of TDestination. 
 
-  **Note:** `T` is `unmanaged`.
+  Reinterprets the span of `TSource` as a read-only span of `TDestination`.
+
+  **Note:** `TSource` is `unmanaged`. `TDestination` is `unmanaged`.
   </details>
 - <details>
   <summary>AsValues&lt;TSource, TDestination&gt;(this ReadOnlySpan&lt;TSource&gt;, ReadOnlySpan&lt;Byte&gt;)</summary>
-  Reinterprets the read-only span of TSource as a read-only span of TDestination. 
 
-  **Note:** `T` is `unmanaged`.
+  Reinterprets the read-only span of `TSource` as a read-only span of `TDestination`.
+
+  **Note:** `TSource` is `unmanaged`. `TDestination` is `unmanaged`.
   </details>
 - <details>
   <summary>GetFixedContext&lt;T&gt;(this ReadOnlyMemory&lt;T&gt;)</summary>
-  Creates an IReadOnlyFixedContext&lt;T&gt;.IDisposable instance by pinning the current ReadOnlyMemory&lt;T&gt; instance, ensuring a safe context for accessing the fixed memory. 
+
+  Creates an `IReadOnlyFixedContext<T>.IDisposable` instance by pinning the current `ReadOnlyMemory<T>` instance,
+  ensuring a safe context for accessing the fixed memory.
 
   **Note:** `T` is `unmanaged`.
   </details>
 - <details>
   <summary>GetFixedContext&lt;T&gt;(this Memory&lt;T&gt;)</summary>
-  Creates an IFixedContext&lt;T&gt;.IDisposable instance by pinning the current Memory&lt;T&gt; instance, ensuring a safe context for accessing the fixed memory. 
+
+  Creates an `IFixedContext<T>.IDisposable` instance by pinning the current `Memory<T>` instance, ensuring a safe
+  context for accessing the fixed memory.
 
   **Note:** `T` is `unmanaged`.
   </details>
 - <details>
   <summary>GetFixedMemory&lt;T&gt;(this ReadOnlyMemory&lt;T&gt;)</summary>
-  Creates an IReadOnlyFixedMemory&lt;T&gt;.IDisposable instance by pinning the current ReadOnlyMemory&lt;T&gt; instance, ensuring a safe context for accessing the fixed memory. 
+
+  Creates an `IReadOnlyFixedMemory<T>.IDisposable` instance by pinning the current `ReadOnlyMemory<T>` instance,
+  ensuring a safe context for accessing the fixed memory.
 
   **Note:** `T` is `unmanaged`.
   </details>
 - <details>
   <summary>GetFixedMemory&lt;T&gt;(this Memory&lt;T&gt;)</summary>
-  Creates an IFixedMemory&lt;T&gt;.IDisposable instance by pinning the current Memory&lt;T&gt; instance, ensuring a safe context for accessing the fixed memory. 
+
+  Creates an `IFixedMemory<T>.IDisposable` instance by pinning the current `Memory<T>` instance, ensuring a safe context
+  for accessing the fixed memory.
 
   **Note:** `T` is `unmanaged`.
   </details>
@@ -2119,129 +2203,161 @@ Set of extensions for basic operations with `IntPtr` and `UIntPtr` instances.
 
 - <details>
   <summary>IsZero(this IntPtr)</summary>
-  Determines if the IntPtr instance is zero.
+
+  Determines if the `IntPtr` instance is zero.
   </details>
 - <details>
   <summary>IsZero(this UIntPtr)</summary>
-  Determines if the UIntPtr instance is zero.
+
+  Determines if the `UIntPtr` instance is zero.
   </details>
 - <details>
   <summary>ToUIntPtr(this IntPtr)</summary>
-  Converts the specified IntPtr instance to a UIntPtr instance.
+
+  Converts the specified `IntPtr` instance to a `UIntPtr` instance.
   </details>
 - <details>
   <summary>ToUIntPtr(this MemoryHandle)</summary>
-  Converts the specified MemoryHandle instance to a UIntPtr instance.
+  Converts the specified `MemoryHandle` instance to a `UIntPtr` instance.
   </details>
 - <details>
   <summary>ToIntPtr(this UIntPtr)</summary>
-  Converts the specified UIntPtr instance to a IntPtr instance.
+
+  Converts the specified `UIntPtr` instance to a `IntPtr` instance.
   </details>
 - <details>
   <summary>ToIntPtr(this MemoryHandle)</summary>
-  Converts the specified MemoryHandle instance to a IntPtr instance.
+
+  Converts the specified `MemoryHandle` instance to a `IntPtr` instance.
   </details>
 - <details>
   <summary>GetUnsafeString(this IntPtr)</summary>
-  Generates a String instance from the memory at the given IntPtr, interpreting the contents as UTF-16 text.
+
+  Generates a `String` instance from the memory at the given `IntPtr`, interpreting the contents as UTF-16 text.
   </details>
 - <details>
   <summary>GetUnsafeString(this UIntPtr)</summary>
-  Generates a String instance from the memory at the given UIntPtr, interpreting the contents as UTF-16 text.
+
+  Generates a `String` instance from the memory at the given `UIntPtr`, interpreting the contents as UTF-16 text.
   </details>
 - <details>
   <summary>GetUnsafeString(this MemoryHandle)</summary>
-  Generates a String instance from the memory at the given MemoryHandle, interpreting the contents as UTF-16 text.
+
+  Generates a `String` instance from the memory at the given `MemoryHandle`, interpreting the contents as UTF-16 text.
   </details>
 - <details>
   <summary>GetUnsafeString(this IntPtr, Int32)</summary>
-  Generates a String instance from the memory at the given IntPtr, interpreting the contents as UTF-16 text.
+
+  Generates a `String` instance from the memory at the given `IntPtr`, interpreting the contents as UTF-16 text.
   </details>
 - <details>
   <summary>GetUnsafeString(this UIntPtr, Int32)</summary>
-  Generates a String instance from the memory at the given UIntPtr, interpreting the contents as UTF-16 text.
+
+  Generates a `String` instance from the memory at the given `UIntPtr`, interpreting the contents as UTF-16 text.
   </details>
 - <details>
   <summary>GetUnsafeString(this MemoryHandle, Int32)</summary>
-  Generates a String instance from the memory at the given MemoryHandle, interpreting the contents as UTF-16 text.
+
+  Generates a `String` instance from the memory at the given `MemoryHandle`, interpreting the contents as UTF-16 text.
   </details>
 - <details>
   <summary>GetUnsafeArray&lt;T&gt;(this IntPtr, Int32)</summary>
-  Generates a T array by copying values from memory starting at the location referenced by an IntPtr. 
+
+  Generates a `T` array by copying values from memory starting at the location referenced by an `IntPtr`.
 
   **Note:** ´T´ is ´unmanaged´.
   </details>
 - <details>
   <summary>GetUnsafeArray&lt;T&gt;(this UIntPtr, Int32)</summary>
-  Generates a T array by copying values from memory starting at the location referenced by a UIntPtr. 
+
+  Generates a `T` array by copying values from memory starting at the location referenced by a `UIntPtr`.
 
   **Note:** ´T´ is ´unmanaged´.
   </details>
 - <details>
   <summary>GetUnsafeArray&lt;T&gt;(this MemoryHandle, Int32)</summary>
-  Generates a T array by copying values from memory starting at the location referenced by a MemoryHandle. 
+
+  Generates a `T` array by copying values from memory starting at the location referenced by a `MemoryHandle`.
 
   **Note:** ´T´ is ´unmanaged´.
   </details>
 - <details>
   <summary>GetUnsafeSpan&lt;T&gt;(this IntPtr, Int32)</summary>
-  Generates a Span&lt;T&gt; instance from an IntPtr, interpreting the memory at the specified location as a sequence of unmanaged values. 
+
+  Generates a `Span<T>` instance from an `IntPtr`, interpreting the memory at the specified location as a sequence of
+  unmanaged values.
 
   **Note:** ´T´ is ´unmanaged´.
   </details>
 - <details>
   <summary>GetUnsafeSpan&lt;T&gt;(this UIntPtr, Int32)</summary>
-  Generates a Span&lt;T&gt; instance from a UIntPtr, interpreting the memory at the specified location as a sequence of unmanaged values. 
+
+  Generates a `Span<T>` instance from a `UIntPtr`, interpreting the memory at the specified location as a sequence of
+  unmanaged values.
 
   **Note:** ´T´ is ´unmanaged´.
   </details>
 - <details>
   <summary>GetUnsafeSpan&lt;T&gt;(this MemoryHandle, Int32)</summary>
-  Generates a Span&lt;T&gt; instance from a MemoryHandle, interpreting the memory at the specified location as a sequence of unmanaged values. 
+
+  Generates a `Span<T>` instance from a `MemoryHandle`, interpreting the memory at the specified location as a sequence
+  of unmanaged values.
 
   **Note:** ´T´ is ´unmanaged´.
   </details>
 - <details>
   <summary>GetUnsafeReadOnlySpan&lt;T&gt;(this IntPtr, Int32)</summary>
-  Generates a ReadOnlySpan&lt;T&gt; instance from an IntPtr, interpreting the memory at the specified location as a sequence of unmanaged values. 
+
+  Generates a `ReadOnlySpan<T>` instance from an `IntPtr`, interpreting the memory at the specified location as a
+  sequence of unmanaged values.
 
   **Note:** ´T´ is ´unmanaged´.
   </details>
 - <details>
   <summary>GetUnsafeReadOnlySpan&lt;T&gt;(this UIntPtr, Int32)</summary>
-  Generates a ReadOnlySpan&lt;T&gt; instance from a UIntPtr, interpreting the memory at the specified location as a sequence of unmanaged values. 
+
+  Generates a `ReadOnlySpan<T>` instance from a `UIntPtr`, interpreting the memory at the specified location as a
+  sequence of unmanaged values.
 
   **Note:** ´T´ is ´unmanaged´.
   </details>
 - <details>
   <summary>GetUnsafeReadOnlySpan&lt;T&gt;(this MemoryHandle, Int32)</summary>
-  Generates a ReadOnlySpan&lt;T&gt; instance from a MemoryHandle, interpreting the memory at the specified location as a sequence of unmanaged values. 
+
+  Generates a `ReadOnlySpan<T>` instance from a `MemoryHandle`, interpreting the memory at the specified location as a
+  sequence of unmanaged values.
 
   **Note:** ´T´ is ´unmanaged´.
   </details>
 - <details>
   <summary>GetUnsafeDelegate&lt;TDelegate&gt;(this IntPtr)</summary>
-  Generates a delegate of type TDelegate from an IntPtr.
+
+  Generates a delegate of type `TDelegate` from an `IntPtr`.
   </details>
 - <details>
   <summary>GetUnsafeDelegate&lt;TDelegate&gt;(this UIntPtr)</summary>
-  Creates a delegate of type TDelegate from a UIntPtr.
+
+  Creates a delegate of type `TDelegate` from a `UIntPtr`.
   </details>
 - <details>
   <summary>GetUnsafeReference&lt;T&gt;(this IntPtr)</summary>
-  Generates a memory reference to an unmanaged value of type T from IntPtr.
+
+  Generates a memory reference to an unmanaged value of type `T` from `IntPtr`.
   </details>
 - <details>
   <summary>GetUnsafeReference&lt;T&gt;(this UIntPtr)</summary>
-  Generates a memory reference to an unmanaged value of type T from UIntPtr.
+
+  Generates a memory reference to an unmanaged value of type `T` from `UIntPtr`.
   </details>
 - <details>
   <summary>GetUnsafeReadOnlyReference&lt;T&gt;(this IntPtr)</summary>
-  Generates a read-only memory reference to an unmanaged value of type T from IntPtr.
+
+  Generates a read-only memory reference to an unmanaged value of type `T` from `IntPtr`.
   </details>
 - <details>
   <summary>GetUnsafeReadOnlyReference&lt;T&gt;(this UIntPtr)</summary>
-  Generates a read-only memory reference to an unmanaged value of type T from UIntPtr.
+
+  Generates a read-only memory reference to an unmanaged value of type `T` from `UIntPtr`.
   </details>
 
 </details>
@@ -2253,15 +2369,21 @@ Set of extensions for `CString` operations with `IntPtr` and `UIntPtr` instances
 
 - <details>
   <summary>GetUnsafeCString(this IntPtr, Int32)</summary>
-  Generates a CString instance using the memory reference pointed to by the given IntPtr, considering it as the start of a UTF-8 encoded string.
+
+  Generates a `CString` instance using the memory reference pointed to by the given `IntPtr`, considering it as the
+  start of a UTF-8 encoded string.
   </details>
 - <details>
   <summary>GetUnsafeCString(this UIntPtr, Int32)</summary>
-  Generates a CString instance using the memory reference pointed to by the given UIntPtr, considering it as the start of a UTF-8 encoded string.
+
+  Generates a `CString` instance using the memory reference pointed to by the given `UIntPtr`, considering it as the
+  start of a UTF-8 encoded string.
   </details>
 - <details>
   <summary>GetUnsafeCString(this MemoryHandle, Int32)</summary>
-  Generates a CString instance using the memory reference pointed to by the given MemoryHandle, considering it as the start of a UTF-8 encoded string.
+
+  Generates a `CString` instance using the memory reference pointed to by the given `MemoryHandle`, considering it as
+  the start of a UTF-8 encoded string.
   </details>
 
 </details>
@@ -2273,23 +2395,29 @@ Set of extensions for basic operations with references to `unmanaged` values.
 
 - <details>
   <summary>GetUnsafeValPtr&lt;T&gt;(ref this T)</summary>
-  Obtains an unsafe pointer of type ValPtr&lt;T&gt; from a reference to an unmanaged value of type T.
+
+  Obtains an unsafe pointer of type `ValPtr<T>` from a reference to an unmanaged value of type `T`.
   </details>
 - <details>
   <summary>GetUnsafeIntPtr&lt;T&gt;(ref this T)</summary>
-  Obtains an unsafe pointer of type IntPtr from a reference to an unmanaged value of type T.
+
+  Obtains an unsafe pointer of type `IntPtr` from a reference to an unmanaged value of type `T`.
   </details>
 - <details>
   <summary>GetUnsafeUIntPtr&lt;T&gt;(ref this T)</summary>
-  Obtains an unsafe pointer of type UIntPtr from a reference to an unmanaged value of type T.
+
+  Obtains an unsafe pointer of type `UIntPtr` from a reference to an unmanaged value of type `T`.
   </details>
 - <details>
   <summary>Transform&lt;TSource, TDestination&gt;(ref this TSource)</summary>
-  Generates a reference for an unmanaged value of type TDestination from an existing reference to an unmanaged value of type TSource.
+
+  Generates a reference for an unmanaged value of type `TDestination` from an existing reference to an unmanaged value
+  of type `TSource`.
   </details>
 - <details>
   <summary>AsBytes&lt;TSource&gt;(ref this TSource)</summary>
-  Creates a Span&lt;Byte&gt; from a reference to an unmanaged value of type TSource.
+
+  Creates a `Span<Byte>` from a reference to an unmanaged value of type `TSource`.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T&gt;(ref this T, FixedReferenceAction&lt;T&gt;)</summary>
@@ -2357,19 +2485,24 @@ Set of extensions for basic operations with `unmanaged` values.
 
 - <details>
   <summary>ToBytes&lt;T&gt;(this T)</summary>
-  Converts a given unmanaged value of type T into an array of Byte.
+
+  Converts a given unmanaged value of type `T` into an array of `Byte`.
   </details>
 - <details>
   <summary>ToBytes&lt;TSource&gt;(this TSource[]?)</summary>
-  Converts an array of unmanaged values of type TSource into an array of Byte.
+
+  Converts an array of unmanaged values of type `TSource` into an array of `Byte`.
   </details>
 - <details>
   <summary>ToValues&lt;TSource, TDestination&gt;(this TSource[]?)</summary>
-  Converts an array of unmanaged values of type TSource into an array of another unmanaged value type TDestination.
+
+  Converts an array of unmanaged values of type `TSource` into an array of another unmanaged value type `TDestination`.
   </details>
 - <details>
   <summary>ToValues&lt;TSource, TDestination&gt;(this TSource[]?, out Byte[]?)</summary>
-  Converts an array of unmanaged values of type TSource into an array of another unmanaged value type TDestination and provides the residual binary array of the reinterpretation.
+
+  Converts an array of unmanaged values of type `TSource` into an array of another unmanaged value type `TDestination`
+  and provides the residual binary array of the reinterpretation.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T&gt;(ref this T, FixedReferenceAction&lt;T&gt;)</summary>
@@ -2443,25 +2576,29 @@ This class allows to allocate buffers on stack if possible.
   Indicates whether metadata for any required buffer is auto-composed.
 
   **Note:** This property will always be false if compiled with `IlcDisableReflection=true` or if the
-  `PInvoke.DisableBufferAutoComposition` feature switch is disabled.
+  `PInvoke.DisableBufferAutoComposition` feature switch is enabled.
   </details>
 
 #### Static Methods:
 
 - <details>
   <summary>Alloc&lt;T&gt;(UInt16, ScopedBufferAction&lt;T&gt;, Boolean)</summary>
+
   Allocates a buffer with `count` elements and executes `action`.
   </details>
 - <details>
   <summary>Alloc&lt;T, TState&gt;(UInt16, TState, ScopedBufferAction&lt;T, TState&gt;, Boolean)</summary>
+
   Allocates a buffer with `count` elements and executes `action`.
   </details>
 - <details>
   <summary>Alloc&lt;T, TResult&gt;(UInt16, ScopedBufferFunc&lt;T, TResult&gt;, Boolean)</summary>
+
   Allocates a buffer with `count` elements and executes `func`.
   </details>
 - <details>
   <summary>Alloc&lt;T, TState, TResult&gt;(UInt16, TState, ScopedBufferFunc&lt;T, TState, TResult&gt;, Boolean)</summary>
+
   Allocates a buffer with `count` elements and executes `func`.
   </details>
 - <details>
@@ -2472,13 +2609,15 @@ This class allows to allocate buffers on stack if possible.
   </details>
 - <details>
   <summary>Register&lt;T, TBuffer&gt;()</summary>
-  Registers T buffer.
+
+  Registers `T` buffer.
 
   **Note:** `T` is `struct`. `TBuffer` is `struct` and `IManagedBuffer<T>`.
   </details>
 - <details>
   <summary>RegisterNullable&lt;T, TBuffer&gt;()</summary>
-  Registers T? buffer.
+
+  Registers `T?` buffer.
 
   **Note:** `T` is `struct`. `TBuffer` is `struct` and `IManagedBuffer<T?>`.
   </details>
@@ -2501,7 +2640,8 @@ Set of utilities for exchange data within the P/Invoke context.
 
 - <details>
   <summary>SizeOf&lt;T&gt;()</summary>
-  Gets the memory size of T structure.
+
+  Gets the memory size of `T` structure.
 
   **Note:** `T` is `unmanaged`.
   </details>
@@ -2519,57 +2659,71 @@ Set of utilities for exchange data within the P/Invoke context.
   </details>
 - <details>
   <summary>GetUnsafeFuncPtr&lt;TDelegate&gt;(TDelegate)</summary>
-  Creates an FuncPtr&lt;TDelegate&gt; from a memory reference to a TDelegate delegate instance.
+
+  Creates an `FuncPtr<TDelegate>` from a memory reference to a `TDelegate` delegate instance.
   </details>
 - <details>
   <summary>GetUnsafeValPtr&lt;T&gt;(in T)</summary>
-  Retrieves an unsafe ReadOnlyValPtr&lt;T&gt; pointer from a read-only reference to a T value.
+
+  Retrieves an unsafe `ReadOnlyValPtr<T>` pointer from a read-only reference to a `T` value.
   </details>
 - <details>
   <summary>GetUnsafeValPtrFromRef&lt;T&gt;(ref T)</summary>
-  Retrieves an unsafe pointer of type ValPtr&lt;T&gt; from a reference to a value of type T.
+
+  Retrieves an unsafe pointer of type `ValPtr<T>` from a reference to a value of type T.
   </details>
 - <details>
   <summary>GetUnsafeIntPtr&lt;T&gt;(in T)</summary>
-  Retrieves an unsafe IntPtr pointer from a read-only reference to a T unmanaged value.
+
+  Retrieves an unsafe `IntPtr` pointer from a read-only reference to a `T` unmanaged value.
   </details>
 - <details>
   <summary>GetUnsafeUIntPtr&lt;T&gt;(in T)</summary>
-  Retrieves an unsafe UIntPtr pointer from a read-only reference to a T unmanaged value.
+
+  Retrieves an unsafe `UIntPtr` pointer from a read-only reference to a `T` unmanaged value.
   </details>
 - <details>
   <summary>Transform&lt;TSource, TDestination&gt;(in TSource)</summary>
-  Transforms a read-only reference of an unmanaged value of type TSource into a read-only reference of an unmanaged value of type TDestination.
+
+  Transforms a read-only reference of an unmanaged value of type `TSource` into a read-only reference of an unmanaged
+  value of type `TDestination`.
   </details>
 - <details>
   <summary>TransformReference&lt;TSource, TDestination&gt;(ref TSource)</summary>
-  Transforms a reference of an unmanaged value of type TSource into a reference of an unmanaged value of type TDestination.
+
+  Transforms a reference of an unmanaged value of type `TSource` into a reference of an unmanaged value of type
+  `TDestination`.
   </details>
 - <details>
   <summary>ToBytes&lt;T&gt;(in TSource)</summary>
-  Retrieves a Byte array from a read-only reference to a TSource value.
+
+  Retrieves a `Byte` array from a read-only reference to a `TSource` value.
 
   **Note:** `TSource` is `unmanaged`.
   </details>
 - <details>
   <summary>AsBytes&lt;TSource&gt;(in TSource)</summary>
-  Creates a ReadOnlySpan&lt;Byte&gt; from an exising read-only reference to a TSource unmanaged value.
+
+  Creates a `ReadOnlySpan<Byte>` from an exising read-only reference to a `TSource` unmanaged value.
   </details>
 - <details>
   <summary>AsBinarySpan&lt;TSource&gt;(ref TSource)</summary>
-  Creates a Span&lt;Byte&gt; from an exising reference to a TSource value. 
+
+  Creates a `Span<Byte>` from an exising reference to a `TSource` value.
 
   **Note:** `TSource` is `unmanaged`.
   </details>
 - <details>
   <summary>CreateArray&lt;T, TState&gt;(Int32, TState, SpanAction&lt;T, TState&gt;)</summary>
-  Creates a new T array with a specific length and initializes it after creation by using the specified callback.
+
+  Creates a new `T` array with a specific length and initializes it after creation by using the specified callback.
 
   **Note:** `T` is `unmanaged`.
   </details>
 - <details>
   <summary>CopyBytes&lt;T&gt;(in TSource, Span&lt;Byte&gt;, Int32)</summary>
-  Performs a binary copy of the given TSource to the destination span.
+
+  Performs a binary copy of the given `TSource` to the destination span.
 
   **Note:** `TSource` is `unmanaged`.
   </details>
