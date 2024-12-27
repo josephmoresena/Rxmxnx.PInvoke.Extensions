@@ -97,7 +97,7 @@ to be used without modification.
 
 - <details>
   <summary>Reference</summary>
-  
+
   Gets the read-only reference to the instance of an object of type `T`.
   </details>
 
@@ -118,7 +118,7 @@ inheritance.
 
 - <details>
   <summary>Reference</summary>
-  
+
   Gets the reference to the instance of an object of type `T`.
   </details>
 
@@ -139,7 +139,7 @@ This interface defines a wrapper for a `T` object.
 
 - <details>
   <summary>Value</summary>
-  
+
   The wrapped `T` object.
   </details>
 
@@ -147,7 +147,7 @@ This interface defines a wrapper for a `T` object.
 
 - <details>
   <summary>Create(T?)</summary>
-  
+
   Creates a new instance of an object that implements `IWrapper<T>` interface.
   </details>
 
@@ -160,19 +160,22 @@ This interface defines a wrapper for a `T` object.
 
 - <details>
   <summary>Create&lt;TValue&gt;(TValue)</summary>
-  Creates a new instance of an object that implements IWrapper&lt;TValue&gt; interface.
+
+  Creates a new instance of an object that implements `IWrapper<TValue>` interface.
 
   **Note:** `TValue` generic type is `struct`.
   </details>
 - <details>
   <summary>CreateNullable&lt;TValue&gt;(TValue?)</summary>
-  Creates a new instance of an object that implements IWrapper&lt;TValue?&gt; interface.
+
+  Creates a new instance of an object that implements `IWrapper<TValue?>` interface.
 
   **Note:** `TValue` generic type is `struct`.
   </details>
 - <details>
   <summary>CreateObject&lt;TObject&gt;(TObject)</summary>
-  Creates a new instance of an object that implements IWrapper&lt;TObject&gt; interface.
+
+  Creates a new instance of an object that implements `IWrapper<TObject>` interface.
 
   **Note:** `TObject` generic type is a `reference type`.
   </details>
@@ -190,14 +193,16 @@ This interface defines a wrapper for an object whose value can be modified.
 
 - <details>
   <summary>Value</summary>
-  The wrapped T object.
+
+  The wrapped `T` object.
   </details>
 
 #### Static Methods:
 
 - <details>
   <summary>Create(T?)</summary>
-  Creates a new instance of an object that implements IMutableWrapper&lt;T&gt; interface.
+
+  Creates a new instance of an object that implements `IMutableWrapper<T>` interface.
   </details>
 
 #### Non-generic interface
@@ -209,19 +214,22 @@ This interface defines a wrapper for an object whose value can be modified.
 
 - <details>
   <summary>Create&lt;TValue&gt;(TValue)</summary>
-  Creates a new instance of an object that implements IMutableWrapper&lt;TValue&gt; interface.
+
+  Creates a new instance of an object that implements `IMutableWrapper<TValue>` interface.
 
   **Note:** `TValue` generic type is `struct`.
   </details>
 - <details>
   <summary>CreateNullable&lt;TValue&gt;(TValue?)</summary>
-  Creates a new instance of an object that implements IMutableWrapper&lt;TValue?&gt; interface.
+
+  Creates a new instance of an object that implements `IMutableWrapper<TValue?>` interface.
 
   **Note:** `TValue` generic type is `struct`.
   </details>
 - <details>
   <summary>CreateObject&lt;TObject&gt;(TObject)</summary>
-  Creates a new instance of an object that implements IMutableWrapper&lt;TObject&gt; interface.
+
+  Creates a new instance of an object that implements `IMutableWrapper<TObject>` interface.
 
   **Note:** `TObject` generic type is a `reference type`.
   </details>
@@ -231,7 +239,7 @@ This interface defines a wrapper for an object whose value can be modified.
 <details>
   <summary>IMutableReference&lt;T&gt;</summary>
 
-This interface exposes a wrapper for T object that can be referenced and whose value can be modified.
+This interface exposes a wrapper for `T` object that can be referenced and whose value can be modified.
 
 **Note:** This interface inherits from `IMutableWrapper<T>` and `IReferenceable<T>`. This type allows public
 implementation or
@@ -241,14 +249,16 @@ inheritance.
 
 - <details>
   <summary>Reference</summary>
-  Reference to T wrapped instance.
+
+  Reference to `T` wrapped instance.
   </details>
 
 #### Static Methods:
 
 - <details>
   <summary>Create(T?)</summary>
-  Creates a new instance of an object that implements IMutableReference&lt;T&gt; interface.
+
+  Creates a new instance of an object that implements `IMutableReference<T>` interface.
   </details>
 
 #### Non-generic interface
@@ -260,19 +270,22 @@ inheritance.
 
 - <details>
   <summary>Create&lt;TValue&gt;(TValue)</summary>
-  Creates a new instance of an object that implements IMutableReference&lt;TValue&gt; interface.
+
+  Creates a new instance of an object that implements `IMutableReference<TValue>` interface.
 
   **Note:** `TValue` generic type is `struct`.
   </details>
 - <details>
   <summary>CreateNullable&lt;TValue&gt;(TValue?)</summary>
-  Creates a new instance of an object that implements IMutableReference&lt;TValue?&gt; interface.
+
+  Creates a new instance of an object that implements `IMutableReference<TValue?>` interface.
 
   **Note:** `TValue` generic type is `struct`.
   </details>
 - <details>
   <summary>CreateObject&lt;TObject&gt;(TObject)</summary>
-  Creates a new instance of an object that implements IMutableReference&lt;TObject&gt; interface.
+
+  Creates a new instance of an object that implements `IMutableReference<TObject>` interface.
 
   **Note:** `TObject` generic type is a `reference type`.
   </details>
@@ -346,11 +359,13 @@ Interface representing a read-only fixed block of memory.
 
 - <details>
   <summary>AsBinaryContext()</summary>
-   Creates a new instance of IReadOnlyFixedContext&lt;Byte&gt; from the current instance.
+
+  Creates a new instance of `IReadOnlyFixedContext<Byte>` from the current instance.
   </details>
 - <details>
   <summary>AsObjectContext()</summary>
-   Creates a new instance of IReadOnlyFixedContext&lt;Object&gt; from the current instance.
+
+  Creates a new instance of `IReadOnlyFixedContext<Object>` from the current instance.
   </details>
 
 #### Disposable interface
@@ -379,7 +394,8 @@ Interface representing a read-only fixed block of memory for a specific type.
 
 - <details>
   <summary>Values</summary>
-   Gets a read-only T span over the fixed block of memory.
+
+  Gets a read-only `T` span over the fixed block of memory.
   </details>
 
 #### Disposable interface
@@ -415,11 +431,13 @@ Interface representing a fixed block of memory.
 
 - <details>
   <summary>AsBinaryContext()</summary>
-   Creates a new instance of IFixedContext&lt;Byte&gt; from the current instance.
+
+  Creates a new instance of `IFixedContext<Byte>` from the current instance.
   </details>
 - <details>
   <summary>AsObjectContext()</summary>
-   Creates a new instance of IFixedContext&lt;Object&gt; from the current instance.
+
+  Creates a new instance of `IFixedContext<Object>` from the current instance.
   </details>
 
 #### Disposable interface
@@ -450,7 +468,8 @@ or inheritance.
 
 - <details>
   <summary>Values</summary>
-   Gets a T span over the fixed block of memory.
+
+  Gets a `T` span over the fixed block of memory.
   </details>
 
 #### Disposable interface
@@ -476,7 +495,8 @@ implementation or inheritance.
 
 - <details>
   <summary>Transformation(out IReadOnlyFixedMemory)</summary>
-   Reinterprets the read-only T fixed memory reference as a read-only TDestination memory reference.
+
+  Reinterprets the read-only `T` fixed memory reference as a read-only `TDestination` memory reference.
   </details>
 
 #### Disposable interface
@@ -503,12 +523,14 @@ public implementation or inheritance.
 
 - <details>
   <summary>Transformation(out IFixedMemory)</summary>
-   Reinterprets the T fixed memory reference as a TDestination memory reference.
+
+  Reinterprets the `T` fixed memory reference as a `TDestination` memory reference.
   </details>
 
 - <details>
   <summary>Transformation(out IReadOnlyFixedMemory)</summary>
-   Reinterprets the T fixed memory reference as a TDestination memory reference.
+
+  Reinterprets the `T` fixed memory reference as a `TDestination` memory reference.
   </details>
 
 #### Disposable interface
@@ -533,7 +555,8 @@ Interface representing a context from a read-only block of fixed memory.
 
 - <details>
   <summary>Transformation(out IReadOnlyFixedMemory)</summary>
-   Reinterprets the T fixed memory block as TDestination memory block.
+
+  Reinterprets the `T` fixed memory block as `TDestination` memory block.
   </details>
 
 #### Disposable interface
@@ -560,12 +583,13 @@ or inheritance.
 
 - <details>
   <summary>Transformation(out IFixedMemory)</summary>
-   Reinterprets the T fixed memory block as a TDestination memory block.
+
+  Reinterprets the `T` fixed memory block as a `TDestination` memory block.
   </details>
 
 - <details>
   <summary>Transformation(out IReadOnlyFixedMemory)</summary>
-   Reinterprets the T fixed memory block as a TDestination memory block.
+   Reinterprets the `T` fixed memory block as a `TDestination` memory block.
   </details>
 
 #### Disposable interface
@@ -605,7 +629,8 @@ Defines methods to support a simple iteration over a sequence of a specified typ
 
 - <details>
   <summary>DisposeEnumeration(Int32)</summary>
-   Method to call when IEnumerator&lt;T&gt; is disposing.
+
+  Method to call when `IEnumerator<T>` is disposing.
   </details>
 
 </details>
@@ -649,7 +674,8 @@ This interfaces exposes a managed buffer.
 
 - <details>
   <summary>GetMetadata&lt;TBuffer&gt;()</summary>
-   Retrieves the BufferTypeMetadata&lt;T&gt; instance from TBuffer.
+
+  Retrieves the `BufferTypeMetadata<T>` instance from `TBuffer`.
   </details>
 
 </details>
@@ -665,7 +691,8 @@ This interfaces exposes a binary managed buffer.
 
 - <details>
   <summary>Metadata&lt;TBuffer&gt;()</summary>
-   Retrieves the BufferTypeMetadata&lt;T&gt; instance from current instance.
+
+  Retrieves the `BufferTypeMetadata<T>` instance from current instance.
   </details>
 
 </details>
@@ -1144,7 +1171,8 @@ Represents a platform-specific type used to manage a pointer to a read-only valu
   </details>
 - <details>
   <summary>IsUnmanaged</summary>
-  Indicates if T type is an unmanaged type.
+
+  Indicates if `T` type is an unmanaged type.
   </details>
 
 #### Properties:
@@ -1166,11 +1194,13 @@ Represents a platform-specific type used to manage a pointer to a read-only valu
 
 - <details>
   <summary>GetUnsafeFixedReference(IDisposable?)</summary>
-  Retrieves an unsafe IReadOnlyFixedReference&lt;T&gt;.IDisposable instance from current read-only reference pointer.
+
+  Retrieves an unsafe `IReadOnlyFixedReference<T>.IDisposable` instance from current read-only reference pointer.
   </details>
 - <details>
   <summary>GetUnsafeFixedContext(IDisposable?)</summary>
-  Retrieves an unsafe IReadOnlyFixedContext&lt;T&gt;.IDisposable instance from current read-only reference pointer.
+
+  Retrieves an unsafe `IReadOnlyFixedContext<T>.IDisposable` instance from current read-only reference pointer.
   </details>
 
 </details>
@@ -1191,7 +1221,8 @@ Represents a platform-specific type used to manage a pointer to a mutable value 
   </details>
 - <details>
   <summary>IsUnmanaged</summary>
-  Indicates if T type is an unmanaged type.
+
+  Indicates if `T` type is an unmanaged type.
   </details>
 
 #### Properties:
@@ -1213,11 +1244,13 @@ Represents a platform-specific type used to manage a pointer to a mutable value 
 
 - <details>
   <summary>GetUnsafeFixedReference(IDisposable?)</summary>
-  Retrieves an unsafe IReadOnlyFixedReference&lt;T&gt;.IDisposable instance from current reference pointer.
+
+  Retrieves an unsafe `IReadOnlyFixedReference<T>.IDisposable` instance from current reference pointer.
   </details>
 - <details>
   <summary>GetUnsafeFixedContext(IDisposable?)</summary>
-  Retrieves an unsafe IReadOnlyFixedContext&lt;T&gt;.IDisposable instance from current reference pointer.
+
+  Retrieves an unsafe `IReadOnlyFixedContext<T>.IDisposable` instance from current reference pointer.
   </details>
 
 </details>
@@ -1280,14 +1313,16 @@ Represents a list of `IReadOnlyFixedMemory` instances.
 
 - <details>
   <summary>Item</summary>
-  Gets the IReadOnlyFixedMemory at the specified index.
+
+  Gets the `IReadOnlyFixedMemory` at the specified index.
   </details>
 
 #### Methods:
 
 - <details>
   <summary>ToArray()</summary>
-  Creates an array from the current ReadOnlyFixedMemoryList instance.
+
+  Creates an array from the current `ReadOnlyFixedMemoryList` instance.
   </details>
 
 </details>
@@ -1314,14 +1349,16 @@ Represents a list of `IFixedMemory` instances.
 
 - <details>
   <summary>Item</summary>
-  Gets the IFixedMemory at the specified index.
+
+  Gets the `IFixedMemory` at the specified index.
   </details>
 
 #### Methods:
 
 - <details>
   <summary>ToArray()</summary>
-  Creates an array from the current FixedMemoryList instance.
+
+  Creates an array from the current `FixedMemoryList` instance.
   </details>
 
 </details>
@@ -1337,7 +1374,8 @@ Represents a `CStringSequence` that is fixed in memory.
 
 - <details>
   <summary>Values</summary>
-  Gets the list of CString values in the sequence.
+
+  Gets the list of `CString` values in the sequence.
   </details>
 
 #### Indexer:
@@ -1351,7 +1389,8 @@ Represents a `CStringSequence` that is fixed in memory.
 
 - <details>
   <summary>ToArray()</summary>
-  Creates an array of IReadOnlyFixedMemory instances from the current instance.
+
+  Creates an array of `IReadOnlyFixedMemory` instances from the current instance.
   </details>
 
 </details>
@@ -1436,30 +1475,36 @@ This class represents a region of memory that contains a sequence of `T` values.
 
 - <details>
   <summary>ReadOnlySpan&lt;T&gt;(ValueRegion&lt;T&gt;)</summary>
-  Converts the value of the current ValueRegion&lt;T&gt; to its equivalent read-only span representation.
+
+  Converts the value of the current `ValueRegion<T>` to its equivalent read-only span representation.
   </details>
 - <details>
   <summary>T[]?(ValueRegion&lt;T&gt;)</summary>
-  Converts the value of the current ValueRegion&lt;T&gt; to its equivalent array representation.
+
+  Converts the value of the current `ValueRegion<T>` to its equivalent array representation.
   </details>
 
 ### Static Methods:
 
 - <details>
   <summary>Create(T[])</summary>
-  Creates a new ValueRegion&lt;T&gt; instance from an array of T values.
+
+  Creates a new `ValueRegion<T>` instance from an array of `T` values.
   </details>
 - <details>
   <summary>Create(IntPtr, Int32)</summary>
-  Creates a new ValueRegion&lt;T&gt; instance from a pointer to a native memory region.
+
+  Creates a new `ValueRegion<T>` instance from a pointer to a native memory region.
   </details>
 - <details>
   <summary>Create(ReadOnlySpanFunc&lt;T&gt;)</summary>
-  Creates a new ValueRegion&lt;T&gt; instance from a ReadOnlySpanFunc&lt;T&gt; function.
+
+  Creates a new `ValueRegion<T>` instance from a `ReadOnlySpanFunc<T>` function.
   </details>
 - <details>
   <summary>Create&lt;TState&gt;(TState, ReadOnlySpanFunc&lt;T, TState&gt;)</summary>
-  Creates a new ValueRegion&lt;T&gt; instance from a ReadOnlySpanFunc&lt;T, TState&gt; function and TState instance.
+
+  Creates a new `ValueRegion<T>` instance from a `ReadOnlySpanFunc<T, TState>` function and TState instance.
   </details>
 
 </details>
