@@ -18,7 +18,7 @@ public unsafe partial class CString
 		ReadOnlySpan<Byte> span = this._data;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 		{
-			ReadOnlyFixedContext<Byte> ctx = new(ptr, this._length);
+			ReadOnlyFixedContext<Byte> ctx = new(ptr, this.Length);
 			try
 			{
 				action(ctx);
@@ -41,12 +41,15 @@ public unsafe partial class CString
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void WithSafeFixed<TArg>(TArg arg, ReadOnlyFixedAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		ReadOnlySpan<Byte> span = this._data;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 		{
-			ReadOnlyFixedContext<Byte> ctx = new(ptr, this._length);
+			ReadOnlyFixedContext<Byte> ctx = new(ptr, this.Length);
 			try
 			{
 				action(ctx, arg);
@@ -74,7 +77,7 @@ public unsafe partial class CString
 		ReadOnlySpan<Byte> span = this._data;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 		{
-			ReadOnlyFixedContext<Byte> ctx = new(ptr, this._length);
+			ReadOnlyFixedContext<Byte> ctx = new(ptr, this.Length);
 			try
 			{
 				return func(ctx);
@@ -99,12 +102,15 @@ public unsafe partial class CString
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public TResult WithSafeFixed<TArg, TResult>(TArg arg, ReadOnlyFixedFunc<TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		ReadOnlySpan<Byte> span = this._data;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 		{
-			ReadOnlyFixedContext<Byte> ctx = new(ptr, this._length);
+			ReadOnlyFixedContext<Byte> ctx = new(ptr, this.Length);
 			try
 			{
 				return func(ctx, arg);

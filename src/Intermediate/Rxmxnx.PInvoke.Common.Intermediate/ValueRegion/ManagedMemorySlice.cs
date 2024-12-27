@@ -40,7 +40,7 @@ public partial class ValueRegion<T>
 			=> this._array = region._array;
 
 		/// <inheritdoc/>
-		protected override T[]? AsArray() => !this.IsMemorySlice ? this._array : default;
+		private protected override T[]? AsArray() => !this.IsMemorySlice ? this._array : default;
 
 		/// <inheritdoc/>
 		internal override ReadOnlySpan<T> AsSpan() => this._array.AsSpan()[this.Offset..this.End];

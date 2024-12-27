@@ -48,12 +48,10 @@ public sealed class LoadNativeLibTest
 	[InlineData(false)]
 	internal void NormalTest(Boolean unloadEvent)
 	{
-		IntPtr? result = default;
 		EventHandler? eventHandler = default;
-		if (unloadEvent)
-			result = NativeUtilities.LoadNativeLib(LoadNativeLibTest.LibraryName, ref eventHandler);
-		else
-			result = NativeUtilities.LoadNativeLib(LoadNativeLibTest.LibraryName);
+		IntPtr? result = unloadEvent ?
+			NativeUtilities.LoadNativeLib(LoadNativeLibTest.LibraryName, ref eventHandler) :
+			NativeUtilities.LoadNativeLib(LoadNativeLibTest.LibraryName);
 		Assert.NotNull(result);
 		if (unloadEvent)
 		{

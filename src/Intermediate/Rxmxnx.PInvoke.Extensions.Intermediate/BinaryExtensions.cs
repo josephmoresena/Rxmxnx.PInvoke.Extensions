@@ -40,40 +40,40 @@ public static unsafe partial class BinaryExtensions
 		return MemoryMarshal.Read<T>(result);
 	}
 	/// <summary>
-	/// Retrieves a read-only reference to a <typeparamref name="TValue"/> value from the given read-only byte span.
+	/// Retrieves a read-only reference to a <typeparamref name="T"/> value from the given read-only byte span.
 	/// </summary>
-	/// <typeparam name="TValue">The type of the value to be referenced.</typeparam>
+	/// <typeparam name="T">The type of the value to be referenced.</typeparam>
 	/// <param name="span">The source read-only byte span.</param>
-	/// <returns>A read-only reference to the <typeparamref name="TValue"/> value.</returns>
+	/// <returns>A read-only reference to the <typeparamref name="T"/> value.</returns>
 	/// <exception cref="InsufficientMemoryException">
-	/// Thrown if the size of the binary span is less than the size of the type <typeparamref name="TValue"/>.
+	/// Thrown if the size of the binary span is less than the size of the type <typeparamref name="T"/>.
 	/// </exception>
 	/// <exception cref="InvalidCastException">
-	/// Thrown if the size of the binary span is greater than the size of the type <typeparamref name="TValue"/>.
+	/// Thrown if the size of the binary span is greater than the size of the type <typeparamref name="T"/>.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static ref readonly TValue AsValue<TValue>(this ReadOnlySpan<Byte> span) where TValue : unmanaged
+	public static ref readonly T AsValue<T>(this ReadOnlySpan<Byte> span) where T : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidBinarySpanSize(span, sizeof(TValue));
-		return ref MemoryMarshal.Cast<Byte, TValue>(span)[0];
+		ValidationUtilities.ThrowIfInvalidBinarySpanSize(span, sizeof(T));
+		return ref MemoryMarshal.Cast<Byte, T>(span)[0];
 	}
 	/// <summary>
-	/// Retrieves a reference to a <typeparamref name="TValue"/> value from the given byte span.
+	/// Retrieves a reference to a <typeparamref name="T"/> value from the given byte span.
 	/// </summary>
-	/// <typeparam name="TValue">The type of the value to be referenced.</typeparam>
+	/// <typeparam name="T">The type of the value to be referenced.</typeparam>
 	/// <param name="span">The source byte span.</param>
-	/// <returns>A reference to the <typeparamref name="TValue"/> value.</returns>
+	/// <returns>A reference to the <typeparamref name="T"/> value.</returns>
 	/// <exception cref="InsufficientMemoryException">
-	/// Thrown if the size of the binary span is less than the size of the type <typeparamref name="TValue"/>.
+	/// Thrown if the size of the binary span is less than the size of the type <typeparamref name="T"/>.
 	/// </exception>
 	/// <exception cref="InvalidCastException">
-	/// Thrown if the size of the binary span is greater than the size of the type <typeparamref name="TValue"/>.
+	/// Thrown if the size of the binary span is greater than the size of the type <typeparamref name="T"/>.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static ref TValue AsValue<TValue>(this Span<Byte> span) where TValue : unmanaged
+	public static ref T AsValue<T>(this Span<Byte> span) where T : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidBinarySpanSize(span, sizeof(TValue));
-		return ref MemoryMarshal.Cast<Byte, TValue>(span)[0];
+		ValidationUtilities.ThrowIfInvalidBinarySpanSize(span, sizeof(T));
+		return ref MemoryMarshal.Cast<Byte, T>(span)[0];
 	}
 
 	/// <summary>

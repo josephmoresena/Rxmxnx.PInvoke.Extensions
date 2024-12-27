@@ -3,7 +3,7 @@
 [ExcludeFromCodeCoverage]
 public sealed class BasicTests
 {
-	private static readonly IFixture fixture = new Fixture();
+	private static readonly String[] texts = IMessageResource.GetInstance().InvalidUtf8Region("|").Split('|');
 
 	[Fact]
 	internal void EmptyTest()
@@ -130,7 +130,7 @@ public sealed class BasicTests
 		for (Int32 i = 0; i < lenght; i++)
 		{
 			CString cstr1 = cstr[0, i];
-			for (Int32 j = 1; j < 4; j++)
+			for (Int32 j = 1; j <= 4; j++)
 			{
 				CString cstr2 = cstr[j, i];
 				Assert.Equal(cstr1, cstr2);
@@ -213,7 +213,8 @@ public sealed class BasicTests
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
 
 		Exception ex = BasicTests.AssertGetBytesException(cstr);
-		Assert.Contains("does not contains the UTF-8 text.", ex.Message);
+		foreach (String text in BasicTests.texts)
+			Assert.Contains(text, ex.Message);
 	}
 	private static void AssertFromNullTerminatedBytes(CString cstr)
 	{
@@ -282,7 +283,8 @@ public sealed class BasicTests
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
 
 		Exception ex = BasicTests.AssertGetBytesException(cstr);
-		Assert.Contains("does not contains the UTF-8 text.", ex.Message);
+		foreach (String text in BasicTests.texts)
+			Assert.Contains(text, ex.Message);
 
 		CString rawSpanClone = CString.Create(cstr);
 		Assert.False(rawSpanClone.IsFunction);
@@ -303,7 +305,8 @@ public sealed class BasicTests
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
 
 		Exception ex = BasicTests.AssertGetBytesException(cstr);
-		Assert.Contains("does not contains the UTF-8 text.", ex.Message);
+		foreach (String text in BasicTests.texts)
+			Assert.Contains(text, ex.Message);
 
 		CString rawSpanClone = CString.Create(cstr);
 		Assert.False(rawSpanClone.IsFunction);
@@ -323,7 +326,8 @@ public sealed class BasicTests
 		Assert.False(CString.IsNullOrEmpty(cstr));
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
 		Exception ex = BasicTests.AssertGetBytesException(cstr);
-		Assert.Contains("does not contains the UTF-8 text.", ex.Message);
+		foreach (String text in BasicTests.texts)
+			Assert.Contains(text, ex.Message);
 
 		fixed (void* ptr = cstr.AsSpan())
 		{

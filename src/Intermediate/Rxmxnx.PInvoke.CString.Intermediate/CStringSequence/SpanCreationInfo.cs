@@ -6,7 +6,11 @@ public partial class CStringSequence
 	/// <summary>
 	/// Information for span creation.
 	/// </summary>
-	private readonly unsafe struct SpanCreationInfo
+	private readonly unsafe
+#if NET9_0_OR_GREATER
+		ref
+#endif
+		struct SpanCreationInfo
 	{
 		/// <summary>
 		/// Pointer to pointers' span.

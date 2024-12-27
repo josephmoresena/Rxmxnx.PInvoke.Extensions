@@ -3,9 +3,7 @@
 [ExcludeFromCodeCoverage]
 public class MutableInstance<T> : IMutableWrapper<T>
 {
-	protected T _value;
-
-	public MutableInstance() => this._value = default!;
+	private T _value = default!;
 
 	T IMutableWrapper<T>.Value
 	{

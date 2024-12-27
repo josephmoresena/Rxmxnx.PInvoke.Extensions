@@ -9,24 +9,33 @@ public interface IFixedMemory : IReadOnlyFixedMemory
 	/// Gets a binary span over the fixed block of memory.
 	/// </summary>
 	new Span<Byte> Bytes { get; }
+	/// <summary>
+	/// Gets an object span over the fixed block of memory.
+	/// </summary>
+	new Span<Object> Objects { get; }
 
 	/// <summary>
 	/// Creates a new instance of <see cref="IFixedContext{Byte}"/> from the current instance.
 	/// </summary>
 	/// <returns>An instance of <see cref="IFixedContext{Byte}"/>.</returns>
 	new IFixedContext<Byte> AsBinaryContext();
+	/// <summary>
+	/// Creates a new instance of <see cref="IFixedContext{Object}"/> from the current instance.
+	/// </summary>
+	/// <returns>An instance of <see cref="IFixedContext{Object}"/>.</returns>
+	new IFixedContext<Object> AsObjectContext();
 
 	/// <summary>
 	/// Interface representing a <see cref="IDisposable"/> <see cref="IFixedMemory"/> object.
 	/// </summary>
-	public new interface IDisposable : IFixedMemory, IReadOnlyFixedMemory.IDisposable { }
+	public new interface IDisposable : IFixedMemory, IReadOnlyFixedMemory.IDisposable;
 }
 
 /// <summary>
 /// Interface representing a fixed block of memory for a specific type.
 /// </summary>
 /// <typeparam name="T">Type of objects in the fixed memory block.</typeparam>
-public interface IFixedMemory<T> : IFixedMemory, IReadOnlyFixedMemory<T> where T : unmanaged
+public interface IFixedMemory<T> : IFixedMemory, IReadOnlyFixedMemory<T>
 {
 	/// <summary>
 	/// Gets the value pointer to the fixed block of memory.

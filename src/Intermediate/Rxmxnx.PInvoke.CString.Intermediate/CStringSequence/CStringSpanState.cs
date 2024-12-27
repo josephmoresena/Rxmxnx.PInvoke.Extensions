@@ -6,7 +6,11 @@ public unsafe partial class CStringSequence
 	/// <summary>
 	/// State for pinned <see cref="CString"/> span.
 	/// </summary>
-	internal readonly struct CStringSpanState
+	private readonly
+#if NET9_0_OR_GREATER
+		ref
+#endif
+		struct CStringSpanState
 	{
 #pragma warning disable CS8500
 		/// <summary>

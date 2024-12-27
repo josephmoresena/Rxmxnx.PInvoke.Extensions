@@ -22,8 +22,8 @@ public sealed class CreateArrayTest
 	private static void CreateTest<T>() where T : unmanaged
 	{
 		Int32 length = Random.Shared.Next(0, 129);
-		List<T> list = new();
-		T[] arr = NativeUtilities.CreateArray<T, IList<T>>(length, list, (span, state) =>
+		List<T> list = [];
+		T[] arr = NativeUtilities.CreateArray<T, IList<T>>(length, list, (span, _) =>
 		{
 			foreach (ref T value in span)
 			{

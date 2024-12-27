@@ -37,11 +37,11 @@ public sealed class BasicTests : ValueRegionTestBase
 
 	private static void Test<T>() where T : unmanaged
 	{
-		List<GCHandle> handles = new();
-		T[] values0 = ValueRegionTestBase.fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
-		T[] values1 = ValueRegionTestBase.fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
-		T[] values2 = ValueRegionTestBase.fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
-		T[] values3 = ValueRegionTestBase.fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
+		List<GCHandle> handles = [];
+		T[] values0 = ValueRegionTestBase.Fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
+		T[] values1 = ValueRegionTestBase.Fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
+		T[] values2 = ValueRegionTestBase.Fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
+		T[] values3 = ValueRegionTestBase.Fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
 
 		try
 		{
@@ -85,6 +85,6 @@ public sealed class BasicTests : ValueRegionTestBase
 		if (values.Length > 0)
 			Assert.NotSame(values, newArray);
 		else
-			Assert.Same(values, newArray);
+			Assert.Same(Array.Empty<T>(), newArray);
 	}
 }

@@ -4,7 +4,7 @@
 /// Interface representing a context from a block of fixed memory.
 /// </summary>
 /// <typeparam name="T">Type of objects in the fixed memory block.</typeparam>
-public interface IFixedContext<T> : IReadOnlyFixedContext<T>, IFixedMemory<T> where T : unmanaged
+public interface IFixedContext<T> : IReadOnlyFixedContext<T>, IFixedMemory<T>
 {
 	/// <summary>
 	/// Reinterprets the <typeparamref name="T"/> fixed memory block as
@@ -13,7 +13,7 @@ public interface IFixedContext<T> : IReadOnlyFixedContext<T>, IFixedMemory<T> wh
 	/// <typeparam name="TDestination">Type of objects in the reinterpreted memory block.</typeparam>
 	/// <param name="residual">Output. Residual memory from the transformation.</param>
 	/// <returns>An instance of <see cref="IFixedContext{TDestination}"/>.</returns>
-	IFixedContext<TDestination> Transformation<TDestination>(out IFixedMemory residual) where TDestination : unmanaged;
+	IFixedContext<TDestination> Transformation<TDestination>(out IFixedMemory residual);
 
 	/// <summary>
 	/// Reinterprets the <typeparamref name="T"/> fixed memory block as
@@ -22,8 +22,7 @@ public interface IFixedContext<T> : IReadOnlyFixedContext<T>, IFixedMemory<T> wh
 	/// <typeparam name="TDestination">Type of objects in the reinterpreted memory block.</typeparam>
 	/// <param name="residual">Output. Residual read-only memory from the transformation.</param>
 	/// <returns>An instance of <see cref="IReadOnlyFixedContext{TDestination}"/>.</returns>
-	new IFixedContext<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual)
-		where TDestination : unmanaged;
+	new IFixedContext<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual);
 
 	/// <summary>
 	/// Interface representing a disposable <see cref="IFixedContext{T}"/> object for a context
@@ -35,5 +34,6 @@ public interface IFixedContext<T> : IReadOnlyFixedContext<T>, IFixedMemory<T> wh
 	/// ensuring that they are properly disposed of when no longer needed. It is crucial to call
 	/// <see cref="System.IDisposable.Dispose"/> to release these unmanaged resources and avoid memory leaks.
 	/// </remarks>
-	public new interface IDisposable : IFixedContext<T>, IFixedMemory<T>.IDisposable, IReadOnlyFixedContext<T>.IDisposable;
+	public new interface IDisposable : IFixedContext<T>, IFixedMemory<T>.IDisposable,
+		IReadOnlyFixedContext<T>.IDisposable;
 }

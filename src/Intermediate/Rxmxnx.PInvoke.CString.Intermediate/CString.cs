@@ -25,7 +25,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// Gets a value indicating whether the UTF-8 text is referenced by, and not contained within,
 	/// the current <see cref="CString"/> instance.
 	/// </summary>
-	public Boolean IsReference => !this._isLocal && !this._isFunction;
+	public Boolean IsReference => !this._isLocal && !this.IsFunction;
 	/// <summary>
 	/// Gets a value indicating whether the current <see cref="CString"/> instance is a segment
 	/// (or slice) of another <see cref="CString"/> instance.
@@ -34,7 +34,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <summary>
 	/// Gets a value indicating whether the current <see cref="CString"/> instance is a function.
 	/// </summary>
-	public Boolean IsFunction => this._isFunction;
+	public Boolean IsFunction { get; }
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified
@@ -94,7 +94,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	public Object Clone()
 	{
 		ReadOnlySpan<Byte> source = this;
-		Byte[] bytes = new Byte[this._length + 1];
+		Byte[] bytes = new Byte[this.Length + 1];
 		source.CopyTo(bytes);
 		return new CString(bytes, true);
 	}
@@ -150,7 +150,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override String ToString()
 	{
-		if (this._length == 0) return String.Empty;
+		if (this.Length == 0) return String.Empty;
 		String result = Encoding.UTF8.GetString(this.AsSpan());
 		return String.IsInterned(result) ?? result;
 	}
@@ -166,6 +166,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// It should not be used in typical code.
 	/// </remarks>
 	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Browsable(false)]
 	public ref readonly Byte GetPinnableReference() => ref MemoryMarshal.GetReference(this._data.AsSpan());
 	/// <summary>
 	/// Copies the UTF-8 text of the current <see cref="CString"/> instance into a new byte array.
@@ -173,14 +174,14 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <returns>
 	/// A new <see cref="Byte"/> array containing the UTF-8 units of the current <see cref="CString"/>.
 	/// </returns>
-	public Byte[] ToArray() => this._data.ToArray()[..this._length];
+	public Byte[] ToArray() => this._data.ToArray()[..this.Length];
 	/// <summary>
 	/// Retrieves the UTF-8 units of the current <see cref="CString"/> as a read-only span of bytes.
 	/// </summary>
 	/// <returns>
 	/// A read-only span of bytes representing the UTF-8 units of the current <see cref="CString"/>.
 	/// </returns>
-	public ReadOnlySpan<Byte> AsSpan() => this._data.AsSpan()[..this._length];
+	public ReadOnlySpan<Byte> AsSpan() => this._data.AsSpan()[..this.Length];
 	/// <summary>
 	/// Returns a <see cref="String"/> that represents the current UTF-8 text as a hexadecimal value.
 	/// </summary>
@@ -208,14 +209,14 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// </returns>
 	public static Boolean IsNullOrEmpty([NotNullWhen(false)] CString? value) => value is null || value.Length == 0;
 	/// <summary>
-	/// Constructs a new instance of the <see cref="CString"/> class using the UTF-8 characters provided
+	/// Creates a new instance of the <see cref="CString"/> class using the UTF-8 characters provided
 	/// in the specified read-only span.
 	/// </summary>
 	/// <param name="source">A read-only span of UTF-8 characters.</param>
 	/// <returns>A new instance of the <see cref="CString"/> class.</returns>
 	public static CString Create(ReadOnlySpan<Byte> source) => new(source.ToArray(), false);
 	/// <summary>
-	/// Constructs a new instance of the <see cref="CString"/> class using the
+	/// Creates a new instance of the <see cref="CString"/> class using the
 	/// <see cref="ReadOnlySpanFunc{Byte}"/> delegate provided.
 	/// </summary>
 	/// <param name="func">
@@ -228,7 +229,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	[return: NotNullIfNotNull(nameof(func))]
 	public static CString? Create(ReadOnlySpanFunc<Byte>? func) => func is not null ? new(func, false) : default;
 	/// <summary>
-	/// Constructs a new instance of the <see cref="CString"/> class using the binary internal
+	/// Creates a new instance of the <see cref="CString"/> class using the binary internal
 	/// information provided.
 	/// </summary>
 	/// <param name="bytes">Binary internal information.</param>
@@ -239,22 +240,23 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	[return: NotNullIfNotNull(nameof(bytes))]
 	public static CString? Create(Byte[]? bytes) => bytes is not null ? new(bytes, false) : default;
 	/// <summary>
-	/// Constructs a new instance of the <see cref="CString"/> class using <paramref name="state"/>.
+	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
 	/// </summary>
+	/// <typeparam name="TState">A <see cref="IUtf8FunctionState{TState}"/> type.</typeparam>
 	/// <param name="state">Function state parameter.</param>
 	/// <returns>
 	/// A new instance of the <see cref="CString"/> class.
 	/// </returns>
-#pragma warning disable CA2252
 	public static CString Create<TState>(TState state) where TState : struct, IUtf8FunctionState<TState>
 	{
+#pragma warning disable CA2252
 		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, TState.GetSpan);
 		Int32 length = TState.GetLength(state);
 		return new(data, true, state.IsNullTerminated, length);
-	}
 #pragma warning restore CA2252
+	}
 	/// <summary>
-	/// Constructs a new instance of the <see cref="CString"/> class using the pointer to a UTF-8
+	/// Creates a new instance of the <see cref="CString"/> class using the pointer to a UTF-8
 	/// character array and length provided.
 	/// </summary>
 	/// <param name="ptr">A pointer to an array of UTF-8 characters.</param>

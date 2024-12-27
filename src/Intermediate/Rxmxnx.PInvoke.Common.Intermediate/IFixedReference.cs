@@ -4,7 +4,7 @@
 /// This interface represents a mutable reference to a fixed memory location.
 /// </summary>
 /// <typeparam name="T">Type of the value referenced in memory.</typeparam>
-public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference<T>, IFixedMemory where T : unmanaged
+public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference<T>, IFixedMemory
 {
 	/// <summary>
 	/// Reinterprets the <typeparamref name="T"/> fixed memory reference as a
@@ -15,8 +15,7 @@ public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference
 	/// <returns>
 	/// A <see cref="IFixedReference{TDestination}"/> instance.
 	/// </returns>
-	IFixedReference<TDestination> Transformation<TDestination>(out IFixedMemory residual)
-		where TDestination : unmanaged;
+	IFixedReference<TDestination> Transformation<TDestination>(out IFixedMemory residual);
 
 	/// <summary>
 	/// Reinterprets the <typeparamref name="T"/> fixed memory reference as a
@@ -27,8 +26,7 @@ public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference
 	/// <returns>
 	/// A <see cref="IReadOnlyFixedReference{TDestination}"/> instance.
 	/// </returns>
-	new IFixedReference<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual)
-		where TDestination : unmanaged;
+	new IFixedReference<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual);
 
 	/// <summary>
 	/// Interface representing a disposable <see cref="IFixedReference{T}"/> object for a fixed memory
@@ -40,5 +38,6 @@ public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference
 	/// ensuring that they are properly disposed of when no longer needed. It is crucial to call
 	/// <see cref="System.IDisposable.Dispose"/> to release these unmanaged resources and avoid memory leaks.
 	/// </remarks>
-	public new interface IDisposable : IFixedReference<T>, IReadOnlyFixedReference<T>.IDisposable, IFixedMemory.IDisposable;
+	public new interface IDisposable : IFixedReference<T>, IReadOnlyFixedReference<T>.IDisposable,
+		IFixedMemory.IDisposable;
 }

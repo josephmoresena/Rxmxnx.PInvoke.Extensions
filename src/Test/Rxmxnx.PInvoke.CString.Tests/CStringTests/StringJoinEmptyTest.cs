@@ -10,7 +10,7 @@ public sealed class StringJoinEmptyTest
 	internal void LocalEmptyTest(Boolean emptyData)
 	{
 		String? separator = !emptyData ? String.Empty : default;
-		String?[] values = !emptyData ? Enumerable.Repeat(String.Empty, 3).ToArray() : Array.Empty<String>();
+		String?[] values = !emptyData ? Enumerable.Repeat(String.Empty, 3).ToArray() : [];
 		StringJoinEmptyTest.Test(separator, values);
 		StringJoinEmptyTest.Test(separator, values.ToList());
 	}
@@ -21,7 +21,7 @@ public sealed class StringJoinEmptyTest
 	internal void NullEmptyTest(Boolean emptyData)
 	{
 		String? separator = !emptyData ? String.Empty : default;
-		String?[] values = !emptyData ? Enumerable.Repeat<String?>(default, 3).ToArray() : Array.Empty<String>();
+		String?[] values = !emptyData ? Enumerable.Repeat<String?>(default, 3).ToArray() : [];
 		StringJoinEmptyTest.Test(separator, values);
 		StringJoinEmptyTest.Test(separator, values.ToList());
 	}
@@ -32,7 +32,7 @@ public sealed class StringJoinEmptyTest
 	internal async Task LocalEmptyTestAsync(Boolean emptyData)
 	{
 		String? separator = !emptyData ? String.Empty : default;
-		String?[] values = !emptyData ? Enumerable.Repeat(String.Empty, 3).ToArray() : Array.Empty<String>();
+		String?[] values = !emptyData ? Enumerable.Repeat(String.Empty, 3).ToArray() : [];
 		await StringJoinEmptyTest.TestAsync(separator, values);
 		await StringJoinEmptyTest.TestAsync(separator, values.ToList());
 	}
@@ -43,15 +43,16 @@ public sealed class StringJoinEmptyTest
 	internal async Task NullEmptyTestAsync(Boolean emptyData)
 	{
 		String? separator = !emptyData ? String.Empty : default;
-		String?[] values = !emptyData ? Enumerable.Repeat<String?>(default, 3).ToArray() : Array.Empty<String>();
+		String?[] values = !emptyData ? Enumerable.Repeat<String?>(default, 3).ToArray() : [];
 		await StringJoinEmptyTest.TestAsync(separator, values);
 		await StringJoinEmptyTest.TestAsync(separator, values.ToList());
 	}
 
 	private static void Test(String? separator, String?[] values)
 	{
+		Int32 count = values.Length > 0 ? 1 : 0;
 		CString resultCString = CString.Join(separator, values);
-		CString resultCString2 = CString.Join(separator, values, 0, 1);
+		CString resultCString2 = CString.Join(separator, values, 0, count);
 		Assert.NotNull(resultCString);
 		Assert.Equal(CString.Empty, resultCString);
 		Assert.Same(CString.Empty, resultCString);
@@ -81,8 +82,9 @@ public sealed class StringJoinEmptyTest
 	}
 	private static async Task TestAsync(String? separator, String?[] values)
 	{
+		Int32 count = values.Length > 0 ? 1 : 0;
 		CString resultCString = await CString.JoinAsync(separator, values);
-		CString resultCString2 = await CString.JoinAsync(separator, values, 0, 1);
+		CString resultCString2 = await CString.JoinAsync(separator, values, 0, count);
 		Assert.NotNull(resultCString);
 		Assert.Equal(CString.Empty, resultCString);
 		Assert.Same(CString.Empty, resultCString);

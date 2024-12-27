@@ -1,9 +1,9 @@
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// Represents a platform-specific type used to handle a pointer to a function of type <typeparamref name="TDelegate"/>.
+/// Represents a platform-specific type used to handle a pointer to a method of type <typeparamref name="TDelegate"/>.
 /// </summary>
-/// <typeparam name="TDelegate">The type of delegate that the function pointer represents.</typeparam>
+/// <typeparam name="TDelegate">The type of delegate that the method pointer represents.</typeparam>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
@@ -29,7 +29,9 @@ public readonly unsafe struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<
 	/// </summary>
 	public Boolean IsZero => IntPtr.Zero == (IntPtr)this._value;
 
-	/// <inheritdoc cref="IFixedMethod{T}.Method"/>
+	/// <summary>
+	/// A managed delegate using the method address pointed to by this instance.
+	/// </summary>
 	public TDelegate Invoke => !this.IsZero ? Marshal.GetDelegateForFunctionPointer<TDelegate>(this.Pointer) : default!;
 
 	/// <summary>
@@ -82,7 +84,7 @@ public readonly unsafe struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<
 	public String ToString(String? format, IFormatProvider? formatProvider)
 		=> this.Pointer.ToString(format, formatProvider);
 	/// <inheritdoc/>
-	[SuppressMessage(SuppressMessageConstants.CSharpSquid, "S1006")]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1006)]
 	public Boolean TryFormat(Span<Char> destination, out Int32 charsWritten, ReadOnlySpan<Char> format = default,
 		IFormatProvider? provider = default)
 		=> this.Pointer.TryFormat(destination, out charsWritten, format, provider);
@@ -90,7 +92,7 @@ public readonly unsafe struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<
 	/// <summary>
 	/// Defines an explicit conversion of a given <see cref="IntPtr"/> to a read-only value pointer.
 	/// </summary>
-	/// <param name="ptr">A <see cref="IntPtr"/> to explicitly convert.</param>
+	/// <param name="ptr">An <see cref="IntPtr"/> to explicitly convert.</param>
 	public static explicit operator FuncPtr<TDelegate>(IntPtr ptr) => new(ptr.ToPointer());
 	/// <summary>
 	/// Defines an explicit conversion of a given <see cref="IntPtr"/> to a read-only value pointer.

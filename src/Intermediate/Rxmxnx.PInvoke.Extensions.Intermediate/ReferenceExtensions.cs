@@ -1,8 +1,7 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// Provides a set of extensions for basic operations with references to <see cref="ValueType"/>
-/// <see langword="unmanaged"/> values.
+/// Provides a set of extensions for basic operations with references to <see langword="unmanaged"/> values.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
 [Browsable(false)]
@@ -10,7 +9,7 @@
 public static unsafe partial class ReferenceExtensions
 {
 	/// <summary>
-	/// Retrieves an unsafe pointer of type <see cref="ValPtr{T}"/> from a reference to an
+	/// Obtains an unsafe pointer of type <see cref="ValPtr{T}"/> from a reference to an
 	/// <see langword="unmanaged"/> value of type <typeparamref name="T"/>.
 	/// </summary>
 	/// <typeparam name="T">
@@ -19,18 +18,16 @@ public static unsafe partial class ReferenceExtensions
 	/// <param name="refValue">The reference to the value from which to retrieve the pointer.</param>
 	/// <returns>An unsafe pointer of type <see cref="ValPtr{T}"/> pointing to the referenced value.</returns>
 	/// <remarks>
-	/// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
-	/// won't be moved or collected by garbage collector.
+	/// The obtained pointer is "unsafe" because it does not guarantee that the referenced value will remain in memory or
+	/// unaffected by garbage collection.
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ValPtr<T> GetUnsafeValPtr<T>(ref this T refValue) where T : unmanaged
-	{
-		void* ptr = Unsafe.AsPointer(ref refValue);
-		return new(ptr);
-	}
+		=> NativeUtilities.GetUnsafeValPtrFromRef(ref refValue);
+
 	/// <summary>
-	/// Retrieves an unsafe pointer of type <see cref="IntPtr"/> from a reference to an
+	/// Obtains an unsafe pointer of type <see cref="IntPtr"/> from a reference to an
 	/// <see langword="unmanaged"/> value of type <typeparamref name="T"/>.
 	/// </summary>
 	/// <typeparam name="T">
@@ -39,8 +36,8 @@ public static unsafe partial class ReferenceExtensions
 	/// <param name="refValue">The reference to the value from which to retrieve the pointer.</param>
 	/// <returns>An unsafe pointer of type <see cref="IntPtr"/> pointing to the referenced value.</returns>
 	/// <remarks>
-	/// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
-	/// won't be moved or collected by garbage collector.
+	/// The obtained pointer is "unsafe" because it does not guarantee that the referenced value will remain in memory or
+	/// unaffected by garbage collection.
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -49,8 +46,9 @@ public static unsafe partial class ReferenceExtensions
 		void* ptr = Unsafe.AsPointer(ref refValue);
 		return (IntPtr)ptr;
 	}
+
 	/// <summary>
-	/// Retrieves an unsafe pointer of type <see cref="UIntPtr"/> from a reference to an
+	/// Obtains an unsafe pointer of type <see cref="UIntPtr"/> from a reference to an
 	/// <see langword="unmanaged"/> value of type <typeparamref name="T"/>.
 	/// </summary>
 	/// <typeparam name="T">
@@ -59,8 +57,8 @@ public static unsafe partial class ReferenceExtensions
 	/// <param name="refValue">The reference to the value from which to retrieve the pointer.</param>
 	/// <returns>An unsafe pointer of type <see cref="UIntPtr"/> pointing to the referenced value.</returns>
 	/// <remarks>
-	/// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
-	/// won't be moved or collected by garbage collector.
+	/// The obtained pointer is "unsafe" because it does not guarantee that the referenced value will remain in memory or
+	/// unaffected by garbage collection.
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -69,8 +67,9 @@ public static unsafe partial class ReferenceExtensions
 		void* ptr = Unsafe.AsPointer(ref refValue);
 		return (UIntPtr)ptr;
 	}
+
 	/// <summary>
-	/// Creates a reference to an <see langword="unmanaged"/> value of type <typeparamref name="TDestination"/>
+	/// Generates a reference for an <see langword="unmanaged"/> value of type <typeparamref name="TDestination"/>
 	/// from an existing reference to an <see langword="unmanaged"/> value of type <typeparamref name="TSource"/>.
 	/// </summary>
 	/// <typeparam name="TSource">
@@ -88,14 +87,14 @@ public static unsafe partial class ReferenceExtensions
 	/// Thrown when <typeparamref name="TSource"/> and <typeparamref name="TDestination"/> do not have the same memory size.
 	/// </exception>
 	/// <remarks>
-	/// This transformation can be performed between <typeparamref name="TSource"/> and <typeparamref name="TDestination"/>
-	/// types
+	/// This conversion is possible between <typeparamref name="TSource"/> and <typeparamref name="TDestination"/> types
 	/// that have the same size in memory.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ref TDestination Transform<TSource, TDestination>(this ref TSource refValue)
 		where TSource : unmanaged where TDestination : unmanaged
 		=> ref NativeUtilities.TransformReference<TSource, TDestination>(ref refValue);
+
 	/// <summary>
 	/// Creates a <see cref="Span{Byte}"/> from a reference to an <see langword="unmanaged"/> value of
 	/// type <typeparamref name="TSource"/>.

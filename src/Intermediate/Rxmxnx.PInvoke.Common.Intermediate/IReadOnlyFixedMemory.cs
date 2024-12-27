@@ -6,15 +6,28 @@
 public interface IReadOnlyFixedMemory : IFixedPointer
 {
 	/// <summary>
+	/// Indicates whether current memory block is null-referenced or empty.
+	/// </summary>
+	Boolean IsNullOrEmpty { get; }
+	/// <summary>
 	/// Gets a read-only binary span over the fixed block of memory.
 	/// </summary>
 	ReadOnlySpan<Byte> Bytes { get; }
+	/// <summary>
+	/// Gets a read-only object span over the fixed block of memory.
+	/// </summary>
+	ReadOnlySpan<Object> Objects { get; }
 
 	/// <summary>
 	/// Creates a new instance of <see cref="IReadOnlyFixedContext{Byte}"/> from the current instance.
 	/// </summary>
 	/// <returns>An instance of <see cref="IReadOnlyFixedContext{Byte}"/>.</returns>
 	IReadOnlyFixedContext<Byte> AsBinaryContext();
+	/// <summary>
+	/// Creates a new instance of <see cref="IReadOnlyFixedContext{Object}"/> from the current instance.
+	/// </summary>
+	/// <returns>An instance of <see cref="IReadOnlyFixedContext{Object}"/>.</returns>
+	IReadOnlyFixedContext<Object> AsObjectContext();
 
 	/// <summary>
 	/// Interface representing a disposable <see cref="IReadOnlyFixedMemory"/> object for a
@@ -33,7 +46,7 @@ public interface IReadOnlyFixedMemory : IFixedPointer
 /// Interface representing a read-only fixed block of memory for a specific type.
 /// </summary>
 /// <typeparam name="T">Type of objects in the fixed memory block.</typeparam>
-public interface IReadOnlyFixedMemory<T> : IReadOnlyFixedMemory where T : unmanaged
+public interface IReadOnlyFixedMemory<T> : IReadOnlyFixedMemory
 {
 	/// <summary>
 	/// Gets the value pointer to the read-only fixed block of memory.

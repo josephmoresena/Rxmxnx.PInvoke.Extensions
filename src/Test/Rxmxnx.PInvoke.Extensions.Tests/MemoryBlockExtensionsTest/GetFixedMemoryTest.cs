@@ -88,8 +88,8 @@ public sealed class GetFixedMemoryTest
 		}
 		using IFixedMemory.IDisposable fMem = mem.GetFixedMemory();
 		using IReadOnlyFixedMemory.IDisposable frMem = rMem.GetFixedMemory();
-		Assert.IsAssignableFrom<IFixedContext<Byte>>(fMem);
-		Assert.IsAssignableFrom<IReadOnlyFixedContext<Byte>>(frMem);
+		Assert.IsAssignableFrom<IFixedContext<T>>(fMem);
+		Assert.IsAssignableFrom<IReadOnlyFixedContext<T>>(frMem);
 		Assert.Equal(array.Length * Unsafe.SizeOf<T>(), fMem.Bytes.Length);
 		Assert.Equal(array.Length * Unsafe.SizeOf<T>(), frMem.Bytes.Length);
 		Assert.True(Unsafe.AreSame(ref array[0], ref Unsafe.As<Byte, T>(ref fMem.Bytes[0])));

@@ -6,7 +6,7 @@ public class AsMemoryTest
 {
 	private static readonly IFixture fixture = new Fixture();
 	private static readonly Type extensionsType = typeof(MemoryBlockExtensions);
-	private static readonly IReadOnlyDictionary<Int32, MethodInfo> asMemories = AsMemoryTest.extensionsType
+	private static readonly ImmutableDictionary<Int32, MethodInfo> asMemories = AsMemoryTest.extensionsType
 		.GetMethods(BindingFlags.Public | BindingFlags.Static).Where(m => m.Name == "AsMemory")
 		.ToImmutableDictionary(m => m.GetParameters()[0].ParameterType.GetArrayRank(), m => m);
 
@@ -172,6 +172,9 @@ public class AsMemoryTest
 			Assert.True(Unsafe.AreSame(ref Unsafe.Add(ref first, i),
 			                           ref Unsafe.Add(ref Unsafe.AsRef<T>(handle.Pointer), i)));
 		}
+		MemoryHandle handle2 = memory.Pin();
+		handle2.Dispose();
+		handle2.Dispose();
 	}
 	private static Array CreateArray<T>(Int32[] lengths)
 	{

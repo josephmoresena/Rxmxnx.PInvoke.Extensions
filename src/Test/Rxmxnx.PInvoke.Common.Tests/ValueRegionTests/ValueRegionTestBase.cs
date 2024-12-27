@@ -6,7 +6,7 @@ public abstract class ValueRegionTestBase
 	/// <summary>
 	/// Fixture instance.
 	/// </summary>
-	protected static readonly IFixture fixture = new Fixture();
+	protected static readonly IFixture Fixture = new Fixture();
 
 	/// <summary>
 	/// Creates a new <see cref="ValueRegion{T}"/> instance from <paramref name="array"/>.

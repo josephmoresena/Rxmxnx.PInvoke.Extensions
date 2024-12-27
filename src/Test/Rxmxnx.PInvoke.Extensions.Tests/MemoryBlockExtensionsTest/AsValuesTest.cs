@@ -71,17 +71,17 @@ public sealed class AsValuesTest
 		Assert.Equal(valuesT2, readOnlySpan.AsValues<T, T2>().ToArray());
 		Assert.Equal(valuesT2, span.AsValues<T, T2>(out Span<Byte> residual).ToArray());
 		Assert.Equal(resiudalBytes, residual.ToArray());
-		Assert.Equal(valuesT2, span.AsValues<T, T2>(out ReadOnlySpan<Byte> residualRO).ToArray());
-		Assert.Equal(resiudalBytes, residualRO.ToArray());
-		Assert.Equal(valuesT2, readOnlySpan.AsValues<T, T2>(out ReadOnlySpan<Byte> residualRO2).ToArray());
-		Assert.Equal(resiudalBytes, residualRO2.ToArray());
+		Assert.Equal(valuesT2, span.AsValues<T, T2>(out ReadOnlySpan<Byte> residualRo).ToArray());
+		Assert.Equal(resiudalBytes, residualRo.ToArray());
+		Assert.Equal(valuesT2, readOnlySpan.AsValues<T, T2>(out ReadOnlySpan<Byte> residualRo2).ToArray());
+		Assert.Equal(resiudalBytes, residualRo2.ToArray());
 
 		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(spanResidual),
 		                           ref MemoryMarshal.GetReference(residual)));
 		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(spanResidual),
-		                           ref MemoryMarshal.GetReference(residualRO)));
+		                           ref MemoryMarshal.GetReference(residualRo)));
 		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(spanResidual),
-		                           ref MemoryMarshal.GetReference(residualRO2)));
+		                           ref MemoryMarshal.GetReference(residualRo2)));
 
 		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(spanT2),
 		                           ref MemoryMarshal.GetReference(span.AsValues<T, T2>())));

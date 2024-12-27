@@ -5,46 +5,51 @@
 public sealed class CreateSpanTest : FixedContextTestsBase
 {
 	[Fact]
-	internal void BooleanTest() => this.Test<Boolean>();
+	internal void BooleanTest() => CreateSpanTest.Test<Boolean>();
 	[Fact]
-	internal void ByteTest() => this.Test<Byte>();
+	internal void ByteTest() => CreateSpanTest.Test<Byte>();
 	[Fact]
-	internal void Int16Test() => this.Test<Int16>();
+	internal void Int16Test() => CreateSpanTest.Test<Int16>();
 	[Fact]
-	internal void CharTest() => this.Test<Char>();
+	internal void CharTest() => CreateSpanTest.Test<Char>();
 	[Fact]
-	internal void Int32Test() => this.Test<Int32>();
+	internal void Int32Test() => CreateSpanTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => this.Test<Int64>();
+	internal void Int64Test() => CreateSpanTest.Test<Int64>();
 	[Fact]
-	internal void Int128Test() => this.Test<Int128>();
+	internal void Int128Test() => CreateSpanTest.Test<Int128>();
 	[Fact]
-	internal void GuidTest() => this.Test<Guid>();
+	internal void GuidTest() => CreateSpanTest.Test<Guid>();
 	[Fact]
-	internal void SingleTest() => this.Test<Single>();
+	internal void SingleTest() => CreateSpanTest.Test<Single>();
 	[Fact]
-	internal void HalfTest() => this.Test<Half>();
+	internal void HalfTest() => CreateSpanTest.Test<Half>();
 	[Fact]
-	internal void DoubleTest() => this.Test<Double>();
+	internal void DoubleTest() => CreateSpanTest.Test<Double>();
 	[Fact]
-	internal void DecimalTest() => this.Test<Decimal>();
+	internal void DecimalTest() => CreateSpanTest.Test<Decimal>();
 	[Fact]
-	internal void DateTimeTest() => this.Test<DateTime>();
+	internal void DateTimeTest() => CreateSpanTest.Test<DateTime>();
 	[Fact]
-	internal void TimeOnlyTest() => this.Test<TimeOnly>();
+	internal void TimeOnlyTest() => CreateSpanTest.Test<TimeOnly>();
 	[Fact]
-	internal void TimeSpanTest() => this.Test<TimeSpan>();
+	internal void TimeSpanTest() => CreateSpanTest.Test<TimeSpan>();
+	[Fact]
+	internal void ManagedStructTest() => CreateSpanTest.Test<ManagedStruct>();
+	[Fact]
+	internal void StringTest() => CreateSpanTest.Test<String>();
 
-	private void Test<T>() where T : unmanaged
+	private static void Test<T>()
 	{
-		T[] values = FixedMemoryTestsBase.fixture.CreateMany<T>().ToArray();
-		this.WithFixed(values, CreateSpanTest.Test);
+		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>().ToArray();
+		FixedContextTestsBase.WithFixed(values, CreateSpanTest.Test);
 		Exception readOnly =
-			Assert.Throws<InvalidOperationException>(() => this.WithFixed(values, CreateSpanTest.ReadOnlyTest));
+			Assert.Throws<InvalidOperationException>(
+				() => FixedContextTestsBase.WithFixed(values, CreateSpanTest.ReadOnlyTest));
 		Assert.Equal(FixedMemoryTestsBase.ReadOnlyError, readOnly.Message);
 	}
 
-	private static void Test<T>(FixedContext<T> ctx, T[] values) where T : unmanaged
+	private static void Test<T>(FixedContext<T> ctx, T[] values)
 	{
 		Span<T> span = ctx.CreateSpan<T>(values.Length);
 		Assert.Equal(values.Length, span.Length);
@@ -52,18 +57,18 @@ public sealed class CreateSpanTest : FixedContextTestsBase
 		Assert.True(Unsafe.AreSame(ref values[0], ref span[0]));
 		Assert.False(ctx.IsFunction);
 
-		Exception functionException = Assert.Throws<InvalidOperationException>(() => ctx.CreateDelegate<Action>());
+		Exception functionException = Assert.Throws<InvalidOperationException>(ctx.CreateDelegate<Action>);
 		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 
 		ctx.Unload();
 		Exception invalid = Assert.Throws<InvalidOperationException>(() => ctx.CreateSpan<T>(values.Length));
 		Assert.Equal(FixedMemoryTestsBase.InvalidError, invalid.Message);
 
-		Exception functionException2 = Assert.Throws<InvalidOperationException>(() => ctx.CreateDelegate<Action>());
+		Exception functionException2 = Assert.Throws<InvalidOperationException>(ctx.CreateDelegate<Action>);
 		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException2.Message);
 	}
 
-	private static void ReadOnlyTest<T>(ReadOnlyFixedContext<T> ctx, T[] values) where T : unmanaged
+	private static void ReadOnlyTest<T>(ReadOnlyFixedContext<T> ctx, T[] values)
 	{
 		_ = ctx.CreateSpan<T>(values.Length);
 	}

@@ -9,7 +9,7 @@ public sealed class ConcatTest
 	[InlineData(false)]
 	internal void LocalEmptyTest(Boolean emptyData)
 	{
-		CString?[] values = !emptyData ? Enumerable.Repeat(CString.Empty, 3).ToArray() : Array.Empty<CString>();
+		CString?[] values = !emptyData ? Enumerable.Repeat(CString.Empty, 3).ToArray() : [];
 		ConcatTest.EmptyTest(values);
 	}
 
@@ -18,9 +18,7 @@ public sealed class ConcatTest
 	[InlineData(false)]
 	internal void ReferenceEmptyTest(Boolean emptyData)
 	{
-		CString?[] values = !emptyData ?
-			Enumerable.Repeat<CString>(new(IntPtr.Zero, default), 3).ToArray() :
-			Array.Empty<CString>();
+		CString?[] values = !emptyData ? Enumerable.Repeat<CString>(new(IntPtr.Zero, default), 3).ToArray() : [];
 		ConcatTest.EmptyTest(values);
 	}
 
@@ -29,7 +27,7 @@ public sealed class ConcatTest
 	[InlineData(false)]
 	internal void NullEmptyTest(Boolean emptyData)
 	{
-		CString?[] values = !emptyData ? Enumerable.Repeat<CString?>(default, 3).ToArray() : Array.Empty<CString>();
+		CString?[] values = !emptyData ? Enumerable.Repeat<CString?>(default, 3).ToArray() : [];
 		ConcatTest.EmptyTest(values);
 	}
 
@@ -58,7 +56,7 @@ public sealed class ConcatTest
 	[Fact]
 	internal void SpanTest()
 	{
-		IReadOnlyList<Int32> indices = TestSet.GetIndices(8);
+		List<Int32> indices = TestSet.GetIndices(8);
 		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
 
 		Assert.Equal(String.Concat(strings[..2]),
@@ -115,7 +113,7 @@ public sealed class ConcatTest
 	[InlineData(false)]
 	internal async Task LocalEmptyTestAsync(Boolean emptyData)
 	{
-		CString?[] values = !emptyData ? Enumerable.Repeat(CString.Empty, 3).ToArray() : Array.Empty<CString>();
+		CString?[] values = !emptyData ? Enumerable.Repeat(CString.Empty, 3).ToArray() : [];
 		await ConcatTest.EmptyTestAsync(values);
 	}
 
@@ -124,9 +122,7 @@ public sealed class ConcatTest
 	[InlineData(false)]
 	internal async Task ReferenceEmptyTestAsync(Boolean emptyData)
 	{
-		CString?[] values = !emptyData ?
-			Enumerable.Repeat<CString>(new(IntPtr.Zero, default), 3).ToArray() :
-			Array.Empty<CString>();
+		CString?[] values = !emptyData ? Enumerable.Repeat<CString>(new(IntPtr.Zero, default), 3).ToArray() : [];
 		await ConcatTest.EmptyTestAsync(values);
 	}
 
@@ -135,7 +131,7 @@ public sealed class ConcatTest
 	[InlineData(false)]
 	internal async Task NullEmptyTestAsync(Boolean emptyData)
 	{
-		CString?[] values = !emptyData ? Enumerable.Repeat<CString?>(default, 3).ToArray() : Array.Empty<CString>();
+		CString?[] values = !emptyData ? Enumerable.Repeat<CString?>(default, 3).ToArray() : [];
 		await ConcatTest.EmptyTestAsync(values);
 	}
 

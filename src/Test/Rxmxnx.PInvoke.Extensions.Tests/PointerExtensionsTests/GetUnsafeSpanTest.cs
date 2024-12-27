@@ -45,6 +45,7 @@ public sealed class GetUnsafeSpanTest
 
 		T[] input = GetUnsafeSpanTest.fixture.CreateMany<T>(10).ToArray();
 
+		MemoryHandle handle = input.AsMemory().Pin();
 		fixed (void* p = &MemoryMarshal.GetReference(input.AsSpan()))
 		{
 			IntPtr intPtr = (IntPtr)p;
@@ -54,9 +55,12 @@ public sealed class GetUnsafeSpanTest
 			Assert.Equal(input, intPtr.GetUnsafeReadOnlySpan<T>(input.Length).ToArray());
 			Assert.Equal(input, uintPtr.GetUnsafeSpan<T>(input.Length).ToArray());
 			Assert.Equal(input, uintPtr.GetUnsafeReadOnlySpan<T>(input.Length).ToArray());
+			Assert.Equal(input, handle.GetUnsafeSpan<T>(input.Length).ToArray());
+			Assert.Equal(input, handle.GetUnsafeReadOnlySpan<T>(input.Length).ToArray());
 
 			Assert.Equal(input, intPtr.GetUnsafeArray<T>(input.Length));
 			Assert.Equal(input, uintPtr.GetUnsafeArray<T>(input.Length));
+			Assert.Equal(input, handle.GetUnsafeArray<T>(input.Length));
 		}
 
 		GetUnsafeSpanTest.MemoryTest(input);

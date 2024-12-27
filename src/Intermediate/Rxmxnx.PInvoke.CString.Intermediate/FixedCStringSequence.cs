@@ -36,6 +36,7 @@ public readonly unsafe ref struct FixedCStringSequence
 	/// <exception cref="IndexOutOfRangeException">
 	/// Thrown when <paramref name="index"/> is greater than or equal to the length of this object or less than zero.
 	/// </exception>
+	[IndexerName("Item")]
 	public IReadOnlyFixedMemory this[Int32 index]
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -84,6 +85,16 @@ public readonly unsafe ref struct FixedCStringSequence
 		for (Int32 i = 0; i < memories.Length; i++)
 			memories[i] = fseq.GetFixedCString(i);
 		return new(memories);
+	}
+
+	/// <summary>
+	/// Retrieves read-only span enumerator from current instance.
+	/// </summary>
+	/// <returns>A read-only span enumerator from current instance.</returns>
+	public ReadOnlySpan<CString?>.Enumerator GetEnumerator()
+	{
+		ReadOnlySpan<CString?> span = this._values;
+		return span.GetEnumerator();
 	}
 
 	/// <summary>

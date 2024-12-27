@@ -3,13 +3,18 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// Represents a platform-specific type used to manage a pointer to a read-only value of type <typeparamref name="T"/>.
 /// </summary>
-/// <typeparam name="T">An <see langword="unmanaged"/> <see cref="ValueType"/>.</typeparam>
+/// <typeparam name="T">Type of pointer.</typeparam>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<ReadOnlyValPtr<T>>, IComparable,
-	IComparable<ReadOnlyValPtr<T>>, ISpanFormattable, ISerializable where T : unmanaged
+	IComparable<ReadOnlyValPtr<T>>, ISpanFormattable, ISerializable
 {
+#pragma warning disable CS8500
+	/// <summary>
+	/// Indicates if <typeparamref name="T"/> is an <see langword="unmanaged"/> type.
+	/// </summary>
+	public static Boolean IsUnmanaged => !RuntimeHelpers.IsReferenceOrContainsReferences<T>();
 	/// <summary>
 	/// A read-only field representing a null-initialized pointer to a value of type <typeparamref name="T"/>.
 	/// </summary>
@@ -57,7 +62,7 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 
 	/// <inheritdoc/>
 	public Int32 CompareTo(Object? obj)
-		=> ValidationUtilities.ThrowIfInvalidValuePointer<T>(obj, this.Pointer, nameof(ValPtr<T>));
+		=> ValidationUtilities.ThrowIfInvalidValuePointer<T>(obj, this.Pointer, nameof(ReadOnlyValPtr<T>));
 	/// <inheritdoc/>
 	public Int32 CompareTo(ReadOnlyValPtr<T> value) => this.Pointer.CompareTo(value.Pointer);
 	/// <inheritdoc/>
@@ -94,7 +99,7 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	public String ToString(String? format, IFormatProvider? formatProvider)
 		=> this.Pointer.ToString(format, formatProvider);
 	/// <inheritdoc/>
-	[SuppressMessage(SuppressMessageConstants.CSharpSquid, "S1006")]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1006)]
 	public Boolean TryFormat(Span<Char> destination, out Int32 charsWritten, ReadOnlySpan<Char> format = default,
 		IFormatProvider? provider = default)
 		=> this.Pointer.TryFormat(destination, out charsWritten, format, provider);
@@ -132,7 +137,7 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// <summary>
 	/// Defines an explicit conversion of a given <see cref="IntPtr"/> to a read-only value pointer.
 	/// </summary>
-	/// <param name="ptr">A <see cref="IntPtr"/> to explicitly convert.</param>
+	/// <param name="ptr">An <see cref="IntPtr"/> to explicitly convert.</param>
 	public static explicit operator ReadOnlyValPtr<T>(IntPtr ptr) => new(ptr.ToPointer());
 	/// <summary>
 	/// Defines an explicit conversion of a given pointer to a read-only value pointer.
@@ -301,4 +306,5 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 		Unsafe.SkipInit(out result);
 		return IntPtr.TryParse(s, style, provider, out Unsafe.As<ReadOnlyValPtr<T>, IntPtr>(ref result));
 	}
+#pragma warning restore CS8500
 }

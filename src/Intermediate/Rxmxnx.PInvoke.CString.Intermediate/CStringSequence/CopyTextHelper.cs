@@ -6,7 +6,11 @@ public partial class CStringSequence
 	/// <summary>
 	/// Represents the state object used during the creation of a <see cref="CStringSequence"/>.
 	/// </summary>
-	private readonly unsafe struct CopyTextHelper
+	private readonly unsafe
+#if NET9_0_OR_GREATER
+		ref
+#endif
+		struct CopyTextHelper
 	{
 		/// <summary>
 		/// Pointer to byte buffer.

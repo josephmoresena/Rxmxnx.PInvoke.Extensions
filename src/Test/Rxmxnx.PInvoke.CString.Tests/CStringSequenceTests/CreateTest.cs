@@ -70,7 +70,7 @@ public sealed class CreateTest
 
 		value.AsSpan().CopyTo(span);
 	}
-	private static void AssertSequence(CStringSequence seq, IReadOnlyList<CString?> values)
+	private static void AssertSequence(CStringSequence seq, CString?[] values)
 	{
 		for (Int32 i = 0; i < seq.Count; i++)
 		{

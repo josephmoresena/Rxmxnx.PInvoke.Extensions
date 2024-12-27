@@ -4,8 +4,8 @@
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class EnumerableSequenceTests
 {
-	private const String notStartedError = "Enumeration has not started. Call MoveNext.";
-	private const String finishedError = "Enumeration already finished.";
+	private static readonly String notStartedError = IMessageResource.GetInstance().NotStartedEnumerable;
+	private static readonly String finishedError = IMessageResource.GetInstance().FinishedEnumerable;
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]

@@ -3,6 +3,15 @@
 public partial class CStringSequence
 {
 	/// <summary>
+	/// Private constructor.
+	/// </summary>
+	private CStringSequence()
+	{
+		this._lengths = [];
+		this._value = String.Empty;
+		this._cache = Array.Empty<CString?>();
+	}
+	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class by making a deep copy of
 	/// the values in the existing <see cref="CStringSequence"/>.
 	/// </summary>

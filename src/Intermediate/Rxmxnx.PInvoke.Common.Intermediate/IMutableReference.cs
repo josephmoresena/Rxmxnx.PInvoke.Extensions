@@ -55,7 +55,7 @@ public interface IMutableReference<T> : IMutableReference, IReferenceableWrapper
 	IReferenceable<T>
 {
 	/// <summary>
-	/// Reference to instance <typeparamref name="T"/> object.
+	/// Reference to <typeparamref name="T"/> wrapped instance.
 	/// </summary>
 	new ref T Reference { get; }
 

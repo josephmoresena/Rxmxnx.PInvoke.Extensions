@@ -65,7 +65,7 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 		ValidationUtilities.ThrowIfInvalidSubsequence(this._lengths.Length, startIndex, length);
 
 		if (length == 0)
-			return CStringSequence.empty;
+			return CStringSequence.Empty;
 
 		if (startIndex == 0 && length == this._lengths.Length)
 			return this;

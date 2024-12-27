@@ -38,6 +38,9 @@ public static partial class ReferenceExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(this ref T refValue, TArg arg, FixedReferenceAction<T, TArg> action)
 		where T : unmanaged
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 		=> NativeUtilities.WithSafeFixed(ref refValue, arg, action);
 	/// <summary>
 	/// Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a
@@ -52,6 +55,9 @@ public static partial class ReferenceExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(this ref T refValue, TArg arg,
 		ReadOnlyFixedReferenceAction<T, TArg> action) where T : unmanaged
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 		=> NativeUtilities.WithSafeReadOnlyFixed(ref refValue, arg, action);
 
 	/// <summary>
@@ -98,6 +104,9 @@ public static partial class ReferenceExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TArg, TResult>(this ref T refValue, TArg arg,
 		FixedReferenceFunc<T, TArg, TResult> func) where T : unmanaged
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 		=> NativeUtilities.WithSafeFixed(ref refValue, arg, func);
 	/// <summary>
 	/// Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a
@@ -114,5 +123,8 @@ public static partial class ReferenceExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TArg, TResult>(this ref T refValue, TArg arg,
 		ReadOnlyFixedReferenceFunc<T, TArg, TResult> func) where T : unmanaged
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 		=> NativeUtilities.WithSafeReadOnlyFixed(ref refValue, arg, func);
 }

@@ -6,6 +6,7 @@
 public interface IEnumerableSequence<out T> : IEnumerable<T>
 {
 	IEnumerator<T> IEnumerable<T>.GetEnumerator() => this.CreateEnumerator();
+	[ExcludeFromCodeCoverage]
 	IEnumerator IEnumerable.GetEnumerator() => this.CreateEnumerator();
 	/// <summary>
 	/// Retrieves the element at the specified index.
@@ -24,7 +25,7 @@ public interface IEnumerableSequence<out T> : IEnumerable<T>
 	/// </summary>
 	protected void DisposeEnumeration()
 	{
-		// By default no resources to dispose.
+		// By default, no resources to dispose.
 	}
 
 	/// <summary>

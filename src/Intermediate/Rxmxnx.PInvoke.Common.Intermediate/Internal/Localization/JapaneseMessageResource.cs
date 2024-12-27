@@ -1,0 +1,60 @@
+namespace Rxmxnx.PInvoke.Internal.Localization;
+
+/// <summary>
+/// Japanese (日本語) message resource.
+/// </summary>
+[ExcludeFromCodeCoverage]
+internal sealed class JapaneseMessageResource : IMessageResource
+{
+	/// <inheritdoc cref="IMessageResource.Instance"/>
+	private static readonly JapaneseMessageResource instance = new();
+
+#if NET6_0
+	[RequiresPreviewFeatures]
+#endif
+	static IMessageResource IMessageResource.Instance => JapaneseMessageResource.instance;
+
+	/// <summary>
+	/// Private constructor.
+	/// </summary>
+	private JapaneseMessageResource() { }
+
+	String IMessageResource.InvalidListIndexMessage => "インデックスがリストの範囲外です。";
+	String IMessageResource.InvalidSequenceIndex => "インデックスがシーケンスの範囲外です。";
+	String IMessageResource.InvalidInstance => "現在のインスタンスは無効です。";
+	String IMessageResource.InvalidPointerSerialization
+		=> "8バイトの値を持つ IntPtr または UIntPtr は、4バイトのワードサイズのマシンでデシリアライズできません。";
+	String IMessageResource.IsNotFunction => "現在のインスタンスは関数ではありません。";
+	String IMessageResource.IsFunction => "現在のインスタンスは関数です。";
+	String IMessageResource.ReadOnlyInstance => "現在のインスタンスは読み取り専用です。";
+	String IMessageResource.InvalidUnmanagedCast => "ソースおよびターゲットの非管理型のサイズは等しくなければなりません。";
+	String IMessageResource.NotStartedEnumerable => "列挙が開始されていません。MoveNext を呼び出してください。";
+	String IMessageResource.FinishedEnumerable => "列挙はすでに終了しています。";
+	String IMessageResource.LessThanZero => "ゼロ未満にはできません。";
+	String IMessageResource.LargerThanRegionLength => "領域の長さを超えることはできません。";
+	String IMessageResource.IndexOutOfRegion => "インデックスと長さは領域内の位置を参照する必要があります。";
+	String IMessageResource.LargerThanStringLength => "文字列の長さを超えることはできません。";
+	String IMessageResource.IndexOutOfString => "インデックスと長さは文字列内の位置を参照する必要があります。";
+	String IMessageResource.LargerThanSequenceLength => "シーケンスの長さを超えることはできません。";
+	String IMessageResource.IndexOutOfSequence => "インデックスと長さはシーケンス内の位置を参照する必要があります。";
+
+	String IMessageResource.InvalidType(String requiredTypeName) => $"オブジェクトは {requiredTypeName} 型である必要があります。";
+	String IMessageResource.InvalidRefTypePointer(Type typeOf) => $"現在のインスタンスは、{typeOf} 型の値を含むには不十分です。";
+	String IMessageResource.InvalidBinarySpanSize(String nameofSpan, Int32 sizeOf)
+		=> $"パラメータ {nameofSpan} の長さは {sizeOf} である必要があります。";
+	String IMessageResource.InvalidCopyUnmanagedType(String nameofSpan, String nameofValue)
+		=> $"{nameofSpan} に {nameofValue} をコピーするには十分な空きサイズがありません。";
+	String IMessageResource.InvalidLength(String nameofLength) => $"パラメータ {nameofLength} はゼロまたは正の整数である必要があります。";
+	String IMessageResource.InvalidUtf8Region(String nameofRegion) => $"{nameofRegion} は UTF-8 テキストを含んでいません。";
+	String IMessageResource.NotUnmanagedType(Type type) => $"{type} は非管理型ではありません。";
+	String IMessageResource.NotValueType(Type type) => $"{type} は値型ではありません。";
+	String IMessageResource.NotReferenceType(Type type) => $"{type} は参照型ではありません。";
+	String IMessageResource.NotType(Type sourceType, Type destinationType)
+		=> $"{sourceType} は {destinationType} ではありません。";
+	String IMessageResource.ContainsReferencesButUnmanaged(Type itemType, Type arrayType)
+		=> $"{itemType} は参照を含みますが、{arrayType} は非管理型です。";
+	String IMessageResource.ReferencesTypeButUnmanaged(Type itemType, Type arrayType)
+		=> $"{itemType} は参照型ですが、{arrayType} は非管理型です。";
+	String IMessageResource.UnmanagedTypeButContainsReferences(Type itemType, Type arrayType)
+		=> $"{itemType} は非管理型ですが、{arrayType} は参照を含んでいます。";
+}

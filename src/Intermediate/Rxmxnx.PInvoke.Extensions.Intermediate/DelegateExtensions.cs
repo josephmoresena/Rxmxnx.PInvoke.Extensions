@@ -9,7 +9,7 @@
 public static unsafe partial class DelegateExtensions
 {
 	/// <summary>
-	/// Creates an <see cref="FuncPtr{TDelegate}"/> from a memory reference to a <typeparamref name="TDelegate"/> delegate
+	/// Retrieves a <see cref="FuncPtr{TDelegate}"/> from a memory reference to a <typeparamref name="TDelegate"/> delegate
 	/// instance.
 	/// </summary>
 	/// <typeparam name="TDelegate">Type of the <see cref="Delegate"/> to be referenced by the pointer.</typeparam>
@@ -24,11 +24,11 @@ public static unsafe partial class DelegateExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static FuncPtr<TDelegate> GetUnsafeFuncPtr<TDelegate>(this TDelegate? delegateInstance)
 		where TDelegate : Delegate
-		=> delegateInstance is null ?
-			FuncPtr<TDelegate>.Zero :
-			(FuncPtr<TDelegate>)Marshal.GetFunctionPointerForDelegate(delegateInstance);
+		=> delegateInstance is not null ?
+			(FuncPtr<TDelegate>)Marshal.GetFunctionPointerForDelegate(delegateInstance) :
+			FuncPtr<TDelegate>.Zero;
 	/// <summary>
-	/// Creates an <see cref="IntPtr"/> from a memory reference to a <typeparamref name="TDelegate"/> delegate instance.
+	/// Retrieves an <see cref="IntPtr"/> from a memory reference to a <typeparamref name="TDelegate"/> delegate instance.
 	/// </summary>
 	/// <typeparam name="TDelegate">Type of the <see cref="Delegate"/> to be referenced by the pointer.</typeparam>
 	/// <param name="delegateInstance">Instance of the <typeparamref name="TDelegate"/> delegate.</param>
@@ -41,9 +41,9 @@ public static unsafe partial class DelegateExtensions
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IntPtr GetUnsafeIntPtr<TDelegate>(this TDelegate? delegateInstance) where TDelegate : Delegate
-		=> delegateInstance is null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(delegateInstance);
+		=> delegateInstance is not null ? Marshal.GetFunctionPointerForDelegate(delegateInstance) : IntPtr.Zero;
 	/// <summary>
-	/// Creates a <see cref="UIntPtr"/> from a memory reference to a <typeparamref name="TDelegate"/> delegate instance.
+	/// Retrieves a <see cref="UIntPtr"/> from a memory reference to a <typeparamref name="TDelegate"/> delegate instance.
 	/// </summary>
 	/// <typeparam name="TDelegate">Type of the <see cref="Delegate"/> to be referenced by the pointer.</typeparam>
 	/// <param name="delegateInstance">Instance of the <typeparamref name="TDelegate"/> delegate.</param>

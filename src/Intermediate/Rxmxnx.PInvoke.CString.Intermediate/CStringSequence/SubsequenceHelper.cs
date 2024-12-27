@@ -5,7 +5,11 @@ public partial class CStringSequence
 	/// <summary>
 	/// A helper class used to create subsequences from a parent <see cref="CStringSequence"/>.
 	/// </summary>
-	private readonly struct SubsequenceHelper
+	private readonly
+#if NET9_0_OR_GREATER
+		ref
+#endif
+		struct SubsequenceHelper
 	{
 		/// <summary>
 		/// A function that returns the binary representation of the subsequence.
@@ -36,7 +40,7 @@ public partial class CStringSequence
 		public CStringSequence CreateSequence()
 		{
 			Int32 binaryLength = this._lengths.Sum(CStringSequence.GetSpanLength);
-			Int32 charLength = binaryLength / CStringSequence.sizeOfChar + binaryLength % CStringSequence.sizeOfChar;
+			Int32 charLength = binaryLength / sizeof(Char) + binaryLength % sizeof(Char);
 			String value = String.Create(charLength, this, SubsequenceHelper.CopyBytes);
 			return new(value, this._lengths);
 		}

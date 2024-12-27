@@ -61,13 +61,12 @@ public sealed class AsValueTest
 	}
 	private static unsafe void InvalidTest<T>(Boolean empty) where T : unmanaged
 	{
-		Span<Byte> bytes = empty ? Array.Empty<Byte>() : AsValueTest.fixture.CreateMany<Byte>(sizeof(T) + 1).ToArray();
+		Span<Byte> bytes = empty ? [] : AsValueTest.fixture.CreateMany<Byte>(sizeof(T) + 1).ToArray();
 		_ = ref bytes.AsValue<T>();
 	}
 	private static unsafe void InvalidReadOnlyTest<T>(Boolean empty) where T : unmanaged
 	{
-		ReadOnlySpan<Byte> bytes =
-			empty ? Array.Empty<Byte>() : AsValueTest.fixture.CreateMany<Byte>(sizeof(T) + 1).ToArray();
+		ReadOnlySpan<Byte> bytes = empty ? [] : AsValueTest.fixture.CreateMany<Byte>(sizeof(T) + 1).ToArray();
 		_ = ref bytes.AsValue<T>();
 	}
 }

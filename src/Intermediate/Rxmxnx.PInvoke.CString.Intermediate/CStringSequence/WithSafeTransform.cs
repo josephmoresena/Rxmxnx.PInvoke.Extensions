@@ -43,6 +43,9 @@ public unsafe partial class CStringSequence
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void WithSafeTransform<TState>(TState state, CStringSequenceAction<TState> action)
+#if NET9_0_OR_GREATER
+		where TState : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (Char* ptr = &MemoryMarshal.GetReference<Char>(this._value))
@@ -102,6 +105,9 @@ public unsafe partial class CStringSequence
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public TResult WithSafeTransform<TState, TResult>(TState state, CStringSequenceFunc<TState, TResult> func)
+#if NET9_0_OR_GREATER
+		where TState : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (Char* ptr = &MemoryMarshal.GetReference<Char>(this._value))

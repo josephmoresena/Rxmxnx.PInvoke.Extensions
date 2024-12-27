@@ -12,7 +12,7 @@ public static unsafe partial class NativeUtilities
 	public static readonly Int32 PointerSize = sizeof(IntPtr);
 
 	/// <summary>
-	/// Retrieves the size of <typeparamref name="T"/> structure.
+	/// Gets the memory size of <typeparamref name="T"/> structure.
 	/// </summary>
 	/// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
 	/// <returns>Size of <typeparamref name="T"/> structure.</returns>
@@ -82,10 +82,10 @@ public static unsafe partial class NativeUtilities
 		=> (FuncPtr<TDelegate>)Marshal.GetFunctionPointerForDelegate(delegateInstance);
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="ReadOnlyValPtr{T}"/> pointer from a read-only reference to a
-	/// <typeparamref name="T"/> <see langword="unmanaged"/> value.
+	/// <typeparamref name="T"/> value.
 	/// </summary>
-	/// <typeparam name="T"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> value.</typeparam>
-	/// <param name="value">A read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</param>
+	/// <typeparam name="T">The type of the managed reference.</typeparam>
+	/// <param name="value">A read-only reference to a <typeparamref name="T"/> value.</param>
 	/// <returns><see cref="ReadOnlyValPtr{T}"/> pointer.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
@@ -93,11 +93,30 @@ public static unsafe partial class NativeUtilities
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static ReadOnlyValPtr<T> GetUnsafeValPtr<T>(in T value) where T : unmanaged
+	public static ReadOnlyValPtr<T> GetUnsafeValPtr<T>(in T value)
 	{
 		ref T refValue = ref Unsafe.AsRef(in value);
 		return new(Unsafe.AsPointer(ref refValue));
 	}
+	/// <summary>
+	/// Retrieves an unsafe pointer of type <see cref="ValPtr{T}"/> from a reference to a value of type
+	/// <typeparamref name="T"/>.
+	/// </summary>
+	/// <typeparam name="T">The type of the managed reference.</typeparam>
+	/// <param name="refValue">The reference to the value from which to retrieve the pointer.</param>
+	/// <returns>An unsafe pointer of type <see cref="ValPtr{T}"/> pointing to the referenced value.</returns>
+	/// <remarks>
+	/// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
+	/// won't be moved or collected by garbage collector.
+	/// The pointer will point to the address in memory the reference had at the moment this method was called.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static ValPtr<T> GetUnsafeValPtrFromRef<T>(ref T refValue)
+	{
+		void* ptr = Unsafe.AsPointer(ref refValue);
+		return new(ptr);
+	}
+
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="IntPtr"/> pointer from a read-only reference to a
 	/// <typeparamref name="T"/> <see langword="unmanaged"/> value.
@@ -198,16 +217,16 @@ public static unsafe partial class NativeUtilities
 		return ref Unsafe.As<TSource, TDestination>(ref refValue);
 	}
 	/// <summary>
-	/// Retrieves a <see cref="Byte"/> array from a read-only reference to a <typeparamref name="T"/> value.
+	/// Retrieves a <see cref="Byte"/> array from a read-only reference to a <typeparamref name="TSource"/> value.
 	/// </summary>
-	/// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-	/// <param name="value">A read-only reference to <typeparamref name="T"/> value.</param>
+	/// <typeparam name="TSource"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
+	/// <param name="value">A read-only reference to <typeparamref name="TSource"/> value.</param>
 	/// <returns><see cref="Byte"/> array.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static Byte[] ToBytes<T>(in T value) where T : unmanaged
+	public static Byte[] ToBytes<TSource>(in TSource value) where TSource : unmanaged
 	{
-		ref T refValue = ref Unsafe.AsRef(in value);
-		ReadOnlySpan<T> intermediateSpan = MemoryMarshal.CreateReadOnlySpan(ref refValue, 1);
+		ref TSource refValue = ref Unsafe.AsRef(in value);
+		ReadOnlySpan<TSource> intermediateSpan = MemoryMarshal.CreateReadOnlySpan(ref refValue, 1);
 		ReadOnlySpan<Byte> bytes = MemoryMarshal.AsBytes(intermediateSpan);
 		return bytes.ToArray();
 	}
@@ -248,7 +267,7 @@ public static unsafe partial class NativeUtilities
 	/// Creates a new <typeparamref name="T"/> array with a specific length and initializes it after
 	/// creation by using the specified callback.
 	/// </summary>
-	/// <typeparam name="T">An <see langword="unmanaged"/> type of elements in the array.</typeparam>
+	/// <typeparam name="T">A type of elements in the array.</typeparam>
 	/// <typeparam name="TState">The type of the element to pass to <paramref name="action"/>.</typeparam>
 	/// <param name="length">The length of the array to create.</param>
 	/// <param name="state">The element to pass to <paramref name="action"/>.</param>
@@ -256,7 +275,9 @@ public static unsafe partial class NativeUtilities
 	/// <returns>The created array.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static T[] CreateArray<T, TState>(Int32 length, TState state, SpanAction<T, TState> action)
-		where T : unmanaged
+#if NET9_0_OR_GREATER
+		where TState : allows ref struct
+#endif
 	{
 		T[] result = new T[length];
 		Span<T> span = result;
@@ -264,20 +285,21 @@ public static unsafe partial class NativeUtilities
 		return result;
 	}
 	/// <summary>
-	/// Preforms a binary copy of <paramref name="value"/> to <paramref name="destination"/> span.
+	/// Performs a binary copy of the given <typeparamref name="TSource"/> to the <paramref name="destination"/> span.
 	/// </summary>
-	/// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
-	/// <param name="value"><typeparamref name="T"/> value.</param>
+	/// <typeparam name="TSource"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
+	/// <param name="value"><typeparamref name="TSource"/> value.</param>
 	/// <param name="destination">Destination <see cref="Span{T}"/> instance.</param>
 	/// <param name="offset">
 	/// The offset in <paramref name="destination"/> at which <paramref name="value"/> will be copied.
 	/// </param>
 	/// <exception cref="ArgumentException">
 	/// Throws an exception when the length of <paramref name="destination"/> span minus the offset is less
-	/// than the size of <typeparamref name="T"/>.
+	/// than the size of <typeparamref name="TSource"/>.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void CopyBytes<T>(in T value, Span<Byte> destination, Int32 offset = 0) where T : unmanaged
+	public static void CopyBytes<TSource>(in TSource value, Span<Byte> destination, Int32 offset = 0)
+		where TSource : unmanaged
 	{
 		ValidationUtilities.ThrowIfInvalidCopyType(value, destination, offset, out ReadOnlySpan<Byte> bytes);
 		bytes.CopyTo(destination[offset..]);
@@ -292,9 +314,14 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A <typeparamref name="TArg"/> instance.</param>
 	/// <param name="action">A <see cref="SpanAction{T, TState}"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void WriteSpan<T, TArg>(Span<T> span, TArg arg, SpanAction<T, TArg> action) where T : unmanaged
+	private static void WriteSpan<T, TArg>(Span<T> span, TArg arg, SpanAction<T, TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
-		fixed (T* ptr = &MemoryMarshal.GetReference(span))
-			action(new(ptr, span.Length), arg);
+#pragma warning disable CS8500
+		fixed (void* _ = &MemoryMarshal.GetReference(span))
+#pragma warning restore CS8500
+			action(span, arg);
 	}
 }

@@ -13,6 +13,8 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <ExcludeXmlAssemblyFiles>false</ExcludeXmlAssemblyFiles>
         <LangVersion>latest</LangVersion>
+        <TrimmerSingleWarn>false</TrimmerSingleWarn>
+        <DefineConstants Condition="'$(DISABLE_BINARY_SPACES)' != 'true'">$(DefineConstants);BINARY_SPACES</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,22 +24,27 @@
         <Using Include="System.Diagnostics.CodeAnalysis"/>
         <Using Include="System.Globalization"/>
         <Using Include="System.Reflection"/>
+        <Using Include="System.Runtime"/>
         <Using Include="System.Runtime.CompilerServices"/>
         <Using Include="System.Runtime.InteropServices"/>
         <Using Include="System.Runtime.Serialization"/>
+        <Using Include="System.Runtime.Versioning"/>
         <Using Include="System.Text"/>
 
         <Using Include="Rxmxnx.PInvoke.Internal"/>
+        <Using Include="Rxmxnx.PInvoke.Internal.Localization"/>
+        <Using Include="Rxmxnx.PInvoke.Localization"/>
     </ItemGroup>
 
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
             <_Parameter1>Rxmxnx.PInvoke.CString.Intermediate</_Parameter1>
         </AssemblyAttribute>
-    </ItemGroup>
-    <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
             <_Parameter1>Rxmxnx.PInvoke.Extensions.Intermediate</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>Rxmxnx.PInvoke.Buffers.Intermediate</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
     <ItemGroup>
@@ -49,6 +56,9 @@
         </AssemblyAttribute>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
             <_Parameter1>Rxmxnx.PInvoke.Extensions.Tests</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>Rxmxnx.PInvoke.Buffers.Tests</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
 

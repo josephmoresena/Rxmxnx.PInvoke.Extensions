@@ -3,17 +3,17 @@
 /// <summary>
 /// Represents a list of <see cref="FixedMemory"/> instances.
 /// </summary>
-internal readonly struct FixedMemoryListValue : IEnumerableSequence<ReadOnlyFixedMemory>
+internal readonly ref struct FixedMemoryListValue
 {
 	/// <summary>
-	/// Array of <see cref="ReadOnlyFixedMemory"/> instances.
+	/// Read-only span of <see cref="ReadOnlyFixedMemory"/> instances.
 	/// </summary>
-	private readonly ReadOnlyFixedMemory[]? _memories;
+	private readonly ReadOnlySpan<ReadOnlyFixedMemory> _memories;
 
 	/// <summary>
 	/// Gets the total number of elements in the list.
 	/// </summary>
-	public Int32 Count => this._memories?.Length ?? default;
+	public Int32 Count => this._memories.Length;
 	/// <summary>
 	/// Gets the element at the specified index.
 	/// </summary>
@@ -28,34 +28,46 @@ internal readonly struct FixedMemoryListValue : IEnumerableSequence<ReadOnlyFixe
 		get
 		{
 			ValidationUtilities.ThrowIfInvalidListIndex(index, this.Count);
-			return this._memories![index];
+			return this._memories[index];
 		}
 	}
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="FixedMemory"/> struct.
 	/// </summary>
-	/// <param name="memories">The array of <see cref="FixedMemory"/> instances.</param>
-	public FixedMemoryListValue(IEnumerable<ReadOnlyFixedMemory> memories) => this._memories = memories.ToArray();
-	/// <summary>
-	/// Initializes a new instance of the <see cref="FixedMemoryListValue"/> struct.
-	/// </summary>
-	/// <param name="memories">The array of <see cref="ReadOnlyFixedMemory"/> instances.</param>
-	public FixedMemoryListValue(ReadOnlyFixedMemory[] memories) => this._memories = memories;
+	/// <param name="memories">A read-only span of <see cref="FixedMemory"/> instances.</param>
+	private FixedMemoryListValue(ReadOnlySpan<ReadOnlyFixedMemory> memories) => this._memories = memories;
 
-	ReadOnlyFixedMemory IEnumerableSequence<ReadOnlyFixedMemory>.GetItem(Int32 index) => this[index];
-	Int32 IEnumerableSequence<ReadOnlyFixedMemory>.GetSize() => this.Count;
+	/// <summary>
+	/// Retrieves read-only span from current instance.
+	/// </summary>
+	/// <returns>A read-only span from current instance.</returns>
+	public ReadOnlySpan<ReadOnlyFixedMemory> AsSpan() => this._memories;
 
 	/// <summary>
 	/// Releases all resources used by the <see cref="ReadOnlyFixedMemory"/> instances in the list.
 	/// </summary>
 	public void Unload()
 	{
-		if (this._memories is null) return;
-		for (Int32 index = 0; index < this._memories.Length; index++)
-		{
-			ReadOnlyFixedMemory mem = this._memories[index];
+		foreach (ReadOnlyFixedMemory mem in this._memories)
 			mem.Unload();
-		}
+	}
+
+	/// <summary>
+	/// Creates a new <see cref="FixedMemoryListValue"/> instance from <paramref name="memories"/>.
+	/// </summary>
+	/// <typeparam name="TMemory">Type of <see cref="ReadOnlyFixedMemory"/>.</typeparam>
+	/// <param name="memories">Read-only of <see cref="ReadOnlyFixedMemory"/> instances.</param>
+	/// <returns>A new <see cref="FixedMemoryListValue"/> instance.</returns>
+	public static FixedMemoryListValue Create<TMemory>(
+#if NET9_0_OR_GREATER
+		params
+#endif
+		ReadOnlySpan<TMemory> memories) where TMemory : ReadOnlyFixedMemory
+	{
+		ref TMemory refMem = ref MemoryMarshal.GetReference(memories);
+		ref ReadOnlyFixedMemory refRoMem = ref Unsafe.As<TMemory, ReadOnlyFixedMemory>(ref refMem);
+		ReadOnlySpan<ReadOnlyFixedMemory> roSpan = MemoryMarshal.CreateReadOnlySpan(ref refRoMem, memories.Length);
+		return new(roSpan);
 	}
 }

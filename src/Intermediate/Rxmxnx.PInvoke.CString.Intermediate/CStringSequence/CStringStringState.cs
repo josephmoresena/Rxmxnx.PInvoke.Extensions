@@ -5,7 +5,7 @@ public partial class CStringSequence
 	/// <summary>
 	/// State for temporal functional <see cref="CString"/>.
 	/// </summary>
-	internal readonly struct CStringStringState(String value) : IUtf8FunctionState<CStringStringState>
+	private readonly struct CStringStringState(String value) : IUtf8FunctionState<CStringStringState>
 	{
 		/// <summary>
 		/// Internal text value.
@@ -25,6 +25,6 @@ public partial class CStringSequence
 #if NET6_0
 		[RequiresPreviewFeatures]
 #endif
-		static Int32 IUtf8FunctionState<CStringStringState>.GetLength(CStringStringState state) => state._utf8Length;
+		static Int32 IUtf8FunctionState<CStringStringState>.GetLength(in CStringStringState state) => state._utf8Length;
 	}
 }

@@ -4,7 +4,7 @@ public static partial class DelegateExtensions
 {
 	/// <summary>
 	/// Prevents the garbage collector from relocating a delegate in memory and fixes its address while
-	/// an action is being performed.
+	/// the action is being performed.
 	/// </summary>
 	/// <typeparam name="TDelegate">Type of the delegate.</typeparam>
 	/// <param name="del">The delegate to be fixed.</param>
@@ -16,7 +16,7 @@ public static partial class DelegateExtensions
 		=> NativeUtilities.WithSafeFixed(del, action);
 	/// <summary>
 	/// Prevents the garbage collector from relocating a delegate in memory and fixes its address while
-	/// an action is being performed, passing an additional argument to the action.
+	/// the action is being performed, passing an additional argument to the action.
 	/// </summary>
 	/// <typeparam name="TDelegate">Type of the delegate.</typeparam>
 	/// <typeparam name="TArg">The type of the additional argument to be passed to the action.</typeparam>
@@ -27,11 +27,14 @@ public static partial class DelegateExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TDelegate, TArg>(this TDelegate del, TArg arg,
 		FixedMethodAction<TDelegate, TArg> action) where TDelegate : Delegate
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 		=> NativeUtilities.WithSafeFixed(del, arg, action);
 
 	/// <summary>
-	/// Prevents the garbage collector from relocating a delegate in memory, fixes its address, and performs
-	/// a function that returns a value.
+	/// Prevents the garbage collector from relocating a delegate in memory, fixes its address, and invokes
+	/// the function that returns a <typeparamref name="TResult"/> value.
 	/// </summary>
 	/// <typeparam name="TDelegate">Type of the delegate.</typeparam>
 	/// <typeparam name="TResult">The type of the return value of the function.</typeparam>
@@ -44,8 +47,8 @@ public static partial class DelegateExtensions
 		FixedMethodFunc<TDelegate, TResult> func) where TDelegate : Delegate
 		=> NativeUtilities.WithSafeFixed(del, func);
 	/// <summary>
-	/// Prevents the garbage collector from relocating a delegate in memory, fixes its address, performs
-	/// a function that returns a value, and accepts an additional argument.
+	/// Prevents the garbage collector from relocating a delegate in memory, fixes its address, invokes
+	/// the function that returns a <typeparamref name="TResult"/> value, passing an additional argument to the function.
 	/// </summary>
 	/// <typeparam name="TDelegate">Type of the delegate.</typeparam>
 	/// <typeparam name="TArg">The type of the additional argument to be passed to the function.</typeparam>
@@ -58,5 +61,8 @@ public static partial class DelegateExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<TDelegate, TArg, TResult>(this TDelegate del, TArg arg,
 		FixedMethodFunc<TDelegate, TArg, TResult> func) where TDelegate : Delegate
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 		=> NativeUtilities.WithSafeFixed(del, arg, func);
 }

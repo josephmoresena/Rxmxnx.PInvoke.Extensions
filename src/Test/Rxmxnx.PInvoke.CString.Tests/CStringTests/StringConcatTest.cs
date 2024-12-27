@@ -9,7 +9,7 @@ public sealed class StringConcatTest
 	[InlineData(false)]
 	internal void LocalEmptyTest(Boolean emptyData)
 	{
-		String?[] values = !emptyData ? Enumerable.Repeat(String.Empty, 3).ToArray() : Array.Empty<String>();
+		String?[] values = !emptyData ? Enumerable.Repeat(String.Empty, 3).ToArray() : [];
 		StringConcatTest.EmptyTest(values);
 	}
 
@@ -18,7 +18,7 @@ public sealed class StringConcatTest
 	[InlineData(false)]
 	internal void NullEmptyTest(Boolean emptyData)
 	{
-		String?[] values = !emptyData ? Enumerable.Repeat<String?>(default, 3).ToArray() : Array.Empty<String>();
+		String?[] values = !emptyData ? Enumerable.Repeat<String?>(default, 3).ToArray() : [];
 		StringConcatTest.EmptyTest(values);
 	}
 
@@ -35,7 +35,7 @@ public sealed class StringConcatTest
 	[InlineData(false)]
 	internal async Task LocalEmptyTestAsync(Boolean emptyData)
 	{
-		String?[] values = !emptyData ? Enumerable.Repeat(String.Empty, 3).ToArray() : Array.Empty<String>();
+		String?[] values = !emptyData ? Enumerable.Repeat(String.Empty, 3).ToArray() : [];
 		await StringConcatTest.EmptyTestAsync(values);
 	}
 
@@ -44,7 +44,7 @@ public sealed class StringConcatTest
 	[InlineData(false)]
 	internal async Task NullEmptyTestAsync(Boolean emptyData)
 	{
-		String?[] values = !emptyData ? Enumerable.Repeat<String?>(default, 3).ToArray() : Array.Empty<String>();
+		String?[] values = !emptyData ? Enumerable.Repeat<String?>(default, 3).ToArray() : [];
 		await StringConcatTest.EmptyTestAsync(values);
 	}
 

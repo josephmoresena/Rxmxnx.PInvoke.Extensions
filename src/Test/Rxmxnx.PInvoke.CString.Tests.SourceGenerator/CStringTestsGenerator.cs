@@ -78,7 +78,7 @@ internal static partial class TestSet
 		foreach (String value in StringSet.Set)
 		{
 			strBuild.AppendLine(
-				$"\t\t\tnew Byte[] {{ {String.Join(", ", Encoding.UTF8.GetBytes(value).Select(x => $"{x}"))} }},");
+				$"\t\t\tnew Byte[] {{ {String.Join(", ", Encoding.UTF8.GetBytes(value).Select(x => $"{x.ToString()}"))} }},");
 		}
 		strBuild.AppendLine("\t\t};");
 	}
@@ -88,7 +88,7 @@ internal static partial class TestSet
 		foreach (String value in StringSet.Set)
 		{
 			strBuild.AppendLine(
-				$"\t\t\tnew Byte[] {{ {String.Join(", ", Encoding.UTF8.GetBytes(value).Select(x => $"{x}"))}, 0 }},");
+				$"\t\t\tnew Byte[] {{ {String.Join(", ", Encoding.UTF8.GetBytes(value).Select(x => $"{x.ToString()}"))}, 0 }},");
 		}
 		strBuild.AppendLine("\t\t};");
 	}

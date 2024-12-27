@@ -23,7 +23,7 @@ public sealed class WithSafeTransformTest
 	internal unsafe void FixedTest()
 	{
 		using TestMemoryHandle handle = new();
-		IReadOnlyList<Int32> indices = TestSet.GetIndices();
+		List<Int32> indices = TestSet.GetIndices();
 		CStringSequence seq = WithSafeTransformTest.CreateSequence(handle, indices, out CString?[] values);
 		fixed (void* ptrSeq = seq)
 		{
@@ -49,7 +49,7 @@ public sealed class WithSafeTransformTest
 	internal unsafe void FixedPointerTest()
 	{
 		using TestMemoryHandle handle = new();
-		IReadOnlyList<Int32> indices = TestSet.GetIndices();
+		List<Int32> indices = TestSet.GetIndices();
 		CStringSequence seq = WithSafeTransformTest.CreateSequence(handle, indices, out CString?[] values);
 		using IFixedPointer.IDisposable fPtr = seq.GetFixedPointer();
 		IntPtr ptr = fPtr.Pointer;
@@ -130,16 +130,14 @@ public sealed class WithSafeTransformTest
 		Int32 offset = 0;
 		IntPtr ptr = IntPtr.Zero;
 
-		for (Int32 i = 0; i < fml.Count; i++)
+		foreach (IReadOnlyFixedMemory fmem in fml)
 		{
-			if (!fml[i].Bytes.IsEmpty)
-			{
-				if (ptr == IntPtr.Zero)
-					ptr = fml[i].Pointer;
+			if (fmem.Bytes.IsEmpty) continue;
+			if (ptr == IntPtr.Zero)
+				ptr = fmem.Pointer;
 
-				Assert.Equal(ptr + offset, fml[i].Pointer);
-				offset += fml[i].Bytes.Length + 1;
-			}
+			Assert.Equal(ptr + offset, fmem.Pointer);
+			offset += fmem.Bytes.Length + 1;
 		}
 	}
 	private static void AssertSequence(FixedCStringSequence fseq, IReadOnlyList<CString?> values)
@@ -246,7 +244,7 @@ public sealed class WithSafeTransformTest
 		Int32 offset = 0;
 		IntPtr ptr = IntPtr.Zero;
 
-		List<CString> cstr = new();
+		List<CString> cstr = [];
 		for (Int32 i = 0; i < fml.Count; i++)
 		{
 			if (!fml[i].Bytes.IsEmpty)
@@ -279,7 +277,7 @@ public sealed class WithSafeTransformTest
 	}
 	private static IEnumerable<CString> GetNonEmptyValues(ReadOnlyFixedMemoryList fml)
 	{
-		List<CString> result = new();
+		List<CString> result = [];
 		foreach (IReadOnlyFixedMemory fmem in fml)
 		{
 			if (!fmem.Bytes.IsEmpty)
@@ -290,21 +288,29 @@ public sealed class WithSafeTransformTest
 	private static Int32[] GetIndices()
 	{
 		Queue<Int32> queue = new(TestSet.GetIndices());
-		List<Int32> result = new();
+		List<Int32> result = [];
 		Byte space = 0;
 		while (queue.TryDequeue(out Int32 value))
 		{
 			result.Add(value);
-			if (space == 2)
-				result.Add(-3);
-			else if (space == 13)
-				result.Add(-2);
-			else if (space == 17)
-				result.Add(-1);
-			else if (space > 23)
-				space = 0;
-			else
-				space++;
+			switch (space)
+			{
+				case 2:
+					result.Add(-3);
+					break;
+				case 13:
+					result.Add(-2);
+					break;
+				case 17:
+					result.Add(-1);
+					break;
+				case > 23:
+					space = 0;
+					break;
+				default:
+					space++;
+					break;
+			}
 		}
 		return result.ToArray();
 	}

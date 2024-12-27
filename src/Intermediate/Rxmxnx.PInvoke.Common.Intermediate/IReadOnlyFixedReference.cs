@@ -4,19 +4,18 @@
 /// This interface represents a read-only reference to a fixed memory location.
 /// </summary>
 /// <typeparam name="T">Type of the value referenced in memory.</typeparam>
-public interface IReadOnlyFixedReference<T> : IReadOnlyReferenceable<T>, IReadOnlyFixedMemory where T : unmanaged
+public interface IReadOnlyFixedReference<T> : IReadOnlyReferenceable<T>, IReadOnlyFixedMemory
 {
 	/// <summary>
-	/// Reinterprets the <typeparamref name="T"/> fixed memory reference as a
-	/// <typeparamref name="TDestination"/> memory reference.
+	/// Reinterprets the read-only <typeparamref name="T"/> fixed memory reference as a
+	/// read-only <typeparamref name="TDestination"/> memory reference.
 	/// </summary>
 	/// <typeparam name="TDestination">Type of the reinterpreted memory reference.</typeparam>
 	/// <param name="residual">Output. Residual read-only memory left after the transformation.</param>
 	/// <returns>
 	/// A <see cref="IReadOnlyFixedReference{TDestination}"/> instance.
 	/// </returns>
-	IReadOnlyFixedReference<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual)
-		where TDestination : unmanaged;
+	IReadOnlyFixedReference<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual);
 
 	/// <summary>
 	/// Interface representing a disposable <see cref="IReadOnlyFixedReference{T}"/> object for a read-only

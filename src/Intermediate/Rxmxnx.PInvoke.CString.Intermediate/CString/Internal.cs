@@ -18,12 +18,12 @@ public partial class CString
 	internal CString(CStringSequence sequence, Int32 index)
 	{
 		this._isLocal = false;
-		this._isFunction = true;
+		this.IsFunction = true;
 		this._data = ValueRegion<Byte>.Create(new SequenceItemState(sequence, index), SequenceItemState.GetSpan);
 
 		ReadOnlySpan<Byte> data = CStringSequence.GetItemSpan(sequence, index);
 		this._isNullTerminated = true;
-		this._length = data.Length;
+		this.Length = data.Length;
 	}
 
 	/// <summary>
@@ -78,7 +78,7 @@ public partial class CString
 	internal async Task WriteAsync(Stream strm, Boolean writeNullTermination,
 		CancellationToken cancellationToken = default)
 	{
-		await this.GetWriteTask(strm, 0, this._length, cancellationToken).ConfigureAwait(false);
+		await this.GetWriteTask(strm, 0, this.Length, cancellationToken).ConfigureAwait(false);
 		if (writeNullTermination)
 			await strm.WriteAsync(CString.empty, cancellationToken);
 	}
@@ -109,7 +109,7 @@ public partial class CString
 	/// <returns>
 	/// A non-null-terminated <see cref="CString"/> instance that contains a single <paramref name="c"/> character.
 	/// </returns>
-	internal static CString Create(Byte c) => new(new[] { c, }, false);
+	private static CString Create(Byte c) => new([c,], false);
 	/// <summary>
 	/// Retrieves the internal binary data from a given <see cref="CString"/>.
 	/// </summary>

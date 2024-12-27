@@ -232,15 +232,36 @@ public partial class CString
 	/// If any element within <paramref name="values"/> is <see langword="null"/>, it is ignored
 	/// during concatenation.
 	/// </remarks>
-	public static CString Concat(params CString?[] values)
+	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
+	public static CString Concat(
+#if !NET9_0_OR_GREATER
+		params
+#endif
+			CString?[] values)
 	{
 		ArgumentNullException.ThrowIfNull(values);
+		return CString.Concat(values.AsSpan());
+	}
+	/// <summary>
+	/// Concatenates the elements of a specified read-only span<see cref="CString"/>.
+	/// </summary>
+	/// <param name="values">A read-only span of <see cref="CString"/> instances.</param>
+	/// <returns>The concatenated elements of <paramref name="values"/>.</returns>
+	/// <remarks>
+	/// This method takes a read-only span of <see cref="CString"/> instances represented by <paramref name="values"/>,
+	/// and concatenates each element into a single <see cref="CString"/> instance.
+	/// If any element within <paramref name="values"/> is <see langword="null"/>, it is ignored
+	/// during concatenation.
+	/// </remarks>
+	public static CString Concat(
+#if NET9_0_OR_GREATER
+		params
+#endif
+		ReadOnlySpan<CString?> values)
+	{
 		using CStringConcatenator helper = new();
-		for (Int32 index = 0; index < values.Length; index++)
-		{
-			CString? value = values[index];
+		foreach (CString? value in values)
 			helper.Write(value);
-		}
 		return helper.ToCString();
 	}
 	/// <summary>
@@ -254,15 +275,36 @@ public partial class CString
 	/// If any element within <paramref name="values"/> is <see langword="null"/>, it is ignored
 	/// during concatenation.
 	/// </remarks>
-	public static CString Concat(params Byte[]?[] values)
+	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
+	public static CString Concat(
+#if !NET9_0_OR_GREATER
+		params
+#endif
+			Byte[]?[] values)
 	{
 		ArgumentNullException.ThrowIfNull(values);
+		return CString.Concat(values.AsSpan());
+	}
+	/// <summary>
+	/// Concatenates the elements of a specified read-only span of UTF-8 bytes.
+	/// </summary>
+	/// <param name="values">A read-only span of UTF-8 bytes instances.</param>
+	/// <returns>The concatenated elements of <paramref name="values"/>.</returns>
+	/// <remarks>
+	/// This method takes a read-only span of UTF-8 byte arrays represented by <paramref name="values"/>,
+	/// and concatenates each element into a single <see cref="CString"/> instance.
+	/// If any element within <paramref name="values"/> is <see langword="null"/>, it is ignored
+	/// during concatenation.
+	/// </remarks>
+	public static CString Concat(
+#if NET9_0_OR_GREATER
+		params
+#endif
+		ReadOnlySpan<Byte[]?> values)
+	{
 		using BinaryConcatenator helper = new();
-		for (Int32 index = 0; index < values.Length; index++)
-		{
-			Byte[]? value = values[index];
+		foreach (Byte[]? value in values)
 			helper.Write(value);
-		}
 		return helper.ToCString();
 	}
 }

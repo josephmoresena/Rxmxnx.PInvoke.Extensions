@@ -27,11 +27,8 @@ internal sealed record ComparisonTestResult
 	{
 		ConcurrentDictionary<StringComparison, Int32> result = new();
 		StringComparison[] values = Enum.GetValues<StringComparison>();
-		for (Int32 i = 0; i < values.Length; i++)
-		{
-			StringComparison comparisonType = values[i];
+		foreach (StringComparison comparisonType in values.AsSpan())
 			result.TryAdd(comparisonType, String.Compare(strA, strB, comparisonType));
-		}
 
 		return new(result);
 	}

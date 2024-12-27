@@ -6,10 +6,10 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
 	[Fact]
 	internal void Test()
 	{
-		String str1 = FixedMemoryTestsBase.fixture.Create<String>();
-		String str2 = FixedMemoryTestsBase.fixture.Create<String>();
-		Byte[] bytes = FixedMemoryTestsBase.fixture.Create<Byte[]>();
-		Guid[] guids = FixedMemoryTestsBase.fixture.CreateMany<Guid>(10).ToArray();
+		String str1 = FixedMemoryTestsBase.Fixture.Create<String>();
+		String str2 = FixedMemoryTestsBase.Fixture.Create<String>();
+		Byte[] bytes = FixedMemoryTestsBase.Fixture.Create<Byte[]>();
+		Guid[] guids = FixedMemoryTestsBase.Fixture.CreateMany<Guid>(10).ToArray();
 		Object obj = new();
 		Boolean called = false;
 
@@ -21,13 +21,6 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
 		VoidObjectDelegate d5 = o => Assert.Same(obj, o);
 		GetGuidSpanDelegate d6 = () => guids;
 #pragma warning restore IDE0039
-
-		String f1() => str1;
-		String f2() => str2 + str1;
-		Span<Byte> f3(Byte[] bArr) => bArr;
-		void f4() => called = !called;
-		void f5(Object o) => Assert.Same(obj, o);
-		Span<Guid> f6() => guids;
 
 		FixedDelegateTestStatus delegateStatus = new()
 		{
@@ -41,24 +34,32 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
 
 		FixedDelegateTestStatus functionStatus = new()
 		{
-			Status1 = new(true, new(f1)) { Delegate = f1, },
-			Status2 = new(true, new(f2)) { Delegate = f2, },
-			Status3 = new(true, new(f3)) { Delegate = f3, },
-			Status4 = new(true, new(f4)) { Delegate = f4, },
-			Status5 = new(true, new(f5)) { Delegate = f5, },
-			Status6 = new(true, new(f6)) { Delegate = f6, },
+			Status1 = new(true, new(F1)) { Delegate = F1, },
+			Status2 = new(true, new(F2)) { Delegate = F2, },
+			Status3 = new(true, new(F3)) { Delegate = F3, },
+			Status4 = new(true, new(F4)) { Delegate = F4, },
+			Status5 = new(true, new(F5)) { Delegate = F5, },
+			Status6 = new(true, new(F6)) { Delegate = F6, },
 		};
 
 		FixedDelegateTest.AssertTest(bytes, guids, ref obj, ref called, delegateStatus);
 		FixedDelegateTest.AssertTest(bytes, guids, ref obj, ref called, functionStatus);
+		return;
+
+		String F1() => str1;
+		String F2() => str2 + str1;
+		Span<Byte> F3(Byte[] bArr) => bArr;
+		void F4() => called = !called;
+		void F5(Object o) => Assert.Same(obj, o);
+		Span<Guid> F6() => guids;
 	}
 
-	private static void AssertTest(Byte[] bytes, Guid[] guids, ref Object obj, ref Boolean togle,
+	private static void AssertTest(Byte[] bytes, Guid[] guids, ref Object obj, ref Boolean toggle,
 		FixedDelegateTestStatus status)
 	{
 		Object initObj = obj;
 
-		togle = false;
+		toggle = false;
 
 		FixedDelegateTest.AssertProperties(status.Status1);
 		FixedDelegateTest.AssertProperties(status.Status2);
@@ -71,13 +72,13 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
 		Assert.Equal(status.Status2.Delegate(), status.Status2.Fixed.CreateDelegate<GetStringDelegate>()());
 		Assert.True(Unsafe.AreSame(ref bytes[0],
 		                           ref status.Status3.Fixed.CreateDelegate<GetByteSpanDelegate>()(bytes)[0]));
-		Assert.False(togle);
+		Assert.False(toggle);
 		status.Status4.Fixed.CreateDelegate<VoidDelegate>()();
-		Assert.True(togle);
+		Assert.True(toggle);
 		status.Status4.Delegate();
-		Assert.False(togle);
+		Assert.False(toggle);
 		status.Status5.Fixed.CreateDelegate<VoidObjectDelegate>()(obj);
-		obj = FixedMemoryTestsBase.fixture.Create<String>();
+		obj = FixedMemoryTestsBase.Fixture.Create<String>();
 		Assert.ThrowsAny<Exception>(() => status.Status5.Fixed.CreateDelegate<VoidObjectDelegate>()(initObj));
 		status.Status5.Fixed.CreateDelegate<VoidObjectDelegate>()(obj);
 		Assert.True(Unsafe.AreSame(ref guids[0], ref status.Status6.Fixed.CreateDelegate<GetGuidSpanDelegate>()()[0]));
@@ -116,7 +117,7 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
 	private static void AssertUnload<TDelegate>(FixedDelegate<TDelegate> fdel) where TDelegate : Delegate
 	{
 		fdel.Unload();
-		Exception invalid = Assert.Throws<InvalidOperationException>(() => fdel.CreateDelegate<TDelegate>());
+		Exception invalid = Assert.Throws<InvalidOperationException>(fdel.CreateDelegate<TDelegate>);
 		Assert.Equal(FixedMemoryTestsBase.InvalidError, invalid.Message);
 		FixedDelegateTest.AssertFunction(fdel);
 	}
@@ -125,7 +126,7 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
 		where TDelegate : Delegate where TAlien : Delegate
 	{
 		if (typeof(TDelegate) != typeof(TAlien))
-			Assert.Throws<InvalidCastException>(() => fdel.CreateDelegate<TAlien>());
+			Assert.Throws<InvalidCastException>(fdel.CreateDelegate<TAlien>);
 	}
 
 	private static void AssertFunction<TDelegate>(FixedDelegate<TDelegate> fdel) where TDelegate : Delegate
@@ -145,5 +146,7 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
 		Assert.Equal(FixedMemoryTestsBase.IsFunction, functionException5.Message);
 		Exception functionException6 = Assert.Throws<InvalidOperationException>(() => fdel.CreateSpan<Int32>(0));
 		Assert.Equal(FixedMemoryTestsBase.IsFunction, functionException6.Message);
+		Exception functionException7 = Assert.Throws<InvalidOperationException>(() => fdel.CreateObjectSpan());
+		Assert.Equal(FixedMemoryTestsBase.IsFunction, functionException7.Message);
 	}
 }

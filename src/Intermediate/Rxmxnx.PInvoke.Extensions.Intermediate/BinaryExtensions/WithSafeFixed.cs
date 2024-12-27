@@ -5,7 +5,7 @@ public static unsafe partial class BinaryExtensions
 {
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <param name="span">The current binary span.</param>
 	/// <param name="action">A <see cref="FixedAction"/> delegate.</param>
@@ -28,7 +28,7 @@ public static unsafe partial class BinaryExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <param name="span">The current binary span.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedAction"/> delegate.</param>
@@ -51,7 +51,7 @@ public static unsafe partial class BinaryExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current read-only span by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <param name="span">The current read-only binary span.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedAction"/> delegate.</param>
@@ -75,7 +75,7 @@ public static unsafe partial class BinaryExtensions
 
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
 	/// <param name="span">The current binary span.</param>
@@ -83,6 +83,9 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="action">A delegate of type <see cref="FixedAction{TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TArg>(this Span<Byte> span, TArg arg, FixedAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -100,7 +103,7 @@ public static unsafe partial class BinaryExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
 	/// <param name="span">The current binary span.</param>
@@ -108,6 +111,9 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedAction{TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TArg>(this Span<Byte> span, TArg arg, ReadOnlyFixedAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -125,7 +131,7 @@ public static unsafe partial class BinaryExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current read-only span by pinning its memory
-	/// address until the action specified in <paramref name="action"/> has completed.
+	/// address until the specified action has completed.
 	/// </summary>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
 	/// <param name="span">The current read-only binary span.</param>
@@ -133,6 +139,9 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedAction{TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TArg>(this ReadOnlySpan<Byte> span, TArg arg, ReadOnlyFixedAction<TArg> action)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -151,7 +160,7 @@ public static unsafe partial class BinaryExtensions
 
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the function specified in <paramref name="func"/> has completed.
+	/// address until the specified function has completed.
 	/// </summary>
 	/// <typeparam name="TResult">The type of the result returned by <paramref name="func"/>.</typeparam>
 	/// <param name="span">The current binary span.</param>
@@ -176,7 +185,7 @@ public static unsafe partial class BinaryExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the function specified in <paramref name="func"/> has completed.
+	/// address until the specified function has completed.
 	/// </summary>
 	/// <typeparam name="TResult">The type of the result returned by <paramref name="func"/>.</typeparam>
 	/// <param name="span">The current binary span.</param>
@@ -201,7 +210,7 @@ public static unsafe partial class BinaryExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current read-only span by pinning its memory
-	/// address until the function specified in <paramref name="func"/> has completed.
+	/// address until the specified function has completed.
 	/// </summary>
 	/// <typeparam name="TResult">The type of the result returned by <paramref name="func"/>.</typeparam>
 	/// <param name="span">The current read-only binary span.</param>
@@ -227,7 +236,7 @@ public static unsafe partial class BinaryExtensions
 
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the function specified in <paramref name="func"/> has completed.
+	/// address until the specified function has completed.
 	/// </summary>
 	/// <typeparam name="TArg">The type of the object representing the state.</typeparam>
 	/// <typeparam name="TResult">The type of the result returned by <paramref name="func"/>.</typeparam>
@@ -237,6 +246,9 @@ public static unsafe partial class BinaryExtensions
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<TArg, TResult>(this Span<Byte> span, TArg arg, FixedFunc<TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -254,7 +266,7 @@ public static unsafe partial class BinaryExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
-	/// address until the function specified in <paramref name="func"/> has completed.
+	/// address until the specified function has completed.
 	/// </summary>
 	/// <typeparam name="TArg">The type of the object representing the state.</typeparam>
 	/// <typeparam name="TResult">The type of the result returned by <paramref name="func"/>.</typeparam>
@@ -265,6 +277,9 @@ public static unsafe partial class BinaryExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<TArg, TResult>(this Span<Byte> span, TArg arg,
 		ReadOnlyFixedFunc<TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -282,7 +297,7 @@ public static unsafe partial class BinaryExtensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current read-only span by pinning its memory
-	/// address until the function specified in <paramref name="func"/> has completed.
+	/// address until the specified function has completed.
 	/// </summary>
 	/// <typeparam name="TArg">The type of the object representing the state.</typeparam>
 	/// <typeparam name="TResult">The type of the result returned by <paramref name="func"/>.</typeparam>
@@ -293,6 +308,9 @@ public static unsafe partial class BinaryExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<TArg, TResult>(this ReadOnlySpan<Byte> span, TArg arg,
 		ReadOnlyFixedFunc<TArg, TResult> func)
+#if NET9_0_OR_GREATER
+		where TArg : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))

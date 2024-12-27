@@ -8,34 +8,55 @@
 public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequence>
 {
 	/// <summary>
+	/// Represents an empty sequence.
+	/// </summary>
+	public static readonly CStringSequence Empty = new();
+
+	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
 	/// from a collection of strings.
 	/// </summary>
 	/// <param name="values">The collection of strings.</param>
-	public CStringSequence(params String?[] values) : this(values.AsSpan()) { }
+	public CStringSequence(
+#if !NET9_0_OR_GREATER
+		params
+#endif
+			String?[] values) : this(values.AsSpan()) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from a
-	/// collection of <see cref="CString"/> instances.
+	/// collection of UTF-8 strings.
 	/// </summary>
 	/// <param name="values">The collection of <see cref="CString"/> instances.</param>
-	public CStringSequence(params CString?[] values) : this(values.AsSpan()) { }
+	public CStringSequence(
+#if !NET9_0_OR_GREATER
+		params
+#endif
+			CString?[] values) : this(values.AsSpan()) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from a
-	/// collection of <see cref="CString"/> instances.
+	/// read-only span of UTF-8 strings.
 	/// </summary>
 	/// <param name="values">The collection of <see cref="CString"/> instances.</param>
-	public CStringSequence(ReadOnlySpan<CString?> values)
+	public CStringSequence(
+#if NET9_0_OR_GREATER
+		params
+#endif
+		ReadOnlySpan<CString?> values)
 	{
 		this._lengths = CStringSequence.GetLengthArray(values);
 		this._value = CStringSequence.CreateBuffer(values);
 		this._cache = CStringSequence.CreateCache(this._lengths);
 	}
 	/// <summary>
-	/// Initializes a new instance of the <see cref="CStringSequence"/> class
-	/// from a collection of strings.
+	/// Initializes a new instance of the <see cref="CStringSequence"/> class from a
+	/// read-only span of strings.
 	/// </summary>
 	/// <param name="values">The collection of strings.</param>
-	public CStringSequence(ReadOnlySpan<String?> values)
+	public CStringSequence(
+#if NET9_0_OR_GREATER
+		params
+#endif
+		ReadOnlySpan<String?> values)
 	{
 		CString?[] list = new CString?[values.Length];
 		this._lengths = new Int32?[values.Length];
@@ -50,13 +71,13 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from an
-	/// enumerable collection of strings.
+	/// enumeration of strings.
 	/// </summary>
 	/// <param name="values">The enumerable collection of strings.</param>
 	public CStringSequence(IEnumerable<String?> values) : this(values.Select(CStringSequence.GetCString).ToArray()) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from an
-	/// enumerable collection of <see cref="CString"/> instances.
+	/// enumeration of UTF-8 strings.
 	/// </summary>
 	/// <param name="values">The enumerable collection of <see cref="CString"/> instances.</param>
 	public CStringSequence(IEnumerable<CString?> values) : this(values.ToArray()) { }
@@ -120,6 +141,9 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// <returns>The created UTF-8 text sequence.</returns>
 	public static CStringSequence Create<TState>(TState state, CStringSequenceCreationAction<TState> action,
 		params Int32?[] lengths)
+#if NET9_0_OR_GREATER
+	where TState : allows ref struct
+#endif
 	{
 		Int32 length = CStringSequence.GetBufferLength(lengths);
 		SequenceCreationHelper<TState> helper = new() { State = state, Action = action, Lengths = lengths, };
@@ -127,7 +151,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		return new(buffer, lengths);
 	}
 	/// <summary>
-	/// Creates a new <see cref="CStringSequence"/> instance from <paramref name="value"/> UTF-8 buffer.
+	/// Creates a new <see cref="CStringSequence"/> instance from a UTF-8 buffer.
 	/// </summary>
 	/// <param name="value">A buffer of a UTF-8 sequence.</param>
 	/// <returns>A new <see cref="CStringSequence"/> instance.</returns>

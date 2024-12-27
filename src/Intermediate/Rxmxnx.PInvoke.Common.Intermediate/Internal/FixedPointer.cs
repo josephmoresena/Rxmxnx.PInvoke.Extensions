@@ -6,14 +6,11 @@
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 internal abstract unsafe partial class FixedPointer : IFixedPointer
 {
+#pragma warning disable CS8500
 	/// <summary>
 	/// Size of the memory block in bytes.
 	/// </summary>
 	private readonly Int32 _binaryLength;
-	/// <summary>
-	/// Indicates whether the memory block is read-only.
-	/// </summary>
-	private readonly Boolean _isReadOnly;
 	/// <summary>
 	/// Indicates whether the current instance is still valid.
 	/// </summary>
@@ -23,6 +20,10 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// </summary>
 	private readonly void* _ptr;
 
+	/// <summary>
+	/// Indicates whether current memory block is unmanaged.
+	/// </summary>
+	public abstract Boolean IsUnmanaged { get; }
 	/// <summary>
 	/// The type of memory.
 	/// </summary>
@@ -35,6 +36,10 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// Indicates whether the current instance is a function pointer.
 	/// </summary>
 	public abstract Boolean IsFunction { get; }
+	/// <summary>
+	/// Indicates whether current memory block is null-referenced or empty.
+	/// </summary>
+	public Boolean IsNullOrEmpty => this._ptr == IntPtr.Zero.ToPointer() || this._binaryLength - this.BinaryOffset == 0;
 
 	/// <summary>
 	/// Size of the memory block in bytes.
@@ -43,7 +48,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// <summary>
 	/// Indicates whether the current instance is read-only.
 	/// </summary>
-	public Boolean IsReadOnly => this._isReadOnly;
+	public Boolean IsReadOnly { get; }
 	/// <summary>
 	/// Indicates whether the current instance is still valid.
 	/// </summary>
@@ -63,7 +68,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		this._ptr = ptr;
 		this._binaryLength = binaryLength;
 		this._isValid = new MutableWrapper<Boolean>(true);
-		this._isReadOnly = isReadOnly;
+		this.IsReadOnly = isReadOnly;
 	}
 	/// <summary>
 	/// Constructs a new FixedPointer instance pointing to a fixed memory block, with specified validity.
@@ -83,7 +88,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		this._ptr = ptr;
 		this._binaryLength = binaryLength;
 		this._isValid = isValid;
-		this._isReadOnly = isReadOnly;
+		this.IsReadOnly = isReadOnly;
 	}
 	/// <summary>
 	/// Constructs a new <see cref="FixedPointer"/> instance using another instance as a template.
@@ -98,7 +103,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		this._ptr = pointer._ptr;
 		this._binaryLength = pointer._binaryLength;
 		this._isValid = pointer._isValid;
-		this._isReadOnly = pointer._isReadOnly;
+		this.IsReadOnly = pointer.IsReadOnly;
 	}
 	/// <summary>
 	/// Constructs a new <see cref="FixedPointer"/> instance using another instance as a template and specifying a memory
@@ -116,40 +121,42 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		this._ptr = ((IntPtr)pointer._ptr + offset).ToPointer();
 		this._binaryLength = pointer._binaryLength - offset;
 		this._isValid = pointer._isValid;
-		this._isReadOnly = pointer._isReadOnly;
+		this.IsReadOnly = pointer.IsReadOnly;
 	}
 
 	IntPtr IFixedPointer.Pointer => (IntPtr)this.GetMemoryOffset();
 
 	/// <summary>
-	/// Creates a reference of a <typeparamref name="TValue"/> value over the memory block.
+	/// Creates a reference of a <typeparamref name="T"/> value over the memory block.
 	/// </summary>
-	/// <typeparam name="TValue">Type of the referenced value.</typeparam>
+	/// <typeparam name="T">Type of the referenced value.</typeparam>
 	/// <returns>
-	/// A reference to a <typeparamref name="TValue"/> value over the memory block.
+	/// A reference to a <typeparamref name="T"/> value over the memory block.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public ref TValue CreateReference<TValue>() where TValue : unmanaged
+	public ref T CreateReference<T>()
 	{
 		this.ValidateOperation();
-		this.ValidateReferenceSize(typeof(TValue), sizeof(TValue));
-		return ref Unsafe.AsRef<TValue>(this._ptr);
+		this.ValidateReferenceSize(typeof(T), sizeof(T));
+		this.ValidateTransformation(typeof(T), !RuntimeHelpers.IsReferenceOrContainsReferences<T>());
+		return ref Unsafe.AsRef<T>(this._ptr);
 	}
 	/// <summary>
-	/// Creates a read-only reference of a <typeparamref name="TValue"/> value over
+	/// Creates a read-only reference of a <typeparamref name="T"/> value over
 	/// the memory block.
 	/// </summary>
-	/// <typeparam name="TValue">Type of the referenced value.</typeparam>
+	/// <typeparam name="T">Type of the referenced value.</typeparam>
 	/// <returns>
-	/// A read-only reference to a <typeparamref name="TValue"/> value over the memory
+	/// A read-only reference to a <typeparamref name="T"/> value over the memory
 	/// block.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public ref readonly TValue CreateReadOnlyReference<TValue>() where TValue : unmanaged
+	public ref readonly T CreateReadOnlyReference<T>()
 	{
 		this.ValidateOperation(true);
-		this.ValidateReferenceSize(typeof(TValue), sizeof(TValue));
-		return ref Unsafe.AsRef<TValue>(this._ptr);
+		this.ValidateReferenceSize(typeof(T), sizeof(T));
+		this.ValidateTransformation(typeof(T), !RuntimeHelpers.IsReferenceOrContainsReferences<T>());
+		return ref Unsafe.AsRef<T>(this._ptr);
 	}
 	/// <summary>
 	/// Creates a <see cref="Span{TValue}"/> instance over the memory block whose
@@ -159,10 +166,11 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// <param name="length">Span length.</param>
 	/// <returns>A <see cref="Span{TValue}"/> instance over the memory block.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public Span<TValue> CreateSpan<TValue>(Int32 length) where TValue : unmanaged
+	public Span<TValue> CreateSpan<TValue>(Int32 length)
 	{
 		this.ValidateOperation();
-		return new(this._ptr, length);
+		ref TValue refValue = ref Unsafe.AsRef<TValue>(this._ptr);
+		return MemoryMarshal.CreateSpan(ref refValue, length);
 	}
 	/// <summary>
 	/// Creates a <see cref="ReadOnlySpan{TValue}"/> instance over the memory block whose
@@ -172,10 +180,11 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// <param name="length">Span length.</param>
 	/// <returns>A <see cref="ReadOnlySpan{TValue}"/> instance over the memory block.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public ReadOnlySpan<TValue> CreateReadOnlySpan<TValue>(Int32 length) where TValue : unmanaged
+	public ReadOnlySpan<TValue> CreateReadOnlySpan<TValue>(Int32 length)
 	{
 		this.ValidateOperation(true);
-		return new(this._ptr, length);
+		ref TValue refValue = ref Unsafe.AsRef<TValue>(this._ptr);
+		return MemoryMarshal.CreateReadOnlySpan(ref refValue, length);
 	}
 	/// <summary>
 	/// Creates a <see cref="Span{Byte}"/> instance over the memory block.
@@ -185,8 +194,22 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	public Span<Byte> CreateBinarySpan()
 	{
 		this.ValidateOperation();
+		if (!this.IsUnmanaged) return default;
 		void* ptr = this.GetMemoryOffset();
 		return new(ptr, this.BinaryLength);
+	}
+	/// <summary>
+	/// Creates a <see cref="Span{Object}"/> instance over the memory block.
+	/// </summary>
+	/// <returns>A <see cref="Span{Object}"/> instance over the memory block.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public Span<Object> CreateObjectSpan()
+	{
+		this.ValidateOperation();
+		if (this.Type is null || this.Type.IsValueType) return default;
+		void* ptr = this.GetMemoryOffset();
+		ref Object refObject = ref Unsafe.AsRef<Object>(ptr);
+		return MemoryMarshal.CreateSpan(ref refObject, this.BinaryLength / sizeof(IntPtr));
 	}
 	/// <summary>
 	/// Creates a <see cref="ReadOnlySpan{Byte}"/> instance over the memory block.
@@ -196,8 +219,22 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	public ReadOnlySpan<Byte> CreateReadOnlyBinarySpan()
 	{
 		this.ValidateOperation(true);
+		if (!this.IsUnmanaged) return default;
 		void* ptr = this.GetMemoryOffset();
 		return new(ptr, this.BinaryLength);
+	}
+	/// <summary>
+	/// Creates a <see cref="ReadOnlySpan{Object}"/> instance over the memory block.
+	/// </summary>
+	/// <returns>A <see cref="ReadOnlySpan{Object}"/> instance over the memory block.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public ReadOnlySpan<Object> CreateReadOnlyObjectSpan()
+	{
+		this.ValidateOperation(true);
+		if (this.Type is null || this.Type.IsValueType) return default;
+		void* ptr = this.GetMemoryOffset();
+		ref Object refObject = ref Unsafe.AsRef<Object>(ptr);
+		return MemoryMarshal.CreateReadOnlySpan(ref refObject, this.BinaryLength / sizeof(IntPtr));
 	}
 	/// <summary>
 	/// Creates a <typeparamref name="TDelegate"/> instance over the memory block.
@@ -224,7 +261,31 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	{
 		ValidationUtilities.ThrowIfFunctionPointer(this.IsFunction);
 		ValidationUtilities.ThrowIfInvalidPointer(this._isValid);
-		ValidationUtilities.ThrowIfReadOnlyPointer(isReadOnly, this._isReadOnly);
+		ValidationUtilities.ThrowIfReadOnlyPointer(isReadOnly, this.IsReadOnly);
+	}
+	/// <summary>
+	/// Validates any unmanaged operation over the fixed value type memory block.
+	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	protected void ValidateUnmanagedOperation()
+	{
+		ValidationUtilities.ThrowIfNotUnmanagedType(this.Type, this.IsUnmanaged);
+	}
+	/// <summary>
+	/// Validates any managed object operation over the fixed value type memory block.
+	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	protected void ValidateReferenceOperation() { ValidationUtilities.ThrowIfNotReferenceType(this.Type); }
+	/// <summary>
+	/// Validates any transformation operation over the fixed memory block.
+	/// </summary>
+	/// <param name="type">Destination type.</param>
+	/// <param name="unmanagedType">Indicates whether <paramref name="type"/> is unmanaged.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	protected void ValidateTransformation(Type type, Boolean unmanagedType)
+	{
+		if (type == this.Type) return;
+		ValidationUtilities.ThrowIfInvalidTransformation(this.Type, this.IsUnmanaged, type, unmanagedType);
 	}
 	/// <summary>
 	/// Retrieves the number of <paramref name="sizeOf"/> items that can be
@@ -266,4 +327,5 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		IntPtr result = ptr + this.BinaryOffset;
 		return result.ToPointer();
 	}
+#pragma warning restore CS8500
 }

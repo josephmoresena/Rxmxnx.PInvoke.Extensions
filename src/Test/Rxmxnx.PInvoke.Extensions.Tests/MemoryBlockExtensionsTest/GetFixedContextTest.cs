@@ -84,6 +84,11 @@ public sealed class GetFixedContextTest
 		Assert.Equal(ctx.Bytes.Length - offset, residual.Bytes.Length);
 		Assert.Equal(ctx.Pointer + offset, residual.Pointer);
 		Assert.Equal(ctx.Bytes.Length - offset, residual.AsBinaryContext().Bytes.Length);
+		Assert.Equal(ctx.Bytes.Length - offset == 0, residual.IsNullOrEmpty);
+		Assert.True(ctx.Objects.IsEmpty);
+		Assert.True(residual.Objects.IsEmpty);
+		Assert.Equal(ctx.Bytes.Length == 0, ctx.IsNullOrEmpty);
+		Assert.Throws<InvalidOperationException>(() => residual.AsObjectContext());
 	}
 	private static unsafe void Test<T>(Memory<T> mem, T[] arr2) where T : unmanaged
 	{
@@ -116,5 +121,10 @@ public sealed class GetFixedContextTest
 		Assert.Equal(ctx.Bytes.Length - offset, residual.Bytes.Length);
 		Assert.Equal(ctx.Pointer + offset, residual.Pointer);
 		Assert.Equal(ctx.Bytes.Length - offset, residual.AsBinaryContext().Bytes.Length);
+		Assert.Equal(ctx.Bytes.Length - offset == 0, residual.IsNullOrEmpty);
+		Assert.True(ctx.Objects.IsEmpty);
+		Assert.True(residual.Objects.IsEmpty);
+		Assert.Equal(ctx.Bytes.Length == 0, ctx.IsNullOrEmpty);
+		Assert.Throws<InvalidOperationException>(() => residual.AsObjectContext());
 	}
 }
