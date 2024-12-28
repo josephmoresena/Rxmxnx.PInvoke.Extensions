@@ -1061,7 +1061,7 @@ Encapsulates a method that receives an instance of `ReadOnlyFixedMemoryList` and
 These delegates encapsulate methods that allow creating and operating with UTF-8/ASCII text.
 
 <details>
-  <summary>void CStringSequenceCreationAction&lt;in TArg&gt;(Span&lt;Byte&lt;, Int32, TArg)</summary>
+  <summary>void CStringSequenceCreationAction&lt;in TArg&gt;(Span&lt;Byte&gt;, Int32, TArg)</summary>
 
 Encapsulates a method that receives a span of bytes, an index and a state object of type `TArg`.
 
