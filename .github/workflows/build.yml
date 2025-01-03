@@ -19,6 +19,8 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 9.x
+      - name: Setup Tree pre-requisites
+        run: sudo apt-get install tree unzip --assume-yes
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
@@ -60,7 +62,14 @@ jobs:
         run: |
           dotnet pack -c Release /p:Version=9999.99.99.99-tmp
           ls -sh bin/Release/net*/Rxmxnx.PInvoke.Extensions.dll
-          ls -sh bin/Release/Rxmxnx.PInvoke.Extensions*.*nupkg
+          for package in bin/Release/Rxmxnx.PInvoke.Extensions*.*nupkg; do
+            echo "-----------------------------------"
+            ls -sh bin/Release/Rxmxnx.PInvoke.Extensions*.*nupkg
+            unzip -q "$package" -d "$TEMP_DIR"
+            tree "$TEMP_DIR"
+            rm -rf "$TEMP_DIR"
+            echo "-----------------------------------"
+          done
         
   run-linux:
     runs-on: ubuntu-latest
