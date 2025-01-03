@@ -23,13 +23,6 @@
         <LangVersion>latest</LangVersion>
         <DefineConstants>$(DefineConstants);PACKAGE</DefineConstants>
     </PropertyGroup>
-    
-    <PropertyGroup>
-        <DocumentationFile Condition="'$(TargetFramework)' == 'net6.0'">./$(AssemblyName).net6.0.xml</DocumentationFile>
-        <DocumentationFile Condition="'$(TargetFramework)' == 'net7.0'">./$(AssemblyName).net7.0.xml</DocumentationFile>
-        <DocumentationFile Condition="'$(TargetFramework)' == 'net8.0'">./$(AssemblyName).net8.0.xml</DocumentationFile>
-        <DocumentationFile Condition="'$(TargetFramework)' == 'net9.0'">./$(AssemblyName).net9.0.xml</DocumentationFile>
-    </PropertyGroup>
 
     <ItemGroup>
         <EmbeddedResource Include="..\src\Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate\ILLink\ILLink.Substitutions.xml">
