@@ -64,13 +64,13 @@ jobs:
           find bin/Release/net* -name "Rxmxnx.PInvoke.Extensions.*" ! -name "Rxmxnx.PInvoke.Extensions.deps.json" -exec ls -sh {} +
           for package in bin/Release/Rxmxnx.PInvoke.Extensions*.*nupkg; do
             echo "-----------------------------------"
-            ls -sh "$package"
             TEMP_DIR=$(mktemp -d)
             unzip -q "$package" -d "$TEMP_DIR"
-            tree "$TEMP_DIR"
+            ls -sh "$package"
+            tree "$TEMP_DIR" -h --noreport | tail -n +2 | sed "s|$TEMP_DIR/||"
             rm -rf "$TEMP_DIR"
-            echo "-----------------------------------"
           done
+          echo "-----------------------------------"
         
   run-linux:
     runs-on: ubuntu-latest
