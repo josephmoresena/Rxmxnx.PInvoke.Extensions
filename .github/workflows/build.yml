@@ -61,10 +61,10 @@ jobs:
         working-directory: ./package
         run: |
           dotnet pack -c Release /p:Version=9999.99.99.99-tmp
-          ls -sh bin/Release/net*/Rxmxnx.PInvoke.Extensions.dll
+          ls -sh bin/Release/net*/Rxmxnx.PInvoke.Extensions.*
           for package in bin/Release/Rxmxnx.PInvoke.Extensions*.*nupkg; do
             echo "-----------------------------------"
-            ls -sh bin/Release/Rxmxnx.PInvoke.Extensions*.*nupkg
+            ls -sh "$package"
             TEMP_DIR=$(mktemp -d)
             unzip -q "$package" -d "$TEMP_DIR"
             tree "$TEMP_DIR"
