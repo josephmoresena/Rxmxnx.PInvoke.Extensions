@@ -65,7 +65,10 @@ jobs:
           for package in bin/Release/Rxmxnx.PInvoke.Extensions*.*nupkg; do
             echo "-----------------------------------"
             ls -sh "$package"
-            unzip -l "$package" | awk 'NR>3 && NF {print $4}' | sed 's/^/|-- /' | sed 's/\//|   /g'
+            TEMP_DIR=$(mktemp -d)
+            unzip -q "$package" -d "$TEMP_DIR"
+            tree "$TEMP_DIR"
+            rm -rf "$TEMP_DIR"
             echo "-----------------------------------"
           done
         
