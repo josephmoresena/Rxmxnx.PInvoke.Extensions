@@ -65,6 +65,7 @@ jobs:
           for package in bin/Release/Rxmxnx.PInvoke.Extensions*.*nupkg; do
             echo "-----------------------------------"
             ls -sh bin/Release/Rxmxnx.PInvoke.Extensions*.*nupkg
+            TEMP_DIR=$(mktemp -d)
             unzip -q "$package" -d "$TEMP_DIR"
             tree "$TEMP_DIR"
             rm -rf "$TEMP_DIR"
