@@ -37,4 +37,10 @@
         </AssemblyAttribute>
     </ItemGroup>
 
+    <ItemGroup>
+        <Content Include="..\..\..\package\PACKAGE.md">
+            <Link>PACKAGE.md</Link>
+        </Content>
+    </ItemGroup>
+
 </Project>
