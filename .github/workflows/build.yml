@@ -61,7 +61,6 @@ jobs:
         working-directory: ./package
         run: |
           dotnet pack -c Release /p:Version=9999.99.99.99-tmp
-          find bin/Release/net* -name "Rxmxnx.PInvoke.Extensions.*" ! -name "Rxmxnx.PInvoke.Extensions.deps.json" -exec ls -sh {} +
           for package in bin/Release/Rxmxnx.PInvoke.Extensions*.*nupkg; do
             echo "-----------------------------------"
             TEMP_DIR=$(mktemp -d)
