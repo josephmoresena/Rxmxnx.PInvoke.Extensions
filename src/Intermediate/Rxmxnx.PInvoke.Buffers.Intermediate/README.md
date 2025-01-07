@@ -28,8 +28,10 @@ In a Native AOT runtime, binary buffer composition requires metadata preservatio
 Below is an example of the metadata preservation needed to compose a binary buffer with a capacity of 10 elements of any
 reference type Composite(2<sup>1</sup>, 2<sup>3</sup>, `Object`).
 
-**Note**: 2<sup>3</sup> is Composite(2<sup>1</sup>, 2<sup>1</sup>, `Object`), 2<sup>1</sup> is
+**Notes**: 
+* 2<sup>2</sup> is Composite(2<sup>1</sup>, 2<sup>1</sup>, `Object`), 2<sup>1</sup> is
 Composite(2<sup>0</sup>, 2<sup>0</sup>, `Object`) and 2<sup>0</sup> is Atomic(`Object`).
+* Once a buffer is composed, it becomes available for use. This process is executed only once for each capacity.
 
 ```xml
 <Directives xmlns="http://schemas.microsoft.com/netfx/2013/01/metadata">
@@ -68,8 +70,6 @@ Composite(2<sup>0</sup>, 2<sup>0</sup>, `Object`) and 2<sup>0</sup> is Atomic(`O
     </Application>
 </Directives>
 ```
-
-**Note:** Once a buffer is composed, it becomes available for use. This process is executed only once for each capacity.
 
 ---
 
