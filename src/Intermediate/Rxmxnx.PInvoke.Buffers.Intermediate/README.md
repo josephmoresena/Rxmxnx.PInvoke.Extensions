@@ -29,7 +29,7 @@ Below is an example of the metadata preservation needed to compose a binary buff
 reference type Composite(2<sup>1</sup>, 2<sup>3</sup>, `Object`).
 
 **Notes**: 
-* 2<sup>2</sup> is Composite(2<sup>1</sup>, 2<sup>1</sup>, `Object`), 2<sup>1</sup> is
+* 2<sup>3</sup> is Composite(2<sup>2</sup>, 2<sup>2</sup>, `Object`), 2<sup>2</sup> is Composite(2<sup>1</sup>, 2<sup>1</sup>, `Object`), 2<sup>1</sup> is
 Composite(2<sup>0</sup>, 2<sup>0</sup>, `Object`) and 2<sup>0</sup> is Atomic(`Object`).
 * Once a buffer is composed, it becomes available for use. This process is executed only once for each capacity.
 
