@@ -1,8 +1,8 @@
 ﻿`Rxmxnx.PInvoke.Extensions` supports the use of two types of buffers: binary and non-binary. The maximum capacity of any
 buffer is limited to 2<sup>15</sup> elements. However, this maximum capacity may not always be allocatable at runtime.
 
-Internally, all reference types utilize buffers of type `Object`. Only value types (both managed and unmanaged) require
-the use of buffers specific to their type.
+Internally, all reference types utilize buffers of type `Object`. Only not unmanaged value types require
+the use of buffers specific to their type, the unmanaged ones uses stackalloc.
 
 ---
 
@@ -28,9 +28,11 @@ In a Native AOT runtime, binary buffer composition requires metadata preservatio
 Below is an example of the metadata preservation needed to compose a binary buffer with a capacity of 10 elements of any
 reference type Composite(2<sup>1</sup>, 2<sup>3</sup>, `Object`).
 
-**Notes**: 
-* 2<sup>3</sup> is Composite(2<sup>2</sup>, 2<sup>2</sup>, `Object`), 2<sup>2</sup> is Composite(2<sup>1</sup>, 2<sup>1</sup>, `Object`), 2<sup>1</sup> is
-Composite(2<sup>0</sup>, 2<sup>0</sup>, `Object`) and 2<sup>0</sup> is Atomic(`Object`).
+**Notes**:
+
+* 2<sup>3</sup> is Composite(2<sup>2</sup>, 2<sup>2</sup>, `Object`), 2<sup>2</sup> is Composite(2<sup>1</sup>, 2<sup>
+  1</sup>, `Object`), 2<sup>1</sup> is
+  Composite(2<sup>0</sup>, 2<sup>0</sup>, `Object`) and 2<sup>0</sup> is Atomic(`Object`).
 * Once a buffer is composed, it becomes available for use. This process is executed only once for each capacity.
 
 ```xml

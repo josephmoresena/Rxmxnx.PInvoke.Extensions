@@ -21,9 +21,9 @@ public static partial class BufferManager
 		/// <param name="state">State object.</param>
 		public static void Execute(ScopedBuffer<Object> buffer, TransformationState<T> state)
 		{
-			Span<T> span =
-				MemoryMarshal.CreateSpan(ref Unsafe.As<Object, T>(ref MemoryMarshal.GetReference(buffer.Span)),
-				                         buffer.Span.Length);
+			ref Object refObject = ref MemoryMarshal.GetReference(buffer.Span);
+			ref T refT = ref Unsafe.As<Object, T>(ref refObject);
+			Span<T> span = MemoryMarshal.CreateSpan(ref refT, buffer.Span.Length);
 			ScopedBuffer<T> bufferT = new(span, !buffer.InStack, buffer.FullLength, buffer.BufferMetadata);
 			state._action(bufferT);
 		}
@@ -49,9 +49,9 @@ public static partial class BufferManager
 		/// <param name="state">State object.</param>
 		public static TResult Execute(ScopedBuffer<Object> buffer, TransformationState<T, TResult> state)
 		{
-			Span<T> span =
-				MemoryMarshal.CreateSpan(ref Unsafe.As<Object, T>(ref MemoryMarshal.GetReference(buffer.Span)),
-				                         buffer.Span.Length);
+			ref Object refObject = ref MemoryMarshal.GetReference(buffer.Span);
+			ref T refT = ref Unsafe.As<Object, T>(ref refObject);
+			Span<T> span = MemoryMarshal.CreateSpan(ref refT, buffer.Span.Length);
 			ScopedBuffer<T> bufferT = new(span, !buffer.InStack, buffer.FullLength, buffer.BufferMetadata);
 			return state._func(bufferT);
 		}

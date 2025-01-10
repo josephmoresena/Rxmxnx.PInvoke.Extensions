@@ -57,6 +57,11 @@ public sealed unsafe class UnitAllocTest
 		Assert.Equal(1, buffer.Span.Length);
 		Assert.Equal(1, buffer.FullLength);
 		Assert.Equal(default, buffer.Span[0]);
+		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+		{
+			Assert.Null(buffer.BufferMetadata);
+			return;
+		}
 		Assert.NotNull(buffer.BufferMetadata);
 		Assert.Equal(typeof(T).IsValueType ? typeof(Atomic<T>) : typeof(Atomic<Object>),
 		             buffer.BufferMetadata.BufferType);

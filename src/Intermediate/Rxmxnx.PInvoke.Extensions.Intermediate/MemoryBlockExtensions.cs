@@ -240,7 +240,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <see cref="ReadOnlyMemory{T}"/> instance, ensuring a safe context for accessing the fixed memory.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The unmanaged type from which the contiguous region of memory will be read.
+	/// The type of items in the <see cref="ReadOnlyMemory{T}"/>.
 	/// </typeparam>
 	/// <param name="mem">A <see cref="ReadOnlyMemory{T}"/> instance.</param>
 	/// <returns>An <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance representing the pinned memory.</returns>
@@ -254,17 +254,21 @@ public static unsafe partial class MemoryBlockExtensions
 	public static IReadOnlyFixedContext<T>.IDisposable GetFixedContext<T>(this ReadOnlyMemory<T> mem)
 	{
 		MemoryHandle handle = mem.Pin();
-		return MemoryMarshal.TryGetMemoryManager<T, MemoryManager<T>>(mem, out _) ||
-			MemoryMarshal.TryGetArray(mem, out _) ?
-				new FixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle) :
-				new ReadOnlyFixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);
+		if (handle.Pointer == default)
+			return ReadOnlyFixedContext<T>.EmptyDisposable;
+
+		Boolean isReadOnly = !MemoryMarshal.TryGetMemoryManager<T, MemoryManager<T>>(mem, out _) &&
+			!MemoryMarshal.TryGetArray(mem, out _);
+		return !isReadOnly ?
+			new FixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle) :
+			new ReadOnlyFixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);
 	}
 	/// <summary>
 	/// Creates an <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance by pinning the current
 	/// <see cref="Memory{T}"/> instance, ensuring a safe context for accessing the fixed memory.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The unmanaged type of items in the <see cref="Memory{T}"/>.
+	/// The type of items in the <see cref="Memory{T}"/>.
 	/// </typeparam>
 	/// <param name="mem">A <see cref="Memory{T}"/> instance.</param>
 	/// <returns>An <see cref="IFixedContext{T}.IDisposable"/> instance representing the pinned memory.</returns>
@@ -278,14 +282,16 @@ public static unsafe partial class MemoryBlockExtensions
 	public static IFixedContext<T>.IDisposable GetFixedContext<T>(this Memory<T> mem)
 	{
 		MemoryHandle handle = mem.Pin();
-		return new FixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);
+		return handle.Pointer == default ?
+			FixedContext<T>.EmptyDisposable :
+			new FixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);
 	}
 	/// <summary>
 	/// Creates an <see cref="IReadOnlyFixedMemory.IDisposable"/> instance by pinning the current
 	/// <see cref="ReadOnlyMemory{T}"/> instance, ensuring a safe context for accessing the fixed memory.
 	/// </summary>
 	/// <typeparam name="T">
-	/// The unmanaged type from which the contiguous region of memory will be read.
+	/// The type of items in the <see cref="ReadOnlyMemory{T}"/>.
 	/// </typeparam>
 	/// <param name="mem">A <see cref="ReadOnlyMemory{T}"/> instance.</param>
 	/// <returns>An <see cref="IReadOnlyFixedMemory.IDisposable"/> instance representing the pinned memory.</returns>

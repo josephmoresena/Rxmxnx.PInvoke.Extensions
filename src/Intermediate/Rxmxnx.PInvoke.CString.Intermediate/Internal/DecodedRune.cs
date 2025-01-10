@@ -143,7 +143,8 @@ internal readonly struct DecodedRune : IWrapper<Rune>, IEquatable<DecodedRune>
 	/// <param name="source">Source span from which the raw value will be copied.</param>
 	private static void CopyRawValue(ref Int32 integerValue, ReadOnlySpan<Byte> source)
 	{
-		Span<Byte> bytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref integerValue, 1));
+		Span<Int32> integers = MemoryMarshal.CreateSpan(ref integerValue, 1);
+		Span<Byte> bytes = MemoryMarshal.AsBytes(integers);
 		source.CopyTo(bytes);
 	}
 

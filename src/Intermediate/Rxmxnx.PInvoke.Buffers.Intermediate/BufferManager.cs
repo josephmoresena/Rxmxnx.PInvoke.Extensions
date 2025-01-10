@@ -12,8 +12,9 @@ public static partial class BufferManager
 	public static Boolean BufferAutoCompositionEnabled
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get => !AotInfo.IsReflectionDisabled && 
-			(!AppContext.TryGetSwitch("PInvoke.DisableBufferAutoComposition", out Boolean disable) || !disable);
+		get
+			=> !AotInfo.IsReflectionDisabled &&
+				(!AppContext.TryGetSwitch("PInvoke.DisableBufferAutoComposition", out Boolean disable) || !disable);
 	}
 
 	/// <summary>
@@ -106,7 +107,11 @@ public static partial class BufferManager
 	/// <typeparam name="TBuffer">Type of <typeparamref name="T"/> buffer.</typeparam>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void Register<T, TBuffer>() where TBuffer : struct, IManagedBuffer<T> where T : struct
-		=> MetadataManager<T>.RegisterBuffer<TBuffer>();
+	{
+		// If unmanaged type, stackalloc should be used.
+		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
+		MetadataManager<T>.RegisterBuffer<TBuffer>();
+	}
 	/// <summary>
 	/// Registers <typeparamref name="T"/> buffer.
 	/// </summary>
@@ -114,5 +119,9 @@ public static partial class BufferManager
 	/// <typeparam name="TBuffer">Type of <see name="Nullable{T}"/> buffer.</typeparam>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void RegisterNullable<T, TBuffer>() where TBuffer : struct, IManagedBuffer<T?> where T : struct
-		=> MetadataManager<T?>.RegisterBuffer<TBuffer>();
+	{
+		// If unmanaged type, stackalloc should be used.
+		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
+		MetadataManager<T?>.RegisterBuffer<TBuffer>();
+	}
 }

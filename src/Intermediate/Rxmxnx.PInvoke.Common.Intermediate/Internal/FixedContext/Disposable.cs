@@ -17,6 +17,11 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 	/// </summary>
 	private sealed class Disposable : Disposable<FixedContext<T>>, IFixedContext<T>.IDisposable
 	{
+		/// <summary>
+		/// An empty instance of <see cref="FixedContext{T}.Disposable"/>.
+		/// </summary>
+		public static readonly Disposable Empty = new(FixedContext<T>.Empty, default);
+
 		/// <inheritdoc/>
 		public Disposable(FixedContext<T> fixedPointer, IDisposable? disposable) : base(fixedPointer, disposable) { }
 

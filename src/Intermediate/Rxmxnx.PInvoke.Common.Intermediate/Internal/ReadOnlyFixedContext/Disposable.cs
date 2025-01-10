@@ -18,6 +18,11 @@ internal partial class ReadOnlyFixedContext<T> : IConvertibleDisposable<IReadOnl
 	/// </summary>
 	private sealed class Disposable : Disposable<ReadOnlyFixedContext<T>>, IReadOnlyFixedContext<T>.IDisposable
 	{
+		/// <summary>
+		/// An empty instance of <see cref="ReadOnlyFixedContext{T}.Disposable"/>.
+		/// </summary>
+		public static readonly Disposable Empty = new(ReadOnlyFixedContext<T>.Empty, default);
+
 		/// <inheritdoc/>
 		public Disposable(ReadOnlyFixedContext<T> fixedPointer, IDisposable? disposable) : base(
 			fixedPointer, disposable) { }

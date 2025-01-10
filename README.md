@@ -2487,6 +2487,18 @@ Set of extensions for basic operations with `String` instances.
 Set of extensions for basic operations with `unmanaged` values.
 
 - <details>
+  <summary>RentFixed&lt;T&gt;(this ArrayPool&lt;T&gt;, Int32, Boolean)</summary>
+
+  Rents and pins an array of minimum number of `T` elements from given array pool,
+  ensuring a safe context for accessing the fixed memory.
+  </details>
+- <details>
+  <summary>RentFixed&lt;T&gt;(this ArrayPool&lt;T&gt;, Int32, Boolean, out Int32)</summary>
+
+  Rents and pins an array of minimum number of `T` elements from given array pool,
+  ensuring a safe context for accessing the fixed memory.
+  </details>
+- <details>
   <summary>ToBytes&lt;T&gt;(this T)</summary>
 
   Converts a given `unmanaged` value of type `T` into an array of `Byte`.

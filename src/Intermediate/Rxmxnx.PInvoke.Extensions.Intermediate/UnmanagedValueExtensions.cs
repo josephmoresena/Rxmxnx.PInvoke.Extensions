@@ -8,6 +8,53 @@
 public static partial class UnmanagedValueExtensions
 {
 	/// <summary>
+	/// Rents and pins an array of minimum <paramref name="count"/> elements from <paramref name="arrayPool"/>,
+	/// ensuring a safe context for accessing the fixed memory.
+	/// </summary>
+	/// <typeparam name="T">
+	/// The unmanaged type from which the contiguous region of memory will be fixed.
+	/// </typeparam>
+	/// <param name="arrayPool">A <see cref="ArrayPool{T}"/> instance.</param>
+	/// <param name="count">Minimum size of rented array.</param>
+	/// <param name="clearArray">Indicates whether the contents of the buffer should be cleared before reuse.</param>
+	/// <returns>An <see cref="IFixedContext{T}.IDisposable"/> instance representing the pinned memory.</returns>
+	/// <remarks>
+	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
+	/// operations on unmanaged memory.
+	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
+	/// and avoid memory leaks.
+	/// </remarks>
+	[ExcludeFromCodeCoverage]
+	public static IFixedContext<T>.IDisposable RentFixed<T>(this ArrayPool<T> arrayPool, Int32 count,
+		Boolean clearArray = false) where T : unmanaged
+		=> arrayPool.RentFixed(count, clearArray, out _);
+	/// <summary>
+	/// Rents and pins an array of minimum <paramref name="count"/> elements from <paramref name="arrayPool"/>,
+	/// ensuring a safe context for accessing the fixed memory.
+	/// </summary>
+	/// <typeparam name="T">
+	/// The unmanaged type from which the contiguous region of memory will be fixed.
+	/// </typeparam>
+	/// <param name="arrayPool">A <see cref="ArrayPool{T}"/> instance.</param>
+	/// <param name="count">Minimum size of rented array.</param>
+	/// <param name="clearArray">Indicates whether the contents of the buffer should be cleared before reuse.</param>
+	/// <param name="arrayLength">Output. Rented array length.</param>
+	/// <returns>An <see cref="IFixedContext{T}.IDisposable"/> instance representing the pinned memory.</returns>
+	/// <remarks>
+	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
+	/// operations on unmanaged memory.
+	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
+	/// and avoid memory leaks.
+	/// </remarks>
+	public static IFixedContext<T>.IDisposable RentFixed<T>(this ArrayPool<T> arrayPool, Int32 count,
+		Boolean clearArray, out Int32 arrayLength) where T : unmanaged
+	{
+		FixedRentedContext<T> result = new(arrayPool, count, clearArray);
+		arrayLength = result.Array.Length;
+		return result;
+	}
+
+	/// <summary>
 	/// Converts a given <see langword="unmanaged"/> value of type <typeparamref name="T"/> into an array of
 	/// <see cref="Byte"/>.
 	/// </summary>

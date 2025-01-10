@@ -8,9 +8,8 @@ public sealed class NonBinarySpaceTests
 	internal void InvalidTest()
 	{
 		Assert.IsType<InvalidOperationException>(
-			Assert.Throws<TypeInitializationException>(BufferManager
-				                                           .Register<Int32,
-					                                           NonBinarySpace<InternalStruct<Object>, Int32>>)
+			Assert.Throws<TypeInitializationException>(IManagedBuffer<Int32>
+				                                           .GetMetadata<NonBinarySpace<InternalStruct<Object>, Int32>>)
 			      .InnerException);
 		Assert.IsType<InvalidOperationException>(
 			Assert.Throws<TypeInitializationException>(BufferManager
@@ -80,6 +79,12 @@ public sealed class NonBinarySpaceTests
 		Assert.Equal(100, buffer.Span.Length);
 		Assert.Equal(buffer.FullLength, buffer.Span.Length);
 		Assert.Equal(default, buffer.Span[0]);
+		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+		{
+			Assert.Null(buffer.BufferMetadata);
+			return;
+		}
+
 		Assert.NotNull(buffer.BufferMetadata);
 		Assert.False(buffer.BufferMetadata.IsBinary);
 		Assert.Equal(buffer.Span.Length, buffer.BufferMetadata.Size);
