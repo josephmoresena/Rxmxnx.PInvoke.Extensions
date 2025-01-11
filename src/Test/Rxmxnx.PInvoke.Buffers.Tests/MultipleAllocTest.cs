@@ -117,9 +117,9 @@ public sealed unsafe class MultipleAllocTest
 
 		Assert.NotNull(buffer.BufferMetadata);
 		if (typeof(T).IsValueType)
-			Assert.IsAssignableFrom<BufferTypeMetadata<T>>(buffer.BufferMetadata);
+			Assert.IsType<BufferTypeMetadata<T>>(buffer.BufferMetadata, false);
 		else
-			Assert.IsAssignableFrom<BufferTypeMetadata<Object>>(buffer.BufferMetadata);
+			Assert.IsType<BufferTypeMetadata<Object>>(buffer.BufferMetadata, false);
 		Assert.True(buffer.BufferMetadata.IsBinary);
 		Assert.Equal(buffer.Span.Length, buffer.BufferMetadata.Size);
 		Assert.InRange(buffer.BufferMetadata.ComponentCount, 0, 2);
