@@ -15,7 +15,7 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	/// <summary>
 	/// An empty instance of <see cref="IReadOnlyFixedContext{T}.IDisposable"/>.
 	/// </summary>
-	public static readonly IReadOnlyFixedContext<T>.IDisposable EmptyDisposable = Disposable.Empty;
+	public static readonly IReadOnlyFixedContext<T>.IDisposable EmptyDisposable = Disposable.Default;
 
 	/// <inheritdoc/>
 	public override Boolean IsUnmanaged => !RuntimeHelpers.IsReferenceOrContainsReferences<T>();

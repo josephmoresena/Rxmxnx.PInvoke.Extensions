@@ -33,6 +33,7 @@ internal sealed class FixedRentedContext<T> : IFixedContext<T>.IDisposable
 	/// <param name="arrayPool">A <see cref="ArrayPool{T}"/> instance.</param>
 	/// <param name="length">Required length.</param>
 	/// <param name="clearArray">Indicates whether the contents of the buffer should be cleared before reuse.</param>
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 	public unsafe FixedRentedContext(ArrayPool<T> arrayPool, Int32 length, Boolean clearArray)
 	{
 		this._arrayPool = arrayPool;
