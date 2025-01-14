@@ -73,6 +73,14 @@ reference type Composite(2<sup>1</sup>, 2<sup>3</sup>, `Object`).
 </Directives>
 ```
 
+### Preparation
+
+Binary buffers can be statically prepared to allocate a specific number of elements using auto-composition to cache the
+buffer metadata with the required size.
+
+**Note:** It is ideal for scenarios where buffer allocation needs to occur as transparently as possible, without
+requiring additional allocations.
+
 ---
 
 ## Non-Binary Buffers
@@ -92,3 +100,7 @@ There are three buffer registration options:
 1. For `Object` type.
 2. For generic `struct` type.
 3. For generic nullable `struct` type.
+
+## Binary buffer Preparation
+
+Binary buffers can be statically prepared for a given count number elements. Thise 
