@@ -62,4 +62,6 @@ internal sealed class RussianMessageResource : IMessageResource
 		=> $"{itemType} является ссылочным типом, но {arrayType} является неуправляемым типом.";
 	String IMessageResource.UnmanagedTypeButContainsReferences(Type itemType, Type arrayType)
 		=> $"{itemType} является неуправляемым типом, но {arrayType} содержит ссылки.";
+	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
+		=> $"Невозможно создать буфер для {itemType} с {size} элементами.";
 }

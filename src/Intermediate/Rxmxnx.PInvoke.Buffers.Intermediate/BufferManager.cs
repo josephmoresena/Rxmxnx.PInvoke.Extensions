@@ -124,4 +124,38 @@ public static partial class BufferManager
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
 		MetadataManager<T?>.RegisterBuffer<TBuffer>();
 	}
+	/// <summary>
+	/// Prepares the binary buffer metadata needed to allocate <paramref name="count"/> objects.
+	/// </summary>
+	/// <param name="count">Amount of items in required buffer.</param>
+	/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void PrepareBinaryBuffer(UInt16 count) => MetadataManager<Object>.PrepareBinaryMetadata(count);
+	/// <summary>
+	/// Prepares the binary buffer metadata needed to allocate <paramref name="count"/> <typeparamref name="T"/> items.
+	/// </summary>
+	/// <typeparam name="T">Type of items in the buffer.</typeparam>
+	/// <param name="count">Amount of items in required buffer.</param>
+	/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void PrepareBinaryBuffer<T>(UInt16 count) where T : struct
+	{
+		// If unmanaged type, stackalloc should be used.
+		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
+		MetadataManager<T>.PrepareBinaryMetadata(count);
+	}
+	/// <summary>
+	/// Prepares the binary buffer metadata needed to allocate <paramref name="count"/> nullable <typeparamref name="T"/>
+	/// items.
+	/// </summary>
+	/// <typeparam name="T">Type of nullable items in the buffer.</typeparam>
+	/// <param name="count">Amount of items in required buffer.</param>
+	/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void PrepareBinaryBufferNullable<T>(UInt16 count) where T : struct
+	{
+		// If unmanaged type, stackalloc should be used.
+		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
+		MetadataManager<T?>.PrepareBinaryMetadata(count);
+	}
 }

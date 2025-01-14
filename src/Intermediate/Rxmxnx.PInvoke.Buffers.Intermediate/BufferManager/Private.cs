@@ -343,6 +343,19 @@ public static partial class BufferManager
 	/// <returns>The maximum value in the given binary space.</returns>
 	private static UInt16 GetMaxValue(UInt16 space) => (UInt16)(space * 2 - 1);
 	/// <summary>
+	/// Retrieves the components sizes for given <paramref name="count"/>.
+	/// </summary>
+	/// <param name="count">Amount of items in required buffer.</param>
+	/// <returns>Enumeration of components sizes.</returns>
+	private static IEnumerable<UInt16> GetBinaryComponents(UInt16 count)
+	{
+		for (UInt16 i = 0; i < 16; i++)
+		{
+			UInt16 mask = (UInt16)(1 << i);
+			if ((count & mask) != 0) yield return mask;
+		}
+	}
+	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
 	/// </summary>
 	/// <typeparam name="T">The type of items in the buffer.</typeparam>

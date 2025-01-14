@@ -55,7 +55,8 @@ interaction between .NET and native P/Invoke methods.
 
 ## Features
 
-- **UTF-8/ASCII String Handling**: Seamlessly work with UTF-8 encoded strings in interop contexts. [More info](src/Intermediate/Rxmxnx.PInvoke.CString.Intermediate/README.md)
+- **UTF-8/ASCII String Handling**: Seamlessly work with UTF-8 encoded strings in interop
+  contexts. [More info](src/Intermediate/Rxmxnx.PInvoke.CString.Intermediate/README.md)
 - **Managed Buffers**: Dynamically allocate object references on the stack with minimal
   effort.  [More info](src/Intermediate/Rxmxnx.PInvoke.Buffers.Intermediate/README.md)
 - **Safe Memory Manipulation**: Eliminate direct pointer manipulation and unsafe code requirements.
@@ -2638,6 +2639,24 @@ This class allows to allocate buffers on stack if possible.
   Registers `T?` buffer.
 
   **Note:** `T` is `struct`. `TBuffer` is `struct` and `IManagedBuffer<T?>`.
+  </details>
+- <details>
+  <summary>PrepareBinaryBuffer(UInt16)</summary>
+  Prepares the binary buffer metadata needed to allocate given number of objects.
+  </details>
+- <details>
+  <summary>PrepareBinaryBuffer&lt;T&gt;(UInt16)</summary>
+
+  Prepares the binary buffer metadata needed to allocate given number of `T` items.
+
+  **Note:** `T` is `struct`.
+  </details>
+- <details>
+  <summary>PrepareBinaryBufferNullable&lt;T&gt;()</summary>
+
+  Prepares the binary buffer metadata needed to allocate given number of `T?` items.
+
+  **Note:** `T` is `struct`.
   </details>
 
 </details>

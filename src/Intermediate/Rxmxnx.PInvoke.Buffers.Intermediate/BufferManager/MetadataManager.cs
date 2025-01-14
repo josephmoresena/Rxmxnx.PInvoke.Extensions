@@ -24,6 +24,30 @@ public static partial class BufferManager
 			return MetadataManager<T>.GetBinaryMetadata(count, true);
 		}
 		/// <summary>
+		/// Prepares internal metadata cache for allocations of <see cref="count"/> items.
+		/// </summary>
+		/// <param name="count">Amount of items in required buffer.</param>
+		/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
+		public static void PrepareBinaryMetadata(UInt16 count)
+		{
+			Type typeofT = typeof(T);
+			BufferTypeMetadata<T>? metadata = default;
+			foreach (UInt16 comp in BufferManager.GetBinaryComponents(count))
+			{
+				BufferTypeMetadata<T>? compMetadata = MetadataManager<T>.GetFundamental(comp);
+				ValidationUtilities.ThrowIfNullMetadata(typeofT, comp, compMetadata is null);
+				if (metadata is null)
+				{
+					metadata = compMetadata;
+					continue;
+				}
+
+				UInt16 composeSize = (UInt16)(comp + metadata.Size);
+				metadata = MetadataManager<T>.GetBinaryMetadata(composeSize, false);
+				ValidationUtilities.ThrowIfNullMetadata(typeofT, composeSize, metadata is null);
+			}
+		}
+		/// <summary>
 		/// Creates <see cref="BufferTypeMetadata{T}"/> for <see cref="Composite{TBufferA,TBufferB,T}"/>.
 		/// </summary>
 		/// <param name="typeofA">The type of low buffer.</param>
