@@ -156,7 +156,7 @@ Console.WriteLine(cstring.IsNullTerminated); // Output: False
 ```
 
 This method allows creating a `CString` instance using an object of type
-`IUtf8FunctionState<TState>`, which provides UTF-8/ASCII units via a function.
+`IUtf8FunctionState<TState>`, which provides UTF-8/ASCII units using a delegate.
 
 ### Creation with pointer
 
@@ -181,8 +181,8 @@ This method creates a `CString` instance that points to an unmanaged
 memory block containing UTF-8/ASCII units of a specified length. If the full length is used, the `IsNullTerminated`
 property is set to `false`; otherwise, it is set to `true`.
 
-**Note:** This method is considered *unsafe* because the pinning of the memory block pointed to* by the resulting
-instance *must be done manually.
+**Note:** This method is considered *unsafe* because the pinning of the memory block pointed to by the resulting
+instance must be done manually.
 
 ## CString Sequences
 
