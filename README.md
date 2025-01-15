@@ -59,7 +59,8 @@ interaction between .NET and native P/Invoke methods.
   contexts. [More info](src/Intermediate/Rxmxnx.PInvoke.CString.Intermediate/README.md)
 - **Managed Buffers**: Dynamically allocate object references on the stack with minimal
   effort.  [More info](src/Intermediate/Rxmxnx.PInvoke.Buffers.Intermediate/README.md)
-- **Safe Memory Manipulation**: Eliminate direct pointer manipulation and unsafe code requirements.
+- **Safe Memory Manipulation**: Eliminate direct pointer manipulation and unsafe code
+  requirements. [More info](src/Intermediate/Rxmxnx.PInvoke.Extensions.Intermediate/README.md)
 
 ---
 
