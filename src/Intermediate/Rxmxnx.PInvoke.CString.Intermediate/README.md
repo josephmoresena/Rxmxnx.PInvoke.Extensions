@@ -11,6 +11,8 @@ There are three types of `CString`:
    the developer have to ensure that the memory address holding the UTF-8/ASCII units remains valid for the
    lifetime of the `CString` instance.
 
+---
+
 ## CString Initialization
 
 The `CString` class offers various constructors and operators for creating `CString` instances:
