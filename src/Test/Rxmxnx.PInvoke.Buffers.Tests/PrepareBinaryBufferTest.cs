@@ -11,5 +11,9 @@ public sealed class PrepareBinaryBufferTest
 		BufferManager.PrepareBinaryBuffer<ValueTuple<Int32, ValueTuple<Int32, Int32>>>(100);
 		BufferManager.PrepareBinaryBuffer<ValueTuple<String, ValueTuple<String, ValueTuple<Int32, Int32>>>>(14);
 		BufferManager.PrepareBinaryBuffer<ValueTuple<Int32, ValueTuple<String, ValueTuple<Int32, Int32>>>>(15);
+
+		BufferManager.PrepareBinaryBufferNullable<ValueTuple<Int32, ValueTuple<Int32, Int32>>>(100);
+		BufferManager.PrepareBinaryBufferNullable<ValueTuple<String, ValueTuple<String, ValueTuple<Int32, Int32>>>>(14);
+		BufferManager.PrepareBinaryBufferNullable<ValueTuple<Int32, ValueTuple<String, ValueTuple<Int32, Int32>>>>(15);
 	}
 }
