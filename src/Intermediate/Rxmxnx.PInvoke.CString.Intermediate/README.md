@@ -186,6 +186,8 @@ property is set to `false`; otherwise, it is set to `true`.
 **Note:** This method is considered *unsafe* because the pinning of the memory block pointed to by the resulting
 instance must be done manually.
 
+---
+
 ## CString Sequences
 
 `Rxmxnx.PInvoke.Extensions` natively supports the creation of null-terminated UTF-8/ASCII sequences to optimize the use
