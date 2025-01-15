@@ -24,7 +24,7 @@ public static partial class BufferManager
 			return MetadataManager<T>.GetBinaryMetadata(count, true);
 		}
 		/// <summary>
-		/// Prepares internal metadata cache for allocations of <see cref="count"/> items.
+		/// Prepares internal metadata cache for allocations of <paramref name="count"/> items.
 		/// </summary>
 		/// <param name="count">Amount of items in required buffer.</param>
 		/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
