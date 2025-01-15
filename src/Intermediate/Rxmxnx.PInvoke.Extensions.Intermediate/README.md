@@ -109,3 +109,61 @@ GC.WaitForFullGCComplete();
 IntPtr u16Ptr = values.Span.GetUnsafeIntPtr();
 Console.WriteLine(Marshal.PtrToStringUni(u16Ptr));  // Output: Hello world
 ```
+
+---
+
+## Typed Pointers
+
+Typed pointers are structures that encapsulate unmanaged pointers, allowing their use without requiring the `unsafe`
+keyword. There are three types of typed pointers:
+
+- **`ValPtr<T>`**: Encapsulates a pointer to an unmanaged reference of type `T`.
+- **`ReadOnlyValPtr<T>`**: Similar to `ValPtr<T>` but represents a read-only unmanaged reference (enforced by convention
+  within .NET, not by runtime constraints).
+- **`FuncPtr<TDelegate>`**: Encapsulates a pointer to a function of type `TDelegate`. The delegate type must not be
+  generic because internally the `Marshal.GetDelegateForFunctionPointer<TDelegate>` method is used to invoke the
+  function.
+
+```csharp
+delegate Int32 QueryFullProcessPath(IntPtr hProcess, UInt32 dwFlags, ValPtr<Char> pathPtr, ValPtr<Int32> pathLengthPtr);
+...
+if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
+
+[DllImport("user32.dll", EntryPoint = "MessageBoxW")]
+static extern Int32 MessageBox(IntPtr hWindow, ReadOnlyValPtr<Char> textPtr, ReadOnlyValPtr<Char> captionPtr, UInt32 type);
+
+IntPtr libHandle = NativeLibrary.Load("kernel32.dll");
+try
+{
+    FuncPtr<QueryFullProcessPath> queryFullProcessPathPtr = 
+        (FuncPtr<QueryFullProcessPath>)NativeLibrary.GetExport(libHandle, "QueryFullProcessImageNameW");
+    Int32 pathLength = 50;
+    QueryFullProcessPath queryFullProcessPath = queryFullProcessPathPtr.Invoke;
+    IntPtr hProcess = Process.GetCurrentProcess().Handle;
+    String? processPath;
+    while ((processPath = GetProcessPath(hProcess, queryFullProcessPath, ref pathLength)) is null)
+        pathLength *= 2;
+
+    using IReadOnlyFixedContext<Char>.IDisposable pathCtx = processPath.AsMemory().GetFixedContext();
+    _ = MessageBox(IntPtr.Zero, pathCtx.ValuePointer, "Process Path".AsSpan().GetUnsafeValPtr(), 0);
+}
+finally
+{
+    NativeLibrary.Free(libHandle);
+}
+
+static String? GetProcessPath(IntPtr hProcess, QueryFullProcessPath queryFullProcessPath, ref Int32 pathLength) 
+{
+    Span<Char> pathChars = stackalloc Char[pathLength];
+    ValPtr<Char> pathPtr = pathChars.GetUnsafeValPtr();
+    if (queryFullProcessPath(hProcess, 0, pathPtr, pathLength.GetUnsafeValPtr()) != 0)
+        return String.Create(pathLength, pathPtr.Pointer, (span, ptr) => {
+            ReadOnlySpan<Char> pathSpan = ptr.GetUnsafeReadOnlySpan<Char>(span.Length);
+            pathSpan.CopyTo(span);
+        });
+    return default;
+}
+```
+
+These types are ideal for generating strongly-typed declarations of PInvoke functions, ensuring safer and more intuitive
+interop with unmanaged code.
