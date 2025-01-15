@@ -62,4 +62,6 @@ internal sealed class GermanMessageResource : IMessageResource
 		=> $"{itemType} ist ein Referenztyp, aber {arrayType} ist ein nicht verwalteter Typ.";
 	String IMessageResource.UnmanagedTypeButContainsReferences(Type itemType, Type arrayType)
 		=> $"{itemType} ist ein nicht verwalteter Typ, aber {arrayType} enthält Verweise.";
+	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
+		=> $"Es ist nicht möglich, einen Puffer für {itemType} mit {size} Elementen zu erstellen.";
 }

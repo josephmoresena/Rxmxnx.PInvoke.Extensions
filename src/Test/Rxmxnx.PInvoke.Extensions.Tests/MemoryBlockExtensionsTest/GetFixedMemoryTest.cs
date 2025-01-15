@@ -80,7 +80,20 @@ public sealed class GetFixedMemoryTest
 		T[] array = GetFixedMemoryTest.fixture.CreateMany<T>().ToArray();
 		Memory<T> mem = array.AsMemory();
 		ReadOnlyMemory<T> rMem = mem;
-		if (!typeof(T).IsValueType)
+		Memory<T> eMemory = default;
+		ReadOnlyMemory<T> erMemory = default;
+
+		using (IFixedMemory.IDisposable eMem = eMemory.GetFixedMemory())
+		using (IReadOnlyFixedMemory.IDisposable erMem = erMemory.GetFixedMemory())
+		{
+			Assert.True(eMem.Bytes.IsEmpty);
+			Assert.True(eMem.Objects.IsEmpty);
+			Assert.True(erMem.Bytes.IsEmpty);
+			Assert.True(erMem.Objects.IsEmpty);
+			Assert.NotSame(eMem, erMem);
+		}
+
+		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
 		{
 			Assert.Throws<ArgumentException>(() => mem.GetFixedMemory());
 			Assert.Throws<ArgumentException>(() => rMem.GetFixedMemory());
@@ -88,8 +101,8 @@ public sealed class GetFixedMemoryTest
 		}
 		using IFixedMemory.IDisposable fMem = mem.GetFixedMemory();
 		using IReadOnlyFixedMemory.IDisposable frMem = rMem.GetFixedMemory();
-		Assert.IsAssignableFrom<IFixedContext<T>>(fMem);
-		Assert.IsAssignableFrom<IReadOnlyFixedContext<T>>(frMem);
+		Assert.IsType<IFixedContext<T>>(fMem, false);
+		Assert.IsType<IReadOnlyFixedContext<T>>(frMem, false);
 		Assert.Equal(array.Length * Unsafe.SizeOf<T>(), fMem.Bytes.Length);
 		Assert.Equal(array.Length * Unsafe.SizeOf<T>(), frMem.Bytes.Length);
 		Assert.True(Unsafe.AreSame(ref array[0], ref Unsafe.As<Byte, T>(ref fMem.Bytes[0])));

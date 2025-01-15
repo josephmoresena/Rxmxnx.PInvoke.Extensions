@@ -61,6 +61,9 @@ public sealed class GetUnsafeSpanTest
 			Assert.Equal(input, intPtr.GetUnsafeArray<T>(input.Length));
 			Assert.Equal(input, uintPtr.GetUnsafeArray<T>(input.Length));
 			Assert.Equal(input, handle.GetUnsafeArray<T>(input.Length));
+			Assert.True(p == handle.Pointer);
+			Assert.Equal(intPtr, handle.ToIntPtr());
+			Assert.Equal(uintPtr, handle.ToUIntPtr());
 		}
 
 		GetUnsafeSpanTest.MemoryTest(input);

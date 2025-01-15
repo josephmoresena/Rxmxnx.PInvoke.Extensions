@@ -117,7 +117,11 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Browsable(false)]
 	public ref readonly Byte GetPinnableReference()
-		=> ref MemoryMarshal.GetReference(MemoryMarshal.AsBytes(this._value.AsSpan()));
+	{
+		ReadOnlySpan<Char> chars = this._value.AsSpan();
+		ReadOnlySpan<Byte> bytes = MemoryMarshal.AsBytes(chars);
+		return ref MemoryMarshal.GetReference(bytes);
+	}
 	/// <summary>
 	/// Returns a <see cref="CString"/> that represents the current sequence.
 	/// </summary>

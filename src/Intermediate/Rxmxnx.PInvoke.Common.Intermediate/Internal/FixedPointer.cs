@@ -250,7 +250,11 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// <summary>
 	/// Invalidates current context.
 	/// </summary>
-	public virtual void Unload() => this._isValid.Value = false;
+	public virtual void Unload()
+	{
+		if (this._ptr == default && this._binaryLength == 0) return;
+		this._isValid.Value = false;
+	}
 
 	/// <summary>
 	/// Validates any operation over the fixed memory block.

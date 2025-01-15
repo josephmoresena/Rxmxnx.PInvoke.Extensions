@@ -135,4 +135,8 @@ internal partial interface IMessageResource
 	/// Message for unmanaged type item but containing array references exception.
 	/// </summary>
 	String UnmanagedTypeButContainsReferences(Type itemType, Type arrayType);
+	/// <summary>
+	/// Message for missing buffer metadata exception.
+	/// </summary>
+	String MissingBufferMetadataException(Type itemType, UInt16 size);
 }

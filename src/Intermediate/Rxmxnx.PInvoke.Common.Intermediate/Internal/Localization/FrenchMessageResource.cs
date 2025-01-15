@@ -63,4 +63,6 @@ internal sealed class FrenchMessageResource : IMessageResource
 		=> $"{itemType} est un type de référence mais {arrayType} est un type non géré.";
 	String IMessageResource.UnmanagedTypeButContainsReferences(Type itemType, Type arrayType)
 		=> $"{itemType} est un type non géré mais {arrayType} contient des références.";
+	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
+		=> $"Impossible de créer un tampon pour {itemType} comportant {size} éléments.";
 }

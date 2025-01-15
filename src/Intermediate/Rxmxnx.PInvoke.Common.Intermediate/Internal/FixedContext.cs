@@ -12,6 +12,10 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 	/// An empty instance of <see cref="FixedContext{T}"/>.
 	/// </summary>
 	public static readonly FixedContext<T> Empty = new();
+	/// <summary>
+	/// An empty instance of <see cref="IFixedContext{T}.IDisposable"/>.
+	/// </summary>
+	public static readonly IFixedContext<T>.IDisposable EmptyDisposable = Disposable.Default;
 
 	/// <summary>
 	/// Gets the number of items of type <typeparamref name="T"/> in the memory block.
