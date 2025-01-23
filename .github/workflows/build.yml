@@ -70,7 +70,107 @@ jobs:
             rm -rf "$TEMP_DIR"
           done
           echo "-----------------------------------"
-        
+          ln -s ./bin/Release/ /tmp/TmpSource
+      - name: Build Package-Trimmed-Executables
+        working-directory: /tmp
+        run: |
+          echo '<Project>' > Directory.Build.props
+          echo '  <ItemGroup>' >> Directory.Build.props
+          echo '    <RuntimeHostConfigurationOption Condition="'"'"'$(DisableBufferAutoComposition)'"'"' == '"'"'true'"'"'" Include="PInvoke.DisableBufferAutoComposition" Value="true" Trim="true" />' >> Directory.Build.props
+          echo '  </ItemGroup>' >> Directory.Build.props
+          echo '</Project>' >> Directory.Build.props  
+          dotnet new console --name PackageTrimmedAssembly --aot true
+          cd PackageTrimmedAssembly
+          dotnet new nugetconfig
+          dotnet nuget add source ./package/bin/Release/ -n TmpSource
+          dotnet add package Rxmxnx.PInvoke.Extensions --version 9999.99.99.99-tmp
+          echo 'Console.WriteLine($"Native AOT: {Rxmxnx.PInvoke.AotInfo.IsNativeAot}");' >> Program.cs
+          echo 'Console.WriteLine($"Reflection Enabled: {(!Rxmxnx.PInvoke.AotInfo.IsReflectionDisabled)}");' >> Program.cs
+          echo 'Console.WriteLine($"Is 64-bit: {(Rxmxnx.PInvoke.NativeUtilities.PointerSize == 8)}");' >> Program.cs
+          echo 'Console.WriteLine($"Globalization-Invariant Mode: {Rxmxnx.PInvoke.NativeUtilities.GlobalizationInvariantModeEnabled}");' >> Program.cs
+          echo 'Console.WriteLine($"UI Culture: {System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}");' >> Program.cs
+          echo 'Console.WriteLine($"UI Iso639-1: {Rxmxnx.PInvoke.NativeUtilities.UserInterfaceIso639P1}");' >> Program.cs
+          echo 'Console.WriteLine($"Buffer AutoComposition Enabled: {Rxmxnx.PInvoke.BufferManager.BufferAutoCompositionEnabled}");' >> Program.cs
+          echo 'var bufferMetadata = (new Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<ValueTuple<String, Int32>>, Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<ValueTuple<String, Int32>>, Rxmxnx.PInvoke.Buffers.Atomic<ValueTuple<String, Int32>>, ValueTuple<String, Int32>>, ValueTuple<String, Int32>>() as Rxmxnx.PInvoke.Buffers.IManagedBinaryBuffer<ValueTuple<String, Int32>>).Metadata;' >> Program.cs
+          echo 'Console.WriteLine($"Metadata Size: {bufferMetadata.Size}");' >> Program.cs
+          echo 'Rxmxnx.PInvoke.BufferManager.Alloc<ValueTuple<String, Int32>>(bufferMetadata.Size, s => ' >> Program.cs
+          echo '{' >> Program.cs
+          echo '  Console.WriteLine($"Span Size: {s.Span.Length}");' >> Program.cs
+          echo '  Console.WriteLine($"Buffer Size: {s.FullLength}");' >> Program.cs
+          echo '  Console.WriteLine($"In Stack: {s.InStack}");' >> Program.cs
+          echo '});' >> Program.cs
+          
+          dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true \
+            /p:DisableBufferAutoComposition=false /p:InvariantGlobalization=false /p:IlcDisableReflection=false \
+            /p:AssemblyName=AutoComposition.Globalization.Reflection
+          mv ./../Executable/debugSymbols/AutoComposition.Globalization.Reflection ./../Executable/AutoComposition.Globalization.Reflection
+          dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true \
+            /p:DisableBufferAutoComposition=true /p:InvariantGlobalization=false /p:IlcDisableReflection=false \
+            /p:AssemblyName=Globalization.Reflection
+          mv ./../Executable/debugSymbols/Globalization.Reflection ./../Executable/Globalization.Reflection
+          dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true \
+            /p:DisableBufferAutoComposition=false /p:InvariantGlobalization=true /p:IlcDisableReflection=false \
+            /p:AssemblyName=AutoComposition.Reflection
+          mv ./../Executable/debugSymbols/AutoComposition.Reflection ./../Executable/AutoComposition.Reflection
+          dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true \
+            /p:DisableBufferAutoComposition=false /p:InvariantGlobalization=false /p:IlcDisableReflection=true \
+            /p:AssemblyName=AutoComposition.Globalization
+          mv ./../Executable/debugSymbols/AutoComposition.Globalization ./../Executable/AutoComposition.Globalization
+          dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true \
+            /p:DisableBufferAutoComposition=true /p:InvariantGlobalization=true /p:IlcDisableReflection=false \
+            /p:AssemblyName=Reflection
+          mv ./../Executable/debugSymbols/Reflection ./../Executable/Reflection
+          dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true \
+            /p:DisableBufferAutoComposition=true /p:InvariantGlobalization=false /p:IlcDisableReflection=true \
+            /p:AssemblyName=Globalization
+          mv ./../Executable/debugSymbols/Globalization ./../Executable/Globalization
+          dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true \
+            /p:DisableBufferAutoComposition=false /p:InvariantGlobalization=true /p:IlcDisableReflection=true \
+            /p:AssemblyName=AutoComposition
+          mv ./../Executable/debugSymbols/AutoComposition ./../Executable/AutoComposition
+          dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true \
+            /p:DisableBufferAutoComposition=true /p:InvariantGlobalization=true /p:IlcDisableReflection=true \
+            /p:AssemblyName=None
+          mv ./../Executable/debugSymbols/None ./../Executable/None
+          
+          mv ./../Executable/obj/native ./../Executable/ilcLogs
+          rm ./../Executable/ilcLogs/*.o
+          rm ./../Executable/ilcLogs/*.ilc.rsp
+          rm ./../Executable/ilcLogs/*.exports
+          rm -rf ./../Executable/obj
+          rm -rf ./../Executable/debugSymbols
+          rm -rf ./bin
+          rm -rf ./obj
+          
+          echo '----- AutoComposition + Globalization + Reflection -----'
+          ./../Executable/AutoComposition.Globalization.Reflection
+          echo '----- Globalization + Reflection -----'
+          ./../Executable/Globalization.Reflection
+          echo '----- AutoComposition + Reflection -----'
+          ./../Executable/AutoComposition.Reflection
+          echo '----- AutoComposition + Globalization -----'
+          ./../Executable/AutoComposition.Globalization
+          echo '----- Reflection -----'
+          ./../Executable/Reflection
+          echo '----- Globalization -----'
+          ./../Executable/Globalization
+          echo '----- AutoComposition -----'
+          ./../Executable/AutoComposition
+          echo '----- None -----'
+          ./../Executable/None
+      - name: Upload Package-Trimmed-Executables
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Package-Trimmed-Executables
+          path: /tmp/Executable/
   run-linux:
     runs-on: ubuntu-latest
     steps:
