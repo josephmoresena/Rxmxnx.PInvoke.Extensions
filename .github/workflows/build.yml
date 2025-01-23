@@ -71,7 +71,7 @@ jobs:
           done
           echo "-----------------------------------"
           ln -s ./bin/Release/ /tmp/TmpSource
-      - name: Build Package-Trimmed-Executables
+      - name: Create PackageTrimmedAssembly.csproj
         working-directory: /tmp
         run: |
           echo '<Project>' > Directory.Build.props
@@ -80,11 +80,17 @@ jobs:
           echo '  </ItemGroup>' >> Directory.Build.props
           echo '</Project>' >> Directory.Build.props  
           dotnet new console --name PackageTrimmedAssembly --aot true
-          cd PackageTrimmedAssembly
+      - name: Create PackageTrimmedAssembly NuGet.config
+        working-directory: /tmp/PackageTrimmedAssembly
+        run: |
           dotnet new nugetconfig
-          dotnet nuget add source ./package/bin/Release/ -n TmpSource
+          dotnet nuget remove source nuget
+          dotnet nuget add source /tmp/TmpSource -n TmpSource
           dotnet add package Rxmxnx.PInvoke.Extensions --version 9999.99.99.99-tmp
-          echo 'Console.WriteLine($"Native AOT: {Rxmxnx.PInvoke.AotInfo.IsNativeAot}");' >> Program.cs
+      - name: Create PackageTrimmedAssembly Program.cs
+        working-directory: /tmp/PackageTrimmedAssembly
+        run: |
+          echo 'Console.WriteLine($"Native AOT: {Rxmxnx.PInvoke.AotInfo.IsNativeAot}");' > Program.cs
           echo 'Console.WriteLine($"Reflection Enabled: {(!Rxmxnx.PInvoke.AotInfo.IsReflectionDisabled)}");' >> Program.cs
           echo 'Console.WriteLine($"Is 64-bit: {(Rxmxnx.PInvoke.NativeUtilities.PointerSize == 8)}");' >> Program.cs
           echo 'Console.WriteLine($"Globalization-Invariant Mode: {Rxmxnx.PInvoke.NativeUtilities.GlobalizationInvariantModeEnabled}");' >> Program.cs
@@ -99,7 +105,9 @@ jobs:
           echo '  Console.WriteLine($"Buffer Size: {s.FullLength}");' >> Program.cs
           echo '  Console.WriteLine($"In Stack: {s.InStack}");' >> Program.cs
           echo '});' >> Program.cs
-          
+      - name: Build Package-Trimmed-Executables (PackageTrimmedAssembly)
+        working-directory: /tmp/PackageTrimmedAssembly
+        run: |
           dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
             /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true \
             /p:DisableBufferAutoComposition=false /p:InvariantGlobalization=false /p:IlcDisableReflection=false \
@@ -149,23 +157,25 @@ jobs:
           rm -rf ./../Executable/debugSymbols
           rm -rf ./bin
           rm -rf ./obj
-          
+      - name: Run Package-Trimmed-Executables
+        working-directory: /tmp/Executable
+        run: |
           echo '----- AutoComposition + Globalization + Reflection -----'
-          ./../Executable/AutoComposition.Globalization.Reflection
+          ./AutoComposition.Globalization.Reflection
           echo '----- Globalization + Reflection -----'
-          ./../Executable/Globalization.Reflection
+          ./Globalization.Reflection
           echo '----- AutoComposition + Reflection -----'
-          ./../Executable/AutoComposition.Reflection
+          ./AutoComposition.Reflection
           echo '----- AutoComposition + Globalization -----'
-          ./../Executable/AutoComposition.Globalization
+          ./AutoComposition.Globalization
           echo '----- Reflection -----'
-          ./../Executable/Reflection
+          ./Reflection
           echo '----- Globalization -----'
-          ./../Executable/Globalization
+          ./Globalization
           echo '----- AutoComposition -----'
-          ./../Executable/AutoComposition
+          ./AutoComposition
           echo '----- None -----'
-          ./../Executable/None
+          ./None
       - name: Upload Package-Trimmed-Executables
         uses: actions/upload-artifact@v4
         with:
