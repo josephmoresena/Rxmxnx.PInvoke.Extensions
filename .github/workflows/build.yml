@@ -167,7 +167,7 @@ jobs:
           echo '----- None -----'
           ./../Executable/None
       - name: Upload Package-Trimmed-Executables
-      - uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: Package-Trimmed-Executables
           path: /tmp/Executable/
