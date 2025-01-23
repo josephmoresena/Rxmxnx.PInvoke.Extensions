@@ -17,6 +17,10 @@ public static partial class BufferManager
 			/// Internal non-binary metadata dictionary.
 			/// </summary>
 			private readonly SortedDictionary<UInt16, BufferTypeMetadata<T>> _nonBinaryCache = new();
+
+			/// <see cref="MetadataStore"/>
+			private MethodInfo? _getMetadataInfo;
+
 			/// <summary>
 			/// Lock object.
 			/// </summary>
@@ -26,9 +30,24 @@ public static partial class BufferManager
 			/// </summary>
 			public IDictionary<UInt16, BufferTypeMetadata<T>> BinaryBuffers => this._binaryCache;
 			/// <summary>
-			/// <see cref="MethodInfo"/> of buffer metadata.
+			/// <see cref="MethodInfo"/> to retrieve buffer metadata.
 			/// </summary>
-			public MethodInfo? GetMetadataInfo { get; }
+			public MethodInfo? GetMetadataInfo
+			{
+				get
+				{
+					try
+					{
+						if (this._getMetadataInfo is null && BufferManager.BufferAutoCompositionEnabled)
+							this._getMetadataInfo = MetadataStore.ReflectGetMetadataMethod();
+					}
+					catch (Exception)
+					{
+						// ignored
+					}
+					return this._getMetadataInfo;
+				}
+			}
 			/// <summary>
 			/// Maximum binary space size.
 			/// </summary>
@@ -43,15 +62,6 @@ public static partial class BufferManager
 #pragma warning disable CA2252
 				this._binaryCache.Add(1, IManagedBuffer<T>.GetMetadata<Atomic<T>>());
 #pragma warning restore CA2252
-				if (!BufferManager.BufferAutoCompositionEnabled) return;
-				try
-				{
-					this.GetMetadataInfo = MetadataStore.ReflectGetMetadataMethod();
-				}
-				catch (Exception)
-				{
-					// ignored
-				}
 			}
 			/// <summary>
 			/// Adds metadata to current cache.

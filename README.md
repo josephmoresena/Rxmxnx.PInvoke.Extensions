@@ -1264,7 +1264,7 @@ Represents a platform-specific type used to manage a pointer to a mutable value 
 <details>
   <summary>FuncPtr&lt;TDelegate&gt;</summary>
 
-Represents a platform-specific type used to handle a pointer to a method of type <typeparamref name="TDelegate"/>.
+Represents a platform-specific type used to handle a pointer to a method of type `TDelegate`.
 
 **Note:** This struct implements `ISpanFormattable`, `ISerializable`, `IWrapper<IntPtr>` and `IEquatable<FuncPtr<T>>`
 interfaces.
@@ -2673,6 +2673,15 @@ Set of utilities for exchange data within the P/Invoke context.
   <summary>PointerSize</summary>
   Size in bytes of a memory pointer.
   </details>
+- <details>
+  <summary>GlobalizationInvariantModeEnabled</summary>
+  Indicates whether globalization-invariant mode is enabled.
+  </details>
+- <details>
+  <summary>UserInterfaceIso639P1</summary>
+
+  Retrieves the `Iso639P1` enum value corresponding to the current user interface culture.
+  </details>
 
 #### Static Methods:
 
@@ -2693,7 +2702,18 @@ Set of utilities for exchange data within the P/Invoke context.
   </details>
 - <details>
   <summary>GetNativeMethod&lt;TDelegate&gt;(IntPtr, String?)</summary>
-  Gets the TDelegate delegate of an exported symbol. 
+
+  Gets the `TDelegate` delegate of an exported symbol.
+  </details>
+- <details>
+  <summary>GetNativeMethod&lt;TDelegate&gt;(IntPtr, String?)</summary>
+
+  Gets a function pointer of type `TDelegate` of an exported symbol.
+  </details>
+- <details>
+  <summary>GetIso639P1(CultureInfo)</summary>
+
+  Retrieves the `Iso639P1` enum value corresponding to the specified culture.
   </details>
 - <details>
   <summary>GetUnsafeFuncPtr&lt;TDelegate&gt;(TDelegate)</summary>

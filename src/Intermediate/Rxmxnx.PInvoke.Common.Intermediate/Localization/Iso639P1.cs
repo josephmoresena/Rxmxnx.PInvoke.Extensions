@@ -5,6 +5,8 @@ namespace Rxmxnx.PInvoke.Localization;
 /// </summary>
 public enum Iso639P1 : byte
 {
+	/// <summary>Invariant</summary>
+	Iv = 0,
 	/// <summary>Abkhazian</summary>
 	Ab = 1,
 	/// <summary>Afar</summary>

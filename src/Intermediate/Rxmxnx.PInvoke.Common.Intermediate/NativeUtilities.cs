@@ -63,6 +63,21 @@ public static unsafe partial class NativeUtilities
 			return Marshal.GetDelegateForFunctionPointer<TDelegate>(address);
 		return default;
 	}
+	/// <summary>
+	/// Gets a function pointer of type <typeparamref name="TDelegate"/> of an exported symbol.
+	/// </summary>
+	/// <typeparam name="TDelegate">Type of the delegate corresponding to the exported symbol.</typeparam>
+	/// <param name="handle">The native library OS handle.</param>
+	/// <param name="name">The name of the exported symbol.</param>
+	/// <returns><typeparamref name="TDelegate"/> delegate.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static FuncPtr<TDelegate> GetNativeMethodPtr<TDelegate>(IntPtr handle, String? name)
+		where TDelegate : Delegate
+	{
+		if (handle != IntPtr.Zero && NativeLibrary.TryGetExport(handle, name ?? String.Empty, out IntPtr address))
+			return (FuncPtr<TDelegate>)address;
+		return default;
+	}
 
 	/// <summary>
 	/// Creates an <see cref="FuncPtr{TDelegate}"/> from a memory reference to a <typeparamref name="TDelegate"/> delegate

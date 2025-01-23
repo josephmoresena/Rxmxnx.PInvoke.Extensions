@@ -3,12 +3,28 @@ namespace Rxmxnx.PInvoke;
 public partial class NativeUtilities
 {
 	/// <summary>
-	/// Gets the corresponding <see cref="Iso639P1"/> enum value for <paramref name="culture"/>.
+	/// Cache for <see cref="GlobalizationInvariantModeEnabled"/>
+	/// </summary>
+	private static Boolean? globalizationInvariantMode;
+
+	/// <summary>
+	/// Indicates whether globalization-invariant mode is enabled.
+	/// </summary>
+	[ExcludeFromCodeCoverage]
+	public static Boolean GlobalizationInvariantModeEnabled
+		=> NativeUtilities.globalizationInvariantMode ??= NativeUtilities.IsGlobalizationInvariantMode();
+	/// <summary>
+	/// Retrieves the <see cref="Iso639P1"/> enum value corresponding to the current user interface culture.
+	/// </summary>
+	public static Iso639P1 UserInterfaceIso639P1 => NativeUtilities.GetIso639P1(CultureInfo.CurrentUICulture);
+
+	/// <summary>
+	/// Retrieves the <see cref="Iso639P1"/> enum value corresponding to the specified <paramref name="culture"/>.
 	/// </summary>
 	/// <param name="culture">A <see cref="CultureInfo"/> instance.</param>
 	/// <returns>A <see cref="Iso639P1"/> enum value.</returns>
 	[ExcludeFromCodeCoverage]
-	internal static Iso639P1 GetIso639P1(CultureInfo culture)
+	public static Iso639P1 GetIso639P1(CultureInfo culture)
 	{
 		try
 		{
@@ -194,12 +210,32 @@ public partial class NativeUtilities
 				"yo" => Iso639P1.Yo,
 				"za" => Iso639P1.Za,
 				"zu" => Iso639P1.Zu,
-				_ => default,
+				_ => Iso639P1.Iv,
 			};
 		}
 		catch (Exception)
 		{
-			return default;
+			return Iso639P1.Iv;
+		}
+	}
+
+	/// <summary>
+	/// Checks if globalization-invariant mode is enabled.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if globalization-invariant mode is enabled; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+	private static Boolean IsGlobalizationInvariantMode()
+	{
+		try
+		{
+			return CultureInfo.GetCultureInfo(0x409).LCID == 0x1000;
+		}
+		catch (CultureNotFoundException)
+		{
+			CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.NeutralCultures);
+			return cultures.Length <= 1;
 		}
 	}
 }
