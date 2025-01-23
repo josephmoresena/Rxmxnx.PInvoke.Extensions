@@ -32,6 +32,7 @@ public static partial class BufferManager
 			/// <summary>
 			/// <see cref="MethodInfo"/> to retrieve buffer metadata.
 			/// </summary>
+			[ExcludeFromCodeCoverage]
 			public MethodInfo? GetMetadataInfo
 			{
 				get

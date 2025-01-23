@@ -226,6 +226,7 @@ public partial class NativeUtilities
 	/// <see langword="true"/> if globalization-invariant mode is enabled; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
+	[ExcludeFromCodeCoverage]
 	private static Boolean IsGlobalizationInvariantMode()
 	{
 		try
