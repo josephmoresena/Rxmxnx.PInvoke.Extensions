@@ -10,12 +10,14 @@ public partial class NativeUtilities
 	/// <summary>
 	/// Indicates whether globalization-invariant mode is enabled.
 	/// </summary>
+	/// <remarks>This property allows trim propagation at compile time using <c>InvariantGlobalization</c>.</remarks>
 	[ExcludeFromCodeCoverage]
 	public static Boolean GlobalizationInvariantModeEnabled
 		=> NativeUtilities.globalizationInvariantMode ??= NativeUtilities.IsGlobalizationInvariantMode();
 	/// <summary>
 	/// Retrieves the <see cref="Iso639P1"/> enum value corresponding to the current user interface culture.
 	/// </summary>
+	/// <remarks>This property allows trim propagation at compile time using <c>InvariantGlobalization</c>.</remarks>
 	public static Iso639P1 UserInterfaceIso639P1
 	{
 		get
