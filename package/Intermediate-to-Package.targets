@@ -99,33 +99,27 @@
         <!-- Prepare final ILLink.Substitutions.xml file content and path -->
         <PropertyGroup>
             <ILLinkSubstitutionsText>@(ILLinkSubstitutionsLines, ' ')</ILLinkSubstitutionsText>
-            <ILLinkSubstitutionsFile Condition="'$(ILLinkSubstitutionsText)' != ''">$(IntermediateOutputPath)\ILLink\ILLink.Substitutions.xml</ILLinkSubstitutionsFile>
         </PropertyGroup>
 
         <!-- Generate final ILLink.Substitutions.xml file -->
-        <WriteLinesToFile Condition="'$(ILLinkSubstitutionsFile)' != ''"
-                          File="$(ILLinkSubstitutionsFile)"
+        <WriteLinesToFile Condition="'$(ILLinkSubstitutionsText)' != ''"
+                          File="$(IntermediateOutputPath)\ILLink\ILLink.Substitutions.xml"
                           Lines="$([System.Text.RegularExpressions.Regex]::Replace('$(ILLinkSubstitutionsText)', '\s{0,}&lt;\/linker&gt;\s{0,}&lt;linker&gt;', ''))"
                           Overwrite="true"/>
-
-        <!-- Embed final ILLink.Substitutions.xml file -->
-        <ItemGroup Condition="'$(ILLinkSubstitutionsFile)' != ''">
-            <EmbeddedResource Include="$(ILLinkSubstitutionsFile)'">
-                <LogicalName>ILLink.Substitutions.xml</LogicalName>
-            </EmbeddedResource>
-        </ItemGroup>
+        <WriteLinesToFile Condition="'$(ILLinkSubstitutionsText)' == ''"
+                          File="$(IntermediateOutputPath)\ILLink\ILLink.Substitutions.xml"
+                          Lines="&lt;linker/&gt;"
+                          Overwrite="true"/>
     </Target>
 
     <!--
-        Target to configure assembly signing
-        This target enables signing the assembly if a signing key is available.
+        Assembly signing settings
+        This settings enables signing the assembly if a signing key is available.
     -->
-    <Target Name="ConfigureAssemblySigning" BeforeTargets="BeforeCompile">
-        <PropertyGroup Condition="Exists('$(SigningKeyFile)')">
-            <SignAssembly>true</SignAssembly>
-            <AssemblyOriginatorKeyFile>$(SigningKeyFile)</AssemblyOriginatorKeyFile>
-        </PropertyGroup>
-    </Target>
+    <PropertyGroup Condition="Exists('$(SigningKeyFile)')">
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>$(SigningKeyFile)</AssemblyOriginatorKeyFile>
+    </PropertyGroup>
 
     <!--
         GitHub integration settings
@@ -138,6 +132,13 @@
         <!-- Publish the repository URL for Source Link -->
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
     </PropertyGroup>
+
+    <!-- Embed final ILLink.Substitutions.xml file -->
+    <ItemGroup>
+        <EmbeddedResource Include="$(IntermediateOutputPath)\ILLink\ILLink.Substitutions.xml">
+            <LogicalName>ILLink.Substitutions.xml</LogicalName>
+        </EmbeddedResource>
+    </ItemGroup>
 
     <ItemGroup>
         <!-- Include Source Link for GitHub -->
