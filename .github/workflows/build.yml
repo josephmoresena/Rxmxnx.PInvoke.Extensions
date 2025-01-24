@@ -70,13 +70,10 @@ jobs:
             rm -rf "$TEMP_DIR"
           done
           echo "-----------------------------------"
-      - name: Create TmpSource NuGet Source
-        working-directory: ./package/bin
-        run: |
-          ln -s ./Release /tmp/TmpSource
-          ls /tmp/TmpSource/*
+      - name: Create tmpProject
+        run: mkdir tmpProject
       - name: Create PackageTrimmedAssembly.csproj
-        working-directory: /tmp
+        working-directory: ./tmpProject
         run: |
           echo '<Project>' > Directory.Build.props
           echo '  <ItemGroup>' >> Directory.Build.props
@@ -85,14 +82,13 @@ jobs:
           echo '</Project>' >> Directory.Build.props  
           dotnet new console --name PackageTrimmedAssembly --aot true
       - name: Create PackageTrimmedAssembly NuGet.config
-        working-directory: /tmp/PackageTrimmedAssembly
+        working-directory: ./tmpProject/PackageTrimmedAssembly
         run: |
           dotnet new nugetconfig
-          dotnet nuget remove source nuget
-          dotnet nuget add source /tmp/TmpSource/ -n TmpSource
+          dotnet nuget add source ../../package/bin/Release/ -n TmpSource
           dotnet add package Rxmxnx.PInvoke.Extensions --version 9999.99.99.99-tmp
       - name: Create PackageTrimmedAssembly Program.cs
-        working-directory: /tmp/PackageTrimmedAssembly
+        working-directory: ./tmpProject/PackageTrimmedAssembly
         run: |
           echo 'Console.WriteLine($"Native AOT: {Rxmxnx.PInvoke.AotInfo.IsNativeAot}");' > Program.cs
           echo 'Console.WriteLine($"Reflection Enabled: {(!Rxmxnx.PInvoke.AotInfo.IsReflectionDisabled)}");' >> Program.cs
@@ -110,7 +106,7 @@ jobs:
           echo '  Console.WriteLine($"In Stack: {s.InStack}");' >> Program.cs
           echo '});' >> Program.cs
       - name: Build Package-Trimmed-Executables (PackageTrimmedAssembly)
-        working-directory: /tmp/PackageTrimmedAssembly
+        working-directory: ./tmpProject/PackageTrimmedAssembly
         run: |
           dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
             /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true \
@@ -162,7 +158,7 @@ jobs:
           rm -rf ./bin
           rm -rf ./obj
       - name: Run Package-Trimmed-Executables
-        working-directory: /tmp/Executable
+        working-directory: ./tmpProject/Executable
         run: |
           echo '----- AutoComposition + Globalization + Reflection -----'
           ./AutoComposition.Globalization.Reflection
@@ -184,7 +180,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Package-Trimmed-Executables
-          path: /tmp/Executable/
+          path: ./tmpProject/Executable/
   run-linux:
     runs-on: ubuntu-latest
     steps:
