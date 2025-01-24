@@ -109,42 +109,42 @@ jobs:
         working-directory: ./tmpProject/PackageTrimmedAssembly
         run: |
           dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
-            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true /p:IlcGenerateDgmlFile=true \
             /p:DisableBufferAutoComposition=false /p:InvariantGlobalization=false /p:IlcDisableReflection=false \
             /p:AssemblyName=AutoComposition.Globalization.Reflection
           mv ./../Executable/debugSymbols/AutoComposition.Globalization.Reflection ./../Executable/AutoComposition.Globalization.Reflection
           dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
-            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true /p:IlcGenerateDgmlFile=true \
             /p:DisableBufferAutoComposition=true /p:InvariantGlobalization=false /p:IlcDisableReflection=false \
             /p:AssemblyName=Globalization.Reflection
           mv ./../Executable/debugSymbols/Globalization.Reflection ./../Executable/Globalization.Reflection
           dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
-            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true /p:IlcGenerateDgmlFile=true \
             /p:DisableBufferAutoComposition=false /p:InvariantGlobalization=true /p:IlcDisableReflection=false \
             /p:AssemblyName=AutoComposition.Reflection
           mv ./../Executable/debugSymbols/AutoComposition.Reflection ./../Executable/AutoComposition.Reflection
           dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
-            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true /p:IlcGenerateDgmlFile=true \
             /p:DisableBufferAutoComposition=false /p:InvariantGlobalization=false /p:IlcDisableReflection=true \
             /p:AssemblyName=AutoComposition.Globalization
           mv ./../Executable/debugSymbols/AutoComposition.Globalization ./../Executable/AutoComposition.Globalization
           dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
-            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true /p:IlcGenerateDgmlFile=true \
             /p:DisableBufferAutoComposition=true /p:InvariantGlobalization=true /p:IlcDisableReflection=false \
             /p:AssemblyName=Reflection
           mv ./../Executable/debugSymbols/Reflection ./../Executable/Reflection
           dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
-            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true /p:IlcGenerateDgmlFile=true \
             /p:DisableBufferAutoComposition=true /p:InvariantGlobalization=false /p:IlcDisableReflection=true \
             /p:AssemblyName=Globalization
           mv ./../Executable/debugSymbols/Globalization ./../Executable/Globalization
           dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
-            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true /p:IlcGenerateDgmlFile=true \
             /p:DisableBufferAutoComposition=false /p:InvariantGlobalization=true /p:IlcDisableReflection=true \
             /p:AssemblyName=AutoComposition
           mv ./../Executable/debugSymbols/AutoComposition ./../Executable/AutoComposition
           dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
-            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true /p:IlcGenerateDgmlFile=true \
             /p:DisableBufferAutoComposition=true /p:InvariantGlobalization=true /p:IlcDisableReflection=true \
             /p:AssemblyName=None
           mv ./../Executable/debugSymbols/None ./../Executable/None
@@ -176,10 +176,10 @@ jobs:
           ./AutoComposition
           echo '----- None -----'
           ./None
-      - name: Upload Package-Trimmed-Executables
+      - name: Upload Package-Trimmed-Executables-Logs
         uses: actions/upload-artifact@v4
         with:
-          name: Package-Trimmed-Executables
+          name: Package-Trimmed-Executables-Logs
           path: ./tmpProject/Executable/
   run-linux:
     runs-on: ubuntu-latest
