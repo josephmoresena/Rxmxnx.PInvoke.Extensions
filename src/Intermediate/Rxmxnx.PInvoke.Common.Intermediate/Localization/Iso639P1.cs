@@ -3,7 +3,7 @@ namespace Rxmxnx.PInvoke.Localization;
 /// <summary>
 /// Enumeration of ISO 639-1 language codes.
 /// </summary>
-public enum Iso639P1 : byte
+public enum Iso639P1 : Byte
 {
 	/// <summary>Invariant</summary>
 	Iv = 0,

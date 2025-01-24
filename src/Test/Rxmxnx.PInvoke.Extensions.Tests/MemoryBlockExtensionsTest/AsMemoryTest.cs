@@ -150,6 +150,10 @@ public class AsMemoryTest
 		Int32[] lengths = Enumerable.Range(0, count).Select(_ => Random.Shared.Next(1, 3)).ToArray();
 		Array arr = AsMemoryTest.CreateArray<T>(lengths);
 		MethodInfo method = AsMemoryTest.asMemories[arr.Rank];
+
+		GC.Collect();
+		GC.WaitForFullGCComplete();
+
 		Memory<T> emptyMemory = Assert.IsType<Memory<T>>(method.MakeGenericMethod(typeof(T)).Invoke(null, [null,]));
 		Memory<T> memory = Assert.IsType<Memory<T>>(method.MakeGenericMethod(typeof(T)).Invoke(null, [arr,]));
 		Assert.Equal(Memory<T>.Empty, emptyMemory);
@@ -160,6 +164,7 @@ public class AsMemoryTest
 			enumerator.MoveNext();
 			Assert.Equal(value, enumerator.Current);
 		}
+		(enumerator as IDisposable)?.Dispose();
 		if (!typeof(T).IsValueType)
 		{
 			Assert.Throws<ArgumentException>(() => memory.Pin());
@@ -175,6 +180,9 @@ public class AsMemoryTest
 		MemoryHandle handle2 = memory.Pin();
 		handle2.Dispose();
 		handle2.Dispose();
+
+		GC.Collect();
+		GC.WaitForFullGCComplete();
 	}
 	private static Array CreateArray<T>(Int32[] lengths)
 	{
