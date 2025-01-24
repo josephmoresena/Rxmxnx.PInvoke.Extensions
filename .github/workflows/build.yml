@@ -180,7 +180,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Package-Trimmed-Executables-Logs
-          path: ./tmpProject/Executable/
+          path: ./tmpProject/Executable/ilcLogs
   run-linux:
     runs-on: ubuntu-latest
     steps:
