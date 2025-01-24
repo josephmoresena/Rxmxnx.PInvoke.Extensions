@@ -2,7 +2,7 @@ name: Release to Nuget
 
 on:
   release:
-    types: [published]
+    types: [ published ]
 
 jobs:
   build:
@@ -13,16 +13,16 @@ jobs:
       SNK_BASE64: ${{ secrets.SN_KEY }}
     
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 9.x
-    - name: Extract public key
-      working-directory: ./package
-      run: echo "${SNK_BASE64}" | base64 -d > Rxmxnx.PInvoke.snk
-    - name: Create NuGet Package
-      working-directory: ./package
-      run: dotnet pack -c Release /p:Version=${{ github.event.release.tag_name }} /p:PackageReleaseNotes="See https://github.com/josephmoresena/Rxmxnx.PInvoke.Extensions/releases/tag/${{ github.event.release.tag_name }}"
-    - name: Push NuGet Package
-      run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.x
+      - name: Extract public key
+        working-directory: ./package
+        run: echo "${SNK_BASE64}" | base64 -d > Rxmxnx.PInvoke.snk
+      - name: Create NuGet Package
+        working-directory: ./package
+        run: dotnet pack -c Release /p:Version=${{ github.event.release.tag_name }} /p:PackageReleaseNotes="See https://github.com/josephmoresena/Rxmxnx.PInvoke.Extensions/releases/tag/${{ github.event.release.tag_name }}"
+      - name: Push NuGet Package
+        run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json

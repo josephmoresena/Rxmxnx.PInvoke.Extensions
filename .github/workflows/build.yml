@@ -4,7 +4,7 @@ on:
     branches:
       - main
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [ opened, synchronize, reopened ]
 jobs:
   build:
     name: Build and analyze
@@ -181,50 +181,50 @@ jobs:
   run-linux:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 9.0.x
-    - name: Linux tests
-      run: |
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+      - name: Linux tests
+        run: |
           dotnet restore src 
           dotnet build src --configuration release 
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release
-          
+  
   run-macOS:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 9.0.x
-    - name: MacOS tests
-      run: |
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+      - name: MacOS tests
+        run: |
           dotnet restore src 
           dotnet build src --configuration release 
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release
-        
+  
   run-windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Install winget
-      uses: Cyberboss/install-winget@v1
-    - name: Setup .NET x86
-      run: |
+      - uses: actions/checkout@v4
+      - name: Install winget
+        uses: Cyberboss/install-winget@v1
+      - name: Setup .NET x86
+        run: |
           winget install Microsoft.DotNet.SDK.9 --architecture x86 --silent --disable-interactivity --accept-source-agreements
-    - name: Setup .NET x64
-      run: |
+      - name: Setup .NET x64
+        run: |
           winget install Microsoft.DotNet.SDK.9 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-    - name: Build tests
-      run: |
+      - name: Build tests
+        run: |
           dotnet restore src 
           dotnet build src --configuration release 
-    - name: Windows x86 tests
-      run: |
+      - name: Windows x86 tests
+        run: |
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release --settings src\Test\x86.runsettings
-    - name: Windows x64 tests
-      run: |
+      - name: Windows x64 tests
+        run: |
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release 
