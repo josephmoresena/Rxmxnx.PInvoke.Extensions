@@ -89,7 +89,9 @@ public sealed class ParseTest
 		Int32 count = Math.Min(buffer.Length - arg.offset, source.Length);
 		Span<Byte> destination = buffer[arg.offset..];
 		source[..count].CopyTo(destination);
-		if (destination.Length > count)
-			destination[count] = default;
+
+		if (destination.Length <= count) return;
+		foreach (ref Byte unit in destination[count..])
+			unit = default;
 	}
 }
