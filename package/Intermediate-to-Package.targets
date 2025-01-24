@@ -1,0 +1,100 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <!-- Common package properties -->
+    <PropertyGroup>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <ExcludeXmlAssemblyFiles>false</ExcludeXmlAssemblyFiles>
+        <IsPackable>true</IsPackable>
+        <Deterministic>true</Deterministic>
+        <CheckEolTargetFramework>false</CheckEolTargetFramework>
+        <IsTrimmable Condition="$(DefineConstants.Contains('NET6_0_OR_GREATER'))">true</IsTrimmable>
+        <IsAotCompatible Condition="$(DefineConstants.Contains('NET8_0_OR_GREATER'))">true</IsAotCompatible>
+        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+        <LangVersion>latest</LangVersion>
+        <DefineConstants>$(DefineConstants);PACKAGE</DefineConstants>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <FirstTargetFramework>$(TargetFrameworks.Split(';')[0])</FirstTargetFramework>
+    </PropertyGroup>
+
+    <!-- Target to compile intermediate projects -->
+    <Target Name="BuildIntermediateProjects" BeforeTargets="BeforeCompile">
+        <ItemGroup>
+
+            <!-- Find intermediate C# projects -->
+            <CsIntermediateProjects Include="@(IntermediateAssemblyNames)">
+                <ProjectPath>$(IntermediateSourceBasePath)\%(Identity)\%(Identity).csproj</ProjectPath>
+            </CsIntermediateProjects>
+
+        </ItemGroup>
+
+        <!-- Compiling intermediate projects -->
+        <MSBuild Condition="'$(NoIntermediateBuild)' != 'true'" Projects="@(CsIntermediateProjects->'%(ProjectPath)')"
+                 Properties="Configuration=$(Configuration);Platform=$(Platform);TargetFramework=$(FirstTargetFramework)"
+                 BuildInParallel="false"/>
+    </Target>
+
+    <!-- Target to include source files for intermediate projects -->
+    <Target Name="IncludeIntermediateSources" AfterTargets="BuildIntermediateProjects">
+        <ItemGroup>
+
+            <!-- Find intermediate C# code files -->
+            <CsFiles Include="$(IntermediateSourceBasePath)\%(IntermediateAssemblyNames)\**\*.cs"/>
+            <!-- Find intermediate global using files -->
+            <GlobalUsingFiles Include="$(IntermediateSourceBasePath)\%(IntermediateAssemblyNames)\**\*.GlobalUsings.g.cs"/>
+
+            <!-- Append source files -->
+            <Compile Include="@(CsFiles)">
+                <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+            </Compile>
+            <Compile Remove="$(IntermediateSourceBasePath)\**\obj\**\*.*;$(IntermediateSourceBasePath)\**\bin\**\*.*"/>
+            <Compile Include="@(GlobalUsingFiles)"/>
+        </ItemGroup>
+    </Target>
+
+    <!-- Target to include ILLink.Substitutions.xml files -->
+    <Target Name="ProcessILLinkSubstitutions" AfterTargets="IncludeIntermediateSources">
+        <ItemGroup>
+            <!-- Find ILLink.Substitutions.xml files -->
+            <_ILLinkSubstitutions Include="@(IntermediateAssemblyNames)">
+                <SourcePath>$(IntermediateSourceBasePath)\%(Identity)\ILLink\ILLink.Substitutions.xml</SourcePath>
+            </_ILLinkSubstitutions>
+
+            <!-- Filter existing ILLink.Substitutions.xml -->
+            <ILLinkSubstitutions Include="@(_ILLinkSubstitutions)"
+                                 Condition="Exists('%(SourcePath)')">
+                <IntermediateAssemblyName>%(Identity)</IntermediateAssemblyName>
+                <SourcePath>%(SourcePath)</SourcePath>
+                <DestinationPath>$(IntermediateOutputPath)\ILLink\%(Identity).ILLink.Substitutions.xml</DestinationPath>
+            </ILLinkSubstitutions>
+        </ItemGroup>
+
+        <!-- Modify and copy ILLink.Substitutions.xml files -->
+        <WriteLinesToFile File="@(ILLinkSubstitutions->'%(DestinationPath)')"
+                          Lines="$([System.IO.File]::ReadAllText('%(SourcePath)').Replace('%(IntermediateAssemblyName)','$(AssemblyName)'))"
+                          Overwrite="true"/>
+
+        <!-- Include modified files to ILLinkSubstitutionsXmls -->
+        <ItemGroup>
+            <ILLinkSubstitutionsXmls Include="@(ILLinkSubstitutions->'%(DestinationPath)')"/>
+        </ItemGroup>
+    </Target>
+
+    <!-- Target to sign assembly -->
+    <Target Name="ConfigureAssemblySigning" BeforeTargets="BeforeCompile">
+        <PropertyGroup Condition="Exists('$(SigningKeyFile)')">
+            <SignAssembly>true</SignAssembly>
+            <AssemblyOriginatorKeyFile>$(SigningKeyFile)</AssemblyOriginatorKeyFile>
+        </PropertyGroup>
+    </Target>
+
+    <!-- GitHub -->
+    <PropertyGroup>
+        <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="*" PrivateAssets="All"/>
+    </ItemGroup>
+</Project>

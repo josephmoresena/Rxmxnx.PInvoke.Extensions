@@ -5,12 +5,5 @@
               featurevalue="true">
             <method signature="System.Boolean get_BufferAutoCompositionEnabled()" body="stub" value="false"/>
         </type>
-        <type fullname="Rxmxnx.PInvoke.NativeUtilities"
-              feature="System.Globalization.Invariant"
-              featurevalue="true">
-            <method signature="System.Boolean get_GlobalizationInvariantModeEnabled()" body="stub" value="true"/>
-            <method signature="System.Void GetUserInterfaceTwoLetterLangCode(Rxmxnx.PInvoke.Localization.Iso639P1&amp;)"
-                    body="stub"/>
-        </type>
     </assembly>
 </linker>
