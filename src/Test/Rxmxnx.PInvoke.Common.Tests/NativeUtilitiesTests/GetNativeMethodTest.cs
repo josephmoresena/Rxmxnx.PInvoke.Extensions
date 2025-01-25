@@ -36,6 +36,8 @@ public sealed class GetNativeMethodTest
 		else
 			result = NativeUtilities.GetNativeMethod<GetT<Int32>>(handle, name);
 		Assert.Null(result);
+		Assert.Equal(default, NativeUtilities.GetNativeMethodPtr<GetInt32>(handle, name));
+		Assert.Equal(default, NativeUtilities.GetNativeMethodPtr<GetT<Int32>>(handle, name));
 		if (!zeroPtr && useRealHandle)
 			NativeLibrary.Free(handle);
 	}
@@ -46,16 +48,25 @@ public sealed class GetNativeMethodTest
 	internal void NormalTest(Boolean generic)
 	{
 		IntPtr handle = NativeLibrary.Load(LoadNativeLibTest.LibraryName);
+		IntPtr addressMethod = NativeLibrary.GetExport(handle, LoadNativeLibTest.MethodName);
 		if (!generic)
 		{
 			GetInt32? result = NativeUtilities.GetNativeMethod<GetInt32>(handle, LoadNativeLibTest.MethodName);
+			FuncPtr<GetInt32> funcPtr =
+				NativeUtilities.GetNativeMethodPtr<GetInt32>(handle, LoadNativeLibTest.MethodName);
 			Assert.NotNull(result);
+			Assert.Equal(addressMethod, funcPtr.Pointer);
 			Assert.Equal(Environment.ProcessId, result());
+			Assert.Equal(Environment.ProcessId, funcPtr.Invoke());
 		}
 		else
 		{
+			FuncPtr<GetT<Int32>> funcPtr =
+				NativeUtilities.GetNativeMethodPtr<GetT<Int32>>(handle, LoadNativeLibTest.MethodName);
 			Assert.Throws<ArgumentException>(
 				() => NativeUtilities.GetNativeMethod<GetT<Int32>>(handle, LoadNativeLibTest.MethodName));
+			Assert.Equal(addressMethod, funcPtr.Pointer);
+			Assert.Throws<ArgumentException>(() => funcPtr.Invoke);
 		}
 		NativeLibrary.Free(handle);
 	}

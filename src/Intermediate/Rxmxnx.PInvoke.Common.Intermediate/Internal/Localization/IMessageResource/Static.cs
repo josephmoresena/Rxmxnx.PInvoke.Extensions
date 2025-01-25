@@ -4,11 +4,6 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 internal partial interface IMessageResource
 {
 	/// <summary>
-	/// Indicates whether globalization-invariant switch is enabled.
-	/// </summary>
-	private static Boolean IsInvariantCulture => false;
-
-	/// <summary>
 	/// Retrieves internal resource objects.
 	/// </summary>
 	/// <returns>Resource resource object.</returns>
@@ -16,9 +11,9 @@ internal partial interface IMessageResource
 	public static IMessageResource GetInstance()
 	{
 		IMessageResource result = IMessageResource.GetInstance<DefaultMessageResource>();
-		if (IMessageResource.IsInvariantCulture) return result;
+		if (NativeUtilities.GlobalizationInvariantModeEnabled) return result;
 
-		return IMessageResource.GetLangCode() switch
+		return NativeUtilities.UserInterfaceIso639P1 switch
 		{
 			Iso639P1.Es => IMessageResource.GetInstance<SpanishMessageResource>(),
 			Iso639P1.Fr => IMessageResource.GetInstance<FrenchMessageResource>(),
@@ -39,23 +34,5 @@ internal partial interface IMessageResource
 	/// <typeparam name="TResource">A <see cref="IMessageResource"/> type.</typeparam>
 	/// <returns>Resource resource object.</returns>
 	private static IMessageResource GetInstance<TResource>() where TResource : IMessageResource => TResource.Instance;
-	/// <summary>
-	/// Retrieves the ISO 639-1 code for the language of the current UI.
-	/// </summary>
-	/// <returns>The ISO 639-1 code for the language of the current UI.</returns>
-	[ExcludeFromCodeCoverage]
-	private static Iso639P1 GetLangCode()
-	{
-		try
-		{
-			Iso639P1 result = NativeUtilities.GetIso639P1(CultureInfo.CurrentUICulture);
-			if (result == default) result = Iso639P1.En;
-			return result;
-		}
-		catch (Exception)
-		{
-			return Iso639P1.En;
-		}
-	}
 }
 #pragma warning restore CA2252

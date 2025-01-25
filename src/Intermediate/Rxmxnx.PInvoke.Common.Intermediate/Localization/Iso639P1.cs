@@ -3,364 +3,366 @@ namespace Rxmxnx.PInvoke.Localization;
 /// <summary>
 /// Enumeration of ISO 639-1 language codes.
 /// </summary>
-public enum Iso639P1 : byte
+public enum Iso639P1 : Byte
 {
+	/// <summary>.NET Invariant</summary>
+	Iv = 0x00,
 	/// <summary>Abkhazian</summary>
-	Ab = 1,
+	Ab = 0x01,
 	/// <summary>Afar</summary>
-	Aa = 2,
+	Aa = 0x02,
 	/// <summary>Afrikaans</summary>
-	Af = 3,
+	Af = 0x03,
 	/// <summary>Akan</summary>
-	Ak = 4,
+	Ak = 0x04,
 	/// <summary>Albanian</summary>
-	Sq = 5,
+	Sq = 0x05,
 	/// <summary>Amharic</summary>
-	Am = 6,
+	Am = 0x06,
 	/// <summary>Arabic</summary>
-	Ar = 7,
+	Ar = 0x07,
 	/// <summary>Aragonese</summary>
-	An = 8,
+	An = 0x08,
 	/// <summary>Armenian</summary>
-	Hy = 9,
+	Hy = 0x09,
 	/// <summary>Assamese</summary>
-	As = 10,
+	As = 0x0A,
 	/// <summary>Avaric</summary>
-	Av = 11,
+	Av = 0x0B,
 	/// <summary>Avestan</summary>
-	Ae = 12,
+	Ae = 0x0C,
 	/// <summary>Aymara</summary>
-	Ay = 13,
+	Ay = 0x0D,
 	/// <summary>Azerbaijani</summary>
-	Az = 14,
+	Az = 0x0E,
 	/// <summary>Bambara</summary>
-	Bm = 15,
+	Bm = 0x0F,
 	/// <summary>Bashkir</summary>
-	Ba = 16,
+	Ba = 0x10,
 	/// <summary>Basque</summary>
-	Eu = 17,
+	Eu = 0x11,
 	/// <summary>Belaurian</summary>
-	Be = 18,
+	Be = 0x12,
 	/// <summary>Bengali</summary>
-	Bn = 19,
+	Bn = 0x13,
 	/// <summary>Bislama</summary>
-	Bi = 20,
+	Bi = 0x14,
 	/// <summary>Bosnian</summary>
-	Bs = 21,
+	Bs = 0x15,
 	/// <summary>Breton</summary>
-	Br = 22,
+	Br = 0x16,
 	/// <summary>Bulgarian</summary>
-	Bg = 23,
+	Bg = 0x17,
 	/// <summary>Burmese</summary>
-	My = 24,
+	My = 0x18,
 	/// <summary>Catalan; Valencian</summary>
-	Ca = 25,
+	Ca = 0x19,
 	/// <summary>Chamorro</summary>
-	Ch = 26,
+	Ch = 0x1A,
 	/// <summary>Chechen</summary>
-	Ce = 27,
+	Ce = 0x1B,
 	/// <summary>Chichewa; Chewa; Nyanja</summary>
-	Ny = 28,
+	Ny = 0x1C,
 	/// <summary>Chinese</summary>
-	Zh = 29,
+	Zh = 0x1D,
 	/// <summary>Chuvash</summary>
-	Cv = 30,
+	Cv = 0x1E,
 	/// <summary>Cornish</summary>
-	Kw = 31,
+	Kw = 0x1F,
 	/// <summary>Corsican</summary>
-	Co = 32,
+	Co = 0x20,
 	/// <summary>Cree</summary>
-	Cr = 33,
+	Cr = 0x21,
 	/// <summary>Czech</summary>
-	Cs = 34,
+	Cs = 0x22,
 	/// <summary>Danish</summary>
-	Da = 35,
+	Da = 0x23,
 	/// <summary>Divehi; Dhivehi; Maldivian</summary>
-	Dv = 36,
+	Dv = 0x24,
 	/// <summary>Dutch; Flemish</summary>
-	Nl = 37,
+	Nl = 0x25,
 	/// <summary>Dzongkha</summary>
-	Dz = 38,
+	Dz = 0x26,
 	/// <summary>English</summary>
-	En = 39,
+	En = 0x27,
 	/// <summary>Esperanto</summary>
-	Eo = 40,
+	Eo = 0x28,
 	/// <summary>Estonian</summary>
-	Et = 41,
+	Et = 0x29,
 	/// <summary>Ewe</summary>
-	Ee = 42,
+	Ee = 0x2A,
 	/// <summary>Faroese</summary>
-	Fo = 43,
+	Fo = 0x2B,
 	/// <summary>Fijian</summary>
-	Fj = 44,
+	Fj = 0x2C,
 	/// <summary>Finnish</summary>
-	Fi = 45,
+	Fi = 0x2D,
 	/// <summary>French</summary>
-	Fr = 46,
+	Fr = 0x2E,
 	/// <summary>Fulah</summary>
-	Ff = 47,
+	Ff = 0x2F,
 	/// <summary>Galician</summary>
-	Gl = 48,
+	Gl = 0x30,
 	/// <summary>Georgian</summary>
-	Ka = 49,
+	Ka = 0x31,
 	/// <summary>German</summary>
-	De = 50,
-	/// <summary>Greek, Modern (1453-)</summary>
-	El = 51,
+	De = 0x32,
+	/// <summary>Greek, Modern</summary>
+	El = 0x33,
 	/// <summary>Guarani</summary>
-	Gn = 52,
+	Gn = 0x34,
 	/// <summary>Gujarati</summary>
-	Gu = 53,
+	Gu = 0x35,
 	/// <summary>Haitian; Haitian Creole</summary>
-	Ht = 54,
+	Ht = 0x36,
 	/// <summary>Hausa</summary>
-	Ha = 55,
+	Ha = 0x37,
 	/// <summary>Hebrew</summary>
-	He = 56,
+	He = 0x38,
 	/// <summary>Herero</summary>
-	Hz = 57,
+	Hz = 0x39,
 	/// <summary>Hindi</summary>
-	Hi = 58,
+	Hi = 0x3A,
 	/// <summary>Hiri Motu</summary>
-	Ho = 59,
+	Ho = 0x3B,
 	/// <summary>Hungarian</summary>
-	Hu = 60,
+	Hu = 0x3C,
 	/// <summary>Icelandic</summary>
-	Is = 61,
+	Is = 0x3D,
 	/// <summary>Ido</summary>
-	Io = 62,
+	Io = 0x3E,
 	/// <summary>Igbo</summary>
-	Ig = 63,
+	Ig = 0x3F,
 	/// <summary>Indonesian</summary>
-	Id = 64,
+	Id = 0x40,
 	/// <summary>Interlingua</summary>
-	Ia = 65,
+	Ia = 0x41,
 	/// <summary>Interlingue</summary>
-	Ie = 66,
+	Ie = 0x42,
 	/// <summary>Inuktitut</summary>
-	Iu = 67,
+	Iu = 0x43,
 	/// <summary>Inupiaq</summary>
-	Ik = 68,
+	Ik = 0x44,
 	/// <summary>Irish</summary>
-	Ga = 69,
+	Ga = 0x45,
 	/// <summary>Italian</summary>
-	It = 70,
+	It = 0x46,
 	/// <summary>Japanese</summary>
-	Ja = 71,
+	Ja = 0x47,
 	/// <summary>Javanese</summary>
-	Jv = 72,
+	Jv = 0x48,
 	/// <summary>Kalaallisut</summary>
-	Kl = 73,
+	Kl = 0x49,
 	/// <summary>Kannada</summary>
-	Kn = 74,
+	Kn = 0x4A,
 	/// <summary>Kanuri</summary>
-	Kr = 75,
+	Kr = 0x4B,
 	/// <summary>Kashmiri</summary>
-	Ks = 76,
+	Ks = 0x4C,
 	/// <summary>Kazakh</summary>
-	Kk = 77,
+	Kk = 0x4D,
 	/// <summary>Kikuyu</summary>
-	Ki = 78,
+	Ki = 0x4E,
 	/// <summary>Kinyarwanda</summary>
-	Rw = 79,
+	Rw = 0x4F,
 	/// <summary>Kyrgyz</summary>
-	Ky = 80,
+	Ky = 0x50,
 	/// <summary>Komi</summary>
-	Kv = 81,
+	Kv = 0x51,
 	/// <summary>Kongo</summary>
-	Kg = 82,
+	Kg = 0x52,
 	/// <summary>Korean</summary>
-	Ko = 83,
+	Ko = 0x53,
 	/// <summary>Kuanyama</summary>
-	Kj = 84,
+	Kj = 0x54,
 	/// <summary>Kurdish</summary>
-	Ku = 85,
+	Ku = 0x55,
 	/// <summary>Lao</summary>
-	Lo = 86,
+	Lo = 0x56,
 	/// <summary>Latin</summary>
-	La = 87,
+	La = 0x57,
 	/// <summary>Latvian</summary>
-	Lv = 88,
+	Lv = 0x58,
 	/// <summary>Limburgish</summary>
-	Li = 89,
+	Li = 0x59,
 	/// <summary>Lingala</summary>
-	Ln = 90,
+	Ln = 0x5A,
 	/// <summary>Lithuanian</summary>
-	Lt = 91,
+	Lt = 0x5B,
 	/// <summary>Luba-Katanga</summary>
-	Lu = 92,
+	Lu = 0x5C,
 	/// <summary>Luxembourgish</summary>
-	Lb = 93,
+	Lb = 0x5D,
 	/// <summary>Macedonian</summary>
-	Mk = 94,
+	Mk = 0x5E,
 	/// <summary>Malagasy</summary>
-	Mg = 95,
+	Mg = 0x5F,
 	/// <summary>Malay</summary>
-	Ms = 96,
+	Ms = 0x60,
 	/// <summary>Malayalam</summary>
-	Ml = 97,
+	Ml = 0x61,
 	/// <summary>Maltese</summary>
-	Mt = 98,
+	Mt = 0x62,
 	/// <summary>Manx</summary>
-	Gv = 99,
+	Gv = 0x63,
 	/// <summary>Maori</summary>
-	Mi = 100,
+	Mi = 0x64,
 	/// <summary>Marathi</summary>
-	Mr = 101,
+	Mr = 0x65,
 	/// <summary>Marshallese</summary>
-	Mh = 102,
+	Mh = 0x66,
 	/// <summary>Mongolian</summary>
-	Mn = 103,
+	Mn = 0x67,
 	/// <summary>Nauru</summary>
-	Na = 104,
+	Na = 0x68,
 	/// <summary>Navajo</summary>
-	Nv = 105,
+	Nv = 0x69,
 	/// <summary>Ndonga</summary>
-	Ng = 106,
+	Ng = 0x6A,
 	/// <summary>Nepali</summary>
-	Ne = 107,
+	Ne = 0x6B,
 	/// <summary>North Ndebele</summary>
-	Nd = 108,
+	Nd = 0x6C,
 	/// <summary>Northern Sami</summary>
-	Se = 109,
+	Se = 0x6D,
 	/// <summary>Norwegian</summary>
-	No = 110,
+	No = 0x6E,
 	/// <summary>Norwegian Bokmål</summary>
-	Nb = 111,
+	Nb = 0x6F,
 	/// <summary>Norwegian Nynorsk</summary>
-	Nn = 112,
+	Nn = 0x70,
 	/// <summary>Nuosu</summary>
-	Ii = 113,
+	Ii = 0x71,
 	/// <summary>Occitan</summary>
-	Oc = 114,
+	Oc = 0x72,
 	/// <summary>Ojibwa</summary>
-	Oj = 115,
+	Oj = 0x73,
 	/// <summary>Oriya</summary>
-	Or = 116,
+	Or = 0x74,
 	/// <summary>Oromo</summary>
-	Om = 117,
+	Om = 0x75,
 	/// <summary>Ossetian</summary>
-	Os = 118,
+	Os = 0x76,
 	/// <summary>Panjabi</summary>
-	Pa = 119,
+	Pa = 0x77,
 	/// <summary>Pali</summary>
-	Pi = 120,
+	Pi = 0x78,
 	/// <summary>Persian</summary>
-	Fa = 121,
+	Fa = 0x79,
 	/// <summary>Polish</summary>
-	Pl = 122,
+	Pl = 0x7A,
 	/// <summary>Pashto</summary>
-	Ps = 123,
+	Ps = 0x7B,
 	/// <summary>Portuguese</summary>
-	Pt = 124,
+	Pt = 0x7C,
 	/// <summary>Quechua</summary>
-	Qu = 125,
+	Qu = 0x7D,
 	/// <summary>Romanian</summary>
-	Ro = 126,
+	Ro = 0x7E,
 	/// <summary>Romansh</summary>
-	Rm = 127,
+	Rm = 0x7F,
 	/// <summary>Rundi</summary>
-	Rn = 128,
+	Rn = 0x80,
 	/// <summary>Russian</summary>
-	Ru = 129,
+	Ru = 0x81,
 	/// <summary>Samoan</summary>
-	Sm = 130,
+	Sm = 0x82,
 	/// <summary>Sango</summary>
-	Sg = 131,
+	Sg = 0x83,
 	/// <summary>Sanskrit</summary>
-	Sa = 132,
+	Sa = 0x84,
 	/// <summary>Sardinian</summary>
-	Sc = 133,
+	Sc = 0x85,
 	/// <summary>Scottish Gaelic</summary>
-	Gd = 134,
+	Gd = 0x86,
 	/// <summary>Serbian</summary>
-	Sr = 135,
+	Sr = 0x87,
 	/// <summary>Shona</summary>
-	Sn = 136,
+	Sn = 0x88,
 	/// <summary>Sindhi</summary>
-	Sd = 137,
+	Sd = 0x89,
 	/// <summary>Sinhalese</summary>
-	Si = 138,
+	Si = 0x8A,
 	/// <summary>Slovak</summary>
-	Sk = 139,
+	Sk = 0x8B,
 	/// <summary>Slovenian</summary>
-	Sl = 140,
+	Sl = 0x8C,
 	/// <summary>Somali</summary>
-	So = 141,
+	So = 0x8D,
 	/// <summary>Southern Sotho</summary>
-	St = 142,
+	St = 0x8E,
 	/// <summary>South Ndebele</summary>
-	Nr = 143,
+	Nr = 0x8F,
 	/// <summary>Spanish</summary>
-	Es = 144,
+	Es = 0x90,
 	/// <summary>Sundanese</summary>
-	Su = 145,
+	Su = 0x91,
 	/// <summary>Swahili</summary>
-	Sw = 146,
+	Sw = 0x92,
 	/// <summary>Swati</summary>
-	Ss = 147,
+	Ss = 0x93,
 	/// <summary>Swedish</summary>
-	Sv = 148,
+	Sv = 0x94,
 	/// <summary>Tagalog</summary>
-	Tl = 149,
+	Tl = 0x95,
 	/// <summary>Tahitian</summary>
-	Ty = 150,
+	Ty = 0x96,
 	/// <summary>Tajik</summary>
-	Tg = 151,
+	Tg = 0x97,
 	/// <summary>Tamil</summary>
-	Ta = 152,
+	Ta = 0x98,
 	/// <summary>Tatar</summary>
-	Tt = 153,
+	Tt = 0x99,
 	/// <summary>Telugu</summary>
-	Te = 154,
+	Te = 0x9A,
 	/// <summary>Thai</summary>
-	Th = 155,
+	Th = 0x9B,
 	/// <summary>Tibetan</summary>
-	Bo = 156,
+	Bo = 0x9C,
 	/// <summary>Tigrinya</summary>
-	Ti = 157,
+	Ti = 0x9D,
 	/// <summary>Tonga</summary>
-	To = 158,
+	To = 0x9E,
 	/// <summary>Tsonga</summary>
-	Ts = 159,
+	Ts = 0x9F,
 	/// <summary>Tswana</summary>
-	Tn = 160,
+	Tn = 0xA0,
 	/// <summary>Turkish</summary>
-	Tr = 161,
+	Tr = 0xA1,
 	/// <summary>Turkmen</summary>
-	Tk = 162,
+	Tk = 0xA2,
 	/// <summary>Twi</summary>
-	Tw = 163,
+	Tw = 0xA3,
 	/// <summary>Uighur</summary>
-	Ug = 164,
+	Ug = 0xA4,
 	/// <summary>Ukrainian</summary>
-	Uk = 165,
+	Uk = 0xA5,
 	/// <summary>Urdu</summary>
-	Ur = 166,
+	Ur = 0xA6,
 	/// <summary>Uzbek</summary>
-	Uz = 167,
+	Uz = 0xA7,
 	/// <summary>Venda</summary>
-	Ve = 168,
+	Ve = 0xA8,
 	/// <summary>Vietnamese</summary>
-	Vi = 169,
+	Vi = 0xA9,
 	/// <summary>Volapük</summary>
-	Vo = 170,
+	Vo = 0xAA,
 	/// <summary>Walloon</summary>
-	Wa = 171,
+	Wa = 0xAB,
 	/// <summary>Welsh</summary>
-	Cy = 172,
+	Cy = 0xAC,
 	/// <summary>Western Frisian</summary>
-	Fy = 173,
+	Fy = 0xAD,
 	/// <summary>Wolof</summary>
-	Wo = 174,
+	Wo = 0xAE,
 	/// <summary>Xhosa</summary>
-	Xh = 175,
+	Xh = 0xAF,
 	/// <summary>Yiddish</summary>
-	Yi = 176,
+	Yi = 0xB0,
 	/// <summary>Yoruba</summary>
-	Yo = 177,
+	Yo = 0xB1,
 	/// <summary>Zhuang</summary>
-	Za = 178,
+	Za = 0xB2,
 	/// <summary>Zulu</summary>
-	Zu = 179,
+	Zu = 0xB3,
 }

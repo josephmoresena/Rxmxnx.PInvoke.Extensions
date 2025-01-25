@@ -151,8 +151,15 @@ public class AsSpanTest
 	private static void GenericTest<T>(Int32 count)
 	{
 		Int32[] lengths = Enumerable.Range(0, count).Select(_ => Random.Shared.Next(1, 3)).ToArray();
+
+		GC.Collect();
+		GC.WaitForFullGCComplete();
+
 		Array arr = AsSpanTest.CreateArray<T>(lengths);
 		AsSpanTest.genericArrayTest.MakeGenericMethod(typeof(T), arr.GetType()).Invoke(null, [arr,]);
+
+		GC.Collect();
+		GC.WaitForFullGCComplete();
 	}
 	private static void GenericArrayTest<T, TArray>(Array arr) where TArray : class
 	{
@@ -169,6 +176,7 @@ public class AsSpanTest
 			enumerator.MoveNext();
 			Assert.Equal(value, enumerator.Current);
 		}
+		(enumerator as IDisposable)?.Dispose();
 	}
 
 	private static Array CreateArray<T>(Int32[] lengths)

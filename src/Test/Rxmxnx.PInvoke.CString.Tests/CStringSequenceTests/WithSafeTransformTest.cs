@@ -217,7 +217,18 @@ public sealed class WithSafeTransformTest
 		}
 	}
 	private static void AssertReference(in IReadOnlyFixedMemory fcstr, IReadOnlyFixedMemory fValue)
-		=> Assert.Equal(fcstr, fValue);
+	{
+		if (!fcstr.IsNullOrEmpty)
+		{
+			Assert.Equal(fcstr, fValue);
+			return;
+		}
+		Assert.Equal(fcstr.Bytes.Length, fValue.Bytes.Length);
+		Assert.True(fcstr.Bytes.SequenceEqual(fValue.Bytes));
+		Assert.Equal(fcstr.Objects.Length, fValue.Objects.Length);
+		Assert.True(fcstr.Objects.SequenceEqual(fValue.Objects));
+		Assert.Equal(fcstr.IsNullOrEmpty, fValue.IsNullOrEmpty);
+	}
 	private static CStringSequence CreateCopy(FixedCStringSequence fseq)
 	{
 		CStringSequence seq = new(fseq.Values);

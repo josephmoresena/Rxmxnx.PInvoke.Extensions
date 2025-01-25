@@ -4,7 +4,7 @@ on:
     branches:
       - main
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [ opened, synchronize, reopened ]
 jobs:
   build:
     name: Build and analyze
@@ -54,13 +54,10 @@ jobs:
           dotnet build src --configuration release 
           dotnet test src --verbosity detailed --collect:"XPlat Code Coverage" --results-directory TestResults/  --logger "trx;verbosity=detailed" --no-build --no-restore --configuration release -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover 
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-      - name: Patch Buffers ILLink.Substitutions
-        working-directory: ./src/Intermediate/Rxmxnx.PInvoke.Buffers.Intermediate/ILLink
-        run: sed -i -z 's/Rxmxnx.PInvoke.Buffers.Intermediate/Rxmxnx.PInvoke.Extensions/g;' ILLink.Substitutions.xml
       - name: Pack assembly
         working-directory: ./package
         run: |
-          dotnet pack -c Release /p:Version=9999.99.99.99-tmp
+          dotnet pack -c Release /p:Version=9999.99.99.99-tmp /p:NoIntermediateBuild=true
           for package in bin/Release/Rxmxnx.PInvoke.Extensions*.*nupkg; do
             echo "-----------------------------------"
             TEMP_DIR=$(mktemp -d)
@@ -70,54 +67,164 @@ jobs:
             rm -rf "$TEMP_DIR"
           done
           echo "-----------------------------------"
-        
+      - name: Create tmpProject
+        run: mkdir tmpProject
+      - name: Create PackageTrimmedAssembly.csproj
+        working-directory: ./tmpProject
+        run: |
+          echo '<Project>' > Directory.Build.props
+          echo '  <ItemGroup>' >> Directory.Build.props
+          echo '    <RuntimeHostConfigurationOption Condition="'"'"'$(DisableBufferAutoComposition)'"'"' == '"'"'true'"'"'" Include="PInvoke.DisableBufferAutoComposition" Value="true" Trim="true" />' >> Directory.Build.props
+          echo '  </ItemGroup>' >> Directory.Build.props
+          echo '</Project>' >> Directory.Build.props  
+          dotnet new console --name PackageTrimmedAssembly --aot true
+      - name: Create PackageTrimmedAssembly NuGet.config
+        working-directory: ./tmpProject/PackageTrimmedAssembly
+        run: |
+          dotnet new nugetconfig
+          dotnet nuget add source ../../package/bin/Release/ -n TmpSource
+          dotnet add package Rxmxnx.PInvoke.Extensions --version 9999.99.99.99-tmp
+      - name: Create PackageTrimmedAssembly Program.cs
+        working-directory: ./tmpProject/PackageTrimmedAssembly
+        run: |
+          echo 'Console.WriteLine($"Native AOT: {Rxmxnx.PInvoke.AotInfo.IsNativeAot}");' > Program.cs
+          echo 'Console.WriteLine($"Reflection Enabled: {(!Rxmxnx.PInvoke.AotInfo.IsReflectionDisabled)}");' >> Program.cs
+          echo 'Console.WriteLine($"Is 64-bit: {(Rxmxnx.PInvoke.NativeUtilities.PointerSize == 8)}");' >> Program.cs
+          echo 'Console.WriteLine($"Globalization-Invariant Mode: {Rxmxnx.PInvoke.NativeUtilities.GlobalizationInvariantModeEnabled}");' >> Program.cs
+          echo 'Console.WriteLine($"UI Culture: {System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}");' >> Program.cs
+          echo 'Console.WriteLine($"UI Iso639-1: {Rxmxnx.PInvoke.NativeUtilities.UserInterfaceIso639P1}");' >> Program.cs
+          echo 'Console.WriteLine($"Buffer AutoComposition Enabled: {Rxmxnx.PInvoke.BufferManager.BufferAutoCompositionEnabled}");' >> Program.cs
+          echo 'var bufferMetadata = (new Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<ValueTuple<String, Int32>>, Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<ValueTuple<String, Int32>>, Rxmxnx.PInvoke.Buffers.Atomic<ValueTuple<String, Int32>>, ValueTuple<String, Int32>>, ValueTuple<String, Int32>>() as Rxmxnx.PInvoke.Buffers.IManagedBinaryBuffer<ValueTuple<String, Int32>>).Metadata;' >> Program.cs
+          echo 'Console.WriteLine($"Metadata Size: {bufferMetadata.Size}");' >> Program.cs
+          echo 'Rxmxnx.PInvoke.BufferManager.Alloc<ValueTuple<String, Int32>>(bufferMetadata.Size, s => ' >> Program.cs
+          echo '{' >> Program.cs
+          echo '  Console.WriteLine($"Span Size: {s.Span.Length}");' >> Program.cs
+          echo '  Console.WriteLine($"Buffer Size: {s.FullLength}");' >> Program.cs
+          echo '  Console.WriteLine($"In Stack: {s.InStack}");' >> Program.cs
+          echo '});' >> Program.cs
+      - name: Build Package-Trimmed-Executables (PackageTrimmedAssembly)
+        working-directory: ./tmpProject/PackageTrimmedAssembly
+        run: |
+          dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true /p:IlcGenerateDgmlFile=true \
+            /p:DisableBufferAutoComposition=false /p:InvariantGlobalization=false /p:IlcDisableReflection=false \
+            /p:AssemblyName=AutoComposition.Globalization.Reflection
+          mv ./../Executable/debugSymbols/AutoComposition.Globalization.Reflection ./../Executable/AutoComposition.Globalization.Reflection
+          dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true /p:IlcGenerateDgmlFile=true \
+            /p:DisableBufferAutoComposition=true /p:InvariantGlobalization=false /p:IlcDisableReflection=false \
+            /p:AssemblyName=Globalization.Reflection
+          mv ./../Executable/debugSymbols/Globalization.Reflection ./../Executable/Globalization.Reflection
+          dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true /p:IlcGenerateDgmlFile=true \
+            /p:DisableBufferAutoComposition=false /p:InvariantGlobalization=true /p:IlcDisableReflection=false \
+            /p:AssemblyName=AutoComposition.Reflection
+          mv ./../Executable/debugSymbols/AutoComposition.Reflection ./../Executable/AutoComposition.Reflection
+          dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true /p:IlcGenerateDgmlFile=true \
+            /p:DisableBufferAutoComposition=false /p:InvariantGlobalization=false /p:IlcDisableReflection=true \
+            /p:AssemblyName=AutoComposition.Globalization
+          mv ./../Executable/debugSymbols/AutoComposition.Globalization ./../Executable/AutoComposition.Globalization
+          dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true /p:IlcGenerateDgmlFile=true \
+            /p:DisableBufferAutoComposition=true /p:InvariantGlobalization=true /p:IlcDisableReflection=false \
+            /p:AssemblyName=Reflection
+          mv ./../Executable/debugSymbols/Reflection ./../Executable/Reflection
+          dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true /p:IlcGenerateDgmlFile=true \
+            /p:DisableBufferAutoComposition=true /p:InvariantGlobalization=false /p:IlcDisableReflection=true \
+            /p:AssemblyName=Globalization
+          mv ./../Executable/debugSymbols/Globalization ./../Executable/Globalization
+          dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true /p:IlcGenerateDgmlFile=true \
+            /p:DisableBufferAutoComposition=false /p:InvariantGlobalization=true /p:IlcDisableReflection=true \
+            /p:AssemblyName=AutoComposition
+          mv ./../Executable/debugSymbols/AutoComposition ./../Executable/AutoComposition
+          dotnet publish /p:TrimMode=full /p:PublishTrimmed=true /p:PublishDir=./../Executable/debugSymbols /p:IntermediateOutputPath=./../Executable/obj/ \
+            /p:TrimmerSingleWarn=false /p:SuppressTrimAnalysisWarnings=false /p:IlcGenerateMetadataLog=true /p:IlcGenerateMstatFile=true /p:IlcGenerateDgmlFile=true \
+            /p:DisableBufferAutoComposition=true /p:InvariantGlobalization=true /p:IlcDisableReflection=true \
+            /p:AssemblyName=None
+          mv ./../Executable/debugSymbols/None ./../Executable/None
+          
+          mv ./../Executable/obj/native ./../Executable/ilcLogs
+          rm ./../Executable/ilcLogs/*.o
+          rm ./../Executable/ilcLogs/*.ilc.rsp
+          rm ./../Executable/ilcLogs/*.exports
+          rm -rf ./../Executable/obj
+          rm -rf ./../Executable/debugSymbols
+          rm -rf ./bin
+          rm -rf ./obj
+      - name: Run Package-Trimmed-Executables
+        working-directory: ./tmpProject/Executable
+        run: |
+          echo '----- AutoComposition + Globalization + Reflection -----'
+          ./AutoComposition.Globalization.Reflection
+          echo '----- Globalization + Reflection -----'
+          ./Globalization.Reflection
+          echo '----- AutoComposition + Reflection -----'
+          ./AutoComposition.Reflection
+          echo '----- AutoComposition + Globalization -----'
+          ./AutoComposition.Globalization
+          echo '----- Reflection -----'
+          ./Reflection
+          echo '----- Globalization -----'
+          ./Globalization
+          echo '----- AutoComposition -----'
+          ./AutoComposition
+          echo '----- None -----'
+          ./None
+      - name: Upload Package-Trimmed-Executables-Logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: Package-Trimmed-Executables-Logs
+          path: ./tmpProject/Executable/ilcLogs
   run-linux:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 9.0.x
-    - name: Linux tests
-      run: |
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+      - name: Linux tests
+        run: |
           dotnet restore src 
           dotnet build src --configuration release 
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release
-          
+  
   run-macOS:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 9.0.x
-    - name: MacOS tests
-      run: |
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+      - name: MacOS tests
+        run: |
           dotnet restore src 
           dotnet build src --configuration release 
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release
-        
+  
   run-windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Install winget
-      uses: Cyberboss/install-winget@v1
-    - name: Setup .NET x86
-      run: |
+      - uses: actions/checkout@v4
+      - name: Install winget
+        uses: Cyberboss/install-winget@v1
+      - name: Setup .NET x86
+        run: |
           winget install Microsoft.DotNet.SDK.9 --architecture x86 --silent --disable-interactivity --accept-source-agreements
-    - name: Setup .NET x64
-      run: |
+      - name: Setup .NET x64
+        run: |
           winget install Microsoft.DotNet.SDK.9 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-    - name: Build tests
-      run: |
+      - name: Build tests
+        run: |
           dotnet restore src 
           dotnet build src --configuration release 
-    - name: Windows x86 tests
-      run: |
+      - name: Windows x86 tests
+        run: |
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release --settings src\Test\x86.runsettings
-    - name: Windows x64 tests
-      run: |
+      - name: Windows x64 tests
+        run: |
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release 
