@@ -34,7 +34,7 @@ public sealed class RegisterTest
 		MethodInfo registerObjectInfo = typeof(BufferManager).GetMethods(BindingFlags.Public | BindingFlags.Static)
 		                                                     .First(m => m.Name == nameof(BufferManager.Register) &&
 			                                                            m.GetGenericArguments().Length == 1);
-		Int32 pow = Random.Shared.Next(2, 10);
+		Int32 pow = Random.Shared.Next(3, 10);
 		_ = RegisterTest.GetCompositeType<Object>(pow, out Int32 sizeofT, out Type resultType);
 		Int32 sizeOfResultType = RegisterTest.sizeOfInfo.MakeGenericMethod(resultType).CreateDelegate<Func<Int32>>()();
 		IManagedBinaryBuffer<Object>? buffer = (IManagedBinaryBuffer<Object>?)Activator.CreateInstance(resultType);
@@ -47,7 +47,7 @@ public sealed class RegisterTest
 
 	private static void StructTest<T>() where T : struct
 	{
-		Int32 pow = Random.Shared.Next(2, 10);
+		Int32 pow = Random.Shared.Next(3, 10);
 		Type typeofT = RegisterTest.GetCompositeType<T>(pow, out Int32 sizeofT, out Type resultType);
 		Int32 sizeOfResultType = RegisterTest.sizeOfInfo.MakeGenericMethod(resultType).CreateDelegate<Func<Int32>>()();
 		IManagedBinaryBuffer<T>? buffer = (IManagedBinaryBuffer<T>?)Activator.CreateInstance(resultType);

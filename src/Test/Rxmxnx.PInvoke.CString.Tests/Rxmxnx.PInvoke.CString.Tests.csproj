@@ -11,6 +11,7 @@
 
     <ItemGroup>
         <Using Include="Xunit"/>
+        <Using Include="Xunit.Sdk"/>
         <Using Include="AutoFixture"/>
         <Using Include="System.Buffers"/>
         <Using Include="System.Collections.Concurrent"/>

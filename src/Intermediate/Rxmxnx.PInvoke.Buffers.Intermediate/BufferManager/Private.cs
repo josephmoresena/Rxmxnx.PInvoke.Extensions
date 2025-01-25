@@ -130,16 +130,14 @@ public static partial class BufferManager
 	private static void AllocObject<T>(UInt16 count, ScopedBufferAction<T> action, Boolean isMinimumCount)
 	{
 		BufferTypeMetadata<Object>? metadata = MetadataManager<Object>.GetMetadata(count);
-		if (metadata is null || (!isMinimumCount && metadata.Size != count))
-		{
-			BufferManager.AllocHeap(count, action);
-			return;
-		}
-		TransformationState<T> stateT = new(action);
+		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count);
 #if !PACKAGE
-		MetadataManager<Object>.PrintMetadata();
+		MetadataManager<Object>.PrintMetadata(!stackAlloc);
 #endif
-		metadata.Execute(stateT, TransformationState<T>.Execute, count);
+		if (stackAlloc)
+			BufferManager.StackAllocObject(metadata!, count, action);
+		else
+			BufferManager.AllocHeap(count, action);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
@@ -159,15 +157,14 @@ public static partial class BufferManager
 #endif
 	{
 		BufferTypeMetadata<Object>? metadata = MetadataManager<Object>.GetMetadata(count);
-		if (metadata is null || (!isMinimumCount && metadata.Size != count))
-		{
-			BufferManager.AllocHeap(count, state, action);
-			return;
-		}
+		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count);
 #if !PACKAGE
-		MetadataManager<Object>.PrintMetadata();
+		MetadataManager<Object>.PrintMetadata(!stackAlloc);
 #endif
-		metadata.Execute(state, action, count);
+		if (stackAlloc)
+			metadata!.Execute(state, action, count);
+		else
+			BufferManager.AllocHeap(count, state, action);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
@@ -184,13 +181,13 @@ public static partial class BufferManager
 		Boolean isMinimumCount)
 	{
 		BufferTypeMetadata<Object>? metadata = MetadataManager<Object>.GetMetadata(count);
-		if (metadata is null || (!isMinimumCount && metadata.Size != count))
-			return BufferManager.AllocHeap(count, func);
-		TransformationState<T, TResult> stateT = new(func);
+		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count);
 #if !PACKAGE
-		MetadataManager<Object>.PrintMetadata();
+		MetadataManager<Object>.PrintMetadata(!stackAlloc);
 #endif
-		return metadata.Execute(stateT, TransformationState<T, TResult>.Execute, count);
+		return stackAlloc ?
+			BufferManager.StackAllocObject(metadata!, count, func) :
+			BufferManager.AllocHeap(count, func);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
@@ -212,12 +209,11 @@ public static partial class BufferManager
 #endif
 	{
 		BufferTypeMetadata<Object>? metadata = MetadataManager<Object>.GetMetadata(count);
-		if (metadata is null || (!isMinimumCount && metadata.Size != count))
-			return BufferManager.AllocHeap(count, state, func);
+		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count);
 #if !PACKAGE
-		MetadataManager<Object>.PrintMetadata();
+		MetadataManager<Object>.PrintMetadata(!stackAlloc);
 #endif
-		return metadata.Execute(state, func, count);
+		return stackAlloc ? metadata!.Execute(state, func, count) : BufferManager.AllocHeap(count, state, func);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
@@ -232,20 +228,19 @@ public static partial class BufferManager
 	{
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>())
 		{
-			BufferManager.AllocStack(count, action);
+			BufferManager.StackAlloc(count, action);
 			return;
 		}
 
 		BufferTypeMetadata<T>? metadata = MetadataManager<T>.GetMetadata(count);
-		if (metadata is null || (!isMinimumCount && metadata.Size != count))
-		{
-			BufferManager.AllocHeap(count, action);
-			return;
-		}
+		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count);
 #if !PACKAGE
-		MetadataManager<T>.PrintMetadata();
+		MetadataManager<T>.PrintMetadata(!stackAlloc);
 #endif
-		metadata.Execute(action, count);
+		if (stackAlloc)
+			metadata!.Execute(action, count);
+		else
+			BufferManager.AllocHeap(count, action);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
@@ -266,20 +261,19 @@ public static partial class BufferManager
 	{
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>())
 		{
-			BufferManager.AllocStack(count, state, action);
+			BufferManager.StackAlloc(count, state, action);
 			return;
 		}
 
 		BufferTypeMetadata<T>? metadata = MetadataManager<T>.GetMetadata(count);
-		if (metadata is null || (!isMinimumCount && metadata.Size != count))
-		{
-			BufferManager.AllocHeap(count, state, action);
-			return;
-		}
+		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count);
 #if !PACKAGE
-		MetadataManager<T>.PrintMetadata();
+		MetadataManager<T>.PrintMetadata(!stackAlloc);
 #endif
-		metadata.Execute<TState>(state, action, count);
+		if (stackAlloc)
+			metadata!.Execute<TState>(state, action, count);
+		else
+			BufferManager.AllocHeap(count, state, action);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
@@ -296,15 +290,14 @@ public static partial class BufferManager
 		Boolean isMinimumCount)
 	{
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>())
-			return BufferManager.AllocStack(count, func);
+			return BufferManager.StackAlloc(count, func);
 
 		BufferTypeMetadata<T>? metadata = MetadataManager<T>.GetMetadata(count);
-		if (metadata is null || (!isMinimumCount && metadata.Size != count))
-			return BufferManager.AllocHeap(count, func);
+		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count);
 #if !PACKAGE
-		MetadataManager<T>.PrintMetadata();
+		MetadataManager<T>.PrintMetadata(!stackAlloc);
 #endif
-		return metadata.Execute(func, count);
+		return stackAlloc ? metadata!.Execute(func, count) : BufferManager.AllocHeap(count, func);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
@@ -326,15 +319,16 @@ public static partial class BufferManager
 #endif
 	{
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>())
-			return BufferManager.AllocStack(count, state, func);
+			return BufferManager.StackAlloc(count, state, func);
 
 		BufferTypeMetadata<T>? metadata = MetadataManager<T>.GetMetadata(count);
-		if (metadata is null || (!isMinimumCount && metadata.Size != count))
-			return BufferManager.AllocHeap(count, state, func);
+		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count);
 #if !PACKAGE
-		MetadataManager<T>.PrintMetadata();
+		MetadataManager<T>.PrintMetadata(!stackAlloc);
 #endif
-		return metadata.Execute<TState, TResult>(state, func, count);
+		return stackAlloc ?
+			metadata!.Execute<TState, TResult>(state, func, count) :
+			BufferManager.AllocHeap(count, state, func);
 	}
 	/// <summary>
 	/// Retrieves the maximum value in the given binary space.
@@ -356,14 +350,44 @@ public static partial class BufferManager
 		}
 	}
 	/// <summary>
+	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
+	/// </summary>
+	/// <typeparam name="T">The type of items in the buffer.</typeparam>
+	/// <param name="metadata">A <see cref="BufferTypeMetadata{Object}"/> instance.</param>
+	/// <param name="count">Required buffer size.</param>
+	/// <param name="action">Method to execute.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static void StackAllocObject<T>(BufferTypeMetadata<Object> metadata, UInt16 count,
+		ScopedBufferAction<T> action)
+	{
+		TransformationState<T> stateT = new(action);
+		metadata.Execute(stateT, TransformationState<T>.Execute, count);
+	}
+	/// <summary>
+	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
+	/// </summary>
+	/// <typeparam name="T">The type of items in the buffer.</typeparam>
+	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
+	/// <param name="metadata">A <see cref="BufferTypeMetadata{Object}"/> instance.</param>
+	/// <param name="count">Required buffer size.</param>
+	/// <param name="func">Function to execute.</param>
+	/// <returns><paramref name="func"/> result.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static TResult StackAllocObject<T, TResult>(BufferTypeMetadata<Object> metadata, UInt16 count,
+		ScopedBufferFunc<T, TResult> func)
+	{
+		TransformationState<T, TResult> stateT = new(func);
+		return metadata.Execute(stateT, TransformationState<T, TResult>.Execute, count);
+	}
+	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
 	/// </summary>
 	/// <typeparam name="T">The type of items in the buffer.</typeparam>
 	/// <param name="count">Required buffer size.</param>
 	/// <param name="action">Method to execute.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #pragma warning disable CS8500
-	[ExcludeFromCodeCoverage]
-	private static unsafe void AllocStack<T>(UInt16 count, ScopedBufferAction<T> action)
+	private static unsafe void StackAlloc<T>(UInt16 count, ScopedBufferAction<T> action)
 	{
 		Int32 sizeOfT = sizeof(T);
 		Span<Byte> bytes = stackalloc Byte[count * sizeOfT];
@@ -380,8 +404,8 @@ public static partial class BufferManager
 	/// <param name="count">Required buffer size.</param>
 	/// <param name="state">State object.</param>
 	/// <param name="action">Method to execute.</param>
-	[ExcludeFromCodeCoverage]
-	private static unsafe void AllocStack<T, TState>(UInt16 count, TState state, ScopedBufferAction<T, TState> action)
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static unsafe void StackAlloc<T, TState>(UInt16 count, TState state, ScopedBufferAction<T, TState> action)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
 #endif
@@ -401,8 +425,8 @@ public static partial class BufferManager
 	/// <param name="count">Required buffer size.</param>
 	/// <param name="func">Function to execute.</param>
 	/// <returns><paramref name="func"/> result.</returns>
-	[ExcludeFromCodeCoverage]
-	private static unsafe TResult AllocStack<T, TResult>(UInt16 count, ScopedBufferFunc<T, TResult> func)
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static unsafe TResult StackAlloc<T, TResult>(UInt16 count, ScopedBufferFunc<T, TResult> func)
 	{
 		Int32 sizeOfT = sizeof(T);
 		Span<Byte> bytes = stackalloc Byte[count * sizeOfT];
@@ -421,8 +445,8 @@ public static partial class BufferManager
 	/// <param name="state">State object.</param>
 	/// <param name="func">Function to execute.</param>
 	/// <returns><paramref name="func"/> result.</returns>
-	[ExcludeFromCodeCoverage]
-	private static unsafe TResult AllocStack<T, TState, TResult>(UInt16 count, TState state,
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static unsafe TResult StackAlloc<T, TState, TResult>(UInt16 count, TState state,
 		ScopedBufferFunc<T, TState, TResult> func)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct

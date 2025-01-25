@@ -127,9 +127,12 @@ public static partial class BufferManager
 		/// <summary>
 		/// Prints metadata dictionary.
 		/// </summary>
+		/// <param name="trace">Indicates whether trace should be written.</param>
+		[ExcludeFromCodeCoverage]
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6670)]
-		public static void PrintMetadata()
+		public static void PrintMetadata(Boolean trace)
 		{
+			if (!trace) return;
 			lock (MetadataManager<T>.store.LockObject)
 			{
 				foreach (UInt16 key in MetadataManager<T>.store.BinaryBuffers.Keys)

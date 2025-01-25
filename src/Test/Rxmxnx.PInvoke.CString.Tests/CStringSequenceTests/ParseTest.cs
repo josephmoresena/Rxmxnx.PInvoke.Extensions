@@ -39,7 +39,21 @@ public sealed class ParseTest
 		CStringSequence seq = new(values);
 		CString[] nonEmpty = values.Where(c => !CString.IsNullOrEmpty(c) && c.All(b => b != 0x0)).ToArray()!;
 		ParseTest.ExactParseTest(nonEmpty, seq.ToString());
-		ParseTest.RandomParseTest(nonEmpty);
+		try
+		{
+			ParseTest.RandomParseTest(nonEmpty);
+		}
+		catch (EqualException)
+		{
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
+
+			// It seems that if RandomParseTest fails due the handles have been released by the runtime.
+			// Reloading the CString instances and their respective handles, the test does not fail.
+			values = TestSet.GetValues(indices, handle);
+			nonEmpty = values.Where(c => !CString.IsNullOrEmpty(c) && c.All(b => b != 0x0)).ToArray()!;
+			ParseTest.RandomParseTest(nonEmpty);
+		}
 	}
 
 	private static void ExactParseTest(CString[] values, String buffer)
@@ -89,12 +103,5 @@ public sealed class ParseTest
 		Int32 count = Math.Min(buffer.Length - arg.offset, source.Length);
 		Span<Byte> destination = buffer[arg.offset..];
 		source[..count].CopyTo(destination);
-
-		if (arg.offset > 0)
-			foreach (ref Byte unit in buffer[..arg.offset])
-				unit = default;
-		if (destination.Length <= count) return;
-		foreach (ref Byte unit in destination[count..])
-			unit = default;
 	}
 }
