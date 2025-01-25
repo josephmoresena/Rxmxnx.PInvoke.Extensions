@@ -48,7 +48,7 @@
         <MSBuild Condition="'$(NoIntermediateBuild)' != 'true'"
                  Projects="@(CsIntermediateProjects->'%(ProjectPath)')"
                  Properties="Configuration=$(Configuration);Platform=$(Platform);TargetFramework=$(FirstTargetFramework)"
-                 BuildInParallel="false"/>
+                 BuildInParallel="false" Targets="Restore;Build"/>
     </Target>
 
     <!--
