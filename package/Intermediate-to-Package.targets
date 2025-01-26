@@ -47,7 +47,7 @@
         <!-- Build the intermediate projects unless explicitly skipped -->
         <MSBuild Condition="'$(NoIntermediateBuild)' != 'true'"
                  Projects="@(CsIntermediateProjects->'%(ProjectPath)')"
-                 Properties="Configuration=$(Configuration);Platform=$(Platform);TargetFramework=$(FirstTargetFramework)"
+                 Properties="Configuration=$(Configuration);Platform=$(Platform);TargetFramework=$(FirstTargetFramework);UseSourceGeneratorAssembly=true"
                  BuildInParallel="false" Targets="Restore;Build"/>
     </Target>
 
@@ -57,21 +57,25 @@
     -->
     <Target Name="IncludeIntermediateSources" AfterTargets="BuildIntermediateProjects">
         <ItemGroup>
+                          
             <!-- Collect C# source files -->
-            <CsFiles Include="$(IntermediateSourceBasePath)\%(IntermediateAssemblyNames)\**\*.cs"/>
+            <CsFiles Include="@(IntermediateAssemblyNames->'$(IntermediateSourceBasePath)\%(Identity)\**\*.cs')" />
+            <!-- Collect excluded C# source files -->
+            <ExcludeFiles Include="@(IntermediateAssemblyNames->'$(IntermediateSourceBasePath)\%(Identity)\**\obj\**\*.*;$(IntermediateSourceBasePath)\%(Identity)\**\bin\**\*.*')"/>
             <!-- Collect global using directive files -->
-            <GlobalUsingFiles Include="$(IntermediateSourceBasePath)\%(IntermediateAssemblyNames)\**\*.GlobalUsings.g.cs"/>
+            <GlobalUsingFiles Include="@(IntermediateAssemblyNames->'$(IntermediateSourceBasePath)\%(Identity)\**\*.GlobalUsings.g.cs')"/>
 
             <!-- Add the collected source files to the compilation -->
-            <Compile Include="@(CsFiles)">
+            <Compile Include="%(CsFiles.Identity)">
                 <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
             </Compile>
+            
 
             <!-- Exclude files from obj and bin directories -->
-            <Compile Remove="$(IntermediateSourceBasePath)\**\obj\**\*.*;$(IntermediateSourceBasePath)\**\bin\**\*.*"/>
+            <Compile Remove="%(ExcludeFiles.Identity)"/>
 
             <!-- Include global using files -->
-            <Compile Include="@(GlobalUsingFiles)"/>
+            <Compile Include="%(GlobalUsingFiles.Identity)"/>
         </ItemGroup>
     </Target>
 
