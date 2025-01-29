@@ -57,9 +57,9 @@
     -->
     <Target Name="IncludeIntermediateSources" AfterTargets="BuildIntermediateProjects">
         <ItemGroup>
-                          
+
             <!-- Collect C# source files -->
-            <CsFiles Include="@(IntermediateAssemblyNames->'$(IntermediateSourceBasePath)\%(Identity)\**\*.cs')" />
+            <CsFiles Include="@(IntermediateAssemblyNames->'$(IntermediateSourceBasePath)\%(Identity)\**\*.cs')"/>
             <!-- Collect excluded C# source files -->
             <ExcludeFiles Include="@(IntermediateAssemblyNames->'$(IntermediateSourceBasePath)\%(Identity)\**\obj\**\*.*;$(IntermediateSourceBasePath)\%(Identity)\**\bin\**\*.*')"/>
             <!-- Collect global using directive files -->
@@ -69,7 +69,7 @@
             <Compile Include="%(CsFiles.Identity)">
                 <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
             </Compile>
-            
+
 
             <!-- Exclude files from obj and bin directories -->
             <Compile Remove="%(ExcludeFiles.Identity)"/>
@@ -120,7 +120,7 @@
         Assembly signing settings
         This settings enables signing the assembly if a signing key is available.
     -->
-    <PropertyGroup Condition="Exists('$(SigningKeyFile)')">
+    <PropertyGroup Condition="Exists('$(MSBuildProjectDirectory)\$(SigningKeyFile)')">
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>$(SigningKeyFile)</AssemblyOriginatorKeyFile>
     </PropertyGroup>
