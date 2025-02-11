@@ -89,5 +89,5 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="value">The source byte.</param>
 	/// <returns>The hexadecimal string representation of the byte.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static String AsHexString(this Byte value) => value.ToString("X2").ToLower();
+	public static String AsHexString(this Byte value) => value.ToString("X2").ToLowerInvariant();
 }
