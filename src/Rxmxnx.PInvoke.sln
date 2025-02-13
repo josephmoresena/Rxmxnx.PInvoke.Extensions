@@ -28,6 +28,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Intermediate", "Intermediat
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{36897245-7D3A-4774-A7CE-4F9D0A86D3C7}"
+	ProjectSection(SolutionItems) = preProject
+		Test\x86.runsettings = Test\x86.runsettings
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rxmxnx.PInvoke.Buffers.Intermediate", "Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate.csproj", "{A3765D6C-8B1C-4852-B502-6CE353DDA47C}"
 EndProject
