@@ -188,7 +188,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <returns>
 	/// A <see cref="String"/> that represents the hexadecimal value of the current UTF-8 text.
 	/// </returns>
-	public String ToHexString() => Convert.ToHexString(this).ToLower();
+	public String ToHexString() => Convert.ToHexString(this).ToLowerInvariant();
 	/// <summary>
 	/// Returns an enumerator that iterates through the UTF-8 units of the current <see cref="CString"/>.
 	/// </summary>

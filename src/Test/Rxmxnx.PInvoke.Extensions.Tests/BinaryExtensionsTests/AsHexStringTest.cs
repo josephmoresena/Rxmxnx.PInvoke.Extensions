@@ -12,9 +12,9 @@ public sealed class AsHexStringTest
 		StringBuilder strBuild = new();
 		foreach (Byte value in input)
 		{
-			Assert.Equal(value.ToString("X2").ToLower(), value.AsHexString());
+			Assert.Equal(value.ToString("X2").ToLowerInvariant(), value.AsHexString());
 			strBuild.Append(value.ToString("X2"));
 		}
-		Assert.Equal(strBuild.ToString().ToLower(), input.AsHexString());
+		Assert.Equal(strBuild.ToString().ToLowerInvariant(), input.AsHexString());
 	}
 }
