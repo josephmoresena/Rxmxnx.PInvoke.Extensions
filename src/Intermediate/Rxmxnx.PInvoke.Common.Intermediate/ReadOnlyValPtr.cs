@@ -7,8 +7,7 @@ namespace Rxmxnx.PInvoke;
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
-public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<ReadOnlyValPtr<T>>, IComparable,
-	IComparable<ReadOnlyValPtr<T>>, ISpanFormattable, ISerializable
+public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<ReadOnlyValPtr<T>>, ISerializable
 {
 #pragma warning disable CS8500
 	/// <summary>
@@ -61,11 +60,6 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 		=> ValidationUtilities.ThrowIfInvalidSerialization(info, this._value);
 
 	/// <inheritdoc/>
-	public Int32 CompareTo(Object? obj)
-		=> ValidationUtilities.ThrowIfInvalidValuePointer<T>(obj, this.Pointer, nameof(ReadOnlyValPtr<T>));
-	/// <inheritdoc/>
-	public Int32 CompareTo(ReadOnlyValPtr<T> value) => this.Pointer.CompareTo(value.Pointer);
-	/// <inheritdoc/>
 	public Boolean Equals(ReadOnlyValPtr<T> other) => this.Pointer == other.Pointer;
 
 	/// <inheritdoc/>
@@ -93,16 +87,6 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// </returns>
 	/// <exception cref="FormatException"><paramref name="format"/> is invalid or not supported.</exception>
 	public String ToString(String? format) => this.Pointer.ToString(format);
-	/// <inheritdoc cref="IntPtr.ToString(IFormatProvider?)"/>
-	public String ToString(IFormatProvider? formatProvider) => this.Pointer.ToString(formatProvider);
-	/// <inheritdoc/>
-	public String ToString(String? format, IFormatProvider? formatProvider)
-		=> this.Pointer.ToString(format, formatProvider);
-	/// <inheritdoc/>
-	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1006)]
-	public Boolean TryFormat(Span<Char> destination, out Int32 charsWritten, ReadOnlySpan<Char> format = default,
-		IFormatProvider? provider = default)
-		=> this.Pointer.TryFormat(destination, out charsWritten, format, provider);
 
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="IReadOnlyFixedReference{T}.IDisposable"/> instance from
@@ -214,32 +198,6 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// <param name="pointer">The pointer to subtract the offset form.</param>
 	public static ReadOnlyValPtr<T> operator --(ReadOnlyValPtr<T> pointer)
 		=> (ReadOnlyValPtr<T>)(pointer.Pointer - sizeof(T));
-	/// <summary>Compares two values to determine which is less.</summary>
-	/// <param name="left">The value to compare with <paramref name="right"/>.</param>
-	/// <param name="right">The value to compare with <paramref name="left"/>.</param>
-	/// <returns><c>true</c> if <paramref name="left"/> is less than <paramref name="right"/>; otherwise, <c>false</c>.</returns>
-	public static Boolean operator <(ReadOnlyValPtr<T> left, ReadOnlyValPtr<T> right) => left.CompareTo(right) < 0;
-	/// <summary>Compares two values to determine which is less or equal.</summary>
-	/// <param name="left">The value to compare with <paramref name="right"/>.</param>
-	/// <param name="right">The value to compare with <paramref name="left"/>.</param>
-	/// <returns>
-	/// <c>true</c> if <paramref name="left"/> is less than or equal to <paramref name="right"/>; otherwise,
-	/// <c>false</c>.
-	/// </returns>
-	public static Boolean operator <=(ReadOnlyValPtr<T> left, ReadOnlyValPtr<T> right) => left.CompareTo(right) <= 0;
-	/// <summary>Compares two values to determine which is greater.</summary>
-	/// <param name="left">The value to compare with <paramref name="right"/>.</param>
-	/// <param name="right">The value to compare with <paramref name="left"/>.</param>
-	/// <returns><c>true</c> if <paramref name="left"/> is greater than <paramref name="right"/>; otherwise, <c>false</c>.</returns>
-	public static Boolean operator >(ReadOnlyValPtr<T> left, ReadOnlyValPtr<T> right) => left.CompareTo(right) > 0;
-	/// <summary>Compares two values to determine which is greater or equal.</summary>
-	/// <param name="left">The value to compare with <paramref name="right"/>.</param>
-	/// <param name="right">The value to compare with <paramref name="left"/>.</param>
-	/// <returns>
-	/// <c>true</c> if <paramref name="left"/> is greater than or equal to <paramref name="right"/>; otherwise,
-	/// <c>false</c>.
-	/// </returns>
-	public static Boolean operator >=(ReadOnlyValPtr<T> left, ReadOnlyValPtr<T> right) => left.CompareTo(right) >= 0;
 
 	/// <summary>
 	/// Adds an offset in <typeparamref name="T"/> units to the value of a pointer.
@@ -255,56 +213,5 @@ public readonly unsafe struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<R
 	/// <param name="offset">The offset in <typeparamref name="T"/> units to subtract.</param>
 	public static ReadOnlyValPtr<T> Subtract(ReadOnlyValPtr<T> pointer, Int32 offset)
 		=> (ReadOnlyValPtr<T>)(pointer.Pointer - offset * sizeof(T));
-
-	/// <inheritdoc cref="IntPtr.Parse(String)"/>
-	[ExcludeFromCodeCoverage]
-	public static ReadOnlyValPtr<T> Parse(String s) => (ReadOnlyValPtr<T>)IntPtr.Parse(s);
-	/// <inheritdoc cref="IntPtr.Parse(String, NumberStyles)"/>
-	[ExcludeFromCodeCoverage]
-	public static ReadOnlyValPtr<T> Parse(String s, NumberStyles style) => (ReadOnlyValPtr<T>)IntPtr.Parse(s, style);
-	/// <inheritdoc cref="IntPtr.Parse(String, IFormatProvider)"/>
-	[ExcludeFromCodeCoverage]
-	public static ReadOnlyValPtr<T> Parse(String s, IFormatProvider? provider)
-		=> (ReadOnlyValPtr<T>)IntPtr.Parse(s, provider);
-	/// <inheritdoc cref="IntPtr.Parse(String, NumberStyles, IFormatProvider)"/>
-	[ExcludeFromCodeCoverage]
-	public static ReadOnlyValPtr<T> Parse(String s, NumberStyles style, IFormatProvider? provider)
-		=> (ReadOnlyValPtr<T>)IntPtr.Parse(s, style, provider);
-	/// <inheritdoc cref="IntPtr.Parse(ReadOnlySpan{Char}, NumberStyles, IFormatProvider)"/>
-	[ExcludeFromCodeCoverage]
-	public static ReadOnlyValPtr<T> Parse(ReadOnlySpan<Char> s, NumberStyles style = NumberStyles.Integer,
-		IFormatProvider? provider = default)
-		=> (ReadOnlyValPtr<T>)IntPtr.Parse(s, style, provider);
-
-	/// <inheritdoc cref="IntPtr.TryParse(String?, out IntPtr)"/>
-	[ExcludeFromCodeCoverage]
-	public static Boolean TryParse([NotNullWhen(true)] String? s, out ReadOnlyValPtr<T> result)
-	{
-		Unsafe.SkipInit(out result);
-		return IntPtr.TryParse(s, out Unsafe.As<ReadOnlyValPtr<T>, IntPtr>(ref result));
-	}
-	/// <inheritdoc cref="IntPtr.TryParse(String?, NumberStyles, IFormatProvider?, out IntPtr)"/>
-	[ExcludeFromCodeCoverage]
-	public static Boolean TryParse([NotNullWhen(true)] String? s, NumberStyles style, IFormatProvider? provider,
-		out ReadOnlyValPtr<T> result)
-	{
-		Unsafe.SkipInit(out result);
-		return IntPtr.TryParse(s, style, provider, out Unsafe.As<ReadOnlyValPtr<T>, IntPtr>(ref result));
-	}
-	/// <inheritdoc cref="IntPtr.TryParse(ReadOnlySpan{Char}, out IntPtr)"/>
-	[ExcludeFromCodeCoverage]
-	public static Boolean TryParse(ReadOnlySpan<Char> s, out ReadOnlyValPtr<T> result)
-	{
-		Unsafe.SkipInit(out result);
-		return IntPtr.TryParse(s, out Unsafe.As<ReadOnlyValPtr<T>, IntPtr>(ref result));
-	}
-	/// <inheritdoc cref="IntPtr.TryParse(ReadOnlySpan{Char}, NumberStyles, IFormatProvider?, out IntPtr)"/>
-	[ExcludeFromCodeCoverage]
-	public static Boolean TryParse(ReadOnlySpan<Char> s, NumberStyles style, IFormatProvider? provider,
-		out ReadOnlyValPtr<T> result)
-	{
-		Unsafe.SkipInit(out result);
-		return IntPtr.TryParse(s, style, provider, out Unsafe.As<ReadOnlyValPtr<T>, IntPtr>(ref result));
-	}
 #pragma warning restore CS8500
 }

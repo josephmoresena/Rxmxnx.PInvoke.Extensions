@@ -7,7 +7,7 @@ namespace Rxmxnx.PInvoke;
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
-public readonly unsafe struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<FuncPtr<TDelegate>>, ISpanFormattable,
+public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<FuncPtr<TDelegate>>,
 	ISerializable where TDelegate : Delegate
 {
 	/// <summary>
@@ -78,16 +78,6 @@ public readonly unsafe struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<
 	/// </returns>
 	/// <exception cref="FormatException"><paramref name="format"/> is invalid or not supported.</exception>
 	public String ToString(String? format) => this.Pointer.ToString(format);
-	/// <inheritdoc cref="IntPtr.ToString(IFormatProvider?)"/>
-	public String ToString(IFormatProvider? formatProvider) => this.Pointer.ToString(formatProvider);
-	/// <inheritdoc/>
-	public String ToString(String? format, IFormatProvider? formatProvider)
-		=> this.Pointer.ToString(format, formatProvider);
-	/// <inheritdoc/>
-	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1006)]
-	public Boolean TryFormat(Span<Char> destination, out Int32 charsWritten, ReadOnlySpan<Char> format = default,
-		IFormatProvider? provider = default)
-		=> this.Pointer.TryFormat(destination, out charsWritten, format, provider);
 
 	/// <summary>
 	/// Defines an explicit conversion of a given <see cref="IntPtr"/> to a read-only value pointer.
@@ -133,55 +123,4 @@ public readonly unsafe struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<
 	/// <inheritdoc cref="IntPtr.op_Inequality(IntPtr, IntPtr)"/>
 	public static Boolean operator !=(FuncPtr<TDelegate> value1, FuncPtr<TDelegate> value2)
 		=> value1._value != value2._value;
-
-	/// <inheritdoc cref="IntPtr.Parse(String)"/>
-	[ExcludeFromCodeCoverage]
-	public static FuncPtr<TDelegate> Parse(String s) => (FuncPtr<TDelegate>)IntPtr.Parse(s);
-	/// <inheritdoc cref="IntPtr.Parse(String, NumberStyles)"/>
-	[ExcludeFromCodeCoverage]
-	public static FuncPtr<TDelegate> Parse(String s, NumberStyles style) => (FuncPtr<TDelegate>)IntPtr.Parse(s, style);
-	/// <inheritdoc cref="IntPtr.Parse(String, IFormatProvider)"/>
-	[ExcludeFromCodeCoverage]
-	public static FuncPtr<TDelegate> Parse(String s, IFormatProvider? formatProvider)
-		=> (FuncPtr<TDelegate>)IntPtr.Parse(s, formatProvider);
-	/// <inheritdoc cref="IntPtr.Parse(String, NumberStyles, IFormatProvider)"/>
-	[ExcludeFromCodeCoverage]
-	public static FuncPtr<TDelegate> Parse(String s, NumberStyles style, IFormatProvider? provider)
-		=> (FuncPtr<TDelegate>)IntPtr.Parse(s, style, provider);
-	/// <inheritdoc cref="IntPtr.Parse(ReadOnlySpan{Char}, NumberStyles, IFormatProvider)"/>
-	[ExcludeFromCodeCoverage]
-	public static FuncPtr<TDelegate> Parse(ReadOnlySpan<Char> s, NumberStyles style = NumberStyles.Integer,
-		IFormatProvider? provider = default)
-		=> (FuncPtr<TDelegate>)IntPtr.Parse(s, style, provider);
-
-	/// <inheritdoc cref="IntPtr.TryParse(String?, out IntPtr)"/>
-	[ExcludeFromCodeCoverage]
-	public static Boolean TryParse([NotNullWhen(true)] String? s, out FuncPtr<TDelegate> result)
-	{
-		Unsafe.SkipInit(out result);
-		return IntPtr.TryParse(s, out Unsafe.As<FuncPtr<TDelegate>, IntPtr>(ref result));
-	}
-	/// <inheritdoc cref="IntPtr.TryParse(String?, NumberStyles, IFormatProvider?, out IntPtr)"/>
-	[ExcludeFromCodeCoverage]
-	public static Boolean TryParse([NotNullWhen(true)] String? s, NumberStyles style, IFormatProvider? provider,
-		out FuncPtr<TDelegate> result)
-	{
-		Unsafe.SkipInit(out result);
-		return IntPtr.TryParse(s, style, provider, out Unsafe.As<FuncPtr<TDelegate>, IntPtr>(ref result));
-	}
-	/// <inheritdoc cref="IntPtr.TryParse(ReadOnlySpan{Char}, out IntPtr)"/>
-	[ExcludeFromCodeCoverage]
-	public static Boolean TryParse(ReadOnlySpan<Char> s, out FuncPtr<TDelegate> result)
-	{
-		Unsafe.SkipInit(out result);
-		return IntPtr.TryParse(s, out Unsafe.As<FuncPtr<TDelegate>, IntPtr>(ref result));
-	}
-	/// <inheritdoc cref="IntPtr.TryParse(ReadOnlySpan{Char}, NumberStyles, IFormatProvider?, out IntPtr)"/>
-	[ExcludeFromCodeCoverage]
-	public static Boolean TryParse(ReadOnlySpan<Char> s, NumberStyles style, IFormatProvider? provider,
-		out FuncPtr<TDelegate> result)
-	{
-		Unsafe.SkipInit(out result);
-		return IntPtr.TryParse(s, style, provider, out Unsafe.As<FuncPtr<TDelegate>, IntPtr>(ref result));
-	}
 }
