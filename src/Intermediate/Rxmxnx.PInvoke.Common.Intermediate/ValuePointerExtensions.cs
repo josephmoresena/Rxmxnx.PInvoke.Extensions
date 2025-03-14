@@ -3,10 +3,10 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// Provides a set of extensions for basic operations with <see cref="IntPtr"/> and <see cref="UIntPtr"/> instances.
 /// </summary>
+#if !PACKAGE
 [EditorBrowsable(EditorBrowsableState.Never)]
 [Browsable(false)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
-#if !PACKAGE
 public static unsafe class ValuePointerExtensions
 #else
 public static unsafe partial class PointerExtensions

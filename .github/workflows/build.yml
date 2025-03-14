@@ -52,7 +52,7 @@ jobs:
           ./.sonar/scanner/dotnet-sonarscanner begin /k:"josephmoresena_PInvoke.Extensions" /o:"josephmoresena" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.scanner.scanAll=false /d:sonar.coverage.exclusions="**Test.cs,**Tests.cs,**test.cs,**tests.cs,**.SourceGenerator/*.cs" /d:sonar.cs.vstest.reportsPaths=TestResults/*.trx /d:sonar.cs.opencover.reportsPaths=TestResults/*/coverage.opencover.xml /d:sonar.cpd.exclusions="**/NativeUtilities/**FixedAction.cs,**/NativeUtilities/**FixedFunc.cs,**/IManagedBinaryBuffer/StaticCompose.cs,**Test/**Tests**/**.cs,**/Localization/**MessageResource.cs"
           dotnet restore src 
           dotnet build src --configuration release 
-          dotnet test src --verbosity detailed --collect:"XPlat Code Coverage" --results-directory TestResults/  --logger "trx;verbosity=detailed" --no-build --no-restore --configuration release -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover 
+          dotnet test src --no-build --no-restore --configuration release --verbosity normal --collect:"XPlat Code Coverage" --results-directory TestResults/ --logger "trx;verbosity=detailed" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
       - name: Pack assembly
         working-directory: ./package
@@ -178,44 +178,28 @@ jobs:
         with:
           name: Package-Trimmed-Executables-Logs
           path: ./tmpProject/Executable/ilcLogs
-  run-linux:
-    runs-on: ubuntu-latest
+  run-tests:
+    needs: [ build ]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ windows-latest, ubuntu-latest, macos-latest, macos-13 ]
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
+        if: runner.os != 'Windows'
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 9.0.x
-      - name: Linux tests
-        run: |
-          dotnet restore src 
-          dotnet build src --configuration release 
-          dotnet test src --verbosity detailed --no-build --no-restore --configuration release
-  
-  run-macOS:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 9.0.x
-      - name: MacOS tests
-        run: |
-          dotnet restore src 
-          dotnet build src --configuration release 
-          dotnet test src --verbosity detailed --no-build --no-restore --configuration release
-  
-  run-windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
       - name: Install winget
+        if: runner.os == 'Windows'
         uses: Cyberboss/install-winget@v1
       - name: Setup .NET x86
+        if: runner.os == 'Windows'
         run: |
           winget install Microsoft.DotNet.SDK.9 --architecture x86 --silent --disable-interactivity --accept-source-agreements
       - name: Setup .NET x64
+        if: runner.os == 'Windows'
         run: |
           winget install Microsoft.DotNet.SDK.9 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
       - name: Build tests
@@ -223,8 +207,9 @@ jobs:
           dotnet restore src 
           dotnet build src --configuration release 
       - name: Windows x86 tests
+        if: runner.os == 'Windows'
         run: |
           dotnet test src --verbosity detailed --no-build --no-restore --configuration release --settings src\Test\x86.runsettings
-      - name: Windows x64 tests
+      - name: Run tests
         run: |
-          dotnet test src --verbosity detailed --no-build --no-restore --configuration release 
+          dotnet test src --verbosity detailed --no-build --no-restore --configuration release
