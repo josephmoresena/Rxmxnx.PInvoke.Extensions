@@ -107,6 +107,9 @@ internal static unsafe class ValidationUtilities
 	/// <returns>A <see cref="Int32"/> value that indicates the relative order of the objects being compared.</returns>
 	/// <exception cref="ArgumentException">Throws an exception if <paramref name="obj"/> is not a value pointer.</exception>
 	public static Int32 ThrowIfInvalidValuePointer<T>(Object? obj, IntPtr ptr, String nameofPtr)
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
 		=> obj switch
 		{
 			null => 1,

@@ -5,6 +5,9 @@
 /// </summary>
 /// <typeparam name="T">Type of the value referenced in memory.</typeparam>
 public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference<T>, IFixedMemory
+#if NET9_0_OR_GREATER
+	where T : allows ref struct
+#endif
 {
 	/// <summary>
 	/// Reinterprets the <typeparamref name="T"/> fixed memory reference as a
