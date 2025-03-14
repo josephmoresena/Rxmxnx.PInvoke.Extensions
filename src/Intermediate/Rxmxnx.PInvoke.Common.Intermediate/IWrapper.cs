@@ -49,7 +49,7 @@ public interface IWrapper
 	/// </summary>
 	/// <typeparam name="T">The type of value to be wrapped.</typeparam>
 	/// <remarks>This interface is covariant.</remarks>
-	public interface Base<out T> : IWrapper
+	public interface IBase<out T> : IWrapper
 #if NET9_0_OR_GREATER
 		where T : allows ref struct
 #endif
@@ -65,14 +65,14 @@ public interface IWrapper
 /// This interface defines a wrapper for a <typeparamref name="T"/> object.
 /// </summary>
 /// <typeparam name="T">The type of value to be wrapped.</typeparam>
-public interface IWrapper<T> : IWrapper.Base<T>, IEquatable<T>
+public interface IWrapper<T> : IWrapper.IBase<T>, IEquatable<T>
 {
 	/// <summary>
 	/// The wrapped <typeparamref name="T"/> object.
 	/// </summary>
 	new T Value { get; }
 
-	T Base<T>.Value => this.Value;
+	T IBase<T>.Value => this.Value;
 	Boolean IEquatable<T>.Equals(T? other) => Object.Equals(this.Value, other);
 
 	/// <summary>

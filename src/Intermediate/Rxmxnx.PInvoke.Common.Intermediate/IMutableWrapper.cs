@@ -59,7 +59,7 @@ public interface IMutableWrapper : IWrapper
 	/// </summary>
 	/// <typeparam name="T">The type of value to be wrapped.</typeparam>
 	/// <remarks>This interface is covariant.</remarks>
-	public new interface Base<T> : IMutableWrapper, IWrapper.Base<T>
+	public new interface IBase<T> : IMutableWrapper, IWrapper.IBase<T>
 #if NET9_0_OR_GREATER
 		where T : allows ref struct
 #endif
@@ -75,14 +75,14 @@ public interface IMutableWrapper : IWrapper
 /// This interface defines a wrapper for a <typeparamref name="T"/> object whose value can be modified.
 /// </summary>
 /// <typeparam name="T">The type of value to be wrapped.</typeparam>
-public interface IMutableWrapper<T> : IMutableWrapper.Base<T>, IWrapper<T>
+public interface IMutableWrapper<T> : IMutableWrapper.IBase<T>, IWrapper<T>
 {
 	/// <summary>
 	/// The wrapped <typeparamref name="T"/> object.
 	/// </summary>
 	new T Value { get; set; }
 
-	T Base<T>.Value
+	T IBase<T>.Value
 	{
 		get => this.Value;
 		set => this.Value = value;
