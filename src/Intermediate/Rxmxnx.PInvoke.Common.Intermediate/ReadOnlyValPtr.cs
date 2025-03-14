@@ -8,6 +8,9 @@ namespace Rxmxnx.PInvoke;
 [StructLayout(LayoutKind.Sequential)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<ReadOnlyValPtr<T>>, ISerializable
+#if NET9_0_OR_GREATER
+	where T : allows ref struct
+#endif
 {
 #pragma warning disable CS8500
 	/// <summary>
