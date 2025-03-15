@@ -501,7 +501,7 @@ implementation or inheritance.
 <details>
   <summary>IReadOnlyFixedReference&lt;T&gt;</summary>
 
-This interface exposes a read-only reference to an object of type T, allowing the object to be used without
+This interface exposes a read-only reference to an object of type `T`, allowing the object to be used without
 modification.
 
 **Note:** This interface inherits from `IReadOnlyReferenceable<T>` and `IReadOnlyFixedMemory`. This type allows public
