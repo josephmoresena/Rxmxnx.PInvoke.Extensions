@@ -421,8 +421,7 @@ Interface representing a read-only fixed block of memory for a specific type.
 This interface is used for managing fixed memory blocks that require explicit resource cleanup.
 
 **Note:** This interface inherits from `IReadOnlyFixedMemory<T>` and `IReadOnlyFixedMemory.IDisposable`. This type
-allows
-public implementation or inheritance.
+allows public implementation or inheritance.
 
 </details>
 
@@ -506,7 +505,7 @@ This interface exposes a read-only reference to an object of type T, allowing th
 modification.
 
 **Note:** This interface inherits from `IReadOnlyReferenceable<T>` and `IReadOnlyFixedMemory`. This type allows public
-implementation or inheritance.
+implementation or inheritance. In .NET 9.0+ `T` allows `ref struct`.
 
 #### Methods:
 
@@ -522,8 +521,7 @@ implementation or inheritance.
 This interface is used for managing fixed memory blocks that require explicit resource cleanup.
 
 **Note:** This interface inherits from `IReadOnlyFixedReference<T>` and `IReadOnlyFixedMemory.IDisposable`. This type
-allows
-public implementation or inheritance.
+allows public implementation or inheritance.
 
 </details>
 
@@ -533,8 +531,7 @@ public implementation or inheritance.
 This interface represents a mutable reference to a fixed memory location.
 
 **Note:** This interface inherits from `IReferenceable<T>`, `IReadOnlyFixedReference<T>` and `IFixedMemory`. This type
-allows
-public implementation or inheritance.
+allows public implementation or inheritance. In .NET 9.0+ `T` allows `ref struct`.
 
 #### Methods:
 
@@ -556,8 +553,7 @@ public implementation or inheritance.
 This interface is used for managing fixed memory blocks that require explicit resource cleanup.
 
 **Note:** This interface inherits from `IFixedReference<T>` and `IReadOnlyFixedReference<T>.IDisposable`. This type
-allows
-public implementation or inheritance.
+allows public implementation or inheritance.
 
 </details>
 
@@ -582,8 +578,7 @@ Interface representing a context from a read-only block of fixed memory.
 This interface is used for managing fixed memory blocks that require explicit resource cleanup.
 
 **Note:** This interface inherits from `IReadOnlyFixedContext<T>` and `IReadOnlyFixedMemory<T>.IDisposable`. This type
-allows
-public implementation or inheritance.
+allows public implementation or inheritance.
 
 </details>
 
@@ -685,7 +680,7 @@ Interface representing a value state for functional CString creation.
 
 This interfaces exposes a managed buffer.
 
-**Note:** This type not allow public implementation or inheritance.
+**Note:** This type not allows public implementation or inheritance.
 
 #### Static Methods:
 
@@ -702,7 +697,7 @@ This interfaces exposes a managed buffer.
 
 This interfaces exposes a binary managed buffer.
 
-**Note:** This interface inherits from `IManagedBuffer<T>`. This type not allow public implementation or inheritance.
+**Note:** This interface inherits from `IManagedBuffer<T>`. This type not allows public implementation or inheritance.
 
 #### Properties:
 
@@ -720,8 +715,7 @@ This interfaces exposes a binary managed buffer.
 This interfaces exposes a binary managed buffer.
 
 **Note:** `TBuffer` generic type is `struct`. This interface inherits from `IManagedBinaryBuffer<T>`. This type not
-allow
-public implementation or inheritance.
+allows public implementation or inheritance.
 
 </details>
 
