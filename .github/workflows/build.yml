@@ -52,7 +52,7 @@ jobs:
           ./.sonar/scanner/dotnet-sonarscanner begin /k:"josephmoresena_PInvoke.Extensions" /o:"josephmoresena" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.scanner.scanAll=false /d:sonar.coverage.exclusions="**Test.cs,**Tests.cs,**test.cs,**tests.cs,**.SourceGenerator/*.cs" /d:sonar.cs.vstest.reportsPaths=TestResults/*.trx /d:sonar.cs.opencover.reportsPaths=TestResults/*/coverage.opencover.xml /d:sonar.cpd.exclusions="**/NativeUtilities/**FixedAction.cs,**/NativeUtilities/**FixedFunc.cs,**/IManagedBinaryBuffer/StaticCompose.cs,**Test/**Tests**/**.cs,**/Localization/**MessageResource.cs"
           dotnet restore src 
           dotnet build src --configuration release 
-          dotnet test src --verbosity detailed --collect:"XPlat Code Coverage" --results-directory TestResults/  --logger "trx;verbosity=detailed" --no-build --no-restore --configuration release -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover 
+          dotnet test src --verbosity normal --collect:"XPlat Code Coverage" --results-directory TestResults/  --logger "trx;verbosity=detailed" --no-build --no-restore --configuration release -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover 
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
       - name: Pack assembly
         working-directory: ./package
@@ -87,21 +87,37 @@ jobs:
       - name: Create PackageTrimmedAssembly Program.cs
         working-directory: ./tmpProject/PackageTrimmedAssembly
         run: |
-          echo 'Console.WriteLine($"Native AOT: {Rxmxnx.PInvoke.AotInfo.IsNativeAot}");' > Program.cs
-          echo 'Console.WriteLine($"Reflection Enabled: {(!Rxmxnx.PInvoke.AotInfo.IsReflectionDisabled)}");' >> Program.cs
-          echo 'Console.WriteLine($"Is 64-bit: {(Rxmxnx.PInvoke.NativeUtilities.PointerSize == 8)}");' >> Program.cs
-          echo 'Console.WriteLine($"Globalization-Invariant Mode: {Rxmxnx.PInvoke.NativeUtilities.GlobalizationInvariantModeEnabled}");' >> Program.cs
-          echo 'Console.WriteLine($"UI Culture: {System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}");' >> Program.cs
-          echo 'Console.WriteLine($"UI Iso639-1: {Rxmxnx.PInvoke.NativeUtilities.UserInterfaceIso639P1}");' >> Program.cs
-          echo 'Console.WriteLine($"Buffer AutoComposition Enabled: {Rxmxnx.PInvoke.BufferManager.BufferAutoCompositionEnabled}");' >> Program.cs
-          echo 'var bufferMetadata = (new Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<ValueTuple<String, Int32>>, Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<ValueTuple<String, Int32>>, Rxmxnx.PInvoke.Buffers.Atomic<ValueTuple<String, Int32>>, ValueTuple<String, Int32>>, ValueTuple<String, Int32>>() as Rxmxnx.PInvoke.Buffers.IManagedBinaryBuffer<ValueTuple<String, Int32>>).Metadata;' >> Program.cs
-          echo 'Console.WriteLine($"Metadata Size: {bufferMetadata.Size}");' >> Program.cs
-          echo 'Rxmxnx.PInvoke.BufferManager.Alloc<ValueTuple<String, Int32>>(bufferMetadata.Size, s => ' >> Program.cs
-          echo '{' >> Program.cs
-          echo '  Console.WriteLine($"Span Size: {s.Span.Length}");' >> Program.cs
-          echo '  Console.WriteLine($"Buffer Size: {s.FullLength}");' >> Program.cs
-          echo '  Console.WriteLine($"In Stack: {s.InStack}");' >> Program.cs
-          echo '});' >> Program.cs
+          echo 'using System.Globalization; using System.Runtime.CompilerServices; using Rxmxnx.PInvoke; using Rxmxnx.PInvoke.Buffers;
+          Console.WriteLine($"Native AOT: {AotInfo.IsNativeAot}");
+          Console.WriteLine($"Reflection Enabled: {(!AotInfo.IsReflectionDisabled)}");
+          Console.WriteLine($"Is 64-bit: {(NativeUtilities.PointerSize == 8)}");
+          Console.WriteLine($"Globalization-Invariant Mode: {NativeUtilities.GlobalizationInvariantModeEnabled}");
+          Console.WriteLine($"UI Culture: {CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}");
+          Console.WriteLine($"UI Iso639-1: {NativeUtilities.UserInterfaceIso639P1}");
+          Console.WriteLine($"Buffer AutoComposition Enabled: {BufferManager.BufferAutoCompositionEnabled}");
+          var bufferMetadata =
+              (new Composite<Atomic<ValueTuple<String, Int32>>,
+                  Composite<Atomic<ValueTuple<String, Int32>>, Atomic<ValueTuple<String, Int32>>, ValueTuple<String, Int32>>,
+                  ValueTuple<String, Int32>>() as IManagedBinaryBuffer<ValueTuple<String, Int32>>).Metadata;
+          Console.WriteLine($"Metadata Size: {bufferMetadata.Size}");
+          BufferManager.Alloc<ValueTuple<String, Int32>>(bufferMetadata.Size, s =>
+          {
+              Console.WriteLine($"Span Size: {s.Span.Length}");
+              Console.WriteLine($"Buffer Size: {s.FullLength}");
+              Console.WriteLine($"In Stack: {s.InStack}");
+              Span<ValueTuple<String, Int32>> localSpan = s.Span;
+              ref Span<ValueTuple<String, Int32>> refSpan = ref localSpan;
+              ValPtr<Span<ValueTuple<String, Int32>>> valRefSpan = NativeUtilities.GetUnsafeValPtrFromRef(ref localSpan);
+              NativeUtilities.WithSafeFixed(ref refSpan, UseFixedRefSpan);
+              Console.WriteLine($"Ref Span: 0x{valRefSpan.Pointer:x8}");
+              Console.WriteLine($"Ref Span vs Ptr Span: {Unsafe.AreSame(ref refSpan, ref valRefSpan.Reference)}");
+          });
+          
+          return;
+          
+          static void UseFixedRefSpan(in IFixedReference<Span<ValueTuple<String, Int32>>> frs) {
+              Console.WriteLine($"Reference Length: {frs.Reference.Length}");
+          }' > Program.cs
       - name: Build Package-Trimmed-Executables (PackageTrimmedAssembly)
         working-directory: ./tmpProject/PackageTrimmedAssembly
         run: |
@@ -178,53 +194,38 @@ jobs:
         with:
           name: Package-Trimmed-Executables-Logs
           path: ./tmpProject/Executable/ilcLogs
-  run-linux:
-    runs-on: ubuntu-latest
+  run-tests:
+    needs: [ build ]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ windows-latest, ubuntu-latest, macos-latest, macos-13 ]
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
+        if: runner.os != 'Windows'
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 9.0.x
-      - name: Linux tests
-        run: |
-          dotnet restore src 
-          dotnet build src --configuration release 
-          dotnet test src --verbosity detailed --no-build --no-restore --configuration release
-  
-  run-macOS:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 9.0.x
-      - name: MacOS tests
-        run: |
-          dotnet restore src 
-          dotnet build src --configuration release 
-          dotnet test src --verbosity detailed --no-build --no-restore --configuration release
-  
-  run-windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install winget
+      - name: Install WinGet
+        if: runner.os == 'Windows'
         uses: Cyberboss/install-winget@v1
       - name: Setup .NET x86
+        if: runner.os == 'Windows'
         run: |
           winget install Microsoft.DotNet.SDK.9 --architecture x86 --silent --disable-interactivity --accept-source-agreements
       - name: Setup .NET x64
+        if: runner.os == 'Windows'
         run: |
           winget install Microsoft.DotNet.SDK.9 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
       - name: Build tests
         run: |
           dotnet restore src 
-          dotnet build src --configuration release 
+          dotnet build src --configuration Release 
       - name: Windows x86 tests
+        if: runner.os == 'Windows'
         run: |
-          dotnet test src --verbosity detailed --no-build --no-restore --configuration release --settings src\Test\x86.runsettings
-      - name: Windows x64 tests
+          dotnet test src --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed" --settings src\Test\x86.runsettings
+      - name: Run tests
         run: |
-          dotnet test src --verbosity detailed --no-build --no-restore --configuration release 
+          dotnet test src --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"

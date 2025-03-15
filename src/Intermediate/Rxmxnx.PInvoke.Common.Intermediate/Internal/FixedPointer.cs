@@ -135,6 +135,9 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ref T CreateReference<T>()
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
 	{
 		this.ValidateOperation();
 		this.ValidateReferenceSize(typeof(T), sizeof(T));
@@ -152,6 +155,9 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ref readonly T CreateReadOnlyReference<T>()
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
 	{
 		this.ValidateOperation(true);
 		this.ValidateReferenceSize(typeof(T), sizeof(T));

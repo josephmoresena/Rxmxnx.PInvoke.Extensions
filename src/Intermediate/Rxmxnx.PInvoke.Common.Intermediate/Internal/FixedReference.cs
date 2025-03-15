@@ -6,6 +6,9 @@
 /// <typeparam name="T">Type of the fixed memory reference.</typeparam>
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedReference<T>
+#if NET9_0_OR_GREATER
+	where T : allows ref struct
+#endif
 {
 #pragma warning disable CS8500
 	/// <inheritdoc/>

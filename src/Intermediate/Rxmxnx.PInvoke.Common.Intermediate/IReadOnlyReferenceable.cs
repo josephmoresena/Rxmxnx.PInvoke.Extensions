@@ -6,6 +6,9 @@
 /// </summary>
 /// <typeparam name="T">The type of the object that the reference points to.</typeparam>
 public interface IReadOnlyReferenceable<T> : IEquatable<IReadOnlyReferenceable<T>>
+#if NET9_0_OR_GREATER
+	where T : allows ref struct
+#endif
 {
 	/// <summary>
 	/// Gets the read-only reference to the instance of an object of type <typeparamref name="T"/>.

@@ -96,7 +96,11 @@ These interfaces represent a safe way to access a managed reference of a specifi
 This interface exposes a read-only reference to an object of type `T`, allowing the object
 to be used without modification.
 
-**Note:** This interface inherits from `IEquatable<T>`. This type allows public implementation or inheritance.
+**Notes:**
+
+- This interface inherits from `IEquatable<IReadOnlyReferenceable<T>>`.
+- This type allows public implementation or inheritance.
+- In .NET 9.0+ `T` allows `ref struct`.
 
 #### Properties:
 
@@ -116,8 +120,11 @@ to be used without modification.
 This interface exposes a reference to an object of type `T`,
 allowing the object to be used and potentially modified.
 
-**Note:** This interface inherits from `IReadOnlyReferenceable<T>`. This type allows public implementation or
-inheritance.
+**Notes:**
+
+- This interface inherits from `IReadOnlyReferenceable<T>` and `IEquatable<IReferenceable<T>>`.
+- This type allows public implementation or inheritance.
+- In .NET 9.0+ `T` allows `ref struct`.
 
 #### Properties:
 
@@ -138,7 +145,9 @@ These interfaces represent a safe way to access a value or managed object of a s
 
 This interface defines a wrapper for a `T` object.
 
-**Note:** This interface inherits from `IEquatable<T>`. This type allows public implementation or inheritance.
+**Notes:**
+
+- This interface inherits from `IEquatable<T>`. This type allows public implementation or inheritance.
 
 #### Properties:
 
@@ -160,6 +169,9 @@ This interface defines a wrapper for a `T` object.
 
 `IWrapper` is a non-generic interface that exposes static methods for creating specific types of
 `IWrapper<T>` for concrete cases of value types, nullable values, and non-nullable reference types.
+
+**Note:** `IWrapper` contains a public interface `IBase<T>` that allows covariance. In .NET 9.0+, `T` allows
+`ref struct`.
 
 ##### Static Methods:
 
@@ -409,8 +421,7 @@ Interface representing a read-only fixed block of memory for a specific type.
 This interface is used for managing fixed memory blocks that require explicit resource cleanup.
 
 **Note:** This interface inherits from `IReadOnlyFixedMemory<T>` and `IReadOnlyFixedMemory.IDisposable`. This type
-allows
-public implementation or inheritance.
+allows public implementation or inheritance.
 
 </details>
 
@@ -490,11 +501,11 @@ implementation or inheritance.
 <details>
   <summary>IReadOnlyFixedReference&lt;T&gt;</summary>
 
-This interface exposes a read-only reference to an object of type T, allowing the object to be used without
+This interface exposes a read-only reference to an object of type `T`, allowing the object to be used without
 modification.
 
 **Note:** This interface inherits from `IReadOnlyReferenceable<T>` and `IReadOnlyFixedMemory`. This type allows public
-implementation or inheritance.
+implementation or inheritance. In .NET 9.0+ `T` allows `ref struct`.
 
 #### Methods:
 
@@ -510,8 +521,7 @@ implementation or inheritance.
 This interface is used for managing fixed memory blocks that require explicit resource cleanup.
 
 **Note:** This interface inherits from `IReadOnlyFixedReference<T>` and `IReadOnlyFixedMemory.IDisposable`. This type
-allows
-public implementation or inheritance.
+allows public implementation or inheritance.
 
 </details>
 
@@ -521,8 +531,7 @@ public implementation or inheritance.
 This interface represents a mutable reference to a fixed memory location.
 
 **Note:** This interface inherits from `IReferenceable<T>`, `IReadOnlyFixedReference<T>` and `IFixedMemory`. This type
-allows
-public implementation or inheritance.
+allows public implementation or inheritance. In .NET 9.0+ `T` allows `ref struct`.
 
 #### Methods:
 
@@ -544,8 +553,7 @@ public implementation or inheritance.
 This interface is used for managing fixed memory blocks that require explicit resource cleanup.
 
 **Note:** This interface inherits from `IFixedReference<T>` and `IReadOnlyFixedReference<T>.IDisposable`. This type
-allows
-public implementation or inheritance.
+allows public implementation or inheritance.
 
 </details>
 
@@ -570,8 +578,7 @@ Interface representing a context from a read-only block of fixed memory.
 This interface is used for managing fixed memory blocks that require explicit resource cleanup.
 
 **Note:** This interface inherits from `IReadOnlyFixedContext<T>` and `IReadOnlyFixedMemory<T>.IDisposable`. This type
-allows
-public implementation or inheritance.
+allows public implementation or inheritance.
 
 </details>
 
@@ -673,7 +680,7 @@ Interface representing a value state for functional CString creation.
 
 This interfaces exposes a managed buffer.
 
-**Note:** This type not allow public implementation or inheritance.
+**Note:** This type does not allow public implementation or inheritance.
 
 #### Static Methods:
 
@@ -690,7 +697,8 @@ This interfaces exposes a managed buffer.
 
 This interfaces exposes a binary managed buffer.
 
-**Note:** This interface inherits from `IManagedBuffer<T>`. This type not allow public implementation or inheritance.
+**Note:** This interface inherits from `IManagedBuffer<T>`. This type does not allow public implementation or
+inheritance.
 
 #### Properties:
 
@@ -708,8 +716,7 @@ This interfaces exposes a binary managed buffer.
 This interfaces exposes a binary managed buffer.
 
 **Note:** `TBuffer` generic type is `struct`. This interface inherits from `IManagedBinaryBuffer<T>`. This type not
-allow
-public implementation or inheritance.
+allows public implementation or inheritance.
 
 </details>
 
@@ -898,6 +905,7 @@ These delegates encapsulate methods that operate on fixed memory references of a
 
 Encapsulates a method that receives an instance of `IFixedReference<T>`.
 
+**Note:** In .NET 9.0+ both `T` and `TArg` allows `ref struct`.
 </details>
 
 <details>
@@ -905,8 +913,7 @@ Encapsulates a method that receives an instance of `IFixedReference<T>`.
 
 Encapsulates a method that receives an instance of `IFixedReference<T>` and a state object of type `TArg`.
 
-**Note:** In .NET 9.0+ `TState` allows `ref struct`.
-
+**Note:** In .NET 9.0+ both `T` and `TArg` allows `ref struct`.
 </details>
 
 <details>
@@ -914,6 +921,7 @@ Encapsulates a method that receives an instance of `IFixedReference<T>` and a st
 
 Encapsulates a method that receives an instance of `IReadOnlyFixedReference<T>`.
 
+**Note:** In .NET 9.0+ `T` allows `ref struct`.
 </details>
 
 <details>
@@ -921,8 +929,7 @@ Encapsulates a method that receives an instance of `IReadOnlyFixedReference<T>`.
 
 Encapsulates a method that receives an instance of `IReadOnlyFixedReference<T>` and a state object of type `TArg`.
 
-**Note:** In .NET 9.0+ `TState` allows `ref struct`.
-
+**Note:** In .NET 9.0+ both `T` and `TArg` allows `ref struct`.
 </details>
 
 <details>
@@ -930,6 +937,7 @@ Encapsulates a method that receives an instance of `IReadOnlyFixedReference<T>` 
 
 Encapsulates a method that receives an instance of `IFixedReference<T>` and returns a value of type `TResult`.
 
+**Note:** In .NET 9.0+ `T` allows `ref struct`.
 </details>
 
 <details>
@@ -937,8 +945,7 @@ Encapsulates a method that receives an instance of `IFixedReference<T>` and retu
 
 Encapsulates a method that receives an instance of `IFixedReference<T>` and returns a value of type `TResult`.
 
-**Note:** In .NET 9.0+ `TState` allows `ref struct`.
-
+**Note:** In .NET 9.0+ both `T` and `TArg` allows `ref struct`.
 </details>
 
 <details>
@@ -946,6 +953,7 @@ Encapsulates a method that receives an instance of `IFixedReference<T>` and retu
 
 Encapsulates a method that receives an instance of `IReadOnlyFixedReference<T>` and returns a value of type `TResult`.
 
+**Note:** In .NET 9.0+ `T` allows `ref struct`.
 </details>
 
 <details>
@@ -953,8 +961,7 @@ Encapsulates a method that receives an instance of `IReadOnlyFixedReference<T>` 
 
 Encapsulates a method that receives an instance of `IReadOnlyFixedReference<T>` and returns a value of type `TResult`.
 
-**Note:** In .NET 9.0+ `TState` allows `ref struct`.
-
+**Note:** In .NET 9.0+ both `T` and `TArg` allows `ref struct`.
 </details>
 
 ## Fixed address method Delegates
@@ -1359,8 +1366,12 @@ These structures safely represent memory addresses for references or methods of 
 
 Represents a platform-specific type used to manage a pointer to a read-only value of type `T`.
 
-**Note:** This struct implements `IComparable`, `ISpanFormattable`, `ISerializable`, `IWrapper<IntPtr>`,
-`IEquatable<ReadOnlyValPtr<T>>` and `IComparable<ReadOnlyValPtr<T>>` interfaces.
+**Notes:**
+
+- This struct implements `IComparable`, `ISpanFormattable`, `ISerializable`, `IWrapper<IntPtr>`,
+  `IEquatable<ReadOnlyValPtr<T>>` and `IComparable<ReadOnlyValPtr<T>>` interfaces.
+- In .NET 7.0+ this struct implements `IParsable<ReadOnlyValPtr<T>>` interface.
+- In .NET 9.0+ `T` allows `ref struct`.
 
 #### Static Properties:
 
@@ -1402,6 +1413,8 @@ Represents a platform-specific type used to manage a pointer to a read-only valu
   <summary>GetUnsafeFixedContext(IDisposable?)</summary>
 
   Retrieves an unsafe `IReadOnlyFixedContext<T>.IDisposable` instance from current read-only reference pointer.
+
+  **Note:** In .NET 9.0+ this is an extension method.
   </details>
 
 </details>
@@ -1411,8 +1424,12 @@ Represents a platform-specific type used to manage a pointer to a read-only valu
 
 Represents a platform-specific type used to manage a pointer to a mutable value of type `T`.
 
-**Note:** This struct implements `IComparable`, `ISpanFormattable`, `ISerializable`, `IWrapper<IntPtr>`,
-`IEquatable<ValPtr<T>>` and `IComparable<ValPtr<T>>` interfaces.
+**Notes:**
+
+- This struct implements `IComparable`, `ISpanFormattable`, `ISerializable`, `IWrapper<IntPtr>`,
+  `IEquatable<ValPtr<T>>` and `IComparable<ValPtr<T>>` interfaces.
+- In .NET 7.0+ this struct implements `IParsable<ValPtr<T>>` interface.
+- In .NET 9.0+ `T` allows `ref struct`.
 
 #### Static Properties:
 
@@ -1453,6 +1470,8 @@ Represents a platform-specific type used to manage a pointer to a mutable value 
   <summary>GetUnsafeFixedContext(IDisposable?)</summary>
 
   Retrieves an unsafe `IReadOnlyFixedContext<T>.IDisposable` instance from current reference pointer.
+
+  **Note:** In .NET 9.0+ this is an extension method.
   </details>
 
 </details>
@@ -1651,7 +1670,7 @@ metadata for stack-allocated buffer management.
 
 This class represents a region of memory that contains a sequence of `T` values.
 
-**Note:** `T` must be `unmanaged`. This type not allow public inheritance.
+**Note:** `T` must be `unmanaged`. This type does not allow public inheritance.
 
 ### Properties:
 
@@ -1717,7 +1736,7 @@ This class represents a region of memory that contains a sequence of `T` values.
 
 Represents the metadata of a managed buffer type.
 
-**Note:** Implements `IEnumerableSequence<BufferTypeMetadata>`. This type not allow public inheritance.
+**Note:** Implements `IEnumerableSequence<BufferTypeMetadata>`. This type does not allow public inheritance.
 
 ### Properties:
 
@@ -1749,7 +1768,7 @@ Represents the metadata of a managed buffer type.
 
 `BufferTypeMetadata<T>` representing a generic `BufferTypeMetadata` object.
 
-**Note:** Inherits from `BufferTypeMetadata`. This type not allow public inheritance.
+**Note:** Inherits from `BufferTypeMetadata`. This type does not allow public inheritance.
 
 </details>
 
@@ -2240,7 +2259,7 @@ Additional functionality for working with memory blocks.
 - <details>
   <summary>GetUnsafePtr&lt;T&gt;(this Span&lt;T&gt;)</summary>
 
-  Retrieves an unsafe `IntPtr` pointer from `Span<TZ` instance.
+  Retrieves an unsafe `IntPtr` pointer from `Span<T>` instance.
   </details>
 - <details>
   <summary>GetUnsafePtr&lt;T&gt;(this ReadOnlySpan&lt;T&gt;)</summary>
@@ -2920,11 +2939,15 @@ Set of utilities for exchange data within the P/Invoke context.
   <summary>GetUnsafeValPtr&lt;T&gt;(in T)</summary>
 
   Retrieves an unsafe `ReadOnlyValPtr<T>` pointer from a read-only reference to a `T` value.
+
+  **Note:** In .NET 9.0+ `T` allows `ref struct`.
   </details>
 - <details>
   <summary>GetUnsafeValPtrFromRef&lt;T&gt;(ref T)</summary>
 
   Retrieves an unsafe pointer of type `ValPtr<T>` from a reference to a value of type T.
+
+  **Note:** In .NET 9.0+ `T` allows `ref struct`.
   </details>
 - <details>
   <summary>GetUnsafeIntPtr&lt;T&gt;(in T)</summary>
@@ -2985,52 +3008,92 @@ Set of utilities for exchange data within the P/Invoke context.
 
 - <details>
   <summary>WithSafeReadOnlyFixed&lt;T&gt;(ref T, ReadOnlyFixedReferenceAction&lt;T&gt;)</summary>
+
   Prevents the garbage collector from relocating a given reference and fixes its memory address until action finishes.
+
+  **Note:** In .NET 9.0+ `T` allows `ref struct`.
   </details>
 - <details>
   <summary>WithSafeReadOnlyFixed&lt;T, TArg&gt;(ref T, TArg, ReadOnlyFixedReferenceAction&lt;T, TArg&gt;)</summary>
+
   Prevents the garbage collector from relocating a given reference and fixes its memory address until action finishes.
+
+  **Note:** In .NET 9.0+ both `T` and `TArg` allows `ref struct`.
   </details>
 - <details>
   <summary>WithSafeReadOnlyFixed&lt;T, TResult&gt;(ref T, ReadOnlyFixedReferenceFunc&lt;T, TResult&gt;)</summary>
+
   Prevents the garbage collector from relocating a given reference and fixes its memory address until func finishes.
+
+  **Note:** In .NET 9.0+ `T` allows `ref struct`.
   </details>
 - <details>
   <summary>WithSafeReadOnlyFixed&lt;T, TArg, TResult&gt;(ref T, TArg, ReadOnlyFixedReferenceFunc&lt;T, TArg, TResult&gt;)</summary>
+
   Prevents the garbage collector from relocating a given reference and fixes its memory address until func finishes.
+
+  **Note:** In .NET 9.0+ both `T` and `TArg` allows `ref struct`.
   </details>
 
 - <details>
   <summary>WithSafeFixed&lt;T&gt;(in T, ReadOnlyFixedReferenceAction&lt;T&gt;)</summary>
-  Prevents the garbage collector from relocating a given read-only reference and fixes its memory address until action finishes.
+
+  Prevents the garbage collector from relocating a given read-only reference and fixes its memory address until action
+  finishes.
+
+  **Note:** In .NET 9.0+ `T` allows `ref struct`.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T&gt;(ref T, FixedReferenceAction&lt;T&gt;)</summary>
+
   Prevents the garbage collector from relocating a given reference and fixes its memory address until action finishes.
+
+  **Note:** In .NET 9.0+ `T` allows `ref struct`.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TArg&gt;(in T, TArg, ReadOnlyFixedReferenceAction&lt;T, TArg&gt;)</summary>
-  Prevents the garbage collector from relocating a given read-only reference and fixes its memory address until action finishes.
+
+  Prevents the garbage collector from relocating a given read-only reference and fixes its memory address until action
+  finishes.
+
+  **Note:** In .NET 9.0+ both `T` and `TArg` allows `ref struct`.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TArg&gt;(ref T, TArg, FixedReferenceAction&lt;T, TArg&gt;)</summary>
+
   Prevents the garbage collector from relocating a given reference and fixes its memory address until action finishes.
+
+  **Note:** In .NET 9.0+ both `T` and `TArg` allows `ref struct`.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TResult&gt;(in T, ReadOnlyFixedReferenceFunc&lt;T, TResult&gt;)</summary>
-  Prevents the garbage collector from relocating a given read-only reference and fixes its memory address until func finishes.
+
+  Prevents the garbage collector from relocating a given read-only reference and fixes its memory address until func
+  finishes.
+
+  **Note:** In .NET 9.0+ `T` allows `ref struct`.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TResult&gt;(ref T, FixedReferenceFunc&lt;T, TResult&gt;)</summary>
+
   Prevents the garbage collector from relocating a given reference and fixes its memory address until func finishes.
+
+  **Note:** In .NET 9.0+ `T` allows `ref struct`.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TArg, TResult&gt;(in T, TArg, ReadOnlyFixedReferenceFunc&lt;T, TArg, TResult&gt;)</summary>
-  Prevents the garbage collector from relocating a given read-only reference and fixes its memory address until func finishes.
+
+  Prevents the garbage collector from relocating a given read-only reference and fixes its memory address until func
+  finishes.
+
+  **Note:** In .NET 9.0+ both `T` and `TArg` allows `ref struct`.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TArg, TResult&gt;(ref T, TArg, FixedReferenceFunc&lt;T, TArg, TResult&gt;)</summary>
+
   Prevents the garbage collector from relocating a given reference and fixes its memory address until func finishes.
+
+  **Note:** In .NET 9.0+ both `T` and `TArg` allows `ref struct`.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TDelegate&gt;(TDelegate, FixedMethodAction&lt;TDelegate&gt;)</summary>
@@ -3038,7 +3101,11 @@ Set of utilities for exchange data within the P/Invoke context.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TDelegate, TArg&gt;(TDelegate, TArg, FixedMethodAction&lt;TDelegate, TArg&gt;)</summary>
-  Prevents the garbage collector from relocating a given method delegate and fixes its memory address until action finishes.
+
+  Prevents the garbage collector from relocating a given method delegate and fixes its memory address until action
+  finishes.
+
+  **Note:** In .NET 9.0+ `TArg` allows `ref struct`.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TDelegate, TResult&gt;(TDelegate, FixedMethodFunc&lt;TDelegate, TResult&gt;)</summary>
@@ -3046,7 +3113,11 @@ Set of utilities for exchange data within the P/Invoke context.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TDelegate, TArg, TResult&gt;(TDelegate, TArg, FixedMethodFunc&lt;TDelegate, TArg, TResult&gt;)</summary>
-  Prevents the garbage collector from relocating a given method delegate and fixes its memory address until func finishes.
+
+  Prevents the garbage collector from relocating a given method delegate and fixes its memory address until func
+  finishes.
+
+  **Note:** In .NET 9.0+ `TArg` allows `ref struct`.
   </details>
 
 - <details>
@@ -3055,7 +3126,10 @@ Set of utilities for exchange data within the P/Invoke context.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T0, ..., T7, TArg&gt;(Span&lt;T0&gt;, ..., Span&lt;T7&gt;, TArg, FixedListAction&lt;TArg&gt;)</summary>
+
   Prevents the garbage collector from reallocating given spans and fixes their memory addresses until action completes.
+
+  **Note:** In .NET 9.0+ `TArg` allows `ref struct`.
   </details>
 
 - <details>
@@ -3064,7 +3138,10 @@ Set of utilities for exchange data within the P/Invoke context.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T0, ..., T7, TArg&gt;(ReadOnlySpan&lt;T0&gt;, ..., ReadOnlySpan&lt;T7&gt;, TArg, ReadOnlyFixedListAction&lt;TArg&gt;)</summary>
+
   Prevents the garbage collector from reallocating given spans and fixes their memory addresses until action completes.
+
+  **Note:** In .NET 9.0+ `TArg` allows `ref struct`.
   </details>
 
 - <details>
@@ -3073,7 +3150,10 @@ Set of utilities for exchange data within the P/Invoke context.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T0, ..., T7, TArg, TResult&gt;(Span&lt;T0&gt;, ..., Span&lt;T7&gt;, TArg, FixedListFunc&lt;TArg, TResult&gt;)</summary>
+
   Prevents the garbage collector from reallocating given spans and fixes their memory addresses until func completes.
+
+  **Note:** In .NET 9.0+ `TArg` allows `ref struct`.
   </details>
 
 - <details>
@@ -3082,7 +3162,10 @@ Set of utilities for exchange data within the P/Invoke context.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T0, ..., T7, TArg, TResult&gt;(Span&lt;T0&gt;, ..., Span&lt;T7&gt;, TArg, ReadOnlyFixedListFunc&lt;TArg, TResult&gt;)</summary>
+
   Prevents the garbage collector from reallocating given spans and fixes their memory addresses until func completes.
+
+  **Note:** In .NET 9.0+ `TArg` allows `ref struct`.
   </details>
 
 - <details>
@@ -3091,7 +3174,10 @@ Set of utilities for exchange data within the P/Invoke context.
   </details>
 - <details>
   <summary>WithSafeReadOnlyFixed&lt;T0, ..., T7, TArg&gt;(Span&lt;T0&gt;, ..., Span&lt;T7&gt;, TArg, ReadOnlyFixedListAction&lt;TArg&gt;)</summary>
+
   Prevents the garbage collector from reallocating given spans and fixes their memory addresses until action completes.
+
+  **Note:** In .NET 9.0+ `TArg` allows `ref struct`.
   </details>
 
 - <details>
@@ -3100,7 +3186,10 @@ Set of utilities for exchange data within the P/Invoke context.
   </details>
 - <details>
   <summary>WithSafeReadOnlyFixed&lt;T0, ..., T7, TArg, TResult&gt;(Span&lt;T0&gt;, ..., Span&lt;T7&gt;, TArg, ReadOnlyFixedListFunc&lt;TArg, TResult&gt;)</summary>
+
   Prevents the garbage collector from reallocating given spans and fixes their memory addresses until func completes.
+
+  **Note:** In .NET 9.0+ `TArg` allows `ref struct`.
   </details>
 
 </details>
