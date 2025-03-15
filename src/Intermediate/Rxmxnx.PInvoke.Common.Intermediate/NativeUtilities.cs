@@ -109,6 +109,9 @@ public static unsafe partial class NativeUtilities
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ReadOnlyValPtr<T> GetUnsafeValPtr<T>(in T value)
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
 	{
 		ref T refValue = ref Unsafe.AsRef(in value);
 		return new(Unsafe.AsPointer(ref refValue));
@@ -127,6 +130,9 @@ public static unsafe partial class NativeUtilities
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ValPtr<T> GetUnsafeValPtrFromRef<T>(ref T refValue)
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
 	{
 		void* ptr = Unsafe.AsPointer(ref refValue);
 		return new(ptr);

@@ -87,21 +87,31 @@ jobs:
       - name: Create PackageTrimmedAssembly Program.cs
         working-directory: ./tmpProject/PackageTrimmedAssembly
         run: |
-          echo 'Console.WriteLine($"Native AOT: {Rxmxnx.PInvoke.AotInfo.IsNativeAot}");' > Program.cs
-          echo 'Console.WriteLine($"Reflection Enabled: {(!Rxmxnx.PInvoke.AotInfo.IsReflectionDisabled)}");' >> Program.cs
-          echo 'Console.WriteLine($"Is 64-bit: {(Rxmxnx.PInvoke.NativeUtilities.PointerSize == 8)}");' >> Program.cs
-          echo 'Console.WriteLine($"Globalization-Invariant Mode: {Rxmxnx.PInvoke.NativeUtilities.GlobalizationInvariantModeEnabled}");' >> Program.cs
-          echo 'Console.WriteLine($"UI Culture: {System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}");' >> Program.cs
-          echo 'Console.WriteLine($"UI Iso639-1: {Rxmxnx.PInvoke.NativeUtilities.UserInterfaceIso639P1}");' >> Program.cs
-          echo 'Console.WriteLine($"Buffer AutoComposition Enabled: {Rxmxnx.PInvoke.BufferManager.BufferAutoCompositionEnabled}");' >> Program.cs
-          echo 'var bufferMetadata = (new Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<ValueTuple<String, Int32>>, Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<ValueTuple<String, Int32>>, Rxmxnx.PInvoke.Buffers.Atomic<ValueTuple<String, Int32>>, ValueTuple<String, Int32>>, ValueTuple<String, Int32>>() as Rxmxnx.PInvoke.Buffers.IManagedBinaryBuffer<ValueTuple<String, Int32>>).Metadata;' >> Program.cs
-          echo 'Console.WriteLine($"Metadata Size: {bufferMetadata.Size}");' >> Program.cs
-          echo 'Rxmxnx.PInvoke.BufferManager.Alloc<ValueTuple<String, Int32>>(bufferMetadata.Size, s => ' >> Program.cs
-          echo '{' >> Program.cs
-          echo '  Console.WriteLine($"Span Size: {s.Span.Length}");' >> Program.cs
-          echo '  Console.WriteLine($"Buffer Size: {s.FullLength}");' >> Program.cs
-          echo '  Console.WriteLine($"In Stack: {s.InStack}");' >> Program.cs
-          echo '});' >> Program.cs
+          echo 'using System.Globalization; using Rxmxnx.PInvoke; using Rxmxnx.PInvoke.Buffers;
+          Console.WriteLine($"Native AOT: {AotInfo.IsNativeAot}");
+          Console.WriteLine($"Reflection Enabled: {(!AotInfo.IsReflectionDisabled)}");
+          Console.WriteLine($"Is 64-bit: {(NativeUtilities.PointerSize == 8)}");
+          Console.WriteLine($"Globalization-Invariant Mode: {NativeUtilities.GlobalizationInvariantModeEnabled}");
+          Console.WriteLine($"UI Culture: {CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}");
+          Console.WriteLine($"UI Iso639-1: {NativeUtilities.UserInterfaceIso639P1}");
+          Console.WriteLine($"Buffer AutoComposition Enabled: {BufferManager.BufferAutoCompositionEnabled}");
+          var bufferMetadata =
+              (new Composite<Atomic<ValueTuple<String, Int32>>,
+                  Composite<Atomic<ValueTuple<String, Int32>>, Atomic<ValueTuple<String, Int32>>, ValueTuple<String, Int32>>,
+                  ValueTuple<String, Int32>>() as IManagedBinaryBuffer<ValueTuple<String, Int32>>).Metadata;
+          Console.WriteLine($"Metadata Size: {bufferMetadata.Size}");
+          BufferManager.Alloc<ValueTuple<String, Int32>>(bufferMetadata.Size, s =>
+          {
+              Console.WriteLine($"Span Size: {s.Span.Length}");
+              Console.WriteLine($"Buffer Size: {s.FullLength}");
+              Console.WriteLine($"In Stack: {s.InStack}");
+              Span<ValueTuple<String, Int32>> localSpan = s.Span;
+              ref Span<ValueTuple<String, Int32>> refSpan = ref localSpan;
+              ValPtr<Span<ValueTuple<String, Int32>>> valRefSpan = NativeUtilities.GetUnsafeValPtr(ref localSpan);
+              NativeUtilities.WithSafeFixed(ref refSpan, frs => Console.WriteLine($"Reference Length: {frs.Reference.Length}"));
+              Console.WriteLine($"Ref Span: {refSpan.Pointer}");
+              Console.WriteLine($"Ref Span vs Ptr Span: {Unsafe.AreSame(ref refSpan, ref valRefSpan.Reference)}");
+          });' > Program.cs
       - name: Build Package-Trimmed-Executables (PackageTrimmedAssembly)
         working-directory: ./tmpProject/PackageTrimmedAssembly
         run: |

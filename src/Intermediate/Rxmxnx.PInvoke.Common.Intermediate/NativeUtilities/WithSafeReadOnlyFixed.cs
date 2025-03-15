@@ -13,6 +13,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="ReadOnlyFixedReferenceAction{T}"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeReadOnlyFixed<T>(ref T value, ReadOnlyFixedReferenceAction<T> action)
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &value)
@@ -41,6 +44,7 @@ public static unsafe partial class NativeUtilities
 	public static void WithSafeReadOnlyFixed<T, TArg>(ref T value, TArg arg,
 		ReadOnlyFixedReferenceAction<T, TArg> action)
 #if NET9_0_OR_GREATER
+		where T : allows ref struct
 		where TArg : allows ref struct
 #endif
 	{
@@ -69,6 +73,9 @@ public static unsafe partial class NativeUtilities
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeReadOnlyFixed<T, TResult>(ref T value, ReadOnlyFixedReferenceFunc<T, TResult> func)
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &value)
@@ -99,6 +106,7 @@ public static unsafe partial class NativeUtilities
 	public static TResult WithSafeReadOnlyFixed<T, TArg, TResult>(ref T value, TArg arg,
 		ReadOnlyFixedReferenceFunc<T, TArg, TResult> func)
 #if NET9_0_OR_GREATER
+		where T : allows ref struct
 		where TArg : allows ref struct
 #endif
 	{

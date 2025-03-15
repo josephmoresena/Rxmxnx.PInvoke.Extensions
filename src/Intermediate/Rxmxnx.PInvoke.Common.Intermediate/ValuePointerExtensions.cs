@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke;
 
+#if NET9_0_OR_GREATER
 /// <summary>
 /// Provides a set of extensions for basic operations with <see cref="IntPtr"/> and <see cref="UIntPtr"/> instances.
 /// </summary>
@@ -50,3 +51,4 @@ public static unsafe partial class PointerExtensions
 		IDisposable? disposable = default)
 		=> new FixedContext<T>(ptr, count).ToDisposable(disposable);
 }
+#endif

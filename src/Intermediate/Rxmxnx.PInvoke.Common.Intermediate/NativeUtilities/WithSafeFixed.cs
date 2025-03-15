@@ -13,6 +13,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="ReadOnlyFixedReferenceAction{T}"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T>(in T value, ReadOnlyFixedReferenceAction<T> action)
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &value)
@@ -37,6 +40,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedReferenceAction{T}"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T>(ref T value, FixedReferenceAction<T> action)
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr = &value)
@@ -64,6 +70,7 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(in T value, TArg arg, ReadOnlyFixedReferenceAction<T, TArg> action)
 #if NET9_0_OR_GREATER
+		where T : allows ref struct
 		where TArg : allows ref struct
 #endif
 	{
@@ -93,6 +100,7 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(ref T value, TArg arg, FixedReferenceAction<T, TArg> action)
 #if NET9_0_OR_GREATER
+		where T : allows ref struct
 		where TArg : allows ref struct
 #endif
 	{
@@ -121,6 +129,9 @@ public static unsafe partial class NativeUtilities
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TResult>(in T value, ReadOnlyFixedReferenceFunc<T, TResult> func)
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &value)
@@ -147,6 +158,9 @@ public static unsafe partial class NativeUtilities
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TResult>(ref T value, FixedReferenceFunc<T, TResult> func)
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		fixed (void* ptr = &value)
@@ -177,6 +191,7 @@ public static unsafe partial class NativeUtilities
 	public static TResult WithSafeFixed<T, TArg, TResult>(in T value, TArg arg,
 		ReadOnlyFixedReferenceFunc<T, TArg, TResult> func)
 #if NET9_0_OR_GREATER
+		where T : allows ref struct
 		where TArg : allows ref struct
 #endif
 	{
@@ -209,6 +224,7 @@ public static unsafe partial class NativeUtilities
 	public static TResult WithSafeFixed<T, TArg, TResult>(ref T value, TArg arg,
 		FixedReferenceFunc<T, TArg, TResult> func)
 #if NET9_0_OR_GREATER
+		where T : allows ref struct
 		where TArg : allows ref struct
 #endif
 	{

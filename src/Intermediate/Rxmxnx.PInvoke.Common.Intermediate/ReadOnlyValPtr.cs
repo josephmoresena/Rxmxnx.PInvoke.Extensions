@@ -105,6 +105,23 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 	/// </remarks>
 	public IReadOnlyFixedReference<T>.IDisposable GetUnsafeFixedReference(IDisposable? disposable = default)
 		=> new ReadOnlyFixedReference<T>(this._value).ToDisposable(disposable);
+#if !NET9_0_OR_GREATER
+	/// <summary>
+	/// Retrieves an <see langword="unsafe"/> <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance from
+	/// current read-only reference pointer.
+	/// </summary>
+	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
+	/// <param name="disposable">Object to dispose in order to free <see langword="unmanaged"/> resources.</param>
+	/// <returns>A <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance.</returns>
+	/// <remarks>
+	/// The instance obtained is "unsafe" as it doesn't guarantee that the referenced values
+	/// won't be moved or collected by garbage collector.
+	/// The <paramref name="disposable"/> parameter allows for custom management of resource cleanup.
+	/// If provided, this object will be disposed of when the fixed reference is disposed.
+	/// </remarks>
+	public IReadOnlyFixedContext<T>.IDisposable GetUnsafeFixedContext(Int32 count, IDisposable? disposable = default)
+		=> new ReadOnlyFixedContext<T>(this._value, count).ToDisposable(disposable);
+#endif
 
 	/// <summary>
 	/// Defines an explicit conversion of a given <see cref="IntPtr"/> to a read-only value pointer.
