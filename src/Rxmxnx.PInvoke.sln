@@ -36,6 +36,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rxmxnx.PInvoke.Buffers.Inte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rxmxnx.PInvoke.Buffers.Tests", "Test\Rxmxnx.PInvoke.Buffers.Tests\Rxmxnx.PInvoke.Buffers.Tests.csproj", "{6B9E67AA-67EE-460E-A403-3EBB99D3F068}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApplicationTest", "ApplicationTest", "{F55791A4-BA76-4CA8-AC96-8769B44E0FA3}"
+	ProjectSection(SolutionItems) = preProject
+		ApplicationTest\Directory.Build.props = ApplicationTest\Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rxmxnx.PInvoke.ApplicationTest", "ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\Rxmxnx.PInvoke.ApplicationTest.csproj", "{D4BE988F-7FAB-4167-BC93-2BFAE395BF65}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,6 +89,10 @@ Global
 		{6B9E67AA-67EE-460E-A403-3EBB99D3F068}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B9E67AA-67EE-460E-A403-3EBB99D3F068}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B9E67AA-67EE-460E-A403-3EBB99D3F068}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4BE988F-7FAB-4167-BC93-2BFAE395BF65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4BE988F-7FAB-4167-BC93-2BFAE395BF65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4BE988F-7FAB-4167-BC93-2BFAE395BF65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4BE988F-7FAB-4167-BC93-2BFAE395BF65}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,5 +111,6 @@ Global
 		{0DD5850A-EEF6-4C33-AEA8-3E3713E311D1} = {36897245-7D3A-4774-A7CE-4F9D0A86D3C7}
 		{A3765D6C-8B1C-4852-B502-6CE353DDA47C} = {7471F0F0-581A-4D38-BD0B-C3B44FA8ABC8}
 		{6B9E67AA-67EE-460E-A403-3EBB99D3F068} = {36897245-7D3A-4774-A7CE-4F9D0A86D3C7}
+		{D4BE988F-7FAB-4167-BC93-2BFAE395BF65} = {F55791A4-BA76-4CA8-AC96-8769B44E0FA3}
 	EndGlobalSection
 EndGlobal
