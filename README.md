@@ -680,7 +680,7 @@ Interface representing a value state for functional CString creation.
 
 This interfaces exposes a managed buffer.
 
-**Note:** This type not allows public implementation or inheritance.
+**Note:** This type does not allow public implementation or inheritance.
 
 #### Static Methods:
 
@@ -697,7 +697,8 @@ This interfaces exposes a managed buffer.
 
 This interfaces exposes a binary managed buffer.
 
-**Note:** This interface inherits from `IManagedBuffer<T>`. This type not allows public implementation or inheritance.
+**Note:** This interface inherits from `IManagedBuffer<T>`. This type does not allow public implementation or
+inheritance.
 
 #### Properties:
 
@@ -1669,7 +1670,7 @@ metadata for stack-allocated buffer management.
 
 This class represents a region of memory that contains a sequence of `T` values.
 
-**Note:** `T` must be `unmanaged`. This type not allow public inheritance.
+**Note:** `T` must be `unmanaged`. This type does not allow public inheritance.
 
 ### Properties:
 
@@ -1735,7 +1736,7 @@ This class represents a region of memory that contains a sequence of `T` values.
 
 Represents the metadata of a managed buffer type.
 
-**Note:** Implements `IEnumerableSequence<BufferTypeMetadata>`. This type not allow public inheritance.
+**Note:** Implements `IEnumerableSequence<BufferTypeMetadata>`. This type does not allow public inheritance.
 
 ### Properties:
 
@@ -1767,7 +1768,7 @@ Represents the metadata of a managed buffer type.
 
 `BufferTypeMetadata<T>` representing a generic `BufferTypeMetadata` object.
 
-**Note:** Inherits from `BufferTypeMetadata`. This type not allow public inheritance.
+**Note:** Inherits from `BufferTypeMetadata`. This type does not allow public inheritance.
 
 </details>
 
