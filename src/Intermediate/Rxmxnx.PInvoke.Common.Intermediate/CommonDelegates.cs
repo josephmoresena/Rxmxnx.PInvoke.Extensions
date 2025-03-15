@@ -229,7 +229,11 @@ public delegate TResult ReadOnlyFixedContextFunc<T, in TArg, out TResult>(in IRe
 /// </summary>
 /// <typeparam name="T">The type of the fixed reference.</typeparam>
 /// <param name="reference">An instance of the fixed reference.</param>
-public delegate void FixedReferenceAction<T>(in IFixedReference<T> reference);
+public delegate void FixedReferenceAction<T>(in IFixedReference<T> reference)
+#if NET9_0_OR_GREATER
+	where T : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Encapsulates a method that receives an  instance of <see cref="IFixedReference{T}"/> and a state object of
@@ -241,6 +245,7 @@ public delegate void FixedReferenceAction<T>(in IFixedReference<T> reference);
 /// <param name="arg">A state object of type TArg.</param>
 public delegate void FixedReferenceAction<T, in TArg>(in IFixedReference<T> reference, TArg arg)
 #if NET9_0_OR_GREATER
+	where T : allows ref struct
 	where TArg : allows ref struct
 #endif
 	;
@@ -250,7 +255,11 @@ public delegate void FixedReferenceAction<T, in TArg>(in IFixedReference<T> refe
 /// </summary>
 /// <typeparam name="T">The type of the fixed reference.</typeparam>
 /// <param name="reference">A read-only instance of the fixed reference.</param>
-public delegate void ReadOnlyFixedReferenceAction<T>(in IReadOnlyFixedReference<T> reference);
+public delegate void ReadOnlyFixedReferenceAction<T>(in IReadOnlyFixedReference<T> reference)
+#if NET9_0_OR_GREATER
+	where T : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Encapsulates a method that receives an instance of <see cref="IReadOnlyFixedReference{T}"/> and a
@@ -262,6 +271,7 @@ public delegate void ReadOnlyFixedReferenceAction<T>(in IReadOnlyFixedReference<
 /// <param name="arg">A state object of type TArg.</param>
 public delegate void ReadOnlyFixedReferenceAction<T, in TArg>(in IReadOnlyFixedReference<T> reference, TArg arg)
 #if NET9_0_OR_GREATER
+	where T : allows ref struct
 	where TArg : allows ref struct
 #endif
 	;
@@ -274,7 +284,11 @@ public delegate void ReadOnlyFixedReferenceAction<T, in TArg>(in IReadOnlyFixedR
 /// <typeparam name="TResult">The type of the return value.</typeparam>
 /// <param name="reference">An instance of the fixed reference.</param>
 /// <returns>The return value from the encapsulated method.</returns>
-public delegate TResult FixedReferenceFunc<T, out TResult>(in IFixedReference<T> reference);
+public delegate TResult FixedReferenceFunc<T, out TResult>(in IFixedReference<T> reference)
+#if NET9_0_OR_GREATER
+	where T : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Encapsulates a method that receives an instance of <see cref="IFixedReference{T}"/>, a state object of
@@ -288,6 +302,7 @@ public delegate TResult FixedReferenceFunc<T, out TResult>(in IFixedReference<T>
 /// <returns>The return value from the encapsulated method.</returns>
 public delegate TResult FixedReferenceFunc<T, in TArg, out TResult>(in IFixedReference<T> reference, TArg arg)
 #if NET9_0_OR_GREATER
+	where T : allows ref struct
 	where TArg : allows ref struct
 #endif
 	;
@@ -300,7 +315,11 @@ public delegate TResult FixedReferenceFunc<T, in TArg, out TResult>(in IFixedRef
 /// <typeparam name="TResult">The type of the return value.</typeparam>
 /// <param name="reference">A read-only instance of the fixed reference.</param>
 /// <returns>The return value from the encapsulated method.</returns>
-public delegate TResult ReadOnlyFixedReferenceFunc<T, out TResult>(in IReadOnlyFixedReference<T> reference);
+public delegate TResult ReadOnlyFixedReferenceFunc<T, out TResult>(in IReadOnlyFixedReference<T> reference)
+#if NET9_0_OR_GREATER
+	where T : allows ref struct
+#endif
+	;
 
 /// <summary>
 /// Encapsulates a method that receives an instance of <see cref="IReadOnlyFixedReference{T}"/>, a
@@ -315,6 +334,7 @@ public delegate TResult ReadOnlyFixedReferenceFunc<T, out TResult>(in IReadOnlyF
 public delegate TResult ReadOnlyFixedReferenceFunc<T, in TArg, out TResult>(in IReadOnlyFixedReference<T> reference,
 		TArg arg)
 #if NET9_0_OR_GREATER
+	where T : allows ref struct
 	where TArg : allows ref struct
 #endif
 	;

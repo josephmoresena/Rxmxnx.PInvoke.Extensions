@@ -898,6 +898,7 @@ These delegates encapsulate methods that operate on fixed memory references of a
 
 Encapsulates a method that receives an instance of `IFixedReference<T>`.
 
+**Note:** In .NET 9.0+ both `T` and `TArg` allows `ref struct`.
 </details>
 
 <details>
@@ -905,8 +906,7 @@ Encapsulates a method that receives an instance of `IFixedReference<T>`.
 
 Encapsulates a method that receives an instance of `IFixedReference<T>` and a state object of type `TArg`.
 
-**Note:** In .NET 9.0+ `TState` allows `ref struct`.
-
+**Note:** In .NET 9.0+ both `T` and `TArg` allows `ref struct`.
 </details>
 
 <details>
@@ -914,6 +914,7 @@ Encapsulates a method that receives an instance of `IFixedReference<T>` and a st
 
 Encapsulates a method that receives an instance of `IReadOnlyFixedReference<T>`.
 
+**Note:** In .NET 9.0+ `T` allows `ref struct`.
 </details>
 
 <details>
@@ -921,8 +922,7 @@ Encapsulates a method that receives an instance of `IReadOnlyFixedReference<T>`.
 
 Encapsulates a method that receives an instance of `IReadOnlyFixedReference<T>` and a state object of type `TArg`.
 
-**Note:** In .NET 9.0+ `TState` allows `ref struct`.
-
+**Note:** In .NET 9.0+ both `T` and `TArg` allows `ref struct`.
 </details>
 
 <details>
@@ -930,6 +930,7 @@ Encapsulates a method that receives an instance of `IReadOnlyFixedReference<T>` 
 
 Encapsulates a method that receives an instance of `IFixedReference<T>` and returns a value of type `TResult`.
 
+**Note:** In .NET 9.0+ `T` allows `ref struct`.
 </details>
 
 <details>
@@ -937,8 +938,7 @@ Encapsulates a method that receives an instance of `IFixedReference<T>` and retu
 
 Encapsulates a method that receives an instance of `IFixedReference<T>` and returns a value of type `TResult`.
 
-**Note:** In .NET 9.0+ `TState` allows `ref struct`.
-
+**Note:** In .NET 9.0+ both `T` and `TArg` allows `ref struct`.
 </details>
 
 <details>
@@ -946,6 +946,7 @@ Encapsulates a method that receives an instance of `IFixedReference<T>` and retu
 
 Encapsulates a method that receives an instance of `IReadOnlyFixedReference<T>` and returns a value of type `TResult`.
 
+**Note:** In .NET 9.0+ `T` allows `ref struct`.
 </details>
 
 <details>
@@ -953,8 +954,7 @@ Encapsulates a method that receives an instance of `IReadOnlyFixedReference<T>` 
 
 Encapsulates a method that receives an instance of `IReadOnlyFixedReference<T>` and returns a value of type `TResult`.
 
-**Note:** In .NET 9.0+ `TState` allows `ref struct`.
-
+**Note:** In .NET 9.0+ both `T` and `TArg` allows `ref struct`.
 </details>
 
 ## Fixed address method Delegates
