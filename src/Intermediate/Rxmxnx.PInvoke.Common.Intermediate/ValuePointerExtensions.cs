@@ -1,6 +1,6 @@
+#if NET9_0_OR_GREATER
 namespace Rxmxnx.PInvoke;
 
-#if NET9_0_OR_GREATER
 /// <summary>
 /// Provides a set of extensions for basic operations with <see cref="IntPtr"/> and <see cref="UIntPtr"/> instances.
 /// </summary>

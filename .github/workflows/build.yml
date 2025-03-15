@@ -107,9 +107,9 @@ jobs:
               Console.WriteLine($"In Stack: {s.InStack}");
               Span<ValueTuple<String, Int32>> localSpan = s.Span;
               ref Span<ValueTuple<String, Int32>> refSpan = ref localSpan;
-              ValPtr<Span<ValueTuple<String, Int32>>> valRefSpan = NativeUtilities.GetUnsafeValPtr(ref localSpan);
-              NativeUtilities.WithSafeFixed(ref refSpan, frs => Console.WriteLine($"Reference Length: {frs.Reference.Length}"));
-              Console.WriteLine($"Ref Span: {refSpan.Pointer}");
+              ValPtr<Span<ValueTuple<String, Int32>>> valRefSpan = NativeUtilities.GetUnsafeValPtrFromRef(ref localSpan);
+              NativeUtilities.WithSafeFixed<Span<ValueTuple<String, Int32>>>(ref refSpan, frs => Console.WriteLine($"Reference Length: {frs.Reference.Length}"));
+              Console.WriteLine($"Ref Span: 0x{valRefSpan.Pointer:x8}");
               Console.WriteLine($"Ref Span vs Ptr Span: {Unsafe.AreSame(ref refSpan, ref valRefSpan.Reference)}");
           });' > Program.cs
       - name: Build Package-Trimmed-Executables (PackageTrimmedAssembly)
