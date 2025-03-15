@@ -96,7 +96,11 @@ These interfaces represent a safe way to access a managed reference of a specifi
 This interface exposes a read-only reference to an object of type `T`, allowing the object
 to be used without modification.
 
-**Note:** This interface inherits from `IEquatable<T>`. This type allows public implementation or inheritance.
+**Notes:**
+
+- This interface inherits from `IEquatable<IReadOnlyReferenceable<T>>`.
+- This type allows public implementation or inheritance.
+- In .NET 9.0+ `T` allows `ref struct`.
 
 #### Properties:
 
@@ -116,8 +120,11 @@ to be used without modification.
 This interface exposes a reference to an object of type `T`,
 allowing the object to be used and potentially modified.
 
-**Note:** This interface inherits from `IReadOnlyReferenceable<T>`. This type allows public implementation or
-inheritance.
+**Notes:**
+
+- This interface inherits from `IReadOnlyReferenceable<T>` and `IEquatable<IReferenceable<T>>`.
+- This type allows public implementation or inheritance.
+- In .NET 9.0+ `T` allows `ref struct`.
 
 #### Properties:
 
@@ -138,7 +145,9 @@ These interfaces represent a safe way to access a value or managed object of a s
 
 This interface defines a wrapper for a `T` object.
 
-**Note:** This interface inherits from `IEquatable<T>`. This type allows public implementation or inheritance.
+**Notes:**
+
+- This interface inherits from `IEquatable<T>`. This type allows public implementation or inheritance.
 
 #### Properties:
 
@@ -160,6 +169,9 @@ This interface defines a wrapper for a `T` object.
 
 `IWrapper` is a non-generic interface that exposes static methods for creating specific types of
 `IWrapper<T>` for concrete cases of value types, nullable values, and non-nullable reference types.
+
+**Note:** `IWrapper` contains a public interface `IBase<T>` that allows covariance. In .NET 9.0+, `T` allows
+`ref struct`.
 
 ##### Static Methods:
 
