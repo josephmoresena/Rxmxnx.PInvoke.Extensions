@@ -167,7 +167,6 @@ jobs:
           dotnet publish -r win-x86 /p:CopyTargetTo=$CopyTargetTo /p:DisableBufferAutoComposition=false /p:InvariantGlobalization=true /p:IlcDisableReflection=true /p:CreateLogs=false
           dotnet publish -r win-x86 /p:CopyTargetTo=$CopyTargetTo /p:DisableBufferAutoComposition=true /p:InvariantGlobalization=false /p:IlcDisableReflection=false /p:CreateLogs=false
           dotnet publish -r win-x86 /p:CopyTargetTo=$CopyTargetTo /p:DisableBufferAutoComposition=true /p:InvariantGlobalization=false /p:IlcDisableReflection=true /p:CreateLogs=false
-          dotnet publish -r win-x86 /p:CopyTargetTo=$CopyTargetTo /p:DisableBufferAutoComposition=true /p:InvariantGlobalization=true /p:IlcDisableReflection=false /p:CreateLogs=false
           dotnet publish -r win-x86 /p:CopyTargetTo=$CopyTargetTo /p:DisableBufferAutoComposition=true /p:InvariantGlobalization=true /p:IlcDisableReflection=true /p:CreateLogs=false
       - name: Run Application Test
         working-directory: ./executable
@@ -180,4 +179,4 @@ jobs:
             Write-Host "====================================="
           
             & $file.FullName
-          }
+        }
