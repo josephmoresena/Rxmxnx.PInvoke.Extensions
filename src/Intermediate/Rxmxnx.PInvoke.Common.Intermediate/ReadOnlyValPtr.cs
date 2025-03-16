@@ -121,7 +121,7 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public IReadOnlyFixedContext<T>.IDisposable GetUnsafeFixedContext(Int32 count, IDisposable? disposable = default)
-		=> new FixedContext<T>(this._value, count).ToDisposable(disposable);
+		=> ReadOnlyFixedContext<T>.CreateDisposable(this, count, disposable);
 #endif
 
 	/// <summary>

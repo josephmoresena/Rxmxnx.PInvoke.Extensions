@@ -20,15 +20,19 @@ public sealed class PatchAssemblyTask : Task
 		DirectoryInfo directory = new(this.OutputPath);
 		FileInfo[] assemblyFiles = directory.GetFiles("Rxmxnx.PInvoke.Extensions.dll", SearchOption.AllDirectories);
 
+		String? assemblyPath = default;
 		try
 		{
-			String assemblyPath = assemblyFiles.First(f => f.FullName.Contains(this.TargetFramework)).FullName;
+			assemblyPath = assemblyFiles
+			               .First(f => f.FullName.Contains(this.TargetFramework,
+			                                               StringComparison.InvariantCultureIgnoreCase)).FullName;
 			PatchAssemblyTask.PatchAssembly(assemblyPath);
 			return true;
 		}
 		catch (Exception ex)
 		{
-			this.Log.LogError($"Error: {ex.Message}");
+			this.Log.LogError(
+				$"Error: {ex.Message} Dir: {directory.FullName} T: {this.TargetFramework} FF:{assemblyFiles.Length} F: {assemblyPath}");
 			return false;
 		}
 	}
@@ -44,7 +48,7 @@ public sealed class PatchAssemblyTask : Task
 		TypeDefinition? readOnlyFixedContext = module.Types.First(t => t.Name.StartsWith("ReadOnlyFixedContext`"));
 		TypeDefinition? fixedContext = module.Types.First(t => t.Name.StartsWith("FixedContext`"));
 		TypeDefinition? iReadOnlyFixedContext = module.Types.First(t => t.Name.StartsWith("IReadOnlyFixedContext`"));
-		TypeDefinition? iFixedContext = module.Types.First(t => t.Name.StartsWith("IReadOnlyFixedContext`"));
+		TypeDefinition? iFixedContext = module.Types.First(t => t.Name.StartsWith("IFixedContext`"));
 
 		PatchAssemblyTask.AddMethod(module, readOnlyValPtrTypeDefinition, iReadOnlyFixedContext, readOnlyFixedContext);
 		PatchAssemblyTask.AddMethod(module, valPtrTypeDefinition, iFixedContext, fixedContext);
@@ -58,47 +62,50 @@ public sealed class PatchAssemblyTask : Task
 		TypeDefinition classType)
 	{
 		GenericParameter genericParameter = type.GenericParameters[0];
-		MethodDefinition getUnsafeFixedContextMethod = new("GetUnsafeFixedContext",
-		                                                   MethodAttributes.Assembly | MethodAttributes.HideBySig,
-		                                                   moduleDefinition.ImportReference(
-			                                                                   returnType.Resolve().NestedTypes
-				                                                                   .First(
-					                                                                   nt => nt.Name == "IDisposable"))
-		                                                                   .MakeGenericInstanceType(genericParameter));
-		ILProcessor? il = getUnsafeFixedContextMethod.Body.GetILProcessor();
-		FieldDefinition valueField = type.MakeGenericInstanceType(genericParameter).Resolve().Fields
-		                                 .First(f => f.Name == "_value");
-		MethodDefinition? classNew = classType.MakeGenericInstanceType(genericParameter).Resolve().Methods
-		                                      .First(m => m.IsConstructor && m.Parameters.Count == 2 &&
-			                                             m.Parameters[0].ParameterType.IsPointer &&
-			                                             m.Parameters[1].ParameterType.IsPrimitive);
-		
-		MethodDefinition? toDisposableMethod = classType.MakeGenericInstanceType(genericParameter).Resolve().Methods
-		                                                .First(m => m.Name == "ToDisposable");
 
+		// ValPtr<T> or ReadOnlyValPtr<T>
+		GenericInstanceType genericType = type.MakeGenericInstanceType(genericParameter);
+		// IFixedContext<T>.IDisposable or IReadOnlyFixedContext<T>.IDisposable
+		GenericInstanceType? genericIDisposable = moduleDefinition
+		                                          .ImportReference(
+			                                          returnType.Resolve().NestedTypes
+			                                                    .First(nt => nt.Name == "IDisposable"))
+		                                          .MakeGenericInstanceType(genericParameter);
+		// FixedContext<T> or ReadOnlyFixedContext<T>
+		GenericInstanceType? genericClassType = moduleDefinition
+		                                        .ImportReference(classType).MakeGenericInstanceType(genericParameter);
+
+		MethodDefinition getUnsafeFixedContextMethod = new("GetUnsafeFixedContext",
+		                                                   MethodAttributes.Private | MethodAttributes.HideBySig,
+		                                                   genericIDisposable);
+
+		// Method parameters
 		getUnsafeFixedContextMethod.Parameters.Add(new("count", ParameterAttributes.None,
 		                                               moduleDefinition.ImportReference(typeof(Int32))));
 		getUnsafeFixedContextMethod.Parameters.Add(new("disposable", ParameterAttributes.Optional,
 		                                               moduleDefinition.ImportReference(typeof(IDisposable))));
 
-		// _value
+		// Obtener referencia al método CreateDisposable<T>
+		MethodDefinition? createDisposableMethod = genericClassType.Resolve().Methods.First(
+			m => m.IsStatic && m.Name == "CreateDisposable" && m.Parameters.Count == 3 &&
+				m.ReturnType.FullName.Contains(returnType.FullName));
+
+		ILProcessor? il = getUnsafeFixedContextMethod.Body.GetILProcessor();
+
+		// 'this'
 		il.Emit(OpCodes.Ldarg_0);
-		il.Emit(OpCodes.Ldfld, valueField);
-
-		// Count
+		// ValPtr<T>
+		il.Emit(OpCodes.Ldobj, moduleDefinition.ImportReference(genericType));
+		// count
 		il.Emit(OpCodes.Ldarg_1);
-
-		// New
-		il.Emit(OpCodes.Newobj, moduleDefinition.ImportReference(classNew));
-
 		// disposable
 		il.Emit(OpCodes.Ldarg_2);
-
-		il.Emit(OpCodes.Call, moduleDefinition.ImportReference(toDisposableMethod));
-
-		// Return
+		// CreateDisposable
+		il.Emit(OpCodes.Call, moduleDefinition.ImportReference(createDisposableMethod));
+		// return
 		il.Emit(OpCodes.Ret);
 
-		type.MakeGenericInstanceType(genericParameter).Resolve().Methods.Add(getUnsafeFixedContextMethod);
+		// Add method
+		genericType.Resolve().Methods.Add(getUnsafeFixedContextMethod);
 	}
 }

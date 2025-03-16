@@ -120,5 +120,11 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 		fixedOffset = new(this, offset);
 		return new(this, count);
 	}
-#pragma warning restore CS8500
+#pragma warning restore
+
+	public static IFixedContext<T>.IDisposable CreateDisposable(ValPtr<T> valPtr, Int32 count, IDisposable? disposable)
+	{
+		FixedContext<T> ctx = new(valPtr, count);
+		return ctx.ToDisposable(disposable);
+	} 
 }

@@ -114,4 +114,10 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 		return new(this, count);
 	}
 #pragma warning restore CS8500
+	
+	public static IReadOnlyFixedContext<T>.IDisposable CreateDisposable(ReadOnlyValPtr<T> valPtr, Int32 count, IDisposable? disposable)
+	{
+		ReadOnlyFixedContext<T> ctx = new(valPtr, count);
+		return ctx.ToDisposable(disposable);
+	} 
 }

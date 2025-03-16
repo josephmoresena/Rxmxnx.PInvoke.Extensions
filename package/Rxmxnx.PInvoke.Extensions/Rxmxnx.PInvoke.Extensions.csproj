@@ -65,7 +65,7 @@
 	<Target Name="IlPatch" AfterTargets="Build" BeforeTargets="Publish;Pack" Condition="'$(TargetFramework)' != 'net6.0' And '$(TargetFramework)' != 'net7.0' And '$(TargetFramework)' != 'net8.0'">
 		<PropertyGroup>
 			<AssemblyOutputPath>$(OutputPath)</AssemblyOutputPath>
-			<AssemblyTargetFramework>$(TargetFramework)\</AssemblyTargetFramework>
+			<AssemblyTargetFramework>$(TargetFramework)</AssemblyTargetFramework>
 		</PropertyGroup>
 		<PatchAssemblyTask OutputPath="$(AssemblyOutputPath)" TargetFramework="$(AssemblyTargetFramework)" />
 	</Target>
