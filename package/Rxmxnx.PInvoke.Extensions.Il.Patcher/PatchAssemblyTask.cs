@@ -71,12 +71,9 @@ public sealed class PatchAssemblyTask : Task
 			                                          returnType.Resolve().NestedTypes
 			                                                    .First(nt => nt.Name == "IDisposable"))
 		                                          .MakeGenericInstanceType(genericParameter);
-		// FixedContext<T> or ReadOnlyFixedContext<T>
-		GenericInstanceType? genericClassType = moduleDefinition
-		                                        .ImportReference(classType).MakeGenericInstanceType(genericParameter);
 
 		MethodDefinition getUnsafeFixedContextMethod = new("GetUnsafeFixedContext",
-		                                                   MethodAttributes.Private | MethodAttributes.HideBySig,
+		                                                   MethodAttributes.Public | MethodAttributes.HideBySig,
 		                                                   genericIDisposable);
 
 		// Method parameters
@@ -85,10 +82,21 @@ public sealed class PatchAssemblyTask : Task
 		getUnsafeFixedContextMethod.Parameters.Add(new("disposable", ParameterAttributes.Optional,
 		                                               moduleDefinition.ImportReference(typeof(IDisposable))));
 
-		// Obtener referencia al método CreateDisposable<T>
-		MethodDefinition? createDisposableMethod = genericClassType.Resolve().Methods.First(
+		// FixedContext<T> or ReadOnlyFixedContext<T>
+		GenericInstanceType genericClassType = new(classType);
+		genericClassType.GenericArguments.Add(genericParameter);
+
+		// ReadOnlyFixedContext<>.CreateDisposable FixedContext<>.CreateDisposable
+		MethodDefinition? createDisposableMethod = classType.Methods.First(
 			m => m.IsStatic && m.Name == "CreateDisposable" && m.Parameters.Count == 3 &&
 				m.ReturnType.FullName.Contains(returnType.FullName));
+
+		MethodReference createDisposableReference =
+			new(createDisposableMethod.Name, createDisposableMethod.ReturnType, genericClassType) { HasThis = false, };
+
+		createDisposableReference.Parameters.Add(new(genericType));
+		createDisposableReference.Parameters.Add(new(createDisposableMethod.Parameters[1].ParameterType));
+		createDisposableReference.Parameters.Add(new(createDisposableMethod.Parameters[2].ParameterType));
 
 		ILProcessor? il = getUnsafeFixedContextMethod.Body.GetILProcessor();
 
@@ -101,7 +109,7 @@ public sealed class PatchAssemblyTask : Task
 		// disposable
 		il.Emit(OpCodes.Ldarg_2);
 		// CreateDisposable
-		il.Emit(OpCodes.Call, moduleDefinition.ImportReference(createDisposableMethod));
+		il.Emit(OpCodes.Call, moduleDefinition.ImportReference(createDisposableReference));
 		// return
 		il.Emit(OpCodes.Ret);
 
