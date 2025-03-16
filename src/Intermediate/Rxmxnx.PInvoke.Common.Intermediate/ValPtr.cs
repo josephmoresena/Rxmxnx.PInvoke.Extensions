@@ -121,7 +121,6 @@ public readonly unsafe partial struct ValPtr<T> : IWrapper<IntPtr>, IEquatable<V
 	/// If provided, this object will be disposed of when the fixed reference is disposed.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	[ExcludeFromCodeCoverage] 
 	public IFixedContext<T>.IDisposable GetUnsafeFixedContext(Int32 count, IDisposable? disposable = default)
 		=> new FixedContext<T>(this._value, count).ToDisposable(disposable);
 #endif
