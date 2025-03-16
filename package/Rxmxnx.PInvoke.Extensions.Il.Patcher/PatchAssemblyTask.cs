@@ -8,6 +8,8 @@ namespace Rxmxnx.PInvoke.Extensions.Il.Patcher;
 
 public sealed class PatchAssemblyTask : Task
 {
+	private static readonly ReaderParameters readParameters = new() { ReadWrite = true, };
+
 	public String? OutputPath { get; set; }
 	public String? TargetFramework { get; set; }
 
@@ -15,40 +17,13 @@ public sealed class PatchAssemblyTask : Task
 	{
 		if (String.IsNullOrEmpty(this.OutputPath) || String.IsNullOrEmpty(this.TargetFramework)) return true;
 
-		ReaderParameters readParameters = new() { ReadWrite = true, };
-
 		DirectoryInfo directory = new(this.OutputPath);
 		FileInfo[] assemblyFiles = directory.GetFiles("Rxmxnx.PInvoke.Extensions.dll", SearchOption.AllDirectories);
 
 		try
 		{
-			using AssemblyDefinition? assembly = AssemblyDefinition.ReadAssembly(
-				assemblyFiles.First(f => f.FullName.Contains(this.TargetFramework)).FullName, readParameters);
-			using ModuleDefinition? module = assembly.MainModule;
-
-			TypeDefinition? readOnlyValPtrTypeDefinition = module.Types.First(t => t.Name == "ReadOnlyValPtr`1");
-			TypeDefinition? valPtrTypeDefinition = module.Types.First(t => t.Name == "ValPtr`1");
-
-			GenericInstanceType? readOnlyFixedContext = module.Types
-			                                                  .First(t => t.Name.StartsWith("ReadOnlyFixedContext`"))
-			                                                  .MakeGenericInstanceType(
-				                                                  readOnlyValPtrTypeDefinition.GenericParameters[0]);
-			GenericInstanceType? fixedContext = module.Types.First(t => t.Name.StartsWith("FixedContext`"))
-			                                          .MakeGenericInstanceType(
-				                                          valPtrTypeDefinition.GenericParameters[0]);
-			GenericInstanceType? iReadOnlyFixedContext = module.Types
-			                                                   .First(t => t.Name.StartsWith("IReadOnlyFixedContext`"))
-			                                                   .MakeGenericInstanceType(
-				                                                   readOnlyValPtrTypeDefinition.GenericParameters[0]);
-			GenericInstanceType? iFixedContext = module.Types.First(t => t.Name.StartsWith("IReadOnlyFixedContext`"))
-			                                           .MakeGenericInstanceType(
-				                                           valPtrTypeDefinition.GenericParameters[0]);
-
-			PatchAssemblyTask.AddMethod(module, readOnlyValPtrTypeDefinition, iReadOnlyFixedContext,
-			                            readOnlyFixedContext);
-			PatchAssemblyTask.AddMethod(module, valPtrTypeDefinition, iFixedContext, fixedContext);
-
-			assembly.Write();
+			String assemblyPath = assemblyFiles.First(f => f.FullName.Contains(this.TargetFramework)).FullName;
+			PatchAssemblyTask.PatchAssembly(assemblyPath);
 			return true;
 		}
 		catch (Exception ex)
@@ -57,24 +32,49 @@ public sealed class PatchAssemblyTask : Task
 			return false;
 		}
 	}
-
-	public static void Main(String[] args) { }
-
-	private static void AddMethod(ModuleDefinition moduleDefinition, TypeDefinition type,
-		GenericInstanceType returnType, GenericInstanceType classType)
+	private static void PatchAssembly(String assemblyPath)
 	{
+		using AssemblyDefinition? assembly =
+			AssemblyDefinition.ReadAssembly(assemblyPath, PatchAssemblyTask.readParameters);
+		using ModuleDefinition? module = assembly.MainModule;
+
+		TypeDefinition? readOnlyValPtrTypeDefinition = module.Types.First(t => t.Name == "ReadOnlyValPtr`1");
+		TypeDefinition? valPtrTypeDefinition = module.Types.First(t => t.Name == "ValPtr`1");
+
+		TypeDefinition? readOnlyFixedContext = module.Types.First(t => t.Name.StartsWith("ReadOnlyFixedContext`"));
+		TypeDefinition? fixedContext = module.Types.First(t => t.Name.StartsWith("FixedContext`"));
+		TypeDefinition? iReadOnlyFixedContext = module.Types.First(t => t.Name.StartsWith("IReadOnlyFixedContext`"));
+		TypeDefinition? iFixedContext = module.Types.First(t => t.Name.StartsWith("IReadOnlyFixedContext`"));
+
+		PatchAssemblyTask.AddMethod(module, readOnlyValPtrTypeDefinition, iReadOnlyFixedContext, readOnlyFixedContext);
+		PatchAssemblyTask.AddMethod(module, valPtrTypeDefinition, iFixedContext, fixedContext);
+
+		assembly.Write();
+	}
+
+	public static void Main(String[] args) { PatchAssemblyTask.PatchAssembly(args[0]); }
+
+	private static void AddMethod(ModuleDefinition moduleDefinition, TypeDefinition type, TypeDefinition returnType,
+		TypeDefinition classType)
+	{
+		GenericParameter genericParameter = type.GenericParameters[0];
 		MethodDefinition getUnsafeFixedContextMethod = new("GetUnsafeFixedContext",
 		                                                   MethodAttributes.Assembly | MethodAttributes.HideBySig,
 		                                                   moduleDefinition.ImportReference(
-			                                                   returnType.Resolve().NestedTypes
-			                                                             .First(nt => nt.Name == "IDisposable")));
+			                                                                   returnType.Resolve().NestedTypes
+				                                                                   .First(
+					                                                                   nt => nt.Name == "IDisposable"))
+		                                                                   .MakeGenericInstanceType(genericParameter));
 		ILProcessor? il = getUnsafeFixedContextMethod.Body.GetILProcessor();
-		FieldDefinition valueField = type.Fields.First(f => f.Name == "_value");
-		MethodDefinition? classNew = classType.Resolve().Methods
+		FieldDefinition valueField = type.MakeGenericInstanceType(genericParameter).Resolve().Fields
+		                                 .First(f => f.Name == "_value");
+		MethodDefinition? classNew = classType.MakeGenericInstanceType(genericParameter).Resolve().Methods
 		                                      .First(m => m.IsConstructor && m.Parameters.Count == 2 &&
 			                                             m.Parameters[0].ParameterType.IsPointer &&
 			                                             m.Parameters[1].ParameterType.IsPrimitive);
-		MethodDefinition? toDisposableMethod = classType.Resolve().Methods.First(m => m.Name == "ToDisposable");
+		
+		MethodDefinition? toDisposableMethod = classType.MakeGenericInstanceType(genericParameter).Resolve().Methods
+		                                                .First(m => m.Name == "ToDisposable");
 
 		getUnsafeFixedContextMethod.Parameters.Add(new("count", ParameterAttributes.None,
 		                                               moduleDefinition.ImportReference(typeof(Int32))));
@@ -99,6 +99,6 @@ public sealed class PatchAssemblyTask : Task
 		// Return
 		il.Emit(OpCodes.Ret);
 
-		type.Methods.Add(getUnsafeFixedContextMethod);
+		type.MakeGenericInstanceType(genericParameter).Resolve().Methods.Add(getUnsafeFixedContextMethod);
 	}
 }
