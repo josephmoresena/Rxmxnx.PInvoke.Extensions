@@ -55,7 +55,7 @@ jobs:
           dotnet test src --verbosity normal --collect:"XPlat Code Coverage" --results-directory TestResults/  --logger "trx;verbosity=detailed" --no-build --no-restore --configuration release -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover 
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
       - name: Pack assembly
-        working-directory: ./package
+        working-directory: ./package/Rxmxnx.PInvoke.Extensions
         run: |
           dotnet pack -c Release /p:Version=9999.99.99.99-tmp /p:NoIntermediateBuild=true
           for package in bin/Release/Rxmxnx.PInvoke.Extensions*.*nupkg; do
@@ -82,7 +82,7 @@ jobs:
         working-directory: ./tmpProject/PackageTrimmedAssembly
         run: |
           dotnet new nugetconfig
-          dotnet nuget add source ../../package/bin/Release/ -n TmpSource
+          dotnet nuget add source ../../package/Rxmxnx.PInvoke.Extensions/bin/Release/ -n TmpSource
           dotnet add package Rxmxnx.PInvoke.Extensions --version 9999.99.99.99-tmp
       - name: Create PackageTrimmedAssembly Program.cs
         working-directory: ./tmpProject/PackageTrimmedAssembly

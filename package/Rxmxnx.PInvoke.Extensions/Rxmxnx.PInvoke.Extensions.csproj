@@ -7,8 +7,8 @@
         <Nullable>enable</Nullable>
         <RootNamespace>Rxmxnx.PInvoke</RootNamespace>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <SigningKeyFile>Rxmxnx.PInvoke.snk</SigningKeyFile>
-        <IntermediateSourceBasePath>..\src\Intermediate</IntermediateSourceBasePath>
+        <SigningKeyFile>..\Rxmxnx.PInvoke.snk</SigningKeyFile>
+        <IntermediateSourceBasePath>..\..\src\Intermediate</IntermediateSourceBasePath>
     </PropertyGroup>
     
     <!-- Include intermediate assemblies -->
@@ -19,7 +19,7 @@
         <IntermediateAssemblyNames Include="Rxmxnx.PInvoke.Extensions.Intermediate"/>
     </ItemGroup>
 
-    <Import Project="Intermediate-to-Package.targets" />
+    <Import Project="..\Intermediate-to-Package.targets" />
 
     <!-- Package properties -->
     <PropertyGroup>
@@ -47,7 +47,27 @@
     <!-- Package license -->
     <ItemGroup>
         <None Include="PACKAGE.md" Pack="true" PackagePath="/"/>
-        <None Include="..\LICENSE" Pack="true" PackagePath="LICENSE.md"/>
+        <None Include="..\..\LICENSE" Pack="true" PackagePath="LICENSE.md"/>
     </ItemGroup>
-
+	
+	<ItemGroup Condition="'$(TargetFramework)' != 'net6.0' And '$(TargetFramework)' != 'net7.0' And '$(TargetFramework)' != 'net8.0'">
+		<ProjectReference Include="..\Rxmxnx.PInvoke.Extensions.Il.Patcher\Rxmxnx.PInvoke.Extensions.Il.Patcher.csproj">
+			<PrivateAssets>all</PrivateAssets>
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+			<CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
+			<Private>False</Private>
+		</ProjectReference>
+	  </ItemGroup>
+	  
+	<UsingTask TaskName="PatchAssemblyTask" 
+		AssemblyFile="..\Rxmxnx.PInvoke.Extensions.Il.Patcher\bin\Release\net9.0\Rxmxnx.PInvoke.Extensions.Il.Patcher.dll" />
+	  
+	<Target Name="IlPatch" AfterTargets="Build" BeforeTargets="Publish;Pack" Condition="'$(TargetFramework)' != 'net6.0' And '$(TargetFramework)' != 'net7.0' And '$(TargetFramework)' != 'net8.0'">
+		<PropertyGroup>
+			<AssemblyOutputPath>$(OutputPath)</AssemblyOutputPath>
+			<AssemblyTargetFramework>$(TargetFramework)\</AssemblyTargetFramework>
+		</PropertyGroup>
+		<PatchAssemblyTask OutputPath="$(AssemblyOutputPath)" TargetFramework="$(AssemblyTargetFramework)" />
+	</Target>
+	
 </Project>
