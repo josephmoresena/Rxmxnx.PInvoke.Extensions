@@ -143,7 +143,7 @@ public sealed class ReadOnlyValPtrTests
 	}
 	private static unsafe void ContextTest<T>(ReadOnlyValPtr<T> valPtr, ReadOnlySpan<T> span)
 	{
-		using IReadOnlyFixedContext<T>.IDisposable ctx = valPtr.GetUnsafeFixedContext(span.Length);
+		using IReadOnlyFixedContext<T>.IDisposable ctx = NativeUtilities.GetUnsafeFixedContext(valPtr, span.Length);
 		Assert.Equal(ctx.Values.Length, span.Length);
 		Assert.Equal(valPtr.Pointer, ctx.Pointer);
 		if (!ReadOnlyValPtr<T>.IsUnmanaged)

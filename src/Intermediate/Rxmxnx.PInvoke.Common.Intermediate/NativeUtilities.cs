@@ -327,6 +327,51 @@ public static unsafe partial class NativeUtilities
 	}
 
 	/// <summary>
+	/// Retrieves an <see langword="unsafe"/> <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance from
+	/// current read-only reference pointer.
+	/// </summary>
+	/// <typeparam name="T">Type of pointer.</typeparam>
+	/// <param name="ptr">Current <see cref="ReadOnlyValPtr{T}"/> value.</param>
+	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
+	/// <param name="disposable">Object to dispose in order to free <see langword="unmanaged"/> resources.</param>
+	/// <returns>A <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance.</returns>
+	/// <remarks>
+	/// The instance obtained is "unsafe" as it doesn't guarantee that the referenced values
+	/// won't be moved or collected by garbage collector.
+	/// The <paramref name="disposable"/> parameter allows for custom management of resource cleanup.
+	/// If provided, this object will be disposed of when the fixed reference is disposed.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if NET9_0_OR_GREATER
+	[EditorBrowsable(EditorBrowsableState.Never)]
+#endif
+	public static IReadOnlyFixedContext<T>.IDisposable GetUnsafeFixedContext<T>(ReadOnlyValPtr<T> ptr, Int32 count,
+		IDisposable? disposable = default)
+		=> new ReadOnlyFixedContext<T>(ptr, count).ToDisposable(disposable);
+	/// <summary>
+	/// Retrieves an <see langword="unsafe"/> <see cref="IFixedContext{T}.IDisposable"/> instance from
+	/// current reference pointer.
+	/// </summary>
+	/// <typeparam name="T">Type of pointer.</typeparam>
+	/// <param name="ptr">Current <see cref="ValPtr{T}"/> value.</param>
+	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
+	/// <param name="disposable">Optional object to dispose in order to free unmanaged resources.</param>
+	/// <returns>An <see cref="IFixedContext{T}.IDisposable"/> instance representing a fixed reference.</returns>
+	/// <remarks>
+	/// The instance obtained is "unsafe" as it doesn't guarantee that the referenced values
+	/// won't be moved or collected by garbage collector.
+	/// The <paramref name="disposable"/> parameter allows for custom management of resource cleanup.
+	/// If provided, this object will be disposed of when the fixed reference is disposed.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if NET9_0_OR_GREATER
+	[EditorBrowsable(EditorBrowsableState.Never)]
+#endif
+	public static IFixedContext<T>.IDisposable GetUnsafeFixedContext<T>(ValPtr<T> ptr, Int32 count,
+		IDisposable? disposable = default)
+		=> new FixedContext<T>(ptr, count).ToDisposable(disposable);
+
+	/// <summary>
 	/// Writes <paramref name="span"/> using <paramref name="arg"/> and <paramref name="action"/>.
 	/// </summary>
 	/// <typeparam name="T">Unmanaged type of elements in <paramref name="span"/>.</typeparam>
