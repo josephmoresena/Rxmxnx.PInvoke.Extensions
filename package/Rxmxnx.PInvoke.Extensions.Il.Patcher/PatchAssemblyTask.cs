@@ -18,12 +18,12 @@ public sealed class PatchAssemblyTask : Task
 		ReaderParameters readParameters = new() { ReadWrite = true, };
 
 		DirectoryInfo directory = new(this.OutputPath);
-		FileInfo[] assemblyFiles = directory.GetFiles("Rxmxnx.PInvoke.Extensions.dll");
+		FileInfo[] assemblyFiles = directory.GetFiles("Rxmxnx.PInvoke.Extensions.dll", SearchOption.AllDirectories);
 
 		try
 		{
 			using AssemblyDefinition? assembly =
-				AssemblyDefinition.ReadAssembly(assemblyFiles.First().FullName, readParameters);
+				AssemblyDefinition.ReadAssembly(assemblyFiles.First(f => f.FullName.Contains(this.TargetFramework)).FullName, readParameters);
 			using ModuleDefinition? module = assembly.MainModule;
 
 			TypeDefinition? readOnlyValPtrTypeDefinition = module.Types.First(t => t.Name == "ReadOnlyValPtr`1");
