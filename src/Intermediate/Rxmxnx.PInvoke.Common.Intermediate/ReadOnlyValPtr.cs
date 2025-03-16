@@ -121,9 +121,8 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	[ExcludeFromCodeCoverage]
-	[Obsolete("This method is obsolete. Use NativeUtilities.GetUnsafeFixedReference instead.", true)]
 	public IReadOnlyFixedContext<T>.IDisposable GetUnsafeFixedContext(Int32 count, IDisposable? disposable = default)
-		=> NativeUtilities.GetUnsafeFixedContext(this, count, disposable);
+		=> new FixedContext<T>(this._value, count).ToDisposable(disposable);
 #endif
 
 	/// <summary>

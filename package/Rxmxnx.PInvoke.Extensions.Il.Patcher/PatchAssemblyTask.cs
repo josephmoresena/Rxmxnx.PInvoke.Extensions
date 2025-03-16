@@ -22,8 +22,8 @@ public sealed class PatchAssemblyTask : Task
 
 		try
 		{
-			using AssemblyDefinition? assembly =
-				AssemblyDefinition.ReadAssembly(assemblyFiles.First(f => f.FullName.Contains(this.TargetFramework)).FullName, readParameters);
+			using AssemblyDefinition? assembly = AssemblyDefinition.ReadAssembly(
+				assemblyFiles.First(f => f.FullName.Contains(this.TargetFramework)).FullName, readParameters);
 			using ModuleDefinition? module = assembly.MainModule;
 
 			TypeDefinition? readOnlyValPtrTypeDefinition = module.Types.First(t => t.Name == "ReadOnlyValPtr`1");
@@ -65,7 +65,9 @@ public sealed class PatchAssemblyTask : Task
 	{
 		MethodDefinition getUnsafeFixedContextMethod = new("GetUnsafeFixedContext",
 		                                                   MethodAttributes.Assembly | MethodAttributes.HideBySig,
-		                                                   moduleDefinition.ImportReference(returnType));
+		                                                   moduleDefinition.ImportReference(
+			                                                   returnType.Resolve().NestedTypes
+			                                                             .First(nt => nt.Name == "IDisposable")));
 		ILProcessor? il = getUnsafeFixedContextMethod.Body.GetILProcessor();
 		FieldDefinition valueField = type.Fields.First(f => f.Name == "_value");
 		MethodDefinition? classNew = classType.Resolve().Methods

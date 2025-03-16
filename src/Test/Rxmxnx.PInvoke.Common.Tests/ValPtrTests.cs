@@ -143,7 +143,7 @@ public sealed class ValPtrTests
 	}
 	private static unsafe void ContextTest<T>(ValPtr<T> valPtr, Span<T> span)
 	{
-		using IFixedContext<T>.IDisposable ctx = NativeUtilities.GetUnsafeFixedContext(valPtr, span.Length);
+		using IFixedContext<T>.IDisposable ctx = valPtr.GetUnsafeFixedContext(span.Length);
 		Assert.Equal(ctx.Values.Length, span.Length);
 		Assert.Equal(valPtr.Pointer, ctx.Pointer);
 		if (!ValPtr<T>.IsUnmanaged)

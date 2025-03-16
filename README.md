@@ -1414,8 +1414,7 @@ Represents a platform-specific type used to manage a pointer to a read-only valu
 
   Retrieves an unsafe `IReadOnlyFixedContext<T>.IDisposable` instance from current read-only reference pointer.
 
-  **Note:** In .NET 9.0+ this is an extension method. In .NET 6.0+ this method is obsolete, use
-  `NativeUtilities.GetUnsafeFixedContext(ReadOnlyValPtr<T>, Int32, IDisposable?)` instead.
+  **Note:** In .NET 9.0+ this is an extension method.
   </details>
 
 </details>
@@ -1472,8 +1471,7 @@ Represents a platform-specific type used to manage a pointer to a mutable value 
 
   Retrieves an unsafe `IReadOnlyFixedContext<T>.IDisposable` instance from current reference pointer.
 
-  **Note:** In .NET 9.0+ this is an extension method. In 6.0+ this method is obsolete, use
-  `NativeUtilities.GetUnsafeFixedContext(ValPtr<T>, Int32, IDisposable?)` instead.
+  **Note:** In .NET 9.0+ this is an extension method.
   </details>
 
 </details>

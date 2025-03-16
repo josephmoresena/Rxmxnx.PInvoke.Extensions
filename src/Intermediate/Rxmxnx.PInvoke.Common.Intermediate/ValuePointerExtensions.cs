@@ -31,7 +31,7 @@ public static unsafe partial class PointerExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IReadOnlyFixedContext<T>.IDisposable GetUnsafeFixedContext<T>(this ReadOnlyValPtr<T> ptr, Int32 count,
 		IDisposable? disposable = default)
-		=> NativeUtilities.GetUnsafeFixedContext(ptr, count, disposable);
+		=> new FixedContext<T>(ptr, count).ToDisposable(disposable);
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="IFixedContext{T}.IDisposable"/> instance from
 	/// current reference pointer.
@@ -50,6 +50,6 @@ public static unsafe partial class PointerExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IFixedContext<T>.IDisposable GetUnsafeFixedContext<T>(this ValPtr<T> ptr, Int32 count,
 		IDisposable? disposable = default)
-		=> NativeUtilities.GetUnsafeFixedContext(ptr, count, disposable);
+		=> new FixedContext<T>(ptr, count).ToDisposable(disposable);
 }
 #endif
