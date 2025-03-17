@@ -24,7 +24,7 @@ public partial class PatchAssemblyTask
 		// GetUnsafeFixedContext<>(Int32, System.IDisposable) method name.
 		const String getUnsafeFixedContextName = "GetUnsafeFixedContext";
 		// GetUnsafeFixedContext<>(Int32, System.IDisposable) method attributes.
-		const MethodAttributes getUnsafeFixedContextAttributes = MethodAttributes.Public | MethodAttributes.HideBySig;
+		const MethodAttributes getUnsafeFixedContextAttributes = MethodAttributes.Assembly | MethodAttributes.HideBySig;
 
 		// Interface full name.
 		String interfaceName = interfaceType.FullName;

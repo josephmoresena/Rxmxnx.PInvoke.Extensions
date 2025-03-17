@@ -6,7 +6,11 @@
 [EditorBrowsable(EditorBrowsableState.Never)]
 [Browsable(false)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#if !PACKAGE
 public static unsafe class PointerExtensions
+#else
+public static unsafe partial class PointerExtensions
+#endif
 {
 	/// <summary>
 	/// Determines if the <see cref="IntPtr"/> instance is zero.
