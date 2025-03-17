@@ -1,17 +1,13 @@
-#if NET9_0_OR_GREATER
+#if NET9_0_OR_GREATER && !PACKAGE
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Provides a set of extensions for basic operations with <see cref="IntPtr"/> and <see cref="UIntPtr"/> instances.
 /// </summary>
-#if !PACKAGE
 [EditorBrowsable(EditorBrowsableState.Never)]
 [Browsable(false)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 public static unsafe class ValuePointerExtensions
-#else
-public static unsafe partial class PointerExtensions
-#endif
 {
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance from
