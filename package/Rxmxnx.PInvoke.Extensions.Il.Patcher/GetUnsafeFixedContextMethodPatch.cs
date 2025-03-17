@@ -102,7 +102,8 @@ public partial class PatchAssemblyTask
             won't be moved or collected by garbage collector.
             The <paramref name=""disposable""/> parameter allows for custom management of resource cleanup.
             If provided, this object will be disposed of when the fixed reference is disposed.
-            Attempting to use this method with generic ref structs will result in a <see cref=""T:System.TypeLoadException""/> error.
+            Attempting to use this method with a generic ref struct type will result in a 
+            <see cref=""T:System.TypeLoadException""/> error.
             </remarks>
         </member>
         <member name=""M:Rxmxnx.PInvoke.ValPtr`1.GetUnsafeFixedContext(System.Int32,System.IDisposable)"">
@@ -118,7 +119,8 @@ public partial class PatchAssemblyTask
             won't be moved or collected by garbage collector.
             The <paramref name=""disposable""/> parameter allows for custom management of resource cleanup.
             If provided, this object will be disposed of when the fixed reference is disposed.
-            Attempting to use this method with generic ref structs will result in a <see cref=""T:System.TypeLoadException""/> error.
+            Attempting to use this method with a generic ref struct type will result in a 
+            <see cref=""T:System.TypeLoadException""/> error.
             </remarks>
         </member>
     ";
