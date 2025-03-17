@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 using Mono.Cecil;
 
 using MsBuildTask = Microsoft.Build.Utilities.Task;
@@ -7,6 +9,7 @@ namespace Rxmxnx.PInvoke.Extensions.Il.Patcher;
 /// <summary>
 /// TaskItem for MSBuild patching.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public sealed partial class PatchAssemblyTask : MsBuildTask
 {
 	/// <summary>

@@ -1,17 +1,13 @@
-#if NET9_0_OR_GREATER
+#if NET9_0_OR_GREATER && !PACKAGE
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Provides a set of extensions for basic operations with <see cref="IntPtr"/> and <see cref="UIntPtr"/> instances.
 /// </summary>
-#if !PACKAGE
 [EditorBrowsable(EditorBrowsableState.Never)]
 [Browsable(false)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 public static unsafe class ValuePointerExtensions
-#else
-public static unsafe partial class PointerExtensions
-#endif
 {
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance from
@@ -31,7 +27,7 @@ public static unsafe partial class PointerExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IReadOnlyFixedContext<T>.IDisposable GetUnsafeFixedContext<T>(this ReadOnlyValPtr<T> ptr, Int32 count,
 		IDisposable? disposable = default)
-		=> new FixedContext<T>(ptr, count).ToDisposable(disposable);
+		=> ReadOnlyFixedContext<T>.CreateDisposable(this, count, disposable);
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="IFixedContext{T}.IDisposable"/> instance from
 	/// current reference pointer.
@@ -50,6 +46,6 @@ public static unsafe partial class PointerExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IFixedContext<T>.IDisposable GetUnsafeFixedContext<T>(this ValPtr<T> ptr, Int32 count,
 		IDisposable? disposable = default)
-		=> new FixedContext<T>(ptr, count).ToDisposable(disposable);
+		=> FixedContext<T>.CreateDisposable(this, count, disposable);
 }
 #endif

@@ -38,7 +38,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="..\..\..\package\PACKAGE.md">
+        <Content Include="..\..\..\package\Rxmxnx.PInvoke.Extensions\PACKAGE.md">
             <Link>PACKAGE.md</Link>
         </Content>
     </ItemGroup>

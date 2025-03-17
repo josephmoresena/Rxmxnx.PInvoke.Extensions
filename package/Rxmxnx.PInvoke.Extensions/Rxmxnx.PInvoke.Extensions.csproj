@@ -12,6 +12,12 @@
         <IntermediateSourceBasePath>..\..\src\Intermediate</IntermediateSourceBasePath>
     </PropertyGroup>
     
+    <!-- Validations -->
+    <PropertyGroup>
+        <ApiCompatPreserveUnnecessarySuppressions>true</ApiCompatPreserveUnnecessarySuppressions>
+        <ApiCompatRespectInternals>true</ApiCompatRespectInternals>
+    </PropertyGroup>
+    
     <!-- Include intermediate assemblies -->
     <ItemGroup>
         <IntermediateAssemblyNames Include="Rxmxnx.PInvoke.Common.Intermediate"/>
