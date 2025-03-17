@@ -15,6 +15,10 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
 	/// <param name="disposable">Object to dispose in order to free <see langword="unmanaged"/> resources.</param>
 	/// <returns>A <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance.</returns>
+	/// <remarks>
+	/// This method serves as a reference for the assembly patcher in .NET 9.0+. It is important to keep the
+	/// attributes of its parameters compatible.
+	/// </remarks>
 	public static IReadOnlyFixedContext<T>.IDisposable CreateDisposable(ReadOnlyValPtr<T> valPtr, Int32 count,
 		IDisposable? disposable = default)
 	{

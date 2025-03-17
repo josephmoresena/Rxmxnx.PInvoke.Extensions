@@ -129,6 +129,10 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
 	/// <param name="disposable">Optional object to dispose in order to free unmanaged resources.</param>
 	/// <returns>An <see cref="IFixedContext{T}.IDisposable"/> instance representing a fixed reference.</returns>
+	/// <remarks>
+	/// This method serves as a reference for the assembly patcher in .NET 9.0+. It is important to keep the
+	/// attributes of its parameters compatible.
+	/// </remarks>
 	public static IFixedContext<T>.IDisposable CreateDisposable(ValPtr<T> valPtr, Int32 count,
 		IDisposable? disposable = default)
 	{

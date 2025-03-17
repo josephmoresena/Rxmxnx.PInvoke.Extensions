@@ -4,6 +4,10 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// Provides a set of extensions for basic operations with <see cref="IntPtr"/> and <see cref="UIntPtr"/> instances.
 /// </summary>
+/// <remarks>
+/// This class exposes extensions for source-level compatibility with the methods generated for .NET 9.0+ assemblies
+/// in the package patcher.
+/// </remarks>
 [EditorBrowsable(EditorBrowsableState.Never)]
 [Browsable(false)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
@@ -27,7 +31,7 @@ public static unsafe class ValuePointerExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IReadOnlyFixedContext<T>.IDisposable GetUnsafeFixedContext<T>(this ReadOnlyValPtr<T> ptr, Int32 count,
 		IDisposable? disposable = default)
-		=> ReadOnlyFixedContext<T>.CreateDisposable(this, count, disposable);
+		=> ReadOnlyFixedContext<T>.CreateDisposable(ptr, count, disposable);
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="IFixedContext{T}.IDisposable"/> instance from
 	/// current reference pointer.
@@ -46,6 +50,6 @@ public static unsafe class ValuePointerExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IFixedContext<T>.IDisposable GetUnsafeFixedContext<T>(this ValPtr<T> ptr, Int32 count,
 		IDisposable? disposable = default)
-		=> FixedContext<T>.CreateDisposable(this, count, disposable);
+		=> FixedContext<T>.CreateDisposable(ptr, count, disposable);
 }
 #endif
