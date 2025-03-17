@@ -121,10 +121,18 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 		return new(this, count);
 	}
 #pragma warning restore
-
-	public static IFixedContext<T>.IDisposable CreateDisposable(ValPtr<T> valPtr, Int32 count, IDisposable? disposable)
+	/// <summary>
+	/// Retrieves an <see langword="unsafe"/> <see cref="IFixedContext{T}.IDisposable"/> instance from
+	/// current reference pointer.
+	/// </summary>
+	/// <param name="valPtr">A <see cref="ReadOnlyValPtr{T}"/> value.</param>
+	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
+	/// <param name="disposable">Optional object to dispose in order to free unmanaged resources.</param>
+	/// <returns>An <see cref="IFixedContext{T}.IDisposable"/> instance representing a fixed reference.</returns>
+	public static IFixedContext<T>.IDisposable CreateDisposable(ValPtr<T> valPtr, Int32 count,
+		IDisposable? disposable = default)
 	{
 		FixedContext<T> ctx = new(valPtr, count);
 		return ctx.ToDisposable(disposable);
-	} 
+	}
 }

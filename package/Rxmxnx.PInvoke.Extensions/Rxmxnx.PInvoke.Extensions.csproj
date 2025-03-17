@@ -7,6 +7,7 @@
         <Nullable>enable</Nullable>
         <RootNamespace>Rxmxnx.PInvoke</RootNamespace>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <EnablePackageValidation>true</EnablePackageValidation>
         <SigningKeyFile>..\Rxmxnx.PInvoke.snk</SigningKeyFile>
         <IntermediateSourceBasePath>..\..\src\Intermediate</IntermediateSourceBasePath>
     </PropertyGroup>
