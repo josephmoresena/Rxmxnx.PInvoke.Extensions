@@ -120,8 +120,9 @@ public readonly unsafe partial struct ValPtr<T> : IWrapper<IntPtr>, IEquatable<V
 	/// The <paramref name="disposable"/> parameter allows for custom management of resource cleanup.
 	/// If provided, this object will be disposed of when the fixed reference is disposed.
 	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public IFixedContext<T>.IDisposable GetUnsafeFixedContext(Int32 count, IDisposable? disposable = default)
-		=> new FixedContext<T>(this._value, count).ToDisposable(disposable);
+		=> FixedContext<T>.CreateDisposable(this, count, disposable);
 #endif
 
 	/// <summary>

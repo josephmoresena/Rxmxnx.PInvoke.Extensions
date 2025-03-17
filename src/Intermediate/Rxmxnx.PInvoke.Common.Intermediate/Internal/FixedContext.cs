@@ -120,5 +120,23 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 		fixedOffset = new(this, offset);
 		return new(this, count);
 	}
-#pragma warning restore CS8500
+#pragma warning restore
+	/// <summary>
+	/// Retrieves an <see langword="unsafe"/> <see cref="IFixedContext{T}.IDisposable"/> instance from
+	/// current reference pointer.
+	/// </summary>
+	/// <param name="valPtr">A <see cref="ReadOnlyValPtr{T}"/> value.</param>
+	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
+	/// <param name="disposable">Optional object to dispose in order to free unmanaged resources.</param>
+	/// <returns>An <see cref="IFixedContext{T}.IDisposable"/> instance representing a fixed reference.</returns>
+	/// <remarks>
+	/// This method serves as a reference for the assembly patcher in .NET 9.0+. It is important to keep the
+	/// attributes of its parameters compatible.
+	/// </remarks>
+	public static IFixedContext<T>.IDisposable CreateDisposable(ValPtr<T> valPtr, Int32 count,
+		IDisposable? disposable = default)
+	{
+		FixedContext<T> ctx = new(valPtr, count);
+		return ctx.ToDisposable(disposable);
+	}
 }

@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- https://learn.microsoft.com/dotnet/fundamentals/package-validation/diagnostic-ids -->
+<Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Microsoft.CodeAnalysis.EmbeddedAttribute</Target>
+    <Left>lib/net7.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net8.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Runtime.CompilerServices.IsUnmanagedAttribute</Target>
+    <Left>lib/net7.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net8.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Runtime.CompilerServices.NullableAttribute</Target>
+    <Left>lib/net7.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net8.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Runtime.CompilerServices.NullableContextAttribute</Target>
+    <Left>lib/net7.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net8.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Runtime.CompilerServices.RefSafetyRulesAttribute</Target>
+    <Left>lib/net7.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net8.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Rxmxnx.PInvoke.FixedMemoryList.#ctor(Rxmxnx.PInvoke.Internal.FixedMemory[])</Target>
+    <Left>lib/net8.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net9.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Rxmxnx.PInvoke.ReadOnlyFixedMemoryList.#ctor(Rxmxnx.PInvoke.Internal.FixedMemory[])</Target>
+    <Left>lib/net8.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net9.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Rxmxnx.PInvoke.ReadOnlyFixedMemoryList.#ctor(Rxmxnx.PInvoke.Internal.ReadOnlyFixedMemory[])</Target>
+    <Left>lib/net8.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net9.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+</Suppressions>

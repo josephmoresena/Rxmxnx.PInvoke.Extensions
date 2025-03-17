@@ -55,7 +55,7 @@ jobs:
           dotnet test src --verbosity normal --collect:"XPlat Code Coverage" --results-directory TestResults/  --logger "trx;verbosity=detailed" --no-build --no-restore --configuration release -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover 
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
       - name: Pack assembly
-        working-directory: ./package
+        working-directory: ./package/Rxmxnx.PInvoke.Extensions
         run: |
           dotnet pack -c Release /p:Version=9999.99.99.99-tmp /p:NoIntermediateBuild=true
           for package in bin/Release/Rxmxnx.PInvoke.Extensions*.*nupkg; do
@@ -82,7 +82,7 @@ jobs:
         working-directory: ./tmpProject/PackageTrimmedAssembly
         run: |
           dotnet new nugetconfig
-          dotnet nuget add source ../../package/bin/Release/ -n TmpSource
+          dotnet nuget add source ../../package/Rxmxnx.PInvoke.Extensions/bin/Release/ -n TmpSource
           dotnet add package Rxmxnx.PInvoke.Extensions --version 9999.99.99.99-tmp
       - name: Create PackageTrimmedAssembly Program.cs
         working-directory: ./tmpProject/PackageTrimmedAssembly
@@ -108,15 +108,25 @@ jobs:
               Span<ValueTuple<String, Int32>> localSpan = s.Span;
               ref Span<ValueTuple<String, Int32>> refSpan = ref localSpan;
               ValPtr<Span<ValueTuple<String, Int32>>> valRefSpan = NativeUtilities.GetUnsafeValPtrFromRef(ref localSpan);
-              NativeUtilities.WithSafeFixed(ref refSpan, UseFixedRefSpan);
+
+              Console.WriteLine($"Unsafe Val Span Address: 0x{s.Span.GetUnsafeIntPtr():x8}");
+              NativeUtilities.WithSafeFixed(ref refSpan, s.InStack, UseFixedRefSpan);
               Console.WriteLine($"Ref Span: 0x{valRefSpan.Pointer:x8}");
               Console.WriteLine($"Ref Span vs Ptr Span: {Unsafe.AreSame(ref refSpan, ref valRefSpan.Reference)}");
           });
           
           return;
           
-          static void UseFixedRefSpan(in IFixedReference<Span<ValueTuple<String, Int32>>> frs) {
+          static void UseFixedRefSpan(in IFixedReference<Span<ValueTuple<String, Int32>>> frs, Boolean inStack)
+          {
+              ValPtr<Span<(String, Int32)>> ptr = NativeUtilities.GetUnsafeValPtrFromRef(ref frs.Reference);
               Console.WriteLine($"Reference Length: {frs.Reference.Length}");
+          
+              if (!inStack) return;
+          
+              ValPtr<(String, Int32)> valPtr = ptr.Reference.GetUnsafeValPtr();
+              using IFixedContext<(String, Int32)>.IDisposable? f = valPtr.GetUnsafeFixedContext(ptr.Reference.Length);
+              Console.WriteLine($"Unsafe Val Span: 0x{f.Pointer:x8}");
           }' > Program.cs
       - name: Build Package-Trimmed-Executables (PackageTrimmedAssembly)
         working-directory: ./tmpProject/PackageTrimmedAssembly

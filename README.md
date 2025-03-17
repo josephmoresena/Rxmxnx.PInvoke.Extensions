@@ -1414,7 +1414,7 @@ Represents a platform-specific type used to manage a pointer to a read-only valu
 
   Retrieves an unsafe `IReadOnlyFixedContext<T>.IDisposable` instance from current read-only reference pointer.
 
-  **Note:** In .NET 9.0+ this is an extension method.
+  **Note:** In .NET 9.0+ this method may cause runtime errors when using a generic `ref struct` type.
   </details>
 
 </details>
@@ -1471,7 +1471,7 @@ Represents a platform-specific type used to manage a pointer to a mutable value 
 
   Retrieves an unsafe `IReadOnlyFixedContext<T>.IDisposable` instance from current reference pointer.
 
-  **Note:** In .NET 9.0+ this is an extension method.
+  **Note:** In .NET 9.0+ this method may cause runtime errors when using a generic `ref struct` type.
   </details>
 
 </details>

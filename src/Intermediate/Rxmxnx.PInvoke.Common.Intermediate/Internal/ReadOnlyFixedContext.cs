@@ -7,6 +7,24 @@
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IReadOnlyFixedContext<T>
 {
+	/// <summary>
+	/// Retrieves an <see langword="unsafe"/> <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance from
+	/// current read-only reference pointer.
+	/// </summary>
+	/// <param name="valPtr">A <see cref="ReadOnlyValPtr{T}"/> value.</param>
+	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
+	/// <param name="disposable">Object to dispose in order to free <see langword="unmanaged"/> resources.</param>
+	/// <returns>A <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance.</returns>
+	/// <remarks>
+	/// This method serves as a reference for the assembly patcher in .NET 9.0+. It is important to keep the
+	/// attributes of its parameters compatible.
+	/// </remarks>
+	public static IReadOnlyFixedContext<T>.IDisposable CreateDisposable(ReadOnlyValPtr<T> valPtr, Int32 count,
+		IDisposable? disposable = default)
+	{
+		ReadOnlyFixedContext<T> ctx = new(valPtr, count);
+		return ctx.ToDisposable(disposable);
+	}
 #pragma warning disable CS8500
 	/// <summary>
 	/// An empty instance of <see cref="ReadOnlyFixedContext{T}"/>.
