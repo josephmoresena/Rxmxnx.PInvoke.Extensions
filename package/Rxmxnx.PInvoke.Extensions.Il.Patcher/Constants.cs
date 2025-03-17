@@ -7,6 +7,10 @@ public partial class PatchAssemblyTask
 	/// </summary>
 	public const String AssemblyName = "Rxmxnx.PInvoke.Extensions.dll";
 	/// <summary>
+	/// Package documentation name.
+	/// </summary>
+	public const String AssemblyDocumentationName = "Rxmxnx.PInvoke.Extensions.xml";
+	/// <summary>
 	/// <c>ReadOnlyPtr&lt;&gt;</c> type name.
 	/// </summary>
 	public const String ReadOnlyValPtrName = "ReadOnlyValPtr`1";

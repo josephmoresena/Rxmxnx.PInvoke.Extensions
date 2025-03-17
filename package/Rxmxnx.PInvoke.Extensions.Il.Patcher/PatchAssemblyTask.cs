@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Xml;
 
 using Mono.Cecil;
 
@@ -45,7 +46,10 @@ public sealed partial class PatchAssemblyTask : MsBuildTask
 			assemblyPath = assemblyFiles
 			               .First(f => f.FullName.Contains(this.TargetFramework,
 			                                               StringComparison.InvariantCultureIgnoreCase)).FullName;
-			PatchAssemblyTask.PatchAssembly(assemblyPath);
+			String? documentationPath = outputPath
+			                            .GetFiles(PatchAssemblyTask.AssemblyDocumentationName,
+			                                      SearchOption.AllDirectories).FirstOrDefault()?.FullName;
+			PatchAssemblyTask.PatchAssembly(assemblyPath, documentationPath);
 			return true;
 		}
 		catch (Exception ex)
@@ -66,14 +70,15 @@ public sealed partial class PatchAssemblyTask : MsBuildTask
 		if (args.Length < 1)
 			Console.Write("Please select the path of Rxmxnx.PInvoke.Extension assembly.");
 
-		PatchAssemblyTask.PatchAssembly(args[0]);
+		PatchAssemblyTask.PatchAssembly(args[0], args.Length > 1 ? args[1] : default);
 	}
 
 	/// <summary>
 	/// Patches the <c>Rxmxnx.PInvoke.Extensions</c> assembly.
 	/// </summary>
 	/// <param name="assemblyPath">Path to <c>Rxmxnx.PInvoke.Extensions</c> assembly.</param>
-	private static void PatchAssembly(String assemblyPath)
+	/// <param name="documentationPath">Path to <c>Rxmxnx.PInvoke.Extensions</c> documentation.</param>
+	private static void PatchAssembly(String assemblyPath, String? documentationPath = default)
 	{
 		using AssemblyDefinition? assembly =
 			AssemblyDefinition.ReadAssembly(assemblyPath, PatchAssemblyTask.readParameters);
@@ -95,5 +100,17 @@ public sealed partial class PatchAssemblyTask : MsBuildTask
 		PatchAssemblyTask.ImplementGetUnsafeFixedContextMethod(module, valPtrTypeDefinition, iFixedContext,
 		                                                       fixedContext);
 		assembly.Write(PatchAssemblyTask.writeParameters);
+
+		if (String.IsNullOrEmpty(documentationPath)) return;
+
+		XmlDocument xmlDocument = new() { PreserveWhitespace = true, };
+		xmlDocument.Load(documentationPath);
+
+		XmlNodeList membersNode = xmlDocument.GetElementsByTagName("members");
+
+		if (membersNode is not [XmlElement membersElement,]) return;
+
+		PatchAssemblyTask.DocumentGetUnsafeFixedContextMethod(membersElement);
+		xmlDocument.Save(documentationPath);
 	}
 }

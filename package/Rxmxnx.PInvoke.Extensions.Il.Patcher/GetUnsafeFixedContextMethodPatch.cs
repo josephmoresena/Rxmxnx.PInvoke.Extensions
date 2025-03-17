@@ -1,3 +1,5 @@
+using System.Xml;
+
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
@@ -79,5 +81,51 @@ public partial class PatchAssemblyTask
 
 		// Add method
 		genericType.Resolve().Methods.Add(getUnsafeFixedContextMethod);
+	}
+	/// <summary>
+	/// Documents <c>GetUnsafeFixedContext&lt;&gt;(Int32, System.IDisposable)</c> methods.
+	/// </summary>
+	/// <param name="membersElement">Xml assembly members documentation.</param>
+	private static void DocumentGetUnsafeFixedContextMethod(XmlElement membersElement)
+	{
+		const String rawXmlDocumentation = @"
+        <member name=""M:Rxmxnx.PInvoke.ReadOnlyValPtr`1.GetUnsafeFixedContext(System.Int32,System.IDisposable)"">
+            <summary>
+            Retrieves an <see langword=""unsafe""/> <see cref=""T:Rxmxnx.PInvoke.IReadOnlyFixedContext`1.IDisposable""/> instance from
+            current read-only reference pointer.
+            </summary>
+            <param name=""count"">The number of items of type <typeparamref name=""T""/> in the memory block.</param>
+            <param name=""disposable"">Object to dispose in order to free <see langword=""unmanaged""/> resources.</param>
+            <returns>A <see cref=""T:Rxmxnx.PInvoke.IReadOnlyFixedContext`1.IDisposable""/> instance.</returns>
+            <remarks>
+            The instance obtained is ""unsafe"" as it doesn't guarantee that the referenced values
+            won't be moved or collected by garbage collector.
+            The <paramref name=""disposable""/> parameter allows for custom management of resource cleanup.
+            If provided, this object will be disposed of when the fixed reference is disposed.
+            Attempting to use this method with generic ref structs will result in a <see cref=""T:System.TypeLoadException""/> error.
+            </remarks>
+        </member>
+        <member name=""M:Rxmxnx.PInvoke.ValPtr`1.GetUnsafeFixedContext(System.Int32,System.IDisposable)"">
+            <summary>
+            Retrieves an <see langword=""unsafe""/> <see cref=""T:Rxmxnx.PInvoke.IFixedContext`1.IDisposable""/> instance from
+            current reference pointer.
+            </summary>
+            <param name=""count"">The number of items of type <typeparamref name=""T""/> in the memory block.</param>
+            <param name=""disposable"">Optional object to dispose in order to free unmanaged resources.</param>
+            <returns>An <see cref=""T:Rxmxnx.PInvoke.IFixedContext`1.IDisposable""/> instance representing a fixed reference.</returns>
+            <remarks>
+            The instance obtained is ""unsafe"" as it doesn't guarantee that the referenced values
+            won't be moved or collected by garbage collector.
+            The <paramref name=""disposable""/> parameter allows for custom management of resource cleanup.
+            If provided, this object will be disposed of when the fixed reference is disposed.
+            Attempting to use this method with generic ref structs will result in a <see cref=""T:System.TypeLoadException""/> error.
+            </remarks>
+        </member>
+    ";
+
+		XmlDocumentFragment fragment = membersElement.OwnerDocument.CreateDocumentFragment();
+		fragment.InnerXml = rawXmlDocumentation;
+
+		membersElement.AppendChild(fragment);
 	}
 }
