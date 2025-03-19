@@ -36,7 +36,7 @@
         Target to compile intermediate projects
         This target builds intermediate projects referenced in the main project.
     -->
-    <Target Name="BuildIntermediateProjects" BeforeTargets="BeforeCompile">
+    <Target Name="BuildIntermediateProjects" BeforeTargets="CoreCompile">
         <ItemGroup>
             <!-- Identify intermediate C# projects based on their assembly names -->
             <CsIntermediateProjects Include="@(IntermediateAssemblyNames)">
