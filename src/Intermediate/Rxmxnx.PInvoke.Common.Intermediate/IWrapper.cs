@@ -72,6 +72,7 @@ public interface IWrapper<T> : IWrapper.IBase<T>, IEquatable<T>
 	/// </summary>
 	new T Value { get; }
 
+	[ExcludeFromCodeCoverage]
 	T IBase<T>.Value => this.Value;
 	Boolean IEquatable<T>.Equals(T? other) => Object.Equals(this.Value, other);
 
