@@ -22,6 +22,7 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	public static IReadOnlyFixedContext<T>.IDisposable CreateDisposable(ReadOnlyValPtr<T> valPtr, Int32 count,
 		IDisposable? disposable = default)
 	{
+		if (valPtr.IsZero) return Disposable.Default;
 		ReadOnlyFixedContext<T> ctx = new(valPtr, count);
 		return ctx.ToDisposable(disposable);
 	}

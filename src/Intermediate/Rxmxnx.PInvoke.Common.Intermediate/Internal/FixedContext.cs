@@ -136,6 +136,7 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 	public static IFixedContext<T>.IDisposable CreateDisposable(ValPtr<T> valPtr, Int32 count,
 		IDisposable? disposable = default)
 	{
+		if (valPtr.IsZero) return Disposable.Default;
 		FixedContext<T> ctx = new(valPtr, count);
 		return ctx.ToDisposable(disposable);
 	}
