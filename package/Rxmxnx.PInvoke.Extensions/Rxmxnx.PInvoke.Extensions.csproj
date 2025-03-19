@@ -74,7 +74,7 @@
 			<AssemblyOutputPath>$(OutputPath)</AssemblyOutputPath>
 			<AssemblyTargetFramework>$(TargetFramework)</AssemblyTargetFramework>
 		</PropertyGroup>
-		<PatchAssemblyTask OutputPath="$(AssemblyOutputPath)" TargetFramework="$(AssemblyTargetFramework)" />
+		<PatchAssemblyTask OutputPath="$(AssemblyOutputPath)" TargetFramework="$(AssemblyTargetFramework)" StrongNameKeyPath="$(SigningKeyFile)" />
 	</Target>
 	
 </Project>

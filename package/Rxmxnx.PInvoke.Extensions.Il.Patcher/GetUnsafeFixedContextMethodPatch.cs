@@ -60,6 +60,10 @@ public partial class PatchAssemblyTask
 		// GetUnsafeFixedContext<>(Int32, System.IDisposable)
 		MethodDefinition getUnsafeFixedContextMethod = new(getUnsafeFixedContextName,
 		                                                   getUnsafeFixedContextAttributes, genericIDisposable);
+
+		// MethodImpl(MethodImplOptions.AggressiveInlining)
+		getUnsafeFixedContextMethod.ImplAttributes |= MethodImplAttributes.AggressiveInlining;
+
 		// Add method parameters
 		getUnsafeFixedContextMethod.Parameters.Add(createDisposableMethod.Parameters[1]);
 		getUnsafeFixedContextMethod.Parameters.Add(createDisposableMethod.Parameters[2]);
