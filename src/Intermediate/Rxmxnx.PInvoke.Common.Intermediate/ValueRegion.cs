@@ -31,6 +31,29 @@ public abstract partial class ValueRegion<T> where T : unmanaged
 	/// </summary>
 	/// <returns>An array containing the copied data from the current memory region.</returns>
 	public T[] ToArray() => this.AsSpan().ToArray();
+	/// <summary>
+	/// Tries to create a new <see cref="GCHandle"/> for current value region.
+	/// </summary>
+	/// <param name="type">The type of <see cref="GCHandle"/> to create.</param>
+	/// <param name="handle">Output. Created <see cref="GCHandle"/> that protects the value region.</param>
+	/// <returns>
+	/// <see langword="true"/> if a <paramref name="handle"/> was successfully created; otherwise, <see langword="false"/>.
+	/// </returns>
+	public virtual Boolean TryAlloc(GCHandleType type, out GCHandle handle)
+	{
+		handle = default;
+		return false;
+	}
+	/// <summary>
+	/// Retrieves the <see cref="IPinnable"/> instance for current region.
+	/// </summary>
+	/// <param name="offset">Memory region offset.</param>
+	/// <returns>The <see cref="IPinnable"/> instance for current region.</returns>
+	public virtual IPinnable? GetPinnable(out Int32 offset)
+	{
+		offset = default;
+		return default;
+	}
 
 	/// <summary>
 	/// Retrieves a subsequence from this instance, starting from a specified item position and extending to the end of
@@ -144,6 +167,18 @@ public abstract partial class ValueRegion<T> where T : unmanaged
 	/// <param name="state">Function state.</param>
 	/// <param name="func"><see cref="ReadOnlySpanFunc{T, TState}"/> delegate.</param>
 	/// <returns>A new <see cref="ValueRegion{T}"/> instance.</returns>
+	[ExcludeFromCodeCoverage]
 	public static ValueRegion<T> Create<TState>(TState state, ReadOnlySpanFunc<T, TState> func)
 		=> new FuncRegion<TState>(state, func);
+	/// <summary>
+	/// Creates a new <see cref="ValueRegion{T}"/> instance from a <see cref="ReadOnlySpanFunc{T, TState}"/>
+	/// function and a <typeparamref name="TState"/> instance.
+	/// </summary>
+	/// <param name="state">Function state.</param>
+	/// <param name="func"><see cref="ReadOnlySpanFunc{T, TState}"/> delegate.</param>
+	/// <param name="alloc">Allocation state delegate.</param>
+	/// <returns>A new <see cref="ValueRegion{T}"/> instance.</returns>
+	public static ValueRegion<T> Create<TState>(TState state, ReadOnlySpanFunc<T, TState> func,
+		Func<TState, GCHandleType, GCHandle> alloc)
+		=> new FuncRegion<TState>(state, func, alloc);
 }

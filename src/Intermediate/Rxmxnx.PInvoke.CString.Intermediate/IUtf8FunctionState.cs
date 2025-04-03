@@ -7,6 +7,11 @@ namespace Rxmxnx.PInvoke;
 public interface IUtf8FunctionState<TSelf> where TSelf : struct, IUtf8FunctionState<TSelf>
 {
 	/// <summary>
+	/// Function that allocates a <see cref="TSelf"/> instance.
+	/// </summary>
+	static virtual Func<TSelf, GCHandleType, GCHandle>? Alloc => default;
+
+	/// <summary>
 	/// Indicates whether resulting UTF-8 text is null-terminated.
 	/// </summary>
 	Boolean IsNullTerminated { get; }

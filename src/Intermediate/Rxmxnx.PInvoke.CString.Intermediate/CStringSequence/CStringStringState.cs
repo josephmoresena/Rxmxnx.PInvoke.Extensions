@@ -16,6 +16,9 @@ public partial class CStringSequence
 		/// </summary>
 		private readonly Int32 _utf8Length = Encoding.UTF8.GetByteCount(value);
 
+		static Func<CStringStringState, GCHandleType, GCHandle>? IUtf8FunctionState<CStringStringState>.Alloc
+			=> (s, t) => GCHandle.Alloc(s._value, t);
+
 		Boolean IUtf8FunctionState<CStringStringState>.IsNullTerminated => false;
 #if NET6_0
 		[RequiresPreviewFeatures]

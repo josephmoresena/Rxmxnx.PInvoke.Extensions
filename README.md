@@ -654,6 +654,13 @@ Interface representing a value state for functional CString creation.
 
 **Note:** `TSelf` generic type is `struct`. This type allows public implementation or inheritance.
 
+#### Static Abstract/Virtual Properties:
+
+- <details>
+  <summary>Alloc</summary>
+    Function that allocates a state instance.
+  </details>
+
 #### Properties:
 
 - <details>
@@ -1692,6 +1699,14 @@ This class represents a region of memory that contains a sequence of `T` values.
   <summary>ToArray()</summary>
   Copies the contents of this memory region into a new array.
   </details>
+- <details>
+  <summary>TryAlloc(GCHandleType, out GCHandle)</summary>
+  Tries to create a new GC CHandle for current value region.
+  </details>
+- <details>
+  <summary>GetPinnable(out Int32)</summary>
+  Retrieves the pinnable instance for current region.
+  </details>
 
 ### Operators:
 
@@ -1726,7 +1741,12 @@ This class represents a region of memory that contains a sequence of `T` values.
 - <details>
   <summary>Create&lt;TState&gt;(TState, ReadOnlySpanFunc&lt;T, TState&gt;)</summary>
 
-  Creates a new `ValueRegion<T>` instance from a `ReadOnlySpanFunc<T, TState>` function and TState instance.
+  Creates a new `ValueRegion<T>` instance from a `ReadOnlySpanFunc<T, TState>` function and a TState instance.
+  </details>
+- <details>
+  <summary>Create&lt;TState&gt;(TState, ReadOnlySpanFunc&lt;T, TState&gt;, Func&lt;TState, GCHandleType, GCHandle>&gt;)</summary>
+
+  Creates a new `ValueRegion<T>` instance from a `ReadOnlySpanFunc<T, TState>` function and a GC-allocatable instance.
   </details>
 
 </details>
@@ -1887,6 +1907,11 @@ Represents a sequence of UTF-8 encoded characters.
   <summary>ToHexString()</summary>
 
   Returns a `String` that represents the current UTF-8 text as a hexadecimal value.
+  </details>
+- <details>
+  <summary>TryPin()</summary>
+
+  Tries to pin the current UTF-8 memory block.
   </details>
 
 ### Operators:

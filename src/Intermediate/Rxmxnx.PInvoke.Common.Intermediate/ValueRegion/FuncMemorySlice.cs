@@ -46,6 +46,10 @@ public partial class ValueRegion<T>
 	private sealed class FuncMemorySlice<TState> : MemorySlice
 	{
 		/// <summary>
+		/// Internal function that allocates the memory region.
+		/// </summary>
+		private readonly Func<TState, GCHandleType, GCHandle>? _alloc;
+		/// <summary>
 		/// The internal function that provides the memory region.
 		/// </summary>
 		private readonly ReadOnlySpanFunc<T, TState> _func;
@@ -63,7 +67,7 @@ public partial class ValueRegion<T>
 		/// <param name="length">The length of the range.</param>
 		public FuncMemorySlice(FuncRegion<TState> region, Int32 offset, Int32 length) : base(
 			region.GetLength(), offset, length)
-			=> this._func = region.AsReadOnlySpanFunc(out this._state);
+			=> this._func = region.AsReadOnlySpanFunc(out this._state, out this._alloc);
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ValueRegion{T}.FuncMemorySlice"/> class from a sub-range of an
@@ -77,6 +81,17 @@ public partial class ValueRegion<T>
 		{
 			this._func = region._func;
 			this._state = region._state;
+		}
+
+		/// <inheritdoc/>
+		public override Boolean TryAlloc(GCHandleType type, out GCHandle handle)
+			=> FuncRegion<TState>.TryAlloc(this._alloc, this._state, type, out handle);
+		/// <param name="offset"></param>
+		/// <inheritdoc/>
+		public override IPinnable? GetPinnable(out Int32 offset)
+		{
+			offset = this.Offset;
+			return this._state as IPinnable;
 		}
 
 		/// <inheritdoc/>
