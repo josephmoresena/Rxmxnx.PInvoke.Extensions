@@ -31,7 +31,7 @@ internal sealed class ArrayMemoryManager<T> : MemoryManager<T>
 			this._handle = GCHandle.Alloc(this._array, GCHandleType.Pinned);
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(this._array);
 		ref T handleRef = ref Unsafe.Add(ref managedRef, elementIndex);
-		return new(Unsafe.AsPointer(ref handleRef), this._handle, this);
+		return new(Unsafe.AsPointer(ref handleRef), default, this);
 	}
 	/// <inheritdoc/>
 	public override void Unpin()
