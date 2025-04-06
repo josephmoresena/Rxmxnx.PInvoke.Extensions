@@ -6,7 +6,9 @@ namespace Rxmxnx.PInvoke;
 /// <typeparam name="T">Type of pointer.</typeparam>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
+#if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<ReadOnlyValPtr<T>>, ISerializable
 #if NET9_0_OR_GREATER
 	where T : allows ref struct
@@ -52,13 +54,17 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 	/// <param name="info">A <see cref="SerializationInfo"/> instance.</param>
 	/// <param name="context">A <see cref="StreamingContext"/> instance.</param>
 	/// <exception cref="ArgumentException">If invalid pointer value.</exception>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	private ReadOnlyValPtr(SerializationInfo info, StreamingContext context)
 		=> this._value = ValidationUtilities.ThrowIfInvalidPointer(info);
 
 	IntPtr IWrapper<IntPtr>.Value => this.Pointer;
 
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 		=> ValidationUtilities.ThrowIfInvalidSerialization(info, this._value);
 

@@ -6,7 +6,9 @@ namespace Rxmxnx.PInvoke;
 /// <typeparam name="TDelegate">The type of delegate that the method pointer represents.</typeparam>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
+#if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<FuncPtr<TDelegate>>,
 	ISerializable where TDelegate : Delegate
 {
@@ -45,13 +47,17 @@ public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEq
 	/// <param name="info">A <see cref="SerializationInfo"/> instance.</param>
 	/// <param name="context">A <see cref="StreamingContext"/> instance.</param>
 	/// <exception cref="ArgumentException">If invalid pointer value.</exception>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	private FuncPtr(SerializationInfo info, StreamingContext context)
 		=> this._value = ValidationUtilities.ThrowIfInvalidPointer(info);
 
 	IntPtr IWrapper<IntPtr>.Value => this.Pointer;
 
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 		=> ValidationUtilities.ThrowIfInvalidSerialization(info, this._value);
 

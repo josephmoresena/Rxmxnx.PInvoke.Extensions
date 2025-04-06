@@ -100,7 +100,9 @@ public static partial class BufferManager
 		/// Registers space type.
 		/// </summary>
 		/// <typeparam name="TSpace">Type of the space.</typeparam>
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
 		public static void RegisterBufferSpace<TSpace>() where TSpace : struct, IManagedBinaryBuffer<TSpace, T>
 		{
 			BufferTypeMetadata<T> typeMetadata = IManagedBuffer<T>.GetMetadata<TSpace>();
@@ -128,8 +130,10 @@ public static partial class BufferManager
 		/// Prints metadata dictionary.
 		/// </summary>
 		/// <param name="trace">Indicates whether trace should be written.</param>
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6670)]
+#endif
 		public static void PrintMetadata(Boolean trace)
 		{
 			if (!trace) return;

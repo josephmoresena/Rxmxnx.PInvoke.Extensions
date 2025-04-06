@@ -5,7 +5,9 @@ public partial class ValueRegion<T>
 	/// <summary>
 	/// Represents a native memory region in which a sequence of values is stored.
 	/// </summary>
+#if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 	private sealed unsafe class NativeRegion : ValueRegion<T>
 	{
 		/// <summary>

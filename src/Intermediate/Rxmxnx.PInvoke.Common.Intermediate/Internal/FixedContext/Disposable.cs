@@ -34,11 +34,17 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 		Span<Object> IFixedMemory.Objects => (this.Value as IFixedMemory).Objects;
 		ReadOnlySpan<Object> IReadOnlyFixedMemory.Objects => (this.Value as IReadOnlyFixedMemory).Objects;
 
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
 		IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
 		IReadOnlyFixedContext<Object> IReadOnlyFixedMemory.AsObjectContext() => this.AsObjectContext();
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
 		IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(
 			out IReadOnlyFixedMemory residual)
 		{
@@ -47,7 +53,9 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 				this.Transformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual));
 			return result;
 		}
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
 		IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 		{
 			Unsafe.SkipInit(out residual);

@@ -1,6 +1,8 @@
 ﻿namespace Rxmxnx.PInvoke;
 
+#if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS107)]
+#endif
 public partial class CString
 {
 	/// <summary>

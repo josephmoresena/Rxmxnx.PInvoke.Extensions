@@ -15,7 +15,9 @@ namespace Rxmxnx.PInvoke.Buffers;
 /// </remarks>
 #pragma warning disable CA2252
 [StructLayout(LayoutKind.Sequential)]
+#if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
+#endif
 public partial struct Composite<TBufferA, TBufferB, T> : IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>
 	where TBufferA : struct, IManagedBinaryBuffer<TBufferA, T>
 	where TBufferB : struct, IManagedBinaryBuffer<TBufferB, T>

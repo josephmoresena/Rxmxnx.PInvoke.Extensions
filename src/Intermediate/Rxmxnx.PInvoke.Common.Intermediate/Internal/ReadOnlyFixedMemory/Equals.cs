@@ -6,7 +6,9 @@ internal abstract partial class ReadOnlyFixedMemory : IEquatable<ReadOnlyFixedMe
 	public virtual Boolean Equals(ReadOnlyFixedMemory? other) => this.Equals(other as FixedPointer);
 
 	/// <inheritdoc/>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	public override Boolean Equals(Object? obj) => base.Equals(obj as FixedMemory);
 
 	/// <inheritdoc/>

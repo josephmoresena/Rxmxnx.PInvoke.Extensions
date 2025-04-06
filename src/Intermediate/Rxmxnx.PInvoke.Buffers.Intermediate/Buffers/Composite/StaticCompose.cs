@@ -4,7 +4,9 @@ namespace Rxmxnx.PInvoke.Buffers;
 public partial struct Composite<TBufferA, TBufferB, T>
 {
 #if BINARY_SPACES
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	static void IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>.StaticCompose<T0>(UInt16 s0,
 		StaticCompositionHelper<T> helper)
 	{
@@ -20,7 +22,9 @@ public partial struct Composite<TBufferA, TBufferB, T>
 		UInt16 bSize = TBufferB.TypeMetadata.Size;
 		TBufferB.StaticCompose<T0, TBufferB>(s0, bSize, helper);
 	}
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	static void IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>.StaticCompose<T0, T1>(UInt16 s0, UInt16 s1,
 		StaticCompositionHelper<T> helper)
 	{
@@ -36,7 +40,9 @@ public partial struct Composite<TBufferA, TBufferB, T>
 		UInt16 bSize = TBufferB.TypeMetadata.Size;
 		TBufferB.StaticCompose<T0, T1, TBufferB>(s0, s1, bSize, helper);
 	}
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	static void IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>.StaticCompose<T0, T1, T2>(UInt16 s0,
 		UInt16 s1, UInt16 s2, StaticCompositionHelper<T> helper)
 	{
@@ -53,7 +59,9 @@ public partial struct Composite<TBufferA, TBufferB, T>
 		UInt16 bSize = TBufferB.TypeMetadata.Size;
 		TBufferB.StaticCompose<T0, T1, T2, TBufferB>(s0, s1, s2, bSize, helper);
 	}
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	static void IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>.StaticCompose<T0, T1, T2, T3>(UInt16 s0,
 		UInt16 s1, UInt16 s2, UInt16 s3, StaticCompositionHelper<T> helper)
 	{
@@ -69,7 +77,9 @@ public partial struct Composite<TBufferA, TBufferB, T>
 		UInt16 bSize = TBufferB.TypeMetadata.Size;
 		TBufferB.StaticCompose<T0, T1, T2, T3, TBufferB>(s0, s1, s2, s3, bSize, helper);
 	}
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	static void IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>.StaticCompose<T0, T1, T2, T3, T4>(UInt16 s0,
 		UInt16 s1, UInt16 s2, UInt16 s3, UInt16 s4, StaticCompositionHelper<T> helper)
 	{
@@ -87,7 +97,9 @@ public partial struct Composite<TBufferA, TBufferB, T>
 		UInt16 bSize = TBufferB.TypeMetadata.Size;
 		TBufferB.StaticCompose<T0, T1, T2, T3, T4, TBufferB>(s0, s1, s2, s3, s4, bSize, helper);
 	}
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	static void IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>.StaticCompose<T0, T1, T2, T3, T4, T5>(
 		UInt16 s0, UInt16 s1, UInt16 s2, UInt16 s3, UInt16 s4, UInt16 s5, StaticCompositionHelper<T> helper)
 	{
@@ -106,7 +118,9 @@ public partial struct Composite<TBufferA, TBufferB, T>
 		UInt16 bSize = TBufferB.TypeMetadata.Size;
 		TBufferB.StaticCompose<T0, T1, T2, T3, T4, T5, TBufferB>(s0, s1, s2, s3, s4, s5, bSize, helper);
 	}
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	static void IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>.StaticCompose<T0, T1, T2, T3, T4, T5, T6>(
 		UInt16 s0, UInt16 s1, UInt16 s2, UInt16 s3, UInt16 s4, UInt16 s5, UInt16 s6, StaticCompositionHelper<T> helper)
 	{
@@ -126,7 +140,9 @@ public partial struct Composite<TBufferA, TBufferB, T>
 		UInt16 bSize = TBufferB.TypeMetadata.Size;
 		TBufferB.StaticCompose<T0, T1, T2, T3, T4, T5, T6, TBufferB>(s0, s1, s2, s3, s4, s5, s6, bSize, helper);
 	}
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	static void IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>.StaticCompose<T0, T1, T2, T3, T4, T5, T6, T7>(
 		UInt16 s0, UInt16 s1, UInt16 s2, UInt16 s3, UInt16 s4, UInt16 s5, UInt16 s6, UInt16 s7,
 		StaticCompositionHelper<T> helper)
@@ -147,7 +163,9 @@ public partial struct Composite<TBufferA, TBufferB, T>
 		UInt16 bSize = TBufferB.TypeMetadata.Size;
 		TBufferB.StaticCompose<T0, T1, T2, T3, T4, T5, T6, T7, TBufferB>(s0, s1, s2, s3, s4, s5, s6, s7, bSize, helper);
 	}
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	static void IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>.
 		StaticCompose<T0, T1, T2, T3, T4, T5, T6, T7, T8>(UInt16 s0, UInt16 s1, UInt16 s2, UInt16 s3, UInt16 s4,
 			UInt16 s5,
@@ -171,7 +189,9 @@ public partial struct Composite<TBufferA, TBufferB, T>
 		TBufferB.StaticCompose<T0, T1, T2, T3, T4, T5, T6, T7, T8, TBufferB>(
 			s0, s1, s2, s3, s4, s5, s6, s7, s8, bSize, helper);
 	}
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	static void IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>.
 		StaticCompose<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(UInt16 s0, UInt16 s1, UInt16 s2, UInt16 s3, UInt16 s4,
 			UInt16 s5, UInt16 s6, UInt16 s7, UInt16 s8, UInt16 s9, StaticCompositionHelper<T> helper)
@@ -197,7 +217,9 @@ public partial struct Composite<TBufferA, TBufferB, T>
 		TBufferB.StaticCompose<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, TBufferB>(
 			s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, bSize, helper);
 	}
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	static void IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>.
 		StaticCompose<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(UInt16 s0, UInt16 s1, UInt16 s2, UInt16 s3,
 			UInt16 s4,
@@ -223,7 +245,9 @@ public partial struct Composite<TBufferA, TBufferB, T>
 		TBufferB.StaticCompose<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TBufferB>(
 			s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, bSize, helper);
 	}
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	static void IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>.
 		StaticCompose<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(UInt16 s0, UInt16 s1, UInt16 s2, UInt16 s3,
 			UInt16 s4, UInt16 s5, UInt16 s6, UInt16 s7, UInt16 s8, UInt16 s9, UInt16 s10, UInt16 s11,
@@ -249,7 +273,9 @@ public partial struct Composite<TBufferA, TBufferB, T>
 		TBufferB.StaticCompose<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TBufferB>(
 			s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, bSize, helper);
 	}
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	static void IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>.
 		StaticCompose<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(UInt16 s0, UInt16 s1, UInt16 s2, UInt16 s3,
 			UInt16 s4, UInt16 s5, UInt16 s6, UInt16 s7, UInt16 s8, UInt16 s9, UInt16 s10, UInt16 s11, UInt16 s12,
@@ -275,7 +301,9 @@ public partial struct Composite<TBufferA, TBufferB, T>
 		TBufferB.StaticCompose<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TBufferB>(
 			s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, bSize, helper);
 	}
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	static void IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>.
 		StaticCompose<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(UInt16 s0, UInt16 s1, UInt16 s2,
 			UInt16 s3, UInt16 s4, UInt16 s5, UInt16 s6, UInt16 s7, UInt16 s8, UInt16 s9, UInt16 s10, UInt16 s11,

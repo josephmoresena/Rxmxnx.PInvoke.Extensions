@@ -61,7 +61,9 @@ public partial class CStringSequence
 				set => this._cache[this.GetRealIndex(index)] = value;
 			}
 			/// <inheritdoc/>
+#if !PACKAGE
 			[ExcludeFromCodeCoverage]
+#endif
 			public override Int32 Count => this._cache.Length;
 
 			/// <summary>
@@ -73,10 +75,14 @@ public partial class CStringSequence
 				=> this._cache = new CString?[count];
 
 			/// <inheritdoc/>
+#if !PACKAGE
 			[ExcludeFromCodeCoverage]
+#endif
 			public override void Insert(Int32 index, CString? item) => this._cache[this.GetRealIndex(index)] = item;
 			/// <inheritdoc/>
+#if !PACKAGE
 			[ExcludeFromCodeCoverage]
+#endif
 			public override void RemoveAt(Int32 index) => this._cache[this.GetRealIndex(index)] = default;
 		}
 
@@ -106,7 +112,9 @@ public partial class CStringSequence
 				}
 			}
 			/// <inheritdoc/>
+#if !PACKAGE
 			[ExcludeFromCodeCoverage]
+#endif
 			public override Int32 Count => this._cache.Length;
 
 			/// <summary>
@@ -118,10 +126,14 @@ public partial class CStringSequence
 				=> this._cache = new WeakReference<CString>[count];
 
 			/// <inheritdoc/>
+#if !PACKAGE
 			[ExcludeFromCodeCoverage]
+#endif
 			public override void RemoveAt(Int32 index) => this._cache[this.GetRealIndex(index)] = default;
 			/// <inheritdoc/>
+#if !PACKAGE
 			[ExcludeFromCodeCoverage]
+#endif
 			public override void Insert(Int32 index, CString? item)
 			{
 				if (this._cache[this.GetRealIndex(index)] is { } weak)

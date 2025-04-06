@@ -4,7 +4,9 @@ namespace Rxmxnx.PInvoke.Internal;
 /// <see cref="MemoryManager{T}"/> Implementation for abstract array.
 /// </summary>
 /// <typeparam name="T">The type of the array.</typeparam>
+#if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 internal sealed class ArrayMemoryManager<T> : MemoryManager<T>
 {
 	/// <summary>
@@ -60,7 +62,9 @@ internal sealed class ArrayMemoryManager<T> : MemoryManager<T>
 	}
 
 	/// <inheritdoc/>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected override void Dispose(Boolean disposing) { }
 

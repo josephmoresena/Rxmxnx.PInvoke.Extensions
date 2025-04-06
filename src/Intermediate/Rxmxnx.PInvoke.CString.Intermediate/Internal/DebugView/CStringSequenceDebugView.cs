@@ -8,7 +8,9 @@
 /// instance,
 /// displaying each CString as a part of a sequence.
 /// </remarks>
+#if !PACKAGE
 [ExcludeFromCodeCoverage]
+#endif
 internal sealed record CStringSequenceDebugView
 {
 	/// <summary>

@@ -9,10 +9,6 @@ internal partial class MemoryInspector
 		/// </summary>
 		private readonly unsafe struct MemoryBoundary : IEquatable<MemoryBoundary>, IComparable<MemoryBoundary>,
 			IWrapper<IntPtr>
-#if NET7_0_OR_GREATER
-			, IEqualityOperators<MemoryBoundary, MemoryBoundary, Boolean>
-			, IComparisonOperators<MemoryBoundary, MemoryBoundary, Boolean>
-#endif
 		{
 			/// <summary>
 			/// Internal value.

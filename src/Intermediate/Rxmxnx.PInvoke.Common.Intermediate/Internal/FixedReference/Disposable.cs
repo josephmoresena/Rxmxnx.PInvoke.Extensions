@@ -21,22 +21,34 @@ internal partial class FixedReference<T> : IConvertibleDisposable<IFixedReferenc
 		public Disposable(FixedReference<T> fixedPointer, IDisposable? disposable) : base(fixedPointer, disposable) { }
 
 		ref T IReferenceable<T>.Reference => ref (this.Value as IReferenceable<T>).Reference;
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
 		ref readonly T IReadOnlyReferenceable<T>.Reference => ref (this.Value as IReadOnlyFixedReference<T>).Reference;
 		IntPtr IFixedPointer.Pointer => (this.Value as IFixedPointer).Pointer;
 		Boolean IReadOnlyFixedMemory.IsNullOrEmpty => (this.Value as IReadOnlyFixedMemory).IsNullOrEmpty;
 		Span<Byte> IFixedMemory.Bytes => (this.Value as IFixedMemory).Bytes;
 		Span<Object> IFixedMemory.Objects => (this.Value as IFixedMemory).Objects;
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
 		ReadOnlySpan<Object> IReadOnlyFixedMemory.Objects => (this.Value as IReadOnlyFixedMemory).Objects;
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
 		ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => (this.Value as IReadOnlyFixedMemory).Bytes;
 
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
 		IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
 		IReadOnlyFixedContext<Object> IReadOnlyFixedMemory.AsObjectContext() => this.AsObjectContext();
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
 		IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(
 			out IReadOnlyFixedMemory residual)
 		{
@@ -45,7 +57,9 @@ internal partial class FixedReference<T> : IConvertibleDisposable<IFixedReferenc
 				this.Transformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual));
 			return result;
 		}
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
 		IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 		{
 			Unsafe.SkipInit(out residual);

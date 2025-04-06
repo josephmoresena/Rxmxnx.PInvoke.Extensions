@@ -3,7 +3,9 @@
 /// <summary>
 /// Helper class for managing fixed read-only memory blocks.
 /// </summary>
+#if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 internal abstract unsafe partial class ReadOnlyFixedMemory : FixedPointer, IReadOnlyFixedMemory
 {
 	/// <summary>

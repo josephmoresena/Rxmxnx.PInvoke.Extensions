@@ -45,9 +45,13 @@ public abstract class BufferTypeMetadata : IEnumerableSequence<BufferTypeMetadat
 		this.Size = capacity;
 	}
 
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	BufferTypeMetadata IEnumerableSequence<BufferTypeMetadata>.GetItem(Int32 index) => this[index];
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	Int32 IEnumerableSequence<BufferTypeMetadata>.GetSize() => this.ComponentCount;
 }
 

@@ -30,7 +30,9 @@ internal partial class BinaryConcatenator<T>
 	/// The initial position in the given <see cref="ReadOnlySpan{Byte}"/> after any
 	/// leading null or BOM characters.
 	/// </returns>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Int32 GetInitialPosition(ReadOnlySpan<Byte> span)
 	{

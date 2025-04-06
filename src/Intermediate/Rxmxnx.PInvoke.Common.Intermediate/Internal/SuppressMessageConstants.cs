@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.Internal;
 
+#if !PACKAGE
 /// <summary>
 /// Constants for <see cref="SuppressMessageAttribute"/>.
 /// </summary>
@@ -16,3 +17,4 @@ internal static class SuppressMessageConstants
 	public const String CheckIdS6670 = "S6670";
 	public const String CheckIdS1006 = "S1006";
 }
+#endif

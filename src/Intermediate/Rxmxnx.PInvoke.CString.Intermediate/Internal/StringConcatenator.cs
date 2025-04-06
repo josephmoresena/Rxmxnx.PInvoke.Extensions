@@ -47,7 +47,9 @@ internal sealed class StringConcatenator : BinaryConcatenator<String>
 	/// <inheritdoc/>
 	protected override Boolean IsEmpty(String? value) => String.IsNullOrEmpty(value) && !this._ignoreEmpty;
 	/// <inheritdoc/>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	protected override Boolean IsEmpty(ReadOnlySpan<Byte> value) => base.IsEmpty(value) && !this._ignoreEmpty;
 	/// <inheritdoc/>
 	protected override void Dispose(Boolean disposing)

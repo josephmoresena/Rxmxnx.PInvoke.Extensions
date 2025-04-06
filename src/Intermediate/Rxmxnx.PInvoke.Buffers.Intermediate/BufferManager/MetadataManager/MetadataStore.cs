@@ -32,7 +32,9 @@ public static partial class BufferManager
 			/// <summary>
 			/// <see cref="MethodInfo"/> to retrieve buffer metadata.
 			/// </summary>
+#if !PACKAGE
 			[ExcludeFromCodeCoverage]
+#endif
 			public MethodInfo? GetMetadataInfo
 			{
 				get
@@ -57,7 +59,9 @@ public static partial class BufferManager
 			/// <summary>
 			/// Constructor.
 			/// </summary>
+#if !PACKAGE
 			[ExcludeFromCodeCoverage]
+#endif
 			public MetadataStore()
 			{
 #pragma warning disable CA2252
@@ -83,7 +87,9 @@ public static partial class BufferManager
 			/// </summary>
 			/// <param name="count">Minimal number of items in buffer.</param>
 			/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+#if !PACKAGE
 			[ExcludeFromCodeCoverage]
+#endif
 			public BufferTypeMetadata<T>? GetMinimal(UInt16 count)
 				=> MetadataStore.GetMinimal(this._nonBinaryCache, count) ??
 					MetadataStore.GetMinimal(this._binaryCache, count);
@@ -110,7 +116,9 @@ public static partial class BufferManager
 			/// <param name="cache">Buffer type metadata cache.</param>
 			/// <param name="count">Minimal elements items in buffer.</param>
 			/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+#if !PACKAGE
 			[ExcludeFromCodeCoverage]
+#endif
 			private static BufferTypeMetadata<T>? GetMinimal(SortedDictionary<UInt16, BufferTypeMetadata<T>> cache,
 				UInt16 count)
 			{

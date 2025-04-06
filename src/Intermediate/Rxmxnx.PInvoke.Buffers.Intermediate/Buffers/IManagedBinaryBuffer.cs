@@ -18,7 +18,9 @@ public interface IManagedBinaryBuffer<T> : IManagedBuffer<T>
 	/// This method allocates in heap a <paramref name="bufferType"/> instance to retrieve the
 	/// <see cref="BufferTypeMetadata{T}"/> instance.
 	/// </remarks>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	internal static BufferTypeMetadata<T>? GetMetadata(
 		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type? bufferType)
 	{
@@ -42,8 +44,10 @@ public interface IManagedBinaryBuffer<T> : IManagedBuffer<T>
 /// </summary>
 /// <typeparam name="TBuffer">The type of buffer.</typeparam>
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
+#if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS107)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
+#endif
 public partial interface IManagedBinaryBuffer<
 	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] TBuffer,
 	T> : IManagedBinaryBuffer<T> where TBuffer : struct, IManagedBinaryBuffer<TBuffer, T>

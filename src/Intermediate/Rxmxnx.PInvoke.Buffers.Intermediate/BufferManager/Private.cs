@@ -1,7 +1,9 @@
 namespace Rxmxnx.PInvoke;
 
+#if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3011)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 public static partial class BufferManager
 {
 	/// <summary>
@@ -25,7 +27,9 @@ public static partial class BufferManager
 	/// <typeparam name="T">The type of items in the buffer.</typeparam>
 	/// <param name="count">Required buffer size.</param>
 	/// <param name="action">Method to execute.</param>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	private static void AllocHeap<T>(UInt16 count, ScopedBufferAction<T> action)
 	{
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
@@ -48,7 +52,9 @@ public static partial class BufferManager
 	/// <param name="count">Required buffer size.</param>
 	/// <param name="state">State object.</param>
 	/// <param name="action">Method to execute.</param>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	private static void AllocHeap<T, TState>(UInt16 count, TState state, ScopedBufferAction<T, TState> action)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
@@ -74,7 +80,9 @@ public static partial class BufferManager
 	/// <param name="count">Required buffer size.</param>
 	/// <param name="func">Function to execute.</param>
 	/// <returns><paramref name="func"/> result.</returns>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	private static TResult AllocHeap<T, TResult>(UInt16 count, ScopedBufferFunc<T, TResult> func)
 	{
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
@@ -99,7 +107,9 @@ public static partial class BufferManager
 	/// <param name="state">State object.</param>
 	/// <param name="func">Function to execute.</param>
 	/// <returns><paramref name="func"/> result.</returns>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	private static TResult AllocHeap<T, TState, TResult>(UInt16 count, TState state,
 		ScopedBufferFunc<T, TState, TResult> func)
 #if NET9_0_OR_GREATER

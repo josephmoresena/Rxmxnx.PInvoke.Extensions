@@ -33,7 +33,9 @@ internal sealed class FixedRentedContext<T> : IFixedContext<T>.IDisposable
 	/// <param name="arrayPool">A <see cref="ArrayPool{T}"/> instance.</param>
 	/// <param name="length">Required length.</param>
 	/// <param name="clearArray">Indicates whether the contents of the buffer should be cleared before reuse.</param>
+#if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 	public unsafe FixedRentedContext(ArrayPool<T> arrayPool, Int32 length, Boolean clearArray)
 	{
 		this._arrayPool = arrayPool;
@@ -43,39 +45,69 @@ internal sealed class FixedRentedContext<T> : IFixedContext<T>.IDisposable
 		this._ctx = new(this._handle.Pointer, length);
 	}
 
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IFixedMemory residual)
 		=> this.GetContext().Transformation<TDestination>(out residual);
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 		=> this.GetContext().Transformation<TDestination>(out residual);
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.
 		Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 		=> this.GetContext().Transformation<TDestination>(out residual);
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	IntPtr IFixedPointer.Pointer => this.GetContext().Pointer;
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	Boolean IReadOnlyFixedMemory.IsNullOrEmpty => this.GetContext().IsNullOrEmpty;
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	Span<Byte> IFixedMemory.Bytes => this.GetContext().Bytes;
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	Span<Object> IFixedMemory.Objects => this.GetContext().Objects;
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => this.GetReadOnlyContext().Bytes;
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	ReadOnlySpan<Object> IReadOnlyFixedMemory.Objects => this.GetReadOnlyContext().Objects;
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.GetReadOnlyContext().AsBinaryContext();
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	IFixedContext<Object> IFixedMemory.AsObjectContext() => this.GetContext().AsObjectContext();
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	IFixedContext<Byte> IFixedMemory.AsBinaryContext() => this.GetContext().AsBinaryContext();
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	IReadOnlyFixedContext<Object> IReadOnlyFixedMemory.AsObjectContext() => this.GetReadOnlyContext().AsObjectContext();
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => this.GetContext().Values;
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	Span<T> IFixedMemory<T>.Values => this.GetContext().Values;
 
 	/// <inheritdoc/>
@@ -85,7 +117,9 @@ internal sealed class FixedRentedContext<T> : IFixedContext<T>.IDisposable
 		GC.SuppressFinalize(this);
 	}
 
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	~FixedRentedContext() => this.Release();
 
 	/// <summary>
@@ -101,13 +135,17 @@ internal sealed class FixedRentedContext<T> : IFixedContext<T>.IDisposable
 	/// <summary>
 	/// Fixed context.
 	/// </summary>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private IFixedContext<T> GetContext() => this._ctx;
 	/// <summary>
 	/// Read-only fixed context.
 	/// </summary>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private IFixedContext<T> GetReadOnlyContext() => this._ctx;
 }

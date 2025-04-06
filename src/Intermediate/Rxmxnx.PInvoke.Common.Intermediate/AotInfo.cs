@@ -3,7 +3,9 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// Provides information about the Ahead-of-Time compilation.
 /// </summary>
+#if !PACKAGE
 [ExcludeFromCodeCoverage]
+#endif
 public static class AotInfo
 {
 	/// <summary>

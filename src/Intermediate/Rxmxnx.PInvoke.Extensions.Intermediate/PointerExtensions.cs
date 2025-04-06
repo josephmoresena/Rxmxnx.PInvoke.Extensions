@@ -5,7 +5,9 @@
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
 [Browsable(false)]
+#if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 public static unsafe class PointerExtensions
 {
 	/// <summary>
@@ -294,7 +296,9 @@ public static unsafe class PointerExtensions
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4144)]
+#endif
 	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this IntPtr ptr, Int32 length) where T : unmanaged
 	{
 		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
@@ -319,7 +323,9 @@ public static unsafe class PointerExtensions
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4144)]
+#endif
 	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
 	{
 		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
@@ -344,7 +350,9 @@ public static unsafe class PointerExtensions
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4144)]
+#endif
 	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this MemoryHandle handle, Int32 length) where T : unmanaged
 	{
 		ValidationUtilities.ThrowIfInvalidMemoryLength(length);

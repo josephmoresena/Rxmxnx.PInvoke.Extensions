@@ -1,6 +1,8 @@
 namespace Rxmxnx.PInvoke;
 
+#if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 public readonly unsafe partial struct ValPtr<T> : IComparable, IComparable<ValPtr<T>>
 {
 	/// <inheritdoc/>
