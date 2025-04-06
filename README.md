@@ -2272,6 +2272,17 @@ Additional functionality for working with delegates.
 Additional functionality for working with memory blocks.
 
 - <details>
+  <summary>IsLiteral&lt;T&gt;(this Span&lt;T&gt;)</summary>
+
+  Indicates whether the given `Span<T>` instance represents a literal or hardcoded memory region.
+  </details>
+- <details>
+  <summary>IsLiteral&lt;T&gt;(this ReadOnlySpan&lt;T&gt;)</summary>
+
+  Indicates whether the given `ReadOnlySpan<T>` instance represents a literal or hardcoded memory region.
+  </details>
+
+- <details>
   <summary>GetUnsafeValPtr&lt;T&gt;(this Span&lt;T&gt;)</summary>
 
   Retrieves an unsafe `ValPtr<T>` pointer from `Span<T>` instance.
