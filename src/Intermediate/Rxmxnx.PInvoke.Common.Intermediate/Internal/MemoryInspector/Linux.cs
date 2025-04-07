@@ -76,7 +76,7 @@ internal partial class MemoryInspector
 		/// </summary>
 		private void RefreshMaps()
 		{
-			Span<Byte> buffer = stackalloc Byte[IntPtr.Size == 4 ? 23 : 39];
+			Span<Byte> buffer = stackalloc Byte[IntPtr.Size == 4 ? 27 : 47]; // 23 + 4 ; 39 + 8
 			FileState state = new(buffer);
 
 			using NativeFile mapsFile = NativeFile.OpenSelfMaps();
@@ -102,7 +102,8 @@ internal partial class MemoryInspector
 		{
 			if (state.Index <= 3) return;
 
-			ReadOnlySpan<Byte> temp = state.Buffer[..state.Index];
+			state.Offset = state.Buffer.IndexOf((Byte)MapsTokens.NewLine) + 1;
+			ReadOnlySpan<Byte> temp = state.Buffer[state.Offset..state.Index];
 			state.Auxiliar = temp.IndexOf((Byte)MapsTokens.Hyphen);
 
 			if (state.Auxiliar <= 0) return;
@@ -110,21 +111,8 @@ internal partial class MemoryInspector
 			ReadOnlySpan<Byte> beginSpan = temp[..state.Auxiliar];
 			ReadOnlySpan<Byte> endSpan = temp[(beginSpan.Length + 1)..];
 
-			try
-			{
-				this.AddBoundary(new(beginSpan, false), isReadOnly);
-				this.AddBoundary(new(endSpan, true), isReadOnly);
-			}
-			catch (Exception ex)
-			{
-#if !PACKAGE
-				throw new(
-					$"S: {IntPtr.Size} B: {Encoding.UTF8.GetString(beginSpan)} E: {Encoding.UTF8.GetString(endSpan)}",
-					ex);
-#else
-				throw;
-#endif
-			}
+			this.AddBoundary(new(beginSpan, false), isReadOnly);
+			this.AddBoundary(new(endSpan, true), isReadOnly);
 		}
 		/// <summary>
 		/// Adds <paramref name="value"/> to maps boundaries.
@@ -146,7 +134,7 @@ internal partial class MemoryInspector
 		{
 			do
 			{
-				if ((state.ReadBytes = mapsFile.Read(state.Buffer)) <= 4) break;
+				if ((state.ReadBytes = mapsFile.Read(state.Buffer)) < 4) break;
 				state.Index = state.Buffer[..state.ReadBytes].IndexOf((Byte)MapsTokens.NewLine);
 			} while (state.Index < 0);
 
