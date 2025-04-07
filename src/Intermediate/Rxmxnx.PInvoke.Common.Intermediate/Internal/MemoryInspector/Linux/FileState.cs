@@ -2,7 +2,7 @@ namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector
 {
-	private partial class Linux
+	private sealed partial class Linux
 	{
 		/// <summary>
 		/// This struct storages state for <c>/proc/self/maps</c> file reading.

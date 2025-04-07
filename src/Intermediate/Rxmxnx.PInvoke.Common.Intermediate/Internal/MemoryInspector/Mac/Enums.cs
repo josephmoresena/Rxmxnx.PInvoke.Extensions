@@ -2,7 +2,7 @@ namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector
 {
-	private partial class Mac
+	private sealed partial class Mac
 	{
 		[Flags]
 		private enum Protection : UInt32

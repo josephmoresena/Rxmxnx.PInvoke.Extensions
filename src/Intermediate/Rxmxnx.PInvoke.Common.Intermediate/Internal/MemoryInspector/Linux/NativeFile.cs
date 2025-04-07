@@ -2,11 +2,14 @@ namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector
 {
-	private partial class Linux
+	private sealed partial class Linux
 	{
 		/// <summary>
 		/// Represents a native linux file buffer.
 		/// </summary>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 		internal unsafe struct NativeFile : IDisposable
 		{
 			/// <summary>
@@ -38,7 +41,7 @@ internal partial class MemoryInspector
 			/// <param name="buffer">Destination buffer.</param>
 			/// <returns>The total number of bytes read into the buffer.</returns>
 			/// <remarks>The position within the file by the number of bytes read.</remarks>
-			public Int32 Read(Span<Byte> buffer)
+			public readonly Int32 Read(Span<Byte> buffer)
 			{
 				unchecked
 				{
@@ -58,7 +61,7 @@ internal partial class MemoryInspector
 			/// <see langword="true"/> if position file setting is successful; otherwise,
 			/// <see langword="false"/>.
 			/// </returns>
-			public Boolean Seek(Int64 offset)
+			public readonly Boolean Seek(Int64 offset)
 			{
 				Int64 result = NativeFile.Seek(this._fd, offset, 1);
 				NativeFile.ValidateResult(result);

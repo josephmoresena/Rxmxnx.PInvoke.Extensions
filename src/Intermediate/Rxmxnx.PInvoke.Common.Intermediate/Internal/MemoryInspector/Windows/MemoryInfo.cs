@@ -2,7 +2,7 @@ namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector
 {
-	private partial class Windows
+	private sealed partial class Windows
 	{
 		[StructLayout(LayoutKind.Sequential)]
 		private unsafe struct MemoryInfo

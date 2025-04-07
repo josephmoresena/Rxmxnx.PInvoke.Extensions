@@ -7,6 +7,7 @@ internal partial class MemoryInspector
 	/// </summary>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 	private sealed unsafe partial class Windows : MemoryInspector
 	{

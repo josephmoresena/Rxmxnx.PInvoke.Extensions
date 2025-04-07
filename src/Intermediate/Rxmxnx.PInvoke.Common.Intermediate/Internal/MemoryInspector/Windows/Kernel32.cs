@@ -2,8 +2,11 @@ namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector
 {
-	private partial class Windows
+	private sealed partial class Windows
 	{
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 		private static unsafe class Kernel32
 		{
 			[DllImport("kernel32.dll")]

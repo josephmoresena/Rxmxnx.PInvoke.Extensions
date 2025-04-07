@@ -7,6 +7,7 @@ internal partial class MemoryInspector
 	/// </summary>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 	private sealed unsafe partial class Linux : MemoryInspector
 	{
@@ -82,37 +83,47 @@ internal partial class MemoryInspector
 			while ((state.ReadBytes = mapsFile.Read(buffer)) > 4)
 			{
 				state.Index = Linux.GetPermissionIndex(state.Buffer[..state.ReadBytes], out Boolean isReadOnly);
-				if (state.Index > 3)
-				{
-					ReadOnlySpan<Byte> temp = state.Buffer[..state.Index];
-					state.Auxiliar = temp.IndexOf((Byte)MapsTokens.Hyphen);
-
-					if (state.Auxiliar > 0)
-					{
-						ReadOnlySpan<Byte> beginSpan = temp[..state.Auxiliar];
-						ReadOnlySpan<Byte> endSpan = temp[(beginSpan.Length + 1)..];
-
-						this.AddBoundary(new(beginSpan, false), isReadOnly);
-						this.AddBoundary(new(endSpan, true), isReadOnly);
-					}
-				}
+				this.CreateMaps(state, isReadOnly);
 
 				state.Offset = state.Index > 0 ? state.Index : 0;
 				state.Index = state.Buffer[state.Offset..state.ReadBytes].IndexOf((Byte)MapsTokens.NewLine);
 				if (state.Index > 0)
-				{
 					mapsFile.Seek(-state.ReadBytes + state.Index + state.Offset + 1);
-				}
 				else
-				{
-					do
-					{
-						if ((state.ReadBytes = mapsFile.Read(state.Buffer)) <= 4) break;
-						state.Index = state.Buffer[..state.ReadBytes].IndexOf((Byte)MapsTokens.NewLine);
-					} while (state.Index < 0);
+					Linux.PrepareNextPosition(state, in mapsFile);
+			}
+		}
+		/// <summary>
+		/// Creates addresses maps.
+		/// </summary>
+		/// <param name="state">A <see cref="FileState"/> instance.</param>
+		/// <param name="isReadOnly">Indicates whether addresses are for read-only section.</param>
+		private void CreateMaps(FileState state, Boolean isReadOnly)
+		{
+			if (state.Index <= 3) return;
 
-					if (state.ReadBytes > 4 && state.Index > -1) mapsFile.Seek(-state.ReadBytes + state.Index + 1);
-				}
+			ReadOnlySpan<Byte> temp = state.Buffer[..state.Index];
+			state.Auxiliar = temp.IndexOf((Byte)MapsTokens.Hyphen);
+
+			if (state.Auxiliar <= 0) return;
+
+			ReadOnlySpan<Byte> beginSpan = temp[..state.Auxiliar];
+			ReadOnlySpan<Byte> endSpan = temp[(beginSpan.Length + 1)..];
+
+			try
+			{
+				this.AddBoundary(new(beginSpan, false), isReadOnly);
+				this.AddBoundary(new(endSpan, true), isReadOnly);
+			}
+			catch (Exception ex)
+			{
+#if !PACKAGE
+				throw new(
+					$"S: {IntPtr.Size} B: {Encoding.UTF8.GetString(beginSpan)} E: {Encoding.UTF8.GetString(endSpan)}",
+					ex);
+#else
+				throw;
+#endif
 			}
 		}
 		/// <summary>
@@ -124,6 +135,22 @@ internal partial class MemoryInspector
 		{
 			SortedSet<MemoryBoundary> maps = isReadOnly ? this._readonlyMemory : this._readwriteMemory;
 			Linux.AddBoundary(maps, value);
+		}
+
+		/// <summary>
+		/// Prepares the maps file for next addresses reading position.
+		/// </summary>
+		/// <param name="state">A <see cref="FileState"/> instance.</param>
+		/// <param name="mapsFile">A <see cref="NativeFile"/> instance.</param>
+		private static void PrepareNextPosition(FileState state, in NativeFile mapsFile)
+		{
+			do
+			{
+				if ((state.ReadBytes = mapsFile.Read(state.Buffer)) <= 4) break;
+				state.Index = state.Buffer[..state.ReadBytes].IndexOf((Byte)MapsTokens.NewLine);
+			} while (state.Index < 0);
+
+			if (state.ReadBytes > 4 && state.Index > -1) mapsFile.Seek(-state.ReadBytes + state.Index + 1);
 		}
 		/// <summary>
 		/// Adds <paramref name="value"/> inside <paramref name="maps"/>.
@@ -140,7 +167,6 @@ internal partial class MemoryInspector
 			}
 			maps.Add(value);
 		}
-
 		/// <summary>
 		/// Indicates whether <paramref name="address"/> is inside <paramref name="maps"/>.
 		/// </summary>

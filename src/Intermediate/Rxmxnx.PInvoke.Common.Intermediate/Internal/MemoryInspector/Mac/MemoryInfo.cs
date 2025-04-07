@@ -2,8 +2,11 @@ namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector
 {
-	private partial class Mac
+	private sealed partial class Mac
 	{
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 		[StructLayout(LayoutKind.Sequential)]
 		private readonly unsafe struct MemoryInfo
 		{

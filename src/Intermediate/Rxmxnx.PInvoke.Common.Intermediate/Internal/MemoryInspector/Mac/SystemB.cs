@@ -2,11 +2,14 @@ namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector
 {
-	private partial class Mac
+	private sealed partial class Mac
 	{
 		/// <summary>
 		/// Interop API for <c>libSystemB.dylib</c> library.
 		/// </summary>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 		private static unsafe class SystemB
 		{
 			[DllImport("libSystem.B.dylib", EntryPoint = "mach_task_self", SetLastError = false)]

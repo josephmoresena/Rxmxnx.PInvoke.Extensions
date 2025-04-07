@@ -2,7 +2,7 @@ namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector
 {
-	private partial class Linux
+	private sealed partial class Linux
 	{
 		/// <summary>
 		/// Memory boundary struct.
@@ -141,17 +141,17 @@ internal partial class MemoryInspector
 			/// <returns>The result of parsing <paramref name="addressText"/>.</returns>
 			private static IntPtr Parse(ReadOnlySpan<Byte> addressText)
 			{
+				Span<Byte> addressBuffer = stackalloc Byte[IntPtr.Size];
 				unchecked
 				{
-					Span<Byte> addressBuffer = stackalloc Byte[IntPtr.Size];
 					for (Int32 i = 0; i < addressText.Length / 2; i++)
 					{
 						addressBuffer[i] = MemoryBoundary.GetDecimalValue(addressText[^(2 * i + 2)]);
 						addressBuffer[i] <<= 4;
 						addressBuffer[i] += MemoryBoundary.GetDecimalValue(addressText[^(2 * i + 1)]);
 					}
-					return MemoryMarshal.Read<IntPtr>(addressBuffer);
 				}
+				return MemoryMarshal.Read<IntPtr>(addressBuffer);
 			}
 			/// <summary>
 			/// Retrieves the decimal value of <paramref name="hexCharacter"/>.
