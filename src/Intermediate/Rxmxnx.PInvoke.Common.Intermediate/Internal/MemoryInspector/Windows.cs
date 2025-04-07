@@ -20,9 +20,13 @@ internal partial class MemoryInspector
 			{
 				UIntPtr result = Kernel32.VirtualQuery(ptr, out MemoryInfo memInfo, MemoryInfo.Size);
 				Kernel32.ValidateResult(result);
-				return (result != UIntPtr.Zero && memInfo.Protect is WinNtConstants.Image) ||
-					(memInfo.Type is WinNtConstants.Image &&
-						memInfo.Protect is WinNtConstants.Readonly or WinNtConstants.ExecuteRead);
+				return result != UIntPtr.Zero && memInfo.Protect switch
+				{
+					MemoryState.Image => true,
+					MemoryState.ReadOnly => memInfo.Type is MemoryState.Image,
+					MemoryState.ExecuteRead => memInfo.Type is MemoryState.Image,
+					_ => false,
+				};
 			}
 		}
 	}

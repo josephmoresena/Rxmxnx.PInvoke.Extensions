@@ -11,12 +11,12 @@ internal partial class MemoryInspector
 
 			public IntPtr BaseAddress;
 			public IntPtr AllocationBase;
-			public WinNtConstants AllocationProtect;
+			public MemoryState AllocationProtect;
 			public UInt16 PartitionId;
 			public UIntPtr RegionSize;
-			public WinNtConstants State;
-			public WinNtConstants Protect;
-			public WinNtConstants Type;
+			public RegionState State;
+			public MemoryState Protect;
+			public MemoryState Type;
 		}
 	}
 }
