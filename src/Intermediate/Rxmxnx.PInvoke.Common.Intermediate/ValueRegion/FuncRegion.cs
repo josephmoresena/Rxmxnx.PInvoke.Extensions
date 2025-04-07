@@ -145,6 +145,9 @@ public partial class ValueRegion<T>
 		/// <returns>
 		/// <see langword="true"/> if a <paramref name="handle"/> was successfully created; otherwise, <see langword="false"/>.
 		/// </returns>
+#if !PACKAGE
+		[ExcludeFromCodeCoverage]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Boolean TryAlloc(Func<TState, GCHandleType, GCHandle>? alloc, TState state, GCHandleType type,
 			out GCHandle handle)

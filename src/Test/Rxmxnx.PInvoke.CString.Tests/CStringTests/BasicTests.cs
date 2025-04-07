@@ -203,6 +203,17 @@ public sealed class BasicTests
 			Assert.True(pinned);
 			Assert.NotEqual((IntPtr)handle.Pointer, IntPtr.Zero);
 			Assert.Equal((IntPtr)handle.Pointer, (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(c.AsSpan())));
+
+			Assert.Equal((IntPtr)handle.Pointer,
+			             (IntPtr)CString.CreateUnsafe((IntPtr)handle.Pointer, c.Length + 1).TryPin(out pinned).Pointer);
+			Assert.False(pinned);
+
+			if (c.Length <= 3) return;
+
+			using MemoryHandle handle2 = c[1..^1].TryPin(out pinned);
+			Assert.True(pinned);
+			Assert.NotEqual((IntPtr)handle.Pointer, IntPtr.Zero);
+			Assert.Equal((IntPtr)handle.Pointer, (IntPtr)handle.Pointer + 1);
 		});
 		Assert.All(literalArray, c =>
 		{
@@ -211,6 +222,17 @@ public sealed class BasicTests
 			Assert.Equal((IntPtr)handle.Pointer, IntPtr.Zero);
 			Assert.NotEqual((IntPtr)handle.Pointer,
 			                (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(c.AsSpan())));
+
+			Assert.Equal((IntPtr)handle.Pointer,
+			             (IntPtr)CString.CreateUnsafe((IntPtr)handle.Pointer, c.Length + 1).TryPin(out pinned).Pointer);
+			Assert.False(pinned);
+
+			if (c.Length <= 3) return;
+
+			using MemoryHandle handle2 = c[1..^1].TryPin(out pinned);
+			Assert.False(pinned);
+			Assert.Equal((IntPtr)handle.Pointer, IntPtr.Zero);
+			Assert.NotEqual((IntPtr)handle.Pointer, (IntPtr)handle.Pointer + 1);
 		});
 		Assert.All(bytesArray, c =>
 		{
@@ -218,6 +240,17 @@ public sealed class BasicTests
 			Assert.True(pinned);
 			Assert.NotEqual((IntPtr)handle.Pointer, IntPtr.Zero);
 			Assert.Equal((IntPtr)handle.Pointer, (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(c.AsSpan())));
+
+			Assert.Equal((IntPtr)handle.Pointer,
+			             (IntPtr)CString.CreateUnsafe((IntPtr)handle.Pointer, c.Length + 1).TryPin(out pinned).Pointer);
+			Assert.False(pinned);
+
+			if (c.Length <= 3) return;
+
+			using MemoryHandle handle2 = c[1..^1].TryPin(out pinned);
+			Assert.True(pinned);
+			Assert.NotEqual((IntPtr)handle.Pointer, IntPtr.Zero);
+			Assert.Equal((IntPtr)handle.Pointer, (IntPtr)handle.Pointer + 1);
 		});
 		Assert.All(bytesNullArray, c =>
 		{
@@ -225,6 +258,17 @@ public sealed class BasicTests
 			Assert.True(pinned);
 			Assert.NotEqual((IntPtr)handle.Pointer, IntPtr.Zero);
 			Assert.Equal((IntPtr)handle.Pointer, (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(c.AsSpan())));
+
+			Assert.Equal((IntPtr)handle.Pointer,
+			             (IntPtr)CString.CreateUnsafe((IntPtr)handle.Pointer, c.Length + 1).TryPin(out pinned).Pointer);
+			Assert.False(pinned);
+
+			if (c.Length <= 3) return;
+
+			using MemoryHandle handle2 = c[1..^1].TryPin(out pinned);
+			Assert.True(pinned);
+			Assert.NotEqual((IntPtr)handle.Pointer, IntPtr.Zero);
+			Assert.Equal((IntPtr)handle.Pointer, (IntPtr)handle.Pointer + 1);
 		});
 	}
 

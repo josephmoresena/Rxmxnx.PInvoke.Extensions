@@ -6,6 +6,7 @@ internal partial class MemoryInspector
 	{
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4487)]
 #endif
 		[StructLayout(LayoutKind.Sequential)]
 		private readonly unsafe struct MemoryInfo

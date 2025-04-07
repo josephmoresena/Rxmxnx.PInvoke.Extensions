@@ -96,7 +96,7 @@ public sealed class BasicTests
 			BasicTests.AssertPin(seq.ToString(), seq[i]);
 		}
 	}
-	private static void AssertPin(String utf8Buffer, CString? cstr)
+	private static unsafe void AssertPin(String utf8Buffer, CString? cstr)
 	{
 		if (CString.IsNullOrEmpty(cstr))
 			return;
@@ -104,5 +104,12 @@ public sealed class BasicTests
 		using MemoryHandle handle = cstr.TryPin(out Boolean pinned);
 		Assert.True(pinned);
 		Assert.Equal(Assert.IsType<GCHandle>(BasicTests.handleFieldInfo.GetValue(handle)).Target, utf8Buffer);
+
+		if (cstr.Length <= 3) return;
+
+		using MemoryHandle handle2 = cstr[1..^1].TryPin(out pinned);
+		Assert.True(pinned);
+		Assert.NotEqual((IntPtr)handle.Pointer, IntPtr.Zero);
+		Assert.Equal((IntPtr)handle.Pointer, (IntPtr)handle.Pointer + 1);
 	}
 }

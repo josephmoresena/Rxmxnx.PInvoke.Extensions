@@ -4,6 +4,10 @@ internal partial class MemoryInspector
 {
 	private sealed partial class Mac
 	{
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6670)]
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2346)]
+#endif
 		[Flags]
 		private enum Protection : UInt32
 		{
@@ -13,6 +17,10 @@ internal partial class MemoryInspector
 			Execute = 0x4,
 		}
 
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6670)]
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2346)]
+#endif
 		[Flags]
 		private enum Inheritance : UInt32
 		{

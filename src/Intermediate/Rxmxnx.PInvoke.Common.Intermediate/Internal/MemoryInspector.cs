@@ -8,6 +8,9 @@ internal abstract partial class MemoryInspector
 	/// <summary>
 	/// A <see cref="MemoryInspector"/> instance.
 	/// </summary>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3358)]
+#endif
 	public static readonly MemoryInspector Instance = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
 		new Windows() :
 		RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? new Mac() : new Linux();
