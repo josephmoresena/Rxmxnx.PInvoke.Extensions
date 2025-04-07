@@ -12,7 +12,7 @@ internal partial class MemoryInspector
 			/// <summary>
 			/// Read buffer.
 			/// </summary>
-			public Span<Byte> Buffer { get; }
+			public Span<Byte> Buffer { get; set; }
 			/// <summary>
 			/// Count of read bytes.
 			/// </summary>

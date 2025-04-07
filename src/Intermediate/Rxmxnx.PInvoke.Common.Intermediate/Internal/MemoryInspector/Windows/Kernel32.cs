@@ -21,7 +21,7 @@ internal partial class MemoryInspector
 			/// <param name="result">Resulting value.</param>
 			public static void ValidateResult(UIntPtr result)
 			{
-				if (result == default) return;
+				if (result != default) return;
 				Kernel32.SetLastError(0);
 			}
 		}

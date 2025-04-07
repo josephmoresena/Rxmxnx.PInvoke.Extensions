@@ -29,6 +29,11 @@ internal partial class MemoryInspector
 		/// </summary>
 		private readonly SortedSet<MemoryBoundary> _readwriteMemory = [];
 
+		/// <summary>
+		/// Last <c>/proc/self/maps</c> binary length.
+		/// </summary>
+		private Int64 _lastLength = -1;
+
 		/// <inheritdoc/>
 		public override Boolean IsLiteral<T>(ReadOnlySpan<T> span)
 		{
@@ -76,21 +81,27 @@ internal partial class MemoryInspector
 		/// </summary>
 		private void RefreshMaps()
 		{
-			Span<Byte> buffer = stackalloc Byte[IntPtr.Size == 4 ? 27 : 47]; // 23 + 4 ; 39 + 8
-			FileState state = new(buffer);
+			Byte[] mapsBytes = File.ReadAllBytes("/proc/self/maps");
+			FileState state = new(mapsBytes);
 
-			using NativeFile mapsFile = NativeFile.OpenSelfMaps();
-			while ((state.ReadBytes = mapsFile.Read(buffer)) > 4)
+			if (mapsBytes.Length == this._lastLength)
+				this._lastLength = mapsBytes.Length;
+
+			this._lastLength = mapsBytes.Length;
+
+			state.ReadBytes = IntPtr.Size == 4 ? 23 : 39;
+			while (state.Buffer.Length > 4)
 			{
 				state.Index = Linux.GetPermissionIndex(state.Buffer[..state.ReadBytes], out Boolean isReadOnly);
 				this.CreateMaps(state, isReadOnly);
 
-				state.Offset = state.Index > 0 ? state.Index : 0;
-				state.Index = state.Buffer[state.Offset..state.ReadBytes].IndexOf((Byte)MapsTokens.NewLine);
-				if (state.Index > 0)
-					mapsFile.Seek(-state.ReadBytes + state.Index + state.Offset + 1);
-				else
-					Linux.PrepareNextPosition(state, in mapsFile);
+				state.Offset = state.Index > 0 ? state.Index + Linux.PermissionTokenLength : 0;
+				state.Buffer = state.Buffer[state.Offset..];
+				state.Index = state.Buffer.IndexOf((Byte)MapsTokens.NewLine); // End of the line.
+				state.Offset = state.Index + 1;
+				state.Buffer = state.Buffer[state.Offset..];
+				if (state.Buffer.Length < state.ReadBytes)
+					state.ReadBytes = state.Buffer.Length; // End of the buffer.
 			}
 		}
 		/// <summary>
@@ -123,22 +134,6 @@ internal partial class MemoryInspector
 		{
 			SortedSet<MemoryBoundary> maps = isReadOnly ? this._readonlyMemory : this._readwriteMemory;
 			Linux.AddBoundary(maps, value);
-		}
-
-		/// <summary>
-		/// Prepares the maps file for next addresses reading position.
-		/// </summary>
-		/// <param name="state">A <see cref="FileState"/> instance.</param>
-		/// <param name="mapsFile">A <see cref="NativeFile"/> instance.</param>
-		private static void PrepareNextPosition(FileState state, in NativeFile mapsFile)
-		{
-			do
-			{
-				if ((state.ReadBytes = mapsFile.Read(state.Buffer)) < 4) break;
-				state.Index = state.Buffer[..state.ReadBytes].IndexOf((Byte)MapsTokens.NewLine);
-			} while (state.Index < 0);
-
-			if (state.ReadBytes > 4 && state.Index > -1) mapsFile.Seek(-state.ReadBytes + state.Index + 1);
 		}
 		/// <summary>
 		/// Adds <paramref name="value"/> inside <paramref name="maps"/>.
@@ -216,21 +211,6 @@ internal partial class MemoryInspector
 			// " r[-w][-x][ps] "
 			isReadOnly = buffer[2] is MapsTokens.Hyphen;
 			return true;
-		}
-
-		/// <summary>
-		/// Maps file Tokens
-		/// </summary>
-		private enum MapsTokens : Byte
-		{
-			Hyphen = (Byte)'-',
-			Space = (Byte)' ',
-			NewLine = (Byte)'\n',
-			Read = (Byte)'r',
-			Write = (Byte)'w',
-			Execute = (Byte)'x',
-			Private = (Byte)'p',
-			Shared = (Byte)'s',
 		}
 	}
 }
