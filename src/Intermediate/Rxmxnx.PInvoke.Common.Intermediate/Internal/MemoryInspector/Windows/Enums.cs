@@ -2,7 +2,7 @@ namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector
 {
-	private partial class Windows : MemoryInspector
+	private partial class Windows
 	{
 		[Flags]
 		private enum AllocationProtection : UInt32

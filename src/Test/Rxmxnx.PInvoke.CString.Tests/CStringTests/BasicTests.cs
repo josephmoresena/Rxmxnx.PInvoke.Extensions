@@ -178,6 +178,56 @@ public sealed class BasicTests
 		}
 	}
 
+	[Fact]
+	internal void LiteralTest()
+	{
+		CString[] literalArray = TestSet.Utf8TextUpper.Select(f => new CString(f)).ToArray();
+		CString[] nonLiteralArray = TestSet.Utf8NullTerminatedBytes.Select(b => (CString)b).ToArray();
+
+		Assert.All(literalArray, c => Assert.True(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
+		Assert.All(nonLiteralArray, c => Assert.False(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
+		Assert.All(nonLiteralArray, c => Assert.False(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
+	}
+
+	[Fact]
+	internal unsafe void TryPinTest()
+	{
+		CString[] encodingArray = TestSet.Utf16Text.Select(s => (CString)s).ToArray();
+		CString[] literalArray = TestSet.Utf8Text.Select(f => new CString(f)).ToArray();
+		CString[] bytesArray = TestSet.Utf8Bytes.Select(a => (CString)a).ToArray();
+		CString[] bytesNullArray = TestSet.Utf8NullTerminatedBytes.Select(a => (CString)a).ToArray();
+
+		Assert.All(encodingArray, c =>
+		{
+			using MemoryHandle handle = c.TryPin(out Boolean pinned);
+			Assert.True(pinned);
+			Assert.NotEqual((IntPtr)handle.Pointer, IntPtr.Zero);
+			Assert.Equal((IntPtr)handle.Pointer, (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(c.AsSpan())));
+		});
+		Assert.All(literalArray, c =>
+		{
+			using MemoryHandle handle = c.TryPin(out Boolean pinned);
+			Assert.False(pinned);
+			Assert.Equal((IntPtr)handle.Pointer, IntPtr.Zero);
+			Assert.NotEqual((IntPtr)handle.Pointer,
+			                (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(c.AsSpan())));
+		});
+		Assert.All(bytesArray, c =>
+		{
+			using MemoryHandle handle = c.TryPin(out Boolean pinned);
+			Assert.True(pinned);
+			Assert.NotEqual((IntPtr)handle.Pointer, IntPtr.Zero);
+			Assert.Equal((IntPtr)handle.Pointer, (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(c.AsSpan())));
+		});
+		Assert.All(bytesNullArray, c =>
+		{
+			using MemoryHandle handle = c.TryPin(out Boolean pinned);
+			Assert.True(pinned);
+			Assert.NotEqual((IntPtr)handle.Pointer, IntPtr.Zero);
+			Assert.Equal((IntPtr)handle.Pointer, (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(c.AsSpan())));
+		});
+	}
+
 	private static void CreateCStringFromString(CString[,] cstr)
 	{
 		for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)

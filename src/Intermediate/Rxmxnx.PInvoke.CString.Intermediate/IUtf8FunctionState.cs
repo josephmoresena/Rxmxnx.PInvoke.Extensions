@@ -9,6 +9,9 @@ public interface IUtf8FunctionState<TSelf> where TSelf : struct, IUtf8FunctionSt
 	/// <summary>
 	/// Function that allocates a <typeparamref name="TSelf"/> instance.
 	/// </summary>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	static virtual Func<TSelf, GCHandleType, GCHandle>? Alloc => default;
 
 	/// <summary>

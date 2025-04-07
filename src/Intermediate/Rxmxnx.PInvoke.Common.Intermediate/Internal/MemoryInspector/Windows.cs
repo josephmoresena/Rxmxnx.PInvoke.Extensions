@@ -5,6 +5,9 @@ internal partial class MemoryInspector
 	/// <summary>
 	/// Windows OS implementation of <see cref="MemoryInspector"/> class.
 	/// </summary>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	private sealed unsafe partial class Windows : MemoryInspector
 	{
 		/// <inheritdoc/>

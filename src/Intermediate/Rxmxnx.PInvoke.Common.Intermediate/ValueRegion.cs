@@ -167,9 +167,6 @@ public abstract partial class ValueRegion<T> where T : unmanaged
 	/// <param name="state">Function state.</param>
 	/// <param name="func"><see cref="ReadOnlySpanFunc{T, TState}"/> delegate.</param>
 	/// <returns>A new <see cref="ValueRegion{T}"/> instance.</returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
 	public static ValueRegion<T> Create<TState>(TState state, ReadOnlySpanFunc<T, TState> func)
 		=> new FuncRegion<TState>(state, func);
 	/// <summary>

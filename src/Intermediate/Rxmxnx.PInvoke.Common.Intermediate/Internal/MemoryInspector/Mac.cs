@@ -5,6 +5,9 @@ internal partial class MemoryInspector
 	/// <summary>
 	/// MacOS implementation of <see cref="MemoryInspector"/> class.
 	/// </summary>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	private sealed unsafe partial class Mac : MemoryInspector
 	{
 		/// <inheritdoc/>

@@ -19,7 +19,8 @@ public partial class CString
 		/// </summary>
 		private readonly Int32 _index = index;
 
-		static Func<SequenceItemState, GCHandleType, GCHandle>? IUtf8FunctionState<SequenceItemState>.Alloc
+		/// <inheritdoc/>
+		public static Func<SequenceItemState, GCHandleType, GCHandle> Alloc
 			=> (s, t) => GCHandle.Alloc(s._sequence.ToString(), t);
 
 #if !PACKAGE

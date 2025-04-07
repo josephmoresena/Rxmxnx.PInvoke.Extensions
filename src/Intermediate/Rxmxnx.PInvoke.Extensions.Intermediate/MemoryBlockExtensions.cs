@@ -20,6 +20,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <see langword="true"/> if current span represents a constant, literal o hardcoded memory region;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Boolean IsLiteral<T>(this Span<T> span) => MemoryInspector.Instance.IsLiteral<T>(span);
 	/// <summary>
