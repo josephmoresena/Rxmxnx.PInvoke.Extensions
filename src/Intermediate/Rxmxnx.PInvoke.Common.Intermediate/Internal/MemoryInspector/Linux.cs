@@ -102,7 +102,7 @@ internal partial class MemoryInspector
 		{
 			if (state.Index <= 3) return;
 
-			state.Offset = state.Buffer.IndexOf((Byte)MapsTokens.NewLine) + 1;
+			state.Offset = state.Buffer[..state.Index].IndexOf((Byte)MapsTokens.NewLine) + 1;
 			ReadOnlySpan<Byte> temp = state.Buffer[state.Offset..state.Index];
 			state.Auxiliar = temp.IndexOf((Byte)MapsTokens.Hyphen);
 
