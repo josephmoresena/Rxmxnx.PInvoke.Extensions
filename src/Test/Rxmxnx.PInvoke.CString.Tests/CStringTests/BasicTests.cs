@@ -212,8 +212,8 @@ public sealed class BasicTests
 
 			using MemoryHandle handle2 = c[1..^1].TryPin(out pinned);
 			Assert.True(pinned);
-			Assert.NotEqual((IntPtr)handle.Pointer, IntPtr.Zero);
-			Assert.Equal((IntPtr)handle.Pointer, (IntPtr)handle.Pointer + 1);
+			Assert.NotEqual((IntPtr)handle2.Pointer, IntPtr.Zero);
+			Assert.Equal((IntPtr)handle2.Pointer, (IntPtr)handle.Pointer + 1);
 		});
 		Assert.All(literalArray, c =>
 		{
@@ -231,8 +231,8 @@ public sealed class BasicTests
 
 			using MemoryHandle handle2 = c[1..^1].TryPin(out pinned);
 			Assert.False(pinned);
-			Assert.Equal((IntPtr)handle.Pointer, IntPtr.Zero);
-			Assert.NotEqual((IntPtr)handle.Pointer, (IntPtr)handle.Pointer + 1);
+			Assert.Equal((IntPtr)handle2.Pointer, IntPtr.Zero);
+			Assert.NotEqual((IntPtr)handle2.Pointer, (IntPtr)handle.Pointer + 1);
 		});
 		Assert.All(bytesArray, c =>
 		{
@@ -249,8 +249,8 @@ public sealed class BasicTests
 
 			using MemoryHandle handle2 = c[1..^1].TryPin(out pinned);
 			Assert.True(pinned);
-			Assert.NotEqual((IntPtr)handle.Pointer, IntPtr.Zero);
-			Assert.Equal((IntPtr)handle.Pointer, (IntPtr)handle.Pointer + 1);
+			Assert.NotEqual((IntPtr)handle2.Pointer, IntPtr.Zero);
+			Assert.Equal((IntPtr)handle2.Pointer, (IntPtr)handle.Pointer + 1);
 		});
 		Assert.All(bytesNullArray, c =>
 		{
@@ -267,8 +267,8 @@ public sealed class BasicTests
 
 			using MemoryHandle handle2 = c[1..^1].TryPin(out pinned);
 			Assert.True(pinned);
-			Assert.NotEqual((IntPtr)handle.Pointer, IntPtr.Zero);
-			Assert.Equal((IntPtr)handle.Pointer, (IntPtr)handle.Pointer + 1);
+			Assert.NotEqual((IntPtr)handle2.Pointer, IntPtr.Zero);
+			Assert.Equal((IntPtr)handle2.Pointer, (IntPtr)handle.Pointer + 1);
 		});
 	}
 

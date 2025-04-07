@@ -5,8 +5,8 @@ internal partial class MemoryInspector
 	private sealed partial class Windows
 	{
 #if !PACKAGE
-		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6670)]
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2346)]
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2342)]
 #endif
 		[Flags]
 		public enum MemoryState : uint
@@ -38,7 +38,7 @@ internal partial class MemoryInspector
 		}
 
 #if !PACKAGE
-		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6670)]
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2342)]
 #endif
 		private enum RegionState : UInt32
 		{
