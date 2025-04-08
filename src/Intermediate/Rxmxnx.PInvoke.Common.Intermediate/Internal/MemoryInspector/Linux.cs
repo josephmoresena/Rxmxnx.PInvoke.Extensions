@@ -104,14 +104,12 @@ internal partial class MemoryInspector
 			    tickCount - Linux.lastThreadTickCount < Linux.LocalFileReadDelay)
 			{
 				Int64 ilcBytes = JitInfo.GetCompiledILBytes();
-				// if (this._lastTickCount < 0 || ilcBytes == 0 || (Double)this._ilcBytes / ilcBytes > 0.9)
-				// 	return; // NativeAOT or no dynamic IL load.
+				if (this._lastTickCount < 0 || ilcBytes == 0 || (Double)this._ilcBytes / ilcBytes > 0.9)
+					return; // NativeAOT or no dynamic IL load.
 				this._ilcBytes = ilcBytes;
 			}
 
-			Thread mapThread = new(Linux.ReadMapsFile);
-			mapThread.Start(this);
-			mapThread.Join();
+			this.ParseMaps(File.ReadAllBytes("/proc/self/maps"));
 
 			this._lastTickCount = Environment.TickCount64;
 			Linux.lastThreadTickCount = this._lastTickCount;

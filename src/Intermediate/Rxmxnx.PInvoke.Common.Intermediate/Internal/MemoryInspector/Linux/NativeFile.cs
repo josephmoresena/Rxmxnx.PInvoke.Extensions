@@ -15,9 +15,9 @@ internal partial class MemoryInspector
 			private const String SelfMapsFileName = "瀯潲\u2f63敳晬洯灡s";
 
 			[DllImport("libc", EntryPoint = "open", SetLastError = false)]
-			private static extern Int32 Open(void* pathname, Int32 flags);
+			private static extern unsafe Int32 Open(void* pathname, Int32 flags);
 			[DllImport("libc", EntryPoint = "read", SetLastError = false)]
-			private static extern Int64 Read(Int32 fd, Byte* buffer, UInt16 count);
+			private static extern unsafe Int64 Read(Int32 fd, Byte* buffer, UInt16 count);
 			[DllImport("libc", EntryPoint = "lseek", SetLastError = false)]
 			private static extern Int64 Seek(Int32 fd, Int64 offset, Int32 whence);
 			[DllImport("libc", EntryPoint = "close", SetLastError = false)]
