@@ -14,11 +14,11 @@ internal partial class MemoryInspector
 		/// <summary>
 		/// Minimum time (ms) between reads of /proc/self/maps to avoid redundant access across all threads.
 		/// </summary>
-		private const Int64 GlobalFileReadDelay = 200;
+		private const Int64 GlobalFileReadDelay = 150;
 		/// <summary>
 		/// Minimum time (ms) between reads of /proc/self/maps within the same thread.
 		/// </summary>
-		private const Int64 LocalFileReadDelay = 480;
+		private const Int64 LocalFileReadDelay = 450;
 		/// <summary>
 		/// Token permission length.
 		/// </summary>
@@ -40,6 +40,10 @@ internal partial class MemoryInspector
 		/// </summary>
 		private readonly SortedSet<MemoryBoundary> _readwriteMemory = [];
 
+		/// <summary>
+		/// IL compiled bytes.
+		/// </summary>
+		private Int64 _ilcBytes = JitInfo.GetCompiledILBytes();
 		/// <summary>
 		/// Last <c>/proc/self/maps</c> binary length.
 		/// </summary>
@@ -98,7 +102,12 @@ internal partial class MemoryInspector
 			Int64 tickCount = Environment.TickCount64;
 			if (tickCount - this._lastTickCount < Linux.GlobalFileReadDelay ||
 			    tickCount - Linux.lastThreadTickCount < Linux.LocalFileReadDelay)
-				return;
+			{
+				Int64 ilcBytes = JitInfo.GetCompiledILBytes();
+				if (this._lastTickCount < 0 || ilcBytes == 0 || (Double)this._ilcBytes / ilcBytes > 0.9)
+					return; // NativeAOT or no dynamic IL load.
+				this._ilcBytes = ilcBytes;
+			}
 
 			Thread mapThread = new(Linux.ReadMapsFile);
 			mapThread.Start(this);
@@ -252,7 +261,7 @@ internal partial class MemoryInspector
 			if (state is not Linux inspector) return;
 
 			using NativeFile nativeFile = NativeFile.OpenSelfMaps();
-			Span<Byte> localBuffer = stackalloc Byte[inspector._lastSize * 1024]; // Clean stack.
+			Span<Byte> localBuffer = stackalloc Byte[inspector._lastSize * 1024];
 			Int32 lastNewLineOffset = -1;
 			Int32 totalBytes = 0;
 			Int32 readBytes;
