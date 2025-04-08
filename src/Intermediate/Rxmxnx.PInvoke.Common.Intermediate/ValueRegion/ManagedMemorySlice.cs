@@ -40,6 +40,10 @@ public partial class ValueRegion<T>
 			=> this._array = region._array;
 
 		/// <inheritdoc/>
+		public override Boolean TryAlloc(GCHandleType type, out GCHandle handle)
+			=> ManagedRegion.TryAlloc(this._array, type, out handle);
+
+		/// <inheritdoc/>
 		private protected override T[]? AsArray() => !this.IsMemorySlice ? this._array : default;
 
 		/// <inheritdoc/>

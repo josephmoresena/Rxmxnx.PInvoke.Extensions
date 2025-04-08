@@ -19,7 +19,7 @@ public partial class CString
 	{
 		this._isLocal = false;
 		this.IsFunction = true;
-		this._data = ValueRegion<Byte>.Create(new SequenceItemState(sequence, index), SequenceItemState.GetSpan);
+		this._data = ValueRegion<Byte>.Create(new(sequence, index), SequenceItemState.GetSpan, SequenceItemState.Alloc);
 
 		ReadOnlySpan<Byte> data = CStringSequence.GetItemSpan(sequence, index);
 		this._isNullTerminated = true;

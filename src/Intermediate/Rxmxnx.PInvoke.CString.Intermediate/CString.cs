@@ -199,6 +199,37 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	public ReadOnlySpan<Byte>.Enumerator GetEnumerator() => this.AsSpan().GetEnumerator();
 
 	/// <summary>
+	/// Tries to pin the current UTF-8 memory block.
+	/// </summary>
+	/// <param name="pinned">Output. Indicates whether current instance was pinned.</param>
+	/// <returns>A <see cref="MemoryHandle"/> instance.</returns>
+	public unsafe MemoryHandle TryPin(out Boolean pinned)
+	{
+		if (this._data.GetPinnable(out Int32 index) is { } p)
+		{
+			pinned = true;
+			return p.Pin(index);
+		}
+
+		fixed (void* ptr = &MemoryMarshal.GetReference(this._data.AsSpan()))
+		{
+			if (this.IsReference)
+			{
+				pinned = false;
+				return new(ptr);
+			}
+			if (this._data.TryAlloc(GCHandleType.Pinned, out GCHandle handle))
+			{
+				pinned = true;
+				return new(ptr, handle);
+			}
+		}
+
+		pinned = false;
+		return default;
+	}
+
+	/// <summary>
 	/// Determines whether the specified <see cref="CString"/> is <see langword="null"/>
 	/// or an empty UTF-8 string.
 	/// </summary>
@@ -250,7 +281,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	public static CString Create<TState>(TState state) where TState : struct, IUtf8FunctionState<TState>
 	{
 #pragma warning disable CA2252
-		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, TState.GetSpan);
+		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, TState.GetSpan, TState.Alloc);
 		Int32 length = TState.GetLength(state);
 		return new(data, true, state.IsNullTerminated, length);
 #pragma warning restore CA2252

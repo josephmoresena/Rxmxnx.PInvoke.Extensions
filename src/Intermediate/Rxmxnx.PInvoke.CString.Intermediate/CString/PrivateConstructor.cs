@@ -152,13 +152,8 @@ public partial class CString
 		/// Creates a <see cref="Utf16ConversionHelper"/> instance from current instance.
 		/// </summary>
 		/// <returns>A <see cref="ValueRegion{Byte}"/> created from current instance.</returns>
-		public ValueRegion<Byte> AsRegion() => ValueRegion<Byte>.Create(this.GetUtf8Bytes);
-
-		/// <summary>
-		/// Retrieves the internal read-only span of UTF-8 bytes.
-		/// </summary>
-		/// <returns>A read-only span of UTF-8 bytes.</returns>
-		private ReadOnlySpan<Byte> GetUtf8Bytes() => MemoryMarshal.AsBytes<Char>(this._utf8String);
+		public ValueRegion<Byte> AsRegion()
+			=> ValueRegion<Byte>.Create(this._utf8String, s => MemoryMarshal.AsBytes(s.AsSpan()), GCHandle.Alloc);
 
 		/// <summary>
 		/// Creates a UTF-16 text which contains the binary information of <paramref name="str"/>

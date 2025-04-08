@@ -4,7 +4,9 @@
 /// Represents a fixed read-only memory block for a specific type.
 /// </summary>
 /// <typeparam name="T">The type of the items in the fixed memory block.</typeparam>
+#if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IReadOnlyFixedContext<T>
 {
 	/// <summary>

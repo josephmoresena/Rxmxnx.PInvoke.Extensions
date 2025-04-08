@@ -69,7 +69,9 @@ public static partial class BufferManager
 		/// <param name="metadata">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
 		/// <param name="sizes">Buffer to write.</param>
 		/// <returns>Written buffer.</returns>
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
 		private static Span<UInt16> WriteSizes(BufferTypeMetadata<T> metadata, Span<UInt16> sizes)
 		{
 			sizes[0] = metadata.Size;

@@ -3,7 +3,9 @@
 /// <summary>
 /// Utility class for argument validation.
 /// </summary>
+#if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 internal static unsafe class ValidationUtilities
 {
 	/// <summary>
@@ -74,7 +76,9 @@ internal static unsafe class ValidationUtilities
 	/// <exception cref="ArgumentException">
 	/// Throws an exception if <paramref name="info"/> contains an invalid <see langword="unmanaged"/> pointer.
 	/// </exception>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	public static void* ThrowIfInvalidPointer(SerializationInfo info)
 	{
 		Int64 l = info.GetInt64("value");
@@ -90,7 +94,9 @@ internal static unsafe class ValidationUtilities
 	/// <exception cref="ArgumentNullException">
 	/// Throws an exception if <paramref name="info"/> is <see langword="null"/>.
 	/// </exception>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	public static void ThrowIfInvalidSerialization(SerializationInfo info, void* ptr)
 	{
 		if (info == null)
@@ -520,7 +526,9 @@ internal static unsafe class ValidationUtilities
 	/// <param name="isNull">Indicates whether buffer metadata is null.</param>
 	/// <param name="size">Buffer size.</param>
 	/// <exception cref="InvalidOperationException">Throws an exception if buffer metadata is null.</exception>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfNullMetadata(Type itemType, UInt16 size, Boolean isNull)
 	{
@@ -536,7 +544,9 @@ internal static unsafe class ValidationUtilities
 	/// <param name="bufferSize">Buffer sizes.</param>
 	/// <param name="type">CLR type of buffer.</param>
 	/// <exception cref="InvalidOperationException">Throws an exception if buffer is not a space.</exception>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfNotSpace(Boolean isBinary, Span<UInt16> bufferSize, Type type)
 	{

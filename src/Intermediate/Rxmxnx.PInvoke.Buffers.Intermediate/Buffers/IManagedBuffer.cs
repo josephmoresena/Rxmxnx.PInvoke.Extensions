@@ -4,7 +4,9 @@ namespace Rxmxnx.PInvoke.Buffers;
 /// This interfaces exposes a managed buffer.
 /// </summary>
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
+#if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2743)]
+#endif
 public interface IManagedBuffer<T>
 {
 	/// <summary>

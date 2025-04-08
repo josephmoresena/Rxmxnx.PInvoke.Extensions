@@ -15,7 +15,7 @@ public abstract class ValueRegionTestBase
 	/// <param name="array">A <typeparamref name="T"/> array.</param>
 	/// <param name="handles">Collection in which to apend used handle.</param>
 	/// <returns>A new <see cref="ValueRegion{T}"/> instance from <paramref name="array"/>.</returns>
-	protected static ValueRegion<T> Create<T>(T[] array, ICollection<GCHandle> handles) where T : unmanaged
+	protected static ValueRegion<T> Create<T>(T[] array, ICollection<GCHandle> handles)
 		=> ValueRegionTestBase.Create(array, handles, out _);
 
 	/// <summary>
@@ -27,10 +27,9 @@ public abstract class ValueRegionTestBase
 	/// <param name="isReference">Indicates whether the created region is a reference.</param>
 	/// <returns>A new <see cref="ValueRegion{T}"/> instance from <paramref name="array"/>.</returns>
 	protected static unsafe ValueRegion<T> Create<T>(T[] array, ICollection<GCHandle> handles, out Boolean isReference)
-		where T : unmanaged
 	{
 		isReference = false;
-		switch (Random.Shared.Next(default, 8))
+		switch (Random.Shared.Next(default, 12))
 		{
 			case 0:
 			case 1:
@@ -39,13 +38,18 @@ public abstract class ValueRegionTestBase
 			case 4:
 				return ValueRegion<T>.Create(() => array);
 			case 3:
-			case 7:
+			case 6:
 				return ValueRegion<T>.Create(array, a => a.AsSpan());
+			case 7:
+			case 10:
+				return ValueRegion<T>.Create(array, a => a.AsSpan(), GCHandle.Alloc);
 			default:
+#pragma warning disable CS8500
 				isReference = true;
 				handles.Add(GCHandle.Alloc(array, GCHandleType.Pinned));
 				fixed (void* ptr = array)
 					return ValueRegion<T>.Create(new(ptr), array.Length);
+#pragma warning restore CS8500
 		}
 	}
 }

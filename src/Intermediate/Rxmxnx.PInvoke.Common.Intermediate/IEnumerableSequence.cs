@@ -6,7 +6,9 @@
 public interface IEnumerableSequence<out T> : IEnumerable<T>
 {
 	IEnumerator<T> IEnumerable<T>.GetEnumerator() => this.CreateEnumerator();
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	IEnumerator IEnumerable.GetEnumerator() => this.CreateEnumerator();
 	/// <summary>
 	/// Retrieves the element at the specified index.

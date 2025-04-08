@@ -4,7 +4,9 @@
 /// Fixed method class, used to hold a fixed pointer to a method delegate.
 /// </summary>
 /// <typeparam name="TDelegate">Type of the method delegate which is being fixed.</typeparam>
+#if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 internal sealed unsafe class FixedDelegate<TDelegate> : FixedPointer, IFixedMethod<TDelegate> where TDelegate : Delegate
 {
 	/// <summary>
@@ -14,7 +16,9 @@ internal sealed unsafe class FixedDelegate<TDelegate> : FixedPointer, IFixedMeth
 	private GCHandle _handle;
 
 	/// <inheritdoc/>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	public override Boolean IsUnmanaged => false;
 	/// <inheritdoc/>
 	public override Type Type => typeof(TDelegate);

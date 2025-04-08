@@ -8,7 +8,9 @@ public static partial class BufferManager
 	/// <summary>
 	/// Indicates whether metadata for any required buffer is auto-composed.
 	/// </summary>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	public static Boolean BufferAutoCompositionEnabled
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -3,7 +3,9 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 /// <summary>
 /// Chinese (中文) message resource.
 /// </summary>
+#if !PACKAGE
 [ExcludeFromCodeCoverage]
+#endif
 internal sealed class ChineseMessageResource : IMessageResource
 {
 	/// <inheritdoc cref="IMessageResource.Instance"/>

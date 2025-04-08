@@ -24,7 +24,9 @@ public static partial class UnmanagedValueExtensions
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	public static IFixedContext<T>.IDisposable RentFixed<T>(this ArrayPool<T> arrayPool, Int32 count,
 		Boolean clearArray = false) where T : unmanaged
 		=> arrayPool.RentFixed(count, clearArray, out _);

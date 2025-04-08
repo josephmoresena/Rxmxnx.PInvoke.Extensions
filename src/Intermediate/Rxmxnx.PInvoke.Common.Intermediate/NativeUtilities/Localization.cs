@@ -11,7 +11,9 @@ public partial class NativeUtilities
 	/// Indicates whether globalization-invariant mode is enabled.
 	/// </summary>
 	/// <remarks>This property allows trim propagation at compile time using <c>InvariantGlobalization</c>.</remarks>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	public static Boolean GlobalizationInvariantModeEnabled
 		=> NativeUtilities.globalizationInvariantMode ??= NativeUtilities.IsGlobalizationInvariantMode();
 	/// <summary>
@@ -32,7 +34,9 @@ public partial class NativeUtilities
 	/// </summary>
 	/// <param name="culture">A <see cref="CultureInfo"/> instance.</param>
 	/// <returns>A <see cref="Iso639P1"/> enum value.</returns>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	public static Iso639P1 GetIso639P1(CultureInfo culture)
 	{
 		try
@@ -235,7 +239,9 @@ public partial class NativeUtilities
 	/// <see langword="true"/> if globalization-invariant mode is enabled; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	private static Boolean IsGlobalizationInvariantMode()
 	{
 		try

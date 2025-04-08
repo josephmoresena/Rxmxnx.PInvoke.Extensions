@@ -1,6 +1,8 @@
 ﻿namespace Rxmxnx.PInvoke;
 
+#if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 #pragma warning disable CS8500
 public static unsafe partial class NativeUtilities
 {

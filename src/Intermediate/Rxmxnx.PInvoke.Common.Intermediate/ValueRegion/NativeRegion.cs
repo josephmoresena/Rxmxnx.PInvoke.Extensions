@@ -5,9 +5,12 @@ public partial class ValueRegion<T>
 	/// <summary>
 	/// Represents a native memory region in which a sequence of values is stored.
 	/// </summary>
+#if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 	private sealed unsafe class NativeRegion : ValueRegion<T>
 	{
+#pragma warning disable CS8500
 		/// <summary>
 		/// An empty instance of <see cref="ValueRegion{T}.NativeRegion"/>.
 		/// </summary>
@@ -59,8 +62,8 @@ public partial class ValueRegion<T>
 		/// <inheritdoc/>
 		internal override ReadOnlySpan<T> AsSpan()
 		{
-			void* pointer = this._ptr.ToPointer();
-			return new(pointer, this._length);
+			ref T refValue = ref Unsafe.AsRef<T>(this._ptr.ToPointer());
+			return MemoryMarshal.CreateReadOnlySpan(ref refValue, this._length);
 		}
 		/// <inheritdoc/>
 		internal override ValueRegion<T> InternalSlice(Int32 startIndex, Int32 length)
@@ -77,5 +80,6 @@ public partial class ValueRegion<T>
 			tPtr += index;
 			return tPtr;
 		}
+#pragma warning restore CS8500
 	}
 }

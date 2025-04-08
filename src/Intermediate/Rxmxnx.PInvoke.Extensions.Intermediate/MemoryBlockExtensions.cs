@@ -6,9 +6,37 @@
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
 [Browsable(false)]
+#if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 public static unsafe partial class MemoryBlockExtensions
 {
+	/// <summary>
+	/// Indicates whether current span represents a literal or hardcoded memory region.
+	/// </summary>
+	/// <typeparam name="T">Type of items in <paramref name="span"/>.</typeparam>
+	/// <param name="span">A span of <typeparamref name="T"/> items.</param>
+	/// <returns>
+	/// <see langword="true"/> if current span represents a constant, literal o hardcoded memory region;
+	/// otherwise, <see langword="false"/>.
+	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Boolean IsLiteral<T>(this Span<T> span) => MemoryInspector.Instance.IsLiteral<T>(span);
+	/// <summary>
+	/// Indicates whether current span represents a literal or hardcoded memory region.
+	/// </summary>
+	/// <typeparam name="T">Type of items in <paramref name="span"/>.</typeparam>
+	/// <param name="span">A read-only span of <typeparamref name="T"/> items.</param>
+	/// <returns>
+	/// <see langword="true"/> if current span represents a constant, literal o hardcoded memory region;
+	/// otherwise, <see langword="false"/>.
+	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Boolean IsLiteral<T>(this ReadOnlySpan<T> span) => MemoryInspector.Instance.IsLiteral(span);
+
 	/// <summary>
 	/// Retrieves an unsafe <see cref="ValPtr{T}"/> pointer from <see cref="Span{T}"/> instance.
 	/// </summary>

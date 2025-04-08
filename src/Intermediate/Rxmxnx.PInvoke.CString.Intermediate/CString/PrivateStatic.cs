@@ -12,7 +12,9 @@ public partial class CString
 	/// strings in a manner that is optimized for the current machine's architecture
 	/// (32 or 64 bit).
 	/// </remarks>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static EqualsDelegate GetEquals()
 		=> Environment.Is64BitProcess ? CString.Equals<Int64> : CString.Equals<Int32>;

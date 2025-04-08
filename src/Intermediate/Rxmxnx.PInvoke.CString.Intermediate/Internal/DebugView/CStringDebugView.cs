@@ -6,7 +6,9 @@
 /// <remarks>
 /// This class automatically decodes the UTF-8 bytes to provide a readable <see cref="String"/> representation.
 /// </remarks>
+#if !PACKAGE
 [ExcludeFromCodeCoverage]
+#endif
 internal sealed record CStringDebugView
 {
 	/// <summary>

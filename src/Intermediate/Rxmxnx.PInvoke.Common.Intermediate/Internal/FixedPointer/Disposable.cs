@@ -6,7 +6,9 @@ internal partial class FixedPointer
 	/// Helper class for managing fixed memory pointer blocks in a disposable context.
 	/// </summary>
 	/// <typeparam name="TFixed">A <see cref="FixedPointer"/> type.</typeparam>
+#if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3881)]
+#endif
 	protected abstract class Disposable<TFixed> : IWrapper<TFixed>, IDisposable where TFixed : FixedPointer
 	{
 		/// <summary>

@@ -58,6 +58,10 @@ public partial class ValueRegion<T>
 	private sealed class FuncRegion<TState> : ValueRegion<T>
 	{
 		/// <summary>
+		/// Internal function that allocates the memory region.
+		/// </summary>
+		private readonly Func<TState, GCHandleType, GCHandle>? _alloc;
+		/// <summary>
 		/// The internal function that provides the memory region.
 		/// </summary>
 		private readonly ReadOnlySpanFunc<T, TState> _func;
@@ -71,20 +75,26 @@ public partial class ValueRegion<T>
 		/// </summary>
 		/// <param name="state">Function state.</param>
 		/// <param name="func">The internal function that provides the memory region.</param>
-		public FuncRegion(TState state, ReadOnlySpanFunc<T, TState> func)
+		/// <param name="alloc">Optional. Function for state allocation.</param>
+		public FuncRegion(TState state, ReadOnlySpanFunc<T, TState> func,
+			Func<TState, GCHandleType, GCHandle>? alloc = default)
 		{
 			this._state = state;
 			this._func = func;
+			this._alloc = alloc;
 		}
 
 		/// <summary>
 		/// Gets the memory region provided by the function.
 		/// </summary>
 		/// <param name="state">Function state.</param>
+		/// <param name="alloc">Function for state allocation.</param>
 		/// <returns>The memory region provided by the function.</returns>
-		public ReadOnlySpanFunc<T, TState> AsReadOnlySpanFunc(out TState state)
+		public ReadOnlySpanFunc<T, TState> AsReadOnlySpanFunc(out TState state,
+			out Func<TState, GCHandleType, GCHandle>? alloc)
 		{
 			state = this._state;
+			alloc = this._alloc;
 			return this._func;
 		}
 		/// <summary>
@@ -108,11 +118,53 @@ public partial class ValueRegion<T>
 			ValidationUtilities.ThrowIfInvalidSubregion(regionLength, startIndex, length);
 			return this.InternalSlice(startIndex, length);
 		}
+		/// <inheritdoc/>
+		public override Boolean TryAlloc(GCHandleType type, out GCHandle handle)
+			=> FuncRegion<TState>.TryAlloc(this._alloc, this._state, type, out handle);
+		/// <param name="offset"></param>
+		/// <inheritdoc/>
+		public override IPinnable? GetPinnable(out Int32 offset)
+		{
+			offset = default;
+			return this._state as IPinnable;
+		}
 
 		/// <inheritdoc/>
 		internal override ValueRegion<T> InternalSlice(Int32 startIndex, Int32 length)
 			=> new FuncMemorySlice<TState>(this, startIndex, length);
 		/// <inheritdoc/>
 		internal override ReadOnlySpan<T> AsSpan() => this._func(this._state);
+
+		/// <summary>
+		/// Tries to create a new <see cref="GCHandle"/> from <paramref name="state"/> instance.
+		/// </summary>
+		/// <param name="alloc">Function to create the new <see cref="GCHandle"/>.</param>
+		/// <param name="state">The object that uses the <see cref="GCHandle"/>.</param>
+		/// <param name="type">The type of <see cref="GCHandle"/> to create.</param>
+		/// <param name="handle">Output. Created <see cref="GCHandle"/> that protects the value region.</param>
+		/// <returns>
+		/// <see langword="true"/> if a <paramref name="handle"/> was successfully created; otherwise, <see langword="false"/>.
+		/// </returns>
+#if !PACKAGE
+		[ExcludeFromCodeCoverage]
+#endif
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Boolean TryAlloc(Func<TState, GCHandleType, GCHandle>? alloc, TState state, GCHandleType type,
+			out GCHandle handle)
+		{
+			if (alloc is not null)
+				try
+				{
+					handle = alloc.Invoke(state, type);
+					return true;
+				}
+				catch (Exception)
+				{
+					// ignored
+				}
+
+			handle = default;
+			return false;
+		}
 	}
 }

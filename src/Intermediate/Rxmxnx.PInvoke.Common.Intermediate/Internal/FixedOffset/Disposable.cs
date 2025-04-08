@@ -27,9 +27,13 @@ internal partial class FixedOffset : IConvertibleDisposable<IFixedMemory.IDispos
 		Span<Object> IFixedMemory.Objects => (this.Value as IFixedMemory).Objects;
 		ReadOnlySpan<Object> IReadOnlyFixedMemory.Objects => (this.Value as IReadOnlyFixedMemory).Objects;
 
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
 		IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
 		IReadOnlyFixedContext<Object> IReadOnlyFixedMemory.AsObjectContext() => this.AsObjectContext();
 
 		/// <inheritdoc/>

@@ -22,6 +22,9 @@ public partial class ValueRegion<T>
 		public ManagedRegion(T[] array) => this._array = array;
 
 		/// <inheritdoc/>
+		public override Boolean TryAlloc(GCHandleType type, out GCHandle handle)
+			=> ManagedRegion.TryAlloc(this._array, type, out handle);
+		/// <inheritdoc/>
 		public override ValueRegion<T> Slice(Int32 startIndex)
 			=> this.Slice(startIndex, this._array.Length - startIndex);
 		/// <inheritdoc/>
@@ -38,5 +41,29 @@ public partial class ValueRegion<T>
 		/// <inheritdoc/>
 		internal override ValueRegion<T> InternalSlice(Int32 startIndex, Int32 length)
 			=> new ManagedMemorySlice(this, startIndex, length);
+
+		/// <summary>
+		/// Tries to create a new <see cref="GCHandle"/> from <paramref name="array"/> instance.
+		/// </summary>
+		/// <param name="array">The array that uses the <see cref="GCHandle"/>.</param>
+		/// <param name="type">The type of <see cref="GCHandle"/> to create.</param>
+		/// <param name="handle">Output. Created <see cref="GCHandle"/> that protects the value region.</param>
+		/// <returns>
+		/// <see langword="true"/> if a <paramref name="handle"/> was successfully created; otherwise, <see langword="false"/>.
+		/// </returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Boolean TryAlloc(T[] array, GCHandleType type, out GCHandle handle)
+		{
+			try
+			{
+				handle = GCHandle.Alloc(array, type);
+				return true;
+			}
+			catch (Exception)
+			{
+				handle = default;
+				return false;
+			}
+		}
 	}
 }

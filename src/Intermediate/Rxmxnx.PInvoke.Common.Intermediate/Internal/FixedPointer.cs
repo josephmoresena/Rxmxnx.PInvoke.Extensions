@@ -3,7 +3,9 @@
 /// <summary>
 /// Helper class for managing fixed memory pointer blocks.
 /// </summary>
+#if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 internal abstract unsafe partial class FixedPointer : IFixedPointer
 {
 #pragma warning disable CS8500

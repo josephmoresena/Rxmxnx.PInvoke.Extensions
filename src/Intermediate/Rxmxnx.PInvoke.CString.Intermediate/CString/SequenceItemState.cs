@@ -19,7 +19,13 @@ public partial class CString
 		/// </summary>
 		private readonly Int32 _index = index;
 
+		/// <inheritdoc/>
+		public static Func<SequenceItemState, GCHandleType, GCHandle> Alloc
+			=> (s, t) => GCHandle.Alloc(s._sequence.ToString(), t);
+
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
 		Boolean IUtf8FunctionState<SequenceItemState>.IsNullTerminated => true;
 
 		/// <summary>
@@ -30,7 +36,9 @@ public partial class CString
 		public static ReadOnlySpan<Byte> GetSpan(SequenceItemState state)
 			=> CStringSequence.GetItemSpan(state._sequence, state._index);
 
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
 #if NET6_0
 		[RequiresPreviewFeatures]
 #endif

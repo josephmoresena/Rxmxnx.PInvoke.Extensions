@@ -1,6 +1,8 @@
 namespace Rxmxnx.PInvoke.Internal;
 
+#if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 internal unsafe partial class FixedPointer : IEquatable<FixedPointer>
 {
 	/// <inheritdoc/>
@@ -8,7 +10,9 @@ internal unsafe partial class FixedPointer : IEquatable<FixedPointer>
 		=> other is not null && this.GetMemoryOffset() == other.GetMemoryOffset() &&
 			this.BinaryLength == other.BinaryLength && this.IsReadOnly == other.IsReadOnly;
 	/// <inheritdoc/>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	public override Boolean Equals(Object? obj) => this.Equals(obj as FixedPointer);
 
 	/// <inheritdoc/>

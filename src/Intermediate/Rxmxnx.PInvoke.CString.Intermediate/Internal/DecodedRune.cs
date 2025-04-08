@@ -49,7 +49,9 @@ internal readonly struct DecodedRune : IWrapper<Rune>, IEquatable<DecodedRune>
 	}
 
 	/// <inheritdoc/>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	public Boolean Equals(DecodedRune other)
 		=> this.CharsConsumed == other.CharsConsumed && this._rawValue == other._rawValue &&
 			this._value.Equals(other._value);

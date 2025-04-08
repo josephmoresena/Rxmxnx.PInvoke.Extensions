@@ -30,7 +30,9 @@ public partial class CStringSequence
 			}
 		}
 		Boolean ICollection<CString?>.IsReadOnly => false;
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
 		Int32 ICollection<CString?>.Count => this._cache.Count;
 
 		void ICollection<CString?>.Clear()
@@ -43,9 +45,13 @@ public partial class CStringSequence
 			}
 		}
 
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
 		void IList<CString?>.Insert(Int32 index, CString? item) => this._cache[index] = new(item!);
+#if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
 		void IList<CString?>.RemoveAt(Int32 index) => this._cache.TryRemove(index, out _);
 	}
 }

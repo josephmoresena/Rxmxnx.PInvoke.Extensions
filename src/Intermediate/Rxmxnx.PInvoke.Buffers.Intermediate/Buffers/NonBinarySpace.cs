@@ -11,7 +11,9 @@ namespace Rxmxnx.PInvoke.Buffers;
 /// therefore, its declaration might generate metadata that will never be used.
 /// </remarks>
 [StructLayout(LayoutKind.Sequential)]
+#if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 #pragma warning disable CA2252
 public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray : struct
 {
@@ -28,7 +30,9 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [];
 	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => NonBinarySpace<TArray, T>.typeMetadata;
 
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	static void IManagedBuffer<T>.AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components) { }
 
 	/// <summary>

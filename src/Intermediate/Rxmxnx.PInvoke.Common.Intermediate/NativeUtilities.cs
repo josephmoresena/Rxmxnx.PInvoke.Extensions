@@ -3,7 +3,9 @@
 /// <summary>
 /// Provides a set of utilities for exchange data within the P/Invoke context.
 /// </summary>
+#if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 public static unsafe partial class NativeUtilities
 {
 	/// <summary>

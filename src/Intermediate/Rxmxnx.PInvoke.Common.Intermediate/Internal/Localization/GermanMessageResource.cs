@@ -3,7 +3,9 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 /// <summary>
 /// German (Deutsch) message resource.
 /// </summary>
+#if !PACKAGE
 [ExcludeFromCodeCoverage]
+#endif
 internal sealed class GermanMessageResource : IMessageResource
 {
 	/// <inheritdoc cref="IMessageResource.Instance"/>

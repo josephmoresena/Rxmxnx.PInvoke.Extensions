@@ -3,7 +3,9 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 /// <summary>
 /// Russian (Русский) message resource.
 /// </summary>
+#if !PACKAGE
 [ExcludeFromCodeCoverage]
+#endif
 internal sealed class RussianMessageResource : IMessageResource
 {
 	/// <inheritdoc cref="IMessageResource.Instance"/>

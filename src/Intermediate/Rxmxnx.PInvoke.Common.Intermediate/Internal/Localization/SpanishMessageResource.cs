@@ -3,7 +3,9 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 /// <summary>
 /// Spanish message resource.
 /// </summary>
+#if !PACKAGE
 [ExcludeFromCodeCoverage]
+#endif
 internal sealed class SpanishMessageResource : IMessageResource
 {
 	/// <inheritdoc cref="IMessageResource.Instance"/>

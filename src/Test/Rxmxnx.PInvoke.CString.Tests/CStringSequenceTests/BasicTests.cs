@@ -3,6 +3,13 @@
 [ExcludeFromCodeCoverage]
 public sealed class BasicTests
 {
+	/// <summary>
+	/// <see cref="GCHandle"/> field info.
+	/// </summary>
+	private static readonly FieldInfo handleFieldInfo = typeof(MemoryHandle)
+	                                                    .GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+	                                                    .First(f => f.FieldType == typeof(GCHandle));
+
 	[Fact]
 	internal void EmptyTest()
 	{
@@ -69,6 +76,7 @@ public sealed class BasicTests
 
 	private static unsafe void AssertSequence(CStringSequence seq, String?[] strings, CString?[] values)
 	{
+		String value = seq.ToString();
 		for (Int32 i = 0; i < seq.Count; i++)
 		{
 			if (seq[i].Length != 0 || !seq[i].IsReference)
@@ -85,6 +93,23 @@ public sealed class BasicTests
 						Assert.Equal(IntPtr.Zero, new(ptr));
 				Assert.Null(strings[i]);
 			}
+			BasicTests.AssertPin(seq.ToString(), seq[i]);
 		}
+	}
+	private static unsafe void AssertPin(String utf8Buffer, CString? cstr)
+	{
+		if (CString.IsNullOrEmpty(cstr))
+			return;
+
+		using MemoryHandle handle = cstr.TryPin(out Boolean pinned);
+		Assert.True(pinned);
+		Assert.Equal(Assert.IsType<GCHandle>(BasicTests.handleFieldInfo.GetValue(handle)).Target, utf8Buffer);
+
+		if (cstr.Length <= 3) return;
+
+		using MemoryHandle handle2 = cstr[1..^1].TryPin(out pinned);
+		Assert.True(pinned);
+		Assert.NotEqual((IntPtr)handle2.Pointer, IntPtr.Zero);
+		Assert.Equal((IntPtr)handle2.Pointer, (IntPtr)handle.Pointer + 1);
 	}
 }

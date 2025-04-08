@@ -7,7 +7,9 @@ internal partial interface IMessageResource
 	/// Retrieves internal resource objects.
 	/// </summary>
 	/// <returns>Resource resource object.</returns>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	public static IMessageResource GetInstance()
 	{
 		IMessageResource result = IMessageResource.GetInstance<DefaultMessageResource>();
