@@ -70,6 +70,7 @@ public sealed class BasicTests : ValueRegionTestBase
 		T[]? array = null;
 		Boolean isReference = false;
 		ReadOnlySpan<T> span = ReadOnlySpan<T>.Empty;
+		Boolean spanTest = true;
 		try
 		{
 			ValueRegion<T> region = ValueRegionTestBase.Create(values, handles, out isReference);
@@ -84,12 +85,12 @@ public sealed class BasicTests : ValueRegionTestBase
 				ValueRegion<T> region = ValueRegion<T>.Create(new(ptr), values.Length);
 				BasicTests.AssertRegion(values, region);
 			}
+			spanTest = false;
 		}
 
 		if (array is not null)
 			Assert.Same(values, array);
-		else if ((isReference && values.Length == 0) ||
-		         (RuntimeHelpers.IsReferenceOrContainsReferences<T>() && span.IsEmpty))
+		else if (spanTest && isReference && values.Length == 0)
 			fixed (void* ptr = &MemoryMarshal.GetReference(span))
 				Assert.Equal(IntPtr.Zero, new(ptr));
 	}

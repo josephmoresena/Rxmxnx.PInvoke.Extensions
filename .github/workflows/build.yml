@@ -91,9 +91,11 @@ jobs:
           Console.WriteLine($"Native AOT: {AotInfo.IsNativeAot}");
           Console.WriteLine($"Reflection Enabled: {(!AotInfo.IsReflectionDisabled)}");
           Console.WriteLine($"Is 64-bit: {(NativeUtilities.PointerSize == 8)}");
+          Console.WriteLine($"Is Little-Endian: {BitConverter.IsLittleEndian}");
           Console.WriteLine($"Globalization-Invariant Mode: {NativeUtilities.GlobalizationInvariantModeEnabled}");
           Console.WriteLine($"UI Culture: {CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}");
           Console.WriteLine($"UI Iso639-1: {NativeUtilities.UserInterfaceIso639P1}");
+          Console.WriteLine($"UTF-8 Literal: {"UTF8_LITERAL"u8.IsLiteral()}");
           Console.WriteLine($"Buffer AutoComposition Enabled: {BufferManager.BufferAutoCompositionEnabled}");
           var bufferMetadata =
               (new Composite<Atomic<ValueTuple<String, Int32>>,

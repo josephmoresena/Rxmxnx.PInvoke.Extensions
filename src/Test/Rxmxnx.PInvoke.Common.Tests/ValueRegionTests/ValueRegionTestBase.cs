@@ -45,8 +45,8 @@ public abstract class ValueRegionTestBase
 				return ValueRegion<T>.Create(array, a => a.AsSpan(), GCHandle.Alloc);
 			default:
 #pragma warning disable CS8500
-				isReference = true;
 				handles.Add(GCHandle.Alloc(array, GCHandleType.Pinned));
+				isReference = true;
 				fixed (void* ptr = array)
 					return ValueRegion<T>.Create(new(ptr), array.Length);
 #pragma warning restore CS8500
