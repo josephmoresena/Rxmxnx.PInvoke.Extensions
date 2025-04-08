@@ -161,7 +161,8 @@ internal partial class MemoryInspector
 		/// </returns>
 		private static Boolean IsMappedAddress(SortedSet<MemoryBoundary> maps, void* address)
 		{
-			SortedSet<MemoryBoundary> view = maps.GetViewBetween(default, address);
+			if (maps.Count == 0) return false;
+			SortedSet<MemoryBoundary> view = maps.GetViewBetween(maps.Min, address);
 			if (view.Count == 0) return false;
 			MemoryBoundary boundary = view.Max;
 			return boundary != default && !boundary.IsEnd;

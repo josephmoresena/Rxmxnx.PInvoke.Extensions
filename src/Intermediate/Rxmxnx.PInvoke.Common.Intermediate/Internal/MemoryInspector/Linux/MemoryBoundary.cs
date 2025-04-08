@@ -8,12 +8,12 @@ internal partial class MemoryInspector
 		/// Memory boundary struct.
 		/// </summary>
 		private readonly unsafe struct MemoryBoundary : IEquatable<MemoryBoundary>, IComparable<MemoryBoundary>,
-			IWrapper<IntPtr>
+			IWrapper<UIntPtr>
 		{
 			/// <summary>
 			/// Internal value.
 			/// </summary>
-			public IntPtr Value { get; private init; }
+			public UIntPtr Value { get; private init; }
 			/// <summary>
 			/// Indicates whether current boundary is terminal.
 			/// </summary>
@@ -35,13 +35,6 @@ internal partial class MemoryInspector
 			/// </summary>
 			/// <param name="value">An <see cref="IntPtr"/> to implicitly convert.</param>
 			public static implicit operator MemoryBoundary(void* value) => new() { Value = new(value), IsEnd = false, };
-			/// <summary>
-			/// Defines an implicit conversion of a given <see cref="ValueTuple{IntPtr, Boolean}"/> to a <see cref="MemoryBoundary"/>
-			/// instance.
-			/// </summary>
-			/// <param name="value">An <see cref="ValueTuple{IntPtr, Boolean}"/> to implicitly convert.</param>
-			public static implicit operator MemoryBoundary((IntPtr, Boolean) value)
-				=> new() { Value = value.Item1, IsEnd = value.Item2, };
 
 			/// <inheritdoc/>
 			public Int32 CompareTo(MemoryBoundary other) => this.Value.CompareTo(other.Value);
@@ -139,9 +132,9 @@ internal partial class MemoryInspector
 			/// </summary>
 			/// <param name="addressText">The span of UTF-8 characters to parse.</param>
 			/// <returns>The result of parsing <paramref name="addressText"/>.</returns>
-			private static IntPtr Parse(ReadOnlySpan<Byte> addressText)
+			private static UIntPtr Parse(ReadOnlySpan<Byte> addressText)
 			{
-				Span<Byte> addressBuffer = stackalloc Byte[IntPtr.Size];
+				Span<Byte> addressBuffer = stackalloc Byte[UIntPtr.Size];
 				unchecked
 				{
 					for (Int32 i = 0; i < addressText.Length / 2; i++)
@@ -151,7 +144,7 @@ internal partial class MemoryInspector
 						addressBuffer[i] += MemoryBoundary.GetDecimalValue(addressText[^(2 * i + 1)]);
 					}
 				}
-				return MemoryMarshal.Read<IntPtr>(addressBuffer);
+				return MemoryMarshal.Read<UIntPtr>(addressBuffer);
 			}
 			/// <summary>
 			/// Retrieves the decimal value of <paramref name="hexCharacter"/>.
