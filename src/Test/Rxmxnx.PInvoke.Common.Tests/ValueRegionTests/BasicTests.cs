@@ -4,6 +4,7 @@
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class BasicTests : ValueRegionTestBase
 {
+#pragma warning disable CS8500
 	[Fact]
 	internal void BooleanTest() => BasicTests.Test<Boolean>();
 	[Fact]
@@ -35,7 +36,10 @@ public sealed class BasicTests : ValueRegionTestBase
 	[Fact]
 	internal void TimeSpanTest() => BasicTests.Test<TimeSpan>();
 
-	private static void Test<T>() where T : unmanaged
+	[Fact]
+	internal void StringTest() => BasicTests.Test<String>();
+
+	private static void Test<T>()
 	{
 		List<GCHandle> handles = [];
 		T[] values0 = ValueRegionTestBase.Fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
@@ -61,11 +65,37 @@ public sealed class BasicTests : ValueRegionTestBase
 		}
 	}
 
-	private static unsafe void AssertRegion<T>(T[] values, ICollection<GCHandle> handles) where T : unmanaged
+	private static unsafe void AssertRegion<T>(T[] values, ICollection<GCHandle> handles)
 	{
-		ValueRegion<T> region = ValueRegionTestBase.Create(values, handles, out Boolean isReference);
+		T[]? array = null;
+		Boolean isReference = false;
+		ReadOnlySpan<T> span = ReadOnlySpan<T>.Empty;
+		try
+		{
+			ValueRegion<T> region = ValueRegionTestBase.Create(values, handles, out isReference);
+			array = (T[]?)region;
+			span = BasicTests.AssertRegion(values, region);
+		}
+		catch (ArgumentException)
+		{
+			Assert.True(RuntimeHelpers.IsReferenceOrContainsReferences<T>());
+			fixed (void* ptr = values)
+			{
+				ValueRegion<T> region = ValueRegion<T>.Create(new(ptr), values.Length);
+				BasicTests.AssertRegion(values, region);
+			}
+		}
+
+		if (array is not null)
+			Assert.Same(values, array);
+		else if ((isReference && values.Length == 0) ||
+		         (RuntimeHelpers.IsReferenceOrContainsReferences<T>() && span.IsEmpty))
+			fixed (void* ptr = &MemoryMarshal.GetReference(span))
+				Assert.Equal(IntPtr.Zero, new(ptr));
+	}
+	private static ReadOnlySpan<T> AssertRegion<T>(T[] values, ValueRegion<T> region)
+	{
 		ReadOnlySpan<T> span = region;
-		T[]? array = (T[]?)region;
 		T[] newArray = region.ToArray();
 
 		Assert.False(region.IsMemorySlice);
@@ -75,16 +105,19 @@ public sealed class BasicTests : ValueRegionTestBase
 			Assert.True(Unsafe.AreSame(in span[i], ref values[i]));
 		}
 
-		if (array is not null)
-			Assert.Same(values, array);
-		else if (isReference && values.Length == 0)
-			fixed (void* ptr = &MemoryMarshal.GetReference(span))
-				Assert.Equal(IntPtr.Zero, new(ptr));
-
 		Assert.Equal(values, newArray);
 		if (values.Length > 0)
 			Assert.NotSame(values, newArray);
 		else
 			Assert.Same(Array.Empty<T>(), newArray);
+
+		Boolean isAllocated = region.TryAlloc(GCHandleType.Pinned, out GCHandle handle);
+		Assert.Equal(isAllocated, handle.IsAllocated);
+
+		if (region.GetType().Name.Contains("Managed"))
+			Assert.Equal(!RuntimeHelpers.IsReferenceOrContainsReferences<T>(), isAllocated);
+
+		return span;
 	}
+#pragma warning restore CS8500
 }

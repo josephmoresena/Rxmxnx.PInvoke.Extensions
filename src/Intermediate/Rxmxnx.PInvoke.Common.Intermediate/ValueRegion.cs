@@ -4,11 +4,8 @@
 /// This class represents a region of memory that contains a sequence of
 /// <typeparamref name="T"/> values.
 /// </summary>
-/// <remarks>
-/// This is not a general-purpose class; it should only be used with <see langword="unmanaged"/> types.
-/// </remarks>
-/// <typeparam name="T">The <see langword="unmanaged"/> type of the items in the sequence.</typeparam>
-public abstract partial class ValueRegion<T> where T : unmanaged
+/// <typeparam name="T">The type of the items in the sequence.</typeparam>
+public abstract partial class ValueRegion<T>
 {
 	/// <summary>
 	/// Retrieves an item from the memory region at the specified zero-based <paramref name="index"/>.
@@ -149,7 +146,7 @@ public abstract partial class ValueRegion<T> where T : unmanaged
 	/// <returns>A new <see cref="ValueRegion{T}"/> instance.</returns>
 	/// <remarks>
 	/// If the provided pointer is <see langword="null"/>, the method returns an empty <see cref="ValueRegion{T}"/>
-	/// instance.
+	/// instance. This method might be intended for use only with memory regions of unmanaged types.
 	/// </remarks>
 	public static ValueRegion<T> Create(IntPtr ptr, Int32 length)
 		=> ptr != IntPtr.Zero && length != default ? new(ptr, length) : NativeRegion.Empty;
