@@ -14,16 +14,19 @@ internal partial class MemoryInspector
 		/// <summary>
 		/// Minimum time (ms) between reads of /proc/self/maps to avoid redundant access across all threads.
 		/// </summary>
-		private const Int64 GlobalFileReadDelay = 150;
+		private const Int64 GlobalFileReadDelay = 250;
 		/// <summary>
 		/// Minimum time (ms) between reads of /proc/self/maps within the same thread.
 		/// </summary>
-		private const Int64 LocalFileReadDelay = 450;
+		private const Int64 LocalFileReadDelay = 600;
 		/// <summary>
 		/// Token permission length.
 		/// </summary>
 		private const Int32 PermissionTokenLength = 6;
 
+		/// <summary>
+		/// Last tick count for current thread.
+		/// </summary>
 		[ThreadStatic]
 		private static Int64 lastThreadTickCount;
 
@@ -40,14 +43,6 @@ internal partial class MemoryInspector
 		/// </summary>
 		private readonly SortedSet<MemoryBoundary> _readwriteMemory = [];
 
-		/// <summary>
-		/// IL compiled bytes.
-		/// </summary>
-		private Int64 _ilcBytes = JitInfo.GetCompiledILBytes();
-		/// <summary>
-		/// Last <c>/proc/self/maps</c> binary length.
-		/// </summary>
-		private Int32 _lastSize = 32;
 		/// <summary>
 		/// Last ticks count.
 		/// </summary>
@@ -102,16 +97,9 @@ internal partial class MemoryInspector
 			Int64 tickCount = Environment.TickCount64;
 			if (tickCount - this._lastTickCount < Linux.GlobalFileReadDelay ||
 			    tickCount - Linux.lastThreadTickCount < Linux.LocalFileReadDelay)
-			{
-				Int64 ilcBytes = JitInfo.GetCompiledILBytes();
-				if (this._lastTickCount < 0 || ilcBytes == 0 || (Double)this._ilcBytes / ilcBytes > 0.9)
-					return; // NativeAOT or no dynamic IL load.
-				this._ilcBytes = ilcBytes;
-			}
+				return;
 
-			Thread mapThread = new(Linux.ReadMapsFile);
-			mapThread.Start(this);
-			mapThread.Join();
+			this.ParseMaps(File.ReadAllBytes("/proc/self/maps"));
 
 			this._lastTickCount = Environment.TickCount64;
 			Linux.lastThreadTickCount = this._lastTickCount;
@@ -120,11 +108,9 @@ internal partial class MemoryInspector
 		/// Parses <paramref name="mapsBytes"/> to addresses boundary.
 		/// </summary>
 		/// <param name="mapsBytes">Read <c>/proc/self/maps</c> bytes.</param>
-		/// <returns>Last new line character position.</returns>
-		private Int32 ParseMaps(Span<Byte> mapsBytes)
+		private void ParseMaps(Span<Byte> mapsBytes)
 		{
 			FileState state = new(mapsBytes) { ReadBytes = IntPtr.Size == 4 ? 23 : 39, };
-			Int32 lastNewLine = 0;
 			while (state.Buffer.Length > 4)
 			{
 				state.Index = Linux.GetPermissionIndex(state.Buffer[..state.ReadBytes], out Boolean isReadOnly);
@@ -134,15 +120,10 @@ internal partial class MemoryInspector
 				state.Buffer = state.Buffer[state.Offset..];
 				state.Index = state.Buffer.IndexOf((Byte)MapsTokens.NewLine); // End of the line.
 				state.Offset = state.Index + 1;
-				if (state.Offset > 0)
-				{
-					lastNewLine = state.Buffer.Length - state.Offset;
-					state.Buffer = state.Buffer[state.Offset..];
-				}
+				state.Buffer = state.Buffer[state.Offset..];
 				if (state.Buffer.Length < state.ReadBytes)
 					state.ReadBytes = state.Buffer.Length; // End of the buffer.
 			}
-			return lastNewLine;
 		}
 		/// <summary>
 		/// Creates addresses maps.
@@ -252,29 +233,6 @@ internal partial class MemoryInspector
 			// " r[-w][-x][ps] "
 			isReadOnly = buffer[2] is MapsTokens.Hyphen;
 			return true;
-		}
-		/// <summary>
-		/// Reads <c>/proc/self/maps</c> file.
-		/// </summary>
-		private static void ReadMapsFile(Object? state)
-		{
-			if (state is not Linux inspector) return;
-
-			using FileStream managedFile = File.OpenRead("/proc/self/maps");
-			Span<Byte> localBuffer = stackalloc Byte[inspector._lastSize * 1024];
-			Int32 lastNewLineOffset = -1;
-			Int32 totalBytes = 0;
-			Int32 readBytes;
-			
-			do
-			{
-				if (lastNewLineOffset > 0) managedFile.Seek(-lastNewLineOffset, SeekOrigin.Current);
-				readBytes = managedFile.Read(localBuffer);
-				totalBytes += readBytes;
-				lastNewLineOffset = inspector.ParseMaps(localBuffer[..readBytes]);
-			} while (readBytes == localBuffer.Length);
-
-			inspector._lastSize = totalBytes / 1024;
 		}
 	}
 }
