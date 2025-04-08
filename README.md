@@ -1677,7 +1677,7 @@ metadata for stack-allocated buffer management.
 
 This class represents a region of memory that contains a sequence of `T` values.
 
-**Note:** `T` must be `unmanaged`. This type does not allow public inheritance.
+**Note:** This type does not allow public inheritance.
 
 ### Properties:
 
