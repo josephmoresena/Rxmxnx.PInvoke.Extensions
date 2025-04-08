@@ -109,7 +109,9 @@ internal partial class MemoryInspector
 				this._ilcBytes = ilcBytes;
 			}
 
-			this.ParseMaps(File.ReadAllBytes("/proc/self/maps"));
+			Thread mapThread = new(Linux.ReadMapsFile);
+			mapThread.Start(this);
+			mapThread.Join();
 
 			this._lastTickCount = Environment.TickCount64;
 			Linux.lastThreadTickCount = this._lastTickCount;
@@ -258,16 +260,16 @@ internal partial class MemoryInspector
 		{
 			if (state is not Linux inspector) return;
 
-			using NativeFile nativeFile = NativeFile.OpenSelfMaps();
+			using FileStream managedFile = File.OpenRead("/proc/self/maps");
 			Span<Byte> localBuffer = stackalloc Byte[inspector._lastSize * 1024];
 			Int32 lastNewLineOffset = -1;
 			Int32 totalBytes = 0;
 			Int32 readBytes;
-
+			
 			do
 			{
-				if (lastNewLineOffset > 0) nativeFile.Seek(-lastNewLineOffset);
-				readBytes = nativeFile.Read(localBuffer);
+				if (lastNewLineOffset > 0) managedFile.Seek(-lastNewLineOffset, SeekOrigin.Current);
+				readBytes = managedFile.Read(localBuffer);
 				totalBytes += readBytes;
 				lastNewLineOffset = inspector.ParseMaps(localBuffer[..readBytes]);
 			} while (readBytes == localBuffer.Length);
