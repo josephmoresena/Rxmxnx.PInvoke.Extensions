@@ -84,6 +84,11 @@ internal partial interface IMessageResource
 	/// </summary>
 	String IndexOutOfSequence { get; }
 	/// <summary>
+	/// Message for missing memory inspector.
+	/// </summary>
+	String MissingMemoryInspector { get; }
+
+	/// <summary>
 	/// Message for invalid pointer value exception.
 	/// </summary>
 	String InvalidType(String requiredTypeName);

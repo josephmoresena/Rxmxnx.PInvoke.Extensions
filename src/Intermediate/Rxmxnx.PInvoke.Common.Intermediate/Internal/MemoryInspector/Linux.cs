@@ -12,9 +12,30 @@ internal partial class MemoryInspector
 	private sealed unsafe partial class Linux : MemoryInspector
 	{
 		/// <summary>
+		/// <c>/proc/self/maps</c> file name.
+		/// </summary>
+		private const String MapsFile = "/proc/self/maps";
+		/// <summary>
+		/// Minimum time (ms) between reads of <c>/proc/self/maps</c> to avoid redundant access across all threads.
+		/// </summary>
+		private const Int64 GlobalFileReadDelay = 256;
+		/// <summary>
+		/// Minimum time (ms) between reads of <c>/proc/self/maps</c> within the same thread.
+		/// </summary>
+		private const Int64 LocalFileReadDelay = 512;
+		/// <summary>
 		/// Token permission length.
 		/// </summary>
 		private const Int32 PermissionTokenLength = 6;
+
+		/// <summary>
+		/// Last tick count for current thread.
+		/// </summary>
+		[ThreadStatic]
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2696)]
+#endif
+		private static Int64 lastThreadTickCount;
 
 		/// <summary>
 		/// Lock object.
@@ -30,9 +51,14 @@ internal partial class MemoryInspector
 		private readonly SortedSet<MemoryBoundary> _readwriteMemory = [];
 
 		/// <summary>
-		/// Last <c>/proc/self/maps</c> binary length.
+		/// Last ticks count.
 		/// </summary>
-		private Int64 _lastLength = -1;
+		private Int64 _lastTickCount = -1;
+
+		/// <summary>
+		/// Parameterless constructor.
+		/// </summary>
+		public Linux() => this.RefreshMaps();
 
 		/// <inheritdoc/>
 		public override Boolean IsLiteral<T>(ReadOnlySpan<T> span)
@@ -75,21 +101,30 @@ internal partial class MemoryInspector
 			Unsafe.SkipInit(out isReadOnly);
 			return false;
 		}
-
 		/// <summary>
 		/// Reads <c>/proc/self/maps</c> file and refresh memories boundaries.
 		/// </summary>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2696)]
+#endif
 		private void RefreshMaps()
 		{
-			Byte[] mapsBytes = File.ReadAllBytes("/proc/self/maps");
-			FileState state = new(mapsBytes);
+			Int64 tickCount = Environment.TickCount64;
+			if (tickCount - this._lastTickCount < Linux.GlobalFileReadDelay ||
+			    tickCount - Linux.lastThreadTickCount < Linux.LocalFileReadDelay)
+				return;
 
-			if (mapsBytes.Length == this._lastLength)
-				this._lastLength = mapsBytes.Length;
-
-			this._lastLength = mapsBytes.Length;
-
-			state.ReadBytes = IntPtr.Size == 4 ? 23 : 39;
+			this.ParseMaps(File.ReadAllBytes(Linux.MapsFile));
+			this._lastTickCount = Environment.TickCount64;
+			Linux.lastThreadTickCount = this._lastTickCount;
+		}
+		/// <summary>
+		/// Parses <paramref name="mapsBytes"/> to addresses boundary.
+		/// </summary>
+		/// <param name="mapsBytes">Read <c>/proc/self/maps</c> bytes.</param>
+		private void ParseMaps(Span<Byte> mapsBytes)
+		{
+			FileState state = new(mapsBytes) { ReadBytes = IntPtr.Size == 4 ? 23 : 39, };
 			while (state.Buffer.Length > 4)
 			{
 				state.Index = Linux.GetPermissionIndex(state.Buffer[..state.ReadBytes], out Boolean isReadOnly);
