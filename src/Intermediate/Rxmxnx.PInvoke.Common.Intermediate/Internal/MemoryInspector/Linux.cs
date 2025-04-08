@@ -32,6 +32,9 @@ internal partial class MemoryInspector
 		/// Last tick count for current thread.
 		/// </summary>
 		[ThreadStatic]
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2696)]
+#endif
 		private static Int64 lastThreadTickCount;
 
 		/// <summary>
@@ -55,7 +58,7 @@ internal partial class MemoryInspector
 		/// <summary>
 		/// Parameterless constructor.
 		/// </summary>
-		public Linux() => ThreadPool.UnsafeQueueUserWorkItem(l => l.RefreshMaps(), this, false);
+		public Linux() => this.RefreshMaps();
 
 		/// <inheritdoc/>
 		public override Boolean IsLiteral<T>(ReadOnlySpan<T> span)

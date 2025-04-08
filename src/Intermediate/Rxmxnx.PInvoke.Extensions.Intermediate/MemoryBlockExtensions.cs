@@ -24,7 +24,11 @@ public static unsafe partial class MemoryBlockExtensions
 	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static Boolean IsLiteral<T>(this Span<T> span) => MemoryInspector.Instance.IsLiteral<T>(span);
+	public static Boolean IsLiteral<T>(this Span<T> span)
+	{
+		ReadOnlySpan<T> readOnlySpan = span;
+		return readOnlySpan.IsLiteral();
+	}
 	/// <summary>
 	/// Indicates whether current span represents a literal or hardcoded memory region.
 	/// </summary>

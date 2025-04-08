@@ -42,6 +42,8 @@ internal sealed class GermanMessageResource : IMessageResource
 	String IMessageResource.LargerThanSequenceLength => "Darf nicht größer als die Länge der Sequenz sein.";
 	String IMessageResource.IndexOutOfSequence
 		=> "Index und Länge müssen sich auf eine Position innerhalb der Sequenz beziehen.";
+	String IMessageResource.MissingMemoryInspector
+		=> "Die Speicherinspektion wird auf der aktuellen Plattform nicht unterstützt.";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"Das Objekt muss vom Typ {requiredTypeName} sein.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)

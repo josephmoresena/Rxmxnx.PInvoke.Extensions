@@ -536,6 +536,15 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = IMessageResource.GetInstance();
 		throw new InvalidOperationException(resource.MissingBufferMetadataException(itemType, size));
 	}
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public static MemoryInspector ThrowIfNotSupportedPlatform(MemoryInspector? instance)
+	{
+		if (instance is not null) return instance;
+		IMessageResource resource = IMessageResource.GetInstance();
+		throw new PlatformNotSupportedException(resource.MissingMemoryInspector);
+	}
 #if BINARY_SPACES
 	/// <summary>
 	/// Throws an exception if buffer is not a space.

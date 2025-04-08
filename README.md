@@ -2275,11 +2275,15 @@ Additional functionality for working with memory blocks.
   <summary>IsLiteral&lt;T&gt;(this Span&lt;T&gt;)</summary>
 
   Indicates whether the given `Span<T>` instance represents a literal or hardcoded memory region.
+
+  **Note:** This function is currently available only on Windows, Linux, and macOS.
   </details>
 - <details>
   <summary>IsLiteral&lt;T&gt;(this ReadOnlySpan&lt;T&gt;)</summary>
 
   Indicates whether the given `ReadOnlySpan<T>` instance represents a literal or hardcoded memory region.
+
+  **Note:** This function is currently available only on Windows, Linux, and macOS.
   </details>
 
 - <details>
