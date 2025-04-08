@@ -6,33 +6,26 @@ namespace Rxmxnx.PInvoke.Internal;
 internal abstract partial class MemoryInspector
 {
 	/// <summary>
-	/// Current platform.
-	/// </summary>
-#if !PACKAGE
-	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3358)]
-#endif
-	private static readonly OperatingSystem operatingSystem = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
-		OperatingSystem.Windows :
-		RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? OperatingSystem.Mac : OperatingSystem.Linux;
-
-	/// <summary>
-	/// Singleton instance.
-	/// </summary>
-	private static MemoryInspector? instance;
-
-	/// <summary>
 	/// A <see cref="MemoryInspector"/> instance.
 	/// </summary>
+	public static readonly MemoryInspector Instance;
+
+	/// <summary>
+	/// Static constructor.
+	/// </summary>
 #if !PACKAGE
+	[ExcludeFromCodeCoverage]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3358)]
 #endif
-	public static MemoryInspector Instance
-		=> MemoryInspector.instance ?? (MemoryInspector.instance = MemoryInspector.operatingSystem switch
-		{
-			OperatingSystem.Windows => new Windows(),
-			OperatingSystem.Mac => new Mac(),
-			_ => new Linux(),
-		});
+	static MemoryInspector()
+	{
+		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			MemoryInspector.Instance = new Windows();
+		else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+			MemoryInspector.Instance = new Mac();
+		else
+			MemoryInspector.Instance = new Linux();
+	}
 
 	/// <summary>
 	/// Indicates whether current span represents a literal or hardcoded memory region.

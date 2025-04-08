@@ -12,13 +12,17 @@ internal partial class MemoryInspector
 	private sealed unsafe partial class Linux : MemoryInspector
 	{
 		/// <summary>
-		/// Minimum time (ms) between reads of /proc/self/maps to avoid redundant access across all threads.
+		/// <c>/proc/self/maps</c> file name.
 		/// </summary>
-		private const Int64 GlobalFileReadDelay = 250;
+		private const String MapsFile = "/proc/self/maps";
 		/// <summary>
-		/// Minimum time (ms) between reads of /proc/self/maps within the same thread.
+		/// Minimum time (ms) between reads of <c>/proc/self/maps</c> to avoid redundant access across all threads.
 		/// </summary>
-		private const Int64 LocalFileReadDelay = 600;
+		private const Int64 GlobalFileReadDelay = 220;
+		/// <summary>
+		/// Minimum time (ms) between reads of <c>/proc/self/maps</c> within the same thread.
+		/// </summary>
+		private const Int64 LocalFileReadDelay = 550;
 		/// <summary>
 		/// Token permission length.
 		/// </summary>
@@ -47,6 +51,11 @@ internal partial class MemoryInspector
 		/// Last ticks count.
 		/// </summary>
 		private Int64 _lastTickCount = -1;
+
+		/// <summary>
+		/// Parameterless constructor.
+		/// </summary>
+		public Linux() => ThreadPool.UnsafeQueueUserWorkItem(l => l.RefreshMaps(), this, false);
 
 		/// <inheritdoc/>
 		public override Boolean IsLiteral<T>(ReadOnlySpan<T> span)
@@ -99,8 +108,7 @@ internal partial class MemoryInspector
 			    tickCount - Linux.lastThreadTickCount < Linux.LocalFileReadDelay)
 				return;
 
-			this.ParseMaps(File.ReadAllBytes("/proc/self/maps"));
-
+			this.ParseMaps(File.ReadAllBytes(Linux.MapsFile));
 			this._lastTickCount = Environment.TickCount64;
 			Linux.lastThreadTickCount = this._lastTickCount;
 		}
