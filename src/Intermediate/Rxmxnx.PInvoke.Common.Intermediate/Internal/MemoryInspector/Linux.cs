@@ -12,9 +12,20 @@ internal partial class MemoryInspector
 	private sealed unsafe partial class Linux : MemoryInspector
 	{
 		/// <summary>
+		/// Minimum time (ms) between reads of /proc/self/maps to avoid redundant access across all threads.
+		/// </summary>
+		private const Int64 GlobalFileReadDelay = 200;
+		/// <summary>
+		/// Minimum time (ms) between reads of /proc/self/maps within the same thread.
+		/// </summary>
+		private const Int64 LocalFileReadDelay = 480;
+		/// <summary>
 		/// Token permission length.
 		/// </summary>
 		private const Int32 PermissionTokenLength = 6;
+
+		[ThreadStatic]
+		private static Int64 lastThreadTickCount;
 
 		/// <summary>
 		/// Lock object.
@@ -32,7 +43,11 @@ internal partial class MemoryInspector
 		/// <summary>
 		/// Last <c>/proc/self/maps</c> binary length.
 		/// </summary>
-		private Int64 _lastLength = -1;
+		private Int32 _lastSize = 32;
+		/// <summary>
+		/// Last ticks count.
+		/// </summary>
+		private Int64 _lastTickCount = -1;
 
 		/// <inheritdoc/>
 		public override Boolean IsLiteral<T>(ReadOnlySpan<T> span)
@@ -75,21 +90,32 @@ internal partial class MemoryInspector
 			Unsafe.SkipInit(out isReadOnly);
 			return false;
 		}
-
 		/// <summary>
 		/// Reads <c>/proc/self/maps</c> file and refresh memories boundaries.
 		/// </summary>
 		private void RefreshMaps()
 		{
-			Byte[] mapsBytes = File.ReadAllBytes("/proc/self/maps");
-			FileState state = new(mapsBytes);
+			Int64 tickCount = Environment.TickCount64;
+			if (tickCount - this._lastTickCount < Linux.GlobalFileReadDelay ||
+			    tickCount - Linux.lastThreadTickCount < Linux.LocalFileReadDelay)
+				return;
 
-			if (mapsBytes.Length == this._lastLength)
-				this._lastLength = mapsBytes.Length;
+			Thread mapThread = new(Linux.ReadMapsFile);
+			mapThread.Start(this);
+			mapThread.Join();
 
-			this._lastLength = mapsBytes.Length;
-
-			state.ReadBytes = IntPtr.Size == 4 ? 23 : 39;
+			this._lastTickCount = Environment.TickCount64;
+			Linux.lastThreadTickCount = this._lastTickCount;
+		}
+		/// <summary>
+		/// Parses <paramref name="mapsBytes"/> to addresses boundary.
+		/// </summary>
+		/// <param name="mapsBytes">Read <c>/proc/self/maps</c> bytes.</param>
+		/// <returns>Last new line character position.</returns>
+		private Int32 ParseMaps(Span<Byte> mapsBytes)
+		{
+			FileState state = new(mapsBytes) { ReadBytes = IntPtr.Size == 4 ? 23 : 39, };
+			Int32 lastNewLine = 0;
 			while (state.Buffer.Length > 4)
 			{
 				state.Index = Linux.GetPermissionIndex(state.Buffer[..state.ReadBytes], out Boolean isReadOnly);
@@ -99,10 +125,15 @@ internal partial class MemoryInspector
 				state.Buffer = state.Buffer[state.Offset..];
 				state.Index = state.Buffer.IndexOf((Byte)MapsTokens.NewLine); // End of the line.
 				state.Offset = state.Index + 1;
-				state.Buffer = state.Buffer[state.Offset..];
+				if (state.Offset > 0)
+				{
+					lastNewLine = state.Buffer.Length - state.Offset;
+					state.Buffer = state.Buffer[state.Offset..];
+				}
 				if (state.Buffer.Length < state.ReadBytes)
 					state.ReadBytes = state.Buffer.Length; // End of the buffer.
 			}
+			return lastNewLine;
 		}
 		/// <summary>
 		/// Creates addresses maps.
@@ -212,6 +243,29 @@ internal partial class MemoryInspector
 			// " r[-w][-x][ps] "
 			isReadOnly = buffer[2] is MapsTokens.Hyphen;
 			return true;
+		}
+		/// <summary>
+		/// Reads <c>/proc/self/maps</c> file.
+		/// </summary>
+		private static void ReadMapsFile(Object? state)
+		{
+			if (state is not Linux inspector) return;
+
+			using NativeFile nativeFile = NativeFile.OpenSelfMaps();
+			Span<Byte> localBuffer = stackalloc Byte[inspector._lastSize * 1024]; // Clean stack.
+			Int32 lastNewLineOffset = -1;
+			Int32 totalBytes = 0;
+			Int32 readBytes;
+
+			do
+			{
+				if (lastNewLineOffset > 0) nativeFile.Seek(-lastNewLineOffset);
+				readBytes = nativeFile.Read(localBuffer);
+				totalBytes += readBytes;
+				lastNewLineOffset = inspector.ParseMaps(localBuffer[..readBytes]);
+			} while (readBytes == localBuffer.Length);
+
+			inspector._lastSize = totalBytes / 1024;
 		}
 	}
 }
