@@ -18,11 +18,11 @@ internal partial class MemoryInspector
 		/// <summary>
 		/// Minimum time (ms) between reads of <c>/proc/self/maps</c> to avoid redundant access across all threads.
 		/// </summary>
-		private const Int64 GlobalFileReadDelay = 220;
+		private const Int64 GlobalFileReadDelay = 256;
 		/// <summary>
 		/// Minimum time (ms) between reads of <c>/proc/self/maps</c> within the same thread.
 		/// </summary>
-		private const Int64 LocalFileReadDelay = 550;
+		private const Int64 LocalFileReadDelay = 512;
 		/// <summary>
 		/// Token permission length.
 		/// </summary>
@@ -104,6 +104,9 @@ internal partial class MemoryInspector
 		/// <summary>
 		/// Reads <c>/proc/self/maps</c> file and refresh memories boundaries.
 		/// </summary>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2696)]
+#endif
 		private void RefreshMaps()
 		{
 			Int64 tickCount = Environment.TickCount64;
