@@ -30,7 +30,9 @@ public abstract class BufferTypeMetadata : IEnumerableSequence<BufferTypeMetadat
 	/// the count of the components.
 	/// </exception>
 	/// <returns>The component at the specified index within the buffer metadata.</returns>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	[IndexerName("Item")]
 	public abstract BufferTypeMetadata this[Int32 index] { get; }
 
