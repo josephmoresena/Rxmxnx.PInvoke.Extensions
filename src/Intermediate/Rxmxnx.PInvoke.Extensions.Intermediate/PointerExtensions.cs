@@ -479,6 +479,37 @@ public static unsafe class PointerExtensions
 		=> uptr.IsZero() ? default(T?) : uptr.GetUnsafeReadOnlyReference<T>();
 
 	/// <summary>
+	/// Creates a new read-only span for a UTF-16 null-terminated string.
+	/// </summary>
+	/// <param name="char0">The pointer to the UTF-16 null-terminated string of characters.</param>
+	/// <returns>
+	/// A read-only span representing the specified UTF-16 null-terminated string, or an empty span if the pointer is
+	/// <see langword="null"/>.
+	/// </returns>
+	/// <remarks>
+	/// The safety and validity of the returned span depends on the lifetime and validity of the pointer.
+	/// If the data the span represents is moved or deallocated, accessing the span can cause unexpected behavior
+	/// or application crashes.
+	/// </remarks>
+	public static ReadOnlySpan<Char> GetUnsafeReadOnlySpanFromNullTerminated(this ReadOnlyValPtr<Char> char0)
+		=> MemoryMarshal.CreateReadOnlySpanFromNullTerminated(char0);
+	/// <summary>
+	/// Creates a new read-only span for a UTF-8 null-terminated string.
+	/// </summary>
+	/// <param name="char0">The pointer to the UTF-8 null-terminated string of characters.</param>
+	/// <returns>
+	/// A read-only span representing the specified UTF-8 null-terminated string, or an empty span if the pointer is
+	/// <see langword="null"/>.
+	/// </returns>
+	/// <remarks>
+	/// The safety and validity of the returned span depends on the lifetime and validity of the pointer.
+	/// If the data the span represents is moved or deallocated, accessing the span can cause unexpected behavior
+	/// or application crashes.
+	/// </remarks>
+	public static ReadOnlySpan<Byte> GetUnsafeReadOnlySpanFromNullTerminated(this ReadOnlyValPtr<Byte> char0)
+		=> MemoryMarshal.CreateReadOnlySpanFromNullTerminated(char0);
+
+	/// <summary>
 	/// Generates a <see cref="String"/> instance from a <see cref="Char"/> pointer, interpreting the contents as UTF-16 text.
 	/// </summary>
 	/// <param name="chrPtr">A pointer to the first character of the UTF-16 text in memory.</param>
