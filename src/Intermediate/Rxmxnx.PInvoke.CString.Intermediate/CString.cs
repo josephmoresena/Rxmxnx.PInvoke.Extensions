@@ -294,6 +294,28 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <param name="length">The number of <see cref="Byte"/> within value to use.</param>
 	/// <param name="useFullLength">Indicates whether the total length should be used.</param>
 	/// <returns>A new instance of the <see cref="CString"/> class.</returns>
+	/// <remarks>
+	/// The safety and validity of the returned <see cref="CString"/> depends on the lifetime and validity of the pointer.
+	/// If the data the UTF-8 text represents is moved or deallocated, accessing the span can cause unexpected behavior
+	/// or application crashes.
+	/// </remarks>
 	public static CString CreateUnsafe(IntPtr ptr, Int32 length, Boolean useFullLength = false)
 		=> new(ptr, length, useFullLength);
+	/// <summary>
+	/// Creates a new instance of the <see cref="CString"/> class using the pointer to a UTF-8
+	/// character array.
+	/// </summary>
+	/// <param name="ptr">A pointer to an array of UTF-8 characters.</param>
+	/// <returns>A new instance of the <see cref="CString"/> class.</returns>
+	/// <remarks>
+	/// The safety and validity of the returned <see cref="CString"/> depends on the lifetime and validity of the pointer.
+	/// If the data the UTF-8 text represents is moved or deallocated, accessing the span can cause unexpected behavior
+	/// or application crashes.
+	/// </remarks>
+	public static unsafe CString CreateNullTerminatedUnsafe(IntPtr ptr)
+	{
+		ReadOnlySpan<Byte> span = MemoryMarshal.CreateReadOnlySpanFromNullTerminated((Byte*)ptr);
+		Int32 length = span.Length;
+		return new(ValueRegion<Byte>.Create(ptr, length), false, true, length);
+	}
 }
