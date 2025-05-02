@@ -2,6 +2,10 @@
 
 public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequence<CString>
 {
+	/// <summary>
+	/// Gets the number of non-empty <see cref="CString"/> instances contained in this <see cref="CStringSequence"/>.
+	/// </summary>
+	public Int32 NonEmptyCount => this._nonEmptyCount;
 	Int32 IEnumerableSequence<CString>.GetSize() => this._lengths.Length;
 	CString IEnumerableSequence<CString>.GetItem(Int32 index) => this[index];
 	void IEnumerableSequence<CString>.DisposeEnumeration()
@@ -71,6 +75,25 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 			return this;
 
 		return new SubsequenceHelper(this, startIndex, length).CreateSequence();
+	}
+	/// <summary>
+	/// Retrieves the starting byte offsets of UTF-8 text segments from the current buffer.
+	/// </summary>
+	/// <param name="offsets">A span where the resulting UTF-8 text offsets will be stored.</param>
+	/// <returns>The number of offsets written to <paramref name="offsets"/>.</returns>
+	public Int32 GetOffsets(Span<Int32> offsets)
+	{
+		Int32 offset = 0;
+		Int32 count = 0;
+		foreach (Int32? length in this._lengths.AsSpan())
+		{
+			if (count >= offsets.Length || count >= this._nonEmptyCount) break;
+			if (length is null or > 0) continue;
+			offsets[count] = offset;
+			count++;
+			offset += length.Value + 1;
+		}
+		return count;
 	}
 
 	/// <summary>
