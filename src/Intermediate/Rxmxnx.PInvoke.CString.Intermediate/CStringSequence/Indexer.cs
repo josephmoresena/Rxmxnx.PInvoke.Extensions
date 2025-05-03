@@ -88,10 +88,10 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 		foreach (Int32? length in this._lengths.AsSpan())
 		{
 			if (count >= offsets.Length || count >= this._nonEmptyCount) break;
-			if (length is null or > 0) continue;
+			if (length is null or <= 0) continue;
 			offsets[count] = offset;
-			count++;
 			offset += length.Value + 1;
+			count++;
 		}
 		return count;
 	}
