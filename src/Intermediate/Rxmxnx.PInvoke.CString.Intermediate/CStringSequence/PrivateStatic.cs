@@ -222,11 +222,12 @@ public unsafe partial class CStringSequence
 	/// Creates cache for <paramref name="lengths"/>.
 	/// </summary>
 	/// <param name="lengths">The lengths of the UTF-8 text sequence.</param>
+	/// <param name="totalNonEmpty">Output. Count of non-empty UTF-8 texts.</param>
 	/// <returns>Instance cache.</returns>
-	private static IList<CString?> CreateCache(IReadOnlyList<Int32?> lengths)
+	private static IList<CString?> CreateCache(IReadOnlyList<Int32?> lengths, out Int32 totalNonEmpty)
 	{
 		List<Int32> emptyIndices =
-			CStringSequence.GetEmptyIndexList(lengths, out Int32 count, out Int32 lastNonEmpty, out Int32 skipLast);
+			CStringSequence.GetEmptyIndexList(lengths, out totalNonEmpty, out Int32 lastNonEmpty, out Int32 skipLast);
 
 		// All elements are empty, the cache is an empty array.
 		if (emptyIndices.Count == lengths.Count) return Array.Empty<CString>();
@@ -235,15 +236,15 @@ public unsafe partial class CStringSequence
 		if (emptyIndices.Count == 0 || (emptyIndices.Count - skipLast == 1 && lastNonEmpty + 1 == emptyIndices[0]))
 			return lengths.Count switch
 			{
-				<= 32 => new CString?[count],
-				<= 256 => FixedCache.CreateFixedCache(count, ImmutableHashSet<Int32>.Empty),
+				<= 32 => new CString?[totalNonEmpty],
+				<= 256 => FixedCache.CreateFixedCache(totalNonEmpty, ImmutableHashSet<Int32>.Empty),
 				_ => new DynamicCache(),
 			};
 
 		// Otherwise
 		return lengths.Count switch
 		{
-			<= 256 => FixedCache.CreateFixedCache(count, emptyIndices.SkipLast(skipLast).ToImmutableHashSet()),
+			<= 256 => FixedCache.CreateFixedCache(totalNonEmpty, emptyIndices.SkipLast(skipLast).ToImmutableHashSet()),
 			_ => new DynamicCache(),
 		};
 	}

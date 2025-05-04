@@ -45,7 +45,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	{
 		this._lengths = CStringSequence.GetLengthArray(values);
 		this._value = CStringSequence.CreateBuffer(values);
-		this._cache = CStringSequence.CreateCache(this._lengths);
+		this._cache = CStringSequence.CreateCache(this._lengths, out this._nonEmptyCount);
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from a
@@ -66,7 +66,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 			list[i] = cstr;
 			this._lengths[i] = cstr?.Length;
 		}
-		this._cache = CStringSequence.CreateCache(this._lengths);
+		this._cache = CStringSequence.CreateCache(this._lengths, out this._nonEmptyCount);
 		this._value = CStringSequence.CreateBuffer(list);
 	}
 	/// <summary>

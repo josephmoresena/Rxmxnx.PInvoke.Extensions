@@ -310,7 +310,7 @@ public sealed class BasicTests
 		foreach (String text in BasicTests.texts)
 			Assert.Contains(text, ex.Message);
 	}
-	private static void AssertFromNullTerminatedBytes(CString cstr)
+	private static unsafe void AssertFromNullTerminatedBytes(CString cstr)
 	{
 		Assert.False(cstr.IsFunction);
 		Assert.True(cstr.IsNullTerminated);
@@ -319,6 +319,16 @@ public sealed class BasicTests
 		Assert.False(CString.IsNullOrEmpty(cstr));
 
 		Assert.Equal(cstr.Length + 1, CString.GetBytes(cstr).Length);
+
+		fixed (Byte* ptr = &MemoryMarshal.GetReference(cstr.AsSpan()))
+		{
+			CString unsafeCStr = CString.CreateNullTerminatedUnsafe((IntPtr)ptr);
+			Assert.False(unsafeCStr.IsFunction);
+			Assert.True(unsafeCStr.IsNullTerminated);
+			Assert.True(unsafeCStr.IsReference);
+			Assert.False(unsafeCStr.IsSegmented);
+			Assert.Equal(cstr, unsafeCStr);
+		}
 
 		CString rawClone = CString.Create(CString.GetBytes(cstr));
 		Assert.False(rawClone.IsFunction);
@@ -367,7 +377,7 @@ public sealed class BasicTests
 		Assert.Equal(cstr, rawSpanClone);
 		Assert.Equal(cstr.Length, rawSpanClone.Length);
 	}
-	private static void AssertFromFunction(CString cstr)
+	private static unsafe void AssertFromFunction(CString cstr)
 	{
 		Assert.True(cstr.IsFunction);
 		Assert.True(cstr.IsNullTerminated);
@@ -375,6 +385,16 @@ public sealed class BasicTests
 		Assert.False(cstr.IsSegmented);
 		Assert.False(CString.IsNullOrEmpty(cstr));
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
+
+		fixed (Byte* ptr = &MemoryMarshal.GetReference(cstr.AsSpan()))
+		{
+			CString unsafeCStr = CString.CreateNullTerminatedUnsafe((IntPtr)ptr);
+			Assert.False(unsafeCStr.IsFunction);
+			Assert.True(unsafeCStr.IsNullTerminated);
+			Assert.True(unsafeCStr.IsReference);
+			Assert.False(unsafeCStr.IsSegmented);
+			Assert.Equal(cstr, unsafeCStr);
+		}
 
 		Exception ex = BasicTests.AssertGetBytesException(cstr);
 		foreach (String text in BasicTests.texts)
@@ -447,14 +467,24 @@ public sealed class BasicTests
 
 		fixed (void* ptr = cstr.AsSpan())
 		{
-			CString rawPointerSpan = CString.CreateUnsafe(new(ptr), cstr.Length + 1, true);
-			Assert.False(rawPointerSpan.IsFunction);
-			Assert.False(rawPointerSpan.IsNullTerminated);
-			Assert.True(rawPointerSpan.IsReference);
-			Assert.False(rawPointerSpan.IsSegmented);
-			Assert.False(CString.IsNullOrEmpty(rawPointerSpan));
-			Assert.NotEqual(cstr, rawPointerSpan);
-			Assert.Equal(cstr.Length + 1, rawPointerSpan.Length);
+			CString rawPointerCString = CString.CreateUnsafe(new(ptr), cstr.Length + 1, true);
+			CString unsafeCStr = CString.CreateNullTerminatedUnsafe(new(ptr));
+
+			Assert.False(rawPointerCString.IsFunction);
+			Assert.False(rawPointerCString.IsNullTerminated);
+			Assert.True(rawPointerCString.IsReference);
+			Assert.False(rawPointerCString.IsSegmented);
+
+			Assert.False(unsafeCStr.IsFunction);
+			Assert.True(unsafeCStr.IsNullTerminated);
+			Assert.True(unsafeCStr.IsReference);
+			Assert.False(unsafeCStr.IsSegmented);
+
+			Assert.False(CString.IsNullOrEmpty(rawPointerCString));
+			Assert.NotEqual(cstr, rawPointerCString);
+			Assert.Equal(cstr, unsafeCStr);
+			Assert.Equal(cstr.Length + 1, rawPointerCString.Length);
+			Assert.Equal(cstr.Length, cstr.Length);
 		}
 	}
 	private static void RefEnumerationTest(CString cstr1, CString cstr2)

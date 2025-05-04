@@ -11,6 +11,10 @@ public partial class CStringSequence
 	/// </summary>
 	private readonly Int32?[] _lengths;
 	/// <summary>
+	/// Non-empty items count.
+	/// </summary>
+	private readonly Int32 _nonEmptyCount;
+	/// <summary>
 	/// Internal buffer representing the combined null-terminated UTF-8 texts.
 	/// </summary>
 	private readonly String _value;

@@ -77,8 +77,11 @@ public sealed class BasicTests
 	private static unsafe void AssertSequence(CStringSequence seq, String?[] strings, CString?[] values)
 	{
 		String value = seq.ToString();
+		Int32 nonEmptyCount = 0;
+		CStringSequence clone = CStringSequence.Parse(value);
 		for (Int32 i = 0; i < seq.Count; i++)
 		{
+			if (!CString.IsNullOrEmpty(seq[i])) nonEmptyCount++;
 			if (seq[i].Length != 0 || !seq[i].IsReference)
 			{
 				Assert.Equal(values[i], seq[i]);
@@ -94,6 +97,30 @@ public sealed class BasicTests
 				Assert.Null(strings[i]);
 			}
 			BasicTests.AssertPin(seq.ToString(), seq[i]);
+		}
+
+		Assert.Equal(nonEmptyCount, seq.NonEmptyCount);
+		Assert.Equal(clone.NonEmptyCount, seq.NonEmptyCount);
+		Assert.Equal(clone.Count, seq.NonEmptyCount);
+
+		Int32 lowerLength = Random.Shared.Next(0, 2 * nonEmptyCount / 3);
+		Int32 upperLength = Random.Shared.Next(nonEmptyCount, nonEmptyCount * 2);
+		Span<Int32> offsetSpan = stackalloc Int32[nonEmptyCount];
+		Span<Int32> offsetSpanClone = stackalloc Int32[nonEmptyCount];
+
+		Assert.Equal(lowerLength, seq.GetOffsets(new Int32[lowerLength]));
+		Assert.Equal(nonEmptyCount, seq.GetOffsets(new Int32[upperLength]));
+		Assert.Equal(nonEmptyCount, seq.GetOffsets(offsetSpan));
+		Assert.Equal(nonEmptyCount, clone.GetOffsets(offsetSpanClone));
+		Assert.True(offsetSpan.SequenceEqual(offsetSpanClone));
+
+		using IFixedPointer.IDisposable fp = clone.GetFixedPointer();
+		for (Int32 i = 0; i < clone.Count; i++)
+		{
+			ReadOnlySpan<Byte> spanValue =
+				MemoryMarshal.CreateReadOnlySpanFromNullTerminated((Byte*)(fp.Pointer + offsetSpan[i]));
+			Assert.True(clone[i].AsSpan().SequenceEqual(spanValue));
+			Assert.True(Unsafe.AreSame(in clone[i].AsSpan()[0], in spanValue[0]));
 		}
 	}
 	private static unsafe void AssertPin(String utf8Buffer, CString? cstr)
