@@ -113,6 +113,15 @@ public sealed class BasicTests
 		Assert.Equal(nonEmptyCount, seq.GetOffsets(offsetSpan));
 		Assert.Equal(nonEmptyCount, clone.GetOffsets(offsetSpanClone));
 		Assert.True(offsetSpan.SequenceEqual(offsetSpanClone));
+
+		using IFixedPointer.IDisposable fp = clone.GetFixedPointer();
+		for (Int32 i = 0; i < clone.Count; i++)
+		{
+			ReadOnlySpan<Byte> spanValue =
+				MemoryMarshal.CreateReadOnlySpanFromNullTerminated((Byte*)(fp.Pointer + offsetSpan[i]));
+			Assert.True(clone[i].AsSpan().SequenceEqual(spanValue));
+			Assert.True(Unsafe.AreSame(in clone[i].AsSpan()[0], in spanValue[0]));
+		}
 	}
 	private static unsafe void AssertPin(String utf8Buffer, CString? cstr)
 	{
