@@ -1963,6 +1963,11 @@ Represents a sequence of UTF-8 encoded characters.
 
   Creates a new instance of the `CString` class using the pointer to a UTF-8 character array and length provided.
   </details>
+- <details>
+  <summary>CreateNullTerminatedUnsafe(IntPtr)</summary>
+
+  Creates a new instance of the `CString` class using the pointer to a UTF-8 character null-terminated array.
+  </details>
 
 </details>
 
@@ -1995,6 +2000,11 @@ Represents a sequence of null-terminated UTF-8 text strings.
   <summary>Count</summary>
 
   Gets the number of `CString` instances contained in this `CStringSequence`.
+  </details>
+- <details>
+  <summary>NonEmptyCount</summary>
+
+  Gets the number of non-empty `CString` instances contained in the buffer of this `CStringSequence`.
   </details>
 
 ### Indexer:
@@ -2072,6 +2082,12 @@ Represents a sequence of null-terminated UTF-8 text strings.
 
   Executes a specified function using the current instance treated as a `FixedCStringSequence`, and an additional
   parameter passed to the function.
+  </details>
+- <details>
+  <summary>GetOffsets(Span&lt;Int32&gt;)</summary>
+
+  Fills the provided span with the starting byte offsets of each UTF-8 encoded `CString' segment within the current
+  buffer.
   </details>
 
 ### Operators:
@@ -2617,6 +2633,16 @@ Set of extensions for basic operations with `IntPtr` and `UIntPtr` instances.
   <summary>GetUnsafeReadOnlyReference&lt;T&gt;(this UIntPtr)</summary>
 
   Generates a read-only memory reference to an `unmanaged` value of type `T` from `UIntPtr`.
+  </details>
+- <details>
+  <summary>GetUnsafeReadOnlySpanFromNullTerminated(this ReadOnlyValPtr&lt;Char&gt;)</summary>
+
+  Generates a read-only span for a UTF-16 null-terminated string from `ReadOnlyValPtr<Char>`.
+  </details>
+- <details>
+  <summary>GetUnsafeReadOnlySpanFromNullTerminated(this ReadOnlyValPtr&lt;Byte&gt;)</summary>
+
+  Generates a read-only span for a UTF-8 null-terminated string from `ReadOnlyValPtr<Byte>`.
   </details>
 
 </details>

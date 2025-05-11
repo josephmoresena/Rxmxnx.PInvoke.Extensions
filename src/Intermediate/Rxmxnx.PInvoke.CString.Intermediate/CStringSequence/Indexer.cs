@@ -2,10 +2,6 @@
 
 public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequence<CString>
 {
-	/// <summary>
-	/// Gets the number of non-empty <see cref="CString"/> instances contained in this <see cref="CStringSequence"/>.
-	/// </summary>
-	public Int32 NonEmptyCount => this._nonEmptyCount;
 	Int32 IEnumerableSequence<CString>.GetSize() => this._lengths.Length;
 	CString IEnumerableSequence<CString>.GetItem(Int32 index) => this[index];
 	void IEnumerableSequence<CString>.DisposeEnumeration()
@@ -40,6 +36,10 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 	/// Gets the number of <see cref="CString"/> instances contained in this <see cref="CStringSequence"/>.
 	/// </summary>
 	public Int32 Count => this._lengths.Length;
+	/// <summary>
+	/// Gets the number of non-empty <see cref="CString"/> instances contained in this <see cref="CStringSequence"/>.
+	/// </summary>
+	public Int32 NonEmptyCount => this._nonEmptyCount;
 
 	/// <summary>
 	/// Retrieves a subsequence from this instance, starting from the specified index and extending to the end
@@ -77,7 +77,8 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 		return new SubsequenceHelper(this, startIndex, length).CreateSequence();
 	}
 	/// <summary>
-	/// Retrieves the starting byte offsets of UTF-8 text segments from the current buffer.
+	/// Fills the provided span with the starting byte offsets of each UTF-8 encoded `CString' segment within the current
+	/// buffer.
 	/// </summary>
 	/// <param name="offsets">A span where the resulting UTF-8 text offsets will be stored.</param>
 	/// <returns>The number of offsets written to <paramref name="offsets"/>.</returns>
