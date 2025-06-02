@@ -27,6 +27,7 @@
         <Using Include="System.Runtime"/>
         <Using Include="System.Runtime.CompilerServices"/>
         <Using Include="System.Runtime.InteropServices"/>
+        <Using Include="System.Runtime.InteropServices.Marshalling"/>
         <Using Include="System.Runtime.Serialization"/>
         <Using Include="System.Runtime.Versioning"/>
         <Using Include="System.Text"/>
