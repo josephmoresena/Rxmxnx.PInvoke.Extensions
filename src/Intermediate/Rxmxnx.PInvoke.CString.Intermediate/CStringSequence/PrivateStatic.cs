@@ -41,6 +41,17 @@ public unsafe partial class CStringSequence
 #pragma warning restore CS8500
 	}
 	/// <summary>
+	/// Creates buffer using <paramref name="span"/> and <paramref name="lengths"/>.
+	/// </summary>
+	/// <param name="span">Span of UTF-8 text pointers.</param>
+	/// <param name="lengths">UTF-8 text lengths.</param>
+	/// <returns>Created buffer.</returns>
+	private static String CreateBuffer(ReadOnlySpan<ReadOnlyValPtr<Byte>> span, Int32?[] lengths)
+	{
+		fixed (void* ptrSpan = &MemoryMarshal.GetReference(span))
+			return CStringSequence.CreateBuffer(ptrSpan, lengths);
+	}
+	/// <summary>
 	/// Creates buffer using <paramref name="ptrSpan"/> and <paramref name="lengths"/>.
 	/// </summary>
 	/// <param name="ptrSpan">Pointer to pointer span.</param>
@@ -219,6 +230,21 @@ public unsafe partial class CStringSequence
 		return result;
 	}
 	/// <summary>
+	/// Retrieves the length array for a given collection of Null-terminated UTF-8 text pointers.
+	/// </summary>
+	/// <param name="list">A collection of Null-terminated UTF-8 text pointers.</param>
+	/// <returns>An array representing the length of each UTF-8 text in the collection.</returns>
+	private static Int32?[] GetLengthArray(ReadOnlySpan<ReadOnlyValPtr<Byte>> list)
+	{
+		Int32?[] result = new Int32?[list.Length];
+		for (Int32 i = 0; i < list.Length; i++)
+		{
+			if (!list[i].IsZero)
+				result[i] = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(list[i]).Length;
+		}
+		return result;
+	}
+	/// <summary>
 	/// Creates cache for <paramref name="lengths"/>.
 	/// </summary>
 	/// <param name="lengths">The lengths of the UTF-8 text sequence.</param>
@@ -292,14 +318,13 @@ public unsafe partial class CStringSequence
 		return length;
 	}
 	/// <summary>
-	/// Retrieves usable UTF-8 buffer from <paramref name="sourceChars"/>.
+	/// Retrieves usable UTF-8 buffer from <paramref name="bufferSpan"/>.
 	/// </summary>
-	/// <param name="sourceChars">A buffer of a UTF-8 sequence.</param>
+	/// <param name="bufferSpan">A buffer of a UTF-8 sequence.</param>
 	/// <param name="isParsable">Indicates whether resulting buffer is parsable.</param>
 	/// <returns>A UTF-8 buffer.</returns>
-	private static ReadOnlySpan<Byte> GetSourceBuffer(ReadOnlySpan<Char> sourceChars, ref Boolean isParsable)
+	private static ReadOnlySpan<Byte> GetSourceBuffer(ReadOnlySpan<Byte> bufferSpan, ref Boolean isParsable)
 	{
-		ReadOnlySpan<Byte> bufferSpan = MemoryMarshal.AsBytes(sourceChars);
 		Int32 bufferLength = bufferSpan.Length;
 		if (bufferSpan.Length == 0)
 		{

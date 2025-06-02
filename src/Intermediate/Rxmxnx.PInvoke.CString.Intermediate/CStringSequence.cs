@@ -165,11 +165,30 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	///     <item>Any consecutive UTF-8 null characters will be considered part of the next element.</item>
 	/// </list>
 	public static CStringSequence Create(ReadOnlySpan<Char> value)
+		=> CStringSequence.Create(MemoryMarshal.AsBytes(value));
+	/// <summary>
+	/// Creates a new <see cref="CStringSequence"/> instance from a UTF-8 buffer.
+	/// </summary>
+	/// <param name="value">A buffer of a UTF-8 sequence.</param>
+	/// <returns>A new <see cref="CStringSequence"/> instance.</returns>
+	/// <list type="bullet">
+	///     <item>Any UTF-8 null characters at the beginning or end of the buffer will be ignored.</item>
+	///     <item>Any non-consecutive UTF-8 null character will be considered an element separator.</item>
+	///     <item>Any consecutive UTF-8 null characters will be considered part of the next element.</item>
+	/// </list>
+	public static CStringSequence Create(ReadOnlySpan<Byte> value)
 	{
 		Boolean isParsable = false;
 		ReadOnlySpan<Byte> bufferSpan = CStringSequence.GetSourceBuffer(value, ref isParsable);
 		return CStringSequence.CreateFrom(bufferSpan);
 	}
+	/// <summary>
+	/// Creates a new <see cref="CStringSequence"/> instance from a UTF-8 text pointer span.
+	/// </summary>
+	/// <param name="values">A UTF-8 text pointer span.</param>
+	/// <returns>A new <see cref="CStringSequence"/> instance.</returns>
+	public static CStringSequence CreateUnsafe(ReadOnlySpan<ReadOnlyValPtr<Byte>> values)
+		=> values.Length == 0 ? CStringSequence.Empty : new(values);
 	/// <summary>
 	/// Converts the buffer of a UTF-8 sequence to a <see cref="CStringSequence"/> instance.
 	/// </summary>
@@ -191,7 +210,8 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	{
 		if (value is null) return default;
 		Boolean isParsable = true;
-		ReadOnlySpan<Byte> bufferSpan = CStringSequence.GetSourceBuffer(value, ref isParsable);
+		ReadOnlySpan<Byte> bufferSpan =
+			CStringSequence.GetSourceBuffer(MemoryMarshal.AsBytes(value.AsSpan()), ref isParsable);
 		return !isParsable ? CStringSequence.CreateFrom(bufferSpan) : CStringSequence.CreateFrom(value);
 	}
 }

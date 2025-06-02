@@ -36,4 +36,14 @@ public partial class CStringSequence
 		this._lengths = lengths;
 		this._cache = CStringSequence.CreateCache(this._lengths, out this._nonEmptyCount);
 	}
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CStringSequence"/> class with UTF-8 text pointers.
+	/// </summary>
+	/// <param name="values">A UTF-8 text pointer span.</param>
+	private CStringSequence(ReadOnlySpan<ReadOnlyValPtr<Byte>> values)
+	{
+		this._lengths = CStringSequence.GetLengthArray(values);
+		this._cache = CStringSequence.CreateCache(this._lengths, out this._nonEmptyCount);
+		this._value = CStringSequence.CreateBuffer(values, this._lengths);
+	}
 }
