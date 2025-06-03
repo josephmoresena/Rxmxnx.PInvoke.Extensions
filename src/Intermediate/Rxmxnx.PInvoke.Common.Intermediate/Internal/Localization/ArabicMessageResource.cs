@@ -63,4 +63,6 @@ internal sealed class ArabicMessageResource : IMessageResource
 		=> $"{itemType} هو نوع غير مُدار لكن {arrayType} يحتوي على مراجع.";
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"تعذّر إنشاء مخزن مؤقت لـ {itemType} يضم {size} عناصر.";
+	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
+		=> $"نوع الرمز غير المتوقع: {currentToken}. نوع الرمز المتوقع: {expectedToken}.";
 }

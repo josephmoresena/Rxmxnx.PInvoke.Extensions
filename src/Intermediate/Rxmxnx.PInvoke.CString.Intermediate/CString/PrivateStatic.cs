@@ -129,4 +129,17 @@ public partial class CString
 		SyncAsyncWriter writer = (SyncAsyncWriter)state!;
 		writer.Write();
 	}
+	/// <summary>
+	/// Reads a UTF-8 string from the specified <see cref="Utf8JsonReader"/> and returns its length.
+	/// </summary>
+	/// <param name="reader">A <see cref="Utf8JsonReader"/> instance.</param>
+	/// <param name="data">Output. A <see cref="ValueRegion{Byte}"/> instance.</param>
+	/// <returns>Read UTF-8 text length.</returns>
+	private static Int32 Read(Utf8JsonReader reader, out ValueRegion<Byte> data)
+	{
+		Int32 length = JsonConverter.GetLength(reader);
+		Byte[] array = new Byte[length + 1];
+		data = ValueRegion<Byte>.Create(array);
+		return length + JsonConverter.ReadBytes(reader, array.AsSpan()[..length]);
+	}
 }

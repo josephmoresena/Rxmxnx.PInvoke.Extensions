@@ -1,10 +1,22 @@
 ﻿namespace Rxmxnx.PInvoke;
 
+#if !NET7_0_OR_GREATER
 /// <summary>
 /// Represents a sequence of null-terminated UTF-8 text strings.
 /// </summary>
+#else
+/// <summary>
+/// Represents a sequence of null-terminated UTF-8 text strings.
+/// </summary>
+/// <remarks>
+/// When marshalling this class via P/Invoke, only non-empty arrays are passed; empty sequences are marshalled as
+/// null pointer.
+/// </remarks>
+[NativeMarshalling(typeof(InputMarshaller))]
+#endif
 [DebuggerDisplay("Count = {Count}")]
 [DebuggerTypeProxy(typeof(CStringSequenceDebugView))]
+[JsonConverter(typeof(JsonConverter))]
 public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequence>
 {
 	/// <summary>

@@ -144,4 +144,8 @@ internal partial interface IMessageResource
 	/// Message for missing buffer metadata exception.
 	/// </summary>
 	String MissingBufferMetadataException(Type itemType, UInt16 size);
+	/// <summary>
+	/// Message for invalid string token exception.
+	/// </summary>
+	String InvalidToken(String currentToken, String expectedToken);
 }

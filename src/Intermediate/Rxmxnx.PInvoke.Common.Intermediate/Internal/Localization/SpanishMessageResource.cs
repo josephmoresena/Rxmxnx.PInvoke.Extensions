@@ -68,4 +68,6 @@ internal sealed class SpanishMessageResource : IMessageResource
 		=> $"{itemType} es un tipo no administrado pero {arrayType} contiene referencias.";
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"No se puede crear un búfer para {itemType} con {size} elementos.";
+	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
+		=> $"Tipo de token inesperado: {currentToken}. Se esperaba el tipo de token: {expectedToken}.";
 }

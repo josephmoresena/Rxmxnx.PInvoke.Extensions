@@ -129,6 +129,17 @@ public partial class CString
 		this._isNullTerminated = isNullTerminated;
 		this.Length = length;
 	}
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CString"/> class reading a String from <see cref="reader"/>.
+	/// </summary>
+	/// <param name="reader">A <see cref="Utf8JsonReader"/> instance.</param>
+	private CString(Utf8JsonReader reader)
+	{
+		this._isLocal = true;
+		this.IsFunction = false;
+		this._isNullTerminated = true;
+		this.Length = CString.Read(reader, out this._data);
+	}
 
 	/// <summary>
 	/// Helper class for UTF-16 to UTF-8 conversion.

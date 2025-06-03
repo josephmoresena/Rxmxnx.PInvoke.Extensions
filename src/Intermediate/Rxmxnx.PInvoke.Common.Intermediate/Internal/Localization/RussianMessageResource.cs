@@ -67,4 +67,6 @@ internal sealed class RussianMessageResource : IMessageResource
 		=> $"{itemType} является неуправляемым типом, но {arrayType} содержит ссылки.";
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Невозможно создать буфер для {itemType} с {size} элементами.";
+	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
+		=> $"Неожиданный тип токена: {currentToken}. Ожидаемый тип токена: {expectedToken}.";
 }

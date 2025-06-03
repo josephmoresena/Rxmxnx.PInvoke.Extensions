@@ -29,6 +29,8 @@
         <Using Include="System.Runtime.InteropServices.Marshalling"/>
         <Using Include="System.Runtime.Versioning"/>
         <Using Include="System.Text"/>
+        <Using Include="System.Text.Json"/>
+        <Using Include="System.Text.Json.Serialization"/>
 
         <Using Include="Rxmxnx.PInvoke.Internal"/>
         <Using Include="Rxmxnx.PInvoke.Internal.DebugView"/>

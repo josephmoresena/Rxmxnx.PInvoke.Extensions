@@ -31,6 +31,7 @@
         <Using Include="System.Runtime.Serialization"/>
         <Using Include="System.Runtime.Versioning"/>
         <Using Include="System.Text"/>
+        <Using Include="System.Text.Json"/>
 
         <Using Include="Rxmxnx.PInvoke.Internal"/>
         <Using Include="Rxmxnx.PInvoke.Internal.Localization"/>

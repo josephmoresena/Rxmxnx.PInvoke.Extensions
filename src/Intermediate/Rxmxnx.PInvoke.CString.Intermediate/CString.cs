@@ -3,8 +3,12 @@
 /// <summary>
 /// Represents a sequence of UTF-8 encoded characters.
 /// </summary>
+#if NET7_0_OR_GREATER
+[NativeMarshalling(typeof(Marshaller))]
+#endif
 [DebuggerDisplay("{ToString()}")]
 [DebuggerTypeProxy(typeof(CStringDebugView))]
+[JsonConverter(typeof(JsonConverter))]
 public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatable<String>
 {
 	/// <summary>

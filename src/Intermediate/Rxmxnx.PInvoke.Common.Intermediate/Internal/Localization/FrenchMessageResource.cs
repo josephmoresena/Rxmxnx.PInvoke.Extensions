@@ -69,4 +69,6 @@ internal sealed class FrenchMessageResource : IMessageResource
 		=> $"{itemType} est un type non géré mais {arrayType} contient des références.";
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Impossible de créer un tampon pour {itemType} comportant {size} éléments.";
+	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
+		=> $"Type de jeton inattendu : {currentToken}. Type de jeton attendu : {expectedToken}.";
 }

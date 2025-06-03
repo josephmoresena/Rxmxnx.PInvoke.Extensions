@@ -68,4 +68,6 @@ internal sealed class GermanMessageResource : IMessageResource
 		=> $"{itemType} ist ein nicht verwalteter Typ, aber {arrayType} enthält Verweise.";
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Es ist nicht möglich, einen Puffer für {itemType} mit {size} Elementen zu erstellen.";
+	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
+		=> $"Unerwarteter Token-Typ: {currentToken}. Erwarteter Token-Typ: {expectedToken}.";
 }

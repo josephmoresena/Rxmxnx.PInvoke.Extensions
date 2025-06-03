@@ -536,6 +536,14 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = IMessageResource.GetInstance();
 		throw new InvalidOperationException(resource.MissingBufferMetadataException(itemType, size));
 	}
+	/// <summary>
+	/// Throws an exception if <see cref="MemoryInspector"/> is not supported on the current platform.
+	/// </summary>
+	/// <param name="instance">Current platform <see cref="MemoryInspector"/> instance.</param>
+	/// <returns></returns>
+	/// <exception cref="PlatformNotSupportedException">
+	/// Throws an exception if <see cref="MemoryInspector"/> is not supported on the current platform.
+	/// </exception>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -544,6 +552,38 @@ internal static unsafe class ValidationUtilities
 		if (instance is not null) return instance;
 		IMessageResource resource = IMessageResource.GetInstance();
 		throw new PlatformNotSupportedException(resource.MissingMemoryInspector);
+	}
+	/// <summary>
+	/// Throws an exception if the current token type is invalid for string type.
+	/// </summary>
+	/// <param name="tokenType">A <see cref="JsonTokenType"/> value.</param>
+	/// <exception cref="JsonException">Throws an exception if the current token type is invalid for string type.</exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNotString(JsonTokenType tokenType)
+	{
+		if (tokenType is JsonTokenType.String or JsonTokenType.Null) return;
+		String expectedTokenTypeName = Enum.GetName(JsonTokenType.String) ??
+			nameof(JsonTokenType) + '.' + nameof(JsonTokenType.String);
+		ValidationUtilities.ThrowIfInvalidToken(tokenType, expectedTokenTypeName);
+	}
+	/// <summary>
+	/// Throws an exception if the current token type is invalid for array type.
+	/// </summary>
+	/// <param name="tokenType">A <see cref="JsonTokenType"/> value.</param>
+	/// <exception cref="JsonException">Throws an exception if the current token type is invalid for array type.</exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNotArray(JsonTokenType tokenType)
+	{
+		if (tokenType is JsonTokenType.StartArray or JsonTokenType.Null) return;
+		String expectedTokenTypeName = Enum.GetName(JsonTokenType.StartArray) ??
+			nameof(JsonTokenType) + '.' + nameof(JsonTokenType.StartArray);
+		ValidationUtilities.ThrowIfInvalidToken(tokenType, expectedTokenTypeName);
 	}
 #if BINARY_SPACES
 	/// <summary>
@@ -564,4 +604,18 @@ internal static unsafe class ValidationUtilities
 				$"{type} is not an space. Size: {bufferSize[0]} ({bufferSize[2]}, {bufferSize[1]}).");
 	}
 #endif
+
+	/// <summary>
+	/// Throws an exception if the current token type is invalid for expected type.
+	/// </summary>
+	/// <param name="tokenType">A <see cref="JsonTokenType"/> value.</param>
+	/// <param name="expectedToken">Expected token type name.</param>
+	/// <exception cref="JsonException">Throws an exception if the current token type is invalid for expeted type.</exception>
+	private static void ThrowIfInvalidToken(JsonTokenType tokenType, String expectedToken)
+	{
+		IMessageResource resource = IMessageResource.GetInstance();
+		String tokenTypeName = Enum.GetName(tokenType) ?? $"{tokenType}";
+		String message = resource.InvalidToken(tokenTypeName, expectedToken);
+		throw new JsonException(message);
+	}
 }
