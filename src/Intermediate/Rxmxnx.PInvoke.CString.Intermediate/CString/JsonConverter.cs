@@ -9,6 +9,17 @@ public partial class CString
 	{
 		/// <inheritdoc/>
 		public override CString? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+			=> JsonConverter.Read(reader);
+		/// <inheritdoc/>
+		public override void Write(Utf8JsonWriter writer, CString? value, JsonSerializerOptions options)
+			=> JsonConverter.Write(writer, value, value is null || value.IsZero, options);
+
+		/// <summary>
+		/// Reads and converts the JSON to type <see cref="CString"/>.
+		/// </summary>
+		/// <param name="reader">The reader.</param>
+		/// <returns>The converted value.</returns>
+		public static CString? Read(Utf8JsonReader reader)
 		{
 			ValidationUtilities.ThrowIfNotString(reader.TokenType);
 			if (reader.TokenType is JsonTokenType.Null) return default;
@@ -16,9 +27,32 @@ public partial class CString
 			Boolean isEmpty = (reader.HasValueSequence ? reader.ValueSequence.Length : reader.ValueSpan.Length) <= 0;
 			return isEmpty ? CString.Empty : new(reader);
 		}
-		/// <inheritdoc/>
-		public override void Write(Utf8JsonWriter writer, CString? value, JsonSerializerOptions options)
-			=> JsonConverter.Write(writer, value, value is null || value.IsZero, options);
+		/// <summary>
+		/// Writes a UTF-8 text bytes as JSON string.
+		/// </summary>
+		/// <param name="writer">The writer to write to.</param>
+		/// <param name="value">UTF-8 text bytes.</param>
+		/// <param name="isNull">Indicates whether UTF-8 text is null.</param>
+		/// <param name="options">An object that specifies serialization options to use.</param>
+		/// <remarks>
+		/// <paramref name="isNull"/> flag is ignored if <paramref name="value"/> is not an empty span.
+		/// </remarks>
+		public static void Write(Utf8JsonWriter writer, ReadOnlySpan<Byte> value, Boolean isNull,
+			JsonSerializerOptions options)
+		{
+			if (isNull && value.IsEmpty)
+				switch (options.DefaultIgnoreCondition)
+				{
+					case JsonIgnoreCondition.WhenWritingNull:
+					case JsonIgnoreCondition.WhenWritingDefault:
+					case JsonIgnoreCondition.Always:
+						break;
+					default:
+						writer.WriteNullValue();
+						return;
+				}
+			writer.WriteStringValue(value);
+		}
 
 		/// <summary>
 		/// Retrieves the length of the UTF-8 text bytes from the reader.
@@ -56,30 +90,6 @@ public partial class CString
 			adjustment -= JsonConverter.EscapeString(buffer);
 #endif
 			return adjustment;
-		}
-		/// <summary>
-		/// Writes a UTF-8 text bytes as JSON string.
-		/// </summary>
-		/// <param name="writer">The writer to write to.</param>
-		/// <param name="value">UTF-8 text bytes.</param>
-		/// <param name="isNull">Indicates whether UTF-8 text is null.</param>
-		/// <param name="options">An object that specifies serialization options to use.</param>
-		internal static void Write(Utf8JsonWriter writer, ReadOnlySpan<Byte> value, Boolean isNull,
-			JsonSerializerOptions options)
-		{
-			if (options.DefaultIgnoreCondition is JsonIgnoreCondition.Always)
-				return;
-			if (isNull)
-				switch (options.DefaultIgnoreCondition)
-				{
-					case JsonIgnoreCondition.WhenWritingNull:
-					case JsonIgnoreCondition.WhenWritingDefault:
-						break;
-					default:
-						writer.WriteNullValue();
-						return;
-				}
-			writer.WriteStringValue(value);
 		}
 
 #if !NET7_0_OR_GREATER
