@@ -12,7 +12,7 @@ public partial class CString
 			=> JsonConverter.Read(reader);
 		/// <inheritdoc/>
 		public override void Write(Utf8JsonWriter writer, CString? value, JsonSerializerOptions options)
-			=> JsonConverter.Write(writer, value, value is null || value.IsZero, options);
+			=> JsonConverter.Write(writer, value, value is null || value.IsZero, options.DefaultIgnoreCondition);
 
 		/// <summary>
 		/// Reads and converts the JSON to type <see cref="CString"/>.
@@ -33,15 +33,15 @@ public partial class CString
 		/// <param name="writer">The writer to write to.</param>
 		/// <param name="value">UTF-8 text bytes.</param>
 		/// <param name="isNull">Indicates whether UTF-8 text is null.</param>
-		/// <param name="options">An object that specifies serialization options to use.</param>
+		/// <param name="ignoreCondition">Ignore condition.</param>
 		/// <remarks>
 		/// <paramref name="isNull"/> flag is ignored if <paramref name="value"/> is not an empty span.
 		/// </remarks>
 		public static void Write(Utf8JsonWriter writer, ReadOnlySpan<Byte> value, Boolean isNull,
-			JsonSerializerOptions options)
+			JsonIgnoreCondition ignoreCondition)
 		{
 			if (isNull && value.IsEmpty)
-				switch (options.DefaultIgnoreCondition)
+				switch (ignoreCondition)
 				{
 					case JsonIgnoreCondition.WhenWritingNull:
 					case JsonIgnoreCondition.WhenWritingDefault:

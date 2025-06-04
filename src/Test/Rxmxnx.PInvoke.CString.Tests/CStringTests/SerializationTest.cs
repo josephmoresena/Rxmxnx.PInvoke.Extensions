@@ -58,7 +58,7 @@ public sealed class SerializationTest
 	[Fact]
 	internal void SpanTest()
 	{
-		IReadOnlyList<Int32> indices = TestSet.GetIndices();
+		List<Int32> indices = TestSet.GetIndices();
 		using TestMemoryHandle handle = new();
 		foreach (Int32 index in indices)
 		{

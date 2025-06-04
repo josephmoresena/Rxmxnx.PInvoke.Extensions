@@ -11,7 +11,7 @@ public partial class CStringSequence
 		public override CStringSequence? Read(ref Utf8JsonReader reader, Type typeToConvert,
 			JsonSerializerOptions options)
 		{
-			ValidationUtilities.ThrowIfNotString(reader.TokenType);
+			ValidationUtilities.ThrowIfNotArray(reader.TokenType);
 			if (reader.TokenType is JsonTokenType.Null) return default;
 			List<Int32?> lengths = [];
 			StringBuilder strBuilder = new();
@@ -26,19 +26,24 @@ public partial class CStringSequence
 		public override void Write(Utf8JsonWriter writer, CStringSequence? value, JsonSerializerOptions options)
 		{
 			if (value is null)
-			{
-				if (!options.DefaultIgnoreCondition.HasFlag(JsonIgnoreCondition.WhenWritingNull))
+				switch (options.DefaultIgnoreCondition)
 				{
-					writer.WriteNullValue();
-					return;
+					case JsonIgnoreCondition.WhenWritingNull:
+					case JsonIgnoreCondition.WhenWritingDefault:
+					case JsonIgnoreCondition.Always:
+						break;
+					default:
+						writer.WriteNullValue();
+						return;
 				}
-				if (options.DefaultIgnoreCondition.HasFlag(JsonIgnoreCondition.WhenWritingDefault))
-					return;
-			}
+
 			writer.WriteStartArray();
 			if (value is not null)
 				for (Int32 i = 0; i < value.Count; i++)
-					CString.JsonConverter.Write(writer, value.GetBinarySpan(i), !value._lengths[i].HasValue, options);
+				{
+					CString.JsonConverter.Write(writer, value.GetBinarySpan(i), !value._lengths[i].HasValue,
+					                            JsonIgnoreCondition.Never);
+				}
 			writer.WriteEndArray();
 		}
 

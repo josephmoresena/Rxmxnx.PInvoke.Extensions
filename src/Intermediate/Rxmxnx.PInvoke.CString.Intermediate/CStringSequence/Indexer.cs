@@ -2,6 +2,10 @@
 
 public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequence<CString>
 {
+	/// <summary>
+	/// Gets the number of non-empty <see cref="CString"/> instances contained in this <see cref="CStringSequence"/>.
+	/// </summary>
+	public Int32 NonEmptyCount => this._nonEmptyCount;
 	Int32 IEnumerableSequence<CString>.GetSize() => this._lengths.Length;
 	CString IEnumerableSequence<CString>.GetItem(Int32 index) => this[index];
 	void IEnumerableSequence<CString>.DisposeEnumeration()
@@ -36,10 +40,6 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 	/// Gets the number of <see cref="CString"/> instances contained in this <see cref="CStringSequence"/>.
 	/// </summary>
 	public Int32 Count => this._lengths.Length;
-	/// <summary>
-	/// Gets the number of non-empty <see cref="CString"/> instances contained in this <see cref="CStringSequence"/>.
-	/// </summary>
-	public Int32 NonEmptyCount => this._nonEmptyCount;
 
 	/// <summary>
 	/// Retrieves a subsequence from this instance, starting from the specified index and extending to the end
@@ -110,7 +110,7 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 	{
 		ReadOnlySpan<Byte> span = MemoryMarshal.AsBytes<Char>(this._value);
 		this.CalculateSubRange(index, count, out Int32 binaryOffset, out Int32 binaryLength);
-		return span.Slice(binaryOffset, binaryLength);
+		return binaryLength > 0 ? span.Slice(binaryOffset, binaryLength) : ReadOnlySpan<Byte>.Empty;
 	}
 	/// <summary>
 	/// Retrieves <see cref="CString"/> instance at the specified index.
