@@ -45,7 +45,7 @@ internal sealed record CStringSequenceDebugView
 	/// Initializes a new instance of the <see cref="CStringSequenceDebugView"/> class with the
 	/// specified <see cref="CStringSequence.Interop"/> instance.
 	/// </summary>
-	/// <param name="seq">The <see cref="CStringSequence.Interop"/> instance to provide a debug view for.</param>
-	public CStringSequenceDebugView(CStringSequence.Interop seq) => this._values = seq.Value?.ToArray() ?? [];
+	/// <param name="interop">The <see cref="CStringSequence.Interop"/> instance to provide a debug view for.</param>
+	public CStringSequenceDebugView(CStringSequence.Interop interop) => this._values = interop.Value?.ToArray() ?? [];
 #endif
 }

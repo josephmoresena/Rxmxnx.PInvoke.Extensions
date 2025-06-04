@@ -39,7 +39,7 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 		switch (obj)
 		{
 			case null:
-				return 1;
+				return this.IsZero ? 0 : 1;
 			case String str:
 				return this.CompareTo(str);
 			default:
@@ -76,7 +76,8 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	///     </item>
 	/// </list>
 	/// </returns>
-	public Int32 CompareTo(CString? other) => other is null ? 1 : CStringUtf8Comparator.Create().Compare(this, other);
+	public Int32 CompareTo(CString? other)
+		=> other is null || other.IsZero ? this.IsZero ? 0 : 1 : CStringUtf8Comparator.Create().Compare(this, other);
 	/// <summary>
 	/// Compares the current instance with another <see cref="String"/> instance and returns an
 	/// integer that indicates whether the current instance precedes, follows, or occurs in the
@@ -106,7 +107,8 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	///     </item>
 	/// </list>
 	/// </returns>
-	public Int32 CompareTo(String? other) => other is null ? 1 : StringUtf8Comparator.Create().Compare(this, other);
+	public Int32 CompareTo(String? other)
+		=> other is null ? this.IsZero ? 0 : 1 : StringUtf8Comparator.Create().Compare(this, other);
 
 	/// <summary>
 	/// Compares two specified <see cref="CString"/> instances, and returns an integer that indicates their
@@ -415,6 +417,7 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 		=> cstrA switch
 		{
 			null when tstrB is null => 0,
+			null when tstrB is CString { IsZero: true, } => 0,
 			null => -1,
 			_ => tstrB is null ? 1 : default(Int32?),
 		};

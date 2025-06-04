@@ -39,6 +39,10 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// Gets a value indicating whether the current <see cref="CString"/> instance is a function.
 	/// </summary>
 	public Boolean IsFunction { get; }
+	/// <summary>
+	/// Indicates whether the current <see cref="CString"/> instance is a null pointer.
+	/// </summary>
+	public Boolean IsZero => this.IsReference && Unsafe.IsNullRef(ref MemoryMarshal.GetReference(this._data.AsSpan()));
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified
@@ -104,7 +108,8 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	}
 
 	/// <inheritdoc/>
-	public Boolean Equals([NotNullWhen(true)] CString? other) => other is not null && CString.equals(this, other);
+	public Boolean Equals([NotNullWhen(true)] CString? other)
+		=> other is not null ? CString.equals(this, other) : this.IsZero;
 	/// <summary>
 	/// Determines whether the current <see cref="CString"/> and a specified <see cref="String"/>
 	/// have the same value.
@@ -115,7 +120,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
 	/// </returns>
 	public Boolean Equals([NotNullWhen(true)] String? other)
-		=> other is not null && StringUtf8Comparator.Create().TextEquals(this, other);
+		=> other is not null ? StringUtf8Comparator.Create().TextEquals(this, other) : this.IsZero;
 	/// <summary>
 	/// Determines whether the current <see cref="CString"/> and a specified <see cref="CString"/>
 	/// have the same value.
@@ -130,7 +135,9 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
 	/// </returns>
 	public Boolean Equals([NotNullWhen(true)] CString? value, StringComparison comparisonType)
-		=> value is not null && CStringUtf8Comparator.Create(comparisonType).TextEquals(this, value);
+		=> value is not null && !value.IsZero ?
+			CStringUtf8Comparator.Create(comparisonType).TextEquals(this, value) :
+			this.IsZero;
 	/// <summary>
 	/// Determines whether the current <see cref="CString"/> and a specified <see cref="String"/>
 	/// have the same value.
@@ -145,11 +152,11 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <see cref="CString"/>, otherwise, <see langword="false"/>.
 	/// </returns>
 	public Boolean Equals([NotNullWhen(true)] String? value, StringComparison comparisonType)
-		=> value is not null && StringUtf8Comparator.Create(comparisonType).TextEquals(this, value);
+		=> value is not null ? StringUtf8Comparator.Create(comparisonType).TextEquals(this, value) : this.IsZero;
 
 	/// <inheritdoc/>
 	public override Boolean Equals([NotNullWhen(true)] Object? obj)
-		=> obj is String str ? this.Equals(str) : obj is CString cstr && this.Equals(cstr);
+		=> obj is String str ? this.Equals(str) : this.Equals(obj as CString);
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override String ToString()
@@ -304,7 +311,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// or application crashes.
 	/// </remarks>
 	public static CString CreateUnsafe(IntPtr ptr, Int32 length, Boolean useFullLength = false)
-		=> new(ptr, length, useFullLength);
+		=> ptr != IntPtr.Zero ? new(ptr, length, useFullLength) : CString.Zero;
 	/// <summary>
 	/// Creates a new instance of the <see cref="CString"/> class using the pointer to a UTF-8
 	/// character array.

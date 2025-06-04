@@ -5,7 +5,7 @@ public partial class CStringSequence
 #if NET7_0_OR_GREATER || !PACKAGE
 #if !NET7_0_OR_GREATER
 	/// <summary>
-	/// Represents a sequence of null-terminated UTF-8 text strings.
+	/// Represents a wrapper for a <see cref="CStringSequence"/> instance.
 	/// </summary>
 #else
 	/// <summary>
@@ -50,8 +50,8 @@ public partial class CStringSequence
 		/// <summary>
 		/// Defines an implicit conversion of a given <see cref="CStringSequence"/> instance to <see cref="Interop"/>.
 		/// </summary>
-		/// <param name="value">A <see cref="CStringSequence"/> array to implicitly convert.</param>
-		public static implicit operator Interop?(CStringSequence value) => new(value);
+		/// <param name="value">A <see cref="CStringSequence"/> instance to implicitly convert.</param>
+		public static implicit operator Interop?(CStringSequence? value) => new(value);
 
 		/// <summary>
 		/// Determines whether two specified <see cref="Interop"/> instances have the same value.

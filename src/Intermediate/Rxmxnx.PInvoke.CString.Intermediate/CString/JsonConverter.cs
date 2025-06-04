@@ -18,7 +18,7 @@ public partial class CString
 		}
 		/// <inheritdoc/>
 		public override void Write(Utf8JsonWriter writer, CString? value, JsonSerializerOptions options)
-			=> JsonConverter.Write(writer, value, value is null, options);
+			=> JsonConverter.Write(writer, value, value is null || value.IsZero, options);
 
 		/// <summary>
 		/// Retrieves the length of the UTF-8 text bytes from the reader.
@@ -70,15 +70,15 @@ public partial class CString
 			if (options.DefaultIgnoreCondition is JsonIgnoreCondition.Always)
 				return;
 			if (isNull)
-			{
-				if (options.DefaultIgnoreCondition is not JsonIgnoreCondition.WhenWritingNull)
+				switch (options.DefaultIgnoreCondition)
 				{
-					writer.WriteNullValue();
-					return;
+					case JsonIgnoreCondition.WhenWritingNull:
+					case JsonIgnoreCondition.WhenWritingDefault:
+						break;
+					default:
+						writer.WriteNullValue();
+						return;
 				}
-				if (options.DefaultIgnoreCondition.HasFlag(JsonIgnoreCondition.WhenWritingDefault))
-					return;
-			}
 			writer.WriteStringValue(value);
 		}
 
@@ -95,33 +95,29 @@ public partial class CString
 			Span<Byte> ueBuffer = buffer;
 			while ((slashIdx = ueBuffer.LastIndexOf((Byte)'\\')) != -1)
 			{
-				if (slashIdx == 0)
-					// The first character is a backslash, so we cannot escape it.
-					break;
-
-				if (slashIdx + 1 == ueBuffer.Length)
-				{
-					if (ueBuffer[slashIdx - 1] != (Byte)'\\')
-						// The last character is a backslash, so we cannot escape it.
-						break;
-					// The previous character is also a backslash, so we can escape it.
+				if (slashIdx > 0 && ueBuffer[slashIdx - 1] == (Byte)'\\')
+					// The backslash is escaped, we escape it.
 					slashIdx--;
-				}
+				else if (slashIdx + 1 == ueBuffer.Length)
+					// The last character is a backslash, we cannot escape it.
+					break;
 
 				switch (ueBuffer[slashIdx + 1])
 				{
-					case (Byte)'\\':
 					case (Byte)'n':
 					case (Byte)'r':
 					case (Byte)'t':
-					case (Byte)'/':
 					case (Byte)'b':
 					case (Byte)'f':
 					case (Byte)'0':
+					case (Byte)'\\':
+					case (Byte)'/':
+					case (Byte)'"':
 						JsonConverter.EscapeUnit(buffer[slashIdx..]);
-						adjustment += 1; // Only a UTF-8 is removed.
+						adjustment += 1; // Only a UTF-8 unit is removed.
 						break;
 					case (Byte)'u':
+					case (Byte)'U':
 						adjustment += JsonConverter.EscapeUnicode(buffer, ref slashIdx);
 						break;
 				}
@@ -135,8 +131,8 @@ public partial class CString
 		/// <param name="buffer">A UTF-8 unescaped buffer.</param>
 		private static void EscapeUnit(Span<Byte> buffer)
 		{
-			Int32 nEscaped = buffer.Length - 1;
-			Span<Byte> tempSpan = JsonConverter.BackupUnescaped(stackalloc Byte[nEscaped], buffer[2..]);
+			Int32 nEscaped = buffer.Length - 2;
+			Span<Byte> escaped = JsonConverter.BackupEscaped(stackalloc Byte[nEscaped], buffer[2..]);
 			buffer[0] = buffer[1] switch
 			{
 				(Byte)'n' => (Byte)'\n',
@@ -145,11 +141,10 @@ public partial class CString
 				(Byte)'b' => (Byte)'\b',
 				(Byte)'f' => (Byte)'\f',
 				(Byte)'0' => (Byte)'\0',
-				(Byte)'/' => (Byte)'/',
 				_ => buffer[0],
 			};
-			buffer[^nEscaped..].CopyTo(tempSpan); // Backup the rest of the buffer.
-			tempSpan.CopyTo(buffer[1..]); // Copy the rest of the buffer after the replacement.
+			buffer[^nEscaped..].CopyTo(escaped); // Backup the rest of the buffer.
+			escaped.CopyTo(buffer[1..]); // Copy the rest of the buffer after the replacement.
 			buffer[nEscaped + 1] = default; // Remove the last character.
 		}
 		/// <summary>
@@ -163,15 +158,15 @@ public partial class CString
 			Char low = JsonConverter.GetUnicodeChar(buffer.Slice(escapeIndex + 2, 4));
 			Int32 baseLength = 6; // Length of "\uXXXX" sequence.
 			Int32 nEscaped = buffer.Length - escapeIndex - baseLength;
-			Span<Byte> tempSpan =
-				JsonConverter.BackupUnescaped(stackalloc Byte[nEscaped], buffer[(escapeIndex + baseLength)..]);
+			Span<Byte> escaped =
+				JsonConverter.BackupEscaped(stackalloc Byte[nEscaped], buffer[(escapeIndex + baseLength)..]);
 			Rune rune = JsonConverter.GetEscapeRune(buffer, ref escapeIndex, low, ref baseLength);
 			Int32 nBytes = rune.EncodeToUtf8(buffer[escapeIndex..]);
 			Int32 offset = escapeIndex + nBytes;
 			Int32 result = baseLength - nBytes;
 
-			tempSpan.CopyTo(buffer[offset..]);
-			buffer.Slice(offset + nEscaped, result).Clear(); // Remove the last characters.
+			escaped.CopyTo(buffer[offset..]);
+			buffer.Slice(offset + nEscaped, result).Clear(); // Clear the rest of the buffer.
 			return result;
 		}
 		/// <summary>
@@ -192,8 +187,8 @@ public partial class CString
 			else
 			{
 				rune = new(high, lowChar);
-				escapeIndex -= 6; // Move past the "\uXXXX" sequence.
-				escapeSize *= 2;
+				escapeIndex -= 6; // Adjust for "\uXXXX" prefix.
+				escapeSize *= 2; // Double the size for surrogate pairs.
 			}
 			return rune;
 		}
@@ -233,12 +228,12 @@ public partial class CString
 			}
 		}
 		/// <summary>
-		/// Backs up the unescaped string in the destination buffer.
+		/// Backs up the escaped string in the destination buffer.
 		/// </summary>
 		/// <param name="destination">Destination buffer.</param>
 		/// <param name="source">Source buffer.</param>
 		/// <returns>Destination buffer.</returns>
-		private static Span<Byte> BackupUnescaped(Span<Byte> destination, ReadOnlySpan<Byte> source)
+		private static Span<Byte> BackupEscaped(Span<Byte> destination, ReadOnlySpan<Byte> source)
 		{
 			source.CopyTo(destination);
 			return destination;

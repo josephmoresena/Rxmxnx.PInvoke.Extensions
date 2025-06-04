@@ -18,34 +18,36 @@ public sealed class BasicTests
 		CString noEmpty4 = noEmpty2[1..];
 		CString noEmpty5 = new(() => emptyBytes);
 
-		CString empty = CString.CreateUnsafe(IntPtr.Zero, 0);
+		CString zero = CString.CreateUnsafe(IntPtr.Zero, 0);
 		CString empty2 = emptyBytes;
 		CString empty3 = noEmpty1[..0];
 		CString empty4 = CString.Create(() => emptyBytes);
 		CString empty5 = new Byte[] { default, default, };
 
-		Assert.Equal(CString.Zero, empty);
-		Assert.Equal(CString.Empty, empty);
+		Assert.Equal(CString.Zero, zero);
+		Assert.Equal(CString.Empty, zero);
 		Assert.Equal(String.Empty, CString.Empty.ToString());
 		Assert.Equal(CString.Empty, (CString)String.Empty);
-		Assert.Equal(String.Empty, empty.ToString());
-		Assert.Equal(empty, (CString)String.Empty);
-		Assert.True(CString.IsNullOrEmpty(empty));
+		Assert.Equal(String.Empty, zero.ToString());
+		Assert.Equal(zero, (CString)String.Empty);
+		Assert.True(CString.IsNullOrEmpty(zero));
 		Assert.True(CString.IsNullOrEmpty(CString.Empty));
 		Assert.True(CString.IsNullOrEmpty(default));
 
-		Assert.Equal(0, empty.CompareTo(CString.Empty));
-		Assert.Equal(0, empty.CompareTo(String.Empty));
-		Assert.Equal(0, empty.CompareTo((Object)CString.Empty));
-		Assert.Equal(0, empty.CompareTo((Object)String.Empty));
+		Assert.Equal(0, zero.CompareTo(CString.Empty));
+		Assert.Equal(0, zero.CompareTo(String.Empty));
+		Assert.Equal(0, zero.CompareTo((Object)CString.Empty));
+		Assert.Equal(0, zero.CompareTo((Object)String.Empty));
 
-		Assert.True(default(CString) == default(CString));
+		Assert.True(default(CString) == nullCStr);
 		Assert.True(default(String) == default(CString));
 		Assert.True(default(CString) == default(String));
+		Assert.True(default(CString) == zero);
+		Assert.True(zero == default(CString));
 		Assert.True(String.Empty == CString.Empty);
 		Assert.True(CString.Empty == String.Empty);
 
-		Assert.False(default(CString) != default(CString));
+		Assert.False(default(CString) != nullCStr);
 		Assert.False(default(String) != default(CString));
 		Assert.False(default(CString) != default(String));
 		Assert.False(String.Empty != CString.Empty);
@@ -61,9 +63,11 @@ public sealed class BasicTests
 		Assert.Null(CString.Create(default(ReadOnlySpanFunc<Byte>)));
 		Assert.Null(CString.Create(default(Byte[])));
 		Assert.Null(nullCStr);
+		Assert.NotNull(zero);
+		Assert.False(zero is null);
 
 		Assert.Throws<ArgumentNullException>(() => CString.GetBytes(default!));
-		Assert.Throws<ArgumentException>(() => empty.CompareTo(new Object()));
+		Assert.Throws<ArgumentException>(() => zero.CompareTo(new Object()));
 
 		Assert.True(emptySpan.IsEmpty);
 
