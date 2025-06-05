@@ -28,6 +28,8 @@ internal abstract partial class StaticCompositionHelper<T> : IDisposable
 	{
 		this._size = size;
 		this._arr = ArrayPool<BufferTypeMetadata<T>?>.Shared.Rent(size + 1);
+
+		this._arr.AsSpan().Clear();
 	}
 
 	/// <inheritdoc/>

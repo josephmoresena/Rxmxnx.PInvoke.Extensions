@@ -137,11 +137,23 @@ public partial class CString
 	/// <returns>Read UTF-8 text length.</returns>
 	private static Int32 Read(Utf8JsonReader reader, out ValueRegion<Byte> data)
 	{
-		Int32 length = JsonConverter.GetLength(reader) + 1;
-		Span<Byte> span = stackalloc Byte[length];
+		Int32 stackConsumed = 0;
+		Byte[]? byteArray = default;
+		try
+		{
+			Int32 length = JsonConverter.GetLength(reader) + 1;
+			Span<Byte> span = JsonConverter.ConsumeStackBytes(length, ref stackConsumed) ?
+				stackalloc Byte[length] :
+				JsonConverter.RentArray(length, out byteArray);
 
-		length += JsonConverter.ReadBytes(reader, span);
-		data = ValueRegion<Byte>.Create(span[..length].ToArray());
-		return length;
+			length += JsonConverter.ReadBytes(reader, span);
+			data = ValueRegion<Byte>.Create(span[..length].ToArray());
+			return length;
+		}
+		finally
+		{
+			JsonConverter.ReturnArray(byteArray);
+			JsonConverter.ReleaseStackBytes(stackConsumed);
+		}
 	}
 }

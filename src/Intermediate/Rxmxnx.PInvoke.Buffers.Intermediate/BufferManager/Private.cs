@@ -37,6 +37,8 @@ public static partial class BufferManager
 		{
 			Span<T> span = arr.AsSpan()[..count];
 			ScopedBuffer<T> buffer = new(span, true, arr.Length);
+
+			span.Clear();
 			action(buffer);
 		}
 		finally
@@ -65,6 +67,8 @@ public static partial class BufferManager
 		{
 			Span<T> span = arr.AsSpan()[..count];
 			ScopedBuffer<T> buffer = new(span, true, arr.Length);
+
+			span.Clear();
 			action(buffer, state);
 		}
 		finally
@@ -90,6 +94,8 @@ public static partial class BufferManager
 		{
 			Span<T> span = arr.AsSpan()[..count];
 			ScopedBuffer<T> buffer = new(span, true, arr.Length);
+
+			span.Clear();
 			return func(buffer);
 		}
 		finally
@@ -121,6 +127,8 @@ public static partial class BufferManager
 		{
 			Span<T> span = arr.AsSpan()[..count];
 			ScopedBuffer<T> buffer = new(span, true, arr.Length);
+
+			span.Clear();
 			return func(buffer, state);
 		}
 		finally

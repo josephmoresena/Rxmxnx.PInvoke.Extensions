@@ -7,6 +7,17 @@ public partial class CString
 	/// </summary>
 	public sealed class JsonConverter : JsonConverter<CString>
 	{
+		/// <summary>
+		/// Threshold for stackalloc usage in bytes.
+		/// </summary>
+		private const Int32 stackallocByteThreshold = 256;
+
+		/// <summary>
+		/// Threshold for stackalloc usage in bytes.
+		/// </summary>
+		[ThreadStatic]
+		private static Int32 stackallocByteConsumed;
+
 		/// <inheritdoc/>
 		public override CString? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 			=> JsonConverter.Read(reader);
@@ -54,6 +65,59 @@ public partial class CString
 			writer.WriteStringValue(value);
 		}
 
+		/// <summary>
+		/// Consumes the stackalloc bytes if the required size is within the threshold.
+		/// </summary>
+		/// <param name="stackRequired">Required stack bytes to consume.</param>
+		/// <param name="stackConsumed">
+		/// Ref. Stack bytes consumed so far. This value is updated with the newly consumed bytes.
+		/// </param>
+		/// <returns>
+		/// <see langword="true"/> if the stackalloc bytes were successfully consumed; otherwise, <see langword="false"/>.
+		/// </returns>
+		internal static Boolean ConsumeStackBytes(Int32 stackRequired, ref Int32 stackConsumed)
+		{
+			if (stackRequired <= 0) return true; // No bytes to consume, return true.
+			if (JsonConverter.stackallocByteConsumed + stackRequired > JsonConverter.stackallocByteThreshold)
+				return false; // Stackalloc threshold exceeded.
+			JsonConverter.stackallocByteConsumed += stackRequired;
+			stackConsumed += stackRequired; // Update the consumed bytes.
+			return true;
+		}
+		/// <summary>
+		/// Returns a rented array of the specified length and clears it.
+		/// </summary>
+		/// <typeparam name="T">Type of the array elements.</typeparam>
+		/// <param name="length">Required length of the array to rent.</param>
+		/// <param name="tArray">Output. Rented array.</param>
+		/// <returns>A span of the rented array with the specified length, cleared.</returns>
+		internal static Span<T> RentArray<T>(Int32 length, out T[]? tArray) where T : unmanaged
+		{
+			Span<T> result = (tArray = ArrayPool<T>.Shared.Rent(length)).AsSpan()[..length];
+			result.Clear();
+			return result;
+		}
+		/// <summary>
+		/// Returns a rented array of the specified length and clears it.
+		/// </summary>
+		/// <typeparam name="T">Type of the array elements.</typeparam>
+		/// <param name="tArray">Rented array to return to the pool.</param>
+		internal static void ReturnArray<T>(T[]? tArray) where T : unmanaged
+		{
+			if (tArray is not null)
+				ArrayPool<T>.Shared.Return(tArray);
+		}
+		/// <summary>
+		/// Releases the stack bytes consumed by the converter.
+		/// </summary>
+		/// <param name="stackConsumed">Number of stack bytes consumed to release.</param>
+		internal static void ReleaseStackBytes(Int32 stackConsumed)
+		{
+			if (stackConsumed <= 0) return; // No bytes to release, return.
+			JsonConverter.stackallocByteConsumed -= stackConsumed;
+			if (JsonConverter.stackallocByteConsumed < 0)
+				JsonConverter.stackallocByteConsumed = 0; // Prevent negative consumption.
+		}
 		/// <summary>
 		/// Retrieves the length of the UTF-8 text bytes from the reader.
 		/// </summary>
