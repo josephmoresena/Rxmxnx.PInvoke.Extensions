@@ -141,7 +141,7 @@ public partial class CString
 		Byte[]? byteArray = default;
 		try
 		{
-			Int32 length = JsonConverter.GetLength(reader) + 1;
+			Int32 length = JsonConverter.GetLength(reader);
 			Span<Byte> span = JsonConverter.ConsumeStackBytes(length, ref stackConsumed) ?
 				stackalloc Byte[length] :
 				JsonConverter.RentArray(length, out byteArray);

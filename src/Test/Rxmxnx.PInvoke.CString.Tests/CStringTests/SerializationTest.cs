@@ -60,12 +60,15 @@ public sealed class SerializationTest
 	{
 		List<Int32> indices = TestSet.GetIndices();
 		using TestMemoryHandle handle = new();
+		StringBuilder builder = new();
 		foreach (Int32 index in indices)
 		{
 			Serializable<String> valueS = new() { Value = TestSet.GetString(index, true), };
 			Serializable<CString> valueC = new() { Value = TestSet.GetCString(index, handle), };
 			SerializationTest.AssertSerialization(valueS, valueC);
+			builder.Append(valueS.Value);
 		}
+		SerializationTest.AssertStringSerialization(builder.ToString());
 	}
 	[Fact]
 	internal void SlashTest()
@@ -132,6 +135,12 @@ public sealed class SerializationTest
 			Assert.Equal(JsonSerializer.Deserialize<Serializable<CString>>(vsSerialized)?.Value, valueC.Value);
 		else
 			Assert.Null(JsonSerializer.Deserialize<Serializable<CString>>(vsSerialized)?.Value);
+	}
+	private static void AssertStringSerialization(String? value)
+	{
+		Serializable<String> valueS = new() { Value = value, };
+		Serializable<CString> valueC = new() { Value = (CString?)value, };
+		SerializationTest.AssertSerialization(valueS, valueC);
 	}
 
 	public sealed class Serializable<TString> where TString : IEquatable<TString>, IEquatable<String>

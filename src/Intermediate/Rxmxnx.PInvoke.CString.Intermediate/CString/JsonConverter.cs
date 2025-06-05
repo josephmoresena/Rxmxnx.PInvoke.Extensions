@@ -150,7 +150,6 @@ public partial class CString
 				reader.ValueSequence.CopyTo(buffer);
 			else
 				reader.ValueSpan.CopyTo(buffer);
-			adjustment -= buffer[^1] == 0 ? 1 : 0;
 			adjustment -= JsonConverter.EscapeString(buffer);
 #endif
 			return adjustment;
@@ -188,11 +187,13 @@ public partial class CString
 					case (Byte)'/':
 					case (Byte)'"':
 						JsonConverter.EscapeUnit(buffer[slashIdx..]);
-						adjustment += 1; // Only a UTF-8 unit is removed.
+						// Only a UTF-8 unit is removed.
+						adjustment += 1;
+						buffer = buffer[..^1];
 						break;
 					case (Byte)'u':
 					case (Byte)'U':
-						adjustment += JsonConverter.EscapeUnicode(buffer, ref slashIdx);
+						adjustment += JsonConverter.EscapeUnicode(ref buffer, ref slashIdx);
 						break;
 				}
 				ueBuffer = ueBuffer[..slashIdx];
@@ -205,21 +206,34 @@ public partial class CString
 		/// <param name="buffer">A UTF-8 unescaped buffer.</param>
 		private static void EscapeUnit(Span<Byte> buffer)
 		{
-			Int32 nEscaped = buffer.Length - 2;
-			Span<Byte> escaped = JsonConverter.BackupEscaped(stackalloc Byte[nEscaped], buffer[2..]);
-			buffer[0] = buffer[1] switch
+			Int32 stackConsumed = 0;
+			Byte[]? byteArray = default;
+			try
 			{
-				(Byte)'n' => (Byte)'\n',
-				(Byte)'r' => (Byte)'\r',
-				(Byte)'t' => (Byte)'\t',
-				(Byte)'b' => (Byte)'\b',
-				(Byte)'f' => (Byte)'\f',
-				(Byte)'0' => (Byte)'\0',
-				_ => buffer[0],
-			};
-			buffer[^nEscaped..].CopyTo(escaped); // Backup the rest of the buffer.
-			escaped.CopyTo(buffer[1..]); // Copy the rest of the buffer after the replacement.
-			buffer[nEscaped + 1] = default; // Remove the last character.
+				Int32 nEscaped = buffer.Length - 2;
+				Span<Byte> escaped = JsonConverter.BackupEscaped(
+					JsonConverter.ConsumeStackBytes(nEscaped, ref stackConsumed) ?
+						stackalloc Byte[nEscaped] :
+						JsonConverter.RentArray(nEscaped, out byteArray), buffer[2..]);
+				buffer[0] = buffer[1] switch
+				{
+					(Byte)'n' => (Byte)'\n',
+					(Byte)'r' => (Byte)'\r',
+					(Byte)'t' => (Byte)'\t',
+					(Byte)'b' => (Byte)'\b',
+					(Byte)'f' => (Byte)'\f',
+					(Byte)'0' => (Byte)'\0',
+					_ => buffer[0],
+				};
+				buffer[^nEscaped..].CopyTo(escaped); // Backup the rest of the buffer.
+				escaped.CopyTo(buffer[1..]); // Copy the rest of the buffer after the replacement.
+				buffer[nEscaped + 1] = default; // Remove the last character.
+			}
+			finally
+			{
+				JsonConverter.ReturnArray(byteArray);
+				JsonConverter.ReleaseStackBytes(stackConsumed);
+			}
 		}
 		/// <summary>
 		/// Escapes a Unicode character in the buffer.
@@ -227,21 +241,34 @@ public partial class CString
 		/// <param name="buffer">A UTF-8 unescaped buffer.</param>
 		/// <param name="escapeIndex">Index of escape begin.</param>
 		/// <returns>The number of bytes that were not replaced.</returns>
-		private static Int32 EscapeUnicode(Span<Byte> buffer, ref Int32 escapeIndex)
+		private static Int32 EscapeUnicode(ref Span<Byte> buffer, ref Int32 escapeIndex)
 		{
-			Char low = JsonConverter.GetUnicodeChar(buffer.Slice(escapeIndex + 2, 4));
-			Int32 baseLength = 6; // Length of "\uXXXX" sequence.
-			Int32 nEscaped = buffer.Length - escapeIndex - baseLength;
-			Span<Byte> escaped =
-				JsonConverter.BackupEscaped(stackalloc Byte[nEscaped], buffer[(escapeIndex + baseLength)..]);
-			Rune rune = JsonConverter.GetEscapeRune(buffer, ref escapeIndex, low, ref baseLength);
-			Int32 nBytes = rune.EncodeToUtf8(buffer[escapeIndex..]);
-			Int32 offset = escapeIndex + nBytes;
-			Int32 result = baseLength - nBytes;
+			Int32 stackConsumed = 0;
+			Byte[]? byteArray = default;
+			try
+			{
+				Char low = JsonConverter.GetUnicodeChar(buffer.Slice(escapeIndex + 2, 4));
+				Int32 baseLength = 6; // Length of "\uXXXX" sequence.
+				Int32 nEscaped = buffer.Length - escapeIndex - baseLength;
+				Span<Byte> escaped = JsonConverter.BackupEscaped(
+					JsonConverter.ConsumeStackBytes(nEscaped, ref stackConsumed) ?
+						stackalloc Byte[nEscaped] :
+						JsonConverter.RentArray(nEscaped, out byteArray), buffer[(escapeIndex + baseLength)..]);
+				Rune rune = JsonConverter.GetEscapeRune(buffer, ref escapeIndex, low, ref baseLength);
+				Int32 nBytes = rune.EncodeToUtf8(buffer[escapeIndex..]);
+				Int32 offset = escapeIndex + nBytes;
+				Int32 result = baseLength - nBytes;
 
-			escaped.CopyTo(buffer[offset..]);
-			buffer.Slice(offset + nEscaped, result).Clear(); // Clear the rest of the buffer.
-			return result;
+				escaped.CopyTo(buffer[offset..]);
+				buffer.Slice(offset + nEscaped, result).Clear(); // Clear the rest of the buffer.
+				buffer = buffer[..^result];
+				return result;
+			}
+			finally
+			{
+				JsonConverter.ReturnArray(byteArray);
+				JsonConverter.ReleaseStackBytes(stackConsumed);
+			}
 		}
 		/// <summary>
 		/// Retrieves the escape rune from the buffer.
