@@ -35,7 +35,7 @@ internal partial class MemoryInspector
 			/// </summary>
 			private static void ClearError()
 			{
-				ref Int32 err = ref Unsafe.AsRef<Int32>(SystemB.GetErrorPointer());
+				ref Int32 err = ref *SystemB.GetErrorPointer();
 				err = 0;
 			}
 		}

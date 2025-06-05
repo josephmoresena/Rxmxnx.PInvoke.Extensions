@@ -1,3 +1,8 @@
+#if !NET6_0_OR_GREATER
+using AssemblyBuilder = System.Reflection.Emit.AssemblyBuilder;
+using AssemblyBuilderAccess = System.Reflection.Emit.AssemblyBuilderAccess;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
@@ -37,12 +42,20 @@ public static class AotInfo
 
 		try
 		{
+#if NET6_0_OR_GREATER
 			Int64 ilBytes = JitInfo.GetCompiledILBytes();
 			Int64 methodCount = JitInfo.GetCompiledMethodCount();
 			TimeSpan compilationTime = JitInfo.GetCompilationTime();
 
 			// If JIT info default, is AOT.
 			AotInfo.IsNativeAot = ilBytes == default && methodCount == default && compilationTime == default;
+#else
+			Type? type = AssemblyBuilder
+			             .DefineDynamicAssembly(new($"MyDynamicAssembly_{Guid.NewGuid():N}"), AssemblyBuilderAccess.Run)
+			             .DefineDynamicModule($"MyDynamicModule_{Guid.NewGuid():N}")
+			             .DefineType($"MyDynamicModule_{Guid.NewGuid():N}", TypeAttributes.NotPublic).CreateType();
+			AotInfo.IsNativeAot = type is null || Activator.CreateInstance(type) is null || !type.Assembly.IsDynamic;
+#endif
 		}
 		// If exception, might be AOT.
 		catch (Exception)

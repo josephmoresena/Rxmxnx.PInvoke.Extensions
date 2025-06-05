@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if !NET6_0_OR_GREATER
+using ArgumentNullException = Rxmxnx.PInvoke.Internal.ArgumentNullUtilities;
+#endif
+
+namespace Rxmxnx.PInvoke;
 
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS107)]

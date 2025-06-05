@@ -1,3 +1,4 @@
+#if NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke;
 
 public static partial class MemoryBlockExtensions
@@ -71,3 +72,4 @@ public static partial class MemoryBlockExtensions
 	public static Memory<T> AsMemory<T>(this T[,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,]? arr)
 		=> ArrayMemoryManager<T>.GetMemory(arr);
 }
+#endif

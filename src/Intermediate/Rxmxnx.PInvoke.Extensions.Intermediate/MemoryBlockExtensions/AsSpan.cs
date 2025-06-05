@@ -1,3 +1,4 @@
+#if NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke;
 
 public static partial class MemoryBlockExtensions
@@ -65,3 +66,4 @@ public static partial class MemoryBlockExtensions
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
 	public static Span<T> AsSpan<T>(this T[,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,]? arr) => ArrayMemoryManager<T>.GetSpan(arr);
 }
+#endif

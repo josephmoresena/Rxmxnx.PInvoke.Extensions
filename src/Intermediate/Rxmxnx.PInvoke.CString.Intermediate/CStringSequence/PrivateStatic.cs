@@ -96,7 +96,7 @@ public unsafe partial class CStringSequence
 	private static void CopyText(Span<Char> charSpan, CStringSpanState state)
 	{
 		Int32 position = 0;
-		ref CString? refCStr = ref Unsafe.AsRef<CString?>(state.Ptr);
+		ref CString? refCStr = ref *state.Ptr;
 		ReadOnlySpan<CString?> values = MemoryMarshal.CreateReadOnlySpan(ref refCStr, state.Length);
 		Span<Byte> byteSpan = MemoryMarshal.AsBytes(charSpan);
 		foreach (CString? value in values)

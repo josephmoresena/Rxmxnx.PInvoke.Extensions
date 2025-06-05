@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if !NET6_0_OR_GREATER
+using MemoryMarshal = Rxmxnx.PInvoke.Internal.MemoryMarshallUtilities;
+#endif
+
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Provides a set of extensions for basic operations with <see cref="IntPtr"/> and <see cref="UIntPtr"/> instances.

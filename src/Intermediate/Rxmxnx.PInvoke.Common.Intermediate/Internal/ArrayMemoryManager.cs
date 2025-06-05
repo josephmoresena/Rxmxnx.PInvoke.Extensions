@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.Internal;
 
+#if !PACKAGE || NET6_0_OR_GREATER
 /// <summary>
 /// <see cref="MemoryManager{T}"/> Implementation for abstract array.
 /// </summary>
@@ -43,7 +44,12 @@ internal sealed class ArrayMemoryManager<T> : MemoryManager<T>
 				this._handle = GCHandle.Alloc(this._array, GCHandleType.Pinned);
 
 			this._pinCount++;
-			ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(this._array);
+			ref T managedRef =
+#if NET6_0_OR_GREATER
+				ref ArrayMemoryManager<T>.GetArrayDataReference(this._array);
+#else
+				ref Unsafe.NullRef<T>();
+#endif
 			ref T handleRef = ref Unsafe.Add(ref managedRef, elementIndex);
 			return new(Unsafe.AsPointer(ref handleRef), default, this);
 		}
@@ -73,7 +79,12 @@ internal sealed class ArrayMemoryManager<T> : MemoryManager<T>
 	public static Span<T> GetSpan(Array? array)
 	{
 		if (array is null) return default;
-		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
+		ref T managedRef =
+#if NET6_0_OR_GREATER
+			ref ArrayMemoryManager<T>.GetArrayDataReference(array);
+#else
+			ref Unsafe.NullRef<T>();
+#endif
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 		return span;
 	}
@@ -82,10 +93,14 @@ internal sealed class ArrayMemoryManager<T> : MemoryManager<T>
 	public static Memory<T> GetMemory(Array? array)
 		=> array is not null ? new ArrayMemoryManager<T>(array).Memory : Memory<T>.Empty;
 
+#if NET6_0_OR_GREATER
 	/// <inheritdoc cref="MemoryMarshal.GetArrayDataReference(Array)"/>
 	private static ref T GetArrayDataReference(Array array)
 	{
 		ref Byte byteRef = ref MemoryMarshal.GetArrayDataReference(array);
 		return ref Unsafe.As<Byte, T>(ref byteRef);
+		return ref Unsafe.NullRef<T>();
 	}
+#endif
 }
+#endif
