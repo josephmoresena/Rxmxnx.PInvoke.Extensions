@@ -14,7 +14,12 @@ public partial class CString
 	/// <param name="str">A <see cref="String"/> to implicitly convert.</param>
 	[return: NotNullIfNotNull(nameof(str))]
 	public static explicit operator CString?(String? str)
-		=> str is not null ? str != String.Empty ? new(str) : CString.Empty : default;
+		=> str switch
+		{
+			null => default,
+			"" => CString.Empty,
+			_ => new(str),
+		};
 	/// <summary>
 	/// Defines an implicit conversion of a given <see cref="CString"/> to a read-only span of bytes.
 	/// </summary>

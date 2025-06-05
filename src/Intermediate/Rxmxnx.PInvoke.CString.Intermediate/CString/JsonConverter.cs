@@ -19,9 +19,15 @@ public partial class CString
 		private static Int32 stackallocByteConsumed;
 
 		/// <inheritdoc/>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
 		public override CString? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 			=> JsonConverter.Read(reader);
 		/// <inheritdoc/>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
 		public override void Write(Utf8JsonWriter writer, CString? value, JsonSerializerOptions options)
 			=> JsonConverter.Write(writer, value, value is null || value.IsZero, options.DefaultIgnoreCondition);
 
