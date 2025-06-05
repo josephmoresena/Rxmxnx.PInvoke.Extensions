@@ -4,6 +4,9 @@ namespace Rxmxnx.PInvoke;
 /// Represents a platform-specific type used to handle a pointer to a method of type <typeparamref name="TDelegate"/>.
 /// </summary>
 /// <typeparam name="TDelegate">The type of delegate that the method pointer represents.</typeparam>
+#if NET7_0_OR_GREATER
+[NativeMarshalling(typeof(FuncPtr<>.Marshaller))]
+#endif
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
 #if !PACKAGE

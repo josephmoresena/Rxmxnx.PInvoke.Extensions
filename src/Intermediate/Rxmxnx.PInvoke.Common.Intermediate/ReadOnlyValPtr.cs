@@ -4,6 +4,9 @@ namespace Rxmxnx.PInvoke;
 /// Represents a platform-specific type used to manage a pointer to a read-only value of type <typeparamref name="T"/>.
 /// </summary>
 /// <typeparam name="T">Type of pointer.</typeparam>
+#if NET7_0_OR_GREATER
+[NativeMarshalling(typeof(ReadOnlyValPtr<>.Marshaller))]
+#endif
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
 #if !PACKAGE
