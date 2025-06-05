@@ -77,7 +77,7 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	/// </list>
 	/// </returns>
 	public Int32 CompareTo(CString? other)
-		=> other is null || other.IsZero ? this.IsZero ? 0 : 1 : CStringUtf8Comparator.Create().Compare(this, other);
+		=> CString.NullCompare(this, other) ?? CStringUtf8Comparator.Create().Compare(this, other);
 	/// <summary>
 	/// Compares the current instance with another <see cref="String"/> instance and returns an
 	/// integer that indicates whether the current instance precedes, follows, or occurs in the
@@ -108,7 +108,7 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	/// </list>
 	/// </returns>
 	public Int32 CompareTo(String? other)
-		=> other is null ? this.IsZero ? 0 : 1 : StringUtf8Comparator.Create().Compare(this, other);
+		=> CString.NullCompare(this, other) ?? StringUtf8Comparator.Create().Compare(this, other);
 
 	/// <summary>
 	/// Compares two specified <see cref="CString"/> instances, and returns an integer that indicates their

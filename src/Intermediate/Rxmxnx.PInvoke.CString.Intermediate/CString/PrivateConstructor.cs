@@ -130,7 +130,7 @@ public partial class CString
 		this.Length = length;
 	}
 	/// <summary>
-	/// Initializes a new instance of the <see cref="CString"/> class reading a String from <see cref="reader"/>.
+	/// Initializes a new instance of the <see cref="CString"/> class reading a String from <paramref name="reader"/>.
 	/// </summary>
 	/// <param name="reader">A <see cref="Utf8JsonReader"/> instance.</param>
 	private CString(Utf8JsonReader reader)

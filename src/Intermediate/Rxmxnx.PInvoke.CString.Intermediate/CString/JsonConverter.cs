@@ -30,6 +30,9 @@ public partial class CString
 		/// </summary>
 		/// <param name="reader">The reader.</param>
 		/// <returns>The converted value.</returns>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
 		public static CString? Read(Utf8JsonReader reader)
 		{
 			ValidationUtilities.ThrowIfNotString(reader.TokenType);
@@ -48,6 +51,9 @@ public partial class CString
 		/// <remarks>
 		/// <paramref name="isNull"/> flag is ignored if <paramref name="value"/> is not an empty span.
 		/// </remarks>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
 		public static void Write(Utf8JsonWriter writer, ReadOnlySpan<Byte> value, Boolean isNull,
 			JsonIgnoreCondition ignoreCondition)
 		{
@@ -75,6 +81,7 @@ public partial class CString
 		/// <returns>
 		/// <see langword="true"/> if the stackalloc bytes were successfully consumed; otherwise, <see langword="false"/>.
 		/// </returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal static Boolean ConsumeStackBytes(Int32 stackRequired, ref Int32 stackConsumed)
 		{
 			if (stackRequired <= 0) return true; // No bytes to consume, return true.
@@ -89,11 +96,14 @@ public partial class CString
 		/// </summary>
 		/// <typeparam name="T">Type of the array elements.</typeparam>
 		/// <param name="length">Required length of the array to rent.</param>
-		/// <param name="tArray">Output. Rented array.</param>
+		/// <param name="arr">Output. Rented array.</param>
 		/// <returns>A span of the rented array with the specified length, cleared.</returns>
-		internal static Span<T> RentArray<T>(Int32 length, out T[]? tArray) where T : unmanaged
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		internal static Span<T> RentArray<T>(Int32 length, out T[]? arr) where T : unmanaged
 		{
-			Span<T> result = (tArray = ArrayPool<T>.Shared.Rent(length)).AsSpan()[..length];
+			arr = ArrayPool<T>.Shared.Rent(length); // Rent an array of the specified length.
+
+			Span<T> result = arr.AsSpan()[..length];
 			result.Clear();
 			return result;
 		}
@@ -102,6 +112,7 @@ public partial class CString
 		/// </summary>
 		/// <typeparam name="T">Type of the array elements.</typeparam>
 		/// <param name="tArray">Rented array to return to the pool.</param>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal static void ReturnArray<T>(T[]? tArray) where T : unmanaged
 		{
 			if (tArray is not null)
@@ -111,6 +122,7 @@ public partial class CString
 		/// Releases the stack bytes consumed by the converter.
 		/// </summary>
 		/// <param name="stackConsumed">Number of stack bytes consumed to release.</param>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal static void ReleaseStackBytes(Int32 stackConsumed)
 		{
 			if (stackConsumed <= 0) return; // No bytes to release, return.
@@ -137,6 +149,7 @@ public partial class CString
 		/// <param name="reader">A <see cref="Utf8JsonReader"/> instance.</param>
 		/// <param name="buffer">Buffer to write to.</param>
 		/// <returns>Adjustment value for text length.</returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal static Int32 ReadBytes(Utf8JsonReader reader, Span<Byte> buffer)
 		{
 			Int32 adjustment = 0;
@@ -161,6 +174,7 @@ public partial class CString
 		/// </summary>
 		/// <param name="buffer">A UTF-8 unescaped buffer.</param>
 		/// <returns>Number of bytes of escape adjustment.</returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static Int32 EscapeString(Span<Byte> buffer)
 		{
 			Int32 adjustment = 0;

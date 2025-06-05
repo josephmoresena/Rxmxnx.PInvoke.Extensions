@@ -22,9 +22,9 @@ public unsafe partial class CStringSequence
 		/// </summary>
 		private GCHandle _handle;
 		/// <summary>
-		/// Handle for <see cref="CString.Empty"/>.
+		/// Memory handle for <see cref="CString.Empty"/>.
 		/// </summary>
-		private GCHandle _emptyHandle;
+		private MemoryHandle _emptyHandle;
 		/// <summary>
 		/// Pointer to the text array.
 		/// </summary>
@@ -38,8 +38,8 @@ public unsafe partial class CStringSequence
 			if (this._pointer == IntPtr.Zero) return;
 			if (this._handle.IsAllocated)
 				this._handle.Free();
-			if (this._emptyHandle.IsAllocated)
-				this._emptyHandle.Free();
+			if (this._emptyHandle.Pointer != default)
+				this._emptyHandle.Dispose();
 			Marshal.FreeHGlobal(this._pointer);
 			this._pointer = IntPtr.Zero;
 		}
@@ -54,8 +54,8 @@ public unsafe partial class CStringSequence
 				this._pointer = IntPtr.Zero;
 				if (this._handle.IsAllocated)
 					this._handle.Free();
-				if (this._emptyHandle.IsAllocated)
-					this._emptyHandle.Free();
+				if (this._emptyHandle.Pointer != default)
+					this._emptyHandle.Dispose();
 				return;
 			}
 
@@ -73,12 +73,13 @@ public unsafe partial class CStringSequence
 				this._pointer = IntPtr.Zero;
 				if (this._handle.IsAllocated)
 					this._handle.Free();
-				if (this._emptyHandle.IsAllocated)
-					this._emptyHandle.Free();
+				if (this._emptyHandle.Pointer != default)
+					this._emptyHandle.Dispose();
 				return;
 			}
 
 			this._handle = GCHandle.Alloc(managed.Value.ToString(), GCHandleType.Pinned);
+			this._emptyHandle = CString.Empty.TryPin(out _);
 			this._pointer = InputMarshaller.CreateUtf8Memory(managed.Value, true);
 		}
 
