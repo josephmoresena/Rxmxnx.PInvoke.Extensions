@@ -8,13 +8,10 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 #endif
 internal sealed class GermanMessageResource : IMessageResource
 {
-	/// <inheritdoc cref="IMessageResource.Instance"/>
-	private static readonly GermanMessageResource instance = new();
-
-#if NET6_0
-	[RequiresPreviewFeatures]
-#endif
-	static IMessageResource IMessageResource.Instance => GermanMessageResource.instance;
+	/// <summary>
+	/// Current instance.
+	/// </summary>
+	public static readonly GermanMessageResource Instance = new();
 
 	/// <summary>
 	/// Private constructor.

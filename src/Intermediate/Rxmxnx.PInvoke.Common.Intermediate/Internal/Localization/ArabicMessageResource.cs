@@ -8,13 +8,10 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 #endif
 internal sealed class ArabicMessageResource : IMessageResource
 {
-	/// <inheritdoc cref="IMessageResource.Instance"/>
-	private static readonly ArabicMessageResource instance = new();
-
-#if NET6_0
-	[RequiresPreviewFeatures]
-#endif
-	static IMessageResource IMessageResource.Instance => ArabicMessageResource.instance;
+	/// <summary>
+	/// Current instance.
+	/// </summary>
+	public static readonly ArabicMessageResource Instance = new();
 
 	/// <summary>
 	/// Private constructor.

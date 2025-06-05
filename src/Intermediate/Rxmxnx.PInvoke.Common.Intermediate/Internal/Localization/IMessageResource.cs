@@ -6,16 +6,6 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 internal partial interface IMessageResource
 {
 	/// <summary>
-	/// Current instance.
-	/// </summary>
-#pragma warning disable CA2252
-#if NET6_0
-	[RequiresPreviewFeatures]
-#endif
-	private protected static abstract IMessageResource Instance { get; }
-#pragma warning restore CA2252
-
-	/// <summary>
 	/// Message for invalid list index exception.
 	/// </summary>
 	String InvalidListIndexMessage { get; }

@@ -12,29 +12,22 @@ internal partial interface IMessageResource
 #endif
 	public static IMessageResource GetInstance()
 	{
-		IMessageResource result = IMessageResource.GetInstance<DefaultMessageResource>();
+		IMessageResource result = DefaultMessageResource.Instance;
 		if (NativeUtilities.GlobalizationInvariantModeEnabled) return result;
 
 		return NativeUtilities.UserInterfaceIso639P1 switch
 		{
-			Iso639P1.Es => IMessageResource.GetInstance<SpanishMessageResource>(),
-			Iso639P1.Fr => IMessageResource.GetInstance<FrenchMessageResource>(),
-			Iso639P1.De => IMessageResource.GetInstance<GermanMessageResource>(),
-			Iso639P1.Zh => IMessageResource.GetInstance<ChineseMessageResource>(),
-			Iso639P1.Ja => IMessageResource.GetInstance<JapaneseMessageResource>(),
-			Iso639P1.Ru => IMessageResource.GetInstance<RussianMessageResource>(),
-			Iso639P1.Ar => IMessageResource.GetInstance<ArabicMessageResource>(),
-			Iso639P1.Pt => IMessageResource.GetInstance<PortugueseMessageResource>(),
-			Iso639P1.It => IMessageResource.GetInstance<ItalianMessageResource>(),
+			Iso639P1.Es => SpanishMessageResource.Instance,
+			Iso639P1.Fr => FrenchMessageResource.Instance,
+			Iso639P1.De => GermanMessageResource.Instance,
+			Iso639P1.Zh => ChineseMessageResource.Instance,
+			Iso639P1.Ja => JapaneseMessageResource.Instance,
+			Iso639P1.Ru => RussianMessageResource.Instance,
+			Iso639P1.Ar => ArabicMessageResource.Instance,
+			Iso639P1.Pt => PortugueseMessageResource.Instance,
+			Iso639P1.It => ItalianMessageResource.Instance,
 			_ => result,
 		};
 	}
-
-	/// <summary>
-	/// Retrieves internal resource objects.
-	/// </summary>
-	/// <typeparam name="TResource">A <see cref="IMessageResource"/> type.</typeparam>
-	/// <returns>Resource resource object.</returns>
-	private static IMessageResource GetInstance<TResource>() where TResource : IMessageResource => TResource.Instance;
 }
 #pragma warning restore CA2252
