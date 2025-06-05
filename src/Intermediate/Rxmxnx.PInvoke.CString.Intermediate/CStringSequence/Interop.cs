@@ -19,6 +19,7 @@ public partial class CStringSequence
 #endif
 	[DebuggerDisplay("Count = {Count}")]
 	[DebuggerTypeProxy(typeof(CStringSequenceDebugView))]
+	[StructLayout(LayoutKind.Sequential)]
 	public readonly struct Interop : IWrapper<CStringSequence?>, IEquatable<Interop>
 	{
 		/// <summary>
