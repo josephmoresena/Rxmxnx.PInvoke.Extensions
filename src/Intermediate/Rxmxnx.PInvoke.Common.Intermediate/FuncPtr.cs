@@ -86,7 +86,7 @@ public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEq
 	/// The <see cref="String"/> representation of the value of the current <see cref="FuncPtr{T}"/> object.
 	/// </returns>
 	/// <exception cref="FormatException"><paramref name="format"/> is invalid or not supported.</exception>
-	public String ToString(String? format) => this.Pointer.ToString(format);
+	public String ToString(String? format) => this.Pointer.ToString(format!);
 
 	/// <summary>
 	/// Defines an explicit conversion of a given <see cref="IntPtr"/> to a read-only value pointer.

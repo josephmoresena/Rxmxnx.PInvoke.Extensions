@@ -47,8 +47,10 @@ internal sealed class ArrayMemoryManager<T> : MemoryManager<T>
 			ref T managedRef =
 #if NET6_0_OR_GREATER
 				ref ArrayMemoryManager<T>.GetArrayDataReference(this._array);
-#else
+#elif NETCOREAPP3_1_OR_GREATER
 				ref Unsafe.NullRef<T>();
+#else
+				ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(Span<Byte>.Empty));
 #endif
 			ref T handleRef = ref Unsafe.Add(ref managedRef, elementIndex);
 			return new(Unsafe.AsPointer(ref handleRef), default, this);
@@ -82,8 +84,10 @@ internal sealed class ArrayMemoryManager<T> : MemoryManager<T>
 		ref T managedRef =
 #if NET6_0_OR_GREATER
 			ref ArrayMemoryManager<T>.GetArrayDataReference(array);
-#else
+#elif NETCOREAPP3_1_OR_GREATER
 			ref Unsafe.NullRef<T>();
+#else
+			ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(Span<Byte>.Empty));
 #endif
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 		return span;
@@ -99,7 +103,6 @@ internal sealed class ArrayMemoryManager<T> : MemoryManager<T>
 	{
 		ref Byte byteRef = ref MemoryMarshal.GetArrayDataReference(array);
 		return ref Unsafe.As<Byte, T>(ref byteRef);
-		return ref Unsafe.NullRef<T>();
 	}
 #endif
 }

@@ -38,7 +38,11 @@ internal sealed unsafe partial class ReadOnlyFixedReference<T> : ReadOnlyFixedMe
 	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
 	{
+#if NETCOREAPP3_1_OR_GREATER
 		Unsafe.SkipInit(out residual);
+#else
+		residual = default!;
+#endif
 		IReadOnlyFixedReference<TDestination> result =
 			this.GetTransformation<TDestination>(
 				out Unsafe.As<IReadOnlyFixedMemory, ReadOnlyFixedOffset>(ref residual));

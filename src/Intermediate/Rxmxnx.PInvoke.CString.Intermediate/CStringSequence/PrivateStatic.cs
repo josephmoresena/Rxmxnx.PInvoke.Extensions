@@ -97,7 +97,7 @@ public unsafe partial class CStringSequence
 	{
 		Int32 position = 0;
 		ref CString? refCStr = ref *state.Ptr;
-		ReadOnlySpan<CString?> values = MemoryMarshal.CreateReadOnlySpan(ref refCStr, state.Length);
+		ReadOnlySpan<CString?> values = MemoryMarshal.CreateReadOnlySpan(ref refCStr, state.Length)!;
 		Span<Byte> byteSpan = MemoryMarshal.AsBytes(charSpan);
 		foreach (CString? value in values)
 		{

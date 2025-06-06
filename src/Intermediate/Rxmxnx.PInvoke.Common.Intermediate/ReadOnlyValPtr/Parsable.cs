@@ -1,3 +1,4 @@
+#if NET5_0_OR_GREATER
 namespace Rxmxnx.PInvoke;
 
 public readonly partial struct ReadOnlyValPtr<T>
@@ -86,3 +87,4 @@ public readonly partial struct ReadOnlyValPtr<T>
 	}
 #endif
 }
+#endif

@@ -98,7 +98,11 @@ internal partial class MemoryInspector
 				isReadOnly = false;
 				return true;
 			}
+#if NETCOREAPP3_1_OR_GREATER
 			Unsafe.SkipInit(out isReadOnly);
+#else
+			isReadOnly = false;
+#endif
 			return false;
 		}
 		/// <summary>
@@ -109,13 +113,23 @@ internal partial class MemoryInspector
 #endif
 		private void RefreshMaps()
 		{
-			Int64 tickCount = Environment.TickCount64;
+			Int64 tickCount
+#if NETCOREAPP
+				= Environment.TickCount64;
+#else
+				= DateTime.Now.Ticks;
+#endif
 			if (tickCount - this._lastTickCount < Linux.GlobalFileReadDelay ||
 			    tickCount - Linux.lastThreadTickCount < Linux.LocalFileReadDelay)
 				return;
 
 			this.ParseMaps(File.ReadAllBytes(Linux.MapsFile));
-			this._lastTickCount = Environment.TickCount64;
+			this._lastTickCount
+#if NETCOREAPP
+				= Environment.TickCount64;
+#else
+				= DateTime.Now.Ticks;
+#endif
 			Linux.lastThreadTickCount = this._lastTickCount;
 		}
 		/// <summary>

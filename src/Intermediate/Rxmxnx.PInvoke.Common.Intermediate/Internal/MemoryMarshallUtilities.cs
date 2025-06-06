@@ -1,6 +1,8 @@
 #if !NET6_0_OR_GREATER
+#if NETCOREAPP
 using UIntPtr = nuint;
 using IntPtr = nint;
+#endif
 
 namespace Rxmxnx.PInvoke.Internal;
 
@@ -49,7 +51,10 @@ internal static unsafe class MemoryMarshallUtilities
 		return MemoryMarshal.CreateReadOnlySpan(ref ref0, length);
 	}
 
+/* The code in the following region was extracted directly from the CoreCLR source code to provide .NET 5 compatibility. */
+
 	#region CORECLRCODE
+#if NETCOREAPP
 	[MethodImpl(MethodImplOptions.AggressiveOptimization)]
 	private static Int32 IndexOf(ref Byte searchSpace, Byte value, Int32 length)
 	{
@@ -72,21 +77,21 @@ internal static unsafe class MemoryMarshallUtilities
 		{
 			lengthToExamine -= 8;
 
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, new((void*)offset)))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallUtilities.ToByteOffset(offset)))
 				goto Found;
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, new((void*)(offset + 1))))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallUtilities.ToByteOffset(offset + 1)))
 				goto Found1;
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, new((void*)(offset + 2))))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallUtilities.ToByteOffset(offset + 2)))
 				goto Found2;
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, new((void*)(offset + 3))))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallUtilities.ToByteOffset(offset + 3)))
 				goto Found3;
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, new((void*)(offset + 4))))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallUtilities.ToByteOffset(offset + 4)))
 				goto Found4;
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, new((void*)(offset + 5))))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallUtilities.ToByteOffset(offset + 5)))
 				goto Found5;
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, new((void*)(offset + 6))))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallUtilities.ToByteOffset(offset + 6)))
 				goto Found6;
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, new((void*)(offset + 7))))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallUtilities.ToByteOffset(offset + 7)))
 				goto Found7;
 
 			offset += 8;
@@ -96,13 +101,13 @@ internal static unsafe class MemoryMarshallUtilities
 		{
 			lengthToExamine -= 4;
 
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, new((void*)offset)))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallUtilities.ToByteOffset(offset)))
 				goto Found;
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, new((void*)(offset + 1))))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallUtilities.ToByteOffset(offset + 1)))
 				goto Found1;
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, new((void*)(offset + 2))))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallUtilities.ToByteOffset(offset + 2)))
 				goto Found2;
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, new((void*)(offset + 3))))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallUtilities.ToByteOffset(offset + 3)))
 				goto Found3;
 
 			offset += 4;
@@ -112,7 +117,7 @@ internal static unsafe class MemoryMarshallUtilities
 		{
 			lengthToExamine -= 1;
 
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, new((void*)offset)))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallUtilities.ToByteOffset(offset)))
 				goto Found;
 
 			offset += 1;
@@ -441,11 +446,17 @@ internal static unsafe class MemoryMarshallUtilities
 		Found:
 		return (Int32)(offset);
 	}
+#if !NETCOREAPP3_1_OR_GREATER
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static Int32 LocateLastFoundByte(UInt64 match) => BitOperations.Log2(match) >> 3;
+	private static System.IntPtr ToByteOffset(UIntPtr ptr) => new((void*)ptr);
+#else
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static UIntPtr ToByteOffset(UIntPtr ptr) => ptr;
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Vector<Byte> LoadVector(ref Byte start, UIntPtr offset)
-		=> Unsafe.ReadUnaligned<Vector<Byte>>(ref Unsafe.AddByteOffset(ref start, new((void*)offset)));
+		=> Unsafe.ReadUnaligned<Vector<Byte>>(
+			ref Unsafe.AddByteOffset(ref start, MemoryMarshallUtilities.ToByteOffset(offset)));
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr UnalignedCountVector128(ref Char searchSpace)
 	{
@@ -478,7 +489,8 @@ internal static unsafe class MemoryMarshallUtilities
 		=> Unsafe.ReadUnaligned<Vector128<UInt16>>(ref Unsafe.As<Char, Byte>(ref Unsafe.Add(ref start, offset)));
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Vector128<Byte> LoadVector128(ref Byte start, UIntPtr offset)
-		=> Unsafe.ReadUnaligned<Vector128<Byte>>(ref Unsafe.AddByteOffset(ref start, new((void*)offset)));
+		=> Unsafe.ReadUnaligned<Vector128<Byte>>(
+			ref Unsafe.AddByteOffset(ref start, MemoryMarshallUtilities.ToByteOffset(offset)));
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Int32 LocateFirstFoundChar(Vector<ushort> match)
 	{
@@ -529,7 +541,8 @@ internal static unsafe class MemoryMarshallUtilities
 		=> Unsafe.ReadUnaligned<Vector256<UInt16>>(ref Unsafe.As<Char, Byte>(ref Unsafe.Add(ref start, offset)));
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Vector256<byte> LoadVector256(ref Byte start, UIntPtr offset)
-		=> Unsafe.ReadUnaligned<Vector256<Byte>>(ref Unsafe.AddByteOffset(ref start, new((void*)offset)));
+		=> Unsafe.ReadUnaligned<Vector256<Byte>>(
+			ref Unsafe.AddByteOffset(ref start, MemoryMarshallUtilities.ToByteOffset(offset)));
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr GetCharVector256SpanLength(IntPtr offset, IntPtr length)
 		=> (length - offset) & ~(Vector256<UInt16>.Count - 1);
@@ -559,6 +572,32 @@ internal static unsafe class MemoryMarshallUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static UIntPtr GetByteVector256SpanLength(UIntPtr offset, Int32 length)
 		=> (UInt32)((length - (Int32)offset) & ~(Vector256<Byte>.Count - 1));
+
+#if NETCOREAPP && !NET5_0_OR_GREATER
+	private static class AdvSimd
+	{
+		public static Vector128<T> CompareEqual<T>(Vector128<T> values, Vector128<T> search) where T : unmanaged
+			=> default;
+		public static Vector128<Byte> And(Vector128<Byte> compareResult, Vector128<Byte> mask) => default;
+
+		public static class Arm64
+		{
+			public static Boolean IsSupported => false;
+
+			public static Vector128<Byte> AddPairwise(Vector128<Byte> maskedSelectedLanes, Vector128<Byte> vector128)
+				=> default;
+		}
+	}
+#endif
+#else
+	private static Int32 IndexOf<T>(ref T ref0, T value, UInt32 maxLength) where T : unmanaged, IEquatable<T>
+	{
+		UInt32 result = 0;
+		while (Unsafe.Add(ref ref0, new IntPtr((void*)result)).Equals(value) && result < maxLength)
+			result++;
+		return (Int32)result;
+	}
+#endif
 	#endregion
 }
 #endif

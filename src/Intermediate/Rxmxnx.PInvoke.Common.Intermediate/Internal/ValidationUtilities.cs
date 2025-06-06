@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke.Internal;
+﻿#if !NET5_0_OR_GREATER
+using Enum = Rxmxnx.PInvoke.Internal.EnumUtilities;
+#endif
+
+namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// Utility class for argument validation.
@@ -119,8 +123,8 @@ internal static unsafe class ValidationUtilities
 		=> obj switch
 		{
 			null => 1,
-			ValPtr<T> v => ptr.CompareTo(v.Pointer),
-			ReadOnlyValPtr<T> r => ptr.CompareTo(r.Pointer),
+			ValPtr<T> v => ((Int64)ptr).CompareTo((Int64)v.Pointer),
+			ReadOnlyValPtr<T> r => ((Int64)ptr).CompareTo((Int64)r.Pointer),
 			_ => throw new ArgumentException(IMessageResource.GetInstance().InvalidType(nameofPtr)),
 		};
 

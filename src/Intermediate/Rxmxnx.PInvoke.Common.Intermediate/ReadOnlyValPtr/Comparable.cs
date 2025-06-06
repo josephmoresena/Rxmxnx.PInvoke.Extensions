@@ -9,7 +9,12 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IComparable, IComparab
 	public Int32 CompareTo(Object? obj)
 		=> ValidationUtilities.ThrowIfInvalidValuePointer<T>(obj, this.Pointer, nameof(ReadOnlyValPtr<T>));
 	/// <inheritdoc/>
-	public Int32 CompareTo(ReadOnlyValPtr<T> value) => this.Pointer.CompareTo(value.Pointer);
+	public Int32 CompareTo(ReadOnlyValPtr<T> value)
+#if NET5_0_OR_GREATER
+		=> this.Pointer.CompareTo(value.Pointer);
+#else
+		=> ((Int64)this.Pointer).CompareTo((Int64)value.Pointer);
+#endif
 
 	/// <summary>Compares two values to determine which is less.</summary>
 	/// <param name="left">The value to compare with <paramref name="right"/>.</param>

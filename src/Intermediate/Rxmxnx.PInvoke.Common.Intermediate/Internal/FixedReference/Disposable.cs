@@ -52,7 +52,11 @@ internal partial class FixedReference<T> : IConvertibleDisposable<IFixedReferenc
 		IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(
 			out IReadOnlyFixedMemory residual)
 		{
+#if NETCOREAPP3_1_OR_GREATER
 			Unsafe.SkipInit(out residual);
+#else
+			residual = default!;
+#endif
 			IReadOnlyFixedReference<TDestination> result =
 				this.Transformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual));
 			return result;
@@ -62,7 +66,11 @@ internal partial class FixedReference<T> : IConvertibleDisposable<IFixedReferenc
 #endif
 		IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 		{
+#if NETCOREAPP3_1_OR_GREATER
 			Unsafe.SkipInit(out residual);
+#else
+			residual = default!;
+#endif
 			IFixedReference<TDestination> result =
 				this.Transformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual));
 			return result;
