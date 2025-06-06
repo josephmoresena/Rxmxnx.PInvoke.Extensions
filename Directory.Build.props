@@ -1,0 +1,16 @@
+<Project>
+    <ItemGroup Condition="$(DefineConstants.Contains('NETSTANDARD2_1'))">
+        <PackageReference Include="System.Memory" Version="4.6.3"/>
+        <PackageReference Include="System.Buffers" Version="4.6.1"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="!$(DefineConstants.Contains('NET8_0_OR_GREATER'))">
+        <PackageReference Condition="$(DefineConstants.Contains('NETSTANDARD2_1')) Or $(DefineConstants.Contains('NETCOREAPP3_0'))" Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.1"/>
+        <PackageReference Condition="$(DefineConstants.Contains('NET5_0')) Or $(DefineConstants.Contains('NETCOREAPP3_1'))" Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0"/>
+        <PackageReference Condition="$(DefineConstants.Contains('NET6_0_OR_GREATER'))" Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2"/>
+
+        <PackageReference Condition="$(DefineConstants.Contains('NETSTANDARD2_1')) Or $(DefineConstants.Contains('NETCOREAPP3_0'))" Include="System.Text.Json" Version="4.7.2"/>
+        <PackageReference Condition="$(DefineConstants.Contains('NET5_0')) Or $(DefineConstants.Contains('NETCOREAPP3_1'))" Include="System.Text.Json" Version="6.0.11"/>
+        <PackageReference Condition="$(DefineConstants.Contains('NET6_0_OR_GREATER'))" Include="System.Text.Json" Version="8.0.5"/>
+    </ItemGroup>
+</Project>
