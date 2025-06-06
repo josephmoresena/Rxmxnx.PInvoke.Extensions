@@ -19,13 +19,16 @@ public sealed class LoadNativeLibTest
 		LoadNativeLibTest.METHODNAME_WINDOWS :
 		LoadNativeLibTest.METHODNAME_UNIX;
 
-	[Theory]
+	[SkippableTheory]
 	[InlineData(true)]
 	[InlineData(false)]
 	[InlineData(true, true)]
 	[InlineData(false, true)]
 	internal void EmptyTest(Boolean unloadEvent, Boolean emptyName = false)
 	{
+		Skip.If(MemoryMarshallCompat.TargetFramework.Contains(".NETStandard"),
+		        ".NETStandard does not support NativeLibrary class.");
+
 		String prefix = LoadNativeLibTest.fixture.Create<String>();
 		String sufix = LoadNativeLibTest.fixture.Create<String>();
 		IntPtr? result = default;
@@ -43,11 +46,14 @@ public sealed class LoadNativeLibTest
 		Assert.Null(result);
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[InlineData(true)]
 	[InlineData(false)]
 	internal void NormalTest(Boolean unloadEvent)
 	{
+		Skip.If(MemoryMarshallCompat.TargetFramework.Contains(".NETStandard"),
+		        ".NETStandard does not support NativeLibrary class.");
+
 		EventHandler? eventHandler = default;
 		IntPtr? result = unloadEvent ?
 			NativeUtilities.LoadNativeLib(LoadNativeLibTest.LibraryName, ref eventHandler) :

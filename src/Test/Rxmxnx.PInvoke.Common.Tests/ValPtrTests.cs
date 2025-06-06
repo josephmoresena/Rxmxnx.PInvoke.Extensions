@@ -223,12 +223,19 @@ public sealed class ValPtrTests
 		CultureInfo culture = ValPtrTests.allCultures[Random.Shared.Next(0, ValPtrTests.allCultures.Length)];
 		Assert.Equal(valPtr.Pointer.GetHashCode(), valPtr.GetHashCode());
 		Assert.Equal(valPtr.Pointer.ToString(), valPtr.ToString());
-		Assert.Equal(valPtr.Pointer.ToString(culture), valPtr.ToString(culture));
+
+		if ((Object)valPtr is not ISpanFormattable spanFormattable) return;
+		MethodInfo? toStringMethodInfo = spanFormattable.GetType()
+		                                                .GetMethod(nameof(IntPtr.ToString),
+		                                                           BindingFlags.Public | BindingFlags.Instance, null,
+		                                                           [typeof(IFormatProvider),], null);
+		if (toStringMethodInfo is not null)
+			Assert.Equal(valPtr.Pointer.ToString(culture), toStringMethodInfo.Invoke(valPtr, [culture,]));
 
 		Span<Char> span1 = stackalloc Char[20];
 		Span<Char> span2 = stackalloc Char[20];
 		Boolean res1 = valPtr.Pointer.TryFormat(span1, out Int32 pC, "X", culture);
-		Boolean res2 = valPtr.TryFormat(span2, out Int32 vC, "X", culture);
+		Boolean res2 = spanFormattable.TryFormat(span2, out Int32 vC, "X", culture);
 
 		Assert.Equal(res1, res2);
 		Assert.Equal(pC, vC);
@@ -238,7 +245,7 @@ public sealed class ValPtrTests
 		{
 			culture = ValPtrTests.allCultures[Random.Shared.Next(0, ValPtrTests.allCultures.Length)];
 			Assert.Equal(valPtr.Pointer.ToString(format), valPtr.ToString(format));
-			Assert.Equal(valPtr.Pointer.ToString(format, culture), valPtr.ToString(format, culture));
+			Assert.Equal(valPtr.Pointer.ToString(format, culture), spanFormattable.ToString(format, culture));
 		}
 	}
 	private static unsafe void ReferenceTransformTest<T, TDestination>(ValPtr<T> ptrI,

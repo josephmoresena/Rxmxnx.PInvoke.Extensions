@@ -319,15 +319,19 @@ public static unsafe partial class NativeUtilities
 #pragma warning restore CS8500
 			action(span, arg);
 	}
-#if NETCOREAPP
+#if !PACKAGE || NETCOREAPP
 	/// <summary>
 	/// Provides a high-level API for loading a native library.
 	/// </summary>
 	/// <param name="libraryName">The name of the native library to be loaded.</param>
 	/// <param name="searchPath">The search path.</param>
 	/// <returns>The OS handle for the loaded native library.</returns>
+#if !PACKAGE && !NETCOREAPP
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IntPtr? LoadNativeLib(String? libraryName, DllImportSearchPath? searchPath = default)
+#if NETCOREAPP
 		=> NativeLibrary.TryLoad(libraryName ?? String.Empty, Assembly.GetExecutingAssembly(), searchPath,
 		                         out IntPtr handle) ?
 			handle :
@@ -351,6 +355,23 @@ public static unsafe partial class NativeUtilities
 			unloadEvent += (_, _) => NativeLibrary.Free(handle.Value);
 		return handle;
 	}
+#else
+		=> default;
+	/// <summary>
+	/// Provides a high-level API for loading a native library.
+	/// </summary>
+	/// <param name="libraryName">The name of the native library to be loaded.</param>
+	/// <param name="unloadEvent">
+	/// An optional event handler that is called when the library is unloaded.
+	/// </param>
+	/// <param name="searchPath">The search path.</param>
+	/// <returns>The OS handle for the loaded native library.</returns>
+	[ExcludeFromCodeCoverage]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static IntPtr? LoadNativeLib(String? libraryName, ref EventHandler? unloadEvent,
+		DllImportSearchPath? searchPath = default)
+		=> default;
+#endif
 	/// <summary>
 	/// Gets the <typeparamref name="TDelegate"/> delegate of an exported symbol.
 	/// </summary>
@@ -361,8 +382,10 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TDelegate? GetNativeMethod<TDelegate>(IntPtr handle, String? name) where TDelegate : Delegate
 	{
+#if NETCOREAPP
 		if (handle != IntPtr.Zero && NativeLibrary.TryGetExport(handle, name ?? String.Empty, out IntPtr address))
 			return Marshal.GetDelegateForFunctionPointer<TDelegate>(address);
+#endif
 		return default;
 	}
 	/// <summary>
@@ -376,8 +399,10 @@ public static unsafe partial class NativeUtilities
 	public static FuncPtr<TDelegate> GetNativeMethodPtr<TDelegate>(IntPtr handle, String? name)
 		where TDelegate : Delegate
 	{
+#if NETCOREAPP
 		if (handle != IntPtr.Zero && NativeLibrary.TryGetExport(handle, name ?? String.Empty, out IntPtr address))
 			return (FuncPtr<TDelegate>)address;
+#endif
 		return default;
 	}
 #endif

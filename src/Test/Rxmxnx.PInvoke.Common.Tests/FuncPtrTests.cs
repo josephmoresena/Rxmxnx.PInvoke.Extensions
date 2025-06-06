@@ -62,12 +62,19 @@ public sealed class FuncPtrTests
 		CultureInfo culture = FuncPtrTests.allCultures[Random.Shared.Next(0, FuncPtrTests.allCultures.Length)];
 		Assert.Equal(funcPtr.Pointer.GetHashCode(), funcPtr.GetHashCode());
 		Assert.Equal(funcPtr.Pointer.ToString(), funcPtr.ToString());
-		Assert.Equal(funcPtr.Pointer.ToString(culture), funcPtr.ToString(culture));
+
+		if ((Object)funcPtr is not ISpanFormattable spanFormattable) return;
+		MethodInfo? toStringMethodInfo = spanFormattable.GetType()
+		                                                .GetMethod(nameof(IntPtr.ToString),
+		                                                           BindingFlags.Public | BindingFlags.Instance, null,
+		                                                           [typeof(IFormatProvider),], null);
+		if (toStringMethodInfo is not null)
+			Assert.Equal(funcPtr.Pointer.ToString(culture), toStringMethodInfo.Invoke(funcPtr, [culture,]));
 
 		Span<Char> span1 = stackalloc Char[20];
 		Span<Char> span2 = stackalloc Char[20];
 		Boolean res1 = funcPtr.Pointer.TryFormat(span1, out Int32 pC, "X", culture);
-		Boolean res2 = funcPtr.TryFormat(span2, out Int32 vC, "X", culture);
+		Boolean res2 = spanFormattable.TryFormat(span2, out Int32 vC, "X", culture);
 
 		Assert.Equal(res1, res2);
 		Assert.Equal(pC, vC);
@@ -77,7 +84,7 @@ public sealed class FuncPtrTests
 		{
 			culture = FuncPtrTests.allCultures[Random.Shared.Next(0, FuncPtrTests.allCultures.Length)];
 			Assert.Equal(funcPtr.Pointer.ToString(format), funcPtr.ToString(format));
-			Assert.Equal(funcPtr.Pointer.ToString(format, culture), funcPtr.ToString(format, culture));
+			Assert.Equal(funcPtr.Pointer.ToString(format, culture), spanFormattable.ToString(format, culture));
 		}
 	}
 }

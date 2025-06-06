@@ -7,6 +7,9 @@ namespace Rxmxnx.PInvoke.Internal;
 /// <typeparam name="T">The type of the array.</typeparam>
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#if NET6_0_OR_GREATER
+[ExcludeFromCodeCoverage]
+#endif
 #endif
 internal sealed class ArrayMemoryManager<T> : MemoryManager<T>
 {

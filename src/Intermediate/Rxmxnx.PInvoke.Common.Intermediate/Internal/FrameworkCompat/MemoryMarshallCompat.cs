@@ -1,7 +1,9 @@
-#if !NET6_0_OR_GREATER
+#if !PACKAGE || !NET6_0_OR_GREATER
+
 #if NETCOREAPP
 using UIntPtr = nuint;
 using IntPtr = nint;
+using System_IntPtr = System.IntPtr;
 #endif
 
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
@@ -14,6 +16,22 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 #endif
 internal static unsafe class MemoryMarshallCompat
 {
+	/// <summary>
+	/// Target framework for the current build.
+	/// </summary>
+	public static readonly String TargetFramework =
+#if !NETCOREAPP
+		".NETStandard 2.1";
+#elif NETCOREAPP3_0
+		".NETCoreApp 3.0.3";
+#elif NETCOREAPP3_1
+		".NETCoreApp 3.1.12";
+#elif NET5_0
+		".NETCoreApp 5.0.17";
+#else
+		RuntimeInformation.FrameworkDescription;
+#endif
+
 	/// <summary>
 	/// Creates a new read-only span for a null-terminated UTF8 string.
 	/// </summary>
@@ -586,11 +604,11 @@ internal static unsafe class MemoryMarshallCompat
 		}
 	}
 #endif
-#else
-	private static Int32 IndexOf<T>(ref T ref0, T value, UInt32 maxLength) where T : unmanaged, IEquatable<T>
+#endif
+	public static Int32 IndexOf<T>(ref T ref0, T value, UInt32 maxLength) where T : unmanaged, IEquatable<T>
 	{
 		UInt32 result = 0;
-		while (!Unsafe.Add(ref ref0, new IntPtr((void*)result)).Equals(value))
+		while (!Unsafe.Add(ref ref0, new System_IntPtr((void*)result)).Equals(value))
 		{
 			result++;
 			if (result >= maxLength)
@@ -599,7 +617,6 @@ internal static unsafe class MemoryMarshallCompat
 
 		return (Int32)result;
 	}
-#endif
 	#endregion
 }
 #endif
