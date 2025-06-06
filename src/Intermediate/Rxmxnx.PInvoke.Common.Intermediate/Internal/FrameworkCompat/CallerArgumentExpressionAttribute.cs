@@ -1,5 +1,5 @@
 #if !NETCOREAPP
-namespace Rxmxnx.PInvoke.Internal;
+namespace System.Runtime.CompilerServices;
 
 [AttributeUsage(AttributeTargets.Parameter)]
 internal sealed class CallerArgumentExpressionAttribute(String parameterName) : Attribute

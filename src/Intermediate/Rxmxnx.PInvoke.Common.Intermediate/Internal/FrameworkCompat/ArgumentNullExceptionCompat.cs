@@ -1,10 +1,10 @@
 #if !NET6_0_OR_GREATER
-namespace Rxmxnx.PInvoke.Internal;
+namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 
 /// <summary>
-/// Helps to throw <see cref="ArgumentNullException"/> for null reference type arguments.
+/// <see cref="ArgumentNullException"/> compatibility utilities for internal use.
 /// </summary>
-internal static class ArgumentNullUtilities
+internal static class ArgumentNullExceptionCompat
 {
 	/// <summary>
 	/// Throws an <see cref="ArgumentNullException"/> if <paramref name="argument"/> is null.

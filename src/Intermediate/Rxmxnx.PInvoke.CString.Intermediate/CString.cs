@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if !NET6_0_OR_GREATER
+using MemoryMarshallCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshallCompat;
+#endif
+
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Represents a sequence of UTF-8 encoded characters.
@@ -378,7 +382,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 #if NET6_0_OR_GREATER
 			MemoryMarshal.CreateReadOnlySpanFromNullTerminated((Byte*)ptr);
 #else
-			MemoryMarshallUtilities.CreateReadOnlySpanFromNullTerminated((Byte*)ptr);
+			MemoryMarshallCompat.CreateReadOnlySpanFromNullTerminated((Byte*)ptr);
 #endif
 		Int32 length = span.Length;
 		return new(ValueRegion<Byte>.Create(ptr, length), false, true, length);

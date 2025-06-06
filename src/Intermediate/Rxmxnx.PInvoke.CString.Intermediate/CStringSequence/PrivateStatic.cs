@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if !NET6_0_OR_GREATER
+using MemoryMarshallCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshallCompat;
+#endif
+
+namespace Rxmxnx.PInvoke;
 
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
@@ -251,7 +255,7 @@ public unsafe partial class CStringSequence
 #if NET6_0_OR_GREATER
 				result[i] = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(list[i]).Length;
 #else
-				result[i] = MemoryMarshallUtilities.CreateReadOnlySpanFromNullTerminated(list[i]).Length;
+				result[i] = MemoryMarshallCompat.CreateReadOnlySpanFromNullTerminated(list[i]).Length;
 #endif
 		}
 		return result;

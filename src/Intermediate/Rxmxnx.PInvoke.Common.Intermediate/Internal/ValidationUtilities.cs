@@ -1,5 +1,5 @@
 ﻿#if !NET5_0_OR_GREATER
-using Enum = Rxmxnx.PInvoke.Internal.EnumUtilities;
+using Enum = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
 #endif
 
 namespace Rxmxnx.PInvoke.Internal;
