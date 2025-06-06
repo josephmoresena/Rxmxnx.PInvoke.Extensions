@@ -198,7 +198,7 @@ public unsafe partial class CStringSequence
 		}
 	}
 	/// <summary>
-	/// Converts the given <paramref name="str"/> to a <see cref="CString"/> instance.
+	/// Creates a transitive <see cref="CString"/> instance from <paramref name="str"/>.
 	/// </summary>
 	/// <param name="str">The <see cref="String"/> instance to be converted.</param>
 	/// <returns>
@@ -206,8 +206,16 @@ public unsafe partial class CStringSequence
 	/// <paramref name="str"/> is <see langword="null"/>.
 	/// </returns>
 	[return: NotNullIfNotNull(nameof(str))]
-	private static CString? GetCString(String? str)
+	private static CString? CreateTransitive(String? str)
+#if NET6_0_OR_GREATER
 		=> str is not null ? CString.Create(new CStringStringState(str)) : default;
+#else
+	{
+		if (str is null) return default;
+		CStringStringState state = new(str);
+		return CString.Create(state, CStringStringState.GetSpan, false, state.Utf8Length);
+	}
+#endif
 	/// <summary>
 	/// Gets the length of the byte span representing a <see cref="CString"/> of the given <paramref name="length"/>.
 	/// </summary>
@@ -240,7 +248,11 @@ public unsafe partial class CStringSequence
 		for (Int32 i = 0; i < list.Length; i++)
 		{
 			if (!list[i].IsZero)
+#if NET6_0_OR_GREATER
 				result[i] = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(list[i]).Length;
+#else
+				result[i] = MemoryMarshallUtilities.CreateReadOnlySpanFromNullTerminated(list[i]).Length;
+#endif
 		}
 		return result;
 	}

@@ -1,4 +1,4 @@
-#if NET6_0 && !PACKAGE
+#if !NET7_0_OR_GREATER && !PACKAGE
 [assembly: SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3261)]
 
 namespace System.Runtime.InteropServices.Marshalling;

@@ -1,3 +1,4 @@
+#if NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
@@ -41,3 +42,4 @@ public interface IUtf8FunctionState<TSelf> where TSelf : struct, IUtf8FunctionSt
 #endif
 	static virtual Int32 GetLength(in TSelf state) => TSelf.GetSpan(state).Length;
 }
+#endif

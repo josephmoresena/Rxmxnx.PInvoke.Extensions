@@ -573,19 +573,17 @@ internal static unsafe class MemoryMarshallUtilities
 	private static UIntPtr GetByteVector256SpanLength(UIntPtr offset, Int32 length)
 		=> (UInt32)((length - (Int32)offset) & ~(Vector256<Byte>.Count - 1));
 
-#if NETCOREAPP && !NET5_0_OR_GREATER
+#if !NET5_0_OR_GREATER
 	private static class AdvSimd
 	{
-		public static Vector128<T> CompareEqual<T>(Vector128<T> values, Vector128<T> search) where T : unmanaged
-			=> default;
-		public static Vector128<Byte> And(Vector128<Byte> compareResult, Vector128<Byte> mask) => default;
+		public static Vector128<T> CompareEqual<T>(Vector128<T> values, Vector128<T> _) where T : unmanaged => values;
+		public static Vector128<Byte> And(Vector128<Byte> compareResult, Vector128<Byte> _) => compareResult;
 
 		public static class Arm64
 		{
 			public static Boolean IsSupported => false;
-
-			public static Vector128<Byte> AddPairwise(Vector128<Byte> maskedSelectedLanes, Vector128<Byte> vector128)
-				=> default;
+			public static Vector128<Byte> AddPairwise(Vector128<Byte> maskedSelectedLanes, Vector128<Byte> _)
+				=> maskedSelectedLanes;
 		}
 	}
 #endif
@@ -593,8 +591,13 @@ internal static unsafe class MemoryMarshallUtilities
 	private static Int32 IndexOf<T>(ref T ref0, T value, UInt32 maxLength) where T : unmanaged, IEquatable<T>
 	{
 		UInt32 result = 0;
-		while (Unsafe.Add(ref ref0, new IntPtr((void*)result)).Equals(value) && result < maxLength)
+		while (!Unsafe.Add(ref ref0, new IntPtr((void*)result)).Equals(value))
+		{
 			result++;
+			if (result >= maxLength)
+				return -1;
+		}
+
 		return (Int32)result;
 	}
 #endif

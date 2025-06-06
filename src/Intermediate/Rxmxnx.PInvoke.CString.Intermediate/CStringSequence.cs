@@ -74,7 +74,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		this._lengths = new Int32?[values.Length];
 		for (Int32 i = 0; i < values.Length; i++)
 		{
-			CString? cstr = CStringSequence.GetCString(values[i]);
+			CString? cstr = CStringSequence.CreateTransitive(values[i]);
 			list[i] = cstr;
 			this._lengths[i] = cstr?.Length;
 		}
@@ -86,7 +86,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// enumeration of strings.
 	/// </summary>
 	/// <param name="values">The enumerable collection of strings.</param>
-	public CStringSequence(IEnumerable<String?> values) : this(values.Select(CStringSequence.GetCString).ToArray()) { }
+	public CStringSequence(IEnumerable<String?> values) : this(values.Select(CStringSequence.CreateTransitive).ToArray()) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from an
 	/// enumeration of UTF-8 strings.
