@@ -6,7 +6,7 @@ namespace Rxmxnx.PInvoke.Buffers;
 #endif
 public partial struct Atomic<T>
 {
-#if BINARY_SPACES
+#if NET6_0_OR_GREATER && BINARY_SPACES
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

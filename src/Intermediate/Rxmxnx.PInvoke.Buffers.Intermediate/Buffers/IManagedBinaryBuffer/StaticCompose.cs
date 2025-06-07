@@ -2,7 +2,7 @@ namespace Rxmxnx.PInvoke.Buffers;
 
 public partial interface IManagedBinaryBuffer<TBuffer, T>
 {
-#if BINARY_SPACES
+#if NET6_0_OR_GREATER && BINARY_SPACES
 	/// <summary>
 	/// Compose statically all buffers in current space.
 	/// </summary>

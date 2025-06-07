@@ -95,7 +95,7 @@ public static partial class BufferManager
 				TBuffer.AppendComponent(MetadataManager<T>.store.BinaryBuffers);
 			}
 		}
-#if BINARY_SPACES
+#if NET6_0_OR_GREATER && BINARY_SPACES
 		/// <summary>
 		/// Registers space type.
 		/// </summary>

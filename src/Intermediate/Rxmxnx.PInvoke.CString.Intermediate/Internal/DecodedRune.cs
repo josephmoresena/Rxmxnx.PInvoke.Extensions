@@ -13,7 +13,7 @@ namespace Rxmxnx.PInvoke.Internal;
 /// during decoding and the raw value read.
 /// </remarks>
 [StructLayout(LayoutKind.Sequential)]
-internal readonly struct DecodedRune : IEquatable<DecodedRune>
+internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 {
 	/// <summary>
 	/// The raw integer value that was read from the input to form the Rune.
@@ -64,15 +64,16 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>
 	[ExcludeFromCodeCoverage]
 #endif
 	public Boolean Equals(DecodedRune other)
-		=> this.CharsConsumed == other.CharsConsumed && this._rawValue == other._rawValue &&
-			this._value.Equals(other._value);
+		=> this.CharsConsumed == other.CharsConsumed && this._rawValue == other._rawValue && this.Equals(other._value);
+	/// <inheritdoc/>
+	public Boolean Equals(Rune other) => this._value == other;
 	/// <inheritdoc/>
 	public override Boolean Equals(Object? obj)
 	{
 		return obj switch
 		{
-			DecodedRune decoded => this._value.Equals(decoded._value),
-			Rune rune => this._value.Equals(rune),
+			DecodedRune decoded => this.Equals(decoded._value),
+			Rune rune => this.Equals(rune),
 			_ => false,
 		};
 	}

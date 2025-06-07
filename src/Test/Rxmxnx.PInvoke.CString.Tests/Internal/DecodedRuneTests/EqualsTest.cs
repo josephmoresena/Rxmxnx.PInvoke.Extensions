@@ -21,7 +21,15 @@ public sealed class EqualsTest
 		DecodedRune? decodedRune2 = DecodedRune.Decode(source);
 
 		Assert.True(decodedRune1?.Equals(decodedRune2));
-		Assert.True(decodedRune1?.Equals(decodedRune2?.Value));
+		try
+		{
+			Assert.True(decodedRune1?.Equals(EqualsTest.CreateRune(decodedRune2?.Value)));
+		}
+		catch (Exception)
+		{
+			// NetStandard
+			Assert.True(decodedRune1?.Equals(decodedRune2?.Value));
+		}
 	}
 
 	[Fact]
@@ -31,7 +39,15 @@ public sealed class EqualsTest
 		DecodedRune? decodedRune2 = DecodedRune.Decode("B".AsSpan());
 
 		Assert.False(decodedRune1?.Equals(decodedRune2));
-		Assert.False(decodedRune1?.Equals(decodedRune2?.Value));
+		try
+		{
+			Assert.False(decodedRune1?.Equals(EqualsTest.CreateRune(decodedRune2?.Value)));
+		}
+		catch (Exception)
+		{
+			// NetStandard
+			Assert.False(decodedRune1?.Equals(decodedRune2?.Value));
+		}
 	}
 
 	[Fact]
@@ -39,5 +55,16 @@ public sealed class EqualsTest
 	{
 		DecodedRune? decodedRune = DecodedRune.Decode("A".AsSpan());
 		Assert.False(decodedRune?.Equals(null));
+	}
+
+	private static Rune? CreateRune(Int32? value)
+	{
+		if (!value.HasValue)
+			return default;
+
+		Span<Rune> result = stackalloc Rune[1];
+		Span<Int32> values = MemoryMarshal.Cast<Rune, Int32>(result);
+		values[0] = value.Value;
+		return result[0];
 	}
 }

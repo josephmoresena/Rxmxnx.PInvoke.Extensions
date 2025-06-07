@@ -38,6 +38,7 @@ public partial struct Composite<TBufferA, TBufferB, T> : IManagedBinaryBuffer<Co
 	/// </summary>
 	private TBufferB _buff1;
 
+#if NET6_0_OR_GREATER
 	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => Composite<TBufferA, TBufferB, T>.typeMetadata;
 	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [TBufferA.TypeMetadata, TBufferB.TypeMetadata,];
 
@@ -46,6 +47,7 @@ public partial struct Composite<TBufferA, TBufferB, T> : IManagedBinaryBuffer<Co
 		IManagedBuffer<T>.AppendComponent<TBufferA>(components);
 		IManagedBuffer<T>.AppendComponent<TBufferB>(components);
 	}
+#endif
 
 	/// <summary>
 	/// Determines if current buffer type is binary.

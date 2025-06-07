@@ -331,8 +331,6 @@ public partial class CString
 				escapeIndex -= 6; // Adjust for "\uXXXX" prefix.
 				escapeSize *= 2; // Double the size for surrogate pairs.
 			}
-			escapeIndex -= 6; // Adjust for "\uXXXX" prefix.
-			escapeSize *= 2; // Double the size for surrogate pairs.
 			return rune;
 		}
 		/// <summary>

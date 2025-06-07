@@ -27,6 +27,7 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 	/// </summary>
 	private TArray _value;
 
+#if NET6_0_OR_GREATER
 	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [];
 	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => NonBinarySpace<TArray, T>.typeMetadata;
 
@@ -34,6 +35,7 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 	[ExcludeFromCodeCoverage]
 #endif
 	static void IManagedBuffer<T>.AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components) { }
+#endif
 
 	/// <summary>
 	/// Retrieves the <see cref="BufferTypeMetadata{T}"/> instance for current type.

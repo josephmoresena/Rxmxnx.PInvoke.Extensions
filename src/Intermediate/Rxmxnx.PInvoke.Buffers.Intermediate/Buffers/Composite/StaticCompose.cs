@@ -3,7 +3,7 @@ namespace Rxmxnx.PInvoke.Buffers;
 #pragma warning disable CA2252
 public partial struct Composite<TBufferA, TBufferB, T>
 {
-#if BINARY_SPACES
+#if NET6_0_OR_GREATER && BINARY_SPACES
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

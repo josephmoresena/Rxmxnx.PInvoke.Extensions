@@ -10,6 +10,19 @@ namespace Rxmxnx.PInvoke.Buffers;
 public interface IManagedBuffer<T>
 {
 	/// <summary>
+	/// Appends all components from <paramref name="component"/> instance.
+	/// </summary>
+	/// <param name="component">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
+	/// <param name="components">A dictionary of components.</param>
+	private static void AppendComponent(BufferTypeMetadata<T> component,
+		IDictionary<UInt16, BufferTypeMetadata<T>> components)
+	{
+		if (!components.TryAdd(component.Size, component)) return;
+		foreach (BufferTypeMetadata<T> metadataComponent in component.Components.AsSpan())
+			IManagedBuffer<T>.AppendComponent(metadataComponent, components);
+	}
+#if NET6_0_OR_GREATER
+	/// <summary>
 	/// Current type components.
 	/// </summary>
 #if NET6_0
@@ -59,17 +72,5 @@ public interface IManagedBuffer<T>
 #pragma warning disable CA2252
 		=> TBuffer.TypeMetadata;
 #pragma warning restore CA2252
-
-	/// <summary>
-	/// Appends all components from <paramref name="component"/> instance.
-	/// </summary>
-	/// <param name="component">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
-	/// <param name="components">A dictionary of components.</param>
-	private static void AppendComponent(BufferTypeMetadata<T> component,
-		IDictionary<UInt16, BufferTypeMetadata<T>> components)
-	{
-		if (!components.TryAdd(component.Size, component)) return;
-		foreach (BufferTypeMetadata<T> metadataComponent in component.Components.AsSpan())
-			IManagedBuffer<T>.AppendComponent(metadataComponent, components);
-	}
+#endif
 }
