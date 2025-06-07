@@ -7,6 +7,22 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 /// </summary>
 internal static class RuneCompat
 {
+	/// <summary>
+	/// Target framework for the current build.
+	/// </summary>
+	public static readonly String TargetFramework =
+#if !NETCOREAPP
+		".NETStandard 2.1";
+#elif NETCOREAPP3_0
+		".NETCoreApp 3.0.3";
+#elif NETCOREAPP3_1
+		".NETCoreApp 3.1.12";
+#elif NET5_0
+		".NETCoreApp 5.0.17";
+#else
+		RuntimeInformation.FrameworkDescription;
+#endif
+
 	private const UInt32 replacementChar = 0xFFFD;
 	private const Char highSurrogateStart = '\ud800';
 	private const Char lowSurrogateStart = '\udc00';
@@ -57,7 +73,7 @@ internal static class RuneCompat
 			if ((UInt32)index >= (UInt32)source.Length) goto NeedsMoreData;
 
 			UInt32 tempValue = source[index];
-			if (tempValue <= 0x7Fu) goto NotAscii;
+			if (!(tempValue <= 0x7Fu)) goto NotAscii;
 
 			Finish:
 

@@ -1,5 +1,5 @@
 ﻿#if !NET6_0_OR_GREATER
-using MemoryMarshallCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshallCompat;
+using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
 #endif
 
 namespace Rxmxnx.PInvoke;
@@ -101,7 +101,7 @@ public unsafe partial class CStringSequence
 	{
 		Int32 position = 0;
 		ref CString? refCStr = ref *state.Ptr;
-		ReadOnlySpan<CString?> values = MemoryMarshal.CreateReadOnlySpan(ref refCStr, state.Length)!;
+		ReadOnlySpan<CString?> values = MemoryMarshal.CreateReadOnlySpan(ref refCStr, state.Length);
 		Span<Byte> byteSpan = MemoryMarshal.AsBytes(charSpan);
 		foreach (CString? value in values)
 		{
@@ -255,7 +255,7 @@ public unsafe partial class CStringSequence
 #if NET6_0_OR_GREATER
 				result[i] = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(list[i]).Length;
 #else
-				result[i] = MemoryMarshallCompat.CreateReadOnlySpanFromNullTerminated(list[i]).Length;
+				result[i] = MemoryMarshalCompat.CreateReadOnlySpanFromNullTerminated(list[i]).Length;
 #endif
 		}
 		return result;
@@ -376,10 +376,10 @@ public unsafe partial class CStringSequence
 		{
 			CopyTextHelper state = new() { Pointer = ptr, Length = buffer.Length, NullChars = [], };
 			sequenceBuffer = String.Create(totalChars, state, CStringSequence.CopyText);
-#if NET6_0_OR_GREATER
+#if NET5_0_OR_GREATER
 			nulls = CollectionsMarshal.AsSpan(state.NullChars);
 #else
-			Span<Int32> nullsTmp = stackalloc Int32[buffer.Length];
+			Span<Int32> nullsTmp = stackalloc Int32[state.NullChars.Count];
 			for (Int32 i = 0; i < state.NullChars.Count; i++)
 				nullsTmp[i] = state.NullChars[i];
 #pragma warning disable CS9080
@@ -405,10 +405,10 @@ public unsafe partial class CStringSequence
 				nulls.Add(i);
 		}
 		if (span[^1] != default) nulls.Add(span.Length);
-#if NET6_0_OR_GREATER
+#if NET5_0_OR_GREATER
 		Int32?[] lengths = CStringSequence.GetLengths(CollectionsMarshal.AsSpan(nulls));
 #else
-		Span<Int32> nullsTmp = stackalloc Int32[buffer.Length];
+		Span<Int32> nullsTmp = stackalloc Int32[nulls.Count];
 		for (Int32 i = 0; i < nulls.Count; i++)
 			nullsTmp[i] = nulls[i];
 		Int32?[] lengths = CStringSequence.GetLengths(nullsTmp);

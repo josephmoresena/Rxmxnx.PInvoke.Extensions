@@ -3,6 +3,8 @@
 [ExcludeFromCodeCoverage]
 public sealed class EqualsTest
 {
+	private static readonly Boolean useSystemRune = (Object?)default(DecodedRune) is IEquatable<Rune>;
+
 	[Fact]
 	internal void EqualityInstanceTest()
 	{
@@ -21,15 +23,9 @@ public sealed class EqualsTest
 		DecodedRune? decodedRune2 = DecodedRune.Decode(source);
 
 		Assert.True(decodedRune1?.Equals(decodedRune2));
-		try
-		{
-			Assert.True(decodedRune1?.Equals(EqualsTest.CreateRune(decodedRune2?.Value)));
-		}
-		catch (Exception)
-		{
-			// NetStandard
-			Assert.True(decodedRune1?.Equals(decodedRune2?.Value));
-		}
+		Assert.True(EqualsTest.useSystemRune ?
+			            decodedRune1?.Equals(EqualsTest.CreateRune(decodedRune2?.Value)) :
+			            decodedRune1?.Equals((UInt32?)decodedRune2?.Value));
 	}
 
 	[Fact]
@@ -39,15 +35,9 @@ public sealed class EqualsTest
 		DecodedRune? decodedRune2 = DecodedRune.Decode("B".AsSpan());
 
 		Assert.False(decodedRune1?.Equals(decodedRune2));
-		try
-		{
-			Assert.False(decodedRune1?.Equals(EqualsTest.CreateRune(decodedRune2?.Value)));
-		}
-		catch (Exception)
-		{
-			// NetStandard
-			Assert.False(decodedRune1?.Equals(decodedRune2?.Value));
-		}
+		Assert.False(EqualsTest.useSystemRune ?
+			             decodedRune1?.Equals(EqualsTest.CreateRune(decodedRune2?.Value)) :
+			             decodedRune1?.Equals((UInt32?)decodedRune2?.Value));
 	}
 
 	[Fact]

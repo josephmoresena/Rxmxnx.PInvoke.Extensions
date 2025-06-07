@@ -20,7 +20,7 @@ public sealed class GetNativeMethodTest
 	[InlineData(false, false, false, true)]
 	internal void EmptyTest(Boolean zeroPtr, Boolean generic, Boolean emptyName = false, Boolean useRealHandle = false)
 	{
-		Skip.If(MemoryMarshallCompat.TargetFramework.Contains(".NETStandard"),
+		Skip.If(MemoryMarshalCompat.TargetFramework.Contains(".NETStandard"),
 		        ".NETStandard does not support NativeLibrary class.");
 
 		String prefix = GetNativeMethodTest.fixture.Create<String>();
@@ -50,7 +50,7 @@ public sealed class GetNativeMethodTest
 	[InlineData(false)]
 	internal void NormalTest(Boolean generic)
 	{
-		Skip.If(MemoryMarshallCompat.TargetFramework.Contains(".NETStandard"),
+		Skip.If(MemoryMarshalCompat.TargetFramework.Contains(".NETStandard"),
 		        ".NETStandard does not support NativeLibrary class.");
 
 		IntPtr handle = NativeLibrary.Load(LoadNativeLibTest.LibraryName);

@@ -14,7 +14,7 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-internal static unsafe class MemoryMarshallCompat
+internal static unsafe class MemoryMarshalCompat
 {
 	/// <summary>
 	/// Target framework for the current build.
@@ -46,7 +46,7 @@ internal static unsafe class MemoryMarshallCompat
 	public static ReadOnlySpan<Byte> CreateReadOnlySpanFromNullTerminated(Byte* value)
 	{
 		ref Byte ref0 = ref *value;
-		Int32 length = MemoryMarshallCompat.IndexOf(ref *value, (Byte)'\0', Int32.MaxValue);
+		Int32 length = MemoryMarshalCompat.IndexOf(ref *value, (Byte)'\0', Int32.MaxValue);
 		if (length < 0)
 			throw new ArgumentException(null, nameof(value));
 		return MemoryMarshal.CreateReadOnlySpan(ref ref0, length);
@@ -63,10 +63,15 @@ internal static unsafe class MemoryMarshallCompat
 	public static ReadOnlySpan<Char> CreateReadOnlySpanFromNullTerminated(Char* value)
 	{
 		ref Char ref0 = ref *value;
-		Int32 length = MemoryMarshallCompat.IndexOf(ref ref0, '\0', Int32.MaxValue);
+		Int32 length = MemoryMarshalCompat.IndexOf(ref ref0, '\0', Int32.MaxValue);
 		if (length < 0)
 			throw new ArgumentException(null, nameof(value));
 		return MemoryMarshal.CreateReadOnlySpan(ref ref0, length);
+	}
+	public static Boolean IsNullSpan(ReadOnlySpan<Byte> utfSpan)
+	{
+		fixed (Byte* ptr = &MemoryMarshal.GetReference(utfSpan))
+			return ptr == System_IntPtr.Zero.ToPointer();
 	}
 
 /* The code in the following region was extracted directly from the CoreCLR source code to provide .NET 5 compatibility. */
@@ -83,33 +88,33 @@ internal static unsafe class MemoryMarshallCompat
 		if (Sse2.IsSupported || AdvSimd.Arm64.IsSupported)
 		{
 			if (length >= Vector128<Byte>.Count * 2)
-				lengthToExamine = MemoryMarshallCompat.UnalignedCountVector128(ref searchSpace);
+				lengthToExamine = MemoryMarshalCompat.UnalignedCountVector128(ref searchSpace);
 		}
 		else if (Vector.IsHardwareAccelerated)
 		{
 			if (length >= Vector<Byte>.Count * 2)
-				lengthToExamine = MemoryMarshallCompat.UnalignedCountVector(ref searchSpace);
+				lengthToExamine = MemoryMarshalCompat.UnalignedCountVector(ref searchSpace);
 		}
 		SequentialScan:
 		while (lengthToExamine >= 8)
 		{
 			lengthToExamine -= 8;
 
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallCompat.ToByteOffset(offset)))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshalCompat.ToByteOffset(offset)))
 				goto Found;
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallCompat.ToByteOffset(offset + 1)))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshalCompat.ToByteOffset(offset + 1)))
 				goto Found1;
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallCompat.ToByteOffset(offset + 2)))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshalCompat.ToByteOffset(offset + 2)))
 				goto Found2;
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallCompat.ToByteOffset(offset + 3)))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshalCompat.ToByteOffset(offset + 3)))
 				goto Found3;
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallCompat.ToByteOffset(offset + 4)))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshalCompat.ToByteOffset(offset + 4)))
 				goto Found4;
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallCompat.ToByteOffset(offset + 5)))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshalCompat.ToByteOffset(offset + 5)))
 				goto Found5;
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallCompat.ToByteOffset(offset + 6)))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshalCompat.ToByteOffset(offset + 6)))
 				goto Found6;
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallCompat.ToByteOffset(offset + 7)))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshalCompat.ToByteOffset(offset + 7)))
 				goto Found7;
 
 			offset += 8;
@@ -119,13 +124,13 @@ internal static unsafe class MemoryMarshallCompat
 		{
 			lengthToExamine -= 4;
 
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallCompat.ToByteOffset(offset)))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshalCompat.ToByteOffset(offset)))
 				goto Found;
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallCompat.ToByteOffset(offset + 1)))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshalCompat.ToByteOffset(offset + 1)))
 				goto Found1;
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallCompat.ToByteOffset(offset + 2)))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshalCompat.ToByteOffset(offset + 2)))
 				goto Found2;
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallCompat.ToByteOffset(offset + 3)))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshalCompat.ToByteOffset(offset + 3)))
 				goto Found3;
 
 			offset += 4;
@@ -135,7 +140,7 @@ internal static unsafe class MemoryMarshallCompat
 		{
 			lengthToExamine -= 1;
 
-			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshallCompat.ToByteOffset(offset)))
+			if (uValue == Unsafe.AddByteOffset(ref searchSpace, MemoryMarshalCompat.ToByteOffset(offset)))
 				goto Found;
 
 			offset += 1;
@@ -148,7 +153,7 @@ internal static unsafe class MemoryMarshallCompat
 			if ((((UInt32)Unsafe.AsPointer(ref searchSpace) + offset) & (UIntPtr)(Vector256<Byte>.Count - 1)) != 0)
 			{
 				Vector128<Byte> values = Vector128.Create(value);
-				Vector128<Byte> search = MemoryMarshallCompat.LoadVector128(ref searchSpace, offset);
+				Vector128<Byte> search = MemoryMarshalCompat.LoadVector128(ref searchSpace, offset);
 
 				Int32 matches = Sse2.MoveMask(Sse2.CompareEqual(values, search));
 				if (matches == 0)
@@ -157,13 +162,13 @@ internal static unsafe class MemoryMarshallCompat
 					return (Int32)(offset + (UInt32)BitOperations.TrailingZeroCount(matches));
 			}
 
-			lengthToExamine = MemoryMarshallCompat.GetByteVector256SpanLength(offset, length);
+			lengthToExamine = MemoryMarshalCompat.GetByteVector256SpanLength(offset, length);
 			if (lengthToExamine > offset)
 			{
 				Vector256<Byte> values = Vector256.Create(value);
 				do
 				{
-					Vector256<Byte> search = MemoryMarshallCompat.LoadVector256(ref searchSpace, offset);
+					Vector256<Byte> search = MemoryMarshalCompat.LoadVector256(ref searchSpace, offset);
 					Int32 matches = Avx2.MoveMask(Avx2.CompareEqual(values, search));
 
 					if (matches != 0) return (Int32)(offset + (UInt32)BitOperations.TrailingZeroCount(matches));
@@ -172,11 +177,11 @@ internal static unsafe class MemoryMarshallCompat
 				} while (lengthToExamine > offset);
 			}
 
-			lengthToExamine = MemoryMarshallCompat.GetByteVector128SpanLength(offset, length);
+			lengthToExamine = MemoryMarshalCompat.GetByteVector128SpanLength(offset, length);
 			if (lengthToExamine > offset)
 			{
 				Vector128<Byte> values = Vector128.Create(value);
-				Vector128<Byte> search = MemoryMarshallCompat.LoadVector128(ref searchSpace, offset);
+				Vector128<Byte> search = MemoryMarshalCompat.LoadVector128(ref searchSpace, offset);
 
 				Int32 matches = Sse2.MoveMask(Sse2.CompareEqual(values, search));
 				if (matches == 0)
@@ -194,12 +199,12 @@ internal static unsafe class MemoryMarshallCompat
 		{
 			if (offset >= (UInt32)length) return -1;
 
-			lengthToExamine = MemoryMarshallCompat.GetByteVector128SpanLength(offset, length);
+			lengthToExamine = MemoryMarshalCompat.GetByteVector128SpanLength(offset, length);
 
 			Vector128<Byte> values = Vector128.Create(value);
 			while (lengthToExamine > offset)
 			{
-				Vector128<Byte> search = MemoryMarshallCompat.LoadVector128(ref searchSpace, offset);
+				Vector128<Byte> search = MemoryMarshalCompat.LoadVector128(ref searchSpace, offset);
 
 				// Same method as above
 				Int32 matches = Sse2.MoveMask(Sse2.CompareEqual(values, search));
@@ -216,7 +221,7 @@ internal static unsafe class MemoryMarshallCompat
 		{
 			if (offset >= (UInt32)length) return -1;
 
-			lengthToExamine = MemoryMarshallCompat.GetByteVector128SpanLength(offset, length);
+			lengthToExamine = MemoryMarshalCompat.GetByteVector128SpanLength(offset, length);
 
 			Vector128<Byte> mask = Vector128.Create((UInt16)0x1001).AsByte();
 			Int32 matchedLane = 0;
@@ -224,10 +229,10 @@ internal static unsafe class MemoryMarshallCompat
 			Vector128<Byte> values = Vector128.Create(value);
 			while (lengthToExamine > offset)
 			{
-				Vector128<Byte> search = MemoryMarshallCompat.LoadVector128(ref searchSpace, offset);
+				Vector128<Byte> search = MemoryMarshalCompat.LoadVector128(ref searchSpace, offset);
 				Vector128<Byte> compareResult = AdvSimd.CompareEqual(values, search);
 
-				if (MemoryMarshallCompat.TryFindFirstMatchedLane(mask, compareResult, ref matchedLane))
+				if (MemoryMarshalCompat.TryFindFirstMatchedLane(mask, compareResult, ref matchedLane))
 					return (Int32)(offset + (UInt32)matchedLane);
 
 				offset += (UIntPtr)Vector128<Byte>.Count;
@@ -241,15 +246,15 @@ internal static unsafe class MemoryMarshallCompat
 		{
 			if (offset >= (UInt32)length) return -1;
 
-			lengthToExamine = MemoryMarshallCompat.GetByteVectorSpanLength(offset, length);
+			lengthToExamine = MemoryMarshalCompat.GetByteVectorSpanLength(offset, length);
 
 			Vector<Byte> values = new(value);
 
 			while (lengthToExamine > offset)
 			{
-				Vector<Byte> matches = Vector.Equals(values, MemoryMarshallCompat.LoadVector(ref searchSpace, offset));
+				Vector<Byte> matches = Vector.Equals(values, MemoryMarshalCompat.LoadVector(ref searchSpace, offset));
 				if (!Vector<Byte>.Zero.Equals(matches))
-					return (Int32)offset + MemoryMarshallCompat.LocateFirstFoundByte(matches);
+					return (Int32)offset + MemoryMarshalCompat.LocateFirstFoundByte(matches);
 
 				offset += (UIntPtr)Vector<Byte>.Count;
 			}
@@ -290,12 +295,12 @@ internal static unsafe class MemoryMarshallCompat
 		else if (Sse2.IsSupported || AdvSimd.Arm64.IsSupported)
 		{
 			if (length >= Vector128<UInt16>.Count * 2)
-				lengthToExamine = MemoryMarshallCompat.UnalignedCountVector128(ref searchSpace);
+				lengthToExamine = MemoryMarshalCompat.UnalignedCountVector128(ref searchSpace);
 		}
 		else if (Vector.IsHardwareAccelerated)
 		{
 			if (length >= Vector<UInt16>.Count * 2)
-				lengthToExamine = MemoryMarshallCompat.UnalignedCountVector(ref searchSpace);
+				lengthToExamine = MemoryMarshalCompat.UnalignedCountVector(ref searchSpace);
 		}
 
 		SequentialScan:
@@ -332,7 +337,7 @@ internal static unsafe class MemoryMarshallCompat
 			if (((IntPtr)Unsafe.AsPointer(ref Unsafe.Add(ref searchSpace, offset)) & (Vector256<Byte>.Count - 1)) != 0)
 			{
 				Vector128<UInt16> values = Vector128.Create(value);
-				Vector128<UInt16> search = MemoryMarshallCompat.LoadVector128(ref searchSpace, offset);
+				Vector128<UInt16> search = MemoryMarshalCompat.LoadVector128(ref searchSpace, offset);
 				Int32 matches = Sse2.MoveMask(Sse2.CompareEqual(values, search).AsByte());
 				if (matches == 0)
 					offset += Vector128<UInt16>.Count;
@@ -340,13 +345,13 @@ internal static unsafe class MemoryMarshallCompat
 					return (Int32)(offset + (UInt32)BitOperations.TrailingZeroCount(matches) / sizeof(Char));
 			}
 
-			lengthToExamine = MemoryMarshallCompat.GetCharVector256SpanLength(offset, length);
+			lengthToExamine = MemoryMarshalCompat.GetCharVector256SpanLength(offset, length);
 			if (lengthToExamine > 0)
 			{
 				Vector256<UInt16> values = Vector256.Create(value);
 				do
 				{
-					Vector256<UInt16> search = MemoryMarshallCompat.LoadVector256(ref searchSpace, offset);
+					Vector256<UInt16> search = MemoryMarshalCompat.LoadVector256(ref searchSpace, offset);
 					Int32 matches = Avx2.MoveMask(Avx2.CompareEqual(values, search).AsByte());
 
 					if (matches != 0)
@@ -357,11 +362,11 @@ internal static unsafe class MemoryMarshallCompat
 				} while (lengthToExamine > 0);
 			}
 
-			lengthToExamine = MemoryMarshallCompat.GetCharVector128SpanLength(offset, length);
+			lengthToExamine = MemoryMarshalCompat.GetCharVector128SpanLength(offset, length);
 			if (lengthToExamine > 0)
 			{
 				Vector128<UInt16> values = Vector128.Create(value);
-				Vector128<UInt16> search = MemoryMarshallCompat.LoadVector128(ref searchSpace, offset);
+				Vector128<UInt16> search = MemoryMarshalCompat.LoadVector128(ref searchSpace, offset);
 
 				Int32 matches = Sse2.MoveMask(Sse2.CompareEqual(values, search).AsByte());
 				if (matches == 0)
@@ -379,13 +384,13 @@ internal static unsafe class MemoryMarshallCompat
 		{
 			if (offset >= length) return -1;
 
-			lengthToExamine = MemoryMarshallCompat.GetCharVector128SpanLength(offset, length);
+			lengthToExamine = MemoryMarshalCompat.GetCharVector128SpanLength(offset, length);
 			if (lengthToExamine > 0)
 			{
 				Vector128<UInt16> values = Vector128.Create(value);
 				do
 				{
-					Vector128<UInt16> search = MemoryMarshallCompat.LoadVector128(ref searchSpace, offset);
+					Vector128<UInt16> search = MemoryMarshalCompat.LoadVector128(ref searchSpace, offset);
 					Int32 matches = Sse2.MoveMask(Sse2.CompareEqual(values, search).AsByte());
 					if (matches != 0)
 						return (Int32)(offset + ((UInt32)BitOperations.TrailingZeroCount(matches) / sizeof(Char)));
@@ -404,7 +409,7 @@ internal static unsafe class MemoryMarshallCompat
 		{
 			if (offset >= length) return -1;
 
-			lengthToExamine = MemoryMarshallCompat.GetCharVector128SpanLength(offset, length);
+			lengthToExamine = MemoryMarshalCompat.GetCharVector128SpanLength(offset, length);
 			if (lengthToExamine > 0)
 			{
 				Vector128<UInt16> values = Vector128.Create(value);
@@ -412,10 +417,10 @@ internal static unsafe class MemoryMarshallCompat
 
 				do
 				{
-					Vector128<UInt16> search = MemoryMarshallCompat.LoadVector128(ref searchSpace, offset);
+					Vector128<UInt16> search = MemoryMarshalCompat.LoadVector128(ref searchSpace, offset);
 					Vector128<UInt16> compareResult = AdvSimd.CompareEqual(values, search);
 
-					if (MemoryMarshallCompat.TryFindFirstMatchedLane(compareResult, ref matchedLane))
+					if (MemoryMarshalCompat.TryFindFirstMatchedLane(compareResult, ref matchedLane))
 						return (Int32)(offset + matchedLane);
 
 					offset += Vector128<UInt16>.Count;
@@ -431,7 +436,7 @@ internal static unsafe class MemoryMarshallCompat
 		if (Vector.IsHardwareAccelerated)
 		{
 			if (offset >= length) return -1;
-			lengthToExamine = MemoryMarshallCompat.GetCharVectorSpanLength(offset, length);
+			lengthToExamine = MemoryMarshalCompat.GetCharVectorSpanLength(offset, length);
 
 			if (lengthToExamine > 0)
 			{
@@ -439,9 +444,9 @@ internal static unsafe class MemoryMarshallCompat
 				do
 				{
 					Vector<UInt16> matches =
-						Vector.Equals(values, MemoryMarshallCompat.LoadVector(ref searchSpace, offset));
+						Vector.Equals(values, MemoryMarshalCompat.LoadVector(ref searchSpace, offset));
 					if (!Vector<UInt16>.Zero.Equals(matches))
-						return (Int32)(offset + MemoryMarshallCompat.LocateFirstFoundChar(matches));
+						return (Int32)(offset + MemoryMarshalCompat.LocateFirstFoundChar(matches));
 
 					offset += Vector<UInt16>.Count;
 					lengthToExamine -= Vector<UInt16>.Count;
@@ -473,7 +478,7 @@ internal static unsafe class MemoryMarshallCompat
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Vector<Byte> LoadVector(ref Byte start, UIntPtr offset)
 		=> Unsafe.ReadUnaligned<Vector<Byte>>(
-			ref Unsafe.AddByteOffset(ref start, MemoryMarshallCompat.ToByteOffset(offset)));
+			ref Unsafe.AddByteOffset(ref start, MemoryMarshalCompat.ToByteOffset(offset)));
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr UnalignedCountVector128(ref Char searchSpace)
 	{
@@ -507,7 +512,7 @@ internal static unsafe class MemoryMarshallCompat
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Vector128<Byte> LoadVector128(ref Byte start, UIntPtr offset)
 		=> Unsafe.ReadUnaligned<Vector128<Byte>>(
-			ref Unsafe.AddByteOffset(ref start, MemoryMarshallCompat.ToByteOffset(offset)));
+			ref Unsafe.AddByteOffset(ref start, MemoryMarshalCompat.ToByteOffset(offset)));
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Int32 LocateFirstFoundChar(Vector<UInt16> match)
 	{
@@ -519,7 +524,7 @@ internal static unsafe class MemoryMarshallCompat
 			candidate = vector64[i];
 			if (candidate != 0) break;
 		}
-		return i * 4 + MemoryMarshallCompat.LocateFirstFoundChar(candidate);
+		return i * 4 + MemoryMarshalCompat.LocateFirstFoundChar(candidate);
 	}
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Int32 LocateFirstFoundChar(UInt64 match) => BitOperations.TrailingZeroCount(match) >> 4;
@@ -559,7 +564,7 @@ internal static unsafe class MemoryMarshallCompat
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Vector256<byte> LoadVector256(ref Byte start, UIntPtr offset)
 		=> Unsafe.ReadUnaligned<Vector256<Byte>>(
-			ref Unsafe.AddByteOffset(ref start, MemoryMarshallCompat.ToByteOffset(offset)));
+			ref Unsafe.AddByteOffset(ref start, MemoryMarshalCompat.ToByteOffset(offset)));
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr GetCharVector256SpanLength(IntPtr offset, IntPtr length)
 		=> (length - offset) & ~(Vector256<UInt16>.Count - 1);
@@ -579,7 +584,7 @@ internal static unsafe class MemoryMarshallCompat
 			if (candidate != 0) break;
 		}
 
-		return i * 8 + MemoryMarshallCompat.LocateFirstFoundByte(candidate);
+		return i * 8 + MemoryMarshalCompat.LocateFirstFoundByte(candidate);
 	}
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Int32 LocateFirstFoundByte(UInt64 match) => BitOperations.TrailingZeroCount(match) >> 3;

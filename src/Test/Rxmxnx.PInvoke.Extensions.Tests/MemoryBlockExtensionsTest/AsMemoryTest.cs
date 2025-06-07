@@ -47,8 +47,8 @@ public class AsMemoryTest
 	internal void ByteTest(Int32 dimension)
 	{
 		Skip.If(
-			MemoryMarshallCompat.TargetFramework.Contains(".NETStandard") ||
-			MemoryMarshallCompat.TargetFramework.Contains(".NETCoreApp"),
+			MemoryMarshalCompat.TargetFramework.Contains(".NETStandard") ||
+			MemoryMarshalCompat.TargetFramework.Contains(".NETCoreApp"),
 			"Building for .NET Standard or .NET Core does not support MemoryMarshal.GetArrayDataReference(Array).");
 		AsMemoryTest.GenericTest<Byte>(dimension);
 	}
@@ -87,8 +87,8 @@ public class AsMemoryTest
 	internal void Int32Test(Int32 dimension)
 	{
 		Skip.If(
-			MemoryMarshallCompat.TargetFramework.Contains(".NETStandard") ||
-			MemoryMarshallCompat.TargetFramework.Contains(".NETCoreApp"),
+			MemoryMarshalCompat.TargetFramework.Contains(".NETStandard") ||
+			MemoryMarshalCompat.TargetFramework.Contains(".NETCoreApp"),
 			"Building for .NET Standard or .NET Core does not support MemoryMarshal.GetArrayDataReference(Array).");
 		AsMemoryTest.GenericTest<Int32>(dimension);
 	}
@@ -127,8 +127,8 @@ public class AsMemoryTest
 	internal void StringTest(Int32 dimension)
 	{
 		Skip.If(
-			MemoryMarshallCompat.TargetFramework.Contains(".NETStandard") ||
-			MemoryMarshallCompat.TargetFramework.Contains(".NETCoreApp"),
+			MemoryMarshalCompat.TargetFramework.Contains(".NETStandard") ||
+			MemoryMarshalCompat.TargetFramework.Contains(".NETCoreApp"),
 			"Building for .NET Standard or .NET Core does not support MemoryMarshal.GetArrayDataReference(Array).");
 		AsMemoryTest.GenericTest<String>(dimension);
 	}
@@ -167,8 +167,8 @@ public class AsMemoryTest
 	internal void ObjectTest(Int32 dimension)
 	{
 		Skip.If(
-			MemoryMarshallCompat.TargetFramework.Contains(".NETStandard") ||
-			MemoryMarshallCompat.TargetFramework.Contains(".NETCoreApp"),
+			MemoryMarshalCompat.TargetFramework.Contains(".NETStandard") ||
+			MemoryMarshalCompat.TargetFramework.Contains(".NETCoreApp"),
 			"Building for .NET Standard or .NET Core does not support MemoryMarshal.GetArrayDataReference(Array).");
 		AsMemoryTest.GenericTest<Object>(dimension);
 	}

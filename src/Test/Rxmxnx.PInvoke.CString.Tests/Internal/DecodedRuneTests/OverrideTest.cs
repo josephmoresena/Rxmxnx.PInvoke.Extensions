@@ -18,6 +18,17 @@ public sealed class OverrideTest
 		ReadOnlySpan<Char> source = "A".AsSpan();
 		DecodedRune? decodedRune = DecodedRune.Decode(source);
 
-		Assert.Equal(source.ToString(), decodedRune?.ToString());
+		Assert.Equal(source.ToString(), OverrideTest.CreateString(decodedRune?.Value));
+	}
+
+	private static String? CreateString(Int32? value)
+	{
+		if (!value.HasValue)
+			return default;
+
+		Span<Rune> result = stackalloc Rune[1];
+		Span<Int32> values = MemoryMarshal.Cast<Rune, Int32>(result);
+		values[0] = value.Value;
+		return result[0].ToString();
 	}
 }

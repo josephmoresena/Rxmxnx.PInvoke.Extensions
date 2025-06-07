@@ -50,8 +50,8 @@ public class AsSpanTest
 	internal void ByteTest(Int32 dimension)
 	{
 		Skip.If(
-			MemoryMarshallCompat.TargetFramework.Contains(".NETStandard") ||
-			MemoryMarshallCompat.TargetFramework.Contains(".NETCoreApp"),
+			MemoryMarshalCompat.TargetFramework.Contains(".NETStandard") ||
+			MemoryMarshalCompat.TargetFramework.Contains(".NETCoreApp"),
 			"Building for .NET Standard or .NET Core does not support MemoryMarshal.GetArrayDataReference(Array).");
 		AsSpanTest.GenericTest<Byte>(dimension);
 	}
@@ -90,8 +90,8 @@ public class AsSpanTest
 	internal void Int32Test(Int32 dimension)
 	{
 		Skip.If(
-			MemoryMarshallCompat.TargetFramework.Contains(".NETStandard") ||
-			MemoryMarshallCompat.TargetFramework.Contains(".NETCoreApp"),
+			MemoryMarshalCompat.TargetFramework.Contains(".NETStandard") ||
+			MemoryMarshalCompat.TargetFramework.Contains(".NETCoreApp"),
 			"Building for .NET Standard or .NET Core does not support MemoryMarshal.GetArrayDataReference(Array).");
 		AsSpanTest.GenericTest<Int32>(dimension);
 	}
@@ -130,8 +130,8 @@ public class AsSpanTest
 	internal void StringTest(Int32 dimension)
 	{
 		Skip.If(
-			MemoryMarshallCompat.TargetFramework.Contains(".NETStandard") ||
-			MemoryMarshallCompat.TargetFramework.Contains(".NETCoreApp"),
+			MemoryMarshalCompat.TargetFramework.Contains(".NETStandard") ||
+			MemoryMarshalCompat.TargetFramework.Contains(".NETCoreApp"),
 			"Building for .NET Standard or .NET Core does not support MemoryMarshal.GetArrayDataReference(Array).");
 		AsSpanTest.GenericTest<String>(dimension);
 	}
@@ -170,8 +170,8 @@ public class AsSpanTest
 	internal void ObjectTest(Int32 dimension)
 	{
 		Skip.If(
-			MemoryMarshallCompat.TargetFramework.Contains(".NETStandard") ||
-			MemoryMarshallCompat.TargetFramework.Contains(".NETCoreApp"),
+			MemoryMarshalCompat.TargetFramework.Contains(".NETStandard") ||
+			MemoryMarshalCompat.TargetFramework.Contains(".NETCoreApp"),
 			"Building for .NET Standard or .NET Core does not support MemoryMarshal.GetArrayDataReference(Array).");
 		AsSpanTest.GenericTest<Object>(dimension);
 	}

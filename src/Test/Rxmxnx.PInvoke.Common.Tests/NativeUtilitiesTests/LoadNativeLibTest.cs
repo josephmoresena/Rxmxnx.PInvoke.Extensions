@@ -26,7 +26,7 @@ public sealed class LoadNativeLibTest
 	[InlineData(false, true)]
 	internal void EmptyTest(Boolean unloadEvent, Boolean emptyName = false)
 	{
-		Skip.If(MemoryMarshallCompat.TargetFramework.Contains(".NETStandard"),
+		Skip.If(MemoryMarshalCompat.TargetFramework.Contains(".NETStandard"),
 		        ".NETStandard does not support NativeLibrary class.");
 
 		String prefix = LoadNativeLibTest.fixture.Create<String>();
@@ -51,7 +51,7 @@ public sealed class LoadNativeLibTest
 	[InlineData(false)]
 	internal void NormalTest(Boolean unloadEvent)
 	{
-		Skip.If(MemoryMarshallCompat.TargetFramework.Contains(".NETStandard"),
+		Skip.If(MemoryMarshalCompat.TargetFramework.Contains(".NETStandard"),
 		        ".NETStandard does not support NativeLibrary class.");
 
 		EventHandler? eventHandler = default;

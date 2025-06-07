@@ -1,5 +1,5 @@
 ﻿#if !NET6_0_OR_GREATER
-using MemoryMarshallCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshallCompat;
+using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
 #endif
 
 #if !NET5_0_OR_GREATER
@@ -52,11 +52,10 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// </summary>
 	public Boolean IsZero
 		=> this.IsReference &&
-#if NETCOREAPP3_1_OR_GREATER
-		Unsafe.IsNullRef(ref MemoryMarshal.GetReference(this._data.AsSpan()));
+#if PACKAGE && !NETCOREAPP || NETCOREAPP3_1_OR_GREATER
+			Unsafe.IsNullRef(ref MemoryMarshal.GetReference(this._data.AsSpan()));
 #else
-			Unsafe.AreSame(ref MemoryMarshal.GetReference(this._data.AsSpan()),
-			               ref MemoryMarshal.GetReference(Span<Byte>.Empty));
+			MemoryMarshalCompat.IsNullSpan(this._data.AsSpan());
 #endif
 
 	/// <summary>
@@ -393,7 +392,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 #if NET6_0_OR_GREATER
 			MemoryMarshal.CreateReadOnlySpanFromNullTerminated((Byte*)ptr);
 #else
-			MemoryMarshallCompat.CreateReadOnlySpanFromNullTerminated((Byte*)ptr);
+			MemoryMarshalCompat.CreateReadOnlySpanFromNullTerminated((Byte*)ptr);
 #endif
 		Int32 length = span.Length;
 		return new(ValueRegion<Byte>.Create(ptr, length), false, true, length);
