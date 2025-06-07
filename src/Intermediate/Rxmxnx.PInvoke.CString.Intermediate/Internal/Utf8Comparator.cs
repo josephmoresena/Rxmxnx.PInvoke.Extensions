@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke.Internal;
+﻿#if !NETCOREAPP
+using Rune = System.UInt32;
+#endif
+
+namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// The abstract Utf8Comparator class provides a means for efficiently and customizable
@@ -127,8 +131,8 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
 			if (!runeA.HasValue || !runeB.HasValue) return this.Compare(textA0, textB0, this._ignoreCase) == 0;
 			//If the value of both runes is the same, no further comparison is necessary.
 			if (runeA == runeB) continue;
-			ReadOnlySpan<Char> strA = Char.ConvertFromUtf32(runeA.Value.Value.Value);
-			ReadOnlySpan<Char> strB = Char.ConvertFromUtf32(runeB.Value.Value.Value);
+			ReadOnlySpan<Char> strA = Char.ConvertFromUtf32(runeA.Value.Value);
+			ReadOnlySpan<Char> strB = Char.ConvertFromUtf32(runeB.Value.Value);
 #if NET5_0_OR_GREATER
 			if (this._culture.CompareInfo.Compare(strA, strB, this.GetOptions(this._ignoreCase)) != 0)
 #else

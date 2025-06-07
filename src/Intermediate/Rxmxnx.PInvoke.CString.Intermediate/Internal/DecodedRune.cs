@@ -1,4 +1,9 @@
-﻿namespace Rxmxnx.PInvoke.Internal;
+﻿#if !NETCOREAPP
+using RuneCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuneCompat;
+using Rune = System.UInt32;
+#endif
+
+namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// Represents a decoded <see cref="Rune"/> instance.
@@ -7,7 +12,8 @@
 /// Contains additional information about the decoded rune, including the number of units consumed
 /// during decoding and the raw value read.
 /// </remarks>
-internal readonly struct DecodedRune : IWrapper<Rune>, IEquatable<DecodedRune>
+[StructLayout(LayoutKind.Sequential)]
+internal readonly struct DecodedRune : IEquatable<DecodedRune>
 {
 	/// <summary>
 	/// The raw integer value that was read from the input to form the Rune.
@@ -29,7 +35,12 @@ internal readonly struct DecodedRune : IWrapper<Rune>, IEquatable<DecodedRune>
 	/// <summary>
 	/// The <see cref="Rune"/> instance decoded from the input.
 	/// </summary>
-	public Rune Value => this._value;
+	public Int32 Value
+#if NETCOREAPP
+		=> this._value.Value;
+#else
+		=> (Int32)this._value;
+#endif
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="DecodedRune"/> class.
@@ -79,13 +90,17 @@ internal readonly struct DecodedRune : IWrapper<Rune>, IEquatable<DecodedRune>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static DecodedRune? Decode(ReadOnlySpan<Byte> source)
 	{
+#if NETCOREAPP
 		if (Rune.DecodeFromUtf8(source, out Rune result, out Int32 charsConsumed) != OperationStatus.Done)
+#else
+		if (RuneCompat.DecodeFromUtf8(source, out Rune result, out Int32 charsConsumed) != OperationStatus.Done)
+#endif
 			return default;
 		DecodedRune decoded = new(result, charsConsumed, source[..charsConsumed]);
 		return decoded;
 	}
 	/// <summary>
-	/// Decodes the <see cref="Rune"/> at the beginning of the provided unicode source buffer and
+	/// Decodes the <see cref="Rune"/> at the beginning of the provided Unicode source buffer and
 	/// wraps it into an <see cref="DecodedRune"/> instance. If the decoding fails, it returns null.
 	/// </summary>
 	/// <param name="source">A read-only span of <see cref="Char"/> that represents a text.</param>
@@ -93,7 +108,11 @@ internal readonly struct DecodedRune : IWrapper<Rune>, IEquatable<DecodedRune>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static DecodedRune? Decode(ReadOnlySpan<Char> source)
 	{
+#if NETCOREAPP
 		if (Rune.DecodeFromUtf16(source, out Rune result, out Int32 charsConsumed) != OperationStatus.Done)
+#else
+		if (RuneCompat.DecodeFromUtf16(source, out Rune result, out Int32 charsConsumed) != OperationStatus.Done)
+#endif
 			return default;
 		DecodedRune decoded = new(result, charsConsumed, MemoryMarshal.AsBytes(source[..charsConsumed]));
 		return decoded;
@@ -149,16 +168,6 @@ internal readonly struct DecodedRune : IWrapper<Rune>, IEquatable<DecodedRune>
 		Span<Byte> bytes = MemoryMarshal.AsBytes(integers);
 		source.CopyTo(bytes);
 	}
-
-	/// <summary>
-	/// Defines an implicit conversion from a nullable <see cref="DecodedRune"/> to a <see cref="Rune"/>.
-	/// </summary>
-	/// <param name="rune">The nullable <see cref="DecodedRune"/> value to convert.</param>
-	/// <returns>
-	/// The converted <see cref="Rune"/> value if the input <paramref name="rune"/> is not <see langword="null"/>;
-	/// otherwise, returns the default value of <see cref="Rune"/>.
-	/// </returns>
-	public static implicit operator Rune(DecodedRune? rune) => rune?.Value ?? default;
 
 	/// <summary>
 	/// Checks if two <see cref="DecodedRune"/> instances have the same value.

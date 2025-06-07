@@ -1,3 +1,8 @@
+#if !NETCOREAPP
+using RuneCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuneCompat;
+using Rune = System.UInt32;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 public partial class CString
@@ -276,8 +281,13 @@ public partial class CString
 					JsonConverter.ConsumeStackBytes(nEscaped, ref stackConsumed) ?
 						stackalloc Byte[nEscaped] :
 						JsonConverter.RentArray(nEscaped, out byteArray), buffer[(escapeIndex + baseLength)..]);
+#if NETCOREAPP
 				Rune rune = JsonConverter.GetEscapeRune(buffer, ref escapeIndex, low, ref baseLength);
 				Int32 nBytes = rune.EncodeToUtf8(buffer[escapeIndex..]);
+#else
+				UInt32 rune = JsonConverter.GetEscapeRune(buffer, ref escapeIndex, low, ref baseLength);
+				Int32 nBytes = RuneCompat.EncodeToUtf8(rune, buffer[escapeIndex..]);
+#endif
 				Int32 offset = escapeIndex + nBytes;
 				Int32 result = baseLength - nBytes;
 
@@ -305,14 +315,24 @@ public partial class CString
 			Rune rune;
 			if (!Char.IsLowSurrogate(lowChar) || !JsonConverter.HasHighSurrogate(buffer, escapeIndex, out Char high))
 			{
+#if NETCOREAPP
 				rune = new(lowChar);
 			}
 			else
 			{
 				rune = new(high, lowChar);
+#else
+				rune = lowChar;
+			}
+			else
+			{
+				rune = (Rune)Char.ConvertToUtf32(high, lowChar);
+#endif
 				escapeIndex -= 6; // Adjust for "\uXXXX" prefix.
 				escapeSize *= 2; // Double the size for surrogate pairs.
 			}
+			escapeIndex -= 6; // Adjust for "\uXXXX" prefix.
+			escapeSize *= 2; // Double the size for surrogate pairs.
 			return rune;
 		}
 		/// <summary>

@@ -41,7 +41,11 @@ internal sealed class StringConcatenator : BinaryConcatenator<String>
 		separator, cancellationToken)
 	{
 		this._ignoreEmpty = !String.IsNullOrEmpty(separator);
+#if NETCOREAPP
 		this._writer = new(this.Stream, Encoding.UTF8, leaveOpen: true) { AutoFlush = true, };
+#else
+		this._writer = new(this.Stream, Encoding.UTF8, -1, true) { AutoFlush = true, };
+#endif
 	}
 
 	/// <inheritdoc/>

@@ -37,15 +37,4 @@ public sealed class OperatorsTest
 		Assert.False(decodedRune1 == decodedRune2);
 		Assert.True(decodedRune1 != decodedRune2);
 	}
-
-	[Fact]
-	internal void ImplicitRuneOperatorTest()
-	{
-		ReadOnlySpan<Char> source = "A".AsSpan();
-		DecodedRune? decodedRune = DecodedRune.Decode(source);
-		Rune rune = decodedRune;
-
-		Assert.Equal(decodedRune?.Value, rune);
-		Assert.Equal(default(DecodedRune?), default(Rune));
-	}
 }
