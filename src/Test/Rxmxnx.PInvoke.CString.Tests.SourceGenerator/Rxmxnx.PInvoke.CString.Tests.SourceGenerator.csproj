@@ -5,6 +5,7 @@
         <RootNamespace>Rxmxnx.PInvoke.Tests.SourceGenerator</RootNamespace>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <LangVersion>11</LangVersion>
+        <DefineConstants>$(DefineConstants);SOURCE_GENERATOR</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>

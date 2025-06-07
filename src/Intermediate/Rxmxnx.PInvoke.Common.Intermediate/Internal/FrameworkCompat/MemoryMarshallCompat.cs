@@ -1,9 +1,9 @@
 #if !PACKAGE || !NET6_0_OR_GREATER
 
+using System_IntPtr = System.IntPtr;
 #if NETCOREAPP
 using UIntPtr = nuint;
 using IntPtr = nint;
-using System_IntPtr = System.IntPtr;
 #endif
 
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
@@ -465,7 +465,7 @@ internal static unsafe class MemoryMarshallCompat
 	}
 #if !NETCOREAPP3_1_OR_GREATER
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static System.IntPtr ToByteOffset(UIntPtr ptr) => new((void*)ptr);
+	private static System_IntPtr ToByteOffset(UIntPtr ptr) => new((void*)ptr);
 #else
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static UIntPtr ToByteOffset(UIntPtr ptr) => ptr;
@@ -509,7 +509,7 @@ internal static unsafe class MemoryMarshallCompat
 		=> Unsafe.ReadUnaligned<Vector128<Byte>>(
 			ref Unsafe.AddByteOffset(ref start, MemoryMarshallCompat.ToByteOffset(offset)));
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static Int32 LocateFirstFoundChar(Vector<ushort> match)
+	private static Int32 LocateFirstFoundChar(Vector<UInt16> match)
 	{
 		Vector<UInt64> vector64 = Vector.AsVectorUInt64(match);
 		UInt64 candidate = 0;

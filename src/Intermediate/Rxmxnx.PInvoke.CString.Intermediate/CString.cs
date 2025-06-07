@@ -2,6 +2,10 @@
 using MemoryMarshallCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshallCompat;
 #endif
 
+#if !NET5_0_OR_GREATER
+using Convert = Rxmxnx.PInvoke.Internal.FrameworkCompat.ConvertCompat;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
@@ -46,7 +50,14 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <summary>
 	/// Indicates whether the current <see cref="CString"/> instance is a null pointer.
 	/// </summary>
-	public Boolean IsZero => this.IsReference && Unsafe.IsNullRef(ref MemoryMarshal.GetReference(this._data.AsSpan()));
+	public Boolean IsZero
+		=> this.IsReference &&
+#if NETCOREAPP3_1_OR_GREATER
+		Unsafe.IsNullRef(ref MemoryMarshal.GetReference(this._data.AsSpan()));
+#else
+			Unsafe.AreSame(ref MemoryMarshal.GetReference(this._data.AsSpan()),
+			               ref MemoryMarshal.GetReference(Span<Byte>.Empty));
+#endif
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified

@@ -8,7 +8,9 @@ public partial class CStringSequence
 	public sealed class JsonConverter : JsonConverter<CStringSequence>
 	{
 		/// <inheritdoc/>
+#pragma warning disable CS8764
 		public override CStringSequence? Read(ref Utf8JsonReader reader, Type typeToConvert,
+#pragma warning restore CS8764
 			JsonSerializerOptions options)
 		{
 			ValidationUtilities.ThrowIfNotArray(reader.TokenType);
@@ -26,24 +28,26 @@ public partial class CStringSequence
 		public override void Write(Utf8JsonWriter writer, CStringSequence? value, JsonSerializerOptions options)
 		{
 			if (value is null)
+#if NETCOREAPP3_1_OR_GREATER
 				switch (options.DefaultIgnoreCondition)
 				{
 					case JsonIgnoreCondition.WhenWritingNull:
 					case JsonIgnoreCondition.WhenWritingDefault:
 					case JsonIgnoreCondition.Always:
 						break;
-					default:
-						writer.WriteNullValue();
-						return;
+				default:
+#else
+				if (!options.IgnoreNullValues)
+				{
+#endif
+					writer.WriteNullValue();
+					return;
 				}
 
 			writer.WriteStartArray();
 			if (value is not null)
 				for (Int32 i = 0; i < value.Count; i++)
-				{
-					CString.JsonConverter.Write(writer, value.GetBinarySpan(i), !value._lengths[i].HasValue,
-					                            JsonIgnoreCondition.Never);
-				}
+					CString.JsonConverter.Write(writer, value.GetBinarySpan(i), !value._lengths[i].HasValue, false);
 			writer.WriteEndArray();
 		}
 

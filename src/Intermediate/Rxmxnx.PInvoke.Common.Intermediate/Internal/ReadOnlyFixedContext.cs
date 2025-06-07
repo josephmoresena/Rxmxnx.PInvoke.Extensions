@@ -94,7 +94,7 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
 	{
-#if NETCOREAPP3_1_OR_GREATER
+#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
 		Unsafe.SkipInit(out residual);
 #else
 		residual = default!;

@@ -58,7 +58,11 @@ internal partial class Utf8Comparator<TChar>
 	{
 		ReadOnlySpan<Char> spanA = Utf8Comparator<TChar>.GetUnicodeSpanFromUtf8(textA);
 		ReadOnlySpan<Char> spanB = this.GetUnicodeSpan(textB);
+#if NET5_0_OR_GREATER
 		return this._culture.CompareInfo.Compare(spanA, spanB, this.GetOptions(ignoreCase));
+#else
+		return this._culture.CompareInfo.Compare(spanA.ToString(), spanB.ToString(), this.GetOptions(ignoreCase));
+#endif
 	}
 	/// <summary>
 	/// Compares two specified <see cref="ReadOnlySpan{Char}"/> instances by evaluating the numeric values of the UTF-16 units.

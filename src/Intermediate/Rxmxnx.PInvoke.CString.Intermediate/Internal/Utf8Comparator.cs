@@ -129,7 +129,12 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
 			if (runeA == runeB) continue;
 			ReadOnlySpan<Char> strA = Char.ConvertFromUtf32(runeA.Value.Value.Value);
 			ReadOnlySpan<Char> strB = Char.ConvertFromUtf32(runeB.Value.Value.Value);
+#if NET5_0_OR_GREATER
 			if (this._culture.CompareInfo.Compare(strA, strB, this.GetOptions(this._ignoreCase)) != 0)
+#else
+			if (this._culture.CompareInfo.Compare(strA.ToString(), strB.ToString(),
+			                                      this.GetOptions(this._ignoreCase)) != 0)
+#endif
 				return false;
 		}
 

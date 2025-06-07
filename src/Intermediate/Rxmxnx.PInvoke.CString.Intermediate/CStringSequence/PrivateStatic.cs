@@ -376,7 +376,16 @@ public unsafe partial class CStringSequence
 		{
 			CopyTextHelper state = new() { Pointer = ptr, Length = buffer.Length, NullChars = [], };
 			sequenceBuffer = String.Create(totalChars, state, CStringSequence.CopyText);
+#if NET6_0_OR_GREATER
 			nulls = CollectionsMarshal.AsSpan(state.NullChars);
+#else
+			Span<Int32> nullsTmp = stackalloc Int32[buffer.Length];
+			for (Int32 i = 0; i < state.NullChars.Count; i++)
+				nullsTmp[i] = state.NullChars[i];
+#pragma warning disable CS9080
+			nulls = nullsTmp;
+#pragma warning restore CS9080
+#endif
 		}
 		Int32?[] lengths = CStringSequence.GetLengths(nulls);
 		return new(sequenceBuffer, lengths);
@@ -396,7 +405,14 @@ public unsafe partial class CStringSequence
 				nulls.Add(i);
 		}
 		if (span[^1] != default) nulls.Add(span.Length);
+#if NET6_0_OR_GREATER
 		Int32?[] lengths = CStringSequence.GetLengths(CollectionsMarshal.AsSpan(nulls));
+#else
+		Span<Int32> nullsTmp = stackalloc Int32[buffer.Length];
+		for (Int32 i = 0; i < nulls.Count; i++)
+			nullsTmp[i] = nulls[i];
+		Int32?[] lengths = CStringSequence.GetLengths(nullsTmp);
+#endif
 		return new(buffer, lengths);
 	}
 	/// <summary>

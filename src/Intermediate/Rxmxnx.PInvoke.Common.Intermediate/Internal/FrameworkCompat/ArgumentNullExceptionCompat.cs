@@ -1,9 +1,12 @@
-#if !NET6_0_OR_GREATER
+#if !PACKAGE || !NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 
 /// <summary>
 /// <see cref="ArgumentNullException"/> compatibility utilities for internal use.
 /// </summary>
+#if !PACKAGE
+[ExcludeFromCodeCoverage]
+#endif
 internal static class ArgumentNullExceptionCompat
 {
 	/// <summary>

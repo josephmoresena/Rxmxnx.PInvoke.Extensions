@@ -38,7 +38,7 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 	ref readonly T IReadOnlyReferenceable<T>.Reference => ref this.CreateReadOnlyReference<T>();
 	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IFixedMemory residual)
 	{
-#if NETCOREAPP3_1_OR_GREATER
+#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
 		Unsafe.SkipInit(out residual);
 #else
 		residual = default!;
@@ -49,7 +49,7 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 	}
 	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 	{
-#if NETCOREAPP3_1_OR_GREATER
+#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
 		Unsafe.SkipInit(out residual);
 #else
 		residual = default!;
@@ -61,7 +61,7 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
 	{
-#if NETCOREAPP3_1_OR_GREATER
+#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
 		Unsafe.SkipInit(out residual);
 #else
 		residual = default!;
