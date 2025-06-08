@@ -36,10 +36,9 @@ internal static unsafe partial class MemoryMarshalCompat
 			if (Int32.MaxValue >= (UInt32)Vector128<Byte>.Count * 2)
 				lengthToExamine = MemoryMarshalCompat.UnalignedCountVector128(ref buffer);
 		}
-		else if (Vector.IsHardwareAccelerated)
+		else if (Vector.IsHardwareAccelerated && Int32.MaxValue >= (UInt32)Vector<Byte>.Count * 2)
 		{
-			if (Int32.MaxValue >= (UInt32)Vector<Byte>.Count * 2)
-				lengthToExamine = MemoryMarshalCompat.UnalignedCountVector(ref buffer);
+			lengthToExamine = MemoryMarshalCompat.UnalignedCountVector(ref buffer);
 		}
 		SequentialScan:
 		while (lengthToExamine >= 8)
@@ -243,10 +242,9 @@ internal static unsafe partial class MemoryMarshalCompat
 			if (Int32.MaxValue >= (UInt32)Vector128<UInt16>.Count * 2)
 				lengthToExamine = MemoryMarshalCompat.UnalignedCountVector128(ref searchSpace);
 		}
-		else if (Vector.IsHardwareAccelerated)
+		else if (Vector.IsHardwareAccelerated && Int32.MaxValue >= (UInt32)Vector<UInt16>.Count * 2)
 		{
-			if (Int32.MaxValue >= (UInt32)Vector<UInt16>.Count * 2)
-				lengthToExamine = MemoryMarshalCompat.UnalignedCountVector(ref searchSpace);
+			lengthToExamine = MemoryMarshalCompat.UnalignedCountVector(ref searchSpace);
 		}
 
 		SequentialScan:
