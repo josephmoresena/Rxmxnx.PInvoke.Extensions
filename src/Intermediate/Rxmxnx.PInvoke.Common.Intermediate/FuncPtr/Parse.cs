@@ -46,8 +46,8 @@ public readonly partial struct FuncPtr<TDelegate>
 		IFormatProvider? provider = default)
 		=> (FuncPtr<TDelegate>)IntPtr.Parse(s, style, provider);
 #endif
-#if !PACKAGE
 	/// <inheritdoc cref="IntPtr.TryParse(String?, out IntPtr)"/>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
 	public static Boolean TryParse([NotNullWhen(true)] String? s, out FuncPtr<TDelegate> result)
