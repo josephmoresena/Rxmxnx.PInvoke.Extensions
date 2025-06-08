@@ -23,17 +23,10 @@ public partial class CString
 	{
 		this._isLocal = false;
 		this.IsFunction = true;
-#if NET6_0_OR_GREATER
 		this._data = ValueRegion<Byte>.Create(new SequenceItemState(sequence, index), SequenceItemState.GetSpan,
 		                                      SequenceItemState.Alloc);
-#else
-		this._data = ValueRegion<Byte>.Create(new SequenceItemState(sequence, index), SequenceItemState.GetSpan,
-		                                      SequenceItemState.Alloc);
-#endif
-
-		ReadOnlySpan<Byte> data = CStringSequence.GetItemSpan(sequence, index);
 		this._isNullTerminated = true;
-		this.Length = data.Length;
+		this.Length = this._data.AsSpan().Length;
 	}
 
 	/// <summary>

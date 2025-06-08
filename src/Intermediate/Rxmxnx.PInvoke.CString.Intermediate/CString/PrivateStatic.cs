@@ -156,4 +156,27 @@ public partial class CString
 			JsonConverter.ReleaseStackBytes(stackConsumed);
 		}
 	}
+	/// <summary>
+	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
+	/// </summary>
+	/// <typeparam name="TState">Type of the state object.</typeparam>
+	/// <param name="state">Function state parameter.</param>
+	/// <param name="getSpan">Function to retrieve utf-8 span from the state.</param>
+	/// <param name="isNullTerminated">Indicates whether resulting UTF-8 text is null-terminated.</param>
+	/// <param name="length">UTF-8 text length.</param>
+	/// <returns>
+	/// A new instance of the <see cref="CString"/> class.
+	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+	public
+#else
+	private
+#endif
+		static CString Create<TState>(TState state, ReadOnlySpanFunc<Byte, TState> getSpan, Boolean isNullTerminated,
+			Int32 length) where TState : struct
+	{
+		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, getSpan);
+		return new(data, true, isNullTerminated, length);
+	}
 }

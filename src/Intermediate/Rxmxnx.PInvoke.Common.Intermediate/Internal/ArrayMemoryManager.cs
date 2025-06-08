@@ -89,7 +89,11 @@ internal sealed class ArrayMemoryManager<T> : MemoryManager<T>
 	public static Memory<T> GetMemory(Array? array)
 		=> array is not null ? new ArrayMemoryManager<T>(array).Memory : Memory<T>.Empty;
 
+#if NET6_0_OR_GREATER
 	/// <inheritdoc cref="MemoryMarshal.GetArrayDataReference(Array)"/>
+#else
+	/// <inheritdoc cref="MemoryMarshalCompat.GetArrayDataReference{T}(Array)"/>
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static ref T GetArrayDataReference(Array array)
 	{

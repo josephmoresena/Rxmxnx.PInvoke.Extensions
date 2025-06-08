@@ -5,6 +5,11 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 /// <summary>
 /// Rune compatibility utilities for internal use.
 /// </summary>
+#if !PACKAGE
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1764)]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS907)]
+#endif
 internal static class RuneCompat
 {
 	/// <summary>
@@ -73,7 +78,7 @@ internal static class RuneCompat
 			if ((UInt32)index >= (UInt32)source.Length) goto NeedsMoreData;
 
 			UInt32 tempValue = source[index];
-			if (!(tempValue <= 0x7Fu)) goto NotAscii;
+			if (tempValue > 0x7Fu) goto NotAscii;
 
 			Finish:
 

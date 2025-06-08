@@ -52,13 +52,13 @@ public static class AotInfo
 #else
 			foreach (Assembly? assembly in AppDomain.CurrentDomain.GetAssemblies().AsSpan())
 			{
-				if (assembly.FullName.StartsWith("System.Reflection.Emit"))
+				if (assembly.FullName?.StartsWith("System.Reflection.Emit") == true)
 				{
 					// System.Reflection.Emit is not allowed in NativeAOT.
 					AotInfo.IsNativeAot = AotInfo.TryToEmit();
 					break;
 				}
-				if (!assembly.FullName.Contains("Il2Cpp", StringComparison.OrdinalIgnoreCase)) continue;
+				if (!assembly.FullName?.Contains("Il2Cpp", StringComparison.OrdinalIgnoreCase) == true) continue;
 
 				// IL2CPP is a AOT mode.
 				AotInfo.IsNativeAot = true;

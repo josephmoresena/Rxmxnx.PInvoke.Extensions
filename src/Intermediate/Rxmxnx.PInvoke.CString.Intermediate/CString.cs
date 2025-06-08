@@ -55,7 +55,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 #if PACKAGE && !NETCOREAPP || NETCOREAPP3_1_OR_GREATER
 			Unsafe.IsNullRef(ref MemoryMarshal.GetReference(this._data.AsSpan()));
 #else
-			MemoryMarshalCompat.IsNullSpan(this._data.AsSpan());
+			MemoryMarshalCompat.IsNullText(this._data.AsSpan());
 #endif
 
 	/// <summary>
@@ -276,7 +276,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <see cref="ReadOnlySpanFunc{Byte}"/> delegate provided.
 	/// </summary>
 	/// <param name="func">
-	/// A <see cref="ReadOnlySpanFunc{Byte}"/> delegate that returns a Utf8 string non-literal.
+	/// A <see cref="ReadOnlySpanFunc{Byte}"/> delegate that returns a UTF-8 string non-literal.
 	/// </param>
 	/// <returns>
 	/// A new instance of the <see cref="CString"/> class, if the func is not <see langword="null"/>;
@@ -309,38 +309,11 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-#if NET6_0_OR_GREATER
-	[Obsolete("Use Create<TState>(TState state) instead.", true)]
-#endif
 	public static CString Create<TState>(TState state, ReadOnlySpanFunc<Byte, TState> getSpan, Boolean isNullTerminated,
 		Func<TState, GCHandleType, GCHandle>? alloc = default) where TState : struct
 	{
 		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, getSpan, alloc);
 		return new(data, true, isNullTerminated, getSpan(state).Length);
-	}
-	/// <summary>
-	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
-	/// </summary>
-	/// <typeparam name="TState">Type of the state object.</typeparam>
-	/// <param name="state">Function state parameter.</param>
-	/// <param name="getSpan">Function to retrieve utf-8 span from the state.</param>
-	/// <param name="isNullTerminated">Indicates whether resulting UTF-8 text is null-terminated.</param>
-	/// <param name="length">UTF-8 text length.</param>
-	/// <param name="alloc">Function to allocate a <see cref="GCHandle"/> for the state.</param>
-	/// <returns>
-	/// A new instance of the <see cref="CString"/> class.
-	/// </returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-#if NET6_0_OR_GREATER
-	[Obsolete("Use Create<TState>(TState state) instead.", true)]
-#endif
-	public static CString Create<TState>(TState state, ReadOnlySpanFunc<Byte, TState> getSpan, Boolean isNullTerminated,
-		Int32 length, Func<TState, GCHandleType, GCHandle>? alloc = default) where TState : struct
-	{
-		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, getSpan, alloc);
-		return new(data, true, isNullTerminated, length);
 	}
 #if NET6_0_OR_GREATER
 	/// <summary>
