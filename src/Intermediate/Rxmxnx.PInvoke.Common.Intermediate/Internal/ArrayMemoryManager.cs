@@ -1,6 +1,9 @@
+#if !NET6_0_OR_GREATER
+using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
+#endif
+
 namespace Rxmxnx.PInvoke.Internal;
 
-#if !PACKAGE || NET6_0_OR_GREATER
 /// <summary>
 /// <see cref="MemoryManager{T}"/> Implementation for abstract array.
 /// </summary>
@@ -47,14 +50,7 @@ internal sealed class ArrayMemoryManager<T> : MemoryManager<T>
 				this._handle = GCHandle.Alloc(this._array, GCHandleType.Pinned);
 
 			this._pinCount++;
-			ref T managedRef =
-#if NET6_0_OR_GREATER
-				ref ArrayMemoryManager<T>.GetArrayDataReference(this._array);
-#elif PACKAGE && !NETCOREAPP || NETCOREAPP3_1_OR_GREATER
-				ref Unsafe.NullRef<T>();
-#else
-				ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(Span<Byte>.Empty));
-#endif
+			ref T managedRef = ref Unsafe.AsRef<T>(this._handle.AddrOfPinnedObject().ToPointer());
 			ref T handleRef = ref Unsafe.Add(ref managedRef, elementIndex);
 			return new(Unsafe.AsPointer(ref handleRef), default, this);
 		}
@@ -84,14 +80,7 @@ internal sealed class ArrayMemoryManager<T> : MemoryManager<T>
 	public static Span<T> GetSpan(Array? array)
 	{
 		if (array is null) return default;
-		ref T managedRef =
-#if NET6_0_OR_GREATER
-			ref ArrayMemoryManager<T>.GetArrayDataReference(array);
-#elif PACKAGE && !NETCOREAPP || NETCOREAPP3_1_OR_GREATER
-			ref Unsafe.NullRef<T>();
-#else
-			ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(Span<Byte>.Empty));
-#endif
+		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 		return span;
 	}
@@ -100,13 +89,15 @@ internal sealed class ArrayMemoryManager<T> : MemoryManager<T>
 	public static Memory<T> GetMemory(Array? array)
 		=> array is not null ? new ArrayMemoryManager<T>(array).Memory : Memory<T>.Empty;
 
-#if NET6_0_OR_GREATER
 	/// <inheritdoc cref="MemoryMarshal.GetArrayDataReference(Array)"/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static ref T GetArrayDataReference(Array array)
 	{
+#if NET6_0_OR_GREATER
 		ref Byte byteRef = ref MemoryMarshal.GetArrayDataReference(array);
 		return ref Unsafe.As<Byte, T>(ref byteRef);
+#else
+		return ref MemoryMarshalCompat.GetArrayDataReference<T>(array);
+#endif
 	}
-#endif
 }
-#endif

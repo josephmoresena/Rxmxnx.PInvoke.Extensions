@@ -37,6 +37,7 @@ internal sealed class JapaneseMessageResource : IMessageResource
 	String IMessageResource.LargerThanSequenceLength => "シーケンスの長さを超えることはできません。";
 	String IMessageResource.IndexOutOfSequence => "インデックスと長さはシーケンス内の位置を参照する必要があります。";
 	String IMessageResource.MissingMemoryInspector => "現在のプラットフォームではメモリ検査はサポートされていません。";
+	String IMessageResource.ReflectionDisabled => "この機能を使用するにはフルリフレクションモードが必要です。";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"オブジェクトは {requiredTypeName} 型である必要があります。";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf) => $"現在のインスタンスは、{typeOf} 型の値を含むには不十分です。";

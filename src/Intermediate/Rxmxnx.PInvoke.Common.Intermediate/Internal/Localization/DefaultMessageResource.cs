@@ -38,6 +38,7 @@ internal sealed class DefaultMessageResource : IMessageResource
 	String IMessageResource.LargerThanSequenceLength => "Cannot be larger than length of sequence.";
 	String IMessageResource.IndexOutOfSequence => "Index and length must refer to a location within the sequence.";
 	String IMessageResource.MissingMemoryInspector => "Memory inspection is not supported on the current platform.";
+	String IMessageResource.ReflectionDisabled => "This feature requires reflection-full mode";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"Object must be of type {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)

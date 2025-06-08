@@ -41,6 +41,7 @@ internal sealed class GermanMessageResource : IMessageResource
 		=> "Index und Länge müssen sich auf eine Position innerhalb der Sequenz beziehen.";
 	String IMessageResource.MissingMemoryInspector
 		=> "Die Speicherinspektion wird auf der aktuellen Plattform nicht unterstützt.";
+	String IMessageResource.ReflectionDisabled => "Diese Funktion erfordert den vollständigen Reflexionsmodus.";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"Das Objekt muss vom Typ {requiredTypeName} sein.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)

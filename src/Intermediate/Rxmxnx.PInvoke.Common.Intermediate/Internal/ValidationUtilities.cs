@@ -589,6 +589,17 @@ internal static unsafe class ValidationUtilities
 			nameof(JsonTokenType) + '.' + nameof(JsonTokenType.StartArray);
 		ValidationUtilities.ThrowIfInvalidToken(tokenType, expectedTokenTypeName);
 	}
+	/// <summary>
+	/// Throw if reflection free-mode.
+	/// </summary>
+	/// <exception cref="NotImplementedException"></exception>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNoReflection()
+	{
+		if (!AotInfo.IsReflectionDisabled) return;
+		IMessageResource resource = IMessageResource.GetInstance();
+		throw new PlatformNotSupportedException(resource.ReflectionDisabled);
+	}
 #if BINARY_SPACES
 	/// <summary>
 	/// Throws an exception if buffer is not a space.

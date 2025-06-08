@@ -42,6 +42,7 @@ internal sealed class ItalianMessageResource : IMessageResource
 		=> "Indice e lunghezza devono fare riferimento a una posizione all'interno della sequenza.";
 	String IMessageResource.MissingMemoryInspector
 		=> "L'ispezione della memoria non è supportata sulla piattaforma corrente.";
+	String IMessageResource.ReflectionDisabled => "Questa funzionalità richiede la modalità reflection-full.";
 
 	String IMessageResource.InvalidType(String requiredTypeName)
 		=> $"L'oggetto deve essere di tipo {requiredTypeName}.";

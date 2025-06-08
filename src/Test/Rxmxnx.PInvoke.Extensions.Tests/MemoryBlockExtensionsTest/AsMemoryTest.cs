@@ -12,7 +12,7 @@ public class AsMemoryTest
 
 	[Fact]
 	internal void AsMemoryCountTest() => Assert.Equal(31, AsMemoryTest.asMemories.Count);
-	[SkippableTheory]
+	[Theory]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -44,15 +44,8 @@ public class AsMemoryTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-	internal void ByteTest(Int32 dimension)
-	{
-		Skip.If(
-			MemoryMarshalCompat.TargetFramework.Contains(".NETStandard") ||
-			MemoryMarshalCompat.TargetFramework.Contains(".NETCoreApp"),
-			"Building for .NET Standard or .NET Core does not support MemoryMarshal.GetArrayDataReference(Array).");
-		AsMemoryTest.GenericTest<Byte>(dimension);
-	}
-	[SkippableTheory]
+	internal void ByteTest(Int32 dimension) => AsMemoryTest.GenericTest<Byte>(dimension);
+	[Theory]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -84,15 +77,8 @@ public class AsMemoryTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-	internal void Int32Test(Int32 dimension)
-	{
-		Skip.If(
-			MemoryMarshalCompat.TargetFramework.Contains(".NETStandard") ||
-			MemoryMarshalCompat.TargetFramework.Contains(".NETCoreApp"),
-			"Building for .NET Standard or .NET Core does not support MemoryMarshal.GetArrayDataReference(Array).");
-		AsMemoryTest.GenericTest<Int32>(dimension);
-	}
-	[SkippableTheory]
+	internal void Int32Test(Int32 dimension) => AsMemoryTest.GenericTest<Int32>(dimension);
+	[Theory]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -124,15 +110,8 @@ public class AsMemoryTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-	internal void StringTest(Int32 dimension)
-	{
-		Skip.If(
-			MemoryMarshalCompat.TargetFramework.Contains(".NETStandard") ||
-			MemoryMarshalCompat.TargetFramework.Contains(".NETCoreApp"),
-			"Building for .NET Standard or .NET Core does not support MemoryMarshal.GetArrayDataReference(Array).");
-		AsMemoryTest.GenericTest<String>(dimension);
-	}
-	[SkippableTheory]
+	internal void StringTest(Int32 dimension) => AsMemoryTest.GenericTest<String>(dimension);
+	[Theory]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -164,14 +143,7 @@ public class AsMemoryTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-	internal void ObjectTest(Int32 dimension)
-	{
-		Skip.If(
-			MemoryMarshalCompat.TargetFramework.Contains(".NETStandard") ||
-			MemoryMarshalCompat.TargetFramework.Contains(".NETCoreApp"),
-			"Building for .NET Standard or .NET Core does not support MemoryMarshal.GetArrayDataReference(Array).");
-		AsMemoryTest.GenericTest<Object>(dimension);
-	}
+	internal void ObjectTest(Int32 dimension) => AsMemoryTest.GenericTest<Object>(dimension);
 
 	private static unsafe void GenericTest<T>(Int32 count)
 	{

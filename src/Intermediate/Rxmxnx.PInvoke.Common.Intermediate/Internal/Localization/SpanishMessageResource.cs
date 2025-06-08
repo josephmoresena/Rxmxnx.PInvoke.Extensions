@@ -42,6 +42,7 @@ internal sealed class SpanishMessageResource : IMessageResource
 		=> "El índice y la longitud deben hacer referencia a una ubicación dentro de la secuencia.";
 	String IMessageResource.MissingMemoryInspector
 		=> "La inspección de memoria no es compatible con la plataforma actual.";
+	String IMessageResource.ReflectionDisabled => "Esta función requiere el modo de reflexión completa.";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"El objeto debe ser del tipo {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)

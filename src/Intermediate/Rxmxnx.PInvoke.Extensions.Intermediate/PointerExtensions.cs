@@ -1,5 +1,5 @@
 ﻿#if !NET6_0_OR_GREATER
-using MemoryMarshal = Rxmxnx.PInvoke.Internal.MemoryMarshallUtilities;
+using MemoryMarshal = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
 #endif
 
 namespace Rxmxnx.PInvoke;

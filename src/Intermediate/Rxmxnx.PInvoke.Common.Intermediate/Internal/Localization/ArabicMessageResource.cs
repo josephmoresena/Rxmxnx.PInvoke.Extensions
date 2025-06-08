@@ -37,6 +37,7 @@ internal sealed class ArabicMessageResource : IMessageResource
 	String IMessageResource.LargerThanSequenceLength => "لا يمكن أن يكون أكبر من طول التسلسل.";
 	String IMessageResource.IndexOutOfSequence => "يجب أن يشير الفهرس والطول إلى موقع داخل التسلسل.";
 	String IMessageResource.MissingMemoryInspector => "لا يتم دعم فحص الذاكرة على النظام الأساسي الحالي.";
+	String IMessageResource.ReflectionDisabled => "تتطلب هذه الميزة وضع الانعكاس الكامل.";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"يجب أن يكون الكائن من النوع {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)

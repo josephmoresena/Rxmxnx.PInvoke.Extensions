@@ -15,7 +15,7 @@ public class AsSpanTest
 
 	[Fact]
 	internal void AsSpanCountTest() => Assert.Equal(31, AsSpanTest.asSpans.Count);
-	[SkippableTheory]
+	[Theory]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -47,15 +47,8 @@ public class AsSpanTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-	internal void ByteTest(Int32 dimension)
-	{
-		Skip.If(
-			MemoryMarshalCompat.TargetFramework.Contains(".NETStandard") ||
-			MemoryMarshalCompat.TargetFramework.Contains(".NETCoreApp"),
-			"Building for .NET Standard or .NET Core does not support MemoryMarshal.GetArrayDataReference(Array).");
-		AsSpanTest.GenericTest<Byte>(dimension);
-	}
-	[SkippableTheory]
+	internal void ByteTest(Int32 dimension) => AsSpanTest.GenericTest<Byte>(dimension);
+	[Theory]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -87,15 +80,8 @@ public class AsSpanTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-	internal void Int32Test(Int32 dimension)
-	{
-		Skip.If(
-			MemoryMarshalCompat.TargetFramework.Contains(".NETStandard") ||
-			MemoryMarshalCompat.TargetFramework.Contains(".NETCoreApp"),
-			"Building for .NET Standard or .NET Core does not support MemoryMarshal.GetArrayDataReference(Array).");
-		AsSpanTest.GenericTest<Int32>(dimension);
-	}
-	[SkippableTheory]
+	internal void Int32Test(Int32 dimension) => AsSpanTest.GenericTest<Int32>(dimension);
+	[Theory]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -127,15 +113,8 @@ public class AsSpanTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-	internal void StringTest(Int32 dimension)
-	{
-		Skip.If(
-			MemoryMarshalCompat.TargetFramework.Contains(".NETStandard") ||
-			MemoryMarshalCompat.TargetFramework.Contains(".NETCoreApp"),
-			"Building for .NET Standard or .NET Core does not support MemoryMarshal.GetArrayDataReference(Array).");
-		AsSpanTest.GenericTest<String>(dimension);
-	}
-	[SkippableTheory]
+	internal void StringTest(Int32 dimension) => AsSpanTest.GenericTest<String>(dimension);
+	[Theory]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -167,14 +146,7 @@ public class AsSpanTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-	internal void ObjectTest(Int32 dimension)
-	{
-		Skip.If(
-			MemoryMarshalCompat.TargetFramework.Contains(".NETStandard") ||
-			MemoryMarshalCompat.TargetFramework.Contains(".NETCoreApp"),
-			"Building for .NET Standard or .NET Core does not support MemoryMarshal.GetArrayDataReference(Array).");
-		AsSpanTest.GenericTest<Object>(dimension);
-	}
+	internal void ObjectTest(Int32 dimension) => AsSpanTest.GenericTest<Object>(dimension);
 
 	private static void GenericTest<T>(Int32 count)
 	{

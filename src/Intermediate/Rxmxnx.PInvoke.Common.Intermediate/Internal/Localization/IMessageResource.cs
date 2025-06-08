@@ -77,6 +77,10 @@ internal partial interface IMessageResource
 	/// Message for missing memory inspector.
 	/// </summary>
 	String MissingMemoryInspector { get; }
+	/// <summary>
+	/// Message for reflection disabled.
+	/// </summary>
+	String ReflectionDisabled { get; }
 
 	/// <summary>
 	/// Message for invalid pointer value exception.
