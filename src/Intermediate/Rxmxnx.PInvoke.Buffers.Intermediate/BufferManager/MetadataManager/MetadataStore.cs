@@ -18,8 +18,10 @@ public static partial class BufferManager
 			/// </summary>
 			private readonly SortedDictionary<UInt16, BufferTypeMetadata<T>> _nonBinaryCache = new();
 
-			/// <see cref="MetadataStore"/>
+#if NET6_0_OR_GREATER
+			/// <see cref="MetadataStore.GetMetadataInfo"/>
 			private MethodInfo? _getMetadataInfo;
+#endif
 
 			/// <summary>
 			/// Lock object.
@@ -29,6 +31,7 @@ public static partial class BufferManager
 			/// Buffers dictionary.
 			/// </summary>
 			public IDictionary<UInt16, BufferTypeMetadata<T>> BinaryBuffers => this._binaryCache;
+#if NET6_0_OR_GREATER
 			/// <summary>
 			/// <see cref="MethodInfo"/> to retrieve buffer metadata.
 			/// </summary>
@@ -51,6 +54,7 @@ public static partial class BufferManager
 					return this._getMetadataInfo;
 				}
 			}
+#endif
 			/// <summary>
 			/// Maximum binary space size.
 			/// </summary>
@@ -64,9 +68,13 @@ public static partial class BufferManager
 #endif
 			public MetadataStore()
 			{
+#if NET6_0_OR_GREATER
 #pragma warning disable CA2252
 				this._binaryCache.Add(1, IManagedBuffer<T>.GetMetadata<Atomic<T>>());
 #pragma warning restore CA2252
+#else
+				this._binaryCache.Add(1, Atomic<T>.TypeMetadata);
+#endif
 			}
 			/// <summary>
 			/// Adds metadata to current cache.
@@ -101,6 +109,7 @@ public static partial class BufferManager
 			public BufferTypeMetadata<T>? GetNonBinaryBuffer(UInt16 count)
 				=> this._nonBinaryCache.GetValueOrDefault(count);
 
+#if NET6_0_OR_GREATER
 			/// <summary>
 			/// Retrieves the reflected <see cref="IManagedBuffer{T}.GetMetadata{TBuffer}()"/> method.
 			/// </summary>
@@ -110,6 +119,7 @@ public static partial class BufferManager
 				Type typeofT = typeof(IManagedBuffer<T>);
 				return typeofT.GetMethod(BufferManager.GetMetadataName, BufferManager.GetMetadataFlags)!;
 			}
+#endif
 			/// <summary>
 			/// Retrieves the minimal buffer metadata registered to hold at least <paramref name="count"/> items.
 			/// </summary>

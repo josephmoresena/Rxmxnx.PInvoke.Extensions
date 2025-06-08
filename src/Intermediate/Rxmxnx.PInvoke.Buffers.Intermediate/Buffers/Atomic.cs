@@ -12,18 +12,25 @@ public partial struct Atomic<T> : IManagedBinaryBuffer<Atomic<T>, T>
 	/// <summary>
 	/// Internal metadata.
 	/// </summary>
-	private static readonly BufferTypeMetadata<T> typeMetadata = new BufferTypeMetadata<Atomic<T>, T>(1);
+	internal static readonly BufferTypeMetadata<T> TypeMetadata =
+#if NET6_0_OR_GREATER
+		new BufferTypeMetadata<Atomic<T>, T>(1);
+#else
+		new BufferTypeMetadata<Atomic<T>, T>(1, []);
+#endif
 
 	/// <summary>
 	/// Internal value.
 	/// </summary>
 	private T _val0;
 
-	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => Atomic<T>.typeMetadata;
+#if NET6_0_OR_GREATER
+	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => Atomic<T>.TypeMetadata;
 	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [];
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
 	static void IManagedBuffer<T>.AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components) { }
+#endif
 }
 #pragma warning restore CA2252

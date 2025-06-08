@@ -6,7 +6,9 @@ namespace Rxmxnx.PInvoke.Buffers;
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
 public interface IManagedBinaryBuffer<T> : IManagedBuffer<T>
 {
-	/// <inheritdoc cref="IManagedBuffer{T}.TypeMetadata"/>
+	/// <summary>
+	/// Buffer type metadata.
+	/// </summary>
 	BufferTypeMetadata<T> Metadata { get; }
 
 	/// <summary>
@@ -22,7 +24,10 @@ public interface IManagedBinaryBuffer<T> : IManagedBuffer<T>
 	[ExcludeFromCodeCoverage]
 #endif
 	internal static BufferTypeMetadata<T>? GetMetadata(
-		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type? bufferType)
+#if NET5_0_OR_GREATER
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+#endif
+		Type? bufferType)
 	{
 		if (bufferType is null) return default;
 		try
@@ -49,8 +54,15 @@ public interface IManagedBinaryBuffer<T> : IManagedBuffer<T>
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 #endif
 public partial interface IManagedBinaryBuffer<
-	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] TBuffer,
-	T> : IManagedBinaryBuffer<T> where TBuffer : struct, IManagedBinaryBuffer<TBuffer, T>
+#if NET5_0_OR_GREATER
+	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+#endif
+	TBuffer, T> : IManagedBinaryBuffer<T> where TBuffer : struct, IManagedBinaryBuffer<TBuffer, T>
 {
-	BufferTypeMetadata<T> IManagedBinaryBuffer<T>.Metadata => IManagedBuffer<T>.GetMetadata<TBuffer>();
+	BufferTypeMetadata<T> IManagedBinaryBuffer<T>.Metadata
+#if NET6_0_OR_GREATER
+		=> IManagedBuffer<T>.GetMetadata<TBuffer>();
+#else
+		=> BufferManager.MetadataManager<T>.GetMetadata(typeof(TBuffer))!;
+#endif
 }

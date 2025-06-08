@@ -523,6 +523,24 @@ internal static unsafe class ValidationUtilities
 		if (!String.IsNullOrEmpty(message))
 			throw new InvalidOperationException(message);
 	}
+#if !NET6_0_OR_GREATER
+	/// <summary>
+	/// Throws an exception if buffer metadata is null.
+	/// </summary>
+	/// <param name="bufferType">Buffer type.</param>
+	/// <param name="isNull">Indicates whether buffer metadata is null.</param>
+	/// <exception cref="InvalidOperationException">Throws an exception if buffer metadata is null.</exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNullMetadata(Type bufferType, Boolean isNull)
+	{
+		if (!isNull) return;
+		IMessageResource resource = IMessageResource.GetInstance();
+		throw new InvalidOperationException(resource.MissingBufferMetadataException(bufferType));
+	}
+#endif
 	/// <summary>
 	/// Throws an exception if buffer metadata is null.
 	/// </summary>

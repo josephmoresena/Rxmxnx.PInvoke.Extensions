@@ -83,6 +83,13 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 		base(isBinary, capacity)
 		=> this.Components = components;
 
+#if !NET6_0_OR_GREATER
+	/// <summary>
+	/// Appends all components from current buffer type.
+	/// </summary>
+	/// <param name="components">A dictionary of components.</param>
+	internal virtual void AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components) { }
+#endif
 	/// <summary>
 	/// Composes a new buffer using twice the current buffer type.
 	/// </summary>

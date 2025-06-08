@@ -10,6 +10,7 @@ internal sealed class BufferTypeMetadata<TBuffer, T> : BufferTypeMetadata<T> whe
 	/// <inheritdoc/>
 	public override Type BufferType => typeof(TBuffer);
 
+#if NET6_0_OR_GREATER
 	/// <summary>
 	/// Internal implementation of <see cref="BufferTypeMetadata{T}"/>.
 	/// </summary>
@@ -20,15 +21,43 @@ internal sealed class BufferTypeMetadata<TBuffer, T> : BufferTypeMetadata<T> whe
 		isBinary, TBuffer.Components, (UInt16)capacity)
 #pragma warning restore CA2252
 	{ }
+#else
+	private readonly Action<IDictionary<UInt16, BufferTypeMetadata<T>>>? _appendComponents;
 
+	/// <summary>
+	/// Internal implementation of <see cref="BufferTypeMetadata{T}"/>.
+	/// </summary>
+	/// <param name="capacity">Buffer's capacity.</param>
+	/// <param name="components">Buffers components.</param>
+	/// <param name="isBinary">Indicates if current buffer is binary.</param>
+	/// <param name="appendComponents">Append components delegate.</param>
+	public BufferTypeMetadata(Int32 capacity, BufferTypeMetadata<T>[] components, Boolean isBinary = true,
+		Action<IDictionary<UInt16, BufferTypeMetadata<T>>>? appendComponents = default) : base(
+		isBinary, components, (UInt16)capacity)
+		=> this._appendComponents = appendComponents;
+
+	/// <inheritdoc/>
+	internal override void AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components)
+	{
+		if (this._appendComponents is null)
+		{
+			base.AppendComponent(components);
+			return;
+		}
+		this._appendComponents(components);
+	}
+#endif
 	/// <inheritdoc/>
 	internal override BufferTypeMetadata<T>? Compose(BufferTypeMetadata<T> otherMetadata)
 		=> otherMetadata.Compose<TBuffer>();
 	/// <inheritdoc/>
 	internal override BufferTypeMetadata<T>? Compose<TOther>()
 	{
-		if (!BufferManager.BufferAutoCompositionEnabled || !this.IsBinary ||
-		    !IManagedBuffer<T>.GetMetadata<TOther>().IsBinary) return default;
+		if (!BufferManager.BufferAutoCompositionEnabled || !this.IsBinary
+#if NET6_0_OR_GREATER
+		    || !IManagedBuffer<T>.GetMetadata<TOther>().IsBinary
+#endif
+		   ) return default;
 		return BufferManager.MetadataManager<T>.ComposeWithReflection(typeof(TBuffer), typeof(TOther));
 	}
 	/// <inheritdoc/>

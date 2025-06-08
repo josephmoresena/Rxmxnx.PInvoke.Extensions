@@ -14,7 +14,7 @@ public interface IManagedBuffer<T>
 	/// </summary>
 	/// <param name="component">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
 	/// <param name="components">A dictionary of components.</param>
-	private static void AppendComponent(BufferTypeMetadata<T> component,
+	protected static void AppendComponent(BufferTypeMetadata<T> component,
 		IDictionary<UInt16, BufferTypeMetadata<T>> components)
 	{
 		if (!components.TryAdd(component.Size, component)) return;

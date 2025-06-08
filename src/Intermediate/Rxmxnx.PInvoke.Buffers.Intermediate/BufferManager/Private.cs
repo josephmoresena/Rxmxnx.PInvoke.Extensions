@@ -6,6 +6,7 @@ namespace Rxmxnx.PInvoke;
 #endif
 public static partial class BufferManager
 {
+#if NET6_0_OR_GREATER
 	/// <summary>
 	/// Name of <see cref="IManagedBuffer{T}.GetMetadata{TBuffer}()"/> method.
 	/// </summary>
@@ -15,6 +16,15 @@ public static partial class BufferManager
 	/// <summary>
 	/// Flags of <see cref="IManagedBuffer{T}.GetMetadata{TBuffer}"/> method.
 	/// </summary>
+#else
+	/// <summary>
+	/// Name of <see cref="Atomic{T}.TypeMetadata"/> method.
+	/// </summary>
+	private const String TypeMetadataName = nameof(Atomic<Object>.TypeMetadata);
+	/// <summary>
+	/// Flags of <see cref="Atomic{T}.TypeMetadata"/> static field.
+	/// </summary>
+#endif
 	private const BindingFlags GetMetadataFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
 	/// <summary>

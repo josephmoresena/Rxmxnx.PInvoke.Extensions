@@ -58,6 +58,9 @@ internal sealed class JapaneseMessageResource : IMessageResource
 		=> $"{itemType} は参照型ですが、{arrayType} は非管理型です。";
 	String IMessageResource.UnmanagedTypeButContainsReferences(Type itemType, Type arrayType)
 		=> $"{itemType} は非管理型ですが、{arrayType} は参照を含んでいます。";
+#if !NET6_0_OR_GREATER
+	String IMessageResource.MissingBufferMetadataException(Type bufferType) => $"{bufferType} バッファーのメタデータを取得できません。";
+#endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"{itemType} の {size} アイテム用のバッファを作成できません。";
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
