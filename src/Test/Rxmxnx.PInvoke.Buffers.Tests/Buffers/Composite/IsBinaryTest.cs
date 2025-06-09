@@ -29,8 +29,8 @@ public sealed class IsBinaryTest
 		Type typeofT = typeof(T);
 		Type typeofAtomic = typeof(Atomic<T>);
 		Type typeofComposite2 = typeof(Composite<Atomic<T>, Atomic<T>, T>);
-		BufferTypeMetadata<T> atomicMetadata = IManagedBuffer<T>.GetMetadata<Atomic<T>>();
-		BufferTypeMetadata<T> composite2Metadata = IManagedBuffer<T>.GetMetadata<Composite<Atomic<T>, Atomic<T>, T>>();
+		BufferTypeMetadata<T> atomicMetadata = IsBinaryTest.GetMetadata<Atomic<T>, T>();
+		BufferTypeMetadata<T> composite2Metadata = IsBinaryTest.GetMetadata<Composite<Atomic<T>, Atomic<T>, T>, T>();
 
 		Type binary = IsBinaryTest.compositeType.MakeGenericType(typeofAtomic, typeofComposite2, typeofT);
 		Type nonBinary1 = IsBinaryTest.compositeType.MakeGenericType(typeofComposite2, typeofAtomic, typeofT);
@@ -94,5 +94,17 @@ public sealed class IsBinaryTest
 		Assert.Equal(atomicMetadata.Size + nonBinaryMetadata3.Size, nonBinaryMetadata5.Size);
 		Assert.Equal(atomicMetadata, nonBinaryMetadata5[0]);
 		Assert.Equal(nonBinaryMetadata3, nonBinaryMetadata5[1]);
+	}
+	private static BufferTypeMetadata<T> GetMetadata<TBuffer, T>()
+		where TBuffer : struct, IManagedBinaryBuffer<TBuffer, T>
+	{
+		const BindingFlags getMetadataFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+		Type typeofInterface = typeof(IManagedBuffer<T>);
+		MethodInfo? getMetadata =
+			typeofInterface.GetMethod(nameof(BufferManager.MetadataManager<T>.GetMetadata), getMetadataFlags);
+		if (getMetadata is not null)
+			return (BufferTypeMetadata<T>)getMetadata.MakeGenericMethod(typeof(TBuffer)).Invoke(null, [])!;
+		return (BufferTypeMetadata<T>)typeof(TBuffer).GetField(
+			nameof(Composite<Atomic<Object>, Atomic<Object>, Object>.TypeMetadata), getMetadataFlags)!.GetValue(null)!;
 	}
 }

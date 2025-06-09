@@ -63,6 +63,7 @@ public static partial class BufferManager
 				return result;
 			}
 		}
+#if NET6_0_OR_GREATER && BINARY_SPACES
 		/// <summary>
 		/// Writes on <paramref name="sizes"/> the sizes of <paramref name="metadata"/>.
 		/// </summary>
@@ -80,6 +81,7 @@ public static partial class BufferManager
 			sizes[2] = metadata.Components[0].Size;
 			return sizes;
 		}
+#endif
 		/// <summary>
 		/// Adds <paramref name="typeMetadata"/> to binary cache.
 		/// </summary>

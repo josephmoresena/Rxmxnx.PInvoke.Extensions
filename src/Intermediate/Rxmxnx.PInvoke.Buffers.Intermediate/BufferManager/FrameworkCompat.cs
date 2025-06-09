@@ -1,6 +1,6 @@
+#if !PACKAGE || !NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke;
 
-#if !NET6_0_OR_GREATER
 public static partial class BufferManager
 {
 	/// <summary>
@@ -28,9 +28,10 @@ public static partial class BufferManager
 				result = (BufferTypeMetadata?)typeMetadataInfo?.GetValue(null);
 			}
 		}
-		catch (Exception)
+		catch (TargetInvocationException tie)
 		{
-			// Ignore
+			if (tie.InnerException is not null)
+				throw tie.InnerException;
 		}
 		result ??= IManagedBinaryBuffer<T>.GetMetadata(bufferType);
 		return BufferManager.Cache(bufferType, result as BufferTypeMetadata<T>);

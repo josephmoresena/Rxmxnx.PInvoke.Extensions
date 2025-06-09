@@ -13,18 +13,14 @@ public static partial class BufferManager
 #pragma warning disable CA2252
 	private const String GetMetadataName = nameof(IManagedBuffer<Object>.GetMetadata);
 #pragma warning restore CA2252
+#endif
 	/// <summary>
-	/// Flags of <see cref="IManagedBuffer{T}.GetMetadata{TBuffer}"/> method.
-	/// </summary>
-#else
-	/// <summary>
-	/// Name of <see cref="Atomic{T}.TypeMetadata"/> method.
+	/// Name of <see cref="Atomic{T}.TypeMetadata"/>  static field.
 	/// </summary>
 	private const String TypeMetadataName = nameof(Atomic<Object>.TypeMetadata);
 	/// <summary>
-	/// Flags of <see cref="Atomic{T}.TypeMetadata"/> static field.
+	/// Flags of metadata static member.
 	/// </summary>
-#endif
 	private const BindingFlags GetMetadataFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
 	/// <summary>
