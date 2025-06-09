@@ -37,7 +37,7 @@ public partial class CString
 #endif
 		public override void Write(Utf8JsonWriter writer, CString? value, JsonSerializerOptions options)
 			=> JsonConverter.Write(writer, value, value is null || value.IsZero,
-#if PACKAGE && !NETCOREAPP || NETCOREAPP3_1_OR_GREATER
+#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
 			                       options.DefaultIgnoreCondition is JsonIgnoreCondition.WhenWritingNull or
 				                       JsonIgnoreCondition.WhenWritingDefault or JsonIgnoreCondition.Always);
 #else

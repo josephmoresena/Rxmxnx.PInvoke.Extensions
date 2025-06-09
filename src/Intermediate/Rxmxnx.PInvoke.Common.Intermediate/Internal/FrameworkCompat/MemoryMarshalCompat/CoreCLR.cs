@@ -14,8 +14,11 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1199)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS907)]
 #endif
-internal static unsafe partial class MemoryMarshalCompat
+internal static partial class MemoryMarshalCompat
 {
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	private static ref Byte GetArrayDataReference(MMethodTable mtpRef, Array array)
 	{
 		ref Byte rawDataRef = ref Unsafe.As<CoreClrRawData>(array).Data;
@@ -23,6 +26,9 @@ internal static unsafe partial class MemoryMarshalCompat
 		return ref Unsafe.AddByteOffset(ref rawDataRef, MemoryMarshalCompat.ToByteOffset(byteOffset));
 	}
 #if NETCOREAPP
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveOptimization)]
 	private static Int32 IndexOfNull(ref Byte buffer)
 	{
@@ -226,6 +232,9 @@ internal static unsafe partial class MemoryMarshalCompat
 		Found7:
 		return (Int32)(offset + 7);
 	}
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveOptimization)]
 	private static Int32 IndexOfNull(ref Char searchSpace)
 	{
@@ -412,6 +421,9 @@ internal static unsafe partial class MemoryMarshalCompat
 		Found:
 		return (Int32)(offset);
 	}
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr UnalignedCountVector(ref Char searchSpace)
 	{
@@ -419,12 +431,18 @@ internal static unsafe partial class MemoryMarshalCompat
 		return (IntPtr)(UInt32)(-(Int32)Unsafe.AsPointer(ref searchSpace) / elementsPerByte) &
 			(Vector<UInt16>.Count - 1);
 	}
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static UIntPtr UnalignedCountVector(ref Byte searchSpace)
 	{
 		IntPtr unaligned = (IntPtr)Unsafe.AsPointer(ref searchSpace) & (Vector<Byte>.Count - 1);
 		return (UIntPtr)((Vector<Byte>.Count - unaligned) & (Vector<Byte>.Count - 1));
 	}
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr UnalignedCountVector128(ref Char searchSpace)
 	{
@@ -432,12 +450,18 @@ internal static unsafe partial class MemoryMarshalCompat
 		return (IntPtr)(UInt32)(-(Int32)Unsafe.AsPointer(ref searchSpace) / elementsPerByte) &
 			(Vector128<UInt16>.Count - 1);
 	}
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static UIntPtr UnalignedCountVector128(ref Byte searchSpace)
 	{
 		IntPtr unaligned = (IntPtr)Unsafe.AsPointer(ref searchSpace) & (Vector128<Byte>.Count - 1);
 		return (UInt32)((Vector128<Byte>.Count - unaligned) & (Vector128<Byte>.Count - 1));
 	}
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Int32 LocateFirstFoundChar(Vector<UInt16> match)
 	{
@@ -451,8 +475,14 @@ internal static unsafe partial class MemoryMarshalCompat
 		}
 		return i * 4 + MemoryMarshalCompat.LocateFirstFoundChar(candidate);
 	}
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Int32 LocateFirstFoundChar(UInt64 match) => BitOperations.TrailingZeroCount(match) >> 4;
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Int32 LocateFirstFoundByte(Vector<Byte> match)
 	{
@@ -468,47 +498,89 @@ internal static unsafe partial class MemoryMarshalCompat
 
 		return i * 8 + MemoryMarshalCompat.LocateFirstFoundByte(candidate);
 	}
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Int32 LocateFirstFoundByte(UInt64 match) => BitOperations.TrailingZeroCount(match) >> 3;
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Vector128<UInt16> LoadVector128(ref Char start, IntPtr offset)
 		=> Unsafe.ReadUnaligned<Vector128<UInt16>>(ref Unsafe.As<Char, Byte>(ref Unsafe.Add(ref start, offset)));
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Vector128<Byte> LoadVector128(ref Byte start, UIntPtr offset)
 		=> Unsafe.ReadUnaligned<Vector128<Byte>>(
 			ref Unsafe.AddByteOffset(ref start, MemoryMarshalCompat.ToByteOffset(offset)));
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Vector<Byte> LoadVector(ref Byte start, UIntPtr offset)
 		=> Unsafe.ReadUnaligned<Vector<Byte>>(
 			ref Unsafe.AddByteOffset(ref start, MemoryMarshalCompat.ToByteOffset(offset)));
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Vector<UInt16> LoadVector(ref Char start, IntPtr offset)
 		=> Unsafe.ReadUnaligned<Vector<UInt16>>(ref Unsafe.As<Char, Byte>(ref Unsafe.Add(ref start, offset)));
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Vector256<UInt16> LoadVector256(ref Char start, IntPtr offset)
 		=> Unsafe.ReadUnaligned<Vector256<UInt16>>(ref Unsafe.As<Char, Byte>(ref Unsafe.Add(ref start, offset)));
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Vector256<Byte> LoadVector256(ref Byte start, UIntPtr offset)
 		=> Unsafe.ReadUnaligned<Vector256<Byte>>(
 			ref Unsafe.AddByteOffset(ref start, MemoryMarshalCompat.ToByteOffset(offset)));
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr GetCharVectorSpanLength(IntPtr offset, IntPtr length)
 		=> (length - offset) & ~(Vector<UInt16>.Count - 1);
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr GetCharVector256SpanLength(IntPtr offset)
 		=> (Int32.MaxValue - offset) & ~(Vector256<UInt16>.Count - 1);
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr GetCharVector128SpanLength(IntPtr offset)
 		=> (Int32.MaxValue - offset) & ~(Vector128<UInt16>.Count - 1);
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static UIntPtr GetByteVector128SpanLength(UIntPtr offset)
 		=> (UInt32)((Int32.MaxValue - (Int32)offset) & ~(Vector128<Byte>.Count - 1));
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static UIntPtr GetByteVector256SpanLength(UIntPtr offset)
 		=> (UInt32)((Int32.MaxValue - (Int32)offset) & ~(Vector256<Byte>.Count - 1));
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static UIntPtr GetByteVectorSpanLength(UIntPtr offset, Int32 length)
 		=> (UInt32)((length - (Int32)offset) & ~(Vector<Byte>.Count - 1));
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Boolean TryFindFirstMatchedLane(Vector128<UInt16> compareResult, ref Int32 matchedLane)
 	{
@@ -519,6 +591,9 @@ internal static unsafe partial class MemoryMarshalCompat
 		matchedLane = BitOperations.TrailingZeroCount(selectedLanes) >> 3;
 		return true;
 	}
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Boolean TryFindFirstMatchedLane(Vector128<Byte> mask, Vector128<Byte> compareResult,
 		ref Int32 matchedLane)

@@ -52,7 +52,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// </summary>
 	public Boolean IsZero
 		=> this.IsReference &&
-#if PACKAGE && !NETCOREAPP || NETCOREAPP3_1_OR_GREATER
+#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
 			Unsafe.IsNullRef(ref MemoryMarshal.GetReference(this._data.AsSpan()));
 #else
 			MemoryMarshalCompat.IsNullText(this._data.AsSpan());

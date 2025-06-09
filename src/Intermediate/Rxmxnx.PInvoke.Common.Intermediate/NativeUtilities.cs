@@ -326,7 +326,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="libraryName">The name of the native library to be loaded.</param>
 	/// <param name="searchPath">The search path.</param>
 	/// <returns>The OS handle for the loaded native library.</returns>
-#if !PACKAGE && !NETCOREAPP
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

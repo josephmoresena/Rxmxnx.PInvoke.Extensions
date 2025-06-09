@@ -40,6 +40,9 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// <exception cref="ArgumentException">The string is longer than <see cref="Int32.MaxValue"/>.</exception>
 	public static ReadOnlySpan<Byte> CreateReadOnlySpanFromNullTerminated(Byte* value)
 	{
+		if (value == IntPtr.Zero.ToPointer())
+			return default;
+
 		ref Byte ref0 = ref *value;
 		Int32 length = MemoryMarshalCompat.IndexOfNull(ref *value);
 		if (length < 0)
@@ -57,6 +60,9 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// <exception cref="ArgumentException">The string is longer than <see cref="int.MaxValue"/>.</exception>
 	public static ReadOnlySpan<Char> CreateReadOnlySpanFromNullTerminated(Char* value)
 	{
+		if (value == IntPtr.Zero.ToPointer())
+			return default;
+
 		ref Char ref0 = ref *value;
 		Int32 length = MemoryMarshalCompat.IndexOfNull(ref ref0);
 		if (length < 0)
@@ -105,7 +111,7 @@ internal static unsafe partial class MemoryMarshalCompat
 		Type typeofRuntimeHelpers = typeof(RuntimeHelpers);
 
 		ref MMethodTable mtpRef =
-#if PACKAGE && !NETCOREAPP || NETCOREAPP3_1_OR_GREATER
+#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
 			ref Unsafe.NullRef<MMethodTable>();
 #else
 			ref MemoryMarshal.GetReference(Span<MMethodTable>.Empty);
@@ -146,6 +152,13 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// <remarks>This method is used only on .Net Standard build.</remarks>
 	public static Int32 IndexOfNull<T>(ref T buffer) where T : unmanaged, IEquatable<T>
 	{
+#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
+		if (Unsafe.IsNullRef(ref buffer))
+#else
+		if (Unsafe.AreSame(ref buffer, ref MemoryMarshal.GetReference(ReadOnlySpan<T>.Empty)))
+#endif
+			return 0;
+
 		UInt32 result = 0;
 		T nullValue = default;
 		while (!Unsafe.Add(ref buffer, new IntPtr((void*)result)).Equals(nullValue))

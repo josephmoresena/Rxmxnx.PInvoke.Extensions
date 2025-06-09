@@ -12,6 +12,10 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 #endif
 internal static class RuneCompat
 {
+	private const UInt32 replacementChar = 0xFFFD;
+	private const Char highSurrogateStart = '\ud800';
+	private const Char lowSurrogateStart = '\udc00';
+	private const Int32 highSurrogateRange = 0x3FF;
 	/// <summary>
 	/// Target framework for the current build.
 	/// </summary>
@@ -28,11 +32,12 @@ internal static class RuneCompat
 		RuntimeInformation.FrameworkDescription;
 #endif
 
-	private const UInt32 replacementChar = 0xFFFD;
-	private const Char highSurrogateStart = '\ud800';
-	private const Char lowSurrogateStart = '\udc00';
-	private const Int32 highSurrogateRange = 0x3FF;
-
+	/// <summary>
+	/// Encodes <paramref name="rune"/> to a UTF-8 destination buffer.
+	/// </summary>
+	/// <param name="rune">A <see cref="UInt32"/> rune.</param>
+	/// <param name="destination">The buffer to which to write this value as UTF-8.</param>
+	/// <returns>The number of <see cref="byte"/>s written to <paramref name="destination"/>.</returns>
 	public static Int32 EncodeToUtf8(UInt32 rune, Span<Byte> destination)
 	{
 		if (destination.Length < 1) return default;
@@ -70,6 +75,13 @@ internal static class RuneCompat
 		destination[3] = (Byte)((rune & 0x3Fu) + 0x80u);
 		return 4;
 	}
+	/// <summary>
+	/// Decodes the <see cref="Rune"/> at the beginning of the provided UTF-8 source buffer.
+	/// </summary>
+	/// <param name="source">Source buffer.</param>
+	/// <param name="result">Decoded rune.</param>
+	/// <param name="bytesConsumed">Number of bytes consumed.</param>
+	/// <returns>A <see cref="OperationStatus"/> value.</returns>
 	public static OperationStatus DecodeFromUtf8(ReadOnlySpan<Byte> source, out UInt32 result, out Int32 bytesConsumed)
 	{
 		unchecked
@@ -169,6 +181,13 @@ internal static class RuneCompat
 			return OperationStatus.NeedMoreData;
 		}
 	}
+	/// <summary>
+	/// Decodes the <see cref="Rune"/> at the beginning of the provided UTF-16 source buffer.
+	/// </summary>
+	/// <param name="source">Source buffer.</param>
+	/// <param name="result">Decoded rune.</param>
+	/// <param name="charsConsumed">Number of chars consumed.</param>
+	/// <returns>A <see cref="OperationStatus"/> value.</returns>
 	public static OperationStatus DecodeFromUtf16(ReadOnlySpan<Char> source, out UInt32 result, out Int32 charsConsumed)
 	{
 		if (!source.IsEmpty)
