@@ -523,7 +523,7 @@ internal static unsafe class ValidationUtilities
 		if (!String.IsNullOrEmpty(message))
 			throw new InvalidOperationException(message);
 	}
-#if !NET6_0_OR_GREATER
+#if !PACKAGE || !NET6_0_OR_GREATER
 	/// <summary>
 	/// Throws an exception if buffer metadata is null.
 	/// </summary>

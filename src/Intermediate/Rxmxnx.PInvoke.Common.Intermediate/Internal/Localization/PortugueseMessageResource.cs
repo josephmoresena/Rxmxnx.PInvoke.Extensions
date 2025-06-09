@@ -63,7 +63,7 @@ internal sealed class PortugueseMessageResource : IMessageResource
 		=> $"{itemType} é um tipo de referência, mas {arrayType} é um tipo não gerenciado.";
 	String IMessageResource.UnmanagedTypeButContainsReferences(Type itemType, Type arrayType)
 		=> $"{itemType} é um tipo não gerenciado, mas {arrayType} contém referências.";
-#if !NET6_0_OR_GREATER
+#if !PACKAGE || !NET6_0_OR_GREATER
 	String IMessageResource.MissingBufferMetadataException(Type bufferType)
 		=> $"Não foi possível obter os metadados para o buffer {bufferType}.";
 #endif
