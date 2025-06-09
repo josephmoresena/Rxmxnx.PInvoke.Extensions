@@ -27,22 +27,21 @@ public partial class CStringSequence
 		/// <inheritdoc/>
 		public override void Write(Utf8JsonWriter writer, CStringSequence? value, JsonSerializerOptions options)
 		{
-			if (value is null)
-#if NETCOREAPP3_1_OR_GREATER
-				switch (options.DefaultIgnoreCondition)
-				{
-					case JsonIgnoreCondition.WhenWritingNull:
-					case JsonIgnoreCondition.WhenWritingDefault:
-					case JsonIgnoreCondition.Always:
-						break;
+#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
+			switch (options.DefaultIgnoreCondition)
+			{
+				case JsonIgnoreCondition.WhenWritingNull when value is null:
+				case JsonIgnoreCondition.WhenWritingDefault when value is null:
+				case JsonIgnoreCondition.Always when value is null:
+					break;
 				default:
 #else
-				if (!options.IgnoreNullValues)
-				{
+			if (!options.IgnoreNullValues)
+			{
 #endif
-					writer.WriteNullValue();
-					return;
-				}
+				writer.WriteNullValue();
+				return;
+			}
 
 			writer.WriteStartArray();
 			if (value is not null)

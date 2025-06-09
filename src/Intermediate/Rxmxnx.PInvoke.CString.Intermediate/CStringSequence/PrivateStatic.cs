@@ -219,7 +219,7 @@ public unsafe partial class CStringSequence
 	{
 		if (str is null) return default;
 		CStringStringState state = new(str);
-		return CString.Create(state, CStringStringState.GetSpan, false, state.Utf8Length);
+		return CString.Create(state, CStringStringState.GetSpan, state.Utf8Length);
 	}
 #endif
 	/// <summary>

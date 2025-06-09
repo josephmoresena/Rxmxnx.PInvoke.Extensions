@@ -14,7 +14,11 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1199)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS907)]
 #endif
-internal static partial class MemoryMarshalCompat
+internal static
+#if NETCOREAPP
+	unsafe
+#endif
+	partial class MemoryMarshalCompat
 {
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]

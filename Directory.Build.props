@@ -1,8 +1,4 @@
 <Project>
-    <PropertyGroup>
-        <IsPackage>$(DefineConstants.Contains('PACKAGE'))</IsPackage>
-        <IsSourceGenerator>$(DefineConstants.Contains('SOURCE_GENERATOR'))</IsSourceGenerator>
-    </PropertyGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
         <PackageReference Include="System.Memory" Version="4.6.3"/>
@@ -10,7 +6,7 @@
     </ItemGroup>
 
     <!-- UNSUPPORTED -->
-    <ItemGroup Condition="(!$(IsPackage) And '$(TargetFramework)' == 'netstandard2.1') or '$(TargetFramework)' == 'netcoreapp3.0'">
+    <ItemGroup Condition="(!$(DefineConstants.Contains('PACKAGE')) And '$(TargetFramework)' == 'netstandard2.1') or '$(TargetFramework)' == 'netcoreapp3.0'">
         <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.1"/>
         <PackageReference Include="System.Text.Json" Version="4.7.2"/>
         <PackageReference Include="System.Collections.Immutable" Version="1.7.1"/>
@@ -31,7 +27,7 @@
     </ItemGroup>
 
     <!-- LEGACY_SUPPORT -->
-    <ItemGroup Condition="$(IsPackage) And '$(TargetFramework)' == 'netstandard2.1'">
+    <ItemGroup Condition="$(DefineConstants.Contains('PACKAGE')) And '$(TargetFramework)' == 'netstandard2.1'">
         <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2"/>
         <PackageReference Include="System.Text.Json" Version="9.0.5"/>
         <PackageReference Include="System.Collections.Immutable" Version="9.0.5"/>

@@ -7,7 +7,7 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-public static class ConvertCompat
+internal static class ConvertCompat
 {
 	/// <summary>
 	/// Converts a span of 8-bit unsigned integers to its equivalent string representation that is
