@@ -45,7 +45,10 @@ public unsafe partial class CStringSequence
 		{
 			if (this._pointer == IntPtr.Zero) return;
 			if (this._emptyHandle.Pointer != default)
+			{
 				this._emptyHandle.Dispose();
+				this._emptyHandle = default;
+			}
 			if (this._handle.IsAllocated)
 			{
 				this._handle.Free();
@@ -87,6 +90,8 @@ public unsafe partial class CStringSequence
 
 			this._handle = GCHandle.Alloc(this._managed._value, GCHandleType.Pinned);
 			this._pointer = InputMarshaller.CreateUtf8Memory(this._managed, this._includeEmpty);
+			if (this._includeEmpty)
+				this._emptyHandle = CString.Empty.TryPin(out _);
 			return this._pointer;
 		}
 
