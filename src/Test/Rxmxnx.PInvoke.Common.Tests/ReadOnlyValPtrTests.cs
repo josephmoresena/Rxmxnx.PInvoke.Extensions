@@ -81,6 +81,7 @@ public sealed class ReadOnlyValPtrTests
 		Assert.Throws<ArgumentException>(() => valPtr.CompareTo(valPtr.Pointer));
 
 		ReadOnlyValPtrTests.FormatTest(ReadOnlyValPtr<T>.Zero);
+		ReadOnlyValPtrTests.MarshallerTest(ReadOnlyValPtr<T>.Zero);
 
 		ReadOnlyValPtr<T> ptrI;
 		for (Int32 i = 0; i < span.Length; i++)
@@ -140,6 +141,7 @@ public sealed class ReadOnlyValPtrTests
 		Assert.False(valPtr != incValue);
 
 		ReadOnlyValPtrTests.ContextTest(valPtr, span);
+		ReadOnlyValPtrTests.MarshallerTest(valPtr);
 	}
 	private static unsafe void ContextTest<T>(ReadOnlyValPtr<T> valPtr, ReadOnlySpan<T> span)
 	{
@@ -249,6 +251,14 @@ public sealed class ReadOnlyValPtrTests
 			Assert.Equal(valPtr.Pointer.ToString(format), valPtr.ToString(format));
 			Assert.Equal(valPtr.Pointer.ToString(format, culture), spanFormattable.ToString(format, culture));
 		}
+	}
+	private static void MarshallerTest<T>(ReadOnlyValPtr<T> valPtr)
+	{
+		IntPtr value = ReadOnlyValPtr<T>.Marshaller.ConvertToUnmanaged(valPtr);
+		ReadOnlyValPtr<T> ptr = ReadOnlyValPtr<T>.Marshaller.ConvertToManaged(value);
+
+		Assert.Equal(value, valPtr.Pointer);
+		Assert.Equal(valPtr, ptr);
 	}
 	private static unsafe void ReferenceTransformTest<T, TDestination>(ReadOnlyValPtr<T> ptrI,
 		IReadOnlyFixedReference<T>.IDisposable fRef) where TDestination : unmanaged

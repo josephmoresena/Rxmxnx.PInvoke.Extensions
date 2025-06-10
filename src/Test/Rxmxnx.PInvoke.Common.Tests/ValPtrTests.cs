@@ -81,6 +81,7 @@ public sealed class ValPtrTests
 		Assert.Throws<ArgumentException>(() => valPtr.CompareTo(valPtr.Pointer));
 
 		ValPtrTests.FormatTest(ValPtr<T>.Zero);
+		ValPtrTests.MarshallerTest(ValPtr<T>.Zero);
 
 		ValPtr<T> ptrI;
 		for (Int32 i = 0; i < span.Length; i++)
@@ -140,6 +141,7 @@ public sealed class ValPtrTests
 		Assert.False(valPtr != incValue);
 
 		ValPtrTests.ContextTest(valPtr, span);
+		ValPtrTests.MarshallerTest(valPtr);
 	}
 	private static unsafe void ContextTest<T>(ValPtr<T> valPtr, Span<T> span)
 	{
@@ -247,6 +249,14 @@ public sealed class ValPtrTests
 			Assert.Equal(valPtr.Pointer.ToString(format), valPtr.ToString(format));
 			Assert.Equal(valPtr.Pointer.ToString(format, culture), spanFormattable.ToString(format, culture));
 		}
+	}
+	private static void MarshallerTest<T>(ValPtr<T> valPtr)
+	{
+		IntPtr value = ValPtr<T>.Marshaller.ConvertToUnmanaged(valPtr);
+		ValPtr<T> ptr = ValPtr<T>.Marshaller.ConvertToManaged(value);
+
+		Assert.Equal(value, valPtr.Pointer);
+		Assert.Equal(valPtr, ptr);
 	}
 	private static unsafe void ReferenceTransformTest<T, TDestination>(ValPtr<T> ptrI,
 		IFixedReference<T>.IDisposable fRef)

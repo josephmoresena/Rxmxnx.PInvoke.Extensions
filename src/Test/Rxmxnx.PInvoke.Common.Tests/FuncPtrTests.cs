@@ -38,6 +38,7 @@ public sealed class FuncPtrTests
 		Assert.False(FuncPtr<TDelegate>.Zero.Equals(empty.Pointer));
 
 		FuncPtrTests.FormatTest(FuncPtr<TDelegate>.Zero);
+		FuncPtrTests.MarshallerTest(FuncPtr<TDelegate>.Zero);
 
 		IntPtr ptr = Marshal.GetFunctionPointerForDelegate(del);
 		FuncPtr<TDelegate> funcPtr = (FuncPtr<TDelegate>)ptr;
@@ -55,6 +56,7 @@ public sealed class FuncPtrTests
 		Assert.Equal(funcPtr.Pointer, (funcPtr as IWrapper<IntPtr>).Value);
 
 		FuncPtrTests.FormatTest(funcPtr);
+		FuncPtrTests.MarshallerTest(funcPtr);
 	}
 
 	private static void FormatTest<TDelegate>(FuncPtr<TDelegate> funcPtr) where TDelegate : Delegate
@@ -86,5 +88,13 @@ public sealed class FuncPtrTests
 			Assert.Equal(funcPtr.Pointer.ToString(format), funcPtr.ToString(format));
 			Assert.Equal(funcPtr.Pointer.ToString(format, culture), spanFormattable.ToString(format, culture));
 		}
+	}
+	private static void MarshallerTest<TDelegate>(FuncPtr<TDelegate> funcPtr) where TDelegate : Delegate
+	{
+		IntPtr value = FuncPtr<TDelegate>.Marshaller.ConvertToUnmanaged(funcPtr);
+		FuncPtr<TDelegate> ptr = FuncPtr<TDelegate>.Marshaller.ConvertToManaged(value);
+
+		Assert.Equal(value, funcPtr.Pointer);
+		Assert.Equal(funcPtr, ptr);
 	}
 }
