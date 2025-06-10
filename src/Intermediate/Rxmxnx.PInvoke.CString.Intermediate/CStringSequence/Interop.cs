@@ -52,7 +52,7 @@ public partial class CStringSequence
 		/// Defines an implicit conversion of a given <see cref="CStringSequence"/> instance to <see cref="Interop"/>.
 		/// </summary>
 		/// <param name="value">A <see cref="CStringSequence"/> instance to implicitly convert.</param>
-		public static implicit operator Interop?(CStringSequence? value) => new(value);
+		public static implicit operator Interop(CStringSequence? value) => new(value);
 
 		/// <summary>
 		/// Determines whether two specified <see cref="Interop"/> instances have the same value.

@@ -1,7 +1,7 @@
 namespace Rxmxnx.PInvoke.Tests.CStringTests;
 
 [ExcludeFromCodeCoverage]
-public sealed unsafe class Marshaller
+public sealed unsafe class MarshallerTests
 {
 	[Fact]
 	internal void FromManagedTest()
@@ -10,12 +10,12 @@ public sealed unsafe class Marshaller
 		ReadOnlySpan<Byte> utf8Span = TestSet.Utf8Text[index]();
 		IntPtr ptr = (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Span));
 
-		Marshaller.AssertToUnmanaged(new(TestSet.Utf8Text[index]));
-		Marshaller.AssertToUnmanaged(TestSet.Utf8NullTerminatedBytes[index]);
-		Marshaller.AssertToUnmanaged(TestSet.Utf8Bytes[index]);
-		Marshaller.AssertToUnmanaged((CString)TestSet.Utf16Text[index]);
-		Marshaller.AssertToUnmanaged(CString.CreateUnsafe(ptr, utf8Span.Length, true));
-		Marshaller.AssertToUnmanaged(CString.CreateUnsafe(ptr, utf8Span.Length + 1));
+		MarshallerTests.AssertToUnmanaged(new(TestSet.Utf8Text[index]));
+		MarshallerTests.AssertToUnmanaged(TestSet.Utf8NullTerminatedBytes[index]);
+		MarshallerTests.AssertToUnmanaged(TestSet.Utf8Bytes[index]);
+		MarshallerTests.AssertToUnmanaged((CString)TestSet.Utf16Text[index]);
+		MarshallerTests.AssertToUnmanaged(CString.CreateUnsafe(ptr, utf8Span.Length, true));
+		MarshallerTests.AssertToUnmanaged(CString.CreateUnsafe(ptr, utf8Span.Length + 1));
 	}
 	[Fact]
 	internal void FromUnmanagedTest()
@@ -45,20 +45,20 @@ public sealed unsafe class Marshaller
 	[Fact]
 	internal void EmptyTest()
 	{
-		Marshaller.AssertToUnmanaged(null);
-		Marshaller.AssertToUnmanaged(CString.Zero);
-		Marshaller.AssertToUnmanaged(CString.Empty);
+		MarshallerTests.AssertToUnmanaged(null);
+		MarshallerTests.AssertToUnmanaged(CString.Zero);
+		MarshallerTests.AssertToUnmanaged(CString.Empty);
 	}
 
 	private static void AssertToUnmanaged(CString? value)
 	{
 		ReadOnlySpan<Byte> utfSpan = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(
 			(Byte*)Unsafe.AsPointer(ref MemoryMarshal.GetReference<Byte>(value)));
-		CString.Marshaller marshal = Marshaller.Marshal(value);
+		CString.Marshaller marshal = MarshallerTests.Marshal(value);
 		IntPtr ptr = marshal.ToUnmanaged();
 		try
 		{
-			Boolean isLiteralOrPinnable = Marshaller.IsLiteralOrPinnable(value);
+			Boolean isLiteralOrPinnable = MarshallerTests.IsLiteralOrPinnable(value);
 			ReadOnlySpan<Byte> unmanagedSpan = new(ptr.ToPointer(), value?.Length ?? 0);
 			Assert.Equal(isLiteralOrPinnable,
 			             Unsafe.AreSame(ref MemoryMarshal.GetReference<Byte>(value),

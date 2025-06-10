@@ -57,6 +57,12 @@ public sealed class NonBinarySpaceTests
 		Assert.Null(atomicMetadata.Compose(typeMetadata));
 		Assert.Equal(typeof(NonBinarySpace<NonBinaryBuffer<T>, WrapperStruct<WrapperStruct<WrapperStruct<T>>>>),
 		             typeMetadata.BufferType);
+		Assert.Equal(atomicMetadata,
+		             BufferManager.MetadataManager<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>.GetMetadata(
+			             atomicMetadata.BufferType));
+		Assert.Equal(typeMetadata,
+		             BufferManager.MetadataManager<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>.GetMetadata(
+			             typeMetadata.BufferType));
 
 		Span<IntPtr> span0 = stackalloc IntPtr[5];
 		span0[0] = (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(span0));
@@ -91,6 +97,9 @@ public sealed class NonBinarySpaceTests
 		Assert.Equal(0, buffer.BufferMetadata.ComponentCount);
 		Assert.Equal(typeof(NonBinarySpace<NonBinaryBuffer<T>, WrapperStruct<WrapperStruct<WrapperStruct<T>>>>),
 		             buffer.BufferMetadata.BufferType);
+		Assert.Equal(buffer.BufferMetadata,
+		             BufferManager.MetadataManager<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>.GetMetadata(
+			             buffer.BufferMetadata.BufferType));
 	}
 	private static void Do<T>(ScopedBuffer<WrapperStruct<WrapperStruct<WrapperStruct<T>>>> buffer,
 		ValPtr<IntPtr> ptrPtr)

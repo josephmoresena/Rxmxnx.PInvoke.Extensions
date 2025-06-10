@@ -18,6 +18,10 @@ public unsafe partial class CStringSequence
 	public ref struct InputMarshaller
 	{
 		/// <summary>
+		/// Managed instance.
+		/// </summary>
+		private CStringSequence? _managed;
+		/// <summary>
 		/// Handle for sequence data.
 		/// </summary>
 		private GCHandle _handle;
@@ -29,6 +33,10 @@ public unsafe partial class CStringSequence
 		/// Pointer to the text array.
 		/// </summary>
 		private IntPtr _pointer;
+		/// <summary>
+		/// Indicates whether unmanaged buffer should include empty instances.
+		/// </summary>
+		private Boolean _includeEmpty;
 
 		/// <summary>
 		/// Releases the unmanaged memory.
@@ -36,10 +44,14 @@ public unsafe partial class CStringSequence
 		public void Free()
 		{
 			if (this._pointer == IntPtr.Zero) return;
-			if (this._handle.IsAllocated)
-				this._handle.Free();
 			if (this._emptyHandle.Pointer != default)
 				this._emptyHandle.Dispose();
+			if (this._handle.IsAllocated)
+			{
+				this._handle.Free();
+				this._pointer = IntPtr.Zero;
+				return;
+			}
 			Marshal.FreeHGlobal(this._pointer);
 			this._pointer = IntPtr.Zero;
 		}
@@ -49,18 +61,9 @@ public unsafe partial class CStringSequence
 		/// <param name="managed">A <see cref="CStringSequence"/> instance.</param>
 		public void FromManaged(CStringSequence? managed)
 		{
-			if (managed is null || managed.NonEmptyCount == 0)
-			{
-				this._pointer = IntPtr.Zero;
-				if (this._handle.IsAllocated)
-					this._handle.Free();
-				if (this._emptyHandle.Pointer != default)
-					this._emptyHandle.Dispose();
-				return;
-			}
-
-			this._handle = GCHandle.Alloc(managed._value, GCHandleType.Pinned);
-			this._pointer = InputMarshaller.CreateUtf8Memory(managed, false);
+			this.Free();
+			this._managed = managed;
+			this._includeEmpty = false;
 		}
 		/// <summary>
 		/// Initializes a new instance of the <see cref="InputMarshaller"/> struct from a managed <see cref="Interop"/>.
@@ -68,26 +71,24 @@ public unsafe partial class CStringSequence
 		/// <param name="managed">A <see cref="Interop"/> instance.</param>
 		public void FromManaged(Interop managed)
 		{
-			if (managed.Value is null)
-			{
-				this._pointer = IntPtr.Zero;
-				if (this._handle.IsAllocated)
-					this._handle.Free();
-				if (this._emptyHandle.Pointer != default)
-					this._emptyHandle.Dispose();
-				return;
-			}
-
-			this._handle = GCHandle.Alloc(managed.Value.ToString(), GCHandleType.Pinned);
-			this._emptyHandle = CString.Empty.TryPin(out _);
-			this._pointer = InputMarshaller.CreateUtf8Memory(managed.Value, true);
+			this.Free();
+			this._managed = managed.Value;
+			this._includeEmpty = true;
 		}
 
 		/// <summary>
 		/// Retrieves unmanaged pointer to the text array.
 		/// </summary>
 		/// <returns>A pointer to the text array.</returns>
-		public IntPtr ToUnmanaged() => this._pointer;
+		public IntPtr ToUnmanaged()
+		{
+			if (this._managed is null) return IntPtr.Zero;
+			if (this._pointer != IntPtr.Zero) return this._pointer;
+
+			this._handle = GCHandle.Alloc(this._managed._value, GCHandleType.Pinned);
+			this._pointer = InputMarshaller.CreateUtf8Memory(this._managed, this._includeEmpty);
+			return this._pointer;
+		}
 
 		/// <summary>
 		/// Creates a pointer to the unmanaged memory containing UTF-8 text array.
@@ -167,7 +168,7 @@ public unsafe partial class CStringSequence
 		/// <returns>Pointer to unmanaged memory for the text array.</returns>
 		private static IntPtr Alloc(CStringSequence source, Boolean includeEmpty, out Int32 length)
 		{
-			length = includeEmpty ? source.Count : source.NonEmptyCount + 1;
+			length = (includeEmpty ? source.Count : source.NonEmptyCount) + 1;
 			return Marshal.AllocHGlobal(length * IntPtr.Size);
 		}
 	}
