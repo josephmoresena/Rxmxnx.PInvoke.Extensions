@@ -28,6 +28,10 @@ public unsafe partial class CString
 		/// Memory handle for pinning the managed instance.
 		/// </summary>
 		private MemoryHandle _pinnable;
+		/// <summary>
+		/// Indicates whether memory is allocated.
+		/// </summary>
+		private Boolean _allocated;
 
 		/// <summary>
 		/// Releases the unmanaged memory.
@@ -41,8 +45,10 @@ public unsafe partial class CString
 				this._pointer = IntPtr.Zero;
 				return;
 			}
-			Marshal.FreeHGlobal(this._pointer);
+			if (this._allocated)
+				Marshal.FreeHGlobal(this._pointer);
 			this._pointer = IntPtr.Zero;
+			this._allocated = false;
 		}
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Marshaller"/> struct form a managed <see cref="CString"/>.
@@ -50,45 +56,8 @@ public unsafe partial class CString
 		/// <param name="managed">A <see cref="CString"/> instance.</param>
 		public void FromManaged(CString? managed)
 		{
+			this.Free();
 			this._managed = managed;
-			if (managed is null)
-			{
-				this._pointer = IntPtr.Zero;
-				this._pinnable = default;
-				return;
-			}
-
-			ReadOnlySpan<Byte> utf8Span = managed.AsSpan();
-			if (managed.IsNullTerminated)
-			{
-				if (managed.IsReference)
-				{
-					// If the CString is a reference type, we can use the pointer directly.
-					this._pointer = (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Span));
-					return;
-				}
-
-				this._pinnable = managed.TryPin(out Boolean pinned);
-				if (pinned)
-				{
-					// If the CString is a value type and pinned, we can use the pointer from the pinning handle.
-					this._pointer = (IntPtr)this._pinnable.Pointer;
-					return;
-				}
-				if (managed.IsFunction && MemoryInspector.Instance.IsLiteral(utf8Span))
-				{
-					// If the CString is a literal, we can use the pointer directly.
-					this._pointer = (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Span));
-					return;
-				}
-			}
-
-			// If the CString is not null-terminated or not pinned, we need to allocate unmanaged memory.
-			this._pointer = Marshal.AllocHGlobal(managed.Length + 1);
-
-			Span<Byte> output = new(this._pointer.ToPointer(), managed.Length + 1);
-			utf8Span.CopyTo(output);
-			output[^1] = default; // Ensure null-termination.
 		}
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Marshaller"/> struct from a null-terminated UTF-8 text pointer.
@@ -96,26 +65,70 @@ public unsafe partial class CString
 		/// <param name="unmanaged">A null-terminated UTF-8 text pointer.</param>
 		public void FromUnmanaged(IntPtr unmanaged)
 		{
-			if (unmanaged == IntPtr.Zero)
-			{
-				this._pointer = IntPtr.Zero;
-				this._pinnable = default;
-				this._managed = null;
-				return;
-			}
-
-			this._managed = CString.CreateNullTerminatedUnsafe(unmanaged);
+			this.Free();
+			this._pointer = unmanaged;
 		}
 		/// <summary>
 		/// Retrieves the pointer to the unmanaged memory containing UTF-8 text.
 		/// </summary>
 		/// <returns>A pointer to unmanaged memory containing UTF-8 text.</returns>
-		public IntPtr ToUnmanaged() => this._pointer;
+		public IntPtr ToUnmanaged()
+		{
+			if (this._managed is null) return IntPtr.Zero;
+			if (this._pointer != IntPtr.Zero) return this._pointer;
+
+			ReadOnlySpan<Byte> utf8Span = this._managed.AsSpan();
+			if (this._managed.IsNullTerminated)
+			{
+				if (this._managed.IsReference)
+				{
+					// If the CString is a reference type, we can use the pointer directly.
+					this._pointer = (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Span));
+					return this._pointer;
+				}
+
+				this._pinnable = this._managed.TryPin(out Boolean pinned);
+				if (pinned)
+				{
+					// If the CString is a value type and pinned, we can use the pointer from the pinning handle.
+					this._pointer = (IntPtr)this._pinnable.Pointer;
+					return this._pointer;
+				}
+
+				try
+				{
+					if (this._managed.IsFunction && MemoryInspector.Instance.IsLiteral(utf8Span))
+					{
+						// If the CString is a literal, we can use the pointer directly.
+						this._pointer = (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Span));
+						return this._pointer;
+					}
+				}
+				catch (PlatformNotSupportedException)
+				{
+					// Ignore 
+				}
+			}
+
+			// If the CString is not null-terminated or not pinned, we need to allocate unmanaged memory.
+			this._pointer = Marshal.AllocHGlobal(this._managed.Length + 1);
+			this._allocated = true;
+
+			Span<Byte> output = new(this._pointer.ToPointer(), this._managed.Length + 1);
+			utf8Span.CopyTo(output);
+			output[^1] = default; // Ensure null-termination.
+
+			return this._pointer;
+		}
 		/// <summary>
 		/// Retrieves the managed <see cref="CString"/> instance.
 		/// </summary>
 		/// <returns>A <see cref="CString"/> instance.</returns>
-		public CString? ToManaged() => this._managed;
+		public CString? ToManaged()
+		{
+			if (IntPtr.Zero == this._pointer) return null;
+			return this._managed ??= CString.CreateNullTerminatedUnsafe(this._pointer);
+		}
 	}
 #endif
 }

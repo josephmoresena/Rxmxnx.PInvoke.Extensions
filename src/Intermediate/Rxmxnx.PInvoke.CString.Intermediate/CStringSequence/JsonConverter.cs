@@ -36,7 +36,7 @@ public partial class CStringSequence
 					_ => true,
 				};
 #else
-				!options.IgnoreNullValues
+				!options.IgnoreNullValues;
 #endif
 			if (writeNull)
 			{
