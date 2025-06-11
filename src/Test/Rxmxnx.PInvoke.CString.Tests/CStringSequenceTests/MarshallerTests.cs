@@ -11,7 +11,7 @@ public sealed unsafe class MarshallerTests
 
 		marshaller.FromManaged(seqNull);
 		Assert.Equal(IntPtr.Zero, marshaller.ToUnmanaged());
-		marshaller.FromManaged((CStringSequence.Interop)seqNull);
+		marshaller.FromManaged(MarshallerTests.GetInterop(seqNull));
 		Assert.Equal(IntPtr.Zero, marshaller.ToUnmanaged());
 	}
 	[Theory]
@@ -69,9 +69,10 @@ public sealed unsafe class MarshallerTests
 		IReadOnlyList<Int32> indices = TestSet.GetIndices(length);
 		CStringSequence seq = new(TestSet.GetValues(indices, handle));
 		String buffer = seq.ToString();
+		CStringSequence.Interop interop = MarshallerTests.GetInterop(seq);
 
 		CStringSequence.InputMarshaller marshaller = new();
-		marshaller.FromManaged((CStringSequence.Interop)seq);
+		marshaller.FromManaged(interop);
 
 		IntPtr ptr = marshaller.ToUnmanaged();
 		try
@@ -84,10 +85,26 @@ public sealed unsafe class MarshallerTests
 			Assert.Equal(seq.NonEmptyCount, result.NonEmptyCount);
 
 			Assert.Equal(seq, result);
+			Assert.True(seq == interop);
+			Assert.False(result != interop);
+			Assert.True(interop.Equals((Object)seq));
+			Assert.True(interop.Equals((Object)interop));
 		}
 		finally
 		{
 			marshaller.Free();
 		}
+	}
+
+	private static CStringSequence.Interop GetInterop(CStringSequence? seq)
+	{
+		CStringSequence.Interop interop = seq;
+
+		Assert.Equal(seq?.Count, interop.Count);
+		Assert.Equal(seq, interop.Value);
+		Assert.Equal(seq?.ToString(), interop.ToString());
+		Assert.Equal(seq?.GetHashCode() ?? 0, interop.GetHashCode());
+
+		return interop;
 	}
 }

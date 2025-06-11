@@ -1,6 +1,4 @@
-﻿using Rune = System.Text.Rune;
-
-namespace Rxmxnx.PInvoke.Tests.Internal.DecodedRuneTests;
+﻿namespace Rxmxnx.PInvoke.Tests.Internal.DecodedRuneTests;
 
 [ExcludeFromCodeCoverage]
 public sealed class DecodeTest

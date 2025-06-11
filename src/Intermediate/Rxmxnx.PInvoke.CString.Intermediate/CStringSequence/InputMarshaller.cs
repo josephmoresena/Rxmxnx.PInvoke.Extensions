@@ -53,7 +53,6 @@ public unsafe partial class CStringSequence
 			{
 				this._handle.Free();
 				this._pointer = IntPtr.Zero;
-				return;
 			}
 			Marshal.FreeHGlobal(this._pointer);
 			this._pointer = IntPtr.Zero;
