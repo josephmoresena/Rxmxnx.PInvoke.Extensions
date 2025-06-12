@@ -147,11 +147,11 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		return result;
 	}
 	/// <summary>
-	/// Creates a new instance of <see cref="ValueSequence"/> for the current sequence.
+	/// Creates a new instance of <see cref="Utf8View"/> for the current sequence.
 	/// </summary>
 	/// <param name="includeEmptyItems">Specifies whether empty items should be included in the enumeration.</param>
-	/// <returns>A <see cref="ValueSequence"/> instance.</returns>
-	public ValueSequence ToValueSequence(Boolean includeEmptyItems = true) => new(this, includeEmptyItems);
+	/// <returns>A <see cref="Utf8View"/> instance.</returns>
+	public Utf8View ToValueSequence(Boolean includeEmptyItems = true) => new(this, includeEmptyItems);
 
 	/// <summary>
 	/// Creates a new UTF-8 text sequence with specific lengths, and initializes each

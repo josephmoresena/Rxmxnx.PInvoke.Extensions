@@ -1,22 +1,19 @@
 namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
 
 [ExcludeFromCodeCoverage]
-public sealed unsafe class ValueSequenceTest
+public sealed unsafe class Utf8ViewTest
 {
 	[Fact]
 	internal void NullTest()
 	{
-		CStringSequence.ValueSequence enumerable = default;
-		CStringSequence.ValueSequence.Enumerator enumerator = enumerable.GetEnumerator();
+		CStringSequence.Utf8View enumerable = default;
+		CStringSequence.Utf8View.Enumerator enumerator = enumerable.GetEnumerator();
 
 		Assert.Null(enumerable.ToString());
 		Assert.Equal(0, enumerable.Count);
 		Assert.Empty(enumerable.ToArray());
 		Assert.False(enumerator.MoveNext());
-		Assert.Throws<InvalidOperationException>(() =>
-		{
-			_ = default(CStringSequence.ValueSequence.Enumerator).Current;
-		});
+		Assert.Throws<InvalidOperationException>(() => { _ = default(CStringSequence.Utf8View.Enumerator).Current; });
 	}
 
 	[Theory]
@@ -24,23 +21,20 @@ public sealed unsafe class ValueSequenceTest
 	[InlineData(false)]
 	internal void EmptyTest(Boolean empty)
 	{
-		CStringSequence.ValueSequence enumerable = (empty ?
+		CStringSequence.Utf8View enumerable = (empty ?
 				CStringSequence.Empty :
 				new(ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty,
 				    ReadOnlySpan<Byte>.Empty,
 				    ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty,
 				    ReadOnlySpan<Byte>.Empty))
 			.ToValueSequence(false);
-		CStringSequence.ValueSequence.Enumerator enumerator = enumerable.GetEnumerator();
+		CStringSequence.Utf8View.Enumerator enumerator = enumerable.GetEnumerator();
 
 		Assert.Equal(String.Empty, enumerable.ToString());
 		Assert.Equal(0, enumerable.Count);
 		Assert.Empty(enumerable.ToArray());
 		Assert.False(enumerator.MoveNext());
-		Assert.Throws<InvalidOperationException>(() =>
-		{
-			_ = default(CStringSequence.ValueSequence.Enumerator).Current;
-		});
+		Assert.Throws<InvalidOperationException>(() => { _ = default(CStringSequence.Utf8View.Enumerator).Current; });
 	}
 
 	[Fact]
@@ -50,28 +44,28 @@ public sealed unsafe class ValueSequenceTest
 		                                         .Concat(TestSet.GetIndices(20).Select(i => TestSet.GetString(i, true)))
 		                                         .Concat(Enumerable.Range(0, 10)
 		                                                           .Select(i => i % 2 == 0 ? String.Empty : default)));
-		CStringSequence.ValueSequence enumerable = sequence.ToValueSequence(false);
-		CStringSequence.ValueSequence.Enumerator enumerator = enumerable.GetEnumerator();
-		ref CStringSequence.ValueSequence.Enumerator refEnumerator = ref enumerator;
+		CStringSequence.Utf8View enumerable = sequence.ToValueSequence(false);
+		CStringSequence.Utf8View.Enumerator enumerator = enumerable.GetEnumerator();
+		ref CStringSequence.Utf8View.Enumerator refEnumerator = ref enumerator;
 		IntPtr ptrEnumerator = (IntPtr)Unsafe.AsPointer(ref refEnumerator);
 
 		Assert.Equal(sequence.NonEmptyCount, enumerable.Count);
 		Assert.Throws<InvalidOperationException>(() =>
 		{
-			ref CStringSequence.ValueSequence.Enumerator rE =
-				ref Unsafe.AsRef<CStringSequence.ValueSequence.Enumerator>(ptrEnumerator.ToPointer());
+			ref CStringSequence.Utf8View.Enumerator rE =
+				ref Unsafe.AsRef<CStringSequence.Utf8View.Enumerator>(ptrEnumerator.ToPointer());
 			_ = rE.Current;
 		});
-		ValueSequenceTest.AssertNonEmpty(sequence, enumerator);
+		Utf8ViewTest.AssertNonEmpty(sequence, enumerator);
 		Assert.Throws<InvalidOperationException>(() =>
 		{
-			ref CStringSequence.ValueSequence.Enumerator rE =
-				ref Unsafe.AsRef<CStringSequence.ValueSequence.Enumerator>(ptrEnumerator.ToPointer());
+			ref CStringSequence.Utf8View.Enumerator rE =
+				ref Unsafe.AsRef<CStringSequence.Utf8View.Enumerator>(ptrEnumerator.ToPointer());
 			_ = rE.Current;
 		});
 
 		enumerator.Reset();
-		ValueSequenceTest.AssertNonEmpty(sequence, enumerator);
+		Utf8ViewTest.AssertNonEmpty(sequence, enumerator);
 	}
 	[Fact]
 	internal void EnumerableTest()
@@ -80,7 +74,7 @@ public sealed unsafe class ValueSequenceTest
 		                                         .Concat(TestSet.GetIndices(20).Select(i => TestSet.GetString(i, true)))
 		                                         .Concat(Enumerable.Range(0, 10)
 		                                                           .Select(i => i % 2 == 0 ? String.Empty : default)));
-		CStringSequence.ValueSequence enumerable = sequence.ToValueSequence();
+		CStringSequence.Utf8View enumerable = sequence.ToValueSequence();
 		using IEnumerator<CString> seqEnumerator = (sequence as IEnumerable<CString>).GetEnumerator();
 		foreach (ReadOnlySpan<Byte> span in enumerable)
 		{
@@ -91,7 +85,7 @@ public sealed unsafe class ValueSequenceTest
 		Assert.Equal(sequence.Count, enumerable.Count);
 	}
 
-	private static void AssertNonEmpty(CStringSequence sequence, CStringSequence.ValueSequence.Enumerator enumerator)
+	private static void AssertNonEmpty(CStringSequence sequence, CStringSequence.Utf8View.Enumerator enumerator)
 	{
 		Int32 index = 0;
 		Span<Int32> offsets = stackalloc Int32[sequence.NonEmptyCount];

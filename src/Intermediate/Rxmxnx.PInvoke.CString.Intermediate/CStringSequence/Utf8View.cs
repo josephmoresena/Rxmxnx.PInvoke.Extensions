@@ -3,7 +3,7 @@ namespace Rxmxnx.PInvoke;
 public partial class CStringSequence
 {
 	/// <summary>
-	/// Provides a stack-only, allocation-free enumerable view over the elements of a <see cref="CStringSequence"/>.
+	/// A stack-only view over the UTF-8 segments of a <see cref="CStringSequence"/>, with control over empty entries.
 	/// </summary>
 	[DebuggerDisplay("Count = {Count}")]
 	[DebuggerTypeProxy(typeof(CStringSequenceDebugView))]
@@ -11,7 +11,7 @@ public partial class CStringSequence
 #if NET7_0_OR_GREATER
 	[NativeMarshalling(typeof(InputMarshaller))]
 #endif
-	public readonly ref struct ValueSequence
+	public readonly ref struct Utf8View
 	{
 		/// <summary>
 		/// Internal <see cref="CStringSequence"/> instance.
@@ -41,7 +41,7 @@ public partial class CStringSequence
 		/// </summary>
 		/// <param name="instance">A <see cref="CStringSequence"/> instance.</param>
 		/// <param name="includeEmptyItems">Specifies whether empty items should be included in the enumeration.</param>
-		internal ValueSequence(CStringSequence? instance, Boolean includeEmptyItems)
+		internal Utf8View(CStringSequence? instance, Boolean includeEmptyItems)
 		{
 			this._instance = instance;
 			this._excludeEmptyItems = !includeEmptyItems;
@@ -81,26 +81,26 @@ public partial class CStringSequence
 		}
 
 		/// <summary>
-		/// Determines whether two specified <see cref="ValueSequence"/> instances have the same value.
+		/// Determines whether two specified <see cref="Utf8View"/> instances have the same value.
 		/// </summary>
-		/// <param name="left">The first <see cref="ValueSequence"/> to compare, or <see langword="null"/>.</param>
-		/// <param name="right">The second <see cref="ValueSequence"/> to compare, or <see langword="null"/>.</param>
+		/// <param name="left">The first <see cref="Utf8View"/> to compare, or <see langword="null"/>.</param>
+		/// <param name="right">The second <see cref="Utf8View"/> to compare, or <see langword="null"/>.</param>
 		/// <returns>
 		/// <see langword="true"/> if the value of <paramref name="left"/> is the same as the value
 		/// of <paramref name="right"/>; otherwise, <see langword="false"/>.
 		/// </returns>
-		public static Boolean operator ==(ValueSequence left, ValueSequence right)
+		public static Boolean operator ==(Utf8View left, Utf8View right)
 			=> Object.Equals(left._instance, right._instance) && left._excludeEmptyItems == right._excludeEmptyItems;
 		/// <summary>
-		/// Determines whether two specified <see cref="ValueSequence"/> instances have different values.
+		/// Determines whether two specified <see cref="Utf8View"/> instances have different values.
 		/// </summary>
-		/// <param name="left">The first <see cref="ValueSequence"/> to compare, or <see langword="null"/>.</param>
-		/// <param name="right">The second <see cref="ValueSequence"/> to compare, or <see langword="null"/>.</param>
+		/// <param name="left">The first <see cref="Utf8View"/> to compare, or <see langword="null"/>.</param>
+		/// <param name="right">The second <see cref="Utf8View"/> to compare, or <see langword="null"/>.</param>
 		/// <returns>
 		/// <see langword="true"/> if the value of <paramref name="left"/> is different from the value
 		/// of <paramref name="right"/>; otherwise, <see langword="false"/>.
 		/// </returns>
-		public static Boolean operator !=(ValueSequence left, ValueSequence right) => !(left == right);
+		public static Boolean operator !=(Utf8View left, Utf8View right) => !(left == right);
 
 		/// <summary>
 		/// Enumerates the UTF-8 segments within a <see cref="CStringSequence"/>.

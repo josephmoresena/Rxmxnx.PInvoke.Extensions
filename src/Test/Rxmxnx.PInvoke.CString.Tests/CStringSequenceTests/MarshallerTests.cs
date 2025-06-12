@@ -82,10 +82,10 @@ public sealed unsafe class MarshallerTests
 		IReadOnlyList<Int32> indices = TestSet.GetIndices(length);
 		CStringSequence seq = new(TestSet.GetValues(indices, handle));
 		String buffer = seq.ToString();
-		CStringSequence.ValueSequence interop = MarshallerTests.GetValue(seq, true);
+		CStringSequence.Utf8View value = MarshallerTests.GetValue(seq, true);
 
 		CStringSequence.InputMarshaller marshaller = new();
-		marshaller.FromManaged(interop);
+		marshaller.FromManaged(value);
 
 		IntPtr ptr = marshaller.ToUnmanaged();
 		try
@@ -117,7 +117,7 @@ public sealed unsafe class MarshallerTests
 		IReadOnlyList<Int32> indices = TestSet.GetIndices(length);
 		CStringSequence seq = new(TestSet.GetValues(indices, handle));
 		String buffer = seq.ToString();
-		CStringSequence.ValueSequence value = MarshallerTests.GetValue(seq, false);
+		CStringSequence.Utf8View value = MarshallerTests.GetValue(seq, false);
 
 		CStringSequence.InputMarshaller marshaller = new();
 		marshaller.FromManaged(value);
@@ -149,11 +149,11 @@ public sealed unsafe class MarshallerTests
 		}
 	}
 
-	private static CStringSequence.ValueSequence GetValue(CStringSequence? seq, Boolean includeEmptyItems)
+	private static CStringSequence.Utf8View GetValue(CStringSequence? seq, Boolean includeEmptyItems)
 	{
 		if (seq is null)
 		{
-			CStringSequence.ValueSequence result = default;
+			CStringSequence.Utf8View result = default;
 			Assert.Equal(0, result.Count);
 			Assert.Null(result.Sequence);
 			Assert.True(result.IncludeEmptyItems);
@@ -162,7 +162,7 @@ public sealed unsafe class MarshallerTests
 			return default;
 		}
 
-		CStringSequence.ValueSequence value = seq.ToValueSequence(includeEmptyItems);
+		CStringSequence.Utf8View value = seq.ToValueSequence(includeEmptyItems);
 		Assert.Equal(includeEmptyItems ? seq.Count : seq.NonEmptyCount, value.Count);
 		Assert.Equal(seq, value.Sequence);
 		Assert.Equal(seq.ToString(), value.ToString());

@@ -13,7 +13,7 @@ public unsafe partial class CStringSequence
 	[Browsable(false)]
 #if NET7_0_OR_GREATER
 	[CustomMarshaller(typeof(CStringSequence), MarshalMode.ManagedToUnmanagedIn, typeof(InputMarshaller))]
-	[CustomMarshaller(typeof(Interop), MarshalMode.ManagedToUnmanagedIn, typeof(InputMarshaller))]
+	[CustomMarshaller(typeof(Utf8View), MarshalMode.ManagedToUnmanagedIn, typeof(InputMarshaller))]
 #endif
 	public ref struct InputMarshaller
 	{
@@ -68,10 +68,10 @@ public unsafe partial class CStringSequence
 			this._includeEmpty = false;
 		}
 		/// <summary>
-		/// Initializes a new instance of the <see cref="InputMarshaller"/> struct from a managed <see cref="ValueSequence"/>.
+		/// Initializes a new instance of the <see cref="InputMarshaller"/> struct from a managed <see cref="Utf8View"/>.
 		/// </summary>
-		/// <param name="managed">A <see cref="ValueSequence"/> instance.</param>
-		public void FromManaged(ValueSequence managed)
+		/// <param name="managed">A <see cref="Utf8View"/> instance.</param>
+		public void FromManaged(Utf8View managed)
 		{
 			this.Free();
 			this._managed = managed.Sequence;
