@@ -242,7 +242,7 @@ internal static
 	[MethodImpl(MethodImplOptions.AggressiveOptimization)]
 	private static Int32 IndexOfNull(ref Char searchSpace)
 	{
-		const Char value = '\0';
+		const UInt16 value = '\0';
 		IntPtr offset = 0;
 		IntPtr lengthToExamine = Int32.MaxValue;
 

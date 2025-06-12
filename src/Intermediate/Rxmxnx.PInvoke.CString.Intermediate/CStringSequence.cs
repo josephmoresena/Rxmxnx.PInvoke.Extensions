@@ -86,7 +86,8 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// enumeration of strings.
 	/// </summary>
 	/// <param name="values">The enumerable collection of strings.</param>
-	public CStringSequence(IEnumerable<String?> values) : this(values.Select(CStringSequence.CreateTransitive).ToArray()) { }
+	public CStringSequence(IEnumerable<String?> values) : this(
+		values.Select(CStringSequence.CreateTransitive).ToArray()) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from an
 	/// enumeration of UTF-8 strings.
@@ -145,6 +146,12 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		this.WithSafeTransform(result, CStringSequence.BinaryCopyTo);
 		return result;
 	}
+	/// <summary>
+	/// Creates a new instance of <see cref="ValueSequence"/> for the current sequence.
+	/// </summary>
+	/// <param name="includeEmptyItems">Specifies whether empty items should be included in the enumeration.</param>
+	/// <returns>A <see cref="ValueSequence"/> instance.</returns>
+	public ValueSequence ToValueSequence(Boolean includeEmptyItems = true) => new(this, includeEmptyItems);
 
 	/// <summary>
 	/// Creates a new UTF-8 text sequence with specific lengths, and initializes each

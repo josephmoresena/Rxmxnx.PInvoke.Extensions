@@ -40,6 +40,14 @@ internal sealed record CStringSequenceDebugView
 	/// </summary>
 	/// <param name="fseq">The <see cref="FixedCStringSequence"/> instance to provide a debug view for.</param>
 	public CStringSequenceDebugView(FixedCStringSequence fseq) => this._values = fseq.Values.ToArray();
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CStringSequenceDebugView"/> class with the
+	/// specified <see cref="CStringSequence.ValueSequence"/> instance.
+	/// </summary>
+	/// <param name="value">
+	/// The <see cref="CStringSequence.ValueSequence"/> instance to provide a debug view for.
+	/// </param>
+	public CStringSequenceDebugView(CStringSequence.ValueSequence value) => this._values = value.ToArray();
 #if NET7_0_OR_GREATER || !PACKAGE
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequenceDebugView"/> class with the
