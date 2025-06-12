@@ -145,8 +145,6 @@ public partial class CStringSequence
 					if (currentLength < 0) return false;
 					if (this._includeEmptyItems || currentLength > 0)
 						return currentLength is null or 0 || currentLength < this._buffer.Length;
-					if (this._includeEmptyItems && currentLength is null or 0)
-						return true;
 				}
 				return false;
 			}
