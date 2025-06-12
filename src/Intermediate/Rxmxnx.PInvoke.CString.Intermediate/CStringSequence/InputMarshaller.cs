@@ -68,14 +68,14 @@ public unsafe partial class CStringSequence
 			this._includeEmpty = false;
 		}
 		/// <summary>
-		/// Initializes a new instance of the <see cref="InputMarshaller"/> struct from a managed <see cref="Interop"/>.
+		/// Initializes a new instance of the <see cref="InputMarshaller"/> struct from a managed <see cref="ValueSequence"/>.
 		/// </summary>
-		/// <param name="managed">A <see cref="Interop"/> instance.</param>
-		public void FromManaged(Interop managed)
+		/// <param name="managed">A <see cref="ValueSequence"/> instance.</param>
+		public void FromManaged(ValueSequence managed)
 		{
 			this.Free();
-			this._managed = managed.Value;
-			this._includeEmpty = true;
+			this._managed = managed.Sequence;
+			this._includeEmpty = managed.IncludeEmptyItems;
 		}
 
 		/// <summary>

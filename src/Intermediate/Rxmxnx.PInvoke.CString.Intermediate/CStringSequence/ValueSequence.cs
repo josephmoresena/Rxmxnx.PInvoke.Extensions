@@ -7,6 +7,10 @@ public partial class CStringSequence
 	/// </summary>
 	[DebuggerDisplay("Count = {Count}")]
 	[DebuggerTypeProxy(typeof(CStringSequenceDebugView))]
+	[StructLayout(LayoutKind.Sequential)]
+#if NET7_0_OR_GREATER
+	[NativeMarshalling(typeof(InputMarshaller))]
+#endif
 	public readonly ref struct ValueSequence
 	{
 		/// <summary>
@@ -16,31 +20,40 @@ public partial class CStringSequence
 		/// <summary>
 		/// Indicates whether current enumeration is only for non-empty items.
 		/// </summary>
-		private readonly Boolean _includeEmptyItems;
+		private readonly Boolean _excludeEmptyItems;
 
 		/// <summary>
-		/// Gets the number of elements in the enumerable.
+		/// Internal sequence instance.
+		/// </summary>
+		public CStringSequence? Sequence => this._instance;
+		/// <summary>
+		/// Indicates whether current enumeration includes empty items. 
+		/// </summary>
+		public Boolean IncludeEmptyItems => !this._excludeEmptyItems;
+		/// <summary>
+		/// Gets the number of elements in the enumeration.
 		/// </summary>
 		public Int32 Count
-			=> (this._includeEmptyItems ? this._instance?.Count : this._instance?.NonEmptyCount).GetValueOrDefault();
+			=> (!this._excludeEmptyItems ? this._instance?.Count : this._instance?.NonEmptyCount).GetValueOrDefault();
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="instance">A <see cref="CStringSequence"/> instance.</param>
-		/// <param name="includeEmptyItems">Indicates whether current enumerable is only for non-empty items.</param>
+		/// <param name="includeEmptyItems">Specifies whether empty items should be included in the enumeration.</param>
 		internal ValueSequence(CStringSequence? instance, Boolean includeEmptyItems)
 		{
 			this._instance = instance;
-			this._includeEmptyItems = includeEmptyItems;
+			this._excludeEmptyItems = !includeEmptyItems;
 		}
-
-		/// <inheritdoc/>
-		public override String? ToString() => this._instance?._value;
 
 		/// <inheritdoc cref="IEnumerable{T}.GetEnumerator"/>
 		public Enumerator GetEnumerator()
-			=> this._instance is not null ? new(this._instance, this._includeEmptyItems) : default;
+			=> this._instance is not null ? new(this._instance, this._excludeEmptyItems) : default;
+		/// <inheritdoc/>
+		public override Int32 GetHashCode() => this._instance?.GetHashCode() ?? default;
+		/// <inheritdoc/>
+		public override String? ToString() => this._instance?._value;
 
 		/// <summary>
 		/// Creates an array of <see cref="CString"/> from current instance.
@@ -51,7 +64,7 @@ public partial class CStringSequence
 		internal CString[] ToArray()
 		{
 			if (this._instance is null or { Count: 0, }) return [];
-			if (this._includeEmptyItems) return this._instance.ToArray();
+			if (!this._excludeEmptyItems) return this._instance.ToArray();
 
 			CString[] result = new CString[this._instance.NonEmptyCount];
 			Span<CString> span = result;
@@ -76,7 +89,7 @@ public partial class CStringSequence
 			/// <summary>
 			/// Indicates whether current enumeration include empty items.
 			/// </summary>
-			private readonly Boolean _includeEmptyItems;
+			private readonly Boolean _excludeEmptyItems;
 			/// <summary>
 			/// Internal instance.
 			/// </summary>
@@ -115,11 +128,11 @@ public partial class CStringSequence
 			/// Constructor.
 			/// </summary>
 			/// <param name="instance">A <see cref="CStringSequence"/> instance.</param>
-			/// <param name="includeEmptyItems">Indicates whether the enumerator should include non-empty element.</param>
-			internal Enumerator(CStringSequence? instance, Boolean includeEmptyItems)
+			/// <param name="excludeEmptyItems">Indicates whether current enumerator is only for non-empty items.</param>
+			internal Enumerator(CStringSequence? instance, Boolean excludeEmptyItems)
 			{
 				this._instance = instance;
-				this._includeEmptyItems = includeEmptyItems;
+				this._excludeEmptyItems = excludeEmptyItems;
 				this.Reset();
 			}
 
@@ -143,7 +156,7 @@ public partial class CStringSequence
 				{
 					this.Advance(ref lengths, ref currentLength);
 					if (currentLength < 0) return false;
-					if (this._includeEmptyItems || currentLength > 0)
+					if (!this._excludeEmptyItems || currentLength > 0)
 						return currentLength is null or 0 || currentLength < this._buffer.Length;
 				}
 				return false;
@@ -187,7 +200,8 @@ public partial class CStringSequence
 				}
 				if (!this._index.HasValue)
 				{
-					this._index = 0;
+					// Starts enumerator instance.
+					this._index = 0; // Start.
 				}
 				else
 				{
@@ -195,7 +209,7 @@ public partial class CStringSequence
 					this._index++;
 					if (this._index > 0 && !lengths.IsEmpty) lengths = lengths[1..];
 				}
-				currentLength = !lengths.IsEmpty ? lengths[0] : -1;
+				currentLength = lengths.IsEmpty ? -1 : lengths[0];
 			}
 		}
 	}

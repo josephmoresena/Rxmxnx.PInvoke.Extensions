@@ -11,8 +11,21 @@ public sealed unsafe class MarshallerTests
 
 		marshaller.FromManaged(seqNull);
 		Assert.Equal(IntPtr.Zero, marshaller.ToUnmanaged());
-		marshaller.FromManaged(MarshallerTests.GetInterop(seqNull));
+		marshaller.FromManaged(MarshallerTests.GetValue(seqNull, true));
 		Assert.Equal(IntPtr.Zero, marshaller.ToUnmanaged());
+	}
+	[Fact]
+	internal void EmptyTest()
+	{
+		CStringSequence empty = CStringSequence.Empty;
+		CStringSequence.InputMarshaller marshaller = new();
+
+		marshaller.FromManaged(empty);
+		Assert.NotEqual(IntPtr.Zero, marshaller.ToUnmanaged());
+		marshaller.Free();
+		marshaller.FromManaged(MarshallerTests.GetValue(empty, false));
+		Assert.NotEqual(IntPtr.Zero, marshaller.ToUnmanaged());
+		marshaller.Free();
 	}
 	[Theory]
 	[InlineData(null)]
@@ -63,13 +76,13 @@ public sealed unsafe class MarshallerTests
 	[InlineData(256)]
 	[InlineData(300)]
 	[InlineData(1000)]
-	internal void FromInteropTest(Int32? length)
+	internal void FromValueTest(Int32? length)
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices(length);
 		CStringSequence seq = new(TestSet.GetValues(indices, handle));
 		String buffer = seq.ToString();
-		CStringSequence.Interop interop = MarshallerTests.GetInterop(seq);
+		CStringSequence.ValueSequence interop = MarshallerTests.GetValue(seq, true);
 
 		CStringSequence.InputMarshaller marshaller = new();
 		marshaller.FromManaged(interop);
@@ -85,10 +98,49 @@ public sealed unsafe class MarshallerTests
 			Assert.Equal(seq.NonEmptyCount, result.NonEmptyCount);
 
 			Assert.Equal(seq, result);
-			Assert.True(seq == interop);
-			Assert.False(result != interop);
-			Assert.True(interop.Equals((Object)seq));
-			Assert.True(interop.Equals((Object)interop));
+		}
+		finally
+		{
+			marshaller.Free();
+		}
+	}
+	[Theory]
+	[InlineData(null)]
+	[InlineData(8)]
+	[InlineData(32)]
+	[InlineData(256)]
+	[InlineData(300)]
+	[InlineData(1000)]
+	internal void FromValueNonEmptyOnlyTest(Int32? length)
+	{
+		using TestMemoryHandle handle = new();
+		IReadOnlyList<Int32> indices = TestSet.GetIndices(length);
+		CStringSequence seq = new(TestSet.GetValues(indices, handle));
+		String buffer = seq.ToString();
+		CStringSequence.ValueSequence interop = MarshallerTests.GetValue(seq, false);
+
+		CStringSequence.InputMarshaller marshaller = new();
+		marshaller.FromManaged(interop);
+
+		IntPtr ptr = marshaller.ToUnmanaged();
+		try
+		{
+			ReadOnlySpan<ReadOnlyValPtr<Byte>> values = new(ptr.ToPointer(), seq.NonEmptyCount);
+			Span<Int32> offset = stackalloc Int32[values.Length];
+			CStringSequence result = CStringSequence.CreateUnsafe(values);
+
+			Assert.Equal(buffer, result.ToString());
+			Assert.Equal(seq.NonEmptyCount, result.Count);
+			Assert.Equal(seq.NonEmptyCount, result.NonEmptyCount);
+
+			seq.GetOffsets(offset);
+			fixed (void* fPtr = &MemoryMarshal.GetReference<Char>(buffer))
+			{
+				ReadOnlyValPtr<Byte> seqPtr = (ReadOnlyValPtr<Byte>)fPtr;
+				for (Int32 i = 0; i < offset.Length; i++)
+					Assert.Equal(seqPtr + offset[i], values[i]);
+			}
+			Assert.Equal(ptr, marshaller.ToUnmanaged());
 		}
 		finally
 		{
@@ -96,15 +148,24 @@ public sealed unsafe class MarshallerTests
 		}
 	}
 
-	private static CStringSequence.Interop GetInterop(CStringSequence? seq)
+	private static CStringSequence.ValueSequence GetValue(CStringSequence? seq, Boolean includeEmptyItems)
 	{
-		CStringSequence.Interop interop = seq;
+		if (seq is null)
+		{
+			CStringSequence.ValueSequence result = default;
+			Assert.Equal(0, result.Count);
+			Assert.Null(result.Sequence);
+			Assert.True(result.IncludeEmptyItems);
+			Assert.Equal(0, result.GetHashCode());
+			return default;
+		}
 
-		Assert.Equal(seq?.Count, interop.Count);
-		Assert.Equal(seq, interop.Value);
-		Assert.Equal(seq?.ToString(), interop.ToString());
-		Assert.Equal(seq?.GetHashCode() ?? 0, interop.GetHashCode());
+		CStringSequence.ValueSequence value = seq.ToValueSequence(includeEmptyItems);
+		Assert.Equal(includeEmptyItems ? seq.Count : seq.NonEmptyCount, value.Count);
+		Assert.Equal(seq, value.Sequence);
+		Assert.Equal(seq.ToString(), value.ToString());
+		Assert.Equal(seq.GetHashCode(), value.GetHashCode());
 
-		return interop;
+		return value;
 	}
 }
