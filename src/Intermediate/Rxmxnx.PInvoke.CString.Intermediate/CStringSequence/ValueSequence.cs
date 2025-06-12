@@ -27,7 +27,7 @@ public partial class CStringSequence
 		/// </summary>
 		public CStringSequence? Sequence => this._instance;
 		/// <summary>
-		/// Indicates whether current enumeration includes empty items. 
+		/// Indicates whether current enumeration includes empty items.
 		/// </summary>
 		public Boolean IncludeEmptyItems => !this._excludeEmptyItems;
 		/// <summary>
@@ -54,6 +54,8 @@ public partial class CStringSequence
 		public override Int32 GetHashCode() => this._instance?.GetHashCode() ?? default;
 		/// <inheritdoc/>
 		public override String? ToString() => this._instance?._value;
+		/// <inheritdoc/>
+		public override Boolean Equals([NotNullWhen(true)] Object? obj) => Object.Equals(obj, this._instance);
 
 		/// <summary>
 		/// Creates an array of <see cref="CString"/> from current instance.
@@ -77,6 +79,28 @@ public partial class CStringSequence
 			}
 			return result;
 		}
+
+		/// <summary>
+		/// Determines whether two specified <see cref="ValueSequence"/> instances have the same value.
+		/// </summary>
+		/// <param name="left">The first <see cref="ValueSequence"/> to compare, or <see langword="null"/>.</param>
+		/// <param name="right">The second <see cref="ValueSequence"/> to compare, or <see langword="null"/>.</param>
+		/// <returns>
+		/// <see langword="true"/> if the value of <paramref name="left"/> is the same as the value
+		/// of <paramref name="right"/>; otherwise, <see langword="false"/>.
+		/// </returns>
+		public static Boolean operator ==(ValueSequence left, ValueSequence right)
+			=> Object.Equals(left._instance, right._instance) && left._excludeEmptyItems == right._excludeEmptyItems;
+		/// <summary>
+		/// Determines whether two specified <see cref="ValueSequence"/> instances have different values.
+		/// </summary>
+		/// <param name="left">The first <see cref="ValueSequence"/> to compare, or <see langword="null"/>.</param>
+		/// <param name="right">The second <see cref="ValueSequence"/> to compare, or <see langword="null"/>.</param>
+		/// <returns>
+		/// <see langword="true"/> if the value of <paramref name="left"/> is different from the value
+		/// of <paramref name="right"/>; otherwise, <see langword="false"/>.
+		/// </returns>
+		public static Boolean operator !=(ValueSequence left, ValueSequence right) => !(left == right);
 
 		/// <summary>
 		/// Enumerates the UTF-8 segments within a <see cref="CStringSequence"/>.

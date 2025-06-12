@@ -117,10 +117,10 @@ public sealed unsafe class MarshallerTests
 		IReadOnlyList<Int32> indices = TestSet.GetIndices(length);
 		CStringSequence seq = new(TestSet.GetValues(indices, handle));
 		String buffer = seq.ToString();
-		CStringSequence.ValueSequence interop = MarshallerTests.GetValue(seq, false);
+		CStringSequence.ValueSequence value = MarshallerTests.GetValue(seq, false);
 
 		CStringSequence.InputMarshaller marshaller = new();
-		marshaller.FromManaged(interop);
+		marshaller.FromManaged(value);
 
 		IntPtr ptr = marshaller.ToUnmanaged();
 		try
@@ -132,6 +132,7 @@ public sealed unsafe class MarshallerTests
 			Assert.Equal(buffer, result.ToString());
 			Assert.Equal(seq.NonEmptyCount, result.Count);
 			Assert.Equal(seq.NonEmptyCount, result.NonEmptyCount);
+			Assert.Equal(seq.Count == seq.NonEmptyCount, value.Equals(result));
 
 			seq.GetOffsets(offset);
 			fixed (void* fPtr = &MemoryMarshal.GetReference<Char>(buffer))
@@ -157,6 +158,7 @@ public sealed unsafe class MarshallerTests
 			Assert.Null(result.Sequence);
 			Assert.True(result.IncludeEmptyItems);
 			Assert.Equal(0, result.GetHashCode());
+			Assert.True(result.Equals(seq));
 			return default;
 		}
 
@@ -165,6 +167,7 @@ public sealed unsafe class MarshallerTests
 		Assert.Equal(seq, value.Sequence);
 		Assert.Equal(seq.ToString(), value.ToString());
 		Assert.Equal(seq.GetHashCode(), value.GetHashCode());
+		Assert.True(value.Equals(seq));
 
 		return value;
 	}
