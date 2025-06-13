@@ -129,6 +129,7 @@ public partial class CString
 		this._isNullTerminated = isNullTerminated;
 		this.Length = length;
 	}
+#if !PACKAGE || NETCOREAPP
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class reading a String from <paramref name="reader"/>.
 	/// </summary>
@@ -140,6 +141,7 @@ public partial class CString
 		this._isNullTerminated = true;
 		this.Length = CString.Read(reader, out this._data);
 	}
+#endif
 
 	/// <summary>
 	/// Helper class for UTF-16 to UTF-8 conversion.

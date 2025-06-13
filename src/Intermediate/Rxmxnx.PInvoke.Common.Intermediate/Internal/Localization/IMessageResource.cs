@@ -144,8 +144,10 @@ internal partial interface IMessageResource
 	/// </summary>
 	String MissingBufferMetadataException(Type bufferType);
 #endif
+#if !PACKAGE || NETCOREAPP
 	/// <summary>
 	/// Message for invalid string token exception.
 	/// </summary>
 	String InvalidToken(String currentToken, String expectedToken);
+#endif
 }

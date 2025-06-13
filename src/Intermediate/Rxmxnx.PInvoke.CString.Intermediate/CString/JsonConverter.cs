@@ -1,3 +1,5 @@
+#if !PACKAGE || NETCOREAPP
+
 #if !NETCOREAPP
 using RuneCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuneCompat;
 using Rune = System.UInt32;
@@ -381,3 +383,4 @@ public partial class CString
 #endif
 	}
 }
+#endif

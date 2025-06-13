@@ -70,6 +70,8 @@ internal sealed class GermanMessageResource : IMessageResource
 #endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Es ist nicht möglich, einen Puffer für {itemType} mit {size} Elementen zu erstellen.";
+#if !PACKAGE || NETCOREAPP
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Unerwarteter Token-Typ: {currentToken}. Erwarteter Token-Typ: {expectedToken}.";
+#endif
 }

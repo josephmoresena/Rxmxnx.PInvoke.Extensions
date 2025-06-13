@@ -16,7 +16,9 @@ namespace Rxmxnx.PInvoke;
 #endif
 [DebuggerDisplay("{ToString()}")]
 [DebuggerTypeProxy(typeof(CStringDebugView))]
+#if !PACKAGE || NETCOREAPP
 [JsonConverter(typeof(JsonConverter))]
+#endif
 public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatable<String>
 {
 	/// <summary>

@@ -575,6 +575,8 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = IMessageResource.GetInstance();
 		throw new PlatformNotSupportedException(resource.MissingMemoryInspector);
 	}
+
+#if !PACKAGE || NETCOREAPP
 	/// <summary>
 	/// Throws an exception if the current token type is invalid for string type.
 	/// </summary>
@@ -607,6 +609,7 @@ internal static unsafe class ValidationUtilities
 			nameof(JsonTokenType) + '.' + nameof(JsonTokenType.StartArray);
 		ValidationUtilities.ThrowIfInvalidToken(tokenType, expectedTokenTypeName);
 	}
+#endif
 	/// <summary>
 	/// Throw if reflection free-mode.
 	/// </summary>
@@ -637,7 +640,7 @@ internal static unsafe class ValidationUtilities
 				$"{type} is not an space. Size: {bufferSize[0]} ({bufferSize[2]}, {bufferSize[1]}).");
 	}
 #endif
-
+#if !PACKAGE || NETCOREAPP
 	/// <summary>
 	/// Throws an exception if the current token type is invalid for expected type.
 	/// </summary>
@@ -651,4 +654,5 @@ internal static unsafe class ValidationUtilities
 		String message = resource.InvalidToken(tokenTypeName, expectedToken);
 		throw new JsonException(message);
 	}
+#endif
 }

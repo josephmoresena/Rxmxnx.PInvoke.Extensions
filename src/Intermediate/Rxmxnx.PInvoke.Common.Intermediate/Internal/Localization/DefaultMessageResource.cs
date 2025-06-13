@@ -67,6 +67,8 @@ internal sealed class DefaultMessageResource : IMessageResource
 #endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Unable to create buffer for {itemType} {size} items.";
+#if !PACKAGE || NETCOREAPP
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Unexpected token type: {currentToken}. Expected token type: {expectedToken}.";
+#endif
 }

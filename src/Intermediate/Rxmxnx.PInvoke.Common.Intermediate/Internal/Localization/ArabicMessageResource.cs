@@ -65,6 +65,8 @@ internal sealed class ArabicMessageResource : IMessageResource
 #endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"تعذّر إنشاء مخزن مؤقت لـ {itemType} يضم {size} عناصر.";
+#if !PACKAGE || NETCOREAPP
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"نوع الرمز غير المتوقع: {currentToken}. نوع الرمز المتوقع: {expectedToken}.";
+#endif
 }

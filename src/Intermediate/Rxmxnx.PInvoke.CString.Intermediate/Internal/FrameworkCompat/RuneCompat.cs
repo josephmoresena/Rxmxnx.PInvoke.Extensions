@@ -32,6 +32,7 @@ internal static class RuneCompat
 		RuntimeInformation.FrameworkDescription;
 #endif
 
+#if !PACKAGE
 	/// <summary>
 	/// Encodes <paramref name="rune"/> to a UTF-8 destination buffer.
 	/// </summary>
@@ -75,6 +76,7 @@ internal static class RuneCompat
 		destination[3] = (Byte)((rune & 0x3Fu) + 0x80u);
 		return 4;
 	}
+#endif
 	/// <summary>
 	/// Decodes the <see cref="UInt32"/> at the beginning of the provided UTF-8 source buffer.
 	/// </summary>

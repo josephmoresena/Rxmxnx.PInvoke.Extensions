@@ -71,6 +71,8 @@ internal sealed class FrenchMessageResource : IMessageResource
 #endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Impossible de créer un tampon pour {itemType} comportant {size} éléments.";
+#if !PACKAGE || NETCOREAPP
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Type de jeton inattendu : {currentToken}. Type de jeton attendu : {expectedToken}.";
+#endif
 }

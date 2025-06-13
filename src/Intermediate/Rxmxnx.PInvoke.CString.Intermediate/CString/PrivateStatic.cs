@@ -129,6 +129,7 @@ public partial class CString
 		SyncAsyncWriter writer = (SyncAsyncWriter)state!;
 		writer.Write();
 	}
+#if !PACKAGE || NETCOREAPP
 	/// <summary>
 	/// Reads a UTF-8 string from the specified <see cref="Utf8JsonReader"/> and returns its length.
 	/// </summary>
@@ -156,6 +157,7 @@ public partial class CString
 			JsonConverter.ReleaseStackBytes(stackConsumed);
 		}
 	}
+#endif
 	/// <summary>
 	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
 	/// </summary>

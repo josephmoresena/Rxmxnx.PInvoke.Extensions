@@ -69,6 +69,8 @@ internal sealed class RussianMessageResource : IMessageResource
 #endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Невозможно создать буфер для {itemType} с {size} элементами.";
+#if !PACKAGE || NETCOREAPP
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Неожиданный тип токена: {currentToken}. Ожидаемый тип токена: {expectedToken}.";
+#endif
 }

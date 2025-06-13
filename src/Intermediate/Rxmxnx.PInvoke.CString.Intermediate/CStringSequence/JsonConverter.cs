@@ -1,3 +1,4 @@
+#if !PACKAGE || NETCOREAPP
 namespace Rxmxnx.PInvoke;
 
 public partial class CStringSequence
@@ -109,3 +110,4 @@ public partial class CStringSequence
 		}
 	}
 }
+#endif

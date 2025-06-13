@@ -61,6 +61,8 @@ internal sealed class ChineseMessageResource : IMessageResource
 #endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"无法为 {itemType} 创建包含 {size} 项的缓冲区。";
+#if !PACKAGE || NETCOREAPP
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"意外的标记类型：{currentToken}。预期的标记类型：{expectedToken}。";
+#endif
 }

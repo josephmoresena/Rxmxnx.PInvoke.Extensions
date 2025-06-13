@@ -69,6 +69,8 @@ internal sealed class PortugueseMessageResource : IMessageResource
 #endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Não é possível criar um buffer para {itemType} com {size} itens.";
+#if !PACKAGE || NETCOREAPP
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Tipo de token inesperado: {currentToken}. Tipo de token esperado: {expectedToken}.";
+#endif
 }
