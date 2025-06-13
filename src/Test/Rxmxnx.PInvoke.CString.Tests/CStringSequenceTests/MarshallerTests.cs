@@ -151,23 +151,14 @@ public sealed unsafe class MarshallerTests
 
 	private static CStringSequence.Utf8View GetValue(CStringSequence? seq, Boolean includeEmptyItems)
 	{
-		if (seq is null)
-		{
-			CStringSequence.Utf8View result = default;
-			Assert.Equal(0, result.Count);
-			Assert.Null(result.Sequence);
-			Assert.True(result.IncludeEmptyItems);
-			Assert.Equal(0, result.GetHashCode());
-			Assert.True(result.Equals(seq));
-			return default;
-		}
-
-		CStringSequence.Utf8View value = seq.ToValueSequence(includeEmptyItems);
-		Assert.Equal(includeEmptyItems ? seq.Count : seq.NonEmptyCount, value.Count);
+		CStringSequence.Utf8View value = seq.CreateView(includeEmptyItems);
+		Assert.Equal((includeEmptyItems ? seq?.Count : seq?.NonEmptyCount).GetValueOrDefault(), value.Count);
 		Assert.Equal(seq, value.Sequence);
-		Assert.Equal(seq.ToString(), value.ToString());
-		Assert.Equal(seq.GetHashCode(), value.GetHashCode());
+		Assert.Equal(seq?.ToString(), value.ToString());
+		Assert.Equal(seq?.GetHashCode() ?? 0, value.GetHashCode());
 		Assert.True(value.Equals(seq));
+		Assert.True(value == seq.CreateView(includeEmptyItems));
+		Assert.True(value != seq.CreateView(!includeEmptyItems));
 
 		return value;
 	}

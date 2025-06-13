@@ -146,12 +146,6 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		this.WithSafeTransform(result, CStringSequence.BinaryCopyTo);
 		return result;
 	}
-	/// <summary>
-	/// Creates a new instance of <see cref="Utf8View"/> for the current sequence.
-	/// </summary>
-	/// <param name="includeEmptyItems">Specifies whether empty items should be included in the enumeration.</param>
-	/// <returns>A <see cref="Utf8View"/> instance.</returns>
-	public Utf8View ToValueSequence(Boolean includeEmptyItems = true) => new(this, includeEmptyItems);
 
 	/// <summary>
 	/// Creates a new UTF-8 text sequence with specific lengths, and initializes each

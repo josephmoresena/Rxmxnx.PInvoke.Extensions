@@ -1516,6 +1516,8 @@ interfaces.
 
 </details>
 
+**Note:** In .NET 7.0+, these structs can be used with source-generated P/Invoke marshalling.
+
 ## Fixed memory lists
 
 These structures represent lists of fixed memory block addresses.

@@ -27,7 +27,7 @@ public sealed unsafe class Utf8ViewTest
 				    ReadOnlySpan<Byte>.Empty,
 				    ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty,
 				    ReadOnlySpan<Byte>.Empty))
-			.ToValueSequence(false);
+			.CreateView(false);
 		CStringSequence.Utf8View.Enumerator enumerator = enumerable.GetEnumerator();
 
 		Assert.Equal(String.Empty, enumerable.ToString());
@@ -44,7 +44,7 @@ public sealed unsafe class Utf8ViewTest
 		                                         .Concat(TestSet.GetIndices(20).Select(i => TestSet.GetString(i, true)))
 		                                         .Concat(Enumerable.Range(0, 10)
 		                                                           .Select(i => i % 2 == 0 ? String.Empty : default)));
-		CStringSequence.Utf8View enumerable = sequence.ToValueSequence(false);
+		CStringSequence.Utf8View enumerable = sequence.CreateView(false);
 		CStringSequence.Utf8View.Enumerator enumerator = enumerable.GetEnumerator();
 		ref CStringSequence.Utf8View.Enumerator refEnumerator = ref enumerator;
 		IntPtr ptrEnumerator = (IntPtr)Unsafe.AsPointer(ref refEnumerator);
@@ -74,7 +74,7 @@ public sealed unsafe class Utf8ViewTest
 		                                         .Concat(TestSet.GetIndices(20).Select(i => TestSet.GetString(i, true)))
 		                                         .Concat(Enumerable.Range(0, 10)
 		                                                           .Select(i => i % 2 == 0 ? String.Empty : default)));
-		CStringSequence.Utf8View enumerable = sequence.ToValueSequence();
+		CStringSequence.Utf8View enumerable = sequence.CreateView();
 		using IEnumerator<CString> seqEnumerator = (sequence as IEnumerable<CString>).GetEnumerator();
 		foreach (ReadOnlySpan<Byte> span in enumerable)
 		{
