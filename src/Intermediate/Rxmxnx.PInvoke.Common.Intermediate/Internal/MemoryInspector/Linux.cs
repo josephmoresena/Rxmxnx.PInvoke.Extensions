@@ -98,11 +98,7 @@ internal partial class MemoryInspector
 				isReadOnly = false;
 				return true;
 			}
-#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
 			Unsafe.SkipInit(out isReadOnly);
-#else
-			isReadOnly = false;
-#endif
 			return false;
 		}
 		/// <summary>

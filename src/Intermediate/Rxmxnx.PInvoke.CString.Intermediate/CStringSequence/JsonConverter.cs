@@ -28,7 +28,7 @@ public partial class CStringSequence
 		public override void Write(Utf8JsonWriter writer, CStringSequence? value, JsonSerializerOptions options)
 		{
 			Boolean writeNull = value is null &&
-#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
+#if NETCOREAPP3_1_OR_GREATER
 				options.DefaultIgnoreCondition switch
 				{
 					JsonIgnoreCondition.WhenWritingNull => false,

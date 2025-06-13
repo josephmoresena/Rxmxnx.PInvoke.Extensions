@@ -63,7 +63,7 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 	ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => this.CreateReadOnlySpan<T>(this.Count);
 	IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IFixedMemory residual)
 	{
-#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
+#if !NETCOREAPP || NETCOREAPP3_1_OR_GREATER
 		Unsafe.SkipInit(out residual);
 #else
 		residual = default!;
@@ -75,22 +75,14 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 	IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
 	{
-#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
 		Unsafe.SkipInit(out residual);
-#else
-		residual = default!;
-#endif
 		IReadOnlyFixedContext<TDestination> result =
 			this.GetTransformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, FixedOffset>(ref residual), true);
 		return result;
 	}
 	IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 	{
-#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
 		Unsafe.SkipInit(out residual);
-#else
-		residual = default!;
-#endif
 		IFixedContext<TDestination> result =
 			this.GetTransformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, FixedOffset>(ref residual), true);
 		return result;

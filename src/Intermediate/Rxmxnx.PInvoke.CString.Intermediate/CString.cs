@@ -50,13 +50,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <summary>
 	/// Indicates whether the current <see cref="CString"/> instance is a null pointer.
 	/// </summary>
-	public Boolean IsZero
-		=> this.IsReference &&
-#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
-			Unsafe.IsNullRef(ref MemoryMarshal.GetReference(this._data.AsSpan()));
-#else
-			MemoryMarshalCompat.IsNullText(this._data.AsSpan());
-#endif
+	public Boolean IsZero => this.IsReference && Unsafe.IsNullRef(ref MemoryMarshal.GetReference(this._data.AsSpan()));
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified

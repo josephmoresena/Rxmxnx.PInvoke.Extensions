@@ -76,7 +76,7 @@ internal static class RuneCompat
 		return 4;
 	}
 	/// <summary>
-	/// Decodes the <see cref="Rune"/> at the beginning of the provided UTF-8 source buffer.
+	/// Decodes the <see cref="UInt32"/> at the beginning of the provided UTF-8 source buffer.
 	/// </summary>
 	/// <param name="source">Source buffer.</param>
 	/// <param name="result">Decoded rune.</param>
@@ -182,7 +182,7 @@ internal static class RuneCompat
 		}
 	}
 	/// <summary>
-	/// Decodes the <see cref="Rune"/> at the beginning of the provided UTF-16 source buffer.
+	/// Decodes the <see cref="UInt32"/> at the beginning of the provided UTF-16 source buffer.
 	/// </summary>
 	/// <param name="source">Source buffer.</param>
 	/// <param name="result">Decoded rune.</param>

@@ -69,6 +69,7 @@ internal static unsafe partial class MemoryMarshalCompat
 			throw new ArgumentException(null, nameof(value));
 		return MemoryMarshal.CreateReadOnlySpan(ref ref0, length);
 	}
+#if !PACKAGE
 	/// <summary>
 	/// Indicates whether <paramref name="utfSpan"/> points to null UTF-8 text-
 	/// </summary>
@@ -82,6 +83,7 @@ internal static unsafe partial class MemoryMarshalCompat
 		fixed (Byte* ptr = &MemoryMarshal.GetReference(utfSpan))
 			return ptr == IntPtr.Zero.ToPointer();
 	}
+#endif
 	/// <summary>
 	/// Returns a reference to the 0th element of <paramref name="array"/>.
 	/// If the array is empty, returns a reference to where the 0th element would have been stored.
@@ -110,12 +112,7 @@ internal static unsafe partial class MemoryMarshalCompat
 
 		Type typeofRuntimeHelpers = typeof(RuntimeHelpers);
 
-		ref MMethodTable mtpRef =
-#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
-			ref Unsafe.NullRef<MMethodTable>();
-#else
-			ref MemoryMarshal.GetReference(Span<MMethodTable>.Empty);
-#endif
+		ref MMethodTable mtpRef = ref Unsafe.NullRef<MMethodTable>();
 		if (typeof(MemoryMarshal).GetMethod("GetArrayDataReference", 0, [typeof(Array),]) is { } methodInfoNet6)
 		{
 			GetArrayDataReferenceDelegate del =
@@ -152,11 +149,7 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// <remarks>This method is used only on .Net Standard build.</remarks>
 	public static Int32 IndexOfNull<T>(ref T buffer) where T : unmanaged, IEquatable<T>
 	{
-#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
 		if (Unsafe.IsNullRef(ref buffer))
-#else
-		if (Unsafe.AreSame(ref buffer, ref MemoryMarshal.GetReference(ReadOnlySpan<T>.Empty)))
-#endif
 			return 0;
 
 		UInt32 result = 0;

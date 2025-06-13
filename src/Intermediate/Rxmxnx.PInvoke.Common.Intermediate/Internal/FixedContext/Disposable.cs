@@ -48,11 +48,7 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 		IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(
 			out IReadOnlyFixedMemory residual)
 		{
-#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
 			Unsafe.SkipInit(out residual);
-#else
-			residual = default!;
-#endif
 			IReadOnlyFixedContext<TDestination> result =
 				this.Transformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual));
 			return result;
@@ -62,11 +58,7 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 #endif
 		IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 		{
-#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
 			Unsafe.SkipInit(out residual);
-#else
-			residual = default!;
-#endif
 			IFixedContext<TDestination> result =
 				this.Transformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual));
 			return result;

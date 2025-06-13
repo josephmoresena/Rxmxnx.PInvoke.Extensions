@@ -38,22 +38,14 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 	ref readonly T IReadOnlyReferenceable<T>.Reference => ref this.CreateReadOnlyReference<T>();
 	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IFixedMemory residual)
 	{
-#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
 		Unsafe.SkipInit(out residual);
-#else
-		residual = default!;
-#endif
 		IFixedReference<TDestination> result =
 			this.GetTransformation<TDestination>(out Unsafe.As<IFixedMemory, FixedOffset>(ref residual));
 		return result;
 	}
 	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 	{
-#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
 		Unsafe.SkipInit(out residual);
-#else
-		residual = default!;
-#endif
 		IFixedReference<TDestination> result =
 			this.GetTransformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, FixedOffset>(ref residual));
 		return result;
@@ -61,11 +53,7 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
 	{
-#if !NETCOREAPP && PACKAGE || NETCOREAPP3_1_OR_GREATER
 		Unsafe.SkipInit(out residual);
-#else
-		residual = default!;
-#endif
 		IReadOnlyFixedReference<TDestination> result =
 			this.GetTransformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, FixedOffset>(ref residual), true);
 		return result;
