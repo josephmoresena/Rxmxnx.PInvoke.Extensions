@@ -50,7 +50,8 @@ internal partial class FixedPointer
 		/// <param name="disposing">Indicates whether current call is from <see cref="IDisposable.Dispose()"/>.</param>
 		private void Dispose(Boolean disposing)
 		{
-			if (!this.Value.IsValid || (!disposing && this._disposable is IFixedPointer.IDisposable)) return;
+			if (this.Value is not ReadOnlyFixedMemory || !this.Value.IsValid ||
+			    (!disposing && this._disposable is IFixedPointer.IDisposable)) return;
 			this.Value.Unload();
 			this._disposable?.Dispose();
 		}
