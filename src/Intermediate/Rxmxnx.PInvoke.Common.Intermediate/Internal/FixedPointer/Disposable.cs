@@ -16,6 +16,9 @@ internal partial class FixedPointer
 		/// </summary>
 		private readonly IDisposable? _disposable;
 
+		/// <inheritdoc cref="IWrapper{T}.Value"/>
+		public TFixed Value { get; }
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -27,17 +30,14 @@ internal partial class FixedPointer
 			this._disposable = disposable;
 		}
 
+		~Disposable() { this.Dispose(false); }
+
 		/// <inheritdoc/>
 		public void Dispose()
 		{
 			this.Dispose(true);
 			GC.SuppressFinalize(this);
 		}
-
-		/// <inheritdoc/>
-		public TFixed Value { get; }
-
-		~Disposable() { this.Dispose(false); }
 
 		/// <summary>
 		/// Retrieves the <see cref="IDisposable"/> parent object.
