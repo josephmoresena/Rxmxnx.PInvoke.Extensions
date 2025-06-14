@@ -55,12 +55,6 @@ public abstract class BufferTypeMetadata : IEnumerableSequence<BufferTypeMetadat
 	[ExcludeFromCodeCoverage]
 #endif
 	Int32 IEnumerableSequence<BufferTypeMetadata>.GetSize() => this.ComponentCount;
-#if PACKAGE && !NETCORE
-	IEnumerator<BufferTypeMetadata> IEnumerable<BufferTypeMetadata>.GetEnumerator() 
-		=> IEnumerableSequence<BufferTypeMetadata>.CreateEnumerator(this);
-	System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-		=> IEnumerableSequence<BufferTypeMetadata>.CreateEnumerator(this);
-#endif
 }
 
 /// <summary>
