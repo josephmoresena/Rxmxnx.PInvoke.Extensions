@@ -4,6 +4,9 @@
 /// Defines methods to support a simple iteration over a sequence of a specified type.
 /// </summary>
 public interface IEnumerableSequence<out T> : IEnumerable<T>
+#if NET9_0_OR_GREATER
+	where T : allows ref struct
+#endif
 {
 	IEnumerator<T> IEnumerable<T>.GetEnumerator()
 #if NETCOREAPP || !PACKAGE

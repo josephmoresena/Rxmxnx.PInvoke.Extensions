@@ -74,8 +74,8 @@ public unsafe partial class CStringSequence
 		public void FromManaged(Utf8View managed)
 		{
 			this.Free();
-			this._managed = managed.Sequence;
-			this._includeEmpty = managed.IncludeEmptyItems;
+			this._managed = managed.Source;
+			this._includeEmpty = managed.EmptyItemsIncluded;
 		}
 
 		/// <summary>

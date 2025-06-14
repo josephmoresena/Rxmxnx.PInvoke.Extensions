@@ -20,7 +20,7 @@ public static unsafe class PointerCStringExtensions
 	/// <returns>A <see cref="CString"/> representation of the UTF-8 text.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown when the provided length is negative.</exception>
 	/// <remarks>
-	/// The safety and validity of the obtained information depends on the lifetime and validity of the pointer at the time
+	/// The reliability of the obtained information depends on the lifetime and validity of the pointer at the time
 	/// of method invocation.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -40,7 +40,7 @@ public static unsafe class PointerCStringExtensions
 	/// <returns>A <see cref="CString"/> representation of the UTF-8 text.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown when the provided length is negative.</exception>
 	/// <remarks>
-	/// The safety and validity of the obtained information depends on the lifetime and validity of the pointer at the time
+	/// The reliability of the obtained information depends on the lifetime and validity of the pointer at the time
 	/// of method invocation.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -60,7 +60,7 @@ public static unsafe class PointerCStringExtensions
 	/// <returns>A <see cref="CString"/> representation of the UTF-8 text.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown when the provided length is negative.</exception>
 	/// <remarks>
-	/// The safety and validity of the obtained information depends on the lifetime and validity of the pointer at the time
+	/// The reliability of the obtained information depends on the lifetime and validity of the pointer at the time
 	/// of method invocation.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

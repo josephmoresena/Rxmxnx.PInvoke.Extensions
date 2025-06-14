@@ -49,7 +49,7 @@ public sealed unsafe class MarshallerTests
 		{
 			ReadOnlySpan<ReadOnlyValPtr<Byte>> values = new(ptr.ToPointer(), seq.NonEmptyCount);
 			Span<Int32> offset = stackalloc Int32[values.Length];
-			CStringSequence result = CStringSequence.CreateUnsafe(values);
+			CStringSequence result = CStringSequence.GetUnsafe(values);
 
 			Assert.Equal(buffer, result.ToString());
 			Assert.Equal(seq.NonEmptyCount, result.Count);
@@ -91,7 +91,7 @@ public sealed unsafe class MarshallerTests
 		try
 		{
 			ReadOnlySpan<ReadOnlyValPtr<Byte>> values = new(ptr.ToPointer(), seq.Count);
-			CStringSequence result = CStringSequence.CreateUnsafe(values);
+			CStringSequence result = CStringSequence.GetUnsafe(values);
 
 			Assert.Equal(buffer, result.ToString());
 			Assert.Equal(seq.Count, result.Count);
@@ -127,7 +127,7 @@ public sealed unsafe class MarshallerTests
 		{
 			ReadOnlySpan<ReadOnlyValPtr<Byte>> values = new(ptr.ToPointer(), seq.NonEmptyCount);
 			Span<Int32> offset = stackalloc Int32[values.Length];
-			CStringSequence result = CStringSequence.CreateUnsafe(values);
+			CStringSequence result = CStringSequence.GetUnsafe(values);
 
 			Assert.Equal(buffer, result.ToString());
 			Assert.Equal(seq.NonEmptyCount, result.Count);
@@ -153,7 +153,7 @@ public sealed unsafe class MarshallerTests
 	{
 		CStringSequence.Utf8View value = seq.CreateView(includeEmptyItems);
 		Assert.Equal((includeEmptyItems ? seq?.Count : seq?.NonEmptyCount).GetValueOrDefault(), value.Count);
-		Assert.Equal(seq, value.Sequence);
+		Assert.Equal(seq, value.Source);
 		Assert.Equal(seq?.ToString(), value.ToString());
 		Assert.Equal(seq?.GetHashCode() ?? 0, value.GetHashCode());
 		Assert.True(value.Equals(seq));

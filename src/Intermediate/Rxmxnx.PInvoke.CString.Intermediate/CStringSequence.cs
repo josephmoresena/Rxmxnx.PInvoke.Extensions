@@ -198,11 +198,15 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		return CStringSequence.CreateFrom(bufferSpan);
 	}
 	/// <summary>
-	/// Creates a new <see cref="CStringSequence"/> instance from a UTF-8 text pointer span.
+	/// Creates a new <see cref="CStringSequence"/> instance from a UTF-8 null-terminated text pointer span.
 	/// </summary>
-	/// <param name="values">A UTF-8 text pointer span.</param>
+	/// <param name="values">A UTF-8 null-terminated text pointer span.</param>
 	/// <returns>A new <see cref="CStringSequence"/> instance.</returns>
-	public static CStringSequence CreateUnsafe(ReadOnlySpan<ReadOnlyValPtr<Byte>> values)
+	/// <remarks>
+	/// The reliability of the returned <see cref="CStringSequence"/> depends on the lifetime and validity of the
+	/// pointer at the time of method invocation.
+	/// </remarks>
+	public static CStringSequence GetUnsafe(ReadOnlySpan<ReadOnlyValPtr<Byte>> values)
 		=> values.Length == 0 ? CStringSequence.Empty : new(values);
 	/// <summary>
 	/// Converts the buffer of a UTF-8 sequence to a <see cref="CStringSequence"/> instance.

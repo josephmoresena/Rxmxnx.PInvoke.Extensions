@@ -6,6 +6,9 @@
 /// </summary>
 /// <typeparam name="T">The type of elements in the sequence.</typeparam>
 internal sealed class SequenceEnumerator<T> : IEnumerator<T>
+#if NET9_0_OR_GREATER
+	where T : allows ref struct
+#endif
 {
 	private readonly Action<IEnumerableSequence<T>>? _dispose;
 	/// <summary>
@@ -13,10 +16,6 @@ internal sealed class SequenceEnumerator<T> : IEnumerator<T>
 	/// </summary>
 	private readonly IEnumerableSequence<T> _instance;
 
-	/// <summary>
-	/// The current element in the sequence.
-	/// </summary>
-	private T _current = default!;
 	/// <summary>
 	/// The current position in the sequence.
 	/// </summary>
@@ -41,7 +40,7 @@ internal sealed class SequenceEnumerator<T> : IEnumerator<T>
 		get
 		{
 			ValidationUtilities.ThrowIfInvalidIndexEnumerator(this._index, this._instance.GetSize());
-			return this._current;
+			return this._instance.GetItem(this._index);
 		}
 	}
 
@@ -57,9 +56,7 @@ internal sealed class SequenceEnumerator<T> : IEnumerator<T>
 	public Boolean MoveNext()
 	{
 		this._index++;
-		if (this._index >= this._instance.GetSize()) return false;
-		this._current = this._instance.GetItem(this._index);
-		return true;
+		return this._index < this._instance.GetSize();
 	}
 	/// <inheritdoc/>
 	public void Reset() => this._index = -1;

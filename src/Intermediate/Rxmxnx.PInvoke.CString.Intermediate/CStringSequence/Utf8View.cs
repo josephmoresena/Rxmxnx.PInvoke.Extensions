@@ -3,7 +3,7 @@ namespace Rxmxnx.PInvoke;
 public partial class CStringSequence
 {
 	/// <summary>
-	/// A stack-only view over the UTF-8 segments of a <see cref="CStringSequence"/>, with control over empty entries.
+	/// A stack-only view over the UTF-8 items on a <see cref="CStringSequence"/>, with control over empty entries.
 	/// </summary>
 	[DebuggerDisplay("Count = {Count}")]
 	[DebuggerTypeProxy(typeof(CStringSequenceDebugView))]
@@ -23,15 +23,15 @@ public partial class CStringSequence
 		private readonly Boolean _excludeEmptyItems;
 
 		/// <summary>
-		/// Internal sequence instance.
+		/// Enumeration source sequence.
 		/// </summary>
-		public CStringSequence? Sequence => this._instance;
+		public CStringSequence? Source => this._instance;
 		/// <summary>
-		/// Indicates whether current enumeration includes empty items.
+		/// Indicates whether current enumeration includes empty items from the source sequence.
 		/// </summary>
-		public Boolean IncludeEmptyItems => !this._excludeEmptyItems;
+		public Boolean EmptyItemsIncluded => !this._excludeEmptyItems;
 		/// <summary>
-		/// Gets the number of elements in the enumeration.
+		/// Gets the number of elements in the current enumeration.
 		/// </summary>
 		public Int32 Count
 			=> (!this._excludeEmptyItems ? this._instance?.Count : this._instance?.NonEmptyCount).GetValueOrDefault();

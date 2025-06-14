@@ -84,6 +84,7 @@ public static partial class BufferManager
 		/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
 		public static void PrepareBinaryMetadata(UInt16 count)
 		{
+			ValidationUtilities.ThrowIfNoReflection();
 			Type typeofT = typeof(T);
 			BufferTypeMetadata<T>? metadata = default;
 			foreach (UInt16 comp in BufferManager.GetBinaryComponents(count))
@@ -160,6 +161,8 @@ public static partial class BufferManager
 #if NET6_0_OR_GREATER
 			BufferTypeMetadata<T> typeMetadata = IManagedBuffer<T>.GetMetadata<TBuffer>();
 #else
+			ValidationUtilities.ThrowIfNoReflection();
+
 			BufferTypeMetadata<T> typeMetadata = BufferManager.GetMetadata<T>(typeof(TBuffer));
 #endif
 			lock (MetadataManager<T>.store.LockObject)

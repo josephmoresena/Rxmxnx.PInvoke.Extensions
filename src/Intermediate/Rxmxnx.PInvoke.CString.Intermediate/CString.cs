@@ -338,8 +338,8 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <param name="useFullLength">Indicates whether the total length should be used.</param>
 	/// <returns>A new instance of the <see cref="CString"/> class.</returns>
 	/// <remarks>
-	/// The safety and validity of the returned <see cref="CString"/> depends on the lifetime and validity of the pointer.
-	/// If the data the UTF-8 text represents is moved or deallocated, accessing the span can cause unexpected behavior
+	/// The reliability of the returned <see cref="CString"/> depends on the lifetime and validity of the pointer.
+	/// If the memory containing the UTF-8 text is moved or deallocated, accessing the span can cause unexpected behavior
 	/// or application crashes.
 	/// </remarks>
 	public static CString CreateUnsafe(IntPtr ptr, Int32 length, Boolean useFullLength = false)
@@ -351,8 +351,8 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <param name="ptr">A pointer to an array of UTF-8 characters.</param>
 	/// <returns>A new instance of the <see cref="CString"/> class.</returns>
 	/// <remarks>
-	/// The safety and validity of the returned <see cref="CString"/> depends on the lifetime and validity of the pointer.
-	/// If the data the UTF-8 text represents is moved or deallocated, accessing the span can cause unexpected behavior
+	/// The reliability of the returned <see cref="CString"/> depends on the lifetime and validity of the pointer.
+	/// If the memory containing the UTF-8 text is moved or deallocated, accessing the span can cause unexpected behavior
 	/// or application crashes.
 	/// </remarks>
 	public static unsafe CString CreateNullTerminatedUnsafe(IntPtr ptr)
