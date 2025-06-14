@@ -22,6 +22,11 @@ public partial class CString : IEnumerableSequence<Byte>
 
 	Int32 IEnumerableSequence<Byte>.GetSize() => this.Length;
 	Byte IEnumerableSequence<Byte>.GetItem(Int32 index) => this[index];
+#if PACKAGE && !NETCORE
+	IEnumerator<Byte> IEnumerable<Byte>.GetEnumerator() => IEnumerableSequence<Byte>.CreateEnumerator(this);
+	System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		=> IEnumerableSequence<Byte>.CreateEnumerator(this);
+#endif
 
 	/// <summary>
 	/// Retrieves a substring from this instance. The substring starts at a specified character

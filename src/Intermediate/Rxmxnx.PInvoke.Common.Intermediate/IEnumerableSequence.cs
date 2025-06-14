@@ -5,11 +5,13 @@
 /// </summary>
 public interface IEnumerableSequence<out T> : IEnumerable<T>
 {
-	IEnumerator<T> IEnumerable<T>.GetEnumerator() => this.CreateEnumerator();
+	IEnumerator<T> IEnumerable<T>.GetEnumerator()
+		=> IEnumerableSequence<T>.CreateEnumerator(this, i => i.DisposeEnumeration());
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	IEnumerator IEnumerable.GetEnumerator() => this.CreateEnumerator();
+	IEnumerator IEnumerable.GetEnumerator()
+		=> IEnumerableSequence<T>.CreateEnumerator(this, i => i.DisposeEnumeration());
 	/// <summary>
 	/// Retrieves the element at the specified index.
 	/// </summary>
@@ -28,20 +30,23 @@ public interface IEnumerableSequence<out T> : IEnumerable<T>
 	protected void DisposeEnumeration()
 	{
 		// By default, no resources to dispose.
+		// Unable to call implementations of this method in Mono Runtime.
 	}
 
 	/// <summary>
-	/// Creates an enumerator that iterates through the sequence.
+	/// Creates an enumerator that iterates through <paramref name="instance"/> instance.
 	/// </summary>
+	/// <param name="instance">A <see cref="IEnumerableSequence{T}"/> instance.</param>
+	/// <param name="disposeEnumeration">Delegate to dispose enumeration.</param>
 	/// <returns>
 	/// An <see cref="IEnumerator{T}"/> that can be used to iterate through the sequence.
 	/// </returns>
+	/// <remarks>
+	/// This method ignores the private implementation of <see cref="IEnumerableSequence{T}.DisposeEnumeration()"/> and
+	/// uses only the <paramref name="disposeEnumeration"/> delegate.
+	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private IEnumerator<T> CreateEnumerator() => new SequenceEnumerator<T>(this);
-
-	/// <summary>
-	/// Calls internal dispose method.
-	/// </summary>
-	/// <param name="instance">A <see cref="IEnumerableSequence{T}"/> instance.</param>
-	internal static void DisposeEnumeration(IEnumerableSequence<T> instance) => instance.DisposeEnumeration();
+	protected static IEnumerator<T> CreateEnumerator(IEnumerableSequence<T> instance,
+		Action<IEnumerableSequence<T>>? disposeEnumeration = default)
+		=> new SequenceEnumerator<T>(instance, disposeEnumeration);
 }

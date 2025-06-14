@@ -7,6 +7,7 @@
 /// <typeparam name="T">The type of elements in the sequence.</typeparam>
 internal sealed class SequenceEnumerator<T> : IEnumerator<T>
 {
+	private readonly Action<IEnumerableSequence<T>>? _dispose;
 	/// <summary>
 	/// The sequence of elements to iterate through.
 	/// </summary>
@@ -25,8 +26,13 @@ internal sealed class SequenceEnumerator<T> : IEnumerator<T>
 	/// Initializes a new instance of the <see cref="SequenceEnumerator{T}"/> class.
 	/// </summary>
 	/// <param name="instance">The sequence of elements to iterate through.</param>
+	/// <param name="dispose">Dispose delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public SequenceEnumerator(IEnumerableSequence<T> instance) => this._instance = instance;
+	public SequenceEnumerator(IEnumerableSequence<T> instance, Action<IEnumerableSequence<T>>? dispose)
+	{
+		this._instance = instance;
+		this._dispose = dispose;
+	}
 
 	/// <inheritdoc/>
 	public T Current
@@ -44,7 +50,7 @@ internal sealed class SequenceEnumerator<T> : IEnumerator<T>
 #endif
 	Object IEnumerator.Current => this.Current!;
 
-	void IDisposable.Dispose() => IEnumerableSequence<T>.DisposeEnumeration(this._instance);
+	void IDisposable.Dispose() => this._dispose?.Invoke(this._instance);
 
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
