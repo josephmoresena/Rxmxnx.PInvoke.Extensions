@@ -32,7 +32,10 @@ public partial struct Atomic<T> : IManagedBinaryBuffer<Atomic<T>, T>
 #endif
 	static void IManagedBuffer<T>.AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components) { }
 #else
-	void IManagedBuffer<T>.NoImplementableMethod() { }
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	void IManagedBuffer<T>.DoNotImplement() { }
 #endif
 }
 #pragma warning restore CA2252

@@ -36,7 +36,10 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 #endif
 	static void IManagedBuffer<T>.AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components) { }
 #else
-	void IManagedBuffer<T>.NoImplementableMethod() { }
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	void IManagedBuffer<T>.DoNotImplement() { }
 #endif
 
 	/// <summary>
@@ -48,13 +51,16 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 		Boolean isItemUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>();
 		Boolean isArrayUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<TArray>();
 		ValidationUtilities.ThrowIfInvalidBuffer(typeof(T), isItemUnmanaged, typeof(TArray), isArrayUnmanaged);
+		
 #pragma warning disable CS8500
-#if NET6_0_OR_GREATER
-		return new(sizeof(TArray) / sizeof(T), false);
-#else
-		return new(sizeof(TArray) / sizeof(T), [], false);
-#endif
+		Int32 spaceCapacity = sizeof(TArray) / sizeof(T);
 #pragma warning restore CS8500
+		
+#if NET6_0_OR_GREATER
+		return new(spaceCapacity, false);
+#else
+		return new(spaceCapacity, [], false);
+#endif
 	}
 }
 #pragma warning disable CA2252

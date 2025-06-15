@@ -74,9 +74,9 @@ public interface IManagedBuffer<T>
 #pragma warning restore CA2252
 #else
 	/// <summary>
-	/// This method cannot be implemented by any external consumer in order to prevent unauthorized implementations of
-	/// this interface.
+	/// This method is intentionally declared to prevent external consumers from implementing this interface.
+	/// It should not be implemented or overridden outside the defining assembly.
 	/// </summary>
-	private protected void NoImplementableMethod();
+	private protected void DoNotImplement();
 #endif
 }
