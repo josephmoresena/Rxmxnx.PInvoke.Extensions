@@ -258,6 +258,16 @@ internal static unsafe class ValidationUtilities
 		throw new InvalidOperationException(message);
 	}
 
+#if NET9_0_OR_GREATER
+	public static void ThrowIfNotObject(Type type)
+	{
+		if (!type.IsByRefLike) return;
+		IMessageResource resource = IMessageResource.GetInstance();
+		String message = IMessageResource.GetInstance().NotObjectType(type);
+		throw new InvalidOperationException(message);
+	}
+#endif
+
 	/// <summary>
 	/// Validates if the binary span <paramref name="destination"/> is sufficient to contain the binary
 	/// information of <paramref name="value"/>.

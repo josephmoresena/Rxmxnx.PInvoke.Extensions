@@ -52,8 +52,9 @@ public partial struct Composite<TBufferA, TBufferB, T> : IManagedBinaryBuffer<Co
 		IManagedBuffer<T>.AppendComponent<TBufferA>(components);
 		IManagedBuffer<T>.AppendComponent<TBufferB>(components);
 	}
-
 #else
+	void IManagedBuffer<T>.NoImplementableMethod() { }
+
 	/// <summary>
 	/// Creates the <see cref="BufferTypeMetadata{T}"/> instance for current type.
 	/// </summary>

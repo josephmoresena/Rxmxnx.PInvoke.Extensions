@@ -75,4 +75,8 @@ internal sealed class FrenchMessageResource : IMessageResource
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Type de jeton inattendu : {currentToken}. Type de jeton attendu : {expectedToken}.";
 #endif
+#if NET9_0_OR_GREATER
+	String IMessageResource.NotObjectType(Type type)
+		=> $"{type} est une ref struct ; la boxing d'objet n'est pas autorisée.";
+#endif
 }

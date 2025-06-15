@@ -69,21 +69,6 @@ internal static unsafe partial class MemoryMarshalCompat
 			throw new ArgumentException(null, nameof(value));
 		return MemoryMarshal.CreateReadOnlySpan(ref ref0, length);
 	}
-#if !PACKAGE
-	/// <summary>
-	/// Indicates whether <paramref name="utfSpan"/> points to null UTF-8 text-
-	/// </summary>
-	/// <param name="utfSpan">A UTF-8 span.</param>
-	/// <returns>
-	/// <see langword="true"/> if the dynamic type was successfully emitted in the current runtime; otherwise,
-	/// <see langword="false"/>.
-	/// </returns>
-	public static Boolean IsNullText(ReadOnlySpan<Byte> utfSpan)
-	{
-		fixed (Byte* ptr = &MemoryMarshal.GetReference(utfSpan))
-			return ptr == IntPtr.Zero.ToPointer();
-	}
-#endif
 	/// <summary>
 	/// Returns a reference to the 0th element of <paramref name="array"/>.
 	/// If the array is empty, returns a reference to where the 0th element would have been stored.

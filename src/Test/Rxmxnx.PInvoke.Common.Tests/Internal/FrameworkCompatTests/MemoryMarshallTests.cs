@@ -76,8 +76,6 @@ public sealed unsafe class MemoryMarshallTests
 					Assert.True(Unsafe.AreSame(in data[i], in span[i]));
 					Assert.True(Unsafe.AreSame(in original[i], in span[i]));
 				}
-				Assert.Equal(ptr == IntPtr.Zero.ToPointer(), MemoryMarshalCompat.IsNullText(original));
-				Assert.Equal(ptr == IntPtr.Zero.ToPointer(), MemoryMarshalCompat.IsNullText(span));
 			}
 		}
 	}
@@ -137,8 +135,6 @@ public sealed unsafe class MemoryMarshallTests
 		Assert.Equal(original.IsEmpty, span.IsEmpty);
 		Assert.Equal(original.Length, span.Length);
 		Assert.Equal(original.Length, MemoryMarshalCompat.IndexOfNull(ref MemoryMarshal.GetReference(original)));
-		Assert.True(MemoryMarshalCompat.IsNullText(original));
-		Assert.True(MemoryMarshalCompat.IsNullText(span));
 	}
 	[Fact]
 	internal void CharNullTest()
@@ -165,9 +161,6 @@ public sealed unsafe class MemoryMarshallTests
 			Assert.Equal(original.IsEmpty, span.IsEmpty);
 			Assert.Equal(original.Length, span.Length);
 			Assert.Equal(original.Length, MemoryMarshalCompat.IndexOfNull(ref MemoryMarshal.GetReference(original)));
-
-			Assert.False(MemoryMarshalCompat.IsNullText(original));
-			Assert.False(MemoryMarshalCompat.IsNullText(span));
 		}
 	}
 	[Fact]

@@ -65,4 +65,7 @@ internal sealed class ChineseMessageResource : IMessageResource
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"意外的标记类型：{currentToken}。预期的标记类型：{expectedToken}。";
 #endif
+#if NET9_0_OR_GREATER
+	String IMessageResource.NotObjectType(Type type) => $"{type} 是 ref struct；不允许进行对象装箱。";
+#endif
 }

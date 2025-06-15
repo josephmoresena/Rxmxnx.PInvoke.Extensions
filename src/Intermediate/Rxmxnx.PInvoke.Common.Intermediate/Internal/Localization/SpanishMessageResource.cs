@@ -74,4 +74,8 @@ internal sealed class SpanishMessageResource : IMessageResource
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Tipo de token inesperado: {currentToken}. Se esperaba el tipo de token: {expectedToken}.";
 #endif
+#if NET9_0_OR_GREATER
+	String IMessageResource.NotObjectType(Type type)
+		=> $"{type} es una ref struct; no se permite el *boxing* de objetos.";
+#endif
 }

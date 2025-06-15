@@ -67,4 +67,7 @@ internal sealed class JapaneseMessageResource : IMessageResource
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"予期しないトークンの種類: {currentToken}。期待されるトークンの種類: {expectedToken}。";
 #endif
+#if NET9_0_OR_GREATER
+	String IMessageResource.NotObjectType(Type type) => $"{type} は ref struct です。オブジェクトのボックス化は許可されていません。";
+#endif
 }

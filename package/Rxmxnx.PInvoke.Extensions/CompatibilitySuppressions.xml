@@ -105,6 +105,12 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Rxmxnx.PInvoke.Buffers.IManagedBuffer`1.NoImplementableMethod</Target>
+    <Left>lib/net5.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net6.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:Rxmxnx.PInvoke.BufferTypeMetadata`1.AppendComponent(System.Collections.Generic.IDictionary{System.UInt16,Rxmxnx.PInvoke.BufferTypeMetadata{`0}})</Target>
     <Left>lib/net5.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/net6.0/Rxmxnx.PInvoke.Extensions.dll</Right>
@@ -168,6 +174,12 @@
     <Target>P:Rxmxnx.PInvoke.Buffers.IManagedBuffer`1.Components</Target>
     <Left>lib/net5.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/net6.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0006</DiagnosticId>
+    <Target>M:Rxmxnx.PInvoke.Internal.Localization.IMessageResource.NotObjectType(System.Type)</Target>
+    <Left>lib/net8.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net9.0/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0006</DiagnosticId>

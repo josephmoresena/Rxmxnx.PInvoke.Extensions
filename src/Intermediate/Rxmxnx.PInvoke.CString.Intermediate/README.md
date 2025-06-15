@@ -157,8 +157,11 @@ Console.WriteLine(cstring);                     // Output: "Hell"
 Console.WriteLine(cstring.IsNullTerminated);    // Output: False
 ```
 
-This method allows creating a `CString` instance using an object of type
-`IUtf8FunctionState<TState>`, which provides UTF-8/ASCII units using a delegate.
+This method allows creating a `CString` instance using an object of type `IUtf8FunctionState<TState>`, which provides
+UTF-8/ASCII units using a delegate.
+
+In .NET 5.0 and earlier, this interface does not exist, but the same functionality can be achieved using a
+state-and-delegate-based approach.
 
 ### Creation with pointer
 
@@ -227,3 +230,6 @@ separated by a null character. The buffer itself is also null-terminated, ensuri
 The `Parse(String)` method is the only one that might avoid creating a new buffer if the input `String` meets the
 criteria to serve directly as the buffer for a `CStringSequence` instance. This is particularly useful when constant
 UTF-8/ASCII sequences (hardcoded) are required.
+
+The `GetUnsafe(ReadOnlySpan<ReadOnlyValPtr<Byte>>)` method enables the creation of a `CStringSequence` instance from an
+unmanaged `char*[]`, as represented by the given span.

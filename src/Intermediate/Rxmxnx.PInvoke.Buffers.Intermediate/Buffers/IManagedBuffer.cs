@@ -72,5 +72,11 @@ public interface IManagedBuffer<T>
 #pragma warning disable CA2252
 		=> TBuffer.TypeMetadata;
 #pragma warning restore CA2252
+#else
+	/// <summary>
+	/// This method cannot be implemented by any external consumer in order to prevent unauthorized implementations of
+	/// this interface.
+	/// </summary>
+	private protected void NoImplementableMethod();
 #endif
 }

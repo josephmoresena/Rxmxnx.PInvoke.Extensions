@@ -150,4 +150,10 @@ internal partial interface IMessageResource
 	/// </summary>
 	String InvalidToken(String currentToken, String expectedToken);
 #endif
+#if NET9_0_OR_GREATER
+	/// <summary>
+	/// Message for not object type.
+	/// </summary>
+	String NotObjectType(Type type);
+#endif
 }

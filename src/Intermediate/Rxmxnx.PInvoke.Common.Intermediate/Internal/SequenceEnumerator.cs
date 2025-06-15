@@ -47,7 +47,19 @@ internal sealed class SequenceEnumerator<T> : IEnumerator<T>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	Object IEnumerator.Current => this.Current!;
+	Object? IEnumerator.Current
+#if !NET9_0_OR_GREATER
+		=> this.Current;
+#else
+	{
+		get
+		{
+			ValidationUtilities.ThrowIfNotObject(typeof(T));
+			T value = this.Current;
+			return Unsafe.As<T, Object?>(ref value);
+		}
+	}
+#endif
 
 	void IDisposable.Dispose() => this._dispose?.Invoke(this._instance);
 

@@ -36,6 +36,7 @@ reference type Composite(2<sup>1</sup>, 2<sup>3</sup>, `Object`).
 * Once a buffer is composed, it becomes available for use. This process is executed only once for each capacity.
 
 ```xml
+
 <Directives xmlns="http://schemas.microsoft.com/netfx/2013/01/metadata">
     <Application>
         <Assembly Name="Rxmxnx.PInvoke.Extensions">
@@ -101,6 +102,10 @@ There are three buffer registration options:
 2. For generic `struct` type.
 3. For generic nullable `struct` type.
 
+**Note:** In .NET 5.0 and earlier, reflection is used by these methods due to the lack of support
+for [static virtual members in interfaces](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/interface#static-abstract-and-virtual-members).
+
 ## Binary buffer Preparation
 
-Binary buffers can be statically prepared for a given count number elements. Thise 
+Binary buffers can be statically prepared for a given count number elements. This method requires the use of reflection
+and relies on the auto-composition feature.

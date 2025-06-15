@@ -79,6 +79,105 @@ dotnet add package Rxmxnx.PInvoke.Extensions
 **Note:** This package officially supports .NET 6 and later. However, this package offers limited support for
 .NET Standard 2.1-compatible runtimes and legacy support for .NET 5.0 and earlier.
 
+### Framework Support
+
+This package guarantees both **binary and source compatibility across all supported target frameworks**, from **.NET
+Standard 2.1** up to **.NET 9.0**.
+
+Here is a detailed description of the specific characteristics of how this package is compiled for each of the supported
+target frameworks, along with the type of support provided for each one.
+
+<details>
+<summary><strong>.NET Standard 2.1</strong> — Limited Support</summary>
+
+- **Static Virtual Members:** No [¹]
+- **Generic `ref struct`:** No
+- **MemoryMarshal (shim implemented):**
+    - `CreateReadOnlySpanFromNullTerminated` [²]
+    - `GetArrayDataReference` [¹]
+- **Rune (shim implemented):**
+    - `EncodeToUtf8`, `DecodeFromUtf8`, `DecodeFromUtf16` [²]
+- **Enum (shim implemented):**
+    - `Enum.GetName<T>` [³]
+- **Convert (shim implemented):**
+    - `ToHexString` [²]
+- **Dependencies:**
+    - `System.Runtime.CompilerServices.Unsafe` 5.0
+    - `System.Collections.Immutable` 5.0
+
+</details>
+<details>
+<summary><strong>.NET Core 3.0</strong> — Legacy (Limited)</summary>
+
+- Inherits from .NET Standard 2.1
+- Adds support for:
+    - **System.Text.Json**
+    - **NativeLibrary**
+- **Rune (native implemented):** Yes
+- **Dependencies:**
+    - Same as .NET Standard 2.1
+    - `System.Text.Json` 5.0.2
+
+</details>
+<details>
+<summary><strong>.NET Core 3.1</strong> — Legacy</summary>
+
+- Inherits from .NET Core 3.0
+- **Updated Dependencies:**
+    - `System.Runtime.CompilerServices.Unsafe` 6.0
+    - `System.Collections.Immutable` 6.0
+    - `System.Text.Json` 6.0.11
+
+</details>
+<details>
+<summary><strong>.NET 5.0</strong> — Legacy</summary>
+
+- Inherits from .NET Core 3.1
+- **Enum (native implemented):** Yes
+- **Convert (native implemented):** Yes
+
+</details>
+<details>
+<summary><strong>.NET 6.0</strong> — LTS (Extended)</summary>
+
+- Inherits from .NET 5.0
+- **Static Virtual Members:** Yes
+- **Updated Dependencies:**
+    - `System.Runtime.CompilerServices.Unsafe` 6.1.2
+    - `System.Collections.Immutable` 8.0
+    - `System.Text.Json` 8.0.5
+
+</details>
+
+<details>
+<summary><strong>.NET 7.0</strong> — Extended</summary>
+
+- Inherits from .NET 6.0
+- Adds support for:
+    - **Marshalling**
+
+</details>
+<details>
+<summary><strong>.NET 8.0</strong> — LTS</summary>
+
+- Inherits from .NET 7.0
+- **No dependencies required**
+
+</details>
+
+<details>
+<summary><strong>.NET 9.0</strong> — Current</summary>
+
+- Inherits from .NET 8.0
+- **Generic `ref struct`:** Yes [⁴]
+
+</details>
+
+1. Retrieving references to multidimensional array data and managed buffers handling should be performed via reflection.
+2. Uses CoreCLR implementations from .NET 6.0. Simpler alternatives may be substituted in .NET Standard 2.1.
+3. Internally relies on `Enum.GetName(Type, Object)`.
+4. Value-type pointers allow `ref struct` generics, but some methods must be written in IL (not C#).
+
 ---
 
 # Abstractions
@@ -3426,6 +3525,19 @@ Feel free to discuss your ideas or changes in an issue or pull request to align 
 
 We currently support only a few languages, but we are open to adding more! If you'd like to help with translations,
 please open an issue or reach out to us. Your contributions to expanding the project's accessibility are highly valued.
+
+This library currently supports translations for the following languages:
+
+* **English**
+* **Arabic**
+* **Chinese**
+* **French**
+* **German**
+* **Italian**
+* **Japanese**
+* **Portuguese**
+* **Russian**
+* **Spanish**
 
 ## Collaboration Guidelines
 
