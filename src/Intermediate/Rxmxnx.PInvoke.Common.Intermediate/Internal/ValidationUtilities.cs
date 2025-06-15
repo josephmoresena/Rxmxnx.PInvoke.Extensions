@@ -621,9 +621,14 @@ internal static unsafe class ValidationUtilities
 	}
 #endif
 	/// <summary>
-	/// Throw if reflection free-mode.
+	/// Throws an exception if the current runtime does not support reflection.
 	/// </summary>
-	/// <exception cref="NotImplementedException"></exception>
+	/// <exception cref="PlatformNotSupportedException">
+	/// Throws an exception if the current runtime does not support reflection.
+	/// </exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfNoReflection()
 	{
@@ -656,7 +661,12 @@ internal static unsafe class ValidationUtilities
 	/// </summary>
 	/// <param name="tokenType">A <see cref="JsonTokenType"/> value.</param>
 	/// <param name="expectedToken">Expected token type name.</param>
-	/// <exception cref="JsonException">Throws an exception if the current token type is invalid for expeted type.</exception>
+	/// <exception cref="JsonException">
+	/// Throws an exception if the current token type is invalid for expected type.
+	/// </exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	private static void ThrowIfInvalidToken(JsonTokenType tokenType, String expectedToken)
 	{
 		IMessageResource resource = IMessageResource.GetInstance();
