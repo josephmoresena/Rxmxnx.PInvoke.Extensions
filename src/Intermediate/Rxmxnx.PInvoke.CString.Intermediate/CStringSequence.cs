@@ -1,10 +1,24 @@
 ﻿namespace Rxmxnx.PInvoke;
 
+#if !NET7_0_OR_GREATER
 /// <summary>
 /// Represents a sequence of null-terminated UTF-8 text strings.
 /// </summary>
+#else
+/// <summary>
+/// Represents a sequence of null-terminated UTF-8 text strings.
+/// </summary>
+/// <remarks>
+/// When marshalling this class via P/Invoke, only non-empty arrays are passed; empty sequences are marshalled as
+/// null pointer.
+/// </remarks>
+[NativeMarshalling(typeof(InputMarshaller))]
+#endif
 [DebuggerDisplay("Count = {Count}")]
 [DebuggerTypeProxy(typeof(CStringSequenceDebugView))]
+#if !PACKAGE || NETCOREAPP
+[JsonConverter(typeof(JsonConverter))]
+#endif
 public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequence>
 {
 	/// <summary>
@@ -62,7 +76,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		this._lengths = new Int32?[values.Length];
 		for (Int32 i = 0; i < values.Length; i++)
 		{
-			CString? cstr = CStringSequence.GetCString(values[i]);
+			CString? cstr = CStringSequence.CreateTransitive(values[i]);
 			list[i] = cstr;
 			this._lengths[i] = cstr?.Length;
 		}
@@ -74,7 +88,8 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// enumeration of strings.
 	/// </summary>
 	/// <param name="values">The enumerable collection of strings.</param>
-	public CStringSequence(IEnumerable<String?> values) : this(values.Select(CStringSequence.GetCString).ToArray()) { }
+	public CStringSequence(IEnumerable<String?> values) : this(
+		values.Select(CStringSequence.CreateTransitive).ToArray()) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from an
 	/// enumeration of UTF-8 strings.
@@ -165,11 +180,34 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	///     <item>Any consecutive UTF-8 null characters will be considered part of the next element.</item>
 	/// </list>
 	public static CStringSequence Create(ReadOnlySpan<Char> value)
+		=> CStringSequence.Create(MemoryMarshal.AsBytes(value));
+	/// <summary>
+	/// Creates a new <see cref="CStringSequence"/> instance from a UTF-8 buffer.
+	/// </summary>
+	/// <param name="value">A buffer of a UTF-8 sequence.</param>
+	/// <returns>A new <see cref="CStringSequence"/> instance.</returns>
+	/// <list type="bullet">
+	///     <item>Any UTF-8 null characters at the beginning or end of the buffer will be ignored.</item>
+	///     <item>Any non-consecutive UTF-8 null character will be considered an element separator.</item>
+	///     <item>Any consecutive UTF-8 null characters will be considered part of the next element.</item>
+	/// </list>
+	public static CStringSequence Create(ReadOnlySpan<Byte> value)
 	{
 		Boolean isParsable = false;
 		ReadOnlySpan<Byte> bufferSpan = CStringSequence.GetSourceBuffer(value, ref isParsable);
 		return CStringSequence.CreateFrom(bufferSpan);
 	}
+	/// <summary>
+	/// Creates a new <see cref="CStringSequence"/> instance from a UTF-8 null-terminated text pointer span.
+	/// </summary>
+	/// <param name="values">A UTF-8 null-terminated text pointer span.</param>
+	/// <returns>A new <see cref="CStringSequence"/> instance.</returns>
+	/// <remarks>
+	/// The reliability of the returned <see cref="CStringSequence"/> depends on the lifetime and validity of the
+	/// pointer at the time of method invocation.
+	/// </remarks>
+	public static CStringSequence GetUnsafe(ReadOnlySpan<ReadOnlyValPtr<Byte>> values)
+		=> values.Length == 0 ? CStringSequence.Empty : new(values);
 	/// <summary>
 	/// Converts the buffer of a UTF-8 sequence to a <see cref="CStringSequence"/> instance.
 	/// </summary>
@@ -191,7 +229,8 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	{
 		if (value is null) return default;
 		Boolean isParsable = true;
-		ReadOnlySpan<Byte> bufferSpan = CStringSequence.GetSourceBuffer(value, ref isParsable);
+		ReadOnlySpan<Byte> bufferSpan =
+			CStringSequence.GetSourceBuffer(MemoryMarshal.AsBytes(value.AsSpan()), ref isParsable);
 		return !isParsable ? CStringSequence.CreateFrom(bufferSpan) : CStringSequence.CreateFrom(value);
 	}
 }

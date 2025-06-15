@@ -7,8 +7,8 @@
         <RootNamespace>Rxmxnx.PInvoke</RootNamespace>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Deterministic>true</Deterministic>
-        <IsTrimmable>true</IsTrimmable>
-        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+        <IsTrimmable Condition="$(DefineConstants.Contains('NET6_0_OR_GREATER'))">true</IsTrimmable>
+        <EnableTrimAnalyzer Condition="$(DefineConstants.Contains('NET6_0_OR_GREATER'))">true</EnableTrimAnalyzer>
         <DocumentationFile>./$(AssemblyName).xml</DocumentationFile>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <ExcludeXmlAssemblyFiles>false</ExcludeXmlAssemblyFiles>
@@ -26,8 +26,11 @@
         <Using Include="System.Globalization"/>
         <Using Include="System.Runtime.CompilerServices"/>
         <Using Include="System.Runtime.InteropServices"/>
+        <Using Include="System.Runtime.InteropServices.Marshalling"/>
         <Using Include="System.Runtime.Versioning"/>
         <Using Include="System.Text"/>
+        <Using Include="System.Text.Json"/>
+        <Using Include="System.Text.Json.Serialization"/>
 
         <Using Include="Rxmxnx.PInvoke.Internal"/>
         <Using Include="Rxmxnx.PInvoke.Internal.DebugView"/>

@@ -20,20 +20,27 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 	/// <summary>
 	/// Buffer type metadata.
 	/// </summary>
-	private static readonly BufferTypeMetadata<T> typeMetadata = NonBinarySpace<TArray, T>.GetMetadata();
+	internal static readonly BufferTypeMetadata<T> TypeMetadata = NonBinarySpace<TArray, T>.GetMetadata();
 
 	/// <summary>
 	/// Internal value.
 	/// </summary>
 	private TArray _value;
 
+#if NET6_0_OR_GREATER
 	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [];
-	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => NonBinarySpace<TArray, T>.typeMetadata;
+	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => NonBinarySpace<TArray, T>.TypeMetadata;
 
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
 	static void IManagedBuffer<T>.AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components) { }
+#else
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	void IManagedBuffer<T>.DoNotImplement() { }
+#endif
 
 	/// <summary>
 	/// Retrieves the <see cref="BufferTypeMetadata{T}"/> instance for current type.
@@ -44,9 +51,16 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 		Boolean isItemUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>();
 		Boolean isArrayUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<TArray>();
 		ValidationUtilities.ThrowIfInvalidBuffer(typeof(T), isItemUnmanaged, typeof(TArray), isArrayUnmanaged);
+		
 #pragma warning disable CS8500
-		return new(sizeof(TArray) / sizeof(T), false);
+		Int32 spaceCapacity = sizeof(TArray) / sizeof(T);
 #pragma warning restore CS8500
+		
+#if NET6_0_OR_GREATER
+		return new(spaceCapacity, false);
+#else
+		return new(spaceCapacity, [], false);
+#endif
 	}
 }
 #pragma warning disable CA2252

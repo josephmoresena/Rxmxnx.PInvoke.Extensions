@@ -129,4 +129,56 @@ public partial class CString
 		SyncAsyncWriter writer = (SyncAsyncWriter)state!;
 		writer.Write();
 	}
+#if !PACKAGE || NETCOREAPP
+	/// <summary>
+	/// Reads a UTF-8 string from the specified <see cref="Utf8JsonReader"/> and returns its length.
+	/// </summary>
+	/// <param name="reader">A <see cref="Utf8JsonReader"/> instance.</param>
+	/// <param name="data">Output. A <see cref="ValueRegion{Byte}"/> instance.</param>
+	/// <returns>Read UTF-8 text length.</returns>
+	private static Int32 Read(Utf8JsonReader reader, out ValueRegion<Byte> data)
+	{
+		Int32 stackConsumed = 0;
+		Byte[]? byteArray = default;
+		try
+		{
+			Int32 length = JsonConverter.GetLength(reader);
+			Span<Byte> span = JsonConverter.ConsumeStackBytes(length, ref stackConsumed) ?
+				stackalloc Byte[length] :
+				JsonConverter.RentArray(length, out byteArray);
+
+			length += JsonConverter.ReadBytes(reader, span);
+			data = ValueRegion<Byte>.Create(span[..length].ToArray());
+			return length;
+		}
+		finally
+		{
+			JsonConverter.ReturnArray(byteArray);
+			JsonConverter.ReleaseStackBytes(stackConsumed);
+		}
+	}
+#endif
+	/// <summary>
+	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
+	/// </summary>
+	/// <typeparam name="TState">Type of the state object.</typeparam>
+	/// <param name="state">Function state parameter.</param>
+	/// <param name="getSpan">Function to retrieve utf-8 span from the state.</param>
+	/// <param name="isNullTerminated">Indicates whether resulting UTF-8 text is null-terminated.</param>
+	/// <param name="length">UTF-8 text length.</param>
+	/// <returns>
+	/// A new instance of the <see cref="CString"/> class.
+	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+	public
+#else
+	private
+#endif
+		static CString Create<TState>(TState state, ReadOnlySpanFunc<Byte, TState> getSpan, Boolean isNullTerminated,
+			Int32 length) where TState : struct
+	{
+		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, getSpan);
+		return new(data, true, isNullTerminated, length);
+	}
 }

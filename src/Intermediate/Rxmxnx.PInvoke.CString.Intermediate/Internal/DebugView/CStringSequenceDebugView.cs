@@ -32,12 +32,20 @@ internal sealed record CStringSequenceDebugView
 	/// Initializes a new instance of the <see cref="CStringSequenceDebugView"/> class with the
 	/// specified <see cref="CStringSequence"/> instance.
 	/// </summary>
-	/// <param name="seq">The CStringSequence instance to provide a debug view for.</param>
+	/// <param name="seq">The <see cref="CStringSequence"/> instance to provide a debug view for.</param>
 	public CStringSequenceDebugView(CStringSequence seq) => this._values = seq.ToArray();
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequenceDebugView"/> class with the
 	/// specified <see cref="FixedCStringSequence"/> instance.
 	/// </summary>
-	/// <param name="fseq">The FixedCStringSequence instance to provide a debug view for.</param>
+	/// <param name="fseq">The <see cref="FixedCStringSequence"/> instance to provide a debug view for.</param>
 	public CStringSequenceDebugView(FixedCStringSequence fseq) => this._values = fseq.Values.ToArray();
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CStringSequenceDebugView"/> class with the
+	/// specified <see cref="CStringSequence.Utf8View"/> instance.
+	/// </summary>
+	/// <param name="value">
+	/// The <see cref="CStringSequence.Utf8View"/> instance to provide a debug view for.
+	/// </param>
+	public CStringSequenceDebugView(CStringSequence.Utf8View value) => this._values = value.ToArray();
 }

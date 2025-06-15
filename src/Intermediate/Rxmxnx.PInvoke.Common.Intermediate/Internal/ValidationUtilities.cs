@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke.Internal;
+﻿#if !NET5_0_OR_GREATER
+using Enum = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
+#endif
+
+namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// Utility class for argument validation.
@@ -119,8 +123,8 @@ internal static unsafe class ValidationUtilities
 		=> obj switch
 		{
 			null => 1,
-			ValPtr<T> v => ptr.CompareTo(v.Pointer),
-			ReadOnlyValPtr<T> r => ptr.CompareTo(r.Pointer),
+			ValPtr<T> v => ((Int64)ptr).CompareTo((Int64)v.Pointer),
+			ReadOnlyValPtr<T> r => ((Int64)ptr).CompareTo((Int64)r.Pointer),
 			_ => throw new ArgumentException(IMessageResource.GetInstance().InvalidType(nameofPtr)),
 		};
 
@@ -253,6 +257,16 @@ internal static unsafe class ValidationUtilities
 		String message = IMessageResource.GetInstance().InvalidUnmanagedCast;
 		throw new InvalidOperationException(message);
 	}
+
+#if NET9_0_OR_GREATER
+	public static void ThrowIfNotObject(Type type)
+	{
+		if (!type.IsByRefLike) return;
+		IMessageResource resource = IMessageResource.GetInstance();
+		String message = IMessageResource.GetInstance().NotObjectType(type);
+		throw new InvalidOperationException(message);
+	}
+#endif
 
 	/// <summary>
 	/// Validates if the binary span <paramref name="destination"/> is sufficient to contain the binary
@@ -519,6 +533,24 @@ internal static unsafe class ValidationUtilities
 		if (!String.IsNullOrEmpty(message))
 			throw new InvalidOperationException(message);
 	}
+#if !PACKAGE || !NET6_0_OR_GREATER
+	/// <summary>
+	/// Throws an exception if buffer metadata is null.
+	/// </summary>
+	/// <param name="bufferType">Buffer type.</param>
+	/// <param name="isNull">Indicates whether buffer metadata is null.</param>
+	/// <exception cref="InvalidOperationException">Throws an exception if buffer metadata is null.</exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNullMetadata(Type bufferType, Boolean isNull)
+	{
+		if (!isNull) return;
+		IMessageResource resource = IMessageResource.GetInstance();
+		throw new InvalidOperationException(resource.MissingBufferMetadataException(bufferType));
+	}
+#endif
 	/// <summary>
 	/// Throws an exception if buffer metadata is null.
 	/// </summary>
@@ -536,6 +568,14 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = IMessageResource.GetInstance();
 		throw new InvalidOperationException(resource.MissingBufferMetadataException(itemType, size));
 	}
+	/// <summary>
+	/// Throws an exception if <see cref="MemoryInspector"/> is not supported on the current platform.
+	/// </summary>
+	/// <param name="instance">Current platform <see cref="MemoryInspector"/> instance.</param>
+	/// <returns></returns>
+	/// <exception cref="PlatformNotSupportedException">
+	/// Throws an exception if <see cref="MemoryInspector"/> is not supported on the current platform.
+	/// </exception>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -544,6 +584,57 @@ internal static unsafe class ValidationUtilities
 		if (instance is not null) return instance;
 		IMessageResource resource = IMessageResource.GetInstance();
 		throw new PlatformNotSupportedException(resource.MissingMemoryInspector);
+	}
+
+#if !PACKAGE || NETCOREAPP
+	/// <summary>
+	/// Throws an exception if the current token type is invalid for string type.
+	/// </summary>
+	/// <param name="tokenType">A <see cref="JsonTokenType"/> value.</param>
+	/// <exception cref="JsonException">Throws an exception if the current token type is invalid for string type.</exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNotString(JsonTokenType tokenType)
+	{
+		if (tokenType is JsonTokenType.String or JsonTokenType.Null) return;
+		String expectedTokenTypeName = Enum.GetName(JsonTokenType.String) ??
+			nameof(JsonTokenType) + '.' + nameof(JsonTokenType.String);
+		ValidationUtilities.ThrowIfInvalidToken(tokenType, expectedTokenTypeName);
+	}
+	/// <summary>
+	/// Throws an exception if the current token type is invalid for array type.
+	/// </summary>
+	/// <param name="tokenType">A <see cref="JsonTokenType"/> value.</param>
+	/// <exception cref="JsonException">Throws an exception if the current token type is invalid for array type.</exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNotArray(JsonTokenType tokenType)
+	{
+		if (tokenType is JsonTokenType.StartArray or JsonTokenType.Null) return;
+		String expectedTokenTypeName = Enum.GetName(JsonTokenType.StartArray) ??
+			nameof(JsonTokenType) + '.' + nameof(JsonTokenType.StartArray);
+		ValidationUtilities.ThrowIfInvalidToken(tokenType, expectedTokenTypeName);
+	}
+#endif
+	/// <summary>
+	/// Throws an exception if the current runtime does not support reflection.
+	/// </summary>
+	/// <exception cref="PlatformNotSupportedException">
+	/// Throws an exception if the current runtime does not support reflection.
+	/// </exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNoReflection()
+	{
+		if (!AotInfo.IsReflectionDisabled) return;
+		IMessageResource resource = IMessageResource.GetInstance();
+		throw new PlatformNotSupportedException(resource.ReflectionDisabled);
 	}
 #if BINARY_SPACES
 	/// <summary>
@@ -562,6 +653,26 @@ internal static unsafe class ValidationUtilities
 		if (!isBinary || bufferSize[0] != 2 * bufferSize[1] || bufferSize[1] != bufferSize[2])
 			throw new InvalidOperationException(
 				$"{type} is not an space. Size: {bufferSize[0]} ({bufferSize[2]}, {bufferSize[1]}).");
+	}
+#endif
+#if !PACKAGE || NETCOREAPP
+	/// <summary>
+	/// Throws an exception if the current token type is invalid for expected type.
+	/// </summary>
+	/// <param name="tokenType">A <see cref="JsonTokenType"/> value.</param>
+	/// <param name="expectedToken">Expected token type name.</param>
+	/// <exception cref="JsonException">
+	/// Throws an exception if the current token type is invalid for expected type.
+	/// </exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	private static void ThrowIfInvalidToken(JsonTokenType tokenType, String expectedToken)
+	{
+		IMessageResource resource = IMessageResource.GetInstance();
+		String tokenTypeName = Enum.GetName(tokenType) ?? $"{tokenType}";
+		String message = resource.InvalidToken(tokenTypeName, expectedToken);
+		throw new JsonException(message);
 	}
 #endif
 }

@@ -33,7 +33,7 @@ public sealed class DecodeTest
 		_ = Rune.DecodeFromUtf16(source, out _, out Int32 expectedCharsConsumed);
 
 		Assert.NotNull(decodedRune);
-		Assert.Equal(source[0], decodedRune.Value.Value.ToString()[0]);
+		Assert.Equal(source[0], DecodeTest.CreateString(decodedRune.Value.Value)[0]);
 		Assert.Equal(expectedCharsConsumed, decodedRune.Value.CharsConsumed);
 		MemoryMarshal.AsBytes(source[..decodedRune.Value.CharsConsumed])
 		             .CopyTo(MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref rawValue, 1)));
@@ -52,10 +52,12 @@ public sealed class DecodeTest
 		_ = Rune.DecodeFromUtf8(source, out _, out Int32 expectedCharsConsumed);
 
 		Assert.NotNull(decodedRune);
-		Assert.Equal(input[0], decodedRune.Value.Value.ToString()[0]);
+		Assert.Equal(input[0], DecodeTest.CreateString(decodedRune.Value.Value)[0]);
 		Assert.Equal(expectedCharsConsumed, decodedRune.Value.CharsConsumed);
 		MemoryMarshal.AsBytes(source[..decodedRune.Value.CharsConsumed])
 		             .CopyTo(MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref rawValue, 1)));
 		Assert.Equal(decodedRune.Value.RawValue, rawValue);
 	}
+
+	private static String CreateString(in Int32 value) => Unsafe.As<Int32, Rune>(ref Unsafe.AsRef(in value)).ToString();
 }

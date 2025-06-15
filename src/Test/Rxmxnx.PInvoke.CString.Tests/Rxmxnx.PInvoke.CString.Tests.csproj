@@ -25,9 +25,12 @@
         <Using Include="System.Runtime.InteropServices"/>
         <Using Include="System.Reflection"/>
         <Using Include="System.Text"/>
+        <Using Include="System.Text.Json"/>
+        <Using Include="System.Text.Json.Serialization"/>
 
         <Using Include="Rxmxnx.PInvoke"/>
         <Using Include="Rxmxnx.PInvoke.Internal"/>
+        <Using Include="Rxmxnx.PInvoke.Internal.FrameworkCompat"/>
         <Using Include="Rxmxnx.PInvoke.Internal.Localization"/>
     </ItemGroup>
 

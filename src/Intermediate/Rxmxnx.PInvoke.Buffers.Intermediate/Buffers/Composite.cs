@@ -25,9 +25,14 @@ public partial struct Composite<TBufferA, TBufferB, T> : IManagedBinaryBuffer<Co
 	/// <summary>
 	/// Internal metadata.
 	/// </summary>
-	private static readonly BufferTypeMetadata<T> typeMetadata =
+	internal static readonly BufferTypeMetadata<T> TypeMetadata =
+#if NET6_0_OR_GREATER
 		new BufferTypeMetadata<Composite<TBufferA, TBufferB, T>, T>(
-			TBufferA.TypeMetadata.Size + TBufferB.TypeMetadata.Size, Composite<TBufferA, TBufferB, T>.IsBinary());
+			BufferManager.MetadataManager<T>.GetCapacity(TBufferA.TypeMetadata, TBufferB.TypeMetadata,
+			                                             out Boolean isBinary), isBinary);
+#else
+		Composite<TBufferA, TBufferB, T>.CreateBufferMetadata();
+#endif
 
 	/// <summary>
 	/// Low buffer.
@@ -38,7 +43,8 @@ public partial struct Composite<TBufferA, TBufferB, T> : IManagedBinaryBuffer<Co
 	/// </summary>
 	private TBufferB _buff1;
 
-	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => Composite<TBufferA, TBufferB, T>.typeMetadata;
+#if NET6_0_OR_GREATER
+	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => Composite<TBufferA, TBufferB, T>.TypeMetadata;
 	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [TBufferA.TypeMetadata, TBufferB.TypeMetadata,];
 
 	static void IManagedBuffer<T>.AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components)
@@ -46,24 +52,36 @@ public partial struct Composite<TBufferA, TBufferB, T> : IManagedBinaryBuffer<Co
 		IManagedBuffer<T>.AppendComponent<TBufferA>(components);
 		IManagedBuffer<T>.AppendComponent<TBufferB>(components);
 	}
+#else
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	void IManagedBuffer<T>.DoNotImplement() { }
 
 	/// <summary>
-	/// Determines if current buffer type is binary.
+	/// Creates the <see cref="BufferTypeMetadata{T}"/> instance for current type.
 	/// </summary>
-	/// <returns>
-	/// <see langword="true"/> if current buffer type is binary; otherwise, <see langword="false"/>.
-	/// </returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static Boolean IsBinary()
+	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+	private static BufferTypeMetadata<T> CreateBufferMetadata()
 	{
-		if (!TBufferA.TypeMetadata.IsBinary || !TBufferB.TypeMetadata.IsBinary)
-			return false;
-		if (TBufferB.TypeMetadata.Components.Length == 2 &&
-		    TBufferB.TypeMetadata.Components[0] != TBufferB.TypeMetadata.Components[^1])
-			return false;
-		UInt16 sizeB = TBufferB.TypeMetadata.Size;
-		Int32 diff = sizeB - TBufferA.TypeMetadata.Size;
-		return diff >= 0 && diff <= sizeB;
+		BufferTypeMetadata<T>[] components =
+			BufferManager.MetadataManager<T>.GetComponents(typeof(TBufferA), typeof(TBufferB));
+		Int32 capacity =
+			BufferManager.MetadataManager<T>.GetCapacity(components[0], components[1], out Boolean isBinary);
+		return new BufferTypeMetadata<Composite<TBufferA, TBufferB, T>, T>(
+			capacity, components, isBinary, Composite<TBufferA, TBufferB, T>.AppendComponent);
 	}
+	/// <summary>
+	/// Appends all components from current type.
+	/// </summary>
+	/// <param name="components">A dictionary of components.</param>
+	private static void AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components)
+	{
+		BufferTypeMetadata<T> currentMetadata = Composite<TBufferA, TBufferB, T>.TypeMetadata;
+		if (!currentMetadata.IsBinary) return;
+		foreach (BufferTypeMetadata<T> component in currentMetadata.Components.AsSpan())
+			IManagedBuffer<T>.AppendComponent(component, components);
+	}
+#endif
 }
 #pragma warning restore CA2252

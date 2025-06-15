@@ -16,6 +16,9 @@ internal partial class FixedPointer
 		/// </summary>
 		private readonly IDisposable? _disposable;
 
+		/// <inheritdoc cref="IWrapper{T}.Value"/>
+		public TFixed Value { get; }
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -27,17 +30,14 @@ internal partial class FixedPointer
 			this._disposable = disposable;
 		}
 
+		~Disposable() { this.Dispose(false); }
+
 		/// <inheritdoc/>
 		public void Dispose()
 		{
 			this.Dispose(true);
 			GC.SuppressFinalize(this);
 		}
-
-		/// <inheritdoc/>
-		public TFixed Value { get; }
-
-		~Disposable() { this.Dispose(false); }
 
 		/// <summary>
 		/// Retrieves the <see cref="IDisposable"/> parent object.
@@ -50,7 +50,8 @@ internal partial class FixedPointer
 		/// <param name="disposing">Indicates whether current call is from <see cref="IDisposable.Dispose()"/>.</param>
 		private void Dispose(Boolean disposing)
 		{
-			if (!this.Value.IsValid || (!disposing && this._disposable is IFixedPointer.IDisposable)) return;
+			if (this.Value is not ReadOnlyFixedMemory || !this.Value.IsValid ||
+			    (!disposing && this._disposable is IFixedPointer.IDisposable)) return;
 			this.Value.Unload();
 			this._disposable?.Dispose();
 		}

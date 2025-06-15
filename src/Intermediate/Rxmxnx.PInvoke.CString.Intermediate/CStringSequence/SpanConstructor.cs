@@ -15,9 +15,8 @@ public unsafe partial class CStringSequence
 	{
 		this._lengths = [span0.Length,];
 		this._cache = CStringSequence.CreateCache(this._lengths, out this._nonEmptyCount);
-		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
-		fixed (void* ptrSpan = &MemoryMarshal.GetReference(stackalloc IntPtr[] { (IntPtr)ptr0, }))
-			this._value = CStringSequence.CreateBuffer(ptrSpan, this._lengths);
+		fixed (Byte* ptr0 = &MemoryMarshal.GetReference(span0))
+			this._value = CStringSequence.CreateBuffer(stackalloc ReadOnlyValPtr<Byte>[] { ptr0, }, this._lengths);
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
@@ -29,10 +28,12 @@ public unsafe partial class CStringSequence
 	{
 		this._lengths = [span0.Length, span1.Length,];
 		this._cache = CStringSequence.CreateCache(this._lengths, out this._nonEmptyCount);
-		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
-		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
-		fixed (void* ptrSpan = &MemoryMarshal.GetReference(stackalloc IntPtr[] { (IntPtr)ptr0, (IntPtr)ptr1, }))
-			this._value = CStringSequence.CreateBuffer(ptrSpan, this._lengths);
+		fixed (Byte* ptr0 = &MemoryMarshal.GetReference(span0))
+		fixed (Byte* ptr1 = &MemoryMarshal.GetReference(span1))
+		{
+			this._value =
+				CStringSequence.CreateBuffer(stackalloc ReadOnlyValPtr<Byte>[] { ptr0, ptr1, }, this._lengths);
+		}
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
@@ -45,12 +46,13 @@ public unsafe partial class CStringSequence
 	{
 		this._lengths = [span0.Length, span1.Length, span2.Length,];
 		this._cache = CStringSequence.CreateCache(this._lengths, out this._nonEmptyCount);
-		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
-		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
-		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
-		fixed (void* ptrSpan =
-			       &MemoryMarshal.GetReference(stackalloc IntPtr[] { (IntPtr)ptr0, (IntPtr)ptr1, (IntPtr)ptr2, }))
-			this._value = CStringSequence.CreateBuffer(ptrSpan, this._lengths);
+		fixed (Byte* ptr0 = &MemoryMarshal.GetReference(span0))
+		fixed (Byte* ptr1 = &MemoryMarshal.GetReference(span1))
+		fixed (Byte* ptr2 = &MemoryMarshal.GetReference(span2))
+		{
+			this._value =
+				CStringSequence.CreateBuffer(stackalloc ReadOnlyValPtr<Byte>[] { ptr0, ptr1, ptr2, }, this._lengths);
+		}
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
@@ -65,16 +67,15 @@ public unsafe partial class CStringSequence
 	{
 		this._lengths = [span0.Length, span1.Length, span2.Length, span3.Length,];
 		this._cache = CStringSequence.CreateCache(this._lengths, out this._nonEmptyCount);
-		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
-		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
-		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
-		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
-		fixed (void* ptrSpan =
-			       &MemoryMarshal.GetReference(stackalloc IntPtr[]
-			       {
-				       (IntPtr)ptr0, (IntPtr)ptr1, (IntPtr)ptr2, (IntPtr)ptr3,
-			       }))
-			this._value = CStringSequence.CreateBuffer(ptrSpan, this._lengths);
+		fixed (Byte* ptr0 = &MemoryMarshal.GetReference(span0))
+		fixed (Byte* ptr1 = &MemoryMarshal.GetReference(span1))
+		fixed (Byte* ptr2 = &MemoryMarshal.GetReference(span2))
+		fixed (Byte* ptr3 = &MemoryMarshal.GetReference(span3))
+		{
+			this._value =
+				CStringSequence.CreateBuffer(stackalloc ReadOnlyValPtr<Byte>[] { ptr0, ptr1, ptr2, ptr3, },
+				                             this._lengths);
+		}
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
@@ -90,18 +91,16 @@ public unsafe partial class CStringSequence
 	{
 		this._lengths = [span0.Length, span1.Length, span2.Length, span3.Length, span4.Length,];
 		this._cache = CStringSequence.CreateCache(this._lengths, out this._nonEmptyCount);
-		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
-		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
-		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
-		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
-		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
-		fixed (void* ptrSpan =
-			       &MemoryMarshal.GetReference(stackalloc IntPtr[]
-			       {
-				       (IntPtr)ptr0, (IntPtr)ptr1, (IntPtr)ptr2, (IntPtr)ptr3,
-				       (IntPtr)ptr4,
-			       }))
-			this._value = CStringSequence.CreateBuffer(ptrSpan, this._lengths);
+		fixed (Byte* ptr0 = &MemoryMarshal.GetReference(span0))
+		fixed (Byte* ptr1 = &MemoryMarshal.GetReference(span1))
+		fixed (Byte* ptr2 = &MemoryMarshal.GetReference(span2))
+		fixed (Byte* ptr3 = &MemoryMarshal.GetReference(span3))
+		fixed (Byte* ptr4 = &MemoryMarshal.GetReference(span4))
+		{
+			this._value =
+				CStringSequence.CreateBuffer(stackalloc ReadOnlyValPtr<Byte>[] { ptr0, ptr1, ptr2, ptr3, ptr4, },
+				                             this._lengths);
+		}
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
@@ -118,18 +117,17 @@ public unsafe partial class CStringSequence
 	{
 		this._lengths = [span0.Length, span1.Length, span2.Length, span3.Length, span4.Length, span5.Length,];
 		this._cache = CStringSequence.CreateCache(this._lengths, out this._nonEmptyCount);
-		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
-		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
-		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
-		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
-		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
-		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
-		fixed (void* ptrSpan = &MemoryMarshal.GetReference(stackalloc IntPtr[]
-		       {
-			       (IntPtr)ptr0, (IntPtr)ptr1, (IntPtr)ptr2,
-			       (IntPtr)ptr3, (IntPtr)ptr4, (IntPtr)ptr5,
-		       }))
-			this._value = CStringSequence.CreateBuffer(ptrSpan, this._lengths);
+		fixed (Byte* ptr0 = &MemoryMarshal.GetReference(span0))
+		fixed (Byte* ptr1 = &MemoryMarshal.GetReference(span1))
+		fixed (Byte* ptr2 = &MemoryMarshal.GetReference(span2))
+		fixed (Byte* ptr3 = &MemoryMarshal.GetReference(span3))
+		fixed (Byte* ptr4 = &MemoryMarshal.GetReference(span4))
+		fixed (Byte* ptr5 = &MemoryMarshal.GetReference(span5))
+		{
+			this._value =
+				CStringSequence.CreateBuffer(stackalloc ReadOnlyValPtr<Byte>[] { ptr0, ptr1, ptr2, ptr3, ptr4, ptr5, },
+				                             this._lengths);
+		}
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
@@ -148,20 +146,17 @@ public unsafe partial class CStringSequence
 		this._lengths =
 			[span0.Length, span1.Length, span2.Length, span3.Length, span4.Length, span5.Length, span6.Length,];
 		this._cache = CStringSequence.CreateCache(this._lengths, out this._nonEmptyCount);
-		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
-		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
-		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
-		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
-		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
-		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
-		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
-		fixed (void* ptrSpan = &MemoryMarshal.GetReference(stackalloc IntPtr[]
-		       {
-			       (IntPtr)ptr0, (IntPtr)ptr1, (IntPtr)ptr2,
-			       (IntPtr)ptr3, (IntPtr)ptr4, (IntPtr)ptr5,
-			       (IntPtr)ptr6,
-		       }))
-			this._value = CStringSequence.CreateBuffer(ptrSpan, this._lengths);
+		fixed (Byte* ptr0 = &MemoryMarshal.GetReference(span0))
+		fixed (Byte* ptr1 = &MemoryMarshal.GetReference(span1))
+		fixed (Byte* ptr2 = &MemoryMarshal.GetReference(span2))
+		fixed (Byte* ptr3 = &MemoryMarshal.GetReference(span3))
+		fixed (Byte* ptr4 = &MemoryMarshal.GetReference(span4))
+		fixed (Byte* ptr5 = &MemoryMarshal.GetReference(span5))
+		fixed (Byte* ptr6 = &MemoryMarshal.GetReference(span6))
+		{
+			this._value = CStringSequence.CreateBuffer(
+				stackalloc ReadOnlyValPtr<Byte>[] { ptr0, ptr1, ptr2, ptr3, ptr4, ptr5, ptr6, }, this._lengths);
+		}
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
@@ -185,20 +180,17 @@ public unsafe partial class CStringSequence
 			span7.Length,
 		];
 		this._cache = CStringSequence.CreateCache(this._lengths, out this._nonEmptyCount);
-		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
-		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
-		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
-		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
-		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
-		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
-		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
-		fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
-		fixed (void* ptrSpan = &MemoryMarshal.GetReference(stackalloc IntPtr[]
-		       {
-			       (IntPtr)ptr0, (IntPtr)ptr1, (IntPtr)ptr2,
-			       (IntPtr)ptr3, (IntPtr)ptr4, (IntPtr)ptr5,
-			       (IntPtr)ptr6, (IntPtr)ptr7,
-		       }))
-			this._value = CStringSequence.CreateBuffer(ptrSpan, this._lengths);
+		fixed (Byte* ptr0 = &MemoryMarshal.GetReference(span0))
+		fixed (Byte* ptr1 = &MemoryMarshal.GetReference(span1))
+		fixed (Byte* ptr2 = &MemoryMarshal.GetReference(span2))
+		fixed (Byte* ptr3 = &MemoryMarshal.GetReference(span3))
+		fixed (Byte* ptr4 = &MemoryMarshal.GetReference(span4))
+		fixed (Byte* ptr5 = &MemoryMarshal.GetReference(span5))
+		fixed (Byte* ptr6 = &MemoryMarshal.GetReference(span6))
+		fixed (Byte* ptr7 = &MemoryMarshal.GetReference(span7))
+		{
+			this._value = CStringSequence.CreateBuffer(
+				stackalloc ReadOnlyValPtr<Byte>[] { ptr0, ptr1, ptr2, ptr3, ptr4, ptr5, ptr6, ptr7, }, this._lengths);
+		}
 	}
 }

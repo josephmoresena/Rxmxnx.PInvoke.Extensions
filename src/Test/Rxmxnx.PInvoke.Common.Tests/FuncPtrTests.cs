@@ -38,6 +38,7 @@ public sealed class FuncPtrTests
 		Assert.False(FuncPtr<TDelegate>.Zero.Equals(empty.Pointer));
 
 		FuncPtrTests.FormatTest(FuncPtr<TDelegate>.Zero);
+		FuncPtrTests.MarshallerTest(FuncPtr<TDelegate>.Zero);
 
 		IntPtr ptr = Marshal.GetFunctionPointerForDelegate(del);
 		FuncPtr<TDelegate> funcPtr = (FuncPtr<TDelegate>)ptr;
@@ -55,6 +56,7 @@ public sealed class FuncPtrTests
 		Assert.Equal(funcPtr.Pointer, (funcPtr as IWrapper<IntPtr>).Value);
 
 		FuncPtrTests.FormatTest(funcPtr);
+		FuncPtrTests.MarshallerTest(funcPtr);
 	}
 
 	private static void FormatTest<TDelegate>(FuncPtr<TDelegate> funcPtr) where TDelegate : Delegate
@@ -62,12 +64,19 @@ public sealed class FuncPtrTests
 		CultureInfo culture = FuncPtrTests.allCultures[Random.Shared.Next(0, FuncPtrTests.allCultures.Length)];
 		Assert.Equal(funcPtr.Pointer.GetHashCode(), funcPtr.GetHashCode());
 		Assert.Equal(funcPtr.Pointer.ToString(), funcPtr.ToString());
-		Assert.Equal(funcPtr.Pointer.ToString(culture), funcPtr.ToString(culture));
+
+		if ((Object)funcPtr is not ISpanFormattable spanFormattable) return;
+		MethodInfo? toStringMethodInfo = spanFormattable.GetType()
+		                                                .GetMethod(nameof(IntPtr.ToString),
+		                                                           BindingFlags.Public | BindingFlags.Instance, null,
+		                                                           [typeof(IFormatProvider),], null);
+		if (toStringMethodInfo is not null)
+			Assert.Equal(funcPtr.Pointer.ToString(culture), toStringMethodInfo.Invoke(funcPtr, [culture,]));
 
 		Span<Char> span1 = stackalloc Char[20];
 		Span<Char> span2 = stackalloc Char[20];
 		Boolean res1 = funcPtr.Pointer.TryFormat(span1, out Int32 pC, "X", culture);
-		Boolean res2 = funcPtr.TryFormat(span2, out Int32 vC, "X", culture);
+		Boolean res2 = spanFormattable.TryFormat(span2, out Int32 vC, "X", culture);
 
 		Assert.Equal(res1, res2);
 		Assert.Equal(pC, vC);
@@ -77,7 +86,15 @@ public sealed class FuncPtrTests
 		{
 			culture = FuncPtrTests.allCultures[Random.Shared.Next(0, FuncPtrTests.allCultures.Length)];
 			Assert.Equal(funcPtr.Pointer.ToString(format), funcPtr.ToString(format));
-			Assert.Equal(funcPtr.Pointer.ToString(format, culture), funcPtr.ToString(format, culture));
+			Assert.Equal(funcPtr.Pointer.ToString(format, culture), spanFormattable.ToString(format, culture));
 		}
+	}
+	private static void MarshallerTest<TDelegate>(FuncPtr<TDelegate> funcPtr) where TDelegate : Delegate
+	{
+		IntPtr value = FuncPtr<TDelegate>.Marshaller.ConvertToUnmanaged(funcPtr);
+		FuncPtr<TDelegate> ptr = FuncPtr<TDelegate>.Marshaller.ConvertToManaged(value);
+
+		Assert.Equal(value, funcPtr.Pointer);
+		Assert.Equal(funcPtr, ptr);
 	}
 }

@@ -3,7 +3,7 @@ namespace Rxmxnx.PInvoke.Buffers;
 #pragma warning disable CA2252
 public partial struct Composite<TBufferA, TBufferB, T>
 {
-#if BINARY_SPACES
+#if NET6_0_OR_GREATER && BINARY_SPACES
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -14,7 +14,7 @@ public partial struct Composite<TBufferA, TBufferB, T>
 		if (typeof(TBufferB) != typeof(Atomic<T>))
 			TBufferB.StaticCompose<T0>(s0, helper);
 
-		BufferTypeMetadata<T> m = Composite<TBufferB, T0, T>.typeMetadata;
+		BufferTypeMetadata<T> m = Composite<TBufferB, T0, T>.TypeMetadata;
 
 		if (!helper.Add(m)) return;
 		if (typeof(TBufferB) == typeof(Atomic<T>)) return;

@@ -8,13 +8,10 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 #endif
 internal sealed class ChineseMessageResource : IMessageResource
 {
-	/// <inheritdoc cref="IMessageResource.Instance"/>
-	private static readonly ChineseMessageResource instance = new();
-
-#if NET6_0
-	[RequiresPreviewFeatures]
-#endif
-	static IMessageResource IMessageResource.Instance => ChineseMessageResource.instance;
+	/// <summary>
+	/// Current instance.
+	/// </summary>
+	public static readonly ChineseMessageResource Instance = new();
 
 	/// <summary>
 	/// Private constructor.
@@ -39,6 +36,7 @@ internal sealed class ChineseMessageResource : IMessageResource
 	String IMessageResource.LargerThanSequenceLength => "不能大于序列的长度。";
 	String IMessageResource.IndexOutOfSequence => "索引和长度必须引用序列内的位置。";
 	String IMessageResource.MissingMemoryInspector => "当前平台不支持内存检查。";
+	String IMessageResource.ReflectionDisabled => "此功能需要启用完整反射模式。";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"对象必须是 {requiredTypeName} 类型。";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf) => $"当前实例不足以包含 {typeOf} 类型的值。";
@@ -58,6 +56,16 @@ internal sealed class ChineseMessageResource : IMessageResource
 		=> $"{itemType} 是引用类型，但 {arrayType} 是非托管类型。";
 	String IMessageResource.UnmanagedTypeButContainsReferences(Type itemType, Type arrayType)
 		=> $"{itemType} 是非托管类型，但 {arrayType} 包含引用。";
+#if !PACKAGE || !NET6_0_OR_GREATER
+	String IMessageResource.MissingBufferMetadataException(Type bufferType) => $"无法获取 {bufferType} 缓冲区的元数据。";
+#endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"无法为 {itemType} 创建包含 {size} 项的缓冲区。";
+#if !PACKAGE || NETCOREAPP
+	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
+		=> $"意外的标记类型：{currentToken}。预期的标记类型：{expectedToken}。";
+#endif
+#if NET9_0_OR_GREATER
+	String IMessageResource.NotObjectType(Type type) => $"{type} 是 ref struct；不允许进行对象装箱。";
+#endif
 }

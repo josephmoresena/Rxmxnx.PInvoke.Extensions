@@ -6,14 +6,20 @@ namespace Rxmxnx.PInvoke;
 #endif
 public static partial class BufferManager
 {
+#if NET6_0_OR_GREATER
 	/// <summary>
 	/// Name of <see cref="IManagedBuffer{T}.GetMetadata{TBuffer}()"/> method.
 	/// </summary>
 #pragma warning disable CA2252
 	private const String GetMetadataName = nameof(IManagedBuffer<Object>.GetMetadata);
 #pragma warning restore CA2252
+#endif
 	/// <summary>
-	/// Flags of <see cref="IManagedBuffer{T}.GetMetadata{TBuffer}"/> method.
+	/// Name of <see cref="Atomic{T}.TypeMetadata"/>  static field.
+	/// </summary>
+	private const String TypeMetadataName = nameof(Atomic<Object>.TypeMetadata);
+	/// <summary>
+	/// Flags of metadata static member.
 	/// </summary>
 	private const BindingFlags GetMetadataFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
@@ -37,6 +43,8 @@ public static partial class BufferManager
 		{
 			Span<T> span = arr.AsSpan()[..count];
 			ScopedBuffer<T> buffer = new(span, true, arr.Length);
+
+			span.Clear();
 			action(buffer);
 		}
 		finally
@@ -65,6 +73,8 @@ public static partial class BufferManager
 		{
 			Span<T> span = arr.AsSpan()[..count];
 			ScopedBuffer<T> buffer = new(span, true, arr.Length);
+
+			span.Clear();
 			action(buffer, state);
 		}
 		finally
@@ -90,6 +100,8 @@ public static partial class BufferManager
 		{
 			Span<T> span = arr.AsSpan()[..count];
 			ScopedBuffer<T> buffer = new(span, true, arr.Length);
+
+			span.Clear();
 			return func(buffer);
 		}
 		finally
@@ -121,6 +133,8 @@ public static partial class BufferManager
 		{
 			Span<T> span = arr.AsSpan()[..count];
 			ScopedBuffer<T> buffer = new(span, true, arr.Length);
+
+			span.Clear();
 			return func(buffer, state);
 		}
 		finally

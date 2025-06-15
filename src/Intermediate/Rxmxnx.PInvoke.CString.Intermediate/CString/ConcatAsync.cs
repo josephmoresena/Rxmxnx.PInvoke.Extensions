@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if !NET6_0_OR_GREATER
+using ArgumentNullException = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
+#endif
+
+namespace Rxmxnx.PInvoke;
 
 public partial class CString
 {

@@ -1,3 +1,4 @@
+#if NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke;
 
 public readonly partial struct FuncPtr<TDelegate> : ISpanFormattable
@@ -15,3 +16,4 @@ public readonly partial struct FuncPtr<TDelegate> : ISpanFormattable
 		IFormatProvider? provider = default)
 		=> this.Pointer.TryFormat(destination, out charsWritten, format, provider);
 }
+#endif

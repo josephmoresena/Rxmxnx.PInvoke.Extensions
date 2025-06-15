@@ -22,5 +22,12 @@ internal static class SuppressMessageConstants
 	public const String CheckIdS2342 = "S2342";
 	public const String CheckIdS3963 = "S3963";
 	public const String CheckIdS2696 = "S2696";
+	public const String CheckIdS3261 = "S3261";
+	public const String CheckIdS3218 = "S3218";
+	public const String CheckIdS3260 = "S3260";
+	public const String CheckIdS3776 = "S3776";
+	public const String CheckIdS1199 = "S1199";
+	public const String CheckIdS1764 = "S1764";
+	public const String CheckIdS907 = "S907";
 }
 #endif

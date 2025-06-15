@@ -8,13 +8,10 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 #endif
 internal sealed class JapaneseMessageResource : IMessageResource
 {
-	/// <inheritdoc cref="IMessageResource.Instance"/>
-	private static readonly JapaneseMessageResource instance = new();
-
-#if NET6_0
-	[RequiresPreviewFeatures]
-#endif
-	static IMessageResource IMessageResource.Instance => JapaneseMessageResource.instance;
+	/// <summary>
+	/// Current instance.
+	/// </summary>
+	public static readonly JapaneseMessageResource Instance = new();
 
 	/// <summary>
 	/// Private constructor.
@@ -40,6 +37,7 @@ internal sealed class JapaneseMessageResource : IMessageResource
 	String IMessageResource.LargerThanSequenceLength => "シーケンスの長さを超えることはできません。";
 	String IMessageResource.IndexOutOfSequence => "インデックスと長さはシーケンス内の位置を参照する必要があります。";
 	String IMessageResource.MissingMemoryInspector => "現在のプラットフォームではメモリ検査はサポートされていません。";
+	String IMessageResource.ReflectionDisabled => "この機能を使用するにはフルリフレクションモードが必要です。";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"オブジェクトは {requiredTypeName} 型である必要があります。";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf) => $"現在のインスタンスは、{typeOf} 型の値を含むには不十分です。";
@@ -60,6 +58,16 @@ internal sealed class JapaneseMessageResource : IMessageResource
 		=> $"{itemType} は参照型ですが、{arrayType} は非管理型です。";
 	String IMessageResource.UnmanagedTypeButContainsReferences(Type itemType, Type arrayType)
 		=> $"{itemType} は非管理型ですが、{arrayType} は参照を含んでいます。";
+#if !PACKAGE || !NET6_0_OR_GREATER
+	String IMessageResource.MissingBufferMetadataException(Type bufferType) => $"{bufferType} バッファーのメタデータを取得できません。";
+#endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"{itemType} の {size} アイテム用のバッファを作成できません。";
+#if !PACKAGE || NETCOREAPP
+	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
+		=> $"予期しないトークンの種類: {currentToken}。期待されるトークンの種類: {expectedToken}。";
+#endif
+#if NET9_0_OR_GREATER
+	String IMessageResource.NotObjectType(Type type) => $"{type} は ref struct です。オブジェクトのボックス化は許可されていません。";
+#endif
 }

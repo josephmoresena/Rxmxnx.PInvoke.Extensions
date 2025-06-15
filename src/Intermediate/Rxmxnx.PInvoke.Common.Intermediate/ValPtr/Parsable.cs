@@ -1,3 +1,4 @@
+#if NET5_0_OR_GREATER
 namespace Rxmxnx.PInvoke;
 
 public readonly partial struct ValPtr<T>
@@ -35,6 +36,7 @@ public readonly partial struct ValPtr<T>
 #endif
 	public static ValPtr<T> Parse(String s, NumberStyles style, IFormatProvider? provider)
 		=> (ValPtr<T>)IntPtr.Parse(s, style, provider);
+#if NET6_0_OR_GREATER
 	/// <inheritdoc cref="IntPtr.Parse(ReadOnlySpan{Char}, NumberStyles, IFormatProvider)"/>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
@@ -42,6 +44,7 @@ public readonly partial struct ValPtr<T>
 	public static ValPtr<T> Parse(ReadOnlySpan<Char> s, NumberStyles style = NumberStyles.Integer,
 		IFormatProvider? provider = default)
 		=> (ValPtr<T>)IntPtr.Parse(s, style, provider);
+#endif
 	/// <inheritdoc cref="IntPtr.TryParse(String?, out IntPtr)"/>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
@@ -61,6 +64,7 @@ public readonly partial struct ValPtr<T>
 		Unsafe.SkipInit(out result);
 		return IntPtr.TryParse(s, style, provider, out Unsafe.As<ValPtr<T>, IntPtr>(ref result));
 	}
+#if NET6_0_OR_GREATER
 	/// <inheritdoc cref="IntPtr.TryParse(ReadOnlySpan{Char}, out IntPtr)"/>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
@@ -80,4 +84,6 @@ public readonly partial struct ValPtr<T>
 		Unsafe.SkipInit(out result);
 		return IntPtr.TryParse(s, style, provider, out Unsafe.As<ValPtr<T>, IntPtr>(ref result));
 	}
+#endif
 }
+#endif

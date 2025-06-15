@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if !NET6_0_OR_GREATER
+using ArgumentNullException = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
+#endif
+
+namespace Rxmxnx.PInvoke;
 
 public partial class CString
 {
@@ -19,11 +23,10 @@ public partial class CString
 	{
 		this._isLocal = false;
 		this.IsFunction = true;
-		this._data = ValueRegion<Byte>.Create(new(sequence, index), SequenceItemState.GetSpan, SequenceItemState.Alloc);
-
-		ReadOnlySpan<Byte> data = CStringSequence.GetItemSpan(sequence, index);
+		this._data = ValueRegion<Byte>.Create(new SequenceItemState(sequence, index), SequenceItemState.GetSpan,
+		                                      SequenceItemState.Alloc);
 		this._isNullTerminated = true;
-		this.Length = data.Length;
+		this.Length = this._data.AsSpan().Length;
 	}
 
 	/// <summary>
@@ -123,5 +126,24 @@ public partial class CString
 		ArgumentNullException.ThrowIfNull(value);
 		ValidationUtilities.ThrowIfInvalidUtf8Region(value._data, nameof(value), out Byte[] result);
 		return result;
+	}
+	/// <summary>
+	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
+	/// </summary>
+	/// <typeparam name="TState">Type of the state object.</typeparam>
+	/// <param name="state">Function state parameter.</param>
+	/// <param name="getSpan">Function to retrieve utf-8 span from the state.</param>
+	/// <param name="length">UTF-8 text length.</param>
+	/// <returns>
+	/// A new instance of the <see cref="CString"/> class.
+	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	internal static CString Create<TState>(TState state, ReadOnlySpanFunc<Byte, TState> getSpan, Int32 length)
+		where TState : struct
+	{
+		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, getSpan);
+		return new(data, true, false, length);
 	}
 }

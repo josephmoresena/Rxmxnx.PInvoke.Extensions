@@ -8,13 +8,10 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 #endif
 internal sealed class RussianMessageResource : IMessageResource
 {
-	/// <inheritdoc cref="IMessageResource.Instance"/>
-	private static readonly RussianMessageResource instance = new();
-
-#if NET6_0
-	[RequiresPreviewFeatures]
-#endif
-	static IMessageResource IMessageResource.Instance => RussianMessageResource.instance;
+	/// <summary>
+	/// Current instance.
+	/// </summary>
+	public static readonly RussianMessageResource Instance = new();
 
 	/// <summary>
 	/// Private constructor.
@@ -42,6 +39,7 @@ internal sealed class RussianMessageResource : IMessageResource
 	String IMessageResource.IndexOutOfSequence
 		=> "Индекс и длина должны указывать на местоположение внутри последовательности.";
 	String IMessageResource.MissingMemoryInspector => "Проверка памяти не поддерживается на текущей платформе.";
+	String IMessageResource.ReflectionDisabled => "Эта функция требует режима полной рефлексии.";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"Объект должен быть типа {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)
@@ -65,6 +63,17 @@ internal sealed class RussianMessageResource : IMessageResource
 		=> $"{itemType} является ссылочным типом, но {arrayType} является неуправляемым типом.";
 	String IMessageResource.UnmanagedTypeButContainsReferences(Type itemType, Type arrayType)
 		=> $"{itemType} является неуправляемым типом, но {arrayType} содержит ссылки.";
+#if !PACKAGE || !NET6_0_OR_GREATER
+	String IMessageResource.MissingBufferMetadataException(Type bufferType)
+		=> $"Не удалось получить метаданные для буфера {bufferType}.";
+#endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Невозможно создать буфер для {itemType} с {size} элементами.";
+#if !PACKAGE || NETCOREAPP
+	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
+		=> $"Неожиданный тип токена: {currentToken}. Ожидаемый тип токена: {expectedToken}.";
+#endif
+#if NET9_0_OR_GREATER
+	String IMessageResource.NotObjectType(Type type) => $"{type} — это ref struct; упаковка объекта не допускается.";
+#endif
 }

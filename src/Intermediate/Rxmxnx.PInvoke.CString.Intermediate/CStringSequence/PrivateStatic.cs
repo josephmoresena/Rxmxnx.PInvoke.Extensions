@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if !NET6_0_OR_GREATER
+using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
+#endif
+
+namespace Rxmxnx.PInvoke;
 
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
@@ -39,6 +43,17 @@ public unsafe partial class CStringSequence
 			return String.Create(totalChars, state, CStringSequence.CopyText);
 		}
 #pragma warning restore CS8500
+	}
+	/// <summary>
+	/// Creates buffer using <paramref name="span"/> and <paramref name="lengths"/>.
+	/// </summary>
+	/// <param name="span">Span of UTF-8 text pointers.</param>
+	/// <param name="lengths">UTF-8 text lengths.</param>
+	/// <returns>Created buffer.</returns>
+	private static String CreateBuffer(ReadOnlySpan<ReadOnlyValPtr<Byte>> span, Int32?[] lengths)
+	{
+		fixed (void* ptrSpan = &MemoryMarshal.GetReference(span))
+			return CStringSequence.CreateBuffer(ptrSpan, lengths);
 	}
 	/// <summary>
 	/// Creates buffer using <paramref name="ptrSpan"/> and <paramref name="lengths"/>.
@@ -85,8 +100,10 @@ public unsafe partial class CStringSequence
 	private static void CopyText(Span<Char> charSpan, CStringSpanState state)
 	{
 		Int32 position = 0;
-		ref CString? refCStr = ref Unsafe.AsRef<CString?>(state.Ptr);
+		ref CString? refCStr = ref *state.Ptr;
+#pragma warning disable CS8619
 		ReadOnlySpan<CString?> values = MemoryMarshal.CreateReadOnlySpan(ref refCStr, state.Length);
+#pragma warning restore CS8619
 		Span<Byte> byteSpan = MemoryMarshal.AsBytes(charSpan);
 		foreach (CString? value in values)
 		{
@@ -187,7 +204,7 @@ public unsafe partial class CStringSequence
 		}
 	}
 	/// <summary>
-	/// Converts the given <paramref name="str"/> to a <see cref="CString"/> instance.
+	/// Creates a transitive <see cref="CString"/> instance from <paramref name="str"/>.
 	/// </summary>
 	/// <param name="str">The <see cref="String"/> instance to be converted.</param>
 	/// <returns>
@@ -195,8 +212,16 @@ public unsafe partial class CStringSequence
 	/// <paramref name="str"/> is <see langword="null"/>.
 	/// </returns>
 	[return: NotNullIfNotNull(nameof(str))]
-	private static CString? GetCString(String? str)
+	private static CString? CreateTransitive(String? str)
+#if NET6_0_OR_GREATER
 		=> str is not null ? CString.Create(new CStringStringState(str)) : default;
+#else
+	{
+		if (str is null) return default;
+		CStringStringState state = new(str);
+		return CString.Create(state, CStringStringState.GetSpan, state.Utf8Length);
+	}
+#endif
 	/// <summary>
 	/// Gets the length of the byte span representing a <see cref="CString"/> of the given <paramref name="length"/>.
 	/// </summary>
@@ -216,6 +241,25 @@ public unsafe partial class CStringSequence
 		Int32?[] result = new Int32?[list.Length];
 		for (Int32 i = 0; i < result.Length; i++)
 			result[i] = CStringSequence.GetLength(list[i]);
+		return result;
+	}
+	/// <summary>
+	/// Retrieves the length array for a given collection of Null-terminated UTF-8 text pointers.
+	/// </summary>
+	/// <param name="list">A collection of Null-terminated UTF-8 text pointers.</param>
+	/// <returns>An array representing the length of each UTF-8 text in the collection.</returns>
+	private static Int32?[] GetLengthArray(ReadOnlySpan<ReadOnlyValPtr<Byte>> list)
+	{
+		Int32?[] result = new Int32?[list.Length];
+		for (Int32 i = 0; i < list.Length; i++)
+		{
+			if (!list[i].IsZero)
+#if NET6_0_OR_GREATER
+				result[i] = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(list[i]).Length;
+#else
+				result[i] = MemoryMarshalCompat.CreateReadOnlySpanFromNullTerminated(list[i]).Length;
+#endif
+		}
 		return result;
 	}
 	/// <summary>
@@ -292,14 +336,13 @@ public unsafe partial class CStringSequence
 		return length;
 	}
 	/// <summary>
-	/// Retrieves usable UTF-8 buffer from <paramref name="sourceChars"/>.
+	/// Retrieves usable UTF-8 buffer from <paramref name="bufferSpan"/>.
 	/// </summary>
-	/// <param name="sourceChars">A buffer of a UTF-8 sequence.</param>
+	/// <param name="bufferSpan">A buffer of a UTF-8 sequence.</param>
 	/// <param name="isParsable">Indicates whether resulting buffer is parsable.</param>
 	/// <returns>A UTF-8 buffer.</returns>
-	private static ReadOnlySpan<Byte> GetSourceBuffer(ReadOnlySpan<Char> sourceChars, ref Boolean isParsable)
+	private static ReadOnlySpan<Byte> GetSourceBuffer(ReadOnlySpan<Byte> bufferSpan, ref Boolean isParsable)
 	{
-		ReadOnlySpan<Byte> bufferSpan = MemoryMarshal.AsBytes(sourceChars);
 		Int32 bufferLength = bufferSpan.Length;
 		if (bufferSpan.Length == 0)
 		{
@@ -335,7 +378,16 @@ public unsafe partial class CStringSequence
 		{
 			CopyTextHelper state = new() { Pointer = ptr, Length = buffer.Length, NullChars = [], };
 			sequenceBuffer = String.Create(totalChars, state, CStringSequence.CopyText);
+#if NET5_0_OR_GREATER
 			nulls = CollectionsMarshal.AsSpan(state.NullChars);
+#else
+			Span<Int32> nullsTmp = stackalloc Int32[state.NullChars.Count];
+			for (Int32 i = 0; i < state.NullChars.Count; i++)
+				nullsTmp[i] = state.NullChars[i];
+#pragma warning disable CS9080
+			nulls = nullsTmp;
+#pragma warning restore CS9080
+#endif
 		}
 		Int32?[] lengths = CStringSequence.GetLengths(nulls);
 		return new(sequenceBuffer, lengths);
@@ -355,7 +407,14 @@ public unsafe partial class CStringSequence
 				nulls.Add(i);
 		}
 		if (span[^1] != default) nulls.Add(span.Length);
+#if NET5_0_OR_GREATER
 		Int32?[] lengths = CStringSequence.GetLengths(CollectionsMarshal.AsSpan(nulls));
+#else
+		Span<Int32> nullsTmp = stackalloc Int32[nulls.Count];
+		for (Int32 i = 0; i < nulls.Count; i++)
+			nullsTmp[i] = nulls[i];
+		Int32?[] lengths = CStringSequence.GetLengths(nullsTmp);
+#endif
 		return new(buffer, lengths);
 	}
 	/// <summary>

@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if !NET6_0_OR_GREATER
+using MemoryMarshal = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
+#endif
+
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Provides a set of extensions for basic operations with <see cref="IntPtr"/> and <see cref="UIntPtr"/> instances.
@@ -66,7 +70,7 @@ public static unsafe class PointerExtensions
 	/// <param name="ptr">The <see cref="IntPtr"/> pointing to the start of UTF-16 text in memory.</param>
 	/// <returns>A <see cref="String"/> representation of the UTF-16 text in memory.</returns>
 	/// <remarks>
-	/// The safety and validity of the obtained information depends on the lifetime and validity of the pointer at the time
+	/// The reliability of the obtained information depends on the lifetime and validity of the pointer at the time
 	/// of method invocation.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -78,7 +82,7 @@ public static unsafe class PointerExtensions
 	/// <param name="uptr">The <see cref="UIntPtr"/> pointing to the start of UTF-16 text in memory.</param>
 	/// <returns>A <see cref="String"/> representation of the UTF-16 text in memory.</returns>
 	/// <remarks>
-	/// The safety and validity of the obtained information depends on the lifetime and validity of the pointer at the time
+	/// The reliability of the obtained information depends on the lifetime and validity of the pointer at the time
 	/// of method invocation.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -103,7 +107,7 @@ public static unsafe class PointerExtensions
 	/// <returns>A <see cref="String"/> representation of the UTF-16 text in memory.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
 	/// <remarks>
-	/// The safety and validity of the obtained information depends on the lifetime and validity of the pointer at the time
+	/// The reliability of the obtained information depends on the lifetime and validity of the pointer at the time
 	/// of method invocation.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -124,7 +128,7 @@ public static unsafe class PointerExtensions
 	/// <returns>A <see cref="String"/> representation of the UTF-16 text in memory.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
 	/// <remarks>
-	/// The safety and validity of the obtained information depends on the lifetime and validity of the pointer at the time
+	/// The reliability of the obtained information depends on the lifetime and validity of the pointer at the time
 	/// of method invocation.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -165,7 +169,7 @@ public static unsafe class PointerExtensions
 	/// <returns>A new array of <typeparamref name="T"/>, or  <see langword="null"/> if the pointer is zero.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
 	/// <remarks>
-	/// The safety and validity of the obtained information depends on the lifetime and validity of the pointer at the time
+	/// The reliability of the obtained information depends on the lifetime and validity of the pointer at the time
 	/// of method invocation.
 	/// </remarks>
 	public static T[]? GetUnsafeArray<T>(this IntPtr ptr, Int32 length) where T : unmanaged
@@ -218,7 +222,7 @@ public static unsafe class PointerExtensions
 	/// <returns>A <see cref="Span{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
 	/// <remarks>
-	/// The safety and validity of the obtained span depends on the lifetime and validity of the pointer during the usage of
+	/// The reliability of the obtained span depends on the lifetime and validity of the pointer during the usage of
 	/// the span.
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
@@ -242,7 +246,7 @@ public static unsafe class PointerExtensions
 	/// <returns>A <see cref="Span{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
 	/// <remarks>
-	/// The safety and validity of the obtained span depends on the lifetime and validity of the pointer during the usage of
+	/// The reliability of the obtained span depends on the lifetime and validity of the pointer during the usage of
 	/// the span.
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
@@ -267,7 +271,7 @@ public static unsafe class PointerExtensions
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
 	/// <exception cref="ArgumentException"><see cref="MemoryHandle"/> cannot be obtained from a non-unmanaged memory.</exception>
 	/// <remarks>
-	/// The safety and validity of the obtained span depends on the lifetime and validity of the handle during the usage of
+	/// The reliability of the obtained span depends on the lifetime and validity of the handle during the usage of
 	/// the span.
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
@@ -291,7 +295,7 @@ public static unsafe class PointerExtensions
 	/// <returns>A <see cref="ReadOnlySpan{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
 	/// <remarks>
-	/// The safety and validity of the obtained span depends on the lifetime and validity of the pointer during the usage of
+	/// The reliability of the obtained span depends on the lifetime and validity of the pointer during the usage of
 	/// the span.
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
@@ -318,7 +322,7 @@ public static unsafe class PointerExtensions
 	/// <returns>A <see cref="ReadOnlySpan{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
 	/// <remarks>
-	/// The safety and validity of the obtained span depends on the lifetime and validity of the pointer during the usage of
+	/// The reliability of the obtained span depends on the lifetime and validity of the pointer during the usage of
 	/// the span.
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
@@ -345,7 +349,7 @@ public static unsafe class PointerExtensions
 	/// <returns>A <see cref="ReadOnlySpan{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
 	/// <remarks>
-	/// The safety and validity of the obtained span depends on the lifetime and validity of the handle during the usage of
+	/// The reliability of the obtained span depends on the lifetime and validity of the handle during the usage of
 	/// the span.
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
@@ -368,7 +372,7 @@ public static unsafe class PointerExtensions
 	/// <param name="ptr">The <see cref="IntPtr"/> referencing the delegate in memory.</param>
 	/// <returns>A delegate of type <typeparamref name="TDelegate"/>, or <see langword="null"/> if the pointer is zero.</returns>
 	/// <remarks>
-	/// The safety and validity of the obtained delegate depends on the lifetime and validity of the pointer.
+	/// The reliability of the obtained delegate depends on the lifetime and validity of the pointer.
 	/// If the function the delegate represents is moved or deallocated, invoking the delegate can cause unexpected behavior or
 	/// application crashes.
 	/// </remarks>
@@ -382,7 +386,7 @@ public static unsafe class PointerExtensions
 	/// <param name="uptr">The <see cref="UIntPtr"/> referencing the delegate in memory.</param>
 	/// <returns>A delegate of type <typeparamref name="TDelegate"/>, or <see langword="null"/> if the pointer is zero.</returns>
 	/// <remarks>
-	/// The safety and validity of the obtained delegate depends on the lifetime and validity of the pointer.
+	/// The reliability of the obtained delegate depends on the lifetime and validity of the pointer.
 	/// If the function the delegate represents is moved or deallocated, invoking the delegate can cause unexpected behavior or
 	/// application crashes.
 	/// </remarks>
@@ -398,8 +402,9 @@ public static unsafe class PointerExtensions
 	/// <param name="ptr">The <see cref="IntPtr"/> pointer.</param>
 	/// <returns>A memory reference to an <see langword="unmanaged"/> value of type <typeparamref name="T"/>.</returns>
 	/// <remarks>
-	/// The safety and validity of the returned reference depends on the lifetime and validity of the pointer.
-	/// If the data the reference represents is moved or deallocated, accessing the reference can cause unexpected behavior
+	/// The reliability of the returned reference depends on the lifetime and validity of the pointer.
+	/// If the memory that the reference points to is moved or deallocated, accessing the reference can cause unexpected
+	/// behavior
 	/// or application crashes.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -413,8 +418,9 @@ public static unsafe class PointerExtensions
 	/// <param name="uptr">The <see cref="UIntPtr"/> pointer.</param>
 	/// <returns>A memory reference to an <see langword="unmanaged"/> value of type <typeparamref name="T"/>.</returns>
 	/// <remarks>
-	/// The safety and validity of the returned reference depends on the lifetime and validity of the pointer.
-	/// If the data the reference represents is moved or deallocated, accessing the reference can cause unexpected behavior
+	/// The reliability of the returned reference depends on the lifetime and validity of the pointer.
+	/// If the memory that the reference points to is moved or deallocated, accessing the reference can cause unexpected
+	/// behavior
 	/// or application crashes.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -428,8 +434,9 @@ public static unsafe class PointerExtensions
 	/// <param name="ptr">The <see cref="IntPtr"/> pointer.</param>
 	/// <returns>A read-only memory reference to an <see langword="unmanaged"/> value of type <typeparamref name="T"/>.</returns>
 	/// <remarks>
-	/// The safety and validity of the returned reference depends on the lifetime and validity of the pointer.
-	/// If the data the reference represents is moved or deallocated, accessing the reference can cause unexpected behavior
+	/// The reliability of the returned reference depends on the lifetime and validity of the pointer.
+	/// If the memory that the reference points to is moved or deallocated, accessing the reference can cause unexpected
+	/// behavior
 	/// or application crashes.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -443,8 +450,9 @@ public static unsafe class PointerExtensions
 	/// <param name="uptr">The <see cref="UIntPtr"/> pointer.</param>
 	/// <returns>A read-only memory reference to an <see langword="unmanaged"/> value of type <typeparamref name="T"/>.</returns>
 	/// <remarks>
-	/// The safety and validity of the returned reference depends on the lifetime and validity of the pointer.
-	/// If the data the reference represents is moved or deallocated, accessing the reference can cause unexpected behavior
+	/// The reliability of the returned reference depends on the lifetime and validity of the pointer.
+	/// If the memory that the reference points to is moved or deallocated, accessing the reference can cause unexpected
+	/// behavior
 	/// or application crashes.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -458,7 +466,7 @@ public static unsafe class PointerExtensions
 	/// <param name="ptr">The <see cref="IntPtr"/> pointer.</param>
 	/// <returns>An <see langword="unmanaged"/> value of type <typeparamref name="T"/>.</returns>
 	/// <remarks>
-	/// The safety and validity of the obtained information depends on the lifetime and validity of the pointer at the time
+	/// The reliability of the obtained information depends on the lifetime and validity of the pointer at the time
 	/// of method invocation.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -471,7 +479,7 @@ public static unsafe class PointerExtensions
 	/// <param name="uptr">The <see cref="UIntPtr"/> pointer.</param>
 	/// <returns>An <see langword="unmanaged"/> value of type <typeparamref name="T"/>.</returns>
 	/// <remarks>
-	/// The safety and validity of the obtained information depends on the lifetime and validity of the pointer at the time
+	/// The reliability of the obtained information depends on the lifetime and validity of the pointer at the time
 	/// of method invocation.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -487,8 +495,8 @@ public static unsafe class PointerExtensions
 	/// <see langword="null"/>.
 	/// </returns>
 	/// <remarks>
-	/// The safety and validity of the returned span depends on the lifetime and validity of the pointer.
-	/// If the data the span represents is moved or deallocated, accessing the span can cause unexpected behavior
+	/// The reliability of the returned span depends on the lifetime and validity of the pointer.
+	/// If the memory containing the UTF-16 text is moved or deallocated, accessing the span can cause unexpected behavior
 	/// or application crashes.
 	/// </remarks>
 	public static ReadOnlySpan<Char> GetUnsafeReadOnlySpanFromNullTerminated(this ReadOnlyValPtr<Char> char0)
@@ -502,8 +510,8 @@ public static unsafe class PointerExtensions
 	/// <see langword="null"/>.
 	/// </returns>
 	/// <remarks>
-	/// The safety and validity of the returned span depends on the lifetime and validity of the pointer.
-	/// If the data the span represents is moved or deallocated, accessing the span can cause unexpected behavior
+	/// The reliability of the returned span depends on the lifetime and validity of the pointer.
+	/// If the memory containing the UTF-16 text is moved or deallocated, accessing the span can cause unexpected behavior
 	/// or application crashes.
 	/// </remarks>
 	public static ReadOnlySpan<Byte> GetUnsafeReadOnlySpanFromNullTerminated(this ReadOnlyValPtr<Byte> char0)
@@ -520,7 +528,7 @@ public static unsafe class PointerExtensions
 	/// <returns>A <see cref="String"/> representation of the UTF-16 text in memory.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
 	/// <remarks>
-	/// The safety and validity of the obtained information depends on the lifetime and validity of the pointer at the time
+	/// The reliability of the obtained information depends on the lifetime and validity of the pointer at the time
 	/// of method invocation.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

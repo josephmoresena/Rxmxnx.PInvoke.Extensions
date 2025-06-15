@@ -13,11 +13,26 @@ internal partial class MemoryInspector
 			/// <summary>
 			/// Internal value.
 			/// </summary>
+#if NET5_0_OR_GREATER
 			public UIntPtr Value { get; private init; }
+#else
+			public readonly UIntPtr Value;
+
+			UIntPtr IWrapper<UIntPtr>.Value => this.Value;
+#endif
+
+#if NET5_0_OR_GREATER
+#else
+#endif
 			/// <summary>
 			/// Indicates whether current boundary is terminal.
 			/// </summary>
+
+#if NET5_0_OR_GREATER
 			public Boolean IsEnd { get; private init; }
+#else
+			public readonly Boolean IsEnd;
+#endif
 
 			/// <summary>
 			/// Constructor.
@@ -30,14 +45,32 @@ internal partial class MemoryInspector
 				this.IsEnd = isEnd;
 			}
 
+#if !NET5_0_OR_GREATER
+			/// <summary>
+			/// Private constructor.
+			/// </summary>
+			/// <param name="value">Internal value.</param>
+			/// <param name="isEnd">Indicates whether current boundary is terminal.</param>
+			private MemoryBoundary(UIntPtr value, Boolean isEnd)
+			{
+				this.Value = value;
+				this.IsEnd = isEnd;
+			}
+#endif
+
 			/// <summary>
 			/// Defines an implicit conversion of a given <see cref="IntPtr"/> to a <see cref="MemoryBoundary"/> instance.
 			/// </summary>
 			/// <param name="value">An <see cref="IntPtr"/> to implicitly convert.</param>
-			public static implicit operator MemoryBoundary(void* value) => new() { Value = new(value), IsEnd = false, };
+			public static implicit operator MemoryBoundary(void* value)
+#if NET5_0_OR_GREATER
+				=> new() { Value = new(value), IsEnd = false, };
+#else
+				=> new(new UIntPtr(value), false);
+#endif
 
 			/// <inheritdoc/>
-			public Int32 CompareTo(MemoryBoundary other) => this.Value.CompareTo(other.Value);
+			public Int32 CompareTo(MemoryBoundary other) => ((UInt64)this.Value).CompareTo((UInt64)other.Value);
 			/// <inheritdoc/>
 			public Boolean Equals(MemoryBoundary other) => this.Value == other.Value;
 			/// <inheritdoc/>
@@ -78,8 +111,10 @@ internal partial class MemoryInspector
 			public static Boolean operator <(MemoryBoundary left, MemoryBoundary right)
 #if NET7_0_OR_GREATER
 				=> left.Value < right.Value;
-#else
+#elif NET5_0_OR_GREATER
 				=> left.Value.CompareTo(right.Value) < 0;
+#else
+				=> ((UInt64)left.Value).CompareTo((UInt64)right.Value) < 0;
 #endif
 			/// <summary>
 			/// Compares two values to determine which is less or equal.
@@ -93,8 +128,10 @@ internal partial class MemoryInspector
 			public static Boolean operator <=(MemoryBoundary left, MemoryBoundary right)
 #if NET7_0_OR_GREATER
 				=> left.Value <= right.Value;
-#else
+#elif NET5_0_OR_GREATER
 				=> left.Value.CompareTo(right.Value) <= 0;
+#else
+				=> ((UInt64)left.Value).CompareTo((UInt64)right.Value) <= 0;
 #endif
 			/// <summary>
 			/// Compares two values to determine which is greater.
@@ -108,8 +145,10 @@ internal partial class MemoryInspector
 			public static Boolean operator >(MemoryBoundary left, MemoryBoundary right)
 #if NET7_0_OR_GREATER
 				=> left.Value > right.Value;
-#else
+#elif NET5_0_OR_GREATER
 				=> left.Value.CompareTo(right.Value) > 0;
+#else
+				=> ((UInt64)left.Value).CompareTo((UInt64)right.Value) > 0;
 #endif
 			/// <summary>
 			/// Compares two values to determine which is greater or equal.
@@ -123,8 +162,10 @@ internal partial class MemoryInspector
 			public static Boolean operator >=(MemoryBoundary left, MemoryBoundary right)
 #if NET7_0_OR_GREATER
 				=> left.Value >= right.Value;
-#else
+#elif NET5_0_OR_GREATER
 				=> left.Value.CompareTo(right.Value) >= 0;
+#else
+				=> ((UInt64)left.Value).CompareTo((UInt64)right.Value) >= 0;
 #endif
 
 			/// <summary>
@@ -139,44 +180,13 @@ internal partial class MemoryInspector
 				{
 					for (Int32 i = 0; i < addressText.Length / 2; i++)
 					{
-						addressBuffer[i] = MemoryBoundary.GetDecimalValue(addressText[^(2 * i + 2)]);
+						addressBuffer[i] = NativeUtilities.GetDecimalValue(addressText[^(2 * i + 2)]);
 						addressBuffer[i] <<= 4;
-						addressBuffer[i] += MemoryBoundary.GetDecimalValue(addressText[^(2 * i + 1)]);
+						addressBuffer[i] += NativeUtilities.GetDecimalValue(addressText[^(2 * i + 1)]);
 					}
 				}
 				return MemoryMarshal.Read<UIntPtr>(addressBuffer);
 			}
-			/// <summary>
-			/// Retrieves the decimal value of <paramref name="hexCharacter"/>.
-			/// </summary>
-			/// <param name="hexCharacter">ASCII hexadecimal character.</param>
-			/// <returns>Decimal value from <paramref name="hexCharacter"/>.</returns>
-			private static Byte GetDecimalValue(Byte hexCharacter)
-				=> hexCharacter switch
-				{
-					(Byte)'a' => 10,
-					(Byte)'A' => 10,
-					(Byte)'b' => 11,
-					(Byte)'B' => 11,
-					(Byte)'c' => 12,
-					(Byte)'C' => 12,
-					(Byte)'d' => 13,
-					(Byte)'D' => 13,
-					(Byte)'e' => 14,
-					(Byte)'E' => 14,
-					(Byte)'f' => 15,
-					(Byte)'F' => 15,
-					(Byte)'1' => 1,
-					(Byte)'2' => 2,
-					(Byte)'3' => 3,
-					(Byte)'4' => 4,
-					(Byte)'5' => 5,
-					(Byte)'6' => 6,
-					(Byte)'7' => 7,
-					(Byte)'8' => 8,
-					(Byte)'9' => 9,
-					_ => 0,
-				};
 		}
 	}
 }

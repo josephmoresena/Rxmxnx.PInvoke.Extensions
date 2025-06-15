@@ -8,13 +8,10 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 #endif
 internal sealed class ItalianMessageResource : IMessageResource
 {
-	/// <inheritdoc cref="IMessageResource.Instance"/>
-	private static readonly ItalianMessageResource instance = new();
-
-#if NET6_0
-	[RequiresPreviewFeatures]
-#endif
-	static IMessageResource IMessageResource.Instance => ItalianMessageResource.instance;
+	/// <summary>
+	/// Current instance.
+	/// </summary>
+	public static readonly ItalianMessageResource Instance = new();
 
 	/// <summary>
 	/// Private constructor.
@@ -45,6 +42,7 @@ internal sealed class ItalianMessageResource : IMessageResource
 		=> "Indice e lunghezza devono fare riferimento a una posizione all'interno della sequenza.";
 	String IMessageResource.MissingMemoryInspector
 		=> "L'ispezione della memoria non è supportata sulla piattaforma corrente.";
+	String IMessageResource.ReflectionDisabled => "Questa funzionalità richiede la modalità reflection-full.";
 
 	String IMessageResource.InvalidType(String requiredTypeName)
 		=> $"L'oggetto deve essere di tipo {requiredTypeName}.";
@@ -67,6 +65,18 @@ internal sealed class ItalianMessageResource : IMessageResource
 		=> $"{itemType} è un tipo di riferimento ma {arrayType} è un tipo non gestito.";
 	String IMessageResource.UnmanagedTypeButContainsReferences(Type itemType, Type arrayType)
 		=> $"{itemType} è un tipo non gestito ma {arrayType} contiene riferimenti.";
+#if !PACKAGE || !NET6_0_OR_GREATER
+	String IMessageResource.MissingBufferMetadataException(Type bufferType)
+		=> $"Impossibile recuperare i metadati per il buffer {bufferType}.";
+#endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Impossibile creare un buffer per {itemType} con {size} elementi.";
+#if !PACKAGE || NETCOREAPP
+	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
+		=> $"Tipo di token imprevisto: {currentToken}. Tipo di token previsto: {expectedToken}.";
+#endif
+#if NET9_0_OR_GREATER
+	String IMessageResource.NotObjectType(Type type)
+		=> $"{type} è una ref struct; il boxing dell'oggetto non è consentito.";
+#endif
 }

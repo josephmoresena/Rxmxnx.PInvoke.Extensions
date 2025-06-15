@@ -20,6 +20,9 @@ public sealed class GetNativeMethodTest
 	[InlineData(false, false, false, true)]
 	internal void EmptyTest(Boolean zeroPtr, Boolean generic, Boolean emptyName = false, Boolean useRealHandle = false)
 	{
+		Skip.If(MemoryMarshalCompat.TargetFramework.Contains(".NETStandard"),
+		        ".NETStandard does not support NativeLibrary class.");
+
 		String prefix = GetNativeMethodTest.fixture.Create<String>();
 		String sufix = GetNativeMethodTest.fixture.Create<String>();
 		IntPtr handle = !zeroPtr ?
@@ -42,11 +45,14 @@ public sealed class GetNativeMethodTest
 			NativeLibrary.Free(handle);
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[InlineData(true)]
 	[InlineData(false)]
 	internal void NormalTest(Boolean generic)
 	{
+		Skip.If(MemoryMarshalCompat.TargetFramework.Contains(".NETStandard"),
+		        ".NETStandard does not support NativeLibrary class.");
+
 		IntPtr handle = NativeLibrary.Load(LoadNativeLibTest.LibraryName);
 		IntPtr addressMethod = NativeLibrary.GetExport(handle, LoadNativeLibTest.MethodName);
 		if (!generic)
@@ -63,8 +69,8 @@ public sealed class GetNativeMethodTest
 		{
 			FuncPtr<GetT<Int32>> funcPtr =
 				NativeUtilities.GetNativeMethodPtr<GetT<Int32>>(handle, LoadNativeLibTest.MethodName);
-			Assert.Throws<ArgumentException>(
-				() => NativeUtilities.GetNativeMethod<GetT<Int32>>(handle, LoadNativeLibTest.MethodName));
+			Assert.Throws<ArgumentException>(() => NativeUtilities.GetNativeMethod<GetT<Int32>>(
+				                                 handle, LoadNativeLibTest.MethodName));
 			Assert.Equal(addressMethod, funcPtr.Pointer);
 			Assert.Throws<ArgumentException>(() => funcPtr.Invoke);
 		}

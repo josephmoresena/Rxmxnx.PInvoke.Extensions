@@ -24,11 +24,23 @@ internal abstract partial class MemoryInspector
 #endif
 	static MemoryInspector()
 	{
+#if NET5_0_OR_GREATER
 		if (OperatingSystem.IsWindows())
+#else
+		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+#endif
 			MemoryInspector.instance = new Windows();
+#if NET5_0_OR_GREATER
 		else if (OperatingSystem.IsLinux())
+#else
+		else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+#endif
 			MemoryInspector.instance = new Linux();
+#if NET5_0_OR_GREATER
 		else if (!OperatingSystem.IsBrowser() && !OperatingSystem.IsFreeBSD() && !OperatingSystem.IsWatchOS())
+#else
+		else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+#endif
 			MemoryInspector.instance = new Mac(); // OSX
 	}
 

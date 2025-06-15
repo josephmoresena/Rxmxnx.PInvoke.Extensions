@@ -170,8 +170,10 @@ public class AsSpanTest
 		Span<T> span = func(arr as TArray);
 		Assert.True(emptySpan.IsEmpty);
 		Assert.Equal(span.Length, arr.Length);
+		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(span),
+		                           ref MemoryMarshalCompat.GetArrayDataReference<T>(arr)));
 		IEnumerator enumerator = arr.GetEnumerator();
-		foreach (T value in span)
+		foreach (ref T value in span)
 		{
 			enumerator.MoveNext();
 			Assert.Equal(value, enumerator.Current);

@@ -6,16 +6,16 @@
 /// </summary>
 /// <typeparam name="T">The type of elements in the sequence.</typeparam>
 internal sealed class SequenceEnumerator<T> : IEnumerator<T>
+#if NET9_0_OR_GREATER
+	where T : allows ref struct
+#endif
 {
+	private readonly Action<IEnumerableSequence<T>>? _dispose;
 	/// <summary>
 	/// The sequence of elements to iterate through.
 	/// </summary>
 	private readonly IEnumerableSequence<T> _instance;
 
-	/// <summary>
-	/// The current element in the sequence.
-	/// </summary>
-	private T _current = default!;
 	/// <summary>
 	/// The current position in the sequence.
 	/// </summary>
@@ -25,8 +25,13 @@ internal sealed class SequenceEnumerator<T> : IEnumerator<T>
 	/// Initializes a new instance of the <see cref="SequenceEnumerator{T}"/> class.
 	/// </summary>
 	/// <param name="instance">The sequence of elements to iterate through.</param>
+	/// <param name="dispose">Dispose delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public SequenceEnumerator(IEnumerableSequence<T> instance) => this._instance = instance;
+	public SequenceEnumerator(IEnumerableSequence<T> instance, Action<IEnumerableSequence<T>>? dispose)
+	{
+		this._instance = instance;
+		this._dispose = dispose;
+	}
 
 	/// <inheritdoc/>
 	public T Current
@@ -35,25 +40,35 @@ internal sealed class SequenceEnumerator<T> : IEnumerator<T>
 		get
 		{
 			ValidationUtilities.ThrowIfInvalidIndexEnumerator(this._index, this._instance.GetSize());
-			return this._current;
+			return this._instance.GetItem(this._index);
 		}
 	}
 
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	Object IEnumerator.Current => this.Current!;
+	Object? IEnumerator.Current
+#if !NET9_0_OR_GREATER
+		=> this.Current;
+#else
+	{
+		get
+		{
+			ValidationUtilities.ThrowIfNotObject(typeof(T));
+			T value = this.Current;
+			return Unsafe.As<T, Object?>(ref value);
+		}
+	}
+#endif
 
-	void IDisposable.Dispose() => IEnumerableSequence<T>.DisposeEnumeration(this._instance);
+	void IDisposable.Dispose() => this._dispose?.Invoke(this._instance);
 
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Boolean MoveNext()
 	{
 		this._index++;
-		if (this._index >= this._instance.GetSize()) return false;
-		this._current = this._instance.GetItem(this._index);
-		return true;
+		return this._index < this._instance.GetSize();
 	}
 	/// <inheritdoc/>
 	public void Reset() => this._index = -1;

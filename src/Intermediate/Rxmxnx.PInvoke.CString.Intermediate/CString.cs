@@ -1,10 +1,24 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if !NET6_0_OR_GREATER
+using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
+#endif
+
+#if !NET5_0_OR_GREATER
+using Convert = Rxmxnx.PInvoke.Internal.FrameworkCompat.ConvertCompat;
+#endif
+
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Represents a sequence of UTF-8 encoded characters.
 /// </summary>
+#if NET7_0_OR_GREATER
+[NativeMarshalling(typeof(Marshaller))]
+#endif
 [DebuggerDisplay("{ToString()}")]
 [DebuggerTypeProxy(typeof(CStringDebugView))]
+#if !PACKAGE || NETCOREAPP
+[JsonConverter(typeof(JsonConverter))]
+#endif
 public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatable<String>
 {
 	/// <summary>
@@ -35,6 +49,10 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// Gets a value indicating whether the current <see cref="CString"/> instance is a function.
 	/// </summary>
 	public Boolean IsFunction { get; }
+	/// <summary>
+	/// Indicates whether the current <see cref="CString"/> instance is a null pointer.
+	/// </summary>
+	public Boolean IsZero => this.IsReference && Unsafe.IsNullRef(ref MemoryMarshal.GetReference(this._data.AsSpan()));
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified
@@ -100,7 +118,8 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	}
 
 	/// <inheritdoc/>
-	public Boolean Equals([NotNullWhen(true)] CString? other) => other is not null && CString.equals(this, other);
+	public Boolean Equals([NotNullWhen(true)] CString? other)
+		=> other is not null ? CString.equals(this, other) : this.IsZero;
 	/// <summary>
 	/// Determines whether the current <see cref="CString"/> and a specified <see cref="String"/>
 	/// have the same value.
@@ -111,7 +130,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
 	/// </returns>
 	public Boolean Equals([NotNullWhen(true)] String? other)
-		=> other is not null && StringUtf8Comparator.Create().TextEquals(this, other);
+		=> other is not null ? StringUtf8Comparator.Create().TextEquals(this, other) : this.IsZero;
 	/// <summary>
 	/// Determines whether the current <see cref="CString"/> and a specified <see cref="CString"/>
 	/// have the same value.
@@ -126,7 +145,9 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
 	/// </returns>
 	public Boolean Equals([NotNullWhen(true)] CString? value, StringComparison comparisonType)
-		=> value is not null && CStringUtf8Comparator.Create(comparisonType).TextEquals(this, value);
+		=> value is not null && !value.IsZero ?
+			CStringUtf8Comparator.Create(comparisonType).TextEquals(this, value) :
+			this.IsZero;
 	/// <summary>
 	/// Determines whether the current <see cref="CString"/> and a specified <see cref="String"/>
 	/// have the same value.
@@ -141,11 +162,11 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <see cref="CString"/>, otherwise, <see langword="false"/>.
 	/// </returns>
 	public Boolean Equals([NotNullWhen(true)] String? value, StringComparison comparisonType)
-		=> value is not null && StringUtf8Comparator.Create(comparisonType).TextEquals(this, value);
+		=> value is not null ? StringUtf8Comparator.Create(comparisonType).TextEquals(this, value) : this.IsZero;
 
 	/// <inheritdoc/>
 	public override Boolean Equals([NotNullWhen(true)] Object? obj)
-		=> obj is String str ? this.Equals(str) : obj is CString cstr && this.Equals(cstr);
+		=> obj is String str ? this.Equals(str) : this.Equals(obj as CString);
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override String ToString()
@@ -251,7 +272,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <see cref="ReadOnlySpanFunc{Byte}"/> delegate provided.
 	/// </summary>
 	/// <param name="func">
-	/// A <see cref="ReadOnlySpanFunc{Byte}"/> delegate that returns a Utf8 string non-literal.
+	/// A <see cref="ReadOnlySpanFunc{Byte}"/> delegate that returns a UTF-8 string non-literal.
 	/// </param>
 	/// <returns>
 	/// A new instance of the <see cref="CString"/> class, if the func is not <see langword="null"/>;
@@ -273,6 +294,27 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <summary>
 	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
 	/// </summary>
+	/// <typeparam name="TState">Type of the state object.</typeparam>
+	/// <param name="state">Function state parameter.</param>
+	/// <param name="getSpan">Function to retrieve utf-8 span from the state.</param>
+	/// <param name="isNullTerminated">Indicates whether resulting UTF-8 text is null-terminated.</param>
+	/// <param name="alloc">Function to allocate a <see cref="GCHandle"/> for the state.</param>
+	/// <returns>
+	/// A new instance of the <see cref="CString"/> class.
+	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public static CString Create<TState>(TState state, ReadOnlySpanFunc<Byte, TState> getSpan, Boolean isNullTerminated,
+		Func<TState, GCHandleType, GCHandle>? alloc = default) where TState : struct
+	{
+		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, getSpan, alloc);
+		return new(data, true, isNullTerminated, getSpan(state).Length);
+	}
+#if NET6_0_OR_GREATER
+	/// <summary>
+	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
+	/// </summary>
 	/// <typeparam name="TState">A <see cref="IUtf8FunctionState{TState}"/> type.</typeparam>
 	/// <param name="state">Function state parameter.</param>
 	/// <returns>
@@ -286,6 +328,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 		return new(data, true, state.IsNullTerminated, length);
 #pragma warning restore CA2252
 	}
+#endif
 	/// <summary>
 	/// Creates a new instance of the <see cref="CString"/> class using the pointer to a UTF-8
 	/// character array and length provided.
@@ -295,12 +338,12 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <param name="useFullLength">Indicates whether the total length should be used.</param>
 	/// <returns>A new instance of the <see cref="CString"/> class.</returns>
 	/// <remarks>
-	/// The safety and validity of the returned <see cref="CString"/> depends on the lifetime and validity of the pointer.
-	/// If the data the UTF-8 text represents is moved or deallocated, accessing the span can cause unexpected behavior
+	/// The reliability of the returned <see cref="CString"/> depends on the lifetime and validity of the pointer.
+	/// If the memory containing the UTF-8 text is moved or deallocated, accessing the span can cause unexpected behavior
 	/// or application crashes.
 	/// </remarks>
 	public static CString CreateUnsafe(IntPtr ptr, Int32 length, Boolean useFullLength = false)
-		=> new(ptr, length, useFullLength);
+		=> ptr != IntPtr.Zero ? new(ptr, length, useFullLength) : CString.Zero;
 	/// <summary>
 	/// Creates a new instance of the <see cref="CString"/> class using the pointer to a UTF-8
 	/// character array.
@@ -308,13 +351,18 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <param name="ptr">A pointer to an array of UTF-8 characters.</param>
 	/// <returns>A new instance of the <see cref="CString"/> class.</returns>
 	/// <remarks>
-	/// The safety and validity of the returned <see cref="CString"/> depends on the lifetime and validity of the pointer.
-	/// If the data the UTF-8 text represents is moved or deallocated, accessing the span can cause unexpected behavior
+	/// The reliability of the returned <see cref="CString"/> depends on the lifetime and validity of the pointer.
+	/// If the memory containing the UTF-8 text is moved or deallocated, accessing the span can cause unexpected behavior
 	/// or application crashes.
 	/// </remarks>
 	public static unsafe CString CreateNullTerminatedUnsafe(IntPtr ptr)
 	{
-		ReadOnlySpan<Byte> span = MemoryMarshal.CreateReadOnlySpanFromNullTerminated((Byte*)ptr);
+		ReadOnlySpan<Byte> span =
+#if NET6_0_OR_GREATER
+			MemoryMarshal.CreateReadOnlySpanFromNullTerminated((Byte*)ptr);
+#else
+			MemoryMarshalCompat.CreateReadOnlySpanFromNullTerminated((Byte*)ptr);
+#endif
 		Int32 length = span.Length;
 		return new(ValueRegion<Byte>.Create(ptr, length), false, true, length);
 	}

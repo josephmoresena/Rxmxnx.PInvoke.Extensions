@@ -8,13 +8,10 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 #endif
 internal sealed class ArabicMessageResource : IMessageResource
 {
-	/// <inheritdoc cref="IMessageResource.Instance"/>
-	private static readonly ArabicMessageResource instance = new();
-
-#if NET6_0
-	[RequiresPreviewFeatures]
-#endif
-	static IMessageResource IMessageResource.Instance => ArabicMessageResource.instance;
+	/// <summary>
+	/// Current instance.
+	/// </summary>
+	public static readonly ArabicMessageResource Instance = new();
 
 	/// <summary>
 	/// Private constructor.
@@ -40,6 +37,7 @@ internal sealed class ArabicMessageResource : IMessageResource
 	String IMessageResource.LargerThanSequenceLength => "لا يمكن أن يكون أكبر من طول التسلسل.";
 	String IMessageResource.IndexOutOfSequence => "يجب أن يشير الفهرس والطول إلى موقع داخل التسلسل.";
 	String IMessageResource.MissingMemoryInspector => "لا يتم دعم فحص الذاكرة على النظام الأساسي الحالي.";
+	String IMessageResource.ReflectionDisabled => "تتطلب هذه الميزة وضع الانعكاس الكامل.";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"يجب أن يكون الكائن من النوع {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)
@@ -61,6 +59,17 @@ internal sealed class ArabicMessageResource : IMessageResource
 		=> $"{itemType} هو نوع مرجعي لكن {arrayType} هو نوع غير مُدار.";
 	String IMessageResource.UnmanagedTypeButContainsReferences(Type itemType, Type arrayType)
 		=> $"{itemType} هو نوع غير مُدار لكن {arrayType} يحتوي على مراجع.";
+#if !PACKAGE || !NET6_0_OR_GREATER
+	String IMessageResource.MissingBufferMetadataException(Type bufferType)
+		=> $"تعذّر استرداد البيانات الوصفية لمخزن {bufferType}.";
+#endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"تعذّر إنشاء مخزن مؤقت لـ {itemType} يضم {size} عناصر.";
+#if !PACKAGE || NETCOREAPP
+	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
+		=> $"نوع الرمز غير المتوقع: {currentToken}. نوع الرمز المتوقع: {expectedToken}.";
+#endif
+#if NET9_0_OR_GREATER
+	String IMessageResource.NotObjectType(Type type) => $"{type} هو ref struct؛ لا يُسمح بتغليف الكائن.";
+#endif
 }

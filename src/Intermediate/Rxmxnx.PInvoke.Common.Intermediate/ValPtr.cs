@@ -4,6 +4,9 @@ namespace Rxmxnx.PInvoke;
 /// Represents a platform-specific type used to manage a pointer to a mutable value of type <typeparamref name="T"/>.
 /// </summary>
 /// <typeparam name="T">Type of pointer.</typeparam>
+#if NET7_0_OR_GREATER
+[NativeMarshalling(typeof(ValPtr<>.Marshaller))]
+#endif
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
 #if !PACKAGE
@@ -96,7 +99,7 @@ public readonly unsafe partial struct ValPtr<T> : IWrapper<IntPtr>, IEquatable<V
 	/// The <see cref="String"/> representation of the value of the current <see cref="ValPtr{T}"/> object.
 	/// </returns>
 	/// <exception cref="FormatException"><paramref name="format"/> is invalid or not supported.</exception>
-	public String ToString(String? format) => this.Pointer.ToString(format);
+	public String ToString(String? format) => this.Pointer.ToString(format!);
 
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="IFixedReference{T}.IDisposable"/> instance from

@@ -13,7 +13,13 @@ public partial class CString
 	/// </summary>
 	/// <param name="str">A <see cref="String"/> to implicitly convert.</param>
 	[return: NotNullIfNotNull(nameof(str))]
-	public static explicit operator CString?(String? str) => str is not null ? new(str) : default;
+	public static explicit operator CString?(String? str)
+		=> str switch
+		{
+			null => default,
+			"" => CString.Empty,
+			_ => new(str),
+		};
 	/// <summary>
 	/// Defines an implicit conversion of a given <see cref="CString"/> to a read-only span of bytes.
 	/// </summary>
@@ -29,7 +35,8 @@ public partial class CString
 	/// <see langword="true"/> if the value of <paramref name="left"/> is the same as the value
 	/// of <paramref name="right"/>; otherwise, <see langword="false"/>.
 	/// </returns>
-	public static Boolean operator ==(CString? left, CString? right) => left?.Equals(right) ?? right is null;
+	public static Boolean operator ==(CString? left, CString? right)
+		=> left?.Equals(right) ?? (right is null || right.IsZero);
 	/// <summary>
 	/// Determines whether two specified <see cref="CString"/> instances have different values.
 	/// </summary>

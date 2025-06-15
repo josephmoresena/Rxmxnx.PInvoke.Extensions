@@ -8,13 +8,10 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 #endif
 internal sealed class FrenchMessageResource : IMessageResource
 {
-	/// <inheritdoc cref="IMessageResource.Instance"/>
-	private static readonly FrenchMessageResource instance = new();
-
-#if NET6_0
-	[RequiresPreviewFeatures]
-#endif
-	static IMessageResource IMessageResource.Instance => FrenchMessageResource.instance;
+	/// <summary>
+	/// Current instance.
+	/// </summary>
+	public static readonly FrenchMessageResource Instance = new();
 
 	/// <summary>
 	/// Private constructor.
@@ -45,6 +42,7 @@ internal sealed class FrenchMessageResource : IMessageResource
 		=> "L'index et la longueur doivent faire référence à un emplacement dans la séquence.";
 	String IMessageResource.MissingMemoryInspector
 		=> "L'inspection de la mémoire n'est pas prise en charge sur la plateforme actuelle.";
+	String IMessageResource.ReflectionDisabled => "Cette fonctionnalité nécessite le mode réflexion complète.";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"L'objet doit être de type {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)
@@ -67,6 +65,18 @@ internal sealed class FrenchMessageResource : IMessageResource
 		=> $"{itemType} est un type de référence mais {arrayType} est un type non géré.";
 	String IMessageResource.UnmanagedTypeButContainsReferences(Type itemType, Type arrayType)
 		=> $"{itemType} est un type non géré mais {arrayType} contient des références.";
+#if !PACKAGE || !NET6_0_OR_GREATER
+	String IMessageResource.MissingBufferMetadataException(Type bufferType)
+		=> $"Impossible de récupérer les métadonnées pour le tampon {bufferType}.";
+#endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Impossible de créer un tampon pour {itemType} comportant {size} éléments.";
+#if !PACKAGE || NETCOREAPP
+	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
+		=> $"Type de jeton inattendu : {currentToken}. Type de jeton attendu : {expectedToken}.";
+#endif
+#if NET9_0_OR_GREATER
+	String IMessageResource.NotObjectType(Type type)
+		=> $"{type} est une ref struct ; la boxing d'objet n'est pas autorisée.";
+#endif
 }

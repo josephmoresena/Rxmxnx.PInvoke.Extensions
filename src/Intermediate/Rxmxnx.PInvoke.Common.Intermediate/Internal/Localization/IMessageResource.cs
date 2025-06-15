@@ -6,16 +6,6 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 internal partial interface IMessageResource
 {
 	/// <summary>
-	/// Current instance.
-	/// </summary>
-#pragma warning disable CA2252
-#if NET6_0
-	[RequiresPreviewFeatures]
-#endif
-	private protected static abstract IMessageResource Instance { get; }
-#pragma warning restore CA2252
-
-	/// <summary>
 	/// Message for invalid list index exception.
 	/// </summary>
 	String InvalidListIndexMessage { get; }
@@ -87,6 +77,10 @@ internal partial interface IMessageResource
 	/// Message for missing memory inspector.
 	/// </summary>
 	String MissingMemoryInspector { get; }
+	/// <summary>
+	/// Message for reflection disabled.
+	/// </summary>
+	String ReflectionDisabled { get; }
 
 	/// <summary>
 	/// Message for invalid pointer value exception.
@@ -144,4 +138,22 @@ internal partial interface IMessageResource
 	/// Message for missing buffer metadata exception.
 	/// </summary>
 	String MissingBufferMetadataException(Type itemType, UInt16 size);
+#if !PACKAGE || !NET6_0_OR_GREATER
+	/// <summary>
+	/// Message for missing buffer metadata exception.
+	/// </summary>
+	String MissingBufferMetadataException(Type bufferType);
+#endif
+#if !PACKAGE || NETCOREAPP
+	/// <summary>
+	/// Message for invalid string token exception.
+	/// </summary>
+	String InvalidToken(String currentToken, String expectedToken);
+#endif
+#if NET9_0_OR_GREATER
+	/// <summary>
+	/// Message for not object type.
+	/// </summary>
+	String NotObjectType(Type type);
+#endif
 }

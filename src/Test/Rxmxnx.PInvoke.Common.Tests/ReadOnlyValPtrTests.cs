@@ -81,6 +81,7 @@ public sealed class ReadOnlyValPtrTests
 		Assert.Throws<ArgumentException>(() => valPtr.CompareTo(valPtr.Pointer));
 
 		ReadOnlyValPtrTests.FormatTest(ReadOnlyValPtr<T>.Zero);
+		ReadOnlyValPtrTests.MarshallerTest(ReadOnlyValPtr<T>.Zero);
 
 		ReadOnlyValPtr<T> ptrI;
 		for (Int32 i = 0; i < span.Length; i++)
@@ -140,6 +141,7 @@ public sealed class ReadOnlyValPtrTests
 		Assert.False(valPtr != incValue);
 
 		ReadOnlyValPtrTests.ContextTest(valPtr, span);
+		ReadOnlyValPtrTests.MarshallerTest(valPtr);
 	}
 	private static unsafe void ContextTest<T>(ReadOnlyValPtr<T> valPtr, ReadOnlySpan<T> span)
 	{
@@ -225,12 +227,19 @@ public sealed class ReadOnlyValPtrTests
 			ReadOnlyValPtrTests.allCultures[Random.Shared.Next(0, ReadOnlyValPtrTests.allCultures.Length)];
 		Assert.Equal(valPtr.Pointer.GetHashCode(), valPtr.GetHashCode());
 		Assert.Equal(valPtr.Pointer.ToString(), valPtr.ToString());
-		Assert.Equal(valPtr.Pointer.ToString(culture), valPtr.ToString(culture));
+
+		if ((Object)valPtr is not ISpanFormattable spanFormattable) return;
+		MethodInfo? toStringMethodInfo = spanFormattable.GetType()
+		                                                .GetMethod(nameof(IntPtr.ToString),
+		                                                           BindingFlags.Public | BindingFlags.Instance, null,
+		                                                           [typeof(IFormatProvider),], null);
+		if (toStringMethodInfo is not null)
+			Assert.Equal(valPtr.Pointer.ToString(culture), toStringMethodInfo.Invoke(valPtr, [culture,]));
 
 		Span<Char> span1 = stackalloc Char[20];
 		Span<Char> span2 = stackalloc Char[20];
 		Boolean res1 = valPtr.Pointer.TryFormat(span1, out Int32 pC, "X", culture);
-		Boolean res2 = valPtr.TryFormat(span2, out Int32 vC, "X", culture);
+		Boolean res2 = spanFormattable.TryFormat(span2, out Int32 vC, "X", culture);
 
 		Assert.Equal(res1, res2);
 		Assert.Equal(pC, vC);
@@ -240,8 +249,16 @@ public sealed class ReadOnlyValPtrTests
 		{
 			culture = ReadOnlyValPtrTests.allCultures[Random.Shared.Next(0, ReadOnlyValPtrTests.allCultures.Length)];
 			Assert.Equal(valPtr.Pointer.ToString(format), valPtr.ToString(format));
-			Assert.Equal(valPtr.Pointer.ToString(format, culture), valPtr.ToString(format, culture));
+			Assert.Equal(valPtr.Pointer.ToString(format, culture), spanFormattable.ToString(format, culture));
 		}
+	}
+	private static void MarshallerTest<T>(ReadOnlyValPtr<T> valPtr)
+	{
+		IntPtr value = ReadOnlyValPtr<T>.Marshaller.ConvertToUnmanaged(valPtr);
+		ReadOnlyValPtr<T> ptr = ReadOnlyValPtr<T>.Marshaller.ConvertToManaged(value);
+
+		Assert.Equal(value, valPtr.Pointer);
+		Assert.Equal(valPtr, ptr);
 	}
 	private static unsafe void ReferenceTransformTest<T, TDestination>(ReadOnlyValPtr<T> ptrI,
 		IReadOnlyFixedReference<T>.IDisposable fRef) where TDestination : unmanaged

@@ -8,9 +8,9 @@ public sealed class NonBinarySpaceTests
 	internal void InvalidTest()
 	{
 		Assert.IsType<InvalidOperationException>(
-			Assert.Throws<TypeInitializationException>(IManagedBuffer<Int32>
-				                                           .GetMetadata<NonBinarySpace<InternalStruct<Object>, Int32>>)
-			      .InnerException);
+			Assert.Throws<TypeInitializationException>(NonBinarySpaceTests
+				                                           .GetMetadata<NonBinarySpace<InternalStruct<Object>, Int32>,
+					                                           Int32>).InnerException);
 		Assert.IsType<InvalidOperationException>(
 			Assert.Throws<TypeInitializationException>(BufferManager
 				                                           .Register<NonBinarySpace<InternalStruct<Int32>, Object>>)
@@ -41,12 +41,12 @@ public sealed class NonBinarySpaceTests
 			.Register<WrapperStruct<WrapperStruct<WrapperStruct<T>>>, NonBinarySpace<NonBinaryBuffer<T>,
 				WrapperStruct<WrapperStruct<WrapperStruct<T>>>>>();
 
-		BufferTypeMetadata<WrapperStruct<WrapperStruct<WrapperStruct<T>>>> atomicMetadata =
-			IManagedBuffer<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>
-				.GetMetadata<Atomic<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>>();
-		BufferTypeMetadata<WrapperStruct<WrapperStruct<WrapperStruct<T>>>> typeMetadata =
-			IManagedBuffer<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>
-				.GetMetadata<NonBinarySpace<NonBinaryBuffer<T>, WrapperStruct<WrapperStruct<WrapperStruct<T>>>>>();
+		BufferTypeMetadata<WrapperStruct<WrapperStruct<WrapperStruct<T>>>> atomicMetadata = NonBinarySpaceTests
+			.GetMetadata<Atomic<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>,
+				WrapperStruct<WrapperStruct<WrapperStruct<T>>>>();
+		BufferTypeMetadata<WrapperStruct<WrapperStruct<WrapperStruct<T>>>> typeMetadata = NonBinarySpaceTests
+			.GetMetadata<NonBinarySpace<NonBinaryBuffer<T>, WrapperStruct<WrapperStruct<WrapperStruct<T>>>>,
+				WrapperStruct<WrapperStruct<WrapperStruct<T>>>>();
 
 		Assert.Empty(typeMetadata);
 		Assert.Empty(typeMetadata.Components);
@@ -57,6 +57,12 @@ public sealed class NonBinarySpaceTests
 		Assert.Null(atomicMetadata.Compose(typeMetadata));
 		Assert.Equal(typeof(NonBinarySpace<NonBinaryBuffer<T>, WrapperStruct<WrapperStruct<WrapperStruct<T>>>>),
 		             typeMetadata.BufferType);
+		Assert.Equal(atomicMetadata,
+		             BufferManager.MetadataManager<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>.GetMetadata(
+			             atomicMetadata.BufferType));
+		Assert.Equal(typeMetadata,
+		             BufferManager.MetadataManager<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>.GetMetadata(
+			             typeMetadata.BufferType));
 
 		Span<IntPtr> span0 = stackalloc IntPtr[5];
 		span0[0] = (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(span0));
@@ -91,6 +97,9 @@ public sealed class NonBinarySpaceTests
 		Assert.Equal(0, buffer.BufferMetadata.ComponentCount);
 		Assert.Equal(typeof(NonBinarySpace<NonBinaryBuffer<T>, WrapperStruct<WrapperStruct<WrapperStruct<T>>>>),
 		             buffer.BufferMetadata.BufferType);
+		Assert.Equal(buffer.BufferMetadata,
+		             BufferManager.MetadataManager<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>.GetMetadata(
+			             buffer.BufferMetadata.BufferType));
 	}
 	private static void Do<T>(ScopedBuffer<WrapperStruct<WrapperStruct<WrapperStruct<T>>>> buffer,
 		ValPtr<IntPtr> ptrPtr)
@@ -107,6 +116,26 @@ public sealed class NonBinarySpaceTests
 	{
 		NonBinarySpaceTests.Do(buffer, ptrPtr);
 		return buffer.Span[0].Value.Value.Value;
+	}
+	private static BufferTypeMetadata<T> GetMetadata<TBuffer, T>() where TBuffer : struct, IManagedBuffer<T>
+	{
+		const BindingFlags getMetadataFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+		try
+		{
+			Type typeofInterface = typeof(IManagedBuffer<T>);
+			MethodInfo? getMetadata =
+				typeofInterface.GetMethod(nameof(BufferManager.MetadataManager<T>.GetMetadata), getMetadataFlags);
+			if (getMetadata is not null)
+				return (BufferTypeMetadata<T>)getMetadata.MakeGenericMethod(typeof(TBuffer)).Invoke(null, [])!;
+			return (BufferTypeMetadata<T>)typeof(TBuffer).GetField(nameof(NonBinarySpace<Int32, Int32>.TypeMetadata),
+			                                                       getMetadataFlags)!.GetValue(null)!;
+		}
+		catch (TargetInvocationException tie)
+		{
+			if (tie.InnerException is not null)
+				throw tie.InnerException;
+			throw;
+		}
 	}
 
 	[InlineArray(10)]

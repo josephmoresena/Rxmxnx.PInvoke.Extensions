@@ -2,42 +2,44 @@ namespace Rxmxnx.PInvoke.Tests.Buffers.Composite;
 
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
-public sealed class IsBinaryTest
+public sealed class BinaryBufferCompositeTest
 {
 	private static readonly Type compositeType = typeof(Composite<,,>);
 
 	[Fact]
-	internal void BooleanTest() => IsBinaryTest.StructTest<Boolean>();
+	internal void BooleanTest() => BinaryBufferCompositeTest.StructTest<Boolean>();
 	[Fact]
-	internal void ByteTest() => IsBinaryTest.StructTest<Byte>();
+	internal void ByteTest() => BinaryBufferCompositeTest.StructTest<Byte>();
 	[Fact]
-	internal void Int16Test() => IsBinaryTest.StructTest<Int16>();
+	internal void Int16Test() => BinaryBufferCompositeTest.StructTest<Int16>();
 	[Fact]
-	internal void Int32Test() => IsBinaryTest.StructTest<Int32>();
+	internal void Int32Test() => BinaryBufferCompositeTest.StructTest<Int32>();
 	[Fact]
-	internal void Int64Test() => IsBinaryTest.StructTest<Int64>();
+	internal void Int64Test() => BinaryBufferCompositeTest.StructTest<Int64>();
 	[Fact]
-	internal void StringWrapperTest() => IsBinaryTest.StructTest<WrapperStruct<String?>>();
+	internal void StringWrapperTest() => BinaryBufferCompositeTest.StructTest<WrapperStruct<String?>>();
 
 	private static void StructTest<T>() where T : struct
 	{
-		IsBinaryTest.Test<WrapperStruct<WrapperStruct<T>>>();
-		IsBinaryTest.Test<WrapperStruct<WrapperStruct<T>>?>();
+		BinaryBufferCompositeTest.Test<WrapperStruct<WrapperStruct<T>>>();
+		BinaryBufferCompositeTest.Test<WrapperStruct<WrapperStruct<T>>?>();
 	}
 	private static void Test<T>()
 	{
 		Type typeofT = typeof(T);
 		Type typeofAtomic = typeof(Atomic<T>);
 		Type typeofComposite2 = typeof(Composite<Atomic<T>, Atomic<T>, T>);
-		BufferTypeMetadata<T> atomicMetadata = IManagedBuffer<T>.GetMetadata<Atomic<T>>();
-		BufferTypeMetadata<T> composite2Metadata = IManagedBuffer<T>.GetMetadata<Composite<Atomic<T>, Atomic<T>, T>>();
+		BufferTypeMetadata<T> atomicMetadata = BinaryBufferCompositeTest.GetMetadata<Atomic<T>, T>();
+		BufferTypeMetadata<T> composite2Metadata =
+			BinaryBufferCompositeTest.GetMetadata<Composite<Atomic<T>, Atomic<T>, T>, T>();
 
-		Type binary = IsBinaryTest.compositeType.MakeGenericType(typeofAtomic, typeofComposite2, typeofT);
-		Type nonBinary1 = IsBinaryTest.compositeType.MakeGenericType(typeofComposite2, typeofAtomic, typeofT);
-		Type nonBinary2 = IsBinaryTest.compositeType.MakeGenericType(typeofAtomic, binary, typeofT);
-		Type nonBinary3 = IsBinaryTest.compositeType.MakeGenericType(binary, binary, typeofT);
-		Type nonBinary4 = IsBinaryTest.compositeType.MakeGenericType(nonBinary3, typeofAtomic, typeofT);
-		Type nonBinary5 = IsBinaryTest.compositeType.MakeGenericType(typeofAtomic, nonBinary3, typeofT);
+		Type binary = BinaryBufferCompositeTest.compositeType.MakeGenericType(typeofAtomic, typeofComposite2, typeofT);
+		Type nonBinary1 =
+			BinaryBufferCompositeTest.compositeType.MakeGenericType(typeofComposite2, typeofAtomic, typeofT);
+		Type nonBinary2 = BinaryBufferCompositeTest.compositeType.MakeGenericType(typeofAtomic, binary, typeofT);
+		Type nonBinary3 = BinaryBufferCompositeTest.compositeType.MakeGenericType(binary, binary, typeofT);
+		Type nonBinary4 = BinaryBufferCompositeTest.compositeType.MakeGenericType(nonBinary3, typeofAtomic, typeofT);
+		Type nonBinary5 = BinaryBufferCompositeTest.compositeType.MakeGenericType(typeofAtomic, nonBinary3, typeofT);
 
 		BufferTypeMetadata<T> binaryMetadata = ((IManagedBinaryBuffer<T>)Activator.CreateInstance(binary)!).Metadata;
 		BufferTypeMetadata<T> nonBinaryMetadata1 =
@@ -94,5 +96,25 @@ public sealed class IsBinaryTest
 		Assert.Equal(atomicMetadata.Size + nonBinaryMetadata3.Size, nonBinaryMetadata5.Size);
 		Assert.Equal(atomicMetadata, nonBinaryMetadata5[0]);
 		Assert.Equal(nonBinaryMetadata3, nonBinaryMetadata5[1]);
+
+		Assert.Equal(atomicMetadata, BufferManager.MetadataManager<T>.GetMetadata(typeofAtomic));
+		Assert.Equal(composite2Metadata, BufferManager.MetadataManager<T>.GetMetadata(typeofComposite2));
+		Assert.Equal(binaryMetadata, BufferManager.MetadataManager<T>.GetMetadata(binaryMetadata.BufferType));
+		Assert.Equal(binaryMetadata.Components,
+		             BufferManager.MetadataManager<T>.GetComponents(typeofAtomic, typeofComposite2));
+		foreach (BufferTypeMetadata<T> metadata in binaryMetadata.Components.AsSpan())
+			Assert.Equal(metadata, BufferManager.MetadataManager<T>.GetMetadata(metadata.BufferType));
+	}
+	private static BufferTypeMetadata<T> GetMetadata<TBuffer, T>()
+		where TBuffer : struct, IManagedBinaryBuffer<TBuffer, T>
+	{
+		const BindingFlags getMetadataFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+		Type typeofInterface = typeof(IManagedBuffer<T>);
+		MethodInfo? getMetadata =
+			typeofInterface.GetMethod(nameof(BufferManager.MetadataManager<T>.GetMetadata), getMetadataFlags);
+		if (getMetadata is not null)
+			return (BufferTypeMetadata<T>)getMetadata.MakeGenericMethod(typeof(TBuffer)).Invoke(null, [])!;
+		return (BufferTypeMetadata<T>)typeof(TBuffer).GetField(
+			nameof(Composite<Atomic<Object>, Atomic<Object>, Object>.TypeMetadata), getMetadataFlags)!.GetValue(null)!;
 	}
 }
