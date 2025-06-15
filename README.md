@@ -76,8 +76,8 @@ Install the library via NuGet:
 dotnet add package Rxmxnx.PInvoke.Extensions
 ```
 
-**Note:** This package currently supports .NET 6 and higher. Ensure your project targets a compatible framework before
-installing.
+**Note:** This package officially supports .NET 6 and later. However, this package offers limited support for
+.NET Standard 2.1-compatible runtimes and legacy support for .NET 5.0 and earlier.
 
 ---
 
@@ -2485,13 +2485,13 @@ Additional functionality for working with memory blocks.
   <summary>AsMemory&lt;T&gt;(this T[...])</summary>
   Creates a new memory region over the target array.
 
-  **Note:** This method in .NET Standard 2.1 uses reflection.
+  **Note:** In .NET 5.0 and earlier, this method uses reflection.
   </details>
 - <details>
   <summary>AsSpan&lt;T&gt;(this T[...])</summary>
   Creates a new span over a target array.
-  
-  **Note:** This method in .NET Standard 2.1 uses reflection.
+
+  **Note:** In .NET 5.0 and earlier, this method uses reflection.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T&gt;(this Span&lt;T&gt;, FixedContextAction&lt;T&gt;)</summary>
@@ -3003,27 +3003,29 @@ This class allows to allocate buffers on stack if possible.
 
   Registers `T` buffer.
 
-  **Note:** `T` is `struct`. `TBuffer` is `struct` and `IManagedBuffer<T>`. In .NET 5.0 and earlier, this method uses reflection.
+  **Note:** `T` is `struct`. `TBuffer` is `struct` and `IManagedBuffer<T>`. In .NET 5.0 and earlier, this method uses
+  reflection.
   </details>
 - <details>
   <summary>RegisterNullable&lt;T, TBuffer&gt;()</summary>
 
   Registers `T?` buffer.
 
-  **Note:** `T` is `struct`. `TBuffer` is `struct` and `IManagedBuffer<T?>`. In .NET 5.0 and earlier, this method uses reflection.
+  **Note:** `T` is `struct`. `TBuffer` is `struct` and `IManagedBuffer<T?>`. In .NET 5.0 and earlier, this method uses
+  reflection.
   </details>
 - <details>
   <summary>PrepareBinaryBuffer(UInt16)</summary>
   Prepares the binary buffer metadata needed to allocate given number of objects.
-  
+
   **Note:** Reflection is always used by this method, and the buffer auto-Composition feature must be enabled.
   </details>
 - <details>
   <summary>PrepareBinaryBuffer&lt;T&gt;(UInt16)</summary>
 
-  Prepares the binary buffer metadata needed to allocate given number of `T` items. 
+  Prepares the binary buffer metadata needed to allocate given number of `T` items.
 
-  **Note:** `T` is `struct`. Reflection is always used by this method, and the buffer auto-Composition feature must 
+  **Note:** `T` is `struct`. Reflection is always used by this method, and the buffer auto-Composition feature must
   be enabled.
   </details>
 - <details>
