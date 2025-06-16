@@ -27,7 +27,7 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 	/// </summary>
 	private TArray _value;
 
-#if NET6_0_OR_GREATER
+#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
 	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [];
 	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => NonBinarySpace<TArray, T>.TypeMetadata;
 
@@ -56,7 +56,7 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 		Int32 spaceCapacity = sizeof(TArray) / sizeof(T);
 #pragma warning restore CS8500
 		
-#if NET6_0_OR_GREATER
+#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
 		return new(spaceCapacity, false);
 #else
 		return new(spaceCapacity, [], false);

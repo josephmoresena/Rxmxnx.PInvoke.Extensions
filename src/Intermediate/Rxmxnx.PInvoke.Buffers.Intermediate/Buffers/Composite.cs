@@ -26,7 +26,7 @@ public partial struct Composite<TBufferA, TBufferB, T> : IManagedBinaryBuffer<Co
 	/// Internal metadata.
 	/// </summary>
 	internal static readonly BufferTypeMetadata<T> TypeMetadata =
-#if NET6_0_OR_GREATER
+#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
 		new BufferTypeMetadata<Composite<TBufferA, TBufferB, T>, T>(
 			BufferManager.MetadataManager<T>.GetCapacity(TBufferA.TypeMetadata, TBufferB.TypeMetadata,
 			                                             out Boolean isBinary), isBinary);
@@ -43,7 +43,7 @@ public partial struct Composite<TBufferA, TBufferB, T> : IManagedBinaryBuffer<Co
 	/// </summary>
 	private TBufferB _buff1;
 
-#if NET6_0_OR_GREATER
+#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
 	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => Composite<TBufferA, TBufferB, T>.TypeMetadata;
 	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [TBufferA.TypeMetadata, TBufferB.TypeMetadata,];
 

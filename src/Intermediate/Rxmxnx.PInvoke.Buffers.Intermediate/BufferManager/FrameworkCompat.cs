@@ -1,4 +1,4 @@
-#if !PACKAGE || !NET6_0_OR_GREATER
+#if !PACKAGE || (PACKAGE || !NET6_0) && !NET7_0_OR_GREATER
 namespace Rxmxnx.PInvoke;
 
 public static partial class BufferManager

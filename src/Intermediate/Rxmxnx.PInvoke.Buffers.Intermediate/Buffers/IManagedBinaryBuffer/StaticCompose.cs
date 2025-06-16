@@ -1,8 +1,8 @@
+#if (!PACKAGE && NET6_0 || NET7_0_OR_GREATER) && BINARY_SPACES
 namespace Rxmxnx.PInvoke.Buffers;
 
 public partial interface IManagedBinaryBuffer<TBuffer, T>
 {
-#if NET6_0_OR_GREATER && BINARY_SPACES
 	/// <summary>
 	/// Compose statically all buffers in current space.
 	/// </summary>
@@ -442,5 +442,5 @@ public partial interface IManagedBinaryBuffer<TBuffer, T>
 		where T11 : struct, IManagedBinaryBuffer<T11, T>
 		where T12 : struct, IManagedBinaryBuffer<T12, T>
 		where T13 : struct, IManagedBinaryBuffer<T13, T>;
-#endif
 }
+#endif

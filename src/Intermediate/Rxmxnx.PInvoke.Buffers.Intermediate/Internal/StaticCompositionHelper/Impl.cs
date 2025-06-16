@@ -1,6 +1,6 @@
 namespace Rxmxnx.PInvoke.Internal;
 
-#if NET6_0_OR_GREATER && BINARY_SPACES
+#if (!PACKAGE && NET6_0 || NET7_0_OR_GREATER) && BINARY_SPACES
 internal partial class StaticCompositionHelper<T>
 {
 	/// <summary>

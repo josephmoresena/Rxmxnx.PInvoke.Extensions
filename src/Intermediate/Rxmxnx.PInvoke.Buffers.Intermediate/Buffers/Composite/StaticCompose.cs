@@ -1,9 +1,9 @@
+#if (!PACKAGE && NET6_0 || NET7_0_OR_GREATER) && BINARY_SPACES
 namespace Rxmxnx.PInvoke.Buffers;
 
 #pragma warning disable CA2252
 public partial struct Composite<TBufferA, TBufferB, T>
 {
-#if NET6_0_OR_GREATER && BINARY_SPACES
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -326,6 +326,6 @@ public partial struct Composite<TBufferA, TBufferB, T>
 		helper.Add(m);
 		// Max space 2^15 - 1
 	}
-#endif
 }
 #pragma warning restore CA2252
+#endif

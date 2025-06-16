@@ -6,7 +6,7 @@ namespace Rxmxnx.PInvoke;
 #endif
 public static partial class BufferManager
 {
-#if NET6_0_OR_GREATER
+#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
 	/// <summary>
 	/// Name of <see cref="IManagedBuffer{T}.GetMetadata{TBuffer}()"/> method.
 	/// </summary>

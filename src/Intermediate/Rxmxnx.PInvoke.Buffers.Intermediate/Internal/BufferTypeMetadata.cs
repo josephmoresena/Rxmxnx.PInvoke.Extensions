@@ -10,7 +10,7 @@ internal sealed class BufferTypeMetadata<TBuffer, T> : BufferTypeMetadata<T> whe
 	/// <inheritdoc/>
 	public override Type BufferType => typeof(TBuffer);
 
-#if NET6_0_OR_GREATER
+#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
 	/// <summary>
 	/// Internal implementation of <see cref="BufferTypeMetadata{T}"/>.
 	/// </summary>
@@ -54,7 +54,7 @@ internal sealed class BufferTypeMetadata<TBuffer, T> : BufferTypeMetadata<T> whe
 	internal override BufferTypeMetadata<T>? Compose<TOther>()
 	{
 		if (!BufferManager.BufferAutoCompositionEnabled || !this.IsBinary
-#if NET6_0_OR_GREATER
+#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
 		    || !IManagedBuffer<T>.GetMetadata<TOther>().IsBinary
 #endif
 		   ) return default;

@@ -89,7 +89,7 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 		base(isBinary, capacity)
 		=> this.Components = components;
 
-#if !NET6_0_OR_GREATER
+#if (PACKAGE || !NET6_0) && !NET7_0_OR_GREATER
 	/// <summary>
 	/// Appends all components from current buffer type.
 	/// </summary>

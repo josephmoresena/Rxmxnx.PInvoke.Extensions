@@ -52,7 +52,7 @@ public static partial class BufferManager
 			}
 			return MetadataManager<T>.GetBinaryMetadata(count, true);
 		}
-#if !PACKAGE || !NET6_0_OR_GREATER
+#if !PACKAGE || !NET7_0_OR_GREATER
 		/// <summary>
 		/// Retrieves metadata required for a buffer of <paramref name="bufferType"/> type.
 		/// </summary>
@@ -117,7 +117,7 @@ public static partial class BufferManager
 #endif
 		public static BufferTypeMetadata<T>? ComposeWithReflection(Type typeofA, Type typeofB)
 		{
-#if NET6_0_OR_GREATER
+#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
 			if (MetadataManager<T>.store.GetMetadataInfo is null) return default;
 			Type? genericType = default;
 			BufferTypeMetadata<T>? result;
@@ -157,7 +157,7 @@ public static partial class BufferManager
 		/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 		public static void RegisterBuffer<TBuffer>() where TBuffer : struct, IManagedBuffer<T>
 		{
-#if NET6_0_OR_GREATER
+#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
 			BufferTypeMetadata<T> typeMetadata = IManagedBuffer<T>.GetMetadata<TBuffer>();
 #else
 			BufferTypeMetadata<T> typeMetadata = BufferManager.GetMetadata<T>(typeof(TBuffer));
@@ -167,14 +167,14 @@ public static partial class BufferManager
 				if (!MetadataManager<T>.store.Add(typeMetadata) || !typeMetadata.IsBinary) return;
 				while (BufferManager.GetMaxValue(MetadataManager<T>.store.MaxSpace) < typeMetadata.Size)
 					MetadataManager<T>.store.MaxSpace *= 2;
-#if NET6_0_OR_GREATER
+#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
 				TBuffer.AppendComponent(MetadataManager<T>.store.BinaryBuffers);
 #else
 				typeMetadata.AppendComponent(MetadataManager<T>.store.BinaryBuffers);
 #endif
 			}
 		}
-#if NET6_0_OR_GREATER && BINARY_SPACES
+#if (!PACKAGE && NET6_0 || NET7_0_OR_GREATER) && BINARY_SPACES
 		/// <summary>
 		/// Registers space type.
 		/// </summary>

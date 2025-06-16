@@ -21,7 +21,7 @@ public interface IManagedBuffer<T>
 		foreach (BufferTypeMetadata<T> metadataComponent in component.Components.AsSpan())
 			IManagedBuffer<T>.AppendComponent(metadataComponent, components);
 	}
-#if NET6_0_OR_GREATER
+#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
 	/// <summary>
 	/// Current type components.
 	/// </summary>
