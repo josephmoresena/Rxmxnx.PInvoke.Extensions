@@ -51,11 +51,11 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 		Boolean isItemUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>();
 		Boolean isArrayUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<TArray>();
 		ValidationUtilities.ThrowIfInvalidBuffer(typeof(T), isItemUnmanaged, typeof(TArray), isArrayUnmanaged);
-		
+
 #pragma warning disable CS8500
 		Int32 spaceCapacity = sizeof(TArray) / sizeof(T);
 #pragma warning restore CS8500
-		
+
 #if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
 		return new(spaceCapacity, false);
 #else

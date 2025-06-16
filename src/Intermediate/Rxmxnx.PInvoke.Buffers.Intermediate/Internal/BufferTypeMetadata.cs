@@ -5,7 +5,11 @@ namespace Rxmxnx.PInvoke.Internal;
 /// </summary>
 /// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 /// <typeparam name="T">Type of items in the buffer.</typeparam>
-internal sealed class BufferTypeMetadata<TBuffer, T> : BufferTypeMetadata<T> where TBuffer : struct, IManagedBuffer<T>
+internal sealed class BufferTypeMetadata<
+#if NET5_0_OR_GREATER
+	[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
+#endif
+	TBuffer, T> : BufferTypeMetadata<T> where TBuffer : struct, IManagedBuffer<T>
 {
 	/// <inheritdoc/>
 	public override Type BufferType => typeof(TBuffer);
@@ -51,7 +55,11 @@ internal sealed class BufferTypeMetadata<TBuffer, T> : BufferTypeMetadata<T> whe
 	internal override BufferTypeMetadata<T>? Compose(BufferTypeMetadata<T> otherMetadata)
 		=> otherMetadata.Compose<TBuffer>();
 	/// <inheritdoc/>
-	internal override BufferTypeMetadata<T>? Compose<TOther>()
+	internal override BufferTypeMetadata<T>? Compose<
+#if NET5_0_OR_GREATER
+		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
+#endif
+		TOther>()
 	{
 		if (!BufferManager.BufferAutoCompositionEnabled || !this.IsBinary
 #if !PACKAGE && NET6_0 || NET7_0_OR_GREATER

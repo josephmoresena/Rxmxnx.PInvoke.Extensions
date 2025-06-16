@@ -170,8 +170,6 @@ public partial class CString
 #if NET7_0_OR_GREATER
 			Int32 nBytes = reader.CopyString(buffer);
 			adjustment -= buffer.Length - nBytes;
-			if (nBytes > 0)
-				adjustment -= buffer[^nBytes] == 0 ? 1 : 0;
 #else
 			if (reader.HasValueSequence)
 				reader.ValueSequence.CopyTo(buffer);

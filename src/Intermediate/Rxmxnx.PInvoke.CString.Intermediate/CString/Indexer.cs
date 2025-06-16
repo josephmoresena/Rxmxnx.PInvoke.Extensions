@@ -23,9 +23,9 @@ public partial class CString : IEnumerableSequence<Byte>
 	Int32 IEnumerableSequence<Byte>.GetSize() => this.Length;
 	Byte IEnumerableSequence<Byte>.GetItem(Int32 index) => this[index];
 #if PACKAGE && !NETCOREAPP
-	IEnumerator<Byte> IEnumerable<Byte>.GetEnumerator() => IEnumerableSequence<Byte>.CreateEnumerator(this);
+	IEnumerator<Byte> IEnumerable<Byte>.GetEnumerator() => IEnumerableSequence.CreateEnumerator(this);
 	System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-		=> IEnumerableSequence<Byte>.CreateEnumerator(this);
+		=> IEnumerableSequence.CreateEnumerator(this);
 #endif
 
 	/// <summary>

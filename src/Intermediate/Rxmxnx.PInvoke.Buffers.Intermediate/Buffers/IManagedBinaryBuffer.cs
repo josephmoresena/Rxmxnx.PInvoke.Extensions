@@ -25,7 +25,7 @@ public interface IManagedBinaryBuffer<T> : IManagedBuffer<T>
 #endif
 	internal static BufferTypeMetadata<T>? GetMetadata(
 #if NET5_0_OR_GREATER
-		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
 #endif
 		Type? bufferType)
 	{
@@ -55,7 +55,7 @@ public interface IManagedBinaryBuffer<T> : IManagedBuffer<T>
 #endif
 public partial interface IManagedBinaryBuffer<
 #if NET5_0_OR_GREATER
-	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+	[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
 #endif
 	TBuffer, T> : IManagedBinaryBuffer<T> where TBuffer : struct, IManagedBinaryBuffer<TBuffer, T>
 {

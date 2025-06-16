@@ -35,6 +35,43 @@ public static partial class BufferManager
 			}
 			return componentA.Size + componentB.Size;
 		}
+#if !PACKAGE || !NET7_0_OR_GREATER
+		/// <summary>
+		/// Retrieves metadata required for a buffer of <paramref name="bufferType"/> type.
+		/// </summary>
+		/// <param name="bufferType">Type of buffer.</param>
+		/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
+		public static BufferTypeMetadata<T> GetMetadata(
+#if NET5_0_OR_GREATER
+			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
+#endif
+			Type bufferType)
+			=> bufferType == typeof(Atomic<T>) ? Atomic<T>.TypeMetadata : BufferManager.GetMetadata<T>(bufferType);
+		/// <summary>
+		/// Retrieves the components array for the composition type of <paramref name="typeofA"/> and <paramref name="typeofB"/>.
+		/// </summary>
+		/// <param name="typeofA"></param>
+		/// <param name="typeofB"></param>
+		/// <returns></returns>
+		public static BufferTypeMetadata<T>[] GetComponents(
+#if NET5_0_OR_GREATER
+			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
+#endif
+			Type typeofA,
+#if NET5_0_OR_GREATER
+			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
+#endif
+			Type typeofB)
+		{
+			BufferTypeMetadata<T>[] components = new BufferTypeMetadata<T>[2];
+			components[0] = MetadataManager<T>.GetMetadata(typeofA);
+			components[1] = MetadataManager<T>.GetMetadata(typeofB);
+			return components;
+		}
+#endif
 		/// <summary>
 		/// Retrieves metadata required for a buffer with <paramref name="count"/> items.
 		/// </summary>
@@ -52,31 +89,6 @@ public static partial class BufferManager
 			}
 			return MetadataManager<T>.GetBinaryMetadata(count, true);
 		}
-#if !PACKAGE || !NET7_0_OR_GREATER
-		/// <summary>
-		/// Retrieves metadata required for a buffer of <paramref name="bufferType"/> type.
-		/// </summary>
-		/// <param name="bufferType">Type of buffer.</param>
-		/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
-#if !PACKAGE
-		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
-#endif
-		public static BufferTypeMetadata<T> GetMetadata(Type bufferType)
-			=> bufferType == typeof(Atomic<T>) ? Atomic<T>.TypeMetadata : BufferManager.GetMetadata<T>(bufferType);
-		/// <summary>
-		/// Retrieves the components array for the composition type of <paramref name="typeofA"/> and <paramref name="typeofB"/>.
-		/// </summary>
-		/// <param name="typeofA"></param>
-		/// <param name="typeofB"></param>
-		/// <returns></returns>
-		public static BufferTypeMetadata<T>[] GetComponents(Type typeofA, Type typeofB)
-		{
-			BufferTypeMetadata<T>[] components = new BufferTypeMetadata<T>[2];
-			components[0] = MetadataManager<T>.GetMetadata(typeofA);
-			components[1] = MetadataManager<T>.GetMetadata(typeofB);
-			return components;
-		}
-#endif
 		/// <summary>
 		/// Prepares internal metadata cache for allocations of <paramref name="count"/> items.
 		/// </summary>
@@ -115,7 +127,15 @@ public static partial class BufferManager
 		[UnconditionalSuppressMessage("AOT", "IL2077")]
 		[UnconditionalSuppressMessage("AOT", "IL3050")]
 #endif
-		public static BufferTypeMetadata<T>? ComposeWithReflection(Type typeofA, Type typeofB)
+		public static BufferTypeMetadata<T>? ComposeWithReflection(
+#if NET5_0_OR_GREATER
+			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
+#endif
+			Type typeofA,
+#if NET5_0_OR_GREATER
+			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
+#endif
+			Type typeofB)
 		{
 #if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
 			if (MetadataManager<T>.store.GetMetadataInfo is null) return default;
@@ -123,7 +143,7 @@ public static partial class BufferManager
 			BufferTypeMetadata<T>? result;
 			try
 			{
-				genericType = BufferManager.typeofComposite.MakeGenericType(typeofA, typeofB, typeof(T));
+				genericType = BufferManager.TypeofComposite.MakeGenericType(typeofA, typeofB, typeof(T));
 				MethodInfo getGenericMetadataInfo =
 					MetadataManager<T>.store.GetMetadataInfo.MakeGenericMethod(genericType);
 				Func<BufferTypeMetadata<T>> getGenericMetadata =
@@ -141,7 +161,7 @@ public static partial class BufferManager
 			BufferTypeMetadata<T>? result = default;
 			try
 			{
-				Type genericType = BufferManager.typeofComposite.MakeGenericType(typeofA, typeofB, typeof(T));
+				Type genericType = BufferManager.TypeofComposite.MakeGenericType(typeofA, typeofB, typeof(T));
 				result = BufferManager.GetMetadata<T>(genericType);
 			}
 			catch (Exception)
@@ -155,7 +175,11 @@ public static partial class BufferManager
 		/// Registers buffer type.
 		/// </summary>
 		/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
-		public static void RegisterBuffer<TBuffer>() where TBuffer : struct, IManagedBuffer<T>
+		public static void RegisterBuffer<
+#if NET5_0_OR_GREATER
+			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
+#endif
+			TBuffer>() where TBuffer : struct, IManagedBuffer<T>
 		{
 #if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
 			BufferTypeMetadata<T> typeMetadata = IManagedBuffer<T>.GetMetadata<TBuffer>();
@@ -182,7 +206,11 @@ public static partial class BufferManager
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
-		public static void RegisterBufferSpace<TSpace>() where TSpace : struct, IManagedBinaryBuffer<TSpace, T>
+		public static void RegisterBufferSpace<
+#if NET5_0_OR_GREATER
+			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
+#endif
+			TSpace>() where TSpace : struct, IManagedBinaryBuffer<TSpace, T>
 		{
 			BufferTypeMetadata<T> typeMetadata = IManagedBuffer<T>.GetMetadata<TSpace>();
 			Boolean isBinary = typeMetadata.IsBinary;

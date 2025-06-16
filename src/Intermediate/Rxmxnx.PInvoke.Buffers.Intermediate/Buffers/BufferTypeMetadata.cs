@@ -57,9 +57,9 @@ public abstract class BufferTypeMetadata : IEnumerableSequence<BufferTypeMetadat
 	Int32 IEnumerableSequence<BufferTypeMetadata>.GetSize() => this.ComponentCount;
 #if PACKAGE && !NETCOREAPP
 	IEnumerator<BufferTypeMetadata> IEnumerable<BufferTypeMetadata>.GetEnumerator() 
-		=> IEnumerableSequence<BufferTypeMetadata>.CreateEnumerator(this);
+		=> IEnumerableSequence.CreateEnumerator(this);
 	System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-		=> IEnumerableSequence<BufferTypeMetadata>.CreateEnumerator(this);
+		=> IEnumerableSequence.CreateEnumerator(this);
 #endif
 }
 
@@ -112,7 +112,11 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// </summary>
 	/// <typeparam name="TBuffer">Other buffer type.</typeparam>
 	/// <returns>A composed <see cref="BufferTypeMetadata{T}"/>.</returns>
-	internal abstract BufferTypeMetadata<T>? Compose<TBuffer>() where TBuffer : struct, IManagedBuffer<T>;
+	internal abstract BufferTypeMetadata<T>? Compose<
+#if NET5_0_OR_GREATER
+		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
+#endif
+		TBuffer>() where TBuffer : struct, IManagedBuffer<T>;
 	/// <summary>
 	/// Executes <paramref name="action"/> using a buffer of current type.
 	/// </summary>

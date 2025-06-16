@@ -18,7 +18,15 @@ namespace Rxmxnx.PInvoke.Buffers;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 #endif
-public partial struct Composite<TBufferA, TBufferB, T> : IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>
+public partial struct Composite<
+#if NET5_0_OR_GREATER
+	[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
+#endif
+	TBufferA,
+#if NET5_0_OR_GREATER
+	[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
+#endif
+	TBufferB, T> : IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>
 	where TBufferA : struct, IManagedBinaryBuffer<TBufferA, T>
 	where TBufferB : struct, IManagedBinaryBuffer<TBufferB, T>
 {

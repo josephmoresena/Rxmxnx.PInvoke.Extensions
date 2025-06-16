@@ -9,7 +9,8 @@ functionality and separate it from the final assembly:
 - **`CString`**: Includes classes for handling UTF-8 and ASCII strings.
 - **`Extensions`**: Offers classes containing extension methods.
 
-The intermediary projects are compiled using .NET 6.0, as it is the official LTS support target of this package.
+The intermediary projects are compiled using .NET 6.0 and the latest supported version of the C# language, as it is the
+official LTS extended support target of this package.
 However, the code remains compatible and can be compiled targeting .NET Standard 2.1 up to the latest publicly available
 version of .NET.
 
