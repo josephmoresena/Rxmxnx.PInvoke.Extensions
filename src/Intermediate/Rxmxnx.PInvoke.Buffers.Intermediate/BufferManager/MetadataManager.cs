@@ -35,6 +35,23 @@ public static partial class BufferManager
 			}
 			return componentA.Size + componentB.Size;
 		}
+		/// <summary>
+		/// Retrieves metadata required for a buffer with <paramref name="count"/> items.
+		/// </summary>
+		/// <param name="count">Amount of items in required buffer.</param>
+		/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
+		public static BufferTypeMetadata<T>? GetMetadata(UInt16 count)
+		{
+			lock (MetadataManager<T>.store.LockObject)
+			{
+				BufferTypeMetadata<T>? nonBinary = MetadataManager<T>.store.GetNonBinaryBuffer(count);
+				if (nonBinary is not null) return nonBinary;
+			}
+			return MetadataManager<T>.GetBinaryMetadata(count, true);
+		}
 #if !PACKAGE || !NET7_0_OR_GREATER
 		/// <summary>
 		/// Retrieves metadata required for a buffer of <paramref name="bufferType"/> type.
@@ -72,23 +89,6 @@ public static partial class BufferManager
 			return components;
 		}
 #endif
-		/// <summary>
-		/// Retrieves metadata required for a buffer with <paramref name="count"/> items.
-		/// </summary>
-		/// <param name="count">Amount of items in required buffer.</param>
-		/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
-#if !PACKAGE
-		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
-#endif
-		public static BufferTypeMetadata<T>? GetMetadata(UInt16 count)
-		{
-			lock (MetadataManager<T>.store.LockObject)
-			{
-				BufferTypeMetadata<T>? nonBinary = MetadataManager<T>.store.GetNonBinaryBuffer(count);
-				if (nonBinary is not null) return nonBinary;
-			}
-			return MetadataManager<T>.GetBinaryMetadata(count, true);
-		}
 		/// <summary>
 		/// Prepares internal metadata cache for allocations of <paramref name="count"/> items.
 		/// </summary>
