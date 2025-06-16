@@ -4,38 +4,39 @@ using System.Linq;
 using System.Text;
 
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Rxmxnx.PInvoke.Tests.SourceGenerator;
 
 [Generator]
 [ExcludeFromCodeCoverage]
-public class CStringTestsGenerator : ISourceGenerator
+public class CStringTestsGenerator : IIncrementalGenerator
 {
-#pragma warning disable
-	void ISourceGenerator.Execute(GeneratorExecutionContext context)
+	public void Initialize(IncrementalGeneratorInitializationContext context)
 	{
-		StringBuilder strBuild = new();
-		strBuild.AppendLine(@"namespace Rxmxnx.PInvoke.Tests;
+#if DEBUG
+		//if (!System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Launch();
+#endif
+		context.RegisterSourceOutput(context.CompilationProvider, (sourceProductionContext, compilation) =>
+		{
+			StringBuilder strBuild = new();
+			strBuild.AppendLine(@"namespace Rxmxnx.PInvoke.Tests;
 
 internal static partial class TestSet
 {
     static TestSet()
     {");
-		CStringTestsGenerator.CreateUtf16Text(strBuild);
-		CStringTestsGenerator.CreateUtf8Text(strBuild);
-		CStringTestsGenerator.CreateUtf8Bytes(strBuild);
-		CStringTestsGenerator.CreateUtf8NullTerminatedBytes(strBuild);
 
-		strBuild.AppendLine(@"    }
+			CStringTestsGenerator.CreateUtf16Text(strBuild);
+			CStringTestsGenerator.CreateUtf8Text(strBuild);
+			CStringTestsGenerator.CreateUtf8Bytes(strBuild);
+			CStringTestsGenerator.CreateUtf8NullTerminatedBytes(strBuild);
+
+			strBuild.AppendLine(@"    }
 }");
-		context.AddSource("TestSet.g.cs", strBuild.ToString());
-	}
 
-	void ISourceGenerator.Initialize(GeneratorInitializationContext context)
-	{
-#if DEBUG
-		//if (!System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Launch();
-#endif
+			sourceProductionContext.AddSource("TestSet.g.cs", SourceText.From(strBuild.ToString(), Encoding.UTF8));
+		});
 	}
 
 	private static void CreateUtf16Text(StringBuilder strBuild)
@@ -93,4 +94,3 @@ internal static partial class TestSet
 		strBuild.AppendLine("\t\t};");
 	}
 }
-#pragma warning restore
