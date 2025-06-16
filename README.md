@@ -76,8 +76,8 @@ Install the library via NuGet:
 dotnet add package Rxmxnx.PInvoke.Extensions
 ```
 
-**Note:** This package officially supports .NET 6 and later. However, this package offers limited support for
-.NET Standard 2.1-compatible runtimes and legacy support for .NET 5.0 and earlier.
+**Note:** This package officially supports .NET 8.0 and later. However, this package offers limited support for
+.NET Standard 2.1-compatible runtimes and legacy support for .NET 7.0 and earlier.
 
 ### Framework Support
 
@@ -141,7 +141,6 @@ target frameworks, along with the type of support provided for each one.
 <summary><strong>.NET 6.0</strong> — LTS (Extended)</summary>
 
 - Inherits from .NET 5.0
-- **Static Virtual Members:** Yes
 - **Updated Dependencies:**
     - `System.Runtime.CompilerServices.Unsafe` 6.1.2
     - `System.Collections.Immutable` 8.0
@@ -161,6 +160,7 @@ target frameworks, along with the type of support provided for each one.
 <summary><strong>.NET 8.0</strong> — LTS</summary>
 
 - Inherits from .NET 7.0
+- **Static Virtual Members:** Yes
 - **No dependencies required**
 
 </details>
@@ -771,7 +771,7 @@ Interface representing a value state for functional CString creation.
 **Notes:**
 
 - `TSelf` generic type is `struct`. This type allows public implementation or inheritance.
-- This type is available only on .NET 6.0 and later.
+- This type is available only on .NET 7.0 and later.
 
 #### Static Abstract/Virtual Properties:
 
@@ -3095,14 +3095,14 @@ This class allows to allocate buffers on stack if possible.
   <summary>Register&lt;TBuffer&gt;()</summary>
   Registers object buffer.
 
-  **Note:** `TBuffer` is `struct` and `IManagedBuffer<Object>`. In .NET 5.0 and earlier, this method uses reflection.
+  **Note:** `TBuffer` is `struct` and `IManagedBuffer<Object>`. In .NET 6.0 and earlier, this method uses reflection.
   </details>
 - <details>
   <summary>Register&lt;T, TBuffer&gt;()</summary>
 
   Registers `T` buffer.
 
-  **Note:** `T` is `struct`. `TBuffer` is `struct` and `IManagedBuffer<T>`. In .NET 5.0 and earlier, this method uses
+  **Note:** `T` is `struct`. `TBuffer` is `struct` and `IManagedBuffer<T>`. In .NET 6.0 and earlier, this method uses
   reflection.
   </details>
 - <details>
@@ -3110,7 +3110,7 @@ This class allows to allocate buffers on stack if possible.
 
   Registers `T?` buffer.
 
-  **Note:** `T` is `struct`. `TBuffer` is `struct` and `IManagedBuffer<T?>`. In .NET 5.0 and earlier, this method uses
+  **Note:** `T` is `struct`. `TBuffer` is `struct` and `IManagedBuffer<T?>`. In .NET 6.0 and earlier, this method uses
   reflection.
   </details>
 - <details>

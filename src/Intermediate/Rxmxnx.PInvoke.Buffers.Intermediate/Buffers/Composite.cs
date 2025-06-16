@@ -18,7 +18,15 @@ namespace Rxmxnx.PInvoke.Buffers;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 #endif
-public partial struct Composite<TBufferA, TBufferB, T> : IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>
+public partial struct Composite<
+#if NET5_0_OR_GREATER
+	[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
+#endif
+	TBufferA,
+#if NET5_0_OR_GREATER
+	[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
+#endif
+	TBufferB, T> : IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>
 	where TBufferA : struct, IManagedBinaryBuffer<TBufferA, T>
 	where TBufferB : struct, IManagedBinaryBuffer<TBufferB, T>
 {
@@ -26,7 +34,7 @@ public partial struct Composite<TBufferA, TBufferB, T> : IManagedBinaryBuffer<Co
 	/// Internal metadata.
 	/// </summary>
 	internal static readonly BufferTypeMetadata<T> TypeMetadata =
-#if NET6_0_OR_GREATER
+#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
 		new BufferTypeMetadata<Composite<TBufferA, TBufferB, T>, T>(
 			BufferManager.MetadataManager<T>.GetCapacity(TBufferA.TypeMetadata, TBufferB.TypeMetadata,
 			                                             out Boolean isBinary), isBinary);
@@ -43,7 +51,7 @@ public partial struct Composite<TBufferA, TBufferB, T> : IManagedBinaryBuffer<Co
 	/// </summary>
 	private TBufferB _buff1;
 
-#if NET6_0_OR_GREATER
+#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
 	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => Composite<TBufferA, TBufferB, T>.TypeMetadata;
 	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [TBufferA.TypeMetadata, TBufferB.TypeMetadata,];
 

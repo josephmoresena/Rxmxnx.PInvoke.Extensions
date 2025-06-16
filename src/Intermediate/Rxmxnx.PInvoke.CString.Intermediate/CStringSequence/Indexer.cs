@@ -10,9 +10,9 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 	CString IEnumerableSequence<CString>.GetItem(Int32 index) => this[index];
 #if PACKAGE && !NETCOREAPP
 	IEnumerator<CString> IEnumerable<CString>.GetEnumerator() 
-		=> IEnumerableSequence<CString>.CreateEnumerator(this, CStringSequence.DisposeEnumeration);
+		=> IEnumerableSequence.CreateEnumerator(this, CStringSequence.DisposeEnumeration);
 	System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-		=> IEnumerableSequence<CString>.CreateEnumerator(this, CStringSequence.DisposeEnumeration);
+		=> IEnumerableSequence.CreateEnumerator(this, CStringSequence.DisposeEnumeration);
 #else
 	void IEnumerableSequence<CString>.DisposeEnumeration() => CStringSequence.DisposeEnumeration(this);
 #endif

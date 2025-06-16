@@ -24,7 +24,20 @@ internal sealed class SequenceEnumerator<T> : IEnumerator<T>
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SequenceEnumerator{T}"/> class.
 	/// </summary>
-	/// <param name="instance">The sequence of elements to iterate through.</param>
+	/// <param name="instance">The sequence of elements for iteration.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public SequenceEnumerator(IEnumerableSequence<T> instance)
+	{
+		this._instance = instance;
+		this._dispose = default;
+	}
+	/// <summary>
+	/// Initializes a new instance of the <see cref="SequenceEnumerator{T}"/> class.
+	/// </summary>
+	/// <param name="instance">The sequence of elements for iteration.</param>
 	/// <param name="dispose">Dispose delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public SequenceEnumerator(IEnumerableSequence<T> instance, Action<IEnumerableSequence<T>>? dispose)

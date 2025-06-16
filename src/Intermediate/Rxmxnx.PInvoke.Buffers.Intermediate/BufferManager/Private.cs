@@ -6,27 +6,6 @@ namespace Rxmxnx.PInvoke;
 #endif
 public static partial class BufferManager
 {
-#if NET6_0_OR_GREATER
-	/// <summary>
-	/// Name of <see cref="IManagedBuffer{T}.GetMetadata{TBuffer}()"/> method.
-	/// </summary>
-#pragma warning disable CA2252
-	private const String GetMetadataName = nameof(IManagedBuffer<Object>.GetMetadata);
-#pragma warning restore CA2252
-#endif
-	/// <summary>
-	/// Name of <see cref="Atomic{T}.TypeMetadata"/>  static field.
-	/// </summary>
-	private const String TypeMetadataName = nameof(Atomic<Object>.TypeMetadata);
-	/// <summary>
-	/// Flags of metadata static member.
-	/// </summary>
-	private const BindingFlags GetMetadataFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-
-	/// <summary>
-	/// Type of <see cref="Composite{TBufferA,TBufferB,T}"/>.
-	/// </summary>
-	private static readonly Type typeofComposite = typeof(Composite<,,>);
 	/// <summary>
 	/// Allocates a heap buffer of size of <paramref name="count"/> elements.
 	/// </summary>

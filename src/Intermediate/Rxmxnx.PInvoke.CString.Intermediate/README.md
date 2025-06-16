@@ -160,7 +160,7 @@ Console.WriteLine(cstring.IsNullTerminated);    // Output: False
 This method allows creating a `CString` instance using an object of type `IUtf8FunctionState<TState>`, which provides
 UTF-8/ASCII units using a delegate.
 
-In .NET 5.0 and earlier, this interface does not exist, but the same functionality can be achieved using a
+In .NET 6.0 and earlier, this interface does not exist, but the same functionality can be achieved using a
 state-and-delegate-based approach.
 
 ### Creation with pointer

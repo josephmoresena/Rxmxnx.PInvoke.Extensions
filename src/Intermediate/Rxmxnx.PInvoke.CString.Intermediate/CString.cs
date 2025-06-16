@@ -311,7 +311,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, getSpan, alloc);
 		return new(data, true, isNullTerminated, getSpan(state).Length);
 	}
-#if NET6_0_OR_GREATER
+#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
 	/// <summary>
 	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
 	/// </summary>
