@@ -56,7 +56,7 @@ public static unsafe partial class MemoryBlockExtensions
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	public static Boolean MayBeNonLiteral<T>(this ReadOnlySpan<T> span) => MemoryInspector.Instance.IsLiteral(span);
+	public static Boolean MayBeNonLiteral<T>(this ReadOnlySpan<T> span) => MemoryInspector.MayBeNonLiteral(span);
 
 	/// <summary>
 	/// Retrieves an unsafe <see cref="ValPtr{T}"/> pointer from <see cref="Span{T}"/> instance.
