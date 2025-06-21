@@ -50,6 +50,9 @@ internal abstract partial class MemoryInspector
 	/// <see langword="true"/> if the current execution is occurring on a Windows-compatible platform; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	private static Boolean IsWindowsPlatform()
 #if NET5_0_OR_GREATER
 		=> OperatingSystem.IsWindows();
@@ -63,6 +66,9 @@ internal abstract partial class MemoryInspector
 	/// <see langword="true"/> if the current execution is occurring on a Linux-compatible platform; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	private static Boolean IsLinuxPlatform()
 #if NET5_0_OR_GREATER
 		=> OperatingSystem.IsLinux() || OperatingSystem.IsAndroid();
@@ -77,6 +83,9 @@ internal abstract partial class MemoryInspector
 	/// <see langword="true"/> if the current execution is occurring on a macOS-compatible platform; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	private static Boolean IsMacPlatform()
 #if NET5_0_OR_GREATER
 		=> OperatingSystem.IsMacOS() || OperatingSystem.IsIOS() || OperatingSystem.IsTvOS() ||
@@ -94,6 +103,9 @@ internal abstract partial class MemoryInspector
 	/// <see langword="true"/> if the current execution is occurring on Mac Catalyst platform; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	private static Boolean IsMacCatalyst()
 #if NET6_0_OR_GREATER
 		=> OperatingSystem.IsMacCatalyst();
