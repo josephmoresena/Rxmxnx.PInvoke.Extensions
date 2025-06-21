@@ -24,24 +24,12 @@ internal abstract partial class MemoryInspector
 #endif
 	static MemoryInspector()
 	{
-#if NET5_0_OR_GREATER
 		if (OperatingSystem.IsWindows())
-#else
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-#endif
 			MemoryInspector.instance = new Windows();
-#if NET5_0_OR_GREATER
-		else if (OperatingSystem.IsLinux() || OperatingSystem.IsAndroid())
-#else
-		else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-#endif
+		else if (MemoryInspector.IsLinuxPlatform())
 			MemoryInspector.instance = new Linux();
-#if NET5_0_OR_GREATER
-		else if (!OperatingSystem.IsBrowser() && !OperatingSystem.IsFreeBSD() && !OperatingSystem.IsWatchOS())
-#else
-		else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-#endif
-			MemoryInspector.instance = new Mac(); // OSX
+		else if (MemoryInspector.IsMacPlatform())
+			MemoryInspector.instance = new Mac();
 	}
 
 	/// <summary>
@@ -54,4 +42,36 @@ internal abstract partial class MemoryInspector
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
 	public abstract Boolean IsLiteral<T>(ReadOnlySpan<T> span);
+
+	/// <summary>
+	/// Indicates whether the current execution is occurring on a Linux-compatible platform.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if the current execution is occurring on a Linux-compatible platform; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+	private static Boolean IsLinuxPlatform()
+#if NET5_0_OR_GREATER
+		=> OperatingSystem.IsLinux() || OperatingSystem.IsAndroid();
+#else
+		=> RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ||
+			RuntimeInformation.IsOSPlatform(OSPlatform.Create("ANDROID"));
+#endif
+	/// <summary>
+	/// Indicates whether the current execution is occurring on a macOS-compatible platform.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if the current execution is occurring on a macOS-compatible platform; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+	private static Boolean IsMacPlatform()
+#if NET5_0_OR_GREATER
+		=> OperatingSystem.IsMacOS() || OperatingSystem.IsIOS() || OperatingSystem.IsTvOS() ||
+			OperatingSystem.IsMacCatalyst();
+#else
+		=> RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ||
+			RuntimeInformation.IsOSPlatform(OSPlatform.Create("IOS")) ||
+			RuntimeInformation.IsOSPlatform(OSPlatform.Create("TVOS")) ||
+			RuntimeInformation.IsOSPlatform(OSPlatform.Create("MACCATALYST"));
+#endif
 }
