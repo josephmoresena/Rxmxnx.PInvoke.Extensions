@@ -24,7 +24,7 @@ internal abstract partial class MemoryInspector
 #endif
 	static MemoryInspector()
 	{
-		if (OperatingSystem.IsWindows())
+		if (MemoryInspector.IsWindowsPlatform())
 			MemoryInspector.instance = new Windows();
 		else if (MemoryInspector.IsLinuxPlatform())
 			MemoryInspector.instance = new Linux();
@@ -43,6 +43,19 @@ internal abstract partial class MemoryInspector
 	/// </returns>
 	public abstract Boolean IsLiteral<T>(ReadOnlySpan<T> span);
 
+	/// <summary>
+	/// Indicates whether the current execution is occurring on a Windows-compatible platform.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if the current execution is occurring on a Windows-compatible platform; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+	private static Boolean IsWindowsPlatform()
+#if NET5_0_OR_GREATER
+		=> OperatingSystem.IsWindows();
+#else
+		=> RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+#endif
 	/// <summary>
 	/// Indicates whether the current execution is occurring on a Linux-compatible platform.
 	/// </summary>
@@ -67,11 +80,24 @@ internal abstract partial class MemoryInspector
 	private static Boolean IsMacPlatform()
 #if NET5_0_OR_GREATER
 		=> OperatingSystem.IsMacOS() || OperatingSystem.IsIOS() || OperatingSystem.IsTvOS() ||
-			OperatingSystem.IsMacCatalyst();
+			MemoryInspector.IsMacCatalyst();
 #else
 		=> RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ||
 			RuntimeInformation.IsOSPlatform(OSPlatform.Create("IOS")) ||
 			RuntimeInformation.IsOSPlatform(OSPlatform.Create("TVOS")) ||
-			RuntimeInformation.IsOSPlatform(OSPlatform.Create("MACCATALYST"));
+			MemoryInspector.IsMacCatalyst();
+#endif
+	/// <summary>
+	/// Indicates whether the current execution is occurring on Mac Catalyst platform.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if the current execution is occurring on Mac Catalyst platform; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+	private static Boolean IsMacCatalyst()
+#if NET6_0_OR_GREATER
+		=> OperatingSystem.IsMacCatalyst();
+#else
+		=> RuntimeInformation.IsOSPlatform(OSPlatform.Create("MACCATALYST"));
 #endif
 }
