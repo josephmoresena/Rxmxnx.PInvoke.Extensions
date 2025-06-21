@@ -12,12 +12,12 @@
 public static unsafe partial class MemoryBlockExtensions
 {
 	/// <summary>
-	/// Indicates whether current span represents a literal or hardcoded memory region.
+	/// Indicates whether the current span represents a literal or hardcoded memory region.
 	/// </summary>
 	/// <typeparam name="T">Type of items in <paramref name="span"/>.</typeparam>
 	/// <param name="span">A span of <typeparamref name="T"/> items.</param>
 	/// <returns>
-	/// <see langword="true"/> if current span represents a constant, literal o hardcoded memory region;
+	/// <see langword="true"/> if the current span represents a literal o hardcoded memory region;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
 #if !PACKAGE
@@ -30,16 +30,33 @@ public static unsafe partial class MemoryBlockExtensions
 		return readOnlySpan.IsLiteral();
 	}
 	/// <summary>
-	/// Indicates whether current span represents a literal or hardcoded memory region.
+	/// Indicates whether the current span represents a literal or hardcoded memory region.
 	/// </summary>
 	/// <typeparam name="T">Type of items in <paramref name="span"/>.</typeparam>
 	/// <param name="span">A read-only span of <typeparamref name="T"/> items.</param>
 	/// <returns>
-	/// <see langword="true"/> if current span represents a constant, literal o hardcoded memory region;
+	/// <see langword="true"/> if the current span represents a literal o hardcoded memory region;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Boolean IsLiteral<T>(this ReadOnlySpan<T> span) => MemoryInspector.Instance.IsLiteral(span);
+
+	/// <summary>
+	/// Indicates whether the current span represents memory that is not part of a hardcoded literal.
+	/// </summary>
+	/// <typeparam name="T">Type of items in <paramref name="span"/>.</typeparam>
+	/// <param name="span">A read-only span of <typeparamref name="T"/> items.</param>
+	/// <returns>
+	/// <see langword="true"/> if the current span represents memory that is not part of a hardcoded literal;
+	/// otherwise, <see langword="false"/>.
+	/// </returns>
+	/// <remarks>
+	/// On unsupported platforms or in case of inspection errors, this method will always return <see langword="true"/>.
+	/// </remarks>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public static Boolean MayBeNonLiteral<T>(this ReadOnlySpan<T> span) => MemoryInspector.Instance.IsLiteral(span);
 
 	/// <summary>
 	/// Retrieves an unsafe <see cref="ValPtr{T}"/> pointer from <see cref="Span{T}"/> instance.

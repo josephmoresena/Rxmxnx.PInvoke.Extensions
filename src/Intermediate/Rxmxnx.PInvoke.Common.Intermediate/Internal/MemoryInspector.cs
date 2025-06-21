@@ -33,15 +33,41 @@ internal abstract partial class MemoryInspector
 	}
 
 	/// <summary>
-	/// Indicates whether current span represents a literal or hardcoded memory region.
+	/// Indicates whether given span represents a literal or hardcoded memory region.
 	/// </summary>
 	/// <typeparam name="T">Type of items in <paramref name="span"/>.</typeparam>
 	/// <param name="span">A read-only span of <typeparamref name="T"/> items.</param>
 	/// <returns>
-	/// <see langword="true"/> if current span represents a constant, literal o hardcoded memory region;
+	/// <see langword="true"/> if the given span represents a literal o hardcoded memory region;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
 	public abstract Boolean IsLiteral<T>(ReadOnlySpan<T> span);
+
+	/// <summary>
+	/// Indicates whether the given span represents memory that is not part of a hardcoded literal.
+	/// </summary>
+	/// <typeparam name="T">Type of items in <paramref name="span"/>.</typeparam>
+	/// <param name="span">A read-only span of <typeparamref name="T"/> items.</param>
+	/// <returns>
+	/// <see langword="true"/> if the given span represents memory that is not part of a hardcoded literal;
+	/// otherwise, <see langword="false"/>.
+	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public static Boolean MayBeNonLiteral<T>(ReadOnlySpan<T> span)
+	{
+		try
+		{
+			if (MemoryInspector.instance is not null)
+				return !MemoryInspector.instance.IsLiteral(span);
+		}
+		catch (Exception)
+		{
+			// Ignore
+		}
+		return true;
+	}
 
 	/// <summary>
 	/// Indicates whether the current execution is occurring on a Windows-compatible platform.
