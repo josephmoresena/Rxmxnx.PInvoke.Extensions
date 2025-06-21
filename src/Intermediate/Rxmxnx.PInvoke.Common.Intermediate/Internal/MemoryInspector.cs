@@ -31,7 +31,7 @@ internal abstract partial class MemoryInspector
 #endif
 			MemoryInspector.instance = new Windows();
 #if NET5_0_OR_GREATER
-		else if (OperatingSystem.IsLinux())
+		else if (OperatingSystem.IsLinux() || OperatingSystem.IsAndroid())
 #else
 		else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 #endif
