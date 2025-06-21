@@ -95,18 +95,11 @@ public unsafe partial class CString
 					return this._pointer;
 				}
 
-				try
+				if (this._managed.IsFunction && !MemoryInspector.MayBeNonLiteral(utf8Span))
 				{
-					if (this._managed.IsFunction && MemoryInspector.Instance.IsLiteral(utf8Span))
-					{
-						// If the CString is a literal, we can use the pointer directly.
-						this._pointer = (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Span));
-						return this._pointer;
-					}
-				}
-				catch (PlatformNotSupportedException)
-				{
-					// Ignore 
+					// If the CString is a literal, we can use the pointer directly.
+					this._pointer = (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Span));
+					return this._pointer;
 				}
 			}
 

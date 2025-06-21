@@ -2468,6 +2468,13 @@ Additional functionality for working with memory blocks.
 
   **Note:** This function is currently available only on Windows, Linux, and macOS.
   </details>
+- <details>
+  <summary>MayBeNonLiteral&lt;T&gt;(this ReadOnlySpan&lt;T&gt;)</summary>
+
+  Indicates whether the given `ReadOnlySpan<T>` instance represents memory that is not part of a hardcoded literal.
+
+  **Note:** If the platform is unsupported or an inspection error occurs, the method returns true.
+  </details>
 
 - <details>
   <summary>GetUnsafeValPtr&lt;T&gt;(this Span&lt;T&gt;)</summary>

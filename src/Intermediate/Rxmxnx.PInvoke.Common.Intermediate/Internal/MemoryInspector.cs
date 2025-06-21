@@ -24,34 +24,118 @@ internal abstract partial class MemoryInspector
 #endif
 	static MemoryInspector()
 	{
-#if NET5_0_OR_GREATER
-		if (OperatingSystem.IsWindows())
-#else
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-#endif
+		if (MemoryInspector.IsWindowsPlatform())
 			MemoryInspector.instance = new Windows();
-#if NET5_0_OR_GREATER
-		else if (OperatingSystem.IsLinux())
-#else
-		else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-#endif
+		else if (MemoryInspector.IsLinuxPlatform())
 			MemoryInspector.instance = new Linux();
-#if NET5_0_OR_GREATER
-		else if (!OperatingSystem.IsBrowser() && !OperatingSystem.IsFreeBSD() && !OperatingSystem.IsWatchOS())
-#else
-		else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-#endif
-			MemoryInspector.instance = new Mac(); // OSX
+		else if (MemoryInspector.IsMacPlatform())
+			MemoryInspector.instance = new Mac();
 	}
 
 	/// <summary>
-	/// Indicates whether current span represents a literal or hardcoded memory region.
+	/// Indicates whether given span represents a literal or hardcoded memory region.
 	/// </summary>
 	/// <typeparam name="T">Type of items in <paramref name="span"/>.</typeparam>
 	/// <param name="span">A read-only span of <typeparamref name="T"/> items.</param>
 	/// <returns>
-	/// <see langword="true"/> if current span represents a constant, literal o hardcoded memory region;
+	/// <see langword="true"/> if the given span represents a literal o hardcoded memory region;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
 	public abstract Boolean IsLiteral<T>(ReadOnlySpan<T> span);
+
+	/// <summary>
+	/// Indicates whether the given span represents memory that is not part of a hardcoded literal.
+	/// </summary>
+	/// <typeparam name="T">Type of items in <paramref name="span"/>.</typeparam>
+	/// <param name="span">A read-only span of <typeparamref name="T"/> items.</param>
+	/// <returns>
+	/// <see langword="true"/> if the given span represents memory that is not part of a hardcoded literal;
+	/// otherwise, <see langword="false"/>.
+	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public static Boolean MayBeNonLiteral<T>(ReadOnlySpan<T> span)
+	{
+		try
+		{
+			if (MemoryInspector.instance is not null)
+				return !MemoryInspector.instance.IsLiteral(span);
+		}
+		catch (Exception)
+		{
+			// Ignore
+		}
+		return true;
+	}
+
+	/// <summary>
+	/// Indicates whether the current execution is occurring on a Windows-compatible platform.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if the current execution is occurring on a Windows-compatible platform; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	private static Boolean IsWindowsPlatform()
+#if NET5_0_OR_GREATER
+		=> OperatingSystem.IsWindows();
+#else
+		=> RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+#endif
+	/// <summary>
+	/// Indicates whether the current execution is occurring on a Linux-compatible platform.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if the current execution is occurring on a Linux-compatible platform; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	private static Boolean IsLinuxPlatform()
+#if NET5_0_OR_GREATER
+		=> OperatingSystem.IsLinux() || OperatingSystem.IsAndroid();
+#else
+		=> RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ||
+			RuntimeInformation.IsOSPlatform(OSPlatform.Create("ANDROID"));
+#endif
+	/// <summary>
+	/// Indicates whether the current execution is occurring on a macOS-compatible platform.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if the current execution is occurring on a macOS-compatible platform; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	private static Boolean IsMacPlatform()
+#if NET5_0_OR_GREATER
+		=> OperatingSystem.IsMacOS() || OperatingSystem.IsIOS() || OperatingSystem.IsTvOS() ||
+			MemoryInspector.IsMacCatalyst();
+#else
+		=> RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ||
+			RuntimeInformation.IsOSPlatform(OSPlatform.Create("IOS")) ||
+			RuntimeInformation.IsOSPlatform(OSPlatform.Create("TVOS")) ||
+			MemoryInspector.IsMacCatalyst();
+#endif
+	/// <summary>
+	/// Indicates whether the current execution is occurring on Mac Catalyst platform.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if the current execution is occurring on Mac Catalyst platform; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	private static Boolean IsMacCatalyst()
+#if NET6_0_OR_GREATER
+		=> OperatingSystem.IsMacCatalyst();
+#else
+		=> RuntimeInformation.IsOSPlatform(OSPlatform.Create("MACCATALYST"));
+#endif
 }
