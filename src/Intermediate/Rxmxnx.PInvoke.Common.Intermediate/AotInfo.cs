@@ -16,10 +16,12 @@ public static class AotInfo
 	/// <summary>
 	/// Indicates whether runtime reflection is disabled.
 	/// </summary>
+	[ReadOnly(true)]
 	public static Boolean IsReflectionDisabled { get; }
 	/// <summary>
 	/// Indicates whether the current runtime is NativeAOT.
 	/// </summary>
+	[ReadOnly(true)]
 	public static Boolean IsNativeAot { get; }
 
 	/// <summary>
@@ -27,30 +29,32 @@ public static class AotInfo
 	/// </summary>
 	static AotInfo()
 	{
-		ReadOnlySpan<Char> fullTypeName = typeof(String).ToString().AsSpan();
-		ReadOnlySpan<Char> stringName = nameof(String).AsSpan();
+		Int64 ilBytes = JitInfo.GetCompiledILBytes();
+		Int64 methodCount = JitInfo.GetCompiledMethodCount();
+		TimeSpan compilationTime = JitInfo.GetCompilationTime();
+		Boolean jitDisabled = ilBytes == default && methodCount == default && compilationTime == default;
 
-		AotInfo.IsReflectionDisabled = stringName.Length >= fullTypeName.Length ||
-			!fullTypeName[^stringName.Length..].SequenceEqual(stringName);
-
-		if (AotInfo.IsReflectionDisabled)
-		{
-			// If reflection disabled, is AOT.
-			AotInfo.IsNativeAot = true;
-			return;
-		}
-
+		AotInfo.IsNativeAot = jitDisabled;
+		AotInfo.IsReflectionDisabled = jitDisabled && !AotInfo.StringTypeNameContainsString();
+#if !NET6_0_OR_GREATER
 		try
 		{
-#if NET6_0_OR_GREATER
-			Int64 ilBytes = JitInfo.GetCompiledILBytes();
-			Int64 methodCount = JitInfo.GetCompiledMethodCount();
-			TimeSpan compilationTime = JitInfo.GetCompilationTime();
+			if (!AotInfo.StringTypeNameContainsString())
+			{
+				// If reflection disabled, is AOT.
+				AotInfo.IsReflectionDisabled = true;
+				AotInfo.IsNativeAot = true;
+				return;
+			}
 
-			// If JIT info default, is AOT.
-			AotInfo.IsNativeAot = ilBytes == default && methodCount == default && compilationTime == default;
-#else
-			foreach (Assembly? assembly in AppDomain.CurrentDomain.GetAssemblies().AsSpan())
+			AotInfo.IsReflectionDisabled = false;
+			if (Type.GetType("System.Runtime.JitInfo") is { } typeJitInfo)
+			{
+				AotInfo.IsNativeAot = !AotInfo.IsJitEnabled(typeJitInfo, out Boolean invoked);
+				if (invoked) return;
+			}
+
+			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().AsSpan())
 			{
 				if (assembly.FullName?.StartsWith("System.Reflection.Emit") == true)
 				{
@@ -65,15 +69,62 @@ public static class AotInfo
 				break;
 			}
 			AotInfo.IsNativeAot = false;
-#endif
 		}
 		// If exception, might be AOT.
 		catch (Exception)
 		{
 			AotInfo.IsNativeAot = true;
 		}
+#endif
+	}
+	/// <summary>
+	/// Indicates whether <see cref="String"/> type name contains the <c>String</c> word.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if <see cref="String"/> type name contains the <c>String</c> word;
+	/// otherwise, <see langword="false"/>.
+	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static Boolean StringTypeNameContainsString()
+	{
+		ReadOnlySpan<Char> fullTypeName = typeof(String).ToString().AsSpan();
+		ReadOnlySpan<Char> stringName = nameof(String).AsSpan();
+		return stringName.Length <= fullTypeName.Length && fullTypeName[^stringName.Length..].SequenceEqual(stringName);
 	}
 #if !NET6_0_OR_GREATER
+	/// <summary>
+	/// Use the reflected JitInfo class to inspect the current runtime.
+	/// </summary>
+	/// <param name="typeJitInfo">CLR type of JitInfo class.</param>
+	/// <param name="invoked">
+	/// Output. Indicates whether at least one of the methods of the JitInfo class was invoked.
+	/// </param>
+	/// <returns>
+	/// <see langword="true"/> if Jit is enabled; otherwise <see langword="false"/>.
+	/// </returns>
+	private static Boolean IsJitEnabled(Type typeJitInfo, out Boolean invoked)
+	{
+		Func<Boolean, Int64>? getCompiledIlBytes = typeJitInfo
+		                                           .GetMethod("GetCompiledILBytes",
+		                                                      BindingFlags.Public | BindingFlags.Static)
+		                                           ?.CreateDelegate<Func<Boolean, Int64>>();
+		Func<Boolean, Int64>? getCompiledMethodCount = typeJitInfo
+		                                               .GetMethod("GetCompiledMethodCount",
+		                                                          BindingFlags.Public | BindingFlags.Static)
+		                                               ?.CreateDelegate<Func<Boolean, Int64>>();
+		Func<Boolean, Int64>? getCompilationTimeInTicks = typeJitInfo
+		                                                  .GetMethod("GetCompilationTimeInTicks",
+		                                                             BindingFlags.NonPublic | BindingFlags.Static)
+		                                                  ?.CreateDelegate<Func<Boolean, Int64>>();
+
+		Int64? reflectionBytes = getCompiledIlBytes?.Invoke(false);
+		Int64? methodCount = getCompiledMethodCount?.Invoke(false);
+		Int64? compilationTimeInTicks = getCompilationTimeInTicks?.Invoke(false);
+
+		invoked = reflectionBytes.HasValue || methodCount.HasValue || compilationTimeInTicks.HasValue;
+		return reflectionBytes.GetValueOrDefault() > 0L || methodCount.GetValueOrDefault() > 0L ||
+			compilationTimeInTicks.GetValueOrDefault() > 0L;
+	}
 	/// <summary>
 	/// Tries to emit a dynamic type in the current runtime. 
 	/// </summary>
