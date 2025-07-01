@@ -25,7 +25,7 @@ public static partial class BufferManager
 
 		try
 		{
-			if (!AotInfo.IsReflectionDisabled)
+			if (!AotInfo.IsNativeAot || !AotInfo.IsReflectionDisabled)
 			{
 				FieldInfo? typeMetadataInfo =
 					bufferType.GetField(BufferManager.TypeMetadataName, BufferManager.GetMetadataFlags);
