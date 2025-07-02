@@ -16,7 +16,11 @@ public interface IWrapper
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IWrapper<TValue> Create<TValue>(in TValue value) where TValue : struct
+#if NETCOREAPP
 		=> IWrapper<TValue>.Create(value);
+#else
+		=> new Input<TValue>(value);
+#endif
 	/// <summary>
 	/// Creates a new instance of an object that implements <see cref="IWrapper{TValue}"/> interface.
 	/// </summary>
@@ -29,7 +33,11 @@ public interface IWrapper
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IWrapper<TValue?> CreateNullable<TValue>(in TValue? value) where TValue : struct
+#if NETCOREAPP
 		=> IWrapper<TValue?>.Create(value);
+#else
+		=> new Input<TValue?>(value);
+#endif
 	/// <summary>
 	/// Creates a new instance of an object that implements <see cref="IWrapper{TObject}"/> interface.
 	/// </summary>
@@ -42,7 +50,11 @@ public interface IWrapper
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IWrapper<TObject> CreateObject<TObject>(TObject instance) where TObject : class
+#if NETCOREAPP
 		=> IWrapper<TObject>.Create(instance)!;
+#else
+		=> new Input<TObject>(instance);
+#endif
 
 	/// <summary>
 	/// This interface defines a wrapper for a <typeparamref name="T"/> object.

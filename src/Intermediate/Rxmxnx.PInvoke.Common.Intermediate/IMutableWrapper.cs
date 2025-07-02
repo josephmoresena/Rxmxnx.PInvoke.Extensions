@@ -20,7 +20,11 @@ public interface IMutableWrapper : IWrapper
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public new static IMutableWrapper<TValue> Create<TValue>(in TValue value = default) where TValue : struct
+#if NETCOREAPP
 		=> IMutableWrapper<TValue>.Create(value);
+#else
+		=> new MutableWrapper<TValue>(value);
+#endif
 	/// <summary>
 	/// Creates a new instance of an object that implements the <see cref="IMutableWrapper{TValue}"/> interface.
 	/// </summary>
@@ -36,7 +40,11 @@ public interface IMutableWrapper : IWrapper
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public new static IMutableWrapper<TValue?> CreateNullable<TValue>(in TValue? value = default) where TValue : struct
+#if NETCOREAPP
 		=> IMutableWrapper<TValue?>.Create(value);
+#else
+		=> new MutableWrapper<TValue?>(value);
+#endif
 	/// <summary>
 	/// Creates a new instance of an object that implements the <see cref="IMutableWrapper{TObject}"/> interface.
 	/// </summary>
@@ -52,7 +60,11 @@ public interface IMutableWrapper : IWrapper
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public new static IMutableWrapper<TObject> CreateObject<TObject>(TObject instance) where TObject : class
+#if NETCOREAPP
 		=> IMutableWrapper<TObject>.Create(instance)!;
+#else
+		=> new MutableWrapper<TObject>(instance);
+#endif
 }
 
 /// <summary>

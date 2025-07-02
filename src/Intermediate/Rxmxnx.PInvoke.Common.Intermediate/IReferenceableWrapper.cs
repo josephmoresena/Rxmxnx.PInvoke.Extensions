@@ -17,7 +17,11 @@ public interface IReferenceableWrapper : IWrapper
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public new static IReferenceableWrapper<TValue> Create<TValue>(in TValue value) where TValue : struct
+#if NETCOREAPP
 		=> IReferenceableWrapper<TValue>.Create(value);
+#else
+		=> new InputReference<TValue>(value);
+#endif
 	/// <summary>
 	/// Creates a new instance of an object that implements <see cref="IReferenceableWrapper{TValue}"/> interface.
 	/// </summary>
@@ -30,7 +34,11 @@ public interface IReferenceableWrapper : IWrapper
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public new static IReferenceableWrapper<TValue?> CreateNullable<TValue>(in TValue? value) where TValue : struct
+#if NETCOREAPP
 		=> IReferenceableWrapper<TValue?>.Create(value);
+#else
+		=> new InputReference<TValue?>(value);
+#endif
 	/// <summary>
 	/// Creates a new instance of an object that implements <see cref="IReferenceableWrapper{TObject}"/> interface.
 	/// </summary>
@@ -43,7 +51,11 @@ public interface IReferenceableWrapper : IWrapper
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public new static IReferenceableWrapper<TObject> CreateObject<TObject>(TObject instance) where TObject : class
+#if NETCOREAPP
 		=> IReferenceableWrapper<TObject>.Create(instance)!;
+#else
+		=> new InputReference<TObject>(instance);
+#endif
 }
 
 /// <summary>
