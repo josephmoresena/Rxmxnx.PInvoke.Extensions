@@ -37,7 +37,7 @@ public static partial class BufferManager
 			if (tie.InnerException is not null)
 				throw tie.InnerException;
 		}
-		result ??= IManagedBinaryBuffer<T>.GetMetadata(bufferType);
+		result ??= ManagedBinaryBuffer<T>.GetMetadata(bufferType);
 		return BufferManager.Cache(bufferType, result as BufferTypeMetadata<T>);
 	}
 #nullable disable

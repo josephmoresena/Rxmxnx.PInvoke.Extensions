@@ -9,18 +9,6 @@ namespace Rxmxnx.PInvoke.Buffers;
 #endif
 public interface IManagedBuffer<T>
 {
-	/// <summary>
-	/// Appends all components from <paramref name="component"/> instance.
-	/// </summary>
-	/// <param name="component">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
-	/// <param name="components">A dictionary of components.</param>
-	protected static void AppendComponent(BufferTypeMetadata<T> component,
-		IDictionary<UInt16, BufferTypeMetadata<T>> components)
-	{
-		if (!components.TryAdd(component.Size, component)) return;
-		foreach (BufferTypeMetadata<T> metadataComponent in component.Components.AsSpan())
-			IManagedBuffer<T>.AppendComponent(metadataComponent, components);
-	}
 #if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
 	/// <summary>
 	/// Current type components.
@@ -58,7 +46,7 @@ public interface IManagedBuffer<T>
 		where TBuffer : struct, IManagedBuffer<T>
 	{
 		if (TBuffer.TypeMetadata.IsBinary)
-			IManagedBuffer<T>.AppendComponent(TBuffer.TypeMetadata, components);
+			ManagedBuffer<T>.AppendComponent(TBuffer.TypeMetadata, components);
 	}
 
 	/// <summary>

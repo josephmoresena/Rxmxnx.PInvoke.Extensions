@@ -6,14 +6,6 @@ namespace Rxmxnx.PInvoke;
 #endif
 public static partial class BufferManager
 {
-#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
-	/// <summary>
-	/// Name of <see cref="IManagedBuffer{T}.GetMetadata{TBuffer}()"/> method.
-	/// </summary>
-#pragma warning disable CA2252
-	internal const String GetMetadataName = nameof(IManagedBuffer<Object>.GetMetadata);
-#pragma warning restore CA2252
-#endif
 	/// <summary>
 	/// Name of <see cref="Atomic{T}.TypeMetadata"/>  static field.
 	/// </summary>

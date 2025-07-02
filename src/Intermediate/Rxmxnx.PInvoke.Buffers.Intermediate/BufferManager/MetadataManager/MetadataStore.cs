@@ -117,7 +117,7 @@ public static partial class BufferManager
 			private static MethodInfo ReflectGetMetadataMethod()
 			{
 				Type typeofT = typeof(IManagedBuffer<T>);
-				return typeofT.GetMethod(BufferManager.GetMetadataName, BufferManager.GetMetadataFlags)!;
+				return typeofT.GetMethod(nameof(IManagedBuffer<Object>.GetMetadata), BufferManager.GetMetadataFlags)!;
 			}
 #endif
 			/// <summary>

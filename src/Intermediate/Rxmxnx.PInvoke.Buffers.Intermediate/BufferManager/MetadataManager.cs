@@ -153,7 +153,7 @@ public static partial class BufferManager
 			catch (Exception)
 			{
 				// This may never be called.
-				result = IManagedBinaryBuffer<T>.GetMetadata(genericType);
+				result = ManagedBinaryBuffer<T>.GetMetadata(genericType);
 			}
 #else
 			if (!BufferManager.GetMetadata<T>(typeofB).IsBinary || !BufferManager.BufferAutoCompositionEnabled)
