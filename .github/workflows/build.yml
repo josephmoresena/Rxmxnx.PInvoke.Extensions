@@ -94,48 +94,552 @@ jobs:
       - name: Create PackageTrimmedAssembly Program.cs
         working-directory: ./tmpProject/PackageTrimmedAssembly
         run: |
-          echo 'using System.Globalization; using System.Runtime.CompilerServices; using Rxmxnx.PInvoke; using Rxmxnx.PInvoke.Buffers;
-          Console.WriteLine($"Native AOT: {AotInfo.IsNativeAot}");
-          Console.WriteLine($"Reflection Enabled: {(!AotInfo.IsReflectionDisabled)}");
-          Console.WriteLine($"Is 64-bit: {(NativeUtilities.PointerSize == 8)}");
-          Console.WriteLine($"Is Little-Endian: {BitConverter.IsLittleEndian}");
-          Console.WriteLine($"Globalization-Invariant Mode: {NativeUtilities.GlobalizationInvariantModeEnabled}");
-          Console.WriteLine($"UI Culture: {CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}");
-          Console.WriteLine($"UI Iso639-1: {NativeUtilities.UserInterfaceIso639P1}");
-          Console.WriteLine($"UTF-8 Literal: {"UTF8_LITERAL"u8.IsLiteral()}");
-          Console.WriteLine($"Buffer AutoComposition Enabled: {BufferManager.BufferAutoCompositionEnabled}");
-          var bufferMetadata =
-              (new Composite<Atomic<ValueTuple<String, Int32>>,
-                  Composite<Atomic<ValueTuple<String, Int32>>, Atomic<ValueTuple<String, Int32>>, ValueTuple<String, Int32>>,
-                  ValueTuple<String, Int32>>() as IManagedBinaryBuffer<ValueTuple<String, Int32>>).Metadata;
-          Console.WriteLine($"Metadata Size: {bufferMetadata.Size}");
-          BufferManager.Alloc<ValueTuple<String, Int32>>(bufferMetadata.Size, s =>
+          echo '#if !NETCOREAPP
+          using System;
+          using System.Linq;
+          using System.Runtime.CompilerServices;
+          #else
+          using System.Text.Json;
+          #endif
+          using System.Reflection;
+          using System.Buffers;
+          using System.Globalization;
+          using System.Runtime.InteropServices;
+          using System.Text;
+          
+          namespace Rxmxnx.PInvoke.ApplicationTest
           {
-              Console.WriteLine($"Span Size: {s.Span.Length}");
-              Console.WriteLine($"Buffer Size: {s.FullLength}");
-              Console.WriteLine($"In Stack: {s.InStack}");
-              Span<ValueTuple<String, Int32>> localSpan = s.Span;
-              ref Span<ValueTuple<String, Int32>> refSpan = ref localSpan;
-              ValPtr<Span<ValueTuple<String, Int32>>> valRefSpan = NativeUtilities.GetUnsafeValPtrFromRef(ref localSpan);
-
-              Console.WriteLine($"Unsafe Val Span Address: 0x{s.Span.GetUnsafeIntPtr():x8}");
-              NativeUtilities.WithSafeFixed(ref refSpan, s.InStack, UseFixedRefSpan);
-              Console.WriteLine($"Ref Span: 0x{valRefSpan.Pointer:x8}");
-              Console.WriteLine($"Ref Span vs Ptr Span: {Unsafe.AreSame(ref refSpan, ref valRefSpan.Reference)}");
-          });
+          	internal static class Program
+          	{
+          		public static void Main()
+          		{
+          			RuntimeHelper.PrintRuntimeInfo();
           
-          return;
+          			Double[,] mxm = { { 0.3, -2.2, 3.2, 0, }, { 0.12, -2, 0.2, 6, }, { 9, 0, 0, -1, }, { 2, 2.1, -1, 4, }, };
+          			Double[,] nxn = { { 2, 3, }, { 2, 1, }, };
+          			Double[,] mxn = { { -1, 1, }, { 4, 0, }, { 2, 1, }, { 1, 3, }, };
           
-          static void UseFixedRefSpan(in IFixedReference<Span<ValueTuple<String, Int32>>> frs, Boolean inStack)
-          {
-              ValPtr<Span<(String, Int32)>> ptr = NativeUtilities.GetUnsafeValPtrFromRef(ref frs.Reference);
-              Console.WriteLine($"Reference Length: {frs.Reference.Length}");
+          			Console.WriteLine("=== 4x4 ===");
+          			Program.Print(mxm);
+          			Console.WriteLine($"Determinant 4x4: {Program.GetDeterminant(mxm, out Double[,] inverse):0.####}");
+          			Console.WriteLine("=== (4x4)^-1 ===");
+          			Program.Print(inverse);
+          			Console.WriteLine("=== 2x2 ===");
+          			Program.Print(nxn);
+          			Console.WriteLine($"Determinant 2x2: {Program.GetDeterminant(nxn):0.####}");
+          			Console.WriteLine("=== 4x2 ===");
+          			Program.Print(mxn);
+          			Console.WriteLine("=== 4x4 * 4x2 ===");
+          			Program.Print(Program.Multiply(mxm, mxn));
+          			Console.WriteLine("=== 2x2 -> [] ===");
+          			mxn.AsSpan().WithSafeFixed(Program.Print);
+          			Console.WriteLine("=== Stack alloc String ===");
+          			BufferManager.Alloc<String?>(13, Program.Generate);
           
-              if (!inStack) return;
+          #if NETCOREAPP
+          			Console.WriteLine("=== System.Text.Json ===");
+          #else
+          			Console.WriteLine("=== UTF-8 / UTF-16 Convert ===");
+          #endif
+          			SerializableMessage<String> serializable = ConvertHelper.Convert(new SerializableMessage<CString>
+          			{
+          				Title =
+          					(CString)
+          					"This is not a message",
+          				Message =
+          					(CString)
+          					"This is a UTF-8 message for you.",
+          			});
+          			Console.WriteLine(ConvertHelper.Convert(serializable));
+          			CStringSequence result = ConvertHelper.Convert(
+          				ConvertHelper.Convert(new CStringSequence("String0", "String1", null, "String3", "", "String5")));
+          			Console.WriteLine("=== Enumerable sequences ===");
+          			foreach (CString value in result)
+          				Console.WriteLine(!value.IsZero ? value : RuntimeHelper.Null);
+          			foreach (Byte utf8U in RuntimeHelper.Null)
+          				Console.Write((Char)utf8U);
+          			ArrayWrapper<Int32> values = new ArrayWrapper<Int32> { Value = new Int32[] { 1, 2, 3, -1, -2, -3, }, };
+          			foreach (Int32 val in values)
+          				Console.WriteLine(val);
+          			Console.WriteLine("=== UTF-8 Enumerable ===");
+          			foreach (ReadOnlySpan<Byte> utf8 in result.CreateView())
+          				Console.WriteLine($"Address: 0x{utf8.GetUnsafeIntPtr().ToString("X")}\t" +
+          				                  $"Length: {utf8.Length}\tBytes: {Convert.ToBase64String(utf8)}\t" +
+          				                  $"Text:{Encoding.UTF8.GetString(utf8)}.");
+          			Console.WriteLine("=== Referenceable Wrapper ===");
+          			IMutableReference<Guid> uuid = IMutableReference.Create(Guid.NewGuid());
           
-              ValPtr<(String, Int32)> valPtr = ptr.Reference.GetUnsafeValPtr();
-              using IFixedContext<(String, Int32)>.IDisposable? f = valPtr.GetUnsafeFixedContext(ptr.Reference.Length);
-              Console.WriteLine($"Unsafe Val Span: 0x{f.Pointer:x8}");
+          			Program.Print(uuid);
+          			uuid.Reference = Guid.NewGuid();
+          			Program.Print(uuid);
+          
+          			Console.WriteLine("=== Fixed Rent ===");
+          			using IFixedContext<Int64>.IDisposable fRent =
+          				ArrayPool<Int64>.Shared.RentFixed(10, false, out Int32 arrayLength);
+          			Console.WriteLine(
+          				$"Address: 0x{fRent.Pointer.ToString("X")} Required: {fRent.Values.Length} Rented: {arrayLength}");
+          			foreach (ref Int64 rLong in fRent.Values)
+          				rLong = RuntimeHelper.Shared.Next();
+          			Program.Print(fRent);
+          		}
+          
+          		private static Double GetDeterminant(Double[,] matrix)
+          		{
+          			Int32 n;
+          			if (matrix.Rank != 2 || (n = matrix.GetLength(0)) != matrix.GetLength(1))
+          				throw new InvalidOperationException("Determinant is only for square matrices.");
+          			if (n == 0)
+          				return 1;
+          
+          			Double determinant = MatrixHelper.GetDeterminant(matrix.AsSpan(), n);
+          			return determinant;
+          		}
+          		private static Double GetDeterminant(Double[,] matrix, out Double[,] inverse)
+          		{
+          			Int32 n;
+          			if (matrix.Rank != 2 || (n = matrix.GetLength(0)) != matrix.GetLength(1))
+          				throw new InvalidOperationException("Determinant is only for square matrices.");
+          			if (n == 0)
+          			{
+          				inverse = MatrixHelper.EmptyMatrix;
+          				return 1;
+          			}
+          
+          			Double determinant = MatrixHelper.GetDeterminant(matrix.AsSpan(), n, out inverse);
+          			return determinant;
+          		}
+          		private static Double[,] Multiply(Double[,] matrixA, Double[,] matrixB)
+          		{
+          			if (matrixA.Rank != 2)
+          				throw new InvalidOperationException("Invalid A matrix.");
+          			if (matrixB.Rank != 2)
+          				throw new InvalidOperationException("Invalid B matrix.");
+          
+          			Int32 aRow = matrixA.GetLength(0);
+          			Int32 bCol = matrixB.GetLength(1);
+          			Int32 n;
+          			if ((n = matrixA.GetLength(1)) != matrixB.GetLength(0))
+          				throw new InvalidOperationException(
+          					"The number of columns in A matrix must equal the number of rows in B matrix.");
+          
+          			if (aRow == 0 || n == 0 || bCol == 0) return MatrixHelper.EmptyMatrix;
+          			Double[,] result = new Double[aRow, bCol];
+          
+          			MatrixHelper.MultiplyMatrices(matrixA.AsSpan(), matrixB.AsSpan(), aRow, bCol, n, result.AsSpan());
+          			return result;
+          		}
+          		private static void Generate(ScopedBuffer<String?> buff)
+          		{
+          			Console.WriteLine($"Span Size: {buff.Span.Length}");
+          			Console.WriteLine($"Buffer Size: {buff.FullLength}");
+          			Console.WriteLine($"In Stack: {buff.InStack}");
+          			Console.WriteLine(
+          				$"Components: {String.Join(", ", buff.BufferMetadata?.Select(c => c.Size) ?? Enumerable.Empty<UInt16>())}");
+          
+          			for (Int32 i = 0; i < buff.Span.Length; i++)
+          				buff.Span[i] = $"Index: {i} Value: {Guid.NewGuid()}";
+          
+          			Program.Print(buff.Span);
+          			Program.CollectGarbage();
+          			Program.Print(buff.Span);
+          		}
+          		private static void CollectGarbage()
+          		{
+          			Console.WriteLine("Begin GC.Collect()");
+          			GC.Collect();
+          			try
+          			{
+          				GC.WaitForFullGCComplete();
+          			}
+          			catch (NotImplementedException)
+          			{
+          				Console.WriteLine("**Unable to call GC.WaitForFullGCComplete()**");
+          			}
+          			Console.WriteLine("End GC.Collect()");
+          		}
+          		private static void Print(Double[,] matrix)
+          		{
+          			if (matrix.Rank != 2)
+          				throw new InvalidOperationException("Invalid matrix.");
+          			if (matrix.GetLength(0) <= 0 || matrix.GetLength(0) <= 0) return;
+          			MatrixHelper.PrintMatrix(matrix.AsSpan(), matrix.GetLength(0), matrix.GetLength(1));
+          		}
+          		private static void Print(ReadOnlySpan<String?> span)
+          		{
+          			foreach (ref readonly String? str in span)
+          				Console.WriteLine(str);
+          		}
+          		private static void Print(IMutableReference<Guid> uuid)
+          		{
+          			Program.CollectGarbage();
+          			ref Guid refU = ref uuid.Reference;
+          			Console.WriteLine(
+          				$"Address: 0x{refU.AsBytes().GetUnsafeIntPtr().ToString("X")} Wrapper: {uuid.Value} Ref: {uuid.Reference}");
+          		}
+          		private static void Print<T>(in IFixedContext<T> ctx)
+          		{
+          			Console.Write($"Address: 0x{ctx.Pointer.ToString("X")} Items: " + ctx.Values.Length);
+          			foreach (T value in ctx.Values)
+          				Console.Write($"{value} ");
+          			Console.WriteLine("");
+          		}
+          
+          		private static String GetName(this Architecture architecture)
+          			=> architecture switch
+          			{
+          				Architecture.X86 => nameof(Architecture.X86),
+          				Architecture.X64 => nameof(Architecture.X64),
+          				Architecture.Arm => nameof(Architecture.Arm),
+          				Architecture.Arm64 => nameof(Architecture.Arm64),
+          #if NET5_0_OR_GREATER
+          				Architecture.Wasm => nameof(Architecture.Wasm),
+          #endif
+          #if NET6_0_OR_GREATER
+          				Architecture.S390x => nameof(Architecture.S390x),
+          #endif
+          #if NET7_0_OR_GREATER
+          				Architecture.LoongArch64 => nameof(Architecture.LoongArch64),
+          				Architecture.Armv6 => nameof(Architecture.Armv6),
+          				Architecture.Ppc64le => nameof(Architecture.Ppc64le),
+          #endif
+          #if NET9_0_OR_GREATER
+          				Architecture.RiscV64 => nameof(Architecture.RiscV64),
+          #endif
+          				_ => architecture.ToString(),
+          			};
+          
+          		private class SerializableMessage<T>
+          			where T : class, IEquatable<String>, IEquatable<T>, IComparable<String>, IComparable<T>
+          		{
+          			public T? Title { get; set; }
+          			public T? Message { get; set; }
+          
+          			public override String ToString()
+          				=> $"{{ Title: {this.Title?.ToString() ?? "null"}, Message: {this.Message?.ToString() ?? ""} }}";
+          		}
+          
+          		private static class ConvertHelper
+          		{
+          			public static SerializableMessage<String> Convert(SerializableMessage<CString> value)
+          #if !NETCOREAPP
+          			=> new SerializableMessage<String>
+          			{
+          				Title = value.Title?.ToString(), Message = value.Message?.ToString(),
+          			};
+          #else
+          			{
+          				String serialized = JsonSerializer.Serialize(value);
+          				return JsonSerializer.Deserialize<SerializableMessage<String>>(serialized)!;
+          			}
+          #endif
+          			public static SerializableMessage<CString> Convert(SerializableMessage<String> value)
+          #if !NETCOREAPP
+          			=> new SerializableMessage<CString> { Title = (CString?)value.Title, Message = (CString?)value.Message, };
+          #else
+          			{
+          				String serialized = JsonSerializer.Serialize(value);
+          				return JsonSerializer.Deserialize<SerializableMessage<CString>>(serialized)!;
+          			}
+          #endif
+          			public static String?[] Convert(CStringSequence sequence)
+          			{
+          #if NETCOREAPP
+          				String serialized = JsonSerializer.Serialize(sequence);
+          				return JsonSerializer.Deserialize<String?[]>(serialized)!;
+          #else
+          			String?[] result = new String?[sequence.Count];
+          			Int32 index = 0;
+          			foreach (ReadOnlySpan<Byte> utf8Text in sequence.CreateView())
+          			{
+          				result[index] = !Unsafe.IsNullRef(ref MemoryMarshal.GetReference(utf8Text)) ?
+          					Encoding.UTF8.GetString(utf8Text) :
+          					default;
+          				index++;
+          			}
+          			return result;
+          #endif
+          			}
+          			public static CStringSequence Convert(params String?[] sequence)
+          #if !NETCOREAPP
+          			=> new CStringSequence(sequence);
+          #else
+          			{
+          				String serialized = JsonSerializer.Serialize(sequence);
+          				return JsonSerializer.Deserialize<CStringSequence>(serialized)!;
+          			}
+          #endif
+          		}
+          
+          		private class ArrayWrapper<T> : IEnumerableSequence<T>, IMutableWrapper<T[]>
+          		{
+          			public T[] Value { get; set; } = Array.Empty<T>();
+          
+          			public Int32 GetSize() => this.Value.Length;
+          			public T GetItem(Int32 index) => this.Value[index];
+          		}
+          
+          		private static class MatrixHelper
+          		{
+          			private const Double epsilon = 1e-12;
+          
+          			public static readonly Double[,] EmptyMatrix = new Double[0, 0];
+          
+          			public static Double GetDeterminant(ReadOnlySpan<Double> matrix, Int32 n)
+          			{
+          				Double[]? array = default;
+          				Span<Double> tempMatrix = n > 4 ?
+          					(array = ArrayPool<Double>.Shared.Rent(matrix.Length)).AsSpan()[..matrix.Length] :
+          					stackalloc Double[matrix.Length];
+          				try
+          				{
+          					matrix.CopyTo(tempMatrix);
+          
+          					Double det = 1;
+          					Int32 swaps = 0;
+          
+          					for (Int32 row = 0; row < n; row++)
+          					{
+          						Double pivot = MatrixHelper.GetPivot(tempMatrix, n, false, row, out Int32 maxRow);
+          
+          						if (Math.Abs(pivot) < MatrixHelper.epsilon)
+          							return 0;
+          
+          						swaps += MatrixHelper.SwapRow(tempMatrix, n, row, maxRow) ? 1 : 0;
+          
+          						for (Int32 k = row + 1; k < n; k++)
+          						{
+          							Double factor = tempMatrix[k * n + row] / tempMatrix[row * n + row];
+          							for (Int32 j = row; j < n; j++)
+          								tempMatrix[k * n + j] -= factor * tempMatrix[row * n + j];
+          						}
+          					}
+          
+          					for (Int32 i = 0; i < n; i++)
+          						det *= tempMatrix[i * n + i];
+          					if (swaps % 2 != 0) det = -det;
+          					return det;
+          				}
+          				finally
+          				{
+          					if (array is not null)
+          						ArrayPool<Double>.Shared.Return(array);
+          				}
+          			}
+          			public static Double GetDeterminant(ReadOnlySpan<Double> matrix, Int32 n, out Double[,] inverse)
+          			{
+          				Double[]? array = default;
+          				Span<Double> augmented = n > 4 ?
+          					(array = ArrayPool<Double>.Shared.Rent(2 * matrix.Length)).AsSpan()[..(2 * matrix.Length)] :
+          					stackalloc Double[2 * matrix.Length];
+          				try
+          				{
+          					Double determinant = 1.0;
+          					Int32 swaps = 0;
+          
+          					MatrixHelper.FillAugmented(matrix, n, augmented);
+          					for (Int32 row = 0; row < n; row++)
+          					{
+          						Double pivot = MatrixHelper.GetPivot(augmented, n, true, row, out Int32 maxRow);
+          						if (Math.Abs(pivot) < MatrixHelper.epsilon)
+          						{
+          							inverse = MatrixHelper.EmptyMatrix;
+          							return 0;
+          						}
+          
+          						determinant *= pivot;
+          						swaps += MatrixHelper.SwapRow(augmented, 2 * n, row, maxRow) ? 1 : 0;
+          						MatrixHelper.NormalizeRow(augmented, n, row, pivot);
+          						MatrixHelper.RowReduction(augmented, n, row);
+          					}
+          
+          					inverse = new Double[n, n];
+          					if (swaps % 2 != 0)
+          						determinant = -determinant;
+          					MatrixHelper.CopyInverse(augmented, n, inverse.AsSpan());
+          					return determinant;
+          				}
+          				finally
+          				{
+          					if (array is not null)
+          						ArrayPool<Double>.Shared.Return(array);
+          				}
+          			}
+          			public static void MultiplyMatrices(ReadOnlySpan<Double> matrixA, ReadOnlySpan<Double> matrixB, Int32 aRow,
+          				Int32 bCol, Int32 n, Span<Double> result)
+          			{
+          				for (Int32 row = 0; row < aRow; row++)
+          				for (Int32 aCol = 0; aCol < bCol; aCol++)
+          				{
+          					Double sum = 0;
+          					for (Int32 col = 0; col < n; col++)
+          						sum += matrixA[row * n + col] * matrixB[col * bCol + aCol];
+          					result[row * bCol + aCol] = sum;
+          				}
+          			}
+          
+          			private static void FillAugmented(ReadOnlySpan<Double> matrix, Int32 n, Span<Double> augmented)
+          			{
+          				// [A | I]
+          				for (Int32 row = 0; row < n; row++)
+          				for (Int32 col = 0; col < n; col++)
+          					(augmented[row * 2 * n + col], augmented[row * 2 * n + col + n]) =
+          						(matrix[row * n + col], row == col ? 1.0 : 0.0);
+          			}
+          			private static void CopyInverse(Span<Double> augmented, Int32 n, Span<Double> inverseAsSpan)
+          			{
+          				for (Int32 i = 0; i < n; i++)
+          				for (Int32 j = 0; j < n; j++)
+          					inverseAsSpan[i * n + j] = augmented[i * 2 * n + j + n];
+          			}
+          			private static void NormalizeRow(Span<Double> augmented, Int32 n, Int32 row, Double pivot)
+          			{
+          				for (Int32 col = 0; col < 2 * n; col++)
+          					augmented[row * 2 * n + col] /= pivot;
+          			}
+          			private static void RowReduction(Span<Double> augmented, Int32 n, Int32 normalizedRow)
+          			{
+          				for (Int32 row = 0; row < n; row++)
+          				{
+          					if (row == normalizedRow) continue;
+          					Double factor = augmented[row * 2 * n + normalizedRow];
+          					for (Int32 col = 0; col < 2 * n; col++)
+          						augmented[row * 2 * n + col] -= factor * augmented[normalizedRow * 2 * n + col];
+          				}
+          			}
+          			private static Double GetPivot(ReadOnlySpan<Double> matrix, Int32 n, Boolean isAugmented, Int32 currentRow,
+          				out Int32 maxRow)
+          			{
+          				maxRow = currentRow;
+          
+          				Int32 multiplier = isAugmented ? 2 : 1;
+          				for (Int32 row = currentRow + 1; row < n; row++)
+          					if (Math.Abs(matrix[row * multiplier * n + currentRow]) >
+          					    Math.Abs(matrix[maxRow * multiplier * n + currentRow]))
+          						maxRow = row;
+          				return matrix[maxRow * multiplier * n + currentRow];
+          			}
+          			public static void PrintMatrix(ReadOnlySpan<Double> matrix, Int32 nRow, Int32 nCol)
+          			{
+          				Int32 addCol = (matrix.Length - nRow * nCol) / nRow;
+          				StringBuilder? strBuild = addCol > 0 ? new StringBuilder() : default;
+          				for (Int32 row = 0; row < nRow; row++)
+          				{
+          					strBuild?.Append("\t|\t");
+          					for (Int32 col = 0; col < nCol; col++)
+          					{
+          						Console.Write($"{matrix[row * (nCol + addCol) + col]:0.####}\t");
+          						if (strBuild is null || col >= addCol) continue;
+          						strBuild.Append($"{matrix[row * (nCol + addCol) + col + nRow]:0.####}\t");
+          					}
+          					Console.WriteLine(strBuild?.ToString());
+          					strBuild?.Clear();
+          				}
+          			}
+          			private static Boolean SwapRow(Span<Double> matrix, Int32 nCol, Int32 row1, Int32 row2)
+          			{
+          				if (row1 == row2) return false;
+          				for (Int32 col = 0; col < nCol; col++)
+          					(matrix[row1 * nCol + col], matrix[row2 * nCol + col]) = (matrix[row2 * nCol + col],
+          						matrix[row1 * nCol + col]);
+          				return true;
+          			}
+          		}
+          
+          		private static class RuntimeHelper
+          		{
+          			private const String literalName =
+          #if !NETCOREAPP
+          				"Read-only byte span"
+          #else
+          					"UTF-8 literal"
+          #endif
+          				;
+          			private static ReadOnlySpan<Byte> GetLiteralNull()
+          #if !NETCOREAPP
+          		=> (new Byte[] { 110, 117, 108, 108, 0, }).AsSpan()[..^1];
+          #else
+          				=> "null"u8;
+          #endif
+          
+          			public static readonly CString Null = new(RuntimeHelper.GetLiteralNull);
+          			public static readonly Random Shared = new Random();
+          
+          			public static void PrintRuntimeInfo()
+          			{
+          				const String runtimeName =
+          #if NET9_0_OR_GREATER
+          					".NET 9.0"
+          #elif NET8_0_OR_GREATER
+          					".NET 8.0"
+          #elif NET7_0_OR_GREATER
+          					".NET 7.0"
+          #elif NET6_0_OR_GREATER
+          					".NET 6.0"
+          #elif NET5_0_OR_GREATER
+          					".NET 5.0"
+          #elif NETCOREAPP3_1
+          					".NET Core 3.1"
+          #elif NETCOREAPP3_0
+          						".NET Core 3.0"
+          #else
+          					"Mono"
+          #endif
+          #if REFLECTION_FREE
+          					+ " Reflection-free"
+          #endif
+          #if NATIVE_AOT
+          					+ " NativeAOT"
+          #endif
+          					;
+          				Console.WriteLine("========== Application for " + runtimeName + " ==========");
+          				RuntimeHelper.PrintDomainInfo();
+          				Console.WriteLine("========== Runtime information ==========");
+          				Console.WriteLine($"Number of Cores: {Environment.ProcessorCount}");
+          				Console.WriteLine($"Is Little-Endian: {BitConverter.IsLittleEndian}");
+          				Console.WriteLine($"OS: {RuntimeInformation.OSDescription}");
+          				Console.WriteLine($"OS Arch: {RuntimeInformation.OSArchitecture.GetName()}");
+          				Console.WriteLine($"OS Version: {Environment.OSVersion}");
+          				Console.WriteLine($"Computer: {Environment.MachineName}");
+          				Console.WriteLine($"User: {Environment.UserName}");
+          				Console.WriteLine($"UI Culture: {CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}");
+          				Console.WriteLine($"System Path: {Environment.SystemDirectory}");
+          				Console.WriteLine($"Current Path: {Environment.CurrentDirectory}");
+          				Console.WriteLine($"Process Arch: {RuntimeInformation.ProcessArchitecture.GetName()}");
+          				try
+          				{
+          					Console.WriteLine($"Framework Version: {Environment.Version}");
+          					Console.WriteLine($"Runtime Path: {RuntimeEnvironment.GetRuntimeDirectory()}");
+          					Console.WriteLine($"Runtime Version: {RuntimeEnvironment.GetSystemVersion()}");
+          				}
+          				catch (Exception)
+          				{
+          					Console.WriteLine("**Unable to retrieve runtime info**");
+          				}
+          				Console.WriteLine("========== Rxmxnx.PInvoke Runtime information ==========");
+          				Console.WriteLine($"Native AOT: {AotInfo.IsNativeAot}");
+          				Console.WriteLine($"Reflection Enabled: {!AotInfo.IsReflectionDisabled}");
+          				Console.WriteLine($"Pointer Size: {NativeUtilities.PointerSize}");
+          				Console.WriteLine($"Globalization-Invariant Mode: {NativeUtilities.GlobalizationInvariantModeEnabled}");
+          				Console.WriteLine($"UI Iso639-1: {NativeUtilities.UserInterfaceIso639P1}");
+          				Console.WriteLine($"Buffer AutoComposition Enabled: {BufferManager.BufferAutoCompositionEnabled}");
+          				Console.WriteLine($"{RuntimeHelper.literalName}: {RuntimeHelper.GetLiteralNull().IsLiteral()}");
+          				Console.WriteLine($"String constant: {RuntimeHelper.literalName.AsSpan().IsLiteral()}");
+          			}
+          			private static void PrintDomainInfo()
+          			{
+          				try
+          				{
+          					ReadOnlySpan<Assembly> span = AppDomain.CurrentDomain.GetAssemblies();
+          					foreach (Assembly assembly in span)
+          						Console.WriteLine(assembly.FullName + " " + assembly.Location);
+          				}
+          				catch (Exception)
+          				{
+          					Console.WriteLine("**Unable to retrieve domain info**");
+          				}
+          			}
+          		}
+          	}
           }' > Program.cs
       - name: Build Package-Trimmed-Executables (PackageTrimmedAssembly)
         working-directory: ./tmpProject/PackageTrimmedAssembly
