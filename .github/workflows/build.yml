@@ -81,7 +81,7 @@ jobs:
         run: |
           echo '<Project>' > Directory.Build.props
           echo '  <PropertyGroup>' >> Directory.Build.props
-          echo '    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>' >> Directory.Build.props
+          echo '    <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>' >> Directory.Build.props
           echo '  </PropertyGroup>' >> Directory.Build.props
           echo '  <ItemGroup>' >> Directory.Build.props
           echo '    <RuntimeHostConfigurationOption Condition="'"'"'$(DisableBufferAutoComposition)'"'"' == '"'"'true'"'"'" Include="PInvoke.DisableBufferAutoComposition" Value="true" Trim="true" />' >> Directory.Build.props
@@ -109,12 +109,24 @@ jobs:
           using System.Globalization;
           using System.Runtime.InteropServices;
           using System.Text;
+          
+          using Rxmxnx.PInvoke.Buffers;
           #if NET8_0_OR_GREATER
           using System.Text.Json.Serialization;
           #endif
           
+          #if NET5_0_OR_GREATER
+          using System.Diagnostics.CodeAnalysis;
+          #endif
+          
           namespace Rxmxnx.PInvoke.ApplicationTest
           {
+          #if NET5_0_OR_GREATER
+          	[UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "This is AOT Safe")]
+          	[UnconditionalSuppressMessage("Trimming", "IL2091", Justification = "This is AOT Safe")]
+          	[UnconditionalSuppressMessage("SingleFile", "IL3000", Justification = "Ignore")]
+          	[UnconditionalSuppressMessage("AOT", "IL3050", Justification = "This is AOT Safe")]
+          #endif
           #if !NET8_0_OR_GREATER
           	internal static class Program
           #else
@@ -143,48 +155,93 @@ jobs:
           			Program.Print(Program.Multiply(mxm, mxn));
           			Console.WriteLine("=== 2x2 -> [] ===");
           			mxn.AsSpan().WithSafeFixed(Program.Print);
-          			Console.WriteLine("=== Stack alloc String ===");
-          			BufferManager.Alloc<String?>(13, Program.Generate);
+          			Console.WriteLine("=== Stack allocations ===");
+          			Action registerMetadataObject =
+          				Program
+          					.GetRegister<Composite<Atomic<Object>, Composite<Atomic<Object>, Atomic<Object>, Object>,
+          						Object>>();
+          			Action registerMetadataValue = Program
+          				.GetRegister<
+          					Composite<Atomic<ValueTuple<Int32, String>>,
+          						Composite<Atomic<ValueTuple<Int32, String>>, Atomic<ValueTuple<Int32, String>>,
+          							ValueTuple<Int32, String>>, ValueTuple<Int32, String>>, ValueTuple<Int32, String>>();
+          			Action registerMetadataNullableValue = Program
+          				.GetNullableRegister<
+          					Composite<Atomic<ValueTuple<Int32, String>?>,
+          						Composite<Atomic<ValueTuple<Int32, String>?>, Atomic<ValueTuple<Int32, String>?>,
+          							ValueTuple<Int32, String>?>, ValueTuple<Int32, String>?>, ValueTuple<Int32, String>>();
+          
+          			Console.WriteLine("=== Stack alloc [Int32] ===");
+          			BufferManager.Alloc<Int32>(3, Program.Generate);
+          			BufferManager.Alloc<Int32>(3, Program.Generate);
+          			BufferManager.Alloc<Int32>(5, Program.Generate);
+          			Console.WriteLine("=== Stack alloc [Double?] ===");
+          			BufferManager.Alloc<Double?>(3, Program.Generate);
+          			BufferManager.Alloc<Double?>(3, Program.Generate);
+          			BufferManager.Alloc<Double?>(5, Program.Generate);
+          			Console.WriteLine("=== Stack alloc [String] ===");
+          			BufferManager.Alloc<String?>(3, Program.Generate);
+          			if (!BufferManager.BufferAutoCompositionEnabled)
+          			{
+          				registerMetadataObject();
+          				BufferManager.Alloc<String?>(3, Program.Generate);
+          			}
+          			BufferManager.Alloc<String?>(5, Program.Generate);
+          			Console.WriteLine("=== Stack alloc [(Int32, String)] ===");
+          			BufferManager.Alloc<ValueTuple<Int32, String>>(3, Program.Generate);
+          			if (!BufferManager.BufferAutoCompositionEnabled)
+          			{
+          				registerMetadataValue();
+          				BufferManager.Alloc<ValueTuple<Int32, String>>(3, Program.Generate);
+          			}
+          			BufferManager.Alloc<ValueTuple<Int32, String>>(5, Program.Generate);
+          			Console.WriteLine("=== Stack alloc [(Int32, String)?] ===");
+          			BufferManager.Alloc<ValueTuple<Int32, String>?>(3, Program.Generate);
+          			if (!BufferManager.BufferAutoCompositionEnabled)
+          			{
+          				registerMetadataNullableValue();
+          				BufferManager.Alloc<ValueTuple<Int32, String>?>(3, Program.Generate);
+          			}
+          			BufferManager.Alloc<ValueTuple<Int32, String>?>(5, Program.Generate);
           
           #if NETCOREAPP
           			Console.WriteLine("=== System.Text.Json ===");
           #else
           			Console.WriteLine("=== UTF-8 / UTF-16 Convert ===");
           #endif
-                    CStringSequence sequence = CStringSequence.Empty;
-                    try
-                    {
-                        SerializableMessage<String> serializable = ConvertHelper.Convert(new SerializableMessage<CString>
-                        {
-                            Title =
-                                (CString)
-                                "This is not a message",
-                            Message =
-                                (CString)
-                                "This is a UTF-8 message for you.",
-                        });
-                        Console.WriteLine(ConvertHelper.Convert(serializable));
-                        sequence = ConvertHelper.Convert(
-                            ConvertHelper.Convert(new CStringSequence("String0", "String1", null, "String3", "", "String5")));
-                    }
-                    catch(Exception ex) 
-                    {
-                        Console.WriteLine($"**Unable to perform conversion: {ex.Message}**");
-                    }
+          			CStringSequence sequence = new CStringSequence("String0", "String1", null, "String3", "", "String5");
+          			try
+          			{
+          				SerializableMessage<String> serializable = ConvertHelper.Convert(new SerializableMessage<CString>
+          				{
+          					Title = (CString)"This is not a message",
+          					Message = (CString)"This is a UTF-8 message for you.",
+          				});
+          				Console.WriteLine(ConvertHelper.Convert(serializable));
+          				String initialBuffer = sequence.ToString();
+          				sequence = ConvertHelper.Convert(ConvertHelper.Convert(sequence));
+          				Console.WriteLine(
+          					$"Buffer Equality: {initialBuffer == sequence.ToString()}\tBuffer Instance: {Object.ReferenceEquals(initialBuffer, sequence.ToString())}");
+          			}
+          			catch (Exception ex)
+          			{
+          				Console.WriteLine($"**Unable to perform conversion: {ex.Message}**");
+          			}
           			Console.WriteLine("=== Enumerable sequences ===");
           			foreach (CString value in sequence)
           				Console.WriteLine(!value.IsZero ? value : RuntimeHelper.Null);
           			foreach (Byte utf8U in RuntimeHelper.Null)
           				Console.Write((Char)utf8U);
+          			Console.WriteLine("");
           			ArrayWrapper<Int32> values = new ArrayWrapper<Int32> { Value = new Int32[] { 1, 2, 3, -1, -2, -3, }, };
           			foreach (Int32 val in values)
           				Console.WriteLine(val);
-                    if (sequence.Count > 0)
-          			   Console.WriteLine("=== UTF-8 Enumerable ===");
+          			if (sequence.Count > 0)
+          				Console.WriteLine("=== UTF-8 Enumerable ===");
           			foreach (ReadOnlySpan<Byte> utf8 in sequence.CreateView())
           				Console.WriteLine($"Address: 0x{utf8.GetUnsafeIntPtr().ToString("X")}\t" +
           				                  $"Length: {utf8.Length}\tBytes: {Convert.ToBase64String(utf8)}\t" +
-          				                  $"Text:{Encoding.UTF8.GetString(utf8)}.");
+          				                  $"Text:{Encoding.UTF8.GetString(utf8)}");
           			Console.WriteLine("=== Referenceable Wrapper ===");
           			IMutableReference<Guid> uuid = IMutableReference.Create(Guid.NewGuid());
           
@@ -249,19 +306,57 @@ jobs:
           		}
           		private static void Generate(ScopedBuffer<String?> buff)
           		{
-          			Console.WriteLine($"Span Size: {buff.Span.Length}");
-          			Console.WriteLine($"Buffer Size: {buff.FullLength}");
-          			Console.WriteLine($"In Stack: {buff.InStack}");
-          			Console.WriteLine(
-          				$"Components: {String.Join(", ", buff.BufferMetadata?.Select(c => c.Size) ?? Enumerable.Empty<UInt16>())}");
-          
+          			Program.PrintBufferInfo(buff);
           			for (Int32 i = 0; i < buff.Span.Length; i++)
-          				buff.Span[i] = $"Index: {i}\tValue: {Guid.NewGuid()}";
+          				buff.Span[i] = $"Index: {i} Value: {Guid.NewGuid()}";
           
-          			Program.Print(buff.Span);
+          			Program.Print<String?>(buff.Span);
           			Program.CollectGarbage();
-          			Program.Print(buff.Span);
+          			Program.Print<String?>(buff.Span);
           		}
+          		private static void Generate(ScopedBuffer<Int32> buff)
+          		{
+          			Program.PrintBufferInfo(buff);
+          			for (Int32 i = 0; i < buff.Span.Length; i++)
+          				buff.Span[i] = RuntimeHelper.Shared.Next();
+          
+          			Program.Print<Int32>(buff.Span);
+          			Program.CollectGarbage();
+          			Program.Print<Int32>(buff.Span);
+          		}
+          		private static void Generate(ScopedBuffer<Double?> buff)
+          		{
+          			Program.PrintBufferInfo(buff);
+          			for (Int32 i = 0; i < buff.Span.Length; i++)
+          				buff.Span[i] = RuntimeHelper.Shared.Next(0, 5) >= 2 ? RuntimeHelper.Shared.NextDouble() : null;
+          
+          			Program.Print<Double?>(buff.Span);
+          			Program.CollectGarbage();
+          			Program.Print<Double?>(buff.Span);
+          		}
+          		private static void Generate(ScopedBuffer<ValueTuple<Int32, String>> buff)
+          		{
+          			Program.PrintBufferInfo(buff);
+          			for (Int32 i = 0; i < buff.Span.Length; i++)
+          				buff.Span[i] = (RuntimeHelper.Shared.Next(), $"Index: {i} Value: {Guid.NewGuid()}");
+          
+          			Program.Print<ValueTuple<Int32, String>>(buff.Span);
+          			Program.CollectGarbage();
+          			Program.Print<ValueTuple<Int32, String>>(buff.Span);
+          		}
+          		private static void Generate(ScopedBuffer<ValueTuple<Int32, String>?> buff)
+          		{
+          			Program.PrintBufferInfo(buff);
+          			for (Int32 i = 0; i < buff.Span.Length; i++)
+          				buff.Span[i] = RuntimeHelper.Shared.Next(0, 5) >= 2 ?
+          					(RuntimeHelper.Shared.Next(), $"Index: {i} Value: {Guid.NewGuid()}") :
+          					null;
+          
+          			Program.Print<ValueTuple<Int32, String>?>(buff.Span);
+          			Program.CollectGarbage();
+          			Program.Print<ValueTuple<Int32, String>?>(buff.Span);
+          		}
+          
           		private static void CollectGarbage()
           		{
           			Console.WriteLine("Begin GC.Collect()");
@@ -283,10 +378,10 @@ jobs:
           			if (matrix.GetLength(0) <= 0 || matrix.GetLength(0) <= 0) return;
           			MatrixHelper.PrintMatrix(matrix.AsSpan(), matrix.GetLength(0), matrix.GetLength(1));
           		}
-          		private static void Print(ReadOnlySpan<String?> span)
+          		private static void Print<T>(ReadOnlySpan<T> span)
           		{
-          			foreach (ref readonly String? str in span)
-          				Console.WriteLine(str);
+          			foreach (ref readonly T item in span)
+          				Console.WriteLine(item);
           		}
           		private static void Print(IMutableReference<Guid> uuid)
           		{
@@ -297,10 +392,41 @@ jobs:
           		}
           		private static void Print<T>(in IFixedContext<T> ctx)
           		{
-          			Console.Write($"Address: 0x{ctx.Pointer.ToString("X")}\tItems: {ctx.Values.Length}\t");
+          			Console.Write($"Address: 0x{ctx.Pointer.ToString("X")}\tItems: {ctx.Values.Length} ");
           			foreach (T value in ctx.Values)
           				Console.Write($"{value} ");
           			Console.WriteLine("");
+          		}
+          		private static void PrintBufferInfo<T>(ScopedBuffer<T> buff)
+          		{
+          			Console.WriteLine($"Span Size: {buff.Span.Length}\t" + $"Buffer Size: {buff.FullLength}\t" +
+          			                  $"In Stack: {buff.InStack}\t" +
+          			                  $"Components: {String.Join(", ", buff.BufferMetadata?.Select(c => c.Size) ?? Enumerable.Empty<UInt16>())}");
+          		}
+          		private static Action GetRegister<TBuffer>() where TBuffer : struct, IManagedBinaryBuffer<Object>
+          		{
+          			return static () =>
+          			{
+          				BufferManager.Register<TBuffer>();
+          				Console.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
+          			};
+          		}
+          		private static Action GetRegister<TBuffer, T>() where TBuffer : struct, IManagedBinaryBuffer<T> where T : struct
+          		{
+          			return static () =>
+          			{
+          				BufferManager.Register<T, TBuffer>();
+          				Console.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
+          			};
+          		}
+          		private static Action GetNullableRegister<TBuffer, T>() where TBuffer : struct, IManagedBinaryBuffer<T?>
+          			where T : struct
+          		{
+          			return static () =>
+          			{
+          				BufferManager.RegisterNullable<T, TBuffer>();
+          				Console.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
+          			};
           		}
           
           		private static String GetName(this Architecture architecture)
@@ -327,7 +453,7 @@ jobs:
           				_ => architecture.ToString(),
           			};
           
-          		private class SerializableMessage<T>
+          		public class SerializableMessage<T>
           			where T : class, IEquatable<String>, IEquatable<T>, IComparable<String>, IComparable<T>
           		{
           			public T? Title { get; set; }
@@ -341,23 +467,26 @@ jobs:
           		{
           			public static SerializableMessage<String> Convert(SerializableMessage<CString> value)
           #if !NETCOREAPP
-          			=> new SerializableMessage<String>
-          			{
-          				Title = value.Title?.ToString(), Message = value.Message?.ToString(),
-          			};
+                    	=> new SerializableMessage<String>
+                    	{
+                    		Title = value.Title?.ToString(), Message = value.Message?.ToString(),
+                    	};
           #else
           			{
           				String serialized = JsonSerializer.Serialize(value, AppJsonSerializerContext.SerializerOptions);
-          				return JsonSerializer.Deserialize<SerializableMessage<String>>(serialized, AppJsonSerializerContext.SerializerOptions)!;
+          				return JsonSerializer.Deserialize<SerializableMessage<String>>(
+          					serialized, AppJsonSerializerContext.SerializerOptions)!;
           			}
           #endif
           			public static SerializableMessage<CString> Convert(SerializableMessage<String> value)
           #if !NETCOREAPP
-          			=> new SerializableMessage<CString> { Title = (CString?)value.Title, Message = (CString?)value.Message, };
+          				=> new SerializableMessage<CString> { Title = (CString?)value.Title, Message =
+          					(CString?)value.Message, };
           #else
           			{
           				String serialized = JsonSerializer.Serialize(value, AppJsonSerializerContext.SerializerOptions);
-          				return JsonSerializer.Deserialize<SerializableMessage<CString>>(serialized, AppJsonSerializerContext.SerializerOptions)!;
+          				return JsonSerializer.Deserialize<SerializableMessage<CString>>(
+          					serialized, AppJsonSerializerContext.SerializerOptions)!;
           			}
           #endif
           			public static String?[] Convert(CStringSequence sequence)
@@ -366,25 +495,26 @@ jobs:
           				String serialized = JsonSerializer.Serialize(sequence, AppJsonSerializerContext.SerializerOptions);
           				return JsonSerializer.Deserialize<String?[]>(serialized, AppJsonSerializerContext.SerializerOptions)!;
           #else
-          			String?[] result = new String?[sequence.Count];
-          			Int32 index = 0;
-          			foreach (ReadOnlySpan<Byte> utf8Text in sequence.CreateView())
-          			{
-          				result[index] = !Unsafe.IsNullRef(ref MemoryMarshal.GetReference(utf8Text)) ?
-          					Encoding.UTF8.GetString(utf8Text) :
-          					default;
-          				index++;
-          			}
-          			return result;
+                    		String?[] result = new String?[sequence.Count];
+                    		Int32 index = 0;
+                    		foreach (ReadOnlySpan<Byte> utf8Text in sequence.CreateView())
+                    		{
+                    			result[index] = !Unsafe.IsNullRef(ref MemoryMarshal.GetReference(utf8Text)) ?
+                    				Encoding.UTF8.GetString(utf8Text) :
+                    				default;
+                    			index++;
+                    		}
+                    		return result;
           #endif
           			}
           			public static CStringSequence Convert(params String?[] sequence)
           #if !NETCOREAPP
-          			=> new CStringSequence(sequence);
+          				=> new CStringSequence(sequence);
           #else
           			{
           				String serialized = JsonSerializer.Serialize(sequence, AppJsonSerializerContext.SerializerOptions);
-          				return JsonSerializer.Deserialize<CStringSequence>(serialized, AppJsonSerializerContext.SerializerOptions)!;
+          				return JsonSerializer.Deserialize<CStringSequence>(
+          					serialized, AppJsonSerializerContext.SerializerOptions)!;
           			}
           #endif
           		}
@@ -568,14 +698,14 @@ jobs:
           		{
           			private const String literalName =
           #if !NETCOREAPP
-          				"Read-only byte span"
+          					"Read-only byte span"
           #else
           					"UTF-8 literal"
           #endif
           				;
           			private static ReadOnlySpan<Byte> GetLiteralNull()
           #if !NETCOREAPP
-          		=> (new Byte[] { 110, 117, 108, 108, 0, }).AsSpan()[..^1];
+                    		=> (new Byte[] { 110, 117, 108, 108, 0, }).AsSpan()[..^1];
           #else
           				=> "null"u8;
           #endif
@@ -587,27 +717,27 @@ jobs:
           			{
           				const String runtimeName =
           #if NET9_0_OR_GREATER
-          					".NET 9.0"
+          						".NET 9.0"
           #elif NET8_0_OR_GREATER
-          					".NET 8.0"
+          						".NET 8.0"
           #elif NET7_0_OR_GREATER
-          					".NET 7.0"
+          						".NET 7.0"
           #elif NET6_0_OR_GREATER
-          					".NET 6.0"
+          						".NET 6.0"
           #elif NET5_0_OR_GREATER
-          					".NET 5.0"
+          						".NET 5.0"
           #elif NETCOREAPP3_1
-          					".NET Core 3.1"
+          						".NET Core 3.1"
           #elif NETCOREAPP3_0
           						".NET Core 3.0"
           #else
-          					"Mono"
+          						"Mono"
           #endif
           #if REFLECTION_FREE
-          					+ " Reflection-free"
+          						+ " Reflection-free"
           #endif
           #if NATIVE_AOT
-          					+ " NativeAOT"
+          						+ " NativeAOT"
           #endif
           					;
           				Console.WriteLine("========== Application for " + runtimeName + " ==========");
@@ -650,10 +780,11 @@ jobs:
           				{
           					ReadOnlySpan<Assembly> span = AppDomain.CurrentDomain.GetAssemblies();
           					foreach (Assembly assembly in span)
-                            {
-                                if (assembly == Assembly.GetExecutingAssembly()) continue;
-          						Console.WriteLine(assembly.FullName + " " + assembly.Location);
-                            }
+          					{
+          						if (assembly == Assembly.GetExecutingAssembly()) continue;
+          						Console.WriteLine(assembly.FullName +
+          						                  (!AotInfo.IsNativeAot ? $" {assembly.Location}" : String.Empty));
+          					}
           				}
           				catch (Exception)
           				{
@@ -664,24 +795,29 @@ jobs:
           
           #if NETCOREAPP
           #if NET8_0_OR_GREATER
-          		[JsonSourceGenerationOptions(WriteIndented = true, PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase, GenerationMode = JsonSourceGenerationMode.Serialization)]
-                [JsonSerializable(typeof(CString))]
-                [JsonSerializable(typeof(CStringSequence))]
-                [JsonSerializable(typeof(String[]))]
-                [JsonSerializable(typeof(SerializableMessage<CString>))]
-                [JsonSerializable(typeof(SerializableMessage<String>))]
-          		private partial class AppJsonSerializerContext : JsonSerializerContext
-          #else 
-          		private static class AppJsonSerializerContext 
+          		[JsonSerializable(typeof(String))]
+          		[JsonSerializable(typeof(CString))]
+          		[JsonSerializable(typeof(CStringSequence))]
+          		[JsonSerializable(typeof(String[]))]
+          		[JsonSerializable(typeof(SerializableMessage<CString>))]
+          		[JsonSerializable(typeof(SerializableMessage<String>))]
+          		public partial class AppJsonSerializerContext : JsonSerializerContext
+          #else
+          		public static class AppJsonSerializerContext
           #endif
           		{
           			public static JsonSerializerOptions SerializerOptions
           #if NET8_0_OR_GREATER
-          			   => AppJsonSerializerContext.Default.Options;
+          				=> AppJsonSerializerContext.Default.Options;
           #else
-          			   { get; } = new JsonSerializerOptions() { Converters = { new CString.JsonConverter(), new CStringSequence.JsonConverter(), }, };
+          			{
+          				get;
+          			} = new JsonSerializerOptions()
+          			{
+          				Converters = { new CString.JsonConverter(), new CStringSequence.JsonConverter(), },
+          			};
           #endif
-                }
+          		}
           #endif
           	}
           }' > Program.cs
