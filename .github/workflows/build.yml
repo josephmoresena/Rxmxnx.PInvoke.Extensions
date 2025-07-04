@@ -173,10 +173,8 @@ jobs:
           
           			Console.WriteLine("=== Stack alloc [Int32] ===");
           			BufferManager.Alloc<Int32>(3, Program.Generate);
-          			BufferManager.Alloc<Int32>(3, Program.Generate);
           			BufferManager.Alloc<Int32>(5, Program.Generate);
           			Console.WriteLine("=== Stack alloc [Double?] ===");
-          			BufferManager.Alloc<Double?>(3, Program.Generate);
           			BufferManager.Alloc<Double?>(3, Program.Generate);
           			BufferManager.Alloc<Double?>(5, Program.Generate);
           			Console.WriteLine("=== Stack alloc [String] ===");
