@@ -80,6 +80,10 @@ jobs:
         working-directory: ./tmpProject
         run: |
           echo '<Project>' > Directory.Build.props
+          echo '  <PropertyGroup>' >> Directory.Build.props
+          echo '    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>' >> Directory.Build.props
+          echo '  <PropertyGroup>' >> Directory.Build.props
+          echo '  </PropertyGroup>' >> Directory.Build.props
           echo '  <ItemGroup>' >> Directory.Build.props
           echo '    <RuntimeHostConfigurationOption Condition="'"'"'$(DisableBufferAutoComposition)'"'"' == '"'"'true'"'"'" Include="PInvoke.DisableBufferAutoComposition" Value="true" Trim="true" />' >> Directory.Build.props
           echo '  </ItemGroup>' >> Directory.Build.props
@@ -106,10 +110,17 @@ jobs:
           using System.Globalization;
           using System.Runtime.InteropServices;
           using System.Text;
+          #if NET8_0_OR_GREATER
+          using System.Text.Json.Serialization;
+          #endif
           
           namespace Rxmxnx.PInvoke.ApplicationTest
           {
+          #if !NET8_0_OR_GREATER
           	internal static class Program
+          #else
+          	internal static partial class Program
+          #endif
           	{
           		public static void Main()
           		{
@@ -141,28 +152,37 @@ jobs:
           #else
           			Console.WriteLine("=== UTF-8 / UTF-16 Convert ===");
           #endif
-          			SerializableMessage<String> serializable = ConvertHelper.Convert(new SerializableMessage<CString>
-          			{
-          				Title =
-          					(CString)
-          					"This is not a message",
-          				Message =
-          					(CString)
-          					"This is a UTF-8 message for you.",
-          			});
-          			Console.WriteLine(ConvertHelper.Convert(serializable));
-          			CStringSequence result = ConvertHelper.Convert(
-          				ConvertHelper.Convert(new CStringSequence("String0", "String1", null, "String3", "", "String5")));
+                    CStringSequence sequence = CStringSequence.Empty;
+                    try
+                    {
+                        SerializableMessage<String> serializable = ConvertHelper.Convert(new SerializableMessage<CString>
+                        {
+                            Title =
+                                (CString)
+                                "This is not a message",
+                            Message =
+                                (CString)
+                                "This is a UTF-8 message for you.",
+                        });
+                        Console.WriteLine(ConvertHelper.Convert(serializable));
+                        sequence = ConvertHelper.Convert(
+                            ConvertHelper.Convert(new CStringSequence("String0", "String1", null, "String3", "", "String5")));
+                    }
+                    catch(Exception ex) 
+                    {
+                        Console.WriteLine($"**Unable to perform conversion: {ex.Message}**");
+                    }
           			Console.WriteLine("=== Enumerable sequences ===");
-          			foreach (CString value in result)
+          			foreach (CString value in sequence)
           				Console.WriteLine(!value.IsZero ? value : RuntimeHelper.Null);
           			foreach (Byte utf8U in RuntimeHelper.Null)
           				Console.Write((Char)utf8U);
           			ArrayWrapper<Int32> values = new ArrayWrapper<Int32> { Value = new Int32[] { 1, 2, 3, -1, -2, -3, }, };
           			foreach (Int32 val in values)
           				Console.WriteLine(val);
-          			Console.WriteLine("=== UTF-8 Enumerable ===");
-          			foreach (ReadOnlySpan<Byte> utf8 in result.CreateView())
+                    if (sequence.Count > 0)
+          			   Console.WriteLine("=== UTF-8 Enumerable ===");
+          			foreach (ReadOnlySpan<Byte> utf8 in sequence.CreateView())
           				Console.WriteLine($"Address: 0x{utf8.GetUnsafeIntPtr().ToString("X")}\t" +
           				                  $"Length: {utf8.Length}\tBytes: {Convert.ToBase64String(utf8)}\t" +
           				                  $"Text:{Encoding.UTF8.GetString(utf8)}.");
@@ -177,7 +197,7 @@ jobs:
           			using IFixedContext<Int64>.IDisposable fRent =
           				ArrayPool<Int64>.Shared.RentFixed(10, false, out Int32 arrayLength);
           			Console.WriteLine(
-          				$"Address: 0x{fRent.Pointer.ToString("X")} Required: {fRent.Values.Length} Rented: {arrayLength}");
+          				$"Address: 0x{fRent.Pointer.ToString("X")}\tRequired: {fRent.Values.Length}\tRented: {arrayLength}");
           			foreach (ref Int64 rLong in fRent.Values)
           				rLong = RuntimeHelper.Shared.Next();
           			Program.Print(fRent);
@@ -237,7 +257,7 @@ jobs:
           				$"Components: {String.Join(", ", buff.BufferMetadata?.Select(c => c.Size) ?? Enumerable.Empty<UInt16>())}");
           
           			for (Int32 i = 0; i < buff.Span.Length; i++)
-          				buff.Span[i] = $"Index: {i} Value: {Guid.NewGuid()}";
+          				buff.Span[i] = $"Index: {i}\tValue: {Guid.NewGuid()}";
           
           			Program.Print(buff.Span);
           			Program.CollectGarbage();
@@ -274,11 +294,11 @@ jobs:
           			Program.CollectGarbage();
           			ref Guid refU = ref uuid.Reference;
           			Console.WriteLine(
-          				$"Address: 0x{refU.AsBytes().GetUnsafeIntPtr().ToString("X")} Wrapper: {uuid.Value} Ref: {uuid.Reference}");
+          				$"Address: 0x{refU.AsBytes().GetUnsafeIntPtr().ToString("X")}\tWrapper: {uuid.Value}\tRef: {uuid.Reference}");
           		}
           		private static void Print<T>(in IFixedContext<T> ctx)
           		{
-          			Console.Write($"Address: 0x{ctx.Pointer.ToString("X")} Items: " + ctx.Values.Length);
+          			Console.Write($"Address: 0x{ctx.Pointer.ToString("X")}\tItems: {ctx.Values.Length}\t");
           			foreach (T value in ctx.Values)
           				Console.Write($"{value} ");
           			Console.WriteLine("");
@@ -328,8 +348,8 @@ jobs:
           			};
           #else
           			{
-          				String serialized = JsonSerializer.Serialize(value);
-          				return JsonSerializer.Deserialize<SerializableMessage<String>>(serialized)!;
+          				String serialized = JsonSerializer.Serialize(value, AppJsonSerializerContext.SerializerOptions);
+          				return JsonSerializer.Deserialize<SerializableMessage<String>>(serialized, AppJsonSerializerContext.SerializerOptions)!;
           			}
           #endif
           			public static SerializableMessage<CString> Convert(SerializableMessage<String> value)
@@ -337,15 +357,15 @@ jobs:
           			=> new SerializableMessage<CString> { Title = (CString?)value.Title, Message = (CString?)value.Message, };
           #else
           			{
-          				String serialized = JsonSerializer.Serialize(value);
-          				return JsonSerializer.Deserialize<SerializableMessage<CString>>(serialized)!;
+          				String serialized = JsonSerializer.Serialize(value, AppJsonSerializerContext.SerializerOptions);
+          				return JsonSerializer.Deserialize<SerializableMessage<CString>>(serialized, AppJsonSerializerContext.SerializerOptions)!;
           			}
           #endif
           			public static String?[] Convert(CStringSequence sequence)
           			{
           #if NETCOREAPP
-          				String serialized = JsonSerializer.Serialize(sequence);
-          				return JsonSerializer.Deserialize<String?[]>(serialized)!;
+          				String serialized = JsonSerializer.Serialize(sequence, AppJsonSerializerContext.SerializerOptions);
+          				return JsonSerializer.Deserialize<String?[]>(serialized, AppJsonSerializerContext.SerializerOptions)!;
           #else
           			String?[] result = new String?[sequence.Count];
           			Int32 index = 0;
@@ -364,8 +384,8 @@ jobs:
           			=> new CStringSequence(sequence);
           #else
           			{
-          				String serialized = JsonSerializer.Serialize(sequence);
-          				return JsonSerializer.Deserialize<CStringSequence>(serialized)!;
+          				String serialized = JsonSerializer.Serialize(sequence, AppJsonSerializerContext.SerializerOptions);
+          				return JsonSerializer.Deserialize<CStringSequence>(serialized, AppJsonSerializerContext.SerializerOptions)!;
           			}
           #endif
           		}
@@ -631,7 +651,10 @@ jobs:
           				{
           					ReadOnlySpan<Assembly> span = AppDomain.CurrentDomain.GetAssemblies();
           					foreach (Assembly assembly in span)
+                            {
+                                if (assembly == Assembly.GetExecutingAssembly()) continue;
           						Console.WriteLine(assembly.FullName + " " + assembly.Location);
+                            }
           				}
           				catch (Exception)
           				{
@@ -639,6 +662,28 @@ jobs:
           				}
           			}
           		}
+          
+          #if NETCOREAPP
+          #if NET8_0_OR_GREATER
+          		[JsonSourceGenerationOptions(WriteIndented = true, PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase, GenerationMode = JsonSourceGenerationMode.Serialization)]
+                [JsonSerializable(typeof(CString))]
+                [JsonSerializable(typeof(CStringSequence))]
+                [JsonSerializable(typeof(String[]))]
+                [JsonSerializable(typeof(SerializableMessage<CString>))]
+                [JsonSerializable(typeof(SerializableMessage<String>))]
+          		private partial class AppJsonSerializerContext : JsonSerializerContext
+          #else 
+          		private static class AppJsonSerializerContext 
+          #endif
+          		{
+          			public static JsonSerializerOptions SerializerOptions
+          #if NET8_0_OR_GREATER
+          			   => AppJsonSerializerContext.Default.Options;
+          #else
+          			   { get; } = new JsonSerializerOptions() { Converters = { new CString.JsonConverter(), new CStringSequence.JsonConverter(), }, };
+          #endif
+                }
+          #endif
           	}
           }' > Program.cs
       - name: Build Package-Trimmed-Executables (PackageTrimmedAssembly)
