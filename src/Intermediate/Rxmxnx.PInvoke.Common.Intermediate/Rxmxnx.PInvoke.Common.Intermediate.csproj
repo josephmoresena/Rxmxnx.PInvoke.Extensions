@@ -73,10 +73,5 @@
             <_Parameter1>Rxmxnx.PInvoke.Buffers.Tests</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
-    <ItemGroup>
-        <Content Include="..\README.md">
-            <Link>README.md</Link>
-        </Content>
-    </ItemGroup>
 
 </Project>
