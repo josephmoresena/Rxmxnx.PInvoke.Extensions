@@ -3,6 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <RootNamespace>Rxmxnx.PInvoke</RootNamespace>
+        <IsPackable>false</IsPackable>
         <Deterministic>true</Deterministic>
         <IsTrimmable Condition="$(DefineConstants.Contains('NET6_0_OR_GREATER'))">true</IsTrimmable>
         <EnableTrimAnalyzer Condition="$(DefineConstants.Contains('NET6_0_OR_GREATER'))">true</EnableTrimAnalyzer>
