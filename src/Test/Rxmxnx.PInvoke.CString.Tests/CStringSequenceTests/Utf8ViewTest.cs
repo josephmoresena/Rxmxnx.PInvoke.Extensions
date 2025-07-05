@@ -46,10 +46,13 @@ public sealed unsafe class Utf8ViewTest
 		                                                           .Select(i => i % 2 == 0 ? String.Empty : default)));
 		CStringSequence.Utf8View enumerable = sequence.CreateView(false);
 		CStringSequence.Utf8View.Enumerator enumerator = enumerable.GetEnumerator();
+
+		Assert.Equal(sequence.NonEmptyCount, enumerable.Count);
+
+#if NET9_0_OR_GREATER
 		ref CStringSequence.Utf8View.Enumerator refEnumerator = ref enumerator;
 		IntPtr ptrEnumerator = (IntPtr)Unsafe.AsPointer(ref refEnumerator);
 
-		Assert.Equal(sequence.NonEmptyCount, enumerable.Count);
 		Assert.Throws<InvalidOperationException>(() =>
 		{
 			ref CStringSequence.Utf8View.Enumerator rE =
@@ -63,6 +66,7 @@ public sealed unsafe class Utf8ViewTest
 				ref Unsafe.AsRef<CStringSequence.Utf8View.Enumerator>(ptrEnumerator.ToPointer());
 			_ = rE.Current;
 		});
+#endif
 
 		enumerator.Reset();
 		Utf8ViewTest.AssertNonEmpty(sequence, enumerator);
@@ -95,8 +99,13 @@ public sealed unsafe class Utf8ViewTest
 			sequence.GetOffsets(offsets);
 			while (enumerator.MoveNext())
 			{
+#if NET7_0_OR_GREATER
 				Assert.True(Unsafe.AreSame(ref Unsafe.AddByteOffset(ref ref0, offsets[index]),
 				                           ref MemoryMarshal.GetReference(enumerator.Current)));
+#else
+				Assert.True(Unsafe.AreSame(ref Unsafe.AddByteOffset(ref ref0, (IntPtr)offsets[index]),
+				                           ref MemoryMarshal.GetReference(enumerator.Current)));
+#endif
 				index++;
 			}
 		}

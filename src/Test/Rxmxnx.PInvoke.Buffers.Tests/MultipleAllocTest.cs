@@ -139,4 +139,10 @@ public sealed unsafe class MultipleAllocTest
 		MultipleAllocTest.Do(buffer, ptrPtr);
 		return buffer.Span[0];
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

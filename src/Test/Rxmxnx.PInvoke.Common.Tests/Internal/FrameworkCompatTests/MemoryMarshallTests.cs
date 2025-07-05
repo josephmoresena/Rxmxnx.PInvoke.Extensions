@@ -1,3 +1,4 @@
+#if NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Tests.Internal;
 
 [ExcludeFromCodeCoverage]
@@ -73,8 +74,13 @@ public sealed unsafe class MemoryMarshallTests
 				             MemoryMarshalCompat.IndexOfNull(ref MemoryMarshal.GetReference(original)));
 				for (Int32 i = 0; i < original.Length; i++)
 				{
+#if NET8_0_OR_GREATER
 					Assert.True(Unsafe.AreSame(in data[i], in span[i]));
 					Assert.True(Unsafe.AreSame(in original[i], in span[i]));
+#else
+					Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in data[i]), ref Unsafe.AsRef(in span[i])));
+					Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in original[i]), ref Unsafe.AsRef(in span[i])));
+#endif
 				}
 			}
 		}
@@ -118,8 +124,13 @@ public sealed unsafe class MemoryMarshallTests
 				             MemoryMarshalCompat.IndexOfNull(ref MemoryMarshal.GetReference(original)));
 				for (Int32 i = 0; i < original.Length; i++)
 				{
+#if NET8_0_OR_GREATER
 					Assert.True(Unsafe.AreSame(in data[i], in span[i]));
 					Assert.True(Unsafe.AreSame(in original[i], in span[i]));
+#else
+					Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in data[i]), ref Unsafe.AsRef(in span[i])));
+					Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in original[i]), ref Unsafe.AsRef(in span[i])));
+#endif
 				}
 			}
 		}
@@ -179,3 +190,4 @@ public sealed unsafe class MemoryMarshallTests
 		}
 	}
 }
+#endif

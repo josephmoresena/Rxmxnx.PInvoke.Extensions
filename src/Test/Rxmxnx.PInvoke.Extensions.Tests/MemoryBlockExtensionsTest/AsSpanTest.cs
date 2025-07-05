@@ -165,8 +165,14 @@ public class AsSpanTest
 	private static void GenericArrayTest<T, TArray>(Array arr) where TArray : class
 	{
 		MethodInfo method = AsSpanTest.asSpans[arr.Rank];
+#if NET5_0_OR_GREATER
 		GetSpanDelegate<T, TArray> func = method.MakeGenericMethod(typeof(T))
 		                                        .CreateDelegate<GetSpanDelegate<T, TArray>>();
+#else
+		GetSpanDelegate<T, TArray> func = (GetSpanDelegate<T, TArray>)method.MakeGenericMethod(typeof(T))
+		                                                                    .CreateDelegate(
+			                                                                    typeof(GetSpanDelegate<T, TArray>));
+#endif
 		Span<T> emptySpan = func(default);
 		Span<T> span = func(arr as TArray);
 		Assert.True(emptySpan.IsEmpty);
@@ -185,11 +191,21 @@ public class AsSpanTest
 	private static Array CreateArray<T>(Int32[] lengths)
 	{
 		Array arr = Array.CreateInstance(typeof(T), lengths);
+#if NET6_0_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetArrayDataReference(arr)),
+#else
+		Span<T> span = MemoryMarshal.CreateSpan(ref MemoryMarshalCompat.GetArrayDataReference<T>(arr),
+#endif
 		                                        arr.Length);
 		T[] data = AsSpanTest.fixture.CreateMany<T>(arr.Length).ToArray();
 		data.CopyTo(span);
 		return arr;
 	}
 	private delegate Span<T> GetSpanDelegate<T, in TArray>(TArray? array);
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

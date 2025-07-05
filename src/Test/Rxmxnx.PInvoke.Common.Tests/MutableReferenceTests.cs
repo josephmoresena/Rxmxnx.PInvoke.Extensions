@@ -18,22 +18,28 @@ public sealed class MutableReferenceTests
 	internal Task Int32TestAsync() => MutableReferenceTests.TestAsync<Int32>();
 	[Fact]
 	internal Task Int64TestAsync() => MutableReferenceTests.TestAsync<Int64>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal Task Int128TestAsync() => MutableReferenceTests.TestAsync<Int128>();
+#endif
 	[Fact]
 	internal Task GuidTestAsync() => MutableReferenceTests.TestAsync<Guid>();
 	[Fact]
 	internal Task SingleTestAsync() => MutableReferenceTests.TestAsync<Single>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal Task HalfTestAsync() => MutableReferenceTests.TestAsync<Half>();
+#endif
 	[Fact]
 	internal Task DoubleTestAsync() => MutableReferenceTests.TestAsync<Double>();
 	[Fact]
 	internal Task DecimalTestAsync() => MutableReferenceTests.TestAsync<Decimal>();
 	[Fact]
 	internal Task DateTimeTestAsync() => MutableReferenceTests.TestAsync<DateTime>();
+#if NET6_0_OR_GREATER
 	[Fact]
 	internal Task TimeOnlyTestAsync() => MutableReferenceTests.TestAsync<TimeOnly>();
+#endif
 	[Fact]
 	internal Task TimeSpanTestAsync() => MutableReferenceTests.TestAsync<TimeSpan>();
 
@@ -61,8 +67,8 @@ public sealed class MutableReferenceTests
 		Assert.Equal(value, refValue);
 		Assert.True(result.Equals(value));
 		Assert.Equal(Object.Equals(value, value2), result.Equals(value2));
-		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(ref result.Reference), ref mutableValueRef));
-		Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(ref result.Reference), ref value));
+		Assert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
+		Assert.False(Unsafe.AreSame(ref result.Reference, ref value));
 		Assert.False(result.Equals(result2));
 		Assert.True(result.Equals(result3));
 		Assert.True((result as IReadOnlyReferenceable<T>).Equals(result3));
@@ -72,8 +78,8 @@ public sealed class MutableReferenceTests
 		Assert.Equal(value2, refValue);
 		Assert.True(result.Equals(value2));
 		Assert.Equal(Object.Equals(value2, value), result.Equals(value));
-		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(ref result.Reference), ref mutableValueRef));
-		Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(ref result.Reference), ref value2));
+		Assert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
+		Assert.False(Unsafe.AreSame(ref result.Reference, ref value2));
 		Assert.False(result.Equals(result2));
 		Assert.True(result.Equals(result3));
 		Assert.True((result as IReadOnlyReferenceable<T>).Equals(result3));
@@ -96,8 +102,8 @@ public sealed class MutableReferenceTests
 		Assert.Equal(value, refValue);
 		Assert.Equal(value, result.Value);
 		Assert.Equal(Object.Equals(value, value2), result.Equals(value2));
-		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(ref result.Reference), ref mutableValueRef));
-		Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(ref result.Reference), ref value));
+		Assert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
+		Assert.False(Unsafe.AreSame(ref result.Reference, ref value));
 		Assert.False(result.Equals(result2));
 		Assert.True(result.Equals(result3));
 
@@ -106,8 +112,8 @@ public sealed class MutableReferenceTests
 		Assert.Equal(value2, refValue);
 		Assert.True(result.Equals(value2));
 		Assert.Equal(Object.Equals(value2, value), result.Equals(value));
-		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(ref result.Reference), ref mutableValueRef));
-		Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(ref result.Reference), ref value2));
+		Assert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
+		Assert.False(Unsafe.AreSame(ref result.Reference, ref value2));
 		Assert.False(result.Equals(result2));
 		Assert.True(result.Equals(result3));
 
@@ -130,8 +136,8 @@ public sealed class MutableReferenceTests
 		Assert.Equal(array, refValue);
 		Assert.True(result.Equals(array));
 		Assert.Equal(Object.Equals(array, array2), result.Equals(array2));
-		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(ref result.Reference), ref mutableValueRef));
-		Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(ref result.Reference), ref array));
+		Assert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
+		Assert.False(Unsafe.AreSame(ref result.Reference, ref array));
 		Assert.False(result.Equals(result2));
 		Assert.True(result.Equals(result3));
 		Assert.True((result as IReadOnlyReferenceable<T[]>).Equals(result3));
@@ -141,8 +147,8 @@ public sealed class MutableReferenceTests
 		Assert.Equal(array2, refValue);
 		Assert.True(result.Equals(array2));
 		Assert.Equal(Object.Equals(array2, array), result.Equals(array));
-		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(ref result.Reference), ref mutableValueRef));
-		Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(ref result.Reference), ref array2));
+		Assert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
+		Assert.False(Unsafe.AreSame(ref result.Reference, ref array2));
 		Assert.False(result.Equals(result2));
 		Assert.True(result.Equals(result3));
 		Assert.True((result as IReadOnlyReferenceable<T[]>).Equals(result3));

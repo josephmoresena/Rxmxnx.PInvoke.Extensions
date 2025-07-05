@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
+﻿#if NETCOREAPP
+namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
 
 [ExcludeFromCodeCoverage]
 public sealed class LoadNativeLibTest
@@ -70,3 +71,4 @@ public sealed class LoadNativeLibTest
 		}
 	}
 }
+#endif

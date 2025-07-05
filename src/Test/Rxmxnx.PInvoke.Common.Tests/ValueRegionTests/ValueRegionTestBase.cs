@@ -52,4 +52,10 @@ public abstract class ValueRegionTestBase
 #pragma warning restore CS8500
 		}
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

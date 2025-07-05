@@ -112,4 +112,10 @@ public sealed class JoinCStringTest
 		Int32 result = Random.Shared.Next(-3, TestSet.Utf16Text.Count);
 		return TestSet.GetCString(result, handle);
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

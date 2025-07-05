@@ -18,8 +18,10 @@ public sealed class TransformTest
 	internal void DoubleTest() => TransformTest.Test<Double>();
 	[Fact]
 	internal void GuidTest() => TransformTest.Test<Guid>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => TransformTest.Test<Half>();
+#endif
 	[Fact]
 	internal void Int16Test() => TransformTest.Test<Int16>();
 	[Fact]
@@ -48,7 +50,9 @@ public sealed class TransformTest
 		TransformTest.Test<T, Decimal>(value);
 		TransformTest.Test<T, Double>(value);
 		TransformTest.Test<T, Guid>(value);
+#if NET5_0_OR_GREATER
 		TransformTest.Test<T, Half>(value);
+#endif
 		TransformTest.Test<T, Int16>(value);
 		TransformTest.Test<T, Int32>(value);
 		TransformTest.Test<T, Int64>(value);

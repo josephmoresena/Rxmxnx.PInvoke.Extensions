@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
+﻿#if NET5_0_OR_GREATER
+namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
 
 [ExcludeFromCodeCoverage]
 public sealed class IsZeroTest
@@ -25,3 +26,4 @@ public sealed class IsZeroTest
 		Assert.Equal(isZero || minValue, input.IsZero());
 	}
 }
+#endif

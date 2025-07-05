@@ -17,22 +17,28 @@ public sealed class BasicTests : ValueRegionTestBase
 	internal void Int32Test() => BasicTests.Test<Int32>();
 	[Fact]
 	internal void Int64Test() => BasicTests.Test<Int64>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal void Int128Test() => BasicTests.Test<Int128>();
+#endif
 	[Fact]
 	internal void GuidTest() => BasicTests.Test<Guid>();
 	[Fact]
 	internal void SingleTest() => BasicTests.Test<Single>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => BasicTests.Test<Half>();
+#endif
 	[Fact]
 	internal void DoubleTest() => BasicTests.Test<Double>();
 	[Fact]
 	internal void DecimalTest() => BasicTests.Test<Decimal>();
 	[Fact]
 	internal void DateTimeTest() => BasicTests.Test<DateTime>();
+#if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => BasicTests.Test<TimeOnly>();
+#endif
 	[Fact]
 	internal void TimeSpanTest() => BasicTests.Test<TimeSpan>();
 
@@ -103,7 +109,11 @@ public sealed class BasicTests : ValueRegionTestBase
 		for (Int32 i = 0; i < values.Length; i++)
 		{
 			Assert.Equal(values[i], region[i]);
+#if NET8_0_OR_GREATER
 			Assert.True(Unsafe.AreSame(in span[i], ref values[i]));
+#else
+			Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in span[i]), ref values[i]));
+#endif
 		}
 
 		Assert.Equal(values, newArray);
@@ -121,4 +131,10 @@ public sealed class BasicTests : ValueRegionTestBase
 		return span;
 	}
 #pragma warning restore CS8500
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

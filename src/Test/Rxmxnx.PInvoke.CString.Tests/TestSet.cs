@@ -91,4 +91,10 @@ internal static partial class TestSet
 				return (CString)TestSet.Utf16Text[index];
 		}
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

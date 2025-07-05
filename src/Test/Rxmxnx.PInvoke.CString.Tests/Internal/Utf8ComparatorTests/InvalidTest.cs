@@ -48,4 +48,10 @@ public sealed class InvalidTest
 		Int32 result = Random.Shared.Next(0x80, 0xC0);
 		return (Byte)result;
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

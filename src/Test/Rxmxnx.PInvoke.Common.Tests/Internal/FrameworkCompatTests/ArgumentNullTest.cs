@@ -1,3 +1,4 @@
+#if NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Tests.Internal;
 
 [ExcludeFromCodeCoverage]
@@ -26,3 +27,4 @@ public sealed class ArgumentNullTest
 		}
 	}
 }
+#endif

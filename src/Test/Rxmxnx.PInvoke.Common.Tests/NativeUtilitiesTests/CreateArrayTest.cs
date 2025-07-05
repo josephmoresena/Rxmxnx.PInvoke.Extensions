@@ -34,4 +34,10 @@ public sealed class CreateArrayTest
 
 		Assert.Equal(list, arr);
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

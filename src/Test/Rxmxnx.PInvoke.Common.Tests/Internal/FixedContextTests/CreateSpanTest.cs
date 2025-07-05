@@ -16,22 +16,28 @@ public sealed class CreateSpanTest : FixedContextTestsBase
 	internal void Int32Test() => CreateSpanTest.Test<Int32>();
 	[Fact]
 	internal void Int64Test() => CreateSpanTest.Test<Int64>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal void Int128Test() => CreateSpanTest.Test<Int128>();
+#endif
 	[Fact]
 	internal void GuidTest() => CreateSpanTest.Test<Guid>();
 	[Fact]
 	internal void SingleTest() => CreateSpanTest.Test<Single>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => CreateSpanTest.Test<Half>();
+#endif
 	[Fact]
 	internal void DoubleTest() => CreateSpanTest.Test<Double>();
 	[Fact]
 	internal void DecimalTest() => CreateSpanTest.Test<Decimal>();
 	[Fact]
 	internal void DateTimeTest() => CreateSpanTest.Test<DateTime>();
+#if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => CreateSpanTest.Test<TimeOnly>();
+#endif
 	[Fact]
 	internal void TimeSpanTest() => CreateSpanTest.Test<TimeSpan>();
 	[Fact]
@@ -44,8 +50,8 @@ public sealed class CreateSpanTest : FixedContextTestsBase
 		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>().ToArray();
 		FixedContextTestsBase.WithFixed(values, CreateSpanTest.Test);
 		Exception readOnly =
-			Assert.Throws<InvalidOperationException>(
-				() => FixedContextTestsBase.WithFixed(values, CreateSpanTest.ReadOnlyTest));
+			Assert.Throws<InvalidOperationException>(() => FixedContextTestsBase.WithFixed(
+				                                         values, CreateSpanTest.ReadOnlyTest));
 		Assert.Equal(FixedMemoryTestsBase.ReadOnlyError, readOnly.Message);
 	}
 

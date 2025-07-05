@@ -123,4 +123,10 @@ public sealed class SegmentTests
 
 		Assert.Equal(cstrSeg.Length + 1, CString.GetBytes(cloneSeg).Length);
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

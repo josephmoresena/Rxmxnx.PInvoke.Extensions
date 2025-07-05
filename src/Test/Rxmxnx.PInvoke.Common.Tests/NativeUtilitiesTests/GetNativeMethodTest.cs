@@ -3,6 +3,9 @@
 [ExcludeFromCodeCoverage]
 public sealed class GetNativeMethodTest
 {
+	internal delegate Int32 GetInt32();
+	internal delegate T GetT<out T>();
+#if NETCOREAPP
 	private static readonly IFixture fixture = new Fixture();
 
 	[SkippableTheory]
@@ -27,7 +30,11 @@ public sealed class GetNativeMethodTest
 		String sufix = GetNativeMethodTest.fixture.Create<String>();
 		IntPtr handle = !zeroPtr ?
 			!useRealHandle ?
+#if NET7_0_OR_GREATER
 				GetNativeMethodTest.fixture.Create<Int32>() :
+#else
+				(IntPtr)GetNativeMethodTest.fixture.Create<Int32>() :
+#endif
 				NativeLibrary.Load(LoadNativeLibTest.LibraryName) :
 			IntPtr.Zero;
 		String? name = !emptyName ? prefix + LoadNativeLibTest.MethodName + sufix : default;
@@ -62,8 +69,13 @@ public sealed class GetNativeMethodTest
 				NativeUtilities.GetNativeMethodPtr<GetInt32>(handle, LoadNativeLibTest.MethodName);
 			Assert.NotNull(result);
 			Assert.Equal(addressMethod, funcPtr.Pointer);
+#if NET5_0_OR_GREATER
 			Assert.Equal(Environment.ProcessId, result());
 			Assert.Equal(Environment.ProcessId, funcPtr.Invoke());
+#else
+			Assert.Equal(Process.GetCurrentProcess().Id, result());
+			Assert.Equal(Process.GetCurrentProcess().Id, funcPtr.Invoke());
+#endif
 		}
 		else
 		{
@@ -76,6 +88,5 @@ public sealed class GetNativeMethodTest
 		}
 		NativeLibrary.Free(handle);
 	}
-	internal delegate Int32 GetInt32();
-	internal delegate T GetT<out T>();
+#endif
 }

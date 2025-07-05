@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal.DecodedRuneTests;
+﻿#if !NETCOREAPP
+using Rune = System.UInt32;
+#endif
+
+namespace Rxmxnx.PInvoke.Tests.Internal.DecodedRuneTests;
 
 [ExcludeFromCodeCoverage]
 public sealed class EqualsTest

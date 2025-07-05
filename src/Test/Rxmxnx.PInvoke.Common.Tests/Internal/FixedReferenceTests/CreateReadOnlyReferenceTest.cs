@@ -17,22 +17,28 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 	internal void Int32Test() => CreateReadOnlyReferenceTest.Test<Int32>();
 	[Fact]
 	internal void Int64Test() => CreateReadOnlyReferenceTest.Test<Int64>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal void Int128Test() => CreateReadOnlyReferenceTest.Test<Int128>();
+#endif
 	[Fact]
 	internal void GuidTest() => CreateReadOnlyReferenceTest.Test<Guid>();
 	[Fact]
 	internal void SingleTest() => CreateReadOnlyReferenceTest.Test<Single>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => CreateReadOnlyReferenceTest.Test<Half>();
+#endif
 	[Fact]
 	internal void DoubleTest() => CreateReadOnlyReferenceTest.Test<Double>();
 	[Fact]
 	internal void DecimalTest() => CreateReadOnlyReferenceTest.Test<Decimal>();
 	[Fact]
 	internal void DateTimeTest() => CreateReadOnlyReferenceTest.Test<DateTime>();
+#if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => CreateReadOnlyReferenceTest.Test<TimeOnly>();
+#endif
 	[Fact]
 	internal void TimeSpanTest() => CreateReadOnlyReferenceTest.Test<TimeSpan>();
 	private static void Test<T>()
@@ -61,14 +67,20 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 			CreateReadOnlyReferenceTest.TestSize<T, Char>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, Int32>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, Int64>(fref);
+#if NET7_0_OR_GREATER
 			CreateReadOnlyReferenceTest.TestSize<T, Int128>(fref);
+#endif
 			CreateReadOnlyReferenceTest.TestSize<T, Guid>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, Single>(fref);
+#if NET5_0_OR_GREATER
 			CreateReadOnlyReferenceTest.TestSize<T, Half>(fref);
+#endif
 			CreateReadOnlyReferenceTest.TestSize<T, Double>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, Decimal>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, DateTime>(fref);
+#if NET6_0_OR_GREATER
 			CreateReadOnlyReferenceTest.TestSize<T, TimeOnly>(fref);
+#endif
 			CreateReadOnlyReferenceTest.TestSize<T, TimeSpan>(fref);
 
 			if (sizeof(T) < sizeof(ManagedStruct))
@@ -146,14 +158,20 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 			CreateReadOnlyReferenceTest.TestSize<T, Char>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, Int32>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, Int64>(fref);
+#if NET7_0_OR_GREATER
 			CreateReadOnlyReferenceTest.TestSize<T, Int128>(fref);
+#endif
 			CreateReadOnlyReferenceTest.TestSize<T, Guid>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, Single>(fref);
+#if NET5_0_OR_GREATER
 			CreateReadOnlyReferenceTest.TestSize<T, Half>(fref);
+#endif
 			CreateReadOnlyReferenceTest.TestSize<T, Double>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, Decimal>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, DateTime>(fref);
+#if NET6_0_OR_GREATER
 			CreateReadOnlyReferenceTest.TestSize<T, TimeOnly>(fref);
+#endif
 			CreateReadOnlyReferenceTest.TestSize<T, TimeSpan>(fref);
 
 			if (sizeof(T) < sizeof(ManagedStruct))

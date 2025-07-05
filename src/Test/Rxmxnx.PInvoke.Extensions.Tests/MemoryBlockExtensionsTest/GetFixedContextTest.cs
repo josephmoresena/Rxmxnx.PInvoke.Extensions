@@ -24,8 +24,10 @@ public sealed class GetFixedContextTest
 	internal void DoubleTest() => GetFixedContextTest.ArrayTest<Double>();
 	[Fact]
 	internal void GuidTest() => GetFixedContextTest.ArrayTest<Guid>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => GetFixedContextTest.ArrayTest<Half>();
+#endif
 	[Fact]
 	internal void Int16Test() => GetFixedContextTest.ArrayTest<Int16>();
 	[Fact]
@@ -56,7 +58,11 @@ public sealed class GetFixedContextTest
 		using IReadOnlyFixedContext<T>.IDisposable ctx = mem.GetFixedContext();
 		for (Int32 i = 0; i < mem.Length; i++)
 		{
+#if NET8_0_OR_GREATER
 			Assert.True(Unsafe.AreSame(in mem.Span[i], in ctx.Values[i]));
+#else
+			Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in mem.Span[i]), ref Unsafe.AsRef(in ctx.Values[i])));
+#endif
 			Assert.Equal(mem.Span[i], ctx.Bytes.Slice(i * sizeof(T), sizeof(T)).ToValue<T>());
 		}
 		GetFixedContextTest.ReadOnlyTransformTest<T, Byte>(ctx);

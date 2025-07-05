@@ -106,4 +106,10 @@ public sealed class StringJoinStringTest
 		Int32 result = Random.Shared.Next(-3, TestSet.Utf16Text.Count);
 		return TestSet.GetString(result);
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

@@ -226,7 +226,11 @@ public sealed class WithSafeTransformTest
 		Assert.Equal(fcstr.Bytes.Length, fValue.Bytes.Length);
 		Assert.True(fcstr.Bytes.SequenceEqual(fValue.Bytes));
 		Assert.Equal(fcstr.Objects.Length, fValue.Objects.Length);
+#if NET6_0_OR_GREATER
 		Assert.True(fcstr.Objects.SequenceEqual(fValue.Objects));
+#else
+		Assert.Equal(fcstr.Objects.ToArray(), fValue.Objects.ToArray());
+#endif
 		Assert.Equal(fcstr.IsNullOrEmpty, fValue.IsNullOrEmpty);
 	}
 	private static CStringSequence CreateCopy(FixedCStringSequence fseq)
@@ -235,7 +239,11 @@ public sealed class WithSafeTransformTest
 		IReadOnlyFixedMemory[] fmems = fseq.ToArray();
 
 		for (Int32 i = 0; i < seq.Count; i++)
+#if NET6_0_OR_GREATER
 			Assert.Equal(seq[i].AsSpan(), fmems[i].Bytes);
+#else
+			Assert.Equal(seq[i].AsSpan().ToArray(), fmems[i].Bytes.ToArray());
+#endif
 
 		fseq.Unload();
 		foreach (IReadOnlyFixedMemory mem in fmems)

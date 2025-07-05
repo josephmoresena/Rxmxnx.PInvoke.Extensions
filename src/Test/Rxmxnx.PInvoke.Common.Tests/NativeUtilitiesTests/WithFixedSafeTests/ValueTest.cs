@@ -20,8 +20,10 @@ public sealed class ValueTest
 	internal void DoubleTest() => this.Test<Double>();
 	[Fact]
 	internal void GuidTest() => this.Test<Guid>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => this.Test<Half>();
+#endif
 	[Fact]
 	internal void Int16Test() => this.Test<Int16>();
 	[Fact]
@@ -74,7 +76,9 @@ public sealed class ValueTest
 		ValueTest.Test<T, Decimal>(fRef, bytes);
 		ValueTest.Test<T, Double>(fRef, bytes);
 		ValueTest.Test<T, Guid>(fRef, bytes);
+#if NET5_0_OR_GREATER
 		ValueTest.Test<T, Half>(fRef, bytes);
+#endif
 		ValueTest.Test<T, Int16>(fRef, bytes);
 		ValueTest.Test<T, Int32>(fRef, bytes);
 		ValueTest.Test<T, Int64>(fRef, bytes);

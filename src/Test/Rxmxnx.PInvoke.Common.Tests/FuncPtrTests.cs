@@ -65,6 +65,7 @@ public sealed class FuncPtrTests
 		Assert.Equal(funcPtr.Pointer.GetHashCode(), funcPtr.GetHashCode());
 		Assert.Equal(funcPtr.Pointer.ToString(), funcPtr.ToString());
 
+#if NET6_0_OR_GREATER
 		if ((Object)funcPtr is not ISpanFormattable spanFormattable) return;
 		MethodInfo? toStringMethodInfo = spanFormattable.GetType()
 		                                                .GetMethod(nameof(IntPtr.ToString),
@@ -88,6 +89,7 @@ public sealed class FuncPtrTests
 			Assert.Equal(funcPtr.Pointer.ToString(format), funcPtr.ToString(format));
 			Assert.Equal(funcPtr.Pointer.ToString(format, culture), spanFormattable.ToString(format, culture));
 		}
+#endif
 	}
 	private static void MarshallerTest<TDelegate>(FuncPtr<TDelegate> funcPtr) where TDelegate : Delegate
 	{
@@ -97,4 +99,10 @@ public sealed class FuncPtrTests
 		Assert.Equal(value, funcPtr.Pointer);
 		Assert.Equal(funcPtr, ptr);
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

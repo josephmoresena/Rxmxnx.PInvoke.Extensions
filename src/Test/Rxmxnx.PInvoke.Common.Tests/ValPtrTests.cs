@@ -20,22 +20,28 @@ public sealed class ValPtrTests
 	internal void Int32Test() => ValPtrTests.Test<Int32>();
 	[Fact]
 	internal void Int64Test() => ValPtrTests.Test<Int64>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal void Int128Test() => ValPtrTests.Test<Int128>();
+#endif
 	[Fact]
 	internal void GuidTest() => ValPtrTests.Test<Guid>();
 	[Fact]
 	internal void SingleTest() => ValPtrTests.Test<Single>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => ValPtrTests.Test<Half>();
+#endif
 	[Fact]
 	internal void DoubleTest() => ValPtrTests.Test<Double>();
 	[Fact]
 	internal void DecimalTest() => ValPtrTests.Test<Decimal>();
 	[Fact]
 	internal void DateTimeTest() => ValPtrTests.Test<DateTime>();
+#if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => ValPtrTests.Test<TimeOnly>();
+#endif
 	[Fact]
 	internal void TimeSpanTest() => ValPtrTests.Test<TimeSpan>();
 	[Fact]
@@ -202,7 +208,11 @@ public sealed class ValPtrTests
 			}
 			else
 			{
+#if NET8_0_OR_GREATER
 				Assert.True(Unsafe.AreSame(in fixedReference.Reference,
+#else
+				Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in fixedReference.Reference),
+#endif
 				                           ref Unsafe.As<Object, T>(
 					                           ref Unsafe.AsRef(in fixedReference.AsObjectContext().Values[0]))));
 				Assert.Equal(typeof(T).IsValueType || fixedReference.IsNullOrEmpty, fixedReference.Objects.IsEmpty);
@@ -226,6 +236,7 @@ public sealed class ValPtrTests
 		Assert.Equal(valPtr.Pointer.GetHashCode(), valPtr.GetHashCode());
 		Assert.Equal(valPtr.Pointer.ToString(), valPtr.ToString());
 
+#if NET6_0_OR_GREATER
 		if ((Object)valPtr is not ISpanFormattable spanFormattable) return;
 		MethodInfo? toStringMethodInfo = spanFormattable.GetType()
 		                                                .GetMethod(nameof(IntPtr.ToString),
@@ -249,6 +260,7 @@ public sealed class ValPtrTests
 			Assert.Equal(valPtr.Pointer.ToString(format), valPtr.ToString(format));
 			Assert.Equal(valPtr.Pointer.ToString(format, culture), spanFormattable.ToString(format, culture));
 		}
+#endif
 	}
 	private static void MarshallerTest<T>(ValPtr<T> valPtr)
 	{
@@ -267,7 +279,11 @@ public sealed class ValPtrTests
 			(fRef as IReadOnlyFixedReference<T>).Transformation<TDestination>(out IReadOnlyFixedMemory _);
 		Assert.True(Unsafe.AreSame(ref fRef2.Reference, ref Unsafe.AsRef<TDestination>(ptrI.Pointer.ToPointer())));
 		Assert.Equal(sizeof(T) - sizeof(TDestination), offset.Bytes.Length);
+#if NET8_0_OR_GREATER
 		Assert.True(Unsafe.AreSame(ref fRef2.Reference, in fRef3.Reference));
+#else
+		Assert.True(Unsafe.AreSame(ref fRef2.Reference, ref Unsafe.AsRef(in fRef3.Reference)));
+#endif
 	}
 	private static unsafe void ContextTransformTest<T, TDestination>(IFixedContext<T>.IDisposable ctx)
 	{
@@ -275,5 +291,11 @@ public sealed class ValPtrTests
 		Assert.Equal(ctx2.Values.Length, ctx.Bytes.Length / sizeof(TDestination));
 		Assert.Equal(offset.Bytes.Length, ctx.Bytes.Length - ctx2.Values.Length * sizeof(TDestination));
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }
 #pragma warning restore CS8500

@@ -17,22 +17,28 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 	internal void Int32Test() => GetTransformationTest.Test<Int32>();
 	[Fact]
 	internal void Int64Test() => GetTransformationTest.Test<Int64>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal void Int128Test() => GetTransformationTest.Test<Int128>();
+#endif
 	[Fact]
 	internal void GuidTest() => GetTransformationTest.Test<Guid>();
 	[Fact]
 	internal void SingleTest() => GetTransformationTest.Test<Single>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => GetTransformationTest.Test<Half>();
+#endif
 	[Fact]
 	internal void DoubleTest() => GetTransformationTest.Test<Double>();
 	[Fact]
 	internal void DecimalTest() => GetTransformationTest.Test<Decimal>();
 	[Fact]
 	internal void DateTimeTest() => GetTransformationTest.Test<DateTime>();
+#if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => GetTransformationTest.Test<TimeOnly>();
+#endif
 	[Fact]
 	internal void TimeSpanTest() => GetTransformationTest.Test<TimeSpan>();
 	[Fact]
@@ -56,13 +62,19 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 			GetTransformationTest.Test<T, Char>(fref);
 			GetTransformationTest.Test<T, Int32>(fref);
 			GetTransformationTest.Test<T, Int64>(fref);
+#if NET7_0_OR_GREATER
 			GetTransformationTest.Test<T, Int128>(fref);
+#endif
 			GetTransformationTest.Test<T, Single>(fref);
+#if NET5_0_OR_GREATER
 			GetTransformationTest.Test<T, Half>(fref);
+#endif
 			GetTransformationTest.Test<T, Double>(fref);
 			GetTransformationTest.Test<T, Decimal>(fref);
 			GetTransformationTest.Test<T, DateTime>(fref);
+#if NET6_0_OR_GREATER
 			GetTransformationTest.Test<T, TimeOnly>(fref);
+#endif
 			GetTransformationTest.Test<T, TimeSpan>(fref);
 
 			if (sizeof(T) < sizeof(ManagedStruct))
@@ -99,12 +111,16 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 				GetTransformationTest.Test<T, Int64>(fref);
 			else
 				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int64>(fref));
+#if NET7_0_OR_GREATER
 			if (sizeof(T) < sizeof(Int128))
 				GetTransformationTest.Test<T, Int128>(fref);
 			else
 				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int128>(fref));
+#endif
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Single>(fref));
+#if NET5_0_OR_GREATER
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Half>(fref));
+#endif
 			if (sizeof(T) < sizeof(Double))
 				GetTransformationTest.Test<T, Double>(fref);
 			else
@@ -117,10 +133,12 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 				GetTransformationTest.Test<T, DateTime>(fref);
 			else
 				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, DateTime>(fref));
+#if NET6_0_OR_GREATER
 			if (sizeof(T) < sizeof(TimeOnly))
 				GetTransformationTest.Test<T, TimeOnly>(fref);
 			else
 				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeOnly>(fref));
+#endif
 			if (sizeof(T) < sizeof(TimeSpan))
 				GetTransformationTest.Test<T, TimeSpan>(fref);
 			else
@@ -171,15 +189,19 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 		Assert.Equal(FixedMemoryTestsBase.InvalidError,
 		             Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int64>(fref, true))
 		                   .Message);
+#if NET7_0_OR_GREATER
 		Assert.Equal(FixedMemoryTestsBase.InvalidError,
 		             Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int128>(fref, true))
 		                   .Message);
+#endif
 		Assert.Equal(FixedMemoryTestsBase.InvalidError,
 		             Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Single>(fref, true))
 		                   .Message);
+#if NET5_0_OR_GREATER
 		Assert.Equal(FixedMemoryTestsBase.InvalidError,
 		             Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Half>(fref, true))
 		                   .Message);
+#endif
 		Assert.Equal(FixedMemoryTestsBase.InvalidError,
 		             Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Double>(fref, true))
 		                   .Message);
@@ -189,9 +211,11 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 		Assert.Equal(FixedMemoryTestsBase.InvalidError,
 		             Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, DateTime>(fref, true))
 		                   .Message);
+#if NET6_0_OR_GREATER
 		Assert.Equal(FixedMemoryTestsBase.InvalidError,
 		             Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeOnly>(fref, true))
 		                   .Message);
+#endif
 		Assert.Equal(FixedMemoryTestsBase.InvalidError,
 		             Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeSpan>(fref, true))
 		                   .Message);
@@ -207,13 +231,19 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 			GetTransformationTest.Test<T, Char>(fref);
 			GetTransformationTest.Test<T, Int32>(fref);
 			GetTransformationTest.Test<T, Int64>(fref);
+#if NET7_0_OR_GREATER
 			GetTransformationTest.Test<T, Int128>(fref);
+#endif
 			GetTransformationTest.Test<T, Single>(fref);
+#if NET5_0_OR_GREATER
 			GetTransformationTest.Test<T, Half>(fref);
+#endif
 			GetTransformationTest.Test<T, Double>(fref);
 			GetTransformationTest.Test<T, Decimal>(fref);
 			GetTransformationTest.Test<T, DateTime>(fref);
+#if NET6_0_OR_GREATER
 			GetTransformationTest.Test<T, TimeOnly>(fref);
+#endif
 			GetTransformationTest.Test<T, TimeSpan>(fref);
 
 			if (sizeof(T) < sizeof(ManagedStruct))
@@ -250,12 +280,16 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 				GetTransformationTest.Test<T, Int64>(fref);
 			else
 				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int64>(fref));
+#if NET7_0_OR_GREATER
 			if (sizeof(T) < sizeof(Int128))
 				GetTransformationTest.Test<T, Int128>(fref);
 			else
 				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int128>(fref));
+#endif
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Single>(fref));
+#if NET5_0_OR_GREATER
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Half>(fref));
+#endif
 			if (sizeof(T) < sizeof(Double))
 				GetTransformationTest.Test<T, Double>(fref);
 			else
@@ -268,10 +302,12 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 				GetTransformationTest.Test<T, DateTime>(fref);
 			else
 				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, DateTime>(fref));
+#if NET6_0_OR_GREATER
 			if (sizeof(T) < sizeof(TimeOnly))
 				GetTransformationTest.Test<T, TimeOnly>(fref);
 			else
 				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeOnly>(fref));
+#endif
 			if (sizeof(T) < sizeof(TimeSpan))
 				GetTransformationTest.Test<T, TimeSpan>(fref);
 			else
@@ -322,15 +358,19 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 		Assert.Equal(FixedMemoryTestsBase.InvalidError,
 		             Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int64>(fref, true))
 		                   .Message);
+#if NET7_0_OR_GREATER
 		Assert.Equal(FixedMemoryTestsBase.InvalidError,
 		             Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int128>(fref, true))
 		                   .Message);
+#endif
 		Assert.Equal(FixedMemoryTestsBase.InvalidError,
 		             Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Single>(fref, true))
 		                   .Message);
+#if NET5_0_OR_GREATER
 		Assert.Equal(FixedMemoryTestsBase.InvalidError,
 		             Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Half>(fref, true))
 		                   .Message);
+#endif
 		Assert.Equal(FixedMemoryTestsBase.InvalidError,
 		             Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Double>(fref, true))
 		                   .Message);
@@ -340,9 +380,11 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 		Assert.Equal(FixedMemoryTestsBase.InvalidError,
 		             Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, DateTime>(fref, true))
 		                   .Message);
+#if NET6_0_OR_GREATER
 		Assert.Equal(FixedMemoryTestsBase.InvalidError,
 		             Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeOnly>(fref, true))
 		                   .Message);
+#endif
 		Assert.Equal(FixedMemoryTestsBase.InvalidError,
 		             Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeSpan>(fref, true))
 		                   .Message);
@@ -448,21 +490,25 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 			_ = fref.GetTransformation<Int64>(out offset2, true);
 			GetTransformationTest.OffsetTest<T2, Int64>(offset, offset2);
 		}
+#if NET7_0_OR_GREATER
 		if (fref.BinaryLength >= sizeof(Int128))
 		{
 			_ = fref.GetTransformation<Int128>(out offset2, true);
 			GetTransformationTest.OffsetTest<T2, Int128>(offset, offset2);
 		}
+#endif
 		if (fref.BinaryLength >= sizeof(Single))
 		{
 			_ = fref.GetTransformation<Single>(out offset2, true);
 			GetTransformationTest.OffsetTest<T2, Single>(offset, offset2);
 		}
+#if NET5_0_OR_GREATER
 		if (fref.BinaryLength >= sizeof(Half))
 		{
 			_ = fref.GetTransformation<Half>(out offset2, true);
 			GetTransformationTest.OffsetTest<T2, Half>(offset, offset2);
 		}
+#endif
 		if (fref.BinaryLength >= sizeof(Double))
 		{
 			_ = fref.GetTransformation<Double>(out offset2, true);
@@ -478,11 +524,13 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 			_ = fref.GetTransformation<DateTime>(out offset2, true);
 			GetTransformationTest.OffsetTest<T2, DateTime>(offset, offset2);
 		}
+#if NET6_0_OR_GREATER
 		if (fref.BinaryLength >= sizeof(TimeOnly))
 		{
 			_ = fref.GetTransformation<TimeOnly>(out offset2, true);
 			GetTransformationTest.OffsetTest<T2, TimeOnly>(offset, offset2);
 		}
+#endif
 		if (fref.BinaryLength >= sizeof(TimeSpan))
 		{
 			_ = fref.GetTransformation<TimeSpan>(out offset2, true);
@@ -557,21 +605,25 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 			_ = fref.GetTransformation<Int64>(out offset2);
 			GetTransformationTest.OffsetTest<T2, Int64>(offset, offset2);
 		}
+#if NET7_0_OR_GREATER
 		if (fref.BinaryLength >= sizeof(Int128))
 		{
 			_ = fref.GetTransformation<Int128>(out offset2);
 			GetTransformationTest.OffsetTest<T2, Int128>(offset, offset2);
 		}
+#endif
 		if (fref.BinaryLength >= sizeof(Single))
 		{
 			_ = fref.GetTransformation<Single>(out offset2);
 			GetTransformationTest.OffsetTest<T2, Single>(offset, offset2);
 		}
+#if NET5_0_OR_GREATER
 		if (fref.BinaryLength >= sizeof(Half))
 		{
 			_ = fref.GetTransformation<Half>(out offset2);
 			GetTransformationTest.OffsetTest<T2, Half>(offset, offset2);
 		}
+#endif
 		if (fref.BinaryLength >= sizeof(Double))
 		{
 			_ = fref.GetTransformation<Double>(out offset2);
@@ -587,11 +639,13 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 			_ = fref.GetTransformation<DateTime>(out offset2);
 			GetTransformationTest.OffsetTest<T2, DateTime>(offset, offset2);
 		}
+#if NET6_0_OR_GREATER
 		if (fref.BinaryLength >= sizeof(TimeOnly))
 		{
 			_ = fref.GetTransformation<TimeOnly>(out offset2);
 			GetTransformationTest.OffsetTest<T2, TimeOnly>(offset, offset2);
 		}
+#endif
 		if (fref.BinaryLength >= sizeof(TimeSpan))
 		{
 			_ = fref.GetTransformation<TimeSpan>(out offset2);

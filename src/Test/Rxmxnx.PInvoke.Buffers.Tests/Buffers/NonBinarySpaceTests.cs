@@ -138,6 +138,7 @@ public sealed class NonBinarySpaceTests
 		}
 	}
 
+#if NET8_0_OR_GREATER
 	[InlineArray(10)]
 	private struct InternalStruct<T>
 	{
@@ -149,4 +150,126 @@ public sealed class NonBinarySpaceTests
 	{
 		private T _val;
 	}
+#else
+	[StructLayout(LayoutKind.Sequential)]
+	private struct InternalStruct<T>
+	{
+		private T _val0;
+		private T _val1;
+		private T _val2;
+		private T _val3;
+		private T _val4;
+		private T _val5;
+		private T _val6;
+		private T _val7;
+		private T _val8;
+		private T _val9;
+		private T _val10;
+	}
+	[StructLayout(LayoutKind.Sequential)]
+	private struct NonBinaryBuffer<T>
+	{
+		private T _val0;
+		private T _val1;
+		private T _val2;
+		private T _val3;
+		private T _val4;
+		private T _val5;
+		private T _val6;
+		private T _val7;
+		private T _val8;
+		private T _val9;
+		private T _val10;
+		private T _val11;
+		private T _val12;
+		private T _val13;
+		private T _val14;
+		private T _val15;
+		private T _val16;
+		private T _val17;
+		private T _val18;
+		private T _val19;
+		private T _val20;
+		private T _val21;
+		private T _val22;
+		private T _val23;
+		private T _val24;
+		private T _val25;
+		private T _val26;
+		private T _val27;
+		private T _val28;
+		private T _val29;
+		private T _val30;
+		private T _val31;
+		private T _val32;
+		private T _val33;
+		private T _val34;
+		private T _val35;
+		private T _val36;
+		private T _val37;
+		private T _val38;
+		private T _val39;
+		private T _val40;
+		private T _val41;
+		private T _val42;
+		private T _val43;
+		private T _val44;
+		private T _val45;
+		private T _val46;
+		private T _val47;
+		private T _val48;
+		private T _val49;
+		private T _val50;
+		private T _val51;
+		private T _val52;
+		private T _val53;
+		private T _val54;
+		private T _val55;
+		private T _val56;
+		private T _val57;
+		private T _val58;
+		private T _val59;
+		private T _val60;
+		private T _val61;
+		private T _val62;
+		private T _val63;
+		private T _val64;
+		private T _val65;
+		private T _val66;
+		private T _val67;
+		private T _val68;
+		private T _val69;
+		private T _val70;
+		private T _val71;
+		private T _val72;
+		private T _val73;
+		private T _val74;
+		private T _val75;
+		private T _val76;
+		private T _val77;
+		private T _val78;
+		private T _val79;
+		private T _val80;
+		private T _val81;
+		private T _val82;
+		private T _val83;
+		private T _val84;
+		private T _val85;
+		private T _val86;
+		private T _val87;
+		private T _val88;
+		private T _val89;
+		private T _val90;
+		private T _val91;
+		private T _val92;
+		private T _val93;
+		private T _val94;
+		private T _val95;
+		private T _val96;
+		private T _val97;
+		private T _val98;
+		private T _val99;
+		private T _val100;
+	}
+#endif
 }

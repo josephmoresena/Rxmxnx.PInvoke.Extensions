@@ -107,4 +107,10 @@ public sealed class StringJoinCharTest
 		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
 	}
 	private static Char GetByteSeparator() => StringJoinCharTest.fixture.Create<Char>();
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

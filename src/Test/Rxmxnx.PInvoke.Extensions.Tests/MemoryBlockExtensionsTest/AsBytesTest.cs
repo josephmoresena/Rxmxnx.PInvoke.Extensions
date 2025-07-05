@@ -20,8 +20,10 @@ public sealed class AsBytesTest
 	internal void DoubleTest() => AsBytesTest.Test<Double>();
 	[Fact]
 	internal void GuidTest() => AsBytesTest.Test<Guid>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => AsBytesTest.Test<Half>();
+#endif
 	[Fact]
 	internal void Int16Test() => AsBytesTest.Test<Int16>();
 	[Fact]

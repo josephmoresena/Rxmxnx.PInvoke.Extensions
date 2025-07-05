@@ -20,8 +20,10 @@ public sealed class WithSafeFixedTest
 	internal void DoubleTest() => this.Test<Double>();
 	[Fact]
 	internal void GuidTest() => this.Test<Guid>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => this.Test<Half>();
+#endif
 	[Fact]
 	internal void Int16Test() => this.Test<Int16>();
 	[Fact]
@@ -81,7 +83,9 @@ public sealed class WithSafeFixedTest
 		WithSafeFixedTest.Test<T, Decimal>(fRef, bytes);
 		WithSafeFixedTest.Test<T, Double>(fRef, bytes);
 		WithSafeFixedTest.Test<T, Guid>(fRef, bytes);
+#if NET5_0_OR_GREATER
 		WithSafeFixedTest.Test<T, Half>(fRef, bytes);
+#endif
 		WithSafeFixedTest.Test<T, Int16>(fRef, bytes);
 		WithSafeFixedTest.Test<T, Int32>(fRef, bytes);
 		WithSafeFixedTest.Test<T, Int64>(fRef, bytes);
@@ -113,7 +117,9 @@ public sealed class WithSafeFixedTest
 		WithSafeFixedTest.Test<T, Decimal>(fRef, bytes);
 		WithSafeFixedTest.Test<T, Double>(fRef, bytes);
 		WithSafeFixedTest.Test<T, Guid>(fRef, bytes);
+#if NET5_0_OR_GREATER
 		WithSafeFixedTest.Test<T, Half>(fRef, bytes);
+#endif
 		WithSafeFixedTest.Test<T, Int16>(fRef, bytes);
 		WithSafeFixedTest.Test<T, Int32>(fRef, bytes);
 		WithSafeFixedTest.Test<T, Int64>(fRef, bytes);

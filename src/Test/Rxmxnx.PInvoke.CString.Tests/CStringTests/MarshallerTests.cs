@@ -52,7 +52,11 @@ public sealed unsafe class MarshallerTests
 
 	private static void AssertToUnmanaged(CString? value)
 	{
+#if NET6_0_OR_GREATER
 		ReadOnlySpan<Byte> utfSpan = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(
+#else
+		ReadOnlySpan<Byte> utfSpan = MemoryMarshalCompat.CreateReadOnlySpanFromNullTerminated(
+#endif
 			(Byte*)Unsafe.AsPointer(ref MemoryMarshal.GetReference<Byte>(value)));
 		CString.Marshaller marshal = MarshallerTests.Marshal(value);
 		IntPtr ptr = marshal.ToUnmanaged();
@@ -63,7 +67,9 @@ public sealed unsafe class MarshallerTests
 			Assert.Equal(isLiteralOrPinnable,
 			             Unsafe.AreSame(ref MemoryMarshal.GetReference<Byte>(value),
 			                            ref MemoryMarshal.GetReference(unmanagedSpan)));
+#if NET6_0_OR_GREATER
 			Assert.True(utfSpan.SequenceEqual(MemoryMarshal.CreateReadOnlySpanFromNullTerminated((Byte*)ptr)));
+#endif
 			Assert.Equal(utfSpan.Length, MemoryMarshalCompat.IndexOfNull(ref MemoryMarshal.GetReference<Byte>(value)));
 			Assert.Equal(ptr, marshal.ToUnmanaged());
 		}
@@ -95,4 +101,10 @@ public sealed unsafe class MarshallerTests
 		Assert.Null(marshal.ToManaged());
 		return marshal;
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

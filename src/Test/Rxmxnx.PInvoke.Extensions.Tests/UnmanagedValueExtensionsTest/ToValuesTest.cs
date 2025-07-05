@@ -18,8 +18,10 @@ public sealed class ToValuesTest
 	internal void DoubleTest() => ToValuesTest.Test<Double>();
 	[Fact]
 	internal void GuidTest() => ToValuesTest.Test<Guid>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => ToValuesTest.Test<Half>();
+#endif
 	[Fact]
 	internal void Int16Test() => ToValuesTest.Test<Int16>();
 	[Fact]
@@ -46,7 +48,9 @@ public sealed class ToValuesTest
 		ToValuesTest.Test<T, Decimal>(values);
 		ToValuesTest.Test<T, Double>(values);
 		ToValuesTest.Test<T, Guid>(values);
+#if NET5_0_OR_GREATER
 		ToValuesTest.Test<T, Half>(values);
+#endif
 		ToValuesTest.Test<T, Int16>(values);
 		ToValuesTest.Test<T, Int32>(values);
 		ToValuesTest.Test<T, Int64>(values);

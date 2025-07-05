@@ -24,12 +24,12 @@ public sealed class GetUnsafePointerTest
 		Assert.Equal(getProcessStaticIdPtr,
 		             NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetInt32>(GetProcessIdStaticFunc));
 
-		Assert.Throws<ArgumentException>(
-			() => NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetT<Int32>>(Thread.GetCurrentProcessorId));
-		Assert.Throws<ArgumentException>(
-			() => NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetT<Int32>>(GetProcessIdStaticFunc));
-		Assert.Throws<ArgumentException>(
-			() => NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetT<Int32>>(GetProcessIdFunc));
+		Assert.Throws<ArgumentException>(() => NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetT<Int32>>(
+			                                 Thread.GetCurrentProcessorId));
+		Assert.Throws<ArgumentException>(() => NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetT<Int32>>(
+			                                 GetProcessIdStaticFunc));
+		Assert.Throws<ArgumentException>(() => NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetT<Int32>>(
+			                                 GetProcessIdFunc));
 
 		Assert.Equal(getCurrentProcessPtr.Invoke, Process.GetCurrentProcess);
 		Assert.Equal(getProcessIdPtr.Invoke, GetProcessIdFunc);
@@ -37,8 +37,13 @@ public sealed class GetUnsafePointerTest
 
 		return;
 
+#if NET5_0_OR_GREATER
 		Int32 GetProcessIdFunc() => Environment.ProcessId;
 		static Int32 GetProcessIdStaticFunc() => Environment.ProcessId;
+#else
+		Int32 GetProcessIdFunc() => Process.GetCurrentProcess().Id;
+		static Int32 GetProcessIdStaticFunc() => Process.GetCurrentProcess().Id;
+#endif
 	}
 	[Fact]
 	internal void BooleanTest() => GetUnsafePointerTest.UnmanagedTest<Boolean>();
@@ -54,8 +59,10 @@ public sealed class GetUnsafePointerTest
 	internal void DoubleTest() => GetUnsafePointerTest.UnmanagedTest<Double>();
 	[Fact]
 	internal void GuidTest() => GetUnsafePointerTest.UnmanagedTest<Guid>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => GetUnsafePointerTest.UnmanagedTest<Half>();
+#endif
 	[Fact]
 	internal void Int16Test() => GetUnsafePointerTest.UnmanagedTest<Int16>();
 	[Fact]

@@ -18,9 +18,17 @@ public sealed class GetUnsafeReadOnlySpanFromNullTerminatedTest
 		ReadOnlyValPtr<Char> charPtr = GetUnsafeReadOnlySpanFromNullTerminatedTest.CharSpan.GetUnsafeValPtr();
 
 		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(GetUnsafeReadOnlySpanFromNullTerminatedTest.ByteSpan),
+#if NET8_0_OR_GREATER
 		                           in bytePtr.Reference));
+#else
+		                           ref Unsafe.AsRef(in bytePtr.Reference)));
+#endif
 		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(GetUnsafeReadOnlySpanFromNullTerminatedTest.CharSpan),
+#if NET8_0_OR_GREATER
 		                           in charPtr.Reference));
+#else
+		                           ref Unsafe.AsRef(in charPtr.Reference)));
+#endif
 
 		ReadOnlySpan<Byte> byteSpan = bytePtr.GetUnsafeReadOnlySpanFromNullTerminated();
 		ReadOnlySpan<Char> charSpan = charPtr.GetUnsafeReadOnlySpanFromNullTerminated();

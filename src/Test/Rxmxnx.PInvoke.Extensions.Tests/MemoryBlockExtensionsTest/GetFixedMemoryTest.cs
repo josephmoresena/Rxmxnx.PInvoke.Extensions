@@ -20,8 +20,10 @@ public sealed class GetFixedMemoryTest
 	internal void DoubleTest() => GetFixedMemoryTest.Test<Double>();
 	[Fact]
 	internal void GuidTest() => GetFixedMemoryTest.Test<Guid>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => GetFixedMemoryTest.Test<Half>();
+#endif
 	[Fact]
 	internal void Int16Test() => GetFixedMemoryTest.Test<Int16>();
 	[Fact]
@@ -54,8 +56,10 @@ public sealed class GetFixedMemoryTest
 	internal void DoubleArrayTest() => GetFixedMemoryTest.Test<Double[]>();
 	[Fact]
 	internal void GuidArrayTest() => GetFixedMemoryTest.Test<Guid[]>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfArrayTest() => GetFixedMemoryTest.Test<Half[]>();
+#endif
 	[Fact]
 	internal void Int16ArrayTest() => GetFixedMemoryTest.Test<Int16[]>();
 	[Fact]
@@ -106,6 +110,10 @@ public sealed class GetFixedMemoryTest
 		Assert.Equal(array.Length * Unsafe.SizeOf<T>(), fMem.Bytes.Length);
 		Assert.Equal(array.Length * Unsafe.SizeOf<T>(), frMem.Bytes.Length);
 		Assert.True(Unsafe.AreSame(ref array[0], ref Unsafe.As<Byte, T>(ref fMem.Bytes[0])));
+#if NET8_0_OR_GREATER
 		Assert.True(Unsafe.AreSame(in fMem.Bytes[0], in frMem.Bytes[0]));
+#else
+		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in fMem.Bytes[0]), ref Unsafe.AsRef(in frMem.Bytes[0])));
+#endif
 	}
 }

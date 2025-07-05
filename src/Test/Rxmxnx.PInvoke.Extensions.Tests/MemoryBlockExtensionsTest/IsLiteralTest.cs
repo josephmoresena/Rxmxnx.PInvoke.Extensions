@@ -39,4 +39,10 @@ public sealed class IsLiteralTest
 		Assert.True(IsLiteralTest.ConstantByteSpan.IsLiteral());
 		Assert.True("LITERAL_BYTE_SPAN"u8.IsLiteral());
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

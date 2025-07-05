@@ -36,11 +36,13 @@ public sealed class RentFixedTest
 	[InlineData(100)]
 	[InlineData(1000)]
 	internal void GuidTest(Int32 size) => TestClass<Guid>.Test(size);
+#if NET5_0_OR_GREATER
 	[Theory]
 	[InlineData(10)]
 	[InlineData(100)]
 	[InlineData(1000)]
 	internal void HalfTest(Int32 size) => TestClass<Half>.Test(size);
+#endif
 	[Theory]
 	[InlineData(10)]
 	[InlineData(100)]
@@ -91,7 +93,11 @@ public sealed class RentFixedTest
 			Assert.Equal(arr.Length, arrayLength);
 			Assert.Equal(size, ctx.Values.Length);
 			Assert.True(Unsafe.AreSame(ref ctx.ValuePointer.Reference, ref MemoryMarshal.GetReference(arr.AsSpan())));
+#if NET6_0_OR_GREATER
 			Assert.True(ctx.Values.SequenceEqual(arr.AsSpan()[..size]));
+#else
+			Assert.Equal(ctx.Values.ToArray(), arr.AsSpan()[..size].ToArray());
+#endif
 		}
 	}
 }

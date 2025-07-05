@@ -20,8 +20,10 @@ public sealed class ToBytesTest
 	internal void DoubleTest() => ToBytesTest.Test<Double>();
 	[Fact]
 	internal void GuidTest() => ToBytesTest.Test<Guid>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => ToBytesTest.Test<Half>();
+#endif
 	[Fact]
 	internal void Int16Test() => ToBytesTest.Test<Int16>();
 	[Fact]

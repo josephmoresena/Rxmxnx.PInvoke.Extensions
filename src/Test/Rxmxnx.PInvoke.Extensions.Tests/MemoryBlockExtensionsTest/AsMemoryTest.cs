@@ -172,7 +172,11 @@ public class AsMemoryTest
 			return;
 		}
 		using MemoryHandle handle = memory.Pin();
+#if NET6_0_OR_GREATER
 		ref T first = ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetArrayDataReference(arr));
+#else
+		ref T first = ref MemoryMarshalCompat.GetArrayDataReference<T>(arr);
+#endif
 		for (Int32 i = 0; i < arr.Length; i++)
 		{
 			Assert.True(Unsafe.AreSame(ref Unsafe.Add(ref first, i),
@@ -188,10 +192,20 @@ public class AsMemoryTest
 	private static Array CreateArray<T>(Int32[] lengths)
 	{
 		Array arr = Array.CreateInstance(typeof(T), lengths);
+#if NET6_0_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetArrayDataReference(arr)),
+#else
+		Span<T> span = MemoryMarshal.CreateSpan(ref MemoryMarshalCompat.GetArrayDataReference<T>(arr),
+#endif
 		                                        arr.Length);
 		T[] data = AsMemoryTest.fixture.CreateMany<T>(arr.Length).ToArray();
 		data.CopyTo(span);
 		return arr;
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

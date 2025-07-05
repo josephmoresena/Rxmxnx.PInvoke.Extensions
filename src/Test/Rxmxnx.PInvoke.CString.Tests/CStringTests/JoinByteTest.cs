@@ -115,4 +115,10 @@ public sealed class JoinByteTest
 		Int32 result = Random.Shared.Next(33, 127);
 		return (Byte)result;
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

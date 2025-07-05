@@ -20,22 +20,28 @@ public sealed class ReadOnlyValPtrTests
 	internal void Int32Test() => ReadOnlyValPtrTests.Test<Int32>();
 	[Fact]
 	internal void Int64Test() => ReadOnlyValPtrTests.Test<Int64>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal void Int128Test() => ReadOnlyValPtrTests.Test<Int128>();
+#endif
 	[Fact]
 	internal void GuidTest() => ReadOnlyValPtrTests.Test<Guid>();
 	[Fact]
 	internal void SingleTest() => ReadOnlyValPtrTests.Test<Single>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => ReadOnlyValPtrTests.Test<Half>();
+#endif
 	[Fact]
 	internal void DoubleTest() => ReadOnlyValPtrTests.Test<Double>();
 	[Fact]
 	internal void DecimalTest() => ReadOnlyValPtrTests.Test<Decimal>();
 	[Fact]
 	internal void DateTimeTest() => ReadOnlyValPtrTests.Test<DateTime>();
+#if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => ReadOnlyValPtrTests.Test<TimeOnly>();
+#endif
 	[Fact]
 	internal void TimeSpanTest() => ReadOnlyValPtrTests.Test<TimeSpan>();
 	[Fact]
@@ -92,7 +98,11 @@ public sealed class ReadOnlyValPtrTests
 			Assert.Equal(ptrI, ptrIAdd);
 			Assert.Equal(valPtr, ReadOnlyValPtr<T>.Subtract(ptrI, i));
 			Assert.True(ptrI == valPtr.Pointer + binaryOffset);
-			Assert.True(Unsafe.AreSame(in ptrI.Reference, ref Unsafe.AsRef(in span[i])));
+#if NET8_0_OR_GREATER
+			Assert.True(Unsafe.AreSame(in ptrI.Reference, in span[i]));
+#else
+			Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in ptrI.Reference), ref Unsafe.AsRef(in span[i])));
+#endif
 			Assert.Equal(valPtr.Pointer, ptrI.Pointer - binaryOffset);
 			Assert.False(ptrI.IsZero);
 			Assert.Equal(ptrI.Pointer, (ptrI as IWrapper<IntPtr>).Value);
@@ -164,7 +174,11 @@ public sealed class ReadOnlyValPtrTests
 				foreach (ref readonly Object refObj in ctx.AsObjectContext().Values)
 				{
 					if (!enumerator.MoveNext()) break;
+#if NET8_0_OR_GREATER
 					Assert.True(Unsafe.AreSame(in enumerator.Current,
+#else
+					Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in enumerator.Current),
+#endif
 					                           ref Unsafe.As<Object, T>(ref Unsafe.AsRef(in refObj))));
 				}
 				Assert.Equal(typeof(T).IsValueType || ctx.IsNullOrEmpty, ctx.Objects.IsEmpty);
@@ -202,7 +216,11 @@ public sealed class ReadOnlyValPtrTests
 			}
 			else
 			{
+#if NET8_0_OR_GREATER
 				Assert.True(Unsafe.AreSame(in fixedReference.Reference,
+#else
+				Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in fixedReference.Reference),
+#endif
 				                           ref Unsafe.As<Object, T>(
 					                           ref Unsafe.AsRef(in fixedReference.AsObjectContext().Values[0]))));
 				Assert.Equal(typeof(T).IsValueType || fixedReference.IsNullOrEmpty, fixedReference.Objects.IsEmpty);
@@ -228,6 +246,7 @@ public sealed class ReadOnlyValPtrTests
 		Assert.Equal(valPtr.Pointer.GetHashCode(), valPtr.GetHashCode());
 		Assert.Equal(valPtr.Pointer.ToString(), valPtr.ToString());
 
+#if NET6_0_OR_GREATER
 		if ((Object)valPtr is not ISpanFormattable spanFormattable) return;
 		MethodInfo? toStringMethodInfo = spanFormattable.GetType()
 		                                                .GetMethod(nameof(IntPtr.ToString),
@@ -251,6 +270,7 @@ public sealed class ReadOnlyValPtrTests
 			Assert.Equal(valPtr.Pointer.ToString(format), valPtr.ToString(format));
 			Assert.Equal(valPtr.Pointer.ToString(format, culture), spanFormattable.ToString(format, culture));
 		}
+#endif
 	}
 	private static void MarshallerTest<T>(ReadOnlyValPtr<T> valPtr)
 	{
@@ -275,5 +295,11 @@ public sealed class ReadOnlyValPtrTests
 		Assert.Equal(ctx2.Values.Length, ctx.Bytes.Length / sizeof(TDestination));
 		Assert.Equal(offset.Bytes.Length, ctx.Bytes.Length - ctx2.Values.Length * sizeof(TDestination));
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }
 #pragma warning restore CS8500

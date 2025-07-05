@@ -36,9 +36,19 @@ public sealed class RegisterTest
 			                                                            m.GetGenericArguments().Length == 1);
 		Int32 pow = Random.Shared.Next(3, 10);
 		_ = RegisterTest.GetCompositeType<Object>(pow, out Int32 sizeofT, out Type resultType);
+
+#if NET5_0_OR_GREATER
 		Int32 sizeOfResultType = RegisterTest.sizeOfInfo.MakeGenericMethod(resultType).CreateDelegate<Func<Int32>>()();
+#else
+		Int32 sizeOfResultType =
+			((Func<Int32>)RegisterTest.sizeOfInfo.MakeGenericMethod(resultType).CreateDelegate(typeof(Func<Int32>)))();
+#endif
 		IManagedBinaryBuffer<Object>? buffer = (IManagedBinaryBuffer<Object>?)Activator.CreateInstance(resultType);
+#if NET5_0_OR_GREATER
 		registerObjectInfo.MakeGenericMethod(resultType).CreateDelegate<Action>()();
+#else
+		((Action)registerObjectInfo.MakeGenericMethod(resultType).CreateDelegate(typeof(Action)))();
+#endif
 		Assert.NotNull(buffer);
 		Assert.Equal(sizeOfResultType / sizeofT, buffer.Metadata.Size);
 		Assert.True(buffer.Metadata.IsBinary);
@@ -49,18 +59,37 @@ public sealed class RegisterTest
 	{
 		Int32 pow = Random.Shared.Next(3, 10);
 		Type typeofT = RegisterTest.GetCompositeType<T>(pow, out Int32 sizeofT, out Type resultType);
+#if NET5_0_OR_GREATER
 		Int32 sizeOfResultType = RegisterTest.sizeOfInfo.MakeGenericMethod(resultType).CreateDelegate<Func<Int32>>()();
+#else
+		Int32 sizeOfResultType =
+			((Func<Int32>)RegisterTest.sizeOfInfo.MakeGenericMethod(resultType).CreateDelegate(typeof(Func<Int32>)))();
+#endif
 		IManagedBinaryBuffer<T>? buffer = (IManagedBinaryBuffer<T>?)Activator.CreateInstance(resultType);
 		Assert.NotNull(buffer);
 		Assert.Equal(sizeOfResultType / sizeofT, buffer.Metadata.Size);
 		Assert.True(buffer.Metadata.IsBinary);
 		Assert.Equal(buffer.Metadata.Size != 1 ? 2 : 0, buffer.Metadata.ComponentCount);
+#if NET5_0_OR_GREATER
 		RegisterTest.registerInfo.MakeGenericMethod(typeofT, resultType).CreateDelegate<Action>()();
+#else
+		((Action)RegisterTest.registerInfo.MakeGenericMethod(typeofT, resultType).CreateDelegate(typeof(Action)))();
+#endif
 
 		_ = RegisterTest.GetCompositeType<T?>(pow, out sizeofT, out resultType);
+#if NET5_0_OR_GREATER
 		sizeOfResultType = RegisterTest.sizeOfInfo.MakeGenericMethod(resultType).CreateDelegate<Func<Int32>>()();
+#else
+		sizeOfResultType =
+			((Func<Int32>)RegisterTest.sizeOfInfo.MakeGenericMethod(resultType).CreateDelegate(typeof(Func<Int32>)))();
+#endif
 		IManagedBinaryBuffer<T?>? nullableBuffer = (IManagedBinaryBuffer<T?>?)Activator.CreateInstance(resultType);
+#if NET5_0_OR_GREATER
 		RegisterTest.registerNullableInfo.MakeGenericMethod(typeofT, resultType).CreateDelegate<Action>()();
+#else
+		((Action)RegisterTest.registerNullableInfo.MakeGenericMethod(typeofT, resultType)
+		                     .CreateDelegate(typeof(Action)))();
+#endif
 		Assert.NotNull(nullableBuffer);
 		Assert.Equal(sizeOfResultType / sizeofT, nullableBuffer.Metadata.Size);
 		Assert.True(nullableBuffer.Metadata.IsBinary);
@@ -92,4 +121,10 @@ public sealed class RegisterTest
 		}
 		return initial ?? components[Random.Shared.Next(0, components.Length)];
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

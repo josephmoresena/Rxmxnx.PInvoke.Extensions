@@ -17,8 +17,10 @@ public sealed class SizeOfTest
 	internal void DoubleTest() => Assert.Equal(8, NativeUtilities.SizeOf<Double>());
 	[Fact]
 	internal void GuidTest() => Assert.Equal(16, NativeUtilities.SizeOf<Guid>());
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => Assert.Equal(2, NativeUtilities.SizeOf<Half>());
+#endif
 	[Fact]
 	internal void Int16Test() => Assert.Equal(2, NativeUtilities.SizeOf<Int16>());
 	[Fact]

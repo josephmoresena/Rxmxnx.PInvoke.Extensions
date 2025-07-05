@@ -1,3 +1,4 @@
+#if NET5_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Tests.Internal;
 
 [ExcludeFromCodeCoverage]
@@ -14,3 +15,4 @@ public sealed class ToHexStringTest
 			Assert.Equal(Convert.ToHexString(value), ConvertCompat.ToHexString(value));
 	}
 }
+#endif
