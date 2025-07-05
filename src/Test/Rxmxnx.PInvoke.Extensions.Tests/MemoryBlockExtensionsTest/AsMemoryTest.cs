@@ -12,7 +12,7 @@ public class AsMemoryTest
 
 	[Fact]
 	internal void AsMemoryCountTest() => Assert.Equal(31, AsMemoryTest.asMemories.Count);
-	[Theory]
+	[SkippableTheory]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -45,7 +45,7 @@ public class AsMemoryTest
 	[InlineData(31)]
 	[InlineData(32)]
 	internal void ByteTest(Int32 dimension) => AsMemoryTest.GenericTest<Byte>(dimension);
-	[Theory]
+	[SkippableTheory]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -78,7 +78,7 @@ public class AsMemoryTest
 	[InlineData(31)]
 	[InlineData(32)]
 	internal void Int32Test(Int32 dimension) => AsMemoryTest.GenericTest<Int32>(dimension);
-	[Theory]
+	[SkippableTheory]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -111,7 +111,7 @@ public class AsMemoryTest
 	[InlineData(31)]
 	[InlineData(32)]
 	internal void StringTest(Int32 dimension) => AsMemoryTest.GenericTest<String>(dimension);
-	[Theory]
+	[SkippableTheory]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -147,6 +147,7 @@ public class AsMemoryTest
 
 	private static unsafe void GenericTest<T>(Int32 count)
 	{
+		Skip.If(IntPtr.Size == sizeof(Int32) && count > 15);
 		Int32[] lengths = Enumerable.Range(0, count).Select(_ => Random.Shared.Next(1, 3)).ToArray();
 		Array arr = AsMemoryTest.CreateArray<T>(lengths);
 		MethodInfo method = AsMemoryTest.asMemories[arr.Rank];

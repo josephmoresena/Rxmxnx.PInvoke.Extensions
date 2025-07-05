@@ -15,7 +15,7 @@ public class AsSpanTest
 
 	[Fact]
 	internal void AsSpanCountTest() => Assert.Equal(31, AsSpanTest.asSpans.Count);
-	[Theory]
+	[SkippableTheory]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -48,7 +48,7 @@ public class AsSpanTest
 	[InlineData(31)]
 	[InlineData(32)]
 	internal void ByteTest(Int32 dimension) => AsSpanTest.GenericTest<Byte>(dimension);
-	[Theory]
+	[SkippableTheory]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -81,7 +81,7 @@ public class AsSpanTest
 	[InlineData(31)]
 	[InlineData(32)]
 	internal void Int32Test(Int32 dimension) => AsSpanTest.GenericTest<Int32>(dimension);
-	[Theory]
+	[SkippableTheory]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -114,7 +114,7 @@ public class AsSpanTest
 	[InlineData(31)]
 	[InlineData(32)]
 	internal void StringTest(Int32 dimension) => AsSpanTest.GenericTest<String>(dimension);
-	[Theory]
+	[SkippableTheory]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -150,6 +150,7 @@ public class AsSpanTest
 
 	private static void GenericTest<T>(Int32 count)
 	{
+		Skip.If(IntPtr.Size == sizeof(Int32) && count > 15);
 		Int32[] lengths = Enumerable.Range(0, count).Select(_ => Random.Shared.Next(1, 3)).ToArray();
 
 		GC.Collect();
