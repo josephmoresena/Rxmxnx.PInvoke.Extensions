@@ -42,7 +42,7 @@ public sealed class ValueTest
 	private void Test<T>() where T : unmanaged
 	{
 		IReferenceableWrapper<T> value = IReferenceableWrapper.Create(ValueTest.fixture.Create<T>());
-		Byte[] bytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref UnsafeLegacy.AsRef(in value.Reference), 1))
+		Byte[] bytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref Unsafe.AsRef(in value.Reference), 1))
 		                            .ToArray();
 
 		this._wraper = value;

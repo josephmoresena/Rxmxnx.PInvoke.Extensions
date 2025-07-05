@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-
-namespace Rxmxnx.PInvoke.Tests.SourceGenerator;
+﻿namespace Rxmxnx.PInvoke.Tests.SourceGenerator;
 
 [ExcludeFromCodeCoverage]
 internal static class StringSet

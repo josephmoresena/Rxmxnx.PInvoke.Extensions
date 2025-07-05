@@ -50,7 +50,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Rxmxnx.PInvoke.Tests.Base\Rxmxnx.PInvoke.Tests.Base.csproj"/>
         <ProjectReference Include="..\..\Intermediate\Rxmxnx.PInvoke.Common.Intermediate\Rxmxnx.PInvoke.Common.Intermediate.csproj"/>
     </ItemGroup>
 

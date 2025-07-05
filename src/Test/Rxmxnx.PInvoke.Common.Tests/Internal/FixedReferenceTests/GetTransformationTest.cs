@@ -73,8 +73,8 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 			else
 			{
 				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, ManagedStruct>(fref));
-				Assert.Throws<InvalidOperationException>(
-					() => GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(fref));
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest
+					                                         .Test<T, WrapperStruct<ManagedStruct>>(fref));
 			}
 
 			if (sizeof(T) < IntPtr.Size)
@@ -129,8 +129,8 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 			if (sizeof(T) < sizeof(ManagedStruct))
 				GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(fref);
 			else
-				Assert.Throws<InvalidOperationException>(
-					() => GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(fref));
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest
+					                                         .Test<T, WrapperStruct<ManagedStruct>>(fref));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<String>>(fref));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<Object>>(fref));
 
@@ -143,10 +143,10 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 			}
 			else
 			{
-				Assert.Throws<InvalidOperationException>(
-					() => GetTransformationTest.Test<T, WrapperStruct<String>>(fref));
-				Assert.Throws<InvalidOperationException>(
-					() => GetTransformationTest.Test<T, WrapperStruct<Object>>(fref));
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<String>>(
+					                                         fref));
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<Object>>(
+					                                         fref));
 				GetTransformationTest.Test<T, String>(fref);
 				GetTransformationTest.Test<T, Object>(fref);
 			}
@@ -224,8 +224,8 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 			else
 			{
 				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, ManagedStruct>(fref));
-				Assert.Throws<InvalidOperationException>(
-					() => GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(fref));
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest
+					                                         .Test<T, WrapperStruct<ManagedStruct>>(fref));
 			}
 
 			if (sizeof(T) < IntPtr.Size)
@@ -280,8 +280,8 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 			if (sizeof(T) < sizeof(ManagedStruct))
 				GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(fref);
 			else
-				Assert.Throws<InvalidOperationException>(
-					() => GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(fref));
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest
+					                                         .Test<T, WrapperStruct<ManagedStruct>>(fref));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<String>>(fref));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<Object>>(fref));
 
@@ -294,10 +294,10 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 			}
 			else
 			{
-				Assert.Throws<InvalidOperationException>(
-					() => GetTransformationTest.Test<T, WrapperStruct<String>>(fref));
-				Assert.Throws<InvalidOperationException>(
-					() => GetTransformationTest.Test<T, WrapperStruct<Object>>(fref));
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<String>>(
+					                                         fref));
+				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<Object>>(
+					                                         fref));
 				GetTransformationTest.Test<T, String>(fref);
 				GetTransformationTest.Test<T, Object>(fref);
 			}
@@ -383,7 +383,7 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 		FixedReference<T2> result)
 	{
 		HashCode hashResidual = new();
-		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in fref.CreateReadOnlyReference<T>()))));
+		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref Unsafe.AsRef(in fref.CreateReadOnlyReference<T>()))));
 		hashResidual.Add(sizeof(T2));
 		hashResidual.Add(fref.BinaryLength);
 		hashResidual.Add(false);
@@ -496,7 +496,7 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 		ReadOnlyFixedReference<T2> result)
 	{
 		HashCode hashResidual = new();
-		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in fref.CreateReadOnlyReference<T>()))));
+		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref Unsafe.AsRef(in fref.CreateReadOnlyReference<T>()))));
 		hashResidual.Add(sizeof(T2));
 		hashResidual.Add(fref.BinaryLength);
 		hashResidual.Add(true);

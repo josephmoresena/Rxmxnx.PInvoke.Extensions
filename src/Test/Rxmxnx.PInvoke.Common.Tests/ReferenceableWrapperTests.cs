@@ -54,7 +54,7 @@ public sealed class ReferenceableWrapperTests
 		IReferenceableWrapper<T> result2 = IReferenceableWrapper.Create(value);
 		ReferenceableWrapper<T> result3 = new(result);
 		ref readonly T refValue = ref result.Reference;
-		ref T mutableValueRef = ref UnsafeLegacy.AsRef(in result.Reference);
+		ref T mutableValueRef = ref Unsafe.AsRef(in result.Reference);
 		Assert.NotNull(result);
 		Assert.Equal(value, result.Value);
 		Assert.Equal(value, refValue);
@@ -76,7 +76,7 @@ public sealed class ReferenceableWrapperTests
 		IReferenceableWrapper<T?> result2 = IReferenceableWrapper.CreateNullable(value);
 		ReferenceableWrapper<T?> result3 = new(result);
 		ref readonly T? refValue = ref result.Reference;
-		ref T? mutableValueRef = ref UnsafeLegacy.AsRef(in result.Reference);
+		ref T? mutableValueRef = ref Unsafe.AsRef(in result.Reference);
 		Assert.NotNull(result);
 		Assert.Equal(value, refValue);
 		Assert.Equal(value, result.Value);
@@ -95,7 +95,7 @@ public sealed class ReferenceableWrapperTests
 		IReferenceableWrapper<T[]> result2 = IReferenceableWrapper.CreateObject(array);
 		ReferenceableWrapper<T[]> result3 = new(result);
 		ref readonly T[] refValue = ref result.Reference;
-		ref T[] mutableValueRef = ref UnsafeLegacy.AsRef(in result.Reference);
+		ref T[] mutableValueRef = ref Unsafe.AsRef(in result.Reference);
 		Assert.NotNull(result);
 		Assert.Equal(array, result.Value);
 		Assert.Equal(array, refValue);

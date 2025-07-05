@@ -92,12 +92,12 @@ public sealed class ReadOnlyValPtrTests
 			Assert.Equal(ptrI, ptrIAdd);
 			Assert.Equal(valPtr, ReadOnlyValPtr<T>.Subtract(ptrI, i));
 			Assert.True(ptrI == valPtr.Pointer + binaryOffset);
-			Assert.True(Unsafe.AreSame(in ptrI.Reference, ref UnsafeLegacy.AsRef(in span[i])));
+			Assert.True(Unsafe.AreSame(in ptrI.Reference, ref Unsafe.AsRef(in span[i])));
 			Assert.Equal(valPtr.Pointer, ptrI.Pointer - binaryOffset);
 			Assert.False(ptrI.IsZero);
 			Assert.Equal(ptrI.Pointer, (ptrI as IWrapper<IntPtr>).Value);
 
-			ReadOnlyValPtrTests.ReferenceTest(ptrI, ref UnsafeLegacy.AsRef(in span[i]));
+			ReadOnlyValPtrTests.ReferenceTest(ptrI, ref Unsafe.AsRef(in span[i]));
 
 			Assert.True(ptrI >= valPtr);
 			Assert.True(valPtr <= ptrI);
@@ -106,7 +106,7 @@ public sealed class ReadOnlyValPtrTests
 			Assert.True(ptrI > valPtr);
 			Assert.True(valPtr < ptrI);
 
-			ValPtr<T> ptrIAdd2 = Unsafe.As<ReadOnlyValPtr<T>, ValPtr<T>>(ref UnsafeLegacy.AsRef(in ptrIAdd));
+			ValPtr<T> ptrIAdd2 = Unsafe.As<ReadOnlyValPtr<T>, ValPtr<T>>(ref Unsafe.AsRef(in ptrIAdd));
 
 			Assert.Equal(1, ptrI.CompareTo(valPtr));
 			Assert.Equal(0, ptrI.CompareTo(ptrIAdd));
@@ -165,7 +165,7 @@ public sealed class ReadOnlyValPtrTests
 				{
 					if (!enumerator.MoveNext()) break;
 					Assert.True(Unsafe.AreSame(in enumerator.Current,
-					                           ref Unsafe.As<Object, T>(ref UnsafeLegacy.AsRef(in refObj))));
+					                           ref Unsafe.As<Object, T>(ref Unsafe.AsRef(in refObj))));
 				}
 				Assert.Equal(typeof(T).IsValueType || ctx.IsNullOrEmpty, ctx.Objects.IsEmpty);
 			}
@@ -178,7 +178,7 @@ public sealed class ReadOnlyValPtrTests
 
 		ReadOnlySpan<T> span2 = ctx.Values;
 		for (Int32 i = 0; i < span.Length; i++)
-			Assert.True(Unsafe.AreSame(ref UnsafeLegacy.AsRef(in span[i]), ref UnsafeLegacy.AsRef(in span2[i])));
+			Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in span[i]), ref Unsafe.AsRef(in span2[i])));
 
 		ReadOnlyValPtrTests.ContextTransformTest<T, Byte>(ctx);
 		ReadOnlyValPtrTests.ContextTransformTest<T, Int16>(ctx);
@@ -188,7 +188,7 @@ public sealed class ReadOnlyValPtrTests
 	private static unsafe void ReferenceTest<T>(ReadOnlyValPtr<T> ptrI, ref T reference)
 	{
 		using IReadOnlyFixedReference<T>.IDisposable fixedReference = ptrI.GetUnsafeFixedReference();
-		Assert.True(Unsafe.AreSame(ref UnsafeLegacy.AsRef(in fixedReference.Reference), ref reference));
+		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in fixedReference.Reference), ref reference));
 		Assert.Equal(ptrI.Pointer, fixedReference.Pointer);
 		Assert.Equal(ptrI.IsZero, fixedReference.IsNullOrEmpty);
 		if (!ReadOnlyValPtr<T>.IsUnmanaged)
@@ -204,7 +204,7 @@ public sealed class ReadOnlyValPtrTests
 			{
 				Assert.True(Unsafe.AreSame(in fixedReference.Reference,
 				                           ref Unsafe.As<Object, T>(
-					                           ref UnsafeLegacy.AsRef(in fixedReference.AsObjectContext().Values[0]))));
+					                           ref Unsafe.AsRef(in fixedReference.AsObjectContext().Values[0]))));
 				Assert.Equal(typeof(T).IsValueType || fixedReference.IsNullOrEmpty, fixedReference.Objects.IsEmpty);
 			}
 			Assert.Throws<InvalidOperationException>(fixedReference.AsBinaryContext);
@@ -265,7 +265,7 @@ public sealed class ReadOnlyValPtrTests
 	{
 		if (sizeof(TDestination) > sizeof(T)) return;
 		IReadOnlyReferenceable<TDestination> fRef2 = fRef.Transformation<TDestination>(out IReadOnlyFixedMemory offset);
-		Assert.True(Unsafe.AreSame(ref UnsafeLegacy.AsRef(in fRef2.Reference),
+		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in fRef2.Reference),
 		                           ref Unsafe.AsRef<TDestination>(ptrI.Pointer.ToPointer())));
 		Assert.Equal(sizeof(T) - sizeof(TDestination), offset.Bytes.Length);
 	}

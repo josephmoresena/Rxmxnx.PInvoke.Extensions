@@ -159,7 +159,7 @@ public sealed class GetHashCodeTest : FixedReferenceTestsBase
 			return;
 
 		ref readonly T valueRef = ref fref.CreateReadOnlyReference<T>();
-		void* ptr = Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in valueRef));
+		void* ptr = Unsafe.AsPointer(ref Unsafe.AsRef(in valueRef));
 		ref readonly T2 transformedRef = ref Unsafe.AsRef<T2>(ptr);
 		FixedReferenceTestsBase.WithFixed(transformedRef, fref, GetHashCodeTest.Test);
 	}
@@ -170,7 +170,7 @@ public sealed class GetHashCodeTest : FixedReferenceTestsBase
 			return;
 
 		ref readonly T valueRef = ref fref.CreateReadOnlyReference<T>();
-		void* ptr = Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in valueRef));
+		void* ptr = Unsafe.AsPointer(ref Unsafe.AsRef(in valueRef));
 		ref readonly T2 transformedRef = ref Unsafe.AsRef<T2>(ptr);
 		FixedReferenceTestsBase.WithFixed(transformedRef, fref, GetHashCodeTest.Test);
 	}

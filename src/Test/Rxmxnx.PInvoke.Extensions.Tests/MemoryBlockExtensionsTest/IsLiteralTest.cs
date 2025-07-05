@@ -24,9 +24,10 @@ public sealed class IsLiteralTest
 		Int32 value = Random.Shared.Next();
 
 		Assert.False(MemoryMarshal.CreateReadOnlySpan(ref value, 1).IsLiteral());
-		Assert.False(MemoryMarshal.CreateReadOnlySpan(ref UnsafeLegacy.AsRef(constIntValue), 1).IsLiteral());
-		Assert.False(
-			MemoryMarshal.CreateReadOnlySpan(ref UnsafeLegacy.AsRef(IsLiteralTest.IntegerValue), 1).IsLiteral());
+#pragma warning disable CS9193
+		Assert.False(MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(constIntValue), 1).IsLiteral());
+		Assert.False(MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(IsLiteralTest.IntegerValue), 1).IsLiteral());
+#pragma warning restore CS9193
 
 		Assert.False(constValue.AsSpan().IsLiteral());
 		Assert.False(IsLiteralTest.constantStringField.AsSpan().IsLiteral());

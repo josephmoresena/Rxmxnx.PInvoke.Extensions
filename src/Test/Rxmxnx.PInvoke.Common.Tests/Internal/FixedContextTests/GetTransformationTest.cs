@@ -66,8 +66,8 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 			GetTransformationTest.Test<T, TimeSpan>(ctx);
 
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, ManagedStruct>(ctx));
-			Assert.Throws<InvalidOperationException>(
-				() => GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(
+				                                         ctx));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, String>(ctx));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Object>(ctx));
 		}
@@ -88,8 +88,8 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeOnly>(ctx));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeSpan>(ctx));
 
-			Assert.Throws<InvalidOperationException>(
-				() => GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(
+				                                         ctx));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<String>>(ctx));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<Object>>(ctx));
 
@@ -167,8 +167,8 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 			GetTransformationTest.Test<T, TimeSpan>(ctx);
 
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, ManagedStruct>(ctx));
-			Assert.Throws<InvalidOperationException>(
-				() => GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(
+				                                         ctx));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, String>(ctx));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Object>(ctx));
 		}
@@ -189,8 +189,8 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeOnly>(ctx));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeSpan>(ctx));
 
-			Assert.Throws<InvalidOperationException>(
-				() => GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(ctx));
+			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(
+				                                         ctx));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<String>>(ctx));
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<Object>>(ctx));
 
@@ -274,7 +274,7 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 		Int32 countT2 = ctx.BinaryLength / sizeof(T2);
 		Int32 offsetT2 = countT2 * sizeof(T2);
 		HashCode hashResidual = new();
-		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in ctx.CreateReadOnlyReference<T>()))));
+		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref Unsafe.AsRef(in ctx.CreateReadOnlyReference<T>()))));
 		hashResidual.Add(offsetT2);
 		hashResidual.Add(ctx.BinaryLength);
 		hashResidual.Add(false);
@@ -347,7 +347,7 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 		Int32 countT2 = ctx.BinaryLength / sizeof(T2);
 		Int32 offsetT2 = countT2 * sizeof(T2);
 		HashCode hashResidual = new();
-		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in ctx.CreateReadOnlyReference<T>()))));
+		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref Unsafe.AsRef(in ctx.CreateReadOnlyReference<T>()))));
 		hashResidual.Add(offsetT2);
 		hashResidual.Add(ctx.BinaryLength);
 		hashResidual.Add(true);

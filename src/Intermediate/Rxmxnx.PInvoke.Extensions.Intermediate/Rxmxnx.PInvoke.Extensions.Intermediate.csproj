@@ -1,20 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <RootNamespace>Rxmxnx.PInvoke</RootNamespace>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Deterministic>true</Deterministic>
-        <IsTrimmable Condition="$(DefineConstants.Contains('NET6_0_OR_GREATER'))">true</IsTrimmable>
-        <EnableTrimAnalyzer Condition="$(DefineConstants.Contains('NET6_0_OR_GREATER'))">true</EnableTrimAnalyzer>
-        <DocumentationFile>./$(AssemblyName).xml</DocumentationFile>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <ExcludeXmlAssemblyFiles>false</ExcludeXmlAssemblyFiles>
-        <LangVersion>latest</LangVersion>
-        <TrimmerSingleWarn>false</TrimmerSingleWarn>
-    </PropertyGroup>
+    <Import Project="..\Intermediate.Library.targets"/>
 
     <ItemGroup>
         <Using Include="System.Buffers"/>

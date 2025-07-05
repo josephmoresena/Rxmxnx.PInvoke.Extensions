@@ -204,7 +204,7 @@ public sealed class ValPtrTests
 			{
 				Assert.True(Unsafe.AreSame(in fixedReference.Reference,
 				                           ref Unsafe.As<Object, T>(
-					                           ref UnsafeLegacy.AsRef(in fixedReference.AsObjectContext().Values[0]))));
+					                           ref Unsafe.AsRef(in fixedReference.AsObjectContext().Values[0]))));
 				Assert.Equal(typeof(T).IsValueType || fixedReference.IsNullOrEmpty, fixedReference.Objects.IsEmpty);
 			}
 			Assert.Throws<InvalidOperationException>(() => fixedReference.Transformation<Byte>(out IFixedMemory _));
