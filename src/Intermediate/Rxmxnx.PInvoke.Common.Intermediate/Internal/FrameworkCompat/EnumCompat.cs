@@ -1,4 +1,3 @@
-#if !PACKAGE || !NET5_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 
 /// <summary>
@@ -7,6 +6,10 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 internal static class EnumCompat
 {
 	/// <inheritdoc cref="Enum.GetName(Type, Object)"/>
-	public static String? GetName<TEnum>(TEnum value) where TEnum : Enum => Enum.GetName(typeof(TEnum), value);
-}
+	public static String? GetName<TEnum>(TEnum value) where TEnum : unmanaged, Enum
+#if !PACKAGE || !NET5_0_OR_GREATER
+		=> Enum.GetName(typeof(TEnum), value);
+#else
+		=> Enum.GetName<TEnum>(value);
 #endif
+}

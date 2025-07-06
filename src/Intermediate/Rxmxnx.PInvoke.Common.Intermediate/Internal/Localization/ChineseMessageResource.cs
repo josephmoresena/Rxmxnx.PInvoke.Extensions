@@ -56,9 +56,7 @@ internal sealed class ChineseMessageResource : IMessageResource
 		=> $"{itemType} 是引用类型，但 {arrayType} 是非托管类型。";
 	String IMessageResource.UnmanagedTypeButContainsReferences(Type itemType, Type arrayType)
 		=> $"{itemType} 是非托管类型，但 {arrayType} 包含引用。";
-#if !PACKAGE || !NET7_0_OR_GREATER
 	String IMessageResource.MissingBufferMetadataException(Type bufferType) => $"无法获取 {bufferType} 缓冲区的元数据。";
-#endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"无法为 {itemType} 创建包含 {size} 项的缓冲区。";
 #if !PACKAGE || NETCOREAPP

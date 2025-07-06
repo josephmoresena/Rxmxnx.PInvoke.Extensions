@@ -59,10 +59,8 @@ internal sealed class ArabicMessageResource : IMessageResource
 		=> $"{itemType} هو نوع مرجعي لكن {arrayType} هو نوع غير مُدار.";
 	String IMessageResource.UnmanagedTypeButContainsReferences(Type itemType, Type arrayType)
 		=> $"{itemType} هو نوع غير مُدار لكن {arrayType} يحتوي على مراجع.";
-#if !PACKAGE || !NET7_0_OR_GREATER
 	String IMessageResource.MissingBufferMetadataException(Type bufferType)
 		=> $"تعذّر استرداد البيانات الوصفية لمخزن {bufferType}.";
-#endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"تعذّر إنشاء مخزن مؤقت لـ {itemType} يضم {size} عناصر.";
 #if !PACKAGE || NETCOREAPP

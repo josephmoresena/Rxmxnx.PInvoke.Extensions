@@ -9,7 +9,7 @@ namespace Rxmxnx.PInvoke.Buffers;
 #endif
 public interface IManagedBuffer<T>
 {
-#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
+#if NET7_0_OR_GREATER
 	/// <summary>
 	/// Current type components.
 	/// </summary>

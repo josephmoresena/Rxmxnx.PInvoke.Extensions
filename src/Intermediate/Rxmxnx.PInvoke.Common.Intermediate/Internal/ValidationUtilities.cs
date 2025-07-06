@@ -533,7 +533,6 @@ internal static unsafe class ValidationUtilities
 		if (!String.IsNullOrEmpty(message))
 			throw new InvalidOperationException(message);
 	}
-#if !PACKAGE || !NET7_0_OR_GREATER
 	/// <summary>
 	/// Throws an exception if buffer metadata is null.
 	/// </summary>
@@ -550,7 +549,6 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = IMessageResource.GetInstance();
 		throw new InvalidOperationException(resource.MissingBufferMetadataException(bufferType));
 	}
-#endif
 	/// <summary>
 	/// Throws an exception if buffer metadata is null.
 	/// </summary>

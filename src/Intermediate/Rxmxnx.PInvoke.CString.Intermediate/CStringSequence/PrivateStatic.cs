@@ -213,7 +213,7 @@ public unsafe partial class CStringSequence
 	/// </returns>
 	[return: NotNullIfNotNull(nameof(str))]
 	private static CString? CreateTransitive(String? str)
-#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
+#if NET7_0_OR_GREATER
 		=> str is not null ? CString.Create(new CStringStringState(str)) : default;
 #else
 	{

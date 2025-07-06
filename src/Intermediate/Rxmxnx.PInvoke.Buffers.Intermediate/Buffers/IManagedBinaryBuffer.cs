@@ -28,7 +28,7 @@ public partial interface IManagedBinaryBuffer<
 	TBuffer, T> : IManagedBinaryBuffer<T> where TBuffer : struct, IManagedBinaryBuffer<TBuffer, T>
 {
 	BufferTypeMetadata<T> IManagedBinaryBuffer<T>.Metadata
-#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
+#if NET7_0_OR_GREATER
 		=> IManagedBuffer<T>.GetMetadata<TBuffer>();
 #else
 		=> BufferManager.MetadataManager<T>.GetMetadata(typeof(TBuffer))!;

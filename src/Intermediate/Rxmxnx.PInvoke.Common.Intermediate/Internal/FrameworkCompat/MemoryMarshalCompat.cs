@@ -1,5 +1,3 @@
-#if !PACKAGE || !NET6_0_OR_GREATER
-
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 
 /// <summary>
@@ -9,8 +7,13 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3011)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-internal static unsafe partial class MemoryMarshalCompat
+internal static unsafe
+#if !PACKAGE || !NET6_0_OR_GREATER
+	partial
+#endif
+	class MemoryMarshalCompat
 {
+#if !PACKAGE
 	/// <summary>
 	/// Target framework for the current build.
 	/// </summary>
@@ -26,6 +29,7 @@ internal static unsafe partial class MemoryMarshalCompat
 #else
 		RuntimeInformation.FrameworkDescription;
 #endif
+#endif
 
 	/// <summary>
 	/// Creates a new read-only span for a null-terminated UTF8 string.
@@ -40,6 +44,7 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// <exception cref="ArgumentException">The string is longer than <see cref="Int32.MaxValue"/>.</exception>
 	public static ReadOnlySpan<Byte> CreateReadOnlySpanFromNullTerminated(Byte* value)
 	{
+#if !PACKAGE || !NET6_0_OR_GREATER
 		if (value == IntPtr.Zero.ToPointer())
 			return default;
 
@@ -48,6 +53,9 @@ internal static unsafe partial class MemoryMarshalCompat
 		if (length < 0)
 			throw new ArgumentException(null, nameof(value));
 		return MemoryMarshal.CreateReadOnlySpan(ref ref0, length);
+#else
+		return MemoryMarshal.CreateReadOnlySpanFromNullTerminated(value);
+#endif
 	}
 	/// <summary>
 	/// Creates a new read-only span for a null-terminated string.
@@ -60,6 +68,7 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// <exception cref="ArgumentException">The string is longer than <see cref="int.MaxValue"/>.</exception>
 	public static ReadOnlySpan<Char> CreateReadOnlySpanFromNullTerminated(Char* value)
 	{
+#if !PACKAGE || !NET6_0_OR_GREATER
 		if (value == IntPtr.Zero.ToPointer())
 			return default;
 
@@ -68,6 +77,9 @@ internal static unsafe partial class MemoryMarshalCompat
 		if (length < 0)
 			throw new ArgumentException(null, nameof(value));
 		return MemoryMarshal.CreateReadOnlySpan(ref ref0, length);
+#else
+		return MemoryMarshal.CreateReadOnlySpanFromNullTerminated(value);
+#endif
 	}
 	/// <summary>
 	/// Returns a reference to the 0th element of <paramref name="array"/>.
@@ -78,6 +90,7 @@ internal static unsafe partial class MemoryMarshalCompat
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ref T GetArrayDataReference<T>(Array array)
 	{
+#if !PACKAGE || !NET6_0_OR_GREATER
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>())
 		{
 			// Arrays of unmanaged items can be pinned.
@@ -122,8 +135,10 @@ internal static unsafe partial class MemoryMarshalCompat
 		{
 			return ref Unsafe.As<Byte, T>(ref Unsafe.As<MonoRawData>(array).Data);
 		}
-
 		return ref Unsafe.As<Byte, T>(ref MemoryMarshalCompat.GetArrayDataReference(mtpRef, array));
+#else
+		return ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetArrayDataReference(array));
+#endif
 	}
 	/// <summary>
 	/// Retrieves the index of the first null occurrence in the buffer represented by <paramref name="buffer"/>.
@@ -149,5 +164,3 @@ internal static unsafe partial class MemoryMarshalCompat
 		return (Int32)result;
 	}
 }
-
-#endif

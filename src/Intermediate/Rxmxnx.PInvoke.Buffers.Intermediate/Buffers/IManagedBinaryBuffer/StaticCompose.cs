@@ -1,4 +1,4 @@
-#if (!PACKAGE && NET6_0 || NET7_0_OR_GREATER) && BINARY_SPACES
+#if NET7_0_OR_GREATER && BINARY_SPACES
 namespace Rxmxnx.PInvoke.Buffers;
 
 public partial interface IManagedBinaryBuffer<TBuffer, T>

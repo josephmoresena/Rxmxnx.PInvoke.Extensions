@@ -61,10 +61,8 @@ internal sealed class DefaultMessageResource : IMessageResource
 		=> $"{itemType} is a reference type but {arrayType} is unmanaged type.";
 	String IMessageResource.UnmanagedTypeButContainsReferences(Type itemType, Type arrayType)
 		=> $"{itemType} is an unmanaged type but {arrayType} contains references.";
-#if !PACKAGE || !NET7_0_OR_GREATER
 	String IMessageResource.MissingBufferMetadataException(Type bufferType)
 		=> $"Unable to retrieve metadata for {bufferType} buffer.";
-#endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Unable to create buffer for {itemType} {size} items.";
 #if !PACKAGE || NETCOREAPP

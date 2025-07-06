@@ -28,8 +28,6 @@ SOFTWARE.
 
 // Adopted and adapted by Joseph Moreno in 2025 based on code from .NET 6.0 CoreCLR (System.Text.Rune)
 
-#if !PACKAGE || !NETCOREAPP
-
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 
 /// <summary>
@@ -42,10 +40,14 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 #endif
 internal static class RuneCompat
 {
+#if !PACKAGE || !NETCOREAPP
 	private const UInt32 replacementChar = 0xFFFD;
 	private const Char highSurrogateStart = '\ud800';
 	private const Char lowSurrogateStart = '\udc00';
 	private const Int32 highSurrogateRange = 0x3FF;
+#endif
+
+#if !PACKAGE
 	/// <summary>
 	/// Target framework for the current build.
 	/// </summary>
@@ -61,8 +63,8 @@ internal static class RuneCompat
 #else
 		RuntimeInformation.FrameworkDescription;
 #endif
+#endif
 
-#if !PACKAGE
 	/// <summary>
 	/// Encodes <paramref name="rune"/> to a UTF-8 destination buffer.
 	/// </summary>
@@ -71,6 +73,7 @@ internal static class RuneCompat
 	/// <returns>The number of <see cref="byte"/>s written to <paramref name="destination"/>.</returns>
 	public static Int32 EncodeToUtf8(UInt32 rune, Span<Byte> destination)
 	{
+#if !PACKAGE || !NETCOREAPP
 		if (destination.Length < 1) return default;
 
 		if (rune <= 0x7Fu)
@@ -105,8 +108,10 @@ internal static class RuneCompat
 		destination[2] = (Byte)(((rune & (0x3Fu << 6)) >> 6) + 0x80u);
 		destination[3] = (Byte)((rune & 0x3Fu) + 0x80u);
 		return 4;
-	}
+#else
+		return Unsafe.As<UInt32, Rune>(ref rune).EncodeToUtf8(destination);
 #endif
+	}
 	/// <summary>
 	/// Decodes the <see cref="UInt32"/> at the beginning of the provided UTF-8 source buffer.
 	/// </summary>
@@ -116,6 +121,7 @@ internal static class RuneCompat
 	/// <returns>A <see cref="OperationStatus"/> value.</returns>
 	public static OperationStatus DecodeFromUtf8(ReadOnlySpan<Byte> source, out UInt32 result, out Int32 bytesConsumed)
 	{
+#if !PACKAGE || !NETCOREAPP
 		unchecked
 		{
 			Int32 index = 0;
@@ -212,6 +218,12 @@ internal static class RuneCompat
 			result = RuneCompat.replacementChar;
 			return OperationStatus.NeedMoreData;
 		}
+#else
+		Unsafe.SkipInit(out result);
+		OperationStatus operationStatus = Rune.DecodeFromUtf8(source, out Rune runeResult, out bytesConsumed);
+		Unsafe.As<UInt32, Int32>(ref result) = runeResult.Value;
+		return operationStatus;
+#endif
 	}
 	/// <summary>
 	/// Decodes the <see cref="UInt32"/> at the beginning of the provided UTF-16 source buffer.
@@ -222,6 +234,7 @@ internal static class RuneCompat
 	/// <returns>A <see cref="OperationStatus"/> value.</returns>
 	public static OperationStatus DecodeFromUtf16(ReadOnlySpan<Char> source, out UInt32 result, out Int32 charsConsumed)
 	{
+#if !PACKAGE || !NETCOREAPP
 		if (!source.IsEmpty)
 		{
 			Char firstChar = source[0];
@@ -254,8 +267,15 @@ internal static class RuneCompat
 		charsConsumed = 1; // maximal invalid subsequence for UTF-16 is always a single code unit in length
 		result = RuneCompat.replacementChar;
 		return OperationStatus.InvalidData;
+#else
+		Unsafe.SkipInit(out result);
+		OperationStatus operationStatus = Rune.DecodeFromUtf16(source, out Rune runeResult, out charsConsumed);
+		Unsafe.As<UInt32, Int32>(ref result) = runeResult.Value;
+		return operationStatus;
+#endif
 	}
 
+#if !PACKAGE || !NETCOREAPP
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Boolean IsInRangeInclusive(UInt32 value, UInt32 lowerBound, UInt32 upperBound)
 		=> value - lowerBound <= upperBound - lowerBound;
@@ -288,5 +308,5 @@ internal static class RuneCompat
 		result = default;
 		return false;
 	}
-}
 #endif
+}
