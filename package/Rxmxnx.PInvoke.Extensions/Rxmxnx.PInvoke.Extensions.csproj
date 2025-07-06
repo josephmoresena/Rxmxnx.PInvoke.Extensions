@@ -3,8 +3,9 @@
     <!-- Assembly properties -->
     <PropertyGroup>
         <OutputType>Library</OutputType>
-        <TargetFrameworks>net6.0;net8.0;net9.0;netstandard2.1;netcoreapp3.0;netcoreapp3.1;net5.0;net7.0</TargetFrameworks>
-        <TargetFrameworks Condition="'$(Version)' == '9999.99.99.99-tmp'">$(TargetFrameworks);net45</TargetFrameworks>
+        <IsTempPackage Condition="'$(Version)' == '9999.99.99.99-tmp'">true</IsTempPackage>
+        <OutputType>Library</OutputType> <TargetFrameworks>net6.0;net8.0;net9.0;netstandard2.1;netcoreapp3.0;netcoreapp3.1;net5.0;net7.0</TargetFrameworks>
+        <TargetFrameworks Condition="'$(IsTempPackage)' == 'true'">$(TargetFrameworks);net45</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>Rxmxnx.PInvoke</RootNamespace>
@@ -41,7 +42,7 @@
         <NeutralLanguage>en-US</NeutralLanguage>
         <Title>Rxmxnx.PInvoke.Extensions</Title>
         <PackageId>Rxmxnx.PInvoke.Extensions</PackageId>
-        <PackageTags>PInvoke;Binary;Reference;Unmanaged;Memory;NativeAOT;Utf8;CString;Pointer;Span;ReadOnlySpan;Unsafe;Fixed;Native;FFI;Binary;u8;Literals;StackAlloc;LocalBuffer;ObjectBuffer;ScopedBuffer;ManagedBuffer;Mono;</PackageTags>
+        <PackageTags>PInvoke;Binary;Reference;Unmanaged;Memory;NativeAOT;Utf8;CString;Pointer;Span;ReadOnlySpan;Unsafe;Fixed;Native;FFI;Binary;u8;Literals;StackAlloc;LocalBuffer;ObjectBuffer;ScopedBuffer;ManagedBuffer;Mono;MonoAOT;AotInfo;</PackageTags>
         <PackageReadmeFile>PACKAGE.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
@@ -52,17 +53,17 @@
         <None Include="..\..\LICENSE" Pack="true" PackagePath="LICENSE.md"/>
     </ItemGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <ItemGroup>
         <ProjectReference Include="..\Rxmxnx.PInvoke.Extensions.Il.Patcher\Rxmxnx.PInvoke.Extensions.Il.Patcher.csproj">
             <PrivateAssets>all</PrivateAssets>
             <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-            <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
+            <SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
             <Private>False</Private>
         </ProjectReference>
     </ItemGroup>
 
     <UsingTask TaskName="PatchAssemblyTask"
-               AssemblyFile="..\Rxmxnx.PInvoke.Extensions.Il.Patcher\bin\Release\net9.0\Rxmxnx.PInvoke.Extensions.Il.Patcher.dll"/>
+               AssemblyFile="..\Rxmxnx.PInvoke.Extensions.Il.Patcher\bin\$(Configuration)\netstandard2.0\Rxmxnx.PInvoke.Extensions.Il.Patcher.dll"/>
 
     <Target Name="IlPatch" AfterTargets="Build" BeforeTargets="Publish;Pack" Condition="'$(TargetFramework)' == 'net9.0' Or '$(TargetFramework)' == 'net10.0'">
         <PropertyGroup>
@@ -72,19 +73,11 @@
         <PatchAssemblyTask OutputPath="$(AssemblyOutputPath)" TargetFramework="$(AssemblyTargetFramework)" StrongNameKeyPath="$(SigningKeyFile)"/>
     </Target>
 
-    <Target Name="IlPatch" AfterTargets="Build" BeforeTargets="Publish;Pack" Condition="'$(TargetFramework)' == 'net9.0' Or '$(TargetFramework)' == 'net10.0'">
-        <PropertyGroup>
-            <AssemblyOutputPath>$(OutputPath)</AssemblyOutputPath>
-            <AssemblyTargetFramework>$(TargetFramework)</AssemblyTargetFramework>
-        </PropertyGroup>
-        <PatchAssemblyTask OutputPath="$(AssemblyOutputPath)" TargetFramework="$(AssemblyTargetFramework)" StrongNameKeyPath="$(SigningKeyFile)"/>
-    </Target>
-
-    <Target Name="MonoBuild" AfterTargets="Build" BeforeTargets="Publish;Pack" Condition="'$(TargetFramework)' == 'net45'">
+    <Target Name="MonoBuild" AfterTargets="Build" BeforeTargets="Publish;Pack" Condition="'$(IsTempPackage)' == 'true' And ('$(TargetFramework)' == 'netstandard2.1' Or '$(TargetFramework)' == 'net45')">
         <ItemGroup>
             <NetStandardOutputFiles Include="$(OutputPath.Replace('net45','netstandard2.1'))\*.*"/>
         </ItemGroup>
-        <Copy SourceFiles="@(NetStandardOutputFiles)" DestinationFolder="$(OutputPath)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true"/>
+        <Copy SourceFiles="@(NetStandardOutputFiles)" DestinationFolder="$(OutputPath.Replace('netstandard2.1','net45'))" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true"/>
     </Target>
 
 </Project>

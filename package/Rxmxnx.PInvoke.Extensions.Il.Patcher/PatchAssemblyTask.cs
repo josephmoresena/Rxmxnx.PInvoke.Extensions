@@ -37,16 +37,15 @@ public sealed partial class PatchAssemblyTask : MsBuildTask
 		if (String.IsNullOrEmpty(this.OutputPath) || String.IsNullOrEmpty(this.TargetFramework)) return true;
 
 		// Runs only if MSBuild sends both parameters.
-		DirectoryInfo outputPath = new(this.OutputPath);
+		DirectoryInfo outputPath = new(this.OutputPath!);
 		FileInfo[] assemblyFiles = outputPath.GetFiles(PatchAssemblyTask.AssemblyName, SearchOption.AllDirectories);
 
 		String? assemblyPath = default;
-		String? snkPath = File.Exists(this.StrongNameKeyPath) ? new FileInfo(this.StrongNameKeyPath).FullName : default;
+		String? snkPath = File.Exists(this.StrongNameKeyPath) ? new FileInfo(this.StrongNameKeyPath!).FullName : default;
 		try
 		{
 			assemblyPath = assemblyFiles
-			               .First(f => f.FullName.Contains(this.TargetFramework,
-			                                               StringComparison.InvariantCultureIgnoreCase)).FullName;
+			               .First(f => f.FullName.ToLowerInvariant().Contains(this.TargetFramework!.ToLowerInvariant())).FullName;
 			String? documentationPath = outputPath
 			                            .GetFiles(PatchAssemblyTask.AssemblyDocumentationName,
 			                                      SearchOption.AllDirectories).FirstOrDefault()?.FullName;
@@ -88,7 +87,7 @@ public sealed partial class PatchAssemblyTask : MsBuildTask
 		using ModuleDefinition? module = assembly.MainModule;
 		WriterParameters writerParameters = !File.Exists(snkPath) ?
 			new() { WriteSymbols = true, } :
-			new() { WriteSymbols = true, StrongNameKeyBlob = File.ReadAllBytes(snkPath), };
+			new() { WriteSymbols = true, StrongNameKeyBlob = File.ReadAllBytes(snkPath!), };
 
 		TypeDefinition readOnlyValPtrTypeDefinition =
 			module.Types.First(t => t.Name == PatchAssemblyTask.ReadOnlyValPtrName);
@@ -114,7 +113,7 @@ public sealed partial class PatchAssemblyTask : MsBuildTask
 
 		XmlNodeList membersNode = xmlDocument.GetElementsByTagName("members");
 
-		if (membersNode is not [XmlElement membersElement,]) return;
+		if (membersNode[0] is not XmlElement membersElement) return;
 
 		PatchAssemblyTask.DocumentGetUnsafeFixedContextMethod(membersElement);
 		xmlDocument.Save(documentationPath);
