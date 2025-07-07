@@ -18,7 +18,14 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 9.x
+          dotnet-version: |
+            3.0.x
+            3.1.x
+            5.0.x
+            6.0.x
+            7.0.x
+            8.0.x
+            9.0.x
       - name: Setup Tree pre-requisites
         run: sudo apt-get install tree unzip --assume-yes
       - name: Setup latest Mono Framework
@@ -59,7 +66,7 @@ jobs:
           ./.sonar/scanner/dotnet-sonarscanner begin /k:"josephmoresena_PInvoke.Extensions" /o:"josephmoresena" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.scanner.scanAll=false /d:sonar.coverage.exclusions="**Test.cs,**Tests.cs,**test.cs,**tests.cs,**.SourceGenerator/*.cs" /d:sonar.cs.vstest.reportsPaths=TestResults/*.trx /d:sonar.cs.opencover.reportsPaths=TestResults/*/coverage.opencover.xml /d:sonar.cpd.exclusions="**/NativeUtilities/**FixedAction.cs,**/NativeUtilities/**FixedFunc.cs,**/IManagedBinaryBuffer/StaticCompose.cs,**Test/**Tests**/**.cs,**/Localization/**MessageResource.cs"
           dotnet restore src 
           dotnet build src --configuration release 
-          dotnet test src --verbosity normal --collect:"XPlat Code Coverage" --results-directory TestResults/  --logger "trx;verbosity=detailed" --no-build --no-restore --configuration release -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover 
+          dotnet test src /p:MultipleFrameworkTest=true --verbosity normal --collect:"XPlat Code Coverage" --results-directory TestResults/  --logger "trx;verbosity=detailed" --no-build --no-restore --configuration release -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover 
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
       - name: Pack assembly
         working-directory: ./package/Rxmxnx.PInvoke.Extensions
