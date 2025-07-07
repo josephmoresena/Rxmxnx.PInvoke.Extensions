@@ -1,31 +1,33 @@
 ﻿<Solution>
-  <Folder Name="/Global/">
-    <File Path="..\.github\workflows\build.yml" />
-    <File Path="..\.github\workflows\release.yml" />
-    <File Path="..\Directory.Build.props" />
-    <File Path="..\README.md" />
-    <File Path="..\.gitignore" />
-    <File Path="Library.targets" />
-  </Folder>
-  <Folder Name="/Intermediate/">
-    <Project Path="Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate.csproj" />
-    <Project Path="Intermediate\Rxmxnx.PInvoke.Common.Intermediate\Rxmxnx.PInvoke.Common.Intermediate.csproj" />
-    <Project Path="Intermediate\Rxmxnx.PInvoke.CString.Intermediate\Rxmxnx.PInvoke.CString.Intermediate.csproj" />
-    <Project Path="Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate.csproj" />
-    <File Path="Intermediate\README.md" />
-    <File Path="Intermediate\Intermediate.Library.targets" />
-  </Folder>
-  <Folder Name="/Package/">
-    <Project Path="..\package\Rxmxnx.PInvoke.Extensions.Il.Patcher\Rxmxnx.PInvoke.Extensions.Il.Patcher.csproj" />
-    <File Path="..\package\Intermediate-to-Package.targets" />
-  </Folder>
-  <Folder Name="/Tests/">
-    <Project Path="Test\Rxmxnx.PInvoke.Buffers.Tests\Rxmxnx.PInvoke.Buffers.Tests.csproj" />
-    <Project Path="Test\Rxmxnx.PInvoke.Common.Tests\Rxmxnx.PInvoke.Common.Tests.csproj" />
-    <Project Path="Test\Rxmxnx.PInvoke.CString.Tests.SourceGenerator\Rxmxnx.PInvoke.CString.Tests.SourceGenerator.csproj" />
-    <Project Path="Test\Rxmxnx.PInvoke.CString.Tests\Rxmxnx.PInvoke.CString.Tests.csproj" />
-    <Project Path="Test\Rxmxnx.PInvoke.Extensions.Tests\Rxmxnx.PInvoke.Extensions.Tests.csproj" />
-    <File Path="Test\x86.runsettings" />
-    <File Path="Test\Tests.targets" />
-  </Folder>
+    <Folder Name="/Global/">
+        <File Path="..\.github\workflows\build.yml"/>
+        <File Path="..\.github\workflows\release.yml"/>
+        <File Path="..\Directory.Build.props"/>
+        <File Path="..\README.md"/>
+        <File Path="..\.gitignore"/>
+        <File Path="Library.targets"/>
+    </Folder>
+    <Folder Name="/Intermediate/">
+        <Project Path="Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate.csproj"/>
+        <Project Path="Intermediate\Rxmxnx.PInvoke.Common.Intermediate\Rxmxnx.PInvoke.Common.Intermediate.csproj"/>
+        <Project Path="Intermediate\Rxmxnx.PInvoke.CString.Intermediate\Rxmxnx.PInvoke.CString.Intermediate.csproj"/>
+        <Project
+                Path="Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate.csproj"/>
+        <File Path="Intermediate\README.md"/>
+        <File Path="Intermediate\Intermediate.Library.targets"/>
+    </Folder>
+    <Folder Name="/Package/">
+        <Project Path="..\package\Rxmxnx.PInvoke.Extensions.IlPatcher\Rxmxnx.PInvoke.Extensions.IlPatcher.csproj"/>
+        <File Path="..\package\Intermediate-to-Package.targets"/>
+    </Folder>
+    <Folder Name="/Tests/">
+        <Project Path="Test\Rxmxnx.PInvoke.Buffers.Tests\Rxmxnx.PInvoke.Buffers.Tests.csproj"/>
+        <Project Path="Test\Rxmxnx.PInvoke.Common.Tests\Rxmxnx.PInvoke.Common.Tests.csproj"/>
+        <Project
+                Path="Test\Rxmxnx.PInvoke.CString.Tests.SourceGenerator\Rxmxnx.PInvoke.CString.Tests.SourceGenerator.csproj"/>
+        <Project Path="Test\Rxmxnx.PInvoke.CString.Tests\Rxmxnx.PInvoke.CString.Tests.csproj"/>
+        <Project Path="Test\Rxmxnx.PInvoke.Extensions.Tests\Rxmxnx.PInvoke.Extensions.Tests.csproj"/>
+        <File Path="Test\x86.runsettings"/>
+        <File Path="Test\Tests.targets"/>
+    </Folder>
 </Solution>

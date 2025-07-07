@@ -75,7 +75,7 @@ public sealed class ReferenceableWrapperTests
 #endif
 		Assert.False(result.Equals(result2));
 		Assert.True(result.Equals(result3));
-		Assert.False(result.Equals(default(IReferenceable<T>)));
+		Assert.False(result.Equals(default(IReferenceable<T>)!));
 	}
 	private static void Nullable<T>(Boolean nullInput) where T : unmanaged
 	{
@@ -101,7 +101,7 @@ public sealed class ReferenceableWrapperTests
 #endif
 		Assert.False(result.Equals(result2));
 		Assert.True(result.Equals(result3));
-		Assert.False(result.Equals(default(IReferenceable<T?>)));
+		Assert.False(result.Equals(default(IReferenceable<T>)));
 	}
 	private static void ObjectTest<T>() where T : unmanaged
 	{

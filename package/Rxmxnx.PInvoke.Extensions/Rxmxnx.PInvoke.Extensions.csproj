@@ -4,7 +4,7 @@
     <PropertyGroup>
         <OutputType>Library</OutputType>
         <IsTempPackage Condition="'$(Version)' == '9999.99.99.99-tmp'">true</IsTempPackage>
-        <OutputType>Library</OutputType> <TargetFrameworks>net6.0;net8.0;net9.0;netstandard2.1;netcoreapp3.0;netcoreapp3.1;net5.0;net7.0</TargetFrameworks>
+        <OutputType>Library</OutputType> <TargetFrameworks>net9.0;net8.0;net7.0;net6.0;net5.0;netcoreapp3.1;netcoreapp3.0;netstandard2.1</TargetFrameworks>
         <TargetFrameworks Condition="'$(IsTempPackage)' == 'true'">$(TargetFrameworks);net45</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
@@ -54,7 +54,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Rxmxnx.PInvoke.Extensions.Il.Patcher\Rxmxnx.PInvoke.Extensions.Il.Patcher.csproj">
+        <ProjectReference Include="..\Rxmxnx.PInvoke.Extensions.IlPatcher\Rxmxnx.PInvoke.Extensions.IlPatcher.csproj">
             <PrivateAssets>all</PrivateAssets>
             <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
             <SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
@@ -62,15 +62,21 @@
         </ProjectReference>
     </ItemGroup>
 
-    <UsingTask TaskName="PatchAssemblyTask"
-               AssemblyFile="..\Rxmxnx.PInvoke.Extensions.Il.Patcher\bin\$(Configuration)\netstandard2.0\Rxmxnx.PInvoke.Extensions.Il.Patcher.dll"/>
+    <UsingTask TaskName="ValuePointerPatchTask"
+               AssemblyFile="..\Rxmxnx.PInvoke.Extensions.IlPatcher\bin\$(Configuration)\netstandard2.0\Rxmxnx.PInvoke.Extensions.IlPatcher.dll"/>
+    <UsingTask TaskName="ClearAssemblyTask"
+               AssemblyFile="..\Rxmxnx.PInvoke.Extensions.IlPatcher\bin\$(Configuration)\netstandard2.0\Rxmxnx.PInvoke.Extensions.IlPatcher.dll"/>
 
-    <Target Name="IlPatch" AfterTargets="Build" BeforeTargets="Publish;Pack" Condition="'$(TargetFramework)' == 'net9.0' Or '$(TargetFramework)' == 'net10.0'">
+    <Target Name="AssemblyPatch" AfterTargets="Build" BeforeTargets="Publish;Pack">
         <PropertyGroup>
             <AssemblyOutputPath>$(OutputPath)</AssemblyOutputPath>
             <AssemblyTargetFramework>$(TargetFramework)</AssemblyTargetFramework>
         </PropertyGroup>
-        <PatchAssemblyTask OutputPath="$(AssemblyOutputPath)" TargetFramework="$(AssemblyTargetFramework)" StrongNameKeyPath="$(SigningKeyFile)"/>
+        <ValuePointerPatchTask 
+            Condition="'$(TargetFramework)' == 'net9.0' Or '$(TargetFramework)' == 'net10.0'" 
+            OutputPath="$(AssemblyOutputPath)"
+            TargetFramework="$(AssemblyTargetFramework)" 
+            StrongNameKeyPath="$(SigningKeyFile)"/>
     </Target>
 
     <Target Name="MonoBuild" AfterTargets="Build" BeforeTargets="Publish;Pack" Condition="'$(IsTempPackage)' == 'true' And ('$(TargetFramework)' == 'netstandard2.1' Or '$(TargetFramework)' == 'net45')">

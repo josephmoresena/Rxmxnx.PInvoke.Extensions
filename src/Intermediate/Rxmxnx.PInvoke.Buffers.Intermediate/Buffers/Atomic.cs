@@ -7,7 +7,11 @@ namespace Rxmxnx.PInvoke.Buffers;
 /// <remarks>Use this type as the basic unit of binary buffers.</remarks>
 #pragma warning disable CA2252
 [StructLayout(LayoutKind.Sequential)]
-public partial struct Atomic<T> : IManagedBinaryBuffer<Atomic<T>, T>
+public
+#if NET7_0_OR_GREATER && BINARY_SPACES
+	partial
+#endif
+	struct Atomic<T> : IManagedBinaryBuffer<Atomic<T>, T>
 {
 	/// <summary>
 	/// Internal metadata.

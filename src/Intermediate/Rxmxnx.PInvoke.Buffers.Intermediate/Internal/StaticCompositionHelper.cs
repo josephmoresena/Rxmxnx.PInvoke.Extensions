@@ -1,6 +1,6 @@
+#if NET7_0_OR_GREATER && BINARY_SPACES
 namespace Rxmxnx.PInvoke.Internal;
 
-#if BINARY_SPACES
 /// <summary>
 /// Helper class to compose statically managed spaces metadata.
 /// </summary>

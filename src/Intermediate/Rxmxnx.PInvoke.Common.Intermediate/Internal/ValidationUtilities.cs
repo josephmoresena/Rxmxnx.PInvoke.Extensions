@@ -634,7 +634,7 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = IMessageResource.GetInstance();
 		throw new PlatformNotSupportedException(resource.ReflectionDisabled);
 	}
-#if BINARY_SPACES
+#if !PACKAGE || NET7_0_OR_GREATER && BINARY_SPACES
 	/// <summary>
 	/// Throws an exception if buffer is not a space.
 	/// </summary>

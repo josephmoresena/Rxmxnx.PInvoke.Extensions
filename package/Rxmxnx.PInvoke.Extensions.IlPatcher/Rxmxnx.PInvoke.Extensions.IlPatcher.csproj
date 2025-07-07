@@ -6,7 +6,18 @@
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <RootNamespace>Rxmxnx.PInvoke.Extensions.IlPatcher</RootNamespace>
+        <ImplicitUsings>true</ImplicitUsings>
     </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="System.Diagnostics.CodeAnalysis"/>
+        <Using Include="System.Xml"/>
+
+        <Using Include="Mono.Cecil"/>
+        <Using Include="Mono.Cecil.Cil"/>
+        <Using Include="Mono.Cecil.Rocks"/>
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.14.8"/>

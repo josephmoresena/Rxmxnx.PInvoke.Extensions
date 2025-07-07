@@ -9,7 +9,7 @@
         <DocumentationFile>./$(AssemblyName).xml</DocumentationFile>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <ExcludeXmlAssemblyFiles>false</ExcludeXmlAssemblyFiles>
-        <DefineConstants Condition="'$(DISABLE_BINARY_SPACES)' != 'true'">$(DefineConstants);BINARY_SPACES</DefineConstants>
+        <DefineConstants Condition="'$(ENABLE_BINARY_SPACES)' == 'true'">$(DefineConstants);BINARY_SPACES</DefineConstants>
     </PropertyGroup>
 
     <Import Project="..\Library.targets"/>

@@ -1,12 +1,6 @@
-using System.Xml;
+namespace Rxmxnx.PInvoke.Extensions.IlPatcher;
 
-using Mono.Cecil;
-using Mono.Cecil.Cil;
-using Mono.Cecil.Rocks;
-
-namespace Rxmxnx.PInvoke.Extensions.Il.Patcher;
-
-public partial class PatchAssemblyTask
+public partial class ValuePointerPatchTask
 {
 	/// <summary>
 	/// Implements <c>GetUnsafeFixedContext&lt;&gt;(Int32, System.IDisposable)</c> method in generic
@@ -41,9 +35,9 @@ public partial class PatchAssemblyTask
 		                                          .MakeGenericInstanceType(genericParameter);
 
 		// <>.CreateDisposable(, Int32, System.IDisposable) method definition.
-		MethodDefinition? createDisposableMethod = fixedClassType.Methods.First(
-			m => m.IsStatic && m.Name == createDisposableName && m.Parameters.Count == 3 &&
-				m.ReturnType.FullName.Contains(interfaceName));
+		MethodDefinition? createDisposableMethod =
+			fixedClassType.Methods.First(m => m.IsStatic && m.Name == createDisposableName && m.Parameters.Count == 3 &&
+				                             m.ReturnType.FullName.Contains(interfaceName));
 
 		// Generic fixed class type.
 		GenericInstanceType genericClassType = new(fixedClassType);
@@ -129,7 +123,7 @@ public partial class PatchAssemblyTask
         </member>
     ";
 
-		XmlDocumentFragment fragment = membersElement.OwnerDocument.CreateDocumentFragment();
+		XmlDocumentFragment fragment = membersElement.OwnerDocument!.CreateDocumentFragment();
 		fragment.InnerXml = rawXmlDocumentation;
 
 		membersElement.AppendChild(fragment);
