@@ -15,6 +15,7 @@ public sealed class ReadOnlyValPtrTests
 		"D", "d", "E", "e", "G", "g", "X", "x",
 	];
 	private static readonly IFixture fixture = ManagedStruct.Register(new Fixture());
+
 	[Fact]
 	internal void BooleanTest() => ReadOnlyValPtrTests.Test<Boolean>();
 	[Fact]
@@ -27,34 +28,31 @@ public sealed class ReadOnlyValPtrTests
 	internal void Int32Test() => ReadOnlyValPtrTests.Test<Int32>();
 	[Fact]
 	internal void Int64Test() => ReadOnlyValPtrTests.Test<Int64>();
+	[Fact]
+	internal void SingleTest() => ReadOnlyValPtrTests.Test<Single>();
+	[Fact]
+	internal void DoubleTest() => ReadOnlyValPtrTests.Test<Double>();
 #if NET7_0_OR_GREATER
 	[Fact]
 	internal void Int128Test() => ReadOnlyValPtrTests.Test<Int128>();
-#endif
 	[Fact]
 	internal void GuidTest() => ReadOnlyValPtrTests.Test<Guid>();
 	[Fact]
-	internal void SingleTest() => ReadOnlyValPtrTests.Test<Single>();
-#if NET5_0_OR_GREATER
-	[Fact]
 	internal void HalfTest() => ReadOnlyValPtrTests.Test<Half>();
-#endif
-	[Fact]
-	internal void DoubleTest() => ReadOnlyValPtrTests.Test<Double>();
 	[Fact]
 	internal void DecimalTest() => ReadOnlyValPtrTests.Test<Decimal>();
 	[Fact]
 	internal void DateTimeTest() => ReadOnlyValPtrTests.Test<DateTime>();
-#if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => ReadOnlyValPtrTests.Test<TimeOnly>();
-#endif
 	[Fact]
 	internal void TimeSpanTest() => ReadOnlyValPtrTests.Test<TimeSpan>();
 	[Fact]
 	internal void ManagedStructTest() => ReadOnlyValPtrTests.Test<ManagedStruct>();
+#endif
 	[Fact]
 	internal void StringTest() => ReadOnlyValPtrTests.Test<String>();
+
 	private static unsafe void Test<T>()
 	{
 		T[] arr = ReadOnlyValPtrTests.fixture.CreateMany<T>(10).ToArray();

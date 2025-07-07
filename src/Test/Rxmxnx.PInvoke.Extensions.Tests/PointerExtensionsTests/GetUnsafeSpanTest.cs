@@ -10,8 +10,10 @@ public sealed class GetUnsafeSpanTest
 	internal void ByteTest() => GetUnsafeSpanTest.Test<Byte>();
 	[Fact]
 	internal void CharTest() => GetUnsafeSpanTest.Test<Char>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal void DateTimeTest() => GetUnsafeSpanTest.Test<DateTime>();
+#endif
 	[Fact]
 	internal void DecimalTest() => GetUnsafeSpanTest.Test<Decimal>();
 	[Fact]

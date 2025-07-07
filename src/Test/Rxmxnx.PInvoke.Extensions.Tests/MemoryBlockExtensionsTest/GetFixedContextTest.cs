@@ -16,8 +16,10 @@ public sealed class GetFixedContextTest
 	internal void ByteTest() => GetFixedContextTest.ArrayTest<Byte>();
 	[Fact]
 	internal void CharTest() => GetFixedContextTest.ArrayTest<Char>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal void DateTimeTest() => GetFixedContextTest.ArrayTest<DateTime>();
+#endif
 	[Fact]
 	internal void DecimalTest() => GetFixedContextTest.ArrayTest<Decimal>();
 	[Fact]

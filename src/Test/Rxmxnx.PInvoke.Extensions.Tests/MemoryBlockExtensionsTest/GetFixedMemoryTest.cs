@@ -12,8 +12,10 @@ public sealed class GetFixedMemoryTest
 	internal void ByteTest() => GetFixedMemoryTest.Test<Byte>();
 	[Fact]
 	internal void CharTest() => GetFixedMemoryTest.Test<Char>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal void DateTimeTest() => GetFixedMemoryTest.Test<DateTime>();
+#endif
 	[Fact]
 	internal void DecimalTest() => GetFixedMemoryTest.Test<Decimal>();
 	[Fact]

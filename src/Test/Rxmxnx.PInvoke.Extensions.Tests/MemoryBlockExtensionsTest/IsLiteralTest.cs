@@ -35,7 +35,11 @@ public sealed class IsLiteralTest
 		Assert.False(IsLiteralTest.ConstantStringProperty.AsSpan().IsLiteral());
 		Assert.False(IsLiteralTest.ConstantStringSpan.IsLiteral());
 
+#if NET7_0_OR_GREATER
 		Assert.True(IsLiteralTest.ConstantCharSpan.IsLiteral());
+#else
+		Assert.False(IsLiteralTest.ConstantCharSpan.IsLiteral());
+#endif
 		Assert.True(IsLiteralTest.ConstantByteSpan.IsLiteral());
 		Assert.True("LITERAL_BYTE_SPAN"u8.IsLiteral());
 	}

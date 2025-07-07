@@ -127,6 +127,7 @@ internal sealed class FixedRentedContext<T> : IFixedContext<T>.IDisposable
 	/// </summary>
 	private void Release()
 	{
+		if (this._ctx is not { IsValid: true, } || (this._ctx as IFixedPointer).Pointer != IntPtr.Zero) return;
 		this._ctx.Unload();
 		this._handle.Dispose();
 		this._arrayPool.Return(this.Array, this._clearArray);

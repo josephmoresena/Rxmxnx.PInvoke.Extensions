@@ -16,11 +16,13 @@ public sealed class RentFixedTest
 	[InlineData(100)]
 	[InlineData(1000)]
 	internal void CharTest(Int32 size) => TestClass<Char>.Test(size);
+#if NET7_0_OR_GREATER
 	[Theory]
 	[InlineData(10)]
 	[InlineData(100)]
 	[InlineData(1000)]
 	internal void DateTimeTest(Int32 size) => TestClass<DateTime>.Test(size);
+#endif
 	[Theory]
 	[InlineData(10)]
 	[InlineData(100)]

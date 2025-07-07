@@ -32,8 +32,10 @@ public sealed class SegmentTest : ValueRegionTestBase
 	internal void DoubleTest() => SegmentTest.Test<Double>();
 	[Fact]
 	internal void DecimalTest() => SegmentTest.Test<Decimal>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal void DateTimeTest() => SegmentTest.Test<DateTime>();
+#endif
 #if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => SegmentTest.Test<TimeOnly>();

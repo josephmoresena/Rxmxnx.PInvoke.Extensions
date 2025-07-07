@@ -33,8 +33,10 @@ public sealed class BasicTests : ValueRegionTestBase
 	internal void DoubleTest() => BasicTests.Test<Double>();
 	[Fact]
 	internal void DecimalTest() => BasicTests.Test<Decimal>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal void DateTimeTest() => BasicTests.Test<DateTime>();
+#endif
 #if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => BasicTests.Test<TimeOnly>();

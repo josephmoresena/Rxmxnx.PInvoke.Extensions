@@ -15,6 +15,7 @@ public sealed class ValPtrTests
 		"D", "d", "E", "e", "G", "g", "X", "x",
 	];
 	private static readonly IFixture fixture = ManagedStruct.Register(new Fixture());
+
 	[Fact]
 	internal void BooleanTest() => ValPtrTests.Test<Boolean>();
 	[Fact]
@@ -27,34 +28,31 @@ public sealed class ValPtrTests
 	internal void Int32Test() => ValPtrTests.Test<Int32>();
 	[Fact]
 	internal void Int64Test() => ValPtrTests.Test<Int64>();
+	[Fact]
+	internal void SingleTest() => ValPtrTests.Test<Single>();
+	[Fact]
+	internal void DoubleTest() => ValPtrTests.Test<Double>();
 #if NET7_0_OR_GREATER
 	[Fact]
 	internal void Int128Test() => ValPtrTests.Test<Int128>();
-#endif
 	[Fact]
 	internal void GuidTest() => ValPtrTests.Test<Guid>();
 	[Fact]
-	internal void SingleTest() => ValPtrTests.Test<Single>();
-#if NET5_0_OR_GREATER
-	[Fact]
 	internal void HalfTest() => ValPtrTests.Test<Half>();
-#endif
-	[Fact]
-	internal void DoubleTest() => ValPtrTests.Test<Double>();
 	[Fact]
 	internal void DecimalTest() => ValPtrTests.Test<Decimal>();
 	[Fact]
 	internal void DateTimeTest() => ValPtrTests.Test<DateTime>();
-#if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => ValPtrTests.Test<TimeOnly>();
-#endif
 	[Fact]
 	internal void TimeSpanTest() => ValPtrTests.Test<TimeSpan>();
 	[Fact]
 	internal void ManagedStructTest() => ValPtrTests.Test<ManagedStruct>();
+#endif
 	[Fact]
 	internal void StringTest() => ValPtrTests.Test<String>();
+
 	private static unsafe void Test<T>()
 	{
 		T[] arr = ValPtrTests.fixture.CreateMany<T>(10).ToArray();

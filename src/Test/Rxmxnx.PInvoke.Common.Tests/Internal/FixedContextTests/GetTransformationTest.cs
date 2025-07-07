@@ -33,8 +33,10 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 	internal void DoubleTest() => GetTransformationTest.Test<Double>();
 	[Fact]
 	internal void DecimalTest() => GetTransformationTest.Test<Decimal>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal void DateTimeTest() => GetTransformationTest.Test<DateTime>();
+#endif
 #if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => GetTransformationTest.Test<TimeOnly>();
