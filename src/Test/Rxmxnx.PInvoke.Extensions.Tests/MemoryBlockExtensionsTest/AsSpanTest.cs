@@ -153,14 +153,12 @@ public class AsSpanTest
 		Skip.If(IntPtr.Size == sizeof(Int32) && count > 15);
 		Int32[] lengths = Enumerable.Range(0, count).Select(_ => Random.Shared.Next(1, 3)).ToArray();
 
-		GC.Collect();
-		GC.WaitForFullGCComplete();
+		AsMemoryTest.CollectGarbage();
 
 		Array arr = AsSpanTest.CreateArray<T>(lengths);
 		AsSpanTest.genericArrayTest.MakeGenericMethod(typeof(T), arr.GetType()).Invoke(null, [arr,]);
 
-		GC.Collect();
-		GC.WaitForFullGCComplete();
+		AsMemoryTest.CollectGarbage();
 	}
 	private static void GenericArrayTest<T, TArray>(Array arr) where TArray : class
 	{

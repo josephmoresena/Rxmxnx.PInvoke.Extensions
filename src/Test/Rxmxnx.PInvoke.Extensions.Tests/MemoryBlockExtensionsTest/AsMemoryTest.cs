@@ -145,6 +145,16 @@ public class AsMemoryTest
 	[InlineData(32)]
 	internal void ObjectTest(Int32 dimension) => AsMemoryTest.GenericTest<Object>(dimension);
 
+	internal static void CollectGarbage()
+	{
+		GC.Collect();
+		try
+		{
+			GC.WaitForFullGCComplete();
+		}
+		catch (NotImplementedException) { }
+	}
+
 	private static unsafe void GenericTest<T>(Int32 count)
 	{
 		Skip.If(IntPtr.Size == sizeof(Int32) && count > 15);
@@ -152,8 +162,7 @@ public class AsMemoryTest
 		Array arr = AsMemoryTest.CreateArray<T>(lengths);
 		MethodInfo method = AsMemoryTest.asMemories[arr.Rank];
 
-		GC.Collect();
-		GC.WaitForFullGCComplete();
+		AsMemoryTest.CollectGarbage();
 
 		Memory<T> emptyMemory = Assert.IsType<Memory<T>>(method.MakeGenericMethod(typeof(T)).Invoke(null, [null,]));
 		Memory<T> memory = Assert.IsType<Memory<T>>(method.MakeGenericMethod(typeof(T)).Invoke(null, [arr,]));
@@ -186,8 +195,7 @@ public class AsMemoryTest
 		handle2.Dispose();
 		handle2.Dispose();
 
-		GC.Collect();
-		GC.WaitForFullGCComplete();
+		AsMemoryTest.CollectGarbage();
 	}
 	private static Array CreateArray<T>(Int32[] lengths)
 	{
