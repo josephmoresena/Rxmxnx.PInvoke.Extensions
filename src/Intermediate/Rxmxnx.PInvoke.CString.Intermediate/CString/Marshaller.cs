@@ -5,7 +5,7 @@ namespace Rxmxnx.PInvoke;
 #endif
 public unsafe partial class CString
 {
-#if NET7_0_OR_GREATER || !PACKAGE
+#if !PACKAGE || NET7_0_OR_GREATER
 	/// <summary>
 	/// Custom marshaller for <see cref="CString"/> to native null-terminated UTF-8 text.
 	/// </summary>

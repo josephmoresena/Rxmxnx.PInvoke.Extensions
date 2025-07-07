@@ -2,7 +2,7 @@ namespace Rxmxnx.PInvoke;
 
 public readonly partial struct FuncPtr<TDelegate>
 {
-#if NET7_0_OR_GREATER || !PACKAGE
+#if !PACKAGE || NET7_0_OR_GREATER
 	/// <summary>
 	/// Custom marshaller for value pointers.
 	/// </summary>
