@@ -21,8 +21,12 @@ public static partial class BufferManager
 #endif
 		Type bufferType)
 	{
+#if !PACKAGE || !NET7_0_OR_GREATER
 		if (BufferManager.metadataCache.TryGetValue(bufferType, out BufferTypeMetadata? result))
 			return (BufferTypeMetadata<T>)result;
+#else
+		BufferTypeMetadata? result = default;
+#endif
 
 		try
 		{
@@ -39,7 +43,12 @@ public static partial class BufferManager
 				throw tie.InnerException;
 		}
 		result ??= ManagedBinaryBuffer<T>.GetMetadata(bufferType);
+#if !PACKAGE || !NET7_0_OR_GREATER
 		return BufferManager.Cache(bufferType, result as BufferTypeMetadata<T>);
+#else
+		ValidationUtilities.ThrowIfNullMetadata(bufferType, result is not BufferTypeMetadata<T>);
+		return (result as BufferTypeMetadata<T>)!;
+#endif
 	}
 #if !PACKAGE || !NET7_0_OR_GREATER
 #nullable disable

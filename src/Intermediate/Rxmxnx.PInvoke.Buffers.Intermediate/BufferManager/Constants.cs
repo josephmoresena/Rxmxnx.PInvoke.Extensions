@@ -19,11 +19,8 @@ public static partial class BufferManager
 	/// Flags of dynamic accessed member types.
 	/// </summary>
 	internal const DynamicallyAccessedMemberTypes DynamicallyAccessedMembers =
-			DynamicallyAccessedMemberTypes.PublicParameterlessConstructor
-#if !NET7_0_OR_GREATER
-			| DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicFields
-#endif
-		;
+		DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.NonPublicFields |
+		DynamicallyAccessedMemberTypes.PublicFields;
 #endif
 	/// <summary>
 	/// Type of <see cref="Composite{TBufferA,TBufferB,T}"/>.
