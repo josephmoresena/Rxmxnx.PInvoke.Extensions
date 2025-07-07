@@ -105,37 +105,7 @@ internal static unsafe
 				handle.Free();
 			}
 		}
-
-		ValidationUtilities.ThrowIfNoReflection();
-
-		Type typeofRuntimeHelpers = typeof(RuntimeHelpers);
-
-		ref MMethodTable mtpRef = ref Unsafe.NullRef<MMethodTable>();
-		if (typeof(MemoryMarshal).GetMethod("GetArrayDataReference", 0, [typeof(Array),]) is { } methodInfoNet6)
-		{
-			GetArrayDataReferenceDelegate del =
-				(GetArrayDataReferenceDelegate)methodInfoNet6.CreateDelegate(typeof(GetArrayDataReferenceDelegate));
-			return ref Unsafe.As<Byte, T>(ref del(array));
-		}
-
-		Object[] methodParam = [array,];
-		if (typeofRuntimeHelpers.GetMethod("GetMethodTable", BindingFlags.Static | BindingFlags.NonPublic) is
-		    { } methodInfoNet5)
-		{
-			Pointer mtpPtr = (Pointer)methodInfoNet5.Invoke(null, methodParam)!;
-			mtpRef = ref Unsafe.AsRef<MMethodTable>(Pointer.Unbox(mtpPtr));
-		}
-		else if (typeofRuntimeHelpers.GetMethod("GetObjectMethodTablePointer",
-		                                        BindingFlags.Static | BindingFlags.NonPublic) is { } methodInfoCore)
-		{
-			IntPtr mtpPtr = (IntPtr)methodInfoCore.Invoke(null, methodParam)!;
-			mtpRef = ref Unsafe.AsRef<MMethodTable>(mtpPtr.ToPointer());
-		}
-		else
-		{
-			return ref Unsafe.As<Byte, T>(ref Unsafe.As<MonoRawData>(array).Data);
-		}
-		return ref Unsafe.As<Byte, T>(ref MemoryMarshalCompat.GetArrayDataReference(mtpRef, array));
+		return ref Unsafe.As<Byte, T>(ref ArrayReferenceHelper.Instance.GetArrayDataReference(array));
 #else
 		return ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetArrayDataReference(array));
 #endif

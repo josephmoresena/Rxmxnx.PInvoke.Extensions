@@ -1,5 +1,4 @@
 #if !PACKAGE || !NET6_0_OR_GREATER
-
 using System_IntPtr = System.IntPtr;
 #if NETCOREAPP
 using UIntPtr = nuint;
