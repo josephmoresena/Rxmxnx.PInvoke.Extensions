@@ -5,7 +5,14 @@ namespace Rxmxnx.PInvoke.Tests;
 public sealed class FuncPtrTests
 {
 	private static readonly CultureInfo[] allCultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-	private static readonly String[] formats = ["", "b", "B", "D", "d", "E", "e", "G", "g", "X", "x",];
+	private static readonly String[] formats =
+	[
+		"",
+#if NET8_0_OR_GREATER
+		"b", "B",
+#endif
+		"D", "d", "E", "e", "G", "g", "X", "x",
+	];
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
