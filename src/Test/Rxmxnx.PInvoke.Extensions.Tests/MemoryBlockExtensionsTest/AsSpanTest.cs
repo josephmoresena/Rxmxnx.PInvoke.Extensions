@@ -91,6 +91,7 @@ public class AsSpanTest
 	[InlineData(8)]
 	[InlineData(9)]
 	[InlineData(10)]
+#if NET6_0_OR_GREATER
 	[InlineData(11)]
 	[InlineData(12)]
 	[InlineData(13)]
@@ -113,6 +114,7 @@ public class AsSpanTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
+#endif
 	internal void StringTest(Int32 dimension) => AsSpanTest.GenericTest<String>(dimension);
 	[SkippableTheory]
 	[InlineData(2)]
@@ -124,6 +126,7 @@ public class AsSpanTest
 	[InlineData(8)]
 	[InlineData(9)]
 	[InlineData(10)]
+#if NET6_0_OR_GREATER
 	[InlineData(11)]
 	[InlineData(12)]
 	[InlineData(13)]
@@ -146,6 +149,7 @@ public class AsSpanTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
+#endif
 	internal void ObjectTest(Int32 dimension) => AsSpanTest.GenericTest<Object>(dimension);
 
 	private static void GenericTest<T>(Int32 count)
