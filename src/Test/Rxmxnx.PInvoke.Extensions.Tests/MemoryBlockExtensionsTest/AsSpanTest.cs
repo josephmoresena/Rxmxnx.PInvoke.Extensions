@@ -15,7 +15,11 @@ public class AsSpanTest
 
 	[Fact]
 	internal void AsSpanCountTest() => Assert.Equal(31, AsSpanTest.asSpans.Count);
+#if NET5_0_OR_GREATER
 	[SkippableTheory]
+#else
+	[Theory]
+#endif
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -48,7 +52,11 @@ public class AsSpanTest
 	[InlineData(31)]
 	[InlineData(32)]
 	internal void ByteTest(Int32 dimension) => AsSpanTest.GenericTest<Byte>(dimension);
+#if NET5_0_OR_GREATER
 	[SkippableTheory]
+#else
+	[Theory]
+#endif
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -81,7 +89,11 @@ public class AsSpanTest
 	[InlineData(31)]
 	[InlineData(32)]
 	internal void Int32Test(Int32 dimension) => AsSpanTest.GenericTest<Int32>(dimension);
+#if NET5_0_OR_GREATER
 	[SkippableTheory]
+#else
+	[Theory]
+#endif
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -116,7 +128,11 @@ public class AsSpanTest
 	[InlineData(32)]
 #endif
 	internal void StringTest(Int32 dimension) => AsSpanTest.GenericTest<String>(dimension);
+#if NET5_0_OR_GREATER
 	[SkippableTheory]
+#else
+	[Theory]
+#endif
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -154,7 +170,11 @@ public class AsSpanTest
 
 	private static void GenericTest<T>(Int32 count)
 	{
+#if NET5_0_OR_GREATER
 		Skip.If(IntPtr.Size == sizeof(Int32) && count > 15);
+#else
+		if (IntPtr.Size == sizeof(Int32) && count > 15) return;
+#endif
 		Int32[] lengths = Enumerable.Range(0, count).Select(_ => Random.Shared.Next(1, 3)).ToArray();
 
 		AsMemoryTest.CollectGarbage();

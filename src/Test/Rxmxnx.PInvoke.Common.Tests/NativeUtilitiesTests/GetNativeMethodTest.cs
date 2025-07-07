@@ -8,7 +8,11 @@ public sealed class GetNativeMethodTest
 #if NETCOREAPP
 	private static readonly IFixture fixture = new Fixture();
 
+#if NET5_0_OR_GREATER
 	[SkippableTheory]
+#else
+	[Theory]
+#endif
 	[InlineData(true, false)]
 	[InlineData(false, true)] //https://github.com/dotnet/dotnet-api-docs/pull/7342
 	[InlineData(true, true)]
@@ -23,8 +27,12 @@ public sealed class GetNativeMethodTest
 	[InlineData(false, false, false, true)]
 	internal void EmptyTest(Boolean zeroPtr, Boolean generic, Boolean emptyName = false, Boolean useRealHandle = false)
 	{
+#if NET5_0_OR_GREATER
 		Skip.If(MemoryMarshalCompat.TargetFramework.Contains(".NETStandard"),
 		        ".NETStandard does not support NativeLibrary class.");
+#else
+		if (MemoryMarshalCompat.TargetFramework.Contains(".NETStandard")) return;
+#endif
 
 		String prefix = GetNativeMethodTest.fixture.Create<String>();
 		String sufix = GetNativeMethodTest.fixture.Create<String>();
@@ -39,8 +47,12 @@ public sealed class GetNativeMethodTest
 			IntPtr.Zero;
 		String? name = !emptyName ? prefix + LoadNativeLibTest.MethodName + sufix : default;
 		Delegate? result;
+#if NET5_0_OR_GREATER
 		Skip.If(!zeroPtr && !useRealHandle,
 		        "Calling this method with an invalid handle parameter other than IntPtr.Zero is not supported and will result in undefined behaviour.");
+#else
+		if (!zeroPtr && !useRealHandle) return;
+#endif
 		if (!generic)
 			result = NativeUtilities.GetNativeMethod<GetInt32>(handle, name);
 		else
@@ -52,13 +64,21 @@ public sealed class GetNativeMethodTest
 			NativeLibrary.Free(handle);
 	}
 
+#if NET5_0_OR_GREATER
 	[SkippableTheory]
+#else
+	[Theory]
+#endif
 	[InlineData(true)]
 	[InlineData(false)]
 	internal void NormalTest(Boolean generic)
 	{
+#if NET5_0_OR_GREATER
 		Skip.If(MemoryMarshalCompat.TargetFramework.Contains(".NETStandard"),
 		        ".NETStandard does not support NativeLibrary class.");
+#else
+		if (MemoryMarshalCompat.TargetFramework.Contains(".NETStandard")) return;
+#endif
 
 		IntPtr handle = NativeLibrary.Load(LoadNativeLibTest.LibraryName);
 		IntPtr addressMethod = NativeLibrary.GetExport(handle, LoadNativeLibTest.MethodName);
