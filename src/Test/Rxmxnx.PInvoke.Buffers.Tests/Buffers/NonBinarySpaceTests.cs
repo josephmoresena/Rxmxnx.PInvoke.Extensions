@@ -269,7 +269,6 @@ public sealed class NonBinarySpaceTests
 		private T _val97;
 		private T _val98;
 		private T _val99;
-		private T _val100;
 	}
 #endif
 }
