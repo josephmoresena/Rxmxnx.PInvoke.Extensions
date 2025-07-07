@@ -14,6 +14,7 @@ public sealed class StringJoinStringTest
 		StringJoinStringTest.EnumerableTest(StringJoinStringTest.GetCStringSeparator(), strings);
 	}
 
+#if NET6_0_OR_GREATER
 	[Fact]
 	internal async Task TestAsync()
 	{
@@ -23,6 +24,7 @@ public sealed class StringJoinStringTest
 		await StringJoinStringTest.ArrayRangeTestAsync(StringJoinStringTest.GetCStringSeparator(), strings);
 		await StringJoinStringTest.EnumerableTestAsync(StringJoinStringTest.GetCStringSeparator(), strings);
 	}
+#endif
 
 	private static void ArrayTest(String? separator, String?[] strings)
 	{
@@ -63,6 +65,7 @@ public sealed class StringJoinStringTest
 		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
 	}
 
+#if NET6_0_OR_GREATER
 	private static async Task ArrayTestAsync(String? separator, String?[] strings)
 	{
 		String? strSeparator = separator;
@@ -101,6 +104,7 @@ public sealed class StringJoinStringTest
 		Assert.Equal(expectedCString, resultCStringCString);
 		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
 	}
+#endif
 	private static String? GetCStringSeparator()
 	{
 		Int32 result = Random.Shared.Next(-3, TestSet.Utf16Text.Count);

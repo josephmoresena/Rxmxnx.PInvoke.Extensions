@@ -17,6 +17,7 @@ public sealed class JoinByteTest
 		JoinByteTest.EnumerableTest(JoinByteTest.GetByteSeparator(), strings, values);
 	}
 
+#if NET6_0_OR_GREATER
 	[Fact]
 	internal async Task TestAsync()
 	{
@@ -29,6 +30,7 @@ public sealed class JoinByteTest
 		await JoinByteTest.ArrayRangeTestAsync(JoinByteTest.GetByteSeparator(), strings, values);
 		await JoinByteTest.EnumerableTestAsync(JoinByteTest.GetByteSeparator(), strings, values);
 	}
+#endif
 
 	private static void ArrayTest(Byte separator, String?[] strings, CString?[] values)
 	{
@@ -72,6 +74,7 @@ public sealed class JoinByteTest
 		Assert.Same(CString.Empty, CString.Join(separator, values, 0, 0));
 	}
 
+#if NET6_0_OR_GREATER
 	private static async Task ArrayTestAsync(Byte separator, String?[] strings, CString?[] values)
 	{
 		String strSeparator = Encoding.UTF8.GetString(new[] { separator, });
@@ -110,6 +113,7 @@ public sealed class JoinByteTest
 		Assert.Equal(expectedCString, resultCStringCString);
 		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
 	}
+#endif
 	private static Byte GetByteSeparator()
 	{
 		Int32 result = Random.Shared.Next(33, 127);
