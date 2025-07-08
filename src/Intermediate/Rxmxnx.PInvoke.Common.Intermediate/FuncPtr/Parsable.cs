@@ -4,17 +4,8 @@ namespace Rxmxnx.PInvoke;
 public readonly partial struct FuncPtr<TDelegate>
 #if NET7_0_OR_GREATER
 	: IParsable<FuncPtr<TDelegate>>
-{
-	/// <inheritdoc cref="IntPtr.TryParse(String, IFormatProvider, out IntPtr)"/>
-	public static Boolean TryParse([NotNullWhen(true)] String? s, IFormatProvider? provider,
-		out FuncPtr<TDelegate> result)
-	{
-		Unsafe.SkipInit(out result);
-		return IntPtr.TryParse(s, provider, out Unsafe.As<FuncPtr<TDelegate>, IntPtr>(ref result));
-	}
-#else
-{
 #endif
+{
 	/// <inheritdoc cref="IntPtr.Parse(String)"/>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
@@ -84,6 +75,15 @@ public readonly partial struct FuncPtr<TDelegate>
 	{
 		Unsafe.SkipInit(out result);
 		return IntPtr.TryParse(s, style, provider, out Unsafe.As<FuncPtr<TDelegate>, IntPtr>(ref result));
+	}
+#endif
+#if NET7_0_OR_GREATER
+	/// <inheritdoc cref="IntPtr.TryParse(String, IFormatProvider, out IntPtr)"/>
+	public static Boolean TryParse([NotNullWhen(true)] String? s, IFormatProvider? provider,
+		out FuncPtr<TDelegate> result)
+	{
+		Unsafe.SkipInit(out result);
+		return IntPtr.TryParse(s, provider, out Unsafe.As<FuncPtr<TDelegate>, IntPtr>(ref result));
 	}
 #endif
 }

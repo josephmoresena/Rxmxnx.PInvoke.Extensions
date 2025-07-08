@@ -3,15 +3,15 @@
 [ExcludeFromCodeCoverage]
 public sealed class BinaryTest
 {
-	private static readonly IFixture fixture = new Fixture();
+	private readonly IFixture _fixture = new Fixture();
 
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
 	internal void Test(Boolean nullSeparator)
 	{
-		Byte[] sourceBytes = Encoding.UTF8.GetBytes(BinaryTest.fixture.Create<String>());
-		Byte? separator = !nullSeparator ? BinaryTest.fixture.Create<Byte>() : default(Byte?);
+		Byte[] sourceBytes = Encoding.UTF8.GetBytes(this._fixture.Create<String>());
+		Byte? separator = !nullSeparator ? this._fixture.Create<Byte>() : default(Byte?);
 		using BinaryConcatenator helper = separator.HasValue ? new(separator.Value) : new();
 
 		foreach (Byte b in sourceBytes)
@@ -25,8 +25,8 @@ public sealed class BinaryTest
 	[InlineData(false)]
 	internal async Task TestAsync(Boolean nullSeparator)
 	{
-		Byte[] sourceBytes = Encoding.UTF8.GetBytes(BinaryTest.fixture.Create<String>());
-		Byte? separator = !nullSeparator ? BinaryTest.fixture.Create<Byte>() : default(Byte?);
+		Byte[] sourceBytes = Encoding.UTF8.GetBytes(this._fixture.Create<String>());
+		Byte? separator = !nullSeparator ? this._fixture.Create<Byte>() : default(Byte?);
 		await using BinaryConcatenator helper = separator.HasValue ? new(separator.Value) : new();
 		foreach (Byte b in sourceBytes)
 			await helper.WriteAsync(b);

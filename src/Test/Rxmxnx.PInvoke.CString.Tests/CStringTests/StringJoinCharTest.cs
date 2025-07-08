@@ -4,16 +4,16 @@
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class StringJoinCharTest
 {
-	private static readonly IFixture fixture = new Fixture();
+	private readonly IFixture _fixture = new Fixture();
 
 	[Fact]
 	internal void Test()
 	{
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
 		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
-		StringJoinCharTest.ArrayTest(StringJoinCharTest.GetByteSeparator(), strings);
-		StringJoinCharTest.ArrayRangeTest(StringJoinCharTest.GetByteSeparator(), strings);
-		StringJoinCharTest.EnumerableTest(StringJoinCharTest.GetByteSeparator(), strings);
+		StringJoinCharTest.ArrayTest(this.GetByteSeparator(), strings);
+		StringJoinCharTest.ArrayRangeTest(this.GetByteSeparator(), strings);
+		StringJoinCharTest.EnumerableTest(this.GetByteSeparator(), strings);
 	}
 
 #if NET6_0_OR_GREATER
@@ -22,9 +22,9 @@ public sealed class StringJoinCharTest
 	{
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
 		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
-		await StringJoinCharTest.ArrayTestAsync(StringJoinCharTest.GetByteSeparator(), strings);
-		await StringJoinCharTest.ArrayRangeTestAsync(StringJoinCharTest.GetByteSeparator(), strings);
-		await StringJoinCharTest.EnumerableTestAsync(StringJoinCharTest.GetByteSeparator(), strings);
+		await StringJoinCharTest.ArrayTestAsync(this.GetByteSeparator(), strings);
+		await StringJoinCharTest.ArrayRangeTestAsync(this.GetByteSeparator(), strings);
+		await StringJoinCharTest.EnumerableTestAsync(this.GetByteSeparator(), strings);
 	}
 #endif
 
@@ -69,6 +69,7 @@ public sealed class StringJoinCharTest
 		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
 		Assert.Same(CString.Empty, CString.Join(separator, strings, 0, 0));
 	}
+	private Char GetByteSeparator() => this._fixture.Create<Char>();
 
 #if NET6_0_OR_GREATER
 	private static async Task ArrayTestAsync(Char separator, String?[] strings)
@@ -110,7 +111,6 @@ public sealed class StringJoinCharTest
 		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
 	}
 #endif
-	private static Char GetByteSeparator() => StringJoinCharTest.fixture.Create<Char>();
 #if !NET6_0_OR_GREATER
 	private static class Random
 	{
