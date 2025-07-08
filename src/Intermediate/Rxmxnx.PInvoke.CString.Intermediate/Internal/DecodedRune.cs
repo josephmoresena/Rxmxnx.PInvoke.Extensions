@@ -90,6 +90,9 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 	/// <inheritdoc/>
 	public override Int32 GetHashCode() => this._value.GetHashCode();
 	/// <inheritdoc/>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public override String ToString() => this._value.ToString();
 
 	/// <summary>

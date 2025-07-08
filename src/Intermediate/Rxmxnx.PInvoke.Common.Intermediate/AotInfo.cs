@@ -82,19 +82,6 @@ public static class AotInfo
 		}
 #endif
 	}
-	/// <summary>
-	/// Indicates whether <see cref="String"/> type name contains the <c>String</c> word.
-	/// </summary>
-	/// <returns>
-	/// <see langword="true"/> if <see cref="String"/> type name contains the <c>String</c> word;
-	/// otherwise, <see langword="false"/>.
-	/// </returns>
-	private static Boolean StringTypeNameContainsString()
-	{
-		ReadOnlySpan<Char> fullTypeName = typeof(String).ToString().AsSpan();
-		ReadOnlySpan<Char> stringName = nameof(String).AsSpan();
-		return stringName.Length <= fullTypeName.Length && fullTypeName[^stringName.Length..].SequenceEqual(stringName);
-	}
 #if !NET6_0_OR_GREATER
 	/// <summary>
 	/// Indicates whether JIT is enabled in the current runtime using reflection.
@@ -146,4 +133,17 @@ public static class AotInfo
 		return type is not null && Activator.CreateInstance(type) is not null && type.Assembly.IsDynamic;
 	}
 #endif
+	/// <summary>
+	/// Indicates whether <see cref="String"/> type name contains the <c>String</c> word.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if <see cref="String"/> type name contains the <c>String</c> word;
+	/// otherwise, <see langword="false"/>.
+	/// </returns>
+	private static Boolean StringTypeNameContainsString()
+	{
+		ReadOnlySpan<Char> fullTypeName = typeof(String).ToString().AsSpan();
+		ReadOnlySpan<Char> stringName = nameof(String).AsSpan();
+		return stringName.Length <= fullTypeName.Length && fullTypeName[^stringName.Length..].SequenceEqual(stringName);
+	}
 }

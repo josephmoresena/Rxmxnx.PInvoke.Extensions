@@ -7,6 +7,7 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// Helper class for managed reference array data retrieving.
 	/// </summary>
 #if !PACKAGE
+	[ExcludeFromCodeCoverage]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
 #endif
 	private abstract class ArrayReferenceHelper
