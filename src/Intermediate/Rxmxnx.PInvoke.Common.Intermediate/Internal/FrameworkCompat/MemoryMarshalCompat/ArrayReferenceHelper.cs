@@ -6,8 +6,15 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// <summary>
 	/// Helper class for managed reference array data retrieving.
 	/// </summary>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
 	private abstract class ArrayReferenceHelper
 	{
+#pragma warning disable CA2263
+		/// <summary>
+		/// Singleton instance.
+		/// </summary>
 		private static ArrayReferenceHelper? instance;
 
 		/// <summary>
@@ -152,6 +159,7 @@ internal static unsafe partial class MemoryMarshalCompat
 			/// <inheritdoc/>
 			public override ref Byte GetArrayDataReference(Array array) => ref Unsafe.As<MonoRawData>(array).Data;
 		}
+#pragma warning restore CA2263
 	}
 }
 #endif

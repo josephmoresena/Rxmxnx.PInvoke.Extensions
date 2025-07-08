@@ -1,6 +1,9 @@
 ﻿#if !NET5_0_OR_GREATER
 using Enum = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
 #endif
+#if !NET6_0_OR_GREATER
+using ArgumentNullExceptionCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
+#endif
 
 namespace Rxmxnx.PInvoke.Internal;
 
@@ -103,8 +106,11 @@ internal static unsafe class ValidationUtilities
 #endif
 	public static void ThrowIfInvalidSerialization(SerializationInfo info, void* ptr)
 	{
-		if (info == null)
-			throw new ArgumentNullException(nameof(info));
+#if !NET6_0_OR_GREATER
+		ArgumentNullExceptionCompat.ThrowIfNull(info);
+#else
+		ArgumentNullException.ThrowIfNull(info);
+#endif
 		info.AddValue("value", (Int64)ptr);
 	}
 	/// <summary>
@@ -263,7 +269,7 @@ internal static unsafe class ValidationUtilities
 	{
 		if (!type.IsByRefLike) return;
 		IMessageResource resource = IMessageResource.GetInstance();
-		String message = IMessageResource.GetInstance().NotObjectType(type);
+		String message = resource.NotObjectType(type);
 		throw new InvalidOperationException(message);
 	}
 #endif

@@ -140,7 +140,9 @@ internal sealed class FixedRentedContext<T> : IFixedContext<T>.IDisposable
 	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#pragma warning disable CA1859
 	private IFixedContext<T> GetContext() => this._ctx;
+#pragma warning restore CA1859
 	/// <summary>
 	/// Read-only fixed context.
 	/// </summary>
@@ -148,5 +150,7 @@ internal sealed class FixedRentedContext<T> : IFixedContext<T>.IDisposable
 	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private IFixedContext<T> GetReadOnlyContext() => this._ctx;
+#pragma warning disable CA1859
+	private IReadOnlyFixedContext<T> GetReadOnlyContext() => this._ctx;
+#pragma warning restore CA1859
 }

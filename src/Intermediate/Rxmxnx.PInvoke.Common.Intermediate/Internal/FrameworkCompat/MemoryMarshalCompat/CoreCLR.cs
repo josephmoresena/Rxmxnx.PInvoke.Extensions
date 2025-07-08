@@ -51,6 +51,7 @@ internal static
 #endif
 	partial class MemoryMarshalCompat
 {
+#pragma warning disable CA2020
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -641,6 +642,9 @@ internal static
 		return true;
 	}
 #if !NET5_0_OR_GREATER
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1172)]
+#endif
 	private static class AdvSimd
 	{
 		public static Vector128<T> CompareEqual<T>(Vector128<T> values, Vector128<T> _) where T : unmanaged => values;
@@ -655,5 +659,6 @@ internal static
 	}
 #endif
 #endif
+#pragma warning restore CA2020
 }
 #endif

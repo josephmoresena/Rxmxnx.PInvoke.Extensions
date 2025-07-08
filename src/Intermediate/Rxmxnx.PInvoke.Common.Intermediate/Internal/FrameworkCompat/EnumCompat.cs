@@ -8,7 +8,9 @@ internal static class EnumCompat
 	/// <inheritdoc cref="Enum.GetName(Type, Object)"/>
 	public static String? GetName<TEnum>(TEnum value) where TEnum : struct, Enum
 #if !PACKAGE || !NET5_0_OR_GREATER
+#pragma warning disable CA2263
 		=> Enum.GetName(typeof(TEnum), value);
+#pragma warning restore CA2263
 #else
 		=> Enum.GetName<TEnum>(value);
 #endif

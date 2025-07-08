@@ -178,7 +178,7 @@ public unsafe partial class CStringSequence
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static void CreateCStringSequence<TState>(Span<Char> buffer, SequenceCreationHelper<TState> helper)
 #if NET9_0_OR_GREATER
-	where TState : allows ref struct
+		where TState : allows ref struct
 #endif
 		=> CStringSequence.CreateCStringSequence(MemoryMarshal.AsBytes(buffer), helper);
 	/// <summary>
@@ -190,7 +190,7 @@ public unsafe partial class CStringSequence
 	/// <param name="helper">The state object used for creation.</param>
 	private static void CreateCStringSequence<TState>(Span<Byte> buffer, SequenceCreationHelper<TState> helper)
 #if NET9_0_OR_GREATER
-	where TState : allows ref struct
+		where TState : allows ref struct
 #endif
 	{
 		Int32 offset = 0;
@@ -268,17 +268,17 @@ public unsafe partial class CStringSequence
 	/// <param name="lengths">The lengths of the UTF-8 text sequence.</param>
 	/// <param name="totalNonEmpty">Output. Count of non-empty UTF-8 texts.</param>
 	/// <returns>Instance cache.</returns>
-	private static IList<CString?> CreateCache(IReadOnlyList<Int32?> lengths, out Int32 totalNonEmpty)
+	private static IList<CString?> CreateCache(ReadOnlySpan<Int32?> lengths, out Int32 totalNonEmpty)
 	{
 		List<Int32> emptyIndices =
 			CStringSequence.GetEmptyIndexList(lengths, out totalNonEmpty, out Int32 lastNonEmpty, out Int32 skipLast);
 
 		// All elements are empty, the cache is an empty array.
-		if (emptyIndices.Count == lengths.Count) return Array.Empty<CString>();
+		if (emptyIndices.Count == lengths.Length) return Array.Empty<CString>();
 
 		// There is no empty elements or there are only at the end of the list
 		if (emptyIndices.Count == 0 || (emptyIndices.Count - skipLast == 1 && lastNonEmpty + 1 == emptyIndices[0]))
-			return lengths.Count switch
+			return lengths.Length switch
 			{
 				<= 32 => new CString?[totalNonEmpty],
 				<= 256 => FixedCache.CreateFixedCache(totalNonEmpty, ImmutableHashSet<Int32>.Empty),
@@ -286,7 +286,7 @@ public unsafe partial class CStringSequence
 			};
 
 		// Otherwise
-		return lengths.Count switch
+		return lengths.Length switch
 		{
 			<= 256 => FixedCache.CreateFixedCache(totalNonEmpty, emptyIndices.SkipLast(skipLast).ToImmutableHashSet()),
 			_ => new DynamicCache(),
@@ -300,13 +300,13 @@ public unsafe partial class CStringSequence
 	/// <param name="lastNonEmpty">Output. Index of last non-empty UTF-8 text.</param>
 	/// <param name="skipLast">Output. Count of useless elements at the end of resulting list.</param>
 	/// <returns>A list containing the indices of all empty UTF-8 in the sequence.</returns>
-	private static List<Int32> GetEmptyIndexList(IReadOnlyList<Int32?> lengths, out Int32 totalNonEmpty,
+	private static List<Int32> GetEmptyIndexList(ReadOnlySpan<Int32?> lengths, out Int32 totalNonEmpty,
 		out Int32 lastNonEmpty, out Int32 skipLast)
 	{
-		List<Int32> result = new(lengths.Count);
+		List<Int32> result = new(lengths.Length);
 		lastNonEmpty = -1;
 		// Fills gaps list and determines latest non-empty element.
-		for (Int32 i = 0; i < lengths.Count; i++)
+		for (Int32 i = 0; i < lengths.Length; i++)
 		{
 			if (lengths[i].GetValueOrDefault() != 0)
 				lastNonEmpty = i;
@@ -314,12 +314,12 @@ public unsafe partial class CStringSequence
 				result.Add(i);
 		}
 		// Determines total non-empty elements.
-		totalNonEmpty = lengths.Count - result.Count;
+		totalNonEmpty = lengths.Length - result.Count;
 		// Determines how many items can be skipped to the end of the list.
 		skipLast = 0;
 		for (Int32 i = result.Count - 1; i > 0; i--)
 		{
-			if (result[i] - 1 != result[i - 1] || result[^1] != lengths.Count - 1) break;
+			if (result[i] - 1 != result[i - 1] || result[^1] != lengths.Length - 1) break;
 			skipLast++;
 		}
 		return result;

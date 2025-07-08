@@ -7,22 +7,22 @@ namespace Rxmxnx.PInvoke.Extensions.IlPatcher;
 public sealed partial class ValuePointerPatchTask : AssemblyPatchTask
 {
 	/// <inheritdoc/>
-	protected override Boolean IlPatch(ModuleDefinition module)
+	protected override Boolean IlPatch(ModuleDefinition mainModule)
 	{
 		TypeDefinition readOnlyValPtrTypeDefinition =
-			module.Types.First(t => t.Name == ValuePointerPatchTask.ReadOnlyValPtrName);
-		TypeDefinition valPtrTypeDefinition = module.Types.First(t => t.Name == ValuePointerPatchTask.ValPtrName);
+			mainModule.Types.First(t => t.Name == ValuePointerPatchTask.ReadOnlyValPtrName);
+		TypeDefinition valPtrTypeDefinition = mainModule.Types.First(t => t.Name == ValuePointerPatchTask.ValPtrName);
 
 		TypeDefinition readOnlyFixedContext =
-			module.Types.First(t => t.Name == ValuePointerPatchTask.ReadOnlyFixedContextName);
-		TypeDefinition fixedContext = module.Types.First(t => t.Name == ValuePointerPatchTask.FixedContextName);
+			mainModule.Types.First(t => t.Name == ValuePointerPatchTask.ReadOnlyFixedContextName);
+		TypeDefinition fixedContext = mainModule.Types.First(t => t.Name == ValuePointerPatchTask.FixedContextName);
 		TypeDefinition iReadOnlyFixedContext =
-			module.Types.First(t => t.Name == ValuePointerPatchTask.IReadOnlyFixedContextName);
-		TypeDefinition iFixedContext = module.Types.First(t => t.Name == ValuePointerPatchTask.IFixedContextName);
+			mainModule.Types.First(t => t.Name == ValuePointerPatchTask.IReadOnlyFixedContextName);
+		TypeDefinition iFixedContext = mainModule.Types.First(t => t.Name == ValuePointerPatchTask.IFixedContextName);
 
-		ValuePointerPatchTask.ImplementGetUnsafeFixedContextMethod(module, readOnlyValPtrTypeDefinition,
+		ValuePointerPatchTask.ImplementGetUnsafeFixedContextMethod(mainModule, readOnlyValPtrTypeDefinition,
 		                                                           iReadOnlyFixedContext, readOnlyFixedContext);
-		ValuePointerPatchTask.ImplementGetUnsafeFixedContextMethod(module, valPtrTypeDefinition, iFixedContext,
+		ValuePointerPatchTask.ImplementGetUnsafeFixedContextMethod(mainModule, valPtrTypeDefinition, iFixedContext,
 		                                                           fixedContext);
 		return true;
 	}

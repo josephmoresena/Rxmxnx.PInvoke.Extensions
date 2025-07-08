@@ -91,21 +91,20 @@ internal static unsafe
 	public static ref T GetArrayDataReference<T>(Array array)
 	{
 #if !PACKAGE || !NET6_0_OR_GREATER
-		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+			return ref Unsafe.As<Byte, T>(ref ArrayReferenceHelper.Instance.GetArrayDataReference(array));
+
+		// Arrays of unmanaged items can be pinned.
+		GCHandle handle = GCHandle.Alloc(array, GCHandleType.Pinned);
+		try
 		{
-			// Arrays of unmanaged items can be pinned.
-			GCHandle handle = GCHandle.Alloc(array, GCHandleType.Pinned);
-			try
-			{
-				return ref Unsafe.As<Byte, T>(
-					ref MemoryMarshalCompat.GetArrayDataReference(handle.AddrOfPinnedObject().ToPointer(), array));
-			}
-			finally
-			{
-				handle.Free();
-			}
+			return ref Unsafe.As<Byte, T>(
+				ref MemoryMarshalCompat.GetArrayDataReference(handle.AddrOfPinnedObject().ToPointer(), array));
 		}
-		return ref Unsafe.As<Byte, T>(ref ArrayReferenceHelper.Instance.GetArrayDataReference(array));
+		finally
+		{
+			handle.Free();
+		}
 #else
 		return ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetArrayDataReference(array));
 #endif

@@ -6,6 +6,7 @@ namespace Rxmxnx.PInvoke.Buffers;
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2743)]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2326)]
 #endif
 public interface IManagedBuffer<T>
 {
