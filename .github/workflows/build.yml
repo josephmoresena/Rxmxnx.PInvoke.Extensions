@@ -35,10 +35,10 @@ jobs:
           echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
           sudo apt update
           
-          wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
           sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
           
-          sudo apt install mono-complete
+          sudo apt install mono-complete libssl3
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
@@ -93,9 +93,23 @@ jobs:
           echo '<Project>' > Directory.Build.props
           echo '  <PropertyGroup>' >> Directory.Build.props
           echo '    <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>' >> Directory.Build.props
+          echo '    <LangVersion>latest</LangVersion>' >> Directory.Build.props
           echo '  </PropertyGroup>' >> Directory.Build.props
           echo '  <ItemGroup>' >> Directory.Build.props
           echo '    <RuntimeHostConfigurationOption Condition="'"'"'$(DisableBufferAutoComposition)'"'"' == '"'"'true'"'"'" Include="PInvoke.DisableBufferAutoComposition" Value="true" Trim="true" />' >> Directory.Build.props
+          echo '  </ItemGroup>' >> Directory.Build.props
+          echo '  <ItemGroup Condition="'"'"'$(TargetFramework)'"'"' == '"'"'net45'"'"'">' >> Directory.Build.props
+          echo '    <Reference Include="mscorlib">' >> Directory.Build.props
+          echo '      <HintPath>$(MONO_FRAMEWORK_PATH)\\4.5\\mscorlib.dll</HintPath>' >> Directory.Build.props
+          echo '      <Private>False</Private>' >> Directory.Build.props
+          echo '    </Reference>' >> Directory.Build.props
+          echo '    <Reference Include="netstandard">' >> Directory.Build.props
+          echo '      <HintPath>$(MONO_FRAMEWORK_PATH)\\4.5\\Facades\\netstandard.dll</HintPath>' >> Directory.Build.props
+          echo '      </Reference>' >> Directory.Build.props
+          echo '  </ItemGroup>' >> Directory.Build.props
+          echo '  <ItemGroup Condition="'"'"'$(TargetFramework)'"'"' == '"'"'net45'"'"'">' >> Directory.Build.props
+          echo '     <PackageReference Include="System.Collections.Immutable" Version="5.0.0"/>' >> Directory.Build.props
+          echo '     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0"/>' >> Directory.Build.props
           echo '  </ItemGroup>' >> Directory.Build.props
           echo '</Project>' >> Directory.Build.props  
           dotnet new console --name PackageTrimmedAssembly --aot true
@@ -902,6 +916,14 @@ jobs:
           ./AutoComposition
           echo '----- None -----'
           ./None
+      - name: Mono-Run
+        working-directory: ./tmpProject/PackageTrimmedAssembly
+        run: |
+          msbuild -restore /p:TargetFramework=net45 /p:Configuration=Release
+          MONO_LOG_LEVEL=debug mono --aot=full bin/Release/net45/Rxmxnx.PInvoke.Extensions.dll > ./../Executable/ilcLogs/MonoAOT.log 2>&1
+          mono bin/Release/net45/PackageTrimmedAssembly.exe
+        env:
+          MONO_FRAMEWORK_PATH: /usr/lib/mono
       - name: Upload Package-Trimmed-Executables-Logs
         uses: actions/upload-artifact@v4
         with:

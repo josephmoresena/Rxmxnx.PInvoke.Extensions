@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke.Tests;
+﻿#if !NET6_0_OR_GREATER
+[assembly: CollectionBehavior(DisableTestParallelization = true)]
+#endif
+
+namespace Rxmxnx.PInvoke.Tests;
 
 [ExcludeFromCodeCoverage]
 internal static partial class TestSet
