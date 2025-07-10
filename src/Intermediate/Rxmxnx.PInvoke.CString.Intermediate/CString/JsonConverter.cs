@@ -175,6 +175,10 @@ public partial class CString
 				reader.ValueSequence.CopyTo(buffer);
 			else
 				reader.ValueSpan.CopyTo(buffer);
+#if NET6_0_OR_GREATER
+			if (reader.ValueIsEscaped)
+				return buffer.Length - reader.ValueSpan.Length;
+#endif
 			adjustment -= JsonConverter.EscapeString(buffer);
 #endif
 			return adjustment;

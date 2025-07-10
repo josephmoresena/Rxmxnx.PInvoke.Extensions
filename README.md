@@ -147,11 +147,11 @@ target frameworks, along with the type of support provided for each one.
     - `System.Text.Json` 8.0.5
 
 </details>
-
 <details>
 <summary><strong>.NET 7.0</strong> — Extended</summary>
 
 - Inherits from .NET 6.0
+- **Static Virtual Members:** Yes [¹]
 - Adds support for:
     - **Marshalling**
 
@@ -160,11 +160,9 @@ target frameworks, along with the type of support provided for each one.
 <summary><strong>.NET 8.0</strong> — LTS</summary>
 
 - Inherits from .NET 7.0
-- **Static Virtual Members:** Yes
 - **No dependencies required**
 
 </details>
-
 <details>
 <summary><strong>.NET 9.0</strong> — Current</summary>
 
@@ -173,10 +171,24 @@ target frameworks, along with the type of support provided for each one.
 
 </details>
 
-1. Retrieving references to multidimensional array data and managed buffers handling should be performed via reflection.
+1. Retrieving references to multidimensional array data, AOT detection, and managed buffers handling should be performed
+   via reflection.
 2. Uses CoreCLR implementations from .NET 6.0. Simpler alternatives may be substituted in .NET Standard 2.1.
 3. Internally relies on `Enum.GetName(Type, Object)`.
 4. Value-type pointers allow `ref struct` generics, but some methods must be written in IL (not C#).
+
+#### AOT Support
+
+This package is AOT-friendly, and almost all of its features support both MonoAOT and NativeAOT,
+including Mono's full AOT and the obsolete reflection-free mode of Native AOT.
+
+The only features that require reflection are:
+
+* Retrieving references from multidimensional arrays when using .NET 5.0 or earlier.
+* Native AOT detection when using .NET 5.0 or earlier.
+* Handling managed buffers when using .NET 6.0 or earlier.
+
+Starting with .NET 7.0 and later, the use of reflection can be completely avoided.
 
 ---
 

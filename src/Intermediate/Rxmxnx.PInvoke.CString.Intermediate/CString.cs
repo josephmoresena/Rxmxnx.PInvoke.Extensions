@@ -60,8 +60,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// </summary>
 	/// <param name="c">A UTF-8 char.</param>
 	/// <param name="count">The number of times <paramref name="c"/> is repeated to form the UTF-8 string.</param>
-	public CString(Byte c, Int32 count) :
-		this(CString.CreateRepeatedSequence(stackalloc Byte[] { c, }, count), true) { }
+	public CString(Byte c, Int32 count) : this(CString.CreateRepeatedSequence([c,], count), true) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified
 	/// UTF-8 sequence repeated a specified number of times.
@@ -69,8 +68,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <param name="u0">The first UTF-8 unit.</param>
 	/// <param name="u1">The second UTF-8 unit.</param>
 	/// <param name="count">The number of times the sequence is repeated to form the UTF-8 string.</param>
-	public CString(Byte u0, Byte u1, Int32 count) : this(
-		CString.CreateRepeatedSequence(stackalloc Byte[] { u0, u1, }, count), true) { }
+	public CString(Byte u0, Byte u1, Int32 count) : this(CString.CreateRepeatedSequence([u0, u1,], count), true) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified
 	/// UTF-8 sequence repeated a specified number of times.
@@ -79,8 +77,8 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <param name="u1">The second UTF-8 unit.</param>
 	/// <param name="u2">The third UTF-8 unit.</param>
 	/// <param name="count">The number of times the sequence is repeated to form the UTF-8 string.</param>
-	public CString(Byte u0, Byte u1, Byte u2, Int32 count) : this(
-		CString.CreateRepeatedSequence(stackalloc Byte[] { u0, u1, u2, }, count), true) { }
+	public CString(Byte u0, Byte u1, Byte u2, Int32 count) : this(CString.CreateRepeatedSequence([u0, u1, u2,], count),
+	                                                              true) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified
 	/// UTF-8 sequence repeated a specified number of times.
@@ -91,7 +89,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <param name="u3">The fourth UTF-8 unit.</param>
 	/// <param name="count">The number of times the sequence is repeated to form the UTF-8 string.</param>
 	public CString(Byte u0, Byte u1, Byte u2, Byte u3, Int32 count) : this(
-		CString.CreateRepeatedSequence(stackalloc Byte[] { u0, u1, u2, u3, }, count), true) { }
+		CString.CreateRepeatedSequence([u0, u1, u2, u3,], count), true) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class using the UTF-8 characters
 	/// indicated in the specified read-only span.

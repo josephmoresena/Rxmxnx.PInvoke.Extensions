@@ -35,7 +35,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 #if !NET9_0_OR_GREATER
 		params
 #endif
-			String?[] values) : this(values.AsSpan()) { }
+		String?[] values) : this(values.AsSpan()) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from a
 	/// collection of UTF-8 strings.
@@ -45,7 +45,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 #if !NET9_0_OR_GREATER
 		params
 #endif
-			CString?[] values) : this(values.AsSpan()) { }
+		CString?[] values) : this(values.AsSpan()) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from a
 	/// read-only span of UTF-8 strings.
@@ -55,11 +55,11 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 #if NET9_0_OR_GREATER
 		params
 #endif
-		ReadOnlySpan<CString?> values)
+			ReadOnlySpan<CString?> values)
 	{
 		this._lengths = CStringSequence.GetLengthArray(values);
 		this._value = CStringSequence.CreateBuffer(values);
-		this._cache = CStringSequence.CreateCache(this._lengths, out this._nonEmptyCount);
+		this._cache = CStringSequence.CreateCache(this._lengths.AsSpan(), out this._nonEmptyCount);
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from a
@@ -70,7 +70,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 #if NET9_0_OR_GREATER
 		params
 #endif
-		ReadOnlySpan<String?> values)
+			ReadOnlySpan<String?> values)
 	{
 		CString?[] list = new CString?[values.Length];
 		this._lengths = new Int32?[values.Length];
@@ -80,7 +80,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 			list[i] = cstr;
 			this._lengths[i] = cstr?.Length;
 		}
-		this._cache = CStringSequence.CreateCache(this._lengths, out this._nonEmptyCount);
+		this._cache = CStringSequence.CreateCache(this._lengths.AsSpan(), out this._nonEmptyCount);
 		this._value = CStringSequence.CreateBuffer(list);
 	}
 	/// <summary>
@@ -161,7 +161,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	public static CStringSequence Create<TState>(TState state, CStringSequenceCreationAction<TState> action,
 		params Int32?[] lengths)
 #if NET9_0_OR_GREATER
-	where TState : allows ref struct
+		where TState : allows ref struct
 #endif
 	{
 		Int32 length = CStringSequence.GetBufferLength(lengths);

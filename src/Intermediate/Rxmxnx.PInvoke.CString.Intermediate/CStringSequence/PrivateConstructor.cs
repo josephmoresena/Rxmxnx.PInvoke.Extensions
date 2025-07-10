@@ -20,7 +20,7 @@ public partial class CStringSequence
 	{
 		this._lengths = sequence._lengths.ToArray();
 		this._value = String.Create(sequence._value.Length, sequence, CStringSequence.CopySequence);
-		this._cache = CStringSequence.CreateCache(this._lengths, out this._nonEmptyCount);
+		this._cache = CStringSequence.CreateCache(this._lengths.AsSpan(), out this._nonEmptyCount);
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class with a predefined
@@ -34,7 +34,7 @@ public partial class CStringSequence
 	{
 		this._value = value;
 		this._lengths = lengths;
-		this._cache = CStringSequence.CreateCache(this._lengths, out this._nonEmptyCount);
+		this._cache = CStringSequence.CreateCache(this._lengths.AsSpan(), out this._nonEmptyCount);
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class with UTF-8 text pointers.
@@ -43,7 +43,7 @@ public partial class CStringSequence
 	private CStringSequence(ReadOnlySpan<ReadOnlyValPtr<Byte>> values)
 	{
 		this._lengths = CStringSequence.GetLengthArray(values);
-		this._cache = CStringSequence.CreateCache(this._lengths, out this._nonEmptyCount);
+		this._cache = CStringSequence.CreateCache(this._lengths.AsSpan(), out this._nonEmptyCount);
 		this._value = CStringSequence.CreateBuffer(values, this._lengths);
 	}
 }

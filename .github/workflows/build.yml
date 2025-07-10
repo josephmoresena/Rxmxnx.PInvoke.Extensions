@@ -171,6 +171,8 @@ jobs:
           			Console.WriteLine($"Determinant 4x4: {Program.GetDeterminant(mxm, out Double[,] inverse):0.####}");
           			Console.WriteLine("=== (4x4)^-1 ===");
           			Program.Print(inverse);
+                    Console.WriteLine("=== (4x4)^-1 (Text) -> [] ===");
+                    Program.ToText(inverse).AsSpan().WithSafeFixed(Program.Print);
           			Console.WriteLine("=== 2x2 ===");
           			Program.Print(nxn);
           			Console.WriteLine($"Determinant 2x2: {Program.GetDeterminant(nxn):0.####}");
@@ -180,6 +182,8 @@ jobs:
           			Program.Print(Program.Multiply(mxm, mxn));
           			Console.WriteLine("=== 2x2 -> [] ===");
           			mxn.AsSpan().WithSafeFixed(Program.Print);
+                    Console.WriteLine("=== 2x2 (Text) -> [] ===");
+                    Program.ToText(mxn).AsSpan().WithSafeFixed(Program.Print);
           			Console.WriteLine("=== Stack allocations ===");
           			Action registerMetadataObject =
           				Program
@@ -283,7 +287,16 @@ jobs:
           			Program.Print(fRent);
           		}
           
-          		private static Double GetDeterminant(Double[,] matrix)
+          		private static String[,] ToText(Double[,] source)
+          		{
+          		    String[,] result = new String[source.GetLength(0), source.GetLength(1)];
+          		    ReadOnlySpan<Double> sourceSpan = source.AsSpan();
+          		    Span<String> resultSpan = result.AsSpan();
+          		    for (Int32 i = 0; i < sourceSpan.Length; i++)
+          		    	resultSpan[i] = sourceSpan[i].ToString(CultureInfo.InvariantCulture);
+          		    return result;
+          		}
+                private static Double GetDeterminant(Double[,] matrix)
           		{
           			Int32 n;
           			if (matrix.Rank != 2 || (n = matrix.GetLength(0)) != matrix.GetLength(1))

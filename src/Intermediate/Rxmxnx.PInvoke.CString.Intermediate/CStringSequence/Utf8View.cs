@@ -1,3 +1,5 @@
+using System.Collections;
+
 namespace Rxmxnx.PInvoke;
 
 public partial class CStringSequence
@@ -12,6 +14,9 @@ public partial class CStringSequence
 	[NativeMarshalling(typeof(InputMarshaller))]
 #endif
 	public readonly ref struct Utf8View
+#if NET9_0_OR_GREATER
+		: IEquatable<Utf8View>
+#endif
 	{
 		/// <summary>
 		/// Internal <see cref="CStringSequence"/> instance.
@@ -54,6 +59,13 @@ public partial class CStringSequence
 		public override Int32 GetHashCode() => this._instance?.GetHashCode() ?? default;
 		/// <inheritdoc/>
 		public override String? ToString() => this._instance?._value;
+#if NET9_0_OR_GREATER
+		/// <inheritdoc/>
+#if !PACKAGE
+		[ExcludeFromCodeCoverage]
+#endif
+		public Boolean Equals(Utf8View other) => this == other;
+#endif
 		/// <inheritdoc/>
 		public override Boolean Equals([NotNullWhen(true)] Object? obj) => Object.Equals(obj, this._instance);
 
@@ -107,7 +119,7 @@ public partial class CStringSequence
 		/// </summary>
 		public ref struct Enumerator
 #if NET9_0_OR_GREATER
-		: IEnumerator<ReadOnlySpan<Byte>>
+			: IEnumerator<ReadOnlySpan<Byte>>
 #endif
 		{
 			/// <summary>
@@ -135,7 +147,7 @@ public partial class CStringSequence
 				get
 				{
 					Int32 index = this._index ?? -1;
-					ReadOnlySpan<Int32?> lengths = this._instance?._lengths;
+					ReadOnlySpan<Int32?> lengths = this._instance?._lengths ?? ReadOnlySpan<Int32?>.Empty;
 
 					ValidationUtilities.ThrowIfInvalidIndexEnumerator(index, lengths.Length);
 					Int32? currentLength = lengths[index];
@@ -161,9 +173,9 @@ public partial class CStringSequence
 			}
 
 #if NET9_0_OR_GREATER
-		Object? System.Collections.IEnumerator.Current => this._instance?[this._index.GetValueOrDefault()];
-		
-		void IDisposable.Dispose() { }
+			Object? IEnumerator.Current => this._instance?[this._index.GetValueOrDefault()];
+
+			void IDisposable.Dispose() { }
 #endif
 
 			/// <summary>
@@ -201,7 +213,7 @@ public partial class CStringSequence
 			/// <returns>A read-only span containing the item lengths.</returns>
 			private ReadOnlySpan<Int32?> GetLengthSpan(out Int32? currentLength)
 			{
-				ReadOnlySpan<Int32?> lengths = this._instance?._lengths;
+				ReadOnlySpan<Int32?> lengths = this._instance?._lengths ?? ReadOnlySpan<Int32?>.Empty;
 				currentLength = default;
 				if (lengths.IsEmpty) return lengths;
 
