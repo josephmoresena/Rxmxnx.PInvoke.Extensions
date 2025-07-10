@@ -951,29 +951,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
-        if: runner.os != 'Windows'
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: |
+            3.0.x
+            3.1.x
+            5.0.x
+            6.0.x
+            7.0.x
+            8.0.x
+            9.0.x
       - name: Install WinGet
         if: runner.os == 'Windows'
         uses: Cyberboss/install-winget@v1
       - name: Setup .NET x86
         if: runner.os == 'Windows'
         run: |
-          winget install Microsoft.DotNet.SDK.9 --architecture x86 --silent --disable-interactivity --accept-source-agreements
-      - name: Setup .NET x64
-        if: runner.os == 'Windows'
-        run: |
-          winget install Microsoft.DotNet.SDK.9 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
+          winget install Microsoft.DotNet.SDK.3_1 Microsoft.DotNet.SDK.5 Microsoft.DotNet.SDK.6 Microsoft.DotNet.SDK.7 Microsoft.DotNet.SDK.8 Microsoft.DotNet.SDK.9 --architecture x86 --silent --disable-interactivity --accept-source-agreements
       - name: Build tests
         run: |
           dotnet restore src 
-          dotnet build src --configuration Release 
+          dotnet build src --configuration Release
       - name: Windows x86 tests
         if: runner.os == 'Windows'
         run: |
-          dotnet test src --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed" --settings src\Test\x86.runsettings
+          dotnet test src /p:MultipleFrameworkTest=true --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed" --settings src\Test\x86.runsettings
       - name: Run tests
         run: |
-          dotnet test src --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"
+          dotnet test src /p:MultipleFrameworkTest=true --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"
