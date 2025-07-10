@@ -1,8 +1,9 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
     <PropertyGroup>
-        <TargetFramework Condition="'$(MultipleFrameworkTest)' != 'true'">net6.0</TargetFramework>
-        <TargetFrameworks Condition="'$(MultipleFrameworkTest)' == 'true'">net9.0;net8.0;net7.0;net6.0;net5.0;netcoreapp3.1;netcoreapp3.0</TargetFrameworks>
+        <TargetFramework Condition="'$(MultipleFrameworkTest)' != 'true'">net9.0</TargetFramework>
+        <TargetFrameworks Condition="'$(MultipleFrameworkTest)' == 'true'">net9.0;net8.0;net7.0;net6.0</TargetFrameworks>
+        <TargetFrameworks Condition="'$(MultipleFrameworkTest)' == 'true' And '$(OnlySupportedFrameworkTest)' != 'true'">$(TargetFrameworks);net5.0;netcoreapp3.1;netcoreapp3.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>Rxmxnx.PInvoke.Tests</RootNamespace>
