@@ -187,13 +187,13 @@ public partial class CStringSequence
 			/// </returns>
 			public Boolean MoveNext()
 			{
-				ReadOnlySpan<Int32?> lengths = this.GetLengthSpan(out Int32? currentLength);
-				while (lengths.Length >= 0)
+				AdvanceState state = this.GetAdvanceState();
+				while (state.Lengths.Length >= 0)
 				{
-					this.Advance(ref lengths, ref currentLength);
-					if (currentLength < 0) return false;
-					if (!this._excludeEmptyItems || currentLength > 0)
-						return currentLength is null or 0 || currentLength < this._buffer.Length;
+					state = this.Advance(state);
+					if (state.Current < 0) return false;
+					if (!this._excludeEmptyItems || state.Current > 0)
+						return state.Current is null or 0 || state.Current < this._buffer.Length;
 				}
 				return false;
 			}
@@ -207,28 +207,34 @@ public partial class CStringSequence
 			}
 
 			/// <summary>
-			/// Retrieves a span containing the lengths of the items.
+			/// Creates a new <see cref="AdvanceState"/> instance representing the current position in the
+			/// enumeration sequence.
 			/// </summary>
-			/// <param name="currentLength">Output. The length of the current item.</param>
-			/// <returns>A read-only span containing the item lengths.</returns>
-			private ReadOnlySpan<Int32?> GetLengthSpan(out Int32? currentLength)
+			/// <returns>
+			/// A new <see cref="AdvanceState"/> containing the remaining items lengths and the current item length.
+			/// </returns>
+			private AdvanceState GetAdvanceState()
 			{
 				ReadOnlySpan<Int32?> lengths = this._instance?._lengths ?? ReadOnlySpan<Int32?>.Empty;
-				currentLength = default;
-				if (lengths.IsEmpty) return lengths;
+				Int32? currentLength = default;
+				if (lengths.IsEmpty) return new(lengths, currentLength);
 
 				if (this._index > 0)
 					lengths = lengths[this._index.Value..];
 				currentLength = !lengths.IsEmpty ? lengths[0] : -1;
-				return lengths;
+				return new(lengths, currentLength);
 			}
 			/// <summary>
-			/// Advances the enumerator to the next item.
+			/// Advances the enumeration state to the next element in the sequence.
 			/// </summary>
-			/// <param name="lengths">A span containing the item lengths.</param>
-			/// <param name="currentLength">Current item length.</param>
-			private void Advance(ref ReadOnlySpan<Int32?> lengths, ref Int32? currentLength)
+			/// <param name="state">The current <see cref="AdvanceState"/>.</param>
+			/// <returns>
+			/// An updated <see cref="AdvanceState"/> representing the next element in the enumeration.
+			/// </returns>
+			private AdvanceState Advance(AdvanceState state)
 			{
+				ReadOnlySpan<Int32?> lengths = state.Lengths;
+				Int32? currentLength = state.Current;
 				if (this._index.HasValue && currentLength > 0)
 				{
 					Int32 offset = currentLength.Value + 1;
@@ -246,6 +252,33 @@ public partial class CStringSequence
 					if (this._index > 0 && !lengths.IsEmpty) lengths = lengths[1..];
 				}
 				currentLength = lengths.IsEmpty ? -1 : lengths[0];
+				return new(lengths, currentLength);
+			}
+
+			/// <summary>
+			/// Represents the current state of a <see cref="Enumerator"/> instance.
+			/// </summary>
+			private readonly ref struct AdvanceState
+			{
+				/// <summary>
+				/// Span of nullable integers representing the lengths of remaining segments.
+				/// </summary>
+				public ReadOnlySpan<Int32?> Lengths { get; }
+				/// <summary>
+				/// The length of the current element in the enumeration.
+				/// </summary>
+				public Int32? Current { get; }
+
+				/// <summary>
+				/// Constructor.
+				/// </summary>
+				/// <param name="lengths">Span containing the lengths of the items.</param>
+				/// <param name="currentLength">Current item length.</param>
+				public AdvanceState(ReadOnlySpan<Int32?> lengths, Int32? currentLength)
+				{
+					this.Lengths = lengths;
+					this.Current = currentLength;
+				}
 			}
 		}
 	}
