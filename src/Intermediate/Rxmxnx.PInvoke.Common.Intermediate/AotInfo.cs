@@ -17,7 +17,12 @@ public static class AotInfo
 	/// <summary>
 	/// Indicates whether the current runtime is ahead-of-time.
 	/// </summary>
-	private static readonly Boolean isAotRuntime = !AotInfo.IsJitEnabled();
+	private static readonly Boolean isAotRuntime =
+#if !NET6_0_OR_GREATER
+		!AotInfo.IsJitEnabled();
+#else
+		JitInfo.GetCompiledILBytes() == 0L && JitInfo.GetCompiledMethodCount() == 0;
+#endif
 
 	/// <summary>
 	/// Indicates whether runtime reflection is disabled.
@@ -28,26 +33,31 @@ public static class AotInfo
 	/// Indicates whether runtime reflection is disabled.
 	/// </summary>
 	public static Boolean IsReflectionDisabled
-		=> AotInfo.reflectionDisabled ??= !AotInfo.StringTypeNameContainsString();
+	{
+		get
+		{
+#if NET6_0_OR_GREATER
+			if (!AotInfo.IsNativeAot)
+				return false;
+#endif
+			return AotInfo.reflectionDisabled ??= !AotInfo.StringTypeNameContainsString();
+		}
+	}
 	/// <summary>
 	/// Indicates whether the current runtime is NativeAOT.
 	/// </summary>
 	public static Boolean IsNativeAot => AotInfo.isAotRuntime;
 
+#if !NET6_0_OR_GREATER
 	/// <summary>
 	/// Indicates whether JIT is enabled in the current runtime.
 	/// </summary>
 	/// <returns>
 	/// <see langword="true"/> if Jit is enabled; otherwise, <see langword="false"/>.
 	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Boolean IsJitEnabled()
 	{
-#if NET6_0_OR_GREATER
-		Int64 ilBytes = JitInfo.GetCompiledILBytes();
-		Int64 methodCount = JitInfo.GetCompiledMethodCount();
-		TimeSpan compilationTime = JitInfo.GetCompilationTime();
-		return ilBytes > 0L || methodCount > 0L || compilationTime > TimeSpan.Zero;
-#else
 		try
 		{
 			if (!AotInfo.StringTypeNameContainsString())
@@ -80,9 +90,7 @@ public static class AotInfo
 		{
 			return false;
 		}
-#endif
 	}
-#if !NET6_0_OR_GREATER
 	/// <summary>
 	/// Indicates whether JIT is enabled in the current runtime using reflection.
 	/// </summary>
@@ -96,23 +104,33 @@ public static class AotInfo
 	{
 		const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
-		Type typeofAction = typeof(Func<Boolean, Int64>);
-		Func<Boolean, Int64>? getCompiledIlBytes = typeJitInfo
-		                                           .GetMethod("GetCompiledILBytes", bindingFlags)
-		                                           ?.CreateDelegate(typeofAction) as Func<Boolean, Int64>;
-		Func<Boolean, Int64>? getCompiledMethodCount = typeJitInfo
-		                                               .GetMethod("GetCompiledMethodCount", bindingFlags)
-		                                               ?.CreateDelegate(typeofAction) as Func<Boolean, Int64>;
-		Func<Boolean, Int64>? getCompilationTimeInTicks = typeJitInfo
-		                                                  .GetMethod("GetCompilationTimeInTicks", bindingFlags)
-		                                                  ?.CreateDelegate(typeofAction) as Func<Boolean, Int64>;
+#if !NET5_0_OR_GREATER
+		Type typeofFunc = typeof(Func<Boolean, Int64>);
+#endif
+		Func<Boolean, Int64>? getCompiledIlBytes = typeJitInfo.GetMethod("GetCompiledILBytes", bindingFlags)
+#if !NET5_0_OR_GREATER
+		                                                      ?.CreateDelegate(typeofFunc) as Func<Boolean, Int64>;
+#else
+		                                                      ?.CreateDelegate<Func<Boolean, Int64>>();
+#endif
 		Int64? reflectionBytes = getCompiledIlBytes?.Invoke(false);
-		Int64? methodCount = getCompiledMethodCount?.Invoke(false);
-		Int64? compilationTimeInTicks = getCompilationTimeInTicks?.Invoke(false);
 
-		if (reflectionBytes.HasValue || methodCount.HasValue || compilationTimeInTicks.HasValue)
-			return reflectionBytes.GetValueOrDefault() > 0L || methodCount.GetValueOrDefault() > 0L ||
-				compilationTimeInTicks.GetValueOrDefault() > 0L;
+		if (reflectionBytes.GetValueOrDefault() != 0L)
+			return true;
+
+		Func<Boolean, Int64>? getCompiledMethodCount = typeJitInfo.GetMethod("GetCompiledMethodCount", bindingFlags)
+#if !NET5_0_OR_GREATER
+		                                                          ?.CreateDelegate(typeofFunc) as Func<Boolean, Int64>;
+#else
+		                                                          ?.CreateDelegate<Func<Boolean, Int64>>();
+#endif
+		Int64? methodCount = getCompiledMethodCount?.Invoke(false);
+
+		if (methodCount.GetValueOrDefault() != 0L)
+			return true;
+
+		if (reflectionBytes.HasValue || methodCount.HasValue)
+			return false;
 
 		return default; // Unabled to retrieve JIT information.
 	}
@@ -140,6 +158,7 @@ public static class AotInfo
 	/// <see langword="true"/> if <see cref="String"/> type name contains the <c>String</c> word;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Boolean StringTypeNameContainsString()
 	{
 		ReadOnlySpan<Char> fullTypeName = typeof(String).ToString().AsSpan();

@@ -63,17 +63,21 @@ internal static unsafe partial class MemoryMarshalCompat
 		private sealed class MemoryMarshalImpl(MethodInfo getArrayDataReference) : ArrayReferenceHelper
 		{
 			/// <summary>
-			/// Delegate to MemoryMarshal.GetArrayDataReference(Array).
+			/// Delegate to <c>MemoryMarshal.GetArrayDataReference(Array)</c>.
 			/// </summary>
 			private readonly GetArrayDataReferenceDelegate _delegate =
+#if !NET5_0_OR_GREATER
 				(GetArrayDataReferenceDelegate)getArrayDataReference.CreateDelegate(
 					typeof(GetArrayDataReferenceDelegate));
+#else
+				getArrayDataReference.CreateDelegate<GetArrayDataReferenceDelegate>();
+#endif
 
 			/// <inheritdoc/>
 			public override ref Byte GetArrayDataReference(Array array) => ref this._delegate(array);
 
 			/// <summary>
-			/// Delegate for .NET 5.0+ of GetArrayDataReference method.
+			/// Delegate for <c>MemoryMarshal.GetArrayDataReference(Array)</c>.
 			/// </summary>
 			private delegate ref Byte GetArrayDataReferenceDelegate(Array array);
 		}
@@ -108,7 +112,11 @@ internal static unsafe partial class MemoryMarshalCompat
 				if (getMethodTablePointer.Name == "GetObjectMethodTablePointer")
 				{
 					this._delegate =
+#if !NET5_0_OR_GREATER
 						(Func<Object, IntPtr>)getMethodTablePointer.CreateDelegate(typeof(Func<Object, IntPtr>));
+#else
+						getMethodTablePointer.CreateDelegate<Func<Object, IntPtr>>();
+#endif
 					return;
 				}
 
@@ -118,11 +126,16 @@ internal static unsafe partial class MemoryMarshalCompat
 
 				this._nativeDelegate = getMethodTablePointer.CreateDelegate(delegateType);
 				this._genericDelegate =
-					(Func<Delegate, Array, IntPtr>)currentType.GetMethod(
-						                                          nameof(RuntimeHelpersImpl.GetMethodTablePointer),
-						                                          bindingFlags)!
-					                                          .MakeGenericMethod(methodTableType)
-					                                          .CreateDelegate(typeof(Func<Delegate, Array, IntPtr>));
+#if !NET5_0_OR_GREATER
+					(Func<Delegate, Array, IntPtr>)
+#endif
+					currentType.GetMethod(nameof(RuntimeHelpersImpl.GetMethodTablePointer), bindingFlags)!
+					           .MakeGenericMethod(methodTableType)
+#if !NET5_0_OR_GREATER
+					           .CreateDelegate(typeof(Func<Delegate, Array, IntPtr>));
+#else
+					           .CreateDelegate<Func<Delegate, Array, IntPtr>>();
+#endif
 			}
 
 			/// <inheritdoc/>
