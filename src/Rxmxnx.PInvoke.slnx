@@ -30,5 +30,6 @@
         <Project Path="Test\Rxmxnx.PInvoke.Extensions.Tests\Rxmxnx.PInvoke.Extensions.Tests.csproj"/>
         <File Path="Test\x86.runsettings"/>
         <File Path="Test\Tests.targets"/>
+        <File Path="Test\README.md"/>
     </Folder>
 </Solution>
