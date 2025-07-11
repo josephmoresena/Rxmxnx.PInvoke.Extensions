@@ -78,6 +78,9 @@ public readonly partial struct ValPtr<T>
 #endif
 #if NET7_0_OR_GREATER
 	/// <inheritdoc cref="IntPtr.TryParse(String, IFormatProvider, out IntPtr)"/>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Boolean TryParse([NotNullWhen(true)] String? s, IFormatProvider? provider,
 		out ValPtr<T> result)
 	{
