@@ -44,7 +44,7 @@ public static class AotInfo
 		}
 	}
 	/// <summary>
-	/// Indicates whether the current runtime is NativeAOT.
+	/// Indicates whether the current runtime is Native AOT.
 	/// </summary>
 	public static Boolean IsNativeAot => AotInfo.isAotRuntime;
 
@@ -160,9 +160,5 @@ public static class AotInfo
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Boolean StringTypeNameContainsString()
-	{
-		ReadOnlySpan<Char> fullTypeName = typeof(String).ToString().AsSpan();
-		ReadOnlySpan<Char> stringName = nameof(String).AsSpan();
-		return stringName.Length <= fullTypeName.Length && fullTypeName[^stringName.Length..].SequenceEqual(stringName);
-	}
+		=> typeof(String).ToString().AsSpan().EndsWith(nameof(String).AsSpan());
 }
