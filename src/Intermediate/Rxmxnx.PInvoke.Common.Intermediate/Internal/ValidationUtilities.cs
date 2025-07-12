@@ -129,8 +129,13 @@ internal static unsafe class ValidationUtilities
 		=> obj switch
 		{
 			null => 1,
-			ValPtr<T> v => ((Int64)ptr).CompareTo(v.Pointer),
-			ReadOnlyValPtr<T> r => ((Int64)ptr).CompareTo(r.Pointer),
+#if !NET5_0_OR_GREATER
+			ValPtr<T> v => ((Int64)ptr).CompareTo((Int64)v.Pointer),
+			ReadOnlyValPtr<T> r => ((Int64)ptr).CompareTo((Int64)r.Pointer),
+#else
+			ValPtr<T> v => ptr.CompareTo(v.Pointer),
+			ReadOnlyValPtr<T> r => ptr.CompareTo(r.Pointer),
+#endif
 			_ => throw new ArgumentException(IMessageResource.GetInstance().InvalidType(nameofPtr)),
 		};
 

@@ -69,6 +69,7 @@ public sealed class WithSafeFixedTest
 	}
 	private static unsafe IntPtr? GetPointerFromBytes(CString cstr)
 	{
+		if (Object.ReferenceEquals(CString.Empty, cstr)) return default;
 		try
 		{
 			fixed (void* ptr = CString.GetBytes(cstr))
