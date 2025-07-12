@@ -64,13 +64,21 @@ internal static partial class TestSet
 		return values;
 	}
 	public static CString? GetCString(Int32 index, TestMemoryHandle handle)
-		=> index switch
+	{
+		switch (index)
 		{
-			-3 => new(IntPtr.Zero, default),
-			-2 => default,
-			-1 => CString.Empty,
-			_ => TestSet.GetCStringWithHandle(index, handle),
-		};
+			case -3:
+				return new(IntPtr.Zero, default);
+			case -2:
+				return default;
+			case -1:
+				MemoryHandle utf8Handle = CString.Empty.TryPin(out Boolean pinned);
+				if (pinned) handle.Add(utf8Handle);
+				return CString.Empty;
+			default:
+				return TestSet.GetCStringWithHandle(index, handle);
+		}
+	}
 	private static unsafe CString GetCStringWithHandle(Int32 index, TestMemoryHandle handle)
 	{
 		switch (Random.Shared.Next(default, 9))
