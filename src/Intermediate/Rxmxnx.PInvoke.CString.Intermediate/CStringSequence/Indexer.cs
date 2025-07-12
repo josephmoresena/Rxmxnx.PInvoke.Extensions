@@ -32,11 +32,12 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 		get
 		{
 			ValidationUtilities.ThrowIfInvalidSequenceIndex(index, this._lengths.Length);
-
-			if (!this._lengths[index].HasValue)
-				return CString.Zero;
-
-			return this._lengths[index].GetValueOrDefault() == 0 ? CString.Empty : this.GetCString(index);
+			return this._lengths[index] switch
+			{
+				null => CString.Zero,
+				0 => CString.Empty,
+				_ => this.GetCString(index),
+			};
 		}
 	}
 
