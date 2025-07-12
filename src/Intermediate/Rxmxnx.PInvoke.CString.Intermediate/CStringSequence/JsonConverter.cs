@@ -45,10 +45,14 @@ public partial class CStringSequence
 				return;
 			}
 
+			Utf8View view = new(value, true);
+
 			writer.WriteStartArray();
-			if (value is not null)
-				for (Int32 i = 0; i < value.Count; i++)
-					CString.JsonConverter.Write(writer, value.GetBinarySpan(i), !value._lengths[i].HasValue, false);
+			foreach (ReadOnlySpan<Byte> utf8Text in view)
+			{
+				Boolean isNull = Unsafe.IsNullRef(ref MemoryMarshal.GetReference(utf8Text));
+				CString.JsonConverter.Write(writer, utf8Text, isNull, false);
+			}
 			writer.WriteEndArray();
 		}
 

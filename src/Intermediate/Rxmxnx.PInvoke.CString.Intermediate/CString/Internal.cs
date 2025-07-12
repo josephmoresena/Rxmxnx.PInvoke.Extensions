@@ -19,14 +19,15 @@ public partial class CString
 	/// </summary>
 	/// <param name="sequence">The <see cref="CStringSequence"/> containing current UTF-8 text.</param>
 	/// <param name="index">Index element of current UTF-8 text into <paramref name="sequence"/>.</param>
-	internal CString(CStringSequence sequence, Int32 index)
+	/// <param name="length">Current UTF-8 text length.</param>
+	internal CString(CStringSequence sequence, Int32 index, Int32 length)
 	{
 		this._isLocal = false;
 		this.IsFunction = true;
-		this._data = ValueRegion<Byte>.Create(new SequenceItemState(sequence, index), SequenceItemState.GetSpan,
+		this._data = ValueRegion<Byte>.Create(new SequenceItemState(sequence, index, length), SequenceItemState.GetSpan,
 		                                      SequenceItemState.Alloc);
 		this._isNullTerminated = true;
-		this.Length = this._data.AsSpan().Length;
+		this.Length = length;
 	}
 
 	/// <summary>

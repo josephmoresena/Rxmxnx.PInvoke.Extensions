@@ -63,7 +63,7 @@ public unsafe partial class CStringSequence
 	/// <returns>Created buffer.</returns>
 	private static String CreateBuffer(void* ptrSpan, Int32?[] lengths)
 	{
-		Int32 bufferLength = CStringSequence.GetBufferLength(lengths);
+		Int32 bufferLength = CStringSequence.GetBufferLength(lengths.AsSpan());
 		SpanCreationInfo info = new() { Pointers = ptrSpan, Lengths = lengths, };
 		return String.Create(bufferLength, info, CStringSequence.CreateBuffer);
 	}
@@ -230,6 +230,7 @@ public unsafe partial class CStringSequence
 	/// The length of the byte span representing a <see cref="CString"/> of <paramref name="length"/> length,
 	/// or 0 if <paramref name="length"/> is <see langword="null"/> or non-positive.
 	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Int32 GetSpanLength(Int32? length) => length is > 0 ? length.Value + 1 : 0;
 	/// <summary>
 	/// Retrieves the length array for a given collection of UTF-8 texts.
@@ -329,9 +330,9 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	/// <param name="lengths">The lengths of the UTF-8 text sequence to create.</param>
 	/// <returns><see cref="String"/> buffer length.</returns>
-	private static Int32 GetBufferLength(IEnumerable<Int32?> lengths)
+	private static Int32 GetBufferLength(ReadOnlySpan<Int32?> lengths)
 	{
-		Int32 bytesLength = lengths.Sum(CStringSequence.GetSpanLength);
+		Int32 bytesLength = CStringSequence.GetTotalBytes(lengths);
 		Int32 length = bytesLength / sizeof(Char) + bytesLength % sizeof(Char);
 		return length;
 	}
@@ -438,7 +439,7 @@ public unsafe partial class CStringSequence
 	/// Retrieves the number of required bytes in the sequence buffer.
 	/// </summary>
 	/// <param name="values">The collection of text.</param>
-	/// <returns>Number of required bytes</returns>
+	/// <returns>Number of required bytes.</returns>
 	private static Int32 GetTotalBytes(ReadOnlySpan<CString?> values)
 	{
 		Int32 totalBytes = 0;
@@ -448,5 +449,18 @@ public unsafe partial class CStringSequence
 				totalBytes += value.Length + 1;
 		}
 		return totalBytes;
+	}
+	/// <summary>
+	/// Retrieves the number of required bytes in the sequence buffer.
+	/// </summary>
+	/// <param name="lengths">The lengths of the UTF-8 text sequence.</param>
+	/// <returns>Number of required bytes.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static Int32 GetTotalBytes(ReadOnlySpan<Int32?> lengths)
+	{
+		Int32 result = 0;
+		foreach (Int32? length in lengths)
+			result += CStringSequence.GetSpanLength(length);
+		return result;
 	}
 }

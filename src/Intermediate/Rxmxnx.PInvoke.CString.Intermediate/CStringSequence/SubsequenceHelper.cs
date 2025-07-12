@@ -12,13 +12,17 @@ public partial class CStringSequence
 		struct SubsequenceHelper
 	{
 		/// <summary>
-		/// A function that returns the binary representation of the subsequence.
-		/// </summary>
-		private readonly ReadOnlySpanFunc<Byte> _function;
-		/// <summary>
 		/// The lengths of the strings in the subsequence.
 		/// </summary>
 		private readonly Int32?[] _lengths;
+		/// <summary>
+		/// Start index of subsequence.
+		/// </summary>
+		private readonly Int32 _startIndex;
+		/// <summary>
+		/// Source sequence.
+		/// </summary>
+		private readonly CStringSequence _sequence;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SubsequenceHelper"/> class.
@@ -30,20 +34,28 @@ public partial class CStringSequence
 		/// <param name="length">The number of strings in the subsequence.</param>
 		public SubsequenceHelper(CStringSequence sequence, Int32 startIndex, Int32 length)
 		{
-			this._lengths = sequence._lengths.Skip(startIndex).Take(length).ToArray();
-			this._function = () => sequence.GetBinarySpan(startIndex, length);
+			this._startIndex = startIndex;
+			this._sequence = sequence;
+			this._lengths = sequence._lengths.AsSpan().Slice(startIndex, length).ToArray();
 		}
+
 		/// <summary>
 		/// Creates a new <see cref="CStringSequence"/> instance using the data stored in this helper.
 		/// </summary>
 		/// <returns>A new <see cref="CStringSequence"/> that contains the subsequence.</returns>
 		public CStringSequence CreateSequence()
 		{
-			Int32 binaryLength = this._lengths.Sum(CStringSequence.GetSpanLength);
-			Int32 charLength = binaryLength / sizeof(Char) + binaryLength % sizeof(Char);
-			String value = String.Create(charLength, this, SubsequenceHelper.CopyBytes);
+			Int32 length = CStringSequence.GetBufferLength(this._lengths.AsSpan());
+			String value = String.Create(length, this, SubsequenceHelper.CopyBytes);
 			return new(value, this._lengths);
 		}
+
+		/// <summary>
+		/// Retrieves the binary span for the current subsequence.
+		/// </summary>
+		/// <returns>The binary span for the current subsequence.</returns>
+		private ReadOnlySpan<Byte> GetBinarySpan()
+			=> this._sequence.GetBinarySpan(this._startIndex, this._lengths.Length);
 
 		/// <summary>
 		/// Copies the binary data of the subsequence from <paramref name="helper"/> to
@@ -57,7 +69,7 @@ public partial class CStringSequence
 		private static void CopyBytes(Span<Char> destination, SubsequenceHelper helper)
 		{
 			Span<Byte> destinationBytes = MemoryMarshal.AsBytes(destination);
-			ReadOnlySpan<Byte> sourceBytes = helper._function();
+			ReadOnlySpan<Byte> sourceBytes = helper.GetBinarySpan();
 			sourceBytes.CopyTo(destinationBytes);
 		}
 	}
