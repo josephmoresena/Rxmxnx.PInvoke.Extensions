@@ -818,6 +818,7 @@ jobs:
           				Console.WriteLine($"Buffer AutoComposition Enabled: {BufferManager.BufferAutoCompositionEnabled}");
           				Console.WriteLine($"{RuntimeHelper.literalName}: {RuntimeHelper.GetLiteralNull().IsLiteral()}");
           				Console.WriteLine($"String constant: {RuntimeHelper.literalName.AsSpan().IsLiteral()}");
+                        Console.WriteLine($"CString.Empty literal: {MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(in CString.Empty.GetPinnableReference()), 1).IsLiteral()}");
           			}
           			private static void PrintDomainInfo()
           			{

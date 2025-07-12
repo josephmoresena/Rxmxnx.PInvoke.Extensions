@@ -114,7 +114,7 @@ public sealed class JoinEmptyTest
 		Assert.True(resultCString.IsNullTerminated);
 		Assert.False(resultCString.IsReference);
 		Assert.False(resultCString.IsSegmented);
-		Assert.False(resultCString.IsFunction);
+		Assert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
 
 		Assert.NotNull(resultCString2);
 		Assert.Equal(CString.Empty, resultCString2);
@@ -122,7 +122,7 @@ public sealed class JoinEmptyTest
 		Assert.True(resultCString2.IsNullTerminated);
 		Assert.False(resultCString2.IsReference);
 		Assert.False(resultCString2.IsSegmented);
-		Assert.False(resultCString2.IsFunction);
+		Assert.Equal(resultCString2.Length == 0 && CString.Empty.IsFunction, resultCString2.IsFunction);
 	}
 	private static void Test(ReadOnlySpan<Byte> separator, IEnumerable<CString?> values)
 	{
@@ -133,7 +133,7 @@ public sealed class JoinEmptyTest
 		Assert.True(resultCString.IsNullTerminated);
 		Assert.False(resultCString.IsReference);
 		Assert.False(resultCString.IsSegmented);
-		Assert.False(resultCString.IsFunction);
+		Assert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
 	}
 	private static void Test(CString? separator, CString?[] values)
 	{
@@ -146,7 +146,7 @@ public sealed class JoinEmptyTest
 		Assert.True(resultCString.IsNullTerminated);
 		Assert.False(resultCString.IsReference);
 		Assert.False(resultCString.IsSegmented);
-		Assert.False(resultCString.IsFunction);
+		Assert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
 
 		Assert.NotNull(resultCString2);
 		Assert.Equal(CString.Empty, resultCString2);
@@ -154,7 +154,7 @@ public sealed class JoinEmptyTest
 		Assert.True(resultCString2.IsNullTerminated);
 		Assert.False(resultCString2.IsReference);
 		Assert.False(resultCString2.IsSegmented);
-		Assert.False(resultCString2.IsFunction);
+		Assert.Equal(resultCString2.Length == 0 && CString.Empty.IsFunction, resultCString2.IsFunction);
 	}
 	private static void Test(CString? separator, IEnumerable<CString?> values)
 	{
@@ -165,7 +165,7 @@ public sealed class JoinEmptyTest
 		Assert.True(resultCString.IsNullTerminated);
 		Assert.False(resultCString.IsReference);
 		Assert.False(resultCString.IsSegmented);
-		Assert.False(resultCString.IsFunction);
+		Assert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
 	}
 	private static async Task TestAsync(CString? separator, CString?[] values)
 	{
@@ -178,7 +178,7 @@ public sealed class JoinEmptyTest
 		Assert.True(resultCString.IsNullTerminated);
 		Assert.False(resultCString.IsReference);
 		Assert.False(resultCString.IsSegmented);
-		Assert.False(resultCString.IsFunction);
+		Assert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
 
 		Assert.NotNull(resultCString2);
 		Assert.Equal(CString.Empty, resultCString2);
@@ -186,7 +186,7 @@ public sealed class JoinEmptyTest
 		Assert.True(resultCString2.IsNullTerminated);
 		Assert.False(resultCString2.IsReference);
 		Assert.False(resultCString2.IsSegmented);
-		Assert.False(resultCString2.IsFunction);
+		Assert.Equal(resultCString2.Length == 0 && CString.Empty.IsFunction, resultCString2.IsFunction);
 	}
 	private static async Task TestAsync(CString? separator, IEnumerable<CString?> values)
 	{
@@ -197,6 +197,6 @@ public sealed class JoinEmptyTest
 		Assert.True(resultCString.IsNullTerminated);
 		Assert.False(resultCString.IsReference);
 		Assert.False(resultCString.IsSegmented);
-		Assert.False(resultCString.IsFunction);
+		Assert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
 	}
 }

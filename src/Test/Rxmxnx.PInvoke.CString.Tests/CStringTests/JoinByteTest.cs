@@ -67,7 +67,9 @@ public sealed class JoinByteTest
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
 		CString resultCString = CString.Join(separator, values, startIndex, count);
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
+		String resultCStringCString = resultCString.Length > 0 || !CString.Empty.IsFunction ?
+			Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]) :
+			String.Empty;
 
 		Assert.Equal(expectedCString, resultCStringCString);
 		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);

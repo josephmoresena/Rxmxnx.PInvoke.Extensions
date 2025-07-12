@@ -59,7 +59,7 @@ public sealed class StringJoinEmptyTest
 		Assert.True(resultCString.IsNullTerminated);
 		Assert.False(resultCString.IsReference);
 		Assert.False(resultCString.IsSegmented);
-		Assert.False(resultCString.IsFunction);
+		Assert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
 
 		Assert.NotNull(resultCString2);
 		Assert.Equal(CString.Empty, resultCString2);
@@ -67,7 +67,7 @@ public sealed class StringJoinEmptyTest
 		Assert.True(resultCString2.IsNullTerminated);
 		Assert.False(resultCString2.IsReference);
 		Assert.False(resultCString2.IsSegmented);
-		Assert.False(resultCString2.IsFunction);
+		Assert.Equal(resultCString2.Length == 0 && CString.Empty.IsFunction, resultCString2.IsFunction);
 	}
 	private static void Test(String? separator, IEnumerable<String?> values)
 	{
@@ -78,7 +78,7 @@ public sealed class StringJoinEmptyTest
 		Assert.True(resultCString.IsNullTerminated);
 		Assert.False(resultCString.IsReference);
 		Assert.False(resultCString.IsSegmented);
-		Assert.False(resultCString.IsFunction);
+		Assert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
 	}
 	private static async Task TestAsync(String? separator, String?[] values)
 	{
@@ -91,7 +91,7 @@ public sealed class StringJoinEmptyTest
 		Assert.True(resultCString.IsNullTerminated);
 		Assert.False(resultCString.IsReference);
 		Assert.False(resultCString.IsSegmented);
-		Assert.False(resultCString.IsFunction);
+		Assert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
 
 		Assert.NotNull(resultCString2);
 		Assert.Equal(CString.Empty, resultCString2);
@@ -99,10 +99,11 @@ public sealed class StringJoinEmptyTest
 		Assert.True(resultCString2.IsNullTerminated);
 		Assert.False(resultCString2.IsReference);
 		Assert.False(resultCString2.IsSegmented);
-		Assert.False(resultCString2.IsFunction);
+		Assert.Equal(resultCString2.Length == 0 && CString.Empty.IsFunction, resultCString2.IsFunction);
 	}
 	private static async Task TestAsync(String? separator, IEnumerable<String?> values)
 	{
+		using MemoryHandle _ = CString.Empty.TryPin(out Boolean pinned);
 		CString resultCString = await CString.JoinAsync(separator, values);
 		Assert.NotNull(resultCString);
 		Assert.Equal(CString.Empty, resultCString);
@@ -110,6 +111,6 @@ public sealed class StringJoinEmptyTest
 		Assert.True(resultCString.IsNullTerminated);
 		Assert.False(resultCString.IsReference);
 		Assert.False(resultCString.IsSegmented);
-		Assert.False(resultCString.IsFunction);
+		Assert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
 	}
 }

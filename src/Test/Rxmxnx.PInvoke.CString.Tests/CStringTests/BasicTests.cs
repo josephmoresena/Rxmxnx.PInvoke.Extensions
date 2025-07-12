@@ -8,9 +8,10 @@ public sealed class BasicTests
 	[Fact]
 	internal void EmptyTest()
 	{
+		using MemoryHandle _ = CString.Empty.TryPin(out Boolean pinned);
 		ReadOnlySpan<Byte> emptySpan = default(CString?);
-		Byte[] emptyBytes = CString.GetBytes(CString.Empty);
 		CString? nullCStr = default(Byte[]);
+		Byte[] emptyBytes = pinned ? CString.GetBytes(CString.Empty) : [default,];
 
 		CString noEmpty1 = CString.Create(emptyBytes);
 		CString noEmpty2 = CString.Create(new Byte[] { default, default, });
@@ -109,7 +110,7 @@ public sealed class BasicTests
 		Assert.Equal(CString.Empty, empty3);
 		Assert.False(empty3.IsReference);
 		Assert.True(empty3.IsNullTerminated);
-		Assert.False(empty3.IsFunction);
+		Assert.Equal(!pinned, empty3.IsFunction);
 		Assert.Equal(CString.Empty, empty4);
 		Assert.False(empty4.IsReference);
 		Assert.True(empty4.IsNullTerminated);

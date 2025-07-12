@@ -69,6 +69,7 @@ public sealed class StringConcatTest
 	}
 	private static async Task EmptyTestAsync(String?[] values)
 	{
+		using MemoryHandle _ = CString.Empty.TryPin(out Boolean pinned);
 		CString resultCString = await CString.ConcatAsync(values);
 		Assert.NotNull(resultCString);
 		Assert.Equal(CString.Empty, resultCString);
@@ -76,7 +77,7 @@ public sealed class StringConcatTest
 		Assert.True(resultCString.IsNullTerminated);
 		Assert.False(resultCString.IsReference);
 		Assert.False(resultCString.IsSegmented);
-		Assert.False(resultCString.IsFunction);
+		Assert.Equal(!pinned, resultCString.IsFunction);
 	}
 	private static void NormalTest(String?[] strings)
 	{
@@ -91,6 +92,7 @@ public sealed class StringConcatTest
 	}
 	private static void EmptyTest(String?[] values)
 	{
+		using MemoryHandle _ = CString.Empty.TryPin(out Boolean pinned);
 		CString resultCString = CString.Concat(values);
 		Assert.NotNull(resultCString);
 		Assert.Equal(CString.Empty, resultCString);
@@ -98,6 +100,6 @@ public sealed class StringConcatTest
 		Assert.True(resultCString.IsNullTerminated);
 		Assert.False(resultCString.IsReference);
 		Assert.False(resultCString.IsSegmented);
-		Assert.False(resultCString.IsFunction);
+		Assert.Equal(!pinned, resultCString.IsFunction);
 	}
 }
