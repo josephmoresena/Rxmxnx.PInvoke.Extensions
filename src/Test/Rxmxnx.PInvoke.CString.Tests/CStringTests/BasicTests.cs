@@ -3,8 +3,6 @@
 [ExcludeFromCodeCoverage]
 public sealed class BasicTests
 {
-	private static readonly String[] texts = IMessageResource.GetInstance().InvalidUtf8Region("|").Split('|');
-
 	[Fact]
 	internal void EmptyTest()
 	{
@@ -310,10 +308,7 @@ public sealed class BasicTests
 		Assert.False(cstr.IsSegmented);
 		Assert.False(CString.IsNullOrEmpty(cstr));
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
-
-		Exception ex = BasicTests.AssertGetBytesException(cstr);
-		foreach (String text in BasicTests.texts)
-			Assert.Contains(text, ex.Message);
+		BasicTests.AssertGetBytesException(cstr);
 	}
 	private static unsafe void AssertFromNullTerminatedBytes(CString cstr)
 	{
@@ -401,9 +396,7 @@ public sealed class BasicTests
 			Assert.Equal(cstr, unsafeCStr);
 		}
 
-		Exception ex = BasicTests.AssertGetBytesException(cstr);
-		foreach (String text in BasicTests.texts)
-			Assert.Contains(text, ex.Message);
+		BasicTests.AssertGetBytesException(cstr);
 
 		CString rawSpanClone = CString.Create(cstr);
 		Assert.False(rawSpanClone.IsFunction);
@@ -423,9 +416,7 @@ public sealed class BasicTests
 		Assert.False(CString.IsNullOrEmpty(cstr));
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
 
-		Exception ex = BasicTests.AssertGetBytesException(cstr);
-		foreach (String text in BasicTests.texts)
-			Assert.Contains(text, ex.Message);
+		BasicTests.AssertGetBytesException(cstr);
 
 		CString rawSpanClone = CString.Create(cstr);
 		Assert.False(rawSpanClone.IsFunction);
@@ -444,9 +435,7 @@ public sealed class BasicTests
 		Assert.False(cstr.IsSegmented);
 		Assert.False(CString.IsNullOrEmpty(cstr));
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
-		Exception ex = BasicTests.AssertGetBytesException(cstr);
-		foreach (String text in BasicTests.texts)
-			Assert.Contains(text, ex.Message);
+		BasicTests.AssertGetBytesException(cstr);
 
 		fixed (void* ptr = cstr.AsSpan())
 		{
@@ -546,20 +535,18 @@ public sealed class BasicTests
 		}
 	}
 
-	private static Exception AssertGetBytesException(CString cstr)
+	private static void AssertGetBytesException(CString cstr)
 	{
-		Exception ex;
 		try
 		{
-			ex = Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
+			Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
 		}
 		catch (Exception)
 		{
 			// For some reason sometimes the test fails even though it shouldn't.
 			// The test must be run again so that it does not fail.
 			Assert.NotEmpty(cstr.ToArray());
-			ex = Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
+			Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
 		}
-		return ex;
 	}
 }

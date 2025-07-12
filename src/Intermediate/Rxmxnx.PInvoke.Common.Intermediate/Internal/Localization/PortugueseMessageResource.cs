@@ -52,7 +52,6 @@ internal sealed class PortugueseMessageResource : IMessageResource
 		=> $"Espaço insuficiente disponível em {nameofSpan} para copiar {nameofValue}.";
 	String IMessageResource.InvalidLength(String nameofLength)
 		=> $"O parâmetro {nameofLength} deve ser zero ou um número inteiro positivo.";
-	String IMessageResource.InvalidUtf8Region(String nameofRegion) => $"{nameofRegion} não contém texto UTF-8.";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} não é um tipo não gerenciado.";
 	String IMessageResource.NotValueType(Type type) => $"{type} não é um tipo de valor.";
 	String IMessageResource.NotReferenceType(Type type) => $"{type} não é um tipo de referência.";

@@ -123,10 +123,10 @@ public partial class CString
 	/// <summary>
 	/// Calls to <see cref="CString.Write(Stream, Int32, Int32)"/> in async context.
 	/// </summary>
-	/// <param name="state">A <see cref="SyncAsyncWriter"/> value.</param>
-	private static void WriteSyncAsync(Object? state)
+	/// <param name="writer">A <see cref="SyncAsyncWriter"/> value.</param>
+	private static async Task WriteSyncAsync(SyncAsyncWriter writer)
 	{
-		SyncAsyncWriter writer = (SyncAsyncWriter)state!;
+		await Task.Yield();
 		writer.Write();
 	}
 #if !PACKAGE || NETCOREAPP
@@ -158,6 +158,15 @@ public partial class CString
 		}
 	}
 #endif
+	/// <summary>
+	/// Creates a non-null-terminated <see cref="CString"/> instance that contains a single
+	/// <paramref name="c"/> character.
+	/// </summary>
+	/// <param name="c">A UTF-8 byte.</param>
+	/// <returns>
+	/// A non-null-terminated <see cref="CString"/> instance that contains a single <paramref name="c"/> character.
+	/// </returns>
+	private static CString Create(Byte c) => new([c,], false);
 	/// <summary>
 	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
 	/// </summary>

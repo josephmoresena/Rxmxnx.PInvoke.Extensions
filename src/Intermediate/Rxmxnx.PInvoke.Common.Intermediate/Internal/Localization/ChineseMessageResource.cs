@@ -45,7 +45,6 @@ internal sealed class ChineseMessageResource : IMessageResource
 	String IMessageResource.InvalidCopyUnmanagedType(String nameofSpan, String nameofValue)
 		=> $"在 {nameofSpan} 上没有足够的可用空间来复制 {nameofValue}。";
 	String IMessageResource.InvalidLength(String nameofLength) => $"参数 {nameofLength} 必须是零或正整数。";
-	String IMessageResource.InvalidUtf8Region(String nameofRegion) => $"{nameofRegion} 不包含 UTF-8 文本。";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} 不是非托管类型。";
 	String IMessageResource.NotValueType(Type type) => $"{type} 不是值类型。";
 	String IMessageResource.NotReferenceType(Type type) => $"{type} 不是引用类型。";

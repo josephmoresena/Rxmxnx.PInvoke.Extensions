@@ -103,10 +103,6 @@ internal partial interface IMessageResource
 	/// </summary>
 	String InvalidLength(String nameofLength);
 	/// <summary>
-	/// Message for invalid UTF-8 region exception.
-	/// </summary>
-	String InvalidUtf8Region(String nameofRegion);
-	/// <summary>
 	/// Message for not unmanaged type exception.
 	/// </summary>
 	String NotUnmanagedType(Type type);
