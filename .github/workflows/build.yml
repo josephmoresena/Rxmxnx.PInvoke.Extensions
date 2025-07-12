@@ -127,13 +127,13 @@ jobs:
           echo '#if !NETCOREAPP
           using System;
           using System.Linq;
-          using System.Runtime.CompilerServices;
           #else
           using System.Text.Json;
           #endif
           using System.Reflection;
           using System.Buffers;
           using System.Globalization;
+          using System.Runtime.CompilerServices;
           using System.Runtime.InteropServices;
           using System.Text;
           
