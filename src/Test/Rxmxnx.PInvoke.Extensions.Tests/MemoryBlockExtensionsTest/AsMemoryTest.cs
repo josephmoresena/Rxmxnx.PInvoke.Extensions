@@ -100,7 +100,7 @@ public class AsMemoryTest
 	[InlineData(8)]
 	[InlineData(9)]
 	[InlineData(10)]
-#if NET6_0_OR_GREATER
+#if !MULTIPLE_FRAMEWORK || NET6_0_OR_GREATER
 	[InlineData(11)]
 	[InlineData(12)]
 	[InlineData(13)]
@@ -139,7 +139,7 @@ public class AsMemoryTest
 	[InlineData(8)]
 	[InlineData(9)]
 	[InlineData(10)]
-#if NET6_0_OR_GREATER
+#if !MULTIPLE_FRAMEWORK || NET6_0_OR_GREATER
 	[InlineData(11)]
 	[InlineData(12)]
 	[InlineData(13)]

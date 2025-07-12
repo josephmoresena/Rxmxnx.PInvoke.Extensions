@@ -98,12 +98,12 @@ public class AsSpanTest
 	[InlineData(3)]
 	[InlineData(4)]
 	[InlineData(5)]
+#if !MULTIPLE_FRAMEWORK || NET6_0_OR_GREATER
 	[InlineData(6)]
 	[InlineData(7)]
 	[InlineData(8)]
 	[InlineData(9)]
 	[InlineData(10)]
-#if NET6_0_OR_GREATER
 	[InlineData(11)]
 	[InlineData(12)]
 	[InlineData(13)]
@@ -137,12 +137,12 @@ public class AsSpanTest
 	[InlineData(3)]
 	[InlineData(4)]
 	[InlineData(5)]
+#if !MULTIPLE_FRAMEWORK || NET6_0_OR_GREATER
 	[InlineData(6)]
 	[InlineData(7)]
 	[InlineData(8)]
 	[InlineData(9)]
 	[InlineData(10)]
-#if NET6_0_OR_GREATER
 	[InlineData(11)]
 	[InlineData(12)]
 	[InlineData(13)]
