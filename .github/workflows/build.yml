@@ -949,7 +949,7 @@ jobs:
       - name: Mono-Run
         working-directory: ./tmpProject/PackageTrimmedAssembly
         run: |
-          msbuild -restore /p:TargetFramework=net45 /p:Configuration=Release > ./../Executable/ilcLogs/Mono.Build.log 2>&1
+          msbuild -restore /p:TargetFramework=net45 /p:Configuration=Release /p:ImplicitUsings=disable > ./../Executable/ilcLogs/Mono.Build.log 2>&1
           MONO_ENV_OPTIONS="--profile=aot:output=rxmxnx-full.aotprofile" mono bin/Release/net45/PackageTrimmedAssembly.exe || true
           cp rxmxnx-full.aotprofile ./../Executable/ilcLogs/rxmxnx-full.aotprofile || true
         env:
