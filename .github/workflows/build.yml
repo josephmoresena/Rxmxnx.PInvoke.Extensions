@@ -948,18 +948,37 @@ jobs:
       - name: Mono-Run
         working-directory: ./tmpProject/PackageTrimmedAssembly
         run: |
-          msbuild -restore /p:TargetFramework=net45 /p:Configuration=Release
+          msbuild -restore /p:TargetFramework=net45 /p:Configuration=Release > ./../Executable/ilcLogs/Mono.Build.log 2>&1
           MONO_ENV_OPTIONS="--profile=aot:output=rxmxnx-full.aotprofile" mono -O=all bin/Release/net45/PackageTrimmedAssembly.exe
+          cp rxmxnx-full.aotprofile ./../Executable/ilcLogs/rxmxnx-full.aotprofile
+      - name: Mono AOT Dependencies
+        working-directory: ./tmpProject/PackageTrimmedAssembly
+        run: |
           MONO_LOG_LEVEL=debug mono --aot=full,hybrid,profile=rxmxnx-full.aotprofile -O=all bin/Release/net45/netstandard.dll > ./../Executable/ilcLogs/netstandard.dll.MonoAOT.log 2>&1
           MONO_LOG_LEVEL=debug mono --aot=full,hybrid,profile=rxmxnx-full.aotprofile -O=all bin/Release/net45/System.Runtime.CompilerServices.Unsafe.dll > ./../Executable/ilcLogs/System.Runtime.CompilerServices.Unsafe.MonoAOT.log 2>&1
           MONO_LOG_LEVEL=debug mono --aot=full,hybrid,profile=rxmxnx-full.aotprofile -O=all bin/Release/net45/System.Collections.Immutable.dll > ./../Executable/ilcLogs/System.Collections.Immutable.MonoAOT.log 2>&1
-          MONO_LOG_LEVEL=debug mono --aot=full,hybrid,profile=rxmxnx-full.aotprofile -O=all bin/Release/net45/Rxmxnx.PInvoke.Extensions.dll > ./../Executable/ilcLogs/Rxmxnx.PInvoke.Extensions.dll.MonoAOT.log 2>&1
-          MONO_LOG_LEVEL=debug mono --aot=full,hybrid,profile=rxmxnx-full.aotprofile -O=all bin/Release/net45/PackageTrimmedAssembly.exe > ./../Executable/ilcLogs/PackageTrimmedAssembly.MonoAOT.log 2>&1
-          MONO_LOG_LEVEL=debug mono bin/Release/net45/PackageTrimmedAssembly.exe  > ./../Executable/ilcLogs/PackageTrimmedAssembly.Mono.log 2>&1
-          mv rxmxnx-full.aotprofile ./../Executable/ilcLogs/rxmxnx-full.aotprofile
+      - name: Mono AOT-Package
+        working-directory: ./tmpProject/PackageTrimmedAssembly
+        run: MONO_LOG_LEVEL=debug mono --aot=full,hybrid,profile=rxmxnx-full.aotprofile -O=all bin/Release/net45/Rxmxnx.PInvoke.Extensions.dll > ./../Executable/ilcLogs/Rxmxnx.PInvoke.Extensions.dll.MonoAOT.log 2>&1
+      - name: Mono AOT-Executable
+        working-directory: ./tmpProject/PackageTrimmedAssembly
+        run: MONO_LOG_LEVEL=debug mono --aot=full,hybrid,profile=rxmxnx-full.aotprofile -O=all bin/Release/net45/PackageTrimmedAssembly.exe > ./../Executable/ilcLogs/PackageTrimmedAssembly.exe.MonoAOT.log 2>&1
+      - name: Mono AOT-Run
+        working-directory: ./tmpProject/PackageTrimmedAssembly
+        run: MONO_LOG_LEVEL=debug mono bin/Release/net45/PackageTrimmedAssembly.exe  > ./../Executable/ilcLogs/PackageTrimmedAssembly.exe.Mono.log 2>&1
         env:
           MONO_FRAMEWORK_PATH: /usr/lib/mono
+      - name: Check Package-Trimmed-Executables-Logs
+        id: check_ilcLogs
+        continue-on-error: true
+        run: |
+          if [ -d "./tmpProject/Executable/ilcLogs" ] && [ "$(ls -A ./tmpProject/Executable/ilcLogs)" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
       - name: Upload Package-Trimmed-Executables-Logs
+        if: steps.check_ilcLogs.outputs.exists == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: Package-Trimmed-Executables-Logs
