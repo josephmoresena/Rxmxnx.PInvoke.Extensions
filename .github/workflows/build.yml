@@ -952,7 +952,7 @@ jobs:
         working-directory: ./tmpProject/PackageTrimmedAssembly
         run: |
           msbuild -restore /p:TargetFramework=net45 /p:Configuration=Release /p:ImplicitUsings=disable > ./../Executable/ilcLogs/PackageTrimmedAssembly.exe.Mono.Build.log 2>&1
-          mono bin/Release/net45/PackageTrimmedAssembly.exe
+          mono -O=all bin/Release/net45/PackageTrimmedAssembly.exe
       - name: Mono-Run without AOT profile
         continue-on-error: true
         working-directory: ./tmpProject/PackageTrimmedAssembly
