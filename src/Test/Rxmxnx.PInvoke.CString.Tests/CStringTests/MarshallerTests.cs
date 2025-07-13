@@ -52,7 +52,7 @@ public sealed unsafe class MarshallerTests
 
 	private static void AssertToUnmanaged(CString? value)
 	{
-		fixed (Byte* valPtr = &MemoryMarshal.GetReference<Byte>(value))
+		fixed (Byte* valPtr = value)
 		{
 #if NET6_0_OR_GREATER
 			ReadOnlySpan<Byte> utfSpan = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(
