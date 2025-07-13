@@ -108,6 +108,7 @@ public sealed class ConcatTest
 		                           ReadOnlySpan<Byte>.Empty, ReadOnlySpan<Byte>.Empty));
 	}
 
+#if NET6_0_OR_GREATER
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
@@ -156,7 +157,9 @@ public sealed class ConcatTest
 
 		await ConcatTest.NormalTestAsync(strings, values);
 	}
+#endif
 
+#if NET6_0_OR_GREATER
 	private static async Task NormalTestAsync(String?[] strings, CString?[] values)
 	{
 		String expectedCString = String.Concat(strings);
@@ -181,6 +184,7 @@ public sealed class ConcatTest
 	}
 	private static async Task EmptyTestAsync(CString?[] values)
 	{
+		using MemoryHandle _ = CString.Empty.TryPin(out Boolean pinned);
 		CString resultCString = await CString.ConcatAsync(values);
 		Assert.NotNull(resultCString);
 		Assert.Equal(CString.Empty, resultCString);
@@ -188,8 +192,9 @@ public sealed class ConcatTest
 		Assert.True(resultCString.IsNullTerminated);
 		Assert.False(resultCString.IsReference);
 		Assert.False(resultCString.IsSegmented);
-		Assert.False(resultCString.IsFunction);
+		Assert.Equal(!pinned, resultCString.IsFunction);
 	}
+#endif
 	private static void NormalTest(String?[] strings, CString?[] values)
 	{
 		String expectedCString = String.Concat(strings);
@@ -214,6 +219,7 @@ public sealed class ConcatTest
 	}
 	private static void EmptyTest(CString?[] values)
 	{
+		using MemoryHandle _ = CString.Empty.TryPin(out Boolean pinned);
 		CString resultCString = CString.Concat(values);
 		Assert.NotNull(resultCString);
 		Assert.Equal(CString.Empty, resultCString);
@@ -221,6 +227,6 @@ public sealed class ConcatTest
 		Assert.True(resultCString.IsNullTerminated);
 		Assert.False(resultCString.IsReference);
 		Assert.False(resultCString.IsSegmented);
-		Assert.False(resultCString.IsFunction);
+		Assert.Equal(!pinned, resultCString.IsFunction);
 	}
 }

@@ -9,7 +9,7 @@ public partial class CString
 	/// <param name="stream">
 	/// The <see cref="Stream"/> where the contents of the current <see cref="CString"/> will be written.
 	/// </param>
-	private sealed class SyncAsyncWriter(CString instance, Stream stream)
+	private readonly struct SyncAsyncWriter(CString instance, Stream stream)
 	{
 		/// <summary>
 		/// The index in the current instance where writing begins.
@@ -24,6 +24,6 @@ public partial class CString
 		/// Performs write operation.
 		/// </summary>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Write() { instance.Write(stream, this.StartIndex, this.Count); }
+		public void Write() => instance.Write(stream, this.StartIndex, this.Count);
 	}
 }

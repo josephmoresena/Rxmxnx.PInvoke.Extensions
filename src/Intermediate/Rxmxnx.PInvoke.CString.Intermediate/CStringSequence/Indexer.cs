@@ -32,11 +32,13 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 		get
 		{
 			ValidationUtilities.ThrowIfInvalidSequenceIndex(index, this._lengths.Length);
-
-			if (!this._lengths[index].HasValue)
-				return CString.Zero;
-
-			return this._lengths[index].GetValueOrDefault() == 0 ? CString.Empty : this.GetCString(index);
+			Int32? length = this._lengths[index];
+			return length switch
+			{
+				null => CString.Zero,
+				0 => CString.Empty,
+				_ => this.GetCString(index, length.Value),
+			};
 		}
 	}
 
@@ -102,6 +104,20 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 	}
 
 	/// <summary>
+	/// Retrieves the binary offset for the given index in the current sequence.
+	/// </summary>
+	/// <param name="index">The zero-based index of the element to get.</param>
+	/// <returns>The binary offset for the specified index.</returns>
+	internal Int32 GetBinaryOffset(Int32 index)
+	{
+		Int32 binaryOffset = 0;
+		ReadOnlySpan<Int32?> lengths = this._lengths.AsSpan()[..index];
+		foreach (Int32? length in lengths)
+			binaryOffset += CStringSequence.GetSpanLength(length);
+		return binaryOffset;
+	}
+
+	/// <summary>
 	/// Retrieves the binary span for the given index.
 	/// </summary>
 	/// <param name="index">The zero-based index of the element to get.</param>
@@ -120,18 +136,9 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 	/// Retrieves <see cref="CString"/> instance at the specified index.
 	/// </summary>
 	/// <param name="index">The zero-based index of the element to get.</param>
+	/// <param name="length">The length of the element to get.</param>
 	/// <returns>The <see cref="CString"/> at the specified index.</returns>
-	private CString GetCString(Int32 index) => this._cache[index] ??= new(this, index);
-
-	/// <summary>
-	/// Retrieves the binary span for the given index in <paramref name="sequence"/>.
-	/// </summary>
-	/// <param name="sequence">A <see cref="CStringSequence"/> instance.</param>
-	/// <param name="index">The zero-based index of the element to get.</param>
-	/// <returns>The binary span for the specified index.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static ReadOnlySpan<Byte> GetItemSpan(CStringSequence sequence, Int32 index)
-		=> sequence.GetBinarySpan(index);
+	private CString GetCString(Int32 index, Int32 length) => this._cache[index] ??= new(this, index, length);
 
 	/// <summary>
 	/// Clears the cache when enumerator is disposes.

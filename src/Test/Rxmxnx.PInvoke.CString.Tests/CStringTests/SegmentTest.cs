@@ -77,8 +77,9 @@ public sealed class SegmentTests
 	{
 		if (cstrSeg.Length == 0)
 		{
+			using MemoryHandle _ = CString.Empty.TryPin(out Boolean pinned);
 			Assert.Same(CString.Empty, cstrSeg);
-			Assert.False(cstrSeg.IsFunction);
+			Assert.Equal(!pinned, cstrSeg.IsFunction);
 			Assert.False(cstrSeg.IsReference);
 			Assert.True(cstrSeg.IsNullTerminated);
 		}
@@ -123,4 +124,10 @@ public sealed class SegmentTests
 
 		Assert.Equal(cstrSeg.Length + 1, CString.GetBytes(cloneSeg).Length);
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

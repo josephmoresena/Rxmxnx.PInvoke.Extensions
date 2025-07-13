@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
+﻿#if NET5_0_OR_GREATER
+namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
 
 [ExcludeFromCodeCoverage]
 public sealed class OperatorsTest
@@ -32,3 +33,4 @@ public sealed class OperatorsTest
 			Assert.Equal(UInt32.MaxValue, (UInt32)inputValue.ToIntPtr().ToInt32());
 	}
 }
+#endif

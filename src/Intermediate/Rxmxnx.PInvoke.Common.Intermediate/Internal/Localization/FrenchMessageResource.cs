@@ -53,7 +53,6 @@ internal sealed class FrenchMessageResource : IMessageResource
 		=> $"Taille insuffisante disponible sur {nameofSpan} pour copier {nameofValue}.";
 	String IMessageResource.InvalidLength(String nameofLength)
 		=> $"Le paramètre {nameofLength} doit être zéro ou un entier positif.";
-	String IMessageResource.InvalidUtf8Region(String nameofRegion) => $"{nameofRegion} ne contient pas de texte UTF-8.";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} n'est pas un type non géré.";
 	String IMessageResource.NotValueType(Type type) => $"{type} n'est pas un type valeur.";
 	String IMessageResource.NotReferenceType(Type type) => $"{type} n'est pas un type de référence.";
@@ -65,10 +64,8 @@ internal sealed class FrenchMessageResource : IMessageResource
 		=> $"{itemType} est un type de référence mais {arrayType} est un type non géré.";
 	String IMessageResource.UnmanagedTypeButContainsReferences(Type itemType, Type arrayType)
 		=> $"{itemType} est un type non géré mais {arrayType} contient des références.";
-#if !PACKAGE || !NET7_0_OR_GREATER
 	String IMessageResource.MissingBufferMetadataException(Type bufferType)
 		=> $"Impossible de récupérer les métadonnées pour le tampon {bufferType}.";
-#endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Impossible de créer un tampon pour {itemType} comportant {size} éléments.";
 #if !PACKAGE || NETCOREAPP

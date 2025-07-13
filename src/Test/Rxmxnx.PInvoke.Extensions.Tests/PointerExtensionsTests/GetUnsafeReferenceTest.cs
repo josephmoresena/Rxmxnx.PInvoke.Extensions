@@ -18,8 +18,10 @@ public sealed class GetUnsafeReferenceTest
 	internal void DoubleTest() => GetUnsafeReferenceTest.Test<Double>();
 	[Fact]
 	internal void GuidTest() => GetUnsafeReferenceTest.Test<Guid>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => GetUnsafeReferenceTest.Test<Half>();
+#endif
 	[Fact]
 	internal void Int16Test() => GetUnsafeReferenceTest.Test<Int16>();
 	[Fact]
@@ -60,8 +62,13 @@ public sealed class GetUnsafeReferenceTest
 
 			Assert.True(Unsafe.AreSame(ref refValue, ref refValue1));
 			Assert.True(Unsafe.AreSame(ref refValue, ref refValue2));
+#if NET8_0_OR_GREATER
 			Assert.True(Unsafe.AreSame(ref refValue, in refReadOnlyValue1));
 			Assert.True(Unsafe.AreSame(ref refValue, in refReadOnlyValue2));
+#else
+			Assert.True(Unsafe.AreSame(ref refValue, ref Unsafe.AsRef(in refReadOnlyValue1)));
+			Assert.True(Unsafe.AreSame(ref refValue, ref Unsafe.AsRef(in refReadOnlyValue2)));
+#endif
 
 			Assert.Null(IntPtr.Zero.GetUnsafeValue<T>());
 			Assert.Null(UIntPtr.Zero.GetUnsafeValue<T>());

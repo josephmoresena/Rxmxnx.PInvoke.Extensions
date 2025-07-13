@@ -52,24 +52,34 @@ public sealed unsafe class MarshallerTests
 
 	private static void AssertToUnmanaged(CString? value)
 	{
-		ReadOnlySpan<Byte> utfSpan = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(
-			(Byte*)Unsafe.AsPointer(ref MemoryMarshal.GetReference<Byte>(value)));
-		CString.Marshaller marshal = MarshallerTests.Marshal(value);
-		IntPtr ptr = marshal.ToUnmanaged();
-		try
+		fixed (Byte* valPtr = value)
 		{
-			Boolean isLiteralOrPinnable = MarshallerTests.IsLiteralOrPinnable(value);
-			ReadOnlySpan<Byte> unmanagedSpan = new(ptr.ToPointer(), value?.Length ?? 0);
-			Assert.Equal(isLiteralOrPinnable,
-			             Unsafe.AreSame(ref MemoryMarshal.GetReference<Byte>(value),
-			                            ref MemoryMarshal.GetReference(unmanagedSpan)));
-			Assert.True(utfSpan.SequenceEqual(MemoryMarshal.CreateReadOnlySpanFromNullTerminated((Byte*)ptr)));
-			Assert.Equal(utfSpan.Length, MemoryMarshalCompat.IndexOfNull(ref MemoryMarshal.GetReference<Byte>(value)));
-			Assert.Equal(ptr, marshal.ToUnmanaged());
-		}
-		finally
-		{
-			marshal.Free();
+#if NET6_0_OR_GREATER
+			ReadOnlySpan<Byte> utfSpan = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(
+#else
+			ReadOnlySpan<Byte> utfSpan = MemoryMarshalCompat.CreateReadOnlySpanFromNullTerminated(
+#endif
+				valPtr);
+			CString.Marshaller marshal = MarshallerTests.Marshal(value);
+			IntPtr ptr = marshal.ToUnmanaged();
+			try
+			{
+				Boolean isLiteralOrPinnable = MarshallerTests.IsLiteralOrPinnable(value);
+				ReadOnlySpan<Byte> unmanagedSpan = new(ptr.ToPointer(), value?.Length ?? 0);
+				Assert.Equal(isLiteralOrPinnable,
+				             Unsafe.AreSame(ref MemoryMarshal.GetReference<Byte>(value),
+				                            ref MemoryMarshal.GetReference(unmanagedSpan)));
+#if NET6_0_OR_GREATER
+				Assert.True(utfSpan.SequenceEqual(MemoryMarshal.CreateReadOnlySpanFromNullTerminated((Byte*)ptr)));
+#endif
+				Assert.Equal(utfSpan.Length,
+				             MemoryMarshalCompat.IndexOfNull(ref MemoryMarshal.GetReference<Byte>(value)));
+				Assert.Equal(ptr, marshal.ToUnmanaged());
+			}
+			finally
+			{
+				marshal.Free();
+			}
 		}
 	}
 	private static Boolean IsLiteralOrPinnable(CString? value)
@@ -95,4 +105,10 @@ public sealed unsafe class MarshallerTests
 		Assert.Null(marshal.ToManaged());
 		return marshal;
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

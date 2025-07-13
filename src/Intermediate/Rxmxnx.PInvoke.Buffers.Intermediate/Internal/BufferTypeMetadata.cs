@@ -11,10 +11,12 @@ internal sealed class BufferTypeMetadata<
 #endif
 	TBuffer, T> : BufferTypeMetadata<T> where TBuffer : struct, IManagedBuffer<T>
 {
+	private readonly Action<IDictionary<UInt16, BufferTypeMetadata<T>>>? _appendComponents;
+
 	/// <inheritdoc/>
 	public override Type BufferType => typeof(TBuffer);
 
-#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
+#if NET7_0_OR_GREATER
 	/// <summary>
 	/// Internal implementation of <see cref="BufferTypeMetadata{T}"/>.
 	/// </summary>
@@ -25,8 +27,7 @@ internal sealed class BufferTypeMetadata<
 		isBinary, TBuffer.Components, (UInt16)capacity)
 #pragma warning restore CA2252
 	{ }
-#else
-	private readonly Action<IDictionary<UInt16, BufferTypeMetadata<T>>>? _appendComponents;
+#endif
 
 	/// <summary>
 	/// Internal implementation of <see cref="BufferTypeMetadata{T}"/>.
@@ -43,14 +44,17 @@ internal sealed class BufferTypeMetadata<
 	/// <inheritdoc/>
 	internal override void AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components)
 	{
+#if !PACKAGE || !NET7_0_OR_GREATER
 		if (this._appendComponents is null)
 		{
 			base.AppendComponent(components);
 			return;
 		}
 		this._appendComponents(components);
-	}
+#else
+		TBuffer.AppendComponent(components);
 #endif
+	}
 	/// <inheritdoc/>
 	internal override BufferTypeMetadata<T>? Compose(BufferTypeMetadata<T> otherMetadata)
 		=> otherMetadata.Compose<TBuffer>();
@@ -62,7 +66,7 @@ internal sealed class BufferTypeMetadata<
 		TOther>()
 	{
 		if (!BufferManager.BufferAutoCompositionEnabled || !this.IsBinary
-#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
+#if NET7_0_OR_GREATER
 		    || !IManagedBuffer<T>.GetMetadata<TOther>().IsBinary
 #endif
 		   ) return default;

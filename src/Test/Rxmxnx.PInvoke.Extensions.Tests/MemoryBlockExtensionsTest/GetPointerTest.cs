@@ -18,8 +18,10 @@ public sealed class GetPointerTest
 	internal void DoubleTest() => GetPointerTest.Test<Double>();
 	[Fact]
 	internal void GuidTest() => GetPointerTest.Test<Guid>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => GetPointerTest.Test<Half>();
+#endif
 	[Fact]
 	internal void Int16Test() => GetPointerTest.Test<Int16>();
 	[Fact]

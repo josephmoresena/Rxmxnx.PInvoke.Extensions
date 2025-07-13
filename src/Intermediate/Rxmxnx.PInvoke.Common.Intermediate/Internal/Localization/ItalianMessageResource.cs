@@ -54,7 +54,6 @@ internal sealed class ItalianMessageResource : IMessageResource
 		=> $"Spazio insufficiente disponibile in {nameofSpan} per copiare {nameofValue}.";
 	String IMessageResource.InvalidLength(String nameofLength)
 		=> $"Il parametro {nameofLength} deve essere zero o un numero intero positivo.";
-	String IMessageResource.InvalidUtf8Region(String nameofRegion) => $"{nameofRegion} non contiene testo UTF-8.";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} non è un tipo non gestito.";
 	String IMessageResource.NotValueType(Type type) => $"{type} non è un tipo valore.";
 	String IMessageResource.NotReferenceType(Type type) => $"{type} non è un tipo di riferimento.";
@@ -65,10 +64,8 @@ internal sealed class ItalianMessageResource : IMessageResource
 		=> $"{itemType} è un tipo di riferimento ma {arrayType} è un tipo non gestito.";
 	String IMessageResource.UnmanagedTypeButContainsReferences(Type itemType, Type arrayType)
 		=> $"{itemType} è un tipo non gestito ma {arrayType} contiene riferimenti.";
-#if !PACKAGE || !NET7_0_OR_GREATER
 	String IMessageResource.MissingBufferMetadataException(Type bufferType)
 		=> $"Impossibile recuperare i metadati per il buffer {bufferType}.";
-#endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Impossibile creare un buffer per {itemType} con {size} elementi.";
 #if !PACKAGE || NETCOREAPP

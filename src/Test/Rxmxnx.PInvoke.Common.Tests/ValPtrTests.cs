@@ -6,8 +6,16 @@ namespace Rxmxnx.PInvoke.Tests;
 public sealed class ValPtrTests
 {
 	private static readonly CultureInfo[] allCultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-	private static readonly String[] formats = ["", "b", "B", "D", "d", "E", "e", "G", "g", "X", "x",];
+	private static readonly String[] formats =
+	[
+		"",
+#if NET8_0_OR_GREATER
+		"b", "B",
+#endif
+		"D", "d", "E", "e", "G", "g", "X", "x",
+	];
 	private static readonly IFixture fixture = ManagedStruct.Register(new Fixture());
+
 	[Fact]
 	internal void BooleanTest() => ValPtrTests.Test<Boolean>();
 	[Fact]
@@ -21,15 +29,16 @@ public sealed class ValPtrTests
 	[Fact]
 	internal void Int64Test() => ValPtrTests.Test<Int64>();
 	[Fact]
+	internal void SingleTest() => ValPtrTests.Test<Single>();
+	[Fact]
+	internal void DoubleTest() => ValPtrTests.Test<Double>();
+#if NET7_0_OR_GREATER
+	[Fact]
 	internal void Int128Test() => ValPtrTests.Test<Int128>();
 	[Fact]
 	internal void GuidTest() => ValPtrTests.Test<Guid>();
 	[Fact]
-	internal void SingleTest() => ValPtrTests.Test<Single>();
-	[Fact]
 	internal void HalfTest() => ValPtrTests.Test<Half>();
-	[Fact]
-	internal void DoubleTest() => ValPtrTests.Test<Double>();
 	[Fact]
 	internal void DecimalTest() => ValPtrTests.Test<Decimal>();
 	[Fact]
@@ -40,8 +49,10 @@ public sealed class ValPtrTests
 	internal void TimeSpanTest() => ValPtrTests.Test<TimeSpan>();
 	[Fact]
 	internal void ManagedStructTest() => ValPtrTests.Test<ManagedStruct>();
+#endif
 	[Fact]
 	internal void StringTest() => ValPtrTests.Test<String>();
+
 	private static unsafe void Test<T>()
 	{
 		T[] arr = ValPtrTests.fixture.CreateMany<T>(10).ToArray();
@@ -202,9 +213,13 @@ public sealed class ValPtrTests
 			}
 			else
 			{
+#if NET8_0_OR_GREATER
 				Assert.True(Unsafe.AreSame(in fixedReference.Reference,
+#else
+				Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in fixedReference.Reference),
+#endif
 				                           ref Unsafe.As<Object, T>(
-					                           ref UnsafeLegacy.AsRef(in fixedReference.AsObjectContext().Values[0]))));
+					                           ref Unsafe.AsRef(in fixedReference.AsObjectContext().Values[0]))));
 				Assert.Equal(typeof(T).IsValueType || fixedReference.IsNullOrEmpty, fixedReference.Objects.IsEmpty);
 			}
 			Assert.Throws<InvalidOperationException>(() => fixedReference.Transformation<Byte>(out IFixedMemory _));
@@ -226,6 +241,7 @@ public sealed class ValPtrTests
 		Assert.Equal(valPtr.Pointer.GetHashCode(), valPtr.GetHashCode());
 		Assert.Equal(valPtr.Pointer.ToString(), valPtr.ToString());
 
+#if NET6_0_OR_GREATER
 		if ((Object)valPtr is not ISpanFormattable spanFormattable) return;
 		MethodInfo? toStringMethodInfo = spanFormattable.GetType()
 		                                                .GetMethod(nameof(IntPtr.ToString),
@@ -249,6 +265,7 @@ public sealed class ValPtrTests
 			Assert.Equal(valPtr.Pointer.ToString(format), valPtr.ToString(format));
 			Assert.Equal(valPtr.Pointer.ToString(format, culture), spanFormattable.ToString(format, culture));
 		}
+#endif
 	}
 	private static void MarshallerTest<T>(ValPtr<T> valPtr)
 	{
@@ -267,7 +284,11 @@ public sealed class ValPtrTests
 			(fRef as IReadOnlyFixedReference<T>).Transformation<TDestination>(out IReadOnlyFixedMemory _);
 		Assert.True(Unsafe.AreSame(ref fRef2.Reference, ref Unsafe.AsRef<TDestination>(ptrI.Pointer.ToPointer())));
 		Assert.Equal(sizeof(T) - sizeof(TDestination), offset.Bytes.Length);
+#if NET8_0_OR_GREATER
 		Assert.True(Unsafe.AreSame(ref fRef2.Reference, in fRef3.Reference));
+#else
+		Assert.True(Unsafe.AreSame(ref fRef2.Reference, ref Unsafe.AsRef(in fRef3.Reference)));
+#endif
 	}
 	private static unsafe void ContextTransformTest<T, TDestination>(IFixedContext<T>.IDisposable ctx)
 	{
@@ -275,5 +296,11 @@ public sealed class ValPtrTests
 		Assert.Equal(ctx2.Values.Length, ctx.Bytes.Length / sizeof(TDestination));
 		Assert.Equal(offset.Bytes.Length, ctx.Bytes.Length - ctx2.Values.Length * sizeof(TDestination));
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }
 #pragma warning restore CS8500

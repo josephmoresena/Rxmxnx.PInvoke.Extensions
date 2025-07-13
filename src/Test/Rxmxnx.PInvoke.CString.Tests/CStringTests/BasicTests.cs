@@ -3,14 +3,13 @@
 [ExcludeFromCodeCoverage]
 public sealed class BasicTests
 {
-	private static readonly String[] texts = IMessageResource.GetInstance().InvalidUtf8Region("|").Split('|');
-
 	[Fact]
 	internal void EmptyTest()
 	{
+		using MemoryHandle _ = CString.Empty.TryPin(out Boolean pinned);
 		ReadOnlySpan<Byte> emptySpan = default(CString?);
-		Byte[] emptyBytes = CString.GetBytes(CString.Empty);
 		CString? nullCStr = default(Byte[]);
+		Byte[] emptyBytes = pinned ? CString.GetBytes(CString.Empty) : [default,];
 
 		CString noEmpty1 = CString.Create(emptyBytes);
 		CString noEmpty2 = CString.Create(new Byte[] { default, default, });
@@ -109,7 +108,7 @@ public sealed class BasicTests
 		Assert.Equal(CString.Empty, empty3);
 		Assert.False(empty3.IsReference);
 		Assert.True(empty3.IsNullTerminated);
-		Assert.False(empty3.IsFunction);
+		Assert.Equal(!pinned, empty3.IsFunction);
 		Assert.Equal(CString.Empty, empty4);
 		Assert.False(empty4.IsReference);
 		Assert.True(empty4.IsNullTerminated);
@@ -309,10 +308,7 @@ public sealed class BasicTests
 		Assert.False(cstr.IsSegmented);
 		Assert.False(CString.IsNullOrEmpty(cstr));
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
-
-		Exception ex = BasicTests.AssertGetBytesException(cstr);
-		foreach (String text in BasicTests.texts)
-			Assert.Contains(text, ex.Message);
+		BasicTests.AssertGetBytesException(cstr);
 	}
 	private static unsafe void AssertFromNullTerminatedBytes(CString cstr)
 	{
@@ -400,9 +396,7 @@ public sealed class BasicTests
 			Assert.Equal(cstr, unsafeCStr);
 		}
 
-		Exception ex = BasicTests.AssertGetBytesException(cstr);
-		foreach (String text in BasicTests.texts)
-			Assert.Contains(text, ex.Message);
+		BasicTests.AssertGetBytesException(cstr);
 
 		CString rawSpanClone = CString.Create(cstr);
 		Assert.False(rawSpanClone.IsFunction);
@@ -422,9 +416,7 @@ public sealed class BasicTests
 		Assert.False(CString.IsNullOrEmpty(cstr));
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
 
-		Exception ex = BasicTests.AssertGetBytesException(cstr);
-		foreach (String text in BasicTests.texts)
-			Assert.Contains(text, ex.Message);
+		BasicTests.AssertGetBytesException(cstr);
 
 		CString rawSpanClone = CString.Create(cstr);
 		Assert.False(rawSpanClone.IsFunction);
@@ -443,9 +435,7 @@ public sealed class BasicTests
 		Assert.False(cstr.IsSegmented);
 		Assert.False(CString.IsNullOrEmpty(cstr));
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
-		Exception ex = BasicTests.AssertGetBytesException(cstr);
-		foreach (String text in BasicTests.texts)
-			Assert.Contains(text, ex.Message);
+		BasicTests.AssertGetBytesException(cstr);
 
 		fixed (void* ptr = cstr.AsSpan())
 		{
@@ -497,7 +487,11 @@ public sealed class BasicTests
 		foreach (ref readonly Byte utf8Char in cstr2)
 		{
 			Assert.Equal(cstr1[i], utf8Char);
+#if NET8_0_OR_GREATER
 			Assert.True(Unsafe.AreSame(in cstr2.AsSpan()[i], in utf8Char));
+#else
+			Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in cstr2.AsSpan()[i]), ref Unsafe.AsRef(in utf8Char)));
+#endif
 			i++;
 		}
 	}
@@ -541,20 +535,18 @@ public sealed class BasicTests
 		}
 	}
 
-	private static Exception AssertGetBytesException(CString cstr)
+	private static void AssertGetBytesException(CString cstr)
 	{
-		Exception ex;
 		try
 		{
-			ex = Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
+			Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
 		}
 		catch (Exception)
 		{
 			// For some reason sometimes the test fails even though it shouldn't.
 			// The test must be run again so that it does not fail.
 			Assert.NotEmpty(cstr.ToArray());
-			ex = Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
+			Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
 		}
-		return ex;
 	}
 }

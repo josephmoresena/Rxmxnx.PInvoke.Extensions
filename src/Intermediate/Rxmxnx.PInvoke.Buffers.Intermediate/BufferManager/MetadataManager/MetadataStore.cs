@@ -18,7 +18,7 @@ public static partial class BufferManager
 			/// </summary>
 			private readonly SortedDictionary<UInt16, BufferTypeMetadata<T>> _nonBinaryCache = new();
 
-#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
+#if NET7_0_OR_GREATER
 			/// <see cref="MetadataStore.GetMetadataInfo"/>
 			private MethodInfo? _getMetadataInfo;
 #endif
@@ -31,7 +31,7 @@ public static partial class BufferManager
 			/// Buffers dictionary.
 			/// </summary>
 			public IDictionary<UInt16, BufferTypeMetadata<T>> BinaryBuffers => this._binaryCache;
-#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
+#if NET7_0_OR_GREATER
 			/// <summary>
 			/// <see cref="MethodInfo"/> to retrieve buffer metadata.
 			/// </summary>
@@ -68,7 +68,7 @@ public static partial class BufferManager
 #endif
 			public MetadataStore()
 			{
-#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
+#if NET7_0_OR_GREATER
 #pragma warning disable CA2252
 				this._binaryCache.Add(1, IManagedBuffer<T>.GetMetadata<Atomic<T>>());
 #pragma warning restore CA2252
@@ -109,7 +109,7 @@ public static partial class BufferManager
 			public BufferTypeMetadata<T>? GetNonBinaryBuffer(UInt16 count)
 				=> this._nonBinaryCache.GetValueOrDefault(count);
 
-#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
+#if NET7_0_OR_GREATER
 			/// <summary>
 			/// Retrieves the reflected <see cref="IManagedBuffer{T}.GetMetadata{TBuffer}()"/> method.
 			/// </summary>
@@ -117,7 +117,7 @@ public static partial class BufferManager
 			private static MethodInfo ReflectGetMetadataMethod()
 			{
 				Type typeofT = typeof(IManagedBuffer<T>);
-				return typeofT.GetMethod(BufferManager.GetMetadataName, BufferManager.GetMetadataFlags)!;
+				return typeofT.GetMethod(nameof(IManagedBuffer<Object>.GetMetadata), BufferManager.GetMetadataFlags)!;
 			}
 #endif
 			/// <summary>

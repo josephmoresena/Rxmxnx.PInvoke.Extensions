@@ -52,7 +52,6 @@ internal sealed class GermanMessageResource : IMessageResource
 		=> $"Nicht genügend Platz verfügbar auf {nameofSpan}, um {nameofValue} zu kopieren.";
 	String IMessageResource.InvalidLength(String nameofLength)
 		=> $"Der Parameter {nameofLength} muss null oder eine positive ganze Zahl sein.";
-	String IMessageResource.InvalidUtf8Region(String nameofRegion) => $"{nameofRegion} enthält keinen UTF-8-Text.";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} ist kein nicht verwalteter Typ.";
 	String IMessageResource.NotValueType(Type type) => $"{type} ist kein Werttyp.";
 	String IMessageResource.NotReferenceType(Type type) => $"{type} ist kein Referenztyp.";
@@ -64,10 +63,8 @@ internal sealed class GermanMessageResource : IMessageResource
 		=> $"{itemType} ist ein Referenztyp, aber {arrayType} ist ein nicht verwalteter Typ.";
 	String IMessageResource.UnmanagedTypeButContainsReferences(Type itemType, Type arrayType)
 		=> $"{itemType} ist ein nicht verwalteter Typ, aber {arrayType} enthält Verweise.";
-#if !PACKAGE || !NET7_0_OR_GREATER
 	String IMessageResource.MissingBufferMetadataException(Type bufferType)
 		=> $"Metadaten für den Puffer {bufferType} konnten nicht abgerufen werden.";
-#endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Es ist nicht möglich, einen Puffer für {itemType} mit {size} Elementen zu erstellen.";
 #if !PACKAGE || NETCOREAPP

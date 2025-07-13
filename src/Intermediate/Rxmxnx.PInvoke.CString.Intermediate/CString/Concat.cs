@@ -282,6 +282,9 @@ public partial class CString
 	/// during concatenation.
 	/// </remarks>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2368)]
+#endif
 	public static CString Concat(
 #if !NET9_0_OR_GREATER
 		params

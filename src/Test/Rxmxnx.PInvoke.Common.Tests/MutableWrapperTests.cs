@@ -26,22 +26,28 @@ public sealed class MutableWrapperTests
 	internal Task Int32TestAsync() => MutableWrapperTests.TestAsync<Int32>();
 	[Fact]
 	internal Task Int64TestAsync() => MutableWrapperTests.TestAsync<Int64>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal Task Int128TestAsync() => MutableWrapperTests.TestAsync<Int128>();
+#endif
 	[Fact]
 	internal Task GuidTestAsync() => MutableWrapperTests.TestAsync<Guid>();
 	[Fact]
 	internal Task SingleTestAsync() => MutableWrapperTests.TestAsync<Single>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal Task HalfTestAsync() => MutableWrapperTests.TestAsync<Half>();
+#endif
 	[Fact]
 	internal Task DoubleTestAsync() => MutableWrapperTests.TestAsync<Double>();
 	[Fact]
 	internal Task DecimalTestAsync() => MutableWrapperTests.TestAsync<Decimal>();
 	[Fact]
 	internal Task DateTimeTestAsync() => MutableWrapperTests.TestAsync<DateTime>();
+#if NET6_0_OR_GREATER
 	[Fact]
 	internal Task TimeOnlyTestAsync() => MutableWrapperTests.TestAsync<TimeOnly>();
+#endif
 	[Fact]
 	internal Task TimeSpanTestAsync() => MutableWrapperTests.TestAsync<TimeSpan>();
 

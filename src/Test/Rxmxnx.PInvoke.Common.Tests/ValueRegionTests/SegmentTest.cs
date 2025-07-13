@@ -16,22 +16,30 @@ public sealed class SegmentTest : ValueRegionTestBase
 	internal void Int32Test() => SegmentTest.Test<Int32>();
 	[Fact]
 	internal void Int64Test() => SegmentTest.Test<Int64>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal void Int128Test() => SegmentTest.Test<Int128>();
+#endif
 	[Fact]
 	internal void GuidTest() => SegmentTest.Test<Guid>();
 	[Fact]
 	internal void SingleTest() => SegmentTest.Test<Single>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => SegmentTest.Test<Half>();
+#endif
 	[Fact]
 	internal void DoubleTest() => SegmentTest.Test<Double>();
 	[Fact]
 	internal void DecimalTest() => SegmentTest.Test<Decimal>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal void DateTimeTest() => SegmentTest.Test<DateTime>();
+#endif
+#if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => SegmentTest.Test<TimeOnly>();
+#endif
 	[Fact]
 	internal void TimeSpanTest() => SegmentTest.Test<TimeSpan>();
 
@@ -144,9 +152,15 @@ public sealed class SegmentTest : ValueRegionTestBase
 
 			Assert.Equal(state.Region[state.GetRegionOffset(j)], state.Segment[j]);
 			Assert.Equal(state.Values[arrayOffset], state.Segment[j]);
+#if NET8_0_OR_GREATER
 			Assert.True(!state.IsReference ?
 				            Unsafe.AreSame(in span[j], ref state.Values[arrayOffset]) :
 				            Unsafe.AreSame(in span[j], ref state.Values.AsSpan()[arrayOffset..][0]));
+#else
+			Assert.True(!state.IsReference ?
+				            Unsafe.AreSame(ref Unsafe.AsRef(in span[j]), ref state.Values[arrayOffset]) :
+				            Unsafe.AreSame(ref Unsafe.AsRef(in span[j]), ref state.Values.AsSpan()[arrayOffset..][0]));
+#endif
 		}
 
 		if (state.Segment.IsMemorySlice || state.IsReference)
@@ -170,4 +184,10 @@ public sealed class SegmentTest : ValueRegionTestBase
 
 		Assert.Equal(state.Values.Skip(state.SkipArray()).Take(state.Count), newArray);
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

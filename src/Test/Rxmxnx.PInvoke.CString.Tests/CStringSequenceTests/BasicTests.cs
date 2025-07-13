@@ -118,9 +118,17 @@ public sealed class BasicTests
 		for (Int32 i = 0; i < clone.Count; i++)
 		{
 			ReadOnlySpan<Byte> spanValue =
+#if NET6_0_OR_GREATER
 				MemoryMarshal.CreateReadOnlySpanFromNullTerminated((Byte*)(fp.Pointer + offsetSpan[i]));
+#else
+				MemoryMarshalCompat.CreateReadOnlySpanFromNullTerminated((Byte*)(fp.Pointer + offsetSpan[i]));
+#endif
 			Assert.True(clone[i].AsSpan().SequenceEqual(spanValue));
+#if NET8_0_OR_GREATER
 			Assert.True(Unsafe.AreSame(in clone[i].AsSpan()[0], in spanValue[0]));
+#else
+			Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in clone[i].AsSpan()[0]), ref Unsafe.AsRef(in spanValue[0])));
+#endif
 		}
 	}
 	private static unsafe void AssertPin(String utf8Buffer, CString? cstr)
@@ -139,4 +147,10 @@ public sealed class BasicTests
 		Assert.NotEqual((IntPtr)handle2.Pointer, IntPtr.Zero);
 		Assert.Equal((IntPtr)handle2.Pointer, (IntPtr)handle.Pointer + 1);
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

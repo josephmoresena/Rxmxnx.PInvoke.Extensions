@@ -1,4 +1,4 @@
-#if NET9_0_OR_GREATER && !PACKAGE
+#if !PACKAGE && NET9_0_OR_GREATER
 namespace Rxmxnx.PInvoke;
 
 /// <summary>

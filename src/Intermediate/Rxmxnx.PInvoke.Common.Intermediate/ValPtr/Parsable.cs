@@ -4,17 +4,8 @@ namespace Rxmxnx.PInvoke;
 public readonly partial struct ValPtr<T>
 #if NET7_0_OR_GREATER
 	: IParsable<ValPtr<T>>
-{
-	/// <inheritdoc cref="IntPtr.TryParse(String, IFormatProvider, out IntPtr)"/>
-	public static Boolean TryParse([NotNullWhen(true)] String? s, IFormatProvider? provider,
-		out ValPtr<T> result)
-	{
-		Unsafe.SkipInit(out result);
-		return IntPtr.TryParse(s, provider, out Unsafe.As<ValPtr<T>, IntPtr>(ref result));
-	}
-#else
-{
 #endif
+{
 	/// <inheritdoc cref="IntPtr.Parse(String)"/>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
@@ -83,6 +74,18 @@ public readonly partial struct ValPtr<T>
 	{
 		Unsafe.SkipInit(out result);
 		return IntPtr.TryParse(s, style, provider, out Unsafe.As<ValPtr<T>, IntPtr>(ref result));
+	}
+#endif
+#if NET7_0_OR_GREATER
+	/// <inheritdoc cref="IntPtr.TryParse(String, IFormatProvider, out IntPtr)"/>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public static Boolean TryParse([NotNullWhen(true)] String? s, IFormatProvider? provider,
+		out ValPtr<T> result)
+	{
+		Unsafe.SkipInit(out result);
+		return IntPtr.TryParse(s, provider, out Unsafe.As<ValPtr<T>, IntPtr>(ref result));
 	}
 #endif
 }

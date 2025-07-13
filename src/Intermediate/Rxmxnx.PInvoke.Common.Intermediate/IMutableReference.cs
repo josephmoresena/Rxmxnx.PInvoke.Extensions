@@ -16,7 +16,11 @@ public interface IMutableReference : IMutableWrapper
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public new static IMutableReference<TValue> Create<TValue>(in TValue value = default!) where TValue : struct
+#if NETCOREAPP
 		=> IMutableReference<TValue>.Create(value);
+#else
+		=> new MutableReference<TValue>(value);
+#endif
 	/// <summary>
 	/// Creates a new instance of an object that implements <see cref="IMutableReference{TValue}"/> interface.
 	/// </summary>
@@ -30,19 +34,27 @@ public interface IMutableReference : IMutableWrapper
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public new static IMutableReference<TValue?> CreateNullable<TValue>(in TValue? value = default)
 		where TValue : struct
+#if NETCOREAPP
 		=> IMutableReference<TValue?>.Create(value);
+#else
+		=> new MutableReference<TValue?>(value);
+#endif
 	/// <summary>
 	/// Creates a new instance of an object that implements <see cref="IMutableReference{TObject}"/> interface.
 	/// </summary>
 	/// <typeparam name="TObject">The type of the object to be wrapped.</typeparam>
-	/// <param name="value">The instance to be wrapped.</param>
+	/// <param name="instance">The instance to be wrapped.</param>
 	/// <returns>An instance of an object that implements <see cref="IMutableReference{TObject}"/> interface.</returns>
 	/// <remarks>
-	/// The newly created object wraps an object of <typeparamref name="TObject"/> type provided by <paramref name="value"/>.
+	/// The newly created object wraps an object of <typeparamref name="TObject"/> type provided by <paramref name="instance"/>.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public new static IMutableReference<TObject> CreateObject<TObject>(TObject value) where TObject : class
-		=> IMutableReference<TObject>.Create(value)!;
+	public new static IMutableReference<TObject> CreateObject<TObject>(TObject instance) where TObject : class
+#if NETCOREAPP
+		=> IMutableReference<TObject>.Create(instance)!;
+#else
+		=> new MutableReference<TObject>(instance);
+#endif
 }
 
 /// <summary>

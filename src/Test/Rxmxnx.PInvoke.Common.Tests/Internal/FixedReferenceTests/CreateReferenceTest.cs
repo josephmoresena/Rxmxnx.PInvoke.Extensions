@@ -17,22 +17,28 @@ public sealed class CreateReferenceTest : FixedReferenceTestsBase
 	internal void Int32Test() => CreateReferenceTest.Test<Int32>();
 	[Fact]
 	internal void Int64Test() => CreateReferenceTest.Test<Int64>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal void Int128Test() => CreateReferenceTest.Test<Int128>();
+#endif
 	[Fact]
 	internal void GuidTest() => CreateReferenceTest.Test<Guid>();
 	[Fact]
 	internal void SingleTest() => CreateReferenceTest.Test<Single>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => CreateReferenceTest.Test<Half>();
+#endif
 	[Fact]
 	internal void DoubleTest() => CreateReferenceTest.Test<Double>();
 	[Fact]
 	internal void DecimalTest() => CreateReferenceTest.Test<Decimal>();
 	[Fact]
 	internal void DateTimeTest() => CreateReferenceTest.Test<DateTime>();
+#if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => CreateReferenceTest.Test<TimeOnly>();
+#endif
 	[Fact]
 	internal void TimeSpanTest() => CreateReferenceTest.Test<TimeSpan>();
 	[Fact]
@@ -44,8 +50,8 @@ public sealed class CreateReferenceTest : FixedReferenceTestsBase
 		T value = FixedMemoryTestsBase.Fixture.Create<T>();
 		FixedReferenceTestsBase.WithFixed(ref value, CreateReferenceTest.Test);
 		Exception readOnly =
-			Assert.Throws<InvalidOperationException>(
-				() => FixedReferenceTestsBase.WithFixed(ref value, CreateReferenceTest.ReadOnlyTest));
+			Assert.Throws<InvalidOperationException>(() => FixedReferenceTestsBase.WithFixed(
+				                                         ref value, CreateReferenceTest.ReadOnlyTest));
 		Assert.Equal(FixedMemoryTestsBase.ReadOnlyError, readOnly.Message);
 	}
 	private static unsafe void Test<T>(FixedReference<T> fref, IntPtr ptr)
@@ -69,14 +75,20 @@ public sealed class CreateReferenceTest : FixedReferenceTestsBase
 			CreateReferenceTest.TestSize<T, Char>(fref);
 			CreateReferenceTest.TestSize<T, Int32>(fref);
 			CreateReferenceTest.TestSize<T, Int64>(fref);
+#if NET7_0_OR_GREATER
 			CreateReferenceTest.TestSize<T, Int128>(fref);
+#endif
 			CreateReferenceTest.TestSize<T, Guid>(fref);
 			CreateReferenceTest.TestSize<T, Single>(fref);
+#if NET5_0_OR_GREATER
 			CreateReferenceTest.TestSize<T, Half>(fref);
+#endif
 			CreateReferenceTest.TestSize<T, Double>(fref);
 			CreateReferenceTest.TestSize<T, Decimal>(fref);
 			CreateReferenceTest.TestSize<T, DateTime>(fref);
+#if NET6_0_OR_GREATER
 			CreateReferenceTest.TestSize<T, TimeOnly>(fref);
+#endif
 			CreateReferenceTest.TestSize<T, TimeSpan>(fref);
 
 			if (sizeof(T) < sizeof(ManagedStruct))
@@ -87,8 +99,8 @@ public sealed class CreateReferenceTest : FixedReferenceTestsBase
 			if (sizeof(T) < sizeof(WrapperStruct<ManagedStruct>))
 				CreateReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref);
 			else
-				Assert.Throws<InvalidOperationException>(
-					() => CreateReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref));
+				Assert.Throws<InvalidOperationException>(() => CreateReferenceTest
+					                                         .TestSize<T, WrapperStruct<ManagedStruct>>(fref));
 
 			if (sizeof(T) < IntPtr.Size)
 			{
@@ -106,8 +118,8 @@ public sealed class CreateReferenceTest : FixedReferenceTestsBase
 			if (sizeof(T) < sizeof(WrapperStruct<ManagedStruct>))
 				CreateReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref);
 			else
-				Assert.Throws<InvalidOperationException>(
-					() => CreateReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref));
+				Assert.Throws<InvalidOperationException>(() => CreateReferenceTest
+					                                         .TestSize<T, WrapperStruct<ManagedStruct>>(fref));
 
 			if (typeof(T).IsValueType)
 			{
@@ -118,8 +130,8 @@ public sealed class CreateReferenceTest : FixedReferenceTestsBase
 			}
 			else
 			{
-				Assert.Throws<InvalidOperationException>(
-					() => CreateReferenceTest.TestSize<T, WrapperStruct<String>>(fref));
+				Assert.Throws<InvalidOperationException>(() => CreateReferenceTest.TestSize<T, WrapperStruct<String>>(
+					                                         fref));
 
 				CreateReferenceTest.TestSize<T, String>(fref);
 				CreateReferenceTest.TestSize<T, Object>(fref);
@@ -153,14 +165,20 @@ public sealed class CreateReferenceTest : FixedReferenceTestsBase
 			CreateReferenceTest.TestSize<T, Char>(fref);
 			CreateReferenceTest.TestSize<T, Int32>(fref);
 			CreateReferenceTest.TestSize<T, Int64>(fref);
+#if NET7_0_OR_GREATER
 			CreateReferenceTest.TestSize<T, Int128>(fref);
+#endif
 			CreateReferenceTest.TestSize<T, Guid>(fref);
 			CreateReferenceTest.TestSize<T, Single>(fref);
+#if NET5_0_OR_GREATER
 			CreateReferenceTest.TestSize<T, Half>(fref);
+#endif
 			CreateReferenceTest.TestSize<T, Double>(fref);
 			CreateReferenceTest.TestSize<T, Decimal>(fref);
 			CreateReferenceTest.TestSize<T, DateTime>(fref);
+#if NET6_0_OR_GREATER
 			CreateReferenceTest.TestSize<T, TimeOnly>(fref);
+#endif
 			CreateReferenceTest.TestSize<T, TimeSpan>(fref);
 
 			if (sizeof(T) < sizeof(ManagedStruct))
@@ -170,8 +188,8 @@ public sealed class CreateReferenceTest : FixedReferenceTestsBase
 			else
 			{
 				Assert.Throws<InvalidOperationException>(() => CreateReferenceTest.TestSize<T, ManagedStruct>(fref));
-				Assert.Throws<InvalidOperationException>(
-					() => CreateReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref));
+				Assert.Throws<InvalidOperationException>(() => CreateReferenceTest
+					                                         .TestSize<T, WrapperStruct<ManagedStruct>>(fref));
 			}
 
 			if (sizeof(T) < IntPtr.Size)
@@ -190,8 +208,8 @@ public sealed class CreateReferenceTest : FixedReferenceTestsBase
 			if (sizeof(T) < sizeof(WrapperStruct<ManagedStruct>))
 				CreateReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref);
 			else
-				Assert.Throws<InvalidOperationException>(
-					() => CreateReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref));
+				Assert.Throws<InvalidOperationException>(() => CreateReferenceTest
+					                                         .TestSize<T, WrapperStruct<ManagedStruct>>(fref));
 
 			if (typeof(T).IsValueType)
 			{

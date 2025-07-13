@@ -1,12 +1,13 @@
-#if !PACKAGE || (PACKAGE || !NET6_0) && !NET7_0_OR_GREATER
 namespace Rxmxnx.PInvoke;
 
 public static partial class BufferManager
 {
+#if !PACKAGE || !NET7_0_OR_GREATER
 	/// <summary>
 	/// Metadata cache.
 	/// </summary>
 	private static readonly ConcurrentDictionary<Type, BufferTypeMetadata> metadataCache = new();
+#endif
 
 	/// <summary>
 	/// Retrieves metadata required for a buffer of <paramref name="bufferType"/> type.
@@ -20,12 +21,16 @@ public static partial class BufferManager
 #endif
 		Type bufferType)
 	{
+#if !PACKAGE || !NET7_0_OR_GREATER
 		if (BufferManager.metadataCache.TryGetValue(bufferType, out BufferTypeMetadata? result))
 			return (BufferTypeMetadata<T>)result;
+#else
+		BufferTypeMetadata? result = default;
+#endif
 
 		try
 		{
-			if (!AotInfo.IsReflectionDisabled)
+			if (!AotInfo.IsNativeAot || !AotInfo.IsReflectionDisabled)
 			{
 				FieldInfo? typeMetadataInfo =
 					bufferType.GetField(BufferManager.TypeMetadataName, BufferManager.GetMetadataFlags);
@@ -37,9 +42,15 @@ public static partial class BufferManager
 			if (tie.InnerException is not null)
 				throw tie.InnerException;
 		}
-		result ??= IManagedBinaryBuffer<T>.GetMetadata(bufferType);
+		result ??= ManagedBinaryBuffer<T>.GetMetadata(bufferType);
+#if !PACKAGE || !NET7_0_OR_GREATER
 		return BufferManager.Cache(bufferType, result as BufferTypeMetadata<T>);
+#else
+		ValidationUtilities.ThrowIfNullMetadata(bufferType, result is not BufferTypeMetadata<T>);
+		return (result as BufferTypeMetadata<T>)!;
+#endif
 	}
+#if !PACKAGE || !NET7_0_OR_GREATER
 #nullable disable
 	/// <summary>
 	/// Caches <paramref name="typeMetadata"/> for <paramref name="bufferType"/>.
@@ -59,5 +70,5 @@ public static partial class BufferManager
 		return typeMetadata;
 	}
 #nullable restore
-}
 #endif
+}

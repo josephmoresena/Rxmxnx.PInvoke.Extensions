@@ -1,3 +1,4 @@
+#if NET5_0_OR_GREATER
 using ThreadState = System.Threading.ThreadState;
 
 namespace Rxmxnx.PInvoke.Tests.Internal;
@@ -34,3 +35,4 @@ public sealed class GetNameTest
 			Assert.Equal(Enum.GetName(value), EnumCompat.GetName(value));
 	}
 }
+#endif

@@ -20,8 +20,10 @@ public sealed class GetUnsafePointerTest
 	internal void DoubleTest() => GetUnsafePointerTest.Test<Double>();
 	[Fact]
 	internal void GuidTest() => GetUnsafePointerTest.Test<Guid>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => GetUnsafePointerTest.Test<Half>();
+#endif
 	[Fact]
 	internal void Int16Test() => GetUnsafePointerTest.Test<Int16>();
 	[Fact]

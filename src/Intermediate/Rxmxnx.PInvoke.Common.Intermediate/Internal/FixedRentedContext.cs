@@ -127,6 +127,7 @@ internal sealed class FixedRentedContext<T> : IFixedContext<T>.IDisposable
 	/// </summary>
 	private void Release()
 	{
+		if (this._ctx is not { IsValid: true, } || (this._ctx as IFixedPointer).Pointer != IntPtr.Zero) return;
 		this._ctx.Unload();
 		this._handle.Dispose();
 		this._arrayPool.Return(this.Array, this._clearArray);
@@ -139,7 +140,9 @@ internal sealed class FixedRentedContext<T> : IFixedContext<T>.IDisposable
 	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#pragma warning disable CA1859
 	private IFixedContext<T> GetContext() => this._ctx;
+#pragma warning restore CA1859
 	/// <summary>
 	/// Read-only fixed context.
 	/// </summary>
@@ -147,5 +150,7 @@ internal sealed class FixedRentedContext<T> : IFixedContext<T>.IDisposable
 	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private IFixedContext<T> GetReadOnlyContext() => this._ctx;
+#pragma warning disable CA1859
+	private IReadOnlyFixedContext<T> GetReadOnlyContext() => this._ctx;
+#pragma warning restore CA1859
 }

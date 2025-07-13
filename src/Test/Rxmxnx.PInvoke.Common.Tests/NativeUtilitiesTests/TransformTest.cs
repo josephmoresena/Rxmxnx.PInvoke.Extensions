@@ -18,8 +18,10 @@ public sealed class TransformTest
 	internal void DoubleTest() => TransformTest.Test<Double>();
 	[Fact]
 	internal void GuidTest() => TransformTest.Test<Guid>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => TransformTest.Test<Half>();
+#endif
 	[Fact]
 	internal void Int16Test() => TransformTest.Test<Int16>();
 	[Fact]
@@ -48,7 +50,9 @@ public sealed class TransformTest
 		TransformTest.Test<T, Decimal>(value);
 		TransformTest.Test<T, Double>(value);
 		TransformTest.Test<T, Guid>(value);
+#if NET5_0_OR_GREATER
 		TransformTest.Test<T, Half>(value);
+#endif
 		TransformTest.Test<T, Int16>(value);
 		TransformTest.Test<T, Int32>(value);
 		TransformTest.Test<T, Int64>(value);
@@ -76,9 +80,9 @@ public sealed class TransformTest
 			else
 			{
 				ReadOnlySpan<Byte> bytes1 =
-					MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref UnsafeLegacy.AsRef(in refValue), 1));
+					MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(in refValue), 1));
 				ReadOnlySpan<Byte> bytes2 =
-					MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref UnsafeLegacy.AsRef(in refValue2), 1));
+					MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(in refValue2), 1));
 				Assert.Equal(bytes1.ToArray(), bytes2.ToArray());
 			}
 		}
@@ -91,13 +95,13 @@ public sealed class TransformTest
 
 	private static void BinaryTest<T>(in T refValue) where T : unmanaged
 	{
-		Byte[] bytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref UnsafeLegacy.AsRef(in refValue), 1))
+		Byte[] bytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(in refValue), 1))
 		                            .ToArray();
 		ReadOnlySpan<Byte> span = NativeUtilities.AsBytes(refValue);
 		ReadOnlySpan<T> spanT = MemoryMarshal.Cast<Byte, T>(span);
 
 		Assert.Equal(bytes, NativeUtilities.ToBytes(refValue));
 		Assert.Equal(bytes, span.ToArray());
-		Assert.True(Unsafe.AreSame(ref UnsafeLegacy.AsRef(in refValue), ref UnsafeLegacy.AsRef(in spanT[0])));
+		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in refValue), ref Unsafe.AsRef(in spanT[0])));
 	}
 }

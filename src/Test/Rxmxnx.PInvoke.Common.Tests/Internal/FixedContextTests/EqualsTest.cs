@@ -17,22 +17,28 @@ public sealed class EqualsTest : FixedContextTestsBase
 	internal void Int32Test() => EqualsTest.Test<Int32>();
 	[Fact]
 	internal void Int64Test() => EqualsTest.Test<Int64>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal void Int128Test() => EqualsTest.Test<Int128>();
+#endif
 	[Fact]
 	internal void GuidTest() => EqualsTest.Test<Guid>();
 	[Fact]
 	internal void SingleTest() => EqualsTest.Test<Single>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => EqualsTest.Test<Half>();
+#endif
 	[Fact]
 	internal void DoubleTest() => EqualsTest.Test<Double>();
 	[Fact]
 	internal void DecimalTest() => EqualsTest.Test<Decimal>();
 	[Fact]
 	internal void DateTimeTest() => EqualsTest.Test<DateTime>();
+#if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => EqualsTest.Test<TimeOnly>();
+#endif
 	[Fact]
 	internal void TimeSpanTest() => EqualsTest.Test<TimeSpan>();
 	[Fact]
@@ -41,7 +47,7 @@ public sealed class EqualsTest : FixedContextTestsBase
 	internal void StringTest() => EqualsTest.Test<String>();
 	private static unsafe void Test<T>()
 	{
-		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>(sizeof(Int128) * 3 / sizeof(T)).ToArray();
+		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>(sizeof(Guid) * 3 / sizeof(T)).ToArray();
 		Action<FixedContext<T>, T[]> action;
 		Action<ReadOnlyFixedContext<T>, T[]> readonlyAction;
 		try
@@ -134,13 +140,19 @@ public sealed class EqualsTest : FixedContextTestsBase
 		EqualsTest.TransformationTest<T, Char>(ctx, length);
 		EqualsTest.TransformationTest<T, Int32>(ctx, length);
 		EqualsTest.TransformationTest<T, Int64>(ctx, length);
+#if NET7_0_OR_GREATER
 		EqualsTest.TransformationTest<T, Int128>(ctx, length);
+#endif
 		EqualsTest.TransformationTest<T, Single>(ctx, length);
+#if NET5_0_OR_GREATER
 		EqualsTest.TransformationTest<T, Half>(ctx, length);
+#endif
 		EqualsTest.TransformationTest<T, Double>(ctx, length);
 		EqualsTest.TransformationTest<T, Decimal>(ctx, length);
 		EqualsTest.TransformationTest<T, DateTime>(ctx, length);
+#if NET6_0_OR_GREATER
 		EqualsTest.TransformationTest<T, TimeOnly>(ctx, length);
+#endif
 		EqualsTest.TransformationTest<T, TimeSpan>(ctx, length);
 
 		EqualsTest.TransformationTest<T, WrapperStruct<Boolean>>(ctx, length);
@@ -149,13 +161,19 @@ public sealed class EqualsTest : FixedContextTestsBase
 		EqualsTest.TransformationTest<T, WrapperStruct<Char>>(ctx, length);
 		EqualsTest.TransformationTest<T, WrapperStruct<Int32>>(ctx, length);
 		EqualsTest.TransformationTest<T, WrapperStruct<Int64>>(ctx, length);
+#if NET7_0_OR_GREATER
 		EqualsTest.TransformationTest<T, WrapperStruct<Int128>>(ctx, length);
+#endif
 		EqualsTest.TransformationTest<T, WrapperStruct<Single>>(ctx, length);
+#if NET5_0_OR_GREATER
 		EqualsTest.TransformationTest<T, WrapperStruct<Half>>(ctx, length);
+#endif
 		EqualsTest.TransformationTest<T, WrapperStruct<Double>>(ctx, length);
 		EqualsTest.TransformationTest<T, WrapperStruct<Decimal>>(ctx, length);
 		EqualsTest.TransformationTest<T, WrapperStruct<DateTime>>(ctx, length);
+#if NET6_0_OR_GREATER
 		EqualsTest.TransformationTest<T, WrapperStruct<TimeOnly>>(ctx, length);
+#endif
 		EqualsTest.TransformationTest<T, WrapperStruct<TimeSpan>>(ctx, length);
 	}
 	private static void UnmanagedTest<T>(ReadOnlyFixedContext<T> ctx, Int32 length)
@@ -166,13 +184,19 @@ public sealed class EqualsTest : FixedContextTestsBase
 		EqualsTest.TransformationTest<T, Char>(ctx, length);
 		EqualsTest.TransformationTest<T, Int32>(ctx, length);
 		EqualsTest.TransformationTest<T, Int64>(ctx, length);
+#if NET7_0_OR_GREATER
 		EqualsTest.TransformationTest<T, Int128>(ctx, length);
+#endif
 		EqualsTest.TransformationTest<T, Single>(ctx, length);
+#if NET5_0_OR_GREATER
 		EqualsTest.TransformationTest<T, Half>(ctx, length);
+#endif
 		EqualsTest.TransformationTest<T, Double>(ctx, length);
 		EqualsTest.TransformationTest<T, Decimal>(ctx, length);
 		EqualsTest.TransformationTest<T, DateTime>(ctx, length);
+#if NET6_0_OR_GREATER
 		EqualsTest.TransformationTest<T, TimeOnly>(ctx, length);
+#endif
 		EqualsTest.TransformationTest<T, TimeSpan>(ctx, length);
 
 		EqualsTest.TransformationTest<T, WrapperStruct<Boolean>>(ctx, length);
@@ -181,13 +205,19 @@ public sealed class EqualsTest : FixedContextTestsBase
 		EqualsTest.TransformationTest<T, WrapperStruct<Char>>(ctx, length);
 		EqualsTest.TransformationTest<T, WrapperStruct<Int32>>(ctx, length);
 		EqualsTest.TransformationTest<T, WrapperStruct<Int64>>(ctx, length);
+#if NET7_0_OR_GREATER
 		EqualsTest.TransformationTest<T, WrapperStruct<Int128>>(ctx, length);
+#endif
 		EqualsTest.TransformationTest<T, WrapperStruct<Single>>(ctx, length);
+#if NET5_0_OR_GREATER
 		EqualsTest.TransformationTest<T, WrapperStruct<Half>>(ctx, length);
+#endif
 		EqualsTest.TransformationTest<T, WrapperStruct<Double>>(ctx, length);
 		EqualsTest.TransformationTest<T, WrapperStruct<Decimal>>(ctx, length);
 		EqualsTest.TransformationTest<T, WrapperStruct<DateTime>>(ctx, length);
+#if NET6_0_OR_GREATER
 		EqualsTest.TransformationTest<T, WrapperStruct<TimeOnly>>(ctx, length);
+#endif
 		EqualsTest.TransformationTest<T, WrapperStruct<TimeSpan>>(ctx, length);
 	}
 	private static void ManagedValueTypeTest<T>(FixedContext<T> ctx, Int32 length)

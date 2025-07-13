@@ -1,3 +1,4 @@
+#if NETCOREAPP
 namespace Rxmxnx.PInvoke.Tests.Internal.DecodedRuneTests;
 
 [ExcludeFromCodeCoverage]
@@ -54,3 +55,4 @@ public sealed class CompatTest
 		}
 	}
 }
+#endif

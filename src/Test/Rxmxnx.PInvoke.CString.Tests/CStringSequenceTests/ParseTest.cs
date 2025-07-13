@@ -104,4 +104,10 @@ public sealed class ParseTest
 		Span<Byte> destination = buffer[arg.offset..];
 		source[..count].CopyTo(destination);
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

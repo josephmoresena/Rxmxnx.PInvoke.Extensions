@@ -8,14 +8,10 @@ public sealed class PrepareBinaryBufferTest
 	internal void AssertConstants()
 	{
 		Assert.Equal(typeof(Composite<,,>), BufferManager.TypeofComposite);
-		Assert.Equal("GetMetadata", BufferManager.GetMetadataName);
 		Assert.Equal("TypeMetadata", BufferManager.TypeMetadataName);
 		Assert.True(BufferManager.GetMetadataFlags.HasFlag(BindingFlags.Public));
 		Assert.True(BufferManager.GetMetadataFlags.HasFlag(BindingFlags.NonPublic));
 		Assert.True(BufferManager.GetMetadataFlags.HasFlag(BindingFlags.Static));
-		Assert.True(
-			BufferManager.DynamicallyAccessedMembers.HasFlag(
-				DynamicallyAccessedMemberTypes.PublicParameterlessConstructor));
 	}
 
 	[Fact]

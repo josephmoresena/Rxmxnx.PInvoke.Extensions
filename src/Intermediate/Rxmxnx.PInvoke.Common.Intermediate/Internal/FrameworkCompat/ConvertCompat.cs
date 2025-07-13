@@ -29,7 +29,6 @@ SOFTWARE.
 // Adopted and adapted by Joseph Moreno in 2025 based on code from .NET 6.0 CoreCLR
 // (System.Convert / System.HexConverter )
 
-#if !PACKAGE || !NET5_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 
 /// <summary>
@@ -48,6 +47,7 @@ internal static class ConvertCompat
 	/// <returns>The string representation in hex of the elements in <paramref name="bytes"/>.</returns>
 	public static unsafe String ToHexString(ReadOnlySpan<Byte> bytes)
 	{
+#if !PACKAGE || !NET5_0_OR_GREATER
 		fixed (Byte* bytesPtr = &MemoryMarshal.GetReference(bytes))
 		{
 			return String.Create(bytes.Length * 2, (Ptr: (IntPtr)bytesPtr, bytes.Length), static (chars, args) =>
@@ -57,6 +57,9 @@ internal static class ConvertCompat
 					ConvertCompat.ToCharsBuffer(ros[pos], chars, pos * 2);
 			});
 		}
+#else
+		return Convert.ToHexString(bytes);
+#endif
 	}
 
 	#region CORECLR
@@ -71,4 +74,3 @@ internal static class ConvertCompat
 	}
 	#endregion
 }
-#endif

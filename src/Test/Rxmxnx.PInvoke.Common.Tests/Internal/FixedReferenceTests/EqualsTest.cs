@@ -17,22 +17,28 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 	internal void Int32Test() => EqualsTest.Test<Int32>();
 	[Fact]
 	internal void Int64Test() => EqualsTest.Test<Int64>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal void Int128Test() => EqualsTest.Test<Int128>();
+#endif
 	[Fact]
 	internal void GuidTest() => EqualsTest.Test<Guid>();
 	[Fact]
 	internal void SingleTest() => EqualsTest.Test<Single>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => EqualsTest.Test<Half>();
+#endif
 	[Fact]
 	internal void DoubleTest() => EqualsTest.Test<Double>();
 	[Fact]
 	internal void DecimalTest() => EqualsTest.Test<Decimal>();
 	[Fact]
 	internal void DateTimeTest() => EqualsTest.Test<DateTime>();
+#if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => EqualsTest.Test<TimeOnly>();
+#endif
 	[Fact]
 	internal void TimeSpanTest() => EqualsTest.Test<TimeSpan>();
 	private static void Test<T>()
@@ -51,13 +57,19 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 		EqualsTest.TransformationTest<T, Char>(fref);
 		EqualsTest.TransformationTest<T, Int32>(fref);
 		EqualsTest.TransformationTest<T, Int64>(fref);
+#if NET7_0_OR_GREATER
 		EqualsTest.TransformationTest<T, Int128>(fref);
+#endif
 		EqualsTest.TransformationTest<T, Single>(fref);
+#if NET5_0_OR_GREATER
 		EqualsTest.TransformationTest<T, Half>(fref);
+#endif
 		EqualsTest.TransformationTest<T, Double>(fref);
 		EqualsTest.TransformationTest<T, Decimal>(fref);
 		EqualsTest.TransformationTest<T, DateTime>(fref);
+#if NET6_0_OR_GREATER
 		EqualsTest.TransformationTest<T, TimeOnly>(fref);
+#endif
 		EqualsTest.TransformationTest<T, TimeSpan>(fref);
 	}
 	private static void Test<T>(ReadOnlyFixedReference<T> fref)
@@ -68,19 +80,25 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 		EqualsTest.TransformationTest<T, Char>(fref);
 		EqualsTest.TransformationTest<T, Int32>(fref);
 		EqualsTest.TransformationTest<T, Int64>(fref);
+#if NET7_0_OR_GREATER
 		EqualsTest.TransformationTest<T, Int128>(fref);
+#endif
 		EqualsTest.TransformationTest<T, Single>(fref);
+#if NET5_0_OR_GREATER
 		EqualsTest.TransformationTest<T, Half>(fref);
+#endif
 		EqualsTest.TransformationTest<T, Double>(fref);
 		EqualsTest.TransformationTest<T, Decimal>(fref);
 		EqualsTest.TransformationTest<T, DateTime>(fref);
+#if NET6_0_OR_GREATER
 		EqualsTest.TransformationTest<T, TimeOnly>(fref);
+#endif
 		EqualsTest.TransformationTest<T, TimeSpan>(fref);
 	}
 	private static unsafe void TransformationTest<T, T2>(FixedReference<T> fref) where T2 : unmanaged
 	{
 		ref readonly T valueRef = ref fref.CreateReadOnlyReference<T>();
-		void* ptr = Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in valueRef));
+		void* ptr = Unsafe.AsPointer(ref Unsafe.AsRef(in valueRef));
 		Int32 binaryLength = sizeof(T);
 
 		if (binaryLength < sizeof(T2)) return;
@@ -92,7 +110,7 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 	private static unsafe void TransformationTest<T, T2>(ReadOnlyFixedReference<T> fref) where T2 : unmanaged
 	{
 		ref readonly T valueRef = ref fref.CreateReadOnlyReference<T>();
-		void* ptr = Unsafe.AsPointer(ref UnsafeLegacy.AsRef(in valueRef));
+		void* ptr = Unsafe.AsPointer(ref Unsafe.AsRef(in valueRef));
 		Int32 binaryLength = sizeof(T);
 
 		if (binaryLength < sizeof(T2)) return;

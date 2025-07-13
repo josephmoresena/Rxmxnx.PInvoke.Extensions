@@ -18,8 +18,10 @@ public sealed class AsValueTest
 	internal void DoubleTest() => AsValueTest.Test<Double>();
 	[Fact]
 	internal void GuidTest() => AsValueTest.Test<Guid>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => AsValueTest.Test<Half>();
+#endif
 	[Fact]
 	internal void Int16Test() => AsValueTest.Test<Int16>();
 	[Fact]
@@ -46,7 +48,11 @@ public sealed class AsValueTest
 		ref T refValue = ref bytes.AsValue<T>();
 		ref readonly T refReadOnlyValue = ref readOnlyBytes.AsValue<T>();
 
+#if NET8_0_OR_GREATER
 		Assert.True(Unsafe.AreSame(ref refValue, in refReadOnlyValue));
+#else
+		Assert.True(Unsafe.AreSame(ref refValue, ref Unsafe.AsRef(in refReadOnlyValue)));
+#endif
 		Assert.Equal(expected, refValue);
 
 		Assert.Throws<InsufficientMemoryException>(() => AsValueTest.InvalidTest<T>(true));

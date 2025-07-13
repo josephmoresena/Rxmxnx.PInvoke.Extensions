@@ -51,10 +51,11 @@ internal static
 #endif
 	partial class MemoryMarshalCompat
 {
+#pragma warning disable CA2020
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	private static ref Byte GetArrayDataReference(MMethodTable mtpRef, Array array)
+	private static ref Byte GetArrayDataReference(MethodTableImpl mtpRef, Array array)
 	{
 		ref Byte rawDataRef = ref Unsafe.As<CoreClrRawData>(array).Data;
 		UIntPtr byteOffset = (UIntPtr)(mtpRef.BaseSize - 2 * System_IntPtr.Size);
@@ -381,7 +382,7 @@ internal static
 					Vector128<UInt16> search = MemoryMarshalCompat.LoadVector128(ref searchSpace, offset);
 					Int32 matches = Sse2.MoveMask(Sse2.CompareEqual(values, search).AsByte());
 					if (matches != 0)
-						return (Int32)(offset + ((UInt32)BitOperations.TrailingZeroCount(matches) / sizeof(Char)));
+						return (Int32)(offset + (UInt32)BitOperations.TrailingZeroCount(matches) / sizeof(Char));
 
 					offset += Vector128<UInt16>.Count;
 					lengthToExamine -= Vector128<UInt16>.Count;
@@ -454,7 +455,7 @@ internal static
 		Found1:
 		return (Int32)(offset + 1);
 		Found:
-		return (Int32)(offset);
+		return (Int32)offset;
 	}
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
@@ -641,6 +642,9 @@ internal static
 		return true;
 	}
 #if !NET5_0_OR_GREATER
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1172)]
+#endif
 	private static class AdvSimd
 	{
 		public static Vector128<T> CompareEqual<T>(Vector128<T> values, Vector128<T> _) where T : unmanaged => values;
@@ -655,5 +659,6 @@ internal static
 	}
 #endif
 #endif
+#pragma warning restore CA2020
 }
 #endif

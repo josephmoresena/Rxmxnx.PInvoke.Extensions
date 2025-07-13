@@ -2,7 +2,10 @@
 
     <!-- Assembly properties -->
     <PropertyGroup>
-        <TargetFrameworks>net6.0;net8.0;net9.0;netstandard2.1;netcoreapp3.0;netcoreapp3.1;net5.0;net7.0</TargetFrameworks>
+        <OutputType>Library</OutputType>
+        <IsTempPackage Condition="'$(Version)' == '9999.99.99.99-tmp'">true</IsTempPackage>
+        <OutputType>Library</OutputType> <TargetFrameworks>net9.0;net8.0;net7.0;net6.0;net5.0;netcoreapp3.1;netcoreapp3.0;netstandard2.1</TargetFrameworks>
+        <TargetFrameworks Condition="'$(IsTempPackage)' == 'true'">$(TargetFrameworks);net45</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>Rxmxnx.PInvoke</RootNamespace>
@@ -10,43 +13,36 @@
         <EnablePackageValidation>true</EnablePackageValidation>
         <SigningKeyFile>..\Rxmxnx.PInvoke.snk</SigningKeyFile>
         <IntermediateSourceBasePath>..\..\src\Intermediate</IntermediateSourceBasePath>
+        <LangVersion>Latest</LangVersion>
     </PropertyGroup>
-    
+
     <!-- Validations -->
     <PropertyGroup>
         <ApiCompatPreserveUnnecessarySuppressions>true</ApiCompatPreserveUnnecessarySuppressions>
         <ApiCompatRespectInternals>true</ApiCompatRespectInternals>
     </PropertyGroup>
-    
+
     <!-- Include intermediate assemblies -->
-    <ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' != 'net45'">
         <IntermediateAssemblyNames Include="Rxmxnx.PInvoke.Common.Intermediate"/>
         <IntermediateAssemblyNames Include="Rxmxnx.PInvoke.CString.Intermediate"/>
         <IntermediateAssemblyNames Include="Rxmxnx.PInvoke.Buffers.Intermediate"/>
         <IntermediateAssemblyNames Include="Rxmxnx.PInvoke.Extensions.Intermediate"/>
     </ItemGroup>
 
-    <Import Project="..\Intermediate-to-Package.targets" />
+    <Import Condition="'$(TargetFramework)' != 'net45'" Project="..\Intermediate-to-Package.targets"/>
 
     <!-- Package properties -->
     <PropertyGroup>
         <Authors>Joseph Moreno</Authors>
         <Product>Rxmxnx.PInvoke.Extensions</Product>
-        <Description>Rxmxnx.PInvoke.Extensions is a comprehensive library designed to streamline and enhance the
-            interaction between .NET and native P/Invoke methods.
-        </Description>
+        <Description>Rxmxnx.PInvoke.Extensions is a comprehensive library designed to streamline and enhance the interaction between .NET and native P/Invoke methods.</Description>
         <Copyright>Copyright © Joseph Moreno 2023</Copyright>
-        <Summary>Rxmxnx.PInvoke.Extensions is a comprehensive library designed to streamline and enhance the
-            interaction between .NET and native P/Invoke methods.
-        </Summary>
+        <Summary>Rxmxnx.PInvoke.Extensions is a comprehensive library designed to streamline and enhance the interaction between .NET and native P/Invoke methods.</Summary>
         <NeutralLanguage>en-US</NeutralLanguage>
         <Title>Rxmxnx.PInvoke.Extensions</Title>
         <PackageId>Rxmxnx.PInvoke.Extensions</PackageId>
-        <PackageTags>
-            PInvoke;Binary;Reference;Unmanaged;Memory;NativeAOT;Utf8;CString;Pointer;Span;
-            ReadOnlySpan;Unsafe;Fixed;Native;FFI;Binary;u8;Literals;StackAlloc;LocalBuffer;
-            ObjectBuffer;ScopedBuffer;ManagedBuffer;
-        </PackageTags>
+        <PackageTags>PInvoke;Binary;Reference;Unmanaged;Memory;NativeAOT;Utf8;CString;Pointer;Span;ReadOnlySpan;Unsafe;Fixed;Native;FFI;Binary;u8;Literals;StackAlloc;LocalBuffer;ObjectBuffer;ScopedBuffer;ManagedBuffer;Mono;MonoAOT;AotInfo;</PackageTags>
         <PackageReadmeFile>PACKAGE.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
@@ -56,25 +52,38 @@
         <None Include="PACKAGE.md" Pack="true" PackagePath="/"/>
         <None Include="..\..\LICENSE" Pack="true" PackagePath="LICENSE.md"/>
     </ItemGroup>
-	
-	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
-		<ProjectReference Include="..\Rxmxnx.PInvoke.Extensions.Il.Patcher\Rxmxnx.PInvoke.Extensions.Il.Patcher.csproj">
-			<PrivateAssets>all</PrivateAssets>
-			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-			<CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
-			<Private>False</Private>
-		</ProjectReference>
-	  </ItemGroup>
-	  
-	<UsingTask TaskName="PatchAssemblyTask" 
-		AssemblyFile="..\Rxmxnx.PInvoke.Extensions.Il.Patcher\bin\Release\net9.0\Rxmxnx.PInvoke.Extensions.Il.Patcher.dll" />
-	  
-	<Target Name="IlPatch" AfterTargets="Build" BeforeTargets="Publish;Pack" Condition="'$(TargetFramework)' == 'net9.0' Or '$(TargetFramework)' == 'net10.0'">
-		<PropertyGroup>
-			<AssemblyOutputPath>$(OutputPath)</AssemblyOutputPath>
-			<AssemblyTargetFramework>$(TargetFramework)</AssemblyTargetFramework>
-		</PropertyGroup>
-		<PatchAssemblyTask OutputPath="$(AssemblyOutputPath)" TargetFramework="$(AssemblyTargetFramework)" StrongNameKeyPath="$(SigningKeyFile)" />
-	</Target>
-	
+
+    <ItemGroup>
+        <ProjectReference Include="..\Rxmxnx.PInvoke.Extensions.IlPatcher\Rxmxnx.PInvoke.Extensions.IlPatcher.csproj">
+            <PrivateAssets>all</PrivateAssets>
+            <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+            <SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
+            <Private>False</Private>
+        </ProjectReference>
+    </ItemGroup>
+
+    <UsingTask TaskName="ValuePointerPatchTask"
+               AssemblyFile="..\Rxmxnx.PInvoke.Extensions.IlPatcher\bin\$(Configuration)\netstandard2.0\Rxmxnx.PInvoke.Extensions.IlPatcher.dll"/>
+    <UsingTask TaskName="ClearAssemblyTask"
+               AssemblyFile="..\Rxmxnx.PInvoke.Extensions.IlPatcher\bin\$(Configuration)\netstandard2.0\Rxmxnx.PInvoke.Extensions.IlPatcher.dll"/>
+
+    <Target Name="AssemblyPatch" AfterTargets="Build" BeforeTargets="Publish;Pack">
+        <PropertyGroup>
+            <AssemblyOutputPath>$(OutputPath)</AssemblyOutputPath>
+            <AssemblyTargetFramework>$(TargetFramework)</AssemblyTargetFramework>
+        </PropertyGroup>
+        <ValuePointerPatchTask 
+            Condition="'$(TargetFramework)' == 'net9.0' Or '$(TargetFramework)' == 'net10.0'" 
+            OutputPath="$(AssemblyOutputPath)"
+            TargetFramework="$(AssemblyTargetFramework)" 
+            StrongNameKeyPath="$(SigningKeyFile)"/>
+    </Target>
+
+    <Target Name="MonoBuild" AfterTargets="Build" BeforeTargets="Publish;Pack" Condition="'$(IsTempPackage)' == 'true' And ('$(TargetFramework)' == 'netstandard2.1' Or '$(TargetFramework)' == 'net45')">
+        <ItemGroup>
+            <NetStandardOutputFiles Include="$(OutputPath.Replace('net45','netstandard2.1'))\*.*"/>
+        </ItemGroup>
+        <Copy SourceFiles="@(NetStandardOutputFiles)" DestinationFolder="$(OutputPath.Replace('netstandard2.1','net45'))" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true"/>
+    </Target>
+
 </Project>

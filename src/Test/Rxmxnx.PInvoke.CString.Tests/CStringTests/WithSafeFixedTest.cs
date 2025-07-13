@@ -35,7 +35,7 @@ public sealed class WithSafeFixedTest
 				if (span.Length != 0)
 					Assert.Equal(fmem.Pointer, new(ptr));
 				else if (fmem.Pointer != IntPtr.Zero)
-					fixed (void* ptrEmpty = CString.GetBytes(CString.Empty))
+					fixed (void* ptrEmpty = CString.Empty)
 						Assert.Equal(fmem.Pointer, new(ptrEmpty));
 			}
 			Assert.True(handle.IsAllocated);
@@ -69,6 +69,7 @@ public sealed class WithSafeFixedTest
 	}
 	private static unsafe IntPtr? GetPointerFromBytes(CString cstr)
 	{
+		if (Object.ReferenceEquals(CString.Empty, cstr)) return default;
 		try
 		{
 			fixed (void* ptr = CString.GetBytes(cstr))

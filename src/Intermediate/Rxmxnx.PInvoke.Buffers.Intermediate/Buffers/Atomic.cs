@@ -7,13 +7,17 @@ namespace Rxmxnx.PInvoke.Buffers;
 /// <remarks>Use this type as the basic unit of binary buffers.</remarks>
 #pragma warning disable CA2252
 [StructLayout(LayoutKind.Sequential)]
-public partial struct Atomic<T> : IManagedBinaryBuffer<Atomic<T>, T>
+public
+#if NET7_0_OR_GREATER && BINARY_SPACES
+	partial
+#endif
+	struct Atomic<T> : IManagedBinaryBuffer<Atomic<T>, T>
 {
 	/// <summary>
 	/// Internal metadata.
 	/// </summary>
 	internal static readonly BufferTypeMetadata<T> TypeMetadata =
-#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
+#if NET7_0_OR_GREATER
 		new BufferTypeMetadata<Atomic<T>, T>(1);
 #else
 		new BufferTypeMetadata<Atomic<T>, T>(1, []);
@@ -24,7 +28,7 @@ public partial struct Atomic<T> : IManagedBinaryBuffer<Atomic<T>, T>
 	/// </summary>
 	private T _val0;
 
-#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
+#if NET7_0_OR_GREATER
 	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => Atomic<T>.TypeMetadata;
 	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [];
 #if !PACKAGE

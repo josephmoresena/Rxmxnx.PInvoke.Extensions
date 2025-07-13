@@ -1,15 +1,7 @@
-namespace Rxmxnx.PInvoke.Extensions.Il.Patcher;
+namespace Rxmxnx.PInvoke.Extensions.IlPatcher;
 
-public partial class PatchAssemblyTask
+public partial class ValuePointerPatchTask
 {
-	/// <summary>
-	/// Package assembly name.
-	/// </summary>
-	public const String AssemblyName = "Rxmxnx.PInvoke.Extensions.dll";
-	/// <summary>
-	/// Package documentation name.
-	/// </summary>
-	public const String AssemblyDocumentationName = "Rxmxnx.PInvoke.Extensions.xml";
 	/// <summary>
 	/// <c>ReadOnlyPtr&lt;&gt;</c> type name.
 	/// </summary>

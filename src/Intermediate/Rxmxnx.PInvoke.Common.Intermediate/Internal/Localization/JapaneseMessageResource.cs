@@ -46,7 +46,6 @@ internal sealed class JapaneseMessageResource : IMessageResource
 	String IMessageResource.InvalidCopyUnmanagedType(String nameofSpan, String nameofValue)
 		=> $"{nameofSpan} に {nameofValue} をコピーするには十分な空きサイズがありません。";
 	String IMessageResource.InvalidLength(String nameofLength) => $"パラメータ {nameofLength} はゼロまたは正の整数である必要があります。";
-	String IMessageResource.InvalidUtf8Region(String nameofRegion) => $"{nameofRegion} は UTF-8 テキストを含んでいません。";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} は非管理型ではありません。";
 	String IMessageResource.NotValueType(Type type) => $"{type} は値型ではありません。";
 	String IMessageResource.NotReferenceType(Type type) => $"{type} は参照型ではありません。";
@@ -58,9 +57,7 @@ internal sealed class JapaneseMessageResource : IMessageResource
 		=> $"{itemType} は参照型ですが、{arrayType} は非管理型です。";
 	String IMessageResource.UnmanagedTypeButContainsReferences(Type itemType, Type arrayType)
 		=> $"{itemType} は非管理型ですが、{arrayType} は参照を含んでいます。";
-#if !PACKAGE || !NET7_0_OR_GREATER
 	String IMessageResource.MissingBufferMetadataException(Type bufferType) => $"{bufferType} バッファーのメタデータを取得できません。";
-#endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"{itemType} の {size} アイテム用のバッファを作成できません。";
 #if !PACKAGE || NETCOREAPP

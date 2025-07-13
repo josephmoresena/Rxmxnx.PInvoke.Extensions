@@ -17,22 +17,28 @@ public sealed class GetHashCodeTest : FixedContextTestsBase
 	internal void Int32Test() => GetHashCodeTest.Test<Int32>();
 	[Fact]
 	internal void Int64Test() => GetHashCodeTest.Test<Int64>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal void Int128Test() => GetHashCodeTest.Test<Int128>();
+#endif
 	[Fact]
 	internal void GuidTest() => GetHashCodeTest.Test<Guid>();
 	[Fact]
 	internal void SingleTest() => GetHashCodeTest.Test<Single>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => GetHashCodeTest.Test<Half>();
+#endif
 	[Fact]
 	internal void DoubleTest() => GetHashCodeTest.Test<Double>();
 	[Fact]
 	internal void DecimalTest() => GetHashCodeTest.Test<Decimal>();
 	[Fact]
 	internal void DateTimeTest() => GetHashCodeTest.Test<DateTime>();
+#if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => GetHashCodeTest.Test<TimeOnly>();
+#endif
 	[Fact]
 	internal void TimeSpanTest() => GetHashCodeTest.Test<TimeSpan>();
 	[Fact]
@@ -41,7 +47,7 @@ public sealed class GetHashCodeTest : FixedContextTestsBase
 	internal void StringTest() => GetHashCodeTest.Test<String>();
 	private static unsafe void Test<T>()
 	{
-		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>(sizeof(Int128) * 3 / sizeof(T)).ToArray();
+		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>(sizeof(Guid) * 3 / sizeof(T)).ToArray();
 		FixedContextTestsBase.WithFixed(values, GetHashCodeTest.Test);
 		FixedContextTestsBase.WithFixed(values, GetHashCodeTest.ReadOnlyTest);
 	}
@@ -77,13 +83,19 @@ public sealed class GetHashCodeTest : FixedContextTestsBase
 				GetHashCodeTest.TransformationTest<T, Char>(ctx, values.Length);
 				GetHashCodeTest.TransformationTest<T, Int32>(ctx, values.Length);
 				GetHashCodeTest.TransformationTest<T, Int64>(ctx, values.Length);
+#if NET7_0_OR_GREATER
 				GetHashCodeTest.TransformationTest<T, Int128>(ctx, values.Length);
+#endif
 				GetHashCodeTest.TransformationTest<T, Single>(ctx, values.Length);
+#if NET5_0_OR_GREATER
 				GetHashCodeTest.TransformationTest<T, Half>(ctx, values.Length);
+#endif
 				GetHashCodeTest.TransformationTest<T, Double>(ctx, values.Length);
 				GetHashCodeTest.TransformationTest<T, Decimal>(ctx, values.Length);
 				GetHashCodeTest.TransformationTest<T, DateTime>(ctx, values.Length);
+#if NET6_0_OR_GREATER
 				GetHashCodeTest.TransformationTest<T, TimeOnly>(ctx, values.Length);
+#endif
 				GetHashCodeTest.TransformationTest<T, TimeSpan>(ctx, values.Length);
 
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<Boolean>>(ctx, values.Length);
@@ -92,13 +104,19 @@ public sealed class GetHashCodeTest : FixedContextTestsBase
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<Char>>(ctx, values.Length);
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<Int32>>(ctx, values.Length);
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<Int64>>(ctx, values.Length);
+#if NET7_0_OR_GREATER
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<Int128>>(ctx, values.Length);
+#endif
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<Single>>(ctx, values.Length);
+#if NET5_0_OR_GREATER
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<Half>>(ctx, values.Length);
+#endif
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<Double>>(ctx, values.Length);
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<Decimal>>(ctx, values.Length);
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<DateTime>>(ctx, values.Length);
+#if NET6_0_OR_GREATER
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<TimeOnly>>(ctx, values.Length);
+#endif
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<TimeSpan>>(ctx, values.Length);
 			}
 			catch (ArgumentException)
@@ -148,13 +166,19 @@ public sealed class GetHashCodeTest : FixedContextTestsBase
 				GetHashCodeTest.TransformationTest<T, Char>(ctx, values.Length);
 				GetHashCodeTest.TransformationTest<T, Int32>(ctx, values.Length);
 				GetHashCodeTest.TransformationTest<T, Int64>(ctx, values.Length);
+#if NET7_0_OR_GREATER
 				GetHashCodeTest.TransformationTest<T, Int128>(ctx, values.Length);
+#endif
 				GetHashCodeTest.TransformationTest<T, Single>(ctx, values.Length);
+#if NET5_0_OR_GREATER
 				GetHashCodeTest.TransformationTest<T, Half>(ctx, values.Length);
+#endif
 				GetHashCodeTest.TransformationTest<T, Double>(ctx, values.Length);
 				GetHashCodeTest.TransformationTest<T, Decimal>(ctx, values.Length);
 				GetHashCodeTest.TransformationTest<T, DateTime>(ctx, values.Length);
+#if NET6_0_OR_GREATER
 				GetHashCodeTest.TransformationTest<T, TimeOnly>(ctx, values.Length);
+#endif
 				GetHashCodeTest.TransformationTest<T, TimeSpan>(ctx, values.Length);
 
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<Boolean>>(ctx, values.Length);
@@ -163,13 +187,19 @@ public sealed class GetHashCodeTest : FixedContextTestsBase
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<Char>>(ctx, values.Length);
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<Int32>>(ctx, values.Length);
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<Int64>>(ctx, values.Length);
+#if NET7_0_OR_GREATER
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<Int128>>(ctx, values.Length);
+#endif
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<Single>>(ctx, values.Length);
+#if NET5_0_OR_GREATER
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<Half>>(ctx, values.Length);
+#endif
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<Double>>(ctx, values.Length);
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<Decimal>>(ctx, values.Length);
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<DateTime>>(ctx, values.Length);
+#if NET6_0_OR_GREATER
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<TimeOnly>>(ctx, values.Length);
+#endif
 				GetHashCodeTest.TransformationTest<T, WrapperStruct<TimeSpan>>(ctx, values.Length);
 			}
 			catch (ArgumentException)

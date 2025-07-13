@@ -18,15 +18,19 @@ namespace Rxmxnx.PInvoke.Buffers;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 #endif
-public partial struct Composite<
-#if NET5_0_OR_GREATER
-	[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
+public
+#if NET7_0_OR_GREATER && BINARY_SPACES
+	partial
 #endif
-	TBufferA,
+	struct Composite<
 #if NET5_0_OR_GREATER
-	[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
+		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
 #endif
-	TBufferB, T> : IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>
+		TBufferA,
+#if NET5_0_OR_GREATER
+		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
+#endif
+		TBufferB, T> : IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>
 	where TBufferA : struct, IManagedBinaryBuffer<TBufferA, T>
 	where TBufferB : struct, IManagedBinaryBuffer<TBufferB, T>
 {
@@ -34,7 +38,7 @@ public partial struct Composite<
 	/// Internal metadata.
 	/// </summary>
 	internal static readonly BufferTypeMetadata<T> TypeMetadata =
-#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
+#if NET7_0_OR_GREATER
 		new BufferTypeMetadata<Composite<TBufferA, TBufferB, T>, T>(
 			BufferManager.MetadataManager<T>.GetCapacity(TBufferA.TypeMetadata, TBufferB.TypeMetadata,
 			                                             out Boolean isBinary), isBinary);
@@ -51,7 +55,7 @@ public partial struct Composite<
 	/// </summary>
 	private TBufferB _buff1;
 
-#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
+#if NET7_0_OR_GREATER
 	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => Composite<TBufferA, TBufferB, T>.TypeMetadata;
 	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [TBufferA.TypeMetadata, TBufferB.TypeMetadata,];
 
@@ -88,7 +92,7 @@ public partial struct Composite<
 		BufferTypeMetadata<T> currentMetadata = Composite<TBufferA, TBufferB, T>.TypeMetadata;
 		if (!currentMetadata.IsBinary) return;
 		foreach (BufferTypeMetadata<T> component in currentMetadata.Components.AsSpan())
-			IManagedBuffer<T>.AppendComponent(component, components);
+			ManagedBuffer<T>.AppendComponent(component, components);
 	}
 #endif
 }

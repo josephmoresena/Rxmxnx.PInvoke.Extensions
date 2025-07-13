@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
+﻿#if NETCOREAPP
+namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
 
 [ExcludeFromCodeCoverage]
 public sealed class LoadNativeLibTest
@@ -19,15 +20,23 @@ public sealed class LoadNativeLibTest
 		LoadNativeLibTest.METHODNAME_WINDOWS :
 		LoadNativeLibTest.METHODNAME_UNIX;
 
+#if NET5_0_OR_GREATER
 	[SkippableTheory]
+#else
+	[Theory]
+#endif
 	[InlineData(true)]
 	[InlineData(false)]
 	[InlineData(true, true)]
 	[InlineData(false, true)]
 	internal void EmptyTest(Boolean unloadEvent, Boolean emptyName = false)
 	{
+#if NET5_0_OR_GREATER
 		Skip.If(MemoryMarshalCompat.TargetFramework.Contains(".NETStandard"),
 		        ".NETStandard does not support NativeLibrary class.");
+#else
+		if (MemoryMarshalCompat.TargetFramework.Contains(".NETStandard")) return;
+#endif
 
 		String prefix = LoadNativeLibTest.fixture.Create<String>();
 		String sufix = LoadNativeLibTest.fixture.Create<String>();
@@ -46,13 +55,21 @@ public sealed class LoadNativeLibTest
 		Assert.Null(result);
 	}
 
+#if NET5_0_OR_GREATER
 	[SkippableTheory]
+#else
+	[Theory]
+#endif
 	[InlineData(true)]
 	[InlineData(false)]
 	internal void NormalTest(Boolean unloadEvent)
 	{
+#if NET5_0_OR_GREATER
 		Skip.If(MemoryMarshalCompat.TargetFramework.Contains(".NETStandard"),
 		        ".NETStandard does not support NativeLibrary class.");
+#else
+		if (MemoryMarshalCompat.TargetFramework.Contains(".NETStandard")) return;
+#endif
 
 		EventHandler? eventHandler = default;
 		IntPtr? result = unloadEvent ?
@@ -70,3 +87,4 @@ public sealed class LoadNativeLibTest
 		}
 	}
 }
+#endif

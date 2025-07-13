@@ -6,7 +6,7 @@ public partial class CStringSequence
 	/// State for temporal functional <see cref="CString"/>.
 	/// </summary>
 	private readonly struct CStringStringState(String value)
-#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
+#if NET7_0_OR_GREATER
 		: IUtf8FunctionState<CStringStringState>
 #endif
 	{
@@ -20,7 +20,7 @@ public partial class CStringSequence
 		/// </summary>
 		public Int32 Utf8Length { get; } = Encoding.UTF8.GetByteCount(value);
 
-#if !PACKAGE && NET6_0 || NET7_0_OR_GREATER
+#if NET7_0_OR_GREATER
 		Boolean IUtf8FunctionState<CStringStringState>.IsNullTerminated => false;
 
 #if NET6_0
@@ -33,7 +33,7 @@ public partial class CStringSequence
 #endif
 		static Int32 IUtf8FunctionState<CStringStringState>.GetLength(in CStringStringState state) => state.Utf8Length;
 #endif
-#if (PACKAGE || !NET6_0) && !NET7_0_OR_GREATER
+#if !NET7_0_OR_GREATER
 		/// <summary>
 		/// Retrieves the span of the UTF-8 text represented by this state.
 		/// </summary>

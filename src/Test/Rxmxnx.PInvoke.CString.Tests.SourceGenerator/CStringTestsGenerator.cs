@@ -1,12 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
-
-namespace Rxmxnx.PInvoke.Tests.SourceGenerator;
+﻿namespace Rxmxnx.PInvoke.Tests.SourceGenerator;
 
 [Generator]
 [ExcludeFromCodeCoverage]

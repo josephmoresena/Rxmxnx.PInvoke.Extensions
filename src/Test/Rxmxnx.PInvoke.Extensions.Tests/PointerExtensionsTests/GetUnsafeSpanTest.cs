@@ -10,16 +10,20 @@ public sealed class GetUnsafeSpanTest
 	internal void ByteTest() => GetUnsafeSpanTest.Test<Byte>();
 	[Fact]
 	internal void CharTest() => GetUnsafeSpanTest.Test<Char>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal void DateTimeTest() => GetUnsafeSpanTest.Test<DateTime>();
+#endif
 	[Fact]
 	internal void DecimalTest() => GetUnsafeSpanTest.Test<Decimal>();
 	[Fact]
 	internal void DoubleTest() => GetUnsafeSpanTest.Test<Double>();
 	[Fact]
 	internal void GuidTest() => GetUnsafeSpanTest.Test<Guid>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => GetUnsafeSpanTest.Test<Half>();
+#endif
 	[Fact]
 	internal void Int16Test() => GetUnsafeSpanTest.Test<Int16>();
 	[Fact]
@@ -99,7 +103,11 @@ public sealed class GetUnsafeSpanTest
 		Span<T> span = handle.GetUnsafeSpan<T>(objMem.Length);
 		ReadOnlySpan<T> readOnlySpan = handle.GetUnsafeReadOnlySpan<T>(objMem.Length);
 
+#if NET6_0_OR_GREATER
 		Assert.True(readOnlySpan.SequenceEqual(span));
+#else
+		Assert.Equal(readOnlySpan.ToArray(), span.ToArray());
+#endif
 		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(span), ref MemoryMarshal.GetReference(arr.AsSpan())));
 
 		for (Int32 i = 0; i < arr.Length; i++)

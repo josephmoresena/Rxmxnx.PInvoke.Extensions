@@ -1,6 +1,9 @@
 ﻿#if !NET5_0_OR_GREATER
 using Enum = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
 #endif
+#if !NET6_0_OR_GREATER
+using ArgumentNullExceptionCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
+#endif
 
 namespace Rxmxnx.PInvoke.Internal;
 
@@ -103,8 +106,11 @@ internal static unsafe class ValidationUtilities
 #endif
 	public static void ThrowIfInvalidSerialization(SerializationInfo info, void* ptr)
 	{
-		if (info == null)
-			throw new ArgumentNullException(nameof(info));
+#if !NET6_0_OR_GREATER
+		ArgumentNullExceptionCompat.ThrowIfNull(info);
+#else
+		ArgumentNullException.ThrowIfNull(info);
+#endif
 		info.AddValue("value", (Int64)ptr);
 	}
 	/// <summary>
@@ -123,8 +129,13 @@ internal static unsafe class ValidationUtilities
 		=> obj switch
 		{
 			null => 1,
+#if !NET5_0_OR_GREATER
 			ValPtr<T> v => ((Int64)ptr).CompareTo((Int64)v.Pointer),
 			ReadOnlyValPtr<T> r => ((Int64)ptr).CompareTo((Int64)r.Pointer),
+#else
+			ValPtr<T> v => ptr.CompareTo(v.Pointer),
+			ReadOnlyValPtr<T> r => ptr.CompareTo(r.Pointer),
+#endif
 			_ => throw new ArgumentException(IMessageResource.GetInstance().InvalidType(nameofPtr)),
 		};
 
@@ -263,7 +274,7 @@ internal static unsafe class ValidationUtilities
 	{
 		if (!type.IsByRefLike) return;
 		IMessageResource resource = IMessageResource.GetInstance();
-		String message = IMessageResource.GetInstance().NotObjectType(type);
+		String message = resource.NotObjectType(type);
 		throw new InvalidOperationException(message);
 	}
 #endif
@@ -325,26 +336,6 @@ internal static unsafe class ValidationUtilities
 			throw new InvalidOperationException(resource.NotStartedEnumerable);
 		if (index >= enumerationSize)
 			throw new InvalidOperationException(resource.FinishedEnumerable);
-	}
-
-	/// <summary>
-	/// Validates if the <paramref name="region"/> is a local UTF-8 string.
-	/// </summary>
-	/// <param name="region">A <see cref="ValueRegion{Byte}"/> instance.</param>
-	/// <param name="nameofRegion">Name of the region parameter.</param>
-	/// <param name="result">Output. Binary information in <paramref name="region"/>.</param>
-	/// <exception cref="InvalidOperationException">
-	/// Thrown if <paramref name="region"/> does not contain UTF-8 text.
-	/// </exception>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void ThrowIfInvalidUtf8Region(ValueRegion<Byte> region, String nameofRegion, out Byte[] result)
-	{
-		result = (Byte[])region!;
-		if (result is null)
-		{
-			String message = IMessageResource.GetInstance().InvalidUtf8Region(nameofRegion);
-			throw new InvalidOperationException(message);
-		}
 	}
 
 	/// <summary>
@@ -449,7 +440,7 @@ internal static unsafe class ValidationUtilities
 	/// <param name="type">CLR type.</param>
 	/// <param name="isUnmanaged">Indicates whether <paramref name="type"/> is unmanaged.</param>
 	/// <exception cref="InvalidOperationException">
-	/// Throws an exception if <paramref name="type"/> is not a unmanaged type.
+	/// Throws an exception if <paramref name="type"/> is not an unmanaged type.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfNotUnmanagedType(Type? type, Boolean isUnmanaged)
@@ -533,7 +524,6 @@ internal static unsafe class ValidationUtilities
 		if (!String.IsNullOrEmpty(message))
 			throw new InvalidOperationException(message);
 	}
-#if !PACKAGE || !NET7_0_OR_GREATER
 	/// <summary>
 	/// Throws an exception if buffer metadata is null.
 	/// </summary>
@@ -550,7 +540,6 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = IMessageResource.GetInstance();
 		throw new InvalidOperationException(resource.MissingBufferMetadataException(bufferType));
 	}
-#endif
 	/// <summary>
 	/// Throws an exception if buffer metadata is null.
 	/// </summary>
@@ -585,41 +574,6 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = IMessageResource.GetInstance();
 		throw new PlatformNotSupportedException(resource.MissingMemoryInspector);
 	}
-
-#if !PACKAGE || NETCOREAPP
-	/// <summary>
-	/// Throws an exception if the current token type is invalid for string type.
-	/// </summary>
-	/// <param name="tokenType">A <see cref="JsonTokenType"/> value.</param>
-	/// <exception cref="JsonException">Throws an exception if the current token type is invalid for string type.</exception>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void ThrowIfNotString(JsonTokenType tokenType)
-	{
-		if (tokenType is JsonTokenType.String or JsonTokenType.Null) return;
-		String expectedTokenTypeName = Enum.GetName(JsonTokenType.String) ??
-			nameof(JsonTokenType) + '.' + nameof(JsonTokenType.String);
-		ValidationUtilities.ThrowIfInvalidToken(tokenType, expectedTokenTypeName);
-	}
-	/// <summary>
-	/// Throws an exception if the current token type is invalid for array type.
-	/// </summary>
-	/// <param name="tokenType">A <see cref="JsonTokenType"/> value.</param>
-	/// <exception cref="JsonException">Throws an exception if the current token type is invalid for array type.</exception>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void ThrowIfNotArray(JsonTokenType tokenType)
-	{
-		if (tokenType is JsonTokenType.StartArray or JsonTokenType.Null) return;
-		String expectedTokenTypeName = Enum.GetName(JsonTokenType.StartArray) ??
-			nameof(JsonTokenType) + '.' + nameof(JsonTokenType.StartArray);
-		ValidationUtilities.ThrowIfInvalidToken(tokenType, expectedTokenTypeName);
-	}
-#endif
 	/// <summary>
 	/// Throws an exception if the current runtime does not support reflection.
 	/// </summary>
@@ -636,7 +590,7 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = IMessageResource.GetInstance();
 		throw new PlatformNotSupportedException(resource.ReflectionDisabled);
 	}
-#if BINARY_SPACES
+#if !PACKAGE || NET7_0_OR_GREATER && BINARY_SPACES
 	/// <summary>
 	/// Throws an exception if buffer is not a space.
 	/// </summary>
@@ -673,6 +627,41 @@ internal static unsafe class ValidationUtilities
 		String tokenTypeName = Enum.GetName(tokenType) ?? $"{tokenType}";
 		String message = resource.InvalidToken(tokenTypeName, expectedToken);
 		throw new JsonException(message);
+	}
+#endif
+
+#if !PACKAGE || NETCOREAPP
+	/// <summary>
+	/// Throws an exception if the current token type is invalid for string type.
+	/// </summary>
+	/// <param name="tokenType">A <see cref="JsonTokenType"/> value.</param>
+	/// <exception cref="JsonException">Throws an exception if the current token type is invalid for string type.</exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNotString(JsonTokenType tokenType)
+	{
+		if (tokenType is JsonTokenType.String or JsonTokenType.Null) return;
+		String expectedTokenTypeName = Enum.GetName(JsonTokenType.String) ??
+			nameof(JsonTokenType) + '.' + nameof(JsonTokenType.String);
+		ValidationUtilities.ThrowIfInvalidToken(tokenType, expectedTokenTypeName);
+	}
+	/// <summary>
+	/// Throws an exception if the current token type is invalid for array type.
+	/// </summary>
+	/// <param name="tokenType">A <see cref="JsonTokenType"/> value.</param>
+	/// <exception cref="JsonException">Throws an exception if the current token type is invalid for array type.</exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNotArray(JsonTokenType tokenType)
+	{
+		if (tokenType is JsonTokenType.StartArray or JsonTokenType.Null) return;
+		String expectedTokenTypeName = Enum.GetName(JsonTokenType.StartArray) ??
+			nameof(JsonTokenType) + '.' + nameof(JsonTokenType.StartArray);
+		ValidationUtilities.ThrowIfInvalidToken(tokenType, expectedTokenTypeName);
 	}
 #endif
 }

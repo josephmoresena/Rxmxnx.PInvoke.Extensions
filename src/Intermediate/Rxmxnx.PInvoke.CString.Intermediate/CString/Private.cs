@@ -51,10 +51,8 @@ public partial class CString
 	private Task GetWriteTask(Stream strm, Int32 startIndex, Int32 count, CancellationToken cancellationToken)
 	{
 		Byte[]? array = (Byte[]?)this._data;
-		if (array is not null)
-			return strm.WriteAsync(array, startIndex, count, cancellationToken);
-		SyncAsyncWriter writer = new(this, strm) { Count = count, StartIndex = startIndex, };
-		return Task.Factory.StartNew(CString.WriteSyncAsync, writer, cancellationToken,
-		                             TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
+		return array is not null ?
+			strm.WriteAsync(array, startIndex, count, cancellationToken) :
+			CString.WriteSyncAsync(new(this, strm) { Count = count, StartIndex = startIndex, });
 	}
 }

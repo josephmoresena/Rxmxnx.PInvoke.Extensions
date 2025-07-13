@@ -103,10 +103,6 @@ internal partial interface IMessageResource
 	/// </summary>
 	String InvalidLength(String nameofLength);
 	/// <summary>
-	/// Message for invalid UTF-8 region exception.
-	/// </summary>
-	String InvalidUtf8Region(String nameofRegion);
-	/// <summary>
 	/// Message for not unmanaged type exception.
 	/// </summary>
 	String NotUnmanagedType(Type type);
@@ -138,12 +134,10 @@ internal partial interface IMessageResource
 	/// Message for missing buffer metadata exception.
 	/// </summary>
 	String MissingBufferMetadataException(Type itemType, UInt16 size);
-#if !PACKAGE || !NET7_0_OR_GREATER
 	/// <summary>
 	/// Message for missing buffer metadata exception.
 	/// </summary>
 	String MissingBufferMetadataException(Type bufferType);
-#endif
 #if !PACKAGE || NETCOREAPP
 	/// <summary>
 	/// Message for invalid string token exception.

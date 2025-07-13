@@ -88,4 +88,10 @@ public sealed class Utf8ConstructorTest
 
 		Assert.Equal(String.Concat(Enumerable.Repeat(strSeq, count)), cstr.ToString());
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

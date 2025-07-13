@@ -59,7 +59,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	{
 		this._lengths = CStringSequence.GetLengthArray(values);
 		this._value = CStringSequence.CreateBuffer(values);
-		this._cache = CStringSequence.CreateCache(this._lengths, out this._nonEmptyCount);
+		this._cache = CStringSequence.CreateCache(this._lengths.AsSpan(), out this._nonEmptyCount);
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from a
@@ -80,7 +80,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 			list[i] = cstr;
 			this._lengths[i] = cstr?.Length;
 		}
-		this._cache = CStringSequence.CreateCache(this._lengths, out this._nonEmptyCount);
+		this._cache = CStringSequence.CreateCache(this._lengths.AsSpan(), out this._nonEmptyCount);
 		this._value = CStringSequence.CreateBuffer(list);
 	}
 	/// <summary>
@@ -143,8 +143,9 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// <returns>A <see cref="CString"/> that represents the current sequence.</returns>
 	public CString ToCString()
 	{
-		this.CalculateSubRange(0, this._lengths.Length, out _, out Int32 bytesLength);
-		Byte[] result = new Byte[bytesLength + 1];
+		Int32 utf8Length = this._value.AsSpan().Length * sizeof(Char) - this._nonEmptyCount;
+		if (utf8Length == 0) return CString.Empty;
+		Byte[] result = new Byte[utf8Length + 1];
 		this.WithSafeTransform(result, CStringSequence.BinaryCopyTo);
 		return result;
 	}
@@ -161,10 +162,10 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	public static CStringSequence Create<TState>(TState state, CStringSequenceCreationAction<TState> action,
 		params Int32?[] lengths)
 #if NET9_0_OR_GREATER
-	where TState : allows ref struct
+		where TState : allows ref struct
 #endif
 	{
-		Int32 length = CStringSequence.GetBufferLength(lengths);
+		Int32 length = CStringSequence.GetBufferLength(lengths.AsSpan());
 		SequenceCreationHelper<TState> helper = new() { State = state, Action = action, Lengths = lengths, };
 		String buffer = String.Create(length, helper, CStringSequence.CreateCStringSequence);
 		return new(buffer, lengths);

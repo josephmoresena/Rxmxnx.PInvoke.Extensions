@@ -1,3 +1,4 @@
+#if NETCOREAPP
 namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
 
 [ExcludeFromCodeCoverage]
@@ -80,3 +81,4 @@ public sealed class SerializationTest
 		public TEnumerable? Values { get; set; }
 	}
 }
+#endif

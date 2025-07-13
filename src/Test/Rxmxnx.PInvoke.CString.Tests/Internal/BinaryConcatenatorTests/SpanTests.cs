@@ -3,15 +3,15 @@
 [ExcludeFromCodeCoverage]
 public sealed class SpanTests
 {
-	private static readonly IFixture fixture = new Fixture();
+	private readonly IFixture _fixture = new Fixture();
 
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
 	internal void SingleSpanTest(Boolean nullSeparator)
 	{
-		Byte[] sourceBytes = Encoding.UTF8.GetBytes(SpanTests.fixture.Create<String>());
-		Byte? separator = !nullSeparator ? SpanTests.fixture.Create<Byte>() : default(Byte?);
+		Byte[] sourceBytes = Encoding.UTF8.GetBytes(this._fixture.Create<String>());
+		Byte? separator = !nullSeparator ? this._fixture.Create<Byte>() : default(Byte?);
 		using BinaryConcatenator helper = separator.HasValue ? new(separator.Value) : new();
 
 		helper.Write(sourceBytes);
@@ -23,9 +23,9 @@ public sealed class SpanTests
 	[InlineData(false)]
 	internal void MultipleSpanTest(Boolean nullSeparator)
 	{
-		Byte[] sourceBytes1 = Encoding.UTF8.GetBytes(SpanTests.fixture.Create<String>());
-		Byte[] sourceBytes2 = Encoding.UTF8.GetBytes(SpanTests.fixture.Create<String>());
-		Byte? separator = !nullSeparator ? SpanTests.fixture.Create<Byte>() : default(Byte?);
+		Byte[] sourceBytes1 = Encoding.UTF8.GetBytes(this._fixture.Create<String>());
+		Byte[] sourceBytes2 = Encoding.UTF8.GetBytes(this._fixture.Create<String>());
+		Byte? separator = !nullSeparator ? this._fixture.Create<Byte>() : default(Byte?);
 		using BinaryConcatenator helper = separator.HasValue ? new(separator.Value) : new();
 
 		helper.Write(sourceBytes1);

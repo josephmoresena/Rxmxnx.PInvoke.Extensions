@@ -1,4 +1,4 @@
-﻿#if !NET6_0_OR_GREATER
+﻿#if !PACKAGE && !NET6_0_OR_GREATER
 using ArgumentNullException = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif
 
@@ -19,14 +19,15 @@ public partial class CString
 	/// </summary>
 	/// <param name="sequence">The <see cref="CStringSequence"/> containing current UTF-8 text.</param>
 	/// <param name="index">Index element of current UTF-8 text into <paramref name="sequence"/>.</param>
-	internal CString(CStringSequence sequence, Int32 index)
+	/// <param name="length">Current UTF-8 text length.</param>
+	internal CString(CStringSequence sequence, Int32 index, Int32 length)
 	{
 		this._isLocal = false;
 		this.IsFunction = true;
-		this._data = ValueRegion<Byte>.Create(new SequenceItemState(sequence, index), SequenceItemState.GetSpan,
+		this._data = ValueRegion<Byte>.Create(new SequenceItemState(sequence, index, length), SequenceItemState.GetSpan,
 		                                      SequenceItemState.Alloc);
 		this._isNullTerminated = true;
-		this.Length = this._data.AsSpan().Length;
+		this.Length = length;
 	}
 
 	/// <summary>
@@ -103,30 +104,6 @@ public partial class CString
 	internal async Task WriteAsync(Stream strm, Int32 startIndex, Int32 count,
 		CancellationToken cancellationToken = default)
 		=> await this.GetWriteTask(strm, startIndex, count, cancellationToken).ConfigureAwait(false);
-
-	/// <summary>
-	/// Creates a non-null-terminated <see cref="CString"/> instance that contains a single
-	/// <paramref name="c"/> character.
-	/// </summary>
-	/// <param name="c">A UTF-8 byte.</param>
-	/// <returns>
-	/// A non-null-terminated <see cref="CString"/> instance that contains a single <paramref name="c"/> character.
-	/// </returns>
-	private static CString Create(Byte c) => new([c,], false);
-	/// <summary>
-	/// Retrieves the internal binary data from a given <see cref="CString"/>.
-	/// </summary>
-	/// <param name="value">A non-reference <see cref="CString"/> instance.</param>
-	/// <returns>A <see cref="Byte"/> array representing the UTF-8 text.</returns>
-	/// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
-	/// <exception cref="InvalidOperationException"><paramref name="value"/> does not contain valid UTF-8 text.</exception>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static Byte[] GetBytes(CString value)
-	{
-		ArgumentNullException.ThrowIfNull(value);
-		ValidationUtilities.ThrowIfInvalidUtf8Region(value._data, nameof(value), out Byte[] result);
-		return result;
-	}
 	/// <summary>
 	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
 	/// </summary>
@@ -146,4 +123,21 @@ public partial class CString
 		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, getSpan);
 		return new(data, true, false, length);
 	}
+#if !PACKAGE
+	/// <summary>
+	/// Retrieves the internal binary data from a given <see cref="CString"/>.
+	/// </summary>
+	/// <param name="value">A non-reference <see cref="CString"/> instance.</param>
+	/// <returns>A <see cref="Byte"/> array representing the UTF-8 text.</returns>
+	/// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
+	/// <exception cref="InvalidOperationException"><paramref name="value"/> does not contain valid UTF-8 text.</exception>
+	[ExcludeFromCodeCoverage]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static Byte[] GetBytes(CString value)
+	{
+		ArgumentNullException.ThrowIfNull(value);
+		if (Object.ReferenceEquals(CString.Empty, value)) return [default,];
+		return (Byte[]?)value._data ?? throw new InvalidOperationException();
+	}
+#endif
 }

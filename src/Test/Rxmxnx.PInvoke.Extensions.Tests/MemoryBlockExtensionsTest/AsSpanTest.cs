@@ -15,7 +15,11 @@ public class AsSpanTest
 
 	[Fact]
 	internal void AsSpanCountTest() => Assert.Equal(31, AsSpanTest.asSpans.Count);
+#if NET5_0_OR_GREATER
+	[SkippableTheory]
+#else
 	[Theory]
+#endif
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -48,7 +52,11 @@ public class AsSpanTest
 	[InlineData(31)]
 	[InlineData(32)]
 	internal void ByteTest(Int32 dimension) => AsSpanTest.GenericTest<Byte>(dimension);
+#if NET5_0_OR_GREATER
+	[SkippableTheory]
+#else
 	[Theory]
+#endif
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -81,11 +89,16 @@ public class AsSpanTest
 	[InlineData(31)]
 	[InlineData(32)]
 	internal void Int32Test(Int32 dimension) => AsSpanTest.GenericTest<Int32>(dimension);
+#if NET5_0_OR_GREATER
+	[SkippableTheory]
+#else
 	[Theory]
+#endif
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
 	[InlineData(5)]
+#if !MULTIPLE_FRAMEWORK || NET6_0_OR_GREATER
 	[InlineData(6)]
 	[InlineData(7)]
 	[InlineData(8)]
@@ -113,12 +126,18 @@ public class AsSpanTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
+#endif
 	internal void StringTest(Int32 dimension) => AsSpanTest.GenericTest<String>(dimension);
+#if NET5_0_OR_GREATER
+	[SkippableTheory]
+#else
 	[Theory]
+#endif
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
 	[InlineData(5)]
+#if !MULTIPLE_FRAMEWORK || NET6_0_OR_GREATER
 	[InlineData(6)]
 	[InlineData(7)]
 	[InlineData(8)]
@@ -146,26 +165,36 @@ public class AsSpanTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
+#endif
 	internal void ObjectTest(Int32 dimension) => AsSpanTest.GenericTest<Object>(dimension);
 
 	private static void GenericTest<T>(Int32 count)
 	{
+#if NET5_0_OR_GREATER
+		Skip.If(IntPtr.Size == sizeof(Int32) && count > 15);
+#else
+		if (IntPtr.Size == sizeof(Int32) && count > 15) return;
+#endif
 		Int32[] lengths = Enumerable.Range(0, count).Select(_ => Random.Shared.Next(1, 3)).ToArray();
 
-		GC.Collect();
-		GC.WaitForFullGCComplete();
+		AsMemoryTest.CollectGarbage();
 
 		Array arr = AsSpanTest.CreateArray<T>(lengths);
 		AsSpanTest.genericArrayTest.MakeGenericMethod(typeof(T), arr.GetType()).Invoke(null, [arr,]);
 
-		GC.Collect();
-		GC.WaitForFullGCComplete();
+		AsMemoryTest.CollectGarbage();
 	}
 	private static void GenericArrayTest<T, TArray>(Array arr) where TArray : class
 	{
 		MethodInfo method = AsSpanTest.asSpans[arr.Rank];
+#if NET5_0_OR_GREATER
 		GetSpanDelegate<T, TArray> func = method.MakeGenericMethod(typeof(T))
 		                                        .CreateDelegate<GetSpanDelegate<T, TArray>>();
+#else
+		GetSpanDelegate<T, TArray> func = (GetSpanDelegate<T, TArray>)method.MakeGenericMethod(typeof(T))
+		                                                                    .CreateDelegate(
+			                                                                    typeof(GetSpanDelegate<T, TArray>));
+#endif
 		Span<T> emptySpan = func(default);
 		Span<T> span = func(arr as TArray);
 		Assert.True(emptySpan.IsEmpty);
@@ -184,11 +213,21 @@ public class AsSpanTest
 	private static Array CreateArray<T>(Int32[] lengths)
 	{
 		Array arr = Array.CreateInstance(typeof(T), lengths);
+#if NET6_0_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetArrayDataReference(arr)),
+#else
+		Span<T> span = MemoryMarshal.CreateSpan(ref MemoryMarshalCompat.GetArrayDataReference<T>(arr),
+#endif
 		                                        arr.Length);
 		T[] data = AsSpanTest.fixture.CreateMany<T>(arr.Length).ToArray();
 		data.CopyTo(span);
 		return arr;
 	}
 	private delegate Span<T> GetSpanDelegate<T, in TArray>(TArray? array);
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }

@@ -20,22 +20,28 @@ public sealed class EnumerableSequenceTests
 	internal Task Int32TestAsync() => EnumerableSequenceTests.TestAsync<Int32>();
 	[Fact]
 	internal Task Int64TestAsync() => EnumerableSequenceTests.TestAsync<Int64>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal Task Int128TestAsync() => EnumerableSequenceTests.TestAsync<Int128>();
+#endif
 	[Fact]
 	internal Task GuidTestAsync() => EnumerableSequenceTests.TestAsync<Guid>();
 	[Fact]
 	internal Task SingleTestAsync() => EnumerableSequenceTests.TestAsync<Single>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal Task HalfTestAsync() => EnumerableSequenceTests.TestAsync<Half>();
+#endif
 	[Fact]
 	internal Task DoubleTestAsync() => EnumerableSequenceTests.TestAsync<Double>();
 	[Fact]
 	internal Task DecimalTestAsync() => EnumerableSequenceTests.TestAsync<Decimal>();
 	[Fact]
 	internal Task DateTimeTestAsync() => EnumerableSequenceTests.TestAsync<DateTime>();
+#if NET6_0_OR_GREATER
 	[Fact]
 	internal Task TimeOnlyTestAsync() => EnumerableSequenceTests.TestAsync<TimeOnly>();
+#endif
 	[Fact]
 	internal Task TimeSpanTestAsync() => EnumerableSequenceTests.TestAsync<TimeSpan>();
 	[Fact]
@@ -54,22 +60,28 @@ public sealed class EnumerableSequenceTests
 	internal Task NullableOInt32TestAsync() => EnumerableSequenceTests.TestAsync<Int32?>();
 	[Fact]
 	internal Task NullableOInt64TestAsync() => EnumerableSequenceTests.TestAsync<Int64?>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal Task NullableOInt128TestAsync() => EnumerableSequenceTests.TestAsync<Int128?>();
+#endif
 	[Fact]
 	internal Task NullableOGuidTestAsync() => EnumerableSequenceTests.TestAsync<Guid?>();
 	[Fact]
 	internal Task NullableOSingleTestAsync() => EnumerableSequenceTests.TestAsync<Single?>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal Task NullableOHalfTestAsync() => EnumerableSequenceTests.TestAsync<Half?>();
+#endif
 	[Fact]
 	internal Task NullableODoubleTestAsync() => EnumerableSequenceTests.TestAsync<Double?>();
 	[Fact]
 	internal Task NullableODecimalTestAsync() => EnumerableSequenceTests.TestAsync<Decimal?>();
 	[Fact]
 	internal Task NullableODateTimeTestAsync() => EnumerableSequenceTests.TestAsync<DateTime?>();
+#if NET6_0_OR_GREATER
 	[Fact]
 	internal Task NullableOTimeOnlyTestAsync() => EnumerableSequenceTests.TestAsync<TimeOnly?>();
+#endif
 	[Fact]
 	internal Task NullableOTimeSpanTestAsync() => EnumerableSequenceTests.TestAsync<TimeSpan?>();
 	[Fact]

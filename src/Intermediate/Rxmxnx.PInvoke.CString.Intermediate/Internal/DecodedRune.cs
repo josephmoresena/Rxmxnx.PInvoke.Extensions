@@ -14,6 +14,9 @@ namespace Rxmxnx.PInvoke.Internal;
 /// </remarks>
 [StructLayout(LayoutKind.Sequential)]
 internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
+#if NETCOREAPP
+	, IEquatable<UInt32>
+#endif
 {
 	/// <summary>
 	/// The raw integer value that was read from the input to form the Rune.
@@ -67,6 +70,10 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 		=> this.CharsConsumed == other.CharsConsumed && this._rawValue == other._rawValue && this.Equals(other._value);
 	/// <inheritdoc/>
 	public Boolean Equals(Rune other) => this._value == other;
+#if NETCOREAPP
+	/// <inheritdoc/>
+	public Boolean Equals(UInt32 other) => this.Equals(new Rune(other));
+#endif
 	/// <inheritdoc/>
 	public override Boolean Equals(Object? obj)
 	{
@@ -74,12 +81,18 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 		{
 			DecodedRune decoded => this.Equals(decoded._value),
 			Rune rune => this.Equals(rune),
+#if NETCOREAPP
+			UInt32 uInt32 => this.Equals(uInt32),
+#endif
 			_ => false,
 		};
 	}
 	/// <inheritdoc/>
 	public override Int32 GetHashCode() => this._value.GetHashCode();
 	/// <inheritdoc/>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public override String ToString() => this._value.ToString();
 
 	/// <summary>

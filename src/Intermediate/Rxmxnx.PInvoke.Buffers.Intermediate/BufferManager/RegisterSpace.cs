@@ -1,4 +1,4 @@
-#if NET6_0_OR_GREATER && BINARY_SPACES
+#if NET7_0_OR_GREATER && BINARY_SPACES
 namespace Rxmxnx.PInvoke;
 
 public static partial class BufferManager

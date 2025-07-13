@@ -1,4 +1,3 @@
-#if !PACKAGE || !NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 
 /// <summary>
@@ -17,7 +16,10 @@ internal static class ArgumentNullExceptionCompat
 	public static void ThrowIfNull<T>([NotNull] T? argument,
 		[CallerArgumentExpression(nameof(argument))] String? paramName = null)
 	{
+#if !PACKAGE || !NET6_0_OR_GREATER
 		if (argument is null) throw new ArgumentNullException(paramName);
+#else
+		ArgumentNullException.ThrowIfNull(argument, paramName);
+#endif
 	}
 }
-#endif

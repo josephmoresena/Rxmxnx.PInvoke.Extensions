@@ -17,22 +17,28 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 	internal void Int32Test() => CreateReadOnlyReferenceTest.Test<Int32>();
 	[Fact]
 	internal void Int64Test() => CreateReadOnlyReferenceTest.Test<Int64>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal void Int128Test() => CreateReadOnlyReferenceTest.Test<Int128>();
+#endif
 	[Fact]
 	internal void GuidTest() => CreateReadOnlyReferenceTest.Test<Guid>();
 	[Fact]
 	internal void SingleTest() => CreateReadOnlyReferenceTest.Test<Single>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => CreateReadOnlyReferenceTest.Test<Half>();
+#endif
 	[Fact]
 	internal void DoubleTest() => CreateReadOnlyReferenceTest.Test<Double>();
 	[Fact]
 	internal void DecimalTest() => CreateReadOnlyReferenceTest.Test<Decimal>();
 	[Fact]
 	internal void DateTimeTest() => CreateReadOnlyReferenceTest.Test<DateTime>();
+#if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => CreateReadOnlyReferenceTest.Test<TimeOnly>();
+#endif
 	[Fact]
 	internal void TimeSpanTest() => CreateReadOnlyReferenceTest.Test<TimeSpan>();
 	private static void Test<T>()
@@ -43,7 +49,7 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 	}
 	private static unsafe void Test<T>(FixedReference<T> fref, IntPtr ptr)
 	{
-		ref T refValue = ref UnsafeLegacy.AsRef(in fref.CreateReadOnlyReference<T>());
+		ref T refValue = ref Unsafe.AsRef(in fref.CreateReadOnlyReference<T>());
 		IntPtr ptr2 = new(Unsafe.AsPointer(ref refValue));
 		Assert.Equal(ptr2, ptr);
 		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef<T>(ptr.ToPointer()), ref refValue));
@@ -61,14 +67,20 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 			CreateReadOnlyReferenceTest.TestSize<T, Char>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, Int32>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, Int64>(fref);
+#if NET7_0_OR_GREATER
 			CreateReadOnlyReferenceTest.TestSize<T, Int128>(fref);
+#endif
 			CreateReadOnlyReferenceTest.TestSize<T, Guid>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, Single>(fref);
+#if NET5_0_OR_GREATER
 			CreateReadOnlyReferenceTest.TestSize<T, Half>(fref);
+#endif
 			CreateReadOnlyReferenceTest.TestSize<T, Double>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, Decimal>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, DateTime>(fref);
+#if NET6_0_OR_GREATER
 			CreateReadOnlyReferenceTest.TestSize<T, TimeOnly>(fref);
+#endif
 			CreateReadOnlyReferenceTest.TestSize<T, TimeSpan>(fref);
 
 			if (sizeof(T) < sizeof(ManagedStruct))
@@ -78,10 +90,10 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 			}
 			else
 			{
-				Assert.Throws<InvalidOperationException>(
-					() => CreateReadOnlyReferenceTest.TestSize<T, ManagedStruct>(fref));
-				Assert.Throws<InvalidOperationException>(
-					() => CreateReadOnlyReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref));
+				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, ManagedStruct>(
+					                                         fref));
+				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest
+					                                         .TestSize<T, WrapperStruct<ManagedStruct>>(fref));
 			}
 
 			if (sizeof(T) < IntPtr.Size)
@@ -100,8 +112,8 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 			if (sizeof(T) < sizeof(WrapperStruct<ManagedStruct>))
 				CreateReadOnlyReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref);
 			else
-				Assert.Throws<InvalidOperationException>(
-					() => CreateReadOnlyReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref));
+				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest
+					                                         .TestSize<T, WrapperStruct<ManagedStruct>>(fref));
 
 			if (typeof(T).IsValueType)
 			{
@@ -112,8 +124,8 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 			}
 			else
 			{
-				Assert.Throws<InvalidOperationException>(
-					() => CreateReadOnlyReferenceTest.TestSize<T, WrapperStruct<String>>(fref));
+				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest
+					                                         .TestSize<T, WrapperStruct<String>>(fref));
 
 				CreateReadOnlyReferenceTest.TestSize<T, String>(fref);
 				CreateReadOnlyReferenceTest.TestSize<T, Object>(fref);
@@ -128,7 +140,7 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 	}
 	private static unsafe void ReadOnlyTest<T>(ReadOnlyFixedReference<T> fref, IntPtr ptr)
 	{
-		ref T refValue = ref UnsafeLegacy.AsRef(in fref.CreateReadOnlyReference<T>());
+		ref T refValue = ref Unsafe.AsRef(in fref.CreateReadOnlyReference<T>());
 		IntPtr ptr2 = new(Unsafe.AsPointer(ref refValue));
 		Assert.Equal(ptr2, ptr);
 		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef<T>(ptr.ToPointer()), ref refValue));
@@ -146,27 +158,33 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 			CreateReadOnlyReferenceTest.TestSize<T, Char>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, Int32>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, Int64>(fref);
+#if NET7_0_OR_GREATER
 			CreateReadOnlyReferenceTest.TestSize<T, Int128>(fref);
+#endif
 			CreateReadOnlyReferenceTest.TestSize<T, Guid>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, Single>(fref);
+#if NET5_0_OR_GREATER
 			CreateReadOnlyReferenceTest.TestSize<T, Half>(fref);
+#endif
 			CreateReadOnlyReferenceTest.TestSize<T, Double>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, Decimal>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, DateTime>(fref);
+#if NET6_0_OR_GREATER
 			CreateReadOnlyReferenceTest.TestSize<T, TimeOnly>(fref);
+#endif
 			CreateReadOnlyReferenceTest.TestSize<T, TimeSpan>(fref);
 
 			if (sizeof(T) < sizeof(ManagedStruct))
 				CreateReadOnlyReferenceTest.TestSize<T, ManagedStruct>(fref);
 			else
-				Assert.Throws<InvalidOperationException>(
-					() => CreateReadOnlyReferenceTest.TestSize<T, ManagedStruct>(fref));
+				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, ManagedStruct>(
+					                                         fref));
 
 			if (sizeof(T) < sizeof(WrapperStruct<ManagedStruct>))
 				CreateReadOnlyReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref);
 			else
-				Assert.Throws<InvalidOperationException>(
-					() => CreateReadOnlyReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref));
+				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest
+					                                         .TestSize<T, WrapperStruct<ManagedStruct>>(fref));
 
 			if (sizeof(T) < IntPtr.Size)
 			{
@@ -184,8 +202,8 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 			if (sizeof(T) < sizeof(WrapperStruct<ManagedStruct>))
 				CreateReadOnlyReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref);
 			else
-				Assert.Throws<InvalidOperationException>(
-					() => CreateReadOnlyReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref));
+				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest
+					                                         .TestSize<T, WrapperStruct<ManagedStruct>>(fref));
 
 			if (typeof(T).IsValueType)
 			{
@@ -196,8 +214,8 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 			}
 			else
 			{
-				Assert.Throws<InvalidOperationException>(
-					() => CreateReadOnlyReferenceTest.TestSize<T, WrapperStruct<String>>(fref));
+				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest
+					                                         .TestSize<T, WrapperStruct<String>>(fref));
 
 				CreateReadOnlyReferenceTest.TestSize<T, String>(fref);
 				CreateReadOnlyReferenceTest.TestSize<T, Object>(fref);
@@ -223,8 +241,8 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 		}
 		else
 		{
-			ref T value = ref UnsafeLegacy.AsRef(in fref.CreateReadOnlyReference<T>());
-			ref T2 value2 = ref UnsafeLegacy.AsRef(in fref.CreateReadOnlyReference<T2>());
+			ref T value = ref Unsafe.AsRef(in fref.CreateReadOnlyReference<T>());
+			ref T2 value2 = ref Unsafe.AsRef(in fref.CreateReadOnlyReference<T2>());
 			Byte[] bytes1 = new ReadOnlySpan<Byte>(Unsafe.AsPointer(ref value), size).ToArray();
 			Byte[] bytes2 = new ReadOnlySpan<Byte>(Unsafe.AsPointer(ref value), size2).ToArray();
 
@@ -250,8 +268,8 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 		}
 		else
 		{
-			ref T value = ref UnsafeLegacy.AsRef(in fref.CreateReadOnlyReference<T>());
-			ref T2 value2 = ref UnsafeLegacy.AsRef(in fref.CreateReadOnlyReference<T2>());
+			ref T value = ref Unsafe.AsRef(in fref.CreateReadOnlyReference<T>());
+			ref T2 value2 = ref Unsafe.AsRef(in fref.CreateReadOnlyReference<T2>());
 			Byte[] bytes1 = new ReadOnlySpan<Byte>(Unsafe.AsPointer(ref value), size).ToArray();
 			Byte[] bytes2 = new ReadOnlySpan<Byte>(Unsafe.AsPointer(ref value), size2).ToArray();
 

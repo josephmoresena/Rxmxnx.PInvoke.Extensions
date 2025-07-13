@@ -50,8 +50,6 @@ internal sealed class RussianMessageResource : IMessageResource
 		=> $"Недостаточно доступного места в {nameofSpan} для копирования {nameofValue}.";
 	String IMessageResource.InvalidLength(String nameofLength)
 		=> $"Параметр {nameofLength} должен быть равен нулю или положительному целому числу.";
-	String IMessageResource.InvalidUtf8Region(String nameofRegion)
-		=> $"{nameofRegion} не содержит текста в формате UTF-8.";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} не является неуправляемым типом.";
 	String IMessageResource.NotValueType(Type type) => $"{type} не является значимым типом.";
 	String IMessageResource.NotReferenceType(Type type) => $"{type} не является ссылочным типом.";
@@ -63,10 +61,8 @@ internal sealed class RussianMessageResource : IMessageResource
 		=> $"{itemType} является ссылочным типом, но {arrayType} является неуправляемым типом.";
 	String IMessageResource.UnmanagedTypeButContainsReferences(Type itemType, Type arrayType)
 		=> $"{itemType} является неуправляемым типом, но {arrayType} содержит ссылки.";
-#if !PACKAGE || !NET7_0_OR_GREATER
 	String IMessageResource.MissingBufferMetadataException(Type bufferType)
 		=> $"Не удалось получить метаданные для буфера {bufferType}.";
-#endif
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Невозможно создать буфер для {itemType} с {size} элементами.";
 #if !PACKAGE || NETCOREAPP

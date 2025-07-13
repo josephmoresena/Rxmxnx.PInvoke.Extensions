@@ -18,22 +18,28 @@ public sealed class ReferenceableWrapperTests
 	internal Task Int32TestAsync() => ReferenceableWrapperTests.TestAsync<Int32>();
 	[Fact]
 	internal Task Int64TestAsync() => ReferenceableWrapperTests.TestAsync<Int64>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal Task Int128TestAsync() => ReferenceableWrapperTests.TestAsync<Int128>();
+#endif
 	[Fact]
 	internal Task GuidTestAsync() => ReferenceableWrapperTests.TestAsync<Guid>();
 	[Fact]
 	internal Task SingleTestAsync() => ReferenceableWrapperTests.TestAsync<Single>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal Task HalfTestAsync() => ReferenceableWrapperTests.TestAsync<Half>();
+#endif
 	[Fact]
 	internal Task DoubleTestAsync() => ReferenceableWrapperTests.TestAsync<Double>();
 	[Fact]
 	internal Task DecimalTestAsync() => ReferenceableWrapperTests.TestAsync<Decimal>();
 	[Fact]
 	internal Task DateTimeTestAsync() => ReferenceableWrapperTests.TestAsync<DateTime>();
+#if NET6_0_OR_GREATER
 	[Fact]
 	internal Task TimeOnlyTestAsync() => ReferenceableWrapperTests.TestAsync<TimeOnly>();
+#endif
 	[Fact]
 	internal Task TimeSpanTestAsync() => ReferenceableWrapperTests.TestAsync<TimeSpan>();
 
@@ -54,17 +60,22 @@ public sealed class ReferenceableWrapperTests
 		IReferenceableWrapper<T> result2 = IReferenceableWrapper.Create(value);
 		ReferenceableWrapper<T> result3 = new(result);
 		ref readonly T refValue = ref result.Reference;
-		ref T mutableValueRef = ref UnsafeLegacy.AsRef(in result.Reference);
+		ref T mutableValueRef = ref Unsafe.AsRef(in result.Reference);
 		Assert.NotNull(result);
 		Assert.Equal(value, result.Value);
 		Assert.Equal(value, refValue);
 		Assert.True(result.Equals(value));
 		Assert.Equal(Object.Equals(value, value2), result.Equals(value2));
+#if NET8_0_OR_GREATER
 		Assert.True(Unsafe.AreSame(in result.Reference, ref mutableValueRef));
 		Assert.False(Unsafe.AreSame(in result.Reference, ref value));
+#else
+		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref mutableValueRef));
+		Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref value));
+#endif
 		Assert.False(result.Equals(result2));
 		Assert.True(result.Equals(result3));
-		Assert.False(result.Equals(default(IReferenceable<T>)));
+		Assert.False(result.Equals(default(IReferenceable<T>)!));
 	}
 	private static void Nullable<T>(Boolean nullInput) where T : unmanaged
 	{
@@ -76,16 +87,21 @@ public sealed class ReferenceableWrapperTests
 		IReferenceableWrapper<T?> result2 = IReferenceableWrapper.CreateNullable(value);
 		ReferenceableWrapper<T?> result3 = new(result);
 		ref readonly T? refValue = ref result.Reference;
-		ref T? mutableValueRef = ref UnsafeLegacy.AsRef(in result.Reference);
+		ref T? mutableValueRef = ref Unsafe.AsRef(in result.Reference);
 		Assert.NotNull(result);
 		Assert.Equal(value, refValue);
 		Assert.Equal(value, result.Value);
 		Assert.Equal(Object.Equals(value, value2), result.Equals(value2));
+#if NET8_0_OR_GREATER
 		Assert.True(Unsafe.AreSame(in result.Reference, ref mutableValueRef));
 		Assert.False(Unsafe.AreSame(in result.Reference, ref value));
+#else
+		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref mutableValueRef));
+		Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref value));
+#endif
 		Assert.False(result.Equals(result2));
 		Assert.True(result.Equals(result3));
-		Assert.False(result.Equals(default(IReferenceable<T?>)));
+		Assert.False(result.Equals(default(IReferenceable<T>)));
 	}
 	private static void ObjectTest<T>() where T : unmanaged
 	{
@@ -95,14 +111,19 @@ public sealed class ReferenceableWrapperTests
 		IReferenceableWrapper<T[]> result2 = IReferenceableWrapper.CreateObject(array);
 		ReferenceableWrapper<T[]> result3 = new(result);
 		ref readonly T[] refValue = ref result.Reference;
-		ref T[] mutableValueRef = ref UnsafeLegacy.AsRef(in result.Reference);
+		ref T[] mutableValueRef = ref Unsafe.AsRef(in result.Reference);
 		Assert.NotNull(result);
 		Assert.Equal(array, result.Value);
 		Assert.Equal(array, refValue);
 		Assert.True(result.Equals(array));
 		Assert.Equal(Object.Equals(array, array2), result.Equals(array2));
+#if NET8_0_OR_GREATER
 		Assert.True(Unsafe.AreSame(in result.Reference, ref mutableValueRef));
 		Assert.False(Unsafe.AreSame(in result.Reference, ref array));
+#else
+		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref mutableValueRef));
+		Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref array));
+#endif
 		Assert.False(result.Equals(result2));
 		Assert.True(result.Equals(result3));
 		Assert.False(result.Equals(default(IReferenceable<T>)));

@@ -17,7 +17,7 @@ public interface IEnumerableSequence
 	/// </summary>
 	private protected void DoNotImplement();
 
-#if NETCOREAPP || !PACKAGE
+#if !PACKAGE || NETCOREAPP
 	/// <summary>
 	/// Creates an enumerator that iterates through <paramref name="instance"/> instance.
 	/// </summary>
@@ -60,7 +60,7 @@ public interface IEnumerableSequence<out T> : IEnumerableSequence, IEnumerable<T
 {
 	void IEnumerableSequence.DoNotImplement() { }
 	IEnumerator<T> IEnumerable<T>.GetEnumerator()
-#if NETCOREAPP || !PACKAGE
+#if !PACKAGE || NETCOREAPP
 		=> IEnumerableSequence.CreateEnumerator(this, i => i.DisposeEnumeration());
 #else
 		=> IEnumerableSequence.CreateEnumerator(this);
@@ -69,7 +69,7 @@ public interface IEnumerableSequence<out T> : IEnumerableSequence, IEnumerable<T
 	[ExcludeFromCodeCoverage]
 #endif
 	IEnumerator IEnumerable.GetEnumerator()
-#if NETCOREAPP || !PACKAGE
+#if !PACKAGE || NETCOREAPP
 		=> IEnumerableSequence.CreateEnumerator(this, i => i.DisposeEnumeration());
 #else
 		=> IEnumerableSequence.CreateEnumerator(this);
@@ -86,7 +86,7 @@ public interface IEnumerableSequence<out T> : IEnumerableSequence, IEnumerable<T
 	/// <returns>The total number of elements in the sequence.</returns>
 	Int32 GetSize();
 
-#if NETCOREAPP || !PACKAGE
+#if !PACKAGE || NETCOREAPP
 	/// <summary>
 	/// Method to call when <see cref="IEnumerator{T}"/> is disposing.
 	/// </summary>

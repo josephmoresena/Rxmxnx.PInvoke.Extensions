@@ -1,24 +1,17 @@
 #if !PACKAGE || !NET6_0_OR_GREATER
-
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 
 internal static partial class MemoryMarshalCompat
 {
 	/// <summary>
-	/// Delegate for .NET 5.0+ of GetArrayDataReference method.
-	/// </summary>
-	private delegate ref Byte GetArrayDataReferenceDelegate(Array array);
-
-	/// <summary>
 	/// Minimal representation of CoreCLR runtime MethodTable struct.
 	/// </summary>
 	[StructLayout(LayoutKind.Explicit)]
-	private struct MMethodTable
+	private struct MethodTableImpl
 	{
 		[FieldOffset(4)]
 		public UInt32 BaseSize;
 	}
-
 #pragma warning disable CS0649
 	/// <summary>
 	/// CoreCLR Object data representation.

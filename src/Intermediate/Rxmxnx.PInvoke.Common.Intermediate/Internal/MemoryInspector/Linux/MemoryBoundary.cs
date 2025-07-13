@@ -70,7 +70,12 @@ internal partial class MemoryInspector
 #endif
 
 			/// <inheritdoc/>
-			public Int32 CompareTo(MemoryBoundary other) => ((UInt64)this.Value).CompareTo((UInt64)other.Value);
+			public Int32 CompareTo(MemoryBoundary other)
+#if !NET5_0_OR_GREATER
+				=> ((UInt64)this.Value).CompareTo((UInt64)other.Value);
+#else
+				=> this.Value.CompareTo(other.Value);
+#endif
 			/// <inheritdoc/>
 			public Boolean Equals(MemoryBoundary other) => this.Value == other.Value;
 			/// <inheritdoc/>

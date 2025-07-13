@@ -1,0 +1,17 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <PropertyGroup>
+        <RootNamespace>Rxmxnx.PInvoke</RootNamespace>
+        <IsPackable>false</IsPackable>
+        <Deterministic>true</Deterministic>
+        <IsTrimmable Condition="$(DefineConstants.Contains('NET6_0_OR_GREATER'))">true</IsTrimmable>
+        <EnableTrimAnalyzer Condition="$(DefineConstants.Contains('NET6_0_OR_GREATER'))">true</EnableTrimAnalyzer>
+        <DocumentationFile>./$(AssemblyName).xml</DocumentationFile>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <ExcludeXmlAssemblyFiles>false</ExcludeXmlAssemblyFiles>
+        <DefineConstants Condition="'$(ENABLE_BINARY_SPACES)' == 'true'">$(DefineConstants);BINARY_SPACES</DefineConstants>
+    </PropertyGroup>
+
+    <Import Project="..\Library.targets"/>
+
+</Project>

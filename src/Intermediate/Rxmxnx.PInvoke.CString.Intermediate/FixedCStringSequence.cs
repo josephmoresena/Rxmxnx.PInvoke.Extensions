@@ -21,10 +21,6 @@ public readonly unsafe ref struct FixedCStringSequence
 	/// Indicates whether the current instance remains valid.
 	/// </summary>
 	private readonly IMutableWrapper<Boolean>? _isValid;
-	/// <summary>
-	/// Handle for <see cref="CString.Empty"/>.
-	/// </summary>
-	private readonly IMutableWrapper<GCHandle>? _emptyHandle;
 
 	/// <summary>
 	/// Gets the list of <see cref="CString"/> values in the sequence.
@@ -59,7 +55,6 @@ public readonly unsafe ref struct FixedCStringSequence
 		this._values = values;
 		this._value = value;
 		this._isValid = IMutableWrapper.Create(true);
-		this._emptyHandle = IMutableWrapper.Create<GCHandle>();
 	}
 
 	/// <summary>
@@ -106,8 +101,6 @@ public readonly unsafe ref struct FixedCStringSequence
 	{
 		if (this._isValid is not null)
 			this._isValid.Value = false;
-		if (this.IsEmptyAllocated())
-			this._emptyHandle!.Value.Free();
 	}
 
 	/// <summary>
@@ -119,24 +112,7 @@ public readonly unsafe ref struct FixedCStringSequence
 	{
 		CString cstr = this._values![index];
 		ReadOnlySpan<Byte> span = cstr;
-
-		if (!cstr.IsReference)
-		{
-			if (!this.IsEmptyAllocated())
-				this._emptyHandle!.Value = GCHandle.Alloc(CString.GetBytes(CString.Empty));
-			span = (Byte[])this._emptyHandle!.Value.Target!;
-		}
-
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 			return new(ptr, cstr.Length, this._isValid!);
 	}
-	/// <summary>
-	/// Indicates whether a <see cref="CString.Empty"/> instance is allocated in memory.
-	/// </summary>
-	/// <returns>
-	/// <see langword="true"/> if a <see cref="CString.Empty"/> instance is allocated in memory;
-	/// otherwise, <see langword="false"/>.
-	/// </returns>
-	private Boolean IsEmptyAllocated()
-		=> this._emptyHandle is not null && (IntPtr)this._emptyHandle.Value != IntPtr.Zero;
 }

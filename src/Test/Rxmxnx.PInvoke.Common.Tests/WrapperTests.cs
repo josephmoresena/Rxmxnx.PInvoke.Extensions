@@ -18,22 +18,28 @@ public sealed class WrapperTests
 	internal Task Int32TestAsync() => WrapperTests.TestAsync<Int32>();
 	[Fact]
 	internal Task Int64TestAsync() => WrapperTests.TestAsync<Int64>();
+#if NET7_0_OR_GREATER
 	[Fact]
 	internal Task Int128TestAsync() => WrapperTests.TestAsync<Int128>();
+#endif
 	[Fact]
 	internal Task GuidTestAsync() => WrapperTests.TestAsync<Guid>();
 	[Fact]
 	internal Task SingleTestAsync() => WrapperTests.TestAsync<Single>();
+#if NET5_0_OR_GREATER
 	[Fact]
 	internal Task HalfTestAsync() => WrapperTests.TestAsync<Half>();
+#endif
 	[Fact]
 	internal Task DoubleTestAsync() => WrapperTests.TestAsync<Double>();
 	[Fact]
 	internal Task DecimalTestAsync() => WrapperTests.TestAsync<Decimal>();
 	[Fact]
 	internal Task DateTimeTestAsync() => WrapperTests.TestAsync<DateTime>();
+#if NET6_0_OR_GREATER
 	[Fact]
 	internal Task TimeOnlyTestAsync() => WrapperTests.TestAsync<TimeOnly>();
+#endif
 	[Fact]
 	internal Task TimeSpanTestAsync() => WrapperTests.TestAsync<TimeSpan>();
 

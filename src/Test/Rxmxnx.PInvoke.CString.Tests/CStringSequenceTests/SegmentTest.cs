@@ -65,4 +65,10 @@ public sealed class SegmentTest
 		CStringSequence seq = new(values);
 		return seq;
 	}
+#if !NET6_0_OR_GREATER
+	private static class Random
+	{
+		public static readonly System.Random Shared = new();
+	}
+#endif
 }
