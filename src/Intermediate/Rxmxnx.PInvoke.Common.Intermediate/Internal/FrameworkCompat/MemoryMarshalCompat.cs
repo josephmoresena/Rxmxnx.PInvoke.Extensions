@@ -8,7 +8,7 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 internal static unsafe
-#if !PACKAGE || !NET6_0_OR_GREATER
+#if NETCOREAPP && (!PACKAGE || !NET6_0_OR_GREATER)
 	partial
 #endif
 	class MemoryMarshalCompat
@@ -79,34 +79,6 @@ internal static unsafe
 		return MemoryMarshal.CreateReadOnlySpan(ref ref0, length);
 #else
 		return MemoryMarshal.CreateReadOnlySpanFromNullTerminated(value);
-#endif
-	}
-	/// <summary>
-	/// Returns a reference to the 0th element of <paramref name="array"/>.
-	/// If the array is empty, returns a reference to where the 0th element would have been stored.
-	/// </summary>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
-	/// <returns>Managed reference to <paramref name="array"/> data.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static ref T GetArrayDataReference<T>(Array array)
-	{
-#if !PACKAGE || !NET6_0_OR_GREATER
-		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
-			return ref Unsafe.As<Byte, T>(ref ArrayReferenceHelper.Instance.GetArrayDataReference(array));
-
-		// Arrays of unmanaged items can be pinned.
-		GCHandle handle = GCHandle.Alloc(array, GCHandleType.Pinned);
-		try
-		{
-			return ref Unsafe.As<Byte, T>(
-				ref MemoryMarshalCompat.GetArrayDataReference(handle.AddrOfPinnedObject().ToPointer(), array));
-		}
-		finally
-		{
-			handle.Free();
-		}
-#else
-		return ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetArrayDataReference(array));
 #endif
 	}
 	/// <summary>

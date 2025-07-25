@@ -135,6 +135,8 @@ public static partial class BufferManager
 		[UnconditionalSuppressMessage("AOT", "IL2060")]
 		[UnconditionalSuppressMessage("AOT", "IL2077")]
 		[UnconditionalSuppressMessage("AOT", "IL3050")]
+		[UnconditionalSuppressMessage("Trimming", "IL2055")]
+		[UnconditionalSuppressMessage("Trimming", "IL2055")]
 #endif
 		public static BufferTypeMetadata<T>? ComposeWithReflection(
 #if NET5_0_OR_GREATER

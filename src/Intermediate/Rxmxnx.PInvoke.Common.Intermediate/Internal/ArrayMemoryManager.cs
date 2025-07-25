@@ -92,8 +92,7 @@ internal sealed partial class ArrayMemoryManager<T> : MemoryManager<T>
 #if NET6_0_OR_GREATER
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #else
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??
-			MemoryMarshalCompat.GetArrayDataReference<T>;
+		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2]!;
 		ref T managedRef = ref getArrayDataReference(array);
 #endif
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);

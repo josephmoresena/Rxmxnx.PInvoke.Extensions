@@ -18,6 +18,9 @@ internal static class ManagedBinaryBuffer<T>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+#if NET5_0_OR_GREATER
+	[UnconditionalSuppressMessage("Trimming", "IL2067")]
+#endif
 	public static BufferTypeMetadata<T>? GetMetadata(
 #if NET5_0_OR_GREATER
 		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]

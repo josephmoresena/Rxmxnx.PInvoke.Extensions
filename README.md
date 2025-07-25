@@ -171,8 +171,8 @@ target frameworks, along with the type of support provided for each one.
 
 </details>
 
-1. Retrieving references to multidimensional array data, AOT detection, and managed buffers handling should be performed
-   via reflection.
+1. AOT detection should be performed via reflection. Retrieving references to multidimensional array data should be done
+   using static delegates, and managed buffer registration should be handled through buffer allocation.
 2. Uses CoreCLR implementations from .NET 6.0. Simpler alternatives may be substituted in .NET Standard 2.1.
 3. Internally relies on `Enum.GetName(Type, Object)`.
 4. Value-type pointers support `ref struct` generics, but due to C# compiler restrictions, some methods must be
@@ -180,19 +180,14 @@ target frameworks, along with the type of support provided for each one.
 
 ### AOT Support
 
-This package is AOT-friendly, and almost all of its features support both Mono AOT and Native AOT, including full AOT
-and the obsolete reflection-free mode.
+This package is AOT-friendly, all of its features support both Mono AOT and Native AOT, including full AOT and the
+obsolete reflection-free mode.
 
 The only features that require reflection are:
 
-* Retrieving references from multidimensional arrays when targeting .NET 5.0 or earlier.
 * Native AOT detection when targeting .NET 5.0 or earlier.
-* Handling managed buffers when targeting .NET 6.0 or earlier.
 
 Starting with .NET 7.0, the use of reflection can be completely avoided.
-
-**Note:** Retrieving references from multidimensional arrays of `unmanaged` elements does **not** rely on reflection,
-even when targeting .NET 5.0 or earlier.
 
 ---
 

@@ -21,6 +21,9 @@ public static partial class BufferManager
 	/// <typeparam name="T">The type of items in the buffer</typeparam>
 	/// <param name="bufferType">Type of buffer.</param>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+#if NET5_0_OR_GREATER
+	[UnconditionalSuppressMessage("Trimming", "IL2070")]
+#endif
 	private static BufferTypeMetadata<T> GetMetadata<T>(
 #if NET5_0_OR_GREATER
 		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]

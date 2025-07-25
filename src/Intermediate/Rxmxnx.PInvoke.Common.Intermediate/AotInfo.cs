@@ -55,6 +55,9 @@ public static class AotInfo
 	/// <returns>
 	/// <see langword="true"/> if Jit is enabled; otherwise, <see langword="false"/>.
 	/// </returns>
+#if NET5_0_OR_GREATER
+	[UnconditionalSuppressMessage("Trimming", "IL2070")]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Boolean IsJitEnabled()
 	{
@@ -100,6 +103,10 @@ public static class AotInfo
 	/// otherwise, <see langword="null"/>.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if NET5_0_OR_GREATER
+	[UnconditionalSuppressMessage("AOT", "IL3050")]
+	[UnconditionalSuppressMessage("Trimming", "IL2070")]
+#endif
 	private static Boolean? IsJitEnabled(Type typeJitInfo)
 	{
 		const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
@@ -142,6 +149,9 @@ public static class AotInfo
 	/// <see langword="false"/>.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if NET5_0_OR_GREATER
+	[UnconditionalSuppressMessage("AOT", "IL3050")]
+#endif
 	private static Boolean IsEmitSupported()
 	{
 		Type? type = AssemblyBuilder
