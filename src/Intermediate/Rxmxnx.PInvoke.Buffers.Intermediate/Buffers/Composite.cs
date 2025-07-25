@@ -13,7 +13,6 @@ namespace Rxmxnx.PInvoke.Buffers;
 /// If the current type has a capacity that is a power of two, <typeparamref name="TBufferA"/> and
 /// <typeparamref name="TBufferB"/> must be the same.
 /// </remarks>
-#pragma warning disable CA2252
 [StructLayout(LayoutKind.Sequential)]
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
@@ -96,4 +95,3 @@ public
 	}
 #endif
 }
-#pragma warning restore CA2252

@@ -58,9 +58,7 @@ public interface IManagedBuffer<T>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Browsable(false)]
 	public static BufferTypeMetadata<T> GetMetadata<TBuffer>() where TBuffer : struct, IManagedBuffer<T>
-#pragma warning disable CA2252
 		=> TBuffer.TypeMetadata;
-#pragma warning restore CA2252
 #else
 	/// <summary>
 	/// Retrieves the <see cref="BufferTypeMetadata{T}"/> instance.

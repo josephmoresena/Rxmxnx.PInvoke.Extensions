@@ -14,7 +14,6 @@ namespace Rxmxnx.PInvoke.Buffers;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-#pragma warning disable CA2252
 public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray : struct
 {
 	/// <summary>
@@ -63,4 +62,3 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 #endif
 	}
 }
-#pragma warning disable CA2252

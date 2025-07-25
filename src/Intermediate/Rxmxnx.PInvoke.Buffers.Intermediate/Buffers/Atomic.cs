@@ -5,7 +5,6 @@ namespace Rxmxnx.PInvoke.Buffers;
 /// </summary>
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
 /// <remarks>Use this type as the basic unit of binary buffers.</remarks>
-#pragma warning disable CA2252
 [StructLayout(LayoutKind.Sequential)]
 public
 #if NET7_0_OR_GREATER && BINARY_SPACES
@@ -43,4 +42,3 @@ public
 	BufferTypeMetadata<T> IManagedBuffer<T>.GetStaticTypeMetadata() => Atomic<T>.TypeMetadata;
 #endif
 }
-#pragma warning restore CA2252

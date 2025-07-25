@@ -1,6 +1,5 @@
 namespace Rxmxnx.PInvoke.Internal.Localization;
 
-#pragma warning disable CA2252
 internal partial interface IMessageResource
 {
 	/// <summary>
@@ -30,4 +29,3 @@ internal partial interface IMessageResource
 		};
 	}
 }
-#pragma warning restore CA2252

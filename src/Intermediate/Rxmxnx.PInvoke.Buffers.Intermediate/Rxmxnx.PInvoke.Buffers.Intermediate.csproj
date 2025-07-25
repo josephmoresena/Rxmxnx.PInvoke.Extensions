@@ -18,6 +18,7 @@
 
         <Using Include="Rxmxnx.PInvoke.Buffers"/>
         <Using Include="Rxmxnx.PInvoke.Internal"/>
+        <Using Include="Rxmxnx.PInvoke.VisualBasic"/>
     </ItemGroup>
 
     <ItemGroup>

@@ -320,11 +320,9 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// </returns>
 	public static CString Create<TState>(TState state) where TState : struct, IUtf8FunctionState<TState>
 	{
-#pragma warning disable CA2252
 		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, TState.GetSpan, TState.Alloc);
 		Int32 length = TState.GetLength(state);
 		return new(data, true, state.IsNullTerminated, length);
-#pragma warning restore CA2252
 	}
 #endif
 	/// <summary>

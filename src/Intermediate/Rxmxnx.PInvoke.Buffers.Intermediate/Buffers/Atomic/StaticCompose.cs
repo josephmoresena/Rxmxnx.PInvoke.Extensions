@@ -1,7 +1,6 @@
 #if NET7_0_OR_GREATER && BINARY_SPACES
 namespace Rxmxnx.PInvoke.Buffers;
 
-#pragma warning disable CA2252
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 #endif
@@ -85,5 +84,4 @@ public partial struct Atomic<T>
 			UInt16 s12,
 			UInt16 s13, StaticCompositionHelper<T> helper) { }
 }
-#pragma warning restore CA2252
 #endif

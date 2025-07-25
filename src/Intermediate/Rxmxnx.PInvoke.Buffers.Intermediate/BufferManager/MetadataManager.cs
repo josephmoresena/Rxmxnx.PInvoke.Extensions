@@ -1,6 +1,5 @@
 namespace Rxmxnx.PInvoke;
 
-#pragma warning disable CA2252
 public static partial class BufferManager
 {
 	/// <summary>
@@ -269,4 +268,3 @@ public static partial class BufferManager
 #endif
 	}
 }
-#pragma warning restore CA2252
