@@ -11,11 +11,7 @@ namespace Rxmxnx.PInvoke.Internal;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-internal sealed
-#if !NET6_0_OR_GREATER
-	partial
-#endif
-	class ArrayMemoryManager<T> : MemoryManager<T>
+internal sealed partial class ArrayMemoryManager<T> : MemoryManager<T>
 {
 #if !NET6_0_OR_GREATER
 	/// <summary>
@@ -88,16 +84,22 @@ internal sealed
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected override void Dispose(Boolean disposing) { }
 
-#if NET6_0_OR_GREATER
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
 	public static Span<T> GetSpan(Array? array)
 	{
 		if (array is null) return default;
+#if NET6_0_OR_GREATER
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
+#else
+		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??
+			MemoryMarshalCompat.GetArrayDataReference<T>;
+		ref T managedRef = ref getArrayDataReference(array);
+#endif
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 		return span;
 	}
+#if NET6_0_OR_GREATER
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
 	public static Memory<T> GetMemory(Array? array)
@@ -109,18 +111,6 @@ internal sealed
 	{
 		ref Byte byteRef = ref MemoryMarshal.GetArrayDataReference(array);
 		return ref Unsafe.As<Byte, T>(ref byteRef);
-	}
-#else
-	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
-	private static Span<T> GetSpan(Array? array)
-	{
-		if (array is null) return default;
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??
-			MemoryMarshalCompat.GetArrayDataReference<T>;
-		ref T managedRef = ref getArrayDataReference(array);
-		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
-		return span;
 	}
 #endif
 }

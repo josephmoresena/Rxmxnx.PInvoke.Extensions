@@ -191,11 +191,8 @@ public class AsSpanTest
 #if NET6_0_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetArrayDataReference(arr)),
 		                                        arr.Length);
-		// Assert.True(
-		// 	span.SequenceEqual(
-		// 		MemoryMarshal.CreateSpan(ref MemoryMarshalCompat.GetArrayDataReference<T>(arr), arr.Length)));
 #else
-		Span<T> span = MemoryMarshal.CreateSpan(ref MemoryMarshalCompat.GetArrayDataReference<T>(arr), arr.Length);
+		Span<T> span = MemoryMarshal.CreateSpan(ref ArrayReferenceHelper.GetArrayDataReference<T>(arr), arr.Length);
 #endif
 		T[] data = AsSpanTest.fixture.CreateMany<T>(arr.Length).ToArray();
 		data.CopyTo(span);
