@@ -100,8 +100,10 @@ public sealed class BinaryBufferCompositeTest
 		Assert.Equal(atomicMetadata, BufferManager.MetadataManager<T>.GetMetadata(typeofAtomic));
 		Assert.Equal(composite2Metadata, BufferManager.MetadataManager<T>.GetMetadata(typeofComposite2));
 		Assert.Equal(binaryMetadata, BufferManager.MetadataManager<T>.GetMetadata(binaryMetadata.BufferType));
-		Assert.Equal(binaryMetadata.Components,
-		             BufferManager.MetadataManager<T>.GetComponents(typeofAtomic, typeofComposite2));
+		Assert.Equal(binaryMetadata.Components, [
+			BufferManager.MetadataManager<T>.GetMetadata(typeofAtomic),
+			BufferManager.MetadataManager<T>.GetMetadata(typeofComposite2),
+		]);
 		foreach (BufferTypeMetadata<T> metadata in binaryMetadata.Components.AsSpan())
 			Assert.Equal(metadata, BufferManager.MetadataManager<T>.GetMetadata(metadata.BufferType));
 	}

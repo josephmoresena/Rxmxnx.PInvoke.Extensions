@@ -63,9 +63,11 @@ public interface IManagedBuffer<T>
 #pragma warning restore CA2252
 #else
 	/// <summary>
-	/// This method is intentionally declared to prevent external consumers from implementing this interface.
-	/// It should not be implemented or overridden outside the defining assembly.
+	/// Retrieves the <see cref="BufferTypeMetadata{T}"/> instance.
 	/// </summary>
-	private protected void DoNotImplement();
+	/// <returns>The <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Browsable(false)]
+	internal BufferTypeMetadata<T> GetStaticTypeMetadata();
 #endif
 }

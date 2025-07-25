@@ -2,13 +2,6 @@ namespace Rxmxnx.PInvoke;
 
 public static partial class BufferManager
 {
-#if !PACKAGE || !NET7_0_OR_GREATER
-	/// <summary>
-	/// Metadata cache.
-	/// </summary>
-	private static readonly ConcurrentDictionary<Type, BufferTypeMetadata> metadataCache = new();
-#endif
-
 	/// <summary>
 	/// Retrieves metadata required for a buffer of <paramref name="bufferType"/> type.
 	/// </summary>
@@ -59,16 +52,52 @@ public static partial class BufferManager
 	/// <param name="bufferType">Type of buffer.</param>
 	/// <param name="typeMetadata">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
-	private static BufferTypeMetadata<T> Cache<T>(
-#if NET5_0_OR_GREATER
-		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
-		Type bufferType, BufferTypeMetadata<T> typeMetadata)
+	private static BufferTypeMetadata<T> Cache<T>(Type bufferType, BufferTypeMetadata<T> typeMetadata)
 	{
 		ValidationUtilities.ThrowIfNullMetadata(bufferType, typeMetadata is null);
 		BufferManager.metadataCache.TryAdd(bufferType, typeMetadata);
 		return typeMetadata;
 	}
 #nullable restore
+#endif
+	/// <summary>
+	/// Retrieves metadata required for a buffer of <typeparamref name="TBuffer"/> type.
+	/// </summary>
+	/// <typeparam name="T">The type of items in the buffer</typeparam>
+	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
+	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+	private static BufferTypeMetadata<T> GetMetadata<T, TBuffer>() where TBuffer : struct, IManagedBuffer<T>
+	{
+#if !NET7_0_OR_GREATER
+		BufferManager.countRegister++;
+		Type bufferType = typeof(TBuffer);
+		try
+		{
+			if (BufferManager.metadataCache.TryGetValue(bufferType, out BufferTypeMetadata? result))
+				return (BufferTypeMetadata<T>)result;
+			BufferTypeMetadata<T> staticMetadata = new TBuffer().GetStaticTypeMetadata();
+			return BufferManager.Cache(bufferType, staticMetadata);
+		}
+		finally
+		{
+			BufferManager.countRegister--;
+		}
+#else
+		return IManagedBuffer<T>.GetMetadata<TBuffer>();
+#endif
+	}
+#if !PACKAGE || !NET7_0_OR_GREATER
+	/// <summary>
+	/// Metadata cache.
+	/// </summary>
+	private static readonly ConcurrentDictionary<Type, BufferTypeMetadata> metadataCache = new();
+
+#if !NET7_0_OR_GREATER
+	/// <summary>
+	/// Registry count.
+	/// </summary>
+	[ThreadStatic]
+	private static Int32 countRegister;
+#endif
 #endif
 }

@@ -39,7 +39,7 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	void IManagedBuffer<T>.DoNotImplement() { }
+	BufferTypeMetadata<T> IManagedBuffer<T>.GetStaticTypeMetadata() => NonBinarySpace<TArray, T>.TypeMetadata;
 #endif
 
 	/// <summary>

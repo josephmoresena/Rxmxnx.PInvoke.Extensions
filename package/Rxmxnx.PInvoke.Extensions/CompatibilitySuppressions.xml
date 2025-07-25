@@ -68,6 +68,12 @@
     <Right>lib/net7.0/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
   <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Rxmxnx.PInvoke.Buffers.IManagedBuffer`1.GetStaticTypeMetadata</Target>
+    <Left>lib/net6.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net7.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
     <DiagnosticId>CP0006</DiagnosticId>
     <Target>M:Rxmxnx.PInvoke.Buffers.IManagedBuffer`1.AppendComponent(System.Collections.Generic.IDictionary{System.UInt16,Rxmxnx.PInvoke.BufferTypeMetadata{`0}})</Target>
     <Left>lib/net6.0/Rxmxnx.PInvoke.Extensions.dll</Left>

@@ -39,7 +39,8 @@ public
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	void IManagedBuffer<T>.DoNotImplement() { }
+	BufferTypeMetadata<T> IManagedBinaryBuffer<T>.Metadata => Atomic<T>.TypeMetadata;
+	BufferTypeMetadata<T> IManagedBuffer<T>.GetStaticTypeMetadata() => Atomic<T>.TypeMetadata;
 #endif
 }
 #pragma warning restore CA2252

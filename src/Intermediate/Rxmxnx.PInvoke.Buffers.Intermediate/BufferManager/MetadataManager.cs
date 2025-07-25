@@ -67,24 +67,35 @@ public static partial class BufferManager
 			Type bufferType)
 			=> bufferType == typeof(Atomic<T>) ? Atomic<T>.TypeMetadata : BufferManager.GetMetadata<T>(bufferType);
 		/// <summary>
-		/// Retrieves the components array for the composition type of <paramref name="typeofA"/> and <paramref name="typeofB"/>.
+		/// Retrieves the components array for the composition type of <typeparamref name="TBufferA"/> and
+		/// <typeparamref name="TBufferB"/> .
 		/// </summary>
-		/// <param name="typeofA"></param>
-		/// <param name="typeofB"></param>
-		/// <returns></returns>
-		public static BufferTypeMetadata<T>[] GetComponents(
+		/// <typeparam name="TBufferA">The type of low buffer.</typeparam>
+		/// <typeparam name="TBufferB">The type of high buffer.</typeparam>
+		/// <returns>The components array for the composition type.</returns>
+		public static BufferTypeMetadata<T>[] GetComponents<
 #if NET5_0_OR_GREATER
 			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
 #endif
-			Type typeofA,
+			TBufferA,
 #if NET5_0_OR_GREATER
 			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
 #endif
-			Type typeofB)
+			TBufferB>() where TBufferA : struct, IManagedBinaryBuffer<T>
+			where TBufferB : struct, IManagedBinaryBuffer<T>
+
 		{
 			BufferTypeMetadata<T>[] components = new BufferTypeMetadata<T>[2];
-			components[0] = MetadataManager<T>.GetMetadata(typeofA);
-			components[1] = MetadataManager<T>.GetMetadata(typeofB);
+#if !NET7_0_OR_GREATER
+			if (BufferManager.countRegister > 0)
+			{
+				components[0] = BufferManager.GetMetadata<T, TBufferA>();
+				components[1] = BufferManager.GetMetadata<T, TBufferB>();
+				return components;
+			}
+#endif
+			components[0] = MetadataManager<T>.GetMetadata(typeof(TBufferA));
+			components[1] = MetadataManager<T>.GetMetadata(typeof(TBufferB));
 			return components;
 		}
 		/// <summary>
@@ -182,7 +193,7 @@ public static partial class BufferManager
 #if NET7_0_OR_GREATER
 			BufferTypeMetadata<T> typeMetadata = IManagedBuffer<T>.GetMetadata<TBuffer>();
 #else
-			BufferTypeMetadata<T> typeMetadata = BufferManager.GetMetadata<T>(typeof(TBuffer));
+			BufferTypeMetadata<T> typeMetadata = BufferManager.GetMetadata<T, TBuffer>();
 #endif
 			lock (MetadataManager<T>.store.LockObject)
 			{
