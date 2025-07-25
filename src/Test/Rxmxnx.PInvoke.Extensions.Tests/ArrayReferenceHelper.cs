@@ -1,9 +1,10 @@
+#if !NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Tests;
 
 internal static class ArrayReferenceHelper
 {
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static ref T GetArrayDataReference<T>(Array? array)
+	public static ref T GetArrayDataReference<T>(Array? array)
 	{
 		switch (array?.Rank)
 		{
@@ -71,3 +72,4 @@ internal static class ArrayReferenceHelper
 		}
 	}
 }
+#endif
