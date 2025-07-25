@@ -25,10 +25,6 @@ public readonly unsafe struct VbScopedBuffer<T> : IEnumerableSequence<T>
 	/// Unmanaged pointer.
 	/// </summary>
 	private readonly void* _pointer;
-	/// <summary>
-	/// Buffer length.
-	/// </summary>
-	private readonly UInt16 _length;
 
 	/// <inheritdoc cref="Span{T}.this"/>
 	[IndexerName("Item")]
@@ -36,7 +32,7 @@ public readonly unsafe struct VbScopedBuffer<T> : IEnumerableSequence<T>
 	{
 		get
 		{
-			ValidationUtilities.ThrowIfInvalidSequenceIndex(index, this._length);
+			ValidationUtilities.ThrowIfInvalidSequenceIndex(index, this.Length);
 			ref T refT = ref this._array is not null ?
 				ref this._array.AsSpan()[index] :
 				ref Unsafe.AsRef<T>((new IntPtr(this._pointer) + index * VbScopedBuffer<T>.sizeOfT).ToPointer());
@@ -44,7 +40,7 @@ public readonly unsafe struct VbScopedBuffer<T> : IEnumerableSequence<T>
 		}
 		set
 		{
-			ValidationUtilities.ThrowIfInvalidSequenceIndex(index, this._length);
+			ValidationUtilities.ThrowIfInvalidSequenceIndex(index, this.Length);
 			ref T refT = ref this._array is not null ?
 				ref this._array.AsSpan()[index] :
 				ref Unsafe.AsRef<T>((new IntPtr(this._pointer) + index * VbScopedBuffer<T>.sizeOfT).ToPointer());
@@ -54,9 +50,11 @@ public readonly unsafe struct VbScopedBuffer<T> : IEnumerableSequence<T>
 	/// <inheritdoc cref="ScopedBuffer{T}.InStack"/>
 	public Boolean InStack => this._array is null;
 	/// <inheritdoc cref="ScopedBuffer{T}.FullLength"/>
-	public Int32 FullLength => this._array?.Length ?? this.BufferMetadata?.Size ?? this._length;
+	public Int32 FullLength => this._array?.Length ?? this.BufferMetadata?.Size ?? this.Length;
 	/// <inheritdoc cref="ScopedBuffer{T}.BufferMetadata"/>
 	public BufferTypeMetadata? BufferMetadata { get; }
+	/// <inheritdoc cref="Span{T}.Length"/>
+	public UInt16 Length { get; }
 
 	/// <summary>
 	/// Creates a <see cref="ScopedBuffer{T}"/> from current instance.
@@ -68,14 +66,14 @@ public readonly unsafe struct VbScopedBuffer<T> : IEnumerableSequence<T>
 		UInt16 length;
 		if (this._array is not null)
 		{
-			span = this._array.AsSpan()[..this._length];
+			span = this._array.AsSpan()[..this.Length];
 			length = (UInt16)this._array.Length;
 		}
 		else
 		{
 			ref T refT = ref Unsafe.AsRef<T>(this._pointer);
-			span = MemoryMarshal.CreateSpan(ref refT, this._length);
-			length = this.BufferMetadata?.Size ?? this._length;
+			span = MemoryMarshal.CreateSpan(ref refT, this.Length);
+			length = this.BufferMetadata?.Size ?? this.Length;
 		}
 		return new(span, this._array is not null, length, this.BufferMetadata);
 	}
@@ -89,7 +87,7 @@ public readonly unsafe struct VbScopedBuffer<T> : IEnumerableSequence<T>
 	internal VbScopedBuffer(ref T refT, UInt16 length, BufferTypeMetadata? bufferTypeMetadata = default)
 	{
 		this._pointer = Unsafe.AsPointer(ref refT);
-		this._length = length;
+		this.Length = length;
 		this.BufferMetadata = bufferTypeMetadata;
 		this._array = default;
 	}
@@ -101,11 +99,11 @@ public readonly unsafe struct VbScopedBuffer<T> : IEnumerableSequence<T>
 	internal VbScopedBuffer(T[] array, UInt16 length)
 	{
 		this._array = array;
-		this._length = length;
-		this._pointer = default;
+		this.Length = length;
 		this.BufferMetadata = default;
+		this._pointer = default;
 	}
 
 	T IEnumerableSequence<T>.GetItem(Int32 index) => this[index];
-	Int32 IEnumerableSequence<T>.GetSize() => this._length;
+	Int32 IEnumerableSequence<T>.GetSize() => this.Length;
 }
