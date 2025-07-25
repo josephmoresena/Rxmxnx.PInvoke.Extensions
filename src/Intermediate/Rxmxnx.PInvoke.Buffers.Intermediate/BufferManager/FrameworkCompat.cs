@@ -69,13 +69,11 @@ public static partial class BufferManager
 	{
 #if !NET7_0_OR_GREATER
 		if (BufferManager.countRegister < 0) BufferManager.countRegister = 0;
-
-		Type bufferType = typeof(TBuffer);
-		if (BufferManager.metadataCache.TryGetValue(bufferType, out BufferTypeMetadata? result))
+		if (BufferManager.metadataCache.TryGetValue(typeof(TBuffer), out BufferTypeMetadata? result))
 			return (BufferTypeMetadata<T>)result;
 
 		// This method allocates the buffer in the current stack.
-		return BufferManager.GetStaticMetadata<T, TBuffer>(bufferType);
+		return BufferManager.GetStaticMetadata<T, TBuffer>();
 #else
 		return IManagedBuffer<T>.GetMetadata<TBuffer>();
 #endif
@@ -87,15 +85,14 @@ public static partial class BufferManager
 	/// <typeparam name="T">The type of items in the buffer</typeparam>
 	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
-	private static BufferTypeMetadata<T> GetStaticMetadata<T, TBuffer>(Type bufferType)
-		where TBuffer : struct, IManagedBuffer<T>
+	private static BufferTypeMetadata<T> GetStaticMetadata<T, TBuffer>() where TBuffer : struct, IManagedBuffer<T>
 	{
 		BufferManager.countRegister++;
 		try
 		{
 #if !NET7_0_OR_GREATER
 			BufferTypeMetadata<T> staticMetadata = new TBuffer().GetStaticTypeMetadata();
-			return BufferManager.Cache(bufferType, staticMetadata);
+			return BufferManager.Cache(staticMetadata.BufferType, staticMetadata);
 #else
 			return IManagedBuffer<T>.GetMetadata<TBuffer>();
 #endif

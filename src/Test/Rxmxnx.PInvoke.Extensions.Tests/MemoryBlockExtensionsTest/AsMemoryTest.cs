@@ -183,7 +183,7 @@ public class AsMemoryTest
 #if NET6_0_OR_GREATER
 		ref T first = ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetArrayDataReference(arr));
 #else
-		ref T first = ref MemoryMarshalCompat.GetArrayDataReference<T>(arr);
+		ref T first = ref ArrayReferenceHelper.GetArrayDataReference<T>(arr);
 #endif
 		for (Int32 i = 0; i < arr.Length; i++)
 		{
