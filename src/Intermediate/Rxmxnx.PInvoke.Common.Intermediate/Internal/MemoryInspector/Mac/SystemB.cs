@@ -12,15 +12,6 @@ internal partial class MemoryInspector
 #endif
 		private static unsafe class SystemB
 		{
-			[DllImport("libSystem.B.dylib", EntryPoint = "mach_task_self", SetLastError = false)]
-			public static extern UInt32 GetTaskHandle();
-			[DllImport("libSystem.B.dylib", EntryPoint = "mach_vm_region", SetLastError = false)]
-			public static extern Int32 MemoryRegion(UInt32 taskHandle, void** address, out UInt64 size, UInt32 flavor,
-				out MemoryInfo info, ref UInt32 count, out UInt32 objName);
-
-			[DllImport("libSystem.B.dylib", EntryPoint = "__error", SetLastError = false)]
-			private static extern Int32* GetErrorPointer();
-
 			/// <summary>
 			/// Validates <paramref name="result"/> value.
 			/// </summary>
@@ -38,6 +29,16 @@ internal partial class MemoryInspector
 				ref Int32 err = ref *SystemB.GetErrorPointer();
 				err = 0;
 			}
+#pragma warning disable SYSLIB1054
+			[DllImport("libSystem.B.dylib", EntryPoint = "mach_task_self", SetLastError = false)]
+			public static extern UInt32 GetTaskHandle();
+			[DllImport("libSystem.B.dylib", EntryPoint = "mach_vm_region", SetLastError = false)]
+			public static extern Int32 MemoryRegion(UInt32 taskHandle, void** address, out UInt64 size, UInt32 flavor,
+				out MemoryInfo info, ref UInt32 count, out UInt32 objName);
+
+			[DllImport("libSystem.B.dylib", EntryPoint = "__error", SetLastError = false)]
+			private static extern Int32* GetErrorPointer();
+#pragma warning restore SYSLIB1054
 		}
 	}
 }

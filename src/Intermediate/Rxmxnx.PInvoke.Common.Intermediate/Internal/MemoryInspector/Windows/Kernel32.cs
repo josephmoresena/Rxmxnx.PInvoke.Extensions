@@ -9,12 +9,6 @@ internal partial class MemoryInspector
 #endif
 		private static unsafe class Kernel32
 		{
-			[DllImport("kernel32.dll")]
-			public static extern UIntPtr VirtualQuery(void* lpAddress, out MemoryInfo memInfo, UIntPtr dwLength);
-
-			[DllImport("kernel32.dll")]
-			private static extern void SetLastError(UInt32 dwErrCode);
-
 			/// <summary>
 			/// Validates <paramref name="result"/> value.
 			/// </summary>
@@ -24,6 +18,13 @@ internal partial class MemoryInspector
 				if (result != default) return;
 				Kernel32.SetLastError(0);
 			}
+#pragma warning disable SYSLIB1054
+			[DllImport("kernel32.dll")]
+			public static extern UIntPtr VirtualQuery(void* lpAddress, out MemoryInfo memInfo, UIntPtr dwLength);
+
+			[DllImport("kernel32.dll")]
+			private static extern void SetLastError(UInt32 dwErrCode);
+#pragma warning restore SYSLIB1054
 		}
 	}
 }

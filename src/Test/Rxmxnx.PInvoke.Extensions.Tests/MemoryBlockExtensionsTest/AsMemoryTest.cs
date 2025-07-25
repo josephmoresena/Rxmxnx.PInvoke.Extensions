@@ -12,11 +12,7 @@ public class AsMemoryTest
 
 	[Fact]
 	internal void AsMemoryCountTest() => Assert.Equal(31, AsMemoryTest.asMemories.Count);
-#if NET5_0_OR_GREATER
-	[SkippableTheory]
-#else
 	[Theory]
-#endif
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -49,11 +45,7 @@ public class AsMemoryTest
 	[InlineData(31)]
 	[InlineData(32)]
 	internal void ByteTest(Int32 dimension) => AsMemoryTest.GenericTest<Byte>(dimension);
-#if NET5_0_OR_GREATER
-	[SkippableTheory]
-#else
 	[Theory]
-#endif
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -86,11 +78,7 @@ public class AsMemoryTest
 	[InlineData(31)]
 	[InlineData(32)]
 	internal void Int32Test(Int32 dimension) => AsMemoryTest.GenericTest<Int32>(dimension);
-#if NET5_0_OR_GREATER
-	[SkippableTheory]
-#else
 	[Theory]
-#endif
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -100,7 +88,6 @@ public class AsMemoryTest
 	[InlineData(8)]
 	[InlineData(9)]
 	[InlineData(10)]
-#if !MULTIPLE_FRAMEWORK || NET6_0_OR_GREATER
 	[InlineData(11)]
 	[InlineData(12)]
 	[InlineData(13)]
@@ -123,13 +110,8 @@ public class AsMemoryTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-#endif
 	internal void StringTest(Int32 dimension) => AsMemoryTest.GenericTest<String>(dimension);
-#if NET5_0_OR_GREATER
-	[SkippableTheory]
-#else
 	[Theory]
-#endif
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -139,7 +121,6 @@ public class AsMemoryTest
 	[InlineData(8)]
 	[InlineData(9)]
 	[InlineData(10)]
-#if !MULTIPLE_FRAMEWORK || NET6_0_OR_GREATER
 	[InlineData(11)]
 	[InlineData(12)]
 	[InlineData(13)]
@@ -162,7 +143,6 @@ public class AsMemoryTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-#endif
 	internal void ObjectTest(Int32 dimension) => AsMemoryTest.GenericTest<Object>(dimension);
 
 	internal static void CollectGarbage()
@@ -177,11 +157,6 @@ public class AsMemoryTest
 
 	private static unsafe void GenericTest<T>(Int32 count)
 	{
-#if NET5_0_OR_GREATER
-		Skip.If(IntPtr.Size == sizeof(Int32) && count > 15);
-#else
-		if (IntPtr.Size == sizeof(Int32) && count > 15) return;
-#endif
 		Int32[] lengths = Enumerable.Range(0, count).Select(_ => Random.Shared.Next(1, 3)).ToArray();
 		Array arr = AsMemoryTest.CreateArray<T>(lengths);
 		MethodInfo method = AsMemoryTest.asMemories[arr.Rank];
@@ -226,10 +201,13 @@ public class AsMemoryTest
 		Array arr = Array.CreateInstance(typeof(T), lengths);
 #if NET6_0_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetArrayDataReference(arr)),
-#else
-		Span<T> span = MemoryMarshal.CreateSpan(ref MemoryMarshalCompat.GetArrayDataReference<T>(arr),
-#endif
 		                                        arr.Length);
+		Assert.True(
+			span.SequenceEqual(
+				MemoryMarshal.CreateSpan(ref MemoryMarshalCompat.GetArrayDataReference<T>(arr), arr.Length)));
+#else
+		Span<T> span = MemoryMarshal.CreateSpan(ref MemoryMarshalCompat.GetArrayDataReference<T>(arr), arr.Length);
+#endif
 		T[] data = AsMemoryTest.fixture.CreateMany<T>(arr.Length).ToArray();
 		data.CopyTo(span);
 		return arr;
