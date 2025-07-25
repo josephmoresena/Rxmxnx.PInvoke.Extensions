@@ -16,6 +16,9 @@
     - [Features](#features)
 - [Getting Started](#getting-started)
     - [Installation](#installation)
+    - [Framework Support](#framework-support)
+    - [AOT Support](#aot-support)
+    - [Visual Basic .NET Support](#visual-basic-net-support)
 - [Abstractions](#abstractions)
     - [Reference Interfaces](#reference-interfaces)
     - [Wrapper Interfaces](#wrapper-interfaces)
@@ -79,7 +82,7 @@ dotnet add package Rxmxnx.PInvoke.Extensions
 **Note:** This package officially supports .NET 8.0 and later. However, this package offers limited support for
 .NET Standard 2.1-compatible runtimes and legacy support for .NET 7.0 and earlier.
 
-### Framework Support
+## Framework Support
 
 This package guarantees both **binary and source compatibility across all supported target frameworks**, from **.NET
 Standard 2.1** up to **.NET 9.0**.
@@ -178,7 +181,7 @@ target frameworks, along with the type of support provided for each one.
 4. Value-type pointers support `ref struct` generics, but due to C# compiler restrictions, some methods must be
    implemented in IL.
 
-### AOT Support
+## AOT Support
 
 This package is AOT-friendly, all of its features support both Mono AOT and Native AOT, including full AOT and the
 obsolete reflection-free mode.
@@ -188,6 +191,14 @@ The only features that require reflection are:
 * Native AOT detection when targeting .NET 5.0 or earlier.
 
 Starting with .NET 7.0, the use of reflection can be completely avoided.
+
+## Visual Basic .NET Support
+
+Some APIs in `Rxmxnx.PInvoke.Extensions` are not directly compatible with Visual Basic .NET due to language
+limitations. The `Rxmxnx.PInvoke.VisualBasic` namespace provides equivalent delegate definitions specifically designed
+for use in **Visual Basic .NET**.
+
+These delegates provide VB.NET-compatible access to selected non-compliant `Rxmxnx.PInvoke.Extensions` APIs.
 
 ---
 
@@ -3151,6 +3162,10 @@ This class allows to allocate buffers on stack if possible.
 
   **Note:** `T` is `struct`. Reflection is always used by this method, and BufferAutoCompositionEnabled must be enabled.
   </details>
+
+**Note:** The nested static class `VisualBasic` provides VB.NET-compatible `Alloc` methods. These are designed to
+accommodate language constraints in Visual Basic and **are not recommended for use in other .NET languages**, due to
+minor performance overhead.
 
 </details>
 

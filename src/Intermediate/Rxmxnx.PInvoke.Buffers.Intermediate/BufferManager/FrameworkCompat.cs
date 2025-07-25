@@ -2,7 +2,7 @@ namespace Rxmxnx.PInvoke;
 
 public static partial class BufferManager
 {
-#if !PACKAGE || !NET7_0_OR_GREATER
+#if !NET7_0_OR_GREATER
 	/// <summary>
 	/// Metadata cache.
 	/// </summary>
@@ -30,7 +30,7 @@ public static partial class BufferManager
 #endif
 		Type bufferType)
 	{
-#if !PACKAGE || !NET7_0_OR_GREATER
+#if !NET7_0_OR_GREATER
 		if (BufferManager.metadataCache.TryGetValue(bufferType, out BufferTypeMetadata? result))
 			return (BufferTypeMetadata<T>)result;
 #else
@@ -52,13 +52,14 @@ public static partial class BufferManager
 				throw tie.InnerException;
 		}
 		result ??= ManagedBinaryBuffer<T>.GetMetadata(bufferType);
-#if !PACKAGE || !NET7_0_OR_GREATER
+#if !NET7_0_OR_GREATER
 		return BufferManager.Cache(bufferType, result as BufferTypeMetadata<T>);
 #else
 		ValidationUtilities.ThrowIfNullMetadata(bufferType, result is not BufferTypeMetadata<T>);
 		return (result as BufferTypeMetadata<T>)!;
 #endif
 	}
+#if !NET7_0_OR_GREATER
 	/// <summary>
 	/// Retrieves metadata required for a buffer of <typeparamref name="TBuffer"/> type.
 	/// </summary>
@@ -67,18 +68,13 @@ public static partial class BufferManager
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 	private static BufferTypeMetadata<T> GetMetadata<T, TBuffer>() where TBuffer : struct, IManagedBuffer<T>
 	{
-#if !NET7_0_OR_GREATER
 		if (BufferManager.countRegister < 0) BufferManager.countRegister = 0;
 		if (BufferManager.metadataCache.TryGetValue(typeof(TBuffer), out BufferTypeMetadata? result))
 			return (BufferTypeMetadata<T>)result;
 
 		// This method allocates the buffer in the current stack.
 		return BufferManager.GetStaticMetadata<T, TBuffer>();
-#else
-		return IManagedBuffer<T>.GetMetadata<TBuffer>();
-#endif
 	}
-#if !PACKAGE || !NET7_0_OR_GREATER
 	/// <summary>
 	/// Retrieves the static metadata required for a buffer of <typeparamref name="TBuffer"/> type.
 	/// </summary>
