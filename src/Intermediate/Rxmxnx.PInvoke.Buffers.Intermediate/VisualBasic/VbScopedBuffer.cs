@@ -7,16 +7,8 @@ namespace Rxmxnx.PInvoke.VisualBasic;
 [ExcludeFromCodeCoverage]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-[StructLayout(LayoutKind.Sequential)]
-public readonly unsafe struct VbScopedBuffer<T> : IEnumerableSequence<T>
+public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 {
-	/// <summary>
-	/// Size of the element type.
-	/// </summary>
-#pragma warning disable CS8500
-	private static readonly Int32 sizeOfT = sizeof(T);
-#pragma warning restore CS8500
-
 	/// <summary>
 	/// Managed array.
 	/// </summary>
@@ -24,7 +16,11 @@ public readonly unsafe struct VbScopedBuffer<T> : IEnumerableSequence<T>
 	/// <summary>
 	/// Unmanaged pointer.
 	/// </summary>
-	private readonly void* _pointer;
+	private readonly ValPtr<T> _pointer;
+	/// <summary>
+	/// Indicates whether the current instance is still valid.
+	/// </summary>
+	private readonly IMutableWrapper<Boolean>? _isValid = IMutableWrapper.Create(true);
 
 	/// <inheritdoc cref="Span{T}.this"/>
 	[IndexerName("Item")]
@@ -33,17 +29,19 @@ public readonly unsafe struct VbScopedBuffer<T> : IEnumerableSequence<T>
 		get
 		{
 			ValidationUtilities.ThrowIfInvalidSequenceIndex(index, this.Length);
+			ValidationUtilities.ThrowIfInvalidPointer(this._isValid!);
 			ref T refT = ref this._array is not null ?
 				ref this._array.AsSpan()[index] :
-				ref Unsafe.AsRef<T>((new IntPtr(this._pointer) + index * VbScopedBuffer<T>.sizeOfT).ToPointer());
+				ref (this._pointer + index).Reference;
 			return refT;
 		}
 		set
 		{
 			ValidationUtilities.ThrowIfInvalidSequenceIndex(index, this.Length);
+			ValidationUtilities.ThrowIfInvalidPointer(this._isValid!);
 			ref T refT = ref this._array is not null ?
 				ref this._array.AsSpan()[index] :
-				ref Unsafe.AsRef<T>((new IntPtr(this._pointer) + index * VbScopedBuffer<T>.sizeOfT).ToPointer());
+				ref (this._pointer + index).Reference;
 			refT = value;
 		}
 	}
@@ -57,28 +55,6 @@ public readonly unsafe struct VbScopedBuffer<T> : IEnumerableSequence<T>
 	public UInt16 Length { get; }
 
 	/// <summary>
-	/// Creates a <see cref="ScopedBuffer{T}"/> from current instance.
-	/// </summary>
-	/// <returns>A <see cref="ScopedBuffer{T}"/> instance.</returns>
-	public ScopedBuffer<T> ToValue()
-	{
-		Span<T> span;
-		UInt16 length;
-		if (this._array is not null)
-		{
-			span = this._array.AsSpan()[..this.Length];
-			length = (UInt16)this._array.Length;
-		}
-		else
-		{
-			ref T refT = ref Unsafe.AsRef<T>(this._pointer);
-			span = MemoryMarshal.CreateSpan(ref refT, this.Length);
-			length = this.BufferMetadata?.Size ?? this.Length;
-		}
-		return new(span, this._array is not null, length, this.BufferMetadata);
-	}
-
-	/// <summary>
 	/// Internal constructor.
 	/// </summary>
 	/// <param name="refT">A <typeparamref name="T"/> managed reference.</param>
@@ -86,7 +62,7 @@ public readonly unsafe struct VbScopedBuffer<T> : IEnumerableSequence<T>
 	/// <param name="bufferTypeMetadata">Buffer type metadata.</param>
 	internal VbScopedBuffer(ref T refT, UInt16 length, BufferTypeMetadata? bufferTypeMetadata = default)
 	{
-		this._pointer = Unsafe.AsPointer(ref refT);
+		this._pointer = (ValPtr<T>)Unsafe.AsPointer(ref refT);
 		this.Length = length;
 		this.BufferMetadata = bufferTypeMetadata;
 		this._array = default;
@@ -102,6 +78,39 @@ public readonly unsafe struct VbScopedBuffer<T> : IEnumerableSequence<T>
 		this.Length = length;
 		this.BufferMetadata = default;
 		this._pointer = default;
+	}
+
+	/// <summary>
+	/// Creates a <see cref="ScopedBuffer{T}"/> from current instance.
+	/// </summary>
+	/// <returns>A <see cref="ScopedBuffer{T}"/> instance.</returns>
+	public ScopedBuffer<T> ToValue()
+	{
+		ValidationUtilities.ThrowIfInvalidPointer(this._isValid!);
+		Span<T> span;
+		UInt16 length;
+		if (this._array is not null)
+		{
+			span = this._array.AsSpan()[..this.Length];
+			length = (UInt16)this._array.Length;
+		}
+		else
+		{
+			ref T refT = ref Unsafe.AsRef<T>(this._pointer);
+			span = MemoryMarshal.CreateSpan(ref refT, this.Length);
+			length = this.BufferMetadata?.Size ?? this.Length;
+		}
+		ValidationUtilities.ThrowIfInvalidPointer(this._isValid!);
+		return new(span, this._array is not null, length, this.BufferMetadata);
+	}
+
+	/// <summary>
+	/// Invalidates the current sequence.
+	/// </summary>
+	internal void Unload()
+	{
+		if (this._isValid is not null)
+			this._isValid.Value = false;
 	}
 
 	T IEnumerableSequence<T>.GetItem(Int32 index) => this[index];

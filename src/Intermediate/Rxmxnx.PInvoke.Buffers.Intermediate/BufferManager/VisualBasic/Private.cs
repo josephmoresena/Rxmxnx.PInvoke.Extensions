@@ -11,14 +11,15 @@ public static partial class BufferManager
 		private static void AllocHeap<T>(UInt16 count, VbScopedBufferAction<T> action)
 		{
 			T[] arr = ArrayPool<T>.Shared.Rent(count);
+			VbScopedBuffer<T> buffer = new(arr, count);
 			try
 			{
-				VbScopedBuffer<T> buffer = new(arr, count);
 				arr.AsSpan()[..count].Clear();
 				action(buffer);
 			}
 			finally
 			{
+				buffer.Unload();
 				ArrayPool<T>.Shared.Return(arr, true);
 			}
 		}
@@ -29,14 +30,15 @@ public static partial class BufferManager
 		private static void AllocHeap<T, TState>(UInt16 count, TState state, VbScopedBufferAction<T, TState> action)
 		{
 			T[] arr = ArrayPool<T>.Shared.Rent(count);
+			VbScopedBuffer<T> buffer = new(arr, count);
 			try
 			{
-				VbScopedBuffer<T> buffer = new(arr, count);
 				arr.AsSpan()[..count].Clear();
 				action(buffer, state);
 			}
 			finally
 			{
+				buffer.Unload();
 				ArrayPool<T>.Shared.Return(arr, true);
 			}
 		}
@@ -47,14 +49,15 @@ public static partial class BufferManager
 		private static TResult AllocHeap<T, TResult>(UInt16 count, VbScopedBufferFunc<T, TResult> func)
 		{
 			T[] arr = ArrayPool<T>.Shared.Rent(count);
+			VbScopedBuffer<T> buffer = new(arr, count);
 			try
 			{
-				VbScopedBuffer<T> buffer = new(arr, count);
 				arr.AsSpan()[..count].Clear();
 				return func(buffer);
 			}
 			finally
 			{
+				buffer.Unload();
 				ArrayPool<T>.Shared.Return(arr, true);
 			}
 		}
@@ -66,14 +69,15 @@ public static partial class BufferManager
 			VbScopedBufferFunc<T, TState, TResult> func)
 		{
 			T[] arr = ArrayPool<T>.Shared.Rent(count);
+			VbScopedBuffer<T> buffer = new(arr, count);
 			try
 			{
-				VbScopedBuffer<T> buffer = new(arr, count);
 				arr.AsSpan()[..count].Clear();
 				return func(buffer, state);
 			}
 			finally
 			{
+				buffer.Unload();
 				ArrayPool<T>.Shared.Return(arr, true);
 			}
 		}
@@ -253,6 +257,9 @@ public static partial class BufferManager
 		}
 
 		/// <inheritdoc cref="BufferManager.StackAlloc{T}(UInt16, ScopedBufferAction{T})"/>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #pragma warning disable CS8500
 		private static unsafe void StackAlloc<T>(UInt16 count, VbScopedBufferAction<T> action)
@@ -261,7 +268,14 @@ public static partial class BufferManager
 			Span<Byte> bytes = stackalloc Byte[count * sizeOfT];
 			ref T refT = ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(bytes));
 			VbScopedBuffer<T> buffer = new(ref refT, count);
-			action(buffer);
+			try
+			{
+				action(buffer);
+			}
+			finally
+			{
+				buffer.Unload();
+			}
 		}
 		/// <inheritdoc cref="BufferManager.StackAlloc{T, TState}(UInt16, TState, ScopedBufferAction{T, TState})"/>
 #if !PACKAGE
@@ -275,7 +289,14 @@ public static partial class BufferManager
 			Span<Byte> bytes = stackalloc Byte[count * sizeOfT];
 			ref T refT = ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(bytes));
 			VbScopedBuffer<T> buffer = new(ref refT, count);
-			action(buffer, state);
+			try
+			{
+				action(buffer, state);
+			}
+			finally
+			{
+				buffer.Unload();
+			}
 		}
 		/// <inheritdoc cref="BufferManager.StackAlloc{T, TResult}(UInt16, ScopedBufferFunc{T, TResult})"/>
 #if !PACKAGE
@@ -288,7 +309,14 @@ public static partial class BufferManager
 			Span<Byte> bytes = stackalloc Byte[count * sizeOfT];
 			ref T refT = ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(bytes));
 			VbScopedBuffer<T> buffer = new(ref refT, count);
-			return func(buffer);
+			try
+			{
+				return func(buffer);
+			}
+			finally
+			{
+				buffer.Unload();
+			}
 		}
 		/// <inheritdoc cref="BufferManager.StackAlloc{T, TState, TResult}(UInt16, TState, ScopedBufferFunc{T, TState, TResult})"/>
 #if !PACKAGE
@@ -302,7 +330,14 @@ public static partial class BufferManager
 			Span<Byte> bytes = stackalloc Byte[count * sizeOfT];
 			ref T refT = ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(bytes));
 			VbScopedBuffer<T> buffer = new(ref refT, count);
-			return func(buffer, state);
+			try
+			{
+				return func(buffer, state);
+			}
+			finally
+			{
+				buffer.Unload();
+			}
 		}
 #pragma warning restore CS8500
 	}

@@ -99,7 +99,14 @@ internal sealed class BufferTypeMetadata<
 		TBuffer buffer = default;
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
 		VbScopedBuffer<T> bufferT = new(ref valRef, (UInt16)spanLength, this);
-		action(bufferT, state);
+		try
+		{
+			action(bufferT, state);
+		}
+		finally
+		{
+			bufferT.Unload();
+		}
 	}
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.NoInlining)]
@@ -133,7 +140,14 @@ internal sealed class BufferTypeMetadata<
 		TBuffer buffer = default;
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
 		VbScopedBuffer<T> bufferT = new(ref valRef, (UInt16)spanLength, this);
-		return func(bufferT, state);
+		try
+		{
+			return func(bufferT, state);
+		}
+		finally
+		{
+			bufferT.Unload();
+		}
 	}
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.NoInlining)]
@@ -155,7 +169,14 @@ internal sealed class BufferTypeMetadata<
 		TBuffer buffer = default;
 		ref TU valRef = ref Unsafe.As<TBuffer, TU>(ref buffer);
 		VbScopedBuffer<TU> bufferT = new(ref valRef, (UInt16)spanLength, this);
-		action(bufferT, state);
+		try
+		{
+			action(bufferT, state);
+		}
+		finally
+		{
+			bufferT.Unload();
+		}
 	}
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.NoInlining)]
@@ -179,6 +200,13 @@ internal sealed class BufferTypeMetadata<
 		TBuffer buffer = default;
 		ref TU valRef = ref Unsafe.As<TBuffer, TU>(ref buffer);
 		VbScopedBuffer<TU> bufferT = new(ref valRef, (UInt16)spanLength, this);
-		return func(bufferT, state);
+		try
+		{
+			return func(bufferT, state);
+		}
+		finally
+		{
+			bufferT.Unload();
+		}
 	}
 }
