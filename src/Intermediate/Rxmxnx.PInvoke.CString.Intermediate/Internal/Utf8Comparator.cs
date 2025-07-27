@@ -142,7 +142,7 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
 				return false;
 		}
 
-		return true;
+		return textA.IsEmpty && textB.IsEmpty;
 	}
 
 	/// <summary>

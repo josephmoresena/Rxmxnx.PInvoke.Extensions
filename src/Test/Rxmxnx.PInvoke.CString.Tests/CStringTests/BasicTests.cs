@@ -117,6 +117,14 @@ public sealed class BasicTests
 		Assert.False(empty4.IsReference);
 		Assert.True(empty5.IsNullTerminated);
 		Assert.False(empty5.IsFunction);
+
+		for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
+		{
+			String str = TestSet.Utf16Text[i];
+			Boolean equal = String.IsNullOrEmpty(str);
+			Assert.Equal(equal, CString.Empty == str);
+			Assert.Equal(equal, CString.Empty == new CString(TestSet.Utf8Text[i]));
+		}
 	}
 
 	[Fact]
@@ -166,6 +174,7 @@ public sealed class BasicTests
 			Assert.True(cstr1.Equals(TestSet.Utf16Text[i]));
 			Assert.Equal(0, cstr1.CompareTo(TestSet.Utf16Text[i]));
 			Assert.Equal(TestSet.Utf16Text[i].GetHashCode(), cstr1.GetHashCode());
+			Assert.Equal(cstr1.Equals(CString.Empty), cstr1.Equals(String.Empty));
 		}
 	}
 
