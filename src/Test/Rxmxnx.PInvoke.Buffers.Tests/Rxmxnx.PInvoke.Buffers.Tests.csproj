@@ -1,9 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    
+
     <Import Project="..\Tests.targets"/>
 
     <ItemGroup>
-        <Using Include="Xunit"/>
+        <Using Condition="'$(TargetFramework)' != 'netstandard2.1'" Include="Xunit"/>
+        <Using Condition="'$(TargetFramework)' == 'netstandard2.1'" Include="NUnit.Framework"/>
         <Using Include="AutoFixture"/>
         <Using Include="System.Diagnostics"/>
         <Using Include="System.Diagnostics.CodeAnalysis"/>

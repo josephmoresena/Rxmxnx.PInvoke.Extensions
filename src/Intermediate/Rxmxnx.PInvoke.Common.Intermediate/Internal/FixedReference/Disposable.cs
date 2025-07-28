@@ -25,8 +25,6 @@ internal partial class FixedReference<T> : IConvertibleDisposable<IFixedReferenc
 		[ExcludeFromCodeCoverage]
 #endif
 		ref readonly T IReadOnlyReferenceable<T>.Reference => ref (this.Value as IReadOnlyFixedReference<T>).Reference;
-		IntPtr IFixedPointer.Pointer => (this.Value as IFixedPointer).Pointer;
-		Boolean IReadOnlyFixedMemory.IsNullOrEmpty => (this.Value as IReadOnlyFixedMemory).IsNullOrEmpty;
 		Span<Byte> IFixedMemory.Bytes => (this.Value as IFixedMemory).Bytes;
 		Span<Object> IFixedMemory.Objects => (this.Value as IFixedMemory).Objects;
 #if !PACKAGE

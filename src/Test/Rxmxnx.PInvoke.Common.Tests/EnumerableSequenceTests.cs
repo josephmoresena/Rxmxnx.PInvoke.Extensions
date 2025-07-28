@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class EnumerableSequenceTests
@@ -9,85 +14,85 @@ public sealed class EnumerableSequenceTests
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
-	internal Task BooleanTestAsync() => EnumerableSequenceTests.TestAsync<Boolean>();
+	public Task BooleanTestAsync() => EnumerableSequenceTests.TestAsync<Boolean>();
 	[Fact]
-	internal Task ByteTestAsync() => EnumerableSequenceTests.TestAsync<Byte>();
+	public Task ByteTestAsync() => EnumerableSequenceTests.TestAsync<Byte>();
 	[Fact]
-	internal Task Int16TestAsync() => EnumerableSequenceTests.TestAsync<Int16>();
+	public Task Int16TestAsync() => EnumerableSequenceTests.TestAsync<Int16>();
 	[Fact]
-	internal Task CharTestAsync() => EnumerableSequenceTests.TestAsync<Char>();
+	public Task CharTestAsync() => EnumerableSequenceTests.TestAsync<Char>();
 	[Fact]
-	internal Task Int32TestAsync() => EnumerableSequenceTests.TestAsync<Int32>();
+	public Task Int32TestAsync() => EnumerableSequenceTests.TestAsync<Int32>();
 	[Fact]
-	internal Task Int64TestAsync() => EnumerableSequenceTests.TestAsync<Int64>();
+	public Task Int64TestAsync() => EnumerableSequenceTests.TestAsync<Int64>();
 #if NET7_0_OR_GREATER
 	[Fact]
 	internal Task Int128TestAsync() => EnumerableSequenceTests.TestAsync<Int128>();
 #endif
 	[Fact]
-	internal Task GuidTestAsync() => EnumerableSequenceTests.TestAsync<Guid>();
+	public Task GuidTestAsync() => EnumerableSequenceTests.TestAsync<Guid>();
 	[Fact]
-	internal Task SingleTestAsync() => EnumerableSequenceTests.TestAsync<Single>();
+	public Task SingleTestAsync() => EnumerableSequenceTests.TestAsync<Single>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal Task HalfTestAsync() => EnumerableSequenceTests.TestAsync<Half>();
 #endif
 	[Fact]
-	internal Task DoubleTestAsync() => EnumerableSequenceTests.TestAsync<Double>();
+	public Task DoubleTestAsync() => EnumerableSequenceTests.TestAsync<Double>();
 	[Fact]
-	internal Task DecimalTestAsync() => EnumerableSequenceTests.TestAsync<Decimal>();
+	public Task DecimalTestAsync() => EnumerableSequenceTests.TestAsync<Decimal>();
 	[Fact]
-	internal Task DateTimeTestAsync() => EnumerableSequenceTests.TestAsync<DateTime>();
+	public Task DateTimeTestAsync() => EnumerableSequenceTests.TestAsync<DateTime>();
 #if NET6_0_OR_GREATER
 	[Fact]
 	internal Task TimeOnlyTestAsync() => EnumerableSequenceTests.TestAsync<TimeOnly>();
 #endif
 	[Fact]
-	internal Task TimeSpanTestAsync() => EnumerableSequenceTests.TestAsync<TimeSpan>();
+	public Task TimeSpanTestAsync() => EnumerableSequenceTests.TestAsync<TimeSpan>();
 	[Fact]
-	internal Task StringTestAsync() => EnumerableSequenceTests.TestAsync<String>();
+	public Task StringTestAsync() => EnumerableSequenceTests.TestAsync<String>();
 	[Fact]
-	internal Task ObjectTestAsync() => EnumerableSequenceTests.TestAsync<Object>();
+	public Task ObjectTestAsync() => EnumerableSequenceTests.TestAsync<Object>();
 	[Fact]
-	internal Task NullableOBooleanTestAsync() => EnumerableSequenceTests.TestAsync<Boolean?>();
+	public Task NullableOBooleanTestAsync() => EnumerableSequenceTests.TestAsync<Boolean?>();
 	[Fact]
-	internal Task NullableOByteTestAsync() => EnumerableSequenceTests.TestAsync<Byte?>();
+	public Task NullableOByteTestAsync() => EnumerableSequenceTests.TestAsync<Byte?>();
 	[Fact]
-	internal Task NullableOInt16TestAsync() => EnumerableSequenceTests.TestAsync<Int16?>();
+	public Task NullableOInt16TestAsync() => EnumerableSequenceTests.TestAsync<Int16?>();
 	[Fact]
-	internal Task NullableOCharTestAsync() => EnumerableSequenceTests.TestAsync<Char?>();
+	public Task NullableOCharTestAsync() => EnumerableSequenceTests.TestAsync<Char?>();
 	[Fact]
-	internal Task NullableOInt32TestAsync() => EnumerableSequenceTests.TestAsync<Int32?>();
+	public Task NullableOInt32TestAsync() => EnumerableSequenceTests.TestAsync<Int32?>();
 	[Fact]
-	internal Task NullableOInt64TestAsync() => EnumerableSequenceTests.TestAsync<Int64?>();
+	public Task NullableOInt64TestAsync() => EnumerableSequenceTests.TestAsync<Int64?>();
 #if NET7_0_OR_GREATER
 	[Fact]
 	internal Task NullableOInt128TestAsync() => EnumerableSequenceTests.TestAsync<Int128?>();
 #endif
 	[Fact]
-	internal Task NullableOGuidTestAsync() => EnumerableSequenceTests.TestAsync<Guid?>();
+	public Task NullableOGuidTestAsync() => EnumerableSequenceTests.TestAsync<Guid?>();
 	[Fact]
-	internal Task NullableOSingleTestAsync() => EnumerableSequenceTests.TestAsync<Single?>();
+	public Task NullableOSingleTestAsync() => EnumerableSequenceTests.TestAsync<Single?>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal Task NullableOHalfTestAsync() => EnumerableSequenceTests.TestAsync<Half?>();
 #endif
 	[Fact]
-	internal Task NullableODoubleTestAsync() => EnumerableSequenceTests.TestAsync<Double?>();
+	public Task NullableODoubleTestAsync() => EnumerableSequenceTests.TestAsync<Double?>();
 	[Fact]
-	internal Task NullableODecimalTestAsync() => EnumerableSequenceTests.TestAsync<Decimal?>();
+	public Task NullableODecimalTestAsync() => EnumerableSequenceTests.TestAsync<Decimal?>();
 	[Fact]
-	internal Task NullableODateTimeTestAsync() => EnumerableSequenceTests.TestAsync<DateTime?>();
+	public Task NullableODateTimeTestAsync() => EnumerableSequenceTests.TestAsync<DateTime?>();
 #if NET6_0_OR_GREATER
 	[Fact]
 	internal Task NullableOTimeOnlyTestAsync() => EnumerableSequenceTests.TestAsync<TimeOnly?>();
 #endif
 	[Fact]
-	internal Task NullableOTimeSpanTestAsync() => EnumerableSequenceTests.TestAsync<TimeSpan?>();
+	public Task NullableOTimeSpanTestAsync() => EnumerableSequenceTests.TestAsync<TimeSpan?>();
 	[Fact]
-	internal Task NullableOStringTestAsync() => EnumerableSequenceTests.TestAsync<String?>();
+	public Task NullableOStringTestAsync() => EnumerableSequenceTests.TestAsync<String?>();
 	[Fact]
-	internal Task NullableObjectTestAsync() => EnumerableSequenceTests.TestAsync<Object?>();
+	public Task NullableObjectTestAsync() => EnumerableSequenceTests.TestAsync<Object?>();
 
 	private static async Task TestAsync<T>()
 	{
@@ -100,10 +105,10 @@ public sealed class EnumerableSequenceTests
 
 	private static void EnumerableTest<T>(T[] values, IEnumerableSequence<T> sequence)
 	{
-		Assert.Equal(values.Length, sequence.GetSize());
+		PInvokeAssert.Equal(values.Length, sequence.GetSize());
 		for (Int32 i = 0; i < values.Length; i++)
-			Assert.Equal(values[i], sequence.GetItem(i));
-		Assert.Equal(values, sequence);
+			PInvokeAssert.Equal(values[i], sequence.GetItem(i));
+		PInvokeAssert.Equal(values, sequence);
 	}
 
 	private static void EnumeratorTest<T>(T[] values, IEnumerableSequence<T> sequence)
@@ -116,16 +121,16 @@ public sealed class EnumerableSequenceTests
 
 	private static void TestEnumerator<T>(T[] values, IEnumerator<T> enumerator)
 	{
-		Assert.Equal(EnumerableSequenceTests.notStartedError,
-		             Assert.Throws<InvalidOperationException>(() => enumerator.Current).Message);
+		PInvokeAssert.Equal(EnumerableSequenceTests.notStartedError,
+		                    PInvokeAssert.Throws<InvalidOperationException>(() => enumerator.Current).Message);
 		Int32 index = -1;
 		while (enumerator.MoveNext())
 		{
 			index++;
-			Assert.Equal(values[index], enumerator.Current);
+			PInvokeAssert.Equal(values[index], enumerator.Current);
 		}
-		Assert.Equal(values.Length, index + 1);
-		Assert.Equal(EnumerableSequenceTests.finishedError,
-		             Assert.Throws<InvalidOperationException>(() => enumerator.Current).Message);
+		PInvokeAssert.Equal(values.Length, index + 1);
+		PInvokeAssert.Equal(EnumerableSequenceTests.finishedError,
+		                    PInvokeAssert.Throws<InvalidOperationException>(() => enumerator.Current).Message);
 	}
 }

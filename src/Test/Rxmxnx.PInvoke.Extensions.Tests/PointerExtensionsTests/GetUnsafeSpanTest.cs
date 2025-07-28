@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class GetUnsafeSpanTest
@@ -7,39 +12,39 @@ public sealed class GetUnsafeSpanTest
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
-	internal void ByteTest() => GetUnsafeSpanTest.Test<Byte>();
+	public void ByteTest() => GetUnsafeSpanTest.Test<Byte>();
 	[Fact]
-	internal void CharTest() => GetUnsafeSpanTest.Test<Char>();
+	public void CharTest() => GetUnsafeSpanTest.Test<Char>();
 #if NET7_0_OR_GREATER
 	[Fact]
-	internal void DateTimeTest() => GetUnsafeSpanTest.Test<DateTime>();
+	public void DateTimeTest() => GetUnsafeSpanTest.Test<DateTime>();
 #endif
 	[Fact]
-	internal void DecimalTest() => GetUnsafeSpanTest.Test<Decimal>();
+	public void DecimalTest() => GetUnsafeSpanTest.Test<Decimal>();
 	[Fact]
-	internal void DoubleTest() => GetUnsafeSpanTest.Test<Double>();
+	public void DoubleTest() => GetUnsafeSpanTest.Test<Double>();
 	[Fact]
-	internal void GuidTest() => GetUnsafeSpanTest.Test<Guid>();
+	public void GuidTest() => GetUnsafeSpanTest.Test<Guid>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => GetUnsafeSpanTest.Test<Half>();
 #endif
 	[Fact]
-	internal void Int16Test() => GetUnsafeSpanTest.Test<Int16>();
+	public void Int16Test() => GetUnsafeSpanTest.Test<Int16>();
 	[Fact]
-	internal void Int32Test() => GetUnsafeSpanTest.Test<Int32>();
+	public void Int32Test() => GetUnsafeSpanTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => GetUnsafeSpanTest.Test<Int64>();
+	public void Int64Test() => GetUnsafeSpanTest.Test<Int64>();
 	[Fact]
-	internal void SByteTest() => GetUnsafeSpanTest.Test<SByte>();
+	public void SByteTest() => GetUnsafeSpanTest.Test<SByte>();
 	[Fact]
-	internal void SingleTest() => GetUnsafeSpanTest.Test<Single>();
+	public void SingleTest() => GetUnsafeSpanTest.Test<Single>();
 	[Fact]
-	internal void UInt16Test() => GetUnsafeSpanTest.Test<UInt16>();
+	public void UInt16Test() => GetUnsafeSpanTest.Test<UInt16>();
 	[Fact]
-	internal void UInt32Test() => GetUnsafeSpanTest.Test<UInt32>();
+	public void UInt32Test() => GetUnsafeSpanTest.Test<UInt32>();
 	[Fact]
-	internal void UInt64Test() => GetUnsafeSpanTest.Test<UInt64>();
+	public void UInt64Test() => GetUnsafeSpanTest.Test<UInt64>();
 
 	private static unsafe void Test<T>() where T : unmanaged
 	{
@@ -55,19 +60,19 @@ public sealed class GetUnsafeSpanTest
 			IntPtr intPtr = (IntPtr)p;
 			UIntPtr uintPtr = (UIntPtr)p;
 
-			Assert.Equal(input, intPtr.GetUnsafeSpan<T>(input.Length).ToArray());
-			Assert.Equal(input, intPtr.GetUnsafeReadOnlySpan<T>(input.Length).ToArray());
-			Assert.Equal(input, uintPtr.GetUnsafeSpan<T>(input.Length).ToArray());
-			Assert.Equal(input, uintPtr.GetUnsafeReadOnlySpan<T>(input.Length).ToArray());
-			Assert.Equal(input, handle.GetUnsafeSpan<T>(input.Length).ToArray());
-			Assert.Equal(input, handle.GetUnsafeReadOnlySpan<T>(input.Length).ToArray());
+			PInvokeAssert.Equal(input, intPtr.GetUnsafeSpan<T>(input.Length).ToArray());
+			PInvokeAssert.Equal(input, intPtr.GetUnsafeReadOnlySpan<T>(input.Length).ToArray());
+			PInvokeAssert.Equal(input, uintPtr.GetUnsafeSpan<T>(input.Length).ToArray());
+			PInvokeAssert.Equal(input, uintPtr.GetUnsafeReadOnlySpan<T>(input.Length).ToArray());
+			PInvokeAssert.Equal(input, handle.GetUnsafeSpan<T>(input.Length).ToArray());
+			PInvokeAssert.Equal(input, handle.GetUnsafeReadOnlySpan<T>(input.Length).ToArray());
 
-			Assert.Equal(input, intPtr.GetUnsafeArray<T>(input.Length));
-			Assert.Equal(input, uintPtr.GetUnsafeArray<T>(input.Length));
-			Assert.Equal(input, handle.GetUnsafeArray<T>(input.Length));
-			Assert.True(p == handle.Pointer);
-			Assert.Equal(intPtr, handle.ToIntPtr());
-			Assert.Equal(uintPtr, handle.ToUIntPtr());
+			PInvokeAssert.Equal(input, intPtr.GetUnsafeArray<T>(input.Length));
+			PInvokeAssert.Equal(input, uintPtr.GetUnsafeArray<T>(input.Length));
+			PInvokeAssert.Equal(input, handle.GetUnsafeArray<T>(input.Length));
+			PInvokeAssert.True(p == handle.Pointer);
+			PInvokeAssert.Equal(intPtr, handle.ToIntPtr());
+			PInvokeAssert.Equal(uintPtr, handle.ToUIntPtr());
 		}
 
 		GetUnsafeSpanTest.MemoryTest(input);
@@ -80,20 +85,20 @@ public sealed class GetUnsafeSpanTest
 			ReadOnlySpan<T> result2 = IntPtr.Zero.GetUnsafeReadOnlySpan<T>(length);
 			Span<T> result3 = UIntPtr.Zero.GetUnsafeSpan<T>(length);
 			ReadOnlySpan<T> result4 = UIntPtr.Zero.GetUnsafeReadOnlySpan<T>(length);
-			Assert.True(result.IsEmpty);
-			Assert.True(result2.IsEmpty);
-			Assert.True(result3.IsEmpty);
-			Assert.True(result4.IsEmpty);
+			PInvokeAssert.True(result.IsEmpty);
+			PInvokeAssert.True(result2.IsEmpty);
+			PInvokeAssert.True(result3.IsEmpty);
+			PInvokeAssert.True(result4.IsEmpty);
 
-			Assert.Null(IntPtr.Zero.GetUnsafeArray<T>(length));
-			Assert.Null(UIntPtr.Zero.GetUnsafeArray<T>(length));
+			PInvokeAssert.Null(IntPtr.Zero.GetUnsafeArray<T>(length));
+			PInvokeAssert.Null(UIntPtr.Zero.GetUnsafeArray<T>(length));
 		}
 		else
 		{
-			Assert.Throws<ArgumentException>(() => IntPtr.Zero.GetUnsafeSpan<T>(length));
-			Assert.Throws<ArgumentException>(() => IntPtr.Zero.GetUnsafeReadOnlySpan<T>(length));
-			Assert.Throws<ArgumentException>(() => UIntPtr.Zero.GetUnsafeSpan<T>(length));
-			Assert.Throws<ArgumentException>(() => UIntPtr.Zero.GetUnsafeReadOnlySpan<T>(length));
+			PInvokeAssert.Throws<ArgumentException>(() => IntPtr.Zero.GetUnsafeSpan<T>(length));
+			PInvokeAssert.Throws<ArgumentException>(() => IntPtr.Zero.GetUnsafeReadOnlySpan<T>(length));
+			PInvokeAssert.Throws<ArgumentException>(() => UIntPtr.Zero.GetUnsafeSpan<T>(length));
+			PInvokeAssert.Throws<ArgumentException>(() => UIntPtr.Zero.GetUnsafeReadOnlySpan<T>(length));
 		}
 	}
 	private static void MemoryTest<T>(T[] arr) where T : unmanaged
@@ -106,21 +111,22 @@ public sealed class GetUnsafeSpanTest
 #if NET6_0_OR_GREATER
 		Assert.True(readOnlySpan.SequenceEqual(span));
 #else
-		Assert.Equal(readOnlySpan.ToArray(), span.ToArray());
+		PInvokeAssert.Equal(readOnlySpan.ToArray(), span.ToArray());
 #endif
-		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(span), ref MemoryMarshal.GetReference(arr.AsSpan())));
+		PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(span),
+		                                  ref MemoryMarshal.GetReference(arr.AsSpan())));
 
 		for (Int32 i = 0; i < arr.Length; i++)
 		{
-			Assert.Equal(readOnlySpan[i], arr[i]);
-			Assert.True(Unsafe.AreSame(ref span[i], ref arr[i]));
+			PInvokeAssert.Equal(readOnlySpan[i], arr[i]);
+			PInvokeAssert.True(Unsafe.AreSame(ref span[i], ref arr[i]));
 		}
 
 		MemoryHandle defaultHandle = default;
 		Span<T> defaultSpan = defaultHandle.GetUnsafeSpan<T>(objMem.Length);
 		ReadOnlySpan<T> defaultReadOnlySpan = defaultHandle.GetUnsafeReadOnlySpan<T>(objMem.Length);
 
-		Assert.True(defaultSpan.IsEmpty);
-		Assert.True(defaultReadOnlySpan.IsEmpty);
+		PInvokeAssert.True(defaultSpan.IsEmpty);
+		PInvokeAssert.True(defaultReadOnlySpan.IsEmpty);
 	}
 }

@@ -1,5 +1,10 @@
+#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
+
 namespace Rxmxnx.PInvoke.Tests;
 
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class RegisterTest
@@ -17,19 +22,19 @@ public sealed class RegisterTest
 		                                                                 nameof(BufferManager.RegisterNullable));
 
 	[Fact]
-	internal void BooleanTest() => RegisterTest.StructTest<Boolean>();
+	public void BooleanTest() => RegisterTest.StructTest<Boolean>();
 	[Fact]
-	internal void ByteTest() => RegisterTest.StructTest<Byte>();
+	public void ByteTest() => RegisterTest.StructTest<Byte>();
 	[Fact]
-	internal void Int16Test() => RegisterTest.StructTest<Int16>();
+	public void Int16Test() => RegisterTest.StructTest<Int16>();
 	[Fact]
-	internal void Int32Test() => RegisterTest.StructTest<Int32>();
+	public void Int32Test() => RegisterTest.StructTest<Int32>();
 	[Fact]
-	internal void Int64Test() => RegisterTest.StructTest<Int64>();
+	public void Int64Test() => RegisterTest.StructTest<Int64>();
 	[Fact]
-	internal void StringWrapperTest() => RegisterTest.StructTest<WrapperStruct<String?>>();
+	public void StringWrapperTest() => RegisterTest.StructTest<WrapperStruct<String?>>();
 	[Fact]
-	internal void ObjectTest()
+	public void ObjectTest()
 	{
 		MethodInfo registerObjectInfo = typeof(BufferManager).GetMethods(BindingFlags.Public | BindingFlags.Static)
 		                                                     .First(m => m.Name == nameof(BufferManager.Register) &&
@@ -49,10 +54,10 @@ public sealed class RegisterTest
 #else
 		((Action)registerObjectInfo.MakeGenericMethod(resultType).CreateDelegate(typeof(Action)))();
 #endif
-		Assert.NotNull(buffer);
-		Assert.Equal(sizeOfResultType / sizeofT, buffer.Metadata.Size);
-		Assert.True(buffer.Metadata.IsBinary);
-		Assert.Equal(buffer.Metadata.Size != 1 ? 2 : 0, buffer.Metadata.ComponentCount);
+		PInvokeAssert.NotNull(buffer);
+		PInvokeAssert.Equal(sizeOfResultType / sizeofT, buffer.Metadata.Size);
+		PInvokeAssert.True(buffer.Metadata.IsBinary);
+		PInvokeAssert.Equal(buffer.Metadata.Size != 1 ? 2 : 0, buffer.Metadata.ComponentCount);
 	}
 
 	private static void StructTest<T>() where T : struct
@@ -66,10 +71,10 @@ public sealed class RegisterTest
 			((Func<Int32>)RegisterTest.sizeOfInfo.MakeGenericMethod(resultType).CreateDelegate(typeof(Func<Int32>)))();
 #endif
 		IManagedBinaryBuffer<T>? buffer = (IManagedBinaryBuffer<T>?)Activator.CreateInstance(resultType);
-		Assert.NotNull(buffer);
-		Assert.Equal(sizeOfResultType / sizeofT, buffer.Metadata.Size);
-		Assert.True(buffer.Metadata.IsBinary);
-		Assert.Equal(buffer.Metadata.Size != 1 ? 2 : 0, buffer.Metadata.ComponentCount);
+		PInvokeAssert.NotNull(buffer);
+		PInvokeAssert.Equal(sizeOfResultType / sizeofT, buffer.Metadata.Size);
+		PInvokeAssert.True(buffer.Metadata.IsBinary);
+		PInvokeAssert.Equal(buffer.Metadata.Size != 1 ? 2 : 0, buffer.Metadata.ComponentCount);
 #if NET5_0_OR_GREATER
 		RegisterTest.registerInfo.MakeGenericMethod(typeofT, resultType).CreateDelegate<Action>()();
 #else
@@ -90,10 +95,10 @@ public sealed class RegisterTest
 		((Action)RegisterTest.registerNullableInfo.MakeGenericMethod(typeofT, resultType)
 		                     .CreateDelegate(typeof(Action)))();
 #endif
-		Assert.NotNull(nullableBuffer);
-		Assert.Equal(sizeOfResultType / sizeofT, nullableBuffer.Metadata.Size);
-		Assert.True(nullableBuffer.Metadata.IsBinary);
-		Assert.Equal(nullableBuffer.Metadata.Size != 1 ? 2 : 0, nullableBuffer.Metadata.ComponentCount);
+		PInvokeAssert.NotNull(nullableBuffer);
+		PInvokeAssert.Equal(sizeOfResultType / sizeofT, nullableBuffer.Metadata.Size);
+		PInvokeAssert.True(nullableBuffer.Metadata.IsBinary);
+		PInvokeAssert.Equal(nullableBuffer.Metadata.Size != 1 ? 2 : 0, nullableBuffer.Metadata.ComponentCount);
 	}
 
 	private static Type GetCompositeType<T>(Int32 pow, out Int32 sizeofT, out Type resultType)

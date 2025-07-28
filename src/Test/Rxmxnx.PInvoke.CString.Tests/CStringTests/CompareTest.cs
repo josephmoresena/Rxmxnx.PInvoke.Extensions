@@ -1,24 +1,29 @@
-﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.CStringTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class CompareTest
 {
 	[Fact]
-	internal void EmptyTest()
+	public void EmptyTest()
 	{
-		Assert.Equal(0, CString.Compare(default, default(CString)));
-		Assert.Equal(0, CString.Compare(default, default(CString), StringComparison.Ordinal));
-		Assert.Equal(0, CString.Compare(default, default(CString), false));
-		Assert.Equal(0, CString.Compare(default, default(CString), false, default));
-		Assert.Equal(0, CString.Compare(default, default(String)));
-		Assert.Equal(0, CString.Compare(default, default(String), StringComparison.Ordinal));
-		Assert.Equal(0, CString.Compare(default, default(String), false));
-		Assert.Equal(0, CString.Compare(default, default(String), false, default));
+		PInvokeAssert.Equal(0, CString.Compare(default, default(CString)));
+		PInvokeAssert.Equal(0, CString.Compare(default, default(CString), StringComparison.Ordinal));
+		PInvokeAssert.Equal(0, CString.Compare(default, default(CString), false));
+		PInvokeAssert.Equal(0, CString.Compare(default, default(CString), false, default));
+		PInvokeAssert.Equal(0, CString.Compare(default, default(String)));
+		PInvokeAssert.Equal(0, CString.Compare(default, default(String), StringComparison.Ordinal));
+		PInvokeAssert.Equal(0, CString.Compare(default, default(String), false));
+		PInvokeAssert.Equal(0, CString.Compare(default, default(String), false, default));
 	}
 
 	[Fact]
-	internal void Test()
+	public void Test()
 	{
 		for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
 		for (Int32 j = 0; j < TestSet.Utf16Text.Count; j++)
@@ -26,7 +31,7 @@ public sealed class CompareTest
 	}
 
 	[Fact]
-	internal void CulturalTest()
+	public void CulturalTest()
 	{
 		for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
 		for (Int32 j = i; j < TestSet.Utf16Text.Count; j++)
@@ -66,7 +71,7 @@ public sealed class CompareTest
 			CompareTest.CompleteTest(ComparisonTestResult.Compare(strB, strLowerA), cstrB, strLowerA, cstrLowerA);
 			CompareTest.CompleteTest(ComparisonTestResult.Compare(strB, strUpperA), cstrB, strUpperA, cstrUpperA);
 		}
-		Assert.Equal(1, cstrA.CompareTo(default(Object)));
+		PInvokeAssert.Equal(1, cstrA.CompareTo(default(Object)));
 	}
 	private static void CompleteTest(ComparisonTestResult results, CString cstrA, String strB, CString cstrB)
 	{
@@ -109,72 +114,72 @@ public sealed class CompareTest
 
 	private static void StringTest(ComparisonTestResult results, CString cstrA, String strB)
 	{
-		Assert.Equal(1, cstrA.CompareTo(default(String)));
-		Assert.Equal(1, CString.Compare(cstrA, default(String)));
-		Assert.Equal(1, CString.Compare(cstrA, default(String), StringComparison.Ordinal));
-		Assert.Equal(1, CString.Compare(cstrA, default(String), false));
-		Assert.Equal(-1, CString.Compare(default, strB));
-		Assert.Equal(-1, CString.Compare(default, strB, StringComparison.Ordinal));
-		Assert.Equal(-1, CString.Compare(default, strB, false));
+		PInvokeAssert.Equal(1, cstrA.CompareTo(default(String)));
+		PInvokeAssert.Equal(1, CString.Compare(cstrA, default(String)));
+		PInvokeAssert.Equal(1, CString.Compare(cstrA, default(String), StringComparison.Ordinal));
+		PInvokeAssert.Equal(1, CString.Compare(cstrA, default(String), false));
+		PInvokeAssert.Equal(-1, CString.Compare(default, strB));
+		PInvokeAssert.Equal(-1, CString.Compare(default, strB, StringComparison.Ordinal));
+		PInvokeAssert.Equal(-1, CString.Compare(default, strB, false));
 
-		Assert.Equal(results.Normal, cstrA.CompareTo(strB));
-		Assert.Equal(results.Normal, CString.Compare(cstrA, strB));
-		Assert.Equal(results.CaseInsensitive, CString.Compare(cstrA, strB, true));
-		Assert.Equal(results.CaseSensitive, CString.Compare(cstrA, strB, false));
-		Assert.Equal(results.Comparisons[StringComparison.Ordinal],
-		             CString.Compare(cstrA, strB, StringComparison.Ordinal));
-		Assert.Equal(results.Comparisons[StringComparison.CurrentCulture],
-		             CString.Compare(cstrA, strB, StringComparison.CurrentCulture));
-		Assert.Equal(results.Comparisons[StringComparison.InvariantCulture],
-		             CString.Compare(cstrA, strB, StringComparison.InvariantCulture));
-		Assert.Equal(results.Comparisons[StringComparison.OrdinalIgnoreCase],
-		             CString.Compare(cstrA, strB, StringComparison.OrdinalIgnoreCase));
-		Assert.Equal(results.Comparisons[StringComparison.CurrentCultureIgnoreCase],
-		             CString.Compare(cstrA, strB, StringComparison.CurrentCultureIgnoreCase));
-		Assert.Equal(results.Comparisons[StringComparison.InvariantCultureIgnoreCase],
-		             CString.Compare(cstrA, strB, StringComparison.InvariantCultureIgnoreCase));
+		PInvokeAssert.Equal(results.Normal, cstrA.CompareTo(strB));
+		PInvokeAssert.Equal(results.Normal, CString.Compare(cstrA, strB));
+		PInvokeAssert.Equal(results.CaseInsensitive, CString.Compare(cstrA, strB, true));
+		PInvokeAssert.Equal(results.CaseSensitive, CString.Compare(cstrA, strB, false));
+		PInvokeAssert.Equal(results.Comparisons[StringComparison.Ordinal],
+		                    CString.Compare(cstrA, strB, StringComparison.Ordinal));
+		PInvokeAssert.Equal(results.Comparisons[StringComparison.CurrentCulture],
+		                    CString.Compare(cstrA, strB, StringComparison.CurrentCulture));
+		PInvokeAssert.Equal(results.Comparisons[StringComparison.InvariantCulture],
+		                    CString.Compare(cstrA, strB, StringComparison.InvariantCulture));
+		PInvokeAssert.Equal(results.Comparisons[StringComparison.OrdinalIgnoreCase],
+		                    CString.Compare(cstrA, strB, StringComparison.OrdinalIgnoreCase));
+		PInvokeAssert.Equal(results.Comparisons[StringComparison.CurrentCultureIgnoreCase],
+		                    CString.Compare(cstrA, strB, StringComparison.CurrentCultureIgnoreCase));
+		PInvokeAssert.Equal(results.Comparisons[StringComparison.InvariantCultureIgnoreCase],
+		                    CString.Compare(cstrA, strB, StringComparison.InvariantCultureIgnoreCase));
 	}
 	private static void StringTest(CulturalComparisonTestResult results, CString cstrA, String strB)
 	{
-		Assert.Equal(1, CString.Compare(cstrA, default(String), false, results.Culture));
-		Assert.Equal(-1, CString.Compare(default, strB, false, results.Culture));
+		PInvokeAssert.Equal(1, CString.Compare(cstrA, default(String), false, results.Culture));
+		PInvokeAssert.Equal(-1, CString.Compare(default, strB, false, results.Culture));
 
-		Assert.Equal(results.CaseInsensitive, CString.Compare(cstrA, strB, true, results.Culture));
-		Assert.Equal(results.CaseSensitive, CString.Compare(cstrA, strB, false, results.Culture));
+		PInvokeAssert.Equal(results.CaseInsensitive, CString.Compare(cstrA, strB, true, results.Culture));
+		PInvokeAssert.Equal(results.CaseSensitive, CString.Compare(cstrA, strB, false, results.Culture));
 	}
 	private static void CStringTest(ComparisonTestResult results, CString cstrA, CString cstrB)
 	{
-		Assert.Equal(1, cstrA.CompareTo(default(CString)));
-		Assert.Equal(1, CString.Compare(cstrA, default(CString)));
-		Assert.Equal(1, CString.Compare(cstrA, default(CString), StringComparison.Ordinal));
-		Assert.Equal(1, CString.Compare(cstrA, default(CString), false));
-		Assert.Equal(-1, CString.Compare(default, cstrB));
-		Assert.Equal(-1, CString.Compare(default, cstrB, StringComparison.Ordinal));
-		Assert.Equal(-1, CString.Compare(default, cstrB, false));
+		PInvokeAssert.Equal(1, cstrA.CompareTo(default(CString)));
+		PInvokeAssert.Equal(1, CString.Compare(cstrA, default(CString)));
+		PInvokeAssert.Equal(1, CString.Compare(cstrA, default(CString), StringComparison.Ordinal));
+		PInvokeAssert.Equal(1, CString.Compare(cstrA, default(CString), false));
+		PInvokeAssert.Equal(-1, CString.Compare(default, cstrB));
+		PInvokeAssert.Equal(-1, CString.Compare(default, cstrB, StringComparison.Ordinal));
+		PInvokeAssert.Equal(-1, CString.Compare(default, cstrB, false));
 
-		Assert.Equal(results.Normal, cstrA.CompareTo(cstrB));
-		Assert.Equal(results.Normal, CString.Compare(cstrA, cstrB));
-		Assert.Equal(results.CaseInsensitive, CString.Compare(cstrA, cstrB, true));
-		Assert.Equal(results.CaseSensitive, CString.Compare(cstrA, cstrB, false));
-		Assert.Equal(results.Comparisons[StringComparison.Ordinal],
-		             CString.Compare(cstrA, cstrB, StringComparison.Ordinal));
-		Assert.Equal(results.Comparisons[StringComparison.CurrentCulture],
-		             CString.Compare(cstrA, cstrB, StringComparison.CurrentCulture));
-		Assert.Equal(results.Comparisons[StringComparison.InvariantCulture],
-		             CString.Compare(cstrA, cstrB, StringComparison.InvariantCulture));
-		Assert.Equal(results.Comparisons[StringComparison.OrdinalIgnoreCase],
-		             CString.Compare(cstrA, cstrB, StringComparison.OrdinalIgnoreCase));
-		Assert.Equal(results.Comparisons[StringComparison.CurrentCultureIgnoreCase],
-		             CString.Compare(cstrA, cstrB, StringComparison.CurrentCultureIgnoreCase));
-		Assert.Equal(results.Comparisons[StringComparison.InvariantCultureIgnoreCase],
-		             CString.Compare(cstrA, cstrB, StringComparison.InvariantCultureIgnoreCase));
+		PInvokeAssert.Equal(results.Normal, cstrA.CompareTo(cstrB));
+		PInvokeAssert.Equal(results.Normal, CString.Compare(cstrA, cstrB));
+		PInvokeAssert.Equal(results.CaseInsensitive, CString.Compare(cstrA, cstrB, true));
+		PInvokeAssert.Equal(results.CaseSensitive, CString.Compare(cstrA, cstrB, false));
+		PInvokeAssert.Equal(results.Comparisons[StringComparison.Ordinal],
+		                    CString.Compare(cstrA, cstrB, StringComparison.Ordinal));
+		PInvokeAssert.Equal(results.Comparisons[StringComparison.CurrentCulture],
+		                    CString.Compare(cstrA, cstrB, StringComparison.CurrentCulture));
+		PInvokeAssert.Equal(results.Comparisons[StringComparison.InvariantCulture],
+		                    CString.Compare(cstrA, cstrB, StringComparison.InvariantCulture));
+		PInvokeAssert.Equal(results.Comparisons[StringComparison.OrdinalIgnoreCase],
+		                    CString.Compare(cstrA, cstrB, StringComparison.OrdinalIgnoreCase));
+		PInvokeAssert.Equal(results.Comparisons[StringComparison.CurrentCultureIgnoreCase],
+		                    CString.Compare(cstrA, cstrB, StringComparison.CurrentCultureIgnoreCase));
+		PInvokeAssert.Equal(results.Comparisons[StringComparison.InvariantCultureIgnoreCase],
+		                    CString.Compare(cstrA, cstrB, StringComparison.InvariantCultureIgnoreCase));
 	}
 	private static void CStringTest(CulturalComparisonTestResult results, CString cstrA, CString cstrB)
 	{
-		Assert.Equal(1, CString.Compare(cstrA, default(CString), false, results.Culture));
-		Assert.Equal(-1, CString.Compare(default, cstrB, false, results.Culture));
+		PInvokeAssert.Equal(1, CString.Compare(cstrA, default(CString), false, results.Culture));
+		PInvokeAssert.Equal(-1, CString.Compare(default, cstrB, false, results.Culture));
 
-		Assert.Equal(results.CaseInsensitive, CString.Compare(cstrA, cstrB, true, results.Culture));
-		Assert.Equal(results.CaseSensitive, CString.Compare(cstrA, cstrB, false, results.Culture));
+		PInvokeAssert.Equal(results.CaseInsensitive, CString.Compare(cstrA, cstrB, true, results.Culture));
+		PInvokeAssert.Equal(results.CaseSensitive, CString.Compare(cstrA, cstrB, false, results.Culture));
 	}
 }

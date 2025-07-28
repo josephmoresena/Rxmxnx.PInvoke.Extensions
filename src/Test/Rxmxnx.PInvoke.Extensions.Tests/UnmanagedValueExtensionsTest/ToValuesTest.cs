@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.UnmanagedValueExtensionsTest;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.UnmanagedValueExtensionsTest;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class ToValuesTest
@@ -7,37 +12,37 @@ public sealed class ToValuesTest
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
-	internal void ByteTest() => ToValuesTest.Test<Byte>();
+	public void ByteTest() => ToValuesTest.Test<Byte>();
 	[Fact]
-	internal void CharTest() => ToValuesTest.Test<Char>();
+	public void CharTest() => ToValuesTest.Test<Char>();
 	[Fact]
-	internal void DateTimeTest() => ToValuesTest.Test<DateTime>();
+	public void DateTimeTest() => ToValuesTest.Test<DateTime>();
 	[Fact]
-	internal void DecimalTest() => ToValuesTest.Test<Decimal>();
+	public void DecimalTest() => ToValuesTest.Test<Decimal>();
 	[Fact]
-	internal void DoubleTest() => ToValuesTest.Test<Double>();
+	public void DoubleTest() => ToValuesTest.Test<Double>();
 	[Fact]
-	internal void GuidTest() => ToValuesTest.Test<Guid>();
+	public void GuidTest() => ToValuesTest.Test<Guid>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => ToValuesTest.Test<Half>();
 #endif
 	[Fact]
-	internal void Int16Test() => ToValuesTest.Test<Int16>();
+	public void Int16Test() => ToValuesTest.Test<Int16>();
 	[Fact]
-	internal void Int32Test() => ToValuesTest.Test<Int32>();
+	public void Int32Test() => ToValuesTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => ToValuesTest.Test<Int64>();
+	public void Int64Test() => ToValuesTest.Test<Int64>();
 	[Fact]
-	internal void SByteTest() => ToValuesTest.Test<SByte>();
+	public void SByteTest() => ToValuesTest.Test<SByte>();
 	[Fact]
-	internal void SingleTest() => ToValuesTest.Test<Single>();
+	public void SingleTest() => ToValuesTest.Test<Single>();
 	[Fact]
-	internal void UInt16Test() => ToValuesTest.Test<UInt16>();
+	public void UInt16Test() => ToValuesTest.Test<UInt16>();
 	[Fact]
-	internal void UInt32Test() => ToValuesTest.Test<UInt32>();
+	public void UInt32Test() => ToValuesTest.Test<UInt32>();
 	[Fact]
-	internal void UInt64Test() => ToValuesTest.Test<UInt64>();
+	public void UInt64Test() => ToValuesTest.Test<UInt64>();
 
 	private static void Test<T>() where T : unmanaged
 	{
@@ -70,17 +75,17 @@ public sealed class ToValuesTest
 		T2[] valuesT2 = spanT2.ToArray();
 		Byte[] resiudalBytes = spanResidual.ToArray();
 
-		Assert.Equal(valuesT2, values.ToValues<T, T2>());
-		Assert.Equal(valuesT2, values.ToValues<T, T2>(out Byte[] residual));
-		Assert.Equal(resiudalBytes, residual);
+		PInvokeAssert.Equal(valuesT2, values.ToValues<T, T2>());
+		PInvokeAssert.Equal(valuesT2, values.ToValues<T, T2>(out Byte[] residual));
+		PInvokeAssert.Equal(resiudalBytes, residual);
 
-		Assert.Equal([], Array.Empty<T>().ToValues<T, T2>());
-		Assert.Equal([], Array.Empty<T>().ToValues<T, T2>(out Byte[] residualEmpty));
-		Assert.Equal(Array.Empty<Byte>(), residualEmpty);
+		PInvokeAssert.Equal([], Array.Empty<T>().ToValues<T, T2>());
+		PInvokeAssert.Equal([], Array.Empty<T>().ToValues<T, T2>(out Byte[] residualEmpty));
+		PInvokeAssert.Equal(Array.Empty<Byte>(), residualEmpty);
 
 		T[]? nullValues = default;
-		Assert.Null(nullValues.ToValues<T, T2>());
-		Assert.Null(nullValues.ToValues<T, T2>(out Byte[]? residualNull));
-		Assert.Null(residualNull);
+		PInvokeAssert.Null(nullValues.ToValues<T, T2>());
+		PInvokeAssert.Null(nullValues.ToValues<T, T2>(out Byte[]? residualNull));
+		PInvokeAssert.Null(residualNull);
 	}
 }

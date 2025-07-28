@@ -1,3 +1,4 @@
+#if NETCOREAPP
 namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
 
 [ExcludeFromCodeCoverage]
@@ -50,3 +51,4 @@ public sealed class IsLiteralTest
 	}
 #endif
 }
+#endif

@@ -1,25 +1,34 @@
+#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+using InlineData = NUnit.Framework.TestCaseAttribute;
+#endif
+
 namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
 
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed unsafe class Utf8ViewTest
 {
 	[Fact]
-	internal void NullTest()
+	public void NullTest()
 	{
 		CStringSequence.Utf8View enumerable = default;
 		CStringSequence.Utf8View.Enumerator enumerator = enumerable.GetEnumerator();
 
-		Assert.Null(enumerable.ToString());
-		Assert.Equal(0, enumerable.Count);
-		Assert.Empty(enumerable.ToArray());
-		Assert.False(enumerator.MoveNext());
-		Assert.Throws<InvalidOperationException>(() => { _ = default(CStringSequence.Utf8View.Enumerator).Current; });
+		PInvokeAssert.Null(enumerable.ToString());
+		PInvokeAssert.Equal(0, enumerable.Count);
+		PInvokeAssert.Empty(enumerable.ToArray());
+		PInvokeAssert.False(enumerator.MoveNext());
+		PInvokeAssert.Throws<InvalidOperationException>(() =>
+		{
+			_ = default(CStringSequence.Utf8View.Enumerator).Current;
+		});
 	}
 
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	internal void EmptyTest(Boolean empty)
+	public void EmptyTest(Boolean empty)
 	{
 		CStringSequence.Utf8View enumerable = (empty ?
 				CStringSequence.Empty :
@@ -30,15 +39,18 @@ public sealed unsafe class Utf8ViewTest
 			.CreateView(false);
 		CStringSequence.Utf8View.Enumerator enumerator = enumerable.GetEnumerator();
 
-		Assert.Equal(String.Empty, enumerable.ToString());
-		Assert.Equal(0, enumerable.Count);
-		Assert.Empty(enumerable.ToArray());
-		Assert.False(enumerator.MoveNext());
-		Assert.Throws<InvalidOperationException>(() => { _ = default(CStringSequence.Utf8View.Enumerator).Current; });
+		PInvokeAssert.Equal(String.Empty, enumerable.ToString());
+		PInvokeAssert.Equal(0, enumerable.Count);
+		PInvokeAssert.Empty(enumerable.ToArray());
+		PInvokeAssert.False(enumerator.MoveNext());
+		PInvokeAssert.Throws<InvalidOperationException>(() =>
+		{
+			_ = default(CStringSequence.Utf8View.Enumerator).Current;
+		});
 	}
 
 	[Fact]
-	internal void EnumeratorTest()
+	public void EnumeratorTest()
 	{
 		CStringSequence sequence = new(Enumerable.Range(0, 10).Select(i => i % 2 == 0 ? String.Empty : default)
 		                                         .Concat(TestSet.GetIndices(20).Select(i => TestSet.GetString(i, true)))
@@ -47,7 +59,7 @@ public sealed unsafe class Utf8ViewTest
 		CStringSequence.Utf8View enumerable = sequence.CreateView(false);
 		CStringSequence.Utf8View.Enumerator enumerator = enumerable.GetEnumerator();
 
-		Assert.Equal(sequence.NonEmptyCount, enumerable.Count);
+		PInvokeAssert.Equal(sequence.NonEmptyCount, enumerable.Count);
 
 #if NET9_0_OR_GREATER
 		ref CStringSequence.Utf8View.Enumerator refEnumerator = ref enumerator;
@@ -72,7 +84,7 @@ public sealed unsafe class Utf8ViewTest
 		Utf8ViewTest.AssertNonEmpty(sequence, enumerator);
 	}
 	[Fact]
-	internal void EnumerableTest()
+	public void EnumerableTest()
 	{
 		CStringSequence sequence = new(Enumerable.Range(0, 10).Select(i => i % 2 == 0 ? String.Empty : default)
 		                                         .Concat(TestSet.GetIndices(20).Select(i => TestSet.GetString(i, true)))
@@ -83,10 +95,10 @@ public sealed unsafe class Utf8ViewTest
 		foreach (ReadOnlySpan<Byte> span in enumerable)
 		{
 			seqEnumerator.MoveNext();
-			Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference<Byte>(seqEnumerator.Current),
-			                           ref MemoryMarshal.GetReference(span)));
+			PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference<Byte>(seqEnumerator.Current),
+			                                  ref MemoryMarshal.GetReference(span)));
 		}
-		Assert.Equal(sequence.Count, enumerable.Count);
+		PInvokeAssert.Equal(sequence.Count, enumerable.Count);
 	}
 
 	private static void AssertNonEmpty(CStringSequence sequence, CStringSequence.Utf8View.Enumerator enumerator)
@@ -103,12 +115,12 @@ public sealed unsafe class Utf8ViewTest
 				Assert.True(Unsafe.AreSame(ref Unsafe.AddByteOffset(ref ref0, offsets[index]),
 				                           ref MemoryMarshal.GetReference(enumerator.Current)));
 #else
-				Assert.True(Unsafe.AreSame(ref Unsafe.AddByteOffset(ref ref0, (IntPtr)offsets[index]),
+				PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AddByteOffset(ref ref0, (IntPtr)offsets[index]),
 				                           ref MemoryMarshal.GetReference(enumerator.Current)));
 #endif
 				index++;
 			}
 		}
-		Assert.Equal(sequence.NonEmptyCount, index);
+		PInvokeAssert.Equal(sequence.NonEmptyCount, index);
 	}
 }

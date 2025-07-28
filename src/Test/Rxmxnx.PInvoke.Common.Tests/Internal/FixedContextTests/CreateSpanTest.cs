@@ -1,77 +1,82 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class CreateSpanTest : FixedContextTestsBase
 {
 	[Fact]
-	internal void BooleanTest() => CreateSpanTest.Test<Boolean>();
+	public void BooleanTest() => CreateSpanTest.Test<Boolean>();
 	[Fact]
-	internal void ByteTest() => CreateSpanTest.Test<Byte>();
+	public void ByteTest() => CreateSpanTest.Test<Byte>();
 	[Fact]
-	internal void Int16Test() => CreateSpanTest.Test<Int16>();
+	public void Int16Test() => CreateSpanTest.Test<Int16>();
 	[Fact]
-	internal void CharTest() => CreateSpanTest.Test<Char>();
+	public void CharTest() => CreateSpanTest.Test<Char>();
 	[Fact]
-	internal void Int32Test() => CreateSpanTest.Test<Int32>();
+	public void Int32Test() => CreateSpanTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => CreateSpanTest.Test<Int64>();
+	public void Int64Test() => CreateSpanTest.Test<Int64>();
 #if NET7_0_OR_GREATER
 	[Fact]
 	internal void Int128Test() => CreateSpanTest.Test<Int128>();
 #endif
 	[Fact]
-	internal void GuidTest() => CreateSpanTest.Test<Guid>();
+	public void GuidTest() => CreateSpanTest.Test<Guid>();
 	[Fact]
-	internal void SingleTest() => CreateSpanTest.Test<Single>();
+	public void SingleTest() => CreateSpanTest.Test<Single>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => CreateSpanTest.Test<Half>();
 #endif
 	[Fact]
-	internal void DoubleTest() => CreateSpanTest.Test<Double>();
+	public void DoubleTest() => CreateSpanTest.Test<Double>();
 	[Fact]
-	internal void DecimalTest() => CreateSpanTest.Test<Decimal>();
+	public void DecimalTest() => CreateSpanTest.Test<Decimal>();
 	[Fact]
-	internal void DateTimeTest() => CreateSpanTest.Test<DateTime>();
+	public void DateTimeTest() => CreateSpanTest.Test<DateTime>();
 #if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => CreateSpanTest.Test<TimeOnly>();
 #endif
 	[Fact]
-	internal void TimeSpanTest() => CreateSpanTest.Test<TimeSpan>();
+	public void TimeSpanTest() => CreateSpanTest.Test<TimeSpan>();
 	[Fact]
-	internal void ManagedStructTest() => CreateSpanTest.Test<ManagedStruct>();
+	public void ManagedStructTest() => CreateSpanTest.Test<ManagedStruct>();
 	[Fact]
-	internal void StringTest() => CreateSpanTest.Test<String>();
+	public void StringTest() => CreateSpanTest.Test<String>();
 
 	private static void Test<T>()
 	{
 		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>().ToArray();
 		FixedContextTestsBase.WithFixed(values, CreateSpanTest.Test);
 		Exception readOnly =
-			Assert.Throws<InvalidOperationException>(() => FixedContextTestsBase.WithFixed(
-				                                         values, CreateSpanTest.ReadOnlyTest));
-		Assert.Equal(FixedMemoryTestsBase.ReadOnlyError, readOnly.Message);
+			PInvokeAssert.Throws<InvalidOperationException>(() => FixedContextTestsBase.WithFixed(
+				                                                values, CreateSpanTest.ReadOnlyTest));
+		PInvokeAssert.Equal(FixedMemoryTestsBase.ReadOnlyError, readOnly.Message);
 	}
 
 	private static void Test<T>(FixedContext<T> ctx, T[] values)
 	{
 		Span<T> span = ctx.CreateSpan<T>(values.Length);
-		Assert.Equal(values.Length, span.Length);
-		Assert.Equal(values.Length, ctx.Count);
-		Assert.True(Unsafe.AreSame(ref values[0], ref span[0]));
-		Assert.False(ctx.IsFunction);
+		PInvokeAssert.Equal(values.Length, span.Length);
+		PInvokeAssert.Equal(values.Length, ctx.Count);
+		PInvokeAssert.True(Unsafe.AreSame(ref values[0], ref span[0]));
+		PInvokeAssert.False(ctx.IsFunction);
 
-		Exception functionException = Assert.Throws<InvalidOperationException>(ctx.CreateDelegate<Action>);
-		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
+		Exception functionException = PInvokeAssert.Throws<InvalidOperationException>(ctx.CreateDelegate<Action>);
+		PInvokeAssert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 
 		ctx.Unload();
-		Exception invalid = Assert.Throws<InvalidOperationException>(() => ctx.CreateSpan<T>(values.Length));
-		Assert.Equal(FixedMemoryTestsBase.InvalidError, invalid.Message);
+		Exception invalid = PInvokeAssert.Throws<InvalidOperationException>(() => ctx.CreateSpan<T>(values.Length));
+		PInvokeAssert.Equal(FixedMemoryTestsBase.InvalidError, invalid.Message);
 
-		Exception functionException2 = Assert.Throws<InvalidOperationException>(ctx.CreateDelegate<Action>);
-		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException2.Message);
+		Exception functionException2 = PInvokeAssert.Throws<InvalidOperationException>(ctx.CreateDelegate<Action>);
+		PInvokeAssert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException2.Message);
 	}
 
 	private static void ReadOnlyTest<T>(ReadOnlyFixedContext<T> ctx, T[] values)

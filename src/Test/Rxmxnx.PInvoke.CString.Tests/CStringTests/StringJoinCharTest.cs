@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.CStringTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class StringJoinCharTest
@@ -7,7 +12,7 @@ public sealed class StringJoinCharTest
 	private readonly IFixture _fixture = new Fixture();
 
 	[Fact]
-	internal void Test()
+	public void Test()
 	{
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
 		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
@@ -37,9 +42,9 @@ public sealed class StringJoinCharTest
 		CString resultCString = CString.Join(separator, strings);
 		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
 
-		Assert.Equal(expectedCString, resultCStringCString);
-		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
-		Assert.Same(CString.Empty, CString.Join(separator));
+		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+		PInvokeAssert.Same(CString.Empty, CString.Join(separator));
 	}
 	private static void EnumerableTest(Char separator, IEnumerable<String?> strings)
 	{
@@ -50,9 +55,9 @@ public sealed class StringJoinCharTest
 		CString resultCString = CString.Join(separator, strings);
 		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
 
-		Assert.Equal(expectedCString, resultCStringCString);
-		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
-		Assert.Same(CString.Empty, CString.Join(separator, Array.Empty<String?>().ToList()));
+		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+		PInvokeAssert.Same(CString.Empty, CString.Join(separator, Array.Empty<String?>().ToList()));
 	}
 	private static void ArrayRangeTest(Char separator, String?[] strings)
 	{
@@ -65,9 +70,9 @@ public sealed class StringJoinCharTest
 		CString resultCString = CString.Join(separator, strings, startIndex, count);
 		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
 
-		Assert.Equal(expectedCString, resultCStringCString);
-		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
-		Assert.Same(CString.Empty, CString.Join(separator, strings, 0, 0));
+		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+		PInvokeAssert.Same(CString.Empty, CString.Join(separator, strings, 0, 0));
 	}
 	private Char GetByteSeparator() => this._fixture.Create<Char>();
 

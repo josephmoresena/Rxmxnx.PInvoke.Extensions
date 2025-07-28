@@ -1,9 +1,11 @@
 ﻿#if !NETCOREAPP
 using Rune = System.UInt32;
+using Fact = NUnit.Framework.TestAttribute;
 #endif
 
 namespace Rxmxnx.PInvoke.Tests.Internal.DecodedRuneTests;
 
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class OverrideTest
 {
@@ -13,7 +15,7 @@ public sealed class OverrideTest
 		DecodedRune? decodedRune1 = DecodedRune.Decode("A".AsSpan());
 		DecodedRune? decodedRune2 = DecodedRune.Decode("A".AsSpan());
 
-		Assert.Equal(decodedRune1?.GetHashCode(), decodedRune2?.GetHashCode());
+		PInvokeAssert.Equal(decodedRune1?.GetHashCode(), decodedRune2?.GetHashCode());
 	}
 
 	[Fact]
@@ -22,7 +24,7 @@ public sealed class OverrideTest
 		ReadOnlySpan<Char> source = "A".AsSpan();
 		DecodedRune? decodedRune = DecodedRune.Decode(source);
 
-		Assert.Equal(source.ToString(), OverrideTest.CreateString(decodedRune?.Value));
+		PInvokeAssert.Equal(source.ToString(), OverrideTest.CreateString(decodedRune?.Value));
 	}
 
 	private static String? CreateString(Int32? value)

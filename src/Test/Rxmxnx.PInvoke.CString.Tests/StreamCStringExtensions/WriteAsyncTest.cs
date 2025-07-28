@@ -1,10 +1,16 @@
-﻿namespace Rxmxnx.PInvoke.Tests.StreamCStringExtensions;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+using InlineData = NUnit.Framework.TestCaseAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.StreamCStringExtensions;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class WriteAsyncTest
 {
 	[Fact]
-	internal async Task BasicTestAsync()
+	public async Task BasicTestAsync()
 	{
 		using TestMemoryHandle handle = new();
 		List<WrittenCString> values = [];
@@ -20,7 +26,7 @@ public sealed class WriteAsyncTest
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	internal async Task TestAsync(Boolean writeNullTermination)
+	public async Task TestAsync(Boolean writeNullTermination)
 	{
 		using TestMemoryHandle handle = new();
 		List<WrittenCString> values = [];
@@ -35,7 +41,7 @@ public sealed class WriteAsyncTest
 	}
 
 	[Fact]
-	internal async Task RangeTestAsync()
+	public async Task RangeTestAsync()
 	{
 		using TestMemoryHandle handle = new();
 		List<WrittenCString> values = [];

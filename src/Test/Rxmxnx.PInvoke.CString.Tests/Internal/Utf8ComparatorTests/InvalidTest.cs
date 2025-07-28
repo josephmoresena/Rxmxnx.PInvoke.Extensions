@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal.Utf8ComparatorTests;
+﻿#if !NETCOREAPP
+using InlineData = NUnit.Framework.TestCaseAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.Internal.Utf8ComparatorTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class InvalidTest
 {
@@ -12,7 +17,7 @@ public sealed class InvalidTest
 	[InlineData("Hello")]
 	[InlineData("Привет")]
 	[InlineData("こんにちは")]
-	internal void Test(String str)
+	public void Test(String str)
 	{
 		CString cstr = (CString)str;
 		CString invalidCStr = InvalidTest.GetInvalidCstr(cstr);
@@ -20,20 +25,20 @@ public sealed class InvalidTest
 
 		Int32 result = String.Compare(str, invalidStr, StringComparison.InvariantCulture);
 
-		Assert.Equal(result, InvalidTest.cstrComparator.Compare(cstr, invalidCStr));
-		Assert.Equal(result, InvalidTest.strComparator.Compare(cstr, invalidStr));
+		PInvokeAssert.Equal(result, InvalidTest.cstrComparator.Compare(cstr, invalidCStr));
+		PInvokeAssert.Equal(result, InvalidTest.strComparator.Compare(cstr, invalidStr));
 
-		Assert.Equal(-result, InvalidTest.cstrComparator.Compare(invalidCStr, cstr));
-		Assert.Equal(-result, InvalidTest.strComparator.Compare(invalidCStr, str));
+		PInvokeAssert.Equal(-result, InvalidTest.cstrComparator.Compare(invalidCStr, cstr));
+		PInvokeAssert.Equal(-result, InvalidTest.strComparator.Compare(invalidCStr, str));
 
-		Assert.Equal(0, InvalidTest.cstrComparator.Compare(invalidCStr, invalidCStr));
-		Assert.Equal(0, InvalidTest.strComparator.Compare(invalidCStr, invalidStr));
+		PInvokeAssert.Equal(0, InvalidTest.cstrComparator.Compare(invalidCStr, invalidCStr));
+		PInvokeAssert.Equal(0, InvalidTest.strComparator.Compare(invalidCStr, invalidStr));
 
-		Assert.Equal(result == 0, InvalidTest.cstrComparator.TextEquals(cstr, invalidCStr));
-		Assert.Equal(result == 0, InvalidTest.strComparator.TextEquals(cstr, invalidStr));
+		PInvokeAssert.Equal(result == 0, InvalidTest.cstrComparator.TextEquals(cstr, invalidCStr));
+		PInvokeAssert.Equal(result == 0, InvalidTest.strComparator.TextEquals(cstr, invalidStr));
 
-		Assert.True(InvalidTest.cstrComparator.TextEquals(invalidCStr, invalidCStr));
-		Assert.True(InvalidTest.strComparator.TextEquals(invalidCStr, invalidStr));
+		PInvokeAssert.True(InvalidTest.cstrComparator.TextEquals(invalidCStr, invalidCStr));
+		PInvokeAssert.True(InvalidTest.strComparator.TextEquals(invalidCStr, invalidStr));
 	}
 
 	private static CString GetInvalidCstr(CString cstr)

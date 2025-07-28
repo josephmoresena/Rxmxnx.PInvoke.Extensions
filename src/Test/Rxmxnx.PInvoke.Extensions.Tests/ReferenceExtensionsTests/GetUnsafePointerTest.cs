@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.ReferenceExtensionsTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.ReferenceExtensionsTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class GetUnsafePointerTest
@@ -7,39 +12,39 @@ public sealed class GetUnsafePointerTest
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
-	internal void BooleanTest() => GetUnsafePointerTest.Test<Boolean>();
+	public void BooleanTest() => GetUnsafePointerTest.Test<Boolean>();
 	[Fact]
-	internal void ByteTest() => GetUnsafePointerTest.Test<Byte>();
+	public void ByteTest() => GetUnsafePointerTest.Test<Byte>();
 	[Fact]
-	internal void CharTest() => GetUnsafePointerTest.Test<Char>();
+	public void CharTest() => GetUnsafePointerTest.Test<Char>();
 	[Fact]
-	internal void DateTimeTest() => GetUnsafePointerTest.Test<DateTime>();
+	public void DateTimeTest() => GetUnsafePointerTest.Test<DateTime>();
 	[Fact]
-	internal void DecimalTest() => GetUnsafePointerTest.Test<Decimal>();
+	public void DecimalTest() => GetUnsafePointerTest.Test<Decimal>();
 	[Fact]
-	internal void DoubleTest() => GetUnsafePointerTest.Test<Double>();
+	public void DoubleTest() => GetUnsafePointerTest.Test<Double>();
 	[Fact]
-	internal void GuidTest() => GetUnsafePointerTest.Test<Guid>();
+	public void GuidTest() => GetUnsafePointerTest.Test<Guid>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => GetUnsafePointerTest.Test<Half>();
 #endif
 	[Fact]
-	internal void Int16Test() => GetUnsafePointerTest.Test<Int16>();
+	public void Int16Test() => GetUnsafePointerTest.Test<Int16>();
 	[Fact]
-	internal void Int32Test() => GetUnsafePointerTest.Test<Int32>();
+	public void Int32Test() => GetUnsafePointerTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => GetUnsafePointerTest.Test<Int64>();
+	public void Int64Test() => GetUnsafePointerTest.Test<Int64>();
 	[Fact]
-	internal void SByteTest() => GetUnsafePointerTest.Test<SByte>();
+	public void SByteTest() => GetUnsafePointerTest.Test<SByte>();
 	[Fact]
-	internal void SingleTest() => GetUnsafePointerTest.Test<Single>();
+	public void SingleTest() => GetUnsafePointerTest.Test<Single>();
 	[Fact]
-	internal void UInt16Test() => GetUnsafePointerTest.Test<UInt16>();
+	public void UInt16Test() => GetUnsafePointerTest.Test<UInt16>();
 	[Fact]
-	internal void UInt32Test() => GetUnsafePointerTest.Test<UInt32>();
+	public void UInt32Test() => GetUnsafePointerTest.Test<UInt32>();
 	[Fact]
-	internal void UInt64Test() => GetUnsafePointerTest.Test<UInt64>();
+	public void UInt64Test() => GetUnsafePointerTest.Test<UInt64>();
 
 	private static unsafe void Test<T>() where T : unmanaged
 	{
@@ -47,9 +52,9 @@ public sealed class GetUnsafePointerTest
 		ref T refValue = ref value;
 		fixed (void* ptr = &refValue)
 		{
-			Assert.Equal((IntPtr)ptr, refValue.GetUnsafeIntPtr());
-			Assert.Equal((UIntPtr)ptr, refValue.GetUnsafeUIntPtr());
-			Assert.Equal((ValPtr<T>)(IntPtr)ptr, refValue.GetUnsafeValPtr());
+			PInvokeAssert.Equal((IntPtr)ptr, refValue.GetUnsafeIntPtr());
+			PInvokeAssert.Equal((UIntPtr)ptr, refValue.GetUnsafeUIntPtr());
+			PInvokeAssert.Equal((ValPtr<T>)(IntPtr)ptr, refValue.GetUnsafeValPtr());
 		}
 	}
 }

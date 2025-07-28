@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal.BinaryConcatenatorTests;
+﻿#if !NETCOREAPP
+using InlineData = NUnit.Framework.TestCaseAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.Internal.BinaryConcatenatorTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class SpanTests
 {
@@ -8,7 +13,7 @@ public sealed class SpanTests
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	internal void SingleSpanTest(Boolean nullSeparator)
+	public void SingleSpanTest(Boolean nullSeparator)
 	{
 		Byte[] sourceBytes = Encoding.UTF8.GetBytes(this._fixture.Create<String>());
 		Byte? separator = !nullSeparator ? this._fixture.Create<Byte>() : default(Byte?);
@@ -21,7 +26,7 @@ public sealed class SpanTests
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	internal void MultipleSpanTest(Boolean nullSeparator)
+	public void MultipleSpanTest(Boolean nullSeparator)
 	{
 		Byte[] sourceBytes1 = Encoding.UTF8.GetBytes(this._fixture.Create<String>());
 		Byte[] sourceBytes2 = Encoding.UTF8.GetBytes(this._fixture.Create<String>());
@@ -39,15 +44,15 @@ public sealed class SpanTests
 		Byte[]? outputBytes1 = helper.ToArray(false);
 		Byte[]? outputBytes2 = helper.ToArray(true);
 
-		Assert.NotNull(outputBytes1);
-		Assert.NotNull(outputBytes2);
+		PInvokeAssert.NotNull(outputBytes1);
+		PInvokeAssert.NotNull(outputBytes2);
 
-		Assert.Equal(sourceBytes, outputBytes1);
-		Assert.Equal(sourceBytes, outputBytes2[..sourceBytes.Length]);
-		Assert.Equal(outputBytes1.Length, outputBytes2.Length - 1);
-		Assert.Equal(default, outputBytes2.Last());
+		PInvokeAssert.Equal(sourceBytes, outputBytes1);
+		PInvokeAssert.Equal(sourceBytes, outputBytes2[..sourceBytes.Length]);
+		PInvokeAssert.Equal(outputBytes1.Length, outputBytes2.Length - 1);
+		PInvokeAssert.Equal(default, outputBytes2.Last());
 
-		Assert.Equal(separatorInBytes, outputBytes1.Any(b => b == helper.Separator));
+		PInvokeAssert.Equal(separatorInBytes, outputBytes1.Any(b => b == helper.Separator));
 	}
 
 	private static void MultipleSpanAssert(Byte[] sourceBytes1, Byte[] sourceBytes2, BinaryConcatenator helper)
@@ -57,17 +62,17 @@ public sealed class SpanTests
 		Byte[]? outputBytes1 = helper.ToArray(false);
 		Byte[]? outputBytes2 = helper.ToArray(true);
 
-		Assert.NotNull(outputBytes1);
-		Assert.NotNull(outputBytes2);
-		Assert.Equal(sourceBytes1, outputBytes1[..sourceBytes1.Length]);
+		PInvokeAssert.NotNull(outputBytes1);
+		PInvokeAssert.NotNull(outputBytes2);
+		PInvokeAssert.Equal(sourceBytes1, outputBytes1[..sourceBytes1.Length]);
 		if (helper.Separator.HasValue)
-			Assert.Equal(helper.Separator, outputBytes1[sourceBytes1.Length]);
-		Assert.Equal(sourceBytes2, outputBytes1[output2Start..]);
+			PInvokeAssert.Equal(helper.Separator, outputBytes1[sourceBytes1.Length]);
+		PInvokeAssert.Equal(sourceBytes2, outputBytes1[output2Start..]);
 		if (helper.Separator.HasValue)
-			Assert.Contains(helper.Separator.Value, outputBytes1);
+			PInvokeAssert.Contains(helper.Separator.Value, outputBytes1);
 
-		Assert.Equal(outputBytes1, outputBytes2[..finalLength]);
-		Assert.Equal(outputBytes1.Length, outputBytes2.Length - 1);
-		Assert.Equal(default, outputBytes2.Last());
+		PInvokeAssert.Equal(outputBytes1, outputBytes2[..finalLength]);
+		PInvokeAssert.Equal(outputBytes1.Length, outputBytes2.Length - 1);
+		PInvokeAssert.Equal(default, outputBytes2.Last());
 	}
 }

@@ -27,8 +27,6 @@ internal partial class ReadOnlyFixedContext<T> : IConvertibleDisposable<IReadOnl
 		public Disposable(ReadOnlyFixedContext<T> fixedPointer, IDisposable? disposable) : base(
 			fixedPointer, disposable) { }
 
-		IntPtr IFixedPointer.Pointer => (this.Value as IFixedPointer).Pointer;
-		Boolean IReadOnlyFixedMemory.IsNullOrEmpty => (this.Value as IReadOnlyFixedMemory).IsNullOrEmpty;
 		ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => (this.Value as IReadOnlyFixedMemory).Bytes;
 		ReadOnlySpan<Object> IReadOnlyFixedMemory.Objects => (this.Value as IReadOnlyFixedMemory).Objects;
 		ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => (this.Value as IReadOnlyFixedMemory<T>).Values;

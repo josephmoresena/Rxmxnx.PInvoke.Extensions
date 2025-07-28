@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests.WithFixedSafeTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests.WithFixedSafeTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class ValueTest
@@ -9,37 +14,37 @@ public sealed class ValueTest
 	private IReferenceableWrapper? _wraper;
 
 	[Fact]
-	internal void ByteTest() => this.Test<Byte>();
+	public void ByteTest() => this.Test<Byte>();
 	[Fact]
-	internal void CharTest() => this.Test<Char>();
+	public void CharTest() => this.Test<Char>();
 	[Fact]
-	internal void DateTimeTest() => this.Test<DateTime>();
+	public void DateTimeTest() => this.Test<DateTime>();
 	[Fact]
-	internal void DecimalTest() => this.Test<Decimal>();
+	public void DecimalTest() => this.Test<Decimal>();
 	[Fact]
-	internal void DoubleTest() => this.Test<Double>();
+	public void DoubleTest() => this.Test<Double>();
 	[Fact]
-	internal void GuidTest() => this.Test<Guid>();
+	public void GuidTest() => this.Test<Guid>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => this.Test<Half>();
 #endif
 	[Fact]
-	internal void Int16Test() => this.Test<Int16>();
+	public void Int16Test() => this.Test<Int16>();
 	[Fact]
-	internal void Int32Test() => this.Test<Int32>();
+	public void Int32Test() => this.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => this.Test<Int64>();
+	public void Int64Test() => this.Test<Int64>();
 	[Fact]
-	internal void SByteTest() => this.Test<SByte>();
+	public void SByteTest() => this.Test<SByte>();
 	[Fact]
-	internal void SingleTest() => this.Test<Single>();
+	public void SingleTest() => this.Test<Single>();
 	[Fact]
-	internal void UInt16Test() => this.Test<UInt16>();
+	public void UInt16Test() => this.Test<UInt16>();
 	[Fact]
-	internal void UInt32Test() => this.Test<UInt32>();
+	public void UInt32Test() => this.Test<UInt32>();
 	[Fact]
-	internal void UInt64Test() => this.Test<UInt64>();
+	public void UInt64Test() => this.Test<UInt64>();
 
 	private void Test<T>() where T : unmanaged
 	{
@@ -50,24 +55,24 @@ public sealed class ValueTest
 		this._wraper = value;
 		NativeUtilities.WithSafeFixed(value.Reference, this.TestActionMethod);
 		NativeUtilities.WithSafeFixed(value.Reference, this, ValueTest.TestActionMethod);
-		Assert.Equal(bytes, NativeUtilities.WithSafeFixed(value.Reference, this.TestFuncMethod));
-		Assert.Equal(bytes, NativeUtilities.WithSafeFixed(value.Reference, this, ValueTest.TestFuncMethod));
+		PInvokeAssert.Equal(bytes, NativeUtilities.WithSafeFixed(value.Reference, this.TestFuncMethod));
+		PInvokeAssert.Equal(bytes, NativeUtilities.WithSafeFixed(value.Reference, this, ValueTest.TestFuncMethod));
 	}
 
 	private unsafe void TestActionMethod<T>(in IReadOnlyFixedReference<T> fRef) where T : unmanaged
 	{
 		IReferenceableWrapper<T> wrapper = (IReferenceableWrapper<T>)this._wraper!;
 		Byte[] bytes = new ReadOnlySpan<Byte>(fRef.Pointer.ToPointer(), sizeof(T)).ToArray();
-		Assert.Equal(wrapper.Value, fRef.Reference);
-		Assert.Equal(wrapper.Value, Unsafe.Read<T>(fRef.Pointer.ToPointer()));
-		Assert.Equal(sizeof(T), fRef.Bytes.Length);
-		Assert.Equal(bytes, fRef.Bytes.ToArray());
+		PInvokeAssert.Equal(wrapper.Value, fRef.Reference);
+		PInvokeAssert.Equal(wrapper.Value, Unsafe.Read<T>(fRef.Pointer.ToPointer()));
+		PInvokeAssert.Equal(sizeof(T), fRef.Bytes.Length);
+		PInvokeAssert.Equal(bytes, fRef.Bytes.ToArray());
 
 		IReadOnlyFixedContext<Byte> ctx = fRef.AsBinaryContext();
 
-		Assert.Equal(bytes, ctx.Values.ToArray());
-		Assert.Equal(bytes, ctx.Bytes.ToArray());
-		Assert.Equal(fRef.Pointer, ctx.Pointer);
+		PInvokeAssert.Equal(bytes, ctx.Values.ToArray());
+		PInvokeAssert.Equal(bytes, ctx.Bytes.ToArray());
+		PInvokeAssert.Equal(fRef.Pointer, ctx.Pointer);
 
 		ValueTest.Test<T, Boolean>(fRef, bytes);
 		ValueTest.Test<T, Byte>(fRef, bytes);
@@ -109,26 +114,26 @@ public sealed class ValueTest
 			Int32 count = bytes.Length / sizeof(T2);
 
 			if (typeof(T) == typeof(T2))
-				Assert.Equal((Object)fRef.Reference, fRef2.Reference);
+				PInvokeAssert.Equal((Object)fRef.Reference, fRef2.Reference);
 			else if (sizeof(T2) == sizeof(T2))
-				Assert.Equal(bytes, fRef2.Bytes.ToArray());
+				PInvokeAssert.Equal(bytes, fRef2.Bytes.ToArray());
 			else
-				Assert.Equal(bytes, fRef2.Bytes.ToArray().Concat(residual.Bytes.ToArray()));
+				PInvokeAssert.Equal(bytes, fRef2.Bytes.ToArray().Concat(residual.Bytes.ToArray()));
 
-			Assert.Equal(sizeof(T) == sizeof(T2), residual.Bytes.IsEmpty);
-			Assert.Equal(sizeof(T) == sizeof(T2), ctxR.Bytes.IsEmpty);
-			Assert.Equal(fRef.Pointer + sizeof(T2), residual.Pointer);
-			Assert.Equal(fRef.Pointer, fRef2.Pointer);
+			PInvokeAssert.Equal(sizeof(T) == sizeof(T2), residual.Bytes.IsEmpty);
+			PInvokeAssert.Equal(sizeof(T) == sizeof(T2), ctxR.Bytes.IsEmpty);
+			PInvokeAssert.Equal(fRef.Pointer + sizeof(T2), residual.Pointer);
+			PInvokeAssert.Equal(fRef.Pointer, fRef2.Pointer);
 
-			Assert.Equal(bytes, ctx.Values.ToArray());
-			Assert.Equal(bytes, ctx.Bytes.ToArray());
-			Assert.Equal(fRef2.Pointer, ctx.Pointer);
-			Assert.Equal(bytes[sizeof(T2)..], ctxR.Bytes.ToArray());
-			Assert.Equal(residual.Pointer, ctxR.Pointer);
+			PInvokeAssert.Equal(bytes, ctx.Values.ToArray());
+			PInvokeAssert.Equal(bytes, ctx.Bytes.ToArray());
+			PInvokeAssert.Equal(fRef2.Pointer, ctx.Pointer);
+			PInvokeAssert.Equal(bytes[sizeof(T2)..], ctxR.Bytes.ToArray());
+			PInvokeAssert.Equal(residual.Pointer, ctxR.Pointer);
 		}
 		else
 		{
-			Assert.Throws<InsufficientMemoryException>(() => fRef.Transformation<T2>(out _));
+			PInvokeAssert.Throws<InsufficientMemoryException>(() => fRef.Transformation<T2>(out _));
 		}
 	}
 }

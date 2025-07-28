@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class WithSafeFixedTest
@@ -9,37 +14,37 @@ public sealed class WithSafeFixedTest
 	private Array? _array;
 
 	[Fact]
-	internal void ByteTest() => this.Test<Byte>();
+	public void ByteTest() => this.Test<Byte>();
 	[Fact]
-	internal void CharTest() => this.Test<Char>();
+	public void CharTest() => this.Test<Char>();
 	[Fact]
-	internal void DateTimeTest() => this.Test<DateTime>();
+	public void DateTimeTest() => this.Test<DateTime>();
 	[Fact]
-	internal void DecimalTest() => this.Test<Decimal>();
+	public void DecimalTest() => this.Test<Decimal>();
 	[Fact]
-	internal void DoubleTest() => this.Test<Double>();
+	public void DoubleTest() => this.Test<Double>();
 	[Fact]
-	internal void GuidTest() => this.Test<Guid>();
+	public void GuidTest() => this.Test<Guid>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => this.Test<Half>();
 #endif
 	[Fact]
-	internal void Int16Test() => this.Test<Int16>();
+	public void Int16Test() => this.Test<Int16>();
 	[Fact]
-	internal void Int32Test() => this.Test<Int32>();
+	public void Int32Test() => this.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => this.Test<Int64>();
+	public void Int64Test() => this.Test<Int64>();
 	[Fact]
-	internal void SByteTest() => this.Test<SByte>();
+	public void SByteTest() => this.Test<SByte>();
 	[Fact]
-	internal void SingleTest() => this.Test<Single>();
+	public void SingleTest() => this.Test<Single>();
 	[Fact]
-	internal void UInt16Test() => this.Test<UInt16>();
+	public void UInt16Test() => this.Test<UInt16>();
 	[Fact]
-	internal void UInt32Test() => this.Test<UInt32>();
+	public void UInt32Test() => this.Test<UInt32>();
 	[Fact]
-	internal void UInt64Test() => this.Test<UInt64>();
+	public void UInt64Test() => this.Test<UInt64>();
 
 	private void Test<T>() where T : unmanaged
 	{
@@ -56,29 +61,30 @@ public sealed class WithSafeFixedTest
 		span.WithSafeFixed(this, WithSafeFixedTest.ActionReadOnlyTest);
 		readOnlySpan.WithSafeFixed(this, WithSafeFixedTest.ReadOnlyActionReadOnlyTest);
 
-		Assert.Equal(values, span.WithSafeFixed(this.FuncTest));
-		Assert.Equal(values, span.WithSafeFixed(this.FuncReadOnlyTest));
-		Assert.Equal(values, readOnlySpan.WithSafeFixed(this.ReadOnlyFuncReadOnlyTest));
+		PInvokeAssert.Equal(values, span.WithSafeFixed(this.FuncTest));
+		PInvokeAssert.Equal(values, span.WithSafeFixed(this.FuncReadOnlyTest));
+		PInvokeAssert.Equal(values, readOnlySpan.WithSafeFixed(this.ReadOnlyFuncReadOnlyTest));
 
-		Assert.Equal(values, span.WithSafeFixed(this, WithSafeFixedTest.FuncTest));
-		Assert.Equal(values, span.WithSafeFixed(this, WithSafeFixedTest.FuncReadOnlyTest));
-		Assert.Equal(values, readOnlySpan.WithSafeFixed(this, WithSafeFixedTest.ReadOnlyFuncReadOnlyTest));
+		PInvokeAssert.Equal(values, span.WithSafeFixed(this, WithSafeFixedTest.FuncTest));
+		PInvokeAssert.Equal(values, span.WithSafeFixed(this, WithSafeFixedTest.FuncReadOnlyTest));
+		PInvokeAssert.Equal(values, readOnlySpan.WithSafeFixed(this, WithSafeFixedTest.ReadOnlyFuncReadOnlyTest));
 	}
 	private void ActionTest<T>(in IFixedContext<T> ctx) where T : unmanaged
 	{
 		IFixedContext<Byte> bctx = ctx.AsBinaryContext();
 		T[] arr = (T[])this._array!;
 
-		Assert.Equal(ctx.Pointer, bctx.Pointer);
-		Assert.Equal(bctx.Bytes.ToArray(), ctx.Bytes.ToArray());
-		Assert.Equal(arr, ctx.Values.ToArray());
-		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(ctx.Bytes),
-		                           ref MemoryMarshal.GetReference(bctx.Values)));
-		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(arr.AsSpan()),
-		                           ref MemoryMarshal.GetReference(ctx.Values)));
+		PInvokeAssert.Equal(ctx.Pointer, bctx.Pointer);
+		PInvokeAssert.Equal(bctx.Bytes.ToArray(), ctx.Bytes.ToArray());
+		PInvokeAssert.Equal(arr, ctx.Values.ToArray());
+		PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(ctx.Bytes),
+		                                  ref MemoryMarshal.GetReference(bctx.Values)));
+		PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(arr.AsSpan()),
+		                                  ref MemoryMarshal.GetReference(ctx.Values)));
 
-		Assert.True(Unsafe.AreSame(ref ctx.ValuePointer.Reference, ref MemoryMarshal.GetReference(arr.AsSpan())));
-		Assert.True(Unsafe.AreSame(ref bctx.ValuePointer.Reference, ref MemoryMarshal.GetReference(ctx.Bytes)));
+		PInvokeAssert.True(Unsafe.AreSame(ref ctx.ValuePointer.Reference,
+		                                  ref MemoryMarshal.GetReference(arr.AsSpan())));
+		PInvokeAssert.True(Unsafe.AreSame(ref bctx.ValuePointer.Reference, ref MemoryMarshal.GetReference(ctx.Bytes)));
 
 		WithSafeFixedTest.Test<T, Boolean>(ctx);
 		WithSafeFixedTest.Test<T, Byte>(ctx);
@@ -108,37 +114,37 @@ public sealed class WithSafeFixedTest
 		IReadOnlyFixedContext<Byte> bctx = ctx.AsBinaryContext();
 		T[] arr = (T[])this._array!;
 
-		Assert.Equal(ctx.Pointer, bctx.Pointer);
-		Assert.Equal(bctx, ctx.AsBinaryContext());
-		Assert.Equal(bctx.Bytes.ToArray(), ctx.Bytes.ToArray());
-		Assert.Equal(arr, ctx.Values.ToArray());
-		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(ctx.Bytes),
-		                           ref MemoryMarshal.GetReference(bctx.Values)));
-		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(arr.AsSpan()),
-		                           ref MemoryMarshal.GetReference(ctx.Values)));
+		PInvokeAssert.Equal(ctx.Pointer, bctx.Pointer);
+		PInvokeAssert.Equal(bctx, ctx.AsBinaryContext());
+		PInvokeAssert.Equal(bctx.Bytes.ToArray(), ctx.Bytes.ToArray());
+		PInvokeAssert.Equal(arr, ctx.Values.ToArray());
+		PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(ctx.Bytes),
+		                                  ref MemoryMarshal.GetReference(bctx.Values)));
+		PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(arr.AsSpan()),
+		                                  ref MemoryMarshal.GetReference(ctx.Values)));
 
 		if (!readOnly)
 		{
 			IFixedContext<Byte> bctx2 = (IFixedContext<Byte>)ctx.AsBinaryContext();
 			IFixedContext<T> ctx2 = (IFixedContext<T>)ctx;
-			Assert.Equal(bctx2, ctx2.AsBinaryContext());
-			Assert.Equal(ctx.Bytes.ToArray(), ctx2.Bytes.ToArray());
-			Assert.Equal(arr, ctx2.Values.ToArray());
-			Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(ctx.Bytes),
-			                           ref MemoryMarshal.GetReference(bctx2.Values)));
-			Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(arr.AsSpan()),
-			                           ref MemoryMarshal.GetReference(ctx2.Values)));
+			PInvokeAssert.Equal(bctx2, ctx2.AsBinaryContext());
+			PInvokeAssert.Equal(ctx.Bytes.ToArray(), ctx2.Bytes.ToArray());
+			PInvokeAssert.Equal(arr, ctx2.Values.ToArray());
+			PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(ctx.Bytes),
+			                                  ref MemoryMarshal.GetReference(bctx2.Values)));
+			PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(arr.AsSpan()),
+			                                  ref MemoryMarshal.GetReference(ctx2.Values)));
 		}
 		else
 		{
-			Assert.Throws<InvalidCastException>(() => (IFixedContext<Byte>)ctx.AsBinaryContext());
+			PInvokeAssert.Throws<InvalidCastException>(() => (IFixedContext<Byte>)ctx.AsBinaryContext());
 #if NET8_0_OR_GREATER
 			Assert.True(Unsafe.AreSame(in ctx.ValuePointer.Reference, ref MemoryMarshal.GetReference(arr.AsSpan())));
 			Assert.True(Unsafe.AreSame(in bctx.ValuePointer.Reference, ref MemoryMarshal.GetReference(ctx.Bytes)));
 #else
-			Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in ctx.ValuePointer.Reference),
+			PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in ctx.ValuePointer.Reference),
 			                           ref MemoryMarshal.GetReference(arr.AsSpan())));
-			Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in bctx.ValuePointer.Reference),
+			PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in bctx.ValuePointer.Reference),
 			                           ref MemoryMarshal.GetReference(ctx.Bytes)));
 #endif
 		}
@@ -184,29 +190,29 @@ public sealed class WithSafeFixedTest
 		IFixedContext<Byte> bctx = residual.AsBinaryContext();
 		Int32 offset = ctx2.Values.Length * sizeof(T2);
 
-		Assert.Equal(ctx2, ctx.Transformation<T2>(out IReadOnlyFixedMemory residualR));
-		Assert.Equal(residual, residualR);
+		PInvokeAssert.Equal(ctx2, ctx.Transformation<T2>(out IReadOnlyFixedMemory residualR));
+		PInvokeAssert.Equal(residual, residualR);
 
-		Assert.Equal(ctx.Pointer, ctx2.Pointer);
-		Assert.Equal(ctx.Bytes.Length / sizeof(T2), ctx2.Values.Length);
-		Assert.Equal(ctx.Bytes.Length, ctx2.Bytes.Length);
-		Assert.Equal(ctx.Bytes.Length - offset, residual.Bytes.Length);
-		Assert.Equal(ctx.Bytes.Length - offset, residualR.Bytes.Length);
-		Assert.Equal(ctx.Bytes.Length - offset, bctx.Bytes.Length);
-		Assert.Equal(ctx.Pointer + offset, residual.Pointer);
-		Assert.Equal(ctx.Pointer + offset, residualR.Pointer);
-		Assert.Equal(ctx.Pointer + offset, bctx.Pointer);
+		PInvokeAssert.Equal(ctx.Pointer, ctx2.Pointer);
+		PInvokeAssert.Equal(ctx.Bytes.Length / sizeof(T2), ctx2.Values.Length);
+		PInvokeAssert.Equal(ctx.Bytes.Length, ctx2.Bytes.Length);
+		PInvokeAssert.Equal(ctx.Bytes.Length - offset, residual.Bytes.Length);
+		PInvokeAssert.Equal(ctx.Bytes.Length - offset, residualR.Bytes.Length);
+		PInvokeAssert.Equal(ctx.Bytes.Length - offset, bctx.Bytes.Length);
+		PInvokeAssert.Equal(ctx.Pointer + offset, residual.Pointer);
+		PInvokeAssert.Equal(ctx.Pointer + offset, residualR.Pointer);
+		PInvokeAssert.Equal(ctx.Pointer + offset, bctx.Pointer);
 	}
 	private static unsafe void Test<T, T2>(IReadOnlyFixedContext<T> ctx) where T : unmanaged where T2 : unmanaged
 	{
 		IReadOnlyFixedContext<T2> ctx2 = ctx.Transformation<T2>(out IReadOnlyFixedMemory residual);
 		Int32 offset = ctx2.Values.Length * sizeof(T2);
 
-		Assert.Equal(ctx.Pointer, ctx2.Pointer);
-		Assert.Equal(ctx.Bytes.Length / sizeof(T2), ctx2.Values.Length);
-		Assert.Equal(ctx.Bytes.Length, ctx2.Bytes.Length);
-		Assert.Equal(ctx.Bytes.Length - offset, residual.Bytes.Length);
-		Assert.Equal(ctx.Pointer + offset, residual.Pointer);
+		PInvokeAssert.Equal(ctx.Pointer, ctx2.Pointer);
+		PInvokeAssert.Equal(ctx.Bytes.Length / sizeof(T2), ctx2.Values.Length);
+		PInvokeAssert.Equal(ctx.Bytes.Length, ctx2.Bytes.Length);
+		PInvokeAssert.Equal(ctx.Bytes.Length - offset, residual.Bytes.Length);
+		PInvokeAssert.Equal(ctx.Pointer + offset, residual.Pointer);
 	}
 	private static void ActionTest<T>(in IFixedContext<T> ctx, WithSafeFixedTest test) where T : unmanaged
 		=> test.ActionTest(ctx);

@@ -28,11 +28,11 @@ internal sealed record WrittenCString
 
 		for (Int32 i = 0; i < values.Count; i++)
 		{
-			Assert.Equal(values[i].Value.Skip(values[i].Start).Take(values[i].Count),
-			             result.Skip(offset).Take(values[i].Count));
+			PInvokeAssert.Equal(values[i].Value.Skip(values[i].Start).Take(values[i].Count),
+			                    result.Skip(offset).Take(values[i].Count));
 			if (writeNullTermination)
 			{
-				Assert.Equal(0, result[offset + values[i].Value.Length]);
+				PInvokeAssert.Equal(0, result[offset + values[i].Value.Length]);
 				offset += values[i].Value.Length + 1;
 			}
 			else

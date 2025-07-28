@@ -1,60 +1,66 @@
-﻿namespace Rxmxnx.PInvoke.Tests.PointerCCStringExtensions;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+using InlineData = NUnit.Framework.TestCaseAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.PointerCCStringExtensions;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class GetUnsafeCStringTest
 {
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
-	internal unsafe void NullFixedTest()
+	public unsafe void NullFixedTest()
 	{
 		CString? input = null;
 		fixed (void* ptr = input)
-			Assert.Equal(IntPtr.Zero, (IntPtr)ptr);
+			PInvokeAssert.Equal(IntPtr.Zero, (IntPtr)ptr);
 	}
 
 	[Fact]
-	internal unsafe void EmptyFixedTest()
+	public unsafe void EmptyFixedTest()
 	{
 		CString input = CString.Empty;
 		fixed (void* ptr = input)
-			Assert.NotEqual(IntPtr.Zero, (IntPtr)ptr);
+			PInvokeAssert.NotEqual(IntPtr.Zero, (IntPtr)ptr);
 	}
 
 	[Fact]
-	internal unsafe void ZeroFixedTest()
+	public unsafe void ZeroFixedTest()
 	{
 		CString input = CString.Zero;
 		fixed (void* ptr = input)
-			Assert.Equal(IntPtr.Zero, (IntPtr)ptr);
+			PInvokeAssert.Equal(IntPtr.Zero, (IntPtr)ptr);
 	}
 
 	[Theory]
 	[InlineData(-1)]
 	[InlineData(0)]
 	[InlineData(1)]
-	internal void ZeroTest(Int32 length)
+	public void ZeroTest(Int32 length)
 	{
 		MemoryHandle handle = default;
 		if (length >= 0)
 		{
-			Assert.Equal(CString.Empty, IntPtr.Zero.GetUnsafeCString(length));
-			Assert.Equal(CString.Empty, UIntPtr.Zero.GetUnsafeCString(length));
-			Assert.Equal(CString.Empty, handle.GetUnsafeCString(length));
-			Assert.Same(CString.Empty, IntPtr.Zero.GetUnsafeCString(length));
-			Assert.Same(CString.Empty, UIntPtr.Zero.GetUnsafeCString(length));
-			Assert.Same(CString.Empty, handle.GetUnsafeCString(length));
+			PInvokeAssert.Equal(CString.Empty, IntPtr.Zero.GetUnsafeCString(length));
+			PInvokeAssert.Equal(CString.Empty, UIntPtr.Zero.GetUnsafeCString(length));
+			PInvokeAssert.Equal(CString.Empty, handle.GetUnsafeCString(length));
+			PInvokeAssert.Same(CString.Empty, IntPtr.Zero.GetUnsafeCString(length));
+			PInvokeAssert.Same(CString.Empty, UIntPtr.Zero.GetUnsafeCString(length));
+			PInvokeAssert.Same(CString.Empty, handle.GetUnsafeCString(length));
 		}
 		else
 		{
-			Assert.Throws<ArgumentException>(() => IntPtr.Zero.GetUnsafeCString(length));
-			Assert.Throws<ArgumentException>(() => UIntPtr.Zero.GetUnsafeCString(length));
-			Assert.Throws<ArgumentException>(() => handle.GetUnsafeCString(length));
+			PInvokeAssert.Throws<ArgumentException>(() => IntPtr.Zero.GetUnsafeCString(length));
+			PInvokeAssert.Throws<ArgumentException>(() => UIntPtr.Zero.GetUnsafeCString(length));
+			PInvokeAssert.Throws<ArgumentException>(() => handle.GetUnsafeCString(length));
 		}
 	}
 
 	[Fact]
-	internal unsafe void Test()
+	public unsafe void Test()
 	{
 		String strInput = GetUnsafeCStringTest.fixture.Create<String>();
 		CString input = (CString)((CString)strInput).Clone();
@@ -68,24 +74,24 @@ public sealed class GetUnsafeCStringTest
 			CString cstr2 = uintPtr.GetUnsafeCString(input.Length);
 			CString cstr3 = handle.GetUnsafeCString(input.Length);
 
-			Assert.Equal(input, cstr1);
-			Assert.Equal(input, cstr2);
-			Assert.Equal(input, cstr3);
+			PInvokeAssert.Equal(input, cstr1);
+			PInvokeAssert.Equal(input, cstr2);
+			PInvokeAssert.Equal(input, cstr3);
 
-			Assert.False(cstr1.IsFunction);
-			Assert.False(cstr1.IsReference);
-			Assert.False(cstr1.IsSegmented);
-			Assert.True(cstr1.IsNullTerminated);
+			PInvokeAssert.False(cstr1.IsFunction);
+			PInvokeAssert.False(cstr1.IsReference);
+			PInvokeAssert.False(cstr1.IsSegmented);
+			PInvokeAssert.True(cstr1.IsNullTerminated);
 
-			Assert.False(cstr2.IsFunction);
-			Assert.False(cstr2.IsReference);
-			Assert.False(cstr2.IsSegmented);
-			Assert.True(cstr2.IsNullTerminated);
+			PInvokeAssert.False(cstr2.IsFunction);
+			PInvokeAssert.False(cstr2.IsReference);
+			PInvokeAssert.False(cstr2.IsSegmented);
+			PInvokeAssert.True(cstr2.IsNullTerminated);
 
-			Assert.False(cstr3.IsFunction);
-			Assert.False(cstr3.IsReference);
-			Assert.False(cstr3.IsSegmented);
-			Assert.True(cstr3.IsNullTerminated);
+			PInvokeAssert.False(cstr3.IsFunction);
+			PInvokeAssert.False(cstr3.IsReference);
+			PInvokeAssert.False(cstr3.IsSegmented);
+			PInvokeAssert.True(cstr3.IsNullTerminated);
 		}
 	}
 }

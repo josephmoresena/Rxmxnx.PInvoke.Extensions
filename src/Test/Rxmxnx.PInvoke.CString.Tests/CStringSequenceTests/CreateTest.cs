@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
+﻿#if !NETCOREAPP
+using InlineData = NUnit.Framework.TestCaseAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class CreateTest
 {
@@ -10,7 +15,7 @@ public sealed class CreateTest
 	[InlineData(256)]
 	[InlineData(300)]
 	[InlineData(1000)]
-	internal void Test(Int32? length)
+	public void Test(Int32? length)
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices(length);
@@ -18,14 +23,14 @@ public sealed class CreateTest
 		CStringSequence seq =
 			CStringSequence.Create(values, CreateTest.CreationMethod, values.Select(x => x?.Length).ToArray());
 		CreateTest.AssertSequence(seq, values);
-		Assert.Equal(seq, values.Select(c => c ?? CString.Zero));
+		PInvokeAssert.Equal(seq, values.Select(c => c ?? CString.Zero));
 		GC.Collect();
-		Assert.Equal(seq.Where(c => !CString.IsNullOrEmpty(c)), values.Where(c => !CString.IsNullOrEmpty(c)));
+		PInvokeAssert.Equal(seq.Where(c => !CString.IsNullOrEmpty(c)), values.Where(c => !CString.IsNullOrEmpty(c)));
 	}
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	internal void SpanTest(Boolean useFirstEmpty)
+	public void SpanTest(Boolean useFirstEmpty)
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices(8);
@@ -52,21 +57,21 @@ public sealed class CreateTest
 		CreateTest.AssertSequence(seq6, values);
 		CreateTest.AssertSequence(seq7, values);
 
-		Assert.Equal(seq0, values.Take(1));
-		Assert.Equal(seq1, values.Take(2));
-		Assert.Equal(seq2, values.Take(3));
-		Assert.Equal(seq3, values.Take(4));
-		Assert.Equal(seq4, values.Take(5));
-		Assert.Equal(seq5, values.Take(6));
-		Assert.Equal(seq6, values.Take(7));
-		Assert.Equal(seq7, values);
+		PInvokeAssert.Equal(seq0, values.Take(1));
+		PInvokeAssert.Equal(seq1, values.Take(2));
+		PInvokeAssert.Equal(seq2, values.Take(3));
+		PInvokeAssert.Equal(seq3, values.Take(4));
+		PInvokeAssert.Equal(seq4, values.Take(5));
+		PInvokeAssert.Equal(seq5, values.Take(6));
+		PInvokeAssert.Equal(seq6, values.Take(7));
+		PInvokeAssert.Equal(seq7, values);
 	}
 
 	private static void CreationMethod(Span<Byte> span, Int32 index, IReadOnlyList<CString?> values)
 	{
 		CString? value = values[index];
-		Assert.False(CString.IsNullOrEmpty(value));
-		Assert.Equal(span.Length, value.Length);
+		PInvokeAssert.False(CString.IsNullOrEmpty(value));
+		PInvokeAssert.Equal(span.Length, value.Length);
 
 		value.AsSpan().CopyTo(span);
 	}
@@ -75,9 +80,9 @@ public sealed class CreateTest
 		for (Int32 i = 0; i < seq.Count; i++)
 		{
 			if (seq[i].Length != 0 || !seq[i].IsReference)
-				Assert.Equal(values[i], seq[i]);
+				PInvokeAssert.Equal(values[i], seq[i]);
 			else
-				Assert.Null(values[i]);
+				PInvokeAssert.Null(values[i]);
 		}
 	}
 }

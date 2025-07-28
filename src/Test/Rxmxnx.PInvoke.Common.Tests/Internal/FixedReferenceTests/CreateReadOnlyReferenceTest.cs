@@ -1,46 +1,51 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedReferenceTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.Internal.FixedReferenceTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 #pragma warning disable CS8500
 public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 {
 	[Fact]
-	internal void BooleanTest() => CreateReadOnlyReferenceTest.Test<Boolean>();
+	public void BooleanTest() => CreateReadOnlyReferenceTest.Test<Boolean>();
 	[Fact]
-	internal void ByteTest() => CreateReadOnlyReferenceTest.Test<Byte>();
+	public void ByteTest() => CreateReadOnlyReferenceTest.Test<Byte>();
 	[Fact]
-	internal void Int16Test() => CreateReadOnlyReferenceTest.Test<Int16>();
+	public void Int16Test() => CreateReadOnlyReferenceTest.Test<Int16>();
 	[Fact]
-	internal void CharTest() => CreateReadOnlyReferenceTest.Test<Char>();
+	public void CharTest() => CreateReadOnlyReferenceTest.Test<Char>();
 	[Fact]
-	internal void Int32Test() => CreateReadOnlyReferenceTest.Test<Int32>();
+	public void Int32Test() => CreateReadOnlyReferenceTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => CreateReadOnlyReferenceTest.Test<Int64>();
+	public void Int64Test() => CreateReadOnlyReferenceTest.Test<Int64>();
 #if NET7_0_OR_GREATER
 	[Fact]
 	internal void Int128Test() => CreateReadOnlyReferenceTest.Test<Int128>();
 #endif
 	[Fact]
-	internal void GuidTest() => CreateReadOnlyReferenceTest.Test<Guid>();
+	public void GuidTest() => CreateReadOnlyReferenceTest.Test<Guid>();
 	[Fact]
-	internal void SingleTest() => CreateReadOnlyReferenceTest.Test<Single>();
+	public void SingleTest() => CreateReadOnlyReferenceTest.Test<Single>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => CreateReadOnlyReferenceTest.Test<Half>();
 #endif
 	[Fact]
-	internal void DoubleTest() => CreateReadOnlyReferenceTest.Test<Double>();
+	public void DoubleTest() => CreateReadOnlyReferenceTest.Test<Double>();
 	[Fact]
-	internal void DecimalTest() => CreateReadOnlyReferenceTest.Test<Decimal>();
+	public void DecimalTest() => CreateReadOnlyReferenceTest.Test<Decimal>();
 	[Fact]
-	internal void DateTimeTest() => CreateReadOnlyReferenceTest.Test<DateTime>();
+	public void DateTimeTest() => CreateReadOnlyReferenceTest.Test<DateTime>();
 #if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => CreateReadOnlyReferenceTest.Test<TimeOnly>();
 #endif
 	[Fact]
-	internal void TimeSpanTest() => CreateReadOnlyReferenceTest.Test<TimeSpan>();
+	public void TimeSpanTest() => CreateReadOnlyReferenceTest.Test<TimeSpan>();
 	private static void Test<T>()
 	{
 		T value = FixedMemoryTestsBase.Fixture.Create<T>();
@@ -51,15 +56,19 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 	{
 		ref T refValue = ref Unsafe.AsRef(in fref.CreateReadOnlyReference<T>());
 		IntPtr ptr2 = new(Unsafe.AsPointer(ref refValue));
-		Assert.Equal(ptr2, ptr);
-		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef<T>(ptr.ToPointer()), ref refValue));
-		Assert.Equal(sizeof(T), fref.BinaryLength);
-		Assert.Equal(0, fref.BinaryOffset);
-		Assert.False(fref.IsFunction);
+		PInvokeAssert.Equal(ptr2, ptr);
+		PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef<T>(ptr.ToPointer()), ref refValue));
+		PInvokeAssert.Equal(sizeof(T), fref.BinaryLength);
+		PInvokeAssert.Equal(0, fref.BinaryOffset);
+		PInvokeAssert.False(fref.IsFunction);
 
 		try
 		{
 			GCHandle.Alloc(Array.Empty<T>(), GCHandleType.Pinned).Free();
+#if !NETCOREAPP
+			if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+				throw new ArgumentException(); // Required for Mono?
+#endif
 
 			CreateReadOnlyReferenceTest.TestSize<T, Boolean>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, Byte>(fref);
@@ -90,10 +99,10 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 			}
 			else
 			{
-				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, ManagedStruct>(
-					                                         fref));
-				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest
-					                                         .TestSize<T, WrapperStruct<ManagedStruct>>(fref));
+				PInvokeAssert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest
+					                                                .TestSize<T, ManagedStruct>(fref));
+				PInvokeAssert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest
+					                                                .TestSize<T, WrapperStruct<ManagedStruct>>(fref));
 			}
 
 			if (sizeof(T) < IntPtr.Size)
@@ -103,8 +112,10 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 			}
 			else
 			{
-				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, String>(fref));
-				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, String>(fref));
+				PInvokeAssert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, String>(
+					                                                fref));
+				PInvokeAssert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, String>(
+					                                                fref));
 			}
 		}
 		catch (ArgumentException)
@@ -112,20 +123,22 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 			if (sizeof(T) < sizeof(WrapperStruct<ManagedStruct>))
 				CreateReadOnlyReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref);
 			else
-				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest
-					                                         .TestSize<T, WrapperStruct<ManagedStruct>>(fref));
+				PInvokeAssert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest
+					                                                .TestSize<T, WrapperStruct<ManagedStruct>>(fref));
 
 			if (typeof(T).IsValueType)
 			{
 				CreateReadOnlyReferenceTest.TestSize<T, ManagedStruct>(fref);
 
-				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, String>(fref));
-				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, String>(fref));
+				PInvokeAssert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, String>(
+					                                                fref));
+				PInvokeAssert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, String>(
+					                                                fref));
 			}
 			else
 			{
-				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest
-					                                         .TestSize<T, WrapperStruct<String>>(fref));
+				PInvokeAssert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest
+					                                                .TestSize<T, WrapperStruct<String>>(fref));
 
 				CreateReadOnlyReferenceTest.TestSize<T, String>(fref);
 				CreateReadOnlyReferenceTest.TestSize<T, Object>(fref);
@@ -133,24 +146,28 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 		}
 
 		fref.Unload();
-		Exception invalid = Assert.Throws<InvalidOperationException>(() => fref.CreateReadOnlyReference<T>());
-		Assert.Equal(FixedMemoryTestsBase.InvalidError, invalid.Message);
-		Exception functionException = Assert.Throws<InvalidOperationException>(fref.CreateDelegate<Action>);
-		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
+		Exception invalid = PInvokeAssert.Throws<InvalidOperationException>(() => fref.CreateReadOnlyReference<T>());
+		PInvokeAssert.Equal(FixedMemoryTestsBase.InvalidError, invalid.Message);
+		Exception functionException = PInvokeAssert.Throws<InvalidOperationException>(fref.CreateDelegate<Action>);
+		PInvokeAssert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
 	private static unsafe void ReadOnlyTest<T>(ReadOnlyFixedReference<T> fref, IntPtr ptr)
 	{
 		ref T refValue = ref Unsafe.AsRef(in fref.CreateReadOnlyReference<T>());
 		IntPtr ptr2 = new(Unsafe.AsPointer(ref refValue));
-		Assert.Equal(ptr2, ptr);
-		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef<T>(ptr.ToPointer()), ref refValue));
-		Assert.Equal(sizeof(T), fref.BinaryLength);
-		Assert.Equal(0, fref.BinaryOffset);
-		Assert.False(fref.IsFunction);
+		PInvokeAssert.Equal(ptr2, ptr);
+		PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef<T>(ptr.ToPointer()), ref refValue));
+		PInvokeAssert.Equal(sizeof(T), fref.BinaryLength);
+		PInvokeAssert.Equal(0, fref.BinaryOffset);
+		PInvokeAssert.False(fref.IsFunction);
 
 		try
 		{
 			GCHandle.Alloc(Array.Empty<T>(), GCHandleType.Pinned).Free();
+#if !NETCOREAPP
+			if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+				throw new ArgumentException(); // Required for Mono?
+#endif
 
 			CreateReadOnlyReferenceTest.TestSize<T, Boolean>(fref);
 			CreateReadOnlyReferenceTest.TestSize<T, Byte>(fref);
@@ -177,14 +194,14 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 			if (sizeof(T) < sizeof(ManagedStruct))
 				CreateReadOnlyReferenceTest.TestSize<T, ManagedStruct>(fref);
 			else
-				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, ManagedStruct>(
-					                                         fref));
+				PInvokeAssert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest
+					                                                .TestSize<T, ManagedStruct>(fref));
 
 			if (sizeof(T) < sizeof(WrapperStruct<ManagedStruct>))
 				CreateReadOnlyReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref);
 			else
-				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest
-					                                         .TestSize<T, WrapperStruct<ManagedStruct>>(fref));
+				PInvokeAssert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest
+					                                                .TestSize<T, WrapperStruct<ManagedStruct>>(fref));
 
 			if (sizeof(T) < IntPtr.Size)
 			{
@@ -193,8 +210,10 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 			}
 			else
 			{
-				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, String>(fref));
-				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, String>(fref));
+				PInvokeAssert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, String>(
+					                                                fref));
+				PInvokeAssert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, String>(
+					                                                fref));
 			}
 		}
 		catch (ArgumentException)
@@ -202,20 +221,22 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 			if (sizeof(T) < sizeof(WrapperStruct<ManagedStruct>))
 				CreateReadOnlyReferenceTest.TestSize<T, WrapperStruct<ManagedStruct>>(fref);
 			else
-				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest
-					                                         .TestSize<T, WrapperStruct<ManagedStruct>>(fref));
+				PInvokeAssert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest
+					                                                .TestSize<T, WrapperStruct<ManagedStruct>>(fref));
 
 			if (typeof(T).IsValueType)
 			{
 				CreateReadOnlyReferenceTest.TestSize<T, ManagedStruct>(fref);
 
-				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, String>(fref));
-				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, String>(fref));
+				PInvokeAssert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, String>(
+					                                                fref));
+				PInvokeAssert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest.TestSize<T, String>(
+					                                                fref));
 			}
 			else
 			{
-				Assert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest
-					                                         .TestSize<T, WrapperStruct<String>>(fref));
+				PInvokeAssert.Throws<InvalidOperationException>(() => CreateReadOnlyReferenceTest
+					                                                .TestSize<T, WrapperStruct<String>>(fref));
 
 				CreateReadOnlyReferenceTest.TestSize<T, String>(fref);
 				CreateReadOnlyReferenceTest.TestSize<T, Object>(fref);
@@ -223,10 +244,10 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 		}
 
 		fref.Unload();
-		Exception invalid = Assert.Throws<InvalidOperationException>(() => fref.CreateReadOnlyReference<T>());
-		Assert.Equal(FixedMemoryTestsBase.InvalidError, invalid.Message);
-		Exception functionException = Assert.Throws<InvalidOperationException>(fref.CreateDelegate<Action>);
-		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
+		Exception invalid = PInvokeAssert.Throws<InvalidOperationException>(() => fref.CreateReadOnlyReference<T>());
+		PInvokeAssert.Equal(FixedMemoryTestsBase.InvalidError, invalid.Message);
+		Exception functionException = PInvokeAssert.Throws<InvalidOperationException>(fref.CreateDelegate<Action>);
+		PInvokeAssert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
 	private static unsafe void TestSize<T, T2>(FixedReference<T> fref)
 	{
@@ -236,8 +257,8 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 		if (size < size2)
 		{
 			Exception invalidSize =
-				Assert.Throws<InsufficientMemoryException>(() => fref.CreateReadOnlyReference<T2>());
-			Assert.Equal(String.Format(FixedMemoryTestsBase.InvalidSizeFormat, typeof(T2)), invalidSize.Message);
+				PInvokeAssert.Throws<InsufficientMemoryException>(() => fref.CreateReadOnlyReference<T2>());
+			PInvokeAssert.Equal(String.Format(FixedMemoryTestsBase.InvalidSizeFormat, typeof(T2)), invalidSize.Message);
 		}
 		else
 		{
@@ -246,14 +267,14 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 			Byte[] bytes1 = new ReadOnlySpan<Byte>(Unsafe.AsPointer(ref value), size).ToArray();
 			Byte[] bytes2 = new ReadOnlySpan<Byte>(Unsafe.AsPointer(ref value), size2).ToArray();
 
-			Assert.Equal(bytes1[..size2], bytes2);
+			PInvokeAssert.Equal(bytes1[..size2], bytes2);
 
 			if (typeof(T) == typeof(T2))
-				Assert.Equal(value, (Object)value2!);
+				PInvokeAssert.Equal(value, (Object)value2!);
 		}
 
-		Exception functionException = Assert.Throws<InvalidOperationException>(fref.CreateDelegate<Action>);
-		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
+		Exception functionException = PInvokeAssert.Throws<InvalidOperationException>(fref.CreateDelegate<Action>);
+		PInvokeAssert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
 	private static unsafe void TestSize<T, T2>(ReadOnlyFixedReference<T> fref)
 	{
@@ -263,8 +284,8 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 		if (size < size2)
 		{
 			Exception invalidSize =
-				Assert.Throws<InsufficientMemoryException>(() => fref.CreateReadOnlyReference<T2>());
-			Assert.Equal(String.Format(FixedMemoryTestsBase.InvalidSizeFormat, typeof(T2)), invalidSize.Message);
+				PInvokeAssert.Throws<InsufficientMemoryException>(() => fref.CreateReadOnlyReference<T2>());
+			PInvokeAssert.Equal(String.Format(FixedMemoryTestsBase.InvalidSizeFormat, typeof(T2)), invalidSize.Message);
 		}
 		else
 		{
@@ -273,14 +294,14 @@ public sealed class CreateReadOnlyReferenceTest : FixedReferenceTestsBase
 			Byte[] bytes1 = new ReadOnlySpan<Byte>(Unsafe.AsPointer(ref value), size).ToArray();
 			Byte[] bytes2 = new ReadOnlySpan<Byte>(Unsafe.AsPointer(ref value), size2).ToArray();
 
-			Assert.Equal(bytes1[..size2], bytes2);
+			PInvokeAssert.Equal(bytes1[..size2], bytes2);
 
 			if (typeof(T) == typeof(T2))
-				Assert.Equal(value, (Object)value2!);
+				PInvokeAssert.Equal(value, (Object)value2!);
 		}
 
-		Exception functionException = Assert.Throws<InvalidOperationException>(fref.CreateDelegate<Action>);
-		Assert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
+		Exception functionException = PInvokeAssert.Throws<InvalidOperationException>(fref.CreateDelegate<Action>);
+		PInvokeAssert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
 }
 #pragma warning restore CS8500

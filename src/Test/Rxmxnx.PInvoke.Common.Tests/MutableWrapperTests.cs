@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class MutableWrapperTests
@@ -7,49 +12,49 @@ public sealed class MutableWrapperTests
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
-	internal void InterfaceTest()
+	public void InterfaceTest()
 	{
 		IMutableWrapper<String> instance = new MutableInstance<String>();
 		instance.Value = MutableWrapperTests.fixture.Create<String>();
-		Assert.Equal(instance.Value, (instance as IWrapper<String>).Value);
+		PInvokeAssert.Equal(instance.Value, (instance as IWrapper<String>).Value);
 	}
 
 	[Fact]
-	internal Task BooleanTestAsync() => MutableWrapperTests.TestAsync<Boolean>();
+	public Task BooleanTestAsync() => MutableWrapperTests.TestAsync<Boolean>();
 	[Fact]
-	internal Task ByteTestAsync() => MutableWrapperTests.TestAsync<Byte>();
+	public Task ByteTestAsync() => MutableWrapperTests.TestAsync<Byte>();
 	[Fact]
-	internal Task Int16TestAsync() => MutableWrapperTests.TestAsync<Int16>();
+	public Task Int16TestAsync() => MutableWrapperTests.TestAsync<Int16>();
 	[Fact]
-	internal Task CharTestAsync() => MutableWrapperTests.TestAsync<Char>();
+	public Task CharTestAsync() => MutableWrapperTests.TestAsync<Char>();
 	[Fact]
-	internal Task Int32TestAsync() => MutableWrapperTests.TestAsync<Int32>();
+	public Task Int32TestAsync() => MutableWrapperTests.TestAsync<Int32>();
 	[Fact]
-	internal Task Int64TestAsync() => MutableWrapperTests.TestAsync<Int64>();
+	public Task Int64TestAsync() => MutableWrapperTests.TestAsync<Int64>();
 #if NET7_0_OR_GREATER
 	[Fact]
 	internal Task Int128TestAsync() => MutableWrapperTests.TestAsync<Int128>();
 #endif
 	[Fact]
-	internal Task GuidTestAsync() => MutableWrapperTests.TestAsync<Guid>();
+	public Task GuidTestAsync() => MutableWrapperTests.TestAsync<Guid>();
 	[Fact]
-	internal Task SingleTestAsync() => MutableWrapperTests.TestAsync<Single>();
+	public Task SingleTestAsync() => MutableWrapperTests.TestAsync<Single>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal Task HalfTestAsync() => MutableWrapperTests.TestAsync<Half>();
 #endif
 	[Fact]
-	internal Task DoubleTestAsync() => MutableWrapperTests.TestAsync<Double>();
+	public Task DoubleTestAsync() => MutableWrapperTests.TestAsync<Double>();
 	[Fact]
-	internal Task DecimalTestAsync() => MutableWrapperTests.TestAsync<Decimal>();
+	public Task DecimalTestAsync() => MutableWrapperTests.TestAsync<Decimal>();
 	[Fact]
-	internal Task DateTimeTestAsync() => MutableWrapperTests.TestAsync<DateTime>();
+	public Task DateTimeTestAsync() => MutableWrapperTests.TestAsync<DateTime>();
 #if NET6_0_OR_GREATER
 	[Fact]
 	internal Task TimeOnlyTestAsync() => MutableWrapperTests.TestAsync<TimeOnly>();
 #endif
 	[Fact]
-	internal Task TimeSpanTestAsync() => MutableWrapperTests.TestAsync<TimeSpan>();
+	public Task TimeSpanTestAsync() => MutableWrapperTests.TestAsync<TimeSpan>();
 
 	private static async Task TestAsync<T>() where T : unmanaged
 	{
@@ -68,22 +73,22 @@ public sealed class MutableWrapperTests
 		IMutableWrapper<T> result = IMutableWrapper.Create(value);
 		IWrapper<T> wrapper = result;
 
-		Assert.NotNull(result);
-		Assert.Equal(value, result.Value);
-		Assert.True(result.Equals(value));
-		Assert.Equal(Object.Equals(value, value2), result.Equals(value2));
-		Assert.NotNull(wrapper);
-		Assert.Equal(value, wrapper.Value);
-		Assert.True(wrapper.Equals(value));
-		Assert.Equal(Object.Equals(value, value2), wrapper.Equals(value2));
+		PInvokeAssert.NotNull(result);
+		PInvokeAssert.Equal(value, result.Value);
+		PInvokeAssert.True(result.Equals(value));
+		PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
+		PInvokeAssert.NotNull(wrapper);
+		PInvokeAssert.Equal(value, wrapper.Value);
+		PInvokeAssert.True(wrapper.Equals(value));
+		PInvokeAssert.Equal(Object.Equals(value, value2), wrapper.Equals(value2));
 
 		result.Value = value2;
-		Assert.Equal(value2, result.Value);
-		Assert.True(result.Equals(value2));
-		Assert.Equal(Object.Equals(value2, value), result.Equals(value));
-		Assert.Equal(value2, wrapper.Value);
-		Assert.True(wrapper.Equals(value2));
-		Assert.Equal(Object.Equals(value2, value), wrapper.Equals(value));
+		PInvokeAssert.Equal(value2, result.Value);
+		PInvokeAssert.True(result.Equals(value2));
+		PInvokeAssert.Equal(Object.Equals(value2, value), result.Equals(value));
+		PInvokeAssert.Equal(value2, wrapper.Value);
+		PInvokeAssert.True(wrapper.Equals(value2));
+		PInvokeAssert.Equal(Object.Equals(value2, value), wrapper.Equals(value));
 	}
 
 	private static void Nullable<T>(Boolean nullInput) where T : unmanaged
@@ -93,21 +98,21 @@ public sealed class MutableWrapperTests
 		IMutableWrapper<T?> result = IMutableWrapper.CreateNullable(value);
 		IWrapper<T?> wrapper = result;
 
-		Assert.NotNull(result);
-		Assert.Equal(value, result.Value);
-		Assert.Equal(Object.Equals(value, value2), result.Equals(value2));
-		Assert.NotNull(wrapper);
-		Assert.Equal(value, wrapper.Value);
-		Assert.True(wrapper.Equals(value));
-		Assert.Equal(Object.Equals(value, value2), wrapper.Equals(value2));
+		PInvokeAssert.NotNull(result);
+		PInvokeAssert.Equal(value, result.Value);
+		PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
+		PInvokeAssert.NotNull(wrapper);
+		PInvokeAssert.Equal(value, wrapper.Value);
+		PInvokeAssert.True(wrapper.Equals(value));
+		PInvokeAssert.Equal(Object.Equals(value, value2), wrapper.Equals(value2));
 
 		result.Value = value2;
-		Assert.Equal(value2, result.Value);
-		Assert.True(result.Equals(value2));
-		Assert.Equal(Object.Equals(value2, value), result.Equals(value));
-		Assert.Equal(value2, wrapper.Value);
-		Assert.True(wrapper.Equals(value2));
-		Assert.Equal(Object.Equals(value2, value), wrapper.Equals(value));
+		PInvokeAssert.Equal(value2, result.Value);
+		PInvokeAssert.True(result.Equals(value2));
+		PInvokeAssert.Equal(Object.Equals(value2, value), result.Equals(value));
+		PInvokeAssert.Equal(value2, wrapper.Value);
+		PInvokeAssert.True(wrapper.Equals(value2));
+		PInvokeAssert.Equal(Object.Equals(value2, value), wrapper.Equals(value));
 	}
 
 	private static void ObjectTest<T>() where T : unmanaged
@@ -117,21 +122,21 @@ public sealed class MutableWrapperTests
 		IMutableWrapper<T[]> result = IMutableWrapper.CreateObject(array);
 		IWrapper<T[]> wrapper = result;
 
-		Assert.NotNull(result);
-		Assert.Equal(array, result.Value);
-		Assert.True(result.Equals(array));
-		Assert.Equal(Object.Equals(array, array2), result.Equals(array2));
-		Assert.NotNull(wrapper);
-		Assert.Equal(array, wrapper.Value);
-		Assert.True(wrapper.Equals(array));
-		Assert.Equal(Object.Equals(array, array2), wrapper.Equals(array2));
+		PInvokeAssert.NotNull(result);
+		PInvokeAssert.Equal(array, result.Value);
+		PInvokeAssert.True(result.Equals(array));
+		PInvokeAssert.Equal(Object.Equals(array, array2), result.Equals(array2));
+		PInvokeAssert.NotNull(wrapper);
+		PInvokeAssert.Equal(array, wrapper.Value);
+		PInvokeAssert.True(wrapper.Equals(array));
+		PInvokeAssert.Equal(Object.Equals(array, array2), wrapper.Equals(array2));
 
 		result.Value = array2;
-		Assert.Equal(array2, result.Value);
-		Assert.True(result.Equals(array2));
-		Assert.Equal(Object.Equals(array2, array), result.Equals(array));
-		Assert.Equal(array2, wrapper.Value);
-		Assert.True(wrapper.Equals(array2));
-		Assert.Equal(Object.Equals(array2, array), wrapper.Equals(array));
+		PInvokeAssert.Equal(array2, result.Value);
+		PInvokeAssert.True(result.Equals(array2));
+		PInvokeAssert.Equal(Object.Equals(array2, array), result.Equals(array));
+		PInvokeAssert.Equal(array2, wrapper.Value);
+		PInvokeAssert.True(wrapper.Equals(array2));
+		PInvokeAssert.Equal(Object.Equals(array2, array), wrapper.Equals(array));
 	}
 }

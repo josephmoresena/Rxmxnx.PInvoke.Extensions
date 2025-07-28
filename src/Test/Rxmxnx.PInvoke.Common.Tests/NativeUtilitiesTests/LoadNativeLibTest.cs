@@ -1,4 +1,11 @@
 ﻿#if NETCOREAPP
+#if NET5_0_OR_GREATER
+using Skip = Xunit.Skip;
+
+#else
+using SkippableTheoryAttribute = Xunit.TheoryAttribute;
+#endif
+
 namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
 
 [ExcludeFromCodeCoverage]
@@ -20,11 +27,7 @@ public sealed class LoadNativeLibTest
 		LoadNativeLibTest.METHODNAME_WINDOWS :
 		LoadNativeLibTest.METHODNAME_UNIX;
 
-#if NET5_0_OR_GREATER
 	[SkippableTheory]
-#else
-	[Theory]
-#endif
 	[InlineData(true)]
 	[InlineData(false)]
 	[InlineData(true, true)]
@@ -55,11 +58,7 @@ public sealed class LoadNativeLibTest
 		Assert.Null(result);
 	}
 
-#if NET5_0_OR_GREATER
 	[SkippableTheory]
-#else
-	[Theory]
-#endif
 	[InlineData(true)]
 	[InlineData(false)]
 	internal void NormalTest(Boolean unloadEvent)

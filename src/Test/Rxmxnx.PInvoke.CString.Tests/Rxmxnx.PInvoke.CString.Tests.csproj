@@ -3,8 +3,9 @@
     <Import Project="..\Tests.targets"/>
 
     <ItemGroup>
-        <Using Include="Xunit"/>
-        <Using Include="Xunit.Sdk"/>
+        <Using Condition="'$(TargetFramework)' != 'netstandard2.1'" Include="Xunit"/>
+        <Using Condition="'$(TargetFramework)' != 'netstandard2.1'" Include="Xunit.Sdk"/>
+        <Using Condition="'$(TargetFramework)' == 'netstandard2.1'" Include="NUnit.Framework"/>
         <Using Include="AutoFixture"/>
         <Using Include="System.Buffers"/>
         <Using Include="System.Collections.Concurrent"/>

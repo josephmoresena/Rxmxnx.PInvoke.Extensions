@@ -20,8 +20,6 @@ internal partial class FixedOffset : IConvertibleDisposable<IFixedMemory.IDispos
 		/// <inheritdoc/>
 		public Disposable(FixedOffset fixedPointer, IDisposable? disposable) : base(fixedPointer, disposable) { }
 
-		IntPtr IFixedPointer.Pointer => (this.Value as IFixedPointer).Pointer;
-		Boolean IReadOnlyFixedMemory.IsNullOrEmpty => (this.Value as IReadOnlyFixedMemory).IsNullOrEmpty;
 		Span<Byte> IFixedMemory.Bytes => (this.Value as IFixedMemory).Bytes;
 		ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => (this.Value as IReadOnlyFixedMemory).Bytes;
 		Span<Object> IFixedMemory.Objects => (this.Value as IFixedMemory).Objects;

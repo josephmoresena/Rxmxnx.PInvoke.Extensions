@@ -1,10 +1,15 @@
-﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.CStringTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class WithSafeFixedTest
 {
 	[Fact]
-	internal void Test()
+	public void Test()
 	{
 		using TestMemoryHandle handle = new();
 		List<Int32> indices = TestSet.GetIndices();
@@ -16,8 +21,8 @@ public sealed class WithSafeFixedTest
 		if (value is null) return;
 		value.WithSafeFixed(WithSafeFixedTest.ActionMethod);
 		value.WithSafeFixed(value, WithSafeFixedTest.ActionMethod);
-		Assert.Equal(value, value.WithSafeFixed(WithSafeFixedTest.FunctionMethod));
-		Assert.Equal(value, value.WithSafeFixed(value, WithSafeFixedTest.FunctionMethod));
+		PInvokeAssert.Equal(value, value.WithSafeFixed(WithSafeFixedTest.FunctionMethod));
+		PInvokeAssert.Equal(value, value.WithSafeFixed(value, WithSafeFixedTest.FunctionMethod));
 	}
 
 	private static unsafe void ActionMethod(in IReadOnlyFixedMemory fmem)
@@ -25,7 +30,7 @@ public sealed class WithSafeFixedTest
 		ReadOnlySpan<Byte> span = fmem.Bytes;
 		if (fmem.Pointer == IntPtr.Zero)
 		{
-			Assert.True(span.IsEmpty);
+			PInvokeAssert.True(span.IsEmpty);
 		}
 		else
 		{
@@ -33,12 +38,12 @@ public sealed class WithSafeFixedTest
 			fixed (void* ptr = span)
 			{
 				if (span.Length != 0)
-					Assert.Equal(fmem.Pointer, new(ptr));
+					PInvokeAssert.Equal(fmem.Pointer, new(ptr));
 				else if (fmem.Pointer != IntPtr.Zero)
 					fixed (void* ptrEmpty = CString.Empty)
-						Assert.Equal(fmem.Pointer, new(ptrEmpty));
+						PInvokeAssert.Equal(fmem.Pointer, new(ptrEmpty));
 			}
-			Assert.True(handle.IsAllocated);
+			PInvokeAssert.True(handle.IsAllocated);
 		}
 	}
 	private static void ActionMethod(in IReadOnlyFixedMemory fmem, CString cstr)
@@ -46,7 +51,7 @@ public sealed class WithSafeFixedTest
 		IReadOnlyFixedMemory fmem2 = fmem;
 
 		WithSafeFixedTest.ActionMethod(fmem);
-		Assert.Equal(cstr, new(() => fmem2.Bytes));
+		PInvokeAssert.Equal(cstr, new(() => fmem2.Bytes));
 		WithSafeFixedTest.BinaryPointerTest(fmem, cstr);
 	}
 
@@ -65,7 +70,7 @@ public sealed class WithSafeFixedTest
 	{
 		IntPtr? ptr = WithSafeFixedTest.GetPointerFromBytes(cstr);
 		if (ptr.HasValue)
-			Assert.Equal(fmem.Pointer, ptr);
+			PInvokeAssert.Equal(fmem.Pointer, ptr);
 	}
 	private static unsafe IntPtr? GetPointerFromBytes(CString cstr)
 	{

@@ -1,11 +1,16 @@
-﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.CStringTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class JoinByteTest
 {
 	[Fact]
-	internal void Test()
+	public void Test()
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
@@ -41,9 +46,9 @@ public sealed class JoinByteTest
 		CString resultCString = CString.Join(separator, values);
 		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
 
-		Assert.Equal(expectedCString, resultCStringCString);
-		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
-		Assert.Same(CString.Empty, CString.Join(separator));
+		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+		PInvokeAssert.Same(CString.Empty, CString.Join(separator));
 	}
 	private static void EnumerableTest(Byte separator, String?[] strings, IEnumerable<CString?> values)
 	{
@@ -54,9 +59,9 @@ public sealed class JoinByteTest
 		CString resultCString = CString.Join(separator, values);
 		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
 
-		Assert.Equal(expectedCString, resultCStringCString);
-		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
-		Assert.Same(CString.Empty, CString.Join(separator, Array.Empty<CString?>().ToList()));
+		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+		PInvokeAssert.Same(CString.Empty, CString.Join(separator, Array.Empty<CString?>().ToList()));
 	}
 	private static void ArrayRangeTest(Byte separator, String?[] strings, CString?[] values)
 	{
@@ -71,9 +76,9 @@ public sealed class JoinByteTest
 			Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]) :
 			String.Empty;
 
-		Assert.Equal(expectedCString, resultCStringCString);
-		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
-		Assert.Same(CString.Empty, CString.Join(separator, values, 0, 0));
+		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+		PInvokeAssert.Same(CString.Empty, CString.Join(separator, values, 0, 0));
 	}
 
 #if NET6_0_OR_GREATER

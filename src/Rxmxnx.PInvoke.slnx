@@ -22,6 +22,7 @@
         <File Path="..\package\Rxmxnx.PInvoke.Extensions\PACKAGE.md"/>
     </Folder>
     <Folder Name="/Tests/">
+        <Project Path="Test\Rxmxnx.PInvoke.Assert.Tests\Rxmxnx.PInvoke.Assert.Tests.csproj" Type="Classic C#"/>
         <Project Path="Test\Rxmxnx.PInvoke.Buffers.Tests\Rxmxnx.PInvoke.Buffers.Tests.csproj"/>
         <Project Path="Test\Rxmxnx.PInvoke.Common.Tests\Rxmxnx.PInvoke.Common.Tests.csproj"/>
         <Project

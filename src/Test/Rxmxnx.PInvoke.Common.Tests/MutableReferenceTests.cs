@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class MutableReferenceTests
@@ -7,41 +12,41 @@ public sealed class MutableReferenceTests
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
-	internal Task BooleanTestAsync() => MutableReferenceTests.TestAsync<Boolean>();
+	public Task BooleanTestAsync() => MutableReferenceTests.TestAsync<Boolean>();
 	[Fact]
-	internal Task ByteTestAsync() => MutableReferenceTests.TestAsync<Byte>();
+	public Task ByteTestAsync() => MutableReferenceTests.TestAsync<Byte>();
 	[Fact]
-	internal Task Int16TestAsync() => MutableReferenceTests.TestAsync<Int16>();
+	public Task Int16TestAsync() => MutableReferenceTests.TestAsync<Int16>();
 	[Fact]
-	internal Task CharTestAsync() => MutableReferenceTests.TestAsync<Char>();
+	public Task CharTestAsync() => MutableReferenceTests.TestAsync<Char>();
 	[Fact]
-	internal Task Int32TestAsync() => MutableReferenceTests.TestAsync<Int32>();
+	public Task Int32TestAsync() => MutableReferenceTests.TestAsync<Int32>();
 	[Fact]
-	internal Task Int64TestAsync() => MutableReferenceTests.TestAsync<Int64>();
+	public Task Int64TestAsync() => MutableReferenceTests.TestAsync<Int64>();
 #if NET7_0_OR_GREATER
 	[Fact]
 	internal Task Int128TestAsync() => MutableReferenceTests.TestAsync<Int128>();
 #endif
 	[Fact]
-	internal Task GuidTestAsync() => MutableReferenceTests.TestAsync<Guid>();
+	public Task GuidTestAsync() => MutableReferenceTests.TestAsync<Guid>();
 	[Fact]
-	internal Task SingleTestAsync() => MutableReferenceTests.TestAsync<Single>();
+	public Task SingleTestAsync() => MutableReferenceTests.TestAsync<Single>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal Task HalfTestAsync() => MutableReferenceTests.TestAsync<Half>();
 #endif
 	[Fact]
-	internal Task DoubleTestAsync() => MutableReferenceTests.TestAsync<Double>();
+	public Task DoubleTestAsync() => MutableReferenceTests.TestAsync<Double>();
 	[Fact]
-	internal Task DecimalTestAsync() => MutableReferenceTests.TestAsync<Decimal>();
+	public Task DecimalTestAsync() => MutableReferenceTests.TestAsync<Decimal>();
 	[Fact]
-	internal Task DateTimeTestAsync() => MutableReferenceTests.TestAsync<DateTime>();
+	public Task DateTimeTestAsync() => MutableReferenceTests.TestAsync<DateTime>();
 #if NET6_0_OR_GREATER
 	[Fact]
 	internal Task TimeOnlyTestAsync() => MutableReferenceTests.TestAsync<TimeOnly>();
 #endif
 	[Fact]
-	internal Task TimeSpanTestAsync() => MutableReferenceTests.TestAsync<TimeSpan>();
+	public Task TimeSpanTestAsync() => MutableReferenceTests.TestAsync<TimeSpan>();
 
 	private static async Task TestAsync<T>() where T : unmanaged
 	{
@@ -62,31 +67,31 @@ public sealed class MutableReferenceTests
 		ReferenceableWrapper<T> result3 = new(result);
 		ref readonly T refValue = ref result.Reference;
 		ref T mutableValueRef = ref result.Reference;
-		Assert.NotNull(result);
-		Assert.Equal(value, result.Value);
-		Assert.Equal(value, refValue);
-		Assert.True(result.Equals(value));
-		Assert.Equal(Object.Equals(value, value2), result.Equals(value2));
-		Assert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
-		Assert.False(Unsafe.AreSame(ref result.Reference, ref value));
-		Assert.False(result.Equals(result2));
-		Assert.True(result.Equals(result3));
-		Assert.True((result as IReadOnlyReferenceable<T>).Equals(result3));
+		PInvokeAssert.NotNull(result);
+		PInvokeAssert.Equal(value, result.Value);
+		PInvokeAssert.Equal(value, refValue);
+		PInvokeAssert.True(result.Equals(value));
+		PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
+		PInvokeAssert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
+		PInvokeAssert.False(Unsafe.AreSame(ref result.Reference, ref value));
+		PInvokeAssert.False(result.Equals(result2));
+		PInvokeAssert.True(result.Equals(result3));
+		PInvokeAssert.True((result as IReadOnlyReferenceable<T>).Equals(result3));
 
 		result.Value = value2;
-		Assert.Equal(value2, result.Value);
-		Assert.Equal(value2, refValue);
-		Assert.True(result.Equals(value2));
-		Assert.Equal(Object.Equals(value2, value), result.Equals(value));
-		Assert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
-		Assert.False(Unsafe.AreSame(ref result.Reference, ref value2));
-		Assert.False(result.Equals(result2));
-		Assert.True(result.Equals(result3));
-		Assert.True((result as IReadOnlyReferenceable<T>).Equals(result3));
+		PInvokeAssert.Equal(value2, result.Value);
+		PInvokeAssert.Equal(value2, refValue);
+		PInvokeAssert.True(result.Equals(value2));
+		PInvokeAssert.Equal(Object.Equals(value2, value), result.Equals(value));
+		PInvokeAssert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
+		PInvokeAssert.False(Unsafe.AreSame(ref result.Reference, ref value2));
+		PInvokeAssert.False(result.Equals(result2));
+		PInvokeAssert.True(result.Equals(result3));
+		PInvokeAssert.True((result as IReadOnlyReferenceable<T>).Equals(result3));
 
 		result.Reference = value3;
-		Assert.Equal(value3, result.Value);
-		Assert.Equal(value3, refValue);
+		PInvokeAssert.Equal(value3, result.Value);
+		PInvokeAssert.Equal(value3, refValue);
 	}
 	private static void Nullable<T>(Boolean nullInput) where T : unmanaged
 	{
@@ -98,28 +103,28 @@ public sealed class MutableReferenceTests
 		ReferenceableWrapper<T?> result3 = new(result);
 		ref readonly T? refValue = ref result.Reference;
 		ref T? mutableValueRef = ref result.Reference;
-		Assert.NotNull(result);
-		Assert.Equal(value, refValue);
-		Assert.Equal(value, result.Value);
-		Assert.Equal(Object.Equals(value, value2), result.Equals(value2));
-		Assert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
-		Assert.False(Unsafe.AreSame(ref result.Reference, ref value));
-		Assert.False(result.Equals(result2));
-		Assert.True(result.Equals(result3));
+		PInvokeAssert.NotNull(result);
+		PInvokeAssert.Equal(value, refValue);
+		PInvokeAssert.Equal(value, result.Value);
+		PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
+		PInvokeAssert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
+		PInvokeAssert.False(Unsafe.AreSame(ref result.Reference, ref value));
+		PInvokeAssert.False(result.Equals(result2));
+		PInvokeAssert.True(result.Equals(result3));
 
 		result.Value = value2;
-		Assert.Equal(value2, result.Value);
-		Assert.Equal(value2, refValue);
-		Assert.True(result.Equals(value2));
-		Assert.Equal(Object.Equals(value2, value), result.Equals(value));
-		Assert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
-		Assert.False(Unsafe.AreSame(ref result.Reference, ref value2));
-		Assert.False(result.Equals(result2));
-		Assert.True(result.Equals(result3));
+		PInvokeAssert.Equal(value2, result.Value);
+		PInvokeAssert.Equal(value2, refValue);
+		PInvokeAssert.True(result.Equals(value2));
+		PInvokeAssert.Equal(Object.Equals(value2, value), result.Equals(value));
+		PInvokeAssert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
+		PInvokeAssert.False(Unsafe.AreSame(ref result.Reference, ref value2));
+		PInvokeAssert.False(result.Equals(result2));
+		PInvokeAssert.True(result.Equals(result3));
 
 		result.Reference = value3;
-		Assert.Equal(value3, result.Value);
-		Assert.Equal(value3, refValue);
+		PInvokeAssert.Equal(value3, result.Value);
+		PInvokeAssert.Equal(value3, refValue);
 	}
 	private static void ObjectTest<T>() where T : unmanaged
 	{
@@ -131,30 +136,30 @@ public sealed class MutableReferenceTests
 		ReferenceableWrapper<T[]> result3 = new(result);
 		ref readonly T[] refValue = ref result.Reference;
 		ref T[] mutableValueRef = ref result.Reference;
-		Assert.NotNull(result);
-		Assert.Equal(array, result.Value);
-		Assert.Equal(array, refValue);
-		Assert.True(result.Equals(array));
-		Assert.Equal(Object.Equals(array, array2), result.Equals(array2));
-		Assert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
-		Assert.False(Unsafe.AreSame(ref result.Reference, ref array));
-		Assert.False(result.Equals(result2));
-		Assert.True(result.Equals(result3));
-		Assert.True((result as IReadOnlyReferenceable<T[]>).Equals(result3));
+		PInvokeAssert.NotNull(result);
+		PInvokeAssert.Equal(array, result.Value);
+		PInvokeAssert.Equal(array, refValue);
+		PInvokeAssert.True(result.Equals(array));
+		PInvokeAssert.Equal(Object.Equals(array, array2), result.Equals(array2));
+		PInvokeAssert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
+		PInvokeAssert.False(Unsafe.AreSame(ref result.Reference, ref array));
+		PInvokeAssert.False(result.Equals(result2));
+		PInvokeAssert.True(result.Equals(result3));
+		PInvokeAssert.True((result as IReadOnlyReferenceable<T[]>).Equals(result3));
 
 		result.Value = array2;
-		Assert.Equal(array2, result.Value);
-		Assert.Equal(array2, refValue);
-		Assert.True(result.Equals(array2));
-		Assert.Equal(Object.Equals(array2, array), result.Equals(array));
-		Assert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
-		Assert.False(Unsafe.AreSame(ref result.Reference, ref array2));
-		Assert.False(result.Equals(result2));
-		Assert.True(result.Equals(result3));
-		Assert.True((result as IReadOnlyReferenceable<T[]>).Equals(result3));
+		PInvokeAssert.Equal(array2, result.Value);
+		PInvokeAssert.Equal(array2, refValue);
+		PInvokeAssert.True(result.Equals(array2));
+		PInvokeAssert.Equal(Object.Equals(array2, array), result.Equals(array));
+		PInvokeAssert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
+		PInvokeAssert.False(Unsafe.AreSame(ref result.Reference, ref array2));
+		PInvokeAssert.False(result.Equals(result2));
+		PInvokeAssert.True(result.Equals(result3));
+		PInvokeAssert.True((result as IReadOnlyReferenceable<T[]>).Equals(result3));
 
 		result.Reference = array3;
-		Assert.Equal(array3, result.Value);
-		Assert.Equal(array3, refValue);
+		PInvokeAssert.Equal(array3, result.Value);
+		PInvokeAssert.Equal(array3, refValue);
 	}
 }

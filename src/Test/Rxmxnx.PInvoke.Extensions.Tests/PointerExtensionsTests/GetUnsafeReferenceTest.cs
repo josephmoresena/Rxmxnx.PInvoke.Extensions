@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class GetUnsafeReferenceTest
@@ -7,37 +12,37 @@ public sealed class GetUnsafeReferenceTest
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
-	internal void ByteTest() => GetUnsafeReferenceTest.Test<Byte>();
+	public void ByteTest() => GetUnsafeReferenceTest.Test<Byte>();
 	[Fact]
-	internal void CharTest() => GetUnsafeReferenceTest.Test<Char>();
+	public void CharTest() => GetUnsafeReferenceTest.Test<Char>();
 	[Fact]
-	internal void DateTimeTest() => GetUnsafeReferenceTest.Test<DateTime>();
+	public void DateTimeTest() => GetUnsafeReferenceTest.Test<DateTime>();
 	[Fact]
-	internal void DecimalTest() => GetUnsafeReferenceTest.Test<Decimal>();
+	public void DecimalTest() => GetUnsafeReferenceTest.Test<Decimal>();
 	[Fact]
-	internal void DoubleTest() => GetUnsafeReferenceTest.Test<Double>();
+	public void DoubleTest() => GetUnsafeReferenceTest.Test<Double>();
 	[Fact]
-	internal void GuidTest() => GetUnsafeReferenceTest.Test<Guid>();
+	public void GuidTest() => GetUnsafeReferenceTest.Test<Guid>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => GetUnsafeReferenceTest.Test<Half>();
 #endif
 	[Fact]
-	internal void Int16Test() => GetUnsafeReferenceTest.Test<Int16>();
+	public void Int16Test() => GetUnsafeReferenceTest.Test<Int16>();
 	[Fact]
-	internal void Int32Test() => GetUnsafeReferenceTest.Test<Int32>();
+	public void Int32Test() => GetUnsafeReferenceTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => GetUnsafeReferenceTest.Test<Int64>();
+	public void Int64Test() => GetUnsafeReferenceTest.Test<Int64>();
 	[Fact]
-	internal void SByteTest() => GetUnsafeReferenceTest.Test<SByte>();
+	public void SByteTest() => GetUnsafeReferenceTest.Test<SByte>();
 	[Fact]
-	internal void SingleTest() => GetUnsafeReferenceTest.Test<Single>();
+	public void SingleTest() => GetUnsafeReferenceTest.Test<Single>();
 	[Fact]
-	internal void UInt16Test() => GetUnsafeReferenceTest.Test<UInt16>();
+	public void UInt16Test() => GetUnsafeReferenceTest.Test<UInt16>();
 	[Fact]
-	internal void UInt32Test() => GetUnsafeReferenceTest.Test<UInt32>();
+	public void UInt32Test() => GetUnsafeReferenceTest.Test<UInt32>();
 	[Fact]
-	internal void UInt64Test() => GetUnsafeReferenceTest.Test<UInt64>();
+	public void UInt64Test() => GetUnsafeReferenceTest.Test<UInt64>();
 
 	private static unsafe void Test<T>() where T : unmanaged
 	{
@@ -53,25 +58,25 @@ public sealed class GetUnsafeReferenceTest
 			ref readonly T refReadOnlyValue1 = ref intPtr.GetUnsafeReadOnlyReference<T>();
 			ref readonly T refReadOnlyValue2 = ref uintPtr.GetUnsafeReadOnlyReference<T>();
 
-			Assert.Equal(value, refValue1);
-			Assert.Equal(value, refValue2);
-			Assert.Equal(value, refReadOnlyValue1);
-			Assert.Equal(value, refReadOnlyValue2);
-			Assert.Equal(value, intPtr.GetUnsafeValue<T>());
-			Assert.Equal(value, uintPtr.GetUnsafeValue<T>());
+			PInvokeAssert.Equal(value, refValue1);
+			PInvokeAssert.Equal(value, refValue2);
+			PInvokeAssert.Equal(value, refReadOnlyValue1);
+			PInvokeAssert.Equal(value, refReadOnlyValue2);
+			PInvokeAssert.Equal(value, intPtr.GetUnsafeValue<T>());
+			PInvokeAssert.Equal(value, uintPtr.GetUnsafeValue<T>());
 
-			Assert.True(Unsafe.AreSame(ref refValue, ref refValue1));
-			Assert.True(Unsafe.AreSame(ref refValue, ref refValue2));
+			PInvokeAssert.True(Unsafe.AreSame(ref refValue, ref refValue1));
+			PInvokeAssert.True(Unsafe.AreSame(ref refValue, ref refValue2));
 #if NET8_0_OR_GREATER
 			Assert.True(Unsafe.AreSame(ref refValue, in refReadOnlyValue1));
 			Assert.True(Unsafe.AreSame(ref refValue, in refReadOnlyValue2));
 #else
-			Assert.True(Unsafe.AreSame(ref refValue, ref Unsafe.AsRef(in refReadOnlyValue1)));
-			Assert.True(Unsafe.AreSame(ref refValue, ref Unsafe.AsRef(in refReadOnlyValue2)));
+			PInvokeAssert.True(Unsafe.AreSame(ref refValue, ref Unsafe.AsRef(in refReadOnlyValue1)));
+			PInvokeAssert.True(Unsafe.AreSame(ref refValue, ref Unsafe.AsRef(in refReadOnlyValue2)));
 #endif
 
-			Assert.Null(IntPtr.Zero.GetUnsafeValue<T>());
-			Assert.Null(UIntPtr.Zero.GetUnsafeValue<T>());
+			PInvokeAssert.Null(IntPtr.Zero.GetUnsafeValue<T>());
+			PInvokeAssert.Null(UIntPtr.Zero.GetUnsafeValue<T>());
 		}
 	}
 }

@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class CopyBytesTest
@@ -7,9 +12,9 @@ public sealed class CopyBytesTest
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
-	internal void ExceptionTest()
+	public void ExceptionTest()
 	{
-		Assert.Throws<InsufficientMemoryException>(() =>
+		PInvokeAssert.Throws<InsufficientMemoryException>(() =>
 		{
 			Span<Byte> bytes = stackalloc Byte[2];
 			NativeUtilities.CopyBytes(CopyBytesTest.fixture.Create<Decimal>(), bytes);
@@ -17,7 +22,7 @@ public sealed class CopyBytesTest
 	}
 
 	[Fact]
-	internal void NormalTest()
+	public void NormalTest()
 	{
 		CopyBytesTest.CopyTest<Boolean>();
 		CopyBytesTest.CopyTest<Byte>();
@@ -36,6 +41,6 @@ public sealed class CopyBytesTest
 		for (Int32 i = 0; i < values.Length; i++)
 			NativeUtilities.CopyBytes(values[i], span, i * sizeof(T));
 		Span<T> spanValues = MemoryMarshal.Cast<Byte, T>(span);
-		Assert.Equal(values, spanValues.ToArray());
+		PInvokeAssert.Equal(values, spanValues.ToArray());
 	}
 }

@@ -1,5 +1,15 @@
-﻿namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
+﻿#if NET5_0_OR_GREATER
+using Skip = Xunit.Skip;
 
+#elif NETCOREAPP
+using SkippableTheoryAttribute = Xunit.TheoryAttribute;
+#else
+using Fact = NUnit.Framework.TestAttribute;
+#endif
+
+namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class GetNativeMethodTest
 {
@@ -8,11 +18,7 @@ public sealed class GetNativeMethodTest
 #if NETCOREAPP
 	private static readonly IFixture fixture = new Fixture();
 
-#if NET5_0_OR_GREATER
 	[SkippableTheory]
-#else
-	[Theory]
-#endif
 	[InlineData(true, false)]
 	[InlineData(false, true)] //https://github.com/dotnet/dotnet-api-docs/pull/7342
 	[InlineData(true, true)]
@@ -64,11 +70,7 @@ public sealed class GetNativeMethodTest
 			NativeLibrary.Free(handle);
 	}
 
-#if NET5_0_OR_GREATER
 	[SkippableTheory]
-#else
-	[Theory]
-#endif
 	[InlineData(true)]
 	[InlineData(false)]
 	internal void NormalTest(Boolean generic)

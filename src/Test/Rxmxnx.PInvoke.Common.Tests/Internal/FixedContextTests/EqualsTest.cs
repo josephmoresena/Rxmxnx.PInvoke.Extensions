@@ -1,50 +1,55 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 #pragma warning disable CS8500
 public sealed class EqualsTest : FixedContextTestsBase
 {
 	[Fact]
-	internal void BooleanTest() => EqualsTest.Test<Boolean>();
+	public void BooleanTest() => EqualsTest.Test<Boolean>();
 	[Fact]
-	internal void ByteTest() => EqualsTest.Test<Byte>();
+	public void ByteTest() => EqualsTest.Test<Byte>();
 	[Fact]
-	internal void Int16Test() => EqualsTest.Test<Int16>();
+	public void Int16Test() => EqualsTest.Test<Int16>();
 	[Fact]
-	internal void CharTest() => EqualsTest.Test<Char>();
+	public void CharTest() => EqualsTest.Test<Char>();
 	[Fact]
-	internal void Int32Test() => EqualsTest.Test<Int32>();
+	public void Int32Test() => EqualsTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => EqualsTest.Test<Int64>();
+	public void Int64Test() => EqualsTest.Test<Int64>();
 #if NET7_0_OR_GREATER
 	[Fact]
 	internal void Int128Test() => EqualsTest.Test<Int128>();
 #endif
 	[Fact]
-	internal void GuidTest() => EqualsTest.Test<Guid>();
+	public void GuidTest() => EqualsTest.Test<Guid>();
 	[Fact]
-	internal void SingleTest() => EqualsTest.Test<Single>();
+	public void SingleTest() => EqualsTest.Test<Single>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => EqualsTest.Test<Half>();
 #endif
 	[Fact]
-	internal void DoubleTest() => EqualsTest.Test<Double>();
+	public void DoubleTest() => EqualsTest.Test<Double>();
 	[Fact]
-	internal void DecimalTest() => EqualsTest.Test<Decimal>();
+	public void DecimalTest() => EqualsTest.Test<Decimal>();
 	[Fact]
-	internal void DateTimeTest() => EqualsTest.Test<DateTime>();
+	public void DateTimeTest() => EqualsTest.Test<DateTime>();
 #if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => EqualsTest.Test<TimeOnly>();
 #endif
 	[Fact]
-	internal void TimeSpanTest() => EqualsTest.Test<TimeSpan>();
+	public void TimeSpanTest() => EqualsTest.Test<TimeSpan>();
 	[Fact]
-	internal void ManagedStructTest() => EqualsTest.Test<ManagedStruct>();
+	public void ManagedStructTest() => EqualsTest.Test<ManagedStruct>();
 	[Fact]
-	internal void StringTest() => EqualsTest.Test<String>();
+	public void StringTest() => EqualsTest.Test<String>();
 	private static unsafe void Test<T>()
 	{
 		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>(sizeof(Guid) * 3 / sizeof(T)).ToArray();
@@ -53,6 +58,10 @@ public sealed class EqualsTest : FixedContextTestsBase
 		try
 		{
 			GCHandle.Alloc(values, GCHandleType.Pinned).Free();
+#if !NETCOREAPP
+			if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+				throw new ArgumentException(); // Required for Mono?
+#endif
 			// Unmanaged type
 			action = EqualsTest.UnmanagedTest;
 			readonlyAction = EqualsTest.UnmanagedReadOnlyTest;
@@ -78,21 +87,21 @@ public sealed class EqualsTest : FixedContextTestsBase
 	{
 		Boolean equal = ctx.IsReadOnly == ctx2.IsReadOnly && typeof(T2) == typeof(T);
 
-		Assert.Equal(equal, ctx2.Equals(ctx));
-		Assert.Equal(equal, ctx2.Equals((Object)ctx));
-		Assert.Equal(equal, ctx2.Equals(ctx as FixedContext<T2>));
-		Assert.False(ctx2.Equals(null));
-		Assert.False(ctx2.Equals(new Object()));
+		PInvokeAssert.Equal(equal, ctx2.Equals(ctx));
+		PInvokeAssert.Equal(equal, ctx2.Equals((Object)ctx));
+		PInvokeAssert.Equal(equal, ctx2.Equals(ctx as FixedContext<T2>));
+		PInvokeAssert.False(ctx2.Equals(null));
+		PInvokeAssert.False(ctx2.Equals(new Object()));
 	}
 	private static void Test<T, T2>(ReadOnlyFixedContext<T2> ctx2, ReadOnlyFixedContext<T> ctx)
 	{
 		Boolean equal = ctx.IsReadOnly == ctx2.IsReadOnly && typeof(T2) == typeof(T);
 
-		Assert.Equal(equal, ctx2.Equals(ctx));
-		Assert.Equal(equal, ctx2.Equals((Object)ctx));
-		Assert.Equal(equal, ctx2.Equals(ctx as ReadOnlyFixedContext<T2>));
-		Assert.False(ctx2.Equals(null));
-		Assert.False(ctx2.Equals(new Object()));
+		PInvokeAssert.Equal(equal, ctx2.Equals(ctx));
+		PInvokeAssert.Equal(equal, ctx2.Equals((Object)ctx));
+		PInvokeAssert.Equal(equal, ctx2.Equals(ctx as ReadOnlyFixedContext<T2>));
+		PInvokeAssert.False(ctx2.Equals(null));
+		PInvokeAssert.False(ctx2.Equals(new Object()));
 	}
 	private static unsafe void TransformationTest<T, T2>(FixedContext<T> ctx, Int32 length)
 	{
@@ -102,7 +111,7 @@ public sealed class EqualsTest : FixedContextTestsBase
 		Int32 binaryLength = length * sizeof(T);
 		ReadOnlySpan<T2> transformedSpan = MemoryMarshal.CreateReadOnlySpan(ref refT2, binaryLength / sizeof(T2));
 
-		Assert.Equal(binaryLength, ctx.BinaryLength);
+		PInvokeAssert.Equal(binaryLength, ctx.BinaryLength);
 		FixedContextTestsBase.WithFixed(transformedSpan, ctx, EqualsTest.Test);
 	}
 	private static unsafe void TransformationTest<T, T2>(ReadOnlyFixedContext<T> ctx, Int32 length)
@@ -113,7 +122,7 @@ public sealed class EqualsTest : FixedContextTestsBase
 		Int32 binaryLength = length * sizeof(T);
 		ReadOnlySpan<T2> transformedSpan = MemoryMarshal.CreateSpan(ref refT2, binaryLength / sizeof(T2));
 
-		Assert.Equal(binaryLength, ctx.BinaryLength);
+		PInvokeAssert.Equal(binaryLength, ctx.BinaryLength);
 		FixedContextTestsBase.WithFixed(transformedSpan, ctx, EqualsTest.Test);
 	}
 	private static unsafe void UnmanagedTest<T>(FixedContext<T> ctx, T[] values)
@@ -247,16 +256,16 @@ public sealed class EqualsTest : FixedContextTestsBase
 		ReadOnlyFixedContext<T> ctx3 = new(ptrValue + 1, values.Length - 1);
 		FixedContext<T> ctx4 = new(ptrValue + 1, values.Length - 1);
 
-		Assert.False(ctx.Equals(ctx1));
-		Assert.False(ctx.Equals(ctx2));
-		Assert.False(ctx.Equals(ctx3));
-		Assert.False(ctx.Equals(ctx4));
-		Assert.False(ctx1.Equals(ctx2));
-		Assert.False(ctx1.Equals(ctx3));
-		Assert.False(ctx1.Equals(ctx4));
-		Assert.False(ctx2.Equals(ctx3));
-		Assert.False(ctx2.Equals(ctx4));
-		Assert.False(ctx3.Equals(ctx4));
+		PInvokeAssert.False(ctx.Equals(ctx1));
+		PInvokeAssert.False(ctx.Equals(ctx2));
+		PInvokeAssert.False(ctx.Equals(ctx3));
+		PInvokeAssert.False(ctx.Equals(ctx4));
+		PInvokeAssert.False(ctx1.Equals(ctx2));
+		PInvokeAssert.False(ctx1.Equals(ctx3));
+		PInvokeAssert.False(ctx1.Equals(ctx4));
+		PInvokeAssert.False(ctx2.Equals(ctx3));
+		PInvokeAssert.False(ctx2.Equals(ctx4));
+		PInvokeAssert.False(ctx3.Equals(ctx4));
 	}
 	private static unsafe void UnmanagedFalseTest<T>(ReadOnlyFixedContext<T> ctx, T[] values, T* ptrValue)
 	{
@@ -265,16 +274,16 @@ public sealed class EqualsTest : FixedContextTestsBase
 		ReadOnlyFixedContext<T> ctx3 = new(ptrValue + 1, values.Length - 1);
 		FixedContext<T> ctx4 = new(ptrValue + 1, values.Length - 1);
 
-		Assert.False(ctx.Equals(ctx1));
-		Assert.False(ctx.Equals(ctx2));
-		Assert.False(ctx.Equals(ctx3));
-		Assert.False(ctx.Equals(ctx4));
-		Assert.False(ctx1.Equals(ctx2));
-		Assert.False(ctx1.Equals(ctx3));
-		Assert.False(ctx1.Equals(ctx4));
-		Assert.False(ctx2.Equals(ctx3));
-		Assert.False(ctx2.Equals(ctx4));
-		Assert.False(ctx3.Equals(ctx4));
+		PInvokeAssert.False(ctx.Equals(ctx1));
+		PInvokeAssert.False(ctx.Equals(ctx2));
+		PInvokeAssert.False(ctx.Equals(ctx3));
+		PInvokeAssert.False(ctx.Equals(ctx4));
+		PInvokeAssert.False(ctx1.Equals(ctx2));
+		PInvokeAssert.False(ctx1.Equals(ctx3));
+		PInvokeAssert.False(ctx1.Equals(ctx4));
+		PInvokeAssert.False(ctx2.Equals(ctx3));
+		PInvokeAssert.False(ctx2.Equals(ctx4));
+		PInvokeAssert.False(ctx3.Equals(ctx4));
 	}
 }
 #pragma warning restore CS8500

@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
+﻿#if !NETCOREAPP
+using InlineData = NUnit.Framework.TestCaseAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class GetUnsafeDelegateTest
 {
@@ -8,37 +13,38 @@ public sealed class GetUnsafeDelegateTest
 	[Theory]
 	[InlineData(false)]
 	[InlineData(true)]
-	internal void EmptyTest(Boolean useGeneric)
+	public void EmptyTest(Boolean useGeneric)
 	{
 		if (useGeneric)
 		{
-			Assert.Null(IntPtr.Zero.GetUnsafeDelegate<GetValue<Byte>>());
-			Assert.Null(UIntPtr.Zero.GetUnsafeDelegate<GetValue<Byte>>());
+			PInvokeAssert.Null(IntPtr.Zero.GetUnsafeDelegate<GetValue<Byte>>());
+			PInvokeAssert.Null(UIntPtr.Zero.GetUnsafeDelegate<GetValue<Byte>>());
 		}
 		else
 		{
-			Assert.Null(IntPtr.Zero.GetUnsafeDelegate<GetByteValue>());
-			Assert.Null(UIntPtr.Zero.GetUnsafeDelegate<GetByteValue>());
+			PInvokeAssert.Null(IntPtr.Zero.GetUnsafeDelegate<GetByteValue>());
+			PInvokeAssert.Null(UIntPtr.Zero.GetUnsafeDelegate<GetByteValue>());
 		}
 	}
 
 	[Theory]
 	[InlineData(false)]
 	[InlineData(true)]
-	internal unsafe void NormalTest(Boolean useGeneric)
+	public unsafe void NormalTest(Boolean useGeneric)
 	{
 		IntPtr intPtr = Marshal.GetFunctionPointerForDelegate<GetByteValue>(GetUnsafeDelegateTest.GetByte);
 		UIntPtr uIntPtr = (UIntPtr)intPtr.ToPointer();
 		Byte input = GetUnsafeDelegateTest.fixture.Create<Byte>();
 		if (!useGeneric)
 		{
-			Assert.Equal(GetUnsafeDelegateTest.GetByte(input), intPtr.GetUnsafeDelegate<GetByteValue>()!(input));
-			Assert.Equal(GetUnsafeDelegateTest.GetByte(input), uIntPtr.GetUnsafeDelegate<GetByteValue>()!(input));
+			PInvokeAssert.Equal(GetUnsafeDelegateTest.GetByte(input), intPtr.GetUnsafeDelegate<GetByteValue>()!(input));
+			PInvokeAssert.Equal(GetUnsafeDelegateTest.GetByte(input),
+			                    uIntPtr.GetUnsafeDelegate<GetByteValue>()!(input));
 		}
 		else
 		{
-			Assert.Throws<ArgumentException>(() => intPtr.GetUnsafeDelegate<GetValue<Byte>>()!(input));
-			Assert.Throws<ArgumentException>(() => uIntPtr.GetUnsafeDelegate<GetValue<Byte>>()!(input));
+			PInvokeAssert.Throws<ArgumentException>(() => intPtr.GetUnsafeDelegate<GetValue<Byte>>()!(input));
+			PInvokeAssert.Throws<ArgumentException>(() => uIntPtr.GetUnsafeDelegate<GetValue<Byte>>()!(input));
 		}
 	}
 

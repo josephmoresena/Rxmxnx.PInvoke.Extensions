@@ -1,32 +1,37 @@
-﻿namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class SegmentTest
 {
 	[Fact]
-	internal void EmptyTest()
+	public void EmptyTest()
 	{
 		const Int32 zero = 0;
 		Int32 varIndex = 1;
 		CStringSequence seq = new(Array.Empty<CString>());
 
-		Assert.Empty(seq);
-		Assert.Throws<ArgumentOutOfRangeException>(() => seq[varIndex]);
-		Assert.Throws<ArgumentOutOfRangeException>(() => seq[varIndex..]);
-		Assert.Throws<ArgumentOutOfRangeException>(() => seq[..varIndex]);
+		PInvokeAssert.Empty(seq);
+		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => seq[varIndex]);
+		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => seq[varIndex..]);
+		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => seq[..varIndex]);
 
 		varIndex = -1;
-		Assert.Throws<ArgumentOutOfRangeException>(() => seq[varIndex]);
-		Assert.Throws<ArgumentOutOfRangeException>(() => seq[varIndex..]);
-		Assert.Throws<ArgumentOutOfRangeException>(() => seq[..varIndex]);
+		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => seq[varIndex]);
+		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => seq[varIndex..]);
+		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => seq[..varIndex]);
 
-		Assert.Throws<ArgumentOutOfRangeException>(() => seq.Slice(varIndex, zero));
-		Assert.Throws<ArgumentOutOfRangeException>(() => seq.Slice(zero, 1));
-		Assert.Throws<ArgumentOutOfRangeException>(() => seq.Slice(varIndex, 1));
+		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => seq.Slice(varIndex, zero));
+		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => seq.Slice(zero, 1));
+		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => seq.Slice(varIndex, 1));
 	}
 
 	[Fact]
-	internal void Test()
+	public void Test()
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
@@ -38,13 +43,13 @@ public sealed class SegmentTest
 			Int32 end = Random.Shared.Next(start, count + 1);
 			CStringSequence subSeq = seq[start..end];
 			for (Int32 j = 0; j < subSeq.Count; j++)
-				Assert.Equal(seq[j + start], subSeq[j]);
+				PInvokeAssert.Equal(seq[j + start], subSeq[j]);
 		}
 	}
 
 	[Fact]
 	[SuppressMessage("Style", "IDE0057")]
-	internal void SliceTest()
+	public void SliceTest()
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
@@ -55,7 +60,7 @@ public sealed class SegmentTest
 			Int32 start = Random.Shared.Next(i);
 			CStringSequence subSeq = seq.Slice(start);
 			for (Int32 j = 0; j < subSeq.Count; j++)
-				Assert.Equal(seq[j + start], subSeq[j]);
+				PInvokeAssert.Equal(seq[j + start], subSeq[j]);
 		}
 	}
 

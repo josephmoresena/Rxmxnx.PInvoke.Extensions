@@ -1,46 +1,51 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedReferenceTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.Internal.FixedReferenceTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 #pragma warning disable CS8500
 public sealed class EqualsTest : FixedReferenceTestsBase
 {
 	[Fact]
-	internal void BooleanTest() => EqualsTest.Test<Boolean>();
+	public void BooleanTest() => EqualsTest.Test<Boolean>();
 	[Fact]
-	internal void ByteTest() => EqualsTest.Test<Byte>();
+	public void ByteTest() => EqualsTest.Test<Byte>();
 	[Fact]
-	internal void Int16Test() => EqualsTest.Test<Int16>();
+	public void Int16Test() => EqualsTest.Test<Int16>();
 	[Fact]
-	internal void CharTest() => EqualsTest.Test<Char>();
+	public void CharTest() => EqualsTest.Test<Char>();
 	[Fact]
-	internal void Int32Test() => EqualsTest.Test<Int32>();
+	public void Int32Test() => EqualsTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => EqualsTest.Test<Int64>();
+	public void Int64Test() => EqualsTest.Test<Int64>();
 #if NET7_0_OR_GREATER
 	[Fact]
 	internal void Int128Test() => EqualsTest.Test<Int128>();
 #endif
 	[Fact]
-	internal void GuidTest() => EqualsTest.Test<Guid>();
+	public void GuidTest() => EqualsTest.Test<Guid>();
 	[Fact]
-	internal void SingleTest() => EqualsTest.Test<Single>();
+	public void SingleTest() => EqualsTest.Test<Single>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => EqualsTest.Test<Half>();
 #endif
 	[Fact]
-	internal void DoubleTest() => EqualsTest.Test<Double>();
+	public void DoubleTest() => EqualsTest.Test<Double>();
 	[Fact]
-	internal void DecimalTest() => EqualsTest.Test<Decimal>();
+	public void DecimalTest() => EqualsTest.Test<Decimal>();
 	[Fact]
-	internal void DateTimeTest() => EqualsTest.Test<DateTime>();
+	public void DateTimeTest() => EqualsTest.Test<DateTime>();
 #if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => EqualsTest.Test<TimeOnly>();
 #endif
 	[Fact]
-	internal void TimeSpanTest() => EqualsTest.Test<TimeSpan>();
+	public void TimeSpanTest() => EqualsTest.Test<TimeSpan>();
 	private static void Test<T>()
 	{
 		T value = FixedMemoryTestsBase.Fixture.Create<T>();
@@ -104,7 +109,7 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 		if (binaryLength < sizeof(T2)) return;
 		ref readonly T2 transformedRef = ref Unsafe.AsRef<T2>(ptr);
 
-		Assert.Equal(binaryLength, fref.BinaryLength);
+		PInvokeAssert.Equal(binaryLength, fref.BinaryLength);
 		FixedReferenceTestsBase.WithFixed(transformedRef, fref, EqualsTest.Test);
 	}
 	private static unsafe void TransformationTest<T, T2>(ReadOnlyFixedReference<T> fref) where T2 : unmanaged
@@ -116,7 +121,7 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 		if (binaryLength < sizeof(T2)) return;
 		ref readonly T2 transformedRef = ref Unsafe.AsRef<T2>(ptr);
 
-		Assert.Equal(binaryLength, fref.BinaryLength);
+		PInvokeAssert.Equal(binaryLength, fref.BinaryLength);
 		FixedReferenceTestsBase.WithFixed(transformedRef, fref, EqualsTest.Test);
 	}
 	private static void Test<T, TInt>(FixedReference<TInt> fref2, FixedReference<T> fref)
@@ -124,23 +129,23 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 	{
 		Boolean equal = fref.IsReadOnly == fref2.IsReadOnly && typeof(TInt) == typeof(T);
 
-		Assert.Equal(equal, fref2.Equals(fref));
-		Assert.Equal(equal, fref2.Equals((Object)fref));
-		Assert.Equal(equal, fref2.Equals(fref as FixedReference<TInt>));
-		Assert.False(fref2.Equals(null));
-		Assert.False(fref2.Equals(new Object()));
-		Assert.False(fref2.IsFunction);
+		PInvokeAssert.Equal(equal, fref2.Equals(fref));
+		PInvokeAssert.Equal(equal, fref2.Equals((Object)fref));
+		PInvokeAssert.Equal(equal, fref2.Equals(fref as FixedReference<TInt>));
+		PInvokeAssert.False(fref2.Equals(null));
+		PInvokeAssert.False(fref2.Equals(new Object()));
+		PInvokeAssert.False(fref2.IsFunction);
 	}
 	private static void Test<T, TInt>(ReadOnlyFixedReference<TInt> fref2, ReadOnlyFixedReference<T> fref)
 	{
 		Boolean equal = fref.IsReadOnly == fref2.IsReadOnly && typeof(TInt) == typeof(T);
 
-		Assert.Equal(equal, fref2.Equals(fref));
-		Assert.Equal(equal, fref2.Equals((Object)fref));
-		Assert.Equal(equal, fref2.Equals(fref as ReadOnlyFixedReference<TInt>));
-		Assert.False(fref2.Equals(null));
-		Assert.False(fref2.Equals(new Object()));
-		Assert.False(fref2.IsFunction);
+		PInvokeAssert.Equal(equal, fref2.Equals(fref));
+		PInvokeAssert.Equal(equal, fref2.Equals((Object)fref));
+		PInvokeAssert.Equal(equal, fref2.Equals(fref as ReadOnlyFixedReference<TInt>));
+		PInvokeAssert.False(fref2.Equals(null));
+		PInvokeAssert.False(fref2.Equals(new Object()));
+		PInvokeAssert.False(fref2.IsFunction);
 	}
 }
 #pragma warning restore CS8500

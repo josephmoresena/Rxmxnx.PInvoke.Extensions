@@ -1,48 +1,54 @@
-﻿namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class SizeOfTest
 {
 	[Fact]
-	internal void BooleanTest() => Assert.Equal(1, NativeUtilities.SizeOf<Boolean>());
+	public void BooleanTest() => PInvokeAssert.Equal(1, NativeUtilities.SizeOf<Boolean>());
 	[Fact]
-	internal void ByteTest() => Assert.Equal(1, NativeUtilities.SizeOf<Byte>());
+	public void ByteTest() => PInvokeAssert.Equal(1, NativeUtilities.SizeOf<Byte>());
 	[Fact]
-	internal void CharTest() => Assert.Equal(2, NativeUtilities.SizeOf<Char>());
+	public void CharTest() => PInvokeAssert.Equal(2, NativeUtilities.SizeOf<Char>());
 	[Fact]
-	internal void DateTimeTest() => Assert.Equal(8, NativeUtilities.SizeOf<DateTime>());
+	public void DateTimeTest() => PInvokeAssert.Equal(8, NativeUtilities.SizeOf<DateTime>());
 	[Fact]
-	internal void DecimalTest() => Assert.Equal(16, NativeUtilities.SizeOf<Decimal>());
+	public void DecimalTest() => PInvokeAssert.Equal(16, NativeUtilities.SizeOf<Decimal>());
 	[Fact]
-	internal void DoubleTest() => Assert.Equal(8, NativeUtilities.SizeOf<Double>());
+	public void DoubleTest() => PInvokeAssert.Equal(8, NativeUtilities.SizeOf<Double>());
 	[Fact]
-	internal void GuidTest() => Assert.Equal(16, NativeUtilities.SizeOf<Guid>());
+	public void GuidTest() => PInvokeAssert.Equal(16, NativeUtilities.SizeOf<Guid>());
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => Assert.Equal(2, NativeUtilities.SizeOf<Half>());
 #endif
 	[Fact]
-	internal void Int16Test() => Assert.Equal(2, NativeUtilities.SizeOf<Int16>());
+	public void Int16Test() => PInvokeAssert.Equal(2, NativeUtilities.SizeOf<Int16>());
 	[Fact]
-	internal void Int32Test() => Assert.Equal(4, NativeUtilities.SizeOf<Int32>());
+	public void Int32Test() => PInvokeAssert.Equal(4, NativeUtilities.SizeOf<Int32>());
 	[Fact]
-	internal void Int64Test() => Assert.Equal(8, NativeUtilities.SizeOf<Int64>());
+	public void Int64Test() => PInvokeAssert.Equal(8, NativeUtilities.SizeOf<Int64>());
 	[Fact]
-	internal void IntPtrTest()
+	public void IntPtrTest()
 	{
-		Assert.Equal(Environment.Is64BitProcess ? 8 : 4, NativeUtilities.SizeOf<IntPtr>());
-		Assert.Equal(NativeUtilities.SizeOf<IntPtr>(), NativeUtilities.PointerSize);
+		PInvokeAssert.Equal(Environment.Is64BitProcess ? 8 : 4, NativeUtilities.SizeOf<IntPtr>());
+		PInvokeAssert.Equal(NativeUtilities.SizeOf<IntPtr>(), NativeUtilities.PointerSize);
 	}
 	[Fact]
-	internal void SByteTest() => Assert.Equal(1, NativeUtilities.SizeOf<SByte>());
+	public void SByteTest() => PInvokeAssert.Equal(1, NativeUtilities.SizeOf<SByte>());
 	[Fact]
-	internal void SingleTest() => Assert.Equal(4, NativeUtilities.SizeOf<Single>());
+	public void SingleTest() => PInvokeAssert.Equal(4, NativeUtilities.SizeOf<Single>());
 	[Fact]
-	internal void UInt16Test() => Assert.Equal(2, NativeUtilities.SizeOf<UInt16>());
+	public void UInt16Test() => PInvokeAssert.Equal(2, NativeUtilities.SizeOf<UInt16>());
 	[Fact]
-	internal void UInt32Test() => Assert.Equal(4, NativeUtilities.SizeOf<UInt32>());
+	public void UInt32Test() => PInvokeAssert.Equal(4, NativeUtilities.SizeOf<UInt32>());
 	[Fact]
-	internal void UInt64Test() => Assert.Equal(8, NativeUtilities.SizeOf<UInt64>());
+	public void UInt64Test() => PInvokeAssert.Equal(8, NativeUtilities.SizeOf<UInt64>());
 	[Fact]
-	internal void UIntPtrTest() => Assert.Equal(Environment.Is64BitProcess ? 8 : 4, NativeUtilities.SizeOf<UIntPtr>());
+	public void UIntPtrTest()
+		=> PInvokeAssert.Equal(Environment.Is64BitProcess ? 8 : 4, NativeUtilities.SizeOf<UIntPtr>());
 }
