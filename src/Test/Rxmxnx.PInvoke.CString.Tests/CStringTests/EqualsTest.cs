@@ -54,12 +54,7 @@ public sealed class EqualsTest
 	private static void CompleteCulturalTest(Int32 indexA, Int32 indexB)
 	{
 		String strA = TestSet.Utf16Text[indexA];
-		String strLowerA = TestSet.Utf16TextLower[indexA];
-		String strUpperA = TestSet.Utf16TextUpper[indexA];
-
 		CString cstrA = new(TestSet.Utf8Text[indexA]);
-		CString cstrLowerA = new(TestSet.Utf8TextLower[indexA]);
-		CString cstrUpperA = new(TestSet.Utf8TextUpper[indexA]);
 
 		String strB = TestSet.Utf16Text[indexB];
 		String strLowerB = TestSet.Utf16TextLower[indexB];
@@ -86,7 +81,7 @@ public sealed class EqualsTest
 	private static void StringTest(ComparisonTestResult results, CString cstrA, String strB)
 	{
 		PInvokeAssert.False(cstrA.Equals(default(String)));
-		PInvokeAssert.False(cstrA.Equals(default(String), StringComparison.OrdinalIgnoreCase));
+		PInvokeAssert.False(cstrA!.Equals(default(String), StringComparison.OrdinalIgnoreCase));
 
 		PInvokeAssert.Equal(results.Normal == 0, cstrA.Equals(strB));
 		PInvokeAssert.Equal(results.Comparisons[StringComparison.Ordinal] == 0,
@@ -112,7 +107,7 @@ public sealed class EqualsTest
 	private static void CStringTest(ComparisonTestResult results, CString cstrA, CString cstrB)
 	{
 		PInvokeAssert.False(cstrA.Equals(default(CString)));
-		PInvokeAssert.False(cstrA.Equals(default(CString), StringComparison.OrdinalIgnoreCase));
+		PInvokeAssert.False(cstrA!.Equals(default(CString), StringComparison.OrdinalIgnoreCase));
 
 		PInvokeAssert.Equal(results.Normal == 0, cstrA.Equals(cstrB));
 		PInvokeAssert.Equal(results.Comparisons[StringComparison.Ordinal] == 0,
