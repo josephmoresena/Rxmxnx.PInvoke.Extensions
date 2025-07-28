@@ -76,22 +76,22 @@ jobs:
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
       - name: Run Rxmxnx.PInvoke.Common.Tests (Mono Framework)
         shell: pwsh
-        working-directory: ./src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release
+        working-directory: ./src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1
         run: |
           mono nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All 
       - name: Run Rxmxnx.PInvoke.CString.Tests (Mono Framework)
         shell: pwsh
-        working-directory: ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release
+        working-directory: ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1
         run: |
           mono nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All 
       - name: Run Rxmxnx.PInvoke.Extensions.Tests (Mono Framework)
         shell: pwsh
-        working-directory: ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release
+        working-directory: ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1
         run: |
           mono nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All 
       - name: Run Rxmxnx.PInvoke.Buffers.Tests (Mono Framework)
         shell: pwsh
-        working-directory: ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release
+        working-directory: ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1
         run: |
           mono nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All 
       - name: Pack assembly
