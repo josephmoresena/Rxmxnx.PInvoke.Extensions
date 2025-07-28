@@ -74,6 +74,26 @@ jobs:
           dotnet build src /p:MultipleFrameworkTest=true --configuration Release 
           dotnet test src /p:MultipleFrameworkTest=true --verbosity normal --collect:"XPlat Code Coverage" --results-directory TestResults/  --logger "trx;verbosity=detailed" --no-build --no-restore --configuration Release -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover 
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+      - name: Run Rxmxnx.PInvoke.Common.Tests (Mono Framework)
+        shell: pwsh
+        working-directory: ./src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release
+        run: |
+          mono nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All 
+      - name: Run Rxmxnx.PInvoke.CString.Tests (Mono Framework)
+        shell: pwsh
+        working-directory: ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release
+        run: |
+          mono nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All 
+      - name: Run Rxmxnx.PInvoke.Extensions.Tests (Mono Framework)
+        shell: pwsh
+        working-directory: ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release
+        run: |
+          mono nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All 
+      - name: Run Rxmxnx.PInvoke.Buffers.Tests (Mono Framework)
+        shell: pwsh
+        working-directory: ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release
+        run: |
+          mono nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All 
       - name: Pack assembly
         working-directory: ./package/Rxmxnx.PInvoke.Extensions
         run: |
@@ -977,7 +997,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
-        if: runner.os != 'Windows'
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: |
@@ -988,6 +1007,9 @@ jobs:
       - name: Install WinGet
         if: runner.os == 'Windows'
         uses: Cyberboss/install-winget@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          wget_release_id: latest
       - name: Setup .NET x86
         if: runner.os == 'Windows'
         run: |
