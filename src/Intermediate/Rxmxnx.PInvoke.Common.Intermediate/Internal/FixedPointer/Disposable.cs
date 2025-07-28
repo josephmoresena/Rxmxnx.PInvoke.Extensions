@@ -46,6 +46,12 @@ internal partial class FixedPointer
 		~Disposable() { this.Dispose(false); }
 
 		/// <summary>
+		/// Retrieves the current value as a <typeparamref name="TValue"/> instance.
+		/// </summary>
+		/// <typeparam name="TValue">A <see cref="IFixedPointer"/> type.</typeparam>
+		/// <returns>A <typeparamref name="TValue"/> instance.</returns>
+		protected TValue? GetValue<TValue>() where TValue : class, IFixedPointer => this.Value as TValue;
+		/// <summary>
 		/// Retrieves the <see cref="IDisposable"/> parent object.
 		/// </summary>
 		/// <returns>A <see cref="IDisposable"/> instance.</returns>
