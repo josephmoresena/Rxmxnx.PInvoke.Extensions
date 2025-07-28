@@ -44,7 +44,8 @@ internal sealed class StringConcatenator : BinaryConcatenator<String>
 #if NETCOREAPP
 		this._writer = new(this.Stream, Encoding.UTF8, leaveOpen: true) { AutoFlush = true, };
 #else
-		this._writer = new(this.Stream, Encoding.UTF8, -1, true) { AutoFlush = true, };
+		// Mono Framework requires positive buffer size.
+		this._writer = new(this.Stream, Encoding.UTF8, 1024, true) { AutoFlush = true, };
 #endif
 	}
 
