@@ -31,10 +31,13 @@ public sealed class OverrideTest
 	{
 		if (!value.HasValue)
 			return default;
-
+#if NETCOREAPP
 		Span<Rune> result = stackalloc Rune[1];
 		Span<Int32> values = MemoryMarshal.Cast<Rune, Int32>(result);
 		values[0] = value.Value;
 		return result[0].ToString();
+#else
+		return Char.ConvertFromUtf32(value.Value);
+#endif
 	}
 }

@@ -195,16 +195,18 @@ public sealed class BasicTests
 		}
 	}
 
+#if NETCOREAPP
 	[Fact]
 	public void LiteralTest()
 	{
 		CString[] literalArray = TestSet.Utf8TextUpper.Select(f => new CString(f)).ToArray();
 		CString[] nonLiteralArray = TestSet.Utf8NullTerminatedBytes.Select(b => (CString)b).ToArray();
 
-		PInvokeAssert.All(literalArray, c => PInvokeAssert.True(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
-		PInvokeAssert.All(nonLiteralArray, c => PInvokeAssert.False(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
-		PInvokeAssert.All(nonLiteralArray, c => PInvokeAssert.False(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
+		Assert.All(literalArray, c => PInvokeAssert.True(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
+		Assert.All(nonLiteralArray, c => PInvokeAssert.False(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
+		Assert.All(nonLiteralArray, c => PInvokeAssert.False(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
 	}
+#endif
 
 	[Fact]
 	public unsafe void TryPinTest()

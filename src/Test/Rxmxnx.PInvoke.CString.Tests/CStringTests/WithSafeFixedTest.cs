@@ -6,7 +6,7 @@ namespace Rxmxnx.PInvoke.Tests.CStringTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
-public sealed class WithSafeFixedTest
+public sealed unsafe class WithSafeFixedTest
 {
 	[Fact]
 	public void Test()
@@ -25,26 +25,26 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(value, value.WithSafeFixed(value, WithSafeFixedTest.FunctionMethod));
 	}
 
-	private static unsafe void ActionMethod(in IReadOnlyFixedMemory fmem)
+	private static void ActionMethod(in IReadOnlyFixedMemory fmem)
 	{
 		ReadOnlySpan<Byte> span = fmem.Bytes;
 		if (fmem.Pointer == IntPtr.Zero)
 		{
 			PInvokeAssert.True(span.IsEmpty);
+			return;
 		}
-		else
+		fixed (void* ptr = span)
 		{
-			GCHandle handle = GCHandle.FromIntPtr(fmem.Pointer);
-			fixed (void* ptr = span)
-			{
-				if (span.Length != 0)
-					PInvokeAssert.Equal(fmem.Pointer, new(ptr));
-				else if (fmem.Pointer != IntPtr.Zero)
-					fixed (void* ptrEmpty = CString.Empty)
-						PInvokeAssert.Equal(fmem.Pointer, new(ptrEmpty));
-			}
-			PInvokeAssert.True(handle.IsAllocated);
+			if (span.Length != 0)
+				PInvokeAssert.Equal(fmem.Pointer, new(ptr));
+			else if (fmem.Pointer != IntPtr.Zero)
+				fixed (void* ptrEmpty = CString.Empty)
+					PInvokeAssert.Equal(fmem.Pointer, new(ptrEmpty));
 		}
+#if NETCOREAPP
+		GCHandle handle = GCHandle.FromIntPtr(fmem.Pointer);
+		Assert.True(handle.IsAllocated);
+#endif
 	}
 	private static void ActionMethod(in IReadOnlyFixedMemory fmem, CString cstr)
 	{
@@ -72,7 +72,7 @@ public sealed class WithSafeFixedTest
 		if (ptr.HasValue)
 			PInvokeAssert.Equal(fmem.Pointer, ptr);
 	}
-	private static unsafe IntPtr? GetPointerFromBytes(CString cstr)
+	private static IntPtr? GetPointerFromBytes(CString cstr)
 	{
 		if (Object.ReferenceEquals(CString.Empty, cstr)) return default;
 		try
