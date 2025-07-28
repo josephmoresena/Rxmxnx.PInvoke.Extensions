@@ -59,14 +59,16 @@ internal partial class ReadOnlyFixedContext<T> : IConvertibleDisposable<IReadOnl
 			ReadOnlyFixedOffset offset;
 			if (this.GetValue<ReadOnlyFixedContext<T>>() is not { } ctx)
 			{
-				offset = new(ReadOnlyFixedContext<Byte>.Empty, 0);
+				ReadOnlyFixedMemory emptyMem = !RuntimeHelpers.IsReferenceOrContainsReferences<T>() ?
+					ReadOnlyFixedContext<Byte>.Empty :
+					ReadOnlyFixedContext<Object>.Empty;
+				offset = new(emptyMem, 0);
 				residual = offset.ToDisposable(this.GetDisposableParent());
 				return ReadOnlyFixedContext<TDestination>.EmptyDisposable;
 			}
-			IReadOnlyFixedContext<TDestination> result = ctx.GetTransformation<TDestination>(out offset)
-			                                                .CreateDisposable(this.GetDisposableParent());
+			ReadOnlyFixedContext<TDestination> result = ctx.GetTransformation<TDestination>(out offset);
 			residual = offset.ToDisposable(this.GetDisposableParent());
-			return result;
+			return result.CreateDisposable(this.GetDisposableParent());
 		}
 	}
 }

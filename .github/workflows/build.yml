@@ -73,10 +73,10 @@ jobs:
           dotnet restore src 
           dotnet build src /p:MultipleFrameworkTest=true --configuration Release 
           dotnet test src /p:MultipleFrameworkTest=true --verbosity normal --collect:"XPlat Code Coverage" --results-directory TestResults/  --logger "trx;verbosity=detailed" --no-build --no-restore --configuration Release -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover 
-          mono src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.Common.Mono.TestResult..xml;format=nunit3
-          mono src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.CString.Mono.TestResult.xml;format=nunit3
-          mono src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.Extensions.Mono.TestResult.xml;format=nunit3
-          mono src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.Buffers.Mono.TestResult.xml;format=nunit3
+          mono src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.Common.Mono.TestResult..xml
+          mono src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.CString.Mono.TestResult.xml
+          mono src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.Extensions.Mono.TestResult.xml
+          mono src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.Buffers.Mono.TestResult.xml
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
       - name: Pack assembly
         working-directory: ./package/Rxmxnx.PInvoke.Extensions

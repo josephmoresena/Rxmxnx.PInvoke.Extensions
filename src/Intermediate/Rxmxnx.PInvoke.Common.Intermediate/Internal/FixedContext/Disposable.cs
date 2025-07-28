@@ -77,7 +77,7 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 		public IFixedContext<Object> AsObjectContext()
 		{
 			FixedContext<T>? ctx = this.GetValue<FixedContext<T>>();
-			return ctx?.AsBinaryContext() is not IConvertibleDisposable<IFixedContext<Object>.IDisposable> convertible ?
+			return ctx?.AsObjectContext() is not IConvertibleDisposable<IFixedContext<Object>.IDisposable> convertible ?
 				FixedContext<Object>.EmptyDisposable :
 				convertible.ToDisposable(this.GetDisposableParent());
 		}
@@ -88,7 +88,10 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 			FixedOffset offset;
 			if (this.GetValue<FixedContext<T>>() is not { } ctx)
 			{
-				offset = new(FixedContext<Byte>.Empty, 0);
+				FixedMemory emptyMem = !RuntimeHelpers.IsReferenceOrContainsReferences<T>() ?
+					FixedContext<Byte>.Empty :
+					FixedContext<Object>.Empty;
+				offset = new(emptyMem, 0);
 				residual = offset.ToDisposable(this.GetDisposableParent());
 				return FixedContext<TDestination>.EmptyDisposable;
 			}
