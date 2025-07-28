@@ -202,7 +202,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	public Span<Byte> CreateBinarySpan()
 	{
 		this.ValidateOperation();
-		if (!this.IsUnmanaged || this.IsNullOrEmpty) return default;
+		if (!this.IsUnmanaged) return default;
 		void* ptr = this.GetMemoryOffset();
 		return new(ptr, this.BinaryLength);
 	}
@@ -214,7 +214,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	public Span<Object> CreateObjectSpan()
 	{
 		this.ValidateOperation();
-		if (this.Type is null || this.Type.IsValueType || this.IsNullOrEmpty) return default;
+		if (this.Type is null || this.Type.IsValueType) return default;
 		void* ptr = this.GetMemoryOffset();
 		ref Object refObject = ref Unsafe.AsRef<Object>(ptr);
 		return MemoryMarshal.CreateSpan(ref refObject, this.BinaryLength / sizeof(IntPtr));
@@ -227,7 +227,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	public ReadOnlySpan<Byte> CreateReadOnlyBinarySpan()
 	{
 		this.ValidateOperation(true);
-		if (!this.IsUnmanaged || this.IsNullOrEmpty) return default;
+		if (!this.IsUnmanaged) return default;
 		void* ptr = this.GetMemoryOffset();
 		return new(ptr, this.BinaryLength);
 	}
@@ -239,7 +239,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	public ReadOnlySpan<Object> CreateReadOnlyObjectSpan()
 	{
 		this.ValidateOperation(true);
-		if (this.Type is null || this.Type.IsValueType || this.IsNullOrEmpty) return default;
+		if (this.Type is null || this.Type.IsValueType) return default;
 		void* ptr = this.GetMemoryOffset();
 		ref Object refObject = ref Unsafe.AsRef<Object>(ptr);
 		return MemoryMarshal.CreateReadOnlySpan(ref refObject, this.BinaryLength / sizeof(IntPtr));

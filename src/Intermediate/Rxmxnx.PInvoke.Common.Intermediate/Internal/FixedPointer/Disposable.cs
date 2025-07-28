@@ -10,7 +10,7 @@ internal partial class FixedPointer
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3881)]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-	protected abstract unsafe class Disposable<TFixed> : IFixedPointer, IWrapper<TFixed>, IDisposable
+	protected abstract class Disposable<TFixed> : IFixedPointer, IWrapper<TFixed>, IDisposable
 		where TFixed : FixedPointer
 	{
 		/// <summary>
@@ -38,7 +38,7 @@ internal partial class FixedPointer
 			GC.SuppressFinalize(this);
 		}
 
-		IntPtr IFixedPointer.Pointer => (IntPtr)this.Value._ptr;
+		IntPtr IFixedPointer.Pointer => this.Value is IFixedPointer ptr ? ptr.Pointer : default;
 
 		/// <inheritdoc cref="IWrapper{T}.Value"/>
 		public TFixed Value { get; }
