@@ -1,15 +1,11 @@
 ﻿#if NET5_0_OR_GREATER
 using Skip = Xunit.Skip;
-
 #elif NETCOREAPP
 using SkippableTheoryAttribute = Xunit.TheoryAttribute;
-#else
-using Fact = NUnit.Framework.TestAttribute;
 #endif
 
 namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
 
-[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class GetNativeMethodTest
 {

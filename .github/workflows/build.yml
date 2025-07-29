@@ -977,7 +977,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ windows-latest, ubuntu-latest, macos-latest, macos-13 ]
+        os: [ windows-2025, ubuntu-latest, macos-latest, macos-13 ]
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
@@ -988,12 +988,6 @@ jobs:
             7.0.x
             8.0.x
             9.0.x
-      - name: Install WinGet
-        if: runner.os == 'Windows'
-        uses: Cyberboss/install-winget@v1
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          wget_release_id: latest
       - name: Setup .NET x86
         if: runner.os == 'Windows'
         run: |
