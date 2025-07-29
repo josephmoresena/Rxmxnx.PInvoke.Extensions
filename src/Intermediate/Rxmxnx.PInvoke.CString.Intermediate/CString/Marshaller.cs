@@ -78,16 +78,8 @@ public unsafe partial class CString
 			if (this._managed is null || this._managed.IsZero) return IntPtr.Zero;
 			if (this._pointer != IntPtr.Zero) return this._pointer;
 
-			ReadOnlySpan<Byte> utf8Span = this._managed.AsSpan();
 			if (this._managed.IsNullTerminated)
 			{
-				if (this._managed.IsReference)
-				{
-					// If the CString is a reference type, we can use the pointer directly.
-					this._pointer = (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Span));
-					return this._pointer;
-				}
-
 				this._pinnable = this._managed.TryPin(out Boolean pinned);
 				if (pinned)
 				{
@@ -96,10 +88,12 @@ public unsafe partial class CString
 					return this._pointer;
 				}
 
-				if (this._managed.IsFunction && !MemoryInspector.MayBeNonLiteral(utf8Span))
+				if (this._managed.IsReference || Object.ReferenceEquals(this._managed, CString.Empty) ||
+				    this._managed.IsFunction && !MemoryInspector.MayBeNonLiteral(this._managed.AsSpan()))
 				{
-					// If the CString is a literal, we can use the pointer directly.
-					this._pointer = (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Span));
+					// If the CString is a reference type, we can use the pointer directly.
+					ref Byte refUtf8 = ref Unsafe.AsRef(in this._managed.GetPinnableReference());
+					this._pointer = (IntPtr)Unsafe.AsPointer(ref refUtf8);
 					return this._pointer;
 				}
 			}
@@ -109,7 +103,7 @@ public unsafe partial class CString
 			this._allocated = true;
 
 			Span<Byte> output = new(this._pointer.ToPointer(), this._managed.Length + 1);
-			utf8Span.CopyTo(output);
+			this._managed.AsSpan().CopyTo(output);
 			output[^1] = default; // Ensure null-termination.
 
 			return this._pointer;
