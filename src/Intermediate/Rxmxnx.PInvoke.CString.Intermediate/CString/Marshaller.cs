@@ -74,7 +74,8 @@ public unsafe partial class CString
 		/// <returns>A pointer to unmanaged memory containing UTF-8 text.</returns>
 		public IntPtr ToUnmanaged()
 		{
-			if (this._managed is null) return IntPtr.Zero;
+			// Null and Zero -> IntPtr.Zero
+			if (this._managed is null || this._managed.IsZero) return IntPtr.Zero;
 			if (this._pointer != IntPtr.Zero) return this._pointer;
 
 			ReadOnlySpan<Byte> utf8Span = this._managed.AsSpan();

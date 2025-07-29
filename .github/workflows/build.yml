@@ -977,7 +977,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ windows-2025, ubuntu-latest, macos-latest, macos-13 ]
+        os: [ windows-2025, ubuntu-latest, macos-latest ]
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
@@ -991,11 +991,17 @@ jobs:
       - name: Setup .NET x86
         if: runner.os == 'Windows'
         run: |
-          winget install Microsoft.DotNet.SDK.6 Microsoft.DotNet.SDK.7 Microsoft.DotNet.SDK.8 Microsoft.DotNet.SDK.9 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements
+          winget install Microsoft.DotNet.SDK.6  --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
+          winget install Microsoft.DotNet.SDK.7 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
+          winget install Microsoft.DotNet.SDK.8 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements  
+          winget install Microsoft.DotNet.SDK.9 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
       - name: Setup .NET x64
         if: runner.os == 'Windows'
         run: |
-          winget install Microsoft.DotNet.SDK.6 Microsoft.DotNet.SDK.7 Microsoft.DotNet.SDK.8 Microsoft.DotNet.SDK.9 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
+          winget install Microsoft.DotNet.SDK.6 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
+          winget install Microsoft.DotNet.SDK.7 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
+          winget install Microsoft.DotNet.SDK.8 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
+          winget install Microsoft.DotNet.SDK.9 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
       - name: Build tests
         run: |
           dotnet restore src 
