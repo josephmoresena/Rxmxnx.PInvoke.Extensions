@@ -94,9 +94,11 @@ public sealed unsafe class MarshallerTests
 	{
 		if (value is null || value.IsZero) return true;
 		if (!value.IsNullTerminated) return false;
+		if (value.IsReference) return true;
 
 		using MemoryHandle handle = value.TryPin(out Boolean pinned);
 		if (pinned) return true;
+		if (!value.IsFunction) return false;
 		ref Byte refB = ref Unsafe.AsRef(in value.GetPinnableReference());
 		return !MemoryInspector.MayBeNonLiteral(MemoryMarshal.CreateReadOnlySpan(ref refB, 1));
 	}
