@@ -80,20 +80,21 @@ public unsafe partial class CString
 
 			if (this._managed.IsNullTerminated)
 			{
+				if (this._managed.IsReference || this._managed.Length == 0 || (this._managed.IsFunction &&
+					    !MemoryInspector.MayBeNonLiteral(this._managed.AsSpan())))
+				{
+					// If the CString is a reference type, we can use the pointer directly.
+					CString source = this._managed.Length > 0 ? this._managed : CString.Empty;
+					ref Byte refUtf8 = ref Unsafe.AsRef(in source.GetPinnableReference());
+					this._pointer = (IntPtr)Unsafe.AsPointer(ref refUtf8);
+					return this._pointer;
+				}
+
 				this._pinnable = this._managed.TryPin(out Boolean pinned);
 				if (pinned)
 				{
 					// If the CString is a value type and pinned, we can use the pointer from the pinning handle.
 					this._pointer = (IntPtr)this._pinnable.Pointer;
-					return this._pointer;
-				}
-
-				if (this._managed.IsReference || Object.ReferenceEquals(this._managed, CString.Empty) ||
-				    this._managed.IsFunction && !MemoryInspector.MayBeNonLiteral(this._managed.AsSpan()))
-				{
-					// If the CString is a reference type, we can use the pointer directly.
-					ref Byte refUtf8 = ref Unsafe.AsRef(in this._managed.GetPinnableReference());
-					this._pointer = (IntPtr)Unsafe.AsPointer(ref refUtf8);
 					return this._pointer;
 				}
 			}

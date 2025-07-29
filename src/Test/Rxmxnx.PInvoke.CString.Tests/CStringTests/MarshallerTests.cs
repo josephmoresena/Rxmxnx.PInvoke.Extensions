@@ -69,13 +69,21 @@ public sealed unsafe class MarshallerTests
 			IntPtr ptr = marshal.ToUnmanaged();
 			try
 			{
-#if NETCOREAPP
-				Boolean isLiteralOrPinnable = MarshallerTests.IsLiteralOrPinnable(value);
-				ReadOnlySpan<Byte> unmanagedSpan = new(ptr.ToPointer(), value?.Length ?? 0);
-				Assert.Equal(isLiteralOrPinnable,
-				             Unsafe.AreSame(ref MemoryMarshal.GetReference<Byte>(value),
-				                            ref MemoryMarshal.GetReference(unmanagedSpan)));
-#endif
+//#if NETCOREAPP
+				if (value is null || value.IsZero || value.Length > 0)
+				{
+					Boolean isLiteralOrPinnable = MarshallerTests.IsLiteralOrPinnable(value);
+					ReadOnlySpan<Byte> unmanagedSpan = new(ptr.ToPointer(), value?.Length ?? 0);
+					PInvokeAssert.Equal(isLiteralOrPinnable,
+					                    Unsafe.AreSame(ref MemoryMarshal.GetReference<Byte>(value),
+					                                   ref MemoryMarshal.GetReference(unmanagedSpan)));
+				}
+				else
+				{
+					ref Byte refUtf8 = ref Unsafe.AsRef(in CString.Empty.GetPinnableReference());
+					PInvokeAssert.True(Unsafe.AreSame(ref refUtf8, ref ((ValPtr<Byte>)ptr).Reference));
+				}
+//#endif
 #if NET6_0_OR_GREATER
 				Assert.True(utfSpan.SequenceEqual(MemoryMarshal.CreateReadOnlySpanFromNullTerminated((Byte*)ptr)));
 #endif
@@ -89,7 +97,6 @@ public sealed unsafe class MarshallerTests
 			}
 		}
 	}
-#if NETCOREAPP
 	private static Boolean IsLiteralOrPinnable(CString? value)
 	{
 		if (value is null || value.IsZero) return true;
@@ -102,7 +109,6 @@ public sealed unsafe class MarshallerTests
 		ref Byte refB = ref Unsafe.AsRef(in value.GetPinnableReference());
 		return !MemoryInspector.MayBeNonLiteral(MemoryMarshal.CreateReadOnlySpan(ref refB, 1));
 	}
-#endif
 	private static CString.Marshaller Marshal(CString? value)
 	{
 		CString.Marshaller marshal = new();
