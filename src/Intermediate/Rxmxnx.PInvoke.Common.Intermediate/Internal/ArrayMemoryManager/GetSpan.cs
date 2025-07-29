@@ -4,6 +4,9 @@ internal partial class ArrayMemoryManager<T>
 {
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -19,6 +22,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -34,6 +40,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -49,6 +58,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -64,6 +76,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -79,6 +94,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -94,6 +112,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -109,6 +130,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -124,6 +148,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -139,6 +166,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -154,6 +184,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -169,6 +202,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -184,6 +220,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -199,6 +238,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -214,6 +256,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -229,6 +274,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -244,6 +292,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -259,6 +310,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -274,6 +328,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -289,6 +346,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -304,6 +364,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -319,6 +382,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -334,6 +400,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -349,6 +418,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -364,6 +436,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -379,6 +454,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -394,6 +472,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -409,6 +490,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -424,6 +508,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -439,6 +526,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER
@@ -454,6 +544,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if !PACKAGE && NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Span<T> GetSpan(T[,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
 #if !NET6_0_OR_GREATER

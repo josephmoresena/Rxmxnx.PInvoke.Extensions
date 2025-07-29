@@ -69,7 +69,6 @@ public sealed unsafe class MarshallerTests
 			IntPtr ptr = marshal.ToUnmanaged();
 			try
 			{
-//#if NETCOREAPP
 				if (value is null || value.IsZero || value.Length > 0)
 				{
 					Boolean isLiteralOrPinnable = MarshallerTests.IsLiteralOrPinnable(value);
@@ -83,7 +82,6 @@ public sealed unsafe class MarshallerTests
 					ref Byte refUtf8 = ref Unsafe.AsRef(in CString.Empty.GetPinnableReference());
 					PInvokeAssert.True(Unsafe.AreSame(ref refUtf8, ref ((ValPtr<Byte>)ptr).Reference));
 				}
-//#endif
 #if NET6_0_OR_GREATER
 				Assert.True(utfSpan.SequenceEqual(MemoryMarshal.CreateReadOnlySpanFromNullTerminated((Byte*)ptr)));
 #endif
