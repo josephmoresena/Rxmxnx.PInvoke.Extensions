@@ -979,7 +979,7 @@ jobs:
           name: Package-Trimmed-Executables-Logs
           path: ./tmpProject/Executable/ilcLogs
       - name: Test in FreeBSD
-        uses: vmactions/freebsd-vm@
+        uses: vmactions/freebsd-vm@v1
         with:
           release: "13.5"
           usesh: true
