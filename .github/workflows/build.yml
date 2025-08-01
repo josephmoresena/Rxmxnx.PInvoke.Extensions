@@ -97,6 +97,13 @@ jobs:
             rm -rf "$TEMP_DIR"
           done
           echo "-----------------------------------"
+      - name: Clean workspace
+        id: clean-workspace
+        run: |
+          rm -rf .git
+          rm -rf .sonarqube
+          rm -rf TestResults
+          dotnet clean src 
       - name: Create tmpProject
         run: mkdir tmpProject
       - name: Create PackageTrimmedAssembly.csproj
@@ -984,7 +991,7 @@ jobs:
           release: "13.5"
           usesh: true
           prepare: |
-            pkg install - y python39 sqlite3 unixODBC libgiplus zip ca_root_nss dotnet
+            pkg install -y python39 sqlite3 unixODBC libgiplus zip ca_root_nss dotnet
             /usr/local/bin/python3.9 -m ensurepip
             /usr/local/bin/python3.9 -m pip install pillow
             
