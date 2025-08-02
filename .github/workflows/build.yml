@@ -1025,6 +1025,7 @@ jobs:
       - name: Run Tests (FreeBSD 13.5)
         shell: freebsd {0}
         run: |
+          cd $GITHUB_WORKSPACE
           dotnet restore src 
           dotnet build src /p:MultipleFrameworkTest=false --configuration Release
           dotnet test src /p:MultipleFrameworkTest=false --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"
