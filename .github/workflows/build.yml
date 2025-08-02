@@ -998,7 +998,7 @@ jobs:
           release: "13.5"
           usesh: true
           copyback: false
-          run: |
+          prepare: |
             pkg install -y python39 sqlite3 unixODBC libgdiplus zip ca_root_nss dotnet
             /usr/local/bin/python3.9 -m ensurepip
             /usr/local/bin/python3.9 -m pip install pillow
@@ -1022,6 +1022,7 @@ jobs:
             
             fetch https://github.com/Thefrank/freebsd-port-sooners/releases/download/20230712/mono6.12-6.12.0.199_1.pkg
             pkg add mono6.12-6.12.0.199_1.pkg
+          run: |
             echo '.NET Tests'
             dotnet restore src 
             dotnet build src /p:MultipleFrameworkTest=false --configuration Release
