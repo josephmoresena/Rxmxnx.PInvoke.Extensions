@@ -1022,10 +1022,12 @@ jobs:
             
             fetch https://github.com/Thefrank/freebsd-port-sooners/releases/download/20230712/mono6.12-6.12.0.199_1.pkg
             pkg add mono6.12-6.12.0.199_1.pkg
+            pwd
       - name: Run Tests (FreeBSD 13.5)
         shell: freebsd {0}
         run: |
-          cd $GITHUB_WORKSPACE
+          cd $GITHUB_WORKSPACE;
+          pwd
           dotnet restore src 
           dotnet build src /p:MultipleFrameworkTest=false --configuration Release
           dotnet test src /p:MultipleFrameworkTest=false --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"
