@@ -1022,11 +1022,15 @@ jobs:
           run:
             pwd
             ls -R
-            echo $GITHUB_WORKSPACE
+            echo $GITHUB_WORKSPACE;
+            pwd
             ls -R
       - name: Mono-Run (FreeBSD) Run Package-Trimmed-Executables
         shell: freebsd {0}
         run: |
+          pwd
+          cd $GITHUB_WORKSPACE;
+          pwd
           cd ./tmpProject/PackageTrimmedAssembly
           mono ./bin/Release/net45/PackageTrimmedAssembly.exe 
   run-tests:
