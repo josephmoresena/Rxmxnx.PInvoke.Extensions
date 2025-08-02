@@ -250,7 +250,7 @@ public partial class NativeUtilities
 	/// <summary>
 	/// Retrieves the Iso639-1 language code enum value corresponding to the current user interface culture.
 	/// </summary>
-	/// <param name="result">Destination <see cref="Iso639P1"/> reference.</param>
+	/// <returns><see cref="Iso639P1"/> code integer value.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Int32 GetUserInterfaceTwoLetterLangCode()
 		=> (Int32)NativeUtilities.GetIso639P1(CultureInfo.CurrentUICulture);
