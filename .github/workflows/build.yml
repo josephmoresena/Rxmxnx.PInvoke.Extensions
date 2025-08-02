@@ -991,13 +991,14 @@ jobs:
           rm -rf ./../_temp
           rm -rf ./tmpProject/Executable
           dotnet clean src 
-      - name: Test in FreeBSD
-        uses: vmactions/freebsd-vm@v1
+      - name: Init FreeBSD 13.5 VM
+        id: vm
+        uses: vmactions/freebsd-vm@v1.2.1
         with:
           release: "13.5"
           usesh: true
           copyback: false
-          prepare: |
+          run: |
             pkg install -y python39 sqlite3 unixODBC libgdiplus zip ca_root_nss dotnet
             /usr/local/bin/python3.9 -m ensurepip
             /usr/local/bin/python3.9 -m pip install pillow
@@ -1021,10 +1022,32 @@ jobs:
             
             fetch https://github.com/Thefrank/freebsd-port-sooners/releases/download/20230712/mono6.12-6.12.0.199_1.pkg
             pkg add mono6.12-6.12.0.199_1.pkg
-          run: |
-            cd ./tmpProject/PackageTrimmedAssembly
-            mono ./bin/Release/net45/PackageTrimmedAssembly.exe 
-            dotnet run
+      - name: Run Tests (FreeBSD 13.5)
+        shell: freebsd {0}
+        run: |
+          dotnet restore src 
+          dotnet build src /p:MultipleFrameworkTest=false --configuration Release
+          dotnet test src /p:MultipleFrameworkTest=false --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"
+      - name: Mono framework tests (FreeBSD 13.5)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: pwsh
+        run: |
+          mono src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.Common.Mono.TestResult..xml
+          mono src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.CString.Mono.TestResult.xml
+          mono src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.Extensions.Mono.TestResult.xml
+          mono src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.Buffers.Mono.TestResult.xml
+      - name: Run Package-Trimmed-Executables (FreeBSD 13.5)
+        shell: freebsd {0}
+        run: |
+          cd $GITHUB_WORKSPACE/tmpProject/PackageTrimmedAssembly
+          dotnet run
+      - name: Mono-Run (FreeBSD 13.5)
+        shell: freebsd {0}
+        run: |
+          cd $GITHUB_WORKSPACE
+          mono ./bin/Release/net45/PackageTrimmedAssembly.exe 
   run-tests:
     needs: [ build ]
     runs-on: ${{ matrix.os }}

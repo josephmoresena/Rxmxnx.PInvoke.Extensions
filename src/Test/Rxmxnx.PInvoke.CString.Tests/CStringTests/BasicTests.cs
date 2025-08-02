@@ -1,5 +1,8 @@
 ﻿#if !NETCOREAPP
 using Fact = NUnit.Framework.TestAttribute;
+#elif NET5_0_OR_GREATER
+using Skip = Xunit.Skip;
+using FactAttribute = Xunit.SkippableFactAttribute;
 #endif
 
 namespace Rxmxnx.PInvoke.Tests.CStringTests;
@@ -199,6 +202,14 @@ public sealed class BasicTests
 	[Fact]
 	public void LiteralTest()
 	{
+		// Skip FreeBSD
+#if NET5_0_OR_GREATER
+		Skip.If(RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD), "FreeBSD memory inspection unsupported.");
+#else
+		if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
+			return;
+#endif
+
 		CString[] literalArray = TestSet.Utf8TextUpper.Select(f => new CString(f)).ToArray();
 		CString[] nonLiteralArray = TestSet.Utf8NullTerminatedBytes.Select(b => (CString)b).ToArray();
 

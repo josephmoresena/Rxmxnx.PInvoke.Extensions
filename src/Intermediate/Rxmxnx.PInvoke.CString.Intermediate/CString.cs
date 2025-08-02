@@ -25,7 +25,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// Represents an empty UTF-8 string. This field is read-only.
 	/// </summary>
 	/// <remarks>This instance is a UTF-8 literal.</remarks>
-	public static readonly CString Empty = new(ValueRegion<Byte>.Create(() => "\0\0\0"u8), true, true, 0);
+	public static readonly CString Empty = new(ValueRegion<Byte>.Create(AotInfo.EmptySpan), true, true, 0);
 	/// <summary>
 	/// Represents a null-pointer UTF-8 string. This field is read-only.
 	/// </summary>

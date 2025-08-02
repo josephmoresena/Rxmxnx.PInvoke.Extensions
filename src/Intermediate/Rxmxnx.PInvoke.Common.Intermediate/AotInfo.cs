@@ -48,6 +48,12 @@ public static class AotInfo
 	/// </summary>
 	public static Boolean IsNativeAot => AotInfo.isAotRuntime;
 
+	/// <summary>
+	/// Internal UTF-8 empty text.
+	/// </summary>
+	/// <returns>A read-only byte span of UTF-8 null-characters.</returns>
+	internal static ReadOnlySpan<Byte> EmptySpan() => "\0\0\0"u8;
+
 #if !NET6_0_OR_GREATER
 	/// <summary>
 	/// Indicates whether JIT is enabled in the current runtime.
