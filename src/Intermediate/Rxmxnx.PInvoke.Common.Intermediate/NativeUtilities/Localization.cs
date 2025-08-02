@@ -20,14 +20,7 @@ public partial class NativeUtilities
 	/// Retrieves the <see cref="Iso639P1"/> enum value corresponding to the current user interface culture.
 	/// </summary>
 	/// <remarks>This property allows trim propagation at compile time using <c>InvariantGlobalization</c>.</remarks>
-	public static Iso639P1 UserInterfaceIso639P1
-	{
-		get
-		{
-			NativeUtilities.GetUserInterfaceTwoLetterLangCode(out Iso639P1 result);
-			return result;
-		}
-	}
+	public static Iso639P1 UserInterfaceIso639P1 => (Iso639P1)NativeUtilities.GetUserInterfaceTwoLetterLangCode();
 
 	/// <summary>
 	/// Retrieves the <see cref="Iso639P1"/> enum value corresponding to the specified <paramref name="culture"/>.
@@ -259,6 +252,6 @@ public partial class NativeUtilities
 	/// </summary>
 	/// <param name="result">Destination <see cref="Iso639P1"/> reference.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void GetUserInterfaceTwoLetterLangCode(out Iso639P1 result)
-		=> result = NativeUtilities.GetIso639P1(CultureInfo.CurrentUICulture);
+	private static Int32 GetUserInterfaceTwoLetterLangCode()
+		=> (Int32)NativeUtilities.GetIso639P1(CultureInfo.CurrentUICulture);
 }
