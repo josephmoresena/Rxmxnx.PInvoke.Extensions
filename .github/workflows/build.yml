@@ -996,7 +996,7 @@ jobs:
         with:
           release: "13.5"
           usesh: true
-          sync: no
+          copyback: false
           prepare: |
             pkg install -y python39 sqlite3 unixODBC libgdiplus zip ca_root_nss dotnet
             /usr/local/bin/python3.9 -m ensurepip
