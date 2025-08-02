@@ -1010,8 +1010,6 @@ jobs:
             licenselogic: single
             licenses: [MIT]
             flatsize: 0
-            annotations:
-              FreeBSD_version: '1300000'
             EOF
             pkg register -M ~/fake-py39-pillow/metadata/+COMPACT_MANIFEST
             
