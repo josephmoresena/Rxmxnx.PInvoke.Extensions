@@ -97,14 +97,6 @@ jobs:
             rm -rf "$TEMP_DIR"
           done
           echo "-----------------------------------"
-      - name: Clean workspace
-        id: clean-workspace
-        run: |
-          rm -rf .git
-          rm -rf .sonarqube
-          rm -rf TestResults
-          rm -rf ./../_temp
-          dotnet clean src 
       - name: Create tmpProject
         run: mkdir tmpProject
       - name: Create PackageTrimmedAssembly.csproj
@@ -116,6 +108,9 @@ jobs:
           echo '    <LangVersion>latest</LangVersion>' >> Directory.Build.props
           echo '    <TrimMode>full</TrimMode>' >> Directory.Build.props
           echo '    <PublishTrimmed>true</PublishTrimmed>' >> Directory.Build.props
+          echo '    <PublishAot>$([MSBuild]::IsOSPlatform('FreeBSD'))</PublishAot>' >> Directory.Build.props
+          echo '    <DefineConstants>$(DefineConstants);NATIVE_AOT</DefineConstants>
+          echo '    <DefineConstants Condition="'$(IlcDisableReflection)' == 'true'">$(DefineConstants);REFLECTION_FREE</DefineConstants>
           echo '  </PropertyGroup>' >> Directory.Build.props
           echo '  <ItemGroup>' >> Directory.Build.props
           echo '    <RuntimeHostConfigurationOption Condition="'"'"'$(DisableBufferAutoComposition)'"'"' == '"'"'true'"'"'" Include="PInvoke.DisableBufferAutoComposition" Value="true" Trim="true" />' >> Directory.Build.props
@@ -134,7 +129,7 @@ jobs:
           echo '     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0"/>' >> Directory.Build.props
           echo '  </ItemGroup>' >> Directory.Build.props
           echo '</Project>' >> Directory.Build.props  
-          dotnet new console --name PackageTrimmedAssembly --aot true
+          dotnet new console --name PackageTrimmedAssembly
       - name: Create PackageTrimmedAssembly NuGet.config
         working-directory: ./tmpProject/PackageTrimmedAssembly
         run: |
@@ -986,11 +981,21 @@ jobs:
         with:
           name: Package-Trimmed-Executables-Logs
           path: ./tmpProject/Executable/ilcLogs
+      - name: Clean workspace
+        id: clean-workspace
+        run: |
+          rm -rf .git
+          rm -rf .sonarqube
+          rm -rf TestResults
+          rm -rf ./../_temp
+          rm -rf ./tmpProject/Executable
+          dotnet clean src 
       - name: Test in FreeBSD
         uses: vmactions/freebsd-vm@v1
         with:
           release: "13.5"
           usesh: true
+          sync: no
           prepare: |
             pkg install -y python39 sqlite3 unixODBC libgdiplus zip ca_root_nss dotnet
             /usr/local/bin/python3.9 -m ensurepip
