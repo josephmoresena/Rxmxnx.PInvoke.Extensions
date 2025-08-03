@@ -968,7 +968,6 @@ jobs:
         continue-on-error: true
         working-directory: ./tmpProject/PackageTrimmedAssembly
         run: |
-          MONO_LOG_LEVEL=debug mono --aot=full,hybrid -O=all bin/Release/net45/netstandard.dll > ./../Executable/ilcLogs/netstandard.dll.Mono.AOT.log 2>&1
           MONO_LOG_LEVEL=debug mono --aot=full,hybrid -O=all bin/Release/net45/System.Runtime.CompilerServices.Unsafe.dll > ./../Executable/ilcLogs/System.Runtime.CompilerServices.Unsafe.Mono.AOT.log 2>&1
           MONO_LOG_LEVEL=debug mono --aot=full,hybrid -O=all bin/Release/net45/System.Collections.Immutable.dll > ./../Executable/ilcLogs/System.Collections.Immutable.Mono.AOT.log 2>&1
           MONO_LOG_LEVEL=debug mono --aot=full,hybrid -O=all bin/Release/net45/Rxmxnx.PInvoke.Extensions.dll > ./../Executable/ilcLogs/Rxmxnx.PInvoke.Extensions.dll.Mono.AOT.log 2>&1
@@ -1023,17 +1022,17 @@ jobs:
         shell: freebsd {0}
         run: |
           cd $GITHUB_WORKSPACE;
-          dotnet restore src;
-          dotnet build src /p:MultipleFrameworkTest=false --configuration Release;
-          dotnet test src /p:MultipleFrameworkTest=false --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"
+          dotnet restore ./src/Rxmxnx.PInvoke.slnx;
+          dotnet build ./src/Rxmxnx.PInvoke.slnx /p:MultipleFrameworkTest=false --configuration Release;
+          dotnet test ./src/Rxmxnx.PInvoke.slnx /p:MultipleFrameworkTest=false --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"
       - name: Mono framework tests (FreeBSD 13.5)
         shell: freebsd {0}
         run: |
           cd $GITHUB_WORKSPACE;
-          mono src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.Common.Mono.TestResult.xml;
-          mono src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.CString.Mono.TestResult.xml;
-          mono src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.Extensions.Mono.TestResult.xml;
-          mono src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.Buffers.Mono.TestResult.xml;
+          mono ./src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.Common.Mono.TestResult.xml;
+          mono ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.CString.Mono.TestResult.xml;
+          mono ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.Extensions.Mono.TestResult.xml;
+          mono ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.Buffers.Mono.TestResult.xml;
       - name: Run Package-Trimmed-Executables (FreeBSD)
         shell: freebsd {0}
         run: |
