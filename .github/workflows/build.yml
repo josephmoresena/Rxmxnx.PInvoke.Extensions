@@ -1018,7 +1018,7 @@ jobs:
             fetch https://github.com/Thefrank/freebsd-port-sooners/releases/download/20230712/mono6.12-6.12.0.199_1.pkg
             pkg add mono6.12-6.12.0.199_1.pkg
           run: |
-            dotnet --version
+            dotnet dev-certs https --trust
             mono --version
       - name: Run Tests (FreeBSD 13.5)
         shell: freebsd {0}
