@@ -986,7 +986,6 @@ jobs:
           rm -rf TestResults
           rm -rf ./../_temp
           rm -rf ./tmpProject/Executable
-          dotnet clean src 
       - name: Init FreeBSD 13.5 VM
         id: vm
         uses: vmactions/freebsd-vm@v1.2.1
@@ -1018,18 +1017,6 @@ jobs:
             
             fetch https://github.com/Thefrank/freebsd-port-sooners/releases/download/20230712/mono6.12-6.12.0.199_1.pkg
             pkg add mono6.12-6.12.0.199_1.pkg
-      - name: Build Tests (FreeBSD 13.5)
-        shell: freebsd {0}
-        run: |
-          cd $GITHUB_WORKSPACE;
-          dotnet restore ./src/Test/Rxmxnx.PInvoke.Common.Tests/Test/Rxmxnx.PInvoke.Common.Tests.csproj;
-          dotnet build ./src/Test/Rxmxnx.PInvoke.Common.Tests/Test/Rxmxnx.PInvoke.Common.Tests.csproj /p:MultipleFrameworkTest=false --configuration Release;
-          dotnet restore ./src/Test/Rxmxnx.PInvoke.CString.Tests/Test/Rxmxnx.PInvoke.CString.Tests.csproj;
-          dotnet build ./src/Test/Rxmxnx.PInvoke.CString.Tests/Test/Rxmxnx.PInvoke.CString.Tests.csproj /p:MultipleFrameworkTest=false --configuration Release;
-          dotnet restore ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/Test/Rxmxnx.PInvoke.Extensions.Tests.csproj;
-          dotnet build ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/Test/Rxmxnx.PInvoke.Extensions.Tests.csproj /p:MultipleFrameworkTest=false --configuration Release;
-          dotnet restore ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/Test/Rxmxnx.PInvoke.Buffers.Tests.csproj;
-          dotnet build ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/Test/Rxmxnx.PInvoke.Buffers.Tests.csproj /p:MultipleFrameworkTest=false --configuration Release;
       - name: Run Tests (FreeBSD 13.5)
         shell: freebsd {0}
         run: |
