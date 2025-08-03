@@ -1021,10 +1021,10 @@ jobs:
         shell: freebsd {0}
         run: |
           cd $GITHUB_WORKSPACE;
-          dotnet test ./src/Test/Rxmxnx.PInvoke.Common.Tests/Test/Rxmxnx.PInvoke.Common.Tests.csproj /p:MultipleFrameworkTest=false --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"
-          dotnet test ./src/Test/Rxmxnx.PInvoke.CString.Tests/Test/Rxmxnx.PInvoke.CString.Tests.csproj /p:MultipleFrameworkTest=false --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"
-          dotnet test ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/Test/Rxmxnx.PInvoke.Extensions.Tests.csproj /p:MultipleFrameworkTest=false --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"
-          dotnet test ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/Test/Rxmxnx.PInvoke.Buffers.Tests.csproj /p:MultipleFrameworkTest=false --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"
+          dotnet test ./src/Test/Rxmxnx.PInvoke.Common.Tests/Rxmxnx.PInvoke.Common.Tests.csproj /p:MultipleFrameworkTest=false --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"
+          dotnet test ./src/Test/Rxmxnx.PInvoke.CString.Tests/Rxmxnx.PInvoke.CString.Tests.csproj /p:MultipleFrameworkTest=false --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"
+          dotnet test ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/Rxmxnx.PInvoke.Extensions.Tests.csproj /p:MultipleFrameworkTest=false --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"
+          dotnet test ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/Rxmxnx.PInvoke.Buffers.Tests.csproj /p:MultipleFrameworkTest=false --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"
       - name: Mono framework tests (FreeBSD 13.5)
         shell: freebsd {0}
         run: |
