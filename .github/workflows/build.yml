@@ -110,7 +110,7 @@ jobs:
           echo '    <PublishTrimmed>true</PublishTrimmed>' >> Directory.Build.props
           echo '    <IsFreeBsdHost>$([MSBuild]::IsOSPlatform('"'"'FreeBSD'"'"'))</IsFreeBsdHost>' >> Directory.Build.props
           echo '    <PublishAot Condition="'"'"'$(IsFreeBsdHost)'"'"' != '"'"'true'"'"'">true</PublishAot>' >> Directory.Build.props
-          echo '    <DefineConstants>$(DefineConstants);NATIVE_AOT</DefineConstants>'  >> Directory.Build.props
+          echo '    <DefineConstants Condition="'"'"'$(PublishAot)'"'"' == '"'"'true'"'"'">$(DefineConstants);NATIVE_AOT</DefineConstants>'  >> Directory.Build.props
           echo '    <DefineConstants Condition="'"'"'$(IlcDisableReflection)'"'"' == '"'"'true'"'"'">$(DefineConstants);REFLECTION_FREE</DefineConstants>' >> Directory.Build.props
           echo '  </PropertyGroup>' >> Directory.Build.props
           echo '  <ItemGroup>' >> Directory.Build.props
