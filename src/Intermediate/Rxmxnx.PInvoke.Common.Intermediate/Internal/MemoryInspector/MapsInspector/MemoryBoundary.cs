@@ -2,12 +2,12 @@ namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector
 {
-	private sealed partial class Linux
+	private abstract partial class MapsInspector
 	{
 		/// <summary>
 		/// Memory boundary struct.
 		/// </summary>
-		private readonly unsafe struct MemoryBoundary : IEquatable<MemoryBoundary>, IComparable<MemoryBoundary>,
+		protected readonly unsafe struct MemoryBoundary : IEquatable<MemoryBoundary>, IComparable<MemoryBoundary>,
 			IWrapper<UIntPtr>
 		{
 			/// <summary>
@@ -42,6 +42,16 @@ internal partial class MemoryInspector
 			public MemoryBoundary(ReadOnlySpan<Byte> addressText, Boolean isEnd)
 			{
 				this.Value = MemoryBoundary.Parse(addressText);
+				this.IsEnd = isEnd;
+			}
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			/// <param name="address">Boundary address.</param>
+			/// <param name="isEnd">Indicates whether current boundary is an end boundary.</param>
+			public MemoryBoundary(UInt64 address, Boolean isEnd)
+			{
+				this.Value = (UIntPtr)address;
 				this.IsEnd = isEnd;
 			}
 

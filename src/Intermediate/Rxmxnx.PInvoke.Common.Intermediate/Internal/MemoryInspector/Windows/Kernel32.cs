@@ -4,6 +4,9 @@ internal partial class MemoryInspector
 {
 	private sealed partial class Windows
 	{
+		/// <summary>
+		/// Interop API for <c>Kernel32.dll</c> library.
+		/// </summary>
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif

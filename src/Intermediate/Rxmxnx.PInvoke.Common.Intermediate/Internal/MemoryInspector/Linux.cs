@@ -7,127 +7,21 @@ internal partial class MemoryInspector
 	/// </summary>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
-	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-	private sealed unsafe partial class Linux : MemoryInspector
+	private sealed partial class Linux : MapsInspector
 	{
 		/// <summary>
 		/// <c>/proc/self/maps</c> file name.
 		/// </summary>
-		private const String MapsFile = "/proc/self/maps";
-		/// <summary>
-		/// Minimum time (ms) between reads of <c>/proc/self/maps</c> to avoid redundant access across all threads.
-		/// </summary>
-		private const Int64 GlobalFileReadDelay = 256;
-		/// <summary>
-		/// Minimum time (ms) between reads of <c>/proc/self/maps</c> within the same thread.
-		/// </summary>
-		private const Int64 LocalFileReadDelay = 512;
+		private const String mapsFileName = "/proc/self/maps";
 		/// <summary>
 		/// Token permission length.
 		/// </summary>
-		private const Int32 PermissionTokenLength = 6;
-
-		/// <summary>
-		/// Last tick count for current thread.
-		/// </summary>
-		[ThreadStatic]
-#if !PACKAGE
-		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2696)]
-#endif
-		private static Int64 lastThreadTickCount;
-
-		/// <summary>
-		/// Lock object.
-		/// </summary>
-		private readonly Object _lock = new();
-		/// <summary>
-		/// Set of read-only memory boundaries.
-		/// </summary>
-		private readonly SortedSet<MemoryBoundary> _readonlyMemory = [];
-		/// <summary>
-		/// Set of read-write memory boundaries.
-		/// </summary>
-		private readonly SortedSet<MemoryBoundary> _readwriteMemory = [];
-
-		/// <summary>
-		/// Last ticks count.
-		/// </summary>
-		private Int64 _lastTickCount = -1;
-
-		/// <summary>
-		/// Parameterless constructor.
-		/// </summary>
-		public Linux() => this.RefreshMaps();
+		private const Int32 permissionTokenLength = 6;
 
 		/// <inheritdoc/>
-		public override Boolean IsLiteral<T>(ReadOnlySpan<T> span)
-		{
-#pragma warning disable CS8500
-			fixed (void* ptr = &MemoryMarshal.GetReference(span))
-#pragma warning restore CS8500
-			{
-				lock (this._lock)
-				{
-					if (this.TryGetProtection(ptr, out Boolean isReadOnly))
-						return isReadOnly;
-					this.RefreshMaps();
-					return this.TryGetProtection(ptr, out isReadOnly) && isReadOnly;
-				}
-			}
-		}
+		protected override void ProcessMaps() => this.ParseMaps(File.ReadAllBytes(Linux.mapsFileName));
 
-		/// <summary>
-		/// Tries to retrieve <paramref name="address"/> protection.
-		/// </summary>
-		/// <param name="address">Address to check.</param>
-		/// <param name="isReadOnly"> Output. Indicates whether <paramref name="address"/> is read-only.</param>
-		/// <returns>
-		/// <see langword="true"/> if <paramref name="address"/> protection is known; otherwise,
-		/// <see langword="false"/>.
-		/// </returns>
-		private Boolean TryGetProtection(void* address, out Boolean isReadOnly)
-		{
-			if (Linux.IsMappedAddress(this._readonlyMemory, address))
-			{
-				isReadOnly = true;
-				return true;
-			}
-			if (Linux.IsMappedAddress(this._readwriteMemory, address))
-			{
-				isReadOnly = false;
-				return true;
-			}
-			Unsafe.SkipInit(out isReadOnly);
-			return false;
-		}
-		/// <summary>
-		/// Reads <c>/proc/self/maps</c> file and refresh memories boundaries.
-		/// </summary>
-#if !PACKAGE
-		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2696)]
-#endif
-		private void RefreshMaps()
-		{
-			Int64 tickCount
-#if NETCOREAPP
-				= Environment.TickCount64;
-#else
-				= DateTime.Now.Ticks;
-#endif
-			if (tickCount - this._lastTickCount < Linux.GlobalFileReadDelay ||
-			    tickCount - Linux.lastThreadTickCount < Linux.LocalFileReadDelay)
-				return;
-
-			this.ParseMaps(File.ReadAllBytes(Linux.MapsFile));
-			this._lastTickCount
-#if NETCOREAPP
-				= Environment.TickCount64;
-#else
-				= DateTime.Now.Ticks;
-#endif
-			Linux.lastThreadTickCount = this._lastTickCount;
-		}
 		/// <summary>
 		/// Parses <paramref name="mapsBytes"/> to addresses boundary.
 		/// </summary>
@@ -140,7 +34,7 @@ internal partial class MemoryInspector
 				state.Index = Linux.GetPermissionIndex(state.Buffer[..state.ReadBytes], out Boolean isReadOnly);
 				this.CreateMaps(state, isReadOnly);
 
-				state.Offset = state.Index > 0 ? state.Index + Linux.PermissionTokenLength : 0;
+				state.Offset = state.Index > 0 ? state.Index + Linux.permissionTokenLength : 0;
 				state.Buffer = state.Buffer[state.Offset..];
 				state.Index = state.Buffer.IndexOf((Byte)MapsTokens.NewLine); // End of the line.
 				state.Offset = state.Index + 1;
@@ -171,48 +65,6 @@ internal partial class MemoryInspector
 			this.AddBoundary(new(endSpan, true), isReadOnly);
 		}
 		/// <summary>
-		/// Adds <paramref name="value"/> to maps boundaries.
-		/// </summary>
-		/// <param name="value">A <see cref="MemoryBoundary"/> instance.</param>
-		/// <param name="isReadOnly">Indicates whether <paramref name="value"/> is read-only boundary.</param>
-		private void AddBoundary(MemoryBoundary value, Boolean isReadOnly)
-		{
-			SortedSet<MemoryBoundary> maps = isReadOnly ? this._readonlyMemory : this._readwriteMemory;
-			Linux.AddBoundary(maps, value);
-		}
-		/// <summary>
-		/// Adds <paramref name="value"/> inside <paramref name="maps"/>.
-		/// </summary>
-		/// <param name="maps">Mapped section.</param>
-		/// <param name="value">A <see cref="MemoryBoundary"/> instance.</param>
-		private static void AddBoundary(SortedSet<MemoryBoundary> maps, MemoryBoundary value)
-		{
-			if (maps.TryGetValue(value, out MemoryBoundary existing))
-			{
-				if (value.IsEnd != existing.IsEnd)
-					maps.Remove(existing);
-				return;
-			}
-			maps.Add(value);
-		}
-		/// <summary>
-		/// Indicates whether <paramref name="address"/> is inside <paramref name="maps"/>.
-		/// </summary>
-		/// <param name="maps">Mapped section.</param>
-		/// <param name="address">Address to check.</param>
-		/// <returns>
-		/// <see langword="true"/> if <paramref name="address"/> is inside <paramref name="maps"/>; otherwise,
-		/// <see langword="false"/>.
-		/// </returns>
-		private static Boolean IsMappedAddress(SortedSet<MemoryBoundary> maps, void* address)
-		{
-			if (maps.Count == 0) return false;
-			SortedSet<MemoryBoundary> view = maps.GetViewBetween(maps.Min, address);
-			if (view.Count == 0) return false;
-			MemoryBoundary boundary = view.Max;
-			return boundary != default && !boundary.IsEnd;
-		}
-		/// <summary>
 		/// Retrieves permission index.
 		/// </summary>
 		/// <param name="buffer">A read-only buffer.</param>
@@ -222,7 +74,7 @@ internal partial class MemoryInspector
 		{
 			Int32 index = 0;
 			ReadOnlySpan<MapsTokens> bAsToken = MemoryMarshal.Cast<Byte, MapsTokens>(buffer);
-			while (bAsToken.Length >= Linux.PermissionTokenLength)
+			while (bAsToken.Length >= Linux.permissionTokenLength)
 			{
 				if (Linux.IsSectionPermission(bAsToken, out isReadOnly))
 					return index;

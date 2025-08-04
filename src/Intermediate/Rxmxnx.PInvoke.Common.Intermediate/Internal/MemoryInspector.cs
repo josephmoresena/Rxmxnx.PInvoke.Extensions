@@ -30,6 +30,8 @@ internal abstract partial class MemoryInspector
 			MemoryInspector.instance = new Linux();
 		else if (MemoryInspector.IsMacPlatform())
 			MemoryInspector.instance = new Mac();
+		else if (MemoryInspector.IsFreeBsd())
+			MemoryInspector.instance = new FreeBsd();
 	}
 
 	/// <summary>
@@ -119,8 +121,7 @@ internal abstract partial class MemoryInspector
 #else
 		=> RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ||
 			RuntimeInformation.IsOSPlatform(OSPlatform.Create("IOS")) ||
-			RuntimeInformation.IsOSPlatform(OSPlatform.Create("TVOS")) ||
-			MemoryInspector.IsMacCatalyst();
+			RuntimeInformation.IsOSPlatform(OSPlatform.Create("TVOS")) || MemoryInspector.IsMacCatalyst();
 #endif
 	/// <summary>
 	/// Indicates whether the current execution is occurring on Mac Catalyst platform.
@@ -137,5 +138,23 @@ internal abstract partial class MemoryInspector
 		=> OperatingSystem.IsMacCatalyst();
 #else
 		=> RuntimeInformation.IsOSPlatform(OSPlatform.Create("MACCATALYST"));
+#endif
+	/// <summary>
+	/// Indicates whether the current execution is occurring on FreeBSD platform.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if the current execution is occurring on FreeBSD platform; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	private static Boolean IsFreeBsd()
+#if NET6_0_OR_GREATER
+		=> OperatingSystem.IsFreeBSD();
+#elif NETCOREAPP
+		=> RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD);
+#else
+		=> RuntimeInformation.IsOSPlatform(OSPlatform.Create("FREEBSD"));
 #endif
 }
