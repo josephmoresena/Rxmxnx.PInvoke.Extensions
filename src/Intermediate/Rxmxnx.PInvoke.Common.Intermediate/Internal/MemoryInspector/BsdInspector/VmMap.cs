@@ -2,13 +2,14 @@ namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector
 {
-	private sealed partial class FreeBsd
+	private abstract partial class BsdInspector
 	{
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4487)]
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 		[StructLayout(LayoutKind.Sequential)]
-		private readonly struct VmMap
+		protected readonly unsafe struct VmMap
 		{
 			public readonly Int32 StructSize;
 			public readonly MapType Type;
@@ -45,6 +46,30 @@ internal partial class MemoryInspector
 				public Int32 Value9;
 				public Int32 Value10;
 				public Int32 Value11;
+			}
+
+			/// <summary>
+			/// Appends to <paramref name="bsdInspector"/> the maps from <paramref name="maps"/>.
+			/// </summary>
+			/// <param name="maps">A pointer to <see cref="VmMap"/> buffer.</param>
+			/// <param name="count">Count of <see cref="VmMap"/> in the buffer.</param>
+			/// <param name="bsdInspector">A <see cref="BsdInspector"/> instance.</param>
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public static void AppendMaps(void* maps, UInt32 count, BsdInspector bsdInspector)
+			{
+				ref VmMap mapRef = ref Unsafe.AsRef<VmMap>(maps);
+				while (count > 0)
+				{
+					Boolean isReadOnly = mapRef.Protection is Protection.Read and not Protection.Write;
+					bsdInspector.AddBoundary(new(mapRef.StartAddress, false), isReadOnly);
+					bsdInspector.AddBoundary(new(mapRef.EndAddress, true), isReadOnly);
+#if NET7_0_OR_GREATER
+					mapRef = ref Unsafe.AddByteOffset(ref mapRef, mapRef.StructSize);
+#else
+					mapRef = ref Unsafe.AddByteOffset(ref mapRef, (IntPtr)mapRef.StructSize);
+#endif
+					count--;
+				}
 			}
 		}
 	}

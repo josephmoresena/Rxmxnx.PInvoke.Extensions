@@ -49,6 +49,16 @@ internal partial class MemoryInspector
 			/// </summary>
 			/// <param name="address">Boundary address.</param>
 			/// <param name="isEnd">Indicates whether current boundary is an end boundary.</param>
+			public MemoryBoundary(UIntPtr address, Boolean isEnd)
+			{
+				this.Value = address;
+				this.IsEnd = isEnd;
+			}
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			/// <param name="address">Boundary address.</param>
+			/// <param name="isEnd">Indicates whether current boundary is an end boundary.</param>
 			public MemoryBoundary(UInt64 address, Boolean isEnd)
 			{
 #pragma warning disable CA2020
@@ -56,19 +66,6 @@ internal partial class MemoryInspector
 #pragma warning restore CA2020
 				this.IsEnd = isEnd;
 			}
-
-#if !NET5_0_OR_GREATER
-			/// <summary>
-			/// Private constructor.
-			/// </summary>
-			/// <param name="value">Internal value.</param>
-			/// <param name="isEnd">Indicates whether current boundary is terminal.</param>
-			private MemoryBoundary(UIntPtr value, Boolean isEnd)
-			{
-				this.Value = value;
-				this.IsEnd = isEnd;
-			}
-#endif
 
 			/// <summary>
 			/// Defines an implicit conversion of a given <see cref="IntPtr"/> to a <see cref="MemoryBoundary"/> instance.

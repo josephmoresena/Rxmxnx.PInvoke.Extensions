@@ -30,27 +30,15 @@ internal partial class MemoryInspector
 			}
 
 			/// <summary>
-			/// Appends the process maps to <paramref name="freeBsd"/>
+			/// Appends the process maps to <paramref name="bsd"/>
 			/// </summary>
-			/// <param name="freeBsd">A <see cref="FreeBsd"/> instance</param>
-			public static void AppendMaps(FreeBsd freeBsd)
+			/// <param name="bsd">A <see cref="FreeBsd"/> instance</param>
+			public static void AppendMaps(FreeBsd bsd)
 			{
 				void* maps = Procstat.GetMaps(Procstat.procstat, Util.KernelInfo, out UInt32 count);
-				ref VmMap mapRef = ref Unsafe.AsRef<VmMap>(maps);
 				try
 				{
-					while (count > 0)
-					{
-						Boolean isReadOnly = mapRef.Protection is Protection.Read and not Protection.Write;
-						freeBsd.AddBoundary(new(mapRef.StartAddress, false), isReadOnly);
-						freeBsd.AddBoundary(new(mapRef.EndAddress, true), isReadOnly);
-#if NET7_0_OR_GREATER
-						mapRef = ref Unsafe.AddByteOffset(ref mapRef, mapRef.StructSize);
-#else
-						mapRef = ref Unsafe.AddByteOffset(ref mapRef, (IntPtr)mapRef.StructSize);
-#endif
-						count--;
-					}
+					VmMap.AppendMaps(maps, count, bsd);
 				}
 				finally
 				{

@@ -32,6 +32,18 @@ internal abstract partial class MemoryInspector
 			MemoryInspector.instance = new Mac();
 		else if (MemoryInspector.IsFreeBsd())
 			MemoryInspector.instance = new FreeBsd();
+		else
+			try
+			{
+				if (MemoryInspector.IsSolaris())
+					MemoryInspector.instance = new Solaris();
+				else if (MemoryInspector.IsNetBsd())
+					MemoryInspector.instance = new NetBsd();
+			}
+			catch (Exception)
+			{
+				// Experimental features.
+			}
 	}
 
 	/// <summary>
@@ -157,4 +169,28 @@ internal abstract partial class MemoryInspector
 #else
 		=> RuntimeInformation.IsOSPlatform(OSPlatform.Create("FREEBSD"));
 #endif
+	/// <summary>
+	/// Indicates whether the current execution is occurring on Solaris or Illumos platform.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if the current execution is occurring on Solaris or Illumos platform; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	private static Boolean IsSolaris()
+		=> RuntimeInformation.IsOSPlatform(OSPlatform.Create("SOLARIS")) ||
+			RuntimeInformation.IsOSPlatform(OSPlatform.Create("ILLUMOS"));
+	/// <summary>
+	/// Indicates whether the current execution is occurring on NetBSD platform.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if the current execution is occurring on NetBSD platform; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	private static Boolean IsNetBsd() => RuntimeInformation.IsOSPlatform(OSPlatform.Create("NETBSD"));
 }

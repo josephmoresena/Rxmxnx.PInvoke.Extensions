@@ -3,7 +3,7 @@ namespace Rxmxnx.PInvoke.Internal;
 internal partial class MemoryInspector
 {
 	/// <summary>
-	/// Unix base implementation of <see cref="MemoryInspector"/> class.
+	/// Unix-like OS memory maps-based implementation of <see cref="MemoryInspector"/> class.
 	/// </summary>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]

@@ -2,13 +2,13 @@ namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector
 {
-	private sealed partial class FreeBsd
+	private abstract partial class BsdInspector
 	{
 		[Flags]
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2342)]
 #endif
-		private enum Protection
+		protected enum Protection
 		{
 			None = 0x0,
 			Read = 0x1,
@@ -16,7 +16,7 @@ internal partial class MemoryInspector
 			Execute = 0x4,
 		}
 
-		private enum MapType
+		protected enum MapType
 		{
 			None = 0x0,
 			Default = 0x1,
@@ -32,7 +32,7 @@ internal partial class MemoryInspector
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2342)]
 #endif
-		private enum MapFlag
+		protected enum MapFlag
 		{
 			None = 0x0,
 			CopyOnWrite = 0x1,
