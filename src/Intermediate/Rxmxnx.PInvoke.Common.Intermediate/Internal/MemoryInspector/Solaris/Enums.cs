@@ -5,6 +5,9 @@ internal partial class MemoryInspector
 	private sealed partial class Solaris
 	{
 		[Flags]
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2344)]
+#endif
 		private enum MapFlags
 		{
 			None = 0x0,

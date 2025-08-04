@@ -129,16 +129,7 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
 
 			//If the runes are not comparable to each other a full text comparison will be needed.
 			if (!runeA.HasValue || !runeB.HasValue) return this.Compare(textA0, textB0, this._ignoreCase) == 0;
-			//If the value of both runes is the same, no further comparison is necessary.
-			if (runeA == runeB) continue;
-			String strA = Char.ConvertFromUtf32(runeA.Value.Value);
-			String strB = Char.ConvertFromUtf32(runeB.Value.Value);
-#if NET5_0_OR_GREATER
-			if (this._culture.CompareInfo.Compare(strA, strB, this.GetOptions(this._ignoreCase)) != 0)
-#else
-			if (this._culture.CompareInfo.Compare(strA, strB, this.GetOptions(this._ignoreCase)) != 0)
-#endif
-				return false;
+			if (!this.RuneEqual(runeA.Value, runeB.Value)) return false;
 		}
 
 		return textA.IsEmpty && textB.IsEmpty;

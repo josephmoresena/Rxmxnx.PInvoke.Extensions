@@ -25,7 +25,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// Represents an empty UTF-8 string. This field is read-only.
 	/// </summary>
 	/// <remarks>This instance is a UTF-8 literal.</remarks>
-	public static readonly CString Empty = new(ValueRegion<Byte>.Create(AotInfo.EmptySpan), true, true, 0);
+	public static readonly CString Empty = new(ValueRegion<Byte>.Create(AotInfo.EmptyUt8Text), true, true, 0);
 	/// <summary>
 	/// Represents a null-pointer UTF-8 string. This field is read-only.
 	/// </summary>
@@ -129,7 +129,9 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
 	/// </returns>
 	public Boolean Equals([NotNullWhen(true)] String? other)
-		=> other is not null ? StringUtf8Comparator.Create().TextEquals(this, other) : this.IsZero;
+		=> other is not null ?
+			StringUtf8Comparator.Create(StringComparison.Ordinal).TextEquals(this, other) :
+			this.IsZero;
 	/// <summary>
 	/// Determines whether the current <see cref="CString"/> and a specified <see cref="CString"/>
 	/// have the same value.
@@ -360,7 +362,8 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 #else
 			MemoryMarshalCompat.CreateReadOnlySpanFromNullTerminated((Byte*)ptr);
 #endif
-		Int32 length = span.Length;
-		return new(ValueRegion<Byte>.Create(ptr, length), false, true, length);
+		Int32 textLength = span.Length;
+		Int32 regionLength = textLength + 1; // Region should include null-terminated char.
+		return new(ValueRegion<Byte>.Create(ptr, regionLength), false, true, textLength);
 	}
 }

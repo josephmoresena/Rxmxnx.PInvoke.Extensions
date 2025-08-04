@@ -106,4 +106,26 @@ internal partial class Utf8Comparator<TChar>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private CompareOptions GetOptions(Boolean caseInsensitive)
 		=> !caseInsensitive ? this._options : this._optionsIgnoreCase;
+	/// <summary>
+	/// Determines whether the text in <paramref name="runeA"/> and the text in <paramref name="runeB"/> are equivalent,
+	/// using specified culture, case, and sorting rules during the comparison.
+	/// </summary>
+	/// <param name="runeA">The first text to compare.</param>
+	/// <param name="runeB">The second text to compare.</param>
+	/// <returns>
+	/// <see langword="true"/> if the value of <paramref name="runeA"/> is the same as the value of <paramref name="runeB"/>;
+	/// otherwise, <see langword="false"/>.
+	/// </returns>
+	private Boolean RuneEqual(DecodedRune runeA, DecodedRune runeB)
+	{
+		CompareOptions compareOptions = this.GetOptions(this._ignoreCase);
+		Boolean result = runeA == runeB;
+		// If the value of both runes are the same, no further comparison is necessary.
+		if (result || compareOptions is CompareOptions.Ordinal)
+			return result;
+		// If not ordinal equality, perform a text comparison.
+		String strA = Char.ConvertFromUtf32(runeA.Value);
+		String strB = Char.ConvertFromUtf32(runeB.Value);
+		return this._culture.CompareInfo.Compare(strA, strB, compareOptions) == 0;
+	}
 }

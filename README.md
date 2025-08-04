@@ -3079,6 +3079,10 @@ Provides information about the Ahead-of-Time compilation.
 
   **Note:** Starting with .NET 6.0, this property enables trimming by allowing the linker to remove unreachable code.
   </details>
+- <details>
+  <summary>IsMono</summary>
+  Indicates whether the current runtime is Mono.
+  </details>
 
 </details>
 

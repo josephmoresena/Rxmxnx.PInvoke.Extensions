@@ -47,12 +47,16 @@ public static class AotInfo
 	/// Indicates whether the current runtime is Native AOT.
 	/// </summary>
 	public static Boolean IsNativeAot => AotInfo.isAotRuntime;
+	/// <summary>
+	/// Indicates whether the current runtime is Mono.
+	/// </summary>
+	public static Boolean IsMono => MonoInfo.IsEmptyNonLiteral;
 
 	/// <summary>
 	/// Internal UTF-8 empty text.
 	/// </summary>
 	/// <returns>A read-only byte span of UTF-8 null-characters.</returns>
-	internal static ReadOnlySpan<Byte> EmptySpan() => "\0\0\0"u8;
+	internal static ReadOnlySpan<Byte> EmptyUt8Text() => "\0\0\0"u8;
 
 #if !NET6_0_OR_GREATER
 	/// <summary>
@@ -177,4 +181,15 @@ public static class AotInfo
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Boolean StringTypeNameContainsString()
 		=> typeof(String).ToString().AsSpan().EndsWith(nameof(String).AsSpan());
+
+	/// <summary>
+	/// Provides information about the Mono framework runtime.
+	/// </summary>
+	private static class MonoInfo
+	{
+		/// <summary>
+		/// Indicates whether <see cref="AotInfo.EmptyUt8Text"/> is loaded in a read-only memory section.
+		/// </summary>
+		public static readonly Boolean IsEmptyNonLiteral = MemoryInspector.MayBeNonLiteral(AotInfo.EmptyUt8Text());
+	}
 }
