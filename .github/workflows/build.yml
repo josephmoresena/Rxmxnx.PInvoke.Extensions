@@ -1024,10 +1024,10 @@ jobs:
         shell: freebsd {0}
         run: |
           cd $GITHUB_WORKSPACE;
-          dotnet test ./src/Test/Rxmxnx.PInvoke.Common.Tests/Rxmxnx.PInvoke.Common.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Common.Tests.dll --logger 'console;verbosity=detailed';
-          dotnet test ./src/Test/Rxmxnx.PInvoke.CString.Tests/Rxmxnx.PInvoke.Common.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.CString.Tests.dll --logger 'console;verbosity=detailed';
-          dotnet test ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/Rxmxnx.PInvoke.Common.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Extensions.Tests.dll --logger 'console;verbosity=detailed';
-          dotnet test ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/Rxmxnx.PInvoke.Common.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Buffers.Tests.dll --logger 'console;verbosity=detailed';
+          dotnet test ./src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Common.Tests.dll --logger 'console;verbosity=detailed';
+          dotnet test ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.CString.Tests.dll --logger 'console;verbosity=detailed';
+          dotnet test ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Extensions.Tests.dll --logger 'console;verbosity=detailed';
+          dotnet test ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Buffers.Tests.dll --logger 'console;verbosity=detailed';
       - name: Mono framework tests (FreeBSD 13.5)
         shell: freebsd {0}
         run: |
