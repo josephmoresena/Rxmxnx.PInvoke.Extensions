@@ -10,7 +10,6 @@ internal partial class MemoryInspector
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-#pragma warning disable CA2020
 		private static unsafe class Procstat
 		{
 			/// <summary>
@@ -71,4 +70,3 @@ internal partial class MemoryInspector
 		}
 	}
 }
-#pragma warning restore CA2020

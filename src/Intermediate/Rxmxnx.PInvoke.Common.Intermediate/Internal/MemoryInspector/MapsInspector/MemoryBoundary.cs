@@ -51,7 +51,9 @@ internal partial class MemoryInspector
 			/// <param name="isEnd">Indicates whether current boundary is an end boundary.</param>
 			public MemoryBoundary(UInt64 address, Boolean isEnd)
 			{
+#pragma warning disable CA2020
 				this.Value = (UIntPtr)address;
+#pragma warning restore CA2020
 				this.IsEnd = isEnd;
 			}
 
