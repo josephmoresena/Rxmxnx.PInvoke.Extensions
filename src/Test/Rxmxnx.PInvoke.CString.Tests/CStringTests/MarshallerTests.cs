@@ -75,25 +75,14 @@ public sealed unsafe class MarshallerTests
 					if (Unsafe.AreSame(ref MemoryMarshal.GetReference<Byte>(value),
 					                   ref MemoryMarshal.GetReference(unmanagedSpan)))
 
-						// Skip FreeBSD
-#if NETCOREAPP
-						if (!RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
-#else
-						if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ||
-						    RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ||
-						    RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-#endif
-							PInvokeAssert.True(MarshallerTests.IsLiteralOrPinnable(value));
+						PInvokeAssert.True(MarshallerTests.IsLiteralOrPinnable(value));
 				}
 				else
 				{
 					ref Byte refUtf8 = ref Unsafe.AsRef(in CString.Empty.GetPinnableReference());
 #if NETCOREAPP
 
-					// Skip FreeBSD
-					if (!RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
-						Assert.True(
-							MemoryInspector.Instance.IsLiteral(MemoryMarshal.CreateReadOnlySpan(ref refUtf8, 1)));
+					Assert.True(MemoryInspector.Instance.IsLiteral(MemoryMarshal.CreateReadOnlySpan(ref refUtf8, 1)));
 #endif
 					PInvokeAssert.True(Unsafe.AreSame(ref refUtf8, ref ((ValPtr<Byte>)ptr).Reference));
 				}

@@ -14,6 +14,7 @@ public sealed class LoadNativeLibTest
 	private const String LIBRARYNAME_WINDOWS = "kernel32.dll";
 	private const String LIBRARYNAME_OSX = "libSystem.B.dylib";
 	private const String LIBRARYNAME_LINUX = "libc.so.6";
+	private const String LIBRARYNAME_FREEBSD = "libc.so.7";
 
 	private const String METHODNAME_WINDOWS = "GetCurrentProcessId";
 	private const String METHODNAME_UNIX = "getpid";
@@ -22,7 +23,8 @@ public sealed class LoadNativeLibTest
 	public static readonly String LibraryName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
 		LoadNativeLibTest.LIBRARYNAME_WINDOWS :
 		RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? LoadNativeLibTest.LIBRARYNAME_OSX :
-			LoadNativeLibTest.LIBRARYNAME_LINUX;
+			RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD) ? LoadNativeLibTest.LIBRARYNAME_FREEBSD :
+				LoadNativeLibTest.LIBRARYNAME_LINUX;
 	public static readonly String MethodName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
 		LoadNativeLibTest.METHODNAME_WINDOWS :
 		LoadNativeLibTest.METHODNAME_UNIX;

@@ -1,8 +1,4 @@
 #if NETCOREAPP
-#if NET5_0_OR_GREATER
-using Skip = Xunit.Skip;
-using FactAttribute = Xunit.SkippableFactAttribute;
-#endif
 
 namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
 
@@ -24,14 +20,6 @@ public sealed class IsLiteralTest
 	[Fact]
 	internal void Test()
 	{
-		// Skip FreeBSD
-#if NET5_0_OR_GREATER
-		Skip.If(RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD), "FreeBSD memory inspection unsupported.");
-#else
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
-			return;
-#endif
-
 		const String constValue = "LOCAL_STRING_VALUE";
 		const Int32 constIntValue = 90;
 
