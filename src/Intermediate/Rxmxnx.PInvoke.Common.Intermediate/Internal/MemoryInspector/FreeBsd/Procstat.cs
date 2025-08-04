@@ -10,6 +10,7 @@ internal partial class MemoryInspector
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
+#pragma warning disable CA2020
 		private static unsafe class Procstat
 		{
 			/// <summary>
@@ -20,6 +21,9 @@ internal partial class MemoryInspector
 			/// <summary>
 			/// Static constructor.
 			/// </summary>
+#if !PACKAGE
+			[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3963)]
+#endif
 			static Procstat()
 			{
 				Procstat.procstat = Procstat.Open();
@@ -54,51 +58,6 @@ internal partial class MemoryInspector
 					Procstat.FreeMaps(Procstat.procstat, maps);
 				}
 			}
-
-			/// <summary>
-			/// Represents a FreeBSD memory map.
-			/// </summary>
-			[StructLayout(LayoutKind.Sequential)]
-			private readonly struct VmMap
-			{
-				public readonly Int32 StructSize;
-				public readonly MapType Type;
-				public readonly UInt64 StartAddress;
-				public readonly UInt64 EndAddress;
-				public readonly UInt64 Offset;
-				public readonly UInt64 FileId;
-				public readonly UInt32 FileSystemId;
-				public readonly MapFlag Flags;
-				public readonly Int32 ResidentPages;
-				public readonly Int32 PrivateResidentPages;
-				public readonly Protection Protection;
-				public readonly Int32 ReferenceCount;
-				public readonly Int32 ShadowCount;
-				public readonly MapType VNodeType;
-				public readonly UInt64 FileSize;
-				public readonly UInt32 DeviceId;
-				public readonly UInt16 FileMode;
-				public readonly UInt16 Status;
-				public readonly IntSpare Spare;
-
-				[StructLayout(LayoutKind.Sequential)]
-				public struct IntSpare
-				{
-					public Int32 Value0;
-					public Int32 Value1;
-					public Int32 Value2;
-					public Int32 Value3;
-					public Int32 Value4;
-					public Int32 Value5;
-					public Int32 Value6;
-					public Int32 Value7;
-					public Int32 Value8;
-					public Int32 Value9;
-					public Int32 Value10;
-					public Int32 Value11;
-				}
-			}
-
 #pragma warning disable SYSLIB1054
 			[DllImport("libprocstat", EntryPoint = "procstat_open_sysctl", SetLastError = false)]
 			private static extern IntPtr Open();
@@ -112,3 +71,4 @@ internal partial class MemoryInspector
 		}
 	}
 }
+#pragma warning restore CA2020

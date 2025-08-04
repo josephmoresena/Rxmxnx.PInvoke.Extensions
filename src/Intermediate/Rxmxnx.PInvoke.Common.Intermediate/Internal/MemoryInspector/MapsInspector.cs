@@ -50,6 +50,9 @@ internal partial class MemoryInspector
 		/// <summary>
 		/// Parameterless constructor.
 		/// </summary>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1144)]
+#endif
 		protected MapsInspector() => this.RefreshMaps();
 
 		/// <inheritdoc/>
