@@ -61,6 +61,13 @@
             <Private>False</Private>
         </ProjectReference>
     </ItemGroup>
+    
+    <!-- Package properties -->
+    <PropertyGroup Condition="'$(IsTempPackage)' == 'true'">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>embedded</DebugType>
+        <EmbededAllSources>true</EmbededAllSources>
+    </PropertyGroup>
 
     <UsingTask TaskName="ValuePointerPatchTask"
                AssemblyFile="..\Rxmxnx.PInvoke.Extensions.IlPatcher\bin\$(Configuration)\netstandard2.0\Rxmxnx.PInvoke.Extensions.IlPatcher.dll"/>
