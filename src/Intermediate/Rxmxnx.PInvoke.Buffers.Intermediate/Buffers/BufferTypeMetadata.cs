@@ -1,3 +1,8 @@
+#if PACKAGE && !NETCOREAPP
+using IEnumerator = System.Collections.IEnumerator;
+using IEnumerable = System.Collections.IEnumerable;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
@@ -58,8 +63,7 @@ public abstract class BufferTypeMetadata : IEnumerableSequence<BufferTypeMetadat
 #if PACKAGE && !NETCOREAPP
 	IEnumerator<BufferTypeMetadata> IEnumerable<BufferTypeMetadata>.GetEnumerator() 
 		=> IEnumerableSequence.CreateEnumerator(this);
-	System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-		=> IEnumerableSequence.CreateEnumerator(this);
+	IEnumerator IEnumerable.GetEnumerator() => IEnumerableSequence.CreateEnumerator(this);
 #endif
 }
 

@@ -1,4 +1,9 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if PACKAGE && !NETCOREAPP
+using IEnumerator = System.Collections.IEnumerator;
+using IEnumerable = System.Collections.IEnumerable;
+#endif
+
+namespace Rxmxnx.PInvoke;
 
 public partial class CString : IEnumerableSequence<Byte>
 {
@@ -24,8 +29,7 @@ public partial class CString : IEnumerableSequence<Byte>
 	Byte IEnumerableSequence<Byte>.GetItem(Int32 index) => this[index];
 #if PACKAGE && !NETCOREAPP
 	IEnumerator<Byte> IEnumerable<Byte>.GetEnumerator() => IEnumerableSequence.CreateEnumerator(this);
-	System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-		=> IEnumerableSequence.CreateEnumerator(this);
+	IEnumerator IEnumerable.GetEnumerator() => IEnumerableSequence.CreateEnumerator(this);
 #endif
 
 	/// <summary>

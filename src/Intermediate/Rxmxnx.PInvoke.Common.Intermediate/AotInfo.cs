@@ -85,7 +85,11 @@ public static class AotInfo
 					return isJitEnabled.Value;
 			}
 
+#if !NET6_0_OR_GREATER
+			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+#else
 			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().AsSpan())
+#endif
 			{
 				if (String.IsNullOrEmpty(assembly.FullName)) continue;
 				if (assembly.FullName.StartsWith("System.Reflection.Emit")) break;
