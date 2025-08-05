@@ -825,6 +825,7 @@ jobs:
           				Console.WriteLine("========== Rxmxnx.PInvoke Runtime information ==========");
           				Console.WriteLine($"Native AOT: {AotInfo.IsNativeAot}");
           				Console.WriteLine($"Reflection Enabled: {!AotInfo.IsReflectionDisabled}");
+          				Console.WriteLine($"Mono Runtime: {AotInfo.IsMono}");
           				Console.WriteLine($"Pointer Size: {NativeUtilities.PointerSize}");
           				Console.WriteLine($"Globalization-Invariant Mode: {NativeUtilities.GlobalizationInvariantModeEnabled}");
           				Console.WriteLine($"UI Iso639-1: {NativeUtilities.UserInterfaceIso639P1}");
