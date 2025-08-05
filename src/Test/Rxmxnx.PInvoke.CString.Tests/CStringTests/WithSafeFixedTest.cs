@@ -51,19 +51,24 @@ public sealed unsafe class WithSafeFixedTest
 		IReadOnlyFixedMemory fmem2 = fmem;
 
 		WithSafeFixedTest.ActionMethod(fmem);
-		PInvokeAssert.Equal(cstr, new(() => fmem2.Bytes));
+		if (fmem2.Bytes.Length > 0)
+			PInvokeAssert.Equal(cstr, new(() => fmem2.Bytes));
 		WithSafeFixedTest.BinaryPointerTest(fmem, cstr);
 	}
 
 	private static CString FunctionMethod(in IReadOnlyFixedMemory fmem)
 	{
 		WithSafeFixedTest.ActionMethod(fmem);
-		return CString.Create(fmem.Bytes);
+		if (fmem.Bytes.Length > 0)
+			return CString.Create(fmem.Bytes);
+		return fmem.Pointer != IntPtr.Zero ? CString.Empty : CString.Zero;
 	}
 	private static CString FunctionMethod(in IReadOnlyFixedMemory fmem, CString cstr)
 	{
 		WithSafeFixedTest.ActionMethod(fmem, cstr);
-		return CString.Create(fmem.Bytes);
+		if (fmem.Bytes.Length > 0)
+			return CString.Create(fmem.Bytes);
+		return fmem.Pointer != IntPtr.Zero ? CString.Empty : CString.Zero;
 	}
 
 	private static void BinaryPointerTest(IReadOnlyFixedMemory fmem, CString cstr)

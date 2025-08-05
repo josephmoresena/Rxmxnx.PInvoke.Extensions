@@ -6,6 +6,12 @@
 internal sealed class StringUtf8Comparator : Utf8Comparator<Char>
 {
 	/// <summary>
+	/// Equality comparator instance.
+	/// </summary>
+	public static readonly StringUtf8Comparator OrdinalComparator =
+		StringUtf8Comparator.Create(StringComparison.Ordinal);
+
+	/// <summary>
 	/// Initializes a new instance of the <see cref="StringUtf8Comparator"/> class.
 	/// </summary>
 	/// <param name="comparisonType">

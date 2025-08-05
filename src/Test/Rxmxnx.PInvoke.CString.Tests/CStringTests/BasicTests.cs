@@ -29,11 +29,11 @@ public sealed class BasicTests
 		CString empty5 = new Byte[] { default, default, };
 
 		PInvokeAssert.Equal(CString.Zero, zero);
-		PInvokeAssert.Equal(CString.Empty, zero);
+		PInvokeAssert.NotEqual(CString.Empty, zero); // Empty <> Zero
 		PInvokeAssert.Equal(String.Empty, CString.Empty.ToString());
 		PInvokeAssert.Equal(CString.Empty, (CString)String.Empty);
 		PInvokeAssert.Equal(String.Empty, zero.ToString());
-		PInvokeAssert.Equal(zero, (CString)String.Empty);
+		PInvokeAssert.NotEqual(zero, (CString)String.Empty);
 		PInvokeAssert.True(CString.IsNullOrEmpty(zero));
 		PInvokeAssert.True(CString.IsNullOrEmpty(CString.Empty));
 		PInvokeAssert.True(CString.IsNullOrEmpty(default));
@@ -46,8 +46,8 @@ public sealed class BasicTests
 		PInvokeAssert.True(default(CString) == nullCStr);
 		PInvokeAssert.True(default(String) == default(CString));
 		PInvokeAssert.True(default(CString) == default(String));
-		PInvokeAssert.True(default(CString) == zero);
-		PInvokeAssert.True(zero == default(CString));
+		PInvokeAssert.False(default(CString) == zero); // Zero is not null.
+		PInvokeAssert.False(zero == default(CString)); // Zero is not null.
 		PInvokeAssert.True(String.Empty == CString.Empty);
 		PInvokeAssert.True(CString.Empty == String.Empty);
 

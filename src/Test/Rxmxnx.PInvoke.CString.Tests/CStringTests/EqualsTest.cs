@@ -80,7 +80,7 @@ public sealed class EqualsTest
 		Assert.False(cstrA.Equals(default(String)));
 		Assert.False(cstrA!.Equals(default(String), StringComparison.OrdinalIgnoreCase));
 
-		Assert.Equal(results.Normal == 0, cstrA.Equals(strB));
+		Assert.Equal(results.Comparisons[StringComparison.Ordinal] == 0, cstrA.Equals(strB));
 		Assert.Equal(results.Comparisons[StringComparison.Ordinal] == 0, cstrA.Equals(strB, StringComparison.Ordinal));
 		Assert.Equal(results.Comparisons[StringComparison.CurrentCulture] == 0,
 		             cstrA.Equals(strB, StringComparison.CurrentCulture));
@@ -105,7 +105,7 @@ public sealed class EqualsTest
 		Assert.False(cstrA.Equals(default(CString)));
 		Assert.False(cstrA!.Equals(default(CString), StringComparison.OrdinalIgnoreCase));
 
-		Assert.Equal(results.Normal == 0, cstrA.Equals(cstrB));
+		Assert.Equal(results.Comparisons[StringComparison.Ordinal] == 0, cstrA.Equals(cstrB));
 		Assert.Equal(results.Comparisons[StringComparison.Ordinal] == 0, cstrA.Equals(cstrB, StringComparison.Ordinal));
 		Assert.Equal(results.Comparisons[StringComparison.CurrentCulture] == 0,
 		             cstrA.Equals(cstrB, StringComparison.CurrentCulture));
@@ -128,7 +128,7 @@ public sealed class EqualsTest
 	private static void OperatorTest(ComparisonTestResult results, CString cstrA, String strA, CString cstrB,
 		String strB)
 	{
-		Boolean equals = results.Normal == 0;
+		Boolean equals = results.Comparisons[StringComparison.Ordinal] == 0;
 		Boolean lower = results.Normal < 0;
 		Boolean upper = results.Normal > 0;
 

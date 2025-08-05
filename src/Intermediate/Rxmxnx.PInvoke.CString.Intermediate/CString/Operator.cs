@@ -35,8 +35,7 @@ public partial class CString
 	/// <see langword="true"/> if the value of <paramref name="left"/> is the same as the value
 	/// of <paramref name="right"/>; otherwise, <see langword="false"/>.
 	/// </returns>
-	public static Boolean operator ==(CString? left, CString? right)
-		=> left?.Equals(right) ?? (right is null || right.IsZero);
+	public static Boolean operator ==(CString? left, CString? right) => left?.Equals(right) ?? right is null;
 	/// <summary>
 	/// Determines whether two specified <see cref="CString"/> instances have different values.
 	/// </summary>
