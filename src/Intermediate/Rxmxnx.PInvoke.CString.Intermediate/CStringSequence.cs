@@ -78,7 +78,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		{
 			CString? cstr = CStringSequence.CreateTransitive(values[i]);
 			list[i] = cstr;
-			this._lengths[i] = cstr?.Length;
+			this._lengths[i] = cstr is not null && !cstr.IsZero ? cstr.Length : null;
 		}
 		this._cache = CStringSequence.CreateCache(this._lengths.AsSpan(), out this._nonEmptyCount);
 		this._value = CStringSequence.CreateBuffer(list);

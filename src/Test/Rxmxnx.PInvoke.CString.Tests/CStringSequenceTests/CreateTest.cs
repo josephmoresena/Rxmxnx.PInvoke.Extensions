@@ -38,7 +38,8 @@ public sealed class CreateTest
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices(8);
-		CString[] values = TestSet.GetValues(indices, handle).Select(c => c ?? CString.Empty).ToArray();
+		CString[] values = TestSet.GetValues(indices, handle).Select(c => !CString.IsNullOrEmpty(c) ? c : CString.Empty)
+		                          .ToArray();
 
 		if (useFirstEmpty) values[0] = CString.Empty;
 

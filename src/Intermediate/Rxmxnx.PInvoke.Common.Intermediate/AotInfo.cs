@@ -192,8 +192,24 @@ public static class AotInfo
 	private static class MonoInfo
 	{
 		/// <summary>
-		/// Indicates whether <see cref="AotInfo.EmptyUt8Text"/> is loaded in a read-only memory section.
+		/// Indicates whether internal UTF-8 empty text is loaded in a read-only memory section.
 		/// </summary>
-		public static readonly Boolean IsEmptyNonLiteral = MemoryInspector.MayBeNonLiteral(AotInfo.EmptyUt8Text());
+		public static readonly Boolean IsEmptyNonLiteral;
+
+		/// <summary>
+		/// Static constructor.
+		/// </summary>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3963)]
+#endif
+		static unsafe MonoInfo()
+		{
+#if !PACKAGE
+			fixed (Byte* ptr = &MemoryMarshal.GetReference(AotInfo.EmptyUt8Text()))
+#else
+			fixed (Byte* ptr = CString.Empty)
+#endif
+				MonoInfo.IsEmptyNonLiteral = MemoryInspector.MayBeNonLiteral<Byte>(new(ptr, 1));
+		}
 	}
 }
