@@ -3,6 +3,9 @@ namespace Rxmxnx.PInvoke.Internal;
 /// <summary>
 /// This class allows to retrieve information about memory directions.
 /// </summary>
+#if !PACKAGE
+[ExcludeFromCodeCoverage]
+#endif
 internal abstract partial class MemoryInspector
 {
 	/// <summary>
@@ -19,25 +22,24 @@ internal abstract partial class MemoryInspector
 	/// Static constructor.
 	/// </summary>
 #if !PACKAGE
-	[ExcludeFromCodeCoverage]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3963)]
 #endif
 	static MemoryInspector()
 	{
-		if (MemoryInspector.IsWindowsPlatform())
+		if (SystemInfo.IsWindows)
 			MemoryInspector.instance = new Windows();
-		else if (MemoryInspector.IsLinuxPlatform())
+		else if (SystemInfo.IsLinux)
 			MemoryInspector.instance = new Linux();
-		else if (MemoryInspector.IsMacPlatform())
+		else if (SystemInfo.IsMac)
 			MemoryInspector.instance = new Mac();
-		else if (MemoryInspector.IsFreeBsd())
+		else if (SystemInfo.IsFreeBsd)
 			MemoryInspector.instance = new FreeBsd();
-		else
+		else if (!SystemInfo.IsWebEngine)
 			try
 			{
-				if (MemoryInspector.IsSolaris())
+				if (SystemInfo.IsSolaris)
 					MemoryInspector.instance = new Solaris();
-				else if (MemoryInspector.IsNetBsd())
+				else if (SystemInfo.IsNetBsd)
 					MemoryInspector.instance = new NetBsd();
 			}
 			catch (Exception)
@@ -82,115 +84,4 @@ internal abstract partial class MemoryInspector
 		}
 		return true;
 	}
-
-	/// <summary>
-	/// Indicates whether the current execution is occurring on a Windows-compatible platform.
-	/// </summary>
-	/// <returns>
-	/// <see langword="true"/> if the current execution is occurring on a Windows-compatible platform; otherwise,
-	/// <see langword="false"/>.
-	/// </returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	private static Boolean IsWindowsPlatform()
-#if NET5_0_OR_GREATER
-		=> OperatingSystem.IsWindows();
-#else
-		=> RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-#endif
-	/// <summary>
-	/// Indicates whether the current execution is occurring on a Linux-compatible platform.
-	/// </summary>
-	/// <returns>
-	/// <see langword="true"/> if the current execution is occurring on a Linux-compatible platform; otherwise,
-	/// <see langword="false"/>.
-	/// </returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	private static Boolean IsLinuxPlatform()
-#if NET5_0_OR_GREATER
-		=> OperatingSystem.IsLinux() || OperatingSystem.IsAndroid();
-#else
-		=> RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ||
-			RuntimeInformation.IsOSPlatform(OSPlatform.Create("ANDROID"));
-#endif
-	/// <summary>
-	/// Indicates whether the current execution is occurring on a macOS-compatible platform.
-	/// </summary>
-	/// <returns>
-	/// <see langword="true"/> if the current execution is occurring on a macOS-compatible platform; otherwise,
-	/// <see langword="false"/>.
-	/// </returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	private static Boolean IsMacPlatform()
-#if NET5_0_OR_GREATER
-		=> OperatingSystem.IsMacOS() || OperatingSystem.IsIOS() || OperatingSystem.IsTvOS() ||
-			MemoryInspector.IsMacCatalyst();
-#else
-		=> RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ||
-			RuntimeInformation.IsOSPlatform(OSPlatform.Create("IOS")) ||
-			RuntimeInformation.IsOSPlatform(OSPlatform.Create("TVOS")) || MemoryInspector.IsMacCatalyst();
-#endif
-	/// <summary>
-	/// Indicates whether the current execution is occurring on Mac Catalyst platform.
-	/// </summary>
-	/// <returns>
-	/// <see langword="true"/> if the current execution is occurring on Mac Catalyst platform; otherwise,
-	/// <see langword="false"/>.
-	/// </returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	private static Boolean IsMacCatalyst()
-#if NET6_0_OR_GREATER
-		=> OperatingSystem.IsMacCatalyst();
-#else
-		=> RuntimeInformation.IsOSPlatform(OSPlatform.Create("MACCATALYST"));
-#endif
-	/// <summary>
-	/// Indicates whether the current execution is occurring on FreeBSD platform.
-	/// </summary>
-	/// <returns>
-	/// <see langword="true"/> if the current execution is occurring on FreeBSD platform; otherwise,
-	/// <see langword="false"/>.
-	/// </returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	private static Boolean IsFreeBsd()
-#if NET6_0_OR_GREATER
-		=> OperatingSystem.IsFreeBSD();
-#elif NETCOREAPP
-		=> RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD);
-#else
-		=> RuntimeInformation.IsOSPlatform(OSPlatform.Create("FREEBSD"));
-#endif
-	/// <summary>
-	/// Indicates whether the current execution is occurring on Solaris or Illumos platform.
-	/// </summary>
-	/// <returns>
-	/// <see langword="true"/> if the current execution is occurring on Solaris or Illumos platform; otherwise,
-	/// <see langword="false"/>.
-	/// </returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	private static Boolean IsSolaris()
-		=> RuntimeInformation.IsOSPlatform(OSPlatform.Create("SOLARIS")) ||
-			RuntimeInformation.IsOSPlatform(OSPlatform.Create("ILLUMOS"));
-	/// <summary>
-	/// Indicates whether the current execution is occurring on NetBSD platform.
-	/// </summary>
-	/// <returns>
-	/// <see langword="true"/> if the current execution is occurring on NetBSD platform; otherwise,
-	/// <see langword="false"/>.
-	/// </returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	private static Boolean IsNetBsd() => RuntimeInformation.IsOSPlatform(OSPlatform.Create("NETBSD"));
 }

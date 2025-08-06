@@ -4,7 +4,6 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 /// <see cref="MemoryMarshal"/> compatibility utilities for internal use.
 /// </summary>
 #if !PACKAGE
-[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3011)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 internal static unsafe
