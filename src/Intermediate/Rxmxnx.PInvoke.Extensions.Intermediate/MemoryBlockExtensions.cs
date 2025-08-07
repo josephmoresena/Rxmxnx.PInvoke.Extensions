@@ -38,8 +38,12 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <see langword="true"/> if the current span represents a literal o hardcoded memory region;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static Boolean IsLiteral<T>(this ReadOnlySpan<T> span) => MemoryInspector.Instance.IsLiteral(span);
+	public static Boolean IsLiteral<T>(this ReadOnlySpan<T> span)
+	{
+		ref T refT = ref MemoryMarshal.GetReference(span);
+		ReadOnlySpan<Byte> byteSpan = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, Byte>(ref refT), 1);
+		return MemoryInspector.Instance.IsLiteral(byteSpan);
+	}
 
 	/// <summary>
 	/// Indicates whether the current span represents memory that is not part of a hardcoded literal.
@@ -56,7 +60,12 @@ public static unsafe partial class MemoryBlockExtensions
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	public static Boolean MayBeNonLiteral<T>(this ReadOnlySpan<T> span) => MemoryInspector.MayBeNonLiteral(span);
+	public static Boolean MayBeNonLiteral<T>(this ReadOnlySpan<T> span)
+	{
+		ref T refT = ref MemoryMarshal.GetReference(span);
+		ReadOnlySpan<Byte> byteSpan = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, Byte>(ref refT), 1);
+		return MemoryInspector.MayBeNonLiteral(byteSpan);
+	}
 
 	/// <summary>
 	/// Retrieves an unsafe <see cref="ValPtr{T}"/> pointer from <see cref="Span{T}"/> instance.

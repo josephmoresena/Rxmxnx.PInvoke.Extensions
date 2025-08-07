@@ -49,13 +49,26 @@ internal abstract partial class MemoryInspector
 	/// <see langword="true"/> if the given span represents a literal o hardcoded memory region;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
-	public abstract Boolean IsLiteral<T>(ReadOnlySpan<T> span);
+	public Boolean IsLiteral<T>(ReadOnlySpan<T> span)
+	{
+		ref T refT = ref MemoryMarshal.GetReference(span);
+		ReadOnlySpan<Byte> byteSpan = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, Byte>(ref refT), 1);
+		return this.IsLiteral(byteSpan);
+	}
+	/// <summary>
+	/// Indicates whether given span represents a literal or hardcoded memory region.
+	/// </summary>
+	/// <param name="span">A read-only span of bytes.</param>
+	/// <returns>
+	/// <see langword="true"/> if the given span represents a literal o hardcoded memory region;
+	/// otherwise, <see langword="false"/>.
+	/// </returns>
+	public abstract Boolean IsLiteral(ReadOnlySpan<Byte> span);
 
 	/// <summary>
 	/// Indicates whether the given span represents memory that is not part of a hardcoded literal.
 	/// </summary>
-	/// <typeparam name="T">Type of items in <paramref name="span"/>.</typeparam>
-	/// <param name="span">A read-only span of <typeparamref name="T"/> items.</param>
+	/// <param name="span">A read-only span of bytes.</param>
 	/// <returns>
 	/// <see langword="true"/> if the given span represents memory that is not part of a hardcoded literal;
 	/// otherwise, <see langword="false"/>.
@@ -63,7 +76,7 @@ internal abstract partial class MemoryInspector
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	public static Boolean MayBeNonLiteral<T>(ReadOnlySpan<T> span)
+	public static Boolean MayBeNonLiteral(ReadOnlySpan<Byte> span)
 	{
 		try
 		{

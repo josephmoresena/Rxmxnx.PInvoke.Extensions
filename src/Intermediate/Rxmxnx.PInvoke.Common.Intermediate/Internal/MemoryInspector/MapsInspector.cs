@@ -66,11 +66,9 @@ internal partial class MemoryInspector
 		}
 
 		/// <inheritdoc/>
-		public sealed override Boolean IsLiteral<T>(ReadOnlySpan<T> span)
+		public sealed override Boolean IsLiteral(ReadOnlySpan<Byte> span)
 		{
-#pragma warning disable CS8500
 			fixed (void* ptr = &MemoryMarshal.GetReference(span))
-#pragma warning restore CS8500
 			{
 				lock (this._lock)
 				{

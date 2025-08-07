@@ -12,11 +12,9 @@ internal partial class MemoryInspector
 	private sealed unsafe partial class Mac : MemoryInspector
 	{
 		/// <inheritdoc/>
-		public override Boolean IsLiteral<T>(ReadOnlySpan<T> span)
+		public override Boolean IsLiteral(ReadOnlySpan<Byte> span)
 		{
-#pragma warning disable CS8500
 			fixed (void* ptr = &MemoryMarshal.GetReference(span))
-#pragma warning restore CS8500
 			{
 				UInt32 taskHandle = SystemB.GetTaskHandle();
 				UInt32 count = MemoryInfo.Count;
