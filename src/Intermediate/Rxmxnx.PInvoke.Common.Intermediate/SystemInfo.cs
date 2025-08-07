@@ -5,6 +5,7 @@
 /// </summary>
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1121)]
 #endif
 public static partial class SystemInfo
 {
@@ -75,23 +76,38 @@ public static partial class SystemInfo
 	/// </summary>
 	public static Boolean IsSolaris
 		=> !SystemInfo.NotTrimmable && (SystemInfo.isSolaris ??=
-			SystemInfo.IsOsPlatform([SystemInfo.solarisPlatform, SystemInfo.illumosPlatform,]));
+			SystemInfo.IsOsPlatform(SystemInfo.solarisPlatform, SystemInfo.illumosPlatform));
 
 	/// <summary>
 	/// Indicates whether the current application is running on one of the specified platforms.
 	/// </summary>
 	/// <param name="platforms">Case-insensitive platform names.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Boolean IsOsPlatform(
 #if !NET9_0_OR_GREATER
-		ReadOnlySpan<String> platforms
+		params String[] platforms
 #else
+		String[] platforms
+#endif
+	)
+		=> SystemInfo.IsOsPlatform(platforms.AsSpan());
+	/// <summary>
+	/// Indicates whether the current application is running on one of the specified platforms.
+	/// </summary>
+	/// <param name="platforms">Case-insensitive platform names.</param>
+	public static Boolean IsOsPlatform(
+#if NET9_0_OR_GREATER
 		params ReadOnlySpan<String> platforms
+#else
+		ReadOnlySpan<String> platforms
 #endif
 	)
 	{
 		foreach (String platform in platforms)
+		{
 			if (SystemInfo.IsOsPlatform(platform))
 				return true;
+		}
 		return false;
 	}
 	/// <summary>
@@ -102,6 +118,8 @@ public static partial class SystemInfo
 #if !NET5_0_OR_GREATER
 		=> RuntimeInformation.IsOSPlatform(OSPlatform.Create(platform));
 #else
+#pragma warning disable CA1418
 		=> OperatingSystem.IsOSPlatform(platform);
+#pragma warning restore CA1418
 #endif
 }

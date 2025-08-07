@@ -205,7 +205,8 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 		where TState : allows ref struct
 #endif
 	;
-	/// <inheritdoc cref="BufferTypeMetadata{T}.Execute{TU, TState, TResult}(TState, ScopedBufferFunc{TU, TState, TResult}, Int32)"/>
+	/// <inheritdoc
+	///     cref="BufferTypeMetadata{T}.Execute{TU, TState, TResult}(TState, ScopedBufferFunc{TU, TState, TResult}, Int32)"/>
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	internal abstract TResult Execute<TU, TState, TResult>(TState state, VbScopedBufferFunc<TU, TState, TResult> func,
 		Int32 spanLength);

@@ -116,7 +116,7 @@ public sealed unsafe class Utf8ViewTest
 				                           ref MemoryMarshal.GetReference(enumerator.Current)));
 #else
 				PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AddByteOffset(ref ref0, (IntPtr)offsets[index]),
-				                           ref MemoryMarshal.GetReference(enumerator.Current)));
+				                                  ref MemoryMarshal.GetReference(enumerator.Current)));
 #endif
 				index++;
 			}

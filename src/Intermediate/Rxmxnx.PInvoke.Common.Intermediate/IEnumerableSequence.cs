@@ -44,7 +44,7 @@ public interface IEnumerableSequence
 	protected static IEnumerator<T> CreateEnumerator<T>(IEnumerableSequence<T> instance,
 		Action<IEnumerableSequence<T>>? disposeEnumeration = default)
 #if NET9_0_OR_GREATER
-	where T : allows ref struct
+		where T : allows ref struct
 #endif
 		=> new SequenceEnumerator<T>(instance, disposeEnumeration);
 }

@@ -42,7 +42,8 @@ public static partial class BufferManager
 			=> typeof(T).IsValueType ?
 				VisualBasic.AllocValue(count, func, isMinimumCount) :
 				VisualBasic.AllocObject(count, func, isMinimumCount);
-		/// <inheritdoc cref="BufferManager.Alloc{T, TState, TResult}(UInt16, TState, ScopedBufferFunc{T, TState, TResult}, Boolean)"/>
+		/// <inheritdoc
+		///     cref="BufferManager.Alloc{T, TState, TResult}(UInt16, TState, ScopedBufferFunc{T, TState, TResult}, Boolean)"/>
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
 #endif

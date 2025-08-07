@@ -1,7 +1,3 @@
-#if !NETCOREAPP
-using Fact = NUnit.Framework.TestAttribute;
-#endif
-
 #if NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Tests.Internal;
 

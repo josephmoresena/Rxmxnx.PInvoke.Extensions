@@ -43,40 +43,47 @@ internal sealed class DisallowNullAttribute : Attribute;
 	AttributeTargets.ReturnValue)]
 internal sealed class MaybeNullAttribute : Attribute;
 
-/// <summary>Specifies that an output will not be null even if the corresponding type allows it. Specifies that an input argument was not null when the call returns.</summary>
+/// <summary>
+/// Specifies that an output will not be null even if the corresponding type allows it. Specifies that an input
+/// argument was not null when the call returns.
+/// </summary>
 [ExcludeFromCodeCoverage]
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.Property |
 	AttributeTargets.ReturnValue)]
 internal sealed class NotNullAttribute : Attribute;
 
-/// <summary>Specifies that when a method returns <see cref="ReturnValue"/>, the parameter may be null even if the corresponding type disallows it.</summary>
+/// <summary>
+/// Specifies that when a method returns <see cref="ReturnValue"/>, the parameter may be null even if the
+/// corresponding type disallows it.
+/// </summary>
 [ExcludeFromCodeCoverage]
 [AttributeUsage(AttributeTargets.Parameter)]
 internal sealed class MaybeNullWhenAttribute : Attribute
 {
+	/// <summary>Gets the return value condition.</summary>
+	public Boolean ReturnValue { get; }
 	/// <summary>Initializes the attribute with the specified return value condition.</summary>
 	/// <param name="returnValue">
 	/// The return value condition. If the method returns this value, the associated parameter may be null.
 	/// </param>
 	public MaybeNullWhenAttribute(Boolean returnValue) => this.ReturnValue = returnValue;
-
-	/// <summary>Gets the return value condition.</summary>
-	public Boolean ReturnValue { get; }
 }
 
-/// <summary>Specifies that when a method returns <see cref="ReturnValue"/>, the parameter will not be null even if the corresponding type allows it.</summary>
+/// <summary>
+/// Specifies that when a method returns <see cref="ReturnValue"/>, the parameter will not be null even if the
+/// corresponding type allows it.
+/// </summary>
 [ExcludeFromCodeCoverage]
 [AttributeUsage(AttributeTargets.Parameter)]
 internal sealed class NotNullWhenAttribute : Attribute
 {
+	/// <summary>Gets the return value condition.</summary>
+	public Boolean ReturnValue { get; }
 	/// <summary>Initializes the attribute with the specified return value condition.</summary>
 	/// <param name="returnValue">
 	/// The return value condition. If the method returns this value, the associated parameter will not be null.
 	/// </param>
 	public NotNullWhenAttribute(Boolean returnValue) => this.ReturnValue = returnValue;
-
-	/// <summary>Gets the return value condition.</summary>
-	public Boolean ReturnValue { get; }
 }
 
 /// <summary>Specifies that the output will be non-null if the named parameter is non-null.</summary>
@@ -85,14 +92,13 @@ internal sealed class NotNullWhenAttribute : Attribute
                 AllowMultiple = true, Inherited = false)]
 internal sealed class NotNullIfNotNullAttribute : Attribute
 {
+	/// <summary>Gets the associated parameter name.</summary>
+	public String ParameterName { get; }
 	/// <summary>Initializes the attribute with the associated parameter name.</summary>
 	/// <param name="parameterName">
 	/// The associated parameter name.  The output will be non-null if the argument to the parameter specified is non-null.
 	/// </param>
 	public NotNullIfNotNullAttribute(String parameterName) => this.ParameterName = parameterName;
-
-	/// <summary>Gets the associated parameter name.</summary>
-	public String ParameterName { get; }
 }
 
 /// <summary>Applied to a method that will never return under any circumstance.</summary>
@@ -105,14 +111,13 @@ internal sealed class DoesNotReturnAttribute : Attribute;
 [AttributeUsage(AttributeTargets.Parameter)]
 internal sealed class DoesNotReturnIfAttribute : Attribute
 {
+	/// <summary>Gets the condition parameter value.</summary>
+	public Boolean ParameterValue { get; }
 	/// <summary>Initializes the attribute with the specified parameter value.</summary>
 	/// <param name="parameterValue">
 	/// The condition parameter value. Code after the method will be considered unreachable by diagnostics if the argument to
 	/// the associated parameter matches this value.
 	/// </param>
 	public DoesNotReturnIfAttribute(Boolean parameterValue) => this.ParameterValue = parameterValue;
-
-	/// <summary>Gets the condition parameter value.</summary>
-	public Boolean ParameterValue { get; }
 }
 #endif

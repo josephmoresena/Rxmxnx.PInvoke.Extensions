@@ -12,7 +12,7 @@ public delegate void CStringSequenceCreationAction<in TArg>(Span<Byte> span, Int
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-	;
+;
 
 /// <summary>
 /// Encapsulates a method that operates on a <see cref="FixedCStringSequence"/> instance.
@@ -31,7 +31,7 @@ public delegate void CStringSequenceAction<in TArg>(FixedCStringSequence seq, TA
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-	;
+;
 
 /// <summary>
 /// Encapsulates a method that operates on a <see cref="FixedCStringSequence"/> instance and returns a value of
@@ -56,4 +56,4 @@ public delegate TResult CStringSequenceFunc<in TArg, out TResult>(FixedCStringSe
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-	;
+;

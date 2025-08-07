@@ -32,7 +32,6 @@ public
 		TBuffer, T> : IManagedBinaryBuffer<T> where TBuffer : struct, IManagedBinaryBuffer<TBuffer, T>
 {
 #if NET7_0_OR_GREATER
-	BufferTypeMetadata<T> IManagedBinaryBuffer<T>.Metadata
-		=> IManagedBuffer<T>.GetMetadata<TBuffer>();
+	BufferTypeMetadata<T> IManagedBinaryBuffer<T>.Metadata => IManagedBuffer<T>.GetMetadata<TBuffer>();
 #endif
 }

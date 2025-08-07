@@ -30,13 +30,13 @@ public static partial class SystemInfo
 			SystemInfo.isLinux = true;
 			return;
 		}
-		if (SystemInfo.IsOsPlatform([SystemInfo.browserPlatform, SystemInfo.wPlatform,]))
+		if (SystemInfo.IsOsPlatform(SystemInfo.browserPlatform, SystemInfo.wPlatform))
 		{
 			SystemInfo.isWeb = true;
 			return;
 		}
 		if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ||
-		    SystemInfo.IsOsPlatform([SystemInfo.iPlatform, SystemInfo.tPlatform, SystemInfo.macCatalystPlatform,]))
+		    SystemInfo.IsOsPlatform(SystemInfo.iPlatform, SystemInfo.tPlatform, SystemInfo.macCatalystPlatform))
 		{
 			SystemInfo.isMac = true;
 		}

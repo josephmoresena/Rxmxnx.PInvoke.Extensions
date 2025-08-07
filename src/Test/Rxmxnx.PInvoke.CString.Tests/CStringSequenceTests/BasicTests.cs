@@ -133,7 +133,8 @@ public sealed class BasicTests
 #if NET8_0_OR_GREATER
 			Assert.True(Unsafe.AreSame(in clone[i].AsSpan()[0], in spanValue[0]));
 #else
-			PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in clone[i].AsSpan()[0]), ref Unsafe.AsRef(in spanValue[0])));
+			PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in clone[i].AsSpan()[0]),
+			                                  ref Unsafe.AsRef(in spanValue[0])));
 #endif
 		}
 	}

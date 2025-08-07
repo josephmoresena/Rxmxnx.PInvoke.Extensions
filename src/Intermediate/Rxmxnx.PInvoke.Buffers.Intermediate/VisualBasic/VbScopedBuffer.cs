@@ -14,13 +14,13 @@ public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 	/// </summary>
 	private readonly T[]? _array;
 	/// <summary>
-	/// Unmanaged pointer.
-	/// </summary>
-	private readonly ValPtr<T> _pointer;
-	/// <summary>
 	/// Indicates whether the current instance is still valid.
 	/// </summary>
 	private readonly IMutableWrapper<Boolean>? _isValid = IMutableWrapper.Create(true);
+	/// <summary>
+	/// Unmanaged pointer.
+	/// </summary>
+	private readonly ValPtr<T> _pointer;
 
 	/// <inheritdoc cref="Span{T}.this"/>
 	[IndexerName("Item")]
@@ -80,6 +80,9 @@ public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 		this._pointer = default;
 	}
 
+	T IEnumerableSequence<T>.GetItem(Int32 index) => this[index];
+	Int32 IEnumerableSequence<T>.GetSize() => this.Length;
+
 	/// <summary>
 	/// Creates a <see cref="ScopedBuffer{T}"/> from current instance.
 	/// </summary>
@@ -112,7 +115,4 @@ public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 		if (this._isValid is not null)
 			this._isValid.Value = false;
 	}
-
-	T IEnumerableSequence<T>.GetItem(Int32 index) => this[index];
-	Int32 IEnumerableSequence<T>.GetSize() => this.Length;
 }

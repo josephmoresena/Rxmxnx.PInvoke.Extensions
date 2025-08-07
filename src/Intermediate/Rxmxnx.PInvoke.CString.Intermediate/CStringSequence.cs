@@ -33,9 +33,11 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// <param name="values">The collection of strings.</param>
 	public CStringSequence(
 #if !NET9_0_OR_GREATER
-		params
+		params String?[] values
+#else
+		String?[] values
 #endif
-			String?[] values) : this(values.AsSpan()) { }
+	) : this(values.AsSpan()) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from a
 	/// collection of UTF-8 strings.
@@ -43,9 +45,11 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// <param name="values">The collection of <see cref="CString"/> instances.</param>
 	public CStringSequence(
 #if !NET9_0_OR_GREATER
-		params
+		params CString?[] values
+#else
+		CString?[] values
 #endif
-			CString?[] values) : this(values.AsSpan()) { }
+	) : this(values.AsSpan()) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class from a
 	/// read-only span of UTF-8 strings.
@@ -53,9 +57,11 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// <param name="values">The collection of <see cref="CString"/> instances.</param>
 	public CStringSequence(
 #if NET9_0_OR_GREATER
-		params
+		params ReadOnlySpan<CString?> values
+#else
+		ReadOnlySpan<CString?> values
 #endif
-		ReadOnlySpan<CString?> values)
+	)
 	{
 		this._lengths = CStringSequence.GetLengthArray(values);
 		this._value = CStringSequence.CreateBuffer(values);
@@ -68,9 +74,11 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// <param name="values">The collection of strings.</param>
 	public CStringSequence(
 #if NET9_0_OR_GREATER
-		params
+		params ReadOnlySpan<String?> values
+#else
+		ReadOnlySpan<String?> values
 #endif
-		ReadOnlySpan<String?> values)
+	)
 	{
 		CString?[] list = new CString?[values.Length];
 		this._lengths = new Int32?[values.Length];

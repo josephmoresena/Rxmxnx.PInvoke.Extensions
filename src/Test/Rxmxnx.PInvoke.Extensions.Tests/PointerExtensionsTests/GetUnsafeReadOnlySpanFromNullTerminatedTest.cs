@@ -30,7 +30,7 @@ public sealed unsafe class GetUnsafeReadOnlySpanFromNullTerminatedTest
 #if NET8_0_OR_GREATER
 				                   in charPtr.Reference));
 #else
-				            ref Unsafe.AsRef(in charPtr.Reference)));
+				                   ref Unsafe.AsRef(in charPtr.Reference)));
 #endif
 			PInvokeAssert.True(Unsafe.AreSame(
 				                   ref MemoryMarshal.GetReference(GetUnsafeReadOnlySpanFromNullTerminatedTest.CharSpan),
@@ -52,7 +52,7 @@ public sealed unsafe class GetUnsafeReadOnlySpanFromNullTerminatedTest
 #if NET8_0_OR_GREATER
 				                   in bytePtr.Reference));
 #else
-				            ref Unsafe.AsRef(in bytePtr.Reference)));
+				                   ref Unsafe.AsRef(in bytePtr.Reference)));
 #endif
 			PInvokeAssert.True(Unsafe.AreSame(
 				                   ref MemoryMarshal.GetReference(GetUnsafeReadOnlySpanFromNullTerminatedTest.ByteSpan),

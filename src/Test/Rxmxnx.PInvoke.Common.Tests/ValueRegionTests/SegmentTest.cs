@@ -163,8 +163,9 @@ public sealed class SegmentTest : ValueRegionTestBase
 				            Unsafe.AreSame(in span[j], ref state.Values.AsSpan()[arrayOffset..][0]));
 #else
 			PInvokeAssert.True(!state.IsReference ?
-				            Unsafe.AreSame(ref Unsafe.AsRef(in span[j]), ref state.Values[arrayOffset]) :
-				            Unsafe.AreSame(ref Unsafe.AsRef(in span[j]), ref state.Values.AsSpan()[arrayOffset..][0]));
+				                   Unsafe.AreSame(ref Unsafe.AsRef(in span[j]), ref state.Values[arrayOffset]) :
+				                   Unsafe.AreSame(ref Unsafe.AsRef(in span[j]),
+				                                  ref state.Values.AsSpan()[arrayOffset..][0]));
 #endif
 		}
 

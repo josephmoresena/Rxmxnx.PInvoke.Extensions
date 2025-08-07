@@ -19,7 +19,7 @@ public delegate void ScopedBufferAction<T, in TArg>(ScopedBuffer<T> buffer, TArg
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-	;
+;
 
 /// <summary>
 /// Encapsulates a function that receives a buffer of objects of type <typeparamref name="T"/> and
@@ -45,4 +45,4 @@ public delegate TResult ScopedBufferFunc<T, in TArg, out TResult>(ScopedBuffer<T
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-	;
+;

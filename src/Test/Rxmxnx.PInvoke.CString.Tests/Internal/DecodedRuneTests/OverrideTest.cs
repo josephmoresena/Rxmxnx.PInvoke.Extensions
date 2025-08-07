@@ -1,5 +1,4 @@
 ﻿#if !NETCOREAPP
-using Rune = System.UInt32;
 using Fact = NUnit.Framework.TestAttribute;
 #endif
 
@@ -29,15 +28,14 @@ public sealed class OverrideTest
 
 	private static String? CreateString(Int32? value)
 	{
-		if (!value.HasValue)
-			return default;
 #if NETCOREAPP
+		if (!value.HasValue) return default;
 		Span<Rune> result = stackalloc Rune[1];
 		Span<Int32> values = MemoryMarshal.Cast<Rune, Int32>(result);
 		values[0] = value.Value;
 		return result[0].ToString();
 #else
-		return Char.ConvertFromUtf32(value.Value);
+		return !value.HasValue ? default : Char.ConvertFromUtf32(value.Value);
 #endif
 	}
 }

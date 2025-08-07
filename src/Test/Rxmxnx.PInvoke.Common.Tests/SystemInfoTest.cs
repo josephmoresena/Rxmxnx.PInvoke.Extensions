@@ -32,5 +32,7 @@ public sealed class SystemInfoTest
 			return result;
 		}).ToArray();
 		PInvokeAssert.Equal(platforms.Any(RuntimeInformation.IsOSPlatform), SystemInfo.IsOsPlatform(platformNames));
+		PInvokeAssert.Equal(platforms.Any(RuntimeInformation.IsOSPlatform),
+		                    SystemInfo.IsOsPlatform(platformNames.AsSpan()));
 	}
 }

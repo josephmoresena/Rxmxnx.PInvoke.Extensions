@@ -24,9 +24,11 @@ public partial class CString
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
 	public static CString Join(Char separator,
 #if !NET9_0_OR_GREATER
-		params
+		params String?[] value
+#else
+		String?[] value
 #endif
-			String?[] value)
+	)
 		=> CString.Join(separator, value.AsSpan());
 	/// <summary>
 	/// Concatenates all the elements of a read-only span UTF-16 text, using the specified separator
@@ -45,9 +47,11 @@ public partial class CString
 	/// </returns>
 	public static CString Join(Char separator,
 #if NET9_0_OR_GREATER
-		params
+		params ReadOnlySpan<String?> value
+#else
+		ReadOnlySpan<String?> value
 #endif
-		ReadOnlySpan<String?> value)
+	)
 		=> CString.Join(CString.CreateSeparator(separator), value);
 	/// <summary>
 	/// Concatenates all the elements of a UTF-16 text enumeration, using the specified separator
@@ -117,9 +121,11 @@ public partial class CString
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
 	public static CString Join(String? separator,
 #if !NET9_0_OR_GREATER
-		params
+		params String?[] value
+#else
+		String?[] value
 #endif
-			String?[] value)
+	)
 	{
 		ArgumentNullException.ThrowIfNull(value);
 		return CString.Join(separator, value.AsSpan());
@@ -141,9 +147,11 @@ public partial class CString
 	/// </returns>
 	public static CString Join(String? separator,
 #if NET9_0_OR_GREATER
-		params
+		params ReadOnlySpan<String?> value
+#else
+		ReadOnlySpan<String?> value
 #endif
-		ReadOnlySpan<String?> value)
+	)
 	{
 		using StringConcatenator helper = new(separator);
 		foreach (String? utf8Text in value)

@@ -61,9 +61,11 @@ internal readonly ref struct FixedMemoryListValue
 	/// <returns>A new <see cref="FixedMemoryListValue"/> instance.</returns>
 	public static FixedMemoryListValue Create<TMemory>(
 #if NET9_0_OR_GREATER
-		params
+		params ReadOnlySpan<TMemory> memories
+#else
+		ReadOnlySpan<TMemory> memories
 #endif
-		ReadOnlySpan<TMemory> memories) where TMemory : ReadOnlyFixedMemory
+	) where TMemory : ReadOnlyFixedMemory
 	{
 		ref TMemory refMem = ref MemoryMarshal.GetReference(memories);
 		ref ReadOnlyFixedMemory refRoMem = ref Unsafe.As<TMemory, ReadOnlyFixedMemory>(ref refMem);

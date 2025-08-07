@@ -80,7 +80,7 @@ public sealed unsafe class MarshallerTests
 				else
 				{
 					ref Byte refUtf8 = ref Unsafe.AsRef(in CString.Empty.GetPinnableReference());
-					ref Byte unsafeRefUtf8 = ref ((ValPtr<Byte>)ptr).Reference; 
+					ref Byte unsafeRefUtf8 = ref ((ValPtr<Byte>)ptr).Reference;
 #if NETCOREAPP
 					Assert.True(MemoryInspector.Instance.IsLiteral(MemoryMarshal.CreateReadOnlySpan(ref refUtf8, 1)));
 #endif

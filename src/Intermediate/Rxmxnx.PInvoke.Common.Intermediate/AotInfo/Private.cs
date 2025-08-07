@@ -7,6 +7,7 @@ namespace Rxmxnx.PInvoke;
 
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3011)]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3267)]
 #endif
 public static partial class AotInfo
 {

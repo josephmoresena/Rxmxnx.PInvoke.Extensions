@@ -130,7 +130,8 @@ public static partial class BufferManager
 				VisualBasic.StackAllocObject(metadata!, count, func) :
 				VisualBasic.AllocHeap(count, func);
 		}
-		/// <inheritdoc cref="BufferManager.AllocObject{T, TState, TResult}(UInt16, TState, ScopedBufferFunc{T, TState, TResult}, Boolean)"/>
+		/// <inheritdoc
+		///     cref="BufferManager.AllocObject{T, TState, TResult}(UInt16, TState, ScopedBufferFunc{T, TState, TResult}, Boolean)"/>
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
 #endif
@@ -214,7 +215,8 @@ public static partial class BufferManager
 			VbTransformationState<T, TResult> state = new(func);
 			return metadata!.Execute(state, VbTransformationState<T, TResult>.Execute, count);
 		}
-		/// <inheritdoc cref="BufferManager.AllocValue{T, TState, TResult}(UInt16, TState, ScopedBufferFunc{T, TState, TResult}, Boolean)"/>
+		/// <inheritdoc
+		///     cref="BufferManager.AllocValue{T, TState, TResult}(UInt16, TState, ScopedBufferFunc{T, TState, TResult}, Boolean)"/>
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
 #endif
@@ -244,7 +246,8 @@ public static partial class BufferManager
 			VbTransformationState<T> stateT = new(action);
 			metadata.Execute(stateT, VbTransformationState<T>.Execute, count);
 		}
-		/// <inheritdoc cref="BufferManager.StackAllocObject{T, TResult}(BufferTypeMetadata{Object}, UInt16, ScopedBufferFunc{T, TResult})"/>
+		/// <inheritdoc
+		///     cref="BufferManager.StackAllocObject{T, TResult}(BufferTypeMetadata{Object}, UInt16, ScopedBufferFunc{T, TResult})"/>
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
 #endif

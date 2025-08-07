@@ -241,9 +241,11 @@ public partial class CString
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
 	public static CString Concat(
 #if !NET9_0_OR_GREATER
-		params
+		params CString?[] values
+#else
+		CString?[] values
 #endif
-			CString?[] values)
+	)
 	{
 		ArgumentNullException.ThrowIfNull(values);
 		return CString.Concat(values.AsSpan());
@@ -261,9 +263,11 @@ public partial class CString
 	/// </remarks>
 	public static CString Concat(
 #if NET9_0_OR_GREATER
-		params
+		params ReadOnlySpan<CString?> values
+#else
+		ReadOnlySpan<CString?> values
 #endif
-		ReadOnlySpan<CString?> values)
+	)
 	{
 		using CStringConcatenator helper = new();
 		foreach (CString? value in values)
@@ -287,9 +291,11 @@ public partial class CString
 #endif
 	public static CString Concat(
 #if !NET9_0_OR_GREATER
-		params
+		params Byte[]?[] values
+#else
+		Byte[]?[] values
 #endif
-			Byte[]?[] values)
+	)
 	{
 		ArgumentNullException.ThrowIfNull(values);
 		return CString.Concat(values.AsSpan());
@@ -307,9 +313,11 @@ public partial class CString
 	/// </remarks>
 	public static CString Concat(
 #if NET9_0_OR_GREATER
-		params
+		params ReadOnlySpan<Byte[]?> values
+#else
+		ReadOnlySpan<Byte[]?> values
 #endif
-		ReadOnlySpan<Byte[]?> values)
+	)
 	{
 		using BinaryConcatenator helper = new();
 		foreach (Byte[]? value in values)

@@ -76,8 +76,7 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(in T value, TArg arg, ReadOnlyFixedReferenceAction<T, TArg> action)
 #if NET9_0_OR_GREATER
-		where T : allows ref struct
-		where TArg : allows ref struct
+		where T : allows ref struct where TArg : allows ref struct
 #endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
@@ -106,8 +105,7 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(ref T value, TArg arg, FixedReferenceAction<T, TArg> action)
 #if NET9_0_OR_GREATER
-		where T : allows ref struct
-		where TArg : allows ref struct
+		where T : allows ref struct where TArg : allows ref struct
 #endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
@@ -197,8 +195,7 @@ public static unsafe partial class NativeUtilities
 	public static TResult WithSafeFixed<T, TArg, TResult>(in T value, TArg arg,
 		ReadOnlyFixedReferenceFunc<T, TArg, TResult> func)
 #if NET9_0_OR_GREATER
-		where T : allows ref struct
-		where TArg : allows ref struct
+		where T : allows ref struct where TArg : allows ref struct
 #endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
@@ -230,8 +227,7 @@ public static unsafe partial class NativeUtilities
 	public static TResult WithSafeFixed<T, TArg, TResult>(ref T value, TArg arg,
 		FixedReferenceFunc<T, TArg, TResult> func)
 #if NET9_0_OR_GREATER
-		where T : allows ref struct
-		where TArg : allows ref struct
+		where T : allows ref struct where TArg : allows ref struct
 #endif
 	{
 		ArgumentNullException.ThrowIfNull(func);

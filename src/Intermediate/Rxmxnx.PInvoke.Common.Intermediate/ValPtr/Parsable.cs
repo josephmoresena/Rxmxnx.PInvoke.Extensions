@@ -81,8 +81,7 @@ public readonly partial struct ValPtr<T>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	public static Boolean TryParse([NotNullWhen(true)] String? s, IFormatProvider? provider,
-		out ValPtr<T> result)
+	public static Boolean TryParse([NotNullWhen(true)] String? s, IFormatProvider? provider, out ValPtr<T> result)
 	{
 		Unsafe.SkipInit(out result);
 		return IntPtr.TryParse(s, provider, out Unsafe.As<ValPtr<T>, IntPtr>(ref result));

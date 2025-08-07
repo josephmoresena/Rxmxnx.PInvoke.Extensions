@@ -1,5 +1,4 @@
 #if NETCOREAPP
-
 namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
 
 [ExcludeFromCodeCoverage]

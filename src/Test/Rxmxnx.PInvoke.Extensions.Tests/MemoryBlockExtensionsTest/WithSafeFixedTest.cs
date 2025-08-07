@@ -143,9 +143,9 @@ public sealed class WithSafeFixedTest
 			Assert.True(Unsafe.AreSame(in bctx.ValuePointer.Reference, ref MemoryMarshal.GetReference(ctx.Bytes)));
 #else
 			PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in ctx.ValuePointer.Reference),
-			                           ref MemoryMarshal.GetReference(arr.AsSpan())));
+			                                  ref MemoryMarshal.GetReference(arr.AsSpan())));
 			PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in bctx.ValuePointer.Reference),
-			                           ref MemoryMarshal.GetReference(ctx.Bytes)));
+			                                  ref MemoryMarshal.GetReference(ctx.Bytes)));
 #endif
 		}
 

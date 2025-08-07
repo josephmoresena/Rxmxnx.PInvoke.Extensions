@@ -2,6 +2,7 @@
 
 public static partial class SystemInfo
 {
+#pragma warning disable CA1418
 #if !NET5_0_OR_GREATER
 	/// <inheritdoc cref="IsWindows"/>
 	private static readonly Boolean isWindows;
@@ -53,4 +54,5 @@ public static partial class SystemInfo
 #else
 			true;
 #endif
+#pragma warning restore CA1418
 }
