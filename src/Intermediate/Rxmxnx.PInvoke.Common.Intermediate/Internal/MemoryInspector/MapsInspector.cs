@@ -53,7 +53,17 @@ internal partial class MemoryInspector
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1144)]
 #endif
-		protected MapsInspector() => this.RefreshMaps();
+		protected MapsInspector()
+		{
+			try
+			{
+				this.RefreshMaps();
+			}
+			catch (Exception)
+			{
+				// Experimental features.
+			}
+		}
 
 		/// <inheritdoc/>
 		public sealed override Boolean IsLiteral<T>(ReadOnlySpan<T> span)

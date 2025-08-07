@@ -19,12 +19,14 @@ internal partial class MemoryInspector
 		/// <inheritdoc/>
 		protected override void ProcessMaps()
 		{
+			if (SystemInfo.IsLinux || SystemInfo.IsFreeBsd) return;
 			ReadOnlySpan<ProcessMap> maps = Solaris.GetMaps();
 			foreach (ProcessMap map in maps)
 			{
-				this.AddBoundary(new(map.Address, false), false);
+				Boolean isReadOnly = map.Flags is MapFlags.Read and not MapFlags.Write;
+				this.AddBoundary(new(map.Address, false), isReadOnly);
 #if NET7_0_OR_GREATER
-				this.AddBoundary(new(map.Address + map.Size, true), false);
+				this.AddBoundary(new(map.Address + map.Size, true), isReadOnly);
 #else
 				this.AddBoundary(new((UInt64)map.Address + (UInt64)map.Size, true), false);
 #endif

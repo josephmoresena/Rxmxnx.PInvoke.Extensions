@@ -34,18 +34,10 @@ internal abstract partial class MemoryInspector
 			MemoryInspector.instance = new Mac();
 		else if (SystemInfo.IsFreeBsd)
 			MemoryInspector.instance = new FreeBsd();
-		else if (!SystemInfo.IsWebEngine)
-			try
-			{
-				if (SystemInfo.IsSolaris)
-					MemoryInspector.instance = new Solaris();
-				else if (SystemInfo.IsNetBsd)
-					MemoryInspector.instance = new NetBsd();
-			}
-			catch (Exception)
-			{
-				// Experimental features.
-			}
+		else if (SystemInfo.IsSolaris)
+			MemoryInspector.instance = new Solaris();
+		else if (SystemInfo.IsNetBsd)
+			MemoryInspector.instance = new NetBsd();
 	}
 
 	/// <summary>

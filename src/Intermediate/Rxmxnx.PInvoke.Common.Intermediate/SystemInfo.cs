@@ -115,11 +115,12 @@ public static partial class SystemInfo
 	/// </summary>
 	/// <param name="platform">Platform name.</param>
 	public static Boolean IsOsPlatform(String platform)
+		=> !String.IsNullOrWhiteSpace(platform) &&
 #if !NET5_0_OR_GREATER
-		=> RuntimeInformation.IsOSPlatform(OSPlatform.Create(platform));
+			RuntimeInformation.IsOSPlatform(OSPlatform.Create(platform));
 #else
 #pragma warning disable CA1418
-		=> OperatingSystem.IsOSPlatform(platform);
+			OperatingSystem.IsOSPlatform(platform);
 #pragma warning restore CA1418
 #endif
 }

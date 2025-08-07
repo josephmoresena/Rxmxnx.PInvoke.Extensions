@@ -2,7 +2,6 @@
 
 public static partial class SystemInfo
 {
-#pragma warning disable CA1418
 #if !NET5_0_OR_GREATER
 	/// <inheritdoc cref="IsWindows"/>
 	private static readonly Boolean isWindows;
@@ -42,17 +41,12 @@ public static partial class SystemInfo
 			!OperatingSystem.IsTvOS() && !OperatingSystem.IsWatchOS() && !OperatingSystem.IsBrowser()
 #if NET6_0_OR_GREATER
 			&& !OperatingSystem.IsMacCatalyst()
-#else
-			&& OperatingSystem.IsOSPlatform(SystemInfo.macCatalystPlatform)
 #endif
 #if NET8_0_OR_GREATER
 			&& !OperatingSystem.IsWasi()
-#else
-			&& OperatingSystem.IsOSPlatform(SystemInfo.wPlatform)
 #endif
 	;
 #else
 			true;
 #endif
-#pragma warning restore CA1418
 }

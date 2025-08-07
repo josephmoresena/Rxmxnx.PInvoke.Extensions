@@ -11,6 +11,10 @@ internal partial class MemoryInspector
 	private sealed partial class NetBsd : BsdInspector
 	{
 		/// <inheritdoc/>
-		protected override void ProcessMaps() => Util.AppendMaps(this);
+		protected override void ProcessMaps()
+		{
+			if (SystemInfo.IsLinux || SystemInfo.IsFreeBsd) return;
+			Util.AppendMaps(this);
+		}
 	}
 }
