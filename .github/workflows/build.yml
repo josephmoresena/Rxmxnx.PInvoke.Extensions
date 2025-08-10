@@ -63,6 +63,14 @@ jobs:
         run: |
           New-Item -Path ./.sonar/scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner 
+      - name: Remove ApplicationTest
+        shell: bash
+        run: |
+          find src/ApplicationTest -name "*.*proj" -exec dotnet sln src remove {} \;
+          rm -rf src/ApplicationTest
+
+      - name: Clean test results
+        run: rm -rf TestResults/
       - name: Build and analyze Sonar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
@@ -87,7 +95,7 @@ jobs:
       - name: Pack assembly
         working-directory: ./package/Rxmxnx.PInvoke.Extensions
         run: |
-          dotnet pack -c Release /p:Version=9999.99.99.99-tmp /p:NoIntermediateBuild=true
+          dotnet pack -c Release /p:Version=9999.99.99.99-tmp /p:NoIntermediateBuild=true /p:UseEmbeddedDebugSymbols=false
           for package in bin/Release/Rxmxnx.PInvoke.Extensions*.*nupkg; do
             echo "-----------------------------------"
             TEMP_DIR=$(mktemp -d)
@@ -1057,6 +1065,89 @@ jobs:
         os: [ windows-2025, ubuntu-latest, macos-latest ]
     steps:
       - uses: actions/checkout@v4
+      - name: APT deb822 sources
+        if: runner.os == 'Linux'
+        run: |
+          if [[ $ImageOS == "ubuntu24" ]]; then
+           sudo bash -c 'cat > /etc/apt/sources.list.d/ubuntu.sources <<EOF
+          Types: deb
+          URIs: https://archive.ubuntu.com/ubuntu/
+          Suites: noble
+          Components: main restricted universe
+          Architectures: amd64
+          
+          Types: deb
+          URIs: https://security.ubuntu.com/ubuntu/
+          Suites: noble-security
+          Components: main restricted universe
+          Architectures: amd64
+          
+          Types: deb
+          URIs: https://archive.ubuntu.com/ubuntu/
+          Suites: noble-updates
+          Components: main restricted universe
+          Architectures: amd64
+          
+          Types: deb
+          URIs: https://azure.ports.ubuntu.com/ubuntu-ports/
+          Suites: noble
+          Components: main restricted multiverse universe
+          Architectures: arm64
+          
+          Types: deb
+          URIs: https://azure.ports.ubuntu.com/ubuntu-ports/
+          Suites: noble-updates
+          Components: main restricted multiverse universe
+          Architectures: arm64
+          
+          Types: deb
+          URIs: https://azure.ports.ubuntu.com/ubuntu-ports/
+          Suites: noble-updates
+          Components: main restricted multiverse universe
+          Architectures: armhf
+          EOF'
+          fi
+      - name: Setup NativeAOT pre-requisites
+        if: runner.os == 'Linux'
+        run: |
+          sudo dpkg --add-architecture arm64
+          sudo dpkg --add-architecture armhf
+          
+          sudo bash -c 'cat > /etc/apt/sources.list.d/arm64.list <<EOF
+          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ noble main restricted
+          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ noble-updates main restricted
+          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ noble-backports main restricted universe multiverse
+          EOF'
+          
+          sudo bash -c 'cat > /etc/apt/sources.list.d/armhf.list <<EOF
+          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ noble main restricted
+          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ noble-updates main restricted
+          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ noble-backports main restricted universe multiverse
+          EOF'
+          
+          sudo sed -i -e 's/deb http/deb [arch=amd64] http/g' /etc/apt/sources.list
+          sudo sed -i -e 's/deb mirror/deb [arch=amd64] mirror/g' /etc/apt/sources.list
+          
+          sudo apt install ca-certificates gnupg --assume-yes
+          sudo gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+          echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+          
+          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+          sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+          rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+          
+          sudo apt update 
+          sudo apt upgrade --assume-yes
+          sudo apt-get install clang llvm zlib1g-dev libkrb5-dev libssl-dev \
+            qemu-user qemu-user-static binfmt-support libicu74:arm64 libicu74:armhf \
+            binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu zlib1g-dev:arm64 libssl-dev:arm64 \
+            binutils-arm-linux-gnueabihf gcc-arm-linux-gnueabihf zlib1g-dev:armhf libssl-dev:armhf \
+            mono-complete mono-vbnc mono-dbg gdb libssl3 \
+            --assume-yes
+      - name: Setup Mono Development Kit
+        if: runner.os == 'MacOS'
+        run: |
+          brew install --cask mono-mdk
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         if: runner.os != 'Windows'
@@ -1076,9 +1167,11 @@ jobs:
       - name: Setup .NET x64
         if: runner.os == 'Windows'
         run: |
+          winget install Mono.Mono --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
           winget install Microsoft.DotNet.SDK.6 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
           winget install Microsoft.DotNet.SDK.7 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
           winget install Microsoft.DotNet.SDK.8 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
+          winget install Microsoft.DotNet.SDK.9 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
           winget install Microsoft.DotNet.SDK.9 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
       - name: Build tests
         run: |
@@ -1091,3 +1184,14 @@ jobs:
       - name: Run tests
         run: |
           dotnet test src /p:MultipleFrameworkTest=true /p:OnlySupportedFrameworkTest=true --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"
+      - name: Run Mono tests
+        shell: pwsh
+        run: |
+          mono src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.Common.Mono.TestResult.xml
+          mono src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.CString.Mono.TestResult.xml
+          mono src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.Extensions.Mono.TestResult.xml
+          mono src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.Buffers.Mono.TestResult.xml
+      - name: Pack assembly
+        working-directory: ./package/Rxmxnx.PInvoke.Extensions
+        run: |
+          dotnet pack -c Release /p:Version=9999.99.99.99-tmp /p:NoIntermediateBuild=true /p:UseEmbeddedDebugSymbols=true

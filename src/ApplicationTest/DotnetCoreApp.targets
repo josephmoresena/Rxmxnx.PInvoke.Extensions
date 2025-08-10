@@ -1,0 +1,70 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <PropertyGroup>
+        <TargetFramework Condition="'$(RequiredFramework)' == ''">net9.0</TargetFramework>
+        <TargetFramework Condition="'$(RequiredFramework)' != ''">$(RequiredFramework)</TargetFramework>
+        <TargetFrameworks Condition="'$(RuntimeIdentifier)' != 'linux-arm' And '$(RuntimeIdentifier)' != 'win-x86'">net9.0;net8.0</TargetFrameworks>
+        <TargetFrameworks Condition="'$(RuntimeIdentifier)' != 'osx-arm64' And '$(RuntimeIdentifier)' != 'osx-x64'">$(TargetFrameworks);net7.0</TargetFrameworks>
+        <AssemblyName Condition="'$(RuntimeIdentifier)' != ''">$(AssemblyName).$(RuntimeIdentifier)</AssemblyName>
+        <AssemblyName>$(AssemblyName).$(TargetFramework)</AssemblyName>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(PublishAot)' != 'true'">
+        <DebugSymbols>false</DebugSymbols>
+        <DebugType>None</DebugType>
+        <PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>true</SelfContained>
+        <!-- Assembly name must specify that it was compiled with ReadyToRun -->
+        <AssemblyName Condition="$(PublishReadyToRun) == 'true'">$(AssemblyName).R2R</AssemblyName>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(PublishAot)' == 'true'">
+        <DefineConstants>$(DefineConstants);NATIVE_AOT</DefineConstants>
+        <DefineConstants Condition="'$(IlcDisableReflection)' == 'true'">$(DefineConstants);REFLECTION_FREE</DefineConstants>
+        <IlcGenerateMetadataLog>true</IlcGenerateMetadataLog>
+        <IlcGenerateMstatFile>true</IlcGenerateMstatFile>
+        <IlcGenerateDgmlFile>true</IlcGenerateDgmlFile>
+        <RootAllApplicationAssemblies>false</RootAllApplicationAssemblies>
+        <TrimUnusedDependencies>true</TrimUnusedDependencies>
+        <IlcOptimizationPreference>Size</IlcOptimizationPreference>
+        <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
+        <IlcTrimMetadata>true</IlcTrimMetadata>
+        <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
+        <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
+        <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
+        <AssemblyName Condition="'$(IlcDisableReflection)' == 'true'">$(AssemblyName).NoReflection</AssemblyName>
+        <AssemblyName Condition="'$(DisableBufferAutoComposition)' == 'true'">$(AssemblyName).NoBufferComposition</AssemblyName>
+        <AssemblyName Condition="'$(InvariantGlobalization)' == 'true'">$(AssemblyName).Invariant</AssemblyName>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm' And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
+        <LinkerFlavor>lld</LinkerFlavor>
+        <ObjCopyName>/usr/arm-linux-gnueabihf/bin/objcopy</ObjCopyName>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <RuntimeHostConfigurationOption Condition="'$(DisableBufferAutoComposition)' == 'true'" Include="PInvoke.DisableBufferAutoComposition" Value="true" Trim="true"/>
+    </ItemGroup>
+
+    <Target Name="CopyTarget" AfterTargets="Publish">
+        <ItemGroup>
+            <Artifact Include="$(PublishDir)$(AssemblyName)*"/>
+            <Artifact Remove="$(PublishDir)$(AssemblyName)*.pdb"/>
+            <Artifact Remove="$(PublishDir)$(AssemblyName)*.dwarf"/>
+            <Artifact Remove="$(PublishDir)$(AssemblyName)*.dSYM"/>
+            <Artifact Remove="$(PublishDir)$(AssemblyName)*.dbg"/>
+            <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Include="$(NativeIntermediateOutputPath)$(AssemblyName)*"/>
+            <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Remove="$(NativeIntermediateOutputPath)$(AssemblyName).o"/>
+            <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Remove="$(NativeIntermediateOutputPath)$(AssemblyName).obj"/>
+            <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Remove="$(NativeIntermediateOutputPath)$(AssemblyName).exports"/>
+            <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Remove="$(NativeIntermediateOutputPath)$(AssemblyName).def"/>
+            <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Remove="$(NativeIntermediateOutputPath)$(AssemblyName).ilc.rsp"/>
+        </ItemGroup>
+
+        <Copy Condition="'$(CopyTargetTo)' != ''" SourceFiles="@(Artifact)" DestinationFolder="$(CopyTargetTo)" SkipUnchangedFiles="false"/>
+        <Copy Condition="'$(CopyTargetTo)' != '' And $(NativeIntermediateOutputPath) != ''" SourceFiles="@(NativeFiles)" DestinationFolder="$(CopyTargetTo)\native" SkipUnchangedFiles="false"/>
+
+        <!-- Remove NativeIntermediateOutput files -->
+        <Delete Condition="$(NativeIntermediateOutputPath) != ''" Files="$(NativeIntermediateOutputPath)$(AssemblyName)*"/>
+    </Target>
+
+</Project>

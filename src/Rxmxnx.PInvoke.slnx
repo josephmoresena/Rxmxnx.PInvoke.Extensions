@@ -1,4 +1,12 @@
 ﻿<Solution>
+    <Folder Name="/ApplicationTest/">
+        <Project Path="ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\Rxmxnx.PInvoke.ApplicationTest.csproj"
+                 Type="Classic C#"/>
+        <Project Path="ApplicationTest\Rxmxnx.PInvoke.LauncherTest\Rxmxnx.PInvoke.LauncherTest.csproj"
+                 Type="Classic C#"/>
+        <File Path="ApplicationTest\DotnetCoreApp.targets"/>
+        <File Path="ApplicationTest\MonoApp.targets"/>
+    </Folder>
     <Folder Name="/Global/">
         <File Path="..\.github\workflows\build.yml"/>
         <File Path="..\.github\workflows\release.yml"/>

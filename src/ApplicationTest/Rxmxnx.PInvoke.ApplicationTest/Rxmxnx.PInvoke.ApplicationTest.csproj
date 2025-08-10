@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <Import Condition="'$(MSBuildRuntimeType)' != 'Mono'" Project="..\DotnetCoreApp.targets"/>
+    <Import Condition="'$(MSBuildRuntimeType)' == 'Mono'" Project="..\MonoApp.targets"/>
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <LangVersion>9.0</LangVersion>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <PublishTrimmed>true</PublishTrimmed>
+        <TrimmerSingleWarn>false</TrimmerSingleWarn>
+        <IsTrimmable Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0'))">true</IsTrimmable>
+        <TrimMode>full</TrimMode>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' != 'net45'">
+        <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(UsePackage)' != 'true'">
+        <ProjectReference Include="..\..\Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate.csproj"/>
+        <ProjectReference Include="..\..\Intermediate\Rxmxnx.PInvoke.CString.Intermediate\Rxmxnx.PInvoke.CString.Intermediate.csproj"/>
+        <ProjectReference Include="..\..\Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate.csproj"/>
+    </ItemGroup>
+    <ItemGroup Condition="'$(UsePackage)' == 'true'">
+        <PackageReference Include="Rxmxnx.PInvoke.Extensions" Version="9999.99.99.99-tmp"/>
+    </ItemGroup>
+
+</Project>

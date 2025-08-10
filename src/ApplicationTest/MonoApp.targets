@@ -1,0 +1,22 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <PropertyGroup>
+        <TargetFramework Condition="'$(MSBuildRuntimeType)' == 'Mono'">net45</TargetFramework>
+        <MonoFrameworkPath Condition="$([MSBuild]::IsOSPlatform('Linux'))">/usr/lib/mono</MonoFrameworkPath>
+        <MonoFrameworkPath Condition="$([MSBuild]::IsOSPlatform('FreeBSD'))">/usr/local/lib/mono</MonoFrameworkPath>
+        <MonoFrameworkPath Condition="$([MSBuild]::IsOSPlatform('MACOS'))">/Library/Frameworks/Mono.framework/Versions/Current/lib/mono</MonoFrameworkPath>
+        <MonoFrameworkPath Condition="$([MSBuild]::IsOSPlatform('Windows'))">C:\Program Files\Mono\lib\mono</MonoFrameworkPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Reference Include="mscorlib">
+            <HintPath>$(MonoFrameworkPath)\4.5\mscorlib.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="netstandard">
+            <HintPath>$(MonoFrameworkPath)\4.5\Facades\netstandard.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+    </ItemGroup>
+
+</Project>

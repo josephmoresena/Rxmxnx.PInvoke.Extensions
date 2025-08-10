@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <OutputType>Exe</OutputType>
+        <TargetFrameworks>$(null)</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <PublishAot>true</PublishAot>
+        <InvariantGlobalization>true</InvariantGlobalization>
+        <PublishDir Condition="'$(PublishDir)' == ''">..\..\..\</PublishDir>
+        <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="System.Collections.Concurrent"/>
+        <Using Include="System.Collections.ObjectModel"/>
+        <Using Include="System.Diagnostics"/>
+        <Using Include="System.Diagnostics.CodeAnalysis"/>
+        <Using Include="System.IO.Compression"/>
+        <Using Include="System.Runtime.InteropServices"/>
+        <Using Include="System.Text"/>
+
+        <Using Include="Rxmxnx.PInvoke.ApplicationTest.Util"/>
+    </ItemGroup>
+
+</Project>
