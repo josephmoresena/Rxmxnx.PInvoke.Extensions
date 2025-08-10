@@ -10,6 +10,7 @@
         <InvariantGlobalization>true</InvariantGlobalization>
         <PublishDir Condition="'$(PublishDir)' == ''">..\..\..\</PublishDir>
         <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
+        <CheckEolTargetFramework>false</CheckEolTargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
