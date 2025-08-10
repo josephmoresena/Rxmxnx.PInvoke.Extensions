@@ -12,6 +12,7 @@
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
         <IsTrimmable Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0'))">true</IsTrimmable>
         <TrimMode>full</TrimMode>
+        <CheckEolTargetFramework>false</CheckEolTargetFramework>
     </PropertyGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' != 'net45'">
