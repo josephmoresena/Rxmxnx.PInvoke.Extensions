@@ -1175,7 +1175,7 @@ jobs:
           winget install Microsoft.DotNet.SDK.9 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
       - name: Build tests
         run: |
-          dotnet restore src 
+          dotnet restore src --ignore-failed-sources
           dotnet build src /p:MultipleFrameworkTest=true /p:OnlySupportedFrameworkTest=true --configuration Release
       - name: Windows x86 tests
         if: runner.os == 'Windows'
