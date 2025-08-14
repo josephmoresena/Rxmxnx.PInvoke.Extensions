@@ -15,6 +15,7 @@
         <CheckEolTargetFramework>false</CheckEolTargetFramework>
         <AssemblyName Condition="'$(DisableBufferAutoComposition)' == 'True'">$(AssemblyName).NoBufferComposition</AssemblyName>
         <AssemblyName Condition="'$(InvariantGlobalization)' == 'True'">$(AssemblyName).Invariant</AssemblyName>
+        <NoWarn>$(NoWarn);NU1801</NoWarn>
     </PropertyGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' != 'net45'">

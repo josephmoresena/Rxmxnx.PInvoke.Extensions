@@ -32,16 +32,21 @@ public static partial class TestCompiler
 			}
 		}
 	}
-	public static async Task CompileMono(DirectoryInfo projectDirectory, String msbuildPath,
-		String outputDirectoryFullName)
+	public static async Task CompileMono(DirectoryInfo projectDirectory, String msbuildPath, String outputPath)
 	{
-		ExecuteState<CompileMonoArgs> state = new()
+		String[] appProjectFiles = projectDirectory.GetDirectories("*.*ApplicationTest", SearchOption.AllDirectories)
+		                                           .SelectMany(d => d.GetFiles("*.*proj")).Select(f => f.FullName)
+		                                           .ToArray();
+		foreach (String appProjectFile in appProjectFiles)
 		{
-			ExecutablePath = msbuildPath,
-			ArgState = new() { ProjectFile = projectDirectory.FullName, OutputPath = outputDirectoryFullName, },
-			AppendArgs = CompileMonoArgs.Append,
-			Notifier = ConsoleNotifier.Notifier,
-		};
-		await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
+			ExecuteState<CompileMonoArgs> state = new()
+			{
+				ExecutablePath = msbuildPath,
+				ArgState = new() { ProjectFile = appProjectFile, OutputPath = outputPath, },
+				AppendArgs = CompileMonoArgs.Append,
+				Notifier = ConsoleNotifier.Notifier,
+			};
+			await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
+		}
 	}
 }

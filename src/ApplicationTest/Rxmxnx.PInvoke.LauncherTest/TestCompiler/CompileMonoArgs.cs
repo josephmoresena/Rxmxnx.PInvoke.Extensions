@@ -10,8 +10,7 @@ public readonly struct CompileMonoArgs
 	{
 		args.Add("-restore");
 		args.Add(compileArgs.ProjectFile);
-		args.Add("/p:Release");
-		args.Add(" /p:Configuration=Release");
+		args.Add("/p:Configuration=Release");
 		if (!String.IsNullOrWhiteSpace(compileArgs.FrameworkPath))
 			args.Add($"/p:MonoFrameworkPath={compileArgs.FrameworkPath}");
 		args.Add($"/p:OutDir=\"{compileArgs.OutputPath}\"");
