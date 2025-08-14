@@ -39,6 +39,22 @@ public static class Utilities
 		state.Notifier?.End(info);
 		return prog.ExitCode;
 	}
+	public static async Task<String> ExecuteWithOutput<TState>(ExecuteState<TState> state,
+		CancellationToken cancellationToken = default)
+	{
+		ProcessStartInfo info = new(state.ExecutablePath)
+		{
+			RedirectStandardError = true, RedirectStandardOutput = true, CreateNoWindow = true,
+		};
+		state.AppendArgs(state.ArgState, info.ArgumentList);
+		if (!String.IsNullOrEmpty(state.WorkingDirectory)) info.WorkingDirectory = state.WorkingDirectory;
+		state.Notifier?.Begin(info);
+		using Process prog = Process.Start(info)!;
+		String result = await Utilities.ReadOutput(prog, cancellationToken);
+		await prog.WaitForExitAsync(cancellationToken);
+		state.Notifier?.End(info);
+		return result;
+	}
 	public static async Task<Int32> QemuExecute(QemuExecuteState state, CancellationToken cancellationToken = default)
 	{
 		ProcessStartInfo info = new(state.QemuExecutable)
@@ -55,5 +71,28 @@ public static class Utilities
 		await prog.WaitForExitAsync(cancellationToken);
 		state.Notifier?.End(info);
 		return prog.ExitCode;
+	}
+
+	private static async Task<String> ReadOutput(Process prog, CancellationToken cancellationToken)
+	{
+		OutputState state = new() { Builder = new(), Lock = new(), CancellationToken = cancellationToken, };
+		await Task.WhenAll(Utilities.CopyOutput(state, prog.StandardOutput),
+		                   Utilities.CopyOutput(state, prog.StandardError));
+		return state.Builder.ToString();
+	}
+	private static async Task CopyOutput(OutputState state, StreamReader reader)
+	{
+		while (await reader.ReadLineAsync(state.CancellationToken) is { } line)
+		{
+			lock (state.Lock)
+				state.Builder.AppendLine(line);
+		}
+	}
+
+	private readonly struct OutputState
+	{
+		public StringBuilder Builder { get; init; }
+		public Object Lock { get; init; }
+		public CancellationToken CancellationToken { get; init; }
 	}
 }

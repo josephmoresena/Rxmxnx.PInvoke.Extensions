@@ -14,7 +14,8 @@ public partial class Launcher
 		public override String MonoFrameworkPath { get; } = Path.Combine(
 			Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Mono", "lib", "mono");
 
-		private Windows(DirectoryInfo outputDirectory, out Task initialize) : base(outputDirectory)
+		private Windows(DirectoryInfo outputDirectory, DirectoryInfo monoOutputDirectory, out Task initialize) : base(
+			outputDirectory, monoOutputDirectory)
 		{
 			this.Architectures = Enum.GetValues<Architecture>()
 			                         .Where(a => a == this.CurrentArch || a is Architecture.X86 ||
@@ -23,7 +24,8 @@ public partial class Launcher
 			initialize = Task.CompletedTask;
 		}
 
-		public static Windows Create(DirectoryInfo outputDirectory, out Task initTask)
-			=> new(outputDirectory, out initTask);
+		public static Windows Create(DirectoryInfo outputDirectory, DirectoryInfo monoOutputDirectory,
+			out Task initTask)
+			=> new(outputDirectory, monoOutputDirectory, out initTask);
 	}
 }

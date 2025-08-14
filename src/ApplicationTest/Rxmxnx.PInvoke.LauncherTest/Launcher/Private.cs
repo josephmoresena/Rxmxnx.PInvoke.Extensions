@@ -2,9 +2,10 @@ namespace Rxmxnx.PInvoke.ApplicationTest;
 
 public partial class Launcher
 {
-	private Launcher(DirectoryInfo outputDirectory)
+	private Launcher(DirectoryInfo outputDirectory, DirectoryInfo monoOutputDirectory)
 	{
 		this.OutputDirectory = outputDirectory;
+		this.MonoOutputDirectory = monoOutputDirectory;
 		this.CurrentArch = RuntimeInformation.OSArchitecture;
 	}
 	private async Task<Int32> RunAppFile(FileInfo appFile, Architecture arch, String executionName)

@@ -32,4 +32,16 @@ public static partial class TestCompiler
 			}
 		}
 	}
+	public static async Task CompileMono(DirectoryInfo projectDirectory, String msbuildPath,
+		String outputDirectoryFullName)
+	{
+		ExecuteState<CompileMonoArgs> state = new()
+		{
+			ExecutablePath = msbuildPath,
+			ArgState = new() { ProjectFile = projectDirectory.FullName, OutputPath = outputDirectoryFullName, },
+			AppendArgs = CompileMonoArgs.Append,
+			Notifier = ConsoleNotifier.Notifier,
+		};
+		await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
+	}
 }

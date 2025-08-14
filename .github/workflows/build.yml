@@ -83,9 +83,6 @@ jobs:
           dotnet test src /p:MultipleFrameworkTest=true --verbosity normal --collect:"XPlat Code Coverage" --results-directory TestResults/  --logger "trx;verbosity=detailed" --no-build --no-restore --configuration Release -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover 
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
       - name: Mono framework tests
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: pwsh
         run: |
           mono src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All --result=TestResults/Rxmxnx.PInvoke.Common.Mono.TestResult.xml
@@ -1207,3 +1204,37 @@ jobs:
         working-directory: ./package/Rxmxnx.PInvoke.Extensions
         run: |
           dotnet pack -c Release /p:Version=9999.99.99.99-tmp /p:NoIntermediateBuild=true /p:UseEmbeddedDebugSymbols=true
+      - name: Publish launcher
+        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.LauncherTest
+        run: dotnet publish
+      - name: Run launcher (compile)
+        shell: pwsh
+        run: |
+          if ($IsWindows) {
+            ./Rxmxnx.PInvoke.LauncherTest.exe "src\ApplicationTest" "artifacts" "compile"
+          } else {
+            chmod +x Rxmxnx.PInvoke.LauncherTest
+            ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "compile"
+          }
+      - name: Run launcher (run)
+        shell: pwsh
+        run: |
+          if ($IsWindows) {
+            ./Rxmxnx.PInvoke.LauncherTest.exe "src\ApplicationTest" "artifacts" "run"
+          } else {
+            ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "run"
+          }
+      - name: Create Native Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ runner.os }}-Artifact
+          path: |
+            ./artifacts/*NAOT*
+            ./artifacts/*RFM*
+      - name: Create Native Artifact Logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ runner.os }}-Artifact-Logs
+          path: |
+            ./artifacts/native/*
+            ./artifacts/Mono/*MonoAOT.log
