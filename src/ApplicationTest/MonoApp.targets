@@ -2,12 +2,12 @@
 
     <PropertyGroup>
         <TargetFramework>net45</TargetFramework>
-        <AssemblyName>$(AssemblyName).MonoApp</AssemblyName>
+        <AssemblyName>$(AssemblyName).mono</AssemblyName>
     </PropertyGroup>
     <PropertyGroup Condition="'$(MonoFrameworkPath)' == ''">
         <MonoFrameworkPath Condition="$([MSBuild]::IsOSPlatform('Linux'))">/usr/lib/mono</MonoFrameworkPath>
         <MonoFrameworkPath Condition="$([MSBuild]::IsOSPlatform('FreeBSD'))">/usr/local/lib/mono</MonoFrameworkPath>
-        <MonoFrameworkPath Condition="$([MSBuild]::IsOSPlatform('MACOS'))">/Library/Frameworks/Mono.framework/Versions/Current/lib/mono</MonoFrameworkPath>
+        <MonoFrameworkPath Condition="$([MSBuild]::IsOSPlatform('OSX'))">/Library/Frameworks/Mono.framework/Versions/Current/lib/mono</MonoFrameworkPath>
         <MonoFrameworkPath Condition="$([MSBuild]::IsOSPlatform('Windows'))">C:\Program Files\Mono\lib\mono</MonoFrameworkPath>
     </PropertyGroup>
 

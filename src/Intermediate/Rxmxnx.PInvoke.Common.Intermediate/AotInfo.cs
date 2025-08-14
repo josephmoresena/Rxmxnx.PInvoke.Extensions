@@ -41,10 +41,6 @@ public static partial class AotInfo
 	/// Indicates whether the current runtime is Native AOT.
 	/// </summary>
 	public static Boolean IsNativeAot => AotInfo.isAotRuntime;
-	/// <summary>
-	/// Indicates whether the current runtime is Mono.
-	/// </summary>
-	public static Boolean IsMono => MonoInfo.IsEmptyNonLiteral;
 
 	/// <summary>
 	/// Internal UTF-8 empty text.

@@ -18,7 +18,7 @@ internal static unsafe class ValidationUtilities
 	/// <summary>
 	/// Empty <see cref="String"/> for <see cref="CallerArgumentExpressionAttribute"/> default value.
 	/// </summary>
-	private const String EmptyString = "";
+	private const String emptyString = "";
 
 	/// <summary>
 	/// Validates that an index is valid for a list of a specific size.
@@ -33,7 +33,7 @@ internal static unsafe class ValidationUtilities
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidListIndex(Int32 index, Int32 count,
-		[CallerArgumentExpression(nameof(index))] String nameofIndex = ValidationUtilities.EmptyString)
+		[CallerArgumentExpression(nameof(index))] String nameofIndex = ValidationUtilities.emptyString)
 	{
 		if (index >= 0 && index < count) return;
 		String message = IMessageResource.GetInstance().InvalidListIndexMessage;
@@ -53,7 +53,7 @@ internal static unsafe class ValidationUtilities
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidSequenceIndex(Int32 index, Int32 count,
-		[CallerArgumentExpression(nameof(index))] String nameofIndex = ValidationUtilities.EmptyString)
+		[CallerArgumentExpression(nameof(index))] String nameofIndex = ValidationUtilities.emptyString)
 	{
 		if (index >= 0 && index < count) return;
 		String message = IMessageResource.GetInstance().InvalidSequenceIndex;
@@ -218,7 +218,7 @@ internal static unsafe class ValidationUtilities
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidBinarySpanSize(ReadOnlySpan<Byte> span, Int32 sizeOf,
-		[CallerArgumentExpression(nameof(span))] String nameofSpan = ValidationUtilities.EmptyString)
+		[CallerArgumentExpression(nameof(span))] String nameofSpan = ValidationUtilities.emptyString)
 	{
 		String message = IMessageResource.GetInstance().InvalidBinarySpanSize(nameofSpan, sizeOf);
 		if (span.Length < sizeOf)
@@ -235,7 +235,7 @@ internal static unsafe class ValidationUtilities
 	/// <param name="obj">The object to check and cast.</param>
 	/// <param name="typeName">The name of the expected type.</param>
 	/// <param name="result">
-	/// Output parameter. If the object is of type <typeparamref name="T"/>, this will contain the casted object.
+	/// Output parameter. If the object is of type <typeparamref name="T"/>, this will contain the cast object.
 	/// </param>
 	/// <param name="nameofObj">
 	/// The name of the object parameter. Used in the exception message if the object is not of type <typeparamref name="T"/>.
@@ -245,7 +245,7 @@ internal static unsafe class ValidationUtilities
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidCastType<T>(Object? obj, String typeName, out T result,
-		[CallerArgumentExpression(nameof(obj))] String nameofObj = ValidationUtilities.EmptyString)
+		[CallerArgumentExpression(nameof(obj))] String nameofObj = ValidationUtilities.emptyString)
 	{
 		if (obj is not T value)
 			throw new ArgumentException(IMessageResource.GetInstance().InvalidType(typeName), nameofObj);
@@ -313,7 +313,7 @@ internal static unsafe class ValidationUtilities
 	/// <exception cref="ArgumentException">Thrown if <paramref name="length"/> is less than zero.</exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidMemoryLength(Int32 length,
-		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.EmptyString)
+		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.emptyString)
 	{
 		if (length >= 0) return;
 		String message = IMessageResource.GetInstance().InvalidLength(nameofLength);
@@ -353,8 +353,8 @@ internal static unsafe class ValidationUtilities
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidSubregion(Int32 regionLength, Int32 startIndex, Int32 length,
-		[CallerArgumentExpression(nameof(startIndex))] String nameofStartIndex = ValidationUtilities.EmptyString,
-		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.EmptyString)
+		[CallerArgumentExpression(nameof(startIndex))] String nameofStartIndex = ValidationUtilities.emptyString,
+		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.emptyString)
 	{
 		IMessageResource resource = IMessageResource.GetInstance();
 		if (startIndex < 0)
@@ -385,8 +385,8 @@ internal static unsafe class ValidationUtilities
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidSubstring(Int32 stringLength, Int32 startIndex, Int32 length,
-		[CallerArgumentExpression(nameof(startIndex))] String nameofStartIndex = ValidationUtilities.EmptyString,
-		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.EmptyString)
+		[CallerArgumentExpression(nameof(startIndex))] String nameofStartIndex = ValidationUtilities.emptyString,
+		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.emptyString)
 	{
 		IMessageResource resource = IMessageResource.GetInstance();
 		if (startIndex < 0)
@@ -418,8 +418,8 @@ internal static unsafe class ValidationUtilities
 	/// <exception cref="ArgumentOutOfRangeException"/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidSubsequence(Int32 sequenceLength, Int32 startIndex, Int32 length,
-		[CallerArgumentExpression(nameof(startIndex))] String nameofStartIndex = ValidationUtilities.EmptyString,
-		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.EmptyString)
+		[CallerArgumentExpression(nameof(startIndex))] String nameofStartIndex = ValidationUtilities.emptyString,
+		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.emptyString)
 	{
 		IMessageResource resource = IMessageResource.GetInstance();
 		if (startIndex < 0)

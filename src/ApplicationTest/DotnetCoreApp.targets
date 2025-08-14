@@ -3,8 +3,6 @@
     <PropertyGroup>
         <TargetFramework Condition="'$(RequiredFramework)' == ''">net9.0</TargetFramework>
         <TargetFramework Condition="'$(RequiredFramework)' != ''">$(RequiredFramework)</TargetFramework>
-        <TargetFrameworks Condition="'$(RuntimeIdentifier)' != 'linux-arm' And '$(RuntimeIdentifier)' != 'win-x86'">net9.0;net8.0</TargetFrameworks>
-        <TargetFrameworks Condition="'$(RuntimeIdentifier)' != 'osx-arm64' And '$(RuntimeIdentifier)' != 'osx-x64'">$(TargetFrameworks);net7.0</TargetFrameworks>
         <AssemblyName Condition="'$(RuntimeIdentifier)' != ''">$(AssemblyName).$(RuntimeIdentifier)</AssemblyName>
         <AssemblyName>$(AssemblyName).$(TargetFramework)</AssemblyName>
     </PropertyGroup>
@@ -20,6 +18,8 @@
     <PropertyGroup Condition="'$(PublishAot)' == 'true'">
         <DefineConstants>$(DefineConstants);NATIVE_AOT</DefineConstants>
         <DefineConstants Condition="'$(IlcDisableReflection)' == 'true'">$(DefineConstants);REFLECTION_FREE</DefineConstants>
+        <AssemblyName Condition="'$(IlcDisableReflection)' != 'true'">$(AssemblyName).NAOT</AssemblyName>
+        <AssemblyName Condition="'$(IlcDisableReflection)' == 'true'">$(AssemblyName).RFM</AssemblyName>
         <IlcGenerateMetadataLog>true</IlcGenerateMetadataLog>
         <IlcGenerateMstatFile>true</IlcGenerateMstatFile>
         <IlcGenerateDgmlFile>true</IlcGenerateDgmlFile>
@@ -31,9 +31,6 @@
         <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
         <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
         <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
-        <AssemblyName Condition="'$(IlcDisableReflection)' == 'true'">$(AssemblyName).NoReflection</AssemblyName>
-        <AssemblyName Condition="'$(DisableBufferAutoComposition)' == 'true'">$(AssemblyName).NoBufferComposition</AssemblyName>
-        <AssemblyName Condition="'$(InvariantGlobalization)' == 'true'">$(AssemblyName).Invariant</AssemblyName>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm' And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">

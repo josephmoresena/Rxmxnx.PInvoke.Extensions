@@ -42,21 +42,6 @@ public static partial class SystemInfo
 #else
 		=> SystemInfo.isMac;
 #endif
-
-	/// <summary>
-	/// Indicates whether the current execution is occurring on a Web engine.
-	/// </summary>
-	public static Boolean IsWebEngine
-#if NET5_0_OR_GREATER
-		=> OperatingSystem.IsBrowser() ||
-#if NET8_0_OR_GREATER
-			OperatingSystem.IsWasi();
-#else
-			!SystemInfo.NotTrimmable && (SystemInfo.isWasi ??= SystemInfo.IsOsPlatform(SystemInfo.wPlatform));
-#endif
-#else
-		=> SystemInfo.isWeb;
-#endif
 	/// <summary>
 	/// Indicates whether the current execution is occurring on FreeBSD platform.
 	/// </summary>
@@ -77,6 +62,25 @@ public static partial class SystemInfo
 	public static Boolean IsSolaris
 		=> !SystemInfo.NotTrimmable && (SystemInfo.isSolaris ??=
 			SystemInfo.IsOsPlatform(SystemInfo.solarisPlatform, SystemInfo.illumosPlatform));
+
+	/// <summary>
+	/// Indicates whether the current execution is occurring on a Web engine.
+	/// </summary>
+	public static Boolean IsWebRuntime
+#if NET5_0_OR_GREATER
+		=> OperatingSystem.IsBrowser() ||
+#if NET8_0_OR_GREATER
+			OperatingSystem.IsWasi();
+#else
+			!SystemInfo.NotTrimmable && (SystemInfo.isWasi ??= SystemInfo.IsOsPlatform(SystemInfo.wPlatform));
+#endif
+#else
+		=> SystemInfo.isWebRuntime;
+#endif
+	/// <summary>
+	/// Indicates whether the current execution is occurring on Mono Runtime.
+	/// </summary>
+	public static Boolean IsMonoRuntime => MonoInfo.IsEmptyNonLiteral;
 
 	/// <summary>
 	/// Indicates whether the current application is running on one of the specified platforms.

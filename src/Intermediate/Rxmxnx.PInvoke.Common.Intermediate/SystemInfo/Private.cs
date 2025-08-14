@@ -9,8 +9,8 @@ public static partial class SystemInfo
 	private static readonly Boolean isLinux;
 	/// <inheritdoc cref="IsMac"/>
 	private static readonly Boolean isMac;
-	/// <inheritdoc cref="IsWebEngine"/>
-	private static readonly Boolean isWeb;
+	/// <inheritdoc cref="IsWebRuntime"/>
+	private static readonly Boolean isWebRuntime;
 	/// <inheritdoc cref="IsFreeBsd"/>
 	private static readonly Boolean isFreeBsd;
 #elif !NET8_0_OR_GREATER

@@ -75,7 +75,14 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Console.WriteLine("========== Rxmxnx.PInvoke Runtime information ==========");
 			Console.WriteLine($"Native AOT: {AotInfo.IsNativeAot}");
 			Console.WriteLine($"Reflection Enabled: {!AotInfo.IsReflectionDisabled}");
-			Console.WriteLine($"Mono Runtime: {AotInfo.IsMono}");
+			Console.WriteLine($"Mono Runtime: {SystemInfo.IsMonoRuntime}");
+			Console.WriteLine($"Windows Platform: {SystemInfo.IsWindows}");
+			Console.WriteLine($"Linux Platform: {SystemInfo.IsLinux}");
+			Console.WriteLine($"macOS Platform: {SystemInfo.IsMac}");
+			Console.WriteLine($"FreeBSD Platform: {SystemInfo.IsFreeBsd}");
+			Console.WriteLine($"NetBSD Platform: {SystemInfo.IsNetBsd}");
+			Console.WriteLine($"Solaris Platform: {SystemInfo.IsSolaris}");
+			Console.WriteLine($"Web Platform: {SystemInfo.IsWebRuntime}");
 			Console.WriteLine($"Pointer Size: {NativeUtilities.PointerSize}");
 			Console.WriteLine($"Globalization-Invariant Mode: {NativeUtilities.GlobalizationInvariantModeEnabled}");
 			Console.WriteLine($"UI Iso639-1: {NativeUtilities.UserInterfaceIso639P1}");

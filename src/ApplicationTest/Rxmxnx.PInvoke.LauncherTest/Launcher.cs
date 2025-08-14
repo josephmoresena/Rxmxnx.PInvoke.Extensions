@@ -24,20 +24,7 @@ public abstract partial class Launcher
 				String executionName = $"{Path.GetRelativePath(this.OutputDirectory.FullName, appFile.FullName)}";
 				results.Add(executionName, await this.RunAppFile(appFile, arch, executionName));
 			}
-		}
-		finally
-		{
-			if (results.Count > 0)
-				ConsoleNotifier.Results(results);
-		}
-	}
-	public async Task ExecuteMono()
-	{
-		Dictionary<String, Int32> results = new();
-
-		try
-		{
-			foreach (FileInfo appFile in this.OutputDirectory.GetFiles("*ApplicationTest.MonoApp.exe"))
+			foreach (FileInfo appFile in this.MonoOutputDirectory.GetFiles("*ApplicationTest.*.exe"))
 			{
 				String executionName = $"{Path.GetRelativePath(this.OutputDirectory.FullName, appFile.FullName)}";
 				ExecuteState<String> state = new()

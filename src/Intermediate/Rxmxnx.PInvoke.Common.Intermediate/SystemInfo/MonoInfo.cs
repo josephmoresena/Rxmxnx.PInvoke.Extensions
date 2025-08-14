@@ -1,6 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke;
 
-public static partial class AotInfo
+public static partial class SystemInfo
 {
 	/// <summary>
 	/// Provides information about the Mono runtime.

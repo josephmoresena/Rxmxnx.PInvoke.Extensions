@@ -32,14 +32,12 @@ public static partial class SystemInfo
 		}
 		if (SystemInfo.IsOsPlatform(SystemInfo.browserPlatform, SystemInfo.wPlatform))
 		{
-			SystemInfo.isWeb = true;
+			SystemInfo.isWebRuntime = true;
 			return;
 		}
 		if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ||
 		    SystemInfo.IsOsPlatform(SystemInfo.iPlatform, SystemInfo.tPlatform, SystemInfo.macCatalystPlatform))
-		{
 			SystemInfo.isMac = true;
-		}
 	}
 }
 #endif

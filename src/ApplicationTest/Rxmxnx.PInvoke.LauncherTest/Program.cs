@@ -24,6 +24,5 @@ if (compile)
 if (run)
 {
 	await launcher.Execute();
-	await launcher.ExecuteMono();
 	await launcher.CompileMonoAot();
 }

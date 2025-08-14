@@ -3079,9 +3079,57 @@ Provides information about the Ahead-of-Time compilation.
 
   **Note:** Starting with .NET 6.0, this property enables trimming by allowing the linker to remove unreachable code.
   </details>
+
+</details>
+
+<details>
+  <summary>SystemInfo</summary>
+
+Provides information about the runtime system.
+
+#### Static Properties:
+
 - <details>
-  <summary>IsMono</summary>
+  <summary>IsMonoRuntime</summary>
   Indicates whether the current runtime is Mono.
+  </details>
+- <details>
+  <summary>IsWebRuntime</summary>
+  Indicates whether the current runtime is Web.
+
+  **Note:** Starting with .NET 8.0, this property enables trimming by allowing the linker to remove unreachable code.
+  </details>
+- <details>
+  <summary>IsWindows</summary>
+  Indicates whether the current runtime is running on a Windows System.
+
+  **Note:** Starting with .NET 5.0, this property enables trimming by allowing the linker to remove unreachable code.
+  </details>
+- <details>
+  <summary>IsLinux</summary>
+  Indicates whether the current runtime is running on a Linux System.
+
+  **Note:** Starting with .NET 5.0, this property enables trimming by allowing the linker to remove unreachable code.
+  </details>
+- <details>
+  <summary>IsMac</summary>
+  Indicates whether the current runtime is running on a macOS System.
+
+  **Note:** Starting with .NET 6.0, this property enables trimming by allowing the linker to remove unreachable code.
+  </details>
+- <details>
+  <summary>IsFreeBsd</summary>
+  Indicates whether the current runtime is running on a FreeBSD System.
+
+  **Note:** Starting with .NET 5.0, this property enables trimming by allowing the linker to remove unreachable code.
+  </details>
+- <details>
+  <summary>IsNetBsd</summary>
+  Indicates whether the current runtime is running on a NetBSD System.
+  </details>
+- <details>
+  <summary>IsSolaris</summary>
+  Indicates whether the current runtime is running on a Solaris System.
   </details>
 
 </details>

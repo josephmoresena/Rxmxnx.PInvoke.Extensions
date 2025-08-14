@@ -32,7 +32,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		{
 			Console.WriteLine("Begin GC.Collect()");
 			GC.Collect();
-			if (!AotInfo.IsMono)
+			if (!SystemInfo.IsMonoRuntime)
 				GC.WaitForFullGCComplete();
 			Console.WriteLine("End GC.Collect()");
 		}
