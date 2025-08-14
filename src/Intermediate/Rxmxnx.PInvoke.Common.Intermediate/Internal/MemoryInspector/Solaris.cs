@@ -19,9 +19,6 @@ internal partial class MemoryInspector
 		/// <inheritdoc/>
 		protected override void ProcessMaps()
 		{
-#if NET5_0_OR_GREATER
-			if (SystemInfo.IsLinux || SystemInfo.IsFreeBsd) return;
-#endif
 			ReadOnlySpan<ProcessMap> maps = Solaris.GetMaps();
 			foreach (ProcessMap map in maps)
 			{
