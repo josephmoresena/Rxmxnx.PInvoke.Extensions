@@ -21,6 +21,8 @@ internal partial class MemoryInspector
 				Int32 result = SystemB.MemoryRegion(taskHandle, &ptr, out _, MemoryInfo.Flavor, out MemoryInfo info,
 				                                    ref count, out _);
 				SystemB.ValidateResult(result);
+				//TODO: Fix on arm64
+				Console.WriteLine($"{info.Protection}, 0x{(UInt32)info.Protection:x8}");
 				return (info.Protection & Protection.Read) == Protection.Read &&
 					(info.Protection & Protection.Write) == Protection.None;
 			}

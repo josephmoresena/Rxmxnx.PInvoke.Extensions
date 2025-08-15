@@ -30,17 +30,6 @@ jobs:
             9.0.x
       - name: Setup Tree pre-requisites
         run: sudo apt-get install tree unzip --assume-yes
-      - name: Setup latest Mono Framework
-        run: |
-          sudo apt install ca-certificates gnupg --assume-yes
-          sudo gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-          echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
-          sudo apt update
-          
-          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          
-          sudo apt install mono-complete mono-vbnc mono-dbg gdb libssl3
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
@@ -303,7 +292,7 @@ jobs:
           rm -rf ./package/**/bin/**/net*
           rm -rf ./package/**/obj
           rm -rf ./artifacts
-          rm -rf ./ssh
+          rm -rf ~/.ssh/
           rm ./Rxmxnx.PInvoke.LauncherTest
       - name: Init FreeBSD 13.5 VM
         if: runner.os == 'Linux'
