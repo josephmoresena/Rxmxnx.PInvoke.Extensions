@@ -999,68 +999,6 @@ jobs:
           rm -rf TestResults
           rm -rf ./../_temp
           rm -rf ./tmpProject/Executable
-      - name: Init FreeBSD 13.5 VM
-        id: vm
-        uses: vmactions/freebsd-vm@v1.2.1
-        with:
-          release: "13.5"
-          usesh: true
-          copyback: false
-          prepare: |
-            pkg install -y python39 sqlite3 unixODBC libgdiplus zip ca_root_nss dotnet
-            /usr/local/bin/python3.9 -m ensurepip
-            /usr/local/bin/python3.9 -m pip install pillow
-            
-            mkdir -p ~/fake-py39-pillow/metadata
-            cat > ~/fake-py39-pillow/metadata/+COMPACT_MANIFEST <<EOF
-            name: py39-pillow
-            version: 9.9.9
-            origin: fake/py39-pillow
-            comment: Fake package to satisfy dependency on py39-pillow
-            desc: This is a fake py39-pillow package to satisfy dependencies.
-            categories: [python]
-            maintainer: a@b.c
-            www: https://py-pillow.org
-            prefix: /usr/local
-            licenselogic: single
-            licenses: [MIT]
-            flatsize: 0
-            EOF
-            pkg register -M ~/fake-py39-pillow/metadata/+COMPACT_MANIFEST
-            
-            fetch https://github.com/Thefrank/freebsd-port-sooners/releases/download/20230712/mono6.12-6.12.0.199_1.pkg
-            pkg add mono6.12-6.12.0.199_1.pkg
-          run: |
-            dotnet dev-certs https --trust
-            mono --version
-      - name: Run Tests (FreeBSD 13.5)
-        shell: freebsd {0}
-        run: |
-          cd $GITHUB_WORKSPACE;
-          dotnet test ./src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Common.Tests.dll --logger 'console;verbosity=detailed';
-          dotnet test ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.CString.Tests.dll --logger 'console;verbosity=detailed';
-          dotnet test ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Extensions.Tests.dll --logger 'console;verbosity=detailed';
-          dotnet test ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Buffers.Tests.dll --logger 'console;verbosity=detailed';
-      - name: Mono framework tests (FreeBSD 13.5)
-        shell: freebsd {0}
-        run: |
-          cd $GITHUB_WORKSPACE;
-          mono ./src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All;
-          mono ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All;
-          mono ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All;
-          mono ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All;
-      - name: Run Package-Trimmed-Executables (FreeBSD)
-        shell: freebsd {0}
-        run: |
-          cd $GITHUB_WORKSPACE;
-          cd ./tmpProject/PackageTrimmedAssembly;
-          dotnet run;
-      - name: Mono-Run (FreeBSD) Run Package-Trimmed-Executables
-        shell: freebsd {0}
-        run: |
-          cd $GITHUB_WORKSPACE;
-          cd ./tmpProject/PackageTrimmedAssembly;
-          mono ./bin/Release/net45/PackageTrimmedAssembly.exe;
   run-tests:
     needs: [ build ]
     runs-on: ${{ matrix.os }}
