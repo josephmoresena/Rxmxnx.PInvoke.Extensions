@@ -75,7 +75,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Console.WriteLine("========== Rxmxnx.PInvoke Runtime information ==========");
 			Console.WriteLine($"Native AOT: {AotInfo.IsNativeAot}");
 			Console.WriteLine($"Reflection Enabled: {!AotInfo.IsReflectionDisabled}");
-			Console.WriteLine($"Untrimmed Runtime: {AotInfo.IsPlatformUntrimmed}");
+			Console.WriteLine($"Trimmed Runtime: {AotInfo.IsPlatformTrimmed}");
 			Console.WriteLine($"Mono Runtime: {SystemInfo.IsMonoRuntime}");
 			Console.WriteLine($"Web Runtime: {SystemInfo.IsWebRuntime}");
 			Console.WriteLine($"Windows Platform: {SystemInfo.IsWindows}");

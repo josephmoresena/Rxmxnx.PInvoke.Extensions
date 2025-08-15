@@ -3074,8 +3074,8 @@ Provides information about the Ahead-of-Time compilation.
   Indicates whether runtime reflection is disabled.
   </details>
 - <details>
-  <summary>IsPlatformUntrimmed</summary>
-  Indicates whether the current runtime is untrimmed on the current platform.
+  <summary>IsPlatformTrimmed</summary>
+  Indicates whether the current runtime is trimmed for the current platform.
 
   **Note:** Starting with .NET 5.0, this property enables trimming by allowing the linker to remove unreachable code.
   </details>

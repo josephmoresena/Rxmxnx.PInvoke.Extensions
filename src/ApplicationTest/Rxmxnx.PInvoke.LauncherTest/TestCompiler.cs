@@ -39,12 +39,13 @@ public static partial class TestCompiler
 		                                           .ToArray();
 		foreach (String appProjectFile in appProjectFiles)
 		{
+			String appDirectory = Path.GetDirectoryName(appProjectFile) ?? String.Empty;
 			ExecuteState<CompileMonoArgs> state = new()
 			{
 				ExecutablePath = msbuildPath,
 				ArgState = new()
 				{
-					ProjectFile = appProjectFile, OutputPath = Path.GetRelativePath(appProjectFile, outputPath),
+					ProjectFile = appProjectFile, OutputPath = Path.GetRelativePath(appDirectory, outputPath),
 				},
 				AppendArgs = CompileMonoArgs.Append,
 				Notifier = ConsoleNotifier.Notifier,

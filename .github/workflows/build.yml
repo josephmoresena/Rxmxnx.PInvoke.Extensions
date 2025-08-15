@@ -1180,7 +1180,7 @@ jobs:
         with:
           name: ${{ runner.os }}-Artifact-Logs
           path: |
-            ./artifacts/native/*
+            ./artifacts/Native/*
             ./artifacts/Mono/*Mono.AOT.log
       - name: Prepare Mono artifact
         if: runner.os == 'Linux'

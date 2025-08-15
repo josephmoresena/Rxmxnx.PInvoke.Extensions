@@ -36,7 +36,7 @@ public static partial class SystemInfo
 #if NET6_0_OR_GREATER
 			OperatingSystem.IsMacCatalyst();
 #else
-			!AotInfo.IsPlatformUntrimmed &&
+			!AotInfo.IsPlatformTrimmed &&
 			(SystemInfo.isMacCatalyst ??= SystemInfo.IsOsPlatform(SystemInfo.macCatalystPlatform));
 #endif
 #else
@@ -55,12 +55,12 @@ public static partial class SystemInfo
 	/// Indicates whether the current execution is running on NetBSD platform.
 	/// </summary>
 	public static Boolean IsNetBsd
-		=> !AotInfo.IsPlatformUntrimmed && (SystemInfo.isNetBsd ??= SystemInfo.IsOsPlatform(SystemInfo.netBsdPlatform));
+		=> !AotInfo.IsPlatformTrimmed && (SystemInfo.isNetBsd ??= SystemInfo.IsOsPlatform(SystemInfo.netBsdPlatform));
 	/// <summary>
 	/// Indicates whether the current execution is running on NetBSD platform.
 	/// </summary>
 	public static Boolean IsSolaris
-		=> !AotInfo.IsPlatformUntrimmed && (SystemInfo.isSolaris ??=
+		=> !AotInfo.IsPlatformTrimmed && (SystemInfo.isSolaris ??=
 			SystemInfo.IsOsPlatform(SystemInfo.solarisPlatform, SystemInfo.illumosPlatform));
 
 	/// <summary>
@@ -72,7 +72,7 @@ public static partial class SystemInfo
 #if NET8_0_OR_GREATER
 			OperatingSystem.IsWasi();
 #else
-			!AotInfo.IsPlatformUntrimmed && (SystemInfo.isWasi ??=
+			!AotInfo.IsPlatformTrimmed && (SystemInfo.isWasi ??=
  SystemInfo.IsOsPlatform(SystemInfo.wPlatform));
 #endif
 #else

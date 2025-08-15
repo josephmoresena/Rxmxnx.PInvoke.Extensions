@@ -14,6 +14,6 @@ public readonly struct CompileMonoArgs
 		args.Add("/p:UsePackage=true");
 		if (!String.IsNullOrWhiteSpace(compileArgs.FrameworkPath))
 			args.Add($"/p:MonoFrameworkPath={compileArgs.FrameworkPath}");
-		args.Add($"/p:OutDir=\"{compileArgs.OutputPath}\"");
+		args.Add($"/p:OutDir={compileArgs.OutputPath}");
 	}
 }
