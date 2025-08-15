@@ -260,6 +260,8 @@ jobs:
         if: runner.os == 'Linux'
         shell: bash
         run: |
+          mkdir -p ./Test/Rxmxnx.PInvoke.{Common,CString,Extensions,Buffers}.Tests
+          
           cp -R ./artifacts/Mono ./mono
           cp -R ./src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/net9.0/ ./Test/Rxmxnx.PInvoke.Common.Tests/net9.0
           cp -R ./src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/ ./Test/Rxmxnx.PInvoke.Common.Tests/netstandard2.1
