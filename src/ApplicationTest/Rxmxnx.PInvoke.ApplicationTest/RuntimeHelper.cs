@@ -37,6 +37,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #if NATIVE_AOT
                     + " NativeAOT"
 #endif
+#if R2R_EXECUTABLE
+                    + " ReadyToRun (R2R)"
+#endif
 			;
 
 		public static readonly Random Shared = new();

@@ -17,7 +17,7 @@ public partial class Launcher
 				return base.RunAppFile(appFile, arch, executionName, cancellationToken);
 			return this.RunAppQemu(appFile, arch, executionName, cancellationToken);
 		}
-		public static Linux Create(DirectoryInfo outputDirectory, DirectoryInfo monoOutputDirectory, out Task initTask)
-			=> new(outputDirectory, monoOutputDirectory, out initTask);
+		public static Linux Create(DirectoryInfo outputDirectory, Boolean useMono, out Task initTask)
+			=> new(outputDirectory, useMono, out initTask);
 	}
 }

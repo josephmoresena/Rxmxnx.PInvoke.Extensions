@@ -14,6 +14,7 @@
         <DebugType>None</DebugType>
         <!-- Assembly name must specify that it was compiled with ReadyToRun -->
         <AssemblyName Condition="$(PublishReadyToRun) == 'true'">$(AssemblyName).R2R</AssemblyName>
+        <DefineConstants Condition="'$(PublishReadyToRun)' == 'true'">$(DefineConstants);R2R_EXECUTABLE</DefineConstants>
     </PropertyGroup>
     <PropertyGroup Condition="'$(PublishAot)' == 'true'">
         <DefineConstants>$(DefineConstants);NATIVE_AOT</DefineConstants>

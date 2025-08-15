@@ -11,15 +11,15 @@ public partial class Launcher
 		public override String MonoMsbuildPath => "/Library/Frameworks/Mono.framework/Versions/Current/bin/msbuild";
 		public override String MonoFrameworkPath => "/Library/Frameworks/Mono.framework/Versions/Current/lib/mono";
 
-		private Mac(DirectoryInfo outputDirectory, DirectoryInfo monoOutputDirectory, out Task initialize) : base(
-			outputDirectory, monoOutputDirectory)
+		private Mac(DirectoryInfo outputDirectory, Boolean useMono, out Task initialize) : base(
+			outputDirectory, useMono)
 		{
 			this.Architectures = Enum.GetValues<Architecture>()
 			                         .Where(a => a == this.CurrentArch || a is Architecture.X64).ToArray();
 			initialize = Task.CompletedTask;
 		}
 
-		public static Mac Create(DirectoryInfo outputDirectory, DirectoryInfo monoOutputDirectory, out Task initTask)
-			=> new(outputDirectory, monoOutputDirectory, out initTask);
+		public static Mac Create(DirectoryInfo outputDirectory, Boolean useMono, out Task initTask)
+			=> new(outputDirectory, useMono, out initTask);
 	}
 }

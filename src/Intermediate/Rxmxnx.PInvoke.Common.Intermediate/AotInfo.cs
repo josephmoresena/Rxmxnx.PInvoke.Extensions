@@ -45,21 +45,27 @@ public static partial class AotInfo
 	/// Indicates whether the current runtime has been trimmed for the platform.
 	/// </summary>
 	public static Boolean IsPlatformTrimmed
-		=>
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get
+		{
+			return
 #if NET5_0_OR_GREATER
-			OperatingSystem.IsLinux() || OperatingSystem.IsWindows() || OperatingSystem.IsMacOS() ||
-			OperatingSystem.IsFreeBSD() || OperatingSystem.IsAndroid() || OperatingSystem.IsIOS() ||
-			OperatingSystem.IsTvOS() || OperatingSystem.IsWatchOS() || OperatingSystem.IsBrowser()
+				OperatingSystem.IsWindows() || OperatingSystem.IsLinux() || OperatingSystem.IsMacOS() ||
+				OperatingSystem.IsFreeBSD() || OperatingSystem.IsAndroid() || OperatingSystem.IsIOS() ||
+				OperatingSystem.IsTvOS() || OperatingSystem.IsWatchOS() || OperatingSystem.IsBrowser()
 #if NET6_0_OR_GREATER
-			|| OperatingSystem.IsMacCatalyst()
+				|| OperatingSystem.IsMacCatalyst()
 #endif
 #if NET8_0_OR_GREATER
-			|| OperatingSystem.IsWasi()
+				|| OperatingSystem.IsWasi()
 #endif
 #else
-			false
+				false
 #endif
-	;
+				;
+		}
+	}
 
 	/// <summary>
 	/// Internal UTF-8 empty text.

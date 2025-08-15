@@ -10,7 +10,6 @@
         <ImplicitUsings>disable</ImplicitUsings>
         <PublishTrimmed>true</PublishTrimmed>
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
-        <IsTrimmable Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0'))">true</IsTrimmable>
         <TrimMode>full</TrimMode>
         <CheckEolTargetFramework>false</CheckEolTargetFramework>
         <AssemblyName Condition="'$(DisableBufferAutoComposition)' == 'True'">$(AssemblyName).NoBufferComposition</AssemblyName>

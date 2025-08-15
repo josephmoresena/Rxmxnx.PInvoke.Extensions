@@ -3,7 +3,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest;
 public abstract partial class Launcher
 {
 	public DirectoryInfo OutputDirectory { get; }
-	public DirectoryInfo MonoOutputDirectory { get; }
+	public DirectoryInfo? MonoOutputDirectory { get; }
 	public Architecture CurrentArch { get; }
 	public abstract String RuntimeIdentifierPrefix { get; }
 	public abstract String MonoMsbuildPath { get; }
@@ -24,6 +24,7 @@ public abstract partial class Launcher
 				String executionName = $"{Path.GetRelativePath(this.OutputDirectory.FullName, appFile.FullName)}";
 				results.Add(executionName, await this.RunAppFile(appFile, arch, executionName));
 			}
+			if (this.MonoOutputDirectory is null) return;
 			foreach (FileInfo appFile in this.MonoOutputDirectory.GetFiles("*ApplicationTest.*mono.exe"))
 			{
 				String executionName = $"{Path.GetRelativePath(this.MonoOutputDirectory.FullName, appFile.FullName)}";
@@ -48,6 +49,7 @@ public abstract partial class Launcher
 	}
 	public async Task CompileMonoAot()
 	{
+		if (this.MonoOutputDirectory is null) return;
 		foreach (FileInfo assemblyFile in this.MonoOutputDirectory.GetFiles())
 		{
 			if (!assemblyFile.Extension.Contains(".exe") && !assemblyFile.Extension.Contains(".dll")) continue;

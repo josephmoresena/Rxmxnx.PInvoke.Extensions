@@ -6,8 +6,8 @@ public partial class Launcher
 	{
 		private readonly Boolean _isArmHf;
 
-		private Linux(DirectoryInfo outputDirectory, DirectoryInfo monoOutputDirectory, out Task initialize) : base(
-			outputDirectory, monoOutputDirectory)
+		private Linux(DirectoryInfo outputDirectory, Boolean useMono, out Task initialize) : base(
+			outputDirectory, useMono)
 		{
 			this._isArmHf = Linux.IsArmHf(this.CurrentArch);
 			this.Architectures = Enum.GetValues<Architecture>()

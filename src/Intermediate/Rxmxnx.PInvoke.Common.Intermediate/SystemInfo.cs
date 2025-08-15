@@ -22,26 +22,42 @@ public static partial class SystemInfo
 	/// Indicates whether the current execution is running on a Linux-compatible platform.
 	/// </summary>
 	public static Boolean IsLinux
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get
+		{
+			return
 #if NET5_0_OR_GREATER
-		=> OperatingSystem.IsLinux() || OperatingSystem.IsAndroid();
+				OperatingSystem.IsLinux() || OperatingSystem.IsAndroid()
 #else
-		=> SystemInfo.isLinux;
+				SystemInfo.isLinux
 #endif
+				;
+		}
+	}
 	/// <summary>
 	/// Indicates whether the current execution is running on a macOS-compatible platform.
 	/// </summary>
 	public static Boolean IsMac
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get
+		{
+			return
 #if NET5_0_OR_GREATER
-		=> OperatingSystem.IsMacOS() || OperatingSystem.IsIOS() || OperatingSystem.IsTvOS() ||
+				OperatingSystem.IsMacOS() || OperatingSystem.IsIOS() || OperatingSystem.IsTvOS() ||
 #if NET6_0_OR_GREATER
-			OperatingSystem.IsMacCatalyst();
+				OperatingSystem.IsMacCatalyst()
 #else
-			!AotInfo.IsPlatformTrimmed &&
-			(SystemInfo.isMacCatalyst ??= SystemInfo.IsOsPlatform(SystemInfo.macCatalystPlatform));
+				!AotInfo.IsPlatformTrimmed &&
+				(SystemInfo.isMacCatalyst ??= SystemInfo.IsOsPlatform(SystemInfo.macCatalystPlatform))
 #endif
 #else
-		=> SystemInfo.isMac;
+				SystemInfo.isMac
 #endif
+				;
+		}
+	}
 	/// <summary>
 	/// Indicates whether the current execution is running on FreeBSD platform.
 	/// </summary>
@@ -67,17 +83,24 @@ public static partial class SystemInfo
 	/// Indicates whether the current execution is running on a Web engine.
 	/// </summary>
 	public static Boolean IsWebRuntime
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get
+		{
+			return
 #if NET5_0_OR_GREATER
-		=> OperatingSystem.IsBrowser() ||
+				OperatingSystem.IsBrowser() ||
 #if NET8_0_OR_GREATER
-			OperatingSystem.IsWasi();
+				OperatingSystem.IsWasi()
 #else
-			!AotInfo.IsPlatformTrimmed && (SystemInfo.isWasi ??=
- SystemInfo.IsOsPlatform(SystemInfo.wPlatform));
+				!AotInfo.IsPlatformTrimmed && (SystemInfo.isWasi ??= SystemInfo.IsOsPlatform(SystemInfo.wPlatform))
 #endif
 #else
-		=> SystemInfo.isWebRuntime;
+				SystemInfo.isWebRuntime
 #endif
+				;
+		}
+	}
 	/// <summary>
 	/// Indicates whether the current execution is running on Mono Runtime.
 	/// </summary>

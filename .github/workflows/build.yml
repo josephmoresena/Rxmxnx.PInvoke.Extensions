@@ -1160,6 +1160,13 @@ jobs:
             chmod +x Rxmxnx.PInvoke.LauncherTest
             ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "compile"
           }
+      - name: Copy Mono Artifact
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          cp -R ./artifacts/Mono ./Mono
+          rm -rf ./artifacts
+          rm Rxmxnx.PInvoke.LauncherTest
       - name: Run launcher (run)
         shell: pwsh
         run: |
@@ -1186,7 +1193,6 @@ jobs:
         if: runner.os == 'Linux'
         shell: bash
         run: |
-          mv ./atrifacts/Mono ./Mono
           rm -rf ./artifacts
           rm Rxmxnx.PInvoke.LauncherTest
       - name: Init FreeBSD 13.5 VM

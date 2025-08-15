@@ -12,8 +12,8 @@
         <Deterministic>true</Deterministic>
         <!-- Disable checking for end-of-life .NET versions -->
         <CheckEolTargetFramework>false</CheckEolTargetFramework>
-        <!-- Mark the assembly as trimmable if targeting .NET 6 or later -->
-        <IsTrimmable Condition="$(DefineConstants.Contains('NET6_0_OR_GREATER'))">true</IsTrimmable>
+        <!-- Mark the assembly as trimmable if targeting .NET 5.0 or later -->
+        <IsTrimmable Condition="$(DefineConstants.Contains('NET5_0_OR_GREATER'))">true</IsTrimmable>
         <!-- Indicate AOT compatibility for .NET 8 or later -->
         <IsAotCompatible Condition="$(DefineConstants.Contains('NET8_0_OR_GREATER'))">true</IsAotCompatible>
         <!-- Enable the trim analyzer for static analysis -->
