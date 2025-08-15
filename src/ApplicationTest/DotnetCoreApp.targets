@@ -3,12 +3,12 @@
     <PropertyGroup>
         <TargetFramework Condition="'$(RequiredFramework)' == ''">net9.0</TargetFramework>
         <TargetFramework Condition="'$(RequiredFramework)' != ''">$(RequiredFramework)</TargetFramework>
+        <SelfContained Condition="'$(RequiredFramework)' != ''">true</SelfContained>
         <AssemblyName Condition="'$(RuntimeIdentifier)' != ''">$(AssemblyName).$(RuntimeIdentifier)</AssemblyName>
         <AssemblyName>$(AssemblyName).$(TargetFramework)</AssemblyName>
-        <SelfContained>true</SelfContained>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(PublishAot)' != 'true'">
+    <PropertyGroup Condition="'$(SelfContained)' == 'true' And '$(PublishAot)' != 'true'">
         <PublishSingleFile>true</PublishSingleFile>
         <DebugSymbols>false</DebugSymbols>
         <DebugType>None</DebugType>
@@ -43,7 +43,7 @@
         <RuntimeHostConfigurationOption Condition="'$(DisableBufferAutoComposition)' == 'true'" Include="PInvoke.DisableBufferAutoComposition" Value="true" Trim="true"/>
     </ItemGroup>
 
-    <Target Name="CopyTarget" AfterTargets="Publish">
+    <Target Name="CopyTarget" Condition="'$(SelfContained)' == 'true' Or '$(PublishAot)' == 'true'" AfterTargets="Publish">
         <ItemGroup>
             <Artifact Include="$(PublishDir)$(AssemblyName)*"/>
             <Artifact Remove="$(PublishDir)$(AssemblyName)*.pdb"/>

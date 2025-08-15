@@ -87,7 +87,9 @@ public static partial class BufferManager
 		try
 		{
 #if !NET7_0_OR_GREATER
-			BufferTypeMetadata<T> staticMetadata = new TBuffer().GetStaticTypeMetadata();
+			IntPtr stackAllocation = IntPtr.Zero;
+			ref TBuffer fakeBufferInstance = ref Unsafe.As<IntPtr, TBuffer>(ref stackAllocation);
+			BufferTypeMetadata<T> staticMetadata = fakeBufferInstance.GetStaticTypeMetadata();
 			return BufferManager.Cache(staticMetadata.BufferType, staticMetadata);
 #else
 			return IManagedBuffer<T>.GetMetadata<TBuffer>();

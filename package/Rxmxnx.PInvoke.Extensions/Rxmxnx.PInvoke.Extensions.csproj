@@ -17,6 +17,12 @@
         <ApiCompatPreserveUnnecessarySuppressions>true</ApiCompatPreserveUnnecessarySuppressions>
         <ApiCompatRespectInternals>true</ApiCompatRespectInternals>
     </PropertyGroup>
+    
+    <!-- Include documentation for net45 -->
+    <PropertyGroup Condition="'$(TargetFramework)' == 'net45'">
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <ExcludeXmlAssemblyFiles>false</ExcludeXmlAssemblyFiles>
+    </PropertyGroup>
 
     <!-- Include intermediate assemblies -->
     <ItemGroup Condition="'$(TargetFramework)' != 'net45'">

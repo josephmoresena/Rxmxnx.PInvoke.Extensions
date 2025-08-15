@@ -12,12 +12,6 @@
         <Deterministic>true</Deterministic>
         <!-- Disable checking for end-of-life .NET versions -->
         <CheckEolTargetFramework>false</CheckEolTargetFramework>
-        <!-- Mark the assembly as trimmable if targeting .NET 5.0 or later -->
-        <IsTrimmable Condition="$(DefineConstants.Contains('NET5_0_OR_GREATER'))">true</IsTrimmable>
-        <!-- Indicate AOT compatibility for .NET 8 or later -->
-        <IsAotCompatible Condition="$(DefineConstants.Contains('NET8_0_OR_GREATER'))">true</IsAotCompatible>
-        <!-- Enable the trim analyzer for static analysis -->
-        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
         <!-- Use the latest C# language version -->
         <LangVersion>latest</LangVersion>
         <!-- Add "PACKAGE" as a constant definition -->
@@ -30,6 +24,14 @@
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <!-- Select the first target framework from the list -->
         <FirstTargetFramework>$(TargetFrameworks.Split(';')[0])</FirstTargetFramework>
+    </PropertyGroup>
+    <!-- Trimming Options if targeting .NET 6.0 or later -->
+    <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0'))">
+        <IsTrimmable>true</IsTrimmable>
+        <!-- Enable the trim analyzer for static analysis -->
+        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+        <!-- Indicate AOT compatibility for .NET 7.0 or later -->
+        <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
     </PropertyGroup>
 
     <!--
