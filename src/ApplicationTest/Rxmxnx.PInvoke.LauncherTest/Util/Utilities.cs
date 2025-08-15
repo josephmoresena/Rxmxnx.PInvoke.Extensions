@@ -16,7 +16,8 @@ public static class Utilities
 		{
 			RedirectStandardError = false, RedirectStandardOutput = false, CreateNoWindow = false,
 		};
-		state.AppendArgs(info.ArgumentList);
+		state.AppendArgs?.Invoke(info.ArgumentList);
+		state.AppendEnvs?.Invoke(info.EnvironmentVariables);
 		if (!String.IsNullOrEmpty(state.WorkingDirectory)) info.WorkingDirectory = state.WorkingDirectory;
 		state.Notifier?.Begin(info);
 		using Process prog = Process.Start(info)!;
@@ -31,7 +32,7 @@ public static class Utilities
 		{
 			RedirectStandardError = false, RedirectStandardOutput = false, CreateNoWindow = false,
 		};
-		state.AppendArgs(state.ArgState, info.ArgumentList);
+		state.AppendArgs?.Invoke(state.ArgState, info.ArgumentList);
 		if (!String.IsNullOrEmpty(state.WorkingDirectory)) info.WorkingDirectory = state.WorkingDirectory;
 		state.Notifier?.Begin(info);
 		using Process prog = Process.Start(info)!;
@@ -46,7 +47,8 @@ public static class Utilities
 		{
 			RedirectStandardError = true, RedirectStandardOutput = true, CreateNoWindow = true,
 		};
-		state.AppendArgs(state.ArgState, info.ArgumentList);
+		state.AppendArgs?.Invoke(state.ArgState, info.ArgumentList);
+		state.AppendEnvs?.Invoke(state.ArgState, info.EnvironmentVariables);
 		if (!String.IsNullOrEmpty(state.WorkingDirectory)) info.WorkingDirectory = state.WorkingDirectory;
 		state.Notifier?.Begin(info);
 		using Process prog = Process.Start(info)!;
@@ -64,7 +66,8 @@ public static class Utilities
 			RedirectStandardOutput = false,
 			CreateNoWindow = false,
 		};
-		state.AppendArgs(info.ArgumentList);
+		state.AppendArgs?.Invoke(info.ArgumentList);
+		state.AppendEnvs?.Invoke(info.EnvironmentVariables);
 		if (!String.IsNullOrEmpty(state.WorkingDirectory)) info.WorkingDirectory = state.WorkingDirectory;
 		state.Notifier?.Begin(info);
 		using Process prog = Process.Start(info)!;

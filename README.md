@@ -3074,6 +3074,12 @@ Provides information about the Ahead-of-Time compilation.
   Indicates whether runtime reflection is disabled.
   </details>
 - <details>
+  <summary>IsPlatformUntrimmed</summary>
+  Indicates whether the current runtime is untrimmed on the current platform.
+
+  **Note:** Starting with .NET 5.0, this property enables trimming by allowing the linker to remove unreachable code.
+  </details>
+- <details>
   <summary>IsNativeAot</summary>
   Indicates whether the current runtime is NativeAOT. 
 
@@ -3132,6 +3138,23 @@ Provides information about the runtime system.
   Indicates whether the current runtime is running on a Solaris System.
   </details>
 
+#### Static Methods:
+
+- <details>
+  <summary>IsOsPlatform(String?)</summary>
+  Indicates whether the current runtime is running on the specified platform.
+  </details>
+- <details>
+  <summary>IsOsPlatform(String?[])</summary>
+  Indicates whether the current runtime is running on one of the specified platforms.
+  </details>
+- <details>
+  <summary>IsOsPlatform(ReadOnlySpan&lt;String?&gt;)</summary>
+  Indicates whether the current runtime is running on one of the specified platforms.
+  </details>
+
+**Note:** Starting with .NET 9.0, `params` is used with `ReadOnlySpan<String?>` arguments instead of `String?[]`
+arguments.
 </details>
 
 <details>

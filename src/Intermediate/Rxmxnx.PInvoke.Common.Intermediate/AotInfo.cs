@@ -41,6 +41,26 @@ public static partial class AotInfo
 	/// Indicates whether the current runtime is Native AOT.
 	/// </summary>
 	public static Boolean IsNativeAot => AotInfo.isAotRuntime;
+	/// <summary>
+	/// Indicates whether the current runtime has not been trimmed by the platform.
+	/// </summary>
+	public static Boolean IsPlatformUntrimmed
+		=>
+#if NET5_0_OR_GREATER
+			!OperatingSystem.IsLinux() && !OperatingSystem.IsWindows() && !OperatingSystem.IsMacOS() &&
+			!OperatingSystem.IsFreeBSD() && !OperatingSystem.IsAndroid() && !OperatingSystem.IsIOS() &&
+			!OperatingSystem.IsTvOS() && !OperatingSystem.IsWatchOS() && !OperatingSystem.IsBrowser()
+#if NET6_0_OR_GREATER
+			&& !OperatingSystem.IsMacCatalyst()
+#endif
+#if NET8_0_OR_GREATER
+			&& !OperatingSystem.IsWasi()
+#endif
+
+#else
+			true
+#endif
+	;
 
 	/// <summary>
 	/// Internal UTF-8 empty text.

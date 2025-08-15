@@ -5,13 +5,13 @@
         <TargetFramework Condition="'$(RequiredFramework)' != ''">$(RequiredFramework)</TargetFramework>
         <AssemblyName Condition="'$(RuntimeIdentifier)' != ''">$(AssemblyName).$(RuntimeIdentifier)</AssemblyName>
         <AssemblyName>$(AssemblyName).$(TargetFramework)</AssemblyName>
+        <SelfContained>true</SelfContained>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(PublishAot)' != 'true'">
+        <PublishSingleFile>true</PublishSingleFile>
         <DebugSymbols>false</DebugSymbols>
         <DebugType>None</DebugType>
-        <PublishSingleFile>true</PublishSingleFile>
-        <SelfContained>true</SelfContained>
         <!-- Assembly name must specify that it was compiled with ReadyToRun -->
         <AssemblyName Condition="$(PublishReadyToRun) == 'true'">$(AssemblyName).R2R</AssemblyName>
     </PropertyGroup>

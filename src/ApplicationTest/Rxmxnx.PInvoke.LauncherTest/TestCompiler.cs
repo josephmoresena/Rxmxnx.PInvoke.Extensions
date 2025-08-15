@@ -42,7 +42,10 @@ public static partial class TestCompiler
 			ExecuteState<CompileMonoArgs> state = new()
 			{
 				ExecutablePath = msbuildPath,
-				ArgState = new() { ProjectFile = appProjectFile, OutputPath = outputPath, },
+				ArgState = new()
+				{
+					ProjectFile = appProjectFile, OutputPath = Path.GetRelativePath(appProjectFile, outputPath),
+				},
 				AppendArgs = CompileMonoArgs.Append,
 				Notifier = ConsoleNotifier.Notifier,
 			};

@@ -830,8 +830,9 @@ jobs:
           				Console.WriteLine("========== Rxmxnx.PInvoke Runtime information ==========");
           				Console.WriteLine($"Native AOT: {AotInfo.IsNativeAot}");
           				Console.WriteLine($"Reflection Enabled: {!AotInfo.IsReflectionDisabled}");
-          				Console.WriteLine($"Mono Runtime: {SystemInfo.IsMonoRuntime}");
-          				Console.WriteLine($"Web Runtime: {SystemInfo.IsWebRuntime}");
+                        Console.WriteLine($"Mono Runtime: {SystemInfo.IsMonoRuntime}");
+                        Console.WriteLine($"Web Runtime: {SystemInfo.IsWebRuntime}");
+                        Console.WriteLine($"Untrimmed Runtime: {SystemInfo.IsPlatformUntrimmedRuntime}");
                         Console.WriteLine($"Windows Platform: {SystemInfo.IsWindows}");
                         Console.WriteLine($"Linux Platform: {SystemInfo.IsLinux}");
                         Console.WriteLine($"macOS Platform: {SystemInfo.IsMac}");
@@ -1181,13 +1182,14 @@ jobs:
           name: ${{ runner.os }}-Artifact-Logs
           path: |
             ./artifacts/native/*
-            ./artifacts/Mono/*MonoAOT.log
+            ./artifacts/Mono/*Mono.AOT.log
       - name: Prepare Mono artifact
         if: runner.os == 'Linux'
         shell: bash
         run: |
           mv ./atrifacts/Mono ./Mono
           rm -rf ./artifacts
+          rm Rxmxnx.PInvoke.LauncherTest
       - name: Init FreeBSD 13.5 VM
         if: runner.os == 'Linux'
         id: vm

@@ -11,6 +11,12 @@ internal partial class MemoryInspector
 	private sealed partial class NetBsd : BsdInspector
 	{
 		/// <inheritdoc/>
-		protected override void ProcessMaps() => Util.AppendMaps(this);
+		protected override void ProcessMaps()
+		{
+#if NET5_0_OR_GREATER
+			if (!AotInfo.IsPlatformUntrimmed) return;
+#endif
+			Util.AppendMaps(this);
+		}
 	}
 }

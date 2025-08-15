@@ -41,17 +41,13 @@ internal abstract partial class MemoryInspector
 			MemoryInspector.instance = new FreeBsd();
 			return;
 		}
-#if NET5_0_OR_GREATER
-		if (OperatingSystem.IsBrowser() || OperatingSystem.IsWatchOS()) return;
-#endif
 		if (SystemInfo.IsMac)
 		{
 			MemoryInspector.instance = new Mac();
 			return;
 		}
-#if NET8_0_OR_GREATER
-		if (OperatingSystem.IsWasi()) return;
-#endif
+		if (!AotInfo.IsPlatformUntrimmed) return;
+
 		if (SystemInfo.IsSolaris)
 			MemoryInspector.instance = new Solaris();
 		else if (SystemInfo.IsNetBsd)

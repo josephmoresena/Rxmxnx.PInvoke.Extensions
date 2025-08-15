@@ -29,24 +29,4 @@ public static partial class SystemInfo
 	private static Boolean? isNetBsd;
 	/// <inheritdoc cref="IsSolaris"/>
 	private static Boolean? isSolaris;
-
-	/// <summary>
-	/// Indicates whether the current property is not trimmable.
-	/// </summary>
-	private static Boolean NotTrimmable
-		=>
-#if NET5_0_OR_GREATER
-			!OperatingSystem.IsLinux() && !OperatingSystem.IsWindows() && !OperatingSystem.IsMacOS() &&
-			!OperatingSystem.IsFreeBSD() && !OperatingSystem.IsAndroid() && !OperatingSystem.IsIOS() &&
-			!OperatingSystem.IsTvOS() && !OperatingSystem.IsWatchOS() && !OperatingSystem.IsBrowser()
-#if NET6_0_OR_GREATER
-			&& !OperatingSystem.IsMacCatalyst()
-#endif
-#if NET8_0_OR_GREATER
-			&& !OperatingSystem.IsWasi()
-#endif
-	;
-#else
-			true;
-#endif
 }

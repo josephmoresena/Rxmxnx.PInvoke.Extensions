@@ -353,3 +353,5 @@ MigrationBackup/
 **/Rxmxnx.PInvoke*.xml
 **/.idea
 package/Rxmxnx.PInvoke.snk
+Rxmxnx.PInvoke.LauncherTest
+Rxmxnx.PInvoke.LauncherTest.exe

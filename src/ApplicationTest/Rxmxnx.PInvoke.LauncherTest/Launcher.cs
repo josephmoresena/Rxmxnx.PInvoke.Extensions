@@ -19,20 +19,20 @@ public abstract partial class Launcher
 		{
 			foreach (Architecture arch in this.Architectures)
 			foreach (FileInfo appFile in this.OutputDirectory.GetFiles(
-				         $"*ApplicationTest.*.{this.RuntimeIdentifierPrefix}-{Enum.GetName(arch)!.ToLower()}.*"))
+				         $"*ApplicationTest.*{this.RuntimeIdentifierPrefix}-{Enum.GetName(arch)!.ToLower()}.*"))
 			{
 				String executionName = $"{Path.GetRelativePath(this.OutputDirectory.FullName, appFile.FullName)}";
 				results.Add(executionName, await this.RunAppFile(appFile, arch, executionName));
 			}
-			foreach (FileInfo appFile in this.MonoOutputDirectory.GetFiles("*ApplicationTest.*.exe"))
+			foreach (FileInfo appFile in this.MonoOutputDirectory.GetFiles("*ApplicationTest.*mono.exe"))
 			{
-				String executionName = $"{Path.GetRelativePath(this.OutputDirectory.FullName, appFile.FullName)}";
+				String executionName = $"{Path.GetRelativePath(this.MonoOutputDirectory.FullName, appFile.FullName)}";
 				ExecuteState<String> state = new()
 				{
 					ExecutablePath = this.MonoExecutablePath,
 					ArgState = executionName,
 					WorkingDirectory = this.MonoOutputDirectory.FullName,
-					AppendArgs = static (s, c) => _ = c.Append(s),
+					AppendArgs = static (s, c) => c.Add(s),
 					Notifier = ConsoleNotifier.Notifier,
 				};
 				Int32 result = await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
@@ -48,7 +48,7 @@ public abstract partial class Launcher
 	}
 	public async Task CompileMonoAot()
 	{
-		foreach (FileInfo assemblyFile in this.OutputDirectory.GetFiles())
+		foreach (FileInfo assemblyFile in this.MonoOutputDirectory.GetFiles())
 		{
 			if (!assemblyFile.Extension.Contains(".exe") && !assemblyFile.Extension.Contains(".dll")) continue;
 			String assemblyName = $"{Path.GetRelativePath(this.MonoOutputDirectory.FullName, assemblyFile.FullName)}";
@@ -59,14 +59,15 @@ public abstract partial class Launcher
 				WorkingDirectory = this.MonoOutputDirectory.FullName,
 				AppendArgs = static (s, c) =>
 				{
-					_ = c.Append("--aot=full,hybrid");
-					_ = c.Append("-O=all");
-					_ = c.Append(s);
+					c.Add("--aot=full,hybrid");
+					c.Add("-O=all");
+					c.Add(s);
 				},
+				AppendEnvs = static (s, d) => d["MONO_LOG_LEVEL"] = "debug",
 				Notifier = ConsoleNotifier.Notifier,
 			};
 			String result = await Utilities.ExecuteWithOutput(state);
-			await File.WriteAllTextAsync($"{assemblyFile.Name}.Mono.AOT.log", result);
+			await File.WriteAllTextAsync($"{assemblyFile.FullName}.Mono.AOT.log", result);
 		}
 	}
 

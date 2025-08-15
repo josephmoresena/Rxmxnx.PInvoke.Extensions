@@ -10,7 +10,7 @@
 public static partial class SystemInfo
 {
 	/// <summary>
-	/// Indicates whether the current execution is occurring on a Windows-compatible platform.
+	/// Indicates whether the current execution is running on a Windows-compatible platform.
 	/// </summary>
 	public static Boolean IsWindows
 #if NET5_0_OR_GREATER
@@ -19,7 +19,7 @@ public static partial class SystemInfo
 		=> SystemInfo.isWindows;
 #endif
 	/// <summary>
-	/// Indicates whether the current execution is occurring on a Linux-compatible platform.
+	/// Indicates whether the current execution is running on a Linux-compatible platform.
 	/// </summary>
 	public static Boolean IsLinux
 #if NET5_0_OR_GREATER
@@ -28,7 +28,7 @@ public static partial class SystemInfo
 		=> SystemInfo.isLinux;
 #endif
 	/// <summary>
-	/// Indicates whether the current execution is occurring on a macOS-compatible platform.
+	/// Indicates whether the current execution is running on a macOS-compatible platform.
 	/// </summary>
 	public static Boolean IsMac
 #if NET5_0_OR_GREATER
@@ -36,14 +36,14 @@ public static partial class SystemInfo
 #if NET6_0_OR_GREATER
 			OperatingSystem.IsMacCatalyst();
 #else
-			!SystemInfo.NotTrimmable &&
+			!AotInfo.IsPlatformUntrimmed &&
 			(SystemInfo.isMacCatalyst ??= SystemInfo.IsOsPlatform(SystemInfo.macCatalystPlatform));
 #endif
 #else
 		=> SystemInfo.isMac;
 #endif
 	/// <summary>
-	/// Indicates whether the current execution is occurring on FreeBSD platform.
+	/// Indicates whether the current execution is running on FreeBSD platform.
 	/// </summary>
 	public static Boolean IsFreeBsd
 #if NET5_0_OR_GREATER
@@ -52,19 +52,19 @@ public static partial class SystemInfo
 		=> SystemInfo.isFreeBsd;
 #endif
 	/// <summary>
-	/// Indicates whether the current execution is occurring on NetBSD platform.
+	/// Indicates whether the current execution is running on NetBSD platform.
 	/// </summary>
 	public static Boolean IsNetBsd
-		=> !SystemInfo.NotTrimmable && (SystemInfo.isNetBsd ??= SystemInfo.IsOsPlatform(SystemInfo.netBsdPlatform));
+		=> !AotInfo.IsPlatformUntrimmed && (SystemInfo.isNetBsd ??= SystemInfo.IsOsPlatform(SystemInfo.netBsdPlatform));
 	/// <summary>
-	/// Indicates whether the current execution is occurring on NetBSD platform.
+	/// Indicates whether the current execution is running on NetBSD platform.
 	/// </summary>
 	public static Boolean IsSolaris
-		=> !SystemInfo.NotTrimmable && (SystemInfo.isSolaris ??=
+		=> !AotInfo.IsPlatformUntrimmed && (SystemInfo.isSolaris ??=
 			SystemInfo.IsOsPlatform(SystemInfo.solarisPlatform, SystemInfo.illumosPlatform));
 
 	/// <summary>
-	/// Indicates whether the current execution is occurring on a Web engine.
+	/// Indicates whether the current execution is running on a Web engine.
 	/// </summary>
 	public static Boolean IsWebRuntime
 #if NET5_0_OR_GREATER
@@ -72,53 +72,22 @@ public static partial class SystemInfo
 #if NET8_0_OR_GREATER
 			OperatingSystem.IsWasi();
 #else
-			!SystemInfo.NotTrimmable && (SystemInfo.isWasi ??= SystemInfo.IsOsPlatform(SystemInfo.wPlatform));
+			!AotInfo.IsPlatformUntrimmed && (SystemInfo.isWasi ??=
+ SystemInfo.IsOsPlatform(SystemInfo.wPlatform));
 #endif
 #else
 		=> SystemInfo.isWebRuntime;
 #endif
 	/// <summary>
-	/// Indicates whether the current execution is occurring on Mono Runtime.
+	/// Indicates whether the current execution is running on Mono Runtime.
 	/// </summary>
 	public static Boolean IsMonoRuntime => MonoInfo.IsEmptyNonLiteral;
 
 	/// <summary>
-	/// Indicates whether the current application is running on one of the specified platforms.
-	/// </summary>
-	/// <param name="platforms">Case-insensitive platform names.</param>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static Boolean IsOsPlatform(
-#if !NET9_0_OR_GREATER
-		params String[] platforms
-#else
-		String[] platforms
-#endif
-	)
-		=> SystemInfo.IsOsPlatform(platforms.AsSpan());
-	/// <summary>
-	/// Indicates whether the current application is running on one of the specified platforms.
-	/// </summary>
-	/// <param name="platforms">Case-insensitive platform names.</param>
-	public static Boolean IsOsPlatform(
-#if NET9_0_OR_GREATER
-		params ReadOnlySpan<String> platforms
-#else
-		ReadOnlySpan<String> platforms
-#endif
-	)
-	{
-		foreach (String platform in platforms)
-		{
-			if (SystemInfo.IsOsPlatform(platform))
-				return true;
-		}
-		return false;
-	}
-	/// <summary>
 	/// Indicates whether the current application is running on the specified platform.
 	/// </summary>
 	/// <param name="platform">Platform name.</param>
-	public static Boolean IsOsPlatform(String platform)
+	public static Boolean IsOsPlatform(String? platform)
 		=> !String.IsNullOrWhiteSpace(platform) &&
 #if !NET5_0_OR_GREATER
 			RuntimeInformation.IsOSPlatform(OSPlatform.Create(platform));
@@ -127,4 +96,36 @@ public static partial class SystemInfo
 			OperatingSystem.IsOSPlatform(platform);
 #pragma warning restore CA1418
 #endif
+	/// <summary>
+	/// Indicates whether the current application is running on one of the specified platforms.
+	/// </summary>
+	/// <param name="platforms">Case-insensitive platform names.</param>
+	public static Boolean IsOsPlatform(
+#if NET9_0_OR_GREATER
+		params ReadOnlySpan<String?> platforms
+#else
+		ReadOnlySpan<String?> platforms
+#endif
+	)
+	{
+		foreach (String? platform in platforms)
+		{
+			if (SystemInfo.IsOsPlatform(platform))
+				return true;
+		}
+		return false;
+	}
+	/// <summary>
+	/// Indicates whether the current application is running on one of the specified platforms.
+	/// </summary>
+	/// <param name="platforms">Case-insensitive platform names.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Boolean IsOsPlatform(
+#if !NET9_0_OR_GREATER
+		params String?[] platforms
+#else
+		String?[] platforms
+#endif
+	)
+		=> SystemInfo.IsOsPlatform(platforms.AsSpan());
 }

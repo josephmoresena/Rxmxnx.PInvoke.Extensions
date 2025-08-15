@@ -19,6 +19,9 @@ internal partial class MemoryInspector
 		/// <inheritdoc/>
 		protected override void ProcessMaps()
 		{
+#if NET5_0_OR_GREATER
+			if (!AotInfo.IsPlatformUntrimmed) return;
+#endif
 			ReadOnlySpan<ProcessMap> maps = Solaris.GetMaps();
 			foreach (ProcessMap map in maps)
 			{
