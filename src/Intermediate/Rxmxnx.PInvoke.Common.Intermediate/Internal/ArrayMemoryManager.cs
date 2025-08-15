@@ -1,7 +1,3 @@
-#if !NET6_0_OR_GREATER
-using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
-#endif
-
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>

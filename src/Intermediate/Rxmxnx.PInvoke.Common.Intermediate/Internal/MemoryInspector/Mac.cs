@@ -21,7 +21,8 @@ internal partial class MemoryInspector
 				Int32 result = SystemB.MemoryRegion(taskHandle, &ptr, out _, MemoryInfo.Flavor, out MemoryInfo info,
 				                                    ref count, out _);
 				SystemB.ValidateResult(result);
-				return info.Protection is Protection.Read and not Protection.Write;
+				return (info.Protection & Protection.Read) == Protection.Read &&
+					(info.Protection & Protection.Write) == Protection.None;
 			}
 		}
 	}

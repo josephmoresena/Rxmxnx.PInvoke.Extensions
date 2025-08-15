@@ -25,7 +25,8 @@ internal partial class MemoryInspector
 			ReadOnlySpan<ProcessMap> maps = Solaris.GetMaps();
 			foreach (ProcessMap map in maps)
 			{
-				Boolean isReadOnly = map.Flags is MapFlags.Read and not MapFlags.Write;
+				Boolean isReadOnly = (map.Flags & MapFlags.Read) == MapFlags.Read &&
+					(map.Flags & MapFlags.Write) == MapFlags.None;
 				this.AddBoundary(new(map.Address, false), isReadOnly);
 #if NET7_0_OR_GREATER
 				this.AddBoundary(new(map.Address + map.Size, true), isReadOnly);

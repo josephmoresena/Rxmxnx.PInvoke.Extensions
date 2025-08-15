@@ -60,7 +60,8 @@ internal partial class MemoryInspector
 				ref VmMap mapRef = ref Unsafe.AsRef<VmMap>(maps);
 				while (count > 0)
 				{
-					Boolean isReadOnly = mapRef.Protection is Protection.Read and not Protection.Write;
+					Boolean isReadOnly = (mapRef.Protection & Protection.Read) == Protection.Read &&
+						(mapRef.Protection & Protection.Write) == Protection.None;
 					bsdInspector.AddBoundary(new(mapRef.StartAddress, false), isReadOnly);
 					bsdInspector.AddBoundary(new(mapRef.EndAddress, true), isReadOnly);
 #if NET7_0_OR_GREATER

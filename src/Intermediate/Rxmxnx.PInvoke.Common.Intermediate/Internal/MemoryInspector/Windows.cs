@@ -23,8 +23,7 @@ internal partial class MemoryInspector
 				return result != UIntPtr.Zero && memInfo.Protect switch
 				{
 					MemoryState.Image => true,
-					MemoryState.ReadOnly => memInfo.Type is MemoryState.Image,
-					MemoryState.ExecuteRead => memInfo.Type is MemoryState.Image,
+					MemoryState.ReadOnly or MemoryState.ExecuteRead => memInfo.Type is MemoryState.Image,
 					_ => false,
 				};
 			}
