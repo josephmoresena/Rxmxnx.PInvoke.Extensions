@@ -1166,7 +1166,6 @@ jobs:
         run: |
           cp -R ./artifacts/Mono ./Mono
           rm -rf ./artifacts
-          rm Rxmxnx.PInvoke.LauncherTest
       - name: Run launcher (run)
         shell: pwsh
         run: |
