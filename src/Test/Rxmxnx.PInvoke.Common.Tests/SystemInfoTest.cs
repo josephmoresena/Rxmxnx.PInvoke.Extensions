@@ -25,7 +25,7 @@ public sealed class SystemInfoTest
 			RuntimeInformation.IsOSPlatform(OSPlatform.Create("SOLARIS")) ||
 			RuntimeInformation.IsOSPlatform(OSPlatform.Create("ILLUMOS")), SystemInfo.IsSolaris);
 		OSPlatform[] platforms = [OSPlatform.Windows, OSPlatform.Linux, OSPlatform.OSX,];
-		String[] platformNames = platforms.Select(p =>
+		String?[] platformNames = platforms.Select(p =>
 		{
 			String result = p.ToString();
 			PInvokeAssert.Equal(RuntimeInformation.IsOSPlatform(p), SystemInfo.IsOsPlatform(result));

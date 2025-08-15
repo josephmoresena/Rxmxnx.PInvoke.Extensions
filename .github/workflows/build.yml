@@ -832,7 +832,6 @@ jobs:
           				Console.WriteLine($"Reflection Enabled: {!AotInfo.IsReflectionDisabled}");
                         Console.WriteLine($"Mono Runtime: {SystemInfo.IsMonoRuntime}");
                         Console.WriteLine($"Web Runtime: {SystemInfo.IsWebRuntime}");
-                        Console.WriteLine($"Untrimmed Runtime: {SystemInfo.IsPlatformUntrimmedRuntime}");
                         Console.WriteLine($"Windows Platform: {SystemInfo.IsWindows}");
                         Console.WriteLine($"Linux Platform: {SystemInfo.IsLinux}");
                         Console.WriteLine($"macOS Platform: {SystemInfo.IsMac}");
