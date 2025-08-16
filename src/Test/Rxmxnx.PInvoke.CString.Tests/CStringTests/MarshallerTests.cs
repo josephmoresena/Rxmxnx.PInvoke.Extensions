@@ -87,8 +87,9 @@ public sealed unsafe class MarshallerTests
 					PInvokeAssert.True(Unsafe.AreSame(ref refUtf8, ref unsafeRefUtf8));
 				}
 #if NET6_0_OR_GREATER
-				Assert.True(
-					utfSpan.SequenceEqual(MemoryMarshalCompat.CreateReadOnlySpanFromNullTerminated((Byte*)ptr)));
+				ReadOnlySpan<Byte> compatSpan = MemoryMarshalCompat.CreateReadOnlySpanFromNullTerminated((Byte*)ptr);
+				Assert.Equal(Encoding.UTF8.GetString(utfSpan), Encoding.UTF8.GetString(compatSpan));
+				Assert.True(utfSpan.SequenceEqual(compatSpan));
 #endif
 				PInvokeAssert.Equal(utfSpan.Length,
 				                    MemoryMarshalCompat.IndexOfNull(ref MemoryMarshal.GetReference<Byte>(value)));
