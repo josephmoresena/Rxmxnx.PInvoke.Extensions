@@ -8,7 +8,7 @@ public abstract partial class Launcher
 	public abstract String RuntimeIdentifierPrefix { get; }
 	public abstract String MonoMsbuildPath { get; }
 	public abstract String MonoExecutablePath { get; }
-	public abstract String MonoFrameworkPath { get; }
+	public virtual String? Mono32ExecutablePath => default;
 
 	public abstract Architecture[] Architectures { get; }
 	public async Task Execute()
@@ -28,17 +28,13 @@ public abstract partial class Launcher
 			foreach (FileInfo appFile in this.MonoOutputDirectory.GetFiles("*ApplicationTest.*mono.exe"))
 			{
 				String executionName = $"{Path.GetRelativePath(this.MonoOutputDirectory.FullName, appFile.FullName)}";
-				ExecuteState<String> state = new()
-				{
-					ExecutablePath = this.MonoExecutablePath,
-					ArgState = executionName,
-					WorkingDirectory = this.MonoOutputDirectory.FullName,
-					AppendArgs = static (s, c) => c.Add(s),
-					Notifier = ConsoleNotifier.Notifier,
-				};
-				Int32 result = await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
-				ConsoleNotifier.Notifier.Result(result, executionName);
-				results.Add(executionName, result);
+				results.Add(appFile.Name,
+				            await Launcher.RunMonoAppFile(this.MonoExecutablePath, executionName,
+				                                       this.MonoOutputDirectory.FullName));
+				if (String.IsNullOrEmpty(this.Mono32ExecutablePath)) return;
+				results.Add($"{appFile.Name} (x86)",
+				            await Launcher.RunMonoAppFile(this.Mono32ExecutablePath, executionName,
+				                                       this.MonoOutputDirectory.FullName));
 			}
 		}
 		finally

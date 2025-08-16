@@ -190,6 +190,7 @@ jobs:
       - name: Setup .NET x86
         if: runner.os == 'Windows'
         run: |
+          winget install Mono.Mono --architecture x86 --silent --force --disable-interactivity --accept-source-agreements
           winget install Microsoft.DotNet.SDK.6  --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
           winget install Microsoft.DotNet.SDK.7 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
           winget install Microsoft.DotNet.SDK.8 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements  
@@ -229,6 +230,16 @@ jobs:
               mono src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All
               mono src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
           }
+      - name: Run Mono tests (x86)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if ($IsWindows) {
+              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Common.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All
+              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.CString.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All
+              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Extensions.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All
+              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Buffers.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
+          }
       - name: Pack assembly
         working-directory: ./package/Rxmxnx.PInvoke.Extensions
         run: |
@@ -240,6 +251,7 @@ jobs:
         shell: pwsh
         run: |
           if ($IsWindows) {
+            Enable-WindowsOptionalFeature -Online -FeatureName "NetFx3"
             ./Rxmxnx.PInvoke.LauncherTest.exe "src\ApplicationTest" "artifacts" "compile"
           } else {
             chmod +x Rxmxnx.PInvoke.LauncherTest

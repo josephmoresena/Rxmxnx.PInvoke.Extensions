@@ -11,8 +11,11 @@ public partial class Launcher
 			Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Mono", "bin", "mono.exe");
 		public override String MonoMsbuildPath { get; } = Path.Combine(
 			Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Mono", "bin", "msbuild.bat");
-		public override String MonoFrameworkPath { get; } = Path.Combine(
-			Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Mono", "lib", "mono");
+		public override String? Mono32ExecutablePath { get; } =
+			RuntimeInformation.OSArchitecture is not Architecture.X86 ?
+				Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Mono", "bin",
+				             "msbuild.bat") :
+				default;
 
 		private Windows(DirectoryInfo outputDirectory, Boolean useMono, out Task initialize) : base(
 			outputDirectory, useMono)

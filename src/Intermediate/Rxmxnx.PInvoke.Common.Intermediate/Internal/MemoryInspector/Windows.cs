@@ -20,15 +20,8 @@ internal partial class MemoryInspector
 			{
 				UIntPtr result = Kernel32.VirtualQuery(ptr, out MemoryInfo memInfo, MemoryInfo.Size);
 				Kernel32.ValidateResult(result);
-				//TODO: Fix on Windows
-				Console.WriteLine($"{memInfo.Protect}, 0x{(UInt32)memInfo.Protect:x8}");
-				Console.WriteLine($"{memInfo.Type}, 0x{(UInt32)memInfo.Type:x8}");
-				return result != UIntPtr.Zero && memInfo.Protect switch
-				{
-					MemoryState.Image => true,
-					MemoryState.ReadOnly or MemoryState.ExecuteRead => memInfo.Type is MemoryState.Image,
-					_ => false,
-				};
+				return result != UIntPtr.Zero && memInfo.Protect is MemoryState.ReadOnly or MemoryState.ExecuteRead &&
+					memInfo.Type.Value is MemoryState.Image or MemoryState.Mapped;
 			}
 		}
 	}

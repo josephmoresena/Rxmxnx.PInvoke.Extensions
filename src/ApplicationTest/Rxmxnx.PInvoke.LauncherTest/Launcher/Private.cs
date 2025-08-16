@@ -25,4 +25,19 @@ public partial class Launcher
 			registry.Unregister();
 		}
 	}
+	
+	private static async Task<Int32> RunMonoAppFile(String monoExecutable, String appFilePath, String workingDirectory)
+	{
+		ExecuteState<String> state = new()
+		{
+			ExecutablePath = monoExecutable,
+			ArgState = appFilePath,
+			WorkingDirectory = workingDirectory,
+			AppendArgs = static (s, c) => c.Add(s),
+			Notifier = ConsoleNotifier.Notifier,
+		};
+		Int32 result = await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
+		ConsoleNotifier.Notifier.Result(result, appFilePath);
+		return result;
+	}
 }

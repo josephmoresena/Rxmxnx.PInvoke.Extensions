@@ -9,7 +9,6 @@ public partial class Launcher
 		public override String RuntimeIdentifierPrefix => "linux";
 		public override String MonoExecutablePath => "/usr/bin/mono";
 		public override String MonoMsbuildPath => "/usr/bin/msbuild";
-		public override String MonoFrameworkPath => "/usr/lib/mono";
 		protected override Task<Int32> RunAppFile(FileInfo appFile, Architecture arch, String executionName,
 			CancellationToken cancellationToken)
 		{

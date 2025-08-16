@@ -9,7 +9,6 @@ public partial class Launcher
 		public override String RuntimeIdentifierPrefix => "osx";
 		public override String MonoExecutablePath => "/Library/Frameworks/Mono.framework/Versions/Current/bin/mono";
 		public override String MonoMsbuildPath => "/Library/Frameworks/Mono.framework/Versions/Current/bin/msbuild";
-		public override String MonoFrameworkPath => "/Library/Frameworks/Mono.framework/Versions/Current/lib/mono";
 
 		private Mac(DirectoryInfo outputDirectory, Boolean useMono, out Task initialize) : base(
 			outputDirectory, useMono)

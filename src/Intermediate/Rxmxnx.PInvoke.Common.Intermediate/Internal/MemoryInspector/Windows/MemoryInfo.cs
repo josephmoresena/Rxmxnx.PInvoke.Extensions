@@ -14,12 +14,20 @@ internal partial class MemoryInspector
 
 			public IntPtr BaseAddress;
 			public IntPtr AllocationBase;
-			public MemoryState AllocationProtect;
-			public UInt16 PartitionId;
+			public AlignedMemoryState AllocationProtect;
 			public UIntPtr RegionSize;
 			public RegionState State;
 			public MemoryState Protect;
-			public MemoryState Type;
+			public AlignedMemoryState Type;
+
+			[StructLayout(LayoutKind.Explicit)]
+			public struct AlignedMemoryState
+			{
+				[FieldOffset(0)]
+				private readonly IntPtr __alignment1;
+				[FieldOffset(0)]
+				public MemoryState Value;
+			}
 		}
 	}
 }
