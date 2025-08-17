@@ -252,6 +252,32 @@ jobs:
       - name: Publish launcher
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.LauncherTest
         run: dotnet publish
+      - name: Install Ubuntu 20.04 (WSL)
+        if: runner.os == 'Windows'
+        uses: Vampire/setup-wsl@v6
+        with:
+          distribution: Ubuntu-20.04
+          wsl-version: 1
+          update: true
+          additional-packages: ca-certificates gnupg
+      - name: Install Mono (WSL)
+        if: runner.os == 'Windows'
+        shell: wsl-bash {0}
+        run: |
+          sudo apt update
+          sudo gpg --homedir /tmp --no-default-keyring \
+                   --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg \
+                   --keyserver hkp://keyserver.ubuntu.com:80 \
+                   --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+          
+          echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" \
+            | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+          
+          sudo apt update -y
+          sudo apt install -y mono-complete
+          
+          which mono
+          mono --version
       - name: Run launcher (compile)
         shell: pwsh
         run: |
@@ -277,6 +303,12 @@ jobs:
           cp -R ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/ ./Test/Rxmxnx.PInvoke.Extensions.Tests/netstandard2.1
           cp -R ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/net9.0/ ./Test/Rxmxnx.PInvoke.Buffers.Tests/net9.0
           cp -R ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/ ./Test/Rxmxnx.PInvoke.Buffers.Tests/netstandard2.1
+      - name: Mono-Compile ApplicationTest (WSL)
+        if: runner.os == 'Windows'
+        shell: wsl-bash {0}
+        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest/obj
+        run: |
+          mono -restore /p:Configuration=Release /p:UsePackage=true /p:OutDir=../../../artifacts/Mono
       - name: Run launcher (run)
         shell: pwsh
         run: |
@@ -309,7 +341,8 @@ jobs:
           rm -rf ./package/**/bin/**/net*
           rm -rf ./package/**/obj
           rm -rf ./artifacts
-          rm -rf ~/.ssh/
+          mkdir -p /home/runner/.ssh
+          sudo chmod 700 /home/runner/.ssh
           rm ./Rxmxnx.PInvoke.LauncherTest
       - name: Init FreeBSD 13.5 VM
         if: runner.os == 'Linux'
@@ -377,3 +410,17 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE;
           mono ./Mono/Rxmxnx.PInvoke.ApplicationTest.mono.exe;
+      - name: Setup Mono Framework
+        if: runner.os == 'MacOS'
+        run: |
+          brew install --overwrite mono
+      - name: Mono framework tests (Apple Silicon)
+        run: |
+          /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All
+          /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All
+          /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All
+          /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
+      - name: Mono-Run ApplicationTest (Apple Silicon)
+        if: runner.os == 'MacOS'
+        run: |
+          /opt/homebrew/bin/mono ./artifact/Mono/Rxmxnx.PInvoke.ApplicationTest.mono.exe;
