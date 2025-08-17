@@ -112,7 +112,7 @@ jobs:
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
         shell: bash
         run: |
-          mono -restore /p:Configuration=Release /p:UsePackage=true
+          msbuild -restore /p:Configuration=Release /p:UsePackage=true
           rm -rf ./obj
       - name: Init FreeBSD 13.5 VM
         id: vm
@@ -390,7 +390,7 @@ jobs:
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
         continue-on-error: true
         run: |
-          wsl "mono -restore /p:Configuration=Release /p:UsePackage=true /p:OutDir=../../../artifacts/Mono"
+          msbuild -restore /p:Configuration=Release /p:UsePackage=true /p:OutDir=../../../artifacts/Mono
       - name: Run launcher (run)
         shell: pwsh
         run: |
