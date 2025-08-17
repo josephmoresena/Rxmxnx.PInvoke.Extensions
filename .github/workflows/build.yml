@@ -306,7 +306,7 @@ jobs:
       - name: Mono-Compile ApplicationTest (WSL)
         if: runner.os == 'Windows'
         shell: wsl-bash {0}
-        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest/obj
+        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
         run: |
           mono -restore /p:Configuration=Release /p:UsePackage=true /p:OutDir=../../../artifacts/Mono
       - name: Run launcher (run)
