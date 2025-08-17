@@ -8,7 +8,8 @@ public abstract partial class Launcher
 	public abstract String RuntimeIdentifierPrefix { get; }
 	public abstract String MonoMsbuildPath { get; }
 	public abstract String MonoExecutablePath { get; }
-	public virtual String? Mono32ExecutablePath => default;
+	public virtual String? Mono2ExecutablePath => default;
+	public virtual Architecture Mono2Arch => RuntimeInformation.OSArchitecture;
 
 	public abstract Architecture[] Architectures { get; }
 	public async Task Execute()
@@ -30,11 +31,11 @@ public abstract partial class Launcher
 				String executionName = $"{Path.GetRelativePath(this.MonoOutputDirectory.FullName, appFile.FullName)}";
 				results.Add(appFile.Name,
 				            await Launcher.RunMonoAppFile(this.MonoExecutablePath, executionName,
-				                                       this.MonoOutputDirectory.FullName));
-				if (String.IsNullOrEmpty(this.Mono32ExecutablePath)) return;
-				results.Add($"{appFile.Name} (x86)",
-				            await Launcher.RunMonoAppFile(this.Mono32ExecutablePath, executionName,
-				                                       this.MonoOutputDirectory.FullName));
+				                                          this.MonoOutputDirectory.FullName));
+				if (String.IsNullOrEmpty(this.Mono2ExecutablePath)) return;
+				results.Add($"{appFile.Name} ({this.Mono2Arch})",
+				            await Launcher.RunMonoAppFile(this.Mono2ExecutablePath, executionName,
+				                                          this.MonoOutputDirectory.FullName));
 			}
 		}
 		finally
@@ -50,22 +51,14 @@ public abstract partial class Launcher
 		{
 			if (!assemblyFile.Extension.Contains(".exe") && !assemblyFile.Extension.Contains(".dll")) continue;
 			String assemblyName = $"{Path.GetRelativePath(this.MonoOutputDirectory.FullName, assemblyFile.FullName)}";
-			ExecuteState<String> state = new()
-			{
-				ExecutablePath = this.MonoExecutablePath,
-				ArgState = assemblyName,
-				WorkingDirectory = this.MonoOutputDirectory.FullName,
-				AppendArgs = static (s, c) =>
-				{
-					c.Add("--aot=full,hybrid");
-					c.Add("-O=all");
-					c.Add(s);
-				},
-				AppendEnvs = static (s, d) => d["MONO_LOG_LEVEL"] = "debug",
-				Notifier = ConsoleNotifier.Notifier,
-			};
-			String result = await Utilities.ExecuteWithOutput(state);
+			String result =
+				await Launcher.RunMonoAot(this.MonoExecutablePath, assemblyName, this.MonoOutputDirectory.FullName);
 			await File.WriteAllTextAsync($"{assemblyFile.FullName}.Mono.AOT.log", result);
+			if (String.IsNullOrEmpty(this.Mono2ExecutablePath)) continue;
+
+			String result2 =
+				await Launcher.RunMonoAot(this.Mono2ExecutablePath, assemblyName, this.MonoOutputDirectory.FullName);
+			await File.WriteAllTextAsync($"{assemblyFile.FullName}.{this.Mono2Arch}.Mono.AOT.log", result2);
 		}
 	}
 

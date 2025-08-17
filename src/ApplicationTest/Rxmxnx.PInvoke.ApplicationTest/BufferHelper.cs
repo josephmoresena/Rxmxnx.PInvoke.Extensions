@@ -34,6 +34,8 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			GC.Collect();
 			if (!SystemInfo.IsMonoRuntime)
 				GC.WaitForFullGCComplete();
+			else
+				GC.WaitForPendingFinalizers();
 			Console.WriteLine("End GC.Collect()");
 		}
 		public static void Generate(ScopedBuffer<Int32> buff)
