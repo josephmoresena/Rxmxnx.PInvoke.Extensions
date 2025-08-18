@@ -301,7 +301,7 @@ public static unsafe partial class NativeUtilities
 		};
 	/// <summary>
 	/// Creates an <see cref="IFixedMethod{TDelegate}.IDisposable"/> instance by marshalling the current
-	/// <see cref="TDelegate"/> instance, ensuring a safe interop context.
+	/// <typeparamref name="TDelegate"/> instance, ensuring a safe interop context.
 	/// </summary>
 	/// <typeparam name="TDelegate">Type of the method delegate which is being fixed.</typeparam>
 	/// <param name="method">Delegate of the method to be fixed.</param>

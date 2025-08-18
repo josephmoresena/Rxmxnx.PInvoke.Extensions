@@ -38,6 +38,9 @@ internal sealed partial class FixedDelegate<TDelegate> : IConvertibleDisposable<
 	private sealed class Disposable : Disposable<FixedDelegate>, IFixedMethod<TDelegate>.IDisposable
 	{
 		/// <inheritdoc cref="Disposable.Default"/>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2743)]
+#endif
 		private static Disposable? defaultInstance;
 
 		/// <summary>

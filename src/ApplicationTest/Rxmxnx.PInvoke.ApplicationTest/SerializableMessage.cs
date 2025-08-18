@@ -1,4 +1,7 @@
 using System;
+#if NETCOREAPP
+using System.Text.Json.Serialization;
+#endif
 
 namespace Rxmxnx.PInvoke.ApplicationTest
 {
@@ -7,5 +10,10 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 	{
 		public T? Title { get; set; }
 		public T? Message { get; set; }
+
+#if NETCOREAPP
+		[JsonConstructor]
+		public SerializableMessage() { }
+#endif
 	}
 }

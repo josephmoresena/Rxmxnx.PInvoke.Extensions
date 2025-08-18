@@ -98,10 +98,13 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		{
 			try
 			{
-				ReadOnlySpan<Assembly> span = AppDomain.CurrentDomain.GetAssemblies();
-				foreach (Assembly assembly in span)
+#if !NET6_0_OR_GREATER
+				foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+#else
+				foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().AsSpan())
+#endif
 				{
-					if (assembly == Assembly.GetExecutingAssembly()) continue;
+					if (assembly == Assembly.GetExecutingAssembly() || assembly.IsDynamic) continue;
 					Console.WriteLine(AotInfo.IsNativeAot ? assembly.FullName : assembly.GetAssemblyName());
 				}
 			}

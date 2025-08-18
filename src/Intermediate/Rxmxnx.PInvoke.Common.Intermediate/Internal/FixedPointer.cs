@@ -249,7 +249,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// </summary>
 	/// <typeparam name="TDelegate">A <see cref="Delegate"/> type.</typeparam>
 	/// <returns>A <typeparamref name="TDelegate"/> instance over the memory block.</returns>
-	public TDelegate? CreateDelegate<TDelegate>() where TDelegate : Delegate
+	public TDelegate CreateDelegate<TDelegate>() where TDelegate : Delegate
 	{
 		this.ValidateFunctionOperation();
 		return Marshal.GetDelegateForFunctionPointer<TDelegate>(new(this._ptr));

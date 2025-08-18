@@ -7,7 +7,7 @@ internal partial class MemoryInspector
 		/// <summary>
 		/// This struct storages state for <c>/proc/self/maps</c> file reading.
 		/// </summary>
-		public ref struct FileState
+		private ref struct FileState
 		{
 			/// <summary>
 			/// Read buffer.

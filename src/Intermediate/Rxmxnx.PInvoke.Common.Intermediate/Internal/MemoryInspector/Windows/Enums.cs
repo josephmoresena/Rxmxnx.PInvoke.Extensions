@@ -9,7 +9,7 @@ internal partial class MemoryInspector
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2342)]
 #endif
 		[Flags]
-		public enum MemoryState : UInt32
+		private enum MemoryState : UInt32
 		{
 			Unknown = 0x0,
 

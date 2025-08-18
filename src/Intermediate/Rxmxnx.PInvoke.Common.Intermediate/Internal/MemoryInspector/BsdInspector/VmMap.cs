@@ -9,7 +9,7 @@ internal partial class MemoryInspector
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 		[StructLayout(LayoutKind.Sequential)]
-		protected readonly unsafe struct VmMap
+		private protected readonly unsafe struct VmMap
 		{
 			public readonly Int32 StructSize;
 			public readonly MapType Type;
