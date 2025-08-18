@@ -6,10 +6,8 @@ namespace Rxmxnx.PInvoke.Tests.DelegateExtensionsTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
-public sealed class GetUnsafePointerTest
+public sealed class GetUnsafePointerTest : DelegatesTests
 {
-	private static readonly IFixture fixture = new Fixture();
-
 	[Fact]
 	public void EmptyTest()
 	{
@@ -27,12 +25,12 @@ public sealed class GetUnsafePointerTest
 	[Fact]
 	public unsafe void NormalTest()
 	{
-		GetByteValue getByteValue = GetUnsafePointerTest.GetByte;
-		GetValue<Byte> getValue = GetUnsafePointerTest.GetByte;
+		GetByteValue getByteValue = DelegatesTests.GetByte;
+		GetValue<Byte> getValue = DelegatesTests.GetByte;
 		IntPtr intPtr = Marshal.GetFunctionPointerForDelegate(getByteValue);
 		UIntPtr uintPtr = (UIntPtr)intPtr.ToPointer();
 		FuncPtr<GetByteValue> funcPtr = (FuncPtr<GetByteValue>)intPtr;
-		Byte input = GetUnsafePointerTest.fixture.Create<Byte>();
+		Byte input = DelegatesTests.Fixture.Create<Byte>();
 
 		IntPtr result = getByteValue.GetUnsafeIntPtr();
 		UIntPtr result2 = getByteValue.GetUnsafeUIntPtr();
@@ -51,8 +49,4 @@ public sealed class GetUnsafePointerTest
 		Assert.Throws<ArgumentException>(() => getValue.GetUnsafeFuncPtr());
 #endif
 	}
-
-	private static Byte GetByte(Byte value) => value;
-	private delegate T GetValue<T>(T value);
-	private delegate Byte GetByteValue(Byte value);
 }

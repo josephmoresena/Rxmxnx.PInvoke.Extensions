@@ -3,7 +3,7 @@
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-internal abstract unsafe class FixedDelegate : FixedPointer
+internal abstract unsafe partial class FixedDelegate : FixedPointer
 {
 	/// <summary>
 	/// Internal instance of <see cref="GCHandle"/>.
@@ -22,6 +22,10 @@ internal abstract unsafe class FixedDelegate : FixedPointer
 	public override Boolean IsFunction => true;
 
 	/// <summary>
+	/// Parameterless constructor.
+	/// </summary>
+	private FixedDelegate() : base(default, sizeof(IntPtr), true) { }
+	/// <summary>
 	/// Constructor that takes a method delegate and stores a pointer to it.
 	/// </summary>
 	/// <param name="methodPointer">Pointer to the method.</param>
@@ -33,7 +37,8 @@ internal abstract unsafe class FixedDelegate : FixedPointer
 	public override void Unload()
 	{
 		base.Unload();
-		this._handle.Free();
+		if (this._handle.IsAllocated)
+			this._handle.Free();
 	}
 }
 
@@ -44,9 +49,14 @@ internal abstract unsafe class FixedDelegate : FixedPointer
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-internal sealed unsafe class FixedDelegate<TDelegate> : FixedDelegate, IFixedMethod<TDelegate>
+internal sealed unsafe partial class FixedDelegate<TDelegate> : FixedDelegate, IFixedMethod<TDelegate>
 	where TDelegate : Delegate
 {
+	/// <summary>
+	/// An empty instance of <see cref="IFixedMethod{T}.IDisposable"/>.
+	/// </summary>
+	public static readonly IFixedMethod<TDelegate>.IDisposable EmptyDisposable = Disposable.Default;
+
 	/// <inheritdoc/>
 	public override Type Type => typeof(TDelegate);
 
@@ -57,7 +67,7 @@ internal sealed unsafe class FixedDelegate<TDelegate> : FixedDelegate, IFixedMet
 	public FixedDelegate(TDelegate method) : base(
 		FixedDelegate<TDelegate>.GetMethodPointer(method, out GCHandle handle), handle) { }
 
-	TDelegate IFixedMethod<TDelegate>.Method => this.CreateDelegate<TDelegate>();
+	TDelegate IFixedMethod<TDelegate>.Method => this.CreateDelegate<TDelegate>()!;
 
 	/// <summary>
 	/// Gets the pointer to the method delegate provided, while creating a <see cref="GCHandle"/> to

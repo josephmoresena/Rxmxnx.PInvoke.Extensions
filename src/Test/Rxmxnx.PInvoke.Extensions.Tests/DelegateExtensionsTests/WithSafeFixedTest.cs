@@ -6,12 +6,12 @@ namespace Rxmxnx.PInvoke.Tests.DelegateExtensionsTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
-public sealed class WithSafeFixedTest
+public sealed class WithSafeFixedTest : DelegatesTests
 {
 	[Fact]
 	public void Test()
 	{
-		GetInt32 getInt = WithSafeFixedTest.GetThreadId;
+		GetInt32 getInt = DelegatesTests.GetThreadId;
 		IntPtr ptr = WithSafeFixedTest.GetMethodPtr();
 
 		getInt.WithSafeFixed(WithSafeFixedTest.ActionTest);
@@ -21,13 +21,12 @@ public sealed class WithSafeFixedTest
 		                    getInt.WithSafeFixed(WithSafeFixedTest.GetMethodDelegate(ptr), WithSafeFixedTest.FuncTest));
 	}
 
-	private static IntPtr GetMethodPtr()
-		=> Marshal.GetFunctionPointerForDelegate<GetInt32>(WithSafeFixedTest.GetThreadId);
+	private static IntPtr GetMethodPtr() => Marshal.GetFunctionPointerForDelegate<GetInt32>(DelegatesTests.GetThreadId);
 	private static GetInt32 GetMethodDelegate(IntPtr ptr) => Marshal.GetDelegateForFunctionPointer<GetInt32>(ptr);
 	private static void ActionTest(in IFixedMethod<GetInt32> fMethod)
 	{
 		PInvokeAssert.Equal(Environment.CurrentManagedThreadId, fMethod.Method());
-		PInvokeAssert.Equal(Marshal.GetFunctionPointerForDelegate<GetInt32>(WithSafeFixedTest.GetThreadId),
+		PInvokeAssert.Equal(Marshal.GetFunctionPointerForDelegate<GetInt32>(DelegatesTests.GetThreadId),
 		                    fMethod.Pointer);
 	}
 	private static void ActionTest(in IFixedMethod<GetInt32> fMethod, GetInt32 instance)
@@ -46,6 +45,4 @@ public sealed class WithSafeFixedTest
 		WithSafeFixedTest.ActionTest(fMethod, instance);
 		return fMethod.Method();
 	}
-	private static Int32 GetThreadId() => Environment.CurrentManagedThreadId;
-	private delegate Int32 GetInt32();
 }

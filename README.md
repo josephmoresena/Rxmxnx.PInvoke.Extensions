@@ -2465,6 +2465,12 @@ Additional functionality for working with delegates.
   Prevents the garbage collector from relocating a delegate in memory, fixes its address, invokes the function that
   returns a `TResult` value, passing an additional argument to the function.
   </details>
+- <details>
+  <summary>GetFixedMethod&lt;TDelegate&gt;(this TDelegate?)</summary>
+
+  Creates an `IFixedMethod<TDelegate>.IDisposable` instance by marshalling the current `TDelegate` instance,
+  ensuring a safe interop context.
+  </details>
 
 </details>
 
@@ -3567,6 +3573,12 @@ Set of utilities for exchange data within the P/Invoke context.
   Prevents the garbage collector from reallocating given spans and fixes their memory addresses until func completes.
 
   **Note:** Starting with .NET 9.0, `TArg` can be a `ref struct`.
+  </details>
+- <details>
+  <summary>GetFixedMethod&lt;TDelegate&gt;(TDelegate?)</summary>
+
+  Creates an `IFixedMethod<TDelegate>.IDisposable` instance by marshalling the current `TDelegate` instance,
+  ensuring a safe interop context.
   </details>
 
 </details>
