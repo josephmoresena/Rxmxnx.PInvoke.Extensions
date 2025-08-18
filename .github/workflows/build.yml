@@ -336,6 +336,7 @@ jobs:
               & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Buffers.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
           }
       - name: Run Mono tests (Apple Silicon)
+        if: runner.os == 'MacOS'
         run: |
           /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All
           /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All
