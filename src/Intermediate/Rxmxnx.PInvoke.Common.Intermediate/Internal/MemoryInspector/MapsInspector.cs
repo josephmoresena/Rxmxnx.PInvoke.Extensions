@@ -81,19 +81,21 @@ internal partial class MemoryInspector
 		}
 
 		/// <summary>
+		/// Processes memory maps from current process.
+		/// </summary>
+		protected abstract void ProcessMaps();
+
+		/// <summary>
 		/// Adds <paramref name="value"/> to maps boundaries.
 		/// </summary>
 		/// <param name="value">A <see cref="MemoryBoundary"/> instance.</param>
 		/// <param name="isReadOnly">Indicates whether <paramref name="value"/> is read-only boundary.</param>
-		protected void AddBoundary(MemoryBoundary value, Boolean isReadOnly)
+		private protected void AddBoundary(MemoryBoundary value, Boolean isReadOnly)
 		{
 			SortedSet<MemoryBoundary> maps = isReadOnly ? this._readonlyMemory : this._readwriteMemory;
 			MapsInspector.AddBoundary(maps, value);
 		}
-		/// <summary>
-		/// Processes memory maps from current process.
-		/// </summary>
-		protected abstract void ProcessMaps();
+
 		/// <summary>
 		/// Refresh memories boundaries.
 		/// </summary>
