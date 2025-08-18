@@ -1,38 +1,43 @@
-﻿namespace Rxmxnx.PInvoke.Tests.ValueRegionTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.ValueRegionTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class BasicTests : ValueRegionTestBase
 {
 #pragma warning disable CS8500
 	[Fact]
-	internal void BooleanTest() => BasicTests.Test<Boolean>();
+	public void BooleanTest() => BasicTests.Test<Boolean>();
 	[Fact]
-	internal void ByteTest() => BasicTests.Test<Byte>();
+	public void ByteTest() => BasicTests.Test<Byte>();
 	[Fact]
-	internal void Int16Test() => BasicTests.Test<Int16>();
+	public void Int16Test() => BasicTests.Test<Int16>();
 	[Fact]
-	internal void CharTest() => BasicTests.Test<Char>();
+	public void CharTest() => BasicTests.Test<Char>();
 	[Fact]
-	internal void Int32Test() => BasicTests.Test<Int32>();
+	public void Int32Test() => BasicTests.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => BasicTests.Test<Int64>();
+	public void Int64Test() => BasicTests.Test<Int64>();
 #if NET7_0_OR_GREATER
 	[Fact]
 	internal void Int128Test() => BasicTests.Test<Int128>();
 #endif
 	[Fact]
-	internal void GuidTest() => BasicTests.Test<Guid>();
+	public void GuidTest() => BasicTests.Test<Guid>();
 	[Fact]
-	internal void SingleTest() => BasicTests.Test<Single>();
+	public void SingleTest() => BasicTests.Test<Single>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => BasicTests.Test<Half>();
 #endif
 	[Fact]
-	internal void DoubleTest() => BasicTests.Test<Double>();
+	public void DoubleTest() => BasicTests.Test<Double>();
 	[Fact]
-	internal void DecimalTest() => BasicTests.Test<Decimal>();
+	public void DecimalTest() => BasicTests.Test<Decimal>();
 #if NET7_0_OR_GREATER
 	[Fact]
 	internal void DateTimeTest() => BasicTests.Test<DateTime>();
@@ -42,10 +47,10 @@ public sealed class BasicTests : ValueRegionTestBase
 	internal void TimeOnlyTest() => BasicTests.Test<TimeOnly>();
 #endif
 	[Fact]
-	internal void TimeSpanTest() => BasicTests.Test<TimeSpan>();
+	public void TimeSpanTest() => BasicTests.Test<TimeSpan>();
 
 	[Fact]
-	internal void StringTest() => BasicTests.Test<String>();
+	public void StringTest() => BasicTests.Test<String>();
 
 	private static void Test<T>()
 	{
@@ -87,7 +92,7 @@ public sealed class BasicTests : ValueRegionTestBase
 		}
 		catch (ArgumentException)
 		{
-			Assert.True(RuntimeHelpers.IsReferenceOrContainsReferences<T>());
+			PInvokeAssert.True(RuntimeHelpers.IsReferenceOrContainsReferences<T>());
 			fixed (void* ptr = values)
 			{
 				ValueRegion<T> region = ValueRegion<T>.Create(new(ptr), values.Length);
@@ -97,39 +102,40 @@ public sealed class BasicTests : ValueRegionTestBase
 		}
 
 		if (array is not null)
-			Assert.Same(values, array);
+			PInvokeAssert.Same(values, array);
 		else if (spanTest && isReference && values.Length == 0)
 			fixed (void* ptr = &MemoryMarshal.GetReference(span))
-				Assert.Equal(IntPtr.Zero, new(ptr));
+				PInvokeAssert.Equal(IntPtr.Zero, new(ptr));
 	}
 	private static ReadOnlySpan<T> AssertRegion<T>(T[] values, ValueRegion<T> region)
 	{
 		ReadOnlySpan<T> span = region;
 		T[] newArray = region.ToArray();
 
-		Assert.False(region.IsMemorySlice);
+		PInvokeAssert.False(region.IsMemorySlice);
 		for (Int32 i = 0; i < values.Length; i++)
 		{
-			Assert.Equal(values[i], region[i]);
+			PInvokeAssert.Equal(values[i], region[i]);
 #if NET8_0_OR_GREATER
 			Assert.True(Unsafe.AreSame(in span[i], ref values[i]));
 #else
-			Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in span[i]), ref values[i]));
+			PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in span[i]), ref values[i]));
 #endif
 		}
 
-		Assert.Equal(values, newArray);
+		PInvokeAssert.Equal(values, newArray);
 		if (values.Length > 0)
-			Assert.NotSame(values, newArray);
+			PInvokeAssert.NotSame(values, newArray);
 		else
-			Assert.Same(Array.Empty<T>(), newArray);
+			PInvokeAssert.Same(Array.Empty<T>(), newArray);
 
 		Boolean isAllocated = region.TryAlloc(GCHandleType.Pinned, out GCHandle handle);
-		Assert.Equal(isAllocated, handle.IsAllocated);
+		PInvokeAssert.Equal(isAllocated, handle.IsAllocated);
 
-		if (region.GetType().Name.Contains("Managed"))
-			Assert.Equal(!RuntimeHelpers.IsReferenceOrContainsReferences<T>(), isAllocated);
-
+#if NETCOREAPP
+		if (!region.GetType().Name.Contains("Managed")) return span;
+		Assert.Equal(!RuntimeHelpers.IsReferenceOrContainsReferences<T>(), isAllocated);
+#endif
 		return span;
 	}
 #pragma warning restore CS8500

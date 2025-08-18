@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class AsBytesTest
@@ -7,39 +12,39 @@ public sealed class AsBytesTest
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
-	internal void BooleanTest() => AsBytesTest.Test<Boolean>();
+	public void BooleanTest() => AsBytesTest.Test<Boolean>();
 	[Fact]
-	internal void ByteTest() => AsBytesTest.Test<Byte>();
+	public void ByteTest() => AsBytesTest.Test<Byte>();
 	[Fact]
-	internal void CharTest() => AsBytesTest.Test<Char>();
+	public void CharTest() => AsBytesTest.Test<Char>();
 	[Fact]
-	internal void DateTimeTest() => AsBytesTest.Test<DateTime>();
+	public void DateTimeTest() => AsBytesTest.Test<DateTime>();
 	[Fact]
-	internal void DecimalTest() => AsBytesTest.Test<Decimal>();
+	public void DecimalTest() => AsBytesTest.Test<Decimal>();
 	[Fact]
-	internal void DoubleTest() => AsBytesTest.Test<Double>();
+	public void DoubleTest() => AsBytesTest.Test<Double>();
 	[Fact]
-	internal void GuidTest() => AsBytesTest.Test<Guid>();
+	public void GuidTest() => AsBytesTest.Test<Guid>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => AsBytesTest.Test<Half>();
 #endif
 	[Fact]
-	internal void Int16Test() => AsBytesTest.Test<Int16>();
+	public void Int16Test() => AsBytesTest.Test<Int16>();
 	[Fact]
-	internal void Int32Test() => AsBytesTest.Test<Int32>();
+	public void Int32Test() => AsBytesTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => AsBytesTest.Test<Int64>();
+	public void Int64Test() => AsBytesTest.Test<Int64>();
 	[Fact]
-	internal void SByteTest() => AsBytesTest.Test<SByte>();
+	public void SByteTest() => AsBytesTest.Test<SByte>();
 	[Fact]
-	internal void SingleTest() => AsBytesTest.Test<Single>();
+	public void SingleTest() => AsBytesTest.Test<Single>();
 	[Fact]
-	internal void UInt16Test() => AsBytesTest.Test<UInt16>();
+	public void UInt16Test() => AsBytesTest.Test<UInt16>();
 	[Fact]
-	internal void UInt32Test() => AsBytesTest.Test<UInt32>();
+	public void UInt32Test() => AsBytesTest.Test<UInt32>();
 	[Fact]
-	internal void UInt64Test() => AsBytesTest.Test<UInt64>();
+	public void UInt64Test() => AsBytesTest.Test<UInt64>();
 
 	private static void Test<T>() where T : unmanaged
 	{
@@ -50,9 +55,9 @@ public sealed class AsBytesTest
 		Span<Byte> spanBytes = MemoryMarshal.AsBytes(span);
 		Byte[] bytes = spanBytes.ToArray();
 
-		Assert.Equal(bytes, span.AsBytes().ToArray());
-		Assert.Equal(bytes, readOnlySpan.AsBytes().ToArray());
-		Assert.True(Unsafe.AreSame(ref spanBytes[0], ref MemoryMarshal.GetReference(span.AsBytes())));
-		Assert.True(Unsafe.AreSame(ref spanBytes[0], ref MemoryMarshal.GetReference(readOnlySpan.AsBytes())));
+		PInvokeAssert.Equal(bytes, span.AsBytes().ToArray());
+		PInvokeAssert.Equal(bytes, readOnlySpan.AsBytes().ToArray());
+		PInvokeAssert.True(Unsafe.AreSame(ref spanBytes[0], ref MemoryMarshal.GetReference(span.AsBytes())));
+		PInvokeAssert.True(Unsafe.AreSame(ref spanBytes[0], ref MemoryMarshal.GetReference(readOnlySpan.AsBytes())));
 	}
 }

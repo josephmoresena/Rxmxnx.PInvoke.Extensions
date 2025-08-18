@@ -7,7 +7,7 @@ public partial interface IManagedBinaryBuffer<TBuffer, T>
 	/// Compose statically all buffers in current space.
 	/// </summary>
 	/// <typeparam name="T0">Buffer space type.</typeparam>
-	/// <param name="s0"></param>
+	/// <param name="s0">Size of 1st buffer space.</param>
 	/// <param name="helper">A <see cref="StaticCompositionHelper{T}"/> instance.</param>
 #if NET6_0
 	[RequiresPreviewFeatures]

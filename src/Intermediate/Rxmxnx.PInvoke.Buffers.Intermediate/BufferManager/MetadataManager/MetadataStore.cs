@@ -69,9 +69,7 @@ public static partial class BufferManager
 			public MetadataStore()
 			{
 #if NET7_0_OR_GREATER
-#pragma warning disable CA2252
 				this._binaryCache.Add(1, IManagedBuffer<T>.GetMetadata<Atomic<T>>());
-#pragma warning restore CA2252
 #else
 				this._binaryCache.Add(1, Atomic<T>.TypeMetadata);
 #endif

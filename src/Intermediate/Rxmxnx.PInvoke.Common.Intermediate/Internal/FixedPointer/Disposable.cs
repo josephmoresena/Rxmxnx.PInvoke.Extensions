@@ -8,16 +8,17 @@ internal partial class FixedPointer
 	/// <typeparam name="TFixed">A <see cref="FixedPointer"/> type.</typeparam>
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3881)]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-	protected abstract class Disposable<TFixed> : IWrapper<TFixed>, IDisposable where TFixed : FixedPointer
+	protected abstract class Disposable<TFixed> : IFixedPointer, IWrapper<TFixed>, IDisposable
+		where TFixed : FixedPointer
 	{
 		/// <summary>
 		/// Internal <see cref="IDisposable"/> instance.
 		/// </summary>
 		private readonly IDisposable? _disposable;
-
-		/// <inheritdoc cref="IWrapper{T}.Value"/>
-		public TFixed Value { get; }
+		/// <inheritdoc cref="IReadOnlyFixedMemory.IsNullOrEmpty"/>
+		public Boolean IsNullOrEmpty => this.Value is not IReadOnlyFixedMemory { IsNullOrEmpty: false, };
 
 		/// <summary>
 		/// Constructor.
@@ -30,8 +31,6 @@ internal partial class FixedPointer
 			this._disposable = disposable;
 		}
 
-		~Disposable() { this.Dispose(false); }
-
 		/// <inheritdoc/>
 		public void Dispose()
 		{
@@ -39,6 +38,19 @@ internal partial class FixedPointer
 			GC.SuppressFinalize(this);
 		}
 
+		IntPtr IFixedPointer.Pointer => this.Value is IFixedPointer ptr ? ptr.Pointer : default;
+
+		/// <inheritdoc cref="IWrapper{T}.Value"/>
+		public TFixed Value { get; }
+
+		~Disposable() { this.Dispose(false); }
+
+		/// <summary>
+		/// Retrieves the current value as a <typeparamref name="TValue"/> instance.
+		/// </summary>
+		/// <typeparam name="TValue">A <see cref="IFixedPointer"/> type.</typeparam>
+		/// <returns>A <typeparamref name="TValue"/> instance.</returns>
+		protected TValue? GetValue<TValue>() where TValue : class, IFixedPointer => this.Value as TValue;
 		/// <summary>
 		/// Retrieves the <see cref="IDisposable"/> parent object.
 		/// </summary>
@@ -50,7 +62,7 @@ internal partial class FixedPointer
 		/// <param name="disposing">Indicates whether current call is from <see cref="IDisposable.Dispose()"/>.</param>
 		private void Dispose(Boolean disposing)
 		{
-			if (this.Value is not ReadOnlyFixedMemory || !this.Value.IsValid ||
+			if (this.Value is not ReadOnlyFixedMemory and not FixedDelegate || !this.Value.IsValid ||
 			    (!disposing && this._disposable is IFixedPointer.IDisposable)) return;
 			this.Value.Unload();
 			this._disposable?.Dispose();

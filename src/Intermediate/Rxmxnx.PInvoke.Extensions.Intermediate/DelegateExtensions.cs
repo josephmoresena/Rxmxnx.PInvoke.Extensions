@@ -62,4 +62,20 @@ public static unsafe partial class DelegateExtensions
 		IntPtr ptr = delegateInstance.GetUnsafeIntPtr();
 		return (UIntPtr)ptr.ToPointer();
 	}
+	/// <summary>
+	/// Creates an <see cref="IFixedMethod{TDelegate}.IDisposable"/> instance by marshalling the current
+	/// <typeparamref name="TDelegate"/> instance, ensuring a safe interop context.
+	/// </summary>
+	/// <typeparam name="TDelegate">Type of the method delegate which is being fixed.</typeparam>
+	/// <param name="method">Delegate of the method to be fixed.</param>
+	/// <returns>An <see cref="IFixedMethod{TDelegate}.IDisposable"/> instance representing the marshalled method.</returns>
+	/// <remarks>
+	/// This method marshalls and protect the managed delegate to prevent the garbage collector from moving it.
+	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the managed delegate
+	/// and avoid memory leaks.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static IFixedMethod<TDelegate>.IDisposable GetFixedMethod<TDelegate>(this TDelegate? method)
+		where TDelegate : Delegate
+		=> NativeUtilities.GetFixedMethod(method);
 }

@@ -13,7 +13,6 @@ namespace Rxmxnx.PInvoke.Buffers;
 /// If the current type has a capacity that is a power of two, <typeparamref name="TBufferA"/> and
 /// <typeparamref name="TBufferB"/> must be the same.
 /// </remarks>
-#pragma warning disable CA2252
 [StructLayout(LayoutKind.Sequential)]
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
@@ -68,7 +67,8 @@ public
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	void IManagedBuffer<T>.DoNotImplement() { }
+	BufferTypeMetadata<T> IManagedBinaryBuffer<T>.Metadata => Composite<TBufferA, TBufferB, T>.TypeMetadata;
+	BufferTypeMetadata<T> IManagedBuffer<T>.GetStaticTypeMetadata() => Composite<TBufferA, TBufferB, T>.TypeMetadata;
 
 	/// <summary>
 	/// Creates the <see cref="BufferTypeMetadata{T}"/> instance for current type.
@@ -76,8 +76,7 @@ public
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 	private static BufferTypeMetadata<T> CreateBufferMetadata()
 	{
-		BufferTypeMetadata<T>[] components =
-			BufferManager.MetadataManager<T>.GetComponents(typeof(TBufferA), typeof(TBufferB));
+		BufferTypeMetadata<T>[] components = BufferManager.MetadataManager<T>.GetComponents<TBufferA, TBufferB>();
 		Int32 capacity =
 			BufferManager.MetadataManager<T>.GetCapacity(components[0], components[1], out Boolean isBinary);
 		return new BufferTypeMetadata<Composite<TBufferA, TBufferB, T>, T>(
@@ -96,4 +95,3 @@ public
 	}
 #endif
 }
-#pragma warning restore CA2252

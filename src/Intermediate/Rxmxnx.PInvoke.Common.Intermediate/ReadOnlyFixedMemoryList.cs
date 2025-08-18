@@ -41,9 +41,11 @@ public readonly ref struct ReadOnlyFixedMemoryList
 	/// <remarks>This constructor initializes the list with the provided fixed memory blocks.</remarks>
 	internal ReadOnlyFixedMemoryList(
 #if !NET9_0_OR_GREATER
-		params
+		params FixedMemory[] memories
+#else
+		FixedMemory[] memories
 #endif
-		FixedMemory[] memories) : this(memories.AsSpan()) { }
+	) : this(memories.AsSpan()) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ReadOnlyFixedMemoryList"/> structure.
 	/// </summary>
@@ -51,9 +53,11 @@ public readonly ref struct ReadOnlyFixedMemoryList
 	/// <remarks>This constructor initializes the list with the provided fixed memory blocks.</remarks>
 	internal ReadOnlyFixedMemoryList(
 #if !NET9_0_OR_GREATER
-		params
+		params ReadOnlyFixedMemory[] memories
+#else
+		ReadOnlyFixedMemory[] memories
 #endif
-		ReadOnlyFixedMemory[] memories) : this(memories.AsSpan()) { }
+	) : this(memories.AsSpan()) { }
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ReadOnlyFixedMemoryList"/> structure.
@@ -62,9 +66,11 @@ public readonly ref struct ReadOnlyFixedMemoryList
 	/// <remarks>This constructor initializes the list with the provided fixed memory blocks.</remarks>
 	internal ReadOnlyFixedMemoryList(
 #if NET9_0_OR_GREATER
-		params
+		params ReadOnlySpan<FixedMemory> memories
+#else
+		ReadOnlySpan<FixedMemory> memories
 #endif
-			ReadOnlySpan<FixedMemory> memories)
+	)
 		=> this._values = FixedMemoryListValue.Create(memories);
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ReadOnlyFixedMemoryList"/> structure.
@@ -73,9 +79,11 @@ public readonly ref struct ReadOnlyFixedMemoryList
 	/// <remarks>This constructor initializes the list with the provided fixed memory blocks.</remarks>
 	internal ReadOnlyFixedMemoryList(
 #if NET9_0_OR_GREATER
-		params
+		params ReadOnlySpan<ReadOnlyFixedMemory> memories
+#else
+		ReadOnlySpan<ReadOnlyFixedMemory> memories
 #endif
-			ReadOnlySpan<ReadOnlyFixedMemory> memories)
+	)
 		=> this._values = FixedMemoryListValue.Create(memories);
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ReadOnlyFixedMemoryList"/> structure.

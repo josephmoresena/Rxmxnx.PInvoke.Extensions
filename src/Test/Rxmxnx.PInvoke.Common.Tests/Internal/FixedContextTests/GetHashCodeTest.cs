@@ -1,50 +1,55 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 #pragma warning disable CS8500
 public sealed class GetHashCodeTest : FixedContextTestsBase
 {
 	[Fact]
-	internal void BooleanTest() => GetHashCodeTest.Test<Boolean>();
+	public void BooleanTest() => GetHashCodeTest.Test<Boolean>();
 	[Fact]
-	internal void ByteTest() => GetHashCodeTest.Test<Byte>();
+	public void ByteTest() => GetHashCodeTest.Test<Byte>();
 	[Fact]
-	internal void Int16Test() => GetHashCodeTest.Test<Int16>();
+	public void Int16Test() => GetHashCodeTest.Test<Int16>();
 	[Fact]
-	internal void CharTest() => GetHashCodeTest.Test<Char>();
+	public void CharTest() => GetHashCodeTest.Test<Char>();
 	[Fact]
-	internal void Int32Test() => GetHashCodeTest.Test<Int32>();
+	public void Int32Test() => GetHashCodeTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => GetHashCodeTest.Test<Int64>();
+	public void Int64Test() => GetHashCodeTest.Test<Int64>();
 #if NET7_0_OR_GREATER
 	[Fact]
 	internal void Int128Test() => GetHashCodeTest.Test<Int128>();
 #endif
 	[Fact]
-	internal void GuidTest() => GetHashCodeTest.Test<Guid>();
+	public void GuidTest() => GetHashCodeTest.Test<Guid>();
 	[Fact]
-	internal void SingleTest() => GetHashCodeTest.Test<Single>();
+	public void SingleTest() => GetHashCodeTest.Test<Single>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => GetHashCodeTest.Test<Half>();
 #endif
 	[Fact]
-	internal void DoubleTest() => GetHashCodeTest.Test<Double>();
+	public void DoubleTest() => GetHashCodeTest.Test<Double>();
 	[Fact]
-	internal void DecimalTest() => GetHashCodeTest.Test<Decimal>();
+	public void DecimalTest() => GetHashCodeTest.Test<Decimal>();
 	[Fact]
-	internal void DateTimeTest() => GetHashCodeTest.Test<DateTime>();
+	public void DateTimeTest() => GetHashCodeTest.Test<DateTime>();
 #if NET6_0_OR_GREATER
 	[Fact]
 	internal void TimeOnlyTest() => GetHashCodeTest.Test<TimeOnly>();
 #endif
 	[Fact]
-	internal void TimeSpanTest() => GetHashCodeTest.Test<TimeSpan>();
+	public void TimeSpanTest() => GetHashCodeTest.Test<TimeSpan>();
 	[Fact]
-	internal void ManagedStructTest() => GetHashCodeTest.Test<ManagedStruct>();
+	public void ManagedStructTest() => GetHashCodeTest.Test<ManagedStruct>();
 	[Fact]
-	internal void StringTest() => GetHashCodeTest.Test<String>();
+	public void StringTest() => GetHashCodeTest.Test<String>();
 	private static unsafe void Test<T>()
 	{
 		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>(sizeof(Guid) * 3 / sizeof(T)).ToArray();
@@ -70,12 +75,16 @@ public sealed class GetHashCodeTest : FixedContextTestsBase
 			hashReadOnly.Add(true);
 			hashReadOnly.Add(typeof(T));
 
-			Assert.True(hash.ToHashCode().Equals(ctx.GetHashCode()));
-			Assert.False(hashReadOnly.ToHashCode().Equals(ctx.GetHashCode()));
+			PInvokeAssert.True(hash.ToHashCode().Equals(ctx.GetHashCode()));
+			PInvokeAssert.False(hashReadOnly.ToHashCode().Equals(ctx.GetHashCode()));
 
 			try
 			{
 				GCHandle.Alloc(values, GCHandleType.Pinned).Free();
+#if !NETCOREAPP
+				if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+					throw new ArgumentException(); // Required for Mono?
+#endif
 
 				GetHashCodeTest.TransformationTest<T, Boolean>(ctx, values.Length);
 				GetHashCodeTest.TransformationTest<T, Byte>(ctx, values.Length);
@@ -153,12 +162,16 @@ public sealed class GetHashCodeTest : FixedContextTestsBase
 			hashReadOnly.Add(true);
 			hashReadOnly.Add(typeof(T));
 
-			Assert.False(hash.ToHashCode().Equals(ctx.GetHashCode()));
-			Assert.True(hashReadOnly.ToHashCode().Equals(ctx.GetHashCode()));
+			PInvokeAssert.False(hash.ToHashCode().Equals(ctx.GetHashCode()));
+			PInvokeAssert.True(hashReadOnly.ToHashCode().Equals(ctx.GetHashCode()));
 
 			try
 			{
 				GCHandle.Alloc(values, GCHandleType.Pinned).Free();
+#if !NETCOREAPP
+				if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+					throw new ArgumentException(); // Required for Mono?
+#endif
 
 				GetHashCodeTest.TransformationTest<T, Boolean>(ctx, values.Length);
 				GetHashCodeTest.TransformationTest<T, Byte>(ctx, values.Length);
@@ -236,8 +249,8 @@ public sealed class GetHashCodeTest : FixedContextTestsBase
 		FixedContextTestsBase.WithFixed(transformedSpan, ctx, GetHashCodeTest.Test);
 	}
 	private static void Test<T, TInt>(FixedContext<TInt> ctx2, FixedContext<T> ctx)
-		=> Assert.Equal(typeof(TInt) == typeof(T), ctx2.GetHashCode().Equals(ctx.GetHashCode()));
+		=> PInvokeAssert.Equal(typeof(TInt) == typeof(T), ctx2.GetHashCode().Equals(ctx.GetHashCode()));
 	private static void Test<T, TInt>(ReadOnlyFixedContext<TInt> ctx2, ReadOnlyFixedContext<T> ctx)
-		=> Assert.Equal(typeof(TInt) == typeof(T), ctx2.GetHashCode().Equals(ctx.GetHashCode()));
+		=> PInvokeAssert.Equal(typeof(TInt) == typeof(T), ctx2.GetHashCode().Equals(ctx.GetHashCode()));
 }
 #pragma warning restore CS8500

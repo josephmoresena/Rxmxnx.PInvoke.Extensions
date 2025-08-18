@@ -1,10 +1,15 @@
+#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
+
 namespace Rxmxnx.PInvoke.Tests.CStringTests;
 
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed unsafe class MarshallerTests
 {
 	[Fact]
-	internal void FromManagedTest()
+	public void FromManagedTest()
 	{
 		Int32 index = Random.Shared.Next(0, TestSet.Utf16Text.Count);
 		ReadOnlySpan<Byte> utf8Span = TestSet.Utf8Text[index]();
@@ -18,7 +23,7 @@ public sealed unsafe class MarshallerTests
 		MarshallerTests.AssertToUnmanaged(CString.CreateUnsafe(ptr, utf8Span.Length + 1));
 	}
 	[Fact]
-	internal void FromUnmanagedTest()
+	public void FromUnmanagedTest()
 	{
 		Int32 index = Random.Shared.Next(0, TestSet.Utf16Text.Count);
 		ReadOnlySpan<Byte> utf8Span = TestSet.Utf8Text[index]();
@@ -27,15 +32,15 @@ public sealed unsafe class MarshallerTests
 		try
 		{
 			marshal.FromUnmanaged(ptr);
-			Assert.Equal(IntPtr.Zero, marshal.ToUnmanaged());
+			PInvokeAssert.Equal(IntPtr.Zero, marshal.ToUnmanaged());
 
 			CString? value = marshal.ToManaged();
-			Assert.NotNull(value);
-			Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(utf8Span),
-			                           ref MemoryMarshal.GetReference<Byte>(value)));
-			Assert.StrictEqual(value, marshal.ToManaged());
-			Assert.True(utf8Span.SequenceEqual(value));
-			Assert.Equal(ptr, marshal.ToUnmanaged());
+			PInvokeAssert.NotNull(value);
+			PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(utf8Span),
+			                                  ref MemoryMarshal.GetReference<Byte>(value)));
+			PInvokeAssert.StrictEqual(value, marshal.ToManaged());
+			PInvokeAssert.True(utf8Span.SequenceEqual(value));
+			PInvokeAssert.Equal(ptr, marshal.ToUnmanaged());
 		}
 		finally
 		{
@@ -43,7 +48,7 @@ public sealed unsafe class MarshallerTests
 		}
 	}
 	[Fact]
-	internal void EmptyTest()
+	public void EmptyTest()
 	{
 		MarshallerTests.AssertToUnmanaged(null);
 		MarshallerTests.AssertToUnmanaged(CString.Zero);
@@ -64,17 +69,31 @@ public sealed unsafe class MarshallerTests
 			IntPtr ptr = marshal.ToUnmanaged();
 			try
 			{
-				Boolean isLiteralOrPinnable = MarshallerTests.IsLiteralOrPinnable(value);
-				ReadOnlySpan<Byte> unmanagedSpan = new(ptr.ToPointer(), value?.Length ?? 0);
-				Assert.Equal(isLiteralOrPinnable,
-				             Unsafe.AreSame(ref MemoryMarshal.GetReference<Byte>(value),
-				                            ref MemoryMarshal.GetReference(unmanagedSpan)));
-#if NET6_0_OR_GREATER
-				Assert.True(utfSpan.SequenceEqual(MemoryMarshal.CreateReadOnlySpanFromNullTerminated((Byte*)ptr)));
+				if (value is null || value.IsZero || value.Length > 0)
+				{
+					ReadOnlySpan<Byte> unmanagedSpan = new(ptr.ToPointer(), value?.Length ?? 0);
+					if (Unsafe.AreSame(ref MemoryMarshal.GetReference<Byte>(value),
+					                   ref MemoryMarshal.GetReference(unmanagedSpan)))
+
+						PInvokeAssert.True(MarshallerTests.IsLiteralOrPinnable(value));
+				}
+				else
+				{
+					ref Byte refUtf8 = ref Unsafe.AsRef(in CString.Empty.GetPinnableReference());
+					ref Byte unsafeRefUtf8 = ref ((ValPtr<Byte>)ptr).Reference;
+#if NETCOREAPP
+					Assert.True(MemoryInspector.Instance.IsLiteral(MemoryMarshal.CreateReadOnlySpan(ref refUtf8, 1)));
 #endif
-				Assert.Equal(utfSpan.Length,
-				             MemoryMarshalCompat.IndexOfNull(ref MemoryMarshal.GetReference<Byte>(value)));
-				Assert.Equal(ptr, marshal.ToUnmanaged());
+					PInvokeAssert.True(Unsafe.AreSame(ref refUtf8, ref unsafeRefUtf8));
+				}
+#if NET6_0_OR_GREATER
+				ReadOnlySpan<Byte> compatSpan = MemoryMarshalCompat.CreateReadOnlySpanFromNullTerminated((Byte*)ptr);
+				Assert.Equal(Encoding.UTF8.GetString(utfSpan), Encoding.UTF8.GetString(compatSpan));
+				Assert.True(utfSpan.SequenceEqual(compatSpan));
+#endif
+				PInvokeAssert.Equal(utfSpan.Length,
+				                    MemoryMarshalCompat.IndexOfNull(ref MemoryMarshal.GetReference<Byte>(value)));
+				PInvokeAssert.Equal(ptr, marshal.ToUnmanaged());
 			}
 			finally
 			{
@@ -84,25 +103,21 @@ public sealed unsafe class MarshallerTests
 	}
 	private static Boolean IsLiteralOrPinnable(CString? value)
 	{
-		if (value is null) return true;
+		if (value is null || value.IsZero) return true;
 		if (!value.IsNullTerminated) return false;
+		if (value.IsReference) return true;
 
 		using MemoryHandle handle = value.TryPin(out Boolean pinned);
 		if (pinned) return true;
-		try
-		{
-			return MemoryInspector.Instance.IsLiteral(value.AsSpan());
-		}
-		catch (PlatformNotSupportedException)
-		{
-			return false;
-		}
+		if (!value.IsFunction) return false;
+		ref Byte refB = ref Unsafe.AsRef(in value.GetPinnableReference());
+		return !MemoryInspector.MayBeNonLiteral(MemoryMarshal.CreateReadOnlySpan(ref refB, 1));
 	}
 	private static CString.Marshaller Marshal(CString? value)
 	{
 		CString.Marshaller marshal = new();
 		marshal.FromManaged(value);
-		Assert.Null(marshal.ToManaged());
+		PInvokeAssert.Null(marshal.ToManaged());
 		return marshal;
 	}
 #if !NET6_0_OR_GREATER

@@ -1,5 +1,16 @@
+#if NET5_0_OR_GREATER
+using Skip = Xunit.Skip;
+
+#elif NETCOREAPP
+using SkippableTheoryAttribute = Xunit.TheoryAttribute;
+#else
+using Fact = NUnit.Framework.TestAttribute;
+using InlineData = NUnit.Framework.TestCaseAttribute;
+#endif
+
 namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
 
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public class AsMemoryTest
@@ -11,12 +22,8 @@ public class AsMemoryTest
 		.ToImmutableDictionary(m => m.GetParameters()[0].ParameterType.GetArrayRank(), m => m);
 
 	[Fact]
-	internal void AsMemoryCountTest() => Assert.Equal(31, AsMemoryTest.asMemories.Count);
-#if NET5_0_OR_GREATER
-	[SkippableTheory]
-#else
-	[Theory]
-#endif
+	public void AsMemoryCountTest() => PInvokeAssert.Equal(31, AsMemoryTest.asMemories.Count);
+	[SkippableTheoryAttribute]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -48,12 +55,8 @@ public class AsMemoryTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-	internal void ByteTest(Int32 dimension) => AsMemoryTest.GenericTest<Byte>(dimension);
-#if NET5_0_OR_GREATER
-	[SkippableTheory]
-#else
-	[Theory]
-#endif
+	public void ByteTest(Int32 dimension) => AsMemoryTest.GenericTest<Byte>(dimension);
+	[SkippableTheoryAttribute]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -85,12 +88,8 @@ public class AsMemoryTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-	internal void Int32Test(Int32 dimension) => AsMemoryTest.GenericTest<Int32>(dimension);
-#if NET5_0_OR_GREATER
-	[SkippableTheory]
-#else
-	[Theory]
-#endif
+	public void Int32Test(Int32 dimension) => AsMemoryTest.GenericTest<Int32>(dimension);
+	[SkippableTheoryAttribute]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -100,7 +99,6 @@ public class AsMemoryTest
 	[InlineData(8)]
 	[InlineData(9)]
 	[InlineData(10)]
-#if !MULTIPLE_FRAMEWORK || NET6_0_OR_GREATER
 	[InlineData(11)]
 	[InlineData(12)]
 	[InlineData(13)]
@@ -123,13 +121,8 @@ public class AsMemoryTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-#endif
-	internal void StringTest(Int32 dimension) => AsMemoryTest.GenericTest<String>(dimension);
-#if NET5_0_OR_GREATER
-	[SkippableTheory]
-#else
-	[Theory]
-#endif
+	public void StringTest(Int32 dimension) => AsMemoryTest.GenericTest<String>(dimension);
+	[SkippableTheoryAttribute]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -139,7 +132,6 @@ public class AsMemoryTest
 	[InlineData(8)]
 	[InlineData(9)]
 	[InlineData(10)]
-#if !MULTIPLE_FRAMEWORK || NET6_0_OR_GREATER
 	[InlineData(11)]
 	[InlineData(12)]
 	[InlineData(13)]
@@ -162,8 +154,7 @@ public class AsMemoryTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-#endif
-	internal void ObjectTest(Int32 dimension) => AsMemoryTest.GenericTest<Object>(dimension);
+	public void ObjectTest(Int32 dimension) => AsMemoryTest.GenericTest<Object>(dimension);
 
 	internal static void CollectGarbage()
 	{
@@ -188,32 +179,35 @@ public class AsMemoryTest
 
 		AsMemoryTest.CollectGarbage();
 
-		Memory<T> emptyMemory = Assert.IsType<Memory<T>>(method.MakeGenericMethod(typeof(T)).Invoke(null, [null,]));
-		Memory<T> memory = Assert.IsType<Memory<T>>(method.MakeGenericMethod(typeof(T)).Invoke(null, [arr,]));
-		Assert.Equal(Memory<T>.Empty, emptyMemory);
-		Assert.Equal(memory.Length, arr.Length);
+		Memory<T> emptyMemory =
+			PInvokeAssert.IsType<Memory<T>>(method.MakeGenericMethod(typeof(T)).Invoke(null, [null,]));
+		Memory<T> memory = PInvokeAssert.IsType<Memory<T>>(method.MakeGenericMethod(typeof(T)).Invoke(null, [arr,]));
+		PInvokeAssert.Equal(Memory<T>.Empty, emptyMemory);
+		PInvokeAssert.Equal(memory.Length, arr.Length);
 		IEnumerator enumerator = arr.GetEnumerator();
 		foreach (T value in memory.Span)
 		{
 			enumerator.MoveNext();
-			Assert.Equal(value, enumerator.Current);
+			PInvokeAssert.Equal(value, enumerator.Current);
 		}
 		(enumerator as IDisposable)?.Dispose();
 		if (!typeof(T).IsValueType)
 		{
+#if NETCOREAPP
 			Assert.Throws<ArgumentException>(() => memory.Pin());
+#endif
 			return;
 		}
 		using MemoryHandle handle = memory.Pin();
 #if NET6_0_OR_GREATER
 		ref T first = ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetArrayDataReference(arr));
 #else
-		ref T first = ref MemoryMarshalCompat.GetArrayDataReference<T>(arr);
+		ref T first = ref ArrayReferenceHelper.GetArrayDataReference<T>(arr);
 #endif
 		for (Int32 i = 0; i < arr.Length; i++)
 		{
-			Assert.True(Unsafe.AreSame(ref Unsafe.Add(ref first, i),
-			                           ref Unsafe.Add(ref Unsafe.AsRef<T>(handle.Pointer), i)));
+			PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.Add(ref first, i),
+			                                  ref Unsafe.Add(ref Unsafe.AsRef<T>(handle.Pointer), i)));
 		}
 		MemoryHandle handle2 = memory.Pin();
 		handle2.Dispose();
@@ -226,10 +220,10 @@ public class AsMemoryTest
 		Array arr = Array.CreateInstance(typeof(T), lengths);
 #if NET6_0_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetArrayDataReference(arr)),
-#else
-		Span<T> span = MemoryMarshal.CreateSpan(ref MemoryMarshalCompat.GetArrayDataReference<T>(arr),
-#endif
 		                                        arr.Length);
+#else
+		Span<T> span = MemoryMarshal.CreateSpan(ref ArrayReferenceHelper.GetArrayDataReference<T>(arr), arr.Length);
+#endif
 		T[] data = AsMemoryTest.fixture.CreateMany<T>(arr.Length).ToArray();
 		data.CopyTo(span);
 		return arr;

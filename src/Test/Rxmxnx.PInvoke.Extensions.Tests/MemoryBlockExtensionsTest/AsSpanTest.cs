@@ -1,5 +1,16 @@
+#if NET5_0_OR_GREATER
+using Skip = Xunit.Skip;
+
+#elif NETCOREAPP
+using SkippableTheoryAttribute = Xunit.TheoryAttribute;
+#else
+using Fact = NUnit.Framework.TestAttribute;
+using InlineData = NUnit.Framework.TestCaseAttribute;
+#endif
+
 namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
 
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public class AsSpanTest
@@ -14,12 +25,8 @@ public class AsSpanTest
 		                             BindingFlags.NonPublic | BindingFlags.Static)!;
 
 	[Fact]
-	internal void AsSpanCountTest() => Assert.Equal(31, AsSpanTest.asSpans.Count);
-#if NET5_0_OR_GREATER
+	public void AsSpanCountTest() => PInvokeAssert.Equal(31, AsSpanTest.asSpans.Count);
 	[SkippableTheory]
-#else
-	[Theory]
-#endif
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -51,12 +58,8 @@ public class AsSpanTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-	internal void ByteTest(Int32 dimension) => AsSpanTest.GenericTest<Byte>(dimension);
-#if NET5_0_OR_GREATER
+	public void ByteTest(Int32 dimension) => AsSpanTest.GenericTest<Byte>(dimension);
 	[SkippableTheory]
-#else
-	[Theory]
-#endif
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -88,17 +91,12 @@ public class AsSpanTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-	internal void Int32Test(Int32 dimension) => AsSpanTest.GenericTest<Int32>(dimension);
-#if NET5_0_OR_GREATER
+	public void Int32Test(Int32 dimension) => AsSpanTest.GenericTest<Int32>(dimension);
 	[SkippableTheory]
-#else
-	[Theory]
-#endif
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
 	[InlineData(5)]
-#if !MULTIPLE_FRAMEWORK || NET6_0_OR_GREATER
 	[InlineData(6)]
 	[InlineData(7)]
 	[InlineData(8)]
@@ -126,18 +124,12 @@ public class AsSpanTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-#endif
-	internal void StringTest(Int32 dimension) => AsSpanTest.GenericTest<String>(dimension);
-#if NET5_0_OR_GREATER
+	public void StringTest(Int32 dimension) => AsSpanTest.GenericTest<String>(dimension);
 	[SkippableTheory]
-#else
-	[Theory]
-#endif
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
 	[InlineData(5)]
-#if !MULTIPLE_FRAMEWORK || NET6_0_OR_GREATER
 	[InlineData(6)]
 	[InlineData(7)]
 	[InlineData(8)]
@@ -165,8 +157,7 @@ public class AsSpanTest
 	[InlineData(30)]
 	[InlineData(31)]
 	[InlineData(32)]
-#endif
-	internal void ObjectTest(Int32 dimension) => AsSpanTest.GenericTest<Object>(dimension);
+	public void ObjectTest(Int32 dimension) => AsSpanTest.GenericTest<Object>(dimension);
 
 	private static void GenericTest<T>(Int32 count)
 	{
@@ -197,15 +188,13 @@ public class AsSpanTest
 #endif
 		Span<T> emptySpan = func(default);
 		Span<T> span = func(arr as TArray);
-		Assert.True(emptySpan.IsEmpty);
-		Assert.Equal(span.Length, arr.Length);
-		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(span),
-		                           ref MemoryMarshalCompat.GetArrayDataReference<T>(arr)));
+		PInvokeAssert.True(emptySpan.IsEmpty);
+		PInvokeAssert.Equal(span.Length, arr.Length);
 		IEnumerator enumerator = arr.GetEnumerator();
 		foreach (ref T value in span)
 		{
 			enumerator.MoveNext();
-			Assert.Equal(value, enumerator.Current);
+			PInvokeAssert.Equal(value, enumerator.Current);
 		}
 		(enumerator as IDisposable)?.Dispose();
 	}
@@ -215,10 +204,10 @@ public class AsSpanTest
 		Array arr = Array.CreateInstance(typeof(T), lengths);
 #if NET6_0_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetArrayDataReference(arr)),
-#else
-		Span<T> span = MemoryMarshal.CreateSpan(ref MemoryMarshalCompat.GetArrayDataReference<T>(arr),
-#endif
 		                                        arr.Length);
+#else
+		Span<T> span = MemoryMarshal.CreateSpan(ref ArrayReferenceHelper.GetArrayDataReference<T>(arr), arr.Length);
+#endif
 		T[] data = AsSpanTest.fixture.CreateMany<T>(arr.Length).ToArray();
 		data.CopyTo(span);
 		return arr;

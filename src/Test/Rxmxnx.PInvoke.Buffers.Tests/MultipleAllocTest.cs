@@ -1,78 +1,83 @@
+#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
+
 namespace Rxmxnx.PInvoke.Tests;
 
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed unsafe class MultipleAllocTest
 {
 	[Fact]
-	internal void BooleanTest() => MultipleAllocTest.MultipleAlloc<Boolean>();
+	public void BooleanTest() => MultipleAllocTest.MultipleAlloc<Boolean>();
 	[Fact]
-	internal void ByteTest() => MultipleAllocTest.MultipleAlloc<Byte>();
+	public void ByteTest() => MultipleAllocTest.MultipleAlloc<Byte>();
 	[Fact]
-	internal void Int16Test() => MultipleAllocTest.MultipleAlloc<Int16>();
+	public void Int16Test() => MultipleAllocTest.MultipleAlloc<Int16>();
 	[Fact]
-	internal void Int32Test() => MultipleAllocTest.MultipleAlloc<Int32>();
+	public void Int32Test() => MultipleAllocTest.MultipleAlloc<Int32>();
 	[Fact]
-	internal void Int64Test() => MultipleAllocTest.MultipleAlloc<Int64>();
+	public void Int64Test() => MultipleAllocTest.MultipleAlloc<Int64>();
 
 	[Fact]
-	internal void NullableBooleanTest() => MultipleAllocTest.MultipleAlloc<Boolean?>();
+	public void NullableBooleanTest() => MultipleAllocTest.MultipleAlloc<Boolean?>();
 	[Fact]
-	internal void NullableByteTest() => MultipleAllocTest.MultipleAlloc<Byte?>();
+	public void NullableByteTest() => MultipleAllocTest.MultipleAlloc<Byte?>();
 	[Fact]
-	internal void NullableInt16Test() => MultipleAllocTest.MultipleAlloc<Int16?>();
+	public void NullableInt16Test() => MultipleAllocTest.MultipleAlloc<Int16?>();
 	[Fact]
-	internal void NullableInt32Test() => MultipleAllocTest.MultipleAlloc<Int32?>();
+	public void NullableInt32Test() => MultipleAllocTest.MultipleAlloc<Int32?>();
 	[Fact]
-	internal void NullableInt64Test() => MultipleAllocTest.MultipleAlloc<Int64?>();
+	public void NullableInt64Test() => MultipleAllocTest.MultipleAlloc<Int64?>();
 
 	[Fact]
-	internal void BooleanArrayTest() => MultipleAllocTest.MultipleAlloc<Boolean[]?>();
+	public void BooleanArrayTest() => MultipleAllocTest.MultipleAlloc<Boolean[]?>();
 	[Fact]
-	internal void ByteArrayTest() => MultipleAllocTest.MultipleAlloc<Byte[]?>();
+	public void ByteArrayTest() => MultipleAllocTest.MultipleAlloc<Byte[]?>();
 	[Fact]
-	internal void Int16ArrayTest() => MultipleAllocTest.MultipleAlloc<Int16[]?>();
+	public void Int16ArrayTest() => MultipleAllocTest.MultipleAlloc<Int16[]?>();
 	[Fact]
-	internal void Int32ArrayTest() => MultipleAllocTest.MultipleAlloc<Int32[]?>();
+	public void Int32ArrayTest() => MultipleAllocTest.MultipleAlloc<Int32[]?>();
 	[Fact]
-	internal void Int64ArrayTest() => MultipleAllocTest.MultipleAlloc<Int64[]?>();
+	public void Int64ArrayTest() => MultipleAllocTest.MultipleAlloc<Int64[]?>();
 	[Fact]
-	internal void StringTest() => MultipleAllocTest.MultipleAlloc<String?>();
+	public void StringTest() => MultipleAllocTest.MultipleAlloc<String?>();
 
 	[Fact]
-	internal void BooleanWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Boolean>>();
+	public void BooleanWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Boolean>>();
 	[Fact]
-	internal void ByteWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Byte>>();
+	public void ByteWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Byte>>();
 	[Fact]
-	internal void Int16WrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Int16>>();
+	public void Int16WrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Int16>>();
 	[Fact]
-	internal void Int32WrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Int32>>();
+	public void Int32WrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Int32>>();
 	[Fact]
-	internal void Int64WrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Int64>>();
+	public void Int64WrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Int64>>();
 
 	[Fact]
-	internal void NullableBooleanWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Boolean?>>();
+	public void NullableBooleanWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Boolean?>>();
 	[Fact]
-	internal void NullableByteWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Byte?>>();
+	public void NullableByteWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Byte?>>();
 	[Fact]
-	internal void NullableInt16WrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Int16?>>();
+	public void NullableInt16WrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Int16?>>();
 	[Fact]
-	internal void NullableInt32WrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Int32?>>();
+	public void NullableInt32WrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Int32?>>();
 	[Fact]
-	internal void NullableInt64WrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Int64?>>();
+	public void NullableInt64WrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Int64?>>();
 
 	[Fact]
-	internal void BooleanArrayWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Boolean[]?>>();
+	public void BooleanArrayWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Boolean[]?>>();
 	[Fact]
-	internal void ByteArrayWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Byte[]?>>();
+	public void ByteArrayWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Byte[]?>>();
 	[Fact]
-	internal void Int16ArrayWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Int16[]?>>();
+	public void Int16ArrayWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Int16[]?>>();
 	[Fact]
-	internal void Int32ArrayWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Int32[]?>>();
+	public void Int32ArrayWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Int32[]?>>();
 	[Fact]
-	internal void Int64ArrayWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Int64[]?>>();
+	public void Int64ArrayWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Int64[]?>>();
 	[Fact]
-	internal void StringWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<String?>>();
+	public void StringWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<String?>>();
 
 	private static void MultipleAlloc<T>()
 	{
@@ -83,19 +88,22 @@ public sealed unsafe class MultipleAllocTest
 		BufferManager.Alloc<T>(count, MultipleAllocTest.Do);
 		BufferManager.Alloc<T, ValPtr<IntPtr>>(count, ptrPtr, MultipleAllocTest.Do);
 		Boolean inStack = BufferManager.Alloc<T, Boolean>(count, MultipleAllocTest.Get);
-		Assert.Equal(default, BufferManager.Alloc<T, ValPtr<IntPtr>, T>(count, ptrPtr, MultipleAllocTest.Get));
-		Assert.True(inStack);
+		PInvokeAssert.Equal(default, BufferManager.Alloc<T, ValPtr<IntPtr>, T>(count, ptrPtr, MultipleAllocTest.Get));
+		PInvokeAssert.True(inStack);
 
 		Exception exception = new();
 
-		Assert.Equal(exception, Assert.ThrowsAny<Exception>(() => BufferManager.Alloc<T>(count, ThrowDo)));
-		Assert.Equal(
+		PInvokeAssert.Equal(
+			exception, PInvokeAssert.ThrowsAny<Exception>(() => BufferManager.Alloc<T>(count, ThrowDo)));
+		PInvokeAssert.Equal(
 			exception,
-			Assert.ThrowsAny<Exception>(() => BufferManager.Alloc<T, Exception>(count, exception, ThrowDoEx)));
-		Assert.Equal(exception, Assert.ThrowsAny<Exception>(() => BufferManager.Alloc<T, T>(count, ThrowGet)));
-		Assert.Equal(
+			PInvokeAssert.ThrowsAny<Exception>(() => BufferManager.Alloc<T, Exception>(count, exception, ThrowDoEx)));
+		PInvokeAssert.Equal(
+			exception, PInvokeAssert.ThrowsAny<Exception>(() => BufferManager.Alloc<T, T>(count, ThrowGet)));
+		PInvokeAssert.Equal(
 			exception,
-			Assert.ThrowsAny<Exception>(() => BufferManager.Alloc<T, Exception, T>(count, exception, ThrowGetEx)));
+			PInvokeAssert.ThrowsAny<Exception>(() => BufferManager.Alloc<T, Exception, T>(
+				                                   count, exception, ThrowGetEx)));
 		return;
 
 		void ThrowDo(ScopedBuffer<T> buffer) => throw exception;
@@ -105,29 +113,29 @@ public sealed unsafe class MultipleAllocTest
 	}
 	private static void Do<T>(ScopedBuffer<T> buffer)
 	{
-		Assert.True(buffer.InStack);
-		Assert.InRange(buffer.Span.Length, 2, Math.Pow(2, 4));
-		Assert.Equal(buffer.FullLength, buffer.Span.Length);
-		Assert.Equal(default, buffer.Span[0]);
+		PInvokeAssert.True(buffer.InStack);
+		PInvokeAssert.InRange(buffer.Span.Length, 2, Math.Pow(2, 4));
+		PInvokeAssert.Equal(buffer.FullLength, buffer.Span.Length);
+		PInvokeAssert.Equal(default, buffer.Span[0]);
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>())
 		{
-			Assert.Null(buffer.BufferMetadata);
+			PInvokeAssert.Null(buffer.BufferMetadata);
 			return;
 		}
 
-		Assert.NotNull(buffer.BufferMetadata);
+		PInvokeAssert.NotNull(buffer.BufferMetadata);
 		if (typeof(T).IsValueType)
-			Assert.IsType<BufferTypeMetadata<T>>(buffer.BufferMetadata, false);
+			PInvokeAssert.IsType<BufferTypeMetadata<T>>(buffer.BufferMetadata, false);
 		else
-			Assert.IsType<BufferTypeMetadata<Object>>(buffer.BufferMetadata, false);
-		Assert.True(buffer.BufferMetadata.IsBinary);
-		Assert.Equal(buffer.Span.Length, buffer.BufferMetadata.Size);
-		Assert.InRange(buffer.BufferMetadata.ComponentCount, 0, 2);
+			PInvokeAssert.IsType<BufferTypeMetadata<Object>>(buffer.BufferMetadata, false);
+		PInvokeAssert.True(buffer.BufferMetadata.IsBinary);
+		PInvokeAssert.Equal(buffer.Span.Length, buffer.BufferMetadata.Size);
+		PInvokeAssert.InRange(buffer.BufferMetadata.ComponentCount, 0, 2);
 	}
 	private static void Do<T>(ScopedBuffer<T> buffer, ValPtr<IntPtr> ptrPtr)
 	{
 		MultipleAllocTest.Do(buffer);
-		Assert.True(ptrPtr.Pointer == ptrPtr.Reference);
+		PInvokeAssert.True(ptrPtr.Pointer == ptrPtr.Reference);
 	}
 	private static Boolean Get<T>(ScopedBuffer<T> buffer)
 	{

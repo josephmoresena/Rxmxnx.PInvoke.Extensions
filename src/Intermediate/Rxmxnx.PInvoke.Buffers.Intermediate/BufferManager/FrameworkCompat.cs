@@ -2,7 +2,7 @@ namespace Rxmxnx.PInvoke;
 
 public static partial class BufferManager
 {
-#if !PACKAGE || !NET7_0_OR_GREATER
+#if !NET7_0_OR_GREATER
 	/// <summary>
 	/// Metadata cache.
 	/// </summary>
@@ -15,13 +15,16 @@ public static partial class BufferManager
 	/// <typeparam name="T">The type of items in the buffer</typeparam>
 	/// <param name="bufferType">Type of buffer.</param>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+#if NET5_0_OR_GREATER
+	[UnconditionalSuppressMessage("Trimming", "IL2070")]
+#endif
 	private static BufferTypeMetadata<T> GetMetadata<T>(
 #if NET5_0_OR_GREATER
 		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
 #endif
 		Type bufferType)
 	{
-#if !PACKAGE || !NET7_0_OR_GREATER
+#if !NET7_0_OR_GREATER
 		if (BufferManager.metadataCache.TryGetValue(bufferType, out BufferTypeMetadata? result))
 			return (BufferTypeMetadata<T>)result;
 #else
@@ -43,14 +46,46 @@ public static partial class BufferManager
 				throw tie.InnerException;
 		}
 		result ??= ManagedBinaryBuffer<T>.GetMetadata(bufferType);
-#if !PACKAGE || !NET7_0_OR_GREATER
+#if !NET7_0_OR_GREATER
 		return BufferManager.Cache(bufferType, result as BufferTypeMetadata<T>);
 #else
 		ValidationUtilities.ThrowIfNullMetadata(bufferType, result is not BufferTypeMetadata<T>);
 		return (result as BufferTypeMetadata<T>)!;
 #endif
 	}
-#if !PACKAGE || !NET7_0_OR_GREATER
+	/// <summary>
+	/// Retrieves metadata required for a buffer of <typeparamref name="TBuffer"/> type.
+	/// </summary>
+	/// <typeparam name="T">The type of items in the buffer</typeparam>
+	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
+	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static BufferTypeMetadata<T> GetMetadata<T, TBuffer>() where TBuffer : struct, IManagedBuffer<T>
+	{
+#if !NET7_0_OR_GREATER
+		if (BufferManager.metadataCache.TryGetValue(typeof(TBuffer), out BufferTypeMetadata? result))
+			return (BufferTypeMetadata<T>)result;
+#endif
+		return BufferManager.GetStaticMetadata<T, TBuffer>();
+	}
+	/// <summary>
+	/// Retrieves the static metadata required for a buffer of <typeparamref name="TBuffer"/> type.
+	/// </summary>
+	/// <typeparam name="T">The type of items in the buffer</typeparam>
+	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
+	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+	private static BufferTypeMetadata<T> GetStaticMetadata<T, TBuffer>() where TBuffer : struct, IManagedBuffer<T>
+	{
+#if !NET7_0_OR_GREATER
+		IntPtr stackAllocation = IntPtr.Zero;
+		ref TBuffer dummyBufferRef = ref Unsafe.As<IntPtr, TBuffer>(ref stackAllocation);
+		BufferTypeMetadata<T> staticMetadata = dummyBufferRef.GetStaticTypeMetadata();
+		return BufferManager.Cache(staticMetadata.BufferType, staticMetadata);
+#else
+		return IManagedBuffer<T>.GetMetadata<TBuffer>();
+#endif
+	}
+#if !NET7_0_OR_GREATER
 #nullable disable
 	/// <summary>
 	/// Caches <paramref name="typeMetadata"/> for <paramref name="bufferType"/>.
@@ -59,11 +94,7 @@ public static partial class BufferManager
 	/// <param name="bufferType">Type of buffer.</param>
 	/// <param name="typeMetadata">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
-	private static BufferTypeMetadata<T> Cache<T>(
-#if NET5_0_OR_GREATER
-		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
-		Type bufferType, BufferTypeMetadata<T> typeMetadata)
+	private static BufferTypeMetadata<T> Cache<T>(Type bufferType, BufferTypeMetadata<T> typeMetadata)
 	{
 		ValidationUtilities.ThrowIfNullMetadata(bufferType, typeMetadata is null);
 		BufferManager.metadataCache.TryAdd(bufferType, typeMetadata);

@@ -24,7 +24,8 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <summary>
 	/// Represents an empty UTF-8 string. This field is read-only.
 	/// </summary>
-	public static readonly CString Empty = new(ValueRegion<Byte>.Create(() => "\0\0\0"u8), true, true, 0);
+	/// <remarks>This instance is a UTF-8 literal.</remarks>
+	public static readonly CString Empty = new(ValueRegion<Byte>.Create(AotInfo.EmptyUt8Text), true, true, 0);
 	/// <summary>
 	/// Represents a null-pointer UTF-8 string. This field is read-only.
 	/// </summary>
@@ -117,7 +118,11 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 
 	/// <inheritdoc/>
 	public Boolean Equals([NotNullWhen(true)] CString? other)
-		=> other is not null ? CString.equals(this, other) : this.IsZero;
+	{
+		if (other is null) return false;
+		if (other.IsZero) return this.IsZero;
+		return !this.IsZero && CString.equals(this, other);
+	}
 	/// <summary>
 	/// Determines whether the current <see cref="CString"/> and a specified <see cref="String"/>
 	/// have the same value.
@@ -128,7 +133,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
 	/// </returns>
 	public Boolean Equals([NotNullWhen(true)] String? other)
-		=> other is not null ? StringUtf8Comparator.Create().TextEquals(this, other) : this.IsZero;
+		=> other is not null && !this.IsZero && StringUtf8Comparator.OrdinalComparator.TextEquals(this, other);
 	/// <summary>
 	/// Determines whether the current <see cref="CString"/> and a specified <see cref="CString"/>
 	/// have the same value.
@@ -143,9 +148,14 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
 	/// </returns>
 	public Boolean Equals([NotNullWhen(true)] CString? value, StringComparison comparisonType)
-		=> value is not null && !value.IsZero ?
-			CStringUtf8Comparator.Create(comparisonType).TextEquals(this, value) :
-			this.IsZero;
+	{
+		if (value is null) return false;
+		if (value.IsZero) return this.IsZero;
+		if (this.IsZero) return false;
+		return comparisonType is StringComparison.Ordinal ?
+			CString.equals(this, value) :
+			CStringUtf8Comparator.Create(comparisonType).TextEquals(this, value);
+	}
 	/// <summary>
 	/// Determines whether the current <see cref="CString"/> and a specified <see cref="String"/>
 	/// have the same value.
@@ -160,7 +170,13 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <see cref="CString"/>, otherwise, <see langword="false"/>.
 	/// </returns>
 	public Boolean Equals([NotNullWhen(true)] String? value, StringComparison comparisonType)
-		=> value is not null ? StringUtf8Comparator.Create(comparisonType).TextEquals(this, value) : this.IsZero;
+	{
+		if (value is null) return false;
+		StringUtf8Comparator comparator = comparisonType is StringComparison.Ordinal ?
+			StringUtf8Comparator.OrdinalComparator :
+			StringUtf8Comparator.Create(comparisonType);
+		return comparator.TextEquals(this, value);
+	}
 
 	/// <inheritdoc/>
 	public override Boolean Equals([NotNullWhen(true)] Object? obj)
@@ -264,7 +280,8 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// </summary>
 	/// <param name="source">A read-only span of UTF-8 characters.</param>
 	/// <returns>A new instance of the <see cref="CString"/> class.</returns>
-	public static CString Create(ReadOnlySpan<Byte> source) => new(source.ToArray(), false);
+	public static CString Create(ReadOnlySpan<Byte> source)
+		=> source.Length == 0 ? CString.Empty : new(source.ToArray(), false);
 	/// <summary>
 	/// Creates a new instance of the <see cref="CString"/> class using the
 	/// <see cref="ReadOnlySpanFunc{Byte}"/> delegate provided.
@@ -288,7 +305,11 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// otherwise, <see langword="null"/>.
 	/// </returns>
 	[return: NotNullIfNotNull(nameof(bytes))]
-	public static CString? Create(Byte[]? bytes) => bytes is not null ? new(bytes, false) : default;
+	public static CString? Create(Byte[]? bytes)
+	{
+		if (bytes is null) return default;
+		return bytes.Length == 0 ? CString.Empty : new(bytes, false);
+	}
 	/// <summary>
 	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
 	/// </summary>
@@ -320,11 +341,9 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// </returns>
 	public static CString Create<TState>(TState state) where TState : struct, IUtf8FunctionState<TState>
 	{
-#pragma warning disable CA2252
 		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, TState.GetSpan, TState.Alloc);
 		Int32 length = TState.GetLength(state);
 		return new(data, true, state.IsNullTerminated, length);
-#pragma warning restore CA2252
 	}
 #endif
 	/// <summary>
@@ -361,7 +380,8 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 #else
 			MemoryMarshalCompat.CreateReadOnlySpanFromNullTerminated((Byte*)ptr);
 #endif
-		Int32 length = span.Length;
-		return new(ValueRegion<Byte>.Create(ptr, length), false, true, length);
+		Int32 textLength = span.Length;
+		Int32 regionLength = textLength + 1; // Region should include null-terminated char.
+		return new(ValueRegion<Byte>.Create(ptr, regionLength), false, true, textLength);
 	}
 }

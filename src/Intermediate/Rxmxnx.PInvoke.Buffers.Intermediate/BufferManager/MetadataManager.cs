@@ -1,6 +1,5 @@
 namespace Rxmxnx.PInvoke;
 
-#pragma warning disable CA2252
 public static partial class BufferManager
 {
 	/// <summary>
@@ -52,39 +51,42 @@ public static partial class BufferManager
 			}
 			return MetadataManager<T>.GetBinaryMetadata(count, true);
 		}
+#if !PACKAGE
 		/// <summary>
 		/// Retrieves metadata required for a buffer of <paramref name="bufferType"/> type.
 		/// </summary>
 		/// <param name="bufferType">Type of buffer.</param>
 		/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
-#if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
-#endif
 		public static BufferTypeMetadata<T> GetMetadata(
 #if NET5_0_OR_GREATER
 			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
 #endif
 			Type bufferType)
 			=> bufferType == typeof(Atomic<T>) ? Atomic<T>.TypeMetadata : BufferManager.GetMetadata<T>(bufferType);
+#endif
 		/// <summary>
-		/// Retrieves the components array for the composition type of <paramref name="typeofA"/> and <paramref name="typeofB"/>.
+		/// Retrieves the components array for the composition type of <typeparamref name="TBufferA"/> and
+		/// <typeparamref name="TBufferB"/> .
 		/// </summary>
-		/// <param name="typeofA"></param>
-		/// <param name="typeofB"></param>
-		/// <returns></returns>
-		public static BufferTypeMetadata<T>[] GetComponents(
+		/// <typeparam name="TBufferA">The type of low buffer.</typeparam>
+		/// <typeparam name="TBufferB">The type of high buffer.</typeparam>
+		/// <returns>The components array for the composition type.</returns>
+		public static BufferTypeMetadata<T>[] GetComponents<
 #if NET5_0_OR_GREATER
 			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
 #endif
-			Type typeofA,
+			TBufferA,
 #if NET5_0_OR_GREATER
 			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
 #endif
-			Type typeofB)
+			TBufferB>() where TBufferA : struct, IManagedBinaryBuffer<T>
+			where TBufferB : struct, IManagedBinaryBuffer<T>
+
 		{
 			BufferTypeMetadata<T>[] components = new BufferTypeMetadata<T>[2];
-			components[0] = MetadataManager<T>.GetMetadata(typeofA);
-			components[1] = MetadataManager<T>.GetMetadata(typeofB);
+			components[0] = BufferManager.GetMetadata<T, TBufferA>();
+			components[1] = BufferManager.GetMetadata<T, TBufferB>();
 			return components;
 		}
 		/// <summary>
@@ -124,6 +126,8 @@ public static partial class BufferManager
 		[UnconditionalSuppressMessage("AOT", "IL2060")]
 		[UnconditionalSuppressMessage("AOT", "IL2077")]
 		[UnconditionalSuppressMessage("AOT", "IL3050")]
+		[UnconditionalSuppressMessage("Trimming", "IL2055")]
+		[UnconditionalSuppressMessage("Trimming", "IL2055")]
 #endif
 		public static BufferTypeMetadata<T>? ComposeWithReflection(
 #if NET5_0_OR_GREATER
@@ -182,7 +186,7 @@ public static partial class BufferManager
 #if NET7_0_OR_GREATER
 			BufferTypeMetadata<T> typeMetadata = IManagedBuffer<T>.GetMetadata<TBuffer>();
 #else
-			BufferTypeMetadata<T> typeMetadata = BufferManager.GetMetadata<T>(typeof(TBuffer));
+			BufferTypeMetadata<T> typeMetadata = BufferManager.GetMetadata<T, TBuffer>();
 #endif
 			lock (MetadataManager<T>.store.LockObject)
 			{
@@ -256,4 +260,3 @@ public static partial class BufferManager
 #endif
 	}
 }
-#pragma warning restore CA2252

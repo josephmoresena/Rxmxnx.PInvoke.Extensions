@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class TransformTest
@@ -7,37 +12,37 @@ public sealed class TransformTest
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
-	internal void ByteTest() => TransformTest.Test<Byte>();
+	public void ByteTest() => TransformTest.Test<Byte>();
 	[Fact]
-	internal void CharTest() => TransformTest.Test<Char>();
+	public void CharTest() => TransformTest.Test<Char>();
 	[Fact]
-	internal void DateTimeTest() => TransformTest.Test<DateTime>();
+	public void DateTimeTest() => TransformTest.Test<DateTime>();
 	[Fact]
-	internal void DecimalTest() => TransformTest.Test<Decimal>();
+	public void DecimalTest() => TransformTest.Test<Decimal>();
 	[Fact]
-	internal void DoubleTest() => TransformTest.Test<Double>();
+	public void DoubleTest() => TransformTest.Test<Double>();
 	[Fact]
-	internal void GuidTest() => TransformTest.Test<Guid>();
+	public void GuidTest() => TransformTest.Test<Guid>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => TransformTest.Test<Half>();
 #endif
 	[Fact]
-	internal void Int16Test() => TransformTest.Test<Int16>();
+	public void Int16Test() => TransformTest.Test<Int16>();
 	[Fact]
-	internal void Int32Test() => TransformTest.Test<Int32>();
+	public void Int32Test() => TransformTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => TransformTest.Test<Int64>();
+	public void Int64Test() => TransformTest.Test<Int64>();
 	[Fact]
-	internal void SByteTest() => TransformTest.Test<SByte>();
+	public void SByteTest() => TransformTest.Test<SByte>();
 	[Fact]
-	internal void SingleTest() => TransformTest.Test<Single>();
+	public void SingleTest() => TransformTest.Test<Single>();
 	[Fact]
-	internal void UInt16Test() => TransformTest.Test<UInt16>();
+	public void UInt16Test() => TransformTest.Test<UInt16>();
 	[Fact]
-	internal void UInt32Test() => TransformTest.Test<UInt32>();
+	public void UInt32Test() => TransformTest.Test<UInt32>();
 	[Fact]
-	internal void UInt64Test() => TransformTest.Test<UInt64>();
+	public void UInt64Test() => TransformTest.Test<UInt64>();
 
 	private static void Test<T>() where T : unmanaged
 	{
@@ -68,14 +73,14 @@ public sealed class TransformTest
 		try
 		{
 			ref readonly T2 refValue2 = ref NativeUtilities.Transform<T, T2>(refValue);
-			Assert.Equal(sizeof(T), sizeof(T2));
+			PInvokeAssert.Equal(sizeof(T), sizeof(T2));
 			fixed (void* ptr1 = &refValue)
 			fixed (void* ptr2 = &refValue2)
-				Assert.Equal(new(ptr1), new IntPtr(ptr2));
+				PInvokeAssert.Equal(new(ptr1), new IntPtr(ptr2));
 
 			if (typeof(T) == typeof(T2))
 			{
-				Assert.Equal((Object)refValue, refValue2);
+				PInvokeAssert.Equal((Object)refValue, refValue2);
 			}
 			else
 			{
@@ -83,13 +88,13 @@ public sealed class TransformTest
 					MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(in refValue), 1));
 				ReadOnlySpan<Byte> bytes2 =
 					MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(in refValue2), 1));
-				Assert.Equal(bytes1.ToArray(), bytes2.ToArray());
+				PInvokeAssert.Equal(bytes1.ToArray(), bytes2.ToArray());
 			}
 		}
 		catch (Exception ex)
 		{
-			Assert.IsType<InvalidOperationException>(ex);
-			Assert.NotEqual(sizeof(T), sizeof(T2));
+			PInvokeAssert.IsType<InvalidOperationException>(ex);
+			PInvokeAssert.NotEqual(sizeof(T), sizeof(T2));
 		}
 	}
 
@@ -100,8 +105,8 @@ public sealed class TransformTest
 		ReadOnlySpan<Byte> span = NativeUtilities.AsBytes(refValue);
 		ReadOnlySpan<T> spanT = MemoryMarshal.Cast<Byte, T>(span);
 
-		Assert.Equal(bytes, NativeUtilities.ToBytes(refValue));
-		Assert.Equal(bytes, span.ToArray());
-		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in refValue), ref Unsafe.AsRef(in spanT[0])));
+		PInvokeAssert.Equal(bytes, NativeUtilities.ToBytes(refValue));
+		PInvokeAssert.Equal(bytes, span.ToArray());
+		PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in refValue), ref Unsafe.AsRef(in spanT[0])));
 	}
 }

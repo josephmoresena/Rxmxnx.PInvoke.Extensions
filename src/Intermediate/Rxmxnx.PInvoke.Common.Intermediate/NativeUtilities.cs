@@ -299,26 +299,24 @@ public static unsafe partial class NativeUtilities
 			(Byte)'9' => 9,
 			_ => 0,
 		};
-
 	/// <summary>
-	/// Writes <paramref name="span"/> using <paramref name="arg"/> and <paramref name="action"/>.
+	/// Creates an <see cref="IFixedMethod{TDelegate}.IDisposable"/> instance by marshalling the current
+	/// <typeparamref name="TDelegate"/> instance, ensuring a safe interop context.
 	/// </summary>
-	/// <typeparam name="T">Unmanaged type of elements in <paramref name="span"/>.</typeparam>
-	/// <typeparam name="TArg">Type of state object.</typeparam>
-	/// <param name="span">A <typeparamref name="T"/> writable memory block.</param>
-	/// <param name="arg">A <typeparamref name="TArg"/> instance.</param>
-	/// <param name="action">A <see cref="SpanAction{T, TState}"/> delegate.</param>
+	/// <typeparam name="TDelegate">Type of the method delegate which is being fixed.</typeparam>
+	/// <param name="method">Delegate of the method to be fixed.</param>
+	/// <returns>An <see cref="IFixedMethod{TDelegate}.IDisposable"/> instance representing the marshalled method.</returns>
+	/// <remarks>
+	/// This method marshalls and protect the managed delegate to prevent the garbage collector from moving it.
+	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the managed delegate
+	/// and avoid memory leaks.
+	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void WriteSpan<T, TArg>(Span<T> span, TArg arg, SpanAction<T, TArg> action)
-#if NET9_0_OR_GREATER
-		where TArg : allows ref struct
-#endif
-	{
-#pragma warning disable CS8500
-		fixed (void* _ = &MemoryMarshal.GetReference(span))
-#pragma warning restore CS8500
-			action(span, arg);
-	}
+	public static IFixedMethod<TDelegate>.IDisposable GetFixedMethod<TDelegate>(TDelegate? method)
+		where TDelegate : Delegate
+		=> method is null ?
+			FixedDelegate<TDelegate>.EmptyDisposable :
+			new FixedDelegate<TDelegate>(method).ToDisposable(default);
 #if !PACKAGE || NETCOREAPP
 	/// <summary>
 	/// Provides a high-level API for loading a native library.

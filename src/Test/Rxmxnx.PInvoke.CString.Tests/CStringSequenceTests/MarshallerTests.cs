@@ -1,30 +1,36 @@
+#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+using InlineData = NUnit.Framework.TestCaseAttribute;
+#endif
+
 namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
 
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed unsafe class MarshallerTests
 {
 	[Fact]
-	internal void NullTest()
+	public void NullTest()
 	{
 		CStringSequence? seqNull = default;
 		CStringSequence.InputMarshaller marshaller = new();
 
 		marshaller.FromManaged(seqNull);
-		Assert.Equal(IntPtr.Zero, marshaller.ToUnmanaged());
+		PInvokeAssert.Equal(IntPtr.Zero, marshaller.ToUnmanaged());
 		marshaller.FromManaged(MarshallerTests.GetValue(seqNull, true));
-		Assert.Equal(IntPtr.Zero, marshaller.ToUnmanaged());
+		PInvokeAssert.Equal(IntPtr.Zero, marshaller.ToUnmanaged());
 	}
 	[Fact]
-	internal void EmptyTest()
+	public void EmptyTest()
 	{
 		CStringSequence empty = CStringSequence.Empty;
 		CStringSequence.InputMarshaller marshaller = new();
 
 		marshaller.FromManaged(empty);
-		Assert.NotEqual(IntPtr.Zero, marshaller.ToUnmanaged());
+		PInvokeAssert.NotEqual(IntPtr.Zero, marshaller.ToUnmanaged());
 		marshaller.Free();
 		marshaller.FromManaged(MarshallerTests.GetValue(empty, false));
-		Assert.NotEqual(IntPtr.Zero, marshaller.ToUnmanaged());
+		PInvokeAssert.NotEqual(IntPtr.Zero, marshaller.ToUnmanaged());
 		marshaller.Free();
 	}
 	[Theory]
@@ -34,7 +40,7 @@ public sealed unsafe class MarshallerTests
 	[InlineData(256)]
 	[InlineData(300)]
 	[InlineData(1000)]
-	internal void FromManagedTest(Int32? length)
+	public void FromManagedTest(Int32? length)
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices(length);
@@ -51,18 +57,18 @@ public sealed unsafe class MarshallerTests
 			Span<Int32> offset = stackalloc Int32[values.Length];
 			CStringSequence result = CStringSequence.GetUnsafe(values);
 
-			Assert.Equal(buffer, result.ToString());
-			Assert.Equal(seq.NonEmptyCount, result.Count);
-			Assert.Equal(seq.NonEmptyCount, result.NonEmptyCount);
+			PInvokeAssert.Equal(buffer, result.ToString());
+			PInvokeAssert.Equal(seq.NonEmptyCount, result.Count);
+			PInvokeAssert.Equal(seq.NonEmptyCount, result.NonEmptyCount);
 
 			seq.GetOffsets(offset);
 			fixed (void* fPtr = &MemoryMarshal.GetReference<Char>(buffer))
 			{
 				ReadOnlyValPtr<Byte> seqPtr = (ReadOnlyValPtr<Byte>)fPtr;
 				for (Int32 i = 0; i < offset.Length; i++)
-					Assert.Equal(seqPtr + offset[i], values[i]);
+					PInvokeAssert.Equal(seqPtr + offset[i], values[i]);
 			}
-			Assert.Equal(ptr, marshaller.ToUnmanaged());
+			PInvokeAssert.Equal(ptr, marshaller.ToUnmanaged());
 		}
 		finally
 		{
@@ -76,7 +82,7 @@ public sealed unsafe class MarshallerTests
 	[InlineData(256)]
 	[InlineData(300)]
 	[InlineData(1000)]
-	internal void FromValueTest(Int32? length)
+	public void FromValueTest(Int32? length)
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices(length);
@@ -93,11 +99,11 @@ public sealed unsafe class MarshallerTests
 			ReadOnlySpan<ReadOnlyValPtr<Byte>> values = new(ptr.ToPointer(), seq.Count);
 			CStringSequence result = CStringSequence.GetUnsafe(values);
 
-			Assert.Equal(buffer, result.ToString());
-			Assert.Equal(seq.Count, result.Count);
-			Assert.Equal(seq.NonEmptyCount, result.NonEmptyCount);
+			PInvokeAssert.Equal(buffer, result.ToString());
+			PInvokeAssert.Equal(seq.Count, result.Count);
+			PInvokeAssert.Equal(seq.NonEmptyCount, result.NonEmptyCount);
 
-			Assert.Equal(seq, result);
+			PInvokeAssert.Equal(seq, result);
 		}
 		finally
 		{
@@ -111,7 +117,7 @@ public sealed unsafe class MarshallerTests
 	[InlineData(256)]
 	[InlineData(300)]
 	[InlineData(1000)]
-	internal void FromValueNonEmptyOnlyTest(Int32? length)
+	public void FromValueNonEmptyOnlyTest(Int32? length)
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices(length);
@@ -129,19 +135,19 @@ public sealed unsafe class MarshallerTests
 			Span<Int32> offset = stackalloc Int32[values.Length];
 			CStringSequence result = CStringSequence.GetUnsafe(values);
 
-			Assert.Equal(buffer, result.ToString());
-			Assert.Equal(seq.NonEmptyCount, result.Count);
-			Assert.Equal(seq.NonEmptyCount, result.NonEmptyCount);
-			Assert.Equal(seq.Count == seq.NonEmptyCount, value.Equals(result));
+			PInvokeAssert.Equal(buffer, result.ToString());
+			PInvokeAssert.Equal(seq.NonEmptyCount, result.Count);
+			PInvokeAssert.Equal(seq.NonEmptyCount, result.NonEmptyCount);
+			PInvokeAssert.Equal(seq.Count == seq.NonEmptyCount, value.Equals(result));
 
 			seq.GetOffsets(offset);
 			fixed (void* fPtr = &MemoryMarshal.GetReference<Char>(buffer))
 			{
 				ReadOnlyValPtr<Byte> seqPtr = (ReadOnlyValPtr<Byte>)fPtr;
 				for (Int32 i = 0; i < offset.Length; i++)
-					Assert.Equal(seqPtr + offset[i], values[i]);
+					PInvokeAssert.Equal(seqPtr + offset[i], values[i]);
 			}
-			Assert.Equal(ptr, marshaller.ToUnmanaged());
+			PInvokeAssert.Equal(ptr, marshaller.ToUnmanaged());
 		}
 		finally
 		{
@@ -152,13 +158,13 @@ public sealed unsafe class MarshallerTests
 	private static CStringSequence.Utf8View GetValue(CStringSequence? seq, Boolean includeEmptyItems)
 	{
 		CStringSequence.Utf8View value = seq.CreateView(includeEmptyItems);
-		Assert.Equal((includeEmptyItems ? seq?.Count : seq?.NonEmptyCount).GetValueOrDefault(), value.Count);
-		Assert.Equal(seq, value.Source);
-		Assert.Equal(seq?.ToString(), value.ToString());
-		Assert.Equal(seq?.GetHashCode() ?? 0, value.GetHashCode());
-		Assert.True(value.Equals(seq));
-		Assert.True(value == seq.CreateView(includeEmptyItems));
-		Assert.True(value != seq.CreateView(!includeEmptyItems));
+		PInvokeAssert.Equal((includeEmptyItems ? seq?.Count : seq?.NonEmptyCount).GetValueOrDefault(), value.Count);
+		PInvokeAssert.Equal(seq, value.Source);
+		PInvokeAssert.Equal(seq?.ToString(), value.ToString());
+		PInvokeAssert.Equal(seq?.GetHashCode() ?? 0, value.GetHashCode());
+		PInvokeAssert.True(value.Equals(seq));
+		PInvokeAssert.True(value == seq.CreateView(includeEmptyItems));
+		PInvokeAssert.True(value != seq.CreateView(!includeEmptyItems));
 
 		return value;
 	}

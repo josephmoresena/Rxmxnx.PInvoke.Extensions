@@ -1,5 +1,11 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal.DecodedRuneTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+using InlineData = NUnit.Framework.TestCaseAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.Internal.DecodedRuneTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("roslyn", "CA1861")]
 public sealed class GetIndicesTest
@@ -10,7 +16,7 @@ public sealed class GetIndicesTest
 		ReadOnlySpan<Char> source = ReadOnlySpan<Char>.Empty;
 		IReadOnlyList<Int32> indices = DecodedRune.GetIndices(source);
 
-		Assert.Empty(indices);
+		PInvokeAssert.Empty(indices);
 	}
 
 	[Fact]
@@ -19,20 +25,20 @@ public sealed class GetIndicesTest
 		ReadOnlySpan<Byte> source = ReadOnlySpan<Byte>.Empty;
 		IReadOnlyList<Int32> indices = DecodedRune.GetIndices(source);
 
-		Assert.Empty(indices);
+		PInvokeAssert.Empty(indices);
 	}
 
 	[Theory]
 	[InlineData("Hello", new[] { 0, 1, 2, 3, 4, })]
 	[InlineData("Привет", new[] { 0, 1, 2, 3, 4, 5, })]
 	[InlineData("こんにちは", new[] { 0, 1, 2, 3, 4, })]
-	internal void Utf16Test(String input, Int32[] expectedIndices)
+	public void Utf16Test(String input, Int32[] expectedIndices)
 	{
 		ReadOnlySpan<Char> source = input.AsSpan();
 		IReadOnlyList<Int32> indices = DecodedRune.GetIndices(source);
 
-		Assert.Equal(expectedIndices.Length, indices.Count);
-		for (Int32 i = 0; i < expectedIndices.Length; i++) Assert.Equal(expectedIndices[i], indices[i]);
+		PInvokeAssert.Equal(expectedIndices.Length, indices.Count);
+		for (Int32 i = 0; i < expectedIndices.Length; i++) PInvokeAssert.Equal(expectedIndices[i], indices[i]);
 	}
 
 	[Theory]
@@ -44,7 +50,7 @@ public sealed class GetIndicesTest
 		ReadOnlySpan<Byte> source = Encoding.UTF8.GetBytes(input);
 		IReadOnlyList<Int32> indices = DecodedRune.GetIndices(source);
 
-		Assert.Equal(expectedIndices.Length, indices.Count);
-		for (Int32 i = 0; i < expectedIndices.Length; i++) Assert.Equal(expectedIndices[i], indices[i]);
+		PInvokeAssert.Equal(expectedIndices.Length, indices.Count);
+		for (Int32 i = 0; i < expectedIndices.Length; i++) PInvokeAssert.Equal(expectedIndices[i], indices[i]);
 	}
 }

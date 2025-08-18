@@ -1,4 +1,4 @@
-﻿#if !NET8_0_OR_GREATER
+﻿#if NETCOREAPP && !NET8_0_OR_GREATER
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 #endif
 

@@ -1,12 +1,18 @@
-﻿namespace Rxmxnx.PInvoke.Tests.StreamCStringExtensions;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+using InlineData = NUnit.Framework.TestCaseAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.StreamCStringExtensions;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class WriteTest
 {
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	internal void Test(Boolean writeNullTermination)
+	public void Test(Boolean writeNullTermination)
 	{
 		using TestMemoryHandle handle = new();
 		List<WrittenCString> values = [];
@@ -18,7 +24,7 @@ public sealed class WriteTest
 	}
 
 	[Fact]
-	internal void RangeTest()
+	public void RangeTest()
 	{
 		using TestMemoryHandle handle = new();
 		List<WrittenCString> values = [];

@@ -1,5 +1,10 @@
+#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
+
 namespace Rxmxnx.PInvoke.Tests.Buffers.Composite;
 
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class BinaryBufferCompositeTest
@@ -7,17 +12,17 @@ public sealed class BinaryBufferCompositeTest
 	private static readonly Type compositeType = typeof(Composite<,,>);
 
 	[Fact]
-	internal void BooleanTest() => BinaryBufferCompositeTest.StructTest<Boolean>();
+	public void BooleanTest() => BinaryBufferCompositeTest.StructTest<Boolean>();
 	[Fact]
-	internal void ByteTest() => BinaryBufferCompositeTest.StructTest<Byte>();
+	public void ByteTest() => BinaryBufferCompositeTest.StructTest<Byte>();
 	[Fact]
-	internal void Int16Test() => BinaryBufferCompositeTest.StructTest<Int16>();
+	public void Int16Test() => BinaryBufferCompositeTest.StructTest<Int16>();
 	[Fact]
-	internal void Int32Test() => BinaryBufferCompositeTest.StructTest<Int32>();
+	public void Int32Test() => BinaryBufferCompositeTest.StructTest<Int32>();
 	[Fact]
-	internal void Int64Test() => BinaryBufferCompositeTest.StructTest<Int64>();
+	public void Int64Test() => BinaryBufferCompositeTest.StructTest<Int64>();
 	[Fact]
-	internal void StringWrapperTest() => BinaryBufferCompositeTest.StructTest<WrapperStruct<String?>>();
+	public void StringWrapperTest() => BinaryBufferCompositeTest.StructTest<WrapperStruct<String?>>();
 
 	private static void StructTest<T>() where T : struct
 	{
@@ -53,57 +58,59 @@ public sealed class BinaryBufferCompositeTest
 		BufferTypeMetadata<T> nonBinaryMetadata5 =
 			((IManagedBinaryBuffer<T>)Activator.CreateInstance(nonBinary5)!).Metadata;
 
-		Assert.Equal(composite2Metadata, atomicMetadata.Double());
-		Assert.Equal(binaryMetadata, composite2Metadata.Compose(atomicMetadata));
-		Assert.Equal(nonBinaryMetadata1, atomicMetadata.Compose(composite2Metadata));
-		Assert.Equal(nonBinaryMetadata2, binaryMetadata.Compose(atomicMetadata));
-		Assert.Equal(nonBinaryMetadata3, binaryMetadata.Double());
-		Assert.Null(atomicMetadata.Compose(nonBinaryMetadata3));
-		Assert.Null(nonBinaryMetadata3.Compose(atomicMetadata));
+		PInvokeAssert.Equal(composite2Metadata, atomicMetadata.Double());
+		PInvokeAssert.Equal(binaryMetadata, composite2Metadata.Compose(atomicMetadata));
+		PInvokeAssert.Equal(nonBinaryMetadata1, atomicMetadata.Compose(composite2Metadata));
+		PInvokeAssert.Equal(nonBinaryMetadata2, binaryMetadata.Compose(atomicMetadata));
+		PInvokeAssert.Equal(nonBinaryMetadata3, binaryMetadata.Double());
+		PInvokeAssert.Null(atomicMetadata.Compose(nonBinaryMetadata3));
+		PInvokeAssert.Null(nonBinaryMetadata3.Compose(atomicMetadata));
 
-		Assert.True(binaryMetadata.IsBinary);
-		Assert.Equal(2, binaryMetadata.ComponentCount);
-		Assert.Equal(atomicMetadata.Size + composite2Metadata.Size, binaryMetadata.Size);
-		Assert.Equal(atomicMetadata, binaryMetadata[0]);
-		Assert.Equal(composite2Metadata, binaryMetadata[1]);
+		PInvokeAssert.True(binaryMetadata.IsBinary);
+		PInvokeAssert.Equal(2, binaryMetadata.ComponentCount);
+		PInvokeAssert.Equal(atomicMetadata.Size + composite2Metadata.Size, binaryMetadata.Size);
+		PInvokeAssert.Equal(atomicMetadata, binaryMetadata[0]);
+		PInvokeAssert.Equal(composite2Metadata, binaryMetadata[1]);
 
-		Assert.False(nonBinaryMetadata1.IsBinary);
-		Assert.Equal(2, nonBinaryMetadata1.ComponentCount);
-		Assert.Equal(atomicMetadata.Size + composite2Metadata.Size, nonBinaryMetadata1.Size);
-		Assert.Equal(composite2Metadata, nonBinaryMetadata1[0]);
-		Assert.Equal(atomicMetadata, nonBinaryMetadata1[1]);
+		PInvokeAssert.False(nonBinaryMetadata1.IsBinary);
+		PInvokeAssert.Equal(2, nonBinaryMetadata1.ComponentCount);
+		PInvokeAssert.Equal(atomicMetadata.Size + composite2Metadata.Size, nonBinaryMetadata1.Size);
+		PInvokeAssert.Equal(composite2Metadata, nonBinaryMetadata1[0]);
+		PInvokeAssert.Equal(atomicMetadata, nonBinaryMetadata1[1]);
 
-		Assert.False(nonBinaryMetadata2.IsBinary);
-		Assert.Equal(2, nonBinaryMetadata2.ComponentCount);
-		Assert.Equal(2 * atomicMetadata.Size + composite2Metadata.Size, nonBinaryMetadata2.Size);
-		Assert.Equal(atomicMetadata, nonBinaryMetadata2[0]);
-		Assert.Equal(binaryMetadata, nonBinaryMetadata2[1]);
+		PInvokeAssert.False(nonBinaryMetadata2.IsBinary);
+		PInvokeAssert.Equal(2, nonBinaryMetadata2.ComponentCount);
+		PInvokeAssert.Equal(2 * atomicMetadata.Size + composite2Metadata.Size, nonBinaryMetadata2.Size);
+		PInvokeAssert.Equal(atomicMetadata, nonBinaryMetadata2[0]);
+		PInvokeAssert.Equal(binaryMetadata, nonBinaryMetadata2[1]);
 
-		Assert.False(nonBinaryMetadata3.IsBinary);
-		Assert.Equal(2, nonBinaryMetadata3.ComponentCount);
-		Assert.Equal(2 * binaryMetadata.Size, nonBinaryMetadata3.Size);
-		Assert.Equal(binaryMetadata, nonBinaryMetadata3[0]);
-		Assert.Equal(binaryMetadata, nonBinaryMetadata3[1]);
+		PInvokeAssert.False(nonBinaryMetadata3.IsBinary);
+		PInvokeAssert.Equal(2, nonBinaryMetadata3.ComponentCount);
+		PInvokeAssert.Equal(2 * binaryMetadata.Size, nonBinaryMetadata3.Size);
+		PInvokeAssert.Equal(binaryMetadata, nonBinaryMetadata3[0]);
+		PInvokeAssert.Equal(binaryMetadata, nonBinaryMetadata3[1]);
 
-		Assert.False(nonBinaryMetadata4.IsBinary);
-		Assert.Equal(2, nonBinaryMetadata4.ComponentCount);
-		Assert.Equal(atomicMetadata.Size + nonBinaryMetadata3.Size, nonBinaryMetadata4.Size);
-		Assert.Equal(nonBinaryMetadata3, nonBinaryMetadata4[0]);
-		Assert.Equal(atomicMetadata, nonBinaryMetadata4[1]);
+		PInvokeAssert.False(nonBinaryMetadata4.IsBinary);
+		PInvokeAssert.Equal(2, nonBinaryMetadata4.ComponentCount);
+		PInvokeAssert.Equal(atomicMetadata.Size + nonBinaryMetadata3.Size, nonBinaryMetadata4.Size);
+		PInvokeAssert.Equal(nonBinaryMetadata3, nonBinaryMetadata4[0]);
+		PInvokeAssert.Equal(atomicMetadata, nonBinaryMetadata4[1]);
 
-		Assert.False(nonBinaryMetadata5.IsBinary);
-		Assert.Equal(2, nonBinaryMetadata5.ComponentCount);
-		Assert.Equal(atomicMetadata.Size + nonBinaryMetadata3.Size, nonBinaryMetadata5.Size);
-		Assert.Equal(atomicMetadata, nonBinaryMetadata5[0]);
-		Assert.Equal(nonBinaryMetadata3, nonBinaryMetadata5[1]);
+		PInvokeAssert.False(nonBinaryMetadata5.IsBinary);
+		PInvokeAssert.Equal(2, nonBinaryMetadata5.ComponentCount);
+		PInvokeAssert.Equal(atomicMetadata.Size + nonBinaryMetadata3.Size, nonBinaryMetadata5.Size);
+		PInvokeAssert.Equal(atomicMetadata, nonBinaryMetadata5[0]);
+		PInvokeAssert.Equal(nonBinaryMetadata3, nonBinaryMetadata5[1]);
 
-		Assert.Equal(atomicMetadata, BufferManager.MetadataManager<T>.GetMetadata(typeofAtomic));
-		Assert.Equal(composite2Metadata, BufferManager.MetadataManager<T>.GetMetadata(typeofComposite2));
-		Assert.Equal(binaryMetadata, BufferManager.MetadataManager<T>.GetMetadata(binaryMetadata.BufferType));
-		Assert.Equal(binaryMetadata.Components,
-		             BufferManager.MetadataManager<T>.GetComponents(typeofAtomic, typeofComposite2));
+		PInvokeAssert.Equal(atomicMetadata, BufferManager.MetadataManager<T>.GetMetadata(typeofAtomic));
+		PInvokeAssert.Equal(composite2Metadata, BufferManager.MetadataManager<T>.GetMetadata(typeofComposite2));
+		PInvokeAssert.Equal(binaryMetadata, BufferManager.MetadataManager<T>.GetMetadata(binaryMetadata.BufferType));
+		PInvokeAssert.Equal(binaryMetadata.Components, [
+			BufferManager.MetadataManager<T>.GetMetadata(typeofAtomic),
+			BufferManager.MetadataManager<T>.GetMetadata(typeofComposite2),
+		]);
 		foreach (BufferTypeMetadata<T> metadata in binaryMetadata.Components.AsSpan())
-			Assert.Equal(metadata, BufferManager.MetadataManager<T>.GetMetadata(metadata.BufferType));
+			PInvokeAssert.Equal(metadata, BufferManager.MetadataManager<T>.GetMetadata(metadata.BufferType));
 	}
 	private static BufferTypeMetadata<T> GetMetadata<TBuffer, T>()
 		where TBuffer : struct, IManagedBinaryBuffer<TBuffer, T>

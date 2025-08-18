@@ -12,7 +12,7 @@ internal partial class MemoryInspector
 	private sealed unsafe partial class Windows : MemoryInspector
 	{
 		/// <inheritdoc/>
-		public override Boolean IsLiteral<T>(ReadOnlySpan<T> span)
+		public override Boolean IsLiteral(ReadOnlySpan<Byte> span)
 		{
 #pragma warning disable CS8500
 			fixed (void* ptr = &MemoryMarshal.GetReference(span))
@@ -20,13 +20,8 @@ internal partial class MemoryInspector
 			{
 				UIntPtr result = Kernel32.VirtualQuery(ptr, out MemoryInfo memInfo, MemoryInfo.Size);
 				Kernel32.ValidateResult(result);
-				return result != UIntPtr.Zero && memInfo.Protect switch
-				{
-					MemoryState.Image => true,
-					MemoryState.ReadOnly => memInfo.Type is MemoryState.Image,
-					MemoryState.ExecuteRead => memInfo.Type is MemoryState.Image,
-					_ => false,
-				};
+				return result != UIntPtr.Zero && memInfo.Protect is MemoryState.ReadOnly or MemoryState.ExecuteRead &&
+					memInfo.Type.Value is MemoryState.Image or MemoryState.Mapped;
 			}
 		}
 	}

@@ -1,12 +1,19 @@
+#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+using InlineData = NUnit.Framework.TestCaseAttribute;
+using EqualException = NUnit.Framework.AssertionException;
+#endif
+
 namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
 
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class ParseTest
 {
 	[Fact]
-	internal void EmptyTest()
+	public void EmptyTest()
 	{
-		Assert.Null(CStringSequence.Parse(null));
+		PInvokeAssert.Null(CStringSequence.Parse(null));
 
 		String nullString = new(Enumerable.Repeat('\0', Random.Shared.Next(0, Byte.MaxValue)).ToArray());
 		CStringSequence seq0 = CStringSequence.Parse(String.Empty);
@@ -14,14 +21,14 @@ public sealed class ParseTest
 		CStringSequence seq2 = CStringSequence.Parse(nullString);
 		CStringSequence seq3 = CStringSequence.Create(nullString);
 
-		Assert.Empty(seq0);
-		Assert.Equal(0, seq0.ToString().Length);
-		Assert.Empty(seq1);
-		Assert.Equal(0, seq1.ToString().Length);
-		Assert.Empty(seq2);
-		Assert.Equal(0, seq2.ToString().Length);
-		Assert.Empty(seq3);
-		Assert.Equal(0, seq3.ToString().Length);
+		PInvokeAssert.Empty(seq0);
+		PInvokeAssert.Equal(0, seq0.ToString().Length);
+		PInvokeAssert.Empty(seq1);
+		PInvokeAssert.Equal(0, seq1.ToString().Length);
+		PInvokeAssert.Empty(seq2);
+		PInvokeAssert.Equal(0, seq2.ToString().Length);
+		PInvokeAssert.Empty(seq3);
+		PInvokeAssert.Equal(0, seq3.ToString().Length);
 	}
 
 	[Theory]
@@ -31,7 +38,7 @@ public sealed class ParseTest
 	[InlineData(256)]
 	[InlineData(300)]
 	[InlineData(1000)]
-	internal void Test(Int32? length)
+	public void Test(Int32? length)
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices(length);
@@ -65,15 +72,15 @@ public sealed class ParseTest
 		CStringSequence seq2 = CStringSequence.Create(buffer);
 		CStringSequence seq3 = new(values);
 
-		Assert.Equal(values, seq0);
-		Assert.Equal(values, seq1);
-		Assert.Equal(values, seq2);
-		Assert.True(Object.ReferenceEquals(buffer, seq0.ToString()));
-		Assert.True(Object.ReferenceEquals(nullEndBuffer, seq1.ToString()));
-		Assert.False(Object.ReferenceEquals(buffer, seq2.ToString()));
-		Assert.Equal(seq3.ToString(), seq0.ToString());
-		Assert.Equal(nullEndBuffer.Length, seq1.ToString().Length);
-		Assert.Equal(seq3.ToString(), seq2.ToString());
+		PInvokeAssert.Equal(values, seq0);
+		PInvokeAssert.Equal(values, seq1);
+		PInvokeAssert.Equal(values, seq2);
+		PInvokeAssert.True(Object.ReferenceEquals(buffer, seq0.ToString()));
+		PInvokeAssert.True(Object.ReferenceEquals(nullEndBuffer, seq1.ToString()));
+		PInvokeAssert.False(Object.ReferenceEquals(buffer, seq2.ToString()));
+		PInvokeAssert.Equal(seq3.ToString(), seq0.ToString());
+		PInvokeAssert.Equal(nullEndBuffer.Length, seq1.ToString().Length);
+		PInvokeAssert.Equal(seq3.ToString(), seq2.ToString());
 	}
 	private static void RandomParseTest(CString[] values)
 	{
@@ -87,13 +94,13 @@ public sealed class ParseTest
 		CStringSequence seq2 = CStringSequence.Create(buffer);
 		CStringSequence seq3 = new(values);
 
-		Assert.Equal(values, seq0);
-		Assert.Equal(values, seq2);
-		Assert.Equal(offset == 0, Object.ReferenceEquals(buffer, seq0.ToString()));
-		Assert.False(Object.ReferenceEquals(buffer, seq2.ToString()));
-		Assert.InRange(seq0.ToString().Length, values.Select(c => c.Length).Sum() / 2, totalChars);
-		Assert.Equal(offset != 0 ? seq3.ToString() : buffer, seq0.ToString());
-		Assert.Equal(seq3.ToString(), seq2.ToString());
+		PInvokeAssert.Equal(values, seq0);
+		PInvokeAssert.Equal(values, seq2);
+		PInvokeAssert.Equal(offset == 0, Object.ReferenceEquals(buffer, seq0.ToString()));
+		PInvokeAssert.False(Object.ReferenceEquals(buffer, seq2.ToString()));
+		PInvokeAssert.InRange(seq0.ToString().Length, values.Select(c => c.Length).Sum() / 2, totalChars);
+		PInvokeAssert.Equal(offset != 0 ? seq3.ToString() : buffer, seq0.ToString());
+		PInvokeAssert.Equal(seq3.ToString(), seq2.ToString());
 	}
 	private static void RandomCreate(Span<Char> span, (Int32 offset, CString[] values) arg)
 	{

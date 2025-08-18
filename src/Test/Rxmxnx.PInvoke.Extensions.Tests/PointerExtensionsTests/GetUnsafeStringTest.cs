@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
+﻿#if !NETCOREAPP
+using InlineData = NUnit.Framework.TestCaseAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class GetUnsafeStringTest
 {
@@ -9,27 +14,27 @@ public sealed class GetUnsafeStringTest
 	[InlineData(-1)]
 	[InlineData(0)]
 	[InlineData(1)]
-	internal void ZeroTest(Int32 length)
+	public void ZeroTest(Int32 length)
 	{
 		MemoryHandle handle = default;
 		if (length >= 0)
 		{
-			Assert.Null(IntPtr.Zero.GetUnsafeString(length));
-			Assert.Null(UIntPtr.Zero.GetUnsafeString(length));
-			Assert.Null(handle.GetUnsafeString(length));
+			PInvokeAssert.Null(IntPtr.Zero.GetUnsafeString(length));
+			PInvokeAssert.Null(UIntPtr.Zero.GetUnsafeString(length));
+			PInvokeAssert.Null(handle.GetUnsafeString(length));
 		}
 		else
 		{
-			Assert.Throws<ArgumentException>(() => IntPtr.Zero.GetUnsafeString(length));
-			Assert.Throws<ArgumentException>(() => UIntPtr.Zero.GetUnsafeString(length));
-			Assert.Throws<ArgumentException>(() => handle.GetUnsafeString(length));
+			PInvokeAssert.Throws<ArgumentException>(() => IntPtr.Zero.GetUnsafeString(length));
+			PInvokeAssert.Throws<ArgumentException>(() => UIntPtr.Zero.GetUnsafeString(length));
+			PInvokeAssert.Throws<ArgumentException>(() => handle.GetUnsafeString(length));
 		}
 	}
 
 	[Theory]
 	[InlineData(false)]
 	[InlineData(true)]
-	internal unsafe void Test(Boolean fixedLength)
+	public unsafe void Test(Boolean fixedLength)
 	{
 		String input = GetUnsafeStringTest.fixture.Create<String>();
 		using MemoryHandle handle = input.AsMemory().Pin();
@@ -40,15 +45,15 @@ public sealed class GetUnsafeStringTest
 
 			if (fixedLength)
 			{
-				Assert.Equal(input, intPtr.GetUnsafeString(input.Length));
-				Assert.Equal(input, uintPtr.GetUnsafeString(input.Length));
-				Assert.Equal(input, handle.GetUnsafeString(input.Length));
+				PInvokeAssert.Equal(input, intPtr.GetUnsafeString(input.Length));
+				PInvokeAssert.Equal(input, uintPtr.GetUnsafeString(input.Length));
+				PInvokeAssert.Equal(input, handle.GetUnsafeString(input.Length));
 			}
 			else
 			{
-				Assert.Equal(input, intPtr.GetUnsafeString());
-				Assert.Equal(input, uintPtr.GetUnsafeString());
-				Assert.Equal(input, handle.GetUnsafeString());
+				PInvokeAssert.Equal(input, intPtr.GetUnsafeString());
+				PInvokeAssert.Equal(input, uintPtr.GetUnsafeString());
+				PInvokeAssert.Equal(input, handle.GetUnsafeString());
 			}
 		}
 	}

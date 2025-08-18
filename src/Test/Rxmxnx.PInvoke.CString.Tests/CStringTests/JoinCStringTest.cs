@@ -1,11 +1,16 @@
-﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.CStringTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class JoinCStringTest
 {
 	[Fact]
-	internal void Test()
+	public void Test()
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
@@ -41,8 +46,8 @@ public sealed class JoinCStringTest
 		CString resultCString = CString.Join(separator, values);
 		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
 
-		Assert.Equal(expectedCString, resultCStringCString);
-		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
 	}
 	private static void EnumerableTest(CString? separator, String?[] strings, IEnumerable<CString?> values)
 	{
@@ -53,8 +58,8 @@ public sealed class JoinCStringTest
 		CString resultCString = CString.Join(separator, values);
 		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
 
-		Assert.Equal(expectedCString, resultCStringCString);
-		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
 	}
 	private static void ArrayRangeTest(CString? separator, String?[] strings, CString?[] values)
 	{
@@ -67,8 +72,8 @@ public sealed class JoinCStringTest
 		CString resultCString = CString.Join(separator, values, startIndex, count);
 		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
 
-		Assert.Equal(expectedCString, resultCStringCString);
-		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
 	}
 
 #if NET6_0_OR_GREATER

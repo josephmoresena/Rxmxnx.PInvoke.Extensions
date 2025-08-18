@@ -1,7 +1,12 @@
-﻿using System.Collections;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
+
+using IEnumerator = System.Collections.IEnumerator;
 
 namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests.WithFixedSafeTests;
 
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class FixedMemoryListTest
 {
@@ -10,18 +15,18 @@ public sealed class FixedMemoryListTest
 	private readonly Array[] _array = FixedMemoryListTest.GetArray();
 
 	[Fact]
-	internal void EmptyTest()
+	public void EmptyTest()
 	{
 		FixedMemoryList fml = default;
 
-		Assert.Equal(0, fml.Count);
-		Assert.True(fml.IsEmpty);
-		Assert.Empty(fml.ToArray());
+		PInvokeAssert.Equal(0, fml.Count);
+		PInvokeAssert.True(fml.IsEmpty);
+		PInvokeAssert.Empty(fml.ToArray());
 		fml.Unload();
 	}
 
 	[Fact]
-	internal void Test()
+	public void Test()
 	{
 		Span<Byte> s0 = (Span<Byte>)this._array[0]!;
 		Span<Guid> s1 = (Span<Guid>)this._array[1]!;
@@ -166,7 +171,7 @@ public sealed class FixedMemoryListTest
 	private void ReadOnlyActionReadOnlyTest(ReadOnlyFixedMemoryList fml) => this.ActionTest(fml, true);
 	private void ActionTest(ReadOnlyFixedMemoryList fml, Boolean readOnly)
 	{
-		Assert.False(fml.IsEmpty);
+		PInvokeAssert.False(fml.IsEmpty);
 		IReadOnlyFixedMemory[] mems = fml.ToArray();
 		for (Int32 i = 0; i < fml.Count; i++)
 		{
@@ -197,13 +202,13 @@ public sealed class FixedMemoryListTest
 					FixedMemoryListTest.ArrayTest<UInt32>(fml[7], this._array[7], readOnly);
 					break;
 			}
-			Assert.Equal(fml[i], mems[i]);
+			PInvokeAssert.Equal(fml[i], mems[i]);
 		}
 		FixedMemoryListTest.EnumeratorTest(fml);
 	}
 	private void ActionFullTest(FixedMemoryList fml)
 	{
-		Assert.False(fml.IsEmpty);
+		PInvokeAssert.False(fml.IsEmpty);
 		IFixedMemory[] mems = fml.ToArray();
 		for (Int32 i = 0; i < fml.Count; i++)
 		{
@@ -234,7 +239,7 @@ public sealed class FixedMemoryListTest
 					FixedMemoryListTest.ArrayTest<UInt32>(fml[7], this._array[7], false);
 					break;
 			}
-			Assert.Equal(fml[i], mems[i]);
+			PInvokeAssert.Equal(fml[i], mems[i]);
 		}
 		FixedMemoryListTest.EnumeratorTest(fml);
 	}
@@ -331,25 +336,25 @@ public sealed class FixedMemoryListTest
 		IReadOnlyFixedContext<T> ctx = (IReadOnlyFixedContext<T>)mem;
 		T[] arrT = (T[])arr;
 
-		Assert.Equal(arrT, ctx.Values.ToArray());
-		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(arrT.AsSpan()),
-		                           ref MemoryMarshal.GetReference(ctx.Values)));
+		PInvokeAssert.Equal(arrT, ctx.Values.ToArray());
+		PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(arrT.AsSpan()),
+		                                  ref MemoryMarshal.GetReference(ctx.Values)));
 		fixed (void* ptr = arrT)
-			Assert.Equal((IntPtr)ptr, ctx.Pointer);
+			PInvokeAssert.Equal((IntPtr)ptr, ctx.Pointer);
 
 		if (!readOnly)
 		{
 			IFixedContext<T> ctxx = (IFixedContext<T>)mem;
-			Assert.Equal(arrT, ctxx.Values.ToArray());
-			Assert.Equal(mem.Bytes.ToArray(), ctxx.Bytes.ToArray());
-			Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(arrT.AsSpan()),
-			                           ref MemoryMarshal.GetReference(ctxx.Values)));
-			Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(mem.Bytes),
-			                           ref MemoryMarshal.GetReference(ctxx.Bytes)));
+			PInvokeAssert.Equal(arrT, ctxx.Values.ToArray());
+			PInvokeAssert.Equal(mem.Bytes.ToArray(), ctxx.Bytes.ToArray());
+			PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(arrT.AsSpan()),
+			                                  ref MemoryMarshal.GetReference(ctxx.Values)));
+			PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(mem.Bytes),
+			                                  ref MemoryMarshal.GetReference(ctxx.Bytes)));
 		}
 		else
 		{
-			Assert.Throws<InvalidCastException>(() => (IFixedContext<T>)mem);
+			PInvokeAssert.Throws<InvalidCastException>(() => (IFixedContext<T>)mem);
 		}
 	}
 	private static void ArrayTest<T>(Byte[] bytes, Array arr) where T : unmanaged
@@ -358,8 +363,8 @@ public sealed class FixedMemoryListTest
 		ReadOnlySpan<Byte> spanByte = MemoryMarshal.AsBytes(arrT.AsSpan());
 		ReadOnlySpan<T> spanT = MemoryMarshal.Cast<Byte, T>(bytes);
 
-		Assert.Equal(bytes, spanByte.ToArray());
-		Assert.Equal(arrT, spanT.ToArray());
+		PInvokeAssert.Equal(bytes, spanByte.ToArray());
+		PInvokeAssert.Equal(arrT, spanT.ToArray());
 	}
 	private static void EnumeratorTest(ReadOnlyFixedMemoryList fml)
 	{
@@ -368,7 +373,7 @@ public sealed class FixedMemoryListTest
 		ReadOnlyFixedMemoryList.Enumerator fmlEnumerator = fml.GetEnumerator();
 
 		while (fmlEnumerator.MoveNext() && arrEnumerator.MoveNext())
-			Assert.Equal(arrEnumerator.Current, fmlEnumerator.Current);
+			PInvokeAssert.Equal(arrEnumerator.Current, fmlEnumerator.Current);
 	}
 	private static void EnumeratorTest(FixedMemoryList fml)
 	{
@@ -377,6 +382,6 @@ public sealed class FixedMemoryListTest
 		FixedMemoryList.Enumerator fmlEnumerator = fml.GetEnumerator();
 
 		while (fmlEnumerator.MoveNext() && arrEnumerator.MoveNext())
-			Assert.Equal(arrEnumerator.Current, fmlEnumerator.Current);
+			PInvokeAssert.Equal(arrEnumerator.Current, fmlEnumerator.Current);
 	}
 }

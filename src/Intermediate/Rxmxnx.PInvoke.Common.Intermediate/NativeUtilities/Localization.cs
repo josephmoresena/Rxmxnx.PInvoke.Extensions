@@ -3,11 +3,6 @@ namespace Rxmxnx.PInvoke;
 public partial class NativeUtilities
 {
 	/// <summary>
-	/// Cache for <see cref="GlobalizationInvariantModeEnabled"/>
-	/// </summary>
-	private static Boolean? globalizationInvariantMode;
-
-	/// <summary>
 	/// Indicates whether globalization-invariant mode is enabled.
 	/// </summary>
 	/// <remarks>This property allows trim propagation at compile time using <c>InvariantGlobalization</c>.</remarks>
@@ -20,14 +15,7 @@ public partial class NativeUtilities
 	/// Retrieves the <see cref="Iso639P1"/> enum value corresponding to the current user interface culture.
 	/// </summary>
 	/// <remarks>This property allows trim propagation at compile time using <c>InvariantGlobalization</c>.</remarks>
-	public static Iso639P1 UserInterfaceIso639P1
-	{
-		get
-		{
-			NativeUtilities.GetUserInterfaceTwoLetterLangCode(out Iso639P1 result);
-			return result;
-		}
-	}
+	public static Iso639P1 UserInterfaceIso639P1 => (Iso639P1)NativeUtilities.GetUserInterfaceTwoLetterLangCode();
 
 	/// <summary>
 	/// Retrieves the <see cref="Iso639P1"/> enum value corresponding to the specified <paramref name="culture"/>.
@@ -231,34 +219,4 @@ public partial class NativeUtilities
 			return Iso639P1.Iv;
 		}
 	}
-
-	/// <summary>
-	/// Checks if globalization-invariant mode is enabled.
-	/// </summary>
-	/// <returns>
-	/// <see langword="true"/> if globalization-invariant mode is enabled; otherwise,
-	/// <see langword="false"/>.
-	/// </returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	private static Boolean IsGlobalizationInvariantMode()
-	{
-		try
-		{
-			return CultureInfo.GetCultureInfo(0x409).LCID == 0x1000;
-		}
-		catch (CultureNotFoundException)
-		{
-			CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.NeutralCultures);
-			return cultures.Length <= 1;
-		}
-	}
-	/// <summary>
-	/// Retrieves the Iso639-1 language code enum value corresponding to the current user interface culture.
-	/// </summary>
-	/// <param name="result">Destination <see cref="Iso639P1"/> reference.</param>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void GetUserInterfaceTwoLetterLangCode(out Iso639P1 result)
-		=> result = NativeUtilities.GetIso639P1(CultureInfo.CurrentUICulture);
 }

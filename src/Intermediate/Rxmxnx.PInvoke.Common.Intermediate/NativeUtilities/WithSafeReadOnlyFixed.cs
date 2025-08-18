@@ -50,8 +50,7 @@ public static unsafe partial class NativeUtilities
 	public static void WithSafeReadOnlyFixed<T, TArg>(ref T value, TArg arg,
 		ReadOnlyFixedReferenceAction<T, TArg> action)
 #if NET9_0_OR_GREATER
-		where T : allows ref struct
-		where TArg : allows ref struct
+		where T : allows ref struct where TArg : allows ref struct
 #endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
@@ -112,8 +111,7 @@ public static unsafe partial class NativeUtilities
 	public static TResult WithSafeReadOnlyFixed<T, TArg, TResult>(ref T value, TArg arg,
 		ReadOnlyFixedReferenceFunc<T, TArg, TResult> func)
 #if NET9_0_OR_GREATER
-		where T : allows ref struct
-		where TArg : allows ref struct
+		where T : allows ref struct where TArg : allows ref struct
 #endif
 	{
 		ArgumentNullException.ThrowIfNull(func);

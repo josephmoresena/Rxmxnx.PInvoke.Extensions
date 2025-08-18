@@ -40,13 +40,6 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 #endif
 internal static class RuneCompat
 {
-#if !PACKAGE || !NETCOREAPP
-	private const UInt32 replacementChar = 0xFFFD;
-	private const Char highSurrogateStart = '\ud800';
-	private const Char lowSurrogateStart = '\udc00';
-	private const Int32 highSurrogateRange = 0x3FF;
-#endif
-
 #if !PACKAGE
 	/// <summary>
 	/// Target framework for the current build.
@@ -274,6 +267,12 @@ internal static class RuneCompat
 		return operationStatus;
 #endif
 	}
+#if !PACKAGE || !NETCOREAPP
+	private const UInt32 replacementChar = 0xFFFD;
+	private const Char highSurrogateStart = '\ud800';
+	private const Char lowSurrogateStart = '\udc00';
+	private const Int32 highSurrogateRange = 0x3FF;
+#endif
 
 #if !PACKAGE || !NETCOREAPP
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

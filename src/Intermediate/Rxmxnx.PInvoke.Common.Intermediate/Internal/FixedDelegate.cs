@@ -1,13 +1,9 @@
 ﻿namespace Rxmxnx.PInvoke.Internal;
 
-/// <summary>
-/// Fixed method class, used to hold a fixed pointer to a method delegate.
-/// </summary>
-/// <typeparam name="TDelegate">Type of the method delegate which is being fixed.</typeparam>
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-internal sealed unsafe class FixedDelegate<TDelegate> : FixedPointer, IFixedMethod<TDelegate> where TDelegate : Delegate
+internal abstract unsafe partial class FixedDelegate : FixedPointer
 {
 	/// <summary>
 	/// Internal instance of <see cref="GCHandle"/>.
@@ -21,28 +17,57 @@ internal sealed unsafe class FixedDelegate<TDelegate> : FixedPointer, IFixedMeth
 #endif
 	public override Boolean IsUnmanaged => false;
 	/// <inheritdoc/>
-	public override Type Type => typeof(TDelegate);
-	/// <inheritdoc/>
 	public override Int32 BinaryOffset => default;
 	/// <inheritdoc/>
 	public override Boolean IsFunction => true;
+
+	/// <summary>
+	/// Parameterless constructor.
+	/// </summary>
+	private FixedDelegate() : base(default, sizeof(IntPtr), true) { }
+	/// <summary>
+	/// Constructor that takes a method delegate and stores a pointer to it.
+	/// </summary>
+	/// <param name="methodPointer">Pointer to the method.</param>
+	/// <param name="handle"><see cref="GCHandle"/> of the method.</param>
+	protected FixedDelegate(void* methodPointer, GCHandle handle) : base(methodPointer, sizeof(IntPtr), true)
+		=> this._handle = handle;
+
+	/// <inheritdoc/>
+	public override void Unload()
+	{
+		base.Unload();
+		if (this._handle.IsAllocated)
+			this._handle.Free();
+	}
+}
+
+/// <summary>
+/// Fixed method class, used to hold a fixed pointer to a method delegate.
+/// </summary>
+/// <typeparam name="TDelegate">Type of the method delegate which is being fixed.</typeparam>
+#if !PACKAGE
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
+internal sealed unsafe partial class FixedDelegate<TDelegate> : FixedDelegate, IFixedMethod<TDelegate>
+	where TDelegate : Delegate
+{
+	/// <summary>
+	/// An empty instance of <see cref="IFixedMethod{T}.IDisposable"/>.
+	/// </summary>
+	public static readonly IFixedMethod<TDelegate>.IDisposable EmptyDisposable = Disposable.Default;
+
+	/// <inheritdoc/>
+	public override Type Type => typeof(TDelegate);
 
 	/// <summary>
 	/// Constructor that takes a method delegate and stores a pointer to it.
 	/// </summary>
 	/// <param name="method">Delegate of the method to be fixed.</param>
 	public FixedDelegate(TDelegate method) : base(
-		FixedDelegate<TDelegate>.GetMethodPointer(method, out GCHandle handle), sizeof(IntPtr), true)
-		=> this._handle = handle;
+		FixedDelegate<TDelegate>.GetMethodPointer(method, out GCHandle handle), handle) { }
 
-	TDelegate IFixedMethod<TDelegate>.Method => this.CreateDelegate<TDelegate>();
-
-	/// <inheritdoc/>
-	public override void Unload()
-	{
-		base.Unload();
-		this._handle.Free();
-	}
+	TDelegate IFixedMethod<TDelegate>.Method => this.CreateDelegate<TDelegate>()!;
 
 	/// <summary>
 	/// Gets the pointer to the method delegate provided, while creating a <see cref="GCHandle"/> to

@@ -42,8 +42,19 @@ public abstract class ValueRegionTestBase
 				return ValueRegion<T>.Create(array, a => a.AsSpan());
 			case 7:
 			case 10:
-				return ValueRegion<T>.Create(array, a => a.AsSpan(), GCHandle.Alloc);
+				return ValueRegion<T>.Create(array, a => a.AsSpan(), (o, t) =>
+				{
+#if !NETCOREAPP
+					if (t == GCHandleType.Pinned && RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+						throw new ArgumentException(); // Required for Mono?
+#endif
+					return GCHandle.Alloc(o, t);
+				});
 			default:
+#if !NETCOREAPP
+				if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+					throw new ArgumentException(); // Required for Mono?
+#endif
 #pragma warning disable CS8500
 				handles.Add(GCHandle.Alloc(array, GCHandleType.Pinned));
 				isReference = true;

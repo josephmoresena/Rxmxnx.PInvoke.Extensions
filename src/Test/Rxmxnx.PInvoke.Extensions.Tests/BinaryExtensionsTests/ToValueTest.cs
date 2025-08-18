@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.BinaryExtensionsTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.BinaryExtensionsTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class ToValueTest
@@ -7,37 +12,37 @@ public sealed class ToValueTest
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
-	internal void ByteTest() => ToValueTest.Test<Byte>();
+	public void ByteTest() => ToValueTest.Test<Byte>();
 	[Fact]
-	internal void CharTest() => ToValueTest.Test<Char>();
+	public void CharTest() => ToValueTest.Test<Char>();
 	[Fact]
-	internal void DateTimeTest() => ToValueTest.Test<DateTime>();
+	public void DateTimeTest() => ToValueTest.Test<DateTime>();
 	[Fact]
-	internal void DecimalTest() => ToValueTest.Test<Decimal>();
+	public void DecimalTest() => ToValueTest.Test<Decimal>();
 	[Fact]
-	internal void DoubleTest() => ToValueTest.Test<Double>();
+	public void DoubleTest() => ToValueTest.Test<Double>();
 	[Fact]
-	internal void GuidTest() => ToValueTest.Test<Guid>();
+	public void GuidTest() => ToValueTest.Test<Guid>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => ToValueTest.Test<Half>();
 #endif
 	[Fact]
-	internal void Int16Test() => ToValueTest.Test<Int16>();
+	public void Int16Test() => ToValueTest.Test<Int16>();
 	[Fact]
-	internal void Int32Test() => ToValueTest.Test<Int32>();
+	public void Int32Test() => ToValueTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => ToValueTest.Test<Int64>();
+	public void Int64Test() => ToValueTest.Test<Int64>();
 	[Fact]
-	internal void SByteTest() => ToValueTest.Test<SByte>();
+	public void SByteTest() => ToValueTest.Test<SByte>();
 	[Fact]
-	internal void SingleTest() => ToValueTest.Test<Single>();
+	public void SingleTest() => ToValueTest.Test<Single>();
 	[Fact]
-	internal void UInt16Test() => ToValueTest.Test<UInt16>();
+	public void UInt16Test() => ToValueTest.Test<UInt16>();
 	[Fact]
-	internal void UInt32Test() => ToValueTest.Test<UInt32>();
+	public void UInt32Test() => ToValueTest.Test<UInt32>();
 	[Fact]
-	internal void UInt64Test() => ToValueTest.Test<UInt64>();
+	public void UInt64Test() => ToValueTest.Test<UInt64>();
 
 	private static unsafe void Test<T>() where T : unmanaged
 	{
@@ -46,35 +51,35 @@ public sealed class ToValueTest
 		ReadOnlySpan<Byte> readOnlyBytes = bytes;
 		T expected = ToValueTest.GetValue<T>(bytes);
 
-		Assert.Equal(expected, bytes.ToValue<T>());
-		Assert.Equal(expected, byteSpan.ToValue<T>());
-		Assert.Equal(expected, readOnlyBytes.ToValue<T>());
+		PInvokeAssert.Equal(expected, bytes.ToValue<T>());
+		PInvokeAssert.Equal(expected, byteSpan.ToValue<T>());
+		PInvokeAssert.Equal(expected, readOnlyBytes.ToValue<T>());
 
 		bytes = ToValueTest.fixture.CreateMany<Byte>(sizeof(T) + 1).ToArray();
 		byteSpan = bytes;
 		readOnlyBytes = bytes;
 		expected = ToValueTest.GetValue<T>(bytes);
 
-		Assert.Equal(expected, bytes.ToValue<T>());
-		Assert.Equal(expected, byteSpan.ToValue<T>());
-		Assert.Equal(expected, readOnlyBytes.ToValue<T>());
+		PInvokeAssert.Equal(expected, bytes.ToValue<T>());
+		PInvokeAssert.Equal(expected, byteSpan.ToValue<T>());
+		PInvokeAssert.Equal(expected, readOnlyBytes.ToValue<T>());
 
 		bytes = ToValueTest.fixture.CreateMany<Byte>(sizeof(T) - 1).ToArray();
 		byteSpan = bytes;
 		readOnlyBytes = bytes;
 		expected = ToValueTest.GetValue<T>(bytes);
 
-		Assert.Equal(expected, bytes.ToValue<T>());
-		Assert.Equal(expected, byteSpan.ToValue<T>());
-		Assert.Equal(expected, readOnlyBytes.ToValue<T>());
+		PInvokeAssert.Equal(expected, bytes.ToValue<T>());
+		PInvokeAssert.Equal(expected, byteSpan.ToValue<T>());
+		PInvokeAssert.Equal(expected, readOnlyBytes.ToValue<T>());
 
 		bytes = [];
 		byteSpan = bytes;
 		readOnlyBytes = bytes;
 
-		Assert.Equal(default, bytes.ToValue<T>());
-		Assert.Equal(default, byteSpan.ToValue<T>());
-		Assert.Equal(default, readOnlyBytes.ToValue<T>());
+		PInvokeAssert.Equal(default, bytes.ToValue<T>());
+		PInvokeAssert.Equal(default, byteSpan.ToValue<T>());
+		PInvokeAssert.Equal(default, readOnlyBytes.ToValue<T>());
 	}
 	private static unsafe T GetValue<T>(ReadOnlySpan<Byte> bytes) where T : unmanaged
 	{

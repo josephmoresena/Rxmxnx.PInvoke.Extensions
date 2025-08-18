@@ -2,13 +2,13 @@ namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector
 {
-	private sealed partial class Linux
+	private abstract partial class MapsInspector
 	{
 		/// <summary>
 		/// Memory boundary struct.
 		/// </summary>
-		private readonly unsafe struct MemoryBoundary : IEquatable<MemoryBoundary>, IComparable<MemoryBoundary>,
-			IWrapper<UIntPtr>
+		private protected readonly unsafe struct MemoryBoundary : IEquatable<MemoryBoundary>,
+			IComparable<MemoryBoundary>, IWrapper<UIntPtr>
 		{
 			/// <summary>
 			/// Internal value.
@@ -44,19 +44,28 @@ internal partial class MemoryInspector
 				this.Value = MemoryBoundary.Parse(addressText);
 				this.IsEnd = isEnd;
 			}
-
-#if !NET5_0_OR_GREATER
 			/// <summary>
-			/// Private constructor.
+			/// Constructor.
 			/// </summary>
-			/// <param name="value">Internal value.</param>
-			/// <param name="isEnd">Indicates whether current boundary is terminal.</param>
-			private MemoryBoundary(UIntPtr value, Boolean isEnd)
+			/// <param name="address">Boundary address.</param>
+			/// <param name="isEnd">Indicates whether current boundary is an end boundary.</param>
+			public MemoryBoundary(UIntPtr address, Boolean isEnd)
 			{
-				this.Value = value;
+				this.Value = address;
 				this.IsEnd = isEnd;
 			}
-#endif
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			/// <param name="address">Boundary address.</param>
+			/// <param name="isEnd">Indicates whether current boundary is an end boundary.</param>
+			public MemoryBoundary(UInt64 address, Boolean isEnd)
+			{
+#pragma warning disable CA2020
+				this.Value = (UIntPtr)address;
+#pragma warning restore CA2020
+				this.IsEnd = isEnd;
+			}
 
 			/// <summary>
 			/// Defines an implicit conversion of a given <see cref="IntPtr"/> to a <see cref="MemoryBoundary"/> instance.

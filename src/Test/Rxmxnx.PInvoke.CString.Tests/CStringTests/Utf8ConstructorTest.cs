@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
+﻿#if !NETCOREAPP
+using InlineData = NUnit.Framework.TestCaseAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.CStringTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class Utf8ConstructorTest
@@ -79,14 +84,14 @@ public sealed class Utf8ConstructorTest
 	private static void Test(ReadOnlySpan<Byte> seq, Int32 count, CString cstr)
 	{
 		String strSeq = Encoding.UTF8.GetString(seq);
-		Assert.Equal(seq.Length * count, cstr.Length);
-		Assert.Equal(seq.Length * count + 1, CString.GetBytes(cstr).Length);
+		PInvokeAssert.Equal(seq.Length * count, cstr.Length);
+		PInvokeAssert.Equal(seq.Length * count + 1, CString.GetBytes(cstr).Length);
 
 		for (Int32 i = 0; i < count; i++)
 		for (Int32 j = 0; j < seq.Length; j++)
-			Assert.Equal(seq[j], cstr[seq.Length * i + j]);
+			PInvokeAssert.Equal(seq[j], cstr[seq.Length * i + j]);
 
-		Assert.Equal(String.Concat(Enumerable.Repeat(strSeq, count)), cstr.ToString());
+		PInvokeAssert.Equal(String.Concat(Enumerable.Repeat(strSeq, count)), cstr.ToString());
 	}
 #if !NET6_0_OR_GREATER
 	private static class Random

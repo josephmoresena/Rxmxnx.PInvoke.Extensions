@@ -44,9 +44,11 @@ public readonly ref struct FixedMemoryList
 #endif
 	internal FixedMemoryList(
 #if !NET9_0_OR_GREATER
-		params
+		params FixedMemory[] memories
+#else
+		FixedMemory[] memories
 #endif
-			FixedMemory[] memories) : this(memories.AsSpan()) { }
+	) : this(memories.AsSpan()) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="FixedMemoryList"/> structure.
 	/// </summary>
@@ -54,9 +56,11 @@ public readonly ref struct FixedMemoryList
 	/// <remarks>This constructor initializes the list with the provided fixed memory blocks.</remarks>
 	internal FixedMemoryList(
 #if NET9_0_OR_GREATER
-		params
+		params ReadOnlySpan<FixedMemory> memories
+#else
+		ReadOnlySpan<FixedMemory> memories
 #endif
-		ReadOnlySpan<FixedMemory> memories)
+	)
 		=> this._values = FixedMemoryListValue.Create(memories);
 
 	/// <summary>

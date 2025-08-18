@@ -1,5 +1,10 @@
+#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
+
 namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
 
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class GetFixedMemoryTest
@@ -7,79 +12,79 @@ public sealed class GetFixedMemoryTest
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
-	internal void BooleanTest() => GetFixedMemoryTest.Test<Boolean>();
+	public void BooleanTest() => GetFixedMemoryTest.Test<Boolean>();
 	[Fact]
-	internal void ByteTest() => GetFixedMemoryTest.Test<Byte>();
+	public void ByteTest() => GetFixedMemoryTest.Test<Byte>();
 	[Fact]
-	internal void CharTest() => GetFixedMemoryTest.Test<Char>();
+	public void CharTest() => GetFixedMemoryTest.Test<Char>();
 #if NET7_0_OR_GREATER
 	[Fact]
 	internal void DateTimeTest() => GetFixedMemoryTest.Test<DateTime>();
 #endif
 	[Fact]
-	internal void DecimalTest() => GetFixedMemoryTest.Test<Decimal>();
+	public void DecimalTest() => GetFixedMemoryTest.Test<Decimal>();
 	[Fact]
-	internal void DoubleTest() => GetFixedMemoryTest.Test<Double>();
+	public void DoubleTest() => GetFixedMemoryTest.Test<Double>();
 	[Fact]
-	internal void GuidTest() => GetFixedMemoryTest.Test<Guid>();
+	public void GuidTest() => GetFixedMemoryTest.Test<Guid>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => GetFixedMemoryTest.Test<Half>();
 #endif
 	[Fact]
-	internal void Int16Test() => GetFixedMemoryTest.Test<Int16>();
+	public void Int16Test() => GetFixedMemoryTest.Test<Int16>();
 	[Fact]
-	internal void Int32Test() => GetFixedMemoryTest.Test<Int32>();
+	public void Int32Test() => GetFixedMemoryTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => GetFixedMemoryTest.Test<Int64>();
+	public void Int64Test() => GetFixedMemoryTest.Test<Int64>();
 	[Fact]
-	internal void SByteTest() => GetFixedMemoryTest.Test<SByte>();
+	public void SByteTest() => GetFixedMemoryTest.Test<SByte>();
 	[Fact]
-	internal void SingleTest() => GetFixedMemoryTest.Test<Single>();
+	public void SingleTest() => GetFixedMemoryTest.Test<Single>();
 	[Fact]
-	internal void UInt16Test() => GetFixedMemoryTest.Test<UInt16>();
+	public void UInt16Test() => GetFixedMemoryTest.Test<UInt16>();
 	[Fact]
-	internal void UInt32Test() => GetFixedMemoryTest.Test<UInt32>();
+	public void UInt32Test() => GetFixedMemoryTest.Test<UInt32>();
 	[Fact]
-	internal void UInt64Test() => GetFixedMemoryTest.Test<UInt64>();
+	public void UInt64Test() => GetFixedMemoryTest.Test<UInt64>();
 	[Fact]
-	internal void StringTest() => GetFixedMemoryTest.Test<String>();
+	public void StringTest() => GetFixedMemoryTest.Test<String>();
 	[Fact]
-	internal void BooleanArrayTest() => GetFixedMemoryTest.Test<Boolean[]>();
+	public void BooleanArrayTest() => GetFixedMemoryTest.Test<Boolean[]>();
 	[Fact]
-	internal void ByteArrayTest() => GetFixedMemoryTest.Test<Byte[]>();
+	public void ByteArrayTest() => GetFixedMemoryTest.Test<Byte[]>();
 	[Fact]
-	internal void CharArrayTest() => GetFixedMemoryTest.Test<Char[]>();
+	public void CharArrayTest() => GetFixedMemoryTest.Test<Char[]>();
 	[Fact]
-	internal void DateTimeArrayTest() => GetFixedMemoryTest.Test<DateTime[]>();
+	public void DateTimeArrayTest() => GetFixedMemoryTest.Test<DateTime[]>();
 	[Fact]
-	internal void DecimalArrayTest() => GetFixedMemoryTest.Test<Decimal[]>();
+	public void DecimalArrayTest() => GetFixedMemoryTest.Test<Decimal[]>();
 	[Fact]
-	internal void DoubleArrayTest() => GetFixedMemoryTest.Test<Double[]>();
+	public void DoubleArrayTest() => GetFixedMemoryTest.Test<Double[]>();
 	[Fact]
-	internal void GuidArrayTest() => GetFixedMemoryTest.Test<Guid[]>();
+	public void GuidArrayTest() => GetFixedMemoryTest.Test<Guid[]>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfArrayTest() => GetFixedMemoryTest.Test<Half[]>();
 #endif
 	[Fact]
-	internal void Int16ArrayTest() => GetFixedMemoryTest.Test<Int16[]>();
+	public void Int16ArrayTest() => GetFixedMemoryTest.Test<Int16[]>();
 	[Fact]
-	internal void Int32ArrayTest() => GetFixedMemoryTest.Test<Int32[]>();
+	public void Int32ArrayTest() => GetFixedMemoryTest.Test<Int32[]>();
 	[Fact]
-	internal void Int64ArrayTest() => GetFixedMemoryTest.Test<Int64[]>();
+	public void Int64ArrayTest() => GetFixedMemoryTest.Test<Int64[]>();
 	[Fact]
-	internal void SByteArrayTest() => GetFixedMemoryTest.Test<SByte[]>();
+	public void SByteArrayTest() => GetFixedMemoryTest.Test<SByte[]>();
 	[Fact]
-	internal void SingleArrayTest() => GetFixedMemoryTest.Test<Single[]>();
+	public void SingleArrayTest() => GetFixedMemoryTest.Test<Single[]>();
 	[Fact]
-	internal void UInt16ArrayTest() => GetFixedMemoryTest.Test<UInt16[]>();
+	public void UInt16ArrayTest() => GetFixedMemoryTest.Test<UInt16[]>();
 	[Fact]
-	internal void UInt32ArrayTest() => GetFixedMemoryTest.Test<UInt32[]>();
+	public void UInt32ArrayTest() => GetFixedMemoryTest.Test<UInt32[]>();
 	[Fact]
-	internal void UInt64ArrayTest() => GetFixedMemoryTest.Test<UInt64[]>();
+	public void UInt64ArrayTest() => GetFixedMemoryTest.Test<UInt64[]>();
 	[Fact]
-	internal void StringArrayTest() => GetFixedMemoryTest.Test<String[]>();
+	public void StringArrayTest() => GetFixedMemoryTest.Test<String[]>();
 
 	private static void Test<T>()
 	{
@@ -92,30 +97,32 @@ public sealed class GetFixedMemoryTest
 		using (IFixedMemory.IDisposable eMem = eMemory.GetFixedMemory())
 		using (IReadOnlyFixedMemory.IDisposable erMem = erMemory.GetFixedMemory())
 		{
-			Assert.True(eMem.Bytes.IsEmpty);
-			Assert.True(eMem.Objects.IsEmpty);
-			Assert.True(erMem.Bytes.IsEmpty);
-			Assert.True(erMem.Objects.IsEmpty);
-			Assert.NotSame(eMem, erMem);
+			PInvokeAssert.True(eMem.Bytes.IsEmpty);
+			PInvokeAssert.True(eMem.Objects.IsEmpty);
+			PInvokeAssert.True(erMem.Bytes.IsEmpty);
+			PInvokeAssert.True(erMem.Objects.IsEmpty);
+			PInvokeAssert.NotSame(eMem, erMem);
 		}
 
 		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
 		{
+#if NETCOREAPP
 			Assert.Throws<ArgumentException>(() => mem.GetFixedMemory());
 			Assert.Throws<ArgumentException>(() => rMem.GetFixedMemory());
+#endif
 			return;
 		}
 		using IFixedMemory.IDisposable fMem = mem.GetFixedMemory();
 		using IReadOnlyFixedMemory.IDisposable frMem = rMem.GetFixedMemory();
-		Assert.IsType<IFixedContext<T>>(fMem, false);
-		Assert.IsType<IReadOnlyFixedContext<T>>(frMem, false);
-		Assert.Equal(array.Length * Unsafe.SizeOf<T>(), fMem.Bytes.Length);
-		Assert.Equal(array.Length * Unsafe.SizeOf<T>(), frMem.Bytes.Length);
-		Assert.True(Unsafe.AreSame(ref array[0], ref Unsafe.As<Byte, T>(ref fMem.Bytes[0])));
+		PInvokeAssert.IsType<IFixedContext<T>>(fMem, false);
+		PInvokeAssert.IsType<IReadOnlyFixedContext<T>>(frMem, false);
+		PInvokeAssert.Equal(array.Length * Unsafe.SizeOf<T>(), fMem.Bytes.Length);
+		PInvokeAssert.Equal(array.Length * Unsafe.SizeOf<T>(), frMem.Bytes.Length);
+		PInvokeAssert.True(Unsafe.AreSame(ref array[0], ref Unsafe.As<Byte, T>(ref fMem.Bytes[0])));
 #if NET8_0_OR_GREATER
 		Assert.True(Unsafe.AreSame(in fMem.Bytes[0], in frMem.Bytes[0]));
 #else
-		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in fMem.Bytes[0]), ref Unsafe.AsRef(in frMem.Bytes[0])));
+		PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in fMem.Bytes[0]), ref Unsafe.AsRef(in frMem.Bytes[0])));
 #endif
 	}
 }

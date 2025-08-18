@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal.BinaryConcatenatorTests;
+﻿#if !NETCOREAPP
+using InlineData = NUnit.Framework.TestCaseAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.Internal.BinaryConcatenatorTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class BinaryTest
 {
@@ -8,7 +13,7 @@ public sealed class BinaryTest
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	internal void Test(Boolean nullSeparator)
+	public void Test(Boolean nullSeparator)
 	{
 		Byte[] sourceBytes = Encoding.UTF8.GetBytes(this._fixture.Create<String>());
 		Byte? separator = !nullSeparator ? this._fixture.Create<Byte>() : default(Byte?);
@@ -23,7 +28,7 @@ public sealed class BinaryTest
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	internal async Task TestAsync(Boolean nullSeparator)
+	public async Task TestAsync(Boolean nullSeparator)
 	{
 		Byte[] sourceBytes = Encoding.UTF8.GetBytes(this._fixture.Create<String>());
 		Byte? separator = !nullSeparator ? this._fixture.Create<Byte>() : default(Byte?);
@@ -39,15 +44,15 @@ public sealed class BinaryTest
 		Byte[]? outputBytes1 = helper.ToArray(false);
 		Byte[]? outputBytes2 = helper.ToArray(true);
 
-		Assert.NotNull(outputBytes1);
-		Assert.NotNull(outputBytes2);
+		PInvokeAssert.NotNull(outputBytes1);
+		PInvokeAssert.NotNull(outputBytes2);
 		if (!helper.Separator.HasValue)
-			Assert.Equal(sourceBytes, outputBytes1);
+			PInvokeAssert.Equal(sourceBytes, outputBytes1);
 		else
 			BinaryTest.AssertWithSeparator(helper, sourceBytes, outputBytes1);
-		Assert.Equal(outputBytes1, outputBytes2[..outputBytes1.Length]);
-		Assert.Equal(outputBytes1.Length, outputBytes2.Length - 1);
-		Assert.Equal(default, outputBytes2.Last());
+		PInvokeAssert.Equal(outputBytes1, outputBytes2[..outputBytes1.Length]);
+		PInvokeAssert.Equal(outputBytes1.Length, outputBytes2.Length - 1);
+		PInvokeAssert.Equal(default, outputBytes2.Last());
 	}
 	private static void AssertWithSeparator(BinaryConcatenator helper, Byte[] sourceBytes, Byte[] outputBytes1)
 	{
@@ -56,9 +61,9 @@ public sealed class BinaryTest
 			Int32 iByte = i * 2;
 			Int32 iSeparator = iByte + 1;
 
-			Assert.Equal(sourceBytes[i], outputBytes1[iByte]);
+			PInvokeAssert.Equal(sourceBytes[i], outputBytes1[iByte]);
 			if (iSeparator < outputBytes1.Length)
-				Assert.Equal(helper.Separator, outputBytes1[iSeparator]);
+				PInvokeAssert.Equal(helper.Separator, outputBytes1[iSeparator]);
 		}
 	}
 }

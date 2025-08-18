@@ -1,21 +1,26 @@
+#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
+
 namespace Rxmxnx.PInvoke.Tests;
 
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class PrepareBinaryBufferTest
 {
 	[Fact]
-	internal void AssertConstants()
+	public void AssertConstants()
 	{
-		Assert.Equal(typeof(Composite<,,>), BufferManager.TypeofComposite);
-		Assert.Equal("TypeMetadata", BufferManager.TypeMetadataName);
-		Assert.True(BufferManager.GetMetadataFlags.HasFlag(BindingFlags.Public));
-		Assert.True(BufferManager.GetMetadataFlags.HasFlag(BindingFlags.NonPublic));
-		Assert.True(BufferManager.GetMetadataFlags.HasFlag(BindingFlags.Static));
+		PInvokeAssert.Equal(typeof(Composite<,,>), BufferManager.TypeofComposite);
+		PInvokeAssert.Equal("TypeMetadata", BufferManager.TypeMetadataName);
+		PInvokeAssert.True(BufferManager.GetMetadataFlags.HasFlag(BindingFlags.Public));
+		PInvokeAssert.True(BufferManager.GetMetadataFlags.HasFlag(BindingFlags.NonPublic));
+		PInvokeAssert.True(BufferManager.GetMetadataFlags.HasFlag(BindingFlags.Static));
 	}
 
 	[Fact]
-	internal void Test()
+	public void Test()
 	{
 		BufferManager.PrepareBinaryBuffer(5);
 		BufferManager.PrepareBinaryBuffer<ValueTuple<Int32, ValueTuple<Int32, Int32>>>(100);

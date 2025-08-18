@@ -46,7 +46,8 @@ public interface IMutableReference : IMutableWrapper
 	/// <param name="instance">The instance to be wrapped.</param>
 	/// <returns>An instance of an object that implements <see cref="IMutableReference{TObject}"/> interface.</returns>
 	/// <remarks>
-	/// The newly created object wraps an object of <typeparamref name="TObject"/> type provided by <paramref name="instance"/>.
+	/// The newly created object wraps an object of <typeparamref name="TObject"/> type provided by <paramref name="instance"/>
+	/// .
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public new static IMutableReference<TObject> CreateObject<TObject>(TObject instance) where TObject : class

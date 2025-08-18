@@ -1,7 +1,6 @@
 namespace Rxmxnx.PInvoke;
 
 #if !PACKAGE
-[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3011)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 public static partial class BufferManager

@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class GetPointerTest
@@ -7,37 +12,37 @@ public sealed class GetPointerTest
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
-	internal void ByteTest() => GetPointerTest.Test<Byte>();
+	public void ByteTest() => GetPointerTest.Test<Byte>();
 	[Fact]
-	internal void CharTest() => GetPointerTest.Test<Char>();
+	public void CharTest() => GetPointerTest.Test<Char>();
 	[Fact]
-	internal void DateTimeTest() => GetPointerTest.Test<DateTime>();
+	public void DateTimeTest() => GetPointerTest.Test<DateTime>();
 	[Fact]
-	internal void DecimalTest() => GetPointerTest.Test<Decimal>();
+	public void DecimalTest() => GetPointerTest.Test<Decimal>();
 	[Fact]
-	internal void DoubleTest() => GetPointerTest.Test<Double>();
+	public void DoubleTest() => GetPointerTest.Test<Double>();
 	[Fact]
-	internal void GuidTest() => GetPointerTest.Test<Guid>();
+	public void GuidTest() => GetPointerTest.Test<Guid>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => GetPointerTest.Test<Half>();
 #endif
 	[Fact]
-	internal void Int16Test() => GetPointerTest.Test<Int16>();
+	public void Int16Test() => GetPointerTest.Test<Int16>();
 	[Fact]
-	internal void Int32Test() => GetPointerTest.Test<Int32>();
+	public void Int32Test() => GetPointerTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => GetPointerTest.Test<Int64>();
+	public void Int64Test() => GetPointerTest.Test<Int64>();
 	[Fact]
-	internal void SByteTest() => GetPointerTest.Test<SByte>();
+	public void SByteTest() => GetPointerTest.Test<SByte>();
 	[Fact]
-	internal void SingleTest() => GetPointerTest.Test<Single>();
+	public void SingleTest() => GetPointerTest.Test<Single>();
 	[Fact]
-	internal void UInt16Test() => GetPointerTest.Test<UInt16>();
+	public void UInt16Test() => GetPointerTest.Test<UInt16>();
 	[Fact]
-	internal void UInt32Test() => GetPointerTest.Test<UInt32>();
+	public void UInt32Test() => GetPointerTest.Test<UInt32>();
 	[Fact]
-	internal void UInt64Test() => GetPointerTest.Test<UInt64>();
+	public void UInt64Test() => GetPointerTest.Test<UInt64>();
 
 	private static unsafe void Test<T>() where T : unmanaged
 	{
@@ -50,12 +55,12 @@ public sealed class GetPointerTest
 			IntPtr intPtr = (IntPtr)ptr;
 			UIntPtr uintPtr = (UIntPtr)ptr;
 
-			Assert.Equal(intPtr, span.GetUnsafeIntPtr());
-			Assert.Equal(uintPtr, span.GetUnsafeUIntPtr());
-			Assert.Equal((ValPtr<T>)intPtr, span.GetUnsafeValPtr());
-			Assert.Equal(intPtr, readOnlySpan.GetUnsafeIntPtr());
-			Assert.Equal(uintPtr, readOnlySpan.GetUnsafeUIntPtr());
-			Assert.Equal((ReadOnlyValPtr<T>)intPtr, readOnlySpan.GetUnsafeValPtr());
+			PInvokeAssert.Equal(intPtr, span.GetUnsafeIntPtr());
+			PInvokeAssert.Equal(uintPtr, span.GetUnsafeUIntPtr());
+			PInvokeAssert.Equal((ValPtr<T>)intPtr, span.GetUnsafeValPtr());
+			PInvokeAssert.Equal(intPtr, readOnlySpan.GetUnsafeIntPtr());
+			PInvokeAssert.Equal(uintPtr, readOnlySpan.GetUnsafeUIntPtr());
+			PInvokeAssert.Equal((ReadOnlyValPtr<T>)intPtr, readOnlySpan.GetUnsafeValPtr());
 		}
 	}
 }

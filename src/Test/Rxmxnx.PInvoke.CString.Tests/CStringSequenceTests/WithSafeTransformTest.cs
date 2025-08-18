@@ -1,26 +1,32 @@
-﻿namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+using InlineData = NUnit.Framework.TestCaseAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class WithSafeTransformTest
 {
 	[Fact]
-	internal unsafe void NullFixedTest()
+	public unsafe void NullFixedTest()
 	{
 		CStringSequence? input = null;
 		fixed (void* ptr = input)
-			Assert.Equal(IntPtr.Zero, (IntPtr)ptr);
+			PInvokeAssert.Equal(IntPtr.Zero, (IntPtr)ptr);
 	}
 
 	[Fact]
-	internal unsafe void EmptyFixedTest()
+	public unsafe void EmptyFixedTest()
 	{
 		CStringSequence input = new(Array.Empty<CString>());
 		fixed (void* ptr = input)
-			Assert.NotEqual(IntPtr.Zero, (IntPtr)ptr);
+			PInvokeAssert.NotEqual(IntPtr.Zero, (IntPtr)ptr);
 	}
 
 	[Fact]
-	internal unsafe void FixedTest()
+	public unsafe void FixedTest()
 	{
 		using TestMemoryHandle handle = new();
 		List<Int32> indices = TestSet.GetIndices();
@@ -32,21 +38,21 @@ public sealed class WithSafeTransformTest
 			{
 				if (!CString.IsNullOrEmpty(values[i]))
 				{
-					Assert.Equal(values[i], seq[i]);
-					Assert.True(Unsafe.AreSame(ref Unsafe.AsRef<Byte>(ptr.ToPointer()),
-					                           ref MemoryMarshal.GetReference(seq[i].AsSpan())));
+					PInvokeAssert.Equal(values[i], seq[i]);
+					PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef<Byte>(ptr.ToPointer()),
+					                                  ref MemoryMarshal.GetReference(seq[i].AsSpan())));
 					ptr += seq[i].Length + 1;
 				}
 				else
 				{
-					Assert.True(CString.IsNullOrEmpty(seq[i]));
+					PInvokeAssert.True(CString.IsNullOrEmpty(seq[i]));
 				}
 			}
 		}
 	}
 
 	[Fact]
-	internal unsafe void FixedPointerTest()
+	public unsafe void FixedPointerTest()
 	{
 		using TestMemoryHandle handle = new();
 		List<Int32> indices = TestSet.GetIndices();
@@ -57,62 +63,62 @@ public sealed class WithSafeTransformTest
 		{
 			if (!CString.IsNullOrEmpty(values[i]))
 			{
-				Assert.Equal(values[i], seq[i]);
-				Assert.True(Unsafe.AreSame(ref Unsafe.AsRef<Byte>(ptr.ToPointer()),
-				                           ref MemoryMarshal.GetReference(seq[i].AsSpan())));
+				PInvokeAssert.Equal(values[i], seq[i]);
+				PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef<Byte>(ptr.ToPointer()),
+				                                  ref MemoryMarshal.GetReference(seq[i].AsSpan())));
 				ptr += seq[i].Length + 1;
 			}
 			else
 			{
-				Assert.True(CString.IsNullOrEmpty(seq[i]));
+				PInvokeAssert.True(CString.IsNullOrEmpty(seq[i]));
 			}
 		}
 	}
 
 	[Fact]
-	internal void EmptyTest()
+	public void EmptyTest()
 	{
 		FixedCStringSequence fseq = default;
 		ReadOnlyFixedMemoryList fml = fseq;
-		Assert.Empty(fseq.Values);
-		Assert.Empty(fseq.ToArray());
-		Assert.Null(fseq.ToString());
+		PInvokeAssert.Empty(fseq.Values);
+		PInvokeAssert.Empty(fseq.ToArray());
+		PInvokeAssert.Null(fseq.ToString());
 
-		Assert.Equal(0, fml.Count);
-		Assert.True(fml.IsEmpty);
-		Assert.Empty(fml.ToArray());
+		PInvokeAssert.Equal(0, fml.Count);
+		PInvokeAssert.True(fml.IsEmpty);
+		PInvokeAssert.Empty(fml.ToArray());
 
 		fseq.Unload();
-		Assert.Empty(fseq.Values);
-		Assert.Empty(fseq.ToArray());
-		Assert.Null(fseq.ToString());
+		PInvokeAssert.Empty(fseq.Values);
+		PInvokeAssert.Empty(fseq.ToArray());
+		PInvokeAssert.Null(fseq.ToString());
 	}
 
 	[Fact]
-	internal void BasicTest()
+	public void BasicTest()
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
 		CStringSequence seq = WithSafeTransformTest.CreateSequence(handle, indices, out _);
 		seq.WithSafeTransform(WithSafeTransformTest.AssertReference);
 		seq.WithSafeFixed(WithSafeTransformTest.AssertReference);
-		Assert.Equal(seq, seq.WithSafeTransform(WithSafeTransformTest.CreateCopy));
-		Assert.Equal(seq.Where(c => !CString.IsNullOrEmpty(c)),
-		             seq.WithSafeFixed(WithSafeTransformTest.GetNonEmptyValues));
+		PInvokeAssert.Equal(seq, seq.WithSafeTransform(WithSafeTransformTest.CreateCopy));
+		PInvokeAssert.Equal(seq.Where(c => !CString.IsNullOrEmpty(c)),
+		                    seq.WithSafeFixed(WithSafeTransformTest.GetNonEmptyValues));
 	}
 
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	internal void Test(Boolean fixedIndices)
+	public void Test(Boolean fixedIndices)
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = !fixedIndices ? TestSet.GetIndices() : WithSafeTransformTest.GetIndices();
 		CStringSequence seq = WithSafeTransformTest.CreateSequence(handle, indices, out CString?[] values);
 		seq.WithSafeTransform(values, WithSafeTransformTest.AssertSequence);
 		seq.WithSafeFixed(seq, WithSafeTransformTest.AssertSequence);
-		Assert.Equal(seq, seq.WithSafeTransform(seq, WithSafeTransformTest.CreateCopy));
-		Assert.Equal(seq.ToString(), seq.WithSafeFixed(seq, WithSafeTransformTest.CreateCopy).ToString());
+		PInvokeAssert.Equal(seq, seq.WithSafeTransform(seq, WithSafeTransformTest.CreateCopy));
+		PInvokeAssert.Equal(seq.ToString(), seq.WithSafeFixed(seq, WithSafeTransformTest.CreateCopy).ToString());
 	}
 
 	private static void AssertReference(FixedCStringSequence fseq)
@@ -136,7 +142,7 @@ public sealed class WithSafeTransformTest
 			if (ptr == IntPtr.Zero)
 				ptr = fmem.Pointer;
 
-			Assert.Equal(ptr + offset, fmem.Pointer);
+			PInvokeAssert.Equal(ptr + offset, fmem.Pointer);
 			offset += fmem.Bytes.Length + 1;
 		}
 	}
@@ -151,7 +157,7 @@ public sealed class WithSafeTransformTest
 		}
 		catch (Exception ex)
 		{
-			Assert.IsType<ArgumentOutOfRangeException>(ex);
+			PInvokeAssert.IsType<ArgumentOutOfRangeException>(ex);
 		}
 
 		try
@@ -160,19 +166,19 @@ public sealed class WithSafeTransformTest
 		}
 		catch (Exception ex)
 		{
-			Assert.IsType<ArgumentOutOfRangeException>(ex);
+			PInvokeAssert.IsType<ArgumentOutOfRangeException>(ex);
 		}
 	}
 	private static void AssertValue(FixedCStringSequence fseq, CString? value, Int32 i)
 	{
 		if (value is not null)
 		{
-			Assert.Equal(value, fseq.Values[i]);
-			Assert.Equal(!fseq.Values[i].IsReference, Object.ReferenceEquals(value, fseq.Values[i]));
+			PInvokeAssert.Equal(value, fseq.Values[i]);
+			PInvokeAssert.Equal(!fseq.Values[i].IsReference, Object.ReferenceEquals(value, fseq.Values[i]));
 		}
 		else
 		{
-			Assert.Equal(0, fseq.Values[i].Length);
+			PInvokeAssert.Equal(0, fseq.Values[i].Length);
 		}
 	}
 	private static unsafe void AssertSequence(ReadOnlyFixedMemoryList fml, CStringSequence seq)
@@ -187,14 +193,14 @@ public sealed class WithSafeTransformTest
 				if (ptr == IntPtr.Zero)
 					ptr = fml[i].Pointer;
 
-				Assert.Equal(seq[i].Length, fml[i].Bytes.Length);
+				PInvokeAssert.Equal(seq[i].Length, fml[i].Bytes.Length);
 				fixed (void* ptr2 = &MemoryMarshal.GetReference(seq[i].AsSpan()))
-					Assert.Equal(new(ptr2), ptr + offset);
+					PInvokeAssert.Equal(new(ptr2), ptr + offset);
 				offset += fml[i].Bytes.Length + 1;
 			}
 			else
 			{
-				Assert.True(CString.IsNullOrEmpty(seq[i]));
+				PInvokeAssert.True(CString.IsNullOrEmpty(seq[i]));
 			}
 		}
 
@@ -204,7 +210,7 @@ public sealed class WithSafeTransformTest
 		}
 		catch (Exception ex)
 		{
-			Assert.IsType<ArgumentOutOfRangeException>(ex);
+			PInvokeAssert.IsType<ArgumentOutOfRangeException>(ex);
 		}
 
 		try
@@ -213,25 +219,25 @@ public sealed class WithSafeTransformTest
 		}
 		catch (Exception ex)
 		{
-			Assert.IsType<ArgumentOutOfRangeException>(ex);
+			PInvokeAssert.IsType<ArgumentOutOfRangeException>(ex);
 		}
 	}
 	private static void AssertReference(in IReadOnlyFixedMemory fcstr, IReadOnlyFixedMemory fValue)
 	{
 		if (!fcstr.IsNullOrEmpty)
 		{
-			Assert.Equal(fcstr, fValue);
+			PInvokeAssert.Equal(fcstr, fValue);
 			return;
 		}
-		Assert.Equal(fcstr.Bytes.Length, fValue.Bytes.Length);
-		Assert.True(fcstr.Bytes.SequenceEqual(fValue.Bytes));
-		Assert.Equal(fcstr.Objects.Length, fValue.Objects.Length);
+		PInvokeAssert.Equal(fcstr.Bytes.Length, fValue.Bytes.Length);
+		PInvokeAssert.True(fcstr.Bytes.SequenceEqual(fValue.Bytes));
+		PInvokeAssert.Equal(fcstr.Objects.Length, fValue.Objects.Length);
 #if NET6_0_OR_GREATER
 		Assert.True(fcstr.Objects.SequenceEqual(fValue.Objects));
 #else
-		Assert.Equal(fcstr.Objects.ToArray(), fValue.Objects.ToArray());
+		PInvokeAssert.Equal(fcstr.Objects.ToArray(), fValue.Objects.ToArray());
 #endif
-		Assert.Equal(fcstr.IsNullOrEmpty, fValue.IsNullOrEmpty);
+		PInvokeAssert.Equal(fcstr.IsNullOrEmpty, fValue.IsNullOrEmpty);
 	}
 	private static CStringSequence CreateCopy(FixedCStringSequence fseq)
 	{
@@ -242,12 +248,12 @@ public sealed class WithSafeTransformTest
 #if NET6_0_OR_GREATER
 			Assert.Equal(seq[i].AsSpan(), fmems[i].Bytes);
 #else
-			Assert.Equal(seq[i].AsSpan().ToArray(), fmems[i].Bytes.ToArray());
+			PInvokeAssert.Equal(seq[i].AsSpan().ToArray(), fmems[i].Bytes.ToArray());
 #endif
 
 		fseq.Unload();
 		foreach (IReadOnlyFixedMemory mem in fmems)
-			Assert.Throws<InvalidOperationException>(() => mem.Bytes.ToArray());
+			PInvokeAssert.Throws<InvalidOperationException>(() => mem.Bytes.ToArray());
 
 		return seq;
 	}
@@ -255,7 +261,7 @@ public sealed class WithSafeTransformTest
 	{
 		for (Int32 i = 0; i < seq.Count; i++)
 			seq[i].WithSafeFixed(fseq[i], WithSafeTransformTest.AssertReference);
-		Assert.Equal(new CString(() => MemoryMarshal.AsBytes<Char>(seq.ToString())).ToString(), fseq.ToString());
+		PInvokeAssert.Equal(new CString(() => MemoryMarshal.AsBytes<Char>(seq.ToString())).ToString(), fseq.ToString());
 		return new(fseq.Values);
 	}
 	private static unsafe CStringSequence CreateCopy(ReadOnlyFixedMemoryList fml, CStringSequence seq)
@@ -271,15 +277,15 @@ public sealed class WithSafeTransformTest
 				if (ptr == IntPtr.Zero)
 					ptr = fml[i].Pointer;
 
-				Assert.Equal(seq[i].Length, fml[i].Bytes.Length);
+				PInvokeAssert.Equal(seq[i].Length, fml[i].Bytes.Length);
 				fixed (void* ptr2 = &MemoryMarshal.GetReference(seq[i].AsSpan()))
-					Assert.Equal(new(ptr2), ptr + offset);
+					PInvokeAssert.Equal(new(ptr2), ptr + offset);
 				offset += fml[i].Bytes.Length + 1;
 				cstr.Add(new(fml[i].Bytes));
 			}
 			else
 			{
-				Assert.True(CString.IsNullOrEmpty(seq[i]));
+				PInvokeAssert.True(CString.IsNullOrEmpty(seq[i]));
 			}
 		}
 

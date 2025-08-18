@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal.BinaryConcatenatorTests;
+﻿#if !NETCOREAPP
+using InlineData = NUnit.Framework.TestCaseAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.Internal.BinaryConcatenatorTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class EmptyTest
 {
@@ -8,25 +13,25 @@ public sealed class EmptyTest
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	internal void Test(Boolean nullSeparator)
+	public void Test(Boolean nullSeparator)
 	{
 		Byte? separator = !nullSeparator ? this._fixture.Create<Byte>() : default(Byte?);
 		using BinaryConcatenator helper = separator.HasValue ? new(separator.Value) : new();
-		Assert.Null(helper.ToArray(false));
-		Assert.Null(helper.ToArray(true));
+		PInvokeAssert.Null(helper.ToArray(false));
+		PInvokeAssert.Null(helper.ToArray(true));
 	}
 
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	internal async Task TestAsync(Boolean nullSeparator)
+	public async Task TestAsync(Boolean nullSeparator)
 	{
 		Byte? separator = !nullSeparator ? this._fixture.Create<Byte>() : default(Byte?);
 		BinaryConcatenator helper = separator.HasValue ? new(separator.Value) : new();
 		try
 		{
-			Assert.Null(helper.ToArray(false));
-			Assert.Null(helper.ToArray(true));
+			PInvokeAssert.Null(helper.ToArray(false));
+			PInvokeAssert.Null(helper.ToArray(true));
 		}
 		finally
 		{

@@ -24,9 +24,11 @@ public partial class CString
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
 	public static CString Join(Byte separator,
 #if !NET9_0_OR_GREATER
-		params
+		params CString?[] value
+#else
+		CString?[] value
 #endif
-			CString?[] value)
+	)
 	{
 		ArgumentNullException.ThrowIfNull(value);
 		return CString.Join(separator, value.AsSpan());
@@ -48,9 +50,11 @@ public partial class CString
 	/// </returns>
 	public static CString Join(Byte separator,
 #if NET9_0_OR_GREATER
-		params
+		params ReadOnlySpan<CString?> value
+#else
+		ReadOnlySpan<CString?> value
 #endif
-		ReadOnlySpan<CString?> value)
+	)
 	{
 		using BinaryConcatenator helper = new(separator);
 		foreach (CString? utf8Text in value)
@@ -113,9 +117,11 @@ public partial class CString
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
 	public static CString Join(ReadOnlySpan<Byte> separator,
 #if !NET9_0_OR_GREATER
-		params
+		params CString?[] value
+#else
+		CString?[] value
 #endif
-			CString?[] value)
+	)
 	{
 		ArgumentNullException.ThrowIfNull(value);
 		return CString.Join(separator, value.AsSpan());
@@ -137,9 +143,11 @@ public partial class CString
 	/// </returns>
 	public static unsafe CString Join(ReadOnlySpan<Byte> separator,
 #if NET9_0_OR_GREATER
-		params
+		params ReadOnlySpan<CString?> value
+#else
+		ReadOnlySpan<CString?> value
 #endif
-		ReadOnlySpan<CString?> value)
+	)
 	{
 		fixed (void* ptr = &MemoryMarshal.GetReference(separator))
 		{
@@ -215,9 +223,11 @@ public partial class CString
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
 	public static CString Join(CString? separator,
 #if !NET9_0_OR_GREATER
-		params
+		params CString?[] value
+#else
+		CString?[] value
 #endif
-			CString?[] value)
+	)
 	{
 		ArgumentNullException.ThrowIfNull(value);
 		return CString.Join(separator, value.AsSpan());
@@ -239,9 +249,11 @@ public partial class CString
 	/// </returns>
 	public static CString Join(CString? separator,
 #if NET9_0_OR_GREATER
-		params
+		params ReadOnlySpan<CString?> value
+#else
+		ReadOnlySpan<CString?> value
 #endif
-		ReadOnlySpan<CString?> value)
+	)
 	{
 		using CStringConcatenator helper = new(separator);
 		foreach (CString? utf8Text in value)

@@ -4,8 +4,7 @@
               feature="System.Globalization.Invariant"
               featurevalue="true">
             <method signature="System.Boolean get_GlobalizationInvariantModeEnabled()" body="stub" value="true"/>
-            <method signature="System.Void GetUserInterfaceTwoLetterLangCode(Rxmxnx.PInvoke.Localization.Iso639P1&amp;)"
-                    body="stub"/>
+            <method signature="System.Int32 GetUserInterfaceTwoLetterLangCode()" body="stub" value="0"/>
         </type>
     </assembly>
 </linker>

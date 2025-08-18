@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
+﻿#if !NETCOREAPP
+using InlineData = NUnit.Framework.TestCaseAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.CStringTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class JoinEmptyTest
@@ -7,7 +12,7 @@ public sealed class JoinEmptyTest
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	internal void LocalEmptySpanTest(Boolean emptyData)
+	public void LocalEmptySpanTest(Boolean emptyData)
 	{
 		ReadOnlySpan<Byte> separator = default;
 		CString?[] values = !emptyData ? Enumerable.Repeat(CString.Empty, 3).ToArray() : [];
@@ -18,7 +23,7 @@ public sealed class JoinEmptyTest
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	internal void ReferenceEmptySpanTest(Boolean emptyData)
+	public void ReferenceEmptySpanTest(Boolean emptyData)
 	{
 		ReadOnlySpan<Byte> separator = default;
 		CString?[] values = !emptyData ? Enumerable.Repeat<CString>(new(IntPtr.Zero, default), 3).ToArray() : [];
@@ -29,7 +34,7 @@ public sealed class JoinEmptyTest
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	internal void NullEmptySpanTest(Boolean emptyData)
+	public void NullEmptySpanTest(Boolean emptyData)
 	{
 		ReadOnlySpan<Byte> separator = default;
 		CString?[] values = !emptyData ? Enumerable.Repeat<CString?>(default, 3).ToArray() : [];
@@ -40,7 +45,7 @@ public sealed class JoinEmptyTest
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	internal void LocalEmptyTest(Boolean emptyData)
+	public void LocalEmptyTest(Boolean emptyData)
 	{
 		CString? separator = !emptyData ? CString.Empty : default;
 		CString?[] values = !emptyData ? Enumerable.Repeat(CString.Empty, 3).ToArray() : [];
@@ -51,7 +56,7 @@ public sealed class JoinEmptyTest
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	internal void ReferenceEmptyTest(Boolean emptyData)
+	public void ReferenceEmptyTest(Boolean emptyData)
 	{
 		CString? separator = !emptyData ? CString.Empty : default;
 		CString?[] values = !emptyData ? Enumerable.Repeat<CString>(new(IntPtr.Zero, default), 3).ToArray() : [];
@@ -62,7 +67,7 @@ public sealed class JoinEmptyTest
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	internal void NullEmptyTest(Boolean emptyData)
+	public void NullEmptyTest(Boolean emptyData)
 	{
 		CString? separator = !emptyData ? CString.Empty : default;
 		CString?[] values = !emptyData ? Enumerable.Repeat<CString?>(default, 3).ToArray() : [];
@@ -73,7 +78,7 @@ public sealed class JoinEmptyTest
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	internal async Task LocalEmptyTestAsync(Boolean emptyData)
+	public async Task LocalEmptyTestAsync(Boolean emptyData)
 	{
 		CString? separator = !emptyData ? CString.Empty : default;
 		CString?[] values = !emptyData ? Enumerable.Repeat(CString.Empty, 3).ToArray() : [];
@@ -84,7 +89,7 @@ public sealed class JoinEmptyTest
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	internal async Task ReferenceEmptyTestAsync(Boolean emptyData)
+	public async Task ReferenceEmptyTestAsync(Boolean emptyData)
 	{
 		CString? separator = !emptyData ? CString.Empty : default;
 		CString?[] values = !emptyData ? Enumerable.Repeat<CString>(new(IntPtr.Zero, default), 3).ToArray() : [];
@@ -95,7 +100,7 @@ public sealed class JoinEmptyTest
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	internal async Task NullEmptyTestAsync(Boolean emptyData)
+	public async Task NullEmptyTestAsync(Boolean emptyData)
 	{
 		CString? separator = !emptyData ? CString.Empty : default;
 		CString?[] values = !emptyData ? Enumerable.Repeat<CString?>(default, 3).ToArray() : [];
@@ -108,95 +113,95 @@ public sealed class JoinEmptyTest
 		Int32 count = values.Length > 0 ? 1 : 0;
 		CString resultCString = CString.Join(separator, values);
 		CString resultCString2 = CString.Join(separator, values, 0, count);
-		Assert.NotNull(resultCString);
-		Assert.Equal(CString.Empty, resultCString);
-		Assert.Same(CString.Empty, resultCString);
-		Assert.True(resultCString.IsNullTerminated);
-		Assert.False(resultCString.IsReference);
-		Assert.False(resultCString.IsSegmented);
-		Assert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
+		PInvokeAssert.NotNull(resultCString);
+		PInvokeAssert.Equal(CString.Empty, resultCString);
+		PInvokeAssert.Same(CString.Empty, resultCString);
+		PInvokeAssert.True(resultCString.IsNullTerminated);
+		PInvokeAssert.False(resultCString.IsReference);
+		PInvokeAssert.False(resultCString.IsSegmented);
+		PInvokeAssert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
 
-		Assert.NotNull(resultCString2);
-		Assert.Equal(CString.Empty, resultCString2);
-		Assert.Same(CString.Empty, resultCString2);
-		Assert.True(resultCString2.IsNullTerminated);
-		Assert.False(resultCString2.IsReference);
-		Assert.False(resultCString2.IsSegmented);
-		Assert.Equal(resultCString2.Length == 0 && CString.Empty.IsFunction, resultCString2.IsFunction);
+		PInvokeAssert.NotNull(resultCString2);
+		PInvokeAssert.Equal(CString.Empty, resultCString2);
+		PInvokeAssert.Same(CString.Empty, resultCString2);
+		PInvokeAssert.True(resultCString2.IsNullTerminated);
+		PInvokeAssert.False(resultCString2.IsReference);
+		PInvokeAssert.False(resultCString2.IsSegmented);
+		PInvokeAssert.Equal(resultCString2.Length == 0 && CString.Empty.IsFunction, resultCString2.IsFunction);
 	}
 	private static void Test(ReadOnlySpan<Byte> separator, IEnumerable<CString?> values)
 	{
 		CString resultCString = CString.Join(separator, values);
-		Assert.NotNull(resultCString);
-		Assert.Equal(CString.Empty, resultCString);
-		Assert.Same(CString.Empty, resultCString);
-		Assert.True(resultCString.IsNullTerminated);
-		Assert.False(resultCString.IsReference);
-		Assert.False(resultCString.IsSegmented);
-		Assert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
+		PInvokeAssert.NotNull(resultCString);
+		PInvokeAssert.Equal(CString.Empty, resultCString);
+		PInvokeAssert.Same(CString.Empty, resultCString);
+		PInvokeAssert.True(resultCString.IsNullTerminated);
+		PInvokeAssert.False(resultCString.IsReference);
+		PInvokeAssert.False(resultCString.IsSegmented);
+		PInvokeAssert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
 	}
 	private static void Test(CString? separator, CString?[] values)
 	{
 		Int32 count = values.Length > 0 ? 1 : 0;
 		CString resultCString = CString.Join(separator, values);
 		CString resultCString2 = CString.Join(separator, values, 0, count);
-		Assert.NotNull(resultCString);
-		Assert.Equal(CString.Empty, resultCString);
-		Assert.Same(CString.Empty, resultCString);
-		Assert.True(resultCString.IsNullTerminated);
-		Assert.False(resultCString.IsReference);
-		Assert.False(resultCString.IsSegmented);
-		Assert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
+		PInvokeAssert.NotNull(resultCString);
+		PInvokeAssert.Equal(CString.Empty, resultCString);
+		PInvokeAssert.Same(CString.Empty, resultCString);
+		PInvokeAssert.True(resultCString.IsNullTerminated);
+		PInvokeAssert.False(resultCString.IsReference);
+		PInvokeAssert.False(resultCString.IsSegmented);
+		PInvokeAssert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
 
-		Assert.NotNull(resultCString2);
-		Assert.Equal(CString.Empty, resultCString2);
-		Assert.Same(CString.Empty, resultCString2);
-		Assert.True(resultCString2.IsNullTerminated);
-		Assert.False(resultCString2.IsReference);
-		Assert.False(resultCString2.IsSegmented);
-		Assert.Equal(resultCString2.Length == 0 && CString.Empty.IsFunction, resultCString2.IsFunction);
+		PInvokeAssert.NotNull(resultCString2);
+		PInvokeAssert.Equal(CString.Empty, resultCString2);
+		PInvokeAssert.Same(CString.Empty, resultCString2);
+		PInvokeAssert.True(resultCString2.IsNullTerminated);
+		PInvokeAssert.False(resultCString2.IsReference);
+		PInvokeAssert.False(resultCString2.IsSegmented);
+		PInvokeAssert.Equal(resultCString2.Length == 0 && CString.Empty.IsFunction, resultCString2.IsFunction);
 	}
 	private static void Test(CString? separator, IEnumerable<CString?> values)
 	{
 		CString resultCString = CString.Join(separator, values);
-		Assert.NotNull(resultCString);
-		Assert.Equal(CString.Empty, resultCString);
-		Assert.Same(CString.Empty, resultCString);
-		Assert.True(resultCString.IsNullTerminated);
-		Assert.False(resultCString.IsReference);
-		Assert.False(resultCString.IsSegmented);
-		Assert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
+		PInvokeAssert.NotNull(resultCString);
+		PInvokeAssert.Equal(CString.Empty, resultCString);
+		PInvokeAssert.Same(CString.Empty, resultCString);
+		PInvokeAssert.True(resultCString.IsNullTerminated);
+		PInvokeAssert.False(resultCString.IsReference);
+		PInvokeAssert.False(resultCString.IsSegmented);
+		PInvokeAssert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
 	}
 	private static async Task TestAsync(CString? separator, CString?[] values)
 	{
 		Int32 count = values.Length > 0 ? 1 : 0;
 		CString resultCString = await CString.JoinAsync(separator, values);
 		CString resultCString2 = await CString.JoinAsync(separator, values, 0, count);
-		Assert.NotNull(resultCString);
-		Assert.Equal(CString.Empty, resultCString);
-		Assert.Same(CString.Empty, resultCString);
-		Assert.True(resultCString.IsNullTerminated);
-		Assert.False(resultCString.IsReference);
-		Assert.False(resultCString.IsSegmented);
-		Assert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
+		PInvokeAssert.NotNull(resultCString);
+		PInvokeAssert.Equal(CString.Empty, resultCString);
+		PInvokeAssert.Same(CString.Empty, resultCString);
+		PInvokeAssert.True(resultCString.IsNullTerminated);
+		PInvokeAssert.False(resultCString.IsReference);
+		PInvokeAssert.False(resultCString.IsSegmented);
+		PInvokeAssert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
 
-		Assert.NotNull(resultCString2);
-		Assert.Equal(CString.Empty, resultCString2);
-		Assert.Same(CString.Empty, resultCString2);
-		Assert.True(resultCString2.IsNullTerminated);
-		Assert.False(resultCString2.IsReference);
-		Assert.False(resultCString2.IsSegmented);
-		Assert.Equal(resultCString2.Length == 0 && CString.Empty.IsFunction, resultCString2.IsFunction);
+		PInvokeAssert.NotNull(resultCString2);
+		PInvokeAssert.Equal(CString.Empty, resultCString2);
+		PInvokeAssert.Same(CString.Empty, resultCString2);
+		PInvokeAssert.True(resultCString2.IsNullTerminated);
+		PInvokeAssert.False(resultCString2.IsReference);
+		PInvokeAssert.False(resultCString2.IsSegmented);
+		PInvokeAssert.Equal(resultCString2.Length == 0 && CString.Empty.IsFunction, resultCString2.IsFunction);
 	}
 	private static async Task TestAsync(CString? separator, IEnumerable<CString?> values)
 	{
 		CString resultCString = await CString.JoinAsync(separator, values);
-		Assert.NotNull(resultCString);
-		Assert.Equal(CString.Empty, resultCString);
-		Assert.Same(CString.Empty, resultCString);
-		Assert.True(resultCString.IsNullTerminated);
-		Assert.False(resultCString.IsReference);
-		Assert.False(resultCString.IsSegmented);
-		Assert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
+		PInvokeAssert.NotNull(resultCString);
+		PInvokeAssert.Equal(CString.Empty, resultCString);
+		PInvokeAssert.Same(CString.Empty, resultCString);
+		PInvokeAssert.True(resultCString.IsNullTerminated);
+		PInvokeAssert.False(resultCString.IsReference);
+		PInvokeAssert.False(resultCString.IsSegmented);
+		PInvokeAssert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
 	}
 }

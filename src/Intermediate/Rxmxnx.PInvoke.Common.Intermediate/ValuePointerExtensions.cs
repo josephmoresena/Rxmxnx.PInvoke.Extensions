@@ -10,8 +10,7 @@ namespace Rxmxnx.PInvoke;
 /// </remarks>
 [EditorBrowsable(EditorBrowsableState.Never)]
 [Browsable(false)]
-[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
-public static unsafe class ValuePointerExtensions
+public static class ValuePointerExtensions
 {
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance from

@@ -20,9 +20,11 @@ public partial class CString
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
 	public static CString Concat(
 #if !NET9_0_OR_GREATER
-		params
+		params String?[] values
+#else
+		String?[] values
 #endif
-			String?[] values)
+	)
 	{
 		ArgumentNullException.ThrowIfNull(values);
 		return CString.Concat(values.AsSpan());
@@ -40,9 +42,11 @@ public partial class CString
 	/// </remarks>
 	public static CString Concat(
 #if NET9_0_OR_GREATER
-		params
+		params ReadOnlySpan<String?> values
+#else
+		ReadOnlySpan<String?> values
 #endif
-		ReadOnlySpan<String?> values)
+	)
 	{
 		using StringConcatenator helper = new();
 		foreach (String? value in values)

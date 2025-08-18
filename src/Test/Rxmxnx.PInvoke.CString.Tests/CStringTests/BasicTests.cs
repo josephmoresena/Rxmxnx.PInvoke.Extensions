@@ -1,10 +1,15 @@
-﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.CStringTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class BasicTests
 {
 	[Fact]
-	internal void EmptyTest()
+	public void EmptyTest()
 	{
 		using MemoryHandle _ = CString.Empty.TryPin(out Boolean pinned);
 		ReadOnlySpan<Byte> emptySpan = default(CString?);
@@ -23,104 +28,112 @@ public sealed class BasicTests
 		CString empty4 = CString.Create(() => emptyBytes);
 		CString empty5 = new Byte[] { default, default, };
 
-		Assert.Equal(CString.Zero, zero);
-		Assert.Equal(CString.Empty, zero);
-		Assert.Equal(String.Empty, CString.Empty.ToString());
-		Assert.Equal(CString.Empty, (CString)String.Empty);
-		Assert.Equal(String.Empty, zero.ToString());
-		Assert.Equal(zero, (CString)String.Empty);
-		Assert.True(CString.IsNullOrEmpty(zero));
-		Assert.True(CString.IsNullOrEmpty(CString.Empty));
-		Assert.True(CString.IsNullOrEmpty(default));
+		PInvokeAssert.Equal(CString.Zero, zero);
+		PInvokeAssert.NotEqual(CString.Empty, zero); // Empty <> Zero
+		PInvokeAssert.Equal(String.Empty, CString.Empty.ToString());
+		PInvokeAssert.Equal(CString.Empty, (CString)String.Empty);
+		PInvokeAssert.Equal(String.Empty, zero.ToString());
+		PInvokeAssert.NotEqual(zero, (CString)String.Empty);
+		PInvokeAssert.True(CString.IsNullOrEmpty(zero));
+		PInvokeAssert.True(CString.IsNullOrEmpty(CString.Empty));
+		PInvokeAssert.True(CString.IsNullOrEmpty(default));
 
-		Assert.Equal(0, zero.CompareTo(CString.Empty));
-		Assert.Equal(0, zero.CompareTo(String.Empty));
-		Assert.Equal(0, zero.CompareTo((Object)CString.Empty));
-		Assert.Equal(0, zero.CompareTo((Object)String.Empty));
+		PInvokeAssert.Equal(0, zero.CompareTo(CString.Empty));
+		PInvokeAssert.Equal(0, zero.CompareTo(String.Empty));
+		PInvokeAssert.Equal(0, zero.CompareTo((Object)CString.Empty));
+		PInvokeAssert.Equal(0, zero.CompareTo((Object)String.Empty));
 
-		Assert.True(default(CString) == nullCStr);
-		Assert.True(default(String) == default(CString));
-		Assert.True(default(CString) == default(String));
-		Assert.True(default(CString) == zero);
-		Assert.True(zero == default(CString));
-		Assert.True(String.Empty == CString.Empty);
-		Assert.True(CString.Empty == String.Empty);
+		PInvokeAssert.True(default(CString) == nullCStr);
+		PInvokeAssert.True(default(String) == default(CString));
+		PInvokeAssert.True(default(CString) == default(String));
+		PInvokeAssert.False(default(CString) == zero); // Zero is not null.
+		PInvokeAssert.False(zero == default(CString)); // Zero is not null.
+		PInvokeAssert.True(String.Empty == CString.Empty);
+		PInvokeAssert.True(CString.Empty == String.Empty);
 
-		Assert.False(default(CString) != nullCStr);
-		Assert.False(default(String) != default(CString));
-		Assert.False(default(CString) != default(String));
-		Assert.False(String.Empty != CString.Empty);
-		Assert.False(CString.Empty != String.Empty);
+		PInvokeAssert.False(default(CString) != nullCStr);
+		PInvokeAssert.False(default(String) != default(CString));
+		PInvokeAssert.False(default(CString) != default(String));
+		PInvokeAssert.False(String.Empty != CString.Empty);
+		PInvokeAssert.False(CString.Empty != String.Empty);
 
-		Assert.True(default(CString) != CString.Empty);
-		Assert.True(default(String) != CString.Empty);
-		Assert.True(default(CString) != String.Empty);
-		Assert.True(CString.Empty != default(CString));
-		Assert.True(String.Empty != default(CString));
-		Assert.True(CString.Empty != default(String));
+		PInvokeAssert.True(default(CString) != CString.Empty);
+		PInvokeAssert.True(default(String) != CString.Empty);
+		PInvokeAssert.True(default(CString) != String.Empty);
+		PInvokeAssert.True(CString.Empty != default(CString));
+		PInvokeAssert.True(String.Empty != default(CString));
+		PInvokeAssert.True(CString.Empty != default(String));
 
-		Assert.Null(CString.Create(default(ReadOnlySpanFunc<Byte>)));
-		Assert.Null(CString.Create(default(Byte[])));
-		Assert.Null(nullCStr);
-		Assert.NotNull(zero);
-		Assert.False(zero is null);
+		PInvokeAssert.Null(CString.Create(default(ReadOnlySpanFunc<Byte>)));
+		PInvokeAssert.Null(CString.Create(default(Byte[])));
+		PInvokeAssert.Null(nullCStr);
+		PInvokeAssert.NotNull(zero);
+		PInvokeAssert.False(zero is null);
 
-		Assert.Throws<ArgumentNullException>(() => CString.GetBytes(default!));
-		Assert.Throws<ArgumentException>(() => zero.CompareTo(new Object()));
+		PInvokeAssert.Throws<ArgumentNullException>(() => CString.GetBytes(default!));
+		PInvokeAssert.Throws<ArgumentException>(() => zero.CompareTo(new Object()));
 
-		Assert.True(emptySpan.IsEmpty);
+		PInvokeAssert.True(emptySpan.IsEmpty);
 
-		Assert.NotEqual(CString.Empty, noEmpty1);
-		Assert.False(noEmpty1.IsReference);
-		Assert.False(noEmpty1.IsNullTerminated);
-		Assert.False(noEmpty1.IsFunction);
-		Assert.False(noEmpty1.IsSegmented);
-		Assert.Equal(1, noEmpty1.Length);
-		Assert.NotEqual(CString.Empty, noEmpty2);
-		Assert.False(noEmpty2.IsReference);
-		Assert.False(noEmpty2.IsNullTerminated);
-		Assert.False(noEmpty2.IsFunction);
-		Assert.False(noEmpty2.IsSegmented);
-		Assert.Equal(2, noEmpty2.Length);
-		Assert.NotEqual(CString.Empty, noEmpty3);
-		Assert.False(noEmpty3.IsReference);
-		Assert.True(noEmpty3.IsNullTerminated);
-		Assert.False(noEmpty3.IsFunction);
-		Assert.False(noEmpty3.IsSegmented);
-		Assert.Equal(1, noEmpty3.Length);
-		Assert.NotEqual(CString.Empty, noEmpty4);
-		Assert.False(noEmpty4.IsReference);
-		Assert.True(noEmpty4.IsNullTerminated);
-		Assert.False(noEmpty4.IsFunction);
-		Assert.True(noEmpty4.IsSegmented);
-		Assert.Equal(1, noEmpty4.Length);
-		Assert.NotEqual(CString.Empty, noEmpty5);
-		Assert.False(noEmpty5.IsReference);
-		Assert.True(noEmpty5.IsNullTerminated);
-		Assert.True(noEmpty5.IsFunction);
-		Assert.False(noEmpty5.IsSegmented);
-		Assert.Equal(1, noEmpty5.Length);
+		PInvokeAssert.NotEqual(CString.Empty, noEmpty1);
+		PInvokeAssert.False(noEmpty1.IsReference);
+		PInvokeAssert.False(noEmpty1.IsNullTerminated);
+		PInvokeAssert.False(noEmpty1.IsFunction);
+		PInvokeAssert.False(noEmpty1.IsSegmented);
+		PInvokeAssert.Equal(1, noEmpty1.Length);
+		PInvokeAssert.NotEqual(CString.Empty, noEmpty2);
+		PInvokeAssert.False(noEmpty2.IsReference);
+		PInvokeAssert.False(noEmpty2.IsNullTerminated);
+		PInvokeAssert.False(noEmpty2.IsFunction);
+		PInvokeAssert.False(noEmpty2.IsSegmented);
+		PInvokeAssert.Equal(2, noEmpty2.Length);
+		PInvokeAssert.NotEqual(CString.Empty, noEmpty3);
+		PInvokeAssert.False(noEmpty3.IsReference);
+		PInvokeAssert.True(noEmpty3.IsNullTerminated);
+		PInvokeAssert.False(noEmpty3.IsFunction);
+		PInvokeAssert.False(noEmpty3.IsSegmented);
+		PInvokeAssert.Equal(1, noEmpty3.Length);
+		PInvokeAssert.NotEqual(CString.Empty, noEmpty4);
+		PInvokeAssert.False(noEmpty4.IsReference);
+		PInvokeAssert.True(noEmpty4.IsNullTerminated);
+		PInvokeAssert.False(noEmpty4.IsFunction);
+		PInvokeAssert.True(noEmpty4.IsSegmented);
+		PInvokeAssert.Equal(1, noEmpty4.Length);
+		PInvokeAssert.NotEqual(CString.Empty, noEmpty5);
+		PInvokeAssert.False(noEmpty5.IsReference);
+		PInvokeAssert.True(noEmpty5.IsNullTerminated);
+		PInvokeAssert.True(noEmpty5.IsFunction);
+		PInvokeAssert.False(noEmpty5.IsSegmented);
+		PInvokeAssert.Equal(1, noEmpty5.Length);
 
-		Assert.Equal(CString.Empty, empty2);
-		Assert.False(empty2.IsReference);
-		Assert.True(empty2.IsNullTerminated);
-		Assert.False(empty2.IsFunction);
-		Assert.Equal(CString.Empty, empty3);
-		Assert.False(empty3.IsReference);
-		Assert.True(empty3.IsNullTerminated);
-		Assert.Equal(!pinned, empty3.IsFunction);
-		Assert.Equal(CString.Empty, empty4);
-		Assert.False(empty4.IsReference);
-		Assert.True(empty4.IsNullTerminated);
-		Assert.True(empty4.IsFunction);
-		Assert.Equal(CString.Empty, empty5);
-		Assert.False(empty4.IsReference);
-		Assert.True(empty5.IsNullTerminated);
-		Assert.False(empty5.IsFunction);
+		PInvokeAssert.Equal(CString.Empty, empty2);
+		PInvokeAssert.False(empty2.IsReference);
+		PInvokeAssert.True(empty2.IsNullTerminated);
+		PInvokeAssert.False(empty2.IsFunction);
+		PInvokeAssert.Equal(CString.Empty, empty3);
+		PInvokeAssert.False(empty3.IsReference);
+		PInvokeAssert.True(empty3.IsNullTerminated);
+		PInvokeAssert.Equal(!pinned, empty3.IsFunction);
+		PInvokeAssert.Equal(CString.Empty, empty4);
+		PInvokeAssert.False(empty4.IsReference);
+		PInvokeAssert.True(empty4.IsNullTerminated);
+		PInvokeAssert.True(empty4.IsFunction);
+		PInvokeAssert.Equal(CString.Empty, empty5);
+		PInvokeAssert.False(empty4.IsReference);
+		PInvokeAssert.True(empty5.IsNullTerminated);
+		PInvokeAssert.False(empty5.IsFunction);
+
+		for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
+		{
+			String str = TestSet.Utf16Text[i];
+			Boolean equal = String.IsNullOrEmpty(str);
+			PInvokeAssert.Equal(equal, CString.Empty == str);
+			PInvokeAssert.Equal(equal, CString.Empty == new CString(TestSet.Utf8Text[i]));
+		}
 	}
 
 	[Fact]
-	internal void NormalTest()
+	public void NormalTest()
 	{
 		Int32 lenght = TestSet.Utf16Text.Count;
 		CString[,] cstr = new CString[5, lenght];
@@ -136,7 +149,7 @@ public sealed class BasicTests
 			for (Int32 j = 1; j <= 4; j++)
 			{
 				CString cstr2 = cstr[j, i];
-				Assert.Equal(cstr1, cstr2);
+				PInvokeAssert.Equal(cstr1, cstr2);
 				switch (j)
 				{
 					case 1:
@@ -154,23 +167,24 @@ public sealed class BasicTests
 				}
 				BasicTests.RefEnumerationTest(cstr1, cstr2);
 				BasicTests.EnumerationTest(cstr1, cstr2);
-				Assert.True(cstr2.Equals(TestSet.Utf16Text[i]));
-				Assert.True(cstr2.Equals((Object)TestSet.Utf16Text[i]));
-				Assert.True(cstr2.Equals((Object)cstr1));
-				Assert.Equal(cstr1.GetHashCode(), cstr2.GetHashCode());
-				Assert.Equal(cstr1.ToHexString(), cstr2.ToHexString());
-				Assert.Equal(cstr1.ToArray(), cstr2.ToArray());
-				Assert.Equal(0, cstr1.CompareTo(cstr2));
+				PInvokeAssert.True(cstr2.Equals(TestSet.Utf16Text[i]));
+				PInvokeAssert.True(cstr2.Equals((Object)TestSet.Utf16Text[i]));
+				PInvokeAssert.True(cstr2.Equals((Object)cstr1));
+				PInvokeAssert.Equal(cstr1.GetHashCode(), cstr2.GetHashCode());
+				PInvokeAssert.Equal(cstr1.ToHexString(), cstr2.ToHexString());
+				PInvokeAssert.Equal(cstr1.ToArray(), cstr2.ToArray());
+				PInvokeAssert.Equal(0, cstr1.CompareTo(cstr2));
 			}
 			BasicTests.AssertFromString(cstr1);
-			Assert.True(cstr1.Equals(TestSet.Utf16Text[i]));
-			Assert.Equal(0, cstr1.CompareTo(TestSet.Utf16Text[i]));
-			Assert.Equal(TestSet.Utf16Text[i].GetHashCode(), cstr1.GetHashCode());
+			PInvokeAssert.True(cstr1.Equals(TestSet.Utf16Text[i]));
+			PInvokeAssert.Equal(0, cstr1.CompareTo(TestSet.Utf16Text[i]));
+			PInvokeAssert.Equal(TestSet.Utf16Text[i].GetHashCode(), cstr1.GetHashCode());
+			PInvokeAssert.Equal(cstr1.Equals(CString.Empty), cstr1.Equals(String.Empty));
 		}
 	}
 
 	[Fact]
-	internal void PointerTest()
+	public void PointerTest()
 	{
 		Int32 lenght = TestSet.Utf8Bytes.Count;
 		for (Int32 i = 0; i < lenght; i++)
@@ -181,97 +195,106 @@ public sealed class BasicTests
 		}
 	}
 
+#if NETCOREAPP
 	[Fact]
-	internal void LiteralTest()
+	public void LiteralTest()
 	{
 		CString[] literalArray = TestSet.Utf8TextUpper.Select(f => new CString(f)).ToArray();
 		CString[] nonLiteralArray = TestSet.Utf8NullTerminatedBytes.Select(b => (CString)b).ToArray();
 
-		Assert.All(literalArray, c => Assert.True(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
-		Assert.All(nonLiteralArray, c => Assert.False(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
-		Assert.All(nonLiteralArray, c => Assert.False(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
+		Assert.All(literalArray, c => PInvokeAssert.True(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
+		Assert.All(nonLiteralArray, c => PInvokeAssert.False(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
+		Assert.All(nonLiteralArray, c => PInvokeAssert.False(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
 	}
+#endif
 
 	[Fact]
-	internal unsafe void TryPinTest()
+	public unsafe void TryPinTest()
 	{
 		CString[] encodingArray = TestSet.Utf16Text.Select(s => (CString)s).ToArray();
 		CString[] literalArray = TestSet.Utf8Text.Select(f => new CString(f)).ToArray();
 		CString[] bytesArray = TestSet.Utf8Bytes.Select(a => (CString)a).ToArray();
 		CString[] bytesNullArray = TestSet.Utf8NullTerminatedBytes.Select(a => (CString)a).ToArray();
 
-		Assert.All(encodingArray, c =>
+		PInvokeAssert.All(encodingArray, c =>
 		{
 			using MemoryHandle handle = c.TryPin(out Boolean pinned);
-			Assert.True(pinned);
-			Assert.NotEqual((IntPtr)handle.Pointer, IntPtr.Zero);
-			Assert.Equal((IntPtr)handle.Pointer, (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(c.AsSpan())));
+			PInvokeAssert.True(pinned);
+			PInvokeAssert.NotEqual((IntPtr)handle.Pointer, IntPtr.Zero);
+			PInvokeAssert.Equal((IntPtr)handle.Pointer,
+			                    (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(c.AsSpan())));
 
-			Assert.Equal((IntPtr)handle.Pointer,
-			             (IntPtr)CString.CreateUnsafe((IntPtr)handle.Pointer, c.Length + 1).TryPin(out pinned).Pointer);
-			Assert.False(pinned);
+			PInvokeAssert.Equal((IntPtr)handle.Pointer,
+			                    (IntPtr)CString.CreateUnsafe((IntPtr)handle.Pointer, c.Length + 1).TryPin(out pinned)
+			                                   .Pointer);
+			PInvokeAssert.False(pinned);
 
 			if (c.Length <= 3) return;
 
 			using MemoryHandle handle2 = c[1..^1].TryPin(out pinned);
-			Assert.True(pinned);
-			Assert.NotEqual((IntPtr)handle2.Pointer, IntPtr.Zero);
-			Assert.Equal((IntPtr)handle2.Pointer, (IntPtr)handle.Pointer + 1);
+			PInvokeAssert.True(pinned);
+			PInvokeAssert.NotEqual((IntPtr)handle2.Pointer, IntPtr.Zero);
+			PInvokeAssert.Equal((IntPtr)handle2.Pointer, (IntPtr)handle.Pointer + 1);
 		});
-		Assert.All(literalArray, c =>
+		PInvokeAssert.All(literalArray, c =>
 		{
 			using MemoryHandle handle = c.TryPin(out Boolean pinned);
-			Assert.False(pinned);
-			Assert.Equal((IntPtr)handle.Pointer, IntPtr.Zero);
-			Assert.NotEqual((IntPtr)handle.Pointer,
-			                (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(c.AsSpan())));
+			PInvokeAssert.False(pinned);
+			PInvokeAssert.Equal((IntPtr)handle.Pointer, IntPtr.Zero);
+			PInvokeAssert.NotEqual((IntPtr)handle.Pointer,
+			                       (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(c.AsSpan())));
 
-			Assert.Equal((IntPtr)handle.Pointer,
-			             (IntPtr)CString.CreateUnsafe((IntPtr)handle.Pointer, c.Length + 1).TryPin(out pinned).Pointer);
-			Assert.False(pinned);
+			PInvokeAssert.Equal((IntPtr)handle.Pointer,
+			                    (IntPtr)CString.CreateUnsafe((IntPtr)handle.Pointer, c.Length + 1).TryPin(out pinned)
+			                                   .Pointer);
+			PInvokeAssert.False(pinned);
 
 			if (c.Length <= 3) return;
 
 			using MemoryHandle handle2 = c[1..^1].TryPin(out pinned);
-			Assert.False(pinned);
-			Assert.Equal((IntPtr)handle2.Pointer, IntPtr.Zero);
-			Assert.NotEqual((IntPtr)handle2.Pointer, (IntPtr)handle.Pointer + 1);
+			PInvokeAssert.False(pinned);
+			PInvokeAssert.Equal((IntPtr)handle2.Pointer, IntPtr.Zero);
+			PInvokeAssert.NotEqual((IntPtr)handle2.Pointer, (IntPtr)handle.Pointer + 1);
 		});
-		Assert.All(bytesArray, c =>
+		PInvokeAssert.All(bytesArray, c =>
 		{
 			using MemoryHandle handle = c.TryPin(out Boolean pinned);
-			Assert.True(pinned);
-			Assert.NotEqual((IntPtr)handle.Pointer, IntPtr.Zero);
-			Assert.Equal((IntPtr)handle.Pointer, (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(c.AsSpan())));
+			PInvokeAssert.True(pinned);
+			PInvokeAssert.NotEqual((IntPtr)handle.Pointer, IntPtr.Zero);
+			PInvokeAssert.Equal((IntPtr)handle.Pointer,
+			                    (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(c.AsSpan())));
 
-			Assert.Equal((IntPtr)handle.Pointer,
-			             (IntPtr)CString.CreateUnsafe((IntPtr)handle.Pointer, c.Length + 1).TryPin(out pinned).Pointer);
-			Assert.False(pinned);
+			PInvokeAssert.Equal((IntPtr)handle.Pointer,
+			                    (IntPtr)CString.CreateUnsafe((IntPtr)handle.Pointer, c.Length + 1).TryPin(out pinned)
+			                                   .Pointer);
+			PInvokeAssert.False(pinned);
 
 			if (c.Length <= 3) return;
 
 			using MemoryHandle handle2 = c[1..^1].TryPin(out pinned);
-			Assert.True(pinned);
-			Assert.NotEqual((IntPtr)handle2.Pointer, IntPtr.Zero);
-			Assert.Equal((IntPtr)handle2.Pointer, (IntPtr)handle.Pointer + 1);
+			PInvokeAssert.True(pinned);
+			PInvokeAssert.NotEqual((IntPtr)handle2.Pointer, IntPtr.Zero);
+			PInvokeAssert.Equal((IntPtr)handle2.Pointer, (IntPtr)handle.Pointer + 1);
 		});
-		Assert.All(bytesNullArray, c =>
+		PInvokeAssert.All(bytesNullArray, c =>
 		{
 			using MemoryHandle handle = c.TryPin(out Boolean pinned);
-			Assert.True(pinned);
-			Assert.NotEqual((IntPtr)handle.Pointer, IntPtr.Zero);
-			Assert.Equal((IntPtr)handle.Pointer, (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(c.AsSpan())));
+			PInvokeAssert.True(pinned);
+			PInvokeAssert.NotEqual((IntPtr)handle.Pointer, IntPtr.Zero);
+			PInvokeAssert.Equal((IntPtr)handle.Pointer,
+			                    (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(c.AsSpan())));
 
-			Assert.Equal((IntPtr)handle.Pointer,
-			             (IntPtr)CString.CreateUnsafe((IntPtr)handle.Pointer, c.Length + 1).TryPin(out pinned).Pointer);
-			Assert.False(pinned);
+			PInvokeAssert.Equal((IntPtr)handle.Pointer,
+			                    (IntPtr)CString.CreateUnsafe((IntPtr)handle.Pointer, c.Length + 1).TryPin(out pinned)
+			                                   .Pointer);
+			PInvokeAssert.False(pinned);
 
 			if (c.Length <= 3) return;
 
 			using MemoryHandle handle2 = c[1..^1].TryPin(out pinned);
-			Assert.True(pinned);
-			Assert.NotEqual((IntPtr)handle2.Pointer, IntPtr.Zero);
-			Assert.Equal((IntPtr)handle2.Pointer, (IntPtr)handle.Pointer + 1);
+			PInvokeAssert.True(pinned);
+			PInvokeAssert.NotEqual((IntPtr)handle2.Pointer, IntPtr.Zero);
+			PInvokeAssert.Equal((IntPtr)handle2.Pointer, (IntPtr)handle.Pointer + 1);
 		});
 	}
 
@@ -302,161 +325,161 @@ public sealed class BasicTests
 	}
 	private static void AssertFromString(CString cstr)
 	{
-		Assert.True(cstr.IsFunction);
-		Assert.True(cstr.IsNullTerminated);
-		Assert.False(cstr.IsReference);
-		Assert.False(cstr.IsSegmented);
-		Assert.False(CString.IsNullOrEmpty(cstr));
+		PInvokeAssert.True(cstr.IsFunction);
+		PInvokeAssert.True(cstr.IsNullTerminated);
+		PInvokeAssert.False(cstr.IsReference);
+		PInvokeAssert.False(cstr.IsSegmented);
+		PInvokeAssert.False(CString.IsNullOrEmpty(cstr));
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
 		BasicTests.AssertGetBytesException(cstr);
 	}
 	private static unsafe void AssertFromNullTerminatedBytes(CString cstr)
 	{
-		Assert.False(cstr.IsFunction);
-		Assert.True(cstr.IsNullTerminated);
-		Assert.False(cstr.IsReference);
-		Assert.False(cstr.IsSegmented);
-		Assert.False(CString.IsNullOrEmpty(cstr));
+		PInvokeAssert.False(cstr.IsFunction);
+		PInvokeAssert.True(cstr.IsNullTerminated);
+		PInvokeAssert.False(cstr.IsReference);
+		PInvokeAssert.False(cstr.IsSegmented);
+		PInvokeAssert.False(CString.IsNullOrEmpty(cstr));
 
-		Assert.Equal(cstr.Length + 1, CString.GetBytes(cstr).Length);
+		PInvokeAssert.Equal(cstr.Length + 1, CString.GetBytes(cstr).Length);
 
 		fixed (Byte* ptr = &MemoryMarshal.GetReference(cstr.AsSpan()))
 		{
 			CString unsafeCStr = CString.CreateNullTerminatedUnsafe((IntPtr)ptr);
-			Assert.False(unsafeCStr.IsFunction);
-			Assert.True(unsafeCStr.IsNullTerminated);
-			Assert.True(unsafeCStr.IsReference);
-			Assert.False(unsafeCStr.IsSegmented);
-			Assert.Equal(cstr, unsafeCStr);
+			PInvokeAssert.False(unsafeCStr.IsFunction);
+			PInvokeAssert.True(unsafeCStr.IsNullTerminated);
+			PInvokeAssert.True(unsafeCStr.IsReference);
+			PInvokeAssert.False(unsafeCStr.IsSegmented);
+			PInvokeAssert.Equal(cstr, unsafeCStr);
 		}
 
 		CString rawClone = CString.Create(CString.GetBytes(cstr));
-		Assert.False(rawClone.IsFunction);
-		Assert.False(rawClone.IsNullTerminated);
-		Assert.False(rawClone.IsReference);
-		Assert.False(rawClone.IsSegmented);
-		Assert.False(CString.IsNullOrEmpty(rawClone));
-		Assert.NotEqual(cstr, rawClone);
-		Assert.Equal(cstr.Length + 1, rawClone.Length);
+		PInvokeAssert.False(rawClone.IsFunction);
+		PInvokeAssert.False(rawClone.IsNullTerminated);
+		PInvokeAssert.False(rawClone.IsReference);
+		PInvokeAssert.False(rawClone.IsSegmented);
+		PInvokeAssert.False(CString.IsNullOrEmpty(rawClone));
+		PInvokeAssert.NotEqual(cstr, rawClone);
+		PInvokeAssert.Equal(cstr.Length + 1, rawClone.Length);
 
 		CString rawSpanClone = CString.Create(CString.GetBytes(cstr).AsSpan());
-		Assert.False(rawSpanClone.IsFunction);
-		Assert.False(rawSpanClone.IsNullTerminated);
-		Assert.False(rawSpanClone.IsReference);
-		Assert.False(rawSpanClone.IsSegmented);
-		Assert.False(CString.IsNullOrEmpty(rawSpanClone));
-		Assert.NotEqual(cstr, rawSpanClone);
-		Assert.Equal(cstr.Length + 1, rawSpanClone.Length);
+		PInvokeAssert.False(rawSpanClone.IsFunction);
+		PInvokeAssert.False(rawSpanClone.IsNullTerminated);
+		PInvokeAssert.False(rawSpanClone.IsReference);
+		PInvokeAssert.False(rawSpanClone.IsSegmented);
+		PInvokeAssert.False(CString.IsNullOrEmpty(rawSpanClone));
+		PInvokeAssert.NotEqual(cstr, rawSpanClone);
+		PInvokeAssert.Equal(cstr.Length + 1, rawSpanClone.Length);
 	}
 	private static void AssertFromBytes(CString cstr)
 	{
-		Assert.False(cstr.IsFunction);
-		Assert.False(cstr.IsNullTerminated);
-		Assert.False(cstr.IsReference);
-		Assert.False(cstr.IsSegmented);
-		Assert.False(CString.IsNullOrEmpty(cstr));
+		PInvokeAssert.False(cstr.IsFunction);
+		PInvokeAssert.False(cstr.IsNullTerminated);
+		PInvokeAssert.False(cstr.IsReference);
+		PInvokeAssert.False(cstr.IsSegmented);
+		PInvokeAssert.False(CString.IsNullOrEmpty(cstr));
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
 
-		Assert.Equal(cstr.Length, CString.GetBytes(cstr).Length);
+		PInvokeAssert.Equal(cstr.Length, CString.GetBytes(cstr).Length);
 
 		CString rawClone = CString.Create(CString.GetBytes(cstr));
-		Assert.False(rawClone.IsFunction);
-		Assert.False(rawClone.IsNullTerminated);
-		Assert.False(rawClone.IsReference);
-		Assert.False(rawClone.IsSegmented);
-		Assert.False(CString.IsNullOrEmpty(rawClone));
-		Assert.Equal(cstr, rawClone);
-		Assert.Equal(cstr.Length, rawClone.Length);
+		PInvokeAssert.False(rawClone.IsFunction);
+		PInvokeAssert.False(rawClone.IsNullTerminated);
+		PInvokeAssert.False(rawClone.IsReference);
+		PInvokeAssert.False(rawClone.IsSegmented);
+		PInvokeAssert.False(CString.IsNullOrEmpty(rawClone));
+		PInvokeAssert.Equal(cstr, rawClone);
+		PInvokeAssert.Equal(cstr.Length, rawClone.Length);
 
 		CString rawSpanClone = CString.Create(CString.GetBytes(cstr).AsSpan());
-		Assert.False(rawSpanClone.IsFunction);
-		Assert.False(rawSpanClone.IsNullTerminated);
-		Assert.False(rawSpanClone.IsReference);
-		Assert.False(rawSpanClone.IsSegmented);
-		Assert.False(CString.IsNullOrEmpty(rawSpanClone));
-		Assert.Equal(cstr, rawSpanClone);
-		Assert.Equal(cstr.Length, rawSpanClone.Length);
+		PInvokeAssert.False(rawSpanClone.IsFunction);
+		PInvokeAssert.False(rawSpanClone.IsNullTerminated);
+		PInvokeAssert.False(rawSpanClone.IsReference);
+		PInvokeAssert.False(rawSpanClone.IsSegmented);
+		PInvokeAssert.False(CString.IsNullOrEmpty(rawSpanClone));
+		PInvokeAssert.Equal(cstr, rawSpanClone);
+		PInvokeAssert.Equal(cstr.Length, rawSpanClone.Length);
 	}
 	private static unsafe void AssertFromFunction(CString cstr)
 	{
-		Assert.True(cstr.IsFunction);
-		Assert.True(cstr.IsNullTerminated);
-		Assert.False(cstr.IsReference);
-		Assert.False(cstr.IsSegmented);
-		Assert.False(CString.IsNullOrEmpty(cstr));
+		PInvokeAssert.True(cstr.IsFunction);
+		PInvokeAssert.True(cstr.IsNullTerminated);
+		PInvokeAssert.False(cstr.IsReference);
+		PInvokeAssert.False(cstr.IsSegmented);
+		PInvokeAssert.False(CString.IsNullOrEmpty(cstr));
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
 
 		fixed (Byte* ptr = &MemoryMarshal.GetReference(cstr.AsSpan()))
 		{
 			CString unsafeCStr = CString.CreateNullTerminatedUnsafe((IntPtr)ptr);
-			Assert.False(unsafeCStr.IsFunction);
-			Assert.True(unsafeCStr.IsNullTerminated);
-			Assert.True(unsafeCStr.IsReference);
-			Assert.False(unsafeCStr.IsSegmented);
-			Assert.Equal(cstr, unsafeCStr);
+			PInvokeAssert.False(unsafeCStr.IsFunction);
+			PInvokeAssert.True(unsafeCStr.IsNullTerminated);
+			PInvokeAssert.True(unsafeCStr.IsReference);
+			PInvokeAssert.False(unsafeCStr.IsSegmented);
+			PInvokeAssert.Equal(cstr, unsafeCStr);
 		}
 
 		BasicTests.AssertGetBytesException(cstr);
 
 		CString rawSpanClone = CString.Create(cstr);
-		Assert.False(rawSpanClone.IsFunction);
-		Assert.False(rawSpanClone.IsNullTerminated);
-		Assert.False(rawSpanClone.IsReference);
-		Assert.False(rawSpanClone.IsSegmented);
-		Assert.False(CString.IsNullOrEmpty(rawSpanClone));
-		Assert.Equal(cstr, rawSpanClone);
-		Assert.Equal(cstr.Length, rawSpanClone.Length);
+		PInvokeAssert.False(rawSpanClone.IsFunction);
+		PInvokeAssert.False(rawSpanClone.IsNullTerminated);
+		PInvokeAssert.False(rawSpanClone.IsReference);
+		PInvokeAssert.False(rawSpanClone.IsSegmented);
+		PInvokeAssert.False(CString.IsNullOrEmpty(rawSpanClone));
+		PInvokeAssert.Equal(cstr, rawSpanClone);
+		PInvokeAssert.Equal(cstr.Length, rawSpanClone.Length);
 	}
 	private static void AssertFromFunctionNonLiteral(CString cstr)
 	{
-		Assert.True(cstr.IsFunction);
-		Assert.False(cstr.IsNullTerminated);
-		Assert.False(cstr.IsReference);
-		Assert.False(cstr.IsSegmented);
-		Assert.False(CString.IsNullOrEmpty(cstr));
+		PInvokeAssert.True(cstr.IsFunction);
+		PInvokeAssert.False(cstr.IsNullTerminated);
+		PInvokeAssert.False(cstr.IsReference);
+		PInvokeAssert.False(cstr.IsSegmented);
+		PInvokeAssert.False(CString.IsNullOrEmpty(cstr));
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
 
 		BasicTests.AssertGetBytesException(cstr);
 
 		CString rawSpanClone = CString.Create(cstr);
-		Assert.False(rawSpanClone.IsFunction);
-		Assert.False(rawSpanClone.IsNullTerminated);
-		Assert.False(rawSpanClone.IsReference);
-		Assert.False(rawSpanClone.IsSegmented);
-		Assert.False(CString.IsNullOrEmpty(rawSpanClone));
-		Assert.Equal(cstr, rawSpanClone);
-		Assert.Equal(cstr.Length, rawSpanClone.Length);
+		PInvokeAssert.False(rawSpanClone.IsFunction);
+		PInvokeAssert.False(rawSpanClone.IsNullTerminated);
+		PInvokeAssert.False(rawSpanClone.IsReference);
+		PInvokeAssert.False(rawSpanClone.IsSegmented);
+		PInvokeAssert.False(CString.IsNullOrEmpty(rawSpanClone));
+		PInvokeAssert.Equal(cstr, rawSpanClone);
+		PInvokeAssert.Equal(cstr.Length, rawSpanClone.Length);
 	}
 	private static unsafe void AssertFromBytesPointer(CString cstr)
 	{
-		Assert.False(cstr.IsFunction);
-		Assert.False(cstr.IsNullTerminated);
-		Assert.True(cstr.IsReference);
-		Assert.False(cstr.IsSegmented);
-		Assert.False(CString.IsNullOrEmpty(cstr));
+		PInvokeAssert.False(cstr.IsFunction);
+		PInvokeAssert.False(cstr.IsNullTerminated);
+		PInvokeAssert.True(cstr.IsReference);
+		PInvokeAssert.False(cstr.IsSegmented);
+		PInvokeAssert.False(CString.IsNullOrEmpty(cstr));
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
 		BasicTests.AssertGetBytesException(cstr);
 
 		fixed (void* ptr = cstr.AsSpan())
 		{
 			CString rawPointerSpan = CString.CreateUnsafe(new(ptr), cstr.Length, true);
-			Assert.False(rawPointerSpan.IsFunction);
-			Assert.False(rawPointerSpan.IsNullTerminated);
-			Assert.True(rawPointerSpan.IsReference);
-			Assert.False(rawPointerSpan.IsSegmented);
-			Assert.False(CString.IsNullOrEmpty(rawPointerSpan));
-			Assert.Equal(cstr, rawPointerSpan);
-			Assert.Equal(cstr.Length, rawPointerSpan.Length);
+			PInvokeAssert.False(rawPointerSpan.IsFunction);
+			PInvokeAssert.False(rawPointerSpan.IsNullTerminated);
+			PInvokeAssert.True(rawPointerSpan.IsReference);
+			PInvokeAssert.False(rawPointerSpan.IsSegmented);
+			PInvokeAssert.False(CString.IsNullOrEmpty(rawPointerSpan));
+			PInvokeAssert.Equal(cstr, rawPointerSpan);
+			PInvokeAssert.Equal(cstr.Length, rawPointerSpan.Length);
 		}
 	}
 
 	private static unsafe void AssertFromNullTerminatedBytesPointer(CString cstr)
 	{
-		Assert.False(cstr.IsFunction);
-		Assert.True(cstr.IsNullTerminated);
-		Assert.True(cstr.IsReference);
-		Assert.False(cstr.IsSegmented);
-		Assert.False(CString.IsNullOrEmpty(cstr));
+		PInvokeAssert.False(cstr.IsFunction);
+		PInvokeAssert.True(cstr.IsNullTerminated);
+		PInvokeAssert.True(cstr.IsReference);
+		PInvokeAssert.False(cstr.IsSegmented);
+		PInvokeAssert.False(CString.IsNullOrEmpty(cstr));
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
 
 		fixed (void* ptr = cstr.AsSpan())
@@ -464,21 +487,21 @@ public sealed class BasicTests
 			CString rawPointerCString = CString.CreateUnsafe(new(ptr), cstr.Length + 1, true);
 			CString unsafeCStr = CString.CreateNullTerminatedUnsafe(new(ptr));
 
-			Assert.False(rawPointerCString.IsFunction);
-			Assert.False(rawPointerCString.IsNullTerminated);
-			Assert.True(rawPointerCString.IsReference);
-			Assert.False(rawPointerCString.IsSegmented);
+			PInvokeAssert.False(rawPointerCString.IsFunction);
+			PInvokeAssert.False(rawPointerCString.IsNullTerminated);
+			PInvokeAssert.True(rawPointerCString.IsReference);
+			PInvokeAssert.False(rawPointerCString.IsSegmented);
 
-			Assert.False(unsafeCStr.IsFunction);
-			Assert.True(unsafeCStr.IsNullTerminated);
-			Assert.True(unsafeCStr.IsReference);
-			Assert.False(unsafeCStr.IsSegmented);
+			PInvokeAssert.False(unsafeCStr.IsFunction);
+			PInvokeAssert.True(unsafeCStr.IsNullTerminated);
+			PInvokeAssert.True(unsafeCStr.IsReference);
+			PInvokeAssert.False(unsafeCStr.IsSegmented);
 
-			Assert.False(CString.IsNullOrEmpty(rawPointerCString));
-			Assert.NotEqual(cstr, rawPointerCString);
-			Assert.Equal(cstr, unsafeCStr);
-			Assert.Equal(cstr.Length + 1, rawPointerCString.Length);
-			Assert.Equal(cstr.Length, cstr.Length);
+			PInvokeAssert.False(CString.IsNullOrEmpty(rawPointerCString));
+			PInvokeAssert.NotEqual(cstr, rawPointerCString);
+			PInvokeAssert.Equal(cstr, unsafeCStr);
+			PInvokeAssert.Equal(cstr.Length + 1, rawPointerCString.Length);
+			PInvokeAssert.Equal(cstr.Length, cstr.Length);
 		}
 	}
 	private static void RefEnumerationTest(CString cstr1, CString cstr2)
@@ -486,11 +509,11 @@ public sealed class BasicTests
 		Int32 i = 0;
 		foreach (ref readonly Byte utf8Char in cstr2)
 		{
-			Assert.Equal(cstr1[i], utf8Char);
+			PInvokeAssert.Equal(cstr1[i], utf8Char);
 #if NET8_0_OR_GREATER
 			Assert.True(Unsafe.AreSame(in cstr2.AsSpan()[i], in utf8Char));
 #else
-			Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in cstr2.AsSpan()[i]), ref Unsafe.AsRef(in utf8Char)));
+			PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in cstr2.AsSpan()[i]), ref Unsafe.AsRef(in utf8Char)));
 #endif
 			i++;
 		}
@@ -501,7 +524,7 @@ public sealed class BasicTests
 		foreach (Byte utf8Char in cstr2)
 		{
 			enumerator1.MoveNext();
-			Assert.Equal(enumerator1.Current, utf8Char);
+			PInvokeAssert.Equal(enumerator1.Current, utf8Char);
 		}
 	}
 	private static unsafe void TestBytesPointer(Byte[] bytes, String text, CString cstr1)
@@ -509,12 +532,12 @@ public sealed class BasicTests
 		fixed (Byte* bptr2 = bytes)
 		{
 			CString cstr2 = CString.CreateUnsafe(new(bptr2), bytes.Length);
-			Assert.Equal(cstr1, cstr2);
+			PInvokeAssert.Equal(cstr1, cstr2);
 			BasicTests.AssertFromBytesPointer(cstr2);
-			Assert.True(cstr2.Equals(text));
-			Assert.Equal(cstr1.GetHashCode(), cstr2.GetHashCode());
-			Assert.Equal(cstr1.ToHexString(), cstr2.ToHexString());
-			Assert.Equal(cstr1.ToArray(), cstr2.ToArray());
+			PInvokeAssert.True(cstr2.Equals(text));
+			PInvokeAssert.Equal(cstr1.GetHashCode(), cstr2.GetHashCode());
+			PInvokeAssert.Equal(cstr1.ToHexString(), cstr2.ToHexString());
+			PInvokeAssert.Equal(cstr1.ToArray(), cstr2.ToArray());
 			BasicTests.RefEnumerationTest(cstr1, cstr2);
 			BasicTests.EnumerationTest(cstr1, cstr2);
 		}
@@ -524,12 +547,12 @@ public sealed class BasicTests
 		fixed (Byte* bptr2 = bytes)
 		{
 			CString cstr2 = CString.CreateUnsafe(new(bptr2), bytes.Length);
-			Assert.Equal(cstr1, cstr2);
-			Assert.True(cstr2.Equals(text));
+			PInvokeAssert.Equal(cstr1, cstr2);
+			PInvokeAssert.True(cstr2.Equals(text));
 			BasicTests.AssertFromNullTerminatedBytesPointer(cstr2);
-			Assert.Equal(cstr1.GetHashCode(), cstr2.GetHashCode());
-			Assert.Equal(cstr1.ToHexString(), cstr2.ToHexString());
-			Assert.Equal(cstr1.ToArray(), cstr2.ToArray());
+			PInvokeAssert.Equal(cstr1.GetHashCode(), cstr2.GetHashCode());
+			PInvokeAssert.Equal(cstr1.ToHexString(), cstr2.ToHexString());
+			PInvokeAssert.Equal(cstr1.ToArray(), cstr2.ToArray());
 			BasicTests.RefEnumerationTest(cstr1, cstr2);
 			BasicTests.EnumerationTest(cstr1, cstr2);
 		}
@@ -539,14 +562,14 @@ public sealed class BasicTests
 	{
 		try
 		{
-			Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
+			PInvokeAssert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
 		}
 		catch (Exception)
 		{
 			// For some reason sometimes the test fails even though it shouldn't.
 			// The test must be run again so that it does not fail.
-			Assert.NotEmpty(cstr.ToArray());
-			Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
+			PInvokeAssert.NotEmpty(cstr.ToArray());
+			PInvokeAssert.Throws<InvalidOperationException>(() => CString.GetBytes(cstr));
 		}
 	}
 }

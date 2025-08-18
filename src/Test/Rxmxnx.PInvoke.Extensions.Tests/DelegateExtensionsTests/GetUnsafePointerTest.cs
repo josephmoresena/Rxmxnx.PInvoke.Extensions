@@ -1,51 +1,52 @@
-﻿namespace Rxmxnx.PInvoke.Tests.DelegateExtensionsTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.DelegateExtensionsTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
-public sealed class GetUnsafePointerTest
+public sealed class GetUnsafePointerTest : DelegatesTests
 {
-	private static readonly IFixture fixture = new Fixture();
-
 	[Fact]
-	internal void EmptyTest()
+	public void EmptyTest()
 	{
 		GetValue<Boolean>? getValueGeneric = default;
 		GetByteValue? getByteValue = default;
 
-		Assert.Equal(IntPtr.Zero, getValueGeneric.GetUnsafeIntPtr());
-		Assert.Equal(UIntPtr.Zero, getValueGeneric.GetUnsafeUIntPtr());
-		Assert.Equal(FuncPtr<GetValue<Boolean>>.Zero, getValueGeneric.GetUnsafeFuncPtr());
-		Assert.Equal(IntPtr.Zero, getByteValue.GetUnsafeIntPtr());
-		Assert.Equal(UIntPtr.Zero, getByteValue.GetUnsafeUIntPtr());
-		Assert.Equal(FuncPtr<GetByteValue>.Zero, getByteValue.GetUnsafeFuncPtr());
+		PInvokeAssert.Equal(IntPtr.Zero, getValueGeneric.GetUnsafeIntPtr());
+		PInvokeAssert.Equal(UIntPtr.Zero, getValueGeneric.GetUnsafeUIntPtr());
+		PInvokeAssert.Equal(FuncPtr<GetValue<Boolean>>.Zero, getValueGeneric.GetUnsafeFuncPtr());
+		PInvokeAssert.Equal(IntPtr.Zero, getByteValue.GetUnsafeIntPtr());
+		PInvokeAssert.Equal(UIntPtr.Zero, getByteValue.GetUnsafeUIntPtr());
+		PInvokeAssert.Equal(FuncPtr<GetByteValue>.Zero, getByteValue.GetUnsafeFuncPtr());
 	}
 
 	[Fact]
-	internal unsafe void NormalTest()
+	public unsafe void NormalTest()
 	{
-		GetByteValue getByteValue = GetUnsafePointerTest.GetByte;
-		GetValue<Byte> getValue = GetUnsafePointerTest.GetByte;
+		GetByteValue getByteValue = DelegatesTests.GetByte;
+		GetValue<Byte> getValue = DelegatesTests.GetByte;
 		IntPtr intPtr = Marshal.GetFunctionPointerForDelegate(getByteValue);
 		UIntPtr uintPtr = (UIntPtr)intPtr.ToPointer();
 		FuncPtr<GetByteValue> funcPtr = (FuncPtr<GetByteValue>)intPtr;
-		Byte input = GetUnsafePointerTest.fixture.Create<Byte>();
+		Byte input = DelegatesTests.Fixture.Create<Byte>();
 
 		IntPtr result = getByteValue.GetUnsafeIntPtr();
 		UIntPtr result2 = getByteValue.GetUnsafeUIntPtr();
 		FuncPtr<GetByteValue> result3 = getByteValue.GetUnsafeFuncPtr();
 
-		Assert.Equal(intPtr, result);
-		Assert.Equal(uintPtr, result2);
-		Assert.Equal(funcPtr, result3);
-		Assert.Equal(getValue(input), Marshal.GetDelegateForFunctionPointer<GetByteValue>(result)(input));
-		Assert.Equal(getValue(input), Marshal.GetDelegateForFunctionPointer<GetByteValue>(result)(input));
-		Assert.Equal(getValue(input), funcPtr.Invoke(input));
+		PInvokeAssert.Equal(intPtr, result);
+		PInvokeAssert.Equal(uintPtr, result2);
+		PInvokeAssert.Equal(funcPtr, result3);
+		PInvokeAssert.Equal(getValue(input), Marshal.GetDelegateForFunctionPointer<GetByteValue>(result)(input));
+		PInvokeAssert.Equal(getValue(input), Marshal.GetDelegateForFunctionPointer<GetByteValue>(result)(input));
+		PInvokeAssert.Equal(getValue(input), funcPtr.Invoke(input));
 
+#if NETCOREAPP
 		Assert.Throws<ArgumentException>(() => getValue.GetUnsafeIntPtr());
 		Assert.Throws<ArgumentException>(() => getValue.GetUnsafeUIntPtr());
 		Assert.Throws<ArgumentException>(() => getValue.GetUnsafeFuncPtr());
+#endif
 	}
-
-	private static Byte GetByte(Byte value) => value;
-	private delegate T GetValue<T>(T value);
-	private delegate Byte GetByteValue(Byte value);
 }

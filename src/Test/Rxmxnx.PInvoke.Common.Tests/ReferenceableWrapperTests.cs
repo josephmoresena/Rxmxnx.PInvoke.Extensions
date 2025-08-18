@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class ReferenceableWrapperTests
@@ -7,41 +12,41 @@ public sealed class ReferenceableWrapperTests
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
-	internal Task BooleanTestAsync() => ReferenceableWrapperTests.TestAsync<Boolean>();
+	public Task BooleanTestAsync() => ReferenceableWrapperTests.TestAsync<Boolean>();
 	[Fact]
-	internal Task ByteTestAsync() => ReferenceableWrapperTests.TestAsync<Byte>();
+	public Task ByteTestAsync() => ReferenceableWrapperTests.TestAsync<Byte>();
 	[Fact]
-	internal Task Int16TestAsync() => ReferenceableWrapperTests.TestAsync<Int16>();
+	public Task Int16TestAsync() => ReferenceableWrapperTests.TestAsync<Int16>();
 	[Fact]
-	internal Task CharTestAsync() => ReferenceableWrapperTests.TestAsync<Char>();
+	public Task CharTestAsync() => ReferenceableWrapperTests.TestAsync<Char>();
 	[Fact]
-	internal Task Int32TestAsync() => ReferenceableWrapperTests.TestAsync<Int32>();
+	public Task Int32TestAsync() => ReferenceableWrapperTests.TestAsync<Int32>();
 	[Fact]
-	internal Task Int64TestAsync() => ReferenceableWrapperTests.TestAsync<Int64>();
+	public Task Int64TestAsync() => ReferenceableWrapperTests.TestAsync<Int64>();
 #if NET7_0_OR_GREATER
 	[Fact]
 	internal Task Int128TestAsync() => ReferenceableWrapperTests.TestAsync<Int128>();
 #endif
 	[Fact]
-	internal Task GuidTestAsync() => ReferenceableWrapperTests.TestAsync<Guid>();
+	public Task GuidTestAsync() => ReferenceableWrapperTests.TestAsync<Guid>();
 	[Fact]
-	internal Task SingleTestAsync() => ReferenceableWrapperTests.TestAsync<Single>();
+	public Task SingleTestAsync() => ReferenceableWrapperTests.TestAsync<Single>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal Task HalfTestAsync() => ReferenceableWrapperTests.TestAsync<Half>();
 #endif
 	[Fact]
-	internal Task DoubleTestAsync() => ReferenceableWrapperTests.TestAsync<Double>();
+	public Task DoubleTestAsync() => ReferenceableWrapperTests.TestAsync<Double>();
 	[Fact]
-	internal Task DecimalTestAsync() => ReferenceableWrapperTests.TestAsync<Decimal>();
+	public Task DecimalTestAsync() => ReferenceableWrapperTests.TestAsync<Decimal>();
 	[Fact]
-	internal Task DateTimeTestAsync() => ReferenceableWrapperTests.TestAsync<DateTime>();
+	public Task DateTimeTestAsync() => ReferenceableWrapperTests.TestAsync<DateTime>();
 #if NET6_0_OR_GREATER
 	[Fact]
 	internal Task TimeOnlyTestAsync() => ReferenceableWrapperTests.TestAsync<TimeOnly>();
 #endif
 	[Fact]
-	internal Task TimeSpanTestAsync() => ReferenceableWrapperTests.TestAsync<TimeSpan>();
+	public Task TimeSpanTestAsync() => ReferenceableWrapperTests.TestAsync<TimeSpan>();
 
 	private static async Task TestAsync<T>() where T : unmanaged
 	{
@@ -61,21 +66,21 @@ public sealed class ReferenceableWrapperTests
 		ReferenceableWrapper<T> result3 = new(result);
 		ref readonly T refValue = ref result.Reference;
 		ref T mutableValueRef = ref Unsafe.AsRef(in result.Reference);
-		Assert.NotNull(result);
-		Assert.Equal(value, result.Value);
-		Assert.Equal(value, refValue);
-		Assert.True(result.Equals(value));
-		Assert.Equal(Object.Equals(value, value2), result.Equals(value2));
+		PInvokeAssert.NotNull(result);
+		PInvokeAssert.Equal(value, result.Value);
+		PInvokeAssert.Equal(value, refValue);
+		PInvokeAssert.True(result.Equals(value));
+		PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
 #if NET8_0_OR_GREATER
 		Assert.True(Unsafe.AreSame(in result.Reference, ref mutableValueRef));
 		Assert.False(Unsafe.AreSame(in result.Reference, ref value));
 #else
-		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref mutableValueRef));
-		Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref value));
+		PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref mutableValueRef));
+		PInvokeAssert.False(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref value));
 #endif
-		Assert.False(result.Equals(result2));
-		Assert.True(result.Equals(result3));
-		Assert.False(result.Equals(default(IReferenceable<T>)!));
+		PInvokeAssert.False(result.Equals(result2));
+		PInvokeAssert.True(result.Equals(result3));
+		PInvokeAssert.False(result.Equals(default(IReferenceable<T>)!));
 	}
 	private static void Nullable<T>(Boolean nullInput) where T : unmanaged
 	{
@@ -88,20 +93,20 @@ public sealed class ReferenceableWrapperTests
 		ReferenceableWrapper<T?> result3 = new(result);
 		ref readonly T? refValue = ref result.Reference;
 		ref T? mutableValueRef = ref Unsafe.AsRef(in result.Reference);
-		Assert.NotNull(result);
-		Assert.Equal(value, refValue);
-		Assert.Equal(value, result.Value);
-		Assert.Equal(Object.Equals(value, value2), result.Equals(value2));
+		PInvokeAssert.NotNull(result);
+		PInvokeAssert.Equal(value, refValue);
+		PInvokeAssert.Equal(value, result.Value);
+		PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
 #if NET8_0_OR_GREATER
 		Assert.True(Unsafe.AreSame(in result.Reference, ref mutableValueRef));
 		Assert.False(Unsafe.AreSame(in result.Reference, ref value));
 #else
-		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref mutableValueRef));
-		Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref value));
+		PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref mutableValueRef));
+		PInvokeAssert.False(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref value));
 #endif
-		Assert.False(result.Equals(result2));
-		Assert.True(result.Equals(result3));
-		Assert.False(result.Equals(default(IReferenceable<T>)));
+		PInvokeAssert.False(result.Equals(result2));
+		PInvokeAssert.True(result.Equals(result3));
+		PInvokeAssert.False(result.Equals(default(IReferenceable<T>)));
 	}
 	private static void ObjectTest<T>() where T : unmanaged
 	{
@@ -112,20 +117,20 @@ public sealed class ReferenceableWrapperTests
 		ReferenceableWrapper<T[]> result3 = new(result);
 		ref readonly T[] refValue = ref result.Reference;
 		ref T[] mutableValueRef = ref Unsafe.AsRef(in result.Reference);
-		Assert.NotNull(result);
-		Assert.Equal(array, result.Value);
-		Assert.Equal(array, refValue);
-		Assert.True(result.Equals(array));
-		Assert.Equal(Object.Equals(array, array2), result.Equals(array2));
+		PInvokeAssert.NotNull(result);
+		PInvokeAssert.Equal(array, result.Value);
+		PInvokeAssert.Equal(array, refValue);
+		PInvokeAssert.True(result.Equals(array));
+		PInvokeAssert.Equal(Object.Equals(array, array2), result.Equals(array2));
 #if NET8_0_OR_GREATER
 		Assert.True(Unsafe.AreSame(in result.Reference, ref mutableValueRef));
 		Assert.False(Unsafe.AreSame(in result.Reference, ref array));
 #else
-		Assert.True(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref mutableValueRef));
-		Assert.False(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref array));
+		PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref mutableValueRef));
+		PInvokeAssert.False(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref array));
 #endif
-		Assert.False(result.Equals(result2));
-		Assert.True(result.Equals(result3));
-		Assert.False(result.Equals(default(IReferenceable<T>)));
+		PInvokeAssert.False(result.Equals(result2));
+		PInvokeAssert.True(result.Equals(result3));
+		PInvokeAssert.False(result.Equals(default(IReferenceable<T>)));
 	}
 }

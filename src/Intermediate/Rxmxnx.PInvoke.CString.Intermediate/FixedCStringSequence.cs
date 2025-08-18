@@ -111,8 +111,7 @@ public readonly unsafe ref struct FixedCStringSequence
 	private ReadOnlyFixedContext<Byte> GetFixedCString(Int32 index)
 	{
 		CString cstr = this._values![index];
-		ReadOnlySpan<Byte> span = cstr;
-		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+		fixed (void* ptr = cstr) // Use Pinnable reference
 			return new(ptr, cstr.Length, this._isValid!);
 	}
 }

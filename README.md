@@ -16,6 +16,9 @@
     - [Features](#features)
 - [Getting Started](#getting-started)
     - [Installation](#installation)
+    - [Framework Support](#framework-support)
+    - [AOT Support](#aot-support)
+    - [Visual Basic .NET Support](#visual-basic-net-support)
 - [Abstractions](#abstractions)
     - [Reference Interfaces](#reference-interfaces)
     - [Wrapper Interfaces](#wrapper-interfaces)
@@ -79,7 +82,7 @@ dotnet add package Rxmxnx.PInvoke.Extensions
 **Note:** This package officially supports .NET 8.0 and later. However, this package offers limited support for
 .NET Standard 2.1-compatible runtimes and legacy support for .NET 7.0 and earlier.
 
-### Framework Support
+## Framework Support
 
 This package guarantees both **binary and source compatibility across all supported target frameworks**, from **.NET
 Standard 2.1** up to **.NET 9.0**.
@@ -171,28 +174,31 @@ target frameworks, along with the type of support provided for each one.
 
 </details>
 
-1. Retrieving references to multidimensional array data, AOT detection, and managed buffers handling should be performed
-   via reflection.
+1. AOT detection should be performed via reflection. Retrieving references to multidimensional array data should be done
+   using static delegates, and managed buffer registration should be handled through buffer allocation.
 2. Uses CoreCLR implementations from .NET 6.0. Simpler alternatives may be substituted in .NET Standard 2.1.
 3. Internally relies on `Enum.GetName(Type, Object)`.
 4. Value-type pointers support `ref struct` generics, but due to C# compiler restrictions, some methods must be
    implemented in IL.
 
-### AOT Support
+## AOT Support
 
-This package is AOT-friendly, and almost all of its features support both Mono AOT and Native AOT, including full AOT
-and the obsolete reflection-free mode.
+This package is AOT-friendly, all of its features support both Mono AOT and Native AOT, including full AOT and the
+obsolete reflection-free mode.
 
 The only features that require reflection are:
 
-* Retrieving references from multidimensional arrays when targeting .NET 5.0 or earlier.
 * Native AOT detection when targeting .NET 5.0 or earlier.
-* Handling managed buffers when targeting .NET 6.0 or earlier.
 
 Starting with .NET 7.0, the use of reflection can be completely avoided.
 
-**Note:** Retrieving references from multidimensional arrays of `unmanaged` elements does **not** rely on reflection,
-even when targeting .NET 5.0 or earlier.
+## Visual Basic .NET Support
+
+Some APIs in `Rxmxnx.PInvoke.Extensions` are not directly compatible with Visual Basic .NET due to language
+limitations. The `Rxmxnx.PInvoke.VisualBasic` namespace provides equivalent delegate definitions specifically designed
+for use in **Visual Basic .NET**.
+
+These delegates provide VB.NET-compatible access to selected non-compliant `Rxmxnx.PInvoke.Extensions` APIs.
 
 ---
 
@@ -2459,6 +2465,12 @@ Additional functionality for working with delegates.
   Prevents the garbage collector from relocating a delegate in memory, fixes its address, invokes the function that
   returns a `TResult` value, passing an additional argument to the function.
   </details>
+- <details>
+  <summary>GetFixedMethod&lt;TDelegate&gt;(this TDelegate?)</summary>
+
+  Creates an `IFixedMethod<TDelegate>.IDisposable` instance by marshalling the current `TDelegate` instance,
+  ensuring a safe interop context.
+  </details>
 
 </details>
 
@@ -2472,14 +2484,14 @@ Additional functionality for working with memory blocks.
 
   Indicates whether the given `Span<T>` instance represents a literal or hardcoded memory region.
 
-  **Note:** This function is currently available only on Windows, Linux, and macOS.
+  **Note:** This function is currently available only on Windows, Linux, macOS and FreeBSD.
   </details>
 - <details>
   <summary>IsLiteral&lt;T&gt;(this ReadOnlySpan&lt;T&gt;)</summary>
 
   Indicates whether the given `ReadOnlySpan<T>` instance represents a literal or hardcoded memory region.
 
-  **Note:** This function is currently available only on Windows, Linux, and macOS.
+  **Note:** This function is currently available only on Windows, Linux, macOS and FreeBSD.
   </details>
 - <details>
   <summary>MayBeNonLiteral&lt;T&gt;(this ReadOnlySpan&lt;T&gt;)</summary>
@@ -3068,12 +3080,87 @@ Provides information about the Ahead-of-Time compilation.
   Indicates whether runtime reflection is disabled.
   </details>
 - <details>
+  <summary>IsPlatformTrimmed</summary>
+  Indicates whether the current runtime is trimmed for the current platform.
+
+  **Note:** Starting with .NET 5.0, this property enables trimming by allowing the linker to remove unreachable code.
+  </details>
+- <details>
   <summary>IsNativeAot</summary>
   Indicates whether the current runtime is NativeAOT. 
 
   **Note:** Starting with .NET 6.0, this property enables trimming by allowing the linker to remove unreachable code.
   </details>
 
+</details>
+
+<details>
+  <summary>SystemInfo</summary>
+
+Provides information about the runtime system.
+
+#### Static Properties:
+
+- <details>
+  <summary>IsMonoRuntime</summary>
+  Indicates whether the current runtime is Mono.
+  </details>
+- <details>
+  <summary>IsWebRuntime</summary>
+  Indicates whether the current runtime is Web.
+
+  **Note:** Starting with .NET 8.0, this property enables trimming by allowing the linker to remove unreachable code.
+  </details>
+- <details>
+  <summary>IsWindows</summary>
+  Indicates whether the current runtime is running on a Windows System.
+
+  **Note:** Starting with .NET 5.0, this property enables trimming by allowing the linker to remove unreachable code.
+  </details>
+- <details>
+  <summary>IsLinux</summary>
+  Indicates whether the current runtime is running on a Linux System.
+
+  **Note:** Starting with .NET 5.0, this property enables trimming by allowing the linker to remove unreachable code.
+  </details>
+- <details>
+  <summary>IsMac</summary>
+  Indicates whether the current runtime is running on a macOS System.
+
+  **Note:** Starting with .NET 6.0, this property enables trimming by allowing the linker to remove unreachable code.
+  </details>
+- <details>
+  <summary>IsFreeBsd</summary>
+  Indicates whether the current runtime is running on a FreeBSD System.
+
+  **Note:** Starting with .NET 5.0, this property enables trimming by allowing the linker to remove unreachable code.
+  </details>
+- <details>
+  <summary>IsNetBsd</summary>
+  Indicates whether the current runtime is running on a NetBSD System.
+  </details>
+- <details>
+  <summary>IsSolaris</summary>
+  Indicates whether the current runtime is running on a Solaris System.
+  </details>
+
+#### Static Methods:
+
+- <details>
+  <summary>IsOsPlatform(String?)</summary>
+  Indicates whether the current runtime is running on the specified platform.
+  </details>
+- <details>
+  <summary>IsOsPlatform(String?[])</summary>
+  Indicates whether the current runtime is running on one of the specified platforms.
+  </details>
+- <details>
+  <summary>IsOsPlatform(ReadOnlySpan&lt;String?&gt;)</summary>
+  Indicates whether the current runtime is running on one of the specified platforms.
+  </details>
+
+**Note:** Starting with .NET 9.0, `params` is used with `ReadOnlySpan<String?>` arguments instead of `String?[]`
+arguments.
 </details>
 
 <details>
@@ -3156,6 +3243,10 @@ This class allows to allocate buffers on stack if possible.
 
   **Note:** `T` is `struct`. Reflection is always used by this method, and BufferAutoCompositionEnabled must be enabled.
   </details>
+
+**Note:** The nested static class `VisualBasic` provides VB.NET-compatible `Alloc` methods. These are designed to
+accommodate language constraints in Visual Basic and **are not recommended for use in other .NET languages**, due to
+minor performance overhead.
 
 </details>
 
@@ -3482,6 +3573,12 @@ Set of utilities for exchange data within the P/Invoke context.
   Prevents the garbage collector from reallocating given spans and fixes their memory addresses until func completes.
 
   **Note:** Starting with .NET 9.0, `TArg` can be a `ref struct`.
+  </details>
+- <details>
+  <summary>GetFixedMethod&lt;TDelegate&gt;(TDelegate?)</summary>
+
+  Creates an `IFixedMethod<TDelegate>.IDisposable` instance by marshalling the current `TDelegate` instance,
+  ensuring a safe interop context.
   </details>
 
 </details>

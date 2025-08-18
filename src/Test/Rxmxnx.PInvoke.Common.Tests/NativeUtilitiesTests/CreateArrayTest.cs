@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class CreateArrayTest
@@ -7,7 +12,7 @@ public sealed class CreateArrayTest
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
-	internal void NormalTest()
+	public void NormalTest()
 	{
 		CreateArrayTest.CreateTest<Boolean>();
 		CreateArrayTest.CreateTest<Byte>();
@@ -32,7 +37,7 @@ public sealed class CreateArrayTest
 			}
 		});
 
-		Assert.Equal(list, arr);
+		PInvokeAssert.Equal(list, arr);
 	}
 #if !NET6_0_OR_GREATER
 	private static class Random

@@ -1,29 +1,34 @@
-﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.CStringTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class SegmentTests
 {
 	[Fact]
-	internal void InvalidTest()
+	public void InvalidTest()
 	{
 		const Int32 zero = 0;
 		Int32 varIndex = 1;
 
-		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[varIndex..]);
-		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[..varIndex]);
+		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[varIndex..]);
+		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[..varIndex]);
 
 		varIndex = -1;
-		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[varIndex..]);
-		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[..varIndex]);
+		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[varIndex..]);
+		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[..varIndex]);
 
-		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(varIndex, zero));
-		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(zero, 1));
-		Assert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(varIndex, 1));
+		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(varIndex, zero));
+		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(zero, 1));
+		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(varIndex, 1));
 	}
 
 	[Fact]
-	internal void Test()
+	public void Test()
 	{
 		for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
 		{
@@ -48,7 +53,7 @@ public sealed class SegmentTests
 		IReadOnlyList<Int32> cstrIndex = DecodedRune.GetIndices(cstr);
 		Int32 count = strIndex.Count;
 
-		Assert.Equal(count, cstrIndex.Count);
+		PInvokeAssert.Equal(count, cstrIndex.Count);
 
 		for (Int32 i = 0; i < count; i++)
 		{
@@ -63,7 +68,7 @@ public sealed class SegmentTests
 			String strSeg = str[strStart..strEnd];
 			CString cstrSeg = cstr[cstrStart..cstrEnd];
 
-			Assert.Equal(strSeg, cstrSeg.ToString());
+			PInvokeAssert.Equal(strSeg, cstrSeg.ToString());
 			SegmentTests.AssertSegment(cstr, cstrSeg, cstrStart, cstrEnd);
 			SegmentTests.AssertSegment(cstr, cstr.Slice(cstrStart), cstrStart, cstr.Length);
 
@@ -78,36 +83,36 @@ public sealed class SegmentTests
 		if (cstrSeg.Length == 0)
 		{
 			using MemoryHandle _ = CString.Empty.TryPin(out Boolean pinned);
-			Assert.Same(CString.Empty, cstrSeg);
-			Assert.Equal(!pinned, cstrSeg.IsFunction);
-			Assert.False(cstrSeg.IsReference);
-			Assert.True(cstrSeg.IsNullTerminated);
+			PInvokeAssert.Same(CString.Empty, cstrSeg);
+			PInvokeAssert.Equal(!pinned, cstrSeg.IsFunction);
+			PInvokeAssert.False(cstrSeg.IsReference);
+			PInvokeAssert.True(cstrSeg.IsNullTerminated);
 		}
 		else
 		{
-			Assert.Equal(cstr.IsReference, cstrSeg.IsReference);
-			Assert.Equal(cstr.IsFunction, cstrSeg.IsFunction);
-			Assert.Equal(cstr.IsSegmented || (!cstr.IsReference && (cstrStart != 0 || cstrEnd != cstr.Length)),
-			             cstrSeg.IsSegmented);
-			Assert.Equal(cstrEnd == cstr.Length && cstr.IsNullTerminated, cstrSeg.IsNullTerminated);
+			PInvokeAssert.Equal(cstr.IsReference, cstrSeg.IsReference);
+			PInvokeAssert.Equal(cstr.IsFunction, cstrSeg.IsFunction);
+			PInvokeAssert.Equal(cstr.IsSegmented || (!cstr.IsReference && (cstrStart != 0 || cstrEnd != cstr.Length)),
+			                    cstrSeg.IsSegmented);
+			PInvokeAssert.Equal(cstrEnd == cstr.Length && cstr.IsNullTerminated, cstrSeg.IsNullTerminated);
 
 			for (Int32 i = 0; i < cstrSeg.Length; i++)
-				Assert.Equal(cstr[i + cstrStart], cstrSeg[i]);
+				PInvokeAssert.Equal(cstr[i + cstrStart], cstrSeg[i]);
 
 			if (cstr is { IsSegmented: false, IsFunction: false, IsReference: false, })
 				if (!cstrSeg.IsSegmented)
-					Assert.Equal(CString.GetBytes(cstr), CString.GetBytes(cstrSeg));
+					PInvokeAssert.Equal(CString.GetBytes(cstr), CString.GetBytes(cstrSeg));
 				else
 					try
 					{
-						Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstrSeg));
+						PInvokeAssert.Throws<InvalidOperationException>(() => CString.GetBytes(cstrSeg));
 					}
 					catch (Exception)
 					{
 						// For some reason sometimes the test fails even though it shouldn't.
 						// The test must be run again so that it does not fail.
-						Assert.NotEqual(cstr, cstrSeg);
-						Assert.Throws<InvalidOperationException>(() => CString.GetBytes(cstrSeg));
+						PInvokeAssert.NotEqual(cstr, cstrSeg);
+						PInvokeAssert.Throws<InvalidOperationException>(() => CString.GetBytes(cstrSeg));
 					}
 		}
 		SegmentTests.AssertClone(cstrSeg);
@@ -115,14 +120,14 @@ public sealed class SegmentTests
 	private static void AssertClone(CString cstrSeg)
 	{
 		CString cloneSeg = (CString)cstrSeg.Clone();
-		Assert.Equal(cstrSeg.ToString(), cloneSeg.ToString());
-		Assert.Equal(cstrSeg.Length, cloneSeg.Length);
-		Assert.False(cloneSeg.IsFunction);
-		Assert.False(cloneSeg.IsReference);
-		Assert.False(cloneSeg.IsSegmented);
-		Assert.True(cloneSeg.IsNullTerminated);
+		PInvokeAssert.Equal(cstrSeg.ToString(), cloneSeg.ToString());
+		PInvokeAssert.Equal(cstrSeg.Length, cloneSeg.Length);
+		PInvokeAssert.False(cloneSeg.IsFunction);
+		PInvokeAssert.False(cloneSeg.IsReference);
+		PInvokeAssert.False(cloneSeg.IsSegmented);
+		PInvokeAssert.True(cloneSeg.IsNullTerminated);
 
-		Assert.Equal(cstrSeg.Length + 1, CString.GetBytes(cloneSeg).Length);
+		PInvokeAssert.Equal(cstrSeg.Length + 1, CString.GetBytes(cloneSeg).Length);
 	}
 #if !NET6_0_OR_GREATER
 	private static class Random

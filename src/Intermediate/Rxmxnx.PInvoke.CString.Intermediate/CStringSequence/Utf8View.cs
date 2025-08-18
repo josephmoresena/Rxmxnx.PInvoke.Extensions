@@ -1,4 +1,6 @@
-using System.Collections;
+#if NET9_0_OR_GREATER
+using IEnumerator = System.Collections.IEnumerator;
+#endif
 
 namespace Rxmxnx.PInvoke;
 

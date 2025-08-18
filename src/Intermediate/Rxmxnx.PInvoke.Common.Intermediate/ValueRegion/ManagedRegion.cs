@@ -57,7 +57,7 @@ public partial class ValueRegion<T>
 			try
 			{
 				handle = GCHandle.Alloc(array, type);
-				return true;
+				return handle.IsAllocated;
 			}
 			catch (Exception)
 			{

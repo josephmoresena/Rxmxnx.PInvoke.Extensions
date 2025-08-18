@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.BinaryExtensionsTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.BinaryExtensionsTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class AsValueTest
@@ -7,37 +12,37 @@ public sealed class AsValueTest
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
-	internal void ByteTest() => AsValueTest.Test<Byte>();
+	public void ByteTest() => AsValueTest.Test<Byte>();
 	[Fact]
-	internal void CharTest() => AsValueTest.Test<Char>();
+	public void CharTest() => AsValueTest.Test<Char>();
 	[Fact]
-	internal void DateTimeTest() => AsValueTest.Test<DateTime>();
+	public void DateTimeTest() => AsValueTest.Test<DateTime>();
 	[Fact]
-	internal void DecimalTest() => AsValueTest.Test<Decimal>();
+	public void DecimalTest() => AsValueTest.Test<Decimal>();
 	[Fact]
-	internal void DoubleTest() => AsValueTest.Test<Double>();
+	public void DoubleTest() => AsValueTest.Test<Double>();
 	[Fact]
-	internal void GuidTest() => AsValueTest.Test<Guid>();
+	public void GuidTest() => AsValueTest.Test<Guid>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => AsValueTest.Test<Half>();
 #endif
 	[Fact]
-	internal void Int16Test() => AsValueTest.Test<Int16>();
+	public void Int16Test() => AsValueTest.Test<Int16>();
 	[Fact]
-	internal void Int32Test() => AsValueTest.Test<Int32>();
+	public void Int32Test() => AsValueTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => AsValueTest.Test<Int64>();
+	public void Int64Test() => AsValueTest.Test<Int64>();
 	[Fact]
-	internal void SByteTest() => AsValueTest.Test<SByte>();
+	public void SByteTest() => AsValueTest.Test<SByte>();
 	[Fact]
-	internal void SingleTest() => AsValueTest.Test<Single>();
+	public void SingleTest() => AsValueTest.Test<Single>();
 	[Fact]
-	internal void UInt16Test() => AsValueTest.Test<UInt16>();
+	public void UInt16Test() => AsValueTest.Test<UInt16>();
 	[Fact]
-	internal void UInt32Test() => AsValueTest.Test<UInt32>();
+	public void UInt32Test() => AsValueTest.Test<UInt32>();
 	[Fact]
-	internal void UInt64Test() => AsValueTest.Test<UInt64>();
+	public void UInt64Test() => AsValueTest.Test<UInt64>();
 
 	private static unsafe void Test<T>() where T : unmanaged
 	{
@@ -51,14 +56,14 @@ public sealed class AsValueTest
 #if NET8_0_OR_GREATER
 		Assert.True(Unsafe.AreSame(ref refValue, in refReadOnlyValue));
 #else
-		Assert.True(Unsafe.AreSame(ref refValue, ref Unsafe.AsRef(in refReadOnlyValue)));
+		PInvokeAssert.True(Unsafe.AreSame(ref refValue, ref Unsafe.AsRef(in refReadOnlyValue)));
 #endif
-		Assert.Equal(expected, refValue);
+		PInvokeAssert.Equal(expected, refValue);
 
-		Assert.Throws<InsufficientMemoryException>(() => AsValueTest.InvalidTest<T>(true));
-		Assert.Throws<InvalidCastException>(() => AsValueTest.InvalidTest<T>(false));
-		Assert.Throws<InsufficientMemoryException>(() => AsValueTest.InvalidReadOnlyTest<T>(true));
-		Assert.Throws<InvalidCastException>(() => AsValueTest.InvalidReadOnlyTest<T>(false));
+		PInvokeAssert.Throws<InsufficientMemoryException>(() => AsValueTest.InvalidTest<T>(true));
+		PInvokeAssert.Throws<InvalidCastException>(() => AsValueTest.InvalidTest<T>(false));
+		PInvokeAssert.Throws<InsufficientMemoryException>(() => AsValueTest.InvalidReadOnlyTest<T>(true));
+		PInvokeAssert.Throws<InvalidCastException>(() => AsValueTest.InvalidReadOnlyTest<T>(false));
 	}
 	private static unsafe T GetValue<T>(ReadOnlySpan<Byte> bytes) where T : unmanaged
 	{

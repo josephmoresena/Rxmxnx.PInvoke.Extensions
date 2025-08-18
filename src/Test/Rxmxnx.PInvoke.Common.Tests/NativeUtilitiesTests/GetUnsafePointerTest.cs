@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 #pragma warning disable CS8500
@@ -7,7 +12,7 @@ public sealed class GetUnsafePointerTest
 {
 	private static readonly IFixture fixture = ManagedStruct.Register(new Fixture());
 	[Fact]
-	internal void DelegateTest()
+	public void DelegateTest()
 	{
 		FuncPtr<GetProcessDelegate> getCurrentProcessPtr =
 			NativeUtilities.GetUnsafeFuncPtr<GetProcessDelegate>(Process.GetCurrentProcess);
@@ -16,24 +21,28 @@ public sealed class GetUnsafePointerTest
 		FuncPtr<GetNativeMethodTest.GetInt32> getProcessStaticIdPtr =
 			NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetInt32>(GetProcessIdStaticFunc);
 
-		Assert.Equal(getProcessStaticIdPtr.Invoke(), getCurrentProcessPtr.Invoke().Id);
-		Assert.Equal(getCurrentProcessPtr,
-		             NativeUtilities.GetUnsafeFuncPtr<GetProcessDelegate>(Process.GetCurrentProcess));
+		PInvokeAssert.Equal(getProcessStaticIdPtr.Invoke(), getCurrentProcessPtr.Invoke().Id);
+		PInvokeAssert.Equal(getCurrentProcessPtr,
+		                    NativeUtilities.GetUnsafeFuncPtr<GetProcessDelegate>(Process.GetCurrentProcess));
+#if NETCOREAPP
 		Assert.NotEqual(getProcessIdPtr,
 		                NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetInt32>(GetProcessIdFunc));
-		Assert.Equal(getProcessStaticIdPtr,
-		             NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetInt32>(GetProcessIdStaticFunc));
+#endif
+		PInvokeAssert.Equal(getProcessStaticIdPtr,
+		                    NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetInt32>(GetProcessIdStaticFunc));
 
+#if NETCOREAPP
 		Assert.Throws<ArgumentException>(() => NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetT<Int32>>(
 			                                 Thread.GetCurrentProcessorId));
 		Assert.Throws<ArgumentException>(() => NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetT<Int32>>(
 			                                 GetProcessIdStaticFunc));
 		Assert.Throws<ArgumentException>(() => NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetT<Int32>>(
 			                                 GetProcessIdFunc));
+#endif
 
-		Assert.Equal(getCurrentProcessPtr.Invoke, Process.GetCurrentProcess);
-		Assert.Equal(getProcessIdPtr.Invoke, GetProcessIdFunc);
-		Assert.Equal(getProcessStaticIdPtr.Invoke, GetProcessIdStaticFunc);
+		PInvokeAssert.Equal(getCurrentProcessPtr.Invoke, Process.GetCurrentProcess);
+		PInvokeAssert.Equal(getProcessIdPtr.Invoke, GetProcessIdFunc);
+		PInvokeAssert.Equal(getProcessStaticIdPtr.Invoke, GetProcessIdStaticFunc);
 
 		return;
 
@@ -46,53 +55,53 @@ public sealed class GetUnsafePointerTest
 #endif
 	}
 	[Fact]
-	internal void BooleanTest() => GetUnsafePointerTest.UnmanagedTest<Boolean>();
+	public void BooleanTest() => GetUnsafePointerTest.UnmanagedTest<Boolean>();
 	[Fact]
-	internal void ByteTest() => GetUnsafePointerTest.UnmanagedTest<Byte>();
+	public void ByteTest() => GetUnsafePointerTest.UnmanagedTest<Byte>();
 	[Fact]
-	internal void CharTest() => GetUnsafePointerTest.UnmanagedTest<Char>();
+	public void CharTest() => GetUnsafePointerTest.UnmanagedTest<Char>();
 	[Fact]
-	internal void DateTimeTest() => GetUnsafePointerTest.UnmanagedTest<DateTime>();
+	public void DateTimeTest() => GetUnsafePointerTest.UnmanagedTest<DateTime>();
 	[Fact]
-	internal void DecimalTest() => GetUnsafePointerTest.UnmanagedTest<Decimal>();
+	public void DecimalTest() => GetUnsafePointerTest.UnmanagedTest<Decimal>();
 	[Fact]
-	internal void DoubleTest() => GetUnsafePointerTest.UnmanagedTest<Double>();
+	public void DoubleTest() => GetUnsafePointerTest.UnmanagedTest<Double>();
 	[Fact]
-	internal void GuidTest() => GetUnsafePointerTest.UnmanagedTest<Guid>();
+	public void GuidTest() => GetUnsafePointerTest.UnmanagedTest<Guid>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => GetUnsafePointerTest.UnmanagedTest<Half>();
 #endif
 	[Fact]
-	internal void Int16Test() => GetUnsafePointerTest.UnmanagedTest<Int16>();
+	public void Int16Test() => GetUnsafePointerTest.UnmanagedTest<Int16>();
 	[Fact]
-	internal void Int32Test() => GetUnsafePointerTest.UnmanagedTest<Int32>();
+	public void Int32Test() => GetUnsafePointerTest.UnmanagedTest<Int32>();
 	[Fact]
-	internal void Int64Test() => GetUnsafePointerTest.UnmanagedTest<Int64>();
+	public void Int64Test() => GetUnsafePointerTest.UnmanagedTest<Int64>();
 	[Fact]
-	internal void SByteTest() => GetUnsafePointerTest.UnmanagedTest<SByte>();
+	public void SByteTest() => GetUnsafePointerTest.UnmanagedTest<SByte>();
 	[Fact]
-	internal void SingleTest() => GetUnsafePointerTest.UnmanagedTest<Single>();
+	public void SingleTest() => GetUnsafePointerTest.UnmanagedTest<Single>();
 	[Fact]
-	internal void UInt16Test() => GetUnsafePointerTest.UnmanagedTest<UInt16>();
+	public void UInt16Test() => GetUnsafePointerTest.UnmanagedTest<UInt16>();
 	[Fact]
-	internal void UInt32Test() => GetUnsafePointerTest.UnmanagedTest<UInt32>();
+	public void UInt32Test() => GetUnsafePointerTest.UnmanagedTest<UInt32>();
 	[Fact]
-	internal void UInt64Test() => GetUnsafePointerTest.UnmanagedTest<UInt64>();
+	public void UInt64Test() => GetUnsafePointerTest.UnmanagedTest<UInt64>();
 	[Fact]
-	internal void ManagedStructTest() => GetUnsafePointerTest.ManagedTest<ManagedStruct>();
+	public void ManagedStructTest() => GetUnsafePointerTest.ManagedTest<ManagedStruct>();
 	[Fact]
-	internal void StringTest() => GetUnsafePointerTest.ManagedTest<String>();
+	public void StringTest() => GetUnsafePointerTest.ManagedTest<String>();
 	private static unsafe void UnmanagedTest<T>() where T : unmanaged
 	{
 		T value = GetUnsafePointerTest.fixture.Create<T>();
 		ref readonly T refValue = ref value;
 		fixed (void* ptr = &refValue)
 		{
-			Assert.Equal((IntPtr)ptr, NativeUtilities.GetUnsafeIntPtr(value));
-			Assert.Equal((UIntPtr)ptr, NativeUtilities.GetUnsafeUIntPtr(value));
-			Assert.Equal((ReadOnlyValPtr<T>)(IntPtr)ptr, NativeUtilities.GetUnsafeValPtr(value));
-			Assert.Equal((ValPtr<T>)(IntPtr)ptr, NativeUtilities.GetUnsafeValPtrFromRef(ref value));
+			PInvokeAssert.Equal((IntPtr)ptr, NativeUtilities.GetUnsafeIntPtr(value));
+			PInvokeAssert.Equal((UIntPtr)ptr, NativeUtilities.GetUnsafeUIntPtr(value));
+			PInvokeAssert.Equal((ReadOnlyValPtr<T>)(IntPtr)ptr, NativeUtilities.GetUnsafeValPtr(value));
+			PInvokeAssert.Equal((ValPtr<T>)(IntPtr)ptr, NativeUtilities.GetUnsafeValPtrFromRef(ref value));
 		}
 	}
 	private static unsafe void ManagedTest<T>()
@@ -101,8 +110,8 @@ public sealed class GetUnsafePointerTest
 		ref T refValue = ref value;
 		fixed (void* ptr = &refValue)
 		{
-			Assert.Equal((ReadOnlyValPtr<T>)(IntPtr)ptr, NativeUtilities.GetUnsafeValPtr(value));
-			Assert.Equal((ValPtr<T>)(IntPtr)ptr, NativeUtilities.GetUnsafeValPtrFromRef(ref value));
+			PInvokeAssert.Equal((ReadOnlyValPtr<T>)(IntPtr)ptr, NativeUtilities.GetUnsafeValPtr(value));
+			PInvokeAssert.Equal((ValPtr<T>)(IntPtr)ptr, NativeUtilities.GetUnsafeValPtrFromRef(ref value));
 		}
 	}
 	private delegate Process GetProcessDelegate();

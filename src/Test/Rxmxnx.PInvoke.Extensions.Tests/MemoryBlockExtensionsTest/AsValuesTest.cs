@@ -1,5 +1,10 @@
-﻿namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class AsValuesTest
@@ -7,37 +12,37 @@ public sealed class AsValuesTest
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
-	internal void ByteTest() => AsValuesTest.Test<Byte>();
+	public void ByteTest() => AsValuesTest.Test<Byte>();
 	[Fact]
-	internal void CharTest() => AsValuesTest.Test<Char>();
+	public void CharTest() => AsValuesTest.Test<Char>();
 	[Fact]
-	internal void DateTimeTest() => AsValuesTest.Test<DateTime>();
+	public void DateTimeTest() => AsValuesTest.Test<DateTime>();
 	[Fact]
-	internal void DecimalTest() => AsValuesTest.Test<Decimal>();
+	public void DecimalTest() => AsValuesTest.Test<Decimal>();
 	[Fact]
-	internal void DoubleTest() => AsValuesTest.Test<Double>();
+	public void DoubleTest() => AsValuesTest.Test<Double>();
 	[Fact]
-	internal void GuidTest() => AsValuesTest.Test<Guid>();
+	public void GuidTest() => AsValuesTest.Test<Guid>();
 #if NET5_0_OR_GREATER
 	[Fact]
 	internal void HalfTest() => AsValuesTest.Test<Half>();
 #endif
 	[Fact]
-	internal void Int16Test() => AsValuesTest.Test<Int16>();
+	public void Int16Test() => AsValuesTest.Test<Int16>();
 	[Fact]
-	internal void Int32Test() => AsValuesTest.Test<Int32>();
+	public void Int32Test() => AsValuesTest.Test<Int32>();
 	[Fact]
-	internal void Int64Test() => AsValuesTest.Test<Int64>();
+	public void Int64Test() => AsValuesTest.Test<Int64>();
 	[Fact]
-	internal void SByteTest() => AsValuesTest.Test<SByte>();
+	public void SByteTest() => AsValuesTest.Test<SByte>();
 	[Fact]
-	internal void SingleTest() => AsValuesTest.Test<Single>();
+	public void SingleTest() => AsValuesTest.Test<Single>();
 	[Fact]
-	internal void UInt16Test() => AsValuesTest.Test<UInt16>();
+	public void UInt16Test() => AsValuesTest.Test<UInt16>();
 	[Fact]
-	internal void UInt32Test() => AsValuesTest.Test<UInt32>();
+	public void UInt32Test() => AsValuesTest.Test<UInt32>();
 	[Fact]
-	internal void UInt64Test() => AsValuesTest.Test<UInt64>();
+	public void UInt64Test() => AsValuesTest.Test<UInt64>();
 
 	private static void Test<T>() where T : unmanaged
 	{
@@ -71,25 +76,25 @@ public sealed class AsValuesTest
 		T2[] valuesT2 = spanT2.ToArray();
 		Byte[] resiudalBytes = spanResidual.ToArray();
 
-		Assert.Equal(valuesT2, span.AsValues<T, T2>().ToArray());
-		Assert.Equal(valuesT2, readOnlySpan.AsValues<T, T2>().ToArray());
-		Assert.Equal(valuesT2, span.AsValues<T, T2>(out Span<Byte> residual).ToArray());
-		Assert.Equal(resiudalBytes, residual.ToArray());
-		Assert.Equal(valuesT2, span.AsValues<T, T2>(out ReadOnlySpan<Byte> residualRo).ToArray());
-		Assert.Equal(resiudalBytes, residualRo.ToArray());
-		Assert.Equal(valuesT2, readOnlySpan.AsValues<T, T2>(out ReadOnlySpan<Byte> residualRo2).ToArray());
-		Assert.Equal(resiudalBytes, residualRo2.ToArray());
+		PInvokeAssert.Equal(valuesT2, span.AsValues<T, T2>().ToArray());
+		PInvokeAssert.Equal(valuesT2, readOnlySpan.AsValues<T, T2>().ToArray());
+		PInvokeAssert.Equal(valuesT2, span.AsValues<T, T2>(out Span<Byte> residual).ToArray());
+		PInvokeAssert.Equal(resiudalBytes, residual.ToArray());
+		PInvokeAssert.Equal(valuesT2, span.AsValues<T, T2>(out ReadOnlySpan<Byte> residualRo).ToArray());
+		PInvokeAssert.Equal(resiudalBytes, residualRo.ToArray());
+		PInvokeAssert.Equal(valuesT2, readOnlySpan.AsValues<T, T2>(out ReadOnlySpan<Byte> residualRo2).ToArray());
+		PInvokeAssert.Equal(resiudalBytes, residualRo2.ToArray());
 
-		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(spanResidual),
-		                           ref MemoryMarshal.GetReference(residual)));
-		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(spanResidual),
-		                           ref MemoryMarshal.GetReference(residualRo)));
-		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(spanResidual),
-		                           ref MemoryMarshal.GetReference(residualRo2)));
+		PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(spanResidual),
+		                                  ref MemoryMarshal.GetReference(residual)));
+		PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(spanResidual),
+		                                  ref MemoryMarshal.GetReference(residualRo)));
+		PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(spanResidual),
+		                                  ref MemoryMarshal.GetReference(residualRo2)));
 
-		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(spanT2),
-		                           ref MemoryMarshal.GetReference(span.AsValues<T, T2>())));
-		Assert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(spanT2),
-		                           ref MemoryMarshal.GetReference(readOnlySpan.AsValues<T, T2>())));
+		PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(spanT2),
+		                                  ref MemoryMarshal.GetReference(span.AsValues<T, T2>())));
+		PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(spanT2),
+		                                  ref MemoryMarshal.GetReference(readOnlySpan.AsValues<T, T2>())));
 	}
 }

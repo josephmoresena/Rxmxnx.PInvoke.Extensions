@@ -93,7 +93,12 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	public override String ToString() => this._value.ToString();
+	public override String ToString()
+#if NETCOREAPP
+		=> this._value.ToString();
+#else
+		=> Char.ConvertFromUtf32(this.Value);
+#endif
 
 	/// <summary>
 	/// Decodes the <see cref="Rune"/> at the beginning of the provided UTF-8 source buffer and

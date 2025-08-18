@@ -29,13 +29,9 @@ SOFTWARE.
 // Adopted and adapted by Joseph Moreno in 2025 based on code from .NET 6.0 CoreCLR
 // (System.Runtime.InteropServices.MemoryMarshal / System.String /  System.SpanHelpers )
 
-#if !PACKAGE || !NET6_0_OR_GREATER
-
-using System_IntPtr = System.IntPtr;
-#if NETCOREAPP
+#if NETCOREAPP && (!PACKAGE || !NET6_0_OR_GREATER)
 using UIntPtr = nuint;
 using IntPtr = nint;
-#endif
 
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 
@@ -45,23 +41,9 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1199)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS907)]
 #endif
-internal static
-#if NETCOREAPP
-	unsafe
-#endif
-	partial class MemoryMarshalCompat
+internal static unsafe partial class MemoryMarshalCompat
 {
 #pragma warning disable CA2020
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	private static ref Byte GetArrayDataReference(MethodTableImpl mtpRef, Array array)
-	{
-		ref Byte rawDataRef = ref Unsafe.As<CoreClrRawData>(array).Data;
-		UIntPtr byteOffset = (UIntPtr)(mtpRef.BaseSize - 2 * System_IntPtr.Size);
-		return ref Unsafe.AddByteOffset(ref rawDataRef, MemoryMarshalCompat.ToByteOffset(byteOffset));
-	}
-#if NETCOREAPP
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -657,7 +639,6 @@ internal static
 				=> maskedSelectedLanes;
 		}
 	}
-#endif
 #endif
 #pragma warning restore CA2020
 }

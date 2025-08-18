@@ -1,4 +1,9 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if PACKAGE && !NETCOREAPP
+using IEnumerator = System.Collections.IEnumerator;
+using IEnumerable = System.Collections.IEnumerable;
+#endif
+
+namespace Rxmxnx.PInvoke;
 
 public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequence<CString>
 {
@@ -9,9 +14,9 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 	Int32 IEnumerableSequence<CString>.GetSize() => this._lengths.Length;
 	CString IEnumerableSequence<CString>.GetItem(Int32 index) => this[index];
 #if PACKAGE && !NETCOREAPP
-	IEnumerator<CString> IEnumerable<CString>.GetEnumerator() 
+	IEnumerator<CString> IEnumerable<CString>.GetEnumerator()
 		=> IEnumerableSequence.CreateEnumerator(this, CStringSequence.DisposeEnumeration);
-	System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+	IEnumerator IEnumerable.GetEnumerator()
 		=> IEnumerableSequence.CreateEnumerator(this, CStringSequence.DisposeEnumeration);
 #else
 	void IEnumerableSequence<CString>.DisposeEnumeration() => CStringSequence.DisposeEnumeration(this);

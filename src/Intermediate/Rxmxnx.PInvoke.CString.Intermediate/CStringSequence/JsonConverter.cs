@@ -45,13 +45,15 @@ public partial class CStringSequence
 				return;
 			}
 
+			Int32 item = 0;
 			Utf8View view = new(value, true);
+			ReadOnlySpan<Int32?> lengths = value?._lengths;
 
 			writer.WriteStartArray();
 			foreach (ReadOnlySpan<Byte> utf8Text in view)
 			{
-				Boolean isNull = Unsafe.IsNullRef(ref MemoryMarshal.GetReference(utf8Text));
-				CString.JsonConverter.Write(writer, utf8Text, isNull, false);
+				CString.JsonConverter.Write(writer, utf8Text, !lengths[item].HasValue, false);
+				item++;
 			}
 			writer.WriteEndArray();
 		}

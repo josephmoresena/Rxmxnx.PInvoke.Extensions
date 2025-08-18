@@ -1,11 +1,13 @@
-﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
+﻿#if NETCOREAPP
+namespace Rxmxnx.PInvoke.Tests.CStringTests;
 
+[TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class EqualsTest
 {
 	[Fact]
-	internal void Test()
+	public void Test()
 	{
 		for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
 		for (Int32 j = i; j < TestSet.Utf16Text.Count; j++)
@@ -13,7 +15,7 @@ public sealed class EqualsTest
 	}
 
 	[Fact]
-	internal void CulturalTest()
+	public void CulturalTest()
 	{
 		for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
 		for (Int32 j = i; j < TestSet.Utf16Text.Count; j++)
@@ -49,12 +51,7 @@ public sealed class EqualsTest
 	private static void CompleteCulturalTest(Int32 indexA, Int32 indexB)
 	{
 		String strA = TestSet.Utf16Text[indexA];
-		String strLowerA = TestSet.Utf16TextLower[indexA];
-		String strUpperA = TestSet.Utf16TextUpper[indexA];
-
 		CString cstrA = new(TestSet.Utf8Text[indexA]);
-		CString cstrLowerA = new(TestSet.Utf8TextLower[indexA]);
-		CString cstrUpperA = new(TestSet.Utf8TextUpper[indexA]);
 
 		String strB = TestSet.Utf16Text[indexB];
 		String strLowerB = TestSet.Utf16TextLower[indexB];
@@ -81,9 +78,9 @@ public sealed class EqualsTest
 	private static void StringTest(ComparisonTestResult results, CString cstrA, String strB)
 	{
 		Assert.False(cstrA.Equals(default(String)));
-		Assert.False(cstrA.Equals(default(String), StringComparison.OrdinalIgnoreCase));
+		Assert.False(cstrA!.Equals(default(String), StringComparison.OrdinalIgnoreCase));
 
-		Assert.Equal(results.Normal == 0, cstrA.Equals(strB));
+		Assert.Equal(results.Comparisons[StringComparison.Ordinal] == 0, cstrA.Equals(strB));
 		Assert.Equal(results.Comparisons[StringComparison.Ordinal] == 0, cstrA.Equals(strB, StringComparison.Ordinal));
 		Assert.Equal(results.Comparisons[StringComparison.CurrentCulture] == 0,
 		             cstrA.Equals(strB, StringComparison.CurrentCulture));
@@ -106,9 +103,9 @@ public sealed class EqualsTest
 	private static void CStringTest(ComparisonTestResult results, CString cstrA, CString cstrB)
 	{
 		Assert.False(cstrA.Equals(default(CString)));
-		Assert.False(cstrA.Equals(default(CString), StringComparison.OrdinalIgnoreCase));
+		Assert.False(cstrA!.Equals(default(CString), StringComparison.OrdinalIgnoreCase));
 
-		Assert.Equal(results.Normal == 0, cstrA.Equals(cstrB));
+		Assert.Equal(results.Comparisons[StringComparison.Ordinal] == 0, cstrA.Equals(cstrB));
 		Assert.Equal(results.Comparisons[StringComparison.Ordinal] == 0, cstrA.Equals(cstrB, StringComparison.Ordinal));
 		Assert.Equal(results.Comparisons[StringComparison.CurrentCulture] == 0,
 		             cstrA.Equals(cstrB, StringComparison.CurrentCulture));
@@ -131,7 +128,7 @@ public sealed class EqualsTest
 	private static void OperatorTest(ComparisonTestResult results, CString cstrA, String strA, CString cstrB,
 		String strB)
 	{
-		Boolean equals = results.Normal == 0;
+		Boolean equals = results.Comparisons[StringComparison.Ordinal] == 0;
 		Boolean lower = results.Normal < 0;
 		Boolean upper = results.Normal > 0;
 
@@ -161,3 +158,4 @@ public sealed class EqualsTest
 		Assert.Equal(upper || equals, cstrA >= strB);
 	}
 }
+#endif

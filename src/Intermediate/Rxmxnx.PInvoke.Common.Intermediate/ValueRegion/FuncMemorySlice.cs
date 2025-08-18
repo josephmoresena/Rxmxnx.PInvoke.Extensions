@@ -86,8 +86,8 @@ public partial class ValueRegion<T>
 		/// <inheritdoc/>
 		public override Boolean TryAlloc(GCHandleType type, out GCHandle handle)
 			=> FuncRegion<TState>.TryAlloc(this._alloc, this._state, type, out handle);
-		/// <param name="offset"></param>
 		/// <inheritdoc/>
+		/// <param name="offset">Internal offset.</param>
 		public override IPinnable? GetPinnable(out Int32 offset)
 		{
 			offset = this.Offset;

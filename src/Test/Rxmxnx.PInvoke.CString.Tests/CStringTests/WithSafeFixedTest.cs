@@ -1,10 +1,15 @@
-﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
+﻿#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
 
+namespace Rxmxnx.PInvoke.Tests.CStringTests;
+
+[TestFixture]
 [ExcludeFromCodeCoverage]
-public sealed class WithSafeFixedTest
+public sealed unsafe class WithSafeFixedTest
 {
 	[Fact]
-	internal void Test()
+	public void Test()
 	{
 		using TestMemoryHandle handle = new();
 		List<Int32> indices = TestSet.GetIndices();
@@ -16,58 +21,63 @@ public sealed class WithSafeFixedTest
 		if (value is null) return;
 		value.WithSafeFixed(WithSafeFixedTest.ActionMethod);
 		value.WithSafeFixed(value, WithSafeFixedTest.ActionMethod);
-		Assert.Equal(value, value.WithSafeFixed(WithSafeFixedTest.FunctionMethod));
-		Assert.Equal(value, value.WithSafeFixed(value, WithSafeFixedTest.FunctionMethod));
+		PInvokeAssert.Equal(value, value.WithSafeFixed(WithSafeFixedTest.FunctionMethod));
+		PInvokeAssert.Equal(value, value.WithSafeFixed(value, WithSafeFixedTest.FunctionMethod));
 	}
 
-	private static unsafe void ActionMethod(in IReadOnlyFixedMemory fmem)
+	private static void ActionMethod(in IReadOnlyFixedMemory fmem)
 	{
 		ReadOnlySpan<Byte> span = fmem.Bytes;
 		if (fmem.Pointer == IntPtr.Zero)
 		{
-			Assert.True(span.IsEmpty);
+			PInvokeAssert.True(span.IsEmpty);
+			return;
 		}
-		else
+		fixed (void* ptr = span)
 		{
-			GCHandle handle = GCHandle.FromIntPtr(fmem.Pointer);
-			fixed (void* ptr = span)
-			{
-				if (span.Length != 0)
-					Assert.Equal(fmem.Pointer, new(ptr));
-				else if (fmem.Pointer != IntPtr.Zero)
-					fixed (void* ptrEmpty = CString.Empty)
-						Assert.Equal(fmem.Pointer, new(ptrEmpty));
-			}
-			Assert.True(handle.IsAllocated);
+			if (span.Length != 0)
+				PInvokeAssert.Equal(fmem.Pointer, new(ptr));
+			else if (fmem.Pointer != IntPtr.Zero)
+				fixed (void* ptrEmpty = CString.Empty)
+					PInvokeAssert.Equal(fmem.Pointer, new(ptrEmpty));
 		}
+#if NETCOREAPP
+		GCHandle handle = GCHandle.FromIntPtr(fmem.Pointer);
+		Assert.True(handle.IsAllocated);
+#endif
 	}
 	private static void ActionMethod(in IReadOnlyFixedMemory fmem, CString cstr)
 	{
 		IReadOnlyFixedMemory fmem2 = fmem;
 
 		WithSafeFixedTest.ActionMethod(fmem);
-		Assert.Equal(cstr, new(() => fmem2.Bytes));
+		if (fmem2.Bytes.Length > 0)
+			PInvokeAssert.Equal(cstr, new(() => fmem2.Bytes));
 		WithSafeFixedTest.BinaryPointerTest(fmem, cstr);
 	}
 
 	private static CString FunctionMethod(in IReadOnlyFixedMemory fmem)
 	{
 		WithSafeFixedTest.ActionMethod(fmem);
-		return CString.Create(fmem.Bytes);
+		if (fmem.Bytes.Length > 0)
+			return CString.Create(fmem.Bytes);
+		return fmem.Pointer != IntPtr.Zero ? CString.Empty : CString.Zero;
 	}
 	private static CString FunctionMethod(in IReadOnlyFixedMemory fmem, CString cstr)
 	{
 		WithSafeFixedTest.ActionMethod(fmem, cstr);
-		return CString.Create(fmem.Bytes);
+		if (fmem.Bytes.Length > 0)
+			return CString.Create(fmem.Bytes);
+		return fmem.Pointer != IntPtr.Zero ? CString.Empty : CString.Zero;
 	}
 
 	private static void BinaryPointerTest(IReadOnlyFixedMemory fmem, CString cstr)
 	{
 		IntPtr? ptr = WithSafeFixedTest.GetPointerFromBytes(cstr);
 		if (ptr.HasValue)
-			Assert.Equal(fmem.Pointer, ptr);
+			PInvokeAssert.Equal(fmem.Pointer, ptr);
 	}
-	private static unsafe IntPtr? GetPointerFromBytes(CString cstr)
+	private static IntPtr? GetPointerFromBytes(CString cstr)
 	{
 		if (Object.ReferenceEquals(CString.Empty, cstr)) return default;
 		try
