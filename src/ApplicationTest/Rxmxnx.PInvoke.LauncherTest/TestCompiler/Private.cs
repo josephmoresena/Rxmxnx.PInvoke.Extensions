@@ -27,29 +27,30 @@ public partial class TestCompiler
 		await TestCompiler.CompileNet(compileArgs);
 		await TestCompiler.CompileNetWithSwitches(compileArgs);
 
-		if (!restoreArgs.ProjectFile.EndsWith(".csproj") || restoreArgs.Version > NetVersion.Net90)
-		{
-			compileArgs.BuildDependencies = false;
-			compileArgs.Publish |= Publish.NoReflection;
-			await TestCompiler.CompileNet(compileArgs);
-			await TestCompiler.CompileNetWithSwitches(compileArgs);
-		}
+		if (!restoreArgs.ProjectFile.EndsWith(".csproj") || restoreArgs.Version > NetVersion.Net90) return;
+		compileArgs.BuildDependencies = false;
+		compileArgs.Publish |= Publish.NoReflection;
+		await TestCompiler.CompileNet(compileArgs);
+		await TestCompiler.CompileNetWithSwitches(compileArgs);
 	}
 	private static async Task CompileNetWithSwitches(CompileNetArgs compileArgs)
 	{
 		await TestCompiler.CompileNet(compileArgs with
 		{
-			Publish = compileArgs.Publish | Publish.DisableBufferAutoComposition,
-		});
-		await TestCompiler.CompileNet(compileArgs with
-		{
 			Publish = compileArgs.Publish | Publish.InvariantGlobalization,
 		});
-		await TestCompiler.CompileNet(compileArgs with
+		if (!compileArgs.Publish.HasFlag(Publish.NoReflection))
 		{
-			Publish = compileArgs.Publish | Publish.DisableBufferAutoComposition |
-			Publish.InvariantGlobalization,
-		});
+			await TestCompiler.CompileNet(compileArgs with
+			{
+				Publish = compileArgs.Publish | Publish.DisableBufferAutoComposition,
+			});
+			await TestCompiler.CompileNet(compileArgs with
+			{
+				Publish = compileArgs.Publish | Publish.DisableBufferAutoComposition |
+				Publish.InvariantGlobalization,
+			});
+		}
 	}
 	private static async Task CompileNet(CompileNetArgs args)
 	{

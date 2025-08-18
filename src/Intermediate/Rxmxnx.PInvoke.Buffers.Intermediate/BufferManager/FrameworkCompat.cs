@@ -7,12 +7,6 @@ public static partial class BufferManager
 	/// Metadata cache.
 	/// </summary>
 	private static readonly ConcurrentDictionary<Type, BufferTypeMetadata> metadataCache = new();
-
-	/// <summary>
-	/// Registry count.
-	/// </summary>
-	[ThreadStatic]
-	private static Int32 countRegister;
 #endif
 
 	/// <summary>
@@ -59,20 +53,19 @@ public static partial class BufferManager
 		return (result as BufferTypeMetadata<T>)!;
 #endif
 	}
-#if !NET7_0_OR_GREATER
 	/// <summary>
 	/// Retrieves metadata required for a buffer of <typeparamref name="TBuffer"/> type.
 	/// </summary>
 	/// <typeparam name="T">The type of items in the buffer</typeparam>
 	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static BufferTypeMetadata<T> GetMetadata<T, TBuffer>() where TBuffer : struct, IManagedBuffer<T>
 	{
-		if (BufferManager.countRegister < 0) BufferManager.countRegister = 0;
+#if !NET7_0_OR_GREATER
 		if (BufferManager.metadataCache.TryGetValue(typeof(TBuffer), out BufferTypeMetadata? result))
 			return (BufferTypeMetadata<T>)result;
-
-		// This method allocates the buffer in the current stack.
+#endif
 		return BufferManager.GetStaticMetadata<T, TBuffer>();
 	}
 	/// <summary>
@@ -83,23 +76,16 @@ public static partial class BufferManager
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 	private static BufferTypeMetadata<T> GetStaticMetadata<T, TBuffer>() where TBuffer : struct, IManagedBuffer<T>
 	{
-		BufferManager.countRegister++;
-		try
-		{
 #if !NET7_0_OR_GREATER
-			IntPtr stackAllocation = IntPtr.Zero;
-			ref TBuffer fakeBufferInstance = ref Unsafe.As<IntPtr, TBuffer>(ref stackAllocation);
-			BufferTypeMetadata<T> staticMetadata = fakeBufferInstance.GetStaticTypeMetadata();
-			return BufferManager.Cache(staticMetadata.BufferType, staticMetadata);
+		IntPtr stackAllocation = IntPtr.Zero;
+		ref TBuffer dummyBufferRef = ref Unsafe.As<IntPtr, TBuffer>(ref stackAllocation);
+		BufferTypeMetadata<T> staticMetadata = dummyBufferRef.GetStaticTypeMetadata();
+		return BufferManager.Cache(staticMetadata.BufferType, staticMetadata);
 #else
-			return IManagedBuffer<T>.GetMetadata<TBuffer>();
+		return IManagedBuffer<T>.GetMetadata<TBuffer>();
 #endif
-		}
-		finally
-		{
-			if (BufferManager.countRegister > 0) BufferManager.countRegister--;
-		}
 	}
+#if !NET7_0_OR_GREATER
 #nullable disable
 	/// <summary>
 	/// Caches <paramref name="typeMetadata"/> for <paramref name="bufferType"/>.

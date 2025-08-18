@@ -51,20 +51,20 @@ public static partial class BufferManager
 			}
 			return MetadataManager<T>.GetBinaryMetadata(count, true);
 		}
+#if !PACKAGE
 		/// <summary>
 		/// Retrieves metadata required for a buffer of <paramref name="bufferType"/> type.
 		/// </summary>
 		/// <param name="bufferType">Type of buffer.</param>
 		/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
-#if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
-#endif
 		public static BufferTypeMetadata<T> GetMetadata(
 #if NET5_0_OR_GREATER
 			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
 #endif
 			Type bufferType)
 			=> bufferType == typeof(Atomic<T>) ? Atomic<T>.TypeMetadata : BufferManager.GetMetadata<T>(bufferType);
+#endif
 		/// <summary>
 		/// Retrieves the components array for the composition type of <typeparamref name="TBufferA"/> and
 		/// <typeparamref name="TBufferB"/> .
@@ -85,16 +85,8 @@ public static partial class BufferManager
 
 		{
 			BufferTypeMetadata<T>[] components = new BufferTypeMetadata<T>[2];
-#if !NET7_0_OR_GREATER
-			if (BufferManager.countRegister > 0)
-			{
-				components[0] = BufferManager.GetMetadata<T, TBufferA>();
-				components[1] = BufferManager.GetMetadata<T, TBufferB>();
-				return components;
-			}
-#endif
-			components[0] = MetadataManager<T>.GetMetadata(typeof(TBufferA));
-			components[1] = MetadataManager<T>.GetMetadata(typeof(TBufferB));
+			components[0] = BufferManager.GetMetadata<T, TBufferA>();
+			components[1] = BufferManager.GetMetadata<T, TBufferB>();
 			return components;
 		}
 		/// <summary>
