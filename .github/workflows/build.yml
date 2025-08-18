@@ -116,7 +116,7 @@ jobs:
           rm -rf ./obj
       - name: Init FreeBSD 13.5 VM
         id: vm
-        uses: vmactions/freebsd-vm@v1.2.1
+        uses: vmactions/freebsd-vm@v1.2.3
         with:
           release: "13.5"
           usesh: true
