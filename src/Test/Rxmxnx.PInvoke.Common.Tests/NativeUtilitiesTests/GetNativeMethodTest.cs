@@ -1,5 +1,6 @@
 ﻿#if NET5_0_OR_GREATER
 using Skip = Xunit.Skip;
+
 #elif NETCOREAPP
 using SkippableTheoryAttribute = Xunit.TheoryAttribute;
 #endif
@@ -30,10 +31,10 @@ public sealed class GetNativeMethodTest
 	internal void EmptyTest(Boolean zeroPtr, Boolean generic, Boolean emptyName = false, Boolean useRealHandle = false)
 	{
 #if NET5_0_OR_GREATER
-		Skip.If(MemoryMarshalCompat.TargetFramework.Contains(".NETStandard"),
+		Skip.If(SystemInfo.CompilationFramework.Contains(".NET Standard"),
 		        ".NETStandard does not support NativeLibrary class.");
 #else
-		if (MemoryMarshalCompat.TargetFramework.Contains(".NETStandard")) return;
+		if (SystemInfo.TargetFramework.Contains(".NET Standard")) return;
 #endif
 
 		String prefix = GetNativeMethodTest.fixture.Create<String>();
@@ -72,10 +73,10 @@ public sealed class GetNativeMethodTest
 	internal void NormalTest(Boolean generic)
 	{
 #if NET5_0_OR_GREATER
-		Skip.If(MemoryMarshalCompat.TargetFramework.Contains(".NETStandard"),
+		Skip.If(SystemInfo.CompilationFramework.Contains(".NET Standard"),
 		        ".NETStandard does not support NativeLibrary class.");
 #else
-		if (MemoryMarshalCompat.TargetFramework.Contains(".NETStandard")) return;
+		if (SystemInfo.TargetFramework.Contains(".NETStandard")) return;
 #endif
 
 		IntPtr handle = NativeLibrary.Load(LoadNativeLibTest.LibraryName);

@@ -10,6 +10,7 @@
         <EnablePackageValidation>true</EnablePackageValidation>
         <SigningKeyFile>..\Rxmxnx.PInvoke.snk</SigningKeyFile>
         <IntermediateSourceBasePath>..\..\src\Intermediate</IntermediateSourceBasePath>
+        <DefineConstants Condition="'$(IsTempPackage)' == 'true'">$(DefineConstants);TEMP_PACKAGE</DefineConstants>
     </PropertyGroup>
 
     <!-- Validations -->

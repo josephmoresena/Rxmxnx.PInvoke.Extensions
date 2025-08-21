@@ -78,6 +78,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				Console.WriteLine("**Unable to retrieve runtime info**");
 			}
 			Console.WriteLine("========== Rxmxnx.PInvoke Runtime information ==========");
+			Console.WriteLine($"Package: {SystemInfo.CompilationFramework}");
 			Console.WriteLine($"Native AOT: {AotInfo.IsNativeAot}");
 			Console.WriteLine($"Reflection Enabled: {!AotInfo.IsReflectionDisabled}");
 			Console.WriteLine($"Trimmed Runtime: {AotInfo.IsPlatformTrimmed}");
@@ -142,7 +143,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #if NET9_0_OR_GREATER
 				Architecture.RiscV64 => nameof(Architecture.RiscV64),
 #endif
-				_ => architecture.ToString(),
+				_ => $"{architecture}",
 			};
 		private static String GetAssemblyName(this Assembly assembly) => $"{assembly.FullName} {assembly.Location}";
 	}

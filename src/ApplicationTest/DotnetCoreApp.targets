@@ -33,7 +33,6 @@
         <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
         <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
     </PropertyGroup>
-
     <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm' And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
         <LinkerFlavor>lld</LinkerFlavor>
         <ObjCopyName>/usr/arm-linux-gnueabihf/bin/objcopy</ObjCopyName>
@@ -41,6 +40,19 @@
 
     <ItemGroup>
         <RuntimeHostConfigurationOption Condition="'$(DisableBufferAutoComposition)' == 'true'" Include="PInvoke.DisableBufferAutoComposition" Value="true" Trim="true"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <KnownILCompilerPack Include="Microsoft.DotNet.ILCompiler"
+                             TargetFramework="net6.0"
+                             ILCompilerRuntimeIdentifiers="linux-arm64;linux-musl-arm64;linux-musl-x64;linux-x64;win-arm64;win-x64;osx-x64"
+                             ILCompilerPackVersion="7.0.20"
+                             ILCompilerPackNamePattern="runtime.**RID**.Microsoft.DotNet.ILCompiler"/>
+        <KnownILCompilerPack Include="Microsoft.DotNet.ILCompiler"
+                             TargetFramework="net7.0"
+                             ILCompilerRuntimeIdentifiers="osx-x64"
+                             ILCompilerPackVersion="7.0.20"
+                             ILCompilerPackNamePattern="runtime.**RID**.Microsoft.DotNet.ILCompiler"/>
     </ItemGroup>
 
     <Target Name="CopyTarget" Condition="'$(SelfContained)' == 'true' Or '$(PublishAot)' == 'true'" AfterTargets="Publish">

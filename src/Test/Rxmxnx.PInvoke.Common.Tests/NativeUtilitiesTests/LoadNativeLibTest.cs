@@ -37,10 +37,10 @@ public sealed class LoadNativeLibTest
 	internal void EmptyTest(Boolean unloadEvent, Boolean emptyName = false)
 	{
 #if NET5_0_OR_GREATER
-		Skip.If(MemoryMarshalCompat.TargetFramework.Contains(".NETStandard"),
+		Skip.If(SystemInfo.CompilationFramework.Contains(".NET Standard"),
 		        ".NETStandard does not support NativeLibrary class.");
 #else
-		if (MemoryMarshalCompat.TargetFramework.Contains(".NETStandard")) return;
+		if (SystemInfo.TargetFramework.Contains(".NETStandard")) return;
 #endif
 
 		String prefix = LoadNativeLibTest.fixture.Create<String>();
@@ -66,10 +66,10 @@ public sealed class LoadNativeLibTest
 	internal void NormalTest(Boolean unloadEvent)
 	{
 #if NET5_0_OR_GREATER
-		Skip.If(MemoryMarshalCompat.TargetFramework.Contains(".NETStandard"),
+		Skip.If(SystemInfo.CompilationFramework.Contains(".NET Standard"),
 		        ".NETStandard does not support NativeLibrary class.");
 #else
-		if (MemoryMarshalCompat.TargetFramework.Contains(".NETStandard")) return;
+		if (SystemInfo.TargetFramework.Contains(".NETStandard")) return;
 #endif
 
 		EventHandler? eventHandler = default;
