@@ -145,6 +145,18 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 				_ => $"{architecture}",
 			};
-		private static String GetAssemblyName(this Assembly assembly) => $"{assembly.FullName} {assembly.Location}";
+		private static String GetAssemblyName(this Assembly assembly)
+		{
+			String location = "**Unable to retrieve location**";
+			try
+			{
+				location = assembly.Location;
+			}
+			catch (Exception)
+			{
+				// Ignore
+			}
+			return $"{assembly.FullName} {location}";
+		}
 	}
 }
