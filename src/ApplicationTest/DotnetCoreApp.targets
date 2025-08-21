@@ -50,9 +50,10 @@
                              ILCompilerPackNamePattern="runtime.**RID**.Microsoft.DotNet.ILCompiler"/>
         <KnownILCompilerPack Include="Microsoft.DotNet.ILCompiler"
                              TargetFramework="net7.0"
-                             ILCompilerRuntimeIdentifiers="osx-x64"
+                             ILCompilerRuntimeIdentifiers="osx-x64;osx-arm64"
                              ILCompilerPackVersion="7.0.20"
-                             ILCompilerPackNamePattern="runtime.**RID**.Microsoft.DotNet.ILCompiler"/>
+                             ILCompilerPackNamePattern="runtime.osx-x64.Microsoft.DotNet.ILCompiler"
+                             Condition="'$(RuntimeIdentifier)' == 'osx-x64'"/>
     </ItemGroup>
 
     <Target Name="CopyTarget" Condition="'$(SelfContained)' == 'true' Or '$(PublishAot)' == 'true'" AfterTargets="Publish">
