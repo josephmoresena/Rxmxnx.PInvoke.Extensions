@@ -343,7 +343,7 @@ jobs:
       - name: Pack assembly
         working-directory: ./package/Rxmxnx.PInvoke.Extensions
         run: |
-          dotnet pack -c Release /p:Version=9999.99.99.99-tmp /p:NoIntermediateBuild=true /p:UseEmbeddedDebugSymbols=true
+          dotnet pack -c Release /p:Version=9999.99.99.99-tmp /p:NoIntermediateBuild=true /p:UseEmbeddedDebugSymbols=false
       - name: Publish launcher
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.LauncherTest
         run: dotnet publish
@@ -377,7 +377,6 @@ jobs:
         shell: pwsh
         run: |
           if ($IsWindows) {
-            Enable-WindowsOptionalFeature -Online -FeatureName "NetFx3"
             ./Rxmxnx.PInvoke.LauncherTest.exe "src\ApplicationTest" "artifacts" "compile"
           } else {
             chmod +x Rxmxnx.PInvoke.LauncherTest

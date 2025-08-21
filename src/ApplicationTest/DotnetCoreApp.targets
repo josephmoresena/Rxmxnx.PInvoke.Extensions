@@ -63,10 +63,11 @@
                              ILCompilerRuntimeIdentifiers="osx-x64;osx-arm64"
                              ILCompilerPackVersion="7.0.20"
                              ILCompilerPackNamePattern="runtime.osx-x64.Microsoft.DotNet.ILCompiler"
-                             Condition="'$(TargetFramework)' == 'net7.0'" />
+                             Condition="'$(TargetFramework)' == 'net7.0'"/>
+        <PackageReference Include="runtime.osx-x64.Microsoft.DotNet.ILCompiler" Version="7.0.20"/>
     </ItemGroup>
 
-    <Target Name="CopyTarget" Condition="'$(PublishAot)' == 'true'" AfterTargets="Publish">
+    <Target Name="CopyTarget" Condition="'$(SelfContained)' == 'true' Or '$(PublishAot)' == 'true'" AfterTargets="Publish">
         <ItemGroup>
             <Artifact Include="$(PublishDir)$(AssemblyName)*"/>
             <Artifact Remove="$(PublishDir)$(AssemblyName)*.pdb"/>
