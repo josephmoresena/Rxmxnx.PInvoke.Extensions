@@ -34,7 +34,7 @@ public sealed class GetNativeMethodTest
 		Skip.If(SystemInfo.CompilationFramework.Contains(".NET Standard"),
 		        ".NETStandard does not support NativeLibrary class.");
 #else
-		if (SystemInfo.TargetFramework.Contains(".NET Standard")) return;
+		if (SystemInfo.CompilationFramework.Contains(".NET Standard")) return;
 #endif
 
 		String prefix = GetNativeMethodTest.fixture.Create<String>();
@@ -76,7 +76,7 @@ public sealed class GetNativeMethodTest
 		Skip.If(SystemInfo.CompilationFramework.Contains(".NET Standard"),
 		        ".NETStandard does not support NativeLibrary class.");
 #else
-		if (SystemInfo.TargetFramework.Contains(".NETStandard")) return;
+		if (SystemInfo.CompilationFramework.Contains(".NETStandard")) return;
 #endif
 
 		IntPtr handle = NativeLibrary.Load(LoadNativeLibTest.LibraryName);
