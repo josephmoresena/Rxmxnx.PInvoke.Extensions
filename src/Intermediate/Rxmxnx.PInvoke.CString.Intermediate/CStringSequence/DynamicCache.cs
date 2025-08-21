@@ -5,14 +5,15 @@ public partial class CStringSequence
 	/// <summary>
 	/// Dynamic <see cref="CString"/> cache.
 	/// </summary>
-	private sealed class DynamicCache : ICStringCache
+	private sealed class DynamicCache : CStringCacheBase
 	{
 		/// <summary>
 		/// Internal cache.
 		/// </summary>
 		private readonly ConcurrentDictionary<Int32, WeakReference<CString>> _cache = new();
 
-		CString? IList<CString?>.this[Int32 index]
+		/// <inheritdoc/>
+		public override CString? this[Int32 index]
 		{
 			get
 			{
@@ -29,13 +30,22 @@ public partial class CStringSequence
 					this._cache[index] = new(value!);
 			}
 		}
-		Boolean ICollection<CString?>.IsReadOnly => false;
+		/// <inheritdoc/>
+		public override Boolean IsReadOnly => false;
+		/// <inheritdoc/>
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
-		Int32 ICollection<CString?>.Count => this._cache.Count;
+		public override Int32 Count => this._cache.Count;
 
-		void ICollection<CString?>.Clear()
+		/// <summary>
+		/// Private constructor.
+		/// </summary>
+		/// <param name="count">Non-empty entries count.</param>
+		private DynamicCache(Int32 count) => this._cache = new(Environment.ProcessorCount, count);
+
+		/// <inheritdoc/>
+		public override void Clear()
 		{
 			Int32[] keys = this._cache.Keys.ToArray();
 			foreach (Int32 key in keys.AsSpan())
@@ -44,14 +54,22 @@ public partial class CStringSequence
 					this._cache.TryRemove(key, out _);
 			}
 		}
+		/// <inheritdoc/>
+#if !PACKAGE
+		[ExcludeFromCodeCoverage]
+#endif
+		public override void Insert(Int32 index, CString? item) => this._cache[index] = new(item!);
+		/// <inheritdoc/>
+#if !PACKAGE
+		[ExcludeFromCodeCoverage]
+#endif
+		public override void RemoveAt(Int32 index) => this._cache.TryRemove(index, out _);
 
-#if !PACKAGE
-		[ExcludeFromCodeCoverage]
-#endif
-		void IList<CString?>.Insert(Int32 index, CString? item) => this._cache[index] = new(item!);
-#if !PACKAGE
-		[ExcludeFromCodeCoverage]
-#endif
-		void IList<CString?>.RemoveAt(Int32 index) => this._cache.TryRemove(index, out _);
+		/// <summary>
+		/// Creates a <see cref="FixedCache"/> instance.
+		/// </summary>
+		/// <param name="count">Non-empty entries count.</param>
+		/// <returns>A <see cref="FixedCache"/> instance.</returns>
+		public static DynamicCache CreateDynamicCache(Int32 count) => new(count);
 	}
 }

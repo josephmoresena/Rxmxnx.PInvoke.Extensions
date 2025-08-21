@@ -5,7 +5,7 @@ public partial class CStringSequence
 	/// <summary>
 	/// Dynamic <see cref="CString"/> cache.
 	/// </summary>
-	private abstract class FixedCache : ICStringCache
+	private abstract class FixedCache : CStringCacheBase
 	{
 		/// <summary>
 		/// Gaps.
@@ -16,17 +16,8 @@ public partial class CStringSequence
 		/// Constructor.
 		/// </summary>
 		/// <param name="emptyIndices">Set indices with empty elements.</param>
-		private FixedCache(IImmutableSet<Int32> emptyIndices) => this._emptyIndices = emptyIndices;
-
-		/// <inheritdoc/>
-		public abstract CString? this[Int32 index] { get; set; }
-		/// <inheritdoc/>
-		public abstract Int32 Count { get; }
-
-		/// <inheritdoc/>
-		public abstract void Insert(Int32 index, CString? item);
-		/// <inheritdoc/>
-		public abstract void RemoveAt(Int32 index);
+		private FixedCache(IImmutableSet<Int32>? emptyIndices)
+			=> this._emptyIndices = emptyIndices ?? ImmutableHashSet<Int32>.Empty;
 
 		/// <summary>
 		/// Calculates real index.
@@ -41,7 +32,7 @@ public partial class CStringSequence
 		/// <param name="count">Non-empty entries count.</param>
 		/// <param name="emptyIndices">Empty caps.</param>
 		/// <returns>A <see cref="FixedCache"/> instance.</returns>
-		public static FixedCache CreateFixedCache(Int32 count, IImmutableSet<Int32> emptyIndices)
+		public static FixedCache CreateFixedCache(Int32 count, IImmutableSet<Int32>? emptyIndices = default)
 			=> count <= 32 ? new CStringCache(count, emptyIndices) : new WeakCache(count, emptyIndices);
 
 		/// <summary>
@@ -71,7 +62,7 @@ public partial class CStringSequence
 			/// </summary>
 			/// <param name="count">Total elements in cache.</param>
 			/// <param name="emptyIndices">Set indices with empty elements.</param>
-			public CStringCache(Int32 count, IImmutableSet<Int32> emptyIndices) : base(emptyIndices)
+			public CStringCache(Int32 count, IImmutableSet<Int32>? emptyIndices) : base(emptyIndices)
 				=> this._cache = new CString?[count];
 
 			/// <inheritdoc/>
@@ -122,7 +113,7 @@ public partial class CStringSequence
 			/// </summary>
 			/// <param name="count">Total elements in cache.</param>
 			/// <param name="emptyIndices">Set indices with empty elements.</param>
-			public WeakCache(Int32 count, IImmutableSet<Int32> emptyIndices) : base(emptyIndices)
+			public WeakCache(Int32 count, IImmutableSet<Int32>? emptyIndices) : base(emptyIndices)
 				=> this._cache = new WeakReference<CString>[count];
 
 			/// <inheritdoc/>

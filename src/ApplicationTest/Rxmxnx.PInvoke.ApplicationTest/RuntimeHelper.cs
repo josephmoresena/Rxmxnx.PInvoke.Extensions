@@ -73,9 +73,10 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				Console.WriteLine($"Runtime Path: {RuntimeEnvironment.GetRuntimeDirectory()}");
 				Console.WriteLine($"Runtime Version: {RuntimeEnvironment.GetSystemVersion()}");
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 				Console.WriteLine("**Unable to retrieve runtime info**");
+				Console.WriteLine(AotInfo.IsReflectionDisabled ? ex.Message : ex);
 			}
 			Console.WriteLine("========== Rxmxnx.PInvoke Runtime information ==========");
 			Console.WriteLine($"Package: {SystemInfo.CompilationFramework}");
@@ -111,9 +112,10 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 					Console.WriteLine(AotInfo.IsNativeAot ? assembly.FullName : assembly.GetAssemblyName());
 				}
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 				Console.WriteLine("**Unable to retrieve domain info**");
+				Console.WriteLine(AotInfo.IsReflectionDisabled ? ex.Message : ex);
 			}
 		}
 		private static ReadOnlySpan<Byte> GetEmptyUtf8()
@@ -145,18 +147,6 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 				_ => $"{architecture}",
 			};
-		private static String GetAssemblyName(this Assembly assembly)
-		{
-			String location = "**Unable to retrieve location**";
-			try
-			{
-				location = assembly.Location;
-			}
-			catch (Exception)
-			{
-				// Ignore
-			}
-			return $"{assembly.FullName} {location}";
-		}
+		private static String GetAssemblyName(this Assembly assembly) => $"{assembly.FullName} {assembly.Location}";
 	}
 }

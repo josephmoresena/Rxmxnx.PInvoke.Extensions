@@ -8,14 +8,25 @@ public partial class CStringSequence
 	/// <summary>
 	/// Internal <see cref="CString"/> list.
 	/// </summary>
-	private interface ICStringCache : IList<CString?>
+	private abstract class CStringCacheBase : IList<CString?>
 	{
-		Boolean ICollection<CString?>.IsReadOnly => true;
+		/// <inheritdoc/>
+		public virtual Boolean IsReadOnly => true;
+		/// <inheritdoc/>
+		public abstract Int32 Count { get; }
 
+		/// <inheritdoc/>
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
-		void ICollection<CString?>.Clear() { }
+		public virtual void Clear() { }
+
+		/// <inheritdoc/>
+		public abstract void Insert(Int32 index, CString? item);
+		/// <inheritdoc/>
+		public abstract void RemoveAt(Int32 index);
+		/// <inheritdoc/>
+		public abstract CString? this[Int32 index] { get; set; }
 
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]

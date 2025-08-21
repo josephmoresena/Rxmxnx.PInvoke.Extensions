@@ -5,7 +5,9 @@ public static class Utilities
 	public static Boolean IsNativeAotSupported(Architecture arch, NetVersion netVersion)
 		=> netVersion >= NetVersion.Net60 && arch switch
 		{
-			Architecture.X64 => true,
+			Architecture.X64 => netVersion >= NetVersion.Net80 || OperatingSystem.IsWindows() ||
+				OperatingSystem.IsLinux() ||
+				(OperatingSystem.IsMacOS() && RuntimeInformation.OSArchitecture is Architecture.X64),
 			Architecture.Arm64 => netVersion >= NetVersion.Net80 || OperatingSystem.IsWindows() ||
 				OperatingSystem.IsLinux(),
 			Architecture.X86 or Architecture.Arm or Architecture.Armv6 => netVersion >= NetVersion.Net90,
