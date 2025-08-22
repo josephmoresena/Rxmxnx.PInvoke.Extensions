@@ -40,7 +40,7 @@ public partial class ValueRegion<T>
 		internal override ReadOnlySpan<T> AsSpan()
 		{
 			if (this._array.Length <= 0)
-				return default;
+				return this._array.AsSpan();
 			ref T refValue = ref this._array[0];
 			return MemoryMarshal.CreateReadOnlySpan(ref refValue, this._array.Length);
 		}

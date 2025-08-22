@@ -13,6 +13,9 @@ internal static class EnumValueHelper<TEnum> where TEnum : struct, Enum
 	/// <summary>
 	/// Static constructor.
 	/// </summary>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3963)]
+#endif
 	static EnumValueHelper()
 	{
 #if NET5_0_OR_GREATER

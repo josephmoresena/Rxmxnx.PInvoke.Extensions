@@ -23,8 +23,8 @@ public unsafe partial class UnmanagedValueExtensions
 	public static void WithSafeFixed<T>(this T[]? arr, FixedContextAction<T> action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
-		if (arr is not null && arr.Length > 0)
-			fixed (void* ptr = &arr[0])
+		if (arr is not null)
+			fixed (void* ptr = &(arr.Length > 0 ? ref arr[0] : ref MemoryMarshal.GetReference(arr.AsSpan())))
 			{
 				FixedContext<T> ctx = new(ptr, arr.Length);
 				try
@@ -52,8 +52,8 @@ public unsafe partial class UnmanagedValueExtensions
 	public static void WithSafeFixed<T>(this T[]? arr, ReadOnlyFixedContextAction<T> action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
-		if (arr is not null && arr.Length > 0)
-			fixed (void* ptr = &arr[0])
+		if (arr is not null)
+			fixed (void* ptr = &(arr.Length > 0 ? ref arr[0] : ref MemoryMarshal.GetReference(arr.AsSpan())))
 			{
 				FixedContext<T> ctx = new(ptr, arr.Length);
 				try
@@ -86,8 +86,8 @@ public unsafe partial class UnmanagedValueExtensions
 #endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
-		if (arr is not null && arr.Length > 0)
-			fixed (void* ptr = &arr[0])
+		if (arr is not null)
+			fixed (void* ptr = &(arr.Length > 0 ? ref arr[0] : ref MemoryMarshal.GetReference(arr.AsSpan())))
 			{
 				FixedContext<T> ctx = new(ptr, arr.Length);
 				try
@@ -120,8 +120,8 @@ public unsafe partial class UnmanagedValueExtensions
 #endif
 	{
 		ArgumentNullException.ThrowIfNull(action);
-		if (arr is not null && arr.Length > 0)
-			fixed (void* ptr = &arr[0])
+		if (arr is not null)
+			fixed (void* ptr = &(arr.Length > 0 ? ref arr[0] : ref MemoryMarshal.GetReference(arr.AsSpan())))
 			{
 				FixedContext<T> ctx = new(ptr, arr.Length);
 				try
@@ -151,8 +151,8 @@ public unsafe partial class UnmanagedValueExtensions
 	public static TResult WithSafeFixed<T, TResult>(this T[]? arr, FixedContextFunc<T, TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
-		if (arr is not null && arr.Length > 0)
-			fixed (void* ptr = &arr[0])
+		if (arr is not null)
+			fixed (void* ptr = &(arr.Length > 0 ? ref arr[0] : ref MemoryMarshal.GetReference(arr.AsSpan())))
 			{
 				FixedContext<T> ctx = new(ptr, arr.Length);
 				try
@@ -181,8 +181,8 @@ public unsafe partial class UnmanagedValueExtensions
 	public static TResult WithSafeFixed<T, TResult>(this T[]? arr, ReadOnlyFixedContextFunc<T, TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
-		if (arr is not null && arr.Length > 0)
-			fixed (void* ptr = &arr[0])
+		if (arr is not null)
+			fixed (void* ptr = &(arr.Length > 0 ? ref arr[0] : ref MemoryMarshal.GetReference(arr.AsSpan())))
 			{
 				FixedContext<T> ctx = new(ptr, arr.Length);
 				try
@@ -217,8 +217,8 @@ public unsafe partial class UnmanagedValueExtensions
 #endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
-		if (arr is not null && arr.Length > 0)
-			fixed (void* ptr = &arr[0])
+		if (arr is not null)
+			fixed (void* ptr = &(arr.Length > 0 ? ref arr[0] : ref MemoryMarshal.GetReference(arr.AsSpan())))
 			{
 				FixedContext<T> ctx = new(ptr, arr.Length);
 				try
@@ -253,8 +253,8 @@ public unsafe partial class UnmanagedValueExtensions
 #endif
 	{
 		ArgumentNullException.ThrowIfNull(func);
-		if (arr is not null && arr.Length > 0)
-			fixed (void* ptr = &arr[0])
+		if (arr is not null)
+			fixed (void* ptr = &(arr.Length > 0 ? ref arr[0] : ref MemoryMarshal.GetReference(arr.AsSpan())))
 			{
 				FixedContext<T> ctx = new(ptr, arr.Length);
 				try

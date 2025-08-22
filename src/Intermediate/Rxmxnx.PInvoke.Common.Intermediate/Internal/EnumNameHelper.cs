@@ -11,13 +11,16 @@ internal static class EnumNameHelper<TEnum> where TEnum : struct, Enum
 	/// <summary>
 	/// Internal array.
 	/// </summary>
-#pragma disable warning S2743
+#pragma warning disable S2743
 	public static readonly String[] Values;
 #pragma warning restore S2743
 
 	/// <summary>
 	/// Static constructor.
 	/// </summary>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3963)]
+#endif
 	static EnumNameHelper()
 	{
 #if NET5_0_OR_GREATER
