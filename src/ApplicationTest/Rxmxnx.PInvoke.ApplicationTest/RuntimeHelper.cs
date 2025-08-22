@@ -102,11 +102,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		{
 			try
 			{
-#if !NET6_0_OR_GREATER
-				foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-#else
-				foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().AsSpan())
-#endif
+				foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().AsReadOnlySpan())
 				{
 					if (assembly == Assembly.GetExecutingAssembly() || assembly.IsDynamic) continue;
 					Console.WriteLine(AotInfo.IsNativeAot ? assembly.FullName : assembly.GetAssemblyName());

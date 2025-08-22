@@ -267,38 +267,42 @@ public static unsafe partial class NativeUtilities
 		ValidationUtilities.ThrowIfInvalidCopyType(value, destination, offset, out ReadOnlySpan<Byte> bytes);
 		bytes.CopyTo(destination[offset..]);
 	}
-
 	/// <summary>
-	/// Retrieves the decimal value of <paramref name="hexCharacter"/>.
+	/// Creates a new span over an array of the values of the constants in a specified enumeration type.
 	/// </summary>
-	/// <param name="hexCharacter">ASCII hexadecimal character.</param>
-	/// <returns>Decimal value from <paramref name="hexCharacter"/>.</returns>
-	internal static Byte GetDecimalValue(Byte hexCharacter)
-		=> hexCharacter switch
-		{
-			(Byte)'a' => 10,
-			(Byte)'A' => 10,
-			(Byte)'b' => 11,
-			(Byte)'B' => 11,
-			(Byte)'c' => 12,
-			(Byte)'C' => 12,
-			(Byte)'d' => 13,
-			(Byte)'D' => 13,
-			(Byte)'e' => 14,
-			(Byte)'E' => 14,
-			(Byte)'f' => 15,
-			(Byte)'F' => 15,
-			(Byte)'1' => 1,
-			(Byte)'2' => 2,
-			(Byte)'3' => 3,
-			(Byte)'4' => 4,
-			(Byte)'5' => 5,
-			(Byte)'6' => 6,
-			(Byte)'7' => 7,
-			(Byte)'8' => 8,
-			(Byte)'9' => 9,
-			_ => 0,
-		};
+	/// <typeparam name="TEnum">The type of the enumeration.</typeparam>
+	/// <returns>A read-only span that contains the values of the constants in <typeparamref name="TEnum"/>.</returns>
+	public static ReadOnlySpan<TEnum> GetValuesSpan<TEnum>() where TEnum : unmanaged, Enum
+		=> EnumValueHelper<TEnum>.Values.AsSpan();
+	/// <summary>
+	/// Creates a new span over an array of the names of the constants in a specified enumeration type.
+	/// </summary>
+	/// <typeparam name="TEnum">The type of the enumeration.</typeparam>
+	/// <returns>The span representation of the array.</returns>
+	/// <returns>A string read-only span of the names of the constants in <typeparamref name="TEnum"/>.</returns>
+	public static ReadOnlySpan<String> GetNamesSpan<TEnum>() where TEnum : unmanaged, Enum
+		=> EnumNameHelper<TEnum>.Values.AsSpan();
+	/// <summary>
+	/// Creates an <see cref="IReadOnlyFixedContext{TEnum}.IDisposable"/> instance by pinning an array of the values of
+	/// the constants in a specified enumeration type.
+	/// </summary>
+	/// <typeparam name="TEnum">The type of the enumeration.</typeparam>
+	/// <returns>An <see cref="IFixedContext{TEnum}.IDisposable"/> instance representing the pinned array.</returns>
+	/// <remarks>
+	/// This method pins the array to prevent the garbage collector from moving it, which is essential for safe
+	/// operations on unmanaged memory.
+	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned array
+	/// and avoid memory leaks.
+	/// </remarks>
+	public static IReadOnlyFixedContext<TEnum>.IDisposable GetValuesFixedContext<TEnum>() where TEnum : unmanaged, Enum
+	{
+		Memory<TEnum> mem = EnumValueHelper<TEnum>.Values.AsMemory();
+		MemoryHandle handle = mem.Pin();
+		return handle.Pointer == default ?
+			ReadOnlyFixedContext<TEnum>.EmptyDisposable :
+			new ReadOnlyFixedContext<TEnum>(handle.Pointer, mem.Length).ToDisposable(handle);
+	}
+
 	/// <summary>
 	/// Creates an <see cref="IFixedMethod{TDelegate}.IDisposable"/> instance by marshalling the current
 	/// <typeparamref name="TDelegate"/> instance, ensuring a safe interop context.

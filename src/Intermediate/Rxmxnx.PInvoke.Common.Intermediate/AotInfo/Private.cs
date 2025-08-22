@@ -38,11 +38,7 @@ public static partial class AotInfo
 					return isJitEnabled.Value;
 			}
 
-#if !NET6_0_OR_GREATER
-			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-#else
-			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().AsSpan())
-#endif
+			foreach (Assembly assembly in AotInfo.GetAssembliesSpan())
 			{
 				if (String.IsNullOrEmpty(assembly.FullName)) continue;
 				if (assembly.FullName.StartsWith("System.Reflection.Emit")) break;
@@ -107,6 +103,14 @@ public static partial class AotInfo
 			return false;
 
 		return default; // Unabled to retrieve JIT information.
+	}
+	/// <inheritdoc cref="AppDomain.GetAssemblies()"/>
+	/// <returns>A read-only span of assemblies in this application domain.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static ReadOnlySpan<Assembly> GetAssembliesSpan()
+	{
+		Assembly[] array = AppDomain.CurrentDomain.GetAssemblies();
+		return array.Length == 0 ? default : MemoryMarshal.CreateReadOnlySpan(ref array[0], array.Length);
 	}
 	/// <summary>
 	/// Indicates whether <see cref="System.Reflection.Emit"/> namespace is supported in the current runtime.

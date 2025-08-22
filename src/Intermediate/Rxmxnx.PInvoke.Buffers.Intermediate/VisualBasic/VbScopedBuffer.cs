@@ -30,18 +30,14 @@ public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 		{
 			ValidationUtilities.ThrowIfInvalidSequenceIndex(index, this.Length);
 			ValidationUtilities.ThrowIfInvalidPointer(this._isValid!);
-			ref T refT = ref this._array is not null ?
-				ref this._array.AsSpan()[index] :
-				ref (this._pointer + index).Reference;
+			ref T refT = ref this._array is not null ? ref this._array[index] : ref (this._pointer + index).Reference;
 			return refT;
 		}
 		set
 		{
 			ValidationUtilities.ThrowIfInvalidSequenceIndex(index, this.Length);
 			ValidationUtilities.ThrowIfInvalidPointer(this._isValid!);
-			ref T refT = ref this._array is not null ?
-				ref this._array.AsSpan()[index] :
-				ref (this._pointer + index).Reference;
+			ref T refT = ref this._array is not null ? ref this._array[index] : ref (this._pointer + index).Reference;
 			refT = value;
 		}
 	}
@@ -94,7 +90,7 @@ public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 		UInt16 length;
 		if (this._array is not null)
 		{
-			span = this._array.AsSpan()[..this.Length];
+			span = this._array.Length > 0 ? MemoryMarshal.CreateSpan(ref this._array[0], this._array.Length) : default;
 			length = (UInt16)this._array.Length;
 		}
 		else

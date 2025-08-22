@@ -44,6 +44,25 @@ public static unsafe partial class MemoryBlockExtensions
 		ReadOnlySpan<Byte> byteSpan = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, Byte>(ref refT), 1);
 		return MemoryInspector.Instance.IsLiteral(byteSpan);
 	}
+	/// <summary>
+	/// Creates a new read-only span over a target array.
+	/// </summary>
+	/// <typeparam name="T">The type of the array.</typeparam>
+	/// <param name="array">The array to convert.</param>
+	/// <returns>The read-only span representation of the array.</returns>
+	/// <remarks>
+	/// This method differs from <see cref="MemoryExtensions.AsSpan{T}(T[])"/> in the way the managed reference of the
+	/// first element of the array is obtained, in order to ensure compatibility across different runtimes.
+	/// </remarks>
+	public static ReadOnlySpan<T> AsReadOnlySpan<T>(this T[]? array)
+		=> array is null || array.Length == 0 ? default : MemoryMarshal.CreateReadOnlySpan(ref array[0], array.Length);
+	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+	/// <remarks>
+	/// This method differs from <see cref="MemoryExtensions.AsSpan{T}(T[])"/> in the way the managed reference of the
+	/// first element of the array is obtained, in order to ensure compatibility across different runtimes.
+	/// </remarks>
+	public static Span<T> AsManagedSpan<T>(this T[]? array)
+		=> array is null || array.Length == 0 ? default : MemoryMarshal.CreateSpan(ref array[0], array.Length);
 
 	/// <summary>
 	/// Indicates whether the current span represents memory that is not part of a hardcoded literal.

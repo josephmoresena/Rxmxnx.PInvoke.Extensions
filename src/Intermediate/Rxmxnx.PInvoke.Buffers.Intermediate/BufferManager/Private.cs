@@ -19,7 +19,7 @@ public static partial class BufferManager
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
 		try
 		{
-			Span<T> span = arr.AsSpan()[..count];
+			Span<T> span = arr.Length > 0 ? MemoryMarshal.CreateSpan(ref arr[0], count) : default;
 			ScopedBuffer<T> buffer = new(span, true, arr.Length);
 
 			span.Clear();
@@ -49,7 +49,7 @@ public static partial class BufferManager
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
 		try
 		{
-			Span<T> span = arr.AsSpan()[..count];
+			Span<T> span = arr.Length > 0 ? MemoryMarshal.CreateSpan(ref arr[0], count) : default;
 			ScopedBuffer<T> buffer = new(span, true, arr.Length);
 
 			span.Clear();
@@ -76,7 +76,7 @@ public static partial class BufferManager
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
 		try
 		{
-			Span<T> span = arr.AsSpan()[..count];
+			Span<T> span = arr.Length > 0 ? MemoryMarshal.CreateSpan(ref arr[0], count) : default;
 			ScopedBuffer<T> buffer = new(span, true, arr.Length);
 
 			span.Clear();
@@ -109,7 +109,7 @@ public static partial class BufferManager
 		T[] arr = ArrayPool<T>.Shared.Rent(count);
 		try
 		{
-			Span<T> span = arr.AsSpan()[..count];
+			Span<T> span = arr.Length > 0 ? MemoryMarshal.CreateSpan(ref arr[0], count) : default;
 			ScopedBuffer<T> buffer = new(span, true, arr.Length);
 
 			span.Clear();
