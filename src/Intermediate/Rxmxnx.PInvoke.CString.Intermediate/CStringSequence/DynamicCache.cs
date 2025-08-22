@@ -10,7 +10,7 @@ public partial class CStringSequence
 		/// <summary>
 		/// Internal cache.
 		/// </summary>
-		private readonly ConcurrentDictionary<Int32, WeakReference<CString>> _cache = new();
+		private readonly ConcurrentDictionary<Int32, WeakReference<CString>> _cache;
 
 		/// <inheritdoc/>
 		public override CString? this[Int32 index]
