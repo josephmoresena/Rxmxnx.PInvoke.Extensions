@@ -76,7 +76,8 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			catch (Exception ex)
 			{
 				Console.WriteLine("**Unable to retrieve runtime info**");
-				Console.WriteLine(AotInfo.IsReflectionDisabled ? ex.Message : ex);
+				if (!AotInfo.IsReflectionDisabled)
+					Console.WriteLine(ex);
 			}
 			Console.WriteLine("========== Rxmxnx.PInvoke Runtime information ==========");
 			Console.WriteLine($"Package: {SystemInfo.CompilationFramework}");
@@ -102,7 +103,8 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		{
 			try
 			{
-				foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().AsReadOnlySpan())
+				ReadOnlyMemory<Assembly> assemblies = new(AppDomain.CurrentDomain.GetAssemblies());
+				foreach (Assembly assembly in assemblies.Span)
 				{
 					if (assembly == Assembly.GetExecutingAssembly() || assembly.IsDynamic) continue;
 					Console.WriteLine(AotInfo.IsNativeAot ? assembly.FullName : assembly.GetAssemblyName());
@@ -111,7 +113,8 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			catch (Exception ex)
 			{
 				Console.WriteLine("**Unable to retrieve domain info**");
-				Console.WriteLine(AotInfo.IsReflectionDisabled ? ex.Message : ex);
+				if (!AotInfo.IsReflectionDisabled)
+					Console.WriteLine(ex);
 			}
 		}
 		private static ReadOnlySpan<Byte> GetEmptyUtf8()
