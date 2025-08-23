@@ -26,7 +26,7 @@ internal sealed record ComparisonTestResult
 	private static Dictionary<StringComparison, Int32> GetComparisons(String strA, String strB)
 	{
 		ConcurrentDictionary<StringComparison, Int32> result = new();
-		foreach (StringComparison comparisonType in NativeUtilities.GetValuesSpan<StringComparison>())
+		foreach (StringComparison comparisonType in NativeUtilities.GetEnumValuesSpan<StringComparison>())
 			result.TryAdd(comparisonType, String.Compare(strA, strB, comparisonType));
 
 		return new(result);

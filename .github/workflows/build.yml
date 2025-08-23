@@ -95,23 +95,6 @@ jobs:
           rm -rf TestResults
           rm -rf ./../_temp
           mv ./ApplicationTest src/ApplicationTest
-      - name: Install Mono Framework
-        run: |
-          sudo apt install ca-certificates gnupg --assume-yes
-          sudo gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-          echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
-          sudo apt update
-          
-          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          
-          sudo apt install mono-complete mono-vbnc mono-dbg gdb libssl3
-      - name: Mono-Compile ApplicationTest for FreeBSD
-        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
-        shell: bash
-        run: |
-          msbuild -restore /p:Configuration=Release /p:UsePackage=true
-          rm -rf ./obj
       - name: Init FreeBSD 13.5 VM
         id: vm
         uses: vmactions/freebsd-vm@v1.2.3
@@ -173,6 +156,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE;
           cd ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest;
+          msbuild -restore /p:Configuration=Release /p:UsePackage=true;
           mono ./bin/Release/net45/Rxmxnx.PInvoke.ApplicationTest.mono.exe;
   run-tests:
     needs: [ build ]

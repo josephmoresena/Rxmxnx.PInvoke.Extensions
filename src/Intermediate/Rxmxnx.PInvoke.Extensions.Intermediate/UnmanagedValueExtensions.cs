@@ -1,4 +1,6 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿using EnumCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
+
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Provides a set of extensions for basic operations with <see langword="unmanaged"/> values.
@@ -7,6 +9,17 @@
 [Browsable(false)]
 public static partial class UnmanagedValueExtensions
 {
+	/// <summary>
+	/// Retrieves the name of the constant in the specified enumeration type that has the specified value.
+	/// </summary>
+	/// <typeparam name="TEnum">The type of the enumeration.</typeparam>
+	/// <param name="value">The value of a particular enumerated constant in terms of its underlying type.</param>
+	/// <returns>
+	/// A string containing the name of the enumerated constant in <typeparamref name="TEnum"/> whose value is
+	/// <paramref name="value"/>,
+	/// or <see langword="null"/> if no such constant is found.
+	/// </returns>
+	public static String? GetName<TEnum>(this TEnum value) where TEnum : struct, Enum => EnumCompat.GetName(value);
 	/// <summary>
 	/// Rents and pins an array of minimum <paramref name="count"/> elements from <paramref name="arrayPool"/>,
 	/// ensuring a safe context for accessing the fixed memory.

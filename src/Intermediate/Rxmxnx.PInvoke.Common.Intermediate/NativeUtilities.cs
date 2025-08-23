@@ -272,7 +272,7 @@ public static unsafe partial class NativeUtilities
 	/// </summary>
 	/// <typeparam name="TEnum">The type of the enumeration.</typeparam>
 	/// <returns>A read-only span that contains the values of the constants in <typeparamref name="TEnum"/>.</returns>
-	public static ReadOnlySpan<TEnum> GetValuesSpan<TEnum>() where TEnum : unmanaged, Enum
+	public static ReadOnlySpan<TEnum> GetEnumValuesSpan<TEnum>() where TEnum : struct, Enum
 		=> EnumValueHelper<TEnum>.Values.Span;
 	/// <summary>
 	/// Creates a new span over an array of the names of the constants in a specified enumeration type.
@@ -280,7 +280,7 @@ public static unsafe partial class NativeUtilities
 	/// <typeparam name="TEnum">The type of the enumeration.</typeparam>
 	/// <returns>The span representation of the array.</returns>
 	/// <returns>A string read-only span of the names of the constants in <typeparamref name="TEnum"/>.</returns>
-	public static ReadOnlySpan<String> GetNamesSpan<TEnum>() where TEnum : unmanaged, Enum
+	public static ReadOnlySpan<String> GetEnumNamesSpan<TEnum>() where TEnum : struct, Enum
 		=> EnumNameHelper<TEnum>.Values.Span;
 	/// <summary>
 	/// Creates an <see cref="IReadOnlyFixedContext{TEnum}.IDisposable"/> instance by pinning an array of the values of
@@ -294,6 +294,9 @@ public static unsafe partial class NativeUtilities
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned array
 	/// and avoid memory leaks.
 	/// </remarks>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public static IReadOnlyFixedContext<TEnum>.IDisposable GetValuesFixedContext<TEnum>() where TEnum : unmanaged, Enum
 	{
 		ReadOnlyMemory<TEnum> mem = EnumValueHelper<TEnum>.Values;
