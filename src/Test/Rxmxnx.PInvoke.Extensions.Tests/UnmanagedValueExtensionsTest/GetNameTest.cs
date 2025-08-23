@@ -30,6 +30,7 @@ public sealed class GetNameTest
 
 	private static void Test<T>() where T : struct, Enum
 	{
+#pragma warning disable CA1859
 #if NET5_0_OR_GREATER
 		IReadOnlyList<T> values = Enum.GetValues<T>();
 		IReadOnlyList<String> names = Enum.GetNames<T>();
@@ -40,6 +41,7 @@ public sealed class GetNameTest
 #endif
 		using IEnumerator<T> valuesEnumerator = values.GetEnumerator();
 		using IEnumerator<String> namesEnumerator = names.GetEnumerator();
+#pragma warning restore CA1859
 		while (valuesEnumerator.MoveNext() && namesEnumerator.MoveNext())
 		{
 			String? valueName = valuesEnumerator.Current.GetName();
