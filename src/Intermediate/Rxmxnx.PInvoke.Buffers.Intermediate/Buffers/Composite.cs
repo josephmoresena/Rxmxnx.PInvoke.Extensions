@@ -90,7 +90,7 @@ public
 	{
 		BufferTypeMetadata<T> currentMetadata = Composite<TBufferA, TBufferB, T>.TypeMetadata;
 		if (!currentMetadata.IsBinary) return;
-		foreach (BufferTypeMetadata<T> component in currentMetadata.Components.AsSpan())
+		foreach (BufferTypeMetadata<T> component in currentMetadata.Components.Span)
 			ManagedBuffer<T>.AppendComponent(component, components);
 	}
 #endif

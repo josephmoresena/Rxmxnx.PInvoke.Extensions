@@ -11,6 +11,16 @@ namespace Rxmxnx.PInvoke;
 #endif
 public static partial class AotInfo
 {
+	/// <summary>
+	/// Indicates whether <see cref="String"/> type name contains the <c>String</c> word.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if <see cref="String"/> type name contains the <c>String</c> word;
+	/// otherwise, <see langword="false"/>.
+	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static Boolean StringTypeNameContainsString()
+		=> typeof(String).ToString().AsSpan().EndsWith(nameof(String).AsSpan());
 #if !NET6_0_OR_GREATER
 	/// <summary>
 	/// Indicates whether JIT is enabled in the current runtime.
@@ -110,7 +120,7 @@ public static partial class AotInfo
 	private static ReadOnlySpan<Assembly> GetAssembliesSpan()
 	{
 		Assembly[] array = AppDomain.CurrentDomain.GetAssemblies();
-		return array.Length == 0 ? default : MemoryMarshal.CreateReadOnlySpan(ref array[0], array.Length);
+		return MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(array), array.Length);
 	}
 	/// <summary>
 	/// Indicates whether <see cref="System.Reflection.Emit"/> namespace is supported in the current runtime.
@@ -132,14 +142,4 @@ public static partial class AotInfo
 		return type is not null && Activator.CreateInstance(type) is not null && type.Assembly.IsDynamic;
 	}
 #endif
-	/// <summary>
-	/// Indicates whether <see cref="String"/> type name contains the <c>String</c> word.
-	/// </summary>
-	/// <returns>
-	/// <see langword="true"/> if <see cref="String"/> type name contains the <c>String</c> word;
-	/// otherwise, <see langword="false"/>.
-	/// </returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static Boolean StringTypeNameContainsString()
-		=> typeof(String).ToString().AsSpan().EndsWith(nameof(String).AsSpan());
 }

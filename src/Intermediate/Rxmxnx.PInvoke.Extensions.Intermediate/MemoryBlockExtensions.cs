@@ -50,19 +50,19 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <typeparam name="T">The type of the array.</typeparam>
 	/// <param name="array">The array to convert.</param>
 	/// <returns>The read-only span representation of the array.</returns>
-	/// <remarks>
-	/// This method differs from <see cref="MemoryExtensions.AsSpan{T}(T[])"/> in the way the managed reference of the
-	/// first element of the array is obtained, in order to ensure compatibility across different runtimes.
-	/// </remarks>
 	public static ReadOnlySpan<T> AsReadOnlySpan<T>(this T[]? array)
-		=> array is null || array.Length == 0 ? default : MemoryMarshal.CreateReadOnlySpan(ref array[0], array.Length);
+		=> array is not null ?
+			MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(array), array.Length) :
+			default;
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
 	/// <remarks>
-	/// This method differs from <see cref="MemoryExtensions.AsSpan{T}(T[])"/> in the way the managed reference of the
-	/// first element of the array is obtained, in order to ensure compatibility across different runtimes.
+	/// This method creates a <see cref="Span{T}"/> even if <paramref name="array"/>
+	/// is an array of items of a type derived from <typeparamref name="T"/>.
 	/// </remarks>
-	public static Span<T> AsManagedSpan<T>(this T[]? array)
-		=> array is null || array.Length == 0 ? default : MemoryMarshal.CreateSpan(ref array[0], array.Length);
+	public static Span<T> AsCovariantSpan<T>(this T[]? array)
+		=> array is not null ?
+			MemoryMarshal.CreateSpan(ref NativeUtilities.GetArrayDataReference(array), array.Length) :
+			default;
 
 	/// <summary>
 	/// Indicates whether the current span represents memory that is not part of a hardcoded literal.

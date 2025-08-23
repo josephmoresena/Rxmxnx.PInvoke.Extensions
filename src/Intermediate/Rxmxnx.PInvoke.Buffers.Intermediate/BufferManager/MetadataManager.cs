@@ -22,8 +22,8 @@ public static partial class BufferManager
 			UInt16 sizeB = componentB.Size;
 			isBinary = false;
 
-			if (!componentA.IsBinary || !componentB.IsBinary || (componentB.Components.Length == 2 &&
-				    componentB.Components[0] != componentB.Components[^1]))
+			if (!componentA.IsBinary || !componentB.IsBinary ||
+			    (componentB.Components is { Length: 2, Span: var bComponents, } && bComponents[0] != bComponents[^1]))
 			{
 				isBinary = false;
 			}
@@ -239,10 +239,8 @@ public static partial class BufferManager
 		/// Prints metadata dictionary.
 		/// </summary>
 		/// <param name="trace">Indicates whether trace should be written.</param>
-#if !PACKAGE
 		[ExcludeFromCodeCoverage]
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6670)]
-#endif
 		public static void PrintMetadata(Boolean trace)
 		{
 			if (!trace) return;
@@ -252,7 +250,7 @@ public static partial class BufferManager
 				{
 					BufferTypeMetadata<T> m = MetadataManager<T>.store.BinaryBuffers[key];
 					Trace.WriteLine(
-						$"{typeof(T)} {key}({String.Join(", ", m.Components.Select(k => k.Size))}): {m.IsBinary}.");
+						$"{typeof(T)} {key}({String.Join(", ", m.Components.ToArray().Select(k => k.Size))}): {m.IsBinary}.");
 				}
 				Trace.WriteLine($"{typeof(T)}: {MetadataManager<T>.store.BinaryBuffers.Count}");
 			}

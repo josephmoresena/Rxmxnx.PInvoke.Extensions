@@ -48,11 +48,8 @@ public partial class ValueRegion<T>
 
 		/// <inheritdoc/>
 		internal override ReadOnlySpan<T> AsSpan()
-		{
-			if (this._array.Length <= 0) return this._array.AsSpan();
-			ref T refValue = ref this._array[0];
-			return MemoryMarshal.CreateReadOnlySpan(ref refValue, this._array.Length)[this.Offset..this.End];
-		}
+			=> MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(this._array),
+			                                    this._array.Length)[this.Offset..this.End];
 		/// <inheritdoc/>
 		internal override ValueRegion<T> InternalSlice(Int32 startIndex, Int32 length)
 			=> new ManagedMemorySlice(this, startIndex, length);

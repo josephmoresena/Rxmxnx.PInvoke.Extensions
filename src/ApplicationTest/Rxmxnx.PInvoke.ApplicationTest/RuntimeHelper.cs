@@ -103,8 +103,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		{
 			try
 			{
-				ReadOnlyMemory<Assembly> assemblies = new(AppDomain.CurrentDomain.GetAssemblies());
-				foreach (Assembly assembly in assemblies.Span)
+				foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().AsReadOnlySpan())
 				{
 					if (assembly == Assembly.GetExecutingAssembly() || assembly.IsDynamic) continue;
 					Console.WriteLine(AotInfo.IsNativeAot ? assembly.FullName : assembly.GetAssemblyName());

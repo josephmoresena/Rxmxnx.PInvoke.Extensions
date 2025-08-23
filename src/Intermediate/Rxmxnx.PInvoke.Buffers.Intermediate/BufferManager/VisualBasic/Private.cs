@@ -14,8 +14,7 @@ public static partial class BufferManager
 			VbScopedBuffer<T> buffer = new(arr, count);
 			try
 			{
-				if (arr.Length > 0)
-					MemoryMarshal.CreateSpan(ref arr[0], count).Clear();
+				arr.AsSpan()[..count].Clear();
 				action(buffer);
 			}
 			finally
@@ -34,8 +33,7 @@ public static partial class BufferManager
 			VbScopedBuffer<T> buffer = new(arr, count);
 			try
 			{
-				if (arr.Length > 0)
-					MemoryMarshal.CreateSpan(ref arr[0], count).Clear();
+				arr.AsSpan()[..count].Clear();
 				action(buffer, state);
 			}
 			finally
@@ -54,8 +52,7 @@ public static partial class BufferManager
 			VbScopedBuffer<T> buffer = new(arr, count);
 			try
 			{
-				if (arr.Length > 0)
-					MemoryMarshal.CreateSpan(ref arr[0], count).Clear();
+				arr.AsSpan()[..count].Clear();
 				return func(buffer);
 			}
 			finally
@@ -75,8 +72,7 @@ public static partial class BufferManager
 			VbScopedBuffer<T> buffer = new(arr, count);
 			try
 			{
-				if (arr.Length > 0)
-					MemoryMarshal.CreateSpan(ref arr[0], count).Clear();
+				arr.AsSpan()[..count].Clear();
 				return func(buffer, state);
 			}
 			finally

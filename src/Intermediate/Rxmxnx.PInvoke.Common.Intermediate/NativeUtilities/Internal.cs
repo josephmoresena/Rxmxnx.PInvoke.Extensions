@@ -33,4 +33,14 @@ public partial class NativeUtilities
 			(Byte)'9' => 9,
 			_ => 0,
 		};
+	/// <summary>
+	/// Returns a reference to the element of the array at index 0.
+	/// </summary>
+	/// <typeparam name="T">The type of items in the array.</typeparam>
+	/// <param name="array">A <see cref="T"/> array.</param>
+	/// <returns>A reference to the element at index 0.</returns>
+	internal static ref T GetArrayDataReference<T>(T[] array)
+		=> ref array.Length > 0 ?
+			ref Unsafe.AsRef(in array[0]) :
+			ref MemoryMarshal.GetReference(new ReadOnlyMemory<T>(array).Span);
 }

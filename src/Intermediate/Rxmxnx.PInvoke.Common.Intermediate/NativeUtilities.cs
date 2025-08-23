@@ -273,7 +273,7 @@ public static unsafe partial class NativeUtilities
 	/// <typeparam name="TEnum">The type of the enumeration.</typeparam>
 	/// <returns>A read-only span that contains the values of the constants in <typeparamref name="TEnum"/>.</returns>
 	public static ReadOnlySpan<TEnum> GetValuesSpan<TEnum>() where TEnum : unmanaged, Enum
-		=> EnumValueHelper<TEnum>.Values.AsSpan();
+		=> EnumValueHelper<TEnum>.Values.Span;
 	/// <summary>
 	/// Creates a new span over an array of the names of the constants in a specified enumeration type.
 	/// </summary>
@@ -281,7 +281,7 @@ public static unsafe partial class NativeUtilities
 	/// <returns>The span representation of the array.</returns>
 	/// <returns>A string read-only span of the names of the constants in <typeparamref name="TEnum"/>.</returns>
 	public static ReadOnlySpan<String> GetNamesSpan<TEnum>() where TEnum : unmanaged, Enum
-		=> EnumNameHelper<TEnum>.Values.AsSpan();
+		=> EnumNameHelper<TEnum>.Values.Span;
 	/// <summary>
 	/// Creates an <see cref="IReadOnlyFixedContext{TEnum}.IDisposable"/> instance by pinning an array of the values of
 	/// the constants in a specified enumeration type.
@@ -296,7 +296,7 @@ public static unsafe partial class NativeUtilities
 	/// </remarks>
 	public static IReadOnlyFixedContext<TEnum>.IDisposable GetValuesFixedContext<TEnum>() where TEnum : unmanaged, Enum
 	{
-		Memory<TEnum> mem = EnumValueHelper<TEnum>.Values.AsMemory();
+		ReadOnlyMemory<TEnum> mem = EnumValueHelper<TEnum>.Values;
 		MemoryHandle handle = mem.Pin();
 		return handle.Pointer == default ?
 			ReadOnlyFixedContext<TEnum>.EmptyDisposable :

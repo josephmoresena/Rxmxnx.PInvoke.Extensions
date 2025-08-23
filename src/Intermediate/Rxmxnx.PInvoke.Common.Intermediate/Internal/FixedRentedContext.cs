@@ -41,7 +41,7 @@ internal sealed class FixedRentedContext<T> : IFixedContext<T>.IDisposable
 		this._arrayPool = arrayPool;
 		this.Array = arrayPool.Rent(length);
 		this._clearArray = clearArray;
-		this._handle = this.Array.AsMemory().Pin();
+		this._handle = new ReadOnlyMemory<T>(this.Array).Pin();
 		this._ctx = new(this._handle.Pointer, length);
 	}
 

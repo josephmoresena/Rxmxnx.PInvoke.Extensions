@@ -12,7 +12,7 @@ internal static class EnumNameHelper<TEnum> where TEnum : struct, Enum
 	/// Internal array.
 	/// </summary>
 #pragma warning disable S2743
-	public static readonly String[] Values;
+	public static readonly ReadOnlyMemory<String> Values;
 #pragma warning restore S2743
 
 	/// <summary>
@@ -24,9 +24,9 @@ internal static class EnumNameHelper<TEnum> where TEnum : struct, Enum
 	static EnumNameHelper()
 	{
 #if NET5_0_OR_GREATER
-		EnumNameHelper<TEnum>.Values = Enum.GetNames<TEnum>();
+		EnumNameHelper<TEnum>.Values = new(Enum.GetNames<TEnum>());
 #else
-		EnumNameHelper<TEnum>.Values = Enum.GetNames(typeof(TEnum));
+		EnumNameHelper<TEnum>.Values = new(Enum.GetNames(typeof(TEnum)));
 #endif
 	}
 }

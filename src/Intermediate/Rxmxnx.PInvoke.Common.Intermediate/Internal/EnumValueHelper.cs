@@ -8,7 +8,7 @@ internal static class EnumValueHelper<TEnum> where TEnum : struct, Enum
 	/// <summary>
 	/// Internal array.
 	/// </summary>
-	public static readonly TEnum[] Values;
+	public static readonly ReadOnlyMemory<TEnum> Values;
 
 	/// <summary>
 	/// Static constructor.
@@ -19,9 +19,9 @@ internal static class EnumValueHelper<TEnum> where TEnum : struct, Enum
 	static EnumValueHelper()
 	{
 #if NET5_0_OR_GREATER
-		EnumValueHelper<TEnum>.Values = Enum.GetValues<TEnum>();
+		EnumValueHelper<TEnum>.Values = new(Enum.GetValues<TEnum>());
 #else
-		EnumValueHelper<TEnum>.Values = (TEnum[])Enum.GetValues(typeof(TEnum));
+		EnumValueHelper<TEnum>.Values = new((TEnum[])Enum.GetValues(typeof(TEnum)));
 #endif
 	}
 }

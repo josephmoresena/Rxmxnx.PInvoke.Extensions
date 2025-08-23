@@ -24,7 +24,7 @@ public unsafe partial class UnmanagedValueExtensions
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		if (arr is not null)
-			fixed (void* ptr = &(arr.Length > 0 ? ref arr[0] : ref MemoryMarshal.GetReference(arr.AsSpan())))
+			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
 			{
 				FixedContext<T> ctx = new(ptr, arr.Length);
 				try
@@ -53,7 +53,7 @@ public unsafe partial class UnmanagedValueExtensions
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		if (arr is not null)
-			fixed (void* ptr = &(arr.Length > 0 ? ref arr[0] : ref MemoryMarshal.GetReference(arr.AsSpan())))
+			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
 			{
 				FixedContext<T> ctx = new(ptr, arr.Length);
 				try
@@ -87,7 +87,7 @@ public unsafe partial class UnmanagedValueExtensions
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		if (arr is not null)
-			fixed (void* ptr = &(arr.Length > 0 ? ref arr[0] : ref MemoryMarshal.GetReference(arr.AsSpan())))
+			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
 			{
 				FixedContext<T> ctx = new(ptr, arr.Length);
 				try
@@ -121,7 +121,7 @@ public unsafe partial class UnmanagedValueExtensions
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		if (arr is not null)
-			fixed (void* ptr = &(arr.Length > 0 ? ref arr[0] : ref MemoryMarshal.GetReference(arr.AsSpan())))
+			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
 			{
 				FixedContext<T> ctx = new(ptr, arr.Length);
 				try
@@ -152,7 +152,7 @@ public unsafe partial class UnmanagedValueExtensions
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		if (arr is not null)
-			fixed (void* ptr = &(arr.Length > 0 ? ref arr[0] : ref MemoryMarshal.GetReference(arr.AsSpan())))
+			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
 			{
 				FixedContext<T> ctx = new(ptr, arr.Length);
 				try
@@ -182,7 +182,7 @@ public unsafe partial class UnmanagedValueExtensions
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		if (arr is not null)
-			fixed (void* ptr = &(arr.Length > 0 ? ref arr[0] : ref MemoryMarshal.GetReference(arr.AsSpan())))
+			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
 			{
 				FixedContext<T> ctx = new(ptr, arr.Length);
 				try
@@ -218,7 +218,7 @@ public unsafe partial class UnmanagedValueExtensions
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		if (arr is not null)
-			fixed (void* ptr = &(arr.Length > 0 ? ref arr[0] : ref MemoryMarshal.GetReference(arr.AsSpan())))
+			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
 			{
 				FixedContext<T> ctx = new(ptr, arr.Length);
 				try
@@ -254,7 +254,7 @@ public unsafe partial class UnmanagedValueExtensions
 	{
 		ArgumentNullException.ThrowIfNull(func);
 		if (arr is not null)
-			fixed (void* ptr = &(arr.Length > 0 ? ref arr[0] : ref MemoryMarshal.GetReference(arr.AsSpan())))
+			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
 			{
 				FixedContext<T> ctx = new(ptr, arr.Length);
 				try

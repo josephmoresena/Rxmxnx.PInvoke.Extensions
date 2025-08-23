@@ -58,7 +58,7 @@ public sealed class NonBinarySpaceTests
 				WrapperStruct<WrapperStruct<WrapperStruct<T>>>>();
 
 		PInvokeAssert.Empty(typeMetadata);
-		PInvokeAssert.Empty(typeMetadata.Components);
+		PInvokeAssert.Empty(typeMetadata.Components.ToArray());
 		PInvokeAssert.False(typeMetadata.IsBinary);
 		PInvokeAssert.Equal(100, typeMetadata.Size);
 		PInvokeAssert.Null(typeMetadata.Double());
