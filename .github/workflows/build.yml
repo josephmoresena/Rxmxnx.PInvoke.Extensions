@@ -188,7 +188,6 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE;
           cd ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest;
-          msbuild -restore /p:Configuration=Release /p:UsePackage=true;
           mono ./bin/Release/net45/Rxmxnx.PInvoke.ApplicationTest.mono.exe;
   run-tests:
     needs: [ build ]
