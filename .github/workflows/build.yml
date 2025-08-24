@@ -224,7 +224,7 @@ jobs:
       - name: Create Web Native Artifact Logs
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ runner.os }}-Artifact-Logs
+          name: Web-Artifact-Logs
           path: |
             ./artifacts/Native/*
   run-tests:
