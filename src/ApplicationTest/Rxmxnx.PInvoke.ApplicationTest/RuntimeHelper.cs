@@ -42,6 +42,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #if R2R_EXECUTABLE
                     + " ReadyToRun (R2R)"
 #endif
+#if WEB_ASSEMBLY
+                    + " WASM"
+#endif
 			;
 
 		public static readonly Random Shared = new();
@@ -96,15 +99,24 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Console.WriteLine($"Globalization-Invariant Mode: {NativeUtilities.GlobalizationInvariantModeEnabled}");
 			Console.WriteLine($"UI Iso639-1: {NativeUtilities.UserInterfaceIso639P1}");
 			Console.WriteLine($"Buffer AutoComposition Enabled: {BufferManager.BufferAutoCompositionEnabled}");
-			Console.WriteLine($"String constant: {RuntimeHelper.runtimeName.AsSpan().IsLiteral()}");
-			Console.WriteLine($"CString.Empty literal: {RuntimeHelper.GetEmptyUtf8().IsLiteral()}");
+			Console.WriteLine($"String constant: {!RuntimeHelper.runtimeName.AsSpan().MayBeNonLiteral()}");
+			Console.WriteLine($"CString.Empty literal: {!RuntimeHelper.GetEmptyUtf8().MayBeNonLiteral()}");
+			Console.WriteLine($"Hardcoded Array literal: {!RuntimeHelper.Null.AsSpan().MayBeNonLiteral()}");
 		}
 		private static void PrintDomainInfo()
 		{
 			try
 			{
+#if !NET9_0_OR_GREATER
 				foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().AsReadOnlySpan())
 				{
+#else
+				ReadOnlySpan<Assembly>.Enumerator enumerator =
+					AppDomain.CurrentDomain.GetAssemblies().AsReadOnlySpan().GetEnumerator();
+				while (enumerator.MoveNext())
+				{
+					ref readonly Assembly assembly = ref enumerator.Current;
+#endif
 					if (assembly == Assembly.GetExecutingAssembly() || assembly.IsDynamic) continue;
 					Console.WriteLine(AotInfo.IsNativeAot ? assembly.FullName : assembly.GetAssemblyName());
 				}

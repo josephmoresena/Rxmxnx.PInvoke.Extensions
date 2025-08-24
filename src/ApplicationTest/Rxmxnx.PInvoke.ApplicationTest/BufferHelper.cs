@@ -95,8 +95,18 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 
 		private static void Print<T>(ReadOnlySpan<T> span)
 		{
+#if !NET9_0_OR_GREATER
 			foreach (ref readonly T item in span)
+#else
+			ReadOnlySpan<T>.Enumerator enumerator = span.GetEnumerator();
+			while (enumerator.MoveNext())
+			{
+				ref readonly T item = ref enumerator.Current;
+#endif
 				Console.WriteLine(item);
+#if NET9_0_OR_GREATER
+			}
+#endif
 		}
 		private static void PrintBufferInfo<T>(ScopedBuffer<T> buff)
 		{

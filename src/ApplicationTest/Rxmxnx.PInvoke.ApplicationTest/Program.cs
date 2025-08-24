@@ -108,14 +108,21 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				Console.WriteLine(val);
 			if (sequence.Count > 0)
 				Console.WriteLine("=== UTF-8 Enumerable ===");
+#if !NET9_0_OR_GREATER
+			foreach (ReadOnlySpan<Byte> utf8Span in sequence.CreateView())
+#else
 			CStringSequence.Utf8View.Enumerator enumerator = sequence.CreateView().GetEnumerator();
+
 			while (enumerator.MoveNext())
 			{
-				Console.WriteLine($"Address: 0x{enumerator.Current.GetUnsafeIntPtr():X}\t" +
-				                  $"Length: {enumerator.Current.Length}\t" +
-				                  $"Bytes: {Convert.ToBase64String(enumerator.Current)}\t" +
-				                  $"Text: {Encoding.UTF8.GetString(enumerator.Current)}");
+				ReadOnlySpan<Byte> utf8Span = enumerator.Current;
+#endif
+				Console.WriteLine($"Address: 0x{utf8Span.GetUnsafeIntPtr():X}\t" + $"Length: {utf8Span.Length}\t" +
+				                  $"Bytes: {Convert.ToBase64String(utf8Span)}\t" +
+				                  $"Text: {Encoding.UTF8.GetString(utf8Span)}");
+#if NET9_0_OR_GREATER
 			}
+#endif
 		}
 		private static void GuidFeature()
 		{
@@ -130,16 +137,36 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			using IFixedContext<Int64>.IDisposable fRent =
 				ArrayPool<Int64>.Shared.RentFixed(10, false, out Int32 arrayLength);
 			Console.WriteLine($"Address: 0x{fRent.Pointer:X}\tRequired: {fRent.Values.Length}\tRented: {arrayLength}");
+#if !NET9_0_OR_GREATER
 			foreach (ref Int64 rLong in fRent.Values)
+#else
+			Span<Int64>.Enumerator enumerator = fRent.Values.GetEnumerator();
+			while (enumerator.MoveNext())
+			{
+				ref Int64 rLong = ref enumerator.Current;
+#endif
 				rLong = RuntimeHelper.Shared.Next();
+#if NET9_0_OR_GREATER
+			}
+#endif
 			Program.Print(fRent);
 		}
 
 		private static void Print<T>(in IFixedContext<T> ctx)
 		{
 			Console.Write($"Address: 0x{ctx.Pointer:X}\tItems: {ctx.Values.Length} ");
+#if !NET9_0_OR_GREATER
 			foreach (T value in ctx.Values)
+#else
+			Span<T>.Enumerator enumerator = ctx.Values.GetEnumerator();
+			while (enumerator.MoveNext())
+			{
+				ref T value = ref enumerator.Current;
+#endif
 				Console.Write($"{value} ");
+#if NET9_0_OR_GREATER
+			}
+#endif
 			Console.WriteLine("");
 		}
 		private static void Print(IMutableReference<Guid> uuid)
