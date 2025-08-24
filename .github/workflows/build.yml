@@ -192,16 +192,16 @@ jobs:
       - name: Install Escripten
         shell: bash
         run: |
-          git clone https://github.com/emscripten-core/emsdk.git
-          cd emsdk
-          ./emsdk install latest
-          ./emsdk activate latest
-          source ./emsdk_env.sh
+          sudo git clone https://github.com/emscripten-core/emsdk.git /opt/emsdk
+          cd /opt/emsdk
+          sudo ./emsdk install latest
+          sudo ./emsdk activate latest
           mkdir artifacts
       - name: WebAssembly Artifact
         shell: bash
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
         run: |
+          source /opt/emsdk/emsdk_env.sh
           dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net9.0 /p:RequiredFramework=net9.0 \
             /p:InvariantGlobalization=False /p:DisableBufferAutoComposition=False \
             /p:CopyTargetTo=../../../artifacts
