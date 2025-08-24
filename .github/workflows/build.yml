@@ -192,11 +192,12 @@ jobs:
       - name: Install Escripten
         shell: bash
         run: |
+          mkdir artifacts
           sudo git clone https://github.com/emscripten-core/emsdk.git /opt/emsdk
           cd /opt/emsdk
           sudo ./emsdk install latest
           sudo ./emsdk activate latest
-          mkdir artifacts
+          sudo chmod -R 777 /opt/emsdk
       - name: WebAssembly Artifact
         shell: bash
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
