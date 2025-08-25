@@ -6,7 +6,7 @@
         <SelfContained Condition="'$(RequiredFramework)' != ''">true</SelfContained>
         <IsNativeAotWebAssembly>$(RuntimeIdentifier.ToLower().EndsWith('-wasm'))</IsNativeAotWebAssembly>
         <IsOSXHost>$([MSBuild]::IsOSPlatform('OSX'))</IsOSXHost>
-        <AssemblyName Condition="'$(RuntimeIdentifier)' != '' And '$(IsNativeAotWebAssembly)' != 'true'">$(AssemblyName).$(RuntimeIdentifier)</AssemblyName>
+        <AssemblyName Condition="'$(RuntimeIdentifier)' != ''">$(AssemblyName).$(RuntimeIdentifier)</AssemblyName>
         <AssemblyName>$(AssemblyName).$(TargetFramework)</AssemblyName>
     </PropertyGroup>
 
@@ -77,14 +77,17 @@
     </ItemGroup>
 
     <Target Name="CopyTarget" Condition="'$(SelfContained)' == 'true' Or '$(PublishAot)' == 'true' Or '$(IsNativeAotWebAssembly)' == 'true'" AfterTargets="Publish">
-        <ItemGroup>
+        <ItemGroup Condition="'$(IsNativeAotWebAssembly)' != 'true'">
             <Artifact Include="$(PublishDir)$(AssemblyName)*"/>
             <Artifact Remove="$(PublishDir)$(AssemblyName)*.pdb"/>
             <Artifact Remove="$(PublishDir)$(AssemblyName)*.dwarf"/>
             <Artifact Remove="$(PublishDir)$(AssemblyName)*.dSYM"/>
-            <Artifact Remove="$(PublishDir)$(AssemblyName)*.deps.json"/>
-            <Artifact Remove="$(PublishDir)$(AssemblyName)*.runtimeconfig.json"/>
-            <Artifact Remove="$(PublishDir)$(AssemblyName)*.html"/>
+        </ItemGroup>
+        <ItemGroup Condition="'$(IsNativeAotWebAssembly)' == 'true'">
+            <Artifact Include="$(NativeOutputPath)$(AssemblyName)*"/>
+            <Artifact Remove="$(NativeOutputPath)$(AssemblyName)*.deps.json"/>
+            <Artifact Remove="$(NativeOutputPath)$(AssemblyName)*.runtimeconfig.json"/>
+            <Artifact Remove="$(NativeOutputPath)$(AssemblyName)*.html"/>
         </ItemGroup>
         
 		<ItemGroup>
