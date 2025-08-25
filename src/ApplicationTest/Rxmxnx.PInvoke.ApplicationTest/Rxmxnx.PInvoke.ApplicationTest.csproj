@@ -30,4 +30,8 @@
         <PackageReference Include="Rxmxnx.PInvoke.Extensions" Version="9999.99.99.99-tmp"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <None Remove="Mono.ILLink.Descriptors.xml"/>
+    </ItemGroup>
+
 </Project>

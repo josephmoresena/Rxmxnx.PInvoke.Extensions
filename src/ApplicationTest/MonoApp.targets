@@ -22,4 +22,10 @@
         </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+        <EmbeddedResource Include="Mono.ILLink.Descriptors.xml">
+            <LogicalName>$(AssemblyName).xml</LogicalName>
+        </EmbeddedResource>
+    </ItemGroup>
+
 </Project>
