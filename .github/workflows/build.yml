@@ -198,7 +198,7 @@ jobs:
           sudo ./emsdk install latest
           sudo ./emsdk activate latest
           sudo chmod -R 777 /opt/emsdk
-      - name: WebAssembly Artifact
+      - name: Web-Compile ApplicationTest
         shell: bash
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
         run: |
@@ -215,6 +215,10 @@ jobs:
           dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net9.0 /p:RequiredFramework=net9.0 \
             /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=True \
             /p:CopyTargetTo=../../../artifacts
+      - name: Node-Run ApplicationTest
+        shell: bash
+        working-directory: ./artifacts
+        run: for f in *.js; do node "$f"; done
       - name: Create Web Native Artifact
         uses: actions/upload-artifact@v4
         with:
