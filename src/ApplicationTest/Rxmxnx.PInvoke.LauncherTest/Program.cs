@@ -17,7 +17,9 @@ if (compile)
 {
 	await TestCompiler.CompileNet(projectDirectory, launcher.RuntimeIdentifierPrefix, outputDirectory.FullName,
 	                              onlyNativeAot);
-	await TestCompiler.CompileMono(projectDirectory, launcher.MonoMsbuildPath, launcher.MonoOutputDirectory!.FullName);
+	if (!launcher.MonoLaunchers.IsEmpty)
+		await TestCompiler.CompileMono(projectDirectory, launcher.MonoLaunchers[0],
+		                               launcher.MonoOutputDirectory!.FullName);
 }
 
 if (run)

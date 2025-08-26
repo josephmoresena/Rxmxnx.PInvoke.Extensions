@@ -5,13 +5,11 @@ public abstract partial class Launcher
 	public DirectoryInfo OutputDirectory { get; }
 	public DirectoryInfo? MonoOutputDirectory { get; }
 	public Architecture CurrentArch { get; }
-	public abstract String RuntimeIdentifierPrefix { get; }
-	public abstract String MonoMsbuildPath { get; }
-	public abstract String MonoExecutablePath { get; }
-	public virtual String? Mono2ExecutablePath => default;
-	public virtual Architecture Mono2Arch => RuntimeInformation.OSArchitecture;
 
+	public abstract ReadOnlySpan<MonoLauncher> MonoLaunchers { get; }
+	public abstract String RuntimeIdentifierPrefix { get; }
 	public abstract Architecture[] Architectures { get; }
+
 	public async Task Execute()
 	{
 		Dictionary<String, Int32> results = new();
@@ -25,17 +23,16 @@ public abstract partial class Launcher
 				String executionName = $"{Path.GetRelativePath(this.OutputDirectory.FullName, appFile.FullName)}";
 				results.Add(executionName, await this.RunAppFile(appFile, arch, executionName));
 			}
-			if (this.MonoOutputDirectory is null) return;
-			foreach (FileInfo appFile in this.MonoOutputDirectory.GetFiles("*ApplicationTest.*mono.exe"))
+			if (this.MonoOutputDirectory is null || this.MonoLaunchers.IsEmpty) return;
+			foreach (MonoLauncher monoLauncher in this.MonoLaunchers.ToArray())
+			foreach (FileInfo executableFile in Launcher.GetMonoExecutables(this.MonoOutputDirectory))
 			{
-				String executionName = $"{Path.GetRelativePath(this.MonoOutputDirectory.FullName, appFile.FullName)}";
-				results.Add(appFile.Name,
-				            await Launcher.RunMonoAppFile(this.MonoExecutablePath, executionName,
-				                                          this.MonoOutputDirectory.FullName));
-				if (String.IsNullOrEmpty(this.Mono2ExecutablePath)) return;
-				results.Add($"{appFile.Name} ({this.Mono2Arch})",
-				            await Launcher.RunMonoAppFile(this.Mono2ExecutablePath, executionName,
-				                                          this.MonoOutputDirectory.FullName));
+				String executionName = $"{executableFile.Name} - {monoLauncher.Architecture}";
+				String executableName =
+					Path.GetRelativePath(this.MonoOutputDirectory.FullName, executableFile.FullName);
+				Int32 result = await Launcher.RunMonoAppFile(monoLauncher.ExecutablePath, executableName,
+				                                             this.MonoOutputDirectory.FullName);
+				results.Add(executionName, result);
 			}
 		}
 		finally
@@ -46,19 +43,14 @@ public abstract partial class Launcher
 	}
 	public async Task CompileMonoAot()
 	{
-		if (this.MonoOutputDirectory is null) return;
-		foreach (FileInfo assemblyFile in this.MonoOutputDirectory.GetFiles())
+		if (this.MonoOutputDirectory is null || this.MonoLaunchers.IsEmpty) return;
+		foreach (MonoLauncher monoLauncher in this.MonoLaunchers.ToArray())
+		foreach (FileInfo executableFile in Launcher.GetMonoExecutables(this.MonoOutputDirectory))
 		{
-			if (!assemblyFile.Extension.Contains(".exe") && !assemblyFile.Extension.Contains(".dll")) continue;
-			String assemblyName = $"{Path.GetRelativePath(this.MonoOutputDirectory.FullName, assemblyFile.FullName)}";
-			String result =
-				await Launcher.RunMonoAot(this.MonoExecutablePath, assemblyName, this.MonoOutputDirectory.FullName);
-			await File.WriteAllTextAsync($"{assemblyFile.FullName}.Mono.AOT.log", result);
-			if (String.IsNullOrEmpty(this.Mono2ExecutablePath)) continue;
-
-			String result2 =
-				await Launcher.RunMonoAot(this.Mono2ExecutablePath, assemblyName, this.MonoOutputDirectory.FullName);
-			await File.WriteAllTextAsync($"{assemblyFile.FullName}.{this.Mono2Arch}.Mono.AOT.log", result2);
+			await Launcher.CompileMonoAot(monoLauncher, this.MonoOutputDirectory.FullName, executableFile);
+			foreach (FileInfo assemblyFile in
+			         executableFile.Directory!.GetFiles("*.dll", SearchOption.TopDirectoryOnly))
+				await Launcher.CompileMonoAot(monoLauncher, this.MonoOutputDirectory.FullName, assemblyFile);
 		}
 	}
 

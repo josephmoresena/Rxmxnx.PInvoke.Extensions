@@ -26,6 +26,18 @@ public partial class Launcher
 		}
 	}
 
+	private static FileInfo[] GetMonoExecutables(DirectoryInfo monoOutputDirectory)
+		=> monoOutputDirectory.GetDirectories()
+		                      .SelectMany(d => d.GetFiles("*ApplicationTest.*mono.exe", SearchOption.TopDirectoryOnly))
+		                      .ToArray();
+	private static async Task CompileMonoAot(MonoLauncher monoLauncher, String outputDirectory, FileInfo assemblyFile)
+	{
+		String assemblyName = assemblyFile.Name;
+		String aotLog = Path.Combine(outputDirectory, $"{assemblyName}.{monoLauncher.Architecture}.Mono.AOT.log");
+		String result =
+			await Launcher.RunMonoAot(monoLauncher.ExecutablePath, assemblyFile.Name, assemblyFile.DirectoryName!);
+		await File.WriteAllTextAsync(aotLog, result);
+	}
 	private static async Task<Int32> RunMonoAppFile(String monoExecutable, String appFilePath, String workingDirectory)
 	{
 		ExecuteState<String> state = new()
@@ -49,7 +61,7 @@ public partial class Launcher
 			WorkingDirectory = workingDirectory,
 			AppendArgs = static (s, c) =>
 			{
-				c.Add("--aot=full,hybrid");
+				c.Add("--aot=full");
 				c.Add("-O=all");
 				c.Add(s);
 			},

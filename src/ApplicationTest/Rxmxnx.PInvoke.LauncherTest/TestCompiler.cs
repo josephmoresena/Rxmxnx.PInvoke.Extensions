@@ -32,23 +32,28 @@ public static partial class TestCompiler
 			}
 		}
 	}
-	public static async Task CompileMono(DirectoryInfo projectDirectory, String msbuildPath, String outputPath)
+	public static async Task CompileMono(DirectoryInfo projectDirectory, MonoLauncher monoLauncher, String outputPath)
 	{
-		String[] appProjectFiles = projectDirectory.GetDirectories("*.*ApplicationTest", SearchOption.AllDirectories)
-		                                           .SelectMany(d => d.GetFiles("*.*proj")).Select(f => f.FullName)
-		                                           .ToArray();
-		foreach (String appProjectFile in appProjectFiles)
+		FileInfo[] appProjectFiles = projectDirectory.GetDirectories("*.*ApplicationTest", SearchOption.AllDirectories)
+		                                             .SelectMany(d => d.GetFiles("*.*proj")).ToArray();
+		foreach (FileInfo appProjectFile in appProjectFiles)
 		{
-			String appDirectory = Path.GetDirectoryName(appProjectFile) ?? String.Empty;
+			String appDirectory = appProjectFile.DirectoryName ?? String.Empty;
+			String appName = appProjectFile.Name[..appProjectFile.Name.AsSpan().LastIndexOf('.')];
+			String appOutputDirectory = Path.Combine(outputPath, appName);
+
+			Directory.CreateDirectory(appOutputDirectory);
 			ExecuteState<CompileMonoArgs> state = new()
 			{
-				ExecutablePath = msbuildPath,
+				ExecutablePath = monoLauncher.MsbuildPath,
 				ArgState = new()
 				{
-					ProjectFile = appProjectFile, OutputPath = Path.GetRelativePath(appDirectory, outputPath),
+					ProjectFile = appProjectFile.FullName,
+					OutputPath = Path.GetRelativePath(appDirectory, appOutputDirectory),
 				},
 				AppendArgs = CompileMonoArgs.Append,
 				Notifier = ConsoleNotifier.Notifier,
+				WorkingDirectory = appDirectory,
 			};
 			await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
 		}
