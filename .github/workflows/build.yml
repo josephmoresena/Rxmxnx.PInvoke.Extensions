@@ -467,3 +467,4 @@ jobs:
           path: |
             ./artifacts/Native/*
             ./artifacts/Mono/*Mono.AOT.log
+            ./artifacts/Mono/*Mono.Link.log

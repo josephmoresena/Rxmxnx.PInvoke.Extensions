@@ -29,14 +29,28 @@ public partial class Launcher
 	private static FileInfo[] GetMonoExecutables(DirectoryInfo monoOutputDirectory)
 		=> monoOutputDirectory.GetDirectories()
 		                      .SelectMany(d => d.GetFiles("*ApplicationTest.*mono.exe", SearchOption.TopDirectoryOnly))
-		                      .ToArray();
+		                      .Where(f => f.DirectoryName!.EndsWith("ApplicationTest")).ToArray();
 	private static async Task CompileMonoAot(MonoLauncher monoLauncher, String outputDirectory, FileInfo assemblyFile)
 	{
 		String assemblyName = assemblyFile.Name;
 		String aotLog = Path.Combine(outputDirectory, $"{assemblyName}.{monoLauncher.Architecture}.Mono.AOT.log");
 		String result =
-			await Launcher.RunMonoAot(monoLauncher.ExecutablePath, assemblyFile.Name, assemblyFile.DirectoryName!);
+			await Launcher.RunMonoAot(monoLauncher.ExecutablePath, assemblyName, assemblyFile.DirectoryName!);
 		await File.WriteAllTextAsync(aotLog, result);
+
+		if (!assemblyName.EndsWith(".mono.exe")) return;
+
+		await Launcher.LinkMono(monoLauncher, outputDirectory, assemblyFile);
+	}
+	private static async Task LinkMono(MonoLauncher monoLauncher, String outputDirectory, FileInfo executableFile)
+	{
+		String assemblyName =
+			executableFile.Name[..executableFile.Name.LastIndexOf(".mono.exe", StringComparison.Ordinal)];
+		String linkLog = Path.Combine(outputDirectory, $"{assemblyName}.{monoLauncher.Architecture}.Mono.Link.log");
+		String linkOutputDirectory = Path.Combine(outputDirectory, $"{assemblyName}.Link.{monoLauncher.Architecture}");
+		String linkResult =
+			await Launcher.RunMonoLink(monoLauncher.LinkerPath, executableFile.FullName, linkOutputDirectory);
+		await File.WriteAllTextAsync(linkLog, linkResult);
 	}
 	private static async Task<Int32> RunMonoAppFile(String monoExecutable, String appFilePath, String workingDirectory)
 	{
@@ -65,7 +79,20 @@ public partial class Launcher
 				c.Add("-O=all");
 				c.Add(s);
 			},
-			AppendEnvs = static (s, d) => d["MONO_LOG_LEVEL"] = "debug",
+			AppendEnvs = static (_, d) => d["MONO_LOG_LEVEL"] = "debug",
+			Notifier = ConsoleNotifier.Notifier,
+		};
+		String result = await Utilities.ExecuteWithOutput(state);
+		return result;
+	}
+	private static async Task<String> RunMonoLink(String linkerExecutable, String executableName,
+		String outputDirectory)
+	{
+		ExecuteState<LinkMonoArgs> state = new()
+		{
+			ExecutablePath = linkerExecutable,
+			ArgState = new() { ExecutableName = executableName, OutputPath = outputDirectory, },
+			AppendArgs = LinkMonoArgs.Link,
 			Notifier = ConsoleNotifier.Notifier,
 		};
 		String result = await Utilities.ExecuteWithOutput(state);
