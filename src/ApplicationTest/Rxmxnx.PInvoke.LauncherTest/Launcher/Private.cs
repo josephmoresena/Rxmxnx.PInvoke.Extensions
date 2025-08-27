@@ -75,11 +75,11 @@ public partial class Launcher
 			WorkingDirectory = workingDirectory,
 			AppendArgs = static (s, c) =>
 			{
-				c.Add("--aot=full");
+				c.Add("--aot=full,nodebug");
+				c.Add("--verbose");
 				c.Add("-O=all");
 				c.Add(s);
 			},
-			AppendEnvs = static (_, d) => d["MONO_LOG_LEVEL"] = "debug",
 			Notifier = ConsoleNotifier.Notifier,
 		};
 		String result = await Utilities.ExecuteWithOutput(state);
