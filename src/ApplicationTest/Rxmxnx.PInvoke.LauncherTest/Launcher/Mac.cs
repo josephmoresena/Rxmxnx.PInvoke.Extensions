@@ -19,24 +19,31 @@ public partial class Launcher
 			Mac.AppendMonoLauncher("/Library/Frameworks/Mono.framework/Versions/Current", Architecture.X64,
 			                       ref this._monoLaunchers);
 			if (this.CurrentArch is Architecture.Arm64)
-				Mac.AppendMonoLauncher("/opt/homebrew/bin", Architecture.Arm64, ref this._monoLaunchers);
+				Mac.AppendMonoLauncher("/opt/homebrew/Cellar/mono/6.14.1/", Architecture.Arm64,
+				                       ref this._monoLaunchers);
 		}
 
 		private static void AppendMonoLauncher(String monoPath, Architecture arch,
 			ref List<MonoLauncher>? monoLaunchers)
 		{
 			String monoBinPath = Path.Combine(monoPath, "bin");
-			String monoLibPath = Path.Combine(monoPath, "lib", "mono", "4.5");
 			String executablePath = Path.Combine(monoBinPath, "mono");
 			if (!File.Exists(executablePath)) return;
+			String monoLibPath = Path.Combine(monoPath, "lib");
+			String monoRuntimePath = Path.Combine(monoLibPath, "mono", "4.5");
+			String libSystemNativePath = Path.Combine(monoLibPath, "libmono-native-compat.dylib");
+			if (!File.Exists(libSystemNativePath))
+				libSystemNativePath = Path.Combine(monoLibPath, "libmono-native.dylib");
 			monoLaunchers ??= new(2);
 			monoLaunchers.Add(new()
 			{
 				Architecture = arch,
+				NativeRuntimeName = "libSystem.Native.dylib",
 				MsbuildPath = Path.Combine(monoBinPath, "msbuild"),
 				LinkerPath = Path.Combine(monoBinPath, "monolinker"),
 				MakerPath = Path.Combine(monoBinPath, "mkbundle"),
-				MonoCilStripAssemblyPath = Path.Combine(monoLibPath, "mono-cil-strip.exe"),
+				MonoCilStripAssemblyPath = Path.Combine(monoRuntimePath, "mono-cil-strip.exe"),
+				NativeRuntimePath = libSystemNativePath,
 				ExecutablePath = executablePath,
 			});
 		}

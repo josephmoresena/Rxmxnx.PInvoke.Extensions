@@ -12,6 +12,7 @@
         <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
         <CheckEolTargetFramework>false</CheckEolTargetFramework>
         <NoWarn>$(NoWarn);IL2072;IL2057;IL2026</NoWarn>
+        <NativeLib>Shared</NativeLib>
     </PropertyGroup>
 
     <ItemGroup>

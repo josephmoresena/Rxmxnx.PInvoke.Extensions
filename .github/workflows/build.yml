@@ -407,7 +407,7 @@ jobs:
       - name: Publish mkbundle patcher
         if: runner.os == 'Windows'
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.Mkbundle.Patcher
-        run: dotnet publish -r win-x64
+        run: dotnet publish --use-current-runtime
       - name: Install Ubuntu 20.04 (WSL)
         if: runner.os == 'Windows'
         uses: Vampire/setup-wsl@v6

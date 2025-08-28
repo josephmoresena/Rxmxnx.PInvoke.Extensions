@@ -30,36 +30,57 @@ public partial class Launcher
 					Architecture.X86, ref this._monoLaunchers);
 		}
 		[LibraryImport("Rxmxnx.PInvoke.Mkbundle.Patcher", StringMarshalling = StringMarshalling.Utf16)]
-		private static partial SByte PatchAssembly(String monoLibPath, Int32 monoLibPathLength, String outputPath,
-			Int32 outputPathLength);
+		private static partial SByte PatchAssemblyForWindows(String monoLibPath, Int32 monoLibPathLength,
+			String outputPath, Int32 outputPathLength);
 
 		private static void AppendMonoLauncher(String monoPath, Architecture arch,
 			ref List<MonoLauncher>? monoLaunchers)
 		{
 			String monoBinPath = Path.Combine(monoPath, "bin");
-			String monoLibPath = Path.Combine(monoPath, "lib", "mono", "4.5");
+			String monoRuntimePath = Path.Combine(monoPath, "lib", "mono", "4.5");
 			String executablePath = Path.Combine(monoPath, "mono.exe");
-			if (!File.Exists(executablePath))
-				return;
+			if (!File.Exists(executablePath)) return;
 			monoLaunchers ??= new(2);
-			String monoPatchPath = Windows.GetMkbundlePath(monoBinPath);
-			if (Windows.PatchAssembly(monoLibPath, monoLibPath.Length, monoPatchPath, monoPatchPath.Length) < 0)
-				throw new InvalidOperationException("Unable to patch mono installation.");
-			String mkbundleAssemblyPath = Path.Combine(monoPatchPath, "mkbundle.exe");
-			String mkbundleBatchPath = Path.Combine(monoPatchPath, "mkbundle.bat");
-
-			File.WriteAllText(mkbundleBatchPath, $@"@echo off
-""{executablePath}"" %MONO_OPTIONS% ""{mkbundleAssemblyPath}"" %*
-", Encoding.ASCII);
+			String mkbundleBatchPath = Windows.PatchMkbundle(monoBinPath, monoRuntimePath, executablePath);
 			monoLaunchers.Add(new()
 			{
 				Architecture = arch,
+				NativeRuntimeName = "mono-2.0-sgen.dll",
 				MsbuildPath = Path.Combine(monoBinPath, "msbuild.bat"),
 				LinkerPath = Path.Combine(monoBinPath, "monolinker.bat"),
 				MakerPath = mkbundleBatchPath,
-				GarbageCollectorPath = Path.Combine(monoBinPath, "mono-2.0-sgen.dll"),
+				NativeRuntimePath = Path.Combine(monoBinPath, "mono-2.0-sgen.dll"),
 				ExecutablePath = executablePath,
 			});
+		}
+		private static String PatchMkbundle(String monoBinPath, String monoRuntimePath, String executablePath)
+		{
+			ConsoleNotifier.Notifier.Print($"Patching Mono {monoRuntimePath}...");
+			String monoPatchPath = Windows.GetMkbundlePath(monoBinPath);
+			String result = Path.Combine(monoBinPath, "mkbundle.bat");
+			try
+			{
+				SByte patchResult =
+					Windows.PatchAssemblyForWindows(monoRuntimePath, monoRuntimePath.Length, monoPatchPath,
+					                                monoPatchPath.Length);
+				ConsoleNotifier.Notifier.Result(patchResult, "mkbundle.exe patch");
+				if (patchResult >= 0)
+				{
+					String mkbundleAssemblyPath = Path.Combine(monoPatchPath, "mkbundle.exe");
+					String mkbundleBatchPath = Path.Combine(monoPatchPath, "mkbundle.bat");
+
+					File.WriteAllText(mkbundleBatchPath, $@"@echo off
+""{executablePath}"" %MONO_OPTIONS% ""{mkbundleAssemblyPath}"" %*
+", Encoding.ASCII);
+					result = mkbundleBatchPath;
+					ConsoleNotifier.Notifier.Print($"Patched Mono {monoRuntimePath} on {monoPatchPath}.", true);
+				}
+			}
+			catch (Exception ex)
+			{
+				ConsoleNotifier.Notifier.PrintError($"Fail patching Mono {monoRuntimePath}", ex);
+			}
+			return result;
 		}
 
 		private static String GetMkbundlePath(String monoPath)

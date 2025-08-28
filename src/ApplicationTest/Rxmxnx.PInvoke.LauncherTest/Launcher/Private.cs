@@ -80,9 +80,9 @@ public partial class Launcher
 		};
 		Int32 result = await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
 		ConsoleNotifier.Notifier.Result(result, $"Bundle {applicationName} - {monoLauncher.Architecture}");
-		if (result == 0 && File.Exists(monoLauncher.GarbageCollectorPath))
+		if (result == 0 && File.Exists(monoLauncher.NativeRuntimePath))
 		{
-			FileInfo gcPath = new(monoLauncher.GarbageCollectorPath);
+			FileInfo gcPath = new(monoLauncher.NativeRuntimePath);
 			String appGcPath = Path.Combine(binaryOutputPath.FullName, gcPath.Name);
 			if (!File.Exists(appGcPath))
 				gcPath.CopyTo(appGcPath);

@@ -18,24 +18,25 @@ public static class MakerPatcher
 	}
 
 	[UnmanagedCallersOnly(EntryPoint = "PatchAssemblyForWindows")]
-	internal static unsafe Result PatchAssembly(Char* monoLibPath, Int32 monoLibPathLength, Char* outputPath,
+	internal static unsafe Result PatchAssembly(Char* monoRuntimePath, Int32 monoRuntimePathLength, Char* outputPath,
 		Int32 outputPathLength)
-		=> MakerPatcher.PatchAssembly(new(monoLibPath, monoLibPathLength), new(outputPath, outputPathLength));
+		=> MakerPatcher.PatchAssembly(new(monoRuntimePath, monoRuntimePathLength), new(outputPath, outputPathLength));
 
-	private static Result PatchAssembly(ReadOnlySpan<Char> monoLibPath, ReadOnlySpan<Char> outputPath)
+	private static Result PatchAssembly(ReadOnlySpan<Char> monoRuntimePath, ReadOnlySpan<Char> outputPath)
 	{
 		try
 		{
-			DirectoryInfo monoLib = new(monoLibPath.ToString());
-			if (!monoLib.Exists) return Result.MonoLibNotFound;
+			DirectoryInfo monoLibDirectory = new(monoRuntimePath.ToString());
+			if (!monoLibDirectory.Exists) return Result.MonoLibNotFound;
 
-			FileInfo? mkbundleAssembly = monoLib.GetFiles("mkbundle.exe").FirstOrDefault();
+			FileInfo? mkbundleAssembly = monoLibDirectory.GetFiles("mkbundle.exe", SearchOption.TopDirectoryOnly)
+			                                             .FirstOrDefault();
 			if (mkbundleAssembly is null) return Result.MakeBundleNotFound;
-			if (!File.Exists(Path.Combine(monoLib.FullName, "mscorlib.dll"))) return Result.MsCoreLibNotFound;
+			if (!File.Exists(Path.Combine(monoLibDirectory.FullName, "mscorlib.dll"))) return Result.MsCoreLibNotFound;
 
 			DirectoryInfo outputDir = new(outputPath.ToString());
 			String patchedAssemblyPath = Path.Combine(outputDir.FullName, mkbundleAssembly.Name);
-			Boolean withSymbols = File.Exists(Path.Combine(monoLib.FullName, "mkbundle.pdb"));
+			Boolean withSymbols = File.Exists(Path.Combine(monoLibDirectory.FullName, "mkbundle.pdb"));
 
 			outputDir.Create();
 			return !File.Exists(patchedAssemblyPath) ?
