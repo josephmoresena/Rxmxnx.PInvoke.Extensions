@@ -51,6 +51,7 @@ public abstract partial class Launcher
 			foreach (FileInfo assemblyFile in
 			         executableFile.Directory!.GetFiles("*.dll", SearchOption.TopDirectoryOnly))
 				await Launcher.CompileMonoAot(monoLauncher, this.MonoOutputDirectory.FullName, assemblyFile);
+			await Launcher.MakeMonoBundle(monoLauncher, this.MonoOutputDirectory, executableFile);
 		}
 	}
 

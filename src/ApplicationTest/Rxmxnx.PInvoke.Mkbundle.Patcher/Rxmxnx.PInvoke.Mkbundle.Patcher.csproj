@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
-        <OutputType>Exe</OutputType>
+        <OutputType>Library</OutputType>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <PublishAot>true</PublishAot>
@@ -11,19 +11,18 @@
         <PublishDir Condition="'$(PublishDir)' == ''">..\..\..\</PublishDir>
         <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
         <CheckEolTargetFramework>false</CheckEolTargetFramework>
+        <NoWarn>$(NoWarn);IL2072;IL2057;IL2026</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="System.Collections.Concurrent"/>
-        <Using Include="System.Collections.ObjectModel"/>
-        <Using Include="System.Collections.Specialized"/>
-        <Using Include="System.Diagnostics"/>
-        <Using Include="System.Diagnostics.CodeAnalysis"/>
-        <Using Include="System.IO.Compression"/>
-        <Using Include="System.Runtime.InteropServices"/>
-        <Using Include="System.Text"/>
+        <PackageReference Include="Mono.Cecil" Version="0.11.6"/>
+    </ItemGroup>
 
-        <Using Include="Rxmxnx.PInvoke.ApplicationTest.Util"/>
+    <ItemGroup>
+        <Using Include="System.Runtime.InteropServices"/>
+
+        <Using Include="Mono.Cecil"/>
+        <Using Include="Mono.Cecil.Cil"/>
     </ItemGroup>
 
 </Project>

@@ -404,6 +404,10 @@ jobs:
       - name: Publish launcher
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.LauncherTest
         run: dotnet publish
+      - name: Publish mkbundle patcher
+        if: runner.os == 'Windows'
+        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.Mkbundle.Patcher
+        run: dotnet publish
       - name: Install Ubuntu 20.04 (WSL)
         if: runner.os == 'Windows'
         uses: Vampire/setup-wsl@v6
@@ -460,6 +464,9 @@ jobs:
           path: |
             ./artifacts/*NAOT*
             ./artifacts/*RFM*
+            ./artifacts/Mono/X86/*
+            ./artifacts/Mono/X64/*
+            ./artifacts/Mono/Arm64/*
       - name: Create Native Artifact Logs
         uses: actions/upload-artifact@v4
         with:

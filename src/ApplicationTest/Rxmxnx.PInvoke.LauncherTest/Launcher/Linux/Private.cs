@@ -28,6 +28,7 @@ public partial class Launcher
 				MsbuildPath = "/usr/bin/msbuild",
 				LinkerPath = "/usr/bin/monolinker",
 				MakerPath = "/usr/bin/mkbundle",
+				MonoCilStripAssemblyPath = "/usr/lib/mono/4.5/mono-cil-strip.exe",
 				ExecutablePath = "/usr/bin/mono",
 			};
 		}
