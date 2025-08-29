@@ -80,13 +80,9 @@ public partial class Launcher
 		};
 		Int32 result = await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
 		ConsoleNotifier.Notifier.Result(result, $"Bundle {applicationName} - {monoLauncher.Architecture}");
-		if (result == 0 && File.Exists(monoLauncher.NativeRuntimePath))
-		{
-			FileInfo gcPath = new(monoLauncher.NativeRuntimePath);
-			String appGcPath = Path.Combine(binaryOutputPath.FullName, gcPath.Name);
-			if (!File.Exists(appGcPath))
-				gcPath.CopyTo(appGcPath);
-		}
+		FileInfo nativeRuntime = new(monoLauncher.NativeRuntimePath);
+		if (result == 0 && nativeRuntime.Exists)
+			nativeRuntime.CopyTo(Path.Combine(binaryOutputPath.FullName, monoLauncher.NativeRuntimeName));
 	}
 	private static async Task<Int32> RunMonoAppFile(String monoExecutable, String appFilePath, String workingDirectory)
 	{

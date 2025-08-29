@@ -37,11 +37,12 @@ public partial class Launcher
 			ref List<MonoLauncher>? monoLaunchers)
 		{
 			String monoBinPath = Path.Combine(monoPath, "bin");
-			String monoRuntimePath = Path.Combine(monoPath, "lib", "mono", "4.5");
-			String executablePath = Path.Combine(monoPath, "mono.exe");
+			String executablePath = Path.Combine(monoBinPath, "mono.exe");
 			if (!File.Exists(executablePath)) return;
+
+			String monoRuntimePath = Path.Combine(monoPath, "lib", "mono", "4.5");
 			monoLaunchers ??= new(2);
-			String mkbundleBatchPath = Windows.PatchMkbundle(monoBinPath, monoRuntimePath, executablePath);
+			String mkbundleBatchPath = Windows.PatchMaker(monoBinPath, monoRuntimePath, executablePath);
 			monoLaunchers.Add(new()
 			{
 				Architecture = arch,
@@ -53,10 +54,10 @@ public partial class Launcher
 				ExecutablePath = executablePath,
 			});
 		}
-		private static String PatchMkbundle(String monoBinPath, String monoRuntimePath, String executablePath)
+		private static String PatchMaker(String monoBinPath, String monoRuntimePath, String executablePath)
 		{
 			ConsoleNotifier.Notifier.Print($"Patching Mono {monoRuntimePath}...");
-			String monoPatchPath = Windows.GetMkbundlePath(monoBinPath);
+			String monoPatchPath = Windows.GetMakerPath(monoBinPath);
 			String result = Path.Combine(monoBinPath, "mkbundle.bat");
 			try
 			{
@@ -83,7 +84,7 @@ public partial class Launcher
 			return result;
 		}
 
-		private static String GetMkbundlePath(String monoPath)
+		private static String GetMakerPath(String monoPath)
 		{
 			String hexHash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(monoPath)));
 			return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), hexHash);
