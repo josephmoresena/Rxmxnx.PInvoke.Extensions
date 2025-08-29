@@ -51,6 +51,7 @@ public partial class Launcher
 				LinkerPath = Path.Combine(monoBinPath, "monolinker.bat"),
 				MakerPath = mkbundleBatchPath,
 				NativeRuntimePath = Path.Combine(monoBinPath, "mono-2.0-sgen.dll"),
+       MonoCilStripAssemblyPath = Path.Combine(monoRuntimePath, "mono-cil-strip.exe"),
 				ExecutablePath = executablePath,
 			});
 		}
