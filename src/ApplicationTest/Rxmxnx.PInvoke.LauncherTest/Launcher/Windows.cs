@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-
 namespace Rxmxnx.PInvoke.ApplicationTest;
 
 public partial class Launcher
@@ -42,7 +40,7 @@ public partial class Launcher
 
 			String monoRuntimePath = Path.Combine(monoPath, "lib", "mono", "4.5");
 			monoLaunchers ??= new(2);
-			String mkbundleBatchPath = Windows.PatchMaker(monoBinPath, monoRuntimePath, executablePath);
+			String mkbundleBatchPath = Windows.PatchMaker(arch, monoBinPath, monoRuntimePath, executablePath);
 			monoLaunchers.Add(new()
 			{
 				Architecture = arch,
@@ -55,10 +53,11 @@ public partial class Launcher
 				ExecutablePath = executablePath,
 			});
 		}
-		private static String PatchMaker(String monoBinPath, String monoRuntimePath, String executablePath)
+		private static String PatchMaker(Architecture arch, String monoBinPath, String monoRuntimePath,
+			String executablePath)
 		{
 			ConsoleNotifier.Notifier.Print($"Patching Mono {monoRuntimePath}...");
-			String monoPatchPath = Windows.GetMakerPath(monoBinPath);
+			String monoPatchPath = Windows.GetMakerPath(arch);
 			String result = Path.Combine(monoBinPath, "mkbundle.bat");
 			try
 			{
@@ -85,11 +84,10 @@ public partial class Launcher
 			return result;
 		}
 
-		private static String GetMakerPath(String monoPath)
+		private static String GetMakerPath(Architecture arch)
 		{
-			String hexHash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(monoPath)));
 			String result = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-			                             hexHash);
+			                             "Rxmxnx.PInvoke.Mkbundle.Patcher", $"{arch}");
 			Directory.CreateDirectory(result);
 			return result;
 		}
