@@ -41,8 +41,9 @@ public static class MakerPatcher
 				mkbundleAssembly.CopyTo(patchedAssembly.FullName, true);
 			return MakerPatcher.PatchIlCode(mkbundleAssembly, patchedAssembly.FullName);
 		}
-		catch (Exception)
+		catch (Exception ex)
 		{
+			Console.WriteLine(ex);
 			return Result.FileError;
 		}
 	}

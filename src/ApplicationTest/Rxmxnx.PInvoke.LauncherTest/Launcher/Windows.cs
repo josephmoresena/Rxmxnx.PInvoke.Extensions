@@ -51,7 +51,7 @@ public partial class Launcher
 				LinkerPath = Path.Combine(monoBinPath, "monolinker.bat"),
 				MakerPath = mkbundleBatchPath,
 				NativeRuntimePath = Path.Combine(monoBinPath, "mono-2.0-sgen.dll"),
-       MonoCilStripAssemblyPath = Path.Combine(monoRuntimePath, "mono-cil-strip.exe"),
+				MonoCilStripAssemblyPath = Path.Combine(monoRuntimePath, "mono-cil-strip.exe"),
 				ExecutablePath = executablePath,
 			});
 		}
@@ -88,7 +88,10 @@ public partial class Launcher
 		private static String GetMakerPath(String monoPath)
 		{
 			String hexHash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(monoPath)));
-			return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), hexHash);
+			String result = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+			                             hexHash);
+			Directory.CreateDirectory(result);
+			return result;
 		}
 
 		public static Windows Create(DirectoryInfo outputDirectory, Boolean useMono, out Task initTask)
