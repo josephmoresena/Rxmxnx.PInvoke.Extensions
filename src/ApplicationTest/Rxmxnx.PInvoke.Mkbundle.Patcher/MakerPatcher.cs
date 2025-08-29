@@ -24,39 +24,42 @@ public static class MakerPatcher
 
 	private static Result PatchAssembly(ReadOnlySpan<Char> monoRuntimePath, ReadOnlySpan<Char> outputPath)
 	{
+		DirectoryInfo monoLibDirectory = new(monoRuntimePath.ToString());
+		if (!monoLibDirectory.Exists) return Result.MonoLibNotFound;
+
+		FileInfo mkbundleAssembly = new(Path.Combine(monoLibDirectory.FullName, "mkbundle.exe"));
+		if (!mkbundleAssembly.Exists) return Result.MakeBundleNotFound;
+
+		FileInfo mscorlibFile = new(Path.Combine(monoLibDirectory.FullName, "mscorlib.dll"));
+		if (!mscorlibFile.Exists) return Result.MsCoreLibNotFound;
+
+		DirectoryInfo outputDir = new(outputPath.ToString());
+		FileInfo patchedAssembly = new(Path.Combine(outputDir.FullName, mkbundleAssembly.Name));
 		try
 		{
-			DirectoryInfo monoLibDirectory = new(monoRuntimePath.ToString());
-			if (!monoLibDirectory.Exists) return Result.MonoLibNotFound;
-
-			FileInfo? mkbundleAssembly = monoLibDirectory.GetFiles("mkbundle.exe", SearchOption.TopDirectoryOnly)
-			                                             .FirstOrDefault();
-			if (mkbundleAssembly is null) return Result.MakeBundleNotFound;
-			if (!File.Exists(Path.Combine(monoLibDirectory.FullName, "mscorlib.dll"))) return Result.MsCoreLibNotFound;
-
-			DirectoryInfo outputDir = new(outputPath.ToString());
-			String patchedAssemblyPath = Path.Combine(outputDir.FullName, mkbundleAssembly.Name);
-			Boolean withSymbols = File.Exists(Path.Combine(monoLibDirectory.FullName, "mkbundle.pdb"));
-
-			outputDir.Create();
-			return !File.Exists(patchedAssemblyPath) ?
-				MakerPatcher.PatchAssembly(mkbundleAssembly.FullName, patchedAssemblyPath, withSymbols) :
-				Result.Unmodified;
+			if (!patchedAssembly.Exists || patchedAssembly.Length <= 0)
+				mkbundleAssembly.CopyTo(patchedAssembly.FullName, true);
+			return MakerPatcher.PatchIlCode(mkbundleAssembly, patchedAssembly.FullName);
 		}
 		catch (Exception)
 		{
 			return Result.FileError;
 		}
 	}
-	private static Result PatchAssembly(String inputPath, String outputPath, Boolean withSymbols)
+	private static Result PatchIlCode(FileInfo sourceAssembly, String outputPath)
 	{
-		ReaderParameters readerParameters = new() { ReadWrite = false, ReadSymbols = withSymbols, };
-		WriterParameters writerParameters = new() { WriteSymbols = withSymbols, };
+		DefaultAssemblyResolver resolver = new();
+		resolver.AddSearchDirectory(sourceAssembly.DirectoryName);
+
+		ReaderParameters readerParameters =
+			new() { ReadWrite = true, ReadSymbols = false, AssemblyResolver = resolver, };
+		WriterParameters writerParameters = new() { WriteSymbols = false, };
 
 		Boolean modified = false;
 		try
 		{
-			using AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(inputPath, readerParameters);
+			Console.WriteLine($"Patching {sourceAssembly.FullName}...");
+			using AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(outputPath, readerParameters);
 			using ModuleDefinition? module = assembly.MainModule;
 
 			if (module.Types.FirstOrDefault(t => t.Name == "MakeBundle") is not { } mkbundleType)
@@ -94,10 +97,14 @@ public static class MakerPatcher
 			MakerPatcher.PatchAotCompileMethod(aotCompileMethod, ref modified);
 			MakerPatcher.PatchExecuteMethod(executeMethod, ref modified);
 
-			assembly.Write(outputPath, writerParameters);
+			Console.WriteLine($"{sourceAssembly.FullName} -> {outputPath}");
+			if (modified)
+				assembly.Write(writerParameters);
+			Console.WriteLine($"{outputPath}...Done.");
 		}
-		catch (Exception)
+		catch (Exception ex)
 		{
+			Console.WriteLine(ex);
 			return modified ? Result.FileError : Result.MonoCecilError;
 		}
 		return modified ? Result.Done : Result.Unmodified;
