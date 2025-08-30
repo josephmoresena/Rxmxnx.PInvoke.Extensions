@@ -2285,7 +2285,7 @@ Represents a sequence of null-terminated UTF-8 text strings.
 - <details>
   <summary>GetOffsets(Span&lt;Int32&gt;)</summary>
 
-  Fills the provided span with the starting byte offsets of each UTF-8 encoded `CString' segment within the current
+  Fills the provided span with the starting byte offsets of each UTF-8 encoded `CString` segment within the current
   buffer.
   </details>
 
@@ -2613,16 +2613,20 @@ Additional functionality for working with memory blocks.
   **Note:** `T` is `unmanaged`.
   </details>
 - <details>
+  <summary>AsReadOnlySpan&lt;T&gt;(this T[]?)</summary>
+  Creates a new read-only span over a target array.
+  </details>
+- <details>
+  <summary>AsCovariantSpan&lt;T&gt;(this T[]?)</summary>
+  Creates a new covariant span over a target array.
+  </details>
+- <details>
   <summary>AsMemory&lt;T&gt;(this T[...])</summary>
   Creates a new memory region over the target array.
-
-  **Note:** In .NET 5.0 and earlier, this method uses reflection.
   </details>
 - <details>
   <summary>AsSpan&lt;T&gt;(this T[...])</summary>
   Creates a new span over a target array.
-
-  **Note:** In .NET 5.0 and earlier, this method uses reflection.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T&gt;(this Span&lt;T&gt;, FixedContextAction&lt;T&gt;)</summary>
@@ -3023,10 +3027,15 @@ Set of extensions for basic operations with `unmanaged` values.
   <summary>ToValues&lt;TSource, TDestination&gt;(this TSource[]?, out Byte[]?)</summary>
 
   Converts an array of `unmanaged` values of type `TSource` into an array of another `unmanaged` value type
-  `TDestination`
-  and provides the residual binary array of the reinterpretation.
+  `TDestination` and provides the residual binary array of the reinterpretation.
+  </details>
+
+- <details>
+  <summary>GetName&lt;TEnum&gt;(this TEnum)</summary>
+  Retrieves the name of the constant in the specified enumeration type that has the specified value.
   </details>
 - <details>
+
   <summary>WithSafeFixed&lt;T&gt;(ref this T, FixedReferenceAction&lt;T&gt;)</summary>
   Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided action.
   </details>
@@ -3392,6 +3401,29 @@ Set of utilities for exchange data within the P/Invoke context.
   Performs a binary copy of the given `TSource` to the destination span.
 
   **Note:** `TSource` is `unmanaged`.
+  </details>
+
+- <details>
+  <summary>GetEnumValuesSpan&lt;TEnum&gt;()</summary>
+
+  Creates a new span over an array of the values of the constants in a specified enumeration type.
+
+  **Note:** `TEnum` is `System.Enum`.
+  </details>
+- <details>
+  <summary>GetEnumNamesSpan&lt;TEnum&gt;()</summary>
+
+  Creates a new span over an array of the names of the constants in a specified enumeration type.
+
+  **Note:** `TEnum` is `System.Enum`.
+  </details>
+- <details>
+  <summary>GetValuesFixedContext&lt;TEnum&gt;()</summary>
+
+  Creates a new `IReadOnlyFixedContext<TEnum>.IDisposable` instance by pinning an array of the values of the
+  constants in a specified enumeration type.
+
+  **Note:** `TEnum` is `System.Enum`.
   </details>
 
 - <details>
