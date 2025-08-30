@@ -457,6 +457,21 @@ jobs:
           } else {
             ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "run"
           }
+      - name: Run Mono-AOT Application Test (X64)
+        shell: pwsh
+        working-directory: ./artifacts/Mono/X64
+        run: |
+          if ($IsWindows) {
+            ./Rxmxnx.PInvoke.ApplicationTest.exe
+          } else {
+            ./Rxmxnx.PInvoke.ApplicationTest
+          }
+      - name: Run Mono-AOT Application Test (Arm64)
+        if: runner.os == 'MacOS'
+        shell: pwsh
+        working-directory: ./artifacts/Mono/Arm64
+        run: |
+          ./Rxmxnx.PInvoke.ApplicationTest
       - name: Create Native Artifact
         uses: actions/upload-artifact@v4
         with:
