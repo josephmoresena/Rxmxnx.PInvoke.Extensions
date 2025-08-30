@@ -8,6 +8,7 @@ public partial class Launcher
 		public String AssemblyPathName { get; init; }
 		public String StripAssemblyPath { get; init; }
 		public String OutputBinaryPath { get; init; }
+		public Boolean UseLlvm { get; init; }
 
 		public static void Make(MonoBundleArgs bundleArgs, Collection<String> args)
 		{
@@ -17,7 +18,7 @@ public partial class Launcher
 			args.Add("--deps");
 			args.Add("--static");
 			args.Add("--aot-mode");
-			args.Add("full");
+			args.Add(!bundleArgs.UseLlvm ? "full" : "llvmonly");
 			args.Add("--runtime");
 			args.Add(bundleArgs.MonoExecutablePath);
 			args.Add("--cil-strip");

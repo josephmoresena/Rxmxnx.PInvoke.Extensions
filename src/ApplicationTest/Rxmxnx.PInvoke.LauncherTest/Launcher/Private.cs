@@ -73,6 +73,7 @@ public partial class Launcher
 				MonoExecutablePath = monoLauncher.ExecutablePath,
 				StripAssemblyPath = monoLauncher.MonoCilStripAssemblyPath,
 				OutputBinaryPath = outputBinaryPath,
+				UseLlvm = false,
 			},
 			WorkingDirectory = linkedExecutableFile.DirectoryName ?? "",
 			AppendArgs = MonoBundleArgs.Make,
@@ -83,6 +84,16 @@ public partial class Launcher
 		FileInfo nativeRuntime = new(monoLauncher.NativeRuntimePath);
 		if (result == 0 && nativeRuntime.Exists)
 			nativeRuntime.CopyTo(Path.Combine(binaryOutputPath.FullName, monoLauncher.NativeRuntimeName));
+		state = state with
+		{
+			ArgState = state.ArgState with
+			{
+				UseLlvm = true,
+				OutputBinaryPath = Path.Combine(binaryOutputPath.FullName, $"{applicationName}.llvm{binaryExtension}"),
+			},
+		};
+		result = await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
+		ConsoleNotifier.Notifier.Result(result, $"Bundle (LLVM) {applicationName} - {monoLauncher.Architecture}");
 	}
 	private static async Task<Int32> RunMonoAppFile(String monoExecutable, String appFilePath, String workingDirectory)
 	{
