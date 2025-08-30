@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 #if NET5_0_OR_GREATER
@@ -85,6 +86,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			}
 			Console.WriteLine($"Dynamic Code Compiled: {RuntimeFeature.IsDynamicCodeCompiled}");
 			Console.WriteLine($"Dynamic Code Supported: {RuntimeFeature.IsDynamicCodeSupported}");
+			Console.WriteLine($"IL compiled bytes: {JitInfo.GetCompiledILBytes()}");
+			Console.WriteLine($"IL method count: {JitInfo.GetCompiledMethodCount()}");
+			Console.WriteLine($"IL compilation time: {JitInfo.GetCompilationTime()}");
 			Console.WriteLine("========== Rxmxnx.PInvoke Runtime information ==========");
 			Console.WriteLine($"Package: {SystemInfo.CompilationFramework}");
 			Console.WriteLine($"Native AOT: {AotInfo.IsNativeAot}");
