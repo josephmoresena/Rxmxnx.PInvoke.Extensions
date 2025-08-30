@@ -15,7 +15,8 @@ public static partial class AotInfo
 #if !NET6_0_OR_GREATER
 		!AotInfo.IsJitEnabled();
 #else
-		JitInfo.GetCompiledILBytes() == 0L && JitInfo.GetCompiledMethodCount() == 0;
+		JitInfo.GetCompiledILBytes() == 0L && JitInfo.GetCompiledMethodCount() == 0 &&
+		(AotInfo.IsDesktopTrimmedPlatform() || EmitInfo.IsEmitAllowed);
 #endif
 
 	/// <summary>
@@ -38,6 +39,20 @@ public static partial class AotInfo
 		}
 	}
 	/// <summary>
+	/// Indicates whether the current runtime supports the emission of dynamic IL code.
+	/// </summary>
+	public static Boolean IsCodeGenerationSupported
+	{
+		get
+		{
+#if NET6_0_OR_GREATER
+			if (AotInfo.IsNativeAot)
+				return false;
+#endif
+			return !AotInfo.IsReflectionDisabled && EmitInfo.IsEmitAllowed;
+		}
+	}
+	/// <summary>
 	/// Indicates whether the current runtime is Native AOT.
 	/// </summary>
 	public static Boolean IsNativeAot => AotInfo.isAotRuntime;
@@ -49,21 +64,12 @@ public static partial class AotInfo
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get
 		{
-			return
 #if NET5_0_OR_GREATER
-				OperatingSystem.IsWindows() || OperatingSystem.IsLinux() || OperatingSystem.IsMacOS() ||
-				OperatingSystem.IsFreeBSD() || OperatingSystem.IsAndroid() || OperatingSystem.IsIOS() ||
-				OperatingSystem.IsTvOS() || OperatingSystem.IsWatchOS() || OperatingSystem.IsBrowser()
-#if NET6_0_OR_GREATER
-				|| OperatingSystem.IsMacCatalyst()
-#endif
-#if NET8_0_OR_GREATER
-				|| OperatingSystem.IsWasi()
-#endif
+			return AotInfo.IsDesktopTrimmedPlatform() || AotInfo.IsMobileTrimmedPlatform() ||
+				AotInfo.IsWebTrimmedPlatform();
 #else
-				false
+			return false;
 #endif
-				;
 		}
 	}
 

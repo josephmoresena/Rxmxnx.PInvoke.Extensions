@@ -3080,6 +3080,10 @@ Provides information about the Ahead-of-Time compilation.
   Indicates whether runtime reflection is disabled.
   </details>
 - <details>
+  <summary>IsCodeGenerationSupported</summary>
+  Indicates whether the current runtime supports the emission of dynamic IL code.
+  </details>
+- <details>
   <summary>IsPlatformTrimmed</summary>
   Indicates whether the current runtime is trimmed for the current platform.
 
@@ -3087,9 +3091,10 @@ Provides information about the Ahead-of-Time compilation.
   </details>
 - <details>
   <summary>IsNativeAot</summary>
-  Indicates whether the current runtime is NativeAOT. 
+  Indicates whether the current runtime is NativeAOT.
 
-  **Note:** Starting with .NET 6.0, this property enables trimming by allowing the linker to remove unreachable code.
+  **Note:** Starting with .NET 6.0, this property enables trimming by allowing the linker to remove unreachable code on
+  desktop platforms.
   </details>
 
 </details>

@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 #if NET5_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
@@ -82,10 +83,13 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				if (!AotInfo.IsReflectionDisabled)
 					Console.WriteLine(ex);
 			}
+			Console.WriteLine($"Dynamic Code Compiled: {RuntimeFeature.IsDynamicCodeCompiled}");
+			Console.WriteLine($"Dynamic Code Supported: {RuntimeFeature.IsDynamicCodeSupported}");
 			Console.WriteLine("========== Rxmxnx.PInvoke Runtime information ==========");
 			Console.WriteLine($"Package: {SystemInfo.CompilationFramework}");
 			Console.WriteLine($"Native AOT: {AotInfo.IsNativeAot}");
 			Console.WriteLine($"Reflection Enabled: {!AotInfo.IsReflectionDisabled}");
+			Console.WriteLine($"IL Code Generation Supported: {AotInfo.IsCodeGenerationSupported}");
 			Console.WriteLine($"Trimmed Runtime: {AotInfo.IsPlatformTrimmed}");
 			Console.WriteLine($"Mono Runtime: {SystemInfo.IsMonoRuntime}");
 			Console.WriteLine($"Web Runtime: {SystemInfo.IsWebRuntime}");
@@ -117,13 +121,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				{
 					ref readonly Assembly assembly = ref enumerator.Current;
 #endif
-					if (assembly == Assembly.GetExecutingAssembly()) continue;
-					Console.WriteLine(AotInfo.IsNativeAot || assembly.IsDynamic ?
-						                  assembly.FullName :
-						                  assembly.GetAssemblyName());
+					if (assembly == Assembly.GetExecutingAssembly() || assembly.IsDynamic) continue;
+					Console.WriteLine(AotInfo.IsNativeAot ? assembly.FullName : assembly.GetAssemblyName());
 				}
-				Console.WriteLine($"Domain Assemblies type: {AppDomain.CurrentDomain.GetAssemblies().GetType()}");
-				Console.WriteLine($"Assemblies array type: {typeof(Assembly[])}");
 			}
 			catch (Exception ex)
 			{
