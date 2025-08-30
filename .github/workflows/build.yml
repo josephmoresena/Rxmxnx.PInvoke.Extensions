@@ -457,20 +457,6 @@ jobs:
           } else {
             ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "run"
           }
-      - name: Run Mono-AOT Application Test (X64)
-        shell: pwsh
-        working-directory: ./artifacts/Mono/X64
-        run: |
-          if ($IsWindows) {
-            ./Rxmxnx.PInvoke.ApplicationTest.exe
-            $exellvm = "./Rxmxnx.PInvoke.ApplicationTest.llvm.exe"
-          } else {
-            ./Rxmxnx.PInvoke.ApplicationTest
-            $exellvm = "./Rxmxnx.PInvoke.ApplicationTest.llvm"
-          }
-          if (Test-Path $exellvm) {
-             & $exellvm
-          }
       - name: Create Native Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -487,5 +473,6 @@ jobs:
           name: ${{ runner.os }}-Artifact-Logs
           path: |
             ./artifacts/Native/*
-            ./artifacts/Mono/*Mono.AOT.log
             ./artifacts/Mono/*Mono.Link.log
+            ./artifacts/Mono/*Mono.AOT*.log
+            ./artifacts/Mono/*Mono.Bundle*.log

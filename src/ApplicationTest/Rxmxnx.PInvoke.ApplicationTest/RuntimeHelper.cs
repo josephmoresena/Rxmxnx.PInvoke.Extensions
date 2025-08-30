@@ -130,9 +130,8 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 					ref readonly Assembly assembly = ref enumerator.Current;
 #endif
 					if (assembly == Assembly.GetExecutingAssembly()) continue;
-					Console.WriteLine(AotInfo.IsNativeAot || assembly.IsDynamic ?
-						                  assembly.FullName :
-						                  assembly.GetAssemblyName());
+					Boolean useFullName = AotInfo.IsNativeAot || assembly.IsDynamic;
+					Console.WriteLine(useFullName ? assembly.FullName : assembly.GetAssemblyName());
 				}
 			}
 			catch (Exception ex)

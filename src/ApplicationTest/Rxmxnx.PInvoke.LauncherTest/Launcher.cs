@@ -13,7 +13,6 @@ public abstract partial class Launcher
 	public async Task Execute()
 	{
 		Dictionary<String, Int32> results = new();
-
 		try
 		{
 			foreach (Architecture arch in this.Architectures)
@@ -67,5 +66,25 @@ public abstract partial class Launcher
 		Int32 result = await Utilities.Execute(state, cancellationToken);
 		ConsoleNotifier.Notifier.Result(result, executionName);
 		return result;
+	}
+	public async Task ExecuteMonoAot()
+	{
+		if (this.MonoOutputDirectory is null) return;
+		Dictionary<String, Int32> results = new();
+		try
+		{
+			foreach (Architecture arch in this.Architectures)
+			foreach (FileInfo appFile in this.MonoOutputDirectory.GetDirectories($"{arch}")
+			                                 .SelectMany(d => d.GetFiles("*ApplicationTest*")))
+			{
+				String executionName = $"{Path.GetRelativePath(this.OutputDirectory.FullName, appFile.FullName)}";
+				results.Add(executionName, await this.RunAppFile(appFile, arch, executionName));
+			}
+		}
+		finally
+		{
+			if (results.Count > 0)
+				ConsoleNotifier.Results(results);
+		}
 	}
 }
