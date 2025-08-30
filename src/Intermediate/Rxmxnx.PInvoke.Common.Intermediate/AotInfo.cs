@@ -16,7 +16,7 @@ public static partial class AotInfo
 		!AotInfo.IsJitEnabled();
 #else
 		JitInfo.GetCompiledILBytes() == 0L && JitInfo.GetCompiledMethodCount() == 0 &&
-		(AotInfo.IsDesktopTrimmedPlatform() || EmitInfo.IsEmitAllowed);
+		(AotInfo.IsDesktopTrimmedPlatform() || !EmitInfo.IsEmitAllowed);
 #endif
 
 	/// <summary>

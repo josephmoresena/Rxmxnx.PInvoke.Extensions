@@ -61,16 +61,13 @@ public static partial class AotInfo
 				ilGenerator.Emit(OpCodes.Add);
 				ilGenerator.Emit(OpCodes.Stloc, localSum);
 
-				// if (sum > 0) goto RETURN_THIS;
 				ilGenerator.Emit(OpCodes.Ldloc, localSum);
 				ilGenerator.Emit(OpCodes.Ldc_I4_0);
 				ilGenerator.Emit(OpCodes.Ble_S, elseLabel);
 
-				// then: return this;
 				ilGenerator.Emit(OpCodes.Ldarg_0);
 				ilGenerator.Emit(OpCodes.Ret);
 
-				// else: return this.GetType();
 				ilGenerator.MarkLabel(elseLabel);
 				ilGenerator.Emit(OpCodes.Ldarg_0);
 				ilGenerator.Emit(OpCodes.Call, typeof(Object).GetMethod("GetType")!);
@@ -83,7 +80,7 @@ public static partial class AotInfo
 			}
 			catch (Exception)
 			{
-				// Any exception at runtime indicates whether emit is not allowed.
+				// Any exception at runtime indicates that System.Reflection.Emit is not allowed.
 				return false;
 			}
 		}
