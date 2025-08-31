@@ -3,11 +3,14 @@ namespace Rxmxnx.PInvoke.ApplicationTest.Util;
 public static class Utilities
 {
 	public static Boolean IsNativeAotSupported(Architecture arch, NetVersion netVersion)
-		=> netVersion switch
+		=> netVersion >= NetVersion.Net60 && arch switch
 		{
-			NetVersion.Net70 => arch is Architecture.X64 && (OperatingSystem.IsWindows() || OperatingSystem.IsLinux()),
-			NetVersion.Net80 => arch is not (Architecture.X86 or Architecture.Arm or Architecture.Armv6),
-			>= NetVersion.Net90 => true,
+			Architecture.X64 => netVersion >= NetVersion.Net80 || OperatingSystem.IsWindows() ||
+				OperatingSystem.IsLinux() ||
+				(OperatingSystem.IsMacOS() && RuntimeInformation.OSArchitecture is Architecture.X64),
+			Architecture.Arm64 => netVersion >= NetVersion.Net80 || OperatingSystem.IsWindows() ||
+				OperatingSystem.IsLinux(),
+			Architecture.X86 or Architecture.Arm or Architecture.Armv6 => netVersion >= NetVersion.Net90,
 			_ => false,
 		};
 	public static async Task<Int32> Execute(ExecuteState state, CancellationToken cancellationToken = default)

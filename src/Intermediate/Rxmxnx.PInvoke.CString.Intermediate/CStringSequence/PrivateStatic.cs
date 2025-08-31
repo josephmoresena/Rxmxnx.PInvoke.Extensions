@@ -282,15 +282,15 @@ public unsafe partial class CStringSequence
 			return lengths.Length switch
 			{
 				<= 32 => new CString?[totalNonEmpty],
-				<= 256 => FixedCache.CreateFixedCache(totalNonEmpty, ImmutableHashSet<Int32>.Empty),
-				_ => new DynamicCache(),
+				<= 256 => FixedCache.CreateFixedCache(totalNonEmpty),
+				_ => DynamicCache.CreateDynamicCache(totalNonEmpty),
 			};
 
 		// Otherwise
 		return lengths.Length switch
 		{
 			<= 256 => FixedCache.CreateFixedCache(totalNonEmpty, emptyIndices.SkipLast(skipLast).ToImmutableHashSet()),
-			_ => new DynamicCache(),
+			_ => DynamicCache.CreateDynamicCache(totalNonEmpty),
 		};
 	}
 	/// <summary>

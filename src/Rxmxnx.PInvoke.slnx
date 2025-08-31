@@ -4,8 +4,11 @@
                  Type="Classic C#"/>
         <Project Path="ApplicationTest\Rxmxnx.PInvoke.LauncherTest\Rxmxnx.PInvoke.LauncherTest.csproj"
                  Type="Classic C#"/>
+        <Project Path="ApplicationTest\Rxmxnx.PInvoke.Mkbundle.Patcher\Rxmxnx.PInvoke.Mkbundle.Patcher.csproj"
+                 Type="Classic C#"/>
         <File Path="ApplicationTest\DotnetCoreApp.targets"/>
         <File Path="ApplicationTest\MonoApp.targets"/>
+        <File Path="ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\Mono.ILLink.Descriptors.xml"/>
     </Folder>
     <Folder Name="/Global/">
         <File Path="..\.github\workflows\build.yml"/>

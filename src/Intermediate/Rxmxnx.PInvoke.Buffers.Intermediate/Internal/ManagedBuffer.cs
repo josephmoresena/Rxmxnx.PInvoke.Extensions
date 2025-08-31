@@ -15,7 +15,7 @@ internal static class ManagedBuffer<T>
 		IDictionary<UInt16, BufferTypeMetadata<T>> components)
 	{
 		if (!components.TryAdd(component.Size, component)) return;
-		foreach (BufferTypeMetadata<T> metadataComponent in component.Components.AsSpan())
+		foreach (BufferTypeMetadata<T> metadataComponent in component.Components.Span)
 			ManagedBuffer<T>.AppendComponent(metadataComponent, components);
 	}
 }

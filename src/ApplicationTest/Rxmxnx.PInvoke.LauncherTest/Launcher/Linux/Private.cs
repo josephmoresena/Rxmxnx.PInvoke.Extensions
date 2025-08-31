@@ -5,6 +5,7 @@ public partial class Launcher
 	private partial class Linux
 	{
 		private readonly Boolean _isArmHf;
+		private readonly MonoLauncher[]? _monoLaunchers;
 
 		private Linux(DirectoryInfo outputDirectory, Boolean useMono, out Task initialize) : base(
 			outputDirectory, useMono)
@@ -15,6 +16,23 @@ public partial class Launcher
 				                                (a is Architecture.X64 or Architecture.Arm64 &&
 					                                !Linux.IsArmHf(this.CurrentArch))).ToArray();
 			initialize = Task.CompletedTask;
+			if (!File.Exists("/usr/bin/mono"))
+			{
+				this._monoLaunchers = default;
+				return;
+			}
+			this._monoLaunchers = new MonoLauncher[1];
+			this._monoLaunchers[0] = new()
+			{
+				Architecture = this.CurrentArch,
+				NativeRuntimeName = "libSystem.Native.so",
+				MsbuildPath = "/usr/bin/msbuild",
+				LinkerPath = "/usr/bin/monolinker",
+				MakerPath = "/usr/bin/mkbundle",
+				MonoCilStripAssemblyPath = "/usr/lib/mono/4.5/mono-cil-strip.exe",
+				NativeRuntimePath = "/usr/lib/libmono-native.so",
+				ExecutablePath = "/usr/bin/mono",
+			};
 		}
 		private async Task<Int32> RunAppQemu(FileInfo appFile, Architecture arch, String executionName,
 			CancellationToken cancellationToken)

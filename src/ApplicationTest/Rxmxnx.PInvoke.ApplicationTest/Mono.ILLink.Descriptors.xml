@@ -1,0 +1,9 @@
+<linker>
+    <assembly fullname="mscorlib">
+        <type fullname="System.Buffers.MemoryManager`1" preserve="all"/>
+    </assembly>
+    <assembly fullname="System">
+        <type fullname="System.Collections.Generic.SortedDictionary`2" preserve="all"/>
+        <type fullname="System.Collections.Generic.ISet`1" preserve="all"/>
+    </assembly>
+</linker>

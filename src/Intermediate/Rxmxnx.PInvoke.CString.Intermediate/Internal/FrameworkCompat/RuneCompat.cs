@@ -40,24 +40,6 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 #endif
 internal static class RuneCompat
 {
-#if !PACKAGE
-	/// <summary>
-	/// Target framework for the current build.
-	/// </summary>
-	public static readonly String TargetFramework =
-#if !NETCOREAPP
-		".NETStandard 2.1";
-#elif NETCOREAPP3_0
-		".NETCoreApp 3.0.3";
-#elif NETCOREAPP3_1
-		".NETCoreApp 3.1.12";
-#elif NET5_0
-		".NETCoreApp 5.0.17";
-#else
-		RuntimeInformation.FrameworkDescription;
-#endif
-#endif
-
 	/// <summary>
 	/// Encodes <paramref name="rune"/> to a UTF-8 destination buffer.
 	/// </summary>

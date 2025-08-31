@@ -1,9 +1,13 @@
 using System;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 #if NET5_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
+#endif
+#if NET6_0_OR_GREATER
+using System.Runtime;
 #endif
 
 namespace Rxmxnx.PInvoke.ApplicationTest
@@ -42,6 +46,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #if R2R_EXECUTABLE
                     + " ReadyToRun (R2R)"
 #endif
+#if WEB_ASSEMBLY
+                    + " WASM"
+#endif
 			;
 
 		public static readonly Random Shared = new();
@@ -73,13 +80,24 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				Console.WriteLine($"Runtime Path: {RuntimeEnvironment.GetRuntimeDirectory()}");
 				Console.WriteLine($"Runtime Version: {RuntimeEnvironment.GetSystemVersion()}");
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 				Console.WriteLine("**Unable to retrieve runtime info**");
+				if (!AotInfo.IsReflectionDisabled)
+					Console.WriteLine(ex);
 			}
+			Console.WriteLine($"Dynamic Code Compiled: {RuntimeFeature.IsDynamicCodeCompiled}");
+			Console.WriteLine($"Dynamic Code Supported: {RuntimeFeature.IsDynamicCodeSupported}");
+#if NET6_0_OR_GREATER
+			Console.WriteLine($"IL compiled bytes: {JitInfo.GetCompiledILBytes()}");
+			Console.WriteLine($"IL method count: {JitInfo.GetCompiledMethodCount()}");
+			Console.WriteLine($"IL compilation time: {JitInfo.GetCompilationTime()}");
+#endif
 			Console.WriteLine("========== Rxmxnx.PInvoke Runtime information ==========");
+			Console.WriteLine($"Package: {SystemInfo.CompilationFramework}");
 			Console.WriteLine($"Native AOT: {AotInfo.IsNativeAot}");
 			Console.WriteLine($"Reflection Enabled: {!AotInfo.IsReflectionDisabled}");
+			Console.WriteLine($"IL Code Generation Supported: {AotInfo.IsCodeGenerationSupported}");
 			Console.WriteLine($"Trimmed Runtime: {AotInfo.IsPlatformTrimmed}");
 			Console.WriteLine($"Mono Runtime: {SystemInfo.IsMonoRuntime}");
 			Console.WriteLine($"Web Runtime: {SystemInfo.IsWebRuntime}");
@@ -93,26 +111,34 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Console.WriteLine($"Globalization-Invariant Mode: {NativeUtilities.GlobalizationInvariantModeEnabled}");
 			Console.WriteLine($"UI Iso639-1: {NativeUtilities.UserInterfaceIso639P1}");
 			Console.WriteLine($"Buffer AutoComposition Enabled: {BufferManager.BufferAutoCompositionEnabled}");
-			Console.WriteLine($"String constant: {RuntimeHelper.runtimeName.AsSpan().IsLiteral()}");
-			Console.WriteLine($"CString.Empty literal: {RuntimeHelper.GetEmptyUtf8().IsLiteral()}");
+			Console.WriteLine($"String constant: {!RuntimeHelper.runtimeName.AsSpan().MayBeNonLiteral()}");
+			Console.WriteLine($"CString.Empty literal: {!RuntimeHelper.GetEmptyUtf8().MayBeNonLiteral()}");
+			Console.WriteLine($"Hardcoded Array literal: {!RuntimeHelper.Null.AsSpan().MayBeNonLiteral()}");
 		}
 		private static void PrintDomainInfo()
 		{
 			try
 			{
-#if !NET6_0_OR_GREATER
-				foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-#else
-				foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().AsSpan())
-#endif
+#if !NET9_0_OR_GREATER
+				foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().AsReadOnlySpan())
 				{
-					if (assembly == Assembly.GetExecutingAssembly() || assembly.IsDynamic) continue;
-					Console.WriteLine(AotInfo.IsNativeAot ? assembly.FullName : assembly.GetAssemblyName());
+#else
+				ReadOnlySpan<Assembly>.Enumerator enumerator =
+					AppDomain.CurrentDomain.GetAssemblies().AsReadOnlySpan().GetEnumerator();
+				while (enumerator.MoveNext())
+				{
+					ref readonly Assembly assembly = ref enumerator.Current;
+#endif
+					if (assembly == Assembly.GetExecutingAssembly()) continue;
+					Boolean useFullName = AotInfo.IsNativeAot || assembly.IsDynamic;
+					Console.WriteLine(useFullName ? assembly.FullName : assembly.GetAssemblyName());
 				}
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 				Console.WriteLine("**Unable to retrieve domain info**");
+				if (!AotInfo.IsReflectionDisabled)
+					Console.WriteLine(ex);
 			}
 		}
 		private static ReadOnlySpan<Byte> GetEmptyUtf8()
@@ -142,7 +168,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #if NET9_0_OR_GREATER
 				Architecture.RiscV64 => nameof(Architecture.RiscV64),
 #endif
-				_ => architecture.ToString(),
+				_ => $"{architecture}",
 			};
 		private static String GetAssemblyName(this Assembly assembly) => $"{assembly.FullName} {assembly.Location}";
 	}

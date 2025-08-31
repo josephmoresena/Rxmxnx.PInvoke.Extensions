@@ -12,24 +12,6 @@ internal static unsafe
 #endif
 	class MemoryMarshalCompat
 {
-#if !PACKAGE
-	/// <summary>
-	/// Target framework for the current build.
-	/// </summary>
-	public static readonly String TargetFramework =
-#if !NETCOREAPP
-		".NETStandard 2.1";
-#elif NETCOREAPP3_0
-		".NETCoreApp 3.0.3";
-#elif NETCOREAPP3_1
-		".NETCoreApp 3.1.12";
-#elif NET5_0
-		".NETCoreApp 5.0.17";
-#else
-		RuntimeInformation.FrameworkDescription;
-#endif
-#endif
-
 	/// <summary>
 	/// Creates a new read-only span for a null-terminated UTF8 string.
 	/// </summary>

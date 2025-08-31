@@ -105,11 +105,11 @@ public sealed class BinaryBufferCompositeTest
 		PInvokeAssert.Equal(atomicMetadata, BufferManager.MetadataManager<T>.GetMetadata(typeofAtomic));
 		PInvokeAssert.Equal(composite2Metadata, BufferManager.MetadataManager<T>.GetMetadata(typeofComposite2));
 		PInvokeAssert.Equal(binaryMetadata, BufferManager.MetadataManager<T>.GetMetadata(binaryMetadata.BufferType));
-		PInvokeAssert.Equal(binaryMetadata.Components, [
+		PInvokeAssert.Equal(binaryMetadata.Components.ToArray(), [
 			BufferManager.MetadataManager<T>.GetMetadata(typeofAtomic),
 			BufferManager.MetadataManager<T>.GetMetadata(typeofComposite2),
 		]);
-		foreach (BufferTypeMetadata<T> metadata in binaryMetadata.Components.AsSpan())
+		foreach (BufferTypeMetadata<T> metadata in binaryMetadata.Components.Span)
 			PInvokeAssert.Equal(metadata, BufferManager.MetadataManager<T>.GetMetadata(metadata.BufferType));
 	}
 	private static BufferTypeMetadata<T> GetMetadata<TBuffer, T>()

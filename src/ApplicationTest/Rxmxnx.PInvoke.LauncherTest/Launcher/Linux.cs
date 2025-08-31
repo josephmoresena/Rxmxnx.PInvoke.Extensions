@@ -5,10 +5,9 @@ public partial class Launcher
 	private sealed partial class Linux : Launcher, ILauncher<Linux>
 	{
 		public static OSPlatform Platform => OSPlatform.Linux;
-		public override Architecture[] Architectures { get; }
 		public override String RuntimeIdentifierPrefix => "linux";
-		public override String MonoExecutablePath => "/usr/bin/mono";
-		public override String MonoMsbuildPath => "/usr/bin/msbuild";
+		public override ReadOnlySpan<MonoLauncher> MonoLaunchers => this._monoLaunchers;
+		public override Architecture[] Architectures { get; }
 		protected override Task<Int32> RunAppFile(FileInfo appFile, Architecture arch, String executionName,
 			CancellationToken cancellationToken)
 		{

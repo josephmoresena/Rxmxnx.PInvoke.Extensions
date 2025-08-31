@@ -4,23 +4,31 @@
         <TargetFramework Condition="'$(RequiredFramework)' == ''">net9.0</TargetFramework>
         <TargetFramework Condition="'$(RequiredFramework)' != ''">$(RequiredFramework)</TargetFramework>
         <SelfContained Condition="'$(RequiredFramework)' != ''">true</SelfContained>
+        <IsNativeAotWebAssembly>$(RuntimeIdentifier.ToLower().EndsWith('-wasm'))</IsNativeAotWebAssembly>
+        <IsOSXHost>$([MSBuild]::IsOSPlatform('OSX'))</IsOSXHost>
         <AssemblyName Condition="'$(RuntimeIdentifier)' != ''">$(AssemblyName).$(RuntimeIdentifier)</AssemblyName>
         <AssemblyName>$(AssemblyName).$(TargetFramework)</AssemblyName>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(IsNativeAotWebAssembly)' == 'true'">
+        <MSBuildEnableWorkloadResolver>false</MSBuildEnableWorkloadResolver>
+        <UseAppHost>false</UseAppHost>
+        <DefineConstants>$(DefineConstants);WEB_ASSEMBLY</DefineConstants>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(SelfContained)' == 'true' And '$(PublishAot)' != 'true'">
-        <PublishSingleFile>true</PublishSingleFile>
+        <PublishSingleFile Condition="'$(IsNativeAotWebAssembly)' != 'true'">true</PublishSingleFile>
         <DebugSymbols>false</DebugSymbols>
         <DebugType>None</DebugType>
         <!-- Assembly name must specify that it was compiled with ReadyToRun -->
         <AssemblyName Condition="$(PublishReadyToRun) == 'true'">$(AssemblyName).R2R</AssemblyName>
         <DefineConstants Condition="'$(PublishReadyToRun)' == 'true'">$(DefineConstants);R2R_EXECUTABLE</DefineConstants>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(PublishAot)' == 'true'">
+    <PropertyGroup Condition="'$(PublishAot)' == 'true' Or '$(IsNativeAotWebAssembly)' == 'true'">
         <DefineConstants>$(DefineConstants);NATIVE_AOT</DefineConstants>
         <DefineConstants Condition="'$(IlcDisableReflection)' == 'true'">$(DefineConstants);REFLECTION_FREE</DefineConstants>
         <AssemblyName Condition="'$(IlcDisableReflection)' != 'true'">$(AssemblyName).NAOT</AssemblyName>
         <AssemblyName Condition="'$(IlcDisableReflection)' == 'true'">$(AssemblyName).RFM</AssemblyName>
+        <StripSymbols>true</StripSymbols>
         <IlcGenerateMetadataLog>true</IlcGenerateMetadataLog>
         <IlcGenerateMstatFile>true</IlcGenerateMstatFile>
         <IlcGenerateDgmlFile>true</IlcGenerateDgmlFile>
@@ -33,25 +41,60 @@
         <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
         <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
     </PropertyGroup>
-
     <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm' And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
         <LinkerFlavor>lld</LinkerFlavor>
         <ObjCopyName>/usr/arm-linux-gnueabihf/bin/objcopy</ObjCopyName>
     </PropertyGroup>
-
+    <ItemGroup Condition="'$(IsNativeAotWebAssembly)' == 'true'">
+        <PackageReference Include="Microsoft.DotNet.ILCompiler.LLVM" Version="10.0.0-*" />
+        <PackageReference Include="runtime.$(NETCoreSdkPortableRuntimeIdentifier).Microsoft.DotNet.ILCompiler.LLVM" Version="10.0.0-*" />
+        <LinkerArg Include="-sEXPORTED_RUNTIME_METHODS=[HEAPU8,HEAPU32,HEAP32,cwrap]" />
+        <LinkerArg Include="-sASSERTIONS" />
+    </ItemGroup>
+    
     <ItemGroup>
         <RuntimeHostConfigurationOption Condition="'$(DisableBufferAutoComposition)' == 'true'" Include="PInvoke.DisableBufferAutoComposition" Value="true" Trim="true"/>
+        <RuntimeHostConfigurationOption Include="Switch.System.Reflection.Disabled.DoNotThrowForNames" Value="true"/>
+        <RuntimeHostConfigurationOption Include="Switch.System.Reflection.Disabled.DoNotThrowForAssembly" Value="true"/>
+        <RuntimeHostConfigurationOption Include="Switch.System.Reflection.Disabled.DoNotThrowForAttributes" Value="true"/>
     </ItemGroup>
 
-    <Target Name="CopyTarget" Condition="'$(SelfContained)' == 'true' Or '$(PublishAot)' == 'true'" AfterTargets="Publish">
-        <ItemGroup>
+    <ItemGroup>
+        <KnownILCompilerPack Include="Microsoft.DotNet.ILCompiler"
+                             TargetFramework="net6.0"
+                             ILCompilerRuntimeIdentifiers="linux-arm64;linux-musl-arm64;linux-musl-x64;linux-x64;win-arm64;win-x64;osx-x64"
+                             ILCompilerPackVersion="7.0.20"
+                             ILCompilerPackNamePattern="runtime.**RID**.Microsoft.DotNet.ILCompiler"/>
+    </ItemGroup>
+    <ItemGroup Condition="'$(IsOSXHost)' == 'true' And '$(RuntimeIdentifier)' == 'osx-x64'">
+        <KnownILCompilerPack Condition="'$(TargetFramework)' == 'net7.0'" Remove="@(KnownILCompilerPack)"/>
+        <KnownILCompilerPack Include="Microsoft.DotNet.ILCompiler"
+                             TargetFramework="net7.0"
+                             ILCompilerRuntimeIdentifiers="linux-arm64;linux-musl-arm64;linux-musl-x64;linux-x64;win-arm64;win-x64;osx-x64"
+                             ILCompilerPackVersion="7.0.20"
+                             ILCompilerPackNamePattern="runtime.**RID**.Microsoft.DotNet.ILCompiler"
+                             Condition="'$(TargetFramework)' == 'net7.0'"/>
+    </ItemGroup>
+
+    <Target Name="CopyTarget" Condition="'$(SelfContained)' == 'true' Or '$(PublishAot)' == 'true' Or '$(IsNativeAotWebAssembly)' == 'true'" AfterTargets="Publish">
+        <ItemGroup Condition="'$(IsNativeAotWebAssembly)' != 'true'">
             <Artifact Include="$(PublishDir)$(AssemblyName)*"/>
             <Artifact Remove="$(PublishDir)$(AssemblyName)*.pdb"/>
             <Artifact Remove="$(PublishDir)$(AssemblyName)*.dwarf"/>
             <Artifact Remove="$(PublishDir)$(AssemblyName)*.dSYM"/>
-            <Artifact Remove="$(PublishDir)$(AssemblyName)*.dbg"/>
+        </ItemGroup>
+        <ItemGroup Condition="'$(IsNativeAotWebAssembly)' == 'true'">
+            <Artifact Include="$(NativeOutputPath)$(AssemblyName)*"/>
+            <Artifact Remove="$(NativeOutputPath)$(AssemblyName)*.deps.json"/>
+            <Artifact Remove="$(NativeOutputPath)$(AssemblyName)*.runtimeconfig.json"/>
+            <Artifact Remove="$(NativeOutputPath)$(AssemblyName)*.html"/>
+        </ItemGroup>
+        
+		<ItemGroup>
             <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Include="$(NativeIntermediateOutputPath)*$(AssemblyName)*"/>
             <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Remove="$(NativeIntermediateOutputPath)*$(AssemblyName).o"/>
+            <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Remove="$(NativeIntermediateOutputPath)*$(AssemblyName).*.o"/>
+            <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Remove="$(NativeIntermediateOutputPath)*$(AssemblyName).*.bc"/>
             <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Remove="$(NativeIntermediateOutputPath)*$(AssemblyName).obj"/>
             <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Remove="$(NativeIntermediateOutputPath)*$(AssemblyName).exports"/>
             <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Remove="$(NativeIntermediateOutputPath)*$(AssemblyName).def"/>

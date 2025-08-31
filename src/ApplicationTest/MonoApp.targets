@@ -3,6 +3,8 @@
     <PropertyGroup>
         <TargetFramework>net45</TargetFramework>
         <AssemblyName>$(AssemblyName).mono</AssemblyName>
+        <DebugSymbols>false</DebugSymbols>
+        <DebugType>None</DebugType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(MonoFrameworkPath)' == ''">
         <MonoFrameworkPath Condition="$([MSBuild]::IsOSPlatform('Linux'))">/usr/lib/mono</MonoFrameworkPath>
@@ -20,6 +22,12 @@
             <HintPath>$(MonoFrameworkPath)\4.5\Facades\netstandard.dll</HintPath>
             <Private>False</Private>
         </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Mono.ILLink.Descriptors.xml">
+            <LogicalName>$(AssemblyName).xml</LogicalName>
+        </EmbeddedResource>
     </ItemGroup>
 
 </Project>

@@ -25,6 +25,26 @@ public sealed class ConsoleNotifier : IExecutionNotifier, IPlatformNotifier
 		                                 $"Finished. [{info.WorkingDirectory}] {info.FileName} {args}");
 	}
 
+	public void Print(String message, Boolean done = false)
+	{
+		ConsoleColor color = done ? ConsoleColor.Green : ConsoleColor.Blue;
+		ConsoleNotifier.WriteColoredLine(color, message);
+	}
+	public void PrintError(String message, Exception? exception)
+	{
+		ConsoleNotifier.WriteColoredLine(ConsoleColor.Red, message);
+		String? exMessage;
+		try
+		{
+			exMessage = exception?.ToString();
+		}
+		catch (Exception)
+		{
+			exMessage = exception?.Message;
+		}
+		if (!String.IsNullOrWhiteSpace(exMessage))
+			ConsoleNotifier.WriteColoredLine(ConsoleColor.Magenta, exMessage);
+	}
 	public void Result(Int32 result, String executionName)
 	{
 		ConsoleColor color = result == 0 ? ConsoleColor.Green : ConsoleColor.Red;

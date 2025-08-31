@@ -76,10 +76,10 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <summary>
 	/// Current buffer components.
 	/// </summary>
-	internal BufferTypeMetadata<T>[] Components { get; }
+	internal ReadOnlyMemory<BufferTypeMetadata<T>> Components { get; }
 
 	/// <inheritdoc/>
-	public override BufferTypeMetadata this[Int32 index] => this.Components[index];
+	public override BufferTypeMetadata this[Int32 index] => this.Components.Span[index];
 	/// <inheritdoc/>
 	public override Int32 ComponentCount => this.Components.Length;
 
@@ -138,7 +138,7 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
 #endif
-	;
+		;
 	/// <inheritdoc cref="BufferTypeMetadata{T}.Execute{TState}(TState, ScopedBufferAction{T, TState}, Int32)"/>
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	internal abstract void Execute<TState>(TState state, VbScopedBufferAction<T, TState> action, Int32 spanLength);
@@ -162,11 +162,11 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <returns><paramref name="func"/> result.</returns>
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	internal abstract TResult Execute<TState, TResult>(TState state, ScopedBufferFunc<T, TState, TResult> func,
-		Int32 spanLength)
+			Int32 spanLength)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
 #endif
-	;
+		;
 	/// <inheritdoc cref="BufferTypeMetadata{T}.Execute{TState, TResult}(TState, ScopedBufferFunc{T, TState, TResult}, Int32)"/>
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	internal abstract TResult Execute<TState, TResult>(TState state, VbScopedBufferFunc<T, TState, TResult> func,
@@ -184,7 +184,7 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
 #endif
-	;
+		;
 	/// <inheritdoc cref="BufferTypeMetadata{T}.Execute{TU, TState}(TState, ScopedBufferAction{TU, TState}, Int32)"/>
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	internal abstract void Execute<TU, TState>(TState state, VbScopedBufferAction<TU, TState> action, Int32 spanLength);
@@ -200,11 +200,11 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <returns><paramref name="func"/> result.</returns>
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	internal abstract TResult Execute<TU, TState, TResult>(TState state, ScopedBufferFunc<TU, TState, TResult> func,
-		Int32 spanLength)
+			Int32 spanLength)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
 #endif
-	;
+		;
 	/// <inheritdoc
 	///     cref="BufferTypeMetadata{T}.Execute{TU, TState, TResult}(TState, ScopedBufferFunc{TU, TState, TResult}, Int32)"/>
 	[MethodImpl(MethodImplOptions.NoInlining)]

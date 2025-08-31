@@ -36,8 +36,8 @@ public sealed class SerializationTest
 		{
 			// Zero is serialized as empty string when ignore condition is set to WhenWritingDefault or WhenWritingNull.
 			// In .NET Standard 2.1 And .Net Core 3.1 Zero is serialized as non-ignorable null.
-			Boolean isNetStandard = RuneCompat.TargetFramework.StartsWith(".NETStandard") ||
-				RuneCompat.TargetFramework.StartsWith(".NETCoreApp 3.0");
+			Boolean isNetStandard = SystemInfo.CompilationFramework.StartsWith(".NET Standard") ||
+				SystemInfo.CompilationFramework.StartsWith(".NET Core 3.0");
 			Assert.NotEqual(vsSerialized, vcSerialized);
 			Assert.Equal(!isNetStandard ? String.Empty : null,
 			             JsonSerializer.Deserialize<Serializable<String>>(vcSerialized)?.Value);
