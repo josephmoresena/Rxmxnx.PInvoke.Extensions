@@ -53,8 +53,8 @@ public sealed class SerializationTest
 		Assert.Equal(vsSerialized, vcSerialized);
 
 		Assert.Equal(0, JsonSerializer.Deserialize<Serializable<String[], String>>(vcSerialized)?.Values?.Length);
-		Assert.Equal(
-			0, JsonSerializer.Deserialize<Serializable<CStringSequence, CString>>(vsSerialized)?.Values?.Count);
+		Assert.Equal(0, JsonSerializer.Deserialize<Serializable<CStringSequence, CString>>(vsSerialized)?.Values
+		                              ?.Count);
 	}
 	[Fact]
 	internal void Test()

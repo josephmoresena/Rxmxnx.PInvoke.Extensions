@@ -4,8 +4,12 @@
 /// Interface representing a method whose memory address is fixed in memory.
 /// </summary>
 /// <typeparam name="TDelegate">Type of the delegate that corresponds to the fixed method.</typeparam>
-public interface IFixedMethod<out TDelegate> : IFixedPointer where TDelegate : Delegate
+public interface IFixedMethod<TDelegate> : IFixedPointer where TDelegate : Delegate
 {
+	/// <summary>
+	/// Gets the function pointer to the fixed method in memory.
+	/// </summary>
+	FuncPtr<TDelegate> FunctionPointer { get; }
 	/// <summary>
 	/// Gets the delegate that points to the fixed method in memory.
 	/// </summary>

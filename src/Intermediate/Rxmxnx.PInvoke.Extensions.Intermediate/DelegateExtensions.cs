@@ -78,17 +78,4 @@ public static unsafe partial class DelegateExtensions
 	public static IFixedMethod<TDelegate>.IDisposable GetFixedMethod<TDelegate>(this TDelegate? method)
 		where TDelegate : Delegate
 		=> NativeUtilities.GetFixedMethod(method);
-
-	/// <summary>
-	/// Retrieves the <see cref="FuncPtr{TDelegate}"/> associated with the current
-	/// <see cref="IFixedMethod{TDelegate}"/> instance.
-	/// </summary>
-	/// <typeparam name="TDelegate">The type of delegate that corresponds to the fixed method.</typeparam>
-	/// <param name="fMethod">An <see cref="IFixedMethod{TDelegate}"/> instance.</param>
-	/// <returns>
-	/// The <see cref="FuncPtr{TDelegate}"/> associated with the current <see cref="IFixedMethod{TDelegate}"/> instance.
-	/// </returns>
-	public static FuncPtr<TDelegate> GetFunctionPointer<TDelegate>(this IFixedMethod<TDelegate>? fMethod)
-		where TDelegate : Delegate
-		=> fMethod is not null ? (FuncPtr<TDelegate>)fMethod.Pointer : FuncPtr<TDelegate>.Zero;
 }

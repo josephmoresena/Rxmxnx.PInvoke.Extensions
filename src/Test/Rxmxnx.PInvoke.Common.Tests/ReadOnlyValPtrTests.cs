@@ -191,7 +191,7 @@ public sealed class ReadOnlyValPtrTests
 #else
 					PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in enumerator.Current),
 #endif
-					                                  ref Unsafe.As<Object, T>(ref Unsafe.AsRef(in refObj))));
+					                           ref Unsafe.As<Object, T>(ref Unsafe.AsRef(in refObj))));
 				}
 				PInvokeAssert.Equal(typeof(T).IsValueType || ctx.IsNullOrEmpty, ctx.Objects.IsEmpty);
 			}
@@ -233,9 +233,8 @@ public sealed class ReadOnlyValPtrTests
 #else
 				PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in fixedReference.Reference),
 #endif
-				                                  ref Unsafe.As<Object, T>(
-					                                  ref Unsafe.AsRef(
-						                                  in fixedReference.AsObjectContext().Values[0]))));
+				                           ref Unsafe.As<Object, T>(
+					                           ref Unsafe.AsRef(in fixedReference.AsObjectContext().Values[0]))));
 				PInvokeAssert.Equal(typeof(T).IsValueType || fixedReference.IsNullOrEmpty,
 				                    fixedReference.Objects.IsEmpty);
 			}

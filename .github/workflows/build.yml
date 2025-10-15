@@ -178,49 +178,52 @@ jobs:
         shell: freebsd {0}
         run: |
           cd $GITHUB_WORKSPACE;
-          cd ./src/ApplicationTest/Rxmxnx.JNetInterface.LauncherTest;
+          cd ./src/ApplicationTest/Rxmxnx.PInvoke.LauncherTest;
           dotnet publish -r freebsd.13-x64;
+          rm -rf ./obj
+
       - name: Run launcher (compile) (FreeBSD)
         shell: freebsd {0}
         run: |
           cd $GITHUB_WORKSPACE;
-          ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "compile";
+          ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifactsf" "compile";
+
       - name: Mono-Compile ApplicationTest for FreeBSD
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
         shell: bash
         run: |
-          msbuild -restore /p:Configuration=Release /p:UsePackage=true
+          msbuild -restore /p:Configuration=Release /p:UsePackage=true /p:OutDir=../../../artifactsf/Mono/Rxmxnx.PInvoke.ApplicationTest
           rm -rf ./obj
       - name: Run launcher (run) (FreeBSD)
         shell: freebsd {0}
         run: |
           cd $GITHUB_WORKSPACE;
-          ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "run";
+          ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifactsf" "run";
 
       - name: Create Native Artifact
         uses: actions/upload-artifact@v4
         with:
           name: FreeBSD.13-Artifact
           path: |
-            ./artifacts/*NAOT*
-            ./artifacts/*RFM*
-            ./artifacts/Mono/X86/*
-            ./artifacts/Mono/X64/*
-            ./artifacts/Mono/Arm64/*
+            ./artifactsf/*NAOT*
+            ./artifactsf/*RFM*
+            ./artifactsf/Mono/X86/*
+            ./artifactsf/Mono/X64/*
+            ./artifactsf/Mono/Arm64/*
       - name: Create Native Artifact Logs
         uses: actions/upload-artifact@v4
         with:
           name: FreeBSD.13-Artifact-Logs
           path: |
-            ./artifacts/Native/*
-            ./artifacts/Mono/*Mono.Link.log
-            ./artifacts/Mono/*Mono.AOT*.log
-            ./artifacts/Mono/*Mono.Bundle*.log
-            
+            ./artifactsf/Native/*
+            ./artifactsf/Mono/*Mono.Link.log
+            ./artifactsf/Mono/*Mono.AOT*.log
+            ./artifactsf/Mono/*Mono.Bundle*.log
+
       - name: Install Escripten
         shell: bash
         run: |
-          rm -rf artifacts
+          rm -rf artifactsf
           mkdir artifacts
           sudo git clone https://github.com/emscripten-core/emsdk.git /opt/emsdk
           cd /opt/emsdk

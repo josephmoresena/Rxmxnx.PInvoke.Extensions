@@ -225,9 +225,8 @@ public sealed class ValPtrTests
 #else
 				PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in fixedReference.Reference),
 #endif
-				                                  ref Unsafe.As<Object, T>(
-					                                  ref Unsafe.AsRef(
-						                                  in fixedReference.AsObjectContext().Values[0]))));
+				                           ref Unsafe.As<Object, T>(
+					                           ref Unsafe.AsRef(in fixedReference.AsObjectContext().Values[0]))));
 				PInvokeAssert.Equal(typeof(T).IsValueType || fixedReference.IsNullOrEmpty,
 				                    fixedReference.Objects.IsEmpty);
 			}

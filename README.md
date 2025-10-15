@@ -469,6 +469,10 @@ Interface representing a method whose memory address is fixed in memory.
   <summary>Method</summary>
    Gets the delegate that points to the fixed method in memory.
   </details>
+- <details>
+  <summary>FunctionPointer</summary>
+   Gets the function pointer to the fixed method in memory.
+  </details>
 
 </details>
 
@@ -2470,11 +2474,6 @@ Additional functionality for working with delegates.
 
   Creates an `IFixedMethod<TDelegate>.IDisposable` instance by marshalling the current `TDelegate` instance,
   ensuring a safe interop context.
-  </details>
-- <details>
-  <summary>GetFunctionPointer&lt;TDelegate&gt;(this IFixedMethod&lt;TDelegate&gt;?)</summary>
-
-  Retrieves the `FuncPtr<TDelegate>` pointer associated to the current `IFixedMethod<TDelegate>` instance.
   </details>
 
 </details>

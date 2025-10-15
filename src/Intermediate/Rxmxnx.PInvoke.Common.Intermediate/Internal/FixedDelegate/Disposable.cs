@@ -52,6 +52,8 @@ internal sealed partial class FixedDelegate<TDelegate> : IConvertibleDisposable<
 		/// <inheritdoc/>
 		public Disposable(FixedDelegate fixedPointer, IDisposable? disposable) : base(fixedPointer, disposable) { }
 
+		FuncPtr<TDelegate> IFixedMethod<TDelegate>.FunctionPointer
+			=> this.GetValue<IFixedMethod<TDelegate>>()?.FunctionPointer ?? default;
 		TDelegate IFixedMethod<TDelegate>.Method => this.GetValue<IFixedMethod<TDelegate>>()?.Method!;
 	}
 }

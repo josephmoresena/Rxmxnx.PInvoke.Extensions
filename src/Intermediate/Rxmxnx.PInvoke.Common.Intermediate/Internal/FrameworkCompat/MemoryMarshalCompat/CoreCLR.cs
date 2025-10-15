@@ -30,6 +30,8 @@ SOFTWARE.
 // (System.Runtime.InteropServices.MemoryMarshal / System.String /  System.SpanHelpers )
 
 #if NETCOREAPP && (!PACKAGE || !NET6_0_OR_GREATER)
+// ReSharper disable BuiltInTypeReferenceStyle
+
 using UIntPtr = nuint;
 using IntPtr = nint;
 
