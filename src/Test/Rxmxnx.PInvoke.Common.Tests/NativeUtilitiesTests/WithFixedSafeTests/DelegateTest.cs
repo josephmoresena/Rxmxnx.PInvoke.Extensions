@@ -36,16 +36,22 @@ public sealed class DelegateTest
 	private static void ActionTest(in IFixedMethod<GetNativeMethodTest.GetInt32> fMethod)
 	{
 		PInvokeAssert.Equal(Environment.CurrentManagedThreadId, fMethod.Method());
+		PInvokeAssert.Equal(Environment.CurrentManagedThreadId, fMethod.FunctionPointer.Invoke());
 		PInvokeAssert.Equal(
 			Marshal.GetFunctionPointerForDelegate<GetNativeMethodTest.GetInt32>(DelegateTest.GetThreadId),
 			fMethod.Pointer);
+		PInvokeAssert.Equal(
+			Marshal.GetFunctionPointerForDelegate<GetNativeMethodTest.GetInt32>(DelegateTest.GetThreadId),
+			fMethod.FunctionPointer.Pointer);
 	}
 	private static void ActionTest(in IFixedMethod<GetNativeMethodTest.GetInt32> fMethod,
 		GetNativeMethodTest.GetInt32 instance)
 	{
 		DelegateTest.ActionTest(fMethod);
 		PInvokeAssert.Equal(fMethod.Method, instance);
+		PInvokeAssert.Equal(fMethod.FunctionPointer.Invoke, instance);
 		PInvokeAssert.Equal(fMethod.Method(), instance());
+		PInvokeAssert.Equal(fMethod.FunctionPointer.Invoke(), instance());
 	}
 	private static Int32 FuncTest(in IFixedMethod<GetNativeMethodTest.GetInt32> fMethod)
 	{

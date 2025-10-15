@@ -26,14 +26,19 @@ public sealed class WithSafeFixedTest : DelegatesTests
 	private static void ActionTest(in IFixedMethod<GetInt32> fMethod)
 	{
 		PInvokeAssert.Equal(Environment.CurrentManagedThreadId, fMethod.Method());
+		PInvokeAssert.Equal(Environment.CurrentManagedThreadId, fMethod.FunctionPointer.Invoke());
 		PInvokeAssert.Equal(Marshal.GetFunctionPointerForDelegate<GetInt32>(DelegatesTests.GetThreadId),
 		                    fMethod.Pointer);
+		PInvokeAssert.Equal(Marshal.GetFunctionPointerForDelegate<GetInt32>(DelegatesTests.GetThreadId),
+		                    fMethod.FunctionPointer.Pointer);
 	}
 	private static void ActionTest(in IFixedMethod<GetInt32> fMethod, GetInt32 instance)
 	{
 		WithSafeFixedTest.ActionTest(fMethod);
 		PInvokeAssert.Equal(fMethod.Method, instance);
+		PInvokeAssert.Equal(fMethod.FunctionPointer.Invoke, instance);
 		PInvokeAssert.Equal(fMethod.Method(), instance());
+		PInvokeAssert.Equal(fMethod.FunctionPointer.Invoke(), instance());
 	}
 	private static Int32 FuncTest(in IFixedMethod<GetInt32> fMethod)
 	{

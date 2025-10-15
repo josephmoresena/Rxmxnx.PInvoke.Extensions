@@ -71,7 +71,7 @@
         <KnownILCompilerPack Include="Microsoft.DotNet.ILCompiler"
                              TargetFramework="net6.0"
                              ILCompilerRuntimeIdentifiers="linux-arm64;linux-musl-arm64;linux-musl-x64;linux-x64;win-arm64;win-x64;osx-arm64;osx-x64"
-                             ILCompilerPackVersion="8.0.20"
+                             ILCompilerPackVersion="8.0.21"
                              ILCompilerPackNamePattern="runtime.**RID**.Microsoft.DotNet.ILCompiler"
                              Condition="$([MSBuild]::IsOSPlatform('OSX')) And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'"/>
     </ItemGroup>
@@ -86,7 +86,7 @@
         <KnownILCompilerPack Include="Microsoft.DotNet.ILCompiler"
                              TargetFramework="net7.0"
                              ILCompilerRuntimeIdentifiers="linux-arm64;linux-musl-arm64;linux-musl-x64;linux-x64;win-arm64;win-x64;osx-arm64;osx-x64"
-                             ILCompilerPackVersion="8.0.20"
+                             ILCompilerPackVersion="8.0.21"
                              ILCompilerPackNamePattern="runtime.**RID**.Microsoft.DotNet.ILCompiler"
                              Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'"/>
     </ItemGroup>
