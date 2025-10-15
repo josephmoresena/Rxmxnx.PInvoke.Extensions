@@ -17,8 +17,11 @@ public partial class TestCompiler
 			await TestCompiler.CompileNet(compileArgs);
 			compileArgs.BuildDependencies = false;
 
-			compileArgs.Publish = Publish.ReadyToRun;
-			await TestCompiler.CompileNet(compileArgs);
+			if (!OperatingSystem.IsFreeBSD())
+			{
+				compileArgs.Publish = Publish.ReadyToRun;
+				await TestCompiler.CompileNet(compileArgs);
+			}
 		}
 
 		if (!Utilities.IsNativeAotSupported(arch, restoreArgs.Version)) return;
@@ -80,10 +83,9 @@ public partial class TestCompiler
 		Architecture currentArch = RuntimeInformation.OSArchitecture;
 		return arch == currentArch || currentArch switch
 		{
-			Architecture.X86 => false,
-			Architecture.Arm => false,
-			Architecture.Armv6 => false,
-			_ => true,
+			Architecture.X86 => OperatingSystem.IsWindows(),
+			Architecture.Arm or Architecture.Armv6 => OperatingSystem.IsLinux(),
+			_ => !OperatingSystem.IsFreeBSD(),
 		};
 	}
 }

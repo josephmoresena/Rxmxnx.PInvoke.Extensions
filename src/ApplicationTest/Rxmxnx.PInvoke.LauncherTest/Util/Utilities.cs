@@ -5,9 +5,7 @@ public static class Utilities
 	public static Boolean IsNativeAotSupported(Architecture arch, NetVersion netVersion)
 		=> netVersion >= NetVersion.Net60 && arch switch
 		{
-			Architecture.X64 => netVersion >= NetVersion.Net80 || OperatingSystem.IsWindows() ||
-				OperatingSystem.IsLinux() ||
-				(OperatingSystem.IsMacOS() && RuntimeInformation.OSArchitecture is Architecture.X64),
+			Architecture.X64 => true,
 			Architecture.Arm64 => netVersion >= NetVersion.Net80 || OperatingSystem.IsWindows() ||
 				OperatingSystem.IsLinux(),
 			Architecture.X86 or Architecture.Arm or Architecture.Armv6 => netVersion >= NetVersion.Net90,
@@ -42,6 +40,23 @@ public static class Utilities
 		await prog.WaitForExitAsync(cancellationToken);
 		state.Notifier?.End(info);
 		return prog.ExitCode;
+	}
+	public static async Task<String> ExecuteWithOutput(ExecuteState state,
+		CancellationToken cancellationToken = default)
+	{
+		ProcessStartInfo info = new(state.ExecutablePath)
+		{
+			RedirectStandardError = true, RedirectStandardOutput = true, CreateNoWindow = true,
+		};
+		state.AppendArgs?.Invoke(info.ArgumentList);
+		state.AppendEnvs?.Invoke(info.EnvironmentVariables);
+		if (!String.IsNullOrEmpty(state.WorkingDirectory)) info.WorkingDirectory = state.WorkingDirectory;
+		state.Notifier?.Begin(info);
+		using Process prog = Process.Start(info)!;
+		String result = await Utilities.ReadOutput(prog, cancellationToken);
+		await prog.WaitForExitAsync(cancellationToken);
+		state.Notifier?.End(info);
+		return result;
 	}
 	public static async Task<String> ExecuteWithOutput<TState>(ExecuteState<TState> state,
 		CancellationToken cancellationToken = default)

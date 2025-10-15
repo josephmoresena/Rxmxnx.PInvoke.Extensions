@@ -16,7 +16,7 @@ _ = Boolean.TryParse(Environment.GetEnvironmentVariable("PINVOKE_ONLY_NATIVE_TES
 if (compile)
 {
 	await TestCompiler.CompileNet(projectDirectory, launcher.RuntimeIdentifierPrefix, outputDirectory.FullName,
-	                              onlyNativeAot);
+	                              launcher.NetVersions, onlyNativeAot);
 	if (!launcher.MonoLaunchers.IsEmpty)
 		await TestCompiler.CompileMono(projectDirectory, launcher.MonoLaunchers[0],
 		                               launcher.MonoOutputDirectory!.FullName);

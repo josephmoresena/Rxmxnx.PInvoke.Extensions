@@ -6,6 +6,8 @@ public abstract partial class Launcher
 	public DirectoryInfo? MonoOutputDirectory { get; }
 	public Architecture CurrentArch { get; }
 
+	public virtual NetVersion[] NetVersions => Enum.GetValues<NetVersion>();
+
 	public abstract ReadOnlySpan<MonoLauncher> MonoLaunchers { get; }
 	public abstract String RuntimeIdentifierPrefix { get; }
 	public abstract Architecture[] Architectures { get; }

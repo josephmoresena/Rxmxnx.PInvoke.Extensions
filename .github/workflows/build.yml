@@ -106,12 +106,7 @@ jobs:
           sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
           
           sudo apt install mono-complete mono-vbnc mono-dbg gdb libssl3
-      - name: Mono-Compile ApplicationTest for FreeBSD
-        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
-        shell: bash
-        run: |
-          msbuild -restore /p:Configuration=Release /p:UsePackage=true
-          rm -rf ./obj
+
       - name: Init FreeBSD 13.5 VM
         id: vm
         uses: vmactions/freebsd-vm@v1.2.3
@@ -119,6 +114,7 @@ jobs:
           release: "13.5"
           usesh: true
           copyback: false
+          sync: nfs
           prepare: |
             pkg install -y python311 py311-pillow sqlite3 unixODBC libgdiplus zip ca_root_nss dotnet 
             
@@ -177,21 +173,54 @@ jobs:
           mono ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All;
           mono ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All;
           mono ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All;
-      - name: Run ApplicationTest (FreeBSD)
+
+      - name: Publish Launcher (FreeBSD)
         shell: freebsd {0}
         run: |
           cd $GITHUB_WORKSPACE;
-          cd ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest;
-          dotnet run /p:UsePackage=true;
-      - name: Mono-Run ApplicationTest (FreeBSD)
+          cd ./src/ApplicationTest/Rxmxnx.JNetInterface.LauncherTest;
+          dotnet publish -r freebsd.13-x64;
+      - name: Run launcher (compile) (FreeBSD)
         shell: freebsd {0}
         run: |
           cd $GITHUB_WORKSPACE;
-          cd ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest;
-          mono ./bin/Release/net45/Rxmxnx.PInvoke.ApplicationTest.mono.exe;
+          ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "compile";
+      - name: Mono-Compile ApplicationTest for FreeBSD
+        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
+        shell: bash
+        run: |
+          msbuild -restore /p:Configuration=Release /p:UsePackage=true
+          rm -rf ./obj
+      - name: Run launcher (run) (FreeBSD)
+        shell: freebsd {0}
+        run: |
+          cd $GITHUB_WORKSPACE;
+          ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "run";
+
+      - name: Create Native Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FreeBSD.13-Artifact
+          path: |
+            ./artifacts/*NAOT*
+            ./artifacts/*RFM*
+            ./artifacts/Mono/X86/*
+            ./artifacts/Mono/X64/*
+            ./artifacts/Mono/Arm64/*
+      - name: Create Native Artifact Logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: FreeBSD.13-Artifact-Logs
+          path: |
+            ./artifacts/Native/*
+            ./artifacts/Mono/*Mono.Link.log
+            ./artifacts/Mono/*Mono.AOT*.log
+            ./artifacts/Mono/*Mono.Bundle*.log
+            
       - name: Install Escripten
         shell: bash
         run: |
+          rm -rf artifacts
           mkdir artifacts
           sudo git clone https://github.com/emscripten-core/emsdk.git /opt/emsdk
           cd /opt/emsdk
@@ -236,7 +265,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ windows-2025, ubuntu-latest, macos-latest ]
+        os: [ windows-latest, ubuntu-latest, macos-latest ]
     steps:
       - uses: actions/checkout@v4
       - name: APT deb822 sources

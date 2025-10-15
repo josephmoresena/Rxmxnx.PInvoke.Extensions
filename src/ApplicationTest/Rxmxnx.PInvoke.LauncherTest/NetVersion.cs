@@ -16,6 +16,7 @@ public static class NetVersionExtensions
 			NetVersion.Net60 => "net6.0",
 			NetVersion.Net70 => "net7.0",
 			NetVersion.Net80 => "net8.0",
-			_ => "net9.0",
+			NetVersion.Net90 => "net9.0",
+			_ => "net10.0",
 		};
 }
