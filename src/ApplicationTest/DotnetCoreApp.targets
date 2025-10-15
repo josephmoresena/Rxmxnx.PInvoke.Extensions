@@ -61,7 +61,7 @@
         <RuntimeHostConfigurationOption Include="Switch.System.Reflection.Disabled.DoNotThrowForAttributes" Value="true"/>
     </ItemGroup>
 
-    <ItemGroup Condition="!$([MSBuild]::IsOSPlatform('OSX'))">
+    <ItemGroup>
         <KnownILCompilerPack Include="Microsoft.DotNet.ILCompiler"
                              TargetFramework="net6.0"
                              ILCompilerRuntimeIdentifiers="linux-arm64;linux-musl-arm64;linux-musl-x64;linux-x64;win-arm64;win-x64;osx-x64"
