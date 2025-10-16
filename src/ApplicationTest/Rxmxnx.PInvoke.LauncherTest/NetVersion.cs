@@ -6,6 +6,9 @@ public enum NetVersion : Byte
 	Net70 = 7,
 	Net80 = 8,
 	Net90 = 9,
+#if NET10_0_OR_GREATER
+	Net100 = 10,
+#endif
 }
 
 public static class NetVersionExtensions

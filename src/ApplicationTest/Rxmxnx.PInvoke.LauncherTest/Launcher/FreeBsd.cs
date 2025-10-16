@@ -7,6 +7,7 @@ public partial class Launcher
 		private static readonly NetVersion[] netVersions =
 		[
 #if NET10_0_OR_GREATER
+			NetVersion.Net100,
 #elif NET9_0_OR_GREATER
 			NetVersion.Net90,
 #elif NET8_0_OR_GREATER
