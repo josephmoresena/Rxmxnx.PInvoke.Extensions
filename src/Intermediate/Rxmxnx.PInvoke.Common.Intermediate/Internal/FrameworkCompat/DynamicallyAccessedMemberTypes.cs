@@ -28,6 +28,7 @@ SOFTWARE.
 
 namespace System.Diagnostics.CodeAnalysis;
 
+[Flags]
 internal enum DynamicallyAccessedMemberTypes
 {
 	None = 0,
