@@ -92,35 +92,38 @@
     </ItemGroup>
 
     <Target Name="CopyTarget" Condition="'$(SelfContained)' == 'true' Or '$(PublishAot)' == 'true' Or '$(IsNativeAotWebAssembly)' == 'true'" AfterTargets="Publish">
-        <ItemGroup Condition="'$(IsNativeAotWebAssembly)' != 'true'">
-            <Artifact Include="$(PublishDir)$(AssemblyName)*"/>
-            <Artifact Remove="$(PublishDir)$(AssemblyName)*.pdb"/>
-            <Artifact Remove="$(PublishDir)$(AssemblyName)*.dwarf"/>
-            <Artifact Remove="$(PublishDir)$(AssemblyName)*.dSYM"/>
-        </ItemGroup>
-        <ItemGroup Condition="'$(IsNativeAotWebAssembly)' == 'true'">
-            <Artifact Include="$(NativeOutputPath)$(AssemblyName)*"/>
-            <Artifact Remove="$(NativeOutputPath)$(AssemblyName)*.deps.json"/>
-            <Artifact Remove="$(NativeOutputPath)$(AssemblyName)*.runtimeconfig.json"/>
-            <Artifact Remove="$(NativeOutputPath)$(AssemblyName)*.html"/>
-        </ItemGroup>
-
         <ItemGroup>
-            <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Include="$(NativeIntermediateOutputPath)*$(AssemblyName)*"/>
-            <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Remove="$(NativeIntermediateOutputPath)*$(AssemblyName).o"/>
-            <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Remove="$(NativeIntermediateOutputPath)*$(AssemblyName).*.o"/>
-            <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Remove="$(NativeIntermediateOutputPath)*$(AssemblyName).*.bc"/>
-            <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Remove="$(NativeIntermediateOutputPath)*$(AssemblyName).obj"/>
-            <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Remove="$(NativeIntermediateOutputPath)*$(AssemblyName).exports"/>
-            <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Remove="$(NativeIntermediateOutputPath)*$(AssemblyName).def"/>
-            <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Remove="$(NativeIntermediateOutputPath)*$(AssemblyName).ilc.rsp"/>
+            <ArtifactToDelete Include="$(PublishDir)$(AssemblyName)*.pdb"/>
+            <ArtifactToDelete Include="$(PublishDir)$(AssemblyName)*.dwarf"/>
+            <ArtifactToDelete Include="$(PublishDir)$(AssemblyName)*.dSYM"/>
+            <ArtifactToDelete Include="$(PublishDir)$(AssemblyName)*.dbg"/>
+            <ArtifactToDelete Include="$(PublishDir)$(AssemblyName)*.dbg"/>
+            <ArtifactToDelete Include="$(NativeOutputPath)$(AssemblyName)*.deps.json"/>
+            <ArtifactToDelete Include="$(NativeOutputPath)$(AssemblyName)*.runtimeconfig.json"/>
+            <ArtifactToDelete Include="$(NativeOutputPath)$(AssemblyName)*.html"/>
+            
+            <Artifact Include="$(PublishDir)$(AssemblyName)*"/>
+            <Artifact Remove="@(ArtifactToDelete)"/>
         </ItemGroup>
 
-        <Copy Condition="'$(CopyTargetTo)' != ''" SourceFiles="@(Artifact)" DestinationFolder="$(CopyTargetTo)" SkipUnchangedFiles="false"/>
-        <Copy Condition="'$(CopyTargetTo)' != '' And $(NativeIntermediateOutputPath) != ''" SourceFiles="@(NativeFiles)" DestinationFolder="$(CopyTargetTo)\Native" SkipUnchangedFiles="false"/>
+        <ItemGroup Condition="$(NativeIntermediateOutputPath) != ''">
+            <NativeFileToDelete Include="$(NativeIntermediateOutputPath)*$(AssemblyName).o"/>
+            <NativeFileToDelete Include="$(NativeIntermediateOutputPath)*$(AssemblyName).*.o"/>
+            <NativeFileToDelete Include="$(NativeIntermediateOutputPath)*$(AssemblyName).*.bc"/>
+            <NativeFileToDelete Include="$(NativeIntermediateOutputPath)*$(AssemblyName).obj"/>
+            <NativeFileToDelete Include="$(NativeIntermediateOutputPath)*$(AssemblyName).exports"/>
+            <NativeFileToDelete Include="$(NativeIntermediateOutputPath)*$(AssemblyName).def"/>
+            <NativeFileToDelete Include="$(NativeIntermediateOutputPath)*$(AssemblyName).ilc.rsp"/>
+            
+            <NativeFiles Include="$(NativeIntermediateOutputPath)$(AssemblyName)*"/>
+            <NativeFiles Remove="@(NativeFileToDelete)"/>
+        </ItemGroup>
 
-        <!-- Remove NativeIntermediateOutput files -->
-        <Delete Condition="$(NativeIntermediateOutputPath) != ''" Files="$(NativeIntermediateOutputPath)*$(AssemblyName)*"/>
+        <Move Condition="'$(CopyTargetTo)' != ''" SourceFiles="@(Artifact)" DestinationFolder="$(CopyTargetTo)"/>
+        <Move Condition="'$(CopyTargetTo)' != '' And $(NativeIntermediateOutputPath) != ''" SourceFiles="@(NativeFiles)" DestinationFolder="$(CopyTargetTo)\native"/>
+
+        <Delete Condition="'$(CopyTargetTo)' != ''" Files="@(ArtifactToDelete)"/>
+        <Delete Condition="'$(CopyTargetTo)' != ''" Files="@(NativeFileToDelete)"/>
     </Target>
 
 </Project>
