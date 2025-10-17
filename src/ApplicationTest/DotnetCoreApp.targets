@@ -124,7 +124,7 @@
             <NativeFileToDelete Include="$(NativeIntermediateOutputPath)*$(AssemblyName).def"/>
             <NativeFileToDelete Include="$(NativeIntermediateOutputPath)*$(AssemblyName).ilc.rsp"/>
 
-            <NativeFiles Include="$(NativeIntermediateOutputPath)$(AssemblyName)*"/>
+            <NativeFiles Include="$(NativeIntermediateOutputPath)*$(AssemblyName)*"/>
             <NativeFiles Remove="@(NativeFileToDelete)"/>
         </ItemGroup>
 
