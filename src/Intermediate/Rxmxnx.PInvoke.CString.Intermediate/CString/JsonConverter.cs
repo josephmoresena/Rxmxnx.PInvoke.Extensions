@@ -345,7 +345,7 @@ public partial class CString
 		private static Boolean HasHighSurrogate(Span<Byte> buffer, Int32 escapeIndex, out Char high)
 		{
 			Boolean hasHighSurrogate = buffer.Length - escapeIndex >= 6 &&
-				buffer.Slice(escapeIndex - 6, 2).SequenceEqual("\\u"u8); // Check for "\u" prefix.
+				buffer.Slice(escapeIndex - 6, 2).SequenceEqual(CString.UnicodePrefix()); // Check for "\u" prefix.
 			high = JsonConverter.GetUnicodeChar(buffer.Slice(escapeIndex - 4, 4));
 			return hasHighSurrogate;
 		}

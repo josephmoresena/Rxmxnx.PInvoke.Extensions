@@ -71,7 +71,7 @@ jobs:
         run: |
           ./.sonar/scanner/dotnet-sonarscanner begin /k:"josephmoresena_PInvoke.Extensions" /o:"josephmoresena" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.scanner.scanAll=false /d:sonar.coverage.exclusions="**Test.cs,**Tests.cs,**test.cs,**tests.cs,**.SourceGenerator/*.cs" /d:sonar.cs.vstest.reportsPaths=TestResults/*.trx /d:sonar.cs.opencover.reportsPaths=TestResults/*/coverage.opencover.xml /d:sonar.cpd.exclusions="**/NativeUtilities/**FixedAction.cs,**/NativeUtilities/**FixedFunc.cs,**/IManagedBinaryBuffer/StaticCompose.cs,**Test/**Tests**/**.cs,**/Localization/**MessageResource.cs"
           dotnet restore src 
-          dotnet build src /p:MultipleFrameworkTest=true --configuration Release 
+          dotnet build src /p:MultipleFrameworkTest=true --configuration Release --disable-build-servers /nr:false /maxcpucount:1
           dotnet test src /p:MultipleFrameworkTest=true --verbosity normal --collect:"XPlat Code Coverage" --results-directory TestResults/  --logger "trx;verbosity=detailed" --no-build --no-restore --configuration Release -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover 
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
       - name: Pack assembly
@@ -389,7 +389,7 @@ jobs:
       - name: Build tests
         run: |
           dotnet restore src --ignore-failed-sources
-          dotnet build src /p:MultipleFrameworkTest=true /p:OnlySupportedFrameworkTest=true --configuration Release
+          dotnet build src /p:MultipleFrameworkTest=true /p:OnlySupportedFrameworkTest=true --configuration Release --disable-build-servers /nr:false /maxcpucount:1
       - name: Windows x86 tests
         if: runner.os == 'Windows'
         run: |

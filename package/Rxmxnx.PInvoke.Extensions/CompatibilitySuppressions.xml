@@ -9,12 +9,6 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:&lt;PrivateImplementationDetails&gt;.__StaticArrayInitTypeSize=3</Target>
-    <Left>lib/net6.0/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/net7.0/Rxmxnx.PInvoke.Extensions.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.CodeAnalysis.EmbeddedAttribute</Target>
     <Left>lib/net7.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/net8.0/Rxmxnx.PInvoke.Extensions.dll</Right>
@@ -78,11 +72,5 @@
     <Target>T:System.Runtime.CompilerServices.CallerArgumentExpressionAttribute</Target>
     <Left>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>F:&lt;PrivateImplementationDetails&gt;.876F332EC3FD86393C4BCE72BBEBC729F27106A41D2C85023808DF5B115C3AE4</Target>
-    <Left>lib/net6.0/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/net7.0/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
 </Suppressions>
