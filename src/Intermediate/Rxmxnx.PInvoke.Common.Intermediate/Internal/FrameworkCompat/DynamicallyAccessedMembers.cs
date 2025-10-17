@@ -28,6 +28,9 @@ SOFTWARE.
 
 namespace System.Diagnostics.CodeAnalysis;
 
+#if !PACKAGE
+[ExcludeFromCodeCoverage]
+#endif
 [AttributeUsage(
 	AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter |
 	AttributeTargets.ReturnValue | AttributeTargets.GenericParameter, Inherited = false)]

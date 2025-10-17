@@ -29,6 +29,9 @@ SOFTWARE.
 namespace System.Diagnostics.CodeAnalysis;
 
 [Flags]
+#if !PACKAGE
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4070)]
+#endif
 internal enum DynamicallyAccessedMemberTypes
 {
 	None = 0,

@@ -28,6 +28,9 @@ SOFTWARE.
 
 namespace System.Diagnostics.CodeAnalysis;
 
+#if !PACKAGE
+[ExcludeFromCodeCoverage]
+#endif
 [AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = true)]
 internal sealed class UnconditionalSuppressMessageAttribute(String category, String checkId) : Attribute
 {
