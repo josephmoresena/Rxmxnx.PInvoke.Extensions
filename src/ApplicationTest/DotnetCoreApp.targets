@@ -92,21 +92,30 @@
     </ItemGroup>
 
     <Target Name="CopyTarget" Condition="'$(SelfContained)' == 'true' Or '$(PublishAot)' == 'true' Or '$(IsNativeAotWebAssembly)' == 'true'" AfterTargets="Publish">
-        <ItemGroup>
+
+        <ItemGroup Condition="'$(IsNativeAotWebAssembly)' != 'true'">
             <ArtifactToDelete Include="$(PublishDir)$(AssemblyName)*.pdb"/>
             <ArtifactToDelete Include="$(PublishDir)$(AssemblyName)*.dwarf"/>
             <ArtifactToDelete Include="$(PublishDir)$(AssemblyName)*.dSYM"/>
             <ArtifactToDelete Include="$(PublishDir)$(AssemblyName)*.dbg"/>
             <ArtifactToDelete Include="$(PublishDir)$(AssemblyName)*.dbg"/>
-            <ArtifactToDelete Include="$(NativeOutputPath)$(AssemblyName)*.deps.json"/>
-            <ArtifactToDelete Include="$(NativeOutputPath)$(AssemblyName)*.runtimeconfig.json"/>
-            <ArtifactToDelete Include="$(NativeOutputPath)$(AssemblyName)*.html"/>
             
             <Artifact Include="$(PublishDir)$(AssemblyName)*"/>
             <Artifact Remove="@(ArtifactToDelete)"/>
         </ItemGroup>
 
-        <ItemGroup Condition="$(NativeIntermediateOutputPath) != ''">
+        <ItemGroup Condition="'$(IsNativeAotWebAssembly)' == 'true'">
+            <Artifact Include="$(NativeOutputPath)$(AssemblyName)*"/>
+            <Artifact Remove="$(NativeOutputPath)$(AssemblyName)*.deps.json"/>
+            <Artifact Remove="$(NativeOutputPath)$(AssemblyName)*.runtimeconfig.json"/>
+            <Artifact Remove="$(NativeOutputPath)$(AssemblyName)*.html"/>
+        </ItemGroup>
+
+        <ItemGroup>
+            <NativeFiles Condition="$(NativeIntermediateOutputPath) != ''" Include="$(NativeIntermediateOutputPath)*$(AssemblyName)*"/>
+        </ItemGroup>
+
+        <ItemGroup Condition="$(NativeIntermediateOutputPath) == 'true'">
             <NativeFileToDelete Include="$(NativeIntermediateOutputPath)*$(AssemblyName).o"/>
             <NativeFileToDelete Include="$(NativeIntermediateOutputPath)*$(AssemblyName).*.o"/>
             <NativeFileToDelete Include="$(NativeIntermediateOutputPath)*$(AssemblyName).*.bc"/>
@@ -114,19 +123,17 @@
             <NativeFileToDelete Include="$(NativeIntermediateOutputPath)*$(AssemblyName).exports"/>
             <NativeFileToDelete Include="$(NativeIntermediateOutputPath)*$(AssemblyName).def"/>
             <NativeFileToDelete Include="$(NativeIntermediateOutputPath)*$(AssemblyName).ilc.rsp"/>
-            
+
             <NativeFiles Include="$(NativeIntermediateOutputPath)$(AssemblyName)*"/>
             <NativeFiles Remove="@(NativeFileToDelete)"/>
         </ItemGroup>
 
         <Move Condition="'$(CopyTargetTo)' != '' And '$(IsNativeAotWebAssembly)' != 'true'" SourceFiles="@(Artifact)" DestinationFolder="$(CopyTargetTo)"/>
-        <Move Condition="'$(CopyTargetTo)' != '' And $(NativeIntermediateOutputPath) != '' And '$(IsNativeAotWebAssembly)' != 'true'" SourceFiles="@(NativeFiles)" DestinationFolder="$(CopyTargetTo)\native"/>
-
         <Copy Condition="'$(CopyTargetTo)' != '' And '$(IsNativeAotWebAssembly)' == 'true'" SourceFiles="@(Artifact)" DestinationFolder="$(CopyTargetTo)" SkipUnchangedFiles="false"/>
-        <Copy Condition="'$(CopyTargetTo)' != '' And $(NativeIntermediateOutputPath) != '' And '$(IsNativeAotWebAssembly)' == 'true'" SourceFiles="@(NativeFiles)" DestinationFolder="$(CopyTargetTo)\Native" SkipUnchangedFiles="false"/>
-        
-        <Delete Condition="'$(CopyTargetTo)' != '' And '$(IsNativeAotWebAssembly)' != 'true'" Files="@(ArtifactToDelete)"/>
-        <Delete Condition="'$(CopyTargetTo)' != '' And '$(IsNativeAotWebAssembly)' != 'true'" Files="@(NativeFileToDelete)"/>
+        <Move Condition="'$(CopyTargetTo)' != '' And $(NativeIntermediateOutputPath) != ''" SourceFiles="@(NativeFiles)" DestinationFolder="$(CopyTargetTo)\native"/>
+
+        <Delete Files="@(ArtifactToDelete)"/>
+        <Delete Files="@(NativeFileToDelete)"/>
     </Target>
 
 </Project>
