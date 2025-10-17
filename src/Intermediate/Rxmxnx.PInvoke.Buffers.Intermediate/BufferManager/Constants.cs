@@ -14,14 +14,12 @@ public static partial class BufferManager
 	/// Flags of metadata static member.
 	/// </summary>
 	internal const BindingFlags GetMetadataFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-#if NET5_0_OR_GREATER
 	/// <summary>
 	/// Flags of dynamic accessed member types.
 	/// </summary>
 	internal const DynamicallyAccessedMemberTypes DynamicallyAccessedMembers =
 		DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.NonPublicFields |
 		DynamicallyAccessedMemberTypes.PublicFields;
-#endif
 	/// <summary>
 	/// Type of <see cref="Composite{TBufferA,TBufferB,T}"/>.
 	/// </summary>

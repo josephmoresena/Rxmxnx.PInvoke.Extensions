@@ -59,10 +59,7 @@ public static partial class BufferManager
 		/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
 		public static BufferTypeMetadata<T> GetMetadata(
-#if NET5_0_OR_GREATER
-			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
-			Type bufferType)
+			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] Type bufferType)
 			=> bufferType == typeof(Atomic<T>) ? Atomic<T>.TypeMetadata : BufferManager.GetMetadata<T>(bufferType);
 #endif
 		/// <summary>
@@ -73,15 +70,9 @@ public static partial class BufferManager
 		/// <typeparam name="TBufferB">The type of high buffer.</typeparam>
 		/// <returns>The components array for the composition type.</returns>
 		public static BufferTypeMetadata<T>[] GetComponents<
-#if NET5_0_OR_GREATER
-			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
-			TBufferA,
-#if NET5_0_OR_GREATER
-			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
-			TBufferB>() where TBufferA : struct, IManagedBinaryBuffer<T>
-			where TBufferB : struct, IManagedBinaryBuffer<T>
+			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBufferA,
+			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBufferB>()
+			where TBufferA : struct, IManagedBinaryBuffer<T> where TBufferB : struct, IManagedBinaryBuffer<T>
 
 		{
 			BufferTypeMetadata<T>[] components = new BufferTypeMetadata<T>[2];
@@ -121,23 +112,15 @@ public static partial class BufferManager
 		/// <returns>
 		/// The <see cref="BufferTypeMetadata{T}"/> for <see cref="Composite{TBufferA,TBufferB,T}"/> buffer.
 		/// </returns>
-#if NET5_0_OR_GREATER
 		[UnconditionalSuppressMessage("AOT", "IL2055")]
 		[UnconditionalSuppressMessage("AOT", "IL2060")]
 		[UnconditionalSuppressMessage("AOT", "IL2077")]
 		[UnconditionalSuppressMessage("AOT", "IL3050")]
 		[UnconditionalSuppressMessage("Trimming", "IL2055")]
 		[UnconditionalSuppressMessage("Trimming", "IL2055")]
-#endif
 		public static BufferTypeMetadata<T>? ComposeWithReflection(
-#if NET5_0_OR_GREATER
-			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
-			Type typeofA,
-#if NET5_0_OR_GREATER
-			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
-			Type typeofB)
+			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] Type typeofA,
+			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] Type typeofB)
 		{
 #if NET7_0_OR_GREATER
 			if (MetadataManager<T>.store.GetMetadataInfo is null) return default;
@@ -178,10 +161,8 @@ public static partial class BufferManager
 		/// </summary>
 		/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 		public static void RegisterBuffer<
-#if NET5_0_OR_GREATER
-			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
-			TBuffer>() where TBuffer : struct, IManagedBuffer<T>
+			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBuffer>()
+			where TBuffer : struct, IManagedBuffer<T>
 		{
 #if NET7_0_OR_GREATER
 			BufferTypeMetadata<T> typeMetadata = IManagedBuffer<T>.GetMetadata<TBuffer>();
@@ -209,9 +190,7 @@ public static partial class BufferManager
 		[ExcludeFromCodeCoverage]
 #endif
 		public static void RegisterBufferSpace<
-#if NET5_0_OR_GREATER
 			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
 			TSpace>() where TSpace : struct, IManagedBinaryBuffer<TSpace, T>
 		{
 			BufferTypeMetadata<T> typeMetadata = IManagedBuffer<T>.GetMetadata<TSpace>();

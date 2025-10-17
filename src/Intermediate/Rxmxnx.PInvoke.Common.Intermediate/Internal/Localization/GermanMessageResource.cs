@@ -67,11 +67,7 @@ internal sealed class GermanMessageResource : IMessageResource
 		=> $"Metadaten für den Puffer {bufferType} konnten nicht abgerufen werden.";
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Es ist nicht möglich, einen Puffer für {itemType} mit {size} Elementen zu erstellen.";
-#if !PACKAGE || NETCOREAPP
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Unerwarteter Token-Typ: {currentToken}. Erwarteter Token-Typ: {expectedToken}.";
-#endif
-#if NET9_0_OR_GREATER
 	String IMessageResource.NotObjectType(Type type) => $"{type} ist eine ref struct; Objekt-Boxing ist nicht erlaubt.";
-#endif
 }

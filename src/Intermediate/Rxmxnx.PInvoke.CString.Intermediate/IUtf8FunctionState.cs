@@ -25,9 +25,6 @@ public interface IUtf8FunctionState<TSelf> where TSelf : struct, IUtf8FunctionSt
 	/// </summary>
 	/// <param name="state">Current item sequence state.</param>
 	/// <returns>The binary span for the specified state.</returns>
-#if NET6_0
-	[RequiresPreviewFeatures]
-#endif
 	static abstract ReadOnlySpan<Byte> GetSpan(TSelf state);
 	/// <summary>
 	/// Retrieves the span length from <paramref name="state"/>.
@@ -36,9 +33,6 @@ public interface IUtf8FunctionState<TSelf> where TSelf : struct, IUtf8FunctionSt
 	/// <returns>The binary span length for the specified state.</returns>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
-#endif
-#if NET6_0
-	[RequiresPreviewFeatures]
 #endif
 	static virtual Int32 GetLength(in TSelf state) => TSelf.GetSpan(state).Length;
 }

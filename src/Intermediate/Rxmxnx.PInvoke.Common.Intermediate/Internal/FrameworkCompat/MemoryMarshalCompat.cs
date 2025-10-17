@@ -6,11 +6,11 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-internal static unsafe
 #if NETCOREAPP && (!PACKAGE || !NET6_0_OR_GREATER)
-	partial
+internal static unsafe partial class MemoryMarshalCompat
+#else
+internal static unsafe class MemoryMarshalCompat
 #endif
-	class MemoryMarshalCompat
 {
 	/// <summary>
 	/// Creates a new read-only span for a null-terminated UTF8 string.

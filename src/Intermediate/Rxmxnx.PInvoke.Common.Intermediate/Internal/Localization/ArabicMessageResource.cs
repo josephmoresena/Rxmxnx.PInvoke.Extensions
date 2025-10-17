@@ -62,11 +62,7 @@ internal sealed class ArabicMessageResource : IMessageResource
 		=> $"تعذّر استرداد البيانات الوصفية لمخزن {bufferType}.";
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"تعذّر إنشاء مخزن مؤقت لـ {itemType} يضم {size} عناصر.";
-#if !PACKAGE || NETCOREAPP
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"نوع الرمز غير المتوقع: {currentToken}. نوع الرمز المتوقع: {expectedToken}.";
-#endif
-#if NET9_0_OR_GREATER
 	String IMessageResource.NotObjectType(Type type) => $"{type} هو ref struct؛ لا يُسمح بتغليف الكائن.";
-#endif
 }

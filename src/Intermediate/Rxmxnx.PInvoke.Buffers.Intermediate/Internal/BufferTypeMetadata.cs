@@ -5,11 +5,8 @@ namespace Rxmxnx.PInvoke.Internal;
 /// </summary>
 /// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 /// <typeparam name="T">Type of items in the buffer.</typeparam>
-internal sealed class BufferTypeMetadata<
-#if NET5_0_OR_GREATER
-	[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
-	TBuffer, T> : BufferTypeMetadata<T> where TBuffer : struct, IManagedBuffer<T>
+internal sealed class BufferTypeMetadata<[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBuffer,
+	T> : BufferTypeMetadata<T> where TBuffer : struct, IManagedBuffer<T>
 {
 	private readonly Action<IDictionary<UInt16, BufferTypeMetadata<T>>>? _appendComponents;
 
@@ -57,10 +54,7 @@ internal sealed class BufferTypeMetadata<
 		=> otherMetadata.Compose<TBuffer>();
 	/// <inheritdoc/>
 	internal override BufferTypeMetadata<T>? Compose<
-#if NET5_0_OR_GREATER
-		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
-		TOther>()
+		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TOther>()
 	{
 		if (!BufferManager.BufferAutoCompositionEnabled || !this.IsBinary
 #if NET7_0_OR_GREATER

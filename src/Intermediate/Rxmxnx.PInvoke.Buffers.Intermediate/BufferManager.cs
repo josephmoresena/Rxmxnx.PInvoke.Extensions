@@ -100,11 +100,8 @@ public static partial class BufferManager
 	/// </summary>
 	/// <typeparam name="TBuffer">Type of object buffer.</typeparam>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void Register<
-#if NET5_0_OR_GREATER
-		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
-		TBuffer>() where TBuffer : struct, IManagedBuffer<Object>
+	public static void Register<[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBuffer>()
+		where TBuffer : struct, IManagedBuffer<Object>
 		=> MetadataManager<Object>.RegisterBuffer<TBuffer>();
 	/// <summary>
 	/// Registers <typeparamref name="T"/> buffer.
@@ -112,11 +109,8 @@ public static partial class BufferManager
 	/// <typeparam name="T">Type of items in the buffer.</typeparam>
 	/// <typeparam name="TBuffer">Type of <typeparamref name="T"/> buffer.</typeparam>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void Register<T,
-#if NET5_0_OR_GREATER
-		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
-		TBuffer>() where TBuffer : struct, IManagedBuffer<T> where T : struct
+	public static void Register<T, [DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBuffer>()
+		where TBuffer : struct, IManagedBuffer<T> where T : struct
 	{
 		// If unmanaged type, stackalloc should be used.
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
@@ -129,10 +123,8 @@ public static partial class BufferManager
 	/// <typeparam name="TBuffer">Type of <see name="Nullable{T}"/> buffer.</typeparam>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void RegisterNullable<T,
-#if NET5_0_OR_GREATER
-		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
-		TBuffer>() where TBuffer : struct, IManagedBuffer<T?> where T : struct
+		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBuffer>()
+		where TBuffer : struct, IManagedBuffer<T?> where T : struct
 	{
 		// If unmanaged type, stackalloc should be used.
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
