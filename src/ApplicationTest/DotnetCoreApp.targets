@@ -122,8 +122,8 @@
         <Move Condition="'$(CopyTargetTo)' != ''" SourceFiles="@(Artifact)" DestinationFolder="$(CopyTargetTo)"/>
         <Move Condition="'$(CopyTargetTo)' != '' And $(NativeIntermediateOutputPath) != ''" SourceFiles="@(NativeFiles)" DestinationFolder="$(CopyTargetTo)\native"/>
 
-        <Delete Condition="'$(CopyTargetTo)' != ''" Files="@(ArtifactToDelete)"/>
-        <Delete Condition="'$(CopyTargetTo)' != ''" Files="@(NativeFileToDelete)"/>
+        <Delete Condition="'$(CopyTargetTo)' != '' And '$(IsNativeAotWebAssembly)' != 'true'" Files="@(ArtifactToDelete)"/>
+        <Delete Condition="'$(CopyTargetTo)' != '' And '$(IsNativeAotWebAssembly)' != 'true'" Files="@(NativeFileToDelete)"/>
     </Target>
 
 </Project>
