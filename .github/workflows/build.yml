@@ -234,9 +234,8 @@ jobs:
         shell: bash
         run:
           dotnet workload install wasm-tools
-
           dotnet workload update
-        
+
       - name: Web-Compile ApplicationTest
         shell: bash
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest

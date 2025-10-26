@@ -89,8 +89,6 @@ public partial class Launcher
 		await File.WriteAllTextAsync(bundleLog, bundleResult);
 
 		FileInfo nativeRuntime = new(monoLauncher.NativeRuntimePath);
-		if (nativeRuntime.Exists)
-			nativeRuntime.CopyTo(Path.Combine(binaryOutputPath.FullName, monoLauncher.NativeRuntimeName), true);
 		state = state with
 		{
 			ArgState = state.ArgState with
@@ -104,6 +102,8 @@ public partial class Launcher
 		                         $"{applicationName}.{monoLauncher.Architecture}.Mono.Bundle.Llvm.log");
 		bundleResult = await Utilities.ExecuteWithOutput(state, ConsoleNotifier.CancellationToken);
 		await File.WriteAllTextAsync(bundleLog, bundleResult);
+		if (nativeRuntime.Exists && binaryOutputPath.GetFiles().Length > 0)
+			nativeRuntime.CopyTo(Path.Combine(binaryOutputPath.FullName, monoLauncher.NativeRuntimeName), true);
 	}
 	private static async Task<Int32> RunMonoAppFile(String monoExecutable, String appFilePath, String workingDirectory)
 	{
