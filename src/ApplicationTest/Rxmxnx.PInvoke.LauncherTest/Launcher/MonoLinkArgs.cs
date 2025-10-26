@@ -4,15 +4,20 @@ public partial class Launcher
 {
 	private readonly struct MonoLinkArgs
 	{
-		public String AssemblyPathName { get; init; }
-		public Boolean Hybrid { get; init; }
+		public String ExecutableName { get; init; }
+		public String OutputPath { get; init; }
 
-		public static void Link(MonoLinkArgs linkArgs, Collection<String> args)
+		public static void Link(MonoLinkArgs monoLinkArgs, Collection<String> args)
 		{
-			args.Add(!linkArgs.Hybrid ? "--aot=full,nodebug" : "--aot=hybrid,nodebug");
+			args.Add("--deterministic");
+			args.Add("--keep-facades");
 			args.Add("--verbose");
-			args.Add("-O=all");
-			args.Add(linkArgs.AssemblyPathName);
+			args.Add("-c");
+			args.Add("link");
+			args.Add("-a");
+			args.Add(monoLinkArgs.ExecutableName);
+			args.Add("-out");
+			args.Add(monoLinkArgs.OutputPath);
 		}
 	}
 }

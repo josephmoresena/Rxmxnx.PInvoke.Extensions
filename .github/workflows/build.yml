@@ -363,6 +363,12 @@ jobs:
           brew install --overwrite mono
           mono --version
           /opt/homebrew/bin/mono --version
+      - name: Setup MinGW i686
+        if: runner.os == 'Windows'
+        shell: msys2 {0}
+        run: |
+          pacman -Sy --noconfirm mingw-w64-i686-toolchain
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         if: runner.os != 'Windows'
@@ -374,7 +380,9 @@ jobs:
             9.0.x
       - name: Setup .NET x86
         if: runner.os == 'Windows'
+        shell: pwsh
         run: |
+          $env:PATH = "C:\msys64\mingw32\bin;" + $env:PATH
           winget install Mono.Mono --architecture x86 --silent --force --disable-interactivity --accept-source-agreements
           winget install Microsoft.DotNet.SDK.6  --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
           winget install Microsoft.DotNet.SDK.7 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
@@ -478,6 +486,7 @@ jobs:
         shell: pwsh
         run: |
           if ($IsWindows) {
+            $env:PATH = "C:\msys64\mingw32\bin;" + $env:PATH
             ./Rxmxnx.PInvoke.LauncherTest.exe "src\ApplicationTest" "artifacts" "compile"
           } else {
             chmod +x Rxmxnx.PInvoke.LauncherTest

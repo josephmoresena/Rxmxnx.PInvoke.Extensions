@@ -90,7 +90,7 @@ public partial class Launcher
 
 		FileInfo nativeRuntime = new(monoLauncher.NativeRuntimePath);
 		if (nativeRuntime.Exists)
-			nativeRuntime.CopyTo(Path.Combine(binaryOutputPath.FullName, monoLauncher.NativeRuntimeName));
+			nativeRuntime.CopyTo(Path.Combine(binaryOutputPath.FullName, monoLauncher.NativeRuntimeName), true);
 		state = state with
 		{
 			ArgState = state.ArgState with
@@ -122,12 +122,12 @@ public partial class Launcher
 	private static async Task<String> RunMonoAot(String monoExecutable, String assemblyName, String workingDirectory,
 		Boolean hybrid)
 	{
-		ExecuteState<MonoLinkArgs> state = new()
+		ExecuteState<MonoAotArgs> state = new()
 		{
 			ExecutablePath = monoExecutable,
 			ArgState = new() { AssemblyPathName = assemblyName, Hybrid = hybrid, },
 			WorkingDirectory = workingDirectory,
-			AppendArgs = MonoLinkArgs.Link,
+			AppendArgs = MonoAotArgs.Link,
 			Notifier = ConsoleNotifier.Notifier,
 		};
 		String result = await Utilities.ExecuteWithOutput(state, ConsoleNotifier.CancellationToken);
@@ -136,11 +136,11 @@ public partial class Launcher
 	private static async Task<String> RunMonoLink(String linkerExecutable, String executableName,
 		String outputDirectory)
 	{
-		ExecuteState<LinkMonoArgs> state = new()
+		ExecuteState<MonoLinkArgs> state = new()
 		{
 			ExecutablePath = linkerExecutable,
 			ArgState = new() { ExecutableName = executableName, OutputPath = outputDirectory, },
-			AppendArgs = LinkMonoArgs.Link,
+			AppendArgs = MonoLinkArgs.Link,
 			Notifier = ConsoleNotifier.Notifier,
 		};
 		String result = await Utilities.ExecuteWithOutput(state, ConsoleNotifier.CancellationToken);
