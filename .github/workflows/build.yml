@@ -372,9 +372,8 @@ jobs:
           /opt/homebrew/bin/mono --version
       - name: Setup MinGW i686
         if: runner.os == 'Windows'
-        shell: msys2 {0}
         run: |
-          pacman -Sy --noconfirm mingw-w64-i686-toolchain
+          C:\msys64\usr\bin\bash.exe -lc "pacman -Sy --noconfirm mingw-w64-i686-toolchain"
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
