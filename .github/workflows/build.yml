@@ -230,6 +230,12 @@ jobs:
           sudo ./emsdk install latest
           sudo ./emsdk activate latest
           sudo chmod -R 777 /opt/emsdk
+      - name: Install WebAssembly Workload
+        shell: bash
+        run:
+          dotnet workload install wasm-tools
+          dotnet workload update
+        
       - name: Web-Compile ApplicationTest
         shell: bash
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
