@@ -107,15 +107,16 @@ jobs:
           
           sudo apt install mono-complete mono-vbnc mono-dbg gdb libssl3
 
-      - name: Init FreeBSD 13.5 VM
+      - name: Init FreeBSD 14.3 VM
         id: vm
         uses: vmactions/freebsd-vm@v1.2.3
         with:
-          release: "13.5"
+          release: "14.3"
           usesh: true
           copyback: false
           sync: nfs
           prepare: |
+            pkg update -f 
             pkg install -y python311 py311-pillow sqlite3 unixODBC libgdiplus zip ca_root_nss binutils dotnet
             
             mkdir -p ~/fake-python39/metadata
@@ -153,11 +154,11 @@ jobs:
             pkg register -M ~/fake-py39-pillow/metadata/+COMPACT_MANIFEST
             
             fetch https://github.com/Thefrank/freebsd-port-sooners/releases/download/20230712/mono6.12-6.12.0.199_1.pkg
-            pkg add mono6.12-6.12.0.199_1.pkg
+            pkg add -f mono6.12-6.12.0.199_1.pkg
           run: |
             dotnet dev-certs https --trust
             mono --version
-      - name: Run Tests (FreeBSD 13.5)
+      - name: Run Tests (FreeBSD 14.3)
         shell: freebsd {0}
         run: |
           cd $GITHUB_WORKSPACE;
@@ -165,7 +166,7 @@ jobs:
           dotnet test ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.CString.Tests.dll --logger 'console;verbosity=detailed';
           dotnet test ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Extensions.Tests.dll --logger 'console;verbosity=detailed';
           dotnet test ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Buffers.Tests.dll --logger 'console;verbosity=detailed';
-      - name: Mono framework tests (FreeBSD 13.5)
+      - name: Mono framework tests (FreeBSD 14.3)
         shell: freebsd {0}
         run: |
           cd $GITHUB_WORKSPACE;
@@ -179,7 +180,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE;
           cd ./src/ApplicationTest/Rxmxnx.PInvoke.LauncherTest;
-          dotnet publish -r freebsd.13-x64;
+          dotnet publish -r freebsd.14-x64;
           rm -rf ./obj
 
       - name: Run launcher (compile) (FreeBSD)
@@ -203,7 +204,7 @@ jobs:
       - name: Create Native Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: FreeBSD.13-Artifact
+          name: FreeBSD.14-Artifact
           path: |
             ./artifactsf/*NAOT*
             ./artifactsf/*RFM*
@@ -213,7 +214,7 @@ jobs:
       - name: Create Native Artifact Logs
         uses: actions/upload-artifact@v4
         with:
-          name: FreeBSD.13-Artifact-Logs
+          name: FreeBSD.14-Artifact-Logs
           path: |
             ./artifactsf/Native/*
             ./artifactsf/Mono/*Mono.Link.log
@@ -233,7 +234,7 @@ jobs:
       - name: Install WebAssembly Workload
         shell: bash
         run:
-          dotnet workload install wasm-tools
+          dotnet workload install wasm-tools 
           dotnet workload update
 
       - name: Web-Compile ApplicationTest
