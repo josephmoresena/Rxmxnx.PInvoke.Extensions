@@ -25,7 +25,11 @@ public static partial class BufferManager
 			{
 				UInt16 diff = (UInt16)(count - result.Size);
 				BufferTypeMetadata<T>? aux = MetadataManager<T>.GetBinaryMetadata(diff, false);
+#if NET9_0_OR_GREATER
+				using (MetadataManager<T>.store.LockObject.EnterScope())
+#else
 				lock (MetadataManager<T>.store.LockObject)
+#endif
 				{
 					// Auxiliary metadata not found. Use minimal.
 					if (aux is null)
@@ -46,7 +50,11 @@ public static partial class BufferManager
 		/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 		private static BufferTypeMetadata<T>? GetFundamental(UInt16 count)
 		{
+#if NET9_0_OR_GREATER
+			using (MetadataManager<T>.store.LockObject.EnterScope())
+#else
 			lock (MetadataManager<T>.store.LockObject)
+#endif
 			{
 				if (MetadataManager<T>.store.BinaryBuffers.TryGetValue(count, out BufferTypeMetadata<T>? metadata))
 					return metadata;

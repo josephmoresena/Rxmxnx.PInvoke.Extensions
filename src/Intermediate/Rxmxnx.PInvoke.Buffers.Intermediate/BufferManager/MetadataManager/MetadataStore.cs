@@ -26,7 +26,11 @@ public static partial class BufferManager
 			/// <summary>
 			/// Lock object.
 			/// </summary>
+#if NET9_0_OR_GREATER
+			public Lock LockObject { get; } = new();
+#else
 			public Object LockObject { get; } = new();
+#endif
 			/// <summary>
 			/// Buffers dictionary.
 			/// </summary>

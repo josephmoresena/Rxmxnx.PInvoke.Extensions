@@ -28,7 +28,11 @@ internal sealed partial class ArrayMemoryManager<T> : MemoryManager<T>
 	/// <summary>
 	/// Internal lock object.
 	/// </summary>
+#if NET9_0_OR_GREATER
+	private readonly Lock _lock = new();
+#else
 	private readonly Object _lock = new();
+#endif
 
 	/// <summary>
 	/// <see cref="GCHandle"/> handle.
@@ -49,7 +53,11 @@ internal sealed partial class ArrayMemoryManager<T> : MemoryManager<T>
 	/// <inheritdoc/>
 	public override unsafe MemoryHandle Pin(Int32 elementIndex = 0)
 	{
+#if NET9_0_OR_GREATER
+		using (this._lock.EnterScope())
+#else
 		lock (this._lock)
+#endif
 		{
 			if (!this._handle.IsAllocated)
 				this._handle = GCHandle.Alloc(this._array, GCHandleType.Pinned);
@@ -63,7 +71,11 @@ internal sealed partial class ArrayMemoryManager<T> : MemoryManager<T>
 	/// <inheritdoc/>
 	public override void Unpin()
 	{
+#if NET9_0_OR_GREATER
+		using (this._lock.EnterScope())
+#else
 		lock (this._lock)
+#endif
 		{
 			if (this._pinCount > 0) this._pinCount--;
 			if (this._pinCount > 0 || !this._handle.IsAllocated) return;

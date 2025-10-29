@@ -105,7 +105,7 @@ public static class Utilities
 	{
 		while (await reader.ReadLineAsync(state.CancellationToken) is { } line)
 		{
-			lock (state.Lock)
+			using (state.Lock.EnterScope())
 				state.Builder.AppendLine(line);
 		}
 	}
@@ -113,7 +113,7 @@ public static class Utilities
 	private readonly struct OutputState
 	{
 		public StringBuilder Builder { get; init; }
-		public Object Lock { get; init; }
+		public Lock Lock { get; init; }
 		public CancellationToken CancellationToken { get; init; }
 	}
 }

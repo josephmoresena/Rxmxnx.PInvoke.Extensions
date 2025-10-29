@@ -44,7 +44,11 @@ public static partial class BufferManager
 #endif
 		public static BufferTypeMetadata<T>? GetMetadata(UInt16 count)
 		{
+#if NET9_0_OR_GREATER
+			using (MetadataManager<T>.store.LockObject.EnterScope())
+#else
 			lock (MetadataManager<T>.store.LockObject)
+#endif
 			{
 				BufferTypeMetadata<T>? nonBinary = MetadataManager<T>.store.GetNonBinaryBuffer(count);
 				if (nonBinary is not null) return nonBinary;
@@ -169,7 +173,11 @@ public static partial class BufferManager
 #else
 			BufferTypeMetadata<T> typeMetadata = BufferManager.GetMetadata<T, TBuffer>();
 #endif
+#if NET9_0_OR_GREATER
+			using (MetadataManager<T>.store.LockObject.EnterScope())
+#else
 			lock (MetadataManager<T>.store.LockObject)
+#endif
 			{
 				if (!MetadataManager<T>.store.Add(typeMetadata) || !typeMetadata.IsBinary) return;
 				while (BufferManager.GetMaxValue(MetadataManager<T>.store.MaxSpace) < typeMetadata.Size)
@@ -197,7 +205,11 @@ public static partial class BufferManager
 			Boolean isBinary = typeMetadata.IsBinary;
 			Span<UInt16> sizes = MetadataManager<T>.WriteSizes(typeMetadata, stackalloc UInt16[3]);
 			ValidationUtilities.ThrowIfNotSpace(isBinary, sizes, typeof(TSpace));
+#if NET9_0_OR_GREATER
+			using (MetadataManager<T>.store.LockObject.EnterScope())
+#else
 			lock (MetadataManager<T>.store.LockObject)
+#endif
 			{
 				using StaticCompositionHelper<T> helper = StaticCompositionHelper<T>.Create<TSpace>();
 				try
@@ -223,7 +235,11 @@ public static partial class BufferManager
 		public static void PrintMetadata(Boolean trace)
 		{
 			if (!trace) return;
+#if NET9_0_OR_GREATER
+			using (MetadataManager<T>.store.LockObject.EnterScope())
+#else
 			lock (MetadataManager<T>.store.LockObject)
+#endif
 			{
 				foreach (UInt16 key in MetadataManager<T>.store.BinaryBuffers.Keys)
 				{

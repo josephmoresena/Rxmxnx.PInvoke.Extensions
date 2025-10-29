@@ -32,7 +32,11 @@ internal partial class MemoryInspector
 		/// <summary>
 		/// Lock object.
 		/// </summary>
+#if NET9_0_OR_GREATER
+		private readonly Lock _lock = new();
+#else
 		private readonly Object _lock = new();
+#endif
 		/// <summary>
 		/// Set of read-only memory boundaries.
 		/// </summary>
@@ -70,7 +74,11 @@ internal partial class MemoryInspector
 		{
 			fixed (void* ptr = &MemoryMarshal.GetReference(span))
 			{
+#if NET9_0_OR_GREATER
+				using (this._lock.EnterScope())
+#else
 				lock (this._lock)
+#endif
 				{
 					if (this.TryGetProtection(ptr, out Boolean isReadOnly))
 						return isReadOnly;
