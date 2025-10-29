@@ -36,11 +36,15 @@ internal class Input<T> : IWrapper<T>
 	/// </summary>
 	/// <param name="writeLock">The lock object used for write synchronization.</param>
 	/// <param name="newValue">The new <typeparamref name="T"/> object to set as the encapsulated instance.</param>
+#if NET9_0_OR_GREATER && !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if NET9_0_OR_GREATER
-	protected void SetInstance(Lock writeLock, in T newValue)
-#else
 	protected void SetInstance(Object writeLock, in T newValue)
+#if NET9_0_OR_GREATER
+		=> this.SetInstance((Lock)writeLock, newValue);
+	/// <inheritdoc cref="Input{T}.SetInstance(Object, in T)"/>
+	protected void SetInstance(Lock writeLock, in T newValue)
 #endif
 	{
 #if NET9_0_OR_GREATER
