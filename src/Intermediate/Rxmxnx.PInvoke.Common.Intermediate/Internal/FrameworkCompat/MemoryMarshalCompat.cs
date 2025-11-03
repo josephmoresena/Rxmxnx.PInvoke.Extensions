@@ -30,10 +30,10 @@ internal static unsafe class MemoryMarshalCompat
 			return default;
 
 		ref Byte ref0 = ref *value;
-		Int32 length = MemoryMarshalCompat.IndexOfNull(ref *value);
-		if (length < 0)
+		Int32 length = MemoryMarshalCompat.IndexOfNull(ref ref0);
+		return length >= 0 ?
+			MemoryMarshal.CreateReadOnlySpan(ref ref0, length) :
 			throw new ArgumentException(null, nameof(value));
-		return MemoryMarshal.CreateReadOnlySpan(ref ref0, length);
 #else
 		return MemoryMarshal.CreateReadOnlySpanFromNullTerminated(value);
 #endif
@@ -55,9 +55,9 @@ internal static unsafe class MemoryMarshalCompat
 
 		ref Char ref0 = ref *value;
 		Int32 length = MemoryMarshalCompat.IndexOfNull(ref ref0);
-		if (length < 0)
+		return length >= 0 ?
+			MemoryMarshal.CreateReadOnlySpan(ref ref0, length) :
 			throw new ArgumentException(null, nameof(value));
-		return MemoryMarshal.CreateReadOnlySpan(ref ref0, length);
 #else
 		return MemoryMarshal.CreateReadOnlySpanFromNullTerminated(value);
 #endif
