@@ -236,7 +236,8 @@ jobs:
         shell: bash
         run:
           dotnet workload install wasm-tools
-          
+          dotnet workload install wasm-tools-net9
+                    
           dotnet workload update
 
       - name: Web-Compile ApplicationTest
