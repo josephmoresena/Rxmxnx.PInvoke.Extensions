@@ -46,6 +46,7 @@ public abstract partial class Launcher
 	}
 	public async Task CompileMonoAot()
 	{
+		ConsoleNotifier.ShowDiskUsage();
 		if (this.MonoOutputDirectory is null || this.MonoLaunchers.IsEmpty) return;
 		foreach (MonoLauncher monoLauncher in this.MonoLaunchers.ToArray())
 		foreach (FileInfo executableFile in Launcher.GetMonoExecutables(this.MonoOutputDirectory))

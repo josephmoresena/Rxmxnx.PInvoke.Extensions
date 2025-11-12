@@ -541,11 +541,15 @@ jobs:
         shell: pwsh
         run: |
           Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
-              $projDir = Split-Path $_.FullName
-              "bin","obj" | ForEach-Object {
+            $projDir = Split-Path $_.FullName
+            "bin","obj" | ForEach-Object {
               $path = Join-Path $projDir $_
               if (Test-Path $path) {
-                Remove-Item -Recurse -Force $path
+                try {
+                  Remove-Item -Recurse -Force -ErrorAction Stop
+                } catch {
+                  Write-Host "$($_.Exception.Message)"
+                }
               }
             }
           }

@@ -12,21 +12,17 @@ public partial class Launcher
 	{
 		using CancellationTokenSource source = new(TimeSpan.FromMinutes(5));
 		CancellationTokenRegistration registry = ConsoleNotifier.RegisterCancellation(source);
-		Boolean error = false;
 		try
 		{
 			return await this.RunAppFile(appFile, arch, executionName, ConsoleNotifier.CancellationToken);
 		}
 		catch (OperationCanceledException)
 		{
-			error = true;
 			return -1;
 		}
 		finally
 		{
 			registry.Unregister();
-			if (!error && Utilities.ShowDiagnostics)
-				ConsoleNotifier.ShowDiskUsage();
 		}
 	}
 
@@ -44,6 +40,8 @@ public partial class Launcher
 		logPath = Path.Combine(outputDirectory, $"{assemblyFile.Name}.{monoLauncher.Architecture}.Mono.AOT.Hybrid.log");
 		result = await Launcher.RunMonoAot(monoLauncher.ExecutablePath, assemblyFile.Name, outputPath, true);
 		await File.WriteAllTextAsync(logPath, result);
+		if (Utilities.ShowDiagnostics)
+			ConsoleNotifier.ShowDiskUsage();
 	}
 	private static async Task PackMonoApp(MonoLauncher monoLauncher, DirectoryInfo outputPath, FileInfo executableFile)
 	{
@@ -52,6 +50,8 @@ public partial class Launcher
 			await Launcher.LinkMonoApp(monoLauncher, outputPath, applicationName, executableFile);
 		if (linkedExecutableFile is not null)
 			await Launcher.MakeMonoBundle(monoLauncher, outputPath, applicationName, linkedExecutableFile);
+		if (Utilities.ShowDiagnostics)
+			ConsoleNotifier.ShowDiskUsage();
 	}
 	private static async Task<FileInfo?> LinkMonoApp(MonoLauncher monoLauncher, DirectoryInfo outputPath,
 		String applicationName, FileInfo assemblyExecutableFile)
@@ -106,8 +106,12 @@ public partial class Launcher
 		                         $"{applicationName}.{monoLauncher.Architecture}.Mono.Bundle.Llvm.log");
 		bundleResult = await Utilities.ExecuteWithOutput(state, ConsoleNotifier.CancellationToken);
 		await File.WriteAllTextAsync(bundleLog, bundleResult);
+
 		if (nativeRuntime.Exists && binaryOutputPath.GetFiles().Length > 0)
 			nativeRuntime.CopyTo(Path.Combine(binaryOutputPath.FullName, monoLauncher.NativeRuntimeName), true);
+
+		if (Utilities.ShowDiagnostics)
+			ConsoleNotifier.ShowDiskUsage();
 	}
 	private static async Task<Int32> RunMonoAppFile(String monoExecutable, String appFilePath, String workingDirectory)
 	{
@@ -148,6 +152,8 @@ public partial class Launcher
 			Notifier = ConsoleNotifier.Notifier,
 		};
 		String result = await Utilities.ExecuteWithOutput(state, ConsoleNotifier.CancellationToken);
+		if (Utilities.ShowDiagnostics)
+			ConsoleNotifier.ShowDiskUsage();
 		return result;
 	}
 }
