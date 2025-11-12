@@ -521,11 +521,15 @@ jobs:
         shell: pwsh
         run: |
           Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
-              $projDir = Split-Path $_.FullName
-              "bin","obj" | ForEach-Object {
+            $projDir = Split-Path $_.FullName
+            "bin","obj" | ForEach-Object {
               $path = Join-Path $projDir $_
               if (Test-Path $path) {
-                Remove-Item -Recurse -Force $path
+                try {
+                  Remove-Item -Recurse -Force $path -ErrorAction Stop
+                } catch {
+                  Write-Host "$($_.Exception.Message)"
+                }
               }
             }
           }
@@ -546,7 +550,7 @@ jobs:
               $path = Join-Path $projDir $_
               if (Test-Path $path) {
                 try {
-                  Remove-Item -Recurse -Force -ErrorAction Stop
+                  Remove-Item -Recurse -Force $path -ErrorAction Stop
                 } catch {
                   Write-Host "$($_.Exception.Message)"
                 }
@@ -567,12 +571,16 @@ jobs:
               "bin","obj" | ForEach-Object {
               $path = Join-Path $projDir $_
               if (Test-Path $path) {
-                Remove-Item -Recurse -Force $path
+                try {
+                  Remove-Item -Recurse -Force $path -ErrorAction Stop
+                } catch {
+                  Write-Host "$($_.Exception.Message)"
+                }
               }
             }
           }
 
-      - name: Clean Up 2
+      - name: Clean Up 2 - Linux
         if: runner.os == 'Linux'
         shell: bash
         run: |
