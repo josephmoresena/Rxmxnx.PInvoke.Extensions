@@ -26,6 +26,7 @@ jobs:
             7.0.x
             8.0.x
             9.0.x
+            10.0.x
       - name: Setup Tree pre-requisites
         run: |
           sudo apt-get install tree unzip --assume-yes
@@ -385,6 +386,7 @@ jobs:
             7.0.x
             8.0.x
             9.0.x
+            10.0.x
       - name: Setup .NET x86
         if: runner.os == 'Windows'
         shell: pwsh
@@ -395,6 +397,7 @@ jobs:
           winget install Microsoft.DotNet.SDK.7 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
           winget install Microsoft.DotNet.SDK.8 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements  
           winget install Microsoft.DotNet.SDK.9 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
+          winget install Microsoft.DotNet.SDK.10 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
       - name: Setup .NET x64
         if: runner.os == 'Windows'
         run: |
@@ -404,6 +407,7 @@ jobs:
           winget install Microsoft.DotNet.SDK.8 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
           winget install Microsoft.DotNet.SDK.9 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
           winget install Microsoft.DotNet.SDK.9 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
+          winget install Microsoft.DotNet.SDK.10 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
           
           dotnet workload update
 

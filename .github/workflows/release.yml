@@ -17,7 +17,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 9.x
+          dotnet-version: 10.x
       - name: Extract public key
         working-directory: ./package
         run: echo "${SNK_BASE64}" | base64 -d > Rxmxnx.PInvoke.snk

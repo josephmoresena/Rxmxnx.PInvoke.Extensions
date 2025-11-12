@@ -1,7 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
     <PropertyGroup>
-        <TargetFramework Condition="'$(RequiredFramework)' == ''">net9.0</TargetFramework>
+        <TargetFramework Condition="'$(RequiredFramework)' == ''">$(DefaultFramework)</TargetFramework>
         <TargetFramework Condition="'$(RequiredFramework)' != ''">$(RequiredFramework)</TargetFramework>
         <SelfContained Condition="'$(RequiredFramework)' != ''">true</SelfContained>
         <IsNativeAotWebAssembly>$(RuntimeIdentifier.ToLower().EndsWith('-wasm'))</IsNativeAotWebAssembly>
