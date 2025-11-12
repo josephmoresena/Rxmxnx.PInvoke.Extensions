@@ -234,11 +234,9 @@ jobs:
           sudo chmod -R 777 /opt/emsdk
       - name: Install WebAssembly Workload
         shell: bash
-        run:
+        run: |
           dotnet workload install wasm-tools
-                    
           dotnet workload install wasm-tools-net9
-                    
           dotnet workload update
 
       - name: Web-Compile ApplicationTest
@@ -246,19 +244,6 @@ jobs:
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
         run: |
           source /opt/emsdk/emsdk_env.sh
-          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net9.0 /p:RequiredFramework=net9.0 \
-            /p:InvariantGlobalization=False /p:DisableBufferAutoComposition=False \
-            /p:CopyTargetTo=../../../artifacts
-          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net9.0 /p:RequiredFramework=net9.0 \
-            /p:InvariantGlobalization=False /p:DisableBufferAutoComposition=True \
-            /p:CopyTargetTo=../../../artifacts
-          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net9.0 /p:RequiredFramework=net9.0 \
-            /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=False \
-            /p:CopyTargetTo=../../../artifacts
-          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net9.0 /p:RequiredFramework=net9.0 \
-            /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=True \
-            /p:CopyTargetTo=../../../artifacts
-          
           dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
             /p:InvariantGlobalization=False /p:DisableBufferAutoComposition=False \
             /p:CopyTargetTo=../../../artifacts
@@ -293,6 +278,8 @@ jobs:
     strategy:
       matrix:
         os: [ windows-latest, ubuntu-latest, macos-latest ]
+    env:
+      SHOW_DIAGNOSTICS: true
     steps:
       - uses: actions/checkout@v5
         with:
@@ -380,6 +367,17 @@ jobs:
 
           sudo mkdir -p /usr/share/dotnet
           sudo chown -R $(whoami):$(whoami) /usr/share/dotnet
+          
+          sudo apt-get clean
+          sudo apt-get autoclean
+          sudo apt-get autoremove -y
+          sudo rm -rf /tmp/*
+          sudo rm -rf /var/tmp/*
+          
+          sudo rm -rf /usr/local/lib/android/sdk
+          
+          df -h
+
       - name: Setup Mono Development Kit And Runtime
         if: runner.os == 'MacOS'
         run: |
@@ -519,6 +517,19 @@ jobs:
             ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "compile"
           }
 
+      - name: Clean up
+        shell: pwsh
+        run: |
+          Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
+              $projDir = Split-Path $_.FullName
+              "bin","obj" | ForEach-Object {
+              $path = Join-Path $projDir $_
+              if (Test-Path $path) {
+                Remove-Item -Recurse -Force $path
+              }
+            }
+          }
+
       - name: Mono-Compile ApplicationTest (WSL)
         if: runner.os == 'Windows'
         shell: wsl-bash {0}
@@ -556,6 +567,15 @@ jobs:
               }
             }
           }
+
+      - name: Clean Up 2
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          sudo rm -rf /tmp/*
+          sudo rm -rf /var/tmp/*
+          
+          df -h
 
       - name: Create Native Artifact
         uses: actions/upload-artifact@v5

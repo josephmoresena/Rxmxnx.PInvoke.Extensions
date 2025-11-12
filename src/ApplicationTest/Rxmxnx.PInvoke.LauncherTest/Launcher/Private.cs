@@ -12,17 +12,21 @@ public partial class Launcher
 	{
 		using CancellationTokenSource source = new(TimeSpan.FromMinutes(5));
 		CancellationTokenRegistration registry = ConsoleNotifier.RegisterCancellation(source);
+		Boolean error = false;
 		try
 		{
 			return await this.RunAppFile(appFile, arch, executionName, ConsoleNotifier.CancellationToken);
 		}
 		catch (OperationCanceledException)
 		{
+			error = true;
 			return -1;
 		}
 		finally
 		{
 			registry.Unregister();
+			if (!error && Utilities.ShowDiagnostics)
+				ConsoleNotifier.ShowDiskUsage();
 		}
 	}
 

@@ -14,6 +14,8 @@ public abstract partial class Launcher
 
 	public async Task Execute()
 	{
+		ConsoleNotifier.ShowDiskUsage();
+
 		Dictionary<String, Int32> results = new();
 		try
 		{

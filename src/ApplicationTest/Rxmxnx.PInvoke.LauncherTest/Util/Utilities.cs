@@ -2,6 +2,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest.Util;
 
 public static class Utilities
 {
+	public static Boolean ShowDiagnostics
+		=> Boolean.TryParse(Environment.GetEnvironmentVariable("SHOW_DIAGNOSTICS"), out Boolean showDiagnostics) &&
+			showDiagnostics;
 	public static Boolean IsNativeAotSupported(Architecture arch, NetVersion netVersion)
 		=> netVersion >= NetVersion.Net60 && arch switch
 		{

@@ -46,6 +46,10 @@
         <LinkerFlavor>lld</LinkerFlavor>
         <ObjCopyName>/usr/arm-linux-gnueabihf/bin/objcopy</ObjCopyName>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm64' And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
+        <LinkerFlavor>lld</LinkerFlavor>
+        <ObjCopyName>/usr/aarch64-linux-gnu/bin/objcopy</ObjCopyName>
+    </PropertyGroup>
 
     <ItemGroup Condition="'$(IsNativeAotWebAssembly)' == 'true'">
         <PackageReference Include="Microsoft.DotNet.ILCompiler.LLVM" Version="10.0.0-*"/>
