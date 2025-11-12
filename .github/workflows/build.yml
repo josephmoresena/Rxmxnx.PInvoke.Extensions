@@ -236,6 +236,7 @@ jobs:
         shell: bash
         run:
           dotnet workload install wasm-tools
+                    
           dotnet workload install wasm-tools-net9
                     
           dotnet workload update
@@ -255,6 +256,19 @@ jobs:
             /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=False \
             /p:CopyTargetTo=../../../artifacts
           dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net9.0 /p:RequiredFramework=net9.0 \
+            /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=True \
+            /p:CopyTargetTo=../../../artifacts
+          
+          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
+            /p:InvariantGlobalization=False /p:DisableBufferAutoComposition=False \
+            /p:CopyTargetTo=../../../artifacts
+          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
+            /p:InvariantGlobalization=False /p:DisableBufferAutoComposition=True \
+            /p:CopyTargetTo=../../../artifacts
+          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
+            /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=False \
+            /p:CopyTargetTo=../../../artifacts
+          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
             /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=True \
             /p:CopyTargetTo=../../../artifacts
       - name: Node-Run ApplicationTest
