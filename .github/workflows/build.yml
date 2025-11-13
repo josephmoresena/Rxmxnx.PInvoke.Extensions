@@ -78,8 +78,8 @@ jobs:
       - name: Pack assembly
         working-directory: ./package/Rxmxnx.PInvoke.Extensions
         run: |
-          dotnet pack -c Release /p:Version=9999.99.99.99-tmp /p:NoIntermediateBuild=true /p:UseEmbeddedDebugSymbols=false
-          for package in bin/Release/Rxmxnx.PInvoke.Extensions*.*nupkg; do
+          dotnet pack -c Release -o ../Nuget /p:Version=9999.99.99.99-tmp /p:NoIntermediateBuild=true /p:UseEmbeddedDebugSymbols=false
+          for package in ../Nuget/Rxmxnx.PInvoke.Extensions*.*nupkg; do
             echo "-----------------------------------"
             TEMP_DIR=$(mktemp -d)
             unzip -q "$package" -d "$TEMP_DIR"
@@ -470,7 +470,7 @@ jobs:
       - name: Pack assembly
         working-directory: ./package/Rxmxnx.PInvoke.Extensions
         run: |
-          dotnet pack -c Release /p:Version=9999.99.99.99-tmp /p:NoIntermediateBuild=true /p:UseEmbeddedDebugSymbols=false
+          dotnet pack -c Release -o ../Nuget /p:Version=9999.99.99.99-tmp /p:NoIntermediateBuild=true /p:UseEmbeddedDebugSymbols=false
       - name: Publish launcher
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.LauncherTest
         run: dotnet publish
