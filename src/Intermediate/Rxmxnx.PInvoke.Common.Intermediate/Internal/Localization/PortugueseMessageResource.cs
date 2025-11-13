@@ -66,11 +66,7 @@ internal sealed class PortugueseMessageResource : IMessageResource
 		=> $"Não foi possível obter os metadados para o buffer {bufferType}.";
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Não é possível criar um buffer para {itemType} com {size} itens.";
-#if !PACKAGE || NETCOREAPP
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Tipo de token inesperado: {currentToken}. Tipo de token esperado: {expectedToken}.";
-#endif
-#if NET9_0_OR_GREATER
 	String IMessageResource.NotObjectType(Type type) => $"{type} é uma ref struct; o boxing de objeto não é permitido.";
-#endif
 }

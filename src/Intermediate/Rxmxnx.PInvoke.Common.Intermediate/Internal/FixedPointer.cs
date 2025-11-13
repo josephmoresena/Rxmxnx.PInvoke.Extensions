@@ -254,6 +254,16 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		this.ValidateFunctionOperation();
 		return Marshal.GetDelegateForFunctionPointer<TDelegate>(new(this._ptr));
 	}
+	/// <summary>
+	/// Creates a <see cref="FuncPtr{TDelegate}"/> instance over the memory block.
+	/// </summary>
+	/// <typeparam name="TDelegate">A <see cref="Delegate"/> type.</typeparam>
+	/// <returns>A <see cref="FuncPtr{TDelegate}"/> instance over the memory block.</returns>
+	public FuncPtr<TDelegate> CreateFuncPointer<TDelegate>() where TDelegate : Delegate
+	{
+		this.ValidateFunctionOperation();
+		return (FuncPtr<TDelegate>)this._ptr;
+	}
 
 	/// <summary>
 	/// Invalidates current context.

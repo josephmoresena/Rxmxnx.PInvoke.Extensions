@@ -3,6 +3,42 @@
 public partial class CString
 {
 	/// <summary>
+	/// Retrieves the UTF-8 \u prefix for JSON decoding.
+	/// </summary>
+	/// <returns>The UTF-8 \u prefix.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+	public static ReadOnlySpan<Byte> UnicodePrefix()
+#else
+	private static ReadOnlySpan<Byte> UnicodePrefix()
+#endif
+		=> "\\u"u8;
+	/// <summary>
+	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
+	/// </summary>
+	/// <typeparam name="TState">Type of the state object.</typeparam>
+	/// <param name="state">Function state parameter.</param>
+	/// <param name="getSpan">Function to retrieve utf-8 span from the state.</param>
+	/// <param name="isNullTerminated">Indicates whether resulting UTF-8 text is null-terminated.</param>
+	/// <param name="length">UTF-8 text length.</param>
+	/// <returns>
+	/// A new instance of the <see cref="CString"/> class.
+	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+	public static CString Create<TState>(TState state, ReadOnlySpanFunc<Byte, TState> getSpan, Boolean isNullTerminated,
+		Int32 length)
+#else
+	private static CString Create<TState>(TState state, ReadOnlySpanFunc<Byte, TState> getSpan,
+		Boolean isNullTerminated, Int32 length)
+#endif
+		where TState : struct
+	{
+		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, getSpan);
+		return new(data, true, isNullTerminated, length);
+	}
+
+	/// <summary>
 	/// Retrieves an instance of the <see cref="EqualsDelegate"/> optimized for the current
 	/// process' bitness.
 	/// </summary>
@@ -167,27 +203,4 @@ public partial class CString
 	/// A non-null-terminated <see cref="CString"/> instance that contains a single <paramref name="c"/> character.
 	/// </returns>
 	private static CString Create(Byte c) => new([c,], false);
-	/// <summary>
-	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
-	/// </summary>
-	/// <typeparam name="TState">Type of the state object.</typeparam>
-	/// <param name="state">Function state parameter.</param>
-	/// <param name="getSpan">Function to retrieve utf-8 span from the state.</param>
-	/// <param name="isNullTerminated">Indicates whether resulting UTF-8 text is null-terminated.</param>
-	/// <param name="length">UTF-8 text length.</param>
-	/// <returns>
-	/// A new instance of the <see cref="CString"/> class.
-	/// </returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-	public
-#else
-	private
-#endif
-		static CString Create<TState>(TState state, ReadOnlySpanFunc<Byte, TState> getSpan, Boolean isNullTerminated,
-			Int32 length) where TState : struct
-	{
-		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, getSpan);
-		return new(data, true, isNullTerminated, length);
-	}
 }

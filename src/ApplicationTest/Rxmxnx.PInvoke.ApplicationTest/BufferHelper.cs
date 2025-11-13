@@ -47,6 +47,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			BufferHelper.Print<Int32>(buff.Span);
 			BufferHelper.CollectGarbage();
 			BufferHelper.Print<Int32>(buff.Span);
+#if NET9_0_OR_GREATER
+			RefStructHelper.PointerFeature(buff.Span, buff.InStack);
+#endif
 		}
 		public static void Generate(ScopedBuffer<String?> buff)
 		{
@@ -57,6 +60,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			BufferHelper.Print<String?>(buff.Span);
 			BufferHelper.CollectGarbage();
 			BufferHelper.Print<String?>(buff.Span);
+#if NET9_0_OR_GREATER
+			RefStructHelper.PointerFeature(buff.Span, buff.InStack);
+#endif
 		}
 		public static void Generate(ScopedBuffer<Double?> buff)
 		{
@@ -67,6 +73,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			BufferHelper.Print<Double?>(buff.Span);
 			BufferHelper.CollectGarbage();
 			BufferHelper.Print<Double?>(buff.Span);
+#if NET9_0_OR_GREATER
+			RefStructHelper.PointerFeature(buff.Span, buff.InStack);
+#endif
 		}
 		public static void Generate(ScopedBuffer<ValueTuple<Int32, String>> buff)
 		{
@@ -77,6 +86,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			BufferHelper.Print<ValueTuple<Int32, String>>(buff.Span);
 			BufferHelper.CollectGarbage();
 			BufferHelper.Print<ValueTuple<Int32, String>>(buff.Span);
+#if NET9_0_OR_GREATER
+			RefStructHelper.PointerFeature(buff.Span, buff.InStack);
+#endif
 		}
 		public static void Generate(ScopedBuffer<ValueTuple<Int32, String>?> buff)
 		{
@@ -91,6 +103,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			BufferHelper.Print<ValueTuple<Int32, String>?>(buff.Span);
 			BufferHelper.CollectGarbage();
 			BufferHelper.Print<ValueTuple<Int32, String>?>(buff.Span);
+#if NET9_0_OR_GREATER
+			RefStructHelper.PointerFeature(buff.Span, buff.InStack);
+#endif
 		}
 
 		private static void Print<T>(ReadOnlySpan<T> span)
@@ -113,6 +128,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Console.WriteLine($"Span Size: {buff.Span.Length}\t" + $"Buffer Size: {buff.FullLength}\t" +
 			                  $"In Stack: {buff.InStack}\t" +
 			                  $"Components: {String.Join(", ", buff.BufferMetadata?.Select(c => c.Size) ?? Enumerable.Empty<UInt16>())}");
+#if NET9_0_OR_GREATER
+			RefStructHelper.PointerFeature((ReadOnlySpan<T>)buff.Span, buff.InStack);
+#endif
 		}
 		private static Action GetRegister<TBuffer>() where TBuffer : struct, IManagedBinaryBuffer<Object>
 		{

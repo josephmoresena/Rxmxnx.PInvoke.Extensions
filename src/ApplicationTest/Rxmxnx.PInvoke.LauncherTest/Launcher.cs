@@ -6,12 +6,16 @@ public abstract partial class Launcher
 	public DirectoryInfo? MonoOutputDirectory { get; }
 	public Architecture CurrentArch { get; }
 
+	public virtual NetVersion[] NetVersions => Enum.GetValues<NetVersion>();
+
 	public abstract ReadOnlySpan<MonoLauncher> MonoLaunchers { get; }
 	public abstract String RuntimeIdentifierPrefix { get; }
 	public abstract Architecture[] Architectures { get; }
 
 	public async Task Execute()
 	{
+		ConsoleNotifier.ShowDiskUsage();
+
 		Dictionary<String, Int32> results = new();
 		try
 		{
@@ -42,6 +46,7 @@ public abstract partial class Launcher
 	}
 	public async Task CompileMonoAot()
 	{
+		ConsoleNotifier.ShowDiskUsage();
 		if (this.MonoOutputDirectory is null || this.MonoLaunchers.IsEmpty) return;
 		foreach (MonoLauncher monoLauncher in this.MonoLaunchers.ToArray())
 		foreach (FileInfo executableFile in Launcher.GetMonoExecutables(this.MonoOutputDirectory))

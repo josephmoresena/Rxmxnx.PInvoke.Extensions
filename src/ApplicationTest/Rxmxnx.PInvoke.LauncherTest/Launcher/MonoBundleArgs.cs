@@ -25,6 +25,7 @@ public partial class Launcher
 			args.Add(bundleArgs.StripAssemblyPath);
 			args.Add("-o");
 			args.Add(bundleArgs.OutputBinaryPath);
+			args.Add("-v");
 		}
 	}
 }

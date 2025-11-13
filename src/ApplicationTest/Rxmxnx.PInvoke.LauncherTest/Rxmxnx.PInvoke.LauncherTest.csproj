@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>$(DefaultFramework)</TargetFramework>
         <OutputType>Exe</OutputType>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
@@ -14,6 +14,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Using Include="System.Buffers"/>
         <Using Include="System.Collections.Concurrent"/>
         <Using Include="System.Collections.ObjectModel"/>
         <Using Include="System.Collections.Specialized"/>

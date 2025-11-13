@@ -138,16 +138,12 @@ internal partial interface IMessageResource
 	/// Message for missing buffer metadata exception.
 	/// </summary>
 	String MissingBufferMetadataException(Type bufferType);
-#if !PACKAGE || NETCOREAPP
 	/// <summary>
 	/// Message for invalid string token exception.
 	/// </summary>
 	String InvalidToken(String currentToken, String expectedToken);
-#endif
-#if NET9_0_OR_GREATER
 	/// <summary>
 	/// Message for not object type.
 	/// </summary>
 	String NotObjectType(Type type);
-#endif
 }

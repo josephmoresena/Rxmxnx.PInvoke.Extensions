@@ -26,6 +26,11 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 	/// </summary>
 	private TArray _value;
 
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	BufferTypeMetadata<T> IManagedBuffer<T>.GetStaticTypeMetadata() => NonBinarySpace<TArray, T>.TypeMetadata;
+
 #if NET7_0_OR_GREATER
 	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [];
 	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => NonBinarySpace<TArray, T>.TypeMetadata;
@@ -34,11 +39,6 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 	[ExcludeFromCodeCoverage]
 #endif
 	static void IManagedBuffer<T>.AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components) { }
-#else
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	BufferTypeMetadata<T> IManagedBuffer<T>.GetStaticTypeMetadata() => NonBinarySpace<TArray, T>.TypeMetadata;
 #endif
 
 	/// <summary>

@@ -13,16 +13,16 @@ jobs:
       SNK_BASE64: ${{ secrets.SN_KEY }}
     
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 9.x
+          dotnet-version: 10.x
       - name: Extract public key
         working-directory: ./package
         run: echo "${SNK_BASE64}" | base64 -d > Rxmxnx.PInvoke.snk
       - name: Create NuGet Package
         working-directory: ./package/Rxmxnx.PInvoke.Extensions
-        run: dotnet pack -c Release /p:Version=${{ github.event.release.tag_name }} /p:PackageReleaseNotes="See https://github.com/josephmoresena/Rxmxnx.PInvoke.Extensions/releases/tag/${{ github.event.release.tag_name }}"
+        run: dotnet pack -c Release -o ../Nuget /p:Version=${{ github.event.release.tag_name }} /p:PackageReleaseNotes="See https://github.com/josephmoresena/Rxmxnx.PInvoke.Extensions/releases/tag/${{ github.event.release.tag_name }}"
       - name: Push NuGet Package
         run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json

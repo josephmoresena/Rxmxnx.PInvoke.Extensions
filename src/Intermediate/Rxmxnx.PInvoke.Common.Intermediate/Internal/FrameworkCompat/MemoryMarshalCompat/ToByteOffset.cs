@@ -1,4 +1,6 @@
 #if NETCOREAPP && (!PACKAGE || !NET6_0_OR_GREATER)
+// ReSharper disable BuiltInTypeReferenceStyle
+
 using UIntPtr = nuint;
 
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;

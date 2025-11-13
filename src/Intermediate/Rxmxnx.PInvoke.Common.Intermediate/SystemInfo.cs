@@ -104,8 +104,9 @@ public static partial class SystemInfo
 	/// <summary>
 	/// Indicates whether the current execution is running on Mono Runtime.
 	/// </summary>
-	public static Boolean IsMonoRuntime 
-		=> !AotInfo.IsReflectionDisabled && (!SystemInfo.IsWebRuntime ? MonoInfo.IsEmptyNonLiteral : AotInfo.IsCodeGenerationSupported);
+	public static Boolean IsMonoRuntime
+		=> !AotInfo.IsReflectionDisabled &&
+			(!SystemInfo.IsWebRuntime ? MonoInfo.IsEmptyNonLiteral : AotInfo.IsCodeGenerationSupported);
 
 	/// <summary>
 	/// Indicates whether the current application is running on the specified platform.

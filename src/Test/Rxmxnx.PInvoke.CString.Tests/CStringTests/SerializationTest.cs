@@ -1,12 +1,21 @@
-#if NETCOREAPP
+#if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
+#endif
+
 namespace Rxmxnx.PInvoke.Tests.CStringTests;
 
 [ExcludeFromCodeCoverage]
 public sealed class SerializationTest
 {
+#if NETCOREAPP
 	private static readonly JsonSerializerOptions
 		jsonOptions = new() { Converters = { new CString.JsonConverter(), }, };
+#endif
 
+	[Fact]
+	public void UnicodePrefixTest() => PInvokeAssert.True(CString.UnicodePrefix().SequenceEqual("\\u"u8));
+
+#if NETCOREAPP
 	[Theory]
 	[InlineData(JsonIgnoreCondition.WhenWritingNull)]
 	[InlineData(JsonIgnoreCondition.WhenWritingDefault)]
@@ -152,5 +161,5 @@ public sealed class SerializationTest
 	{
 		public TString? Value { get; set; }
 	}
-}
 #endif
+}

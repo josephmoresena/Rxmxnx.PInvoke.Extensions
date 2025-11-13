@@ -23,14 +23,8 @@ public partial class CStringSequence
 #if NET7_0_OR_GREATER
 		Boolean IUtf8FunctionState<CStringStringState>.IsNullTerminated => false;
 
-#if NET6_0
-		[RequiresPreviewFeatures]
-#endif
 		static ReadOnlySpan<Byte> IUtf8FunctionState<CStringStringState>.GetSpan(CStringStringState state)
 			=> Encoding.UTF8.GetBytes(state._value);
-#if NET6_0
-		[RequiresPreviewFeatures]
-#endif
 		static Int32 IUtf8FunctionState<CStringStringState>.GetLength(in CStringStringState state) => state.Utf8Length;
 #endif
 #if !NET7_0_OR_GREATER

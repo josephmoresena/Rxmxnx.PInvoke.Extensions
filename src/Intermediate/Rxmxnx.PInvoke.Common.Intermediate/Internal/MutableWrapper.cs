@@ -10,7 +10,11 @@ internal class MutableWrapper<T> : Input<T>, IMutableWrapper<T>
 	/// <summary>
 	/// Lock object used for synchronization of write operations.
 	/// </summary>
+#if NET9_0_OR_GREATER
+	private readonly Lock _writeLock = new();
+#else
 	private readonly Object _writeLock = new();
+#endif
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="MutableWrapper{T}"/> record with the specified

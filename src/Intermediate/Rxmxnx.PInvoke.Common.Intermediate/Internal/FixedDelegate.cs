@@ -67,6 +67,7 @@ internal sealed unsafe partial class FixedDelegate<TDelegate> : FixedDelegate, I
 	public FixedDelegate(TDelegate method) : base(
 		FixedDelegate<TDelegate>.GetMethodPointer(method, out GCHandle handle), handle) { }
 
+	FuncPtr<TDelegate> IFixedMethod<TDelegate>.FunctionPointer => this.CreateFuncPointer<TDelegate>();
 	TDelegate IFixedMethod<TDelegate>.Method => this.CreateDelegate<TDelegate>()!;
 
 	/// <summary>

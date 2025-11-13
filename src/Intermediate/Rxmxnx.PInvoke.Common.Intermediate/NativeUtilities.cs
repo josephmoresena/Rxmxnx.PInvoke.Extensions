@@ -337,10 +337,13 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IntPtr? LoadNativeLib(String? libraryName, DllImportSearchPath? searchPath = default)
 #if NETCOREAPP
-		=> NativeLibrary.TryLoad(libraryName ?? String.Empty, Assembly.GetExecutingAssembly(), searchPath,
-		                         out IntPtr handle) ?
-			handle :
-			default(IntPtr?);
+	{
+		if (String.IsNullOrWhiteSpace(libraryName)) return default;
+		if (NativeLibrary.TryLoad(libraryName, Assembly.GetExecutingAssembly(), searchPath, out IntPtr handle) ||
+		    (Path.IsPathFullyQualified(libraryName) && NativeLibrary.TryLoad(libraryName, out handle)))
+			return handle;
+		return default;
+	}
 	/// <summary>
 	/// Provides a high-level API for loading a native library.
 	/// </summary>

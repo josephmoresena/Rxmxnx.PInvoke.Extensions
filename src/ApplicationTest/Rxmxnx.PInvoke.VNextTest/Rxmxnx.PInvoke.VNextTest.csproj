@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <TargetFrameworks>$(DefaultFrameworks)</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <PublishTrimmed>true</PublishTrimmed>
+        <TrimmerSingleWarn>false</TrimmerSingleWarn>
+        <TrimMode>full</TrimMode>
+        <NoWarn>$(NoWarn);NU1801</NoWarn>
+        <Deterministic>True</Deterministic>
+        <Optimize>true</Optimize>
+        <RootNamespace>Rxmxnx.PInvoke.ApplicationTest.RefStruct</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(UsePackage)' != 'true'">
+        <ProjectReference Include="..\..\Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate.csproj"/>
+        <ProjectReference Include="..\..\Intermediate\Rxmxnx.PInvoke.CString.Intermediate\Rxmxnx.PInvoke.CString.Intermediate.csproj"/>
+        <ProjectReference Include="..\..\Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate.csproj"/>
+    </ItemGroup>
+    <ItemGroup Condition="'$(UsePackage)' == 'true'">
+        <PackageReference Include="Rxmxnx.PInvoke.Extensions" Version="9999.99.99.99-tmp"/>
+    </ItemGroup>
+
+</Project>

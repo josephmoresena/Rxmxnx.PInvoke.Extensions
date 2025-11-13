@@ -6,11 +6,11 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-internal static unsafe
 #if NETCOREAPP && (!PACKAGE || !NET6_0_OR_GREATER)
-	partial
+internal static unsafe partial class MemoryMarshalCompat
+#else
+internal static unsafe class MemoryMarshalCompat
 #endif
-	class MemoryMarshalCompat
 {
 	/// <summary>
 	/// Creates a new read-only span for a null-terminated UTF8 string.
@@ -30,10 +30,10 @@ internal static unsafe
 			return default;
 
 		ref Byte ref0 = ref *value;
-		Int32 length = MemoryMarshalCompat.IndexOfNull(ref *value);
-		if (length < 0)
+		Int32 length = MemoryMarshalCompat.IndexOfNull(ref ref0);
+		return length >= 0 ?
+			MemoryMarshal.CreateReadOnlySpan(ref ref0, length) :
 			throw new ArgumentException(null, nameof(value));
-		return MemoryMarshal.CreateReadOnlySpan(ref ref0, length);
 #else
 		return MemoryMarshal.CreateReadOnlySpanFromNullTerminated(value);
 #endif
@@ -55,9 +55,9 @@ internal static unsafe
 
 		ref Char ref0 = ref *value;
 		Int32 length = MemoryMarshalCompat.IndexOfNull(ref ref0);
-		if (length < 0)
+		return length >= 0 ?
+			MemoryMarshal.CreateReadOnlySpan(ref ref0, length) :
 			throw new ArgumentException(null, nameof(value));
-		return MemoryMarshal.CreateReadOnlySpan(ref ref0, length);
 #else
 		return MemoryMarshal.CreateReadOnlySpanFromNullTerminated(value);
 #endif

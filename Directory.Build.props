@@ -1,5 +1,14 @@
 <Project>
 
+    <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('FREEBSD'))">
+        <DefaultFramework>net9.0</DefaultFramework>
+        <DefaultFrameworks>net9.0</DefaultFrameworks>
+    </PropertyGroup>
+    <PropertyGroup Condition="!$([MSBuild]::IsOSPlatform('FREEBSD'))">
+        <DefaultFramework>net10.0</DefaultFramework>
+        <DefaultFrameworks>net10.0;net9.0</DefaultFrameworks>
+    </PropertyGroup>
+
     <!-- LIMITED_SUPPORT -->
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1' Or '$(TargetFramework)' == 'netcoreapp3.0' Or '$(TargetFramework)' == 'net45'">
         <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0"/>
@@ -9,10 +18,12 @@
     <!-- LIMITED_LEGACY_UNSUPPORT -->
     <ItemGroup Condition="!$(DefineConstants.Contains('PACKAGE')) And '$(TargetFramework)' == 'netstandard2.1'">
         <PackageReference Include="System.Text.Json" Version="4.7.0"/>
+        <PackageReference Include="System.Text.Encodings.Web" Version="5.0.1" />
     </ItemGroup>
     <!-- LIMITED_LEGACY_SUPPORT -->
     <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
         <PackageReference Include="System.Text.Json" Version="5.0.2"/>
+        <PackageReference Include="System.Text.Encodings.Web" Version="5.0.1" />
     </ItemGroup>
 
     <!-- LEGACY_SUPPORT -->
@@ -20,6 +31,7 @@
         <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0"/>
         <PackageReference Include="System.Collections.Immutable" Version="6.0.0"/>
         <PackageReference Include="System.Text.Json" Version="6.0.11"/>
+        <PackageReference Include="System.Text.Encodings.Web" Version="6.0.1" />
     </ItemGroup>
 
     <!-- SUPPORTED -->
@@ -27,6 +39,7 @@
         <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2"/>
         <PackageReference Include="System.Collections.Immutable" Version="8.0.0"/>
         <PackageReference Include="System.Text.Json" Version="8.0.6"/>
+        <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" />
     </ItemGroup>
 
 </Project>

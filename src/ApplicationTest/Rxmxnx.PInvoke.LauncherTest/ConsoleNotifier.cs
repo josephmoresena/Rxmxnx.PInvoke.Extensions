@@ -131,6 +131,110 @@ public sealed class ConsoleNotifier : IExecutionNotifier, IPlatformNotifier
 	}
 	public static CancellationTokenRegistration RegisterCancellation(CancellationTokenSource cts)
 		=> ConsoleNotifier.CancellationToken.Register(ConsoleNotifier.CancelSource, cts);
+	public static void ShowDiskUsage()
+	{
+		ReadOnlySpan<String> headers = ["Filesystem", "Size", "Used", "Avail", "Use %",];
+		ReadOnlySpan<Char> separator = ['\t',];
+		Span<Int32> maxLen = [-1, -1, -1, -1, -1,];
+		DriveInfo[] drives = DriveInfo.GetDrives();
+		Span<ConsoleColor> colors = stackalloc ConsoleColor[drives.Length];
+		String[] colValues = ArrayPool<String>.Shared.Rent(drives.Length * headers.Length);
+
+		Span<String> colFs = colValues.AsSpan()[..drives.Length];
+		Span<String> colSize = colValues.AsSpan().Slice(drives.Length, drives.Length);
+		Span<String> colUsed = colValues.AsSpan().Slice(2 * drives.Length, drives.Length);
+		Span<String> colAvail = colValues.AsSpan().Slice(3 * drives.Length, drives.Length);
+		Span<String> colUse = colValues.AsSpan().Slice(4 * drives.Length, drives.Length);
+
+		try
+		{
+			Int32 validRows = 0;
+			foreach (DriveInfo drive in drives)
+			{
+				try
+				{
+					if (!drive.IsReady || drive.TotalSize == 0)
+						continue;
+
+					Int64 total = drive.TotalSize;
+					Int64 free = drive.AvailableFreeSpace;
+					Int64 used = total - free;
+					Double percentUsed = (Double)used / total * 100.0;
+
+					String fs = drive.Name.TrimEnd(Path.DirectorySeparatorChar);
+					String size = ConsoleNotifier.FormatBytes(total);
+					String usedStr = ConsoleNotifier.FormatBytes(used);
+					String avail = ConsoleNotifier.FormatBytes(free);
+					String usePct = $"{percentUsed:0.0}%";
+
+					colFs[validRows] = fs;
+					colSize[validRows] = size;
+					colUsed[validRows] = usedStr;
+					colAvail[validRows] = avail;
+					colUse[validRows] = usePct;
+
+					colors[validRows] = percentUsed switch
+					{
+						// Determine color based on usage
+						< 70.0 => ConsoleColor.Blue,
+						< 90.0 => ConsoleColor.Cyan,
+						_ => ConsoleColor.Red,
+					};
+
+					// Track max widths
+					maxLen[0] = Math.Max(maxLen[0], fs.Length);
+					maxLen[1] = Math.Max(maxLen[1], size.Length);
+					maxLen[2] = Math.Max(maxLen[2], usedStr.Length);
+					maxLen[3] = Math.Max(maxLen[3], avail.Length);
+					maxLen[4] = Math.Max(maxLen[4], usePct.Length);
+
+					validRows++;
+				}
+				catch (Exception ex)
+				{
+					colFs[validRows] = drive.Name;
+					colSize[validRows] = $"[Error: {ex.Message}]";
+					colUsed[validRows] = String.Empty;
+					colAvail[validRows] = String.Empty;
+					colUse[validRows] = String.Empty;
+					colors[validRows] = ConsoleColor.Yellow;
+
+					maxLen[0] = Math.Max(maxLen[0], colFs[validRows].Length);
+					maxLen[1] = Math.Max(maxLen[1], colSize[validRows].Length);
+					validRows++;
+				}
+			}
+
+			if (validRows == 0)
+			{
+				Console.WriteLine("No drives found or accessible.");
+				return;
+			}
+
+			Int32 bufferLength = 0;
+			for (Int32 i = 0; i < headers.Length; i++)
+			{
+				maxLen[i] = Math.Max(maxLen[i], headers[i].Length);
+				bufferLength += maxLen[i];
+			}
+			bufferLength += (headers.Length - 1) * separator.Length;
+
+			Span<Char> buffer = stackalloc Char[bufferLength];
+			ConsoleNotifier.FillBufferLine(buffer, headers, maxLen, separator);
+			Console.WriteLine(buffer.ToString());
+
+			for (Int32 i = 0; i < validRows; i++)
+			{
+				ConsoleNotifier.FillBufferLine(buffer, [colFs[i], colSize[i], colUsed[i], colAvail[i], colUse[i],],
+				                               maxLen, separator);
+				ConsoleNotifier.WriteColoredLine(colors[i], buffer.ToString());
+			}
+		}
+		finally
+		{
+			ArrayPool<String>.Shared.Return(colValues, true);
+		}
+	}
 
 	private static Double GetValue(Int64 total, out String unitName)
 	{
@@ -180,5 +284,37 @@ public sealed class ConsoleNotifier : IExecutionNotifier, IPlatformNotifier
 	{
 		if (objSource is not CancellationTokenSource cts) return;
 		cts.Cancel();
+	}
+	private static String FormatBytes(Int64 bytes)
+	{
+		ReadOnlySpan<Char> sizes = ['B', 'K', 'M', 'G', 'T',];
+		Double len = bytes;
+		Int32 order = 0;
+		while (len >= 1024 && order < sizes.Length - 1)
+		{
+			order++;
+			len /= 1024;
+		}
+		return $"{len:0.##}{sizes[order]}";
+	}
+	private static void FillBufferLine(Span<Char> buffer, ReadOnlySpan<String> fields, ReadOnlySpan<Int32> widths,
+		ReadOnlySpan<Char> separator)
+	{
+		buffer.Fill(' ');
+
+		Int32 pos = 0;
+		for (Int32 i = 0; i < fields.Length; i++)
+		{
+			String text = fields[i];
+
+			Int32 copyLen = Math.Min(text.Length, widths[i]);
+			text.AsSpan(0, copyLen).CopyTo(buffer[pos..]);
+
+			pos += widths[i];
+
+			if (i >= fields.Length - 1) continue;
+			separator.CopyTo(buffer[pos..]);
+			pos += separator.Length;
+		}
 	}
 }

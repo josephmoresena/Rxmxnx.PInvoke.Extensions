@@ -12,26 +12,36 @@ public partial class TestCompiler
 
 		await TestCompiler.RestoreNet(restoreArgs);
 
-		if (!onlyNativeAot)
+		try
 		{
+			if (!onlyNativeAot)
+			{
+				await TestCompiler.CompileNet(compileArgs);
+				compileArgs.BuildDependencies = false;
+
+				if (!OperatingSystem.IsFreeBSD())
+				{
+					compileArgs.Publish = Publish.ReadyToRun;
+					await TestCompiler.CompileNet(compileArgs);
+				}
+			}
+
+			if (!Utilities.IsNativeAotSupported(arch, restoreArgs.Version)) return;
+
+			compileArgs.Publish = Publish.NativeAot;
 			await TestCompiler.CompileNet(compileArgs);
+			await TestCompiler.CompileNetWithSwitches(compileArgs);
+
+			if (!restoreArgs.ProjectFile.EndsWith(".csproj") || restoreArgs.Version > NetVersion.Net90) return;
 			compileArgs.BuildDependencies = false;
-
-			compileArgs.Publish = Publish.ReadyToRun;
+			compileArgs.Publish |= Publish.NoReflection;
 			await TestCompiler.CompileNet(compileArgs);
+			await TestCompiler.CompileNetWithSwitches(compileArgs);
 		}
-
-		if (!Utilities.IsNativeAotSupported(arch, restoreArgs.Version)) return;
-
-		compileArgs.Publish = Publish.NativeAot;
-		await TestCompiler.CompileNet(compileArgs);
-		await TestCompiler.CompileNetWithSwitches(compileArgs);
-
-		if (!restoreArgs.ProjectFile.EndsWith(".csproj") || restoreArgs.Version > NetVersion.Net90) return;
-		compileArgs.BuildDependencies = false;
-		compileArgs.Publish |= Publish.NoReflection;
-		await TestCompiler.CompileNet(compileArgs);
-		await TestCompiler.CompileNetWithSwitches(compileArgs);
+		finally
+		{
+			TestCompiler.NetCleanUp(restoreArgs);
+		}
 	}
 	private static async Task CompileNetWithSwitches(CompileNetArgs compileArgs)
 	{
@@ -62,6 +72,8 @@ public partial class TestCompiler
 			Notifier = ConsoleNotifier.Notifier,
 		};
 		await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
+		if (Utilities.ShowDiagnostics)
+			ConsoleNotifier.ShowDiskUsage();
 	}
 	private static async Task RestoreNet(RestoreNetArgs args)
 	{
@@ -80,10 +92,22 @@ public partial class TestCompiler
 		Architecture currentArch = RuntimeInformation.OSArchitecture;
 		return arch == currentArch || currentArch switch
 		{
-			Architecture.X86 => false,
-			Architecture.Arm => false,
-			Architecture.Armv6 => false,
-			_ => true,
+			Architecture.X86 => OperatingSystem.IsWindows(),
+			Architecture.Arm or Architecture.Armv6 => OperatingSystem.IsLinux(),
+			_ => !OperatingSystem.IsFreeBSD(),
 		};
+	}
+	private static void NetCleanUp(RestoreNetArgs restoreArgs)
+	{
+		try
+		{
+			DirectoryInfo projectDirectory = new FileInfo(restoreArgs.ProjectFile).Directory!;
+			projectDirectory.GetDirectories("bin", SearchOption.TopDirectoryOnly).FirstOrDefault()?.Delete();
+			projectDirectory.GetDirectories("obj", SearchOption.TopDirectoryOnly).FirstOrDefault()?.Delete();
+		}
+		catch (Exception)
+		{
+			// Ignore
+		}
 	}
 }

@@ -469,6 +469,10 @@ Interface representing a method whose memory address is fixed in memory.
   <summary>Method</summary>
    Gets the delegate that points to the fixed method in memory.
   </details>
+- <details>
+  <summary>FunctionPointer</summary>
+   Gets the function pointer to the fixed method in memory.
+  </details>
 
 </details>
 

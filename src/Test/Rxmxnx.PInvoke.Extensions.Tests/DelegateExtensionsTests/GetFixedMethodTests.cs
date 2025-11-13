@@ -21,6 +21,8 @@ public sealed class GetFixedMethodTests : DelegatesTests
 
 		PInvokeAssert.Equal(IntPtr.Zero, empty0.Pointer);
 		PInvokeAssert.Equal(IntPtr.Zero, empty1.Pointer);
+		PInvokeAssert.Equal(IntPtr.Zero, empty0.FunctionPointer);
+		PInvokeAssert.Equal(IntPtr.Zero, empty1.FunctionPointer);
 		PInvokeAssert.Null(empty0.Method);
 		PInvokeAssert.Null(empty1.Method);
 
@@ -29,6 +31,8 @@ public sealed class GetFixedMethodTests : DelegatesTests
 
 		PInvokeAssert.Equal(IntPtr.Zero, empty2.Pointer);
 		PInvokeAssert.Equal(IntPtr.Zero, empty3.Pointer);
+		PInvokeAssert.Equal(IntPtr.Zero, empty0.FunctionPointer);
+		PInvokeAssert.Equal(IntPtr.Zero, empty1.FunctionPointer);
 		PInvokeAssert.Null(empty2.Method);
 		PInvokeAssert.Null(empty3.Method);
 	}
@@ -45,10 +49,14 @@ public sealed class GetFixedMethodTests : DelegatesTests
 		using IFixedMethod<GetByteValue>.IDisposable getByteValueDisposable = getByteValue.GetFixedMethod();
 
 		PInvokeAssert.True(Object.ReferenceEquals(getByteValue, getByteValueDisposable.Method));
+		PInvokeAssert.True(Object.ReferenceEquals(getByteValue, getByteValueDisposable.FunctionPointer.Invoke));
 		PInvokeAssert.Equal(intPtr, getByteValueDisposable.Pointer);
+		PInvokeAssert.Equal(intPtr, getByteValueDisposable.FunctionPointer);
 		PInvokeAssert.Equal(getValue(input), getByteValueDisposable.Method(input));
+		PInvokeAssert.Equal(getValue(input), getByteValueDisposable.FunctionPointer.Invoke(input));
 		PInvokeAssert.Equal(getValue(input),
 		                    Marshal.GetDelegateForFunctionPointer<GetByteValue>(getByteValueDisposable.Pointer)(input));
+		PInvokeAssert.Equal(getValue(input), getByteValueDisposable.FunctionPointer.Invoke(input));
 
 #if NETCOREAPP
 		Assert.Throws<ArgumentException>(() => getValue.GetFixedMethod());

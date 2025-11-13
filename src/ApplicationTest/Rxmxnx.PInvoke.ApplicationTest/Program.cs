@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Buffers;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Rxmxnx.PInvoke.ApplicationTest
@@ -100,7 +101,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Console.WriteLine("=== Enumerable sequences ===");
 			foreach (CString value in sequence)
 				Console.WriteLine(!value.IsZero ? value : RuntimeHelper.Null);
+#if !NET10_0_OR_GREATER
 			foreach (Byte utf8U in RuntimeHelper.Null)
+#else
+			foreach (Byte utf8U in (IEnumerable<Byte>)RuntimeHelper.Null)
+#endif
 				Console.Write((Char)utf8U);
 			Console.WriteLine("");
 			ArrayWrapper<Int32> values = new() { Value = new[] { 1, 2, 3, -1, -2, -3, }, };

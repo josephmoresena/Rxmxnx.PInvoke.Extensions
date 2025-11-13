@@ -17,9 +17,10 @@ public delegate void ScopedBufferAction<T>(ScopedBuffer<T> buffer);
 /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 public delegate void ScopedBufferAction<T, in TArg>(ScopedBuffer<T> buffer, TArg arg)
 #if NET9_0_OR_GREATER
-	where TArg : allows ref struct
+	where TArg : allows ref struct;
+#else
+	;
 #endif
-;
 
 /// <summary>
 /// Encapsulates a function that receives a buffer of objects of type <typeparamref name="T"/> and
@@ -43,6 +44,7 @@ public delegate TResult ScopedBufferFunc<T, out TResult>(ScopedBuffer<T> buffer)
 /// <returns>The return value of the method that this delegate encapsulates.</returns>
 public delegate TResult ScopedBufferFunc<T, in TArg, out TResult>(ScopedBuffer<T> buffer, TArg arg)
 #if NET9_0_OR_GREATER
-	where TArg : allows ref struct
+	where TArg : allows ref struct;
+#else
+	;
 #endif
-;

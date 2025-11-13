@@ -115,10 +115,8 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <typeparam name="TBuffer">Other buffer type.</typeparam>
 	/// <returns>A composed <see cref="BufferTypeMetadata{T}"/>.</returns>
 	internal abstract BufferTypeMetadata<T>? Compose<
-#if NET5_0_OR_GREATER
-		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
-		TBuffer>() where TBuffer : struct, IManagedBuffer<T>;
+		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBuffer>()
+		where TBuffer : struct, IManagedBuffer<T>;
 	/// <summary>
 	/// Executes <paramref name="action"/> using a buffer of current type.
 	/// </summary>

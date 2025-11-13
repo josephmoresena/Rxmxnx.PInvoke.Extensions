@@ -36,9 +36,7 @@ public static partial class AotInfo
 		/// <see langword="false"/>.
 		/// </returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if NET5_0_OR_GREATER
 		[UnconditionalSuppressMessage("AOT", "IL3050")]
-#endif
 		private static Boolean EmitCode()
 		{
 			try

@@ -40,6 +40,8 @@ public partial class Launcher
 		logPath = Path.Combine(outputDirectory, $"{assemblyFile.Name}.{monoLauncher.Architecture}.Mono.AOT.Hybrid.log");
 		result = await Launcher.RunMonoAot(monoLauncher.ExecutablePath, assemblyFile.Name, outputPath, true);
 		await File.WriteAllTextAsync(logPath, result);
+		if (Utilities.ShowDiagnostics)
+			ConsoleNotifier.ShowDiskUsage();
 	}
 	private static async Task PackMonoApp(MonoLauncher monoLauncher, DirectoryInfo outputPath, FileInfo executableFile)
 	{
@@ -48,6 +50,8 @@ public partial class Launcher
 			await Launcher.LinkMonoApp(monoLauncher, outputPath, applicationName, executableFile);
 		if (linkedExecutableFile is not null)
 			await Launcher.MakeMonoBundle(monoLauncher, outputPath, applicationName, linkedExecutableFile);
+		if (Utilities.ShowDiagnostics)
+			ConsoleNotifier.ShowDiskUsage();
 	}
 	private static async Task<FileInfo?> LinkMonoApp(MonoLauncher monoLauncher, DirectoryInfo outputPath,
 		String applicationName, FileInfo assemblyExecutableFile)
@@ -89,8 +93,6 @@ public partial class Launcher
 		await File.WriteAllTextAsync(bundleLog, bundleResult);
 
 		FileInfo nativeRuntime = new(monoLauncher.NativeRuntimePath);
-		if (nativeRuntime.Exists)
-			nativeRuntime.CopyTo(Path.Combine(binaryOutputPath.FullName, monoLauncher.NativeRuntimeName));
 		state = state with
 		{
 			ArgState = state.ArgState with
@@ -104,6 +106,12 @@ public partial class Launcher
 		                         $"{applicationName}.{monoLauncher.Architecture}.Mono.Bundle.Llvm.log");
 		bundleResult = await Utilities.ExecuteWithOutput(state, ConsoleNotifier.CancellationToken);
 		await File.WriteAllTextAsync(bundleLog, bundleResult);
+
+		if (nativeRuntime.Exists && binaryOutputPath.GetFiles().Length > 0)
+			nativeRuntime.CopyTo(Path.Combine(binaryOutputPath.FullName, monoLauncher.NativeRuntimeName), true);
+
+		if (Utilities.ShowDiagnostics)
+			ConsoleNotifier.ShowDiskUsage();
 	}
 	private static async Task<Int32> RunMonoAppFile(String monoExecutable, String appFilePath, String workingDirectory)
 	{
@@ -122,12 +130,12 @@ public partial class Launcher
 	private static async Task<String> RunMonoAot(String monoExecutable, String assemblyName, String workingDirectory,
 		Boolean hybrid)
 	{
-		ExecuteState<MonoLinkArgs> state = new()
+		ExecuteState<MonoAotArgs> state = new()
 		{
 			ExecutablePath = monoExecutable,
 			ArgState = new() { AssemblyPathName = assemblyName, Hybrid = hybrid, },
 			WorkingDirectory = workingDirectory,
-			AppendArgs = MonoLinkArgs.Link,
+			AppendArgs = MonoAotArgs.Link,
 			Notifier = ConsoleNotifier.Notifier,
 		};
 		String result = await Utilities.ExecuteWithOutput(state, ConsoleNotifier.CancellationToken);
@@ -136,14 +144,16 @@ public partial class Launcher
 	private static async Task<String> RunMonoLink(String linkerExecutable, String executableName,
 		String outputDirectory)
 	{
-		ExecuteState<LinkMonoArgs> state = new()
+		ExecuteState<MonoLinkArgs> state = new()
 		{
 			ExecutablePath = linkerExecutable,
 			ArgState = new() { ExecutableName = executableName, OutputPath = outputDirectory, },
-			AppendArgs = LinkMonoArgs.Link,
+			AppendArgs = MonoLinkArgs.Link,
 			Notifier = ConsoleNotifier.Notifier,
 		};
 		String result = await Utilities.ExecuteWithOutput(state, ConsoleNotifier.CancellationToken);
+		if (Utilities.ShowDiagnostics)
+			ConsoleNotifier.ShowDiskUsage();
 		return result;
 	}
 }

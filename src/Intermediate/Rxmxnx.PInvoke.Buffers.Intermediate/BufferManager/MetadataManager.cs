@@ -44,7 +44,11 @@ public static partial class BufferManager
 #endif
 		public static BufferTypeMetadata<T>? GetMetadata(UInt16 count)
 		{
+#if NET9_0_OR_GREATER
+			using (MetadataManager<T>.store.LockObject.EnterScope())
+#else
 			lock (MetadataManager<T>.store.LockObject)
+#endif
 			{
 				BufferTypeMetadata<T>? nonBinary = MetadataManager<T>.store.GetNonBinaryBuffer(count);
 				if (nonBinary is not null) return nonBinary;
@@ -59,10 +63,7 @@ public static partial class BufferManager
 		/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
 		public static BufferTypeMetadata<T> GetMetadata(
-#if NET5_0_OR_GREATER
-			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
-			Type bufferType)
+			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] Type bufferType)
 			=> bufferType == typeof(Atomic<T>) ? Atomic<T>.TypeMetadata : BufferManager.GetMetadata<T>(bufferType);
 #endif
 		/// <summary>
@@ -73,15 +74,9 @@ public static partial class BufferManager
 		/// <typeparam name="TBufferB">The type of high buffer.</typeparam>
 		/// <returns>The components array for the composition type.</returns>
 		public static BufferTypeMetadata<T>[] GetComponents<
-#if NET5_0_OR_GREATER
-			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
-			TBufferA,
-#if NET5_0_OR_GREATER
-			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
-			TBufferB>() where TBufferA : struct, IManagedBinaryBuffer<T>
-			where TBufferB : struct, IManagedBinaryBuffer<T>
+			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBufferA,
+			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBufferB>()
+			where TBufferA : struct, IManagedBinaryBuffer<T> where TBufferB : struct, IManagedBinaryBuffer<T>
 
 		{
 			BufferTypeMetadata<T>[] components = new BufferTypeMetadata<T>[2];
@@ -121,23 +116,15 @@ public static partial class BufferManager
 		/// <returns>
 		/// The <see cref="BufferTypeMetadata{T}"/> for <see cref="Composite{TBufferA,TBufferB,T}"/> buffer.
 		/// </returns>
-#if NET5_0_OR_GREATER
 		[UnconditionalSuppressMessage("AOT", "IL2055")]
 		[UnconditionalSuppressMessage("AOT", "IL2060")]
 		[UnconditionalSuppressMessage("AOT", "IL2077")]
 		[UnconditionalSuppressMessage("AOT", "IL3050")]
 		[UnconditionalSuppressMessage("Trimming", "IL2055")]
 		[UnconditionalSuppressMessage("Trimming", "IL2055")]
-#endif
 		public static BufferTypeMetadata<T>? ComposeWithReflection(
-#if NET5_0_OR_GREATER
-			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
-			Type typeofA,
-#if NET5_0_OR_GREATER
-			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
-			Type typeofB)
+			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] Type typeofA,
+			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] Type typeofB)
 		{
 #if NET7_0_OR_GREATER
 			if (MetadataManager<T>.store.GetMetadataInfo is null) return default;
@@ -178,17 +165,19 @@ public static partial class BufferManager
 		/// </summary>
 		/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 		public static void RegisterBuffer<
-#if NET5_0_OR_GREATER
-			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
-			TBuffer>() where TBuffer : struct, IManagedBuffer<T>
+			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBuffer>()
+			where TBuffer : struct, IManagedBuffer<T>
 		{
 #if NET7_0_OR_GREATER
 			BufferTypeMetadata<T> typeMetadata = IManagedBuffer<T>.GetMetadata<TBuffer>();
 #else
 			BufferTypeMetadata<T> typeMetadata = BufferManager.GetMetadata<T, TBuffer>();
 #endif
+#if NET9_0_OR_GREATER
+			using (MetadataManager<T>.store.LockObject.EnterScope())
+#else
 			lock (MetadataManager<T>.store.LockObject)
+#endif
 			{
 				if (!MetadataManager<T>.store.Add(typeMetadata) || !typeMetadata.IsBinary) return;
 				while (BufferManager.GetMaxValue(MetadataManager<T>.store.MaxSpace) < typeMetadata.Size)
@@ -209,16 +198,18 @@ public static partial class BufferManager
 		[ExcludeFromCodeCoverage]
 #endif
 		public static void RegisterBufferSpace<
-#if NET5_0_OR_GREATER
 			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
-#endif
 			TSpace>() where TSpace : struct, IManagedBinaryBuffer<TSpace, T>
 		{
 			BufferTypeMetadata<T> typeMetadata = IManagedBuffer<T>.GetMetadata<TSpace>();
 			Boolean isBinary = typeMetadata.IsBinary;
 			Span<UInt16> sizes = MetadataManager<T>.WriteSizes(typeMetadata, stackalloc UInt16[3]);
 			ValidationUtilities.ThrowIfNotSpace(isBinary, sizes, typeof(TSpace));
+#if NET9_0_OR_GREATER
+			using (MetadataManager<T>.store.LockObject.EnterScope())
+#else
 			lock (MetadataManager<T>.store.LockObject)
+#endif
 			{
 				using StaticCompositionHelper<T> helper = StaticCompositionHelper<T>.Create<TSpace>();
 				try
@@ -244,7 +235,11 @@ public static partial class BufferManager
 		public static void PrintMetadata(Boolean trace)
 		{
 			if (!trace) return;
+#if NET9_0_OR_GREATER
+			using (MetadataManager<T>.store.LockObject.EnterScope())
+#else
 			lock (MetadataManager<T>.store.LockObject)
+#endif
 			{
 				foreach (UInt16 key in MetadataManager<T>.store.BinaryBuffers.Keys)
 				{
