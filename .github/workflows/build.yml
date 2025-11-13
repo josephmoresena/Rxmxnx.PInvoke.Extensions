@@ -242,6 +242,8 @@ jobs:
       - name: Web-Compile ApplicationTest
         shell: bash
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
+        env:
+          DOTNET_NUGET_SIGNATURE_VERIFICATION: false
         run: |
           source /opt/emsdk/emsdk_env.sh
           dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
@@ -256,6 +258,7 @@ jobs:
           dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
             /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=True \
             /p:CopyTargetTo=../../../artifacts
+
       - name: Node-Run ApplicationTest
         shell: bash
         working-directory: ./artifacts
@@ -503,6 +506,12 @@ jobs:
           sudo apt update -y
           sudo apt install -y mono-complete
           
+          sudo apt-get clean
+          sudo apt-get autoclean
+          sudo apt-get autoremove -y
+          sudo rm -rf /tmp/*
+          sudo rm -rf /var/tmp/*
+          
           which mono
           mono --version
 
@@ -512,12 +521,21 @@ jobs:
           if ($IsWindows) {
             $env:PATH = "C:\msys64\mingw32\bin;" + $env:PATH
             ./Rxmxnx.PInvoke.LauncherTest.exe "src\ApplicationTest" "artifacts" "compile"
+          
+            Remove-Item -Recurse -Force "$env:WINDIR\SoftwareDistribution\Download" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "$env:WINDIR\Prefetch" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "C:\Android\android-sdk" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "$env:WINDIR\Temp\*" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "$env:TEMP\*" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "$env:TMP\*" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Temp\*" -ErrorAction SilentlyContinue
+          
           } else {
             chmod +x Rxmxnx.PInvoke.LauncherTest
             ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "compile"
           }
 
-      - name: Clean up
+      - name: Clean Up
         shell: pwsh
         run: |
           Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
@@ -540,23 +558,9 @@ jobs:
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
         run: |
           msbuild -restore /p:Configuration=Release /p:UsePackage=true /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
-
-      - name: Clean up
-        shell: pwsh
-        run: |
-          Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
-            $projDir = Split-Path $_.FullName
-            "bin","obj" | ForEach-Object {
-              $path = Join-Path $projDir $_
-              if (Test-Path $path) {
-                try {
-                  Remove-Item -Recurse -Force $path -ErrorAction Stop
-                } catch {
-                  Write-Host "$($_.Exception.Message)"
-                }
-              }
-            }
-          }
+          rm -rf ./obj
+          sudo rm -rf /tmp/*
+          sudo rm -rf /var/tmp/*
 
       - name: Run launcher (run)
         shell: pwsh
@@ -580,14 +584,42 @@ jobs:
             }
           }
 
-      - name: Clean Up 2 - Linux
-        if: runner.os == 'Linux'
+      - name: Clean Up Extra 
+        if: runner.os != 'Windows'
         shell: bash
         run: |
           sudo rm -rf /tmp/*
           sudo rm -rf /var/tmp/*
+          sudo rm -rf ~/.nuget/packages
           
           df -h
+      
+      - name: Clean Up Extra - Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Remove-Item -Recurse -Force "$env:WINDIR\Temp\*" -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force "$env:TEMP\*" -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force "$env:TMP\*" -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Temp\*" -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force "$env:USERPROFILE\.nuget\packages" -ErrorAction SilentlyContinue
+
+      - name: Create Native Artifact Logs
+        uses: actions/upload-artifact@v5
+        with:
+          name: ${{ runner.os }}-Artifact-Logs
+          path: |
+            ./artifacts/Native/*
+            ./artifacts/Mono/*Mono.Link.log
+            ./artifacts/Mono/*Mono.AOT*.log
+            ./artifacts/Mono/*Mono.Bundle*.log
+
+      - name: Remove Native Logs
+        shell: pwsh
+        run: |
+          if (Test-Path ./artifacts/native) {
+              Remove-Item -Recurse -Force ./artifacts/native/*
+          }
 
       - name: Create Native Artifact
         uses: actions/upload-artifact@v5
@@ -599,13 +631,3 @@ jobs:
             ./artifacts/Mono/X86/*
             ./artifacts/Mono/X64/*
             ./artifacts/Mono/Arm64/*
-
-      - name: Create Native Artifact Logs
-        uses: actions/upload-artifact@v5
-        with:
-          name: ${{ runner.os }}-Artifact-Logs
-          path: |
-            ./artifacts/Native/*
-            ./artifacts/Mono/*Mono.Link.log
-            ./artifacts/Mono/*Mono.AOT*.log
-            ./artifacts/Mono/*Mono.Bundle*.log
