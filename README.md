@@ -85,7 +85,7 @@ dotnet add package Rxmxnx.PInvoke.Extensions
 ## Framework Support
 
 This package guarantees both **binary and source compatibility across all supported target frameworks**, from **.NET
-Standard 2.1** up to **.NET 9.0**.
+Standard 2.1** up to **.NET 10.0**.
 
 Here is a detailed description of the specific characteristics of how this package is compiled for each of the supported
 target frameworks, along with the type of support provided for each one.
@@ -171,6 +171,11 @@ target frameworks, along with the type of support provided for each one.
 
 - Inherits from .NET 8.0
 - **Generic `ref struct`:** Yes [⁴]
+
+</details>
+<summary><strong>.NET 10.0</strong> — LTS (Current)</summary>
+
+- Inherits from .NET 9.0
 
 </details>
 
