@@ -173,6 +173,7 @@ target frameworks, along with the type of support provided for each one.
 - **Generic `ref struct`:** Yes [⁴]
 
 </details>
+<details>
 <summary><strong>.NET 10.0</strong> — LTS (Current)</summary>
 
 - Inherits from .NET 9.0
