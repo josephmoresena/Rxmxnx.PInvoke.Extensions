@@ -96,7 +96,7 @@ public static partial class SystemInfo
 	/// </summary>
 #if NET6_0_OR_GREATER
 	[SupportedOSPlatformGuard("solaris")]
-	[SupportedOSPlatformGuard("sunos")]
+	[SupportedOSPlatformGuard("illumos")]
 #endif
 	public static Boolean IsSolaris
 		=> !AotInfo.IsPlatformTrimmed && (SystemInfo.isSolaris ??=
