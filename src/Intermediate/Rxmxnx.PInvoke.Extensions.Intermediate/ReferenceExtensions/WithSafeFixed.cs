@@ -1,4 +1,6 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿// ReSharper disable ConvertToExtensionBlock
+
+namespace Rxmxnx.PInvoke;
 
 public static partial class ReferenceExtensions
 {
