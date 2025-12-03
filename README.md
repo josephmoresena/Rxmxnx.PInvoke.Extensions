@@ -7,7 +7,7 @@
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
-[![NuGet](https://img.shields.io/nuget/v/Rxmxnx.PInvoke.Extensions) ![Downloads](https://img.shields.io/nuget/dt/Rxmxnx.PInvoke.Extensions?style=flat-square&color=blue)](https://www.nuget.org/packages/Rxmxnx.PInvoke.Extensions/)
+[![NuGet](https://img.shields.io/nuget/v/Rxmxnx.PInvoke.Extensions)&nbsp;![Downloads](https://img.shields.io/nuget/dt/Rxmxnx.PInvoke.Extensions?style=flat-square&color=blue)](https://www.nuget.org/packages/Rxmxnx.PInvoke.Extensions/)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/josephmoresena/Rxmxnx.PInvoke.Extensions)
 
 ---
