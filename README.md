@@ -3650,6 +3650,8 @@ For more details, refer to the full license text included in the [LICENSE](LICEN
 We warmly welcome contributions to this open-source project! Whether you're here to report issues, propose enhancements,
 or contribute directly to the codebase, your help is greatly appreciated.
 
+For more details, refer to the [CONTRIBUTING](CONTRIBUTING.md) file.
+
 ## Translations
 
 We currently support only a few languages, but we are open to adding more! If you'd like to help with translations,
@@ -3675,5 +3677,3 @@ everyone.
 
 Thank you for considering contributing to this project! Your involvement, whether through reporting, coding, or
 translating, helps make this project better for everyone. 🚀
-
-For more details, refer to the full license text included in the [CONTRIBUTING](CONTRIBUTING.md) file.
