@@ -1,10 +1,9 @@
 ﻿<Solution>
     <Folder Name="/ApplicationTest/">
-        <Project Path="ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\Rxmxnx.PInvoke.ApplicationTest.csproj" Type="C#"/>
-        <Project Path="ApplicationTest\Rxmxnx.PInvoke.LauncherTest\Rxmxnx.PInvoke.LauncherTest.csproj" Type="C#"/>
-        <Project Path="ApplicationTest\Rxmxnx.PInvoke.Mkbundle.Patcher\Rxmxnx.PInvoke.Mkbundle.Patcher.csproj"
-                 Type="C#"/>
-        <Project Path="ApplicationTest\Rxmxnx.PInvoke.VNextTest\Rxmxnx.PInvoke.VNextTest.csproj" Type="C#"/>
+        <Project Path="ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\Rxmxnx.PInvoke.ApplicationTest.csproj"/>
+        <Project Path="ApplicationTest\Rxmxnx.PInvoke.LauncherTest\Rxmxnx.PInvoke.LauncherTest.csproj"/>
+        <Project Path="ApplicationTest\Rxmxnx.PInvoke.Mkbundle.Patcher\Rxmxnx.PInvoke.Mkbundle.Patcher.csproj"/>
+        <Project Path="ApplicationTest\Rxmxnx.PInvoke.VNextTest\Rxmxnx.PInvoke.VNextTest.csproj"/>
         <File Path="ApplicationTest\DotnetCoreApp.targets"/>
         <File Path="ApplicationTest\MonoApp.targets"/>
         <File Path="ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\Mono.ILLink.Descriptors.xml"/>
@@ -12,6 +11,7 @@
     <Folder Name="/Global/">
         <File Path="..\.github\workflows\build.yml"/>
         <File Path="..\.github\workflows\release.yml"/>
+        <File Path="..\CONTRIBUTING.md"/>
         <File Path="..\Directory.Build.props"/>
         <File Path="..\LICENSE.md"/>
         <File Path="..\README.md"/>
@@ -33,7 +33,7 @@
         <File Path="..\package\Rxmxnx.PInvoke.Extensions\PACKAGE.md"/>
     </Folder>
     <Folder Name="/Tests/">
-        <Project Path="Test\Rxmxnx.PInvoke.Assert.Tests\Rxmxnx.PInvoke.Assert.Tests.csproj" Type="C#"/>
+        <Project Path="Test\Rxmxnx.PInvoke.Assert.Tests\Rxmxnx.PInvoke.Assert.Tests.csproj"/>
         <Project Path="Test\Rxmxnx.PInvoke.Buffers.Tests\Rxmxnx.PInvoke.Buffers.Tests.csproj"/>
         <Project Path="Test\Rxmxnx.PInvoke.Common.Tests\Rxmxnx.PInvoke.Common.Tests.csproj"/>
         <Project

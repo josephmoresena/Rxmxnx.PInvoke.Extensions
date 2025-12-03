@@ -41,9 +41,6 @@
     - [Key Highlights](#key-highlights)
     - [Disclaimer](#disclaimer)
 - [Contributing](#contributing)
-    - [Reporting Issues](#reporting-issues)
-    - [Proposing Improvements](#proposing-improvements)
-    - [Contributing Code](#contributing-code)
     - [Translations](#translations)
     - [Collaboration Guidelines](#collaboration-guidelines)
 
@@ -3644,46 +3641,14 @@ This project is licensed under the **MIT License**, one of the most permissive a
 > The software is provided "as is," without warranty of any kind. The authors are not liable for any damages or issues
 > that may arise from its use.
 
-For more details, refer to the full license text included in the [LICENSE](LICENSE) file.
+For more details, refer to the full license text included in the [LICENSE](LICENSE.md) file.
 
 ---
 
 # Contributing
 
 We warmly welcome contributions to this open-source project! Whether you're here to report issues, propose enhancements,
-or contribute directly to the codebase, your help is greatly appreciated. Below are some ways you can get involved:
-
-## Reporting Issues
-
-If you encounter a bug, experience unexpected behavior, or have suggestions for improvement, feel free to open an issue.
-Please include as much detail as possible, such as:
-
-- Steps to reproduce the problem
-- Your environment (e.g., OS, software version)
-- Any relevant logs or screenshots
-
-## Proposing Improvements
-
-Have an idea for a new feature or enhancement? Open an issue with a clear description of your proposal and why you think
-it would benefit the project.
-
-## Contributing Code
-
-You can directly contribute to the project by:
-
-- Fixing bugs
-- Adding new features
-- Improving existing functionality
-- Enhancing documentation
-
-To contribute code:
-
-1. Fork the repository.
-2. Create a new branch for your changes.
-3. Make your changes and commit them with clear and concise messages.
-4. Submit a pull request for review.
-
-Feel free to discuss your ideas or changes in an issue or pull request to align with the project's goals.
+or contribute directly to the codebase, your help is greatly appreciated.
 
 ## Translations
 
@@ -3710,3 +3675,5 @@ everyone.
 
 Thank you for considering contributing to this project! Your involvement, whether through reporting, coding, or
 translating, helps make this project better for everyone. 🚀
+
+For more details, refer to the full license text included in the [CONTRIBUTING](CONTRIBUTING.md) file.
