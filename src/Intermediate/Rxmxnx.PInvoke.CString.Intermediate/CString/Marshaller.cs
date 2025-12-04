@@ -78,7 +78,7 @@ public unsafe partial class CString
 			if (this._managed is null || this._managed.IsZero) return IntPtr.Zero;
 			if (this._pointer != IntPtr.Zero) return this._pointer;
 
-			Boolean isEmpty = this._managed.Length == 0;
+			Boolean isEmpty = this._managed._length == 0;
 			if (isEmpty || this._managed.IsNullTerminated)
 			{
 				if (isEmpty || this._managed.IsReference || (this._managed.IsFunction &&
@@ -102,10 +102,10 @@ public unsafe partial class CString
 			}
 
 			// If the CString is not null-terminated or not pinned, we need to allocate unmanaged memory.
-			this._pointer = Marshal.AllocHGlobal(this._managed.Length + 1);
+			this._pointer = Marshal.AllocHGlobal(this._managed._length + 1);
 			this._allocated = true;
 
-			Span<Byte> output = new(this._pointer.ToPointer(), this._managed.Length + 1);
+			Span<Byte> output = new(this._pointer.ToPointer(), this._managed._length + 1);
 			this._managed.AsSpan().CopyTo(output);
 			output[^1] = default; // Ensure null-termination.
 

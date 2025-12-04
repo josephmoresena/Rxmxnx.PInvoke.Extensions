@@ -111,7 +111,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	public Object Clone()
 	{
 		ReadOnlySpan<Byte> source = this;
-		Byte[] bytes = new Byte[this.Length + 1];
+		Byte[] bytes = new Byte[this._length + 1];
 		source.CopyTo(bytes);
 		return new CString(bytes, true);
 	}
@@ -185,7 +185,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override String ToString()
 	{
-		if (this.Length == 0) return String.Empty;
+		if (this._length == 0) return String.Empty;
 		String result = Encoding.UTF8.GetString(this.AsSpan());
 		return String.IsInterned(result) ?? result;
 	}
@@ -209,14 +209,14 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <returns>
 	/// A new <see cref="Byte"/> array containing the UTF-8 units of the current <see cref="CString"/>.
 	/// </returns>
-	public Byte[] ToArray() => this._data.ToArray()[..this.Length];
+	public Byte[] ToArray() => this._data.ToArray()[..this._length];
 	/// <summary>
 	/// Retrieves the UTF-8 units of the current <see cref="CString"/> as a read-only span of bytes.
 	/// </summary>
 	/// <returns>
 	/// A read-only span of bytes representing the UTF-8 units of the current <see cref="CString"/>.
 	/// </returns>
-	public ReadOnlySpan<Byte> AsSpan() => this._data.AsSpan()[..this.Length];
+	public ReadOnlySpan<Byte> AsSpan() => this._data.AsSpan()[..this._length];
 	/// <summary>
 	/// Returns a <see cref="String"/> that represents the current UTF-8 text as a hexadecimal value.
 	/// </summary>
@@ -273,7 +273,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <see langword="true"/> if the value parameter is <see langword="null"/> or an empty UTF-8 string;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
-	public static Boolean IsNullOrEmpty([NotNullWhen(false)] CString? value) => value is null || value.Length == 0;
+	public static Boolean IsNullOrEmpty([NotNullWhen(false)] CString? value) => value is null || value._length == 0;
 	/// <summary>
 	/// Creates a new instance of the <see cref="CString"/> class using the UTF-8 characters provided
 	/// in the specified read-only span.
