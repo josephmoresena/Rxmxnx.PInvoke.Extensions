@@ -55,31 +55,6 @@ public partial class CString
 	private static EqualsDelegate GetEquals()
 		=> Environment.Is64BitProcess ? CString.Equals<Int64> : CString.Equals<Int32>;
 	/// <summary>
-	/// Copies the byte data from the source array into the destination character span,
-	/// treating the byte data as UTF-8 encoded text.
-	/// </summary>
-	/// <param name="destination">
-	/// The destination <see cref="Span{Char}"/> where the byte data will be copied to.
-	/// </param>
-	/// <param name="source">The source byte array from which the data will be copied.</param>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void CopyBytes(Span<Char> destination, Byte[] source)
-	{
-		//Converts binary span into source char span.
-		ReadOnlySpan<Char> sourceChars = MemoryMarshal.Cast<Byte, Char>(source);
-		//Gets the binary size of source char span.
-		Int32 offset = sourceChars.Length * sizeof(Char);
-		//Creates the remaining bytes from source.
-		ReadOnlySpan<Byte> remSource = source.AsSpan()[offset..];
-		//Gets the remaining binary destination into destination span.
-		Span<Byte> remDestination = MemoryMarshal.AsBytes(destination[sourceChars.Length..]);
-
-		//Copies the source char span into destination span.
-		sourceChars.CopyTo(destination);
-		//Copies the remaining binary span into UTF8 destination span.
-		remSource.CopyTo(remDestination);
-	}
-	/// <summary>
 	/// Compares two ReadOnlySpan instances for equality, treating their byte data as
 	/// <typeparamref name="TInteger"/> for faster comparison.
 	/// </summary>
