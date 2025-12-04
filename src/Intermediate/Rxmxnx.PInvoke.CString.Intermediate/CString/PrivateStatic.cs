@@ -100,7 +100,7 @@ public partial class CString
 		return textLength < data.Length;
 	}
 	/// <summary>
-	/// Creates a null-terminated UTF-8 string that consists of a given ReadOnlySpan of bytes repeated
+	/// Creates a null-terminated UTF-8 string that consists of a given read-only span of bytes repeated
 	/// a specified number of times.
 	/// </summary>
 	/// <param name="seq">The read-only span of bytes to repeat.</param>
@@ -115,6 +115,29 @@ public partial class CString
 		Byte[] result = new Byte[seq.Length * count + 1];
 		for (Int32 i = 0; i < count; i++)
 			seq.CopyTo(result.AsSpan()[(seq.Length * i)..]);
+		result[^1] = default;
+		return result;
+	}
+	/// <summary>
+	/// Creates a null-terminated UTF-8 string that consists of a given read-only span of chars repeated
+	/// a specified number of times.
+	/// </summary>
+	/// <param name="seq">The read-only span of chars to repeat.</param>
+	/// <param name="count">The number of times to repeat the read-only span.</param>
+	/// <returns>
+	/// A <see cref="Byte"/> array that represents a null-terminated UTF-8 string composed of the
+	/// read-only span repeated the specified number of times.
+	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static Byte[] CreateRepeatedSequence(ReadOnlySpan<Char> seq, Int32 count)
+	{
+		Int32 utf8Length = Encoding.UTF8.GetByteCount(seq);
+		Byte[] result = new Byte[utf8Length * count + 1];
+		Span<Byte> initial = result.AsSpan()[..utf8Length];
+		_ = Encoding.UTF8.GetBytes(seq, initial);
+		for (Int32 i = 1; i < count; i++)
+			initial.CopyTo(result[(initial.Length * i)..]);
+		result[^1] = default;
 		return result;
 	}
 	/// <summary>

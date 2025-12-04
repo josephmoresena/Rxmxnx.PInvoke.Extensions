@@ -208,20 +208,19 @@ public partial class CString
 			//Try to fetch internal String
 			return String.IsInterned(result) ?? result;
 		}
-
 		/// <summary>
-		/// Writes UTF-8 encoded binary data into the destination UTF-16 character buffer.
+		/// Writes UTF-8 encoded binary data into the destination character buffer.
 		/// </summary>
-		/// <param name="utf8Span">Destination span whose memory backing will contain UTF-8 byte data.</param>
+		/// <param name="utf8Span">The destination span whose memory backing will contain UTF-8 byte data.</param>
 		/// <param name="utf16Text">Input UTF-16 string to encode.</param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void WriteUtf8String(Span<Char> utf8Span, String utf16Text)
 		{
 			Span<Byte> utf8Units = MemoryMarshal.AsBytes(utf8Span);
 			Int32 byteCount = Encoding.UTF8.GetBytes(utf16Text, utf8Units);
-			utf8Units[byteCount..].Clear();
+			if (utf8Units.Length > byteCount)
+				utf8Units[byteCount..].Clear();
 		}
-
 		/// <summary>
 		/// Retrieves the UTF8 String length which contains <paramref name="utf8Length"/>
 		/// information.

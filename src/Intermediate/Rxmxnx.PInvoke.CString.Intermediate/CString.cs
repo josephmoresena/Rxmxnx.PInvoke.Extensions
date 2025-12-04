@@ -92,11 +92,32 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	public CString(Byte u0, Byte u1, Byte u2, Byte u3, Int32 count) : this(
 		CString.CreateRepeatedSequence([u0, u1, u2, u3,], count), true) { }
 	/// <summary>
+	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified
+	/// UTF-16 character repeated a specified number of times.
+	/// </summary>
+	/// <param name="c">A UTF-16 char.</param>
+	/// <param name="count">The number of times <paramref name="c"/> is repeated to form the UTF-8 string.</param>
+	public CString(Char c, Int32 count) : this(CString.CreateRepeatedSequence([c,], count), true) { }
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified
+	/// UTF-16 sequence repeated a specified number of times.
+	/// </summary>
+	/// <param name="u0">The first UTF-16 unit.</param>
+	/// <param name="u1">The second UTF-16 unit.</param>
+	/// <param name="count">The number of times the sequence is repeated to form the UTF-8 string.</param>
+	public CString(Char u0, Char u1, Int32 count) : this(CString.CreateRepeatedSequence([u0, u1,], count), true) { }
+	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class using the UTF-8 characters
 	/// indicated in the specified read-only span.
 	/// </summary>
 	/// <param name="source">A read-only span of UTF-8 characters to initialize the new instance.</param>
 	public CString(ReadOnlySpan<Byte> source) : this(CString.CreateRepeatedSequence(source, 1)) { }
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CString"/> class using the UTF-16 characters
+	/// indicated in the specified read-only span.
+	/// </summary>
+	/// <param name="source">A read-only span of UTF-16 characters to initialize the new instance.</param>
+	public CString(ReadOnlySpan<Char> source) : this(CString.CreateRepeatedSequence(source, 1)) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class that contains the UTF-8 string
 	/// returned by the specified <see cref="ReadOnlySpanFunc{Byte}"/>.
