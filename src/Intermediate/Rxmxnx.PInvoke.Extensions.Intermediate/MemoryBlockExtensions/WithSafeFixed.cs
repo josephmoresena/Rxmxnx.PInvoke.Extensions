@@ -1,4 +1,6 @@
-﻿#if !NET6_0_OR_GREATER
+﻿// ReSharper disable ConvertToExtensionBlock
+
+#if !NET6_0_OR_GREATER
 using ArgumentNullException = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif
 

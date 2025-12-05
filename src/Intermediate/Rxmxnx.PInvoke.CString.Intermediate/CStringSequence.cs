@@ -153,8 +153,13 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	{
 		Int32 utf8Length = this._value.AsSpan().Length * sizeof(Char) - this._nonEmptyCount;
 		if (utf8Length == 0) return CString.Empty;
+#if !NET5_0_OR_GREATER
 		Byte[] result = new Byte[utf8Length + 1];
-		this.WithSafeTransform(result, CStringSequence.BinaryCopyTo);
+#else
+		Byte[] result = GC.AllocateUninitializedArray<Byte>(utf8Length + 1);
+#endif
+		Int32 offset = this.WithSafeTransform(result, CStringSequence.BinaryCopyTo);
+		result.AsSpan()[offset..].Clear();
 		return result;
 	}
 

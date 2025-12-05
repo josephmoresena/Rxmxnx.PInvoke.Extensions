@@ -1,11 +1,7 @@
-﻿[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=bugs)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=coverage)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
-[![NuGet](https://img.shields.io/nuget/v/Rxmxnx.PInvoke.Extensions)](https://www.nuget.org/packages/Rxmxnx.PInvoke.Extensions/)
+﻿[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=alert_status)![Bugs](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=bugs)![Coverage](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=coverage)![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=ncloc)![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=reliability_rating)![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=sqale_rating)![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/josephmoresena/Rxmxnx.PInvoke.Extensions/build.yml?style=flat-square)](https://github.com/josephmoresena/Rxmxnx.PInvoke.Extensions/actions/workflows/build.yml)
+[![License](https://img.shields.io/github/license/josephmoresena/Rxmxnx.PInvoke.Extensions?style=flat-square)](LICENSE.md)
+[![NuGet](https://img.shields.io/nuget/v/Rxmxnx.PInvoke.Extensions)![Downloads](https://img.shields.io/nuget/dt/Rxmxnx.PInvoke.Extensions?style=flat-square&color=blue)](https://www.nuget.org/packages/Rxmxnx.PInvoke.Extensions/)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/josephmoresena/Rxmxnx.PInvoke.Extensions)
 
 ---
@@ -45,9 +41,6 @@
     - [Key Highlights](#key-highlights)
     - [Disclaimer](#disclaimer)
 - [Contributing](#contributing)
-    - [Reporting Issues](#reporting-issues)
-    - [Proposing Improvements](#proposing-improvements)
-    - [Contributing Code](#contributing-code)
     - [Translations](#translations)
     - [Collaboration Guidelines](#collaboration-guidelines)
 
@@ -3648,46 +3641,16 @@ This project is licensed under the **MIT License**, one of the most permissive a
 > The software is provided "as is," without warranty of any kind. The authors are not liable for any damages or issues
 > that may arise from its use.
 
-For more details, refer to the full license text included in the [LICENSE](LICENSE) file.
+For more details, refer to the full license text included in the [LICENSE](LICENSE.md) file.
 
 ---
 
 # Contributing
 
 We warmly welcome contributions to this open-source project! Whether you're here to report issues, propose enhancements,
-or contribute directly to the codebase, your help is greatly appreciated. Below are some ways you can get involved:
+or contribute directly to the codebase, your help is greatly appreciated.
 
-## Reporting Issues
-
-If you encounter a bug, experience unexpected behavior, or have suggestions for improvement, feel free to open an issue.
-Please include as much detail as possible, such as:
-
-- Steps to reproduce the problem
-- Your environment (e.g., OS, software version)
-- Any relevant logs or screenshots
-
-## Proposing Improvements
-
-Have an idea for a new feature or enhancement? Open an issue with a clear description of your proposal and why you think
-it would benefit the project.
-
-## Contributing Code
-
-You can directly contribute to the project by:
-
-- Fixing bugs
-- Adding new features
-- Improving existing functionality
-- Enhancing documentation
-
-To contribute code:
-
-1. Fork the repository.
-2. Create a new branch for your changes.
-3. Make your changes and commit them with clear and concise messages.
-4. Submit a pull request for review.
-
-Feel free to discuss your ideas or changes in an issue or pull request to align with the project's goals.
+For more details, refer to the [CONTRIBUTING](CONTRIBUTING.md) file.
 
 ## Translations
 

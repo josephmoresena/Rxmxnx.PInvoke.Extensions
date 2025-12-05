@@ -156,8 +156,9 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	/// <param name="seq">The source <see cref="FixedCStringSequence"/> instance.</param>
 	/// <param name="destination">The destination byte array.</param>
+	/// <returns>The number of written bytes.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void BinaryCopyTo(FixedCStringSequence seq, Byte[] destination)
+	private static Int32 BinaryCopyTo(FixedCStringSequence seq, Byte[] destination)
 	{
 		Int32 offset = 0;
 		foreach (CString? value in seq)
@@ -167,6 +168,7 @@ public unsafe partial class CStringSequence
 			bytes.CopyTo(destination.AsSpan()[offset..]);
 			offset += bytes.Length;
 		}
+		return offset;
 	}
 	/// <summary>
 	/// Creates a UTF-8 text sequence using the given <paramref name="helper"/>,

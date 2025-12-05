@@ -14,6 +14,10 @@ public partial class CString
 	/// Indicates whether the UTF-8 string represented by this instance is null-terminated.
 	/// </summary>
 	private readonly Boolean _isNullTerminated;
+	/// <summary>
+	/// Gets the number of bytes in the current <see cref="CString"/> object.
+	/// </summary>
+	private readonly Int32 _length;
 
 	/// <summary>
 	/// Calculates the final length of a segment of the current <see cref="CString"/>,

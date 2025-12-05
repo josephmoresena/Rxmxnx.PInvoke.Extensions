@@ -23,9 +23,9 @@ public partial class CString : IEnumerableSequence<Byte>
 	/// Gets the number of bytes in the current <see cref="CString"/> object.
 	/// </summary>
 	/// <value>The number of bytes in the current <see cref="CString"/>.</value>
-	public Int32 Length { get; }
+	public Int32 Length => this._length;
 
-	Int32 IEnumerableSequence<Byte>.GetSize() => this.Length;
+	Int32 IEnumerableSequence<Byte>.GetSize() => this._length;
 	Byte IEnumerableSequence<Byte>.GetItem(Int32 index) => this[index];
 #if PACKAGE && !NETCOREAPP
 	IEnumerator<Byte> IEnumerable<Byte>.GetEnumerator() => IEnumerableSequence.CreateEnumerator(this);
@@ -47,7 +47,7 @@ public partial class CString : IEnumerableSequence<Byte>
 	/// <exception cref="ArgumentOutOfRangeException">
 	/// <paramref name="startIndex"/> is less than zero or greater than the length of this instance.
 	/// </exception>
-	public CString Slice(Int32 startIndex) => this[startIndex..this.Length];
+	public CString Slice(Int32 startIndex) => this[startIndex..this._length];
 	/// <summary>
 	/// Retrieves a substring from this instance. The substring starts at a specified character
 	/// position and has a specified length.
@@ -69,11 +69,11 @@ public partial class CString : IEnumerableSequence<Byte>
 	/// </exception>
 	public CString Slice(Int32 startIndex, Int32 length)
 	{
-		ValidationUtilities.ThrowIfInvalidSubstring(this.Length, startIndex, length);
+		ValidationUtilities.ThrowIfInvalidSubstring(this._length, startIndex, length);
 		if (length == 0)
 			return CString.Empty;
 
-		if (startIndex == 0 && length == this.Length)
+		if (startIndex == 0 && length == this._length)
 			return this;
 
 		return new(this, startIndex, length);

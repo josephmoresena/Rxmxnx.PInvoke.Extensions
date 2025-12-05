@@ -18,12 +18,12 @@
     <!-- LIMITED_LEGACY_UNSUPPORT -->
     <ItemGroup Condition="!$(DefineConstants.Contains('PACKAGE')) And '$(TargetFramework)' == 'netstandard2.1'">
         <PackageReference Include="System.Text.Json" Version="4.7.0"/>
-        <PackageReference Include="System.Text.Encodings.Web" Version="5.0.1" />
+        <PackageReference Include="System.Text.Encodings.Web" Version="5.0.1"/>
     </ItemGroup>
     <!-- LIMITED_LEGACY_SUPPORT -->
     <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
         <PackageReference Include="System.Text.Json" Version="5.0.2"/>
-        <PackageReference Include="System.Text.Encodings.Web" Version="5.0.1" />
+        <PackageReference Include="System.Text.Encodings.Web" Version="5.0.1"/>
     </ItemGroup>
 
     <!-- LEGACY_SUPPORT -->
@@ -31,15 +31,22 @@
         <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0"/>
         <PackageReference Include="System.Collections.Immutable" Version="6.0.0"/>
         <PackageReference Include="System.Text.Json" Version="6.0.11"/>
-        <PackageReference Include="System.Text.Encodings.Web" Version="6.0.1" />
+        <PackageReference Include="System.Text.Encodings.Web" Version="6.0.1"/>
     </ItemGroup>
 
-    <!-- SUPPORTED -->
+    <!-- OLD_SUPPORTED -->
     <ItemGroup Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'">
         <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2"/>
         <PackageReference Include="System.Collections.Immutable" Version="8.0.0"/>
         <PackageReference Include="System.Text.Json" Version="8.0.6"/>
-        <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" />
+        <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0"/>
+    </ItemGroup>
+
+    <!-- SUPPORTED -->
+    <ItemGroup Condition="'$(TargetFramework)' == 'net8.0' Or '$(TargetFramework)' == 'net9.0'">
+        <PackageReference Include="System.Collections.Immutable" Version="10.0.0"/>
+        <PackageReference Include="System.Text.Json" Version="10.0.0"/>
+        <PackageReference Include="System.Text.Encodings.Web" Version="10.0.0"/>
     </ItemGroup>
 
 </Project>

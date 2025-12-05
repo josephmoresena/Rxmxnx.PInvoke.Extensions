@@ -23,11 +23,12 @@ public partial class CString
 	internal CString(CStringSequence sequence, Int32 index, Int32 length)
 	{
 		this._isLocal = false;
-		this.IsFunction = true;
 		this._data = ValueRegion<Byte>.Create(new SequenceItemState(sequence, index, length), SequenceItemState.GetSpan,
 		                                      SequenceItemState.Alloc);
 		this._isNullTerminated = true;
-		this.Length = length;
+		this._length = length;
+
+		this.IsFunction = true;
 	}
 
 	/// <summary>
@@ -82,7 +83,7 @@ public partial class CString
 	internal async Task WriteAsync(Stream strm, Boolean writeNullTermination,
 		CancellationToken cancellationToken = default)
 	{
-		await this.GetWriteTask(strm, 0, this.Length, cancellationToken).ConfigureAwait(false);
+		await this.GetWriteTask(strm, 0, this._length, cancellationToken).ConfigureAwait(false);
 		if (writeNullTermination)
 			await strm.WriteAsync(CString.empty, cancellationToken);
 	}

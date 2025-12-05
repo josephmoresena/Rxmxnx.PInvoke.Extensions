@@ -92,11 +92,32 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	public CString(Byte u0, Byte u1, Byte u2, Byte u3, Int32 count) : this(
 		CString.CreateRepeatedSequence([u0, u1, u2, u3,], count), true) { }
 	/// <summary>
+	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified
+	/// UTF-16 character repeated a specified number of times.
+	/// </summary>
+	/// <param name="c">A UTF-16 char.</param>
+	/// <param name="count">The number of times <paramref name="c"/> is repeated to form the UTF-8 string.</param>
+	public CString(Char c, Int32 count) : this(CString.CreateRepeatedSequence([c,], count), true) { }
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified
+	/// UTF-16 sequence repeated a specified number of times.
+	/// </summary>
+	/// <param name="u0">The first UTF-16 unit.</param>
+	/// <param name="u1">The second UTF-16 unit.</param>
+	/// <param name="count">The number of times the sequence is repeated to form the UTF-8 string.</param>
+	public CString(Char u0, Char u1, Int32 count) : this(CString.CreateRepeatedSequence([u0, u1,], count), true) { }
+	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class using the UTF-8 characters
 	/// indicated in the specified read-only span.
 	/// </summary>
 	/// <param name="source">A read-only span of UTF-8 characters to initialize the new instance.</param>
 	public CString(ReadOnlySpan<Byte> source) : this(CString.CreateRepeatedSequence(source, 1)) { }
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CString"/> class using the UTF-16 characters
+	/// indicated in the specified read-only span.
+	/// </summary>
+	/// <param name="source">A read-only span of UTF-16 characters to initialize the new instance.</param>
+	public CString(ReadOnlySpan<Char> source) : this(CString.CreateRepeatedSequence(source, 1)) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class that contains the UTF-8 string
 	/// returned by the specified <see cref="ReadOnlySpanFunc{Byte}"/>.
@@ -111,8 +132,13 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	public Object Clone()
 	{
 		ReadOnlySpan<Byte> source = this;
-		Byte[] bytes = new Byte[this.Length + 1];
+#if !NET5_0_OR_GREATER
+		Byte[] bytes = new Byte[this._length + 1];
+#else
+		Byte[] bytes = GC.AllocateUninitializedArray<Byte>(this._length + 1);
+#endif
 		source.CopyTo(bytes);
+		bytes[^1] = default;
 		return new CString(bytes, true);
 	}
 
@@ -185,7 +211,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override String ToString()
 	{
-		if (this.Length == 0) return String.Empty;
+		if (this._length == 0) return String.Empty;
 		String result = Encoding.UTF8.GetString(this.AsSpan());
 		return String.IsInterned(result) ?? result;
 	}
@@ -209,14 +235,14 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <returns>
 	/// A new <see cref="Byte"/> array containing the UTF-8 units of the current <see cref="CString"/>.
 	/// </returns>
-	public Byte[] ToArray() => this._data.ToArray()[..this.Length];
+	public Byte[] ToArray() => this._data.ToArray()[..this._length];
 	/// <summary>
 	/// Retrieves the UTF-8 units of the current <see cref="CString"/> as a read-only span of bytes.
 	/// </summary>
 	/// <returns>
 	/// A read-only span of bytes representing the UTF-8 units of the current <see cref="CString"/>.
 	/// </returns>
-	public ReadOnlySpan<Byte> AsSpan() => this._data.AsSpan()[..this.Length];
+	public ReadOnlySpan<Byte> AsSpan() => this._data.AsSpan()[..this._length];
 	/// <summary>
 	/// Returns a <see cref="String"/> that represents the current UTF-8 text as a hexadecimal value.
 	/// </summary>
@@ -273,7 +299,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <see langword="true"/> if the value parameter is <see langword="null"/> or an empty UTF-8 string;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
-	public static Boolean IsNullOrEmpty([NotNullWhen(false)] CString? value) => value is null || value.Length == 0;
+	public static Boolean IsNullOrEmpty([NotNullWhen(false)] CString? value) => value is null || value._length == 0;
 	/// <summary>
 	/// Creates a new instance of the <see cref="CString"/> class using the UTF-8 characters provided
 	/// in the specified read-only span.
