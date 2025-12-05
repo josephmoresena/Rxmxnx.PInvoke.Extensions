@@ -3,11 +3,11 @@ namespace Rxmxnx.PInvoke;
 public partial class CString
 {
 	/// <summary>
-	/// Concatenates a <cref name="String"/> instance with a <cref name="CString"/> instance and returns a new
+	/// Concatenates a <see cref="String"/> instance with a <see cref="CString"/> instance and returns a new
 	/// <see cref="CString"/>.
 	/// </summary>
-	/// <param name="left">The left-hand <cref name="String"/> instance.</param>
-	/// <param name="right">The right-hand <cref name="CString"/> instance.</param>
+	/// <param name="left">The left-hand <see cref="String"/> instance.</param>
+	/// <param name="right">The right-hand <see cref="CString"/> instance.</param>
 	/// <returns>
 	/// A new <see cref="CString"/> instance containing the concatenation of  <paramref name="left"/> and
 	/// <paramref name="right"/> encoded as UTF-8.
@@ -20,10 +20,10 @@ public partial class CString
 		return leftSpan + right;
 	}
 	/// <summary>
-	/// Concatenates two <cref name="CString"/> instance instances and returns a new <see cref="CString"/>.
+	/// Concatenates two <see cref="CString"/> instance instances and returns a new <see cref="CString"/>.
 	/// </summary>
-	/// <param name="left">The first <cref name="CString"/> instance.</param>
-	/// <param name="right">The second <cref name="CString"/> instance.</param>
+	/// <param name="left">The first <see cref="CString"/> instance.</param>
+	/// <param name="right">The second <see cref="CString"/> instance.</param>
 	/// <returns>
 	/// A new <see cref="CString"/> instance containing the concatenation of <paramref name="left"/> and
 	/// <paramref name="right"/>.
@@ -36,11 +36,11 @@ public partial class CString
 		return leftSpan + right;
 	}
 	/// <summary>
-	/// Concatenates a <cref name="CString"/> instance with a <cref name="String"/> instance and returns a new
+	/// Concatenates a <see cref="CString"/> instance with a <see cref="String"/> instance and returns a new
 	/// <see cref="CString"/>.
 	/// </summary>
-	/// <param name="left">The left-hand <cref name="CString"/> instance.</param>
-	/// <param name="right">The right-hand <cref name="String"/> instance.</param>
+	/// <param name="left">The left-hand <see cref="CString"/> instance.</param>
+	/// <param name="right">The right-hand <see cref="String"/> instance.</param>
 	/// <returns>
 	/// A new <see cref="CString"/> instance containing the concatenation of <paramref name="left"/> and
 	/// <paramref name="right"/> encoded as UTF-8.
@@ -53,10 +53,10 @@ public partial class CString
 		return left + rightSpan;
 	}
 	/// <summary>
-	/// Concatenates a UTF-16 character span with a <cref name="CString"/> instance and returns a new <see cref="CString"/>.
+	/// Concatenates a UTF-16 character span with a <see cref="CString"/> instance and returns a new <see cref="CString"/>.
 	/// </summary>
 	/// <param name="leftSpan">The left-hand UTF-16 character span.</param>
-	/// <param name="right">The right-hand <cref name="CString"/> instance.</param>
+	/// <param name="right">The right-hand <see cref="CString"/> instance.</param>
 	/// <returns>
 	/// A new <see cref="CString"/> instance containing the concatenation of <paramref name="leftSpan"/> and
 	/// <paramref name="right"/> encoded as UTF-8.
@@ -79,7 +79,7 @@ public partial class CString
 	/// Concatenates a UTF-8 byte span with a <see cref="CString"/> and returns a new <see cref="CString"/>.
 	/// </summary>
 	/// <param name="leftSpan">The left-hand UTF-8 byte span.</param>
-	/// <param name="right">The right-hand <cref name="CString"/> instance.</param>
+	/// <param name="right">The right-hand <see cref="CString"/> instance.</param>
 	/// <returns>
 	/// A new <see cref="CString"/> instance containing the concatenation of <paramref name="leftSpan"/> and
 	/// <paramref name="right"/>.
@@ -98,10 +98,10 @@ public partial class CString
 		return new(result, true);
 	}
 	/// <summary>
-	/// Concatenates a <cref name="CString"/> instance with a UTF-16 character span and returns a new
+	/// Concatenates a <see cref="CString"/> instance with a UTF-16 character span and returns a new
 	/// <see cref="CString"/>.
 	/// </summary>
-	/// <param name="left">The left-hand <cref name="CString"/> instance.</param>
+	/// <param name="left">The left-hand <see cref="CString"/> instance.</param>
 	/// <param name="rightSpan">The right-hand UTF-16 character span.</param>
 	/// <returns>
 	/// A new <see cref="CString"/> instance containing the concatenation of <paramref name="left"/> and
@@ -122,9 +122,9 @@ public partial class CString
 		return new(result, true);
 	}
 	/// <summary>
-	/// Concatenates a <cref name="CString"/> instance with a UTF-8 byte span and returns a new <see cref="CString"/>.
+	/// Concatenates a <see cref="CString"/> instance with a UTF-8 byte span and returns a new <see cref="CString"/>.
 	/// </summary>
-	/// <param name="left">The left-hand <cref name="CString"/> instance.</param>
+	/// <param name="left">The left-hand <see cref="CString"/> instance.</param>
 	/// <param name="rightSpan">The right-hand UTF-8 byte span.</param>
 	/// <returns>
 	/// A new <see cref="CString"/> instance containing the concatenation of <paramref name="left"/> and
