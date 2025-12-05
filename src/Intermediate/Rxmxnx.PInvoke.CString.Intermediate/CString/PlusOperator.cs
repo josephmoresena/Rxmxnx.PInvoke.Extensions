@@ -69,7 +69,11 @@ public partial class CString
 			return new(leftSpan);
 
 		Int32 leftUtf8Length = Encoding.UTF8.GetByteCount(leftSpan);
+#if !NET5_0_OR_GREATER
 		Byte[] result = new Byte[leftUtf8Length + right.Length + 1];
+#else
+		Byte[] result = GC.AllocateUninitializedArray<Byte>(leftUtf8Length + right.Length + 1);
+#endif
 		Encoding.UTF8.GetBytes(leftSpan, result.AsSpan()[..leftUtf8Length]);
 		right.AsSpan().CopyTo(result.AsSpan()[..leftUtf8Length]);
 		result[^1] = default;
@@ -91,7 +95,11 @@ public partial class CString
 		if (CString.IsNullOrEmpty(right))
 			return new(leftSpan);
 
+#if !NET5_0_OR_GREATER
 		Byte[] result = new Byte[leftSpan.Length + right.Length + 1];
+#else
+		Byte[] result = GC.AllocateUninitializedArray<Byte>(leftSpan.Length + right.Length + 1);
+#endif
 		leftSpan.CopyTo(result.AsSpan()[..leftSpan.Length]);
 		right.AsSpan().CopyTo(result.AsSpan()[..leftSpan.Length]);
 		result[^1] = default;
@@ -115,7 +123,11 @@ public partial class CString
 			return new(rightSpan);
 
 		Int32 rightUtf8Length = Encoding.UTF8.GetByteCount(rightSpan);
+#if !NET5_0_OR_GREATER
 		Byte[] result = new Byte[left.Length + rightUtf8Length + 1];
+#else
+		Byte[] result = GC.AllocateUninitializedArray<Byte>(left.Length + rightUtf8Length + 1);
+#endif
 		left.AsSpan().CopyTo(result.AsSpan()[..left.Length]);
 		Encoding.UTF8.GetBytes(rightSpan, result.AsSpan()[left.Length..]);
 		result[^1] = default;
@@ -137,7 +149,11 @@ public partial class CString
 		if (CString.IsNullOrEmpty(left))
 			return new(rightSpan);
 
+#if !NET5_0_OR_GREATER
 		Byte[] result = new Byte[left.Length + rightSpan.Length + 1];
+#else
+		Byte[] result = GC.AllocateUninitializedArray<Byte>(left.Length + rightSpan.Length + 1);
+#endif
 		left.AsSpan().CopyTo(result.AsSpan()[..left.Length]);
 		rightSpan.CopyTo(result.AsSpan()[left.Length..]);
 		result[^1] = default;

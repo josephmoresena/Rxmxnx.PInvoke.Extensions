@@ -155,8 +155,13 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 		ReadOnlySpan<Byte> span = BinaryConcatenator<T>.PrepareUtf8Text(this.Stream.GetBuffer());
 		if (span.IsEmpty) return result;
 		Int32 resultLength = span.Length + (nullTerminated ? 1 : 0);
+#if !NET5_0_OR_GREATER
 		result = new Byte[resultLength];
+#else
+		result = GC.AllocateUninitializedArray<Byte>(resultLength);
+#endif
 		span.CopyTo(result);
+		if (result.Length > span.Length) result.AsSpan()[span.Length..].Clear();
 		return result;
 	}
 }
