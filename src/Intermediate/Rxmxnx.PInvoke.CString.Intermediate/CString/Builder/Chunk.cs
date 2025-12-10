@@ -38,6 +38,51 @@ public partial class CString
 				return new Chunk(this).Append(newData[span.Length..]);
 			}
 			/// <summary>
+			/// Appends a span of chars to the sequence, allocating new chunks as needed.
+			/// </summary>
+			/// <param name="byteCount">UTF-8 bytes required to encode <paramref name="newData"/>.</param>
+			/// <param name="newData">Data to append.</param>
+			/// <returns>The chunk into which the final portion of <paramref name="newData"/> was written.</returns>
+			public Chunk Append(Int32 byteCount, ReadOnlySpan<Char> newData)
+			{
+				Span<Byte> span = this.GetAvailable();
+				if (byteCount <= span.Length)
+				{
+					this._count += Encoding.UTF8.GetBytes(newData, span);
+					return this;
+				}
+				CharSpanUtf8Split split = new(newData, byteCount, span.Length);
+				Int32 leftByteCount = Encoding.UTF8.GetBytes(split.Left, span);
+				this._count += leftByteCount;
+				return new Chunk(this).Append(byteCount - leftByteCount, split.Right);
+			}
+#if NET8_0_OR_GREATER
+			/// <summary>
+			/// Appends a <see cref="IUtf8SpanFormattable"/> value to the sequence, allocating new chunks as needed.
+			/// </summary>
+			/// <typeparam name="T"></typeparam>
+			/// <param name="value">A <see cref="IUtf8SpanFormattable"/> instance.</param>
+			/// <returns>The chunk into which the final portion of <paramref name="value"/> was written.</returns>
+			public Chunk Append<T>(T value) where T : IUtf8SpanFormattable
+			{
+				if (value.TryFormat(this.GetAvailable(), out Int32 count, default, default))
+				{
+					this._count += count;
+					return this;
+				}
+
+				if (this._buffer.Length - this._count < CString.stackallocByteThreshold)
+				{
+					Span<Byte> span = stackalloc Byte[CString.stackallocByteThreshold];
+					if (value.TryFormat(span, out count, default, default))
+						return this.Append(span[..count]);
+				}
+
+				ReadOnlySpan<Char> chars = value.ToString();
+				return this.Append(Encoding.UTF8.GetByteCount(chars), chars);
+			}
+#endif
+			/// <summary>
 			/// Resets the current instance.
 			/// </summary>
 			/// <param name="capacity">Reset capacity.</param>

@@ -55,14 +55,14 @@ public partial class CString
 		/// A sequence that contains the UTF-8 texts to concatenate and append to the current instance.
 		/// </param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
-		public void JoinAppend(ReadOnlySpan<Byte> separator,
+		public void AppendJoin(ReadOnlySpan<Byte> separator,
 #if !NET9_0_OR_GREATER
 			params CString?[] values
 #else
 			CString?[] values
 #endif
 		)
-			=> this.JoinAppend(separator, values.AsSpan());
+			=> this.AppendJoin(separator, values.AsSpan());
 		/// <summary>
 		/// Concatenates the UTF-8 texts of the provided span, using the specified UTF-8 sequence separator between
 		/// each text, then appends the result to the current instance.
@@ -75,7 +75,7 @@ public partial class CString
 		/// A sequence that contains the UTF-8 texts to concatenate and append to the current instance.
 		/// </param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
-		public void JoinAppend(ReadOnlySpan<Byte> separator,
+		public void AppendJoin(ReadOnlySpan<Byte> separator,
 #if NET9_0_OR_GREATER
 			params ReadOnlySpan<CString?> values
 #else
@@ -111,10 +111,14 @@ public partial class CString
 		/// A sequence that contains the UTF-8 texts to concatenate and append to the current instance.
 		/// </param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
-		public void JoinAppend(ReadOnlySpan<Byte> separator, CStringSequence sequence)
+		public void AppendJoin(ReadOnlySpan<Byte> separator, CStringSequence sequence)
 		{
 			CStringSequence.Utf8View view = new(sequence, true);
+#if NET9_0_OR_GREATER
+			using CStringSequence.Utf8View.Enumerator enumerator = view.GetEnumerator();
+#else
 			CStringSequence.Utf8View.Enumerator enumerator = view.GetEnumerator();
+#endif
 			if (!enumerator.MoveNext()) return;
 #if NET9_0_OR_GREATER
 			using (this._lock.EnterScope())
@@ -176,35 +180,12 @@ public partial class CString
 		/// <param name="value">The read-only character span to append.</param>
 		public void Append(ReadOnlySpan<Char> value)
 		{
-			Int32 byteCount = Encoding.UTF8.GetByteCount(value);
-
 #if NET9_0_OR_GREATER
 			using (this._lock.EnterScope())
 #else
 			lock (this._lock)
 #endif
-			{
-				if (byteCount <= CString.stackallocByteThreshold)
-				{
-					Span<Byte> source = stackalloc Byte[byteCount];
-					Encoding.UTF8.GetBytes(value, source);
-					this._chunk = this._chunk.Append(source);
-					return;
-				}
-
-				Byte[] byteArray = ArrayPool<Byte>.Shared.Rent(byteCount);
-				try
-				{
-					Span<Byte> source = byteArray.AsSpan()[..byteCount];
-					Encoding.UTF8.GetBytes(value, source);
-					this._chunk = this._chunk.Append(source);
-					source.Clear();
-				}
-				finally
-				{
-					ArrayPool<Byte>.Shared.Return(byteArray);
-				}
-			}
+				this._chunk = this._chunk.Append(Encoding.UTF8.GetByteCount(value), value);
 		}
 		/// <summary>
 		/// Appends the default line terminator to the end of the current instance.
