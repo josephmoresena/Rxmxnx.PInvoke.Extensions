@@ -17,11 +17,6 @@ public partial class CString
 		/// <summary>
 		/// Threshold for stackalloc usage in bytes.
 		/// </summary>
-		private const Int32 stackallocByteThreshold = 256;
-
-		/// <summary>
-		/// Threshold for stackalloc usage in bytes.
-		/// </summary>
 		[ThreadStatic]
 		private static Int32 stackallocByteConsumed;
 
@@ -99,7 +94,7 @@ public partial class CString
 		internal static Boolean ConsumeStackBytes(Int32 stackRequired, ref Int32 stackConsumed)
 		{
 			if (stackRequired <= 0) return true; // No bytes to consume, return true.
-			if (JsonConverter.stackallocByteConsumed + stackRequired > JsonConverter.stackallocByteThreshold)
+			if (JsonConverter.stackallocByteConsumed + stackRequired > CString.stackallocByteThreshold)
 				return false; // Stackalloc threshold exceeded.
 			JsonConverter.stackallocByteConsumed += stackRequired;
 			stackConsumed += stackRequired; // Update the consumed bytes.

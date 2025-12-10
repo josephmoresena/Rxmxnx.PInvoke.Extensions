@@ -3,6 +3,11 @@
 public partial class CString
 {
 	/// <summary>
+	/// Threshold for stackalloc usage in bytes.
+	/// </summary>
+	private const Int32 stackallocByteThreshold = 256;
+
+	/// <summary>
 	/// Represents an empty UTF-8 byte array. This field is read-only.
 	/// </summary>
 	private static readonly Byte[] empty = [default,];

@@ -30,6 +30,10 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// Represents a null-pointer UTF-8 string. This field is read-only.
 	/// </summary>
 	public static readonly CString Zero = new(IntPtr.Zero, 0, true);
+	/// <inheritdoc cref="Environment.NewLine"/>
+	public static readonly CString NewLine = SystemInfo.IsWindows ?
+		new(ValueRegion<Byte>.Create(AotInfo.WindowsNewLine), true, true, 2) :
+		new(ValueRegion<Byte>.Create(AotInfo.NonWindowsNewLine), true, true, 1);
 
 	/// <summary>
 	/// Gets a value indicating whether the text in the current <see cref="CString"/> instance
@@ -132,11 +136,8 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	public Object Clone()
 	{
 		ReadOnlySpan<Byte> source = this;
-#if !NET5_0_OR_GREATER
-		Byte[] bytes = new Byte[this._length + 1];
-#else
-		Byte[] bytes = GC.AllocateUninitializedArray<Byte>(this._length + 1);
-#endif
+		Int32 bufferLength = this._length + 1;
+		Byte[] bytes = CString.CreateByteArray(bufferLength);
 		source.CopyTo(bytes);
 		bytes[^1] = default;
 		return new CString(bytes, true);

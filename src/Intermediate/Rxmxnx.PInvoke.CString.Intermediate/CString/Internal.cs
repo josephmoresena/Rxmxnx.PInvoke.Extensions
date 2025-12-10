@@ -124,6 +124,21 @@ public partial class CString
 		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, getSpan);
 		return new(data, true, false, length);
 	}
+	/// <summary>
+	/// Allocates a new byte buffer of the specified length.
+	/// </summary>
+	/// <param name="length">Length of the array.</param>
+	/// <returns>A new <see cref="Byte"/> array.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static Byte[] CreateByteArray(Int32 length)
+#if !NET5_0_OR_GREATER
+		=> new Byte[length];
+#else
+		=> GC.AllocateUninitializedArray<Byte>(length);
+#endif
 #if !PACKAGE
 	/// <summary>
 	/// Retrieves the internal binary data from a given <see cref="CString"/>.

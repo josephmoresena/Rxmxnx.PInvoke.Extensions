@@ -10,7 +10,7 @@ public partial class CString
 		/// <summary>
 		/// The default capacity of a <see cref="Builder"/>.
 		/// </summary>
-		internal const Int32 DefaultCapacity = 32;
+		internal const UInt16 DefaultCapacity = 32;
 
 		/// <summary>
 		/// Lock object.
@@ -21,8 +21,215 @@ public partial class CString
 		private readonly Object _lock = new();
 #endif
 		/// <summary>
+		/// Initial capacity.
+		/// </summary>
+		private readonly UInt16 _capacity;
+		/// <summary>
 		/// Current string chunk.
 		/// </summary>
 		private Chunk _chunk;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Builder"/> class.
+		/// </summary>
+		public Builder() : this(Builder.DefaultCapacity) { }
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Builder"/> class using the specified capacity.
+		/// </summary>
+		/// <param name="capacity">The suggested starting size of this instance.</param>
+		public Builder(UInt16 capacity)
+		{
+			this._capacity = capacity;
+			this._chunk = new(capacity);
+		}
+
+		/// <summary>
+		/// Concatenates the UTF-8 texts of the provided span, using the specified UTF-8 sequence separator between
+		/// each text, then appends the result to the current instance.
+		/// </summary>
+		/// <param name="separator">
+		/// The UTF-8 sequence to use as a separator. <paramref name="separator"/> is included in the joined text
+		/// only if <paramref name="values"/> has more than one element.
+		/// </param>
+		/// <param name="values">
+		/// A sequence that contains the UTF-8 texts to concatenate and append to the current instance.
+		/// </param>
+		/// <returns>A reference to this instance after the append operation has completed.</returns>
+		public void JoinAppend(ReadOnlySpan<Byte> separator,
+#if !NET9_0_OR_GREATER
+			params CString?[] values
+#else
+			CString?[] values
+#endif
+		)
+			=> this.JoinAppend(separator, values.AsSpan());
+		/// <summary>
+		/// Concatenates the UTF-8 texts of the provided span, using the specified UTF-8 sequence separator between
+		/// each text, then appends the result to the current instance.
+		/// </summary>
+		/// <param name="separator">
+		/// The UTF-8 sequence to use as a separator. <paramref name="separator"/> is included in the joined text
+		/// only if <paramref name="values"/> has more than one element.
+		/// </param>
+		/// <param name="values">
+		/// A sequence that contains the UTF-8 texts to concatenate and append to the current instance.
+		/// </param>
+		/// <returns>A reference to this instance after the append operation has completed.</returns>
+		public void JoinAppend(ReadOnlySpan<Byte> separator,
+#if NET9_0_OR_GREATER
+			params ReadOnlySpan<CString?> values
+#else
+			ReadOnlySpan<CString?> values
+#endif
+		)
+		{
+			ReadOnlySpan<CString?>.Enumerator enumerator = values.GetEnumerator();
+			if (!enumerator.MoveNext()) return;
+#if NET9_0_OR_GREATER
+			using (this._lock.EnterScope())
+#else
+			lock (this._lock)
+#endif
+			{
+				this._chunk = this._chunk.Append(enumerator.Current);
+				while (enumerator.MoveNext())
+				{
+					this._chunk = this._chunk.Append(separator);
+					this._chunk = this._chunk.Append(enumerator.Current);
+				}
+			}
+		}
+		/// <summary>
+		/// Concatenates the UTF-8 texts of the provided sequence, using the specified UTF-8 sequence separator between
+		/// each text, then appends the result to the current instance.
+		/// </summary>
+		/// <param name="separator">
+		/// The UTF-8 sequence to use as a separator. <paramref name="separator"/> is included in the joined text
+		/// only if <paramref name="sequence"/> has more than one element.
+		/// </param>
+		/// <param name="sequence">
+		/// A sequence that contains the UTF-8 texts to concatenate and append to the current instance.
+		/// </param>
+		/// <returns>A reference to this instance after the append operation has completed.</returns>
+		public void JoinAppend(ReadOnlySpan<Byte> separator, CStringSequence sequence)
+		{
+			CStringSequence.Utf8View view = new(sequence, true);
+			CStringSequence.Utf8View.Enumerator enumerator = view.GetEnumerator();
+			if (!enumerator.MoveNext()) return;
+#if NET9_0_OR_GREATER
+			using (this._lock.EnterScope())
+#else
+			lock (this._lock)
+#endif
+			{
+				this._chunk = this._chunk.Append(enumerator.Current);
+				while (enumerator.MoveNext())
+				{
+					this._chunk = this._chunk.Append(separator);
+					this._chunk = this._chunk.Append(enumerator.Current);
+				}
+			}
+		}
+		/// <summary>
+		/// Appends each non-empty UTF-8 text in <paramref name="sequence"/>.
+		/// </summary>
+		/// <param name="sequence">A UTF-8 text sequence to append.</param>
+		public void Append(CStringSequence sequence)
+		{
+			CStringSequence.Utf8View view = new(sequence, false);
+#if NET9_0_OR_GREATER
+			using (this._lock.EnterScope())
+#else
+			lock (this._lock)
+#endif
+			{
+				foreach (ReadOnlySpan<Byte> value in view)
+					this._chunk = this._chunk.Append(value);
+			}
+		}
+		/// <summary>
+		/// Appends a UTF-8 text to this instance.
+		/// </summary>
+		/// <param name="value">The read-only byte span to append.</param>
+		public void Append(CString value) => this.Append(value.AsSpan());
+		/// <summary>
+		/// Appends the UTF-8 representation of <paramref name="value"/>.
+		/// </summary>
+		/// <param name="value">The read-only character span to append.</param>
+		public void Append(String value) => this.Append(value.AsSpan());
+		/// <summary>
+		/// Appends the UTF-8 representation of a specified read-only byte span to this instance.
+		/// </summary>
+		/// <param name="value">The read-only byte span to append.</param>
+		public void Append(ReadOnlySpan<Byte> value)
+		{
+#if NET9_0_OR_GREATER
+			using (this._lock.EnterScope())
+#else
+			lock (this._lock)
+#endif
+				this._chunk = this._chunk.Append(value);
+		}
+		/// <summary>
+		/// Appends the UTF-8 representation of a specified read-only character span to this instance.
+		/// </summary>
+		/// <param name="value">The read-only character span to append.</param>
+		public void Append(ReadOnlySpan<Char> value)
+		{
+			Int32 byteCount = Encoding.UTF8.GetByteCount(value);
+
+#if NET9_0_OR_GREATER
+			using (this._lock.EnterScope())
+#else
+			lock (this._lock)
+#endif
+			{
+				if (byteCount <= CString.stackallocByteThreshold)
+				{
+					Span<Byte> source = stackalloc Byte[byteCount];
+					Encoding.UTF8.GetBytes(value, source);
+					this._chunk = this._chunk.Append(source);
+					return;
+				}
+
+				Byte[] byteArray = ArrayPool<Byte>.Shared.Rent(byteCount);
+				try
+				{
+					Span<Byte> source = byteArray.AsSpan()[..byteCount];
+					Encoding.UTF8.GetBytes(value, source);
+					this._chunk = this._chunk.Append(source);
+					source.Clear();
+				}
+				finally
+				{
+					ArrayPool<Byte>.Shared.Return(byteArray);
+				}
+			}
+		}
+		/// <summary>
+		/// Appends the default line terminator to the end of the current instance.
+		/// </summary>
+		/// <returns>A reference to this instance after the append operation has completed.</returns>
+		public void AppendLine()
+		{
+#if NET9_0_OR_GREATER
+			using (this._lock.EnterScope())
+#else
+			lock (this._lock)
+#endif
+				this._chunk = this._chunk.Append(CString.NewLine);
+		}
+		/// <summary>
+		/// Removes all units from the current <see cref="Builder"/> instance.
+		/// </summary>
+		public void Clear()
+		{
+#if NET9_0_OR_GREATER
+			using (this._lock.EnterScope())
+#else
+			lock (this._lock)
+#endif
+				this._chunk.Reset(this._capacity);
+		}
 	}
 }

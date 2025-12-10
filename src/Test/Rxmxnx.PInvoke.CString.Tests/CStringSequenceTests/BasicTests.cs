@@ -55,17 +55,17 @@ public sealed class BasicTests
 		PInvokeAssert.Equal(String.Concat(strings), seq.ToCString().ToString());
 		PInvokeAssert.NotSame(seqRef, seq);
 		PInvokeAssert.False(seqRef.Equals(default));
-		PInvokeAssert.False(seqRef.Equals(default(Object)));
-		PInvokeAssert.True(seqRef.Equals(seq));
-		PInvokeAssert.True(seqRef.Equals((Object)seq));
+		PInvokeAssert.False(seqRef?.Equals(default(Object)));
+		PInvokeAssert.True(seqRef?.Equals(seq));
+		PInvokeAssert.True(seqRef?.Equals((Object)seq));
 
 		PInvokeAssert.Equal(new(strings.ToList()), seq);
 		PInvokeAssert.Equal(new(values.ToList()), seq);
 
 		CStringSequence clone = (CStringSequence)seq.Clone();
-		PInvokeAssert.Equal(seqRef.Count, clone.Count);
-		PInvokeAssert.Equal(seqRef.ToString(), clone.ToString());
-		PInvokeAssert.NotSame(seqRef.ToString(), clone.ToString());
+		PInvokeAssert.Equal(seqRef?.Count, clone.Count);
+		PInvokeAssert.Equal(seqRef?.ToString(), clone.ToString());
+		PInvokeAssert.NotSame(seqRef?.ToString(), clone.ToString());
 
 		IEnumerator<CString> enumerator = (seq as IEnumerable<CString>).GetEnumerator();
 		enumerator.MoveNext();

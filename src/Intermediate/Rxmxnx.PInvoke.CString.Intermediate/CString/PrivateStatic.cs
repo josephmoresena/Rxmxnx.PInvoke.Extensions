@@ -112,11 +112,8 @@ public partial class CString
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Byte[] CreateRepeatedSequence(ReadOnlySpan<Byte> seq, Int32 count)
 	{
-#if !NET5_0_OR_GREATER
-		Byte[] result = new Byte[seq.Length * count + 1];
-#else
-		Byte[] result = GC.AllocateUninitializedArray<Byte>(seq.Length * count + 1);
-#endif
+		Int32 bufferLength = seq.Length * count + 1;
+		Byte[] result = CString.CreateByteArray(bufferLength);
 		for (Int32 i = 0; i < count; i++)
 			seq.CopyTo(result.AsSpan()[(seq.Length * i)..]);
 		result[^1] = default;
@@ -136,11 +133,8 @@ public partial class CString
 	private static Byte[] CreateRepeatedSequence(ReadOnlySpan<Char> seq, Int32 count)
 	{
 		Int32 utf8Length = Encoding.UTF8.GetByteCount(seq);
-#if !NET5_0_OR_GREATER
-		Byte[] result = new Byte[utf8Length * count + 1];
-#else
-		Byte[] result = GC.AllocateUninitializedArray<Byte>(utf8Length * count + 1);
-#endif
+		Int32 bufferLength = utf8Length * count + 1;
+		Byte[] result = CString.CreateByteArray(bufferLength);
 		Span<Byte> span = result.AsSpan();
 		Span<Byte> initial = span[..utf8Length];
 		_ = Encoding.UTF8.GetBytes(seq, initial);
