@@ -83,7 +83,11 @@ public partial class CString
 #endif
 		)
 		{
+#if NET10_0_OR_GREATER
+			using ReadOnlySpan<CString?>.Enumerator enumerator = values.GetEnumerator();
+#else
 			ReadOnlySpan<CString?>.Enumerator enumerator = values.GetEnumerator();
+#endif
 			if (!enumerator.MoveNext()) return this;
 #if NET9_0_OR_GREATER
 			using (this._lock.EnterScope())
