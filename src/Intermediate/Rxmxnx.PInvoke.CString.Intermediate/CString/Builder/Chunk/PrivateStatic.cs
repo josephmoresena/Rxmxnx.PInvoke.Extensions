@@ -126,6 +126,34 @@ public partial class CString
 				chunk.Insert(index, temp);
 				return bytes;
 			}
+#if NET8_0_OR_GREATER
+			/// <summary>
+			/// Appends a <see cref="IUtf8SpanFormattable"/> value to the sequence, allocating new chunks as needed.
+			/// </summary>
+			/// <typeparam name="T">A <see cref="IUtf8SpanFormattable"/> instance.</typeparam>
+			/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
+			/// <param name="value">A <see cref="IUtf8SpanFormattable"/> instance.</param>
+			/// <returns>A <see cref="Chunk"/> instance.</returns>
+			private static Chunk? AppendUtf8<T>(Chunk chunk, T value) where T : IUtf8SpanFormattable
+			{
+				Span<Byte> span = stackalloc Byte[CString.stackallocByteThreshold];
+				return value.TryFormat(span, out Int32 count, default, default) ? chunk.Append(span[..count]) : default;
+			}
+#endif
+#if NET6_0_OR_GREATER
+			/// <summary>
+			/// Appends a <see cref="ISpanFormattable"/> value to the sequence, allocating new chunks as needed.
+			/// </summary>
+			/// <typeparam name="T">A <see cref="ISpanFormattable"/> instance.</typeparam>
+			/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
+			/// <param name="value">A <see cref="ISpanFormattable"/> instance.</param>
+			/// <returns>A <see cref="Chunk"/> instance.</returns>
+			private static Chunk? AppendUtf16<T>(Chunk chunk, T value) where T : ISpanFormattable
+			{
+				Span<Char> span = stackalloc Char[CString.stackallocByteThreshold / 2];
+				return value.TryFormat(span, out Int32 count, default, default) ? chunk.Append(span[..count]) : default;
+			}
+#endif
 		}
 	}
 }

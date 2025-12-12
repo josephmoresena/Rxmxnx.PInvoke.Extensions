@@ -24,17 +24,17 @@ public partial class CString
 			return this;
 		}
 		/// <summary>
-		/// Appends a UTF-8 text to this instance.
+		/// Appends the UTF-8 text to this instance.
 		/// </summary>
 		/// <param name="value">The UTF-8 text to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
-		public Builder Append(CString value) => this.Append(value.AsSpan());
+		public Builder Append(CString? value) => !CString.IsNullOrEmpty(value) ? this.Append(value.AsSpan()) : this;
 		/// <summary>
-		/// Appends the UTF-8 representation of <paramref name="value"/>.
+		/// Appends the UTF-8 representation of the specified string.
 		/// </summary>
 		/// <param name="value">The read-only character span to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
-		public Builder Append(String value) => this.Append(value.AsSpan());
+		public Builder Append(String? value) => !String.IsNullOrEmpty(value) ? this.Append(value.AsSpan()) : this;
 		/// <summary>
 		/// Appends the specified UTF-8 units read-only span to this instance.
 		/// </summary>
@@ -42,6 +42,7 @@ public partial class CString
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
 		public Builder Append(ReadOnlySpan<Byte> value)
 		{
+			if (value.IsEmpty) return this;
 #if NET9_0_OR_GREATER
 			using (this._lock.EnterScope())
 #else
@@ -51,7 +52,7 @@ public partial class CString
 			return this;
 		}
 		/// <summary>
-		/// Appends the UTF-8 representation of the characters in a specified array to this instance.
+		/// Appends the UTF-8 representation of the characters in the specified array to this instance.
 		/// </summary>
 		/// <param name="value">The array of characters to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
@@ -71,12 +72,13 @@ public partial class CString
 			return this.Append(value.AsSpan());
 		}
 		/// <summary>
-		/// Appends the UTF-8 representation of the characters in a specified read-only span to this instance.
+		/// Appends the UTF-8 representation of the characters in the specified read-only span to this instance.
 		/// </summary>
 		/// <param name="value">The read-only span of characters to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
 		public Builder Append(ReadOnlySpan<Char> value)
 		{
+			if (value.IsEmpty) return this;
 #if NET9_0_OR_GREATER
 			using (this._lock.EnterScope())
 #else
@@ -86,7 +88,7 @@ public partial class CString
 			return this;
 		}
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified Boolean value to this instance.
+		/// Appends the UTF-8 representation of the specified Boolean value to this instance.
 		/// </summary>
 		/// <param name="value">The Boolean value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
@@ -101,13 +103,13 @@ public partial class CString
 			return this;
 		}
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified Boolean value to this instance.
+		/// Appends the UTF-8 representation of the specified Boolean value to this instance.
 		/// </summary>
 		/// <param name="value">The Boolean value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
 		public Builder Append(Boolean? value) => value.HasValue ? this.Append(value.Value) : this;
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified <see cref="Char"/> object to this instance.
+		/// Appends the UTF-8 representation of the specified <see cref="Char"/> object to this instance.
 		/// </summary>
 		/// <param name="value">The UTF-16-encoded code char to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
@@ -119,20 +121,22 @@ public partial class CString
 			lock (this._lock)
 #endif
 #if NET8_0_OR_GREATER
-				this._chunk = this._chunk.Append(value);
+				this._chunk = this._chunk.AppendUtf8(value);
+#elif NET6_0_OR_GREATER
+				this._chunk = this._chunk.AppendUtf16(value);
 #else
 				this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 			return this;
 		}
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified <see cref="Char"/> object to this instance.
+		/// Appends the UTF-8 representation of the specified <see cref="Char"/> object to this instance.
 		/// </summary>
 		/// <param name="value">The UTF-16-encoded code char to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
 		public Builder Append(Char? value) => value.HasValue ? this.Append(value.Value) : this;
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified decimal number to this instance.
+		/// Appends the UTF-8 representation of the specified decimal number to this instance.
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
@@ -144,14 +148,16 @@ public partial class CString
 			lock (this._lock)
 #endif
 #if NET8_0_OR_GREATER
-				this._chunk = this._chunk.Append(value);
+				this._chunk = this._chunk.AppendUtf8(value);
+#elif NET6_0_OR_GREATER
+				this._chunk = this._chunk.AppendUtf16(value);
 #else
 				this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 			return this;
 		}
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified double-precision floating-point number to this instance.
+		/// Appends the UTF-8 representation of the specified double-precision floating-point number to this instance.
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
@@ -163,20 +169,22 @@ public partial class CString
 			lock (this._lock)
 #endif
 #if NET8_0_OR_GREATER
-				this._chunk = this._chunk.Append(value);
+				this._chunk = this._chunk.AppendUtf8(value);
+#elif NET6_0_OR_GREATER
+				this._chunk = this._chunk.AppendUtf16(value);
 #else
 				this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 			return this;
 		}
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified double-precision floating-point number to this instance.
+		/// Appends the UTF-8 representation of the specified double-precision floating-point number to this instance.
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
 		public Builder Append(Double? value) => value.HasValue ? this.Append(value.Value) : this;
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified 16-bit signed integer to this instance.
+		/// Appends the UTF-8 representation of the specified 16-bit signed integer to this instance.
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
@@ -189,20 +197,22 @@ public partial class CString
 			lock (this._lock)
 #endif
 #if NET8_0_OR_GREATER
-				this._chunk = this._chunk.Append(value);
+				this._chunk = this._chunk.AppendUtf8(value);
+#elif NET6_0_OR_GREATER
+				this._chunk = this._chunk.AppendUtf16(value);
 #else
 				this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 			return this;
 		}
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified 16-bit signed integer to this instance.
+		/// Appends the UTF-8 representation of the specified 16-bit signed integer to this instance.
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
 		public Builder Append(Int16? value) => value.HasValue ? this.Append(value.Value) : this;
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified 32-bit signed integer to this instance.
+		/// Appends the UTF-8 representation of the specified 32-bit signed integer to this instance.
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
@@ -214,20 +224,22 @@ public partial class CString
 			lock (this._lock)
 #endif
 #if NET8_0_OR_GREATER
-				this._chunk = this._chunk.Append(value);
+				this._chunk = this._chunk.AppendUtf8(value);
+#elif NET6_0_OR_GREATER
+				this._chunk = this._chunk.AppendUtf16(value);
 #else
 				this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 			return this;
 		}
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified 32-bit signed integer to this instance.
+		/// Appends the UTF-8 representation of the specified 32-bit signed integer to this instance.
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
 		public Builder Append(Int32? value) => value.HasValue ? this.Append(value.Value) : this;
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified 64-bit signed integer to this instance.
+		/// Appends the UTF-8 representation of the specified 64-bit signed integer to this instance.
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
@@ -239,20 +251,22 @@ public partial class CString
 			lock (this._lock)
 #endif
 #if NET8_0_OR_GREATER
-				this._chunk = this._chunk.Append(value);
+				this._chunk = this._chunk.AppendUtf8(value);
+#elif NET6_0_OR_GREATER
+				this._chunk = this._chunk.AppendUtf16(value);
 #else
 				this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 			return this;
 		}
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified 64-bit signed integer to this instance.
+		/// Appends the UTF-8 representation of the specified 64-bit signed integer to this instance.
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
 		public Builder Append(Int64? value) => value.HasValue ? this.Append(value.Value) : this;
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified 8-bit signed integer to this instance.
+		/// Appends the UTF-8 representation of the specified 8-bit signed integer to this instance.
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
@@ -264,20 +278,22 @@ public partial class CString
 			lock (this._lock)
 #endif
 #if NET8_0_OR_GREATER
-				this._chunk = this._chunk.Append(value);
+				this._chunk = this._chunk.AppendUtf8(value);
+#elif NET6_0_OR_GREATER
+				this._chunk = this._chunk.AppendUtf16(value);
 #else
 				this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 			return this;
 		}
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified 8-bit signed integer to this instance.
+		/// Appends the UTF-8 representation of the specified 8-bit signed integer to this instance.
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
 		public Builder Append(SByte? value) => value.HasValue ? this.Append(value.Value) : this;
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified single-precision floating-point number to this instance.
+		/// Appends the UTF-8 representation of the specified single-precision floating-point number to this instance.
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
@@ -289,19 +305,23 @@ public partial class CString
 			lock (this._lock)
 #endif
 #if NET8_0_OR_GREATER
-				this._chunk = this._chunk.Append(value);
+				this._chunk = this._chunk.AppendUtf8(value);
+#elif NET6_0_OR_GREATER
+				this._chunk = this._chunk.AppendUtf16(value);
 #else
 				this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 			return this;
 		}
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified single-precision floating-point number to this instance.
+		/// Appends the UTF-8 representation of the specified single-precision floating-point number to this instance.
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
 		public Builder Append(Single? value) => value.HasValue ? this.Append(value.Value) : this;
-		/// <summary>Appends the UTF-8 representation of a specified 16-bit unsigned integer to this instance.</summary>
+		/// <summary>
+		/// Appends the UTF-8 representation of the specified 16-bit unsigned integer to this instance.
+		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
 		public Builder Append(UInt16 value)
@@ -312,18 +332,22 @@ public partial class CString
 			lock (this._lock)
 #endif
 #if NET8_0_OR_GREATER
-				this._chunk = this._chunk.Append(value);
+				this._chunk = this._chunk.AppendUtf8(value);
+#elif NET6_0_OR_GREATER
+				this._chunk = this._chunk.AppendUtf16(value);
 #else
 				this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 			return this;
 		}
-		/// <summary>Appends the UTF-8 representation of a specified 16-bit unsigned integer to this instance.</summary>
+		/// <summary>
+		/// Appends the UTF-8 representation of the specified 16-bit unsigned integer to this instance.
+		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
 		public Builder Append(UInt16? value) => value.HasValue ? this.Append(value.Value) : this;
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified 32-bit unsigned integer to this instance.
+		/// Appends the UTF-8 representation of the specified 32-bit unsigned integer to this instance.
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
@@ -335,20 +359,22 @@ public partial class CString
 			lock (this._lock)
 #endif
 #if NET8_0_OR_GREATER
-				this._chunk = this._chunk.Append(value);
+				this._chunk = this._chunk.AppendUtf8(value);
+#elif NET6_0_OR_GREATER
+				this._chunk = this._chunk.AppendUtf16(value);
 #else
 				this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 			return this;
 		}
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified 32-bit unsigned integer to this instance.
+		/// Appends the UTF-8 representation of the specified 32-bit unsigned integer to this instance.
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
 		public Builder Append(UInt32? value) => value.HasValue ? this.Append(value.Value) : this;
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified 64-bit unsigned integer to this instance.
+		/// Appends the UTF-8 representation of the specified 64-bit unsigned integer to this instance.
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
@@ -360,23 +386,27 @@ public partial class CString
 			lock (this._lock)
 #endif
 #if NET8_0_OR_GREATER
-				this._chunk = this._chunk.Append(value);
+				this._chunk = this._chunk.AppendUtf8(value);
+#elif NET6_0_OR_GREATER
+				this._chunk = this._chunk.AppendUtf16(value);
 #else
 				this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 			return this;
 		}
 		/// <summary>
-		/// Appends the UTF-8 representation of a specified 64-bit unsigned integer to this instance.
+		/// Appends the UTF-8 representation of the specified 64-bit unsigned integer to this instance.
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
 		public Builder Append(UInt64? value) => value.HasValue ? this.Append(value.Value) : this;
 		/// <summary>
-		/// Appends the UTF-8 unit or the UTF-8 representation of a specified 8-bit unsigned integer to this instance.
+		/// Appends the UTF-8 unit or the UTF-8 representation of the specified 8-bit unsigned integer to this instance.
 		/// </summary>
 		/// <param name="value">The value to append.</param>
-		/// <param name="asNumber">Indicates whether <paramref name="value"/> should be trated as a number instead of UTF-8 unit.</param>
+		/// <param name="asNumber">
+		/// Indicates whether <paramref name="value"/> should be treated as a number instead of UTF-8 unit.
+		/// </param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
 		public Builder Append(Byte value, Boolean asNumber = false)
 		{
@@ -386,7 +416,9 @@ public partial class CString
 			lock (this._lock)
 #endif
 #if NET8_0_OR_GREATER
-				this._chunk = asNumber ? this._chunk.Append(value) : this._chunk.Append([value,]);
+				this._chunk = asNumber ? this._chunk.AppendUtf8(value) : this._chunk.Append([value,]);
+#elif NET6_0_OR_GREATER
+				this._chunk = asNumber ? this._chunk.AppendUtf16(value) : this._chunk.Append([value,]);
 #else
 			{
 				this._chunk = asNumber ?
@@ -397,10 +429,12 @@ public partial class CString
 			return this;
 		}
 		/// <summary>
-		/// Appends the UTF-8 unit or the UTF-8 representation of a specified 8-bit unsigned integer to this instance.
+		/// Appends the UTF-8 unit or the UTF-8 representation of the specified 8-bit unsigned integer to this instance.
 		/// </summary>
 		/// <param name="value">The value to append.</param>
-		/// <param name="asNumber">Indicates whether <paramref name="value"/> should be trated as a number instead of UTF-8 unit.</param>
+		/// <param name="asNumber">
+		/// Indicates whether <paramref name="value"/> should be treated as a number instead of UTF-8 unit.
+		/// </param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
 		public Builder Append(Byte? value, Boolean asNumber = false)
 			=> value.HasValue ? this.Append(value.Value, asNumber) : this;

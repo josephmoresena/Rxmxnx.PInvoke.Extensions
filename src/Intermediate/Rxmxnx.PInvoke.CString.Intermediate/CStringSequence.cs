@@ -124,7 +124,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		=> other is not null && this._value.Equals(other._value) && this._lengths.SequenceEqual(other._lengths);
 
 	/// <inheritdoc/>
-	public override Boolean Equals(Object? obj) => obj is CStringSequence cstr && this.Equals(cstr);
+	public override Boolean Equals(Object? obj) => obj is CStringSequence seq && this.Equals(seq);
 	/// <inheritdoc/>
 	public override String ToString() => this._value;
 	/// <inheritdoc/>

@@ -53,20 +53,34 @@ public partial class CString
 			/// <typeparam name="T">A <see cref="IUtf8SpanFormattable"/> instance.</typeparam>
 			/// <param name="value">A <see cref="IUtf8SpanFormattable"/> instance.</param>
 			/// <returns>The chunk into which the final portion of <paramref name="value"/> was written.</returns>
-			public Chunk Append<T>(T value) where T : IUtf8SpanFormattable
+			public Chunk AppendUtf8<T>(T value) where T : IUtf8SpanFormattable, ISpanFormattable
 			{
-				if (value.TryFormat(this.GetAvailable(), out Int32 count, default, default))
-				{
-					this._count += count;
-					return this;
-				}
+				if (!value.TryFormat(this.GetAvailable(), out Int32 count, default, default))
+					return (this._buffer.Length - this._count) switch
+					{
+						< CString.stackallocByteThreshold when Chunk.AppendUtf8(this, value) is { } chunk => chunk,
+						_ => this.AppendUtf16(value),
+					};
 
-				if (this._buffer.Length - this._count < CString.stackallocByteThreshold)
-				{
-					Span<Byte> span = stackalloc Byte[CString.stackallocByteThreshold];
-					if (value.TryFormat(span, out count, default, default))
-						return this.Append(span[..count]);
-				}
+				this._count += count;
+				return this;
+			}
+#endif
+#if NET6_0_OR_GREATER
+			/// <summary>
+			/// Appends a <see cref="ISpanFormattable"/> value to the sequence, allocating new chunks as needed.
+			/// </summary>
+			/// <typeparam name="T">A <see cref="ISpanFormattable"/> instance.</typeparam>
+			/// <param name="value">A <see cref="ISpanFormattable"/> instance.</param>
+			/// <returns>The chunk into which the final portion of <paramref name="value"/> was written.</returns>
+#if !NET8_0_OR_GREATER
+			public Chunk AppendUtf16<T>(T value) where T : ISpanFormattable
+#else
+			private Chunk AppendUtf16<T>(T value) where T : ISpanFormattable
+#endif
+			{
+				if (Chunk.AppendUtf16(this, value) is { } chunk)
+					return chunk;
 
 				ReadOnlySpan<Char> chars = value.ToString();
 				return this.Append(Encoding.UTF8.GetByteCount(chars), chars);

@@ -58,10 +58,10 @@ public partial class CString
 			return this;
 		}
 		/// <summary>
-		/// Removes the specified range of characters from this instance.
+		/// Removes the specified range of UTF-8 from this instance.
 		/// </summary>
 		/// <param name="startIndex">The zero-based position in this instance where removal begins.</param>
-		/// <param name="length">The number of characters to remove.</param>
+		/// <param name="length">The number of UTF-8 units to remove.</param>
 		/// <returns>A reference to this instance after the excise operation has completed.</returns>
 		public Builder Remove(Int32 startIndex, Int32 length)
 		{
