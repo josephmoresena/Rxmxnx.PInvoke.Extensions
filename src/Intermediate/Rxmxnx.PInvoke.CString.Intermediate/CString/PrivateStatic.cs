@@ -207,4 +207,20 @@ public partial class CString
 	/// A non-null-terminated <see cref="CString"/> instance that contains a single <paramref name="c"/> character.
 	/// </returns>
 	private static CString Create(Byte c) => new([c,], false);
+	/// <summary>
+	/// Creates a managed region with <paramref name="utf16Text"/> UTF-8 representation.
+	/// </summary>
+	/// <param name="utf16Text">The UTF-16 text to initialize de region.</param>
+	/// <param name="utf8Length">Output. UTF-8 length of <paramref name="utf16Text"/>.</param>
+	/// <returns>The managed region with <paramref name="utf16Text"/> UTF-8 representation.</returns>
+	private static ValueRegion<Byte> CreateUtf8Region(String utf16Text, out Int32 utf8Length)
+	{
+		utf8Length = Encoding.UTF8.GetByteCount(utf16Text);
+
+		Byte[] array = CString.CreateByteArray(utf8Length + 1);
+		Span<Byte> bytes = array;
+		Encoding.UTF8.GetBytes(utf16Text, bytes);
+		bytes[^1] = default;
+		return ValueRegion<Byte>.Create(array);
+	}
 }

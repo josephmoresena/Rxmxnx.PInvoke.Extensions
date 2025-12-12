@@ -27,6 +27,8 @@ public partial class CString
 			/// <returns>The chunk into which the final portion of <paramref name="newData"/> was written.</returns>
 			public Chunk Append(ReadOnlySpan<Byte> newData)
 			{
+				if (newData.IsEmpty) return this;
+
 				Span<Byte> span = this.GetAvailable();
 				if (newData.Length <= span.Length)
 				{
@@ -40,27 +42,15 @@ public partial class CString
 			/// <summary>
 			/// Appends a span of chars to the sequence, allocating new chunks as needed.
 			/// </summary>
-			/// <param name="byteCount">UTF-8 bytes required to encode <paramref name="newData"/>.</param>
 			/// <param name="newData">Data to append.</param>
 			/// <returns>The chunk into which the final portion of <paramref name="newData"/> was written.</returns>
-			public Chunk Append(Int32 byteCount, ReadOnlySpan<Char> newData)
-			{
-				Span<Byte> span = this.GetAvailable();
-				if (byteCount <= span.Length)
-				{
-					this._count += Encoding.UTF8.GetBytes(newData, span);
-					return this;
-				}
-				CharSpanUtf8Split split = new(newData, byteCount, span.Length);
-				Int32 leftByteCount = Encoding.UTF8.GetBytes(split.Left, span);
-				this._count += leftByteCount;
-				return new Chunk(this).Append(byteCount - leftByteCount, split.Right);
-			}
+			public Chunk Append(ReadOnlySpan<Char> newData)
+				=> newData.IsEmpty ? this : this.Append(Encoding.UTF8.GetByteCount(newData), newData);
 #if NET8_0_OR_GREATER
 			/// <summary>
 			/// Appends a <see cref="IUtf8SpanFormattable"/> value to the sequence, allocating new chunks as needed.
 			/// </summary>
-			/// <typeparam name="T"></typeparam>
+			/// <typeparam name="T">A <see cref="IUtf8SpanFormattable"/> instance.</typeparam>
 			/// <param name="value">A <see cref="IUtf8SpanFormattable"/> instance.</param>
 			/// <returns>The chunk into which the final portion of <paramref name="value"/> was written.</returns>
 			public Chunk Append<T>(T value) where T : IUtf8SpanFormattable
@@ -94,10 +84,25 @@ public partial class CString
 				this._previous = default;
 			}
 			/// <summary>
-			/// Inserts <paramref name="newData"/> at the specified local <paramref name="index"/>, creating
-			/// additional chunks if necessary.
+			/// Inserts <paramref name="newData"/> at the specified index creating additional chunks if necessary.
 			/// </summary>
-			/// <param name="index">Local insertion index.</param>
+			/// <param name="index">Insertion index.</param>
+			/// <param name="newData">Chars to insert.</param>
+			public void Insert(Int32 index, ReadOnlySpan<Char> newData)
+			{
+				Int32 byteCount = Encoding.UTF8.GetByteCount(newData);
+				CharSpanUtf8Split split = new(newData, byteCount, CString.stackallocByteThreshold);
+				Int32 bytes = 0;
+				while (!split.Right.IsEmpty)
+				{
+					bytes += Chunk.InsertChars(this, index + bytes, split.Left);
+					split = new(split.Right, byteCount - bytes, CString.stackallocByteThreshold);
+				}
+			}
+			/// <summary>
+			/// Inserts <paramref name="newData"/> at the specified index creating additional chunks if necessary.
+			/// </summary>
+			/// <param name="index">Insertion index.</param>
 			/// <param name="newData">Bytes to insert.</param>
 			public void Insert(Int32 index, ReadOnlySpan<Byte> newData)
 			{
@@ -142,7 +147,7 @@ public partial class CString
 
 				endChunk._count = 0;
 				endChunk._previous = startChunk;
-				startChunk.Remove(startIndex, startChunk._count - 1);
+				startChunk.Remove(startIndex, startChunk._count - startIndex);
 			}
 			/// <summary>
 			/// Copies the units from a specified segment of this instance to a destination <see cref="Byte"/> span.

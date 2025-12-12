@@ -113,6 +113,19 @@ public partial class CString
 					destination = destination[..^source.Length];
 				} while (!destination.IsEmpty);
 			}
+			/// <summary>
+			/// Inserts <paramref name="chars"/> on <paramref name="chunk"/>.
+			/// </summary>
+			/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
+			/// <param name="index">Insertion index.</param>
+			/// <param name="chars">A read-only character span.</param>
+			private static Int32 InsertChars(Chunk chunk, Int32 index, ReadOnlySpan<Char> chars)
+			{
+				Span<Byte> temp = stackalloc Byte[CString.stackallocByteThreshold];
+				Int32 bytes = Encoding.UTF8.GetBytes(chars, temp);
+				chunk.Insert(index, temp);
+				return bytes;
+			}
 		}
 	}
 }

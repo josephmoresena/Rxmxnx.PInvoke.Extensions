@@ -123,6 +123,25 @@ public partial class CString
 					ArrayPool<Byte>.Shared.Return(tempArray);
 				}
 			}
+			/// <summary>
+			/// Appends a span of chars to the sequence, allocating new chunks as needed.
+			/// </summary>
+			/// <param name="byteCount">UTF-8 bytes required to encode <paramref name="newData"/>.</param>
+			/// <param name="newData">Data to append.</param>
+			/// <returns>The chunk into which the final portion of <paramref name="newData"/> was written.</returns>
+			private Chunk Append(Int32 byteCount, ReadOnlySpan<Char> newData)
+			{
+				Span<Byte> span = this.GetAvailable();
+				if (byteCount <= span.Length)
+				{
+					this._count += Encoding.UTF8.GetBytes(newData, span);
+					return this;
+				}
+				CharSpanUtf8Split split = new(newData, byteCount, span.Length);
+				Int32 leftByteCount = Encoding.UTF8.GetBytes(split.Left, span);
+				this._count += leftByteCount;
+				return new Chunk(this).Append(byteCount - leftByteCount, split.Right);
+			}
 		}
 	}
 }

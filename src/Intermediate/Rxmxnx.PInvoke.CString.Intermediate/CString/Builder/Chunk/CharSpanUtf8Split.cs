@@ -28,6 +28,8 @@ public partial class CString
 				/// <param name="maxLeftByteCount">Maximum UTF-8 bytes available to store left char span.</param>
 				public CharSpanUtf8Split(ReadOnlySpan<Char> chars, Int32 charsByteCount, Int32 maxLeftByteCount)
 				{
+					if (chars.IsEmpty) return;
+
 					Int32 utf8Count = 0;
 					Int32 leftCharCount =
 						CharSpanUtf8Split.GetInitialCharCount(chars.Length, charsByteCount, maxLeftByteCount);
