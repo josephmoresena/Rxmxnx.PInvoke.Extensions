@@ -169,26 +169,46 @@ public partial class CString
 		/// </summary>
 		/// <param name="reader">A <see cref="Utf8JsonReader"/> instance.</param>
 		/// <param name="buffer">Buffer to write to.</param>
+		/// <param name="clearUnused">Indicates whether the current unused bytes should be cleared.</param>
 		/// <returns>Adjustment value for text length.</returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static Int32 ReadBytes(Utf8JsonReader reader, Span<Byte> buffer)
+		internal static Int32 ReadBytes(Utf8JsonReader reader, Span<Byte> buffer, Boolean clearUnused)
 		{
-			Int32 adjustment = 0;
 #if NET7_0_OR_GREATER
 			Int32 nBytes = reader.CopyString(buffer);
-			Span<Byte> invalidBytes = buffer[nBytes..];
-			if (!invalidBytes.IsEmpty)
-				invalidBytes[0] = default; // Clears the first invalid byte.
-			adjustment -= invalidBytes.Length;
+			Span<Byte> unusedBytes = buffer[nBytes..];
 #else
 			if (reader.HasValueSequence)
 				reader.ValueSequence.CopyTo(buffer);
 			else
 				reader.ValueSpan.CopyTo(buffer);
-			adjustment -= JsonConverter.EscapeString(buffer);
+			Span<Byte> unusedBytes = buffer[^JsonConverter.EscapeString(buffer)..];
 #endif
-			return adjustment;
+			switch (clearUnused)
+			{
+				case false when !unusedBytes.IsEmpty:
+					unusedBytes[0] = default; // Clear only the first invalid byte in the buffer.
+					break;
+				case true when !unusedBytes.IsEmpty &&
+					JsonConverter.IsReusableBuffer(buffer.Length, unusedBytes.Length):
+					unusedBytes.Clear(); // Clear the rest of the buffer.
+					break;
+			}
+			return -unusedBytes.Length;
 		}
+		/// <summary>
+		/// Determines whether a buffer of size <paramref name="bufferLength"/> can be reused to store a UTF-8 encoded
+		/// text of length <paramref name="textLength"/> without causing excessive unused capacity.
+		/// </summary>
+		/// <param name="bufferLength">The total length of the buffer, in bytes.</param>
+		/// <param name="textLength">The length of the UTF-8 encoded text, in bytes.</param>
+		/// <returns>
+		/// <see langword="true"/> if the buffer can be reused to hold the UTF-8 text efficiently; otherwise,
+		/// <see langword="false"/>.
+		/// </returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		internal static Boolean IsReusableBuffer(Int32 bufferLength, Int32 textLength)
+			=> bufferLength - textLength <= bufferLength >> 4;
 
 #if !NET7_0_OR_GREATER
 		/// <summary>
@@ -266,7 +286,6 @@ public partial class CString
 				};
 				buffer[^nEscaped..].CopyTo(escaped); // Backup the rest of the buffer.
 				escaped.CopyTo(buffer[1..]); // Copy the rest of the buffer after the replacement.
-				buffer[nEscaped + 1] = default; // Remove the last character.
 			}
 			finally
 			{
@@ -277,8 +296,8 @@ public partial class CString
 		/// <summary>
 		/// Escapes a Unicode character in the buffer.
 		/// </summary>
-		/// <param name="buffer">A UTF-8 unescaped buffer.</param>
-		/// <param name="escapeIndex">Index of escape begin.</param>
+		/// <param name="buffer">Reference. A UTF-8 unescaped buffer.</param>
+		/// <param name="escapeIndex">Reference. Index of escape begin.</param>
 		/// <returns>The number of bytes that were not replaced.</returns>
 #if NET5_0_OR_GREATER
 		[SkipLocalsInit]
@@ -307,7 +326,6 @@ public partial class CString
 				Int32 result = baseLength - nBytes;
 
 				escaped.CopyTo(buffer[offset..]);
-				buffer.Slice(offset + nEscaped, result).Clear(); // Clear the rest of the buffer.
 				buffer = buffer[..^result];
 				return result;
 			}

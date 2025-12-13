@@ -102,7 +102,7 @@ public partial class CStringSequence
 					bytes = bytes[1..]; // Skip leading null.
 				}
 				charSpan[^1] = default; // Ensure the last character is null.
-				length += CString.JsonConverter.ReadBytes(reader, bytes[..length]);
+				length += CString.JsonConverter.ReadBytes(reader, bytes[..length], false);
 
 				Int32 nBytes = length + (leadingNull ? 1 : 0);
 				Int32 charsCount = nBytes / sizeof(Char) + nBytes % sizeof(Char);
