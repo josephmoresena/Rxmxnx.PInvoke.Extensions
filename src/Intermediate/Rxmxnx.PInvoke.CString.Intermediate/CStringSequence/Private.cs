@@ -43,6 +43,7 @@ public partial class CStringSequence
 	private IEnumerable<CString> GetValues(IntPtr ptr)
 	{
 		Int32 offset = 0;
+		// ReSharper disable once ForCanBeConvertedToForeach
 		for (Int32 index = 0; index < this._lengths.Length; index++)
 		{
 			Int32? length = this._lengths[index];

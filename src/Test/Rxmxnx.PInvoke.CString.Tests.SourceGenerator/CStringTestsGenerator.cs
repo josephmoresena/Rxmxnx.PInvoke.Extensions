@@ -9,9 +9,10 @@ public class CStringTestsGenerator : IIncrementalGenerator
 #if DEBUG
 		//if (!System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Launch();
 #endif
-		context.RegisterSourceOutput(context.CompilationProvider, (sourceProductionContext, compilation) =>
+		context.RegisterSourceOutput(context.CompilationProvider, (sourceProductionContext, _) =>
 		{
 			StringBuilder strBuild = new();
+			// ReSharper disable once UseRawString
 			strBuild.AppendLine(@"namespace Rxmxnx.PInvoke.Tests;
 
 internal static partial class TestSet
@@ -24,6 +25,7 @@ internal static partial class TestSet
 			CStringTestsGenerator.CreateUtf8Bytes(strBuild);
 			CStringTestsGenerator.CreateUtf8NullTerminatedBytes(strBuild);
 
+			// ReSharper disable once UseRawString
 			strBuild.AppendLine(@"    }
 }");
 

@@ -37,10 +37,12 @@ public partial class CString
 	/// If any element within <paramref name="values"/> is <see langword="null"/>, it is ignored during concatenation.
 	/// The operation can be cancelled at any time by triggering the <paramref name="cancellationToken"/>.
 	/// </remarks>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public static async Task<CString> ConcatAsync(CancellationToken cancellationToken, params CString?[] values)
 	{
 		ArgumentNullException.ThrowIfNull(values);
 		await using CStringConcatenator helper = new(cancellationToken);
+		// ReSharper disable once ForCanBeConvertedToForeach
 		for (Int32 index = 0; index < values.Length; index++)
 		{
 			CString? value = values[index];
@@ -79,10 +81,12 @@ public partial class CString
 	/// If any element within <paramref name="values"/> is <see langword="null"/>, it is ignored during concatenation.
 	/// The operation can be cancelled at any time by triggering the <paramref name="cancellationToken"/>.
 	/// </remarks>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public static async Task<CString> ConcatAsync(CancellationToken cancellationToken, params Byte[]?[] values)
 	{
 		ArgumentNullException.ThrowIfNull(values);
 		await using CStringConcatenator helper = new(cancellationToken);
+		// ReSharper disable once ForCanBeConvertedToForeach
 		for (Int32 index = 0; index < values.Length; index++)
 		{
 			Byte[]? value = values[index];

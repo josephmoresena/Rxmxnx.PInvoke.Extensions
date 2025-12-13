@@ -40,6 +40,7 @@ public partial class CString
 	/// If any element within <paramref name="values"/> is <see langword="null"/>, it is ignored
 	/// during concatenation.
 	/// </remarks>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public static CString Concat(
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<String?> values
@@ -88,10 +89,12 @@ public partial class CString
 	/// The operation can be cancelled at any time by triggering the <paramref name="cancellationToken"/>.
 	/// </remarks>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public static async Task<CString> ConcatAsync(CancellationToken cancellationToken, params String?[] values)
 	{
 		ArgumentNullException.ThrowIfNull(values);
 		await using StringConcatenator helper = new(cancellationToken);
+		// ReSharper disable once ForCanBeConvertedToForeach
 		for (Int32 index = 0; index < values.Length; index++)
 		{
 			String? value = values[index];

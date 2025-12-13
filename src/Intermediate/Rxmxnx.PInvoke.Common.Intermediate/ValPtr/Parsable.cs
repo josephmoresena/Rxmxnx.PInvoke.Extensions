@@ -40,6 +40,7 @@ public readonly partial struct ValPtr<T>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+	// ReSharper disable once OutParameterValueIsAlwaysDiscarded.Global
 	public static Boolean TryParse([NotNullWhen(true)] String? s, out ValPtr<T> result)
 	{
 		Unsafe.SkipInit(out result);
@@ -50,6 +51,7 @@ public readonly partial struct ValPtr<T>
 	[ExcludeFromCodeCoverage]
 #endif
 	public static Boolean TryParse([NotNullWhen(true)] String? s, NumberStyles style, IFormatProvider? provider,
+		// ReSharper disable once OutParameterValueIsAlwaysDiscarded.Global
 		out ValPtr<T> result)
 	{
 		Unsafe.SkipInit(out result);
@@ -60,6 +62,7 @@ public readonly partial struct ValPtr<T>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+	// ReSharper disable once OutParameterValueIsAlwaysDiscarded.Global
 	public static Boolean TryParse(ReadOnlySpan<Char> s, out ValPtr<T> result)
 	{
 		Unsafe.SkipInit(out result);
@@ -70,6 +73,7 @@ public readonly partial struct ValPtr<T>
 	[ExcludeFromCodeCoverage]
 #endif
 	public static Boolean TryParse(ReadOnlySpan<Char> s, NumberStyles style, IFormatProvider? provider,
+		// ReSharper disable once OutParameterValueIsAlwaysDiscarded.Global
 		out ValPtr<T> result)
 	{
 		Unsafe.SkipInit(out result);

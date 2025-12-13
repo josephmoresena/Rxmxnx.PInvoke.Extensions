@@ -34,6 +34,7 @@ public interface IFixedContext<T> : IReadOnlyFixedContext<T>, IFixedMemory<T>
 	/// ensuring that they are properly disposed of when no longer needed. It is crucial to call
 	/// <see cref="System.IDisposable.Dispose"/> to release these unmanaged resources and avoid memory leaks.
 	/// </remarks>
+	// ReSharper disable once PossibleInterfaceMemberAmbiguity
 	public new interface IDisposable : IFixedContext<T>, IFixedMemory<T>.IDisposable,
 		IReadOnlyFixedContext<T>.IDisposable;
 }

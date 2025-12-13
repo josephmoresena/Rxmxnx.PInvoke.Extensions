@@ -303,6 +303,7 @@ public static unsafe partial class NativeUtilities
 		MemoryHandle handle = mem.Pin();
 		return handle.Pointer == default ?
 			ReadOnlyFixedContext<TEnum>.EmptyDisposable :
+			// ReSharper disable once HeapView.BoxingAllocation
 			new ReadOnlyFixedContext<TEnum>(handle.Pointer, mem.Length).ToDisposable(handle);
 	}
 
@@ -358,8 +359,10 @@ public static unsafe partial class NativeUtilities
 	public static IntPtr? LoadNativeLib(String? libraryName, ref EventHandler? unloadEvent,
 		DllImportSearchPath? searchPath = default)
 	{
+		// ReSharper disable once HeapView.ClosureAllocation
 		IntPtr? handle = NativeUtilities.LoadNativeLib(libraryName, searchPath);
 		if (handle.HasValue)
+			// ReSharper disable once HeapView.DelegateAllocation
 			unloadEvent += (_, _) => NativeLibrary.Free(handle.Value);
 		return handle;
 	}

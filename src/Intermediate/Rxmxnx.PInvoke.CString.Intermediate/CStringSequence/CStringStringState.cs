@@ -18,7 +18,12 @@ public partial class CStringSequence
 		/// <summary>
 		/// Internal text UTF-8 length.
 		/// </summary>
-		public Int32 Utf8Length { get; } = Encoding.UTF8.GetByteCount(value);
+#if NET7_0_OR_GREATER
+		private Int32 Utf8Length { get; }
+#else
+		public Int32 Utf8Length { get; }
+#endif
+			= Encoding.UTF8.GetByteCount(value);
 
 #if NET7_0_OR_GREATER
 		Boolean IUtf8FunctionState<CStringStringState>.IsNullTerminated => false;

@@ -141,6 +141,7 @@ public partial class CString
 	/// by the separator UTF-8 text. -or- <see cref="Empty"/> if
 	/// <paramref name="value"/> has zero elements.
 	/// </returns>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public static unsafe CString Join(ReadOnlySpan<Byte> separator,
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<CString?> value
@@ -247,6 +248,7 @@ public partial class CString
 	/// by the separator UTF-8 text. -or- <see cref="Empty"/> if
 	/// <paramref name="value"/> has zero elements.
 	/// </returns>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public static CString Join(CString? separator,
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<CString?> value

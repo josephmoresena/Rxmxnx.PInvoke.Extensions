@@ -12,6 +12,7 @@ internal static class EnumNameHelper<TEnum> where TEnum : struct, Enum
 	/// Internal array.
 	/// </summary>
 #pragma warning disable S2743
+	// ReSharper disable once StaticMemberInGenericType
 	public static readonly ReadOnlyMemory<String> Values;
 #pragma warning restore S2743
 

@@ -31,6 +31,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// </summary>
 	public static readonly CString Zero = new(IntPtr.Zero, 0, true);
 	/// <inheritdoc cref="Environment.NewLine"/>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public static readonly CString NewLine = SystemInfo.IsWindows ?
 		new(ValueRegion<Byte>.Create(AotInfo.WindowsNewLine), true, true, 2) :
 		new(ValueRegion<Byte>.Create(AotInfo.NonWindowsNewLine), true, true, 1);
@@ -121,6 +122,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// indicated in the specified read-only span.
 	/// </summary>
 	/// <param name="source">A read-only span of UTF-16 characters to initialize the new instance.</param>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public CString(ReadOnlySpan<Char> source) : this(CString.CreateRepeatedSequence(source, 1)) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class that contains the UTF-8 string

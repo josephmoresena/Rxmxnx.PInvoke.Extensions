@@ -64,6 +64,7 @@ public interface IMutableReference : IMutableWrapper
 /// </summary>
 /// <typeparam name="T">Type of both wrapped and referenced value.</typeparam>
 /// <remarks>The provided reference is mutable, allowing changes to the value.</remarks>
+// ReSharper disable once PossibleInterfaceMemberAmbiguity
 public interface IMutableReference<T> : IMutableReference, IReferenceableWrapper<T>, IMutableWrapper<T>,
 	IReferenceable<T>
 {

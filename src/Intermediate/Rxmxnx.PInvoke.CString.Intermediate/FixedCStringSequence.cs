@@ -97,11 +97,7 @@ public readonly unsafe ref struct FixedCStringSequence
 	/// <summary>
 	/// Invalidates the current sequence.
 	/// </summary>
-	internal void Unload()
-	{
-		if (this._isValid is not null)
-			this._isValid.Value = false;
-	}
+	internal void Unload() => this._isValid?.Value = false;
 
 	/// <summary>
 	/// Retrieves the <see cref="ReadOnlyFixedContext{Byte}"/> for the element at the specified <paramref name="index"/>.

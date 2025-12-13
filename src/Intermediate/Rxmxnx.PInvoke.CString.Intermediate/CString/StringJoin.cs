@@ -145,6 +145,7 @@ public partial class CString
 	/// by the separator UTF-16 text. -or- <see cref="Empty"/> if
 	/// <paramref name="value"/> has zero elements.
 	/// </returns>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public static CString Join(String? separator,
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<String?> value

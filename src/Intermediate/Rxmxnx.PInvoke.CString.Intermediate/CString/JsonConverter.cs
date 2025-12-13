@@ -51,6 +51,23 @@ public partial class CString
 #endif
 
 		/// <summary>
+		/// Reads and converts the JSON to type <see cref="CString"/>.
+		/// </summary>
+		/// <param name="reader">The reader.</param>
+		/// <returns>The converted value.</returns>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
+		// ReSharper disable once MemberCanBePrivate.Global
+		public static CString? Read(Utf8JsonReader reader)
+		{
+			ValidationUtilities.ThrowIfNotString(reader.TokenType);
+			if (reader.TokenType is JsonTokenType.Null) return default;
+
+			Boolean isEmpty = (reader.HasValueSequence ? reader.ValueSequence.Length : reader.ValueSpan.Length) <= 0;
+			return isEmpty ? CString.Empty : new(reader);
+		}
+		/// <summary>
 		/// Writes a UTF-8 text bytes as JSON string.
 		/// </summary>
 		/// <param name="writer">The writer to write to.</param>
@@ -108,8 +125,7 @@ public partial class CString
 			arr = ArrayPool<T>.Shared.Rent(length); // Rent an array of the specified length.
 
 			Span<T> result = arr.AsSpan()[..length];
-			if (clear)
-				result.Clear(); // Clears the usable span.
+			if (clear) result.Clear(); // Clear the usable span.
 			return result;
 		}
 		/// <summary>
@@ -174,22 +190,6 @@ public partial class CString
 			return adjustment;
 		}
 
-		/// <summary>
-		/// Reads and converts the JSON to type <see cref="CString"/>.
-		/// </summary>
-		/// <param name="reader">The reader.</param>
-		/// <returns>The converted value.</returns>
-#if !PACKAGE
-		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
-#endif
-		private static CString? Read(Utf8JsonReader reader)
-		{
-			ValidationUtilities.ThrowIfNotString(reader.TokenType);
-			if (reader.TokenType is JsonTokenType.Null) return default;
-
-			Boolean isEmpty = (reader.HasValueSequence ? reader.ValueSequence.Length : reader.ValueSpan.Length) <= 0;
-			return isEmpty ? CString.Empty : new(reader);
-		}
 #if !NET7_0_OR_GREATER
 		/// <summary>
 		/// Escapes the string in the buffer.

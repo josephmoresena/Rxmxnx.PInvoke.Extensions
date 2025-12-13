@@ -10,7 +10,9 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 	/// <summary>
 	/// Gets the number of non-empty <see cref="CString"/> instances contained in this <see cref="CStringSequence"/>.
 	/// </summary>
+	// ReSharper disable once ConvertToAutoPropertyWhenPossible
 	public Int32 NonEmptyCount => this._nonEmptyCount;
+
 	Int32 IEnumerableSequence<CString>.GetSize() => this._lengths.Length;
 	CString IEnumerableSequence<CString>.GetItem(Int32 index) => this[index];
 #if PACKAGE && !NETCOREAPP

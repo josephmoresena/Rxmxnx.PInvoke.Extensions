@@ -25,6 +25,7 @@ public partial class NativeUtilities
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+	// ReSharper disable once MemberCanBePrivate.Global
 	public static Iso639P1 GetIso639P1(CultureInfo culture)
 	{
 		try

@@ -73,6 +73,7 @@ public static partial class AotInfo
 
 				return typeBuilder.CreateType() is { } type && Activator.CreateInstance(type) is { } obj &&
 					type.Assembly.IsDynamic &&
+					// ReSharper disable once HeapView.BoxingAllocation
 					type.GetMethod(methodBuilder.Name)?.Invoke(obj, [input,]) is { } result &&
 					(input + 1 > 0 ? obj.Equals(result) : type.Equals(result));
 			}

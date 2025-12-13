@@ -39,7 +39,8 @@ public interface IReadOnlyFixedMemory : IFixedPointer
 	/// ensuring that they are properly disposed of when no longer needed. It is crucial to call
 	/// <see cref="System.IDisposable.Dispose"/> to release these unmanaged resources and avoid memory leaks.
 	/// </remarks>
-	public new interface IDisposable : IReadOnlyFixedMemory, IFixedPointer.IDisposable { }
+	// ReSharper disable once PossibleInterfaceMemberAmbiguity
+	public new interface IDisposable : IReadOnlyFixedMemory, IFixedPointer.IDisposable;
 }
 
 /// <summary>
@@ -67,5 +68,6 @@ public interface IReadOnlyFixedMemory<T> : IReadOnlyFixedMemory
 	/// ensuring that they are properly disposed of when no longer needed. It is crucial to call
 	/// <see cref="System.IDisposable.Dispose"/> to release these unmanaged resources and avoid memory leaks.
 	/// </remarks>
+	// ReSharper disable once PossibleInterfaceMemberAmbiguity
 	public new interface IDisposable : IReadOnlyFixedMemory<T>, IReadOnlyFixedMemory.IDisposable;
 }

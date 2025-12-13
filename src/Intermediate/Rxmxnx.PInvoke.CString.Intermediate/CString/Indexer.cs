@@ -23,6 +23,7 @@ public partial class CString : IEnumerableSequence<Byte>
 	/// Gets the number of bytes in the current <see cref="CString"/> object.
 	/// </summary>
 	/// <value>The number of bytes in the current <see cref="CString"/>.</value>
+	// ReSharper disable once ConvertToAutoPropertyWhenPossible
 	public Int32 Length => this._length;
 
 	Int32 IEnumerableSequence<Byte>.GetSize() => this._length;
