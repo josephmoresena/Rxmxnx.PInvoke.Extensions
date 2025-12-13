@@ -143,6 +143,9 @@ public unsafe partial class CStringSequence
 		/// </summary>
 		/// <param name="source">A <see cref="CStringSequence"/> instance.</param>
 		/// <param name="arrayBuffer">Buffer of output array.</param>
+#if NET5_0_OR_GREATER
+		[SkipLocalsInit]
+#endif
 		private static void InitializeNonEmptyUtf8Array(CStringSequence source, Span<ReadOnlyValPtr<Byte>> arrayBuffer)
 		{
 			ReadOnlyValPtr<Byte> valPtr = InputMarshaller.GetAddress(in source.GetPinnableReference());

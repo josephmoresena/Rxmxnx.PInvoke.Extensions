@@ -176,6 +176,9 @@ public partial class CString
 	/// <param name="reader">A <see cref="Utf8JsonReader"/> instance.</param>
 	/// <param name="data">Output. A <see cref="ValueRegion{Byte}"/> instance.</param>
 	/// <returns>Read UTF-8 text length.</returns>
+#if NET7_0_OR_GREATER
+	[SkipLocalsInit]
+#endif
 	private static Int32 Read(Utf8JsonReader reader, out ValueRegion<Byte> data)
 	{
 		Int32 stackConsumed = 0;
@@ -183,6 +186,7 @@ public partial class CString
 		try
 		{
 			Int32 length = JsonConverter.GetLength(reader);
+			// Since .NET 7.0, the resulting span is left uninitialized.
 			Span<Byte> span = JsonConverter.ConsumeStackBytes(length, ref stackConsumed) ?
 				stackalloc Byte[length] :
 				JsonConverter.RentArray(length, out byteArray);

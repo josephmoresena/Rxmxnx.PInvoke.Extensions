@@ -331,7 +331,8 @@ public sealed class BasicTests
 		PInvokeAssert.False(cstr.IsSegmented);
 		PInvokeAssert.False(CString.IsNullOrEmpty(cstr));
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
-		BasicTests.AssertGetBytesException(cstr);
+		// Now String -> CString, uses Byte[] buffer
+		PInvokeAssert.Equal(cstr.Length + 1, CString.GetBytes(cstr).Length);
 	}
 	private static unsafe void AssertFromNullTerminatedBytes(CString cstr)
 	{

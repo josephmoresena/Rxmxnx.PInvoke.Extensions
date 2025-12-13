@@ -84,9 +84,7 @@ public partial class CString
 				this._count = start + source.Length;
 				if (source.Length <= CString.stackallocByteThreshold)
 				{
-					Span<Byte> buffer = stackalloc Byte[source.Length];
-					source.CopyTo(buffer);
-					buffer.CopyTo(this._buffer.AsSpan()[start..]);
+					Chunk.CopyBytes(source, this._buffer.AsSpan()[start..]);
 					return;
 				}
 				if (start == 0)

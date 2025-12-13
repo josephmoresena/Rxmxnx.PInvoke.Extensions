@@ -10,10 +10,19 @@ namespace Rxmxnx.PInvoke;
 public partial class CString
 {
 	/// <summary>
-	/// Json converter for <see cref="CString"/> class.
+	/// JSON converter for <see cref="CString"/> class.
 	/// </summary>
 	public sealed class JsonConverter : JsonConverter<CString>
 	{
+		/// <summary>
+		/// Specifies whether the rented span is cleared by default before use.
+		/// </summary>
+#if NET7_0_OR_GREATER
+		private const Boolean clearArray = false;
+#else
+		private const Boolean clearArray = true;
+#endif
+
 		/// <summary>
 		/// Threshold for stackalloc usage in bytes.
 		/// </summary>
@@ -41,22 +50,6 @@ public partial class CString
 			                       options.IgnoreNullValues);
 #endif
 
-		/// <summary>
-		/// Reads and converts the JSON to type <see cref="CString"/>.
-		/// </summary>
-		/// <param name="reader">The reader.</param>
-		/// <returns>The converted value.</returns>
-#if !PACKAGE
-		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
-#endif
-		public static CString? Read(Utf8JsonReader reader)
-		{
-			ValidationUtilities.ThrowIfNotString(reader.TokenType);
-			if (reader.TokenType is JsonTokenType.Null) return default;
-
-			Boolean isEmpty = (reader.HasValueSequence ? reader.ValueSequence.Length : reader.ValueSpan.Length) <= 0;
-			return isEmpty ? CString.Empty : new(reader);
-		}
 		/// <summary>
 		/// Writes a UTF-8 text bytes as JSON string.
 		/// </summary>
@@ -106,14 +99,17 @@ public partial class CString
 		/// <typeparam name="T">Type of the array elements.</typeparam>
 		/// <param name="length">Required length of the array to rent.</param>
 		/// <param name="arr">Output. Rented array.</param>
+		/// <param name="clear">Indicates whether the array is required to be cleared.</param>
 		/// <returns>A span of the rented array with the specified length, cleared.</returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static Span<T> RentArray<T>(Int32 length, out T[]? arr) where T : unmanaged
+		internal static Span<T> RentArray<T>(Int32 length, out T[]? arr, Boolean clear = JsonConverter.clearArray)
+			where T : unmanaged
 		{
 			arr = ArrayPool<T>.Shared.Rent(length); // Rent an array of the specified length.
 
 			Span<T> result = arr.AsSpan()[..length];
-			result.Clear();
+			if (clear)
+				result.Clear(); // Clears the usable span.
 			return result;
 		}
 		/// <summary>
@@ -164,7 +160,10 @@ public partial class CString
 			Int32 adjustment = 0;
 #if NET7_0_OR_GREATER
 			Int32 nBytes = reader.CopyString(buffer);
-			adjustment -= buffer.Length - nBytes;
+			Span<Byte> invalidBytes = buffer[nBytes..];
+			if (!invalidBytes.IsEmpty)
+				invalidBytes[0] = default; // Clears the first invalid byte.
+			adjustment -= invalidBytes.Length;
 #else
 			if (reader.HasValueSequence)
 				reader.ValueSequence.CopyTo(buffer);
@@ -175,6 +174,22 @@ public partial class CString
 			return adjustment;
 		}
 
+		/// <summary>
+		/// Reads and converts the JSON to type <see cref="CString"/>.
+		/// </summary>
+		/// <param name="reader">The reader.</param>
+		/// <returns>The converted value.</returns>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
+		private static CString? Read(Utf8JsonReader reader)
+		{
+			ValidationUtilities.ThrowIfNotString(reader.TokenType);
+			if (reader.TokenType is JsonTokenType.Null) return default;
+
+			Boolean isEmpty = (reader.HasValueSequence ? reader.ValueSequence.Length : reader.ValueSpan.Length) <= 0;
+			return isEmpty ? CString.Empty : new(reader);
+		}
 #if !NET7_0_OR_GREATER
 		/// <summary>
 		/// Escapes the string in the buffer.
@@ -225,6 +240,9 @@ public partial class CString
 		/// Escapes a UTF-8 unit in the buffer.
 		/// </summary>
 		/// <param name="buffer">A UTF-8 unescaped buffer.</param>
+#if NET5_0_OR_GREATER
+		[SkipLocalsInit]
+#endif
 		private static void EscapeUnit(Span<Byte> buffer)
 		{
 			Int32 stackConsumed = 0;
@@ -235,7 +253,7 @@ public partial class CString
 				Span<Byte> escaped = JsonConverter.BackupEscaped(
 					JsonConverter.ConsumeStackBytes(nEscaped, ref stackConsumed) ?
 						stackalloc Byte[nEscaped] :
-						JsonConverter.RentArray(nEscaped, out byteArray), buffer[2..]);
+						JsonConverter.RentArray(nEscaped, out byteArray, false), buffer[2..]);
 				buffer[0] = buffer[1] switch
 				{
 					(Byte)'n' => (Byte)'\n',
@@ -262,6 +280,9 @@ public partial class CString
 		/// <param name="buffer">A UTF-8 unescaped buffer.</param>
 		/// <param name="escapeIndex">Index of escape begin.</param>
 		/// <returns>The number of bytes that were not replaced.</returns>
+#if NET5_0_OR_GREATER
+		[SkipLocalsInit]
+#endif
 		private static Int32 EscapeUnicode(ref Span<Byte> buffer, ref Int32 escapeIndex)
 		{
 			Int32 stackConsumed = 0;
@@ -274,7 +295,7 @@ public partial class CString
 				Span<Byte> escaped = JsonConverter.BackupEscaped(
 					JsonConverter.ConsumeStackBytes(nEscaped, ref stackConsumed) ?
 						stackalloc Byte[nEscaped] :
-						JsonConverter.RentArray(nEscaped, out byteArray), buffer[(escapeIndex + baseLength)..]);
+						JsonConverter.RentArray(nEscaped, out byteArray, false), buffer[(escapeIndex + baseLength)..]);
 #if NETCOREAPP
 				Rune rune = JsonConverter.GetEscapeRune(buffer, ref escapeIndex, low, ref baseLength);
 				Int32 nBytes = rune.EncodeToUtf8(buffer[escapeIndex..]);
