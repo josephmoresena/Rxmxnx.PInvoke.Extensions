@@ -190,17 +190,15 @@ public partial class CString
 			byteArray = CString.CreateByteArray(length + 1);
 #else
 			byteArray = GC.AllocateUninitializedArray<Byte>(length + 1);
+		span[^1] = default; // Clear the end of the buffer.
 #endif
-
 		length += JsonConverter.ReadBytes(reader, span[..length], byteArray is not null);
 		if (byteArray is null || !JsonConverter.IsReusableBuffer(byteArray.Length, byteArray.Length))
 		{
 			// Allocate a new array sized to fit the UTF-8 data.
 			byteArray = CString.CreateByteArray(length + 1);
 			// Copy the valid UTF-8 data into the new buffer.
-			span[..length].CopyTo(byteArray.AsSpan());
-			// Clear the end of the new buffer.
-			byteArray[^1] = default;
+			span[..byteArray.Length].CopyTo(byteArray.AsSpan());
 		}
 
 		data = ValueRegion<Byte>.Create(byteArray);
