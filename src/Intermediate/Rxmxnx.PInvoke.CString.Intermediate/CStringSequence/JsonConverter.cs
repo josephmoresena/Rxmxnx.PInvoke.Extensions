@@ -95,7 +95,7 @@ public partial class CStringSequence
 				Int32 nChar = length / sizeof(Char) + 1;
 				// Since .NET 7.0, the resulting charSpan is left uninitialized.
 				Span<Char> charSpan = StackAllocationHelper.ConsumeStackBytes(nChar * 2, ref stackConsumed) ?
-					stackalloc Char[length / sizeof(Char) + 1] :
+					stackalloc Char[nChar] :
 					StackAllocationHelper.RentArray(nChar, out charArray, CString.JsonConverter.ClearArray);
 				Span<Byte> bytes = MemoryMarshal.AsBytes(charSpan);
 
