@@ -6,16 +6,6 @@ public partial class CString
 	/// Represents an empty UTF-8 byte array. This field is read-only.
 	/// </summary>
 	private static readonly Byte[] empty = [default,];
-	/// <summary>
-	/// An instance of <see cref="EqualsDelegate"/> for native comparison.
-	/// Optimized for either 32 or 64-bit processes.
-	/// </summary>
-	/// <remarks>
-	/// The purpose of initializing the <c>equals</c> delegate is to allow an optimized comparison
-	/// between UTF-8 strings in both 32 and 64-bit architectures by comparing 4 or 8 bytes
-	/// respectively.
-	/// </remarks>
-	private static readonly EqualsDelegate equals = CString.GetEquals();
 
 	/// <summary>
 	/// Delegate for comparing two <see cref="ReadOnlySpan{Byte}"/> instances for equality.

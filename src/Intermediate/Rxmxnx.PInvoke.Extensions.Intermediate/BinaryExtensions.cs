@@ -37,11 +37,15 @@ public static unsafe partial class BinaryExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static T ToValue<T>(this ReadOnlySpan<Byte> span) where T : unmanaged
 	{
-		Span<Byte> result = stackalloc Byte[sizeof(T)];
-		Int32 bytesToCopy = Math.Min(result.Length, span.Length);
+		if (span.IsEmpty) return default;
+		ref Byte refByte = ref MemoryMarshal.GetReference(span);
+		if (sizeof(T) == Math.Min(sizeof(T), span.Length))
+			return Unsafe.ReadUnaligned<T>(ref refByte);
 
-		span[..bytesToCopy].CopyTo(result);
-		return MemoryMarshal.Read<T>(result);
+		T result = default;
+		Span<Byte> resultBytes = MemoryMarshal.CreateSpan(ref Unsafe.As<T, Byte>(ref result), span.Length);
+		span.CopyTo(resultBytes);
+		return result;
 	}
 	/// <summary>
 	/// Retrieves a read-only reference to a <typeparamref name="T"/> value from the given read-only byte span.

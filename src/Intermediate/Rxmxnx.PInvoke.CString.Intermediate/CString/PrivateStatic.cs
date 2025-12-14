@@ -39,47 +39,6 @@ public partial class CString
 	}
 
 	/// <summary>
-	/// Retrieves an instance of the <see cref="EqualsDelegate"/> optimized for the current
-	/// process' bitness.
-	/// </summary>
-	/// <returns>An instance of the <see cref="EqualsDelegate"/>.</returns>
-	/// <remarks>
-	/// This method selects the appropriate version of the Equals method to compare UTF-8
-	/// strings in a manner that is optimized for the current machine's architecture
-	/// (32 or 64 bit).
-	/// </remarks>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static EqualsDelegate GetEquals()
-		=> Environment.Is64BitProcess ? CString.Equals<Int64> : CString.Equals<Int32>;
-	/// <summary>
-	/// Compares two ReadOnlySpan instances for equality, treating their byte data as
-	/// <typeparamref name="TInteger"/> for faster comparison.
-	/// </summary>
-	/// <typeparam name="TInteger">
-	/// A ValueType which is used to interpret the byte data for comparison, such as
-	/// <see cref="Int32"/> or <see cref="Int64"/>.
-	/// </typeparam>
-	/// <param name="current">The first ReadOnlySpan instance to compare.</param>
-	/// <param name="other">The second ReadOnlySpan instance to compare.</param>
-	/// <returns>
-	/// <see langword="true"/> if both read-only instances have the same length and contain the same
-	/// byte data, otherwise <see langword="false"/>.
-	/// </returns>
-	private static unsafe Boolean Equals<TInteger>(ReadOnlySpan<Byte> current, ReadOnlySpan<Byte> other)
-		where TInteger : unmanaged, IEquatable<TInteger>
-	{
-		if (current.Length != other.Length) return false;
-		ReadOnlySpan<TInteger> currentIntegers = MemoryMarshal.Cast<Byte, TInteger>(current);
-		ReadOnlySpan<TInteger> otherIntegers = MemoryMarshal.Cast<Byte, TInteger>(other);
-
-		if (!currentIntegers.SequenceEqual(otherIntegers)) return false;
-		Int32 binaryOffset = currentIntegers.Length * sizeof(TInteger);
-		return current[binaryOffset..].SequenceEqual(other[binaryOffset..]);
-	}
-	/// <summary>
 	/// Determines if a given read-only span of bytes represents a null-terminated UTF-8 string.
 	/// </summary>
 	/// <param name="data">The read-only span of bytes to check.</param>

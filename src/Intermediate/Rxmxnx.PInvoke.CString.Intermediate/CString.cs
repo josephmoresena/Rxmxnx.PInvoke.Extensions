@@ -150,7 +150,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	{
 		if (other is null) return false;
 		if (other.IsZero) return this.IsZero;
-		return !this.IsZero && CString.equals(this, other);
+		return !this.IsZero && this.AsSpan().SequenceEqual(other);
 	}
 	/// <summary>
 	/// Determines whether the current <see cref="CString"/> and a specified <see cref="String"/>
@@ -162,7 +162,8 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
 	/// </returns>
 	public Boolean Equals([NotNullWhen(true)] String? other)
-		=> other is not null && !this.IsZero && StringUtf8Comparator.OrdinalComparator.TextEquals(this, other);
+		=> other is not null && !this.IsZero &&
+			StringUtf8Comparator.OrdinalComparator.TextEquals(this, other.AsSpan(), other);
 	/// <summary>
 	/// Determines whether the current <see cref="CString"/> and a specified <see cref="CString"/>
 	/// have the same value.
@@ -182,7 +183,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 		if (value.IsZero) return this.IsZero;
 		if (this.IsZero) return false;
 		return comparisonType is StringComparison.Ordinal ?
-			CString.equals(this, value) :
+			this.AsSpan().SequenceEqual(value) :
 			CStringUtf8Comparator.Create(comparisonType).TextEquals(this, value);
 	}
 	/// <summary>
@@ -204,7 +205,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 		StringUtf8Comparator comparator = comparisonType is StringComparison.Ordinal ?
 			StringUtf8Comparator.OrdinalComparator :
 			StringUtf8Comparator.Create(comparisonType);
-		return comparator.TextEquals(this, value);
+		return comparator.TextEquals(this, value.AsSpan(), value);
 	}
 
 	/// <inheritdoc/>
