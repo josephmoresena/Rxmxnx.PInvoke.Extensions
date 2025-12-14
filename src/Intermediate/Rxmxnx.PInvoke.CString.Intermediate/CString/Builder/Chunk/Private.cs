@@ -82,7 +82,7 @@ public partial class CString
 				ReadOnlySpan<Byte> source = this._buffer.AsSpan()[end..this._count];
 
 				this._count = start + source.Length;
-				if (source.Length <= CString.stackallocByteThreshold)
+				if (source.Length <= StackAllocationHelper.StackallocByteThreshold)
 				{
 					Chunk.CopyBytes(source, this._buffer.AsSpan()[start..]);
 					return;

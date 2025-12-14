@@ -58,7 +58,8 @@ public partial class CString
 				if (!value.TryFormat(this.GetAvailable(), out Int32 count, default, default))
 					return (this._buffer.Length - this._count) switch
 					{
-						< CString.stackallocByteThreshold when Chunk.AppendUtf8(this, value) is { } chunk => chunk,
+						< StackAllocationHelper.StackallocByteThreshold when Chunk.AppendUtf8(this, value) is { } chunk
+							=> chunk,
 						_ => this.AppendUtf16(value),
 					};
 
@@ -105,12 +106,12 @@ public partial class CString
 			public void Insert(Int32 index, ReadOnlySpan<Char> newData)
 			{
 				Int32 byteCount = Encoding.UTF8.GetByteCount(newData);
-				CharSpanUtf8Split split = new(newData, byteCount, CString.stackallocByteThreshold);
+				CharSpanUtf8Split split = new(newData, byteCount, StackAllocationHelper.StackallocByteThreshold);
 				Int32 bytes = 0;
 				while (!split.Right.IsEmpty)
 				{
 					bytes += Chunk.InsertChars(this, index + bytes, split.Left);
-					split = new(split.Right, byteCount - bytes, CString.stackallocByteThreshold);
+					split = new(split.Right, byteCount - bytes, StackAllocationHelper.StackallocByteThreshold);
 				}
 			}
 			/// <summary>

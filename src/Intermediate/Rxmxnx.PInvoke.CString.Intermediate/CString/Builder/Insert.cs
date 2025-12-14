@@ -437,7 +437,7 @@ public partial class CString
 		[SkipLocalsInit]
 		private static Builder? InsertUtf8<T>(Builder builder, Int32 index, T value) where T : IUtf8SpanFormattable
 		{
-			Span<Byte> span = stackalloc Byte[CString.stackallocByteThreshold];
+			Span<Byte> span = stackalloc Byte[StackAllocationHelper.StackallocByteThreshold];
 			return value.TryFormat(span, out Int32 count, default, default) ?
 				builder.Insert(index, span[..count]) :
 				default;
@@ -456,7 +456,7 @@ public partial class CString
 		[SkipLocalsInit]
 		private static Builder? InsertUtf16<T>(Builder builder, Int32 index, T value) where T : ISpanFormattable
 		{
-			Span<Char> span = stackalloc Char[CString.stackallocByteThreshold];
+			Span<Char> span = stackalloc Char[StackAllocationHelper.StackallocByteThreshold];
 			return value.TryFormat(span, out Int32 count, default, default) ?
 				builder.Insert(index, span[..count]) :
 				default;

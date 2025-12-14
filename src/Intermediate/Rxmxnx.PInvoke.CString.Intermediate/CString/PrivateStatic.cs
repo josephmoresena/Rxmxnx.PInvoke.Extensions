@@ -181,11 +181,13 @@ public partial class CString
 #endif
 	private static Int32 Read(Utf8JsonReader reader, out ValueRegion<Byte> data)
 	{
+		StackAllocationHelper.InitStackBytes();
+
 		Int32 stackConsumed = 0;
 		Byte[]? byteArray = default;
 		Int32 length = JsonConverter.GetLength(reader);
-		Span<Byte> span = JsonConverter.ConsumeStackBytes(length, ref stackConsumed) ?
-			stackalloc Byte[length] :
+		Span<Byte> span = StackAllocationHelper.ConsumeStackBytes(length, ref stackConsumed) ?
+			stackalloc Byte[length + 1] :
 #if !NET7_0_OR_GREATER
 			byteArray = CString.CreateByteArray(length + 1);
 #else

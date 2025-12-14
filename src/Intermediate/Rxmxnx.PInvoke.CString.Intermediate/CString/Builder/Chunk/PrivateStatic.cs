@@ -121,7 +121,7 @@ public partial class CString
 			/// <param name="chars">A read-only character span.</param>
 			private static Int32 InsertChars(Chunk chunk, Int32 index, ReadOnlySpan<Char> chars)
 			{
-				Span<Byte> temp = stackalloc Byte[CString.stackallocByteThreshold];
+				Span<Byte> temp = stackalloc Byte[StackAllocationHelper.StackallocByteThreshold];
 				Int32 bytes = Encoding.UTF8.GetBytes(chars, temp);
 				chunk.Insert(index, temp);
 				return bytes;
@@ -152,7 +152,7 @@ public partial class CString
 			[SkipLocalsInit]
 			private static Chunk? AppendUtf8<T>(Chunk chunk, T value) where T : IUtf8SpanFormattable
 			{
-				Span<Byte> span = stackalloc Byte[CString.stackallocByteThreshold];
+				Span<Byte> span = stackalloc Byte[StackAllocationHelper.StackallocByteThreshold];
 				return value.TryFormat(span, out Int32 count, default, default) ? chunk.Append(span[..count]) : default;
 			}
 #endif
@@ -167,7 +167,7 @@ public partial class CString
 			[SkipLocalsInit]
 			private static Chunk? AppendUtf16<T>(Chunk chunk, T value) where T : ISpanFormattable
 			{
-				Span<Char> span = stackalloc Char[CString.stackallocByteThreshold];
+				Span<Char> span = stackalloc Char[StackAllocationHelper.StackallocByteThreshold];
 				return value.TryFormat(span, out Int32 count, default, default) ? chunk.Append(span[..count]) : default;
 			}
 #endif

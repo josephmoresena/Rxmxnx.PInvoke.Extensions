@@ -19,8 +19,11 @@ public partial class CStringSequence
 			List<Int32?> lengths = [];
 			StringBuilder strBuilder = new();
 			Boolean leadingNull = false;
+
+			StackAllocationHelper.InitStackBytes();
 			while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
 				JsonConverter.ReadString(reader, strBuilder, lengths, ref leadingNull);
+
 			if (leadingNull)
 				strBuilder.Append('\0'); // Append a null character if the last string was not null-terminated.
 			return lengths.Count == 0 ? CStringSequence.Empty : new(strBuilder.ToString(), lengths.ToArray());
@@ -91,9 +94,9 @@ public partial class CStringSequence
 			{
 				Int32 nChar = length / sizeof(Char) + 1;
 				// Since .NET 7.0, the resulting charSpan is left uninitialized.
-				Span<Char> charSpan = CString.JsonConverter.ConsumeStackBytes(nChar * 2, ref stackConsumed) ?
+				Span<Char> charSpan = StackAllocationHelper.ConsumeStackBytes(nChar * 2, ref stackConsumed) ?
 					stackalloc Char[length / sizeof(Char) + 1] :
-					CString.JsonConverter.RentArray(nChar, out charArray);
+					StackAllocationHelper.RentArray(nChar, out charArray, CString.JsonConverter.ClearArray);
 				Span<Byte> bytes = MemoryMarshal.AsBytes(charSpan);
 
 				if (leadingNull)
@@ -114,8 +117,8 @@ public partial class CStringSequence
 			}
 			finally
 			{
-				CString.JsonConverter.ReturnArray(charArray);
-				CString.JsonConverter.ReleaseStackBytes(stackConsumed);
+				StackAllocationHelper.ReturnArray(charArray);
+				StackAllocationHelper.ReleaseStackBytes(stackConsumed);
 			}
 		}
 	}

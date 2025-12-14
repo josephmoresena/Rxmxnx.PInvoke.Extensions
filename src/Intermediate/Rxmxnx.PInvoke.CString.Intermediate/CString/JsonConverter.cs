@@ -18,16 +18,10 @@ public partial class CString
 		/// Specifies whether the rented span is cleared by default before use.
 		/// </summary>
 #if NET7_0_OR_GREATER
-		private const Boolean clearArray = false;
+		internal const Boolean ClearArray = false;
 #else
-		private const Boolean clearArray = true;
+		internal const Boolean ClearArray = true;
 #endif
-
-		/// <summary>
-		/// Threshold for stackalloc usage in bytes.
-		/// </summary>
-		[ThreadStatic]
-		private static Int32 stackallocByteConsumed;
 
 		/// <inheritdoc/>
 #if !PACKAGE
@@ -90,67 +84,6 @@ public partial class CString
 			writer.WriteStringValue(value);
 		}
 
-		/// <summary>
-		/// Consumes the stackalloc bytes if the required size is within the threshold.
-		/// </summary>
-		/// <param name="stackRequired">Required stack bytes to consume.</param>
-		/// <param name="stackConsumed">
-		/// Ref. Stack bytes consumed so far. This value is updated with the newly consumed bytes.
-		/// </param>
-		/// <returns>
-		/// <see langword="true"/> if the stackalloc bytes were successfully consumed; otherwise, <see langword="false"/>.
-		/// </returns>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static Boolean ConsumeStackBytes(Int32 stackRequired, ref Int32 stackConsumed)
-		{
-			if (stackRequired <= 0) return true; // No bytes to consume, return true.
-			if (JsonConverter.stackallocByteConsumed + stackRequired > CString.stackallocByteThreshold)
-				return false; // Stackalloc threshold exceeded.
-			JsonConverter.stackallocByteConsumed += stackRequired;
-			stackConsumed += stackRequired; // Update the consumed bytes.
-			return true;
-		}
-		/// <summary>
-		/// Returns a rented array of the specified length and clears it.
-		/// </summary>
-		/// <typeparam name="T">Type of the array elements.</typeparam>
-		/// <param name="length">Required length of the array to rent.</param>
-		/// <param name="arr">Output. Rented array.</param>
-		/// <param name="clear">Indicates whether the array is required to be cleared.</param>
-		/// <returns>A span of the rented array with the specified length, cleared.</returns>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static Span<T> RentArray<T>(Int32 length, out T[]? arr, Boolean clear = JsonConverter.clearArray)
-			where T : unmanaged
-		{
-			arr = ArrayPool<T>.Shared.Rent(length); // Rent an array of the specified length.
-
-			Span<T> result = arr.AsSpan()[..length];
-			if (clear) result.Clear(); // Clear the usable span.
-			return result;
-		}
-		/// <summary>
-		/// Returns a rented array of the specified length and clears it.
-		/// </summary>
-		/// <typeparam name="T">Type of the array elements.</typeparam>
-		/// <param name="tArray">Rented array to return to the pool.</param>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static void ReturnArray<T>(T[]? tArray) where T : unmanaged
-		{
-			if (tArray is not null)
-				ArrayPool<T>.Shared.Return(tArray);
-		}
-		/// <summary>
-		/// Releases the stack bytes consumed by the converter.
-		/// </summary>
-		/// <param name="stackConsumed">Number of stack bytes consumed to release.</param>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static void ReleaseStackBytes(Int32 stackConsumed)
-		{
-			if (stackConsumed <= 0) return; // No bytes to release, return.
-			JsonConverter.stackallocByteConsumed -= stackConsumed;
-			if (JsonConverter.stackallocByteConsumed < 0)
-				JsonConverter.stackallocByteConsumed = 0; // Prevent negative consumption.
-		}
 		/// <summary>
 		/// Retrieves the length of the UTF-8 text bytes from the reader.
 		/// </summary>
@@ -271,9 +204,9 @@ public partial class CString
 			{
 				Int32 nEscaped = buffer.Length - 2;
 				Span<Byte> escaped = JsonConverter.BackupEscaped(
-					JsonConverter.ConsumeStackBytes(nEscaped, ref stackConsumed) ?
+					StackAllocationHelper.ConsumeStackBytes(nEscaped, ref stackConsumed) ?
 						stackalloc Byte[nEscaped] :
-						JsonConverter.RentArray(nEscaped, out byteArray, false), buffer[2..]);
+						StackAllocationHelper.RentArray(nEscaped, out byteArray, false), buffer[2..]);
 				buffer[0] = buffer[1] switch
 				{
 					(Byte)'n' => (Byte)'\n',
@@ -289,8 +222,8 @@ public partial class CString
 			}
 			finally
 			{
-				JsonConverter.ReturnArray(byteArray);
-				JsonConverter.ReleaseStackBytes(stackConsumed);
+				StackAllocationHelper.ReturnArray(byteArray);
+				StackAllocationHelper.ReleaseStackBytes(stackConsumed);
 			}
 		}
 		/// <summary>
@@ -312,9 +245,10 @@ public partial class CString
 				Int32 baseLength = 6; // Length of "\uXXXX" sequence.
 				Int32 nEscaped = buffer.Length - escapeIndex - baseLength;
 				Span<Byte> escaped = JsonConverter.BackupEscaped(
-					JsonConverter.ConsumeStackBytes(nEscaped, ref stackConsumed) ?
+					StackAllocationHelper.ConsumeStackBytes(nEscaped, ref stackConsumed) ?
 						stackalloc Byte[nEscaped] :
-						JsonConverter.RentArray(nEscaped, out byteArray, false), buffer[(escapeIndex + baseLength)..]);
+						StackAllocationHelper.RentArray(nEscaped, out byteArray, false),
+					buffer[(escapeIndex + baseLength)..]);
 #if NETCOREAPP
 				Rune rune = JsonConverter.GetEscapeRune(buffer, ref escapeIndex, low, ref baseLength);
 				Int32 nBytes = rune.EncodeToUtf8(buffer[escapeIndex..]);
@@ -331,8 +265,8 @@ public partial class CString
 			}
 			finally
 			{
-				JsonConverter.ReturnArray(byteArray);
-				JsonConverter.ReleaseStackBytes(stackConsumed);
+				StackAllocationHelper.ReturnArray(byteArray);
+				StackAllocationHelper.ReleaseStackBytes(stackConsumed);
 			}
 		}
 		/// <summary>
