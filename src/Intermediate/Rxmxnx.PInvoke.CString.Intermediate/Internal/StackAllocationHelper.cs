@@ -1,7 +1,7 @@
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
-/// Helper class for stack allocation.
+/// Helper class for stack/heap buffer allocation.
 /// </summary>
 internal static class StackAllocationHelper
 {
@@ -26,7 +26,7 @@ internal static class StackAllocationHelper
 	/// </summary>
 	/// <param name="stackRequired">Required stack bytes to consume.</param>
 	/// <param name="stackConsumed">
-	/// Ref. Stack bytes consumed so far. This value is updated with the newly consumed bytes.
+	/// Reference. Stack bytes consumed so far. This value is updated with the newly consumed bytes.
 	/// </param>
 	/// <returns>
 	/// <see langword="true"/> if the stackalloc bytes were successfully consumed; otherwise, <see langword="false"/>.
