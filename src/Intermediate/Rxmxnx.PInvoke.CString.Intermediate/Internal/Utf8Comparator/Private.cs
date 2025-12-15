@@ -225,11 +225,13 @@ internal partial class Utf8Comparator<TChar>
 
 		// If not ordinal equality, perform a text comparison.
 #if NET5_0_OR_GREATER
-		Span<Char> strA = stackalloc Char[2];
-		Span<Char> strB = stackalloc Char[2];
+		Span<Char> temp = stackalloc Char[4];
 
-		((Rune)runeA.Value).EncodeToUtf16(strA);
-		((Rune)runeB.Value).EncodeToUtf16(strA);
+		((Rune)runeA.Value).TryEncodeToUtf16(temp[..2], out Int32 countA);
+		((Rune)runeB.Value).TryEncodeToUtf16(temp[2..], out Int32 countB);
+
+		ReadOnlySpan<Char> strA = temp[..countA];
+		ReadOnlySpan<Char> strB = temp.Slice(2, countB);
 #else
 		String strA = Char.ConvertFromUtf32(runeA.Value);
 		String strB = Char.ConvertFromUtf32(runeB.Value);

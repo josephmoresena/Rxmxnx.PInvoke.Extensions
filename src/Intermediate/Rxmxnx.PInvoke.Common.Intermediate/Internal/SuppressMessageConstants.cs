@@ -35,6 +35,7 @@ internal static class SuppressMessageConstants
 	public const String CheckIdS1199 = "S1199";
 	public const String CheckIdS1172 = "S1172";
 	public const String CheckIdS1144 = "S1144";
+	public const String CheckIdS1066 = "S1066";
 	public const String CheckIdS1006 = "S1006";
 	public const String CheckIdS907 = "S907";
 	public const String CheckIdS107 = "S107";
