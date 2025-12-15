@@ -10,7 +10,7 @@ public partial class CString
 		/// <summary>
 		/// The default capacity of a <see cref="Builder"/>.
 		/// </summary>
-		private const UInt16 defaultCapacity = 32;
+		private const UInt16 defaultCapacity = 128;
 
 		/// <summary>
 		/// Lock object.
@@ -39,7 +39,7 @@ public partial class CString
 		/// <param name="capacity">The suggested starting size of this instance.</param>
 		public Builder(UInt16 capacity)
 		{
-			this._capacity = capacity;
+			this._capacity = Math.Max(capacity, Builder.defaultCapacity);
 			this._chunk = new(capacity);
 		}
 
@@ -77,7 +77,15 @@ public partial class CString
 		/// Converts the value of this instance to a <see cref="CString"/>.
 		/// </summary>
 		/// <returns>A <see cref="CString"/> whose value is the same as this instance.</returns>
-		public CString ToCString()
+		public CString ToCString() => this.ToCString(true);
+		/// <summary>
+		/// Converts the value of this instance to a <see cref="CString"/>.
+		/// </summary>
+		/// <param name="nullTerminated">
+		/// Indicates whether the resulting <see cref="CString"/> is null-terminated.
+		/// </param>
+		/// <returns>A <see cref="CString"/> whose value is the same as this instance.</returns>
+		public CString ToCString(Boolean nullTerminated)
 		{
 #if NET9_0_OR_GREATER
 			using (this._lock.EnterScope())
@@ -85,12 +93,16 @@ public partial class CString
 			lock (this._lock)
 #endif
 			{
-				Byte[] bytes = CString.CreateByteArray(this._chunk.Count + 1);
-				this._chunk.CopyTo(0, bytes.AsSpan()[..^1]);
-				return new(bytes, true);
+				if (this._chunk.Count == 0) return CString.Empty;
+
+				Int32 length = nullTerminated ? 1 : 0;
+				Byte[] bytes = CString.CreateByteArray(this._chunk.Count + length);
+				Span<Byte> span = bytes.AsSpan()[..^length];
+				this._chunk.CopyTo(0, span);
+				return new(bytes, length != 0);
 			}
 		}
 		/// <inheritdoc/>
-		public override String ToString() => this.ToCString().ToString();
+		public override String ToString() => this.ToCString(false).ToString();
 	}
 }

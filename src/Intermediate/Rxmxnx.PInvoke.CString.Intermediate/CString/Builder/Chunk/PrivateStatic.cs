@@ -10,10 +10,16 @@ public partial class CString
 			/// Allocates a new buffer for the next chunk based on the capacity of the current chunk.
 			/// </summary>
 			/// <param name="chunk">Current <see cref="Chunk"/> instance.</param>
+			/// <param name="sameSize">
+			/// Indicates whether the next array is the same size of <paramref name="chunk"/>.
+			/// </param>
 			/// <returns>A new <see cref="Byte"/> array.</returns>
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			private static Byte[] CreateNextArray(Chunk chunk)
-				=> CString.CreateByteArray(Chunk.GetNextCapacity(chunk._buffer.Length));
+			private static Byte[] CreateNextArray(Chunk chunk, Boolean sameSize = false)
+			{
+				Int32 newLength = !sameSize ? Chunk.GetNextCapacity(chunk._buffer.Length) : chunk._buffer.Length;
+				return CString.CreateByteArray(newLength);
+			}
 			/// <summary>
 			/// Computes the next capacity in the growth sequence for chunk buffers.
 			/// </summary>
@@ -26,14 +32,16 @@ public partial class CString
 			/// </summary>
 			/// <param name="capacity">Current chunk capacity.</param>
 			/// <param name="required">Required new bytes.</param>
+			/// <param name="constantLength"></param>
 			/// <returns>Information for data insertion.</returns>
-			private static InsertInfo GetInsertInfo(Int32 capacity, Int32 required)
+			private static InsertInfo GetInsertInfo(Int32 capacity, Int32 required, Boolean constantLength)
 			{
 				Byte count = 0;
 				Int32 sumCapacity = 0;
 				while (required > sumCapacity)
 				{
-					capacity = Math.Min(2 * capacity, UInt16.MaxValue);
+					if (!constantLength)
+						capacity = Math.Min(2 * capacity, UInt16.MaxValue);
 					sumCapacity += capacity;
 					count++;
 				}
@@ -44,17 +52,24 @@ public partial class CString
 			/// </summary>
 			/// <param name="current">Current <see cref="Chunk"/> instance.</param>
 			/// <param name="info">Insertion information.</param>
+			/// <param name="initialCount">Initial count value.</param>
+			/// <param name="sameSize">
+			/// Indicates whether the next array is the same size of <paramref name="current"/>.
+			/// </param>
 			/// <returns>The array of insertion chunks.</returns>
-			private static Chunk[] GetInsertChunks(Chunk current, InsertInfo info)
+			private static Chunk[] GetInsertChunks(Chunk current, InsertInfo info, Int32 initialCount, Boolean sameSize)
 			{
 				Chunk[] chunks = new Chunk[info.Chunks + 1];
-				chunks[0] = new(current._previous, current._buffer); // The lowest chunk retains current buffer.
+				// The lowest chunk retains current buffer.
+				chunks[0] = new(current._previous, current._buffer, initialCount);
+				// The highest chunk is the current chunk.
+				chunks[^1] = current;
 				for (Int32 i = 1; i < chunks.Length - 1; i++)
-					chunks[i] = new(current._previous, Chunk.CreateNextArray(chunks[i - 1]));
-				chunks[^1] = current; // The highest chunk is the current chunk.
+					chunks[i] = new(chunks[i - 1], Chunk.CreateNextArray(chunks[i - 1], sameSize));
 				current._count = info.LastCount;
 				current._previous = chunks[^2];
-				current._buffer = Chunk.CreateNextArray(current._previous); // The current chunk has new buffer.
+				// The current chunk has new buffer.
+				current._buffer = Chunk.CreateNextArray(current._previous, sameSize);
 				return chunks;
 			}
 			/// <summary>

@@ -72,7 +72,7 @@ public partial class CString
 		Int32 bufferLength = leftUtf8Length + right.Length + 1;
 		Byte[] result = CString.CreateByteArray(bufferLength);
 		Encoding.UTF8.GetBytes(leftSpan, result.AsSpan()[..leftUtf8Length]);
-		right.AsSpan().CopyTo(result.AsSpan()[..leftUtf8Length]);
+		right.AsSpan().CopyTo(result.AsSpan()[leftUtf8Length..]);
 		result[^1] = default;
 		return new(result, true);
 	}
@@ -95,7 +95,7 @@ public partial class CString
 		Int32 bufferLength = leftSpan.Length + right.Length + 1;
 		Byte[] result = CString.CreateByteArray(bufferLength);
 		leftSpan.CopyTo(result.AsSpan()[..leftSpan.Length]);
-		right.AsSpan().CopyTo(result.AsSpan()[..leftSpan.Length]);
+		right.AsSpan().CopyTo(result.AsSpan()[leftSpan.Length..]);
 		result[^1] = default;
 		return new(result, true);
 	}

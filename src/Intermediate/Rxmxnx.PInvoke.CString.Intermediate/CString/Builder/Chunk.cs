@@ -37,6 +37,7 @@ public partial class CString
 					return this;
 				}
 				newData[..span.Length].CopyTo(span);
+				this._count += span.Length;
 				return new Chunk(this).Append(newData[span.Length..]);
 			}
 			/// <summary>
@@ -128,18 +129,25 @@ public partial class CString
 				if (newData.Length <= available)
 				{
 					Span<Byte> span = chunk._buffer.AsSpan()[index..];
-					span[..^remaining].CopyTo(span[newData.Length..]);
+					span[..remaining].CopyTo(span[newData.Length..]);
 					newData.CopyTo(span);
 					chunk._count += newData.Length;
 					return;
 				}
+				Int32 offset = Math.Min(available + remaining, newData.Length);
+				ReadOnlySpan<Byte> lastNewData = newData[offset..];
+				ReadOnlySpan<Byte> firstNewData = newData[..offset];
+				ReadOnlySpan<Byte> oldData = chunk._buffer.AsSpan().Slice(index, remaining);
+				Span<Byte> firstSpan = chunk._buffer.AsSpan()[index..];
 
-				Int32 usableCount = chunk._buffer.Length - index;
-				Int32 additionalRequired = newData.Length + remaining - usableCount;
-				InsertInfo info = Chunk.GetInsertInfo(chunk._buffer.Length, additionalRequired);
-				Chunk[] chunks = Chunk.GetInsertChunks(chunk, info);
-				Chunk.Fill(chunks.AsSpan()[1..], newData[usableCount..], chunk._buffer.AsSpan()[index..remaining]);
-				newData[..usableCount].CopyTo(chunks[0]._buffer.AsSpan()[index..]); // Copy the remaining newData.
+				Boolean useSameSize = !Object.ReferenceEquals(this, chunk);
+				InsertInfo info =
+					Chunk.GetInsertInfo(chunk._buffer.Length, lastNewData.Length + oldData.Length, useSameSize);
+				Chunk[] chunks = Chunk.GetInsertChunks(chunk, info, index + firstNewData.Length, useSameSize);
+				ReadOnlySpan<Chunk> lastChunks = chunks.AsSpan()[1..];
+
+				Chunk.Fill(lastChunks, lastNewData, oldData);
+				firstNewData.CopyTo(firstSpan); // Copy the remaining newData.
 			}
 			/// <summary>
 			/// Removes the specified range of characters from this instance.

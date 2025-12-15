@@ -94,4 +94,22 @@ public partial class CStringSequence
 				binaryLength += spanLength;
 		}
 	}
+	/// <summary>
+	/// Creates a byte array containing each non-empty UTF-8 text bytes in the current instance.
+	/// </summary>
+	/// <param name="arrayLength">Array length.</param>
+	/// <returns>A byte array containing each non-empty UTF-8 text bytes in the current instance.</returns>
+	private Byte[] CreateTextArray(Int32 arrayLength)
+	{
+		Byte[] result = CString.CreateByteArray(arrayLength);
+		Utf8View view = new(this, false);
+		Span<Byte> destination = result.AsSpan();
+		foreach (ReadOnlySpan<Byte> value in view)
+		{
+			value.CopyTo(destination);
+			destination = destination[value.Length..];
+		}
+		destination.Clear();
+		return result;
+	}
 }

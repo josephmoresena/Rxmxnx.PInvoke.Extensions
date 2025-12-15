@@ -71,7 +71,7 @@ public sealed class BasicTests
 		PInvokeAssert.False(zero is null);
 
 		PInvokeAssert.Throws<ArgumentNullException>(() => CString.GetBytes(default!));
-		PInvokeAssert.Throws<ArgumentException>(() => zero.CompareTo(new Object()));
+		PInvokeAssert.Throws<ArgumentException>(() => zero!.CompareTo(new Object()));
 
 		PInvokeAssert.True(emptySpan.IsEmpty);
 
@@ -296,6 +296,31 @@ public sealed class BasicTests
 			PInvokeAssert.NotEqual((IntPtr)handle2.Pointer, IntPtr.Zero);
 			PInvokeAssert.Equal((IntPtr)handle2.Pointer, (IntPtr)handle.Pointer + 1);
 		});
+	}
+
+	[Fact]
+	public void PlusOperator()
+	{
+		using TestMemoryHandle handle = new();
+		List<Int32> indices = TestSet.GetIndices();
+		List<Int32> indices2 = TestSet.GetIndices(indices.Count);
+		for (Int32 i = 0; i < indices.Count; i++)
+		{
+			String? leftStr = TestSet.GetString(indices[i], true);
+			CString? leftCStr = TestSet.GetCString(indices[i], handle);
+
+			String? rightStr = TestSet.GetString(indices2[i], true);
+			CString? rightCStr = TestSet.GetCString(indices2[i], handle);
+
+			String valueStr = leftStr + rightStr;
+			CString valueCStr0 = leftCStr + rightCStr;
+			CString valueCStr1 = leftStr + rightCStr;
+			CString valueCStr2 = leftCStr + rightStr;
+
+			PInvokeAssert.Equal(valueStr, valueCStr0.ToString());
+			PInvokeAssert.True(valueCStr0.AsSpan().SequenceEqual(valueCStr1));
+			PInvokeAssert.True(valueCStr0.AsSpan().SequenceEqual(valueCStr2));
+		}
 	}
 
 	private static void CreateCStringFromString(CString[,] cstr)
