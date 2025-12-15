@@ -54,7 +54,7 @@ internal abstract unsafe partial class Utf8Comparator
 	/// <param name="source">A read-only span of <see cref="byte"/> elements representing a UTF-8 encoded text.</param>
 	/// <returns>A <see cref="ReadOnlySpan{Char}"/> that represents the <paramref name="source"/> text.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static ReadOnlySpan<Char> GetUnicodeSpanFromUtf8(ReadOnlySpan<Byte> source)
+	protected static ReadOnlySpan<Char> GetUnicodeSpanFromUtf8(ReadOnlySpan<Byte> source)
 		=> Utf8Comparator.GetStringFromUtf8(source).AsSpan();
 	/// <summary>
 	/// Performs an ordinal comparison between two UTF-16 character spans.
@@ -74,9 +74,12 @@ internal abstract unsafe partial class Utf8Comparator
 	{
 		Int32 lengthA = spanA.Length;
 		Int32 lengthB = spanB.Length;
-		Int32 minLength = Environment.Is64BitProcess ? 12 : 10;
+
 		if (Utf8Comparator.OrdinalCompareFirst(ref spanA, ref spanB, out Int32 result))
 			return result;
+
+#if !NETCOREAPP || NET7_0_OR_GREATER
+		Int32 minLength = Environment.Is64BitProcess ? 12 : 10;
 		while (Math.Min(spanA.Length, spanB.Length) >= minLength)
 		{
 			switch (Environment.Is64BitProcess)
@@ -94,6 +97,12 @@ internal abstract unsafe partial class Utf8Comparator
 			if (result != 0) return result;
 		}
 		return lengthA - lengthB;
+#else
+		if (spanA.IsEmpty || spanB.IsEmpty)
+			return lengthA - lengthB;
+		return Utf8Comparator.SequenceCompareTo(ref MemoryMarshal.GetReference(spanA), spanA.Length,
+		                                        ref MemoryMarshal.GetReference(spanB), spanB.Length);
+#endif
 	}
 
 	/// <summary>
@@ -118,6 +127,41 @@ internal abstract unsafe partial class Utf8Comparator
 		result = charA - charB;
 		return result != 0;
 	}
+	/// <summary>
+	/// Reads a value of type <typeparamref name="T"/> from the given location.
+	/// </summary>
+	/// <typeparam name="T">The type of the value to read.</typeparam>
+	/// <param name="source">The Unicode char span source.</param>
+	/// <returns>A value of type <typeparamref name="T"/>  read from the given span.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static T Read<T>(ref ReadOnlySpan<Char> source) where T : unmanaged
+	{
+		if (source.IsEmpty) return default;
+
+		ref Char refChar = ref MemoryMarshal.GetReference(source);
+		if (sizeof(T) == sizeof(Char))
+		{
+			source = source.Length > 0 ? source[1..] : default;
+			return Unsafe.As<Char, T>(ref refChar);
+		}
+
+		Int32 sizeOnBytes = Math.Min(sizeof(T), source.Length * sizeof(Char));
+		if (sizeof(T) == sizeOnBytes)
+		{
+			Int32 sizeInChars = sizeof(T) / sizeof(Char);
+			source = source.Length > 0 ? source[sizeInChars..] : default;
+			return Unsafe.As<Char, T>(ref refChar);
+		}
+
+		T result = default;
+		ref Byte refByte = ref Unsafe.As<Char, Byte>(ref refChar);
+		ReadOnlySpan<Byte> bytes = MemoryMarshal.CreateReadOnlySpan(ref refByte, sizeOnBytes);
+		Span<Byte> resultBytes = MemoryMarshal.CreateSpan(ref Unsafe.As<T, Byte>(ref result), bytes.Length);
+		bytes.CopyTo(resultBytes);
+		source = default;
+		return result;
+	}
+#if !NETCOREAPP || NET7_0_OR_GREATER
 	/// <summary>
 	/// Compares the first 24 UTF-16 characters of each span.
 	/// </summary>
@@ -177,38 +221,5 @@ internal abstract unsafe partial class Utf8Comparator
 		result = CharSpanChunk.Compare(chunkA, chunkB);
 		return result != 0;
 	}
-	/// <summary>
-	/// Reads a value of type <typeparamref name="T"/> from the given location.
-	/// </summary>
-	/// <typeparam name="T">The type of the value to read.</typeparam>
-	/// <param name="source">The Unicode char span source.</param>
-	/// <returns>A value of type <typeparamref name="T"/>  read from the given span.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static T Read<T>(ref ReadOnlySpan<Char> source) where T : unmanaged
-	{
-		if (source.IsEmpty) return default;
-
-		ref Char refChar = ref MemoryMarshal.GetReference(source);
-		if (sizeof(T) == sizeof(Char))
-		{
-			source = source.Length > 0 ? source[1..] : default;
-			return Unsafe.As<Char, T>(ref refChar);
-		}
-
-		Int32 sizeOnBytes = Math.Min(sizeof(T), source.Length * sizeof(Char));
-		if (sizeof(T) == sizeOnBytes)
-		{
-			Int32 sizeInChars = sizeof(T) / sizeof(Char);
-			source = source.Length > 0 ? source[sizeInChars..] : default;
-			return Unsafe.As<Char, T>(ref refChar);
-		}
-
-		T result = default;
-		ref Byte refByte = ref Unsafe.As<Char, Byte>(ref refChar);
-		ReadOnlySpan<Byte> bytes = MemoryMarshal.CreateReadOnlySpan(ref refByte, sizeOnBytes);
-		Span<Byte> resultBytes = MemoryMarshal.CreateSpan(ref Unsafe.As<T, Byte>(ref result), bytes.Length);
-		bytes.CopyTo(resultBytes);
-		source = default;
-		return result;
-	}
+#endif
 }

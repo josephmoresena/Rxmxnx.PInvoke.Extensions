@@ -124,7 +124,7 @@ internal partial class Utf8Comparator<TChar>
 			StackAllocationHelper.ReleaseStackBytes(stackConsumed);
 		}
 #else
-		String stringA = Utf8Comparator<TChar>.GetStringFromUtf8(textA);
+		String stringA = Utf8Comparator.GetStringFromUtf8(textA);
 		return compareInfo.Compare(stringA, stringB ?? this.GetString(textB), options);
 #endif
 	}
@@ -211,16 +211,29 @@ internal partial class Utf8Comparator<TChar>
 	/// <see langword="true"/> if the value of <paramref name="runeA"/> is the same as the value of <paramref name="runeB"/>;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
+#if NET5_0_OR_GREATER
+	[SkipLocalsInit]
+#endif
 	private Boolean RuneEqual(DecodedRune runeA, DecodedRune runeB)
 	{
 		CompareOptions compareOptions = this.GetOptions(this._ignoreCase);
 		Boolean result = runeA == runeB;
+
 		// If the value of both runes are the same, no further comparison is necessary.
 		if (result || compareOptions is CompareOptions.Ordinal)
 			return result;
+
 		// If not ordinal equality, perform a text comparison.
+#if NET5_0_OR_GREATER
+		Span<Char> strA = stackalloc Char[2];
+		Span<Char> strB = stackalloc Char[2];
+
+		((Rune)runeA.Value).EncodeToUtf16(strA);
+		((Rune)runeB.Value).EncodeToUtf16(strA);
+#else
 		String strA = Char.ConvertFromUtf32(runeA.Value);
 		String strB = Char.ConvertFromUtf32(runeB.Value);
+#endif
 		return this._culture.CompareInfo.Compare(strA, strB, compareOptions) == 0;
 	}
 	/// <summary>
