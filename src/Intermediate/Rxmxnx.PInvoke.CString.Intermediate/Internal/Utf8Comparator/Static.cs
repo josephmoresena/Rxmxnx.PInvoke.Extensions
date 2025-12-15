@@ -11,7 +11,11 @@ namespace Rxmxnx.PInvoke.Internal;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
+#if NETCOREAPP && !NET7_0_OR_GREATER
+internal abstract class Utf8Comparator
+#else
 internal abstract unsafe partial class Utf8Comparator
+#endif
 {
 	/// <summary>
 	/// Retrieves the string representation of <paramref name="source"/>.
@@ -56,6 +60,7 @@ internal abstract unsafe partial class Utf8Comparator
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected static ReadOnlySpan<Char> GetUnicodeSpanFromUtf8(ReadOnlySpan<Byte> source)
 		=> Utf8Comparator.GetStringFromUtf8(source).AsSpan();
+#if !NETCOREAPP || NET7_0_OR_GREATER
 	/// <summary>
 	/// Performs an ordinal comparison between two UTF-16 character spans.
 	/// </summary>
@@ -78,7 +83,6 @@ internal abstract unsafe partial class Utf8Comparator
 		if (Utf8Comparator.OrdinalCompareFirst(ref spanA, ref spanB, out Int32 result))
 			return result;
 
-#if !NETCOREAPP || NET7_0_OR_GREATER
 		Int32 minLength = Environment.Is64BitProcess ? 12 : 10;
 		while (Math.Min(spanA.Length, spanB.Length) >= minLength)
 		{
@@ -97,12 +101,6 @@ internal abstract unsafe partial class Utf8Comparator
 			if (result != 0) return result;
 		}
 		return lengthA - lengthB;
-#else
-		if (spanA.IsEmpty || spanB.IsEmpty)
-			return lengthA - lengthB;
-		return Utf8Comparator.SequenceCompareTo(ref MemoryMarshal.GetReference(spanA), spanA.Length,
-		                                        ref MemoryMarshal.GetReference(spanB), spanB.Length);
-#endif
 	}
 
 	/// <summary>
@@ -161,7 +159,6 @@ internal abstract unsafe partial class Utf8Comparator
 		source = default;
 		return result;
 	}
-#if !NETCOREAPP || NET7_0_OR_GREATER
 	/// <summary>
 	/// Compares the first 24 UTF-16 characters of each span.
 	/// </summary>

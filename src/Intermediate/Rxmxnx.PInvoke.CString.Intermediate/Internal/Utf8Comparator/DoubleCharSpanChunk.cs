@@ -1,3 +1,4 @@
+#if !NETCOREAPP || NET7_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class Utf8Comparator
@@ -35,3 +36,4 @@ internal partial class Utf8Comparator
 		}
 	}
 }
+#endif
