@@ -168,7 +168,7 @@ internal partial class Utf8Comparator<TChar>
 		try
 		{
 			Int32 charCountA = Utf8Comparator.GetCharCountFromUtf8(textA);
-			Span<Char> spanA = StackAllocationHelper.ConsumeStackBytes(charCountA, ref stackConsumed) ?
+			Span<Char> spanA = StackAllocationHelper.ConsumeStackBytes(charCountA * sizeof(Char), ref stackConsumed) ?
 				stackalloc Char[charCountA] :
 				StackAllocationHelper.RentArray(charCountA, out arrayA, false);
 
@@ -179,7 +179,7 @@ internal partial class Utf8Comparator<TChar>
 				return Utf8Comparator.OrdinalCompare(spanA, MemoryMarshal.Cast<TChar, Char>(textB));
 
 			Int32 charCountB = this.CountChars(textB);
-			Span<Char> spanB = StackAllocationHelper.ConsumeStackBytes(charCountA, ref stackConsumed) ?
+			Span<Char> spanB = StackAllocationHelper.ConsumeStackBytes(charCountB * sizeof(Char), ref stackConsumed) ?
 				stackalloc Char[charCountB] :
 				StackAllocationHelper.RentArray(charCountB, out arrayB, false);
 
