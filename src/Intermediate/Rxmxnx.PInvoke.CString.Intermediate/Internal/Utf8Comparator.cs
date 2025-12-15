@@ -29,6 +29,7 @@ internal abstract partial class Utf8Comparator<TChar> : Utf8Comparator where TCh
 	protected Utf8Comparator(StringComparison comparisonType)
 	{
 		StackAllocationHelper.InitStackBytes();
+		// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 		switch (comparisonType)
 		{
 			case StringComparison.CurrentCulture:
@@ -66,7 +67,6 @@ internal abstract partial class Utf8Comparator<TChar> : Utf8Comparator where TCh
 				this._ignoreCase = true;
 				this._ordinal = true;
 				break;
-			case StringComparison.Ordinal:
 			default:
 				this._culture = CultureInfo.InvariantCulture;
 				this._options = CompareOptions.Ordinal;

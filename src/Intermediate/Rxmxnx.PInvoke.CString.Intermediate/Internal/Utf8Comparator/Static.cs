@@ -1,10 +1,17 @@
+#if !NETCOREAPP
+using Rune = System.UInt32;
+#endif
+
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// The abstract Utf8Comparator class provides a means for efficiently and customizable
 /// comparing two UTF-8 texts.
 /// </summary>
-internal abstract partial class Utf8Comparator
+#if !PACKAGE
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
+internal abstract unsafe partial class Utf8Comparator
 {
 	/// <summary>
 	/// Retrieves the string representation of <paramref name="source"/>.
@@ -29,10 +36,10 @@ internal abstract partial class Utf8Comparator
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected static Int32 GetCharCountFromUtf8(ReadOnlySpan<Byte> source) => Encoding.UTF8.GetCharCount(source);
 	/// <summary>
-	/// Decodes the <see cref="System.Text.Rune"/> at the beginning of the provided UTF-8 encoded source buffer.
+	/// Decodes the <see cref="Rune"/> at the beginning of the provided UTF-8 encoded source buffer.
 	/// </summary>
 	/// <param name="source">A read-only span of <see cref="byte"/> elements representing a UTF-8 encoded text.</param>
-	/// <returns>The decoded <see cref="System.Text.Rune"/>, if any; otherwise, <see langword="null"/>.</returns>
+	/// <returns>The decoded <see cref="Rune"/>, if any; otherwise, <see langword="null"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected static DecodedRune? DecodeRuneFromUtf8(ref ReadOnlySpan<Byte> source)
 	{
@@ -177,7 +184,7 @@ internal abstract partial class Utf8Comparator
 	/// <param name="source">The Unicode char span source.</param>
 	/// <returns>A value of type <typeparamref name="T"/>  read from the given span.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe T Read<T>(ref ReadOnlySpan<Char> source) where T : unmanaged
+	private static T Read<T>(ref ReadOnlySpan<Char> source) where T : unmanaged
 	{
 		if (source.IsEmpty) return default;
 

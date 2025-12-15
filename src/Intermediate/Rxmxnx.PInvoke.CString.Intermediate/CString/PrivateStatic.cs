@@ -138,6 +138,9 @@ public partial class CString
 #if NET7_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1121)]
+#endif
 	private static Int32 Read(Utf8JsonReader reader, out ValueRegion<Byte> data)
 	{
 		StackAllocationHelper.InitStackBytes();

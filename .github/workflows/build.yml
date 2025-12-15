@@ -88,6 +88,7 @@ jobs:
             rm -rf "$TEMP_DIR"
           done
           echo "-----------------------------------"
+
       - name: Prepare workspace for FreeBSD
         id: clean-workspace
         run: |
@@ -96,6 +97,7 @@ jobs:
           rm -rf TestResults
           rm -rf ./../_temp
           mv ./ApplicationTest src/ApplicationTest
+
       - name: Install Mono Framework
         run: |
           sudo apt install ca-certificates gnupg --assume-yes
@@ -159,6 +161,7 @@ jobs:
           run: |
             dotnet dev-certs https --trust
             mono --version
+
       - name: Run Tests (FreeBSD 14.3)
         shell: freebsd {0}
         run: |
@@ -167,6 +170,7 @@ jobs:
           dotnet test ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.CString.Tests.dll --logger 'console;verbosity=detailed';
           dotnet test ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Extensions.Tests.dll --logger 'console;verbosity=detailed';
           dotnet test ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Buffers.Tests.dll --logger 'console;verbosity=detailed';
+
       - name: Mono framework tests (FreeBSD 14.3)
         shell: freebsd {0}
         run: |
@@ -190,17 +194,70 @@ jobs:
           cd $GITHUB_WORKSPACE;
           ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifactsf" "compile";
 
+      - name: Clean Up FreeBSD
+        shell: pwsh
+        run: |
+          Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
+            $projDir = Split-Path $_.FullName
+            "bin","obj" | ForEach-Object {
+              $path = Join-Path $projDir $_
+              if (Test-Path $path) {
+                try {
+                  Remove-Item -Recurse -Force $path -ErrorAction Stop
+                } catch {
+                  Write-Host "$($_.Exception.Message)"
+                }
+              }
+            }
+          }
+
       - name: Mono-Compile ApplicationTest for FreeBSD
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
         shell: bash
         run: |
           msbuild -restore /p:Configuration=Release /p:UsePackage=true /p:OutDir=../../../artifactsf/Mono/Rxmxnx.PInvoke.ApplicationTest
           rm -rf ./obj
+
       - name: Run launcher (run) (FreeBSD)
         shell: freebsd {0}
         run: |
           cd $GITHUB_WORKSPACE;
           ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifactsf" "run";
+          rm -rf ~/.nuget/packages;
+
+      - name: Clean Up FreeBSD Run
+        shell: pwsh
+        run: |
+          Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
+              $projDir = Split-Path $_.FullName
+              "bin","obj" | ForEach-Object {
+              $path = Join-Path $projDir $_
+              if (Test-Path $path) {
+                try {
+                  Remove-Item -Recurse -Force $path -ErrorAction Stop
+                } catch {
+                  Write-Host "$($_.Exception.Message)"
+                }
+              }
+            }
+          }
+
+      - name: Create Native Artifact Logs
+        uses: actions/upload-artifact@v5
+        with:
+          name: FreeBSD.14-Artifact-Logs
+          path: |
+            ./artifactsf/Native/*
+            ./artifactsf/Mono/*Mono.Link.log
+            ./artifactsf/Mono/*Mono.AOT*.log
+            ./artifactsf/Mono/*Mono.Bundle*.log
+
+      - name: Remove Native Logs FreeBSD
+        shell: pwsh
+        run: |
+          if (Test-Path ./artifactsf/Native) {
+              Remove-Item -Recurse -Force ./artifactsf/Native/*
+          }
 
       - name: Create Native Artifact
         uses: actions/upload-artifact@v5
@@ -212,15 +269,6 @@ jobs:
             ./artifactsf/Mono/X86/*
             ./artifactsf/Mono/X64/*
             ./artifactsf/Mono/Arm64/*
-      - name: Create Native Artifact Logs
-        uses: actions/upload-artifact@v5
-        with:
-          name: FreeBSD.14-Artifact-Logs
-          path: |
-            ./artifactsf/Native/*
-            ./artifactsf/Mono/*Mono.Link.log
-            ./artifactsf/Mono/*Mono.AOT*.log
-            ./artifactsf/Mono/*Mono.Bundle*.log
 
       - name: Install Escripten
         shell: bash
@@ -232,6 +280,7 @@ jobs:
           sudo ./emsdk install latest
           sudo ./emsdk activate latest
           sudo chmod -R 777 /opt/emsdk
+
       - name: Install WebAssembly Workload
         shell: bash
         run: |
@@ -259,22 +308,41 @@ jobs:
             /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=True \
             /p:CopyTargetTo=../../../artifacts
 
-      - name: Node-Run ApplicationTest
+      - name: Clean Up Extra
         shell: bash
-        working-directory: ./artifacts
-        run: for f in *.js; do node "$f"; done
-      - name: Create Web Native Artifact
-        uses: actions/upload-artifact@v5
-        with:
-          name: Web-Artifact
-          path: |
-            ./artifacts/*NAOT*
+        run: |
+          sudo rm -rf /tmp/*
+          sudo rm -rf /var/tmp/*
+          sudo rm -rf ~/.nuget/packages
+          
+          df -h
+
       - name: Create Web Native Artifact Logs
         uses: actions/upload-artifact@v5
         with:
           name: Web-Artifact-Logs
           path: |
             ./artifacts/Native/*
+
+      - name: Remove Web Native Logs
+        shell: pwsh
+        run: |
+          if (Test-Path ./artifacts/Native) {
+              Remove-Item -Recurse -Force ./artifacts/Native/*
+          }
+
+      - name: Create Web Native Artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: Web-Artifact
+          path: |
+            ./artifacts/*NAOT*
+
+      - name: Node-Run ApplicationTest
+        shell: bash
+        working-directory: ./artifacts
+        run: for f in *.js; do node "$f"; done
+  
   run-tests:
     needs: [ build ]
     runs-on: ${{ matrix.os }}
@@ -490,7 +558,7 @@ jobs:
           update: true
           additional-packages: ca-certificates gnupg
 
-      - name: Install Mono (WSL)
+      - name: Install Mono Framework (WSL)
         if: runner.os == 'Windows'
         shell: wsl-bash {0}
         run: |
@@ -559,6 +627,17 @@ jobs:
         run: |
           msbuild -restore /p:Configuration=Release /p:UsePackage=true /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
           rm -rf ./obj
+
+      - name: Remove Mono Framework (WSL)
+        if: runner.os == 'Windows'
+        shell: wsl-bash {0}
+        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
+        run: |
+          sudo apt-get purge mono*
+          sudo apt-get clean
+          sudo apt-get autoclean
+          sudo apt-get autoremove -y
+          
           sudo rm -rf /tmp/*
           sudo rm -rf /var/tmp/*
 
@@ -584,7 +663,7 @@ jobs:
             }
           }
 
-      - name: Clean Up Extra 
+      - name: Clean Up Extra
         if: runner.os != 'Windows'
         shell: bash
         run: |
@@ -593,7 +672,7 @@ jobs:
           sudo rm -rf ~/.nuget/packages
           
           df -h
-      
+
       - name: Clean Up Extra - Windows
         if: runner.os == 'Windows'
         shell: pwsh
@@ -617,8 +696,8 @@ jobs:
       - name: Remove Native Logs
         shell: pwsh
         run: |
-          if (Test-Path ./artifacts/native) {
-              Remove-Item -Recurse -Force ./artifacts/native/*
+          if (Test-Path ./artifacts/Native) {
+              Remove-Item -Recurse -Force ./artifacts/Native/*
           }
 
       - name: Create Native Artifact

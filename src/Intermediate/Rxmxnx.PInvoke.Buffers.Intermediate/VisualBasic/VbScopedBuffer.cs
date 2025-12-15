@@ -6,6 +6,7 @@ namespace Rxmxnx.PInvoke.VisualBasic;
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1121)]
 #endif
 public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 {

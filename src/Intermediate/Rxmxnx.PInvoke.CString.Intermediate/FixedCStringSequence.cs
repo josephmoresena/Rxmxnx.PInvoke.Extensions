@@ -6,6 +6,7 @@
 [DebuggerTypeProxy(typeof(CStringSequenceDebugView))]
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1121)]
 #endif
 public readonly unsafe ref struct FixedCStringSequence
 {

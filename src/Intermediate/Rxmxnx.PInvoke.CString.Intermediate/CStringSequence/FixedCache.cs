@@ -24,6 +24,9 @@ public partial class CStringSequence
 		/// </summary>
 		/// <param name="index">Required index.</param>
 		/// <returns>The real index at cache.</returns>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3267)]
+#endif
 		private Int32 GetRealIndex(Int32 index)
 		{
 			Int32 count = 0;
