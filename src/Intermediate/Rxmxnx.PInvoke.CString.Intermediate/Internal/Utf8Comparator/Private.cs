@@ -163,8 +163,7 @@ internal partial class Utf8Comparator<TChar>
 			return this.Compare(this._culture.CompareInfo, CompareOptions.OrdinalIgnoreCase, textA, textB, stringB);
 
 #if !NET7_0_OR_GREATER
-		// In Mono Framework System.AppDomain implements System._AppDomain and System.Security.IEvidenceFactory
-		// interfaces.
+		// In Mono Framework, System.AppDomain implements System._AppDomain interface.
 		// Starting with .NET 7.0, System.Runtime.InteropServices.GCHandle implements
 		// System.IEquatable<System.Runtime.InteropServices.GCHandle>.
 		if (SystemInfo.CountInterfaces<AppDomain>() == 0 && !SystemInfo.IsSelfEquatable<GCHandle>())
