@@ -44,9 +44,9 @@
 
     <!-- SUPPORTED -->
     <ItemGroup Condition="'$(TargetFramework)' == 'net8.0' Or '$(TargetFramework)' == 'net9.0'">
-        <PackageReference Include="System.Collections.Immutable" Version="10.0.0"/>
-        <PackageReference Include="System.Text.Json" Version="10.0.0"/>
-        <PackageReference Include="System.Text.Encodings.Web" Version="10.0.0"/>
+        <PackageReference Include="System.Collections.Immutable" Version="10.0.1"/>
+        <PackageReference Include="System.Text.Json" Version="10.0.1"/>
+        <PackageReference Include="System.Text.Encodings.Web" Version="10.0.1"/>
     </ItemGroup>
 
 </Project>
