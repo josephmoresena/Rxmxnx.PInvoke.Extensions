@@ -221,7 +221,7 @@ jobs:
       - name: Remove Mono Framework (Host)
         shell: bash
         run: |
-          sudo apt-get purge mono*
+          sudo apt-get purge mono* -y
           sudo apt-get clean
           sudo apt-get autoclean
           sudo apt-get autoremove -y
@@ -644,7 +644,7 @@ jobs:
         shell: wsl-bash {0}
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
         run: |
-          sudo apt-get purge mono*
+          sudo apt-get purge mono* -y
           sudo apt-get clean
           sudo apt-get autoclean
           sudo apt-get autoremove -y
