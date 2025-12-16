@@ -11,11 +11,7 @@ namespace Rxmxnx.PInvoke.Internal;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-#if NETCOREAPP && !NET7_0_OR_GREATER
-internal abstract class Utf8Comparator
-#else
 internal abstract unsafe partial class Utf8Comparator
-#endif
 {
 	/// <summary>
 	/// Retrieves the string representation of <paramref name="source"/>.
@@ -60,7 +56,6 @@ internal abstract unsafe partial class Utf8Comparator
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected static ReadOnlySpan<Char> GetUnicodeSpanFromUtf8(ReadOnlySpan<Byte> source)
 		=> Utf8Comparator.GetStringFromUtf8(source).AsSpan();
-#if !NETCOREAPP || NET7_0_OR_GREATER
 	/// <summary>
 	/// Performs an ordinal comparison between two UTF-16 character spans.
 	/// </summary>
@@ -218,5 +213,4 @@ internal abstract unsafe partial class Utf8Comparator
 		result = CharSpanChunk.Compare(chunkA, chunkB);
 		return result != 0;
 	}
-#endif
 }

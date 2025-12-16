@@ -162,13 +162,13 @@ internal partial class Utf8Comparator<TChar>
 		if (this._ignoreCase)
 			return this.Compare(this._culture.CompareInfo, CompareOptions.OrdinalIgnoreCase, textA, textB, stringB);
 
-#if !NETCOREAPP
-		if (!SystemInfo.IsMonoRuntime)
+#if !NET7_0_OR_GREATER
+		if (SystemInfo.CountInterfaces<AppDomain>() == 0 && SystemInfo.CountInterfaces<Int32>() < 29)
+			// In .NET Core / modern .NET, System.AppDomain does not implement any interfaces.
+			// Starting with .NET 7.0, System.Int32 implements at least 29 interfaces.
 			return String.CompareOrdinal(Utf8Comparator.GetStringFromUtf8(textA), stringB ?? this.GetString(textB));
-#elif !NET7_0_OR_GREATER
-		return String.CompareOrdinal(Utf8Comparator.GetStringFromUtf8(textA), stringB ?? this.GetString(textB));
 #endif
-#if !NETCOREAPP || NET7_0_OR_GREATER
+
 		Int32 stackConsumed = 0;
 		Char[]? arrayA = default;
 		Char[]? arrayB = default;
@@ -199,7 +199,6 @@ internal partial class Utf8Comparator<TChar>
 			StackAllocationHelper.ReturnArray(arrayB);
 			StackAllocationHelper.ReleaseStackBytes(stackConsumed);
 		}
-#endif
 	}
 	/// <summary>
 	/// Retrieves the <see cref="CompareOptions"/> for the current comparison.
