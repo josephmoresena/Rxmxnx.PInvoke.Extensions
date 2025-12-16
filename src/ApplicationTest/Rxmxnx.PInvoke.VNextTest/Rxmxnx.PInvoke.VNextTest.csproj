@@ -8,7 +8,7 @@
         <PublishTrimmed>true</PublishTrimmed>
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
         <TrimMode>full</TrimMode>
-        <NoWarn>$(NoWarn);NU1801</NoWarn>
+        <NoWarn>$(NoWarn);NU1801;NU1102</NoWarn>
         <Deterministic>True</Deterministic>
         <Optimize>true</Optimize>
         <RootNamespace>Rxmxnx.PInvoke.ApplicationTest.RefStruct</RootNamespace>

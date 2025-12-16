@@ -14,7 +14,7 @@
         <CheckEolTargetFramework>false</CheckEolTargetFramework>
         <AssemblyName Condition="'$(DisableBufferAutoComposition)' == 'True'">$(AssemblyName).NoBufferComposition</AssemblyName>
         <AssemblyName Condition="'$(InvariantGlobalization)' == 'True'">$(AssemblyName).Invariant</AssemblyName>
-        <NoWarn>$(NoWarn);NU1801</NoWarn>
+        <NoWarn>$(NoWarn);NU1801;NU1102</NoWarn>
         <Deterministic>True</Deterministic>
         <Optimize>true</Optimize>
     </PropertyGroup>

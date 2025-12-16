@@ -1988,6 +1988,8 @@ Represents a sequence of UTF-8 encoded characters.
 - When marshalling, the instances of this type are represented as null-terminated UTF-8 strings.
 - Starting with .NET Core 3.0, the nested `JsonConverter` class can be used to support serialization and
   deserialization with `System.Text.Json`.
+- The JSON deserialization process produces null-terminated `CString` instances; however, it is not guaranteed that
+  this termination consists of a single UTF-8 null character.
 
 ### Static Fields:
 
@@ -2075,6 +2077,24 @@ Represents a sequence of UTF-8 encoded characters.
   Initializes a new instance of the `CString` class that contains the UTF-8 string returned by the specified
   `ReadOnlySpanFunc<Byte>`.
   </details>
+- <details>
+  <summary>CString(Char, Int32)</summary>
+
+  Initializes a new instance of the `CString` class to the value indicated by a specified UTF-16 character repeated a
+  specified number of times.
+  </details>
+- <details>
+  <summary>CString(Char, Char, Int32)</summary>
+
+  Initializes a new instance of the `CString` class to the value indicated by a specified UTF-16 sequence repeated a
+  specified number of times.
+  </details>
+- <details>
+  <summary>CString(ReadOnlySpan&lt;Byte&gt;)</summary>
+
+  Initializes a new instance of the `CString` class using the UTF-16 characters indicated in the specified read-only
+  span.
+  </details>
 
 ### Methods:
 
@@ -2116,6 +2136,34 @@ Represents a sequence of UTF-8 encoded characters.
 
   Defines an implicit conversion of a given `CString` to a read-only span of bytes.
   </details>
+- <details>
+  <summary>+ CString</summary>
+
+  Defines an operator for concatenating the current instance with a `CString` instance.
+  </details>
+- <details>
+  <summary>+ String</summary>
+
+  Defines an operator for concatenating the current instance with a `String` instance.
+  </details>
+- <details>
+  <summary>+ ReadOnlySpan&lt;Byte&gt;</summary>
+
+  Defines an operator for concatenating the current instance with a `ReadOnlySpan<Byte>` instance.
+  </details>
+- <details>
+  <summary>+ ReadOnlySpan&lt;Char&gt;</summary>
+
+  Defines an operator for concatenating the current instance with a `ReadOnlySpan<Char>` instance.
+  </details>
+
+**Notes:**
+
+- The `CString` resulting from a concatenation operation is always a new null-terminated instance when both operands are
+  non-empty.
+- If both operands in a concatenation operation are empty or null, the resulting instance is `CString.Empty`. Otherwise,
+  the non-empty operand instance is returned.
+- Concatenation operations involving `String` or `ReadOnlySpan<char>` require converting UTF-16 text to UTF-8.
 
 ### Static Methods:
 
@@ -2255,7 +2303,14 @@ Represents a sequence of null-terminated UTF-8 text strings.
 - <details>
   <summary>ToCString()</summary>
 
-  Returns a `CString` that represents the current sequence.
+  Returns a `CString` that represents the current sequence. The returned `CString` is always null-terminated.
+  </details>
+- <details>
+  <summary>ToCString(Boolean)</summary>
+
+  Returns a `CString` that represents the current sequence. The boolean parameter specifies whether the returned
+  `CString` should be null-terminated.
+  must be null-terminated.
   </details>
 - <details>
   <summary>GetFixedPointer()</summary>
