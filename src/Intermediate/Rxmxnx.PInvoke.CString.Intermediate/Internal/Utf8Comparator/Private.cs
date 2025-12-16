@@ -163,9 +163,11 @@ internal partial class Utf8Comparator<TChar>
 			return this.Compare(this._culture.CompareInfo, CompareOptions.OrdinalIgnoreCase, textA, textB, stringB);
 
 #if !NET7_0_OR_GREATER
-		if (SystemInfo.CountInterfaces<AppDomain>() == 0 && SystemInfo.CountInterfaces<Int32>() < 29)
-			// In .NET Core / modern .NET, System.AppDomain does not implement any interfaces.
-			// Starting with .NET 7.0, System.Int32 implements at least 29 interfaces.
+		// In Mono Framework System.AppDomain implements System._AppDomain and System.Security.IEvidenceFactory
+		// interfaces.
+		// Starting with .NET 7.0, System.Runtime.InteropServices.GCHandle implements
+		// System.IEquatable<System.Runtime.InteropServices.GCHandle>.
+		if (SystemInfo.CountInterfaces<AppDomain>() == 0 && !SystemInfo.IsSelfEquatable<GCHandle>())
 			return String.CompareOrdinal(Utf8Comparator.GetStringFromUtf8(textA), stringB ?? this.GetString(textB));
 #endif
 

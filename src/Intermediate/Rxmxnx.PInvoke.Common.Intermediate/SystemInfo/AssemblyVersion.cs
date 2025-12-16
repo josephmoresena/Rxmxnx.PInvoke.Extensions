@@ -5,6 +5,7 @@ public static partial class SystemInfo
 	/// <summary>
 	/// Specifies all interfaces implemented by a type.
 	/// </summary>
+	// ReSharper disable once MemberCanBePrivate.Global
 #if NET5_0
 	internal const DynamicallyAccessedMemberTypes InterfaceAccess = (DynamicallyAccessedMemberTypes)0x2000;
 #else
@@ -44,4 +45,23 @@ public static partial class SystemInfo
 	/// <returns>Number of interfaces implemented by <typeparamref name="T"/> type.</returns>
 	internal static Int32 CountInterfaces<[DynamicallyAccessedMembers(SystemInfo.InterfaceAccess)] T>()
 		=> typeof(T).GetInterfaces().Length;
+	/// <summary>
+	/// Indicates whether <typeparamref name="T"/> implements <see cref="IEquatable{T}"/> interface.
+	/// </summary>
+	/// <typeparam name="T">Generic managed type.</typeparam>
+	/// <returns>
+	/// <see langword="true"/> if <typeparamref name="T"/> implements <see cref="IEquatable{T}"/> interface; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+	internal static Boolean IsSelfEquatable<[DynamicallyAccessedMembers(SystemInfo.InterfaceAccess)] T>()
+	{
+		Type equatable = typeof(IEquatable<T>);
+		ReadOnlySpan<Type> interfaces = typeof(T).GetInterfaces();
+		foreach (Type t in interfaces)
+		{
+			if (equatable == t)
+				return true;
+		}
+		return false;
+	}
 }

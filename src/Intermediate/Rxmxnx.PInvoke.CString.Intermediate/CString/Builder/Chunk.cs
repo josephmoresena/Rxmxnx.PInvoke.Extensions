@@ -122,7 +122,7 @@ public partial class CString
 			/// <param name="newData">Bytes to insert.</param>
 			public void Insert(Int32 index, ReadOnlySpan<Byte> newData)
 			{
-				Chunk chunk = this.GetChunkFor(ref index);
+				Chunk chunk = index == this.Count ? this : this.GetChunkFor(ref index);
 				Int32 available = chunk._buffer.Length - chunk._count;
 				Int32 remaining = chunk._count - index;
 
