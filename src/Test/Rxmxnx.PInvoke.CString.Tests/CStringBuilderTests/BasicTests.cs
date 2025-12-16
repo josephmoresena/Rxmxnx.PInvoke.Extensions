@@ -1,13 +1,12 @@
 #if !NETCOREAPP
-using Fact = NUnit.Framework.TestAttribute;
 using InlineData = NUnit.Framework.TestCaseAttribute;
 #endif
 
-namespace Rxmxnx.PInvoke.Tests.CStringTests;
+namespace Rxmxnx.PInvoke.Tests.CStringBuilderTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
-public sealed class BuilderTest
+public sealed class BasicTests
 {
 	[Theory]
 	[InlineData(null)]
@@ -21,7 +20,7 @@ public sealed class BuilderTest
 		using TestMemoryHandle handle = new();
 		List<Int32> indices = TestSet.GetIndices(length);
 		StringBuilder strBuild = new();
-		CString.Builder cstrBuild = new();
+		CStringBuilder cstrBuild = new();
 		foreach (Int32 i in indices)
 		{
 			strBuild.Append(TestSet.GetString(i, true));
@@ -43,7 +42,7 @@ public sealed class BuilderTest
 		using TestMemoryHandle handle = new();
 		List<Int32> indices = TestSet.GetIndices(length);
 		StringBuilder strBuild = new();
-		CString.Builder cstrBuild = new();
+		CStringBuilder cstrBuild = new();
 		Int32 seed = indices.OrderBy(_ => Guid.NewGuid()).FirstOrDefault();
 
 		strBuild.Append(TestSet.GetString(seed, true));
@@ -52,7 +51,7 @@ public sealed class BuilderTest
 		{
 			String? newString = TestSet.GetString(i, true);
 			CString? newCString = TestSet.GetCString(i, handle);
-			(Int32 utf16Index, Int32 utf8Index) = BuilderTest.GetIndex(strBuild.ToString());
+			(Int32 utf16Index, Int32 utf8Index) = BasicTests.GetIndex(strBuild.ToString());
 			strBuild.Insert(utf16Index, newString);
 			cstrBuild.Insert(utf8Index, newCString);
 		}
