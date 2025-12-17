@@ -5,7 +5,7 @@ public partial class CStringBuilder
 	/// <summary>
 	/// Represents a chunk of a mutable <see cref="CString"/> instance.
 	/// </summary>
-	internal sealed partial class Chunk
+	private sealed partial class Chunk
 	{
 		/// <summary>
 		/// The number of bytes in the entire sequence up to and including this chunk.

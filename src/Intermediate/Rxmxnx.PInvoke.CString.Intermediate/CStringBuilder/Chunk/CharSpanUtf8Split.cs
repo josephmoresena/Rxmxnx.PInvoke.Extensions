@@ -2,7 +2,7 @@ namespace Rxmxnx.PInvoke;
 
 public partial class CStringBuilder
 {
-	internal sealed partial class Chunk
+	private sealed partial class Chunk
 	{
 		/// <summary>
 		/// Structure containing metadata required to allocate UTF-8 chunks from a char span.
