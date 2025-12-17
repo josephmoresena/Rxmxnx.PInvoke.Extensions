@@ -25,7 +25,12 @@ public sealed partial class CStringBuilder
 	/// <summary>
 	/// Current string chunk.
 	/// </summary>
-	private CString.Chunk _chunk;
+	private Chunk _chunk;
+
+	/// <summary>
+	/// Gets the length of the current <see cref="CStringBuilder"/> object.
+	/// </summary>
+	public Int32 Length => this._chunk.Count;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringBuilder"/> class.

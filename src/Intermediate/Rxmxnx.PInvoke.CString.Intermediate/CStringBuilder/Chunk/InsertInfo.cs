@@ -1,6 +1,6 @@
 namespace Rxmxnx.PInvoke;
 
-public partial class CString
+public partial class CStringBuilder
 {
 	internal sealed partial class Chunk
 	{

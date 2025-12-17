@@ -1,6 +1,6 @@
 namespace Rxmxnx.PInvoke;
 
-public partial class CString
+public partial class CStringBuilder
 {
 	/// <summary>
 	/// Represents a chunk of a mutable <see cref="CString"/> instance.
@@ -126,26 +126,36 @@ public partial class CString
 
 			if (newData.Length <= available)
 			{
+				// The new data fits entirely in the current chunk.
 				Span<Byte> span = chunk._buffer.AsSpan()[index..];
 				span[..remaining].CopyTo(span[newData.Length..]);
 				newData.CopyTo(span);
 				chunk._count += newData.Length;
 				return;
 			}
+
+			// Maximum number of bytes that can be handled by reusing the current chunk and its existing data.
 			Int32 offset = Math.Min(available + remaining, newData.Length);
+			// Portion of new data that does not fit in the current buffer chunk (in another buffer instance).
 			ReadOnlySpan<Byte> lastNewData = newData[offset..];
+			// Portion of new data that will be inserted into the current chunk (with a new buffer).
 			ReadOnlySpan<Byte> firstNewData = newData[..offset];
+			// Existing data that must be moved after the inserted data.
 			ReadOnlySpan<Byte> oldData = chunk._buffer.AsSpan().Slice(index, remaining);
+			// Destination span in the current chunk buffer for the first portion.
 			Span<Byte> firstSpan = chunk._buffer.AsSpan()[index..];
 
+			// Compute how many chunks are required and their sizes to store the remaining new data and shifted old data.
 			Boolean useSameSize = !Object.ReferenceEquals(this, chunk);
 			InsertInfo info =
 				Chunk.GetInsertInfo(chunk._buffer.Length, lastNewData.Length + oldData.Length, useSameSize);
+			// Create and link the new chunks before the current one. 
 			Chunk[] chunks = Chunk.GetInsertChunks(chunk, info, index + firstNewData.Length, useSameSize);
-			ReadOnlySpan<Chunk> lastChunks = chunks.AsSpan()[1..];
 
-			Chunk.Fill(lastChunks, lastNewData, oldData);
-			firstNewData.CopyTo(firstSpan); // Copy the remaining newData.
+			// Fill the chunks with the last portion of the new data followed by old data.
+			Chunk.Fill(chunks.AsSpan()[1..], lastNewData, oldData);
+			// Copy the first portion of the new data into the first chunk buffer.
+			firstNewData.CopyTo(firstSpan);
 		}
 		/// <summary>
 		/// Removes the specified range of characters from this instance.
@@ -166,9 +176,9 @@ public partial class CString
 				return;
 			}
 
-			endChunk._count = 0;
 			endChunk._previous = startChunk;
-			startChunk.Remove(startIndex, startChunk._count - startIndex);
+			endChunk.RemoveRange(0, endIndex + 1);
+			startChunk._count = startIndex;
 		}
 		/// <summary>
 		/// Copies the units from a specified segment of this instance to a destination <see cref="Byte"/> span.

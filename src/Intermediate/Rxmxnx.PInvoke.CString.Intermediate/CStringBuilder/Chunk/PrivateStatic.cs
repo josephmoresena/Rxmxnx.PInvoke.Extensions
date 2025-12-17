@@ -1,9 +1,14 @@
 namespace Rxmxnx.PInvoke;
 
-public partial class CString
+public partial class CStringBuilder
 {
 	internal sealed partial class Chunk
 	{
+		/// <summary>
+		/// Maximum array length.
+		/// </summary>
+		private const Int32 maxLength = UInt16.MaxValue * (Byte.MaxValue * Byte.MaxValue / 2);
+
 		/// <summary>
 		/// Allocates a new buffer for the next chunk based on the capacity of the current chunk.
 		/// </summary>
@@ -24,7 +29,7 @@ public partial class CString
 		/// <param name="capacity">Current chunk capacity.</param>
 		/// <returns>The next chunk capacity.</returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static Int32 GetNextCapacity(Int32 capacity) => Math.Min(2 * capacity, UInt16.MaxValue);
+		private static Int32 GetNextCapacity(Int32 capacity) => Math.Min(2 * capacity, Chunk.maxLength);
 		/// <summary>
 		/// Computes how many additional chunks are required for an insertion, and their sizes.
 		/// </summary>

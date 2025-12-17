@@ -1,6 +1,6 @@
 namespace Rxmxnx.PInvoke;
 
-public partial class CString
+public partial class CStringBuilder
 {
 	internal sealed partial class Chunk
 	{
@@ -65,58 +65,74 @@ public partial class CString
 		/// <returns>The span of unused space in this chunk.</returns>
 		private Span<Byte> GetAvailable() => this._buffer.AsSpan()[this._count..];
 		/// <summary>
-		/// Removes the range from <paramref name="start"/> to <paramref name="end"/>
+		/// Removes the range from <paramref name="start"/> to <paramref name="length"/>
 		/// </summary>
 		/// <param name="start">Start index.</param>
-		/// <param name="end">End index.</param>
-		private void RemoveRange(Int32 start, Int32 end)
+		/// <param name="length">Range length.</param>
+		private void RemoveRange(Int32 start, Int32 length)
 		{
-			if (end >= this._count)
+			if (length >= this._count)
 			{
-				this._count -= start; // At the end of the chunk.
+				// Truncate the chunk at the start position.
+				this._count = start;
 				return;
 			}
 
-			ReadOnlySpan<Byte> source = this._buffer.AsSpan()[end..this._count];
-
+			// Bytes that will remain after the removed range.
+			ReadOnlySpan<Byte> source = this._buffer.AsSpan()[length..this._count];
+			// Update the length of the chunk.
 			this._count = start + source.Length;
 			if (source.Length <= StackAllocationHelper.StackallocByteThreshold)
 			{
+				// Use a stack-allocated temporary buffer to move the remaining bytes.
 				Chunk.CopyBytes(source, this._buffer.AsSpan()[start..]);
 				return;
 			}
 			if (start == 0)
 			{
+				// Allocate a new buffer and copy the remaining bytes into it.
 				this._buffer = CString.CreateByteArray(this._buffer.Length);
 				source.CopyTo(this._buffer);
 				return;
 			}
 
-			Span<Byte> span = this._buffer.AsSpan()[start..this._count];
-			Int32 bufferSize = span.Length - source.Length;
-			if (5 * bufferSize >= source.Length)
+			Span<Byte> chunkBuffer = this._buffer.AsSpan()[start..this._count];
+			Span<Byte> tempBuffer;
+
+			// The source and destination regions overlap.
+			if (5 * (this._buffer.Length - this._count) >= source.Length)
 			{
+				// There is enough unused space at the end of the chunk to use it as a temporary buffer and
+				// avoid allocations.
+				tempBuffer = this._buffer.AsSpan()[this._count..];
 				while (!source.IsEmpty)
 				{
-					Int32 bytesToCopy = Math.Min(bufferSize, source.Length);
-					source[..bufferSize].CopyTo(span);
+					// Determine how many bytes to copy in this iteration.
+					Int32 bytesToCopy = Math.Min(tempBuffer.Length, source.Length);
+					// Copy the source bytes into the temporary buffer.
+					source[..bytesToCopy].CopyTo(tempBuffer);
+					// Advance the source span.
 					source = source[bytesToCopy..];
-					span = span[bytesToCopy..];
+					// Copy from the temporary buffer into the destination span.
+					tempBuffer[..bytesToCopy].CopyTo(chunkBuffer);
+					// Advance the destination span.
+					chunkBuffer = chunkBuffer[bytesToCopy..];
 				}
 				return;
 			}
 
-			Byte[] tempArray = ArrayPool<Byte>.Shared.Rent(source.Length);
+			// Rent a temporary array to safely handle overlapping memory.
+			tempBuffer = StackAllocationHelper.RentArray(source.Length, out Byte[]? tempArray, false);
 			try
 			{
-				Span<Byte> buffer = tempArray.AsSpan()[..source.Length];
-				source.CopyTo(buffer);
-				buffer.CopyTo(this._buffer.AsSpan()[start..]);
-				buffer.Clear();
+				// Copy the remaining bytes into the temporary buffer.
+				source.CopyTo(tempBuffer);
+				// Copy them back into the destination region.
+				tempBuffer.CopyTo(chunkBuffer);
 			}
 			finally
 			{
-				ArrayPool<Byte>.Shared.Return(tempArray);
+				StackAllocationHelper.ReturnArray(tempArray);
 			}
 		}
 		/// <summary>
