@@ -110,11 +110,11 @@ public partial class CStringBuilder
 					// Determine how many bytes to copy in this iteration.
 					Int32 bytesToCopy = Math.Min(tempBuffer.Length, source.Length);
 					// Copy the source bytes into the temporary buffer.
-					source[..bytesToCopy].CopyTo(tempBuffer);
+					source[..bytesToCopy].CopyTo(tempBuffer[^bytesToCopy..]);
 					// Advance the source span.
 					source = source[bytesToCopy..];
 					// Copy from the temporary buffer into the destination span.
-					tempBuffer[..bytesToCopy].CopyTo(chunkBuffer);
+					tempBuffer[^bytesToCopy..].CopyTo(chunkBuffer);
 					// Advance the destination span.
 					chunkBuffer = chunkBuffer[bytesToCopy..];
 				}
