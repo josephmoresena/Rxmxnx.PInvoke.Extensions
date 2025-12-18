@@ -28,10 +28,10 @@ public partial class CStringBuilder
 			{
 				if (chars.IsEmpty) return;
 
-				Int32 utf8Count = 0;
 				Int32 leftCharCount =
 					CharSpanUtf8Split.GetInitialCharCount(chars.Length, charsByteCount, maxLeftByteCount);
-				while (leftCharCount < chars.Length)
+				Int32 utf8Count = Encoding.UTF8.GetByteCount(chars[..leftCharCount]);
+				while (leftCharCount < chars.Length && utf8Count < maxLeftByteCount)
 				{
 					Int32 runeUtf8Bytes = CharSpanUtf8Split.DecodeRune(chars[leftCharCount..], out Int32 charsConsumed);
 					if (utf8Count + runeUtf8Bytes > maxLeftByteCount)
@@ -76,13 +76,12 @@ public partial class CStringBuilder
 			/// <param name="maxLeftByteCount">Maximum UTF-8 bytes available to store left char span.</param>
 			/// <returns>The initial length of left char span.</returns>
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			private static Int32 GetInitialCharCount(Int64 charsLength, Int32 charsByteCount, Int32 maxLeftByteCount)
+			private static Int32 GetInitialCharCount(Int32 charsLength, Int32 charsByteCount, Int32 maxLeftByteCount)
 			{
-				Int32 leftCharCount = 0;
-				if (charsByteCount <= 0 || maxLeftByteCount <= 0) return leftCharCount;
-				Int32 approx = (Int32)(charsLength * maxLeftByteCount / charsByteCount);
-				leftCharCount = (UInt32)approx <= (UInt32)charsLength ? approx : (Int32)charsLength;
-				return leftCharCount;
+				if (charsByteCount <= 0 || maxLeftByteCount <= 0)
+					return 0;
+				Int32 approx = (Int32)(1L * charsLength * maxLeftByteCount / (3L * charsByteCount));
+				return charsLength >= approx ? approx : 0;
 			}
 		}
 	}

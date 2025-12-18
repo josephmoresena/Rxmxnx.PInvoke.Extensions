@@ -107,11 +107,11 @@ public partial class CStringBuilder
 			Int32 byteCount = Encoding.UTF8.GetByteCount(newData);
 			CharSpanUtf8Split split = new(newData, byteCount, StackAllocationHelper.StackallocByteThreshold);
 			Int32 bytes = 0;
-			while (!split.Right.IsEmpty)
+			do
 			{
 				bytes += Chunk.InsertChars(this, index + bytes, split.Left);
 				split = new(split.Right, byteCount - bytes, StackAllocationHelper.StackallocByteThreshold);
-			}
+			} while (!split.Left.IsEmpty);
 		}
 		/// <summary>
 		/// Inserts <paramref name="newData"/> at the specified index creating additional chunks if necessary.

@@ -140,7 +140,7 @@ public partial class CStringBuilder
 		{
 			Span<Byte> temp = stackalloc Byte[StackAllocationHelper.StackallocByteThreshold];
 			Int32 bytes = Encoding.UTF8.GetBytes(chars, temp);
-			chunk.Insert(index, temp);
+			chunk.Insert(index, temp[..bytes]);
 			return bytes;
 		}
 #if NET8_0_OR_GREATER

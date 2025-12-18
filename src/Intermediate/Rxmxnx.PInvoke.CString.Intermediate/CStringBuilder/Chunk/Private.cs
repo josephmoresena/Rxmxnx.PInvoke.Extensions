@@ -101,7 +101,7 @@ public partial class CStringBuilder
 			CharSpanUtf8Split split = new(newData, byteCount, span.Length);
 			Int32 leftByteCount = Encoding.UTF8.GetBytes(split.Left, span);
 			this._count += leftByteCount;
-			return new Chunk(this).Append(byteCount - leftByteCount, split.Right);
+			return new Chunk(this).Append(Encoding.UTF8.GetByteCount(split.Right), split.Right);
 		}
 	}
 }
