@@ -143,21 +143,6 @@ public partial class CStringBuilder
 			chunk.Insert(index, temp);
 			return bytes;
 		}
-		/// <summary>
-		/// Copies the contents of <paramref name="source"/> into <paramref name="destination"/>.
-		/// </summary>
-		/// <param name="source">The read-only span from which to copy the bytes.</param>
-		/// <param name="destination">The span into which the bytes will be copied.</param>
-		/// <remarks>A temporary stack-allocated buffer is used to perform the copy.</remarks>
-#if NET5_0_OR_GREATER
-		[SkipLocalsInit]
-#endif
-		private static void CopyBytes(ReadOnlySpan<Byte> source, Span<Byte> destination)
-		{
-			Span<Byte> buffer = stackalloc Byte[source.Length];
-			source.CopyTo(buffer);
-			buffer.CopyTo(destination);
-		}
 #if NET8_0_OR_GREATER
 		/// <summary>
 		/// Appends a <see cref="IUtf8SpanFormattable"/> value to the sequence, allocating new chunks as needed.

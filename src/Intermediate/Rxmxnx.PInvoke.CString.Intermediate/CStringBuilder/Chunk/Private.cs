@@ -78,62 +78,11 @@ public partial class CStringBuilder
 				return;
 			}
 
-			// Bytes that will remain after the removed range.
 			ReadOnlySpan<Byte> source = this._buffer.AsSpan()[length..this._count];
-			// Update the length of the chunk.
+			Span<Byte> chunkBuffer = this._buffer.AsSpan()[start..];
+			source.CopyTo(chunkBuffer);
+
 			this._count = start + source.Length;
-			if (source.Length <= StackAllocationHelper.StackallocByteThreshold)
-			{
-				// Use a stack-allocated temporary buffer to move the remaining bytes.
-				Chunk.CopyBytes(source, this._buffer.AsSpan()[start..]);
-				return;
-			}
-			if (start == 0)
-			{
-				// Allocate a new buffer and copy the remaining bytes into it.
-				this._buffer = CString.CreateByteArray(this._buffer.Length);
-				source.CopyTo(this._buffer);
-				return;
-			}
-
-			Span<Byte> chunkBuffer = this._buffer.AsSpan()[start..this._count];
-			Span<Byte> tempBuffer;
-
-			// The source and destination regions overlap.
-			if (5 * (this._buffer.Length - this._count) >= source.Length)
-			{
-				// There is enough unused space at the end of the chunk to use it as a temporary buffer and
-				// avoid allocations.
-				tempBuffer = this._buffer.AsSpan()[this._count..];
-				while (!source.IsEmpty)
-				{
-					// Determine how many bytes to copy in this iteration.
-					Int32 bytesToCopy = Math.Min(tempBuffer.Length, source.Length);
-					// Copy the source bytes into the temporary buffer.
-					source[..bytesToCopy].CopyTo(tempBuffer[^bytesToCopy..]);
-					// Advance the source span.
-					source = source[bytesToCopy..];
-					// Copy from the temporary buffer into the destination span.
-					tempBuffer[^bytesToCopy..].CopyTo(chunkBuffer);
-					// Advance the destination span.
-					chunkBuffer = chunkBuffer[bytesToCopy..];
-				}
-				return;
-			}
-
-			// Rent a temporary array to safely handle overlapping memory.
-			tempBuffer = StackAllocationHelper.RentArray(source.Length, out Byte[]? tempArray, false);
-			try
-			{
-				// Copy the remaining bytes into the temporary buffer.
-				source.CopyTo(tempBuffer);
-				// Copy them back into the destination region.
-				tempBuffer.CopyTo(chunkBuffer);
-			}
-			finally
-			{
-				StackAllocationHelper.ReturnArray(tempArray);
-			}
 		}
 		/// <summary>
 		/// Appends a span of chars to the sequence, allocating new chunks as needed.
