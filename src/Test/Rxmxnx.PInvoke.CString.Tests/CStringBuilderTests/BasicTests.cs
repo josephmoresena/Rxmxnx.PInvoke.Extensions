@@ -28,12 +28,107 @@ public sealed class BasicTests : CStringBuilderTestsBase
 			CString? newCString = TestSet.GetCString(i, handle);
 
 			strBuild.Append(newString);
-			cstrBuild.Append(newCString);
+			Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.Append(newCString)));
 			builderLength += newCString?.Length ?? 0;
 			PInvokeAssert.Equal(builderLength, cstrBuild.Length);
 			PInvokeAssert.True(
 				cstrBuild.ToCString().AsSpan().SequenceEqual(Encoding.UTF8.GetBytes(strBuild.ToString())));
 		}
+		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
+	}
+	[Theory]
+	[InlineData(null)]
+	[InlineData(8)]
+	[InlineData(32)]
+	[InlineData(256)]
+	[InlineData(300)]
+	[InlineData(1000)]
+	[InlineData(null, "|")]
+	[InlineData(8, "|")]
+	[InlineData(32, "|")]
+	[InlineData(256, "|")]
+	[InlineData(300, "|")]
+	[InlineData(1000, "|")]
+	[InlineData(null, ", ")]
+	[InlineData(8, ", ")]
+	[InlineData(32, ", ")]
+	[InlineData(256, ", ")]
+	[InlineData(300, ", ")]
+	[InlineData(1000, ", ")]
+	public void AppendJoinTest(Int32? length, String? separator = default)
+	{
+		using TestMemoryHandle handle = new();
+		List<Int32> indices = TestSet.GetIndices(length);
+		StringBuilder strBuild = new();
+		CStringBuilder cstrBuild = new();
+		strBuild.AppendJoin(separator, indices.Select(i => TestSet.GetString(i, true)));
+		PInvokeAssert.True(Object.ReferenceEquals(cstrBuild,
+		                                          // ReSharper disable once AccessToDisposedClosure
+		                                          cstrBuild.AppendJoin((CString?)separator,
+		                                                               indices.Select(i => TestSet
+			                                                               .GetCString(i, handle)))));
+		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
+	}
+	[Theory]
+	[InlineData(null)]
+	[InlineData(8)]
+	[InlineData(32)]
+	[InlineData(256)]
+	[InlineData(300)]
+	[InlineData(1000)]
+	[InlineData(null, "|")]
+	[InlineData(8, "|")]
+	[InlineData(32, "|")]
+	[InlineData(256, "|")]
+	[InlineData(300, "|")]
+	[InlineData(1000, "|")]
+	[InlineData(null, ", ")]
+	[InlineData(8, ", ")]
+	[InlineData(32, ", ")]
+	[InlineData(256, ", ")]
+	[InlineData(300, ", ")]
+	[InlineData(1000, ", ")]
+	public void AppendJoinSequenceTest(Int32? length, String? separator = default)
+	{
+		List<Int32> indices = TestSet.GetIndices(length);
+		String?[] values = indices.Select(i => TestSet.GetString(i, true)).ToArray();
+		CStringSequence seq = new(values);
+		StringBuilder strBuild = new();
+		CStringBuilder cstrBuild = new();
+		strBuild.AppendJoin(separator, values);
+		PInvokeAssert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.AppendJoin((CString?)separator, seq)));
+		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
+	}
+	[Theory]
+	[InlineData(null)]
+	[InlineData(8)]
+	[InlineData(32)]
+	[InlineData(256)]
+	[InlineData(300)]
+	[InlineData(1000)]
+	[InlineData(null, "|")]
+	[InlineData(8, "|")]
+	[InlineData(32, "|")]
+	[InlineData(256, "|")]
+	[InlineData(300, "|")]
+	[InlineData(1000, "|")]
+	[InlineData(null, ", ")]
+	[InlineData(8, ", ")]
+	[InlineData(32, ", ")]
+	[InlineData(256, ", ")]
+	[InlineData(300, ", ")]
+	[InlineData(1000, ", ")]
+	public void AppendJoinArrayTest(Int32? length, String? separator = default)
+	{
+		using TestMemoryHandle handle = new();
+		List<Int32> indices = TestSet.GetIndices(length);
+		String?[] values = indices.Select(i => TestSet.GetString(i, true)).ToArray();
+		CString?[] cValues = // ReSharper disable once AccessToDisposedClosure
+			indices.Select(i => TestSet.GetCString(i, handle)).ToArray();
+		StringBuilder strBuild = new();
+		CStringBuilder cstrBuild = new();
+		strBuild.AppendJoin(separator, values);
+		PInvokeAssert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.AppendJoin((CString?)separator, cValues)));
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
 	}
 	[Theory]
@@ -63,7 +158,7 @@ public sealed class BasicTests : CStringBuilderTestsBase
 			CString? newCString = TestSet.GetCString(i, handle);
 			(Int32 utf16Index, Int32 utf8Index) = CStringBuilderTestsBase.GetIndex(strBuild.ToString(), out rune);
 			strBuild.Insert(utf16Index, newString);
-			cstrBuild.Insert(utf8Index, newCString);
+			PInvokeAssert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.Insert(utf8Index, newCString)));
 			builderLength += newCString?.Length ?? 0;
 			PInvokeAssert.Equal(builderLength, cstrBuild.Length);
 		}
@@ -78,7 +173,7 @@ public sealed class BasicTests : CStringBuilderTestsBase
 				CStringBuilderTestsBase.GetIndex(strBuildValue.AsSpan()[utf16Start..], out _);
 
 			strBuild.Remove(utf16Start, utf16End);
-			cstrBuild.Remove(utf8Start, utf8End);
+			PInvokeAssert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.Remove(utf8Start, utf8End)));
 			strBuildValue = strBuild.ToString();
 			PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToCString().ToString());
 		}

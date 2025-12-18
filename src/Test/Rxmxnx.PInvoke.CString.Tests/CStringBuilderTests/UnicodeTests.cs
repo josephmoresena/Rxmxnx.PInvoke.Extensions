@@ -24,7 +24,7 @@ public sealed class UnicodeTests : CStringBuilderTestsBase
 		foreach (String? newString in indices.Select(i => TestSet.GetString(i, true)))
 		{
 			strBuild.Append(newString);
-			cstrBuild.Append(newString);
+			PInvokeAssert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.Append(newString)));
 		}
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
 	}
@@ -50,7 +50,7 @@ public sealed class UnicodeTests : CStringBuilderTestsBase
 		{
 			(Int32 utf16Index, Int32 utf8Index) = CStringBuilderTestsBase.GetIndex(strBuild.ToString(), out _);
 			strBuild.Insert(utf16Index, newString);
-			cstrBuild.Insert(utf8Index, newString);
+			PInvokeAssert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.Insert(utf8Index, newString)));
 		}
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
 	}
