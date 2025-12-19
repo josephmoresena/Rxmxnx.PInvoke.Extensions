@@ -399,7 +399,7 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the insert operation has completed.</returns>
 	public CStringBuilder Insert(Int32 index, Byte value, Boolean asNumber = false)
 	{
-		if (asNumber)
+		if (!asNumber)
 			return this.Insert(index, [value,]);
 #if NET8_0_OR_GREATER
 		if (CStringBuilder.InsertUtf8(this, index, value) is { } result8)

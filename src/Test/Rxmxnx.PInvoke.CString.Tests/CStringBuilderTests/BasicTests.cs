@@ -179,4 +179,44 @@ public sealed class BasicTests : CStringBuilderTestsBase
 		}
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToCString().ToString());
 	}
+	[Theory]
+	[InlineData(8)]
+	[InlineData(32)]
+	public void AppendU8CharTest(Int32? length)
+	{
+		List<Int32> indices = TestSet.GetIndices(length);
+		StringBuilder strBuild = new();
+		CStringBuilder cstrBuild = new();
+		foreach (Int32 i in indices)
+		{
+			strBuild.Append(TestSet.GetString(i, true));
+			ReadOnlySpan<Byte> bytes = i >= 0 ? TestSet.Utf8Text[i]() : default;
+			foreach (Byte u8 in bytes)
+				Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.Append(u8)));
+		}
+		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
+	}
+	[Theory]
+	[InlineData(8)]
+	[InlineData(32)]
+	public void InsertU8Test(Int32? length)
+	{
+		List<Int32> indices = TestSet.GetIndices(length);
+		StringBuilder strBuild = new();
+		CStringBuilder cstrBuild = new();
+		String? seed = TestSet.GetString(indices.OrderBy(_ => Guid.NewGuid()).FirstOrDefault(), true);
+
+		strBuild.Append(seed);
+		cstrBuild.Append(seed);
+
+		foreach (Int32 i in indices)
+		{
+			(Int32 utf16Index, Int32 utf8Index) = CStringBuilderTestsBase.GetIndex(strBuild.ToString(), out _);
+			strBuild.Insert(utf16Index, TestSet.GetString(i, true));
+			ReadOnlySpan<Byte> bytes = i >= 0 ? TestSet.Utf8Text[i]() : default;
+			for (Int32 j = 0; j < bytes.Length; j++)
+				Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.Insert(utf8Index + j, bytes[j])));
+		}
+		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
+	}
 }
