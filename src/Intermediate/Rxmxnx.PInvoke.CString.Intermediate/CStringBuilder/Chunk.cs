@@ -110,7 +110,8 @@ public partial class CStringBuilder
 			do
 			{
 				bytes += Chunk.InsertChars(this, index + bytes, split.Left);
-				split = new(split.Right, byteCount - bytes, StackAllocationHelper.StackallocByteThreshold);
+				split = new(split.Right, Encoding.UTF8.GetByteCount(split.Right),
+				            StackAllocationHelper.StackallocByteThreshold);
 			} while (!split.Left.IsEmpty);
 		}
 		/// <summary>
