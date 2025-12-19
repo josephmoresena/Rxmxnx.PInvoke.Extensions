@@ -22,8 +22,10 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		{
 			AppendU16 = static (v, s) => s.Append(v),
 			AppendU8 = static (v, c) => c.Append(v),
+			AppendU8Null = static (v, c) => c.Append(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
 			InsertU8 = static (i, v, c) => c.Insert(i, v),
+			InsertU8Null = static (i, v, c) => c.Insert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -40,8 +42,10 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		{
 			AppendU16 = static (v, s) => s.Append(v),
 			AppendU8 = static (v, c) => c.Append(v),
+			AppendU8Null = static (v, c) => c.Append(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
 			InsertU8 = static (i, v, c) => c.Insert(i, v),
+			InsertU8Null = static (i, v, c) => c.Insert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -58,8 +62,10 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		{
 			AppendU16 = static (v, s) => s.Append(v),
 			AppendU8 = static (v, c) => c.Append(v, true),
+			AppendU8Null = static (v, c) => c.Append(v, true),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
 			InsertU8 = static (i, v, c) => c.Insert(i, v, true),
+			InsertU8Null = static (i, v, c) => c.Insert(i, v, true),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -76,8 +82,10 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		{
 			AppendU16 = static (v, s) => s.Append(v),
 			AppendU8 = static (v, c) => c.Append(v),
+			AppendU8Null = static (v, c) => c.Append(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
 			InsertU8 = static (i, v, c) => c.Insert(i, v),
+			InsertU8Null = static (i, v, c) => c.Insert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -94,8 +102,10 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		{
 			AppendU16 = static (v, s) => s.Append(v),
 			AppendU8 = static (v, c) => c.Append(v),
+			AppendU8Null = static (v, c) => c.Append(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
 			InsertU8 = static (i, v, c) => c.Insert(i, v),
+			InsertU8Null = static (i, v, c) => c.Insert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -112,8 +122,10 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		{
 			AppendU16 = static (v, s) => s.Append(v),
 			AppendU8 = static (v, c) => c.Append(v),
+			AppendU8Null = static (v, c) => c.Append(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
 			InsertU8 = static (i, v, c) => c.Insert(i, v),
+			InsertU8Null = static (i, v, c) => c.Insert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -130,8 +142,10 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		{
 			AppendU16 = static (v, s) => s.Append(v),
 			AppendU8 = static (v, c) => c.Append(v),
+			AppendU8Null = static (v, c) => c.Append(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
 			InsertU8 = static (i, v, c) => c.Insert(i, v),
+			InsertU8Null = static (i, v, c) => c.Insert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -148,8 +162,10 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		{
 			AppendU16 = static (v, s) => s.Append(v),
 			AppendU8 = static (v, c) => c.Append(v),
+			AppendU8Null = static (v, c) => c.Append(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
 			InsertU8 = static (i, v, c) => c.Insert(i, v),
+			InsertU8Null = static (i, v, c) => c.Insert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -166,8 +182,10 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		{
 			AppendU16 = static (v, s) => s.Append(v),
 			AppendU8 = static (v, c) => c.Append(v),
+			AppendU8Null = static (v, c) => c.Append(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
 			InsertU8 = static (i, v, c) => c.Insert(i, v),
+			InsertU8Null = static (i, v, c) => c.Insert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -184,8 +202,10 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		{
 			AppendU16 = static (v, s) => s.Append(v),
 			AppendU8 = static (v, c) => c.Append(v),
+			AppendU8Null = static (v, c) => c.Append(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
 			InsertU8 = static (i, v, c) => c.Insert(i, v),
+			InsertU8Null = static (i, v, c) => c.Insert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -202,8 +222,10 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		{
 			AppendU16 = static (v, s) => s.Append(v),
 			AppendU8 = static (v, c) => c.Append(v),
+			AppendU8Null = static (v, c) => c.Append(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
 			InsertU8 = static (i, v, c) => c.Insert(i, v),
+			InsertU8Null = static (i, v, c) => c.Insert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -220,8 +242,10 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		{
 			AppendU16 = static (v, s) => s.Append(v),
 			AppendU8 = static (v, c) => c.Append(v),
+			AppendU8Null = static (v, c) => c.Append(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
 			InsertU8 = static (i, v, c) => c.Insert(i, v),
+			InsertU8Null = static (i, v, c) => c.Insert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -238,8 +262,10 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		{
 			AppendU16 = static (v, s) => s.Append(v),
 			AppendU8 = static (v, c) => c.Append(v),
+			AppendU8Null = static (v, c) => c.Append(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
 			InsertU8 = static (i, v, c) => c.Insert(i, v),
+			InsertU8Null = static (i, v, c) => c.Insert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -248,6 +274,7 @@ public sealed class ValueTests : CStringBuilderTestsBase
 	private void AppendTest<T>(Int32 length, Helper<T> helper) where T : unmanaged
 	{
 		T[] values = this._fixture.CreateMany<T>(length).ToArray();
+		T?[] valuesNull = this._fixture.CreateMany<T?>(length).ToArray();
 		StringBuilder strBuild = new();
 		CStringBuilder cstrBuild = new();
 		foreach (T value in values.AsSpan())
@@ -256,10 +283,17 @@ public sealed class ValueTests : CStringBuilderTestsBase
 			Assert.True(Object.ReferenceEquals(cstrBuild, helper.AppendU8(value, cstrBuild)));
 		}
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
+		foreach (T? value in valuesNull.AsSpan())
+		{
+			strBuild.Append(value);
+			Assert.True(Object.ReferenceEquals(cstrBuild, helper.AppendU8Null(value, cstrBuild)));
+		}
+		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
 	}
 	private void InsertTest<T>(Int32 length, Helper<T> helper) where T : unmanaged
 	{
 		T[] values = this._fixture.CreateMany<T>(length).ToArray();
+		T?[] valuesNull = this._fixture.CreateMany<T?>(length).ToArray();
 		StringBuilder strBuild = new();
 		CStringBuilder cstrBuild = new();
 		String? seed = TestSet.GetString(TestSet.GetIndices(1).FirstOrDefault(), true);
@@ -273,13 +307,22 @@ public sealed class ValueTests : CStringBuilderTestsBase
 			Assert.True(Object.ReferenceEquals(cstrBuild, helper.InsertU8(utf8Index, value, cstrBuild)));
 		}
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
+		foreach (T? value in valuesNull.AsSpan())
+		{
+			(Int32 utf16Index, Int32 utf8Index) = CStringBuilderTestsBase.GetIndex(strBuild.ToString(), out _);
+			strBuild.Insert(utf16Index, value);
+			Assert.True(Object.ReferenceEquals(cstrBuild, helper.InsertU8Null(utf8Index, value, cstrBuild)));
+		}
+		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
 	}
 
 	private sealed class Helper<T> where T : unmanaged
 	{
 		public Func<T, StringBuilder, StringBuilder> AppendU16 { get; init; } = default!;
 		public Func<T, CStringBuilder, CStringBuilder> AppendU8 { get; init; } = default!;
+		public Func<T?, CStringBuilder, CStringBuilder> AppendU8Null { get; init; } = default!;
 		public Func<Int32, T, StringBuilder, StringBuilder> InsertU16 { get; init; } = default!;
 		public Func<Int32, T, CStringBuilder, CStringBuilder> InsertU8 { get; init; } = default!;
+		public Func<Int32, T?, CStringBuilder, CStringBuilder> InsertU8Null { get; init; } = default!;
 	}
 }

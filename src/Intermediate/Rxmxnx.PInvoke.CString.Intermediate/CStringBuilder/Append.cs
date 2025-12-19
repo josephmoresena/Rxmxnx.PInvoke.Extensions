@@ -155,6 +155,12 @@ public sealed partial class CStringBuilder
 		return this;
 	}
 	/// <summary>
+	/// Appends the UTF-8 representation of the specified decimal number to this instance.
+	/// </summary>
+	/// <param name="value">The value to append.</param>
+	/// <returns>A reference to this instance after the append operation has completed.</returns>
+	public CStringBuilder Append(Decimal? value) => value.HasValue ? this.Append(value.Value) : this;
+	/// <summary>
 	/// Appends the UTF-8 representation of the specified double-precision floating-point number to this instance.
 	/// </summary>
 	/// <param name="value">The value to append.</param>

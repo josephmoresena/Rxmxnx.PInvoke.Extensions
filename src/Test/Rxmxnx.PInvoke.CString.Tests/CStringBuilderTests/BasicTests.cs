@@ -184,15 +184,27 @@ public sealed class BasicTests : CStringBuilderTestsBase
 	[InlineData(32)]
 	public void AppendU8CharTest(Int32? length)
 	{
+		using TestMemoryHandle handle = new();
 		List<Int32> indices = TestSet.GetIndices(length);
 		StringBuilder strBuild = new();
 		CStringBuilder cstrBuild = new();
 		foreach (Int32 i in indices)
 		{
 			strBuild.Append(TestSet.GetString(i, true));
-			ReadOnlySpan<Byte> bytes = i >= 0 ? TestSet.Utf8Text[i]() : default;
-			foreach (Byte u8 in bytes)
-				Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.Append(u8)));
+
+			if (TestSet.GetCString(i, handle) is not { } cstr)
+			{
+				Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.Append(default(Byte?))));
+				continue;
+			}
+
+			foreach (Byte u8 in cstr.AsSpan())
+			{
+				CStringBuilder result = Random.Shared.Next(0, 3) < 2 ?
+					cstrBuild.Append(u8) :
+					cstrBuild.Append((Byte?)u8);
+				Assert.True(Object.ReferenceEquals(cstrBuild, result));
+			}
 		}
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
 	}
@@ -201,6 +213,7 @@ public sealed class BasicTests : CStringBuilderTestsBase
 	[InlineData(32)]
 	public void InsertU8Test(Int32? length)
 	{
+		using TestMemoryHandle handle = new();
 		List<Int32> indices = TestSet.GetIndices(length);
 		StringBuilder strBuild = new();
 		CStringBuilder cstrBuild = new();
@@ -213,9 +226,20 @@ public sealed class BasicTests : CStringBuilderTestsBase
 		{
 			(Int32 utf16Index, Int32 utf8Index) = CStringBuilderTestsBase.GetIndex(strBuild.ToString(), out _);
 			strBuild.Insert(utf16Index, TestSet.GetString(i, true));
-			ReadOnlySpan<Byte> bytes = i >= 0 ? TestSet.Utf8Text[i]() : default;
+			if (TestSet.GetCString(i, handle) is not { } cstr)
+			{
+				Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.Insert(utf8Index, default(Byte?))));
+				continue;
+			}
+
+			ReadOnlySpan<Byte> bytes = cstr;
 			for (Int32 j = 0; j < bytes.Length; j++)
-				Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.Insert(utf8Index + j, bytes[j])));
+			{
+				CStringBuilder result = Random.Shared.Next(0, 3) < 2 ?
+					cstrBuild.Insert(utf8Index + j, bytes[j]) :
+					cstrBuild.Insert(utf8Index + j, (Byte?)bytes[j]);
+				Assert.True(Object.ReferenceEquals(cstrBuild, result));
+			}
 		}
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
 	}
