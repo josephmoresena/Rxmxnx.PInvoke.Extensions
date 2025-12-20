@@ -153,12 +153,6 @@ internal abstract partial class Utf8Comparator<TChar> : Utf8Comparator where TCh
 	}
 
 	/// <summary>
-	/// Retrieves a <see cref="ReadOnlySpan{Char}"/> representation of the <paramref name="source"/>.
-	/// </summary>
-	/// <param name="source">A read-only span of <typeparamref name="TChar"/> elements that represent a text.</param>
-	/// <returns>A <see cref="ReadOnlySpan{Char}"/> that represents the <paramref name="source"/> text.</returns>
-	protected abstract ReadOnlySpan<Char> GetUnicodeSpan(ReadOnlySpan<TChar> source);
-	/// <summary>
 	/// Retrieves the string representation of the <paramref name="source"/>.
 	/// </summary>
 	/// <param name="source">A read-only span of <typeparamref name="TChar"/> elements that represent a text.</param>

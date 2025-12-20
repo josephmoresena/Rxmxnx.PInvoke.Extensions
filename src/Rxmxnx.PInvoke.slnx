@@ -30,6 +30,7 @@
     <Folder Name="/Package/">
         <Project Path="..\package\Rxmxnx.PInvoke.Extensions.IlPatcher\Rxmxnx.PInvoke.Extensions.IlPatcher.csproj"/>
         <File Path="..\package\Intermediate-to-Package.targets"/>
+        <File Path="..\package\Rxmxnx.PInvoke.Extensions\CompatibilitySuppressions.xml"/>
         <File Path="..\package\Rxmxnx.PInvoke.Extensions\PACKAGE.md"/>
     </Folder>
     <Folder Name="/Tests/">

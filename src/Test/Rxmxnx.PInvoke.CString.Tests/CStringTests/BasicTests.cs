@@ -313,13 +313,22 @@ public sealed class BasicTests
 			CString? rightCStr = TestSet.GetCString(indices2[i], handle);
 
 			String valueStr = leftStr + rightStr;
+			String valueInvStr = rightStr + leftStr;
+
 			CString valueCStr0 = leftCStr + rightCStr;
 			CString valueCStr1 = leftStr + rightCStr;
 			CString valueCStr2 = leftCStr + rightStr;
 
+			CString valueInvCStr0 = rightCStr + leftCStr;
+			CString valueInvCStr1 = rightCStr + leftStr;
+			CString valueInvCStr2 = rightStr + leftCStr;
+
 			PInvokeAssert.Equal(valueStr, valueCStr0.ToString());
 			PInvokeAssert.True(valueCStr0.AsSpan().SequenceEqual(valueCStr1));
 			PInvokeAssert.True(valueCStr0.AsSpan().SequenceEqual(valueCStr2));
+			PInvokeAssert.Equal(valueInvStr, valueInvCStr0.ToString());
+			PInvokeAssert.True(valueInvCStr0.AsSpan().SequenceEqual(valueInvCStr1));
+			PInvokeAssert.True(valueInvCStr0.AsSpan().SequenceEqual(valueInvCStr2));
 		}
 	}
 

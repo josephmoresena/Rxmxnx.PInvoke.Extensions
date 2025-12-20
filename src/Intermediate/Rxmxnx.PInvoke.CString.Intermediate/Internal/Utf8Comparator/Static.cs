@@ -49,14 +49,6 @@ internal abstract unsafe partial class Utf8Comparator
 		return result;
 	}
 	/// <summary>
-	/// Retrieves the <see cref="ReadOnlySpan{Char}"/> representation of <paramref name="source"/>.
-	/// </summary>
-	/// <param name="source">A read-only span of <see cref="byte"/> elements representing a UTF-8 encoded text.</param>
-	/// <returns>A <see cref="ReadOnlySpan{Char}"/> that represents the <paramref name="source"/> text.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	protected static ReadOnlySpan<Char> GetUnicodeSpanFromUtf8(ReadOnlySpan<Byte> source)
-		=> Utf8Comparator.GetStringFromUtf8(source).AsSpan();
-	/// <summary>
 	/// Performs an ordinal comparison between two UTF-16 character spans.
 	/// </summary>
 	/// <param name="spanA">The first UTF-16 span to compare.</param>
@@ -163,6 +155,9 @@ internal abstract unsafe partial class Utf8Comparator
 	/// <returns> <see langword="true"/> if a difference was detected; otherwise <see langword="false"/>.</returns>
 	/// <remarks>Advances both spans by the number of characters read.</remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	private static Boolean OrdinalCompare64Bit(ref ReadOnlySpan<Char> spanA, ref ReadOnlySpan<Char> spanB,
 		out Int32 result)
 	{
@@ -188,6 +183,9 @@ internal abstract unsafe partial class Utf8Comparator
 	/// <returns> <see langword="true"/> if a difference was detected; otherwise <see langword="false"/>.</returns>
 	/// <remarks>Advances both spans by the number of characters read.</remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	private static Boolean OrdinalCompare32Bit(ref ReadOnlySpan<Char> spanA, ref ReadOnlySpan<Char> spanB,
 		out Int32 result)
 	{

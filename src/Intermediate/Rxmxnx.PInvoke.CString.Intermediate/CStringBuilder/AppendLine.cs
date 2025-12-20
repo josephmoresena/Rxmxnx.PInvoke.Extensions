@@ -36,14 +36,14 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The UTF-8 text to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
-	public CStringBuilder AppendLine(CString? value) => this.Append((ReadOnlySpan<Byte>)value);
+	public CStringBuilder AppendLine(CString? value) => this.AppendLine((ReadOnlySpan<Byte>)value);
 	/// <summary>
 	/// Appends the specified UTF-8 units array followed by the default line terminator to the end of
 	/// the current instance.
 	/// </summary>
 	/// <param name="value">The UTF-8 units array to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
-	public CStringBuilder AppendLine(Byte[]? value) => this.Append((ReadOnlySpan<Byte>)value);
+	public CStringBuilder AppendLine(Byte[]? value) => this.AppendLine((ReadOnlySpan<Byte>)value);
 	/// <summary>
 	/// Appends the UTF-8 representation of the specified character span followed by the default line terminator to
 	/// the end of the current instance.

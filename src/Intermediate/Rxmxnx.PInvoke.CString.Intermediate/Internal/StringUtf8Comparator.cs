@@ -39,8 +39,6 @@ internal sealed class StringUtf8Comparator : Utf8Comparator<Char>
 		return result;
 	}
 	/// <inheritdoc/>
-	protected override ReadOnlySpan<Char> GetUnicodeSpan(ReadOnlySpan<Char> source) => source;
-	/// <inheritdoc/>
 	protected override String GetString(ReadOnlySpan<Char> source) => new(source);
 	/// <inheritdoc/>
 #if !PACKAGE

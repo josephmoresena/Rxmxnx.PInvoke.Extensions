@@ -26,9 +26,6 @@ internal sealed class CStringUtf8Comparator : Utf8Comparator<Byte>
 	protected override DecodedRune? DecodeRune(ref ReadOnlySpan<Byte> source)
 		=> Utf8Comparator.DecodeRuneFromUtf8(ref source);
 	/// <inheritdoc/>
-	protected override ReadOnlySpan<Char> GetUnicodeSpan(ReadOnlySpan<Byte> source)
-		=> Utf8Comparator.GetUnicodeSpanFromUtf8(source);
-	/// <inheritdoc/>
 	protected override String GetString(ReadOnlySpan<Byte> source) => Utf8Comparator.GetStringFromUtf8(source);
 	/// <inheritdoc/>
 	protected override Int32 CountChars(ReadOnlySpan<Byte> source) => Utf8Comparator.GetCharCountFromUtf8(source);

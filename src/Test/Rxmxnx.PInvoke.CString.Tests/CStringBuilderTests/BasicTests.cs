@@ -37,6 +37,45 @@ public sealed class BasicTests : CStringBuilderTestsBase
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
 	}
 	[Theory]
+	[InlineData(8)]
+	[InlineData(32)]
+	[InlineData(256)]
+	public void AppendLineParameterlessTest(Int32 length)
+	{
+		StringBuilder strBuild = new();
+		CStringBuilder cstrBuild = new();
+		while (length > 0)
+		{
+			strBuild.AppendLine();
+			Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.AppendLine()));
+			length--;
+		}
+		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
+	}
+	[Theory]
+	[InlineData(null)]
+	[InlineData(8)]
+	[InlineData(32)]
+	[InlineData(256)]
+	[InlineData(300)]
+	[InlineData(1000)]
+	public void AppendLineTest(Int32? length)
+	{
+		using TestMemoryHandle handle = new();
+		List<Int32> indices = TestSet.GetIndices(length);
+		StringBuilder strBuild = new();
+		CStringBuilder cstrBuild = new();
+		foreach (Int32 i in indices)
+		{
+			String? newString = TestSet.GetString(i, true);
+			CString? newCString = TestSet.GetCString(i, handle);
+
+			strBuild.AppendLine(newString);
+			Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.AppendLine(newCString)));
+		}
+		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
+	}
+	[Theory]
 	[InlineData(null)]
 	[InlineData(8)]
 	[InlineData(32)]
