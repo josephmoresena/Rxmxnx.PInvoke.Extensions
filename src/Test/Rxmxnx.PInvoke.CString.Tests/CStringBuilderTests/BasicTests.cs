@@ -37,6 +37,29 @@ public sealed class BasicTests : CStringBuilderTestsBase
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
 	}
 	[Theory]
+	[InlineData(null)]
+	[InlineData(8)]
+	[InlineData(32)]
+	[InlineData(256)]
+	[InlineData(300)]
+	[InlineData(1000)]
+	public void AppendArrayTest(Int32? length)
+	{
+		using TestMemoryHandle handle = new();
+		List<Int32> indices = TestSet.GetIndices(length);
+		StringBuilder strBuild = new();
+		CStringBuilder cstrBuild = new();
+		foreach (Int32 i in indices)
+		{
+			Char[]? chars = TestSet.GetString(i, true)?.ToCharArray();
+			Byte[]? bytes = TestSet.GetCString(i, handle)?.ToArray();
+
+			strBuild.Append(chars);
+			Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.Append(bytes)));
+		}
+		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
+	}
+	[Theory]
 	[InlineData(8)]
 	[InlineData(32)]
 	[InlineData(256)]
@@ -72,6 +95,29 @@ public sealed class BasicTests : CStringBuilderTestsBase
 
 			strBuild.AppendLine(newString);
 			Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.AppendLine(newCString)));
+		}
+		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
+	}
+	[Theory]
+	[InlineData(null)]
+	[InlineData(8)]
+	[InlineData(32)]
+	[InlineData(256)]
+	[InlineData(300)]
+	[InlineData(1000)]
+	public void AppendLineArrayTest(Int32? length)
+	{
+		using TestMemoryHandle handle = new();
+		List<Int32> indices = TestSet.GetIndices(length);
+		StringBuilder strBuild = new();
+		CStringBuilder cstrBuild = new();
+		foreach (Int32 i in indices)
+		{
+			String? newString = TestSet.GetString(i, true);
+			Byte[]? bytes = TestSet.GetCString(i, handle)?.ToArray();
+
+			strBuild.AppendLine(newString);
+			Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.AppendLine(bytes)));
 		}
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
 	}

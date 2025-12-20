@@ -35,7 +35,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="capacity">Current chunk capacity.</param>
 		/// <param name="required">Required new bytes.</param>
-		/// <param name="constantLength"></param>
+		/// <param name="constantLength">
+		/// Indicates whether the required chunk capacity are equals to <paramref name="capacity"/>.
+		/// </param>
 		/// <returns>Information for data insertion.</returns>
 		private static InsertInfo GetInsertInfo(Int32 capacity, Int32 required, Boolean constantLength)
 		{

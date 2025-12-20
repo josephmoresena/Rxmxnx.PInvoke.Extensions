@@ -34,6 +34,26 @@ public sealed class UnicodeTests : CStringBuilderTestsBase
 	[InlineData(256)]
 	[InlineData(300)]
 	[InlineData(1000)]
+	public void AppendArrayTest(Int32? length)
+	{
+		List<Int32> indices = TestSet.GetIndices(length);
+		StringBuilder strBuild = new();
+		CStringBuilder cstrBuild = new();
+		foreach (String? newString in indices.Select(i => TestSet.GetString(i, true)))
+		{
+			Char[]? chars = newString?.ToCharArray();
+			strBuild.Append(chars);
+			PInvokeAssert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.Append(chars)));
+		}
+		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
+	}
+	[Theory]
+	[InlineData(null)]
+	[InlineData(8)]
+	[InlineData(32)]
+	[InlineData(256)]
+	[InlineData(300)]
+	[InlineData(1000)]
 	public void AppendLineTest(Int32? length)
 	{
 		List<Int32> indices = TestSet.GetIndices(length);
@@ -43,6 +63,25 @@ public sealed class UnicodeTests : CStringBuilderTestsBase
 		{
 			strBuild.AppendLine(newString);
 			PInvokeAssert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.AppendLine(newString)));
+		}
+		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
+	}
+	[Theory]
+	[InlineData(null)]
+	[InlineData(8)]
+	[InlineData(32)]
+	[InlineData(256)]
+	[InlineData(300)]
+	[InlineData(1000)]
+	public void AppendLineArrayTest(Int32? length)
+	{
+		List<Int32> indices = TestSet.GetIndices(length);
+		StringBuilder strBuild = new();
+		CStringBuilder cstrBuild = new();
+		foreach (String? newString in indices.Select(i => TestSet.GetString(i, true)))
+		{
+			strBuild.AppendLine(newString);
+			PInvokeAssert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.AppendLine(newString?.ToCharArray())));
 		}
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
 	}
