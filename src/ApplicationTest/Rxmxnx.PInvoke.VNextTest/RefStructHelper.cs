@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿#if NET9_0_OR_GREATER
+using System.Runtime.CompilerServices;
 
 namespace Rxmxnx.PInvoke.ApplicationTest;
 
@@ -55,3 +56,4 @@ public static class RefStructHelper
 		Console.WriteLine($"Unsafe Read-only Span Memory Pointer: 0x{f.Pointer:x8}");
 	}
 }
+#endif

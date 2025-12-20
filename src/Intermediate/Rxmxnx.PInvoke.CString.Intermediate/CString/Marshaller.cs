@@ -43,6 +43,7 @@ public unsafe partial class CString
 			{
 				this._pinnable.Dispose();
 				this._pointer = IntPtr.Zero;
+				this._pinnable = default;
 				return;
 			}
 			if (this._allocated)
@@ -78,19 +79,15 @@ public unsafe partial class CString
 			if (this._managed is null || this._managed.IsZero) return IntPtr.Zero;
 			if (this._pointer != IntPtr.Zero) return this._pointer;
 
-			Boolean isEmpty = this._managed._length == 0;
-			if (isEmpty || this._managed.IsNullTerminated)
+			// Empty CString
+			if (this._managed._length == 0)
+				return this.GetDirectPointer(CString.Empty);
+
+			// Null-terminated
+			if (this._managed.IsNullTerminated)
 			{
-				if (isEmpty || this._managed.IsReference || (this._managed.IsFunction &&
-					    !MemoryInspector.MayBeNonLiteral(this._managed.AsSpan())))
-				{
-					// If the CString is empty, we can use CString.Empty literal.
-					CString source = !isEmpty ? this._managed : CString.Empty;
-					// If the CString is a reference or literal, we can use the pointer directly.
-					ref Byte refUtf8 = ref Unsafe.AsRef(in source.GetPinnableReference());
-					this._pointer = (IntPtr)Unsafe.AsPointer(ref refUtf8);
-					return this._pointer;
-				}
+				if (this._managed.IsReference || (this._managed.IsFunction && CString.IsImagePersistent(this._managed)))
+					return this.GetDirectPointer(this._managed);
 
 				this._pinnable = this._managed.TryPin(out Boolean pinned);
 				if (pinned)
@@ -109,6 +106,18 @@ public unsafe partial class CString
 			this._managed.AsSpan().CopyTo(output);
 			output[^1] = default; // Ensure null-termination.
 
+			return this._pointer;
+		}
+		/// <summary>
+		/// Retrieves a direct pointer to <paramref name="source"/> data.
+		/// </summary>
+		/// <param name="source">A <see cref="CString"/> instance.</param>
+		/// <returns>A direct  pointer to <paramref name="source"/> data.</returns>
+		private IntPtr GetDirectPointer(CString source)
+		{
+			// If the CString is a reference or literal, we can use the pointer directly.
+			ref Byte refUtf8 = ref Unsafe.AsRef(in source.GetPinnableReference());
+			this._pointer = (IntPtr)Unsafe.AsPointer(ref refUtf8);
 			return this._pointer;
 		}
 		/// <summary>

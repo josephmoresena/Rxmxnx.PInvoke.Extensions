@@ -202,9 +202,10 @@ public sealed class BasicTests
 		CString[] literalArray = TestSet.Utf8TextUpper.Select(f => new CString(f)).ToArray();
 		CString[] nonLiteralArray = TestSet.Utf8NullTerminatedBytes.Select(b => (CString)b).ToArray();
 
-		Assert.All(literalArray, c => PInvokeAssert.True(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
-		Assert.All(nonLiteralArray, c => PInvokeAssert.False(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
-		Assert.All(nonLiteralArray, c => PInvokeAssert.False(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
+		Assert.All(literalArray, c => Assert.True(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
+		Assert.All(nonLiteralArray, c => Assert.False(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
+		Assert.All(literalArray, c => Assert.True(CString.IsImagePersistent(c)));
+		Assert.All(nonLiteralArray, c => Assert.False(CString.IsImagePersistent(c)));
 	}
 #endif
 

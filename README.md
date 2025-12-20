@@ -2209,6 +2209,11 @@ Represents a sequence of UTF-8 encoded characters.
 
   Creates a new instance of the `CString` class using the pointer to a UTF-8 character null-terminated array.
   </details>
+- <details>
+  <summary>IsImagePersistent(CString)</summary>
+
+  Gets a value indicating whether the data of the given `CString` instance resides within the loaded binary image.
+  </details>
 
 </details>
 
