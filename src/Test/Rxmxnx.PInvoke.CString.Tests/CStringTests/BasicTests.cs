@@ -329,6 +329,11 @@ public sealed class BasicTests
 			PInvokeAssert.Equal(valueInvStr, valueInvCStr0.ToString());
 			PInvokeAssert.True(valueInvCStr0.AsSpan().SequenceEqual(valueInvCStr1));
 			PInvokeAssert.True(valueInvCStr0.AsSpan().SequenceEqual(valueInvCStr2));
+
+			PInvokeAssert.Equal(valueCStr0, leftCStr + (ReadOnlySpan<Byte>)rightCStr);
+			PInvokeAssert.Equal(valueCStr0, (ReadOnlySpan<Byte>)leftCStr + rightCStr);
+			PInvokeAssert.Equal(valueInvCStr0, rightCStr + (ReadOnlySpan<Byte>)leftCStr);
+			PInvokeAssert.Equal(valueInvCStr0, (ReadOnlySpan<Byte>)rightCStr + leftCStr);
 		}
 	}
 
