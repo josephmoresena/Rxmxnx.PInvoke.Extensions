@@ -3,12 +3,13 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// Represents a mutable <see cref="CString"/> instance.
 /// </summary>
+[DebuggerTypeProxy(typeof(CStringBuilderDebugView))]
 public sealed partial class CStringBuilder
 {
 	/// <summary>
 	/// The default capacity of a <see cref="CStringBuilder"/>.
 	/// </summary>
-	private const UInt16 defaultCapacity = 128;
+	private const UInt16 defaultCapacity = 16;
 
 	/// <summary>
 	/// Lock object.
@@ -30,7 +31,18 @@ public sealed partial class CStringBuilder
 	/// <summary>
 	/// Gets the length of the current <see cref="CStringBuilder"/> object.
 	/// </summary>
-	public Int32 Length => this._chunk.Count;
+	public Int32 Length
+	{
+		get
+		{
+#if NET9_0_OR_GREATER
+			using (this._lock.EnterScope())
+#else
+			lock (this._lock)
+#endif
+				return this._chunk.Count;
+		}
+	}
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringBuilder"/> class.
@@ -97,16 +109,46 @@ public sealed partial class CStringBuilder
 #endif
 		{
 			if (this._chunk.Count == 0) return CString.Empty;
-
-			Int32 length = nullTerminated ? 1 : 0;
-			Byte[] bytes = CString.CreateByteArray(this._chunk.Count + length);
-			Span<Byte> span = bytes.AsSpan()[..^length];
-			this._chunk.CopyTo(0, span);
-			if (nullTerminated)
-				bytes.AsSpan()[span.Length..].Clear();
+			Byte[] bytes = this.GetDataBytes(nullTerminated);
 			return nullTerminated ? bytes : CString.Create(bytes);
 		}
 	}
 	/// <inheritdoc/>
 	public override String ToString() => this.ToCString(false).ToString();
+
+	/// <summary>
+	/// Retrieves the current debug information.
+	/// </summary>
+	/// <param name="length">Output. Builder length.</param>
+	/// <param name="chunks">Output. Chunks information array.</param>
+	/// <returns>Current instance data.</returns>
+	internal String GetDebugInfo(out Int32 length, out CStringBuilderDebugView.ChunkInfo[] chunks)
+	{
+#if NET9_0_OR_GREATER
+		using (this._lock.EnterScope())
+#else
+		lock (this._lock)
+#endif
+		{
+			length = this._chunk.Count;
+			chunks = this._chunk.EnumerateInformation().Reverse().ToArray();
+			return Encoding.UTF8.GetString(this.GetDataBytes(false));
+		}
+	}
+
+	/// <summary>
+	/// Retrieves a byte array containing all the usable bytes from current instance.
+	/// </summary>
+	/// <param name="nullTerminated">Indicates whether the returning array is UTF-8 null-terminated.</param>
+	/// <returns>A byte array containing all the usable bytes from current instance.</returns>
+	private Byte[] GetDataBytes(Boolean nullTerminated)
+	{
+		Int32 length = nullTerminated ? 1 : 0;
+		Byte[] bytes = CString.CreateByteArray(this._chunk.Count + length);
+		Span<Byte> span = bytes.AsSpan()[..^length];
+		this._chunk.CopyTo(0, span);
+		if (nullTerminated)
+			bytes.AsSpan()[span.Length..].Clear();
+		return bytes;
+	}
 }

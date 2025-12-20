@@ -147,9 +147,9 @@ public partial class CStringBuilder
 			Span<Byte> firstSpan = chunk._buffer.AsSpan()[index..];
 
 			// Compute how many chunks are required and their sizes to store the remaining new data and shifted old data.
-			Boolean useSameSize = !Object.ReferenceEquals(this, chunk);
-			InsertInfo info =
-				Chunk.GetInsertInfo(chunk._buffer.Length, lastNewData.Length + oldData.Length, useSameSize);
+			Int32 newRequiredBytes = lastNewData.Length + oldData.Length;
+			Boolean useSameSize = !Object.ReferenceEquals(this, chunk) && chunk._buffer.Length >= newRequiredBytes / 2;
+			InsertInfo info = Chunk.GetInsertInfo(chunk._buffer.Length, newRequiredBytes, useSameSize);
 			// Create and link the new chunks before the current one. 
 			Chunk[] chunks = Chunk.GetInsertChunks(chunk, info, index + firstNewData.Length, useSameSize);
 
@@ -203,6 +203,19 @@ public partial class CStringBuilder
 			}
 			Chunk.CopyTo(new() { Chunk = startChunk, Start = sourceIndex, Count = startChunk._count, },
 			             new() { Chunk = endChunk, Start = 0, Count = endChunk._count, }, destination);
+		}
+		/// <summary>
+		/// Enumerates the information of the linked chunks.
+		/// </summary>
+		/// <returns>An enumeration with the linked chunks information.</returns>
+		public IEnumerable<CStringBuilderDebugView.ChunkInfo> EnumerateInformation()
+		{
+			Chunk? chunk = this;
+			while (chunk is not null)
+			{
+				yield return new(chunk._buffer.Length, chunk._count);
+				chunk = chunk._previous;
+			}
 		}
 	}
 }

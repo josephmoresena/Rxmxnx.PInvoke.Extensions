@@ -127,8 +127,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				                  $"Text: {Encoding.UTF8.GetString(utf8Span)}");
 #if NET9_0_OR_GREATER
 			}
-#endif
-#if NETCOREAPP
+
 			Console.WriteLine("=== Building `Bohemian rhapsody` ===");
 			Utf8ConcatenationHelper.CStringBuildingFeature();
 #endif

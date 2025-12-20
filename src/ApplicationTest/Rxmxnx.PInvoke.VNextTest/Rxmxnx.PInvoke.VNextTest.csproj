@@ -2,17 +2,16 @@
 
     <PropertyGroup>
         <OutputType>Library</OutputType>
-        <TargetFrameworks>netcoreapp3.0;netcoreapp3.1;net5.0;net7.0;net8.0;$(DefaultFrameworks)</TargetFrameworks>
+        <TargetFrameworks>$(DefaultFrameworks)</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <PublishTrimmed>true</PublishTrimmed>
-        <TrimmerSingleWarn>false</TrimmerSingleWarn>
-        <TrimMode>full</TrimMode>
         <NoWarn>$(NoWarn);NU1801;NU1102</NoWarn>
         <Deterministic>True</Deterministic>
         <Optimize>true</Optimize>
         <RootNamespace>Rxmxnx.PInvoke.ApplicationTest</RootNamespace>
         <LangVersion>latest</LangVersion>
+        <TrimmerSingleWarn>false</TrimmerSingleWarn>
+        <TrimMode>full</TrimMode>
     </PropertyGroup>
 
     <ItemGroup Condition="'$(UsePackage)' != 'true'">
