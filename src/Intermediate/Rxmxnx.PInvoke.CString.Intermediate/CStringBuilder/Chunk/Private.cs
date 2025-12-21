@@ -46,12 +46,23 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="index">Input: global index; Output: local index in the resulting chunk.</param>
 		/// <returns>The chunk corresponding to the provided index.</returns>
-		private Chunk GetChunkFor(ref Int32 index)
+		private Chunk GetChunkFor(ref Int32 index) => this.GetChunkFor(ref index, out _);
+		/// <summary>
+		/// Retrieves the chunk that contains the element at the global index <paramref name="index"/>.
+		/// </summary>
+		/// <param name="index">Input: global index; Output: local index in the resulting chunk.</param>
+		/// <param name="next">Output: Next chunk to the resulting chunk.</param>
+		/// <returns>The chunk corresponding to the provided index.</returns>
+		private Chunk GetChunkFor(ref Int32 index, out Chunk? next)
 		{
 			Chunk result = this;
 			ValidationUtilities.ThrowIfInvalidSequenceIndex(index, this.GetOffset() + this._count);
+			next = default;
 			while (index < result.GetOffset())
+			{
+				next = result;
 				result = result._previous!; // After the index validation, previous will never be null.
+			}
 			index -= result.GetOffset();
 			return result;
 		}

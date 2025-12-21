@@ -47,7 +47,7 @@ public static class Utf8ConcatenationHelper
 		                .AppendLine("Just gotta get out, just gotta get right outta here"u8).AppendLine()
 		                .AppendLine("Ooh "u8).AppendLine("Ooh, yeah, ooh, yeah "u8)
 		                .AppendLine("Nothing really matters, anyone can see "u8).AppendLine("Nothing really matters "u8)
-		                .AppendLine("Nothing really matters to me"u8);
+		                .Append("Nothing really matters to me"u8);
 
 		bohemianRhapsody.Insert(interruptions[7] - CString.NewLine.Length, ")"u8);
 		bohemianRhapsody.Insert(interruptions[6], "("u8);

@@ -121,7 +121,8 @@ public partial class CStringBuilder
 		/// <param name="newData">Bytes to insert.</param>
 		public void Insert(Int32 index, ReadOnlySpan<Byte> newData)
 		{
-			Chunk chunk = index == this.Count ? this : this.GetChunkFor(ref index);
+			Chunk? nextChunk = null;
+			Chunk chunk = index == this.Count ? this : this.GetChunkFor(ref index, out nextChunk);
 			Int32 available = chunk._buffer.Length - chunk._count;
 			Int32 remaining = chunk._count - index;
 
@@ -144,19 +145,33 @@ public partial class CStringBuilder
 			// Existing data that must be moved after the inserted data.
 			ReadOnlySpan<Byte> oldData = chunk._buffer.AsSpan().Slice(index, remaining);
 			// Destination span in the current chunk buffer for the first portion.
-			Span<Byte> firstSpan = chunk._buffer.AsSpan()[index..];
+			Span<Byte> firstChunkBuffer = chunk._buffer.AsSpan()[index..];
 
-			// Compute how many chunks are required and their sizes to store the remaining new data and shifted old data.
+			if (nextChunk is not null)
+				// Use unused bytes form the next chunk.
+				Chunk.Fill(nextChunk, ref lastNewData, ref oldData);
+
 			Int32 newRequiredBytes = lastNewData.Length + oldData.Length;
-			Boolean useSameSize = !Object.ReferenceEquals(this, chunk) && chunk._buffer.Length >= newRequiredBytes / 2;
-			InsertInfo info = Chunk.GetInsertInfo(chunk._buffer.Length, newRequiredBytes, useSameSize);
-			// Create and link the new chunks before the current one. 
-			Chunk[] chunks = Chunk.GetInsertChunks(chunk, info, index + firstNewData.Length, useSameSize);
+			if (newRequiredBytes <= 0)
+				// There is no need to create new chunks.
+			{
+				chunk._count = index + firstNewData.Length;
+			}
+			else
+			{
+				Boolean useSameSize = !Object.ReferenceEquals(this, chunk) &&
+					chunk._buffer.Length >= newRequiredBytes / 2;
+				// Compute how many chunks are required and their sizes to store the remaining new data and shifted old data.
+				InsertInfo info = Chunk.GetInsertInfo(chunk._buffer.Length, newRequiredBytes, useSameSize);
+				// Create and link the new chunks before the current one. 
+				Chunk[] chunks = Chunk.GetInsertChunks(chunk, info, index + firstNewData.Length, useSameSize);
 
-			// Fill the chunks with the last portion of the new data followed by old data.
-			Chunk.Fill(chunks.AsSpan()[1..], lastNewData, oldData);
+				// Fill the chunks with the last portion of the new data followed by old data.
+				Chunk.Fill(chunks.AsSpan()[1..], lastNewData, oldData);
+			}
+
 			// Copy the first portion of the new data into the first chunk buffer.
-			firstNewData.CopyTo(firstSpan);
+			firstNewData.CopyTo(firstChunkBuffer);
 		}
 		/// <summary>
 		/// Removes the specified range of characters from this instance.
@@ -207,7 +222,7 @@ public partial class CStringBuilder
 		/// <summary>
 		/// Enumerates the information of the linked chunks.
 		/// </summary>
-		/// <returns>An enumeration with the linked chunks information.</returns>
+		/// <returns>An enumeration with the linked chunk's information.</returns>
 		public IEnumerable<CStringBuilderDebugView.ChunkInfo> EnumerateInformation()
 		{
 			Chunk? chunk = this;

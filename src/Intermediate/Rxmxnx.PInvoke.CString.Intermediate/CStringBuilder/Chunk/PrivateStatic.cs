@@ -78,20 +78,54 @@ public partial class CStringBuilder
 			return chunks;
 		}
 		/// <summary>
+		/// Fills the provided insertion chunk with the supplied byte segments as long as possible.
+		/// <paramref name="nextData"/> and <paramref name="firstData"/>.
+		/// </summary>
+		/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
+		/// <param name="firstData">Input. First data to insert. Output. Remaining data to insert.</param>
+		/// <param name="nextData">Next data to insert. Output. Remaining data to insert.</param>
+		private static void Fill(Chunk chunk, ref ReadOnlySpan<Byte> firstData, ref ReadOnlySpan<Byte> nextData)
+		{
+			Int32 available = chunk._buffer.Length - chunk._count;
+			if (available <= 0) return;
+
+			Int32 nextNewDataBytes = Math.Min(nextData.Length, available);
+			Int32 availableForFirstNewData = available - nextNewDataBytes;
+			Int32 nextNewDataOffset = availableForFirstNewData > 0 ?
+				Math.Min(firstData.Length, availableForFirstNewData) :
+				0;
+			Int32 newRequiredBytes = nextNewDataBytes + nextNewDataOffset;
+
+			if (newRequiredBytes <= 0) return;
+
+			Span<Byte> chunkBuffer = chunk._buffer.AsSpan();
+			ReadOnlySpan<Byte> oldChunkData = chunkBuffer[..chunk._count];
+
+			chunk._count += newRequiredBytes;
+			oldChunkData.CopyTo(chunkBuffer[newRequiredBytes..]);
+			nextData[^nextNewDataBytes..].CopyTo(chunkBuffer[nextNewDataOffset..]);
+			nextData = nextData[..^nextNewDataBytes];
+
+			if (nextNewDataOffset <= 0) return;
+
+			firstData[^nextNewDataOffset..].CopyTo(chunkBuffer);
+			firstData = firstData[..^nextNewDataOffset];
+		}
+		/// <summary>
 		/// Fills the provided insertion chunks with the supplied byte segments.
 		/// </summary>
 		/// <param name="chunks">A read-only <see cref="Chunk"/> span.</param>
 		/// <param name="firstData">First data bytes.</param>
-		/// <param name="lastData">Last data bytes.</param>
-		private static void Fill(ReadOnlySpan<Chunk> chunks, ReadOnlySpan<Byte> firstData, ReadOnlySpan<Byte> lastData)
+		/// <param name="nextData">Next data bytes.</param>
+		private static void Fill(ReadOnlySpan<Chunk> chunks, ReadOnlySpan<Byte> firstData, ReadOnlySpan<Byte> nextData)
 		{
 			for (Int32 i = chunks.Length - 1; i >= 0; i--)
 			{
 				Span<Byte> span = chunks[i]._buffer.AsSpan()[..chunks[i]._count]; // Gets the available span.
-				if (!lastData.IsEmpty)
+				if (!nextData.IsEmpty)
 				{
 					// Copy the last bytes from lastData
-					Int32 lastCount = Chunk.CopyLast(ref lastData, span);
+					Int32 lastCount = Chunk.CopyLast(ref nextData, span);
 					if (span.Length == lastCount)
 						continue; // The lastData already fills the available span from the chunk.
 					span = span[..^lastCount]; // Shrinks the available span.
