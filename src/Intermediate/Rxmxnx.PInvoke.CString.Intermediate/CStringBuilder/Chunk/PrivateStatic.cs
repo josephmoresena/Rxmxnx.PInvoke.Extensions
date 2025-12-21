@@ -78,23 +78,61 @@ public partial class CStringBuilder
 			return chunks;
 		}
 		/// <summary>
+		/// Fills the provided append chunk with the supplied byte segments as long as possible.
+		/// </summary>
+		/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
+		/// <param name="newData">Input. New data to append. Output. Remaining data to append.</param>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static void FillFirst(Chunk chunk, ref ReadOnlySpan<Byte> newData)
+		{
+			if (chunk._buffer.Length - chunk._count <= 0) return;
+
+			Span<Byte> chunkBuffer = chunk.GetAvailable();
+			Int32 newRequiredBytes = Math.Min(newData.Length, chunkBuffer.Length);
+
+			chunk._count += newRequiredBytes;
+			newData[..newRequiredBytes].CopyTo(chunkBuffer);
+			newData = newData[newRequiredBytes..];
+		}
+		/// <summary>
+		/// Fills the provided append chunk with the supplied byte segments as long as possible.
+		/// </summary>
+		/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
+		/// <param name="byteCount">
+		/// Input. UTF-8 bytes required to encode <paramref name="newData"/>. Output. UTF-8 bytes required to encode
+		/// the remaining data.
+		/// </param>
+		/// <param name="newData">Input. New data to append. Output. Remaining data to append.</param>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static void FillFirst(Chunk chunk, ref Int32 byteCount, ref ReadOnlySpan<Char> newData)
+		{
+			if (chunk._buffer.Length - chunk._count <= 0) return;
+
+			Span<Byte> chunkBuffer = chunk.GetAvailable();
+			CharSpanUtf8Split split = new(newData, byteCount, chunkBuffer.Length);
+
+			if (split.Left.Length <= 0) return;
+
+			chunk._count += Encoding.UTF8.GetBytes(split.Left, chunkBuffer);
+			newData = split.Right;
+			byteCount = Encoding.UTF8.GetByteCount(newData);
+		}
+		/// <summary>
 		/// Fills the provided insertion chunk with the supplied byte segments as long as possible.
-		/// <paramref name="nextData"/> and <paramref name="firstData"/>.
 		/// </summary>
 		/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
 		/// <param name="firstData">Input. First data to insert. Output. Remaining data to insert.</param>
 		/// <param name="nextData">Next data to insert. Output. Remaining data to insert.</param>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void Fill(Chunk chunk, ref ReadOnlySpan<Byte> firstData, ref ReadOnlySpan<Byte> nextData)
 		{
 			Int32 available = chunk._buffer.Length - chunk._count;
 			if (available <= 0) return;
 
-			Int32 nextNewDataBytes = Math.Min(nextData.Length, available);
-			Int32 availableForFirstNewData = available - nextNewDataBytes;
-			Int32 nextNewDataOffset = availableForFirstNewData > 0 ?
-				Math.Min(firstData.Length, availableForFirstNewData) :
-				0;
-			Int32 newRequiredBytes = nextNewDataBytes + nextNewDataOffset;
+			Int32 nextDataBytes = Math.Min(nextData.Length, available);
+			Int32 availableForFirstData = available - nextDataBytes;
+			Int32 nextDataOffset = availableForFirstData > 0 ? Math.Min(firstData.Length, availableForFirstData) : 0;
+			Int32 newRequiredBytes = nextDataBytes + nextDataOffset;
 
 			if (newRequiredBytes <= 0) return;
 
@@ -103,13 +141,13 @@ public partial class CStringBuilder
 
 			chunk._count += newRequiredBytes;
 			oldChunkData.CopyTo(chunkBuffer[newRequiredBytes..]);
-			nextData[^nextNewDataBytes..].CopyTo(chunkBuffer[nextNewDataOffset..]);
-			nextData = nextData[..^nextNewDataBytes];
+			nextData[^nextDataBytes..].CopyTo(chunkBuffer[nextDataOffset..]);
+			nextData = nextData[..^nextDataBytes];
 
-			if (nextNewDataOffset <= 0) return;
+			if (nextDataOffset <= 0) return;
 
-			firstData[^nextNewDataOffset..].CopyTo(chunkBuffer);
-			firstData = firstData[..^nextNewDataOffset];
+			firstData[^nextDataOffset..].CopyTo(chunkBuffer);
+			firstData = firstData[..^nextDataOffset];
 		}
 		/// <summary>
 		/// Fills the provided insertion chunks with the supplied byte segments.
@@ -117,6 +155,7 @@ public partial class CStringBuilder
 		/// <param name="chunks">A read-only <see cref="Chunk"/> span.</param>
 		/// <param name="firstData">First data bytes.</param>
 		/// <param name="nextData">Next data bytes.</param>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void Fill(ReadOnlySpan<Chunk> chunks, ReadOnlySpan<Byte> firstData, ReadOnlySpan<Byte> nextData)
 		{
 			for (Int32 i = chunks.Length - 1; i >= 0; i--)
@@ -141,6 +180,7 @@ public partial class CStringBuilder
 		/// <param name="source">Source span to copy from; updated to represent the remaining data.</param>
 		/// <param name="destination">Destination <see cref="Byte"/> span</param>
 		/// <returns>The number of bytes copied.</returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static Int32 CopyLast(ref ReadOnlySpan<Byte> source, Span<Byte> destination)
 		{
 			Int32 result = Math.Min(source.Length, destination.Length);
@@ -154,6 +194,7 @@ public partial class CStringBuilder
 		/// <param name="start">The starting chunk where units will be copied from.</param>
 		/// <param name="end">The ending chunk where units will be copied from.</param>
 		/// <param name="destination">The writable span where units will be copied.</param>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void CopyTo(CopyInfo start, CopyInfo end, Span<Byte> destination)
 		{
 			do

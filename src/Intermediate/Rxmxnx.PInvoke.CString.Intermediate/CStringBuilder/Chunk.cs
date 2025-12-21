@@ -27,16 +27,19 @@ public partial class CStringBuilder
 		{
 			if (newData.IsEmpty) return this;
 
-			Span<Byte> span = this.GetAvailable();
-			if (newData.Length <= span.Length)
+			if (this._count == 0 && this._previous is not null)
+				Chunk.FillFirst(this._previous, ref newData);
+
+			Span<Byte> chunkBuffer = this.GetAvailable();
+			if (newData.Length <= chunkBuffer.Length)
 			{
-				newData.CopyTo(span);
+				newData.CopyTo(chunkBuffer);
 				this._count += newData.Length;
 				return this;
 			}
-			newData[..span.Length].CopyTo(span);
-			this._count += span.Length;
-			return new Chunk(this).Append(newData[span.Length..]);
+			newData[..chunkBuffer.Length].CopyTo(chunkBuffer);
+			this._count += chunkBuffer.Length;
+			return new Chunk(this).Append(newData[chunkBuffer.Length..]);
 		}
 		/// <summary>
 		/// Appends a span of chars to the sequence, allocating new chunks as needed.

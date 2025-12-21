@@ -2,6 +2,18 @@ namespace Rxmxnx.PInvoke.Tests.CStringBuilderTests;
 
 public abstract class CStringBuilderTestsBase
 {
+	protected static Int32 GetSeedIndex()
+	{
+		Int32 indexSeed = 0;
+		foreach (Int32 i in TestSet.GetIndices().OrderBy(_ => Guid.NewGuid()))
+		{
+			if (TestSet.GetString(i) is not { } str || str.Length < CStringBuilder.DefaultCapacity) continue;
+
+			indexSeed = i;
+			break;
+		}
+		return indexSeed;
+	}
 	protected static (Int32 utf16Index, Int32 utf8Index) GetIndex(ReadOnlySpan<Char> value, out Int32 nRune)
 	{
 		List<Int32> safeUtf16Indices = [];

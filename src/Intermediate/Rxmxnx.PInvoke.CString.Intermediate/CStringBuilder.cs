@@ -9,7 +9,7 @@ public sealed partial class CStringBuilder
 	/// <summary>
 	/// The default capacity of a <see cref="CStringBuilder"/>.
 	/// </summary>
-	private const UInt16 defaultCapacity = 16;
+	internal const UInt16 DefaultCapacity = 16;
 
 	/// <summary>
 	/// Lock object.
@@ -47,14 +47,14 @@ public sealed partial class CStringBuilder
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringBuilder"/> class.
 	/// </summary>
-	public CStringBuilder() : this(CStringBuilder.defaultCapacity) { }
+	public CStringBuilder() : this(CStringBuilder.DefaultCapacity) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringBuilder"/> class using the specified capacity.
 	/// </summary>
 	/// <param name="capacity">The suggested starting size of this instance.</param>
 	public CStringBuilder(UInt16 capacity)
 	{
-		this._capacity = Math.Max(capacity, CStringBuilder.defaultCapacity);
+		this._capacity = Math.Max(capacity, CStringBuilder.DefaultCapacity);
 		this._chunk = new(capacity);
 	}
 

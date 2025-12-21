@@ -1,4 +1,6 @@
+using ChunkInfo = Rxmxnx.PInvoke.Internal.DebugView.CStringBuilderDebugView.ChunkInfo;
 #if !NETCOREAPP
+using Fact = NUnit.Framework.TestAttribute;
 using InlineData = NUnit.Framework.TestCaseAttribute;
 #endif
 
@@ -110,5 +112,48 @@ public sealed class UnicodeTests : CStringBuilderTestsBase
 			PInvokeAssert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.Insert(utf8Index, newString)));
 		}
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
+	}
+	[Fact]
+	public void AppendRemoveAppendTest()
+	{
+		Int32 indexSeed = CStringBuilderTestsBase.GetSeedIndex();
+		String? seed = TestSet.GetString(indexSeed);
+		Int32 seedLength = Encoding.UTF8.GetByteCount((ReadOnlySpan<Char>)seed);
+		if (seedLength < CStringBuilder.DefaultCapacity) return;
+
+		CStringBuilder cstrBuild = new((UInt16)(seedLength * 2));
+		cstrBuild.Append(seed).Append(seed).Append(seed);
+
+		PInvokeAssert.Equal(seed + seed + seed, cstrBuild.GetDebugInfo(out Int32 length, out ChunkInfo[] chunks));
+		PInvokeAssert.Equal(3 * seedLength, length);
+		PInvokeAssert.Equal(2, chunks.Length);
+		PInvokeAssert.Equal(2 * seedLength, chunks[0].Size);
+		PInvokeAssert.Equal(seedLength, chunks[1].Used);
+		PInvokeAssert.Equal(chunks[0].Size, chunks[0].Used);
+		PInvokeAssert.True(chunks[1].Size > chunks[1].Used);
+
+		cstrBuild.Remove(seedLength, seedLength * 2);
+		PInvokeAssert.Equal(seed, cstrBuild.GetDebugInfo(out length, out chunks));
+		PInvokeAssert.Equal(seedLength, length);
+		PInvokeAssert.Equal(2, chunks.Length);
+		PInvokeAssert.Equal(seedLength, chunks[0].Used);
+		PInvokeAssert.Equal(0, chunks[1].Used);
+		PInvokeAssert.True(chunks[0].Size > chunks[0].Used);
+		PInvokeAssert.True(chunks[1].Size > chunks[1].Used);
+
+		cstrBuild.Append(seed);
+		PInvokeAssert.Equal(seed + seed, cstrBuild.GetDebugInfo(out length, out chunks));
+		PInvokeAssert.Equal(2 * seedLength, length);
+		PInvokeAssert.Equal(2, chunks.Length);
+		PInvokeAssert.Equal(2 * seedLength, chunks[0].Used);
+		PInvokeAssert.Equal(0, chunks[1].Used);
+		PInvokeAssert.Equal(chunks[0].Size, chunks[0].Used);
+
+		cstrBuild.Append(seed);
+		PInvokeAssert.Equal(seed + seed + seed, cstrBuild.GetDebugInfo(out length, out chunks));
+		PInvokeAssert.Equal(3 * seedLength, length);
+		PInvokeAssert.Equal(2, chunks.Length);
+		PInvokeAssert.Equal(2 * seedLength, chunks[0].Used);
+		PInvokeAssert.Equal(seedLength, chunks[1].Used);
 	}
 }

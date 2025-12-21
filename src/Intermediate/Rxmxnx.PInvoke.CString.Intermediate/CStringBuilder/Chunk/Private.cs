@@ -46,6 +46,7 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="index">Input: global index; Output: local index in the resulting chunk.</param>
 		/// <returns>The chunk corresponding to the provided index.</returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private Chunk GetChunkFor(ref Int32 index) => this.GetChunkFor(ref index, out _);
 		/// <summary>
 		/// Retrieves the chunk that contains the element at the global index <paramref name="index"/>.
@@ -103,14 +104,17 @@ public partial class CStringBuilder
 		/// <returns>The chunk into which the final portion of <paramref name="newData"/> was written.</returns>
 		private Chunk Append(Int32 byteCount, ReadOnlySpan<Char> newData)
 		{
-			Span<Byte> span = this.GetAvailable();
-			if (byteCount <= span.Length)
+			if (this._count == 0 && this._previous is not null)
+				Chunk.FillFirst(this._previous, ref byteCount, ref newData);
+
+			Span<Byte> chunkBuffer = this.GetAvailable();
+			if (byteCount <= chunkBuffer.Length)
 			{
-				this._count += Encoding.UTF8.GetBytes(newData, span);
+				this._count += Encoding.UTF8.GetBytes(newData, chunkBuffer);
 				return this;
 			}
-			CharSpanUtf8Split split = new(newData, byteCount, span.Length);
-			Int32 leftByteCount = Encoding.UTF8.GetBytes(split.Left, span);
+			CharSpanUtf8Split split = new(newData, byteCount, chunkBuffer.Length);
+			Int32 leftByteCount = Encoding.UTF8.GetBytes(split.Left, chunkBuffer);
 			this._count += leftByteCount;
 			return new Chunk(this).Append(Encoding.UTF8.GetByteCount(split.Right), split.Right);
 		}
