@@ -1,11 +1,16 @@
 ﻿<Solution>
     <Folder Name="/ApplicationTest/">
+        <Project Path="ApplicationTest/Rxmxnx.PInvoke.WebApiTest/Rxmxnx.PInvoke.WebApiTest.csproj"/>
         <Project Path="ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\Rxmxnx.PInvoke.ApplicationTest.csproj"/>
         <Project Path="ApplicationTest\Rxmxnx.PInvoke.LauncherTest\Rxmxnx.PInvoke.LauncherTest.csproj"/>
         <Project Path="ApplicationTest\Rxmxnx.PInvoke.Mkbundle.Patcher\Rxmxnx.PInvoke.Mkbundle.Patcher.csproj"/>
         <Project Path="ApplicationTest\Rxmxnx.PInvoke.VNextTest\Rxmxnx.PInvoke.VNextTest.csproj"/>
+        <File Path="ApplicationTest\Artifact.targets"/>
         <File Path="ApplicationTest\DotnetCoreApp.targets"/>
         <File Path="ApplicationTest\MonoApp.targets"/>
+        <File Path="ApplicationTest\NativeAot.targets"/>
+        <File Path="ApplicationTest\nuget.config"/>
+        <File Path="ApplicationTest\PackageReference.targets"/>
         <File Path="ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\Mono.ILLink.Descriptors.xml"/>
     </Folder>
     <Folder Name="/Global/">

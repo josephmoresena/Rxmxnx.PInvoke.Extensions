@@ -506,6 +506,14 @@ jobs:
           
           dotnet workload update
 
+      - name: Remove ApplicationTest
+        shell: pwsh
+        run: |
+          Get-ChildItem -Path "src/ApplicationTest" -Recurse -Include "*.*proj" |
+          ForEach-Object {
+            dotnet sln src remove $_.FullName
+          }
+
       - name: Build tests
         run: |
           dotnet restore src --ignore-failed-sources

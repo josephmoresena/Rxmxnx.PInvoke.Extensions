@@ -1,0 +1,80 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <PropertyGroup Condition="'$(IsNativeAotWebAssembly)' == 'true'">
+        <MSBuildEnableWorkloadResolver>false</MSBuildEnableWorkloadResolver>
+        <UseAppHost>false</UseAppHost>
+        <DefineConstants>$(DefineConstants);WEB_ASSEMBLY</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(PublishAot)' == 'true' Or '$(IsNativeAotWebAssembly)' == 'true'">
+        <DefineConstants>$(DefineConstants);NATIVE_AOT</DefineConstants>
+        <DefineConstants Condition="'$(IlcDisableReflection)' == 'true'">$(DefineConstants);REFLECTION_FREE</DefineConstants>
+        <SelfContained Condition="'$(TargetFramework)' == 'net7.0' OR '$(TargetFramework)' == 'net6.0' ">true</SelfContained>
+        <StripSymbols>true</StripSymbols>
+        <IlcGenerateMetadataLog>true</IlcGenerateMetadataLog>
+        <IlcGenerateMstatFile>true</IlcGenerateMstatFile>
+        <IlcGenerateDgmlFile>true</IlcGenerateDgmlFile>
+        <RootAllApplicationAssemblies>false</RootAllApplicationAssemblies>
+        <TrimUnusedDependencies>true</TrimUnusedDependencies>
+        <IlcOptimizationPreference>Size</IlcOptimizationPreference>
+        <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
+        <IlcTrimMetadata>true</IlcTrimMetadata>
+        <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
+        <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
+        <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm' And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
+        <LinkerFlavor>lld</LinkerFlavor>
+        <ObjCopyName>/usr/arm-linux-gnueabihf/bin/objcopy</ObjCopyName>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm64' And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
+        <LinkerFlavor>lld</LinkerFlavor>
+        <ObjCopyName>/usr/aarch64-linux-gnu/bin/objcopy</ObjCopyName>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(IsNativeAotWebAssembly)' == 'true'">
+        <PackageReference Include="Microsoft.DotNet.ILCompiler.LLVM" Version="10.0.0-*"/>
+        <PackageReference Include="runtime.$(NETCoreSdkPortableRuntimeIdentifier).Microsoft.DotNet.ILCompiler.LLVM" Version="10.0.0-*"/>
+        <LinkerArg Include="-sEXPORTED_RUNTIME_METHODS=[HEAPU8,HEAPU32,HEAP32,cwrap]"/>
+        <LinkerArg Include="-sASSERTIONS"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <RuntimeHostConfigurationOption Condition="'$(DisableBufferAutoComposition)' == 'true'" Include="PInvoke.DisableBufferAutoComposition" Value="true" Trim="true"/>
+        <RuntimeHostConfigurationOption Include="Switch.System.Reflection.Disabled.DoNotThrowForNames" Value="true"/>
+        <RuntimeHostConfigurationOption Include="Switch.System.Reflection.Disabled.DoNotThrowForAssembly" Value="true"/>
+        <RuntimeHostConfigurationOption Include="Switch.System.Reflection.Disabled.DoNotThrowForAttributes" Value="true"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <KnownILCompilerPack Include="Microsoft.DotNet.ILCompiler"
+                             TargetFramework="net6.0"
+                             ILCompilerRuntimeIdentifiers="linux-arm64;linux-musl-arm64;linux-musl-x64;linux-x64;win-arm64;win-x64;osx-x64"
+                             ILCompilerPackVersion="7.0.20"
+                             ILCompilerPackNamePattern="runtime.**RID**.Microsoft.DotNet.ILCompiler"
+                             Condition="!$([MSBuild]::IsOSPlatform('OSX')) Or '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'"/>
+        <KnownILCompilerPack Include="Microsoft.DotNet.ILCompiler"
+                             TargetFramework="net6.0"
+                             ILCompilerRuntimeIdentifiers="linux-arm64;linux-musl-arm64;linux-musl-x64;linux-x64;win-arm64;win-x64;osx-arm64;osx-x64"
+                             ILCompilerPackVersion="8.0.22"
+                             ILCompilerPackNamePattern="runtime.**RID**.Microsoft.DotNet.ILCompiler"
+                             Condition="$([MSBuild]::IsOSPlatform('OSX')) And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'"/>
+    </ItemGroup>
+    <ItemGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+        <KnownILCompilerPack Remove="@(KnownILCompilerPack)" Condition="'$(TargetFramework)' == 'net7.0'"/>
+        <KnownILCompilerPack Include="Microsoft.DotNet.ILCompiler"
+                             TargetFramework="net7.0"
+                             ILCompilerRuntimeIdentifiers="linux-arm64;linux-musl-arm64;linux-musl-x64;linux-x64;win-arm64;win-x64;osx-x64"
+                             ILCompilerPackVersion="7.0.20"
+                             ILCompilerPackNamePattern="runtime.**RID**.Microsoft.DotNet.ILCompiler"
+                             Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'"/>
+        <KnownILCompilerPack Include="Microsoft.DotNet.ILCompiler"
+                             TargetFramework="net7.0"
+                             ILCompilerRuntimeIdentifiers="linux-arm64;linux-musl-arm64;linux-musl-x64;linux-x64;win-arm64;win-x64;osx-arm64;osx-x64"
+                             ILCompilerPackVersion="8.0.22"
+                             ILCompilerPackNamePattern="runtime.**RID**.Microsoft.DotNet.ILCompiler"
+                             Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'"/>
+    </ItemGroup>
+
+</Project>
