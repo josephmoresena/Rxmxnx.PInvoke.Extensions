@@ -1,16 +1,15 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-    <Import Project="NativeAot.targets"/>
-    <Import Project="Artifact.targets"/>
-
     <PropertyGroup>
         <TargetFramework Condition="'$(RequiredFramework)' == ''">$(DefaultFramework)</TargetFramework>
         <TargetFramework Condition="'$(RequiredFramework)' != ''">$(RequiredFramework)</TargetFramework>
         <SelfContained Condition="'$(RequiredFramework)' != ''">true</SelfContained>
-        <IsNativeAotWebAssembly>$(RuntimeIdentifier.ToLower().EndsWith('-wasm'))</IsNativeAotWebAssembly>
         <AssemblyName Condition="'$(RuntimeIdentifier)' != ''">$(AssemblyName).$(RuntimeIdentifier)</AssemblyName>
         <AssemblyName>$(AssemblyName).$(TargetFramework)</AssemblyName>
     </PropertyGroup>
+
+    <Import Project="NativeAot.targets"/>
+    <Import Project="Artifact.targets"/>
 
     <PropertyGroup Condition="'$(SelfContained)' == 'true' And '$(PublishAot)' != 'true'">
         <PublishSingleFile Condition="'$(IsNativeAotWebAssembly)' != 'true'">true</PublishSingleFile>

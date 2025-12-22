@@ -1,5 +1,9 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+    <PropertyGroup>
+        <IsNativeAotWebAssembly>$(RuntimeIdentifier.ToLower().EndsWith('-wasm'))</IsNativeAotWebAssembly>
+    </PropertyGroup>
+
     <PropertyGroup Condition="'$(IsNativeAotWebAssembly)' == 'true'">
         <MSBuildEnableWorkloadResolver>false</MSBuildEnableWorkloadResolver>
         <UseAppHost>false</UseAppHost>
