@@ -5,7 +5,7 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "launchUrl": "todos",
+      "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5027",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

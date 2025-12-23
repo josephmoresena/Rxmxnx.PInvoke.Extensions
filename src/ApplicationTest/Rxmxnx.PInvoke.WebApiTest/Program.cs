@@ -1,9 +1,24 @@
 using System.Text.Json.Serialization;
 
+using Microsoft.AspNetCore.Routing.Constraints;
+using Microsoft.OpenApi;
+
 using Rxmxnx.PInvoke;
 
 WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(args);
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+	c.MapType<CString>(() => new OpenApiSchema { Type = JsonSchemaType.String, });
+	c.MapType<CStringSequence>(() => new OpenApiSchema
+	{
+		Type = JsonSchemaType.Array,
+		Items = new OpenApiSchema { Type = JsonSchemaType.String, },
+	});
+});
+builder.Services.AddOpenApi();
+builder.Services.Configure<RouteOptions>(options => options.SetParameterPolicy<RegexInlineRouteConstraint>("regex"));
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
 	options.SerializerOptions.TypeInfoResolverChain.Insert(
@@ -11,24 +26,46 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 });
 
 WebApplication app = builder.Build();
-Todo[] sampleTodos =
-[
-	new(1, new(() => "Walk the dog"u8)), new(2, new(() => "Do the dishes"u8), DateOnly.FromDateTime(DateTime.Now)),
-	new(3, new(() => "Do the laundry"u8), DateOnly.FromDateTime(DateTime.Now.AddDays(1))),
-	new(4, new(() => "Clean the bathroom"u8)),
-	new(5, new(() => "Clean the car"u8), DateOnly.FromDateTime(DateTime.Now.AddDays(2))),
-];
+
+app.MapOpenApi();
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.MapSwagger();
+
 RouteGroupBuilder todosApi = app.MapGroup("/todos");
 
-todosApi.MapGet("/", () => sampleTodos);
+todosApi.MapGet("/", static () => SampleCollections.Todos);
 todosApi.MapGet("/{id:int}",
-                (Int32 id) => sampleTodos.FirstOrDefault(a => a.Id == id) is { } todo ?
+                static (Int32 id) => SampleCollections.Todos.FirstOrDefault(a => a.Id == id) is { } todo ?
 	                Results.Ok(todo) :
 	                Results.NotFound());
+
+RouteGroupBuilder fruitsApi = app.MapGroup("/fruits");
+fruitsApi.MapGet("/", static () => SampleCollections.Fruits);
+fruitsApi.MapGet("/{id:int}",
+                 static (Int32 id) => SampleCollections.Fruits.Skip(id - 1).FirstOrDefault() is { } fruit ?
+	                 Results.Ok(fruit) :
+	                 Results.NotFound());
 
 app.Run();
 
 public record Todo(Int32 Id, CString? Title, DateOnly? DueBy = null, Boolean IsComplete = false);
 
 [JsonSerializable(typeof(Todo[]))]
-internal partial class AppJsonSerializerContext : JsonSerializerContext { }
+[JsonSerializable(typeof(CStringSequence))]
+[JsonSerializable(typeof(CString))]
+internal partial class AppJsonSerializerContext : JsonSerializerContext;
+
+internal static class SampleCollections
+{
+	public static readonly Todo[] Todos =
+	[
+		new(1, new(() => "Walk the dog"u8)), new(2, new(() => "Do the dishes"u8), DateOnly.FromDateTime(DateTime.Now)),
+		new(3, new(() => "Do the laundry"u8), DateOnly.FromDateTime(DateTime.Now.AddDays(1))),
+		new(4, new(() => "Clean the bathroom"u8)),
+		new(5, new(() => "Clean the car"u8), DateOnly.FromDateTime(DateTime.Now.AddDays(2))),
+	];
+	public static readonly CStringSequence Fruits = CStringSequence.Parse(
+		"鿰躍䄠灰敬\uf000趟\u208f片敥\u206e灁汰e鿰貍䈠湡湡a鿰認传慲杮e鿰讍䰠浥湯\uf000趟ₐ敐牡\uf000趟ₑ敐捡h鿰銍䌠敨牲y鿰鎍匠牴睡敢牲y鿰邫䈠畬扥牥祲\uf000趟₇片灡獥\uf000趟₉慗整浲汥湯\uf000趟₍楐敮灡汰e鿰궥䴠湡潧\uf000ꖟ\u209d楋楷\uf000趟₈敍潬n鿰薍吠浯瑡o鿰ꖥ䌠捯湯瑵\uf000ꖟₑ癁捯摡o鿰銫传楬敶\0");
+}

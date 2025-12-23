@@ -8,6 +8,13 @@
         <InvariantGlobalization>true</InvariantGlobalization>
         <ImplicitUsings>true</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <InterceptorsNamespaces>$(InterceptorsNamespaces);Microsoft.AspNetCore.OpenApi.Generated</InterceptorsNamespaces>
     </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="SwaggerUI.OpenApi" Version="2.5.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.1.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.0"/>
+    </ItemGroup>
 
 </Project>
