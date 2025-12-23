@@ -125,7 +125,16 @@ public partial class CStringBuilder
 		public void Insert(Int32 index, ReadOnlySpan<Byte> newData)
 		{
 			Chunk? nextChunk = null;
-			Chunk chunk = index == this.Count ? this : this.GetChunkFor(ref index, out nextChunk);
+			Chunk chunk;
+
+			if (index != this.Count)
+				chunk = this.GetChunkFor(ref index, out nextChunk);
+			else
+			{
+				chunk = this;
+				index = this._count;
+			}
+
 			Int32 available = chunk._buffer.Length - chunk._count;
 			Int32 remaining = chunk._count - index;
 
