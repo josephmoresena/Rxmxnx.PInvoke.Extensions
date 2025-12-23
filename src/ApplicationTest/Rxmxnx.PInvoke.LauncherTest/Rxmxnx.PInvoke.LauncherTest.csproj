@@ -11,6 +11,7 @@
         <PublishDir Condition="'$(PublishDir)' == ''">..\..\..\</PublishDir>
         <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
         <CheckEolTargetFramework>false</CheckEolTargetFramework>
+        <NoWarn>$(NoWarn);NU1801;NU1102</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

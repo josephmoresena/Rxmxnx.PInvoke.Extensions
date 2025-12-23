@@ -234,6 +234,9 @@ public static partial class BufferManager
 		/// <param name="trace">Indicates whether trace should be written.</param>
 		[ExcludeFromCodeCoverage]
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6670)]
+#if !PACKAGE
+		[SuppressMessage("ReSharper", "HeapView.BoxingAllocation")]
+#endif
 		public static void PrintMetadata(Boolean trace)
 		{
 			if (!trace) return;

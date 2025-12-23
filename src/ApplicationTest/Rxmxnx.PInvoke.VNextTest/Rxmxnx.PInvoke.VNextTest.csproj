@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="..\PackageReference.targets"/>
+    <Import Project="..\PackageReference.props"/>
 
     <PropertyGroup>
         <OutputType>Library</OutputType>

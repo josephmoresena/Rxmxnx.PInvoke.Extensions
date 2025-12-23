@@ -249,11 +249,10 @@ public partial class CString
 						stackalloc Byte[nEscaped] :
 						StackAllocationHelper.RentArray(nEscaped, out byteArray, false),
 					buffer[(escapeIndex + baseLength)..]);
-#if NETCOREAPP
 				Rune rune = JsonConverter.GetEscapeRune(buffer, ref escapeIndex, low, ref baseLength);
+#if NETCOREAPP
 				Int32 nBytes = rune.EncodeToUtf8(buffer[escapeIndex..]);
 #else
-				UInt32 rune = JsonConverter.GetEscapeRune(buffer, ref escapeIndex, low, ref baseLength);
 				Int32 nBytes = RuneCompat.EncodeToUtf8(rune, buffer[escapeIndex..]);
 #endif
 				Int32 offset = escapeIndex + nBytes;

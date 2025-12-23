@@ -94,12 +94,45 @@ public sealed partial class CStringBuilder
 	/// <returns>A <see cref="CString"/> whose value is the same as this instance.</returns>
 	public CString ToCString() => this.ToCString(true);
 	/// <summary>
+	/// Copies UTF-8 units starting at the specified index of this instance into the provided destination
+	/// <see cref="Byte"/> span and returns the total number of units actually copied.
+	/// </summary>
+	/// <param name="index">
+	/// The zero-based starting position in this instance from which UTF-8 units will be copied.
+	/// </param>
+	/// <param name="destination">
+	/// The destination span that receives the copied UTF-8 units. The number of units copied is limited
+	/// by the length of this span.
+	/// </param>
+	/// <returns>
+	/// The number of UTF-8 units copied to <paramref name="destination"/>. This value is the lesser of
+	/// the available UTF-8 units starting at <paramref name="index"/> and the length of the destination span.
+	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public Int32 CopyTo(Int32 index, Span<Byte> destination)
+	{
+#if NET9_0_OR_GREATER
+		using (this._lock.EnterScope())
+#else
+		lock (this._lock)
+#endif
+		{
+			Int32 length = Math.Min(index + destination.Length, this._chunk.Count - index);
+			this._chunk.CopyTo(index, destination[..length]);
+			return length;
+		}
+	}
+	/// <summary>
 	/// Converts the value of this instance to a <see cref="CString"/>.
 	/// </summary>
 	/// <param name="nullTerminated">
 	/// Indicates whether the resulting <see cref="CString"/> is null-terminated.
 	/// </param>
 	/// <returns>A <see cref="CString"/> whose value is the same as this instance.</returns>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public CString ToCString(Boolean nullTerminated)
 	{
 #if NET9_0_OR_GREATER

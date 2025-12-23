@@ -8,8 +8,7 @@
         <AssemblyName>$(AssemblyName).$(TargetFramework)</AssemblyName>
     </PropertyGroup>
 
-    <Import Project="NativeAot.targets"/>
-    <Import Project="Artifact.targets"/>
+    <Import Project="NativeAot.props"/>
 
     <PropertyGroup Condition="'$(SelfContained)' == 'true' And '$(PublishAot)' != 'true'">
         <PublishSingleFile Condition="'$(IsNativeAotWebAssembly)' != 'true'">true</PublishSingleFile>

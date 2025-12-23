@@ -176,6 +176,9 @@ public partial class CString
 	/// delimited by the <paramref name="separator"/> text, or an empty string if <paramref name="values"/> has no elements.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
+#if !PACKAGE
+	[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+#endif
 	public static async Task<CString> JoinAsync(CString? separator, IEnumerable<CString?> values,
 		CancellationToken cancellationToken = default)
 	{

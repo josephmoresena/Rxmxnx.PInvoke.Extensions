@@ -70,6 +70,9 @@ public partial class CString
 	/// Concatenated UTF-8 text with separators or an empty <see cref="CString"/> if the collection is empty.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
+#if !PACKAGE
+	[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+#endif
 	public static CString Join(Byte separator, IEnumerable<CString?> values)
 	{
 		ArgumentNullException.ThrowIfNull(values);
@@ -165,6 +168,9 @@ public partial class CString
 	/// Concatenated UTF-8 text with separators or an empty <see cref="CString"/> if the collection is empty.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
+#if !PACKAGE
+	[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+#endif
 	public static unsafe CString Join(ReadOnlySpan<Byte> separator, IEnumerable<CString?> values)
 	{
 		ArgumentNullException.ThrowIfNull(values);
@@ -271,6 +277,9 @@ public partial class CString
 	/// Concatenated UTF-8 text with separators or an empty <see cref="CString"/> if the collection is empty.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
+#if !PACKAGE
+	[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+#endif
 	public static CString Join(CString? separator, IEnumerable<CString?> values)
 	{
 		ArgumentNullException.ThrowIfNull(values);

@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="..\PackageReference.targets"/>
-    <Import Condition="'$(MSBuildRuntimeType)' != 'Mono'" Project="..\DotnetCoreApp.targets"/>
-    <Import Condition="'$(MSBuildRuntimeType)' == 'Mono'" Project="..\MonoApp.targets"/>
+    <Import Project="..\PackageReference.props"/>
+    <Import Condition="'$(MSBuildRuntimeType)' != 'Mono'" Project="..\DotnetCoreApp.props"/>
+    <Import Condition="'$(MSBuildRuntimeType)' == 'Mono'" Project="..\MonoApp.props"/>
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
@@ -15,7 +15,6 @@
         <CheckEolTargetFramework>false</CheckEolTargetFramework>
         <AssemblyName Condition="'$(DisableBufferAutoComposition)' == 'True'">$(AssemblyName).NoBufferComposition</AssemblyName>
         <AssemblyName Condition="'$(InvariantGlobalization)' == 'True'">$(AssemblyName).Invariant</AssemblyName>
-        <NoWarn>$(NoWarn);NU1801;NU1102</NoWarn>
         <Deterministic>True</Deterministic>
         <Optimize>true</Optimize>
     </PropertyGroup>
@@ -30,5 +29,7 @@
     <ItemGroup>
         <None Remove="Mono.ILLink.Descriptors.xml"/>
     </ItemGroup>
+
+    <Import Project="..\Artifact.targets"/>
 
 </Project>

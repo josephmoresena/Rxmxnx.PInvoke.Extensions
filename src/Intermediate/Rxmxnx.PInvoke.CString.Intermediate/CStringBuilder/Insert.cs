@@ -43,6 +43,7 @@ public sealed partial class CStringBuilder
 	/// <param name="index">The position in this instance where insertion begins.</param>
 	/// <param name="value">The read-only span of characters to insert.</param>
 	/// <returns>A reference to this instance after the insert operation has completed.</returns>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public CStringBuilder Insert(Int32 index, ReadOnlySpan<Char> value)
 	{
 		if (value.IsEmpty) return this;
@@ -399,6 +400,7 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the insert operation has completed.</returns>
 	public CStringBuilder Insert(Int32 index, Byte value, Boolean asNumber = false)
 	{
+		// ReSharper disable once ConvertIfStatementToReturnStatement
 		if (!asNumber)
 			return this.Insert(index, [value,]);
 #if NET8_0_OR_GREATER

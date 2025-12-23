@@ -74,6 +74,7 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The read-only span of characters to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public CStringBuilder Append(ReadOnlySpan<Char> value)
 	{
 		if (value.IsEmpty) return this;

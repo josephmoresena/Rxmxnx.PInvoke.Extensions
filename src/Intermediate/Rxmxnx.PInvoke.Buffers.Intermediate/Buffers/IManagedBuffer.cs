@@ -56,6 +56,7 @@ public interface IManagedBuffer<T>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+	// ReSharper disable once UnusedParameter.Global
 	internal static void AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components)
 	{
 		// This method is declared for compatibility with .NET 7.0 APIs but is not usable. 

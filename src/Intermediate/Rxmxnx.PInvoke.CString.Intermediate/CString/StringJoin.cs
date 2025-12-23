@@ -178,6 +178,9 @@ public partial class CString
 	/// if <paramref name="values"/> has zero elements.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
+#if !PACKAGE
+	[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+#endif
 	public static CString Join(String? separator, IEnumerable<String?> values)
 	{
 		ArgumentNullException.ThrowIfNull(values);
