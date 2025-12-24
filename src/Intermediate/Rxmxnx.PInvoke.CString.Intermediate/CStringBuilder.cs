@@ -49,6 +49,30 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	public CStringBuilder() : this(CStringBuilder.DefaultCapacity) { }
 	/// <summary>
+	/// Initializes a new instance of the <see cref="CStringBuilder"/> class.
+	/// </summary>
+	// <param name="value">The initial contents of this builder.</param>
+	public CStringBuilder(String? value) : this((ReadOnlySpan<Char>)value) { }
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CStringBuilder"/> class.
+	/// </summary>
+	// <param name="value">The initial contents of this builder.</param>
+	public CStringBuilder(CString? value) : this((ReadOnlySpan<Byte>)value) { }
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CStringBuilder"/> class.
+	/// </summary>
+	// <param name="value">The initial contents of this builder.</param>
+	// ReSharper disable once MemberCanBePrivate.Global
+	public CStringBuilder(ReadOnlySpan<Byte> value) : this(CStringBuilder.GetCapacityFor(value))
+		=> this._chunk = this._chunk.Append(value);
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CStringBuilder"/> class.
+	/// </summary>
+	// <param name="value">The initial contents of this builder.</param>
+	// ReSharper disable once MemberCanBePrivate.Global
+	public CStringBuilder(ReadOnlySpan<Char> value) : this(CStringBuilder.GetCapacityFor(value))
+		=> this._chunk = this._chunk.Append(value);
+	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringBuilder"/> class using the specified capacity.
 	/// </summary>
 	/// <param name="capacity">The suggested starting size of this instance.</param>
@@ -183,5 +207,29 @@ public sealed partial class CStringBuilder
 		if (nullTerminated)
 			bytes.AsSpan()[span.Length..].Clear();
 		return bytes;
+	}
+
+	/// <summary>
+	/// Retrieves the capacity for a <see cref="CStringBuilder"/> initialized with <paramref name="initialValue"/>.
+	/// </summary>
+	/// <param name="initialValue">Initial builder value.</param>
+	/// <returns>Builder capacity.</returns>
+	private static UInt16 GetCapacityFor(ReadOnlySpan<Byte> initialValue)
+	{
+		if (initialValue.Length < CStringBuilder.DefaultCapacity)
+			return CStringBuilder.DefaultCapacity;
+		return (UInt16)Math.Min(initialValue.Length, Chunk.MaxLength);
+	}
+	/// <summary>
+	/// Retrieves the capacity for a <see cref="CStringBuilder"/> initialized with <paramref name="initialValue"/>.
+	/// </summary>
+	/// <param name="initialValue">Initial builder value.</param>
+	/// <returns>Builder capacity.</returns>
+	private static UInt16 GetCapacityFor(ReadOnlySpan<Char> initialValue)
+	{
+		Int32 byteCount = Encoding.UTF8.GetByteCount(initialValue);
+		if (byteCount < CStringBuilder.DefaultCapacity)
+			return CStringBuilder.DefaultCapacity;
+		return (UInt16)Math.Min(byteCount, Chunk.MaxLength);
 	}
 }

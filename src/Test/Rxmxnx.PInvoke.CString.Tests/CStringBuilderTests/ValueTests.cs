@@ -294,12 +294,10 @@ public sealed class ValueTests : CStringBuilderTestsBase
 	{
 		T[] values = this._fixture.CreateMany<T>(length).ToArray();
 		T?[] valuesNull = this._fixture.CreateMany<T?>(length).ToArray();
-		StringBuilder strBuild = new();
-		CStringBuilder cstrBuild = new();
 		String? seed = TestSet.GetString(TestSet.GetIndices(1).FirstOrDefault(), true);
+		StringBuilder strBuild = new(seed);
+		CStringBuilder cstrBuild = new(seed);
 
-		strBuild.Append(seed);
-		cstrBuild.Append(seed);
 		foreach (T value in values.AsSpan())
 		{
 			(Int32 utf16Index, Int32 utf8Index) = CStringBuilderTestsBase.GetIndex(strBuild.ToString(), out _);

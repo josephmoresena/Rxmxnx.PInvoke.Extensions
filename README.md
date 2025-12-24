@@ -2381,6 +2381,131 @@ Represents a sequence of null-terminated UTF-8 text strings.
 
 </details>
 
+<details>
+  <summary>CStringBuilder</summary>
+
+Represents a mutable string of UTF-8 encoded characters.
+
+**Notes:**
+
+- This class cannot be inherited.
+- This type is designed to be a UTF-8 equivalent of `System.Text.StringBuilder`.
+- Instances of this type are mutable.
+- This type exposes APIs to append, insert, remove, and clear UTF-8 text efficiently.
+- This type supports method chaining (Fluent API) for most operations.
+- This type provides optimized support for `ReadOnlySpan<Byte>` and `ReadOnlySpan<Char>`, minimizing allocations during
+  string manipulation.
+- Conversions to `CString` can be customized to produce null-terminated or non-null-terminated strings.
+
+### Properties:
+
+- <details>
+  <summary>Length</summary>
+
+  Gets the length of the current `CStringBuilder` object.
+  </details>
+
+### Constructors:
+
+- <details>
+  <summary>CStringBuilder()</summary>
+
+  Initializes a new instance of the `CStringBuilder` class.
+  </details>
+- <details>
+  <summary>CStringBuilder(UInt16)</summary>
+
+  Initializes a new instance of the `CStringBuilder` class using the specified capacity.
+  </details>
+- <details>
+  <summary>CStringBuilder(CString?)</summary>
+
+  Initializes a new instance of the `CStringBuilder` class using the specified value as initial content.
+  </details>
+- <details>
+  <summary>CStringBuilder(String?)</summary>
+
+  Initializes a new instance of the `CStringBuilder` class using the specified value as initial content.
+  </details>
+- <details>
+  <summary>CStringBuilder(ReadOnlySpan&amp;lt;Byte&amp;gt;)</summary>
+
+  Initializes a new instance of the `CStringBuilder` class using the specified UTF-8 text as initial content.
+  </details>
+- <details>
+  <summary>CStringBuilder(ReadOnlySpan&amp;lt;Char&amp;gt;)</summary>
+
+  Initializes a new instance of the `CStringBuilder` class using the specified UTF-16 text as initial content.
+  </details>
+
+### Methods:
+
+- <details>
+  <summary>ToCString()</summary>
+
+  Converts the value of this instance to a `CString`. The returned `CString` is always null-terminated.
+  </details>
+- <details>
+  <summary>ToCString(Boolean)</summary>
+
+  Converts the value of this instance to a `CString`. The boolean parameter specifies whether the returned
+  `CString` should be null-terminated.
+  must be null-terminated.
+  </details>
+- <details>
+  <summary>ToString()</summary>
+
+  Converts the value of this instance to a `String`.
+  </details>
+- <details>
+  <summary>CopyTo(Int32, Span&amp;lt;Byte&amp;gt;)</summary>
+
+  Copies the UTF-8 characters from a specified segment of this instance to a destination span of bytes.
+  </details>
+- <details>
+  <summary>Clear()</summary>
+
+  Removes all characters from the current `CStringBuilder` instance.
+  </details>
+- <details>
+  <summary>Remove(Int32, Int32)</summary>
+
+  Removes the specified range of characters from this instance.
+  </details>
+- <details>
+  <summary>Append(?)</summary>
+
+  Appends the UTF-8 string representation of a specified parameter to this instance.
+
+  **Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySpan<Char>`, `Byte[]`, `Char[]` and
+  standard numeric primitives.
+  </details>
+- <details>
+  <summary>AppendJoin(?, ?)</summary>
+
+  Concatenates the string representations of the elements in the provided sequence, using the specified separator
+  between each member.
+  </details>
+- <details>
+  <summary>AppendLine()</summary>
+
+  Appends the default line terminator to the end of the current `CStringBuilder` object.
+  </details>
+- <details>
+  <summary>AppendLine(?)</summary>
+
+  Appends the UTF-8 string representation of a specified parameter followed by the default line terminator to the end of
+  the current `CStringBuilder` object.
+  </details>
+- <details>
+  <summary>Insert(Int32, ?)</summary>
+
+  Inserts the UTF-8 string representation of a specified parameter into this instance at the specified character
+  position.
+  </details>
+
+</details>
+
 ---
 
 # Extensions

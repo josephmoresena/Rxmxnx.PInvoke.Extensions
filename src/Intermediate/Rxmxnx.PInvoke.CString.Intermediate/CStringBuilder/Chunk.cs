@@ -8,6 +8,11 @@ public partial class CStringBuilder
 	private sealed partial class Chunk
 	{
 		/// <summary>
+		/// Maximum array length.
+		/// </summary>
+		public const Int32 MaxLength = UInt16.MaxValue * (Byte.MaxValue * Byte.MaxValue / 2);
+
+		/// <summary>
 		/// The number of bytes in the entire sequence up to and including this chunk.
 		/// </summary>
 		public Int32 Count => this.GetOffset() + this._count;
@@ -128,7 +133,9 @@ public partial class CStringBuilder
 			Chunk chunk;
 
 			if (index != this.Count)
+			{
 				chunk = this.GetChunkFor(ref index, out nextChunk);
+			}
 			else
 			{
 				chunk = this;

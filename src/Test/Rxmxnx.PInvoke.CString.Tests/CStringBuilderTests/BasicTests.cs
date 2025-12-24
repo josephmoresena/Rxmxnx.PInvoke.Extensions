@@ -229,14 +229,11 @@ public sealed class BasicTests : CStringBuilderTestsBase
 	{
 		using TestMemoryHandle handle = new();
 		List<Int32> indices = TestSet.GetIndices(length);
-		StringBuilder strBuild = new();
-		CStringBuilder cstrBuild = new();
 		Int32 seed = indices.OrderBy(_ => Guid.NewGuid()).FirstOrDefault();
+		StringBuilder strBuild = new(TestSet.GetString(seed, true));
+		CStringBuilder cstrBuild = new(TestSet.GetCString(seed, handle));
 		Int32 rune = 0;
 		String strBuildValue;
-
-		strBuild.Append(TestSet.GetString(seed, true));
-		cstrBuild.Append(TestSet.GetCString(seed, handle));
 
 		Int32 builderLength = cstrBuild.Length;
 		foreach (Int32 i in indices)

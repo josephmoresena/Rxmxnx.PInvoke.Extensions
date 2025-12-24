@@ -5,11 +5,6 @@ public partial class CStringBuilder
 	private sealed partial class Chunk
 	{
 		/// <summary>
-		/// Maximum array length.
-		/// </summary>
-		private const Int32 maxLength = UInt16.MaxValue * (Byte.MaxValue * Byte.MaxValue / 2);
-
-		/// <summary>
 		/// Allocates a new buffer for the next chunk based on the capacity of the current chunk.
 		/// </summary>
 		/// <param name="chunk">Current <see cref="Chunk"/> instance.</param>
@@ -29,7 +24,7 @@ public partial class CStringBuilder
 		/// <param name="capacity">Current chunk capacity.</param>
 		/// <returns>The next chunk capacity.</returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static Int32 GetNextCapacity(Int32 capacity) => Math.Min(2 * capacity, Chunk.maxLength);
+		private static Int32 GetNextCapacity(Int32 capacity) => Math.Min(2 * capacity, Chunk.MaxLength);
 		/// <summary>
 		/// Computes how many additional chunks are required for an insertion, and their sizes.
 		/// </summary>

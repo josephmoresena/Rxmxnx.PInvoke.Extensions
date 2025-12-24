@@ -121,8 +121,8 @@ public sealed class UnicodeTests : CStringBuilderTestsBase
 		Int32 seedLength = Encoding.UTF8.GetByteCount((ReadOnlySpan<Char>)seed);
 		if (seedLength < CStringBuilder.DefaultCapacity) return;
 
-		CStringBuilder cstrBuild = new((UInt16)(seedLength * 2));
-		cstrBuild.Append(seed).Append(seed).Append(seed);
+		CStringBuilder cstrBuild = new(seed + seed);
+		cstrBuild.Append(seed);
 
 		PInvokeAssert.Equal(seed + seed + seed, cstrBuild.GetDebugInfo(out Int32 length, out ChunkInfo[] chunks));
 		PInvokeAssert.Equal(3 * seedLength, length);
