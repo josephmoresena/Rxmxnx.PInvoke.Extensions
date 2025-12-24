@@ -312,6 +312,8 @@ public sealed class ValueTests : CStringBuilderTestsBase
 			Assert.True(Object.ReferenceEquals(cstrBuild, helper.InsertU8Null(utf8Index, value, cstrBuild)));
 		}
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
+		PInvokeAssert.Equal("", cstrBuild.Clear().ToString());
+		PInvokeAssert.Equal(0, cstrBuild.Length);
 	}
 
 	private sealed class Helper<T> where T : unmanaged

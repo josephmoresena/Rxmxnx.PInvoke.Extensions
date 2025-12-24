@@ -112,6 +112,8 @@ public sealed class UnicodeTests : CStringBuilderTestsBase
 			PInvokeAssert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.Insert(utf8Index, newString)));
 		}
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
+		PInvokeAssert.Equal("", strBuild.Clear().ToString());
+		PInvokeAssert.Equal(0, strBuild.Length);
 	}
 	[Fact]
 	public void AppendRemoveAppendTest()

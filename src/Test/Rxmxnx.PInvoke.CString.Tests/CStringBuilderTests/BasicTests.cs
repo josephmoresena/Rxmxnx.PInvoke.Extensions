@@ -262,6 +262,8 @@ public sealed class BasicTests : CStringBuilderTestsBase
 			PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToCString().ToString());
 		}
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToCString().ToString());
+		PInvokeAssert.Equal("", cstrBuild.Clear().ToString());
+		PInvokeAssert.Equal(0, cstrBuild.Length);
 	}
 	[Theory]
 	[InlineData(8)]
