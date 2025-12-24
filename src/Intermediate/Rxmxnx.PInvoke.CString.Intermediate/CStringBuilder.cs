@@ -113,11 +113,6 @@ public sealed partial class CStringBuilder
 		return this;
 	}
 	/// <summary>
-	/// Converts the value of this instance to a <see cref="CString"/>.
-	/// </summary>
-	/// <returns>A <see cref="CString"/> whose value is the same as this instance.</returns>
-	public CString ToCString() => this.ToCString(true);
-	/// <summary>
 	/// Copies UTF-8 units starting at the specified index of this instance into the provided destination
 	/// <see cref="Byte"/> span and returns the total number of units actually copied.
 	/// </summary>
@@ -144,11 +139,16 @@ public sealed partial class CStringBuilder
 		lock (this._lock)
 #endif
 		{
-			Int32 length = Math.Min(index + destination.Length, this._chunk.Count - index);
+			Int32 length = Math.Min(destination.Length, this._chunk.Count - index);
 			this._chunk.CopyTo(index, destination[..length]);
 			return length;
 		}
 	}
+	/// <summary>
+	/// Converts the value of this instance to a <see cref="CString"/>.
+	/// </summary>
+	/// <returns>A <see cref="CString"/> whose value is the same as this instance.</returns>
+	public CString ToCString() => this.ToCString(true);
 	/// <summary>
 	/// Converts the value of this instance to a <see cref="CString"/>.
 	/// </summary>

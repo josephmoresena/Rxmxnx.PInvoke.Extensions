@@ -232,3 +232,92 @@ UTF-8/ASCII sequences (hardcoded) are required.
 
 The `GetUnsafe(ReadOnlySpan<ReadOnlyValPtr<Byte>>)` method enables the creation of a `CStringSequence` instance from an
 unmanaged `char*[]`, as represented by the given span.
+
+## CString Builder
+
+`Rxmxnx.PInvoke.Extensions` provides a mutable sequence of UTF-8 characters through the `CStringBuilder` class. This
+class is designed as a UTF-8 equivalent of `System.Text.StringBuilder`.
+
+### Construction and Appending
+
+```csharp
+CStringBuilder csb = new();
+
+csb.Append("Hello");                 // Append String
+csb.Append((Byte)' ');               // Append Byte character
+csb.Append("World"u8);               // Append UTF-8 literal (ReadOnlySpan<Byte>)
+csb.AppendLine();                    // Append Line terminator
+csb.Append(2023);                    // Append Int32
+
+Console.WriteLine(csb.ToString());   
+// Output: 
+// Hello World
+// 2023
+```
+
+This snippet demonstrates how to initialize a `CStringBuilder` and append different data types. The class automatically
+handles the UTF-8 encoding of C# strings and numeric values.
+
+### Joining Values
+
+```csharp
+CStringBuilder csb = new();
+CString[] values = [ new(() => "A"u8), new(() => "B"u8), new(() => "C"u8) ];
+
+csb.AppendJoin(", "u8, values);
+
+Console.WriteLine(csb.ToString());   // Output: "A, B, C"
+
+csb.Clear();
+csb.AppendJoin(" - "u8, new(() => "1"u8), new(() => "2"u8), new(() => "3"u8));
+
+Console.WriteLine(csb.ToString());   // Output: "1 - 2 - 3"
+```
+
+The `AppendJoin` method simplifies the concatenation of collections or sequences of values, inserting a specified
+separator between each element.
+
+### Manipulation
+
+```csharp
+CStringBuilder csb = new("Hello World"u8);
+
+csb.Remove(5, 6);        // Removes " World"
+csb.Insert(5, " C#");    // Inserts " C#" at index 5
+
+Console.WriteLine(csb.ToString());   // Output: "Hello C#"
+```
+
+`CStringBuilder` supports `Insert` and `Remove` operations effectively. These operations modify the internal chunks,
+shifting data as necessary.
+
+### Conversion to CString
+
+```csharp
+CStringBuilder csb = new("Text");
+
+CString cstr1 = csb.ToCString();
+CString cstr2 = csb.ToCString(false);
+
+Console.WriteLine(cstr1.IsNullTerminated); // Output: True (Default)
+Console.WriteLine(cstr2.IsNullTerminated); // Output: False (Explicit)
+```
+
+The `ToCString()` method creates a new `CString` instance containing the current data. By default, this method ensures
+the resulting `CString` is null-terminated, making it ready for interop scenarios. The overload
+`ToCString(bool nullTerminated)` allows the developer to prevent the addition of the null terminator (by passing
+`false`) if it is not required.
+
+### Low-Level Copy
+
+```csharp
+CStringBuilder csb = new("12345");
+Span<Byte> buffer = stackalloc Byte[3];
+
+csb.CopyTo(1, buffer); // Copy 3 bytes starting from index 1
+
+Console.WriteLine(Encoding.UTF8.GetString(buffer)); // Output: "234"
+```
+
+For high-performance scenarios, the `CopyTo` method allows direct copying of the builder's content into a destination
+`Span<Byte>`, enabling interaction with other low-level APIs without allocating intermediate objects.
