@@ -28,6 +28,7 @@ public delegate ReadOnlySpan<T> ReadOnlySpanFunc<T, in TState>(TState arg);
 /// <param name="span">A span of type <typeparamref name="T"/>.</param>
 /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 /// <returns>The return value of the method that this delegate encapsulates.</returns>
+// ReSharper disable once UnusedType.Global
 public delegate TResult SpanFunc<T, in TArg, out TResult>(Span<T> span, TArg arg)
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
@@ -44,6 +45,7 @@ public delegate TResult SpanFunc<T, in TArg, out TResult>(Span<T> span, TArg arg
 /// <param name="span">A read-only span of type <typeparamref name="T"/>.</param>
 /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 /// <returns>The return value of the method that this delegate encapsulates.</returns>
+// ReSharper disable once UnusedType.Global
 public delegate TResult ReadOnlySpanFunc<T, in TArg, out TResult>(ReadOnlySpan<T> span, TArg arg)
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct

@@ -24,7 +24,20 @@ public partial class CStringSequence
 		/// </summary>
 		/// <param name="index">Required index.</param>
 		/// <returns>The real index at cache.</returns>
-		private Int32 GetRealIndex(Int32 index) => index - this._emptyIndices.Count(i => i < index);
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3267)]
+#endif
+		private Int32 GetRealIndex(Int32 index)
+		{
+			Int32 count = 0;
+			// ReSharper disable once LoopCanBeConvertedToQuery
+			foreach (Int32 i in this._emptyIndices)
+			{
+				if (i < index)
+					count++;
+			}
+			return index - count;
+		}
 
 		/// <summary>
 		/// Creates a <see cref="FixedCache"/> instance.

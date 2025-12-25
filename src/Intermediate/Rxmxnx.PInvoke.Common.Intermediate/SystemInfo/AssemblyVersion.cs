@@ -1,8 +1,18 @@
-﻿#if !PACKAGE || TEMP_PACKAGE
-namespace Rxmxnx.PInvoke;
+﻿namespace Rxmxnx.PInvoke;
 
 public static partial class SystemInfo
 {
+	/// <summary>
+	/// Specifies all interfaces implemented by a type.
+	/// </summary>
+	// ReSharper disable once MemberCanBePrivate.Global
+#if NET5_0
+	internal const DynamicallyAccessedMemberTypes InterfaceAccess = (DynamicallyAccessedMemberTypes)0x2000;
+#else
+	internal const DynamicallyAccessedMemberTypes InterfaceAccess = DynamicallyAccessedMemberTypes.Interfaces;
+#endif
+
+#if !PACKAGE || TEMP_PACKAGE
 	/// <summary>
 	/// Target framework for the current build.
 	/// </summary>
@@ -27,5 +37,31 @@ public static partial class SystemInfo
 			".NET Standard 2.1"
 #endif
 		;
-}
 #endif
+	/// <summary>
+	/// Retrieves the number of interfaces implemented by <typeparamref name="T"/> type.
+	/// </summary>
+	/// <typeparam name="T">Generic type.</typeparam>
+	/// <returns>Number of interfaces implemented by <typeparamref name="T"/> type.</returns>
+	internal static Int32 CountInterfaces<[DynamicallyAccessedMembers(SystemInfo.InterfaceAccess)] T>()
+		=> typeof(T).GetInterfaces().Length;
+	/// <summary>
+	/// Indicates whether <typeparamref name="T"/> implements <see cref="IEquatable{T}"/> interface.
+	/// </summary>
+	/// <typeparam name="T">Generic managed type.</typeparam>
+	/// <returns>
+	/// <see langword="true"/> if <typeparamref name="T"/> implements <see cref="IEquatable{T}"/> interface; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+	internal static Boolean IsSelfEquatable<[DynamicallyAccessedMembers(SystemInfo.InterfaceAccess)] T>()
+	{
+		Type equatable = typeof(IEquatable<T>);
+		ReadOnlySpan<Type> interfaces = typeof(T).GetInterfaces();
+		foreach (Type t in interfaces)
+		{
+			if (equatable == t)
+				return true;
+		}
+		return false;
+	}
+}

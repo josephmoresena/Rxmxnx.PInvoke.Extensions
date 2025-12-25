@@ -25,6 +25,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// <summary>
 	/// Indicates whether current memory block is unmanaged.
 	/// </summary>
+	// ReSharper disable once MemberCanBeProtected.Global
 	public abstract Boolean IsUnmanaged { get; }
 	/// <summary>
 	/// The type of memory.
@@ -259,6 +260,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// </summary>
 	/// <typeparam name="TDelegate">A <see cref="Delegate"/> type.</typeparam>
 	/// <returns>A <see cref="FuncPtr{TDelegate}"/> instance over the memory block.</returns>
+	// ReSharper disable once MemberCanBeProtected.Global
 	public FuncPtr<TDelegate> CreateFuncPointer<TDelegate>() where TDelegate : Delegate
 	{
 		this.ValidateFunctionOperation();

@@ -11,9 +11,13 @@ public static partial class TestCompiler
 				OperatingSystem.IsLinux() ? [Architecture.X64, Architecture.Arm, Architecture.Arm64,] :
 					[RuntimeInformation.OSArchitecture,];
 
+		NetVersion maxNetVersion = netVersions.Max();
 		String[] appProjectFiles = projectDirectory.GetDirectories("*.*ApplicationTest", SearchOption.AllDirectories)
 		                                           .SelectMany(d => d.GetFiles("*.*proj")).Select(f => f.FullName)
 		                                           .ToArray();
+		String? webProjectFile = projectDirectory.GetDirectories("*.*WebApiTest", SearchOption.AllDirectories)
+		                                         .SelectMany(d => d.GetFiles("*.*proj")).Select(f => f.FullName)
+		                                         .FirstOrDefault();
 
 		foreach (Architecture arch in architectures)
 		{
@@ -21,15 +25,22 @@ public static partial class TestCompiler
 
 			String rid = $"{os}-{Enum.GetName(arch)!.ToLower()}";
 			foreach (NetVersion netVersion in netVersions)
-			foreach (String appProjectFile in appProjectFiles)
 			{
-				await TestCompiler.CompileNetApp(onlyNativeAot,
-				                                 new()
-				                                 {
-					                                 ProjectFile = appProjectFile,
-					                                 RuntimeIdentifier = rid,
-					                                 Version = netVersion,
-				                                 }, arch, outputPath);
+				foreach (String appProjectFile in appProjectFiles)
+				{
+					await TestCompiler.CompileNetApp(onlyNativeAot,
+					                                 new()
+					                                 {
+						                                 ProjectFile = appProjectFile,
+						                                 RuntimeIdentifier = rid,
+						                                 Version = netVersion,
+					                                 }, arch, outputPath);
+				}
+
+				if (netVersion != maxNetVersion || String.IsNullOrEmpty(webProjectFile)) continue;
+				await TestCompiler.CompileWebApi(
+					new() { ProjectFile = webProjectFile, RuntimeIdentifier = rid, Version = netVersion, }, arch,
+					outputPath);
 			}
 		}
 	}

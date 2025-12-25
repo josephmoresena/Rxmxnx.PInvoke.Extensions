@@ -39,72 +39,6 @@ public partial class CString
 	}
 
 	/// <summary>
-	/// Retrieves an instance of the <see cref="EqualsDelegate"/> optimized for the current
-	/// process' bitness.
-	/// </summary>
-	/// <returns>An instance of the <see cref="EqualsDelegate"/>.</returns>
-	/// <remarks>
-	/// This method selects the appropriate version of the Equals method to compare UTF-8
-	/// strings in a manner that is optimized for the current machine's architecture
-	/// (32 or 64 bit).
-	/// </remarks>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static EqualsDelegate GetEquals()
-		=> Environment.Is64BitProcess ? CString.Equals<Int64> : CString.Equals<Int32>;
-	/// <summary>
-	/// Copies the byte data from the source array into the destination character span,
-	/// treating the byte data as UTF-8 encoded text.
-	/// </summary>
-	/// <param name="destination">
-	/// The destination <see cref="Span{Char}"/> where the byte data will be copied to.
-	/// </param>
-	/// <param name="source">The source byte array from which the data will be copied.</param>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void CopyBytes(Span<Char> destination, Byte[] source)
-	{
-		//Converts binary span into source char span.
-		ReadOnlySpan<Char> sourceChars = MemoryMarshal.Cast<Byte, Char>(source);
-		//Gets the binary size of source char span.
-		Int32 offset = sourceChars.Length * sizeof(Char);
-		//Creates the remaining bytes from source.
-		ReadOnlySpan<Byte> remSource = source.AsSpan()[offset..];
-		//Gets the remaining binary destination into destination span.
-		Span<Byte> remDestination = MemoryMarshal.AsBytes(destination[sourceChars.Length..]);
-
-		//Copies the source char span into destination span.
-		sourceChars.CopyTo(destination);
-		//Copies the remaining binary span into UTF8 destination span.
-		remSource.CopyTo(remDestination);
-	}
-	/// <summary>
-	/// Compares two ReadOnlySpan instances for equality, treating their byte data as
-	/// <typeparamref name="TInteger"/> for faster comparison.
-	/// </summary>
-	/// <typeparam name="TInteger">
-	/// A ValueType which is used to interpret the byte data for comparison, such as
-	/// <see cref="Int32"/> or <see cref="Int64"/>.
-	/// </typeparam>
-	/// <param name="current">The first ReadOnlySpan instance to compare.</param>
-	/// <param name="other">The second ReadOnlySpan instance to compare.</param>
-	/// <returns>
-	/// <see langword="true"/> if both read-only instances have the same length and contain the same
-	/// byte data, otherwise <see langword="false"/>.
-	/// </returns>
-	private static unsafe Boolean Equals<TInteger>(ReadOnlySpan<Byte> current, ReadOnlySpan<Byte> other)
-		where TInteger : unmanaged, IEquatable<TInteger>
-	{
-		if (current.Length != other.Length) return false;
-		ReadOnlySpan<TInteger> currentIntegers = MemoryMarshal.Cast<Byte, TInteger>(current);
-		ReadOnlySpan<TInteger> otherIntegers = MemoryMarshal.Cast<Byte, TInteger>(other);
-
-		if (!currentIntegers.SequenceEqual(otherIntegers)) return false;
-		Int32 binaryOffset = currentIntegers.Length * sizeof(TInteger);
-		return current[binaryOffset..].SequenceEqual(other[binaryOffset..]);
-	}
-	/// <summary>
 	/// Determines if a given read-only span of bytes represents a null-terminated UTF-8 string.
 	/// </summary>
 	/// <param name="data">The read-only span of bytes to check.</param>
@@ -125,7 +59,7 @@ public partial class CString
 		return textLength < data.Length;
 	}
 	/// <summary>
-	/// Creates a null-terminated UTF-8 string that consists of a given ReadOnlySpan of bytes repeated
+	/// Creates a null-terminated UTF-8 string that consists of a given read-only span of bytes repeated
 	/// a specified number of times.
 	/// </summary>
 	/// <param name="seq">The read-only span of bytes to repeat.</param>
@@ -137,9 +71,42 @@ public partial class CString
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Byte[] CreateRepeatedSequence(ReadOnlySpan<Byte> seq, Int32 count)
 	{
-		Byte[] result = new Byte[seq.Length * count + 1];
+		if (count == 0) return CString.empty;
+
+		Int32 bufferLength = seq.Length * count + 1;
+		Byte[] result = CString.CreateByteArray(bufferLength);
 		for (Int32 i = 0; i < count; i++)
 			seq.CopyTo(result.AsSpan()[(seq.Length * i)..]);
+		result[^1] = default;
+		return result;
+	}
+	/// <summary>
+	/// Creates a null-terminated UTF-8 string that consists of a given read-only span of chars repeated
+	/// a specified number of times.
+	/// </summary>
+	/// <param name="seq">The read-only span of chars to repeat.</param>
+	/// <param name="count">The number of times to repeat the read-only span.</param>
+	/// <returns>
+	/// A <see cref="Byte"/> array that represents a null-terminated UTF-8 string composed of the
+	/// read-only span repeated the specified number of times.
+	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static Byte[] CreateRepeatedSequence(ReadOnlySpan<Char> seq, Int32 count)
+	{
+		if (count == 0) return CString.empty;
+
+		Int32 utf8Length = Encoding.UTF8.GetByteCount(seq);
+		Int32 bufferLength = utf8Length * count + 1;
+		Byte[] result = CString.CreateByteArray(bufferLength);
+		Span<Byte> span = result.AsSpan();
+		Span<Byte> initial = span[..utf8Length];
+		_ = Encoding.UTF8.GetBytes(seq, initial);
+		for (Int32 i = 1; i < count; i++)
+		{
+			span = span[initial.Length..];
+			initial.CopyTo(span);
+		}
+		result[^1] = default;
 		return result;
 	}
 	/// <summary>
@@ -172,26 +139,38 @@ public partial class CString
 	/// <param name="reader">A <see cref="Utf8JsonReader"/> instance.</param>
 	/// <param name="data">Output. A <see cref="ValueRegion{Byte}"/> instance.</param>
 	/// <returns>Read UTF-8 text length.</returns>
+#if NET7_0_OR_GREATER
+	[SkipLocalsInit]
+#endif
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1121)]
+#endif
 	private static Int32 Read(Utf8JsonReader reader, out ValueRegion<Byte> data)
 	{
+		StackAllocationHelper.InitStackBytes();
+
 		Int32 stackConsumed = 0;
 		Byte[]? byteArray = default;
-		try
+		Int32 length = JsonConverter.GetLength(reader);
+		Span<Byte> span = StackAllocationHelper.ConsumeStackBytes(length, ref stackConsumed) ?
+			stackalloc Byte[length + 1] :
+#if !NET7_0_OR_GREATER
+			byteArray = CString.CreateByteArray(length + 1);
+#else
+			byteArray = GC.AllocateUninitializedArray<Byte>(length + 1);
+		span[^1] = default; // Clear the end of the buffer.
+#endif
+		length += JsonConverter.ReadBytes(reader, span[..length], byteArray is not null);
+		if (byteArray is null || !JsonConverter.IsReusableBuffer(byteArray.Length, byteArray.Length))
 		{
-			Int32 length = JsonConverter.GetLength(reader);
-			Span<Byte> span = JsonConverter.ConsumeStackBytes(length, ref stackConsumed) ?
-				stackalloc Byte[length] :
-				JsonConverter.RentArray(length, out byteArray);
+			// Allocate a new array sized to fit the UTF-8 data.
+			byteArray = CString.CreateByteArray(length + 1);
+			// Copy the valid UTF-8 data into the new buffer.
+			span[..byteArray.Length].CopyTo(byteArray.AsSpan());
+		}
 
-			length += JsonConverter.ReadBytes(reader, span);
-			data = ValueRegion<Byte>.Create(span[..length].ToArray());
-			return length;
-		}
-		finally
-		{
-			JsonConverter.ReturnArray(byteArray);
-			JsonConverter.ReleaseStackBytes(stackConsumed);
-		}
+		data = ValueRegion<Byte>.Create(byteArray);
+		return length;
 	}
 #endif
 	/// <summary>
@@ -203,4 +182,20 @@ public partial class CString
 	/// A non-null-terminated <see cref="CString"/> instance that contains a single <paramref name="c"/> character.
 	/// </returns>
 	private static CString Create(Byte c) => new([c,], false);
+	/// <summary>
+	/// Creates a managed region with <paramref name="utf16Text"/> UTF-8 representation.
+	/// </summary>
+	/// <param name="utf16Text">The UTF-16 text to initialize de region.</param>
+	/// <param name="utf8Length">Output. UTF-8 length of <paramref name="utf16Text"/>.</param>
+	/// <returns>The managed region with <paramref name="utf16Text"/> UTF-8 representation.</returns>
+	private static ValueRegion<Byte> CreateUtf8Region(String utf16Text, out Int32 utf8Length)
+	{
+		utf8Length = Encoding.UTF8.GetByteCount(utf16Text);
+
+		Byte[] array = CString.CreateByteArray(utf8Length + 1);
+		Span<Byte> bytes = array;
+		Encoding.UTF8.GetBytes(utf16Text, bytes);
+		bytes[^1] = default;
+		return ValueRegion<Byte>.Create(array);
+	}
 }

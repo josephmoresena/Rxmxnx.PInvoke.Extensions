@@ -145,6 +145,7 @@ public partial class CString
 	/// by the separator UTF-16 text. -or- <see cref="Empty"/> if
 	/// <paramref name="value"/> has zero elements.
 	/// </returns>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public static CString Join(String? separator,
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<String?> value
@@ -177,6 +178,9 @@ public partial class CString
 	/// if <paramref name="values"/> has zero elements.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
+#if !PACKAGE
+	[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+#endif
 	public static CString Join(String? separator, IEnumerable<String?> values)
 	{
 		ArgumentNullException.ThrowIfNull(values);

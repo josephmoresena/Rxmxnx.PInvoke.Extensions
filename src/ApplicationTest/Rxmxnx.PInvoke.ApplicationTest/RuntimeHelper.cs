@@ -112,7 +112,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Console.WriteLine($"UI Iso639-1: {NativeUtilities.UserInterfaceIso639P1}");
 			Console.WriteLine($"Buffer AutoComposition Enabled: {BufferManager.BufferAutoCompositionEnabled}");
 			Console.WriteLine($"String constant: {!RuntimeHelper.runtimeName.AsSpan().MayBeNonLiteral()}");
-			Console.WriteLine($"CString.Empty literal: {!RuntimeHelper.GetEmptyUtf8().MayBeNonLiteral()}");
+			Console.WriteLine($"CString.Empty literal: {CString.IsImagePersistent(CString.Empty)}");
 			Console.WriteLine($"Hardcoded Array literal: {!RuntimeHelper.Null.AsSpan().MayBeNonLiteral()}");
 		}
 		private static void PrintDomainInfo()
@@ -141,12 +141,6 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 					Console.WriteLine(ex);
 			}
 		}
-		private static ReadOnlySpan<Byte> GetEmptyUtf8()
-		{
-			ref readonly Byte ref0 = ref CString.Empty.GetPinnableReference();
-			return NativeUtilities.AsBytes(in ref0);
-		}
-
 		private static String GetName(this Architecture architecture)
 			=> architecture switch
 			{

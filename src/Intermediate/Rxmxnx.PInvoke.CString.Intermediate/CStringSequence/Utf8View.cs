@@ -32,6 +32,7 @@ public partial class CStringSequence
 		/// <summary>
 		/// Enumeration source sequence.
 		/// </summary>
+		// ReSharper disable once ConvertToAutoPropertyWhenPossible
 		public CStringSequence? Source => this._instance;
 		/// <summary>
 		/// Indicates whether current enumeration includes empty items from the source sequence.

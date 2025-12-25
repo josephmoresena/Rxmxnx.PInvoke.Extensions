@@ -1,4 +1,6 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿// ReSharper disable ConvertToExtensionBlock
+
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Provides a set of extensions for basic operations with <see cref="Span{T}"/> and <see cref="ReadOnlySpan{T}"/>
@@ -336,9 +338,11 @@ public static unsafe partial class MemoryBlockExtensions
 
 		Boolean isReadOnly = !MemoryMarshal.TryGetMemoryManager<T, MemoryManager<T>>(mem, out _) &&
 			!MemoryMarshal.TryGetArray(mem, out _);
+		// ReSharper disable HeapView.BoxingAllocation
 		return !isReadOnly ?
 			new FixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle) :
 			new ReadOnlyFixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);
+		// ReSharper restore HeapView.BoxingAllocation
 	}
 	/// <summary>
 	/// Creates an <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance by pinning the current
@@ -361,6 +365,7 @@ public static unsafe partial class MemoryBlockExtensions
 		MemoryHandle handle = mem.Pin();
 		return handle.Pointer == default ?
 			FixedContext<T>.EmptyDisposable :
+			// ReSharper disable once HeapView.BoxingAllocation
 			new FixedContext<T>(handle.Pointer, mem.Length).ToDisposable(handle);
 	}
 	/// <summary>

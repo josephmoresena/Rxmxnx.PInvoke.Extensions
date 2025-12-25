@@ -1,4 +1,6 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿// ReSharper disable ConvertToExtensionBlock
+
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Provides a set of extensions for basic operations with <see cref="Delegate"/> instances.

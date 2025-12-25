@@ -1,23 +1,27 @@
 ﻿<Solution>
     <Folder Name="/ApplicationTest/">
-        <Project Path="ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\Rxmxnx.PInvoke.ApplicationTest.csproj"
-                 Type="Classic C#"/>
-        <Project Path="ApplicationTest\Rxmxnx.PInvoke.LauncherTest\Rxmxnx.PInvoke.LauncherTest.csproj"
-                 Type="Classic C#"/>
-        <Project Path="ApplicationTest\Rxmxnx.PInvoke.Mkbundle.Patcher\Rxmxnx.PInvoke.Mkbundle.Patcher.csproj"
-                 Type="Classic C#"/>
-        <Project Path="ApplicationTest\Rxmxnx.PInvoke.VNextTest\Rxmxnx.PInvoke.VNextTest.csproj" Type="Classic C#"/>
-        <File Path="ApplicationTest\DotnetCoreApp.targets"/>
-        <File Path="ApplicationTest\MonoApp.targets"/>
+        <Project Path="ApplicationTest/Rxmxnx.PInvoke.WebApiTest/Rxmxnx.PInvoke.WebApiTest.csproj"/>
+        <Project Path="ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\Rxmxnx.PInvoke.ApplicationTest.csproj"/>
+        <Project Path="ApplicationTest\Rxmxnx.PInvoke.LauncherTest\Rxmxnx.PInvoke.LauncherTest.csproj"/>
+        <Project Path="ApplicationTest\Rxmxnx.PInvoke.Mkbundle.Patcher\Rxmxnx.PInvoke.Mkbundle.Patcher.csproj"/>
+        <Project Path="ApplicationTest\Rxmxnx.PInvoke.VNextTest\Rxmxnx.PInvoke.VNextTest.csproj"/>
+        <File Path="ApplicationTest\Artifact.targets"/>
+        <File Path="ApplicationTest\DotnetCoreApp.props"/>
+        <File Path="ApplicationTest\MonoApp.props"/>
+        <File Path="ApplicationTest\NativeAot.props"/>
+        <File Path="ApplicationTest\nuget.config"/>
+        <File Path="ApplicationTest\PackageReference.props"/>
         <File Path="ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\Mono.ILLink.Descriptors.xml"/>
     </Folder>
     <Folder Name="/Global/">
         <File Path="..\.github\workflows\build.yml"/>
         <File Path="..\.github\workflows\release.yml"/>
+        <File Path="..\CONTRIBUTING.md"/>
         <File Path="..\Directory.Build.props"/>
+        <File Path="..\LICENSE.md"/>
         <File Path="..\README.md"/>
         <File Path="..\.gitignore"/>
-        <File Path="Library.targets"/>
+        <File Path="Library.props"/>
     </Folder>
     <Folder Name="/Intermediate/">
         <Project Path="Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate.csproj"/>
@@ -26,15 +30,18 @@
         <Project
                 Path="Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate.csproj"/>
         <File Path="Intermediate\README.md"/>
-        <File Path="Intermediate\Intermediate.Library.targets"/>
+        <File Path="Intermediate\Intermediate.Library.props"/>
     </Folder>
     <Folder Name="/Package/">
         <Project Path="..\package\Rxmxnx.PInvoke.Extensions.IlPatcher\Rxmxnx.PInvoke.Extensions.IlPatcher.csproj"/>
         <File Path="..\package\Intermediate-to-Package.targets"/>
+        <File Path="..\package\Package.props"/>
+        <File Path="..\package\Package.targets"/>
+        <File Path="..\package\Rxmxnx.PInvoke.Extensions\CompatibilitySuppressions.xml"/>
         <File Path="..\package\Rxmxnx.PInvoke.Extensions\PACKAGE.md"/>
     </Folder>
     <Folder Name="/Tests/">
-        <Project Path="Test\Rxmxnx.PInvoke.Assert.Tests\Rxmxnx.PInvoke.Assert.Tests.csproj" Type="Classic C#"/>
+        <Project Path="Test\Rxmxnx.PInvoke.Assert.Tests\Rxmxnx.PInvoke.Assert.Tests.csproj"/>
         <Project Path="Test\Rxmxnx.PInvoke.Buffers.Tests\Rxmxnx.PInvoke.Buffers.Tests.csproj"/>
         <Project Path="Test\Rxmxnx.PInvoke.Common.Tests\Rxmxnx.PInvoke.Common.Tests.csproj"/>
         <Project
@@ -42,7 +49,7 @@
         <Project Path="Test\Rxmxnx.PInvoke.CString.Tests\Rxmxnx.PInvoke.CString.Tests.csproj"/>
         <Project Path="Test\Rxmxnx.PInvoke.Extensions.Tests\Rxmxnx.PInvoke.Extensions.Tests.csproj"/>
         <File Path="Test\x86.runsettings"/>
-        <File Path="Test\Tests.targets"/>
+        <File Path="Test\Tests.props"/>
         <File Path="Test\README.md"/>
     </Folder>
 </Solution>

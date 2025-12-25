@@ -4,7 +4,7 @@ namespace Rxmxnx.PInvoke;
 public partial class CStringSequence
 {
 	/// <summary>
-	/// Json converter for <see cref="CStringSequence"/> class.
+	/// JSON converter for <see cref="CStringSequence"/> class.
 	/// </summary>
 	public sealed class JsonConverter : JsonConverter<CStringSequence>
 	{
@@ -19,8 +19,11 @@ public partial class CStringSequence
 			List<Int32?> lengths = [];
 			StringBuilder strBuilder = new();
 			Boolean leadingNull = false;
+
+			StackAllocationHelper.InitStackBytes();
 			while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
 				JsonConverter.ReadString(reader, strBuilder, lengths, ref leadingNull);
+
 			if (leadingNull)
 				strBuilder.Append('\0'); // Append a null character if the last string was not null-terminated.
 			return lengths.Count == 0 ? CStringSequence.Empty : new(strBuilder.ToString(), lengths.ToArray());
@@ -65,6 +68,9 @@ public partial class CStringSequence
 		/// <param name="buffer">Buffer for UTF-8 data.</param>
 		/// <param name="lengths">Text length collection.</param>
 		/// <param name="leadingNull">Ref. Leading null-character flag.</param>
+#if NET7_0_OR_GREATER
+		[SkipLocalsInit]
+#endif
 		private static void ReadString(Utf8JsonReader reader, StringBuilder buffer, List<Int32?> lengths,
 			ref Boolean leadingNull)
 		{
@@ -87,31 +93,32 @@ public partial class CStringSequence
 			try
 			{
 				Int32 nChar = length / sizeof(Char) + 1;
-				Span<Char> charSpan = CString.JsonConverter.ConsumeStackBytes(nChar * 2, ref stackConsumed) ?
-					stackalloc Char[length / sizeof(Char) + 1] :
-					CString.JsonConverter.RentArray(nChar, out charArray);
-				Span<Byte> array = MemoryMarshal.AsBytes(charSpan);
+				// Since .NET 7.0, the resulting charSpan is left uninitialized.
+				Span<Char> charSpan = StackAllocationHelper.ConsumeStackBytes(nChar * 2, ref stackConsumed) ?
+					stackalloc Char[nChar] :
+					StackAllocationHelper.RentArray(nChar, out charArray, CString.JsonConverter.ClearArray);
+				Span<Byte> bytes = MemoryMarshal.AsBytes(charSpan);
 
 				if (leadingNull)
 				{
-					array[0] = default; // Add leading null character in the string.
-					array = array[1..]; // Skip leading null.
+					bytes[0] = default; // Add leading null character in the string.
+					bytes = bytes[1..]; // Skip leading null.
 				}
 				charSpan[^1] = default; // Ensure the last character is null.
-				length += CString.JsonConverter.ReadBytes(reader, array[..length]);
+				length += CString.JsonConverter.ReadBytes(reader, bytes[..length], false);
 
 				Int32 nBytes = length + (leadingNull ? 1 : 0);
 				Int32 charsCount = nBytes / sizeof(Char) + nBytes % sizeof(Char);
 
 				// If the last byte is not null, we need to add a null character.
-				leadingNull = nBytes % sizeof(Char) == 0 || array[length] != default;
+				leadingNull = nBytes % sizeof(Char) == 0 || bytes[length] != default;
 				buffer.Append(charSpan[..charsCount]);
 				lengths.Add(length);
 			}
 			finally
 			{
-				CString.JsonConverter.ReturnArray(charArray);
-				CString.JsonConverter.ReleaseStackBytes(stackConsumed);
+				StackAllocationHelper.ReturnArray(charArray);
+				StackAllocationHelper.ReleaseStackBytes(stackConsumed);
 			}
 		}
 	}

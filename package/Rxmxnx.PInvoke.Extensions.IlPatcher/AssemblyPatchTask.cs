@@ -11,28 +11,34 @@ public abstract class AssemblyPatchTask : MsBuildTask
 	/// <summary>
 	/// Package assembly name.
 	/// </summary>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public const String AssemblyName = "Rxmxnx.PInvoke.Extensions.dll";
 	/// <summary>
 	/// Package documentation name.
 	/// </summary>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public const String AssemblyDocumentationName = "Rxmxnx.PInvoke.Extensions.xml";
 
 	/// <summary>
 	/// Reader parameters for assembly.
 	/// </summary>
+	// ReSharper disable once MemberCanBePrivate.Global
 	protected static readonly ReaderParameters ReadParameters = new() { ReadWrite = true, ReadSymbols = true, };
 
 	/// <summary>
 	/// MSBuild Output path.
 	/// </summary>
+	// ReSharper disable once UnusedAutoPropertyAccessor.Global
 	public String? OutputPath { get; set; }
 	/// <summary>
 	/// Target framework.
 	/// </summary>
+	// ReSharper disable once UnusedAutoPropertyAccessor.Global
 	public String? TargetFramework { get; set; }
 	/// <summary>
 	/// Strong-name Key path.
 	/// </summary>
+	// ReSharper disable once UnusedAutoPropertyAccessor.Global
 	public String? StrongNameKeyPath { get; set; }
 
 	/// <inheritdoc/>
@@ -51,6 +57,7 @@ public abstract class AssemblyPatchTask : MsBuildTask
 		try
 		{
 			assemblyPath = assemblyFiles
+			               // ReSharper disable once HeapView.DelegateAllocation
 			               .First(f => f.FullName.ToLowerInvariant().Contains(this.TargetFramework!.ToLowerInvariant()))
 			               .FullName;
 			String? documentationPath = outputPath
@@ -62,6 +69,7 @@ public abstract class AssemblyPatchTask : MsBuildTask
 		catch (Exception ex)
 		{
 			this.Log.LogError(
+				// ReSharper disable once HeapView.BoxingAllocation
 				$"Error: {ex.Message} Output Path: {outputPath.FullName} Framework: {this.TargetFramework} SN-Key: {this.StrongNameKeyPath}  Count: {assemblyFiles.Length} Assembly: {assemblyPath} Snk:{snkPath}");
 			this.Log.LogError(ex.ToString());
 			return false;
@@ -74,6 +82,7 @@ public abstract class AssemblyPatchTask : MsBuildTask
 	/// <param name="assemblyPath">Path to <c>Rxmxnx.PInvoke.Extensions</c> assembly.</param>
 	/// <param name="snkPath">Path to <c>Rxmxnx.PInvoke.Extensions</c> strong-name key.</param>
 	/// <param name="documentationPath">Path to <c>Rxmxnx.PInvoke.Extensions</c> documentation.</param>
+	// ReSharper disable once MemberCanBePrivate.Global
 	protected void AssemblyPatch(String assemblyPath, String? snkPath, String? documentationPath)
 	{
 		using AssemblyDefinition? assembly =

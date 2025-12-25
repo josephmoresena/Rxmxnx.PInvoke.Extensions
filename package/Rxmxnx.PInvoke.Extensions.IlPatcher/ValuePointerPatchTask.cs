@@ -4,6 +4,7 @@ namespace Rxmxnx.PInvoke.Extensions.IlPatcher;
 /// Value pointer patch task.
 /// </summary>
 [ExcludeFromCodeCoverage]
+// ReSharper disable once UnusedType.Global
 public sealed partial class ValuePointerPatchTask : AssemblyPatchTask
 {
 	/// <inheritdoc/>

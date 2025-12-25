@@ -18,10 +18,13 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 	, IEquatable<UInt32>
 #endif
 {
+#if !PACKAGE
 	/// <summary>
 	/// The raw integer value that was read from the input to form the Rune.
 	/// </summary>
+	/// <remarks>This is required only for the tests.</remarks>
 	private readonly Int32 _rawValue;
+#endif
 	/// <summary>
 	/// The <see cref="Rune"/> instance decoded from the input.
 	/// </summary>
@@ -32,10 +35,6 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 	/// </summary>
 	public Int32 CharsConsumed { get; }
 	/// <summary>
-	/// The raw integer value that was read from the input to form the Rune.
-	/// </summary>
-	public Int32 RawValue => this._rawValue;
-	/// <summary>
 	/// The <see cref="Rune"/> instance decoded from the input.
 	/// </summary>
 	public Int32 Value
@@ -44,7 +43,15 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 #else
 		=> (Int32)this._value;
 #endif
+#if !PACKAGE
+	/// <summary>
+	/// The raw integer value that was read from the input to form the Rune.
+	/// </summary>
+	/// <remarks>This is required only for the tests.</remarks>
+	public Int32 RawValue => this._rawValue;
+#endif
 
+#if !PACKAGE
 	/// <summary>
 	/// Initializes a new instance of the <see cref="DecodedRune"/> class.
 	/// </summary>
@@ -56,18 +63,27 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 	/// for creating instances, which handles the Rune decoding internally.
 	/// </remarks>
 	private DecodedRune(Rune value, Int32 charsConsumed, ReadOnlySpan<Byte> source)
+#else
+	/// <summary>
+	/// Initializes a new instance of the <see cref="DecodedRune"/> class.
+	/// </summary>
+	/// <param name="value">The <see cref="Rune"/> instance decoded from the source.</param>
+	/// <param name="charsConsumed">The number of code units consumed from the source to decode the Rune.</param>
+	private DecodedRune(Rune value, Int32 charsConsumed)
+#endif
 	{
 		this._value = value;
 		this.CharsConsumed = charsConsumed;
+#if !PACKAGE
 		DecodedRune.CopyRawValue(ref this._rawValue, source);
+#endif
 	}
 
 	/// <inheritdoc/>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	public Boolean Equals(DecodedRune other)
-		=> this.CharsConsumed == other.CharsConsumed && this._rawValue == other._rawValue && this.Equals(other._value);
+	public Boolean Equals(DecodedRune other) => this.CharsConsumed == other.CharsConsumed && this.Equals(other._value);
 	/// <inheritdoc/>
 	public Boolean Equals(Rune other) => this._value == other;
 #if NETCOREAPP
@@ -115,7 +131,11 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 		if (RuneCompat.DecodeFromUtf8(source, out Rune result, out Int32 charsConsumed) != OperationStatus.Done)
 #endif
 			return default;
+#if !PACKAGE
 		DecodedRune decoded = new(result, charsConsumed, source[..charsConsumed]);
+#else
+		DecodedRune decoded = new(result, charsConsumed);
+#endif
 		return decoded;
 	}
 	/// <summary>
@@ -133,13 +153,17 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 		if (RuneCompat.DecodeFromUtf16(source, out Rune result, out Int32 charsConsumed) != OperationStatus.Done)
 #endif
 			return default;
+#if !PACKAGE
 		DecodedRune decoded = new(result, charsConsumed, MemoryMarshal.AsBytes(source[..charsConsumed]));
+#else
+		DecodedRune decoded = new(result, charsConsumed);
+#endif
 		return decoded;
 	}
 	/// <summary>
 	/// Retrieves the starting positions of individual runes decoded from the <paramref name="source"/>.
 	/// </summary>
-	/// <param name="source">A read-only span of <see cref="Char"/> that represents a unicode text.</param>
+	/// <param name="source">A read-only span of <see cref="Char"/> that represents a Unicode text.</param>
 	/// <returns>A list of starting positions for each decoded rune in <paramref name="source"/>.</returns>
 	public static IReadOnlyList<Int32> GetIndices(ReadOnlySpan<Char> source)
 	{

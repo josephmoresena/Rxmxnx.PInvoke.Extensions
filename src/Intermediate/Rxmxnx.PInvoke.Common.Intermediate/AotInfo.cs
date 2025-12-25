@@ -78,4 +78,14 @@ public static partial class AotInfo
 	/// </summary>
 	/// <returns>A read-only byte span of UTF-8 null-characters.</returns>
 	internal static ReadOnlySpan<Byte> EmptyUt8Text() => "\0\0\0"u8;
+	/// <summary>
+	/// Internal Windows New line UTF-8 sequence.
+	/// </summary>
+	/// <returns>A read-only byte span containing UTF-8 new line.</returns>
+	internal static ReadOnlySpan<Byte> WindowsNewLine() => "\r\n"u8;
+	/// <summary>
+	/// Internal non-Windows New line UTF-8 sequence.
+	/// </summary>
+	/// <returns>A read-only byte span containing UTF-8 new line.</returns>
+	internal static ReadOnlySpan<Byte> NonWindowsNewLine() => "\n"u8;
 }

@@ -55,17 +55,49 @@ public sealed class BasicTests
 		PInvokeAssert.Equal(String.Concat(strings), seq.ToCString().ToString());
 		PInvokeAssert.NotSame(seqRef, seq);
 		PInvokeAssert.False(seqRef.Equals(default));
-		PInvokeAssert.False(seqRef.Equals(default(Object)));
-		PInvokeAssert.True(seqRef.Equals(seq));
-		PInvokeAssert.True(seqRef.Equals((Object)seq));
+		PInvokeAssert.False(seqRef?.Equals(default(Object)));
+		PInvokeAssert.True(seqRef?.Equals(seq));
+		PInvokeAssert.True(seqRef?.Equals((Object)seq));
 
 		PInvokeAssert.Equal(new(strings.ToList()), seq);
 		PInvokeAssert.Equal(new(values.ToList()), seq);
 
+		CString nullTerminated = seq.ToCString(true);
+		CString nonNullTerminated = seq.ToCString(false);
+
+		PInvokeAssert.Equal(nullTerminated.Length, nonNullTerminated.Length);
+		PInvokeAssert.Equal(nullTerminated.IsFunction, nonNullTerminated.IsFunction);
+		PInvokeAssert.Equal(nullTerminated.IsReference, nonNullTerminated.IsReference);
+		PInvokeAssert.Equal(nullTerminated.IsSegmented, nonNullTerminated.IsSegmented);
+		PInvokeAssert.Equal(nullTerminated.IsReference, nonNullTerminated.IsReference);
+		PInvokeAssert.Equal(nullTerminated.IsZero, nonNullTerminated.IsZero);
+		if (seq.NonEmptyCount > 0)
+		{
+			PInvokeAssert.Equal(nullTerminated.IsNullTerminated, !nonNullTerminated.IsNullTerminated);
+			PInvokeAssert.True(nullTerminated.Length < CString.GetBytes(nullTerminated).Length);
+			PInvokeAssert.True(nonNullTerminated.Length == CString.GetBytes(nonNullTerminated).Length);
+			PInvokeAssert.True(nullTerminated.IsNullTerminated);
+			PInvokeAssert.False(nullTerminated.IsFunction);
+			PInvokeAssert.False(nullTerminated.IsReference);
+			PInvokeAssert.False(nullTerminated.IsSegmented);
+			PInvokeAssert.False(nullTerminated.IsZero);
+		}
+		else
+		{
+			PInvokeAssert.Equal(nullTerminated.IsZero, CString.Empty.IsZero);
+			PInvokeAssert.Equal(nullTerminated.IsFunction, CString.Empty.IsFunction);
+			PInvokeAssert.Equal(nullTerminated.IsReference, CString.Empty.IsReference);
+			PInvokeAssert.Equal(nullTerminated.IsSegmented, CString.Empty.IsSegmented);
+			PInvokeAssert.Equal(nullTerminated.IsNullTerminated, nonNullTerminated.IsNullTerminated);
+			PInvokeAssert.True(Object.ReferenceEquals(nullTerminated, nonNullTerminated));
+			PInvokeAssert.True(nullTerminated.IsNullTerminated);
+		}
+		PInvokeAssert.True(nullTerminated.AsSpan().SequenceEqual(nonNullTerminated));
+
 		CStringSequence clone = (CStringSequence)seq.Clone();
-		PInvokeAssert.Equal(seqRef.Count, clone.Count);
-		PInvokeAssert.Equal(seqRef.ToString(), clone.ToString());
-		PInvokeAssert.NotSame(seqRef.ToString(), clone.ToString());
+		PInvokeAssert.Equal(seqRef?.Count, clone.Count);
+		PInvokeAssert.Equal(seqRef?.ToString(), clone.ToString());
+		PInvokeAssert.NotSame(seqRef?.ToString(), clone.ToString());
 
 		IEnumerator<CString> enumerator = (seq as IEnumerable<CString>).GetEnumerator();
 		enumerator.MoveNext();

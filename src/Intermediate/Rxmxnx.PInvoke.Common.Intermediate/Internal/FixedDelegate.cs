@@ -24,6 +24,7 @@ internal abstract unsafe partial class FixedDelegate : FixedPointer
 	/// <summary>
 	/// Parameterless constructor.
 	/// </summary>
+	// ReSharper disable once UnusedMember.Local
 	private FixedDelegate() : base(default, sizeof(IntPtr), true) { }
 	/// <summary>
 	/// Constructor that takes a method delegate and stores a pointer to it.
@@ -68,7 +69,7 @@ internal sealed unsafe partial class FixedDelegate<TDelegate> : FixedDelegate, I
 		FixedDelegate<TDelegate>.GetMethodPointer(method, out GCHandle handle), handle) { }
 
 	FuncPtr<TDelegate> IFixedMethod<TDelegate>.FunctionPointer => this.CreateFuncPointer<TDelegate>();
-	TDelegate IFixedMethod<TDelegate>.Method => this.CreateDelegate<TDelegate>()!;
+	TDelegate IFixedMethod<TDelegate>.Method => this.CreateDelegate<TDelegate>();
 
 	/// <summary>
 	/// Gets the pointer to the method delegate provided, while creating a <see cref="GCHandle"/> to

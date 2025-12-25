@@ -71,7 +71,7 @@ public sealed class BasicTests
 		PInvokeAssert.False(zero is null);
 
 		PInvokeAssert.Throws<ArgumentNullException>(() => CString.GetBytes(default!));
-		PInvokeAssert.Throws<ArgumentException>(() => zero.CompareTo(new Object()));
+		PInvokeAssert.Throws<ArgumentException>(() => zero!.CompareTo(new Object()));
 
 		PInvokeAssert.True(emptySpan.IsEmpty);
 
@@ -202,9 +202,10 @@ public sealed class BasicTests
 		CString[] literalArray = TestSet.Utf8TextUpper.Select(f => new CString(f)).ToArray();
 		CString[] nonLiteralArray = TestSet.Utf8NullTerminatedBytes.Select(b => (CString)b).ToArray();
 
-		Assert.All(literalArray, c => PInvokeAssert.True(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
-		Assert.All(nonLiteralArray, c => PInvokeAssert.False(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
-		Assert.All(nonLiteralArray, c => PInvokeAssert.False(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
+		Assert.All(literalArray, c => Assert.True(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
+		Assert.All(nonLiteralArray, c => Assert.False(MemoryInspector.Instance.IsLiteral(c.AsSpan())));
+		Assert.All(literalArray, c => Assert.True(CString.IsImagePersistent(c)));
+		Assert.All(nonLiteralArray, c => Assert.False(CString.IsImagePersistent(c)));
 	}
 #endif
 
@@ -298,6 +299,45 @@ public sealed class BasicTests
 		});
 	}
 
+	[Fact]
+	public void PlusOperator()
+	{
+		using TestMemoryHandle handle = new();
+		List<Int32> indices = TestSet.GetIndices();
+		List<Int32> indices2 = TestSet.GetIndices(indices.Count);
+		for (Int32 i = 0; i < indices.Count; i++)
+		{
+			String? leftStr = TestSet.GetString(indices[i], true);
+			CString? leftCStr = TestSet.GetCString(indices[i], handle);
+
+			String? rightStr = TestSet.GetString(indices2[i], true);
+			CString? rightCStr = TestSet.GetCString(indices2[i], handle);
+
+			String valueStr = leftStr + rightStr;
+			String valueInvStr = rightStr + leftStr;
+
+			CString valueCStr0 = leftCStr + rightCStr;
+			CString valueCStr1 = leftStr + rightCStr;
+			CString valueCStr2 = leftCStr + rightStr;
+
+			CString valueInvCStr0 = rightCStr + leftCStr;
+			CString valueInvCStr1 = rightCStr + leftStr;
+			CString valueInvCStr2 = rightStr + leftCStr;
+
+			PInvokeAssert.Equal(valueStr, valueCStr0.ToString());
+			PInvokeAssert.True(valueCStr0.AsSpan().SequenceEqual(valueCStr1));
+			PInvokeAssert.True(valueCStr0.AsSpan().SequenceEqual(valueCStr2));
+			PInvokeAssert.Equal(valueInvStr, valueInvCStr0.ToString());
+			PInvokeAssert.True(valueInvCStr0.AsSpan().SequenceEqual(valueInvCStr1));
+			PInvokeAssert.True(valueInvCStr0.AsSpan().SequenceEqual(valueInvCStr2));
+
+			PInvokeAssert.Equal(valueCStr0, leftCStr + (ReadOnlySpan<Byte>)rightCStr);
+			PInvokeAssert.Equal(valueCStr0, (ReadOnlySpan<Byte>)leftCStr + rightCStr);
+			PInvokeAssert.Equal(valueInvCStr0, rightCStr + (ReadOnlySpan<Byte>)leftCStr);
+			PInvokeAssert.Equal(valueInvCStr0, (ReadOnlySpan<Byte>)rightCStr + leftCStr);
+		}
+	}
+
 	private static void CreateCStringFromString(CString[,] cstr)
 	{
 		for (Int32 i = 0; i < TestSet.Utf16Text.Count; i++)
@@ -331,7 +371,8 @@ public sealed class BasicTests
 		PInvokeAssert.False(cstr.IsSegmented);
 		PInvokeAssert.False(CString.IsNullOrEmpty(cstr));
 		BasicTests.AssertFromNullTerminatedBytes((CString)cstr.Clone());
-		BasicTests.AssertGetBytesException(cstr);
+		// Now String -> CString, uses Byte[] buffer
+		PInvokeAssert.Equal(cstr.Length + 1, CString.GetBytes(cstr).Length);
 	}
 	private static unsafe void AssertFromNullTerminatedBytes(CString cstr)
 	{

@@ -6,6 +6,7 @@ namespace Rxmxnx.PInvoke.VisualBasic;
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1121)]
 #endif
 public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 {
@@ -46,8 +47,10 @@ public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 	/// <inheritdoc cref="ScopedBuffer{T}.FullLength"/>
 	public Int32 FullLength => this._array?.Length ?? this.BufferMetadata?.Size ?? this.Length;
 	/// <inheritdoc cref="ScopedBuffer{T}.BufferMetadata"/>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public BufferTypeMetadata? BufferMetadata { get; }
 	/// <inheritdoc cref="Span{T}.Length"/>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public UInt16 Length { get; }
 
 	/// <summary>
@@ -106,9 +109,5 @@ public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 	/// <summary>
 	/// Invalidates the current sequence.
 	/// </summary>
-	internal void Unload()
-	{
-		if (this._isValid is not null)
-			this._isValid.Value = false;
-	}
+	internal void Unload() => this._isValid?.Value = false;
 }

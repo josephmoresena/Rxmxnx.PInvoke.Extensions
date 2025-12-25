@@ -1,4 +1,6 @@
-﻿using EnumCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
+﻿// ReSharper disable ConvertToExtensionBlock
+
+using EnumCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
 
 namespace Rxmxnx.PInvoke;
 

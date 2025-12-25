@@ -1,3 +1,5 @@
+// ReSharper disable UnusedMember.Local
+
 namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector

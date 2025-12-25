@@ -151,24 +151,6 @@ public unsafe partial class CStringSequence
 	}
 
 	/// <summary>
-	/// Performs a binary copy of all non-empty CString values in <paramref name="seq"/> to
-	/// the <paramref name="destination"/> byte array.
-	/// </summary>
-	/// <param name="seq">The source <see cref="FixedCStringSequence"/> instance.</param>
-	/// <param name="destination">The destination byte array.</param>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void BinaryCopyTo(FixedCStringSequence seq, Byte[] destination)
-	{
-		Int32 offset = 0;
-		foreach (CString? value in seq)
-		{
-			if (value is null || value.Length <= 0) continue;
-			ReadOnlySpan<Byte> bytes = value.AsSpan();
-			bytes.CopyTo(destination.AsSpan()[offset..]);
-			offset += bytes.Length;
-		}
-	}
-	/// <summary>
 	/// Creates a UTF-8 text sequence using the given <paramref name="helper"/>,
 	/// with each UTF-8 text being initialized using the specified callback.
 	/// </summary>

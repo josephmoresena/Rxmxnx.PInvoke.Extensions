@@ -1,3 +1,5 @@
+// ReSharper disable EmptyNamespace
+
 #if !PACKAGE
 [assembly: SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3261)]
 #endif

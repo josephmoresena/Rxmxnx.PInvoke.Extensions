@@ -1,0 +1,25 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <UsingTask TaskName="ValuePointerPatchTask"
+               AssemblyFile="Rxmxnx.PInvoke.Extensions.IlPatcher\bin\$(Configuration)\netstandard2.0\Rxmxnx.PInvoke.Extensions.IlPatcher.dll"/>
+
+    <Target Name="AssemblyPatch" AfterTargets="Build" BeforeTargets="Publish;Pack">
+        <PropertyGroup>
+            <AssemblyOutputPath>$(OutputPath)</AssemblyOutputPath>
+            <AssemblyTargetFramework>$(TargetFramework)</AssemblyTargetFramework>
+        </PropertyGroup>
+        <ValuePointerPatchTask
+                Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))"
+                OutputPath="$(AssemblyOutputPath)"
+                TargetFramework="$(AssemblyTargetFramework)"
+                StrongNameKeyPath="$(SigningKeyFile)"/>
+    </Target>
+
+    <Target Name="MonoBuild" AfterTargets="Build" BeforeTargets="Publish;Pack" Condition="'$(IsTempPackage)' == 'true' And ('$(TargetFramework)' == 'netstandard2.1' Or '$(TargetFramework)' == 'net45')">
+        <ItemGroup>
+            <NetStandardOutputFiles Include="$(OutputPath.Replace('net45','netstandard2.1'))\*.*"/>
+        </ItemGroup>
+        <Copy SourceFiles="@(NetStandardOutputFiles)" DestinationFolder="$(OutputPath.Replace('netstandard2.1','net45'))" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true"/>
+    </Target>
+
+</Project>

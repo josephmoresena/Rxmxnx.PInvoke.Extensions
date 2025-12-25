@@ -108,7 +108,7 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	/// </list>
 	/// </returns>
 	public Int32 CompareTo(String? other)
-		=> CString.NullCompare(this, other) ?? StringUtf8Comparator.Create().Compare(this, other);
+		=> CString.NullCompare(this, other) ?? StringUtf8Comparator.Create().Compare(this, other, other);
 
 	/// <summary>
 	/// Compares two specified <see cref="CString"/> instances, and returns an integer that indicates their
@@ -272,7 +272,7 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	/// </list>
 	/// </returns>
 	public static Int32 Compare(CString? textA, String? textB)
-		=> CString.NullCompare(textA, textB) ?? StringUtf8Comparator.Create().Compare(textA, textB);
+		=> CString.NullCompare(textA, textB) ?? StringUtf8Comparator.Create().Compare(textA, textB, textB);
 	/// <summary>
 	/// Compares two specified text instances, ignoring or honoring their case, and returns an integer that indicates their
 	/// relative position in the sort order.
@@ -303,7 +303,7 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	/// </list>
 	/// </returns>
 	public static Int32 Compare(CString? textA, String? textB, Boolean ignoreCase)
-		=> CString.NullCompare(textA, textB) ?? StringUtf8Comparator.Create(ignoreCase).Compare(textA, textB);
+		=> CString.NullCompare(textA, textB) ?? StringUtf8Comparator.Create(ignoreCase).Compare(textA, textB, textB);
 	/// <summary>
 	/// Compares two specified text instances, ignoring or honoring their case, and using culture-specific
 	/// information to influence the comparison, and returns an integer that indicates their relative position
@@ -341,7 +341,8 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	/// </list>
 	/// </returns>
 	public static Int32 Compare(CString? textA, String? textB, Boolean ignoreCase, CultureInfo? culture)
-		=> CString.NullCompare(textA, textB) ?? StringUtf8Comparator.Create(ignoreCase, culture).Compare(textA, textB);
+		=> CString.NullCompare(textA, textB) ??
+			StringUtf8Comparator.Create(ignoreCase, culture).Compare(textA, textB, textB);
 	/// <summary>
 	/// Compares two specified text instances using the specified rules, and returns an integer that indicates their
 	/// relative position in the sort order.
@@ -374,7 +375,8 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	/// </list>
 	/// </returns>
 	public static Int32 Compare(CString? textA, String? textB, StringComparison comparisonType)
-		=> CString.NullCompare(textA, textB) ?? StringUtf8Comparator.Create(comparisonType).Compare(textA, textB);
+		=> CString.NullCompare(textA, textB) ??
+			StringUtf8Comparator.Create(comparisonType).Compare(textA, textB, textB);
 	/// <summary>
 	/// Compares two text instances for <see langword="null"/> values.
 	/// </summary>

@@ -69,6 +69,7 @@ public interface IWrapper
 		/// <summary>
 		/// The wrapped <typeparamref name="T"/> object.
 		/// </summary>
+		// ReSharper disable once UnusedMemberInSuper.Global
 		T Value { get; }
 	}
 }

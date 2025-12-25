@@ -39,7 +39,17 @@ internal sealed class StringUtf8Comparator : Utf8Comparator<Char>
 		return result;
 	}
 	/// <inheritdoc/>
-	protected override ReadOnlySpan<Char> GetUnicodeSpan(ReadOnlySpan<Char> source) => source;
+	protected override String GetString(ReadOnlySpan<Char> source) => new(source);
+	/// <inheritdoc/>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	protected override Int32 CountChars(ReadOnlySpan<Char> source) => source.Length;
+	/// <inheritdoc/>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	protected override void GetChars(ReadOnlySpan<Char> source, Span<Char> destination) => source.CopyTo(destination);
 
 	/// <summary>
 	/// Creates a new instance of the <see cref="StringUtf8Comparator"/> class.

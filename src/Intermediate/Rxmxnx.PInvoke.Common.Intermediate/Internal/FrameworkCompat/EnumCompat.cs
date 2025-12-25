@@ -10,6 +10,7 @@ internal static class EnumCompat
 	public static String? GetName<TEnum>(TEnum value) where TEnum : struct, Enum
 #if !PACKAGE || !NET5_0_OR_GREATER
 #pragma warning disable CA2263
+	// ReSharper disable once HeapView.BoxingAllocation
 		=> Enum.GetName(typeof(TEnum), value);
 #pragma warning restore CA2263
 #else

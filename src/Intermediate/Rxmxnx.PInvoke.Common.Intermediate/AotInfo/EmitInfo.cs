@@ -37,6 +37,9 @@ public static partial class AotInfo
 		/// </returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		[UnconditionalSuppressMessage("AOT", "IL3050")]
+#if !PACKAGE
+		[SuppressMessage("ReSharper", "HeapView.BoxingAllocation")]
+#endif
 		private static Boolean EmitCode()
 		{
 			try
@@ -73,6 +76,7 @@ public static partial class AotInfo
 
 				return typeBuilder.CreateType() is { } type && Activator.CreateInstance(type) is { } obj &&
 					type.Assembly.IsDynamic &&
+					// ReSharper disable once HeapView.BoxingAllocation
 					type.GetMethod(methodBuilder.Name)?.Invoke(obj, [input,]) is { } result &&
 					(input + 1 > 0 ? obj.Equals(result) : type.Equals(result));
 			}

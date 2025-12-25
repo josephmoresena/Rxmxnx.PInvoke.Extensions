@@ -19,22 +19,25 @@ public partial class CString
 	{
 		this._isLocal = false;
 		this._data = ValueRegion<Byte>.Create(ptr, length);
+		this.IsFunction = false;
+
 		ReadOnlySpan<Byte> data = this._data;
+
 		if (data.IsEmpty)
 		{
 			this._isNullTerminated = false;
-			this.Length = 0;
+			this._length = 0;
+			return;
 		}
-		else if (useFullLength)
+
+		if (!useFullLength)
 		{
-			this._isNullTerminated = false;
-			this.Length = length;
+			this._isNullTerminated = CString.IsNullTerminatedSpan(data, out this._length);
+			return;
 		}
-		else
-		{
-			this._isNullTerminated = CString.IsNullTerminatedSpan(data, out Int32 textLength);
-			this.Length = textLength;
-		}
+
+		this._isNullTerminated = false;
+		this._length = length;
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class using the binary internal
@@ -47,11 +50,20 @@ public partial class CString
 	/// </param>
 	private CString(Byte[] bytes, Boolean? isNullTerminated = default)
 	{
-		Int32 textLength = bytes.Length;
 		this._isLocal = true;
 		this._data = ValueRegion<Byte>.Create(bytes);
-		this._isNullTerminated = isNullTerminated ?? CString.IsNullTerminatedSpan(bytes, out textLength);
-		this.Length = textLength - (isNullTerminated.GetValueOrDefault() ? 1 : 0);
+		this.IsFunction = false;
+
+		if (!isNullTerminated.HasValue)
+		{
+			this._isNullTerminated = CString.IsNullTerminatedSpan(bytes, out this._length);
+			return;
+		}
+
+		this._length = bytes.Length;
+		this._isNullTerminated = isNullTerminated.Value;
+		if (this._isNullTerminated)
+			this._length--;
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class that contains the UTF-8 string
@@ -62,20 +74,18 @@ public partial class CString
 	private CString(ReadOnlySpanFunc<Byte> func, Boolean isLiteral)
 	{
 		this._isLocal = false;
-		this.IsFunction = true;
 		this._data = ValueRegion<Byte>.Create(func);
+		this.IsFunction = true;
 
 		ReadOnlySpan<Byte> data = func();
-		if (isLiteral)
+		if (!isLiteral)
 		{
-			this._isNullTerminated = true;
-			this.Length = data.Length;
+			this._isNullTerminated = CString.IsNullTerminatedSpan(data, out this._length);
+			return;
 		}
-		else
-		{
-			this._isNullTerminated = CString.IsNullTerminatedSpan(data, out Int32 textLength);
-			this.Length = textLength;
-		}
+
+		this._isNullTerminated = true;
+		this._length = data.Length;
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a
@@ -91,12 +101,13 @@ public partial class CString
 	private CString(CString value, Int32 startIndex, Int32 length)
 	{
 		this._isLocal = value._isLocal;
-		this.IsFunction = value.IsFunction;
-		this.Length = length;
+		this._length = length;
 		this._data = value._data.InternalSlice(startIndex, value.GetDataLength(startIndex, length));
 		this._isNullTerminated =
-			(value is { IsFunction: true, _isNullTerminated: true, } && value.Length - startIndex == length) ||
+			(value is { IsFunction: true, _isNullTerminated: true, } && value._length - startIndex == length) ||
 			this._data.AsSpan()[^1] == default;
+
+		this.IsFunction = value.IsFunction;
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value
@@ -105,12 +116,11 @@ public partial class CString
 	/// <param name="utf16Text">The UTF-16 text to convert and assign to the new instance.</param>
 	private CString(String utf16Text)
 	{
-		Utf16ConversionHelper helper = new(utf16Text, out Int32 length);
-		this.Length = length;
+		this._data = CString.CreateUtf8Region(utf16Text, out this._length);
 		this._isLocal = true;
-		this.IsFunction = true;
-		this._data = helper.AsRegion();
 		this._isNullTerminated = true;
+
+		this.IsFunction = true;
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value
@@ -123,11 +133,11 @@ public partial class CString
 	private CString(ValueRegion<Byte> data, Boolean isFunction, Boolean isNullTerminated, Int32 length)
 	{
 		this._isLocal = false;
-		this.IsFunction = isFunction;
 		this._data = data;
-
 		this._isNullTerminated = isNullTerminated;
-		this.Length = length;
+		this._length = length;
+
+		this.IsFunction = isFunction;
 	}
 #if !PACKAGE || NETCOREAPP
 	/// <summary>
@@ -137,79 +147,10 @@ public partial class CString
 	private CString(Utf8JsonReader reader)
 	{
 		this._isLocal = true;
-		this.IsFunction = false;
 		this._isNullTerminated = true;
-		this.Length = CString.Read(reader, out this._data);
+		this._length = CString.Read(reader, out this._data);
+
+		this.IsFunction = false;
 	}
 #endif
-
-	/// <summary>
-	/// Helper class for UTF-16 to UTF-8 conversion.
-	/// </summary>
-	private sealed class Utf16ConversionHelper
-	{
-		/// <summary>
-		/// Internal UTF-16 text which serves as buffer.
-		/// </summary>
-		private readonly String _utf8String;
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="utf8Text">UTF-16 text to be converter.</param>
-		/// <param name="length">Output. Length of UTF-8 text.</param>
-		public Utf16ConversionHelper(String utf8Text, out Int32 length)
-			=> this._utf8String = Utf16ConversionHelper.GetUtf8String(utf8Text, out length);
-
-		/// <summary>
-		/// Creates a <see cref="Utf16ConversionHelper"/> instance from current instance.
-		/// </summary>
-		/// <returns>A <see cref="ValueRegion{Byte}"/> created from current instance.</returns>
-		public ValueRegion<Byte> AsRegion()
-			=> ValueRegion<Byte>.Create(this._utf8String, s => MemoryMarshal.AsBytes(s.AsSpan()), GCHandle.Alloc);
-
-		/// <summary>
-		/// Creates a UTF-16 text which contains the binary information of <paramref name="str"/>
-		/// encoded to UTF-8 text.
-		/// </summary>
-		/// <param name="str"><see cref="String"/> representation of UTF-16 text.</param>
-		/// <param name="length">Output. Length of UTF-8 text.</param>
-		/// <returns>UTF-16 text containing the UTF-8 text binary information.</returns>
-		private static String GetUtf8String(String str, out Int32 length)
-		{
-			//Encodes String to UTF8 bytes.
-			Byte[] bytes = Utf16ConversionHelper.GetUtf8Bytes(str);
-			//Calculates the final UTF8 String length.
-			Int32 stringLength = Utf16ConversionHelper.GetUtf8StringLength(bytes);
-			//Creates final String.
-			String result = String.Create(stringLength, bytes, CString.CopyBytes);
-
-			//Try to fetch internal String
-			length = bytes.Length;
-			return String.IsInterned(result) ?? result;
-		}
-
-		/// <summary>
-		/// Encodes the UTF-16 text using the UTF-8 charset and retrieves the <see cref="Byte"/> array with
-		/// UTF-8 text.
-		/// </summary>
-		/// <param name="str"><see cref="String"/> representation of UTF-16 text.</param>
-		/// <returns><see cref="Byte"/> array with UTF-8 text.</returns>
-		private static Byte[] GetUtf8Bytes(String str) => !String.IsNullOrEmpty(str) ? Encoding.UTF8.GetBytes(str) : [];
-
-		/// <summary>
-		/// Retrieves the UTF8 String length which contains <paramref name="bytes"/>
-		/// information.
-		/// </summary>
-		/// <param name="bytes">UTF8 bytes.</param>
-		/// <returns>UTF8 String length contains <paramref name="bytes"/> information.</returns>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static Int32 GetUtf8StringLength(ReadOnlySpan<Byte> bytes)
-		{
-			Int32 result = (bytes.Length + 1) / sizeof(Char);
-			if (bytes.Length % sizeof(Char) == 0)
-				result++;
-			return result;
-		}
-	}
 }

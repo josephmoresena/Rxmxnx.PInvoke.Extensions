@@ -24,6 +24,7 @@ public unsafe partial class CStringSequence
 	{
 		ReadOnlyMemory<Char> mem = this._value.AsMemory();
 		MemoryHandle handle = mem.Pin();
+		// ReSharper disable once HeapView.BoxingAllocation
 		return new FixedContext<Char>(handle.Pointer, mem.Length).ToDisposable(handle);
 	}
 	/// <summary>

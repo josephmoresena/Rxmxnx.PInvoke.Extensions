@@ -7,7 +7,7 @@ public readonly unsafe partial struct ValPtr<T> : IComparable, IComparable<ValPt
 {
 	/// <inheritdoc/>
 	public Int32 CompareTo(Object? obj)
-		=> ValidationUtilities.ThrowIfInvalidValuePointer<T>(obj, this.Pointer, nameof(ValPtr<T>));
+		=> ValidationUtilities.ThrowIfInvalidValuePointer<T>(obj, this.Pointer, nameof(ValPtr<>));
 	/// <inheritdoc/>
 	public Int32 CompareTo(ValPtr<T> value)
 #if NET5_0_OR_GREATER

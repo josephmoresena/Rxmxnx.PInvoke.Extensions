@@ -41,6 +41,7 @@ public readonly partial struct FuncPtr<TDelegate>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+	// ReSharper disable once OutParameterValueIsAlwaysDiscarded.Global
 	public static Boolean TryParse([NotNullWhen(true)] String? s, out FuncPtr<TDelegate> result)
 	{
 		Unsafe.SkipInit(out result);
@@ -51,6 +52,7 @@ public readonly partial struct FuncPtr<TDelegate>
 	[ExcludeFromCodeCoverage]
 #endif
 	public static Boolean TryParse([NotNullWhen(true)] String? s, NumberStyles style, IFormatProvider? provider,
+		// ReSharper disable once OutParameterValueIsAlwaysDiscarded.Global
 		out FuncPtr<TDelegate> result)
 	{
 		Unsafe.SkipInit(out result);
@@ -61,6 +63,7 @@ public readonly partial struct FuncPtr<TDelegate>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+	// ReSharper disable once OutParameterValueIsAlwaysDiscarded.Global
 	public static Boolean TryParse(ReadOnlySpan<Char> s, out FuncPtr<TDelegate> result)
 	{
 		Unsafe.SkipInit(out result);
@@ -71,6 +74,7 @@ public readonly partial struct FuncPtr<TDelegate>
 	[ExcludeFromCodeCoverage]
 #endif
 	public static Boolean TryParse(ReadOnlySpan<Char> s, NumberStyles style, IFormatProvider? provider,
+		// ReSharper disable once OutParameterValueIsAlwaysDiscarded.Global
 		out FuncPtr<TDelegate> result)
 	{
 		Unsafe.SkipInit(out result);
@@ -82,6 +86,7 @@ public readonly partial struct FuncPtr<TDelegate>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+	// ReSharper disable once OutParameterValueIsAlwaysDiscarded.Global
 	public static Boolean TryParse([NotNullWhen(true)] String? s, IFormatProvider? provider,
 		out FuncPtr<TDelegate> result)
 	{

@@ -3,12 +3,6 @@
 internal partial class BinaryConcatenator<T>
 {
 	/// <summary>
-	/// Provides a token that allows for monitoring and responding to cancellation
-	/// requests.
-	/// </summary>
-	private readonly CancellationToken _cancellationToken;
-
-	/// <summary>
 	/// The separator value to use between elements when writing.
 	/// </summary>
 	private readonly T? _separator;
@@ -41,15 +35,15 @@ internal partial class BinaryConcatenator<T>
 	{
 		if (!this.IsEmpty(this._separator))
 		{
-			this._binaryWrite = this.InitialWrite;
-			this._write = this.InitialWrite;
-			this._writeAsync = this.InitialWriteAsync;
+			this._binaryWrite = static (c, s) => c.InitialWrite(s);
+			this._write = static (c, v) => c.InitialWrite(v);
+			this._writeAsync = static (c, a) => c.InitialWriteAsync(a);
 		}
 		else
 		{
-			this._binaryWrite = this.FinalWrite;
-			this._write = this.FinalWrite;
-			this._writeAsync = this.FinalWriteAsync;
+			this._binaryWrite = static (c, s) => c.FinalWrite(s);
+			this._write = static (c, v) => c.FinalWrite(v);
+			this._writeAsync = static (c, a) => c.FinalWriteAsync(a);
 		}
 	}
 	/// <summary>
@@ -67,9 +61,9 @@ internal partial class BinaryConcatenator<T>
 	private void InitialWrite(ReadOnlySpan<Byte> value)
 	{
 		this.WriteValue(value);
-		this._binaryWrite = this.WriteWithSeparator;
-		this._write = this.WriteWithSeparator;
-		this._writeAsync = this.WriteWithSeparatorAsync;
+		this._binaryWrite = static (c, s) => c.WriteWithSeparator(s);
+		this._write = static (c, v) => c.WriteWithSeparator(v);
+		this._writeAsync = static (c, a) => c.WriteWithSeparatorAsync(a);
 	}
 	/// <summary>
 	/// Writes the <paramref name="value"/> to the current instance and updates the writing delegates
@@ -81,9 +75,9 @@ internal partial class BinaryConcatenator<T>
 	private void InitialWrite(T? value)
 	{
 		this.WriteValue(value!);
-		this._binaryWrite = this.WriteWithSeparator;
-		this._write = this.WriteWithSeparator;
-		this._writeAsync = this.WriteWithSeparatorAsync;
+		this._binaryWrite = static (c, s) => c.WriteWithSeparator(s);
+		this._write = static (c, v) => c.WriteWithSeparator(v);
+		this._writeAsync = static (c, a) => c.WriteWithSeparatorAsync(a);
 	}
 	/// <summary>
 	/// Writes the <paramref name="value"/> to the current instance preceded by the separator.
@@ -145,9 +139,9 @@ internal partial class BinaryConcatenator<T>
 		if (!this.IsEmpty(value))
 		{
 			await this.WriteValueAsync(value);
-			this._binaryWrite = this.WriteWithSeparator;
-			this._write = this.WriteWithSeparator;
-			this._writeAsync = this.WriteWithSeparatorAsync;
+			this._binaryWrite = static (c, s) => c.WriteWithSeparator(s);
+			this._write = static (c, v) => c.WriteWithSeparator(v);
+			this._writeAsync = static (c, a) => c.WriteWithSeparatorAsync(a);
 		}
 	}
 	/// <summary>
@@ -183,21 +177,24 @@ internal partial class BinaryConcatenator<T>
 	/// <summary>
 	/// Delegate that defines a method to write UTF-8 bytes into the current instance.
 	/// </summary>
+	/// <param name="concatenator">A <see cref="BinaryConcatenator{T}"/> instance.</param>
 	/// <param name="value">The span of UTF-8 bytes to write.</param>
-	private delegate void BinaryWriteDelegate(ReadOnlySpan<Byte> value);
+	private delegate void BinaryWriteDelegate(BinaryConcatenator<T> concatenator, ReadOnlySpan<Byte> value);
 
 	/// <summary>
 	/// Delegate that defines a method to write the UTF-8 bytes of a specific value into
 	/// the current instance.
 	/// </summary>
+	/// <param name="concatenator">A <see cref="BinaryConcatenator{T}"/> instance.</param>
 	/// <param name="value">The value to write its UTF-8 bytes representation.</param>
-	private delegate void WriteDelegate(T? value);
+	private delegate void WriteDelegate(BinaryConcatenator<T> concatenator, T? value);
 
 	/// <summary>
 	/// Delegate that defines a method to write the UTF-8 bytes of a specific value into the
 	/// current instance asynchronously.
 	/// </summary>
+	/// <param name="concatenator">A <see cref="BinaryConcatenator{T}"/> instance.</param>
 	/// <param name="value">The value to write its UTF-8 bytes representation.</param>
 	/// <returns>A <see cref="Task"/> that represents the asynchronous write operation.</returns>
-	private delegate Task WriteAsyncDelegate(T? value);
+	private delegate Task WriteAsyncDelegate(BinaryConcatenator<T> concatenator, T? value);
 }

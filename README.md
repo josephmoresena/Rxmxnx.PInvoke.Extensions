@@ -1,11 +1,7 @@
-﻿[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=bugs)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=coverage)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
-[![NuGet](https://img.shields.io/nuget/v/Rxmxnx.PInvoke.Extensions)](https://www.nuget.org/packages/Rxmxnx.PInvoke.Extensions/)
+﻿[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=alert_status)![Bugs](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=bugs)![Coverage](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=coverage)![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=ncloc)![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=reliability_rating)![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=sqale_rating)![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=josephmoresena_PInvoke.Extensions&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=josephmoresena_PInvoke.Extensions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/josephmoresena/Rxmxnx.PInvoke.Extensions/build.yml?style=flat-square)](https://github.com/josephmoresena/Rxmxnx.PInvoke.Extensions/actions/workflows/build.yml)
+[![License](https://img.shields.io/github/license/josephmoresena/Rxmxnx.PInvoke.Extensions?style=flat-square)](LICENSE.md)
+[![NuGet](https://img.shields.io/nuget/v/Rxmxnx.PInvoke.Extensions)![Downloads](https://img.shields.io/nuget/dt/Rxmxnx.PInvoke.Extensions?style=flat-square&color=blue)](https://www.nuget.org/packages/Rxmxnx.PInvoke.Extensions/)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/josephmoresena/Rxmxnx.PInvoke.Extensions)
 
 ---
@@ -45,9 +41,6 @@
     - [Key Highlights](#key-highlights)
     - [Disclaimer](#disclaimer)
 - [Contributing](#contributing)
-    - [Reporting Issues](#reporting-issues)
-    - [Proposing Improvements](#proposing-improvements)
-    - [Contributing Code](#contributing-code)
     - [Translations](#translations)
     - [Collaboration Guidelines](#collaboration-guidelines)
 
@@ -1995,6 +1988,8 @@ Represents a sequence of UTF-8 encoded characters.
 - When marshalling, the instances of this type are represented as null-terminated UTF-8 strings.
 - Starting with .NET Core 3.0, the nested `JsonConverter` class can be used to support serialization and
   deserialization with `System.Text.Json`.
+- The JSON deserialization process produces null-terminated `CString` instances; however, it is not guaranteed that
+  this termination consists of a single UTF-8 null character.
 
 ### Static Fields:
 
@@ -2082,6 +2077,24 @@ Represents a sequence of UTF-8 encoded characters.
   Initializes a new instance of the `CString` class that contains the UTF-8 string returned by the specified
   `ReadOnlySpanFunc<Byte>`.
   </details>
+- <details>
+  <summary>CString(Char, Int32)</summary>
+
+  Initializes a new instance of the `CString` class to the value indicated by a specified UTF-16 character repeated a
+  specified number of times.
+  </details>
+- <details>
+  <summary>CString(Char, Char, Int32)</summary>
+
+  Initializes a new instance of the `CString` class to the value indicated by a specified UTF-16 sequence repeated a
+  specified number of times.
+  </details>
+- <details>
+  <summary>CString(ReadOnlySpan&lt;Byte&gt;)</summary>
+
+  Initializes a new instance of the `CString` class using the UTF-16 characters indicated in the specified read-only
+  span.
+  </details>
 
 ### Methods:
 
@@ -2123,6 +2136,34 @@ Represents a sequence of UTF-8 encoded characters.
 
   Defines an implicit conversion of a given `CString` to a read-only span of bytes.
   </details>
+- <details>
+  <summary>+ CString</summary>
+
+  Defines an operator for concatenating the current instance with a `CString` instance.
+  </details>
+- <details>
+  <summary>+ String</summary>
+
+  Defines an operator for concatenating the current instance with a `String` instance.
+  </details>
+- <details>
+  <summary>+ ReadOnlySpan&lt;Byte&gt;</summary>
+
+  Defines an operator for concatenating the current instance with a `ReadOnlySpan<Byte>` instance.
+  </details>
+- <details>
+  <summary>+ ReadOnlySpan&lt;Char&gt;</summary>
+
+  Defines an operator for concatenating the current instance with a `ReadOnlySpan<Char>` instance.
+  </details>
+
+**Notes:**
+
+- The `CString` resulting from a concatenation operation is always a new null-terminated instance when both operands are
+  non-empty.
+- If both operands in a concatenation operation are empty or null, the resulting instance is `CString.Empty`. Otherwise,
+  the non-empty operand instance is returned.
+- Concatenation operations involving `String` or `ReadOnlySpan<char>` require converting UTF-16 text to UTF-8.
 
 ### Static Methods:
 
@@ -2167,6 +2208,11 @@ Represents a sequence of UTF-8 encoded characters.
   <summary>CreateNullTerminatedUnsafe(IntPtr)</summary>
 
   Creates a new instance of the `CString` class using the pointer to a UTF-8 character null-terminated array.
+  </details>
+- <details>
+  <summary>IsImagePersistent(CString)</summary>
+
+  Gets a value indicating whether the data of the given `CString` instance resides within the loaded binary image.
   </details>
 
 </details>
@@ -2262,7 +2308,14 @@ Represents a sequence of null-terminated UTF-8 text strings.
 - <details>
   <summary>ToCString()</summary>
 
-  Returns a `CString` that represents the current sequence.
+  Returns a `CString` that represents the current sequence. The returned `CString` is always null-terminated.
+  </details>
+- <details>
+  <summary>ToCString(Boolean)</summary>
+
+  Returns a `CString` that represents the current sequence. The boolean parameter specifies whether the returned
+  `CString` should be null-terminated.
+  must be null-terminated.
   </details>
 - <details>
   <summary>GetFixedPointer()</summary>
@@ -2324,6 +2377,131 @@ Represents a sequence of null-terminated UTF-8 text strings.
   <summary>Parse(String?)</summary>
 
   Converts the buffer of a UTF-8 sequence to a `CStringSequence` instance.
+  </details>
+
+</details>
+
+<details>
+  <summary>CStringBuilder</summary>
+
+Represents a mutable string of UTF-8 encoded characters.
+
+**Notes:**
+
+- This class cannot be inherited.
+- This type is designed to be a UTF-8 equivalent of `System.Text.StringBuilder`.
+- Instances of this type are mutable.
+- This type exposes APIs to append, insert, remove, and clear UTF-8 text efficiently.
+- This type supports method chaining (Fluent API) for most operations.
+- This type provides optimized support for `ReadOnlySpan<Byte>` and `ReadOnlySpan<Char>`, minimizing allocations during
+  string manipulation.
+- Conversions to `CString` can be customized to produce null-terminated or non-null-terminated strings.
+
+### Properties:
+
+- <details>
+  <summary>Length</summary>
+
+  Gets the length of the current `CStringBuilder` object.
+  </details>
+
+### Constructors:
+
+- <details>
+  <summary>CStringBuilder()</summary>
+
+  Initializes a new instance of the `CStringBuilder` class.
+  </details>
+- <details>
+  <summary>CStringBuilder(UInt16)</summary>
+
+  Initializes a new instance of the `CStringBuilder` class using the specified capacity.
+  </details>
+- <details>
+  <summary>CStringBuilder(CString?)</summary>
+
+  Initializes a new instance of the `CStringBuilder` class using the specified value as initial content.
+  </details>
+- <details>
+  <summary>CStringBuilder(String?)</summary>
+
+  Initializes a new instance of the `CStringBuilder` class using the specified value as initial content.
+  </details>
+- <details>
+  <summary>CStringBuilder(ReadOnlySpan&amp;lt;Byte&amp;gt;)</summary>
+
+  Initializes a new instance of the `CStringBuilder` class using the specified UTF-8 text as initial content.
+  </details>
+- <details>
+  <summary>CStringBuilder(ReadOnlySpan&amp;lt;Char&amp;gt;)</summary>
+
+  Initializes a new instance of the `CStringBuilder` class using the specified UTF-16 text as initial content.
+  </details>
+
+### Methods:
+
+- <details>
+  <summary>ToCString()</summary>
+
+  Converts the value of this instance to a `CString`. The returned `CString` is always null-terminated.
+  </details>
+- <details>
+  <summary>ToCString(Boolean)</summary>
+
+  Converts the value of this instance to a `CString`. The boolean parameter specifies whether the returned
+  `CString` should be null-terminated.
+  must be null-terminated.
+  </details>
+- <details>
+  <summary>ToString()</summary>
+
+  Converts the value of this instance to a `String`.
+  </details>
+- <details>
+  <summary>CopyTo(Int32, Span&amp;lt;Byte&amp;gt;)</summary>
+
+  Copies the UTF-8 characters from a specified segment of this instance to a destination span of bytes.
+  </details>
+- <details>
+  <summary>Clear()</summary>
+
+  Removes all characters from the current `CStringBuilder` instance.
+  </details>
+- <details>
+  <summary>Remove(Int32, Int32)</summary>
+
+  Removes the specified range of characters from this instance.
+  </details>
+- <details>
+  <summary>Append(?)</summary>
+
+  Appends the UTF-8 string representation of a specified parameter to this instance.
+
+  **Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySpan<Char>`, `Byte[]`, `Char[]` and
+  standard numeric primitives.
+  </details>
+- <details>
+  <summary>AppendJoin(?, ?)</summary>
+
+  Concatenates the string representations of the elements in the provided sequence, using the specified separator
+  between each member.
+  </details>
+- <details>
+  <summary>AppendLine()</summary>
+
+  Appends the default line terminator to the end of the current `CStringBuilder` object.
+  </details>
+- <details>
+  <summary>AppendLine(?)</summary>
+
+  Appends the UTF-8 string representation of a specified parameter followed by the default line terminator to the end of
+  the current `CStringBuilder` object.
+  </details>
+- <details>
+  <summary>Insert(Int32, ?)</summary>
+
+  Inserts the UTF-8 string representation of a specified parameter into this instance at the specified character
+  position.
   </details>
 
 </details>
@@ -3648,46 +3826,16 @@ This project is licensed under the **MIT License**, one of the most permissive a
 > The software is provided "as is," without warranty of any kind. The authors are not liable for any damages or issues
 > that may arise from its use.
 
-For more details, refer to the full license text included in the [LICENSE](LICENSE) file.
+For more details, refer to the full license text included in the [LICENSE](LICENSE.md) file.
 
 ---
 
 # Contributing
 
 We warmly welcome contributions to this open-source project! Whether you're here to report issues, propose enhancements,
-or contribute directly to the codebase, your help is greatly appreciated. Below are some ways you can get involved:
+or contribute directly to the codebase, your help is greatly appreciated.
 
-## Reporting Issues
-
-If you encounter a bug, experience unexpected behavior, or have suggestions for improvement, feel free to open an issue.
-Please include as much detail as possible, such as:
-
-- Steps to reproduce the problem
-- Your environment (e.g., OS, software version)
-- Any relevant logs or screenshots
-
-## Proposing Improvements
-
-Have an idea for a new feature or enhancement? Open an issue with a clear description of your proposal and why you think
-it would benefit the project.
-
-## Contributing Code
-
-You can directly contribute to the project by:
-
-- Fixing bugs
-- Adding new features
-- Improving existing functionality
-- Enhancing documentation
-
-To contribute code:
-
-1. Fork the repository.
-2. Create a new branch for your changes.
-3. Make your changes and commit them with clear and concise messages.
-4. Submit a pull request for review.
-
-Feel free to discuss your ideas or changes in an issue or pull request to align with the project's goals.
+For more details, refer to the [CONTRIBUTING](CONTRIBUTING.md) file.
 
 ## Translations
 

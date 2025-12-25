@@ -261,6 +261,7 @@ public partial class CString
 	/// If any element within <paramref name="values"/> is <see langword="null"/>, it is ignored
 	/// during concatenation.
 	/// </remarks>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public static CString Concat(
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<CString?> values
@@ -311,6 +312,7 @@ public partial class CString
 	/// If any element within <paramref name="values"/> is <see langword="null"/>, it is ignored
 	/// during concatenation.
 	/// </remarks>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public static CString Concat(
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<Byte[]?> values

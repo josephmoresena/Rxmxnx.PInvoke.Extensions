@@ -43,6 +43,25 @@ public partial class TestCompiler
 			TestCompiler.NetCleanUp(restoreArgs);
 		}
 	}
+	private static async Task CompileWebApi(RestoreNetArgs restoreArgs, Architecture arch, String outputPath)
+	{
+		if (!Utilities.IsNativeAotSupported(arch, restoreArgs.Version)) return;
+
+		CompileNetArgs compileArgs = new(restoreArgs, outputPath)
+		{
+			BuildDependencies = true, Publish = Publish.NativeAot,
+		};
+
+		try
+		{
+			await TestCompiler.RestoreNet(restoreArgs);
+			await TestCompiler.CompileNet(compileArgs);
+		}
+		finally
+		{
+			TestCompiler.NetCleanUp(restoreArgs);
+		}
+	}
 	private static async Task CompileNetWithSwitches(CompileNetArgs compileArgs)
 	{
 		await TestCompiler.CompileNet(compileArgs with

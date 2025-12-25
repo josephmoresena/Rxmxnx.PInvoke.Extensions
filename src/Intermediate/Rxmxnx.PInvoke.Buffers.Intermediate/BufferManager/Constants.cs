@@ -9,7 +9,7 @@ public static partial class BufferManager
 	/// <summary>
 	/// Name of <see cref="Atomic{T}.TypeMetadata"/>  static field.
 	/// </summary>
-	internal const String TypeMetadataName = nameof(Atomic<Object>.TypeMetadata);
+	internal const String TypeMetadataName = nameof(Atomic<>.TypeMetadata);
 	/// <summary>
 	/// Flags of metadata static member.
 	/// </summary>

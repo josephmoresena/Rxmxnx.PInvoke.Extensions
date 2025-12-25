@@ -10,20 +10,18 @@ namespace Rxmxnx.PInvoke;
 public partial class CString
 {
 	/// <summary>
-	/// Json converter for <see cref="CString"/> class.
+	/// JSON converter for <see cref="CString"/> class.
 	/// </summary>
 	public sealed class JsonConverter : JsonConverter<CString>
 	{
 		/// <summary>
-		/// Threshold for stackalloc usage in bytes.
+		/// Specifies whether the rented span is cleared by default before use.
 		/// </summary>
-		private const Int32 stackallocByteThreshold = 256;
-
-		/// <summary>
-		/// Threshold for stackalloc usage in bytes.
-		/// </summary>
-		[ThreadStatic]
-		private static Int32 stackallocByteConsumed;
+#if NET7_0_OR_GREATER
+		internal const Boolean ClearArray = false;
+#else
+		internal const Boolean ClearArray = true;
+#endif
 
 		/// <inheritdoc/>
 #if !PACKAGE
@@ -54,6 +52,7 @@ public partial class CString
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
 #endif
+		// ReSharper disable once MemberCanBePrivate.Global
 		public static CString? Read(Utf8JsonReader reader)
 		{
 			ValidationUtilities.ThrowIfNotString(reader.TokenType);
@@ -86,65 +85,6 @@ public partial class CString
 		}
 
 		/// <summary>
-		/// Consumes the stackalloc bytes if the required size is within the threshold.
-		/// </summary>
-		/// <param name="stackRequired">Required stack bytes to consume.</param>
-		/// <param name="stackConsumed">
-		/// Ref. Stack bytes consumed so far. This value is updated with the newly consumed bytes.
-		/// </param>
-		/// <returns>
-		/// <see langword="true"/> if the stackalloc bytes were successfully consumed; otherwise, <see langword="false"/>.
-		/// </returns>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static Boolean ConsumeStackBytes(Int32 stackRequired, ref Int32 stackConsumed)
-		{
-			if (stackRequired <= 0) return true; // No bytes to consume, return true.
-			if (JsonConverter.stackallocByteConsumed + stackRequired > JsonConverter.stackallocByteThreshold)
-				return false; // Stackalloc threshold exceeded.
-			JsonConverter.stackallocByteConsumed += stackRequired;
-			stackConsumed += stackRequired; // Update the consumed bytes.
-			return true;
-		}
-		/// <summary>
-		/// Returns a rented array of the specified length and clears it.
-		/// </summary>
-		/// <typeparam name="T">Type of the array elements.</typeparam>
-		/// <param name="length">Required length of the array to rent.</param>
-		/// <param name="arr">Output. Rented array.</param>
-		/// <returns>A span of the rented array with the specified length, cleared.</returns>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static Span<T> RentArray<T>(Int32 length, out T[]? arr) where T : unmanaged
-		{
-			arr = ArrayPool<T>.Shared.Rent(length); // Rent an array of the specified length.
-
-			Span<T> result = arr.AsSpan()[..length];
-			result.Clear();
-			return result;
-		}
-		/// <summary>
-		/// Returns a rented array of the specified length and clears it.
-		/// </summary>
-		/// <typeparam name="T">Type of the array elements.</typeparam>
-		/// <param name="tArray">Rented array to return to the pool.</param>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static void ReturnArray<T>(T[]? tArray) where T : unmanaged
-		{
-			if (tArray is not null)
-				ArrayPool<T>.Shared.Return(tArray);
-		}
-		/// <summary>
-		/// Releases the stack bytes consumed by the converter.
-		/// </summary>
-		/// <param name="stackConsumed">Number of stack bytes consumed to release.</param>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static void ReleaseStackBytes(Int32 stackConsumed)
-		{
-			if (stackConsumed <= 0) return; // No bytes to release, return.
-			JsonConverter.stackallocByteConsumed -= stackConsumed;
-			if (JsonConverter.stackallocByteConsumed < 0)
-				JsonConverter.stackallocByteConsumed = 0; // Prevent negative consumption.
-		}
-		/// <summary>
 		/// Retrieves the length of the UTF-8 text bytes from the reader.
 		/// </summary>
 		/// <param name="reader">A <see cref="Utf8JsonReader"/> instance.</param>
@@ -162,23 +102,46 @@ public partial class CString
 		/// </summary>
 		/// <param name="reader">A <see cref="Utf8JsonReader"/> instance.</param>
 		/// <param name="buffer">Buffer to write to.</param>
+		/// <param name="clearUnused">Indicates whether the current unused bytes should be cleared.</param>
 		/// <returns>Adjustment value for text length.</returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static Int32 ReadBytes(Utf8JsonReader reader, Span<Byte> buffer)
+		internal static Int32 ReadBytes(Utf8JsonReader reader, Span<Byte> buffer, Boolean clearUnused)
 		{
-			Int32 adjustment = 0;
 #if NET7_0_OR_GREATER
 			Int32 nBytes = reader.CopyString(buffer);
-			adjustment -= buffer.Length - nBytes;
+			Span<Byte> unusedBytes = buffer[nBytes..];
 #else
 			if (reader.HasValueSequence)
 				reader.ValueSequence.CopyTo(buffer);
 			else
 				reader.ValueSpan.CopyTo(buffer);
-			adjustment -= JsonConverter.EscapeString(buffer);
+			Span<Byte> unusedBytes = buffer[^JsonConverter.EscapeString(buffer)..];
 #endif
-			return adjustment;
+			switch (clearUnused)
+			{
+				case false when !unusedBytes.IsEmpty:
+					unusedBytes[0] = default; // Clear only the first invalid byte in the buffer.
+					break;
+				case true when !unusedBytes.IsEmpty &&
+					JsonConverter.IsReusableBuffer(buffer.Length, unusedBytes.Length):
+					unusedBytes.Clear(); // Clear the rest of the buffer.
+					break;
+			}
+			return -unusedBytes.Length;
 		}
+		/// <summary>
+		/// Determines whether a buffer of size <paramref name="bufferLength"/> can be reused to store a UTF-8 encoded
+		/// text of length <paramref name="textLength"/> without causing excessive unused capacity.
+		/// </summary>
+		/// <param name="bufferLength">The total length of the buffer, in bytes.</param>
+		/// <param name="textLength">The length of the UTF-8 encoded text, in bytes.</param>
+		/// <returns>
+		/// <see langword="true"/> if the buffer can be reused to hold the UTF-8 text efficiently; otherwise,
+		/// <see langword="false"/>.
+		/// </returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		internal static Boolean IsReusableBuffer(Int32 bufferLength, Int32 textLength)
+			=> bufferLength - textLength <= bufferLength >> 4;
 
 #if !NET7_0_OR_GREATER
 		/// <summary>
@@ -230,6 +193,9 @@ public partial class CString
 		/// Escapes a UTF-8 unit in the buffer.
 		/// </summary>
 		/// <param name="buffer">A UTF-8 unescaped buffer.</param>
+#if NET5_0_OR_GREATER
+		[SkipLocalsInit]
+#endif
 		private static void EscapeUnit(Span<Byte> buffer)
 		{
 			Int32 stackConsumed = 0;
@@ -238,9 +204,9 @@ public partial class CString
 			{
 				Int32 nEscaped = buffer.Length - 2;
 				Span<Byte> escaped = JsonConverter.BackupEscaped(
-					JsonConverter.ConsumeStackBytes(nEscaped, ref stackConsumed) ?
+					StackAllocationHelper.ConsumeStackBytes(nEscaped, ref stackConsumed) ?
 						stackalloc Byte[nEscaped] :
-						JsonConverter.RentArray(nEscaped, out byteArray), buffer[2..]);
+						StackAllocationHelper.RentArray(nEscaped, out byteArray, false), buffer[2..]);
 				buffer[0] = buffer[1] switch
 				{
 					(Byte)'n' => (Byte)'\n',
@@ -253,20 +219,22 @@ public partial class CString
 				};
 				buffer[^nEscaped..].CopyTo(escaped); // Backup the rest of the buffer.
 				escaped.CopyTo(buffer[1..]); // Copy the rest of the buffer after the replacement.
-				buffer[nEscaped + 1] = default; // Remove the last character.
 			}
 			finally
 			{
-				JsonConverter.ReturnArray(byteArray);
-				JsonConverter.ReleaseStackBytes(stackConsumed);
+				StackAllocationHelper.ReturnArray(byteArray);
+				StackAllocationHelper.ReleaseStackBytes(stackConsumed);
 			}
 		}
 		/// <summary>
 		/// Escapes a Unicode character in the buffer.
 		/// </summary>
-		/// <param name="buffer">A UTF-8 unescaped buffer.</param>
-		/// <param name="escapeIndex">Index of escape begin.</param>
+		/// <param name="buffer">Reference. A UTF-8 unescaped buffer.</param>
+		/// <param name="escapeIndex">Reference. Index of escape begin.</param>
 		/// <returns>The number of bytes that were not replaced.</returns>
+#if NET5_0_OR_GREATER
+		[SkipLocalsInit]
+#endif
 		private static Int32 EscapeUnicode(ref Span<Byte> buffer, ref Int32 escapeIndex)
 		{
 			Int32 stackConsumed = 0;
@@ -277,28 +245,27 @@ public partial class CString
 				Int32 baseLength = 6; // Length of "\uXXXX" sequence.
 				Int32 nEscaped = buffer.Length - escapeIndex - baseLength;
 				Span<Byte> escaped = JsonConverter.BackupEscaped(
-					JsonConverter.ConsumeStackBytes(nEscaped, ref stackConsumed) ?
+					StackAllocationHelper.ConsumeStackBytes(nEscaped, ref stackConsumed) ?
 						stackalloc Byte[nEscaped] :
-						JsonConverter.RentArray(nEscaped, out byteArray), buffer[(escapeIndex + baseLength)..]);
-#if NETCOREAPP
+						StackAllocationHelper.RentArray(nEscaped, out byteArray, false),
+					buffer[(escapeIndex + baseLength)..]);
 				Rune rune = JsonConverter.GetEscapeRune(buffer, ref escapeIndex, low, ref baseLength);
+#if NETCOREAPP
 				Int32 nBytes = rune.EncodeToUtf8(buffer[escapeIndex..]);
 #else
-				UInt32 rune = JsonConverter.GetEscapeRune(buffer, ref escapeIndex, low, ref baseLength);
 				Int32 nBytes = RuneCompat.EncodeToUtf8(rune, buffer[escapeIndex..]);
 #endif
 				Int32 offset = escapeIndex + nBytes;
 				Int32 result = baseLength - nBytes;
 
 				escaped.CopyTo(buffer[offset..]);
-				buffer.Slice(offset + nEscaped, result).Clear(); // Clear the rest of the buffer.
 				buffer = buffer[..^result];
 				return result;
 			}
 			finally
 			{
-				JsonConverter.ReturnArray(byteArray);
-				JsonConverter.ReleaseStackBytes(stackConsumed);
+				StackAllocationHelper.ReturnArray(byteArray);
+				StackAllocationHelper.ReleaseStackBytes(stackConsumed);
 			}
 		}
 		/// <summary>

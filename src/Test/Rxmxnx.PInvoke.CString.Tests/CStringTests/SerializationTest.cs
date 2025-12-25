@@ -44,7 +44,7 @@ public sealed class SerializationTest
 		if (condition is JsonIgnoreCondition.WhenWritingDefault or JsonIgnoreCondition.WhenWritingNull)
 		{
 			// Zero is serialized as empty string when ignore condition is set to WhenWritingDefault or WhenWritingNull.
-			// In .NET Standard 2.1 And .Net Core 3.1 Zero is serialized as non-ignorable null.
+			// In .NET Standard 2.1 And .NET Core 3.1 Zero is serialized as non-ignorable null.
 			Boolean isNetStandard = SystemInfo.CompilationFramework.StartsWith(".NET Standard") ||
 				SystemInfo.CompilationFramework.StartsWith(".NET Core 3.0");
 			Assert.NotEqual(vsSerialized, vcSerialized);
@@ -142,13 +142,35 @@ public sealed class SerializationTest
 	{
 		String vsSerialized = JsonSerializer.Serialize(valueS, SerializationTest.jsonOptions);
 		String vcSerialized = JsonSerializer.Serialize(valueC, SerializationTest.jsonOptions);
+		CString? value = JsonSerializer.Deserialize<Serializable<CString>>(vsSerialized)?.Value;
+		Int32? textLength = value?.Length;
+		Byte[]? bytes = !CString.IsNullOrEmpty(value) ? CString.GetBytes(value) : default;
+		Int32? byteCount = bytes?.Length;
 
 		Assert.Equal(vsSerialized, vcSerialized);
 		Assert.Equal(JsonSerializer.Deserialize<Serializable<String>>(vcSerialized)?.Value, valueS.Value);
-		if (valueC.Value is not null && !valueC.Value.IsZero)
-			Assert.Equal(JsonSerializer.Deserialize<Serializable<CString>>(vsSerialized)?.Value, valueC.Value);
-		else
-			Assert.Null(JsonSerializer.Deserialize<Serializable<CString>>(vsSerialized)?.Value);
+
+		if (valueC.Value is null || valueC.Value.IsZero)
+		{
+			Assert.Null(value);
+			return;
+		}
+
+		Assert.NotNull(value);
+		Assert.Equal(value, valueC.Value);
+		Assert.True(value.IsNullTerminated);
+		Assert.False(value.IsSegmented);
+		Assert.False(value.IsZero);
+
+		if (value.Equals(CString.Empty))
+		{
+			Assert.True(value.IsFunction);
+			return;
+		}
+
+		Assert.False(value.IsFunction);
+		Assert.NotNull(bytes);
+		Assert.True(byteCount >= textLength + 1);
 	}
 	private static void AssertStringSerialization(String? value)
 	{

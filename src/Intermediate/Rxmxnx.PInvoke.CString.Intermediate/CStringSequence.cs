@@ -124,7 +124,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		=> other is not null && this._value.Equals(other._value) && this._lengths.SequenceEqual(other._lengths);
 
 	/// <inheritdoc/>
-	public override Boolean Equals(Object? obj) => obj is CStringSequence cstr && this.Equals(cstr);
+	public override Boolean Equals(Object? obj) => obj is CStringSequence seq && this.Equals(seq);
 	/// <inheritdoc/>
 	public override String ToString() => this._value;
 	/// <inheritdoc/>
@@ -151,11 +151,25 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// <returns>A <see cref="CString"/> that represents the current sequence.</returns>
 	public CString ToCString()
 	{
+		if (this._nonEmptyCount == 0) return CString.Empty;
 		Int32 utf8Length = this._value.AsSpan().Length * sizeof(Char) - this._nonEmptyCount;
-		if (utf8Length == 0) return CString.Empty;
-		Byte[] result = new Byte[utf8Length + 1];
-		this.WithSafeTransform(result, CStringSequence.BinaryCopyTo);
-		return result;
+		Int32 bufferLength = utf8Length + 1;
+		return this.CreateTextArray(bufferLength);
+	}
+	/// <summary>
+	/// Returns a <see cref="CString"/> that represents the current sequence.
+	/// </summary>
+	/// <param name="nullTerminated">Indicates whether the resulting <see cref="CString"/> is null-terminated.</param>
+	/// <returns>A <see cref="CString"/> that represents the current sequence.</returns>
+	public CString ToCString(Boolean nullTerminated)
+	{
+		if (nullTerminated) return this.ToCString();
+		if (this._nonEmptyCount == 0) return CString.Empty;
+
+		Int32 bufferLength = 0;
+		foreach (Int32? length in this._lengths.AsSpan())
+			bufferLength += length.GetValueOrDefault();
+		return CString.Create(this.CreateTextArray(bufferLength));
 	}
 
 	/// <summary>

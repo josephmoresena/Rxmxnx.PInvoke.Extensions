@@ -24,10 +24,14 @@ internal sealed class CStringUtf8Comparator : Utf8Comparator<Byte>
 
 	/// <inheritdoc/>
 	protected override DecodedRune? DecodeRune(ref ReadOnlySpan<Byte> source)
-		=> Utf8Comparator<Byte>.DecodeRuneFromUtf8(ref source);
+		=> Utf8Comparator.DecodeRuneFromUtf8(ref source);
 	/// <inheritdoc/>
-	protected override ReadOnlySpan<Char> GetUnicodeSpan(ReadOnlySpan<Byte> source)
-		=> Utf8Comparator<Byte>.GetUnicodeSpanFromUtf8(source);
+	protected override String GetString(ReadOnlySpan<Byte> source) => Utf8Comparator.GetStringFromUtf8(source);
+	/// <inheritdoc/>
+	protected override Int32 CountChars(ReadOnlySpan<Byte> source) => Utf8Comparator.GetCharCountFromUtf8(source);
+	/// <inheritdoc/>
+	protected override void GetChars(ReadOnlySpan<Byte> source, Span<Char> destination)
+		=> Utf8Comparator.CopyCharsFromUtf8(source, destination);
 
 	/// <summary>
 	/// Creates a new instance of the <see cref="CStringUtf8Comparator"/> class.

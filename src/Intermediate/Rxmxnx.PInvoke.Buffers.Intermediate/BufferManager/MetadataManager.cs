@@ -132,9 +132,11 @@ public static partial class BufferManager
 			BufferTypeMetadata<T>? result;
 			try
 			{
+#pragma warning disable IL3050
 				genericType = BufferManager.TypeofComposite.MakeGenericType(typeofA, typeofB, typeof(T));
 				MethodInfo getGenericMetadataInfo =
 					MetadataManager<T>.store.GetMetadataInfo.MakeGenericMethod(genericType);
+#pragma warning restore IL3050
 				Func<BufferTypeMetadata<T>> getGenericMetadata =
 					getGenericMetadataInfo.CreateDelegate<Func<BufferTypeMetadata<T>>>();
 				result = getGenericMetadata();
@@ -232,6 +234,9 @@ public static partial class BufferManager
 		/// <param name="trace">Indicates whether trace should be written.</param>
 		[ExcludeFromCodeCoverage]
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6670)]
+#if !PACKAGE
+		[SuppressMessage("ReSharper", "HeapView.BoxingAllocation")]
+#endif
 		public static void PrintMetadata(Boolean trace)
 		{
 			if (!trace) return;

@@ -22,12 +22,14 @@ public partial class CString
 	/// <param name="length">Current UTF-8 text length.</param>
 	internal CString(CStringSequence sequence, Int32 index, Int32 length)
 	{
+		SequenceItemState state = new(sequence, index, length);
+
 		this._isLocal = false;
-		this.IsFunction = true;
-		this._data = ValueRegion<Byte>.Create(new SequenceItemState(sequence, index, length), SequenceItemState.GetSpan,
-		                                      SequenceItemState.Alloc);
+		this._data = ValueRegion<Byte>.Create(state, SequenceItemState.GetSpan, SequenceItemState.Alloc);
 		this._isNullTerminated = true;
-		this.Length = length;
+		this._length = length;
+
+		this.IsFunction = true;
 	}
 
 	/// <summary>
@@ -82,7 +84,7 @@ public partial class CString
 	internal async Task WriteAsync(Stream strm, Boolean writeNullTermination,
 		CancellationToken cancellationToken = default)
 	{
-		await this.GetWriteTask(strm, 0, this.Length, cancellationToken).ConfigureAwait(false);
+		await this.GetWriteTask(strm, 0, this._length, cancellationToken).ConfigureAwait(false);
 		if (writeNullTermination)
 			await strm.WriteAsync(CString.empty, cancellationToken);
 	}
@@ -123,6 +125,21 @@ public partial class CString
 		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, getSpan);
 		return new(data, true, false, length);
 	}
+	/// <summary>
+	/// Allocates a new byte buffer of the specified length.
+	/// </summary>
+	/// <param name="length">Length of the array.</param>
+	/// <returns>A new <see cref="Byte"/> array.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static Byte[] CreateByteArray(Int32 length)
+#if !NET5_0_OR_GREATER
+		=> new Byte[length];
+#else
+		=> GC.AllocateUninitializedArray<Byte>(length);
+#endif
 #if !PACKAGE
 	/// <summary>
 	/// Retrieves the internal binary data from a given <see cref="CString"/>.

@@ -24,5 +24,6 @@ public interface IFixedMethod<TDelegate> : IFixedPointer where TDelegate : Deleg
 	/// ensuring that they are properly disposed of when no longer needed. It is crucial to call
 	/// <see cref="System.IDisposable.Dispose"/> to release these unmanaged resources and avoid memory leaks.
 	/// </remarks>
+	// ReSharper disable once PossibleInterfaceMemberAmbiguity
 	public new interface IDisposable : IFixedMethod<TDelegate>, IFixedPointer.IDisposable;
 }

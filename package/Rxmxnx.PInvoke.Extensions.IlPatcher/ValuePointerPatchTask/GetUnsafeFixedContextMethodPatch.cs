@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.Extensions.IlPatcher;
 
+// ReSharper disable once UnusedType.Global
 public partial class ValuePointerPatchTask
 {
 	/// <summary>
@@ -23,6 +24,7 @@ public partial class ValuePointerPatchTask
 		const MethodAttributes getUnsafeFixedContextAttributes = MethodAttributes.Public | MethodAttributes.HideBySig;
 
 		// Interface full name.
+		// ReSharper disable once HeapView.ClosureAllocation
 		String interfaceName = interfaceType.FullName;
 		// T parameter.
 		GenericParameter genericParameter = ptrType.GenericParameters[0];
@@ -36,6 +38,7 @@ public partial class ValuePointerPatchTask
 
 		// <>.CreateDisposable(, Int32, System.IDisposable) method definition.
 		MethodDefinition? createDisposableMethod =
+			// ReSharper disable once HeapView.DelegateAllocation
 			fixedClassType.Methods.First(m => m.IsStatic && m.Name == createDisposableName && m.Parameters.Count == 3 &&
 				                             m.ReturnType.FullName.Contains(interfaceName));
 
@@ -86,6 +89,7 @@ public partial class ValuePointerPatchTask
 	/// <param name="membersElement">Xml assembly members documentation.</param>
 	private static void DocumentGetUnsafeFixedContextMethod(XmlElement membersElement)
 	{
+		// ReSharper disable once UseRawString
 		const String rawXmlDocumentation = @"
         <member name=""M:Rxmxnx.PInvoke.ReadOnlyValPtr`1.GetUnsafeFixedContext(System.Int32,System.IDisposable)"">
             <summary>

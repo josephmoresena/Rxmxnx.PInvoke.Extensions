@@ -9,8 +9,17 @@ namespace Rxmxnx.PInvoke.Internal;
 /// comparing two UTF-8 texts.
 /// </summary>
 /// <typeparam name="TChar">The type of characters in the text being compared.</typeparam>
-internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
+internal abstract partial class Utf8Comparator<TChar> : Utf8Comparator where TChar : unmanaged
 {
+	/// <summary>
+	/// Indicates whether the <see cref="String"/> input should be ignored.
+	/// </summary>
+#if NET5_0_OR_GREATER
+	private static Boolean IgnoreStringInput => typeof(TChar) == typeof(Char);
+#else
+	private static Boolean IgnoreStringInput => false;
+#endif
+
 	/// <summary>
 	/// Constructor for setting up the comparator with a specific comparison type.
 	/// </summary>
@@ -19,6 +28,8 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
 	/// </param>
 	protected Utf8Comparator(StringComparison comparisonType)
 	{
+		StackAllocationHelper.InitStackBytes();
+		// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 		switch (comparisonType)
 		{
 			case StringComparison.CurrentCulture:
@@ -72,6 +83,7 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
 	/// <param name="culture">An object that supplies culture-specific comparison information.</param>
 	protected Utf8Comparator(Boolean ignoreCase, CultureInfo? culture)
 	{
+		StackAllocationHelper.InitStackBytes();
 		this._culture = culture ?? CultureInfo.CurrentCulture;
 		this._ignoreCase = ignoreCase;
 		this._options = !ignoreCase ? CompareOptions.None : CompareOptions.IgnoreCase;
@@ -84,6 +96,7 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
 	/// </summary>
 	/// <param name="textA">The first text to compare.</param>
 	/// <param name="textB">The second text instance.</param>
+	/// <param name="stringB">The second string instance.</param>
 	/// <returns>
 	/// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
 	/// <list type="table">
@@ -104,19 +117,22 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
 	///     </item>
 	/// </list>
 	/// </returns>
-	public Int32 Compare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
-		=> this._ordinal ? this.OrdinalCompare(textA, textB) : this.Compare(textA, textB, this._ignoreCase);
+	public Int32 Compare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB, String? stringB = default)
+		=> this._ordinal ?
+			this.OrdinalCompare(textA, textB, stringB) :
+			this.Compare(textA, textB, this._ignoreCase, stringB);
 	/// <summary>
 	/// Determines whether the text in <paramref name="textA"/> and the text in <paramref name="textB"/> are equivalent,
 	/// using specified culture, case, and sorting rules during the comparison.
 	/// </summary>
 	/// <param name="textA">The first text to compare.</param>
 	/// <param name="textB">The second text to compare.</param>
+	/// <param name="stringB">The second string instance.</param>
 	/// <returns>
 	/// <see langword="true"/> if the value of <paramref name="textA"/> is the same as the value of <paramref name="textB"/>;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
-	public Boolean TextEquals(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB)
+	public Boolean TextEquals(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB, String? stringB = default)
 	{
 		while (!textA.IsEmpty && !textB.IsEmpty)
 		{
@@ -124,11 +140,12 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
 			ReadOnlySpan<Byte> textA0 = textA;
 			ReadOnlySpan<TChar> textB0 = textB;
 
-			DecodedRune? runeA = Utf8Comparator<TChar>.DecodeRuneFromUtf8(ref textA);
+			DecodedRune? runeA = Utf8Comparator.DecodeRuneFromUtf8(ref textA);
 			DecodedRune? runeB = this.DecodeRune(ref textB);
 
 			//If the runes are not comparable to each other a full text comparison will be needed.
-			if (!runeA.HasValue || !runeB.HasValue) return this.Compare(textA0, textB0, this._ignoreCase) == 0;
+			if (!runeA.HasValue || !runeB.HasValue)
+				return this.Compare(textA0, textB0, this._ignoreCase, this.GetSubStringB(textB, stringB)) == 0;
 			if (!this.RuneEqual(runeA.Value, runeB.Value)) return false;
 		}
 
@@ -136,37 +153,27 @@ internal abstract partial class Utf8Comparator<TChar> where TChar : unmanaged
 	}
 
 	/// <summary>
-	/// Retrieves a <see cref="ReadOnlySpan{Char}"/> representation of the <paramref name="source"/>.
+	/// Retrieves the string representation of the <paramref name="source"/>.
 	/// </summary>
 	/// <param name="source">A read-only span of <typeparamref name="TChar"/> elements that represent a text.</param>
-	/// <returns>A <see cref="ReadOnlySpan{Char}"/> that represents the <paramref name="source"/> text.</returns>
-	protected abstract ReadOnlySpan<Char> GetUnicodeSpan(ReadOnlySpan<TChar> source);
+	/// <returns>A string that represents the <paramref name="source"/> text.</returns>
+	protected abstract String GetString(ReadOnlySpan<TChar> source);
+	/// <summary>
+	/// Calculates the number of characters produced by decoding the provided read-only span.
+	/// </summary>
+	/// <param name="source">A read-only span of <typeparamref name="TChar"/> elements that represent a text.</param>
+	/// <returns>The number of characters produced by decoding <paramref name="source"/>.</returns>
+	protected abstract Int32 CountChars(ReadOnlySpan<TChar> source);
+	/// <summary>
+	/// Decodes all the <typeparamref name="TChar"/> elements in the specified read-only span into a character span.
+	/// </summary>
+	/// <param name="source">A read-only span of <typeparamref name="TChar"/> elements that represent a text.</param>
+	/// <param name="destination">The character span receiving the decoded <typeparamref name="TChar"/> elements.</param>
+	protected abstract void GetChars(ReadOnlySpan<TChar> source, Span<Char> destination);
 	/// <summary>
 	/// Decodes the <see cref="Rune"/> at the beginning of the provided <typeparamref name="TChar"/> source buffer.
 	/// </summary>
 	/// <param name="source">A read-only span of <typeparamref name="TChar"/> elements that represents a text.</param>
 	/// <returns>The decoded <see cref="Rune"/>, if any; otherwise, <see langword="null"/>.</returns>
 	protected abstract DecodedRune? DecodeRune(ref ReadOnlySpan<TChar> source);
-
-	/// <summary>
-	/// Retrieves the <see cref="ReadOnlySpan{Char}"/> representation of the <paramref name="source"/>.
-	/// </summary>
-	/// <param name="source">A read-only span of <see cref="Byte"/> elements representing a UTF-8 encoded text.</param>
-	/// <returns>A <see cref="ReadOnlySpan{Char}"/> that represents the <paramref name="source"/> text.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	protected static ReadOnlySpan<Char> GetUnicodeSpanFromUtf8(ReadOnlySpan<Byte> source)
-		=> Encoding.UTF8.GetString(source);
-	/// <summary>
-	/// Decodes the <see cref="Rune"/> at the beginning of the provided UTF-8 encoded source buffer.
-	/// </summary>
-	/// <param name="source">A read-only span of <see cref="Byte"/> elements representing a UTF-8 encoded text.</param>
-	/// <returns>The decoded <see cref="Rune"/>, if any; otherwise, <see langword="null"/>.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	protected static DecodedRune? DecodeRuneFromUtf8(ref ReadOnlySpan<Byte> source)
-	{
-		DecodedRune? result = DecodedRune.Decode(source);
-		if (result.HasValue)
-			source = source[result.Value.CharsConsumed..];
-		return result;
-	}
 }

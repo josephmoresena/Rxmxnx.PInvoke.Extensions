@@ -1,3 +1,5 @@
+// ReSharper disable HeapView.BoxingAllocation
+
 namespace Rxmxnx.PInvoke.Internal.Localization;
 
 /// <summary>

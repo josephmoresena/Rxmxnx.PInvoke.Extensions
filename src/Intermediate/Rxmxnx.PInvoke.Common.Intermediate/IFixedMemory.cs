@@ -28,6 +28,7 @@ public interface IFixedMemory : IReadOnlyFixedMemory
 	/// <summary>
 	/// Interface representing a <see cref="IDisposable"/> <see cref="IFixedMemory"/> object.
 	/// </summary>
+	// ReSharper disable once PossibleInterfaceMemberAmbiguity
 	public new interface IDisposable : IFixedMemory, IReadOnlyFixedMemory.IDisposable;
 }
 
@@ -56,5 +57,6 @@ public interface IFixedMemory<T> : IFixedMemory, IReadOnlyFixedMemory<T>
 	/// ensuring that they are properly disposed of when no longer needed. It is crucial to call
 	/// <see cref="System.IDisposable.Dispose"/> to release these unmanaged resources and avoid memory leaks.
 	/// </remarks>
+	// ReSharper disable once PossibleInterfaceMemberAmbiguity
 	public new interface IDisposable : IFixedMemory<T>, IFixedMemory.IDisposable, IReadOnlyFixedMemory<T>.IDisposable;
 }

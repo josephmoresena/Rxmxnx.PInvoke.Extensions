@@ -12,7 +12,7 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 	/// <summary>
 	/// Gets the cancellation token to monitor for cancellation requests.
 	/// </summary>
-	protected CancellationToken CancellationToken => this._cancellationToken;
+	protected CancellationToken CancellationToken { get; }
 
 	/// <summary>
 	/// Gets the separator instance.
@@ -27,7 +27,7 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 	{
 		this.Stream = new();
 		this._separator = separator;
-		this._cancellationToken = cancellationToken;
+		this.CancellationToken = cancellationToken;
 		this.InitializeDelegates();
 	}
 	/// <inheritdoc/>
@@ -48,18 +48,18 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 	/// Writes the given <paramref name="value"/> into the current instance.
 	/// </summary>
 	/// <param name="value">A read-only span of UTF-8 bytes to be written.</param>
-	public void Write(ReadOnlySpan<Byte> value) => this._binaryWrite(value);
+	public void Write(ReadOnlySpan<Byte> value) => this._binaryWrite(this, value);
 	/// <summary>
 	/// Writes the given <paramref name="value"/> into the current instance.
 	/// </summary>
 	/// <param name="value">The value of type T to be written.</param>
-	public void Write(T? value) => this._write(value);
+	public void Write(T? value) => this._write(this, value);
 	/// <summary>
 	/// Asynchronously writes the given <paramref name="value"/> into the current instance.
 	/// </summary>
 	/// <param name="value">The value of type T to be written.</param>
 	/// <returns>A task that represents the asynchronous write operation.</returns>
-	public Task WriteAsync(T? value) => this._writeAsync(value);
+	public Task WriteAsync(T? value) => this._writeAsync(this, value);
 	/// <summary>
 	/// Creates a <see cref="CString"/> instance from the UTF-8 encoded text stored in the
 	/// current instance.
@@ -155,8 +155,9 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 		ReadOnlySpan<Byte> span = BinaryConcatenator<T>.PrepareUtf8Text(this.Stream.GetBuffer());
 		if (span.IsEmpty) return result;
 		Int32 resultLength = span.Length + (nullTerminated ? 1 : 0);
-		result = new Byte[resultLength];
+		result = CString.CreateByteArray(resultLength);
 		span.CopyTo(result);
+		if (result.Length > span.Length) result.AsSpan()[span.Length..].Clear();
 		return result;
 	}
 }

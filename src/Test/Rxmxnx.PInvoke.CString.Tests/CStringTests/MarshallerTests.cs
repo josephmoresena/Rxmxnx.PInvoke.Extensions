@@ -12,15 +12,17 @@ public sealed unsafe class MarshallerTests
 	public void FromManagedTest()
 	{
 		Int32 index = Random.Shared.Next(0, TestSet.Utf16Text.Count);
-		ReadOnlySpan<Byte> utf8Span = TestSet.Utf8Text[index]();
-		IntPtr ptr = (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Span));
-
 		MarshallerTests.AssertToUnmanaged(new(TestSet.Utf8Text[index]));
 		MarshallerTests.AssertToUnmanaged(TestSet.Utf8NullTerminatedBytes[index]);
 		MarshallerTests.AssertToUnmanaged(TestSet.Utf8Bytes[index]);
 		MarshallerTests.AssertToUnmanaged((CString)TestSet.Utf16Text[index]);
-		MarshallerTests.AssertToUnmanaged(CString.CreateUnsafe(ptr, utf8Span.Length, true));
-		MarshallerTests.AssertToUnmanaged(CString.CreateUnsafe(ptr, utf8Span.Length + 1));
+		
+		ReadOnlySpan<Byte> utf8Span = TestSet.Utf8Text[index]();
+		fixed (void* ptr = &MemoryMarshal.GetReference(utf8Span))
+		{
+			MarshallerTests.AssertToUnmanaged(CString.CreateUnsafe((IntPtr)ptr, utf8Span.Length, true));
+			MarshallerTests.AssertToUnmanaged(CString.CreateUnsafe((IntPtr)ptr, utf8Span.Length + 1));
+		}
 	}
 	[Fact]
 	public void FromUnmanagedTest()

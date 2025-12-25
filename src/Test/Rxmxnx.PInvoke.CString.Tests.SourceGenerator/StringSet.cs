@@ -5,7 +5,7 @@ internal static class StringSet
 {
 #pragma warning disable
 	public static readonly String[] Set =
-	{
+	[
 		"Hello, World! 🌍👋" /* English, Length = 15 */, "¡Hola! ¿Cómo estás? 😊👍" /* Spanish, Length = 24 */,
 		"你好，你怎么样？👀💬" /* Chinese, Length = 14 */, "こんにちは、お元気ですか？🌸😃" /* Japanese, Length = 20 */,
 		"Привет, как дела? 👋😊" /* Russian, Length = 18 */,
@@ -300,6 +300,6 @@ internal static class StringSet
 		"O ciclo do carbono é o processo natural pelo qual o carbono é trocado entre a biosfera, a atmosfera, os oceanos e a crosta terrestre. 🌍🌡️🔬" /* Portuguese, Length = 114 */,
 		"जैविक उपचार नामक विज्ञान हमें वनस्पतियों, जीवों और बाक्टीरिया के उपयोग से दवाओं को बनाना सिखाता है। 🌿💊🧫" /* Hindi, Length = 109 */,
 		"En linguistique, la morphologie est l'étude de la formation des mots et de leur structure interne. 🔎📚🗣️" /* French, Length = 90 */,
-	};
+	];
 #pragma warning restore
 }

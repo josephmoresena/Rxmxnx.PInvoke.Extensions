@@ -8,6 +8,7 @@ public static partial class BufferManager
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+	// ReSharper disable once UnusedType.Global
 	public static partial class VisualBasic
 	{
 		/// <inheritdoc cref="BufferManager.Alloc{T}(UInt16, ScopedBufferAction{T}, Boolean)"/>

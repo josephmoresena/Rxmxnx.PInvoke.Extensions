@@ -12,6 +12,9 @@ public static partial class SystemInfo
 	/// <summary>
 	/// Indicates whether the current execution is running on a Windows-compatible platform.
 	/// </summary>
+#if NET6_0_OR_GREATER
+	[SupportedOSPlatformGuard("windows")]
+#endif
 	public static Boolean IsWindows
 #if NET5_0_OR_GREATER
 		=> OperatingSystem.IsWindows();
@@ -21,6 +24,10 @@ public static partial class SystemInfo
 	/// <summary>
 	/// Indicates whether the current execution is running on a Linux-compatible platform.
 	/// </summary>
+#if NET6_0_OR_GREATER
+	[SupportedOSPlatformGuard("linux")]
+	[SupportedOSPlatformGuard("android")]
+#endif
 	public static Boolean IsLinux
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -38,6 +45,12 @@ public static partial class SystemInfo
 	/// <summary>
 	/// Indicates whether the current execution is running on a macOS-compatible platform.
 	/// </summary>
+#if NET6_0_OR_GREATER
+	[SupportedOSPlatformGuard("osx")]
+	[SupportedOSPlatformGuard("macos")]
+	[SupportedOSPlatformGuard("tvos")]
+	[SupportedOSPlatformGuard("maccatalyst")]
+#endif
 	public static Boolean IsMac
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -61,6 +74,9 @@ public static partial class SystemInfo
 	/// <summary>
 	/// Indicates whether the current execution is running on FreeBSD platform.
 	/// </summary>
+#if NET6_0_OR_GREATER
+	[SupportedOSPlatformGuard("freebsd")]
+#endif
 	public static Boolean IsFreeBsd
 #if NET5_0_OR_GREATER
 		=> OperatingSystem.IsFreeBSD();
@@ -70,11 +86,18 @@ public static partial class SystemInfo
 	/// <summary>
 	/// Indicates whether the current execution is running on NetBSD platform.
 	/// </summary>
+#if NET6_0_OR_GREATER
+	[SupportedOSPlatformGuard("netbsd")]
+#endif
 	public static Boolean IsNetBsd
 		=> !AotInfo.IsPlatformTrimmed && (SystemInfo.isNetBsd ??= SystemInfo.IsOsPlatform(SystemInfo.netBsdPlatform));
 	/// <summary>
 	/// Indicates whether the current execution is running on NetBSD platform.
 	/// </summary>
+#if NET6_0_OR_GREATER
+	[SupportedOSPlatformGuard("solaris")]
+	[SupportedOSPlatformGuard("illumos")]
+#endif
 	public static Boolean IsSolaris
 		=> !AotInfo.IsPlatformTrimmed && (SystemInfo.isSolaris ??=
 			SystemInfo.IsOsPlatform(SystemInfo.solarisPlatform, SystemInfo.illumosPlatform));
@@ -82,6 +105,11 @@ public static partial class SystemInfo
 	/// <summary>
 	/// Indicates whether the current execution is running on a Web engine.
 	/// </summary>
+#if NET6_0_OR_GREATER
+	[SupportedOSPlatformGuard("browser")]
+	[SupportedOSPlatformGuard("wasi")]
+	[SupportedOSPlatformGuard("wasm")]
+#endif
 	public static Boolean IsWebRuntime
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]

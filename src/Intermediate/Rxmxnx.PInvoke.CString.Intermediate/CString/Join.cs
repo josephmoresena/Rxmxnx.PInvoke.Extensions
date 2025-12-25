@@ -70,6 +70,9 @@ public partial class CString
 	/// Concatenated UTF-8 text with separators or an empty <see cref="CString"/> if the collection is empty.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
+#if !PACKAGE
+	[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+#endif
 	public static CString Join(Byte separator, IEnumerable<CString?> values)
 	{
 		ArgumentNullException.ThrowIfNull(values);
@@ -141,6 +144,7 @@ public partial class CString
 	/// by the separator UTF-8 text. -or- <see cref="Empty"/> if
 	/// <paramref name="value"/> has zero elements.
 	/// </returns>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public static unsafe CString Join(ReadOnlySpan<Byte> separator,
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<CString?> value
@@ -164,6 +168,9 @@ public partial class CString
 	/// Concatenated UTF-8 text with separators or an empty <see cref="CString"/> if the collection is empty.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
+#if !PACKAGE
+	[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+#endif
 	public static unsafe CString Join(ReadOnlySpan<Byte> separator, IEnumerable<CString?> values)
 	{
 		ArgumentNullException.ThrowIfNull(values);
@@ -247,6 +254,7 @@ public partial class CString
 	/// by the separator UTF-8 text. -or- <see cref="Empty"/> if
 	/// <paramref name="value"/> has zero elements.
 	/// </returns>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public static CString Join(CString? separator,
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<CString?> value
@@ -269,6 +277,9 @@ public partial class CString
 	/// Concatenated UTF-8 text with separators or an empty <see cref="CString"/> if the collection is empty.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
+#if !PACKAGE
+	[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+#endif
 	public static CString Join(CString? separator, IEnumerable<CString?> values)
 	{
 		ArgumentNullException.ThrowIfNull(values);

@@ -44,6 +44,7 @@ public partial class CString
 	/// <see cref="Empty"/>.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public static Task<CString> JoinAsync(Byte separator, CancellationToken cancellationToken, params CString?[] value)
 		=> CString.JoinAsync(CString.Create(separator), cancellationToken, value);
 	/// <summary>
@@ -141,11 +142,13 @@ public partial class CString
 	/// <paramref name="value"/> has zero elements.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public static async Task<CString> JoinAsync(CString? separator, CancellationToken cancellationToken,
 		params CString?[] value)
 	{
 		ArgumentNullException.ThrowIfNull(value);
 		await using CStringConcatenator helper = new(separator, cancellationToken);
+		// ReSharper disable once ForCanBeConvertedToForeach
 		for (Int32 index = 0; index < value.Length; index++)
 		{
 			CString? utf8Text = value[index];
@@ -173,6 +176,9 @@ public partial class CString
 	/// delimited by the <paramref name="separator"/> text, or an empty string if <paramref name="values"/> has no elements.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
+#if !PACKAGE
+	[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+#endif
 	public static async Task<CString> JoinAsync(CString? separator, IEnumerable<CString?> values,
 		CancellationToken cancellationToken = default)
 	{

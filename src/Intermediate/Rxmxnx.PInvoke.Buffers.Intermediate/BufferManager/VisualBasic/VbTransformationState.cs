@@ -2,6 +2,7 @@ namespace Rxmxnx.PInvoke;
 
 public static partial class BufferManager
 {
+	// ReSharper disable once UnusedType.Global
 	public static partial class VisualBasic
 	{
 		/// <summary>

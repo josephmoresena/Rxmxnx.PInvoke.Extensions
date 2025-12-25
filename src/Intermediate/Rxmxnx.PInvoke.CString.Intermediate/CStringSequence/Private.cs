@@ -43,6 +43,7 @@ public partial class CStringSequence
 	private IEnumerable<CString> GetValues(IntPtr ptr)
 	{
 		Int32 offset = 0;
+		// ReSharper disable once ForCanBeConvertedToForeach
 		for (Int32 index = 0; index < this._lengths.Length; index++)
 		{
 			Int32? length = this._lengths[index];
@@ -92,5 +93,23 @@ public partial class CStringSequence
 			else
 				binaryLength += spanLength;
 		}
+	}
+	/// <summary>
+	/// Creates a byte array containing each non-empty UTF-8 text bytes in the current instance.
+	/// </summary>
+	/// <param name="arrayLength">Array length.</param>
+	/// <returns>A byte array containing each non-empty UTF-8 text bytes in the current instance.</returns>
+	private Byte[] CreateTextArray(Int32 arrayLength)
+	{
+		Byte[] result = CString.CreateByteArray(arrayLength);
+		Utf8View view = new(this, false);
+		Span<Byte> destination = result.AsSpan();
+		foreach (ReadOnlySpan<Byte> value in view)
+		{
+			value.CopyTo(destination);
+			destination = destination[value.Length..];
+		}
+		destination.Clear();
+		return result;
 	}
 }

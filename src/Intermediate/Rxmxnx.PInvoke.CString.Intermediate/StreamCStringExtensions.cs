@@ -1,4 +1,6 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿// ReSharper disable ConvertToExtensionBlock
+
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// <see cref="CString"/> extensions for <see cref="Stream"/> class.

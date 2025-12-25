@@ -9,6 +9,7 @@ namespace Rxmxnx.PInvoke.Tests;
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class FuncPtrTests
 {
+#if NETCOREAPP
 	private static readonly CultureInfo[] allCultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
 	private static readonly String[] formats =
 	[
@@ -19,6 +20,7 @@ public sealed class FuncPtrTests
 		"D", "d", "E", "e", "G", "g", "X", "x",
 	];
 	private static readonly IFixture fixture = new Fixture();
+#endif
 
 	[Fact]
 	public void StringTest() => FuncPtrTests.TestDelegate<GetStringDelegate>(() => String.Empty);
@@ -75,12 +77,12 @@ public sealed class FuncPtrTests
 
 	private static void FormatTest<TDelegate>(FuncPtr<TDelegate> funcPtr) where TDelegate : Delegate
 	{
-		CultureInfo culture = FuncPtrTests.allCultures[Random.Shared.Next(0, FuncPtrTests.allCultures.Length)];
 		PInvokeAssert.Equal(funcPtr.Pointer.GetHashCode(), funcPtr.GetHashCode());
 		PInvokeAssert.Equal(funcPtr.Pointer.ToString(), funcPtr.ToString());
-
 #if NET6_0_OR_GREATER
 		if ((Object)funcPtr is not ISpanFormattable spanFormattable) return;
+
+		CultureInfo culture = FuncPtrTests.allCultures[Random.Shared.Next(0, FuncPtrTests.allCultures.Length)];
 		MethodInfo? toStringMethodInfo = spanFormattable.GetType()
 		                                                .GetMethod(nameof(IntPtr.ToString),
 		                                                           BindingFlags.Public | BindingFlags.Instance, null,
@@ -113,7 +115,7 @@ public sealed class FuncPtrTests
 		PInvokeAssert.Equal(value, funcPtr.Pointer);
 		PInvokeAssert.Equal(funcPtr, ptr);
 	}
-#if !NET6_0_OR_GREATER
+#if NETCOREAPP && !NET6_0_OR_GREATER
 	private static class Random
 	{
 		public static readonly System.Random Shared = new();
