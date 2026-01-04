@@ -132,6 +132,9 @@ public unsafe partial class CStringSequence
 			if (sourceSpan[i] == default && sourceSpan[i - 1] != default)
 				helper.NullChars.Add(i);
 		}
+		if (sourceSpan[^1] != default)
+			// Not null-terminated source.
+			helper.NullChars.Add(sourceSpan.Length);
 	}
 	/// <summary>
 	/// Copies the content of the specified <paramref name="sequence"/> to the given
@@ -354,7 +357,7 @@ public unsafe partial class CStringSequence
 	{
 		if (buffer.Length == 0) return CStringSequence.Empty;
 		Int32 totalBytes = buffer.Length + (buffer[^1] == default ? 0 : 1);
-		Int32 totalChars = totalBytes / sizeof(Char);
+		Int32 totalChars = totalBytes / sizeof(Char) + totalBytes % sizeof(Char);
 		ReadOnlySpan<Int32> nulls;
 		String sequenceBuffer;
 		fixed (Byte* ptr = &MemoryMarshal.GetReference(buffer))
