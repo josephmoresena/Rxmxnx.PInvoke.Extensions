@@ -52,9 +52,9 @@ internal static class ConvertCompat
 		{
 			return String.Create(bytes.Length * 2, (Ptr: (IntPtr)bytesPtr, bytes.Length), static (chars, args) =>
 			{
-				ReadOnlySpan<Byte> ros = new((Byte*)args.Ptr, args.Length);
+				ReadOnlySpan<Byte> source = new((Byte*)args.Ptr, args.Length);
 				for (Int32 pos = 0; pos < args.Length; ++pos)
-					ConvertCompat.ToCharsBuffer(ros[pos], chars, pos * 2);
+					ConvertCompat.ToCharsBuffer(source[pos], chars, pos * 2);
 			});
 		}
 #else
