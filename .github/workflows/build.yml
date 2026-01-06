@@ -158,11 +158,14 @@ jobs:
             
             fetch https://github.com/Thefrank/freebsd-port-sooners/releases/download/20230712/mono6.12-6.12.0.199_1.pkg
             pkg add -f mono6.12-6.12.0.199_1.pkg
+            rm mono6.12-6.12.0.199_1.pkg
+            rm -rf ~/fake-py39-pillow
+            rm -rf ~/fake-python39
           run: |
             dotnet dev-certs https --trust
             mono --version
 
-      - name: Run Tests (FreeBSD 14.3)
+      - name: Run Tests (FreeBSD 13.5)
         shell: freebsd {0}
         run: |
           cd $GITHUB_WORKSPACE;
