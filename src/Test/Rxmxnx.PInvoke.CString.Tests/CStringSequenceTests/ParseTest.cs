@@ -1,7 +1,6 @@
 #if !NETCOREAPP
 using Fact = NUnit.Framework.TestAttribute;
 using InlineData = NUnit.Framework.TestCaseAttribute;
-using EqualException = NUnit.Framework.AssertionException;
 #endif
 
 namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
@@ -46,21 +45,44 @@ public sealed class ParseTest
 		CStringSequence seq = new(values);
 		CString[] nonEmpty = values.Where(c => !CString.IsNullOrEmpty(c) && c.All(b => b != 0x0)).ToArray()!;
 		ParseTest.ExactParseTest(nonEmpty, seq.ToString());
-		try
-		{
-			ParseTest.RandomParseTest(nonEmpty);
-		}
-		catch (EqualException)
-		{
-			GC.Collect();
-			GC.WaitForPendingFinalizers();
+		ParseTest.RandomParseTest(nonEmpty);
+	}
 
-			// It seems that if RandomParseTest fails due the handles have been released by the runtime.
-			// Reloading the CString instances and their respective handles, the test does not fail.
-			values = TestSet.GetValues(indices, handle);
-			nonEmpty = values.Where(c => !CString.IsNullOrEmpty(c) && c.All(b => b != 0x0)).ToArray()!;
-			ParseTest.RandomParseTest(nonEmpty);
+	[Theory]
+	[InlineData(null)]
+	[InlineData(8)]
+	[InlineData(32)]
+	[InlineData(256)]
+	[InlineData(300)]
+	[InlineData(1000)]
+	public void SpanTest(Int32? length)
+	{
+		IReadOnlyList<Int32> indices = TestSet.GetIndices(length);
+		CStringBuilder csb = new();
+		using (IEnumerator<Int32> enumerator = indices.GetEnumerator())
+		{
+			while (enumerator.MoveNext())
+			{
+				String? val = TestSet.GetString(enumerator.Current);
+				if (String.IsNullOrEmpty(val)) continue;
+				csb.Append(TestSet.GetString(enumerator.Current));
+				break;
+			}
+			while (enumerator.MoveNext())
+			{
+				String? val = TestSet.GetString(enumerator.Current);
+				if (String.IsNullOrEmpty(val)) continue;
+				csb.Append((Byte)'\0');
+				csb.Append(TestSet.GetString(enumerator.Current));
+			}
 		}
+
+		CString value = csb.ToCString(false);
+		CStringSequence seq = CStringSequence.Create(value);
+
+		csb.Clear().AppendJoin("\0"u8, seq.CreateView(false));
+
+		PInvokeAssert.Equal(value, csb.ToCString());
 	}
 
 	private static void ExactParseTest(CString[] values, String buffer)
