@@ -110,11 +110,11 @@ jobs:
           
           sudo apt install mono-complete mono-vbnc mono-dbg gdb libssl3
 
-      - name: Init FreeBSD 14.3 VM
+      - name: Init FreeBSD 13.5 VM
         id: vm
         uses: vmactions/freebsd-vm@v1.3.6
         with:
-          release: "14.3"
+          release: "13.5"
           usesh: true
           copyback: false
           sync: nfs
@@ -171,7 +171,7 @@ jobs:
           dotnet test ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Extensions.Tests.dll --logger 'console;verbosity=detailed';
           dotnet test ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Buffers.Tests.dll --logger 'console;verbosity=detailed';
 
-      - name: Mono framework tests (FreeBSD 14.3)
+      - name: Mono framework tests (FreeBSD 13.5)
         shell: freebsd {0}
         run: |
           cd $GITHUB_WORKSPACE;
@@ -185,7 +185,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE;
           cd ./src/ApplicationTest/Rxmxnx.PInvoke.LauncherTest;
-          dotnet publish -r freebsd.14-x64;
+          dotnet publish -r freebsd.13-x64;
           rm -rf ./obj
 
       - name: Run launcher (compile) (FreeBSD)
@@ -256,7 +256,7 @@ jobs:
       - name: Create Native Artifact Logs
         uses: actions/upload-artifact@v5
         with:
-          name: FreeBSD.14-Artifact-Logs
+          name: FreeBSD.13-Artifact-Logs
           path: |
             ./artifactsf/Native/*
             ./artifactsf/Mono/*Mono.Link.log
