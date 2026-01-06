@@ -73,6 +73,9 @@ public static partial class BufferManager
 		/// <typeparam name="TBufferA">The type of low buffer.</typeparam>
 		/// <typeparam name="TBufferB">The type of high buffer.</typeparam>
 		/// <returns>The components array for the composition type.</returns>
+#if !PACKAGE && NET7_0_OR_GREATER
+		[ExcludeFromCodeCoverage]
+#endif
 		public static BufferTypeMetadata<T>[] GetComponents<
 			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBufferA,
 			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBufferB>()

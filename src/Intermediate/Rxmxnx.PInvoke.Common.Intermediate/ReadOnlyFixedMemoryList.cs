@@ -39,6 +39,9 @@ public readonly ref struct ReadOnlyFixedMemoryList
 	/// </summary>
 	/// <param name="memories">An array of <see cref="FixedMemory"/> instances to be stored in the list.</param>
 	/// <remarks>This constructor initializes the list with the provided fixed memory blocks.</remarks>
+#if !PACKAGE && NET9_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	internal ReadOnlyFixedMemoryList(
 #if !NET9_0_OR_GREATER
 		params FixedMemory[] memories

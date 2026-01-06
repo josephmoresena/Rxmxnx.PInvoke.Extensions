@@ -239,6 +239,9 @@ public partial class CStringBuilder
 		/// <param name="value">A <see cref="ISpanFormattable"/> instance.</param>
 		/// <returns>A <see cref="Chunk"/> instance.</returns>
 		[SkipLocalsInit]
+#if !PACKAGE && NET8_0_OR_GREATER
+		[ExcludeFromCodeCoverage]
+#endif
 		private static Chunk? AppendUtf16<T>(Chunk chunk, T value) where T : ISpanFormattable
 		{
 			Span<Char> span = stackalloc Char[StackAllocationHelper.StackallocByteThreshold];

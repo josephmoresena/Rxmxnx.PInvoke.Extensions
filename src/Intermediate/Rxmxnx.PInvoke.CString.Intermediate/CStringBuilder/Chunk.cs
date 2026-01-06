@@ -84,6 +84,9 @@ public partial class CStringBuilder
 #if !NET8_0_OR_GREATER
 		public Chunk AppendUtf16<T>(T value) where T : ISpanFormattable
 #else
+#if !PACKAGE
+		[ExcludeFromCodeCoverage]
+#endif
 		private Chunk AppendUtf16<T>(T value) where T : ISpanFormattable
 #endif
 		{

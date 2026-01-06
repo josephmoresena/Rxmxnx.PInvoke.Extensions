@@ -88,6 +88,9 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 	public Boolean Equals(Rune other) => this._value == other;
 #if NETCOREAPP
 	/// <inheritdoc/>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public Boolean Equals(UInt32 other) => this.Equals(new Rune(other));
 #endif
 	/// <inheritdoc/>

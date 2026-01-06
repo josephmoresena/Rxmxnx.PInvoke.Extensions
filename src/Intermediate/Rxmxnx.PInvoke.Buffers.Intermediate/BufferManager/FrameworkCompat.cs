@@ -15,6 +15,9 @@ public static partial class BufferManager
 	/// <typeparam name="T">The type of items in the buffer</typeparam>
 	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+#if !PACKAGE && NET7_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	internal static BufferTypeMetadata<T> GetStaticMetadata<T, TBuffer>() where TBuffer : struct, IManagedBuffer<T>
 	{
 #if !NET7_0_OR_GREATER
@@ -72,6 +75,9 @@ public static partial class BufferManager
 	/// <typeparam name="T">The type of items in the buffer</typeparam>
 	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+#if !PACKAGE && NET7_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static BufferTypeMetadata<T> GetMetadata<T, TBuffer>() where TBuffer : struct, IManagedBuffer<T>
 	{
