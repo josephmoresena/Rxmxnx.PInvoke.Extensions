@@ -78,7 +78,7 @@ public static class Utf8ConcatenationHelper
 
 		bohemianRhapsody.Insert(interruptions[2], CString.NewLine);
 		bohemianRhapsody.Insert(interruptions[2], "Galileo, Galileo Figaro, magnifico"u8);
-		bohemianRhapsody.Insert(interruptions[2] + 8, " (Galileo) "u8);
+		bohemianRhapsody.Insert(interruptions[2] + 9, "(Galileo) "u8);
 		bohemianRhapsody.Insert(interruptions[2], "(Galileo) "u8);
 
 		bohemianRhapsody.Insert(interruptions[1], CString.NewLine);
