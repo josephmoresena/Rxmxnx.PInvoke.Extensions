@@ -50,6 +50,9 @@
         <Project Path="Test\Rxmxnx.PInvoke.Extensions.Tests\Rxmxnx.PInvoke.Extensions.Tests.csproj"/>
         <File Path="Test\x86.runsettings"/>
         <File Path="Test\Tests.props"/>
+        <File Path="Test\DotnetCoreAppTests.props"/>
+        <File Path="Test\MonoTests.targets"/>
+        <File Path="Test\NUnitLite.targets"/>
         <File Path="Test\README.md"/>
     </Folder>
 </Solution>

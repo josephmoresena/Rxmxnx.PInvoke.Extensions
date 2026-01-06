@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <Import Project="..\Tests.props"/>
+    <Import Condition="'$(TargetFramework)' == 'netstandard2.1'" Project="..\MonoTests.targets"/>
 
     <ItemGroup>
         <Using Condition="'$(TargetFramework)' != 'netstandard2.1'" Include="Xunit"/>

@@ -12,7 +12,6 @@
         <IsPackable>false</IsPackable>
         <LangVersion>latest</LangVersion>
         <DefineConstants Condition="'$(MultipleFrameworkTest)' == 'true'">$(DefineConstants);MULTIPLE_FRAMEWORK</DefineConstants>
-        <CopyLocalLockFileAssemblies Condition="'$(TargetFramework)' == 'netstandard2.1'">true</CopyLocalLockFileAssemblies>
     </PropertyGroup>
 
     <ItemGroup>
@@ -25,47 +24,6 @@
         <ProjectReference Include="..\Rxmxnx.PInvoke.Assert.Tests\Rxmxnx.PInvoke.Assert.Tests.csproj"/>
     </ItemGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.3"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-    </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1' Or '$(TargetFramework)' == 'net5.0'">
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-    </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'">
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-    </ItemGroup>
-    <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-    </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
-        <PackageReference Include="NUnitLite" Version="3.14.0" GeneratePathProperty="true"/>
-    </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.1'">
-        <PackageReference Include="coverlet.collector" Version="6.0.4">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-    </ItemGroup>
-
-    <Target Name="CopyNUnitLiteRunner" AfterTargets="Build" Condition="'$(TargetFramework)' == 'netstandard2.1'">
-        <Copy SourceFiles="$(PkgNUnitLite)\tools\net45\nunitlite-runner.exe"
-              DestinationFolder="$(OutDir)"/>
-    </Target>
+    <Import Condition="'$(TargetFramework)' != 'netstandard2.1'" Project="DotnetCoreAppTests.props"/>
 
 </Project>

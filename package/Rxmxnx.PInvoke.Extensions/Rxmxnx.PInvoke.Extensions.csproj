@@ -42,15 +42,6 @@
         <None Include="..\..\LICENSE.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\Rxmxnx.PInvoke.Extensions.IlPatcher\Rxmxnx.PInvoke.Extensions.IlPatcher.csproj">
-            <PrivateAssets>all</PrivateAssets>
-            <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-            <SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
-            <Private>False</Private>
-        </ProjectReference>
-    </ItemGroup>
-
     <!-- Package properties -->
     <PropertyGroup Condition="'$(IsTempPackage)' == 'true' And '$(UseEmbeddedDebugSymbols)' == 'true' And ('$(TargetFramework)' == 'netstandard2.1' Or '$(TargetFramework)' == 'net45')">
         <DebugSymbols>true</DebugSymbols>
