@@ -97,7 +97,7 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// Appends all components from current buffer type.
 	/// </summary>
 	/// <param name="components">A dictionary of components.</param>
-#if !PACKAGE && NET7_0_OR_GREATER
+#if !PACKAGE && !NET7_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
 	internal virtual void AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components) { }

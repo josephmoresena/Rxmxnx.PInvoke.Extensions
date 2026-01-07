@@ -195,7 +195,6 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	public CStringBuilder Append(Int16 value)
 	{
-		if (value < 0) throw new ArgumentOutOfRangeException(nameof(value));
 #if NET9_0_OR_GREATER
 		using (this._lock.EnterScope())
 #else
