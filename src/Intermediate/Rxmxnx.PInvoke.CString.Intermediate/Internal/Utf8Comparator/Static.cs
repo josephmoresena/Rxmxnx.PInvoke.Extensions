@@ -18,6 +18,9 @@ internal abstract unsafe partial class Utf8Comparator
 	/// </summary>
 	/// <param name="source">A read-only span of <see cref="byte"/> elements representing a UTF-8 encoded text.</param>
 	/// <returns>A string that represents the <paramref name="source"/> text.</returns>
+#if !PACKAGE && (!NETCOREAPP || NET7_0_OR_GREATER)
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected static String GetStringFromUtf8(ReadOnlySpan<Byte> source) => Encoding.UTF8.GetString(source);
 	/// <summary>
@@ -25,6 +28,9 @@ internal abstract unsafe partial class Utf8Comparator
 	/// </summary>
 	/// <param name="source">A read-only span of <see cref="byte"/> elements representing a UTF-8 encoded text.</param>
 	/// <param name="destination">The character span receiving the decoded bytes.</param>
+#if !PACKAGE && NETCOREAPP && !NET7_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected static void CopyCharsFromUtf8(ReadOnlySpan<Byte> source, Span<Char> destination)
 		=> Encoding.UTF8.GetChars(source, destination);
@@ -33,6 +39,9 @@ internal abstract unsafe partial class Utf8Comparator
 	/// </summary>
 	/// <param name="source">A read-only span of <see cref="byte"/> elements representing a UTF-8 encoded text.</param>
 	/// <returns>The number of characters produced by decoding the UTF-8 encoded text.</returns>
+#if !PACKAGE && NETCOREAPP && !NET7_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected static Int32 GetCharCountFromUtf8(ReadOnlySpan<Byte> source) => Encoding.UTF8.GetCharCount(source);
 	/// <summary>
@@ -61,6 +70,9 @@ internal abstract unsafe partial class Utf8Comparator
 	/// Comparison is performed using the numeric values of UTF-16 code units and is independent of culture or
 	/// normalization.
 	/// </remarks>
+#if !PACKAGE && NETCOREAPP && !NET7_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected static Int32 OrdinalCompare(ReadOnlySpan<Char> spanA, ReadOnlySpan<Char> spanB)
 	{
@@ -98,6 +110,9 @@ internal abstract unsafe partial class Utf8Comparator
 	/// <param name="result">Receives the comparison result.</param>
 	/// <returns> <see langword="true"/> if a difference was detected; otherwise <see langword="false"/>.</returns>
 	/// <remarks>Advances both spans by the number of characters read.</remarks>
+#if !PACKAGE && NETCOREAPP && !NET7_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Boolean OrdinalCompareFirst(ref ReadOnlySpan<Char> spanA, ref ReadOnlySpan<Char> spanB,
 		out Int32 result)
@@ -118,6 +133,9 @@ internal abstract unsafe partial class Utf8Comparator
 	/// <typeparam name="T">The type of the value to read.</typeparam>
 	/// <param name="source">The Unicode char span source.</param>
 	/// <returns>A value of type <typeparamref name="T"/>  read from the given span.</returns>
+#if !PACKAGE && NETCOREAPP && !NET7_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static T Read<T>(ref ReadOnlySpan<Char> source) where T : unmanaged
 	{

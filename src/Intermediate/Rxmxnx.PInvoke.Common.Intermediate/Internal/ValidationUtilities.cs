@@ -270,6 +270,16 @@ internal static unsafe class ValidationUtilities
 	}
 
 #if NET9_0_OR_GREATER
+	/// <summary>
+	/// Validates if <paramref name="type"/> is not a ref-like type.
+	/// </summary>
+	/// <param name="type"></param>
+	/// <exception cref="InvalidOperationException">
+	/// Thrown if <paramref name="type"/> is not a ref-like type.
+	/// </exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public static void ThrowIfNotObject(Type type)
 	{
 		if (!type.IsByRefLike) return;
