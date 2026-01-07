@@ -19,6 +19,8 @@ public sealed class ParseTest
 		CStringSequence seq1 = CStringSequence.Create(Array.Empty<Char>());
 		CStringSequence seq2 = CStringSequence.Parse(nullString);
 		CStringSequence seq3 = CStringSequence.Create(nullString);
+		CStringSequence seq4 = CStringSequence.Create("\0\0\0"u8);
+		CStringSequence seq5 = CStringSequence.Parse("\0\0\0");
 
 		PInvokeAssert.Empty(seq0);
 		PInvokeAssert.Equal(0, seq0.ToString().Length);
@@ -28,6 +30,10 @@ public sealed class ParseTest
 		PInvokeAssert.Equal(0, seq2.ToString().Length);
 		PInvokeAssert.Empty(seq3);
 		PInvokeAssert.Equal(0, seq3.ToString().Length);
+		PInvokeAssert.Empty(seq4);
+		PInvokeAssert.Equal(0, seq4.ToString().Length);
+		PInvokeAssert.Empty(seq5);
+		PInvokeAssert.Equal(0, seq5.ToString().Length);
 	}
 
 	[Theory]
@@ -81,6 +87,44 @@ public sealed class ParseTest
 		CStringSequence seq = CStringSequence.Create(value);
 
 		csb.Clear().AppendJoin("\0"u8, seq.CreateView(false));
+
+		PInvokeAssert.Equal(value, csb.ToCString());
+	}
+
+	[Theory]
+	[InlineData(null)]
+	[InlineData(8)]
+	[InlineData(32)]
+	[InlineData(256)]
+	[InlineData(300)]
+	[InlineData(1000)]
+	public void ZeroTest(Int32? length)
+	{
+#pragma warning disable CA1859
+		IReadOnlyList<Int32> indices = TestSet.GetIndices(length);
+#pragma warning restore CA1859
+		CString[] zeros = new CString[indices.Count];
+		CStringBuilder csb = new();
+		for (Int32 i = 0; i < indices.Count; i++)
+		{
+			String? str = TestSet.GetString(indices[i]);
+			zeros[i] = CString.Create(Enumerable.Repeat((Byte)0, i).ToArray());
+			if (String.IsNullOrEmpty(str)) str = i.ToString();
+			csb.Append((Byte)0);
+			csb.Append(zeros[i]);
+			csb.Append(str);
+			zeros[i] += str;
+		}
+
+		CString value = csb.ToCString(false);
+		CStringSequence seq = CStringSequence.Create(value);
+		CStringSequence seq2 = CStringSequence.Parse(seq.ToString());
+
+		for (Int32 index = 0; index < seq.Count; index++)
+		{
+			PInvokeAssert.Equal(zeros[index], seq[index]);
+			PInvokeAssert.Equal(zeros[index], seq2[index]);
+		}
 
 		PInvokeAssert.Equal(value, csb.ToCString());
 	}

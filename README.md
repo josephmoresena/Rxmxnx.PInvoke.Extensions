@@ -2366,7 +2366,8 @@ Represents a sequence of null-terminated UTF-8 text strings.
 - <details>
   <summary>Create(ReadOnlySpan&lt;Char&gt;)</summary>
 
-  Creates a new `CStringSequence` instance from a UTF-8 buffer represented by a span of `Char`.
+  ~~Creates a new `CStringSequence` instance from a UTF-8 buffer represented by a span of `Char`.~~
+  This method is obsolete, use `CStringSequence.Create(ReadOnlySpan<Byte> value)` instead.
   </details>
 - <details>
   <summary>GetUnsafe(ReadOnlySpan&lt;ReadOnlyValPtr&lt;Byte&gt;&gt;)</summary>

@@ -202,6 +202,12 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	///     <item>Any non-consecutive UTF-8 null character will be considered an element separator.</item>
 	///     <item>Any consecutive UTF-8 null characters will be considered part of the next element.</item>
 	/// </list>
+	/// <remarks>
+	/// This method does not perform any encoding conversion. The input is interpreted as a UTF-8 buffer.
+	/// </remarks>
+#if PACKAGE
+	[Obsolete("Obsolete to avoid encoding confusion. Use Create(ReadOnlySpan<byte> value) instead.", true)]
+#endif
 	public static CStringSequence Create(ReadOnlySpan<Char> value)
 		=> CStringSequence.Create(MemoryMarshal.AsBytes(value));
 	/// <summary>
