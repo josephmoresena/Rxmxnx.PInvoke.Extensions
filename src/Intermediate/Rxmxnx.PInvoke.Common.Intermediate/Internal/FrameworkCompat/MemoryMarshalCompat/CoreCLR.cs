@@ -56,7 +56,11 @@ internal static unsafe partial class MemoryMarshalCompat
 		UIntPtr offset = 0;
 		UIntPtr lengthToExamine = Int32.MaxValue;
 
+#if !NET5_0_OR_GREATER
+		if (Sse2.IsSupported)
+#else
 		if (Sse2.IsSupported || AdvSimd.Arm64.IsSupported)
+#endif
 		{
 			if (Int32.MaxValue >= (UInt32)Vector128<Byte>.Count * 2)
 				lengthToExamine = MemoryMarshalCompat.UnalignedCountVector128(ref buffer);
@@ -187,6 +191,7 @@ internal static unsafe partial class MemoryMarshalCompat
 			lengthToExamine = Int32.MaxValue - offset;
 			goto SequentialScan;
 		}
+#if NET5_0_OR_GREATER
 		if (AdvSimd.Arm64.IsSupported)
 		{
 			if (offset >= Int32.MaxValue) return -1;
@@ -212,6 +217,7 @@ internal static unsafe partial class MemoryMarshalCompat
 			lengthToExamine = Int32.MaxValue - offset;
 			goto SequentialScan;
 		}
+#endif
 		if (!Vector.IsHardwareAccelerated) return -1;
 		{
 			if (offset >= Int32.MaxValue) return -1;
@@ -265,7 +271,11 @@ internal static unsafe partial class MemoryMarshalCompat
 		{
 			// Input isn't char aligned, we won't be able to align it to a Vector
 		}
+#if !NET5_0_OR_GREATER
+		else if (Sse2.IsSupported)
+#else
 		else if (Sse2.IsSupported || AdvSimd.Arm64.IsSupported)
+#endif
 		{
 			if (Int32.MaxValue >= (UInt32)Vector128<UInt16>.Count * 2)
 				lengthToExamine = MemoryMarshalCompat.UnalignedCountVector128(ref searchSpace);
@@ -377,6 +387,7 @@ internal static unsafe partial class MemoryMarshalCompat
 			lengthToExamine = Int32.MaxValue - offset;
 			goto SequentialScan;
 		}
+#if NET5_0_OR_GREATER
 		if (AdvSimd.Arm64.IsSupported)
 		{
 			if (offset >= Int32.MaxValue) return -1;
@@ -405,32 +416,30 @@ internal static unsafe partial class MemoryMarshalCompat
 			lengthToExamine = Int32.MaxValue - offset;
 			goto SequentialScan;
 		}
+#endif
 		if (!Vector.IsHardwareAccelerated) return -1;
 
+		if (offset >= Int32.MaxValue) return -1;
+		lengthToExamine = MemoryMarshalCompat.GetCharVectorSpanLength(offset, Int32.MaxValue);
+
+		if (lengthToExamine > 0)
 		{
-			if (offset >= Int32.MaxValue) return -1;
-			lengthToExamine = MemoryMarshalCompat.GetCharVectorSpanLength(offset, Int32.MaxValue);
-
-			if (lengthToExamine > 0)
+			Vector<UInt16> values = new(value);
+			do
 			{
-				Vector<UInt16> values = new(value);
-				do
-				{
-					Vector<UInt16> matches =
-						Vector.Equals(values, MemoryMarshalCompat.LoadVector(ref searchSpace, offset));
-					if (!Vector<UInt16>.Zero.Equals(matches))
-						return (Int32)(offset + MemoryMarshalCompat.LocateFirstFoundChar(matches));
+				Vector<UInt16> matches = Vector.Equals(values, MemoryMarshalCompat.LoadVector(ref searchSpace, offset));
+				if (!Vector<UInt16>.Zero.Equals(matches))
+					return (Int32)(offset + MemoryMarshalCompat.LocateFirstFoundChar(matches));
 
-					offset += Vector<UInt16>.Count;
-					lengthToExamine -= Vector<UInt16>.Count;
-				} while (lengthToExamine > 0);
-			}
-
-			if (offset >= Int32.MaxValue) return -1;
-
-			lengthToExamine = Int32.MaxValue - offset;
-			goto SequentialScan;
+				offset += Vector<UInt16>.Count;
+				lengthToExamine -= Vector<UInt16>.Count;
+			} while (lengthToExamine > 0);
 		}
+
+		if (offset >= Int32.MaxValue) return -1;
+
+		lengthToExamine = Int32.MaxValue - offset;
+		goto SequentialScan;
 		Found3:
 		return (Int32)(offset + 3);
 		Found2:
@@ -597,6 +606,7 @@ internal static unsafe partial class MemoryMarshalCompat
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static UIntPtr GetByteVectorSpanLength(UIntPtr offset, Int32 length)
 		=> (UInt32)((length - (Int32)offset) & ~(Vector<Byte>.Count - 1));
+#if NET5_0_OR_GREATER
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -623,22 +633,6 @@ internal static unsafe partial class MemoryMarshalCompat
 		if (selectedLanes == 0) return false;
 		matchedLane = BitOperations.TrailingZeroCount(selectedLanes) >> 2;
 		return true;
-	}
-#if !NET5_0_OR_GREATER
-#if !PACKAGE
-	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1172)]
-#endif
-	private static class AdvSimd
-	{
-		public static Vector128<T> CompareEqual<T>(Vector128<T> values, Vector128<T> _) where T : unmanaged => values;
-		public static Vector128<Byte> And(Vector128<Byte> compareResult, Vector128<Byte> _) => compareResult;
-
-		public static class Arm64
-		{
-			public static Boolean IsSupported => false;
-			public static Vector128<Byte> AddPairwise(Vector128<Byte> maskedSelectedLanes, Vector128<Byte> _)
-				=> maskedSelectedLanes;
-		}
 	}
 #endif
 #pragma warning restore CA2020
