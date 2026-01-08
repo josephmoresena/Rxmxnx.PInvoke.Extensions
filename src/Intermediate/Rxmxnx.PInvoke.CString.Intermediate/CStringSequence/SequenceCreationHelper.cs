@@ -6,13 +6,10 @@ public partial class CStringSequence
 	/// Represents the state object used during the creation of a <see cref="CStringSequence"/>.
 	/// </summary>
 	/// <typeparam name="TState">The type of the element to pass to the creation callback.</typeparam>
-	private readonly
 #if NET9_0_OR_GREATER
-		ref
-#endif
-		struct SequenceCreationHelper<TState>
-#if NET9_0_OR_GREATER
-		where TState : allows ref struct
+	private readonly ref struct SequenceCreationHelper<TState> where TState : allows ref struct
+#else
+	private readonly struct SequenceCreationHelper<TState>
 #endif
 	{
 		/// <summary>

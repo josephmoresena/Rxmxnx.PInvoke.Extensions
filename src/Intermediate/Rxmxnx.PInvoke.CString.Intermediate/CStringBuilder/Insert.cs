@@ -26,6 +26,9 @@ public sealed partial class CStringBuilder
 	/// <param name="index">The position in this instance where insertion begins.</param>
 	/// <param name="value">The character array to insert.</param>
 	/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public CStringBuilder Insert(Int32 index, Char[]? value)
 		=> value is null || value.Length == 0 ? this.Insert(index, value.AsSpan()) : this;
 	/// <summary>
@@ -34,6 +37,9 @@ public sealed partial class CStringBuilder
 	/// <param name="index">The position in this instance where insertion begins.</param>
 	/// <param name="value">The array of UTF-8 units to insert.</param>
 	/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public CStringBuilder Insert(Int32 index, Byte[]? value)
 		=> value is null || value.Length == 0 ? this.Insert(index, value.AsSpan()) : this;
 	/// <summary>
@@ -457,6 +463,9 @@ public sealed partial class CStringBuilder
 	/// <param name="value">The value to insert.</param>
 	/// <returns>A reference to this instance after the insert operation has completed.</returns>
 	[SkipLocalsInit]
+#if !PACKAGE && NET8_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	private static CStringBuilder? InsertUtf16<T>(CStringBuilder builder, Int32 index, T value)
 		where T : ISpanFormattable
 	{

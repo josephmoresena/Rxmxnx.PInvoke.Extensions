@@ -83,6 +83,7 @@ public unsafe partial class CStringSequence
 			if (textLength < 1) continue;
 			ReadOnlySpan<Byte> utf8Text = new(pointers[i].ToPointer(), textLength);
 			utf8Text.CopyTo(bytes[offset..]);
+			bytes[offset + utf8Text.Length] = default; // Null-termination.
 			offset += utf8Text.Length + 1;
 		}
 	}
@@ -126,30 +127,38 @@ public unsafe partial class CStringSequence
 	{
 		Span<Byte> byteSpan = MemoryMarshal.AsBytes(charSpan);
 		ReadOnlySpan<Byte> sourceSpan = new(helper.Pointer, helper.Length);
-		for (Int32 i = 0; i < sourceSpan.Length && i < byteSpan.Length; i++)
+		List<Int32> nulls = helper.NullChars;
+		Int32 textLength = Math.Min(sourceSpan.Length, byteSpan.Length);
+		Boolean addNullAtEnd = sourceSpan[textLength - 1] != default;
+		Int32 offset = 0;
+		while (!sourceSpan.IsEmpty && !byteSpan.IsEmpty)
 		{
-			byteSpan[i] = sourceSpan[i];
-			if (sourceSpan[i] == default && sourceSpan[i - 1] != default)
-				helper.NullChars.Add(i);
-		}
-	}
-	/// <summary>
-	/// Copies the content of the specified <paramref name="sequence"/> to the given
-	/// <paramref name="charSpan"/>.
-	/// </summary>
-	/// <param name="charSpan">
-	/// The writable <see cref="Char"/> span that is the destination of the copy operation.
-	/// </param>
-	/// <param name="sequence">
-	/// The <see cref="CStringSequence"/> instance whose content is to be copied.
-	/// </param>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void CopySequence(Span<Char> charSpan, CStringSequence sequence)
-	{
-		ReadOnlySpan<Char> chars = sequence._value;
-		chars.CopyTo(charSpan);
-	}
+			Int32 distToNull = sourceSpan.IndexOf((Byte)0);
+			if (distToNull < 0) break;
+			if (distToNull > 0)
+			{
+				offset += distToNull;
+				nulls.Add(offset);
 
+				Int32 newOffset = distToNull + 1;
+				sourceSpan[..newOffset].CopyTo(byteSpan);
+				sourceSpan = sourceSpan[newOffset..];
+				byteSpan = byteSpan[newOffset..];
+				offset++;
+				continue;
+			}
+			Int32 zeros = CStringSequence.GetZeros(sourceSpan);
+			offset += distToNull + zeros;
+			byteSpan[..zeros].Clear();
+			sourceSpan = sourceSpan[zeros..];
+			byteSpan = byteSpan[zeros..];
+		}
+		sourceSpan.CopyTo(byteSpan);
+		if (addNullAtEnd)
+			helper.NullChars.Add(textLength);
+		if (!byteSpan.IsEmpty)
+			byteSpan[sourceSpan.Length..].Clear();
+	}
 	/// <summary>
 	/// Creates a UTF-8 text sequence using the given <paramref name="helper"/>,
 	/// with each UTF-8 text being initialized using the specified callback.
@@ -319,60 +328,25 @@ public unsafe partial class CStringSequence
 		return length;
 	}
 	/// <summary>
-	/// Retrieves usable UTF-8 buffer from <paramref name="bufferSpan"/>.
-	/// </summary>
-	/// <param name="bufferSpan">A buffer of a UTF-8 sequence.</param>
-	/// <param name="isParsable">Indicates whether resulting buffer is parsable.</param>
-	/// <returns>A UTF-8 buffer.</returns>
-	private static ReadOnlySpan<Byte> GetSourceBuffer(ReadOnlySpan<Byte> bufferSpan, ref Boolean isParsable)
-	{
-		Int32 bufferLength = bufferSpan.Length;
-		if (bufferSpan.Length == 0)
-		{
-			isParsable = false;
-			return bufferSpan;
-		}
-		while (bufferSpan.Length > 0 && bufferSpan[0] == default)
-			bufferSpan = bufferSpan[1..]; // Any UTF-8 null-character at beginning is ignored.
-		isParsable &= bufferSpan.Length == bufferLength;
-		while (!isParsable && bufferSpan.Length > 3 && bufferSpan[^3] == default)
-		{
-			// If not parsable buffer, unnecessary UTF-8 null-characters at the end will be removed.
-			if (bufferSpan[^2] != default || bufferSpan[^1] != default)
-				break;
-			bufferSpan = bufferSpan[..^1];
-		}
-		isParsable = bufferSpan.Length == bufferLength && bufferSpan[^1] == default;
-		return bufferSpan;
-	}
-	/// <summary>
 	/// Creates a new <see cref="CStringSequence"/> instance from <paramref name="buffer"/>.
 	/// </summary>
 	/// <param name="buffer">A buffer of a UTF-8 sequence.</param>
 	/// <returns>A new <see cref="CStringSequence"/> instance.</returns>
 	private static CStringSequence CreateFrom(ReadOnlySpan<Byte> buffer)
 	{
+		CStringSequence.Trim(ref buffer);
+
 		if (buffer.Length == 0) return CStringSequence.Empty;
 		Int32 totalBytes = buffer.Length + (buffer[^1] == default ? 0 : 1);
-		Int32 totalChars = totalBytes / sizeof(Char);
-		ReadOnlySpan<Int32> nulls;
+		Int32 totalChars = totalBytes / sizeof(Char) + totalBytes % sizeof(Char);
 		String sequenceBuffer;
+		Int32?[] lengths;
 		fixed (Byte* ptr = &MemoryMarshal.GetReference(buffer))
 		{
 			CopyTextHelper state = new() { Pointer = ptr, Length = buffer.Length, NullChars = [], };
 			sequenceBuffer = String.Create(totalChars, state, CStringSequence.CopyText);
-#if NET5_0_OR_GREATER
-			nulls = CollectionsMarshal.AsSpan(state.NullChars);
-#else
-			Span<Int32> nullsTmp = stackalloc Int32[state.NullChars.Count];
-			for (Int32 i = 0; i < state.NullChars.Count; i++)
-				nullsTmp[i] = state.NullChars[i];
-#pragma warning disable CS9080
-			nulls = nullsTmp;
-#pragma warning restore CS9080
-#endif
+			lengths = CStringSequence.GetLengths(state.NullChars);
 		}
-		Int32?[] lengths = CStringSequence.GetLengths(nulls);
 		return new(sequenceBuffer, lengths);
 	}
 	/// <summary>
@@ -382,23 +356,82 @@ public unsafe partial class CStringSequence
 	/// <returns>A new <see cref="CStringSequence"/> instance.</returns>
 	private static CStringSequence CreateFrom(String buffer)
 	{
+		ReadOnlySpan<Byte> source = MemoryMarshal.AsBytes(buffer.AsSpan());
+		Int32?[] lengths = CStringSequence.GetLengths(CStringSequence.GetNulls(source));
+		return new(buffer, lengths);
+	}
+	/// <summary>
+	/// Retrieves the number of consecutive UTF-8 null-characters in <paramref name="buffer"/>.
+	/// </summary>
+	/// <param name="buffer">A buffer of a UTF-8 sequence.</param>
+	/// <returns>The number of consecutive UTF-8 null-characters in <paramref name="buffer"/>.</returns>
+	private static Int32 GetZeros(ReadOnlySpan<Byte> buffer)
+	{
+		Int32 zeros = 0;
+		while (zeros < buffer.Length && buffer[zeros] == 0)
+			zeros++;
+		return zeros;
+	}
+	/// <summary>
+	/// Trims leading and trailing UTF-8 null-character from the given <see cref="ReadOnlySpan{Byte}"/>.
+	/// </summary>
+	/// <param name="bufferSpan">
+	/// A reference to a <see cref="ReadOnlySpan{Byte}"/> that will be updated to exclude leading and trailing
+	/// UTF-8 null-characters.
+	/// </param>
+	private static void Trim(ref ReadOnlySpan<Byte> bufferSpan)
+	{
+		Int32 zeros = CStringSequence.GetZeros(bufferSpan);
+		Int32 length = bufferSpan.Length - zeros;
+		while (length > 0 && bufferSpan[zeros + length - 1] == default)
+			length--;
+		bufferSpan = bufferSpan.Slice(zeros, length);
+	}
+	/// <summary>
+	/// Retrieves the zero-based indices of isolated UTF-8 null-character within the given span.
+	/// </summary>
+	/// <param name="span">A <see cref="ReadOnlySpan{Byte}"/> to scan for null bytes.</param>
+	/// <returns>
+	/// A <see cref="List{Int32}"/> containing the zero-based positions of null bytes that are not part of a
+	/// consecutive sequence of zeros.
+	/// </returns>
+	private static List<Int32> GetNulls(ReadOnlySpan<Byte> span)
+	{
 		List<Int32> nulls = [];
-		ReadOnlySpan<Byte> span = MemoryMarshal.AsBytes(buffer.AsSpan());
-		for (Int32 i = 0; i < span.Length; i++)
+		Int32 offset = 0;
+		while (!span.IsEmpty)
 		{
-			if (span[i] == default && span[i - 1] != default)
-				nulls.Add(i);
+			Int32 distToNull = span.IndexOf((Byte)0);
+			if (distToNull < 0) break;
+			offset += distToNull;
+			if (distToNull > 0)
+			{
+				nulls.Add(offset);
+				span = span[(distToNull + 1)..];
+				offset++;
+				continue;
+			}
+			Int32 zeros = CStringSequence.GetZeros(span);
+			offset += zeros;
+			span = span[zeros..];
 		}
-		if (span[^1] != default) nulls.Add(span.Length);
+		return nulls;
+	}
+	/// <summary>
+	/// Retrieves the sequence lengths array from <paramref name="nulls"/>.
+	/// </summary>
+	/// <param name="nulls">Collection of the indices UTF-8 null-character in buffer.</param>
+	/// <returns>Sequence lengths array.</returns>
+	private static Int32?[] GetLengths(List<Int32> nulls)
+	{
 #if NET5_0_OR_GREATER
-		Int32?[] lengths = CStringSequence.GetLengths(CollectionsMarshal.AsSpan(nulls));
+		return CStringSequence.GetLengths(CollectionsMarshal.AsSpan(nulls));
 #else
 		Span<Int32> nullsTmp = stackalloc Int32[nulls.Count];
 		for (Int32 i = 0; i < nulls.Count; i++)
 			nullsTmp[i] = nulls[i];
-		Int32?[] lengths = CStringSequence.GetLengths(nullsTmp);
+		return CStringSequence.GetLengths(nullsTmp);
 #endif
-		return new(buffer, lengths);
 	}
 	/// <summary>
 	/// Retrieves the sequence lengths array from <paramref name="nulls"/>.
@@ -407,6 +440,8 @@ public unsafe partial class CStringSequence
 	/// <returns>Sequence lengths array.</returns>
 	private static Int32?[] GetLengths(ReadOnlySpan<Int32> nulls)
 	{
+		if (nulls.IsEmpty) return [];
+
 		Int32?[] lengths = new Int32?[nulls.Length];
 		Int32 offset = 0;
 		for (Int32 i = 0; i < lengths.Length; i++)

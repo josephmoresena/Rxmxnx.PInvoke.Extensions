@@ -5,6 +5,9 @@ internal partial class Utf8Comparator
 	/// <summary>
 	/// Represents a 64-bit chunk containing four UTF-16 code units.
 	/// </summary>
+#if !PACKAGE && NETCOREAPP && !NET7_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	[StructLayout(LayoutKind.Explicit, Size = sizeof(Int64))]
 	private readonly struct DoubleCharSpanChunk
 	{

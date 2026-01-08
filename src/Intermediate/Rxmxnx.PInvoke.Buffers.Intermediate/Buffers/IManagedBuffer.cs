@@ -70,6 +70,9 @@ public interface IManagedBuffer<T>
 	/// <param name="components">A dictionary of components.</param>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Browsable(false)]
+#if !PACKAGE && !NET7_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	private protected static void AppendComponent<TBuffer>(IDictionary<UInt16, BufferTypeMetadata<T>> components)
 		where TBuffer : struct, IManagedBuffer<T>
 	{

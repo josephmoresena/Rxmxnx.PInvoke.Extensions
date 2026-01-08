@@ -62,6 +62,20 @@ public sealed class BasicTests : CStringBuilderTestsBase
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
 	}
 	[Theory]
+	[InlineData(null)]
+	[InlineData(8)]
+	[InlineData(32)]
+	[InlineData(256)]
+	[InlineData(300)]
+	[InlineData(1000)]
+	public void AppendSequenceTest(Int32? length)
+	{
+		CStringSequence seq = new(TestSet.GetIndices(length).Select(i => TestSet.GetString(i)));
+		CString value0 = seq.ToCString(false);
+		CString value1 = new CStringBuilder().Append(seq).ToCString(false);
+		Assert.True(value0.AsSpan().SequenceEqual(value1.AsSpan()));
+	}
+	[Theory]
 	[InlineData(8)]
 	[InlineData(32)]
 	[InlineData(256)]

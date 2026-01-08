@@ -6,6 +6,9 @@ internal partial class Utf8Comparator
 	/// Represents a fixed-size pair of unmanaged values of type <typeparamref name="T"/>.
 	/// </summary>
 	/// <typeparam name="T">An unmanaged value type whose instances are stored contiguously.</typeparam>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[StructLayout(LayoutKind.Sequential)]
 	private readonly struct Pair<T> where T : unmanaged
 	{

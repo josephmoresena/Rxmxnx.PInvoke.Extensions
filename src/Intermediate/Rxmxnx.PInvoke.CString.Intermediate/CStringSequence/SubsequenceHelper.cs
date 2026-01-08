@@ -5,11 +5,11 @@ public partial class CStringSequence
 	/// <summary>
 	/// A helper class used to create subsequences from a parent <see cref="CStringSequence"/>.
 	/// </summary>
-	private readonly
 #if NET9_0_OR_GREATER
-		ref
+	private readonly ref struct SubsequenceHelper
+#else
+	private readonly struct SubsequenceHelper
 #endif
-		struct SubsequenceHelper
 	{
 		/// <summary>
 		/// The lengths of the strings in the subsequence.

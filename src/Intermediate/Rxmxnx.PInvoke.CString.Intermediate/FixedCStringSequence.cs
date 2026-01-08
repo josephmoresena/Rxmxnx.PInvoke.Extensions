@@ -89,6 +89,9 @@ public readonly unsafe ref struct FixedCStringSequence
 	/// Retrieves read-only span enumerator from current instance.
 	/// </summary>
 	/// <returns>A read-only span enumerator from current instance.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public ReadOnlySpan<CString?>.Enumerator GetEnumerator()
 	{
 		ReadOnlySpan<CString?> span = this._values;

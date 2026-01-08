@@ -50,6 +50,7 @@ fruitsApi.MapGet("/{id:int}",
 
 app.Run();
 
+#pragma warning disable CA1050
 public record Todo(Int32 Id, CString? Title, DateOnly? DueBy = null, Boolean IsComplete = false);
 
 [JsonSerializable(typeof(Todo[]))]
@@ -59,6 +60,10 @@ internal partial class AppJsonSerializerContext : JsonSerializerContext;
 
 internal static class SampleCollections
 {
+	private const String fruitsData = "鿰躍䄠灰敬\uf000趟\u208f片敥\u206e灁汰e鿰貍䈠湡湡a鿰認传慲杮e鿰讍䰠浥湯\uf000" +
+		"趟ₐ敐牡\uf000趟ₑ敐捡h鿰銍䌠敨牲y鿰鎍匠牴睡敢牲y鿰邫䈠畬扥牥祲\uf000趟\u2087片灡獥\uf000趟\u2089慗整浲汥湯\uf000" +
+		"趟₍楐敮灡汰e鿰궥䴠湡潧\uf000ꖟ\u209d楋楷\uf000趟\u2088敍潬n鿰薍吠浯瑡o鿰ꖥ䌠捯湯瑵\uf000ꖟₑ癁捯摡o鿰銫传楬敶\0\0";
+
 	public static readonly Todo[] Todos =
 	[
 		new(1, new(() => "Walk the dog"u8)), new(2, new(() => "Do the dishes"u8), DateOnly.FromDateTime(DateTime.Now)),
@@ -66,6 +71,6 @@ internal static class SampleCollections
 		new(4, new(() => "Clean the bathroom"u8)),
 		new(5, new(() => "Clean the car"u8), DateOnly.FromDateTime(DateTime.Now.AddDays(2))),
 	];
-	public static readonly CStringSequence Fruits = CStringSequence.Parse(
-		"鿰躍䄠灰敬\uf000趟\u208f片敥\u206e灁汰e鿰貍䈠湡湡a鿰認传慲杮e鿰讍䰠浥湯\uf000趟ₐ敐牡\uf000趟ₑ敐捡h鿰銍䌠敨牲y鿰鎍匠牴睡敢牲y鿰邫䈠畬扥牥祲\uf000趟₇片灡獥\uf000趟₉慗整浲汥湯\uf000趟₍楐敮灡汰e鿰궥䴠湡潧\uf000ꖟ\u209d楋楷\uf000趟₈敍潬n鿰薍吠浯瑡o鿰ꖥ䌠捯湯瑵\uf000ꖟₑ癁捯摡o鿰銫传楬敶\0");
+	public static readonly CStringSequence Fruits = CStringSequence.Parse(SampleCollections.fruitsData);
 }
+#pragma warning restore CA1050

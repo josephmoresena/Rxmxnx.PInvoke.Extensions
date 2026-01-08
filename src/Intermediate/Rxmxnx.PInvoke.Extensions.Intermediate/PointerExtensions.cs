@@ -39,6 +39,9 @@ public static unsafe class PointerExtensions
 	/// </summary>
 	/// <param name="ptr">The <see cref="IntPtr"/> instance to convert.</param>
 	/// <returns>The <see cref="UIntPtr"/> instance that represents the same pointer as this instance.</returns>
+#if !PACKAGE && !NET5_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static UIntPtr ToUIntPtr(this IntPtr ptr) => (UIntPtr)ptr.ToPointer();
 	/// <summary>

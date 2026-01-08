@@ -8,7 +8,9 @@ namespace Rxmxnx.PInvoke.Internal;
 internal sealed class BufferTypeMetadata<[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBuffer,
 	T> : BufferTypeMetadata<T> where TBuffer : struct, IManagedBuffer<T>
 {
+#if !NET7_0_OR_GREATER
 	private readonly Action<IDictionary<UInt16, BufferTypeMetadata<T>>>? _appendComponents;
+#endif
 
 	/// <inheritdoc/>
 	public override Type BufferType => typeof(TBuffer);
@@ -30,15 +32,28 @@ internal sealed class BufferTypeMetadata<[DynamicallyAccessedMembers(BufferManag
 	/// <param name="components">Buffers components.</param>
 	/// <param name="isBinary">Indicates if current buffer is binary.</param>
 	/// <param name="appendComponents">Append components delegate.</param>
+#if !PACKAGE && NET7_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public BufferTypeMetadata(Int32 capacity, BufferTypeMetadata<T>[] components, Boolean isBinary = true,
+#if !PACKAGE && NET7_0_OR_GREATER
+		[SuppressMessage("ReSharper", "UnusedParameter.Local")]
+#endif
 		Action<IDictionary<UInt16, BufferTypeMetadata<T>>>? appendComponents = default) : base(
 		isBinary, components, (UInt16)capacity)
-		=> this._appendComponents = appendComponents;
+	{
+#if !NET7_0_OR_GREATER
+		this._appendComponents = appendComponents;
+#endif
+	}
 
 	/// <inheritdoc/>
+#if !PACKAGE && NET7_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	internal override void AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components)
 	{
-#if !PACKAGE || !NET7_0_OR_GREATER
+#if !NET7_0_OR_GREATER
 		if (this._appendComponents is null)
 		{
 			base.AppendComponent(components);

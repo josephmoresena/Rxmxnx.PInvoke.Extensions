@@ -102,9 +102,6 @@ There are three buffer registration options:
 2. For generic `struct` type.
 3. For generic nullable `struct` type.
 
-**Note:** In .NET 5.0 and earlier, reflection is used by these methods due to the lack of support
-for [static virtual members in interfaces](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/interface#static-abstract-and-virtual-members).
-
 ## Binary buffer Preparation
 
 Binary buffers can be statically prepared for a given count number elements. This method requires the use of reflection

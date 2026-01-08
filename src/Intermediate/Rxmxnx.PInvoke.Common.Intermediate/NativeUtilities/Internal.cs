@@ -7,6 +7,9 @@ public partial class NativeUtilities
 	/// </summary>
 	/// <param name="hexCharacter">ASCII hexadecimal character.</param>
 	/// <returns>Decimal value from <paramref name="hexCharacter"/>.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	internal static Byte GetDecimalValue(Byte hexCharacter)
 		=> hexCharacter switch
 		{

@@ -39,6 +39,9 @@ internal sealed class StringUtf8Comparator : Utf8Comparator<Char>
 		return result;
 	}
 	/// <inheritdoc/>
+#if !PACKAGE && (!NETCOREAPP || NET7_0_OR_GREATER)
+	[ExcludeFromCodeCoverage]
+#endif
 	protected override String GetString(ReadOnlySpan<Char> source) => new(source);
 	/// <inheritdoc/>
 #if !PACKAGE

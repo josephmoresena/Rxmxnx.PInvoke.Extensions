@@ -18,8 +18,8 @@ public partial class CStringSequence
 	/// <param name="sequence">The <see cref="CStringSequence"/> instance to copy.</param>
 	private CStringSequence(CStringSequence sequence)
 	{
-		this._lengths = sequence._lengths.ToArray();
-		this._value = String.Create(sequence._value.Length, sequence, CStringSequence.CopySequence);
+		this._lengths = (Int32?[])sequence._lengths.Clone();
+		this._value = (String)sequence._value.Clone();
 		this._cache = CStringSequence.CreateCache(this._lengths.AsSpan(), out this._nonEmptyCount);
 	}
 	/// <summary>

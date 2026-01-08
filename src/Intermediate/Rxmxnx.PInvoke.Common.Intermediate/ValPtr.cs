@@ -99,6 +99,9 @@ public readonly unsafe partial struct ValPtr<T> : IWrapper<IntPtr>, IEquatable<V
 	/// The <see cref="String"/> representation of the value of the current <see cref="ValPtr{T}"/> object.
 	/// </returns>
 	/// <exception cref="FormatException"><paramref name="format"/> is invalid or not supported.</exception>
+#if !PACKAGE && !NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public String ToString(String? format) => this.Pointer.ToString(format!);
 
 	/// <summary>

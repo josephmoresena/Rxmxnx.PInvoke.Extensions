@@ -19,15 +19,12 @@
         <Optimize>true</Optimize>
     </PropertyGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)' != 'net45'">
-        <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage"/>
-    </ItemGroup>
-    <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
-        <ProjectReference Include="..\Rxmxnx.PInvoke.VNextTest\Rxmxnx.PInvoke.VNextTest.csproj"/>
-    </ItemGroup>
-
     <ItemGroup>
         <None Remove="Mono.ILLink.Descriptors.xml"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
+        <ProjectReference Include="..\Rxmxnx.PInvoke.VNextTest\Rxmxnx.PInvoke.VNextTest.csproj"/>
     </ItemGroup>
 
     <Import Project="..\Artifact.targets"/>

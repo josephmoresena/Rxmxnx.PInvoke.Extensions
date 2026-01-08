@@ -58,6 +58,9 @@ public interface IEnumerableSequence<out T> : IEnumerableSequence, IEnumerable<T
 	where T : allows ref struct
 #endif
 {
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	void IEnumerableSequence.DoNotImplement() { }
 	IEnumerator<T> IEnumerable<T>.GetEnumerator()
 #if !PACKAGE || NETCOREAPP
