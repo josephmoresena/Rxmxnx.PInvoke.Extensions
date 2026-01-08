@@ -147,6 +147,13 @@ public sealed class ParseTest
 		PInvokeAssert.Equal(seq3.ToString(), seq0.ToString());
 		PInvokeAssert.Equal(nullEndBuffer.Length, seq1.ToString().Length);
 		PInvokeAssert.Equal(seq3.ToString(), seq2.ToString());
+
+		using (MemoryHandle mem0 = seq0.ToString().AsMemory().Pin())
+			ParseTest.UnsafeTest(values, mem0);
+		using (MemoryHandle mem1 = seq1.ToString().AsMemory().Pin())
+			ParseTest.UnsafeTest(values, mem1);
+		using (MemoryHandle mem2 = seq2.ToString().AsMemory().Pin())
+			ParseTest.UnsafeTest(values, mem2);
 	}
 	private static void RandomParseTest(CString[] values)
 	{
@@ -157,16 +164,37 @@ public sealed class ParseTest
 		Int32 totalChars = totalBytes / sizeof(Char) + totalBytes % sizeof(Char);
 		String buffer = String.Create(totalChars, (offset, values), ParseTest.RandomCreate);
 		CStringSequence seq0 = CStringSequence.Parse(buffer);
-		CStringSequence seq2 = CStringSequence.Create(buffer);
-		CStringSequence seq3 = new(values);
+		CStringSequence seq1 = CStringSequence.Create(buffer);
+		CStringSequence seq2 = new(values);
 
 		PInvokeAssert.Equal(values, seq0);
-		PInvokeAssert.Equal(values, seq2);
+		PInvokeAssert.Equal(values, seq1);
 		PInvokeAssert.Equal(offset == 0, Object.ReferenceEquals(buffer, seq0.ToString()));
-		PInvokeAssert.False(Object.ReferenceEquals(buffer, seq2.ToString()));
+		PInvokeAssert.False(Object.ReferenceEquals(buffer, seq1.ToString()));
 		PInvokeAssert.InRange(seq0.ToString().Length, values.Select(c => c.Length).Sum() / 2, totalChars);
-		PInvokeAssert.Equal(offset != 0 ? seq3.ToString() : buffer, seq0.ToString());
-		PInvokeAssert.Equal(seq3.ToString(), seq2.ToString());
+		PInvokeAssert.Equal(offset != 0 ? seq2.ToString() : buffer, seq0.ToString());
+		PInvokeAssert.Equal(seq2.ToString(), seq1.ToString());
+
+		using (MemoryHandle mem0 = seq0.ToString().AsMemory().Pin())
+			ParseTest.UnsafeTest(values, mem0);
+		using (MemoryHandle mem1 = seq1.ToString().AsMemory().Pin())
+			ParseTest.UnsafeTest(values, mem1);
+		using (MemoryHandle mem2 = seq2.ToString().AsMemory().Pin())
+			ParseTest.UnsafeTest(values, mem2);
+	}
+	private static unsafe void UnsafeTest(CString[] values, MemoryHandle memoryHandle)
+	{
+		Byte* ptr = (Byte*)memoryHandle.Pointer;
+		foreach (CString t in values)
+		{
+#if !NET6_0_OR_GREATER
+			ReadOnlySpan<Byte> val0 = MemoryMarshalCompat.CreateReadOnlySpanFromNullTerminated(ptr);
+#else
+			ReadOnlySpan<Byte> val0 = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(ptr);
+#endif
+			PInvokeAssert.True(t.AsSpan().SequenceEqual(val0));
+			ptr += val0.Length + 1;
+		}
 	}
 	private static void RandomCreate(Span<Char> span, (Int32 offset, CString[] values) arg)
 	{
