@@ -8,6 +8,7 @@ namespace Rxmxnx.PInvoke.Patch.Tests;
 public class XUnitDisplayNamePatch : TestAssemblyPatchTask
 {
 	/// <inheritdoc/>
+	[SuppressMessage("csharpsquid", "S3973")]
 	protected override Boolean IlPatch(ModuleDefinition mainModule)
 	{
 		Boolean modified = false;
