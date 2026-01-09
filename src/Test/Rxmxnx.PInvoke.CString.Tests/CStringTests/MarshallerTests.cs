@@ -1,7 +1,3 @@
-#if !NETCOREAPP
-using Fact = NUnit.Framework.TestAttribute;
-#endif
-
 namespace Rxmxnx.PInvoke.Tests.CStringTests;
 
 [TestFixture]
@@ -16,7 +12,7 @@ public sealed unsafe class MarshallerTests
 		MarshallerTests.AssertToUnmanaged(TestSet.Utf8NullTerminatedBytes[index]);
 		MarshallerTests.AssertToUnmanaged(TestSet.Utf8Bytes[index]);
 		MarshallerTests.AssertToUnmanaged((CString)TestSet.Utf16Text[index]);
-		
+
 		ReadOnlySpan<Byte> utf8Span = TestSet.Utf8Text[index]();
 		fixed (void* ptr = &MemoryMarshal.GetReference(utf8Span))
 		{

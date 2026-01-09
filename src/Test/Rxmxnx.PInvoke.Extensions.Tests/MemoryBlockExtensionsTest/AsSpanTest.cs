@@ -4,8 +4,7 @@ using Skip = Xunit.Skip;
 #elif NETCOREAPP
 using SkippableTheoryAttribute = Xunit.TheoryAttribute;
 #else
-using Fact = NUnit.Framework.TestAttribute;
-using InlineData = NUnit.Framework.TestCaseAttribute;
+using SkippableTheory = NUnit.Framework.TestAttribute;
 #endif
 
 namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;

@@ -2,10 +2,9 @@
 using Skip = Xunit.Skip;
 
 #elif NETCOREAPP
-using SkippableTheoryAttribute = Xunit.TheoryAttribute;
+using SkippableTheory = Xunit.TheoryAttribute;
 #else
-using Fact = NUnit.Framework.TestAttribute;
-using InlineData = NUnit.Framework.TestCaseAttribute;
+using SkippableTheory = NUnit.Framework.TestAttribute;
 #endif
 
 namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
@@ -23,7 +22,7 @@ public class AsMemoryTest
 
 	[Fact]
 	public void AsMemoryCountTest() => PInvokeAssert.Equal(31, AsMemoryTest.asMemories.Count);
-	[SkippableTheoryAttribute]
+	[SkippableTheory]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -56,7 +55,7 @@ public class AsMemoryTest
 	[InlineData(31)]
 	[InlineData(32)]
 	public void ByteTest(Int32 dimension) => AsMemoryTest.GenericTest<Byte>(dimension);
-	[SkippableTheoryAttribute]
+	[SkippableTheory]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -89,7 +88,7 @@ public class AsMemoryTest
 	[InlineData(31)]
 	[InlineData(32)]
 	public void Int32Test(Int32 dimension) => AsMemoryTest.GenericTest<Int32>(dimension);
-	[SkippableTheoryAttribute]
+	[SkippableTheory]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]
@@ -122,7 +121,7 @@ public class AsMemoryTest
 	[InlineData(31)]
 	[InlineData(32)]
 	public void StringTest(Int32 dimension) => AsMemoryTest.GenericTest<String>(dimension);
-	[SkippableTheoryAttribute]
+	[SkippableTheory]
 	[InlineData(2)]
 	[InlineData(3)]
 	[InlineData(4)]

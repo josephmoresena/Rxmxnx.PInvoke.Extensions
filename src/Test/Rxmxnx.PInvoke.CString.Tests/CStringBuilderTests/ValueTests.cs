@@ -1,7 +1,3 @@
-#if !NETCOREAPP
-using InlineData = NUnit.Framework.TestCaseAttribute;
-#endif
-
 namespace Rxmxnx.PInvoke.Tests.CStringBuilderTests;
 
 [TestFixture]

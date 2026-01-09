@@ -1,6 +1,5 @@
 ﻿#if !NETCOREAPP
 using Rune = System.UInt32;
-using Fact = NUnit.Framework.TestAttribute;
 #endif
 
 namespace Rxmxnx.PInvoke.Tests.Internal.DecodedRuneTests;

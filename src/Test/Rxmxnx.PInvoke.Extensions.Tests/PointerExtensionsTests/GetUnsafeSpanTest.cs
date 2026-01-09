@@ -1,8 +1,4 @@
-﻿#if !NETCOREAPP
-using Fact = NUnit.Framework.TestAttribute;
-#endif
-
-namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
+﻿namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]

@@ -1,8 +1,4 @@
-﻿#if !NETCOREAPP
-using Fact = NUnit.Framework.TestAttribute;
-#endif
-
-namespace Rxmxnx.PInvoke.Tests.ValueRegionTests;
+﻿namespace Rxmxnx.PInvoke.Tests.ValueRegionTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
