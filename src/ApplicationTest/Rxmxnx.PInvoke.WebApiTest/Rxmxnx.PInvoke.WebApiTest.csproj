@@ -13,13 +13,17 @@
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
         <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
         <InterceptorsNamespaces>$(InterceptorsNamespaces);Microsoft.AspNetCore.OpenApi.Generated</InterceptorsNamespaces>
-        <NoWarn>$(NoWarn);IL2026;IL2070;IL2072;IL2075</NoWarn>
+        <NoWarn>$(NoWarn);IL2026;IL2070;IL2072;IL2075;IL3050</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.OpenApi" Version="3.1.2"/>
         <PackageReference Include="SwaggerUI.OpenApi" Version="2.5.0"/>
-        <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="10.1.0"/>
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="9.0.6"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.6"/>
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.1.0"/>
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.0"/>
     </ItemGroup>
