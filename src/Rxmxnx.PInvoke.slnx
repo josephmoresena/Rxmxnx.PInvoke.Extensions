@@ -20,6 +20,7 @@
         <File Path="..\CONTRIBUTING.md"/>
         <File Path="..\Directory.Build.props"/>
         <File Path="..\LICENSE.md"/>
+        <File Path="..\MonoCecil.props"/>
         <File Path="..\README.md"/>
         <File Path="..\.gitignore"/>
         <File Path="Library.props"/>

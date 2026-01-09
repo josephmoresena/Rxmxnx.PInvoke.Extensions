@@ -12,15 +12,12 @@
     <ItemGroup>
         <Using Include="System.Diagnostics.CodeAnalysis"/>
         <Using Include="System.Xml"/>
-
-        <Using Include="Mono.Cecil"/>
-        <Using Include="Mono.Cecil.Cil"/>
-        <Using Include="Mono.Cecil.Rocks"/>
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Build.Utilities.Core" Version="18.0.2"/>
-        <PackageReference Include="Mono.Cecil" Version="0.11.6"/>
     </ItemGroup>
+
+    <Import Project="MonoCecil.props"/>
 
 </Project>

@@ -20,14 +20,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Mono.Cecil" Version="0.11.6"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <Using Include="System.Runtime.InteropServices"/>
-
-        <Using Include="Mono.Cecil"/>
-        <Using Include="Mono.Cecil.Cil"/>
     </ItemGroup>
+
+    <Import Project="..\..\..\MonoCecil.props"/>
 
 </Project>
