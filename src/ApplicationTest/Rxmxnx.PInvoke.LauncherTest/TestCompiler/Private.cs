@@ -10,7 +10,8 @@ public partial class TestCompiler
 			BuildDependencies = true, Publish = Publish.SelfContained,
 		};
 
-		await TestCompiler.RestoreNet(restoreArgs);
+		if (!OperatingSystem.IsFreeBSD())
+			await TestCompiler.RestoreNet(restoreArgs);
 
 		try
 		{
@@ -103,7 +104,6 @@ public partial class TestCompiler
 			AppendArgs = RestoreNetArgs.Append,
 			Notifier = ConsoleNotifier.Notifier,
 		};
-		await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
 		await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
 	}
 	private static Boolean ArchSupported(Architecture arch)
