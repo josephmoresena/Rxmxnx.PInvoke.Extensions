@@ -42,8 +42,8 @@
         <File Path="..\package\Rxmxnx.PInvoke.Extensions\PACKAGE.md"/>
     </Folder>
     <Folder Name="/Tests/">
-        <Project Path="Test/Rxmxnx.PInvoke.Patch.Tests/Rxmxnx.PInvoke.Patch.Tests.csproj"/>
-        <Project Path="Test\Rxmxnx.PInvoke.Assert.Tests\Rxmxnx.PInvoke.Assert.Tests.csproj"/>
+        <Project Path="Test\Rxmxnx.Assert.Tests\Rxmxnx.Assert.Tests.csproj"/>
+        <Project Path="Test\Rxmxnx.Patch.Tests\Rxmxnx.Patch.Tests.csproj"/>
         <Project Path="Test\Rxmxnx.PInvoke.Buffers.Tests\Rxmxnx.PInvoke.Buffers.Tests.csproj"/>
         <Project Path="Test\Rxmxnx.PInvoke.Common.Tests\Rxmxnx.PInvoke.Common.Tests.csproj"/>
         <Project

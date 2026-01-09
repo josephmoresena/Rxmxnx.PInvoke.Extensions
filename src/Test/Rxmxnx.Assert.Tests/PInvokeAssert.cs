@@ -7,7 +7,6 @@ namespace Rxmxnx.PInvoke.Tests;
 
 #if NETCOREAPP
 using TestDelegate = Action;
-
 #else
 using TestDelegate = TestDelegate;
 #endif

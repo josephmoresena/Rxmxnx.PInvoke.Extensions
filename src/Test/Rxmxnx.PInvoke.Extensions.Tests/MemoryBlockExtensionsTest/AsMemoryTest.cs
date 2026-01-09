@@ -2,7 +2,7 @@
 using Skip = Xunit.Skip;
 
 #elif NETCOREAPP
-using SkippableTheory = Xunit.TheoryAttribute;
+using SkippableTheoryAttribute = Xunit.TheoryAttribute;
 #else
 using SkippableTheory = NUnit.Framework.TestAttribute;
 #endif

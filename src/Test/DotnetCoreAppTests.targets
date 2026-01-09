@@ -1,7 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
     <ItemGroup>
-        <ProjectReference Include="..\Rxmxnx.PInvoke.Patch.Tests\Rxmxnx.PInvoke.Patch.Tests.csproj">
+        <ProjectReference Include="..\Rxmxnx.Patch.Tests\Rxmxnx.Patch.Tests.csproj">
             <PrivateAssets>all</PrivateAssets>
             <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
             <SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
@@ -10,7 +10,7 @@
     </ItemGroup>
 
     <UsingTask TaskName="XUnitDisplayNamePatch"
-               AssemblyFile="Rxmxnx.PInvoke.Patch.Tests\bin\$(Configuration)\netstandard2.0\Rxmxnx.PInvoke.Patch.Tests.dll"/>
+               AssemblyFile="Rxmxnx.Patch.Tests\bin\$(Configuration)\netstandard2.0\Rxmxnx.Patch.Tests.dll"/>
 
     <Target Name="AssemblyPatch" AfterTargets="Build" BeforeTargets="Test">
         <PropertyGroup>
