@@ -2,6 +2,7 @@
 
     <Import Project="..\Tests.props"/>
     <Import Condition="'$(TargetFramework)' == 'netstandard2.1'" Project="..\MonoTests.targets"/>
+    <Import Condition="'$(TargetFramework)' != 'netstandard2.1' And '$(MultipleFrameworkTest)' == 'true'" Project="..\DotnetCoreAppTests.targets"/>
 
     <ItemGroup>
         <Using Condition="'$(TargetFramework)' != 'netstandard2.1'" Include="Xunit"/>
