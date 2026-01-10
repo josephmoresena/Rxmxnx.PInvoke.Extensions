@@ -1,21 +1,36 @@
 using System.Text.Json.Serialization;
 
 using Microsoft.AspNetCore.Routing.Constraints;
-using Microsoft.OpenApi;
 
 using Rxmxnx.PInvoke;
+#if OPEN_API_2
+using Microsoft.OpenApi;
+
+#else
+using Microsoft.OpenApi.Models;
+#endif
 
 WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-	c.MapType<CString>(() => new OpenApiSchema { Type = JsonSchemaType.String, });
+#if OPEN_API_2
+	const JsonSchemaType stringType = JsonSchemaType.String;
+	const JsonSchemaType arrayType = JsonSchemaType.Array;
+#else
+	const String stringType = "string";
+	const String arrayType = "array";
+	// ReSharper disable ArrangeObjectCreationWhenTypeNotEvident
+#endif
+	c.MapType<CString>(() => new OpenApiSchema { Type = stringType, });
 	c.MapType<CStringSequence>(() => new OpenApiSchema
 	{
-		Type = JsonSchemaType.Array,
-		Items = new OpenApiSchema { Type = JsonSchemaType.String, },
+		Type = arrayType, Items = new OpenApiSchema { Type = stringType, },
 	});
+#if !OPEN_API_2
+	// ReSharper restore ArrangeObjectCreationWhenTypeNotEvident
+#endif
 });
 builder.Services.AddOpenApi();
 builder.Services.Configure<RouteOptions>(options => options.SetParameterPolicy<RegexInlineRouteConstraint>("regex"));

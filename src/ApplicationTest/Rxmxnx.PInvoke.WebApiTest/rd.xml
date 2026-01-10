@@ -1,8 +1,0 @@
-<Directives>
-  <Application>
-    <Assembly Name="Microsoft.OpenApi">
-	  <!--In order to retrieve HiddenBorderSize-->
-      <Type Name="Microsoft.OpenApi.Models.OpenApiDocument" Dynamic="Required All"/>
-    </Assembly>
-  </Application>
-</Directives>

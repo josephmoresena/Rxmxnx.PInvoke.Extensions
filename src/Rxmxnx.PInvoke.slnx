@@ -10,6 +10,8 @@
         <File Path="ApplicationTest\MonoApp.props"/>
         <File Path="ApplicationTest\NativeAot.props"/>
         <File Path="ApplicationTest\nuget.config"/>
+        <File Path="ApplicationTest\OpenApi1.props"/>
+        <File Path="ApplicationTest\OpenApi2.props"/>
         <File Path="ApplicationTest\PackageReference.props"/>
         <File Path="ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\Mono.ILLink.Descriptors.xml"/>
     </Folder>

@@ -55,7 +55,8 @@ public partial class TestCompiler
 
 		try
 		{
-			await TestCompiler.RestoreNet(restoreArgs);
+			if (!OperatingSystem.IsFreeBSD())
+				await TestCompiler.RestoreNet(restoreArgs);
 			await TestCompiler.CompileNet(compileArgs);
 		}
 		finally
