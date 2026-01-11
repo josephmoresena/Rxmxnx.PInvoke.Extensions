@@ -47,6 +47,12 @@ public partial class ValueRegion<T>
 		private protected override T[]? AsArray() => !this.IsMemorySlice ? this._array : default;
 
 		/// <inheritdoc/>
+		internal override Boolean TryGetMemory(out ReadOnlyMemory<T> memory)
+		{
+			memory = new(this._array, this.Offset, this.End - this.Offset);
+			return true;
+		}
+		/// <inheritdoc/>
 		internal override ReadOnlySpan<T> AsSpan()
 			=> MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(this._array),
 			                                    this._array.Length)[this.Offset..this.End];

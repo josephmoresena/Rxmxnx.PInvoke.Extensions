@@ -1,8 +1,17 @@
+using System.Globalization;
+using System.Text;
 using System.Text.Json.Serialization;
 
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing.Constraints;
 
 using Rxmxnx.PInvoke;
+using Rxmxnx.PInvoke.WebApiTest;
+#if NET10_0_OR_GREATER
+using System.Runtime.CompilerServices;
+#endif
+
 #if OPEN_API_2
 using Microsoft.OpenApi;
 
@@ -51,10 +60,13 @@ app.MapSwagger();
 RouteGroupBuilder todosApi = app.MapGroup("/todos");
 
 todosApi.MapGet("/", static () => SampleCollections.Todos);
-todosApi.MapGet("/{id:int}",
-                static (Int32 id) => SampleCollections.Todos.FirstOrDefault(a => a.Id == id) is { } todo ?
-	                Results.Ok(todo) :
-	                Results.NotFound());
+todosApi.MapGet("/{id:int}", static async Task<Results<Ok<Todo>, NotFound>> (Int32 id) =>
+{
+	await Task.Yield();
+	Todo? todo = SampleCollections.Todos.FirstOrDefault(a => a.Id == id);
+	await Task.Delay(Random.Shared.Next(10, 200));
+	return todo is not null ? TypedResults.Ok(todo) : TypedResults.NotFound();
+});
 
 RouteGroupBuilder fruitsApi = app.MapGroup("/fruits");
 fruitsApi.MapGet("/", static () => SampleCollections.Fruits);
@@ -62,8 +74,72 @@ fruitsApi.MapGet("/{id:int}",
                  static (Int32 id) => SampleCollections.Fruits.Skip(id - 1).FirstOrDefault() is { } fruit ?
 	                 Results.Ok(fruit) :
 	                 Results.NotFound());
+fruitsApi.MapGet("random/{count:int}", (Int32 count, CancellationToken cancellationToken) =>
+{
+	return new JsonAsyncEnumerableResult<CString>(EnumerateRandomFruits(count, cancellationToken));
+	static async IAsyncEnumerable<CString> EnumerateRandomFruits(Int32 count,
+		[EnumeratorCancellation] CancellationToken ct)
+	{
+		await Task.Yield();
+		while (count > 0 && !ct.IsCancellationRequested)
+		{
+			Int32 index = Random.Shared.Next(0, SampleCollections.Fruits.Count);
+			yield return SampleCollections.Fruits[index];
+			await Task.Delay(Random.Shared.Next(10, 200));
+			count--;
+		}
+	}
+});
 
+RouteGroupBuilder textApi = app.MapGroup("/text");
+textApi.MapPost("/concat", static ([FromBody] CStringSequence sequence) => sequence.ToCString(false));
+textApi.MapPost("/getPrint",
+                static ([FromBody] CStringSequence sequence) => PrintSequenceBuffer(sequence.ToString().AsSpan()));
 app.Run();
+return;
+
+static CString PrintSequenceBuffer(ReadOnlySpan<Char> buffer)
+{
+	CStringBuilder cstrBuild = new();
+	foreach (Rune rune in buffer.EnumerateRunes())
+	{
+		if (rune.Value == 0)
+		{
+			cstrBuild.Append("\\0"u8);
+			continue;
+		}
+
+		UnicodeCategory cat = Rune.GetUnicodeCategory(rune);
+
+		Boolean printable = cat != UnicodeCategory.Control && cat != UnicodeCategory.Format &&
+			cat != UnicodeCategory.PrivateUse && cat != UnicodeCategory.OtherNotAssigned;
+
+		if (!printable || rune.Value == '"' || rune.Value == '\\' || rune.Value is >= 0x9FE0 and <= 0x9FFF)
+			AppendHex(cstrBuild, rune);
+		else
+			cstrBuild.Append(rune);
+	}
+	return cstrBuild.ToCString(false);
+	static void AppendHex(CStringBuilder cstrBuild, Rune rune)
+	{
+		if (rune.Value <= 0xFFFF)
+		{
+			cstrBuild.Append("\\u"u8);
+
+			Span<Byte> span = stackalloc Byte[4];
+			rune.Value.TryFormat(span, out _, "x4");
+			cstrBuild.Append(span);
+		}
+		else
+		{
+			cstrBuild.Append("\\U"u8);
+
+			Span<Byte> span = stackalloc Byte[8];
+			rune.Value.TryFormat(span, out _, "x8");
+			cstrBuild.Append(span);
+		}
+	}
+}
 
 #pragma warning disable CA1050
 public record Todo(Int32 Id, CString? Title, DateOnly? DueBy = null, Boolean IsComplete = false);
@@ -75,9 +151,9 @@ internal partial class AppJsonSerializerContext : JsonSerializerContext;
 
 internal static class SampleCollections
 {
-	private const String fruitsData = "鿰躍䄠灰敬\uf000趟\u208f片敥\u206e灁汰e鿰貍䈠湡湡a鿰認传慲杮e鿰讍䰠浥湯\uf000" +
-		"趟ₐ敐牡\uf000趟ₑ敐捡h鿰銍䌠敨牲y鿰鎍匠牴睡敢牲y鿰邫䈠畬扥牥祲\uf000趟\u2087片灡獥\uf000趟\u2089慗整浲汥湯\uf000" +
-		"趟₍楐敮灡汰e鿰궥䴠湡潧\uf000ꖟ\u209d楋楷\uf000趟\u2088敍潬n鿰薍吠浯瑡o鿰ꖥ䌠捯湯瑵\uf000ꖟₑ癁捯摡o鿰銫传楬敶\0\0";
+	private const String fruitsData = "\u9ff0躍䄠灰敬\uf000趟\u208f片敥\u206e灁汰e\u9ff0貍䈠湡湡a\u9ff0認传慲杮e\u9ff0讍䰠浥湯\uf000" +
+		"趟ₐ敐牡\uf000趟ₑ敐捡h\u9ff0銍䌠敨牲y\u9ff0鎍匠牴睡敢牲y\u9ff0邫䈠畬扥牥祲\uf000趟₇片灡獥\uf000趟₉慗整浲汥湯\uf000" +
+		"趟₍楐敮灡汰e\u9ff0궥䴠湡潧\uf000ꖟ\u209d楋楷\uf000趟₈敍潬n\u9ff0薍吠浯瑡o\u9ff0ꖥ䌠捯湯瑵\uf000ꖟₑ癁捯摡o\u9ff0銫传楬敶\0";
 
 	public static readonly Todo[] Todos =
 	[
