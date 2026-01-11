@@ -1,8 +1,4 @@
-﻿#if !NETCOREAPP
-using InlineData = NUnit.Framework.TestCaseAttribute;
-#endif
-
-namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
+﻿namespace Rxmxnx.PInvoke.Tests.PointerExtensionsTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]

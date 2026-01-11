@@ -1,0 +1,26 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <ItemGroup>
+        <ProjectReference Include="..\Rxmxnx.Patch.Tests\Rxmxnx.Patch.Tests.csproj">
+            <PrivateAssets>all</PrivateAssets>
+            <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+            <SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
+            <Private>False</Private>
+        </ProjectReference>
+    </ItemGroup>
+
+    <UsingTask TaskName="XUnitDisplayNamePatch"
+               AssemblyFile="Rxmxnx.Patch.Tests\bin\$(Configuration)\netstandard2.0\Rxmxnx.Patch.Tests.dll"/>
+
+    <Target Name="AssemblyPatch" AfterTargets="Build" BeforeTargets="Test">
+        <PropertyGroup>
+            <AssemblyOutputPath>$(OutputPath)</AssemblyOutputPath>
+            <AssemblyTargetFramework>$(TargetFramework)</AssemblyTargetFramework>
+        </PropertyGroup>
+        <XUnitDisplayNamePatch
+                OutputPath="$(AssemblyOutputPath)"
+                TargetFramework="$(AssemblyTargetFramework)"
+                TestAssemblyName="$(AssemblyName)"/>
+    </Target>
+
+</Project>

@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <Import Project="..\..\..\AssemblyPatchers.props"/>
+
+    <PropertyGroup>
+        <RootNamespace>Rxmxnx.PInvoke.Patch.Tests</RootNamespace>
+    </PropertyGroup>
+
+</Project>

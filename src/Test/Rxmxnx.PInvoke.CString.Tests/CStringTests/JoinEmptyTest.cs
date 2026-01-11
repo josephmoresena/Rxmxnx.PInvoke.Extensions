@@ -1,8 +1,4 @@
-﻿#if !NETCOREAPP
-using InlineData = NUnit.Framework.TestCaseAttribute;
-#endif
-
-namespace Rxmxnx.PInvoke.Tests.CStringTests;
+﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]

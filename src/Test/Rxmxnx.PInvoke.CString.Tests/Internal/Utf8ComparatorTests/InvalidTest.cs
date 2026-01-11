@@ -1,8 +1,4 @@
-﻿#if !NETCOREAPP
-using InlineData = NUnit.Framework.TestCaseAttribute;
-#endif
-
-namespace Rxmxnx.PInvoke.Tests.Internal.Utf8ComparatorTests;
+﻿namespace Rxmxnx.PInvoke.Tests.Internal.Utf8ComparatorTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]

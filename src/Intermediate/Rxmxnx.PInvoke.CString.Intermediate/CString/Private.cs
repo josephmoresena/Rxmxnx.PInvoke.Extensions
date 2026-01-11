@@ -54,9 +54,9 @@ public partial class CString
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private Task GetWriteTask(Stream strm, Int32 startIndex, Int32 count, CancellationToken cancellationToken)
 	{
-		Byte[]? array = (Byte[]?)this._data;
-		return array is not null ?
-			strm.WriteAsync(array, startIndex, count, cancellationToken) :
+		if ((Byte[]?)this._data is { } array) return strm.WriteAsync(array, startIndex, count, cancellationToken);
+		return this._data.TryGetMemory(out ReadOnlyMemory<Byte> memory) ?
+			strm.WriteAsync(memory.Slice(startIndex, count), cancellationToken).AsTask() :
 			CString.WriteSyncAsync(new(this, strm) { Count = count, StartIndex = startIndex, });
 	}
 }

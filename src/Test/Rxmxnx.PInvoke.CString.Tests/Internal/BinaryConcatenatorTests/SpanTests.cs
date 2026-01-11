@@ -1,8 +1,4 @@
-﻿#if !NETCOREAPP
-using InlineData = NUnit.Framework.TestCaseAttribute;
-#endif
-
-namespace Rxmxnx.PInvoke.Tests.Internal.BinaryConcatenatorTests;
+﻿namespace Rxmxnx.PInvoke.Tests.Internal.BinaryConcatenatorTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]

@@ -17,7 +17,7 @@ if (compile)
 {
 	await TestCompiler.CompileNet(projectDirectory, launcher.RuntimeIdentifierPrefix, outputDirectory.FullName,
 	                              launcher.NetVersions, onlyNativeAot);
-	if (!launcher.MonoLaunchers.IsEmpty)
+	if (!launcher.MonoLaunchers.IsEmpty && !OperatingSystem.IsWindows() && !OperatingSystem.IsFreeBSD())
 		await TestCompiler.CompileMono(projectDirectory, launcher.MonoLaunchers[0],
 		                               launcher.MonoOutputDirectory!.FullName);
 }

@@ -27,7 +27,7 @@ public abstract partial class ValueRegion<T>
 	/// Copies the contents of this memory region into a new array.
 	/// </summary>
 	/// <returns>An array containing the copied data from the current memory region.</returns>
-	public T[] ToArray() => this.AsSpan().ToArray();
+	public virtual T[] ToArray() => this.AsSpan().ToArray();
 	/// <summary>
 	/// Tries to create a new <see cref="GCHandle"/> for current value region.
 	/// </summary>
@@ -84,12 +84,12 @@ public abstract partial class ValueRegion<T>
 	/// <paramref name="startIndex"/>.
 	/// </exception>
 	public abstract ValueRegion<T> Slice(Int32 startIndex, Int32 length);
+
 	/// <summary>
 	/// Creates a new read-only span over this memory region.
 	/// </summary>
 	/// <returns>A read-only span representation of the memory region.</returns>
 	internal abstract ReadOnlySpan<T> AsSpan();
-
 	/// <summary>
 	/// Retrieves a subregion from this instance.
 	/// The subregion starts at a specified item position and has a specified length.
@@ -115,6 +115,19 @@ public abstract partial class ValueRegion<T>
 	/// </returns>
 	private protected virtual T[]? AsArray() => default;
 
+	/// <summary>
+	/// Attempts to retrieve a <see cref="ReadOnlyMemory{T}"/> instance representing the current instance.
+	/// </summary>
+	/// <param name="memory">Output. A <see cref="ReadOnlyMemory{T}"/> instance representing the current instance.</param>
+	/// <returns>
+	/// <see langword="true"/> if <paramref name="memory"/> instance represents the current instance; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+	internal virtual Boolean TryGetMemory(out ReadOnlyMemory<T> memory)
+	{
+		Unsafe.SkipInit(out memory);
+		return false;
+	}
 	/// <summary>
 	/// Converts the value of the current <see cref="ValueRegion{T}"/> to its equivalent read-only span representation.
 	/// </summary>

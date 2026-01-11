@@ -89,7 +89,7 @@ internal sealed class NotNullWhenAttribute : Attribute
 /// <summary>Specifies that the output will be non-null if the named parameter is non-null.</summary>
 [ExcludeFromCodeCoverage]
 [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.ReturnValue,
-                AllowMultiple = true, Inherited = false)]
+                AllowMultiple = true)]
 internal sealed class NotNullIfNotNullAttribute : Attribute
 {
 	/// <summary>Gets the associated parameter name.</summary>

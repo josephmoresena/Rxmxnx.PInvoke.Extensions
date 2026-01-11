@@ -132,7 +132,7 @@ public partial class CString
 	/// <param name="length">UTF-8 text length.</param>
 	private CString(ValueRegion<Byte> data, Boolean isFunction, Boolean isNullTerminated, Int32 length)
 	{
-		this._isLocal = false;
+		this._isLocal = !isFunction && data is ValueRegion<Byte>.Memory;
 		this._data = data;
 		this._isNullTerminated = isNullTerminated;
 		this._length = length;

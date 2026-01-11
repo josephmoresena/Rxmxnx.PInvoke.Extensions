@@ -3,7 +3,7 @@
 public partial class ValueRegion<T>
 {
 	/// <summary>
-	/// Represents a memory region that is contained within an array of array of values.
+	/// Represents a memory region that is contained within an array of values.
 	/// </summary>
 	private sealed class ManagedRegion : ValueRegion<T>
 	{
@@ -36,6 +36,12 @@ public partial class ValueRegion<T>
 		/// <inheritdoc/>
 		private protected override T[] AsArray() => this._array;
 
+		/// <inheritdoc/>
+		internal override Boolean TryGetMemory(out ReadOnlyMemory<T> memory)
+		{
+			memory = new(this._array);
+			return true;
+		}
 		/// <inheritdoc/>
 		internal override ReadOnlySpan<T> AsSpan()
 			=> MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(this._array),

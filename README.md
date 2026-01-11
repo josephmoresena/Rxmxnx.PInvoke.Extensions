@@ -1925,6 +1925,11 @@ This class represents a region of memory that contains a sequence of `T` values.
   Creates a new `ValueRegion<T>` instance from a `ReadOnlySpanFunc<T, TState>` function and a GC-allocatable instance.
   </details>
 
+### Memory class
+
+The nested abstract class `Memory` allows the creation of custom `ValueRegion<T>` types based on `ReadOnlyMemory<T>`
+instances.
+
 </details>
 
 <details>
@@ -1990,6 +1995,8 @@ Represents a sequence of UTF-8 encoded characters.
   deserialization with `System.Text.Json`.
 - The JSON deserialization process produces null-terminated `CString` instances; however, it is not guaranteed that
   this termination consists of a single UTF-8 null character.
+- The nested abstract class `Backing` allows the creation of custom UTF-8 data storage to be backed by `CString`
+  instances.
 
 ### Static Fields:
 

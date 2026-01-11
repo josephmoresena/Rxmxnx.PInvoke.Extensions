@@ -7,7 +7,6 @@ namespace Rxmxnx.PInvoke.Tests;
 
 #if NETCOREAPP
 using TestDelegate = Action;
-
 #else
 using TestDelegate = TestDelegate;
 #endif
@@ -26,11 +25,11 @@ public sealed class PInvokeAssert
 	/// <inheritdoc cref="Assert.True(Boolean)"/>
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void True([DoesNotReturnIf(false)] Boolean? isUnmanaged)
+	public static void True([DoesNotReturnIf(false)] Boolean? condition)
 #if NETCOREAPP
-		=> Assert.True(isUnmanaged);
+		=> Assert.True(condition);
 #else
-		=> Assert.True(isUnmanaged);
+		=> Assert.True(condition);
 #endif
 #if NETCOREAPP
 	/// <inheritdoc cref="Assert.False(Boolean)"/>
@@ -38,11 +37,11 @@ public sealed class PInvokeAssert
 	/// <inheritdoc cref="Assert.False(Boolean)"/>
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void False([DoesNotReturnIf(true)] Boolean? isUnmanaged)
+	public static void False([DoesNotReturnIf(true)] Boolean? condition)
 #if NETCOREAPP
-		=> Assert.False(isUnmanaged);
+		=> Assert.False(condition);
 #else
-		=> Assert.False(isUnmanaged);
+		=> Assert.False(condition);
 #endif
 #if NETCOREAPP
 	/// <inheritdoc cref="Assert.Equal{T}(T,T)"/>

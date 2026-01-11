@@ -1,9 +1,4 @@
-﻿#if !NETCOREAPP
-using Fact = NUnit.Framework.TestAttribute;
-using InlineData = NUnit.Framework.TestCaseAttribute;
-#endif
-
-namespace Rxmxnx.PInvoke.Tests.StringExtensionsTests;
+﻿namespace Rxmxnx.PInvoke.Tests.StringExtensionsTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]

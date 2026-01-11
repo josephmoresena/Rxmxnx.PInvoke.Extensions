@@ -1,6 +1,3 @@
-#if !NETCOREAPP
-using Fact = NUnit.Framework.TestAttribute;
-#endif
 using ThreadState = System.Threading.ThreadState;
 
 namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;

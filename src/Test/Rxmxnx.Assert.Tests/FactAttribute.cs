@@ -2,9 +2,9 @@
 namespace Rxmxnx.PInvoke.Tests;
 
 /// <summary>
-/// Replacement class for XUnit.SkippableTheoryAttribute
+/// Replacement class for XUnit.FactAttribute
 /// </summary>
 [ExcludeFromCodeCoverage]
 [AttributeUsage(AttributeTargets.Method)]
-public class SkippableTheoryAttribute : Attribute;
+public sealed class FactAttribute : TestAttribute;
 #endif

@@ -1,14 +1,9 @@
-﻿#if !NETCOREAPP
-using InlineData = NUnit.Framework.TestCaseAttribute;
-#endif
-
-namespace Rxmxnx.PInvoke.Tests.Internal.DecodedRuneTests;
+﻿namespace Rxmxnx.PInvoke.Tests.Internal.DecodedRuneTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
 public sealed class GetIndicesInvalidTest
 {
-	#region UTF16
 	[Theory]
 	[InlineData((Char)0xD800)]
 	[InlineData((Char)0xD801)]
@@ -1041,9 +1036,6 @@ public sealed class GetIndicesInvalidTest
 
 		PInvokeAssert.Empty(indices);
 	}
-	#endregion
-
-	#region UTF8
 	[Theory]
 	[InlineData(0x80)]
 	[InlineData(0x81)]
@@ -1116,5 +1108,4 @@ public sealed class GetIndicesInvalidTest
 
 		PInvokeAssert.Empty(indices);
 	}
-	#endregion
 }

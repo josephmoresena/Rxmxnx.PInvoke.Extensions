@@ -6,5 +6,5 @@ namespace Rxmxnx.PInvoke.Tests;
 /// </summary>
 [ExcludeFromCodeCoverage]
 [AttributeUsage(AttributeTargets.Method)]
-public sealed class TheoryAttribute : Attribute;
+public sealed class TheoryAttribute : TestAttribute;
 #endif
