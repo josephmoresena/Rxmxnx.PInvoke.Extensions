@@ -56,6 +56,7 @@ jobs:
         run: |
           New-Item -Path ./.sonar/scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner 
+          
       - name: Remove ApplicationTest
         shell: bash
         run: |
@@ -75,6 +76,7 @@ jobs:
           dotnet build src /p:MultipleFrameworkTest=true --configuration Release --disable-build-servers /nr:false /maxcpucount:1
           dotnet test src /p:MultipleFrameworkTest=true --verbosity normal --collect:"XPlat Code Coverage" --results-directory TestResults/  --logger "trx;verbosity=detailed" --no-build --no-restore --configuration Release -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover 
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+      
       - name: Pack assembly
         working-directory: ./package/Rxmxnx.PInvoke.Extensions
         run: |
@@ -97,24 +99,6 @@ jobs:
           rm -rf TestResults
           rm -rf ./../_temp
           mv ./ApplicationTest src/ApplicationTest
-      
-
-      - name: Clean Up FreeBSD/Web Compile
-        shell: pwsh
-        run: |
-          Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
-              $projDir = Split-Path $_.FullName
-              "bin","obj" | ForEach-Object {
-              $path = Join-Path $projDir $_
-              if (Test-Path $path) {
-                try {
-                  Remove-Item -Recurse -Force $path -ErrorAction Stop
-                } catch {
-                  Write-Host "$($_.Exception.Message)"
-                }
-              }
-            }
-          }
 
       - name: Init FreeBSD 13.5 VM
         id: vm
@@ -188,6 +172,23 @@ jobs:
           mono ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All;
           mono ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All;
           mono ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All;
+          
+      - name: Clean Up FreeBSD/Web Compile
+        shell: pwsh
+        run: |
+          Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
+              $projDir = Split-Path $_.FullName
+              "bin","obj" | ForEach-Object {
+              $path = Join-Path $projDir $_
+              if (Test-Path $path) {
+                try {
+                  Remove-Item -Recurse -Force $path -ErrorAction Stop
+                } catch {
+                  Write-Host "$($_.Exception.Message)"
+                }
+              }
+            }
+          }
 
       - name: Publish Launcher (FreeBSD)
         shell: freebsd {0}
