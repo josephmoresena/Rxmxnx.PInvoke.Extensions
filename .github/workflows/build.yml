@@ -284,6 +284,13 @@ jobs:
             ./artifactsf/Mono/X64/*
             ./artifactsf/Mono/Arm64/*
 
+      - name: Remove Artifacts FreeBSD
+        shell: pwsh
+        run: |
+          if (Test-Path ./artifactsf) {
+              Remove-Item -Recurse -Force ./artifactsf/*
+          }
+
       - name: Install Escripten
         shell: bash
         run: |
