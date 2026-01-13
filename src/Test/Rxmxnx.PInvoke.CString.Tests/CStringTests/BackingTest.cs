@@ -52,7 +52,6 @@ public sealed class BackingTest
 
 			using MemoryHandle handle0 = segment.TryPin(out Boolean pinned);
 			using MemoryHandle handle1 = segmentMemory.Pin();
-			
 
 			PInvokeAssert.True(pinned);
 			PInvokeAssert.Equal(handle0, handle1);

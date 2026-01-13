@@ -95,7 +95,7 @@ public sealed class SegmentTests
 			for (Int32 i = 0; i < cstrSeg.Length; i++)
 				PInvokeAssert.Equal(cstr[i + cstrStart], cstrSeg[i]);
 
-			if (cstr is { IsFunction: false, } or { IsReference: false, } ) return;
+			if (cstr is { IsFunction: false, } or { IsReference: false, }) return;
 
 			if (!cstrSeg.IsSegmented)
 				PInvokeAssert.Equal(CString.GetBytes(cstr), CString.GetBytes(cstrSeg));
