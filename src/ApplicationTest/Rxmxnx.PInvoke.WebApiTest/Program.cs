@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Routing.Constraints;
 
 using Rxmxnx.PInvoke;
 using Rxmxnx.PInvoke.WebApiTest;
-
 #if OPEN_API_2
 using Microsoft.OpenApi;
 
