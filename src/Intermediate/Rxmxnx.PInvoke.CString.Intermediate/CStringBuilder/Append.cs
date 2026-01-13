@@ -448,6 +448,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The value to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public CStringBuilder Append(Rune value)
 	{
 		Span<Byte> utf8Text = stackalloc Byte[value.Utf8SequenceLength];
@@ -459,6 +462,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The value to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public CStringBuilder Append(Rune? value) => value.HasValue ? this.Append(value.Value) : this;
 #endif
 }

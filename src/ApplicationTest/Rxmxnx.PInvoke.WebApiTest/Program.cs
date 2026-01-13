@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -8,9 +9,6 @@ using Microsoft.AspNetCore.Routing.Constraints;
 
 using Rxmxnx.PInvoke;
 using Rxmxnx.PInvoke.WebApiTest;
-#if NET10_0_OR_GREATER
-using System.Runtime.CompilerServices;
-#endif
 
 #if OPEN_API_2
 using Microsoft.OpenApi;

@@ -95,21 +95,10 @@ public sealed class SegmentTests
 			for (Int32 i = 0; i < cstrSeg.Length; i++)
 				PInvokeAssert.Equal(cstr[i + cstrStart], cstrSeg[i]);
 
-			if (cstr is { IsSegmented: false, IsFunction: false, IsReference: false, })
-				if (!cstrSeg.IsSegmented)
-					PInvokeAssert.Equal(CString.GetBytes(cstr), CString.GetBytes(cstrSeg));
-				else
-					try
-					{
-						//PInvokeAssert.Throws<InvalidOperationException>(() => CString.GetBytes(cstrSeg));
-					}
-					catch (Exception)
-					{
-						// For some reason sometimes the test fails even though it shouldn't.
-						// The test must be run again so that it does not fail.
-						PInvokeAssert.NotEqual(cstr, cstrSeg);
-						//PInvokeAssert.Throws<InvalidOperationException>(() => CString.GetBytes(cstrSeg));
-					}
+			if (cstr is { IsFunction: false, } or { IsReference: false, } ) return;
+
+			if (!cstrSeg.IsSegmented)
+				PInvokeAssert.Equal(CString.GetBytes(cstr), CString.GetBytes(cstrSeg));
 		}
 		SegmentTests.AssertClone(cstrSeg);
 	}

@@ -27,12 +27,14 @@ public sealed class BackingTest
 	}
 	private static void AssertSegment(CString backedValue)
 	{
+		CString cloneValue = (CString)backedValue.Clone();
 		for (Int32 i = 0; i < backedValue.Length; i++)
 		{
 			Int32 start = Random.Shared.Next(i, backedValue.Length);
 			Int32 end = Random.Shared.Next(start, backedValue.Length + 1);
 
 			CString segment = backedValue[start..end];
+			CString segmentFromClone = cloneValue[start..end];
 			if (segment.Length == 0) continue;
 
 			PInvokeAssert.True(segment.IsSegmented);
@@ -42,12 +44,15 @@ public sealed class BackingTest
 
 			ReadOnlyMemory<Byte> backedMemory = UnsafeMemoryBacking.GetMemory(backedValue);
 			ReadOnlyMemory<Byte> segmentMemory = UnsafeMemoryBacking.GetMemory(segment);
+			ReadOnlyMemory<Byte> cloneMemory = UnsafeMemoryBacking.GetMemory(segmentFromClone);
 
+			Assert.True(cloneMemory.Span.SequenceEqual(segmentMemory.Span));
 			PInvokeAssert.Equal(start == 0 && end == backedValue.Length,
 			                    backedMemory.Span.SequenceEqual(segmentMemory.Span));
 
 			using MemoryHandle handle0 = segment.TryPin(out Boolean pinned);
 			using MemoryHandle handle1 = segmentMemory.Pin();
+			
 
 			PInvokeAssert.True(pinned);
 			PInvokeAssert.Equal(handle0, handle1);
