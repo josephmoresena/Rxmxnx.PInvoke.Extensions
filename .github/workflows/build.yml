@@ -89,7 +89,7 @@ jobs:
           done
           echo "-----------------------------------"
 
-      - name: Prepare workspace for FreeBSD
+      - name: Prepare workspace for FreeBSD/Web Compile
         id: clean-workspace
         run: |
           rm -rf .git
@@ -97,18 +97,24 @@ jobs:
           rm -rf TestResults
           rm -rf ./../_temp
           mv ./ApplicationTest src/ApplicationTest
+      
 
-      - name: Install Mono Framework (Host)
+      - name: Clean Up FreeBSD/Web Compile
+        shell: pwsh
         run: |
-          sudo apt install ca-certificates gnupg --assume-yes
-          sudo gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-          echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
-          sudo apt update
-          
-          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          
-          sudo apt install mono-complete mono-vbnc mono-dbg gdb libssl3
+          Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
+              $projDir = Split-Path $_.FullName
+              "bin","obj" | ForEach-Object {
+              $path = Join-Path $projDir $_
+              if (Test-Path $path) {
+                try {
+                  Remove-Item -Recurse -Force $path -ErrorAction Stop
+                } catch {
+                  Write-Host "$($_.Exception.Message)"
+                }
+              }
+            }
+          }
 
       - name: Init FreeBSD 13.5 VM
         id: vm
@@ -190,12 +196,95 @@ jobs:
           cd ./src/ApplicationTest/Rxmxnx.PInvoke.LauncherTest;
           dotnet publish -r freebsd.13-x64;
           rm -rf ./obj
-
-      - name: Run launcher (compile) (FreeBSD)
-        shell: freebsd {0}
+          
+      - name: Install Escripten
+        shell: bash
         run: |
-          cd $GITHUB_WORKSPACE;
-          ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifactsf" "compile";
+          mkdir artifacts
+          sudo git clone https://github.com/emscripten-core/emsdk.git /opt/emsdk
+          cd /opt/emsdk
+          sudo ./emsdk install latest
+          sudo ./emsdk activate latest
+          sudo chmod -R 777 /opt/emsdk
+
+      - name: Install WebAssembly Workload
+        shell: bash
+        run: |
+          dotnet workload install wasm-tools
+          dotnet workload install wasm-tools-net9
+          dotnet workload update
+
+      - name: Web-Compile ApplicationTest
+        shell: bash
+        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
+        env:
+          DOTNET_NUGET_SIGNATURE_VERIFICATION: false
+        run: |
+          source /opt/emsdk/emsdk_env.sh
+          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
+            /p:InvariantGlobalization=False /p:DisableBufferAutoComposition=False \
+            /p:CopyTargetTo=../../../artifacts
+          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
+            /p:InvariantGlobalization=False /p:DisableBufferAutoComposition=True \
+            /p:CopyTargetTo=../../../artifacts
+          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
+            /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=False \
+            /p:CopyTargetTo=../../../artifacts
+          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
+            /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=True \
+            /p:CopyTargetTo=../../../artifacts
+
+      - name: Clean Up Extra
+        shell: bash
+        run: |
+          sudo rm -rf /tmp/*
+          sudo rm -rf /var/tmp/*
+          sudo rm -rf ~/.nuget/packages
+          
+          df -h
+
+      - name: Create Web Native Artifact Logs
+        uses: actions/upload-artifact@v5
+        with:
+          name: Web-Artifact-Logs
+          path: |
+            ./artifacts/Native/*
+
+      - name: Remove Web Native Logs
+        shell: pwsh
+        run: |
+          if (Test-Path ./artifacts/Native) {
+              Remove-Item -Recurse -Force ./artifacts/Native/*
+          }
+
+      - name: Create Web Native Artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: Web-Artifact
+          path: |
+            ./artifacts/*NAOT*
+
+      - name: Node-Run ApplicationTest
+        shell: bash
+        working-directory: ./artifacts
+        run: for f in *.js; do node "$f"; done
+
+      - name: Remove WebAssembly Workload
+        shell: bash
+        run: |
+          dotnet workload uninstall wasm-tools
+          dotnet workload uninstall wasm-tools-net9
+          
+      - name: Remove Escripten
+        shell: bash
+        run: |
+          rm -rf artifacts
+          sudo rm -rf /opt/emsdk
+          sudo rm -rf /tmp/*
+          sudo rm -rf /var/tmp/*
+          sudo rm -rf ~/.nuget/packages
+          
+          df -h
 
       - name: Clean Up FreeBSD
         shell: pwsh
@@ -213,6 +302,25 @@ jobs:
               }
             }
           }
+
+      - name: Run launcher (compile) (FreeBSD)
+        shell: freebsd {0}
+        run: |
+          cd $GITHUB_WORKSPACE;
+          ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifactsf" "compile";
+
+      - name: Install Mono Framework (Host)
+        run: |
+          sudo apt install ca-certificates gnupg --assume-yes
+          sudo gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+          echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+          sudo apt update
+          
+          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+          sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+          rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+          
+          sudo apt install mono-complete mono-vbnc mono-dbg gdb libssl3
 
       - name: Mono-Compile ApplicationTest for FreeBSD
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
@@ -290,79 +398,6 @@ jobs:
           if (Test-Path ./artifactsf) {
               Remove-Item -Recurse -Force ./artifactsf/*
           }
-
-      - name: Install Escripten
-        shell: bash
-        run: |
-          rm -rf artifactsf
-          mkdir artifacts
-          sudo git clone https://github.com/emscripten-core/emsdk.git /opt/emsdk
-          cd /opt/emsdk
-          sudo ./emsdk install latest
-          sudo ./emsdk activate latest
-          sudo chmod -R 777 /opt/emsdk
-
-      - name: Install WebAssembly Workload
-        shell: bash
-        run: |
-          dotnet workload install wasm-tools
-          dotnet workload install wasm-tools-net9
-          dotnet workload update
-
-      - name: Web-Compile ApplicationTest
-        shell: bash
-        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
-        env:
-          DOTNET_NUGET_SIGNATURE_VERIFICATION: false
-        run: |
-          source /opt/emsdk/emsdk_env.sh
-          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
-            /p:InvariantGlobalization=False /p:DisableBufferAutoComposition=False \
-            /p:CopyTargetTo=../../../artifacts
-          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
-            /p:InvariantGlobalization=False /p:DisableBufferAutoComposition=True \
-            /p:CopyTargetTo=../../../artifacts
-          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
-            /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=False \
-            /p:CopyTargetTo=../../../artifacts
-          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
-            /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=True \
-            /p:CopyTargetTo=../../../artifacts
-
-      - name: Clean Up Extra
-        shell: bash
-        run: |
-          sudo rm -rf /tmp/*
-          sudo rm -rf /var/tmp/*
-          sudo rm -rf ~/.nuget/packages
-          
-          df -h
-
-      - name: Create Web Native Artifact Logs
-        uses: actions/upload-artifact@v5
-        with:
-          name: Web-Artifact-Logs
-          path: |
-            ./artifacts/Native/*
-
-      - name: Remove Web Native Logs
-        shell: pwsh
-        run: |
-          if (Test-Path ./artifacts/Native) {
-              Remove-Item -Recurse -Force ./artifacts/Native/*
-          }
-
-      - name: Create Web Native Artifact
-        uses: actions/upload-artifact@v5
-        with:
-          name: Web-Artifact
-          path: |
-            ./artifacts/*NAOT*
-
-      - name: Node-Run ApplicationTest
-        shell: bash
-        working-directory: ./artifacts
-        run: for f in *.js; do node "$f"; done
   
   run-tests:
     needs: [ build ]
