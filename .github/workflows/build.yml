@@ -179,19 +179,19 @@ jobs:
         shell: freebsd {0}
         run: |
           cd $GITHUB_WORKSPACE;
-          dotnet test ./src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Common.Tests.dll --logger 'console;verbosity=detailed';
-          dotnet test ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.CString.Tests.dll --logger 'console;verbosity=detailed';
-          dotnet test ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Extensions.Tests.dll --logger 'console;verbosity=detailed';
-          dotnet test ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Buffers.Tests.dll --logger 'console;verbosity=detailed';
+          dotnet test ./Tests/Release/net9.0/Rxmxnx.PInvoke.Common.Tests.dll --logger 'console;verbosity=detailed';
+          dotnet test ./Tests/Release/net9.0/Rxmxnx.PInvoke.CString.Tests.dll --logger 'console;verbosity=detailed';
+          dotnet test ./Tests/Release/net9.0/Rxmxnx.PInvoke.Extensions.Tests.dll --logger 'console;verbosity=detailed';
+          dotnet test ./Tests/Release/net9.0/Rxmxnx.PInvoke.Buffers.Tests.dll --logger 'console;verbosity=detailed';
 
       - name: Mono framework tests (FreeBSD 13.5)
         shell: freebsd {0}
         run: |
           cd $GITHUB_WORKSPACE;
-          mono ./src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All;
-          mono ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All;
-          mono ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All;
-          mono ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All;
+          mono ./src/Tests/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All;
+          mono ./src/Tests/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All;
+          mono ./src/Tests/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All;
+          mono ./src/Tests/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All;
           
       - name: Clean Up FreeBSD/Web Compile
         shell: pwsh
@@ -591,18 +591,18 @@ jobs:
         shell: pwsh
         run: |
           if ($IsWindows) {
-              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Common.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All
-              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.CString.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All
-              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Extensions.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All
-              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Buffers.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
+              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Tests\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All
+              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Tests\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All
+              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Tests\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All
+              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Tests\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
           }
       - name: Run Mono tests (Apple Silicon)
         if: runner.os == 'MacOS'
         run: |
-          /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All
-          /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All
-          /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All
-          /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
+          /opt/homebrew/bin/mono src/Tests/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All
+          /opt/homebrew/bin/mono src/Tests/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All
+          /opt/homebrew/bin/mono src/Tests/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All
+          /opt/homebrew/bin/mono src/Tests/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
       - name: Pack assembly
         working-directory: ./package/Rxmxnx.PInvoke.Extensions
         run: |
