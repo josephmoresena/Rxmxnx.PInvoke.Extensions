@@ -1,9 +1,5 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-    <PropertyGroup Condition="'$(TargetFramework)' == '$(DefaultFramework)' Or '$(TargetFramework)' == 'netstandard2.1'">
-        <BaseOutputPath Condition="'$(MultipleFrameworkTest)' == 'true'">../../../Tests/</BaseOutputPath>
-    </PropertyGroup>
-
     <PropertyGroup>
         <TargetFrameworks Condition="'$(MultipleFrameworkTest)' != 'true'">$(DefaultFramework);netstandard2.1</TargetFrameworks>
         <TargetFrameworks Condition="'$(MultipleFrameworkTest)' == 'true'">$(DefaultFrameworks);net8.0;net7.0;net6.0</TargetFrameworks>
