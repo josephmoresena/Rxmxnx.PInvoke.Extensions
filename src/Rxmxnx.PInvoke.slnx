@@ -18,6 +18,7 @@
     </Folder>
     <Folder Name="/Global/">
         <File Path="..\.github\workflows\build.yml"/>
+        <File Path="..\.github\workflows\freebsd-actions.yml"/>
         <File Path="..\.github\workflows\release.yml"/>
         <File Path="..\AssemblyPatchers.props"/>
         <File Path="..\CONTRIBUTING.md"/>
@@ -25,6 +26,7 @@
         <File Path="..\LICENSE.md"/>
         <File Path="..\MonoCecil.props"/>
         <File Path="..\README.md"/>
+        <File Path="..\.github\workflows\webasm-actions.yml"/>
         <File Path="..\.gitignore"/>
         <File Path="Library.props"/>
     </Folder>

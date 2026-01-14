@@ -1,0 +1,80 @@
+name: WebASM Actions
+on: workflow_call
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      SHOW_DIAGNOSTICS: true
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - name: Restore Internal NuGet Packages
+        uses: actions/cache/restore@v5
+        if: inputs.build_artifacts == true
+        with:
+          path: ./package/Nuget
+          key: internal-nuget-${{ github.run_id }}
+          fail-on-cache-miss: true
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install WebAssembly Workload
+        shell: bash
+        run: |
+          dotnet workload install wasm-tools
+          dotnet workload install wasm-tools-net9
+          dotnet workload update
+
+      - name: Install Escripten
+        shell: bash
+        run: |
+          mkdir artifacts
+          sudo git clone https://github.com/emscripten-core/emsdk.git /opt/emsdk
+          cd /opt/emsdk
+          sudo ./emsdk install latest
+          sudo ./emsdk activate latest
+          sudo chmod -R 777 /opt/emsdk
+
+      - name: Web-Compile ApplicationTest
+        shell: bash
+        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
+        env:
+          DOTNET_NUGET_SIGNATURE_VERIFICATION: false
+        run: |
+          source /opt/emsdk/emsdk_env.sh
+          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
+            /p:InvariantGlobalization=False /p:DisableBufferAutoComposition=False \
+            /p:CopyTargetTo=../../../artifacts
+          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
+            /p:InvariantGlobalization=False /p:DisableBufferAutoComposition=True \
+            /p:CopyTargetTo=../../../artifacts
+          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
+            /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=False \
+            /p:CopyTargetTo=../../../artifacts
+          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
+            /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=True \
+            /p:CopyTargetTo=../../../artifacts
+
+      - name: Create Web Native Artifact Logs
+        uses: actions/upload-artifact@v5
+        with:
+          name: Web-Artifact-Logs
+          path: |
+            ./artifacts/Native/*
+      - name: Create Web Native Artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: Web-Artifact
+          path: |
+            ./artifacts/*NAOT*
+
+      - name: Node-Run ApplicationTest
+        shell: bash
+        working-directory: ./artifacts
+        run: for f in *.js; do node "$f"; done

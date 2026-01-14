@@ -1,0 +1,178 @@
+name: FreeBSD Actions
+on:
+  workflow_call:
+    inputs:
+      run_tests:
+        required: false
+        default: true
+        type: boolean
+      build_artifacts:
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      SHOW_DIAGNOSTICS: true
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - name: Restore Internal NuGet Packages
+        uses: actions/cache/restore@v5
+        if: inputs.build_artifacts == true
+        with:
+          path: ./package/Nuget
+          key: internal-nuget-${{ github.run_id }}
+          fail-on-cache-miss: true
+      - name: Restore Compiled Tests
+        if: inputs.run_tests == true
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ./src/Test/**/bin/Release/netstandard2.1/Release
+            ./src/Test/**/bin/Release/net9.0/Release
+          key: internal-tests-bin-${{ github.run_id }}
+          fail-on-cache-miss: true
+
+      - name: Install Mono Framework (Host)
+        run: |
+          sudo apt install ca-certificates gnupg --assume-yes
+          sudo gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+          echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+          sudo apt update
+
+          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+          sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+          rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+
+          sudo apt install mono-complete mono-vbnc mono-dbg gdb libssl3
+
+      - name: Init FreeBSD 13.5 VM
+        id: vm
+        uses: vmactions/freebsd-vm@v1.3.6
+        with:
+          release: "13.5"
+          usesh: true
+          copyback: false
+          sync: nfs
+          prepare: |
+            pkg update -f 
+            pkg install -y python311 py311-pillow sqlite3 unixODBC libgdiplus zip ca_root_nss binutils dotnet
+            
+            mkdir -p ~/fake-python39/metadata
+            cat > ~/fake-python39/metadata/+COMPACT_MANIFEST <<EOF
+            name: python39
+            version: 9.9.9
+            origin: fake/python39
+            comment: Fake package to satisfy dependency on python39
+            desc: This is a fake python39 package to satisfy dependencies.
+            categories: [python]
+            maintainer: a@b.c
+            www: https://python.org
+            prefix: /usr/local
+            licenselogic: single
+            licenses: [MIT]
+            flatsize: 0
+            EOF
+            pkg register -M ~/fake-python39/metadata/+COMPACT_MANIFEST
+            
+            mkdir -p ~/fake-py39-pillow/metadata
+            cat > ~/fake-py39-pillow/metadata/+COMPACT_MANIFEST <<EOF
+            name: py39-pillow
+            version: 9.9.9
+            origin: fake/py39-pillow
+            comment: Fake package to satisfy dependency on py39-pillow
+            desc: This is a fake py39-pillow package to satisfy dependencies.
+            categories: [python]
+            maintainer: a@b.c
+            www: https://py-pillow.org
+            prefix: /usr/local
+            licenselogic: single
+            licenses: [MIT]
+            flatsize: 0
+            EOF
+            pkg register -M ~/fake-py39-pillow/metadata/+COMPACT_MANIFEST
+            
+            fetch https://github.com/Thefrank/freebsd-port-sooners/releases/download/20230712/mono6.12-6.12.0.199_1.pkg
+            pkg add -f mono6.12-6.12.0.199_1.pkg
+            rm mono6.12-6.12.0.199_1.pkg
+            rm -rf ~/fake-py39-pillow
+            rm -rf ~/fake-python39
+          run: |
+            dotnet dev-certs https --trust
+            mono --version
+
+      - name: Run Tests (FreeBSD 13.5)
+        if: inputs.run_tests == true
+        shell: freebsd {0}
+        run: |
+          cd $GITHUB_WORKSPACE;
+          dotnet test ./src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Common.Tests.dll --logger 'console;verbosity=detailed';
+          dotnet test ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.CString.Tests.dll --logger 'console;verbosity=detailed';
+          dotnet test ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Extensions.Tests.dll --logger 'console;verbosity=detailed';
+          dotnet test ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Buffers.Tests.dll --logger 'console;verbosity=detailed';
+      - name: Mono framework tests (FreeBSD 13.5)
+        if: inputs.run_tests == true
+        shell: freebsd {0}
+        run: |
+          cd $GITHUB_WORKSPACE;
+          mono ./src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All;
+          mono ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All;
+          mono ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All;
+          mono ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All;
+
+      - name: Publish Launcher (FreeBSD 13.5)
+        if: inputs.build_artifacts == true
+        shell: freebsd {0}
+        run: |
+          cd $GITHUB_WORKSPACE;
+          cd ./src/ApplicationTest/Rxmxnx.PInvoke.LauncherTest;
+          dotnet publish -r freebsd.13-x64;
+          rm -rf ./obj
+      - name: Run launcher - Compile (FreeBSD 13.5)
+        if: inputs.build_artifacts == true
+        shell: freebsd {0}
+        run: |
+          cd $GITHUB_WORKSPACE;
+          ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "compile";
+
+      - name: Mono-Compile ApplicationTest - FreeBSD 13.5 (Host)
+        if: inputs.build_artifacts == true
+        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
+        shell: bash
+        run: |
+          msbuild -restore /p:Configuration=Release /p:UsePackage=true /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
+          rm -rf ./obj
+
+      - name: Run launcher - Run (FreeBSD)
+        shell: freebsd {0}
+        run: |
+          cd $GITHUB_WORKSPACE;
+          ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "run";
+          rm -rf ~/.nuget/packages;
+
+      - name: Create Native Artifact Logs
+        uses: actions/upload-artifact@v5
+        if: inputs.build_artifacts == true
+        with:
+          name: FreeBSD.13-Artifact-Logs
+          path: |
+            ./artifacts/Native/*
+            ./artifacts/Mono/*Mono.Link.log
+            ./artifacts/Mono/*Mono.AOT*.log
+            ./artifacts/Mono/*Mono.Bundle*.log
+      - name: Create Native Artifact
+        uses: actions/upload-artifact@v5
+        if: inputs.build_artifacts == true
+        with:
+          name: FreeBSD.13-Artifact
+          path: |
+            ./artifacts/*NAOT*
+            ./artifacts/*RFM*
+            ./artifacts/Mono/X86/*
+            ./artifacts/Mono/X64/*
+            ./artifacts/Mono/Arm64/*

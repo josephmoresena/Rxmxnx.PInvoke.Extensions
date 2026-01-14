@@ -5,6 +5,9 @@ on:
       - main
   pull_request:
     types: [ opened, synchronize, reopened ]
+permissions:
+  actions: write
+  contents: read
 jobs:
   build:
     name: Build and analyze
@@ -55,8 +58,8 @@ jobs:
         shell: pwsh
         run: |
           New-Item -Path ./.sonar/scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner 
-          
+          dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
+
       - name: Remove ApplicationTest
         shell: bash
         run: |
@@ -76,7 +79,7 @@ jobs:
           dotnet build src /p:MultipleFrameworkTest=true --configuration Release --disable-build-servers /nr:false /maxcpucount:1
           dotnet test src /p:MultipleFrameworkTest=true --verbosity normal --collect:"XPlat Code Coverage" --results-directory TestResults/  --logger "trx;verbosity=detailed" --no-build --no-restore --configuration Release -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover 
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-      
+
       - name: Pack assembly
         working-directory: ./package/Rxmxnx.PInvoke.Extensions
         run: |
@@ -91,317 +94,48 @@ jobs:
           done
           echo "-----------------------------------"
 
-      - name: Install WebAssembly Workload
-        shell: bash
-        run: |
-          dotnet workload install wasm-tools
-          dotnet workload install wasm-tools-net9
-          dotnet workload update
-
-      - name: Install Mono Framework (Host)
-        run: |
-          sudo apt install ca-certificates gnupg --assume-yes
-          sudo gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-          echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
-          sudo apt update
-          
-          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          
-          sudo apt install mono-complete mono-vbnc mono-dbg gdb libssl3
-
-      - name: Prepare workspace for FreeBSD/Web Compile
-        id: clean-workspace
-        run: |
-          rm -rf .git
-          rm -rf .sonarqube
-          rm -rf TestResults
-          rm -rf ./../_temp
-          mv ./ApplicationTest src/ApplicationTest
-
-      - name: Init FreeBSD 13.5 VM
-        id: vm
-        uses: vmactions/freebsd-vm@v1.3.6
+      - name: Cache NuGet Packages
+        uses: actions/cache/save@v4
         with:
-          release: "13.5"
-          usesh: true
-          copyback: false
-          sync: nfs
-          prepare: |
-            pkg update -f 
-            pkg install -y python311 py311-pillow sqlite3 unixODBC libgdiplus zip ca_root_nss binutils dotnet
-            
-            mkdir -p ~/fake-python39/metadata
-            cat > ~/fake-python39/metadata/+COMPACT_MANIFEST <<EOF
-            name: python39
-            version: 9.9.9
-            origin: fake/python39
-            comment: Fake package to satisfy dependency on python39
-            desc: This is a fake python39 package to satisfy dependencies.
-            categories: [python]
-            maintainer: a@b.c
-            www: https://python.org
-            prefix: /usr/local
-            licenselogic: single
-            licenses: [MIT]
-            flatsize: 0
-            EOF
-            pkg register -M ~/fake-python39/metadata/+COMPACT_MANIFEST
-            
-            mkdir -p ~/fake-py39-pillow/metadata
-            cat > ~/fake-py39-pillow/metadata/+COMPACT_MANIFEST <<EOF
-            name: py39-pillow
-            version: 9.9.9
-            origin: fake/py39-pillow
-            comment: Fake package to satisfy dependency on py39-pillow
-            desc: This is a fake py39-pillow package to satisfy dependencies.
-            categories: [python]
-            maintainer: a@b.c
-            www: https://py-pillow.org
-            prefix: /usr/local
-            licenselogic: single
-            licenses: [MIT]
-            flatsize: 0
-            EOF
-            pkg register -M ~/fake-py39-pillow/metadata/+COMPACT_MANIFEST
-            
-            fetch https://github.com/Thefrank/freebsd-port-sooners/releases/download/20230712/mono6.12-6.12.0.199_1.pkg
-            pkg add -f mono6.12-6.12.0.199_1.pkg
-            rm mono6.12-6.12.0.199_1.pkg
-            rm -rf ~/fake-py39-pillow
-            rm -rf ~/fake-python39
-          run: |
-            dotnet dev-certs https --trust
-            mono --version
+          path: ./package/Nuget
+          key: internal-nuget-${{ github.run_id }}
 
-      - name: Run Tests (FreeBSD 13.5)
-        shell: freebsd {0}
-        run: |
-          cd $GITHUB_WORKSPACE;
-          dotnet test ./src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Common.Tests.dll --logger 'console;verbosity=detailed';
-          dotnet test ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.CString.Tests.dll --logger 'console;verbosity=detailed';
-          dotnet test ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Extensions.Tests.dll --logger 'console;verbosity=detailed';
-          dotnet test ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Buffers.Tests.dll --logger 'console;verbosity=detailed';
-
-      - name: Mono framework tests (FreeBSD 13.5)
-        shell: freebsd {0}
-        run: |
-          cd $GITHUB_WORKSPACE;
-          mono ./src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All;
-          mono ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All;
-          mono ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All;
-          mono ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All;
-          
-      - name: Clean Up FreeBSD/Web Compile
-        shell: pwsh
-        run: |
-          Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
-              $projDir = Split-Path $_.FullName
-              "bin","obj" | ForEach-Object {
-              $path = Join-Path $projDir $_
-              if (Test-Path $path) {
-                try {
-                  Remove-Item -Recurse -Force $path -ErrorAction Stop
-                } catch {
-                  Write-Host "$($_.Exception.Message)"
-                }
-              }
-            }
-          }
-
-      - name: Publish Launcher (FreeBSD)
-        shell: freebsd {0}
-        run: |
-          cd $GITHUB_WORKSPACE;
-          cd ./src/ApplicationTest/Rxmxnx.PInvoke.LauncherTest;
-          dotnet publish -r freebsd.13-x64;
-          rm -rf ./obj
-          
-      - name: Install Escripten
-        shell: bash
-        run: |
-          mkdir artifacts
-          sudo git clone https://github.com/emscripten-core/emsdk.git /opt/emsdk
-          cd /opt/emsdk
-          sudo ./emsdk install latest
-          sudo ./emsdk activate latest
-          sudo chmod -R 777 /opt/emsdk
-
-      - name: Web-Compile ApplicationTest
-        shell: bash
-        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
+      - name: Cache Compiled Tests
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ./src/Test/**/bin/Release/netstandard2.1/Release
+            ./src/Test/**/bin/Release/net9.0/Release
+          key: internal-tests-bin-${{ github.run_id }}
+  
+  webasm-actions:
+    needs: [ build ]
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/webasm-actions.yml
+  
+  freebsd-actions:
+    needs: [ build ]
+    uses: ./.github/workflows/build-freebsd.yml
+    with:
+      run_tests: true
+      build_artifacts: ${{ github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' }}
+  
+  cleanup-cache:
+    name: Secure Cleanup
+    needs: [ build, webasm-actions, freebsd-actions ]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Delete Internal Cache
         env:
-          DOTNET_NUGET_SIGNATURE_VERIFICATION: false
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          source /opt/emsdk/emsdk_env.sh
-          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
-            /p:InvariantGlobalization=False /p:DisableBufferAutoComposition=False \
-            /p:CopyTargetTo=../../../artifacts
-          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
-            /p:InvariantGlobalization=False /p:DisableBufferAutoComposition=True \
-            /p:CopyTargetTo=../../../artifacts
-          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
-            /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=False \
-            /p:CopyTargetTo=../../../artifacts
-          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
-            /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=True \
-            /p:CopyTargetTo=../../../artifacts
-
-      - name: Clean Up Extra
-        shell: bash
-        run: |
-          sudo rm -rf /tmp/*
-          sudo rm -rf /var/tmp/*
-          sudo rm -rf ~/.nuget/packages
-          
-          df -h
-
-      - name: Create Web Native Artifact Logs
-        uses: actions/upload-artifact@v5
-        with:
-          name: Web-Artifact-Logs
-          path: |
-            ./artifacts/Native/*
-
-      - name: Remove Web Native Logs
-        shell: pwsh
-        run: |
-          if (Test-Path ./artifacts/Native) {
-              Remove-Item -Recurse -Force ./artifacts/Native/*
-          }
-
-      - name: Create Web Native Artifact
-        uses: actions/upload-artifact@v5
-        with:
-          name: Web-Artifact
-          path: |
-            ./artifacts/*NAOT*
-
-      - name: Node-Run ApplicationTest
-        shell: bash
-        working-directory: ./artifacts
-        run: for f in *.js; do node "$f"; done
-
-      - name: Remove WebAssembly Workload
-        shell: bash
-        run: |
-          dotnet workload uninstall wasm-tools
-          dotnet workload uninstall wasm-tools-net9
-          
-      - name: Remove Escripten
-        shell: bash
-        run: |
-          rm -rf artifacts
-          sudo rm -rf /opt/emsdk
-          sudo rm -rf /tmp/*
-          sudo rm -rf /var/tmp/*
-          sudo rm -rf ~/.nuget/packages
-          
-          df -h
-
-      - name: Clean Up FreeBSD
-        shell: pwsh
-        run: |
-          Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
-            $projDir = Split-Path $_.FullName
-            "bin","obj" | ForEach-Object {
-              $path = Join-Path $projDir $_
-              if (Test-Path $path) {
-                try {
-                  Remove-Item -Recurse -Force $path -ErrorAction Stop
-                } catch {
-                  Write-Host "$($_.Exception.Message)"
-                }
-              }
-            }
-          }
-
-      - name: Run launcher (compile) (FreeBSD)
-        shell: freebsd {0}
-        run: |
-          cd $GITHUB_WORKSPACE;
-          ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifactsf" "compile";
-
-      - name: Mono-Compile ApplicationTest for FreeBSD
-        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
-        shell: bash
-        run: |
-          msbuild -restore /p:Configuration=Release /p:UsePackage=true /p:OutDir=../../../artifactsf/Mono/Rxmxnx.PInvoke.ApplicationTest
-          rm -rf ./obj
-
-      - name: Remove Mono Framework (Host)
-        shell: bash
-        run: |
-          sudo apt-get purge mono* -y
-          sudo apt-get clean
-          sudo apt-get autoclean
-          sudo apt-get autoremove -y
-          
-          sudo rm -rf /tmp/*
-          sudo rm -rf /var/tmp/*
-
-      - name: Run launcher (run) (FreeBSD)
-        shell: freebsd {0}
-        run: |
-          cd $GITHUB_WORKSPACE;
-          ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifactsf" "run";
-          rm -rf ~/.nuget/packages;
-
-      - name: Clean Up FreeBSD Run
-        shell: pwsh
-        run: |
-          Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
-              $projDir = Split-Path $_.FullName
-              "bin","obj" | ForEach-Object {
-              $path = Join-Path $projDir $_
-              if (Test-Path $path) {
-                try {
-                  Remove-Item -Recurse -Force $path -ErrorAction Stop
-                } catch {
-                  Write-Host "$($_.Exception.Message)"
-                }
-              }
-            }
-          }
-
-      - name: Create Native Artifact Logs
-        uses: actions/upload-artifact@v5
-        with:
-          name: FreeBSD.13-Artifact-Logs
-          path: |
-            ./artifactsf/Native/*
-            ./artifactsf/Mono/*Mono.Link.log
-            ./artifactsf/Mono/*Mono.AOT*.log
-            ./artifactsf/Mono/*Mono.Bundle*.log
-
-      - name: Remove Native Logs FreeBSD
-        shell: pwsh
-        run: |
-          if (Test-Path ./artifactsf/Native) {
-              Remove-Item -Recurse -Force ./artifactsf/Native/*
-          }
-
-      - name: Create Native Artifact
-        uses: actions/upload-artifact@v5
-        with:
-          name: FreeBSD.13-Artifact
-          path: |
-            ./artifactsf/*NAOT*
-            ./artifactsf/*RFM*
-            ./artifactsf/Mono/X86/*
-            ./artifactsf/Mono/X64/*
-            ./artifactsf/Mono/Arm64/*
-
-      - name: Remove Artifacts FreeBSD
-        shell: pwsh
-        run: |
-          if (Test-Path ./artifactsf) {
-              Remove-Item -Recurse -Force ./artifactsf/*
-          }
+          echo "Deleting caches..."
+          gh cache delete "internal-nuget-${{ github.run_id }}" || true
+          gh cache delete "internal-tests-bin-${{ github.run_id }}" || true
   
   run-tests:
-    needs: [ build ]
+    needs: [ build, webasm-actions, freebsd-actions, cleanup-cache ]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
