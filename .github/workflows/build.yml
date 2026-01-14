@@ -91,6 +91,13 @@ jobs:
           done
           echo "-----------------------------------"
 
+      - name: Install WebAssembly Workload
+        shell: bash
+        run: |
+          dotnet workload install wasm-tools
+          dotnet workload install wasm-tools-net9
+          dotnet workload update
+
       - name: Install Mono Framework (Host)
         run: |
           sudo apt install ca-certificates gnupg --assume-yes
@@ -220,13 +227,6 @@ jobs:
           sudo ./emsdk install latest
           sudo ./emsdk activate latest
           sudo chmod -R 777 /opt/emsdk
-
-      - name: Install WebAssembly Workload
-        shell: bash
-        run: |
-          dotnet workload install wasm-tools
-          dotnet workload install wasm-tools-net9
-          dotnet workload update
 
       - name: Web-Compile ApplicationTest
         shell: bash
