@@ -90,11 +90,11 @@ target frameworks, along with the type of support provided for each one.
 - **Generic `ref struct`:** No
 - **MemoryMarshal (shim implemented):**
     - `CreateReadOnlySpanFromNullTerminated` [²]
-    - `GetArrayDataReference` [¹]
+    - `GetArrayDataReference` [³]
 - **Rune (shim implemented):**
     - `EncodeToUtf8`, `DecodeFromUtf8`, `DecodeFromUtf16` [²]
 - **Enum (shim implemented):**
-    - `Enum.GetName<T>` [³]
+    - `Enum.GetName<T>` [⁴]
 - **Convert (shim implemented):**
     - `ToHexString` [²]
 - **Dependencies:**
@@ -163,7 +163,7 @@ target frameworks, along with the type of support provided for each one.
 <summary><strong>.NET 9.0</strong> — Current</summary>
 
 - Inherits from .NET 8.0
-- **Generic `ref struct`:** Yes [⁴]
+- **Generic `ref struct`:** Yes [⁵]
 
 </details>
 <details>
@@ -173,11 +173,12 @@ target frameworks, along with the type of support provided for each one.
 
 </details>
 
-1. AOT detection should be performed via reflection. Retrieving references to multidimensional array data should be done
-   using static delegates, and managed buffer registration should be handled through buffer allocation.
+1. AOT detection should be performed via reflection. 
 2. Uses CoreCLR implementations from .NET 6.0. Simpler alternatives may be substituted in .NET Standard 2.1.
-3. Internally relies on `Enum.GetName(Type, Object)`.
-4. Value-type pointers support `ref struct` generics, but due to C# compiler restrictions, some methods must be
+3. Retrieving references to multidimensional array data should be done using static delegates, and managed buffer 
+   registration should be handled through buffer binding.
+4. Internally relies on `Enum.GetName(Type, Object)`.
+5. Value-type pointers support `ref struct` generics, but due to C# compiler restrictions, some methods must be
    implemented in IL.
 
 ## AOT Support
@@ -187,9 +188,9 @@ obsolete reflection-free mode.
 
 The only features that require reflection are:
 
-* Native AOT detection when targeting .NET 5.0 or earlier.
-
-Starting with .NET 7.0, the use of reflection can be completely avoided.
+* Buffer preparation and auto-composition when no binary buffer is registered.
+* AOT detection when targeting **.NET 5.0 or earlier**.
+* AOT detection on **.NET 7.0 and later** when running on **Web or Mobile platforms** only.
 
 ## Visual Basic .NET Support
 
@@ -2436,12 +2437,12 @@ Represents a mutable string of UTF-8 encoded characters.
   Initializes a new instance of the `CStringBuilder` class using the specified value as initial content.
   </details>
 - <details>
-  <summary>CStringBuilder(ReadOnlySpan&amp;lt;Byte&amp;gt;)</summary>
+  <summary>CStringBuilder(ReadOnlySpan&lt;Byte&gt;)</summary>
 
   Initializes a new instance of the `CStringBuilder` class using the specified UTF-8 text as initial content.
   </details>
 - <details>
-  <summary>CStringBuilder(ReadOnlySpan&amp;lt;Char&amp;gt;)</summary>
+  <summary>CStringBuilder(ReadOnlySpan&lt;Char&gt;)</summary>
 
   Initializes a new instance of the `CStringBuilder` class using the specified UTF-16 text as initial content.
   </details>
@@ -2466,7 +2467,7 @@ Represents a mutable string of UTF-8 encoded characters.
   Converts the value of this instance to a `String`.
   </details>
 - <details>
-  <summary>CopyTo(Int32, Span&amp;lt;Byte&amp;gt;)</summary>
+  <summary>CopyTo(Int32, Span&lt;Byte&gt;)</summary>
 
   Copies the UTF-8 characters from a specified segment of this instance to a destination span of bytes.
   </details>
@@ -3414,23 +3415,21 @@ This class allows to allocate buffers on stack if possible.
   <summary>Register&lt;TBuffer&gt;()</summary>
   Registers object buffer.
 
-  **Note:** `TBuffer` is `struct` and `IManagedBuffer<Object>`. In .NET 6.0 and earlier, this method uses reflection.
+  **Note:** `TBuffer` is `struct` and `IManagedBuffer<Object>`.
   </details>
 - <details>
   <summary>Register&lt;T, TBuffer&gt;()</summary>
 
   Registers `T` buffer.
 
-  **Note:** `T` is `struct`. `TBuffer` is `struct` and `IManagedBuffer<T>`. In .NET 6.0 and earlier, this method uses
-  reflection.
+  **Note:** `T` is `struct`. `TBuffer` is `struct` and `IManagedBuffer<T>`.
   </details>
 - <details>
   <summary>RegisterNullable&lt;T, TBuffer&gt;()</summary>
 
   Registers `T?` buffer.
 
-  **Note:** `T` is `struct`. `TBuffer` is `struct` and `IManagedBuffer<T?>`. In .NET 6.0 and earlier, this method uses
-  reflection.
+  **Note:** `T` is `struct`. `TBuffer` is `struct` and `IManagedBuffer<T?>`.
   </details>
 - <details>
   <summary>PrepareBinaryBuffer(UInt16)</summary>
