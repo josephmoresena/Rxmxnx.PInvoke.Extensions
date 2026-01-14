@@ -115,7 +115,7 @@ jobs:
   
   freebsd-actions:
     needs: [ build ]
-    uses: ./.github/workflows/build-freebsd.yml
+    uses: ./.github/workflows/freebsd-actions.yml
     with:
       run_tests: true
       build_artifacts: ${{ github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' }}
