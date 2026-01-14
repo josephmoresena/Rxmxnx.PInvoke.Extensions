@@ -225,6 +225,7 @@ jobs:
         shell: bash
         run: |
           dotnet workload install wasm-tools
+          dotnet workload install wasm-tools-net9
           dotnet workload update
 
       - name: Web-Compile ApplicationTest
@@ -286,6 +287,7 @@ jobs:
         shell: bash
         run: |
           dotnet workload uninstall wasm-tools
+          dotnet workload uninstall wasm-tools-net9
           
       - name: Remove Escripten
         shell: bash
