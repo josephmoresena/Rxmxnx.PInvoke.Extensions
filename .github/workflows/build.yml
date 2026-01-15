@@ -173,4 +173,5 @@ jobs:
         run: |
           echo "Deleting caches..."
           gh cache delete "internal-nuget-${{ github.run_id }}" || true
+          gh cache delete "internal-monoapp-bin-${{ github.run_id }}" || true
           gh cache delete "internal-tests-bin-${{ github.run_id }}" || true
