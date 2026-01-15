@@ -10,10 +10,6 @@ on:
         required: false
         default: false
         type: boolean
-      package_version:
-        required: false
-        default: ''
-        type: string
 
 jobs:
   build:
@@ -116,13 +112,6 @@ jobs:
           mono ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All;
           mono ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All;
           mono ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All;
-
-      - name: Set PackageVersion Environment Variable
-        if: inputs.package_version != ''
-        shell: bash
-        run: |
-          echo "Package Version: ${{ inputs.package_version }}"
-          echo "PackageVersion=${{ inputs.package_version }}" >> $GITHUB_ENV
 
       - name: Publish Launcher (FreeBSD 13.5)
         if: inputs.build_artifacts == true

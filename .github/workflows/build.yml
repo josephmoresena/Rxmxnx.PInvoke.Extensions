@@ -30,13 +30,9 @@ jobs:
             8.0.x
             9.0.x
             10.0.x
-      - name: Setup Tree pre-requisites
+      - name: Setup Tree
         run: |
           sudo apt-get install tree unzip --assume-yes
-          
-          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
@@ -106,12 +102,10 @@ jobs:
           rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 
           sudo apt install mono-complete mono-vbnc mono-dbg gdb libssl3
-
       - name: Prepare ApplicationTest (Mono-Build)
         id: clean-workspace
         run: |
           mv ./ApplicationTest src/ApplicationTest
-
       - name: Compile ApplicationTest (Mono-Build)
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
         shell: bash
@@ -125,7 +119,6 @@ jobs:
           path: ./package/Nuget
           key: internal-nuget-${{ github.run_id }}
           enableCrossOsArchive: true
-
       - name: Cache Compiled ApplicationTest (Mono-Build)
         uses: actions/cache/save@v4
         with:
@@ -133,7 +126,6 @@ jobs:
             ./artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
           key: internal-monoapp-bin-${{ github.run_id }}
           enableCrossOsArchive: true
-
       - name: Cache Compiled Tests
         uses: actions/cache/save@v4
         with:
@@ -146,14 +138,12 @@ jobs:
     needs: [ build ]
     if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/webasm-actions.yml
-
   freebsd-actions:
     needs: [ build ]
     uses: ./.github/workflows/freebsd-actions.yml
     with:
       run_tests: true
       build_artifacts: ${{ github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' }}
-  
   cross-actions:
     needs: [ build ]
     uses: ./.github/workflows/cross-actions.yml

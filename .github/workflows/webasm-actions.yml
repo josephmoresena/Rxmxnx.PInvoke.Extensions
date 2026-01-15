@@ -1,11 +1,5 @@
 name: WebASM Actions
-on:
-  workflow_call:
-    inputs:
-      package_version:
-        required: false
-        default: ''
-        type: string
+on: workflow_call
 
 jobs:
   build:
@@ -16,13 +10,6 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 1
-
-      - name: Set PackageVersion Environment Variable
-        if: inputs.package_version != ''
-        shell: bash
-        run: |
-          echo "Package Version: ${{ inputs.package_version }}"
-          echo "PackageVersion=${{ inputs.package_version }}" >> $GITHUB_ENV
 
       - name: Restore Internal NuGet Packages
         uses: actions/cache/restore@v5
