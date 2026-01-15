@@ -1,0 +1,413 @@
+name: Cross Actions
+on:
+  workflow_call:
+    inputs:
+      run_tests:
+        required: false
+        default: false
+        type: boolean
+      build_artifacts:
+        required: false
+        default: false
+        type: boolean
+      package_version:
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ windows-latest, ubuntu-latest, macos-latest ]
+    env:
+      SHOW_DIAGNOSTICS: true
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - name: Restore Internal NuGet Packages
+        uses: actions/cache/restore@v5
+        if: inputs.build_artifacts == true
+        with:
+          path: ./package/Nuget
+          key: internal-nuget-${{ github.run_id }}
+          fail-on-cache-miss: true
+
+      - name: APT deb822 sources
+        if: runner.os == 'Linux'
+        run: |
+          if [[ $ImageOS == "ubuntu24" ]]; then
+           sudo bash -c 'cat > /etc/apt/sources.list.d/ubuntu.sources <<EOF
+          Types: deb
+          URIs: https://archive.ubuntu.com/ubuntu/
+          Suites: noble
+          Components: main restricted universe
+          Architectures: amd64
+
+          Types: deb
+          URIs: https://security.ubuntu.com/ubuntu/
+          Suites: noble-security
+          Components: main restricted universe
+          Architectures: amd64
+
+          Types: deb
+          URIs: https://archive.ubuntu.com/ubuntu/
+          Suites: noble-updates
+          Components: main restricted universe
+          Architectures: amd64
+
+          Types: deb
+          URIs: https://azure.ports.ubuntu.com/ubuntu-ports/
+          Suites: noble
+          Components: main restricted multiverse universe
+          Architectures: arm64
+
+          Types: deb
+          URIs: https://azure.ports.ubuntu.com/ubuntu-ports/
+          Suites: noble-updates
+          Components: main restricted multiverse universe
+          Architectures: arm64
+
+          Types: deb
+          URIs: https://azure.ports.ubuntu.com/ubuntu-ports/
+          Suites: noble-updates
+          Components: main restricted multiverse universe
+          Architectures: armhf
+          EOF'
+          fi
+      - name: Setup NativeAOT pre-requisites
+        if: runner.os == 'Linux'
+        run: |
+          sudo dpkg --add-architecture arm64
+          sudo dpkg --add-architecture armhf
+
+          sudo bash -c 'cat > /etc/apt/sources.list.d/arm64.list <<EOF
+          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ noble main restricted
+          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ noble-updates main restricted
+          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ noble-backports main restricted universe multiverse
+          EOF'
+
+          sudo bash -c 'cat > /etc/apt/sources.list.d/armhf.list <<EOF
+          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ noble main restricted
+          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ noble-updates main restricted
+          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ noble-backports main restricted universe multiverse
+          EOF'
+
+          sudo sed -i -e 's/deb http/deb [arch=amd64] http/g' /etc/apt/sources.list
+          sudo sed -i -e 's/deb mirror/deb [arch=amd64] mirror/g' /etc/apt/sources.list
+
+          sudo apt install ca-certificates gnupg --assume-yes
+          sudo gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+          echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+
+          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+          sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+          rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+
+          sudo apt update 
+          sudo apt upgrade --assume-yes
+          sudo apt-get install clang llvm zlib1g-dev libkrb5-dev libssl-dev \
+            qemu-user qemu-user-static binfmt-support libicu74:arm64 libicu74:armhf \
+            binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu zlib1g-dev:arm64 libssl-dev:arm64 \
+            binutils-arm-linux-gnueabihf gcc-arm-linux-gnueabihf zlib1g-dev:armhf libssl-dev:armhf \
+            mono-complete mono-vbnc mono-dbg gdb libssl3 \
+            --assume-yes
+
+          sudo mkdir -p /usr/share/dotnet
+          sudo chown -R $(whoami):$(whoami) /usr/share/dotnet
+
+          sudo apt-get clean
+          sudo apt-get autoclean
+          sudo apt-get autoremove -y
+          sudo rm -rf /tmp/*
+          sudo rm -rf /var/tmp/*
+
+          sudo rm -rf /usr/local/lib/android/sdk
+
+          df -h
+
+      - name: Setup Mono Development Kit And Runtime
+        if: runner.os == 'MacOS'
+        run: |
+          brew install --cask mono-mdk
+          brew install --overwrite mono
+          mono --version
+          /opt/homebrew/bin/mono --version
+      - name: Setup MinGW i686
+        if: runner.os == 'Windows' && inputs.build_artifacts == true
+        run: |
+          C:\msys64\usr\bin\bash.exe -lc "pacman -Sy --noconfirm mingw-w64-i686-toolchain"
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        if: runner.os != 'Windows'
+        with:
+          dotnet-version: |
+            6.0.x
+            7.0.x
+            8.0.x
+            9.0.x
+            10.0.x
+      - name: Setup .NET x86
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $env:PATH = "C:\msys64\mingw32\bin;" + $env:PATH
+          winget install Mono.Mono --architecture x86 --silent --force --disable-interactivity --accept-source-agreements
+          winget install Microsoft.DotNet.SDK.6  --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
+          winget install Microsoft.DotNet.SDK.7 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
+          winget install Microsoft.DotNet.SDK.8 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements  
+          winget install Microsoft.DotNet.SDK.9 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
+          winget install Microsoft.DotNet.SDK.10 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
+      - name: Setup .NET x64
+        if: runner.os == 'Windows'
+        run: |
+          winget install Mono.Mono --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
+          winget install Microsoft.DotNet.SDK.6 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
+          winget install Microsoft.DotNet.SDK.7 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
+          winget install Microsoft.DotNet.SDK.8 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
+          winget install Microsoft.DotNet.SDK.9 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
+          winget install Microsoft.DotNet.SDK.9 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
+          winget install Microsoft.DotNet.SDK.10 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
+
+          dotnet workload update
+
+      - name: Remove ApplicationTest
+        shell: pwsh
+        run: |
+          Get-ChildItem -Path "src/ApplicationTest" -Recurse -Include "*.*proj" |
+          ForEach-Object {
+            dotnet sln src remove $_.FullName
+          }
+
+      - name: Build tests
+        if: inputs.run_tests == true && runner.os != 'Linux'
+        run: |
+          dotnet restore src --ignore-failed-sources
+          dotnet build src /p:MultipleFrameworkTest=true /p:OnlySupportedFrameworkTest=true --configuration Release --disable-build-servers /nr:false /maxcpucount:1
+      - name: Windows x86 tests
+        if: inputs.run_tests == true && runner.os == 'Windows'
+        run: |
+          dotnet test src /p:MultipleFrameworkTest=true /p:OnlySupportedFrameworkTest=true --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed" --settings src\Test\x86.runsettings
+      - name: Run tests
+        if: inputs.run_tests == true && runner.os != 'Linux'
+        run: |
+          dotnet test src /p:MultipleFrameworkTest=true /p:OnlySupportedFrameworkTest=true --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"
+      - name: Run Mono tests
+        if: inputs.run_tests == true && runner.os != 'Linux'
+        shell: pwsh
+        run: |
+          if ($IsWindows) {
+              & "C:\Program Files\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Common.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All
+              & "C:\Program Files\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.CString.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All
+              & "C:\Program Files\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Extensions.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All
+              & "C:\Program Files\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Buffers.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
+          }
+          else {
+              mono src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All
+              mono src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All
+              mono src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All
+              mono src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
+          }
+      - name: Run Mono tests (x86)
+        if: inputs.run_tests == true && runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if ($IsWindows) {
+              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Common.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All
+              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.CString.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All
+              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Extensions.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All
+              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Buffers.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
+          }
+      - name: Run Mono tests (Apple Silicon)
+        if: inputs.run_tests == true && runner.os == 'MacOS'
+        run: |
+          /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All
+          /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All
+          /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All
+          /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
+
+      - name: Set PackageVersion Environment Variable
+        if: inputs.package_version != ''
+        shell: bash
+        run: |
+          echo "Package Version: ${{ inputs.package_version }}"
+          echo "PackageVersion=${{ inputs.package_version }}" >> $GITHUB_ENV
+
+      - name: Publish launcher
+        if: inputs.build_artifacts == true
+        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.LauncherTest
+        run: dotnet publish
+      - name: Publish mkbundle patcher
+        if: inputs.build_artifacts == true && runner.os == 'Windows'
+        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.Mkbundle.Patcher
+        run: dotnet publish --use-current-runtime
+
+      - name: Install Ubuntu 20.04 (WSL)
+        if: inputs.build_artifacts == true && runner.os == 'Windows'
+        uses: Vampire/setup-wsl@v6
+        with:
+          distribution: Ubuntu-20.04
+          wsl-version: 1
+          update: true
+          additional-packages: ca-certificates gnupg
+
+      - name: Install Mono Framework (WSL)
+        if: inputs.build_artifacts == true && runner.os == 'Windows'
+        shell: wsl-bash {0}
+        run: |
+          sudo apt update
+          sudo gpg --homedir /tmp --no-default-keyring \
+                   --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg \
+                   --keyserver hkp://keyserver.ubuntu.com:80 \
+                   --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+
+          echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" \
+            | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+
+          sudo apt update -y
+          sudo apt install -y mono-complete
+
+          sudo apt-get clean
+          sudo apt-get autoclean
+          sudo apt-get autoremove -y
+          sudo rm -rf /tmp/*
+          sudo rm -rf /var/tmp/*
+
+          which mono
+          mono --version
+
+      - name: Run launcher (compile)
+        if: inputs.build_artifacts == true
+        shell: pwsh
+        run: |
+          if ($IsWindows) {
+            $env:PATH = "C:\msys64\mingw32\bin;" + $env:PATH
+            ./Rxmxnx.PInvoke.LauncherTest.exe "src\ApplicationTest" "artifacts" "compile"
+
+            Remove-Item -Recurse -Force "$env:WINDIR\SoftwareDistribution\Download" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "$env:WINDIR\Prefetch" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "C:\Android\android-sdk" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "$env:WINDIR\Temp\*" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "$env:TEMP\*" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "$env:TMP\*" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Temp\*" -ErrorAction SilentlyContinue
+
+          } else {
+            chmod +x Rxmxnx.PInvoke.LauncherTest
+            ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "compile"
+          }
+      - name: Clean Up
+        if: inputs.build_artifacts == true
+        shell: pwsh
+        run: |
+          Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
+            $projDir = Split-Path $_.FullName
+            "bin","obj" | ForEach-Object {
+              $path = Join-Path $projDir $_
+              if (Test-Path $path) {
+                try {
+                  Remove-Item -Recurse -Force $path -ErrorAction Stop
+                } catch {
+                  Write-Host "$($_.Exception.Message)"
+                }
+              }
+            }
+          }
+
+      - name: inputs.build_artifacts == true && Mono-Compile ApplicationTest (WSL)
+        if: inputs.build_artifacts == true && runner.os == 'Windows'
+        shell: wsl-bash {0}
+        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
+        run: |
+          msbuild -restore /p:Configuration=Release /p:UsePackage=true /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
+          rm -rf ./obj
+      - name: inputs.build_artifacts == true && Remove Mono Framework (WSL)
+        if: inputs.build_artifacts == true && runner.os == 'Windows'
+        shell: wsl-bash {0}
+        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
+        run: |
+          sudo apt-get purge mono* -y
+          sudo apt-get clean
+          sudo apt-get autoclean
+          sudo apt-get autoremove -y
+
+          sudo rm -rf /tmp/*
+          sudo rm -rf /var/tmp/*
+
+      - name: Run launcher (run)
+        if: inputs.build_artifacts == true
+        shell: pwsh
+        run: |
+          if ($IsWindows) {
+            ./Rxmxnx.PInvoke.LauncherTest.exe "src\ApplicationTest" "artifacts" "run"
+          } else {
+            ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "run"
+          }
+          Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
+              $projDir = Split-Path $_.FullName
+              "bin","obj" | ForEach-Object {
+              $path = Join-Path $projDir $_
+              if (Test-Path $path) {
+                try {
+                  Remove-Item -Recurse -Force $path -ErrorAction Stop
+                } catch {
+                  Write-Host "$($_.Exception.Message)"
+                }
+              }
+            }
+          }
+
+      - name: Clean Up Extra - Windows
+        if: inputs.build_artifacts == true && runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Remove-Item -Recurse -Force "$env:WINDIR\Temp\*" -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force "$env:TEMP\*" -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force "$env:TMP\*" -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Temp\*" -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force "$env:USERPROFILE\.nuget\packages" -ErrorAction SilentlyContinue
+
+      - name: Clean Up Extra
+        if: inputs.build_artifacts == true && runner.os != 'Windows'
+        shell: bash
+        run: |
+          sudo rm -rf /tmp/*
+          sudo rm -rf /var/tmp/*
+          sudo rm -rf ~/.nuget/packages
+
+          df -h
+
+      - name: Create Native Artifact Logs
+        if: inputs.build_artifacts == true
+        uses: actions/upload-artifact@v5
+        with:
+          name: ${{ runner.os }}-Artifact-Logs
+          path: |
+            ./artifacts/Native/*
+            ./artifacts/Mono/*Mono.Link.log
+            ./artifacts/Mono/*Mono.AOT*.log
+            ./artifacts/Mono/*Mono.Bundle*.log
+
+      - name: Remove Native Logs
+        if: inputs.build_artifacts == true
+        shell: pwsh
+        run: |
+          if (Test-Path ./artifacts/Native) {
+              Remove-Item -Recurse -Force ./artifacts/Native/*
+          }
+
+      - name: Create Native Artifact
+        if: inputs.build_artifacts == true
+        uses: actions/upload-artifact@v5
+        with:
+          name: ${{ runner.os }}-Artifact
+          path: |
+            ./artifacts/*NAOT*
+            ./artifacts/*RFM*
+            ./artifacts/Mono/X86/*
+            ./artifacts/Mono/X64/*
+            ./artifacts/Mono/Arm64/*

@@ -94,7 +94,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Console.WriteLine($"IL compilation time: {JitInfo.GetCompilationTime()}");
 #endif
 			Console.WriteLine("========== Rxmxnx.PInvoke Runtime information ==========");
+#if TMP_PKG
 			Console.WriteLine($"Package: {SystemInfo.CompilationFramework}");
+#endif
 			Console.WriteLine($"Native AOT: {AotInfo.IsNativeAot}");
 			Console.WriteLine($"Reflection Enabled: {!AotInfo.IsReflectionDisabled}");
 			Console.WriteLine($"IL Code Generation Supported: {AotInfo.IsCodeGenerationSupported}");

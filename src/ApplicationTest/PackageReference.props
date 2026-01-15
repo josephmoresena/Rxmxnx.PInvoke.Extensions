@@ -1,10 +1,15 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <PackageVersion Condition="'$(PackageVersion)' == ''">9999.99.99.99-tmp</PackageVersion>
+        <DefineConstants Condition="'$(PackageVersion)' == '9999.99.99.99-tmp'">$(DefineConstants);TMP_PKG</DefineConstants>
+        <Version>$(PackageVersion)</Version>
+    </PropertyGroup>
     <ItemGroup Condition="'$(UsePackage)' != 'true'">
         <ProjectReference Include="..\..\Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate.csproj"/>
         <ProjectReference Include="..\..\Intermediate\Rxmxnx.PInvoke.CString.Intermediate\Rxmxnx.PInvoke.CString.Intermediate.csproj"/>
         <ProjectReference Include="..\..\Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate.csproj"/>
     </ItemGroup>
     <ItemGroup Condition="'$(UsePackage)' == 'true'">
-        <PackageReference Include="Rxmxnx.PInvoke.Extensions" Version="9999.99.99.99-tmp"/>
+        <PackageReference Include="Rxmxnx.PInvoke.Extensions" Version="$(PackageVersion)"/>
     </ItemGroup>
 </Project>
