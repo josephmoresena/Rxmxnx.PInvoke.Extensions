@@ -43,19 +43,6 @@ jobs:
           key: internal-tests-bin-${{ github.run_id }}
           fail-on-cache-miss: true
 
-      - name: Install Mono Framework (Host)
-        run: |
-          sudo apt install ca-certificates gnupg --assume-yes
-          sudo gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-          echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
-          sudo apt update
-
-          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-
-          sudo apt install mono-complete mono-vbnc mono-dbg gdb libssl3
-
       - name: Init FreeBSD 13.5 VM
         id: vm
         uses: vmactions/freebsd-vm@v1.3.6
@@ -152,13 +139,14 @@ jobs:
           cd $GITHUB_WORKSPACE;
           ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "compile";
 
-      - name: Mono-Compile ApplicationTest - FreeBSD 13.5 (Host)
+      - name: Restore Compiled ApplicationTest (Mono-Build)
+        uses: actions/cache/restore@v5
         if: inputs.build_artifacts == true
-        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
-        shell: bash
-        run: |
-          msbuild -restore /p:Configuration=Release /p:UsePackage=true /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
-          rm -rf ./obj
+        with:
+          path: ./artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
+          key: internal-monoapp-bin-${{ github.run_id }}
+          fail-on-cache-miss: true
+          enableCrossOsArchive: true
 
       - name: Run launcher - Run (FreeBSD)
         shell: freebsd {0}

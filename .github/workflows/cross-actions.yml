@@ -185,7 +185,7 @@ jobs:
           }
 
       - name: Build tests
-        if: inputs.run_tests == true && runner.os != 'Linux'
+        if: inputs.run_tests == true
         run: |
           dotnet restore src --ignore-failed-sources
           dotnet build src /p:MultipleFrameworkTest=true /p:OnlySupportedFrameworkTest=true --configuration Release --disable-build-servers /nr:false /maxcpucount:1
@@ -194,11 +194,11 @@ jobs:
         run: |
           dotnet test src /p:MultipleFrameworkTest=true /p:OnlySupportedFrameworkTest=true --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed" --settings src\Test\x86.runsettings
       - name: Run tests
-        if: inputs.run_tests == true && runner.os != 'Linux'
+        if: inputs.run_tests == true
         run: |
           dotnet test src /p:MultipleFrameworkTest=true /p:OnlySupportedFrameworkTest=true --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"
       - name: Run Mono tests
-        if: inputs.run_tests == true && runner.os != 'Linux'
+        if: inputs.run_tests == true
         shell: pwsh
         run: |
           if ($IsWindows) {
@@ -247,40 +247,6 @@ jobs:
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.Mkbundle.Patcher
         run: dotnet publish --use-current-runtime
 
-      - name: Install Ubuntu 20.04 (WSL)
-        if: inputs.build_artifacts == true && runner.os == 'Windows'
-        uses: Vampire/setup-wsl@v6
-        with:
-          distribution: Ubuntu-20.04
-          wsl-version: 1
-          update: true
-          additional-packages: ca-certificates gnupg
-
-      - name: Install Mono Framework (WSL)
-        if: inputs.build_artifacts == true && runner.os == 'Windows'
-        shell: wsl-bash {0}
-        run: |
-          sudo apt update
-          sudo gpg --homedir /tmp --no-default-keyring \
-                   --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg \
-                   --keyserver hkp://keyserver.ubuntu.com:80 \
-                   --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-
-          echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" \
-            | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
-
-          sudo apt update -y
-          sudo apt install -y mono-complete
-
-          sudo apt-get clean
-          sudo apt-get autoclean
-          sudo apt-get autoremove -y
-          sudo rm -rf /tmp/*
-          sudo rm -rf /var/tmp/*
-
-          which mono
-          mono --version
-
       - name: Run launcher (compile)
         if: inputs.build_artifacts == true
         shell: pwsh
@@ -319,25 +285,15 @@ jobs:
             }
           }
 
-      - name: inputs.build_artifacts == true && Mono-Compile ApplicationTest (WSL)
-        if: inputs.build_artifacts == true && runner.os == 'Windows'
-        shell: wsl-bash {0}
-        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
-        run: |
-          msbuild -restore /p:Configuration=Release /p:UsePackage=true /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
-          rm -rf ./obj
-      - name: inputs.build_artifacts == true && Remove Mono Framework (WSL)
-        if: inputs.build_artifacts == true && runner.os == 'Windows'
-        shell: wsl-bash {0}
-        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
-        run: |
-          sudo apt-get purge mono* -y
-          sudo apt-get clean
-          sudo apt-get autoclean
-          sudo apt-get autoremove -y
 
-          sudo rm -rf /tmp/*
-          sudo rm -rf /var/tmp/*
+      - name: Restore Compiled ApplicationTest (Mono-Build)
+        uses: actions/cache/restore@v5
+        if: inputs.build_artifacts == true && runner.os == 'Windows'
+        with:
+          path: ./artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
+          key: internal-monoapp-bin-${{ github.run_id }}
+          fail-on-cache-miss: true
+          enableCrossOsArchive: true
 
       - name: Run launcher (run)
         if: inputs.build_artifacts == true

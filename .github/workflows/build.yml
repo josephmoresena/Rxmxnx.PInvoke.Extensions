@@ -94,11 +94,45 @@ jobs:
           done
           echo "-----------------------------------"
 
+      - name: Install Mono Framework
+        run: |
+          sudo apt install ca-certificates gnupg --assume-yes
+          sudo gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+          echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+          sudo apt update
+
+          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+          sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+          rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+
+          sudo apt install mono-complete mono-vbnc mono-dbg gdb libssl3
+
+      - name: Prepare ApplicationTest (Mono-Build)
+        id: clean-workspace
+        run: |
+          mv ./ApplicationTest src/ApplicationTest
+
+      - name: Compile ApplicationTest (Mono-Build)
+        if: inputs.build_artifacts == true
+        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
+        shell: bash
+        run: |
+          msbuild -restore /p:Configuration=Release /p:UsePackage=true /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
+          rm -rf ./obj
+
       - name: Cache NuGet Packages
         uses: actions/cache/save@v4
         with:
           path: ./package/Nuget
           key: internal-nuget-${{ github.run_id }}
+          enableCrossOsArchive: true
+
+      - name: Cache Compiled ApplicationTest (Mono-Build)
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ./artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
+          key: internal-monoapp-bin-${{ github.run_id }}
           enableCrossOsArchive: true
 
       - name: Cache Compiled Tests
