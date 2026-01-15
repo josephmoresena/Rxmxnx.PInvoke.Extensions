@@ -53,8 +53,8 @@ public sealed class StringJoinStringTest
 	}
 	private static void ArrayRangeTest(String? separator, String?[] strings)
 	{
-		Int32 startIndex = Random.Shared.Next(0, strings.Length);
-		Int32 count = Random.Shared.Next(startIndex, strings.Length) - startIndex;
+		Int32 startIndex = PInvokeRandom.Shared.Next(0, strings.Length);
+		Int32 count = PInvokeRandom.Shared.Next(startIndex, strings.Length) - startIndex;
 		String? strSeparator = separator;
 		String expectedCString = String.Join(strSeparator, strings, startIndex, count);
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
@@ -64,6 +64,11 @@ public sealed class StringJoinStringTest
 
 		PInvokeAssert.Equal(expectedCString, resultCStringCString);
 		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+	}
+	private static String? GetCStringSeparator()
+	{
+		Int32 result = PInvokeRandom.Shared.Next(-3, TestSet.Utf16Text.Count);
+		return TestSet.GetString(result);
 	}
 
 #if NET6_0_OR_GREATER
@@ -93,8 +98,8 @@ public sealed class StringJoinStringTest
 	}
 	private static async Task ArrayRangeTestAsync(String? separator, String?[] strings)
 	{
-		Int32 startIndex = Random.Shared.Next(0, strings.Length);
-		Int32 count = Random.Shared.Next(startIndex, strings.Length) - startIndex;
+		Int32 startIndex = PInvokeRandom.Shared.Next(0, strings.Length);
+		Int32 count = PInvokeRandom.Shared.Next(startIndex, strings.Length) - startIndex;
 		String? strSeparator = separator;
 		String expectedCString = String.Join(strSeparator, strings, startIndex, count);
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
@@ -104,17 +109,6 @@ public sealed class StringJoinStringTest
 
 		Assert.Equal(expectedCString, resultCStringCString);
 		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
-	}
-#endif
-	private static String? GetCStringSeparator()
-	{
-		Int32 result = Random.Shared.Next(-3, TestSet.Utf16Text.Count);
-		return TestSet.GetString(result);
-	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
 	}
 #endif
 }

@@ -21,7 +21,7 @@ public sealed class IsLiteralTest
 	[Fact]
 	public void Test()
 	{
-		Int32 value = Random.Shared.Next();
+		Int32 value = PInvokeRandom.Shared.Next();
 
 		PInvokeAssert.False(MemoryMarshal.CreateReadOnlySpan(ref value, 1).IsLiteral());
 #pragma warning disable CS9193
@@ -80,11 +80,4 @@ public sealed class IsLiteralTest
 #pragma warning restore CS9193
 		PInvokeAssert.False(constValue.AsSpan().IsLiteral());
 	}
-
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

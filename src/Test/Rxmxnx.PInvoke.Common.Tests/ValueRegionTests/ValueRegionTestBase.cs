@@ -29,7 +29,7 @@ public abstract class ValueRegionTestBase
 	protected static unsafe ValueRegion<T> Create<T>(T[] array, ICollection<GCHandle> handles, out Boolean isReference)
 	{
 		isReference = false;
-		switch (Random.Shared.Next(default, 12))
+		switch (PInvokeRandom.Shared.Next(default, 12))
 		{
 			case 0:
 			case 1:
@@ -63,10 +63,4 @@ public abstract class ValueRegionTestBase
 #pragma warning restore CS8500
 		}
 	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

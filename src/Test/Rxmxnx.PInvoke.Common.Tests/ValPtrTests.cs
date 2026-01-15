@@ -244,7 +244,7 @@ public sealed class ValPtrTests
 	}
 	private static void FormatTest<T>(ValPtr<T> valPtr)
 	{
-		CultureInfo culture = ValPtrTests.allCultures[Random.Shared.Next(0, ValPtrTests.allCultures.Length)];
+		CultureInfo culture = ValPtrTests.allCultures[PInvokeRandom.Shared.Next(0, ValPtrTests.allCultures.Length)];
 		PInvokeAssert.Equal(valPtr.Pointer.GetHashCode(), valPtr.GetHashCode());
 		PInvokeAssert.Equal(valPtr.Pointer.ToString(), valPtr.ToString());
 
@@ -268,7 +268,7 @@ public sealed class ValPtrTests
 
 		foreach (String format in ValPtrTests.formats)
 		{
-			culture = ValPtrTests.allCultures[Random.Shared.Next(0, ValPtrTests.allCultures.Length)];
+			culture = ValPtrTests.allCultures[PInvokeRandom.Shared.Next(0, ValPtrTests.allCultures.Length)];
 			Assert.Equal(valPtr.Pointer.ToString(format), valPtr.ToString(format));
 			Assert.Equal(valPtr.Pointer.ToString(format, culture), spanFormattable.ToString(format, culture));
 		}
@@ -304,11 +304,5 @@ public sealed class ValPtrTests
 		PInvokeAssert.Equal(ctx2.Values.Length, ctx.Bytes.Length / sizeof(TDestination));
 		PInvokeAssert.Equal(offset.Bytes.Length, ctx.Bytes.Length - ctx2.Values.Length * sizeof(TDestination));
 	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }
 #pragma warning restore CS8500

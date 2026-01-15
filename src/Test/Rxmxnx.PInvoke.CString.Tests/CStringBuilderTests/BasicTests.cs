@@ -296,7 +296,7 @@ public sealed class BasicTests : CStringBuilderTestsBase
 
 			foreach (Byte u8 in cstr.AsSpan())
 			{
-				CStringBuilder result = Random.Shared.Next(0, 3) < 2 ?
+				CStringBuilder result = PInvokeRandom.Shared.Next(0, 3) < 2 ?
 					cstrBuild.Append(u8) :
 					cstrBuild.Append((Byte?)u8);
 				Assert.True(Object.ReferenceEquals(cstrBuild, result));
@@ -331,7 +331,7 @@ public sealed class BasicTests : CStringBuilderTestsBase
 			ReadOnlySpan<Byte> bytes = cstr;
 			for (Int32 j = 0; j < bytes.Length; j++)
 			{
-				CStringBuilder result = Random.Shared.Next(0, 3) < 2 ?
+				CStringBuilder result = PInvokeRandom.Shared.Next(0, 3) < 2 ?
 					cstrBuild.Insert(utf8Index + j, bytes[j]) :
 					cstrBuild.Insert(utf8Index + j, (Byte?)bytes[j]);
 				Assert.True(Object.ReferenceEquals(cstrBuild, result));

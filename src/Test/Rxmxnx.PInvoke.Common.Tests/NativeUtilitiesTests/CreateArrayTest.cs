@@ -22,7 +22,7 @@ public sealed class CreateArrayTest
 
 	private static void CreateTest<T>() where T : unmanaged
 	{
-		Int32 length = Random.Shared.Next(0, 129);
+		Int32 length = PInvokeRandom.Shared.Next(0, 129);
 		List<T> list = [];
 		T[] arr = NativeUtilities.CreateArray<T, IList<T>>(length, list, (span, _) =>
 		{
@@ -35,10 +35,4 @@ public sealed class CreateArrayTest
 
 		PInvokeAssert.Equal(list, arr);
 	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

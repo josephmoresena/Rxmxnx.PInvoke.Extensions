@@ -61,8 +61,8 @@ public sealed class JoinByteTest
 	}
 	private static void ArrayRangeTest(Byte separator, String?[] strings, CString?[] values)
 	{
-		Int32 startIndex = Random.Shared.Next(0, strings.Length);
-		Int32 count = Random.Shared.Next(startIndex, strings.Length) - startIndex;
+		Int32 startIndex = PInvokeRandom.Shared.Next(0, strings.Length);
+		Int32 count = PInvokeRandom.Shared.Next(startIndex, strings.Length) - startIndex;
 		String strSeparator = Encoding.UTF8.GetString(new[] { separator, });
 		String expectedCString = String.Join(strSeparator, strings, startIndex, count);
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
@@ -75,6 +75,11 @@ public sealed class JoinByteTest
 		PInvokeAssert.Equal(expectedCString, resultCStringCString);
 		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
 		PInvokeAssert.Same(CString.Empty, CString.Join(separator, values, 0, 0));
+	}
+	private static Byte GetByteSeparator()
+	{
+		Int32 result = PInvokeRandom.Shared.Next(33, 127);
+		return (Byte)result;
 	}
 
 #if NET6_0_OR_GREATER
@@ -104,8 +109,8 @@ public sealed class JoinByteTest
 	}
 	private static async Task ArrayRangeTestAsync(Byte separator, String?[] strings, CString?[] values)
 	{
-		Int32 startIndex = Random.Shared.Next(0, strings.Length);
-		Int32 count = Random.Shared.Next(startIndex, strings.Length) - startIndex;
+		Int32 startIndex = PInvokeRandom.Shared.Next(0, strings.Length);
+		Int32 count = PInvokeRandom.Shared.Next(startIndex, strings.Length) - startIndex;
 		String strSeparator = Encoding.UTF8.GetString(new[] { separator, });
 		String expectedCString = String.Join(strSeparator, strings, startIndex, count);
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
@@ -115,17 +120,6 @@ public sealed class JoinByteTest
 
 		Assert.Equal(expectedCString, resultCStringCString);
 		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
-	}
-#endif
-	private static Byte GetByteSeparator()
-	{
-		Int32 result = Random.Shared.Next(33, 127);
-		return (Byte)result;
-	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
 	}
 #endif
 }

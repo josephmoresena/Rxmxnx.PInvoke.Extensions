@@ -172,7 +172,7 @@ public class AsMemoryTest
 #else
 		if (IntPtr.Size == sizeof(Int32) && count > 15) return;
 #endif
-		Int32[] lengths = Enumerable.Range(0, count).Select(_ => Random.Shared.Next(1, 3)).ToArray();
+		Int32[] lengths = Enumerable.Range(0, count).Select(_ => PInvokeRandom.Shared.Next(1, 3)).ToArray();
 		Array arr = AsMemoryTest.CreateArray<T>(lengths);
 		MethodInfo method = AsMemoryTest.asMemories[arr.Rank];
 
@@ -227,10 +227,4 @@ public class AsMemoryTest
 		data.CopyTo(span);
 		return arr;
 	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

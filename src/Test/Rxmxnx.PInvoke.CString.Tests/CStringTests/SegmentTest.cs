@@ -53,8 +53,8 @@ public sealed class SegmentTests
 
 		for (Int32 i = 0; i < count; i++)
 		{
-			Int32 start = Random.Shared.Next(i, count);
-			Int32 end = Random.Shared.Next(start, count + 1);
+			Int32 start = PInvokeRandom.Shared.Next(i, count);
+			Int32 end = PInvokeRandom.Shared.Next(start, count + 1);
 
 			Int32 strStart = strIndex[start];
 			Int32 strEnd = end < strIndex.Count ? strIndex[end] : str.Length;
@@ -114,10 +114,4 @@ public sealed class SegmentTests
 
 		PInvokeAssert.Equal(cstrSeg.Length + 1, CString.GetBytes(cloneSeg).Length);
 	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

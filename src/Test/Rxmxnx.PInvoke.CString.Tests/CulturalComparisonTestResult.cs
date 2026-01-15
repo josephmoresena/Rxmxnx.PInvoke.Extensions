@@ -30,16 +30,10 @@ internal sealed record CulturalComparisonTestResult
 		do
 		{
 			result = CulturalComparisonTestResult.cultures[
-				Random.Shared.Next(0, CulturalComparisonTestResult.cultures.Length)];
+				PInvokeRandom.Shared.Next(0, CulturalComparisonTestResult.cultures.Length)];
 		}
 		// Prevents the use of unsupported cultures.
 		while (result.Name.StartsWith("om"));
 		return result;
 	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

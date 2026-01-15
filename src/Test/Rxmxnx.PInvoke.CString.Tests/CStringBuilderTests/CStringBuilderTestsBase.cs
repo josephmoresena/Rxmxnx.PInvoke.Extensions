@@ -37,17 +37,10 @@ public abstract class CStringBuilderTestsBase
 		}
 		if (safeUtf16Indices.Count == 0) return (0, 0);
 
-		Int32 randomIndexInList = Random.Shared.Next(0, safeUtf16Indices.Count);
+		Int32 randomIndexInList = PInvokeRandom.Shared.Next(0, safeUtf16Indices.Count);
 		Int32 utf16Index = safeUtf16Indices[randomIndexInList];
 		Int32 utf8Index = Encoding.UTF8.GetByteCount(value[..utf16Index]);
 
 		return (utf16Index, utf8Index);
 	}
-
-#if !NET6_0_OR_GREATER
-	protected static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

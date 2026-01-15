@@ -51,10 +51,10 @@ public sealed class BasicTests : ValueRegionTestBase
 	private static void Test<T>()
 	{
 		List<GCHandle> handles = [];
-		T[] values0 = ValueRegionTestBase.Fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
-		T[] values1 = ValueRegionTestBase.Fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
-		T[] values2 = ValueRegionTestBase.Fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
-		T[] values3 = ValueRegionTestBase.Fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
+		T[] values0 = ValueRegionTestBase.Fixture.CreateMany<T>(PInvokeRandom.Shared.Next(default, 100)).ToArray();
+		T[] values1 = ValueRegionTestBase.Fixture.CreateMany<T>(PInvokeRandom.Shared.Next(default, 100)).ToArray();
+		T[] values2 = ValueRegionTestBase.Fixture.CreateMany<T>(PInvokeRandom.Shared.Next(default, 100)).ToArray();
+		T[] values3 = ValueRegionTestBase.Fixture.CreateMany<T>(PInvokeRandom.Shared.Next(default, 100)).ToArray();
 
 		try
 		{
@@ -135,10 +135,4 @@ public sealed class BasicTests : ValueRegionTestBase
 		return span;
 	}
 #pragma warning restore CS8500
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

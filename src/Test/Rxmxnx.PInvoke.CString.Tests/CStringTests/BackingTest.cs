@@ -25,13 +25,14 @@ public sealed class BackingTest
 		PInvokeAssert.True(values.All(c => Backing2D.GetBacking(c) is null));
 		PInvokeAssert.True(values.All(c => (CString.Backing?)c is null));
 	}
+
 	private static void AssertSegment(CString backedValue)
 	{
 		CString cloneValue = (CString)backedValue.Clone();
 		for (Int32 i = 0; i < backedValue.Length; i++)
 		{
-			Int32 start = Random.Shared.Next(i, backedValue.Length);
-			Int32 end = Random.Shared.Next(start, backedValue.Length + 1);
+			Int32 start = PInvokeRandom.Shared.Next(i, backedValue.Length);
+			Int32 end = PInvokeRandom.Shared.Next(start, backedValue.Length + 1);
 
 			CString segment = backedValue[start..end];
 			CString segmentFromClone = cloneValue[start..end];
@@ -99,7 +100,6 @@ public sealed class BackingTest
 		PInvokeAssert.False(backedValue.IsZero);
 		PInvokeAssert.True(backedValue.IsNullTerminated);
 	}
-
 	private static Byte[,] CreateFor(CString?[] values)
 	{
 		Int32 maxLength = values.Select(c => c?.Length ?? 0).Max();
@@ -122,12 +122,10 @@ public sealed class BackingTest
 		protected override ValueRegion<Byte> Slice(ReadOnlyMemory<Byte> memory) => new UnsafeMemoryBacking(memory);
 
 		public static ReadOnlyMemory<Byte> GetMemory(CString? value)
-		{
-			if (value is null) return default;
-			return CString.Backing.TryGetMemory(value, !value.IsNullTerminated, out ReadOnlyMemory<Byte> mem) ?
+			=> CString.Backing.TryGetMemory(value, value is not null && !value.IsNullTerminated,
+			                                out ReadOnlyMemory<Byte> mem) ?
 				mem :
-				value.ToArray();
-		}
+				value?.ToArray();
 	}
 
 	private sealed class Backing2D : CString.Backing
@@ -162,10 +160,4 @@ public sealed class BackingTest
 		public static Backing2D? GetBacking(CString? value)
 			=> CString.Backing.TryGetBacking(value, out Backing2D result) ? result : default;
 	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

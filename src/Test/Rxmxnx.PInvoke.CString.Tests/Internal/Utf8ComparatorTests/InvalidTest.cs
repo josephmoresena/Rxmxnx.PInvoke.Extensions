@@ -41,18 +41,12 @@ public sealed class InvalidTest
 	{
 		Byte[] utf8Byte = cstr.ToArray();
 		for (Int32 i = 0; i < utf8Byte.Length; i++)
-			utf8Byte[i] = Random.Shared.Next(0, 2) == 0 ? utf8Byte[i] : InvalidTest.GetInvalidByte();
+			utf8Byte[i] = PInvokeRandom.Shared.Next(0, 2) == 0 ? utf8Byte[i] : InvalidTest.GetInvalidByte();
 		return utf8Byte;
 	}
 	private static Byte GetInvalidByte()
 	{
-		Int32 result = Random.Shared.Next(0x80, 0xC0);
+		Int32 result = PInvokeRandom.Shared.Next(0x80, 0xC0);
 		return (Byte)result;
 	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

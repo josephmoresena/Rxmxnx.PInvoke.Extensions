@@ -57,8 +57,8 @@ public sealed class StringJoinCharTest
 	}
 	private static void ArrayRangeTest(Char separator, String?[] strings)
 	{
-		Int32 startIndex = Random.Shared.Next(0, strings.Length);
-		Int32 count = Random.Shared.Next(startIndex, strings.Length) - startIndex;
+		Int32 startIndex = PInvokeRandom.Shared.Next(0, strings.Length);
+		Int32 count = PInvokeRandom.Shared.Next(startIndex, strings.Length) - startIndex;
 		String strSeparator = new(new[] { separator, });
 		String expectedCString = String.Join(strSeparator, strings, startIndex, count);
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
@@ -99,8 +99,8 @@ public sealed class StringJoinCharTest
 	}
 	private static async Task ArrayRangeTestAsync(Char separator, String?[] strings)
 	{
-		Int32 startIndex = Random.Shared.Next(0, strings.Length);
-		Int32 count = Random.Shared.Next(startIndex, strings.Length) - startIndex;
+		Int32 startIndex = PInvokeRandom.Shared.Next(0, strings.Length);
+		Int32 count = PInvokeRandom.Shared.Next(startIndex, strings.Length) - startIndex;
 		String strSeparator = new(new[] { separator, });
 		String expectedCString = String.Join(strSeparator, strings, startIndex, count);
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
@@ -110,12 +110,6 @@ public sealed class StringJoinCharTest
 
 		Assert.Equal(expectedCString, resultCStringCString);
 		Assert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
-	}
-#endif
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
 	}
 #endif
 }

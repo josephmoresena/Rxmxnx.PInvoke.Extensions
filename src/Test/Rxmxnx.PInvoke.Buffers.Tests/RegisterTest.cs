@@ -35,7 +35,7 @@ public sealed class RegisterTest
 		MethodInfo registerObjectInfo = typeof(BufferManager).GetMethods(BindingFlags.Public | BindingFlags.Static)
 		                                                     .First(m => m.Name == nameof(BufferManager.Register) &&
 			                                                            m.GetGenericArguments().Length == 1);
-		Int32 pow = Random.Shared.Next(3, 10);
+		Int32 pow = PInvokeRandom.Shared.Next(3, 10);
 		_ = RegisterTest.GetCompositeType<Object>(pow, out Int32 sizeofT, out Type resultType);
 
 #if NET5_0_OR_GREATER
@@ -58,7 +58,7 @@ public sealed class RegisterTest
 
 	private static void StructTest<T>() where T : struct
 	{
-		Int32 pow = Random.Shared.Next(3, 10);
+		Int32 pow = PInvokeRandom.Shared.Next(3, 10);
 		Type typeofT = RegisterTest.GetCompositeType<T>(pow, out Int32 sizeofT, out Type resultType);
 #if NET5_0_OR_GREATER
 		Int32 sizeOfResultType = RegisterTest.sizeOfInfo.MakeGenericMethod(resultType).CreateDelegate<Func<Int32>>()();
@@ -115,17 +115,11 @@ public sealed class RegisterTest
 		Type? initial = default;
 		foreach (Type component in components)
 		{
-			if (Random.Shared.NextDouble() < 0.5)
+			if (PInvokeRandom.Shared.NextDouble() < 0.5)
 				initial = initial is null ?
 					initial :
 					RegisterTest.compositeType.MakeGenericType(initial, component, itemType);
 		}
-		return initial ?? components[Random.Shared.Next(0, components.Length)];
+		return initial ?? components[PInvokeRandom.Shared.Next(0, components.Length)];
 	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

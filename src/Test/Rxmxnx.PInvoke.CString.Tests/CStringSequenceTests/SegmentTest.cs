@@ -35,8 +35,8 @@ public sealed class SegmentTest
 		Int32 count = seq.Count;
 		for (Int32 i = 0; i < count; i++)
 		{
-			Int32 start = Random.Shared.Next(i, count);
-			Int32 end = Random.Shared.Next(start, count + 1);
+			Int32 start = PInvokeRandom.Shared.Next(i, count);
+			Int32 end = PInvokeRandom.Shared.Next(start, count + 1);
 			CStringSequence subSeq = seq[start..end];
 			for (Int32 j = 0; j < subSeq.Count; j++)
 				PInvokeAssert.Equal(seq[j + start], subSeq[j]);
@@ -53,7 +53,7 @@ public sealed class SegmentTest
 		Int32 count = seq.Count;
 		for (Int32 i = 0; i < count; i++)
 		{
-			Int32 start = Random.Shared.Next(i);
+			Int32 start = PInvokeRandom.Shared.Next(i);
 			CStringSequence subSeq = seq.Slice(start);
 			for (Int32 j = 0; j < subSeq.Count; j++)
 				PInvokeAssert.Equal(seq[j + start], subSeq[j]);
@@ -66,10 +66,4 @@ public sealed class SegmentTest
 		CStringSequence seq = new(values);
 		return seq;
 	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

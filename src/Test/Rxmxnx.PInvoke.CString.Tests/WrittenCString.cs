@@ -14,8 +14,8 @@ internal sealed record WrittenCString
 		if (value is null)
 			return default;
 
-		Int32 start = writeAllBytes ? 0 : Random.Shared.Next(0, value.Length);
-		Int32 count = writeAllBytes ? value.Length : Random.Shared.Next(0, value.Length - start);
+		Int32 start = writeAllBytes ? 0 : PInvokeRandom.Shared.Next(0, value.Length);
+		Int32 count = writeAllBytes ? value.Length : PInvokeRandom.Shared.Next(0, value.Length - start);
 
 		return new(value) { Start = start, Count = count, };
 	}
@@ -41,10 +41,4 @@ internal sealed record WrittenCString
 			}
 		}
 	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }
