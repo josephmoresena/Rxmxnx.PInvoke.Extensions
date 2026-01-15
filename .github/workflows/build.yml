@@ -113,7 +113,6 @@ jobs:
           mv ./ApplicationTest src/ApplicationTest
 
       - name: Compile ApplicationTest (Mono-Build)
-        if: inputs.build_artifacts == true
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
         shell: bash
         run: |
