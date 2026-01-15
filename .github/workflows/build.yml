@@ -170,6 +170,7 @@ jobs:
       - name: Delete Internal Cache
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
         run: |
           echo "Deleting caches..."
           gh cache delete "internal-nuget-${{ github.run_id }}" || true
