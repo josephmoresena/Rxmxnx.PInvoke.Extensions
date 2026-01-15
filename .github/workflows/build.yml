@@ -99,6 +99,7 @@ jobs:
         with:
           path: ./package/Nuget
           key: internal-nuget-${{ github.run_id }}
+          enableCrossOsArchive: true
 
       - name: Cache Compiled Tests
         uses: actions/cache/save@v4

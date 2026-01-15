@@ -35,6 +35,7 @@ jobs:
           path: ./package/Nuget
           key: internal-nuget-${{ github.run_id }}
           fail-on-cache-miss: true
+          enableCrossOsArchive: true
 
       - name: APT deb822 sources
         if: runner.os == 'Linux'

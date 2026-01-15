@@ -32,6 +32,7 @@ jobs:
           path: ./package/Nuget
           key: internal-nuget-${{ github.run_id }}
           fail-on-cache-miss: true
+          enableCrossOsArchive: true
       - name: Restore Compiled Tests
         if: inputs.run_tests == true
         uses: actions/cache/restore@v4
