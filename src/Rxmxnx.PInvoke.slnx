@@ -10,16 +10,24 @@
         <File Path="ApplicationTest\MonoApp.props"/>
         <File Path="ApplicationTest\NativeAot.props"/>
         <File Path="ApplicationTest\nuget.config"/>
+        <File Path="ApplicationTest\OpenApi1.props"/>
+        <File Path="ApplicationTest\OpenApi2.props"/>
         <File Path="ApplicationTest\PackageReference.props"/>
+        <File Path="ApplicationTest\README.md"/>
         <File Path="ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\Mono.ILLink.Descriptors.xml"/>
     </Folder>
     <Folder Name="/Global/">
         <File Path="..\.github\workflows\build.yml"/>
+        <File Path="..\.github\workflows\cross-actions.yml"/>
+        <File Path="..\.github\workflows\freebsd-actions.yml"/>
         <File Path="..\.github\workflows\release.yml"/>
+        <File Path="..\AssemblyPatchers.props"/>
         <File Path="..\CONTRIBUTING.md"/>
         <File Path="..\Directory.Build.props"/>
         <File Path="..\LICENSE.md"/>
+        <File Path="..\MonoCecil.props"/>
         <File Path="..\README.md"/>
+        <File Path="..\.github\workflows\webasm-actions.yml"/>
         <File Path="..\.gitignore"/>
         <File Path="Library.props"/>
     </Folder>
@@ -41,7 +49,8 @@
         <File Path="..\package\Rxmxnx.PInvoke.Extensions\PACKAGE.md"/>
     </Folder>
     <Folder Name="/Tests/">
-        <Project Path="Test\Rxmxnx.PInvoke.Assert.Tests\Rxmxnx.PInvoke.Assert.Tests.csproj"/>
+        <Project Path="Test\Rxmxnx.Assert.Tests\Rxmxnx.Assert.Tests.csproj"/>
+        <Project Path="Test\Rxmxnx.Patch.Tests\Rxmxnx.Patch.Tests.csproj"/>
         <Project Path="Test\Rxmxnx.PInvoke.Buffers.Tests\Rxmxnx.PInvoke.Buffers.Tests.csproj"/>
         <Project Path="Test\Rxmxnx.PInvoke.Common.Tests\Rxmxnx.PInvoke.Common.Tests.csproj"/>
         <Project
@@ -51,6 +60,7 @@
         <File Path="Test\x86.runsettings"/>
         <File Path="Test\Tests.props"/>
         <File Path="Test\DotnetCoreAppTests.props"/>
+        <File Path="Test\DotnetCoreAppTests.targets"/>
         <File Path="Test\MonoTests.targets"/>
         <File Path="Test\README.md"/>
     </Folder>

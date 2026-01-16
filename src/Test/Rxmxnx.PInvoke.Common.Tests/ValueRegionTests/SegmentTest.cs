@@ -1,8 +1,4 @@
-﻿#if !NETCOREAPP
-using Fact = NUnit.Framework.TestAttribute;
-#endif
-
-namespace Rxmxnx.PInvoke.Tests.ValueRegionTests;
+﻿namespace Rxmxnx.PInvoke.Tests.ValueRegionTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -51,10 +47,10 @@ public sealed class SegmentTest : ValueRegionTestBase
 	private static void Test<T>() where T : unmanaged
 	{
 		List<GCHandle> handles = [];
-		T[] values0 = ValueRegionTestBase.Fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
-		T[] values1 = ValueRegionTestBase.Fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
-		T[] values2 = ValueRegionTestBase.Fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
-		T[] values3 = ValueRegionTestBase.Fixture.CreateMany<T>(Random.Shared.Next(default, 100)).ToArray();
+		T[] values0 = ValueRegionTestBase.Fixture.CreateMany<T>(PInvokeRandom.Shared.Next(default, 100)).ToArray();
+		T[] values1 = ValueRegionTestBase.Fixture.CreateMany<T>(PInvokeRandom.Shared.Next(default, 100)).ToArray();
+		T[] values2 = ValueRegionTestBase.Fixture.CreateMany<T>(PInvokeRandom.Shared.Next(default, 100)).ToArray();
+		T[] values3 = ValueRegionTestBase.Fixture.CreateMany<T>(PInvokeRandom.Shared.Next(default, 100)).ToArray();
 
 		try
 		{
@@ -108,8 +104,8 @@ public sealed class SegmentTest : ValueRegionTestBase
 		Int32 length = region.AsSpan().Length;
 		for (Int32 i = 0; i < length; i++)
 		{
-			Int32 start = Random.Shared.Next(i, length);
-			Int32 count = Random.Shared.Next(start, length) - start;
+			Int32 start = PInvokeRandom.Shared.Next(i, length);
+			Int32 count = PInvokeRandom.Shared.Next(start, length) - start;
 			ValueRegion<T> segment = region.Slice(start, count);
 
 			SegmentTest.AssertSegment(new SegmentedRegionState<T>
@@ -190,10 +186,4 @@ public sealed class SegmentTest : ValueRegionTestBase
 
 		PInvokeAssert.Equal(state.Values.Skip(state.SkipArray()).Take(state.Count), newArray);
 	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

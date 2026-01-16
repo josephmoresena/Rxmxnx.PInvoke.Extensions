@@ -5,6 +5,9 @@ on:
       - main
   pull_request:
     types: [ opened, synchronize, reopened ]
+permissions:
+  actions: write
+  contents: read
 jobs:
   build:
     name: Build and analyze
@@ -27,13 +30,9 @@ jobs:
             8.0.x
             9.0.x
             10.0.x
-      - name: Setup Tree pre-requisites
+      - name: Setup Tree
         run: |
           sudo apt-get install tree unzip --assume-yes
-          
-          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
@@ -55,7 +54,8 @@ jobs:
         shell: pwsh
         run: |
           New-Item -Path ./.sonar/scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner 
+          dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
+
       - name: Remove ApplicationTest
         shell: bash
         run: |
@@ -75,6 +75,7 @@ jobs:
           dotnet build src /p:MultipleFrameworkTest=true --configuration Release --disable-build-servers /nr:false /maxcpucount:1
           dotnet test src /p:MultipleFrameworkTest=true --verbosity normal --collect:"XPlat Code Coverage" --results-directory TestResults/  --logger "trx;verbosity=detailed" --no-build --no-restore --configuration Release -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover 
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+
       - name: Pack assembly
         working-directory: ./package/Rxmxnx.PInvoke.Extensions
         run: |
@@ -89,646 +90,79 @@ jobs:
           done
           echo "-----------------------------------"
 
-      - name: Prepare workspace for FreeBSD
-        id: clean-workspace
-        run: |
-          rm -rf .git
-          rm -rf .sonarqube
-          rm -rf TestResults
-          rm -rf ./../_temp
-          mv ./ApplicationTest src/ApplicationTest
-
-      - name: Install Mono Framework (Host)
+      - name: Install Mono Framework
         run: |
           sudo apt install ca-certificates gnupg --assume-yes
           sudo gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
           echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
           sudo apt update
-          
-          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          
-          sudo apt install mono-complete mono-vbnc mono-dbg gdb libssl3
 
-      - name: Init FreeBSD 13.5 VM
-        id: vm
-        uses: vmactions/freebsd-vm@v1.3.6
-        with:
-          release: "13.5"
-          usesh: true
-          copyback: false
-          sync: nfs
-          prepare: |
-            pkg update -f 
-            pkg install -y python311 py311-pillow sqlite3 unixODBC libgdiplus zip ca_root_nss binutils dotnet
-            
-            mkdir -p ~/fake-python39/metadata
-            cat > ~/fake-python39/metadata/+COMPACT_MANIFEST <<EOF
-            name: python39
-            version: 9.9.9
-            origin: fake/python39
-            comment: Fake package to satisfy dependency on python39
-            desc: This is a fake python39 package to satisfy dependencies.
-            categories: [python]
-            maintainer: a@b.c
-            www: https://python.org
-            prefix: /usr/local
-            licenselogic: single
-            licenses: [MIT]
-            flatsize: 0
-            EOF
-            pkg register -M ~/fake-python39/metadata/+COMPACT_MANIFEST
-            
-            mkdir -p ~/fake-py39-pillow/metadata
-            cat > ~/fake-py39-pillow/metadata/+COMPACT_MANIFEST <<EOF
-            name: py39-pillow
-            version: 9.9.9
-            origin: fake/py39-pillow
-            comment: Fake package to satisfy dependency on py39-pillow
-            desc: This is a fake py39-pillow package to satisfy dependencies.
-            categories: [python]
-            maintainer: a@b.c
-            www: https://py-pillow.org
-            prefix: /usr/local
-            licenselogic: single
-            licenses: [MIT]
-            flatsize: 0
-            EOF
-            pkg register -M ~/fake-py39-pillow/metadata/+COMPACT_MANIFEST
-            
-            fetch https://github.com/Thefrank/freebsd-port-sooners/releases/download/20230712/mono6.12-6.12.0.199_1.pkg
-            pkg add -f mono6.12-6.12.0.199_1.pkg
-            rm mono6.12-6.12.0.199_1.pkg
-            rm -rf ~/fake-py39-pillow
-            rm -rf ~/fake-python39
-          run: |
-            dotnet dev-certs https --trust
-            mono --version
-
-      - name: Run Tests (FreeBSD 13.5)
-        shell: freebsd {0}
-        run: |
-          cd $GITHUB_WORKSPACE;
-          dotnet test ./src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Common.Tests.dll --logger 'console;verbosity=detailed';
-          dotnet test ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.CString.Tests.dll --logger 'console;verbosity=detailed';
-          dotnet test ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Extensions.Tests.dll --logger 'console;verbosity=detailed';
-          dotnet test ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Buffers.Tests.dll --logger 'console;verbosity=detailed';
-
-      - name: Mono framework tests (FreeBSD 13.5)
-        shell: freebsd {0}
-        run: |
-          cd $GITHUB_WORKSPACE;
-          mono ./src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All;
-          mono ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All;
-          mono ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All;
-          mono ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All;
-
-      - name: Publish Launcher (FreeBSD)
-        shell: freebsd {0}
-        run: |
-          cd $GITHUB_WORKSPACE;
-          cd ./src/ApplicationTest/Rxmxnx.PInvoke.LauncherTest;
-          dotnet publish -r freebsd.13-x64;
-          rm -rf ./obj
-
-      - name: Run launcher (compile) (FreeBSD)
-        shell: freebsd {0}
-        run: |
-          cd $GITHUB_WORKSPACE;
-          ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifactsf" "compile";
-
-      - name: Clean Up FreeBSD
-        shell: pwsh
-        run: |
-          Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
-            $projDir = Split-Path $_.FullName
-            "bin","obj" | ForEach-Object {
-              $path = Join-Path $projDir $_
-              if (Test-Path $path) {
-                try {
-                  Remove-Item -Recurse -Force $path -ErrorAction Stop
-                } catch {
-                  Write-Host "$($_.Exception.Message)"
-                }
-              }
-            }
-          }
-
-      - name: Mono-Compile ApplicationTest for FreeBSD
-        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
-        shell: bash
-        run: |
-          msbuild -restore /p:Configuration=Release /p:UsePackage=true /p:OutDir=../../../artifactsf/Mono/Rxmxnx.PInvoke.ApplicationTest
-          rm -rf ./obj
-
-      - name: Remove Mono Framework (Host)
-        shell: bash
-        run: |
-          sudo apt-get purge mono* -y
-          sudo apt-get clean
-          sudo apt-get autoclean
-          sudo apt-get autoremove -y
-          
-          sudo rm -rf /tmp/*
-          sudo rm -rf /var/tmp/*
-
-      - name: Run launcher (run) (FreeBSD)
-        shell: freebsd {0}
-        run: |
-          cd $GITHUB_WORKSPACE;
-          ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifactsf" "run";
-          rm -rf ~/.nuget/packages;
-
-      - name: Clean Up FreeBSD Run
-        shell: pwsh
-        run: |
-          Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
-              $projDir = Split-Path $_.FullName
-              "bin","obj" | ForEach-Object {
-              $path = Join-Path $projDir $_
-              if (Test-Path $path) {
-                try {
-                  Remove-Item -Recurse -Force $path -ErrorAction Stop
-                } catch {
-                  Write-Host "$($_.Exception.Message)"
-                }
-              }
-            }
-          }
-
-      - name: Create Native Artifact Logs
-        uses: actions/upload-artifact@v5
-        with:
-          name: FreeBSD.13-Artifact-Logs
-          path: |
-            ./artifactsf/Native/*
-            ./artifactsf/Mono/*Mono.Link.log
-            ./artifactsf/Mono/*Mono.AOT*.log
-            ./artifactsf/Mono/*Mono.Bundle*.log
-
-      - name: Remove Native Logs FreeBSD
-        shell: pwsh
-        run: |
-          if (Test-Path ./artifactsf/Native) {
-              Remove-Item -Recurse -Force ./artifactsf/Native/*
-          }
-
-      - name: Create Native Artifact
-        uses: actions/upload-artifact@v5
-        with:
-          name: FreeBSD.14-Artifact
-          path: |
-            ./artifactsf/*NAOT*
-            ./artifactsf/*RFM*
-            ./artifactsf/Mono/X86/*
-            ./artifactsf/Mono/X64/*
-            ./artifactsf/Mono/Arm64/*
-
-      - name: Install Escripten
-        shell: bash
-        run: |
-          rm -rf artifactsf
-          mkdir artifacts
-          sudo git clone https://github.com/emscripten-core/emsdk.git /opt/emsdk
-          cd /opt/emsdk
-          sudo ./emsdk install latest
-          sudo ./emsdk activate latest
-          sudo chmod -R 777 /opt/emsdk
-
-      - name: Install WebAssembly Workload
-        shell: bash
-        run: |
-          dotnet workload install wasm-tools
-          dotnet workload install wasm-tools-net9
-          dotnet workload update
-
-      - name: Web-Compile ApplicationTest
-        shell: bash
-        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
-        env:
-          DOTNET_NUGET_SIGNATURE_VERIFICATION: false
-        run: |
-          source /opt/emsdk/emsdk_env.sh
-          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
-            /p:InvariantGlobalization=False /p:DisableBufferAutoComposition=False \
-            /p:CopyTargetTo=../../../artifacts
-          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
-            /p:InvariantGlobalization=False /p:DisableBufferAutoComposition=True \
-            /p:CopyTargetTo=../../../artifacts
-          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
-            /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=False \
-            /p:CopyTargetTo=../../../artifacts
-          dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
-            /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=True \
-            /p:CopyTargetTo=../../../artifacts
-
-      - name: Clean Up Extra
-        shell: bash
-        run: |
-          sudo rm -rf /tmp/*
-          sudo rm -rf /var/tmp/*
-          sudo rm -rf ~/.nuget/packages
-          
-          df -h
-
-      - name: Create Web Native Artifact Logs
-        uses: actions/upload-artifact@v5
-        with:
-          name: Web-Artifact-Logs
-          path: |
-            ./artifacts/Native/*
-
-      - name: Remove Web Native Logs
-        shell: pwsh
-        run: |
-          if (Test-Path ./artifacts/Native) {
-              Remove-Item -Recurse -Force ./artifacts/Native/*
-          }
-
-      - name: Create Web Native Artifact
-        uses: actions/upload-artifact@v5
-        with:
-          name: Web-Artifact
-          path: |
-            ./artifacts/*NAOT*
-
-      - name: Node-Run ApplicationTest
-        shell: bash
-        working-directory: ./artifacts
-        run: for f in *.js; do node "$f"; done
-  
-  run-tests:
-    needs: [ build ]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ windows-latest, ubuntu-latest, macos-latest ]
-    env:
-      SHOW_DIAGNOSTICS: true
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          fetch-depth: 1
-
-      - name: APT deb822 sources
-        if: runner.os == 'Linux'
-        run: |
-          if [[ $ImageOS == "ubuntu24" ]]; then
-           sudo bash -c 'cat > /etc/apt/sources.list.d/ubuntu.sources <<EOF
-          Types: deb
-          URIs: https://archive.ubuntu.com/ubuntu/
-          Suites: noble
-          Components: main restricted universe
-          Architectures: amd64
-          
-          Types: deb
-          URIs: https://security.ubuntu.com/ubuntu/
-          Suites: noble-security
-          Components: main restricted universe
-          Architectures: amd64
-          
-          Types: deb
-          URIs: https://archive.ubuntu.com/ubuntu/
-          Suites: noble-updates
-          Components: main restricted universe
-          Architectures: amd64
-          
-          Types: deb
-          URIs: https://azure.ports.ubuntu.com/ubuntu-ports/
-          Suites: noble
-          Components: main restricted multiverse universe
-          Architectures: arm64
-          
-          Types: deb
-          URIs: https://azure.ports.ubuntu.com/ubuntu-ports/
-          Suites: noble-updates
-          Components: main restricted multiverse universe
-          Architectures: arm64
-          
-          Types: deb
-          URIs: https://azure.ports.ubuntu.com/ubuntu-ports/
-          Suites: noble-updates
-          Components: main restricted multiverse universe
-          Architectures: armhf
-          EOF'
-          fi
-      - name: Setup NativeAOT pre-requisites
-        if: runner.os == 'Linux'
-        run: |
-          sudo dpkg --add-architecture arm64
-          sudo dpkg --add-architecture armhf
-          
-          sudo bash -c 'cat > /etc/apt/sources.list.d/arm64.list <<EOF
-          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ noble main restricted
-          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ noble-updates main restricted
-          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ noble-backports main restricted universe multiverse
-          EOF'
-          
-          sudo bash -c 'cat > /etc/apt/sources.list.d/armhf.list <<EOF
-          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ noble main restricted
-          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ noble-updates main restricted
-          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ noble-backports main restricted universe multiverse
-          EOF'
-          
-          sudo sed -i -e 's/deb http/deb [arch=amd64] http/g' /etc/apt/sources.list
-          sudo sed -i -e 's/deb mirror/deb [arch=amd64] mirror/g' /etc/apt/sources.list
-          
-          sudo apt install ca-certificates gnupg --assume-yes
-          sudo gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-          echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
-          
           wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
           sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
           rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          
-          sudo apt update 
-          sudo apt upgrade --assume-yes
-          sudo apt-get install clang llvm zlib1g-dev libkrb5-dev libssl-dev \
-            qemu-user qemu-user-static binfmt-support libicu74:arm64 libicu74:armhf \
-            binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu zlib1g-dev:arm64 libssl-dev:arm64 \
-            binutils-arm-linux-gnueabihf gcc-arm-linux-gnueabihf zlib1g-dev:armhf libssl-dev:armhf \
-            mono-complete mono-vbnc mono-dbg gdb libssl3 \
-            --assume-yes
 
-          sudo mkdir -p /usr/share/dotnet
-          sudo chown -R $(whoami):$(whoami) /usr/share/dotnet
-          
-          sudo apt-get clean
-          sudo apt-get autoclean
-          sudo apt-get autoremove -y
-          sudo rm -rf /tmp/*
-          sudo rm -rf /var/tmp/*
-          
-          sudo rm -rf /usr/local/lib/android/sdk
-          
-          df -h
-
-      - name: Setup Mono Development Kit And Runtime
-        if: runner.os == 'MacOS'
+          sudo apt install mono-complete mono-vbnc mono-dbg gdb libssl3
+      - name: Prepare ApplicationTest (Mono-Build)
+        id: clean-workspace
         run: |
-          brew install --cask mono-mdk
-          brew install --overwrite mono
-          mono --version
-          /opt/homebrew/bin/mono --version
-      - name: Setup MinGW i686
-        if: runner.os == 'Windows'
-        run: |
-          C:\msys64\usr\bin\bash.exe -lc "pacman -Sy --noconfirm mingw-w64-i686-toolchain"
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-        if: runner.os != 'Windows'
-        with:
-          dotnet-version: |
-            6.0.x
-            7.0.x
-            8.0.x
-            9.0.x
-            10.0.x
-      - name: Setup .NET x86
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $env:PATH = "C:\msys64\mingw32\bin;" + $env:PATH
-          winget install Mono.Mono --architecture x86 --silent --force --disable-interactivity --accept-source-agreements
-          winget install Microsoft.DotNet.SDK.6  --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
-          winget install Microsoft.DotNet.SDK.7 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
-          winget install Microsoft.DotNet.SDK.8 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements  
-          winget install Microsoft.DotNet.SDK.9 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
-          winget install Microsoft.DotNet.SDK.10 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
-      - name: Setup .NET x64
-        if: runner.os == 'Windows'
-        run: |
-          winget install Mono.Mono --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-          winget install Microsoft.DotNet.SDK.6 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-          winget install Microsoft.DotNet.SDK.7 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-          winget install Microsoft.DotNet.SDK.8 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-          winget install Microsoft.DotNet.SDK.9 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-          winget install Microsoft.DotNet.SDK.9 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-          winget install Microsoft.DotNet.SDK.10 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-          
-          dotnet workload update
-
-      - name: Remove ApplicationTest
-        shell: pwsh
-        run: |
-          Get-ChildItem -Path "src/ApplicationTest" -Recurse -Include "*.*proj" |
-          ForEach-Object {
-            dotnet sln src remove $_.FullName
-          }
-
-      - name: Build tests
-        run: |
-          dotnet restore src --ignore-failed-sources
-          dotnet build src /p:MultipleFrameworkTest=true /p:OnlySupportedFrameworkTest=true --configuration Release --disable-build-servers /nr:false /maxcpucount:1
-      - name: Windows x86 tests
-        if: runner.os == 'Windows'
-        run: |
-          dotnet test src /p:MultipleFrameworkTest=true /p:OnlySupportedFrameworkTest=true --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed" --settings src\Test\x86.runsettings
-      - name: Run tests
-        run: |
-          dotnet test src /p:MultipleFrameworkTest=true /p:OnlySupportedFrameworkTest=true --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"
-      - name: Run Mono tests
-        shell: pwsh
-        run: |
-          if ($IsWindows) {
-              & "C:\Program Files\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Common.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All
-              & "C:\Program Files\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.CString.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All
-              & "C:\Program Files\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Extensions.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All
-              & "C:\Program Files\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Buffers.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
-          }
-          else {
-              mono src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All
-              mono src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All
-              mono src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All
-              mono src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
-          }
-      - name: Run Mono tests (x86)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          if ($IsWindows) {
-              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Common.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All
-              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.CString.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All
-              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Extensions.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All
-              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Buffers.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
-          }
-      - name: Run Mono tests (Apple Silicon)
-        if: runner.os == 'MacOS'
-        run: |
-          /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All
-          /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All
-          /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All
-          /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
-      - name: Pack assembly
-        working-directory: ./package/Rxmxnx.PInvoke.Extensions
-        run: |
-          dotnet pack -c Release -o ../Nuget /p:Version=9999.99.99.99-tmp /p:NoIntermediateBuild=true /p:UseEmbeddedDebugSymbols=false
-      - name: Publish launcher
-        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.LauncherTest
-        run: dotnet publish
-      - name: Publish mkbundle patcher
-        if: runner.os == 'Windows'
-        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.Mkbundle.Patcher
-        run: dotnet publish --use-current-runtime
-      - name: Install Ubuntu 20.04 (WSL)
-        if: runner.os == 'Windows'
-        uses: Vampire/setup-wsl@v6
-        with:
-          distribution: Ubuntu-20.04
-          wsl-version: 1
-          update: true
-          additional-packages: ca-certificates gnupg
-
-      - name: Install Mono Framework (WSL)
-        if: runner.os == 'Windows'
-        shell: wsl-bash {0}
-        run: |
-          sudo apt update
-          sudo gpg --homedir /tmp --no-default-keyring \
-                   --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg \
-                   --keyserver hkp://keyserver.ubuntu.com:80 \
-                   --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-          
-          echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" \
-            | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
-          
-          sudo apt update -y
-          sudo apt install -y mono-complete
-          
-          sudo apt-get clean
-          sudo apt-get autoclean
-          sudo apt-get autoremove -y
-          sudo rm -rf /tmp/*
-          sudo rm -rf /var/tmp/*
-          
-          which mono
-          mono --version
-
-      - name: Run launcher (compile)
-        shell: pwsh
-        run: |
-          if ($IsWindows) {
-            $env:PATH = "C:\msys64\mingw32\bin;" + $env:PATH
-            ./Rxmxnx.PInvoke.LauncherTest.exe "src\ApplicationTest" "artifacts" "compile"
-          
-            Remove-Item -Recurse -Force "$env:WINDIR\SoftwareDistribution\Download" -ErrorAction SilentlyContinue
-            Remove-Item -Recurse -Force "$env:WINDIR\Prefetch" -ErrorAction SilentlyContinue
-            Remove-Item -Recurse -Force "C:\Android\android-sdk" -ErrorAction SilentlyContinue
-            Remove-Item -Recurse -Force "$env:WINDIR\Temp\*" -ErrorAction SilentlyContinue
-            Remove-Item -Recurse -Force "$env:TEMP\*" -ErrorAction SilentlyContinue
-            Remove-Item -Recurse -Force "$env:TMP\*" -ErrorAction SilentlyContinue
-            Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Temp\*" -ErrorAction SilentlyContinue
-          
-          } else {
-            chmod +x Rxmxnx.PInvoke.LauncherTest
-            ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "compile"
-          }
-
-      - name: Clean Up
-        shell: pwsh
-        run: |
-          Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
-            $projDir = Split-Path $_.FullName
-            "bin","obj" | ForEach-Object {
-              $path = Join-Path $projDir $_
-              if (Test-Path $path) {
-                try {
-                  Remove-Item -Recurse -Force $path -ErrorAction Stop
-                } catch {
-                  Write-Host "$($_.Exception.Message)"
-                }
-              }
-            }
-          }
-
-      - name: Mono-Compile ApplicationTest (WSL)
-        if: runner.os == 'Windows'
-        shell: wsl-bash {0}
+          mv ./ApplicationTest src/ApplicationTest
+      - name: Compile ApplicationTest (Mono-Build)
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
+        shell: bash
         run: |
           msbuild -restore /p:Configuration=Release /p:UsePackage=true /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
           rm -rf ./obj
 
-      - name: Remove Mono Framework (WSL)
-        if: runner.os == 'Windows'
-        shell: wsl-bash {0}
-        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
-        run: |
-          sudo apt-get purge mono* -y
-          sudo apt-get clean
-          sudo apt-get autoclean
-          sudo apt-get autoremove -y
-          
-          sudo rm -rf /tmp/*
-          sudo rm -rf /var/tmp/*
-
-      - name: Run launcher (run)
-        shell: pwsh
-        run: |
-          if ($IsWindows) {
-            ./Rxmxnx.PInvoke.LauncherTest.exe "src\ApplicationTest" "artifacts" "run"
-          } else {
-            ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "run"
-          }
-          Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
-              $projDir = Split-Path $_.FullName
-              "bin","obj" | ForEach-Object {
-              $path = Join-Path $projDir $_
-              if (Test-Path $path) {
-                try {
-                  Remove-Item -Recurse -Force $path -ErrorAction Stop
-                } catch {
-                  Write-Host "$($_.Exception.Message)"
-                }
-              }
-            }
-          }
-
-      - name: Clean Up Extra
-        if: runner.os != 'Windows'
-        shell: bash
-        run: |
-          sudo rm -rf /tmp/*
-          sudo rm -rf /var/tmp/*
-          sudo rm -rf ~/.nuget/packages
-          
-          df -h
-
-      - name: Clean Up Extra - Windows
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          Remove-Item -Recurse -Force "$env:WINDIR\Temp\*" -ErrorAction SilentlyContinue
-          Remove-Item -Recurse -Force "$env:TEMP\*" -ErrorAction SilentlyContinue
-          Remove-Item -Recurse -Force "$env:TMP\*" -ErrorAction SilentlyContinue
-          Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Temp\*" -ErrorAction SilentlyContinue
-          Remove-Item -Recurse -Force "$env:USERPROFILE\.nuget\packages" -ErrorAction SilentlyContinue
-
-      - name: Create Native Artifact Logs
-        uses: actions/upload-artifact@v5
+      - name: Cache NuGet Packages
+        uses: actions/cache/save@v4
         with:
-          name: ${{ runner.os }}-Artifact-Logs
-          path: |
-            ./artifacts/Native/*
-            ./artifacts/Mono/*Mono.Link.log
-            ./artifacts/Mono/*Mono.AOT*.log
-            ./artifacts/Mono/*Mono.Bundle*.log
-
-      - name: Remove Native Logs
-        shell: pwsh
-        run: |
-          if (Test-Path ./artifacts/Native) {
-              Remove-Item -Recurse -Force ./artifacts/Native/*
-          }
-
-      - name: Create Native Artifact
-        uses: actions/upload-artifact@v5
+          path: ./package/Nuget
+          key: internal-nuget-${{ github.run_id }}
+          enableCrossOsArchive: true
+      - name: Cache Compiled ApplicationTest (Mono-Build)
+        uses: actions/cache/save@v4
         with:
-          name: ${{ runner.os }}-Artifact
           path: |
-            ./artifacts/*NAOT*
-            ./artifacts/*RFM*
-            ./artifacts/Mono/X86/*
-            ./artifacts/Mono/X64/*
-            ./artifacts/Mono/Arm64/*
+            ./artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
+          key: internal-monoapp-bin-${{ github.run_id }}
+          enableCrossOsArchive: true
+      - name: Cache Compiled Tests
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ./src/Test/**/bin/Release/netstandard2.1
+            ./src/Test/**/bin/Release/net9.0
+          key: internal-tests-bin-${{ github.run_id }}
+  
+  webasm-actions:
+    needs: [ build ]
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/webasm-actions.yml
+  freebsd-actions:
+    needs: [ build ]
+    uses: ./.github/workflows/freebsd-actions.yml
+    with:
+      run_tests: true
+      build_artifacts: ${{ github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' }}
+  cross-actions:
+    needs: [ build ]
+    uses: ./.github/workflows/cross-actions.yml
+    with:
+      run_tests: true
+      build_artifacts: ${{ github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' }}
+  
+  cleanup-cache:
+    name: Secure Cleanup
+    needs: [ build, webasm-actions, freebsd-actions, cross-actions ]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Delete Internal Cache
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          echo "Deleting caches..."
+          gh cache delete "internal-nuget-${{ github.run_id }}" || true
+          gh cache delete "internal-monoapp-bin-${{ github.run_id }}" || true
+          gh cache delete "internal-tests-bin-${{ github.run_id }}" || true

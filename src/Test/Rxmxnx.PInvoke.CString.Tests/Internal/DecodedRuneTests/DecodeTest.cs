@@ -1,7 +1,5 @@
 ﻿#if !NETCOREAPP
 using Rune = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuneCompat;
-using Fact = NUnit.Framework.TestAttribute;
-using InlineData = NUnit.Framework.TestCaseAttribute;
 #endif
 
 namespace Rxmxnx.PInvoke.Tests.Internal.DecodedRuneTests;

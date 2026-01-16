@@ -1,9 +1,4 @@
-﻿#if !NETCOREAPP
-using Fact = NUnit.Framework.TestAttribute;
-using InlineData = NUnit.Framework.TestCaseAttribute;
-#endif
-
-namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
+﻿namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -141,8 +136,8 @@ public sealed class BasicTests
 		PInvokeAssert.Equal(clone.NonEmptyCount, seq.NonEmptyCount);
 		PInvokeAssert.Equal(clone.Count, seq.NonEmptyCount);
 
-		Int32 lowerLength = Random.Shared.Next(0, 2 * nonEmptyCount / 3);
-		Int32 upperLength = Random.Shared.Next(nonEmptyCount, nonEmptyCount * 2);
+		Int32 lowerLength = PInvokeRandom.Shared.Next(0, 2 * nonEmptyCount / 3);
+		Int32 upperLength = PInvokeRandom.Shared.Next(nonEmptyCount, nonEmptyCount * 2);
 		Span<Int32> offsetSpan = stackalloc Int32[nonEmptyCount];
 		Span<Int32> offsetSpanClone = stackalloc Int32[nonEmptyCount];
 
@@ -187,10 +182,4 @@ public sealed class BasicTests
 		PInvokeAssert.NotEqual((IntPtr)handle2.Pointer, IntPtr.Zero);
 		PInvokeAssert.Equal((IntPtr)handle2.Pointer, (IntPtr)handle.Pointer + 1);
 	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

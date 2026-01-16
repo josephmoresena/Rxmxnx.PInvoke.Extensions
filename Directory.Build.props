@@ -3,6 +3,7 @@
     <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('FREEBSD'))">
         <DefaultFramework>net9.0</DefaultFramework>
         <DefaultFrameworks>net9.0</DefaultFrameworks>
+        <NoWarn>$(NoWarn);NU1101</NoWarn>
     </PropertyGroup>
     <PropertyGroup Condition="!$([MSBuild]::IsOSPlatform('FREEBSD'))">
         <DefaultFramework>net10.0</DefaultFramework>

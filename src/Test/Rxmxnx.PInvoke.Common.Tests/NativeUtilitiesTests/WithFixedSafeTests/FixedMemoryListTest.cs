@@ -1,8 +1,4 @@
-﻿#if !NETCOREAPP
-using Fact = NUnit.Framework.TestAttribute;
-#endif
-
-using IEnumerator = System.Collections.IEnumerator;
+﻿using IEnumerator = System.Collections.IEnumerator;
 
 namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests.WithFixedSafeTests;
 

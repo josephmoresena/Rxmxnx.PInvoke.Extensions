@@ -1,7 +1,3 @@
-#if !NETCOREAPP
-using Fact = NUnit.Framework.TestAttribute;
-#endif
-
 namespace Rxmxnx.PInvoke.Tests.CStringTests;
 
 [TestFixture]
@@ -11,12 +7,12 @@ public sealed unsafe class MarshallerTests
 	[Fact]
 	public void FromManagedTest()
 	{
-		Int32 index = Random.Shared.Next(0, TestSet.Utf16Text.Count);
+		Int32 index = PInvokeRandom.Shared.Next(0, TestSet.Utf16Text.Count);
 		MarshallerTests.AssertToUnmanaged(new(TestSet.Utf8Text[index]));
 		MarshallerTests.AssertToUnmanaged(TestSet.Utf8NullTerminatedBytes[index]);
 		MarshallerTests.AssertToUnmanaged(TestSet.Utf8Bytes[index]);
 		MarshallerTests.AssertToUnmanaged((CString)TestSet.Utf16Text[index]);
-		
+
 		ReadOnlySpan<Byte> utf8Span = TestSet.Utf8Text[index]();
 		fixed (void* ptr = &MemoryMarshal.GetReference(utf8Span))
 		{
@@ -27,7 +23,7 @@ public sealed unsafe class MarshallerTests
 	[Fact]
 	public void FromUnmanagedTest()
 	{
-		Int32 index = Random.Shared.Next(0, TestSet.Utf16Text.Count);
+		Int32 index = PInvokeRandom.Shared.Next(0, TestSet.Utf16Text.Count);
 		ReadOnlySpan<Byte> utf8Span = TestSet.Utf8Text[index]();
 		IntPtr ptr = (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Span));
 		CString.Marshaller marshal = new();
@@ -122,10 +118,4 @@ public sealed unsafe class MarshallerTests
 		PInvokeAssert.Null(marshal.ToManaged());
 		return marshal;
 	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

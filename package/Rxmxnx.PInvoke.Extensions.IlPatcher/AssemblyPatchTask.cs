@@ -115,7 +115,7 @@ public abstract class AssemblyPatchTask : MsBuildTask
 	/// <summary>
 	/// Patches the documentation from loaded assembly.
 	/// </summary>
-	/// <param name="xmlDocument">Xml documentation of loaded assembly.</param>
+	/// <param name="xmlDocument">XML documentation of loaded assembly.</param>
 	/// <returns>
 	/// <see langword="true"/> if <see cref="xmlDocument"/> was modified; otherwise; <see langword="false"/>.
 	/// </returns>

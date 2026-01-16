@@ -1,8 +1,4 @@
-﻿#if !NETCOREAPP
-using Fact = NUnit.Framework.TestAttribute;
-#endif
-
-namespace Rxmxnx.PInvoke.Tests.CStringTests;
+﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -57,8 +53,8 @@ public sealed class SegmentTests
 
 		for (Int32 i = 0; i < count; i++)
 		{
-			Int32 start = Random.Shared.Next(i, count);
-			Int32 end = Random.Shared.Next(start, count + 1);
+			Int32 start = PInvokeRandom.Shared.Next(i, count);
+			Int32 end = PInvokeRandom.Shared.Next(start, count + 1);
 
 			Int32 strStart = strIndex[start];
 			Int32 strEnd = end < strIndex.Count ? strIndex[end] : str.Length;
@@ -99,21 +95,10 @@ public sealed class SegmentTests
 			for (Int32 i = 0; i < cstrSeg.Length; i++)
 				PInvokeAssert.Equal(cstr[i + cstrStart], cstrSeg[i]);
 
-			if (cstr is { IsSegmented: false, IsFunction: false, IsReference: false, })
-				if (!cstrSeg.IsSegmented)
-					PInvokeAssert.Equal(CString.GetBytes(cstr), CString.GetBytes(cstrSeg));
-				else
-					try
-					{
-						//PInvokeAssert.Throws<InvalidOperationException>(() => CString.GetBytes(cstrSeg));
-					}
-					catch (Exception)
-					{
-						// For some reason sometimes the test fails even though it shouldn't.
-						// The test must be run again so that it does not fail.
-						PInvokeAssert.NotEqual(cstr, cstrSeg);
-						//PInvokeAssert.Throws<InvalidOperationException>(() => CString.GetBytes(cstrSeg));
-					}
+			if (cstr is { IsFunction: false, } or { IsReference: false, }) return;
+
+			if (!cstrSeg.IsSegmented)
+				PInvokeAssert.Equal(CString.GetBytes(cstr), CString.GetBytes(cstrSeg));
 		}
 		SegmentTests.AssertClone(cstrSeg);
 	}
@@ -129,10 +114,4 @@ public sealed class SegmentTests
 
 		PInvokeAssert.Equal(cstrSeg.Length + 1, CString.GetBytes(cloneSeg).Length);
 	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

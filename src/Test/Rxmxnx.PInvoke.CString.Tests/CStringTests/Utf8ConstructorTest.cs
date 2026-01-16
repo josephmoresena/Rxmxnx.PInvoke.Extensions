@@ -1,8 +1,4 @@
-﻿#if !NETCOREAPP
-using InlineData = NUnit.Framework.TestCaseAttribute;
-#endif
-
-namespace Rxmxnx.PInvoke.Tests.CStringTests;
+﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -22,7 +18,7 @@ public sealed class Utf8ConstructorTest
 	[InlineData(0x7D)]
 	public void SingleTest(Byte character)
 	{
-		Int32 count = Random.Shared.Next(0, 10);
+		Int32 count = PInvokeRandom.Shared.Next(0, 10);
 		CString cstr = new(character, count);
 		Utf8ConstructorTest.Test([character,], count, cstr);
 	}
@@ -40,7 +36,7 @@ public sealed class Utf8ConstructorTest
 	[InlineData(0xC4, 0xB1)]
 	public void DoupleTest(Byte u0, Byte u1)
 	{
-		Int32 count = Random.Shared.Next(0, 10);
+		Int32 count = PInvokeRandom.Shared.Next(0, 10);
 		CString cstr = new(u0, u1, count);
 		Utf8ConstructorTest.Test([u0, u1,], count, cstr);
 	}
@@ -58,7 +54,7 @@ public sealed class Utf8ConstructorTest
 	[InlineData(0xE3, 0x81, 0x8F)]
 	public void TripleTest(Byte u0, Byte u1, Byte u2)
 	{
-		Int32 count = Random.Shared.Next(0, 10);
+		Int32 count = PInvokeRandom.Shared.Next(0, 10);
 		CString cstr = new(u0, u1, u2, count);
 		Utf8ConstructorTest.Test([u0, u1, u2,], count, cstr);
 	}
@@ -76,7 +72,7 @@ public sealed class Utf8ConstructorTest
 	[InlineData(0xF0, 0x9F, 0x8D, 0xBA)]
 	public void QuadrupleTest(Byte u0, Byte u1, Byte u2, Byte u3)
 	{
-		Int32 count = Random.Shared.Next(0, 10);
+		Int32 count = PInvokeRandom.Shared.Next(0, 10);
 		CString cstr = new(u0, u1, u2, u3, count);
 		Utf8ConstructorTest.Test([u0, u1, u2, u3,], count, cstr);
 	}
@@ -93,10 +89,4 @@ public sealed class Utf8ConstructorTest
 
 		PInvokeAssert.Equal(String.Concat(Enumerable.Repeat(strSeq, count)), cstr.ToString());
 	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

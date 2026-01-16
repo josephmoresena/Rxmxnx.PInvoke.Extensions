@@ -4,8 +4,7 @@ using Skip = Xunit.Skip;
 #elif NETCOREAPP
 using SkippableTheoryAttribute = Xunit.TheoryAttribute;
 #else
-using Fact = NUnit.Framework.TestAttribute;
-using InlineData = NUnit.Framework.TestCaseAttribute;
+using SkippableTheory = NUnit.Framework.TestAttribute;
 #endif
 
 namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
@@ -166,7 +165,7 @@ public class AsSpanTest
 #else
 		if (IntPtr.Size == sizeof(Int32) && count > 15) return;
 #endif
-		Int32[] lengths = Enumerable.Range(0, count).Select(_ => Random.Shared.Next(1, 3)).ToArray();
+		Int32[] lengths = Enumerable.Range(0, count).Select(_ => PInvokeRandom.Shared.Next(1, 3)).ToArray();
 
 		AsMemoryTest.CollectGarbage();
 
@@ -213,10 +212,4 @@ public class AsSpanTest
 		return arr;
 	}
 	private delegate Span<T> GetSpanDelegate<T, in TArray>(TArray? array);
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

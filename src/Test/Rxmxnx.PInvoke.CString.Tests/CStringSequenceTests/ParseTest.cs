@@ -1,8 +1,3 @@
-#if !NETCOREAPP
-using Fact = NUnit.Framework.TestAttribute;
-using InlineData = NUnit.Framework.TestCaseAttribute;
-#endif
-
 namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
 
 [TestFixture]
@@ -14,7 +9,7 @@ public sealed class ParseTest
 	{
 		PInvokeAssert.Null(CStringSequence.Parse(null));
 
-		String nullString = new(Enumerable.Repeat('\0', Random.Shared.Next(0, Byte.MaxValue)).ToArray());
+		String nullString = new(Enumerable.Repeat('\0', PInvokeRandom.Shared.Next(0, Byte.MaxValue)).ToArray());
 		CStringSequence seq0 = CStringSequence.Parse(String.Empty);
 		CStringSequence seq1 = CStringSequence.Create(Array.Empty<Char>());
 		CStringSequence seq2 = CStringSequence.Parse(nullString);
@@ -132,7 +127,7 @@ public sealed class ParseTest
 	private static void ExactParseTest(CString[] values, String buffer)
 	{
 		String nullEndBuffer = buffer +
-			new String(Enumerable.Repeat('\0', Random.Shared.Next(0, Byte.MaxValue)).ToArray());
+			new String(Enumerable.Repeat('\0', PInvokeRandom.Shared.Next(0, Byte.MaxValue)).ToArray());
 		CStringSequence seq0 = CStringSequence.Parse(buffer);
 		CStringSequence seq1 = CStringSequence.Parse(nullEndBuffer);
 		CStringSequence seq2 = CStringSequence.Create(buffer);
@@ -157,8 +152,8 @@ public sealed class ParseTest
 	}
 	private static void RandomParseTest(CString[] values)
 	{
-		Int32 offset = Random.Shared.Next(0, Byte.MaxValue);
-		Int32 padding = Random.Shared.Next(-1, Byte.MaxValue);
+		Int32 offset = PInvokeRandom.Shared.Next(0, Byte.MaxValue);
+		Int32 padding = PInvokeRandom.Shared.Next(-1, Byte.MaxValue);
 		Int32 length = values.Select(c => c.Length + 1).Sum();
 		Int32 totalBytes = length + padding + offset;
 		Int32 totalChars = totalBytes / sizeof(Char) + totalBytes % sizeof(Char);
@@ -207,10 +202,4 @@ public sealed class ParseTest
 		source[..count].CopyTo(destination);
 		destination[count..].Clear();
 	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

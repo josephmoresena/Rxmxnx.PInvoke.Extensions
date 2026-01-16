@@ -442,4 +442,29 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	public CStringBuilder Append(Byte? value, Boolean asNumber = false)
 		=> value.HasValue ? this.Append(value.Value, asNumber) : this;
+#if NETCOREAPP
+	/// <summary>
+	/// Appends the UTF-8 representation of the specified rune to this instance.
+	/// </summary>
+	/// <param name="value">The value to append.</param>
+	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public CStringBuilder Append(Rune value)
+	{
+		Span<Byte> utf8Text = stackalloc Byte[value.Utf8SequenceLength];
+		value.EncodeToUtf8(utf8Text);
+		return this.Append(utf8Text);
+	}
+	/// <summary>
+	/// Appends the UTF-8 representation of the specified rune to this instance.
+	/// </summary>
+	/// <param name="value">The value to append.</param>
+	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public CStringBuilder Append(Rune? value) => value.HasValue ? this.Append(value.Value) : this;
+#endif
 }

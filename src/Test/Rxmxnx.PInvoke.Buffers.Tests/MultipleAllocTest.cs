@@ -1,7 +1,3 @@
-#if !NETCOREAPP
-using Fact = NUnit.Framework.TestAttribute;
-#endif
-
 namespace Rxmxnx.PInvoke.Tests;
 
 [TestFixture]
@@ -81,7 +77,7 @@ public sealed unsafe class MultipleAllocTest
 
 	private static void MultipleAlloc<T>()
 	{
-		UInt16 count = (UInt16)(Math.Pow(2, Random.Shared.Next(2, 4)) - 1);
+		UInt16 count = (UInt16)(Math.Pow(2, PInvokeRandom.Shared.Next(2, 4)) - 1);
 		Span<IntPtr> span0 = stackalloc IntPtr[5];
 		span0[0] = (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(span0));
 		ValPtr<IntPtr> ptrPtr = NativeUtilities.GetUnsafeValPtrFromRef(ref span0[0]);
@@ -147,10 +143,4 @@ public sealed unsafe class MultipleAllocTest
 		MultipleAllocTest.Do(buffer, ptrPtr);
 		return buffer.Span[0];
 	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

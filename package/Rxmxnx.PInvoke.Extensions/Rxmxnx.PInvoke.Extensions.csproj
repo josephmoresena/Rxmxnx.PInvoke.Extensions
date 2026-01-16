@@ -4,13 +4,10 @@
 
     <!-- Assembly properties -->
     <PropertyGroup>
-        <IsTempPackage Condition="'$(Version)' == '9999.99.99.99-tmp'">true</IsTempPackage>
-        <TargetFrameworks Condition="'$(IsTempPackage)' == 'true'">$(TargetFrameworks);net45</TargetFrameworks>
         <RootNamespace>Rxmxnx.PInvoke</RootNamespace>
         <EnablePackageValidation>true</EnablePackageValidation>
         <SigningKeyFile>..\Rxmxnx.PInvoke.snk</SigningKeyFile>
         <IntermediateSourceBasePath>..\..\src\Intermediate</IntermediateSourceBasePath>
-        <DefineConstants Condition="'$(IsTempPackage)' == 'true'">$(DefineConstants);TEMP_PACKAGE</DefineConstants>
     </PropertyGroup>
 
     <!-- Validations -->
@@ -41,13 +38,6 @@
         <None Include="PACKAGE.md" Pack="true" PackagePath="\"/>
         <None Include="..\..\LICENSE.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
-
-    <!-- Package properties -->
-    <PropertyGroup Condition="'$(IsTempPackage)' == 'true' And '$(UseEmbeddedDebugSymbols)' == 'true' And ('$(TargetFramework)' == 'netstandard2.1' Or '$(TargetFramework)' == 'net45')">
-        <DebugSymbols>true</DebugSymbols>
-        <DebugType>embedded</DebugType>
-        <EmbededAllSources>true</EmbededAllSources>
-    </PropertyGroup>
 
     <Import Project="..\Package.targets"/>
     

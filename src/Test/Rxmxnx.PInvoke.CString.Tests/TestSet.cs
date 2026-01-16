@@ -31,11 +31,11 @@ internal static partial class TestSet
 
 	public static List<Int32> GetIndices(Int32? length = default)
 	{
-		length ??= 2 * TestSet.Utf16Text.Count + Random.Shared.Next(3, 10);
+		length ??= 2 * TestSet.Utf16Text.Count + PInvokeRandom.Shared.Next(3, 10);
 		List<Int32> result = new(length.Value);
 		while (length > 0)
 		{
-			result.Add(Random.Shared.Next(-3, TestSet.Utf16Text.Count));
+			result.Add(PInvokeRandom.Shared.Next(-3, TestSet.Utf16Text.Count));
 			length--;
 		}
 		return result;
@@ -81,7 +81,7 @@ internal static partial class TestSet
 	}
 	private static unsafe CString GetCStringWithHandle(Int32 index, TestMemoryHandle handle)
 	{
-		switch (Random.Shared.Next(default, 9))
+		switch (PInvokeRandom.Shared.Next(default, 9))
 		{
 			case 0:
 			case 1:
@@ -103,10 +103,4 @@ internal static partial class TestSet
 				return (CString)TestSet.Utf16Text[index];
 		}
 	}
-#if !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }

@@ -1,7 +1,3 @@
-#if !NETCOREAPP
-using Fact = NUnit.Framework.TestAttribute;
-#endif
-
 namespace Rxmxnx.PInvoke.Tests;
 
 [TestFixture]
@@ -115,10 +111,4 @@ public sealed class FuncPtrTests
 		PInvokeAssert.Equal(value, funcPtr.Pointer);
 		PInvokeAssert.Equal(funcPtr, ptr);
 	}
-#if NETCOREAPP && !NET6_0_OR_GREATER
-	private static class Random
-	{
-		public static readonly System.Random Shared = new();
-	}
-#endif
 }
