@@ -16,11 +16,6 @@
         <PackageReference Include="System.Collections.Immutable" Version="5.0.0"/>
     </ItemGroup>
 
-    <!-- LIMITED_LEGACY_UNSUPPORT -->
-    <ItemGroup Condition="!$(DefineConstants.Contains('PACKAGE')) And '$(TargetFramework)' == 'netstandard2.1'">
-        <PackageReference Include="System.Text.Json" Version="4.7.0"/>
-        <PackageReference Include="System.Text.Encodings.Web" Version="5.0.1"/>
-    </ItemGroup>
     <!-- LIMITED_LEGACY_SUPPORT -->
     <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
         <PackageReference Include="System.Text.Json" Version="5.0.2"/>

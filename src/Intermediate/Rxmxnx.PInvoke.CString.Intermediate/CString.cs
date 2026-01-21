@@ -16,7 +16,7 @@ namespace Rxmxnx.PInvoke;
 #endif
 [DebuggerDisplay("{ToString()}")]
 [DebuggerTypeProxy(typeof(CStringDebugView))]
-#if !PACKAGE || NETCOREAPP
+#if NETCOREAPP
 [JsonConverter(typeof(JsonConverter))]
 #endif
 public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatable<String>
@@ -464,8 +464,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 			new(length);
 
 		utf8Sequence.CopyTo(helper.Bytes);
-		length += CString.FinalizeBuffer(helper.Bytes, TextUnescape.Unescape(helper.Bytes[..length]),
-		                                 helper.HasArray);
+		length += CString.FinalizeBuffer(helper.Bytes, TextUnescape.Unescape(helper.Bytes[..length]), helper.HasArray);
 		return new(helper, length);
 	}
 }

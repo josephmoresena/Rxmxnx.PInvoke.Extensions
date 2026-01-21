@@ -16,7 +16,7 @@
 #endif
 [DebuggerDisplay("Count = {Count}")]
 [DebuggerTypeProxy(typeof(CStringSequenceDebugView))]
-#if !PACKAGE || NETCOREAPP
+#if NETCOREAPP
 [JsonConverter(typeof(JsonConverter))]
 #endif
 public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequence>

@@ -55,7 +55,7 @@ public partial class ValueRegion<T>
 	/// <summary>
 	/// This class represents a memory region provided by a stateful function.
 	/// </summary>
-	private sealed class FuncRegion<TState> : ValueRegion<T>
+	private sealed class FuncRegion<TState> : ValueRegion<T>, IWrapper<TState>
 	{
 		/// <summary>
 		/// Internal function that allocates the memory region.
@@ -83,6 +83,11 @@ public partial class ValueRegion<T>
 			this._func = func;
 			this._alloc = alloc;
 		}
+
+#if !PACKAGE
+		[ExcludeFromCodeCoverage]
+#endif
+		TState IWrapper<TState>.Value => this._state;
 
 		/// <summary>
 		/// Gets the memory region provided by the function.

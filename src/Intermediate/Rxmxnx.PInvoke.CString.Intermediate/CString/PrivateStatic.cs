@@ -132,7 +132,7 @@ public partial class CString
 		await Task.Yield();
 		writer.Write();
 	}
-#if !PACKAGE || NETCOREAPP
+#if NETCOREAPP
 	/// <summary>
 	/// Reads a UTF-8 string from the specified <see cref="Utf8JsonReader"/> and returns its length.
 	/// </summary>

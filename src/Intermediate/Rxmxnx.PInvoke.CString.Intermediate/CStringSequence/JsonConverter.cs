@@ -1,4 +1,4 @@
-#if !PACKAGE || NETCOREAPP
+#if NETCOREAPP
 namespace Rxmxnx.PInvoke;
 
 public partial class CStringSequence

@@ -25,6 +25,8 @@
     </ItemGroup>
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
         <PackageReference Include="NUnit" Version="3.14"/>
+        <PackageReference Include="System.Text.Json" Version="4.7.0"/>
+        <PackageReference Include="System.Text.Encodings.Web" Version="5.0.1"/>
     </ItemGroup>
 
 </Project>

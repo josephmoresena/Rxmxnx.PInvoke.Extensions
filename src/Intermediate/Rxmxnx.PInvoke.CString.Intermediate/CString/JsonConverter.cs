@@ -1,10 +1,4 @@
-#if !PACKAGE || NETCOREAPP
-
-#if !NETCOREAPP
-using RuneCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuneCompat;
-using Rune = System.UInt32;
-#endif
-
+#if NETCOREAPP
 namespace Rxmxnx.PInvoke;
 
 public partial class CString
