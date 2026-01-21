@@ -150,26 +150,12 @@ public partial class CString
 		StackAllocationHelper.InitStackBytes();
 
 		Int32 stackConsumed = 0;
-		Byte[]? byteArray = default;
 		Int32 length = JsonConverter.GetLength(reader);
-		Span<Byte> span = StackAllocationHelper.ConsumeStackBytes(length, ref stackConsumed) ?
-			stackalloc Byte[length + 1] :
-#if !NET7_0_OR_GREATER
-			byteArray = CString.CreateByteArray(length + 1);
-#else
-			byteArray = GC.AllocateUninitializedArray<Byte>(length + 1);
-		span[^1] = default; // Clear the end of the buffer.
-#endif
-		length += JsonConverter.ReadBytes(reader, span[..length], byteArray is not null);
-		if (byteArray is null || !JsonConverter.IsReusableBuffer(byteArray.Length, byteArray.Length))
-		{
-			// Allocate a new array sized to fit the UTF-8 data.
-			byteArray = CString.CreateByteArray(length + 1);
-			// Copy the valid UTF-8 data into the new buffer.
-			span[..byteArray.Length].CopyTo(byteArray.AsSpan());
-		}
-
-		data = ValueRegion<Byte>.Create(byteArray);
+		ReadHelper helper = StackAllocationHelper.ConsumeStackBytes(length, ref stackConsumed) ?
+			new(stackalloc Byte[length + 1]) :
+			new(length);
+		length += JsonConverter.ReadBytes(reader, helper.Bytes[..length], helper.HasArray);
+		data = ValueRegion<Byte>.Create(helper.ToArray(length));
 		return length;
 	}
 #endif

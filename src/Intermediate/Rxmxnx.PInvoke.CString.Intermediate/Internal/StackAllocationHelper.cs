@@ -82,4 +82,17 @@ internal static class StackAllocationHelper
 		if (StackAllocationHelper.stackallocByteConsumed < 0)
 			StackAllocationHelper.stackallocByteConsumed = 0; // Prevent negative consumption.
 	}
+	/// <summary>
+	/// Determines whether a buffer of size <paramref name="bufferLength"/> can be reused to store a UTF-8 encoded
+	/// text of length <paramref name="textLength"/> without causing excessive unused capacity.
+	/// </summary>
+	/// <param name="bufferLength">The total length of the buffer, in bytes.</param>
+	/// <param name="textLength">The length of the UTF-8 encoded text, in bytes.</param>
+	/// <returns>
+	/// <see langword="true"/> if the buffer can be reused to hold the UTF-8 text efficiently; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Boolean IsReusableBuffer(Int32 bufferLength, Int32 textLength)
+		=> bufferLength - textLength <= bufferLength >> 4;
 }

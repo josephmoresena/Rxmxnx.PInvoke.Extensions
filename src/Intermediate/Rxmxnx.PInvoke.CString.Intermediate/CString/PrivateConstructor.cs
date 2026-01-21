@@ -66,6 +66,22 @@ public partial class CString
 			this._length--;
 	}
 	/// <summary>
+	/// Constructor.
+	/// </summary>
+	/// <param name="read">A <see cref="ReadHelper"/> instance.</param>
+	/// <param name="length">UTF-8 text length.</param>
+	private CString(ReadHelper read, Int32 length)
+	{
+		Byte[] byteArray = read.ToArray(length);
+
+		this._isLocal = true;
+		this._data = ValueRegion<Byte>.Create(byteArray);
+		this._length = length;
+		this._isNullTerminated = byteArray.Length > length;
+
+		this.IsFunction = false;
+	}
+	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class that contains the UTF-8 string
 	/// returned by the specified <see cref="ReadOnlySpanFunc{Byte}"/>.
 	/// </summary>

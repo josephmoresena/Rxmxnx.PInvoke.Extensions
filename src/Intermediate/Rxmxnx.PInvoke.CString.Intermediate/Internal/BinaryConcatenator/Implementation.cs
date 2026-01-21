@@ -56,9 +56,7 @@ internal sealed class BinaryConcatenator : BinaryConcatenator<Byte?>
 	/// <summary>
 	/// Retrieves the binary data from the UTF-8 text.
 	/// </summary>
-	/// <param name="nullTerminated">
-	/// Specifies whether the UTF-8 text should be null-terminated.
-	/// </param>
+	/// <param name="nullTerminated">Specifies whether the UTF-8 text should be null-terminated.</param>
 	/// <returns>A byte array containing the binary data from the UTF-8 text.</returns>
 	public new Byte[]? ToArray(Boolean nullTerminated) => base.ToArray(nullTerminated);
 }
