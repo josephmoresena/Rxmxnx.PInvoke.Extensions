@@ -65,36 +65,21 @@ internal static class TextUnescape
 #endif
 	private static void UnescapeUnit(Span<Byte> buffer)
 	{
-		Int32 stackConsumed = 0;
-		Byte[]? byteArray = default;
-		try
+		ReadOnlySpan<Byte> unescaped = buffer[2..];
+		buffer[0] = buffer[1] switch
 		{
-			Int32 nEscaped = buffer.Length - 2;
-			Span<Byte> unescaped = TextUnescape.BackupUnescaped(
-				StackAllocationHelper.ConsumeStackBytes(nEscaped, ref stackConsumed) ?
-					stackalloc Byte[nEscaped] :
-					StackAllocationHelper.RentArray(nEscaped, out byteArray, false), buffer[2..]);
-			buffer[0] = buffer[1] switch
-			{
-				(Byte)'n' => (Byte)'\n',
-				(Byte)'r' => (Byte)'\r',
-				(Byte)'t' => (Byte)'\t',
-				(Byte)'b' => (Byte)'\b',
-				(Byte)'f' => (Byte)'\f',
-				(Byte)'0' => (Byte)'\0',
-				_ => buffer[0],
-			};
-			buffer[^nEscaped..].CopyTo(unescaped); // Backup the rest of the buffer.
-			unescaped.CopyTo(buffer[1..]); // Copy the rest of the buffer after the replacement.
-		}
-		finally
-		{
-			StackAllocationHelper.ReturnArray(byteArray);
-			StackAllocationHelper.ReleaseStackBytes(stackConsumed);
-		}
+			(Byte)'n' => (Byte)'\n',
+			(Byte)'r' => (Byte)'\r',
+			(Byte)'t' => (Byte)'\t',
+			(Byte)'b' => (Byte)'\b',
+			(Byte)'f' => (Byte)'\f',
+			(Byte)'0' => (Byte)'\0',
+			_ => buffer[0],
+		};
+		unescaped.CopyTo(buffer[1..]); // Copy the rest of the buffer after the replacement.
 	}
 	/// <summary>
-	/// Unescapes a unicode character in the buffer.
+	/// Unescapes a Unicode character in the buffer.
 	/// </summary>
 	/// <param name="escapedBuffer">Reference. A UTF-8 unescaped buffer.</param>
 	/// <param name="escapeIndex">Reference. Index of escape begin.</param>
@@ -110,12 +95,7 @@ internal static class TextUnescape
 		{
 			Char low = TextUnescape.GetUnicodeChar(escapedBuffer.Slice(escapeIndex + 2, 4));
 			Int32 baseLength = 6; // Length of "\uXXXX" sequence.
-			Int32 nEscaped = escapedBuffer.Length - escapeIndex - baseLength;
-			Span<Byte> escaped = TextUnescape.BackupUnescaped(
-				StackAllocationHelper.ConsumeStackBytes(nEscaped, ref stackConsumed) ?
-					stackalloc Byte[nEscaped] :
-					StackAllocationHelper.RentArray(nEscaped, out byteArray, false),
-				escapedBuffer[(escapeIndex + baseLength)..]);
+			ReadOnlySpan<Byte> unescaped = escapedBuffer[(escapeIndex + baseLength)..];
 			Rune rune = TextUnescape.GetUnescapeRune(escapedBuffer, ref escapeIndex, low, ref baseLength);
 #if NETCOREAPP
 			Int32 nBytes = rune.EncodeToUtf8(escapedBuffer[escapeIndex..]);
@@ -125,7 +105,7 @@ internal static class TextUnescape
 			Int32 offset = escapeIndex + nBytes;
 			Int32 result = baseLength - nBytes;
 
-			escaped.CopyTo(escapedBuffer[offset..]);
+			unescaped.CopyTo(escapedBuffer[offset..]);
 			escapedBuffer = escapedBuffer[..^result];
 			return result;
 		}
@@ -188,7 +168,7 @@ internal static class TextUnescape
 	/// Retrieves a Unicode character from the specified span of bytes.
 	/// </summary>
 	/// <param name="charCodeSpan">A UTF-8 span containing the hexadecimal value of a UTF-16 char.</param>
-	/// <returns>An unicode char.</returns>
+	/// <returns>A Unicode char.</returns>
 	private static Char GetUnicodeChar(ReadOnlySpan<Byte> charCodeSpan)
 	{
 		UInt16 result = 0;
@@ -201,16 +181,5 @@ internal static class TextUnescape
 			}
 			return (Char)result;
 		}
-	}
-	/// <summary>
-	/// Backs up the unescaped string in the destination buffer.
-	/// </summary>
-	/// <param name="destination">Destination buffer.</param>
-	/// <param name="source">Source buffer.</param>
-	/// <returns>Destination buffer.</returns>
-	private static Span<T> BackupUnescaped<T>(Span<T> destination, ReadOnlySpan<T> source)
-	{
-		source.CopyTo(destination);
-		return destination;
 	}
 }
