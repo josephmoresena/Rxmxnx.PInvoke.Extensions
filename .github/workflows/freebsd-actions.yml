@@ -10,18 +10,23 @@ on:
         required: false
         default: false
         type: boolean
+      package_version:
+        required: false
+        default: ''
+        type: string
 
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      SHOW_DIAGNOSTICS: true
+      SHOW_DIAGNOSTICS: ${{ inputs.run_tests }}
+      PINVOKE_ONLY_NATIVE_TEST: ${{ inputs.package_version != '' }}
+      PackageVersion: ${{ inputs.package_version }}
     steps:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 1
-
-      - name: Restore Internal NuGet Packages
+      - name: Restore Internal NuGet Package
         uses: actions/cache/restore@v5
         if: inputs.build_artifacts == true
         with:
@@ -38,7 +43,6 @@ jobs:
             ./src/Test/**/bin/Release/net9.0
           key: internal-tests-bin-${{ github.run_id }}
           fail-on-cache-miss: true
-
       - name: Init FreeBSD 13.5 VM
         id: vm
         uses: vmactions/freebsd-vm@v1.3.6
@@ -93,7 +97,6 @@ jobs:
           run: |
             dotnet dev-certs https --trust
             mono --version
-
       - name: Run Tests (FreeBSD 13.5)
         if: inputs.run_tests == true
         shell: freebsd {0}
@@ -112,7 +115,6 @@ jobs:
           mono ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All;
           mono ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All;
           mono ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All;
-
       - name: Publish Launcher (FreeBSD 13.5)
         if: inputs.build_artifacts == true
         shell: freebsd {0}
@@ -127,7 +129,6 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE;
           ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "compile";
-
       - name: Restore Compiled ApplicationTest (Mono-Build)
         uses: actions/cache/restore@v5
         if: inputs.build_artifacts == true
@@ -136,14 +137,13 @@ jobs:
           key: internal-monoapp-bin-${{ github.run_id }}
           fail-on-cache-miss: true
           enableCrossOsArchive: true
-
       - name: Run launcher - Run (FreeBSD)
+        if: inputs.build_artifacts == true
         shell: freebsd {0}
         run: |
           cd $GITHUB_WORKSPACE;
           ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "run";
           rm -rf ~/.nuget/packages;
-
       - name: Create Native Artifact Logs
         uses: actions/upload-artifact@v5
         if: inputs.build_artifacts == true

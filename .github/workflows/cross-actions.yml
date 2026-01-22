@@ -10,6 +10,10 @@ on:
         required: false
         default: false
         type: boolean
+      package_version:
+        required: false
+        default: ''
+        type: string
 
 jobs:
   build:
@@ -18,13 +22,14 @@ jobs:
       matrix:
         os: [ windows-latest, ubuntu-latest, macos-latest ]
     env:
-      SHOW_DIAGNOSTICS: true
+      SHOW_DIAGNOSTICS: ${{ inputs.run_tests }}
+      PINVOKE_ONLY_NATIVE_TEST: ${{ inputs.package_version != '' }}
+      PackageVersion: ${{ inputs.package_version }}
     steps:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 1
-
-      - name: Restore Internal NuGet Packages
+      - name: Restore Internal NuGet Package
         uses: actions/cache/restore@v5
         if: inputs.build_artifacts == true
         with:
@@ -32,7 +37,6 @@ jobs:
           key: internal-nuget-${{ github.run_id }}
           fail-on-cache-miss: true
           enableCrossOsArchive: true
-
       - name: APT deb822 sources
         if: runner.os == 'Linux'
         run: |
@@ -125,7 +129,6 @@ jobs:
           sudo rm -rf /usr/local/lib/android/sdk
 
           df -h
-
       - name: Setup Mono Development Kit And Runtime
         if: runner.os == 'MacOS'
         run: |
@@ -137,7 +140,6 @@ jobs:
         if: runner.os == 'Windows' && inputs.build_artifacts == true
         run: |
           C:\msys64\usr\bin\bash.exe -lc "pacman -Sy --noconfirm mingw-w64-i686-toolchain"
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         if: runner.os != 'Windows'
@@ -171,7 +173,6 @@ jobs:
           winget install Microsoft.DotNet.SDK.10 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
 
           dotnet workload update
-
       - name: Remove ApplicationTest
         shell: pwsh
         run: |
@@ -179,7 +180,6 @@ jobs:
           ForEach-Object {
             dotnet sln src remove $_.FullName
           }
-
       - name: Build tests
         if: inputs.run_tests == true
         run: |
@@ -226,7 +226,6 @@ jobs:
           /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All
           /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All
           /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
-
       - name: Publish launcher
         if: inputs.build_artifacts == true
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.LauncherTest
@@ -235,7 +234,6 @@ jobs:
         if: inputs.build_artifacts == true && runner.os == 'Windows'
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.Mkbundle.Patcher
         run: dotnet publish --use-current-runtime
-
       - name: Run launcher (compile)
         if: inputs.build_artifacts == true
         shell: pwsh
@@ -273,8 +271,6 @@ jobs:
               }
             }
           }
-
-
       - name: Restore Compiled ApplicationTest (Mono-Build)
         uses: actions/cache/restore@v5
         if: inputs.build_artifacts == true && runner.os == 'Windows'
@@ -283,7 +279,6 @@ jobs:
           key: internal-monoapp-bin-${{ github.run_id }}
           fail-on-cache-miss: true
           enableCrossOsArchive: true
-
       - name: Run launcher (run)
         if: inputs.build_artifacts == true
         shell: pwsh
@@ -306,7 +301,6 @@ jobs:
               }
             }
           }
-
       - name: Clean Up Extra - Windows
         if: inputs.build_artifacts == true && runner.os == 'Windows'
         shell: pwsh
@@ -316,7 +310,6 @@ jobs:
           Remove-Item -Recurse -Force "$env:TMP\*" -ErrorAction SilentlyContinue
           Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Temp\*" -ErrorAction SilentlyContinue
           Remove-Item -Recurse -Force "$env:USERPROFILE\.nuget\packages" -ErrorAction SilentlyContinue
-
       - name: Clean Up Extra
         if: inputs.build_artifacts == true && runner.os != 'Windows'
         shell: bash
@@ -326,7 +319,6 @@ jobs:
           sudo rm -rf ~/.nuget/packages
 
           df -h
-
       - name: Create Native Artifact Logs
         if: inputs.build_artifacts == true
         uses: actions/upload-artifact@v5
@@ -337,7 +329,6 @@ jobs:
             ./artifacts/Mono/*Mono.Link.log
             ./artifacts/Mono/*Mono.AOT*.log
             ./artifacts/Mono/*Mono.Bundle*.log
-
       - name: Remove Native Logs
         if: inputs.build_artifacts == true
         shell: pwsh
@@ -345,7 +336,6 @@ jobs:
           if (Test-Path ./artifacts/Native) {
               Remove-Item -Recurse -Force ./artifacts/Native/*
           }
-
       - name: Create Native Artifact
         if: inputs.build_artifacts == true
         uses: actions/upload-artifact@v5

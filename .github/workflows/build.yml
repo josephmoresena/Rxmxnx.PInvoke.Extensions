@@ -59,13 +59,11 @@ jobs:
         run: |
           New-Item -Path ./.sonar/scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
-
       - name: Remove ApplicationTest
         shell: bash
         run: |
           find src/ApplicationTest -name "*.*proj" -exec dotnet sln src remove {} \;
           mv src/ApplicationTest ./ApplicationTest
-
       - name: Clean test results
         run: rm -rf TestResults/
       - name: Build and analyze Sonar
@@ -79,7 +77,6 @@ jobs:
           dotnet build src /p:MultipleFrameworkTest=true --configuration Release --disable-build-servers /nr:false /maxcpucount:1
           dotnet test src /p:MultipleFrameworkTest=true --verbosity normal --collect:"XPlat Code Coverage" --results-directory TestResults/  --logger "trx;verbosity=detailed" --no-build --no-restore --configuration Release -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover 
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-
       - name: Pack assembly
         working-directory: ./package/Rxmxnx.PInvoke.Extensions
         run: |
@@ -93,7 +90,6 @@ jobs:
             rm -rf "$TEMP_DIR"
           done
           echo "-----------------------------------"
-
       - name: Install Mono Framework
         run: |
           sudo apt install ca-certificates gnupg --assume-yes
@@ -106,17 +102,14 @@ jobs:
           rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 
           sudo apt install mono-complete mono-vbnc mono-dbg gdb libssl3
-      - name: Prepare ApplicationTest (Mono-Build)
-        id: clean-workspace
-        run: |
           mv ./ApplicationTest src/ApplicationTest
       - name: Compile ApplicationTest (Mono-Build)
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
         shell: bash
         run: |
-          msbuild -restore /p:Configuration=Release /p:UsePackage=true /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
+          msbuild -restore /p:Configuration=Release /p:UsePackage=true \
+            /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
           rm -rf ./obj
-
       - name: Cache NuGet Packages
         uses: actions/cache/save@v4
         with:
