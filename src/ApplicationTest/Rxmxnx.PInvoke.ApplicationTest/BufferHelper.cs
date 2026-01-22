@@ -68,7 +68,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		{
 			BufferHelper.PrintBufferInfo(buff);
 			for (Int32 i = 0; i < buff.Span.Length; i++)
+#if !CSHARP_90
+				buff.Span[i] = RuntimeHelper.Shared.Next(0, 5) >= 2 ? (Double?)RuntimeHelper.Shared.NextDouble() : null;
+#else
 				buff.Span[i] = RuntimeHelper.Shared.Next(0, 5) >= 2 ? RuntimeHelper.Shared.NextDouble() : null;
+#endif
 
 			BufferHelper.Print<Double?>(buff.Span);
 			BufferHelper.CollectGarbage();
@@ -95,9 +99,16 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			BufferHelper.PrintBufferInfo(buff);
 			for (Int32 i = 0; i < buff.Span.Length; i++)
 			{
+#if !CSHARP_90
+				buff.Span[i] = RuntimeHelper.Shared.Next(0, 5) >= 2 ?
+					(ValueTuple<Int32, String>?)new ValueTuple<Int32, String>(
+						RuntimeHelper.Shared.Next(), $"Index: {i} Value: {Guid.NewGuid()}") :
+					null;
+#else
 				buff.Span[i] = RuntimeHelper.Shared.Next(0, 5) >= 2 ?
 					(RuntimeHelper.Shared.Next(), $"Index: {i} Value: {Guid.NewGuid()}") :
 					null;
+#endif
 			}
 
 			BufferHelper.Print<ValueTuple<Int32, String>?>(buff.Span);
@@ -134,28 +145,58 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		}
 		private static Action GetRegister<TBuffer>() where TBuffer : struct, IManagedBinaryBuffer<Object>
 		{
+#if !CSHARP_90
+			return BufferHelper.Register<TBuffer>;
+#else
 			return static () =>
 			{
 				BufferManager.Register<TBuffer>();
 				Console.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
 			};
+#endif
 		}
 		private static Action GetRegister<TBuffer, T>() where TBuffer : struct, IManagedBinaryBuffer<T> where T : struct
 		{
+#if !CSHARP_90
+			return BufferHelper.RegisterValue<TBuffer, T>;
+#else
 			return static () =>
 			{
 				BufferManager.Register<T, TBuffer>();
 				Console.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
 			};
+#endif
 		}
 		private static Action GetNullableRegister<TBuffer, T>() where TBuffer : struct, IManagedBinaryBuffer<T?>
 			where T : struct
 		{
+#if !CSHARP_90
+			return BufferHelper.RegisterNullableValue<TBuffer, T>;
+#else
 			return static () =>
 			{
 				BufferManager.RegisterNullable<T, TBuffer>();
 				Console.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
 			};
+#endif
 		}
+#if !CSHARP_90
+		private static void Register<TBuffer>() where TBuffer : struct, IManagedBinaryBuffer<Object>
+		{
+			BufferManager.Register<TBuffer>();
+			Console.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
+		}
+		private static void RegisterValue<TBuffer, T>() where TBuffer : struct, IManagedBinaryBuffer<T> where T : struct
+		{
+			BufferManager.Register<T, TBuffer>();
+			Console.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
+		}
+		private static void RegisterNullableValue<TBuffer, T>() where TBuffer : struct, IManagedBinaryBuffer<T?>
+			where T : struct
+		{
+			BufferManager.RegisterNullable<T, TBuffer>();
+			Console.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
+		}
+#endif
 	}
 }

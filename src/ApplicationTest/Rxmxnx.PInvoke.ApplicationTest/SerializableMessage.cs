@@ -5,7 +5,11 @@ using System.Text.Json.Serialization;
 
 namespace Rxmxnx.PInvoke.ApplicationTest
 {
+#if !CSHARP_90
+	public sealed class SerializableMessage<T>
+#else
 	public sealed record SerializableMessage<T>
+#endif
 		where T : class, IEquatable<String>, IEquatable<T>, IComparable<String>, IComparable<T>
 	{
 		public T? Title { get; set; }

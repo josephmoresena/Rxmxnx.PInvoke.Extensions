@@ -24,7 +24,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 	{
 		public static SerializableMessage<String> Convert(SerializableMessage<CString> value)
 #if !NETCOREAPP
+#if !CSHARP_90
+            => new SerializableMessage<String>
+#else
             => new()
+#endif
             {
                 Title = value.Title?.ToString(), Message = value.Message?.ToString(),
             };
@@ -37,7 +41,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 		public static SerializableMessage<CString> Convert(SerializableMessage<String> value)
 #if !NETCOREAPP
+#if !CSHARP_90
+            => new SerializableMessage<CString>() { Title = (CString?)value.Title, Message = (CString?)value.Message, };
+#else
             => new() { Title = (CString?)value.Title, Message = (CString?)value.Message, };
+#endif
 #else
 		{
 			String serialized = JsonSerializer.Serialize(value, AppJsonSerializerContext.SerializerOptions);
@@ -65,7 +73,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		}
 		public static CStringSequence Convert(params String?[] sequence)
 #if !NETCOREAPP
+#if !CSHARP_90
+            => new CStringSequence(sequence);
+#else
             => new(sequence);
+#endif
 #else
 		{
 			String serialized = JsonSerializer.Serialize(sequence, AppJsonSerializerContext.SerializerOptions);

@@ -10,9 +10,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		public static void Main(String[] args)
 		{
 			RuntimeHelper.PrintRuntimeInfo();
+#if NET6_0_OR_GREATER
 			if (!AotInfo.IsNativeAot)
 				new TrimmedByNativeAot(Console.Out).WriteUtf8(
 					"This text will be removed when compiled using NativeAOT.");
+#endif
 			Program.MatrixFeature();
 			Program.BufferFeature();
 			Program.UnicodeFeature();
@@ -80,13 +82,17 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		private static void UnicodeFeature()
 		{
 			String?[] texts = { "String0", "String1", null, "String3", "", "String5", };
+#if !CSHARP_90
+			CStringSequence sequence = new CStringSequence(texts);
+#else
 			CStringSequence sequence = new(texts);
+#endif
 			try
 			{
 				SerializableMessage<String> serializable = ConvertHelper.Convert(new SerializableMessage<CString>
 				{
-					Title = (CString)"This is not a message",
-					Message = (CString)"This is a UTF-8 message for you.",
+					Title = (CString?)"This is not a message",
+					Message = (CString?)"This is a UTF-8 message for you.",
 				});
 				Console.WriteLine(ConvertHelper.Convert(serializable));
 				String initialBuffer = sequence.ToString();
@@ -108,7 +114,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 				Console.Write((Char)utf8U);
 			Console.WriteLine("");
+#if !CSHARP_90
+			ArrayWrapper<Int32> values = new ArrayWrapper<Int32>() { Value = new[] { 1, 2, 3, -1, -2, -3, }, };
+#else
 			ArrayWrapper<Int32> values = new() { Value = new[] { 1, 2, 3, -1, -2, -3, }, };
+#endif
 			foreach (Int32 val in values)
 				Console.WriteLine(val);
 			if (sequence.Count > 0)
