@@ -1,23 +1,28 @@
-#if !NET9_0_OR_GREATER
-using Lock = System.Object;
-#endif
-
 namespace Rxmxnx.PInvoke;
 
-public sealed partial class CStringBuilder : CStringBuilder.IUnsafe<Lock>
+#if !NET9_0_OR_GREATER
+public sealed partial class CStringBuilder : CStringBuilder.IUnsafe<Object>
+{
+	Object IUnsafe<Object>.Lock => this._lock;
+#else
+public sealed partial class CStringBuilder : CStringBuilder.IUnsafe<Object>, CStringBuilder.IUnsafe<Lock>
 {
 	Lock IUnsafe<Lock>.Lock => this._lock;
+#pragma warning disable CS9216
+	Object IUnsafe<Object>.Lock => this._lock;
+#pragma warning restore CS9216
+#endif
 
-	Int32 IUnsafe<Lock>.Count => this._chunk.Count;
+	Int32 IUnsafe.Count => this._chunk.Count;
 
-	void IUnsafe<Lock>.Append(ReadOnlySpan<Byte> value) => this._chunk = this._chunk.Append(value);
-	void IUnsafe<Lock>.Append(ReadOnlySequence<Byte> value) => this._chunk = this._chunk.Append(value);
-	void IUnsafe<Lock>.Append(ReadOnlySpan<Char> value) => this._chunk = this._chunk.Append(value);
-	void IUnsafe<Lock>.Insert(Int32 index, ReadOnlySpan<Char> value) => this._chunk.Insert(index, value);
-	void IUnsafe<Lock>.Insert(Int32 index, ReadOnlySpan<Byte> value) => this._chunk.Insert(index, value);
-	void IUnsafe<Lock>.Clear() => this._chunk.Reset(this._capacity);
-	void IUnsafe<Lock>.Remove(Int32 startIndex, Int32 length) => this._chunk.Remove(startIndex, length);
-	void IUnsafe<Lock>.CopyTo(Span<Byte> destination)
+	void IUnsafe.Append(ReadOnlySpan<Byte> value) => this._chunk = this._chunk.Append(value);
+	void IUnsafe.Append(ReadOnlySequence<Byte> value) => this._chunk = this._chunk.Append(value);
+	void IUnsafe.Append(ReadOnlySpan<Char> value) => this._chunk = this._chunk.Append(value);
+	void IUnsafe.Insert(Int32 index, ReadOnlySpan<Char> value) => this._chunk.Insert(index, value);
+	void IUnsafe.Insert(Int32 index, ReadOnlySpan<Byte> value) => this._chunk.Insert(index, value);
+	void IUnsafe.Clear() => this._chunk.Reset(this._capacity);
+	void IUnsafe.Remove(Int32 startIndex, Int32 length) => this._chunk.Remove(startIndex, length);
+	void IUnsafe.CopyTo(Span<Byte> destination)
 	{
 		Int32 length = Math.Min(destination.Length, this._chunk.Count);
 		this._chunk.CopyTo(0, destination[..length]);
@@ -26,14 +31,8 @@ public sealed partial class CStringBuilder : CStringBuilder.IUnsafe<Lock>
 	/// <summary>
 	/// Unsafe <see cref="CStringBuilder"/> instance.
 	/// </summary>
-	/// <typeparam name="TLock">Type of lock object.</typeparam>
-	internal interface IUnsafe<out TLock>
+	internal interface IUnsafe
 	{
-		/// <summary>
-		/// The lock object.
-		/// </summary>
-		TLock Lock { get; }
-
 		/// <summary>
 		/// The number of bytes in the entire sequence.
 		/// </summary>
@@ -78,9 +77,21 @@ public sealed partial class CStringBuilder : CStringBuilder.IUnsafe<Lock>
 		/// <param name="length">The number of UTF-8 units to remove.</param>
 		void Remove(Int32 startIndex, Int32 length);
 		/// <summary>
-		/// Copies the units from the begining of this instance to a destination <see cref="Byte"/> span.
+		/// Copies the units from the beginning of this instance to a destination <see cref="Byte"/> span.
 		/// </summary>
 		/// <param name="destination">The writable span where units will be copied.</param>
 		void CopyTo(Span<Byte> destination);
+	}
+
+	/// <summary>
+	/// Unsafe <see cref="CStringBuilder"/> instance.
+	/// </summary>
+	/// <typeparam name="TLock">Type of lock object.</typeparam>
+	internal interface IUnsafe<out TLock> : IUnsafe
+	{
+		/// <summary>
+		/// The lock object.
+		/// </summary>
+		TLock Lock { get; }
 	}
 }
