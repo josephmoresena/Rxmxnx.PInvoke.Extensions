@@ -23,7 +23,7 @@
             <Private>False</Private>
         </Reference>
         <Reference Include="Rxmxnx.PInvoke.Extensions">
-            <HintPath>$(NuGetPackageRoot)rxmxnx.pInvoke.extensions/$(PackageVersion)/lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</HintPath>
+            <HintPath>$(NuGetPackageRoot)rxmxnx.pinvoke.extensions/$(PackageVersion)/lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</HintPath>
             <Private>True</Private>
         </Reference>
     </ItemGroup>
