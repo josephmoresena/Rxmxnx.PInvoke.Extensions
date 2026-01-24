@@ -1,18 +1,19 @@
-namespace Rxmxnx.PInvoke;
-
 #if !NET9_0_OR_GREATER
-public sealed partial class CStringBuilder : CStringBuilder.IUnsafe<Object>
-{
-	Object IUnsafe<Object>.Lock => this._lock;
+using IUnsafe = Rxmxnx.PInvoke.CStringBuilder.IUnsafe;
+
 #else
-public sealed partial class CStringBuilder : CStringBuilder.IUnsafe<Object>, CStringBuilder.IUnsafe<Lock>
-{
-	Lock IUnsafe<Lock>.Lock => this._lock;
-#pragma warning disable CS9216
-	Object IUnsafe<Object>.Lock => this._lock;
-#pragma warning restore CS9216
+using IUnsafe = Rxmxnx.PInvoke.CStringBuilder.IUnsafe<System.Threading.Lock>;
 #endif
 
+namespace Rxmxnx.PInvoke;
+
+public sealed partial class CStringBuilder : IUnsafe
+{
+#if !NET9_0_OR_GREATER
+	Object IUnsafe.Lock => this._lock;
+#else
+	Lock IUnsafe<Lock>.Lock => this._lock;
+#endif
 	Int32 IUnsafe.Count => this._chunk.Count;
 
 	void IUnsafe.Append(ReadOnlySpan<Byte> value) => this._chunk = this._chunk.Append(value);
@@ -33,6 +34,10 @@ public sealed partial class CStringBuilder : CStringBuilder.IUnsafe<Object>, CSt
 	/// </summary>
 	internal interface IUnsafe
 	{
+		/// <summary>
+		/// The lock object.
+		/// </summary>
+		Object Lock { get; }
 		/// <summary>
 		/// The number of bytes in the entire sequence.
 		/// </summary>
@@ -83,6 +88,7 @@ public sealed partial class CStringBuilder : CStringBuilder.IUnsafe<Object>, CSt
 		void CopyTo(Span<Byte> destination);
 	}
 
+#if NET9_0_OR_GREATER
 	/// <summary>
 	/// Unsafe <see cref="CStringBuilder"/> instance.
 	/// </summary>
@@ -92,6 +98,9 @@ public sealed partial class CStringBuilder : CStringBuilder.IUnsafe<Object>, CSt
 		/// <summary>
 		/// The lock object.
 		/// </summary>
-		TLock Lock { get; }
+		new TLock Lock { get; }
+
+		Object IUnsafe.Lock => this.Lock!;
 	}
+#endif
 }

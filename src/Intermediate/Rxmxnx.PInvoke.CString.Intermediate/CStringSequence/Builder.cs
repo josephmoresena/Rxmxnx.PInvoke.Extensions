@@ -10,7 +10,7 @@ public partial class CStringSequence
 	public readonly partial struct Builder
 	{
 		/// <summary>
-		/// Null character span.
+		/// UTF-8 null character span.
 		/// </summary>
 		private static ReadOnlySpan<Byte> NullChar => "\0"u8;
 

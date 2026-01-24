@@ -1,5 +1,8 @@
 #if !NET9_0_OR_GREATER
-using Lock = System.Object;
+using IUtf8Buffer = Rxmxnx.PInvoke.CStringBuilder.IUnsafe;
+
+#else
+using IUtf8Buffer = Rxmxnx.PInvoke.CStringBuilder.IUnsafe<System.Threading.Lock>;
 #endif
 
 namespace Rxmxnx.PInvoke;
@@ -11,10 +14,10 @@ public partial class CStringSequence
 		/// <summary>
 		/// Internal <see cref="Builder"/> value type.
 		/// </summary>
-		/// <typeparam name="T">A <see cref="CStringBuilder.IUnsafe{TLock}"/> type.</typeparam>
+		/// <typeparam name="T">A <see cref="CStringBuilder.IUnsafe"/> type.</typeparam>
 		/// <param name="lengths">Lengths list.</param>
 		/// <param name="charBuffer">Characters buffer.</param>
-		private readonly struct Value<T>(List<Int32?> lengths, T charBuffer) where T : CStringBuilder.IUnsafe<Lock>
+		private readonly struct Value<T>(List<Int32?> lengths, T charBuffer) where T : IUtf8Buffer
 		{
 			/// <summary>
 			/// Internal lengths list.
@@ -304,7 +307,7 @@ public partial class CStringSequence
 			/// Copies the content of <paramref name="builder"/> to <paramref name="span"/>.
 			/// </summary>
 			/// <param name="span">Destination UTF-16 character buffer.</param>
-			/// <param name="builder">A <see cref="CStringBuilder.IUnsafe{Lock}"/> instance.</param>
+			/// <param name="builder">A <see cref="CStringBuilder.IUnsafe"/> instance.</param>
 			private static void CopyChars(Span<Char> span, T builder)
 			{
 				span[^1] = default;
