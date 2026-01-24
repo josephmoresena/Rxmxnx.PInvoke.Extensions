@@ -126,7 +126,7 @@ public partial class CStringSequence
 		ReadOnlySpan<Int32?> lengths = this._lengths.AsSpan();
 		for (Int32 i = 0; i < lengths.Length; i++)
 		{
-			if (lengths[i] is null)
+			if (lengths[i] == length)
 				return i;
 		}
 		return -1;

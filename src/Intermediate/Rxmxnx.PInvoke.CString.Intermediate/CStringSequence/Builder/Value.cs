@@ -272,7 +272,7 @@ public partial class CStringSequence
 #endif
 			public CString[] ToArray()
 			{
-				ReadOnlySpan<Int32?> lengths;
+				ReadOnlySpan<Int32?> lengthsSpan;
 				CString value;
 #if NET9_0_OR_GREATER
 				using (this._charBuffer.Lock.EnterScope())
@@ -283,20 +283,20 @@ public partial class CStringSequence
 					Byte[] array = CString.CreateByteArray(this._charBuffer.Count);
 
 					this._charBuffer.CopyTo(array);
-					lengths = this._lengths.ToArray();
+					lengthsSpan = this._lengths.ToArray();
 					value = CString.Create(array);
 				}
 
-				CString[] result = new CString[lengths.Length];
+				CString[] result = new CString[lengthsSpan.Length];
 				Int32 offset = 0;
-				for (Int32 i = 0; i < lengths.Length; i++)
+				for (Int32 i = 0; i < lengthsSpan.Length; i++)
 				{
-					if (lengths[i].GetValueOrDefault() == 0)
+					if (lengthsSpan[i].GetValueOrDefault() == 0)
 					{
-						result[i] = lengths[i].HasValue ? CString.Empty : CString.Zero;
+						result[i] = lengthsSpan[i].HasValue ? CString.Empty : CString.Zero;
 						continue;
 					}
-					result[i] = value.Slice(offset, lengths[i].GetValueOrDefault());
+					result[i] = value.Slice(offset, lengthsSpan[i].GetValueOrDefault());
 					offset += result[i].Length + 1;
 				}
 

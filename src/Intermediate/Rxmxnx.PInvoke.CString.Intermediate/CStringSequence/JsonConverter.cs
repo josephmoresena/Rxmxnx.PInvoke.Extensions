@@ -21,8 +21,13 @@ public partial class CStringSequence
 			while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
 			{
 				ValidationUtilities.ThrowIfNotString(reader.TokenType);
-				builder = reader.TokenType is JsonTokenType.Null ? builder.Append(CString.Zero) :
-					reader.HasValueSequence ? builder.AppendEscaped(reader.ValueSequence) :
+				if (reader.TokenType is JsonTokenType.Null)
+				{
+					builder = builder.Append(CString.Zero);
+					continue;
+				}
+				builder = reader.HasValueSequence ?
+					builder.AppendEscaped(reader.ValueSequence) :
 					builder.AppendEscaped(reader.ValueSpan);
 			}
 			return builder.Build();

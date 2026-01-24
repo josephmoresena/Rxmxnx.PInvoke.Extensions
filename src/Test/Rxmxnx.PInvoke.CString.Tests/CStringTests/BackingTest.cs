@@ -55,7 +55,14 @@ public sealed class BackingTest
 			using MemoryHandle handle1 = segmentMemory.Pin();
 
 			PInvokeAssert.True(pinned);
+#if !NETCOREAPP || NET6_0_OR_GREATER
 			PInvokeAssert.Equal(handle0, handle1);
+#else
+			unsafe
+			{
+				PInvokeAssert.Equal((IntPtr)handle0.Pointer, (IntPtr)handle1.Pointer);
+			}
+#endif
 		}
 	}
 	private static void AssertNormalize2D(CString? value)
