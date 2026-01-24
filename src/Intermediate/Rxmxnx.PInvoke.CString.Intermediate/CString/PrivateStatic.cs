@@ -3,17 +3,6 @@
 public partial class CString
 {
 	/// <summary>
-	/// Retrieves the UTF-8 \u prefix for JSON decoding.
-	/// </summary>
-	/// <returns>The UTF-8 \u prefix.</returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-	public static ReadOnlySpan<Byte> UnicodePrefix()
-#else
-	private static ReadOnlySpan<Byte> UnicodePrefix()
-#endif
-		=> "\\u"u8;
-	/// <summary>
 	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
 	/// </summary>
 	/// <typeparam name="TState">Type of the state object.</typeparam>

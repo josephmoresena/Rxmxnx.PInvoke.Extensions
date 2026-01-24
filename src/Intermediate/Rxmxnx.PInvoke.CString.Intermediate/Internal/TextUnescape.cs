@@ -11,6 +11,12 @@ namespace Rxmxnx.PInvoke.Internal;
 internal static class TextUnescape
 {
 	/// <summary>
+	/// Retrieves the UTF-8 \u prefix for JSON decoding.
+	/// </summary>
+	[ExcludeFromCodeCoverage]
+	public static ReadOnlySpan<Byte> UnicodePrefix => "\\u"u8;
+
+	/// <summary>
 	/// Unescapes the UTF-8 string in the buffer.
 	/// </summary>
 	/// <param name="buffer">A UTF-8 unescaped buffer.</param>
@@ -160,7 +166,7 @@ internal static class TextUnescape
 	private static Boolean HasHighSurrogate(Span<Byte> escapedBuffer, Int32 escapeIndex, out Char high)
 	{
 		Boolean hasHighSurrogate = escapedBuffer.Length - escapeIndex >= 6 &&
-			escapedBuffer.Slice(escapeIndex - 6, 2).SequenceEqual(CString.UnicodePrefix()); // Check for "\u" prefix.
+			escapedBuffer.Slice(escapeIndex - 6, 2).SequenceEqual(TextUnescape.UnicodePrefix); // Check for "\u" prefix.
 		high = TextUnescape.GetUnicodeChar(escapedBuffer.Slice(escapeIndex - 4, 4));
 		return hasHighSurrogate;
 	}

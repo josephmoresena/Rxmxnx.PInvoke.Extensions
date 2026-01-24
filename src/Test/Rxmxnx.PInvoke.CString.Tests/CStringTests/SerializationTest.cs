@@ -8,13 +8,13 @@ public sealed class SerializationTest
 		jsonOptions = new() { Converters = { new CString.JsonConverter(), }, };
 #endif
 	[Fact]
-	public void UnicodePrefixTest() => PInvokeAssert.True(CString.UnicodePrefix().SequenceEqual("\\u"u8));
+	public void UnicodePrefixTest() => PInvokeAssert.True(TextUnescape.UnicodePrefix.SequenceEqual("\\u"u8));
 	[Fact]
 	public void EscapedSpanTest()
 	{
 		PInvokeAssert.StrictEqual(CString.Empty, CString.Unescape([]));
 
-		SerializationTest.AssertEscaped(new(CString.UnicodePrefix));
+		SerializationTest.AssertEscaped(new(() => TextUnescape.UnicodePrefix));
 		SerializationTest.AssertEscaped(TextContainer.Slash);
 		SerializationTest.AssertEscaped(TextContainer.NewLine);
 		SerializationTest.AssertEscaped(TextContainer.Tab);
