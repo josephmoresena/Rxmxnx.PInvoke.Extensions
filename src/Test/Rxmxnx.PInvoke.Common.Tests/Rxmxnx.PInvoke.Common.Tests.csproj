@@ -16,7 +16,8 @@
         <Using Include="System.Runtime.CompilerServices"/>
         <Using Include="System.Runtime.InteropServices"/>
         <Using Include="System.Text"/>
-        <Using Include="System.Text.Json"/>
+        <Using Condition="'$(TargetFramework)' != 'netstandard2.1'" Include="System.Text.Json"/>
+        <Using Condition="'$(TargetFramework)' == 'netstandard2.1'" Include="Newtonsoft.Json"/>
         <Using Include="Rxmxnx.PInvoke.Tests.Internal"/>
 
         <Using Include="Rxmxnx.PInvoke.Internal"/>

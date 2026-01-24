@@ -68,11 +68,11 @@ public partial class CString
 	/// <summary>
 	/// Constructor.
 	/// </summary>
-	/// <param name="read">A <see cref="ReadHelper"/> instance.</param>
+	/// <param name="utfRead">A <see cref="UtfReadHelper"/> instance.</param>
 	/// <param name="length">UTF-8 text length.</param>
-	private CString(ReadHelper read, Int32 length)
+	private CString(UtfReadHelper utfRead, Int32 length)
 	{
-		Byte[] byteArray = read.ToArray(length);
+		Byte[] byteArray = utfRead.ToArray(length);
 
 		this._isLocal = true;
 		this._data = ValueRegion<Byte>.Create(byteArray);

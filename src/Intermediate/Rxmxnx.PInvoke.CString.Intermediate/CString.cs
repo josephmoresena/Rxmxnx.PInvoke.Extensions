@@ -118,6 +118,23 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <param name="source">A read-only span of UTF-8 characters to initialize the new instance.</param>
 	public CString(ReadOnlySpan<Byte> source) : this(CString.CreateRepeatedSequence(source, 1)) { }
 	/// <summary>
+	/// Initializes a new instance of the <see cref="CString"/> class using the UTF-8 characters
+	/// indicated in the specified read-only sequence.
+	/// </summary>
+	/// <param name="source">A read-only span of UTF-8 characters to initialize the new instance.</param>
+	public CString(ReadOnlySequence<Byte> source)
+	{
+		Byte[] bytes = CString.CreateByteArray((Int32)(source.Length + 1));
+
+		source.CopyTo(bytes.AsSpan());
+		bytes[^1] = default;
+
+		this._isLocal = true;
+		this._length = bytes.Length - 1;
+		this._data = ValueRegion<Byte>.Create(bytes);
+		this.IsFunction = false;
+	}
+	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class using the UTF-16 characters
 	/// indicated in the specified read-only span.
 	/// </summary>
@@ -424,46 +441,57 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	public static Boolean IsImagePersistent([NotNullWhen(true)] CString? str)
 		=> str is not null && !MemoryInspector.MayBeNonLiteral(str._data.AsSpan());
 	/// <summary>
+	/// Tries to retrieve the <see cref="CStringSequence"/> instance associated to <paramref name="value"/>.
+	/// </summary>
+	/// <param name="value">A <see cref="CString"/> instance.</param>
+	/// <param name="index">Output. The index of the returning sequence item associated to <paramref name="value"/>.</param>
+	/// <returns>
+	/// The <see cref="CStringSequence"/> associated to <paramref name="value"/> or <see langword="null"/> if
+	/// <paramref name="value"/> is not associated to any <see cref="CStringSequence"/> instance.
+	/// </returns>
+	public static CStringSequence? TryGetSequence(CString? value, out Int32 index)
+	{
+		if (!CString.IsNullOrEmpty(value) && value._data is IWrapper.IBase<SequenceItemState> state)
+			return state.Value.GetSequence(out index);
+
+		index = -1;
+		return default;
+	}
+	/// <summary>
 	/// Creates a <see cref="CString"/> instance from an escaped UTF-8 text span.
 	/// </summary>
-	/// <param name="utf8Span">Escaped UTF-8 text span.</param>
+	/// <param name="escaped">Escaped UTF-8 text span.</param>
 	/// <returns>A new <see cref="CString"/> instance.</returns>
-	public static CString CreateFromEscaped(ReadOnlySpan<Byte> utf8Span)
+	public static CString Unescape(ReadOnlySpan<Byte> escaped)
 	{
-		if (utf8Span.IsEmpty) return CString.Empty;
+		if (escaped.IsEmpty) return CString.Empty;
 
-		StackAllocationHelper.InitStackBytes();
+		UtfReadHelper helper = StackAllocationHelper.HasStackBytes(escaped.Length) ?
+			new(stackalloc Byte[escaped.Length + 1]) :
+			new(escaped.Length);
 
-		Int32 stackConsumed = 0;
-		ReadHelper helper = StackAllocationHelper.ConsumeStackBytes(utf8Span.Length, ref stackConsumed) ?
-			new(stackalloc Byte[utf8Span.Length + 1]) :
-			new(utf8Span.Length);
+		escaped.CopyTo(helper.Bytes);
 
-		utf8Span.CopyTo(helper.Bytes);
-
-		Int32 length = utf8Span.Length +
-			CString.FinalizeBuffer(helper.Bytes, TextUnescape.Unescape(helper.Bytes[..utf8Span.Length]),
+		Int32 length = escaped.Length +
+			CString.FinalizeBuffer(helper.Bytes, TextUnescape.Unescape(helper.Bytes[..escaped.Length]),
 			                       helper.HasArray);
 		return new(helper, length);
 	}
 	/// <summary>
 	/// Creates a <see cref="CString"/> instance from an escaped UTF-8 text sequence.
 	/// </summary>
-	/// <param name="utf8Sequence">Escaped UTF-8 text sequence.</param>
+	/// <param name="escaped">Escaped UTF-8 text sequence.</param>
 	/// <returns>A new <see cref="CString"/> instance.</returns>
-	public static CString CreateFromEscaped(ReadOnlySequence<Byte> utf8Sequence)
+	public static CString Unescape(ReadOnlySequence<Byte> escaped)
 	{
-		if (utf8Sequence.IsEmpty) return CString.Empty;
+		if (escaped.IsEmpty) return CString.Empty;
 
-		StackAllocationHelper.InitStackBytes();
-
-		Int32 stackConsumed = 0;
-		Int32 length = (Int32)utf8Sequence.Length;
-		ReadHelper helper = StackAllocationHelper.ConsumeStackBytes(length, ref stackConsumed) ?
+		Int32 length = (Int32)escaped.Length;
+		UtfReadHelper helper = StackAllocationHelper.HasStackBytes(length) ?
 			new(stackalloc Byte[length + 1]) :
 			new(length);
 
-		utf8Sequence.CopyTo(helper.Bytes);
+		escaped.CopyTo(helper.Bytes);
 		length += CString.FinalizeBuffer(helper.Bytes, TextUnescape.Unescape(helper.Bytes[..length]), helper.HasArray);
 		return new(helper, length);
 	}

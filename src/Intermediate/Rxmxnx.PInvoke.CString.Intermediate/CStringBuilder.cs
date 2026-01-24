@@ -85,7 +85,7 @@ public sealed partial class CStringBuilder
 	/// <summary>
 	/// Removes all units from the current <see cref="CStringBuilder"/> instance.
 	/// </summary>
-	/// <returns>A reference to this instance after the append operation has completed.</returns>
+	/// <returns>A reference to this instance after the clear operation has completed.</returns>
 	public CStringBuilder Clear()
 	{
 #if NET9_0_OR_GREATER
@@ -101,7 +101,7 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="startIndex">The zero-based position in this instance where removal begins.</param>
 	/// <param name="length">The number of UTF-8 units to remove.</param>
-	/// <returns>A reference to this instance after the excise operation has completed.</returns>
+	/// <returns>A reference to this instance after the remove operation has completed.</returns>
 	public CStringBuilder Remove(Int32 startIndex, Int32 length)
 	{
 #if NET9_0_OR_GREATER
@@ -208,7 +208,6 @@ public sealed partial class CStringBuilder
 			bytes.AsSpan()[span.Length..].Clear();
 		return bytes;
 	}
-
 	/// <summary>
 	/// Retrieves the capacity for a <see cref="CStringBuilder"/> initialized with <paramref name="initialValue"/>.
 	/// </summary>

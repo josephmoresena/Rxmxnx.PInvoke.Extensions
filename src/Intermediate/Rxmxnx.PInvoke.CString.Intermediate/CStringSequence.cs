@@ -171,6 +171,22 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 			bufferLength += length.GetValueOrDefault();
 		return CString.Create(this.CreateTextArray(bufferLength));
 	}
+	/// <summary>
+	/// Tries to retrieve the index of the associated item to <paramref name="value"/>.
+	/// </summary>
+	/// <param name="value">A <see cref="CString"/> instance.</param>
+	/// <param name="index">Output. The index of the associated item to <paramref name="value"/>.</param>
+	/// <returns>
+	/// <see langword="true"/> if the current instance is associated to <paramref name="value"/>; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+	public Boolean TryGetIndexOf(CString? value, out Int32 index)
+	{
+		if (!CString.IsNullOrEmpty(value))
+			return Object.ReferenceEquals(this, CString.TryGetSequence(value, out index));
+		index = this.GetIndexOfLength(value is not null && !value.IsZero ? 0 : null);
+		return false;
+	}
 
 	/// <summary>
 	/// Creates a new UTF-8 text sequence with specific lengths, and initializes each
@@ -258,4 +274,12 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		Boolean isParsable = bufferSpan[0] != 0 && bufferSpan[^1] == 0;
 		return isParsable ? CStringSequence.CreateFrom(value) : CStringSequence.CreateFrom(bufferSpan);
 	}
+	/// <summary>
+	/// Initializes new <see cref="Builder"/> instance.
+	/// </summary>
+	/// <returns>A new <see cref="Builder"/> instance.</returns>
+	/// <remarks>
+	/// Avoid boxing the resulting instance since <see cref="Builder"/> is a <see cref="ValueType"/>.
+	/// </remarks>
+	public static Builder CreateBuilder() => new();
 }

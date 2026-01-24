@@ -13,6 +13,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Using Include="System.Buffers"/>
         <Using Include="System.Diagnostics.CodeAnalysis"/>
         <Using Include="System.Runtime.CompilerServices"/>
         <Using Condition="'$(TargetFramework)' != 'netstandard2.0'" Include="Xunit"/>
@@ -25,8 +26,8 @@
     </ItemGroup>
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
         <PackageReference Include="NUnit" Version="3.14"/>
-        <PackageReference Include="System.Text.Json" Version="4.7.0"/>
-        <PackageReference Include="System.Text.Encodings.Web" Version="5.0.1"/>
+        <PackageReference Include="System.Buffers" Version="4.5.0"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
     </ItemGroup>
 
 </Project>

@@ -8,6 +8,7 @@ public partial class CString
 	/// </summary>
 	public sealed class JsonConverter : JsonConverter<CString>
 	{
+#if NET6_0_OR_GREATER
 		/// <summary>
 		/// Specifies whether the rented span is cleared by default before use.
 		/// </summary>
@@ -15,6 +16,7 @@ public partial class CString
 		internal const Boolean ClearArray = false;
 #else
 		internal const Boolean ClearArray = true;
+#endif
 #endif
 
 		/// <inheritdoc/>

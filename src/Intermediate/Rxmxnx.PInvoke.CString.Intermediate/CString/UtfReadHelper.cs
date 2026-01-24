@@ -5,7 +5,7 @@ public partial class CString
 	/// <summary>
 	/// Helper struct for span/sequence reading.
 	/// </summary>
-	private readonly ref struct ReadHelper
+	private readonly ref struct UtfReadHelper
 	{
 		/// <summary>
 		/// Internal array instance.
@@ -25,7 +25,7 @@ public partial class CString
 		/// Constructor. Used for stack allocation.
 		/// </summary>
 		/// <param name="bytes">A stack alocated span.</param>
-		public ReadHelper(Span<Byte> bytes)
+		public UtfReadHelper(Span<Byte> bytes)
 		{
 			this._array = default;
 			this.Bytes = bytes;
@@ -37,7 +37,7 @@ public partial class CString
 		/// Constructor. Used for heap allocation.
 		/// </summary>
 		/// <param name="length">Array length.</param>
-		public ReadHelper(Int32 length) : this()
+		public UtfReadHelper(Int32 length) : this()
 		{
 			this._array = CString.CreateByteArray(length + 1);
 			this.Bytes = this._array;

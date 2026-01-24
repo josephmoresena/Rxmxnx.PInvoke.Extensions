@@ -112,4 +112,23 @@ public partial class CStringSequence
 		destination.Clear();
 		return result;
 	}
+	/// <summary>
+	/// Searches for the specified item whose length matches with <paramref name="length"/> and returns the
+	/// zero-based index of the first occurrence within the sequence.
+	/// </summary>
+	/// <param name="length">The item length to locate in the sequence.</param>
+	/// <returns>
+	/// The zero-based index of the first occurrence of an element whose length is <paramref name="length"/> within
+	/// the sequence, if found; otherwise, -1.
+	/// </returns>
+	private Int32 GetIndexOfLength(Int32? length)
+	{
+		ReadOnlySpan<Int32?> lengths = this._lengths.AsSpan();
+		for (Int32 i = 0; i < lengths.Length; i++)
+		{
+			if (lengths[i] is null)
+				return i;
+		}
+		return -1;
+	}
 }

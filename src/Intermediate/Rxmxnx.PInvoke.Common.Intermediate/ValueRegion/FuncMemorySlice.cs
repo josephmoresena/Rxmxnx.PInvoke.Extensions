@@ -43,7 +43,7 @@ public partial class ValueRegion<T>
 	/// <summary>
 	/// This class represents a memory slice provided by a stateful function.
 	/// </summary>
-	private sealed class FuncMemorySlice<TState> : MemorySlice
+	private sealed class FuncMemorySlice<TState> : MemorySlice, IWrapper<TState>
 	{
 		/// <summary>
 		/// Internal function that allocates the memory region.
@@ -82,6 +82,11 @@ public partial class ValueRegion<T>
 			this._func = region._func;
 			this._state = region._state;
 		}
+
+#if !PACKAGE
+		[ExcludeFromCodeCoverage]
+#endif
+		TState IWrapper<TState>.Value => this._state;
 
 		/// <inheritdoc/>
 		public override Boolean TryAlloc(GCHandleType type, out GCHandle handle)

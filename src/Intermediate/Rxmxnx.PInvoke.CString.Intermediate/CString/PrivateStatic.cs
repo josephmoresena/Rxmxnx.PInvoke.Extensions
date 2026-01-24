@@ -147,11 +147,8 @@ public partial class CString
 #endif
 	private static Int32 Read(Utf8JsonReader reader, out ValueRegion<Byte> data)
 	{
-		StackAllocationHelper.InitStackBytes();
-
-		Int32 stackConsumed = 0;
 		Int32 length = JsonConverter.GetLength(reader);
-		ReadHelper helper = StackAllocationHelper.ConsumeStackBytes(length, ref stackConsumed) ?
+		UtfReadHelper helper = StackAllocationHelper.HasStackBytes(length) ?
 			new(stackalloc Byte[length + 1]) :
 			new(length);
 		length += JsonConverter.ReadBytes(reader, helper.Bytes[..length], helper.HasArray);

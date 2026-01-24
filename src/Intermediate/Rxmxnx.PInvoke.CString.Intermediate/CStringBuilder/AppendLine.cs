@@ -77,4 +77,23 @@ public sealed partial class CStringBuilder
 			this._chunk = this._chunk.Append(value).Append(CString.NewLine);
 		return this;
 	}
+	/// <summary>
+	/// Appends the specified UTF-8 units read-only sequence followed by the default line terminator to the end of
+	/// the current instance.
+	/// </summary>
+	/// <param name="value">The UTF-8 units read-only sequence to append.</param>
+	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public CStringBuilder AppendLine(ReadOnlySequence<Byte> value)
+	{
+#if NET9_0_OR_GREATER
+		using (this._lock.EnterScope())
+#else
+		lock (this._lock)
+#endif
+			this._chunk = this._chunk.Append(value).Append(CString.NewLine);
+		return this;
+	}
 }

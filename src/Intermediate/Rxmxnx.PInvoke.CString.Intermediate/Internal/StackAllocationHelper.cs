@@ -43,6 +43,16 @@ internal static class StackAllocationHelper
 		return true;
 	}
 	/// <summary>
+	/// Indicates whether if the required size is allocatable on the current stack.
+	/// </summary>
+	/// <param name="stackRequired">Required stack bytes to consume.</param>
+	/// <returns>
+	/// <see langword="true"/> if the required size is allocatable on the current stack; otherwise, <see langword="false"/>.
+	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Boolean HasStackBytes(Int32 stackRequired)
+		=> stackRequired <= StackAllocationHelper.StackallocByteThreshold;
+	/// <summary>
 	/// Returns a rented array of the specified length and clears it.
 	/// </summary>
 	/// <typeparam name="T">Type of the array elements.</typeparam>

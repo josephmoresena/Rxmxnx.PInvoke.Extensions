@@ -7,33 +7,68 @@ public sealed class SerializationTest
 	private static readonly JsonSerializerOptions
 		jsonOptions = new() { Converters = { new CString.JsonConverter(), }, };
 #endif
-
 	[Fact]
 	public void UnicodePrefixTest() => PInvokeAssert.True(CString.UnicodePrefix().SequenceEqual("\\u"u8));
 	[Fact]
 	public void EscapedSpanTest()
 	{
-		PInvokeAssert.StrictEqual(CString.Empty, CString.CreateFromEscaped([]));
+		PInvokeAssert.StrictEqual(CString.Empty, CString.Unescape([]));
 
-		SerializationTest.AssertEscaped(CString.UnicodePrefix());
-		SerializationTest.AssertEscaped(TextContainer.Slash.Utf8.Value);
-		SerializationTest.AssertEscaped(TextContainer.NewLine.Utf8.Value);
-		SerializationTest.AssertEscaped(TextContainer.Tab.Utf8.Value);
-		SerializationTest.AssertEscaped(TextContainer.Quotes.Utf8.Value);
+		SerializationTest.AssertEscaped(new(CString.UnicodePrefix));
+		SerializationTest.AssertEscaped(TextContainer.Slash);
+		SerializationTest.AssertEscaped(TextContainer.NewLine);
+		SerializationTest.AssertEscaped(TextContainer.Tab);
+		SerializationTest.AssertEscaped(TextContainer.Quotes);
 
 		foreach (ReadOnlySpanFunc<Byte> text in TestSet.Utf8Text)
-			SerializationTest.AssertEscaped(text());
+			SerializationTest.AssertEscaped(new(text));
 	}
 	[Fact]
 	public void EscapedSequenceTest()
 	{
+#if !NETCOREAPP
+		for (Int32 i = 0; i < TestSet.Utf8Text.Count; i++)
+		{
+			ReadOnlySpanFunc<Byte> text = TestSet.Utf8Text[i];
+			Byte[] encoded = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(TestSet.Utf16Text[i])[1..^1]);
+#else
 		foreach (ReadOnlySpanFunc<Byte> text in TestSet.Utf8Text)
 		{
 			Byte[] encoded = JsonEncodedText.Encode(text()).EncodedUtf8Bytes.ToArray();
-			CString value = CString.CreateFromEscaped(new ReadOnlySequence<Byte>(encoded));
+#endif
+			Byte[] encodedStandard = JsonEncoderStandard.EncodeToUtf8Bytes(text());
+
+			CString valueStandard = CString.Unescape(new ReadOnlySequence<Byte>(encodedStandard));
+			CString value = CString.Unescape(new ReadOnlySequence<Byte>(encoded));
 
 			SerializationTest.AssertUnescaped(text(), value);
+			SerializationTest.AssertUnescaped(text(), valueStandard);
 		}
+	}
+	private static void AssertEscaped(TextContainer unescaped)
+	{
+		Byte[] encodedStandard = JsonEncoderStandard.EncodeToUtf8Bytes(unescaped.Utf8.Value);
+#if !NETCOREAPP
+		ReadOnlySpan<Byte> encoded = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(unescaped.Utf16.Value)[1..^1]);
+		CString value = CString.Unescape(encoded);
+#else
+		ReadOnlySpan<Byte> encoded = JsonEncodedText.Encode(unescaped.Utf8.Value).EncodedUtf8Bytes;
+		CString value = CString.Unescape(encoded);
+#endif
+		CString valueStandard = CString.Unescape(encodedStandard);
+
+		SerializationTest.AssertUnescaped(unescaped.Utf8.Value, valueStandard);
+		SerializationTest.AssertUnescaped(unescaped.Utf8.Value, value);
+	}
+	private static void AssertUnescaped(ReadOnlySpan<Byte> unescaped, CString value)
+	{
+		PInvokeAssert.False(value.IsFunction);
+		PInvokeAssert.False(value.IsReference);
+		PInvokeAssert.False(value.IsZero);
+		PInvokeAssert.False(value.IsSegmented);
+		PInvokeAssert.True(value.IsNullTerminated);
+
+		PInvokeAssert.True(unescaped.SequenceEqual(value.AsSpan()));
 	}
 
 #if NETCOREAPP
@@ -108,11 +143,13 @@ public sealed class SerializationTest
 	internal void SlashTest()
 		=> SerializationTest.AssertSerialization(TextContainer.Slash.Utf16, TextContainer.Slash.Utf8);
 	[Fact]
-	internal void NewLineTest() => SerializationTest.AssertSerialization(TextContainer.NewLine.Utf16, TextContainer.NewLine.Utf8);
+	internal void NewLineTest()
+		=> SerializationTest.AssertSerialization(TextContainer.NewLine.Utf16, TextContainer.NewLine.Utf8);
 	[Fact]
 	internal void TabTest() => SerializationTest.AssertSerialization(TextContainer.Tab.Utf16, TextContainer.Tab.Utf8);
 	[Fact]
-	internal void QuoteTest() => SerializationTest.AssertSerialization(TextContainer.Quotes.Utf16, TextContainer.Quotes.Utf8);
+	internal void QuoteTest()
+		=> SerializationTest.AssertSerialization(TextContainer.Quotes.Utf16, TextContainer.Quotes.Utf8);
 
 	private static void AssertSerialization(TextContainer<String> valueS, TextContainer<CString> valueC)
 	{
@@ -155,19 +192,4 @@ public sealed class SerializationTest
 		SerializationTest.AssertSerialization(valueS, valueC);
 	}
 #endif
-	private static void AssertEscaped(ReadOnlySpan<Byte> unescaped)
-	{
-		JsonEncodedText encoded = JsonEncodedText.Encode(unescaped);
-		CString value = CString.CreateFromEscaped(encoded.EncodedUtf8Bytes);
-		SerializationTest.AssertUnescaped(unescaped, value);
-	}
-	private static void AssertUnescaped(ReadOnlySpan<Byte> unescaped, CString value)
-	{
-		PInvokeAssert.False(value.IsFunction);
-		PInvokeAssert.False(value.IsReference);
-		PInvokeAssert.False(value.IsZero);
-		PInvokeAssert.False(value.IsSegmented);
-		PInvokeAssert.True(value.IsNullTerminated);
-		PInvokeAssert.True(unescaped.SequenceEqual(value.AsSpan()));
-	}
 }

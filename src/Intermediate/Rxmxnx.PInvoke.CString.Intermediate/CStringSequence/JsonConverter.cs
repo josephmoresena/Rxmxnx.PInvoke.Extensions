@@ -16,6 +16,17 @@ public partial class CStringSequence
 		{
 			ValidationUtilities.ThrowIfNotArray(reader.TokenType);
 			if (reader.TokenType is JsonTokenType.Null) return default;
+#if !NET6_0_OR_GREATER
+			Builder builder = CStringSequence.CreateBuilder();
+			while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
+			{
+				ValidationUtilities.ThrowIfNotString(reader.TokenType);
+				builder = reader.TokenType is JsonTokenType.Null ? builder.Append(CString.Zero) :
+					reader.HasValueSequence ? builder.AppendEscaped(reader.ValueSequence) :
+					builder.AppendEscaped(reader.ValueSpan);
+			}
+			return builder.Build();
+#else
 			List<Int32?> lengths = [];
 			StringBuilder strBuilder = new();
 			Boolean leadingNull = false;
@@ -27,6 +38,7 @@ public partial class CStringSequence
 			if (leadingNull)
 				strBuilder.Append('\0'); // Append a null character if the last string was not null-terminated.
 			return lengths.Count == 0 ? CStringSequence.Empty : new(strBuilder.ToString(), lengths.ToArray());
+#endif
 		}
 		/// <inheritdoc/>
 		public override void Write(Utf8JsonWriter writer, CStringSequence? value, JsonSerializerOptions options)
@@ -61,6 +73,7 @@ public partial class CStringSequence
 			writer.WriteEndArray();
 		}
 
+#if NET6_0_OR_GREATER
 		/// <summary>
 		/// Reads a string from the JSON reader and appends it to the building sequence.
 		/// </summary>
@@ -121,6 +134,7 @@ public partial class CStringSequence
 				StackAllocationHelper.ReleaseStackBytes(stackConsumed);
 			}
 		}
+#endif
 	}
 }
 #endif

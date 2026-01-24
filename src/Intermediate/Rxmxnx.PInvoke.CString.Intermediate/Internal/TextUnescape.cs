@@ -74,7 +74,7 @@ internal static class TextUnescape
 			(Byte)'b' => (Byte)'\b',
 			(Byte)'f' => (Byte)'\f',
 			(Byte)'0' => (Byte)'\0',
-			_ => buffer[0],
+			_ => buffer[1],
 		};
 		unescaped.CopyTo(buffer[1..]); // Copy the rest of the buffer after the replacement.
 	}
