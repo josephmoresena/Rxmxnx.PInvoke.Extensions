@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.Tests.CStringTests;
 
+[ExcludeFromCodeCoverage]
 public static class JsonEncoderStandard
 {
 	public static Byte[] EncodeToUtf8Bytes(ReadOnlySpan<Byte> input)

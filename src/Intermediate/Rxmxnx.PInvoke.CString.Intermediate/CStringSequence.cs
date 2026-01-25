@@ -180,7 +180,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// <see langword="true"/> if the current instance is associated to <paramref name="value"/>; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
-	public Boolean TryGetIndexOf(CString? value, out Int32 index)
+	public Boolean TryIndexOf(CString? value, out Int32 index)
 	{
 		if (!CString.IsNullOrEmpty(value))
 			return Object.ReferenceEquals(this, CString.TryGetSequence(value, out index));
