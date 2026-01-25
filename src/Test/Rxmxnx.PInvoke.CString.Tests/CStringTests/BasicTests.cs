@@ -4,13 +4,14 @@
 [ExcludeFromCodeCoverage]
 public sealed class BasicTests
 {
+	private static readonly Boolean isEmptyLiteral = CString.IsImagePersistent(CString.Empty);
+
 	[Fact]
 	public void EmptyTest()
 	{
-		using MemoryHandle _ = CString.Empty.TryPin(out Boolean pinned);
 		ReadOnlySpan<Byte> emptySpan = default(CString?);
 		CString? nullCStr = default(Byte[]);
-		Byte[] emptyBytes = pinned ? CString.GetBytes(CString.Empty) : [default,];
+		Byte[] emptyBytes = !CString.Empty.IsFunction ? CString.GetBytes(CString.Empty) : [default,];
 
 		CString noEmpty1 = CString.Create(emptyBytes);
 		CString noEmpty2 = CString.Create(new Byte[] { default, default, });
@@ -109,7 +110,6 @@ public sealed class BasicTests
 		PInvokeAssert.Equal(CString.Empty, empty3);
 		PInvokeAssert.False(empty3.IsReference);
 		PInvokeAssert.True(empty3.IsNullTerminated);
-		PInvokeAssert.Equal(!pinned, empty3.IsFunction);
 		PInvokeAssert.Equal(CString.Empty, empty4);
 		PInvokeAssert.False(empty4.IsReference);
 		PInvokeAssert.True(empty4.IsNullTerminated);
@@ -126,6 +126,11 @@ public sealed class BasicTests
 			PInvokeAssert.Equal(equal, CString.Empty == str);
 			PInvokeAssert.Equal(equal, CString.Empty == new CString(TestSet.Utf8Text[i]));
 		}
+
+		PInvokeAssert.Null(CString.TryGetSequence(CString.Empty, out Int32 seqIndex));
+		PInvokeAssert.Equal(-1, seqIndex);
+		PInvokeAssert.Null(CString.TryGetSequence(CString.Zero, out seqIndex));
+		PInvokeAssert.Equal(-1, seqIndex);
 	}
 
 	[Fact]
@@ -170,6 +175,10 @@ public sealed class BasicTests
 				PInvokeAssert.Equal(cstr1.ToHexString(), cstr2.ToHexString());
 				PInvokeAssert.Equal(cstr1.ToArray(), cstr2.ToArray());
 				PInvokeAssert.Equal(0, cstr1.CompareTo(cstr2));
+				PInvokeAssert.Null(CString.TryGetSequence(cstr1, out Int32 seqIndex));
+				PInvokeAssert.Equal(-1, seqIndex);
+				PInvokeAssert.Null(CString.TryGetSequence(cstr2, out seqIndex));
+				PInvokeAssert.Equal(-1, seqIndex);
 			}
 			BasicTests.AssertFromString(cstr1);
 			PInvokeAssert.True(cstr1.Equals(TestSet.Utf16Text[i]));
@@ -188,6 +197,8 @@ public sealed class BasicTests
 			CString cstr1 = new(TestSet.Utf8Text[i]);
 			BasicTests.TestBytesPointer(TestSet.Utf8Bytes[i], TestSet.Utf16Text[i], cstr1);
 			BasicTests.TestNullTerminatedBytesPointer(TestSet.Utf8NullTerminatedBytes[i], TestSet.Utf16Text[i], cstr1);
+			PInvokeAssert.Null(CString.TryGetSequence(cstr1, out Int32 seqIndex));
+			PInvokeAssert.Equal(-1, seqIndex);
 		}
 	}
 
@@ -236,22 +247,19 @@ public sealed class BasicTests
 		PInvokeAssert.All(literalArray, c =>
 		{
 			using MemoryHandle handle = c.TryPin(out Boolean pinned);
-			PInvokeAssert.False(pinned);
-			PInvokeAssert.Equal((IntPtr)handle.Pointer, IntPtr.Zero);
-			PInvokeAssert.NotEqual((IntPtr)handle.Pointer,
-			                       (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(c.AsSpan())));
+			PInvokeAssert.Equal(BasicTests.isEmptyLiteral, pinned);
+			ref Byte byte0 = ref Unsafe.AsRef(in c.GetPinnableReference());
+			IntPtr ptr = (IntPtr)Unsafe.AsPointer(ref byte0);
 
-			PInvokeAssert.Equal((IntPtr)handle.Pointer,
-			                    (IntPtr)CString.CreateUnsafe((IntPtr)handle.Pointer, c.Length + 1).TryPin(out pinned)
-			                                   .Pointer);
-			PInvokeAssert.False(pinned);
+			PInvokeAssert.Equal(BasicTests.isEmptyLiteral ? ptr : IntPtr.Zero, (IntPtr)handle.Pointer);
+			PInvokeAssert.Equal(ptr, (IntPtr)CString.CreateUnsafe(ptr, 1).TryPin(out pinned).Pointer);
+			PInvokeAssert.Equal(BasicTests.isEmptyLiteral, pinned);
 
 			if (c.Length <= 3) return;
 
 			using MemoryHandle handle2 = c[1..^1].TryPin(out pinned);
-			PInvokeAssert.False(pinned);
-			PInvokeAssert.Equal((IntPtr)handle2.Pointer, IntPtr.Zero);
-			PInvokeAssert.NotEqual((IntPtr)handle2.Pointer, (IntPtr)handle.Pointer + 1);
+			PInvokeAssert.Equal(BasicTests.isEmptyLiteral, pinned);
+			PInvokeAssert.Equal(BasicTests.isEmptyLiteral ? ptr + 1 : IntPtr.Zero, (IntPtr)handle2.Pointer);
 		});
 		PInvokeAssert.All(bytesArray, c =>
 		{

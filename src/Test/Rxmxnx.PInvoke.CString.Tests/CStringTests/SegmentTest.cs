@@ -78,9 +78,7 @@ public sealed class SegmentTests
 	{
 		if (cstrSeg.Length == 0)
 		{
-			using MemoryHandle _ = CString.Empty.TryPin(out Boolean pinned);
 			PInvokeAssert.Same(CString.Empty, cstrSeg);
-			PInvokeAssert.Equal(!pinned, cstrSeg.IsFunction);
 			PInvokeAssert.False(cstrSeg.IsReference);
 			PInvokeAssert.True(cstrSeg.IsNullTerminated);
 		}

@@ -26,7 +26,7 @@ public static partial class SystemInfo
 #else
 			fixed (Byte* ptr = CString.Empty)
 #endif
-				MonoInfo.IsEmptyNonLiteral = MemoryInspector.MayBeNonLiteral(new(ptr, 1));
+				MonoInfo.IsEmptyNonLiteral = MemoryInspector.MayBeNonLiteral(ptr);
 		}
 	}
 }

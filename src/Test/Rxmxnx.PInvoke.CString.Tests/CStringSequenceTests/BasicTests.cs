@@ -112,24 +112,59 @@ public sealed class BasicTests
 		String value = seq.ToString();
 		Int32 nonEmptyCount = 0;
 		CStringSequence clone = CStringSequence.Parse(value);
+		Int32 indexOfEmpty = Array.FindIndex(strings, s => s is not null && s.Length == 0);
+		Int32 indexOfNull = Array.FindIndex(strings, s => s is null);
 		for (Int32 i = 0; i < seq.Count; i++)
 		{
-			if (!CString.IsNullOrEmpty(seq[i])) nonEmptyCount++;
-			if (seq[i].Length != 0 || !seq[i].IsReference)
+			CString item = seq[i];
+			if (!CString.IsNullOrEmpty(item)) nonEmptyCount++;
+			if (item.Length != 0 || !item.IsReference)
 			{
-				PInvokeAssert.Equal(values[i], seq[i]);
-				PInvokeAssert.Equal(strings[i], seq[i].ToString());
+				PInvokeAssert.Equal(values[i], item);
+				PInvokeAssert.Equal(strings[i], item.ToString());
+				if (item.Length != 0)
+				{
+					PInvokeAssert.StrictEqual(seq, CString.TryGetSequence(item, out Int32 index));
+					PInvokeAssert.Equal(i, index);
+					PInvokeAssert.False(seq.TryIndexOf(values[i], out index));
+					PInvokeAssert.Equal(-1, index);
+					PInvokeAssert.True(seq.TryIndexOf(item, out index));
+					PInvokeAssert.Equal(i, index);
+					if (item.Length > 3)
+					{
+						CString slice = item[1..^1];
+						PInvokeAssert.StrictEqual(seq, CString.TryGetSequence(slice, out index));
+						PInvokeAssert.Equal(i, index);
+						PInvokeAssert.True(seq.TryIndexOf(item, out index));
+						PInvokeAssert.Equal(i, index);
+					}
+					PInvokeAssert.Null(CString.TryGetSequence(values[i], out index));
+					PInvokeAssert.Equal(-1, index);
+				}
+				else
+				{
+					PInvokeAssert.Null(CString.TryGetSequence(item, out Int32 index));
+					PInvokeAssert.Equal(-1, index);
+					PInvokeAssert.False(seq.TryIndexOf(values[i], out index));
+					PInvokeAssert.Equal(indexOfEmpty, index);
+					PInvokeAssert.False(seq.TryIndexOf(item, out index));
+					PInvokeAssert.Equal(indexOfEmpty, index);
+					PInvokeAssert.Null(CString.TryGetSequence(values[i], out index));
+					PInvokeAssert.Equal(-1, index);
+				}
 			}
 			else
 			{
-				PInvokeAssert.Same(seq[i], CString.Zero);
-				PInvokeAssert.Equal(String.Empty, seq[i].ToString());
+				PInvokeAssert.Same(item, CString.Zero);
+				PInvokeAssert.Equal(String.Empty, item.ToString());
 				if (values[i] is not null)
 					fixed (void* ptr = values[i]!.AsSpan())
 						PInvokeAssert.Equal(IntPtr.Zero, new(ptr));
 				PInvokeAssert.Null(strings[i]);
+				PInvokeAssert.False(seq.TryIndexOf(item, out Int32 index));
+				PInvokeAssert.Equal(indexOfNull, index);
 			}
-			BasicTests.AssertPin(seq.ToString(), seq[i]);
+			BasicTests.AssertPin(seq.ToString(), item);
 		}
 
 		PInvokeAssert.Equal(nonEmptyCount, seq.NonEmptyCount);

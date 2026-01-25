@@ -5,8 +5,9 @@ namespace Rxmxnx.PInvoke.Internal;
 /// </summary>
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-internal abstract partial class MemoryInspector
+internal abstract unsafe partial class MemoryInspector
 {
 	/// <summary>
 	/// Current platform <see cref="MemoryInspector"/> instance.
@@ -66,7 +67,20 @@ internal abstract partial class MemoryInspector
 	/// <see langword="true"/> if the given span represents a literal o hardcoded memory region;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
-	public abstract Boolean IsLiteral(ReadOnlySpan<Byte> span);
+	public Boolean IsLiteral(ReadOnlySpan<Byte> span)
+	{
+		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+			return this.IsLiteral(ptr);
+	}
+	/// <summary>
+	/// Indicates whether given pointer references to a literal or hardcoded memory region.
+	/// </summary>
+	/// <param name="ptr">A native pointer.</param>
+	/// <returns>
+	/// <see langword="true"/> if the given span represents a literal o hardcoded memory region;
+	/// otherwise, <see langword="false"/>.
+	/// </returns>
+	public abstract Boolean IsLiteral(void* ptr);
 
 	/// <summary>
 	/// Indicates whether the given span represents memory that is not part of a hardcoded literal.
@@ -85,6 +99,55 @@ internal abstract partial class MemoryInspector
 		{
 			if (MemoryInspector.instance is not null)
 				return !MemoryInspector.instance.IsLiteral(span);
+		}
+		catch (Exception)
+		{
+			// Ignore
+		}
+		return true;
+	}
+	/// <summary>
+	/// Indicates whether the given span represents memory that is not part of a hardcoded literal.
+	/// </summary>
+	/// <param name="refByte">A read only <see cref="Byte"/> reference.</param>
+	/// <returns>
+	/// <see langword="true"/> if the given span represents memory that is not part of a hardcoded literal;
+	/// otherwise, <see langword="false"/>.
+	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public static Boolean MayBeNonLiteral(in Byte refByte)
+	{
+		try
+		{
+			if (MemoryInspector.instance is not null)
+				fixed (void* ptr = &refByte)
+					return !MemoryInspector.instance.IsLiteral(ptr);
+		}
+		catch (Exception)
+		{
+			// Ignore
+		}
+		return true;
+	}
+	/// <summary>
+	/// Indicates whether the given span represents memory that is not part of a hardcoded literal.
+	/// </summary>
+	/// <param name="ptr">A native pointer.</param>
+	/// <returns>
+	/// <see langword="true"/> if the given span represents memory that is not part of a hardcoded literal;
+	/// otherwise, <see langword="false"/>.
+	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public static Boolean MayBeNonLiteral(void* ptr)
+	{
+		try
+		{
+			if (MemoryInspector.instance is not null)
+				return !MemoryInspector.instance.IsLiteral(ptr);
 		}
 		catch (Exception)
 		{

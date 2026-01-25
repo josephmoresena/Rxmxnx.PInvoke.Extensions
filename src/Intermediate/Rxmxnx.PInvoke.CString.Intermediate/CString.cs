@@ -295,11 +295,8 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 
 		fixed (void* ptr = &MemoryMarshal.GetReference(this._data.AsSpan()))
 		{
-			if (this.IsReference)
-			{
-				pinned = false;
+			if ((pinned = !MemoryInspector.MayBeNonLiteral(ptr)) || this.IsReference)
 				return new(ptr);
-			}
 			if (this._data.TryAlloc(GCHandleType.Pinned, out GCHandle handle))
 			{
 				pinned = true;
