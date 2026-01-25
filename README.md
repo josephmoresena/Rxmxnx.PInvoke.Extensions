@@ -2397,6 +2397,11 @@ Represents a sequence of null-terminated UTF-8 text strings.
   must be null-terminated.
   </details>
 - <details>
+  <summary>Pin()</summary>
+
+  Creates an `MemoryHandle` instance by pinning the current instance, allowing safe access to the fixed memory region.
+  </details>
+- <details>
   <summary>GetFixedPointer()</summary>
 
   Creates an `IFixedPointer.IDisposable` instance by pinning the current instance, allowing safe access to the fixed

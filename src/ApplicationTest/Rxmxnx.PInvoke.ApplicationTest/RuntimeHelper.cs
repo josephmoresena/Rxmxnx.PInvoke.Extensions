@@ -51,7 +51,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 			;
 
-#if !CSHARP_90
+#if !CSHARP9_0
 		public static readonly Random Shared = new Random();
 		public static readonly CString Null = new CString(RuntimeHelper.NullBytes);
 #else
@@ -172,7 +172,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				_ => $"{architecture}",
 			};
 		private static String GetAssemblyName(this Assembly assembly) => $"{assembly.FullName} {assembly.Location}";
-#if !CSHARP_90
+#if !CSHARP9_0
 		private static ReadOnlySpan<Byte> NullBytes()
 		{
 			Byte[] utf8 = { (Byte)'N', (Byte)'u', (Byte)'l', (Byte)'l', (Byte)'\0', };

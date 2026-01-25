@@ -10,8 +10,24 @@ namespace Rxmxnx.PInvoke;
 public unsafe partial class CStringSequence
 {
 	/// <summary>
-	/// Creates an <see cref="IFixedPointer.IDisposable"/> instance by pinning the current
-	/// instance, allowing safe access to the fixed memory region.
+	/// Creates an <see cref="MemoryHandle"/> instance by pinning the current instance.
+	/// </summary>
+	/// <returns>A <see cref="MemoryHandle"/> for the pinned memory.</returns>
+	/// <remarks>
+	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
+	/// operations on unmanaged memory.
+	/// Ensure that the <see cref="MemoryHandle"/> value returned is properly disposed to release the pinned memory
+	/// and avoid memory leaks.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public MemoryHandle Pin()
+	{
+		ReadOnlyMemory<Char> mem = this._value.AsMemory();
+		return mem.Pin();
+	}
+	/// <summary>
+	/// Creates an <see cref="IFixedPointer.IDisposable"/> instance by pinning the current instance, allowing safe
+	/// access to the fixed memory region.
 	/// </summary>
 	/// <returns>An <see cref="IFixedPointer.IDisposable"/> instance representing the pinned memory.</returns>
 	/// <remarks>
@@ -22,10 +38,9 @@ public unsafe partial class CStringSequence
 	/// </remarks>
 	public IFixedPointer.IDisposable GetFixedPointer()
 	{
-		ReadOnlyMemory<Char> mem = this._value.AsMemory();
-		MemoryHandle handle = mem.Pin();
+		MemoryHandle handle = this.Pin();
 		// ReSharper disable once HeapView.BoxingAllocation
-		return new FixedContext<Char>(handle.Pointer, mem.Length).ToDisposable(handle);
+		return new FixedContext<Char>(handle.Pointer, this._value.Length).ToDisposable(handle);
 	}
 	/// <summary>
 	/// Executes a specified action using the current instance treated as a <see cref="ReadOnlyFixedMemoryList"/>.

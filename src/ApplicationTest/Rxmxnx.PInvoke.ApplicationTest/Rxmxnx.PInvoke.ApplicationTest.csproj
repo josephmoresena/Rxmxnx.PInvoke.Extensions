@@ -10,15 +10,12 @@
         <LangVersion Condition="'$(LangVersion)' != '8.0'">9.0</LangVersion>
         <Nullable>enable</Nullable>
         <ImplicitUsings>disable</ImplicitUsings>
-        <PublishTrimmed>true</PublishTrimmed>
-        <TrimmerSingleWarn>false</TrimmerSingleWarn>
-        <TrimMode>full</TrimMode>
         <CheckEolTargetFramework>false</CheckEolTargetFramework>
         <AssemblyName Condition="'$(DisableBufferAutoComposition)' == 'True'">$(AssemblyName).NoBufferComposition</AssemblyName>
         <AssemblyName Condition="'$(InvariantGlobalization)' == 'True'">$(AssemblyName).Invariant</AssemblyName>
         <Deterministic>True</Deterministic>
         <Optimize>true</Optimize>
-        <DefineConstants Condition="'$(LangVersion)' == '9.0'">$(DefineConstants);CSHARP_90</DefineConstants>
+        <DefineConstants Condition="'$(LangVersion)' == '9.0'">$(DefineConstants);CSHARP9_0</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>

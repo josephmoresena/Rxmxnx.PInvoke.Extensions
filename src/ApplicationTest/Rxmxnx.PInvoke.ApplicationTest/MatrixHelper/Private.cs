@@ -47,7 +47,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			}
 			finally
 			{
-#if !CSHARP_90
+#if !CSHARP9_0
 				if (array != null)
 #else
 				if (array is not null)
@@ -90,7 +90,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			}
 			finally
 			{
-#if !CSHARP_90
+#if !CSHARP9_0
 				if (array != null)
 #else
 				if (array is not null)

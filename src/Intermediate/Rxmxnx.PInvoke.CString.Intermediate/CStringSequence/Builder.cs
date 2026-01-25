@@ -176,6 +176,9 @@ public partial class CStringSequence
 		/// <param name="index">The zero-based index at which item should be inserted.</param>
 		/// <param name="value">The UTF-8 text to insert.</param>
 		/// <returns>The current instance after the insert operation has completed.</returns>
+#if !PACKAGE
+		[ExcludeFromCodeCoverage]
+#endif
 		public Builder Insert(Int32 index, ReadOnlySpan<Byte> value)
 		{
 			this._value.Insert(index, value);
@@ -187,6 +190,9 @@ public partial class CStringSequence
 		/// <param name="index">The zero-based index at which item should be inserted.</param>
 		/// <param name="value">The UTF-16 text to insert.</param>
 		/// <returns>The current instance after the insert operation has completed.</returns>
+#if !PACKAGE
+		[ExcludeFromCodeCoverage]
+#endif
 		public Builder Insert(Int32 index, ReadOnlySpan<Char> value)
 		{
 			this._value.Insert(index, value);

@@ -78,6 +78,8 @@ The project uses C# 9.0 syntax to remain compatible with Mono 6.12, but it is co
 - Building with .NET Core/.NET enables a demonstration of JSON serialization/deserialization of UTF-8 strings while
   avoiding re-encoding.
 - When builds targeting .NET 9.0 or later reference the VNext project, where some additional features are used.
+- Part of the code is also compatible with C# 8.0 through preprocessor directives in order to maintain compatibility
+  with the original language version of the minimum TFM.
 
 # VNext Test
 

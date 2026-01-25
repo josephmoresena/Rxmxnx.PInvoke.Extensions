@@ -82,7 +82,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		private static void UnicodeFeature()
 		{
 			String?[] texts = { "String0", "String1", null, "String3", "", "String5", };
-#if !CSHARP_90
+#if !CSHARP9_0
 			CStringSequence sequence = new CStringSequence(texts);
 #else
 			CStringSequence sequence = new(texts);
@@ -114,8 +114,8 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 				Console.Write((Char)utf8U);
 			Console.WriteLine("");
-#if !CSHARP_90
-			ArrayWrapper<Int32> values = new ArrayWrapper<Int32>() { Value = new[] { 1, 2, 3, -1, -2, -3, }, };
+#if !CSHARP9_0
+			ArrayWrapper<Int32> values = new ArrayWrapper<Int32> { Value = new[] { 1, 2, 3, -1, -2, -3, }, };
 #else
 			ArrayWrapper<Int32> values = new() { Value = new[] { 1, 2, 3, -1, -2, -3, }, };
 #endif

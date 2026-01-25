@@ -24,7 +24,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 	{
 		public static SerializableMessage<String> Convert(SerializableMessage<CString> value)
 #if !NETCOREAPP
-#if !CSHARP_90
+#if !CSHARP9_0
             => new SerializableMessage<String>
 #else
             => new()
@@ -41,8 +41,8 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 		public static SerializableMessage<CString> Convert(SerializableMessage<String> value)
 #if !NETCOREAPP
-#if !CSHARP_90
-            => new SerializableMessage<CString>() { Title = (CString?)value.Title, Message = (CString?)value.Message, };
+#if !CSHARP9_0
+            => new SerializableMessage<CString> { Title = (CString?)value.Title, Message = (CString?)value.Message, };
 #else
             => new() { Title = (CString?)value.Title, Message = (CString?)value.Message, };
 #endif
@@ -73,7 +73,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		}
 		public static CStringSequence Convert(params String?[] sequence)
 #if !NETCOREAPP
-#if !CSHARP_90
+#if !CSHARP9_0
             => new CStringSequence(sequence);
 #else
             => new(sequence);

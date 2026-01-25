@@ -6,6 +6,9 @@
         <SelfContained Condition="'$(RequiredFramework)' != ''">true</SelfContained>
         <AssemblyName Condition="'$(RuntimeIdentifier)' != ''">$(AssemblyName).$(RuntimeIdentifier)</AssemblyName>
         <AssemblyName>$(AssemblyName).$(TargetFramework)</AssemblyName>
+        <PublishTrimmed>true</PublishTrimmed>
+        <TrimmerSingleWarn>false</TrimmerSingleWarn>
+        <TrimMode>full</TrimMode>
     </PropertyGroup>
 
     <Import Project="NativeAot.props"/>

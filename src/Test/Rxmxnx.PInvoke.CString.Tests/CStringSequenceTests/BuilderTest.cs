@@ -84,14 +84,13 @@ public sealed class BuilderTest
 	[InlineData(1000)]
 	public void AppendTest(Int32? length)
 	{
-		using TestMemoryHandle handle = new();
 		List<Int32> indices = TestSet.GetIndices(length);
 		String?[] strings = indices.Select(i => TestSet.GetString(i, true)).ToArray();
 		CStringSequence seqRef = new(strings);
 		CStringSequence.Builder builder = CStringSequence.CreateBuilder();
 
 		PInvokeAssert.StrictEqual(CStringSequence.Empty, builder.Build());
-		foreach (CString? value in TestSet.GetValues(indices, handle))
+		foreach (CString? value in seqRef)
 			builder.Append(value);
 		PInvokeAssert.Equal(seqRef, builder.Build());
 	}
@@ -104,7 +103,6 @@ public sealed class BuilderTest
 	[InlineData(1000)]
 	public void AppendStringTest(Int32? length)
 	{
-		using TestMemoryHandle handle = new();
 		List<Int32> indices = TestSet.GetIndices(length);
 		String?[] strings = indices.Select(i => TestSet.GetString(i, true)).ToArray();
 		CStringSequence seqRef = new(strings);
@@ -168,6 +166,64 @@ public sealed class BuilderTest
 #endif
 			builder.AppendEscaped(new ReadOnlySequence<Byte>(encoded));
 		}
+		PInvokeAssert.Equal(seqRef, builder.Build());
+	}
+	[Theory]
+	[InlineData(null)]
+	[InlineData(8)]
+	[InlineData(32)]
+	[InlineData(256)]
+	[InlineData(300)]
+	[InlineData(1000)]
+	public void InsertTest(Int32? length)
+	{
+		List<Int32> indices = TestSet.GetIndices(length);
+		String?[] strings = indices.Select(i => TestSet.GetString(i, true)).ToArray();
+		CStringSequence seqRef = new(strings);
+		CStringSequence.Builder builder = CStringSequence.CreateBuilder();
+		Int32[] oddIndexes = Enumerable.Range(0, strings.Length).Where(i => i % 2 != 0).ToArray();
+
+		foreach (CString value in seqRef)
+			builder.Append(value);
+		PInvokeAssert.Equal(seqRef, builder.Build());
+
+		foreach (Int32 index in oddIndexes.AsEnumerable().Reverse())
+			builder.RemoveAt(index);
+		PInvokeAssert.Equal(new(Enumerable.Range(0, strings.Length).Except(oddIndexes).Select(i => strings[i])),
+		                    builder.Build());
+
+		foreach (Int32 index in oddIndexes)
+			builder.Insert(index, seqRef[index]);
+
+		PInvokeAssert.Equal(seqRef, builder.Build());
+	}
+	[Theory]
+	[InlineData(null)]
+	[InlineData(8)]
+	[InlineData(32)]
+	[InlineData(256)]
+	[InlineData(300)]
+	[InlineData(1000)]
+	public void InsertStringTest(Int32? length)
+	{
+		List<Int32> indices = TestSet.GetIndices(length);
+		String?[] strings = indices.Select(i => TestSet.GetString(i, true)).ToArray();
+		CStringSequence seqRef = new(strings);
+		CStringSequence.Builder builder = CStringSequence.CreateBuilder();
+		Int32[] oddIndexes = Enumerable.Range(0, strings.Length).Where(i => i % 2 != 0).ToArray();
+
+		foreach (String? value in strings)
+			builder.Append(value);
+		PInvokeAssert.Equal(seqRef, builder.Build());
+
+		foreach (Int32 index in oddIndexes.AsEnumerable().Reverse())
+			builder.RemoveAt(index);
+		PInvokeAssert.Equal(new(Enumerable.Range(0, strings.Length).Except(oddIndexes).Select(i => strings[i])),
+		                    builder.Build());
+
+		foreach (Int32 index in oddIndexes)
+			builder.Insert(index, strings[index]);
+
 		PInvokeAssert.Equal(seqRef, builder.Build());
 	}
 }

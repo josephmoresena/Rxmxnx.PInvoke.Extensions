@@ -164,6 +164,9 @@ public sealed class BasicTests
 			                                  ref Unsafe.AsRef(in spanValue[0])));
 #endif
 		}
+
+		using MemoryHandle handle = clone.Pin();
+		PInvokeAssert.Equal(fp.Pointer, (IntPtr)handle.Pointer);
 	}
 	private static unsafe void AssertPin(String utf8Buffer, CString? cstr)
 	{

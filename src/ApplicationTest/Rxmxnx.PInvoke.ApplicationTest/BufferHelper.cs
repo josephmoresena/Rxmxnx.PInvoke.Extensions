@@ -68,7 +68,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		{
 			BufferHelper.PrintBufferInfo(buff);
 			for (Int32 i = 0; i < buff.Span.Length; i++)
-#if !CSHARP_90
+#if !CSHARP9_0
 				buff.Span[i] = RuntimeHelper.Shared.Next(0, 5) >= 2 ? (Double?)RuntimeHelper.Shared.NextDouble() : null;
 #else
 				buff.Span[i] = RuntimeHelper.Shared.Next(0, 5) >= 2 ? RuntimeHelper.Shared.NextDouble() : null;
@@ -99,7 +99,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			BufferHelper.PrintBufferInfo(buff);
 			for (Int32 i = 0; i < buff.Span.Length; i++)
 			{
-#if !CSHARP_90
+#if !CSHARP9_0
 				buff.Span[i] = RuntimeHelper.Shared.Next(0, 5) >= 2 ?
 					(ValueTuple<Int32, String>?)new ValueTuple<Int32, String>(
 						RuntimeHelper.Shared.Next(), $"Index: {i} Value: {Guid.NewGuid()}") :
@@ -145,7 +145,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		}
 		private static Action GetRegister<TBuffer>() where TBuffer : struct, IManagedBinaryBuffer<Object>
 		{
-#if !CSHARP_90
+#if !CSHARP9_0
 			return BufferHelper.Register<TBuffer>;
 #else
 			return static () =>
@@ -157,7 +157,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		}
 		private static Action GetRegister<TBuffer, T>() where TBuffer : struct, IManagedBinaryBuffer<T> where T : struct
 		{
-#if !CSHARP_90
+#if !CSHARP9_0
 			return BufferHelper.RegisterValue<TBuffer, T>;
 #else
 			return static () =>
@@ -170,7 +170,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		private static Action GetNullableRegister<TBuffer, T>() where TBuffer : struct, IManagedBinaryBuffer<T?>
 			where T : struct
 		{
-#if !CSHARP_90
+#if !CSHARP9_0
 			return BufferHelper.RegisterNullableValue<TBuffer, T>;
 #else
 			return static () =>
@@ -180,7 +180,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			};
 #endif
 		}
-#if !CSHARP_90
+#if !CSHARP9_0
 		private static void Register<TBuffer>() where TBuffer : struct, IManagedBinaryBuffer<Object>
 		{
 			BufferManager.Register<TBuffer>();
