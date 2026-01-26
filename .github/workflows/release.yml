@@ -5,7 +5,7 @@ on:
     types: [ published ]
 permissions:
   actions: write
-  contents: read
+  contents: write
 jobs:
   build:
     name: Create NuGet Package Release
