@@ -110,9 +110,10 @@ public sealed class BasicTests
 
 		Byte[] sequenceData = MemoryMarshal.AsBytes(seq.ToString().AsSpan()).ToArray();
 		Byte[] invertedSequenceData = sequenceData.AsEnumerable().Reverse().ToArray();
+		Int32 firstIndex = Enumerable.Range(0, seq.Count).FirstOrDefault(i => !CString.IsNullOrEmpty(seq[i]));
 
 		Assert.False(seq.TryGetIndex(sequenceData, out Int32 index));
-		PInvokeAssert.Equal(0, index);
+		PInvokeAssert.Equal(firstIndex, index);
 		Assert.False(seq.TryGetIndex(invertedSequenceData, out index));
 		PInvokeAssert.Equal(-1, index);
 	}
