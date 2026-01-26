@@ -1,22 +1,26 @@
 param (
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [string]$ZipName,
 
-    [Parameter(Mandatory=$true)]
-    [string]$Patterns # "*A*,*B*"
+    [Parameter(Mandatory = $true)]
+    [string[]]$Patterns
 )
-
-$patternList = $Patterns -split "," | ForEach-Object { $_.Trim() }
-$filesToZip = Get-ChildItem -Path . -File | Where-Object { 
-    $fileName = $_.Name
-    ($patternList | Where-Object { $fileName -like $_ }) 
+$filesToZip = @()
+foreach ($pat in $Patterns)
+{
+    $found = Get-ChildItem -Path $pat -File -ErrorAction SilentlyContinue
+    if ($found)
+    {
+        $filesToZip += $found
+    }
 }
+$filesToZip = $filesToZip | Select-Object -Unique
+if ($filesToZip.Count -gt 0)
+{
+    Compress-Archive -Path $filesToZip.FullName -DestinationPath $ZipName -Update -CompressionLevel Optimal -Verbose
 
-if ($filesToZip.Count -gt 0) {
-    Compress-Archive -Path $filesToZip.FullName -DestinationPath $zipName -Update -CompressionLevel Optimal -Verbose
-    if (Test-Path $zipName) {
+    if (Test-Path $ZipName)
+    {
         $filesToZip | Remove-Item -Force -Verbose
-    } else {
-        exit 1
     }
 }
