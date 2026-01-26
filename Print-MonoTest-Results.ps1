@@ -73,18 +73,21 @@ foreach ($file in $files)
                 }
             }
 
-            if ($test.result -eq "Passed")
+            $result = $test.result
+            $color = "White"
+            switch ($result)
             {
-                Write-Host "  ✅ [netstandard2.1] $name $timeStr" -ForegroundColor Green
+                "Passed"  {
+                    $color = "Green"
+                }
+                "Failed"  {
+                    $color = "Red"
+                }
+                "Skipped" {
+                    $color = "Yellow"
+                }
             }
-            elseif ($test.result -eq "Failed")
-            {
-                Write-Host "  ❌ [netstandard2.1] $name $timeStr" -ForegroundColor Red
-            }
-            else
-            {
-                Write-Host "  ⚠️ [netstandard2.1] $name $timeStr" -ForegroundColor Yellow
-            }
+            Write-Host "  $result [netstandard2.1] $name $timeStr" -ForegroundColor $color
         }
     }
     catch

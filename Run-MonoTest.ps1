@@ -20,8 +20,6 @@ foreach ($projName in $testProjects.Keys)
 
     if ($foundPaths.Count -eq 0)
     {
-        Write-Error "❌ Build output not found for project: $projName"
-        Write-Error "   Expected pattern: $searchPattern"
         $executionFailed = $true
         continue
     }
@@ -40,14 +38,10 @@ foreach ($projName in $testProjects.Keys)
 
     $resultFile = "$shortName.TestResult.xml"
 
-    Write-Host "`n🚀 Running: $projName.dll..." -ForegroundColor Cyan
-    Write-Host "   Path: $binPath" -ForegroundColor DarkGray
-
-    & $MonoPath $runnerExe $dllPath "-labels=All" "--result=$resultFile"
+    & $MonoPath $runnerExe $dllPath "-labels=All" "--result=$resultFile" "--test-name-format={m}{p}"
 
     if ($LASTEXITCODE -ne 0)
     {
-        Write-Error "❌ Tests failed in: $shortName"
         $executionFailed = $true
     }
 }
