@@ -79,7 +79,7 @@ jobs:
           Architectures: armhf
           EOF'
           fi
-      - name: Setup NativeAOT pre-requisites
+      - name: Setup Mono Framework and NativeAOT pre-requisites (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo dpkg --add-architecture arm64
@@ -129,7 +129,7 @@ jobs:
           sudo rm -rf /usr/local/lib/android/sdk
 
           df -h
-      - name: Setup Mono Development Kit And Runtime
+      - name: Setup Mono Development Kit And Runtime (macOS)
         if: runner.os == 'MacOS'
         run: |
           brew install --cask mono-mdk
@@ -140,6 +140,13 @@ jobs:
         if: runner.os == 'Windows' && inputs.build_artifacts == true
         run: |
           C:\msys64\usr\bin\bash.exe -lc "pacman -Sy --noconfirm mingw-w64-i686-toolchain"
+          $env:PATH = "C:\msys64\mingw32\bin;" + $env:PATH
+      - name: Setup Mono Framework (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          winget install Mono.Mono --architecture x86 --silent --force --disable-interactivity --accept-source-agreements
+          winget install Mono.Mono --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         if: runner.os != 'Windows' || inputs.run_tests != true
@@ -150,21 +157,18 @@ jobs:
             8.0.x
             9.0.x
             10.0.x
-      - name: Setup .NET x86
+      - name: Setup .NET x86 (Windows)
         if: runner.os == 'Windows' && inputs.run_tests == true
         shell: pwsh
         run: |
-          $env:PATH = "C:\msys64\mingw32\bin;" + $env:PATH
-          winget install Mono.Mono --architecture x86 --silent --force --disable-interactivity --accept-source-agreements
           winget install Microsoft.DotNet.SDK.6  --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
           winget install Microsoft.DotNet.SDK.7 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
           winget install Microsoft.DotNet.SDK.8 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements  
           winget install Microsoft.DotNet.SDK.9 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
           winget install Microsoft.DotNet.SDK.10 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
-      - name: Setup .NET x64
-        if: runner.os == 'Windows'
+      - name: Setup .NET x64 (Windows)
+        if: runner.os == 'Windows' && inputs.run_tests == true
         run: |
-          winget install Mono.Mono --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
           winget install Microsoft.DotNet.SDK.6 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
           winget install Microsoft.DotNet.SDK.7 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
           winget install Microsoft.DotNet.SDK.8 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
@@ -174,6 +178,7 @@ jobs:
 
           dotnet workload update
       - name: Remove ApplicationTest
+        if: inputs.run_tests == true
         shell: pwsh
         run: |
           Get-ChildItem -Path "src/ApplicationTest" -Recurse -Include "*.*proj" |
