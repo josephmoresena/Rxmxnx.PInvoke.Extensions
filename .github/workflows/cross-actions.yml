@@ -185,7 +185,7 @@ jobs:
         run: |
           dotnet restore src --ignore-failed-sources
           dotnet build src /p:MultipleFrameworkTest=true /p:OnlySupportedFrameworkTest=true --configuration Release --disable-build-servers /nr:false /maxcpucount:1
-      - name: Windows x86 tests
+      - name: Run x86 tests
         if: inputs.run_tests == true && runner.os == 'Windows'
         run: |
           dotnet test src /p:MultipleFrameworkTest=true /p:OnlySupportedFrameworkTest=true --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed" --settings src\Test\x86.runsettings
@@ -194,6 +194,7 @@ jobs:
         run: |
           dotnet test src /p:MultipleFrameworkTest=true /p:OnlySupportedFrameworkTest=true --no-build --no-restore --configuration Release  --logger "console;verbosity=detailed"
       - name: Run Mono tests
+        id: mono_tests
         if: inputs.run_tests == true
         shell: pwsh
         run: |
@@ -204,19 +205,22 @@ jobs:
             ./Run-MonoTest.ps1 -MonoPath "mono"
           }
       - name: Results Mono tests
-        if: inputs.run_tests == true
+        if: always() && steps.mono_tests.outcome != 'skipped'
         shell: pwsh
         run: ./Print-MonoTest-Results.ps1
       - name: Run Mono tests (x86)
+        id: mono_x86
         if: inputs.run_tests == true && runner.os == 'Windows'
         shell: pwsh
         run: ./Run-MonoTest.ps1 -MonoPath "C:\Program Files (x86)\Mono\bin\mono.exe"
       - name: Run Mono tests (Apple Silicon)
+        id: mono_mac
+        shell: pwsh
         if: inputs.run_tests == true && runner.os == 'MacOS'
         run: ./Run-MonoTest.ps1 -MonoPath "/opt/homebrew/bin/mono"
       - name: Results Mono tests (x86 or Apple Silicon)
         shell: pwsh
-        if: inputs.run_tests == true && (runner.os == 'Windows' || runner.os == 'MacOS')
+        if: always() && (steps.mono_x86.outcome != 'skipped' || steps.mono_mac.outcome != 'skipped')
         run: ./Print-MonoTest-Results.ps1
       - name: Publish launcher
         if: inputs.build_artifacts == true

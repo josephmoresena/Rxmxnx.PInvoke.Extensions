@@ -40,7 +40,7 @@ foreach ($projName in $testProjects.Keys)
 
     $resultFile = "$shortName.TestResult.xml"
 
-    Write-Host "`n🚀 Running: $shortName ($resultFile)..." -ForegroundColor Cyan
+    Write-Host "`n🚀 Running: $projName.dll..." -ForegroundColor Cyan
     Write-Host "   Path: $binPath" -ForegroundColor DarkGray
 
     & $MonoPath $runnerExe $dllPath "-labels=All" "--result=$resultFile"

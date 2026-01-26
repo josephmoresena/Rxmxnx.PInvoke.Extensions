@@ -106,14 +106,15 @@ jobs:
           dotnet test ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.CString.Tests.dll --logger 'console;verbosity=detailed';
           dotnet test ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Extensions.Tests.dll --logger 'console;verbosity=detailed';
           dotnet test ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Buffers.Tests.dll --logger 'console;verbosity=detailed';
-      - name: Mono framework tests (FreeBSD 13.5)
+      - name: Run Mono tests (FreeBSD 13.5)
+        id: mono_freebsd
         if: inputs.run_tests == true
         shell: freebsd {0}
         run: |
           cd $GITHUB_WORKSPACE;
           pwsh ./Run-MonoTest.ps1 -MonoPath "mono"
-      - name: Show Mono tests Results
-        if: inputs.run_tests == true
+      - name: Results Mono tests
+        if: always() && steps.mono_freebsd.outcome != 'skipped'
         shell: freebsd {0}
         run: |
           cd $GITHUB_WORKSPACE;
