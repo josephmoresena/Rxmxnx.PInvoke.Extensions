@@ -63,6 +63,10 @@ jobs:
           dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
             /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=True \
             /p:CopyTargetTo=../../../artifacts
+      - name: Node-Run ApplicationTest
+        shell: bash
+        working-directory: ./artifacts
+        run: for f in *.js; do node "$f"; done
       - name: Create Web Native Artifact Logs
         if: inputs.package_version == ''
         uses: actions/upload-artifact@v5
@@ -94,7 +98,3 @@ jobs:
         shell: bash
         run: |
           gh release upload ${{ github.ref_name }} ./*-Assets*.zip --clobber
-      - name: Node-Run ApplicationTest
-        shell: bash
-        working-directory: ./artifacts
-        run: for f in *.js; do node "$f"; done
