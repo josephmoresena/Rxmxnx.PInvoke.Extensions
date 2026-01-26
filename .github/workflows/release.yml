@@ -75,10 +75,16 @@ jobs:
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
         shell: bash
         run: |
-          msbuild -restore /p:Configuration=Release /p:UsePackage=true \ 
-            /p:PackageVersion=${{ github.event.release.tag_name }} \ 
-            /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest 
-          rm -rf ./obj 
+          msbuild -restore /p:Configuration=Release /p:UsePackage=true /p:PackageVersion=${{ github.event.release.tag_name }} \
+            /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
+          rm -rf ./obj
+      - name: Compile ApplicationTest (Mono-Build)
+        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
+        shell: bash
+        run: |
+          msbuild -restore /p:Configuration=Release /p:UsePackage=true \
+            /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
+          rm -rf ./obj
       - name: Cache Compiled ApplicationTest (Mono-Build)
         uses: actions/cache/save@v4
         with:
@@ -127,8 +133,12 @@ jobs:
           enableCrossOsArchive: true
       - name: Push NuGet Package
         working-directory: ./package/Nuget
+        if: |
+          needs.webasm-actions.result == 'success' &&
+          needs.freebsd-actions.result == 'success' &&
+          needs.cross-actions.result == 'success'
         run: |
-          dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
+          dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
       - name: Delete Internal Cache
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
