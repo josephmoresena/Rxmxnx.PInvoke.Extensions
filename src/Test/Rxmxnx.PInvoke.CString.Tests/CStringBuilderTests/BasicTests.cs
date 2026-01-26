@@ -41,6 +41,35 @@ public sealed class BasicTests : CStringBuilderTestsBase
 	[InlineData(256)]
 	[InlineData(300)]
 	[InlineData(1000)]
+	public void AppendByteSequenceTest(Int32? length)
+	{
+		List<Int32> indices = TestSet.GetIndices(length);
+		StringBuilder strBuild = new();
+		CStringBuilder cstrBuild = new();
+		Int32 builderLength = 0;
+		foreach (Int32 i in indices)
+		{
+			String? newString = TestSet.GetString(i, true);
+			ReadOnlySequence<Byte> newByteSequence = !String.IsNullOrEmpty(newString) ?
+				new(Encoding.UTF8.GetBytes(newString)) :
+				default;
+
+			strBuild.Append(newString);
+			Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.Append(newByteSequence)));
+			builderLength += (Int32)newByteSequence.Length;
+			PInvokeAssert.Equal(builderLength, cstrBuild.Length);
+			PInvokeAssert.True(
+				cstrBuild.ToCString().AsSpan().SequenceEqual(Encoding.UTF8.GetBytes(strBuild.ToString())));
+		}
+		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
+	}
+	[Theory]
+	[InlineData(null)]
+	[InlineData(8)]
+	[InlineData(32)]
+	[InlineData(256)]
+	[InlineData(300)]
+	[InlineData(1000)]
 	public void AppendArrayTest(Int32? length)
 	{
 		using TestMemoryHandle handle = new();

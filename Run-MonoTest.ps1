@@ -1,32 +1,36 @@
 param(
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [string]$MonoPath
 )
 
 $testProjects = [ordered]@{
-    "Rxmxnx.PInvoke.Common.Tests"     = "Common"
-    "Rxmxnx.PInvoke.CString.Tests"    = "CString"
+    "Rxmxnx.PInvoke.Common.Tests" = "Common"
+    "Rxmxnx.PInvoke.CString.Tests" = "CString"
     "Rxmxnx.PInvoke.Extensions.Tests" = "Extensions"
-    "Rxmxnx.PInvoke.Buffers.Tests"    = "Buffers"
+    "Rxmxnx.PInvoke.Buffers.Tests" = "Buffers"
 }
 
 $executionFailed = $false
 
-foreach ($projName in $testProjects.Keys) {
+foreach ($projName in $testProjects.Keys)
+{
     $shortName = $testProjects[$projName]
     $searchPattern = "src/Test/$projName/bin/*/netstandard2.1"
     $foundPaths = @(Resolve-Path $searchPattern -ErrorAction SilentlyContinue)
 
-    if ($foundPaths.Count -eq 0) {
+    if ($foundPaths.Count -eq 0)
+    {
         Write-Error "❌ Build output not found for project: $projName"
         Write-Error "   Expected pattern: $searchPattern"
         $executionFailed = $true
         continue
     }
-    
+
     $binPath = $foundPaths[0].Path
-    foreach ($p in $foundPaths) {
-        if ($p.Path -match "Release") {
+    foreach ($p in $foundPaths)
+    {
+        if ($p.Path -match "Release")
+        {
             $binPath = $p.Path
             break
         }
@@ -34,7 +38,6 @@ foreach ($projName in $testProjects.Keys) {
     $runnerExe = "$binPath/nunitlite-runner.exe"
     $dllPath = "$binPath/$projName.dll"
 
-    # Define result filename
     $resultFile = "$shortName.TestResult.xml"
 
     Write-Host "`n🚀 Running: $shortName ($resultFile)..." -ForegroundColor Cyan
@@ -42,12 +45,14 @@ foreach ($projName in $testProjects.Keys) {
 
     & $MonoPath $runnerExe $dllPath "-labels=All" "--result=$resultFile"
 
-    if ($LASTEXITCODE -ne 0) {
+    if ($LASTEXITCODE -ne 0)
+    {
         Write-Error "❌ Tests failed in: $shortName"
         $executionFailed = $true
     }
 }
 
-if ($executionFailed) {
+if ($executionFailed)
+{
     exit 1
 }
