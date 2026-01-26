@@ -12,7 +12,7 @@ public class XUnitDisplayNamePatch : TestAssemblyPatchTask
 	protected override Boolean IlPatch(ModuleDefinition mainModule)
 	{
 		Boolean modified = false;
-		String tfm = $" [{this.TargetFramework}]";
+		String tfm = $"[{this.TargetFramework}] ";
 		TypeReference stringType = mainModule.TypeSystem.String;
 
 		foreach (TypeDefinition? type in mainModule.Types)
@@ -68,12 +68,12 @@ public class XUnitDisplayNamePatch : TestAssemblyPatchTask
 		if (existing.Name != null)
 		{
 			displayName = (String)existing.Argument.Value!;
-			if (displayName.EndsWith(tfm, StringComparison.Ordinal))
+			if (displayName.StartsWith(tfm, StringComparison.Ordinal))
 				return false;
 
 			attr.Properties.Remove(existing);
 		}
-		attr.Properties.Add(new(propName, new(stringType, displayName + tfm)));
+		attr.Properties.Add(new(propName, new(stringType, tfm + displayName)));
 
 		return true;
 	}

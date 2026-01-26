@@ -94,6 +94,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
 		/// <param name="newData">Input. New data to append. Output. Remaining data to append.</param>
+#if !PACKAGE
+		[ExcludeFromCodeCoverage]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void FillFirst(Chunk chunk, ref ReadOnlySequence<Byte> newData)
 		{

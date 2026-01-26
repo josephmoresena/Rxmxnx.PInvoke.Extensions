@@ -122,6 +122,9 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// indicated in the specified read-only sequence.
 	/// </summary>
 	/// <param name="source">A read-only span of UTF-8 characters to initialize the new instance.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public CString(ReadOnlySequence<Byte> source)
 	{
 		Byte[] bytes = CString.CreateByteArray((Int32)(source.Length + 1));

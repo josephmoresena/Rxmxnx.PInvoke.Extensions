@@ -115,7 +115,9 @@ jobs:
       - name: Show Mono tests Results
         if: inputs.run_tests == true
         shell: freebsd {0}
-        run: ./Print-MonoTest-Results.ps1
+        run: |
+          cd $GITHUB_WORKSPACE;
+          pwsh ./Print-MonoTest-Results.ps1
       - name: Publish Launcher (FreeBSD 13.5)
         if: inputs.build_artifacts == true
         shell: freebsd {0}
