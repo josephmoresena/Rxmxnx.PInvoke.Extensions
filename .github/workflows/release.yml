@@ -3,7 +3,9 @@ name: Release to Nuget
 on:
   release:
     types: [ published ]
-
+permissions:
+  actions: write
+  contents: read
 jobs:
   build:
     name: Create NuGet Package Release
@@ -114,14 +116,7 @@ jobs:
     needs: [ webasm-actions, freebsd-actions, cross-actions ]
     runs-on: ubuntu-latest
     if: always()
-    permissions:
-      contents: write
     steps:
-      - uses: actions/checkout@v5
-      - name: Create directories
-        run: |
-          mkdir -p ./package/Nuget
-          mkdir -p ./release-assets
       - name: Restore NuGet Package
         uses: actions/cache/restore@v5
         with:
@@ -129,20 +124,6 @@ jobs:
           key: internal-nuget-${{ github.run_id }}
           fail-on-cache-miss: true
           enableCrossOsArchive: true
-      - name: Download all artifacts
-        uses: actions/download-artifact@v5
-        with:
-          path: ./release-assets
-          merge-multiple: true
-      - name: Upload Release Assets
-        if: |
-          needs.webasm-actions.result == 'success' &&
-          needs.freebsd-actions.result == 'success' &&
-          needs.cross-actions.result == 'success'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release upload ${{ github.ref_name }} ./release-assets/* --clobber
       - name: Push NuGet Package
         working-directory: ./package/Nuget
         if: |

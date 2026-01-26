@@ -61,20 +61,37 @@ jobs:
           dotnet publish -r browser-wasm /p:UsePackage=true /p:TargetFramework=net10.0 /p:RequiredFramework=net10.0 \
             /p:InvariantGlobalization=True /p:DisableBufferAutoComposition=True \
             /p:CopyTargetTo=../../../artifacts
-
       - name: Create Web Native Artifact Logs
+        if: inputs.package_version == ''
         uses: actions/upload-artifact@v5
         with:
           name: Web-Artifact-Logs
-          path: |
-            ./artifacts/Native/*
+          path: ./artifacts/Native/*
+      - name: Create Release Logs Assets
+        if: inputs.package_version != ''
+        shell: pwsh
+        run: |
+          $logPatterns = @("./artifacts/Native/*")
+          ./ZipAndClean.ps1 -ZipName "Web-Assets-Logs.zip" -Patterns $logPatterns
       - name: Create Web Native Artifact
+        if: inputs.package_version == ''
         uses: actions/upload-artifact@v5
         with:
           name: Web-Artifact
-          path: |
-            ./artifacts/*NAOT*
-
+          path: ./artifacts/*NAOT*
+      - name: Create Release Assets
+        if: inputs.package_version != ''
+        shell: pwsh
+        run: |
+          $binPatterns = @("./artifacts/*NAOT*")
+          ./ZipAndClean.ps1 -ZipName "Web-Assets.zip" -Patterns $binPatterns
+      - name: Upload Release Assets
+        if: inputs.package_version != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          gh release upload ${{ github.ref_name }} ./*-Assets*.zip --clobber
       - name: Node-Run ApplicationTest
         shell: bash
         working-directory: ./artifacts
