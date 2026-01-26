@@ -27,7 +27,8 @@ public class XUnitDisplayNamePatch : TestAssemblyPatchTask
 				if (!XUnitDisplayNamePatch.IsXunitAttribute(attr))
 					continue;
 
-				modified |= XUnitDisplayNamePatch.PatchDisplayName(attr, stringType, tfm, method.Name);
+				modified |= XUnitDisplayNamePatch.PatchDisplayName(attr, stringType, tfm,
+				                                                   $"{type.FullName}.{method.Name}");
 			}
 		}
 

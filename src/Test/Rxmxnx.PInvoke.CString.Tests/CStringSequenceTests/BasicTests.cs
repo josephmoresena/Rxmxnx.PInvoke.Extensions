@@ -105,6 +105,16 @@ public sealed class BasicTests
 		enumerator.MoveNext();
 		GC.Collect();
 		enumerator.Dispose();
+
+		if (seq.NonEmptyCount == 0) return;
+
+		Byte[] sequenceData = MemoryMarshal.AsBytes(seq.ToString().AsSpan()).ToArray();
+		Byte[] invertedSequenceData = sequenceData.AsEnumerable().Reverse().ToArray();
+
+		Assert.False(seq.TryGetIndex(sequenceData, out Int32 index));
+		PInvokeAssert.Equal(0, index);
+		Assert.False(seq.TryGetIndex(invertedSequenceData, out index));
+		PInvokeAssert.Equal(-1, index);
 	}
 
 	private static unsafe void AssertSequence(CStringSequence seq, String?[] strings, CString?[] values)
@@ -124,32 +134,34 @@ public sealed class BasicTests
 				PInvokeAssert.Equal(strings[i], item.ToString());
 				if (item.Length != 0)
 				{
-					PInvokeAssert.StrictEqual(seq, CString.TryGetSequence(item, out Int32 index));
+					PInvokeAssert.StrictEqual(seq, CString.GetAssociatedSequence(item, out Int32 index));
 					PInvokeAssert.Equal(i, index);
-					PInvokeAssert.False(seq.TryIndexOf(values[i], out index));
-					PInvokeAssert.Equal(-1, index);
-					PInvokeAssert.True(seq.TryIndexOf(item, out index));
+					PInvokeAssert.False(seq.TryGetIndex(values[i], out index));
+					PInvokeAssert.InRange(index, 0, i);
+					PInvokeAssert.True(seq.TryGetIndex(item, out index));
 					PInvokeAssert.Equal(i, index);
 					if (item.Length > 3)
 					{
 						CString slice = item[1..^1];
-						PInvokeAssert.StrictEqual(seq, CString.TryGetSequence(slice, out index));
+						PInvokeAssert.StrictEqual(seq, CString.GetAssociatedSequence(slice, out index));
 						PInvokeAssert.Equal(i, index);
-						PInvokeAssert.True(seq.TryIndexOf(item, out index));
+						PInvokeAssert.True(seq.TryGetIndex(item, out index));
 						PInvokeAssert.Equal(i, index);
+						PInvokeAssert.False(seq.TryGetIndex((CString)item.Clone(), out index));
+						PInvokeAssert.InRange(index, 0, i);
 					}
-					PInvokeAssert.Null(CString.TryGetSequence(values[i], out index));
+					PInvokeAssert.Null(CString.GetAssociatedSequence(values[i], out index));
 					PInvokeAssert.Equal(-1, index);
 				}
 				else
 				{
-					PInvokeAssert.Null(CString.TryGetSequence(item, out Int32 index));
+					PInvokeAssert.Null(CString.GetAssociatedSequence(item, out Int32 index));
 					PInvokeAssert.Equal(-1, index);
-					PInvokeAssert.False(seq.TryIndexOf(values[i], out index));
+					PInvokeAssert.False(seq.TryGetIndex(values[i], out index));
 					PInvokeAssert.Equal(indexOfEmpty, index);
-					PInvokeAssert.False(seq.TryIndexOf(item, out index));
+					PInvokeAssert.False(seq.TryGetIndex(item, out index));
 					PInvokeAssert.Equal(indexOfEmpty, index);
-					PInvokeAssert.Null(CString.TryGetSequence(values[i], out index));
+					PInvokeAssert.Null(CString.GetAssociatedSequence(values[i], out index));
 					PInvokeAssert.Equal(-1, index);
 				}
 			}
@@ -161,7 +173,7 @@ public sealed class BasicTests
 					fixed (void* ptr = values[i]!.AsSpan())
 						PInvokeAssert.Equal(IntPtr.Zero, new(ptr));
 				PInvokeAssert.Null(strings[i]);
-				PInvokeAssert.False(seq.TryIndexOf(item, out Int32 index));
+				PInvokeAssert.False(seq.TryGetIndex(item, out Int32 index));
 				PInvokeAssert.Equal(indexOfNull, index);
 			}
 			BasicTests.AssertPin(seq.ToString(), item);

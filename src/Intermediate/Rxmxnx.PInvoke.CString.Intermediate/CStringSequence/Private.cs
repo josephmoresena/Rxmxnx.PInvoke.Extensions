@@ -113,22 +113,49 @@ public partial class CStringSequence
 		return result;
 	}
 	/// <summary>
-	/// Searches for the specified item whose length matches with <paramref name="length"/> and returns the
-	/// zero-based index of the first occurrence within the sequence.
+	/// Resolves the zero-based index of the segment that contains the specified absolute <paramref name="offset"/>
+	/// within the current instance.
 	/// </summary>
-	/// <param name="length">The item length to locate in the sequence.</param>
+	/// <param name="offset">Absolute offset within the concatenated sequence of items.</param>
 	/// <returns>
-	/// The zero-based index of the first occurrence of an element whose length is <paramref name="length"/> within
-	/// the sequence, if found; otherwise, -1.
+	/// The zero-based index of the segment that contains <paramref name="offset"/>, or -1 if the offset falls outside
+	/// all segments.
 	/// </returns>
-	private Int32 GetIndexOfLength(Int32? length)
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private Int32 ResolveIndexFromOffset(Int32 offset)
 	{
 		ReadOnlySpan<Int32?> lengths = this._lengths.AsSpan();
 		for (Int32 i = 0; i < lengths.Length; i++)
 		{
-			if (lengths[i] == length)
-				return i;
+			Int32 length = lengths[i].GetValueOrDefault();
+			if (length == 0) continue;
+			if (offset < 0) break;
+			if (offset < length) return i;
+			offset -= length + 1;
 		}
 		return -1;
+	}
+	/// <summary>
+	/// Searches for the first segment whose stored length matches exactly <paramref name="length"/>.
+	/// </summary>
+	/// <param name="length">Length value to match. May be <see langword="null"/>.</param>
+	/// <returns>
+	/// The zero-based index of the first segment whose length equals <paramref name="length"/>, or -1 if no match is
+	/// found.
+	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private Int32 GetIndexOfExactLength(Int32? length)
+	{
+#if !NET10_0_OR_GREATER
+		ReadOnlySpan<Int32?> lengths = this._lengths.AsSpan();
+		for (Int32 i = 0; i < lengths.Length; i++)
+		{
+			if (lengths[i] != length) continue;
+			return i;
+		}
+		return -1;
+#else
+		return this._lengths.AsSpan().IndexOf(length);
+#endif
 	}
 }

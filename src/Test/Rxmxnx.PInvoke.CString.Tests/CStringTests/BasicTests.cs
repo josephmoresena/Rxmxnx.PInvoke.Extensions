@@ -127,9 +127,9 @@ public sealed class BasicTests
 			PInvokeAssert.Equal(equal, CString.Empty == new CString(TestSet.Utf8Text[i]));
 		}
 
-		PInvokeAssert.Null(CString.TryGetSequence(CString.Empty, out Int32 seqIndex));
+		PInvokeAssert.Null(CString.GetAssociatedSequence(CString.Empty, out Int32 seqIndex));
 		PInvokeAssert.Equal(-1, seqIndex);
-		PInvokeAssert.Null(CString.TryGetSequence(CString.Zero, out seqIndex));
+		PInvokeAssert.Null(CString.GetAssociatedSequence(CString.Zero, out seqIndex));
 		PInvokeAssert.Equal(-1, seqIndex);
 	}
 
@@ -175,9 +175,9 @@ public sealed class BasicTests
 				PInvokeAssert.Equal(cstr1.ToHexString(), cstr2.ToHexString());
 				PInvokeAssert.Equal(cstr1.ToArray(), cstr2.ToArray());
 				PInvokeAssert.Equal(0, cstr1.CompareTo(cstr2));
-				PInvokeAssert.Null(CString.TryGetSequence(cstr1, out Int32 seqIndex));
+				PInvokeAssert.Null(CString.GetAssociatedSequence(cstr1, out Int32 seqIndex));
 				PInvokeAssert.Equal(-1, seqIndex);
-				PInvokeAssert.Null(CString.TryGetSequence(cstr2, out seqIndex));
+				PInvokeAssert.Null(CString.GetAssociatedSequence(cstr2, out seqIndex));
 				PInvokeAssert.Equal(-1, seqIndex);
 			}
 			BasicTests.AssertFromString(cstr1);
@@ -197,7 +197,7 @@ public sealed class BasicTests
 			CString cstr1 = new(TestSet.Utf8Text[i]);
 			BasicTests.TestBytesPointer(TestSet.Utf8Bytes[i], TestSet.Utf16Text[i], cstr1);
 			BasicTests.TestNullTerminatedBytesPointer(TestSet.Utf8NullTerminatedBytes[i], TestSet.Utf16Text[i], cstr1);
-			PInvokeAssert.Null(CString.TryGetSequence(cstr1, out Int32 seqIndex));
+			PInvokeAssert.Null(CString.GetAssociatedSequence(cstr1, out Int32 seqIndex));
 			PInvokeAssert.Equal(-1, seqIndex);
 		}
 	}

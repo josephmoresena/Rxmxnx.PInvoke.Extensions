@@ -172,19 +172,31 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		return CString.Create(this.CreateTextArray(bufferLength));
 	}
 	/// <summary>
-	/// Tries to retrieve the index of the associated item to <paramref name="value"/>.
+	/// Attempts to retrieve the index of the item <em>associated by instance</em> with the specified
+	/// <paramref name="value"/>.
 	/// </summary>
-	/// <param name="value">A <see cref="CString"/> instance.</param>
-	/// <param name="index">Output. The index of the associated item to <paramref name="value"/>.</param>
+	/// <param name="value">A <see cref="CString"/> instance to test for association with the current sequence.</param>
+	/// <param name="index">
+	/// Output. When this method returns <see langword="true"/>, contains the zero-based index of the associated item.
+	/// When it returns <see langword="false"/>, may contain the index of a value-equal item if a match by content is
+	/// found.
+	/// </param>
 	/// <returns>
-	/// <see langword="true"/> if the current instance is associated to <paramref name="value"/>; otherwise,
+	/// <see langword="true"/> if <paramref name="value"/> is directly associated with the current instance; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
-	public Boolean TryIndexOf(CString? value, out Int32 index)
+	public Boolean TryGetIndex(CString? value, out Int32 index)
 	{
 		if (!CString.IsNullOrEmpty(value))
-			return Object.ReferenceEquals(this, CString.TryGetSequence(value, out index));
-		index = this.GetIndexOfLength(value is not null && !value.IsZero ? 0 : null);
+		{
+			if (Object.ReferenceEquals(this, CString.GetAssociatedSequence(value, out index))) return true;
+			ReadOnlySpan<Byte> bytes = MemoryMarshal.AsBytes(this._value.AsSpan());
+			Int32 spanIndex = bytes.IndexOf(value.AsSpan());
+			if (spanIndex >= 0)
+				index = this.ResolveIndexFromOffset(spanIndex);
+			return false;
+		}
+		index = this.GetIndexOfExactLength(value is not null && !value.IsZero ? 0 : null);
 		return false;
 	}
 

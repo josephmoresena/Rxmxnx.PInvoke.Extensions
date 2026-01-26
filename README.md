@@ -2278,7 +2278,7 @@ Represents a sequence of UTF-8 encoded characters.
   Gets a value indicating whether the data of the given `CString` instance resides within the loaded binary image.
   </details>
 - <details>
-  <summary>TryGetSequence(CString?, out Int32)</summary>
+  <summary>GetAssociatedSequence(CString?, out Int32)</summary>
 
   Tries to retrieve the `CStringSequence` instance and the index of the item associated to the given value.
   </details>
@@ -2436,9 +2436,9 @@ Represents a sequence of null-terminated UTF-8 text strings.
   buffer.
   </details>
 - <details>
-  <summary>TryGetIndexOf(CString?, out Int32)</summary>
+  <summary>TryGetIndex(CString?, out Int32)</summary>
 
-  Tries to retrieve the index of the associated item to the given value.
+  Attempts to retrieve the index of the item associated by instance with the specified `CString`.
   </details>
 
 ### Static Methods:

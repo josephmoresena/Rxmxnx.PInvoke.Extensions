@@ -285,6 +285,10 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// </summary>
 	/// <param name="pinned">Output. Indicates whether current instance was pinned.</param>
 	/// <returns>A <see cref="MemoryHandle"/> instance.</returns>
+	/// <remarks>
+	/// The returned handle may reference a valid memory address even when <paramref name="pinned"/> is
+	/// <see langword="false"/>, in which case memory stability is not guaranteed.
+	/// </remarks>
 	public unsafe MemoryHandle TryPin(out Boolean pinned)
 	{
 		if (this._data.GetPinnable(out Int32 index) is { } p)
@@ -435,15 +439,19 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	public static Boolean IsImagePersistent([NotNullWhen(true)] CString? str)
 		=> str is not null && !MemoryInspector.MayBeNonLiteral(str._data.AsSpan());
 	/// <summary>
-	/// Tries to retrieve the <see cref="CStringSequence"/> instance associated to <paramref name="value"/>.
+	/// Retrieves the <see cref="CStringSequence"/> instance structurally associated with the specified
+	/// <paramref name="value"/>.
 	/// </summary>
-	/// <param name="value">A <see cref="CString"/> instance.</param>
-	/// <param name="index">Output. The index of the returning sequence item associated to <paramref name="value"/>.</param>
+	/// <param name="value">A <see cref="CString"/> instance whose originating sequence is to be resolved.</param>
+	/// <param name="index">
+	/// Output. The zero-based index of the sequence item associated with <paramref name="value"/>,
+	/// or -1 if no association exists.
+	/// </param>
 	/// <returns>
-	/// The <see cref="CStringSequence"/> associated to <paramref name="value"/> or <see langword="null"/> if
-	/// <paramref name="value"/> is not associated to any <see cref="CStringSequence"/> instance.
+	/// The <see cref="CStringSequence"/> instance associated with <paramref name="value"/>, or <see langword="null"/>
+	/// if <paramref name="value"/> is not associated with any sequence.
 	/// </returns>
-	public static CStringSequence? TryGetSequence(CString? value, out Int32 index)
+	public static CStringSequence? GetAssociatedSequence(CString? value, out Int32 index)
 	{
 		if (!CString.IsNullOrEmpty(value) && value._data is IWrapper.IBase<SequenceItemState> state)
 			return state.Value.GetSequence(out index);
@@ -452,10 +460,10 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 		return default;
 	}
 	/// <summary>
-	/// Creates a <see cref="CString"/> instance from an escaped UTF-8 text span.
+	/// Creates a new <see cref="CString"/> instance by unescaping the specified escaped UTF-8 text span.
 	/// </summary>
-	/// <param name="escaped">Escaped UTF-8 text span.</param>
-	/// <returns>A new <see cref="CString"/> instance.</returns>
+	/// <param name="escaped">A span containing escaped UTF-8 encoded text.</param>
+	/// <returns>A new <see cref="CString"/> instance containing the unescaped UTF-8 text.</returns>
 	public static CString Unescape(ReadOnlySpan<Byte> escaped)
 	{
 		if (escaped.IsEmpty) return CString.Empty;
@@ -472,10 +480,10 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 		return new(helper, length);
 	}
 	/// <summary>
-	/// Creates a <see cref="CString"/> instance from an escaped UTF-8 text sequence.
+	/// Creates a new <see cref="CString"/> instance by unescaping the specified escaped UTF-8 text sequence.
 	/// </summary>
-	/// <param name="escaped">Escaped UTF-8 text sequence.</param>
-	/// <returns>A new <see cref="CString"/> instance.</returns>
+	/// <param name="escaped">A sequence containing escaped UTF-8 encoded text.</param>
+	/// <returns>A new <see cref="CString"/> instance containing the unescaped UTF-8 text.</returns>
 	public static CString Unescape(ReadOnlySequence<Byte> escaped)
 	{
 		if (escaped.IsEmpty) return CString.Empty;

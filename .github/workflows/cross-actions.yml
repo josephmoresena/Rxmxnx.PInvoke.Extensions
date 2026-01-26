@@ -198,34 +198,26 @@ jobs:
         shell: pwsh
         run: |
           if ($IsWindows) {
-              & "C:\Program Files\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Common.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All
-              & "C:\Program Files\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.CString.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All
-              & "C:\Program Files\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Extensions.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All
-              & "C:\Program Files\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Buffers.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
+            ./Run-MonoTest.ps1 -MonoPath "C:\Program Files\Mono\bin\mono.exe"
           }
           else {
-              mono src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All
-              mono src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All
-              mono src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All
-              mono src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
+            ./Run-MonoTest.ps1 -MonoPath "mono"
           }
+      - name: Results Mono tests
+        if: inputs.run_tests == true
+        shell: pwsh
+        run: ./Print-MonoTest-Results.ps1
       - name: Run Mono tests (x86)
         if: inputs.run_tests == true && runner.os == 'Windows'
         shell: pwsh
-        run: |
-          if ($IsWindows) {
-              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Common.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All
-              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.CString.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All
-              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Extensions.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All
-              & "C:\Program Files (x86)\Mono\bin\mono.exe" src\Test\Rxmxnx.PInvoke.Buffers.Tests\bin\Release\netstandard2.1\nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
-          }
+        run: ./Run-MonoTest.ps1 -MonoPath "C:\Program Files (x86)\Mono\bin\mono.exe"
       - name: Run Mono tests (Apple Silicon)
         if: inputs.run_tests == true && runner.os == 'MacOS'
-        run: |
-          /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.Common.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Common.Tests.dll -labels=All
-          /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.CString.Tests.dll -labels=All
-          /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Extensions.Tests.dll -labels=All
-          /opt/homebrew/bin/mono src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/netstandard2.1/nunitlite-runner.exe Rxmxnx.PInvoke.Buffers.Tests.dll -labels=All
+        run: ./Run-MonoTest.ps1 -MonoPath "/opt/homebrew/bin/mono"
+      - name: Results Mono tests (x86 or Apple Silicon)
+        shell: pwsh
+        if: inputs.run_tests == true && (runner.os == 'Windows' || runner.os == 'MacOS')
+        run: ./Print-MonoTest-Results.ps1
       - name: Publish launcher
         if: inputs.build_artifacts == true
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.LauncherTest
