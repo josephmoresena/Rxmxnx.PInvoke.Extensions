@@ -6,7 +6,9 @@ on:
         required: false
         default: ''
         type: string
-
+        
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
