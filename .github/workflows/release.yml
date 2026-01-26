@@ -78,13 +78,6 @@ jobs:
           msbuild -restore /p:Configuration=Release /p:UsePackage=true /p:PackageVersion=${{ github.event.release.tag_name }} \
             /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
           rm -rf ./obj
-      - name: Compile ApplicationTest (Mono-Build)
-        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
-        shell: bash
-        run: |
-          msbuild -restore /p:Configuration=Release /p:UsePackage=true \
-            /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
-          rm -rf ./obj
       - name: Cache Compiled ApplicationTest (Mono-Build)
         uses: actions/cache/save@v4
         with:
