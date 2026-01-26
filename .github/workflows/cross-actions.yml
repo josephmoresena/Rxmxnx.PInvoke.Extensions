@@ -142,7 +142,7 @@ jobs:
           C:\msys64\usr\bin\bash.exe -lc "pacman -Sy --noconfirm mingw-w64-i686-toolchain"
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
-        if: runner.os != 'Windows'
+        if: runner.os != 'Windows' || inputs.run_tests != true
         with:
           dotnet-version: |
             6.0.x
@@ -151,7 +151,7 @@ jobs:
             9.0.x
             10.0.x
       - name: Setup .NET x86
-        if: runner.os == 'Windows'
+        if: runner.os == 'Windows' && inputs.run_tests == true
         shell: pwsh
         run: |
           $env:PATH = "C:\msys64\mingw32\bin;" + $env:PATH
