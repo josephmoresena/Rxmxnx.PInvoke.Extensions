@@ -47,6 +47,29 @@ public partial class CStringBuilder
 			return new Chunk(this).Append(newData[chunkBuffer.Length..]);
 		}
 		/// <summary>
+		/// Appends a span of bytes to the sequence, allocating new chunks as needed.
+		/// </summary>
+		/// <param name="newData">Data to append.</param>
+		/// <returns>The chunk into which the final portion of <paramref name="newData"/> was written.</returns>
+		public Chunk Append(ReadOnlySequence<Byte> newData)
+		{
+			if (newData.IsEmpty) return this;
+
+			if (this._count == 0 && this._previous is not null)
+				Chunk.FillFirst(this._previous, ref newData);
+
+			Span<Byte> chunkBuffer = this.GetAvailable();
+			if (newData.Length <= chunkBuffer.Length)
+			{
+				newData.CopyTo(chunkBuffer);
+				this._count += (Int32)newData.Length;
+				return this;
+			}
+			newData.Slice(0, chunkBuffer.Length).CopyTo(chunkBuffer);
+			this._count += chunkBuffer.Length;
+			return new Chunk(this).Append(newData.Slice(chunkBuffer.Length));
+		}
+		/// <summary>
 		/// Appends a span of chars to the sequence, allocating new chunks as needed.
 		/// </summary>
 		/// <param name="newData">Data to append.</param>

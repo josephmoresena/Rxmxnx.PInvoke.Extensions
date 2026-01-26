@@ -24,6 +24,17 @@ public partial class CString
 		private readonly Int32 _length = length;
 
 		/// <summary>
+		/// Retrieves the <see cref="CStringSequence"/> instance of the current item.
+		/// </summary>
+		/// <param name="itemIndex">Output. The index of the current item in the sequence.</param>
+		/// <returns>The <see cref="CStringSequence"/> instance of the current item.</returns>
+		public CStringSequence GetSequence(out Int32 itemIndex)
+		{
+			itemIndex = index;
+			return sequence;
+		}
+
+		/// <summary>
 		/// Allocates a <see cref="GCHandle"/> for the specified <paramref name="t"/>.
 		/// </summary>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]

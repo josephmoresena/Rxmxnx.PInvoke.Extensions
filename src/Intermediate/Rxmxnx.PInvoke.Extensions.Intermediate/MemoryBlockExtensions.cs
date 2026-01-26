@@ -84,8 +84,7 @@ public static unsafe partial class MemoryBlockExtensions
 	public static Boolean MayBeNonLiteral<T>(this ReadOnlySpan<T> span)
 	{
 		ref T refT = ref MemoryMarshal.GetReference(span);
-		ReadOnlySpan<Byte> byteSpan = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, Byte>(ref refT), 1);
-		return MemoryInspector.MayBeNonLiteral(byteSpan);
+		return MemoryInspector.MayBeNonLiteral(in Unsafe.As<T, Byte>(ref refT));
 	}
 
 	/// <summary>

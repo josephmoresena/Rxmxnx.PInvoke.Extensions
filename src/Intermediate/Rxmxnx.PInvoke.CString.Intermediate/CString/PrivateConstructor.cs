@@ -66,6 +66,22 @@ public partial class CString
 			this._length--;
 	}
 	/// <summary>
+	/// Constructor.
+	/// </summary>
+	/// <param name="utfRead">A <see cref="UtfReadHelper"/> instance.</param>
+	/// <param name="length">UTF-8 text length.</param>
+	private CString(UtfReadHelper utfRead, Int32 length)
+	{
+		Byte[] byteArray = utfRead.ToArray(length);
+
+		this._isLocal = true;
+		this._data = ValueRegion<Byte>.Create(byteArray);
+		this._length = length;
+		this._isNullTerminated = byteArray.Length > length;
+
+		this.IsFunction = false;
+	}
+	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class that contains the UTF-8 string
 	/// returned by the specified <see cref="ReadOnlySpanFunc{Byte}"/>.
 	/// </summary>
@@ -139,7 +155,7 @@ public partial class CString
 
 		this.IsFunction = isFunction;
 	}
-#if !PACKAGE || NETCOREAPP
+#if NETCOREAPP
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class reading a String from <paramref name="reader"/>.
 	/// </summary>

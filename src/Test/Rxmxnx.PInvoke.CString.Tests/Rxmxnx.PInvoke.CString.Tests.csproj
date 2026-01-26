@@ -17,8 +17,9 @@
         <Using Include="System.Runtime.InteropServices"/>
         <Using Include="System.Reflection"/>
         <Using Include="System.Text"/>
-        <Using Include="System.Text.Json"/>
-        <Using Include="System.Text.Json.Serialization"/>
+        <Using Condition="'$(TargetFramework)' != 'netstandard2.1'" Include="System.Text.Json"/>
+        <Using Condition="'$(TargetFramework)' != 'netstandard2.1'" Include="System.Text.Json.Serialization"/>
+        <Using Condition="'$(TargetFramework)' == 'netstandard2.1'" Include="Newtonsoft.Json"/>
 
         <Using Include="Rxmxnx.PInvoke"/>
         <Using Include="Rxmxnx.PInvoke.Internal"/>

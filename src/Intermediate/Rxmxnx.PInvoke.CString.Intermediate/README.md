@@ -321,3 +321,85 @@ Console.WriteLine(Encoding.UTF8.GetString(buffer)); // Output: "234"
 
 For high-performance scenarios, the `CopyTo` method allows direct copying of the builder's content into a destination
 `Span<Byte>`, enabling interaction with other low-level APIs without allocating intermediate objects.
+
+---
+
+## Sequence Builder
+
+`CStringSequence.Builder` is an structure that enables the dynamic, incremental construction of UTF-8 null-terminated
+text sequences.
+Its usage and design closely mirror `CStringBuilder`, extending the same construction model from single UTF-8 text
+values to *sequences* of them.
+
+### Similarities with `CStringBuilder`
+
+`CStringSequence.Builder` follows the same core principles as `CStringBuilder`:
+
+* Fluent, chainable API
+* Incremental construction
+* UTF-8–centric design
+* Support for mixed input sources (`String`, UTF-8 spans, `CString`)
+* Deferred materialization into an immutable result.
+
+### Dynamic Appending
+
+Elements can be appended progressively using chained calls:
+
+```csharp
+CStringSequence args = CStringSequence.CreateBuilder()
+    .Append("bash"u8)
+    .Append("-c"u8)
+    .Append("echo \"Hello $ENV_USER\""u8)
+    .Build();
+```
+
+Each `Append` call behaves analogously to `CStringBuilder.Append`, but instead of extending a single string, it appends
+a new element to the sequence. Appending a `null` value results in an `CString.Zero` element.
+
+### Runtime Composition
+
+As with `CStringBuilder`, composition can depend entirely on runtime state:
+
+```csharp
+CStringSequence envs = CStringSequence.CreateBuilder()
+    .Append($"ENV_USER={Environment.UserName}")
+    .Append($"PATH={Environment.GetEnvironmentVariable("PATH")}")
+    .Build();
+```
+
+This pattern allows sequences to be assembled conditionally without pre-allocating buffers or arrays.
+
+### Structural Operations
+
+Insertion and removal operations are conceptually equivalent to their `CStringBuilder` counterparts, but operate at
+the **item level** instead of the character level:
+
+```csharp
+CStringSequence seq = CStringSequence.CreateBuilder()
+    .Append("Hello"u8)
+    .Append("World"u8)
+    .Insert(1, Environment.UserName)
+    .RemoveAt(2)
+    .Build();
+```
+
+These operations allow reordering and selective exclusion of elements prior to finalization.
+
+### Escaped UTF-8 Handling
+
+Just like `CStringBuilder`, escaped UTF-8 input can be appended and unescaped during construction:
+
+```csharp
+CStringSequence seq = CStringSequence.CreateBuilder()
+    .AppendEscaped("Line\\nValue"u8)
+    .AppendEscaped("Tab\\tValue"u8)
+    .Build();
+```
+
+The unescaped representation is written directly into the final sequence buffer.
+
+### Finalization
+
+Calling `Build()` captures the current state of `CStringSequence.Builder` and produces the resulting sequence. At this
+point, the builder’s role is complete, and the produced sequence is ready for immediate use in native interop scenarios.
+

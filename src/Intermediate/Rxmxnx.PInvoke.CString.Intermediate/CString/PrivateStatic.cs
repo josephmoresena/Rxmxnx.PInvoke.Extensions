@@ -3,17 +3,6 @@
 public partial class CString
 {
 	/// <summary>
-	/// Retrieves the UTF-8 \u prefix for JSON decoding.
-	/// </summary>
-	/// <returns>The UTF-8 \u prefix.</returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-	public static ReadOnlySpan<Byte> UnicodePrefix()
-#else
-	private static ReadOnlySpan<Byte> UnicodePrefix()
-#endif
-		=> "\\u"u8;
-	/// <summary>
 	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
 	/// </summary>
 	/// <typeparam name="TState">Type of the state object.</typeparam>
@@ -132,7 +121,7 @@ public partial class CString
 		await Task.Yield();
 		writer.Write();
 	}
-#if !PACKAGE || NETCOREAPP
+#if NETCOREAPP
 	/// <summary>
 	/// Reads a UTF-8 string from the specified <see cref="Utf8JsonReader"/> and returns its length.
 	/// </summary>
@@ -147,29 +136,12 @@ public partial class CString
 #endif
 	private static Int32 Read(Utf8JsonReader reader, out ValueRegion<Byte> data)
 	{
-		StackAllocationHelper.InitStackBytes();
-
-		Int32 stackConsumed = 0;
-		Byte[]? byteArray = default;
 		Int32 length = JsonConverter.GetLength(reader);
-		Span<Byte> span = StackAllocationHelper.ConsumeStackBytes(length, ref stackConsumed) ?
-			stackalloc Byte[length + 1] :
-#if !NET7_0_OR_GREATER
-			byteArray = CString.CreateByteArray(length + 1);
-#else
-			byteArray = GC.AllocateUninitializedArray<Byte>(length + 1);
-		span[^1] = default; // Clear the end of the buffer.
-#endif
-		length += JsonConverter.ReadBytes(reader, span[..length], byteArray is not null);
-		if (byteArray is null || !JsonConverter.IsReusableBuffer(byteArray.Length, byteArray.Length))
-		{
-			// Allocate a new array sized to fit the UTF-8 data.
-			byteArray = CString.CreateByteArray(length + 1);
-			// Copy the valid UTF-8 data into the new buffer.
-			span[..byteArray.Length].CopyTo(byteArray.AsSpan());
-		}
-
-		data = ValueRegion<Byte>.Create(byteArray);
+		UtfReadHelper helper = StackAllocationHelper.HasStackBytes(length) ?
+			new(stackalloc Byte[length + 1]) :
+			new(length);
+		length += JsonConverter.ReadBytes(reader, helper.Bytes[..length], helper.HasArray);
+		data = ValueRegion<Byte>.Create(helper.ToArray(length));
 		return length;
 	}
 #endif

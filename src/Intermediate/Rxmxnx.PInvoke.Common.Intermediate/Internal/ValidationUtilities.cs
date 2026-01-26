@@ -1,4 +1,4 @@
-﻿#if !NET5_0_OR_GREATER
+﻿#if NETCOREAPP && !NET5_0_OR_GREATER
 using Enum = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
 #endif
 #if !NET6_0_OR_GREATER
@@ -619,28 +619,7 @@ internal static unsafe class ValidationUtilities
 				$"{type} is not an space. Size: {bufferSize[0]} ({bufferSize[2]}, {bufferSize[1]}).");
 	}
 #endif
-#if !PACKAGE || NETCOREAPP
-	/// <summary>
-	/// Throws an exception if the current token type is invalid for expected type.
-	/// </summary>
-	/// <param name="tokenType">A <see cref="JsonTokenType"/> value.</param>
-	/// <param name="expectedToken">Expected token type name.</param>
-	/// <exception cref="JsonException">
-	/// Throws an exception if the current token type is invalid for expected type.
-	/// </exception>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	private static void ThrowIfInvalidToken(JsonTokenType tokenType, String expectedToken)
-	{
-		IMessageResource resource = IMessageResource.GetInstance();
-		String tokenTypeName = Enum.GetName(tokenType) ?? $"{tokenType}";
-		String message = resource.InvalidToken(tokenTypeName, expectedToken);
-		throw new JsonException(message);
-	}
-#endif
-
-#if !PACKAGE || NETCOREAPP
+#if NETCOREAPP
 	/// <summary>
 	/// Throws an exception if the current token type is invalid for string type.
 	/// </summary>
@@ -672,6 +651,25 @@ internal static unsafe class ValidationUtilities
 		String expectedTokenTypeName = Enum.GetName(JsonTokenType.StartArray) ??
 			nameof(JsonTokenType) + '.' + nameof(JsonTokenType.StartArray);
 		ValidationUtilities.ThrowIfInvalidToken(tokenType, expectedTokenTypeName);
+	}
+
+	/// <summary>
+	/// Throws an exception if the current token type is invalid for expected type.
+	/// </summary>
+	/// <param name="tokenType">A <see cref="JsonTokenType"/> value.</param>
+	/// <param name="expectedToken">Expected token type name.</param>
+	/// <exception cref="JsonException">
+	/// Throws an exception if the current token type is invalid for expected type.
+	/// </exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	private static void ThrowIfInvalidToken(JsonTokenType tokenType, String expectedToken)
+	{
+		IMessageResource resource = IMessageResource.GetInstance();
+		String tokenTypeName = Enum.GetName(tokenType) ?? $"{tokenType}";
+		String message = resource.InvalidToken(tokenTypeName, expectedToken);
+		throw new JsonException(message);
 	}
 #endif
 }

@@ -48,4 +48,12 @@ internal sealed record CStringSequenceDebugView
 	/// The <see cref="CStringSequence.Utf8View"/> instance to provide a debug view for.
 	/// </param>
 	public CStringSequenceDebugView(CStringSequence.Utf8View value) => this._values = value.ToArray();
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CStringSequenceDebugView"/> class with the
+	/// specified <see cref="CStringSequence.Utf8View"/> instance.
+	/// </summary>
+	/// <param name="value">
+	/// The <see cref="CStringSequence.Utf8View"/> instance to provide a debug view for.
+	/// </param>
+	public CStringSequenceDebugView(CStringSequence.Builder value) => this._values = value.ToArray();
 }

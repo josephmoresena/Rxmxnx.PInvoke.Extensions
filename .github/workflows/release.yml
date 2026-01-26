@@ -6,6 +6,7 @@ on:
 
 jobs:
   build:
+    name: Create NuGet Package Release
     runs-on: ubuntu-latest
     env:
       SNK_BASE64: ${{ secrets.SN_KEY }}
@@ -22,11 +23,8 @@ jobs:
         run: echo "${SNK_BASE64}" | base64 -d > Rxmxnx.PInvoke.snk
       - name: Create NuGet Package
         working-directory: ./package/Rxmxnx.PInvoke.Extensions
-        run: dotnet pack -c Release -o ../Nuget /p:Version=${{ github.event.release.tag_name }} /p:PackageReleaseNotes="See https://github.com/josephmoresena/Rxmxnx.PInvoke.Extensions/releases/tag/${{ github.event.release.tag_name }}"
-      - name: Push NuGet Package
-        working-directory: ./package/Rxmxnx.PInvoke.Extensions
         run: |
-          dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
+          dotnet pack -c Release -o ../Nuget /p:Version=${{ github.event.release.tag_name }} /p:PackageReleaseNotes="See https://github.com/josephmoresena/Rxmxnx.PInvoke.Extensions/releases/tag/${{ github.event.release.tag_name }}"
           for package in ../Nuget/Rxmxnx.PInvoke.Extensions*.*nupkg; do
             echo "-----------------------------------"
             TEMP_DIR=$(mktemp -d)
@@ -36,13 +34,15 @@ jobs:
             rm -rf "$TEMP_DIR"
           done
           echo "-----------------------------------"
-          rm ../Nuget/Rxmxnx.PInvoke.Extensions*.*nupkg
-      - name: Create NuGet Package for Artifacts
-        working-directory: ./package/Rxmxnx.PInvoke.Extensions
-        run: |
-          dotnet pack -c Release -o ../Nuget /p:Version=9999.99.99.99-tmp /p:NoIntermediateBuild=true /p:UseEmbeddedDebugSymbols=false
-
-  buildtmp:
+      - name: Cache NuGet Package
+        uses: actions/cache/save@v4
+        with:
+          path: ./package/Nuget
+          key: internal-nuget-${{ github.run_id }}
+          enableCrossOsArchive: true
+  
+  buildmono:
+    name: Build Mono Application Test
     needs: [ build ]
     runs-on: ubuntu-latest
     steps:
@@ -51,11 +51,14 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.x
-      - name: Create NuGet Package
-        working-directory: ./package/Rxmxnx.PInvoke.Extensions
-        run: |
-          dotnet pack -c Release -o ../Nuget /p:Version=9999.99.99.99-tmp /p:NoIntermediateBuild=true /p:UseEmbeddedDebugSymbols=false
-      
+      - name: Restore NuGet Package
+        uses: actions/cache/restore@v5
+        if: inputs.build_artifacts == true
+        with:
+          path: ./package/Nuget
+          key: internal-nuget-${{ github.run_id }}
+          fail-on-cache-miss: true
+          enableCrossOsArchive: true
       - name: Install Mono Framework
         run: |
           sudo apt install ca-certificates gnupg --assume-yes
@@ -72,15 +75,10 @@ jobs:
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
         shell: bash
         run: |
-          msbuild -restore /p:Configuration=Release /p:UsePackage=true /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
-          rm -rf ./obj
-
-      - name: Cache NuGet Package
-        uses: actions/cache/save@v4
-        with:
-          path: ./package/Nuget
-          key: internal-nuget-${{ github.run_id }}
-          enableCrossOsArchive: true
+          msbuild -restore /p:Configuration=Release /p:UsePackage=true \ 
+            /p:PackageVersion=${{ github.event.release.tag_name }} \ 
+            /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest 
+          rm -rf ./obj 
       - name: Cache Compiled ApplicationTest (Mono-Build)
         uses: actions/cache/save@v4
         with:
@@ -90,27 +88,47 @@ jobs:
           enableCrossOsArchive: true
 
   webasm-actions:
-    needs: [ buildtmp ]
+    name: Build Native-AOT WebASM Artifacts
+    needs: [ build ]
     uses: ./.github/workflows/webasm-actions.yml
+    with:
+      package_version: ${{ github.event.release.tag_name }}
   freebsd-actions:
-    needs: [ buildtmp ]
+    name: Build Native-AOT FreeBSD Artifacts
+    needs: [ buildmono ]
     uses: ./.github/workflows/freebsd-actions.yml
     with:
       run_tests: false
       build_artifacts: true
+      package_version: ${{ github.event.release.tag_name }}
   cross-actions:
-    needs: [ buildtmp ]
+    name: Build Native-AOT Windows, Linux and macOS Artifacts
+    needs: [ buildmono ]
     uses: ./.github/workflows/cross-actions.yml
     with:
       run_tests: false
       build_artifacts: true
+      package_version: ${{ github.event.release.tag_name }}
   
-  cleanup-cache:
-    name: Secure Cleanup
-    needs: [ buildtmp, webasm-actions, freebsd-actions, cross-actions ]
+  push-package:
+    name: Push NuGet Package Release
+    needs: [ webasm-actions, freebsd-actions, cross-actions ]
     runs-on: ubuntu-latest
     if: always()
     steps:
+      - name: Create directory
+        run: mkdir -p ./package/Nuget
+      - name: Restore NuGet Package
+        uses: actions/cache/restore@v5
+        with:
+          path: ./package/Nuget
+          key: internal-nuget-${{ github.run_id }}
+          fail-on-cache-miss: true
+          enableCrossOsArchive: true
+      - name: Push NuGet Package
+        working-directory: ./package/Nuget
+        run: |
+          dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
       - name: Delete Internal Cache
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

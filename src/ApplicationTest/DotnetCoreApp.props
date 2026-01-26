@@ -6,6 +6,9 @@
         <SelfContained Condition="'$(RequiredFramework)' != ''">true</SelfContained>
         <AssemblyName Condition="'$(RuntimeIdentifier)' != ''">$(AssemblyName).$(RuntimeIdentifier)</AssemblyName>
         <AssemblyName>$(AssemblyName).$(TargetFramework)</AssemblyName>
+        <PublishTrimmed>true</PublishTrimmed>
+        <TrimmerSingleWarn>false</TrimmerSingleWarn>
+        <TrimMode>full</TrimMode>
     </PropertyGroup>
 
     <Import Project="NativeAot.props"/>
@@ -26,6 +29,10 @@
 
     <ItemGroup>
         <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
+        <ProjectReference Include="..\Rxmxnx.PInvoke.VNextTest\Rxmxnx.PInvoke.VNextTest.csproj"/>
     </ItemGroup>
 
 </Project>

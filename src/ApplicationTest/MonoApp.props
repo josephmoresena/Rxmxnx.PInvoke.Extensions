@@ -22,6 +22,10 @@
             <HintPath>$(MonoFrameworkPath)\4.5\Facades\netstandard.dll</HintPath>
             <Private>False</Private>
         </Reference>
+        <Reference Include="Rxmxnx.PInvoke.Extensions">
+            <HintPath>$(NuGetPackageRoot)rxmxnx.pinvoke.extensions/$(PackageVersion)/lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</HintPath>
+            <Private>True</Private>
+        </Reference>
     </ItemGroup>
 
     <ItemGroup>

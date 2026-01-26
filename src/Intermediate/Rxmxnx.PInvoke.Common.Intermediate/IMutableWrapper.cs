@@ -71,12 +71,21 @@ public interface IMutableWrapper : IWrapper
 /// This interface defines a wrapper for a <typeparamref name="T"/> object whose value can be modified.
 /// </summary>
 /// <typeparam name="T">The type of value to be wrapped.</typeparam>
-public interface IMutableWrapper<T> : IMutableWrapper, IWrapper<T>
+public interface IMutableWrapper<T> : IMutableWrapper, IWrapper<T>, IStrongBox
 {
 	/// <summary>
 	/// The wrapped <typeparamref name="T"/> object.
 	/// </summary>
 	new T Value { get; set; }
+
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	Object? IStrongBox.Value
+	{
+		get => this.Value;
+		set => this.Value = (T)value!;
+	}
 
 	T IWrapper<T>.Value => this.Value;
 

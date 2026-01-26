@@ -173,9 +173,9 @@ target frameworks, along with the type of support provided for each one.
 
 </details>
 
-1. AOT detection should be performed via reflection. 
+1. AOT detection should be performed via reflection.
 2. Uses CoreCLR implementations from .NET 6.0. Simpler alternatives may be substituted in .NET Standard 2.1.
-3. Retrieving references to multidimensional array data should be done using static delegates, and managed buffer 
+3. Retrieving references to multidimensional array data should be done using static delegates, and managed buffer
    registration should be handled through buffer binding.
 4. Internally relies on `Enum.GetName(Type, Object)`.
 5. Value-type pointers support `ref struct` generics, but due to C# compiler restrictions, some methods must be
@@ -204,8 +204,7 @@ These delegates provide VB.NET-compatible access to selected non-compliant `Rxmx
 
 # Abstractions
 
-`Rxmxnx.PInvoke.Extensions` provides abstractions for managed handling of references and
-fixed memory segments.
+`Rxmxnx.PInvoke.Extensions` provides abstractions for managed handling of references and fixed memory segments.
 
 ## Reference Interfaces
 
@@ -1812,7 +1811,7 @@ Non-binary buffer space.
 <details>
   <summary>CStringSequence.Utf8View</summary>
 
-A view over the UTF-8 items in a CStringSequence instance, allowing filtering of empty and null items.
+A view over the UTF-8 items in a `CStringSequence` instance, allowing filtering of empty and null items.
 
 **Notes:**
 
@@ -1838,6 +1837,56 @@ A view over the UTF-8 items in a CStringSequence instance, allowing filtering of
 - <details>
   <summary>Count</summary>
   Gets the total number of elements in the current enumeration.
+  </details>
+
+</details>
+
+
+<details>
+  <summary>CStringSequence.Builder</summary>
+
+A fluent builder for `CStringSequence` type.
+
+**Notes:**
+
+- This type is a `struct` type. Please avoid boxing.
+- The builder is based on `CStringBuilder` type.
+- This type allows UTF-16 texts and UTF-8 escaped text as inputs.
+
+#### Methods:
+
+- <details>
+  <summary>Append(?)</summary>
+  Appends the text input as the last item of the building sequence.
+
+  **Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySequence<Byte>`
+  and `ReadOnlySpan<Char>`.
+  </details>
+- <details>
+  <summary>AppendEscaped(?)</summary>
+  Appends the unescaped text input as the last item of the building sequence.
+
+  **Supported types include:** `ReadOnlySpan<Byte>` and `ReadOnlySequence<Byte>`.
+  </details>
+- <details>
+  <summary>Insert(Int32, ?)</summary>
+  Inserts the text input at the given position of the building sequence.
+
+  **Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySequence<Byte>`
+  and `ReadOnlySpan<Char>`.
+  </details>
+- <details>
+  <summary>RemoveAt(Int32)</summary>
+  Removes the item at the given position of the building sequence.
+  </details>
+- <details>
+  <summary>Clear()</summary>
+  Removes all the items of the building sequence.
+  </details>
+- <details>
+  <summary>Build()</summary>
+
+  Builds a new `CStringSequence` instance using the state of the builder.
   </details>
 
 </details>
@@ -2080,6 +2129,12 @@ Represents a sequence of UTF-8 encoded characters.
   span.
   </details>
 - <details>
+  <summary>CString(ReadOnlySequence&lt;Byte&gt;)</summary>
+
+  Initializes a new instance of the `CString` class using the UTF-8 characters indicated in the specified read-only
+  sequence.
+  </details>
+- <details>
   <summary>CString(ReadOnlySpanFunc&lt;Byte&gt;)</summary>
 
   Initializes a new instance of the `CString` class that contains the UTF-8 string returned by the specified
@@ -2098,7 +2153,7 @@ Represents a sequence of UTF-8 encoded characters.
   specified number of times.
   </details>
 - <details>
-  <summary>CString(ReadOnlySpan&lt;Byte&gt;)</summary>
+  <summary>CString(ReadOnlySpan&lt;Char&gt;)</summary>
 
   Initializes a new instance of the `CString` class using the UTF-16 characters indicated in the specified read-only
   span.
@@ -2196,14 +2251,14 @@ Represents a sequence of UTF-8 encoded characters.
   Creates a new instance of the `CString` class using the binary internal information provided.
   </details>
 - <details>
-  <summary>CreateCreate&lt;TState&gt;(TState)</summary>
+  <summary>Create&lt;TState&gt;(TState)</summary>
 
   Creates a new instance of the `CString` class using a `TState` instance.
 
   **Note:** This method is available only on .NET 6.0 and later.
   </details>
 - <details>
-  <summary>CreateCreate&lt;TState&gt;(TState, ReadOnlySpanFunc&lt;Byte, TState&gt;, Func&lt;TState, GCHandleType, GCHandle&gt;)</summary>
+  <summary>Create&lt;TState&gt;(TState, ReadOnlySpanFunc&lt;Byte, TState&gt;, Func&lt;TState, GCHandleType, GCHandle&gt;)</summary>
 
   Creates a new instance of the `CString` class using a `TState` instance.
   </details>
@@ -2221,6 +2276,21 @@ Represents a sequence of UTF-8 encoded characters.
   <summary>IsImagePersistent(CString)</summary>
 
   Gets a value indicating whether the data of the given `CString` instance resides within the loaded binary image.
+  </details>
+- <details>
+  <summary>GetAssociatedSequence(CString?, out Int32)</summary>
+
+  Tries to retrieve the `CStringSequence` instance and the index of the item associated to the given value.
+  </details>
+- <details>
+  <summary>Unescape(ReadOnlySpan&lt;Byte&gt;)</summary>
+
+  Creates a new instance of the `CString` class using an unescaped copy of the given UTF-8 escaped text.
+  </details>
+- <details>
+  <summary>Unescape(ReadOnlySequence&lt;Byte&gt;)</summary>
+
+  Creates a new instance of the `CString` class using an unescaped copy of the given UTF-8 escaped text.
   </details>
 
 </details>
@@ -2249,6 +2319,7 @@ Represents a sequence of null-terminated UTF-8 text strings.
 - control over whether empty elements are included during enumeration.
 - When marshalling in .NET 7.0 and later, `Utf8View` instances are represented as arrays of null-terminated UTF-8
   strings. Empty elements are omitted only if they were not included in the enumeration view.
+- The nested `struct` `Builder` allows fluent creation of `CStringSequence` instances.
 
 ### Static Properties:
 
@@ -2326,6 +2397,11 @@ Represents a sequence of null-terminated UTF-8 text strings.
   must be null-terminated.
   </details>
 - <details>
+  <summary>Pin()</summary>
+
+  Creates an `MemoryHandle` instance by pinning the current instance, allowing safe access to the fixed memory region.
+  </details>
+- <details>
   <summary>GetFixedPointer()</summary>
 
   Creates an `IFixedPointer.IDisposable` instance by pinning the current instance, allowing safe access to the fixed
@@ -2359,12 +2435,18 @@ Represents a sequence of null-terminated UTF-8 text strings.
   Fills the provided span with the starting byte offsets of each UTF-8 encoded `CString` segment within the current
   buffer.
   </details>
+- <details>
+  <summary>TryGetIndex(CString?, out Int32)</summary>
+
+  Attempts to retrieve the index of the item associated by instance with the specified `CString`.
+  </details>
 
 ### Static Methods:
 
 - <details>
   <summary>Create&lt;TState&gt;(TState, CStringSequenceCreationAction&lt;TState&gt;, params Int32?[])</summary>
-  Creates a new UTF-8 text sequence with specific lengths, and initializes each UTF-8 text string in it after creation using the specified callback.
+  Creates a new UTF-8 text sequence with specific lengths, and initializes each UTF-8 text string in it after creation 
+  using the specified callback.
   </details>
 - <details>
   <summary>Create(ReadOnlySpan&lt;Byte&gt;)</summary>
@@ -2486,31 +2568,42 @@ Represents a mutable string of UTF-8 encoded characters.
 
   Appends the UTF-8 string representation of a specified parameter to this instance.
 
-  **Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySpan<Char>`, `Byte[]`, `Char[]` and
-  standard numeric primitives.
+  **Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySequence<Byte>`,
+  `ReadOnlySpan<Char>`, `Byte[]`, `Char[]` and standard numeric primitives.
   </details>
 - <details>
   <summary>AppendJoin(?, ?)</summary>
 
   Concatenates the string representations of the elements in the provided sequence, using the specified separator
   between each member.
-  </details>
+-
+
+**Supported separator types include:** `CString`, and `ReadOnlySpan<Byte>`.
+**Supported types include:** `CString[]`, `ReadOnlySpan<CString>`, `CStringSequence`, `CStringSequence.Utf8View`,
+and `IEnumerable<CString>`.
+</details>
 - <details>
   <summary>AppendLine()</summary>
 
-  Appends the default line terminator to the end of the current `CStringBuilder` object.
+Appends the default line terminator to the end of the current `CStringBuilder` object.
   </details>
 - <details>
   <summary>AppendLine(?)</summary>
 
-  Appends the UTF-8 string representation of a specified parameter followed by the default line terminator to the end of
-  the current `CStringBuilder` object.
+Appends the UTF-8 string representation of a specified parameter followed by the default line terminator to the end of
+the current `CStringBuilder` object.
+
+**Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySequence<Byte>`,
+`ReadOnlySpan<Char>`, `Byte[]` and `Char[]`.
   </details>
 - <details>
   <summary>Insert(Int32, ?)</summary>
 
-  Inserts the UTF-8 string representation of a specified parameter into this instance at the specified character
-  position.
+Inserts the UTF-8 string representation of a specified parameter into this instance at the specified character
+position.
+
+**Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySpan<Char>`, `Byte[]`, `Char[]` and
+standard numeric primitives.
   </details>
 
 </details>
@@ -2572,51 +2665,63 @@ Set of useful methods when working with bytes, byte arrays, and byte spans in a 
   </details>
 - <details>
   <summary>WithSafeFixed(this Span&lt;Byte&gt;, FixedAction)</summary>
-  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified action has completed.
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified 
+  action has completed.
   </details>
 - <details>
   <summary>WithSafeFixed(this Span&lt;Byte&gt;, ReadOnlyFixedAction)</summary>
-  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified action has completed.
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified 
+  action has completed.
   </details>
 - <details>
   <summary>WithSafeFixed(this ReadOnlySpan&lt;Byte&gt;, ReadOnlyFixedAction)</summary>
-  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the specified action has completed.
+  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the 
+  specified action has completed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TArg&gt;(this Span&lt;Byte&gt;, FixedAction&lt;TArg&gt;)</summary>
-  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified action has completed.
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified 
+  action has completed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TArg&gt;(this Span&lt;Byte&gt;, ReadOnlyFixedAction&lt;TArg&gt;)</summary>
-  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified action has completed.
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified 
+  action has completed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TArg&gt;(this ReadOnlySpan&lt;Byte&gt;, ReadOnlyFixedAction&lt;TArg&gt;)</summary>
-  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the specified action has completed.
+  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the 
+  specified action has completed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TResult&gt;(this Span&lt;Byte&gt;, FixedFunc&lt;TResult&gt;)</summary>
-  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified function has completed.
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified 
+  function has completed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TResult&gt;(this Span&lt;Byte&gt;, ReadOnlyFixedFunc&lt;TResult&gt;)</summary>
-  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified function has completed.
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified 
+  function has completed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TResult&gt;(this ReadOnlySpan&lt;Byte&gt;, ReadOnlyFixedFunc&lt;TResult&gt;)</summary>
-  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the specified function has completed.
+  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the 
+  specified function has completed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TArg, TResult&gt;(this Span&lt;Byte&gt;, TArg, FixedFunc&lt;TArg, TResult&gt;)</summary>
-  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified function has completed.
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified 
+  function has completed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TArg, TResult&gt;(this Span&lt;Byte&gt;, TArg, ReadOnlyFixedFunc&lt;TArg, TResult&gt;)</summary>
-  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified function has completed.
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified 
+  function has completed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TArg, TResult&gt;(this ReadOnlySpan&lt;Byte&gt;, TArg, ReadOnlyFixedFunc&lt;TArg, TResult&gt;)</summary>
-  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the specified function has completed.
+  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the 
+  specified function has completed.
   </details>
 
 </details>
@@ -2643,12 +2748,13 @@ Additional functionality for working with delegates.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TDelegate&gt;(this TDelegate, FixedMethodAction&lt;TDelegate&gt;)</summary>
-  Prevents the garbage collector from relocating a delegate in memory and fixes its address while an action is being performed.
+  Prevents the garbage collector from relocating a delegate in memory and fixes its address while an action is being 
+  performed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TDelegate, TArg&gt;(this TDelegate, TArg, FixedMethodAction&lt;TDelegate, TArg&gt;)</summary>
-  Prevents the garbage collector from relocating a delegate in memory and fixes its address while an action is being performed, passing an additional 
-  argument to the action.
+  Prevents the garbage collector from relocating a delegate in memory and fixes its address while an action is being 
+  performed, passing an additional argument to the action.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TDelegate, TResult&gt;(this TDelegate, TArg, FixedMethodFunc&lt;TDelegate, TResult&gt;)</summary>
@@ -2827,51 +2933,63 @@ Additional functionality for working with memory blocks.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T&gt;(this Span&lt;T&gt;, FixedContextAction&lt;T&gt;)</summary>
-  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified action has completed.
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified 
+  action has completed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T&gt;(this Span&lt;T&gt;, ReadOnlyFixedContextAction&lt;T&gt;)</summary>
-  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified action has completed.
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified 
+  action has completed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T&gt;(this ReadOnlySpan&lt;T&gt;, ReadOnlyFixedContextAction&lt;T&gt;)</summary>
-  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the specified action has completed.
+  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the 
+  specified action has completed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TArg&gt;(this Span&lt;T&gt;, FixedContextAction&lt;T, TArg&gt;)</summary>
-  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified action has completed.
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified 
+  action has completed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TArg&gt;(this Span&lt;T&gt;, ReadOnlyFixedContextAction&lt;T, TArg&gt;)</summary>
-  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified action has completed.
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified 
+  action has completed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TArg&gt;(this ReadOnlySpan&lt;T&gt;, ReadOnlyFixedContextAction&lt;T, TArg&gt;)</summary>
-  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the specified action has completed.
+  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the 
+  specified action has completed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TResult&gt;(this Span&lt;T&gt;, FixedContextFunc&lt;T, TResult&gt;)</summary>
-  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified function has completed.
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified 
+  function has completed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TResult&gt;(this Span&lt;T&gt;, ReadOnlyFixedContextFunc&lt;T, TResult&gt;)</summary>
-  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified function has completed.
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified 
+  function has completed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TResult&gt;(this ReadOnlySpan&lt;T&gt;, ReadOnlyFixedContextFunc&lt;T, TResult&gt;)</summary>
-  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the specified function has completed.
+  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the 
+  specified function has completed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TArg, TResult&gt;(this Span&lt;T&gt;, TArg, FixedContextFunc&lt;T, TArg, TResult&gt;)</summary>
-  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified function has completed.
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified 
+  function has completed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TArg, TResult&gt;(this Span&lt;T&gt;, TArg, ReadOnlyFixedContextFunc&lt;T, TArg, TResult&gt;)</summary>
-  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified function has completed.
+  Prevents the garbage collector from relocating the current span by pinning its memory address until the specified 
+  function has completed.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TArg, TResult&gt;(this ReadOnlySpan&lt;T&gt;, TArg, ReadOnlyFixedContextFunc&lt;T, TArg, TResult&gt;)</summary>
-  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the specified function has completed.
+  Prevents the garbage collector from relocating the current read-only span by pinning its memory address until the 
+  specified function has completed.
   </details>
 
 </details>
@@ -3130,35 +3248,43 @@ Set of extensions for basic operations with references to `unmanaged` values.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T&gt;(ref this T, FixedReferenceAction&lt;T&gt;)</summary>
-  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided action.
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a 
+  provided action.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T&gt;(ref this T, ReadOnlyFixedReferenceAction&lt;T&gt;)</summary>
-  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided read-only action.
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a 
+  provided read-only action.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TArg&gt;(ref this T, TArg, FixedReferenceAction&lt;T, TArg&gt;)</summary>
-  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided action along with an argument.
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a 
+  provided action along with an argument.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TArg&gt;(ref this T, TArg, ReadOnlyFixedReferenceAction&lt;T, TArg&gt;)</summary>
-  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided read-only action along with an argument.
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a 
+  provided read-only action along with an argument.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TResult&gt;(ref this T, FixedReferenceFunc&lt;T, TResult&gt;)</summary>
-  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided function.
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a 
+  provided function.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TResult&gt;(ref this T, ReadOnlyFixedReferenceFunc&lt;T, TResult&gt;)</summary>
-  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided read-only function.
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a 
+  provided read-only function.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TArg, TResult&gt;(ref this T, TArg, FixedReferenceFunc&lt;T, TArg, TResult&gt;)</summary>
-  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided function along with an argument.
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a 
+  provided function along with an argument.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TArg, TResult&gt;(ref this T, TArg, ReadOnlyFixedReferenceFunc&lt;T, TArg, TResult&gt;)</summary>
-  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided read-only function along with an argument.
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a 
+  provided read-only function along with an argument.
   </details>
 
 </details>
@@ -3170,19 +3296,23 @@ Set of extensions for basic operations with `String` instances.
 
 - <details>
   <summary>WithSafeFixed(this String?, ReadOnlyFixedContextAction&lt;Char&gt;)</summary>
-  Pins the current string to prevent the garbage collector from relocating its memory address during the execution of the specified action.
+  Pins the current string to prevent the garbage collector from relocating its memory address during the execution of 
+  the specified action.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TArg&gt;(this String?, TArg, ReadOnlyFixedContextAction&lt;Char, TArg&gt;)</summary>
-  Pins the current string to prevent the garbage collector from relocating its memory address during the execution of the specified action along with an argument.
+  Pins the current string to prevent the garbage collector from relocating its memory address during the execution of 
+  the specified action along with an argument.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TResult&gt;(this String?, ReadOnlyFixedContextFunc&lt;Char, TResult&gt;)</summary>
-  Pins the current string to prevent the garbage collector from relocating its memory address during the execution of the specified function.
+  Pins the current string to prevent the garbage collector from relocating its memory address during the execution of 
+  the specified function.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;TArg, TResult&gt;(this String?, TArg, ReadOnlyFixedContextFunc&lt;Char, TArg, TResult&gt;)</summary>
-  Pins the current string to prevent the garbage collector from relocating its memory address during the execution of the specified function along with an argument.
+  Pins the current string to prevent the garbage collector from relocating its memory address during the execution of 
+  the specified function along with an argument.
   </details>
 
 </details>
@@ -3234,35 +3364,43 @@ Set of extensions for basic operations with `unmanaged` values.
 - <details>
 
   <summary>WithSafeFixed&lt;T&gt;(ref this T, FixedReferenceAction&lt;T&gt;)</summary>
-  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided action.
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a 
+  provided action.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T&gt;(ref this T, ReadOnlyFixedReferenceAction&lt;T&gt;)</summary>
-  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided read-only action.
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a 
+  provided read-only action.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TArg&gt;(ref this T, TArg, FixedReferenceAction&lt;T, TArg&gt;)</summary>
-  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided action along with an argument.
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a 
+  provided action along with an argument.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TArg&gt;(ref this T, TArg, ReadOnlyFixedReferenceAction&lt;T, TArg&gt;)</summary>
-  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided read-only action along with an argument.
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a 
+  provided read-only action along with an argument.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TResult&gt;(ref this T, FixedReferenceFunc&lt;T, TResult&gt;)</summary>
-  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided function.
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a 
+  provided function.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TResult&gt;(ref this T, ReadOnlyFixedReferenceFunc&lt;T, TResult&gt;)</summary>
-  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided read-only function.
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a 
+  provided read-only function.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TArg, TResult&gt;(ref this T, TArg, FixedReferenceFunc&lt;T, TArg, TResult&gt;)</summary>
-  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided function along with an argument.
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a 
+  provided function along with an argument.
   </details>
 - <details>
   <summary>WithSafeFixed&lt;T, TArg, TResult&gt;(ref this T, TArg, ReadOnlyFixedReferenceFunc&lt;T, TArg, TResult&gt;)</summary>
-  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a provided read-only function along with an argument.
+  Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a 
+  provided read-only function along with an argument.
   </details>
 
 </details>

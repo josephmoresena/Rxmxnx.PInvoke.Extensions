@@ -43,6 +43,16 @@ internal static class StackAllocationHelper
 		return true;
 	}
 	/// <summary>
+	/// Indicates whether if the required size is allocatable on the current stack.
+	/// </summary>
+	/// <param name="stackRequired">Required stack bytes to consume.</param>
+	/// <returns>
+	/// <see langword="true"/> if the required size is allocatable on the current stack; otherwise, <see langword="false"/>.
+	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Boolean HasStackBytes(Int32 stackRequired)
+		=> stackRequired <= StackAllocationHelper.StackallocByteThreshold;
+	/// <summary>
 	/// Returns a rented array of the specified length and clears it.
 	/// </summary>
 	/// <typeparam name="T">Type of the array elements.</typeparam>
@@ -82,4 +92,17 @@ internal static class StackAllocationHelper
 		if (StackAllocationHelper.stackallocByteConsumed < 0)
 			StackAllocationHelper.stackallocByteConsumed = 0; // Prevent negative consumption.
 	}
+	/// <summary>
+	/// Determines whether a buffer of size <paramref name="bufferLength"/> can be reused to store a UTF-8 encoded
+	/// text of length <paramref name="textLength"/> without causing excessive unused capacity.
+	/// </summary>
+	/// <param name="bufferLength">The total length of the buffer, in bytes.</param>
+	/// <param name="textLength">The length of the UTF-8 encoded text, in bytes.</param>
+	/// <returns>
+	/// <see langword="true"/> if the buffer can be reused to hold the UTF-8 text efficiently; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Boolean IsReusableBuffer(Int32 bufferLength, Int32 textLength)
+		=> bufferLength - textLength <= bufferLength >> 4;
 }

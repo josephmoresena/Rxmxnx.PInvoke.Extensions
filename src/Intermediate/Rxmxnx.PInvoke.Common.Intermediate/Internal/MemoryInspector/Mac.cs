@@ -3,7 +3,7 @@ namespace Rxmxnx.PInvoke.Internal;
 internal partial class MemoryInspector
 {
 	/// <summary>
-	/// MacOS implementation of <see cref="MemoryInspector"/> class.
+	/// macOS implementation of <see cref="MemoryInspector"/> class.
 	/// </summary>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
@@ -24,20 +24,18 @@ internal partial class MemoryInspector
 			;
 
 		/// <inheritdoc/>
-		public override Boolean IsLiteral(ReadOnlySpan<Byte> span)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public override Boolean IsLiteral(void* ptr)
 		{
-			fixed (void* ptr = &MemoryMarshal.GetReference(span))
-			{
-				UInt32 taskHandle = SystemB.GetTaskHandle();
-				UInt32 count = MemoryInfo.Count;
-				Int32 result = SystemB.MemoryRegion(taskHandle, &ptr, out _, MemoryInfo.Flavor, out MemoryInfo info,
-				                                    ref count, out _);
-				SystemB.ValidateResult(result);
-				if ((info.Protection & Protection.Read) == Protection.None) return false;
-				if (this._readonlyExecutable && (info.Protection & Protection.Execute) == Protection.Execute)
-					return true;
-				return (info.Protection & Protection.Write) == Protection.None;
-			}
+			UInt32 taskHandle = SystemB.GetTaskHandle();
+			UInt32 count = MemoryInfo.Count;
+			Int32 result = SystemB.MemoryRegion(taskHandle, &ptr, out _, MemoryInfo.Flavor, out MemoryInfo info,
+			                                    ref count, out _);
+			SystemB.ValidateResult(result);
+			if ((info.Protection & Protection.Read) == Protection.None) return false;
+			if (this._readonlyExecutable && (info.Protection & Protection.Execute) == Protection.Execute)
+				return true;
+			return (info.Protection & Protection.Write) == Protection.None;
 		}
 	}
 }

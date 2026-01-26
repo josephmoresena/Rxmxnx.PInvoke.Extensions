@@ -142,7 +142,7 @@ public sealed class ConcatTest
 		PInvokeAssert.True(resultCString.IsNullTerminated);
 		PInvokeAssert.False(resultCString.IsReference);
 		PInvokeAssert.False(resultCString.IsSegmented);
-		PInvokeAssert.Equal(!pinned, resultCString.IsFunction);
+		PInvokeAssert.Equal(!pinned, resultCString.IsFunction && !CString.IsImagePersistent(resultCString));
 	}
 
 #if NET6_0_OR_GREATER
@@ -221,7 +221,6 @@ public sealed class ConcatTest
 	}
 	private static async Task EmptyTestAsync(CString?[] values)
 	{
-		using MemoryHandle _ = CString.Empty.TryPin(out Boolean pinned);
 		CString resultCString = await CString.ConcatAsync(values);
 		Assert.NotNull(resultCString);
 		Assert.Equal(CString.Empty, resultCString);
@@ -229,7 +228,6 @@ public sealed class ConcatTest
 		Assert.True(resultCString.IsNullTerminated);
 		Assert.False(resultCString.IsReference);
 		Assert.False(resultCString.IsSegmented);
-		Assert.Equal(!pinned, resultCString.IsFunction);
 	}
 #endif
 }

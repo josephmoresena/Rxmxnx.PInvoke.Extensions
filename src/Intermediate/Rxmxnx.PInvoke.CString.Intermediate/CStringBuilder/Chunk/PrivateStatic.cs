@@ -93,6 +93,26 @@ public partial class CStringBuilder
 		/// Fills the provided append chunk with the supplied byte segments as long as possible.
 		/// </summary>
 		/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
+		/// <param name="newData">Input. New data to append. Output. Remaining data to append.</param>
+#if !PACKAGE
+		[ExcludeFromCodeCoverage]
+#endif
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static void FillFirst(Chunk chunk, ref ReadOnlySequence<Byte> newData)
+		{
+			if (chunk._buffer.Length - chunk._count <= 0) return;
+
+			Span<Byte> chunkBuffer = chunk.GetAvailable();
+			Int32 newRequiredBytes = Math.Min((Int32)newData.Length, chunkBuffer.Length);
+
+			chunk._count += newRequiredBytes;
+			newData.Slice(0, newRequiredBytes).CopyTo(chunkBuffer);
+			newData = newData.Slice(newRequiredBytes);
+		}
+		/// <summary>
+		/// Fills the provided append chunk with the supplied byte segments as long as possible.
+		/// </summary>
+		/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
 		/// <param name="byteCount">
 		/// Input. UTF-8 bytes required to encode <paramref name="newData"/>. Output. UTF-8 bytes required to encode
 		/// the remaining data.

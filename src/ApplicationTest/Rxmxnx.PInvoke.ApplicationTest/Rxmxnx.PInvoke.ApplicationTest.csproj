@@ -6,25 +6,20 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <LangVersion>9.0</LangVersion>
+        <LangVersion Condition="'$(MSBuildVersion)' &lt; '16.8.0'">8.0</LangVersion>
+        <LangVersion Condition="'$(LangVersion)' != '8.0'">9.0</LangVersion>
         <Nullable>enable</Nullable>
         <ImplicitUsings>disable</ImplicitUsings>
-        <PublishTrimmed>true</PublishTrimmed>
-        <TrimmerSingleWarn>false</TrimmerSingleWarn>
-        <TrimMode>full</TrimMode>
         <CheckEolTargetFramework>false</CheckEolTargetFramework>
         <AssemblyName Condition="'$(DisableBufferAutoComposition)' == 'True'">$(AssemblyName).NoBufferComposition</AssemblyName>
         <AssemblyName Condition="'$(InvariantGlobalization)' == 'True'">$(AssemblyName).Invariant</AssemblyName>
         <Deterministic>True</Deterministic>
         <Optimize>true</Optimize>
+        <DefineConstants Condition="'$(LangVersion)' == '9.0'">$(DefineConstants);CSHARP9_0</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>
         <None Remove="Mono.ILLink.Descriptors.xml"/>
-    </ItemGroup>
-
-    <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
-        <ProjectReference Include="..\Rxmxnx.PInvoke.VNextTest\Rxmxnx.PInvoke.VNextTest.csproj"/>
     </ItemGroup>
 
     <Import Project="..\Artifact.targets"/>

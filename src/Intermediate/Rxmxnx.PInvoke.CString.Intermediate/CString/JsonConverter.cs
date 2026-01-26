@@ -1,10 +1,4 @@
-#if !PACKAGE || NETCOREAPP
-
-#if !NETCOREAPP
-using RuneCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuneCompat;
-using Rune = System.UInt32;
-#endif
-
+#if NETCOREAPP
 namespace Rxmxnx.PInvoke;
 
 public partial class CString
@@ -14,6 +8,7 @@ public partial class CString
 	/// </summary>
 	public sealed class JsonConverter : JsonConverter<CString>
 	{
+#if NET6_0_OR_GREATER
 		/// <summary>
 		/// Specifies whether the rented span is cleared by default before use.
 		/// </summary>
@@ -21,6 +16,7 @@ public partial class CString
 		internal const Boolean ClearArray = false;
 #else
 		internal const Boolean ClearArray = true;
+#endif
 #endif
 
 		/// <inheritdoc/>
@@ -108,244 +104,17 @@ public partial class CString
 		internal static Int32 ReadBytes(Utf8JsonReader reader, Span<Byte> buffer, Boolean clearUnused)
 		{
 #if NET7_0_OR_GREATER
-			Int32 nBytes = reader.CopyString(buffer);
-			Span<Byte> unusedBytes = buffer[nBytes..];
+			Int32 unused = buffer.Length - reader.CopyString(buffer);
 #else
 			if (reader.HasValueSequence)
 				reader.ValueSequence.CopyTo(buffer);
 			else
 				reader.ValueSpan.CopyTo(buffer);
-			Span<Byte> unusedBytes = buffer[^JsonConverter.EscapeString(buffer)..];
-#endif
-			switch (clearUnused)
-			{
-				case false when !unusedBytes.IsEmpty:
-					unusedBytes[0] = default; // Clear only the first invalid byte in the buffer.
-					break;
-				case true when !unusedBytes.IsEmpty &&
-					JsonConverter.IsReusableBuffer(buffer.Length, unusedBytes.Length):
-					unusedBytes.Clear(); // Clear the rest of the buffer.
-					break;
-			}
-			return -unusedBytes.Length;
-		}
-		/// <summary>
-		/// Determines whether a buffer of size <paramref name="bufferLength"/> can be reused to store a UTF-8 encoded
-		/// text of length <paramref name="textLength"/> without causing excessive unused capacity.
-		/// </summary>
-		/// <param name="bufferLength">The total length of the buffer, in bytes.</param>
-		/// <param name="textLength">The length of the UTF-8 encoded text, in bytes.</param>
-		/// <returns>
-		/// <see langword="true"/> if the buffer can be reused to hold the UTF-8 text efficiently; otherwise,
-		/// <see langword="false"/>.
-		/// </returns>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static Boolean IsReusableBuffer(Int32 bufferLength, Int32 textLength)
-			=> bufferLength - textLength <= bufferLength >> 4;
 
-#if !NET7_0_OR_GREATER
-		/// <summary>
-		/// Escapes the string in the buffer.
-		/// </summary>
-		/// <param name="buffer">A UTF-8 unescaped buffer.</param>
-		/// <returns>Number of bytes of escape adjustment.</returns>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static Int32 EscapeString(Span<Byte> buffer)
-		{
-			Int32 adjustment = 0;
-			Int32 slashIdx;
-			Span<Byte> ueBuffer = buffer;
-			while ((slashIdx = ueBuffer.LastIndexOf((Byte)'\\')) != -1)
-			{
-				if (slashIdx > 0 && ueBuffer[slashIdx - 1] == (Byte)'\\')
-					// The backslash is escaped, we escape it.
-					slashIdx--;
-				else if (slashIdx + 1 == ueBuffer.Length)
-					// The last character is a backslash, we cannot escape it.
-					break;
-
-				switch (ueBuffer[slashIdx + 1])
-				{
-					case (Byte)'n':
-					case (Byte)'r':
-					case (Byte)'t':
-					case (Byte)'b':
-					case (Byte)'f':
-					case (Byte)'0':
-					case (Byte)'\\':
-					case (Byte)'/':
-					case (Byte)'"':
-						JsonConverter.EscapeUnit(buffer[slashIdx..]);
-						// Only a UTF-8 unit is removed.
-						adjustment += 1;
-						buffer = buffer[..^1];
-						break;
-					case (Byte)'u':
-					case (Byte)'U':
-						adjustment += JsonConverter.EscapeUnicode(ref buffer, ref slashIdx);
-						break;
-				}
-				ueBuffer = ueBuffer[..slashIdx];
-			}
-			return adjustment;
-		}
-		/// <summary>
-		/// Escapes a UTF-8 unit in the buffer.
-		/// </summary>
-		/// <param name="buffer">A UTF-8 unescaped buffer.</param>
-#if NET5_0_OR_GREATER
-		[SkipLocalsInit]
+			Int32 unused = TextUnescape.Unescape(buffer);
 #endif
-		private static void EscapeUnit(Span<Byte> buffer)
-		{
-			Int32 stackConsumed = 0;
-			Byte[]? byteArray = default;
-			try
-			{
-				Int32 nEscaped = buffer.Length - 2;
-				Span<Byte> escaped = JsonConverter.BackupEscaped(
-					StackAllocationHelper.ConsumeStackBytes(nEscaped, ref stackConsumed) ?
-						stackalloc Byte[nEscaped] :
-						StackAllocationHelper.RentArray(nEscaped, out byteArray, false), buffer[2..]);
-				buffer[0] = buffer[1] switch
-				{
-					(Byte)'n' => (Byte)'\n',
-					(Byte)'r' => (Byte)'\r',
-					(Byte)'t' => (Byte)'\t',
-					(Byte)'b' => (Byte)'\b',
-					(Byte)'f' => (Byte)'\f',
-					(Byte)'0' => (Byte)'\0',
-					_ => buffer[0],
-				};
-				buffer[^nEscaped..].CopyTo(escaped); // Backup the rest of the buffer.
-				escaped.CopyTo(buffer[1..]); // Copy the rest of the buffer after the replacement.
-			}
-			finally
-			{
-				StackAllocationHelper.ReturnArray(byteArray);
-				StackAllocationHelper.ReleaseStackBytes(stackConsumed);
-			}
+			return CString.FinalizeBuffer(buffer, unused, clearUnused);
 		}
-		/// <summary>
-		/// Escapes a Unicode character in the buffer.
-		/// </summary>
-		/// <param name="buffer">Reference. A UTF-8 unescaped buffer.</param>
-		/// <param name="escapeIndex">Reference. Index of escape begin.</param>
-		/// <returns>The number of bytes that were not replaced.</returns>
-#if NET5_0_OR_GREATER
-		[SkipLocalsInit]
-#endif
-		private static Int32 EscapeUnicode(ref Span<Byte> buffer, ref Int32 escapeIndex)
-		{
-			Int32 stackConsumed = 0;
-			Byte[]? byteArray = default;
-			try
-			{
-				Char low = JsonConverter.GetUnicodeChar(buffer.Slice(escapeIndex + 2, 4));
-				Int32 baseLength = 6; // Length of "\uXXXX" sequence.
-				Int32 nEscaped = buffer.Length - escapeIndex - baseLength;
-				Span<Byte> escaped = JsonConverter.BackupEscaped(
-					StackAllocationHelper.ConsumeStackBytes(nEscaped, ref stackConsumed) ?
-						stackalloc Byte[nEscaped] :
-						StackAllocationHelper.RentArray(nEscaped, out byteArray, false),
-					buffer[(escapeIndex + baseLength)..]);
-				Rune rune = JsonConverter.GetEscapeRune(buffer, ref escapeIndex, low, ref baseLength);
-#if NETCOREAPP
-				Int32 nBytes = rune.EncodeToUtf8(buffer[escapeIndex..]);
-#else
-				Int32 nBytes = RuneCompat.EncodeToUtf8(rune, buffer[escapeIndex..]);
-#endif
-				Int32 offset = escapeIndex + nBytes;
-				Int32 result = baseLength - nBytes;
-
-				escaped.CopyTo(buffer[offset..]);
-				buffer = buffer[..^result];
-				return result;
-			}
-			finally
-			{
-				StackAllocationHelper.ReturnArray(byteArray);
-				StackAllocationHelper.ReleaseStackBytes(stackConsumed);
-			}
-		}
-		/// <summary>
-		/// Retrieves the escape rune from the buffer.
-		/// </summary>
-		/// <param name="buffer">A UTF-8 unescaped buffer.</param>
-		/// <param name="escapeIndex">Index of escape begin.</param>
-		/// <param name="lowChar">Low surrogate char.</param>
-		/// <param name="escapeSize">Escape size in bytes.</param>
-		/// <returns>The escape rune from the buffer.</returns>
-		private static Rune GetEscapeRune(Span<Byte> buffer, ref Int32 escapeIndex, Char lowChar, ref Int32 escapeSize)
-		{
-			Rune rune;
-			if (!Char.IsLowSurrogate(lowChar) || !JsonConverter.HasHighSurrogate(buffer, escapeIndex, out Char high))
-			{
-#if NETCOREAPP
-				rune = new(lowChar);
-			}
-			else
-			{
-				rune = new(high, lowChar);
-#else
-				rune = lowChar;
-			}
-			else
-			{
-				rune = (Rune)Char.ConvertToUtf32(high, lowChar);
-#endif
-				escapeIndex -= 6; // Adjust for "\uXXXX" prefix.
-				escapeSize *= 2; // Double the size for surrogate pairs.
-			}
-			return rune;
-		}
-		/// <summary>
-		/// Indicates whether the buffer has a high surrogate character at the specified escape index.
-		/// </summary>
-		/// <param name="buffer">A UTF-8 unescaped buffer.</param>
-		/// <param name="escapeIndex">Index of escape begin.</param>
-		/// <param name="high">Output. High surrogate character.</param>
-		/// <returns>
-		/// <see langword="true"/> if the buffer has a high surrogate character at the specified escape index;
-		/// otherwise, <see langword="false"/>.
-		/// </returns>
-		private static Boolean HasHighSurrogate(Span<Byte> buffer, Int32 escapeIndex, out Char high)
-		{
-			Boolean hasHighSurrogate = buffer.Length - escapeIndex >= 6 &&
-				buffer.Slice(escapeIndex - 6, 2).SequenceEqual(CString.UnicodePrefix()); // Check for "\u" prefix.
-			high = JsonConverter.GetUnicodeChar(buffer.Slice(escapeIndex - 4, 4));
-			return hasHighSurrogate;
-		}
-		/// <summary>
-		/// Retrieves a Unicode character from the specified span of bytes.
-		/// </summary>
-		/// <param name="charCodeSpan">A UTF-8 span containing the hexadecimal value of a UTF-16 char.</param>
-		/// <returns>An unicode char.</returns>
-		private static Char GetUnicodeChar(ReadOnlySpan<Byte> charCodeSpan)
-		{
-			UInt16 result = 0;
-			unchecked
-			{
-				foreach (Byte t in charCodeSpan)
-				{
-					result <<= 4;
-					result += NativeUtilities.GetDecimalValue(t);
-				}
-				return (Char)result;
-			}
-		}
-		/// <summary>
-		/// Backs up the escaped string in the destination buffer.
-		/// </summary>
-		/// <param name="destination">Destination buffer.</param>
-		/// <param name="source">Source buffer.</param>
-		/// <returns>Destination buffer.</returns>
-		private static Span<Byte> BackupEscaped(Span<Byte> destination, ReadOnlySpan<Byte> source)
-		{
-			source.CopyTo(destination);
-			return destination;
-		}
-#endif
 	}
 }
 #endif

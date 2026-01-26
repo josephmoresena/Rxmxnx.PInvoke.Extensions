@@ -108,8 +108,7 @@ public sealed unsafe class MarshallerTests
 		using MemoryHandle handle = value.TryPin(out Boolean pinned);
 		if (pinned) return true;
 		if (!value.IsFunction) return false;
-		ref Byte refB = ref Unsafe.AsRef(in value.GetPinnableReference());
-		return !MemoryInspector.MayBeNonLiteral(MemoryMarshal.CreateReadOnlySpan(ref refB, 1));
+		return !MemoryInspector.MayBeNonLiteral(in value.GetPinnableReference());
 	}
 	private static CString.Marshaller Marshal(CString? value)
 	{

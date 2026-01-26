@@ -86,6 +86,20 @@ public abstract partial class ValueRegion<T>
 	public abstract ValueRegion<T> Slice(Int32 startIndex, Int32 length);
 
 	/// <summary>
+	/// Attempts to retrieve a <see cref="ReadOnlyMemory{T}"/> instance representing the current instance.
+	/// </summary>
+	/// <param name="memory">Output. A <see cref="ReadOnlyMemory{T}"/> instance representing the current instance.</param>
+	/// <returns>
+	/// <see langword="true"/> if <paramref name="memory"/> instance represents the current instance; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+	internal virtual Boolean TryGetMemory(out ReadOnlyMemory<T> memory)
+	{
+		Unsafe.SkipInit(out memory);
+		return false;
+	}
+
+	/// <summary>
 	/// Creates a new read-only span over this memory region.
 	/// </summary>
 	/// <returns>A read-only span representation of the memory region.</returns>
@@ -115,19 +129,6 @@ public abstract partial class ValueRegion<T>
 	/// </returns>
 	private protected virtual T[]? AsArray() => default;
 
-	/// <summary>
-	/// Attempts to retrieve a <see cref="ReadOnlyMemory{T}"/> instance representing the current instance.
-	/// </summary>
-	/// <param name="memory">Output. A <see cref="ReadOnlyMemory{T}"/> instance representing the current instance.</param>
-	/// <returns>
-	/// <see langword="true"/> if <paramref name="memory"/> instance represents the current instance; otherwise,
-	/// <see langword="false"/>.
-	/// </returns>
-	internal virtual Boolean TryGetMemory(out ReadOnlyMemory<T> memory)
-	{
-		Unsafe.SkipInit(out memory);
-		return false;
-	}
 	/// <summary>
 	/// Converts the value of the current <see cref="ValueRegion{T}"/> to its equivalent read-only span representation.
 	/// </summary>

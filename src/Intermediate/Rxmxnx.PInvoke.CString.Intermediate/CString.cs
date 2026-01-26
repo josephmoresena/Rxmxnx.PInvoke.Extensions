@@ -16,7 +16,7 @@ namespace Rxmxnx.PInvoke;
 #endif
 [DebuggerDisplay("{ToString()}")]
 [DebuggerTypeProxy(typeof(CStringDebugView))]
-#if !PACKAGE || NETCOREAPP
+#if NETCOREAPP
 [JsonConverter(typeof(JsonConverter))]
 #endif
 public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatable<String>
@@ -117,6 +117,26 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// </summary>
 	/// <param name="source">A read-only span of UTF-8 characters to initialize the new instance.</param>
 	public CString(ReadOnlySpan<Byte> source) : this(CString.CreateRepeatedSequence(source, 1)) { }
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CString"/> class using the UTF-8 characters
+	/// indicated in the specified read-only sequence.
+	/// </summary>
+	/// <param name="source">A read-only span of UTF-8 characters to initialize the new instance.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public CString(ReadOnlySequence<Byte> source)
+	{
+		Byte[] bytes = CString.CreateByteArray((Int32)(source.Length + 1));
+
+		source.CopyTo(bytes.AsSpan());
+		bytes[^1] = default;
+
+		this._isLocal = true;
+		this._length = bytes.Length - 1;
+		this._data = ValueRegion<Byte>.Create(bytes);
+		this.IsFunction = false;
+	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class using the UTF-16 characters
 	/// indicated in the specified read-only span.
@@ -268,6 +288,10 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// </summary>
 	/// <param name="pinned">Output. Indicates whether current instance was pinned.</param>
 	/// <returns>A <see cref="MemoryHandle"/> instance.</returns>
+	/// <remarks>
+	/// The returned handle may reference a valid memory address even when <paramref name="pinned"/> is
+	/// <see langword="false"/>, in which case memory stability is not guaranteed.
+	/// </remarks>
 	public unsafe MemoryHandle TryPin(out Boolean pinned)
 	{
 		if (this._data.GetPinnable(out Int32 index) is { } p)
@@ -278,20 +302,14 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 
 		fixed (void* ptr = &MemoryMarshal.GetReference(this._data.AsSpan()))
 		{
-			if (this.IsReference)
-			{
-				pinned = false;
-				return new(ptr);
-			}
-			if (this._data.TryAlloc(GCHandleType.Pinned, out GCHandle handle))
-			{
-				pinned = true;
-				return new(ptr, handle);
-			}
-		}
+			pinned = !MemoryInspector.MayBeNonLiteral(ptr);
 
-		pinned = false;
-		return default;
+			if (pinned || this.IsReference) return new(ptr);
+			if (!this._data.TryAlloc(GCHandleType.Pinned, out GCHandle handle)) return default;
+
+			pinned = true;
+			return new(ptr, handle);
+		}
 	}
 
 	/// <summary>
@@ -392,8 +410,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	public static CString CreateUnsafe(IntPtr ptr, Int32 length, Boolean useFullLength = false)
 		=> ptr != IntPtr.Zero ? new(ptr, length, useFullLength) : CString.Zero;
 	/// <summary>
-	/// Creates a new instance of the <see cref="CString"/> class using the pointer to a UTF-8
-	/// character array.
+	/// Creates a new instance of the <see cref="CString"/> class using the pointer to a UTF-8 character array.
 	/// </summary>
 	/// <param name="ptr">A pointer to an array of UTF-8 characters.</param>
 	/// <returns>A new instance of the <see cref="CString"/> class.</returns>
@@ -424,4 +441,63 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// </remarks>
 	public static Boolean IsImagePersistent([NotNullWhen(true)] CString? str)
 		=> str is not null && !MemoryInspector.MayBeNonLiteral(str._data.AsSpan());
+	/// <summary>
+	/// Retrieves the <see cref="CStringSequence"/> instance structurally associated with the specified
+	/// <paramref name="value"/>.
+	/// </summary>
+	/// <param name="value">A <see cref="CString"/> instance whose originating sequence is to be resolved.</param>
+	/// <param name="index">
+	/// Output. The zero-based index of the sequence item associated with <paramref name="value"/>,
+	/// or -1 if no association exists.
+	/// </param>
+	/// <returns>
+	/// The <see cref="CStringSequence"/> instance associated with <paramref name="value"/>, or <see langword="null"/>
+	/// if <paramref name="value"/> is not associated with any sequence.
+	/// </returns>
+	public static CStringSequence? GetAssociatedSequence(CString? value, out Int32 index)
+	{
+		if (!CString.IsNullOrEmpty(value) && value._data is IWrapper.IBase<SequenceItemState> state)
+			return state.Value.GetSequence(out index);
+
+		index = -1;
+		return default;
+	}
+	/// <summary>
+	/// Creates a new <see cref="CString"/> instance by unescaping the specified escaped UTF-8 text span.
+	/// </summary>
+	/// <param name="escaped">A span containing escaped UTF-8 encoded text.</param>
+	/// <returns>A new <see cref="CString"/> instance containing the unescaped UTF-8 text.</returns>
+	public static CString Unescape(ReadOnlySpan<Byte> escaped)
+	{
+		if (escaped.IsEmpty) return CString.Empty;
+
+		UtfReadHelper helper = StackAllocationHelper.HasStackBytes(escaped.Length) ?
+			new(stackalloc Byte[escaped.Length + 1]) :
+			new(escaped.Length);
+
+		escaped.CopyTo(helper.Bytes);
+
+		Int32 length = escaped.Length +
+			CString.FinalizeBuffer(helper.Bytes, TextUnescape.Unescape(helper.Bytes[..escaped.Length]),
+			                       helper.HasArray);
+		return new(helper, length);
+	}
+	/// <summary>
+	/// Creates a new <see cref="CString"/> instance by unescaping the specified escaped UTF-8 text sequence.
+	/// </summary>
+	/// <param name="escaped">A sequence containing escaped UTF-8 encoded text.</param>
+	/// <returns>A new <see cref="CString"/> instance containing the unescaped UTF-8 text.</returns>
+	public static CString Unescape(ReadOnlySequence<Byte> escaped)
+	{
+		if (escaped.IsEmpty) return CString.Empty;
+
+		Int32 length = (Int32)escaped.Length;
+		UtfReadHelper helper = StackAllocationHelper.HasStackBytes(length) ?
+			new(stackalloc Byte[length + 1]) :
+			new(length);
+
+		escaped.CopyTo(helper.Bytes);
+		length += CString.FinalizeBuffer(helper.Bytes, TextUnescape.Unescape(helper.Bytes[..length]), helper.HasArray);
+		return new(helper, length);
+	}
 }

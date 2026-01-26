@@ -50,6 +50,22 @@ public sealed partial class CStringBuilder
 		return this;
 	}
 	/// <summary>
+	/// Appends the specified UTF-8 units read-only sequence to this instance.
+	/// </summary>
+	/// <param name="value">The UTF-8 units read-only sequence to append.</param>
+	/// <returns>A reference to this instance after the append operation has completed.</returns>
+	public CStringBuilder Append(ReadOnlySequence<Byte> value)
+	{
+		if (value.IsEmpty) return this;
+#if NET9_0_OR_GREATER
+		using (this._lock.EnterScope())
+#else
+		lock (this._lock)
+#endif
+			this._chunk = this._chunk.Append(value);
+		return this;
+	}
+	/// <summary>
 	/// Appends the UTF-8 representation of the characters in the specified array to this instance.
 	/// </summary>
 	/// <param name="value">The array of characters to append.</param>

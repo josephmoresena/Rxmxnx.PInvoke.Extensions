@@ -157,4 +157,26 @@ public partial class CString
 		return (Byte[]?)value._data ?? throw new InvalidOperationException();
 	}
 #endif
+	/// <summary>
+	/// Finalize the UTF-8 text containing buffer <paramref name="buffer"/>.
+	/// </summary>
+	/// <param name="buffer">Buffer to finalize.</param>
+	/// <param name="unusedCount">Unused byte count.</param>
+	/// <param name="clearUnused">Indicates whether the current unused bytes should be cleared.</param>
+	/// <returns>Additive inverse of the number of unused bytes at the end of the buffer.</returns>
+	internal static Int32 FinalizeBuffer(Span<Byte> buffer, Int32 unusedCount, Boolean clearUnused)
+	{
+		Span<Byte> unusedBytes = buffer[^unusedCount..];
+		switch (clearUnused)
+		{
+			case false when !unusedBytes.IsEmpty:
+				unusedBytes[0] = default; // Clear only the first invalid byte in the buffer.
+				break;
+			case true when !unusedBytes.IsEmpty &&
+				StackAllocationHelper.IsReusableBuffer(buffer.Length, unusedBytes.Length):
+				unusedBytes.Clear(); // Clear the rest of the buffer.
+				break;
+		}
+		return -unusedBytes.Length;
+	}
 }

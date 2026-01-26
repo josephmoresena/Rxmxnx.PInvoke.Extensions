@@ -16,7 +16,7 @@
 #endif
 [DebuggerDisplay("Count = {Count}")]
 [DebuggerTypeProxy(typeof(CStringSequenceDebugView))]
-#if !PACKAGE || NETCOREAPP
+#if NETCOREAPP
 [JsonConverter(typeof(JsonConverter))]
 #endif
 public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequence>
@@ -171,6 +171,34 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 			bufferLength += length.GetValueOrDefault();
 		return CString.Create(this.CreateTextArray(bufferLength));
 	}
+	/// <summary>
+	/// Attempts to retrieve the index of the item <em>associated by instance</em> with the specified
+	/// <paramref name="value"/>.
+	/// </summary>
+	/// <param name="value">A <see cref="CString"/> instance to test for association with the current sequence.</param>
+	/// <param name="index">
+	/// Output. When this method returns <see langword="true"/>, contains the zero-based index of the associated item.
+	/// When it returns <see langword="false"/>, may contain the index of a value-equal item if a match by content is
+	/// found.
+	/// </param>
+	/// <returns>
+	/// <see langword="true"/> if <paramref name="value"/> is directly associated with the current instance; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+	public Boolean TryGetIndex(CString? value, out Int32 index)
+	{
+		if (!CString.IsNullOrEmpty(value))
+		{
+			if (Object.ReferenceEquals(this, CString.GetAssociatedSequence(value, out index))) return true;
+			ReadOnlySpan<Byte> bytes = MemoryMarshal.AsBytes(this._value.AsSpan());
+			Int32 spanIndex = bytes.IndexOf(value.AsSpan());
+			if (spanIndex >= 0)
+				index = this.ResolveIndexFromOffset(spanIndex);
+			return false;
+		}
+		index = this.GetIndexOfExactLength(value is not null && !value.IsZero ? 0 : null);
+		return false;
+	}
 
 	/// <summary>
 	/// Creates a new UTF-8 text sequence with specific lengths, and initializes each
@@ -258,4 +286,12 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		Boolean isParsable = bufferSpan[0] != 0 && bufferSpan[^1] == 0;
 		return isParsable ? CStringSequence.CreateFrom(value) : CStringSequence.CreateFrom(bufferSpan);
 	}
+	/// <summary>
+	/// Initializes new <see cref="Builder"/> instance.
+	/// </summary>
+	/// <returns>A new <see cref="Builder"/> instance.</returns>
+	/// <remarks>
+	/// Avoid boxing the resulting instance since <see cref="Builder"/> is a <see cref="ValueType"/>.
+	/// </remarks>
+	public static Builder CreateBuilder() => new();
 }

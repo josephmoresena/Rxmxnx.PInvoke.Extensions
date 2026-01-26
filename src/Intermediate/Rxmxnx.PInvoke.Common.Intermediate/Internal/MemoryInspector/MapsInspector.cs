@@ -70,21 +70,19 @@ internal partial class MemoryInspector
 		}
 
 		/// <inheritdoc/>
-		public sealed override Boolean IsLiteral(ReadOnlySpan<Byte> span)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public override Boolean IsLiteral(void* ptr)
 		{
-			fixed (void* ptr = &MemoryMarshal.GetReference(span))
-			{
 #if NET9_0_OR_GREATER
-				using (this._lock.EnterScope())
+			using (this._lock.EnterScope())
 #else
-				lock (this._lock)
+			lock (this._lock)
 #endif
-				{
-					if (this.TryGetProtection(ptr, out Boolean isReadOnly))
-						return isReadOnly;
-					this.RefreshMaps();
-					return this.TryGetProtection(ptr, out isReadOnly) && isReadOnly;
-				}
+			{
+				if (this.TryGetProtection(ptr, out Boolean isReadOnly))
+					return isReadOnly;
+				this.RefreshMaps();
+				return this.TryGetProtection(ptr, out isReadOnly) && isReadOnly;
 			}
 		}
 

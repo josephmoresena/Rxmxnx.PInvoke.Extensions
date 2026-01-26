@@ -1,36 +1,38 @@
 name: WebASM Actions
-on: workflow_call
+on:
+  workflow_call:
+    inputs:
+      package_version:
+        required: false
+        default: ''
+        type: string
 
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      SHOW_DIAGNOSTICS: true
+      PackageVersion: ${{ inputs.package_version }}
     steps:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 1
-
-      - name: Restore Internal NuGet Packages
+      - name: Restore NuGet Package
         uses: actions/cache/restore@v5
         with:
           path: ./package/Nuget
           key: internal-nuget-${{ github.run_id }}
           fail-on-cache-miss: true
           enableCrossOsArchive: true
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
-
       - name: Install WebAssembly Workload
         shell: bash
         run: |
           dotnet workload install wasm-tools
           dotnet workload install wasm-tools-net9
           dotnet workload update
-
       - name: Install Escripten
         shell: bash
         run: |
@@ -40,7 +42,6 @@ jobs:
           sudo ./emsdk install latest
           sudo ./emsdk activate latest
           sudo chmod -R 777 /opt/emsdk
-
       - name: Web-Compile ApplicationTest
         shell: bash
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest

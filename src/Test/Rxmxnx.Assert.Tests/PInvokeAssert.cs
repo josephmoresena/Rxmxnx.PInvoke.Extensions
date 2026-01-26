@@ -267,7 +267,8 @@ public sealed class PInvokeAssert
 #else
 	{
 		Assert.AreEqual(expected, actual);
-		Assert.AreSame(expected, actual);
+		if (!typeof(T).IsValueType)
+			Assert.AreSame(expected, actual);
 	}
 #endif
 #if NETCOREAPP

@@ -51,12 +51,17 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 			;
 
+#if !CSHARP9_0
+		public static readonly Random Shared = new Random();
+		public static readonly CString Null = new CString(RuntimeHelper.NullBytes);
+#else
 		public static readonly Random Shared = new();
 		public static readonly CString Null = new(static () =>
 		{
 			Byte[] utf8 = { (Byte)'N', (Byte)'u', (Byte)'l', (Byte)'l', (Byte)'\0', };
 			return utf8.AsSpan()[..^1];
 		});
+#endif
 
 		public static void PrintRuntimeInfo()
 		{
@@ -94,7 +99,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Console.WriteLine($"IL compilation time: {JitInfo.GetCompilationTime()}");
 #endif
 			Console.WriteLine("========== Rxmxnx.PInvoke Runtime information ==========");
+#if !RELEASE_PACKAGE
 			Console.WriteLine($"Package: {SystemInfo.CompilationFramework}");
+#endif
 			Console.WriteLine($"Native AOT: {AotInfo.IsNativeAot}");
 			Console.WriteLine($"Reflection Enabled: {!AotInfo.IsReflectionDisabled}");
 			Console.WriteLine($"IL Code Generation Supported: {AotInfo.IsCodeGenerationSupported}");
@@ -165,5 +172,12 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				_ => $"{architecture}",
 			};
 		private static String GetAssemblyName(this Assembly assembly) => $"{assembly.FullName} {assembly.Location}";
+#if !CSHARP9_0
+		private static ReadOnlySpan<Byte> NullBytes()
+		{
+			Byte[] utf8 = { (Byte)'N', (Byte)'u', (Byte)'l', (Byte)'l', (Byte)'\0', };
+			return utf8.AsSpan()[..^1];
+		}
+#endif
 	}
 }

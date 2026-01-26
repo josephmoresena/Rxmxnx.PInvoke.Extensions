@@ -47,7 +47,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			}
 			finally
 			{
+#if !CSHARP9_0
+				if (array != null)
+#else
 				if (array is not null)
+#endif
 					ArrayPool<Double>.Shared.Return(array);
 			}
 		}
@@ -86,7 +90,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			}
 			finally
 			{
+#if !CSHARP9_0
+				if (array != null)
+#else
 				if (array is not null)
+#endif
 					ArrayPool<Double>.Shared.Return(array);
 			}
 		}

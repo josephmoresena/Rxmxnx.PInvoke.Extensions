@@ -81,18 +81,18 @@ public unsafe partial class CString
 
 			// Empty CString
 			if (this._managed._length == 0)
-				return this.GetDirectPointer(CString.Empty);
+			{
+				ref Byte refUtf8 = ref Unsafe.AsRef(in CString.Empty.GetPinnableReference());
+				this._pointer = (IntPtr)Unsafe.AsPointer(ref refUtf8);
+				return this._pointer;
+			}
 
 			// Null-terminated
 			if (this._managed.IsNullTerminated)
 			{
-				if (this._managed.IsReference || (this._managed.IsFunction && CString.IsImagePersistent(this._managed)))
-					return this.GetDirectPointer(this._managed);
-
 				this._pinnable = this._managed.TryPin(out Boolean pinned);
 				if (pinned)
 				{
-					// If the CString is pinned, we can use the pointer from the pinning handle.
 					this._pointer = (IntPtr)this._pinnable.Pointer;
 					return this._pointer;
 				}
@@ -106,18 +106,6 @@ public unsafe partial class CString
 			this._managed.AsSpan().CopyTo(output);
 			output[^1] = default; // Ensure null-termination.
 
-			return this._pointer;
-		}
-		/// <summary>
-		/// Retrieves a direct pointer to <paramref name="source"/> data.
-		/// </summary>
-		/// <param name="source">A <see cref="CString"/> instance.</param>
-		/// <returns>A direct  pointer to <paramref name="source"/> data.</returns>
-		private IntPtr GetDirectPointer(CString source)
-		{
-			// If the CString is a reference or literal, we can use the pointer directly.
-			ref Byte refUtf8 = ref Unsafe.AsRef(in source.GetPinnableReference());
-			this._pointer = (IntPtr)Unsafe.AsPointer(ref refUtf8);
 			return this._pointer;
 		}
 		/// <summary>
