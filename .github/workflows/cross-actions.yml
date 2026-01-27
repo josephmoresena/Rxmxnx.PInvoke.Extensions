@@ -14,7 +14,7 @@ on:
         required: false
         default: ''
         type: string
-        
+
 permissions:
   contents: write
 jobs:
@@ -367,13 +367,28 @@ jobs:
         shell: pwsh
         run: |
           $binPatterns = @(
-            "./artifacts/*NAOT*",
-            "./artifacts/*RFM*",
-            "./artifacts/Mono/X86/*",
-            "./artifacts/Mono/X64/*",
+            "./artifacts/*x64*NAOT*",
+            "./artifacts/*x64*RFM*",
+            "./artifacts/Mono/X64/*"
+          )
+          ./ZipAndClean.ps1 -ZipName "${{ runner.os }}-x64-Assets.zip" -Patterns $binPatterns
+          $binPatterns = @(
+            "./artifacts/*arm64*NAOT*",
+            "./artifacts/*arm64*RFM*",
             "./artifacts/Mono/Arm64/*"
           )
-          ./ZipAndClean.ps1 -ZipName "${{ runner.os }}-Assets.zip" -Patterns $binPatterns
+          ./ZipAndClean.ps1 -ZipName "${{ runner.os }}-arm64-Assets.zip" -Patterns $binPatterns
+          $binPatterns = @(
+            "./artifacts/*x86*NAOT*",
+            "./artifacts/*x86*RFM*",
+            "./artifacts/Mono/X86/*"
+          )
+          ./ZipAndClean.ps1 -ZipName "${{ runner.os }}-x86-Assets.zip" -Patterns $binPatterns
+          $binPatterns = @(
+            "./artifacts/*arm*NAOT*",
+            "./artifacts/*arm*RFM*"
+          )
+          ./ZipAndClean.ps1 -ZipName "${{ runner.os }}-arm-Assets.zip" -Patterns $binPatterns
       - name: Upload Release Assets
         if: inputs.build_artifacts == true && inputs.package_version != ''
         env:
