@@ -72,7 +72,9 @@ public partial class Launcher
 		String bundleLog = Path.Combine(outputPath.FullName,
 		                                $"{applicationName}.{monoLauncher.Architecture}.Mono.Bundle.log");
 		String binaryExtension = OperatingSystem.IsWindows() ? ".exe" : "";
-		String binaryName = $"{applicationName}{binaryExtension}";
+		String complement =
+			$"{(!applicationName.Contains(".mono", StringComparison.InvariantCultureIgnoreCase) ? ".mono" : "")}";
+		String binaryName = $"{applicationName}{complement}{binaryExtension}";
 		String outputBinaryPath = Path.Combine(binaryOutputPath.FullName, binaryName);
 		ExecuteState<MonoBundleArgs> state = new()
 		{
@@ -98,8 +100,8 @@ public partial class Launcher
 			ArgState = state.ArgState with
 			{
 				UseLlvm = true,
-				OutputBinaryPath =
-				Path.Combine(binaryOutputPath.FullName, $"{applicationName}.llvm{binaryExtension}"),
+				OutputBinaryPath = Path.Combine(binaryOutputPath.FullName,
+				                                $"{applicationName}{complement}.llvm{binaryExtension}"),
 			},
 		};
 		bundleLog = Path.Combine(outputPath.FullName,
