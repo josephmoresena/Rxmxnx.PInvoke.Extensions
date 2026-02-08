@@ -5,13 +5,16 @@ public static class MakerPatcher
 	[Flags]
 	public enum Result
 	{
-		MonoLibNotFound = -1024,
-		MakeBundleNotFound = -512,
-		MsCoreLibNotFound = -256,
-		MonoCecilError = -128,
-		Vc14ClangTypeNotFound = -64,
-		MkBundleTypeNotFound = -32,
-		FindVcToolchainProgramMethodNotFound = -16,
+		MonoLibNotFound = -8192,
+		MakeBundleNotFound = -4096,
+		MsCoreLibNotFound = -2048,
+		MonoCecilError = -1024,
+		Vc15ClangTypeNotFound = -512,
+		Vc14ClangTypeNotFound = -256,
+		Vc15ToolchainProgramTypeNotFound = -128,
+		MkBundleTypeNotFound = -64,
+		FindVcToolchainProgramMethodNotFound = -32,
+		IsVisualStudio15NotFound = -16,
 		GenerateBundlesMethodNotFound = -8,
 		AotCompileMethodNotFound = -4,
 		ExecuteMethodNotFound = -2,
@@ -65,9 +68,21 @@ public static class MakerPatcher
 			Console.WriteLine($"Patching {sourceAssembly.FullName}...");
 			using AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(outputPath, readerParameters);
 			using ModuleDefinition? module = assembly.MainModule;
-			
+
 			if (module.Types.FirstOrDefault(t => t.Name == "MakeBundle") is not { } mkbundleType)
 				return Result.MkBundleTypeNotFound;
+
+			Dictionary<String, TypeDefinition> nestedTypes = mkbundleType.NestedTypes
+			                                                             .Where(MakerPatcher.IsRequiredNestedType)
+			                                                             .ToDictionary(
+				                                                             MakerPatcher.GetNestedTypeName, t => t);
+
+			if (nestedTypes.GetValueOrDefault("VC15ToolchainProgram") is not { } vc15ToolchainProgramType)
+				return Result.Vc15ToolchainProgramTypeNotFound;
+			if (nestedTypes.GetValueOrDefault("VC14Clang") is not { } vc14ClangType)
+				return Result.Vc14ClangTypeNotFound;
+			if (nestedTypes.GetValueOrDefault("VC15Clang") is not { } vc15ClangType)
+				return Result.Vc15ClangTypeNotFound;
 
 			MethodDefinition? aotCompileMethod = default;
 			MethodDefinition? executeMethod = default;
@@ -85,41 +100,44 @@ public static class MakerPatcher
 				if (aotCompileMethod is not null && executeMethod is not null)
 					break;
 			}
-
-			switch (aotCompileMethod)
-			{
-				case null when executeMethod is null:
-					return Result.AotCompileMethodNotFound | Result.ExecuteMethodNotFound;
-				case null:
-					return Result.AotCompileMethodNotFound;
-				default:
-					if (executeMethod is null)
-						return Result.ExecuteMethodNotFound;
-					break;
-			}
-
-			MethodDefinition? generateBundlesMethod = mkbundleType.NestedTypes
-			                                                      .Where(nt => nt.Name.Contains("DisplayClass"))
-			                                                      .SelectMany(nt => nt.Methods.Where(m => m.Name
-				                                                                  .Contains("<GenerateBundles>")))
-			                                                      .FirstOrDefault();
-
-			if (generateBundlesMethod is null)
-				return Result.GenerateBundlesMethodNotFound;
-
-			if (mkbundleType.NestedTypes.FirstOrDefault(t => t.Name == "VC14Clang") is not { } vc14ClangType)
-				return Result.Vc14ClangTypeNotFound;
+			MethodDefinition? generateBundlesMethod = MakerPatcher.GetMethod(nestedTypes, "GenerateBundles");
+			MethodDefinition? isVisualStudio15Method =
+				MakerPatcher.GetMethod(nestedTypes, "VisualStudioSDKHelper", "IsVisualStudio15");
 
 			MethodDefinition? findVcToolchainProgramMethod =
 				vc14ClangType.Methods.FirstOrDefault(m => m.Name is "FindVCToolchainProgram");
 
+			Result error = Result.Done;
+			if (aotCompileMethod is null)
+				error |= Result.AotCompileMethodNotFound;
+			if (executeMethod is null)
+				error |= Result.ExecuteMethodNotFound;
+			if (generateBundlesMethod is null)
+				error |= Result.GenerateBundlesMethodNotFound;
+			if (isVisualStudio15Method is null)
+				error |= Result.IsVisualStudio15NotFound;
 			if (findVcToolchainProgramMethod is null)
-				return Result.FindVcToolchainProgramMethodNotFound;
+				error |= Result.FindVcToolchainProgramMethodNotFound;
+			if (error is not Result.Done)
+				return error;
 
-			MakerPatcher.PatchAotCompileMethod(aotCompileMethod, ref modified);
-			MakerPatcher.PatchExecuteMethod(executeMethod, ref modified);
-			MakerPatcher.PatchGenerateBundlesMethod(generateBundlesMethod, ref modified);
-			MakerPatcher.PatchFindVcToolchainProgramMethod(findVcToolchainProgramMethod, ref modified);
+			MakerPatcher.PatchAotCompileMethod(aotCompileMethod!, ref modified);
+			MakerPatcher.PatchExecuteMethod(executeMethod!, ref modified);
+			MakerPatcher.PatchGenerateBundlesMethod(generateBundlesMethod!, ref modified);
+			MakerPatcher.PatchIsVersion15Method(isVisualStudio15Method!, ref modified);
+			MakerPatcher.PatchFindVcToolchainProgramMethod(findVcToolchainProgramMethod!, ref modified);
+
+			if (vc14ClangType.BaseType.FullName != vc15ToolchainProgramType.FullName)
+			{
+				vc14ClangType.BaseType = vc15ToolchainProgramType;
+				modified = true;
+			}
+
+			if (vc15ClangType.BaseType.FullName != vc15ToolchainProgramType.BaseType.FullName)
+			{
+				vc15ClangType.BaseType = vc15ToolchainProgramType.BaseType;
+				modified = true;
+			}
 
 			Console.WriteLine($"{sourceAssembly.FullName} -> {outputPath}");
 			if (modified)
@@ -133,6 +151,22 @@ public static class MakerPatcher
 		}
 		return modified ? Result.Done : Result.Unmodified;
 	}
+	private static Boolean IsRequiredNestedType(TypeDefinition nestedType)
+	{
+		if (nestedType.Name.StartsWith("VC1")) //VC14 or VC15
+			return true;
+		if (nestedType.Name.Contains("DisplayClass")) // Class for GenerateBundles action.
+			return nestedType.Methods.Any(m => m.Name.StartsWith("<GenerateBundles>"));
+		return nestedType.Name is "VCToolChainProgram" or "VisualStudioSDKHelper";
+	}
+	private static String GetNestedTypeName(TypeDefinition nestedType)
+		=> nestedType.Name.Contains("DisplayClass") ? "GenerateBundles" : nestedType.Name;
+	private static MethodDefinition? GetMethod(Dictionary<String, TypeDefinition> nestedTypes, String className,
+		String? methodName = default)
+		=> nestedTypes.GetValueOrDefault(className)?.Methods
+		              .FirstOrDefault(m => String.IsNullOrEmpty(methodName) ?
+			                              m.Name == methodName :
+			                              m.Name.StartsWith($"<{className}>"));
 	private static void PatchAotCompileMethod(MethodDefinition aotCompileMethod, ref Boolean modified)
 	{
 		Span<Boolean> done = [false, false, false, false,];
@@ -194,6 +228,14 @@ public static class MakerPatcher
 			modified = true;
 			return;
 		}
+	}
+	private static void PatchIsVersion15Method(MethodDefinition isVersion15Method, ref Boolean modified)
+	{
+		Instruction? instr = isVersion15Method.Body.Instructions.FirstOrDefault(i => i.OpCode == OpCodes.Beq_S);
+		if (instr is null) return;
+
+		instr.OpCode = OpCodes.Bge_S;
+		modified = true;
 	}
 	private static void PatchFindVcToolchainProgramMethod(MethodDefinition findVcToolchainProgramMethod,
 		ref Boolean modified)
