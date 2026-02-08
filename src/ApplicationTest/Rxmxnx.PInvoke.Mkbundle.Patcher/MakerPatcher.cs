@@ -277,7 +277,7 @@ public static class MakerPatcher
 
 		if (oldBaseClassName == newBaseTypeName) return;
 
-		Console.WriteLine($"{className}: -> {oldBaseClassName} -> {newBaseTypeName}");
+		Console.WriteLine($"{className}: {oldBaseClassName} -> {newBaseTypeName}");
 		classType.BaseType = newBaseType;
 		modified = true;
 	}
