@@ -126,18 +126,8 @@ public static class MakerPatcher
 			MakerPatcher.PatchGenerateBundlesMethod(generateBundlesMethod!, ref modified);
 			MakerPatcher.PatchIsVersion15Method(isVisualStudio15Method!, ref modified);
 			MakerPatcher.PatchFindVcToolchainProgramMethod(findVcToolchainProgramMethod!, ref modified);
-
-			if (vc14ClangType.BaseType.FullName != vc15ToolchainProgramType.FullName)
-			{
-				vc14ClangType.BaseType = vc15ToolchainProgramType;
-				modified = true;
-			}
-
-			if (vc15ClangType.BaseType.FullName != vc15ToolchainProgramType.BaseType.FullName)
-			{
-				vc15ClangType.BaseType = vc15ToolchainProgramType.BaseType;
-				modified = true;
-			}
+			MakerPatcher.ChangeBaseType(vc14ClangType, vc15ToolchainProgramType, ref modified);
+			MakerPatcher.ChangeBaseType(vc15ClangType, vc15ToolchainProgramType.BaseType, ref modified);
 
 			Console.WriteLine($"{sourceAssembly.FullName} -> {outputPath}");
 			if (modified)
@@ -204,11 +194,15 @@ public static class MakerPatcher
 	{
 		foreach (Instruction instr in executeMethod.Body.Instructions.Where(i => i.OpCode == OpCodes.Ldstr))
 		{
-			switch (instr.Operand)
+			String? oldOperand = instr.Operand as String;
+			switch (oldOperand)
 			{
 				case "/c \"{0}\"":
 				{
-					instr.Operand = "/v /c \"{0}\"";
+					const String replace = "/v /c \"{0}\"";
+
+					Console.WriteLine($"{oldOperand} -> {replace}");
+					instr.Operand = replace;
 					modified = true;
 					return;
 				}
@@ -224,6 +218,8 @@ public static class MakerPatcher
 				continue;
 
 			ILProcessor processor = methodBody.GetILProcessor();
+
+			Console.WriteLine($"Remove: {instr}");
 			processor.Remove(instr);
 			modified = true;
 			return;
@@ -235,6 +231,7 @@ public static class MakerPatcher
 		if (instr is null) return;
 
 		instr.OpCode = OpCodes.Bge_S;
+		Console.WriteLine($"{OpCodes.Beq_S} -> {OpCodes.Bge_S}");
 		modified = true;
 	}
 	private static void PatchFindVcToolchainProgramMethod(MethodDefinition findVcToolchainProgramMethod,
@@ -271,5 +268,17 @@ public static class MakerPatcher
 			modified = true;
 			if (done.SequenceEqual([true, true, true, true,])) return;
 		}
+	}
+	private static void ChangeBaseType(TypeDefinition classType, TypeReference newBaseType, ref Boolean modified)
+	{
+		String className = classType.FullName;
+		String oldBaseClassName = classType.BaseType.FullName;
+		String newBaseTypeName = newBaseType.FullName;
+
+		if (oldBaseClassName == newBaseTypeName) return;
+
+		Console.WriteLine($"{className}: -> {oldBaseClassName} -> {newBaseTypeName}");
+		classType.BaseType = newBaseType;
+		modified = true;
 	}
 }
