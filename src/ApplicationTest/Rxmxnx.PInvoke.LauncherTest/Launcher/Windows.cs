@@ -28,7 +28,7 @@ public partial class Launcher
 					Architecture.X86, ref this._monoLaunchers);
 		}
 		[LibraryImport("Rxmxnx.PInvoke.Mkbundle.Patcher", StringMarshalling = StringMarshalling.Utf16)]
-		private static partial SByte PatchAssemblyForWindows(String monoLibPath, Int32 monoLibPathLength,
+		private static partial Int32 PatchAssemblyForWindows(String monoLibPath, Int32 monoLibPathLength,
 			String outputPath, Int32 outputPathLength);
 
 		private static void AppendMonoLauncher(String monoPath, Architecture arch,
@@ -61,7 +61,7 @@ public partial class Launcher
 			String result = Path.Combine(monoBinPath, "mkbundle.bat");
 			try
 			{
-				SByte patchResult =
+				Int32 patchResult =
 					Windows.PatchAssemblyForWindows(monoRuntimePath, monoRuntimePath.Length, monoPatchPath,
 					                                monoPatchPath.Length);
 				ConsoleNotifier.Notifier.Result(patchResult, "mkbundle.exe patch");

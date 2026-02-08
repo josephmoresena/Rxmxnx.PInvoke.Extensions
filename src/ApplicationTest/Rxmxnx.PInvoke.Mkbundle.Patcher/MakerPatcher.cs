@@ -3,13 +3,16 @@
 public static class MakerPatcher
 {
 	[Flags]
-	public enum Result : SByte
+	public enum Result
 	{
-		MonoLibNotFound = -128,
-		MakeBundleNotFound = -64,
-		MsCoreLibNotFound = -32,
-		MonoCecilError = -16,
-		MkBundleTypeNotFound = -8,
+		MonoLibNotFound = -1024,
+		MakeBundleNotFound = -512,
+		MsCoreLibNotFound = -256,
+		MonoCecilError = -128,
+		Vc14ClangTypeNotFound = -64,
+		MkBundleTypeNotFound = -32,
+		FindVcToolchainProgramMethodNotFound = -16,
+		GenerateBundlesMethodNotFound = -8,
 		AotCompileMethodNotFound = -4,
 		ExecuteMethodNotFound = -2,
 		FileError = -1,
@@ -62,8 +65,9 @@ public static class MakerPatcher
 			Console.WriteLine($"Patching {sourceAssembly.FullName}...");
 			using AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(outputPath, readerParameters);
 			using ModuleDefinition? module = assembly.MainModule;
+			TypeDefinition[] typesToPatch = module.Types.Where(t => t.Name is "MakeBundle" or "VC14Clang").ToArray();
 
-			if (module.Types.FirstOrDefault(t => t.Name == "MakeBundle") is not { } mkbundleType)
+			if (typesToPatch.FirstOrDefault(t => t.Name == "MakeBundle") is not { } mkbundleType)
 				return Result.MkBundleTypeNotFound;
 
 			MethodDefinition? aotCompileMethod = default;
@@ -95,8 +99,28 @@ public static class MakerPatcher
 					break;
 			}
 
+			MethodDefinition? generateBundlesMethod = mkbundleType.NestedTypes
+			                                                      .Where(nt => nt.Name.Contains("DisplayClass"))
+			                                                      .SelectMany(nt => nt.Methods.Where(m => m.Name
+				                                                                  .Contains("<GenerateBundles>")))
+			                                                      .FirstOrDefault();
+
+			if (generateBundlesMethod is null)
+				return Result.GenerateBundlesMethodNotFound;
+
+			if (typesToPatch.FirstOrDefault(t => t.Name == "VC14Clang") is not { } vc14ClangType)
+				return Result.Vc14ClangTypeNotFound;
+
+			MethodDefinition? findVcToolchainProgramMethod =
+				vc14ClangType.Methods.FirstOrDefault(m => m.Name is "FindVCToolchainProgram");
+
+			if (findVcToolchainProgramMethod is null)
+				return Result.FindVcToolchainProgramMethodNotFound;
+
 			MakerPatcher.PatchAotCompileMethod(aotCompileMethod, ref modified);
 			MakerPatcher.PatchExecuteMethod(executeMethod, ref modified);
+			MakerPatcher.PatchGenerateBundlesMethod(generateBundlesMethod, ref modified);
+			MakerPatcher.PatchFindVcToolchainProgramMethod(findVcToolchainProgramMethod, ref modified);
 
 			Console.WriteLine($"{sourceAssembly.FullName} -> {outputPath}");
 			if (modified)
@@ -156,6 +180,55 @@ public static class MakerPatcher
 					return;
 				}
 			}
+		}
+	}
+	private static void PatchGenerateBundlesMethod(MethodDefinition generateBundlesMethod, ref Boolean modified)
+	{
+		MethodBody methodBody = generateBundlesMethod.Body;
+		foreach (Instruction instr in generateBundlesMethod.Body.Instructions.Where(i => i.OpCode == OpCodes.Call))
+		{
+			if (instr.Operand is not MethodReference { Name: "LocateFile", })
+				continue;
+
+			ILProcessor processor = methodBody.GetILProcessor();
+			processor.Remove(instr);
+			modified = true;
+			return;
+		}
+	}
+	private static void PatchFindVcToolchainProgramMethod(MethodDefinition findVcToolchainProgramMethod,
+		ref Boolean modified)
+	{
+		Span<Boolean> done = [false, false, false, false,];
+		foreach (Instruction instr in
+		         findVcToolchainProgramMethod.Body.Instructions.Where(i => i.OpCode == OpCodes.Ldstr))
+		{
+			String replace;
+			switch (instr.Operand)
+			{
+				case "ClangC2":
+					replace = "Tools";
+					done[0] = true;
+					break;
+				case "bin":
+					replace = "llvm";
+					done[1] = true;
+					break;
+				case "amd64":
+					replace = "x64\\bin";
+					done[2] = true;
+					break;
+				case "x86":
+					replace = "bin";
+					done[3] = true;
+					break;
+				default:
+					continue;
+			}
+			Console.WriteLine($"{instr.Operand} -> {replace}");
+			instr.Operand = replace;
+			modified = true;
+			if (done.SequenceEqual([true, true, true, true,])) return;
 		}
 	}
 }
