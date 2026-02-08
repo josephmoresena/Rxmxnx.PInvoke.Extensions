@@ -164,7 +164,7 @@ public static class MakerPatcher
 	private static MethodDefinition? GetMethod(Dictionary<String, TypeDefinition> nestedTypes, String className,
 		String? methodName = default)
 		=> nestedTypes.GetValueOrDefault(className)?.Methods
-		              .FirstOrDefault(m => String.IsNullOrEmpty(methodName) ?
+		              .FirstOrDefault(m => !String.IsNullOrEmpty(methodName) ?
 			                              m.Name == methodName :
 			                              m.Name.StartsWith($"<{className}>"));
 	private static void PatchAotCompileMethod(MethodDefinition aotCompileMethod, ref Boolean modified)
