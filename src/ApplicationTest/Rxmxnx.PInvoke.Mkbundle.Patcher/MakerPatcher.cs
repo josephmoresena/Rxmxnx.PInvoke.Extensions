@@ -65,9 +65,8 @@ public static class MakerPatcher
 			Console.WriteLine($"Patching {sourceAssembly.FullName}...");
 			using AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(outputPath, readerParameters);
 			using ModuleDefinition? module = assembly.MainModule;
-			TypeDefinition[] typesToPatch = module.Types.Where(t => t.Name is "MakeBundle" or "VC14Clang").ToArray();
-
-			if (typesToPatch.FirstOrDefault(t => t.Name == "MakeBundle") is not { } mkbundleType)
+			
+			if (module.Types.FirstOrDefault(t => t.Name == "MakeBundle") is not { } mkbundleType)
 				return Result.MkBundleTypeNotFound;
 
 			MethodDefinition? aotCompileMethod = default;
@@ -108,7 +107,7 @@ public static class MakerPatcher
 			if (generateBundlesMethod is null)
 				return Result.GenerateBundlesMethodNotFound;
 
-			if (typesToPatch.FirstOrDefault(t => t.Name == "VC14Clang") is not { } vc14ClangType)
+			if (mkbundleType.NestedTypes.FirstOrDefault(t => t.Name == "VC14Clang") is not { } vc14ClangType)
 				return Result.Vc14ClangTypeNotFound;
 
 			MethodDefinition? findVcToolchainProgramMethod =
