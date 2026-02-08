@@ -126,8 +126,8 @@ public static class MakerPatcher
 			MakerPatcher.PatchGenerateBundlesMethod(generateBundlesMethod!, ref modified);
 			MakerPatcher.PatchIsVersion15Method(isVisualStudio15Method!, ref modified);
 			MakerPatcher.PatchFindVcToolchainProgramMethod(findVcToolchainProgramMethod!, ref modified);
-			MakerPatcher.ChangeBaseType(vc14ClangType, vc15ToolchainProgramType, ref modified);
 			MakerPatcher.ChangeBaseType(vc15ClangType, vc15ToolchainProgramType.BaseType, ref modified);
+			MakerPatcher.ChangeBaseType(vc14ClangType, vc15ToolchainProgramType, ref modified);
 
 			Console.WriteLine($"{sourceAssembly.FullName} -> {outputPath}");
 			if (modified)
