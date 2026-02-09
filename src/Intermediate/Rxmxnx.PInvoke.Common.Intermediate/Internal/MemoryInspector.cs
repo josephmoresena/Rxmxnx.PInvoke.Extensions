@@ -36,7 +36,7 @@ internal abstract unsafe partial class MemoryInspector
 		else if (SystemInfo.IsMac)
 			MemoryInspector.instance = new Mac();
 
-		if (AotInfo.IsPlatformTrimmed) return;
+		if (TrimInfo.IsPlatformTrimmed()) return;
 
 		if (SystemInfo.IsSolaris)
 			MemoryInspector.instance = new Solaris();

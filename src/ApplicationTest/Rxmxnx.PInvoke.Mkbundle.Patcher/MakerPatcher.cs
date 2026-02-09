@@ -1,4 +1,6 @@
-﻿using Mono.Collections.Generic;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using Mono.Collections.Generic;
 
 namespace Rxmxnx.PInvoke.Mkbundle.Patcher;
 
@@ -7,13 +9,12 @@ public static class MakerPatcher
 	[Flags]
 	public enum Result
 	{
-		MonoLibNotFound = -8192,
-		MakeBundleNotFound = -4096,
-		MsCoreLibNotFound = -2048,
-		MonoCecilError = -1024,
-		Vc15ClangTypeNotFound = -512,
-		Vc14ClangTypeNotFound = -256,
-		Vc15ToolchainProgramTypeNotFound = -128,
+		MonoLibNotFound = -4096,
+		MakeBundleNotFound = -2048,
+		MsCoreLibNotFound = -1024,
+		MonoCecilError = -512,
+		Vc15ClangTypeNotFound = -256,
+		Vc14ClangTypeNotFound = -128,
 		MkBundleTypeNotFound = -64,
 		FindVcToolchainProgramMethodNotFound = -32,
 		IsVisualStudio15NotFound = -16,
@@ -79,8 +80,6 @@ public static class MakerPatcher
 			                                                             .ToDictionary(
 				                                                             MakerPatcher.GetNestedTypeName, t => t);
 
-			if (nestedTypes.GetValueOrDefault("VC15ToolchainProgram") is not { } vc15ToolchainProgramType)
-				return Result.Vc15ToolchainProgramTypeNotFound;
 			if (nestedTypes.GetValueOrDefault("VC14Clang") is not { } vc14ClangType)
 				return Result.Vc14ClangTypeNotFound;
 			if (nestedTypes.GetValueOrDefault("VC15Clang") is not { } vc15ClangType)
@@ -105,7 +104,6 @@ public static class MakerPatcher
 			MethodDefinition? generateBundlesMethod = MakerPatcher.GetMethod(nestedTypes, "GenerateBundles");
 			MethodDefinition? isVisualStudio15Method =
 				MakerPatcher.GetMethod(nestedTypes, "VisualStudioSDKHelper", "IsVisualStudio15");
-
 			MethodDefinition? findVcToolchainProgramMethod =
 				vc14ClangType.Methods.FirstOrDefault(m => m.Name is "FindVCToolchainProgram");
 
@@ -154,12 +152,16 @@ public static class MakerPatcher
 	}
 	private static String GetNestedTypeName(TypeDefinition nestedType)
 		=> nestedType.Name.Contains("DisplayClass") ? "GenerateBundles" : nestedType.Name;
+	[SuppressMessage("ReSharper", "HeapView.DelegateAllocation")]
 	private static MethodDefinition? GetMethod(Dictionary<String, TypeDefinition> nestedTypes, String className,
 		String? methodName = default)
-		=> nestedTypes.GetValueOrDefault(className)?.Methods
-		              .FirstOrDefault(m => !String.IsNullOrEmpty(methodName) ?
-			                              m.Name == methodName :
-			                              m.Name.StartsWith($"<{className}>"));
+	{
+		if (nestedTypes.GetValueOrDefault(className) is not { } classType)
+			return default;
+		return !String.IsNullOrEmpty(methodName) ?
+			classType.Methods.FirstOrDefault(m => m.Name == methodName) :
+			classType.Methods.FirstOrDefault(m => m.Name.StartsWith($"<{className}>"));
+	}
 	private static void PatchAotCompileMethod(MethodDefinition aotCompileMethod, ref Boolean modified)
 	{
 		Span<Boolean> done = [false, false, false, false,];

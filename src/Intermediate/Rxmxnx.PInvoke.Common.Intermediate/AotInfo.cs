@@ -16,7 +16,7 @@ public static partial class AotInfo
 		!AotInfo.IsJitEnabled();
 #else
 		JitInfo.GetCompiledILBytes() == 0L && JitInfo.GetCompiledMethodCount() == 0 &&
-		(AotInfo.IsDesktopTrimmedPlatform() || !EmitInfo.IsEmitAllowed);
+		(TrimInfo.IsDesktopTrimmedPlatform() || !EmitInfo.IsEmitAllowed);
 #endif
 
 	/// <summary>
@@ -35,7 +35,7 @@ public static partial class AotInfo
 			if (!AotInfo.IsNativeAot)
 				return false;
 #endif
-			return AotInfo.reflectionDisabled ??= !AotInfo.StringTypeNameContainsString();
+			return AotInfo.reflectionDisabled ??= !TrimInfo.StringTypeNameContainsString();
 		}
 	}
 	/// <summary>
@@ -62,30 +62,6 @@ public static partial class AotInfo
 	public static Boolean IsPlatformTrimmed
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get
-		{
-#if NET5_0_OR_GREATER
-			return AotInfo.IsDesktopTrimmedPlatform() || AotInfo.IsMobileTrimmedPlatform() ||
-				AotInfo.IsWebTrimmedPlatform();
-#else
-			return false;
-#endif
-		}
+		get => TrimInfo.IsPlatformTrimmed();
 	}
-
-	/// <summary>
-	/// Internal UTF-8 empty text.
-	/// </summary>
-	/// <returns>A read-only byte span of UTF-8 null-characters.</returns>
-	internal static ReadOnlySpan<Byte> EmptyUt8Text() => "\0\0\0"u8;
-	/// <summary>
-	/// Internal Windows New line UTF-8 sequence.
-	/// </summary>
-	/// <returns>A read-only byte span containing UTF-8 new line.</returns>
-	internal static ReadOnlySpan<Byte> WindowsNewLine() => "\r\n"u8;
-	/// <summary>
-	/// Internal non-Windows New line UTF-8 sequence.
-	/// </summary>
-	/// <returns>A read-only byte span containing UTF-8 new line.</returns>
-	internal static ReadOnlySpan<Byte> NonWindowsNewLine() => "\n"u8;
 }

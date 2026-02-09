@@ -6,6 +6,7 @@
         <Using Include="System.Buffers"/>
         <Using Include="System.Collections"/>
         <Using Include="System.ComponentModel"/>
+        <Using Include="System.Diagnostics"/>
         <Using Include="System.Diagnostics.CodeAnalysis"/>
         <Using Include="System.Globalization"/>
         <Using Include="System.Numerics"/>

@@ -6,16 +6,6 @@
 #endif
 public static partial class AotInfo
 {
-	/// <summary>
-	/// Indicates whether <see cref="String"/> type name contains the <c>String</c> word.
-	/// </summary>
-	/// <returns>
-	/// <see langword="true"/> if <see cref="String"/> type name contains the <c>String</c> word;
-	/// otherwise, <see langword="false"/>.
-	/// </returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static Boolean StringTypeNameContainsString()
-		=> typeof(String).ToString().AsSpan().EndsWith(nameof(String).AsSpan());
 #if !NET6_0_OR_GREATER
 	/// <summary>
 	/// Indicates whether JIT is enabled in the current runtime.
@@ -29,14 +19,14 @@ public static partial class AotInfo
 	{
 		try
 		{
-			if (!AotInfo.StringTypeNameContainsString())
+			if (!TrimInfo.StringTypeNameContainsString())
 			{
 				// If reflection disabled, is AOT.
 				AotInfo.reflectionDisabled = true;
 				return false;
 			}
 
-			if (Type.GetType("System.Runtime.JitInfo") is { } typeJitInfo)
+			if (typeof(RuntimeInformation).Assembly.GetType("System.Runtime.JitInfo") is { } typeJitInfo)
 			{
 				// Tries to retrieve JIT information using reflection.
 				Boolean? isJitEnabled = AotInfo.IsJitEnabled(typeJitInfo);
@@ -53,6 +43,22 @@ public static partial class AotInfo
 				// IL2CPP is an AOT mode.
 				return false;
 			}
+
+// 			if (MonoInfo.MonoRuntimeType is not null)
+// 			{
+// 				// Mono/Xamarin
+// 				StackTrace stackTrace = new();
+// #if !NETCOREAPP
+// 				StackFrame?[] frames = stackTrace.GetFrames() ?? [];
+// #else
+// 				StackFrame?[] frames = stackTrace.GetFrames();
+// #endif
+// 				Boolean isAot = true;
+// 				foreach (StackFrame? frame in frames)
+// 					if (frame is null)
+// 						continue;
+// 				return isAot;
+// 			}
 
 			// System.Reflection.Emit is not allowed in AOT.
 			return EmitInfo.IsEmitAllowed;
@@ -116,44 +122,9 @@ public static partial class AotInfo
 		Assembly[] array = AppDomain.CurrentDomain.GetAssemblies();
 		return MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(array), array.Length);
 	}
-#endif
-#if NET5_0_OR_GREATER
-	/// <summary>
-	/// Indicates the current platform is desktop and trimmed.
-	/// </summary>
-	/// <returns>
-	/// <see langword="true"/> if current platform is desktop and trimmed; otherwise, <see langword="false"/>.
-	/// </returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static Boolean IsDesktopTrimmedPlatform()
-		=> OperatingSystem.IsWindows() || OperatingSystem.IsLinux() || OperatingSystem.IsMacOS() ||
-			OperatingSystem.IsFreeBSD();
-	/// <summary>
-	/// Indicates the current platform is mobile and trimmed.
-	/// </summary>
-	/// <returns>
-	/// <see langword="true"/> if current platform is mobile and trimmed; otherwise, <see langword="false"/>.
-	/// </returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static Boolean IsMobileTrimmedPlatform()
-		=> OperatingSystem.IsAndroid() || OperatingSystem.IsIOS() || OperatingSystem.IsTvOS() ||
-			OperatingSystem.IsWatchOS()
-#if NET6_0_OR_GREATER
-			|| OperatingSystem.IsMacCatalyst()
-#endif
-	;
-	/// <summary>
-	/// Indicates the current platform is web and trimmed.
-	/// </summary>
-	/// <returns>
-	/// <see langword="true"/> if current platform is web and trimmed; otherwise, <see langword="false"/>.
-	/// </returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static Boolean IsWebTrimmedPlatform()
-		=> OperatingSystem.IsBrowser()
-#if NET8_0_OR_GREATER
-			|| OperatingSystem.IsWasi()
-#endif
-	;
+	// private static Boolean IsNativeMethod(RuntimeMethodHandle methodHandle)
+	// {
+	// 	
+	// }
 #endif
 }
