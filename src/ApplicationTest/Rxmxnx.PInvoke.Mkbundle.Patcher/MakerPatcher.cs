@@ -1,4 +1,6 @@
-﻿namespace Rxmxnx.PInvoke.Mkbundle.Patcher;
+﻿using Mono.Collections.Generic;
+
+namespace Rxmxnx.PInvoke.Mkbundle.Patcher;
 
 public static class MakerPatcher
 {
@@ -126,9 +128,9 @@ public static class MakerPatcher
 			MakerPatcher.PatchGenerateBundlesMethod(generateBundlesMethod!, ref modified);
 			MakerPatcher.PatchIsVersion15Method(isVisualStudio15Method!, ref modified);
 			MakerPatcher.PatchFindVcToolchainProgramMethod(findVcToolchainProgramMethod!, ref modified);
-			MakerPatcher.ChangeBaseType(vc15ClangType, module.ImportReference(vc15ToolchainProgramType.BaseType),
-			                            ref modified);
-			MakerPatcher.ChangeBaseType(vc14ClangType, module.ImportReference(vc15ToolchainProgramType), ref modified);
+			MakerPatcher.PatchVc14ClangType(vc14ClangType, module.ImportReference(isVisualStudio15Method),
+			                                ref modified);
+			MakerPatcher.PatchVc15ClangType(vc15ClangType, ref modified);
 
 			Console.WriteLine($"{sourceAssembly.FullName} -> {outputPath}");
 			if (modified)
@@ -270,16 +272,46 @@ public static class MakerPatcher
 			if (done.SequenceEqual([true, true, true, true,])) return;
 		}
 	}
-	private static void ChangeBaseType(TypeDefinition classType, TypeReference newBaseType, ref Boolean modified)
+	private static void PatchVc14ClangType(TypeDefinition vc14ClangType, MethodReference isVersion15Method,
+		ref Boolean modified)
 	{
-		String className = classType.FullName;
-		String oldBaseClassName = classType.BaseType.FullName;
-		String newBaseTypeName = newBaseType.FullName;
+		MethodDefinition? isVersionMethod = vc14ClangType.Methods.First(m => m.Name == "IsVersion");
+		Instruction? instr = isVersionMethod?.Body.Instructions.FirstOrDefault(i => i.OpCode == OpCodes.Call);
+		if (instr is null || (instr.Operand is MethodReference methodRef &&
+			    methodRef.FullName == isVersion15Method.FullName)) return;
 
-		if (oldBaseClassName == newBaseTypeName) return;
+		Console.WriteLine($"{isVersionMethod!.FullName} -> {isVersion15Method.FullName}");
+		instr.Operand = isVersion15Method;
+		modified = true;
+	}
+	private static void PatchVc15ClangType(TypeDefinition vc15ClangType, ref Boolean modified)
+	{
+		MethodDefinition? isVersionMethod = vc15ClangType.Methods.FirstOrDefault(m => m.Name == "IsVersion");
+		if (isVersionMethod is null) return;
 
-		Console.WriteLine($"{className}: {oldBaseClassName} -> {newBaseTypeName}");
-		classType.BaseType = newBaseType;
+		MethodBody methodBody = isVersionMethod.Body;
+		Collection<Instruction>? instructions = methodBody.Instructions;
+
+		if (instructions.Count == 2 && instructions[0].OpCode == OpCodes.Ldc_I4_0 &&
+		    instructions[1].OpCode == OpCodes.Ret)
+			return;
+
+		Console.WriteLine($"{isVersionMethod.FullName} -> false");
+
+		instructions.Clear();
+		if (methodBody.HasVariables)
+			methodBody.Variables.Clear();
+		if (methodBody.HasExceptionHandlers)
+			methodBody.ExceptionHandlers.Clear();
+
+		ILProcessor processor = methodBody.GetILProcessor();
+
+		processor.Append(processor.Create(OpCodes.Ldc_I4_0));
+		processor.Append(processor.Create(OpCodes.Ret));
+
+		methodBody.MaxStackSize = 1;
+		methodBody.InitLocals = false;
+		methodBody.OptimizeMacros();
 		modified = true;
 	}
 }
