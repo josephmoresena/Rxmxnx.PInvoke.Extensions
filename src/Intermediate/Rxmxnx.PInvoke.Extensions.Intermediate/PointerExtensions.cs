@@ -514,7 +514,7 @@ public static unsafe class PointerExtensions
 	/// </returns>
 	/// <remarks>
 	/// The reliability of the returned span depends on the lifetime and validity of the pointer.
-	/// If the memory containing the UTF-16 text is moved or deallocated, accessing the span can cause unexpected behavior
+	/// If the memory containing the UTF-8 text is moved or deallocated, accessing the span can cause unexpected behavior
 	/// or application crashes.
 	/// </remarks>
 	public static ReadOnlySpan<Byte> GetUnsafeReadOnlySpanFromNullTerminated(this ReadOnlyValPtr<Byte> char0)
