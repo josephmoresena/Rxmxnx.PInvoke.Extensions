@@ -276,7 +276,7 @@ public static class MakerPatcher
 		ref Boolean modified)
 	{
 		MethodDefinition? isVersionMethod = vc14ClangType.Methods.First(m => m.Name == "IsVersion");
-		Instruction? instr = isVersionMethod?.Body.Instructions.FirstOrDefault(i => i.OpCode == OpCodes.Call);
+		Instruction? instr = isVersionMethod?.Body.Instructions.FirstOrDefault(i => i.OpCode == OpCodes.Callvirt);
 		if (instr is null || (instr.Operand is MethodReference methodRef &&
 			    methodRef.FullName == isVersion15Method.FullName)) return;
 
