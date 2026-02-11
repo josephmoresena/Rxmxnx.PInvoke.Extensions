@@ -134,8 +134,17 @@ public static partial class SystemInfo
 	/// Indicates whether the current execution is running on Mono Runtime.
 	/// </summary>
 	public static Boolean IsMonoRuntime
-		=> MonoInfo.MonoRuntimeType is not null || (!AotInfo.IsReflectionDisabled &&
-			(!SystemInfo.IsWebRuntime ? MonoInfo.IsEmptyNonLiteral : AotInfo.IsCodeGenerationSupported));
+	{
+		get
+		{
+			if (MonoInfo.MonoRuntimeType is not null || MonoInfo.MonoAssemblyNameType is not null)
+				return true; // Mono.Framework, Xamarin.* or Microsoft.NETCore.App.Runtime.Mono.*
+
+			return AotInfo.IsReflectionDisabled ?
+				MonoInfo.IsEmptyNonLiteral : // Microsoft.NETCore.App (CLR)
+				AotInfo.IsCodeGenerationSupported;
+		}
+	}
 
 	/// <summary>
 	/// Indicates whether the current application is running on the specified platform.

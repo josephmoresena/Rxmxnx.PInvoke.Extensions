@@ -13,6 +13,10 @@ internal static class MonoInfo
 	/// The <c>Mono.Runtime</c> CLR type.
 	/// </summary>
 	public static readonly Type? MonoRuntimeType;
+	/// <summary>
+	/// The <c>Mono.MonoAssemblyName</c> CLR type.
+	/// </summary>
+	public static readonly Type? MonoAssemblyNameType;
 
 	/// <summary>
 	/// Static constructor.
@@ -29,15 +33,7 @@ internal static class MonoInfo
 		fixed (Byte* ptr = CString.Empty)
 #endif
 			MonoInfo.IsEmptyNonLiteral = MemoryInspector.MayBeNonLiteral(ptr);
-
-		if (TrimInfo.StringTypeNameContainsString()) return;
-		try
-		{
-			MonoInfo.MonoRuntimeType = typeof(String).Assembly.GetType("Mono.Runtime");
-		}
-		catch (Exception)
-		{
-			// Ignore
-		}
+		MonoInfo.MonoRuntimeType = TrimInfo.SafeGetType(typeof(String), "Mono.Runtime");
+		MonoInfo.MonoAssemblyNameType = TrimInfo.SafeGetType(typeof(String), "Mono.MonoAssemblyName");
 	}
 }

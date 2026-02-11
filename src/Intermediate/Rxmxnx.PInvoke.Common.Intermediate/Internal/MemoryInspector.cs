@@ -18,6 +18,10 @@ internal abstract unsafe partial class MemoryInspector
 	/// A <see cref="MemoryInspector"/> instance.
 	/// </summary>
 	public static MemoryInspector Instance => ValidationUtilities.ThrowIfNotSupportedPlatform(MemoryInspector.instance);
+	/// <summary>
+	/// Indicates whether the memory inspection is supported.
+	/// </summary>
+	public static Boolean IsSupported => MemoryInspector.instance is not null;
 
 	/// <summary>
 	/// Static constructor.

@@ -49,6 +49,24 @@ internal static class TrimInfo
 		return false;
 #endif
 	}
+	/// <summary>
+	/// Retrieves the CLR type whose name is <paramref name="typeFullName"/> on the <paramref name="assemblyType"/> assembly.
+	/// </summary>
+	/// <param name="assemblyType">A CLR type on the searching assembly.</param>
+	/// <param name="typeFullName">Full name of the searching type.</param>
+	/// <returns>The CLR type found.</returns>
+	[UnconditionalSuppressMessage("Trimming", "IL2026")]
+	public static Type? SafeGetType(Type assemblyType, String typeFullName)
+	{
+		try
+		{
+			return assemblyType.Assembly.GetType(typeFullName);
+		}
+		catch (Exception)
+		{
+			return default;
+		}
+	}
 #if NET5_0_OR_GREATER
 	/// <summary>
 	/// Indicates the current platform is desktop and trimmed.

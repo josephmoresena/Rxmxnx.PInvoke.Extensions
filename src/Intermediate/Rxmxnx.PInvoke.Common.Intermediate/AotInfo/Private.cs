@@ -17,6 +17,7 @@ public static partial class AotInfo
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Boolean IsJitEnabled()
 	{
+		Boolean hasReflectionEmit = false;
 		try
 		{
 			if (!TrimInfo.StringTypeNameContainsString())
@@ -37,38 +38,68 @@ public static partial class AotInfo
 			foreach (Assembly assembly in AotInfo.GetAssembliesSpan())
 			{
 				if (String.IsNullOrEmpty(assembly.FullName)) continue;
-				if (assembly.FullName.StartsWith("System.Reflection.Emit")) break;
-				if (!assembly.FullName.Contains("Il2Cpp", StringComparison.OrdinalIgnoreCase)) continue;
-
-				// IL2CPP is an AOT mode.
-				return false;
+				if (assembly.FullName.StartsWith("System.Reflection.Emit"))
+				{
+					hasReflectionEmit = true;
+					continue;
+				}
+				switch (assembly.FullName[..assembly.FullName.IndexOf(',')])
+				{
+					case "System.Reflection.Emit":
+						hasReflectionEmit = true;
+						continue;
+					case "Microsoft.iOS":
+					case "Xamarin.iOS":
+						return false;
+				}
 			}
 
-// 			if (MonoInfo.MonoRuntimeType is not null)
-// 			{
-// 				// Mono/Xamarin
-// 				StackTrace stackTrace = new();
-// #if !NETCOREAPP
-// 				StackFrame?[] frames = stackTrace.GetFrames() ?? [];
-// #else
-// 				StackFrame?[] frames = stackTrace.GetFrames();
-// #endif
-// 				Boolean isAot = true;
-// 				foreach (StackFrame? frame in frames)
-// 					if (frame is null)
-// 						continue;
-// 				return isAot;
-// 			}
-
-			// System.Reflection.Emit is not allowed in AOT.
-			return EmitInfo.IsEmitAllowed;
+			if (MemoryInspector.IsSupported && MonoInfo.MonoAssemblyNameType is not null && AotInfo.IsAotFrame())
+				return true;
 		}
 		// If exception, might be AOT.
 		catch (Exception)
 		{
 			return false;
 		}
+
+		// System.Reflection.Emit is not allowed in AOT/IL2CPP.
+		return hasReflectionEmit && EmitInfo.IsEmitAllowed;
 	}
+	/// <summary>
+	/// Indicates whether the executing frame is AOT.
+	/// </summary>
+	/// <returns><see langword="true"/> if executing frame is AOT; otherwise, <see langword="false"/>.</returns>
+	private static Boolean IsAotFrame()
+	{
+		StackTrace stackTrace = new();
+#if !NETCOREAPP
+		ReadOnlySpan<StackFrame?> frames = stackTrace.GetFrames() ?? [];
+#else
+		ReadOnlySpan<StackFrame?> frames = stackTrace.GetFrames();
+#endif
+		foreach (StackFrame? frame in frames)
+		{
+			if (frame is null || !frame.HasMethod()) continue;
+			MethodBase methodBase = frame.GetMethod()!;
+			if (!AotInfo.IsNativeMethod(methodBase.MethodHandle))
+				return false;
+		}
+		return true;
+	}
+	/// <summary>
+	/// Indicates whether the function pointer of <paramref name="methodHandle"/> references to an R/RX memory section.
+	/// </summary>
+	/// <param name="methodHandle">A <see langword="RuntimeMethodHandle"/> value.</param>
+	/// <returns>
+	/// <see langword="true"/> if the function pointer references to an R/RX memory section; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
+	private static unsafe Boolean IsNativeMethod(RuntimeMethodHandle methodHandle)
+		=> MemoryInspector.Instance.IsLiteral(methodHandle.GetFunctionPointer().ToPointer());
 	/// <summary>
 	/// Indicates whether JIT is enabled in the current runtime using reflection.
 	/// </summary>
@@ -122,9 +153,5 @@ public static partial class AotInfo
 		Assembly[] array = AppDomain.CurrentDomain.GetAssemblies();
 		return MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(array), array.Length);
 	}
-	// private static Boolean IsNativeMethod(RuntimeMethodHandle methodHandle)
-	// {
-	// 	
-	// }
 #endif
 }
