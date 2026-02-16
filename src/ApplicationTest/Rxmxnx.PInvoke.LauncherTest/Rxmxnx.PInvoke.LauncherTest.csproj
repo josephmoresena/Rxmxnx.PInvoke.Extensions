@@ -19,6 +19,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Using Include="Microsoft.Win32"/>
+        
         <Using Include="System.Buffers"/>
         <Using Include="System.Collections.Concurrent"/>
         <Using Include="System.Collections.ObjectModel"/>
