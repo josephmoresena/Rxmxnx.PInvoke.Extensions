@@ -27,7 +27,16 @@ public partial class TestCompiler
 			args.Add($"/p:BuildProjectReferences={compileArgs.BuildDependencies}");
 			args.Add($"/p:TargetFramework={compileArgs._args.Version.GetTargetFramework()}");
 			args.Add($"/p:PublishReadyToRun={compileArgs.Publish.HasFlag(Publish.ReadyToRun)}");
-			args.Add($"/p:PublishAot={compileArgs.Publish.HasFlag(Publish.NativeAot)}");
+			if (compileArgs._args.Version >= NetVersion.Net60)
+			{
+				args.Add($"/p:PublishAot={compileArgs.Publish.HasFlag(Publish.NativeAot)}");
+				args.Add("/p:PublishAotLegacy=false");
+			}
+			else
+			{
+				args.Add($"/p:PublishAotLegacy={compileArgs.Publish.HasFlag(Publish.NativeAot)}");
+				args.Add("/p:PublishAot=false");
+			}
 			args.Add($"/p:IlcDisableReflection={compileArgs.Publish.HasFlag(Publish.NoReflection)}");
 			args.Add($"/p:InvariantGlobalization={compileArgs.Publish.HasFlag(Publish.InvariantGlobalization)}");
 			args.Add(

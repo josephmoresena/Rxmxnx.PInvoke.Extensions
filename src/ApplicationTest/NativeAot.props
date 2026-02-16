@@ -4,16 +4,20 @@
         <IsNativeAotWebAssembly>$(RuntimeIdentifier.ToLower().EndsWith('-wasm'))</IsNativeAotWebAssembly>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(PublishAotLegacy)' == 'true'">
+        <EnsureNETCoreAppRuntime>false</EnsureNETCoreAppRuntime>
+        <EmitLegacyAssetsFileItems>true</EmitLegacyAssetsFileItems>
+        <PublishTrimmed>true</PublishTrimmed>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(IsNativeAotWebAssembly)' == 'true'">
         <MSBuildEnableWorkloadResolver>false</MSBuildEnableWorkloadResolver>
         <UseAppHost>false</UseAppHost>
         <DefineConstants>$(DefineConstants);WEB_ASSEMBLY</DefineConstants>
     </PropertyGroup>
-
-    <PropertyGroup Condition="'$(PublishAot)' == 'true' Or '$(IsNativeAotWebAssembly)' == 'true'">
+    <PropertyGroup Condition="'$(PublishAot)' == 'true' Or '$(PublishAotLegacy)' == 'true' Or '$(IsNativeAotWebAssembly)' == 'true'">
         <DefineConstants>$(DefineConstants);NATIVE_AOT</DefineConstants>
         <DefineConstants Condition="'$(IlcDisableReflection)' == 'true'">$(DefineConstants);REFLECTION_FREE</DefineConstants>
-        <SelfContained Condition="'$(TargetFramework)' == 'net7.0' OR '$(TargetFramework)' == 'net6.0' ">true</SelfContained>
+        <SelfContained Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">true</SelfContained>
         <StripSymbols>true</StripSymbols>
         <IlcGenerateMetadataLog>true</IlcGenerateMetadataLog>
         <IlcGenerateMstatFile>true</IlcGenerateMstatFile>
@@ -79,6 +83,10 @@
                              ILCompilerPackVersion="8.0.22"
                              ILCompilerPackNamePattern="runtime.**RID**.Microsoft.DotNet.ILCompiler"
                              Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'"/>
+    </ItemGroup>
+    
+    <ItemGroup Condition="'$(PublishAotLegacy)' == 'true'">
+        <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="7.0.0-alpha.1.22074.1"/>
     </ItemGroup>
 
 </Project>

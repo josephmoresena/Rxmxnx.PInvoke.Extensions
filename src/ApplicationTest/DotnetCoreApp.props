@@ -10,10 +10,13 @@
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
         <TrimMode>full</TrimMode>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(PublishAotLegacy)' == 'true'">
+        <NoWarn>$(NoWran);IL3050;IL2026</NoWarn>
+    </PropertyGroup>
 
     <Import Project="NativeAot.props"/>
 
-    <PropertyGroup Condition="'$(SelfContained)' == 'true' And '$(PublishAot)' != 'true'">
+    <PropertyGroup Condition="'$(SelfContained)' == 'true' And '$(PublishAot)' != 'true' And '$(PublishAotLegacy)' != 'true'">
         <PublishSingleFile Condition="'$(IsNativeAotWebAssembly)' != 'true'">true</PublishSingleFile>
         <DebugSymbols>false</DebugSymbols>
         <DebugType>None</DebugType>
@@ -21,10 +24,9 @@
         <AssemblyName Condition="$(PublishReadyToRun) == 'true'">$(AssemblyName).R2R</AssemblyName>
         <DefineConstants Condition="'$(PublishReadyToRun)' == 'true'">$(DefineConstants);R2R_EXECUTABLE</DefineConstants>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(PublishAot)' == 'true' Or '$(IsNativeAotWebAssembly)' == 'true'">
+    <PropertyGroup Condition="'$(PublishAot)' == 'true' Or '$(PublishAotLegacy)' == 'true' Or '$(IsNativeAotWebAssembly)' == 'true'">
         <AssemblyName Condition="'$(IlcDisableReflection)' != 'true'">$(AssemblyName).NAOT</AssemblyName>
         <AssemblyName Condition="'$(IlcDisableReflection)' == 'true'">$(AssemblyName).RFM</AssemblyName>
-        <SelfContained Condition="'$(TargetFramework)' == 'net7.0' OR '$(TargetFramework)' == 'net6.0' ">true</SelfContained>
     </PropertyGroup>
 
     <ItemGroup>
