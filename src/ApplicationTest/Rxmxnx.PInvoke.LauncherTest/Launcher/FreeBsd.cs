@@ -60,5 +60,16 @@ public partial class Launcher
 
 		public static FreeBsd Create(DirectoryInfo outputDirectory, Boolean useMono, out Task initTask)
 			=> new(outputDirectory, useMono, out initTask);
+
+		private sealed class CppCompiler(Architecture arch) : UnixCppCompiler(arch)
+		{
+			public override String BeginWholeLink => "-Wl,--whole-archive";
+			public override String EndWholeLink => "-Wl,--no-whole-archive";
+			public override String ExportDynamicSymbols => "-Wl,--export-dynamic";
+
+			protected override String LocalRuntimePath => "'$ORIGIN'";
+			protected override String WarningName => "discarded-qualifiers";
+			protected override IEnumerable<String> AdditionalLink() => ["rt",];
+		}
 	}
 }

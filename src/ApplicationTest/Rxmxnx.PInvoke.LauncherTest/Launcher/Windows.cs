@@ -94,5 +94,53 @@ public partial class Launcher
 
 		public static Windows Create(DirectoryInfo outputDirectory, Boolean useMono, out Task initTask)
 			=> new(outputDirectory, useMono, out initTask);
+
+		private sealed class CppCompiler(String msvcPath, String kitPath, Architecture arch) : ICppCompiler
+		{
+			public IEnumerable<String> LibraryPaths
+			{
+				get
+				{
+					yield return Path.Combine(kitPath, "um", $"{arch}");
+					yield return Path.Combine(kitPath, "ucrt", $"{arch}");
+					yield return Path.Combine(msvcPath, "lib", $"{arch}");
+				}
+			}
+			public String CompilerExecutable => Path.Combine(msvcPath, "bin", $"Host{arch}", $"{arch}", "cl.exe");
+			public String DynamicRuntime => "/MD";
+			public String IncludeFlag => "/I";
+			public String OutputFlag => "/OUT:";
+			public String StaticLibPathFlag => "/LIBPATH:";
+			public IEnumerable<String> DefaultLink
+			{
+				get
+				{
+					yield return "kernel32.lib";
+					yield return "user32.lib";
+					yield return "advapi32.lib";
+					yield return "shell32.lib";
+					yield return "ole32.lib";
+					yield return "oleaut32.lib";
+					yield return "version.lib";
+					yield return "ws2_32.lib";
+					yield return "mswsock.lib";
+					yield return "psapi.lib";
+					yield return "winmm.lib";
+					yield return "bcrypt.lib";
+				}
+			}
+			public String EnableAllWarnings => String.Empty;
+			public String RemovePointerWarnings => "/wd4090";
+			public String BeginWholeLink => String.Empty;
+			public String EndWholeLink => String.Empty;
+			public String ExportDynamicSymbols => String.Empty;
+			public String RuntimePath => String.Empty;
+			public IEnumerable<String> BeginLink(Boolean windowApp)
+			{
+				yield return "/link";
+				yield return $"/MACHINE:{arch}";
+				yield return $"/SUBSYSTEM:{(windowApp ? "WINDOWS" : "CONSOLE")}";
+			}
+		}
 	}
 }

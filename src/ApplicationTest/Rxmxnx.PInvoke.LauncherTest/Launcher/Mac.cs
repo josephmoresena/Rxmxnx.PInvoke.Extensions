@@ -50,5 +50,20 @@ public partial class Launcher
 
 		public static Mac Create(DirectoryInfo outputDirectory, Boolean useMono, out Task initTask)
 			=> new(outputDirectory, useMono, out initTask);
+
+		private sealed class XCppCompiler(Architecture arch) : UnixCppCompiler(arch)
+		{
+			public override String BeginWholeLink => "-Wl,-force_load,";
+
+			protected override String LocalRuntimePath => "@loader_path";
+			protected override String WarningName => "incompatible-pointer-types";
+			protected override IEnumerable<String> AdditionalLink()
+			{
+				yield return "-lobjc";
+				yield return "-liconv";
+				yield return "-framework";
+				yield return "Foundation";
+			}
+		}
 	}
 }

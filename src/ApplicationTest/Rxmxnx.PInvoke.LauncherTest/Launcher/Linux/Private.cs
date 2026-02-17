@@ -55,5 +55,16 @@ public partial class Launcher
 			=> arch == this.CurrentArch || (this._isArmHf && Linux.IsArmHf(arch));
 
 		private static Boolean IsArmHf(Architecture arch) => arch is Architecture.Arm or Architecture.Armv6;
+
+		private sealed class CppCompiler(Architecture arch) : UnixCppCompiler(arch)
+		{
+			public override String BeginWholeLink => "-Wl,--whole-archive";
+			public override String EndWholeLink => "-Wl,--no-whole-archive";
+			public override String ExportDynamicSymbols => "-Wl,--export-dynamic";
+
+			protected override String LocalRuntimePath => "'$ORIGIN'";
+			protected override String WarningName => "discarded-qualifiers";
+			protected override IEnumerable<String> AdditionalLink() => ["rt",];
+		}
 	}
 }
