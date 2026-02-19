@@ -26,6 +26,7 @@ jobs:
     env:
       SHOW_DIAGNOSTICS: ${{ inputs.run_tests }}
       PINVOKE_ONLY_NATIVE_TEST: ${{ inputs.package_version != '' }}
+      NO_MONO_COMPILATION: true
       PackageVersion: ${{ inputs.package_version }}
     steps:
       - uses: actions/checkout@v5
@@ -276,7 +277,7 @@ jobs:
           }
       - name: Restore Compiled ApplicationTest (Mono-Build)
         uses: actions/cache/restore@v5
-        if: inputs.build_artifacts == true && runner.os == 'Windows'
+        if: inputs.build_artifacts == true
         with:
           path: ./artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
           key: internal-monoapp-bin-${{ github.run_id }}

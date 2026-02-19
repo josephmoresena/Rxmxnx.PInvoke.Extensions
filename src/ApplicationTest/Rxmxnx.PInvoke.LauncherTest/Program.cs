@@ -12,12 +12,14 @@ Boolean run = args.Length < 3 || "run".AsSpan().SequenceEqual(args[2].ToLowerInv
 
 Launcher launcher = await Launcher.Create(outputDirectory, true);
 _ = Boolean.TryParse(Environment.GetEnvironmentVariable("PINVOKE_ONLY_NATIVE_TEST"), out Boolean onlyNativeAot);
+_ = Boolean.TryParse(Environment.GetEnvironmentVariable("NO_MONO_COMPILATION"), out Boolean noMonoCompilation);
 
 if (compile)
 {
 	await TestCompiler.CompileNet(projectDirectory, launcher.RuntimeIdentifierPrefix, outputDirectory.FullName,
 	                              launcher.NetVersions, onlyNativeAot);
-	if (!launcher.MonoLaunchers.IsEmpty && !OperatingSystem.IsWindows() && !OperatingSystem.IsFreeBSD())
+	noMonoCompilation |= OperatingSystem.IsWindows() || OperatingSystem.IsFreeBSD();
+	if (!launcher.MonoLaunchers.IsEmpty && !noMonoCompilation)
 		await TestCompiler.CompileMono(projectDirectory, launcher.MonoLaunchers[0],
 		                               launcher.MonoOutputDirectory!.FullName);
 }
