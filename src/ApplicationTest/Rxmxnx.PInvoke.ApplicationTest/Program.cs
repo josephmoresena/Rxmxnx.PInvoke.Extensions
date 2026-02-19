@@ -137,10 +137,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				                  $"Text: {Encoding.UTF8.GetString(utf8Span)}");
 #if NET9_0_OR_GREATER
 			}
-
+#endif
 			Console.WriteLine("=== Building `Bohemian rhapsody` ===");
 			Utf8ConcatenationHelper.CStringBuildingFeature();
-#endif
 		}
 		private static void GuidFeature()
 		{

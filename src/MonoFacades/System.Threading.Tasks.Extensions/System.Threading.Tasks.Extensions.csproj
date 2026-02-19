@@ -1,0 +1,6 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <FacadeVersion>4.2.99</FacadeVersion>
+    </PropertyGroup>
+    <Import Project="..\MonoFacade.props"/>
+</Project>

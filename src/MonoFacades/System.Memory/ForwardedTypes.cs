@@ -1,0 +1,32 @@
+﻿using System;
+using System.Buffers;
+using System.Buffers.Binary;
+using System.Buffers.Text;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+[assembly: CompilationRelaxations(8)]
+[assembly: RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: TypeForwardedTo(typeof(BinaryPrimitives))]
+[assembly: TypeForwardedTo(typeof(BuffersExtensions))]
+[assembly: TypeForwardedTo(typeof(IBufferWriter<>))]
+[assembly: TypeForwardedTo(typeof(IMemoryOwner<>))]
+[assembly: TypeForwardedTo(typeof(IPinnable))]
+[assembly: TypeForwardedTo(typeof(MemoryHandle))]
+[assembly: TypeForwardedTo(typeof(MemoryManager<>))]
+[assembly: TypeForwardedTo(typeof(MemoryPool<>))]
+[assembly: TypeForwardedTo(typeof(OperationStatus))]
+[assembly: TypeForwardedTo(typeof(ReadOnlySequence<>))]
+[assembly: TypeForwardedTo(typeof(ReadOnlySequenceSegment<>))]
+[assembly: TypeForwardedTo(typeof(StandardFormat))]
+[assembly: TypeForwardedTo(typeof(Base64))]
+[assembly: TypeForwardedTo(typeof(Utf8Formatter))]
+[assembly: TypeForwardedTo(typeof(Utf8Parser))]
+[assembly: TypeForwardedTo(typeof(Memory<>))]
+[assembly: TypeForwardedTo(typeof(MemoryExtensions))]
+[assembly: TypeForwardedTo(typeof(ReadOnlyMemory<>))]
+[assembly: TypeForwardedTo(typeof(ReadOnlySpan<>))]
+[assembly: TypeForwardedTo(typeof(MemoryMarshal))]
+[assembly: TypeForwardedTo(typeof(SequenceMarshal))]
+[assembly: TypeForwardedTo(typeof(SequencePosition))]
+[assembly: TypeForwardedTo(typeof(Span<>))]

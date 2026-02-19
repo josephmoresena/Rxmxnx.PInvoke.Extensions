@@ -11,7 +11,10 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <IsPackable>false</IsPackable>
         <LangVersion>latest</LangVersion>
+        <DebugSymbols>false</DebugSymbols>
+        <DebugType>None</DebugType>
         <DefineConstants Condition="'$(MultipleFrameworkTest)' == 'true'">$(DefineConstants);MULTIPLE_FRAMEWORK</DefineConstants>
+        <NoWarn Condition="'$(TargetFramework)' == 'netstandard2.1'">$(NoWarn);MSB3243</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

@@ -1,37 +1,23 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-    <PropertyGroup>
-        <TargetFramework>net45</TargetFramework>
-        <AssemblyName>$(AssemblyName).mono</AssemblyName>
-        <DebugSymbols>false</DebugSymbols>
-        <DebugType>None</DebugType>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(MonoFrameworkPath)' == ''">
-        <MonoFrameworkPath Condition="$([MSBuild]::IsOSPlatform('Linux'))">/usr/lib/mono</MonoFrameworkPath>
-        <MonoFrameworkPath Condition="$([MSBuild]::IsOSPlatform('FreeBSD'))">/usr/local/lib/mono</MonoFrameworkPath>
-        <MonoFrameworkPath Condition="$([MSBuild]::IsOSPlatform('OSX'))">/Library/Frameworks/Mono.framework/Versions/Current/lib/mono</MonoFrameworkPath>
-        <MonoFrameworkPath Condition="$([MSBuild]::IsOSPlatform('Windows'))">C:\Program Files\Mono\lib\mono</MonoFrameworkPath>
-    </PropertyGroup>
+    <Import Project="..\MonoProject.props"/>
 
-    <ItemGroup>
-        <Reference Include="mscorlib">
-            <HintPath>$(MonoFrameworkPath)\4.5\mscorlib.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
-        <Reference Include="netstandard">
-            <HintPath>$(MonoFrameworkPath)\4.5\Facades\netstandard.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
-        <Reference Include="Rxmxnx.PInvoke.Extensions">
-            <HintPath>$(NuGetPackageRoot)rxmxnx.pinvoke.extensions/$(PackageVersion)/lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</HintPath>
-            <Private>True</Private>
-        </Reference>
-    </ItemGroup>
+    <PropertyGroup>
+        <AssemblyName>$(AssemblyName).mono</AssemblyName>
+        <UseSystemTextJson>True</UseSystemTextJson>
+        <UseSystemTextJson Condition="!Exists('..\..\MonoFacades\System.Buffers.dll')">False</UseSystemTextJson>
+        <UseSystemTextJson Condition="!Exists('..\..\MonoFacades\System.Memory.dll')">False</UseSystemTextJson>
+        <UseSystemTextJson Condition="!Exists('..\..\MonoFacades\System.Threading.Tasks.Extensions.dll')">False</UseSystemTextJson>
+        <DefineConstants Condition="'$(UseSystemTextJson)' == 'True'">$(DefineConstants);USE_SYSTEM_JSON</DefineConstants>
+    </PropertyGroup>
 
     <ItemGroup>
         <EmbeddedResource Include="Mono.ILLink.Descriptors.xml">
             <LogicalName>$(AssemblyName).xml</LogicalName>
         </EmbeddedResource>
+        <ProjectReference Condition="'$(UseSystemTextJson)' == 'True'" Include="..\..\MonoFacades\Rxmxnx.PInvoke.Json\Rxmxnx.PInvoke.Json.csproj"/>
     </ItemGroup>
+
+    <Import Condition="'$(UseSystemTextJson)' == 'True'" Project="..\MonoFacades\System.Text.Json.Mono.props"/>
 
 </Project>

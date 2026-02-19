@@ -8,12 +8,9 @@ namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
 public sealed class EnumUtilities
 {
 	[Fact]
-	public void JsonTokenTest()
-#if NETCOREAPP
-		=> EnumUtilities.Test<JsonTokenType>();
-#else
-		=> EnumUtilities.Test<JsonToken>();
-#endif
+	public void JsonTokenTypeTest() => EnumUtilities.Test<JsonTokenType>();
+	[Fact]
+	public void JsonTokenTest() => EnumUtilities.Test<JsonToken>();
 	[Fact]
 	public void MethodImplOptionsTest() => EnumUtilities.Test<MethodImplOptions>();
 	[Fact]

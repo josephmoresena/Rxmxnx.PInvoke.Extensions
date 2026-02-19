@@ -1,4 +1,4 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal;
+﻿namespace Rxmxnx.PInvoke.Tests;
 
 [ExcludeFromCodeCoverage]
 public class MutableInstance<T> : IMutableWrapper<T>

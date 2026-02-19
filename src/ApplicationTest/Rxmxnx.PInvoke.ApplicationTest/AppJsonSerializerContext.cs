@@ -1,9 +1,19 @@
-#if NETCOREAPP
+#if NETCOREAPP || USE_SYSTEM_JSON
 
 using System.Text.Json;
 #if CSHARP9_0
 using System;
 using System.Text.Json.Serialization;
+
+#endif
+
+#if !NETCOREAPP
+using CStringJsonConverter = Rxmxnx.PInvoke.Json.CStringJsonConverter;
+using CStringSequenceJsonConverter = Rxmxnx.PInvoke.Json.CStringSequenceJsonConverter;
+
+#elif !NET8_0_OR_GREATER || !CSHARP9_0
+using CStringJsonConverter = Rxmxnx.PInvoke.CString.JsonConverter;
+using CStringSequenceJsonConverter = Rxmxnx.PInvoke.CStringSequence.JsonConverter;
 
 #endif
 
@@ -39,7 +49,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 					new JsonSerializerOptions
 #endif
 					{
-						Converters = { new CString.JsonConverter(), new CStringSequence.JsonConverter(), },
+						Converters = { new CStringJsonConverter(), new CStringSequenceJsonConverter(), },
 					};
 #endif
 			}

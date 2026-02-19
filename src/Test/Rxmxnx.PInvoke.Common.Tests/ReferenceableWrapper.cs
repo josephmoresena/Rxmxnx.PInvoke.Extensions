@@ -1,4 +1,4 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal;
+﻿namespace Rxmxnx.PInvoke.Tests;
 
 [ExcludeFromCodeCoverage]
 internal sealed class ReferenceableWrapper<T>(IReadOnlyReferenceable<T> referenceable) : IReferenceable<T>

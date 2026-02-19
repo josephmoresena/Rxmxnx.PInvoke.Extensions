@@ -1,0 +1,59 @@
+<Project>
+    <PropertyGroup>
+        <NoWarn>$(NoWarn);MSB3243;MSB3277</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.Text.Json" Version="5.0.2">
+            <PrivateAssets Condition="'$(MSBuildRuntimeType)' == 'Mono'">All</PrivateAssets>
+            <ExcludeAssets Condition="'$(MSBuildRuntimeType)' == 'Mono'">compile;runtime</ExcludeAssets>
+        </PackageReference>
+        <PackageReference Include="System.Text.Encodings.Web" Version="5.0.1">
+            <PrivateAssets Condition="'$(MSBuildRuntimeType)' == 'Mono'">All</PrivateAssets>
+            <ExcludeAssets Condition="'$(MSBuildRuntimeType)' == 'Mono'">compile;runtime</ExcludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0">
+            <PrivateAssets Condition="'$(MSBuildRuntimeType)' == 'Mono'">All</PrivateAssets>
+            <ExcludeAssets Condition="'$(MSBuildRuntimeType)' == 'Mono'">compile;runtime</ExcludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(MSBuildRuntimeType)' != 'Mono'">
+        <ProjectReference Include="..\System.Buffers\System.Buffers.csproj"/>
+        <ProjectReference Include="..\System.Memory\System.Memory.csproj"/>
+        <ProjectReference Include="..\System.Threading.Tasks.Extensions\System.Threading.Tasks.Extensions.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(MSBuildRuntimeType)' == 'Mono'">
+        <Reference Include="System.Text.Json">
+            <HintPath>$(NuGetPackageRoot)system.text.json/5.0.2/lib/netstandard2.0/System.Text.Json.dll</HintPath>
+            <Private Condition="'$(OutputType)' == 'Exe'">True</Private>
+            <Private Condition="'$(OutputType)' != 'Exe'">False</Private>
+        </Reference>
+        <Reference Include="System.Text.Encodings.Web">
+            <HintPath>$(NuGetPackageRoot)system.text.encodings.web/5.0.1/lib/netstandard2.1/System.Text.Encodings.Web.dll</HintPath>
+            <Private Condition="'$(OutputType)' == 'Exe'">True</Private>
+            <Private Condition="'$(OutputType)' != 'Exe'">False</Private>
+        </Reference>
+        <Reference Include="Microsoft.Bcl.AsyncInterfaces">
+            <HintPath>$(NuGetPackageRoot)microsoft.bcl.asyncinterfaces/5.0.0/lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+            <Private Condition="'$(OutputType)' == 'Exe'">True</Private>
+            <Private Condition="'$(OutputType)' != 'Exe'">False</Private>
+        </Reference>
+        <Reference Include="System.Buffers.dll">
+            <HintPath>$(MSBuildThisFileDirectory)System.Buffers.dll</HintPath>
+            <Private Condition="'$(OutputType)' == 'Exe'">True</Private>
+            <Private Condition="'$(OutputType)' != 'Exe'">False</Private>
+        </Reference>
+        <Reference Include="System.Memory.dll">
+            <HintPath>$(MSBuildThisFileDirectory)System.Memory.dll</HintPath>
+            <Private Condition="'$(OutputType)' == 'Exe'">True</Private>
+            <Private Condition="'$(OutputType)' != 'Exe'">False</Private>
+        </Reference>
+        <Reference Include="System.Threading.Tasks.Extensions.dll">
+            <HintPath>$(MSBuildThisFileDirectory)System.Threading.Tasks.Extensions.dll</HintPath>
+            <Private Condition="'$(OutputType)' == 'Exe'">True</Private>
+            <Private Condition="'$(OutputType)' != 'Exe'">False</Private>
+        </Reference>
+    </ItemGroup>
+</Project>

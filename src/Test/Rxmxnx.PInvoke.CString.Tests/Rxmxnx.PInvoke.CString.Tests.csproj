@@ -17,9 +17,8 @@
         <Using Include="System.Runtime.InteropServices"/>
         <Using Include="System.Reflection"/>
         <Using Include="System.Text"/>
-        <Using Condition="'$(TargetFramework)' != 'netstandard2.1'" Include="System.Text.Json"/>
-        <Using Condition="'$(TargetFramework)' != 'netstandard2.1'" Include="System.Text.Json.Serialization"/>
-        <Using Condition="'$(TargetFramework)' == 'netstandard2.1'" Include="Newtonsoft.Json"/>
+        <Using Include="System.Text.Json"/>
+        <Using Include="System.Text.Json.Serialization"/>
 
         <Using Include="Rxmxnx.PInvoke"/>
         <Using Include="Rxmxnx.PInvoke.Internal"/>
@@ -30,6 +29,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\Intermediate\Rxmxnx.PInvoke.CString.Intermediate\Rxmxnx.PInvoke.CString.Intermediate.csproj"/>
         <ProjectReference Include="..\Rxmxnx.PInvoke.CString.Tests.SourceGenerator\Rxmxnx.PInvoke.CString.Tests.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" SetTargetFramework="TargetFramework=netstandard2.0"/>
+        <!--<PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>-->
     </ItemGroup>
 
 </Project>

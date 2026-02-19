@@ -1,6 +1,4 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal;
-
-internal delegate ReadOnlySpan<T> GetSpanDelegate<T>();
+﻿namespace Rxmxnx.PInvoke.Tests;
 
 [ExcludeFromCodeCoverage]
 internal sealed class EnumerableSequence<T>(GetSpanDelegate<T> getSpan) : IEnumerableSequence<T>

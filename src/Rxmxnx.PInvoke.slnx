@@ -12,7 +12,6 @@
         <File Path="ApplicationTest\nuget.config"/>
         <File Path="ApplicationTest\OpenApi1.props"/>
         <File Path="ApplicationTest\OpenApi2.props"/>
-        <File Path="ApplicationTest\PackageReference.props"/>
         <File Path="ApplicationTest\README.md"/>
         <File Path="ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\Mono.ILLink.Descriptors.xml"/>
     </Folder>
@@ -26,6 +25,7 @@
         <File Path="..\Directory.Build.props"/>
         <File Path="..\LICENSE.md"/>
         <File Path="..\MonoCecil.props"/>
+        <File Path="..\Packages.props"/>
         <File Path="..\Print-MonoTest-Results.ps1"/>
         <File Path="..\README.md"/>
         <File Path="..\.github\workflows\webasm-actions.yml"/>
@@ -33,6 +33,8 @@
         <File Path="..\Run-MonoTest.ps1"/>
         <File Path="..\ZipAndClean.ps1"/>
         <File Path="Library.props"/>
+        <File Path="MonoProject.props"/>
+        <File Path="PackageReference.props"/>
     </Folder>
     <Folder Name="/Intermediate/">
         <Project Path="Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate.csproj"/>
@@ -42,6 +44,14 @@
                 Path="Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate.csproj"/>
         <File Path="Intermediate\README.md"/>
         <File Path="Intermediate\Intermediate.Library.props"/>
+    </Folder>
+    <Folder Name="/MonoFacades/">
+        <File Path="MonoFacades\MonoFacade.props"/>
+        <File Path="MonoFacades\System.Text.Json.Mono.props"/>
+        <Project Path="MonoFacades/Rxmxnx.PInvoke.Json/Rxmxnx.PInvoke.Json.csproj"/>
+        <Project Path="MonoFacades/System.Buffers/System.Buffers.csproj"/>
+        <Project Path="MonoFacades/System.Memory/System.Memory.csproj"/>
+        <Project Path="MonoFacades/System.Threading.Tasks.Extensions/System.Threading.Tasks.Extensions.csproj"/>
     </Folder>
     <Folder Name="/Package/">
         <Project Path="..\package\Rxmxnx.PInvoke.Extensions.IlPatcher\Rxmxnx.PInvoke.Extensions.IlPatcher.csproj"/>

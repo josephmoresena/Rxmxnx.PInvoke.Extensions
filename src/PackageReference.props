@@ -14,4 +14,11 @@
             <ExcludeAssets Condition="'$(MSBuildRuntimeType)' == 'Mono'">compile;runtime</ExcludeAssets>
         </PackageReference>
     </ItemGroup>
+    <ItemGroup Condition="'$(UsePackage)' == 'true' And '$(MSBuildRuntimeType)' == 'Mono'">
+        <Reference Include="Rxmxnx.PInvoke.Extensions">
+            <HintPath>$(NuGetPackageRoot)rxmxnx.pinvoke.extensions/$(PackageVersion)/lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</HintPath>
+            <Private Condition="'$(OutputType)' == 'Exe'">True</Private>
+            <Private Condition="'$(OutputType)' != 'Exe'">False</Private>
+        </Reference>
+    </ItemGroup>
 </Project>
