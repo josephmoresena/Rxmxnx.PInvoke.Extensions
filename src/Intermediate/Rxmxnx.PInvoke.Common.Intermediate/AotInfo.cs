@@ -16,7 +16,9 @@ public static partial class AotInfo
 		!AotInfo.IsJitEnabled();
 #else
 		JitInfo.GetCompiledILBytes() == 0L && JitInfo.GetCompiledMethodCount() == 0 &&
-		(TrimInfo.IsDesktopTrimmedPlatform() || !EmitInfo.IsEmitAllowed);
+		(TrimInfo.IsDesktopTrimmedPlatform() || OperatingSystem.IsIOS() || OperatingSystem.IsTvOS() ||
+			OperatingSystem.IsWatchOS() || OperatingSystem.IsMacCatalyst() ||
+			(MemoryInspector.IsSupported && AotInfo.IsAotFrame()) || !EmitInfo.IsEmitAllowed);
 #endif
 
 	/// <summary>

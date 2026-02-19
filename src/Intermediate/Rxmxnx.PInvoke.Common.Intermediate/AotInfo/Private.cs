@@ -67,40 +67,6 @@ public static partial class AotInfo
 		return hasReflectionEmit && EmitInfo.IsEmitAllowed;
 	}
 	/// <summary>
-	/// Indicates whether the executing frame is AOT.
-	/// </summary>
-	/// <returns><see langword="true"/> if executing frame is AOT; otherwise, <see langword="false"/>.</returns>
-	private static Boolean IsAotFrame()
-	{
-		StackTrace stackTrace = new();
-#if !NETCOREAPP
-		ReadOnlySpan<StackFrame?> frames = stackTrace.GetFrames() ?? [];
-#else
-		ReadOnlySpan<StackFrame?> frames = stackTrace.GetFrames();
-#endif
-		foreach (StackFrame? frame in frames)
-		{
-			if (frame is null || !frame.HasMethod()) continue;
-			MethodBase methodBase = frame.GetMethod()!;
-			if (!AotInfo.IsNativeMethod(methodBase.MethodHandle))
-				return false;
-		}
-		return true;
-	}
-	/// <summary>
-	/// Indicates whether the function pointer of <paramref name="methodHandle"/> references to an R/RX memory section.
-	/// </summary>
-	/// <param name="methodHandle">A <see langword="RuntimeMethodHandle"/> value.</param>
-	/// <returns>
-	/// <see langword="true"/> if the function pointer references to an R/RX memory section; otherwise,
-	/// <see langword="false"/>.
-	/// </returns>
-#if !PACKAGE
-	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
-#endif
-	private static unsafe Boolean IsNativeMethod(RuntimeMethodHandle methodHandle)
-		=> MemoryInspector.Instance.IsLiteral(methodHandle.GetFunctionPointer().ToPointer());
-	/// <summary>
 	/// Indicates whether JIT is enabled in the current runtime using reflection.
 	/// </summary>
 	/// <param name="typeJitInfo">CLR type of System.Runtime.JitInfo class.</param>
@@ -154,4 +120,39 @@ public static partial class AotInfo
 		return MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(array), array.Length);
 	}
 #endif
+	/// <summary>
+	/// Indicates whether the executing frame is AOT.
+	/// </summary>
+	/// <returns><see langword="true"/> if executing frame is AOT; otherwise, <see langword="false"/>.</returns>
+	[UnconditionalSuppressMessage("Trimming", "IL2026")]
+	private static Boolean IsAotFrame()
+	{
+		StackTrace stackTrace = new();
+#if !NETCOREAPP
+		ReadOnlySpan<StackFrame?> frames = stackTrace.GetFrames() ?? [];
+#else
+		ReadOnlySpan<StackFrame?> frames = stackTrace.GetFrames();
+#endif
+		foreach (StackFrame? frame in frames)
+		{
+			if (frame is null || !frame.HasMethod()) continue;
+			MethodBase methodBase = frame.GetMethod()!;
+			if (!AotInfo.IsNativeMethod(methodBase.MethodHandle))
+				return false;
+		}
+		return true;
+	}
+	/// <summary>
+	/// Indicates whether the function pointer of <paramref name="methodHandle"/> references to an R/RX memory section.
+	/// </summary>
+	/// <param name="methodHandle">A <see langword="RuntimeMethodHandle"/> value.</param>
+	/// <returns>
+	/// <see langword="true"/> if the function pointer references to an R/RX memory section; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
+	private static unsafe Boolean IsNativeMethod(RuntimeMethodHandle methodHandle)
+		=> MemoryInspector.Instance.IsLiteral(methodHandle.GetFunctionPointer().ToPointer());
 }
