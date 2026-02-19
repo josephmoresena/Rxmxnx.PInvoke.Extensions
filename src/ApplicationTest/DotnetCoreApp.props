@@ -9,9 +9,7 @@
         <PublishTrimmed>true</PublishTrimmed>
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
         <TrimMode>full</TrimMode>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(PublishAotLegacy)' == 'true'">
-        <NoWarn>$(NoWran);IL3050;IL2026</NoWarn>
+        <NoWarn Condition="'$(PublishAotLegacy)' == 'true'">$(NoWran);IL3050;IL2026</NoWarn>
     </PropertyGroup>
 
     <Import Project="NativeAot.props"/>
@@ -34,7 +32,7 @@
     </ItemGroup>
 
     <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
-        <ProjectReference Include="..\Rxmxnx.PInvoke.VNextTest\Rxmxnx.PInvoke.VNextTest.csproj"/>
+        <ProjectReference Include="$(MSBuildThisFileDirectory)Rxmxnx.PInvoke.VNextTest\Rxmxnx.PInvoke.VNextTest.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -1,13 +1,11 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
     <Import Project="..\MonoProject.props"/>
+    <Import Project="..\MonoFacades\System.Text.Json.Mono.props"/>
 
     <PropertyGroup>
         <AssemblyName>$(AssemblyName).mono</AssemblyName>
-        <UseSystemTextJson>True</UseSystemTextJson>
-        <UseSystemTextJson Condition="!Exists('..\..\MonoFacades\System.Buffers.dll')">False</UseSystemTextJson>
-        <UseSystemTextJson Condition="!Exists('..\..\MonoFacades\System.Memory.dll')">False</UseSystemTextJson>
-        <UseSystemTextJson Condition="!Exists('..\..\MonoFacades\System.Threading.Tasks.Extensions.dll')">False</UseSystemTextJson>
+        <UseSystemTextJson Condition="'$(UseSystemTextJson)' == ''">True</UseSystemTextJson>
         <DefineConstants Condition="'$(UseSystemTextJson)' == 'True'">$(DefineConstants);USE_SYSTEM_JSON</DefineConstants>
     </PropertyGroup>
 
@@ -15,9 +13,7 @@
         <EmbeddedResource Include="Mono.ILLink.Descriptors.xml">
             <LogicalName>$(AssemblyName).xml</LogicalName>
         </EmbeddedResource>
-        <ProjectReference Condition="'$(UseSystemTextJson)' == 'True'" Include="..\..\MonoFacades\Rxmxnx.PInvoke.Json\Rxmxnx.PInvoke.Json.csproj"/>
+        <ProjectReference Condition="'$(UseSystemTextJson)' == 'True'" Include="$(MSBuildThisFileDirectory)..\MonoFacades\Rxmxnx.PInvoke.Json\Rxmxnx.PInvoke.Json.csproj"/>
     </ItemGroup>
-
-    <Import Condition="'$(UseSystemTextJson)' == 'True'" Project="..\MonoFacades\System.Text.Json.Mono.props"/>
 
 </Project>

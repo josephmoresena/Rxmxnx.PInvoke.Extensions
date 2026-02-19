@@ -4,9 +4,9 @@
         <DefineConstants Condition="'$(PackageVersion)' != '9999.99.99.99-tmp'">$(DefineConstants);RELEASE_PACKAGE</DefineConstants>
     </PropertyGroup>
     <ItemGroup Condition="'$(UsePackage)' != 'true'">
-        <ProjectReference Include="..\..\Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate.csproj"/>
-        <ProjectReference Include="..\..\Intermediate\Rxmxnx.PInvoke.CString.Intermediate\Rxmxnx.PInvoke.CString.Intermediate.csproj"/>
-        <ProjectReference Include="..\..\Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate.csproj"/>
+        <ProjectReference Include="$(MSBuildThisFileDirectory)Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate.csproj"/>
+        <ProjectReference Include="$(MSBuildThisFileDirectory)Intermediate\Rxmxnx.PInvoke.CString.Intermediate\Rxmxnx.PInvoke.CString.Intermediate.csproj"/>
+        <ProjectReference Include="$(MSBuildThisFileDirectory)Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate\Rxmxnx.PInvoke.Extensions.Intermediate.csproj"/>
     </ItemGroup>
     <ItemGroup Condition="'$(UsePackage)' == 'true'">
         <PackageReference Include="Rxmxnx.PInvoke.Extensions" Version="$(PackageVersion)">

@@ -16,12 +16,16 @@
             <PrivateAssets Condition="'$(MSBuildRuntimeType)' == 'Mono'">All</PrivateAssets>
             <ExcludeAssets Condition="'$(MSBuildRuntimeType)' == 'Mono'">compile;runtime</ExcludeAssets>
         </PackageReference>
+        <PackageReference Condition="'$(MSBuildRuntimeType)' == 'Mono'" Include="NETStandard.Library.Ref" Version="2.1.0">
+            <PrivateAssets>All</PrivateAssets>
+            <ExcludeAssets>compile;runtime</ExcludeAssets>
+        </PackageReference>
     </ItemGroup>
 
-    <ItemGroup Condition="'$(MSBuildRuntimeType)' != 'Mono'">
-        <ProjectReference Include="..\System.Buffers\System.Buffers.csproj"/>
-        <ProjectReference Include="..\System.Memory\System.Memory.csproj"/>
-        <ProjectReference Include="..\System.Threading.Tasks.Extensions\System.Threading.Tasks.Extensions.csproj"/>
+    <ItemGroup Condition="'$(MSBuildRuntimeType)' != 'Mono' Or '$(OutputType)' == 'Exe'">
+        <ProjectReference Include="$(MSBuildThisFileDirectory)System.Buffers\System.Buffers.csproj"/>
+        <ProjectReference Include="$(MSBuildThisFileDirectory)System.Memory\System.Memory.csproj"/>
+        <ProjectReference Include="$(MSBuildThisFileDirectory)System.Threading.Tasks.Extensions\System.Threading.Tasks.Extensions.csproj"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(MSBuildRuntimeType)' == 'Mono'">
@@ -40,20 +44,17 @@
             <Private Condition="'$(OutputType)' == 'Exe'">True</Private>
             <Private Condition="'$(OutputType)' != 'Exe'">False</Private>
         </Reference>
-        <Reference Include="System.Buffers.dll">
-            <HintPath>$(MSBuildThisFileDirectory)System.Buffers.dll</HintPath>
-            <Private Condition="'$(OutputType)' == 'Exe'">True</Private>
-            <Private Condition="'$(OutputType)' != 'Exe'">False</Private>
+        <Reference Include="System.Memory">
+            <HintPath>$(NuGetPackageRoot)netstandard.library.ref/2.1.0/ref/netstandard2.1/System.Memory.dll</HintPath>
+            <Private>False</Private>
         </Reference>
-        <Reference Include="System.Memory.dll">
-            <HintPath>$(MSBuildThisFileDirectory)System.Memory.dll</HintPath>
-            <Private Condition="'$(OutputType)' == 'Exe'">True</Private>
-            <Private Condition="'$(OutputType)' != 'Exe'">False</Private>
+        <Reference Include="System.Buffers">
+            <HintPath>$(NuGetPackageRoot)netstandard.library.ref/2.1.0/ref/netstandard2.1/System.Buffers.dll</HintPath>
+            <Private>False</Private>
         </Reference>
-        <Reference Include="System.Threading.Tasks.Extensions.dll">
-            <HintPath>$(MSBuildThisFileDirectory)System.Threading.Tasks.Extensions.dll</HintPath>
-            <Private Condition="'$(OutputType)' == 'Exe'">True</Private>
-            <Private Condition="'$(OutputType)' != 'Exe'">False</Private>
+        <Reference Include="System.Threading.Tasks.Extensions">
+            <HintPath>$(NuGetPackageRoot)netstandard.library.ref/2.1.0/ref/netstandard2.1/System.Threading.Tasks.Extensions.dll</HintPath>
+            <Private>False</Private>
         </Reference>
     </ItemGroup>
 </Project>
