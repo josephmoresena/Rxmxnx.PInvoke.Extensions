@@ -3438,7 +3438,7 @@ Provides information about the Ahead-of-Time compilation.
   Indicates whether the current runtime is NativeAOT.
 
   **Note:** Starting with .NET 6.0, this property enables trimming by allowing the linker to remove unreachable code on
-  desktop platforms.
+  desktop and XNU platforms.
   </details>
 
 </details>

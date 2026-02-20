@@ -75,8 +75,11 @@ The project uses C# 9.0 syntax to remain compatible with Mono 6.12, but it is co
 
 ## Considerations
 
-- Building with .NET Core/.NET enables a demonstration of JSON serialization/deserialization of UTF-8 strings while
+- When building with .NET Core/.NET enables a demonstration of JSON serialization/deserialization of UTF-8 strings while
   avoiding re-encoding.
+- When building with the Mono framework, custom facades for **System.Buffers**, **System.Memory**, and
+  **System.Threading.Tasks.Extensions** are used to implement JSON serializers that are not built into
+  `Rxmxnx.PInvoke.Extensions`. The code for these serializers is compatible with Xamarin.
 - When builds targeting .NET 9.0 or later reference the VNext project, where some additional features are used.
 - Part of the code is also compatible with C# 8.0 through preprocessor directives in order to maintain compatibility
   with the original language version of the minimum TFM.
@@ -90,3 +93,192 @@ pointers to ref-struct values.
 
 The ASP .NET Core project demonstrates how it is possible to integrate JSON serialization of UTF-8 strings (and
 sequences) while avoiding re-encoding.
+
+Here is a more continuous, technically detailed, and fluid version suitable for a README section:
+
+---
+
+# NativeAot.props
+
+`NativeAot.props` exists to deliberately extend and stabilize Native AOT support beyond what is officially supported by
+the .NET SDK.
+
+Officially, Native AOT support begins with .NET 7.0, and platform availability depends on SDK version and runtime
+identifier. However, this project supports additional scenarios that are either unofficial, partially supported, or not
+wired by default in the SDK.
+
+To achieve this, this file overrides default SDK behavior and explicitly controls ILCompiler pack resolution using
+`KnownILCompilerPack`. This ensures deterministic builds and enables Native AOT in frameworks and environments that
+would otherwise not be supported.
+
+---
+
+## Extended Native AOT Support
+
+### .NET 6.0
+
+Native AOT is officially introduced in .NET 7.0. However, the ILCompiler toolchain can target .NET 6.0 when properly
+configured.
+
+This file explicitly registers ILCompiler packs for `net6.0`, allowing Native AOT publishing for .NET 6.0 projects.
+Without this override, the SDK does not resolve an ILCompiler pack for that target framework.
+
+The ILCompiler version used for .NET 6.0 depends on the host platform:
+
+* On non-macOS systems, or on macOS x64 → **7.0.20**
+* On macOS arm64 → **8.0.24**
+
+This guarantees correct architecture matching and compiler availability.
+
+---
+
+### .NET 7.0 on macOS x64
+
+Official SDK support for Native AOT on `osx-x64` starts with .NET 8.0.
+
+However, an official `Microsoft.DotNet.ILCompiler` 7.0.x pack for `osx-x64` does exist.
+
+The SDK does not automatically wire this for .NET 7.0, so this file explicitly declares the pack, enabling Native AOT
+for .NET 7.0 on macOS x64 without requiring an upgrade to .NET 8.0.
+
+The ILCompiler version used for .NET 7.0 follows the same rule:
+
+* On non-macOS systems, or on macOS x64 → **7.0.20**
+* On macOS arm64 → **8.0.24**
+
+---
+
+### macOS arm64 (No Cross-Architecture Compilation)
+
+Native AOT does **not** support cross-architecture compilation.
+
+The ILCompiler must match the host architecture:
+
+* arm64 hosts require an arm64 ILCompiler pack.
+* x64 hosts require an x64 ILCompiler pack.
+
+You cannot reliably compile using an ILCompiler built for another architecture. This is particularly critical on macOS
+arm64 systems.
+
+For this reason:
+
+* macOS arm64 uses **ILCompiler 8.0.24**
+* Other platforms (including macOS x64) use **ILCompiler 7.0.20**
+
+This ensures that:
+
+* .NET 6.0 and .NET 7.0 projects can be compiled correctly on macOS arm64.
+* No cross-architecture compiler mismatch occurs.
+* The required arm64-native ILCompiler is always used.
+
+---
+
+### .NET 5.0 and Earlier Support (Experimental)
+
+When `PublishAotLegacy=true`, this file references to `Microsoft.DotNet.ILCompiler` **7.0.0-alpha.1.22074.1** package.
+
+This version is an early alpha release but the last minimally stable version capable of targeting .NET 5.0 and earlier.
+Newer ILCompiler versions either fail when targeting .NET 5.0 or earlier, or do not support those frameworks at all.
+
+This support should therefore be considered experimental and not production-grade.
+
+---
+
+## Target Framework vs Embedded Runtime Version
+
+A crucial distinction must be understood.
+
+Even though the project is compiled against the declared **Target Framework** (for example, .NET 6.0, .NET 5.0, or even
+.NET Core 3.0), the runtime embedded into the final Native AOT binary is the runtime that ships with the selected
+ILCompiler pack.
+
+This means:
+
+* The **Target Framework** determines the reference assemblies and compile-time API surface.
+* The **ILCompiler version** determines the runtime implementation that is statically linked into the native binary.
+
+Concretely:
+
+* A .NET 6.0 project built on macOS arm64 will embed a runtime derived from **8.0.24**.
+* A .NET 6.0 or .NET 7.0 project built on non-macOS or macOS x64 will embed a runtime derived from **7.0.20**.
+* A .NET 5.0 or .NET Core 3.0 project built with `PublishAotLegacy=true` will embed a runtime derived from
+  **7.0.0-alpha.1.22074.1**.
+
+Therefore, even when compiling a project targeting .NET Core 3.0, the resulting native binary will contain a runtime
+based on the 7.0-alpha toolchain.
+
+The Target Framework controls compile-time compatibility, but the ILCompiler version governs the actual runtime
+components (CoreLib and native runtime) that are linked into the final executable.
+
+---
+
+## Linux cross-Compilation support
+
+When building from a Linux x64 host targeting to `linux-arm` or `linux-arm64` this file forces `lld` as the linker and
+specifies explicit `objcopy` tool paths.
+
+---
+
+## Native AOT Activation Model
+
+Native AOT behavior is enabled when any of the following are true:
+
+* `PublishAot=true`
+* `PublishAotLegacy=true`
+* The runtime identifier ends with `-wasm`
+
+When active, this file:
+
+* Defines `NATIVE_AOT`
+* Optionally defines `REFLECTION_FREE` if `IlcDisableReflection=true`
+* Enables aggressive trimming
+* Configures metadata reduction
+* Disables unnecessary symbol emission
+
+This ensures that Native AOT builds are consistently optimized for minimal footprint and deterministic output.
+
+---
+
+## Reflection-Free Mode
+
+If `IlcDisableReflection=true`, the build:
+
+* Defines `REFLECTION_FREE`
+* Suppresses certain reflection-related exceptions via runtime host configuration switches
+
+This enables highly constrained Native AOT builds where reflection metadata is intentionally minimized or removed. It is
+particularly useful in environments where size, determinism, and static behavior are prioritized.
+
+---
+
+### Optimization Strategy
+
+When Native AOT is active, the configuration prioritizes binary size and minimal metadata:
+
+* `IlcOptimizationPreference = Size`
+* `IlcFoldIdenticalMethodBodies = true`
+* `IlcTrimMetadata = true`
+* `IlcGenerateStackTraceData = false`
+* `IlcGenerateCompleteTypeMetadata = false`
+* `TrimUnusedDependencies = true`
+* `StripSymbols = true`
+* `CopyOutputSymbolsToPublishDirectory = false`
+
+Additionally, metadata diagnostics (`IlcGenerateMetadataLog`, `IlcGenerateMstatFile`, `IlcGenerateDgmlFile`) are enabled
+to allow inspection of trimming and dependency decisions during development.
+
+---
+
+## WebAssembly and LLVM support (Experimental)
+
+When targeting a runtime identifier ending in `-wasm`, this file enables a specialized configuration:
+
+* Disables the workload resolver (`MSBuildEnableWorkloadResolver=false`)
+* Disables app host generation
+* Defines `WEB_ASSEMBLY`
+* References `Microsoft.DotNet.ILCompiler.LLVM`
+* Injects explicit linker arguments
+
+It is important to note that **`Microsoft.DotNet.ILCompiler.LLVM` is experimental**. Its behavior, packaging, and
+compatibility guarantees are not as stable as the core ILCompiler packs. WebAssembly Native AOT builds using this
+backend should therefore be considered experimental and may change across versions.

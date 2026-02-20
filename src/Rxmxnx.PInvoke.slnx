@@ -47,6 +47,7 @@
     </Folder>
     <Folder Name="/MonoFacades/">
         <File Path="MonoFacades\MonoFacade.props"/>
+        <File Path="MonoFacades\README.md"/>
         <File Path="MonoFacades\System.Text.Json.Mono.props"/>
         <Project Path="MonoFacades/Rxmxnx.PInvoke.Json/Rxmxnx.PInvoke.Json.csproj"/>
         <Project Path="MonoFacades/System.Buffers/System.Buffers.csproj"/>
