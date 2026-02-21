@@ -65,6 +65,7 @@ public abstract partial class Launcher
 				else
 					await Launcher.PackMonoApp(monoLauncher, cppCompiler, zlibPath, this.MonoOutputDirectory,
 					                           executableFile);
+				Launcher.DeleteMonoAotBundleTempFiles();
 			}
 		}
 	}

@@ -288,4 +288,10 @@ public partial class Launcher
 			ConsoleNotifier.ShowDiskUsage();
 		return result;
 	}
+	private static void DeleteMonoAotBundleTempFiles()
+	{
+		DirectoryInfo temp = new(Path.GetTempPath());
+		foreach (FileInfo aotFile in temp.GetFiles("mono_aot_"))
+			aotFile.Delete();
+	}
 }
