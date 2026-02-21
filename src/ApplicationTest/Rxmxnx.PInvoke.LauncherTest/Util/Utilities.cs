@@ -156,6 +156,7 @@ public static class Utilities
 		result.AddArg(value.AsSpan()[start..].ToString());
 		return result.ToArray();
 	}
+	private static String CombinePathArg(String flag, String path) => $"{flag}{path}";
 
 	private readonly struct OutputState
 	{
@@ -180,7 +181,7 @@ public static class Utilities
 		if (String.IsNullOrWhiteSpace(argValue)) return;
 		if (includeFlag.StartsWith('-'))
 		{
-			args.Add($"{includeFlag}{argValue}");
+			args.Add(Utilities.CombinePathArg(includeFlag, argValue));
 			return;
 		}
 		args.Add(includeFlag);
@@ -198,7 +199,7 @@ public static class Utilities
 		added = true;
 		if (String.IsNullOrWhiteSpace(endWholeLink))
 		{
-			args.Add($"{beginWholeLink}{argValue}");
+			args.Add(Utilities.CombinePathArg(beginWholeLink, argValue));
 			return;
 		}
 		args.Add(beginWholeLink);
@@ -210,7 +211,7 @@ public static class Utilities
 		if (String.IsNullOrWhiteSpace(argValue)) return;
 		if (!outputFlag.StartsWith('-'))
 		{
-			args.Add($"{outputFlag}{argValue}");
+			args.Add(Utilities.CombinePathArg(outputFlag, argValue));
 			return;
 		}
 		args.Add(outputFlag);
@@ -219,7 +220,7 @@ public static class Utilities
 	public static void AddLibPathArg(this Collection<String> args, String libPathFlag, String? argValue)
 	{
 		if (String.IsNullOrWhiteSpace(argValue)) return;
-		args.Add(String.IsNullOrWhiteSpace(libPathFlag) ? argValue : $"{libPathFlag}{argValue}");
+		args.Add(String.IsNullOrWhiteSpace(libPathFlag) ? argValue : Utilities.CombinePathArg(libPathFlag, argValue));
 	}
 	#endregion
 }
