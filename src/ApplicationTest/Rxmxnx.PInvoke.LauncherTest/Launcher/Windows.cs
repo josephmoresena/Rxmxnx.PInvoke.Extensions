@@ -216,7 +216,7 @@ public partial class Launcher
 					Path.Combine(vsPath, "VC", "Auxiliary", "Build", "Microsoft.VCToolsVersion.default.txt"));
 				Version vcVersion = Version.Parse(vcVersionText);
 				ConsoleNotifier.Notifier.Print($"Visual C++ {vcVersion} found.");
-				return Path.Combine(vsPath, "VC", "Tools", "MSVC", vcVersion.ToString(), "bin");
+				return Path.Combine(vsPath, "VC", "Tools", "MSVC", vcVersion.ToString());
 			}
 			catch (Exception ex)
 			{
