@@ -81,13 +81,15 @@ public partial class Launcher
 			ExecutablePath = monoLauncher.MakerPath,
 			ArgState = new()
 			{
+				Architecture = monoLauncher.Architecture,
 				AssemblyPathName = linkedExecutableFile.FullName,
 				MonoExecutablePath = monoLauncher.ExecutablePath,
 				StripAssemblyPath = monoLauncher.MonoCilStripAssemblyPath,
-				OutputBinaryPath = outputBinaryPath,
+				OutputPath = outputBinaryPath,
 				UseLlvm = false,
 			},
 			WorkingDirectory = linkedExecutableFile.DirectoryName ?? "",
+			AppendEnvs = MonoBundleArgs.MakeEnv,
 			AppendArgs = MonoBundleArgs.Make,
 			Notifier = ConsoleNotifier.Notifier,
 		};
@@ -100,8 +102,8 @@ public partial class Launcher
 			ArgState = state.ArgState with
 			{
 				UseLlvm = true,
-				OutputBinaryPath = Path.Combine(binaryOutputPath.FullName,
-				                                $"{applicationName}{complement}.llvm{binaryExtension}"),
+				OutputPath = Path.Combine(binaryOutputPath.FullName,
+				                          $"{applicationName}{complement}.llvm{binaryExtension}"),
 			},
 		};
 		bundleLog = Path.Combine(outputPath.FullName,

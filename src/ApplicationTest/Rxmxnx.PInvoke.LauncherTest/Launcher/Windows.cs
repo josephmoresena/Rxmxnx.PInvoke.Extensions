@@ -4,9 +4,15 @@ public partial class Launcher
 {
 	private sealed partial class Windows : Launcher, ILauncher<Windows>
 	{
-		public static OSPlatform Platform => OSPlatform.Windows;
+		private const String zLibUrl = "http://www.winimage.com/zLibDll/zlib123.zip";
+#if ZLINK_STATIC
+		private const String zLib32Url = "http://www.winimage.com/zLibDll/zlib123dll.zip";
+		private const String zLib64Url = "http://www.winimage.com/zLibDll/zlib123dllx64.zip";
+#endif
 
 		private readonly List<MonoLauncher>? _monoLaunchers;
+
+		public static OSPlatform Platform => OSPlatform.Windows;
 		public override Architecture[] Architectures { get; }
 		public override String RuntimeIdentifierPrefix => "win";
 		public override ReadOnlySpan<MonoLauncher> MonoLaunchers => CollectionsMarshal.AsSpan(this._monoLaunchers);
@@ -27,10 +33,45 @@ public partial class Launcher
 					Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Mono"),
 					Architecture.X86, ref this._monoLaunchers);
 		}
+
+		protected override async Task<String?> GetZlibPath()
+		{
+			DirectoryInfo zlibDir =
+				new(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+				                 "Rxmxnx.PInvoke.Launcher", "zlib"));
+
+			if (!zlibDir.Exists)
+				zlibDir.Create();
+
+			DirectoryInfo includeDir = zlibDir.CreateSubdirectory("include");
+#if ZLINK_STATIC
+			DirectoryInfo lib32Dir = zlibDir.CreateSubdirectory($"{Architecture.X86}");
+			DirectoryInfo lib64Dir = zlibDir.CreateSubdirectory($"{Architecture.X64}");
+#endif
+
+			Boolean downloadHeaders = includeDir.GetFiles("z*.h").Count(f => f.Name is "zlib.h" or "zconf.h") < 2;
+#if ZLINK_STATIC
+			Boolean download32Lib = lib32Dir.GetFiles("zlibstat.lib").Length == 0;
+			Boolean download64Lib = lib64Dir.GetFiles("zlibstat.lib").Length == 0;
+			
+			HttpClient httpClient = downloadHeaders || download32Lib || download64Lib ? new() : default!;
+#else
+			HttpClient httpClient = downloadHeaders ? new() : default!;
+#endif
+			if (downloadHeaders)
+				await Windows.DownloadZLibHeadersAsync(httpClient, includeDir);
+#if ZLINK_STATIC
+			if (download32Lib)
+				await Windows.DownloadStaticZLibAsync(httpClient, Windows.zLib32Url, lib32Dir);
+			if (download64Lib)
+				await Windows.DownloadStaticZLibAsync(httpClient, Windows.zLib64Url, lib64Dir);
+#endif
+			return zlibDir.FullName;
+		}
+
 		[LibraryImport("Rxmxnx.PInvoke.Mkbundle.Patcher", StringMarshalling = StringMarshalling.Utf16)]
 		private static partial Int32 PatchAssemblyForWindows(String monoLibPath, Int32 monoLibPathLength,
 			String outputPath, Int32 outputPathLength);
-
 		private static void AppendMonoLauncher(String monoPath, Architecture arch,
 			ref List<MonoLauncher>? monoLaunchers)
 		{
@@ -83,13 +124,37 @@ public partial class Launcher
 			}
 			return result;
 		}
-
 		private static String GetMakerPath(Architecture arch)
 		{
 			String result = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
 			                             "Rxmxnx.PInvoke.Mkbundle.Patcher", $"{arch}");
 			Directory.CreateDirectory(result);
 			return result;
+		}
+		private static async Task DownloadZLibHeadersAsync(HttpClient httpClient, DirectoryInfo includeDir)
+		{
+			await using MemoryStream zipStream = await Windows.DownloadZipFile(httpClient, Windows.zLibUrl);
+			await using ZipArchive archive =
+				await ZipArchive.CreateAsync(zipStream, ZipArchiveMode.Read, true, default);
+			await archive.GetEntry("zlib.h")!.ExtractToFileAsync(Path.Combine(includeDir.FullName, "zlib.h"));
+			await archive.GetEntry("zconf.h")!.ExtractToFileAsync(Path.Combine(includeDir.FullName, "zconf.h"));
+		}
+#if ZLINK_STATIC
+		private static async Task DownloadStaticZLibAsync(HttpClient httpClient, String libUrl, DirectoryInfo libDir)
+		{
+			await using MemoryStream zipStream = await Windows.DownloadZipFile(httpClient, libUrl);
+			await using ZipArchive archive =
+				await ZipArchive.CreateAsync(zipStream, ZipArchiveMode.Read, true, default);
+			await archive.Entries.First(a => a.Name.EndsWith("zlibstat.lib"))
+			             .ExtractToFileAsync(Path.Combine(libDir.FullName, "zlibstat.lib"));
+		}
+#endif
+		private static async Task<MemoryStream> DownloadZipFile(HttpClient httpClient, String url)
+		{
+			using HttpResponseMessage response = await httpClient.GetAsync(url);
+			MemoryStream zipStream = new();
+			await response.Content.CopyToAsync(zipStream);
+			return zipStream;
 		}
 
 		public static Windows Create(DirectoryInfo outputDirectory, Boolean useMono, out Task initTask)

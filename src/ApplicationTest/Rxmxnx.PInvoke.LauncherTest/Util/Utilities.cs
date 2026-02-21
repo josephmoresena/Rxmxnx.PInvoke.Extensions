@@ -1,3 +1,5 @@
+// ReSharper disable ConvertToExtensionBlock
+
 namespace Rxmxnx.PInvoke.ApplicationTest.Util;
 
 public static class Utilities
@@ -119,4 +121,63 @@ public static class Utilities
 		public Lock Lock { get; init; }
 		public CancellationToken CancellationToken { get; init; }
 	}
+
+	#region Extensions
+	public static void AddArg(this Collection<String> args, String? argValue)
+	{
+		if (String.IsNullOrWhiteSpace(argValue)) return;
+		args.Add(argValue);
+	}
+	public static void AddArgs(this Collection<String> args, IEnumerable<String?> argValues)
+	{
+		foreach (String? argValue in argValues)
+			args.AddArg(argValue);
+	}
+	public static void AddIncludeArg(this Collection<String> args, String includeFlag, String? argValue)
+	{
+		if (String.IsNullOrWhiteSpace(argValue)) return;
+		if (includeFlag.StartsWith('-'))
+		{
+			args.Add($"{includeFlag}{argValue}");
+			return;
+		}
+		args.Add(includeFlag);
+		args.Add(argValue);
+	}
+	public static void AddWholeLibArg(this Collection<String> args, String beginWholeLink, String endWholeLink,
+		String? argValue, out Boolean added)
+	{
+		if (String.IsNullOrWhiteSpace(beginWholeLink) || String.IsNullOrWhiteSpace(argValue))
+		{
+			added = false;
+			return;
+		}
+
+		added = true;
+		if (String.IsNullOrWhiteSpace(endWholeLink))
+		{
+			args.Add($"{beginWholeLink}{argValue}");
+			return;
+		}
+		args.Add(beginWholeLink);
+		args.Add(argValue);
+		args.Add(endWholeLink);
+	}
+	public static void AddOutputArg(this Collection<String> args, String outputFlag, String? argValue)
+	{
+		if (String.IsNullOrWhiteSpace(argValue)) return;
+		if (!outputFlag.StartsWith('-'))
+		{
+			args.Add($"{outputFlag}{argValue}");
+			return;
+		}
+		args.Add(outputFlag);
+		args.Add(argValue);
+	}
+	public static void AddLibPathArg(this Collection<String> args, String libPathFlag, String? argValue)
+	{
+		if (String.IsNullOrWhiteSpace(argValue)) return;
+		args.Add(String.IsNullOrWhiteSpace(libPathFlag) ? argValue : $"{libPathFlag}{argValue}");
+	}
+	#endregion
 }

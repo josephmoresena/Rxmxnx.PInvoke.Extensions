@@ -11,6 +11,7 @@ public abstract partial class Launcher
 	public abstract ReadOnlySpan<MonoLauncher> MonoLaunchers { get; }
 	public abstract String RuntimeIdentifierPrefix { get; }
 	public abstract Architecture[] Architectures { get; }
+	protected virtual Task<String?> GetZlibPath() => Task.FromResult<String?>(default);
 
 	public async Task Execute()
 	{
@@ -48,6 +49,7 @@ public abstract partial class Launcher
 	{
 		ConsoleNotifier.ShowDiskUsage();
 		if (this.MonoOutputDirectory is null || this.MonoLaunchers.IsEmpty) return;
+		String? zlibPath = await this.GetZlibPath();
 		foreach (MonoLauncher monoLauncher in this.MonoLaunchers.ToArray())
 		foreach (FileInfo executableFile in Launcher.GetMonoExecutables(this.MonoOutputDirectory))
 		{

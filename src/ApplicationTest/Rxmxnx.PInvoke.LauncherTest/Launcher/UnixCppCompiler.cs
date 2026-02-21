@@ -26,6 +26,8 @@ public partial class Launcher
 				yield return "-ldl";
 				yield return "-lpthread";
 				yield return "-lm";
+				foreach (String link in this.AdditionalLink())
+					yield return link;
 			}
 		}
 		public String RuntimePath => $"-Wl,-rpath,{this.LocalRuntimePath}";
