@@ -26,7 +26,7 @@ public partial class Launcher
 			foreach (FileInfo aotFile in this.AotFiles)
 				aotFile.Delete();
 			if (this._assembliesDirectory.Exists)
-				this._assembliesDirectory.Delete();
+				this._assembliesDirectory.Delete(true);
 			if (this.ObjectFile.Exists)
 				this.ObjectFile.Delete();
 			if (this.SourceFile.Exists)

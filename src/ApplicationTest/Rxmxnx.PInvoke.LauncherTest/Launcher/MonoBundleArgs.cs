@@ -40,6 +40,8 @@ public partial class Launcher
 				args.Add("-oo");
 				args.Add(bundleArgs.OutputObjectPath);
 			}
+			if (bundleArgs.CustomBuild)
+				args.Add("-c");
 			args.Add("-o");
 			args.Add(bundleArgs.OutputPath);
 			args.Add("-v");
