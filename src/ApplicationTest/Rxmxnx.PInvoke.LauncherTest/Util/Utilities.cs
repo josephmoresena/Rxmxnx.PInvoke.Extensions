@@ -124,7 +124,7 @@ public static class Utilities
 	public static async Task PatchMonoBundleSource(String sourceFilePath)
 	{
 		String text = await File.ReadAllTextAsync(sourceFilePath);
-		String patched = text.Replace("#ifndef USE_COMPRESSED_ASSEMBLY", "ifndef UNDEFINED")
+		String patched = text.Replace("#ifndef USE_COMPRESSED_ASSEMBLY", "#ifndef UNDEFINED")
 		                     .Replace("mono_mkbundle_init();", "mono_mkbundle_init(); install_aot_modules();");
 		await File.WriteAllTextAsync(sourceFilePath, patched);
 	}
