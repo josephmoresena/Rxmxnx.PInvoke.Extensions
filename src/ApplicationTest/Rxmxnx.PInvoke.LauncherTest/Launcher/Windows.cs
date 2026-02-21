@@ -194,14 +194,13 @@ public partial class Launcher
 				Version vsVersion = Version.Parse(vsVersionText);
 				String registryKey = $"{vsVersion.Major}.0";
 
-				if ((Registry.LocalMachine.OpenSubKey(registryPath) ?? Registry.CurrentUser.OpenSubKey(registryPath)) is
-				    not { } registry)
-					registry = Registry.CurrentUser.CreateSubKey(registryPath);
+				if (Windows.OpenWritableSubKey(registryPath) is not { } registry)
+					registry = Registry.CurrentUser.CreateSubKey(registryPath, true);
 				if (registry.GetValue(registryKey) is not String vsPath || String.IsNullOrWhiteSpace(vsPath))
 				{
 					vsPath = await Utilities.ExecuteWithOutput(vsPropertyQuery with { ArgState = "installationPath", },
 					                                           ConsoleNotifier.CancellationToken);
-					registry.CreateSubKey(registryKey).SetValue(registryKey, vsPath);
+					registry.CreateSubKey(registryKey, true).SetValue(registryKey, vsPath);
 				}
 				Version vcVersion = Version.Parse(await File.ReadAllBytesAsync(
 					                                  Path.Combine(vsPath, "VC", "Auxiliary", "Build",
@@ -214,13 +213,18 @@ public partial class Launcher
 				throw;
 			}
 		}
+		private static RegistryKey? OpenWritableSubKey(String registryPath)
+		{
+			if (Registry.LocalMachine.OpenSubKey(registryPath, true) is { } local)
+				return local;
+			return Registry.CurrentUser.OpenSubKey(registryPath, true);
+		}
 		private static String GetWindowsKitPath()
 		{
 			const String registryPath = @"\Microsoft\Microsoft SDKs\Windows\";
 			try
 			{
-				RegistryKey registry = Registry.LocalMachine.OpenSubKey(registryPath) ??
-					Registry.CurrentUser.OpenSubKey(registryPath)!;
+				RegistryKey registry = Windows.OpenWritableSubKey(registryPath)!;
 				Dictionary<Version, String> kitsLibs = new();
 				foreach (String kitPath in Windows.GetWindowsKits(registry))
 				{
