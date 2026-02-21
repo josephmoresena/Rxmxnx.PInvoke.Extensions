@@ -196,7 +196,6 @@ public partial class Launcher
 				Architecture = monoLauncher.Architecture,
 #endif
 			},
-			WorkingDirectory = workingDirectory,
 			AppendArgs = MonoNativeCompilationArgs.Compile,
 			Notifier = ConsoleNotifier.Notifier,
 		};
