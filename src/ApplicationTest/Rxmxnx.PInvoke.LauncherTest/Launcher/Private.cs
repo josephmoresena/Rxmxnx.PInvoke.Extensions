@@ -291,7 +291,7 @@ public partial class Launcher
 	private static void DeleteMonoAotBundleTempFiles()
 	{
 		DirectoryInfo temp = new(Path.GetTempPath());
-		foreach (FileInfo aotFile in temp.GetFiles("mono_aot_"))
+		foreach (FileInfo aotFile in temp.GetFiles("mono_aot_*"))
 			aotFile.Delete();
 	}
 }
