@@ -147,7 +147,7 @@ public partial class Launcher
 			OperatingSystem.IsWindows() ? linkedExecutableFile.DirectoryName ?? "" : Path.GetTempPath();
 		ExecuteState<MonoBundleArgs> state = new()
 		{
-			ExecutablePath = cppCompiler.CompilerExecutable,
+			ExecutablePath = cppCompiler.MakerPath,
 			ArgState = new()
 			{
 				Architecture = monoLauncher.Architecture,
@@ -179,7 +179,7 @@ public partial class Launcher
 		String outputBinaryPath = Path.Combine(binaryOutputPath.FullName, binaryName);
 		ExecuteState<MonoNativeCompilationArgs> compState = new()
 		{
-			ExecutablePath = monoLauncher.MakerPath,
+			ExecutablePath = cppCompiler.CompilerExecutable,
 			ArgState = new()
 			{
 				Compiler = cppCompiler,
@@ -196,7 +196,6 @@ public partial class Launcher
 				Architecture = monoLauncher.Architecture,
 #endif
 			},
-			WorkingDirectory = workingDirectory,
 			AppendArgs = MonoNativeCompilationArgs.Compile,
 			Notifier = ConsoleNotifier.Notifier,
 		};
