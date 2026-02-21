@@ -194,13 +194,20 @@ public partial class Launcher
 				Version vsVersion = Version.Parse(vsVersionText);
 				String registryKey = $"{vsVersion.Major}.0";
 
-				if (Windows.OpenSoftwareKey(registryPath, true) is not { } registry)
+				Boolean writable = false;
+				if (Windows.OpenSoftwareKey(registryPath) is not { } registry)
+				{
 					registry = Windows.CreateSoftwareKey(registryPath);
+					writable = true;
+				}
 				if (registry.GetValue(registryKey) is not String vsPath || String.IsNullOrWhiteSpace(vsPath))
 				{
 					vsPath = await Utilities.ExecuteWithOutput(vsPropertyQuery with { ArgState = "installationPath", },
 					                                           ConsoleNotifier.CancellationToken);
-					registry.CreateSubKey(registryKey, true).SetValue(registryKey, vsPath);
+					if (writable)
+						registry.SetValue(registryKey, vsPath);
+					else
+						Windows.SetSoftwareValue(registryPath, registryKey, vsPath);
 				}
 				Version vcVersion = Version.Parse(await File.ReadAllBytesAsync(
 					                                  Path.Combine(vsPath, "VC", "Auxiliary", "Build",
@@ -212,6 +219,11 @@ public partial class Launcher
 				ConsoleNotifier.Notifier.PrintError("Fail Microsoft Visual Studio Detection", ex);
 				throw;
 			}
+		}
+		private static void SetSoftwareValue(String registryPath, String name, String value)
+		{
+			RegistryKey registry = Windows.OpenSoftwareKey(registryPath, true)!;
+			registry.SetValue(name, value);
 		}
 		private static RegistryKey? OpenSoftwareKey(String registryPath, Boolean writable = false)
 		{
