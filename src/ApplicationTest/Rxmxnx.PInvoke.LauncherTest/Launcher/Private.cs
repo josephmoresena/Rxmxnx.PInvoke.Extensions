@@ -147,7 +147,7 @@ public partial class Launcher
 			OperatingSystem.IsWindows() ? linkedExecutableFile.DirectoryName ?? "" : Path.GetTempPath();
 		ExecuteState<MonoBundleArgs> state = new()
 		{
-			ExecutablePath = monoLauncher.MakerPath,
+			ExecutablePath = cppCompiler.CompilerExecutable,
 			ArgState = new()
 			{
 				Architecture = monoLauncher.Architecture,
