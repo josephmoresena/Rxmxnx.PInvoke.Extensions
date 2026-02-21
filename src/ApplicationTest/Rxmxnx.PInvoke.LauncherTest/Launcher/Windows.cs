@@ -185,13 +185,13 @@ public partial class Launcher
 					{
 						c.Add("-latest");
 						c.Add("-property");
-						c.Add("installationVersion");
 						c.Add(prop);
 					},
 					Notifier = ConsoleNotifier.Notifier,
 				};
-				Version vsVersion = Version.Parse(
-					await Utilities.ExecuteWithOutput(vsPropertyQuery, ConsoleNotifier.CancellationToken));
+				String vsVersionText =
+					await Utilities.ExecuteWithOutput(vsPropertyQuery, ConsoleNotifier.CancellationToken);
+				Version vsVersion = Version.Parse(vsVersionText);
 				String registryKey = $"{vsVersion.Major}.0";
 
 				if ((Registry.LocalMachine.OpenSubKey(registryPath) ?? Registry.CurrentUser.OpenSubKey(registryPath)) is
