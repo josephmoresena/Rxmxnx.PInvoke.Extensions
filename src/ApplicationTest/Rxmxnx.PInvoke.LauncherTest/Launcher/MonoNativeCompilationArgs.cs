@@ -2,9 +2,8 @@ namespace Rxmxnx.PInvoke.ApplicationTest;
 
 public partial class Launcher
 {
-	private readonly struct MonoCompilationArgs
+	private readonly struct MonoNativeCompilationArgs
 	{
-		public Architecture Architecture { get; init; }
 		public ICppCompiler Compiler { get; init; }
 		public Boolean WindowApp { get; init; }
 		public IEnumerable<String> AotFiles { get; init; }
@@ -15,34 +14,37 @@ public partial class Launcher
 		public IEnumerable<String> MonoFlags { get; init; }
 		public String? ZLibPath { get; init; }
 		public String BinaryOutputPath { get; init; }
+#if ZLINK_STATIC
+		public Architecture Architecture { get; init; }
+#endif
 
-		public static void Compile(MonoCompilationArgs compilationArgs, Collection<String> args)
+		public static void Compile(MonoNativeCompilationArgs nativeCompilationArgs, Collection<String> args)
 		{
-			ICppCompiler compiler = compilationArgs.Compiler;
+			ICppCompiler compiler = nativeCompilationArgs.Compiler;
 
 			args.AddArg(compiler.DynamicRuntime);
 			args.AddArg(compiler.EnableAllWarnings);
 			args.AddArg(compiler.RemovePointerWarnings);
-			foreach (String additionalArg in compilationArgs.MonoFlags)
+			foreach (String additionalArg in nativeCompilationArgs.MonoFlags)
 				args.AddArg(additionalArg);
-			args.AddIncludeArg(compiler.IncludeFlag, compilationArgs.MonoIncludePath);
-			args.AddIncludeArg(compiler.IncludeFlag, compilationArgs.GetZLibInclude());
-			args.AddArg(compilationArgs.SourceFile);
-			args.AddArgs(compiler.BeginLink(compilationArgs.WindowApp));
-			args.AddWholeLibArg(compiler.BeginWholeLink, compiler.EndWholeLink, compilationArgs.StaticRuntimePath,
+			args.AddIncludeArg(compiler.IncludeFlag, nativeCompilationArgs.MonoIncludePath);
+			args.AddIncludeArg(compiler.IncludeFlag, nativeCompilationArgs.GetZLibInclude());
+			args.AddArg(nativeCompilationArgs.SourceFile);
+			args.AddArgs(compiler.BeginLink(nativeCompilationArgs.WindowApp));
+			args.AddWholeLibArg(compiler.BeginWholeLink, compiler.EndWholeLink, nativeCompilationArgs.StaticRuntimePath,
 			                    out Boolean linked);
-			args.AddArg(compilationArgs.ObjectFile);
-			foreach (String aotFile in compilationArgs.AotFiles)
+			args.AddArg(nativeCompilationArgs.ObjectFile);
+			foreach (String aotFile in nativeCompilationArgs.AotFiles)
 				args.AddArg(aotFile);
 #if ZLINK_STATIC
 			args.AddArg(compilationArgs.GetStaticZLibPath());
 #endif
 			if (!linked)
-				args.AddArg(compilationArgs.StaticRuntimePath);
+				args.AddArg(nativeCompilationArgs.StaticRuntimePath);
 			foreach (String libPath in compiler.LibraryPaths)
 				args.AddLibPathArg(compiler.StaticLibPathFlag, libPath);
 			args.AddArgs(compiler.DefaultLink);
-			args.AddOutputArg(compiler.OutputFlag, compilationArgs.BinaryOutputPath);
+			args.AddOutputArg(compiler.OutputFlag, nativeCompilationArgs.BinaryOutputPath);
 		}
 
 		private String? GetZLibInclude() => this.ZLibPath is null ? default : Path.Combine(this.ZLibPath, "include");

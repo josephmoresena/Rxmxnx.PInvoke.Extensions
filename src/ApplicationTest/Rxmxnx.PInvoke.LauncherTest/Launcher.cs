@@ -11,7 +11,8 @@ public abstract partial class Launcher
 	public abstract ReadOnlySpan<MonoLauncher> MonoLaunchers { get; }
 	public abstract String RuntimeIdentifierPrefix { get; }
 	public abstract Architecture[] Architectures { get; }
-	protected virtual Task<String?> GetZlibPath() => Task.FromResult<String?>(default);
+	public abstract ICppCompiler? GetCompiler(Architecture arch);
+	public virtual Task<String?> GetZlibPath() => Task.FromResult<String?>(default);
 
 	public async Task Execute()
 	{
@@ -51,13 +52,20 @@ public abstract partial class Launcher
 		if (this.MonoOutputDirectory is null || this.MonoLaunchers.IsEmpty) return;
 		String? zlibPath = await this.GetZlibPath();
 		foreach (MonoLauncher monoLauncher in this.MonoLaunchers.ToArray())
-		foreach (FileInfo executableFile in Launcher.GetMonoExecutables(this.MonoOutputDirectory))
 		{
-			await Launcher.CompileMonoAot(monoLauncher, this.MonoOutputDirectory.FullName, executableFile);
-			foreach (FileInfo assemblyFile in
-			         executableFile.Directory!.GetFiles("*.dll", SearchOption.TopDirectoryOnly))
-				await Launcher.CompileMonoAot(monoLauncher, this.MonoOutputDirectory.FullName, assemblyFile);
-			await Launcher.PackMonoApp(monoLauncher, this.MonoOutputDirectory, executableFile);
+			ICppCompiler? cppCompiler = this.GetCompiler(monoLauncher.Architecture);
+			foreach (FileInfo executableFile in Launcher.GetMonoExecutables(this.MonoOutputDirectory))
+			{
+				await Launcher.CompileMonoAot(monoLauncher, this.MonoOutputDirectory.FullName, executableFile);
+				foreach (FileInfo assemblyFile in executableFile.Directory!.GetFiles(
+					         "*.dll", SearchOption.TopDirectoryOnly))
+					await Launcher.CompileMonoAot(monoLauncher, this.MonoOutputDirectory.FullName, assemblyFile);
+				if (cppCompiler is null)
+					await Launcher.PackMonoApp(monoLauncher, this.MonoOutputDirectory, executableFile);
+				else
+					await Launcher.PackMonoApp(monoLauncher, cppCompiler, zlibPath, this.MonoOutputDirectory,
+					                           executableFile);
+			}
 		}
 	}
 

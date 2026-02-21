@@ -32,6 +32,7 @@ public partial class Launcher
 				MonoCilStripAssemblyPath = "/usr/lib/mono/4.5/mono-cil-strip.exe",
 				NativeRuntimePath = "/usr/lib/libmono-native.so",
 				ExecutablePath = "/usr/bin/mono",
+				StaticRuntimePath = "/usr/lib/libmonosgen-2.0.a",
 			};
 		}
 		private async Task<Int32> RunAppQemu(FileInfo appFile, Architecture arch, String executionName,

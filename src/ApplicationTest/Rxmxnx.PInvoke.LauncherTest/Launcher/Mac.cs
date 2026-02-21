@@ -23,6 +23,8 @@ public partial class Launcher
 				                       ref this._monoLaunchers);
 		}
 
+		public override ICppCompiler GetCompiler(Architecture arch) => new XCppCompiler(arch);
+
 		private static void AppendMonoLauncher(String monoPath, Architecture arch,
 			ref List<MonoLauncher>? monoLaunchers)
 		{
@@ -45,6 +47,9 @@ public partial class Launcher
 				MonoCilStripAssemblyPath = Path.Combine(monoRuntimePath, "mono-cil-strip.exe"),
 				NativeRuntimePath = libSystemNativePath,
 				ExecutablePath = executablePath,
+				IncludeRuntimePath = Path.Combine(monoPath, "include"),
+				StaticRuntimePath = Path.Combine(monoLibPath, "libmonosgen-2.0.a"),
+				PkgConfigPath = Path.Combine(monoLibPath, "pkgconfig"),
 			});
 		}
 

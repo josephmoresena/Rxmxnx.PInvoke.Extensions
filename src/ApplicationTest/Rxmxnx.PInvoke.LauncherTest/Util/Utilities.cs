@@ -98,6 +98,36 @@ public static class Utilities
 		state.Notifier?.End(info);
 		return prog.ExitCode;
 	}
+	public static async Task<String[]> GetMonoFlags(String? monoLauncherPkgConfigPath,
+		CancellationToken cancellationToken = default)
+	{
+		if (OperatingSystem.IsWindows()) return [];
+		ExecuteState<String?> state = new()
+		{
+			ExecutablePath = "pkg-config",
+			ArgState = monoLauncherPkgConfigPath,
+			AppendEnvs = (s, e) =>
+			{
+				if (!String.IsNullOrWhiteSpace(s)) return;
+				e.Add("PKG_CONFIG_PATH", s);
+			},
+			AppendArgs = (_, a) =>
+			{
+				a.Add("--cflags");
+				a.Add("mono-2");
+			},
+			Notifier = ConsoleNotifier.Notifier,
+		};
+		String value = await Utilities.ExecuteWithOutput(state, cancellationToken);
+		return String.IsNullOrWhiteSpace(value) ? [] : Utilities.ParseMonoFlags(value);
+	}
+	public static async Task PatchMonoBundleSource(String sourceFilePath)
+	{
+		String text = await File.ReadAllTextAsync(sourceFilePath);
+		String patched = text.Replace("#ifndef USE_COMPRESSED_ASSEMBLY", "ifndef UNDEFINED")
+		                     .Replace("mono_mkbundle_init();", "mono_mkbundle_init(); install_aot_modules();");
+		await File.WriteAllTextAsync(sourceFilePath, patched);
+	}
 
 	private static async Task<String> ReadOutput(Process prog, CancellationToken cancellationToken)
 	{
@@ -113,6 +143,18 @@ public static class Utilities
 			using (state.Lock.EnterScope())
 				state.Builder.AppendLine(line);
 		}
+	}
+	private static String[] ParseMonoFlags(String value)
+	{
+		Collection<String> result = [];
+		Int32 start = 0;
+		while (value.AsSpan()[start..].IndexOf([' ', '-',]) is { } end and > 0)
+		{
+			result.AddArg(value.AsSpan().Slice(start, end).ToString());
+			start += end;
+		}
+		result.AddArg(value.AsSpan()[start..].ToString());
+		return result.ToArray();
 	}
 
 	private readonly struct OutputState

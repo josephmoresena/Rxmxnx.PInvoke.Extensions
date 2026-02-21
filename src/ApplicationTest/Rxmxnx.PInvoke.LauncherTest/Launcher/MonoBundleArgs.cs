@@ -9,9 +9,9 @@ public partial class Launcher
 		public String AssemblyPathName { get; init; }
 		public String StripAssemblyPath { get; init; }
 		public Boolean CustomBuild { get; init; }
-		public String OutputObjectPath { get; init; }
 		public String OutputPath { get; init; }
 		public Boolean UseLlvm { get; init; }
+		public String? OutputObjectPath { get; init; }
 
 		public static void MakeEnv(MonoBundleArgs bundleArgs, StringDictionary env)
 			=> env.Add("VSCMD_ARG_TGT_ARCH", $"{bundleArgs.Architecture}");

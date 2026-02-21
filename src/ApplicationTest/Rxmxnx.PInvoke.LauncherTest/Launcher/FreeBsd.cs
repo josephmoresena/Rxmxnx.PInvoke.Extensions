@@ -42,9 +42,12 @@ public partial class Launcher
 				MonoCilStripAssemblyPath = "/usr/local/lib/mono/4.5/mono-cil-strip.exe",
 				NativeRuntimePath = "/usr/local/lib/libmono-native.so",
 				ExecutablePath = "/usr/local/bin/mono",
+				IncludeRuntimePath = "/usr/local/include/mono-2.0",
+				StaticRuntimePath = "/usr/local/lib/libmonosgen-2.0.a",
 			};
 			initialize = this.Initialize();
 		}
+		public override ICppCompiler GetCompiler(Architecture arch) => new CppCompiler(arch);
 
 		private async Task Initialize()
 		{

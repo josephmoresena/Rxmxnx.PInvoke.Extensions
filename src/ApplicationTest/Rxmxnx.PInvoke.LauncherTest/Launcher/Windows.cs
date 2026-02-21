@@ -2,6 +2,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest;
 
 public partial class Launcher
 {
+	[SupportedOSPlatform("WINDOWS")]
 	private sealed partial class Windows : Launcher, ILauncher<Windows>
 	{
 		private const String zLibUrl = "http://www.winimage.com/zLibDll/zlib123.zip";
@@ -10,6 +11,7 @@ public partial class Launcher
 		private const String zLib64Url = "http://www.winimage.com/zLibDll/zlib123dllx64.zip";
 #endif
 
+		private readonly Dictionary<Architecture, CppCompiler> _cppCompilers = new();
 		private readonly List<MonoLauncher>? _monoLaunchers;
 
 		public static OSPlatform Platform => OSPlatform.Windows;
@@ -24,7 +26,7 @@ public partial class Launcher
 			                         .Where(a => a == this.CurrentArch || a is Architecture.X86 ||
 				                                (a is Architecture.X64 && this.CurrentArch is not Architecture.X86))
 			                         .ToArray();
-			initialize = Task.CompletedTask;
+			initialize = Windows.PrepareCompilers(this._cppCompilers, this.Architectures);
 			Windows.AppendMonoLauncher(
 				Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Mono"),
 				Architecture.X64, ref this._monoLaunchers);
@@ -34,7 +36,8 @@ public partial class Launcher
 					Architecture.X86, ref this._monoLaunchers);
 		}
 
-		protected override async Task<String?> GetZlibPath()
+		public override ICppCompiler? GetCompiler(Architecture arch) => this._cppCompilers.GetValueOrDefault(arch);
+		public override async Task<String?> GetZlibPath()
 		{
 			DirectoryInfo zlibDir =
 				new(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -68,6 +71,9 @@ public partial class Launcher
 #endif
 			return zlibDir.FullName;
 		}
+
+		public static Windows Create(DirectoryInfo outputDirectory, Boolean useMono, out Task initTask)
+			=> new(outputDirectory, useMono, out initTask);
 
 		[LibraryImport("Rxmxnx.PInvoke.Mkbundle.Patcher", StringMarshalling = StringMarshalling.Utf16)]
 		private static partial Int32 PatchAssemblyForWindows(String monoLibPath, Int32 monoLibPathLength,
@@ -156,9 +162,105 @@ public partial class Launcher
 			await response.Content.CopyToAsync(zipStream);
 			return zipStream;
 		}
+		private static async Task PrepareCompilers(Dictionary<Architecture, CppCompiler> cppCompilers,
+			Architecture[] architectures)
+		{
+			String vcPath = await Windows.GetVisualCppPath();
+			String kitPath = Windows.GetWindowsKitPath();
+			foreach (Architecture arch in architectures)
+				cppCompilers.Add(arch, new(vcPath, kitPath, arch));
+		}
+		private static async Task<String> GetVisualCppPath()
+		{
+			const String registryPath = @"\Microsoft\VisualStudio\SxS\VS7";
+			try
+			{
+				String vsWherePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
+				                                  "Microsoft Visual Studio", "Installer", "vswhere.exe");
+				ExecuteState<String> vsPropertyQuery = new()
+				{
+					ExecutablePath = vsWherePath,
+					ArgState = "installationVersion",
+					AppendArgs = (prop, c) =>
+					{
+						c.Add("-latest");
+						c.Add("-property");
+						c.Add("installationVersion");
+						c.Add(prop);
+					},
+					Notifier = ConsoleNotifier.Notifier,
+				};
+				Version vsVersion = Version.Parse(
+					await Utilities.ExecuteWithOutput(vsPropertyQuery, ConsoleNotifier.CancellationToken));
+				String registryKey = $"{vsVersion.Major}.0";
 
-		public static Windows Create(DirectoryInfo outputDirectory, Boolean useMono, out Task initTask)
-			=> new(outputDirectory, useMono, out initTask);
+				if ((Registry.LocalMachine.OpenSubKey(registryPath) ?? Registry.CurrentUser.OpenSubKey(registryPath)) is
+				    not { } registry)
+					registry = Registry.CurrentUser.CreateSubKey(registryPath);
+				if (registry.GetValue(registryKey) is not String vsPath || String.IsNullOrWhiteSpace(vsPath))
+				{
+					vsPath = await Utilities.ExecuteWithOutput(vsPropertyQuery with { ArgState = "installationPath", },
+					                                           ConsoleNotifier.CancellationToken);
+					registry.CreateSubKey(registryKey).SetValue(registryKey, vsPath);
+				}
+				Version vcVersion = Version.Parse(await File.ReadAllBytesAsync(
+					                                  Path.Combine(vsPath, "VC", "Auxiliary", "Build",
+					                                               "Microsoft.VCToolsVersion.default.txt")));
+				return Path.Combine(vsPath, "VC", "Tools", "MSVC", vcVersion.ToString(), "bin");
+			}
+			catch (Exception ex)
+			{
+				ConsoleNotifier.Notifier.PrintError("Fail Microsoft Visual Studio Detection", ex);
+				throw;
+			}
+		}
+		private static String GetWindowsKitPath()
+		{
+			const String registryPath = @"\Microsoft\Microsoft SDKs\Windows\";
+			try
+			{
+				RegistryKey registry = Registry.LocalMachine.OpenSubKey(registryPath) ??
+					Registry.CurrentUser.OpenSubKey(registryPath)!;
+				Dictionary<Version, String> kitsLibs = new();
+				foreach (String kitPath in Windows.GetWindowsKits(registry))
+				{
+					DirectoryInfo libPath = new(Path.Combine(kitPath, "lib"));
+					if (!libPath.Exists) continue;
+					Windows.GetVersions(libPath, kitsLibs);
+				}
+				return kitsLibs[kitsLibs.Keys.Max()!];
+			}
+			catch (Exception ex)
+			{
+				ConsoleNotifier.Notifier.PrintError("Fail Microsoft Windows Kit Detection", ex);
+				throw;
+			}
+		}
+		private static void GetVersions(DirectoryInfo libPath, Dictionary<Version, String> kitsLibs)
+		{
+			foreach (DirectoryInfo version in libPath.GetDirectories())
+			{
+				if (!Version.TryParse(version.Name, out Version? libVersion))
+					continue;
+				if (libPath.GetDirectories().Count(d => d.Name is "um" or "ucrt") < 2)
+					continue;
+				kitsLibs.Add(libVersion, libPath.FullName);
+			}
+		}
+		private static String[] GetWindowsKits(RegistryKey registry)
+		{
+			Dictionary<Version, String> kits = new();
+			foreach (String subKeyName in registry.GetSubKeyNames())
+			{
+				RegistryKey subKeyRegistry = registry.OpenSubKey(subKeyName)!;
+				String? installationFolder = subKeyRegistry.GetValue("InstallationFolder")?.ToString();
+				if (String.IsNullOrWhiteSpace(installationFolder) ||
+				    !Version.TryParse(subKeyRegistry.GetValue("ProductVersion")?.ToString(), out Version? kitVersion))
+					continue;
+				kits.Add(kitVersion, installationFolder);
+			}
+			return kits.OrderBy(p => p.Key).Select(p => p.Value).ToArray();
+		}
 
 		private sealed class CppCompiler(String msvcPath, String kitPath, Architecture arch) : ICppCompiler
 		{
