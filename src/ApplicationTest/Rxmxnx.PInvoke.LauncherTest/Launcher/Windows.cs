@@ -85,7 +85,8 @@ public partial class Launcher
 			String executablePath = Path.Combine(monoBinPath, "mono.exe");
 			if (!File.Exists(executablePath)) return;
 
-			String monoRuntimePath = Path.Combine(monoPath, "lib", "mono", "4.5");
+			String monoLibPath = Path.Combine(monoPath, "lib");
+			String monoRuntimePath = Path.Combine(monoLibPath, "mono", "4.5");
 			monoLaunchers ??= new(2);
 			String mkbundleBatchPath = Windows.PatchMaker(arch, monoBinPath, monoRuntimePath, executablePath);
 			monoLaunchers.Add(new()
@@ -97,6 +98,8 @@ public partial class Launcher
 				MakerPath = mkbundleBatchPath,
 				NativeRuntimePath = Path.Combine(monoBinPath, "mono-2.0-sgen.dll"),
 				MonoCilStripAssemblyPath = Path.Combine(monoRuntimePath, "mono-cil-strip.exe"),
+				IncludeRuntimePath = Path.Combine(monoPath, "include", "mono-2.0"),
+				StaticRuntimePath = Path.Combine(monoLibPath, "libmono-static-sgen.lib"),
 				ExecutablePath = executablePath,
 			});
 		}
