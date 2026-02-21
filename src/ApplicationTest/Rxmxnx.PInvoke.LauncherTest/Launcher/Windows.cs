@@ -287,16 +287,17 @@ public partial class Launcher
 					ConsoleNotifier.Notifier.Print($"Invalid Windows Kit directory [{version.FullName}].");
 					continue;
 				}
-				DirectoryInfo? umDir = libPath.GetDirectories("um").FirstOrDefault();
-				DirectoryInfo? ucrtDir = libPath.GetDirectories("ucrt").FirstOrDefault();
-				if (umDir is null)
-					ConsoleNotifier.Notifier.Print($"Missing 'um' libraries [{version.FullName}].");
-				if (ucrtDir is null)
-					ConsoleNotifier.Notifier.Print($"Missing 'ucrt' libraries [{version.FullName}].");
+				DirectoryInfo? umDir = version.GetDirectories("um").FirstOrDefault();
+				DirectoryInfo? ucrtDir = version.GetDirectories("ucrt").FirstOrDefault();
 				if (umDir is null || ucrtDir is null)
+				{
+					String missing = umDir is null && ucrtDir is null ? "'um' and 'ucrt'" :
+						umDir is null ? "'um'" : "'ucrt'";
+					ConsoleNotifier.Notifier.Print($"Missing {missing} libraries [{version.FullName}].");
 					continue;
+				}
 				kitsLibs.Add(libVersion, libPath.FullName);
-				ConsoleNotifier.Notifier.Print($"Windows Kit Version {libVersion} libs found.");
+				ConsoleNotifier.Notifier.Print($"Found libraries [{version.FullName}] found.");
 			}
 		}
 		private static String[] GetWindowsKits(RegistryKey registry)
