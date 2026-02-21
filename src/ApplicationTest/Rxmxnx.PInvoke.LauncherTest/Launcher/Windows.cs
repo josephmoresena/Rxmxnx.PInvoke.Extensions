@@ -266,7 +266,7 @@ public partial class Launcher
 				Dictionary<Version, String> kitsLibs = new();
 				foreach (String kitPath in Windows.GetWindowsKits(registry))
 				{
-					DirectoryInfo libPath = new(Path.Combine(kitPath, "lib"));
+					DirectoryInfo libPath = new(Path.Combine(kitPath, "Lib"));
 					if (!libPath.Exists) continue;
 					Windows.GetVersions(libPath, kitsLibs);
 				}
@@ -283,8 +283,17 @@ public partial class Launcher
 			foreach (DirectoryInfo version in libPath.GetDirectories())
 			{
 				if (!Version.TryParse(version.Name, out Version? libVersion))
+				{
+					ConsoleNotifier.Notifier.Print($"Invalid Windows Kit directory [{version.FullName}].");
 					continue;
-				if (libPath.GetDirectories().Count(d => d.Name is "um" or "ucrt") < 2)
+				}
+				DirectoryInfo? umDir = libPath.GetDirectories("um").FirstOrDefault();
+				DirectoryInfo? ucrtDir = libPath.GetDirectories("ucrt").FirstOrDefault();
+				if (umDir is null)
+					ConsoleNotifier.Notifier.Print($"Missing 'um' libraries [{version.FullName}].");
+				if (ucrtDir is null)
+					ConsoleNotifier.Notifier.Print($"Missing 'ucrt' libraries [{version.FullName}].");
+				if (umDir is null || ucrtDir is null)
 					continue;
 				kitsLibs.Add(libVersion, libPath.FullName);
 				ConsoleNotifier.Notifier.Print($"Windows Kit Version {libVersion} libs found.");
@@ -302,7 +311,7 @@ public partial class Launcher
 				    !Version.TryParse(version, out Version? kitVersion))
 					continue;
 				kits.Add(kitVersion, installationFolder);
-				ConsoleNotifier.Notifier.Print($"Windows Kit Version {kitVersion} found ({installationFolder}).");
+				ConsoleNotifier.Notifier.Print($"Windows Kit Version {kitVersion} [{installationFolder}] found.");
 			}
 			return kits.OrderBy(p => p.Key).Select(p => p.Value).ToArray();
 		}
