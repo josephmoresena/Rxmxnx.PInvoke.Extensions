@@ -134,7 +134,7 @@ public static class Utilities
 	public static void AddArg(this Collection<String> args, String? argValue)
 	{
 		if (String.IsNullOrWhiteSpace(argValue)) return;
-		args.Add(argValue);
+		args.Add(argValue.Trim());
 	}
 	public static void AddArgs(this Collection<String> args, IEnumerable<String?> argValues)
 	{
@@ -146,11 +146,11 @@ public static class Utilities
 		if (String.IsNullOrWhiteSpace(argValue)) return;
 		if (includeFlag.StartsWith('-'))
 		{
-			args.Add(Utilities.CombinePathArg(includeFlag, argValue));
+			args.Add(Utilities.CombinePathArg(includeFlag.Trim(), argValue.Trim()));
 			return;
 		}
-		args.Add(includeFlag);
-		args.Add(argValue);
+		args.Add(includeFlag.Trim());
+		args.Add(argValue.Trim());
 	}
 	public static void AddWholeLibArg(this Collection<String> args, String beginWholeLink, String endWholeLink,
 		String? argValue, out Boolean added)
@@ -164,28 +164,30 @@ public static class Utilities
 		added = true;
 		if (String.IsNullOrWhiteSpace(endWholeLink))
 		{
-			args.Add(Utilities.CombinePathArg(beginWholeLink, argValue));
+			args.Add(Utilities.CombinePathArg(beginWholeLink.Trim(), argValue.Trim()));
 			return;
 		}
-		args.Add(beginWholeLink);
-		args.Add(argValue);
-		args.Add(endWholeLink);
+		args.Add(beginWholeLink.Trim());
+		args.Add(argValue.Trim());
+		args.Add(endWholeLink.Trim());
 	}
 	public static void AddOutputArg(this Collection<String> args, String outputFlag, String? argValue)
 	{
 		if (String.IsNullOrWhiteSpace(argValue)) return;
 		if (!outputFlag.StartsWith('-'))
 		{
-			args.Add(Utilities.CombinePathArg(outputFlag, argValue));
+			args.Add(Utilities.CombinePathArg(outputFlag.Trim(), argValue.Trim()));
 			return;
 		}
-		args.Add(outputFlag);
-		args.Add(argValue);
+		args.Add(outputFlag.Trim());
+		args.Add(argValue.Trim());
 	}
 	public static void AddLibPathArg(this Collection<String> args, String libPathFlag, String? argValue)
 	{
 		if (String.IsNullOrWhiteSpace(argValue)) return;
-		args.Add(String.IsNullOrWhiteSpace(libPathFlag) ? argValue : Utilities.CombinePathArg(libPathFlag, argValue));
+		args.Add(String.IsNullOrWhiteSpace(libPathFlag) ?
+			         argValue.Trim() :
+			         Utilities.CombinePathArg(libPathFlag.Trim(), argValue.Trim()));
 	}
 	#endregion
 }

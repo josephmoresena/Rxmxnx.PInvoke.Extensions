@@ -110,8 +110,6 @@ public partial class Launcher
 		};
 		String bundleResult = await Utilities.ExecuteWithOutput(state, ConsoleNotifier.CancellationToken);
 		await File.WriteAllTextAsync(bundleLog, bundleResult);
-
-		FileInfo nativeRuntime = new(monoLauncher.NativeRuntimePath);
 		state = state with
 		{
 			ArgState = state.ArgState with
@@ -126,8 +124,8 @@ public partial class Launcher
 		bundleResult = await Utilities.ExecuteWithOutput(state, ConsoleNotifier.CancellationToken);
 		await File.WriteAllTextAsync(bundleLog, bundleResult);
 
-		if (nativeRuntime.Exists && binaryOutputPath.GetFiles().Length > 0)
-			nativeRuntime.CopyTo(Path.Combine(binaryOutputPath.FullName, monoLauncher.NativeRuntimeName), true);
+		if (binaryOutputPath.GetFiles().Length > 0)
+			Launcher.CopyMonoRuntime(monoLauncher, binaryOutputPath);
 
 		if (Utilities.ShowDiagnostics)
 			ConsoleNotifier.ShowDiskUsage();
@@ -136,13 +134,15 @@ public partial class Launcher
 		Boolean isWindowsApp, DirectoryInfo outputPath, String applicationName, FileInfo linkedExecutableFile)
 	{
 		const String sourceFile = "main.c";
-		const String objectFile = "assemblies.obj";
 		const String assembliesPath = "temp_assemblies";
+
+		String objectFile = OperatingSystem.IsWindows() ? "assemblies.obj" : "assemblies.o";
 		DirectoryInfo binaryOutputPath = outputPath.CreateSubdirectory($"{monoLauncher.Architecture}");
 		String bundleLog = Path.Combine(outputPath.FullName,
 		                                $"{applicationName}.{monoLauncher.Architecture}.Mono.Bundle.log");
-		String workingDirectory =
-			OperatingSystem.IsWindows() ? linkedExecutableFile.DirectoryName ?? "" : Path.GetTempPath();
+		String workingDirectory = OperatingSystem.IsWindows() ?
+			linkedExecutableFile.DirectoryName ?? "" :
+			Path.GetTempPath();
 		ExecuteState<MonoBundleArgs> state = new()
 		{
 			ExecutablePath = monoLauncher.MakerPath,
@@ -194,7 +194,6 @@ public partial class Launcher
 				Architecture = monoLauncher.Architecture,
 #endif
 			},
-			WorkingDirectory = workingDirectory,
 			AppendEnvs = MonoNativeCompilationArgs.CompileEnv,
 			AppendArgs = MonoNativeCompilationArgs.Compile,
 			Notifier = ConsoleNotifier.Notifier,
@@ -206,12 +205,36 @@ public partial class Launcher
 		bundleResult = await Utilities.ExecuteWithOutput(compState, ConsoleNotifier.CancellationToken);
 		await File.WriteAllTextAsync(bundleLog, bundleResult);
 
-		FileInfo nativeRuntime = new(monoLauncher.NativeRuntimePath);
-		if (!OperatingSystem.IsWindows() && nativeRuntime.Exists && binaryOutputPath.GetFiles().Length > 0)
-			nativeRuntime.CopyTo(Path.Combine(binaryOutputPath.FullName, monoLauncher.NativeRuntimeName), true);
+		if (!OperatingSystem.IsWindows() && Path.Exists(outputBinaryPath))
+		{
+			await Launcher.StripUnixExecutable(outputBinaryPath);
+			Launcher.CopyMonoRuntime(monoLauncher, binaryOutputPath);
+		}
 
 		if (Utilities.ShowDiagnostics)
 			ConsoleNotifier.ShowDiskUsage();
+	}
+	private static async Task StripUnixExecutable(String outputBinaryPath)
+	{
+		ExecuteState<String> stripState = new()
+		{
+			ExecutablePath = "strip",
+			ArgState = outputBinaryPath,
+			AppendArgs = (s, c) =>
+			{
+				c.Add("-x");
+				c.Add(s);
+			},
+			Notifier = ConsoleNotifier.Notifier,
+		};
+		await Utilities.Execute(stripState, ConsoleNotifier.CancellationToken);
+	}
+	private static void CopyMonoRuntime(MonoLauncher monoLauncher, DirectoryInfo binaryOutputPath)
+	{
+		FileInfo nativeRuntime = new(monoLauncher.NativeRuntimePath);
+		String nativeRuntimePath = Path.Combine(binaryOutputPath.FullName, monoLauncher.NativeRuntimeName);
+		if (nativeRuntime.Exists && !File.Exists(nativeRuntimePath))
+			nativeRuntime.CopyTo(nativeRuntimePath, true);
 	}
 	private static Boolean IsWindowApp(FileInfo linkedExecutableFile)
 	{
@@ -237,15 +260,17 @@ public partial class Launcher
 	private static async Task<String> RunMonoAot(String monoExecutable, String assemblyName, String workingDirectory,
 		Boolean hybrid)
 	{
+		String outFile = Path.GetTempFileName();
 		ExecuteState<MonoAotArgs> state = new()
 		{
 			ExecutablePath = monoExecutable,
-			ArgState = new() { AssemblyPathName = assemblyName, Hybrid = hybrid, },
+			ArgState = new() { AssemblyPathName = assemblyName, Hybrid = hybrid, OutputFile = outFile, },
 			WorkingDirectory = workingDirectory,
 			AppendArgs = MonoAotArgs.Link,
 			Notifier = ConsoleNotifier.Notifier,
 		};
 		String result = await Utilities.ExecuteWithOutput(state, ConsoleNotifier.CancellationToken);
+		if (File.Exists(outFile)) File.Delete(outFile);
 		return result;
 	}
 	private static async Task<String> RunMonoLink(String linkerExecutable, String executableName,

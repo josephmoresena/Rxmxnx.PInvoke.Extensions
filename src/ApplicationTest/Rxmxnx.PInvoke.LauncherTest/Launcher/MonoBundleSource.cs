@@ -8,6 +8,7 @@ public partial class Launcher
 		String objectFile,
 		String assembliesPath) : IDisposable
 	{
+		private readonly FileInfo _asmFile = new(Path.Combine(bundlePath, "temp.s"));
 		private readonly DirectoryInfo _assembliesDirectory = new(Path.Combine(bundlePath, assembliesPath));
 		private Boolean _disposed;
 
@@ -29,6 +30,8 @@ public partial class Launcher
 				this._assembliesDirectory.Delete(true);
 			if (this.ObjectFile.Exists)
 				this.ObjectFile.Delete();
+			if (this._asmFile.Exists)
+				this._asmFile.Delete();
 			if (this.SourceFile.Exists)
 				this.SourceFile.Delete();
 		}

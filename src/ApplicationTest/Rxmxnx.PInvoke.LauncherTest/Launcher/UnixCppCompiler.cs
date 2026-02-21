@@ -11,7 +11,7 @@ public partial class Launcher
 		public virtual String ExportDynamicSymbols => String.Empty;
 
 		public IEnumerable<String> LibraryPaths => [];
-		public String CompilerExecutable => "cpp";
+		public String CompilerExecutable => "cc";
 		public String EnableAllWarnings => "-Wall";
 		public String IncludeFlag => "-I";
 		public String OutputFlag => "-o";

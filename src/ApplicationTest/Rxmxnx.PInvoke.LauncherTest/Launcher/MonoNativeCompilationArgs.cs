@@ -65,6 +65,7 @@ public partial class Launcher
 			foreach (String libPath in compiler.LibraryPaths)
 				args.AddLibPathArg(compiler.StaticLibPathFlag, libPath);
 			args.AddArgs(compiler.DefaultLink);
+			args.AddArg(compiler.RuntimePath);
 			args.AddOutputArg(compiler.OutputFlag, nativeCompilationArgs.BinaryOutputPath);
 		}
 
