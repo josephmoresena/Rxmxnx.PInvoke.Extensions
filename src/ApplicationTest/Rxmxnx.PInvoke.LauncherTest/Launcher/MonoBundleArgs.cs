@@ -14,7 +14,7 @@ public partial class Launcher
 		public String? OutputObjectPath { get; init; }
 
 		public static void MakeEnv(MonoBundleArgs bundleArgs, StringDictionary env)
-			=> env.Add("VSCMD_ARG_TGT_ARCH", $"{bundleArgs.Architecture}");
+			=> env["VSCMD_ARG_TGT_ARCH"] = $"{bundleArgs.Architecture}";
 
 		public static void Make(MonoBundleArgs bundleArgs, Collection<String> args)
 		{
