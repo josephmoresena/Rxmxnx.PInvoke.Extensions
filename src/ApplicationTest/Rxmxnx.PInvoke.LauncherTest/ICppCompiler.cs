@@ -17,9 +17,6 @@ public interface ICppCompiler
 	String RuntimePath { get; }
 
 	IEnumerable<String> BeginLink(Boolean windowApp);
-	async Task<(String name, String value)[]> GetEnv()
-	{
-		await Task.Yield();
-		return [];
-	}
+	Task<(String name, String value)[]> GetEnv();
+	Task<String[]> GetPkgConfigArgs(String packageName, String? pkgPath);
 }

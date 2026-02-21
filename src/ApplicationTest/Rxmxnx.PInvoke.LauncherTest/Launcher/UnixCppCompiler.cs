@@ -44,7 +44,55 @@ public partial class Launcher
 				_ => arch.ToString().ToLowerInvariant(),
 			};
 		}
+		public async Task<String[]> GetPkgConfigArgs(String packageName, String? pkgPath)
+		{
+			if (OperatingSystem.IsWindows()) return [];
+			ExecuteState<PkgConfigState> state = new()
+			{
+				ExecutablePath = "pkg-config",
+				ArgState = new() { Package = packageName, Path = pkgPath, },
+				AppendEnvs = (s, e) =>
+				{
+					if (!String.IsNullOrWhiteSpace(s.Path)) return;
+					e["PKG_CONFIG_PATH"] = s.Path;
+				},
+				AppendArgs = (s, a) =>
+				{
+					a.Add("--cflags");
+					if (!String.IsNullOrWhiteSpace(s.Package))
+						a.Add(s.Package);
+				},
+				Notifier = ConsoleNotifier.Notifier,
+			};
+			String value = await Utilities.ExecuteWithOutput(state, ConsoleNotifier.CancellationToken);
+			return String.IsNullOrWhiteSpace(value) ? [] : UnixCppCompiler.ParseMonoFlags(value);
+		}
+
+		async Task<(String name, String value)[]> ICppCompiler.GetEnv()
+		{
+			await Task.Yield();
+			return [];
+		}
 
 		protected abstract IEnumerable<String> AdditionalLink();
+
+		private static String[] ParseMonoFlags(String value)
+		{
+			Collection<String> result = [];
+			Int32 start = 0;
+			while (value.AsSpan()[start..].IndexOf([' ', '-',]) is { } end and > 0)
+			{
+				result.AddArg(value.AsSpan().Slice(start, end).ToString());
+				start += end;
+			}
+			result.AddArg(value.AsSpan()[start..].ToString());
+			return result.ToArray();
+		}
+
+		private readonly struct PkgConfigState
+		{
+			public String Package { get; init; }
+			public String? Path { get; init; }
+		}
 	}
 }

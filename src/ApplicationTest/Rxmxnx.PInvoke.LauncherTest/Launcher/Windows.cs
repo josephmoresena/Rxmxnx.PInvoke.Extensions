@@ -398,6 +398,12 @@ public partial class Launcher
 				}
 				return result;
 			}
+
+			async Task<String[]> ICppCompiler.GetPkgConfigArgs(String packageName, String? pkgPath)
+			{
+				await Task.Yield();
+				return [];
+			}
 		}
 	}
 }

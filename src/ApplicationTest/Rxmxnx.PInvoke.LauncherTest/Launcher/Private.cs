@@ -168,8 +168,7 @@ public partial class Launcher
 		using MonoBundleSource source = new(workingDirectory, sourceFile, objectFile, assembliesPath);
 		if (!source.Exists) return;
 
-		String[] monoFlags =
-			await Utilities.GetMonoFlags(monoLauncher.PkgConfigPath, ConsoleNotifier.CancellationToken);
+		String[] monoArgs = await cppCompiler.GetPkgConfigArgs("mono-2", monoLauncher.PkgConfigPath);
 		String binaryExtension = OperatingSystem.IsWindows() ? ".exe" : "";
 		String complement =
 			$"{(!applicationName.Contains(".mono", StringComparison.InvariantCultureIgnoreCase) ? ".mono" : "")}";
@@ -181,8 +180,8 @@ public partial class Launcher
 			ArgState = new()
 			{
 				Compiler = cppCompiler,
-				MonoFlags = monoFlags,
-				MonoIncludePath = monoFlags.Length == 0 ? monoLauncher.IncludeRuntimePath : default,
+				MonoFlags = monoArgs,
+				MonoIncludePath = monoArgs.Length == 0 ? monoLauncher.IncludeRuntimePath : default,
 				StaticRuntimePath = monoLauncher.StaticRuntimePath,
 				AotFiles = source.AotFiles.Select(af => af.FullName),
 				ObjectFile = source.ObjectFile.FullName,

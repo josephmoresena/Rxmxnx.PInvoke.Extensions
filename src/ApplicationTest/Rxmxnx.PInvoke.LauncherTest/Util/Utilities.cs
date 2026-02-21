@@ -98,29 +98,6 @@ public static class Utilities
 		state.Notifier?.End(info);
 		return prog.ExitCode;
 	}
-	public static async Task<String[]> GetMonoFlags(String? monoLauncherPkgConfigPath,
-		CancellationToken cancellationToken = default)
-	{
-		if (OperatingSystem.IsWindows()) return [];
-		ExecuteState<String?> state = new()
-		{
-			ExecutablePath = "pkg-config",
-			ArgState = monoLauncherPkgConfigPath,
-			AppendEnvs = (s, e) =>
-			{
-				if (!String.IsNullOrWhiteSpace(s)) return;
-				e.Add("PKG_CONFIG_PATH", s);
-			},
-			AppendArgs = (_, a) =>
-			{
-				a.Add("--cflags");
-				a.Add("mono-2");
-			},
-			Notifier = ConsoleNotifier.Notifier,
-		};
-		String value = await Utilities.ExecuteWithOutput(state, cancellationToken);
-		return String.IsNullOrWhiteSpace(value) ? [] : Utilities.ParseMonoFlags(value);
-	}
 	public static async Task PatchMonoBundleSource(String sourceFilePath)
 	{
 		String text = await File.ReadAllTextAsync(sourceFilePath);
@@ -135,7 +112,7 @@ public static class Utilities
 		                   Utilities.CopyOutput(state, prog.StandardError));
 		return state.Builder.ToString();
 	}
-	
+
 	private static async Task CopyOutput(OutputState state, StreamReader reader)
 	{
 		while (await reader.ReadLineAsync(state.CancellationToken) is { } line)
@@ -143,18 +120,6 @@ public static class Utilities
 			using (state.Lock.EnterScope())
 				state.Builder.AppendLine(line);
 		}
-	}
-	private static String[] ParseMonoFlags(String value)
-	{
-		Collection<String> result = [];
-		Int32 start = 0;
-		while (value.AsSpan()[start..].IndexOf([' ', '-',]) is { } end and > 0)
-		{
-			result.AddArg(value.AsSpan().Slice(start, end).ToString());
-			start += end;
-		}
-		result.AddArg(value.AsSpan()[start..].ToString());
-		return result.ToArray();
 	}
 	private static String CombinePathArg(String flag, String path) => $"{flag}{path}";
 
