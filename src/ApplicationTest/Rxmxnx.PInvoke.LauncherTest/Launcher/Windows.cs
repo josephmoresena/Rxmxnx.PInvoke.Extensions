@@ -191,6 +191,8 @@ public partial class Launcher
 				};
 				String vsVersionText =
 					await Utilities.ExecuteWithOutput(vsPropertyQuery, ConsoleNotifier.CancellationToken);
+				ConsoleNotifier.Notifier.Print($"Visual Studio Version {vsVersionText} found.");
+
 				Version vsVersion = Version.Parse(vsVersionText);
 				String registryKey = $"{vsVersion.Major}.0";
 
@@ -208,10 +210,12 @@ public partial class Launcher
 						registry.SetValue(registryKey, vsPath);
 					else
 						Windows.SetSoftwareValue(registryPath, registryKey, vsPath);
+					ConsoleNotifier.Notifier.Print($"Set {registry} @{registryKey} -> {vsPath}");
 				}
-				Version vcVersion = Version.Parse(await File.ReadAllBytesAsync(
-					                                  Path.Combine(vsPath, "VC", "Auxiliary", "Build",
-					                                               "Microsoft.VCToolsVersion.default.txt")));
+				String vcVersionText = await File.ReadAllTextAsync(
+					Path.Combine(vsPath, "VC", "Auxiliary", "Build", "Microsoft.VCToolsVersion.default.txt"));
+				Version vcVersion = Version.Parse(vcVersionText);
+				ConsoleNotifier.Notifier.Print($"Visual C++ {vcVersion} found.");
 				return Path.Combine(vsPath, "VC", "Tools", "MSVC", vcVersion.ToString(), "bin");
 			}
 			catch (Exception ex)
@@ -227,27 +231,35 @@ public partial class Launcher
 		}
 		private static RegistryKey? OpenSoftwareKey(String registryPath, Boolean writable = false)
 		{
+			RegistryKey? result = default;
 			if (Environment.Is64BitOperatingSystem)
 			{
 				if (Registry.LocalMachine.OpenSubKey(@$"SOFTWARE\Wow6432Node\{registryPath}", writable) is { } local32)
-					return local32;
-				if (Registry.CurrentUser.OpenSubKey(@$"SOFTWARE\Wow6432Node\{registryPath}", writable) is { } user32)
-					return user32;
+					result = local32;
+				else if (Registry.CurrentUser.OpenSubKey(@$"SOFTWARE\Wow6432Node\{registryPath}", writable) is
+				         { } user32)
+					result = user32;
 			}
-			if (Registry.LocalMachine.OpenSubKey(@$"SOFTWARE\{registryPath}", writable) is { } local)
-				return local;
-			return Registry.CurrentUser.OpenSubKey(@$"SOFTWARE\{registryPath}", true);
+			if (result is null && Registry.LocalMachine.OpenSubKey(@$"SOFTWARE\{registryPath}", writable) is { } local)
+				result = local;
+			result ??= Registry.CurrentUser.OpenSubKey(@$"SOFTWARE\{registryPath}", true);
+
+			if (result is not null && !writable)
+				ConsoleNotifier.Notifier.Print($"Found registry key {result}");
+			return result;
 		}
 		private static RegistryKey CreateSoftwareKey(String registryPath)
 		{
 			String prefix = Environment.Is64BitOperatingSystem == Environment.Is64BitProcess ?
 				@"SOFTWARE\" :
 				@"SOFTWARE\Wow6432Node\";
-			return Registry.CurrentUser.CreateSubKey($"{prefix}{registryPath}", true);
+			RegistryKey result = Registry.CurrentUser.CreateSubKey($"{prefix}{registryPath}", true);
+			ConsoleNotifier.Notifier.Print($"Created registry key {result}");
+			return result;
 		}
 		private static String GetWindowsKitPath()
 		{
-			const String registryPath = @"\Microsoft\Microsoft SDKs\Windows\";
+			const String registryPath = @"\Microsoft\Microsoft SDKs\Windows";
 			try
 			{
 				RegistryKey registry = Windows.OpenSoftwareKey(registryPath)!;
@@ -275,6 +287,7 @@ public partial class Launcher
 				if (libPath.GetDirectories().Count(d => d.Name is "um" or "ucrt") < 2)
 					continue;
 				kitsLibs.Add(libVersion, libPath.FullName);
+				ConsoleNotifier.Notifier.Print($"Windows Kit Version {libVersion} libs found.");
 			}
 		}
 		private static String[] GetWindowsKits(RegistryKey registry)
@@ -284,10 +297,12 @@ public partial class Launcher
 			{
 				RegistryKey subKeyRegistry = registry.OpenSubKey(subKeyName)!;
 				String? installationFolder = subKeyRegistry.GetValue("InstallationFolder")?.ToString();
+				String? version = subKeyRegistry.GetValue("ProductVersion")?.ToString();
 				if (String.IsNullOrWhiteSpace(installationFolder) ||
-				    !Version.TryParse(subKeyRegistry.GetValue("ProductVersion")?.ToString(), out Version? kitVersion))
+				    !Version.TryParse(version, out Version? kitVersion))
 					continue;
 				kits.Add(kitVersion, installationFolder);
+				ConsoleNotifier.Notifier.Print($"Windows Kit Version {kitVersion} found ({installationFolder}).");
 			}
 			return kits.OrderBy(p => p.Key).Select(p => p.Value).ToArray();
 		}
