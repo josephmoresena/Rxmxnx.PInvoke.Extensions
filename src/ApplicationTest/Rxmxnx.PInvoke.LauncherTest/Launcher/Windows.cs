@@ -194,8 +194,8 @@ public partial class Launcher
 				Version vsVersion = Version.Parse(vsVersionText);
 				String registryKey = $"{vsVersion.Major}.0";
 
-				if (Windows.OpenWritableSubKey(registryPath) is not { } registry)
-					registry = Registry.CurrentUser.CreateSubKey(registryPath, true);
+				if (Windows.OpenSoftwareKey(registryPath, true) is not { } registry)
+					registry = Windows.CreateSoftwareKey(registryPath);
 				if (registry.GetValue(registryKey) is not String vsPath || String.IsNullOrWhiteSpace(vsPath))
 				{
 					vsPath = await Utilities.ExecuteWithOutput(vsPropertyQuery with { ArgState = "installationPath", },
@@ -213,18 +213,32 @@ public partial class Launcher
 				throw;
 			}
 		}
-		private static RegistryKey? OpenWritableSubKey(String registryPath)
+		private static RegistryKey? OpenSoftwareKey(String registryPath, Boolean writable = false)
 		{
-			if (Registry.LocalMachine.OpenSubKey(registryPath, true) is { } local)
+			if (Environment.Is64BitOperatingSystem)
+			{
+				if (Registry.LocalMachine.OpenSubKey(@$"SOFTWARE\Wow6432Node\{registryPath}", writable) is { } local32)
+					return local32;
+				if (Registry.CurrentUser.OpenSubKey(@$"SOFTWARE\Wow6432Node\{registryPath}", writable) is { } user32)
+					return user32;
+			}
+			if (Registry.LocalMachine.OpenSubKey(@$"SOFTWARE\{registryPath}", writable) is { } local)
 				return local;
-			return Registry.CurrentUser.OpenSubKey(registryPath, true);
+			return Registry.CurrentUser.OpenSubKey(@$"SOFTWARE\{registryPath}", true);
+		}
+		private static RegistryKey CreateSoftwareKey(String registryPath)
+		{
+			String prefix = Environment.Is64BitOperatingSystem == Environment.Is64BitProcess ?
+				@"SOFTWARE\" :
+				@"SOFTWARE\Wow6432Node\";
+			return Registry.CurrentUser.CreateSubKey($"{prefix}{registryPath}", true);
 		}
 		private static String GetWindowsKitPath()
 		{
 			const String registryPath = @"\Microsoft\Microsoft SDKs\Windows\";
 			try
 			{
-				RegistryKey registry = Windows.OpenWritableSubKey(registryPath)!;
+				RegistryKey registry = Windows.OpenSoftwareKey(registryPath)!;
 				Dictionary<Version, String> kitsLibs = new();
 				foreach (String kitPath in Windows.GetWindowsKits(registry))
 				{
