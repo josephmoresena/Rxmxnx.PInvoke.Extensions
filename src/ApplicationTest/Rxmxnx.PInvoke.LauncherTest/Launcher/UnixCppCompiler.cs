@@ -53,7 +53,7 @@ public partial class Launcher
 				ArgState = new() { Package = packageName, Path = pkgPath, },
 				AppendEnvs = (s, e) =>
 				{
-					if (!String.IsNullOrWhiteSpace(s.Path)) return;
+					if (String.IsNullOrWhiteSpace(s.Path)) return;
 					e["PKG_CONFIG_PATH"] = s.Path;
 				},
 				AppendArgs = (s, a) =>
