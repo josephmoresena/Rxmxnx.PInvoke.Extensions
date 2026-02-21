@@ -1,7 +1,7 @@
 <linker>
     <assembly fullname="System.Text.Json">
+        <type fullname="System.Buffers.ArrayBufferWriter`1" preserve="all"/>
         <type fullname="System.Text.Json.Serialization.Converters.ArrayConverter`2" preserve="all"/>
         <type fullname="System.Text.Json.PooledByteBufferWriter" preserve="all"/>
-        <type fullname="System.Buffers.ArrayBufferWriter`1" preserve="all"/>
     </assembly>
 </linker>
