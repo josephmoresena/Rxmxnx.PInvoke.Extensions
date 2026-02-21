@@ -14,10 +14,31 @@ public partial class Launcher
 		public IEnumerable<String> MonoFlags { get; init; }
 		public String? ZLibPath { get; init; }
 		public String BinaryOutputPath { get; init; }
+		public (String name, String value)[] Environment { get; init; }
 #if ZLINK_STATIC
 		public Architecture Architecture { get; init; }
 #endif
-
+		public static void CompileEnv(MonoNativeCompilationArgs nativeCompilationArgs, StringDictionary env)
+		{
+			foreach ((String name, String value) in nativeCompilationArgs.Environment)
+			{
+				switch (name)
+				{
+					case "INCLUDE":
+					case "LIB":
+					case "LIBPATH":
+					case "EXTERNAL_INCLUDE":
+					case "PATH":
+						break;
+					default:
+						if (!name.StartsWith("VS") && !name.StartsWith("VC") && !name.StartsWith("Windows") &&
+						    !name.Contains("SDK", StringComparison.InvariantCultureIgnoreCase))
+							continue;
+						break;
+				}
+				env[name] = value;
+			}
+		}
 		public static void Compile(MonoNativeCompilationArgs nativeCompilationArgs, Collection<String> args)
 		{
 			ICppCompiler compiler = nativeCompilationArgs.Compiler;

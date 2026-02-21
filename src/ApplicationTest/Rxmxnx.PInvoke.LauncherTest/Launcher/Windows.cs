@@ -78,6 +78,8 @@ public partial class Launcher
 		[LibraryImport("Rxmxnx.PInvoke.Mkbundle.Patcher", StringMarshalling = StringMarshalling.Utf16)]
 		private static partial Int32 PatchAssemblyForWindows(String monoLibPath, Int32 monoLibPathLength,
 			String outputPath, Int32 outputPathLength);
+		[GeneratedRegex("(.+)=(.+)")]
+		private static partial Regex VsEnvRegex();
 		private static void AppendMonoLauncher(String monoPath, Architecture arch,
 			ref List<MonoLauncher>? monoLaunchers)
 		{
@@ -365,6 +367,36 @@ public partial class Launcher
 				yield return "/link";
 				yield return $"/MACHINE:{arch}";
 				yield return $"/SUBSYSTEM:{(windowApp ? "WINDOWS" : "CONSOLE")}";
+			}
+			public async Task<(String name, String value)[]> GetEnv()
+			{
+				String vcvarsallPath =
+					Path.GetFullPath(Path.Combine(msvcPath, "..", "..", "..", "Auxiliary", "build", "vcvarsall.bat"));
+				ProcessStartInfo info = new("cmd.exe")
+				{
+					Arguments = $"/c \"\"{vcvarsallPath}\" {arch} && set\"",
+					RedirectStandardError = true,
+					RedirectStandardOutput = true,
+					CreateNoWindow = true,
+				};
+				using Process prog = Process.Start(info)!;
+				String envResult = await Utilities.ReadOutput(prog, ConsoleNotifier.CancellationToken);
+				MatchCollection matches = Windows.VsEnvRegex().Matches(envResult);
+
+				if (matches.Count == 0) return [];
+
+				(String name, String value)[] result = new (String name, String value)[matches.Count];
+#if NET10_0_OR_GREATER
+				using Span<(String name, String value)>.Enumerator enumerable = result.AsSpan().GetEnumerator();
+#else
+				Span<(String name, String value)>.Enumerator enumerable = result.AsSpan().GetEnumerator();
+#endif
+				foreach (Match match in matches)
+				{
+					enumerable.MoveNext();
+					enumerable.Current = (match.Groups[1].Value, match.Groups[2].Value);
+				}
+				return result;
 			}
 		}
 	}

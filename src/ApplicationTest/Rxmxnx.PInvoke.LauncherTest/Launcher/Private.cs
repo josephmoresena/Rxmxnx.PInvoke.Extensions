@@ -1,5 +1,3 @@
-using System.Reflection.PortableExecutable;
-
 namespace Rxmxnx.PInvoke.ApplicationTest;
 
 public partial class Launcher
@@ -192,11 +190,13 @@ public partial class Launcher
 				WindowApp = isWindowsApp,
 				ZLibPath = zLibPath,
 				BinaryOutputPath = outputBinaryPath,
+				Environment = await cppCompiler.GetEnv(),
 #if ZLINK_STATIC
 				Architecture = monoLauncher.Architecture,
 #endif
 			},
 			WorkingDirectory = workingDirectory,
+			AppendEnvs = MonoNativeCompilationArgs.CompileEnv,
 			AppendArgs = MonoNativeCompilationArgs.Compile,
 			Notifier = ConsoleNotifier.Notifier,
 		};
@@ -208,7 +208,7 @@ public partial class Launcher
 		await File.WriteAllTextAsync(bundleLog, bundleResult);
 
 		FileInfo nativeRuntime = new(monoLauncher.NativeRuntimePath);
-		if (nativeRuntime.Exists && binaryOutputPath.GetFiles().Length > 0)
+		if (!OperatingSystem.IsWindows() && nativeRuntime.Exists && binaryOutputPath.GetFiles().Length > 0)
 			nativeRuntime.CopyTo(Path.Combine(binaryOutputPath.FullName, monoLauncher.NativeRuntimeName), true);
 
 		if (Utilities.ShowDiagnostics)

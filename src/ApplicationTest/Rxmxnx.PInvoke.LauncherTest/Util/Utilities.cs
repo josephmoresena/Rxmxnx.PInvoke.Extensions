@@ -128,14 +128,14 @@ public static class Utilities
 		                     .Replace("mono_mkbundle_init();", "mono_mkbundle_init(); install_aot_modules();");
 		await File.WriteAllTextAsync(sourceFilePath, patched);
 	}
-
-	private static async Task<String> ReadOutput(Process prog, CancellationToken cancellationToken)
+	public static async Task<String> ReadOutput(Process prog, CancellationToken cancellationToken)
 	{
 		OutputState state = new() { Builder = new(), Lock = new(), CancellationToken = cancellationToken, };
 		await Task.WhenAll(Utilities.CopyOutput(state, prog.StandardOutput),
 		                   Utilities.CopyOutput(state, prog.StandardError));
 		return state.Builder.ToString();
 	}
+	
 	private static async Task CopyOutput(OutputState state, StreamReader reader)
 	{
 		while (await reader.ReadLineAsync(state.CancellationToken) is { } line)
