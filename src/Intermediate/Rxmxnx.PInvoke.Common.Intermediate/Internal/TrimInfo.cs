@@ -41,7 +41,7 @@ internal static class TrimInfo
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if !PACKAGE && !NET5_0_OR_GREATER
-	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3400)]
 #endif
 	public static Boolean IsPlatformTrimmed()
 	{

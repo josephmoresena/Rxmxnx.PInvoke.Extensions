@@ -146,20 +146,38 @@ public partial class Launcher
 		}
 		private static async Task DownloadZLibHeadersAsync(HttpClient httpClient, DirectoryInfo includeDir)
 		{
+			const String zLibHeaderName = "zlib.h";
+			const String zConfHeaderName = "zconf.h";
 			await using MemoryStream zipStream = await Utilities.DownloadZipFile(httpClient, Windows.zLibUrl);
+#if NET10_0_OR_GREATER
 			await using ZipArchive archive =
 				await ZipArchive.CreateAsync(zipStream, ZipArchiveMode.Read, true, default);
-			await archive.GetEntry("zlib.h")!.ExtractToFileAsync(Path.Combine(includeDir.FullName, "zlib.h"));
-			await archive.GetEntry("zconf.h")!.ExtractToFileAsync(Path.Combine(includeDir.FullName, "zconf.h"));
+			await archive.GetEntry(zLibHeaderName)!.ExtractToFileAsync(
+				Path.Combine(includeDir.FullName, zLibHeaderName));
+			await archive.GetEntry(zConfHeaderName)!.ExtractToFileAsync(
+				Path.Combine(includeDir.FullName, zConfHeaderName));
+#else
+			using ZipArchive archive = new(zipStream, ZipArchiveMode.Read, true, default);
+			archive.GetEntry(zLibHeaderName)!.ExtractToFile(Path.Combine(includeDir.FullName, zLibHeaderName));
+			archive.GetEntry(zConfHeaderName)!.ExtractToFile(Path.Combine(includeDir.FullName, zConfHeaderName));
+#endif
 		}
 #if ZLINK_STATIC
 		private static async Task DownloadStaticZLibAsync(HttpClient httpClient, String libUrl, DirectoryInfo libDir)
 		{
+			const String libZStaticName = "zlibstat.lib";
+			String libZPath = Path.Combine(libDir.FullName, libZStaticName);
 			await using MemoryStream zipStream = await Utilities.DownloadZipFile(httpClient, libUrl);
+#if NET10_0_OR_GREATER
 			await using ZipArchive archive =
 				await ZipArchive.CreateAsync(zipStream, ZipArchiveMode.Read, true, default);
-			await archive.Entries.First(a => a.Name.EndsWith("zlibstat.lib"))
-			             .ExtractToFileAsync(Path.Combine(libDir.FullName, "zlibstat.lib"));
+			await archive.Entries.First(a => a.Name.EndsWith(libZStaticName))
+			             .ExtractToFileAsync(Path.Combine(libDir.FullName, libZPath));
+#else
+			using ZipArchive archive = new(zipStream, ZipArchiveMode.Read, true, default);
+			archive.Entries.First(a => a.Name.EndsWith(libZStaticName))
+			       .ExtractToFile(Path.Combine(libDir.FullName, libZPath));
+#endif
 		}
 #endif
 		private static async Task PrepareCompilers(Dictionary<Architecture, CppCompiler> cppCompilers,

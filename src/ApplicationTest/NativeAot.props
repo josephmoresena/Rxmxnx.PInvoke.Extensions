@@ -44,7 +44,6 @@
     <ItemGroup Condition="'$(IsNativeAotWebAssembly)' == 'true'">
         <PackageReference Include="Microsoft.DotNet.ILCompiler.LLVM" Version="10.0.0-*"/>
         <PackageReference Include="runtime.$(NETCoreSdkPortableRuntimeIdentifier).Microsoft.DotNet.ILCompiler.LLVM" Version="10.0.0-*"/>
-        <LinkerArg Include="-sEXPORTED_FUNCTIONS=[_free]"/>
         <LinkerArg Include="-sEXPORTED_RUNTIME_METHODS=[HEAPU8,HEAPU32,HEAP32,cwrap,stringToNewUTF8]"/>
         <LinkerArg Include="-sASSERTIONS"/>
     </ItemGroup>

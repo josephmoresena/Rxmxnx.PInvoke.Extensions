@@ -9,12 +9,6 @@ namespace Rxmxnx.PInvoke.Patch.Tests;
 public abstract class TestAssemblyPatchTask : MsBuildTask
 {
 	/// <summary>
-	/// Reader parameters for assembly.
-	/// </summary>
-	// ReSharper disable once MemberCanBePrivate.Global
-	protected static readonly ReaderParameters ReadParameters = new() { ReadWrite = true, ReadSymbols = true, };
-
-	/// <summary>
 	/// Test Assembly name.
 	/// </summary>
 	// ReSharper disable once UnusedAutoPropertyAccessor.Global
@@ -43,11 +37,13 @@ public abstract class TestAssemblyPatchTask : MsBuildTask
 		String? assemblyPath = default;
 		try
 		{
-			assemblyPath = assemblyFiles
-			               // ReSharper disable once HeapView.DelegateAllocation
-			               .First(f => f.FullName.ToLowerInvariant().Contains(this.TargetFramework!.ToLowerInvariant()))
-			               .FullName;
-			this.AssemblyPatch(assemblyPath);
+			FileInfo assembly = assemblyFiles
+				// ReSharper disable once HeapView.DelegateAllocation
+				.First(f => f.FullName.ToLowerInvariant().Contains(this.TargetFramework!.ToLowerInvariant()));
+			String symbolsFileName = assembly.Name.Replace(assembly.Extension, ".pdb");
+			Boolean debugSymbols = File.Exists(assembly.FullName.Replace(assembly.Name, symbolsFileName));
+			assemblyPath = assembly.FullName;
+			this.AssemblyPatch(assemblyPath, debugSymbols);
 			return true;
 		}
 		catch (Exception ex)
@@ -64,13 +60,14 @@ public abstract class TestAssemblyPatchTask : MsBuildTask
 	/// Patches the test assembly.
 	/// </summary>
 	/// <param name="assemblyPath">Path to test assembly.</param>
+	/// <param name="withDebugSymbols">Indicates whether the debug symbols of the test assembly ara available.</param>
 	// ReSharper disable once MemberCanBePrivate.Global
-	protected void AssemblyPatch(String assemblyPath)
+	protected void AssemblyPatch(String assemblyPath, Boolean withDebugSymbols)
 	{
-		using AssemblyDefinition? assembly =
-			AssemblyDefinition.ReadAssembly(assemblyPath, TestAssemblyPatchTask.ReadParameters);
+		ReaderParameters readParameters = new() { ReadWrite = true, ReadSymbols = withDebugSymbols, };
+		using AssemblyDefinition? assembly = AssemblyDefinition.ReadAssembly(assemblyPath, readParameters);
 		using ModuleDefinition? module = assembly.MainModule;
-		WriterParameters writerParameters = new() { WriteSymbols = true, };
+		WriterParameters writerParameters = new() { WriteSymbols = readParameters.ReadSymbols, };
 
 		if (this.IlPatch(module))
 			assembly.Write(writerParameters);
