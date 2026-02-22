@@ -2,7 +2,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest;
 
 public partial class Launcher
 {
-	public abstract class UnixCppCompiler(Architecture arch) : ICppCompiler
+	public abstract class UnixCppCompiler : ICppCompiler
 	{
 		protected abstract String LocalRuntimePath { get; }
 		protected abstract String WarningName { get; }
@@ -33,17 +33,7 @@ public partial class Launcher
 		public String RuntimePath => $"-Wl,-rpath,{this.LocalRuntimePath}";
 		public String RemovePointerWarnings => $"-Wno-{this.WarningName}";
 
-		public IEnumerable<String> BeginLink(Boolean _)
-		{
-			yield return "-arch";
-			yield return arch switch
-			{
-				Architecture.X86 => "x86",
-				Architecture.X64 => "x86_64",
-				Architecture.Arm64 => "arm64",
-				_ => arch.ToString().ToLowerInvariant(),
-			};
-		}
+		public virtual IEnumerable<String> BeginLink(Boolean _) => [];
 		public async Task<String[]> GetPkgConfigArgs(String packageName, String? pkgPath)
 		{
 			if (OperatingSystem.IsWindows()) return [];

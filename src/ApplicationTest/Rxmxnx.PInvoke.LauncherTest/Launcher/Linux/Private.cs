@@ -57,7 +57,7 @@ public partial class Launcher
 
 		private static Boolean IsArmHf(Architecture arch) => arch is Architecture.Arm or Architecture.Armv6;
 
-		private sealed class CppCompiler(Architecture arch) : UnixCppCompiler(arch)
+		private sealed class CppCompiler(Architecture arch) : UnixCppCompiler
 		{
 			public override String BeginWholeLink => "-Wl,--whole-archive";
 			public override String EndWholeLink => "-Wl,--no-whole-archive";

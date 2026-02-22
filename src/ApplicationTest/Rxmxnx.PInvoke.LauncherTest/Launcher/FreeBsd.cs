@@ -64,7 +64,7 @@ public partial class Launcher
 		public static FreeBsd Create(DirectoryInfo outputDirectory, Boolean useMono, out Task initTask)
 			=> new(outputDirectory, useMono, out initTask);
 
-		private sealed class CppCompiler(Architecture arch) : UnixCppCompiler(arch)
+		private sealed class CppCompiler(Architecture arch) : UnixCppCompiler
 		{
 			public override String BeginWholeLink => "-Wl,--whole-archive";
 			public override String EndWholeLink => "-Wl,--no-whole-archive";

@@ -56,12 +56,23 @@ public partial class Launcher
 		public static Mac Create(DirectoryInfo outputDirectory, Boolean useMono, out Task initTask)
 			=> new(outputDirectory, useMono, out initTask);
 
-		private sealed class XCppCompiler(Architecture arch) : UnixCppCompiler(arch)
+		private sealed class XCppCompiler(Architecture arch) : UnixCppCompiler
 		{
 			public override String BeginWholeLink => "-Wl,-force_load,";
-
 			protected override String LocalRuntimePath => "@loader_path";
 			protected override String WarningName => "incompatible-pointer-types";
+
+			public override IEnumerable<String> BeginLink(Boolean _)
+			{
+				yield return "-arch";
+				yield return arch switch
+				{
+					Architecture.X86 => "x86",
+					Architecture.X64 => "x86_64",
+					Architecture.Arm64 => "arm64",
+					_ => arch.ToString().ToLowerInvariant(),
+				};
+			}
 			protected override IEnumerable<String> AdditionalLink()
 			{
 				yield return "-lobjc";
