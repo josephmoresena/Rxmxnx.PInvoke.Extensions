@@ -28,9 +28,12 @@ public partial class Launcher
 				args.Add("--keeptemp");
 			}
 			args.Add("--deps");
-			args.Add("--static");
-			args.Add("--aot-mode");
-			args.Add(!bundleArgs.UseLlvm ? "full" : "llvmonly");
+			if (bundleArgs.CustomBuild || bundleArgs.Architecture is not Architecture.X86)
+			{
+				args.Add("--static");
+				args.Add("--aot-mode");
+				args.Add(!bundleArgs.UseLlvm ? "full" : "llvmonly");
+			}
 			if (!bundleArgs.CustomBuild)
 			{
 				args.Add("--aot-args");
