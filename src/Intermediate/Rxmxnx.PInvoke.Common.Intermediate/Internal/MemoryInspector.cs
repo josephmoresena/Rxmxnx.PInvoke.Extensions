@@ -74,17 +74,17 @@ internal abstract unsafe partial class MemoryInspector
 	public Boolean IsLiteral(ReadOnlySpan<Byte> span)
 	{
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
-			return this.IsLiteral(ptr);
+			return this.IsReadOnlyAddress(ptr);
 	}
 	/// <summary>
-	/// Indicates whether given pointer references to a literal or hardcoded memory region.
+	/// Indicates whether given pointer references to a read-only memory section.
 	/// </summary>
 	/// <param name="ptr">A native pointer.</param>
 	/// <returns>
-	/// <see langword="true"/> if the given span represents a literal o hardcoded memory region;
+	/// <see langword="true"/> if the given pointers references to a read-only memory section;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
-	public abstract Boolean IsLiteral(void* ptr);
+	public abstract Boolean IsReadOnlyAddress(void* ptr);
 
 	/// <summary>
 	/// Indicates whether the given span represents memory that is not part of a hardcoded literal.
@@ -127,7 +127,7 @@ internal abstract unsafe partial class MemoryInspector
 		{
 			if (MemoryInspector.instance is not null)
 				fixed (void* ptr = &refByte)
-					return !MemoryInspector.instance.IsLiteral(ptr);
+					return !MemoryInspector.instance.IsReadOnlyAddress(ptr);
 		}
 		catch (Exception)
 		{
@@ -151,7 +151,7 @@ internal abstract unsafe partial class MemoryInspector
 		try
 		{
 			if (MemoryInspector.instance is not null)
-				return !MemoryInspector.instance.IsLiteral(ptr);
+				return !MemoryInspector.instance.IsReadOnlyAddress(ptr);
 		}
 		catch (Exception)
 		{

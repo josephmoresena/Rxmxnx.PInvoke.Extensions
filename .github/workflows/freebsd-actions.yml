@@ -56,7 +56,7 @@ jobs:
           envs: 'PackageVersion'
           prepare: |
             pkg update -f 
-            pkg install -y python311 py311-pillow sqlite3 unixODBC libgdiplus zip ca_root_nss binutils dotnet powershell pkgconf
+            pkg install -y python311 py311-pillow sqlite3 unixODBC libgdiplus zip ca_root_nss binutils dotnet powershell pkgconf libinotify
             
             mkdir -p ~/fake-python39/metadata
             cat > ~/fake-python39/metadata/+COMPACT_MANIFEST <<EOF
@@ -151,6 +151,7 @@ jobs:
           cd $GITHUB_WORKSPACE;
           ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "run";
           rm -rf ~/.nuget/packages;
+          rm -rf artifacts/Mono/X64/Bundle;
       - name: Create Native Artifact Logs
         if: inputs.build_artifacts == true && inputs.package_version == ''
         uses: actions/upload-artifact@v5

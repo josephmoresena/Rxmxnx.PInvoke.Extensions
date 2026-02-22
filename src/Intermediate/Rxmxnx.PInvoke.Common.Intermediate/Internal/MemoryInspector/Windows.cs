@@ -13,7 +13,7 @@ internal partial class MemoryInspector
 	{
 		/// <inheritdoc/>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public override Boolean IsLiteral(void* ptr)
+		public override Boolean IsReadOnlyAddress(void* ptr)
 		{
 			UIntPtr result = Kernel32.VirtualQuery(ptr, out MemoryInfo memInfo, MemoryInfo.Size);
 			Kernel32.ValidateResult(result);

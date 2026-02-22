@@ -32,7 +32,6 @@ namespace Rxmxnx.PInvoke.Json
 			}
 			return builder.Build();
 		}
-		/// <inheritdoc/>
 		public override void Write(Utf8JsonWriter writer, CStringSequence? value, JsonSerializerOptions options)
 		{
 			Boolean writeNull = value is null && !options.IgnoreNullValues;

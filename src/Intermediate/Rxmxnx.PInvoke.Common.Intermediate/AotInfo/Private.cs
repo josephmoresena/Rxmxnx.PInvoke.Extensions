@@ -40,7 +40,7 @@ public static partial class AotInfo
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 	private static unsafe Boolean IsNativeMethod(RuntimeMethodHandle methodHandle)
-		=> MemoryInspector.Instance.IsLiteral(methodHandle.GetFunctionPointer().ToPointer());
+		=> MemoryInspector.Instance.IsReadOnlyAddress(methodHandle.GetFunctionPointer().ToPointer());
 #if !NET6_0_OR_GREATER
 	/// <summary>
 	/// Indicates whether JIT is enabled in the current runtime.
@@ -77,7 +77,7 @@ public static partial class AotInfo
 			}
 
 			if (MonoInfo.MonoAssemblyNameType is not null && MemoryInspector.IsSupported)
-				return AotInfo.IsAotFrame();
+				return !AotInfo.IsAotFrame();
 
 			if (MonoInfo.MonoAssemblyNameType is null &&
 			    typeof(RuntimeInformation).Assembly.GetType("System.Runtime.JitInfo") is { } jitInfoType)

@@ -71,7 +71,7 @@ internal partial class MemoryInspector
 
 		/// <inheritdoc/>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public override Boolean IsLiteral(void* ptr)
+		public override Boolean IsReadOnlyAddress(void* ptr)
 		{
 #if NET9_0_OR_GREATER
 			using (this._lock.EnterScope())
