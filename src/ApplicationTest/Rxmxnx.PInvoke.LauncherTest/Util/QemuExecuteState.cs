@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.ApplicationTest.Util;
 
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public readonly struct QemuExecuteState
 {
 	public String QemuExecutable { get; init; }

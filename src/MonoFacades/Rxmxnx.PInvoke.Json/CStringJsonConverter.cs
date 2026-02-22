@@ -11,7 +11,9 @@ namespace Rxmxnx.PInvoke.Json
 		public override CString? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
 			if (reader.TokenType == JsonTokenType.Null) return default;
-			if (reader.TokenType != JsonTokenType.String) throw new Exception("Not String");
+			if (reader.TokenType != JsonTokenType.String)
+				throw new JsonException(
+					$"Unexpected token type: {reader.TokenType}. Expected token type: {JsonTokenType.String}.");
 			return reader.HasValueSequence ?
 				CString.Unescape(reader.ValueSequence) :
 				CString.Unescape(reader.ValueSpan);

@@ -1,5 +1,7 @@
 namespace Rxmxnx.PInvoke.ApplicationTest;
 
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
 public abstract partial class Launcher
 {
 	public DirectoryInfo OutputDirectory { get; }

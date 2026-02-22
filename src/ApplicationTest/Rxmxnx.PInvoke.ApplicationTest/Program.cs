@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Rxmxnx.PInvoke.ApplicationTest
 {
+	[SuppressMessage("ReSharper", "HeapView.DelegateAllocation")]
+	[SuppressMessage("ReSharper", "UnusedParameter.Global")]
 	internal static class Program
 	{
 		public static void Main(String[] args)

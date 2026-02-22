@@ -13,13 +13,13 @@ internal partial class MemoryInspector
 			/// <summary>
 			/// Internal value.
 			/// </summary>
+			public UIntPtr Value
+			{
+				get;
 #if NET5_0_OR_GREATER
-			public UIntPtr Value { get; private init; }
-#else
-			public readonly UIntPtr Value;
-
-			UIntPtr IWrapper<UIntPtr>.Value => this.Value;
+				private init;
 #endif
+			}
 
 #if NET5_0_OR_GREATER
 #else

@@ -40,6 +40,9 @@ internal static class TrimInfo
 	/// <see langword="true"/> if the current runtime has been trimmed; otherwise; <see langword="false"/>.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE && !NET5_0_OR_GREATER
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 	public static Boolean IsPlatformTrimmed()
 	{
 #if NET5_0_OR_GREATER

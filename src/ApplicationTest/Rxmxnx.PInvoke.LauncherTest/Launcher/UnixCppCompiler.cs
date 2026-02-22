@@ -68,7 +68,7 @@ public partial class Launcher
 		{
 			Collection<String> result = [];
 			Int32 start = 0;
-			while (value.AsSpan()[start..].IndexOf([' ', '-',]) is { } end and > 0)
+			while (value.AsSpan()[start..].IndexOf([' ', '-',]) is var end and > 0)
 			{
 				result.AddArg(value.AsSpan().Slice(start, end).ToString());
 				start += end;

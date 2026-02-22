@@ -19,6 +19,7 @@ public partial class Launcher
 		public override String RuntimeIdentifierPrefix => "win";
 		public override ReadOnlySpan<MonoLauncher> MonoLaunchers => CollectionsMarshal.AsSpan(this._monoLaunchers);
 
+		[SuppressMessage("ReSharper", "HeapView.DelegateAllocation")]
 		private Windows(DirectoryInfo outputDirectory, Boolean useMono, out Task initialize) : base(
 			outputDirectory, useMono)
 		{
@@ -105,6 +106,7 @@ public partial class Launcher
 				ExecutablePath = executablePath,
 			});
 		}
+		[SuppressMessage("ReSharper", "UseRawString")]
 		private static String PatchMaker(Architecture arch, String monoBinPath, String monoRuntimePath,
 			String executablePath)
 		{
@@ -144,7 +146,7 @@ public partial class Launcher
 		}
 		private static async Task DownloadZLibHeadersAsync(HttpClient httpClient, DirectoryInfo includeDir)
 		{
-			await using MemoryStream zipStream = await Windows.DownloadZipFile(httpClient, Windows.zLibUrl);
+			await using MemoryStream zipStream = await Utilities.DownloadZipFile(httpClient, Windows.zLibUrl);
 			await using ZipArchive archive =
 				await ZipArchive.CreateAsync(zipStream, ZipArchiveMode.Read, true, default);
 			await archive.GetEntry("zlib.h")!.ExtractToFileAsync(Path.Combine(includeDir.FullName, "zlib.h"));
@@ -153,20 +155,13 @@ public partial class Launcher
 #if ZLINK_STATIC
 		private static async Task DownloadStaticZLibAsync(HttpClient httpClient, String libUrl, DirectoryInfo libDir)
 		{
-			await using MemoryStream zipStream = await Windows.DownloadZipFile(httpClient, libUrl);
+			await using MemoryStream zipStream = await Utilities.DownloadZipFile(httpClient, libUrl);
 			await using ZipArchive archive =
 				await ZipArchive.CreateAsync(zipStream, ZipArchiveMode.Read, true, default);
 			await archive.Entries.First(a => a.Name.EndsWith("zlibstat.lib"))
 			             .ExtractToFileAsync(Path.Combine(libDir.FullName, "zlibstat.lib"));
 		}
 #endif
-		private static async Task<MemoryStream> DownloadZipFile(HttpClient httpClient, String url)
-		{
-			using HttpResponseMessage response = await httpClient.GetAsync(url);
-			MemoryStream zipStream = new();
-			await response.Content.CopyToAsync(zipStream);
-			return zipStream;
-		}
 		private static async Task PrepareCompilers(Dictionary<Architecture, CppCompiler> cppCompilers,
 			Architecture[] architectures)
 		{

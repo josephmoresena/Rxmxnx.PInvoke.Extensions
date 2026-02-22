@@ -10,6 +10,7 @@ public partial class Launcher
 		public override String RuntimeIdentifierPrefix => "osx";
 		public override ReadOnlySpan<MonoLauncher> MonoLaunchers => CollectionsMarshal.AsSpan(this._monoLaunchers);
 
+		[SuppressMessage("ReSharper", "HeapView.DelegateAllocation")]
 		private Mac(DirectoryInfo outputDirectory, Boolean useMono, out Task initialize) : base(
 			outputDirectory, useMono)
 		{
@@ -61,6 +62,7 @@ public partial class Launcher
 			public override String BeginWholeLink => "-Wl,-force_load,";
 			protected override String LocalRuntimePath => "@loader_path";
 
+			[SuppressMessage("ReSharper", "HeapView.BoxingAllocation")]
 			public override IEnumerable<String> BeginLink(Boolean _)
 			{
 				yield return "-arch";

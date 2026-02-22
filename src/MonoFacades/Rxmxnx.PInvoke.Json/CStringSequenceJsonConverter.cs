@@ -14,14 +14,17 @@ namespace Rxmxnx.PInvoke.Json
 			JsonSerializerOptions options)
 		{
 			if (reader.TokenType == JsonTokenType.Null) return default;
-			if (reader.TokenType != JsonTokenType.StartArray) throw new Exception("Not Array");
+			if (reader.TokenType != JsonTokenType.StartArray)
+				throw new JsonException(
+					$"Unexpected token type: {reader.TokenType}. Expected token type: {JsonTokenType.StartArray}.");
 			CStringSequence.Builder builder = CStringSequence.CreateBuilder();
 			while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
 			{
 				if (reader.TokenType == JsonTokenType.Null)
 					builder.Append(CString.Zero);
 				else if (reader.TokenType != JsonTokenType.String)
-					throw new Exception("Not text");
+					throw new JsonException(
+						$"Unexpected token type: {reader.TokenType}. Expected token type: {JsonTokenType.String}.");
 				else
 					builder = reader.HasValueSequence ?
 						builder.AppendEscaped(reader.ValueSequence) :

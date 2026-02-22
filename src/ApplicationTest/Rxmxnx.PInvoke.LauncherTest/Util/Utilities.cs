@@ -117,6 +117,37 @@ public static class Utilities
 		if (String.IsNullOrWhiteSpace(fileContent)) return;
 		await File.WriteAllTextAsync(filePath, fileContent);
 	}
+	public static async Task<MemoryStream> DownloadZipFile(HttpClient httpClient, String url)
+	{
+		using HttpResponseMessage response =
+			await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ConsoleNotifier.CancellationToken);
+		response.EnsureSuccessStatusCode();
+
+		Int64? size = response.Content.Headers.ContentLength;
+		Int64 current = 0;
+
+		ConsoleNotifier.Begin(url, size);
+
+		MemoryStream zipStream = new();
+		Task copyTask = response.Content.CopyToAsync(zipStream);
+
+		Int32 cursorTop = -1;
+		Int32 textLength = 0;
+
+		while (!copyTask.IsCompleted)
+		{
+			Int64 previous = current;
+			await Task.WhenAny(Task.Delay(ConsoleNotifier.Notifier.RefreshTime, ConsoleNotifier.CancellationToken),
+			                   copyTask);
+			if (copyTask.IsCompleted) break;
+			current = zipStream.Position;
+			if (previous != current)
+				ConsoleNotifier.Progress(url, size, current, ref cursorTop, ref textLength);
+		}
+
+		ConsoleNotifier.End(url, zipStream.Length, "MEMORY");
+		return zipStream;
+	}
 
 	private static async Task CopyOutput(OutputState state, StreamReader reader)
 	{

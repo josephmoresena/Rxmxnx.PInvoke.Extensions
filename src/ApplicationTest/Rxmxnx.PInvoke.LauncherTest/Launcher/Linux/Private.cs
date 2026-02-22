@@ -7,6 +7,7 @@ public partial class Launcher
 		private readonly Boolean _isArmHf;
 		private readonly MonoLauncher[]? _monoLaunchers;
 
+		[SuppressMessage("ReSharper", "HeapView.DelegateAllocation")]
 		private Linux(DirectoryInfo outputDirectory, Boolean useMono, out Task initialize) : base(
 			outputDirectory, useMono)
 		{

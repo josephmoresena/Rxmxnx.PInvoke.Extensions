@@ -23,6 +23,8 @@ public partial class Launcher
 		private readonly MonoLauncher[] _monoLaunchers;
 
 		private String _runtimeIdentifier = "freebsd";
+
+		// ReSharper disable once ConvertToAutoPropertyWhenPossible
 		public override String RuntimeIdentifierPrefix => this._runtimeIdentifier;
 		public override Architecture[] Architectures => FreeBsd.currentArch;
 		public override ReadOnlySpan<MonoLauncher> MonoLaunchers => this._monoLaunchers;

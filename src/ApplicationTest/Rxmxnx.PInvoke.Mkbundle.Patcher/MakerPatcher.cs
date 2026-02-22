@@ -153,6 +153,7 @@ public static class MakerPatcher
 	private static String GetNestedTypeName(TypeDefinition nestedType)
 		=> nestedType.Name.Contains("DisplayClass") ? "GenerateBundles" : nestedType.Name;
 	[SuppressMessage("ReSharper", "HeapView.DelegateAllocation")]
+	[SuppressMessage("ReSharper", "HeapView.ClosureAllocation")]
 	private static MethodDefinition? GetMethod(Dictionary<String, TypeDefinition> nestedTypes, String className,
 		String? methodName = default)
 	{

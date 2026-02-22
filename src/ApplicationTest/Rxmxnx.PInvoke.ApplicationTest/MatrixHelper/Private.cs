@@ -1,9 +1,11 @@
 using System;
 using System.Buffers;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Rxmxnx.PInvoke.ApplicationTest
 {
+	[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 	internal static partial class MatrixHelper
 	{
 		private const Double epsilon = 1e-12;

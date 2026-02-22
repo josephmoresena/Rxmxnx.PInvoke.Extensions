@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.ApplicationTest.Util;
 
+[SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
 public interface IExecutionNotifier
 {
 	Int32 RefreshTime { get; }

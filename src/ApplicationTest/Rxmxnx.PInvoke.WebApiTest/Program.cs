@@ -16,6 +16,9 @@ using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 #endif
 
+// ReSharper disable HeapView.DelegateAllocation
+// ReSharper disable HeapView.ClosureAllocation
+
 WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
@@ -82,7 +85,7 @@ fruitsApi.MapGet("random/{count:int}", (Int32 count, CancellationToken cancellat
 		{
 			Int32 index = Random.Shared.Next(0, SampleCollections.Fruits.Count);
 			yield return SampleCollections.Fruits[index];
-			await Task.Delay(Random.Shared.Next(10, 200));
+			await Task.Delay(Random.Shared.Next(10, 200), ct);
 			count--;
 		}
 	}
