@@ -73,7 +73,8 @@ public partial class Launcher
 			public override String ExportDynamicSymbols => "-Wl,--export-dynamic";
 
 			protected override String LocalRuntimePath => "'$ORIGIN'";
-			protected override IEnumerable<String> AdditionalLink() => ["-lrt",];
+			protected override IEnumerable<String> AdditionalLink()
+				=> ["-lrt", "-linotify", "-lexecinfo", "-lutil", "-lprocstat",];
 		}
 	}
 }

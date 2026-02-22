@@ -110,7 +110,7 @@ public static class Utilities
 		OutputState state = new() { Builder = new(), Lock = new(), CancellationToken = cancellationToken, };
 		await Task.WhenAll(Utilities.CopyOutput(state, prog.StandardOutput),
 		                   Utilities.CopyOutput(state, prog.StandardError));
-		return state.Builder.ToString();
+		return state.Builder.ToString().Trim();
 	}
 	public static async Task SaveTextFile(String filePath, String fileContent)
 	{
