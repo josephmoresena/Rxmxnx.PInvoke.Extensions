@@ -65,7 +65,7 @@ public partial class Launcher
 
 			protected override String LocalRuntimePath => "'$ORIGIN'";
 			protected override String WarningName => "discarded-qualifiers";
-			protected override IEnumerable<String> AdditionalLink() => ["rt",];
+			protected override IEnumerable<String> AdditionalLink() => ["-lrt",];
 		}
 	}
 }
