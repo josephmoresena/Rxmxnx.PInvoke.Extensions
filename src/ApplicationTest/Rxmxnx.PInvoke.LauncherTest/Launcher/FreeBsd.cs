@@ -74,7 +74,7 @@ public partial class Launcher
 
 			protected override String LocalRuntimePath => "'$ORIGIN'";
 			protected override IEnumerable<String> AdditionalLink()
-				=> ["-lrt", "-linotify", "-lexecinfo", "-lutil", "-lprocstat",];
+				=> ["/usr/local/lib/libinotify.a", "-lrt", "-lexecinfo", "-lutil", "-lprocstat",];
 		}
 	}
 }
