@@ -47,7 +47,7 @@ public partial class Launcher
 			};
 			initialize = this.Initialize();
 		}
-		public override ICppCompiler GetCompiler(Architecture arch) => new CppCompiler(arch);
+		public override ICppCompiler GetCompiler(Architecture _) => new CppCompiler();
 
 		private async Task Initialize()
 		{
@@ -64,7 +64,7 @@ public partial class Launcher
 		public static FreeBsd Create(DirectoryInfo outputDirectory, Boolean useMono, out Task initTask)
 			=> new(outputDirectory, useMono, out initTask);
 
-		private sealed class CppCompiler(Architecture arch) : UnixCppCompiler
+		private sealed class CppCompiler : UnixCppCompiler
 		{
 			public override String BeginWholeLink => "-Wl,--whole-archive";
 			public override String EndWholeLink => "-Wl,--no-whole-archive";
@@ -72,7 +72,7 @@ public partial class Launcher
 
 			protected override String LocalRuntimePath => "'$ORIGIN'";
 			protected override String WarningName => "discarded-qualifiers";
-			protected override IEnumerable<String> AdditionalLink() => ["rt",];
+			protected override IEnumerable<String> AdditionalLink() => ["-lrt",];
 		}
 	}
 }

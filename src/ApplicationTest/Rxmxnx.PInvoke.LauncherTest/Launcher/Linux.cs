@@ -8,7 +8,7 @@ public partial class Launcher
 		public override String RuntimeIdentifierPrefix => "linux";
 		public override ReadOnlySpan<MonoLauncher> MonoLaunchers => this._monoLaunchers;
 		public override Architecture[] Architectures { get; }
-		public override ICppCompiler GetCompiler(Architecture arch) => new CppCompiler(arch);
+		public override ICppCompiler GetCompiler(Architecture _) => new CppCompiler();
 		protected override Task<Int32> RunAppFile(FileInfo appFile, Architecture arch, String executionName,
 			CancellationToken cancellationToken)
 		{
