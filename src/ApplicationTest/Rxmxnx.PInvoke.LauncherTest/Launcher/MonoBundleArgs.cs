@@ -31,15 +31,17 @@ public partial class Launcher
 			args.Add("--static");
 			args.Add("--aot-mode");
 			args.Add(!bundleArgs.UseLlvm ? "full" : "llvmonly");
-			args.Add("--aot-runtime");
-			args.Add(bundleArgs.MonoExecutablePath);
 			if (!bundleArgs.CustomBuild)
 			{
 				args.Add("--aot-args");
 				args.Add("asmonly");
+				args.Add("--runtime");
+				args.Add(bundleArgs.MonoExecutablePath);
 			}
 			else
 			{
+				args.Add("--aot-runtime");
+				args.Add(bundleArgs.MonoExecutablePath);
 				args.Add("--cil-strip");
 				args.Add(bundleArgs.StripAssemblyPath);
 				if (!String.IsNullOrWhiteSpace(bundleArgs.OutputObjectPath))

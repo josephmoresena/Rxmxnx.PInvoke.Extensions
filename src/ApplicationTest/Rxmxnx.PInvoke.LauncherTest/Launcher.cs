@@ -46,7 +46,7 @@ public abstract partial class Launcher
 				ConsoleNotifier.Results(results);
 		}
 	}
-	public async Task CompileMonoAot()
+	public async Task CompileMonoBundle()
 	{
 		ConsoleNotifier.ShowDiskUsage();
 		if (this.MonoOutputDirectory is null || this.MonoLaunchers.IsEmpty) return;
@@ -56,16 +56,9 @@ public abstract partial class Launcher
 			ICppCompiler? cppCompiler = this.GetCompiler(monoLauncher.Architecture);
 			foreach (FileInfo executableFile in Launcher.GetMonoExecutables(this.MonoOutputDirectory))
 			{
-				await Launcher.CompileMonoAot(monoLauncher, this.MonoOutputDirectory.FullName, executableFile);
-				foreach (FileInfo assemblyFile in executableFile.Directory!.GetFiles(
-					         "*.dll", SearchOption.TopDirectoryOnly))
-					await Launcher.CompileMonoAot(monoLauncher, this.MonoOutputDirectory.FullName, assemblyFile);
-				if (cppCompiler is null)
-					await Launcher.PackMonoApp(monoLauncher, this.MonoOutputDirectory, executableFile);
-				else
-					await Launcher.PackMonoApp(monoLauncher, cppCompiler, zlibPath, this.MonoOutputDirectory,
-					                           executableFile);
-				Launcher.DeleteMonoAotBundleTempFiles();
+				await this.CompileMonoAotAssembly(monoLauncher, executableFile);
+				await Launcher.PackMonoApp(monoLauncher, cppCompiler, zlibPath, this.MonoOutputDirectory,
+				                           executableFile);
 			}
 		}
 	}
@@ -83,7 +76,7 @@ public abstract partial class Launcher
 		ConsoleNotifier.Notifier.Result(result, executionName);
 		return result;
 	}
-	public async Task ExecuteMonoAot()
+	public async Task ExecuteMonoBundle()
 	{
 		if (this.MonoOutputDirectory is null) return;
 		Dictionary<String, Int32> results = new();
@@ -91,7 +84,8 @@ public abstract partial class Launcher
 		{
 			foreach (Architecture arch in this.Architectures)
 			foreach (FileInfo appFile in this.MonoOutputDirectory.GetDirectories($"{arch}")
-			                                 .SelectMany(d => d.GetFiles("*ApplicationTest*")))
+			                                 .SelectMany(d => d.GetFiles("*ApplicationTest*",
+			                                                             SearchOption.AllDirectories)))
 			{
 				String executionName = $"{Path.GetRelativePath(this.OutputDirectory.FullName, appFile.FullName)}";
 				results.Add(executionName, await this.RunAppFile(appFile, arch, executionName));

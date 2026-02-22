@@ -27,6 +27,6 @@ if (compile)
 if (run)
 {
 	await launcher.Execute();
-	await launcher.CompileMonoAot();
-	await launcher.ExecuteMonoAot();
+	await launcher.CompileMonoBundle();
+	await launcher.ExecuteMonoBundle();
 }

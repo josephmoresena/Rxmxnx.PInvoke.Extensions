@@ -103,7 +103,7 @@ public static class Utilities
 		String text = await File.ReadAllTextAsync(sourceFilePath);
 		String patched = text.Replace("#ifndef USE_COMPRESSED_ASSEMBLY", "#ifndef UNDEFINED")
 		                     .Replace("mono_mkbundle_init();", "mono_mkbundle_init(); install_aot_modules();");
-		await File.WriteAllTextAsync(sourceFilePath, patched);
+		await Utilities.SaveTextFile(sourceFilePath, patched);
 	}
 	public static async Task<String> ReadOutput(Process prog, CancellationToken cancellationToken)
 	{
@@ -111,6 +111,11 @@ public static class Utilities
 		await Task.WhenAll(Utilities.CopyOutput(state, prog.StandardOutput),
 		                   Utilities.CopyOutput(state, prog.StandardError));
 		return state.Builder.ToString();
+	}
+	public static async Task SaveTextFile(String filePath, String fileContent)
+	{
+		if (String.IsNullOrWhiteSpace(fileContent)) return;
+		await File.WriteAllTextAsync(filePath, fileContent);
 	}
 
 	private static async Task CopyOutput(OutputState state, StreamReader reader)

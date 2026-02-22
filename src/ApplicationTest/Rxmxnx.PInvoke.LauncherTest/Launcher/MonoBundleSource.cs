@@ -14,8 +14,7 @@ public partial class Launcher
 
 		public FileInfo SourceFile { get; } = new(Path.Combine(bundlePath, sourceFile));
 		public FileInfo ObjectFile { get; } = new(Path.Combine(bundlePath, objectFile));
-		public FileInfo[] AotFiles { get; } =
-			new DirectoryInfo(Path.Combine(bundlePath)).GetFiles("*.aot_out", SearchOption.AllDirectories);
+		public FileInfo[] AotFiles { get; } = MonoBundleSource.GetAotFiles(bundlePath);
 		public Boolean Exists
 			=> !this._disposed && this.SourceFile.Exists && this.ObjectFile.Exists && this.AotFiles.Length > 0;
 
@@ -24,8 +23,7 @@ public partial class Launcher
 			if (this._disposed) return;
 			this._disposed = true;
 
-			foreach (FileInfo aotFile in this.AotFiles)
-				aotFile.Delete();
+			MonoBundleSource.DeleteAotFiles(this.AotFiles);
 			if (this._assembliesDirectory.Exists)
 				this._assembliesDirectory.Delete(true);
 			if (this.ObjectFile.Exists)
@@ -34,6 +32,17 @@ public partial class Launcher
 				this._asmFile.Delete();
 			if (this.SourceFile.Exists)
 				this.SourceFile.Delete();
+		}
+
+		public static void DeleteAotFiles(String bundlePath)
+			=> MonoBundleSource.DeleteAotFiles(MonoBundleSource.GetAotFiles(bundlePath));
+
+		private static FileInfo[] GetAotFiles(String bundlePath)
+			=> new DirectoryInfo(Path.Combine(bundlePath)).GetFiles("*.aot_out", SearchOption.AllDirectories);
+		private static void DeleteAotFiles(ReadOnlySpan<FileInfo> aotFiles)
+		{
+			foreach (FileInfo aotFile in aotFiles)
+				aotFile.Delete();
 		}
 	}
 }
