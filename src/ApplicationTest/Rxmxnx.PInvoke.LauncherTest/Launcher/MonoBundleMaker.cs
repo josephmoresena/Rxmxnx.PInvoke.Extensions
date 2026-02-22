@@ -32,19 +32,22 @@ public partial class Launcher
 		await Utilities.SaveTextFile(bundleLog, bundleResult);
 		MonoBundleSource.DeleteAotFiles(workingDirectory);
 
-		binaryName = Launcher.GetMonoBundleName(applicationName, true);
-		state = state with
+		if (monoLauncher.Architecture is not Architecture.X86)
 		{
-			ArgState = state.ArgState with
+			binaryName = Launcher.GetMonoBundleName(applicationName, true);
+			state = state with
 			{
-				UseLlvm = true, OutputPath = Path.Combine(binaryOutputPath.FullName, binaryName),
-			},
-		};
-		bundleLog = Path.Combine(outputPath.FullName,
-		                         $"{applicationName}.{monoLauncher.Architecture}.Mono.Bundle.Llvm.log");
-		bundleResult = await Utilities.ExecuteWithOutput(state, ConsoleNotifier.CancellationToken);
-		await Utilities.SaveTextFile(bundleLog, bundleResult);
-		MonoBundleSource.DeleteAotFiles(workingDirectory);
+				ArgState = state.ArgState with
+				{
+					UseLlvm = true, OutputPath = Path.Combine(binaryOutputPath.FullName, binaryName),
+				},
+			};
+			bundleLog = Path.Combine(outputPath.FullName,
+			                         $"{applicationName}.{monoLauncher.Architecture}.Mono.Bundle.Llvm.log");
+			bundleResult = await Utilities.ExecuteWithOutput(state, ConsoleNotifier.CancellationToken);
+			await Utilities.SaveTextFile(bundleLog, bundleResult);
+			MonoBundleSource.DeleteAotFiles(workingDirectory);
+		}
 
 		if (binaryOutputPath.GetFiles().Length > 0)
 			Launcher.CopyMonoRuntime(monoLauncher, binaryOutputPath);
