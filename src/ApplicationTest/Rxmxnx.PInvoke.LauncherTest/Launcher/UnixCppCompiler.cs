@@ -5,7 +5,6 @@ public partial class Launcher
 	public abstract class UnixCppCompiler : ICppCompiler
 	{
 		protected abstract String LocalRuntimePath { get; }
-		protected abstract String WarningName { get; }
 		public abstract String BeginWholeLink { get; }
 		public virtual String EndWholeLink => String.Empty;
 		public virtual String ExportDynamicSymbols => String.Empty;
@@ -31,7 +30,6 @@ public partial class Launcher
 			}
 		}
 		public String RuntimePath => $"-Wl,-rpath,{this.LocalRuntimePath}";
-		public String RemovePointerWarnings => $"-Wno-{this.WarningName}";
 
 		public virtual IEnumerable<String> BeginLink(Boolean _) => [];
 		public async Task<String[]> GetPkgConfigArgs(String packageName, String? pkgPath)

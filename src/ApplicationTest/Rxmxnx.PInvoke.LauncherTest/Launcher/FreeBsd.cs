@@ -71,7 +71,6 @@ public partial class Launcher
 			public override String ExportDynamicSymbols => "-Wl,--export-dynamic";
 
 			protected override String LocalRuntimePath => "'$ORIGIN'";
-			protected override String WarningName => "discarded-qualifiers";
 			protected override IEnumerable<String> AdditionalLink() => ["-lrt",];
 		}
 	}

@@ -60,7 +60,6 @@ public partial class Launcher
 		{
 			public override String BeginWholeLink => "-Wl,-force_load,";
 			protected override String LocalRuntimePath => "@loader_path";
-			protected override String WarningName => "incompatible-pointer-types";
 
 			public override IEnumerable<String> BeginLink(Boolean _)
 			{

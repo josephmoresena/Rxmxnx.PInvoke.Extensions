@@ -45,7 +45,6 @@ public partial class Launcher
 
 			args.AddArg(compiler.DynamicRuntime);
 			args.AddArg(compiler.EnableAllWarnings);
-			args.AddArg(compiler.RemovePointerWarnings);
 			foreach (String additionalArg in nativeCompilationArgs.MonoFlags)
 				args.AddArg(additionalArg);
 			args.AddIncludeArg(compiler.IncludeFlag, nativeCompilationArgs.MonoIncludePath);
@@ -54,6 +53,7 @@ public partial class Launcher
 			args.AddArgs(compiler.BeginLink(nativeCompilationArgs.WindowApp));
 			args.AddWholeLibArg(compiler.BeginWholeLink, compiler.EndWholeLink, nativeCompilationArgs.StaticRuntimePath,
 			                    out Boolean linked);
+			args.AddArg(compiler.ExportDynamicSymbols);
 			args.AddArg(nativeCompilationArgs.ObjectFile);
 			foreach (String aotFile in nativeCompilationArgs.AotFiles)
 				args.AddArg(aotFile);

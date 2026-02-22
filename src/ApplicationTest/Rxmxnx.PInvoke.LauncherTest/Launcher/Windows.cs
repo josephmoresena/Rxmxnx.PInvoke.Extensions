@@ -357,7 +357,6 @@ public partial class Launcher
 				}
 			}
 			public String EnableAllWarnings => String.Empty;
-			public String RemovePointerWarnings => "/wd4090";
 			public String BeginWholeLink => String.Empty;
 			public String EndWholeLink => String.Empty;
 			public String ExportDynamicSymbols => String.Empty;

@@ -10,7 +10,6 @@ public interface ICppCompiler
 	String StaticLibPathFlag { get; }
 	IEnumerable<String> DefaultLink { get; }
 	String EnableAllWarnings { get; }
-	String RemovePointerWarnings { get; }
 	String BeginWholeLink { get; }
 	String EndWholeLink { get; }
 	String ExportDynamicSymbols { get; }
