@@ -48,7 +48,7 @@ public abstract partial class Launcher
 				ConsoleNotifier.Results(results);
 		}
 	}
-	public async Task CompileMonoBundle()
+	public async Task CompileMonoBundle(Boolean onlyMonoAot)
 	{
 		ConsoleNotifier.ShowDiskUsage();
 		if (this.MonoOutputDirectory is null || this.MonoLaunchers.IsEmpty) return;
@@ -58,9 +58,10 @@ public abstract partial class Launcher
 			ICppCompiler? cppCompiler = this.GetCompiler(monoLauncher.Architecture);
 			foreach (FileInfo executableFile in Launcher.GetMonoExecutables(this.MonoOutputDirectory))
 			{
-				await this.CompileMonoAotAssembly(monoLauncher, executableFile);
+				if (!onlyMonoAot)
+					await this.CompileMonoAotAssembly(monoLauncher, executableFile);
 				await Launcher.PackMonoApp(monoLauncher, cppCompiler, zlibPath, this.MonoOutputDirectory,
-				                           executableFile);
+				                           executableFile, onlyMonoAot);
 			}
 		}
 	}

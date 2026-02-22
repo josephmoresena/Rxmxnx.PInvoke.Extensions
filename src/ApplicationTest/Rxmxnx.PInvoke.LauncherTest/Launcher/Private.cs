@@ -44,16 +44,19 @@ public partial class Launcher
 			ConsoleNotifier.ShowDiskUsage();
 	}
 	private static async Task PackMonoApp(MonoLauncher monoLauncher, ICppCompiler? cppCompiler, String? zLibPath,
-		DirectoryInfo outputPath, FileInfo executableFile)
+		DirectoryInfo outputPath, FileInfo executableFile, Boolean onlyMonoAot)
 	{
 		String applicationName = executableFile.Directory?.Name ?? executableFile.Name;
 		FileInfo? linkedExecutableFile =
 			await Launcher.LinkMonoApp(monoLauncher, outputPath, applicationName, executableFile);
 		if (linkedExecutableFile is null) return;
 
-		await Launcher.MakeMonoBundle(monoLauncher, outputPath, applicationName, linkedExecutableFile);
-		Launcher.DeleteBundleTempFiles();
-		if (cppCompiler is not null)
+		if (!onlyMonoAot)
+		{
+			await Launcher.MakeMonoBundle(monoLauncher, outputPath, applicationName, linkedExecutableFile);
+			Launcher.DeleteBundleTempFiles();
+		}
+		if (cppCompiler is not null && monoLauncher.Architecture != Architecture.X86)
 		{
 			Boolean isWindowApp = Launcher.IsWindowApp(linkedExecutableFile);
 			await Launcher.MakeMonoAotBundle(monoLauncher, cppCompiler, zLibPath, isWindowApp, outputPath,

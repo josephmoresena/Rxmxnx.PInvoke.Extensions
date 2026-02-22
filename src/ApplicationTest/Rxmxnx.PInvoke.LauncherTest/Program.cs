@@ -27,6 +27,6 @@ if (compile)
 if (run)
 {
 	await launcher.Execute();
-	await launcher.CompileMonoBundle();
+	await launcher.CompileMonoBundle(onlyNativeAot);
 	await launcher.ExecuteMonoBundle();
 }
