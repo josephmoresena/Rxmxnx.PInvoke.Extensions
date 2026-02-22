@@ -36,8 +36,11 @@ public partial class Launcher
 			}
 			if (!bundleArgs.CustomBuild)
 			{
-				args.Add("--aot-args");
-				args.Add("asmonly");
+				if (!bundleArgs.UseLlvm)
+				{
+					args.Add("--aot-args");
+					args.Add("asmonly");
+				}
 				args.Add("--runtime");
 				args.Add(bundleArgs.MonoExecutablePath);
 			}

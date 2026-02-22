@@ -152,7 +152,7 @@ public partial class Launcher
 	private static void DeleteBundleTempFiles()
 	{
 		DirectoryInfo temp = new(Path.GetTempPath());
-		foreach (FileInfo aotFile in temp.GetFiles("mono_aot_*"))
+		foreach (FileInfo aotFile in temp.EnumerateFiles("mono_aot_*", MonoBundleSource.SafeEnumerationOptions))
 			aotFile.Delete();
 	}
 	private async Task CompileMonoAotAssembly(MonoLauncher monoLauncher, FileInfo executableFile)

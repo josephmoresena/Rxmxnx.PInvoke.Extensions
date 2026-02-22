@@ -8,6 +8,11 @@ public partial class Launcher
 		String objectFile,
 		String assembliesPath) : IDisposable
 	{
+		public static readonly EnumerationOptions SafeEnumerationOptions = new()
+		{
+			IgnoreInaccessible = true, RecurseSubdirectories = true, MaxRecursionDepth = 2,
+		};
+
 		private readonly FileInfo _asmFile = new(Path.Combine(bundlePath, "temp.s"));
 		private readonly DirectoryInfo _assembliesDirectory = new(Path.Combine(bundlePath, assembliesPath));
 		private Boolean _disposed;
@@ -38,7 +43,8 @@ public partial class Launcher
 			=> MonoBundleSource.DeleteAotFiles(MonoBundleSource.GetAotFiles(bundlePath));
 
 		private static FileInfo[] GetAotFiles(String bundlePath)
-			=> new DirectoryInfo(Path.Combine(bundlePath)).GetFiles("*.aot_out", SearchOption.AllDirectories);
+			=> new DirectoryInfo(Path.Combine(bundlePath))
+			   .EnumerateFiles("*.aot_out", MonoBundleSource.SafeEnumerationOptions).ToArray();
 		private static void DeleteAotFiles(ReadOnlySpan<FileInfo> aotFiles)
 		{
 			foreach (FileInfo aotFile in aotFiles)
