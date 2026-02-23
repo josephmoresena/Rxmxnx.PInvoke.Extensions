@@ -100,16 +100,6 @@ public static partial class AotInfo
 		return EmitInfo.IsEmitAllowed;
 	}
 	/// <summary>
-	/// Retrieves the assembly name from its full name.
-	/// </summary>
-	/// <param name="assemblyFullName">The full name of an assembly.</param>
-	/// <returns>The name of the assembly.</returns>
-	private static String GetAssemblyName(String assemblyFullName)
-	{
-		Int32 assemblyNameLength = assemblyFullName.IndexOf(',');
-		return assemblyNameLength < 0 ? assemblyFullName : assemblyFullName[..assemblyNameLength];
-	}
-	/// <summary>
 	/// Indicates whether JIT is enabled in the current runtime using reflection.
 	/// </summary>
 	/// <param name="jitInfoType">CLR type of System.Runtime.JitInfo class.</param>
@@ -161,6 +151,16 @@ public static partial class AotInfo
 	{
 		Assembly[] array = AppDomain.CurrentDomain.GetAssemblies();
 		return MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(array), array.Length);
+	}
+	/// <summary>
+	/// Retrieves the assembly name from its full name.
+	/// </summary>
+	/// <param name="assemblyFullName">The full name of an assembly.</param>
+	/// <returns>The name of the assembly.</returns>
+	private static String GetAssemblyName(String assemblyFullName)
+	{
+		Int32 assemblyNameLength = assemblyFullName.IndexOf(',');
+		return assemblyNameLength < 0 ? assemblyFullName : assemblyFullName[..assemblyNameLength];
 	}
 #endif
 }
