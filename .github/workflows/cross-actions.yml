@@ -25,7 +25,7 @@ jobs:
         os: [ windows-latest, ubuntu-latest, macos-latest ]
     env:
       SHOW_DIAGNOSTICS: ${{ inputs.run_tests }}
-      PINVOKE_ONLY_NATIVE_TEST: true
+      PINVOKE_ONLY_NATIVE_TEST: ${{ inputs.package_version != '' }}
       NO_MONO_COMPILATION: true
       PackageVersion: ${{ inputs.package_version }}
     steps:
