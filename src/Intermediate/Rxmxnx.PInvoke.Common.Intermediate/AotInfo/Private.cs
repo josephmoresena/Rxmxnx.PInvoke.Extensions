@@ -66,8 +66,14 @@ public static partial class AotInfo
 				if (String.IsNullOrWhiteSpace(assembly.FullName) || assembly.IsDynamic) continue;
 				switch (AotInfo.GetAssemblyName(assembly.FullName))
 				{
-					case "Microsoft.iOS":
 					case "Xamarin.iOS":
+					case "Xamarin.MacCatalyst":
+					case "Xamarin.TVOS":
+					case "Xamarin.WatchOS":
+					case "Microsoft.iOS":
+					case "Microsoft.MacCatalyst":
+					case "Microsoft.tvOS":
+					case "Microsoft.watchOS":
 						return false;
 				}
 			}
