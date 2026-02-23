@@ -52,7 +52,6 @@ public static partial class AotInfo
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Boolean IsJitEnabled()
 	{
-		Boolean hasReflectionEmit = false;
 		try
 		{
 			if (!TrimInfo.StringTypeNameContainsString())
@@ -64,17 +63,9 @@ public static partial class AotInfo
 
 			foreach (Assembly assembly in AotInfo.GetAssembliesSpan())
 			{
-				if (String.IsNullOrWhiteSpace(assembly.FullName)) continue;
-				if (assembly.IsDynamic)
-				{
-					hasReflectionEmit = true;
-					continue;
-				}
+				if (String.IsNullOrWhiteSpace(assembly.FullName) || assembly.IsDynamic) continue;
 				switch (AotInfo.GetAssemblyName(assembly.FullName))
 				{
-					case "System.Reflection.Emit":
-						hasReflectionEmit = true;
-						continue;
 					case "Microsoft.iOS":
 					case "Xamarin.iOS":
 						return false;
@@ -100,7 +91,7 @@ public static partial class AotInfo
 		}
 
 		// System.Reflection.Emit is not allowed in AOT/IL2CPP.
-		return hasReflectionEmit && EmitInfo.IsEmitAllowed;
+		return EmitInfo.IsEmitAllowed;
 	}
 	/// <summary>
 	/// Retrieves the assembly name from its full name.
