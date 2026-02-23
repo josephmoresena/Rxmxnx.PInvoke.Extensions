@@ -64,8 +64,13 @@ public static partial class AotInfo
 
 			foreach (Assembly assembly in AotInfo.GetAssembliesSpan())
 			{
-				if (String.IsNullOrEmpty(assembly.FullName)) continue;
-				switch (assembly.FullName[..assembly.FullName.IndexOf(',')])
+				if (String.IsNullOrWhiteSpace(assembly.FullName)) continue;
+				if (assembly.IsDynamic)
+				{
+					hasReflectionEmit = true;
+					continue;
+				}
+				switch (AotInfo.GetAssemblyName(assembly.FullName))
 				{
 					case "System.Reflection.Emit":
 						hasReflectionEmit = true;
@@ -96,6 +101,16 @@ public static partial class AotInfo
 
 		// System.Reflection.Emit is not allowed in AOT/IL2CPP.
 		return hasReflectionEmit && EmitInfo.IsEmitAllowed;
+	}
+	/// <summary>
+	/// Retrieves the assembly name from its full name.
+	/// </summary>
+	/// <param name="assemblyFullName">The full name of an assembly.</param>
+	/// <returns>The name of the assembly.</returns>
+	private static String GetAssemblyName(String assemblyFullName)
+	{
+		Int32 assemblyNameLength = assemblyFullName.IndexOf(',');
+		return assemblyNameLength < 0 ? assemblyFullName : assemblyFullName[..assemblyNameLength];
 	}
 	/// <summary>
 	/// Indicates whether JIT is enabled in the current runtime using reflection.
