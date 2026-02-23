@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SHOW_DIAGNOSTICS: ${{ inputs.run_tests }}
-      PINVOKE_ONLY_NATIVE_TEST: true
+      PINVOKE_ONLY_NATIVE_TEST: ${{ inputs.package_version != '' }}
       PackageVersion: ${{ inputs.package_version }}
     steps:
       - uses: actions/checkout@v5
