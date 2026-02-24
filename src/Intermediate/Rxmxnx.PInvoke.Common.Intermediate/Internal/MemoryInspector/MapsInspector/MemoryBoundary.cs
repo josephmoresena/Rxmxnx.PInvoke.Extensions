@@ -7,6 +7,7 @@ internal partial class MemoryInspector
 		/// <summary>
 		/// Memory boundary struct.
 		/// </summary>
+		[Preserve(AllMembers = true, Conditional = true)]
 		private protected readonly unsafe struct MemoryBoundary : IEquatable<MemoryBoundary>,
 			IComparable<MemoryBoundary>, IWrapper<UIntPtr>
 		{

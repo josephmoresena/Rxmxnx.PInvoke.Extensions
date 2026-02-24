@@ -5,6 +5,7 @@
 /// <typeparamref name="T"/>.
 /// </summary>
 /// <typeparam name="T">The type of elements in the sequence.</typeparam>
+[Preserve(AllMembers = true)]
 internal sealed class SequenceEnumerator<T> : IEnumerator<T>
 #if NET9_0_OR_GREATER
 	where T : allows ref struct

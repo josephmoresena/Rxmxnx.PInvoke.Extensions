@@ -8,6 +8,7 @@ internal partial class MemoryInspector
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4487)]
 #endif
 		[StructLayout(LayoutKind.Sequential, Pack = 4)]
+		[Preserve(AllMembers = true, Conditional = true)]
 		private readonly struct MemoryInfo
 		{
 			public static readonly UInt32 Flavor = MemoryInfo.SupportsFlavor64() ? 9u : 1u;
