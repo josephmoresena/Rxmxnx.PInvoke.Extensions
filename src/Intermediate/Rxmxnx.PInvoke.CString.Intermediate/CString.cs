@@ -461,7 +461,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// </returns>
 	public static CStringSequence? GetAssociatedSequence(CString? value, out Int32 index)
 	{
-		if (!CString.IsNullOrEmpty(value) && value._data is IWrapper.IBase<SequenceItemState> state)
+		if (!CString.IsNullOrEmpty(value) && value._data is IWrapper.IBase<BufferItemState<CStringSequence>> state)
 			return state.Value.GetSequence(out index);
 
 		index = -1;

@@ -5,19 +5,19 @@ public partial class CStringSequence
 	/// <summary>
 	/// Dynamic <see cref="CString"/> cache.
 	/// </summary>
+	[Preserve(AllMembers = true, Conditional = true)]
 	private abstract class FixedCache : CStringCacheBase
 	{
 		/// <summary>
 		/// Gaps.
 		/// </summary>
-		private readonly IImmutableSet<Int32> _emptyIndices;
+		private readonly Int32[] _emptyIndices;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="emptyIndices">Set indices with empty elements.</param>
-		private FixedCache(IImmutableSet<Int32>? emptyIndices)
-			=> this._emptyIndices = emptyIndices ?? ImmutableHashSet<Int32>.Empty;
+		/// <param name="emptyIndices">Array indices with empty elements.</param>
+		private FixedCache(Int32[] emptyIndices) => this._emptyIndices = emptyIndices;
 
 		/// <summary>
 		/// Calculates real index.
@@ -29,13 +29,9 @@ public partial class CStringSequence
 #endif
 		private Int32 GetRealIndex(Int32 index)
 		{
-			Int32 count = 0;
-			// ReSharper disable once LoopCanBeConvertedToQuery
-			foreach (Int32 i in this._emptyIndices)
-			{
-				if (i < index)
-					count++;
-			}
+			if (this._emptyIndices.Length == 0) return index;
+			Int32 result = Array.BinarySearch(this._emptyIndices, index);
+			Int32 count = result < 0 ? ~result : result;
 			return index - count;
 		}
 
@@ -43,14 +39,27 @@ public partial class CStringSequence
 		/// Creates a <see cref="FixedCache"/> instance.
 		/// </summary>
 		/// <param name="count">Non-empty entries count.</param>
-		/// <param name="emptyIndices">Empty caps.</param>
+		/// <param name="emptyIndicesList">List of empty indices.</param>
+		/// <param name="skipLast">Number of elements to exclude at the end of the list.</param>
 		/// <returns>A <see cref="FixedCache"/> instance.</returns>
-		public static FixedCache CreateFixedCache(Int32 count, IImmutableSet<Int32>? emptyIndices = default)
-			=> count <= 32 ? new CStringCache(count, emptyIndices) : new WeakCache(count, emptyIndices);
+		public static IList<CString?> CreateFixedCache(Int32 count, List<Int32>? emptyIndicesList = default,
+			Int32 skipLast = 0)
+		{
+			Int32 arrayLength = emptyIndicesList?.Count - skipLast ?? 0;
+#if !NET5_0_OR_GREATER
+			Int32[] emptyIndices = arrayLength > 0 ? new Int32[arrayLength] : [];
+			emptyIndicesList?.CopyTo(0, emptyIndices, 0, emptyIndices.Length);
+#else
+			Int32[] emptyIndices = arrayLength > 0 ? GC.AllocateUninitializedArray<Int32>(arrayLength) : [];
+			CollectionsMarshal.AsSpan(emptyIndicesList)[..emptyIndices.Length].CopyTo(emptyIndices);
+#endif
+			return count <= 32 ? new CStringCache(count, emptyIndices) : new WeakCache(count, emptyIndices);
+		}
 
 		/// <summary>
 		/// A <see cref="CString"/> cache.
 		/// </summary>
+		[Preserve(AllMembers = true, Conditional = true)]
 		private sealed class CStringCache : FixedCache
 		{
 			/// <summary>
@@ -74,8 +83,8 @@ public partial class CStringSequence
 			/// Constructor.
 			/// </summary>
 			/// <param name="count">Total elements in cache.</param>
-			/// <param name="emptyIndices">Set indices with empty elements.</param>
-			public CStringCache(Int32 count, IImmutableSet<Int32>? emptyIndices) : base(emptyIndices)
+			/// <param name="emptyIndices">Array indices with empty elements.</param>
+			public CStringCache(Int32 count, Int32[] emptyIndices) : base(emptyIndices)
 				=> this._cache = new CString?[count];
 
 			/// <inheritdoc/>
@@ -93,6 +102,7 @@ public partial class CStringSequence
 		/// <summary>
 		/// A <see cref="WeakReference{CString}"/> cache.
 		/// </summary>
+		[Preserve(AllMembers = true, Conditional = true)]
 		private sealed class WeakCache : FixedCache
 		{
 			/// <summary>
@@ -125,8 +135,8 @@ public partial class CStringSequence
 			/// Constructor.
 			/// </summary>
 			/// <param name="count">Total elements in cache.</param>
-			/// <param name="emptyIndices">Set indices with empty elements.</param>
-			public WeakCache(Int32 count, IImmutableSet<Int32>? emptyIndices) : base(emptyIndices)
+			/// <param name="emptyIndices">Array indices with empty elements.</param>
+			public WeakCache(Int32 count, Int32[] emptyIndices) : base(emptyIndices)
 				=> this._cache = new WeakReference<CString>[count];
 
 			/// <inheritdoc/>

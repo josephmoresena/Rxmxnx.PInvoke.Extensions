@@ -7,6 +7,7 @@ namespace Rxmxnx.PInvoke.Internal;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
+[Preserve(AllMembers = true)]
 internal sealed partial class ArrayMemoryManager<T> : MemoryManager<T>
 {
 #if !NET6_0_OR_GREATER

@@ -31,17 +31,10 @@ As a result, mixing it with dependencies targeting **.NET Standard 2.0** may int
 **Mono Framework** runtimes.
 
 When using `Rxmxnx.PInvoke.Extensions` with **Mono Framework** (excluding **Xamarin** and **Unity**), the build should
-reference only the following packages:
+reference only `System.Runtime.CompilerServices.Unsafe` package. At compile time the **.NET Framework 4.5** assembly of
+`System.Runtime.CompilerServices.Unsafe` is used.
 
-* `System.Runtime.CompilerServices.Unsafe`
-* `System.Collections.Immutable`
-
-At compile time:
-
-* The **.NET Framework 4.5** assembly of `System.Runtime.CompilerServices.Unsafe` is used.
-* The **.NET Standard 1.0** assembly of `System.Collections.Immutable` is used.
-
-These assemblies do not rely on APIs unavailable in **.NET Framework 4.5**, ensuring that no additional framework
+That assembly does not rely on APIs unavailable in **.NET Framework 4.5**, ensuring that no additional framework
 requirements are introduced.
 
 ---

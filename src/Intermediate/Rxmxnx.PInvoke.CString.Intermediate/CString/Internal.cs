@@ -22,10 +22,11 @@ public partial class CString
 	/// <param name="length">Current UTF-8 text length.</param>
 	internal CString(CStringSequence sequence, Int32 index, Int32 length)
 	{
-		SequenceItemState state = new(sequence, index, length);
+		BufferItemState<CStringSequence> state = new(sequence, index, length);
 
 		this._isLocal = false;
-		this._data = ValueRegion<Byte>.Create(state, SequenceItemState.GetSpan, SequenceItemState.Alloc);
+		this._data = ValueRegion<Byte>.Create(state, BufferItemState<CStringSequence>.GetSpan,
+		                                      BufferItemState<CStringSequence>.Alloc);
 		this._isNullTerminated = true;
 		this._length = length;
 

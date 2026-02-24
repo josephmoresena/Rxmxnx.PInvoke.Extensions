@@ -3,7 +3,7 @@
         <NoWarn>$(NoWarn);MSB3243;MSB3277</NoWarn>
         <SystemTextJsonVersion>5.0.2</SystemTextJsonVersion>
         <SystemTextEncodingsWebVersion>5.0.1</SystemTextEncodingsWebVersion>
-        <MicrosoftBclAsyncInterfacesVersion>5.0.0</MicrosoftBclAsyncInterfacesVersion>
+        <MicrosoftBclAsyncInterfacesVersion>10.0.3</MicrosoftBclAsyncInterfacesVersion>
     </PropertyGroup>
 
     <ItemGroup>

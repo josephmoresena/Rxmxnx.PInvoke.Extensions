@@ -280,7 +280,7 @@ public unsafe partial class CStringSequence
 		// Otherwise
 		return lengths.Length switch
 		{
-			<= 256 => FixedCache.CreateFixedCache(totalNonEmpty, emptyIndices.SkipLast(skipLast).ToImmutableHashSet()),
+			<= 256 => FixedCache.CreateFixedCache(totalNonEmpty, emptyIndices, skipLast),
 			_ => DynamicCache.CreateDynamicCache(totalNonEmpty),
 		};
 	}

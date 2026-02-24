@@ -28,8 +28,17 @@
         <PackageReference Include="NUnit" Version="3.14"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="System.Memory" Version="4.5.4"/>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
+        <PackageReference Include="System.Memory" Version="4.6.3"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4"/>
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'netcoreapp3.0' Or '$(TargetFramework)' == 'net45'">
+        <PackageReference Include="System.Collections.Immutable" Version="5.0.0"/>
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1' Or '$(TargetFramework)' == 'net5.0'">
+        <PackageReference Include="System.Collections.Immutable" Version="6.0.0"/>
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'">
+        <PackageReference Include="System.Collections.Immutable" Version="8.0.0"/>
     </ItemGroup>
 
 </Project>
