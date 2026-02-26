@@ -10,11 +10,11 @@
     </ItemGroup>
     <ItemGroup Condition="'$(UsePackage)' == 'true'">
         <PackageReference Include="Rxmxnx.PInvoke.Extensions" Version="$(PackageVersion)">
-            <PrivateAssets Condition="'$(MSBuildRuntimeType)' == 'Mono'">All</PrivateAssets>
-            <ExcludeAssets Condition="'$(MSBuildRuntimeType)' == 'Mono'">compile;runtime</ExcludeAssets>
+            <PrivateAssets Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">All</PrivateAssets>
+            <ExcludeAssets Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">compile;runtime</ExcludeAssets>
         </PackageReference>
     </ItemGroup>
-    <ItemGroup Condition="'$(UsePackage)' == 'true' And '$(MSBuildRuntimeType)' == 'Mono'">
+    <ItemGroup Condition="'$(UsePackage)' == 'true' And '$(MSBuildRuntimeType)' == 'Mono' And '$(TargetFrameworkIdentifier)' == '.NETFramework'">
         <Reference Include="Rxmxnx.PInvoke.Extensions">
             <HintPath>$(NuGetPackageRoot)rxmxnx.pinvoke.extensions/$(PackageVersion)/lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</HintPath>
             <Private Condition="'$(OutputType)' == 'Exe'">True</Private>

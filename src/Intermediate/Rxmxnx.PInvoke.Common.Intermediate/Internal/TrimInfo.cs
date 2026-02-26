@@ -9,6 +9,15 @@ namespace Rxmxnx.PInvoke.Internal;
 internal static class TrimInfo
 {
 	/// <summary>
+	/// Web Assembly .NET Architecture.
+	/// </summary>
+#if !NET5_0_OR_GREATER
+	public const Architecture WasmArch = (Architecture)4;
+#else
+	public const Architecture WasmArch = Architecture.Wasm;
+#endif
+
+	/// <summary>
 	/// Internal UTF-8 empty text.
 	/// </summary>
 	/// <returns>A read-only byte span of UTF-8 null-characters.</returns>

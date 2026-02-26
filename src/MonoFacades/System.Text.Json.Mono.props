@@ -8,30 +8,30 @@
 
     <ItemGroup>
         <PackageReference Include="System.Text.Json" Version="$(SystemTextJsonVersion)">
-            <PrivateAssets Condition="'$(MSBuildRuntimeType)' == 'Mono'">All</PrivateAssets>
-            <ExcludeAssets Condition="'$(MSBuildRuntimeType)' == 'Mono'">compile;runtime</ExcludeAssets>
+            <PrivateAssets Condition="'$(MSBuildRuntimeType)' == 'Mono' And '$(TargetFrameworkIdentifier)' == '.NETFramework'">All</PrivateAssets>
+            <ExcludeAssets Condition="'$(MSBuildRuntimeType)' == 'Mono' And '$(TargetFrameworkIdentifier)' == '.NETFramework'">compile;runtime</ExcludeAssets>
         </PackageReference>
         <PackageReference Include="System.Text.Encodings.Web" Version="$(SystemTextEncodingsWebVersion)">
-            <PrivateAssets Condition="'$(MSBuildRuntimeType)' == 'Mono'">All</PrivateAssets>
-            <ExcludeAssets Condition="'$(MSBuildRuntimeType)' == 'Mono'">compile;runtime</ExcludeAssets>
+            <PrivateAssets Condition="'$(MSBuildRuntimeType)' == 'Mono' And '$(TargetFrameworkIdentifier)' == '.NETFramework'">All</PrivateAssets>
+            <ExcludeAssets Condition="'$(MSBuildRuntimeType)' == 'Mono' And '$(TargetFrameworkIdentifier)' == '.NETFramework'">compile;runtime</ExcludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="$(MicrosoftBclAsyncInterfacesVersion)">
-            <PrivateAssets Condition="'$(MSBuildRuntimeType)' == 'Mono'">All</PrivateAssets>
-            <ExcludeAssets Condition="'$(MSBuildRuntimeType)' == 'Mono'">compile;runtime</ExcludeAssets>
+            <PrivateAssets Condition="'$(MSBuildRuntimeType)' == 'Mono' And '$(TargetFrameworkIdentifier)' == '.NETFramework'">All</PrivateAssets>
+            <ExcludeAssets Condition="'$(MSBuildRuntimeType)' == 'Mono' And '$(TargetFrameworkIdentifier)' == '.NETFramework'">compile;runtime</ExcludeAssets>
         </PackageReference>
-        <PackageReference Condition="'$(MSBuildRuntimeType)' == 'Mono'" Include="NETStandard.Library.Ref" Version="2.1.0">
+        <PackageReference Condition="'$(MSBuildRuntimeType)' == 'Mono' And '$(TargetFrameworkIdentifier)' == '.NETFramework'" Include="NETStandard.Library.Ref" Version="2.1.0">
             <PrivateAssets>All</PrivateAssets>
             <ExcludeAssets>compile;runtime</ExcludeAssets>
         </PackageReference>
     </ItemGroup>
 
-    <ItemGroup Condition="'$(MSBuildRuntimeType)' != 'Mono' Or '$(OutputType)' == 'Exe'">
+    <ItemGroup Condition="'$(MSBuildRuntimeType)' != 'Mono' Or '$(TargetFrameworkIdentifier)' == '.NETFramework'">
         <ProjectReference Include="$(MSBuildThisFileDirectory)System.Buffers\System.Buffers.csproj"/>
         <ProjectReference Include="$(MSBuildThisFileDirectory)System.Memory\System.Memory.csproj"/>
         <ProjectReference Include="$(MSBuildThisFileDirectory)System.Threading.Tasks.Extensions\System.Threading.Tasks.Extensions.csproj"/>
     </ItemGroup>
 
-    <ItemGroup Condition="'$(MSBuildRuntimeType)' == 'Mono'">
+    <ItemGroup Condition="'$(MSBuildRuntimeType)' == 'Mono' And '$(TargetFrameworkIdentifier)' == '.NETFramework'">
         <Reference Include="System.Text.Json">
             <HintPath>$(NuGetPackageRoot)system.text.json/$(SystemTextJsonVersion)/lib/netstandard2.0/System.Text.Json.dll</HintPath>
             <Private Condition="'$(OutputType)' == 'Exe'">True</Private>

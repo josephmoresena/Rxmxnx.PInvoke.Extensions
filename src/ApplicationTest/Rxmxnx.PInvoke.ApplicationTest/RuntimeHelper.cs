@@ -118,7 +118,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Console.WriteLine($"Globalization-Invariant Mode: {NativeUtilities.GlobalizationInvariantModeEnabled}");
 			Console.WriteLine($"UI Iso639-1: {NativeUtilities.UserInterfaceIso639P1}");
 			Console.WriteLine($"Buffer AutoComposition Enabled: {BufferManager.BufferAutoCompositionEnabled}");
-			if (RuntimeInformation.ProcessArchitecture != Architecture.Wasm)
+			if (!SystemInfo.IsWebRuntime)
 			{
 				Console.WriteLine($"String constant: {!RuntimeHelper.runtimeName.AsSpan().IsLiteral()}");
 				Console.WriteLine($"CString.Empty literal: {CString.IsImagePersistent(CString.Empty)}");

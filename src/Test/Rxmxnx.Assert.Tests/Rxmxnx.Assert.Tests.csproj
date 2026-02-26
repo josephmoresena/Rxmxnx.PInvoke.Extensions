@@ -31,7 +31,7 @@
         <PackageReference Include="System.Memory" Version="4.6.3"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4"/>
     </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'netcoreapp3.0' Or '$(TargetFramework)' == 'net45'">
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'netcoreapp3.0'">
         <PackageReference Include="System.Collections.Immutable" Version="5.0.0"/>
     </ItemGroup>
     <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1' Or '$(TargetFramework)' == 'net5.0'">

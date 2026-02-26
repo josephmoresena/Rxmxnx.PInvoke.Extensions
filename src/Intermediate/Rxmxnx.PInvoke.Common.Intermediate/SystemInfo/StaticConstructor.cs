@@ -30,7 +30,8 @@ public static partial class SystemInfo
 			SystemInfo.isLinux = true;
 			return;
 		}
-		if (SystemInfo.IsOsPlatform(SystemInfo.browserPlatform, SystemInfo.wPlatform))
+		if (RuntimeInformation.ProcessArchitecture == TrimInfo.WasmArch ||
+		    SystemInfo.IsOsPlatform(SystemInfo.browserPlatform, SystemInfo.wPlatform))
 		{
 			SystemInfo.isWebRuntime = true;
 			return;

@@ -118,7 +118,7 @@ public static partial class SystemInfo
 		{
 			return
 #if NET5_0_OR_GREATER
-				OperatingSystem.IsBrowser() ||
+				OperatingSystem.IsBrowser() || RuntimeInformation.ProcessArchitecture == TrimInfo.WasmArch ||
 #if NET8_0_OR_GREATER
 				OperatingSystem.IsWasi()
 #else
