@@ -129,7 +129,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			writer.WriteLine($"Buffer AutoComposition Enabled: {BufferManager.BufferAutoCompositionEnabled}");
 			if (!SystemInfo.IsWebRuntime)
 			{
-				writer.WriteLine($"String constant: {!RuntimeHelper.runtimeName.AsSpan().IsLiteral()}");
+				writer.WriteLine($"String constant: {RuntimeHelper.runtimeName.AsSpan().IsLiteral()}");
 				writer.WriteLine($"CString.Empty literal: {CString.IsImagePersistent(CString.Empty)}");
 			}
 			writer.WriteLine($"Hardcoded Array literal: {!RuntimeHelper.Null.AsSpan().MayBeNonLiteral()}");
