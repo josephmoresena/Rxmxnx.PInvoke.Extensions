@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net45</TargetFramework>
+        <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
         <DebugSymbols>false</DebugSymbols>
         <DebugType>None</DebugType>
     </PropertyGroup>

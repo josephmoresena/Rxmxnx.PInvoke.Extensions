@@ -1,8 +1,10 @@
 using System;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 #if NET5_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
 #endif
@@ -63,69 +65,76 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		});
 #endif
 
-		public static void PrintRuntimeInfo()
+		public static void PrintRuntimeInfo() => RuntimeHelper.PrintRuntimeInfo(Console.Out);
+		public static void PrintRuntimeInfo(StringBuilder strBuilder)
 		{
-			Console.WriteLine("========== Application for " + RuntimeHelper.runtimeName + " ==========");
-			RuntimeHelper.PrintDomainInfo();
-			Console.WriteLine("========== Runtime information ==========");
-			Console.WriteLine($"Number of Cores: {Environment.ProcessorCount}");
-			Console.WriteLine($"Is Little-Endian: {BitConverter.IsLittleEndian}");
-			Console.WriteLine($"OS: {RuntimeInformation.OSDescription}");
-			Console.WriteLine($"OS Arch: {RuntimeInformation.OSArchitecture.GetName()}");
-			Console.WriteLine($"OS Version: {Environment.OSVersion}");
-			Console.WriteLine($"Computer: {Environment.MachineName}");
-			Console.WriteLine($"User: {Environment.UserName}");
-			Console.WriteLine($"UI Culture: {CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}");
-			Console.WriteLine($"System Path: {Environment.SystemDirectory}");
-			Console.WriteLine($"Current Path: {Environment.CurrentDirectory}");
-			Console.WriteLine($"Process Arch: {RuntimeInformation.ProcessArchitecture.GetName()}");
+			using StringWriter writer = new(strBuilder);
+			RuntimeHelper.PrintRuntimeInfo(writer);
+		}
+
+		private static void PrintRuntimeInfo(TextWriter writer)
+		{
+			writer.WriteLine("========== Application for " + RuntimeHelper.runtimeName + " ==========");
+			RuntimeHelper.PrintDomainInfo(writer);
+			writer.WriteLine("========== Runtime information ==========");
+			writer.WriteLine($"Number of Cores: {Environment.ProcessorCount}");
+			writer.WriteLine($"Is Little-Endian: {BitConverter.IsLittleEndian}");
+			writer.WriteLine($"OS: {RuntimeInformation.OSDescription}");
+			writer.WriteLine($"OS Arch: {RuntimeInformation.OSArchitecture.GetName()}");
+			writer.WriteLine($"OS Version: {Environment.OSVersion}");
+			writer.WriteLine($"Computer: {Environment.MachineName}");
+			writer.WriteLine($"User: {Environment.UserName}");
+			writer.WriteLine($"UI Culture: {CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}");
+			writer.WriteLine($"System Path: {Environment.SystemDirectory}");
+			writer.WriteLine($"Current Path: {Environment.CurrentDirectory}");
+			writer.WriteLine($"Process Arch: {RuntimeInformation.ProcessArchitecture.GetName()}");
 			try
 			{
-				Console.WriteLine($"Framework Version: {Environment.Version}");
-				Console.WriteLine($"Runtime Path: {RuntimeEnvironment.GetRuntimeDirectory()}");
-				Console.WriteLine($"Runtime Version: {RuntimeEnvironment.GetSystemVersion()}");
+				writer.WriteLine($"Framework Version: {Environment.Version}");
+				writer.WriteLine($"Runtime Path: {RuntimeEnvironment.GetRuntimeDirectory()}");
+				writer.WriteLine($"Runtime Version: {RuntimeEnvironment.GetSystemVersion()}");
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine("**Unable to retrieve runtime info**");
+				writer.WriteLine("**Unable to retrieve runtime info**");
 				if (!AotInfo.IsReflectionDisabled)
-					Console.WriteLine(ex);
+					writer.WriteLine(ex);
 			}
-			Console.WriteLine($"Dynamic Code Compiled: {RuntimeFeature.IsDynamicCodeCompiled}");
-			Console.WriteLine($"Dynamic Code Supported: {RuntimeFeature.IsDynamicCodeSupported}");
+			writer.WriteLine($"Dynamic Code Compiled: {RuntimeFeature.IsDynamicCodeCompiled}");
+			writer.WriteLine($"Dynamic Code Supported: {RuntimeFeature.IsDynamicCodeSupported}");
 #if NET6_0_OR_GREATER
-			Console.WriteLine($"IL compiled bytes: {JitInfo.GetCompiledILBytes()}");
-			Console.WriteLine($"IL method count: {JitInfo.GetCompiledMethodCount()}");
-			Console.WriteLine($"IL compilation time: {JitInfo.GetCompilationTime()}");
+			writer.WriteLine($"IL compiled bytes: {JitInfo.GetCompiledILBytes()}");
+			writer.WriteLine($"IL method count: {JitInfo.GetCompiledMethodCount()}");
+			writer.WriteLine($"IL compilation time: {JitInfo.GetCompilationTime()}");
 #endif
-			Console.WriteLine("========== Rxmxnx.PInvoke Runtime information ==========");
+			writer.WriteLine("========== Rxmxnx.PInvoke Runtime information ==========");
 #if !RELEASE_PACKAGE
-			Console.WriteLine($"Package: {SystemInfo.CompilationFramework}");
+			writer.WriteLine($"Package: {SystemInfo.CompilationFramework}");
 #endif
-			Console.WriteLine($"Native AOT: {AotInfo.IsNativeAot}");
-			Console.WriteLine($"Reflection Enabled: {!AotInfo.IsReflectionDisabled}");
-			Console.WriteLine($"IL Code Generation Supported: {AotInfo.IsCodeGenerationSupported}");
-			Console.WriteLine($"Trimmed Runtime: {AotInfo.IsPlatformTrimmed}");
-			Console.WriteLine($"Mono Runtime: {SystemInfo.IsMonoRuntime}");
-			Console.WriteLine($"Web Runtime: {SystemInfo.IsWebRuntime}");
-			Console.WriteLine($"Windows Platform: {SystemInfo.IsWindows}");
-			Console.WriteLine($"Linux Platform: {SystemInfo.IsLinux}");
-			Console.WriteLine($"macOS Platform: {SystemInfo.IsMac}");
-			Console.WriteLine($"FreeBSD Platform: {SystemInfo.IsFreeBsd}");
-			Console.WriteLine($"NetBSD Platform: {SystemInfo.IsNetBsd}");
-			Console.WriteLine($"Solaris Platform: {SystemInfo.IsSolaris}");
-			Console.WriteLine($"Pointer Size: {NativeUtilities.PointerSize}");
-			Console.WriteLine($"Globalization-Invariant Mode: {NativeUtilities.GlobalizationInvariantModeEnabled}");
-			Console.WriteLine($"UI Iso639-1: {NativeUtilities.UserInterfaceIso639P1}");
-			Console.WriteLine($"Buffer AutoComposition Enabled: {BufferManager.BufferAutoCompositionEnabled}");
+			writer.WriteLine($"Native AOT: {AotInfo.IsNativeAot}");
+			writer.WriteLine($"Reflection Enabled: {!AotInfo.IsReflectionDisabled}");
+			writer.WriteLine($"IL Code Generation Supported: {AotInfo.IsCodeGenerationSupported}");
+			writer.WriteLine($"Trimmed Runtime: {AotInfo.IsPlatformTrimmed}");
+			writer.WriteLine($"Mono Runtime: {SystemInfo.IsMonoRuntime}");
+			writer.WriteLine($"Web Runtime: {SystemInfo.IsWebRuntime}");
+			writer.WriteLine($"Windows Platform: {SystemInfo.IsWindows}");
+			writer.WriteLine($"Linux Platform: {SystemInfo.IsLinux}");
+			writer.WriteLine($"macOS Platform: {SystemInfo.IsMac}");
+			writer.WriteLine($"FreeBSD Platform: {SystemInfo.IsFreeBsd}");
+			writer.WriteLine($"NetBSD Platform: {SystemInfo.IsNetBsd}");
+			writer.WriteLine($"Solaris Platform: {SystemInfo.IsSolaris}");
+			writer.WriteLine($"Pointer Size: {NativeUtilities.PointerSize}");
+			writer.WriteLine($"Globalization-Invariant Mode: {NativeUtilities.GlobalizationInvariantModeEnabled}");
+			writer.WriteLine($"UI Iso639-1: {NativeUtilities.UserInterfaceIso639P1}");
+			writer.WriteLine($"Buffer AutoComposition Enabled: {BufferManager.BufferAutoCompositionEnabled}");
 			if (!SystemInfo.IsWebRuntime)
 			{
-				Console.WriteLine($"String constant: {!RuntimeHelper.runtimeName.AsSpan().IsLiteral()}");
-				Console.WriteLine($"CString.Empty literal: {CString.IsImagePersistent(CString.Empty)}");
+				writer.WriteLine($"String constant: {!RuntimeHelper.runtimeName.AsSpan().IsLiteral()}");
+				writer.WriteLine($"CString.Empty literal: {CString.IsImagePersistent(CString.Empty)}");
 			}
-			Console.WriteLine($"Hardcoded Array literal: {!RuntimeHelper.Null.AsSpan().MayBeNonLiteral()}");
+			writer.WriteLine($"Hardcoded Array literal: {!RuntimeHelper.Null.AsSpan().MayBeNonLiteral()}");
 		}
-		private static void PrintDomainInfo()
+		private static void PrintDomainInfo(TextWriter writer)
 		{
 			try
 			{
@@ -141,14 +150,14 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 					if (assembly == Assembly.GetExecutingAssembly()) continue;
 					Boolean useFullName = AotInfo.IsNativeAot || assembly.IsDynamic;
-					Console.WriteLine(useFullName ? assembly.FullName : assembly.GetAssemblyName());
+					writer.WriteLine(useFullName ? assembly.FullName : assembly.GetAssemblyName());
 				}
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine("**Unable to retrieve domain info**");
+				writer.WriteLine("**Unable to retrieve domain info**");
 				if (!AotInfo.IsReflectionDisabled)
-					Console.WriteLine(ex);
+					writer.WriteLine(ex);
 			}
 		}
 		private static String GetName(this Architecture architecture)

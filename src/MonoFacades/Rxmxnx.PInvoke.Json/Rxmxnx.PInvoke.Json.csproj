@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+    <PropertyGroup>
+        <Nullable>enable</Nullable>
+        <CustomFacadesRequired>true</CustomFacadesRequired>
+    </PropertyGroup>
+
     <Import Project="..\MonoFacade.props"/>
     <Import Project="..\System.Text.Json.Mono.props"/>
     <Import Project="..\..\PackageReference.props"/>
-
-    <PropertyGroup>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
 
     <PropertyGroup Condition="'$(UsePackage)' == 'true' And '$(PackageVersion)' != ''">
         <Version>$(PackageVersion)</Version>
