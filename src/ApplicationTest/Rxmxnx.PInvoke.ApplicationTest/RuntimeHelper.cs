@@ -25,29 +25,29 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #elif NET8_0_OR_GREATER
 				".NET 8.0"
 #elif NET7_0_OR_GREATER
-                    ".NET 7.0"
+				".NET 7.0"
 #elif NET6_0_OR_GREATER
-                    ".NET 6.0"
+				".NET 6.0"
 #elif NET5_0_OR_GREATER
-                    ".NET 5.0"
+				".NET 5.0"
 #elif NETCOREAPP3_1
-                    ".NET Core 3.1"
+				".NET Core 3.1"
 #elif NETCOREAPP3_0
-                    ".NET Core 3.0"
+				".NET Core 3.0"
 #else
-                    "Mono"
+				"Mono"
 #endif
 #if REFLECTION_FREE
-                    + " Reflection-free"
+				+ " Reflection-free"
 #endif
 #if NATIVE_AOT
-                    + " NativeAOT"
+				+ " NativeAOT"
 #endif
 #if R2R_EXECUTABLE
-                    + " ReadyToRun (R2R)"
+				+ " ReadyToRun (R2R)"
 #endif
 #if WEB_ASSEMBLY
-                    + " WASM"
+				+ " WASM"
 #endif
 			;
 
@@ -118,8 +118,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Console.WriteLine($"Globalization-Invariant Mode: {NativeUtilities.GlobalizationInvariantModeEnabled}");
 			Console.WriteLine($"UI Iso639-1: {NativeUtilities.UserInterfaceIso639P1}");
 			Console.WriteLine($"Buffer AutoComposition Enabled: {BufferManager.BufferAutoCompositionEnabled}");
-			Console.WriteLine($"String constant: {!RuntimeHelper.runtimeName.AsSpan().MayBeNonLiteral()}");
-			Console.WriteLine($"CString.Empty literal: {CString.IsImagePersistent(CString.Empty)}");
+			if (RuntimeInformation.ProcessArchitecture != Architecture.Wasm)
+			{
+				Console.WriteLine($"String constant: {!RuntimeHelper.runtimeName.AsSpan().IsLiteral()}");
+				Console.WriteLine($"CString.Empty literal: {CString.IsImagePersistent(CString.Empty)}");
+			}
 			Console.WriteLine($"Hardcoded Array literal: {!RuntimeHelper.Null.AsSpan().MayBeNonLiteral()}");
 		}
 		private static void PrintDomainInfo()
