@@ -23,24 +23,11 @@ public static partial class AotInfo
 		{
 			if (frame is null || !frame.HasMethod()) continue;
 			MethodBase methodBase = frame.GetMethod()!;
-			if (!AotInfo.IsNativeMethod(methodBase.MethodHandle))
+			if (!EmitInfo.IsDynamicMethod(methodBase) && !AotInfo.IsImageMethod(methodBase.MethodHandle))
 				return false;
 		}
 		return true;
 	}
-	/// <summary>
-	/// Indicates whether the function pointer of <paramref name="methodHandle"/> references to an R/RX memory section.
-	/// </summary>
-	/// <param name="methodHandle">A <see langword="RuntimeMethodHandle"/> value.</param>
-	/// <returns>
-	/// <see langword="true"/> if the function pointer references to an R/RX memory section; otherwise,
-	/// <see langword="false"/>.
-	/// </returns>
-#if !PACKAGE
-	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
-#endif
-	private static unsafe Boolean IsNativeMethod(RuntimeMethodHandle methodHandle)
-		=> MemoryInspector.Instance.IsReadOnlyAddress(methodHandle.GetFunctionPointer().ToPointer());
 #if !NET6_0_OR_GREATER
 	/// <summary>
 	/// Indicates whether JIT is enabled in the current runtime.

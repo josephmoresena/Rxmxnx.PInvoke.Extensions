@@ -1,5 +1,6 @@
-using System.Reflection.Emit;
-
+using Label = System.Reflection.Emit.Label;
+using LocalBuilder = System.Reflection.Emit.LocalBuilder;
+using DynamicMethod = System.Reflection.Emit.DynamicMethod;
 using TypeBuilder = System.Reflection.Emit.TypeBuilder;
 using OpCodes = System.Reflection.Emit.OpCodes;
 using MethodBuilder = System.Reflection.Emit.MethodBuilder;
@@ -27,6 +28,20 @@ public static partial class AotInfo
 		/// Indicates whether the current runtime allows the use of System.Reflection.Emit namespace.
 		/// </summary>
 		public static Boolean IsEmitAllowed => EmitInfo.isEmitAllowed ??= EmitInfo.EmitCode();
+
+		/// <summary>
+		/// Indicates whether <paramref name="methodBase"/> is dynamic.
+		/// </summary>
+		/// <param name="methodBase">A <see cref="MethodBase"/> instance.</param>
+		/// <returns>
+		/// <see langword="true"/> if <paramref name="methodBase"/> is a dynamic method or its assembly is dynamic;
+		/// otherwise <see langword="false"/>.
+		/// </returns>
+#if !PACKAGE
+		[ExcludeFromCodeCoverage]
+#endif
+		public static Boolean IsDynamicMethod(MethodBase methodBase)
+			=> methodBase is DynamicMethod || methodBase.Module.Assembly.IsDynamic;
 
 		/// <summary>
 		/// Indicates whether <see cref="System.Reflection.Emit"/> namespace is supported in the current runtime.

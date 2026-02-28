@@ -1,0 +1,19 @@
+﻿@page "/runtimeInfo"
+
+<h1>Runtime Information</h1>
+
+@foreach (String line in GetRuntimeInformation().Split(Environment.NewLine))
+{
+    <p>@line</p>
+}
+
+
+@code {
+
+    private String GetRuntimeInformation()
+    {
+        StringBuilder stringBuilder = new();
+        RuntimeHelper.PrintRuntimeInfo(stringBuilder);
+        return stringBuilder.ToString();
+    }
+}

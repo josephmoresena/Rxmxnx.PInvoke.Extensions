@@ -361,3 +361,4 @@ Rxmxnx.PInvoke.MkBundle.Patcher.dll
 **/Extensions.TestResult.xml
 **/Buffers.TestResult.xml
 src/MonoFacades/**.dll
+**.editorconfig

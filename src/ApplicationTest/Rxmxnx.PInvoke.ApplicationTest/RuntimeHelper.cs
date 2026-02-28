@@ -8,6 +8,7 @@ using System.Text;
 #if NET5_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
 #endif
+
 #if NET6_0_OR_GREATER
 using System.Runtime;
 #endif
@@ -169,17 +170,27 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				Architecture.Arm64 => nameof(Architecture.Arm64),
 #if NET5_0_OR_GREATER
 				Architecture.Wasm => nameof(Architecture.Wasm),
+#else
+				(Architecture)4 => "Wasm",
 #endif
 #if NET6_0_OR_GREATER
 				Architecture.S390x => nameof(Architecture.S390x),
+#else
+				(Architecture)5 => "S390x",
 #endif
 #if NET7_0_OR_GREATER
 				Architecture.LoongArch64 => nameof(Architecture.LoongArch64),
 				Architecture.Armv6 => nameof(Architecture.Armv6),
 				Architecture.Ppc64le => nameof(Architecture.Ppc64le),
+#else
+				(Architecture)6 => "LoongArch64",
+				(Architecture)7 => "Armv6",
+				(Architecture)8 => "Ppc64le",
 #endif
 #if NET9_0_OR_GREATER
 				Architecture.RiscV64 => nameof(Architecture.RiscV64),
+#else
+				(Architecture)9 => "RiscV64",
 #endif
 				_ => $"{architecture}",
 			};

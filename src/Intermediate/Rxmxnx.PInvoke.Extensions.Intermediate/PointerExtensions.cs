@@ -521,6 +521,37 @@ public static unsafe class PointerExtensions
 		=> MemoryMarshal.CreateReadOnlySpanFromNullTerminated(char0);
 
 	/// <summary>
+	/// Determines whether the specified <see cref="RuntimeMethodHandle"/> represents executable code that originates
+	/// from a statically compiled image (AOT/R2R) rather than dynamically generated runtime code.
+	/// </summary>
+	/// <param name="methodHandle">The method handle to evaluate.</param>
+	/// <returns>
+	/// <see langword="true"/> if the method is backed by image-compiled code; otherwise, <see langword="false"/>.
+	/// </returns>
+	/// <remarks>
+	/// Returns <see langword="false"/> for open generic methods and on platforms where memory inspection is not supported.
+	/// In reflection-free runtimes, valid method handles are treated as image-backed code.
+	/// </remarks>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public static Boolean IsImageCode(this RuntimeMethodHandle methodHandle)
+	{
+		if (MemoryInspector.IsSupported || methodHandle == default) return false;
+		if (AotInfo.IsReflectionDisabled) return true;
+		try
+		{
+			if (MethodBase.GetMethodFromHandle(methodHandle) is not { } methodBase) return true;
+			if (methodBase.ContainsGenericParameters || AotInfo.IsDynamicCode(methodBase)) return false;
+		}
+		catch (Exception)
+		{
+			return true;
+		}
+		return AotInfo.IsImageMethod(methodHandle);
+	}
+
+	/// <summary>
 	/// Generates a <see cref="String"/> instance from a <see cref="Char"/> pointer, interpreting the contents as UTF-16 text.
 	/// </summary>
 	/// <param name="chrPtr">A pointer to the first character of the UTF-16 text in memory.</param>

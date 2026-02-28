@@ -13,17 +13,17 @@ namespace Rxmxnx.PInvoke;
 public static unsafe partial class DelegateExtensions
 {
 	/// <summary>
-	/// Retrieves a <see cref="FuncPtr{TDelegate}"/> from a memory reference to a <typeparamref name="TDelegate"/> delegate
-	/// instance.
+	/// Retrieves a <see cref="FuncPtr{TDelegate}"/> from a memory reference to a <typeparamref name="TDelegate"/>
+	/// delegate instance.
 	/// </summary>
 	/// <typeparam name="TDelegate">Type of the <see cref="Delegate"/> to be referenced by the pointer.</typeparam>
 	/// <param name="delegateInstance">Instance of the <typeparamref name="TDelegate"/> delegate.</param>
 	/// <returns>An <see cref="FuncPtr{TDelegate}"/> pointer.</returns>
 	/// <remarks>
-	/// The pointer will point to the address in memory where the delegate instance was located at the moment this method was
-	/// called.
-	/// To ensure that the pointer remains valid, the delegate instance must be kept alive and not allowed to be collected by
-	/// the GC.
+	/// The pointer will point to the address in memory where the delegate instance was located at the moment this
+	/// method was called.
+	/// To ensure that the pointer remains valid, the delegate instance must be kept alive and not allowed to be
+	/// collected by the GC.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static FuncPtr<TDelegate> GetUnsafeFuncPtr<TDelegate>(this TDelegate? delegateInstance)
@@ -38,10 +38,10 @@ public static unsafe partial class DelegateExtensions
 	/// <param name="delegateInstance">Instance of the <typeparamref name="TDelegate"/> delegate.</param>
 	/// <returns>An <see cref="IntPtr"/> pointer.</returns>
 	/// <remarks>
-	/// The pointer will point to the address in memory where the delegate instance was located at the moment this method was
-	/// called.
-	/// To ensure that the pointer remains valid, the delegate instance must be kept alive and not allowed to be collected by
-	/// the GC.
+	/// The pointer will point to the address in memory where the delegate instance was located at the moment this
+	/// method was called.
+	/// To ensure that the pointer remains valid, the delegate instance must be kept alive and not allowed to be
+	/// collected by the GC.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IntPtr GetUnsafeIntPtr<TDelegate>(this TDelegate? delegateInstance) where TDelegate : Delegate
@@ -53,10 +53,10 @@ public static unsafe partial class DelegateExtensions
 	/// <param name="delegateInstance">Instance of the <typeparamref name="TDelegate"/> delegate.</param>
 	/// <returns>A <see cref="UIntPtr"/> pointer.</returns>
 	/// <remarks>
-	/// The pointer will point to the address in memory where the delegate instance was located at the moment this method was
-	/// called.
-	/// To ensure that the pointer remains valid, the delegate instance must be kept alive and not allowed to be collected by
-	/// the GC.
+	/// The pointer will point to the address in memory where the delegate instance was located at the moment this
+	/// method was called.
+	/// To ensure that the pointer remains valid, the delegate instance must be kept alive and not allowed to be
+	/// collected by the GC.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static UIntPtr GetUnsafeUIntPtr<TDelegate>(this TDelegate? delegateInstance) where TDelegate : Delegate
@@ -80,4 +80,36 @@ public static unsafe partial class DelegateExtensions
 	public static IFixedMethod<TDelegate>.IDisposable GetFixedMethod<TDelegate>(this TDelegate? method)
 		where TDelegate : Delegate
 		=> NativeUtilities.GetFixedMethod(method);
+
+	/// <inheritdoc cref="NativeUtilities.IsImageMethod{TDelegate}(TDelegate?)"/>
+	public static Boolean IsImageMethod<TDelegate>(this TDelegate? method) where TDelegate : Delegate
+		=> NativeUtilities.IsImageMethod(method);
+	/// <summary>
+	/// Determines whether the specified <see cref="MethodBase"/> represents executable code that originates from a
+	/// statically compiled image (AOT/R2R) rather than dynamically generated runtime code.
+	/// </summary>
+	/// <param name="method">The method to evaluate.</param>
+	/// <returns>
+	/// <see langword="true"/> if the method is backed by image-compiled code; otherwise, <see langword="false"/>.
+	/// </returns>
+	/// <remarks>
+	/// Returns <see langword="false"/> if <paramref name="method"/> is  <see langword="null"/>, represents an open
+	/// generic method, or if the current platform does not support memory inspection.
+	/// In reflection-free runtimes, valid methods are treated as image-backed.
+	/// </remarks>
+	public static Boolean IsImageMethod(this MethodBase? method)
+	{
+		if (MemoryInspector.IsSupported || method is null) return false;
+		if (AotInfo.IsReflectionDisabled) return true;
+		try
+		{
+			if (!NativeUtilities.IsImageMethodUnsafe(method))
+				return false;
+		}
+		catch (Exception)
+		{
+			return false;
+		}
+		return true;
+	}
 }
