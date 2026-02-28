@@ -21,8 +21,7 @@ public static partial class AotInfo
 #endif
 		foreach (StackFrame? frame in frames)
 		{
-			if (frame is null || !frame.HasMethod()) continue;
-			MethodBase methodBase = frame.GetMethod()!;
+			if (frame?.GetMethod() is not { } methodBase) continue;
 			if (!EmitInfo.IsDynamicMethod(methodBase) && !AotInfo.IsImageMethod(methodBase.MethodHandle))
 				return false;
 		}

@@ -135,8 +135,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				writer.WriteLine($"CString.Empty literal: {CString.IsImagePersistent(CString.Empty)}");
 			}
 			writer.WriteLine($"Hardcoded Array literal: {!RuntimeHelper.Null.AsSpan().MayBeNonLiteral()}");
-			if (!SystemInfo.IsWebRuntime)
-				RuntimeHelper.PrintStackInfo(writer);
+			if (SystemInfo.IsWebRuntime) return;
+			writer.WriteLine("========== StackTrace information ==========");
+			RuntimeHelper.PrintStackInfo(writer);
 		}
 		private static void PrintDomainInfo(TextWriter writer)
 		{
@@ -181,8 +182,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				{
 					ref readonly StackFrame? frame = ref enumerator.Current;
 #endif
-					if (frame is null || !frame.HasMethod()) continue;
-					MethodBase methodBase = frame.GetMethod()!;
+					if (frame?.GetMethod() is not { } methodBase) continue;
 					writer.WriteLine($"{methodBase.Name} -> {methodBase.IsImageMethod()}");
 				}
 			}
