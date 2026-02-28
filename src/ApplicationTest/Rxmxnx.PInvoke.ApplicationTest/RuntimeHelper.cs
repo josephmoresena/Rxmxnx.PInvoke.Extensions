@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -134,6 +135,8 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				writer.WriteLine($"CString.Empty literal: {CString.IsImagePersistent(CString.Empty)}");
 			}
 			writer.WriteLine($"Hardcoded Array literal: {!RuntimeHelper.Null.AsSpan().MayBeNonLiteral()}");
+			if (!SystemInfo.IsWebRuntime)
+				RuntimeHelper.PrintStackInfo(writer);
 		}
 		private static void PrintDomainInfo(TextWriter writer)
 		{
@@ -157,6 +160,35 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			catch (Exception ex)
 			{
 				writer.WriteLine("**Unable to retrieve domain info**");
+				if (!AotInfo.IsReflectionDisabled)
+					writer.WriteLine(ex);
+			}
+		}
+#if NET5_0_OR_GREATER
+		[UnconditionalSuppressMessage("Trimming", "IL2026")]
+#endif
+		private static void PrintStackInfo(TextWriter writer)
+		{
+			try
+			{
+#if !NET9_0_OR_GREATER
+				foreach (StackFrame? assembly in new StackTrace().GetFrames().AsReadOnlySpan())
+				{
+#else
+				ReadOnlySpan<StackFrame?>.Enumerator enumerator =
+					new StackTrace().GetFrames().AsReadOnlySpan().GetEnumerator()!;
+				while (enumerator.MoveNext())
+				{
+					ref readonly StackFrame? frame = ref enumerator.Current;
+#endif
+					if (frame is null || !frame.HasMethod()) continue;
+					MethodBase methodBase = frame.GetMethod()!;
+					writer.WriteLine($"{methodBase.Name} -> {methodBase.IsImageMethod()}");
+				}
+			}
+			catch (Exception ex)
+			{
+				writer.WriteLine("**Unable to retrieve stack info**");
 				if (!AotInfo.IsReflectionDisabled)
 					writer.WriteLine(ex);
 			}

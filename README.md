@@ -2576,34 +2576,33 @@ Represents a mutable string of UTF-8 encoded characters.
 
   Concatenates the string representations of the elements in the provided sequence, using the specified separator
   between each member.
--
 
-**Supported separator types include:** `CString`, and `ReadOnlySpan<Byte>`.
-**Supported types include:** `CString[]`, `ReadOnlySpan<CString>`, `CStringSequence`, `CStringSequence.Utf8View`,
-and `IEnumerable<CString>`.
-</details>
+  **Supported separator types include:** `CString`, and `ReadOnlySpan<Byte>`.
+  **Supported types include:** `CString[]`, `ReadOnlySpan<CString>`, `CStringSequence`, `CStringSequence.Utf8View`,
+  and `IEnumerable<CString>`.
+  </details>
 - <details>
   <summary>AppendLine()</summary>
 
-Appends the default line terminator to the end of the current `CStringBuilder` object.
+  Appends the default line terminator to the end of the current `CStringBuilder` object.
   </details>
 - <details>
   <summary>AppendLine(?)</summary>
 
-Appends the UTF-8 string representation of a specified parameter followed by the default line terminator to the end of
-the current `CStringBuilder` object.
+  Appends the UTF-8 string representation of a specified parameter followed by the default line terminator to the end of
+  the current `CStringBuilder` object.
 
-**Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySequence<Byte>`,
-`ReadOnlySpan<Char>`, `Byte[]` and `Char[]`.
+  **Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySequence<Byte>`,
+  `ReadOnlySpan<Char>`, `Byte[]` and `Char[]`.
   </details>
 - <details>
   <summary>Insert(Int32, ?)</summary>
 
-Inserts the UTF-8 string representation of a specified parameter into this instance at the specified character
-position.
+  Inserts the UTF-8 string representation of a specified parameter into this instance at the specified character
+  position.
 
-**Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySpan<Char>`, `Byte[]`, `Char[]` and
-standard numeric primitives.
+  **Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySpan<Char>`, `Byte[]`, `Char[]` and
+  standard numeric primitives.
   </details>
 
 </details>
@@ -2773,6 +2772,26 @@ Additional functionality for working with delegates.
 
   Creates an `IFixedMethod<TDelegate>.IDisposable` instance by marshalling the current `TDelegate` instance,
   ensuring a safe interop context.
+  </details>
+- <details>
+  <summary>IsImageMethod&lt;TDelegate&gt;(this TDelegate?)</summary>
+
+  Determines whether all methods referenced by the specified delegate originate from statically compiled image code
+  (AOT/R2R) rather than dynamically generated runtime code.
+
+  **Notes:**
+    - Returns `false` if the delegate is `null` or any referenced method is an open generic method.
+    - On platforms without memory inspection support, detection may be unreliable and defaults to `false`.
+    - In reflection-free runtimes, valid delegates are assumed to refer to image-backed code.
+    - The entire invocation list of the delegate is evaluated; each delegate element represents a single method.
+  </details>
+- <details>
+  <summary>IsImageMethod(this MethodBase?)</summary>
+
+  Determines whether the specified reflected method represents executable code that originates from a statically
+  compiled image (AOT/R2R) rather than dynamically generated runtime code.
+
+  **Note:** Returns `false` for `null` or open generic methods, or on platforms without memory inspection support.
   </details>
 
 </details>
@@ -3167,6 +3186,14 @@ Set of extensions for basic operations with `IntPtr` and `UIntPtr` instances.
 
   Generates a read-only span for a UTF-8 null-terminated string from `ReadOnlyValPtr<Byte>`.
   </details>
+- <details>
+  <summary>IsImageCode(this RuntimeMethodHandle)</summary>
+
+  Determines whether the specified handle represents executable code that originates from a statically compiled image
+  (AOT/R2R) rather than dynamically generated runtime code.
+
+  **Note:** Returns `false` for open generic methods and on platforms that do not support memory inspection.
+  </details>
 
 </details>
 
@@ -3437,8 +3464,17 @@ Provides information about the Ahead-of-Time compilation.
   <summary>IsNativeAot</summary>
   Indicates whether the current runtime is NativeAOT.
 
-  **Note:** Starting with .NET 6.0, this property enables trimming by allowing the linker to remove unreachable code on
-  desktop and XNU platforms.
+  **Notes:**
+    - Starting with .NET 6.0, this property helps the linker remove unreachable code on desktop and mobile XNU
+      platforms.
+    - On mobile XNU platforms, this property is always considered `true`.
+    - On CoreCLR-based runtimes (including R2R, NativeAOT, and NativeAOT-LLVM), detection of AOT is reliable and does
+      not require memory inspection.
+    - On Mono-based runtimes, AOT detection may depend on when and where the property is first accessed, because Mono
+      AOT
+      does not compile the entire assembly at once and requires platform memory inspection to confirm AOT execution.
+    - On Blazor WebAssembly (Mono-based), it is generally not possible to distinguish AOT from non-AOT runtimes; this
+      property may only return `true` when IL generation is disallowed.
   </details>
 
 </details>
@@ -3949,6 +3985,18 @@ Set of utilities for exchange data within the P/Invoke context.
 
   Creates an `IFixedMethod<TDelegate>.IDisposable` instance by marshalling the current `TDelegate` instance,
   ensuring a safe interop context.
+  </details>
+- <details>
+  <summary>IsImageMethod&lt;TDelegate&gt;(TDelegate?)</summary>
+
+  Determines whether all methods referenced by the specified delegate originate from statically compiled image code
+  (AOT/R2R) rather than dynamically generated runtime code.
+
+  **Notes:**
+    - Returns `false` if the delegate is `null` or any referenced method is an open generic method.
+    - On platforms without memory inspection support, detection may be unreliable and defaults to `false`.
+    - In reflection-free runtimes, valid delegates are assumed to refer to image-backed code.
+    - The entire invocation list of the delegate is evaluated; each delegate element represents a single method.
   </details>
 
 </details>
