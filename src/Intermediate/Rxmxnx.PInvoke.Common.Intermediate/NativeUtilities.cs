@@ -340,6 +340,9 @@ public static unsafe partial class NativeUtilities
 	/// generic method, or if the current platform does not support memory inspection.
 	/// In reflection-free runtimes, valid delegates are treated as image-backed.
 	/// </remarks>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Boolean IsImageMethod<TDelegate>(TDelegate? method) where TDelegate : Delegate
 	{
 		if (MemoryInspector.IsSupported || method is null) return false;

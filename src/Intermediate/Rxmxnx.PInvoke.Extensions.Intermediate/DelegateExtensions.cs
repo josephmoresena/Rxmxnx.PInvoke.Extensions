@@ -82,6 +82,9 @@ public static unsafe partial class DelegateExtensions
 		=> NativeUtilities.GetFixedMethod(method);
 
 	/// <inheritdoc cref="NativeUtilities.IsImageMethod{TDelegate}(TDelegate?)"/>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Boolean IsImageMethod<TDelegate>(this TDelegate? method) where TDelegate : Delegate
 		=> NativeUtilities.IsImageMethod(method);
 	/// <summary>
@@ -97,6 +100,9 @@ public static unsafe partial class DelegateExtensions
 	/// generic method, or if the current platform does not support memory inspection.
 	/// In reflection-free runtimes, valid methods are treated as image-backed.
 	/// </remarks>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Boolean IsImageMethod(this MethodBase? method)
 	{
 		if (MemoryInspector.IsSupported || method is null) return false;
