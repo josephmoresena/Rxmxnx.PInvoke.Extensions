@@ -22,7 +22,7 @@ public static partial class AotInfo
 		foreach (StackFrame? frame in frames)
 		{
 			if (frame?.GetMethod() is not { } methodBase) continue;
-			if (!EmitInfo.IsDynamicMethod(methodBase) && !AotInfo.IsImageMethod(methodBase.MethodHandle))
+			if (!EmitInfo.IsDynamicMethod(methodBase) && !AotInfo.IsImageMethodUnsafe(methodBase.MethodHandle))
 				return false;
 		}
 		return true;

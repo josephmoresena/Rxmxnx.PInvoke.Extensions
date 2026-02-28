@@ -135,7 +135,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				writer.WriteLine($"CString.Empty literal: {CString.IsImagePersistent(CString.Empty)}");
 			}
 			writer.WriteLine($"Hardcoded Array literal: {!RuntimeHelper.Null.AsSpan().MayBeNonLiteral()}");
-			if (SystemInfo.IsWebRuntime) return;
+			if (SystemInfo.IsWebRuntime || AotInfo.IsReflectionDisabled) return;
 			writer.WriteLine("========== StackTrace information ==========");
 			RuntimeHelper.PrintStackInfo(writer);
 		}
@@ -172,6 +172,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		{
 			try
 			{
+				Boolean hasFrame = false;
 #if !NET9_0_OR_GREATER
 				foreach (StackFrame? frame in new StackTrace().GetFrames().AsReadOnlySpan())
 				{
@@ -183,8 +184,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 					ref readonly StackFrame? frame = ref enumerator.Current;
 #endif
 					if (frame?.GetMethod() is not { } methodBase) continue;
-					writer.WriteLine($"{methodBase.Name} -> {methodBase.IsImageMethod()}");
+					writer.WriteLine($"{methodBase.DeclaringType}.{methodBase.Name} -> {methodBase.IsImageMethod()}");
+					hasFrame = true;
 				}
+				if (!hasFrame)
+					writer.WriteLine("**Empty stack trace info**");
 			}
 			catch (Exception ex)
 			{

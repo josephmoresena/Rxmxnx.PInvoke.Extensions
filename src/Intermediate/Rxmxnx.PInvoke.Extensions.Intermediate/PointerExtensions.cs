@@ -537,18 +537,18 @@ public static unsafe class PointerExtensions
 #endif
 	public static Boolean IsImageCode(this RuntimeMethodHandle methodHandle)
 	{
-		if (MemoryInspector.IsSupported || methodHandle == default) return false;
+		if (!MemoryInspector.IsSupported || methodHandle == default) return false;
 		if (AotInfo.IsReflectionDisabled) return true;
 		try
 		{
 			if (MethodBase.GetMethodFromHandle(methodHandle) is not { } methodBase) return true;
 			if (methodBase.ContainsGenericParameters || AotInfo.IsDynamicCode(methodBase)) return false;
+			return AotInfo.IsImageMethodUnsafe(methodHandle);
 		}
 		catch (Exception)
 		{
 			return true;
 		}
-		return AotInfo.IsImageMethod(methodHandle);
 	}
 
 	/// <summary>

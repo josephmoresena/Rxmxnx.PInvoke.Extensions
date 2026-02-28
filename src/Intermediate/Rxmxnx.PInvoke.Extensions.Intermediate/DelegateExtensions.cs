@@ -118,17 +118,15 @@ public static unsafe partial class DelegateExtensions
 #endif
 	public static Boolean IsImageMethod(this MethodBase? method)
 	{
-		if (MemoryInspector.IsSupported || method is null) return false;
+		if (!MemoryInspector.IsSupported || method is null) return false;
 		if (AotInfo.IsReflectionDisabled) return true;
 		try
 		{
-			if (!NativeUtilities.IsImageMethodUnsafe(method))
-				return false;
+			return NativeUtilities.IsImageMethodUnsafe(method);
 		}
 		catch (Exception)
 		{
 			return false;
 		}
-		return true;
 	}
 }

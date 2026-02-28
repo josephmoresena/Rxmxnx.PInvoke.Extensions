@@ -345,11 +345,11 @@ public static unsafe partial class NativeUtilities
 #endif
 	public static Boolean IsImageMethod<TDelegate>(TDelegate? method) where TDelegate : Delegate
 	{
-		if (MemoryInspector.IsSupported || method is null) return false;
+		if (!MemoryInspector.IsSupported || method is null) return false;
 		if (AotInfo.IsReflectionDisabled) return true;
 		try
 		{
-			foreach (Delegate? d in NativeUtilities.GetInvocationSpan(method))
+			foreach (Delegate d in NativeUtilities.GetInvocationSpan(method))
 			{
 				if (!NativeUtilities.IsImageMethodUnsafe(d.Method))
 					return false;

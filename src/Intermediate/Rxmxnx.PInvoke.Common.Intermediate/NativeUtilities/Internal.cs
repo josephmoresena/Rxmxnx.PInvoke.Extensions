@@ -64,6 +64,6 @@ public partial class NativeUtilities
 	internal static Boolean IsImageMethodUnsafe(MethodBase methodBase)
 	{
 		if (methodBase.ContainsGenericParameters || AotInfo.IsDynamicCode(methodBase)) return false;
-		return AotInfo.IsImageMethod(methodBase.MethodHandle);
+		return AotInfo.IsImageMethodUnsafe(methodBase.MethodHandle);
 	}
 }

@@ -85,7 +85,7 @@ public static partial class AotInfo
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 	[ExcludeFromCodeCoverage]
 #endif
-	internal static unsafe Boolean IsImageMethod(RuntimeMethodHandle methodHandle)
+	internal static unsafe Boolean IsImageMethodUnsafe(RuntimeMethodHandle methodHandle)
 	{
 		RuntimeHelpers.PrepareMethod(methodHandle);
 		return MemoryInspector.Instance.IsReadOnlyAddress(methodHandle.GetFunctionPointer().ToPointer());
