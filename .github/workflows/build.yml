@@ -64,6 +64,7 @@ jobs:
         run: |
           find src/ApplicationTest -name "*.*proj" -exec dotnet sln src remove {} \;
           mv src/ApplicationTest ./ApplicationTest
+          rm -rf src/LegacyAppTest
       - name: Clean test results
         run: rm -rf TestResults/
       - name: Build and analyze Sonar

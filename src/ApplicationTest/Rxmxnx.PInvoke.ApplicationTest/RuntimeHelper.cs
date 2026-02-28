@@ -172,7 +172,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			try
 			{
 #if !NET9_0_OR_GREATER
-				foreach (StackFrame? assembly in new StackTrace().GetFrames().AsReadOnlySpan())
+				foreach (StackFrame? frame in new StackTrace().GetFrames().AsReadOnlySpan())
 				{
 #else
 				ReadOnlySpan<StackFrame?>.Enumerator enumerator =
