@@ -2776,10 +2776,11 @@ Additional functionality for working with delegates.
 - <details>
   <summary>IsImageMethod&lt;TDelegate&gt;(this TDelegate?)</summary>
 
-  Determines whether all methods referenced by the specified delegate originate from statically compiled image code
-  (AOT/R2R) rather than dynamically generated runtime code.
+  Determines whether all methods referenced by the specified delegate are backed by statically compiled image code
+  rather than dynamically generated runtime code.
 
   **Notes:**
+    - This API is primarily intended for Mono-based runtimes.
     - Returns `false` if the delegate is `null` or any referenced method is an open generic method.
     - On platforms without memory inspection support, detection may be unreliable and defaults to `false`.
     - In reflection-free runtimes, valid delegates are assumed to refer to image-backed code.
@@ -2788,10 +2789,12 @@ Additional functionality for working with delegates.
 - <details>
   <summary>IsImageMethod(this MethodBase?)</summary>
 
-  Determines whether the specified reflected method represents executable code that originates from a statically
-  compiled image (AOT/R2R) rather than dynamically generated runtime code.
+  Determines whether the specified reflected method is backed by statically compiled image code rather than dynamically
+  generated runtime code.
 
-  **Note:** Returns `false` for `null` or open generic methods, or on platforms without memory inspection support.
+  **Notes:**
+    - This API is primarily intended for Mono-based runtimes.
+    - Returns `false` for `null` or open generic methods, or on platforms without memory inspection support.
   </details>
 
 </details>
@@ -3188,11 +3191,11 @@ Set of extensions for basic operations with `IntPtr` and `UIntPtr` instances.
   </details>
 - <details>
   <summary>IsImageCode(this RuntimeMethodHandle)</summary>
+  Determines whether the specified method handle represents executable code that is backed by a statically compiled image rather than dynamically generated runtime code.
 
-  Determines whether the specified handle represents executable code that originates from a statically compiled image
-  (AOT/R2R) rather than dynamically generated runtime code.
-
-  **Note:** Returns `false` for open generic methods and on platforms that do not support memory inspection.
+  **Notes:**
+    - This API is primarily intended for Mono-based runtimes.
+    - Returns `false` for open generic methods and on platforms that do not support memory inspection.
   </details>
 
 </details>
@@ -3989,10 +3992,11 @@ Set of utilities for exchange data within the P/Invoke context.
 - <details>
   <summary>IsImageMethod&lt;TDelegate&gt;(TDelegate?)</summary>
 
-  Determines whether all methods referenced by the specified delegate originate from statically compiled image code
-  (AOT/R2R) rather than dynamically generated runtime code.
+  Determines whether all methods referenced by the specified delegate are backed by statically compiled image code
+  rather than dynamically generated runtime code.
 
   **Notes:**
+    - This API is primarily intended for Mono-based runtimes.
     - Returns `false` if the delegate is `null` or any referenced method is an open generic method.
     - On platforms without memory inspection support, detection may be unreliable and defaults to `false`.
     - In reflection-free runtimes, valid delegates are assumed to refer to image-backed code.

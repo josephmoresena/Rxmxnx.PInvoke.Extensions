@@ -521,14 +521,15 @@ public static unsafe class PointerExtensions
 		=> MemoryMarshal.CreateReadOnlySpanFromNullTerminated(char0);
 
 	/// <summary>
-	/// Determines whether the specified <see cref="RuntimeMethodHandle"/> represents executable code that originates
-	/// from a statically compiled image (AOT/R2R) rather than dynamically generated runtime code.
+	/// Determines whether the specified method handle represents executable code that is backed by a statically
+	/// compiled image rather than dynamically generated runtime code.
 	/// </summary>
 	/// <param name="methodHandle">The method handle to evaluate.</param>
 	/// <returns>
 	/// <see langword="true"/> if the method is backed by image-compiled code; otherwise, <see langword="false"/>.
 	/// </returns>
 	/// <remarks>
+	/// This API is primarily intended for Mono-based runtimes.
 	/// Returns <see langword="false"/> for open generic methods and on platforms where memory inspection is not supported.
 	/// In reflection-free runtimes, valid method handles are treated as image-backed code.
 	/// </remarks>
