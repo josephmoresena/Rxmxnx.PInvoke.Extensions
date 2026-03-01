@@ -26,7 +26,7 @@ namespace iOSAppTest
 				Font = UIFont.SystemFontOfSize(16),
 				TextColor = UIColor.Black,
 #pragma warning disable CS0618
-				BackgroundColor = UIColor.SystemGray6Color,
+				BackgroundColor = UIColor.White,
 #pragma warning restore CS0618
 				Text = Application.RuntimeInfo,
 			};

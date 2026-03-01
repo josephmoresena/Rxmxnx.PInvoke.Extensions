@@ -362,3 +362,4 @@ Rxmxnx.PInvoke.MkBundle.Patcher.dll
 **/Buffers.TestResult.xml
 src/MonoFacades/**.dll
 **.editorconfig
+src/iPhone.Profile.props

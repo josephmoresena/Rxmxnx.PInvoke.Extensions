@@ -4,8 +4,6 @@ using AppKit;
 
 using CoreGraphics;
 
-using Foundation;
-
 namespace MacAppTest
 {
 	public partial class ViewController : NSViewController

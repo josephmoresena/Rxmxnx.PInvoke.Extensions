@@ -18,7 +18,7 @@
         <PackageReference Include="System.Net.Http.Json" Version="3.2.1"/>
     </ItemGroup>
 
-    <Target Name="RemoveUnsafeFromWasamRuntime" AfterTargets="_ResolveBlazorInputs">
+    <Target Name="RemoveUnsafeFromWasmRuntime" AfterTargets="_ResolveBlazorInputs">
         <ItemGroup>
             <!-- WebAssembly BCL ships an older System.Runtime.CompilerServices.Unsafe, causing ILLink missing-method errors, so it is removed. -->
             <_WebAssemblyBCLAssembly Remove="$(ComponentsWebAssemblyBaseClassLibraryPath)System.Runtime.CompilerServices.Unsafe.dll"/>

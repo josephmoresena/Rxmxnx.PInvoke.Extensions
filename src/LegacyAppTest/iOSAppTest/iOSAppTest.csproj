@@ -49,7 +49,6 @@
         <WarningLevel>4</WarningLevel>
         <MtouchArch>ARM64</MtouchArch>
         <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-        <CodesignKey>iPhone Developer</CodesignKey>
         <MtouchDebug>true</MtouchDebug>
         <MtouchLink>SdkOnly</MtouchLink>
     </PropertyGroup>
@@ -61,8 +60,7 @@
         <WarningLevel>4</WarningLevel>
         <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
         <MtouchArch>ARM64</MtouchArch>
-        <CodesignKey>iPhone Developer</CodesignKey>
-        <MtouchLink>SdkOnly</MtouchLink>
+        <MtouchLink>Full</MtouchLink>
     </PropertyGroup>
     <ItemGroup>
         <Reference Include="System"/>
@@ -141,6 +139,7 @@
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets"/>
 
+    <Import Condition="'$(Platform)' == 'iPhone'" Project="..\..\iPhone.Profile.props"/>
     <Import Project="..\LegacyProject.props"/>
     <ItemGroup>
         <ProjectReference Include="..\LegacyAppTest.Core\LegacyAppTest.Core.csproj">
