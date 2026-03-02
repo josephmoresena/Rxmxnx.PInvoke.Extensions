@@ -5,6 +5,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <EmbeddedResource Include="..\..\MonoFacades\Rxmxnx.PInvoke.Json\Mono.ILLink.Descriptors.xml">
+            <LogicalName>$(AssemblyName).xml</LogicalName>
+        </EmbeddedResource>
+    </ItemGroup>
+    <ItemGroup>
         <Compile Include="..\..\MonoFacades\Rxmxnx.PInvoke.Json\CStringJsonConverter.cs">
             <Link>CStringJsonConverter.cs</Link>
         </Compile>

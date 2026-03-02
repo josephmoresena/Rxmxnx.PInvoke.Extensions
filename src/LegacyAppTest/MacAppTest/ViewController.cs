@@ -15,10 +15,6 @@ namespace MacAppTest
 			base.ViewDidLoad();
 			// Do any additional setup after loading the view.
 			CGRect frame = new(20, 20, 300, 200);
-			NSColor textColor = NSColor.Black;
-			NSColor backgroundColor = NSColor.WindowBackground;
-			if (NSApplication.SharedApplication.EffectiveAppearance.Name == NSAppearance.NameDarkAqua)
-				textColor = NSColor.White;
 			NSScrollView scrollView = new(frame)
 			{
 				HasVerticalScroller = true,
@@ -32,8 +28,11 @@ namespace MacAppTest
 					HorizontallyResizable = false,
 					AutoresizingMask = NSViewResizingMask.WidthSizable | NSViewResizingMask.HeightSizable,
 					Font = NSFont.SystemFontOfSize(16),
-					TextColor = textColor,
-					BackgroundColor = backgroundColor,
+					TextColor =
+						NSApplication.SharedApplication.EffectiveAppearance.Name == NSAppearance.NameDarkAqua ?
+							NSColor.White :
+							NSColor.Black,
+					BackgroundColor = NSColor.WindowBackground,
 					Value = MainClass.RuntimeInfo,
 				},
 			};

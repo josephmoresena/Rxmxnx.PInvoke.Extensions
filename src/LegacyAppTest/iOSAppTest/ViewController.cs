@@ -15,7 +15,7 @@ namespace iOSAppTest
 			base.ViewDidLoad();
 			if (this.View == null) return;
 			// Perform any additional setup after loading the view, typically from a nib.
-			UITextView textView = new(new CGRect(20, 100, this.View.Bounds.Width - 40, this.View.Bounds.Height - 120))
+			UITextView textView = new(new CGRect(20, 60, this.View.Bounds.Width - 40, this.View.Bounds.Height - 120))
 			{
 				Editable = false,
 				Selectable = true,
@@ -23,7 +23,7 @@ namespace iOSAppTest
 				Bounces = true,
 				ShowsVerticalScrollIndicator = true,
 				IndicatorStyle = UIScrollViewIndicatorStyle.Default,
-				Font = UIFont.SystemFontOfSize(16),
+				Font = UIFont.SystemFontOfSize(12),
 				TextColor = UIColor.Black,
 #pragma warning disable CS0618
 				BackgroundColor = UIColor.White,

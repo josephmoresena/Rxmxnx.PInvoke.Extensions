@@ -109,7 +109,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			writer.WriteLine($"IL method count: {JitInfo.GetCompiledMethodCount()}");
 			writer.WriteLine($"IL compilation time: {JitInfo.GetCompilationTime()}");
 #endif
-			writer.WriteLine("========== Rxmxnx.PInvoke Runtime information ==========");
+			writer.WriteLine("======= Rxmxnx.PInvoke Runtime information =======");
 #if !RELEASE_PACKAGE
 			writer.WriteLine($"Package: {SystemInfo.CompilationFramework}");
 #endif
