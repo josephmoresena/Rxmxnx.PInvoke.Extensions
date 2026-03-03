@@ -87,13 +87,33 @@ internal static class TrimInfo
 	/// <see langword="true"/> if current platform is desktop and trimmed; otherwise, <see langword="false"/>.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if !NET6_0_OR_GREATER
-	private static Boolean IsDesktopTrimmedPlatform()
-#else
 	public static Boolean IsDesktopTrimmedPlatform()
-#endif
 		=> OperatingSystem.IsWindows() || OperatingSystem.IsLinux() || OperatingSystem.IsMacOS() ||
 			OperatingSystem.IsFreeBSD();
+	/// <summary>
+	/// Indicates the current platform is mobile XNU and trimmed.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if current platform is mobile XNU and trimmed; otherwise, <see langword="false"/>.
+	/// </returns>
+	public static Boolean IsMobileTrimmedXnu()
+		=> OperatingSystem.IsIOS() || OperatingSystem.IsTvOS() || OperatingSystem.IsWatchOS()
+#if NET6_0_OR_GREATER
+			|| OperatingSystem.IsMacCatalyst()
+#endif
+	;
+#if NET6_0_OR_GREATER
+	/// <summary>
+	/// Indicates whether no IL code bytes have been processed at the current runtime.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if no IL code bytes have been processed at the current runtime; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Boolean ZeroIlBytes() => JitInfo.GetCompiledILBytes() == 0L && JitInfo.GetCompiledMethodCount() == 0;
+#endif
+
 	/// <summary>
 	/// Indicates the current platform is mobile and trimmed.
 	/// </summary>
@@ -101,13 +121,7 @@ internal static class TrimInfo
 	/// <see langword="true"/> if current platform is mobile and trimmed; otherwise, <see langword="false"/>.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static Boolean IsMobileTrimmedPlatform()
-		=> OperatingSystem.IsAndroid() || OperatingSystem.IsIOS() || OperatingSystem.IsTvOS() ||
-			OperatingSystem.IsWatchOS()
-#if NET6_0_OR_GREATER
-			|| OperatingSystem.IsMacCatalyst()
-#endif
-	;
+	private static Boolean IsMobileTrimmedPlatform() => OperatingSystem.IsAndroid() || TrimInfo.IsMobileTrimmedXnu();
 	/// <summary>
 	/// Indicates the current platform is web and trimmed.
 	/// </summary>

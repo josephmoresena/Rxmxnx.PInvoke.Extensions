@@ -38,6 +38,10 @@ public static partial class AotInfo
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Boolean IsJitEnabled()
 	{
+#if NET5_0_OR_GREATER
+		if (TrimInfo.IsMobileTrimmedXnu())
+			return true;
+#endif
 		try
 		{
 			if (!TrimInfo.StringTypeNameContainsString())
@@ -46,7 +50,14 @@ public static partial class AotInfo
 				AotInfo.reflectionDisabled = true;
 				return false;
 			}
-
+#if NET5_0_OR_GREATER
+			if (TrimInfo.IsDesktopTrimmedPlatform())
+				goto jitInfo;
+			if (OperatingSystem.IsAndroid())
+				goto aotFrame;
+#else
+			Boolean isAndroid = false;
+#endif
 			foreach (Assembly assembly in AotInfo.GetAssembliesSpan())
 			{
 				if (String.IsNullOrWhiteSpace(assembly.FullName) || assembly.IsDynamic) continue;
@@ -61,27 +72,43 @@ public static partial class AotInfo
 					case "Microsoft.tvOS":
 					case "Microsoft.watchOS":
 						return false;
+#if !NET5_0_OR_GREATER
+					case "Mono.Android":
+						isAndroid = true;
+						break;
+#endif
 				}
 			}
+#if NET5_0_OR_GREATER
+			aotFrame:
+#endif
 
-			if (MonoInfo.MonoAssemblyNameType is not null && MemoryInspector.IsSupported)
-				return !AotInfo.IsAotFrame();
-
-			if (MonoInfo.MonoAssemblyNameType is null &&
-			    typeof(RuntimeInformation).Assembly.GetType("System.Runtime.JitInfo") is { } jitInfoType)
+			if (MonoInfo.MonoAssemblyNameType is not null)
 			{
-				// Tries to retrieve JIT information using reflection.
-				Boolean? isJitEnabled = AotInfo.IsJitEnabled(jitInfoType);
-				if (isJitEnabled.HasValue && isJitEnabled.Value)
-					return true;
+				if (MemoryInspector.IsSupported)
+					return !AotInfo.IsAotFrame();
+#if !NET5_0_OR_GREATER
+				if (isAndroid)
+#else
+				if (OperatingSystem.IsAndroid())
+#endif
+					goto jitInfo;
+				goto emit;
 			}
+
+			jitInfo:
+			// Tries to retrieve JIT information using reflection.
+			Type? jitInfoType = typeof(RuntimeInformation).Assembly.GetType("System.Runtime.JitInfo");
+			Boolean? isJitEnabled = AotInfo.IsJitEnabled(jitInfoType);
+			if (isJitEnabled.HasValue && isJitEnabled.Value)
+				return true;
 		}
 		// If exception, might be AOT.
 		catch (Exception)
 		{
 			return false;
 		}
-
+		emit:
 		// System.Reflection.Emit is not allowed in AOT/IL2CPP.
 		return EmitInfo.IsEmitAllowed;
 	}
@@ -94,33 +121,17 @@ public static partial class AotInfo
 	/// otherwise, <see langword="null"/>.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	[UnconditionalSuppressMessage("AOT", "IL3050")]
-	[UnconditionalSuppressMessage("Trimming", "IL2070")]
-	private static Boolean? IsJitEnabled(Type jitInfoType)
+	private static Boolean? IsJitEnabled(Type? jitInfoType)
 	{
-		const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-
-#if !NET5_0_OR_GREATER
-		Type typeofFunc = typeof(Func<Boolean, Int64>);
-#endif
-		Func<Boolean, Int64>? getCompiledIlBytes = jitInfoType.GetMethod("GetCompiledILBytes", bindingFlags)
-#if !NET5_0_OR_GREATER
-		                                                      ?.CreateDelegate(typeofFunc) as Func<Boolean, Int64>;
-#else
-		                                                      ?.CreateDelegate<Func<Boolean, Int64>>();
-#endif
-		Int64? reflectionBytes = getCompiledIlBytes?.Invoke(false);
+		String ilBytesCountName = jitInfoType is not null ? "GetCompiledILBytes" : "GetILBytesJitted";
+		Int64? reflectionBytes = AotInfo.GetJitCount<Int64>(jitInfoType ?? typeof(RuntimeHelpers), ilBytesCountName);
 
 		if (reflectionBytes.GetValueOrDefault() != 0L)
 			return true;
 
-		Func<Boolean, Int64>? getCompiledMethodCount = jitInfoType.GetMethod("GetCompiledMethodCount", bindingFlags)
-#if !NET5_0_OR_GREATER
-		                                                          ?.CreateDelegate(typeofFunc) as Func<Boolean, Int64>;
-#else
-		                                                          ?.CreateDelegate<Func<Boolean, Int64>>();
-#endif
-		Int64? methodCount = getCompiledMethodCount?.Invoke(false);
+		Int64? methodCount = jitInfoType is not null ?
+			AotInfo.GetJitCount<Int64>(jitInfoType, "GetCompiledMethodCount") :
+			AotInfo.GetJitCount<Int32>(typeof(RuntimeHelpers), "GetMethodsJittedCount");
 
 		if (methodCount.GetValueOrDefault() != 0L)
 			return true;
@@ -129,6 +140,30 @@ public static partial class AotInfo
 			return false;
 
 		return default; // Unabled to retrieve JIT information.
+	}
+	/// <summary>
+	/// Retrieves the result of a JIT method count.
+	/// </summary>
+	/// <typeparam name="T">Type of JIT method count result.</typeparam>
+	/// <param name="declaringType">Declaring method count type.</param>
+	/// <param name="methodName">JIT method count name.</param>
+	/// <returns>The result of a JIT method count.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	[UnconditionalSuppressMessage("AOT", "IL3050")]
+	[UnconditionalSuppressMessage("Trimming", "IL2070")]
+	private static T? GetJitCount<T>(Type declaringType, String methodName) where T : unmanaged, IEquatable<T>
+	{
+		const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+#if !NET5_0_OR_GREATER
+		Type typeofFunc = typeof(Func<Boolean, T>);
+#endif
+		Func<Boolean, T>? getCompiledIlBytes = declaringType.GetMethod(methodName, bindingFlags)
+#if !NET5_0_OR_GREATER
+		                                                    ?.CreateDelegate(typeofFunc) as Func<Boolean, T>;
+#else
+		                                                    ?.CreateDelegate<Func<Boolean, T>>();
+#endif
+		return getCompiledIlBytes?.Invoke(false);
 	}
 	/// <inheritdoc cref="AppDomain.GetAssemblies()"/>
 	/// <returns>A read-only span of assemblies in this application domain.</returns>

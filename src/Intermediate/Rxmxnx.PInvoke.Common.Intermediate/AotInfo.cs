@@ -15,10 +15,11 @@ public static partial class AotInfo
 #if !NET6_0_OR_GREATER
 		!AotInfo.IsJitEnabled();
 #else
-		JitInfo.GetCompiledILBytes() == 0L && JitInfo.GetCompiledMethodCount() == 0 &&
-		(TrimInfo.IsDesktopTrimmedPlatform() || OperatingSystem.IsIOS() || OperatingSystem.IsTvOS() ||
-			OperatingSystem.IsWatchOS() || OperatingSystem.IsMacCatalyst() ||
-			(MemoryInspector.IsSupported && AotInfo.IsAotFrame()) || !EmitInfo.IsEmitAllowed);
+		TrimInfo.IsDesktopTrimmedPlatform() ?
+			TrimInfo.ZeroIlBytes() :
+			TrimInfo.IsMobileTrimmedXnu() || (OperatingSystem.IsAndroid() && TrimInfo.ZeroIlBytes()) ||
+			(MonoInfo.MonoAssemblyNameType is not null && MemoryInspector.IsSupported && AotInfo.IsAotFrame()) ||
+			!EmitInfo.IsEmitAllowed;
 #endif
 
 	/// <summary>
