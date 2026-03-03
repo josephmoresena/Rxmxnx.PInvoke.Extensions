@@ -52,9 +52,9 @@ public static partial class AotInfo
 			}
 #if NET5_0_OR_GREATER
 			if (TrimInfo.IsDesktopTrimmedPlatform())
-				goto jitInfo;
+				goto jitInfo; // Skip Mono Runtime checks.
 			if (OperatingSystem.IsAndroid())
-				goto aotFrame;
+				goto aotFrame; // Skip XNU checks.
 #else
 			Boolean isAndroid = false;
 #endif
@@ -93,7 +93,7 @@ public static partial class AotInfo
 				if (OperatingSystem.IsAndroid())
 #endif
 					goto jitInfo;
-				goto emit;
+				goto emit; // Avoid CoreCLR checks.
 			}
 
 			jitInfo:
@@ -109,6 +109,10 @@ public static partial class AotInfo
 			return false;
 		}
 		emit:
+#if NET5_0_OR_GREATER
+		if (TrimInfo.IsDesktopTrimmedPlatform() || OperatingSystem.IsAndroid())
+			return false; // Avoid use System.Reflection.Emit on .NET 5.0
+#endif
 		// System.Reflection.Emit is not allowed in AOT/IL2CPP.
 		return EmitInfo.IsEmitAllowed;
 	}
