@@ -205,6 +205,7 @@ public static partial class AotInfo
 	/// <returns>
 	/// <see langword="true"/> if Mono AOT is enabled; otherwise, <see langword="false"/>.
 	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Boolean IsMonoAot()
 	{
 		if (MonoInfo.MonoAssemblyNameType is null || !MemoryInspector.IsSupported) return false;
