@@ -16,8 +16,8 @@ public static partial class AotInfo
 		!AotInfo.IsJitEnabled();
 #else
 		TrimInfo.IsMobileTrimmedXnu() || // iOS, tvOS, watchOS, macCatalyst
-		(TrimInfo.ZeroIlBytes() && AotInfo.IsDesktopOrAndroid()) || AotInfo.IsMonoAot() ||
-		(!AotInfo.IsDesktopOrAndroid() && !EmitInfo.IsEmitAllowed);
+		TrimInfo.ZeroIlBytes() && AotInfo.IsDesktopOrAndroid() || AotInfo.IsMonoAot() ||
+		!AotInfo.IsDesktopOrAndroid() && !EmitInfo.IsEmitAllowed;
 #endif
 
 	/// <summary>
@@ -47,7 +47,7 @@ public static partial class AotInfo
 		get
 		{
 #if NET6_0_OR_GREATER
-			if (AotInfo.IsNativeAot)
+			if (TrimInfo.ZeroIlBytes() && TrimInfo.IsDesktopTrimmedPlatform())
 				return false;
 #endif
 			return !AotInfo.IsReflectionDisabled && EmitInfo.IsEmitAllowed;
