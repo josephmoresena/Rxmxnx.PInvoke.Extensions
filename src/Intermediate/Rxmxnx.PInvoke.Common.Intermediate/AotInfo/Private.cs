@@ -36,6 +36,10 @@ public static partial class AotInfo
 	/// </returns>
 	[UnconditionalSuppressMessage("Trimming", "IL2070")]
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS907)]
+#endif
 	private static Boolean IsJitEnabled()
 	{
 #if NET5_0_OR_GREATER
@@ -52,9 +56,9 @@ public static partial class AotInfo
 			}
 #if NET5_0_OR_GREATER
 			if (TrimInfo.IsDesktopTrimmedPlatform())
-				goto jitInfo; // Skip Mono Runtime checks.
+				goto JitInfoCheck; // Skip Mono Runtime checks.
 			if (OperatingSystem.IsAndroid())
-				goto aotFrame; // Skip XNU checks.
+				goto AotFrameCheck; // Skip XNU checks.
 #else
 			Boolean isAndroid = false;
 #endif
@@ -80,7 +84,7 @@ public static partial class AotInfo
 				}
 			}
 #if NET5_0_OR_GREATER
-			aotFrame:
+			AotFrameCheck:
 #endif
 
 			if (MonoInfo.MonoAssemblyNameType is not null)
@@ -92,11 +96,11 @@ public static partial class AotInfo
 #else
 				if (OperatingSystem.IsAndroid())
 #endif
-					goto jitInfo;
-				goto emit; // Avoid CoreCLR checks.
+					goto JitInfoCheck;
+				goto EmitCheck; // Avoid CoreCLR checks.
 			}
 
-			jitInfo:
+			JitInfoCheck:
 			// Tries to retrieve JIT information using reflection.
 			Type? jitInfoType = typeof(RuntimeInformation).Assembly.GetType("System.Runtime.JitInfo");
 			Boolean? isJitEnabled = AotInfo.IsJitEnabled(jitInfoType);
@@ -108,7 +112,7 @@ public static partial class AotInfo
 		{
 			return false;
 		}
-		emit:
+		EmitCheck:
 #if NET5_0_OR_GREATER
 		if (TrimInfo.IsDesktopTrimmedPlatform() || OperatingSystem.IsAndroid())
 			return false; // Avoid use System.Reflection.Emit on .NET 5.0
@@ -186,6 +190,33 @@ public static partial class AotInfo
 	{
 		Int32 assemblyNameLength = assemblyFullName.IndexOf(',');
 		return assemblyNameLength < 0 ? assemblyFullName : assemblyFullName[..assemblyNameLength];
+	}
+#else
+	/// <summary>
+	/// Indicates whether the current platform is Desktop or Android.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if current platform is Desktop or Android; otherwise, <see langword="false"/>.
+	/// </returns>
+	private static Boolean IsDesktopOrAndroid() => TrimInfo.IsDesktopTrimmedPlatform() || OperatingSystem.IsAndroid();
+	/// <summary>
+	/// Indicates whether the current runtime is Mono ahead-of-time.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if Mono AOT is enabled; otherwise, <see langword="false"/>.
+	/// </returns>
+	private static Boolean IsMonoAot()
+	{
+		if (MonoInfo.MonoAssemblyNameType is null || !MemoryInspector.IsSupported) return false;
+		try
+		{
+			return AotInfo.IsAotFrame();
+		}
+		// If exception, might be AOT.
+		catch (Exception)
+		{
+			return true;
+		}
 	}
 #endif
 }
