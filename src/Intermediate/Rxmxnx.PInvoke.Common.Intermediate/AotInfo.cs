@@ -47,7 +47,7 @@ public static partial class AotInfo
 		get
 		{
 #if NET6_0_OR_GREATER
-			if (TrimInfo.ZeroIlBytes() && TrimInfo.IsDesktopTrimmedPlatform())
+			if (TrimInfo.ZeroIlBytes() && AotInfo.IsDesktopOrAndroid())
 				return false;
 #endif
 			return !AotInfo.IsReflectionDisabled && EmitInfo.IsEmitAllowed;
