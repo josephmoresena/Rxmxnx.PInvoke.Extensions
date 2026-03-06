@@ -7,6 +7,9 @@ internal partial class MemoryInspector
 		/// <summary>
 		/// This struct storages state for <c>/proc/self/maps</c> file reading.
 		/// </summary>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2292)]
+#endif
 		[Preserve(AllMembers = true, Conditional = true)]
 		private ref struct FileState
 		{
