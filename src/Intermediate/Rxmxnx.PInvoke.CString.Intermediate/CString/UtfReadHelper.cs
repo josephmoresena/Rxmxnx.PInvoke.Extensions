@@ -11,11 +11,13 @@ public partial class CString
 		/// Internal array instance.
 		/// </summary>
 		private readonly Byte[]? _array;
+		/// <inheritdoc cref="UtfReadHelper.Bytes"/>
+		private readonly Span<Byte> _span;
 
 		/// <summary>
 		/// Buffer span.
 		/// </summary>
-		public Span<Byte> Bytes { get; }
+		public Span<Byte> Bytes => this._span; // Required backing field for Mono AOT.
 		/// <summary>
 		/// Indicates whether the current buffer is an array instance.
 		/// </summary>
@@ -28,7 +30,7 @@ public partial class CString
 		public UtfReadHelper(Span<Byte> bytes)
 		{
 			this._array = default;
-			this.Bytes = bytes;
+			this._span = bytes;
 #if NET7_0_OR_GREATER
 			bytes[^1] = default;
 #endif
@@ -40,7 +42,7 @@ public partial class CString
 		public UtfReadHelper(Int32 length) : this()
 		{
 			this._array = CString.CreateByteArray(length + 1);
-			this.Bytes = this._array;
+			this._span = this._array;
 #if NET5_0_OR_GREATER
 			this._array[^1] = default;
 #endif

@@ -129,17 +129,33 @@ public static partial class AotInfo
 	/// otherwise, <see langword="null"/>.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	[UnconditionalSuppressMessage("AOT", "IL3050")]
+	[UnconditionalSuppressMessage("Trimming", "IL2070")]
 	private static Boolean? IsJitEnabled(Type? jitInfoType)
 	{
-		String ilBytesCountName = jitInfoType is not null ? "GetCompiledILBytes" : "GetILBytesJitted";
-		Int64? reflectionBytes = AotInfo.GetJitCount<Int64>(jitInfoType ?? typeof(RuntimeHelpers), ilBytesCountName);
+		const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+		if (jitInfoType is null) return AotInfo.IsJitEnabled(typeof(RuntimeHelpers), bindingFlags);
+#if !NET5_0_OR_GREATER
+		Type typeofFunc = typeof(Func<Boolean, Int64>);
+#endif
+		Func<Boolean, Int64>? getCompiledIlBytes = jitInfoType.GetMethod("GetCompiledILBytes", bindingFlags)
+#if !NET5_0_OR_GREATER
+		                                                      ?.CreateDelegate(typeofFunc) as Func<Boolean, Int64>;
+#else
+		                                                      ?.CreateDelegate<Func<Boolean, Int64>>();
+#endif
+		Int64? reflectionBytes = getCompiledIlBytes?.Invoke(false);
 
 		if (reflectionBytes.GetValueOrDefault() != 0L)
 			return true;
 
-		Int64? methodCount = jitInfoType is not null ?
-			AotInfo.GetJitCount<Int64>(jitInfoType, "GetCompiledMethodCount") :
-			AotInfo.GetJitCount<Int32>(typeof(RuntimeHelpers), "GetMethodsJittedCount");
+		Func<Boolean, Int64>? getCompiledMethodCount = jitInfoType.GetMethod("GetCompiledMethodCount", bindingFlags)
+#if !NET5_0_OR_GREATER
+		                                                          ?.CreateDelegate(typeofFunc) as Func<Boolean, Int64>;
+#else
+		                                                          ?.CreateDelegate<Func<Boolean, Int64>>();
+#endif
+		Int64? methodCount = getCompiledMethodCount?.Invoke(false);
 
 		if (methodCount.GetValueOrDefault() != 0L)
 			return true;
@@ -150,28 +166,45 @@ public static partial class AotInfo
 		return default; // Unabled to retrieve JIT information.
 	}
 	/// <summary>
-	/// Retrieves the result of a JIT method count.
+	/// Indicates whether JIT is enabled in the current runtime using reflection.
 	/// </summary>
-	/// <typeparam name="T">Type of JIT method count result.</typeparam>
-	/// <param name="declaringType">Declaring method count type.</param>
-	/// <param name="methodName">JIT method count name.</param>
-	/// <returns>The result of a JIT method count.</returns>
+	/// <param name="runtimeHelpersType">CLR type of <see cref="RuntimeHelpers"/> class.</param>
+	/// <param name="bindingFlags">Method binding flags.</param>
+	/// <returns>
+	/// <see langword="true"/> if Jit is enabled, <see langword="false"/> if Jit is disabled;
+	/// otherwise, <see langword="null"/>.
+	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	[UnconditionalSuppressMessage("AOT", "IL3050")]
 	[UnconditionalSuppressMessage("Trimming", "IL2070")]
-	private static T? GetJitCount<T>(Type declaringType, String methodName) where T : unmanaged, IEquatable<T>
+	private static Boolean? IsJitEnabled(Type runtimeHelpersType, BindingFlags bindingFlags)
 	{
-		const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+		Func<Int64>? getIlBytesJitted = runtimeHelpersType.GetMethod("GetILBytesJitted", bindingFlags)
 #if !NET5_0_OR_GREATER
-		Type typeofFunc = typeof(Func<Boolean, T>);
-#endif
-		Func<Boolean, T>? getCompiledIlBytes = declaringType.GetMethod(methodName, bindingFlags)
-#if !NET5_0_OR_GREATER
-		                                                    ?.CreateDelegate(typeofFunc) as Func<Boolean, T>;
+		                                                  ?.CreateDelegate(typeof(Func<Int64>)) as Func<Int64>;
 #else
-		                                                    ?.CreateDelegate<Func<Boolean, T>>();
+		                                                  ?.CreateDelegate<Func<Int64>>();
 #endif
-		return getCompiledIlBytes?.Invoke(false);
+		Int64? reflectionBytes = getIlBytesJitted?.Invoke();
+
+		if (reflectionBytes.GetValueOrDefault() != 0L)
+			return true;
+
+		Func<Int32>? getCompiledMethodCount = runtimeHelpersType.GetMethod("GetMethodsJittedCount", bindingFlags)
+#if !NET5_0_OR_GREATER
+		                                                        ?.CreateDelegate(typeof(Func<Int32>)) as Func<Int32>;
+#else
+		                                                        ?.CreateDelegate<Func<Int32>>();
+#endif
+		Int32? methodCount = getCompiledMethodCount?.Invoke();
+
+		if (methodCount.GetValueOrDefault() != 0)
+			return true;
+
+		if (reflectionBytes.HasValue || methodCount.HasValue)
+			return false;
+
+		return default; // Unabled to retrieve JIT information.
 	}
 	/// <inheritdoc cref="AppDomain.GetAssemblies()"/>
 	/// <returns>A read-only span of assemblies in this application domain.</returns>

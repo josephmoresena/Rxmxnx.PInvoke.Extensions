@@ -1,3 +1,5 @@
+// ReSharper disable ReplaceWithFieldKeyword
+
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
@@ -6,14 +8,21 @@ namespace Rxmxnx.PInvoke;
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
 public readonly ref struct ScopedBuffer<T>
 {
+	/// <inheritdoc cref="ScopedBuffer{T}.Span"/>
+	private readonly Span<T> _span;
+	/// <summary>
+	/// Indicates whether current buffer is heap allocated.
+	/// </summary>
+	private readonly Boolean _heapAllocated;
+
 	/// <summary>
 	/// Current buffer span.
 	/// </summary>
-	public Span<T> Span { get; }
+	public Span<T> Span => this._span; // Required backing field for Mono AOT.
 	/// <summary>
 	/// Indicates whether current buffer is stack allocated.
 	/// </summary>
-	public Boolean InStack => !field;
+	public Boolean InStack => !this._heapAllocated;
 	/// <summary>
 	/// Allocated buffer full length.
 	/// </summary>
@@ -32,8 +41,8 @@ public readonly ref struct ScopedBuffer<T>
 	/// <param name="metadata">Allocated buffer metadata.</param>
 	internal ScopedBuffer(Span<T> span, Boolean heapAllocated, Int32 fullLength, BufferTypeMetadata? metadata = default)
 	{
-		this.Span = span;
-		this.InStack = heapAllocated;
+		this._span = span;
+		this._heapAllocated = heapAllocated;
 		this.FullLength = fullLength;
 		this.BufferMetadata = metadata;
 	}

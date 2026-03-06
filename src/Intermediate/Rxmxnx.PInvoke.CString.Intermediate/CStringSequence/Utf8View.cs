@@ -263,10 +263,13 @@ public partial class CStringSequence
 			/// </summary>
 			private readonly ref struct AdvanceState
 			{
+				/// <inheritdoc cref="AdvanceState.Lengths"/>
+				private readonly ReadOnlySpan<Int32?> _span;
+
 				/// <summary>
 				/// Span of nullable integers representing the lengths of remaining segments.
 				/// </summary>
-				public ReadOnlySpan<Int32?> Lengths { get; }
+				public ReadOnlySpan<Int32?> Lengths => this._span; // Required backing field for Mono AOT.
 				/// <summary>
 				/// The length of the current element in the enumeration.
 				/// </summary>
@@ -279,7 +282,7 @@ public partial class CStringSequence
 				/// <param name="currentLength">Current item length.</param>
 				public AdvanceState(ReadOnlySpan<Int32?> lengths, Int32? currentLength)
 				{
-					this.Lengths = lengths;
+					this._span = lengths;
 					this.Current = currentLength;
 				}
 			}

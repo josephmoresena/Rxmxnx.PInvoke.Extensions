@@ -181,6 +181,75 @@ target frameworks, along with the type of support provided for each one.
 5. Value-type pointers support `ref struct` generics, but due to C# compiler restrictions, some methods must be
    implemented in IL.
 
+The specifications compatible with `Rxmxnx.PInvoke.Extensions` are:
+
+<details>
+<summary><strong>.NET</strong></summary>
+
+This package supports **.NET 5.0** and later through assemblies compiled for each target framework. However, backward
+compatibility with earlier frameworks is maintained when possible, taking into account potential feature limitations.
+
+`Rxmxnx.PInvoke.Extensions` automatically adapts its behavior to the different platforms supported by these
+specifications.
+
+Currently, functionality is guaranteed on the following runtimes:
+
+* **CoreCLR:** The default runtime for **.NET/.NET Core** desktop platforms.
+* **Mono VM:** The default runtime for mobile platforms and Blazor WebAssembly.
+
+</details>
+<details>
+<summary><strong>Unity</strong></summary>
+
+Through the assembly compiled for .NET Standard 2.1, `Rxmxnx.PInvoke.Extensions` can be used in Unity projects, adapting
+to the various versions of the internal Mono runtime and supported platforms.
+
+The only requirement is the presence of version **6.0 or later** of the `System.Runtime.CompilerServices.Unsafe`
+assembly. Using the build compiled for **.NET Standard 2.0** is recommended.
+
+</details>
+<details>
+<summary><strong>Xamarin (Android, iOS, macOS)</strong></summary>
+
+Because `Rxmxnx.PInvoke.Extensions` is compiled for .NET Standard 2.1, it can be used in legacy Xamarin projects by
+adding it directly as a NuGet package reference. This will also reference version **5.0** of the
+`System.Runtime.CompilerServices.Unsafe` package (which contains assembly version 6.0).
+
+However, for new projects it is recommended to use the latest version of the package (**6.1.2**).
+
+To build Xamarin applications, **Visual Studio 2019** or **Visual Studio 2019 for Mac** is required.
+
+</details>
+<details>
+<summary><strong>.NET Core 3.x</strong></summary>
+
+This package supports **.NET Core 3.0** and **.NET Core 3.1** through assemblies compiled specifically for those
+frameworks. Backward compatibility with the **.NET Standard 2.1** assembly is also maintained, considering potential
+feature differences such as native support for `System.Text.Json` and native libraries.
+
+The **.NET Core 3.0** assembly uses a different version of `System.Text.Json` than **.NET Core 3.1**, which may result
+in slightly different behavior.
+
+</details>
+<details>
+<summary><strong>Blazor WebAssembly 3.2</strong></summary>
+
+Through the assembly compiled for **.NET Standard 2.1**, this package supports the initial version of **Blazor
+WebAssembly**, which ran on a WASM build of the **Mono runtime**.
+
+To use it, you only need to add the NuGet package reference (which will also reference version **5.0** of the
+`System.Runtime.CompilerServices.Unsafe` package). Additionally, the publishing process must be intercepted to ensure
+that the assembly from this package is used instead of the version bundled with the WASM runtime.
+</details>
+<details>
+<summary><strong>Mono Framework</strong></summary>
+
+Because it is compiled for **.NET Standard 2.1**, `Rxmxnx.PInvoke.Extensions` is compatible with the **Mono Framework**,
+using the **.NET Framework 4.5 facades** and the `System.Runtime.CompilerServices.Unsafe` package version 5.0 across
+the supported platforms.
+
+</details>
+
 ## AOT Support
 
 This package is AOT-friendly, all of its features support both Mono AOT and Native AOT, including full AOT and the
@@ -191,6 +260,110 @@ The only features that require reflection are:
 * Buffer preparation and auto-composition when no binary buffer is registered.
 * AOT detection when targeting **.NET 5.0 or earlier**.
 * AOT detection on **.NET 7.0 and later** when running on **Web or Mobile platforms** only.
+
+`Rxmxnx.PInvoke.Extensions` supports the following **AOT compilation models**, regardless of the framework used to build
+them:
+
+<details>
+<summary><strong>Mono AOT</strong></summary>
+
+`Rxmxnx.PInvoke.Extensions` supports **Mono AOT compilation** in **Full, Hybrid, and LLVM modes**, subject only to the
+level of support provided by the target platform and runtime.
+
+This includes Mono-based runtimes that support **.NET Standard 2.1**, such as **Mono Framework, Xamarin, Blazor
+WebAssembly 3.x, and Unity**, as well as newer Mono-based runtimes compatible with **.NET 5.0 or later**, used by modern
+mobile platforms and **Blazor WebAssembly on .NET**.
+
+</details>
+
+<details>
+<summary><strong>ReadyToRun (R2R)</strong></summary>
+
+`Rxmxnx.PInvoke.Extensions` supports **ReadyToRun (R2R)** hybrid AOT compilation based on **CoreCLR**, available since *
+*.NET Core 3.0** and still supported in current versions of .NET.
+
+</details>
+
+<details>
+<summary><strong>NativeAOT</strong></summary>
+
+`Rxmxnx.PInvoke.Extensions` supports **CoreCLR-based NativeAOT**, available since **.NET 7.0** and supported by current
+versions of .NET.
+
+One of the key design goals of `Rxmxnx.PInvoke.Extensions` is to rely on **minimal reflection**, making it well suited
+for NativeAOT scenarios. This approach helps avoid common issues such as **N+1 reflection patterns**, while most
+functionality is implemented using **statically compiled code**.
+
+The library can also adapt—though with limited functionality—to the legacy **reflection-free mode** supported by early
+NativeAOT implementations.
+
+</details>
+
+<details>
+<summary><strong>Unity IL2CPP</strong></summary>
+
+As mentioned previously, **Unity** supports `Rxmxnx.PInvoke.Extensions` through the assembly compiled for **.NET
+Standard 2.1**. Consequently, the library can also be used when **IL2CPP** compilation is enabled.
+
+However, because certain **multidimensional array flattening features** are statically included, **IL2CPP may generate
+invalid C++ identifiers for array indices greater than 17** if these members are not removed by the linker.
+
+The following .NET utility can be used to work around this issue. When executed with the directory containing the **C++
+source files generated by IL2CPP**, it adjusts the generated code. Afterward, recompiling the project in Unity without
+further modifications will reuse the corrected files and allow the compilation to succeed.
+
+```csharp
+if (args.Length != 1) 
+{
+    Console.WriteLine("Invalid IL2CPP source code folder.");
+    return;
+}
+Dictionary<Char, String> map = new()
+{
+	{ (Char)(18 + 'i'), "a" },
+	{ (Char)(19 + 'i'), "b" },
+	{ (Char)(20 + 'i'), "c" },
+	{ (Char)(21 + 'i'), "d" },
+	{ (Char)(22 + 'i'), "e" },
+	{ (Char)(23 + 'i'), "f" },
+	{ (Char)(24 + 'i'), "g" },
+	{ (Char)(25 + 'i'), "h" },
+	{ (Char)(26 + 'i'), "_i" },
+	{ (Char)(27 + 'i'), "_j" },
+	{ (Char)(28 + 'i'), "_k" },
+	{ (Char)(29 + 'i'), "_l" },
+	{ (Char)(30 + 'i'), "_m" },
+	{ (Char)(31 + 'i'), "_n" },
+};
+String[] replacements = ["l2cpp_array_size_t {0}", "{0}, {0}Bound", "{0}Bound + {0}",];
+foreach (String sourceCodeFile in new DirectoryInfo(args[0]).GetFiles("*.cpp").Select(f => f.FullName))
+{
+	String sourceCodeContent = await File.ReadAllTextAsync(sourceCodeFile);
+	Boolean modified = false;
+	foreach (Char invalidBound in map.Keys)
+	{
+		foreach (String replacement in replacements)
+		{
+			String o = String.Format(replacement, invalidBound);
+			if (!sourceCodeContent.Contains(o, StringComparison.InvariantCulture)) continue;
+			String r = String.Format(replacement, map[invalidBound]);
+			sourceCodeContent = sourceCodeContent.Replace(o, r,  StringComparison.InvariantCulture);
+			modified = true;
+		}
+	}
+	if (modified) 
+    {
+		await File.WriteAllTextAsync(sourceCodeFile, sourceCodeContent);
+        Console.WriteLine($"{sourceCodeFile} fixed.");
+    }
+}
+```
+
+</details>
+
+Since `Rxmxnx.PInvoke.Extensions`, across its different builds, uses **minimal reflection** in favor of **statically
+reachable code**, it is compatible with various **linking and trimming tools**, ranging from the classic **Mono Linker**
+to the modern **ILLink**.
 
 ## Visual Basic .NET Support
 

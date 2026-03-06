@@ -10,6 +10,7 @@
         <Deterministic>True</Deterministic>
         <Optimize>true</Optimize>
         <DefineConstants Condition="'$(LangVersion)' == '9.0'">$(DefineConstants);CSHARP9_0</DefineConstants>
+        <RequiredFramework>net5.0</RequiredFramework>
     </PropertyGroup>
 
     <Import Project="..\..\PackageReference.props"/>
