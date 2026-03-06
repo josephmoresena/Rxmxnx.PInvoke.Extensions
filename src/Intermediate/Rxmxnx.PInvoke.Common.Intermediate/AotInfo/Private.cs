@@ -44,7 +44,10 @@ public static partial class AotInfo
 	{
 #if NET5_0_OR_GREATER
 		if (TrimInfo.IsMobileTrimmedXnu())
-			return true;
+		{
+			// iOS, tvOS, watchOS, macCatalyst is always AOT.
+			return false;
+		}
 #endif
 		try
 		{
