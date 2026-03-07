@@ -93,7 +93,8 @@ public static partial class AotInfo
 			if (MonoInfo.MonoAssemblyNameType is not null)
 			{
 				if (MemoryInspector.IsSupported)
-					return !AotInfo.IsAotFrame();
+					// Mono/Xamarin AOT -> AotFrame. IL2CPP -> Empty literal.
+					return !AotInfo.IsAotFrame() && !MemoryInspector.Instance.IsLiteral(TrimInfo.EmptyUt8Text());
 #if !NET5_0_OR_GREATER
 				if (isAndroid)
 #else
@@ -247,7 +248,8 @@ public static partial class AotInfo
 		if (MonoInfo.MonoAssemblyNameType is null || !MemoryInspector.IsSupported) return false;
 		try
 		{
-			return AotInfo.IsAotFrame();
+			// Mono/Xamarin AOT -> AotFrame. IL2CPP -> Empty literal.
+			return AotInfo.IsAotFrame() || MemoryInspector.Instance.IsLiteral(TrimInfo.EmptyUt8Text());
 		}
 		// If exception, might be AOT.
 		catch (Exception)
