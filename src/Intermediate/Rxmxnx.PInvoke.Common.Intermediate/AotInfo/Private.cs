@@ -22,7 +22,10 @@ public static partial class AotInfo
 		foreach (StackFrame? frame in frames)
 		{
 			if (frame?.GetMethod() is not { } methodBase) continue;
-			if (!EmitInfo.IsDynamicMethod(methodBase) && !AotInfo.IsImageMethodUnsafe(methodBase.MethodHandle))
+			Boolean isDynamicMethod = EmitInfo.IsDynamicMethod(methodBase);
+			Boolean isImageMethod = !isDynamicMethod && AotInfo.IsImageMethodUnsafe(methodBase.MethodHandle);
+			Console.WriteLine($"Method: {methodBase.DeclaringType}.{methodBase.Name} Dynamic: {isDynamicMethod} Image: {isImageMethod}");
+			if (!isDynamicMethod && !isImageMethod)
 				return false;
 		}
 		return true;
@@ -93,8 +96,13 @@ public static partial class AotInfo
 			if (MonoInfo.MonoAssemblyNameType is not null)
 			{
 				if (MemoryInspector.IsSupported)
+				{
+					Boolean isAotFrame = AotInfo.IsAotFrame();
+					Boolean isEmptyLiteral = MemoryInspector.Instance.IsLiteral(TrimInfo.EmptyUt8Text());
+					Console.WriteLine($"Aot Frame: {isAotFrame} Empty: {isEmptyLiteral}");
 					// Mono/Xamarin AOT -> AotFrame. IL2CPP -> Empty literal.
-					return !AotInfo.IsAotFrame() && !MemoryInspector.Instance.IsLiteral(TrimInfo.EmptyUt8Text());
+					return !isAotFrame && !isEmptyLiteral;
+				}
 #if !NET5_0_OR_GREATER
 				if (isAndroid)
 #else
@@ -112,8 +120,9 @@ public static partial class AotInfo
 				return true;
 		}
 		// If exception, might be AOT.
-		catch (Exception)
+		catch (Exception ex)
 		{
+			Console.WriteLine(ex);
 			return false;
 		}
 		EmitCheck:

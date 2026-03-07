@@ -309,10 +309,6 @@ jobs:
         if: inputs.build_artifacts == true && runner.os == 'Windows'
         shell: pwsh
         run: |
-          if (Test-Path "artifacts\Mono") {
-              Get-ChildItem artifacts\Mono -Directory -Recurse -Filter Bundle |
-              Remove-Item -Recurse -Force
-          }
           Remove-Item -Recurse -Force "$env:WINDIR\Temp\*" -ErrorAction SilentlyContinue
           Remove-Item -Recurse -Force "$env:TEMP\*" -ErrorAction SilentlyContinue
           Remove-Item -Recurse -Force "$env:TMP\*" -ErrorAction SilentlyContinue
