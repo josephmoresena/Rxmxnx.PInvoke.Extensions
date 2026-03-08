@@ -96,11 +96,10 @@ public static partial class AotInfo
 				{
 					// IL2CPP -> Empty literal.
 					if (MemoryInspector.Instance.IsLiteral(TrimInfo.EmptyUt8Text())) return true;
-					Boolean isAotFrame = AotInfo.IsAotFrame();
-#if !NETCOREAPP
-					if (isAotFrame && !AotInfo.IsAvoidableEmitCheck())
+					// On emulated platforms, AOT Frame is a false positive.
+					if (!AotInfo.IsAvoidableEmitCheck())
 						goto EmitCheck;
-#endif
+					Boolean isAotFrame = AotInfo.IsAotFrame();
 					// Mono/Xamarin AOT.
 					return !isAotFrame;
 				}

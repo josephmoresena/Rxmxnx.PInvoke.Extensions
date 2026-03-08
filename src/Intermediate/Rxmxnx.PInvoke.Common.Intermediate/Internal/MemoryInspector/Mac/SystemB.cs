@@ -27,10 +27,9 @@ internal partial class MemoryInspector
 					UIntPtr length = (UIntPtr)sizeof(Int32);
 					Int32 result = SystemB.GetSystemInfo(name, &isTranslated, ref length, default, default);
 					SystemB.ValidateResult(result);
-					Console.WriteLine($"Is Rosseta: R:{result} L:{length} B:{isTranslated}");
-					if (result == -1) return isTranslated != default;
+					Console.WriteLine($"Is Rosetta: R:{result} L:{length} B:{isTranslated}");
+					return result != -1 && isTranslated == 1;
 				}
-				return false;
 			}
 			/// <summary>
 			/// Validates <paramref name="result"/> value.

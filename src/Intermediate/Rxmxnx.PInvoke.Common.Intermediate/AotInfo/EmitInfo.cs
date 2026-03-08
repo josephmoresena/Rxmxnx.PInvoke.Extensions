@@ -89,14 +89,23 @@ public static partial class AotInfo
 				ilGenerator.Emit(OpCodes.Call, typeof(Object).GetMethod("GetType")!);
 				ilGenerator.Emit(OpCodes.Ret);
 
-				return typeBuilder.CreateType() is { } type && Activator.CreateInstance(type) is { } obj &&
-					type.Assembly.IsDynamic &&
-					// ReSharper disable once HeapView.BoxingAllocation
-					type.GetMethod(methodBuilder.Name)?.Invoke(obj, [input,]) is { } result &&
-					(input + 1 > 0 ? obj.Equals(result) : type.Equals(result));
+				if (typeBuilder.CreateType() is not { } type) return false; // Dynamic type is null.
+				Console.WriteLine($"Emitted type: {type}");
+				if (Activator.CreateInstance(type) is not { } obj) return false; // Instantiation is null.
+				Console.WriteLine($"Instantiated object: {obj}");
+				if (!type.Assembly.IsDynamic) return false; // Assembly is not null.
+				Console.WriteLine($"Is dynamic assembly: {type.Assembly.IsDynamic}");
+				if (type.GetMethod(methodBuilder.Name) is not { } method) return false;
+				Console.WriteLine($"Emitted method: {method}");
+				// ReSharper disable once HeapView.BoxingAllocation
+				if (method.Invoke(obj, [input,]) is not { } result)
+					return false; // Result is null.
+				Console.WriteLine($"Emitted result: {result}");
+				return input + 1 > 0 ? obj.Equals(result) : type.Equals(result);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				Console.WriteLine(ex);
 				// Any exception at runtime indicates that System.Reflection.Emit is not allowed.
 				return false;
 			}
