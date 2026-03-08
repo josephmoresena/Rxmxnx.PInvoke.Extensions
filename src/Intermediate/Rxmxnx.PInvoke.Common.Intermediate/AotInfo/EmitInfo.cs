@@ -56,23 +56,12 @@ public static partial class AotInfo
 				DynamicMethod method = new($"MyDynamicMethod_{Guid.NewGuid():N}", typeof(MethodBase), Type.EmptyTypes,
 				                           typeof(Object).Module, true);
 				ILGenerator il = method.GetILGenerator();
-
 				il.Emit(OpCodes.Call, typeof(MethodBase).GetMethod(nameof(MethodBase.GetCurrentMethod))!);
 				il.Emit(OpCodes.Ret);
-
-				Console.WriteLine($"Emitted method: {method}");
-#if !NET5_0_OR_GREATER
-				Func<MethodBase> del = (Func<MethodBase>)method.CreateDelegate(typeof(Func<MethodBase>));
-#else
-				Func<MethodBase> del = method.CreateDelegate<Func<MethodBase>>();
-#endif
-				MethodBase result = del();
-				Console.WriteLine($"Returned method: {result}");
-				return Object.ReferenceEquals(result, method);
+				return method.Invoke(null, []) is not null;
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
-				Console.WriteLine(ex);
 				// Any exception at runtime indicates that System.Reflection.Emit is not allowed.
 				return false;
 			}
