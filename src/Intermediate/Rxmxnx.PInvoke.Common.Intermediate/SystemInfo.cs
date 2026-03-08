@@ -137,11 +137,9 @@ public static partial class SystemInfo
 		get
 		{
 			if (MonoInfo.MonoRuntimeType is not null || MonoInfo.MonoAssemblyNameType is not null)
-				return true; // Mono.Framework, Xamarin.* or Microsoft.NETCore.App.Runtime.Mono.*
+				return true; // Mono.Framework, Xamarin.*, Unity or Microsoft.NETCore.App.Runtime.Mono.*
 
-			return AotInfo.IsReflectionDisabled ?
-				MonoInfo.IsEmptyNonLiteral : // Microsoft.NETCore.App (CLR)
-				AotInfo.IsCodeGenerationSupported;
+			return AotInfo.IsReflectionDisabled && MonoInfo.IsEmptyNonLiteral; // Microsoft.NETCore.App (CLR)
 		}
 	}
 

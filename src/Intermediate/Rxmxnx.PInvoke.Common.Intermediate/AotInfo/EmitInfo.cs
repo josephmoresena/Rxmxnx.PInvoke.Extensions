@@ -59,49 +59,25 @@ public static partial class AotInfo
 		{
 			try
 			{
-				TypeBuilder typeBuilder = AssemblyBuilder
-				                          .DefineDynamicAssembly(new($"MyDynamicAssembly_{Guid.NewGuid():N}"),
-				                                                 AssemblyBuilderAccess.Run)
-				                          .DefineDynamicModule($"MyDynamicModule_{Guid.NewGuid():N}")
-				                          .DefineType($"MyDynamicModule_{Guid.NewGuid():N}", TypeAttributes.NotPublic);
-				MethodBuilder methodBuilder = typeBuilder.DefineMethod($"MyDynamicMethod_{Guid.NewGuid():N}",
-				                                                       MethodAttributes.Public, typeof(Object),
-				                                                       [typeof(Int32),]);
-				ILGenerator ilGenerator = methodBuilder.GetILGenerator();
-				Int32 input = typeBuilder.GetHashCode() - methodBuilder.GetHashCode() + ilGenerator.GetHashCode();
-				LocalBuilder localSum = ilGenerator.DeclareLocal(typeof(Int32));
-				Label elseLabel = ilGenerator.DefineLabel();
+				DynamicMethod method = new(
+					$"MyDynamicMethod_{Guid.NewGuid():N}",
+					typeof(MethodBase),
+					Type.EmptyTypes,
+					typeof(object).Module,
+					true);
+				ILGenerator il = method.GetILGenerator();
 
-				ilGenerator.Emit(OpCodes.Ldarg_1);
-				ilGenerator.Emit(OpCodes.Ldc_I4_1);
-				ilGenerator.Emit(OpCodes.Add);
-				ilGenerator.Emit(OpCodes.Stloc, localSum);
+				il.Emit(OpCodes.Call,
+				        typeof(MethodBase).GetMethod(nameof(MethodBase.GetCurrentMethod))!);
+				il.Emit(OpCodes.Ret);
 
-				ilGenerator.Emit(OpCodes.Ldloc, localSum);
-				ilGenerator.Emit(OpCodes.Ldc_I4_0);
-				ilGenerator.Emit(OpCodes.Ble_S, elseLabel);
-
-				ilGenerator.Emit(OpCodes.Ldarg_0);
-				ilGenerator.Emit(OpCodes.Ret);
-
-				ilGenerator.MarkLabel(elseLabel);
-				ilGenerator.Emit(OpCodes.Ldarg_0);
-				ilGenerator.Emit(OpCodes.Call, typeof(Object).GetMethod("GetType")!);
-				ilGenerator.Emit(OpCodes.Ret);
-
-				if (typeBuilder.CreateType() is not { } type) return false; // Dynamic type is null.
-				Console.WriteLine($"Emitted type: {type}");
-				if (Activator.CreateInstance(type) is not { } obj) return false; // Instantiation is null.
-				Console.WriteLine($"Instantiated object: {obj}");
-				if (!type.Assembly.IsDynamic) return false; // Assembly is not null.
-				Console.WriteLine($"Is dynamic assembly: {type.Assembly.IsDynamic}");
-				if (type.GetMethod(methodBuilder.Name) is not { } method) return false;
 				Console.WriteLine($"Emitted method: {method}");
-				// ReSharper disable once HeapView.BoxingAllocation
-				if (method.Invoke(obj, [input,]) is not { } result)
-					return false; // Result is null.
-				Console.WriteLine($"Emitted result: {result}");
-				return input + 1 > 0 ? obj.Equals(result) : type.Equals(result);
+
+				Object? result = method.Invoke(null, null);
+
+				Console.WriteLine($"Returned method: {result}");
+
+				return Object.ReferenceEquals(result, method);
 			}
 			catch (Exception ex)
 			{
