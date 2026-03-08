@@ -24,6 +24,11 @@ internal abstract unsafe partial class MemoryInspector
 	public static Boolean IsSupported => MemoryInspector.instance is not null;
 
 	/// <summary>
+	/// Indicates whether the current process is running over an emulated platform.
+	/// </summary>
+	public virtual Boolean IsEmulated => false;
+
+	/// <summary>
 	/// Static constructor.
 	/// </summary>
 #if !PACKAGE

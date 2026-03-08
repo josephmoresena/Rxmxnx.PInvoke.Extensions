@@ -8,9 +8,6 @@ public static partial class SystemInfo
 #if !NET8_0_OR_GREATER
 	private const String wPlatform = "WASI";
 #endif
-#if !NET6_0_OR_GREATER
-	private const String macCatalystPlatform = "MACCATALYST";
-#endif
 #if !NETCOREAPP
 	private const String freePlatform = "FREEBSD";
 #endif

@@ -322,6 +322,7 @@ jobs:
         if: inputs.build_artifacts == true && runner.os != 'Windows'
         shell: bash
         run: |
+          [ -d artifacts/Mono ] &&  find artifacts/Mono -type d -name Bundle -exec rm -rf {} +
           
           sudo rm -rf /tmp/*
           sudo rm -rf /var/tmp/*

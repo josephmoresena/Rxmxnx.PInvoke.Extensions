@@ -22,11 +22,8 @@ public static partial class AotInfo
 		foreach (StackFrame? frame in frames)
 		{
 			if (frame?.GetMethod() is not { } methodBase) continue;
-			Boolean isDynamicMethod = EmitInfo.IsDynamicMethod(methodBase);
-			Boolean isImageMethod = !isDynamicMethod && AotInfo.IsImageMethodUnsafe(methodBase.MethodHandle);
-			Console.WriteLine($"Method: {methodBase.DeclaringType}.{methodBase.Name} Dynamic: {isDynamicMethod} Image: {isImageMethod}");
-			if (!isDynamicMethod && !isImageMethod)
-				return false;
+			if (EmitInfo.IsDynamicMethod(methodBase)) return false;
+			if (!AotInfo.IsImageMethodUnsafe(methodBase.MethodHandle)) return false;
 		}
 		return true;
 	}
@@ -97,11 +94,15 @@ public static partial class AotInfo
 			{
 				if (MemoryInspector.IsSupported)
 				{
+					// IL2CPP -> Empty literal.
+					if (MemoryInspector.Instance.IsLiteral(TrimInfo.EmptyUt8Text())) return true;
 					Boolean isAotFrame = AotInfo.IsAotFrame();
-					Boolean isEmptyLiteral = MemoryInspector.Instance.IsLiteral(TrimInfo.EmptyUt8Text());
-					Console.WriteLine($"Aot Frame: {isAotFrame} Empty: {isEmptyLiteral}");
-					// Mono/Xamarin AOT -> AotFrame. IL2CPP -> Empty literal.
-					return !isAotFrame && !isEmptyLiteral;
+#if !NETCOREAPP
+					if (isAotFrame && !AotInfo.IsAvoidableEmitCheck())
+						goto EmitCheck;
+#endif
+					// Mono/Xamarin AOT.
+					return !isAotFrame;
 				}
 #if !NET5_0_OR_GREATER
 				if (isAndroid)
@@ -120,9 +121,8 @@ public static partial class AotInfo
 				return true;
 		}
 		// If exception, might be AOT.
-		catch (Exception ex)
+		catch (Exception)
 		{
-			Console.WriteLine(ex);
 			return false;
 		}
 		EmitCheck:
@@ -237,6 +237,16 @@ public static partial class AotInfo
 		Int32 assemblyNameLength = assemblyFullName.IndexOf(',');
 		return assemblyNameLength < 0 ? assemblyFullName : assemblyFullName[..assemblyNameLength];
 	}
+	/// <summary>
+	/// Indicates whether the System.Reflection.Emit check is avoidable at the AOT detection.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if the System.Reflection.Emit is avoidable at the AOT detection; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+	private static Boolean IsAvoidableEmitCheck()
+		=> !SystemInfo.IsMac || (RuntimeInformation.ProcessArchitecture is not Architecture.Arm64 &&
+			!MemoryInspector.Instance.IsEmulated);
 #else
 	/// <summary>
 	/// Indicates whether the current platform is Desktop or Android.

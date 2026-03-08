@@ -37,7 +37,7 @@ public static partial class SystemInfo
 			return;
 		}
 		if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ||
-		    SystemInfo.IsOsPlatform(SystemInfo.iPlatform, SystemInfo.tPlatform, SystemInfo.macCatalystPlatform))
+		    SystemInfo.IsOsPlatform(SystemInfo.iPlatform, SystemInfo.tPlatform))
 		{
 			SystemInfo.isMac = true;
 			return;

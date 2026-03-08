@@ -62,8 +62,7 @@ public static partial class SystemInfo
 #if NET6_0_OR_GREATER
 				OperatingSystem.IsMacCatalyst()
 #else
-				(!TrimInfo.IsPlatformTrimmed() && (SystemInfo.isMacCatalyst ??=
-					SystemInfo.IsOsPlatform(SystemInfo.macCatalystPlatform)))
+				(!TrimInfo.IsPlatformTrimmed() && RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
 #endif
 #else
 				SystemInfo.isMac

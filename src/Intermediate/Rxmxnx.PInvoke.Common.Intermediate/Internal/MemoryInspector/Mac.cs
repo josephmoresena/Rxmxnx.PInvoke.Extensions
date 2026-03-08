@@ -24,6 +24,9 @@ internal partial class MemoryInspector
 			;
 
 		/// <inheritdoc/>
+		public override Boolean IsEmulated => SystemB.IsRunningUnderRosetta();
+
+		/// <inheritdoc/>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public override Boolean IsReadOnlyAddress(void* ptr)
 		{
@@ -32,11 +35,11 @@ internal partial class MemoryInspector
 			Int32 result = SystemB.MemoryRegion(taskHandle, &ptr, out _, MemoryInfo.Flavor, out MemoryInfo info,
 			                                    ref count, out _);
 			SystemB.ValidateResult(result);
-			Console.WriteLine($"0x{new IntPtr(ptr).ToString("x8")}: {info.Protection}");
 			if ((info.Protection & Protection.Read) == Protection.None) return false;
 			if (this._readonlyExecutable && (info.Protection & Protection.Execute) == Protection.Execute)
 				return true;
 			return (info.Protection & Protection.Write) == Protection.None;
 		}
+		public Architecture Architecture { get; }
 	}
 }
