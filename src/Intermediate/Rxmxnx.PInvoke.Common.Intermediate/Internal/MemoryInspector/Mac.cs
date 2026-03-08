@@ -40,6 +40,5 @@ internal partial class MemoryInspector
 				return true;
 			return (info.Protection & Protection.Write) == Protection.None;
 		}
-		public Architecture Architecture { get; }
 	}
 }

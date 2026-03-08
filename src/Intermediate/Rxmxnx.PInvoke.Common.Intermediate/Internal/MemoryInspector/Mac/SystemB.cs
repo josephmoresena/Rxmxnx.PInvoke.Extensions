@@ -21,13 +21,14 @@ internal partial class MemoryInspector
 			public static Boolean IsRunningUnderRosetta()
 			{
 				ReadOnlySpan<Byte> ctlName = "sysctl.proc_translated"u8;
-				Int32 isTraslated = 0;
+				Int32 isTranslated = 0;
 				fixed (Byte* name = &MemoryMarshal.GetReference(ctlName))
 				{
 					UIntPtr length = (UIntPtr)sizeof(Int32);
-					Int32 result = SystemB.GetSystemInfo(name, &isTraslated, ref length, default, default);
+					Int32 result = SystemB.GetSystemInfo(name, &isTranslated, ref length, default, default);
 					SystemB.ValidateResult(result);
-					if (result != 0) return isTraslated == 1;
+					Console.WriteLine($"Is Rosseta: R:{result} L:{length} B:{isTranslated}");
+					if (result == -1) return isTranslated != default;
 				}
 				return false;
 			}

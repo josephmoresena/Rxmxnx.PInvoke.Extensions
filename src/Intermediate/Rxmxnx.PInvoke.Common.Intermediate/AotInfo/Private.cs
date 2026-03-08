@@ -121,8 +121,9 @@ public static partial class AotInfo
 				return true;
 		}
 		// If exception, might be AOT.
-		catch (Exception)
+		catch (Exception ex)
 		{
+			Console.WriteLine(ex);
 			return false;
 		}
 		EmitCheck:
