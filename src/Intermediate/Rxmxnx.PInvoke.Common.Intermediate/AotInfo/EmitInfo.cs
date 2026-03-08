@@ -1,12 +1,6 @@
-using Label = System.Reflection.Emit.Label;
-using LocalBuilder = System.Reflection.Emit.LocalBuilder;
 using DynamicMethod = System.Reflection.Emit.DynamicMethod;
-using TypeBuilder = System.Reflection.Emit.TypeBuilder;
 using OpCodes = System.Reflection.Emit.OpCodes;
-using MethodBuilder = System.Reflection.Emit.MethodBuilder;
 using ILGenerator = System.Reflection.Emit.ILGenerator;
-using AssemblyBuilder = System.Reflection.Emit.AssemblyBuilder;
-using AssemblyBuilderAccess = System.Reflection.Emit.AssemblyBuilderAccess;
 
 namespace Rxmxnx.PInvoke;
 
@@ -59,24 +53,21 @@ public static partial class AotInfo
 		{
 			try
 			{
-				DynamicMethod method = new(
-					$"MyDynamicMethod_{Guid.NewGuid():N}",
-					typeof(MethodBase),
-					Type.EmptyTypes,
-					typeof(object).Module,
-					true);
+				DynamicMethod method = new($"MyDynamicMethod_{Guid.NewGuid():N}", typeof(MethodBase), Type.EmptyTypes,
+				                           typeof(Object).Module, true);
 				ILGenerator il = method.GetILGenerator();
 
-				il.Emit(OpCodes.Call,
-				        typeof(MethodBase).GetMethod(nameof(MethodBase.GetCurrentMethod))!);
+				il.Emit(OpCodes.Call, typeof(MethodBase).GetMethod(nameof(MethodBase.GetCurrentMethod))!);
 				il.Emit(OpCodes.Ret);
 
 				Console.WriteLine($"Emitted method: {method}");
-
-				Object? result = method.Invoke(null, null);
-
+#if !NET5_0_OR_GREATER
+				Func<MethodBase> del = (Func<MethodBase>)method.CreateDelegate(typeof(Func<MethodBase>));
+#else
+				Func<MethodBase> del = method.CreateDelegate<Func<MethodBase>>();
+#endif
+				MethodBase result = del();
 				Console.WriteLine($"Returned method: {result}");
-
 				return Object.ReferenceEquals(result, method);
 			}
 			catch (Exception ex)
