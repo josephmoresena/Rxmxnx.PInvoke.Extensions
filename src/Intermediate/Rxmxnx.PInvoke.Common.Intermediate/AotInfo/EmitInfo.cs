@@ -46,6 +46,7 @@ public static partial class AotInfo
 		/// </returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		[UnconditionalSuppressMessage("AOT", "IL3050")]
+		[UnconditionalSuppressMessage("Trimming", "IL2026")]
 #if !PACKAGE
 		[SuppressMessage("ReSharper", "HeapView.BoxingAllocation")]
 #endif
