@@ -95,7 +95,7 @@ public static partial class AotInfo
 				if (MemoryInspector.IsSupported)
 				{
 					// IL2CPP -> Empty literal.
-					if (MemoryInspector.Instance.IsLiteral(TrimInfo.EmptyUt8Text())) return true;
+					if (MemoryInspector.Instance.IsLiteral(TrimInfo.EmptyUt8Text())) return false;
 					// On emulated platforms, AOT Frame is a false positive.
 					if (!AotInfo.IsAvoidableEmitCheck())
 						goto EmitCheck;
