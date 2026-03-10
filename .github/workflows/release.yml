@@ -55,7 +55,6 @@ jobs:
           dotnet-version: 10.x
       - name: Restore NuGet Package
         uses: actions/cache/restore@v5
-        if: inputs.build_artifacts == true
         with:
           path: ./package/Nuget
           key: internal-nuget-${{ github.run_id }}
