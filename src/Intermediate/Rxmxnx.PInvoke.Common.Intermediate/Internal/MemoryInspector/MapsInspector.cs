@@ -71,7 +71,7 @@ internal partial class MemoryInspector
 
 		/// <inheritdoc/>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public override Boolean IsLiteral(void* ptr)
+		public override Boolean IsReadOnlyAddress(void* ptr)
 		{
 #if NET9_0_OR_GREATER
 			using (this._lock.EnterScope())
@@ -181,7 +181,9 @@ internal partial class MemoryInspector
 		private static Boolean IsMappedAddress(SortedSet<MemoryBoundary> maps, void* address)
 		{
 			if (maps.Count == 0) return false;
-			SortedSet<MemoryBoundary> view = maps.GetViewBetween(maps.Min, address);
+			MemoryBoundary min = maps.Min;
+			if (min > address) return false;
+			SortedSet<MemoryBoundary> view = maps.GetViewBetween(min, address);
 			if (view.Count == 0) return false;
 			MemoryBoundary boundary = view.Max;
 			return boundary != default && !boundary.IsEnd;

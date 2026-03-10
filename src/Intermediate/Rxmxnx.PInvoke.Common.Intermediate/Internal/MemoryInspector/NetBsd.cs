@@ -14,7 +14,7 @@ internal partial class MemoryInspector
 		protected override void ProcessMaps()
 		{
 #if NET5_0_OR_GREATER
-			if (AotInfo.IsPlatformTrimmed) return;
+			if (TrimInfo.IsPlatformTrimmed()) return;
 #endif
 			Util.AppendMaps(this);
 		}

@@ -10,6 +10,7 @@ public partial class Launcher
 		public override String RuntimeIdentifierPrefix => "osx";
 		public override ReadOnlySpan<MonoLauncher> MonoLaunchers => CollectionsMarshal.AsSpan(this._monoLaunchers);
 
+		[SuppressMessage("ReSharper", "HeapView.DelegateAllocation")]
 		private Mac(DirectoryInfo outputDirectory, Boolean useMono, out Task initialize) : base(
 			outputDirectory, useMono)
 		{
@@ -22,6 +23,8 @@ public partial class Launcher
 				Mac.AppendMonoLauncher("/opt/homebrew/Cellar/mono/6.14.1/", Architecture.Arm64,
 				                       ref this._monoLaunchers);
 		}
+
+		public override ICppCompiler GetCompiler(Architecture arch) => new XCppCompiler(arch);
 
 		private static void AppendMonoLauncher(String monoPath, Architecture arch,
 			ref List<MonoLauncher>? monoLaunchers)
@@ -45,10 +48,39 @@ public partial class Launcher
 				MonoCilStripAssemblyPath = Path.Combine(monoRuntimePath, "mono-cil-strip.exe"),
 				NativeRuntimePath = libSystemNativePath,
 				ExecutablePath = executablePath,
+				IncludeRuntimePath = Path.Combine(monoPath, "include"),
+				StaticRuntimePath = Path.Combine(monoLibPath, "libmonosgen-2.0.a"),
+				PkgConfigPath = Path.Combine(monoLibPath, "pkgconfig"),
 			});
 		}
 
 		public static Mac Create(DirectoryInfo outputDirectory, Boolean useMono, out Task initTask)
 			=> new(outputDirectory, useMono, out initTask);
+
+		private sealed class XCppCompiler(Architecture arch) : UnixCppCompiler
+		{
+			public override String BeginWholeLink => "-Wl,-force_load,";
+			protected override String LocalRuntimePath => "@loader_path";
+
+			[SuppressMessage("ReSharper", "HeapView.BoxingAllocation")]
+			public override IEnumerable<String> BeginLink(Boolean _)
+			{
+				yield return "-arch";
+				yield return arch switch
+				{
+					Architecture.X86 => "x86",
+					Architecture.X64 => "x86_64",
+					Architecture.Arm64 => "arm64",
+					_ => arch.ToString().ToLowerInvariant(),
+				};
+			}
+			protected override IEnumerable<String> AdditionalLink()
+			{
+				yield return "-lobjc";
+				yield return "-liconv";
+				yield return "-framework";
+				yield return "Foundation";
+			}
+		}
 	}
 }

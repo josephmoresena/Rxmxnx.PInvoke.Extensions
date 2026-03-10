@@ -1,0 +1,23 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <PropertyGroup>
+        <TargetFramework>net45</TargetFramework>
+        <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
+        <DebugSymbols>false</DebugSymbols>
+        <DebugType>None</DebugType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Reference Include="mscorlib">
+            <HintPath>$(MonoFrameworkPath)\4.5\mscorlib.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="netstandard">
+            <HintPath>$(MonoFrameworkPath)\4.5\Facades\netstandard.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+    </ItemGroup>
+
+    <Import Project="..\Packages.props"/>
+
+</Project>

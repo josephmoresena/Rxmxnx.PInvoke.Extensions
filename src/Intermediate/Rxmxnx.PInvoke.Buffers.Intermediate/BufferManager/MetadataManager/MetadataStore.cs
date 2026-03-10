@@ -7,6 +7,7 @@ public static partial class BufferManager
 		/// <summary>
 		/// Class to store metadata buffer types.
 		/// </summary>
+		[Preserve(AllMembers = true, Conditional = true)]
 		private sealed class MetadataStore
 		{
 			/// <summary>

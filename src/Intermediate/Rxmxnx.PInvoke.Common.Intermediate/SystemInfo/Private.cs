@@ -14,12 +14,6 @@ public static partial class SystemInfo
 	/// <inheritdoc cref="IsFreeBsd"/>
 	private static readonly Boolean isFreeBsd;
 #elif !NET8_0_OR_GREATER
-#if !NET6_0_OR_GREATER
-	/// <summary>
-	/// Indicates whether the current execution is occurring on Mac Catalyst platform.
-	/// </summary>
-	private static Boolean? isMacCatalyst;
-#endif
 	/// <summary>
 	/// Indicates whether the current execution is occurring on a WASI-compatible platform.
 	/// </summary>

@@ -24,8 +24,11 @@ internal partial class MemoryInspector
 			;
 
 		/// <inheritdoc/>
+		public override Boolean IsEmulated => SystemB.IsRunningUnderRosetta();
+
+		/// <inheritdoc/>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public override Boolean IsLiteral(void* ptr)
+		public override Boolean IsReadOnlyAddress(void* ptr)
 		{
 			UInt32 taskHandle = SystemB.GetTaskHandle();
 			UInt32 count = MemoryInfo.Count;

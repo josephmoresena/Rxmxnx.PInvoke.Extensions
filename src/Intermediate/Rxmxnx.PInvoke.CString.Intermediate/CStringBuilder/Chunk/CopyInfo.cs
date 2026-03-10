@@ -7,6 +7,7 @@ public partial class CStringBuilder
 		/// <summary>
 		/// Structure containing metadata required to copy chunks.
 		/// </summary>
+		[Preserve(AllMembers = true, Conditional = true)]
 		public readonly struct CopyInfo
 		{
 			public Chunk Chunk { get; init; }

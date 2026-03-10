@@ -46,4 +46,24 @@ public partial class NativeUtilities
 		=> ref array.Length > 0 ?
 			ref Unsafe.AsRef(in array[0]) :
 			ref MemoryMarshal.GetReference(new ReadOnlyMemory<T>(array).Span);
+	/// <summary>
+	/// Determines whether the specified <see cref="MethodBase"/> represents executable code that originates
+	/// from a statically compiled image (AOT/R2R) rather than dynamically generated runtime code.
+	/// </summary>
+	/// <param name="methodBase">The <see langword="MethodBase"/> to evaluate.</param>
+	/// <returns>
+	/// <see langword="true"/> if the method is backed by image-compiled code; otherwise, <see langword="false"/>.
+	/// </returns>
+	/// <remarks>
+	/// Returns <see langword="false"/> for open generic methods and on platforms where memory inspection is not supported.
+	/// In reflection-free runtimes, valid method handles are treated as image-backed code.
+	/// </remarks>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	internal static Boolean IsImageMethodUnsafe(MethodBase methodBase)
+	{
+		if (methodBase.ContainsGenericParameters || AotInfo.IsDynamicCode(methodBase)) return false;
+		return AotInfo.IsImageMethodUnsafe(methodBase.MethodHandle);
+	}
 }

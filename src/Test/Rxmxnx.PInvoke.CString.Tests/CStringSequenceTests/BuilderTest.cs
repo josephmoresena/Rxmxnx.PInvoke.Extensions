@@ -126,7 +126,7 @@ public sealed class BuilderTest
 
 		foreach (ReadOnlySpanFunc<Byte> value in TestSet.Utf8Text)
 		{
-#if NETCOREAPP
+#if TRUE || NETCOREAPP
 			ReadOnlySpan<Byte> encoded = JsonEncodedText.Encode(value()).EncodedUtf8Bytes;
 #else
 			ReadOnlySpan<Byte> encoded =
@@ -159,7 +159,7 @@ public sealed class BuilderTest
 
 		foreach (String value in TestSet.Utf16Text)
 		{
-#if NETCOREAPP
+#if TRUE || NETCOREAPP
 			Byte[] encoded = JsonEncodedText.Encode(value).EncodedUtf8Bytes.ToArray();
 #else
 			Byte[] encoded = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(value)[1..^1]);

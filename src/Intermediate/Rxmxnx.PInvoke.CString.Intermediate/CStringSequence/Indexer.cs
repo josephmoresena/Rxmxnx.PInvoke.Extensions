@@ -5,7 +5,7 @@ using IEnumerable = System.Collections.IEnumerable;
 
 namespace Rxmxnx.PInvoke;
 
-public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequence<CString>
+public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequence<CString>, IUtf8Buffer
 {
 	/// <summary>
 	/// Gets the number of non-empty <see cref="CString"/> instances contained in this <see cref="CStringSequence"/>.
@@ -23,6 +23,9 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 #else
 	void IEnumerableSequence<CString>.DisposeEnumeration() => CStringSequence.DisposeEnumeration(this);
 #endif
+	ReadOnlySpan<Byte> IUtf8Buffer.Buffer => MemoryMarshal.AsBytes(this._value.AsSpan());
+	GCHandle IUtf8Buffer.Alloc(GCHandleType type) => GCHandle.Alloc(this._value, type);
+	Int32 IUtf8Buffer.GetBinaryOffset(Int32 index) => this.GetBinaryOffset(index);
 
 	/// <summary>
 	/// Gets the <see cref="CString"/> at the specified index.
@@ -90,7 +93,7 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 		return new SubsequenceHelper(this, startIndex, length).CreateSequence();
 	}
 	/// <summary>
-	/// Fills the provided span with the starting byte offsets of each UTF-8 encoded `CString' segment within the current
+	/// Fills the provided span with the starting byte offsets of each UTF-8 segment within the current
 	/// buffer.
 	/// </summary>
 	/// <param name="offsets">A span where the resulting UTF-8 text offsets will be stored.</param>

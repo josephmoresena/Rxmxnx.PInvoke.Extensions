@@ -9,6 +9,7 @@
 /// </remarks>
 [EditorBrowsable(EditorBrowsableState.Never)]
 [Browsable(false)]
+[Preserve(AllMembers = true)]
 public interface IEnumerableSequence
 {
 	/// <summary>

@@ -1,0 +1,9 @@
+﻿namespace Rxmxnx.PInvoke.Tests;
+
+[ExcludeFromCodeCoverage]
+internal sealed class ReferenceableWrapper<T>(IReadOnlyReferenceable<T> referenceable) : IReferenceable<T>
+{
+	ref readonly T IReadOnlyReferenceable<T>.Reference => ref referenceable.Reference;
+
+	ref T IReferenceable<T>.Reference => ref Unsafe.AsRef(in referenceable.Reference);
+}

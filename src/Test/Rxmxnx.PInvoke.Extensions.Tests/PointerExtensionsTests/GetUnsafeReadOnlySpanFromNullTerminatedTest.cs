@@ -14,6 +14,17 @@ public sealed unsafe class GetUnsafeReadOnlySpanFromNullTerminatedTest
 		];
 
 	[Fact]
+	public void NullTest()
+	{
+		ReadOnlySpan<Byte> bytes = ReadOnlyValPtr<Byte>.Zero.GetUnsafeReadOnlySpanFromNullTerminated();
+		ReadOnlySpan<Char> chars = ReadOnlyValPtr<Char>.Zero.GetUnsafeReadOnlySpanFromNullTerminated();
+
+		PInvokeAssert.True(bytes.SequenceEqual(ReadOnlySpan<Byte>.Empty));
+		PInvokeAssert.True(chars.SequenceEqual(ReadOnlySpan<Char>.Empty));
+		PInvokeAssert.True(Unsafe.IsNullRef(ref MemoryMarshal.GetReference(bytes)));
+		PInvokeAssert.True(Unsafe.IsNullRef(ref MemoryMarshal.GetReference(chars)));
+	}
+	[Fact]
 	public void CharTest()
 	{
 		fixed (Char* sourcePtr = &MemoryMarshal.GetReference(GetUnsafeReadOnlySpanFromNullTerminatedTest.CharSpan))

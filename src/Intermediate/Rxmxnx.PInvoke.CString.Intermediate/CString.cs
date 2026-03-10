@@ -25,16 +25,21 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// Represents an empty UTF-8 string. This field is read-only.
 	/// </summary>
 	/// <remarks>This instance is a UTF-8 literal.</remarks>
-	public static readonly CString Empty = new(ValueRegion<Byte>.Create(AotInfo.EmptyUt8Text), true, true, 0);
+	public static readonly CString Empty = new(ValueRegion<Byte>.Create(TrimInfo.EmptyUt8Text), true, true, 0);
 	/// <summary>
 	/// Represents a null-pointer UTF-8 string. This field is read-only.
 	/// </summary>
 	public static readonly CString Zero = new(IntPtr.Zero, 0, true);
 	/// <inheritdoc cref="Environment.NewLine"/>
 	// ReSharper disable once MemberCanBePrivate.Global
-	public static readonly CString NewLine = SystemInfo.IsWindows ?
-		new(ValueRegion<Byte>.Create(AotInfo.WindowsNewLine), true, true, 2) :
-		new(ValueRegion<Byte>.Create(AotInfo.NonWindowsNewLine), true, true, 1);
+	public static readonly CString NewLine =
+#if NET5_0_OR_GREATER
+		OperatingSystem.IsWindows() ?
+#else
+		RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
+#endif
+			new(ValueRegion<Byte>.Create(TrimInfo.WindowsNewLine), true, true, 2) :
+			new(ValueRegion<Byte>.Create(TrimInfo.NonWindowsNewLine), true, true, 1);
 
 	/// <summary>
 	/// Gets a value indicating whether the text in the current <see cref="CString"/> instance
@@ -456,7 +461,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// </returns>
 	public static CStringSequence? GetAssociatedSequence(CString? value, out Int32 index)
 	{
-		if (!CString.IsNullOrEmpty(value) && value._data is IWrapper.IBase<SequenceItemState> state)
+		if (!CString.IsNullOrEmpty(value) && value._data is IWrapper.IBase<BufferItemState<CStringSequence>> state)
 			return state.Value.GetSequence(out index);
 
 		index = -1;

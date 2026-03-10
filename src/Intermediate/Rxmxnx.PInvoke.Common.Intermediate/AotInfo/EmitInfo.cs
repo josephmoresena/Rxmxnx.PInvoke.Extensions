@@ -1,11 +1,6 @@
-using System.Reflection.Emit;
-
-using TypeBuilder = System.Reflection.Emit.TypeBuilder;
+using DynamicMethod = System.Reflection.Emit.DynamicMethod;
 using OpCodes = System.Reflection.Emit.OpCodes;
-using MethodBuilder = System.Reflection.Emit.MethodBuilder;
 using ILGenerator = System.Reflection.Emit.ILGenerator;
-using AssemblyBuilder = System.Reflection.Emit.AssemblyBuilder;
-using AssemblyBuilderAccess = System.Reflection.Emit.AssemblyBuilderAccess;
 
 namespace Rxmxnx.PInvoke;
 
@@ -29,6 +24,20 @@ public static partial class AotInfo
 		public static Boolean IsEmitAllowed => EmitInfo.isEmitAllowed ??= EmitInfo.EmitCode();
 
 		/// <summary>
+		/// Indicates whether <paramref name="methodBase"/> is dynamic.
+		/// </summary>
+		/// <param name="methodBase">A <see cref="MethodBase"/> instance.</param>
+		/// <returns>
+		/// <see langword="true"/> if <paramref name="methodBase"/> is a dynamic method or its assembly is dynamic;
+		/// otherwise <see langword="false"/>.
+		/// </returns>
+#if !PACKAGE
+		[ExcludeFromCodeCoverage]
+#endif
+		public static Boolean IsDynamicMethod(MethodBase methodBase)
+			=> methodBase is DynamicMethod || methodBase.Module.Assembly.IsDynamic;
+
+		/// <summary>
 		/// Indicates whether <see cref="System.Reflection.Emit"/> namespace is supported in the current runtime.
 		/// </summary>
 		/// <returns>
@@ -37,6 +46,7 @@ public static partial class AotInfo
 		/// </returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		[UnconditionalSuppressMessage("AOT", "IL3050")]
+		[UnconditionalSuppressMessage("Trimming", "IL2026")]
 #if !PACKAGE
 		[SuppressMessage("ReSharper", "HeapView.BoxingAllocation")]
 #endif
@@ -44,41 +54,12 @@ public static partial class AotInfo
 		{
 			try
 			{
-				TypeBuilder typeBuilder = AssemblyBuilder
-				                          .DefineDynamicAssembly(new($"MyDynamicAssembly_{Guid.NewGuid():N}"),
-				                                                 AssemblyBuilderAccess.Run)
-				                          .DefineDynamicModule($"MyDynamicModule_{Guid.NewGuid():N}")
-				                          .DefineType($"MyDynamicModule_{Guid.NewGuid():N}", TypeAttributes.NotPublic);
-				MethodBuilder methodBuilder = typeBuilder.DefineMethod($"MyDynamicMethod_{Guid.NewGuid():N}",
-				                                                       MethodAttributes.Public, typeof(Object),
-				                                                       [typeof(Int32),]);
-				ILGenerator ilGenerator = methodBuilder.GetILGenerator();
-				Int32 input = typeBuilder.GetHashCode() - methodBuilder.GetHashCode() + ilGenerator.GetHashCode();
-				LocalBuilder localSum = ilGenerator.DeclareLocal(typeof(Int32));
-				Label elseLabel = ilGenerator.DefineLabel();
-
-				ilGenerator.Emit(OpCodes.Ldarg_1);
-				ilGenerator.Emit(OpCodes.Ldc_I4_1);
-				ilGenerator.Emit(OpCodes.Add);
-				ilGenerator.Emit(OpCodes.Stloc, localSum);
-
-				ilGenerator.Emit(OpCodes.Ldloc, localSum);
-				ilGenerator.Emit(OpCodes.Ldc_I4_0);
-				ilGenerator.Emit(OpCodes.Ble_S, elseLabel);
-
-				ilGenerator.Emit(OpCodes.Ldarg_0);
-				ilGenerator.Emit(OpCodes.Ret);
-
-				ilGenerator.MarkLabel(elseLabel);
-				ilGenerator.Emit(OpCodes.Ldarg_0);
-				ilGenerator.Emit(OpCodes.Call, typeof(Object).GetMethod("GetType")!);
-				ilGenerator.Emit(OpCodes.Ret);
-
-				return typeBuilder.CreateType() is { } type && Activator.CreateInstance(type) is { } obj &&
-					type.Assembly.IsDynamic &&
-					// ReSharper disable once HeapView.BoxingAllocation
-					type.GetMethod(methodBuilder.Name)?.Invoke(obj, [input,]) is { } result &&
-					(input + 1 > 0 ? obj.Equals(result) : type.Equals(result));
+				DynamicMethod method = new($"MyDynamicMethod_{Guid.NewGuid():N}", typeof(MethodBase), Type.EmptyTypes,
+				                           typeof(Object).Module, true);
+				ILGenerator il = method.GetILGenerator();
+				il.Emit(OpCodes.Call, typeof(MethodBase).GetMethod(nameof(MethodBase.GetCurrentMethod))!);
+				il.Emit(OpCodes.Ret);
+				return method.Invoke(null, []) is not null;
 			}
 			catch (Exception)
 			{

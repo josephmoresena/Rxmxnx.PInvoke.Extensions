@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.ApplicationTest.Util;
 
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public readonly struct ExecuteState
 {
 	public String ExecutablePath { get; init; }
@@ -9,7 +10,7 @@ public readonly struct ExecuteState
 	public IExecutionNotifier? Notifier { get; init; }
 }
 
-public readonly struct ExecuteState<TState>
+public readonly record struct ExecuteState<TState>
 {
 	public String ExecutablePath { get; init; }
 	public String? WorkingDirectory { get; init; }

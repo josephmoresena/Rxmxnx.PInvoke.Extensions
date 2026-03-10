@@ -10,4 +10,7 @@ public sealed record MonoLauncher
 	public String ExecutablePath { get; init; } = default!;
 	public String MonoCilStripAssemblyPath { get; init; } = default!;
 	public String NativeRuntimePath { get; init; } = default!;
+	public String IncludeRuntimePath { get; init; } = default!;
+	public String StaticRuntimePath { get; init; } = default!;
+	public String? PkgConfigPath { get; init; }
 }

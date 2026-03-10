@@ -15,7 +15,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Rxmxnx.PInvoke.Extensions.IlPatcher\Rxmxnx.PInvoke.Extensions.IlPatcher.csproj">
+        <ProjectReference Include="$(MSBuildThisFileDirectory)Rxmxnx.PInvoke.Extensions.IlPatcher\Rxmxnx.PInvoke.Extensions.IlPatcher.csproj">
             <PrivateAssets>all</PrivateAssets>
             <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
             <SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>

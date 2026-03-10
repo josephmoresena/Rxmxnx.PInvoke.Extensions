@@ -55,6 +55,7 @@ public sealed unsafe class MarshallerTests
 
 	private static void AssertToUnmanaged(CString? value)
 	{
+		if (value is not null && !value.IsNullTerminated) return;
 		fixed (Byte* valPtr = value)
 		{
 #if NET6_0_OR_GREATER

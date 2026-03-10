@@ -4,16 +4,20 @@
         <IsNativeAotWebAssembly>$(RuntimeIdentifier.ToLower().EndsWith('-wasm'))</IsNativeAotWebAssembly>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(PublishAotLegacy)' == 'true'">
+        <EnsureNETCoreAppRuntime>false</EnsureNETCoreAppRuntime>
+        <EmitLegacyAssetsFileItems>true</EmitLegacyAssetsFileItems>
+        <PublishTrimmed>true</PublishTrimmed>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(IsNativeAotWebAssembly)' == 'true'">
         <MSBuildEnableWorkloadResolver>false</MSBuildEnableWorkloadResolver>
         <UseAppHost>false</UseAppHost>
         <DefineConstants>$(DefineConstants);WEB_ASSEMBLY</DefineConstants>
     </PropertyGroup>
-
-    <PropertyGroup Condition="'$(PublishAot)' == 'true' Or '$(IsNativeAotWebAssembly)' == 'true'">
+    <PropertyGroup Condition="'$(PublishAot)' == 'true' Or '$(PublishAotLegacy)' == 'true' Or '$(IsNativeAotWebAssembly)' == 'true'">
         <DefineConstants>$(DefineConstants);NATIVE_AOT</DefineConstants>
         <DefineConstants Condition="'$(IlcDisableReflection)' == 'true'">$(DefineConstants);REFLECTION_FREE</DefineConstants>
-        <SelfContained Condition="'$(TargetFramework)' == 'net7.0' OR '$(TargetFramework)' == 'net6.0' ">true</SelfContained>
+        <SelfContained Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">true</SelfContained>
         <StripSymbols>true</StripSymbols>
         <IlcGenerateMetadataLog>true</IlcGenerateMetadataLog>
         <IlcGenerateMstatFile>true</IlcGenerateMstatFile>
@@ -40,7 +44,7 @@
     <ItemGroup Condition="'$(IsNativeAotWebAssembly)' == 'true'">
         <PackageReference Include="Microsoft.DotNet.ILCompiler.LLVM" Version="10.0.0-*"/>
         <PackageReference Include="runtime.$(NETCoreSdkPortableRuntimeIdentifier).Microsoft.DotNet.ILCompiler.LLVM" Version="10.0.0-*"/>
-        <LinkerArg Include="-sEXPORTED_RUNTIME_METHODS=[HEAPU8,HEAPU32,HEAP32,cwrap]"/>
+        <LinkerArg Include="-sEXPORTED_RUNTIME_METHODS=[HEAPU8,HEAPU32,HEAP32,cwrap,stringToNewUTF8]"/>
         <LinkerArg Include="-sASSERTIONS"/>
     </ItemGroup>
 
@@ -61,7 +65,7 @@
         <KnownILCompilerPack Include="Microsoft.DotNet.ILCompiler"
                              TargetFramework="net6.0"
                              ILCompilerRuntimeIdentifiers="linux-arm64;linux-musl-arm64;linux-musl-x64;linux-x64;win-arm64;win-x64;osx-arm64;osx-x64"
-                             ILCompilerPackVersion="8.0.22"
+                             ILCompilerPackVersion="8.0.24"
                              ILCompilerPackNamePattern="runtime.**RID**.Microsoft.DotNet.ILCompiler"
                              Condition="$([MSBuild]::IsOSPlatform('OSX')) And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'"/>
     </ItemGroup>
@@ -76,9 +80,13 @@
         <KnownILCompilerPack Include="Microsoft.DotNet.ILCompiler"
                              TargetFramework="net7.0"
                              ILCompilerRuntimeIdentifiers="linux-arm64;linux-musl-arm64;linux-musl-x64;linux-x64;win-arm64;win-x64;osx-arm64;osx-x64"
-                             ILCompilerPackVersion="8.0.22"
+                             ILCompilerPackVersion="8.0.24"
                              ILCompilerPackNamePattern="runtime.**RID**.Microsoft.DotNet.ILCompiler"
                              Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(PublishAotLegacy)' == 'true'">
+        <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="7.0.0-alpha.1.22074.1"/>
     </ItemGroup>
 
 </Project>

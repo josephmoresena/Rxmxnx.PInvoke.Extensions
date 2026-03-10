@@ -13,6 +13,24 @@ internal partial class MemoryInspector
 		private static unsafe class SystemB
 		{
 			/// <summary>
+			/// Indicates whether the current process is running under Rosetta.
+			/// </summary>
+			/// <returns>
+			/// <see langword="true"/> if current process is running under Rosetta; otherwise, <see langword="false"/>.
+			/// </returns>
+			public static Boolean IsRunningUnderRosetta()
+			{
+				ReadOnlySpan<Byte> ctlName = "sysctl.proc_translated"u8;
+				Int32 isTranslated = 0;
+				fixed (Byte* name = &MemoryMarshal.GetReference(ctlName))
+				{
+					UIntPtr length = (UIntPtr)sizeof(Int32);
+					Int32 result = SystemB.GetSystemInfo(name, &isTranslated, ref length, default, default);
+					SystemB.ValidateResult(result);
+					return result != -1 && isTranslated == 1;
+				}
+			}
+			/// <summary>
 			/// Validates <paramref name="result"/> value.
 			/// </summary>
 			/// <param name="result">Resulting value.</param>
@@ -38,6 +56,9 @@ internal partial class MemoryInspector
 
 			[DllImport("libSystem.B.dylib", EntryPoint = "__error", SetLastError = false)]
 			private static extern Int32* GetErrorPointer();
+			[DllImport("libSystem.B.dylib", EntryPoint = "sysctlbyname", SetLastError = false)]
+			private static extern Int32 GetSystemInfo(Byte* name, void* valueBuffer, ref UIntPtr valueLength,
+				void* newValueBuffer, UIntPtr newValueLength);
 #pragma warning restore SYSLIB1054
 		}
 	}

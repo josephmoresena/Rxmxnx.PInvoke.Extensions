@@ -1,9 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="..\PackageReference.props"/>
-    <Import Condition="'$(MSBuildRuntimeType)' != 'Mono'" Project="..\DotnetCoreApp.props"/>
-    <Import Condition="'$(MSBuildRuntimeType)' == 'Mono'" Project="..\MonoApp.props"/>
-
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <LangVersion Condition="'$(MSBuildVersion)' &lt; '16.8.0'">8.0</LangVersion>
@@ -11,11 +7,19 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>disable</ImplicitUsings>
         <CheckEolTargetFramework>false</CheckEolTargetFramework>
-        <AssemblyName Condition="'$(DisableBufferAutoComposition)' == 'True'">$(AssemblyName).NoBufferComposition</AssemblyName>
-        <AssemblyName Condition="'$(InvariantGlobalization)' == 'True'">$(AssemblyName).Invariant</AssemblyName>
         <Deterministic>True</Deterministic>
         <Optimize>true</Optimize>
         <DefineConstants Condition="'$(LangVersion)' == '9.0'">$(DefineConstants);CSHARP9_0</DefineConstants>
+        <RequiredFramework>net5.0</RequiredFramework>
+    </PropertyGroup>
+
+    <Import Project="..\..\PackageReference.props"/>
+    <Import Condition="'$(MSBuildRuntimeType)' != 'Mono'" Project="..\DotnetCoreApp.props"/>
+    <Import Condition="'$(MSBuildRuntimeType)' == 'Mono'" Project="..\MonoApp.props"/>
+
+    <PropertyGroup>
+        <AssemblyName Condition="'$(DisableBufferAutoComposition)' == 'True'">$(AssemblyName).NoBufferComposition</AssemblyName>
+        <AssemblyName Condition="'$(InvariantGlobalization)' == 'True'">$(AssemblyName).Invariant</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>

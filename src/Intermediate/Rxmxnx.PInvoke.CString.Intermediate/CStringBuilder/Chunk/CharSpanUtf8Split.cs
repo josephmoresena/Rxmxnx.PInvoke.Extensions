@@ -7,16 +7,22 @@ public partial class CStringBuilder
 		/// <summary>
 		/// Structure containing metadata required to allocate UTF-8 chunks from a char span.
 		/// </summary>
+		[Preserve(AllMembers = true, Conditional = true)]
 		private readonly ref struct CharSpanUtf8Split
 		{
+			/// <inheritdoc cref="CharSpanUtf8Split.Left"/>
+			private readonly ReadOnlySpan<Char> _left;
+			/// <inheritdoc cref="CharSpanUtf8Split.Right"/>
+			private readonly ReadOnlySpan<Char> _right;
+
 			/// <summary>
 			/// Left char span.
 			/// </summary>
-			public ReadOnlySpan<Char> Left { get; }
+			public ReadOnlySpan<Char> Left => this._left; // Required backing field for Mono AOT.
 			/// <summary>
 			/// Right char span.
 			/// </summary>
-			public ReadOnlySpan<Char> Right { get; }
+			public ReadOnlySpan<Char> Right => this._right; // Required backing field for Mono AOT.
 
 			/// <summary>
 			/// Constructor.
@@ -41,8 +47,8 @@ public partial class CStringBuilder
 					leftCharCount += charsConsumed;
 				}
 
-				this.Left = chars[..leftCharCount];
-				this.Right = chars[leftCharCount..];
+				this._left = chars[..leftCharCount];
+				this._right = chars[leftCharCount..];
 			}
 
 			/// <summary>

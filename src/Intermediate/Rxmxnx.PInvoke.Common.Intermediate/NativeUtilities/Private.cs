@@ -61,4 +61,12 @@ public unsafe partial class NativeUtilities
 #pragma warning restore CS8500
 			action(span, arg);
 	}
+	/// <inheritdoc cref="Delegate.GetInvocationList()"/>
+	/// <returns>A read-only span of delegates in this delegate instance.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static ReadOnlySpan<Delegate> GetInvocationSpan(Delegate del)
+	{
+		Delegate[] array = del.GetInvocationList();
+		return MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(array), array.Length);
+	}
 }

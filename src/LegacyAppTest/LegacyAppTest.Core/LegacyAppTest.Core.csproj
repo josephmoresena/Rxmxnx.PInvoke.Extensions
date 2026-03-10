@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="..\..\MonoFacades\Rxmxnx.PInvoke.Json\Mono.ILLink.Descriptors.xml">
+            <LogicalName>$(AssemblyName).xml</LogicalName>
+        </EmbeddedResource>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="..\..\MonoFacades\Rxmxnx.PInvoke.Json\CStringJsonConverter.cs">
+            <Link>CStringJsonConverter.cs</Link>
+        </Compile>
+        <Compile Include="..\..\MonoFacades\Rxmxnx.PInvoke.Json\CStringSequenceJsonConverter.cs">
+            <Link>CStringSequenceJsonConverter.cs</Link>
+        </Compile>
+        <Compile Include="..\..\ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\RuntimeHelper.cs">
+            <Link>RuntimeHelper.cs</Link>
+        </Compile>
+    </ItemGroup>
+    <ItemGroup>
+        <None Remove="..\.editorconfig"/>
+    </ItemGroup>
+    <Import Project="..\LegacyProject.props"/>
+
+</Project>

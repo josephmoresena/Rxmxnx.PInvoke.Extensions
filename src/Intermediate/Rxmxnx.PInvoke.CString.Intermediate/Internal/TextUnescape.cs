@@ -95,31 +95,21 @@ internal static class TextUnescape
 #endif
 	private static Int32 UnescapeUnicode(ref Span<Byte> escapedBuffer, ref Int32 escapeIndex)
 	{
-		Int32 stackConsumed = 0;
-		Byte[]? byteArray = default;
-		try
-		{
-			Char low = TextUnescape.GetUnicodeChar(escapedBuffer.Slice(escapeIndex + 2, 4));
-			Int32 baseLength = 6; // Length of "\uXXXX" sequence.
-			ReadOnlySpan<Byte> unescaped = escapedBuffer[(escapeIndex + baseLength)..];
-			Rune rune = TextUnescape.GetUnescapeRune(escapedBuffer, ref escapeIndex, low, ref baseLength);
+		Char low = TextUnescape.GetUnicodeChar(escapedBuffer.Slice(escapeIndex + 2, 4));
+		Int32 baseLength = 6; // Length of "\uXXXX" sequence.
+		ReadOnlySpan<Byte> unescaped = escapedBuffer[(escapeIndex + baseLength)..];
+		Rune rune = TextUnescape.GetUnescapeRune(escapedBuffer, ref escapeIndex, low, ref baseLength);
 #if NETCOREAPP
-			Int32 nBytes = rune.EncodeToUtf8(escapedBuffer[escapeIndex..]);
+		Int32 nBytes = rune.EncodeToUtf8(escapedBuffer[escapeIndex..]);
 #else
 			Int32 nBytes = RuneCompat.EncodeToUtf8(rune, escapedBuffer[escapeIndex..]);
 #endif
-			Int32 offset = escapeIndex + nBytes;
-			Int32 result = baseLength - nBytes;
+		Int32 offset = escapeIndex + nBytes;
+		Int32 result = baseLength - nBytes;
 
-			unescaped.CopyTo(escapedBuffer[offset..]);
-			escapedBuffer = escapedBuffer[..^result];
-			return result;
-		}
-		finally
-		{
-			StackAllocationHelper.ReturnArray(byteArray);
-			StackAllocationHelper.ReleaseStackBytes(stackConsumed);
-		}
+		unescaped.CopyTo(escapedBuffer[offset..]);
+		escapedBuffer = escapedBuffer[..^result];
+		return result;
 	}
 	/// <summary>
 	/// Retrieves the unescape rune from the buffer.

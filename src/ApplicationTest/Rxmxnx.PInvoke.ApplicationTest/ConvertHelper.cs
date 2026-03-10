@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 
-#elif !NETCOREAPP
+#elif !NETCOREAPP && !USE_SYSTEM_JSON
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -23,7 +23,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 	internal static class ConvertHelper
 	{
 		public static SerializableMessage<String> Convert(SerializableMessage<CString> value)
-#if !NETCOREAPP
+#if !NETCOREAPP && !USE_SYSTEM_JSON
 #if !CSHARP9_0
             => new SerializableMessage<String>
 #else
@@ -40,7 +40,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		}
 #endif
 		public static SerializableMessage<CString> Convert(SerializableMessage<String> value)
-#if !NETCOREAPP
+#if !NETCOREAPP && !USE_SYSTEM_JSON
 #if !CSHARP9_0
             => new SerializableMessage<CString> { Title = (CString?)value.Title, Message = (CString?)value.Message, };
 #else
@@ -55,7 +55,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 		public static String?[] Convert(CStringSequence sequence)
 		{
-#if NETCOREAPP
+#if NETCOREAPP || USE_SYSTEM_JSON
 			String serialized = JsonSerializer.Serialize(sequence, AppJsonSerializerContext.SerializerOptions);
 			return JsonSerializer.Deserialize<String?[]>(serialized, AppJsonSerializerContext.SerializerOptions)!;
 #else
@@ -72,7 +72,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 		}
 		public static CStringSequence Convert(params String?[] sequence)
-#if !NETCOREAPP
+#if !NETCOREAPP && !USE_SYSTEM_JSON
 #if !CSHARP9_0
             => new CStringSequence(sequence);
 #else

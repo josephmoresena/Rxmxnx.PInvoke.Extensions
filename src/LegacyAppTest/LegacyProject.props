@@ -1,0 +1,17 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <PropertyGroup>
+        <Nullable>enable</Nullable>
+        <DefineConstants>$(DefineConstants);CSHARP9_0;RELEASE_PACKAGE;XAMARIN</DefineConstants>
+        <LangVersion>9.0</LangVersion>
+        <Deterministic>True</Deterministic>
+    </PropertyGroup>
+
+    <Import Project="$(MSBuildThisFileDirectory)..\MonoFacades\System.Text.Json.Mono.props"/>
+    <ItemGroup>
+        <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2"/>
+        <Reference Include="Rxmxnx.PInvoke.Extensions">
+            <HintPath>$(MSBuildThisFileDirectory)..\..\package\Rxmxnx.PInvoke.Extensions\bin\Release\netstandard2.1\Rxmxnx.PInvoke.Extensions.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+</Project>

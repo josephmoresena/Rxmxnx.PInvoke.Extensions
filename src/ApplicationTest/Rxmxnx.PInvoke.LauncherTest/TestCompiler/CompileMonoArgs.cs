@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.ApplicationTest;
 
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public readonly struct CompileMonoArgs
 {
 	public String ProjectFile { get; init; }

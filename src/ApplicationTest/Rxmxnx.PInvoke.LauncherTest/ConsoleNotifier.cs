@@ -58,7 +58,7 @@ public sealed class ConsoleNotifier : IExecutionNotifier, IPlatformNotifier
 	void IPlatformNotifier.Initialization(OSPlatform platform, Architecture arch)
 		=> ConsoleNotifier.WriteColoredLine(ConsoleColor.Green, $"{platform} {arch} initialized.");
 
-	public void Begin(String url, Int64? total)
+	public static void Begin(String url, Int64? total)
 	{
 		if (!total.HasValue)
 		{
@@ -68,7 +68,7 @@ public sealed class ConsoleNotifier : IExecutionNotifier, IPlatformNotifier
 		Double value = ConsoleNotifier.GetValue(total.Value, out String unitName);
 		ConsoleNotifier.WriteColoredLine(ConsoleColor.Blue, $"Downloading... {url} [{value:0.##} {unitName}]");
 	}
-	public void Progress(String url, Int64? total, Int64 progress, ref Int32 cursorTop, ref Int32 textLength)
+	public static void Progress(String url, Int64? total, Int64 progress, ref Int32 cursorTop, ref Int32 textLength)
 	{
 		Double value;
 		String text;
@@ -100,11 +100,9 @@ public sealed class ConsoleNotifier : IExecutionNotifier, IPlatformNotifier
 		Console.WriteLine();
 		textLength = text.Length;
 	}
-
-	public void End(String url, Int64 total, String destinationPath)
+	public static void End(String url, Int64 total, String destinationPath)
 		=> ConsoleNotifier.WriteColoredLine(ConsoleColor.Green,
 		                                    $"Downloaded. {url} -> {destinationPath} [{ConsoleNotifier.GetValue(total, out String unitName):0.##} {unitName}]");
-
 	public static void Results(Dictionary<String, Int32> results)
 	{
 		Int32 maxKeyLength = results.Keys.Max(k => k.Length);
@@ -257,6 +255,8 @@ public sealed class ConsoleNotifier : IExecutionNotifier, IPlatformNotifier
 		Console.WriteLine(message);
 		Console.ResetColor();
 	}
+	[SuppressMessage("ReSharper", "HeapView.ClosureAllocation")]
+	[SuppressMessage("ReSharper", "HeapView.DelegateAllocation")]
 	private static CancellationToken CreateCancellationToken()
 	{
 		CancellationTokenSource cts = new();

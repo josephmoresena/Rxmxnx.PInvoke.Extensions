@@ -8,6 +8,7 @@ internal partial class MemoryInspector
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4487)]
 #endif
 		[StructLayout(LayoutKind.Sequential)]
+		[Preserve(AllMembers = true, Conditional = true)]
 		private unsafe struct MemoryInfo
 		{
 			public static readonly UIntPtr Size = (UIntPtr)sizeof(MemoryInfo);

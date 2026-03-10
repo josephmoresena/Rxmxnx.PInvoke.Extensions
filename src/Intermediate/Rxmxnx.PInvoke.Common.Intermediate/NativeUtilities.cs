@@ -325,6 +325,43 @@ public static unsafe partial class NativeUtilities
 		=> method is null ?
 			FixedDelegate<TDelegate>.EmptyDisposable :
 			new FixedDelegate<TDelegate>(method).ToDisposable(default);
+
+	/// <summary>
+	/// Determines whether all methods referenced by the specified <typeparamref name="TDelegate"/> delegate are backed
+	/// by statically compiled image code rather than dynamically generated runtime code.
+	/// </summary>
+	/// <typeparam name="TDelegate">The delegate type.</typeparam>
+	/// <param name="method">The delegate instance to evaluate.</param>
+	/// <returns>
+	/// <see langword="true"/> if all referenced methods are backed by image-compiled code; otherwise, <see langword="false"/>.
+	/// </returns>
+	/// <remarks>
+	/// This API is primarily intended for Mono-based runtimes.
+	/// Returns <see langword="false"/> if the delegate is <see langword="null"/>, if any referenced method is an open
+	/// generic method, or if the current platform does not support memory inspection.
+	/// In reflection-free runtimes, valid delegates are treated as image-backed.
+	/// </remarks>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public static Boolean IsImageMethod<TDelegate>(TDelegate? method) where TDelegate : Delegate
+	{
+		if (!MemoryInspector.IsSupported || method is null) return false;
+		if (AotInfo.IsReflectionDisabled) return true;
+		try
+		{
+			foreach (Delegate d in NativeUtilities.GetInvocationSpan(method))
+			{
+				if (!NativeUtilities.IsImageMethodUnsafe(d.Method))
+					return false;
+			}
+		}
+		catch (Exception)
+		{
+			return false;
+		}
+		return true;
+	}
 #if !PACKAGE || NETCOREAPP
 	/// <summary>
 	/// Provides a high-level API for loading a native library.

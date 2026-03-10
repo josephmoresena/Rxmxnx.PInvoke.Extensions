@@ -1,13 +1,5 @@
 ﻿namespace Rxmxnx.PInvoke.Tests.Internal;
 
-internal delegate String GetStringDelegate();
-#if NETCOREAPP
-internal delegate Span<Byte> GetByteSpanDelegate(Byte[] bytes);
-internal delegate Span<Guid> GetGuidSpanDelegate();
-#endif
-internal delegate void VoidDelegate();
-internal delegate void VoidObjectDelegate(Object obj);
-
 [ExcludeFromCodeCoverage]
 internal sealed record FixedDelegateTestStatus
 {

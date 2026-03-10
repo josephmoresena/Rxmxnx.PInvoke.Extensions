@@ -514,11 +514,43 @@ public static unsafe class PointerExtensions
 	/// </returns>
 	/// <remarks>
 	/// The reliability of the returned span depends on the lifetime and validity of the pointer.
-	/// If the memory containing the UTF-16 text is moved or deallocated, accessing the span can cause unexpected behavior
+	/// If the memory containing the UTF-8 text is moved or deallocated, accessing the span can cause unexpected behavior
 	/// or application crashes.
 	/// </remarks>
 	public static ReadOnlySpan<Byte> GetUnsafeReadOnlySpanFromNullTerminated(this ReadOnlyValPtr<Byte> char0)
 		=> MemoryMarshal.CreateReadOnlySpanFromNullTerminated(char0);
+
+	/// <summary>
+	/// Determines whether the specified method handle represents executable code that is backed by a statically
+	/// compiled image rather than dynamically generated runtime code.
+	/// </summary>
+	/// <param name="methodHandle">The method handle to evaluate.</param>
+	/// <returns>
+	/// <see langword="true"/> if the method is backed by image-compiled code; otherwise, <see langword="false"/>.
+	/// </returns>
+	/// <remarks>
+	/// This API is primarily intended for Mono-based runtimes.
+	/// Returns <see langword="false"/> for open generic methods and on platforms where memory inspection is not supported.
+	/// In reflection-free runtimes, valid method handles are treated as image-backed code.
+	/// </remarks>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public static Boolean IsImageCode(this RuntimeMethodHandle methodHandle)
+	{
+		if (!MemoryInspector.IsSupported || methodHandle == default) return false;
+		if (AotInfo.IsReflectionDisabled) return true;
+		try
+		{
+			if (MethodBase.GetMethodFromHandle(methodHandle) is not { } methodBase) return true;
+			if (methodBase.ContainsGenericParameters || AotInfo.IsDynamicCode(methodBase)) return false;
+			return AotInfo.IsImageMethodUnsafe(methodHandle);
+		}
+		catch (Exception)
+		{
+			return true;
+		}
+	}
 
 	/// <summary>
 	/// Generates a <see cref="String"/> instance from a <see cref="Char"/> pointer, interpreting the contents as UTF-16 text.

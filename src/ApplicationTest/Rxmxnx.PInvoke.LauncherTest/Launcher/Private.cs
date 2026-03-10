@@ -36,20 +36,33 @@ public partial class Launcher
 		String outputPath = assemblyFile.DirectoryName ?? String.Empty;
 		String result = await Launcher.RunMonoAot(monoLauncher.ExecutablePath, assemblyFile.Name, outputPath, false);
 
-		await File.WriteAllTextAsync(logPath, result);
+		await Utilities.SaveTextFile(logPath, result);
 		logPath = Path.Combine(outputDirectory, $"{assemblyFile.Name}.{monoLauncher.Architecture}.Mono.AOT.Hybrid.log");
 		result = await Launcher.RunMonoAot(monoLauncher.ExecutablePath, assemblyFile.Name, outputPath, true);
-		await File.WriteAllTextAsync(logPath, result);
+		await Utilities.SaveTextFile(logPath, result);
 		if (Utilities.ShowDiagnostics)
 			ConsoleNotifier.ShowDiskUsage();
 	}
-	private static async Task PackMonoApp(MonoLauncher monoLauncher, DirectoryInfo outputPath, FileInfo executableFile)
+	private static async Task PackMonoApp(MonoLauncher monoLauncher, ICppCompiler? cppCompiler, String? zLibPath,
+		DirectoryInfo outputPath, FileInfo executableFile, Boolean onlyMonoAot)
 	{
 		String applicationName = executableFile.Directory?.Name ?? executableFile.Name;
 		FileInfo? linkedExecutableFile =
 			await Launcher.LinkMonoApp(monoLauncher, outputPath, applicationName, executableFile);
-		if (linkedExecutableFile is not null)
+		if (linkedExecutableFile is null) return;
+
+		if (!onlyMonoAot)
+		{
 			await Launcher.MakeMonoBundle(monoLauncher, outputPath, applicationName, linkedExecutableFile);
+			Launcher.DeleteBundleTempFiles();
+		}
+		if (cppCompiler is not null && monoLauncher.Architecture != Architecture.X86)
+		{
+			Boolean isWindowApp = Launcher.IsWindowApp(linkedExecutableFile);
+			await Launcher.MakeMonoAotBundle(monoLauncher, cppCompiler, zLibPath, isWindowApp, outputPath,
+			                                 applicationName, linkedExecutableFile);
+			Launcher.DeleteBundleTempFiles();
+		}
 		if (Utilities.ShowDiagnostics)
 			ConsoleNotifier.ShowDiskUsage();
 	}
@@ -62,58 +75,8 @@ public partial class Launcher
 			outputPath.CreateSubdirectory($"{applicationName}.Link.{monoLauncher.Architecture}");
 		String linkResult = await Launcher.RunMonoLink(monoLauncher.LinkerPath, assemblyExecutableFile.FullName,
 		                                               linkOutputDirectory.FullName);
-		await File.WriteAllTextAsync(linkLog, linkResult);
+		await Utilities.SaveTextFile(linkLog, linkResult);
 		return linkOutputDirectory.GetFiles(assemblyExecutableFile.Name).FirstOrDefault();
-	}
-	private static async Task MakeMonoBundle(MonoLauncher monoLauncher, DirectoryInfo outputPath,
-		String applicationName, FileInfo linkedExecutableFile)
-	{
-		DirectoryInfo binaryOutputPath = outputPath.CreateSubdirectory($"{monoLauncher.Architecture}");
-		String bundleLog = Path.Combine(outputPath.FullName,
-		                                $"{applicationName}.{monoLauncher.Architecture}.Mono.Bundle.log");
-		String binaryExtension = OperatingSystem.IsWindows() ? ".exe" : "";
-		String complement =
-			$"{(!applicationName.Contains(".mono", StringComparison.InvariantCultureIgnoreCase) ? ".mono" : "")}";
-		String binaryName = $"{applicationName}{complement}{binaryExtension}";
-		String outputBinaryPath = Path.Combine(binaryOutputPath.FullName, binaryName);
-		ExecuteState<MonoBundleArgs> state = new()
-		{
-			ExecutablePath = monoLauncher.MakerPath,
-			ArgState = new()
-			{
-				AssemblyPathName = linkedExecutableFile.FullName,
-				MonoExecutablePath = monoLauncher.ExecutablePath,
-				StripAssemblyPath = monoLauncher.MonoCilStripAssemblyPath,
-				OutputBinaryPath = outputBinaryPath,
-				UseLlvm = false,
-			},
-			WorkingDirectory = linkedExecutableFile.DirectoryName ?? "",
-			AppendArgs = MonoBundleArgs.Make,
-			Notifier = ConsoleNotifier.Notifier,
-		};
-		String bundleResult = await Utilities.ExecuteWithOutput(state, ConsoleNotifier.CancellationToken);
-		await File.WriteAllTextAsync(bundleLog, bundleResult);
-
-		FileInfo nativeRuntime = new(monoLauncher.NativeRuntimePath);
-		state = state with
-		{
-			ArgState = state.ArgState with
-			{
-				UseLlvm = true,
-				OutputBinaryPath = Path.Combine(binaryOutputPath.FullName,
-				                                $"{applicationName}{complement}.llvm{binaryExtension}"),
-			},
-		};
-		bundleLog = Path.Combine(outputPath.FullName,
-		                         $"{applicationName}.{monoLauncher.Architecture}.Mono.Bundle.Llvm.log");
-		bundleResult = await Utilities.ExecuteWithOutput(state, ConsoleNotifier.CancellationToken);
-		await File.WriteAllTextAsync(bundleLog, bundleResult);
-
-		if (nativeRuntime.Exists && binaryOutputPath.GetFiles().Length > 0)
-			nativeRuntime.CopyTo(Path.Combine(binaryOutputPath.FullName, monoLauncher.NativeRuntimeName), true);
-
-		if (Utilities.ShowDiagnostics)
-			ConsoleNotifier.ShowDiskUsage();
 	}
 	private static async Task<Int32> RunMonoAppFile(String monoExecutable, String appFilePath, String workingDirectory)
 	{
@@ -132,15 +95,17 @@ public partial class Launcher
 	private static async Task<String> RunMonoAot(String monoExecutable, String assemblyName, String workingDirectory,
 		Boolean hybrid)
 	{
+		String outFile = Path.GetTempFileName();
 		ExecuteState<MonoAotArgs> state = new()
 		{
 			ExecutablePath = monoExecutable,
-			ArgState = new() { AssemblyPathName = assemblyName, Hybrid = hybrid, },
+			ArgState = new() { AssemblyPathName = assemblyName, Hybrid = hybrid, OutputFile = outFile, },
 			WorkingDirectory = workingDirectory,
 			AppendArgs = MonoAotArgs.Link,
 			Notifier = ConsoleNotifier.Notifier,
 		};
 		String result = await Utilities.ExecuteWithOutput(state, ConsoleNotifier.CancellationToken);
+		if (File.Exists(outFile)) File.Delete(outFile);
 		return result;
 	}
 	private static async Task<String> RunMonoLink(String linkerExecutable, String executableName,

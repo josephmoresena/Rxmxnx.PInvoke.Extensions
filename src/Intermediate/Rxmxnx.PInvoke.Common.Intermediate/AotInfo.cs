@@ -15,8 +15,9 @@ public static partial class AotInfo
 #if !NET6_0_OR_GREATER
 		!AotInfo.IsJitEnabled();
 #else
-		JitInfo.GetCompiledILBytes() == 0L && JitInfo.GetCompiledMethodCount() == 0 &&
-		(AotInfo.IsDesktopTrimmedPlatform() || !EmitInfo.IsEmitAllowed);
+		TrimInfo.IsMobileTrimmedXnu() || // iOS, tvOS, watchOS, macCatalyst
+		TrimInfo.ZeroIlBytes() && AotInfo.IsDesktopOrAndroid() || AotInfo.IsMonoAot() ||
+		!AotInfo.IsDesktopOrAndroid() && !EmitInfo.IsEmitAllowed;
 #endif
 
 	/// <summary>
@@ -35,7 +36,7 @@ public static partial class AotInfo
 			if (!AotInfo.IsNativeAot)
 				return false;
 #endif
-			return AotInfo.reflectionDisabled ??= !AotInfo.StringTypeNameContainsString();
+			return AotInfo.reflectionDisabled ??= !TrimInfo.StringTypeNameContainsString();
 		}
 	}
 	/// <summary>
@@ -46,7 +47,7 @@ public static partial class AotInfo
 		get
 		{
 #if NET6_0_OR_GREATER
-			if (AotInfo.IsNativeAot)
+			if (TrimInfo.ZeroIlBytes() && AotInfo.IsDesktopOrAndroid())
 				return false;
 #endif
 			return !AotInfo.IsReflectionDisabled && EmitInfo.IsEmitAllowed;
@@ -62,30 +63,30 @@ public static partial class AotInfo
 	public static Boolean IsPlatformTrimmed
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get
-		{
-#if NET5_0_OR_GREATER
-			return AotInfo.IsDesktopTrimmedPlatform() || AotInfo.IsMobileTrimmedPlatform() ||
-				AotInfo.IsWebTrimmedPlatform();
-#else
-			return false;
-#endif
-		}
+		get => TrimInfo.IsPlatformTrimmed();
 	}
 
+	/// <inheritdoc cref="EmitInfo.IsDynamicMethod(MethodBase)"/>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static Boolean IsDynamicCode(MethodBase methodBase) => EmitInfo.IsDynamicMethod(methodBase);
 	/// <summary>
-	/// Internal UTF-8 empty text.
+	/// Indicates whether the function pointer of <paramref name="methodHandle"/> references to an R/RX memory section.
 	/// </summary>
-	/// <returns>A read-only byte span of UTF-8 null-characters.</returns>
-	internal static ReadOnlySpan<Byte> EmptyUt8Text() => "\0\0\0"u8;
-	/// <summary>
-	/// Internal Windows New line UTF-8 sequence.
-	/// </summary>
-	/// <returns>A read-only byte span containing UTF-8 new line.</returns>
-	internal static ReadOnlySpan<Byte> WindowsNewLine() => "\r\n"u8;
-	/// <summary>
-	/// Internal non-Windows New line UTF-8 sequence.
-	/// </summary>
-	/// <returns>A read-only byte span containing UTF-8 new line.</returns>
-	internal static ReadOnlySpan<Byte> NonWindowsNewLine() => "\n"u8;
+	/// <param name="methodHandle">A <see langword="RuntimeMethodHandle"/> value.</param>
+	/// <returns>
+	/// <see langword="true"/> if the function pointer references to an R/RX memory section; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+	[ExcludeFromCodeCoverage]
+#endif
+	internal static unsafe Boolean IsImageMethodUnsafe(RuntimeMethodHandle methodHandle)
+	{
+		RuntimeHelpers.PrepareMethod(methodHandle);
+		return MemoryInspector.Instance.IsReadOnlyAddress(methodHandle.GetFunctionPointer().ToPointer());
+	}
 }

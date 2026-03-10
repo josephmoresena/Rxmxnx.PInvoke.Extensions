@@ -181,6 +181,75 @@ target frameworks, along with the type of support provided for each one.
 5. Value-type pointers support `ref struct` generics, but due to C# compiler restrictions, some methods must be
    implemented in IL.
 
+The specifications compatible with `Rxmxnx.PInvoke.Extensions` are:
+
+<details>
+<summary><strong>.NET</strong></summary>
+
+This package supports **.NET 5.0** and later through assemblies compiled for each target framework. However, backward
+compatibility with earlier frameworks is maintained when possible, taking into account potential feature limitations.
+
+`Rxmxnx.PInvoke.Extensions` automatically adapts its behavior to the different platforms supported by these
+specifications.
+
+Currently, functionality is guaranteed on the following runtimes:
+
+* **CoreCLR:** The default runtime for **.NET/.NET Core** desktop platforms.
+* **Mono VM:** The default runtime for mobile platforms and Blazor WebAssembly.
+
+</details>
+<details>
+<summary><strong>Unity</strong></summary>
+
+Through the assembly compiled for .NET Standard 2.1, `Rxmxnx.PInvoke.Extensions` can be used in Unity projects, adapting
+to the various versions of the internal Mono runtime and supported platforms.
+
+The only requirement is the presence of version **6.0 or later** of the `System.Runtime.CompilerServices.Unsafe`
+assembly. Using the build compiled for **.NET Standard 2.0** is recommended.
+
+</details>
+<details>
+<summary><strong>Xamarin (Android, iOS, macOS)</strong></summary>
+
+Because `Rxmxnx.PInvoke.Extensions` is compiled for .NET Standard 2.1, it can be used in legacy Xamarin projects by
+adding it directly as a NuGet package reference. This will also reference version **5.0** of the
+`System.Runtime.CompilerServices.Unsafe` package (which contains assembly version 6.0).
+
+However, for new projects it is recommended to use the latest version of the package (**6.1.2**).
+
+To build Xamarin applications, **Visual Studio 2019** or **Visual Studio 2019 for Mac** is required.
+
+</details>
+<details>
+<summary><strong>.NET Core 3.x</strong></summary>
+
+This package supports **.NET Core 3.0** and **.NET Core 3.1** through assemblies compiled specifically for those
+frameworks. Backward compatibility with the **.NET Standard 2.1** assembly is also maintained, considering potential
+feature differences such as native support for `System.Text.Json` and native libraries.
+
+The **.NET Core 3.0** assembly uses a different version of `System.Text.Json` than **.NET Core 3.1**, which may result
+in slightly different behavior.
+
+</details>
+<details>
+<summary><strong>Blazor WebAssembly 3.2</strong></summary>
+
+Through the assembly compiled for **.NET Standard 2.1**, this package supports the initial version of **Blazor
+WebAssembly**, which ran on a WASM build of the **Mono runtime**.
+
+To use it, you only need to add the NuGet package reference (which will also reference version **5.0** of the
+`System.Runtime.CompilerServices.Unsafe` package). Additionally, the publishing process must be intercepted to ensure
+that the assembly from this package is used instead of the version bundled with the WASM runtime.
+</details>
+<details>
+<summary><strong>Mono Framework</strong></summary>
+
+Because it is compiled for **.NET Standard 2.1**, `Rxmxnx.PInvoke.Extensions` is compatible with the **Mono Framework**,
+using the **.NET Framework 4.5 facades** and the `System.Runtime.CompilerServices.Unsafe` package version 5.0 across
+the supported platforms.
+
+</details>
+
 ## AOT Support
 
 This package is AOT-friendly, all of its features support both Mono AOT and Native AOT, including full AOT and the
@@ -191,6 +260,110 @@ The only features that require reflection are:
 * Buffer preparation and auto-composition when no binary buffer is registered.
 * AOT detection when targeting **.NET 5.0 or earlier**.
 * AOT detection on **.NET 7.0 and later** when running on **Web or Mobile platforms** only.
+
+`Rxmxnx.PInvoke.Extensions` supports the following **AOT compilation models**, regardless of the framework used to build
+them:
+
+<details>
+<summary><strong>Mono AOT</strong></summary>
+
+`Rxmxnx.PInvoke.Extensions` supports **Mono AOT compilation** in **Full, Hybrid, and LLVM modes**, subject only to the
+level of support provided by the target platform and runtime.
+
+This includes Mono-based runtimes that support **.NET Standard 2.1**, such as **Mono Framework, Xamarin, Blazor
+WebAssembly 3.x, and Unity**, as well as newer Mono-based runtimes compatible with **.NET 5.0 or later**, used by modern
+mobile platforms and **Blazor WebAssembly on .NET**.
+
+</details>
+
+<details>
+<summary><strong>ReadyToRun (R2R)</strong></summary>
+
+`Rxmxnx.PInvoke.Extensions` supports **ReadyToRun (R2R)** hybrid AOT compilation based on **CoreCLR**, available since *
+*.NET Core 3.0** and still supported in current versions of .NET.
+
+</details>
+
+<details>
+<summary><strong>NativeAOT</strong></summary>
+
+`Rxmxnx.PInvoke.Extensions` supports **CoreCLR-based NativeAOT**, available since **.NET 7.0** and supported by current
+versions of .NET.
+
+One of the key design goals of `Rxmxnx.PInvoke.Extensions` is to rely on **minimal reflection**, making it well suited
+for NativeAOT scenarios. This approach helps avoid common issues such as **N+1 reflection patterns**, while most
+functionality is implemented using **statically compiled code**.
+
+The library can also adapt—though with limited functionality—to the legacy **reflection-free mode** supported by early
+NativeAOT implementations.
+
+</details>
+
+<details>
+<summary><strong>Unity IL2CPP</strong></summary>
+
+As mentioned previously, **Unity** supports `Rxmxnx.PInvoke.Extensions` through the assembly compiled for **.NET
+Standard 2.1**. Consequently, the library can also be used when **IL2CPP** compilation is enabled.
+
+However, because certain **multidimensional array flattening features** are statically included, **IL2CPP may generate
+invalid C++ identifiers for array indices greater than 17** if these members are not removed by the linker.
+
+The following .NET utility can be used to work around this issue. When executed with the directory containing the **C++
+source files generated by IL2CPP**, it adjusts the generated code. Afterward, recompiling the project in Unity without
+further modifications will reuse the corrected files and allow the compilation to succeed.
+
+```csharp
+if (args.Length != 1) 
+{
+    Console.WriteLine("Invalid IL2CPP source code folder.");
+    return;
+}
+Dictionary<Char, String> map = new()
+{
+	{ (Char)(18 + 'i'), "a" },
+	{ (Char)(19 + 'i'), "b" },
+	{ (Char)(20 + 'i'), "c" },
+	{ (Char)(21 + 'i'), "d" },
+	{ (Char)(22 + 'i'), "e" },
+	{ (Char)(23 + 'i'), "f" },
+	{ (Char)(24 + 'i'), "g" },
+	{ (Char)(25 + 'i'), "h" },
+	{ (Char)(26 + 'i'), "_i" },
+	{ (Char)(27 + 'i'), "_j" },
+	{ (Char)(28 + 'i'), "_k" },
+	{ (Char)(29 + 'i'), "_l" },
+	{ (Char)(30 + 'i'), "_m" },
+	{ (Char)(31 + 'i'), "_n" },
+};
+String[] replacements = ["l2cpp_array_size_t {0}", "{0}, {0}Bound", "{0}Bound + {0}",];
+foreach (String sourceCodeFile in new DirectoryInfo(args[0]).GetFiles("*.cpp").Select(f => f.FullName))
+{
+	String sourceCodeContent = await File.ReadAllTextAsync(sourceCodeFile);
+	Boolean modified = false;
+	foreach (Char invalidBound in map.Keys)
+	{
+		foreach (String replacement in replacements)
+		{
+			String o = String.Format(replacement, invalidBound);
+			if (!sourceCodeContent.Contains(o, StringComparison.OrdinalIgnoreCase)) continue;
+			String r = String.Format(replacement, map[invalidBound]);
+			sourceCodeContent = sourceCodeContent.Replace(o, r,  StringComparison.OrdinalIgnoreCase);
+			modified = true;
+		}
+	}
+	if (modified) 
+    {
+		await File.WriteAllTextAsync(sourceCodeFile, sourceCodeContent);
+        Console.WriteLine($"{sourceCodeFile} fixed.");
+    }
+}
+```
+
+</details>
+
+Since `Rxmxnx.PInvoke.Extensions`, across its different builds, uses **minimal reflection** in favor of **statically
+reachable code**, it is compatible with various **linking and trimming tools**, ranging from the classic **Mono Linker**
+to the modern **ILLink**.
 
 ## Visual Basic .NET Support
 
@@ -2576,34 +2749,33 @@ Represents a mutable string of UTF-8 encoded characters.
 
   Concatenates the string representations of the elements in the provided sequence, using the specified separator
   between each member.
--
 
-**Supported separator types include:** `CString`, and `ReadOnlySpan<Byte>`.
-**Supported types include:** `CString[]`, `ReadOnlySpan<CString>`, `CStringSequence`, `CStringSequence.Utf8View`,
-and `IEnumerable<CString>`.
-</details>
+  **Supported separator types include:** `CString`, and `ReadOnlySpan<Byte>`.
+  **Supported types include:** `CString[]`, `ReadOnlySpan<CString>`, `CStringSequence`, `CStringSequence.Utf8View`,
+  and `IEnumerable<CString>`.
+  </details>
 - <details>
   <summary>AppendLine()</summary>
 
-Appends the default line terminator to the end of the current `CStringBuilder` object.
+  Appends the default line terminator to the end of the current `CStringBuilder` object.
   </details>
 - <details>
   <summary>AppendLine(?)</summary>
 
-Appends the UTF-8 string representation of a specified parameter followed by the default line terminator to the end of
-the current `CStringBuilder` object.
+  Appends the UTF-8 string representation of a specified parameter followed by the default line terminator to the end of
+  the current `CStringBuilder` object.
 
-**Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySequence<Byte>`,
-`ReadOnlySpan<Char>`, `Byte[]` and `Char[]`.
+  **Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySequence<Byte>`,
+  `ReadOnlySpan<Char>`, `Byte[]` and `Char[]`.
   </details>
 - <details>
   <summary>Insert(Int32, ?)</summary>
 
-Inserts the UTF-8 string representation of a specified parameter into this instance at the specified character
-position.
+  Inserts the UTF-8 string representation of a specified parameter into this instance at the specified character
+  position.
 
-**Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySpan<Char>`, `Byte[]`, `Char[]` and
-standard numeric primitives.
+  **Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySpan<Char>`, `Byte[]`, `Char[]` and
+  standard numeric primitives.
   </details>
 
 </details>
@@ -2773,6 +2945,29 @@ Additional functionality for working with delegates.
 
   Creates an `IFixedMethod<TDelegate>.IDisposable` instance by marshalling the current `TDelegate` instance,
   ensuring a safe interop context.
+  </details>
+- <details>
+  <summary>IsImageMethod&lt;TDelegate&gt;(this TDelegate?)</summary>
+
+  Determines whether all methods referenced by the specified delegate are backed by statically compiled image code
+  rather than dynamically generated runtime code.
+
+  **Notes:**
+    - This API is primarily intended for Mono-based runtimes.
+    - Returns `false` if the delegate is `null` or any referenced method is an open generic method.
+    - On platforms without memory inspection support, detection may be unreliable and defaults to `false`.
+    - In reflection-free runtimes, valid delegates are assumed to refer to image-backed code.
+    - The entire invocation list of the delegate is evaluated; each delegate element represents a single method.
+  </details>
+- <details>
+  <summary>IsImageMethod(this MethodBase?)</summary>
+
+  Determines whether the specified reflected method is backed by statically compiled image code rather than dynamically
+  generated runtime code.
+
+  **Notes:**
+    - This API is primarily intended for Mono-based runtimes.
+    - Returns `false` for `null` or open generic methods, or on platforms without memory inspection support.
   </details>
 
 </details>
@@ -3167,6 +3362,14 @@ Set of extensions for basic operations with `IntPtr` and `UIntPtr` instances.
 
   Generates a read-only span for a UTF-8 null-terminated string from `ReadOnlyValPtr<Byte>`.
   </details>
+- <details>
+  <summary>IsImageCode(this RuntimeMethodHandle)</summary>
+  Determines whether the specified method handle represents executable code that is backed by a statically compiled image rather than dynamically generated runtime code.
+
+  **Notes:**
+    - This API is primarily intended for Mono-based runtimes.
+    - Returns `false` for open generic methods and on platforms that do not support memory inspection.
+  </details>
 
 </details>
 
@@ -3437,8 +3640,17 @@ Provides information about the Ahead-of-Time compilation.
   <summary>IsNativeAot</summary>
   Indicates whether the current runtime is NativeAOT.
 
-  **Note:** Starting with .NET 6.0, this property enables trimming by allowing the linker to remove unreachable code on
-  desktop platforms.
+  **Notes:**
+    - Starting with .NET 6.0, this property helps the linker remove unreachable code on desktop and mobile XNU
+      platforms.
+    - On mobile XNU platforms, this property is always considered `true`.
+    - On CoreCLR-based runtimes (including R2R, NativeAOT, and NativeAOT-LLVM), detection of AOT is reliable and does
+      not require memory inspection.
+    - On Mono-based runtimes, AOT detection may depend on when and where the property is first accessed, because Mono
+      AOT
+      does not compile the entire assembly at once and requires platform memory inspection to confirm AOT execution.
+    - On Blazor WebAssembly (Mono-based), it is generally not possible to distinguish AOT from non-AOT runtimes; this
+      property may only return `true` when IL generation is disallowed.
   </details>
 
 </details>
@@ -3949,6 +4161,19 @@ Set of utilities for exchange data within the P/Invoke context.
 
   Creates an `IFixedMethod<TDelegate>.IDisposable` instance by marshalling the current `TDelegate` instance,
   ensuring a safe interop context.
+  </details>
+- <details>
+  <summary>IsImageMethod&lt;TDelegate&gt;(TDelegate?)</summary>
+
+  Determines whether all methods referenced by the specified delegate are backed by statically compiled image code
+  rather than dynamically generated runtime code.
+
+  **Notes:**
+    - This API is primarily intended for Mono-based runtimes.
+    - Returns `false` if the delegate is `null` or any referenced method is an open generic method.
+    - On platforms without memory inspection support, detection may be unreliable and defaults to `false`.
+    - In reflection-free runtimes, valid delegates are assumed to refer to image-backed code.
+    - The entire invocation list of the delegate is evaluated; each delegate element represents a single method.
   </details>
 
 </details>

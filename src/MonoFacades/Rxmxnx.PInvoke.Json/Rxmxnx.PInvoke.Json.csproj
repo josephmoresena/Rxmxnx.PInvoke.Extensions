@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Nullable>enable</Nullable>
+        <CustomFacadesRequired>true</CustomFacadesRequired>
+    </PropertyGroup>
+
+    <Import Project="..\MonoFacade.props"/>
+    <Import Project="..\System.Text.Json.Mono.props"/>
+    <Import Project="..\..\PackageReference.props"/>
+
+    <PropertyGroup Condition="'$(UsePackage)' == 'true' And '$(PackageVersion)' != ''">
+        <Version>$(PackageVersion)</Version>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(UsePackage)' == 'true' And Exists('..\..\..\package\Rxmxnx.PInvoke.snk')">
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>..\..\..\package\Rxmxnx.PInvoke.snk</AssemblyOriginatorKeyFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Remove="Mono.ILLink.Descriptors.xml"/>
+        <EmbeddedResource Include="Mono.ILLink.Descriptors.xml">
+            <LogicalName>$(AssemblyName).xml</LogicalName>
+        </EmbeddedResource>
+    </ItemGroup>
+
+</Project>

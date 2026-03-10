@@ -7,12 +7,24 @@ internal partial class MemoryInspector
 		/// <summary>
 		/// This struct storages state for <c>/proc/self/maps</c> file reading.
 		/// </summary>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2292)]
+#endif
+		[Preserve(AllMembers = true, Conditional = true)]
 		private ref struct FileState
 		{
+			/// <inheritdoc cref="FileState.Buffer"/>
+			private Span<Byte> _buffer;
+
 			/// <summary>
 			/// Read buffer.
 			/// </summary>
-			public Span<Byte> Buffer { get; set; }
+			public Span<Byte> Buffer
+			{
+				// Required backing field for Mono AOT.
+				get => this._buffer;
+				set => this._buffer = value;
+			}
 			/// <summary>
 			/// Count of read bytes.
 			/// </summary>
@@ -34,7 +46,7 @@ internal partial class MemoryInspector
 			/// Constructor.
 			/// </summary>
 			/// <param name="buffer">Read buffer.</param>
-			public FileState(Span<Byte> buffer) => this.Buffer = buffer;
+			public FileState(Span<Byte> buffer) => this._buffer = buffer;
 		}
 	}
 }

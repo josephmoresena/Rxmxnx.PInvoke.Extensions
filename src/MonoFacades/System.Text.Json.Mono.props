@@ -1,0 +1,64 @@
+<Project>
+    <PropertyGroup>
+        <NoWarn>$(NoWarn);MSB3243;MSB3277</NoWarn>
+        <SystemTextJsonVersion>5.0.2</SystemTextJsonVersion>
+        <SystemTextEncodingsWebVersion>5.0.1</SystemTextEncodingsWebVersion>
+        <MicrosoftBclAsyncInterfacesVersion>10.0.3</MicrosoftBclAsyncInterfacesVersion>
+        <IsMDK Condition="'$(MSBuildRuntimeType)' == 'Mono' And '$(TargetFrameworkIdentifier)' == '.NETFramework'">True</IsMDK>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.Text.Json" Version="$(SystemTextJsonVersion)">
+            <PrivateAssets Condition="'$(IsMDK)' == 'True'">All</PrivateAssets>
+            <ExcludeAssets Condition="'$(IsMDK)' == 'True'">compile;runtime</ExcludeAssets>
+        </PackageReference>
+        <PackageReference Include="System.Text.Encodings.Web" Version="$(SystemTextEncodingsWebVersion)">
+            <PrivateAssets Condition="'$(IsMDK)' == 'True'">All</PrivateAssets>
+            <ExcludeAssets Condition="'$(IsMDK)' == 'True'">compile;runtime</ExcludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="$(MicrosoftBclAsyncInterfacesVersion)">
+            <PrivateAssets Condition="'$(IsMDK)' == 'True'">All</PrivateAssets>
+            <ExcludeAssets Condition="'$(IsMDK)' == 'True'">compile;runtime</ExcludeAssets>
+        </PackageReference>
+        <PackageReference Condition="'$(IsMDK)' == 'True'" Include="NETStandard.Library.Ref" Version="2.1.0">
+            <PrivateAssets>All</PrivateAssets>
+            <ExcludeAssets>compile;runtime</ExcludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(CustomFacadesRequired)' == 'true' Or '$(IsMDK)' == 'True'">
+        <ProjectReference Include="$(MSBuildThisFileDirectory)System.Buffers\System.Buffers.csproj"/>
+        <ProjectReference Include="$(MSBuildThisFileDirectory)System.Memory\System.Memory.csproj"/>
+        <ProjectReference Include="$(MSBuildThisFileDirectory)System.Threading.Tasks.Extensions\System.Threading.Tasks.Extensions.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(IsMDK)' == 'True'">
+        <Reference Include="System.Text.Json">
+            <HintPath>$(NuGetPackageRoot)system.text.json/$(SystemTextJsonVersion)/lib/netstandard2.0/System.Text.Json.dll</HintPath>
+            <Private Condition="'$(OutputType)' == 'Exe'">True</Private>
+            <Private Condition="'$(OutputType)' != 'Exe'">False</Private>
+        </Reference>
+        <Reference Include="System.Text.Encodings.Web">
+            <HintPath>$(NuGetPackageRoot)system.text.encodings.web/$(SystemTextEncodingsWebVersion)/lib/netstandard2.1/System.Text.Encodings.Web.dll</HintPath>
+            <Private Condition="'$(OutputType)' == 'Exe'">True</Private>
+            <Private Condition="'$(OutputType)' != 'Exe'">False</Private>
+        </Reference>
+        <Reference Include="Microsoft.Bcl.AsyncInterfaces">
+            <HintPath>$(NuGetPackageRoot)microsoft.bcl.asyncinterfaces/$(MicrosoftBclAsyncInterfacesVersion)/lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+            <Private Condition="'$(OutputType)' == 'Exe'">True</Private>
+            <Private Condition="'$(OutputType)' != 'Exe'">False</Private>
+        </Reference>
+        <Reference Include="System.Memory">
+            <HintPath>$(NuGetPackageRoot)netstandard.library.ref/2.1.0/ref/netstandard2.1/System.Memory.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="System.Buffers">
+            <HintPath>$(NuGetPackageRoot)netstandard.library.ref/2.1.0/ref/netstandard2.1/System.Buffers.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="System.Threading.Tasks.Extensions">
+            <HintPath>$(NuGetPackageRoot)netstandard.library.ref/2.1.0/ref/netstandard2.1/System.Threading.Tasks.Extensions.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+    </ItemGroup>
+</Project>

@@ -7,6 +7,7 @@ public partial class Launcher
 		private readonly Boolean _isArmHf;
 		private readonly MonoLauncher[]? _monoLaunchers;
 
+		[SuppressMessage("ReSharper", "HeapView.DelegateAllocation")]
 		private Linux(DirectoryInfo outputDirectory, Boolean useMono, out Task initialize) : base(
 			outputDirectory, useMono)
 		{
@@ -32,6 +33,7 @@ public partial class Launcher
 				MonoCilStripAssemblyPath = "/usr/lib/mono/4.5/mono-cil-strip.exe",
 				NativeRuntimePath = "/usr/lib/libmono-native.so",
 				ExecutablePath = "/usr/bin/mono",
+				StaticRuntimePath = "/usr/lib/libmonosgen-2.0.a",
 			};
 		}
 		private async Task<Int32> RunAppQemu(FileInfo appFile, Architecture arch, String executionName,
@@ -55,5 +57,15 @@ public partial class Launcher
 			=> arch == this.CurrentArch || (this._isArmHf && Linux.IsArmHf(arch));
 
 		private static Boolean IsArmHf(Architecture arch) => arch is Architecture.Arm or Architecture.Armv6;
+
+		private sealed class CppCompiler : UnixCppCompiler
+		{
+			public override String BeginWholeLink => "-Wl,--whole-archive";
+			public override String EndWholeLink => "-Wl,--no-whole-archive";
+			public override String ExportDynamicSymbols => "-Wl,--export-dynamic";
+
+			protected override String LocalRuntimePath => "'$ORIGIN'";
+			protected override IEnumerable<String> AdditionalLink() => ["-lrt",];
+		}
 	}
 }

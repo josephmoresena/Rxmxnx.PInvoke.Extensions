@@ -1,7 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="..\PackageReference.props"/>
-
     <PropertyGroup>
         <OutputType>Library</OutputType>
         <TargetFrameworks>$(DefaultFrameworks)</TargetFrameworks>
@@ -15,6 +13,8 @@
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
         <TrimMode>full</TrimMode>
     </PropertyGroup>
+
+    <Import Project="..\..\PackageReference.props"/>
 
     <ItemGroup>
         <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage"/>

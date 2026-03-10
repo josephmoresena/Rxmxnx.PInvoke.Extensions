@@ -1,21 +1,27 @@
 #if NETCOREAPP
+using CStringSequenceJsonConverter = Rxmxnx.PInvoke.CStringSequence.JsonConverter;
+
+#else
+using CStringSequenceJsonConverter = Rxmxnx.PInvoke.Json.CStringSequenceJsonConverter;
+#endif
+
 namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
 
 [ExcludeFromCodeCoverage]
 public sealed class SerializationTest
 {
 	private static readonly JsonSerializerOptions jsonOptions =
-		new() { Converters = { new CStringSequence.JsonConverter(), }, };
+		new() { Converters = { new CStringSequenceJsonConverter(), }, };
 
 	[Theory]
 	[InlineData(JsonIgnoreCondition.WhenWritingNull)]
 	[InlineData(JsonIgnoreCondition.WhenWritingDefault)]
 	[InlineData(JsonIgnoreCondition.Never)]
-	internal void EmptyTest(JsonIgnoreCondition condition)
+	public void EmptyTest(JsonIgnoreCondition condition)
 	{
 		JsonSerializerOptions options = new()
 		{
-			DefaultIgnoreCondition = condition, Converters = { new CStringSequence.JsonConverter(), },
+			DefaultIgnoreCondition = condition, Converters = { SerializationTest.jsonOptions.Converters.First(), },
 		};
 		Serializable<String?[], String> valueS = new();
 		Serializable<CStringSequence, CString> valueC = new();
@@ -23,10 +29,11 @@ public sealed class SerializationTest
 		String vsSerialized = JsonSerializer.Serialize(valueS, options);
 		String vcSerialized = JsonSerializer.Serialize(valueC, options);
 
-		Assert.Equal(vsSerialized, vcSerialized);
+		PInvokeAssert.Equal(vsSerialized, vcSerialized);
 
-		Assert.Null(JsonSerializer.Deserialize<Serializable<String[], String>>(vcSerialized)?.Values);
-		Assert.Null(JsonSerializer.Deserialize<Serializable<CStringSequence, CString>>(vsSerialized)?.Values);
+		PInvokeAssert.Null(JsonSerializer.Deserialize<Serializable<String[], String>>(vcSerialized, options)?.Values);
+		PInvokeAssert.Null(JsonSerializer.Deserialize<Serializable<CStringSequence, CString>>(vsSerialized, options)
+		                                 ?.Values);
 
 		valueS.Values = [default,];
 		valueC.Values = new(CString.Zero);
@@ -34,15 +41,17 @@ public sealed class SerializationTest
 		vsSerialized = JsonSerializer.Serialize(valueS, options);
 		vcSerialized = JsonSerializer.Serialize(valueC, options);
 
-		Assert.Equal(vsSerialized, vcSerialized);
-		Assert.Null(JsonSerializer.Deserialize<Serializable<String[], String>>(vcSerialized)?.Values?[0]);
-		Assert.True(JsonSerializer.Deserialize<Serializable<CStringSequence, CString>>(vsSerialized)?.Values?[0]
-		                          .IsZero);
+		PInvokeAssert.Equal(vsSerialized, vcSerialized);
+		PInvokeAssert.Null(
+			JsonSerializer.Deserialize<Serializable<String[], String>>(vcSerialized, options)?.Values?[0]);
+		PInvokeAssert.True(JsonSerializer.Deserialize<Serializable<CStringSequence, CString>>(vsSerialized, options)
+		                                 ?.Values?[0].IsZero);
 
 		valueC.Values = new(default(CString));
 
-		Assert.Equal(vsSerialized, vcSerialized);
-		Assert.Null(JsonSerializer.Deserialize<Serializable<String[], String>>(vcSerialized)?.Values?[0]);
+		PInvokeAssert.Equal(vsSerialized, vcSerialized);
+		PInvokeAssert.Null(
+			JsonSerializer.Deserialize<Serializable<String[], String>>(vcSerialized, options)?.Values?[0]);
 
 		valueS.Values = [];
 		valueC.Values = CStringSequence.Empty;
@@ -50,14 +59,15 @@ public sealed class SerializationTest
 		vsSerialized = JsonSerializer.Serialize(valueS, options);
 		vcSerialized = JsonSerializer.Serialize(valueC, options);
 
-		Assert.Equal(vsSerialized, vcSerialized);
+		PInvokeAssert.Equal(vsSerialized, vcSerialized);
 
-		Assert.Equal(0, JsonSerializer.Deserialize<Serializable<String[], String>>(vcSerialized)?.Values?.Length);
-		Assert.Equal(0, JsonSerializer.Deserialize<Serializable<CStringSequence, CString>>(vsSerialized)?.Values
-		                              ?.Count);
+		PInvokeAssert.Equal(0, JsonSerializer.Deserialize<Serializable<String[], String>>(vcSerialized, options)?.Values
+		                                     ?.Length);
+		PInvokeAssert.Equal(0, JsonSerializer.Deserialize<Serializable<CStringSequence, CString>>(vsSerialized, options)
+		                                     ?.Values?.Count);
 	}
 	[Fact]
-	internal void Test()
+	public void Test()
 	{
 		Serializable<String?[], String> valueS = new()
 		{
@@ -68,11 +78,15 @@ public sealed class SerializationTest
 		String vsSerialized = JsonSerializer.Serialize(valueS, SerializationTest.jsonOptions);
 		String vcSerialized = JsonSerializer.Serialize(valueC, SerializationTest.jsonOptions);
 
-		Assert.Equal(vsSerialized, vcSerialized);
+		PInvokeAssert.Equal(vsSerialized, vcSerialized);
 
-		Assert.Equal(valueS.Values, JsonSerializer.Deserialize<Serializable<String[], String>>(vcSerialized)?.Values);
-		Assert.Equal(valueC.Values,
-		             JsonSerializer.Deserialize<Serializable<CStringSequence, CString>>(vsSerialized)!.Values);
+		PInvokeAssert.Equal(valueS.Values,
+		                    JsonSerializer
+			                    .Deserialize<Serializable<String[], String>>(
+				                    vcSerialized, SerializationTest.jsonOptions)?.Values);
+		PInvokeAssert.Equal(valueC.Values,
+		                    JsonSerializer.Deserialize<Serializable<CStringSequence, CString>>(
+			                    vsSerialized, SerializationTest.jsonOptions)!.Values);
 	}
 
 	public sealed class Serializable<TEnumerable, TString> where TString : IEquatable<TString>, IEquatable<String>
@@ -81,4 +95,3 @@ public sealed class SerializationTest
 		public TEnumerable? Values { get; set; }
 	}
 }
-#endif

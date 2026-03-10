@@ -7,19 +7,20 @@ internal partial class MemoryInspector
 		/// <summary>
 		/// Memory boundary struct.
 		/// </summary>
+		[Preserve(AllMembers = true, Conditional = true)]
 		private protected readonly unsafe struct MemoryBoundary : IEquatable<MemoryBoundary>,
 			IComparable<MemoryBoundary>, IWrapper<UIntPtr>
 		{
 			/// <summary>
 			/// Internal value.
 			/// </summary>
+			public UIntPtr Value
+			{
+				get;
 #if NET5_0_OR_GREATER
-			public UIntPtr Value { get; private init; }
-#else
-			public readonly UIntPtr Value;
-
-			UIntPtr IWrapper<UIntPtr>.Value => this.Value;
+				private init;
 #endif
+			}
 
 #if NET5_0_OR_GREATER
 #else

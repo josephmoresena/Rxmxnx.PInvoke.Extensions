@@ -23,6 +23,8 @@ public partial class Launcher
 		private readonly MonoLauncher[] _monoLaunchers;
 
 		private String _runtimeIdentifier = "freebsd";
+
+		// ReSharper disable once ConvertToAutoPropertyWhenPossible
 		public override String RuntimeIdentifierPrefix => this._runtimeIdentifier;
 		public override Architecture[] Architectures => FreeBsd.currentArch;
 		public override ReadOnlySpan<MonoLauncher> MonoLaunchers => this._monoLaunchers;
@@ -42,9 +44,12 @@ public partial class Launcher
 				MonoCilStripAssemblyPath = "/usr/local/lib/mono/4.5/mono-cil-strip.exe",
 				NativeRuntimePath = "/usr/local/lib/libmono-native.so",
 				ExecutablePath = "/usr/local/bin/mono",
+				IncludeRuntimePath = "/usr/local/include/mono-2.0",
+				StaticRuntimePath = "/usr/local/lib/libmonosgen-2.0.a",
 			};
 			initialize = this.Initialize();
 		}
+		public override ICppCompiler GetCompiler(Architecture _) => new CppCompiler();
 
 		private async Task Initialize()
 		{
@@ -60,5 +65,16 @@ public partial class Launcher
 
 		public static FreeBsd Create(DirectoryInfo outputDirectory, Boolean useMono, out Task initTask)
 			=> new(outputDirectory, useMono, out initTask);
+
+		private sealed class CppCompiler : UnixCppCompiler
+		{
+			public override String BeginWholeLink => "-Wl,--whole-archive";
+			public override String EndWholeLink => "-Wl,--no-whole-archive";
+			public override String ExportDynamicSymbols => "-Wl,--export-dynamic";
+
+			protected override String LocalRuntimePath => "'$ORIGIN'";
+			protected override IEnumerable<String> AdditionalLink()
+				=> ["/usr/local/lib/libinotify.a", "-lrt", "-lexecinfo", "-lutil", "-lprocstat",];
+		}
 	}
 }

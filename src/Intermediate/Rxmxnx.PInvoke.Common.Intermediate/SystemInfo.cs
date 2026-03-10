@@ -62,8 +62,7 @@ public static partial class SystemInfo
 #if NET6_0_OR_GREATER
 				OperatingSystem.IsMacCatalyst()
 #else
-				!AotInfo.IsPlatformTrimmed &&
-				(SystemInfo.isMacCatalyst ??= SystemInfo.IsOsPlatform(SystemInfo.macCatalystPlatform))
+				(!TrimInfo.IsPlatformTrimmed() && RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
 #endif
 #else
 				SystemInfo.isMac
@@ -90,7 +89,8 @@ public static partial class SystemInfo
 	[SupportedOSPlatformGuard("netbsd")]
 #endif
 	public static Boolean IsNetBsd
-		=> !AotInfo.IsPlatformTrimmed && (SystemInfo.isNetBsd ??= SystemInfo.IsOsPlatform(SystemInfo.netBsdPlatform));
+		=> !TrimInfo.IsPlatformTrimmed() &&
+			(SystemInfo.isNetBsd ??= SystemInfo.IsOsPlatform(SystemInfo.netBsdPlatform));
 	/// <summary>
 	/// Indicates whether the current execution is running on NetBSD platform.
 	/// </summary>
@@ -99,7 +99,7 @@ public static partial class SystemInfo
 	[SupportedOSPlatformGuard("illumos")]
 #endif
 	public static Boolean IsSolaris
-		=> !AotInfo.IsPlatformTrimmed && (SystemInfo.isSolaris ??=
+		=> !TrimInfo.IsPlatformTrimmed() && (SystemInfo.isSolaris ??=
 			SystemInfo.IsOsPlatform(SystemInfo.solarisPlatform, SystemInfo.illumosPlatform));
 
 	/// <summary>
@@ -117,11 +117,11 @@ public static partial class SystemInfo
 		{
 			return
 #if NET5_0_OR_GREATER
-				OperatingSystem.IsBrowser() ||
+				OperatingSystem.IsBrowser() || RuntimeInformation.ProcessArchitecture == TrimInfo.WasmArch ||
 #if NET8_0_OR_GREATER
 				OperatingSystem.IsWasi()
 #else
-				!AotInfo.IsPlatformTrimmed && (SystemInfo.isWasi ??= SystemInfo.IsOsPlatform(SystemInfo.wPlatform))
+				(!TrimInfo.IsPlatformTrimmed() && (SystemInfo.isWasi ??= SystemInfo.IsOsPlatform(SystemInfo.wPlatform)))
 #endif
 #else
 				SystemInfo.isWebRuntime
@@ -133,8 +133,15 @@ public static partial class SystemInfo
 	/// Indicates whether the current execution is running on Mono Runtime.
 	/// </summary>
 	public static Boolean IsMonoRuntime
-		=> !AotInfo.IsReflectionDisabled &&
-			(!SystemInfo.IsWebRuntime ? MonoInfo.IsEmptyNonLiteral : AotInfo.IsCodeGenerationSupported);
+	{
+		get
+		{
+			if (MonoInfo.MonoRuntimeType is not null || MonoInfo.MonoAssemblyNameType is not null)
+				return true; // Mono.Framework, Xamarin.*, Unity or Microsoft.NETCore.App.Runtime.Mono.*
+
+			return AotInfo.IsReflectionDisabled && MonoInfo.IsEmptyNonLiteral; // Microsoft.NETCore.App (CLR)
+		}
+	}
 
 	/// <summary>
 	/// Indicates whether the current application is running on the specified platform.
