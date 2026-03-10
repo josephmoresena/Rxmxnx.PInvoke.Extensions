@@ -345,9 +345,9 @@ foreach (String sourceCodeFile in new DirectoryInfo(args[0]).GetFiles("*.cpp").S
 		foreach (String replacement in replacements)
 		{
 			String o = String.Format(replacement, invalidBound);
-			if (!sourceCodeContent.Contains(o, StringComparison.InvariantCulture)) continue;
+			if (!sourceCodeContent.Contains(o, StringComparison.OrdinalIgnoreCase)) continue;
 			String r = String.Format(replacement, map[invalidBound]);
-			sourceCodeContent = sourceCodeContent.Replace(o, r,  StringComparison.InvariantCulture);
+			sourceCodeContent = sourceCodeContent.Replace(o, r,  StringComparison.OrdinalIgnoreCase);
 			modified = true;
 		}
 	}
