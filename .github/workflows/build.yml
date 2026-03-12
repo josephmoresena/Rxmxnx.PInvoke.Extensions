@@ -112,20 +112,20 @@ jobs:
             /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
           rm -rf ./obj
       - name: Cache NuGet Packages
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: ./package/Nuget
           key: internal-nuget-${{ github.run_id }}
           enableCrossOsArchive: true
       - name: Cache Compiled ApplicationTest (Mono-Build)
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: |
             ./artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
           key: internal-monoapp-bin-${{ github.run_id }}
           enableCrossOsArchive: true
       - name: Cache Compiled Tests
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: |
             ./src/Test/**/bin/Release/netstandard2.1
