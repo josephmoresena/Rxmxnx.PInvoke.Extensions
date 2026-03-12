@@ -38,7 +38,7 @@ jobs:
           enableCrossOsArchive: true
       - name: Restore Compiled Tests
         if: inputs.run_tests == true
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: |
             ./src/Test/**/bin/Release/netstandard2.1
@@ -157,7 +157,7 @@ jobs:
           rm -rf artifacts/Mono/X64/Bundle;
       - name: Create Native Artifact Logs
         if: inputs.build_artifacts == true && inputs.package_version == ''
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: FreeBSD.13-Artifact-Logs
           path: |
@@ -178,7 +178,7 @@ jobs:
           ./ZipAndClean.ps1 -ZipName "FreeBSD.13-Assets-Logs.zip" -Patterns $logPatterns
       - name: Create Native Artifact
         if: inputs.build_artifacts == true && inputs.package_version == ''
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: FreeBSD.13-Artifact
           path: |
