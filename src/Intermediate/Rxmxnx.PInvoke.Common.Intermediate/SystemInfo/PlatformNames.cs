@@ -4,6 +4,7 @@ public static partial class SystemInfo
 {
 	private const String solarisPlatform = "SOLARIS";
 	private const String illumosPlatform = "ILLUMOS";
+	private const String sunosPlatform = "SUNOS";
 	private const String netBsdPlatform = "NETBSD";
 #if !NET8_0_OR_GREATER
 	private const String wPlatform = "WASI";
