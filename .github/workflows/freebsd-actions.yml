@@ -193,7 +193,7 @@ jobs:
         run: |
           $binPatterns = @(
             "./artifacts/*x64*NAOT*",
-            "./artifacts/*64*RFM*",
+            "./artifacts/*x64*RFM*",
             "./artifacts/Mono/X64/*"
           )
           ./ZipAndClean.ps1 -ZipName "FreeBSD.13-x64-Assets.zip" -Patterns $binPatterns
