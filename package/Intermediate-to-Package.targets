@@ -24,6 +24,7 @@
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <!-- Select the first target framework from the list -->
         <FirstTargetFramework>$(TargetFrameworks.Split(';')[0])</FirstTargetFramework>
+        <!-- Required modern .NET SDK building -->
         <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     </PropertyGroup>
     <!-- Trimming Options if targeting .NET 6.0 or later -->
