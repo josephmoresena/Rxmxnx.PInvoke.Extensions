@@ -112,7 +112,7 @@
         <!-- Generate final ILLink.Substitutions.xml file -->
         <WriteLinesToFile Condition="'$(ILLinkSubstitutionsText)' != ''"
                           File="$(IntermediateOutputPath)\ILLink\ILLink.Substitutions.xml"
-                          Lines="$([System.Text.RegularExpressions.Regex]::Replace('$(ILLinkSubstitutionsText)', '\s{0,}&lt;\/linker&gt;\s{0,}&lt;linker&gt;', ''))"
+                          Lines="$([System.Text.RegularExpressions.Regex]::Replace('$(ILLinkSubstitutionsText)', '\s{0,}\&lt;\/linker\&gt;\s{0,}(\&lt;\?xml[^&lt;&gt;]+\&gt;){0,1}\s{0,}\&lt;linker\&gt;', ''))"
                           Overwrite="true"/>
         <WriteLinesToFile Condition="'$(ILLinkSubstitutionsText)' == ''"
                           File="$(IntermediateOutputPath)\ILLink\ILLink.Substitutions.xml"
