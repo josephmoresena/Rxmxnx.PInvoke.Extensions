@@ -26,7 +26,7 @@ public sealed class BasicConcurrentTests : CStringBuilderTestsBase
 			CString? newCString = TestSet.GetCString(i, handle);
 
 			strBuild.Append(newString);
-			Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.Append(newCString)));
+			Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.ConcurrentAppend(newCString)));
 			builderLength += newCString?.Length ?? 0;
 			PInvokeAssert.Equal(builderLength, cstrBuild.ConcurrentLength());
 			PInvokeAssert.True(cstrBuild.ConcurrentToCString().AsSpan()
@@ -55,7 +55,7 @@ public sealed class BasicConcurrentTests : CStringBuilderTestsBase
 				default;
 
 			strBuild.Append(newString);
-			Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.Append(newByteSequence)));
+			Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.ConcurrentAppend(newByteSequence)));
 			builderLength += (Int32)newByteSequence.Length;
 			PInvokeAssert.Equal(builderLength, cstrBuild.ConcurrentLength());
 			PInvokeAssert.True(cstrBuild.ConcurrentToCString().AsSpan()
@@ -82,7 +82,7 @@ public sealed class BasicConcurrentTests : CStringBuilderTestsBase
 			Byte[]? bytes = TestSet.GetCString(i, handle)?.ToArray();
 
 			strBuild.Append(chars);
-			Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.Append(bytes)));
+			Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.ConcurrentAppend(bytes)));
 		}
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ConcurrentToString());
 	}
@@ -319,15 +319,15 @@ public sealed class BasicConcurrentTests : CStringBuilderTestsBase
 
 			if (TestSet.GetCString(i, handle) is not { } cstr)
 			{
-				Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.Append(default(Byte?))));
+				Assert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.ConcurrentAppend(default(Byte?))));
 				continue;
 			}
 
 			foreach (Byte u8 in cstr.AsSpan())
 			{
 				CStringBuilder result = PInvokeRandom.Shared.Next(0, 3) < 2 ?
-					cstrBuild.Append(u8) :
-					cstrBuild.Append((Byte?)u8);
+					cstrBuild.ConcurrentAppend(u8) :
+					cstrBuild.ConcurrentAppend((Byte?)u8);
 				Assert.True(Object.ReferenceEquals(cstrBuild, result));
 			}
 		}
@@ -345,7 +345,7 @@ public sealed class BasicConcurrentTests : CStringBuilderTestsBase
 		String? seed = TestSet.GetString(indices.OrderBy(_ => Guid.NewGuid()).FirstOrDefault(), true);
 
 		strBuild.Append(seed);
-		cstrBuild.Append(seed);
+		cstrBuild.ConcurrentAppend(seed);
 
 		foreach (Int32 i in indices)
 		{
@@ -378,7 +378,7 @@ public sealed class BasicConcurrentTests : CStringBuilderTestsBase
 		if (seed is null || seedLength < CStringBuilder.DefaultCapacity) return;
 
 		CStringBuilder cstrBuild = new((UInt16)(seedLength * 2));
-		cstrBuild.Append(seed).ConcurrentAppend(seed).ConcurrentAppend(seed);
+		cstrBuild.ConcurrentAppend(seed).ConcurrentAppend(seed).ConcurrentAppend(seed);
 
 		PInvokeAssert.Equal((seed + seed + seed).ToString(),
 		                    cstrBuild.GetDebugInfo(out Int32 length, out ChunkInfo[] chunks));
@@ -398,7 +398,7 @@ public sealed class BasicConcurrentTests : CStringBuilderTestsBase
 		PInvokeAssert.True(chunks[0].Size > chunks[0].Used);
 		PInvokeAssert.True(chunks[1].Size > chunks[1].Used);
 
-		cstrBuild.Append(seed);
+		cstrBuild.ConcurrentAppend(seed);
 		PInvokeAssert.Equal((seed + seed).ToString(), cstrBuild.GetDebugInfo(out length, out chunks));
 		PInvokeAssert.Equal(2 * seedLength, length);
 		PInvokeAssert.Equal(2, chunks.Length);
@@ -406,7 +406,7 @@ public sealed class BasicConcurrentTests : CStringBuilderTestsBase
 		PInvokeAssert.Equal(0, chunks[1].Used);
 		PInvokeAssert.Equal(chunks[0].Size, chunks[0].Used);
 
-		cstrBuild.Append(seed);
+		cstrBuild.ConcurrentAppend(seed);
 		PInvokeAssert.Equal((seed + seed + seed).ToString(), cstrBuild.GetDebugInfo(out length, out chunks));
 		PInvokeAssert.Equal(3 * seedLength, length);
 		PInvokeAssert.Equal(2, chunks.Length);

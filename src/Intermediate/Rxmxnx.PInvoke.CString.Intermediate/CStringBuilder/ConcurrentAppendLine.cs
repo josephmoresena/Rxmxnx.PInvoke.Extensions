@@ -13,8 +13,7 @@ public sealed partial class CStringBuilder
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	public CStringBuilder ConcurrentAppendLine(String? value)
-		=> String.IsNullOrEmpty(value) ? this : new Concurrent(this.GetLock(), this).AppendLine(value);
+	public CStringBuilder ConcurrentAppendLine(String? value) => new Concurrent(this.GetLock(), this).AppendLine(value);
 	/// <inheritdoc cref="CStringBuilder.AppendLine(Char[])"/>
 	/// <remarks>This operation is thread-safe.</remarks>
 #if !PACKAGE
