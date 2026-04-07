@@ -211,7 +211,7 @@ assembly. Using the build compiled for **.NET Standard 2.0** is recommended.
 <details>
 <summary><strong>Xamarin (Android, iOS, macOS)</strong></summary>
 
-Because `Rxmxnx.PInvoke.Extensions` is compiled for .NET Standard 2.1, it can be used in legacy Xamarin projects by
+Since `Rxmxnx.PInvoke.Extensions` is compiled for .NET Standard 2.1, it can be used in legacy Xamarin projects by
 adding it directly as a NuGet package reference. This will also reference version **5.0** of the
 `System.Runtime.CompilerServices.Unsafe` package (which contains assembly version 6.0).
 
@@ -244,7 +244,7 @@ that the assembly from this package is used instead of the version bundled with 
 <details>
 <summary><strong>Mono Framework</strong></summary>
 
-Because it is compiled for **.NET Standard 2.1**, `Rxmxnx.PInvoke.Extensions` is compatible with the **Mono Framework**,
+As it is compiled for **.NET Standard 2.1**, `Rxmxnx.PInvoke.Extensions` is compatible with the **Mono Framework**,
 using the **.NET Framework 4.5 facades** and the `System.Runtime.CompilerServices.Unsafe` package version 5.0 across
 the supported platforms.
 
@@ -305,7 +305,7 @@ NativeAOT implementations.
 As mentioned previously, **Unity** supports `Rxmxnx.PInvoke.Extensions` through the assembly compiled for **.NET
 Standard 2.1**. Consequently, the library can also be used when **IL2CPP** compilation is enabled.
 
-However, because certain **multidimensional array flattening features** are statically included, **IL2CPP may generate
+However, since certain **multidimensional array flattening features** are statically included, **IL2CPP may generate
 invalid C++ identifiers for array indices greater than 17** if these members are not removed by the linker.
 
 The following .NET utility can be used to work around this issue. When executed with the directory containing the **C++
@@ -3723,9 +3723,8 @@ Provides information about the Ahead-of-Time compilation.
     - On mobile XNU platforms, this property is always considered `true`.
     - On CoreCLR-based runtimes (including R2R, NativeAOT, and NativeAOT-LLVM), detection of AOT is reliable and does
       not require memory inspection.
-    - On Mono-based runtimes, AOT detection may depend on when and where the property is first accessed, because Mono
-      AOT
-      does not compile the entire assembly at once and requires platform memory inspection to confirm AOT execution.
+    - On Mono-based runtimes, AOT detection may depend on when and where the property is first accessed, since Mono
+      AOT does not compile the entire assembly at once and requires platform memory inspection to confirm AOT execution.
     - On Blazor WebAssembly (Mono-based), it is generally not possible to distinguish AOT from non-AOT runtimes; this
       property may only return `true` when IL generation is disallowed.
   </details>

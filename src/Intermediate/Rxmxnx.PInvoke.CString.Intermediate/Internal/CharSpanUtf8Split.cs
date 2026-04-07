@@ -6,19 +6,14 @@ namespace Rxmxnx.PInvoke.Internal;
 [Preserve(AllMembers = true, Conditional = true)]
 internal readonly ref struct CharSpanUtf8Split
 {
-	/// <inheritdoc cref="CharSpanUtf8Split.Left"/>
-	private readonly ReadOnlySpan<Char> _left;
-	/// <inheritdoc cref="CharSpanUtf8Split.Right"/>
-	private readonly ReadOnlySpan<Char> _right;
-
 	/// <summary>
 	/// Left char span.
 	/// </summary>
-	public ReadOnlySpan<Char> Left => this._left; // Required backing field for Mono AOT.
+	public ReadOnlySpan<Char> Left { get; }
 	/// <summary>
 	/// Right char span.
 	/// </summary>
-	public ReadOnlySpan<Char> Right => this._right; // Required backing field for Mono AOT.
+	public ReadOnlySpan<Char> Right { get; }
 
 	/// <summary>
 	/// Constructor.
@@ -30,8 +25,7 @@ internal readonly ref struct CharSpanUtf8Split
 	{
 		if (chars.IsEmpty) return;
 
-		Int32 leftCharCount =
-			CharSpanUtf8Split.GetInitialCharCount(chars.Length, charsByteCount, maxLeftByteCount);
+		Int32 leftCharCount = CharSpanUtf8Split.GetInitialCharCount(chars.Length, charsByteCount, maxLeftByteCount);
 		Int32 utf8Count = Encoding.UTF8.GetByteCount(chars[..leftCharCount]);
 		while (leftCharCount < chars.Length && utf8Count < maxLeftByteCount)
 		{
@@ -43,8 +37,8 @@ internal readonly ref struct CharSpanUtf8Split
 			leftCharCount += charsConsumed;
 		}
 
-		this._left = chars[..leftCharCount];
-		this._right = chars[leftCharCount..];
+		this.Left = chars[..leftCharCount];
+		this.Right = chars[leftCharCount..];
 	}
 
 	/// <summary>
