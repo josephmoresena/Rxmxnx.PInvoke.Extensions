@@ -7,18 +7,11 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="sequence">A UTF-8 text sequence to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
-	public CStringBuilder Append(CStringSequence sequence)
+	public CStringBuilder Append(CStringSequence? sequence)
 	{
 		CStringSequence.Utf8View view = new(sequence, false);
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
-		{
-			foreach (ReadOnlySpan<Byte> value in view)
-				this._chunk = this._chunk.Append(value);
-		}
+		foreach (ReadOnlySpan<Byte> value in view)
+			this._chunk = this._chunk.Append(value);
 		return this;
 	}
 	/// <summary>
@@ -41,12 +34,7 @@ public sealed partial class CStringBuilder
 	public CStringBuilder Append(ReadOnlySpan<Byte> value)
 	{
 		if (value.IsEmpty) return this;
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
-			this._chunk = this._chunk.Append(value);
+		this._chunk = this._chunk.Append(value);
 		return this;
 	}
 	/// <summary>
@@ -57,12 +45,7 @@ public sealed partial class CStringBuilder
 	public CStringBuilder Append(ReadOnlySequence<Byte> value)
 	{
 		if (value.IsEmpty) return this;
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
-			this._chunk = this._chunk.Append(value);
+		this._chunk = this._chunk.Append(value);
 		return this;
 	}
 	/// <summary>
@@ -94,12 +77,7 @@ public sealed partial class CStringBuilder
 	public CStringBuilder Append(ReadOnlySpan<Char> value)
 	{
 		if (value.IsEmpty) return this;
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
-			this._chunk = this._chunk.Append(value);
+		this._chunk = this._chunk.Append(value);
 		return this;
 	}
 	/// <summary>
@@ -109,12 +87,7 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	public CStringBuilder Append(Boolean value)
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
-			this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
+		this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 		return this;
 	}
 	/// <summary>
@@ -130,17 +103,12 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	public CStringBuilder Append(Char value)
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
 #if NET8_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf8(value);
+		this._chunk = this._chunk.AppendUtf8(value);
 #elif NET6_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf16(value);
+		this._chunk = this._chunk.AppendUtf16(value);
 #else
-			this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
+		this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 		return this;
 	}
@@ -157,17 +125,12 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	public CStringBuilder Append(Decimal value)
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
 #if NET8_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf8(value);
+		this._chunk = this._chunk.AppendUtf8(value);
 #elif NET6_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf16(value);
+		this._chunk = this._chunk.AppendUtf16(value);
 #else
-			this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
+		this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 		return this;
 	}
@@ -184,17 +147,12 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	public CStringBuilder Append(Double value)
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
 #if NET8_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf8(value);
+		this._chunk = this._chunk.AppendUtf8(value);
 #elif NET6_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf16(value);
+		this._chunk = this._chunk.AppendUtf16(value);
 #else
-			this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
+		this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 		return this;
 	}
@@ -211,17 +169,12 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	public CStringBuilder Append(Int16 value)
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
 #if NET8_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf8(value);
+		this._chunk = this._chunk.AppendUtf8(value);
 #elif NET6_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf16(value);
+		this._chunk = this._chunk.AppendUtf16(value);
 #else
-			this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
+		this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 		return this;
 	}
@@ -238,17 +191,12 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	public CStringBuilder Append(Int32 value)
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
 #if NET8_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf8(value);
+		this._chunk = this._chunk.AppendUtf8(value);
 #elif NET6_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf16(value);
+		this._chunk = this._chunk.AppendUtf16(value);
 #else
-			this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
+		this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 		return this;
 	}
@@ -265,17 +213,12 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	public CStringBuilder Append(Int64 value)
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
 #if NET8_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf8(value);
+		this._chunk = this._chunk.AppendUtf8(value);
 #elif NET6_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf16(value);
+		this._chunk = this._chunk.AppendUtf16(value);
 #else
-			this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
+		this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 		return this;
 	}
@@ -292,17 +235,12 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	public CStringBuilder Append(SByte value)
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
 #if NET8_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf8(value);
+		this._chunk = this._chunk.AppendUtf8(value);
 #elif NET6_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf16(value);
+		this._chunk = this._chunk.AppendUtf16(value);
 #else
-			this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
+		this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 		return this;
 	}
@@ -319,17 +257,12 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	public CStringBuilder Append(Single value)
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
 #if NET8_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf8(value);
+		this._chunk = this._chunk.AppendUtf8(value);
 #elif NET6_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf16(value);
+		this._chunk = this._chunk.AppendUtf16(value);
 #else
-			this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
+		this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 		return this;
 	}
@@ -346,17 +279,12 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	public CStringBuilder Append(UInt16 value)
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
 #if NET8_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf8(value);
+		this._chunk = this._chunk.AppendUtf8(value);
 #elif NET6_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf16(value);
+		this._chunk = this._chunk.AppendUtf16(value);
 #else
-			this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
+		this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 		return this;
 	}
@@ -373,17 +301,12 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	public CStringBuilder Append(UInt32 value)
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
 #if NET8_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf8(value);
+		this._chunk = this._chunk.AppendUtf8(value);
 #elif NET6_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf16(value);
+		this._chunk = this._chunk.AppendUtf16(value);
 #else
-			this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
+		this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 		return this;
 	}
@@ -400,17 +323,12 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	public CStringBuilder Append(UInt64 value)
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
 #if NET8_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf8(value);
+		this._chunk = this._chunk.AppendUtf8(value);
 #elif NET6_0_OR_GREATER
-			this._chunk = this._chunk.AppendUtf16(value);
+		this._chunk = this._chunk.AppendUtf16(value);
 #else
-			this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
+		this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
 		return this;
 	}
@@ -430,21 +348,14 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	public CStringBuilder Append(Byte value, Boolean asNumber = false)
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
 #if NET8_0_OR_GREATER
-			this._chunk = asNumber ? this._chunk.AppendUtf8(value) : this._chunk.Append([value,]);
+		this._chunk = asNumber ? this._chunk.AppendUtf8(value) : this._chunk.Append([value,]);
 #elif NET6_0_OR_GREATER
-			this._chunk = asNumber ? this._chunk.AppendUtf16(value) : this._chunk.Append([value,]);
+		this._chunk = asNumber ? this._chunk.AppendUtf16(value) : this._chunk.Append([value,]);
 #else
-		{
-			this._chunk = asNumber ?
-				this._chunk.Append(value.ToString(CultureInfo.CurrentCulture)) :
-				this._chunk.Append([value,]);
-		}
+		this._chunk = asNumber ?
+			this._chunk.Append(value.ToString(CultureInfo.CurrentCulture)) :
+			this._chunk.Append([value,]);
 #endif
 		return this;
 	}

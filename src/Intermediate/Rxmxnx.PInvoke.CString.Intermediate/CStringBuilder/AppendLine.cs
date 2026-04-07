@@ -8,12 +8,7 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	public CStringBuilder AppendLine()
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
-			this._chunk = this._chunk.Append(CString.NewLine);
+		this._chunk = this._chunk.Append(CString.NewLine);
 		return this;
 	}
 	/// <summary>
@@ -53,12 +48,7 @@ public sealed partial class CStringBuilder
 	// ReSharper disable once MemberCanBePrivate.Global
 	public CStringBuilder AppendLine(ReadOnlySpan<Char> value)
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
-			this._chunk = this._chunk.Append(value).Append(CString.NewLine);
+		this._chunk = this._chunk.Append(value).Append(CString.NewLine);
 		return this;
 	}
 	/// <summary>
@@ -69,12 +59,7 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	public CStringBuilder AppendLine(ReadOnlySpan<Byte> value)
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
-			this._chunk = this._chunk.Append(value).Append(CString.NewLine);
+		this._chunk = this._chunk.Append(value).Append(CString.NewLine);
 		return this;
 	}
 	/// <summary>
@@ -88,12 +73,7 @@ public sealed partial class CStringBuilder
 #endif
 	public CStringBuilder AppendLine(ReadOnlySequence<Byte> value)
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
-			this._chunk = this._chunk.Append(value).Append(CString.NewLine);
+		this._chunk = this._chunk.Append(value).Append(CString.NewLine);
 		return this;
 	}
 }

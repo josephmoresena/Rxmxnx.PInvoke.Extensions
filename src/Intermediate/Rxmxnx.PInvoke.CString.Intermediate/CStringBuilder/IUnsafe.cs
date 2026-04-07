@@ -10,9 +10,9 @@ namespace Rxmxnx.PInvoke;
 public sealed partial class CStringBuilder : IUnsafe
 {
 #if !NET9_0_OR_GREATER
-	Object IUnsafe.Lock => this._lock;
+	Object IUnsafe.Lock => this.GetLock();
 #else
-	Lock IUnsafe<Lock>.Lock => this._lock;
+	Lock IUnsafe<Lock>.Lock => this.GetLock();
 #endif
 	Int32 IUnsafe.Count => this._chunk.Count;
 

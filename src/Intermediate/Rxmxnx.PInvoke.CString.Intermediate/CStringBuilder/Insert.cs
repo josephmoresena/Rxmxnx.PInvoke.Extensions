@@ -30,7 +30,7 @@ public sealed partial class CStringBuilder
 	[ExcludeFromCodeCoverage]
 #endif
 	public CStringBuilder Insert(Int32 index, Char[]? value)
-		=> value is null || value.Length == 0 ? this.Insert(index, value.AsSpan()) : this;
+		=> value is not null && value.Length != 0 ? this.Insert(index, value.AsSpan()) : this;
 	/// <summary>
 	/// Inserts the specified UTF-8 units array into this instance at the specified UTF-8 unit position.
 	/// </summary>
@@ -41,7 +41,7 @@ public sealed partial class CStringBuilder
 	[ExcludeFromCodeCoverage]
 #endif
 	public CStringBuilder Insert(Int32 index, Byte[]? value)
-		=> value is null || value.Length == 0 ? this.Insert(index, value.AsSpan()) : this;
+		=> value is not null && value.Length != 0 ? this.Insert(index, value.AsSpan()) : this;
 	/// <summary>
 	/// Inserts UTF-8 representation of the characters in the specified read-only span into this instance at the
 	/// specified UTF-8 unit position.
@@ -53,12 +53,7 @@ public sealed partial class CStringBuilder
 	public CStringBuilder Insert(Int32 index, ReadOnlySpan<Char> value)
 	{
 		if (value.IsEmpty) return this;
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
-			this._chunk.Insert(index, value);
+		this._chunk.Insert(index, value);
 		return this;
 	}
 	/// <summary>
@@ -70,12 +65,7 @@ public sealed partial class CStringBuilder
 	public CStringBuilder Insert(Int32 index, ReadOnlySpan<Byte> value)
 	{
 		if (value.IsEmpty) return this;
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
-			this._chunk.Insert(index, value);
+		this._chunk.Insert(index, value);
 		return this;
 	}
 	/// <summary>

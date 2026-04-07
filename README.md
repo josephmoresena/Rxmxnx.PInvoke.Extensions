@@ -2660,6 +2660,10 @@ Represents a mutable string of UTF-8 encoded characters.
 - This type provides optimized support for `ReadOnlySpan<Byte>` and `ReadOnlySpan<Char>`, minimizing allocations during
   string manipulation.
 - Conversions to `CString` can be customized to produce null-terminated or non-null-terminated strings.
+- Until 2.9.0 version `Append`, `AppendLine`, `AppendJoin`, `Insert`, `Remove`, `Clear`, `ToCString` and `ToString`
+  methods and the `Length` property is thread-safe, in upper versions to make thread-safe operations use
+  `ConcurrentAppend`, `ConcurrentAppendLine`, `ConcurrentAppendJoin`, `ConcurrentInsert`, `ConcurrentRemove`,
+  `ConcurrentClear`, `ConcurrentToCString`, `ConcurrentToString` and `ConcurrentLength` methods.
 
 ### Properties:
 
@@ -2714,7 +2718,6 @@ Represents a mutable string of UTF-8 encoded characters.
 
   Converts the value of this instance to a `CString`. The boolean parameter specifies whether the returned
   `CString` should be null-terminated.
-  must be null-terminated.
   </details>
 - <details>
   <summary>ToString()</summary>
@@ -2773,6 +2776,80 @@ Represents a mutable string of UTF-8 encoded characters.
 
   Inserts the UTF-8 string representation of a specified parameter into this instance at the specified character
   position.
+
+  **Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySpan<Char>`, `Byte[]`, `Char[]` and
+  standard numeric primitives.
+  </details>
+- <details>
+  <summary>ConcurrentLength()</summary>
+
+  Retrieves the length of the current `CStringBuilder` object. This method is thread-safe.
+  </details>
+- <details>
+  <summary>ConcurrentToCString()</summary>
+
+  Converts the value of this instance to a `CString`. The returned `CString` is always null-terminated. This method is
+  thread-safe.
+  </details>
+- <details>
+  <summary>ConcurrentToCString(Boolean)</summary>
+
+  Converts the value of this instance to a `CString`. The boolean parameter specifies whether the returned
+  `CString` should be null-terminated. This method is thread-safe.
+  </details>
+- <details>
+  <summary>ConcurrentCopyTo(Int32, Span&lt;Byte&gt;)</summary>
+
+  Copies the UTF-8 characters from a specified segment of this instance to a destination span of bytes. This method is
+  thread-safe.
+  </details>
+- <details>
+  <summary>ConcurrentClear()</summary>
+
+  Removes all characters from the current `CStringBuilder` instance. This method is thread-safe.
+  </details>
+- <details>
+  <summary>ConcurrentRemove(Int32, Int32)</summary>
+
+  Removes the specified range of characters from this instance. This method is thread-safe.
+  </details>
+- <details>
+  <summary>ConcurrentAppend(?)</summary>
+
+  Appends the UTF-8 string representation of a specified parameter to this instance.
+
+  **Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySequence<Byte>`,
+  `ReadOnlySpan<Char>`, `Byte[]`, `Char[]` and standard numeric primitives. This method is thread-safe.
+  </details>
+- <details>
+  <summary>ConcurrentAppendJoin(?, ?)</summary>
+
+  Concatenates the string representations of the elements in the provided sequence, using the specified separator
+  between each member. This method is thread-safe.
+
+  **Supported separator types include:** `CString`, and `ReadOnlySpan<Byte>`.
+  **Supported types include:** `CString[]`, `ReadOnlySpan<CString>`, `CStringSequence`, `CStringSequence.Utf8View`,
+  and `IEnumerable<CString>`.
+  </details>
+- <details>
+  <summary>ConcurrentAppendLine()</summary>
+
+  Appends the default line terminator to the end of the current `CStringBuilder` object. This method is thread-safe.
+  </details>
+- <details>
+  <summary>ConcurrentAppendLine(?)</summary>
+
+  Appends the UTF-8 string representation of a specified parameter followed by the default line terminator to the end of
+  the current `CStringBuilder` object. This method is thread-safe.
+
+  **Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySequence<Byte>`,
+  `ReadOnlySpan<Char>`, `Byte[]` and `Char[]`.
+  </details>
+- <details>
+  <summary>ConcurrentInsert(Int32, ?)</summary>
+
+  Inserts the UTF-8 string representation of a specified parameter into this instance at the specified character
+  position. This method is thread-safe.
 
   **Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySpan<Char>`, `Byte[]`, `Char[]` and
   standard numeric primitives.
