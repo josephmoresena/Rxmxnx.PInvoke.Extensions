@@ -178,17 +178,17 @@ public sealed partial class CStringBuilder
 		chunks = this._chunk.EnumerateInformation().Reverse().ToArray();
 		return Encoding.UTF8.GetString(this.GetDataBytes(false));
 	}
-
 	/// <summary>
 	/// Retrieves the lock object to concurrent operations.
 	/// </summary>
 	/// <returns>A <see cref="Lock"/> instance.</returns>
-	private Lock GetLock()
+	internal Lock GetLock()
 	{
 		if (this._lock is not null) return this._lock;
 		Lock newLock = new();
 		return Interlocked.CompareExchange(ref this._lock, newLock, default) ?? newLock;
 	}
+
 	/// <summary>
 	/// Retrieves a byte array containing all the usable bytes from current instance.
 	/// </summary>

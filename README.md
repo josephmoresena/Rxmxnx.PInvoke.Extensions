@@ -2025,6 +2025,17 @@ A fluent builder for `CStringSequence` type.
 - This type is a `struct` type. Please avoid boxing.
 - The builder is based on `CStringBuilder` type.
 - This type allows UTF-16 texts and UTF-8 escaped text as inputs.
+- Until 2.9.0 version `Append`, `AppendEscaped`, `Insert`, `RemoveAt`, `Clear` and `Build`
+  methods and the `Count` property are thread-safe, in upper versions to make thread-safe operations use
+  `ConcurrentAppend`, `ConcurrentAppendEscaped`, `ConcurrentInsert`, `ConcurrentRemoveAt`,
+  `ConcurrentClear`, `ConcurrentBuild` and `ConcurrentCount` methods.
+
+#### Properties:
+
+- <details>
+  <summary>Count</summary>
+  Retrieves the number of items contained in the builder.
+  </details>
 
 #### Methods:
 
@@ -2060,6 +2071,43 @@ A fluent builder for `CStringSequence` type.
   <summary>Build()</summary>
 
   Builds a new `CStringSequence` instance using the state of the builder.
+  </details>
+- <details>
+  <summary>ConcurrentCount()</summary>
+  Retrieves the number of items contained in the builder. This method is thread-safe.
+  </details>
+- <details>
+  <summary>ConcurrentAppend(?)</summary>
+  Appends the text input as the last item of the building sequence. This method is thread-safe.
+
+  **Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySequence<Byte>`
+  and `ReadOnlySpan<Char>`.
+  </details>
+- <details>
+  <summary>ConcurrentAppendEscaped(?)</summary>
+  Appends the unescaped text input as the last item of the building sequence. This method is thread-safe.
+
+  **Supported types include:** `ReadOnlySpan<Byte>` and `ReadOnlySequence<Byte>`.
+  </details>
+- <details>
+  <summary>ConcurrentInsert(Int32, ?)</summary>
+  Inserts the text input at the given position of the building sequence. This method is thread-safe.
+
+  **Supported types include:** `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySequence<Byte>`
+  and `ReadOnlySpan<Char>`.
+  </details>
+- <details>
+  <summary>ConcurrentRemoveAt(Int32)</summary>
+  Removes the item at the given position of the building sequence. This method is thread-safe.
+  </details>
+- <details>
+  <summary>ConcurrentClear()</summary>
+  Removes all the items of the building sequence. This method is thread-safe.
+  </details>
+- <details>
+  <summary>ConcurrentBuild()</summary>
+
+  Builds a new `CStringSequence` instance using the state of the builder. This method is thread-safe.
   </details>
 
 </details>
@@ -2661,7 +2709,7 @@ Represents a mutable string of UTF-8 encoded characters.
   string manipulation.
 - Conversions to `CString` can be customized to produce null-terminated or non-null-terminated strings.
 - Until 2.9.0 version `Append`, `AppendLine`, `AppendJoin`, `Insert`, `Remove`, `Clear`, `ToCString` and `ToString`
-  methods and the `Length` property is thread-safe, in upper versions to make thread-safe operations use
+  methods and the `Length` property are thread-safe, in upper versions to make thread-safe operations use
   `ConcurrentAppend`, `ConcurrentAppendLine`, `ConcurrentAppendJoin`, `ConcurrentInsert`, `ConcurrentRemove`,
   `ConcurrentClear`, `ConcurrentToCString`, `ConcurrentToString` and `ConcurrentLength` methods.
 

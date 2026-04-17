@@ -17,9 +17,9 @@ public partial class CStringSequence
 		/// <summary>
 		/// Internal lengths list.
 		/// </summary>
-		private readonly Value<CStringBuilder> _value;
+		private readonly Value _value;
 
-		/// <inheritdoc cref="Value{TBuilder}.Count"/>
+		/// <inheritdoc cref="Value.Count"/>
 		public Int32 Count => this._value.Count;
 
 		/// <summary>
@@ -50,7 +50,7 @@ public partial class CStringSequence
 			if (value is null)
 				this._value.AppendNull();
 			else
-				this._value.Append(value);
+				this._value.Append(value.AsSpan(), Encoding.UTF8.GetByteCount(value));
 			return this;
 		}
 		/// <summary>
@@ -80,7 +80,7 @@ public partial class CStringSequence
 		/// <returns>The current instance after the append operation has completed.</returns>
 		public Builder Append(ReadOnlySpan<Char> value)
 		{
-			this._value.Append(value);
+			this._value.Append(value, Encoding.UTF8.GetByteCount(value));
 			return this;
 		}
 		/// <summary>
@@ -167,7 +167,7 @@ public partial class CStringSequence
 			if (value is null)
 				this._value.InsertNull(index);
 			else
-				this._value.Insert(index, value.AsSpan());
+				this._value.Insert(index, value.AsSpan(), Encoding.UTF8.GetByteCount(value));
 			return this;
 		}
 		/// <summary>
@@ -195,10 +195,10 @@ public partial class CStringSequence
 #endif
 		public Builder Insert(Int32 index, ReadOnlySpan<Char> value)
 		{
-			this._value.Insert(index, value);
+			this._value.Insert(index, value, Encoding.UTF8.GetByteCount(value));
 			return this;
 		}
-		/// <inheritdoc cref="CStringSequence.Builder.Value{T}.RemoveAt(Int32)"/>
+		/// <inheritdoc cref="CStringSequence.Builder.Value.RemoveAt(Int32)"/>
 		/// <returns>The current instance after the remove operation has completed.</returns>
 		public Builder RemoveAt(Int32 index)
 		{
@@ -218,10 +218,8 @@ public partial class CStringSequence
 		/// Creates a new <see cref="CStringSequence"/> instance using the current builder state.
 		/// </summary>
 		/// <returns>A new <see cref="CStringSequence"/> instance.</returns>
-		public CStringSequence Build()
-			=> !this._value.IsEmpty ?
-				new(this._value.BuildState(out Int32?[] lengths), lengths) :
-				CStringSequence.Empty;
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public CStringSequence Build() => this._value.CreateSequence();
 
 		/// <summary>
 		/// Creates an array of <see cref="CString"/> from current instance.
@@ -230,6 +228,22 @@ public partial class CStringSequence
 		[ExcludeFromCodeCoverage]
 #endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal CString[] ToArray() => this._value.ToArray();
+		internal CString[] ToArray()
+		{
+			CString value = this._value.GetValue(out ReadOnlySpan<Int32?> lengths);
+			CString[] result = new CString[lengths.Length];
+			Int32 offset = 0;
+			for (Int32 i = 0; i < lengths.Length; i++)
+			{
+				if (lengths[i].GetValueOrDefault() == 0)
+				{
+					result[i] = lengths[i].HasValue ? CString.Empty : CString.Zero;
+					continue;
+				}
+				result[i] = value.Slice(offset, lengths[i].GetValueOrDefault());
+				offset += result[i].Length + 1;
+			}
+			return result;
+		}
 	}
 }
