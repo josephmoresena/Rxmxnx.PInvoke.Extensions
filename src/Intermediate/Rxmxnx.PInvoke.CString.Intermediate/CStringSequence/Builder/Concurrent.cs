@@ -38,6 +38,14 @@ public partial class CStringSequence
 			concurrent.Append(value);
 			return this;
 		}
+		/// <inheritdoc cref="CStringSequence.Builder.Append(ReadOnlySequence{Byte})"/>
+		/// <remarks>This operation is thread-safe.</remarks>
+		public Builder ConcurrentAppend(ReadOnlySequence<Byte> value)
+		{
+			Concurrent concurrent = new(this._value);
+			concurrent.Append(value);
+			return this;
+		}
 		/// <inheritdoc cref="CStringSequence.Builder.Append(ReadOnlySpan{Char})"/>
 		/// <remarks>This operation is thread-safe.</remarks>
 		public Builder ConcurrentAppend(ReadOnlySpan<Char> value)
@@ -225,6 +233,16 @@ public partial class CStringSequence
 			}
 			/// <inheritdoc cref="Value.Append(ReadOnlySpan{Byte})"/>
 			public void Append(ReadOnlySpan<Byte> utf8Text)
+			{
+#if NET9_0_OR_GREATER
+				using (this._value.GetLock().EnterScope())
+#else
+				lock (this._value.GetLock())
+#endif
+					this._value.Append(utf8Text);
+			}
+			/// <inheritdoc cref="Value.Append(ReadOnlySequence{Byte})"/>
+			public void Append(ReadOnlySequence<Byte> utf8Text)
 			{
 #if NET9_0_OR_GREATER
 				using (this._value.GetLock().EnterScope())
