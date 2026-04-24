@@ -13,7 +13,7 @@ public sealed partial class CStringBuilder
 	/// <summary>
 	/// The default capacity of a <see cref="CStringBuilder"/>.
 	/// </summary>
-	internal const UInt16 DefaultCapacity = 16;
+	internal const UInt16 DefaultCapacity = 32;
 
 	/// <summary>
 	/// Initial capacity.
