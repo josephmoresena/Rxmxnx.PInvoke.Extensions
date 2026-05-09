@@ -149,7 +149,8 @@ public partial class CStringSequence
 #endif
 		public Builder ConcurrentInsert(Int32 index, ReadOnlySpan<Char> value)
 		{
-			this._value.Insert(index, value, Encoding.UTF8.GetByteCount(value));
+			Concurrent concurrent = new(this._value);
+			concurrent.Insert(index, value, Encoding.UTF8.GetByteCount(value));
 			return this;
 		}
 		/// <inheritdoc cref="CStringSequence.Builder.RemoveAt(Int32)"/>

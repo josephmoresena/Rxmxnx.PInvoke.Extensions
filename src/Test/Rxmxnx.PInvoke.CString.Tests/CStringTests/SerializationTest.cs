@@ -68,13 +68,8 @@ public sealed class SerializationTest
 
 		if (condition is JsonIgnoreCondition.WhenWritingDefault or JsonIgnoreCondition.WhenWritingNull)
 		{
-			// Zero is serialized as empty string when ignore condition is set to WhenWritingDefault or WhenWritingNull.
-			// In .NET Core 3.1 and .NET Standard 2.1 Zero is serialized as non-ignorable null.
-			Boolean isNetStandard = SystemInfo.CompilationFramework.EndsWith(" 3.0") ||
-				SystemInfo.CompilationFramework.EndsWith(" 2.1");
 			PInvokeAssert.NotEqual(vsSerialized, vcSerialized);
-			PInvokeAssert.Equal(!isNetStandard ? String.Empty : null,
-			                    JsonSerializer.Deserialize<TextContainer<String>>(vcSerialized)?.Value);
+			PInvokeAssert.Equal(String.Empty, JsonSerializer.Deserialize<TextContainer<String>>(vcSerialized)?.Value);
 		}
 		else
 		{

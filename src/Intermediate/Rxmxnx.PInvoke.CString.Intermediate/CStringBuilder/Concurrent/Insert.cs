@@ -294,6 +294,9 @@ public partial class CStringBuilder
 		/// <param name="value">The value to insert.</param>
 		/// <returns>A reference to this instance after the insert operation has completed.</returns>
 		[SkipLocalsInit]
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
 		private static CStringBuilder? InsertUtf8<T>(Concurrent concurrent, Int32 index, T value)
 			where T : IUtf8SpanFormattable
 		{
@@ -316,6 +319,9 @@ public partial class CStringBuilder
 		[SkipLocalsInit]
 #if !PACKAGE && NET8_0_OR_GREATER
 		[ExcludeFromCodeCoverage]
+#endif
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
 #endif
 		private static CStringBuilder? InsertUtf16<T>(Concurrent concurrent, Int32 index, T value)
 			where T : ISpanFormattable

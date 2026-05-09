@@ -35,7 +35,7 @@ public partial class CStringSequence
 			/// <returns>A <see cref="CStringSequence"/> instance.</returns>
 			public CStringSequence CreateSequence()
 				=> this._lengths.Count != 0 ?
-					new(this.BuildState(out Int32?[] lengths), lengths) :
+					new(this.BuildState(out Int32?[] stateLengths), stateLengths) :
 					CStringSequence.Empty;
 			/// <summary>
 			/// Appends a null UTF-8 text at the current position.
