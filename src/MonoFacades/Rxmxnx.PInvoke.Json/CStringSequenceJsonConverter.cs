@@ -34,7 +34,10 @@ namespace Rxmxnx.PInvoke.Json
 		}
 		public override void Write(Utf8JsonWriter writer, CStringSequence? value, JsonSerializerOptions options)
 		{
-			Boolean writeNull = value is null && !options.IgnoreNullValues;
+			Boolean writeNull = value is null &&
+				options.DefaultIgnoreCondition != JsonIgnoreCondition.WhenWritingNull &&
+				options.DefaultIgnoreCondition != JsonIgnoreCondition.WhenWritingDefault &&
+				!options.IgnoreNullValues;
 			if (writeNull)
 			{
 				writer.WriteNullValue();

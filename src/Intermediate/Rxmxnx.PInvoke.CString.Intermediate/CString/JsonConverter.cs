@@ -33,12 +33,11 @@ public partial class CString
 #endif
 		public override void Write(Utf8JsonWriter writer, CString? value, JsonSerializerOptions options)
 			=> JsonConverter.Write(writer, value, value is null || value.IsZero,
-#if NETCOREAPP3_1_OR_GREATER
 			                       options.DefaultIgnoreCondition is JsonIgnoreCondition.WhenWritingNull or
-				                       JsonIgnoreCondition.WhenWritingDefault or JsonIgnoreCondition.Always);
-#else
+				                       JsonIgnoreCondition.WhenWritingDefault or JsonIgnoreCondition.Always ||
+#pragma warning disable SYSLIB0020
 			                       options.IgnoreNullValues);
-#endif
+#pragma warning restore SYSLIB0020
 
 		/// <summary>
 		/// Reads and converts the JSON to type <see cref="CString"/>.
