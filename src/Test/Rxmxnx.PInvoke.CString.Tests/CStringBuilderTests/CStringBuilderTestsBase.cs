@@ -43,4 +43,14 @@ public abstract class CStringBuilderTestsBase
 
 		return (utf16Index, utf8Index);
 	}
+
+	protected sealed class Helper<T> where T : unmanaged
+	{
+		public Func<T, StringBuilder, StringBuilder> AppendU16 { get; init; } = default!;
+		public Func<T, CStringBuilder, CStringBuilder> AppendU8 { get; init; } = default!;
+		public Func<T?, CStringBuilder, CStringBuilder> AppendU8Null { get; init; } = default!;
+		public Func<Int32, T, StringBuilder, StringBuilder> InsertU16 { get; init; } = default!;
+		public Func<Int32, T, CStringBuilder, CStringBuilder> InsertU8 { get; init; } = default!;
+		public Func<Int32, T?, CStringBuilder, CStringBuilder> InsertU8Null { get; init; } = default!;
+	}
 }

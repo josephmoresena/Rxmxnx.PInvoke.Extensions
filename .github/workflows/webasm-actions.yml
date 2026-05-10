@@ -69,7 +69,7 @@ jobs:
         run: for f in *.js; do node "$f"; done
       - name: Create Web Native Artifact Logs
         if: inputs.package_version == ''
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Web-Artifact-Logs
           path: ./artifacts/Native/*
@@ -81,7 +81,7 @@ jobs:
           ./ZipAndClean.ps1 -ZipName "Web-Assets-Logs.zip" -Patterns $logPatterns
       - name: Create Web Native Artifact
         if: inputs.package_version == ''
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Web-Artifact
           path: ./artifacts/*NAOT*

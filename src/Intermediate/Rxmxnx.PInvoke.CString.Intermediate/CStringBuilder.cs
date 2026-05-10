@@ -1,3 +1,7 @@
+#if !NET9_0_OR_GREATER
+using Lock = System.Object;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
@@ -9,16 +13,8 @@ public sealed partial class CStringBuilder
 	/// <summary>
 	/// The default capacity of a <see cref="CStringBuilder"/>.
 	/// </summary>
-	internal const UInt16 DefaultCapacity = 16;
+	internal const UInt16 DefaultCapacity = 32;
 
-	/// <summary>
-	/// Lock object.
-	/// </summary>
-#if NET9_0_OR_GREATER
-	private readonly Lock _lock = new();
-#else
-	private readonly Object _lock = new();
-#endif
 	/// <summary>
 	/// Initial capacity.
 	/// </summary>
@@ -29,20 +25,14 @@ public sealed partial class CStringBuilder
 	private Chunk _chunk;
 
 	/// <summary>
+	/// Lock object.
+	/// </summary>
+	private Lock? _lock;
+
+	/// <summary>
 	/// Gets the length of the current <see cref="CStringBuilder"/> object.
 	/// </summary>
-	public Int32 Length
-	{
-		get
-		{
-#if NET9_0_OR_GREATER
-			using (this._lock.EnterScope())
-#else
-			lock (this._lock)
-#endif
-				return this._chunk.Count;
-		}
-	}
+	public Int32 Length => this._chunk.Count;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringBuilder"/> class.
@@ -88,12 +78,7 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the clear operation has completed.</returns>
 	public CStringBuilder Clear()
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
-			this._chunk.Reset(this._capacity);
+		this._chunk.Reset(this._capacity);
 		return this;
 	}
 	/// <summary>
@@ -104,12 +89,7 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the remove operation has completed.</returns>
 	public CStringBuilder Remove(Int32 startIndex, Int32 length)
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
-			this._chunk.Remove(startIndex, length);
+		this._chunk.Remove(startIndex, length);
 		return this;
 	}
 	/// <summary>
@@ -131,18 +111,12 @@ public sealed partial class CStringBuilder
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+	// ReSharper disable once MemberCanBePrivate.Global
 	public Int32 CopyTo(Int32 index, Span<Byte> destination)
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
-		{
-			Int32 length = Math.Min(destination.Length, this._chunk.Count - index);
-			this._chunk.CopyTo(index, destination[..length]);
-			return length;
-		}
+		Int32 length = Math.Min(destination.Length, this._chunk.Count - index);
+		this._chunk.CopyTo(index, destination[..length]);
+		return length;
 	}
 	/// <summary>
 	/// Converts the value of this instance to a <see cref="CString"/>.
@@ -159,19 +133,38 @@ public sealed partial class CStringBuilder
 	// ReSharper disable once MemberCanBePrivate.Global
 	public CString ToCString(Boolean nullTerminated)
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
-		{
-			if (this._chunk.Count == 0) return CString.Empty;
-			Byte[] bytes = this.GetDataBytes(nullTerminated);
-			return nullTerminated ? bytes : CString.Create(bytes);
-		}
+		if (this._chunk.Count == 0) return CString.Empty;
+		Byte[] bytes = this.GetDataBytes(nullTerminated);
+		return nullTerminated ? bytes : CString.Create(bytes);
 	}
 	/// <inheritdoc/>
 	public override String ToString() => this.ToCString(false).ToString();
+
+	/// <inheritdoc cref="CStringBuilder.Length"/>
+	/// <returns>The length of the current <see cref="CStringBuilder"/> object.</returns>
+	/// <remarks>This operation is thread-safe.</remarks>
+	public Int32 ConcurrentLength() => new Concurrent(this.GetLock(), this).Length;
+	/// <inheritdoc cref="CStringBuilder.Clear()"/>
+	/// <remarks>This operation is thread-safe.</remarks>
+	public CStringBuilder ConcurrentClear() => new Concurrent(this.GetLock(), this).Clear();
+	/// <inheritdoc cref="CStringBuilder.Remove(Int32, Int32)"/>
+	/// <remarks>This operation is thread-safe.</remarks>
+	public CStringBuilder ConcurrentRemove(Int32 startIndex, Int32 length)
+		=> new Concurrent(this.GetLock(), this).Remove(startIndex, length);
+	/// <inheritdoc cref="CStringBuilder.CopyTo(Int32, Span{Byte})"/>
+	/// <remarks>This operation is thread-safe.</remarks>
+	public Int32 ConcurrentCopyTo(Int32 index, Span<Byte> destination)
+		=> new Concurrent(this.GetLock(), this).CopyTo(index, destination);
+	/// <inheritdoc cref="CStringBuilder.ToCString()"/>
+	/// <remarks>This operation is thread-safe.</remarks>
+	public CString ConcurrentToCString() => new Concurrent(this.GetLock(), this).ToCString(true);
+	/// <inheritdoc cref="CStringBuilder.ToCString(Boolean)"/>
+	/// <remarks>This operation is thread-safe.</remarks>
+	public CString ConcurrentToCString(Boolean nullTerminated)
+		=> new Concurrent(this.GetLock(), this).ToCString(nullTerminated);
+	/// <inheritdoc cref="CStringBuilder.ToString()"/>
+	/// <remarks>This operation is thread-safe.</remarks>
+	public String ConcurrentToString() => new Concurrent(this.GetLock(), this).ToCString(false).ToString();
 
 	/// <summary>
 	/// Retrieves the current debug information.
@@ -181,16 +174,19 @@ public sealed partial class CStringBuilder
 	/// <returns>Current instance data.</returns>
 	internal String GetDebugInfo(out Int32 length, out CStringBuilderDebugView.ChunkInfo[] chunks)
 	{
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
-		{
-			length = this._chunk.Count;
-			chunks = this._chunk.EnumerateInformation().Reverse().ToArray();
-			return Encoding.UTF8.GetString(this.GetDataBytes(false));
-		}
+		length = this._chunk.Count;
+		chunks = this._chunk.EnumerateInformation().Reverse().ToArray();
+		return Encoding.UTF8.GetString(this.GetDataBytes(false));
+	}
+	/// <summary>
+	/// Retrieves the lock object to concurrent operations.
+	/// </summary>
+	/// <returns>A <see cref="Lock"/> instance.</returns>
+	internal Lock GetLock()
+	{
+		if (this._lock is not null) return this._lock;
+		Lock newLock = new();
+		return Interlocked.CompareExchange(ref this._lock, newLock, default) ?? newLock;
 	}
 
 	/// <summary>
@@ -208,6 +204,7 @@ public sealed partial class CStringBuilder
 			bytes.AsSpan()[span.Length..].Clear();
 		return bytes;
 	}
+
 	/// <summary>
 	/// Retrieves the capacity for a <see cref="CStringBuilder"/> initialized with <paramref name="initialValue"/>.
 	/// </summary>

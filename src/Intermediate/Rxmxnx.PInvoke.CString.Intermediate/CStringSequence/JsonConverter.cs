@@ -49,16 +49,14 @@ public partial class CStringSequence
 		public override void Write(Utf8JsonWriter writer, CStringSequence? value, JsonSerializerOptions options)
 		{
 			Boolean writeNull = value is null &&
-#if NETCOREAPP3_1_OR_GREATER
 				options.DefaultIgnoreCondition switch
 				{
 					JsonIgnoreCondition.WhenWritingNull => false,
 					JsonIgnoreCondition.WhenWritingDefault => false,
-					_ => true,
+#pragma warning disable SYSLIB0020
+					_ => !options.IgnoreNullValues,
+#pragma warning restore SYSLIB0020
 				};
-#else
-				!options.IgnoreNullValues;
-#endif
 			if (writeNull)
 			{
 				writer.WriteNullValue();

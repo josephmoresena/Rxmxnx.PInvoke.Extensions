@@ -2,7 +2,7 @@ namespace Rxmxnx.PInvoke.Tests.CStringBuilderTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
-public sealed class ValueTests : CStringBuilderTestsBase
+public sealed class ValueConcurrentTests : CStringBuilderTestsBase
 {
 	private readonly IFixture _fixture = new Fixture();
 
@@ -17,11 +17,11 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		Helper<Boolean> helper = new()
 		{
 			AppendU16 = static (v, s) => s.Append(v),
-			AppendU8 = static (v, c) => c.Append(v),
-			AppendU8Null = static (v, c) => c.Append(v),
+			AppendU8 = static (v, c) => c.ConcurrentAppend(v),
+			AppendU8Null = static (v, c) => c.ConcurrentAppend(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
-			InsertU8 = static (i, v, c) => c.Insert(i, v),
-			InsertU8Null = static (i, v, c) => c.Insert(i, v),
+			InsertU8 = static (i, v, c) => c.ConcurrentInsert(i, v),
+			InsertU8Null = static (i, v, c) => c.ConcurrentInsert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -37,11 +37,11 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		Helper<SByte> helper = new()
 		{
 			AppendU16 = static (v, s) => s.Append(v),
-			AppendU8 = static (v, c) => c.Append(v),
-			AppendU8Null = static (v, c) => c.Append(v),
+			AppendU8 = static (v, c) => c.ConcurrentAppend(v),
+			AppendU8Null = static (v, c) => c.ConcurrentAppend(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
-			InsertU8 = static (i, v, c) => c.Insert(i, v),
-			InsertU8Null = static (i, v, c) => c.Insert(i, v),
+			InsertU8 = static (i, v, c) => c.ConcurrentInsert(i, v),
+			InsertU8Null = static (i, v, c) => c.ConcurrentInsert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -57,11 +57,11 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		Helper<Byte> helper = new()
 		{
 			AppendU16 = static (v, s) => s.Append(v),
-			AppendU8 = static (v, c) => c.Append(v, true),
-			AppendU8Null = static (v, c) => c.Append(v, true),
+			AppendU8 = static (v, c) => c.ConcurrentAppend(v, true),
+			AppendU8Null = static (v, c) => c.ConcurrentAppend(v, true),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
-			InsertU8 = static (i, v, c) => c.Insert(i, v, true),
-			InsertU8Null = static (i, v, c) => c.Insert(i, v, true),
+			InsertU8 = static (i, v, c) => c.ConcurrentInsert(i, v, true),
+			InsertU8Null = static (i, v, c) => c.ConcurrentInsert(i, v, true),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -77,11 +77,11 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		Helper<Char> helper = new()
 		{
 			AppendU16 = static (v, s) => s.Append(v),
-			AppendU8 = static (v, c) => c.Append(v),
-			AppendU8Null = static (v, c) => c.Append(v),
+			AppendU8 = static (v, c) => c.ConcurrentAppend(v),
+			AppendU8Null = static (v, c) => c.ConcurrentAppend(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
-			InsertU8 = static (i, v, c) => c.Insert(i, v),
-			InsertU8Null = static (i, v, c) => c.Insert(i, v),
+			InsertU8 = static (i, v, c) => c.ConcurrentInsert(i, v),
+			InsertU8Null = static (i, v, c) => c.ConcurrentInsert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -97,11 +97,11 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		Helper<Double> helper = new()
 		{
 			AppendU16 = static (v, s) => s.Append(v),
-			AppendU8 = static (v, c) => c.Append(v),
-			AppendU8Null = static (v, c) => c.Append(v),
+			AppendU8 = static (v, c) => c.ConcurrentAppend(v),
+			AppendU8Null = static (v, c) => c.ConcurrentAppend(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
-			InsertU8 = static (i, v, c) => c.Insert(i, v),
-			InsertU8Null = static (i, v, c) => c.Insert(i, v),
+			InsertU8 = static (i, v, c) => c.ConcurrentInsert(i, v),
+			InsertU8Null = static (i, v, c) => c.ConcurrentInsert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -117,11 +117,11 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		Helper<Decimal> helper = new()
 		{
 			AppendU16 = static (v, s) => s.Append(v),
-			AppendU8 = static (v, c) => c.Append(v),
-			AppendU8Null = static (v, c) => c.Append(v),
+			AppendU8 = static (v, c) => c.ConcurrentAppend(v),
+			AppendU8Null = static (v, c) => c.ConcurrentAppend(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
-			InsertU8 = static (i, v, c) => c.Insert(i, v),
-			InsertU8Null = static (i, v, c) => c.Insert(i, v),
+			InsertU8 = static (i, v, c) => c.ConcurrentInsert(i, v),
+			InsertU8Null = static (i, v, c) => c.ConcurrentInsert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -137,11 +137,11 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		Helper<Single> helper = new()
 		{
 			AppendU16 = static (v, s) => s.Append(v),
-			AppendU8 = static (v, c) => c.Append(v),
-			AppendU8Null = static (v, c) => c.Append(v),
+			AppendU8 = static (v, c) => c.ConcurrentAppend(v),
+			AppendU8Null = static (v, c) => c.ConcurrentAppend(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
-			InsertU8 = static (i, v, c) => c.Insert(i, v),
-			InsertU8Null = static (i, v, c) => c.Insert(i, v),
+			InsertU8 = static (i, v, c) => c.ConcurrentInsert(i, v),
+			InsertU8Null = static (i, v, c) => c.ConcurrentInsert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -157,11 +157,11 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		Helper<Int16> helper = new()
 		{
 			AppendU16 = static (v, s) => s.Append(v),
-			AppendU8 = static (v, c) => c.Append(v),
-			AppendU8Null = static (v, c) => c.Append(v),
+			AppendU8 = static (v, c) => c.ConcurrentAppend(v),
+			AppendU8Null = static (v, c) => c.ConcurrentAppend(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
-			InsertU8 = static (i, v, c) => c.Insert(i, v),
-			InsertU8Null = static (i, v, c) => c.Insert(i, v),
+			InsertU8 = static (i, v, c) => c.ConcurrentInsert(i, v),
+			InsertU8Null = static (i, v, c) => c.ConcurrentInsert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -177,11 +177,11 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		Helper<UInt16> helper = new()
 		{
 			AppendU16 = static (v, s) => s.Append(v),
-			AppendU8 = static (v, c) => c.Append(v),
-			AppendU8Null = static (v, c) => c.Append(v),
+			AppendU8 = static (v, c) => c.ConcurrentAppend(v),
+			AppendU8Null = static (v, c) => c.ConcurrentAppend(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
-			InsertU8 = static (i, v, c) => c.Insert(i, v),
-			InsertU8Null = static (i, v, c) => c.Insert(i, v),
+			InsertU8 = static (i, v, c) => c.ConcurrentInsert(i, v),
+			InsertU8Null = static (i, v, c) => c.ConcurrentInsert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -197,11 +197,11 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		Helper<Int32> helper = new()
 		{
 			AppendU16 = static (v, s) => s.Append(v),
-			AppendU8 = static (v, c) => c.Append(v),
-			AppendU8Null = static (v, c) => c.Append(v),
+			AppendU8 = static (v, c) => c.ConcurrentAppend(v),
+			AppendU8Null = static (v, c) => c.ConcurrentAppend(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
-			InsertU8 = static (i, v, c) => c.Insert(i, v),
-			InsertU8Null = static (i, v, c) => c.Insert(i, v),
+			InsertU8 = static (i, v, c) => c.ConcurrentInsert(i, v),
+			InsertU8Null = static (i, v, c) => c.ConcurrentInsert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -217,11 +217,11 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		Helper<UInt32> helper = new()
 		{
 			AppendU16 = static (v, s) => s.Append(v),
-			AppendU8 = static (v, c) => c.Append(v),
-			AppendU8Null = static (v, c) => c.Append(v),
+			AppendU8 = static (v, c) => c.ConcurrentAppend(v),
+			AppendU8Null = static (v, c) => c.ConcurrentAppend(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
-			InsertU8 = static (i, v, c) => c.Insert(i, v),
-			InsertU8Null = static (i, v, c) => c.Insert(i, v),
+			InsertU8 = static (i, v, c) => c.ConcurrentInsert(i, v),
+			InsertU8Null = static (i, v, c) => c.ConcurrentInsert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -237,11 +237,11 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		Helper<Int64> helper = new()
 		{
 			AppendU16 = static (v, s) => s.Append(v),
-			AppendU8 = static (v, c) => c.Append(v),
-			AppendU8Null = static (v, c) => c.Append(v),
+			AppendU8 = static (v, c) => c.ConcurrentAppend(v),
+			AppendU8Null = static (v, c) => c.ConcurrentAppend(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
-			InsertU8 = static (i, v, c) => c.Insert(i, v),
-			InsertU8Null = static (i, v, c) => c.Insert(i, v),
+			InsertU8 = static (i, v, c) => c.ConcurrentInsert(i, v),
+			InsertU8Null = static (i, v, c) => c.ConcurrentInsert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -257,11 +257,11 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		Helper<UInt64> helper = new()
 		{
 			AppendU16 = static (v, s) => s.Append(v),
-			AppendU8 = static (v, c) => c.Append(v),
-			AppendU8Null = static (v, c) => c.Append(v),
+			AppendU8 = static (v, c) => c.ConcurrentAppend(v),
+			AppendU8Null = static (v, c) => c.ConcurrentAppend(v),
 			InsertU16 = static (i, v, s) => s.Insert(i, v),
-			InsertU8 = static (i, v, c) => c.Insert(i, v),
-			InsertU8Null = static (i, v, c) => c.Insert(i, v),
+			InsertU8 = static (i, v, c) => c.ConcurrentInsert(i, v),
+			InsertU8Null = static (i, v, c) => c.ConcurrentInsert(i, v),
 		};
 		this.AppendTest(length, helper);
 		this.InsertTest(length, helper);
@@ -309,6 +309,6 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		}
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
 		PInvokeAssert.Equal("", cstrBuild.Clear().ToString());
-		PInvokeAssert.Equal(0, cstrBuild.Length);
+		PInvokeAssert.Equal(0, cstrBuild.ConcurrentLength());
 	}
 }

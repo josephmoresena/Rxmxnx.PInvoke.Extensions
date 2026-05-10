@@ -11,8 +11,7 @@ Native AOT or reflection-free mode—cannot be fully covered by these test proje
   elements that are not reused by other intermediary components. Tests in this project are considered low-level and
   foundational compared to those in the other test suites.
 * **`Buffers.Tests`**: Validates buffer allocation (binary and non-binary) across various data types. These tests are
-  more
-  advanced as they extensively utilize reflection to avoid undesired behavior during validation. This is necessary
+  more advanced as they extensively utilize reflection to avoid undesired behavior during validation. This is necessary
   because the library statically caches metadata used for runtime buffer generation.
 * **`CString.Tests`**: Tests UTF-8 text handling and UTF-8 string sequences, covering different internal representations
   through `CString` and `CStringSequence` instances. Powered by the `CString.Tests.SourceGenerator` project, it includes

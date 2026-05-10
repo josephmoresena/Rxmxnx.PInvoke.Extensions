@@ -100,7 +100,7 @@ public static partial class SystemInfo
 #endif
 	public static Boolean IsSolaris
 		=> !TrimInfo.IsPlatformTrimmed() && (SystemInfo.isSolaris ??=
-			SystemInfo.IsOsPlatform(SystemInfo.solarisPlatform, SystemInfo.illumosPlatform));
+			SystemInfo.IsOsPlatform(SystemInfo.solarisPlatform, SystemInfo.illumosPlatform, SystemInfo.sunosPlatform));
 
 	/// <summary>
 	/// Indicates whether the current execution is running on a Web engine.

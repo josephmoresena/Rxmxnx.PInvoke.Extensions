@@ -16,7 +16,7 @@ namespace Rxmxnx.PInvoke.Internal;
 internal static unsafe class ValidationUtilities
 {
 	/// <summary>
-	/// Empty <see cref="String"/> for <see cref="CallerArgumentExpressionAttribute"/> default value.
+	/// Empty <see cref="String"/> for caller argument default value.
 	/// </summary>
 	private const String emptyString = "";
 

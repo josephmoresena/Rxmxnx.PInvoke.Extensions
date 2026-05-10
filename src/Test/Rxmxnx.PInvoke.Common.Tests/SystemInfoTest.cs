@@ -19,7 +19,8 @@ public sealed class SystemInfoTest
 		PInvokeAssert.Equal(RuntimeInformation.IsOSPlatform(OSPlatform.Create("NETBSD")), SystemInfo.IsNetBsd);
 		PInvokeAssert.Equal(
 			RuntimeInformation.IsOSPlatform(OSPlatform.Create("SOLARIS")) ||
-			RuntimeInformation.IsOSPlatform(OSPlatform.Create("ILLUMOS")), SystemInfo.IsSolaris);
+			RuntimeInformation.IsOSPlatform(OSPlatform.Create("ILLUMOS")) ||
+			RuntimeInformation.IsOSPlatform(OSPlatform.Create("SUNOS")), SystemInfo.IsSolaris);
 		OSPlatform[] platforms = [OSPlatform.Windows, OSPlatform.Linux, OSPlatform.OSX,];
 		String?[] platformNames = platforms.Select(p =>
 		{

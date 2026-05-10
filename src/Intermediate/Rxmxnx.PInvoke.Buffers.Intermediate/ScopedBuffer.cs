@@ -8,8 +8,6 @@ namespace Rxmxnx.PInvoke;
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
 public readonly ref struct ScopedBuffer<T>
 {
-	/// <inheritdoc cref="ScopedBuffer{T}.Span"/>
-	private readonly Span<T> _span;
 	/// <summary>
 	/// Indicates whether current buffer is heap allocated.
 	/// </summary>
@@ -18,7 +16,7 @@ public readonly ref struct ScopedBuffer<T>
 	/// <summary>
 	/// Current buffer span.
 	/// </summary>
-	public Span<T> Span => this._span; // Required backing field for Mono AOT.
+	public Span<T> Span { get; }
 	/// <summary>
 	/// Indicates whether current buffer is stack allocated.
 	/// </summary>
@@ -41,7 +39,7 @@ public readonly ref struct ScopedBuffer<T>
 	/// <param name="metadata">Allocated buffer metadata.</param>
 	internal ScopedBuffer(Span<T> span, Boolean heapAllocated, Int32 fullLength, BufferTypeMetadata? metadata = default)
 	{
-		this._span = span;
+		this.Span = span;
 		this._heapAllocated = heapAllocated;
 		this.FullLength = fullLength;
 		this.BufferMetadata = metadata;

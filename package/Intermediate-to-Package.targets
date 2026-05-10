@@ -24,6 +24,8 @@
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <!-- Select the first target framework from the list -->
         <FirstTargetFramework>$(TargetFrameworks.Split(';')[0])</FirstTargetFramework>
+        <!-- Required modern .NET SDK building -->
+        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     </PropertyGroup>
     <!-- Trimming Options if targeting .NET 6.0 or later -->
     <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0'))">
@@ -110,7 +112,7 @@
         <!-- Generate final ILLink.Substitutions.xml file -->
         <WriteLinesToFile Condition="'$(ILLinkSubstitutionsText)' != ''"
                           File="$(IntermediateOutputPath)\ILLink\ILLink.Substitutions.xml"
-                          Lines="$([System.Text.RegularExpressions.Regex]::Replace('$(ILLinkSubstitutionsText)', '\s{0,}&lt;\/linker&gt;\s{0,}&lt;linker&gt;', ''))"
+                          Lines="$([System.Text.RegularExpressions.Regex]::Replace('$(ILLinkSubstitutionsText)', '\s{0,}\&lt;\/linker\&gt;\s{0,}(\&lt;\?xml[^&lt;&gt;]+\&gt;){0,1}\s{0,}\&lt;linker\&gt;', ''))"
                           Overwrite="true"/>
         <WriteLinesToFile Condition="'$(ILLinkSubstitutionsText)' == ''"
                           File="$(IntermediateOutputPath)\ILLink\ILLink.Substitutions.xml"

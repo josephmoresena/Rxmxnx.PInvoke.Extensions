@@ -49,18 +49,11 @@ public sealed partial class CStringBuilder
 		ReadOnlySpan<CString?>.Enumerator enumerator = values.GetEnumerator();
 #endif
 		if (!enumerator.MoveNext()) return this;
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
+		this._chunk = this._chunk.Append(enumerator.Current);
+		while (enumerator.MoveNext())
 		{
+			this._chunk = this._chunk.Append(separator);
 			this._chunk = this._chunk.Append(enumerator.Current);
-			while (enumerator.MoveNext())
-			{
-				this._chunk = this._chunk.Append(separator);
-				this._chunk = this._chunk.Append(enumerator.Current);
-			}
 		}
 		return this;
 	}
@@ -99,18 +92,11 @@ public sealed partial class CStringBuilder
 		CStringSequence.Utf8View.Enumerator enumerator = sequenceView.GetEnumerator();
 #endif
 		if (!enumerator.MoveNext()) return this;
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
+		this._chunk = this._chunk.Append(enumerator.Current);
+		while (enumerator.MoveNext())
 		{
+			this._chunk = this._chunk.Append(separator);
 			this._chunk = this._chunk.Append(enumerator.Current);
-			while (enumerator.MoveNext())
-			{
-				this._chunk = this._chunk.Append(separator);
-				this._chunk = this._chunk.Append(enumerator.Current);
-			}
 		}
 		return this;
 	}
@@ -130,18 +116,12 @@ public sealed partial class CStringBuilder
 	{
 		using IEnumerator<CString?> enumerator = values.GetEnumerator();
 		if (!enumerator.MoveNext()) return this;
-#if NET9_0_OR_GREATER
-		using (this._lock.EnterScope())
-#else
-		lock (this._lock)
-#endif
+
+		this._chunk = this._chunk.Append(enumerator.Current);
+		while (enumerator.MoveNext())
 		{
+			this._chunk = this._chunk.Append(separator);
 			this._chunk = this._chunk.Append(enumerator.Current);
-			while (enumerator.MoveNext())
-			{
-				this._chunk = this._chunk.Append(separator);
-				this._chunk = this._chunk.Append(enumerator.Current);
-			}
 		}
 		return this;
 	}
