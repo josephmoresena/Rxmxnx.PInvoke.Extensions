@@ -239,13 +239,23 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override String ToString()
-	{
-		if (this._length == 0) return String.Empty;
-		String result = Encoding.UTF8.GetString(this.AsSpan());
-		return String.IsInterned(result) ?? result;
-	}
+		=> this._length switch
+		{
+			0 => String.Empty,
+			>= StackAllocationHelper.StackallocByteThreshold when this.CachedValue is { } result => result,
+			_ => this.CreateInternalString(),
+		};
 	/// <inheritdoc/>
-	public override Int32 GetHashCode() => this.ToString().GetHashCode();
+	public override Int32 GetHashCode()
+		=> this._length switch
+		{
+			0 => String.Empty.GetHashCode(),
+#if NETCOREAPP
+			<= StackAllocationHelper.StackallocByteThreshold => CString.GetHashCode(this.AsSpan()),
+#endif
+			_ when this.CachedValue is { } result => result.GetHashCode(),
+			_ => this.CreateInternalString().GetHashCode(),
+		};
 
 	/// <summary>
 	/// Returns a reference to the first UTF-8 unit of the <see cref="CString"/>.

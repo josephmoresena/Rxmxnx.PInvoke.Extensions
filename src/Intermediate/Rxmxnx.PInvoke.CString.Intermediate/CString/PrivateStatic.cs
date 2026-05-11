@@ -192,4 +192,22 @@ public partial class CString
 		}
 		return -unusedBytes.Length;
 	}
+#if NETCOREAPP
+	/// <summary>
+	/// Computes the hash function for <paramref name="utf8Bytes"/>.
+	/// </summary>
+	/// <param name="utf8Bytes">The UTF-8 text to hash compute.</param>
+	/// <returns>The hash for of <paramref name="utf8Bytes"/>.</returns>
+	private static Int32 GetHashCode(ReadOnlySpan<Byte> utf8Bytes)
+	{
+		Int32 maxChars = Encoding.UTF8.GetMaxCharCount(utf8Bytes.Length);
+		Span<Char> utf16Chars = stackalloc Char[maxChars];
+		Int32 charsWritten = Encoding.UTF8.GetChars(utf8Bytes, utf16Chars);
+#if NET6_0_OR_GREATER
+		return String.GetHashCode(utf16Chars[..charsWritten]);
+#else
+		return String.GetHashCode(utf16Chars[..charsWritten], StringComparison.Ordinal);
+#endif
+	}
+#endif
 }
