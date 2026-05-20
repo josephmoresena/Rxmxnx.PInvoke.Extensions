@@ -250,6 +250,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 		=> this._length switch
 		{
 			0 => String.Empty.GetHashCode(),
+			_ when MarvinCompat.DefaultSeed.HasValue => MarvinCompat.GetHashCode(this.AsSpan()),
 #if NETCOREAPP
 			<= StackAllocationHelper.StackallocByteThreshold => CString.GetHashCode(this.AsSpan()),
 #endif

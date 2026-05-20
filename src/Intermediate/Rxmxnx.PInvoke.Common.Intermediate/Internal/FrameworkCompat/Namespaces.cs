@@ -8,8 +8,9 @@ namespace System.Runtime.Intrinsics.X86 { }
 
 namespace System.Text.Json { }
 #if PACKAGE
-namespace System.Text.Json { }
 namespace System.Text.Json.Serialization { }
+
+namespace System.Text.Unicode { }
 #endif
 #endif
 #if !NET5_0_OR_GREATER
