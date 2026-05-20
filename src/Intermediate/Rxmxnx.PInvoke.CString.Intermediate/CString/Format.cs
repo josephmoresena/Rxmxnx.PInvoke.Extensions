@@ -86,7 +86,7 @@ public partial class CString : ISpanFormattable
 		}
 		Int32 maxBytes = Encoding.UTF8.GetByteCount(s);
 		Byte[] utf8Buffer = new Byte[maxBytes + 1];
-		_ = Encoding.UTF8.GetBytes(s, utf8Buffer);
+		Utf8.FromUtf16(s, utf8Buffer, out Int32 _, out Int32 _);
 		result = new(utf8Buffer, true);
 		return true;
 	}

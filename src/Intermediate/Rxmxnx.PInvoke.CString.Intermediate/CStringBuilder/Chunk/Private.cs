@@ -110,11 +110,20 @@ public partial class CStringBuilder
 			Span<Byte> chunkBuffer = this.GetAvailable();
 			if (byteCount <= chunkBuffer.Length)
 			{
+#if !NETCOREAPP
 				this._count += Encoding.UTF8.GetBytes(newData, chunkBuffer);
+#else
+				Utf8.FromUtf16(newData, chunkBuffer, out Int32 _, out Int32 bytesWritten);
+				this._count += bytesWritten;
+#endif
 				return this;
 			}
 			CharSpanUtf8Split split = new(newData, byteCount, chunkBuffer.Length);
+#if !NETCOREAPP
 			Int32 leftByteCount = Encoding.UTF8.GetBytes(split.Left, chunkBuffer);
+#else
+			Utf8.FromUtf16(split.Left, chunkBuffer, out Int32 _, out Int32 leftByteCount);
+#endif
 			this._count += leftByteCount;
 			return new Chunk(this).Append(Encoding.UTF8.GetByteCount(split.Right), split.Right);
 		}

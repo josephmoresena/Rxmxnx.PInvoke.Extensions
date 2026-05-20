@@ -128,7 +128,12 @@ public partial class CStringBuilder
 
 			if (split.Left.Length <= 0) return;
 
+#if !NETCOREAPP
 			chunk._count += Encoding.UTF8.GetBytes(split.Left, chunkBuffer);
+#else
+			Utf8.FromUtf16(split.Left, chunkBuffer, out Int32 _, out Int32 bytesWritten);
+			chunk._count += bytesWritten;
+#endif
 			newData = split.Right;
 			byteCount = Encoding.UTF8.GetByteCount(newData);
 		}
@@ -231,7 +236,11 @@ public partial class CStringBuilder
 		private static Int32 InsertChars(Chunk chunk, Int32 index, ReadOnlySpan<Char> chars)
 		{
 			Span<Byte> temp = stackalloc Byte[StackAllocationHelper.StackallocByteThreshold];
+#if !NETCOREAPP
 			Int32 bytes = Encoding.UTF8.GetBytes(chars, temp);
+#else
+			Utf8.FromUtf16(chars, temp, out Int32 _, out Int32 bytes);
+#endif
 			chunk.Insert(index, temp[..bytes]);
 			return bytes;
 		}
