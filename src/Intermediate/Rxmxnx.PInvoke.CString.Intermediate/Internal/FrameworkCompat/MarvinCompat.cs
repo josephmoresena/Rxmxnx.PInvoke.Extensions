@@ -72,9 +72,14 @@ internal static class MarvinCompat
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	public static Int32 GetHashCode(ReadOnlySpan<Byte> value)
 	{
-		if (Encoding.UTF8.GetMaxCharCount(value.Length) <= 32)
+#if !PACKAGE
+		const Int32 maxChars = 16;
+#else
+		const Int32 maxChars = StackAllocationHelper.StackallocByteThreshold / 2;
+#endif
+		if (Encoding.UTF8.GetMaxCharCount(value.Length) <= maxChars)
 		{
-			Span<Char> chars = stackalloc Char[32];
+			Span<Char> chars = stackalloc Char[maxChars];
 #if !NETCOREAPP
 			Int32 charCount = Encoding.UTF8.GetChars(value, chars);
 			return MarvinCompat.GetHashCode(chars[..charCount]);
@@ -96,26 +101,26 @@ internal static class MarvinCompat
 	/// Compute a Marvin hash and collapse it into a 32-bit hash.
 	/// </summary>
 	/// <returns>A 32-bit signed integer hash code.</returns>
-	private static Int32 ComputeUtf8Hash32(ReadOnlySpan<Byte> source, UInt32 p0, UInt32 p1)
+	private static Int32 ComputeUtf8Hash32(ReadOnlySpan<Byte> value, UInt32 p0, UInt32 p1)
 	{
 		UInt32 count = 0;
-		Boolean carry = false;
-		Span<Char> destination = stackalloc Char[5];
-		ref Byte utf16Data = ref Unsafe.As<Char, Byte>(ref MemoryMarshal.GetReference(destination));
-		while (!source.IsEmpty)
+		Int32 carryOffset = 0;
+		Span<Char> buffer = stackalloc Char[5];
+		ref Byte utf16Data = ref Unsafe.As<Char, Byte>(ref MemoryMarshal.GetReference(buffer));
+		while (true)
 		{
-			Span<Char> freeSpace = carry ? destination[1..] : destination;
+			Span<Char> destination = buffer.Slice(carryOffset, 5 - carryOffset);
 #if !NETCOREAPP
-			MarvinCompat.CountChunk(source, freeSpace.Length, out Int32 bytesConsumed, out Int32 charsWritten);
-			Encoding.UTF8.GetChars(source[..bytesConsumed], freeSpace);
+			MarvinCompat.CountChunk(value, destination.Length, out Int32 bytesConsumed, out Int32 charsWritten);
+			Encoding.UTF8.GetChars(value[..bytesConsumed], destination);
 #else
-			Utf8.ToUtf16(source, freeSpace, out Int32 bytesConsumed, out Int32 charsWritten);
+			Utf8.ToUtf16(value, destination, out Int32 bytesConsumed, out Int32 charsWritten);
 #endif
-			UInt32 consumedSpace = (UInt32)(2 * charsWritten);
-			source = source[bytesConsumed..];
-			count += consumedSpace;
+			UInt32 consumption = (UInt32)(2 * charsWritten);
+			value = value[bytesConsumed..];
+			count += consumption;
 
-			if (consumedSpace + (carry ? 2 : 0) < 8) break;
+			if (consumption + 2 * carryOffset < 8) break;
 			p0 += Unsafe.ReadUnaligned<UInt32>(ref utf16Data);
 #if !NETCOREAPP3_1_OR_GREATER
 			UInt32 nextUInt32 = Unsafe.ReadUnaligned<UInt32>(ref Unsafe.AddByteOffset(ref utf16Data, (IntPtr)4));
@@ -125,13 +130,13 @@ internal static class MarvinCompat
 			MarvinCompat.Block(ref p0, ref p1);
 			p0 += nextUInt32;
 			MarvinCompat.Block(ref p0, ref p1);
-			if (charsWritten != freeSpace.Length)
+			if (charsWritten != destination.Length)
 			{
-				carry = false;
+				carryOffset = 0;
 				continue;
 			}
-			destination[0] = destination[4];
-			carry = true;
+			buffer[0] = buffer[^1];
+			carryOffset = 1;
 		}
 
 		if ((count & 0b_0100) == 0) goto DoFinalPartialRead;
