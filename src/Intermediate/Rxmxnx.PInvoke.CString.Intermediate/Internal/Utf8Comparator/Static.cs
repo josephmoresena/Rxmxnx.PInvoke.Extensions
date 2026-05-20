@@ -22,7 +22,12 @@ internal abstract unsafe partial class Utf8Comparator
 	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	protected static String GetStringFromUtf8(ReadOnlySpan<Byte> source) => Encoding.UTF8.GetString(source);
+	protected static String GetStringFromUtf8(ReadOnlySpan<Byte> source)
+#if !NET9_0_OR_GREATER
+		=> Encoding.UTF8.GetString(source);
+#else
+		=> String.Create(source.Length, source, static (d, s) => Utf8.ToUtf16(s, d, out _, out _));
+#endif
 	/// <summary>
 	/// Decodes all the bytes in <paramref name="source"/> into a <paramref name="destination"/>.
 	/// </summary>
@@ -33,7 +38,11 @@ internal abstract unsafe partial class Utf8Comparator
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected static void CopyCharsFromUtf8(ReadOnlySpan<Byte> source, Span<Char> destination)
+#if !NETCOREAPP
 		=> Encoding.UTF8.GetChars(source, destination);
+#else
+		=> Utf8.ToUtf16(source, destination, out _, out _);
+#endif
 	/// <summary>
 	/// Calculates the number of characters produced by decoding the <paramref name="source"/>.
 	/// </summary>
