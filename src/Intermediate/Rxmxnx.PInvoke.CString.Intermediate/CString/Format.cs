@@ -1,6 +1,4 @@
 #if NET6_0_OR_GREATER
-using System.Text.Unicode;
-
 namespace Rxmxnx.PInvoke;
 
 public partial class CString : ISpanFormattable
@@ -86,7 +84,11 @@ public partial class CString : ISpanFormattable
 		}
 		Int32 maxBytes = Encoding.UTF8.GetByteCount(s);
 		Byte[] utf8Buffer = new Byte[maxBytes + 1];
-		Utf8.FromUtf16(s, utf8Buffer, out Int32 _, out Int32 _);
+		if (Utf8.FromUtf16(s, utf8Buffer, out Int32 _, out Int32 _) is not OperationStatus.Done)
+		{
+			result = CString.Empty;
+			return false;
+		}
 		result = new(utf8Buffer, true);
 		return true;
 	}
