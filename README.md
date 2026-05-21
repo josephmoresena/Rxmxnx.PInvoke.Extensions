@@ -2254,6 +2254,7 @@ Represents a sequence of UTF-8 encoded characters.
 - Implements `ICloneable`, `IComparable`, `IComparable<CString>`, `IComparable<String>`, `IEquatable<CString>`,
   `IEquatable<String>` and `IEnumerableSequence<Byte>`.
 - This type is sealed.
+- The `GetHashCode()` produces the same hash code as a `System.String` instance with the equivalent UTF-16 text.
 - Instances of this type can be fixed but not pinned.
 - Instances of this type can be iterated using both `IEnumerable<Byte>` and `ReadOnlySpan<Byte>.Enumerator`.
 - Range operations can be used on instances of this type.
@@ -2512,6 +2513,14 @@ Represents a sequence of UTF-8 encoded characters.
   <summary>Unescape(ReadOnlySequence&lt;Byte&gt;)</summary>
 
   Creates a new instance of the `CString` class using an unescaped copy of the given UTF-8 escaped text.
+  </details>
+- <details>
+  <summary>GetHashCode(ReadOnlySpan&lt;Byte&gt;)</summary>
+
+  Computes the hash code for the provided UTF-8 unit span.
+
+  **Note:** As with `GetHashCode()`, On some restricted runtime environments, this method may require temporary string
+  materialization to preserve `System.String` hash compatibility.
   </details>
 
 </details>

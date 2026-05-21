@@ -200,16 +200,27 @@ public partial class CString
 		}
 		return -unusedBytes.Length;
 	}
+	/// <summary>
+	/// Creates a <see cref="String"/> instance from <paramref name="utf8Bytes"/>.
+	/// </summary>
+	/// <param name="utf8Bytes">The UTF-8 text to encode to UTF-16.</param>
+	/// <returns>A <see cref="String"/> instance.</returns>
+	private static String ToUtf16(ReadOnlySpan<Byte> utf8Bytes)
+	{
+		String result = Encoding.UTF8.GetString(utf8Bytes);
+		return String.IsInterned(result) ?? result;
+	}
 #if NETCOREAPP
 	/// <summary>
-	/// Computes the hash function for <paramref name="utf8Bytes"/>.
+	/// Encodes <paramref name="utf8Bytes"/> to UTF-16 chars and computes the hash function
+	/// for <paramref name="utf8Bytes"/>.
 	/// </summary>
 	/// <param name="utf8Bytes">The UTF-8 text to hash compute.</param>
 	/// <returns>The hash for of <paramref name="utf8Bytes"/>.</returns>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	private static Int32 GetHashCode(ReadOnlySpan<Byte> utf8Bytes)
+	private static Int32 GetStringHashCode(ReadOnlySpan<Byte> utf8Bytes)
 	{
 		Int32 maxChars = Encoding.UTF8.GetMaxCharCount(utf8Bytes.Length);
 		Span<Char> utf16Chars = stackalloc Char[maxChars];

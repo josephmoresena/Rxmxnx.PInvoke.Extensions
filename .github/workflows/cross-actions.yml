@@ -128,16 +128,25 @@ jobs:
           sudo rm -rf /tmp/*
           sudo rm -rf /var/tmp/*
 
-          sudo rm -rf /usr/local/lib/android/sdk
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/share/miniconda
+          sudo rm -rf /usr/local/share/vcpkg
+          sudo rm -rf /usr/local/share/chromedriver-linux64
+          sudo rm -rf /usr/local/share/edge_driver
+          sudo rm -rf /usr/local/share/gecko_driver
+          sudo rm -rf /usr/share/java/selenium-server.jar
 
           df -h
       - name: Setup Mono Development Kit And Runtime (macOS)
         if: runner.os == 'MacOS'
         run: |
+          sudo rm -rf /Users/runner/Library/Android
+          
           brew install --cask mono-mdk
           brew install --overwrite mono
           mono --version
           /opt/homebrew/bin/mono --version
+
       - name: Setup MinGW i686
         if: runner.os == 'Windows' && inputs.build_artifacts == true
         run: |
@@ -241,7 +250,6 @@ jobs:
           $latestVersion = ($versions | Measure-Object -Maximum).Maximum
           foreach ($v in $versions) {
             if ($v -eq $latestVersion) {
-                Write-Host "Preservando .NET SDK $v ($a)"
                 continue
             }
             winget uninstall "Microsoft.DotNet.SDK.$v" `
@@ -263,18 +271,26 @@ jobs:
         if: inputs.build_artifacts == true
         shell: pwsh
         run: |
+          dotnet nuget locals all --clear
           if ($IsWindows) {
+            Remove-Item -Recurse -Force "C:\Android" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "C:\vcpkg" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "C:\Miniconda" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "C:\SeleniumWebDrivers" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "$env:WINDIR\Temp\*" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "$env:TEMP\*" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "$env:TMP\*" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Temp\*" -ErrorAction SilentlyContinue
+          
             $env:PATH = "C:\msys64\mingw32\bin;" + $env:PATH
             ./Rxmxnx.PInvoke.LauncherTest.exe "src\ApplicationTest" "artifacts" "compile"
 
             Remove-Item -Recurse -Force "$env:WINDIR\SoftwareDistribution\Download" -ErrorAction SilentlyContinue
             Remove-Item -Recurse -Force "$env:WINDIR\Prefetch" -ErrorAction SilentlyContinue
-            Remove-Item -Recurse -Force "C:\Android\android-sdk" -ErrorAction SilentlyContinue
             Remove-Item -Recurse -Force "$env:WINDIR\Temp\*" -ErrorAction SilentlyContinue
             Remove-Item -Recurse -Force "$env:TEMP\*" -ErrorAction SilentlyContinue
             Remove-Item -Recurse -Force "$env:TMP\*" -ErrorAction SilentlyContinue
             Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Temp\*" -ErrorAction SilentlyContinue
-
           } else {
             chmod +x Rxmxnx.PInvoke.LauncherTest
             ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "compile"
@@ -283,6 +299,7 @@ jobs:
         if: inputs.build_artifacts == true
         shell: pwsh
         run: |
+          dotnet nuget locals all --clear
           Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
             $projDir = Split-Path $_.FullName
             "bin","obj" | ForEach-Object {

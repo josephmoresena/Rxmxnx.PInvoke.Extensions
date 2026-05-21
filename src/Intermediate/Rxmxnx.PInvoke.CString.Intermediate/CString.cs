@@ -255,7 +255,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 			0 => String.Empty.GetHashCode(),
 			_ when MarvinCompat.DefaultSeed.HasValue => MarvinCompat.GetHashCode(this.AsSpan()),
 #if NETCOREAPP
-			<= StackAllocationHelper.StackallocByteThreshold => CString.GetHashCode(this.AsSpan()),
+			<= StackAllocationHelper.StackallocByteThreshold => CString.GetStringHashCode(this.AsSpan()),
 #endif
 			_ when this.CachedValue is { } result => result.GetHashCode(),
 			_ => this.CreateInternalString().GetHashCode(),
@@ -522,4 +522,19 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 		length += CString.FinalizeBuffer(helper.Bytes, TextUnescape.Unescape(helper.Bytes[..length]), helper.HasArray);
 		return new(helper, length);
 	}
+	/// <summary>
+	/// Returns the hash code for the provided read-only UTF-8 unit span.
+	/// </summary>
+	/// <param name="value">A read-only UTF-8 unit span.</param>
+	/// <returns>A 32-bit signed integer hash code.</returns>
+	public static Int32 GetHashCode(ReadOnlySpan<Byte> value)
+		=> value.Length switch
+		{
+			0 => String.Empty.GetHashCode(),
+			_ when MarvinCompat.DefaultSeed.HasValue => MarvinCompat.GetHashCode(value),
+#if NETCOREAPP
+			<= StackAllocationHelper.StackallocByteThreshold => CString.GetStringHashCode(value),
+#endif
+			_ => CString.ToUtf16(value).GetHashCode(),
+		};
 }

@@ -76,16 +76,12 @@ public partial class CString
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	private String CreateInternalString()
 	{
-		String result = Encoding.UTF8.GetString(this.AsSpan());
-		result = String.IsInterned(result) ?? result;
-
+		String result = CString.ToUtf16(this._data.AsSpan());
 		if (this._length <= StackAllocationHelper.StackallocByteThreshold) return result;
-
 		if (this._strValue is null)
 			this._strValue = new(result);
 		else
 			this._strValue.SetTarget(result);
-
 		return result;
 	}
 }

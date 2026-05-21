@@ -137,8 +137,6 @@ public partial class CString
 		this._isNullTerminated = true;
 
 		this.IsFunction = true;
-		if (this._length > StackAllocationHelper.StackallocByteThreshold)
-			this._strValue = new(utf16Text);
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value
