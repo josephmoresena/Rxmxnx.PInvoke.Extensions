@@ -61,6 +61,7 @@ public sealed class BasicTests
 		PInvokeAssert.True(String.Empty != default(CString));
 		PInvokeAssert.True(CString.Empty != default(String));
 
+		PInvokeAssert.Equal(CString.Empty, CString.Create(ReadOnlySpan<Byte>.Empty));
 		PInvokeAssert.Null(CString.Create(default(ReadOnlySpanFunc<Byte>)));
 		PInvokeAssert.Null(CString.Create(default(Byte[])));
 		PInvokeAssert.Null(nullCStr);

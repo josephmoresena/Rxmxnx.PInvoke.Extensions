@@ -246,6 +246,9 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 			_ => this.CreateInternalString(),
 		};
 	/// <inheritdoc/>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public override Int32 GetHashCode()
 		=> this._length switch
 		{
@@ -455,6 +458,9 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// This value is only reliable on supported platforms. On unsupported platforms or in case of inspection errors,
 	/// this property will always return <see langword="false"/>.
 	/// </remarks>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Boolean IsImagePersistent([NotNullWhen(true)] CString? str)
 		=> str is not null && !MemoryInspector.MayBeNonLiteral(str._data.AsSpan());
 	/// <summary>

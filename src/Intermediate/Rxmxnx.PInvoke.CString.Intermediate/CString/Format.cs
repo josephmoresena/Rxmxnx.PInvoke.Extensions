@@ -9,6 +9,9 @@ public partial class CString : ISpanFormattable
 	, IUtf8SpanFormattable, IUtf8SpanParsable<CString>
 #endif
 {
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	String IFormattable.ToString(String? format, IFormatProvider? formatProvider) => this.ToString();
 	Boolean ISpanFormattable.TryFormat(Span<Char> destination, out Int32 charsWritten, ReadOnlySpan<Char> format,
 		IFormatProvider? provider)

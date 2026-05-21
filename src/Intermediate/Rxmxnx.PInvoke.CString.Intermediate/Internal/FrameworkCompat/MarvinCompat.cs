@@ -74,6 +74,9 @@ internal static class MarvinCompat
 	/// </summary>
 	/// <param name="value">A read-only UTF-8 unit span.</param>
 	/// <returns>A 32-bit signed integer hash code.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	public static Int32 GetHashCode(ReadOnlySpan<Byte> value)
 	{
@@ -127,6 +130,9 @@ internal static class MarvinCompat
 	/// Compute a Marvin hash and collapse it into a 32-bit hash.
 	/// </summary>
 	/// <returns>A 32-bit signed integer hash code.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	private static Int32 ComputeUtf16Hash32(ref Byte utf16Data, UInt32 count, UInt32 p0, UInt32 p1)
 	{
