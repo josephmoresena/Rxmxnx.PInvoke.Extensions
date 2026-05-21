@@ -112,7 +112,6 @@ jobs:
           rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 
           sudo apt update 
-          sudo apt upgrade --assume-yes
           sudo apt-get install clang llvm zlib1g-dev libkrb5-dev libssl-dev \
             qemu-user qemu-user-static binfmt-support libicu74:arm64 libicu74:armhf \
             binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu zlib1g-dev:arm64 libssl-dev:arm64 \
