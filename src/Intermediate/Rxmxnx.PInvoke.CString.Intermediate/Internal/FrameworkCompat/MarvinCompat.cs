@@ -248,6 +248,142 @@ internal static class MarvinCompat
 		goto DoFinalRoundsAndReturn;
 	}
 #endif
+#if !NETCOREAPP
+	/// <summary>
+	/// Determines how many UTF-8 bytes can be decoded into the available UTF-16 space,
+	/// gracefully handling invalid or incomplete sequences (Maximal Subpart Rule).
+	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static void CountChunk(ReadOnlySpan<Byte> source, Int32 availableChars, out Int32 bytesConsumed,
+		out Int32 charsWritten)
+	{
+		bytesConsumed = 0;
+		charsWritten = 0;
+
+		while (bytesConsumed < source.Length && charsWritten < availableChars)
+		{
+			Byte b1 = source[bytesConsumed];
+			// 1. FAST-PATH para ASCII (1 byte -> 1 char)
+			if (b1 < 0x80)
+			{
+				bytesConsumed++;
+				charsWritten++;
+				continue;
+			}
+
+			Int32 sequenceLength = 0;
+			Int32 utf16Chars = 1;
+			Boolean isValid = false;
+
+			switch (b1)
+			{
+				case >= 0xC2 and <= 0xDF:
+				{
+					if (bytesConsumed + 1 < source.Length && MarvinCompat.IsTrailByte(source[bytesConsumed + 1]))
+					{
+						sequenceLength = 2;
+						isValid = true;
+					}
+					break;
+				}
+				case >= 0xE0 and <= 0xEF:
+				{
+					if (bytesConsumed + 2 < source.Length)
+					{
+						Byte b2 = source[bytesConsumed + 1];
+						Byte b3 = source[bytesConsumed + 2];
+						if (MarvinCompat.IsTrailByte(b3) && ((b1 == 0xE0 && b2 is >= 0xA0 and <= 0xBF) ||
+							    (b1 is >= 0xE1 and <= 0xEC && MarvinCompat.IsTrailByte(b2)) ||
+							    (b1 == 0xED && b2 is >= 0x80 and <= 0x9F) ||
+							    (b1 is >= 0xEE and <= 0xEF && MarvinCompat.IsTrailByte(b2))))
+						{
+							sequenceLength = 3;
+							isValid = true;
+						}
+					}
+					break;
+				}
+				case >= 0xF0 and <= 0xF4:
+				{
+					if (bytesConsumed + 3 < source.Length)
+					{
+						Byte b2 = source[bytesConsumed + 1];
+						Byte b3 = source[bytesConsumed + 2];
+						Byte b4 = source[bytesConsumed + 3];
+
+						if (MarvinCompat.IsTrailByte(b3) && MarvinCompat.IsTrailByte(b4) &&
+						    ((b1 == 0xF0 && b2 is >= 0x90 and <= 0xBF) ||
+							    (b1 is >= 0xF1 and <= 0xF3 && MarvinCompat.IsTrailByte(b2)) ||
+							    (b1 == 0xF4 && b2 is >= 0x80 and <= 0x8F)))
+						{
+							sequenceLength = 4;
+							utf16Chars = 2;
+							isValid = true;
+						}
+					}
+					break;
+				}
+			}
+
+			if (isValid)
+			{
+				if (charsWritten + utf16Chars > availableChars)
+					break;
+
+				bytesConsumed += sequenceLength;
+				charsWritten += utf16Chars;
+			}
+			else
+			{
+				if (charsWritten + 1 > availableChars)
+					break;
+
+				Int32 invalidBytesToConsume = 1;
+				if (b1 is >= 0xC2 and <= 0xF4 && bytesConsumed + 1 < source.Length)
+				{
+					Byte b2 = source[bytesConsumed + 1];
+
+					switch (b1)
+					{
+						case >= 0xE0 and <= 0xEF:
+						{
+							if ((b1 == 0xE0 && b2 is >= 0xA0 and <= 0xBF) ||
+							    (b1 is >= 0xE1 and <= 0xEC && MarvinCompat.IsTrailByte(b2)) ||
+							    (b1 == 0xED && b2 is >= 0x80 and <= 0x9F) ||
+							    (b1 is >= 0xEE and <= 0xEF && MarvinCompat.IsTrailByte(b2)))
+								invalidBytesToConsume = 2;
+							break;
+						}
+						case >= 0xF0 and <= 0xF4:
+						{
+							if ((b1 == 0xF0 && b2 is >= 0x90 and <= 0xBF) ||
+							    (b1 is >= 0xF1 and <= 0xF3 && MarvinCompat.IsTrailByte(b2)) ||
+							    (b1 == 0xF4 && b2 is >= 0x80 and <= 0x8F))
+							{
+								invalidBytesToConsume = 2;
+								if (bytesConsumed + 2 < source.Length &&
+								    MarvinCompat.IsTrailByte(source[bytesConsumed + 2]))
+									invalidBytesToConsume = 3;
+							}
+							break;
+						}
+					}
+				}
+				bytesConsumed += invalidBytesToConsume;
+				charsWritten += 1;
+			}
+		}
+	}
+	/// <summary>
+	/// Indicates whether <paramref name="b"/> is a UTF-8 trail byte.
+	/// </summary>
+	/// <param name="b">A UTF-8 unit.</param>
+	/// <returns>
+	/// <see langword="true"/> if <paramref name="b"/> is a UTF-8 trail byte; otherwise <see langword="false"/>.
+	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static Boolean IsTrailByte(Byte b) => (b & 0xC0) == 0x80;
+#endif
 	/// <summary>
 	/// Compute a Marvin hash and collapse it into a 32-bit hash.
 	/// </summary>
@@ -367,48 +503,4 @@ internal static class MarvinCompat
 	/// <returns>The value resulting from the left bit rotation.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static UInt32 RotateLeft(UInt32 value, Int32 shift) => (value << shift) | (value >> (32 - shift));
-#if !NETCOREAPP
-	/// <summary>
-	/// Determines how many UTF-8 bytes can be decoded into the available UTF-16 space.
-	/// </summary>
-	/// <param name="source">The UTF-8 input data.</param>
-	/// <param name="availableChars">The available UTF-16 character capacity.</param>
-	/// <param name="bytesConsumed">Output. The number of UTF-8 bytes that fit in the destination.</param>
-	/// <param name="charsWritten">Output. The number of UTF-16 characters produced.</param>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void CountChunk(ReadOnlySpan<Byte> source, Int32 availableChars, out Int32 bytesConsumed,
-		out Int32 charsWritten)
-	{
-		bytesConsumed = 0;
-		charsWritten = 0;
-
-		Int32 i = 0;
-
-		while (i < source.Length && charsWritten < availableChars)
-		{
-			Byte b = source[i];
-			Int32 utf8Length;
-			if ((b & 0x80) == 0)
-				utf8Length = 1;
-			else if ((b & 0xE0) == 0xC0)
-				utf8Length = 2;
-			else if ((b & 0xF0) == 0xE0)
-				utf8Length = 3;
-			else
-				utf8Length = 4;
-
-			if (i + utf8Length > source.Length)
-				break;
-
-			Int32 utf16Chars = utf8Length == 4 ? 2 : 1;
-			if (charsWritten + utf16Chars > availableChars)
-				break;
-
-			i += utf8Length;
-			charsWritten += utf16Chars;
-		}
-
-		bytesConsumed = i;
-	}
-#endif
 }

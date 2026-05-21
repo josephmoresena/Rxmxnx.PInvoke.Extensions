@@ -160,25 +160,22 @@ jobs:
             8.0.x
             9.0.x
             10.0.x
-      - name: Setup .NET x86 (Windows)
+      - name: Setup .NET (Windows)
         if: runner.os == 'Windows' && inputs.run_tests == true
         shell: pwsh
         run: |
-          winget install Microsoft.DotNet.SDK.6  --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
-          winget install Microsoft.DotNet.SDK.7 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
-          winget install Microsoft.DotNet.SDK.8 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements  
-          winget install Microsoft.DotNet.SDK.9 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
-          winget install Microsoft.DotNet.SDK.10 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
-      - name: Setup .NET x64 (Windows)
-        if: runner.os == 'Windows' && inputs.run_tests == true
-        run: |
-          winget install Microsoft.DotNet.SDK.6 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-          winget install Microsoft.DotNet.SDK.7 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-          winget install Microsoft.DotNet.SDK.8 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-          winget install Microsoft.DotNet.SDK.9 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-          winget install Microsoft.DotNet.SDK.9 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-          winget install Microsoft.DotNet.SDK.10 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-
+          $versions = 6..10
+          $archs = @("x86", "x64")
+          foreach ($v in $versions) {
+            foreach ($a in $archs) {
+              winget install "Microsoft.DotNet.SDK.$v" `
+              --architecture $a `
+              --silent `
+              --force `
+              --disable-interactivity `
+              --accept-source-agreements
+            }
+          }
           dotnet workload update
       - name: Remove ApplicationTest
         if: inputs.run_tests == true
@@ -237,6 +234,25 @@ jobs:
           Remove-Item -Recurse -Force "src/Test"
           Remove-Item -Recurse -Force "src/Intermediate"
           Remove-Item -Recurse -Force "src/LegacyAppTest"
+      - name: Remove old .NET Versions
+        if: inputs.run_tests == true && runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $versions = 6..10
+          $archs = @("x86", "x64")
+          $latestVersion = ($versions | Measure-Object -Maximum).Maximum
+          foreach ($v in $versions) {
+              foreach ($a in $archs) {
+                  if ($v -eq $latestVersion -and $a -eq "x64") {
+                      Write-Host "Preservando .NET SDK $v ($a)"
+                      continue
+                  }
+                  winget uninstall "Microsoft.DotNet.SDK.$v" `
+                      --architecture $a `
+                      --silent `
+                      --disable-interactivity
+              }
+          }
       - name: Publish launcher
         if: inputs.build_artifacts == true
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.LauncherTest
