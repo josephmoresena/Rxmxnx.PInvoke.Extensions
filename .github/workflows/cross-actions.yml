@@ -248,6 +248,7 @@ jobs:
                 --force `
                 --purge `
                 --silent `
+                --all-versions `
                 --disable-interactivity
           }
       - name: Publish launcher
