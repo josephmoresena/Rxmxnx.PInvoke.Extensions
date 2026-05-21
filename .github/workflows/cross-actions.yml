@@ -238,19 +238,17 @@ jobs:
         shell: pwsh
         run: |
           $versions = 6..10
-          $archs = @("x86", "x64")
           $latestVersion = ($versions | Measure-Object -Maximum).Maximum
           foreach ($v in $versions) {
-              foreach ($a in $archs) {
-                  if ($v -eq $latestVersion -and $a -eq "x64") {
-                      Write-Host "Preservando .NET SDK $v ($a)"
-                      continue
-                  }
-                  winget uninstall "Microsoft.DotNet.SDK.$v" `
-                      --architecture $a `
-                      --silent `
-                      --disable-interactivity
-              }
+            if ($v -eq $latestVersion) {
+                Write-Host "Preservando .NET SDK $v ($a)"
+                continue
+            }
+            winget uninstall "Microsoft.DotNet.SDK.$v" `
+                --force `
+                --purge `
+                --silent `
+                --disable-interactivity
           }
       - name: Publish launcher
         if: inputs.build_artifacts == true
