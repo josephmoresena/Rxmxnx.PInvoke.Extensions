@@ -230,6 +230,13 @@ jobs:
         shell: pwsh
         if: always() && (steps.mono_x86.outcome != 'skipped' || steps.mono_mac.outcome != 'skipped')
         run: ./Print-MonoTest-Results.ps1
+      - name: Remove source code files
+        if: inputs.run_tests == true
+        shell: pwsh
+        run: |
+          Remove-Item -Recurse -Force "src/Test"
+          Remove-Item -Recurse -Force "src/Intermediate"
+          Remove-Item -Recurse -Force "src/LegacyAppTest"
       - name: Publish launcher
         if: inputs.build_artifacts == true
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.LauncherTest

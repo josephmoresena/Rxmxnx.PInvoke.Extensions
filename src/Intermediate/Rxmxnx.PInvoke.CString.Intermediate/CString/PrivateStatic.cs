@@ -206,6 +206,9 @@ public partial class CString
 	/// </summary>
 	/// <param name="utf8Bytes">The UTF-8 text to hash compute.</param>
 	/// <returns>The hash for of <paramref name="utf8Bytes"/>.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	private static Int32 GetHashCode(ReadOnlySpan<Byte> utf8Bytes)
 	{
 		Int32 maxChars = Encoding.UTF8.GetMaxCharCount(utf8Bytes.Length);

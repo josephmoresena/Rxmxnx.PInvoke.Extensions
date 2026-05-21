@@ -26,17 +26,17 @@ public partial class CString : ISpanFormattable
 	static CString IParsable<CString>.Parse(String s, IFormatProvider? provider)
 	{
 		ArgumentNullException.ThrowIfNull(s);
-		return CString.TryParse(s, out CString result) ? result : CString.Zero;
+		return CString.TryParse(s, out CString? result) ? result : throw new FormatException();
 	}
 	static Boolean IParsable<CString>.TryParse([NotNullWhen(true)] String? s, IFormatProvider? provider,
 		[MaybeNullWhen(false)] out CString result)
 	{
 		if (s is not null) return CString.TryParse(s, out result);
-		result = CString.Zero;
+		result = null;
 		return false;
 	}
 	static CString ISpanParsable<CString>.Parse(ReadOnlySpan<Char> s, IFormatProvider? provider)
-		=> CString.TryParse(s, out CString result) ? result : CString.Zero;
+		=> CString.TryParse(s, out CString? result) ? result : throw new FormatException();
 	static Boolean ISpanParsable<CString>.TryParse(ReadOnlySpan<Char> s, IFormatProvider? provider,
 		[MaybeNullWhen(false)] out CString result)
 		=> CString.TryParse(s, out result);
@@ -68,14 +68,17 @@ public partial class CString : ISpanFormattable
 			return true;
 		}
 		_ = CString.IsNullTerminatedSpan(utf8Text, out Int32 length);
-		Byte[] utf8Buffer = new Byte[length + 1];
+		Byte[] utf8Buffer = CString.CreateByteArray(length + 1);
 		utf8Text[..length].CopyTo(utf8Buffer);
-		result = new(utf8Buffer);
+#if NET5_0_OR_GREATER
+		utf8Buffer[^1] = default;
+#endif
+		result = new(utf8Buffer, true);
 		return true;
 	}
 #endif
 	/// <inheritdoc cref="ISpanParsable{CString}.TryParse(ReadOnlySpan{Char}, IFormatProvider, out CString)"/>
-	private static Boolean TryParse(ReadOnlySpan<Char> s, out CString result)
+	private static Boolean TryParse(ReadOnlySpan<Char> s, [MaybeNullWhen(false)] out CString result)
 	{
 		if (s.IsEmpty)
 		{
@@ -83,12 +86,15 @@ public partial class CString : ISpanFormattable
 			return true;
 		}
 		Int32 maxBytes = Encoding.UTF8.GetByteCount(s);
-		Byte[] utf8Buffer = new Byte[maxBytes + 1];
-		if (Utf8.FromUtf16(s, utf8Buffer, out Int32 _, out Int32 _) is not OperationStatus.Done)
+		Byte[] utf8Buffer = CString.CreateByteArray(maxBytes + 1);
+		if (Utf8.FromUtf16(s, utf8Buffer, out Int32 _, out Int32 _) != OperationStatus.Done)
 		{
-			result = CString.Empty;
+			result = default;
 			return false;
 		}
+#if NET5_0_OR_GREATER
+		utf8Buffer[^1] = default;
+#endif
 		result = new(utf8Buffer, true);
 		return true;
 	}
