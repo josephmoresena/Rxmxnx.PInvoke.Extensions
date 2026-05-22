@@ -7,7 +7,5 @@ namespace System.Runtime.InteropServices.Marshalling { }
 namespace System.Text.Json { }
 
 namespace System.Text.Json.Serialization { }
-
-namespace System.Text.Unicode { }
 #endif
 #endif

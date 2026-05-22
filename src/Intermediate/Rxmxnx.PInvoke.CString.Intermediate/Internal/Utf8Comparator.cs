@@ -1,8 +1,4 @@
-﻿#if !NETCOREAPP
-using Rune = System.UInt32;
-#endif
-
-namespace Rxmxnx.PInvoke.Internal;
+﻿namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// The abstract Utf8Comparator class provides a means for efficiently and customizable

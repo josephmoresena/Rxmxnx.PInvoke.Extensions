@@ -1,9 +1,4 @@
-﻿#if !NETCOREAPP
-using RuneCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuneCompat;
-using Rune = System.UInt32;
-#endif
-
-namespace Rxmxnx.PInvoke.Internal;
+﻿namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// Represents a decoded <see cref="Rune"/> instance.
@@ -13,10 +8,7 @@ namespace Rxmxnx.PInvoke.Internal;
 /// during decoding and the raw value read.
 /// </remarks>
 [StructLayout(LayoutKind.Sequential)]
-internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
-#if NETCOREAPP
-	, IEquatable<UInt32>
-#endif
+internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>, IEquatable<UInt32>
 {
 #if !PACKAGE
 	/// <summary>
@@ -37,12 +29,7 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 	/// <summary>
 	/// The <see cref="Rune"/> instance decoded from the input.
 	/// </summary>
-	public Int32 Value
-#if NETCOREAPP
-		=> this._value.Value;
-#else
-		=> (Int32)this._value;
-#endif
+	public Int32 Value => this._value.Value;
 #if !PACKAGE
 	/// <summary>
 	/// The raw integer value that was read from the input to form the Rune.
@@ -86,13 +73,11 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 	public Boolean Equals(DecodedRune other) => this.CharsConsumed == other.CharsConsumed && this.Equals(other._value);
 	/// <inheritdoc/>
 	public Boolean Equals(Rune other) => this._value == other;
-#if NETCOREAPP
 	/// <inheritdoc/>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
 	public Boolean Equals(UInt32 other) => this.Equals(new Rune(other));
-#endif
 	/// <inheritdoc/>
 	public override Boolean Equals(Object? obj)
 	{
@@ -100,9 +85,7 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 		{
 			DecodedRune decoded => this.Equals(decoded._value),
 			Rune rune => this.Equals(rune),
-#if NETCOREAPP
 			UInt32 uInt32 => this.Equals(uInt32),
-#endif
 			_ => false,
 		};
 	}
@@ -112,12 +95,7 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	public override String ToString()
-#if NETCOREAPP
-		=> this._value.ToString();
-#else
-		=> Char.ConvertFromUtf32(this.Value);
-#endif
+	public override String ToString() => this._value.ToString();
 
 	/// <summary>
 	/// Decodes the <see cref="Rune"/> at the beginning of the provided UTF-8 source buffer and
@@ -128,11 +106,7 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static DecodedRune? Decode(ReadOnlySpan<Byte> source)
 	{
-#if NETCOREAPP
 		if (Rune.DecodeFromUtf8(source, out Rune result, out Int32 charsConsumed) != OperationStatus.Done)
-#else
-		if (RuneCompat.DecodeFromUtf8(source, out Rune result, out Int32 charsConsumed) != OperationStatus.Done)
-#endif
 			return default;
 #if !PACKAGE
 		DecodedRune decoded = new(result, charsConsumed, source[..charsConsumed]);
@@ -150,11 +124,7 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static DecodedRune? Decode(ReadOnlySpan<Char> source)
 	{
-#if NETCOREAPP
 		if (Rune.DecodeFromUtf16(source, out Rune result, out Int32 charsConsumed) != OperationStatus.Done)
-#else
-		if (RuneCompat.DecodeFromUtf16(source, out Rune result, out Int32 charsConsumed) != OperationStatus.Done)
-#endif
 			return default;
 #if !PACKAGE
 		DecodedRune decoded = new(result, charsConsumed, MemoryMarshal.AsBytes(source[..charsConsumed]));

@@ -1,7 +1,3 @@
-#if !NETCOREAPP
-using Rune = System.UInt32;
-#endif
-
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>

@@ -1,8 +1,3 @@
-#if !NETCOREAPP
-using RuneCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuneCompat;
-using Rune = System.UInt32;
-#endif
-
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
@@ -99,11 +94,7 @@ internal static class TextUnescape
 		Int32 baseLength = 6; // Length of "\uXXXX" sequence.
 		ReadOnlySpan<Byte> unescaped = escapedBuffer[(escapeIndex + baseLength)..];
 		Rune rune = TextUnescape.GetUnescapeRune(escapedBuffer, ref escapeIndex, low, ref baseLength);
-#if NETCOREAPP
 		Int32 nBytes = rune.EncodeToUtf8(escapedBuffer[escapeIndex..]);
-#else
-			Int32 nBytes = RuneCompat.EncodeToUtf8(rune, escapedBuffer[escapeIndex..]);
-#endif
 		Int32 offset = escapeIndex + nBytes;
 		Int32 result = baseLength - nBytes;
 
@@ -125,19 +116,11 @@ internal static class TextUnescape
 		Rune rune;
 		if (!Char.IsLowSurrogate(lowChar) || !TextUnescape.HasHighSurrogate(escapedBuffer, escapeIndex, out Char high))
 		{
-#if NETCOREAPP
 			rune = new(lowChar);
 		}
 		else
 		{
 			rune = new(high, lowChar);
-#else
-			rune = lowChar;
-		}
-		else
-		{
-			rune = (Rune)Char.ConvertToUtf32(high, lowChar);
-#endif
 			escapeIndex -= 6; // Adjust for "\uXXXX" prefix.
 			escapeSize *= 2; // Double the size for surrogate pairs.
 		}

@@ -1,8 +1,4 @@
-﻿#if !NETCOREAPP
-using Rune = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuneCompat;
-#endif
-
-namespace Rxmxnx.PInvoke.Tests.Internal.DecodedRuneTests;
+﻿namespace Rxmxnx.PInvoke.Tests.Internal.DecodedRuneTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -64,13 +60,5 @@ public sealed class DecodeTest
 		PInvokeAssert.Equal(decodedRune.Value.RawValue, rawValue);
 	}
 
-#if NETCOREAPP
 	private static String CreateString(in Int32 value) => Unsafe.As<Int32, Rune>(ref Unsafe.AsRef(in value)).ToString();
-#else
-	private static unsafe String CreateString(in Int32 value)
-	{
-		fixed (void* ptr = &value)
-			return Encoding.UTF32.GetString((Byte*)ptr, sizeof(Int32));
-	}
-#endif
 }

@@ -111,7 +111,55 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:&lt;PrivateImplementationDetails&gt;.__StaticArrayInitTypeSize=128</Target>
+    <Left>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:&lt;PrivateImplementationDetails&gt;.__StaticArrayInitTypeSize=32</Target>
+    <Left>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.ExceptionArgument</Target>
+    <Left>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Numerics.BitOperations</Target>
+    <Left>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Rune</Target>
+    <Left>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Runtime.CompilerServices.CallerArgumentExpressionAttribute</Target>
+    <Left>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Text.Unicode.Utf16Utility</Target>
+    <Left>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Text.UnicodeUtility</Target>
+    <Left>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.ThrowHelper</Target>
     <Left>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
@@ -120,5 +168,23 @@
     <Target>M:Rxmxnx.PInvoke.CStringBuilder.GetLock</Target>
     <Left>lib/net8.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/net9.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>F:&lt;PrivateImplementationDetails&gt;.2F3EFC9595514E83DED03093C4F3E3C781A650E1AAB8CA350537CD1A47E1EE8E</Target>
+    <Left>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>F:&lt;PrivateImplementationDetails&gt;.3BF63951626584EB1653F9B8DBB590A5EE1EAE1135A904B9317C3773896DF076</Target>
+    <Left>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0008</DiagnosticId>
+    <Target>T:Rxmxnx.PInvoke.Internal.DecodedRune</Target>
+    <Left>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
 </Suppressions>
