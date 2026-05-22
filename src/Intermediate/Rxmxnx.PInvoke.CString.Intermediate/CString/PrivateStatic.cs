@@ -89,11 +89,7 @@ public partial class CString
 		Byte[] result = CString.CreateByteArray(bufferLength);
 		Span<Byte> span = result.AsSpan();
 		Span<Byte> initial = span[..utf8Length];
-#if !NETCOREAPP
-		Encoding.UTF8.GetBytes(seq, initial);
-#else
 		Utf8.FromUtf16(seq, initial, out Int32 _, out Int32 _);
-#endif
 		for (Int32 i = 1; i < count; i++)
 		{
 			span = span[initial.Length..];
@@ -170,11 +166,7 @@ public partial class CString
 
 		Byte[] array = CString.CreateByteArray(utf8Length + 1);
 		Span<Byte> bytes = array;
-#if !NETCOREAPP
-		Encoding.UTF8.GetBytes(utf16Text, bytes);
-#else
 		Utf8.FromUtf16(utf16Text, bytes, out Int32 _, out Int32 _);
-#endif
 		bytes[^1] = default;
 		return ValueRegion<Byte>.Create(array);
 	}

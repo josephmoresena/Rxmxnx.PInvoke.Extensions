@@ -147,7 +147,25 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Text.Ascii</Target>
+    <Left>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Text.Unicode.Utf16Utility</Target>
+    <Left>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Text.Unicode.Utf8</Target>
+    <Left>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Text.Unicode.Utf8Utility</Target>
     <Left>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>

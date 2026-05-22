@@ -63,7 +63,6 @@ internal static class ThrowHelper
 			case ExceptionArgument.value:
 				return nameof(ExceptionArgument.value);
 			default:
-				Debug.Fail("The enum value is not defined, please check the ExceptionArgument Enum.");
 				return "";
 		}
 	}
