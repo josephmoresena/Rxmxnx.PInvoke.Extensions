@@ -76,7 +76,7 @@ public partial class CString
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	private String CreateInternalString()
 	{
-		String result = CString.ToUtf16(this._data.AsSpan());
+		String result = CString.ToUtf16(this.AsSpan());
 		if (this._length <= StackAllocationHelper.StackallocByteThreshold) return result;
 		if (this._strValue is null)
 			this._strValue = new(result);
