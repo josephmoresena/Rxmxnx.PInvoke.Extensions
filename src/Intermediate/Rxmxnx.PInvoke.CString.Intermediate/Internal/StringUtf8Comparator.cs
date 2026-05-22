@@ -31,11 +31,12 @@ internal sealed class StringUtf8Comparator : Utf8Comparator<Char>
 	private StringUtf8Comparator(Boolean ignoreCase, CultureInfo? culture) : base(ignoreCase, culture) { }
 
 	/// <inheritdoc/>
-	protected override DecodedRune? DecodeRune(ref ReadOnlySpan<Char> source)
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	protected override Rune? DecodeRune(ref ReadOnlySpan<Char> source)
 	{
-		DecodedRune? result = DecodedRune.Decode(source);
-		if (result.HasValue)
-			source = source[result.Value.CharsConsumed..];
+		if (Rune.DecodeFromUtf16(source, out Rune result, out Int32 charsConsumed) != OperationStatus.Done)
+			return default;
+		source = source[charsConsumed..];
 		return result;
 	}
 	/// <inheritdoc/>

@@ -46,11 +46,11 @@ internal abstract unsafe partial class Utf8Comparator
 	/// <param name="source">A read-only span of <see cref="byte"/> elements representing a UTF-8 encoded text.</param>
 	/// <returns>The decoded <see cref="Rune"/>, if any; otherwise, <see langword="null"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	protected static DecodedRune? DecodeRuneFromUtf8(ref ReadOnlySpan<Byte> source)
+	protected static Rune? DecodeRuneFromUtf8(ref ReadOnlySpan<Byte> source)
 	{
-		DecodedRune? result = DecodedRune.Decode(source);
-		if (result.HasValue)
-			source = source[result.Value.CharsConsumed..];
+		if (Rune.DecodeFromUtf8(source, out Rune result, out Int32 bytesConsumed) != OperationStatus.Done)
+			return default;
+		source = source[bytesConsumed..];
 		return result;
 	}
 	/// <summary>

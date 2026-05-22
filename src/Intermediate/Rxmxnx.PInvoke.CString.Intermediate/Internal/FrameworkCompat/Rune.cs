@@ -93,7 +93,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	{
 		UInt32 expanded = ch;
 		if (UnicodeUtility.IsSurrogateCodePoint(expanded))
-			ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.ch);
+			throw new ArgumentOutOfRangeException(nameof(ch));
 		this._value = expanded;
 	}
 
@@ -124,7 +124,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	public Rune(UInt32 value)
 	{
 		if (!UnicodeUtility.IsValidUnicodeScalar(value))
-			ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.value);
+			throw new ArgumentOutOfRangeException(nameof(value));
 		this._value = value;
 	}
 
@@ -544,12 +544,9 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// If <paramref name="destination"/> is not large enough to hold the output.
 	/// </exception>
 	public Int32 EncodeToUtf16(Span<Char> destination)
-	{
-		if (!this.TryEncodeToUtf16(destination, out Int32 charsWritten))
-			ThrowHelper.ThrowArgumentException_DestinationTooShort();
-
-		return charsWritten;
-	}
+		=> this.TryEncodeToUtf16(destination, out Int32 charsWritten) ?
+			charsWritten :
+			throw new ArgumentException("Destination is too short.", nameof(destination));
 
 	/// <summary>
 	/// Encodes this <see cref="Rune"/> to a UTF-8 destination buffer.
@@ -560,12 +557,9 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// If <paramref name="destination"/> is not large enough to hold the output.
 	/// </exception>
 	public Int32 EncodeToUtf8(Span<Byte> destination)
-	{
-		if (!this.TryEncodeToUtf8(destination, out Int32 bytesWritten))
-			ThrowHelper.ThrowArgumentException_DestinationTooShort();
-
-		return bytesWritten;
-	}
+		=> this.TryEncodeToUtf8(destination, out Int32 bytesWritten) ?
+			bytesWritten :
+			throw new ArgumentException("Destination is too short.", nameof(destination));
 
 	public override Boolean Equals([NotNullWhen(true)] Object? obj) => obj is Rune other && this.Equals(other);
 
@@ -874,8 +868,8 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 
 	public static Rune ToLower(Rune value, CultureInfo? culture)
 	{
-		if (culture is null) ThrowHelper.ThrowArgumentNullException(ExceptionArgument.culture);
-		return Rune.ChangeCaseCultureAware(value, culture, false);
+		ArgumentNullExceptionCompat.ThrowIfNull(culture);
+		return Rune.ChangeCaseCultureAware(value, culture!, false);
 	}
 
 	public static Rune ToLowerInvariant(Rune value)
@@ -885,8 +879,8 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 
 	public static Rune ToUpper(Rune value, CultureInfo? culture)
 	{
-		if (culture is null) ThrowHelper.ThrowArgumentNullException(ExceptionArgument.culture);
-		return Rune.ChangeCaseCultureAware(value, culture, true);
+		ArgumentNullExceptionCompat.ThrowIfNull(culture);
+		return Rune.ChangeCaseCultureAware(value, culture!, true);
 	}
 
 	public static Rune ToUpperInvariant(Rune value)
@@ -894,7 +888,9 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 			Rune.UnsafeCreate(Utf16Utility.ConvertAllAsciiCharsInUInt32ToUppercase(value._value)) :
 			Rune.ChangeCaseCultureAware(value, CultureInfo.InvariantCulture, true);
 
-	/// <inheritdoc cref="IComparable.CompareTo"/>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3928)]
+#endif
 	Int32 IComparable.CompareTo(Object? obj)
 		=> obj switch
 		{
