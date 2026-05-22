@@ -239,13 +239,27 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override String ToString()
-	{
-		if (this._length == 0) return String.Empty;
-		String result = Encoding.UTF8.GetString(this.AsSpan());
-		return String.IsInterned(result) ?? result;
-	}
+		=> this._length switch
+		{
+			0 => String.Empty,
+			>= StackAllocationHelper.StackallocByteThreshold when this.CachedValue is { } result => result,
+			_ => this.CreateInternalString(),
+		};
 	/// <inheritdoc/>
-	public override Int32 GetHashCode() => this.ToString().GetHashCode();
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public override Int32 GetHashCode()
+		=> this._length switch
+		{
+			0 => String.Empty.GetHashCode(),
+			_ when MarvinCompat.DefaultSeed.HasValue => MarvinCompat.GetHashCode(this.AsSpan()),
+#if NETCOREAPP
+			<= StackAllocationHelper.StackallocByteThreshold => CString.GetStringHashCode(this.AsSpan()),
+#endif
+			_ when this.CachedValue is { } result => result.GetHashCode(),
+			_ => this.CreateInternalString().GetHashCode(),
+		};
 
 	/// <summary>
 	/// Returns a reference to the first UTF-8 unit of the <see cref="CString"/>.
@@ -444,6 +458,9 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// This value is only reliable on supported platforms. On unsupported platforms or in case of inspection errors,
 	/// this property will always return <see langword="false"/>.
 	/// </remarks>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Boolean IsImagePersistent([NotNullWhen(true)] CString? str)
 		=> str is not null && !MemoryInspector.MayBeNonLiteral(str._data.AsSpan());
 	/// <summary>
@@ -505,4 +522,19 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 		length += CString.FinalizeBuffer(helper.Bytes, TextUnescape.Unescape(helper.Bytes[..length]), helper.HasArray);
 		return new(helper, length);
 	}
+	/// <summary>
+	/// Returns the hash code for the provided read-only UTF-8 unit span.
+	/// </summary>
+	/// <param name="value">A read-only UTF-8 unit span.</param>
+	/// <returns>A 32-bit signed integer hash code.</returns>
+	public static Int32 GetHashCode(ReadOnlySpan<Byte> value)
+		=> value.Length switch
+		{
+			0 => String.Empty.GetHashCode(),
+			_ when MarvinCompat.DefaultSeed.HasValue => MarvinCompat.GetHashCode(value),
+#if NETCOREAPP
+			<= StackAllocationHelper.StackallocByteThreshold => CString.GetStringHashCode(value),
+#endif
+			_ => CString.ToUtf16(value).GetHashCode(),
+		};
 }

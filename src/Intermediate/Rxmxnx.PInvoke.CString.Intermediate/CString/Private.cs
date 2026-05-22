@@ -18,6 +18,16 @@ public partial class CString
 	/// Gets the number of bytes in the current <see cref="CString"/> object.
 	/// </summary>
 	private readonly Int32 _length;
+	/// <summary>
+	/// Cached <see cref="String"/> instance.
+	/// </summary>
+	private WeakReference<String>? _strValue;
+
+	/// <summary>
+	/// Retrieves the cached value of current instance.
+	/// </summary>
+	private String? CachedValue
+		=> this._strValue is not null && this._strValue.TryGetTarget(out String? result) ? result : default;
 
 	/// <summary>
 	/// Calculates the final length of a segment of the current <see cref="CString"/>,
@@ -58,5 +68,20 @@ public partial class CString
 		return this._data.TryGetMemory(out ReadOnlyMemory<Byte> memory) ?
 			strm.WriteAsync(memory.Slice(startIndex, count), cancellationToken).AsTask() :
 			CString.WriteSyncAsync(new(this, strm) { Count = count, StartIndex = startIndex, });
+	}
+	/// <summary>
+	/// Creates the <see cref="String"/> representation of the current instance.
+	/// </summary>
+	/// <returns>The <see cref="String"/> representation of the current instance.</returns>
+	[MethodImpl(MethodImplOptions.NoInlining)]
+	private String CreateInternalString()
+	{
+		String result = CString.ToUtf16(this.AsSpan());
+		if (this._length <= StackAllocationHelper.StackallocByteThreshold) return result;
+		if (this._strValue is null)
+			this._strValue = new(result);
+		else
+			this._strValue.SetTarget(result);
+		return result;
 	}
 }

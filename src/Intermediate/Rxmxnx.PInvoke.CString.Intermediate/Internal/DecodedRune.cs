@@ -163,6 +163,7 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 #endif
 		return decoded;
 	}
+#if !PACKAGE
 	/// <summary>
 	/// Retrieves the starting positions of individual runes decoded from the <paramref name="source"/>.
 	/// </summary>
@@ -214,6 +215,7 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 		Span<Byte> bytes = MemoryMarshal.AsBytes(integers);
 		source.CopyTo(bytes);
 	}
+#endif
 
 	/// <summary>
 	/// Checks if two <see cref="DecodedRune"/> instances have the same value.
@@ -224,8 +226,7 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 	/// <see langword="true"/> if the value of <paramref name="left"/> is the same as the value of <paramref name="right"/>;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
-	public static Boolean operator ==(DecodedRune? left, DecodedRune? right)
-		=> left.HasValue ? left.Value._value == right?._value : !right.HasValue;
+	public static Boolean operator ==(DecodedRune left, DecodedRune right) => left._value == right._value;
 	/// <summary>
 	/// Checks if two <see cref="DecodedRune"/> instances have different values.
 	/// </summary>
@@ -235,5 +236,5 @@ internal readonly struct DecodedRune : IEquatable<DecodedRune>, IEquatable<Rune>
 	/// <see langword="true"/> if the value of <paramref name="left"/> is different from the value of <paramref name="right"/>;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
-	public static Boolean operator !=(DecodedRune? left, DecodedRune? right) => !(left == right);
+	public static Boolean operator !=(DecodedRune left, DecodedRune right) => !(left == right);
 }
