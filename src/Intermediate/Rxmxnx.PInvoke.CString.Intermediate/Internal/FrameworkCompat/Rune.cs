@@ -26,10 +26,10 @@ SOFTWARE.
 */
 
 // Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Blc.Memory 10.0.8
-// (System.Rune)
+// (System.Text.Rune)
 
 #if !NETCOREAPP
-namespace System;
+namespace System.Text;
 
 /// <summary>
 /// Represents a Unicode scalar value ([ U+0000..U+D7FF ], inclusive; or [ U+E000..U+10FFFF ], inclusive).
@@ -45,6 +45,7 @@ namespace System;
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS907)]
 #endif
+// ReSharper disable MemberCanBePrivate.Global
 internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 {
 	internal const Int32 MaxUtf16CharsPerRune = 2;

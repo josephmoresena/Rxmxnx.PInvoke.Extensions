@@ -135,7 +135,7 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:System.Rune</Target>
+    <Target>T:System.Text.Rune</Target>
     <Left>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
