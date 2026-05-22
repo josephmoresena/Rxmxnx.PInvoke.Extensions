@@ -367,8 +367,7 @@ internal static partial class Utf8Utility
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Boolean UInt32BeginsWithValidUtf8TwoByteSequenceLittleEndian(UInt32 value)
-		=> (BitConverter.IsLittleEndian && UnicodeUtility.IsInRangeInclusive(value & 0xC0FFu, 0x80C2u, 0x80DFu)) ||
-			(!BitConverter.IsLittleEndian && false);
+		=> BitConverter.IsLittleEndian && UnicodeUtility.IsInRangeInclusive(value & 0xC0FFu, 0x80C2u, 0x80DFu);
 
 	/// <summary>
 	/// Given a UTF-8 buffer which has been read into a DWORD on a little-endian machine,
@@ -378,9 +377,8 @@ internal static partial class Utf8Utility
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Boolean UInt32EndsWithValidUtf8TwoByteSequenceLittleEndian(UInt32 value)
-		=> (BitConverter.IsLittleEndian &&
-				UnicodeUtility.IsInRangeInclusive(value & 0xC0FF_0000u, 0x80C2_0000u, 0x80DF_0000u)) ||
-			(!BitConverter.IsLittleEndian && false);
+		=> BitConverter.IsLittleEndian &&
+			UnicodeUtility.IsInRangeInclusive(value & 0xC0FF_0000u, 0x80C2_0000u, 0x80DF_0000u);
 
 	/// <summary>
 	/// Given a UTF-8 buffer which has been read into a DWORD in machine endianness,
@@ -422,6 +420,9 @@ internal static partial class Utf8Utility
 	/// resulting 6 bytes to the destination buffer.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1121)]
+#endif
 	private static void WriteTwoUtf16CharsAsTwoUtf8ThreeByteSequences(ref Byte outputBuffer, UInt32 value)
 	{
 		if (BitConverter.IsLittleEndian)
@@ -439,8 +440,7 @@ internal static partial class Utf8Utility
 			Unsafe.Add(ref outputBuffer, 3) = (Byte)(((value >>= 6) & 0x0Fu) | 0xE0u);
 			Unsafe.Add(ref outputBuffer, 2) = (Byte)(((value >>= 4) & 0x3Fu) | 0x80u);
 			Unsafe.Add(ref outputBuffer, 1) = (Byte)(((value >>= 6) & 0x3Fu) | 0x80u);
-			// ReSharper disable once RedundantAssignment
-			outputBuffer = (Byte)((value >>= 6) | 0xE0u);
+			outputBuffer = (Byte)((value >> 6) | 0xE0u);
 		}
 	}
 
@@ -450,6 +450,9 @@ internal static partial class Utf8Utility
 	/// resulting 3 bytes to the destination buffer.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1121)]
+#endif
 	private static void WriteFirstUtf16CharAsUtf8ThreeByteSequence(ref Byte outputBuffer, UInt32 value)
 	{
 		if (BitConverter.IsLittleEndian)
@@ -463,8 +466,7 @@ internal static partial class Utf8Utility
 		{
 			Unsafe.Add(ref outputBuffer, 2) = (Byte)(((value >>= 16) & 0x3Fu) | 0x80u);
 			Unsafe.Add(ref outputBuffer, 1) = (Byte)(((value >>= 6) & 0x3Fu) | 0x80u);
-			// ReSharper disable once RedundantAssignment
-			outputBuffer = (Byte)((value >>= 6) | 0xE0u);
+			outputBuffer = (Byte)((value >> 6) | 0xE0u);
 		}
 	}
 }

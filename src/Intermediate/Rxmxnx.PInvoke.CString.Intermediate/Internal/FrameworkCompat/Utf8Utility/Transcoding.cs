@@ -31,6 +31,7 @@ SOFTWARE.
 #if !NETCOREAPP
 namespace System.Text.Unicode;
 
+// ReSharper disable BuiltInTypeReferenceStyle
 using UIntPtr = nuint;
 using IntPtr = nint;
 
@@ -279,26 +280,25 @@ internal static unsafe partial class Utf8Utility
 				}
 				if (outputCharsRemaining == 0)
 					goto OutputBufferTooSmall;
-				if (BitConverter.IsLittleEndian)
-					if (((thisDWord - 0xE000_0000u) & 0xF000_0000u) == 0)
-						if (outputCharsRemaining > 1 &&
-						    (IntPtr)(void*)Unsafe.ByteOffset(ref *pInputBuffer,
-						                                     ref *pFinalPosWhereCanReadDWordFromInputBuffer) >= 3)
-						{
-							UInt32 secondDWord = Unsafe.ReadUnaligned<UInt32>(pInputBuffer + 3);
+				if (BitConverter.IsLittleEndian && ((thisDWord - 0xE000_0000u) & 0xF000_0000u) == 0 &&
+				    outputCharsRemaining > 1 &&
+				    (IntPtr)(void*)Unsafe.ByteOffset(ref *pInputBuffer,
+				                                     ref *pFinalPosWhereCanReadDWordFromInputBuffer) >= 3)
+				{
+					UInt32 secondDWord = Unsafe.ReadUnaligned<UInt32>(pInputBuffer + 3);
 
-							if (Utf8Utility.UInt32BeginsWithUtf8ThreeByteMask(secondDWord) &&
-							    (secondDWord & 0x0000_200Fu) != 0 && ((secondDWord - 0x0000_200Du) & 0x0000_200Fu) != 0)
-							{
-								pOutputBuffer[0] = (Char)Utf8Utility.ExtractCharFromFirstThreeByteSequence(thisDWord);
-								pOutputBuffer[1] = (Char)Utf8Utility.ExtractCharFromFirstThreeByteSequence(secondDWord);
-								pInputBuffer += 6;
-								pOutputBuffer += 2;
-								outputCharsRemaining -= 2;
+					if (Utf8Utility.UInt32BeginsWithUtf8ThreeByteMask(secondDWord) &&
+					    (secondDWord & 0x0000_200Fu) != 0 && ((secondDWord - 0x0000_200Du) & 0x0000_200Fu) != 0)
+					{
+						pOutputBuffer[0] = (Char)Utf8Utility.ExtractCharFromFirstThreeByteSequence(thisDWord);
+						pOutputBuffer[1] = (Char)Utf8Utility.ExtractCharFromFirstThreeByteSequence(secondDWord);
+						pInputBuffer += 6;
+						pOutputBuffer += 2;
+						outputCharsRemaining -= 2;
 
-								goto CheckForAsciiByteAfterThreeByteSequence;
-							}
-						}
+						goto CheckForAsciiByteAfterThreeByteSequence;
+					}
+				}
 
 				*pOutputBuffer = (Char)Utf8Utility.ExtractCharFromFirstThreeByteSequence(thisDWord);
 				pInputBuffer += 3;
@@ -646,25 +646,25 @@ internal static unsafe partial class Utf8Utility
 
 			if (!Utf8Utility.IsFirstCharSurrogate(thisDWord))
 			{
-				if (Utf8Utility.IsSecondCharAtLeastThreeUtf8Bytes(thisDWord))
-					if (!Utf8Utility.IsSecondCharSurrogate(thisDWord))
-					{
-						if (outputBytesRemaining < 6)
-							goto ConsumeSingleThreeByteRun;
+				if (Utf8Utility.IsSecondCharAtLeastThreeUtf8Bytes(thisDWord) &&
+				    !Utf8Utility.IsSecondCharSurrogate(thisDWord))
+				{
+					if (outputBytesRemaining < 6)
+						goto ConsumeSingleThreeByteRun;
 
-						Utf8Utility.WriteTwoUtf16CharsAsTwoUtf8ThreeByteSequences(ref *pOutputBuffer, thisDWord);
+					Utf8Utility.WriteTwoUtf16CharsAsTwoUtf8ThreeByteSequences(ref *pOutputBuffer, thisDWord);
 
-						pInputBuffer += 2;
-						pOutputBuffer += 6;
-						outputBytesRemaining -= 6;
-						if (pInputBuffer > pFinalPosWhereCanReadDWordFromInputBuffer)
-							goto ProcessNextCharAndFinish;
-						thisDWord = Unsafe.ReadUnaligned<UInt32>(pInputBuffer);
+					pInputBuffer += 2;
+					pOutputBuffer += 6;
+					outputBytesRemaining -= 6;
+					if (pInputBuffer > pFinalPosWhereCanReadDWordFromInputBuffer)
+						goto ProcessNextCharAndFinish;
+					thisDWord = Unsafe.ReadUnaligned<UInt32>(pInputBuffer);
 
-						if (Utf8Utility.IsFirstCharAtLeastThreeUtf8Bytes(thisDWord))
-							goto BeforeProcessThreeByteSequence;
-						goto AfterReadDWord;
-					}
+					if (Utf8Utility.IsFirstCharAtLeastThreeUtf8Bytes(thisDWord))
+						goto BeforeProcessThreeByteSequence;
+					goto AfterReadDWord;
+				}
 
 				ConsumeSingleThreeByteRun:
 

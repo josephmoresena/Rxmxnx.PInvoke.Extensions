@@ -34,7 +34,10 @@ namespace System.Text.Unicode;
 /// <summary>
 /// Provides static methods that convert chunked data between UTF-8 and UTF-16 encodings.
 /// </summary>
-internal static class Utf8
+#if !PACKAGE
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
+internal static unsafe class Utf8
 {
 	/// <summary>
 	/// Transcodes the UTF-16 <paramref name="source"/> buffer to <paramref name="destination"/> as UTF-8.
@@ -44,7 +47,7 @@ internal static class Utf8
 	/// in <paramref name="source"/> will be replaced with U+FFFD in <paramref name="destination"/>, and
 	/// this method will not return <see cref="OperationStatus.InvalidData"/>.
 	/// </remarks>
-	public static unsafe OperationStatus FromUtf16(ReadOnlySpan<Char> source, Span<Byte> destination,
+	public static OperationStatus FromUtf16(ReadOnlySpan<Char> source, Span<Byte> destination,
 		out Int32 charsRead, out Int32 bytesWritten, Boolean replaceInvalidSequences = true,
 		Boolean isFinalBlock = true)
 	{
@@ -107,7 +110,7 @@ internal static class Utf8
 	/// in <paramref name="source"/> will be replaced with U+FFFD in <paramref name="destination"/>, and
 	/// this method will not return <see cref="OperationStatus.InvalidData"/>.
 	/// </remarks>
-	public static unsafe OperationStatus ToUtf16(ReadOnlySpan<Byte> source, Span<Char> destination, out Int32 bytesRead,
+	public static OperationStatus ToUtf16(ReadOnlySpan<Byte> source, Span<Char> destination, out Int32 bytesRead,
 		out Int32 charsWritten, Boolean replaceInvalidSequences = true, Boolean isFinalBlock = true)
 	{
 		fixed (Byte* pOriginalSource = &MemoryMarshal.GetReference(source))

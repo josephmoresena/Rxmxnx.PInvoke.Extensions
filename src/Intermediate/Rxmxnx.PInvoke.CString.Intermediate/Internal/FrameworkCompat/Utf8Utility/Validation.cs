@@ -28,8 +28,6 @@ SOFTWARE.
 // Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Blc.Memory 10.0.8
 // (System.text.Unicode.Utf8Utility)
 
-using System_IntPtr = System.IntPtr;
-
 #if !NETCOREAPP
 namespace System.Text.Unicode;
 
@@ -220,49 +218,49 @@ internal static unsafe partial class Utf8Utility
 
 				SuccessfullyProcessedThreeByteSequence:
 
-				if (System_IntPtr.Size >= 8 && BitConverter.IsLittleEndian)
-					if ((IntPtr)(pFinalPosWhereCanReadDWordFromInputBuffer - pInputBuffer) >= 5)
+				if (System.IntPtr.Size >= 8 && BitConverter.IsLittleEndian &&
+				    (IntPtr)(pFinalPosWhereCanReadDWordFromInputBuffer - pInputBuffer) >= 5)
+				{
+					UInt64 thisQWord = Unsafe.ReadUnaligned<UInt64>(pInputBuffer);
+					thisDWord = (UInt32)thisQWord;
+					if ((thisQWord & 0xC0F0_C0C0_F0C0_C0F0ul) == 0x80E0_8080_E080_80E0ul &&
+					    Utf8Utility.IsUtf8ContinuationByte(in pInputBuffer[8]))
 					{
-						UInt64 thisQWord = Unsafe.ReadUnaligned<UInt64>(pInputBuffer);
-						thisDWord = (UInt32)thisQWord;
-						if ((thisQWord & 0xC0F0_C0C0_F0C0_C0F0ul) == 0x80E0_8080_E080_80E0ul &&
-						    Utf8Utility.IsUtf8ContinuationByte(in pInputBuffer[8]))
-						{
-							if (((UInt32)thisQWord & 0x200Fu) == 0 || (((UInt32)thisQWord - 0x200Du) & 0x200Fu) == 0)
-								goto Error;
+						if (((UInt32)thisQWord & 0x200Fu) == 0 || (((UInt32)thisQWord - 0x200Du) & 0x200Fu) == 0)
+							goto Error;
 
-							thisQWord >>= 24;
-							if (((UInt32)thisQWord & 0x200Fu) == 0 || (((UInt32)thisQWord - 0x200Du) & 0x200Fu) == 0)
-								goto ProcessSingleThreeByteSequenceSkipOverlongAndSurrogateChecks;
+						thisQWord >>= 24;
+						if (((UInt32)thisQWord & 0x200Fu) == 0 || (((UInt32)thisQWord - 0x200Du) & 0x200Fu) == 0)
+							goto ProcessSingleThreeByteSequenceSkipOverlongAndSurrogateChecks;
 
-							thisQWord >>= 24;
-							if (((UInt32)thisQWord & 0x200Fu) == 0 || (((UInt32)thisQWord - 0x200Du) & 0x200Fu) == 0)
-								goto ProcessSingleThreeByteSequenceSkipOverlongAndSurrogateChecks;
+						thisQWord >>= 24;
+						if (((UInt32)thisQWord & 0x200Fu) == 0 || (((UInt32)thisQWord - 0x200Du) & 0x200Fu) == 0)
+							goto ProcessSingleThreeByteSequenceSkipOverlongAndSurrogateChecks;
 
-							pInputBuffer += 9;
-							tempUtf16CodeUnitCountAdjustment -= 6;
+						pInputBuffer += 9;
+						tempUtf16CodeUnitCountAdjustment -= 6;
 
-							goto SuccessfullyProcessedThreeByteSequence;
-						}
-						if ((thisQWord & 0xC0C0_F0C0_C0F0ul) == 0x8080_E080_80E0ul)
-						{
-							if (((UInt32)thisQWord & 0x200Fu) == 0 || (((UInt32)thisQWord - 0x200Du) & 0x200Fu) == 0)
-								goto Error;
-
-							thisQWord >>= 24;
-							if (((UInt32)thisQWord & 0x200Fu) == 0 || (((UInt32)thisQWord - 0x200Du) & 0x200Fu) == 0)
-								goto ProcessSingleThreeByteSequenceSkipOverlongAndSurrogateChecks;
-
-							pInputBuffer += 6;
-							tempUtf16CodeUnitCountAdjustment -= 4;
-
-							continue;
-						}
-
-						if (Utf8Utility.UInt32BeginsWithUtf8ThreeByteMask(thisDWord))
-							goto ProcessThreeByteSequenceWithCheck;
-						goto AfterReadDWord;
+						goto SuccessfullyProcessedThreeByteSequence;
 					}
+					if ((thisQWord & 0xC0C0_F0C0_C0F0ul) == 0x8080_E080_80E0ul)
+					{
+						if (((UInt32)thisQWord & 0x200Fu) == 0 || (((UInt32)thisQWord - 0x200Du) & 0x200Fu) == 0)
+							goto Error;
+
+						thisQWord >>= 24;
+						if (((UInt32)thisQWord & 0x200Fu) == 0 || (((UInt32)thisQWord - 0x200Du) & 0x200Fu) == 0)
+							goto ProcessSingleThreeByteSequenceSkipOverlongAndSurrogateChecks;
+
+						pInputBuffer += 6;
+						tempUtf16CodeUnitCountAdjustment -= 4;
+
+						continue;
+					}
+
+					if (Utf8Utility.UInt32BeginsWithUtf8ThreeByteMask(thisDWord))
+						goto ProcessThreeByteSequenceWithCheck;
+					goto AfterReadDWord;
+				}
 
 				if (pInputBuffer <= pFinalPosWhereCanReadDWordFromInputBuffer)
 				{
@@ -328,33 +326,30 @@ internal static unsafe partial class Utf8Utility
 						continue;
 					}
 				}
-				else if (inputBufferRemainingBytes >= 3)
+				else if (inputBufferRemainingBytes >= 3 && (Byte)firstByte < 0xF0u)
 				{
-					if ((Byte)firstByte < 0xF0u)
+					if ((Byte)firstByte == 0xE0u)
 					{
-						if ((Byte)firstByte == 0xE0u)
-						{
-							if (!UnicodeUtility.IsInRangeInclusive(secondByte, 0xA0u, 0xBFu))
-								goto Error;
-						}
-						else if ((Byte)firstByte == 0xEDu)
-						{
-							if (!UnicodeUtility.IsInRangeInclusive(secondByte, 0x80u, 0x9Fu))
-								goto Error;
-						}
-						else
-						{
-							if (!Utf8Utility.IsLowByteUtf8ContinuationByte(secondByte))
-								goto Error;
-						}
+						if (!UnicodeUtility.IsInRangeInclusive(secondByte, 0xA0u, 0xBFu))
+							goto Error;
+					}
+					else if ((Byte)firstByte == 0xEDu)
+					{
+						if (!UnicodeUtility.IsInRangeInclusive(secondByte, 0x80u, 0x9Fu))
+							goto Error;
+					}
+					else
+					{
+						if (!Utf8Utility.IsLowByteUtf8ContinuationByte(secondByte))
+							goto Error;
+					}
 
-						if (Utf8Utility.IsUtf8ContinuationByte(in pInputBuffer[2]))
-						{
-							pInputBuffer += 3;
-							tempUtf16CodeUnitCountAdjustment -= 2;
-							inputBufferRemainingBytes -= 3;
-							continue;
-						}
+					if (Utf8Utility.IsUtf8ContinuationByte(in pInputBuffer[2]))
+					{
+						pInputBuffer += 3;
+						tempUtf16CodeUnitCountAdjustment -= 2;
+						inputBufferRemainingBytes -= 3;
+						continue;
 					}
 				}
 			}

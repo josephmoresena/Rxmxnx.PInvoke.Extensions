@@ -123,9 +123,8 @@ internal static unsafe class Ascii
 
 			pBuffer += 2;
 		}
-		if ((bufferLength & 1) != 0)
-			if (*(SByte*)pBuffer >= 0)
-				pBuffer++;
+		if ((bufferLength & 1) != 0 && *(SByte*)pBuffer >= 0)
+			pBuffer++;
 
 		Finish:
 
@@ -178,8 +177,7 @@ internal static unsafe class Ascii
 			pBuffer += 2;
 		}
 
-		if ((bufferLength & 1) != 0)
-			if (*pBuffer <= 0x007F)
+		if ((bufferLength & 1) != 0 && *pBuffer <= 0x007F)
 				pBuffer++;
 
 		Finish:
