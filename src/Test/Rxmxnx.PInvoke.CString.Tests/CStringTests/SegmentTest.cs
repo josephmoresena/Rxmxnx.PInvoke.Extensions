@@ -11,16 +11,19 @@ public sealed class SegmentTests
 		const Int32 zero = 0;
 		Int32 varIndex = 1;
 
-		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[varIndex..]);
-		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[..varIndex]);
+		PInvokeAssert.Throws<ArgumentOutOfRangeException>(SubEmpty);
+		PInvokeAssert.Throws<ArgumentOutOfRangeException>(SubEmpty);
 
 		varIndex = -1;
-		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[varIndex..]);
-		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => CString.Empty[..varIndex]);
+		PInvokeAssert.Throws<ArgumentOutOfRangeException>(SubEmpty);
+		PInvokeAssert.Throws<ArgumentOutOfRangeException>(SubEmpty);
 
 		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(varIndex, zero));
 		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(zero, 1));
 		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(varIndex, 1));
+		return;
+		// ReSharper disable once AccessToModifiedClosure
+		void SubEmpty() => _ = CString.Empty[varIndex..];
 	}
 
 	[Fact]
@@ -45,8 +48,8 @@ public sealed class SegmentTests
 	[SuppressMessage("Style", "IDE0057")]
 	private static void SegmentTest(String str, CString cstr)
 	{
-		IReadOnlyList<Int32> strIndex = DecodedRune.GetIndices(str);
-		IReadOnlyList<Int32> cstrIndex = DecodedRune.GetIndices(cstr);
+		IReadOnlyList<Int32> strIndex = SegmentTests.GetIndices(str);
+		IReadOnlyList<Int32> cstrIndex = SegmentTests.GetIndices(cstr);
 		Int32 count = strIndex.Count;
 
 		PInvokeAssert.Equal(count, cstrIndex.Count);
@@ -111,5 +114,35 @@ public sealed class SegmentTests
 		PInvokeAssert.True(cloneSeg.IsNullTerminated);
 
 		PInvokeAssert.Equal(cstrSeg.Length + 1, CString.GetBytes(cloneSeg).Length);
+	}
+	private static IReadOnlyList<Int32> GetIndices(ReadOnlySpan<Byte> source)
+	{
+		List<Int32> result = new(Encoding.UTF8.GetCharCount(source));
+		Int32 length = default;
+
+		while (length < source.Length)
+		{
+			if (Rune.DecodeFromUtf8(source[length..], out Rune _, out Int32 consumed) is not OperationStatus.Done)
+				break;
+			result.Add(length);
+			length += consumed;
+		}
+
+		return result.ToArray();
+	}
+	private static IReadOnlyList<Int32> GetIndices(ReadOnlySpan<Char> source)
+	{
+		List<Int32> result = new(source.Length);
+		Int32 length = default;
+
+		while (length < source.Length)
+		{
+			if (Rune.DecodeFromUtf16(source[length..], out Rune _, out Int32 consumed) is not OperationStatus.Done)
+				break;
+			result.Add(length);
+			length += consumed;
+		}
+
+		return result.ToArray();
 	}
 }
