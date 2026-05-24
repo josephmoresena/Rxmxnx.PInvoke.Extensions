@@ -357,7 +357,7 @@ public unsafe partial class CStringSequence
 	private static CStringSequence CreateFrom(String buffer)
 	{
 		ReadOnlySpan<Byte> source = MemoryMarshal.AsBytes(buffer.AsSpan());
-		Int32?[] lengths = CStringSequence.GetLengths(CStringSequence.GetNulls(source));
+		Int32?[] lengths = CStringSequence.GetLengths(source);
 		return new(buffer, lengths);
 	}
 	/// <summary>
@@ -386,36 +386,6 @@ public unsafe partial class CStringSequence
 		while (length > 0 && bufferSpan[zeros + length - 1] == default)
 			length--;
 		bufferSpan = bufferSpan.Slice(zeros, length);
-	}
-	/// <summary>
-	/// Retrieves the zero-based indices of isolated UTF-8 null-character within the given span.
-	/// </summary>
-	/// <param name="span">A <see cref="ReadOnlySpan{Byte}"/> to scan for null bytes.</param>
-	/// <returns>
-	/// A <see cref="List{Int32}"/> containing the zero-based positions of null bytes that are not part of a
-	/// consecutive sequence of zeros.
-	/// </returns>
-	private static List<Int32> GetNulls(ReadOnlySpan<Byte> span)
-	{
-		List<Int32> nulls = [];
-		Int32 offset = 0;
-		while (!span.IsEmpty)
-		{
-			Int32 distToNull = span.IndexOf((Byte)0);
-			if (distToNull < 0) break;
-			offset += distToNull;
-			if (distToNull > 0)
-			{
-				nulls.Add(offset);
-				span = span[(distToNull + 1)..];
-				offset++;
-				continue;
-			}
-			Int32 zeros = CStringSequence.GetZeros(span);
-			offset += zeros;
-			span = span[zeros..];
-		}
-		return nulls;
 	}
 	/// <summary>
 	/// Retrieves the sequence lengths array from <paramref name="nulls"/>.
@@ -451,6 +421,107 @@ public unsafe partial class CStringSequence
 			offset += length + 1;
 		}
 		return lengths;
+	}
+	/// <summary>
+	/// Retrieves the sequence lengths array from <paramref name="buffer"/>.
+	/// </summary>
+	/// <param name="buffer">A buffer of a UTF-8 sequence.</param>
+	/// <returns></returns>
+	private static Int32?[] GetLengths(ReadOnlySpan<Byte> buffer)
+	{
+		const Int32 maxStackNulls = StackAllocationHelper.StackallocByteThreshold / sizeof(Int32);
+		NullState state = new()
+		{
+			Offset = 0,
+			Buffer = buffer,
+			Initial = stackalloc Int32[buffer.Length > maxStackNulls ? maxStackNulls : buffer.Length],
+		};
+		CStringSequence.FindNullIndices(ref state);
+		if (state.Buffer.IsEmpty) return CStringSequence.GetLengths(state.Initial);
+		List<Int32> extraLengths = CStringSequence.GetNulls(state.Offset, state.Buffer);
+		return CStringSequence.GetLengths(state.Initial, extraLengths);
+	}
+	/// <summary>
+	/// Retrieves the sequence lengths array from <paramref name="nulls"/> and <paramref name="extraNulls"/>.
+	/// </summary>
+	/// <param name="nulls">Collection of the indices UTF-8 null-character in buffer.</param>
+	/// <param name="extraNulls">Additional collection of the indices UTF-8 null-character in buffer.</param>
+	/// <returns>Sequence lengths array.</returns>
+	private static Int32?[] GetLengths(ReadOnlySpan<Int32> nulls, List<Int32> extraNulls)
+	{
+		if (nulls.IsEmpty) return [];
+		Int32 offset = 0;
+		Int32 totalLengths = nulls.Length + extraNulls.Count;
+		Int32?[] lengths = new Int32?[totalLengths];
+		for (Int32 i = 0; i < nulls.Length; i++)
+		{
+			Int32 length = nulls[i] - offset;
+			lengths[i] = length;
+			offset += length + 1;
+		}
+		for (Int32 i = 0; i < extraNulls.Count; i++)
+		{
+			Int32 length = extraNulls[i] - offset;
+			lengths[i + nulls.Length] = length;
+			offset += length + 1;
+		}
+		return lengths;
+	}
+	/// <summary>
+	/// Retrieves the zero-based indices of isolated UTF-8 null-character within the given span.
+	/// </summary>
+	/// <param name="offset">Initial buffer offset.</param>
+	/// <param name="buffer">A <see cref="ReadOnlySpan{Byte}"/> to scan for null bytes.</param>
+	/// <returns>
+	/// A <see cref="List{Int32}"/> containing the zero-based positions of null bytes that are not part of a
+	/// consecutive sequence of zeros.
+	/// </returns>
+	private static List<Int32> GetNulls(Int32 offset, ReadOnlySpan<Byte> buffer)
+	{
+		List<Int32> nulls = [];
+		while (!buffer.IsEmpty)
+		{
+			Int32 distToNull = buffer.IndexOf((Byte)0);
+			if (distToNull < 0) break;
+			offset += distToNull;
+			if (distToNull > 0)
+			{
+				nulls.Add(offset);
+				buffer = buffer[(distToNull + 1)..];
+				offset++;
+				continue;
+			}
+			Int32 zeros = CStringSequence.GetZeros(buffer);
+			offset += zeros;
+			buffer = buffer[zeros..];
+		}
+		return nulls;
+	}
+	/// <summary>
+	/// Finds the zero-based indices of isolated UTF-8 null-character using <paramref name="state"/>.
+	/// </summary>
+	/// <param name="state">A state sequence used as input/output of the find null indices.</param>
+	private static void FindNullIndices(ref NullState state)
+	{
+		Int32 index = 0;
+		while (!state.Buffer.IsEmpty && index < state.Initial.Length)
+		{
+			Int32 distToNull = state.Buffer.IndexOf((Byte)0);
+			if (distToNull < 0) break;
+			state.Offset += distToNull;
+			if (distToNull > 0)
+			{
+				state.Initial[index] = state.Offset;
+				index++;
+				state.Buffer = state.Buffer[(distToNull + 1)..];
+				state.Offset++;
+				continue;
+			}
+			Int32 zeros = CStringSequence.GetZeros(state.Buffer);
+			state.Offset += zeros;
+			state.Buffer = state.Buffer[zeros..];
+		}
+		state.Initial = state.Initial[..index];
 	}
 	/// <summary>
 	/// Retrieves the number of required bytes in the sequence buffer.
