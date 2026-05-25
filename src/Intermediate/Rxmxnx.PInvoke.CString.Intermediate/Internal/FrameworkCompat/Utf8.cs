@@ -29,6 +29,7 @@ SOFTWARE.
 // (System.text.Unicode.Utf8)
 
 #if !NETCOREAPP
+// ReSharper disable UnusedMethodReturnValue.Global
 namespace System.Text.Unicode;
 
 /// <summary>
@@ -47,9 +48,8 @@ internal static unsafe class Utf8
 	/// in <paramref name="source"/> will be replaced with U+FFFD in <paramref name="destination"/>, and
 	/// this method will not return <see cref="OperationStatus.InvalidData"/>.
 	/// </remarks>
-	public static OperationStatus FromUtf16(ReadOnlySpan<Char> source, Span<Byte> destination,
-		out Int32 charsRead, out Int32 bytesWritten, Boolean replaceInvalidSequences = true,
-		Boolean isFinalBlock = true)
+	public static OperationStatus FromUtf16(ReadOnlySpan<Char> source, Span<Byte> destination, out Int32 charsRead,
+		out Int32 bytesWritten, Boolean replaceInvalidSequences = true, Boolean isFinalBlock = true)
 	{
 		fixed (Char* pOriginalSource = &MemoryMarshal.GetReference(source))
 		fixed (Byte* pOriginalDestination = &MemoryMarshal.GetReference(destination))

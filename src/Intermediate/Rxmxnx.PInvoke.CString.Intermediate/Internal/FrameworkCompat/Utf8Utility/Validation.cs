@@ -29,6 +29,7 @@ SOFTWARE.
 // (System.text.Unicode.Utf8Utility)
 
 #if !NETCOREAPP
+// ReSharper disable OutParameterValueIsAlwaysDiscarded.Local
 namespace System.Text.Unicode;
 
 // ReSharper disable BuiltInTypeReferenceStyle
@@ -51,7 +52,7 @@ internal static unsafe partial class Utf8Utility
 	/// <remarks>
 	/// Returns a pointer to the end of <paramref name="pInputBuffer"/> if the buffer is well-formed.
 	/// </remarks>
-	public static Byte* GetPointerToFirstInvalidByte(Byte* pInputBuffer, Int32 inputLength,
+	private static Byte* GetPointerToFirstInvalidByte(Byte* pInputBuffer, Int32 inputLength,
 		out Int32 utf16CodeUnitCountAdjustment, out Int32 scalarCountAdjustment)
 	{
 		UIntPtr numAsciiBytesCounted = Ascii.GetIndexOfFirstNonAsciiByte(pInputBuffer, (UInt32)inputLength);

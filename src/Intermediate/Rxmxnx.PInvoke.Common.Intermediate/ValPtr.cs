@@ -21,7 +21,7 @@ public readonly unsafe partial struct ValPtr<T> : IWrapper<IntPtr>, IEquatable<V
 	/// <summary>
 	/// A read-only field that represents a pointer that has been initialized to zero.
 	/// </summary>
-	public static readonly ValPtr<T> Zero = default;
+	public static readonly ValPtr<T> Zero;
 
 	/// <summary>
 	/// Indicates if <typeparamref name="T"/> is an <see langword="unmanaged"/> type.

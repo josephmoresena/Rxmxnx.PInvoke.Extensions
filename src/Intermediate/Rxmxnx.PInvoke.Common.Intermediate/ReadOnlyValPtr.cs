@@ -25,7 +25,7 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 	/// <summary>
 	/// A read-only field representing a null-initialized pointer to a value of type <typeparamref name="T"/>.
 	/// </summary>
-	public static readonly ReadOnlyValPtr<T> Zero = default;
+	public static readonly ReadOnlyValPtr<T> Zero;
 
 	/// <summary>
 	/// The internal pointer value.

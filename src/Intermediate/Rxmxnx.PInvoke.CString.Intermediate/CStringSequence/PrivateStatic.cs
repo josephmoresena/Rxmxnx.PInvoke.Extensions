@@ -545,8 +545,13 @@ public unsafe partial class CStringSequence
 	private static Int32 GetTotalBytes(ReadOnlySpan<Int32> lengths)
 	{
 		Int32 result = 0;
+		Int32 nonEmpty = 0;
 		foreach (Int32 length in lengths)
-			result += CStringSequence.GetSpanLength(length);
-		return result;
+		{
+			if (length <= 0) continue;
+			result += length;
+			nonEmpty++;
+		}
+		return result + nonEmpty;
 	}
 }

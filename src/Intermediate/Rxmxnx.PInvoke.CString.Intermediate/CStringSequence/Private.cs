@@ -32,35 +32,30 @@ public partial class CStringSequence
 		ReadOnlySpan<Char> result = this._value;
 		ref Char firstCharRef = ref MemoryMarshal.GetReference(result);
 		IntPtr ptr = new(Unsafe.AsPointer(ref firstCharRef));
-		output = this.GetValues(ptr).ToArray();
+		output = this.GetValues(ptr);
 		return this._value;
 	}
 	/// <summary>
 	/// Retrieves a sequence of <see cref="CString"/> based on the buffer and lengths of the texts.
 	/// </summary>
 	/// <param name="ptr">Pointer to the start of the buffer.</param>
-	/// <returns>An <see cref="IEnumerable{CString}"/> representing the sequence of texts.</returns>
-	private IEnumerable<CString> GetValues(IntPtr ptr)
+	/// <returns>An <see cref="CString"/> array representing the sequence of texts.</returns>
+	private CString[] GetValues(IntPtr ptr)
 	{
+		CString[] result = new CString[this._lengths.Length];
 		Int32 offset = 0;
-		// ReSharper disable once ForCanBeConvertedToForeach
-		for (Int32 index = 0; index < this._lengths.Length; index++)
+		for (Int32 i = 0; i < this._lengths.Length; i++)
 		{
-			Int32 length = this._lengths[index];
-			switch (length)
+			Int32 length = this._lengths[i];
+			result[i] = length switch
 			{
-				case < 0:
-					yield return CString.Zero;
-					break;
-				case 0:
-					yield return CString.Empty;
-					break;
-				case > 0:
-					yield return CString.CreateUnsafe(ptr + offset, length + 1);
-					offset += length + 1;
-					break;
-			}
+				< 0 => CString.Zero,
+				0 => CString.Empty,
+				_ => CString.CreateUnsafe(ptr + offset, length + 1),
+			};
+			if (length > 0) offset += length + 1;
 		}
+		return result;
 	}
 	/// <summary>
 	/// Creates a <see cref="FixedCStringSequence"/> instance from the current instance and a pointer to the buffer.

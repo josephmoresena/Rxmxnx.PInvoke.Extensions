@@ -269,8 +269,7 @@ internal static partial class Utf8Utility
 	/// i.e., has binary representation 10xxxxxx, where x is any bit.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static Boolean IsUtf8ContinuationByte(in Byte value) => (SByte)value < -64;
-
+	private static Boolean IsUtf8ContinuationByte(in Byte value) => (SByte)value < -64;
 	/// <summary>
 	/// Given a 32-bit integer that represents two packed UTF-16 characters, all in machine-endian order,
 	/// returns true iff the two characters represent a well-formed UTF-16 surrogate pair.

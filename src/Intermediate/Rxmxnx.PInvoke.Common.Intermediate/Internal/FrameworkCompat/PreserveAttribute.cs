@@ -1,3 +1,4 @@
+// ReSharper disable NotAccessedField.Global
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 
 /// <summary>
@@ -28,5 +29,6 @@ internal sealed class PreserveAttribute : Attribute
 	/// the specified <paramref name="type"/> is also preserved.
 	/// </summary>
 	/// <param name="type">The specific Type to be preserved by the Linker.</param>
+	// ReSharper disable once UnusedParameter.Local
 	public PreserveAttribute(Type type) { }
 }

@@ -24,7 +24,11 @@ internal partial class MemoryInspector
 				Int32 isTranslated = 0;
 				fixed (Byte* name = &MemoryMarshal.GetReference(ctlName))
 				{
+#if !NET7_0_OR_GREATER
 					UIntPtr length = (UIntPtr)sizeof(Int32);
+#else
+					UIntPtr length = sizeof(Int32);
+#endif
 					Int32 result = SystemB.GetSystemInfo(name, &isTranslated, ref length, default, default);
 					SystemB.ValidateResult(result);
 					return result != -1 && isTranslated == 1;

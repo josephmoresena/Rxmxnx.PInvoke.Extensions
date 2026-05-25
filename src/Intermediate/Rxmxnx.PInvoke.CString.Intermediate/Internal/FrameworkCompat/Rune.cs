@@ -152,6 +152,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	// Displayed as "'<char>' (U+XXXX)"; e.g., "'e' (U+0065)"
 	private String DebuggerDisplay
 		=> FormattableString.Invariant(
+			// ReSharper disable once HeapView.BoxingAllocation
 			$"U+{this._value:X4} '{(Rune.IsValid(this._value) ? this.ToString() : "\uFFFD")}'");
 
 	/// <summary>
@@ -769,10 +770,9 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	public static Double GetNumericValue(Rune value)
 	{
 		if (!value.IsAscii)
-			if (value.IsBmp)
-				return CharUnicodeInfo.GetNumericValue((Char)value._value);
-			else
-				return CharUnicodeInfo.GetNumericValue(value.ToString(), 0);
+			return value.IsBmp ?
+				CharUnicodeInfo.GetNumericValue((Char)value._value) :
+				CharUnicodeInfo.GetNumericValue(value.ToString(), 0);
 		UInt32 baseNum = value._value - '0';
 		return baseNum <= 9 ? baseNum : -1;
 	}
@@ -869,7 +869,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	public static Rune ToLower(Rune value, CultureInfo? culture)
 	{
 		ArgumentNullExceptionCompat.ThrowIfNull(culture);
-		return Rune.ChangeCaseCultureAware(value, culture!, false);
+		return Rune.ChangeCaseCultureAware(value, culture, false);
 	}
 
 	public static Rune ToLowerInvariant(Rune value)
@@ -880,7 +880,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	public static Rune ToUpper(Rune value, CultureInfo? culture)
 	{
 		ArgumentNullExceptionCompat.ThrowIfNull(culture);
-		return Rune.ChangeCaseCultureAware(value, culture!, true);
+		return Rune.ChangeCaseCultureAware(value, culture, true);
 	}
 
 	public static Rune ToUpperInvariant(Rune value)

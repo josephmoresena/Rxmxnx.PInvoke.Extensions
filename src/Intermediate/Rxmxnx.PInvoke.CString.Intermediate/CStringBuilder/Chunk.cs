@@ -33,7 +33,10 @@ public partial class CStringBuilder
 			if (newData.IsEmpty) return this;
 
 			if (this._count == 0 && this._previous is not null)
+			{
 				Chunk.FillFirst(this._previous, ref newData);
+				if (newData.IsEmpty) return this;
+			}
 
 			Span<Byte> chunkBuffer = this.GetAvailable();
 			if (newData.Length <= chunkBuffer.Length)
@@ -56,7 +59,10 @@ public partial class CStringBuilder
 			if (newData.IsEmpty) return this;
 
 			if (this._count == 0 && this._previous is not null)
+			{
 				Chunk.FillFirst(this._previous, ref newData);
+				if (newData.IsEmpty) return this;
+			}
 
 			Span<Byte> chunkBuffer = this.GetAvailable();
 			if (newData.Length <= chunkBuffer.Length)
@@ -79,12 +85,27 @@ public partial class CStringBuilder
 			if (newData.IsEmpty) return this;
 
 			if (this._count == 0 && this._previous is not null)
+			{
 				Chunk.FillFirst(this._previous, ref newData);
+				if (newData.IsEmpty) return this;
+			}
 
 			Span<Byte> chunkBuffer = this.GetAvailable();
-			Utf8.FromUtf16(newData, chunkBuffer, out Int32 charsRead, out Int32 bytesWritten);
-			this._count += bytesWritten;
-			return charsRead == newData.Length ? this : new Chunk(this).Append(newData[charsRead..]);
+			Char first = newData[0];
+			switch (chunkBuffer.Length)
+			{
+#if !NET6_0_OR_GREATER
+				case < 3 when first > '\u007F':
+#else
+				case < 3 when !Char.IsAscii(first):
+#endif
+				case < 4 when Char.IsHighSurrogate(first):
+					return new Chunk(this).Append(newData);
+				default:
+					Utf8.FromUtf16(newData, chunkBuffer, out Int32 charsRead, out Int32 bytesWritten);
+					this._count += bytesWritten;
+					return charsRead == newData.Length ? this : new Chunk(this).Append(newData[charsRead..]);
+			}
 		}
 #if NET8_0_OR_GREATER
 		/// <summary>

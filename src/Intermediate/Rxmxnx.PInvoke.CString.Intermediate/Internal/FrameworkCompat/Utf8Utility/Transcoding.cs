@@ -270,12 +270,12 @@ internal static unsafe partial class Utf8Utility
 				ProcessThreeByteSequenceWithCheck:
 				if (BitConverter.IsLittleEndian)
 				{
-					if ((thisDWord & 0x0000_200Fu) == 0 || (((thisDWord - 0x0000_200Du) & 0x0000_200Fu) == 0))
+					if ((thisDWord & 0x0000_200Fu) == 0 || ((thisDWord - 0x0000_200Du) & 0x0000_200Fu) == 0)
 						goto Error;
 				}
 				else
 				{
-					if ((thisDWord & 0x0F20_0000u) == 0 || (((thisDWord - 0x0D20_0000u) & 0x0F20_0000u) == 0))
+					if ((thisDWord & 0x0F20_0000u) == 0 || ((thisDWord - 0x0D20_0000u) & 0x0F20_0000u) == 0)
 						goto Error;
 				}
 				if (outputCharsRemaining == 0)
@@ -374,7 +374,7 @@ internal static unsafe partial class Utf8Utility
 				continue;
 			}
 			firstByte -= 0xC2u;
-			if ((Byte)firstByte <= (0xDFu - 0xC2u))
+			if ((Byte)firstByte <= 0xDFu - 0xC2u)
 			{
 				if (inputLength < 2) goto InputBufferTooSmall;
 				UInt32 secondByte = pInputBuffer[1];
@@ -390,7 +390,7 @@ internal static unsafe partial class Utf8Utility
 				inputLength -= 2;
 				outputCharsRemaining--;
 			}
-			else if ((Byte)firstByte <= (0xEFu - 0xC2u))
+			else if ((Byte)firstByte <= 0xEFu - 0xC2u)
 			{
 				switch (inputLength)
 				{
@@ -597,7 +597,7 @@ internal static unsafe partial class Utf8Utility
 					if (outputBytesRemaining < 4)
 						goto ProcessOneCharFromCurrentDWordAndFinish;
 					Unsafe.WriteUnaligned(pOutputBuffer,
-					                      ExtractTwoUtf8TwoByteSequencesFromTwoPackedUtf16Chars(thisDWord));
+					                      Utf8Utility.ExtractTwoUtf8TwoByteSequencesFromTwoPackedUtf16Chars(thisDWord));
 
 					pInputBuffer += 2;
 					pOutputBuffer += 4;
@@ -683,7 +683,7 @@ internal static unsafe partial class Utf8Utility
 					if (BitConverter.IsLittleEndian)
 						*pOutputBuffer = (Byte)(thisDWord >> 16);
 					else
-						*pOutputBuffer = (Byte)(thisDWord);
+						*pOutputBuffer = (Byte)thisDWord;
 
 					pInputBuffer++;
 					pOutputBuffer++;
