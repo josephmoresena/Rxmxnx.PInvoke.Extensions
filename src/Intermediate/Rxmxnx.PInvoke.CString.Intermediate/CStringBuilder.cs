@@ -186,11 +186,7 @@ public sealed partial class CStringBuilder
 	{
 		if (this._lock is { } existing) return existing;
 		Lock newLock = new();
-#if !NET9_0_OR_GREATER
-		Lock? previous = (Lock?)Interlocked.CompareExchange(ref this._lock, newLock, null);
-#else
 		Lock? previous = Interlocked.CompareExchange(ref this._lock, newLock, null);
-#endif
 		return previous ?? newLock;
 	}
 
