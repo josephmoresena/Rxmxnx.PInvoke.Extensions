@@ -361,7 +361,7 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = IMessageResource.GetInstance();
 		if (invalidInstance || (invalidState && !emptyEnumerator))
 			throw new InvalidOperationException(resource.NotStartedEnumerable);
-		if (invalidState && emptyEnumerator)
+		if (invalidState)
 			throw new InvalidOperationException(resource.FinishedEnumerable);
 	}
 
