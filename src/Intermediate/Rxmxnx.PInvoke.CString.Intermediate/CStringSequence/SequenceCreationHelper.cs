@@ -23,7 +23,7 @@ public partial class CStringSequence
 		/// <summary>
 		/// Array containing the lengths of each UTF-8 text in the sequence to be created.
 		/// </summary>
-		public Int32?[] Lengths { get; init; }
+		public Int32[] Lengths { get; init; }
 
 		/// <summary>
 		/// Invokes the specified action for UTF-8 text creation.

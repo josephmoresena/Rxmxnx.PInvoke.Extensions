@@ -13,12 +13,12 @@ public partial class CStringSequence
 		/// </summary>
 		/// <param name="lengths">Lengths list.</param>
 		/// <param name="charBuffer">Characters buffer.</param>
-		private readonly struct Value(List<Int32?> lengths, CStringBuilder charBuffer)
+		private readonly struct Value(List<Int32> lengths, CStringBuilder charBuffer)
 		{
 			/// <summary>
 			/// Internal lengths list.
 			/// </summary>
-			private readonly List<Int32?> _lengths = lengths;
+			private readonly List<Int32> _lengths = lengths;
 			/// <summary>
 			/// Internal characters buffer.
 			/// </summary>
@@ -35,17 +35,17 @@ public partial class CStringSequence
 			/// <returns>A <see cref="CStringSequence"/> instance.</returns>
 			public CStringSequence CreateSequence()
 				=> this._lengths.Count != 0 ?
-					new(this.BuildState(out Int32?[] stateLengths), stateLengths) :
+					new(this.BuildState(out Int32[] stateLengths), stateLengths) :
 					CStringSequence.Empty;
 			/// <summary>
 			/// Appends a null UTF-8 text at the current position.
 			/// </summary>
-			public void AppendNull() => this._lengths.Add(null);
+			public void AppendNull() => this._lengths.Add(CStringSequence.zeroItemLength);
 			/// <summary>
 			/// Inserts a null UTF-8 text at <paramref name="index"/>.
 			/// </summary>
 			/// <param name="index">The zero-based index at which null UTF-8 text should be inserted.</param>
-			public void InsertNull(Int32 index) => this._lengths.Insert(index, null);
+			public void InsertNull(Int32 index) => this._lengths.Insert(index, CStringSequence.zeroItemLength);
 			/// <summary>
 			/// Appends the specified UTF-8 text span at the current position.
 			/// </summary>
@@ -88,7 +88,7 @@ public partial class CStringSequence
 			/// <param name="utf8Text">The UTF-8 text to insert.</param>
 			public void Insert(Int32 index, ReadOnlySpan<Byte> utf8Text)
 			{
-				Int32 charIndex = this._lengths.Take(index).Sum(l => l is > 0 ? l.Value + 1 : 0);
+				Int32 charIndex = this._lengths.Take(index).Sum(l => l > 0 ? l + 1 : 0);
 				this._lengths.Insert(index, utf8Text.Length);
 				if (utf8Text.Length <= 0) return;
 				this._charBuffer.Insert(charIndex, Builder.NullChar);
@@ -103,7 +103,7 @@ public partial class CStringSequence
 			/// <param name="utf8Length">The UTF-8 text length to append.</param>
 			public void Insert(Int32 index, ReadOnlySpan<Char> utf16Text, Int32 utf8Length)
 			{
-				Int32 charIndex = this._lengths.Take(index).Sum(l => l is > 0 ? l.Value + 1 : 0);
+				Int32 charIndex = this._lengths.Take(index).Sum(l => l > 0 ? l + 1 : 0);
 				this._lengths.Insert(index, utf8Length);
 				if (utf8Length <= 0) return;
 				this._charBuffer.Insert(charIndex, Builder.NullChar);
@@ -115,12 +115,12 @@ public partial class CStringSequence
 			/// <param name="index">The zero-based index of the item to remove.</param>
 			public void RemoveAt(Int32 index)
 			{
-				Int32? length = this._lengths[index];
+				Int32 length = this._lengths[index];
 				this._lengths.RemoveAt(index);
-				if (length is not > 0) return;
+				if (length <= 0) return;
 
-				Int32 charIndex = this._lengths.Take(index).Sum(l => l is > 0 ? l.Value + 1 : 0);
-				this._charBuffer.Remove(charIndex, length.Value + 1);
+				Int32 charIndex = this._lengths.Take(index).Sum(l => l > 0 ? l + 1 : 0);
+				this._charBuffer.Remove(charIndex, length + 1);
 			}
 			/// <summary>
 			/// Removes all items from the current instance.
@@ -135,7 +135,7 @@ public partial class CStringSequence
 			/// </summary>
 			/// <param name="lengths">Output. Item length span.</param>
 			/// <returns>The UTF-8 value.</returns>
-			public CString GetValue(out ReadOnlySpan<Int32?> lengths)
+			public CString GetValue(out ReadOnlySpan<Int32> lengths)
 			{
 				Byte[] array = CString.CreateByteArray(this._charBuffer.Length);
 
@@ -155,30 +155,24 @@ public partial class CStringSequence
 			/// </summary>
 			/// <param name="lengths">Output. Lengths array.</param>
 			/// <returns>The sequence buffer.</returns>
-			private String BuildState(out Int32?[] lengths)
+			private String BuildState(out Int32[] lengths)
 			{
+				lengths = CStringSequence.CreateIntArray(this._lengths.Count);
 #if !NET5_0_OR_GREATER
-				lengths = new Int32?[this._lengths.Count];
-
-				Span<Int32?>.Enumerator arrEnumerator = lengths.AsSpan().GetEnumerator();
-				using List<Int32?>.Enumerator lstEnumerator = this._lengths.GetEnumerator();
+				Span<Int32>.Enumerator arrEnumerator = lengths.AsSpan().GetEnumerator();
+				using List<Int32>.Enumerator lstEnumerator = this._lengths.GetEnumerator();
+#elif !NET10_0_OR_GREATER
+				Span<Int32>.Enumerator arrEnumerator = lengths.AsSpan().GetEnumerator();
+				Span<Int32>.Enumerator lstEnumerator = CollectionsMarshal.AsSpan(this._lengths).GetEnumerator();
 #else
-				lengths = GC.AllocateUninitializedArray<Int32?>(this._lengths.Count);
-
-#if !NET10_0_OR_GREATER
-				Span<Int32?>.Enumerator arrEnumerator = lengths.AsSpan().GetEnumerator();
-				Span<Int32?>.Enumerator lstEnumerator = CollectionsMarshal.AsSpan(this._lengths).GetEnumerator();
-#else
-				using Span<Int32?>.Enumerator arrEnumerator = lengths.AsSpan().GetEnumerator();
-				using Span<Int32?>.Enumerator lstEnumerator =
-					CollectionsMarshal.AsSpan(this._lengths).GetEnumerator();
-#endif
+				using Span<Int32>.Enumerator arrEnumerator = lengths.AsSpan().GetEnumerator();
+				using Span<Int32>.Enumerator lstEnumerator = CollectionsMarshal.AsSpan(this._lengths).GetEnumerator();
 #endif
 				Int32 totalLength = 0;
 				while (arrEnumerator.MoveNext() && lstEnumerator.MoveNext())
 				{
-					Int32 itemLength = lstEnumerator.Current.GetValueOrDefault();
-					arrEnumerator.Current = lstEnumerator.Current;
+					Int32 itemLength = lstEnumerator.Current;
+					arrEnumerator.Current = itemLength;
 					if (itemLength > 0)
 						totalLength += itemLength + 1;
 				}

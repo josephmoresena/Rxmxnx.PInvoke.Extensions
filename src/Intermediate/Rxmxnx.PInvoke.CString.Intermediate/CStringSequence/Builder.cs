@@ -230,17 +230,17 @@ public partial class CStringSequence
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal CString[] ToArray()
 		{
-			CString value = this._value.GetValue(out ReadOnlySpan<Int32?> lengths);
+			CString value = this._value.GetValue(out ReadOnlySpan<Int32> lengths);
 			CString[] result = new CString[lengths.Length];
 			Int32 offset = 0;
 			for (Int32 i = 0; i < lengths.Length; i++)
 			{
-				if (lengths[i].GetValueOrDefault() == 0)
+				if (lengths[i] <= 0)
 				{
-					result[i] = lengths[i].HasValue ? CString.Empty : CString.Zero;
+					result[i] = lengths[i] == 0 ? CString.Empty : CString.Zero;
 					continue;
 				}
-				result[i] = value.Slice(offset, lengths[i].GetValueOrDefault());
+				result[i] = value.Slice(offset, lengths[i]);
 				offset += result[i].Length + 1;
 			}
 			return result;

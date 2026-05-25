@@ -126,18 +126,18 @@ public unsafe partial class CStringSequence
 			ReadOnlyValPtr<Byte> valPtr = InputMarshaller.GetAddress(in source.GetPinnableReference());
 			for (Int32 i = 0; i < source.Count; i++)
 			{
-				Int32? currentLength = source._lengths[i];
+				Int32 currentLength = source._lengths[i];
 				switch (currentLength)
 				{
-					case null:
+					case < 0:
 						arrayBuffer[i] = ReadOnlyValPtr<Byte>.Zero;
 						continue;
-					case <= 0:
+					case 0:
 						arrayBuffer[i] = emptyPtr;
 						continue;
 					default:
 						arrayBuffer[i] = valPtr;
-						valPtr += currentLength.Value + 1; // +1 for the null terminator
+						valPtr += currentLength + 1; // +1 for the null terminator
 						break;
 				}
 			}

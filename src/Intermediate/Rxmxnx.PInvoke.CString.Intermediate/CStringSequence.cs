@@ -81,12 +81,12 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	)
 	{
 		CString?[] list = new CString?[values.Length];
-		this._lengths = new Int32?[values.Length];
+		this._lengths = CStringSequence.CreateIntArray(values.Length);
 		for (Int32 i = 0; i < values.Length; i++)
 		{
 			CString? cstr = CStringSequence.CreateTransitive(values[i]);
 			list[i] = cstr;
-			this._lengths[i] = cstr is not null && !cstr.IsZero ? cstr.Length : null;
+			this._lengths[i] = cstr is not null && !cstr.IsZero ? cstr.Length : CStringSequence.zeroItemLength;
 		}
 		this._cache = CStringSequence.CreateCache(this._lengths.AsSpan(), out this._nonEmptyCount);
 		this._value = CStringSequence.CreateBuffer(list);
@@ -167,8 +167,8 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		if (this._nonEmptyCount == 0) return CString.Empty;
 
 		Int32 bufferLength = 0;
-		foreach (Int32? length in this._lengths.AsSpan())
-			bufferLength += length.GetValueOrDefault();
+		foreach (Int32 length in this._lengths.AsSpan())
+			bufferLength += length > 0 ? length : 0;
 		return CString.Create(this.CreateTextArray(bufferLength));
 	}
 	/// <summary>
@@ -196,7 +196,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 				index = this.ResolveIndexFromOffset(spanIndex);
 			return false;
 		}
-		index = this.GetIndexOfExactLength(value is not null && !value.IsZero ? 0 : null);
+		index = this.GetIndexOfExactLength(value is not null && !value.IsZero ? 0 : CStringSequence.zeroItemLength);
 		return false;
 	}
 
@@ -215,10 +215,11 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		where TState : allows ref struct
 #endif
 	{
-		Int32 length = CStringSequence.GetBufferLength(lengths.AsSpan());
-		SequenceCreationHelper<TState> helper = new() { State = state, Action = action, Lengths = lengths, };
+		Int32[] lengthsArray = CStringSequence.NormalizeLengths(lengths);
+		Int32 length = CStringSequence.GetBufferLength(lengthsArray);
+		SequenceCreationHelper<TState> helper = new() { State = state, Action = action, Lengths = lengthsArray, };
 		String buffer = String.Create(length, helper, CStringSequence.CreateCStringSequence);
-		return new(buffer, lengths);
+		return new(buffer, lengthsArray);
 	}
 	/// <summary>
 	/// Creates a new <see cref="CStringSequence"/> instance from a UTF-8 buffer.

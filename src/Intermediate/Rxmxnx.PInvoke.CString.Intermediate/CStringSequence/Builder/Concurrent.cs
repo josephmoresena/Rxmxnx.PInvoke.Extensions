@@ -212,7 +212,7 @@ public partial class CStringSequence
 #endif
 					return this._value.CreateSequence();
 			}
-			/// <inheritdoc cref="Value.BuildState(out Nullable{Int32}[])"/>
+			/// <inheritdoc cref="Value.AppendNull()"/>
 			public void AppendNull()
 			{
 #if NET9_0_OR_GREATER
