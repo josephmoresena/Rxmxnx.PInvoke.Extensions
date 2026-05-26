@@ -96,27 +96,5 @@ public partial class CStringBuilder
 
 			this._count = start + source.Length;
 		}
-		/// <summary>
-		/// Appends a span of chars to the sequence, allocating new chunks as needed.
-		/// </summary>
-		/// <param name="byteCount">UTF-8 bytes required to encode <paramref name="newData"/>.</param>
-		/// <param name="newData">Data to append.</param>
-		/// <returns>The chunk into which the final portion of <paramref name="newData"/> was written.</returns>
-		private Chunk Append(Int32 byteCount, ReadOnlySpan<Char> newData)
-		{
-			if (this._count == 0 && this._previous is not null)
-				Chunk.FillFirst(this._previous, ref byteCount, ref newData);
-
-			Span<Byte> chunkBuffer = this.GetAvailable();
-			if (byteCount <= chunkBuffer.Length)
-			{
-				this._count += Encoding.UTF8.GetBytes(newData, chunkBuffer);
-				return this;
-			}
-			CharSpanUtf8Split split = new(newData, byteCount, chunkBuffer.Length);
-			Int32 leftByteCount = Encoding.UTF8.GetBytes(split.Left, chunkBuffer);
-			this._count += leftByteCount;
-			return new Chunk(this).Append(Encoding.UTF8.GetByteCount(split.Right), split.Right);
-		}
 	}
 }

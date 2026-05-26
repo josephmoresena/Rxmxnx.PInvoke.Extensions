@@ -88,6 +88,9 @@ internal partial class Utf8Comparator<TChar>
 	///     </item>
 	/// </list>
 	/// </returns>
+#if NET5_0_OR_GREATER
+	[SkipLocalsInit]
+#endif
 	private Int32 Compare(CompareInfo compareInfo, CompareOptions options, ReadOnlySpan<Byte> textA,
 		ReadOnlySpan<TChar> textB, String? stringB)
 	{
@@ -222,7 +225,7 @@ internal partial class Utf8Comparator<TChar>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
-	private Boolean RuneEqual(DecodedRune runeA, DecodedRune runeB)
+	private Boolean RuneEqual(Rune runeA, Rune runeB)
 	{
 		CompareOptions compareOptions = this.GetOptions(this._ignoreCase);
 		Boolean result = runeA == runeB;
@@ -235,8 +238,8 @@ internal partial class Utf8Comparator<TChar>
 #if NET5_0_OR_GREATER
 		Span<Char> temp = stackalloc Char[4];
 
-		((Rune)runeA.Value).TryEncodeToUtf16(temp[..2], out Int32 countA);
-		((Rune)runeB.Value).TryEncodeToUtf16(temp[2..], out Int32 countB);
+		runeA.TryEncodeToUtf16(temp[..2], out Int32 countA);
+		runeB.TryEncodeToUtf16(temp[2..], out Int32 countB);
 
 		ReadOnlySpan<Char> strA = temp[..countA];
 		ReadOnlySpan<Char> strB = temp.Slice(2, countB);

@@ -14,7 +14,7 @@ public partial class CStringSequence
 		/// <summary>
 		/// The lengths of the strings in the subsequence.
 		/// </summary>
-		private readonly Int32?[] _lengths;
+		private readonly Int32[] _lengths;
 		/// <summary>
 		/// Start index of subsequence.
 		/// </summary>

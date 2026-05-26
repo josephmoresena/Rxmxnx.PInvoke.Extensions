@@ -1,7 +1,3 @@
-#if !NETCOREAPP
-using Rune = System.UInt32;
-#endif
-
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
@@ -33,7 +29,7 @@ internal abstract unsafe partial class Utf8Comparator
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected static void CopyCharsFromUtf8(ReadOnlySpan<Byte> source, Span<Char> destination)
-		=> Encoding.UTF8.GetChars(source, destination);
+		=> Utf8.ToUtf16(source, destination, out _, out _);
 	/// <summary>
 	/// Calculates the number of characters produced by decoding the <paramref name="source"/>.
 	/// </summary>
@@ -50,11 +46,11 @@ internal abstract unsafe partial class Utf8Comparator
 	/// <param name="source">A read-only span of <see cref="byte"/> elements representing a UTF-8 encoded text.</param>
 	/// <returns>The decoded <see cref="Rune"/>, if any; otherwise, <see langword="null"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	protected static DecodedRune? DecodeRuneFromUtf8(ref ReadOnlySpan<Byte> source)
+	protected static Rune? DecodeRuneFromUtf8(ref ReadOnlySpan<Byte> source)
 	{
-		DecodedRune? result = DecodedRune.Decode(source);
-		if (result.HasValue)
-			source = source[result.Value.CharsConsumed..];
+		if (Rune.DecodeFromUtf8(source, out Rune result, out Int32 bytesConsumed) != OperationStatus.Done)
+			return default;
+		source = source[bytesConsumed..];
 		return result;
 	}
 	/// <summary>

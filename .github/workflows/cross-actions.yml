@@ -112,7 +112,6 @@ jobs:
           rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 
           sudo apt update 
-          sudo apt upgrade --assume-yes
           sudo apt-get install clang llvm zlib1g-dev libkrb5-dev libssl-dev \
             qemu-user qemu-user-static binfmt-support libicu74:arm64 libicu74:armhf \
             binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu zlib1g-dev:arm64 libssl-dev:arm64 \
@@ -129,16 +128,25 @@ jobs:
           sudo rm -rf /tmp/*
           sudo rm -rf /var/tmp/*
 
-          sudo rm -rf /usr/local/lib/android/sdk
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/share/miniconda
+          sudo rm -rf /usr/local/share/vcpkg
+          sudo rm -rf /usr/local/share/chromedriver-linux64
+          sudo rm -rf /usr/local/share/edge_driver
+          sudo rm -rf /usr/local/share/gecko_driver
+          sudo rm -rf /usr/share/java/selenium-server.jar
 
           df -h
       - name: Setup Mono Development Kit And Runtime (macOS)
         if: runner.os == 'MacOS'
         run: |
+          sudo rm -rf /Users/runner/Library/Android
+          
           brew install --cask mono-mdk
           brew install --overwrite mono
           mono --version
           /opt/homebrew/bin/mono --version
+
       - name: Setup MinGW i686
         if: runner.os == 'Windows' && inputs.build_artifacts == true
         run: |
@@ -160,25 +168,22 @@ jobs:
             8.0.x
             9.0.x
             10.0.x
-      - name: Setup .NET x86 (Windows)
+      - name: Setup .NET (Windows)
         if: runner.os == 'Windows' && inputs.run_tests == true
         shell: pwsh
         run: |
-          winget install Microsoft.DotNet.SDK.6  --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
-          winget install Microsoft.DotNet.SDK.7 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
-          winget install Microsoft.DotNet.SDK.8 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements  
-          winget install Microsoft.DotNet.SDK.9 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
-          winget install Microsoft.DotNet.SDK.10 --architecture x86 --silent --force --disable-interactivity --accept-source-agreements 
-      - name: Setup .NET x64 (Windows)
-        if: runner.os == 'Windows' && inputs.run_tests == true
-        run: |
-          winget install Microsoft.DotNet.SDK.6 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-          winget install Microsoft.DotNet.SDK.7 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-          winget install Microsoft.DotNet.SDK.8 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-          winget install Microsoft.DotNet.SDK.9 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-          winget install Microsoft.DotNet.SDK.9 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-          winget install Microsoft.DotNet.SDK.10 --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
-
+          $versions = 6..10
+          $archs = @("x86", "x64")
+          foreach ($v in $versions) {
+            foreach ($a in $archs) {
+              winget install "Microsoft.DotNet.SDK.$v" `
+              --architecture $a `
+              --silent `
+              --force `
+              --disable-interactivity `
+              --accept-source-agreements
+            }
+          }
           dotnet workload update
       - name: Remove ApplicationTest
         if: inputs.run_tests == true
@@ -230,6 +235,30 @@ jobs:
         shell: pwsh
         if: always() && (steps.mono_x86.outcome != 'skipped' || steps.mono_mac.outcome != 'skipped')
         run: ./Print-MonoTest-Results.ps1
+      - name: Remove source code files
+        if: inputs.run_tests == true
+        shell: pwsh
+        run: |
+          Remove-Item -Recurse -Force "src/Test"
+          Remove-Item -Recurse -Force "src/Intermediate"
+          Remove-Item -Recurse -Force "src/LegacyAppTest"
+      - name: Remove old .NET Versions
+        if: inputs.run_tests == true && runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $versions = 6..10
+          $latestVersion = ($versions | Measure-Object -Maximum).Maximum
+          foreach ($v in $versions) {
+            if ($v -eq $latestVersion) {
+                continue
+            }
+            winget uninstall "Microsoft.DotNet.SDK.$v" `
+                --force `
+                --purge `
+                --silent `
+                --all-versions `
+                --disable-interactivity
+          }
       - name: Publish launcher
         if: inputs.build_artifacts == true
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.LauncherTest
@@ -242,18 +271,26 @@ jobs:
         if: inputs.build_artifacts == true
         shell: pwsh
         run: |
+          dotnet nuget locals all --clear
           if ($IsWindows) {
+            Remove-Item -Recurse -Force "C:\Android" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "C:\vcpkg" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "C:\Miniconda" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "C:\SeleniumWebDrivers" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "$env:WINDIR\Temp\*" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "$env:TEMP\*" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "$env:TMP\*" -ErrorAction SilentlyContinue
+            Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Temp\*" -ErrorAction SilentlyContinue
+          
             $env:PATH = "C:\msys64\mingw32\bin;" + $env:PATH
             ./Rxmxnx.PInvoke.LauncherTest.exe "src\ApplicationTest" "artifacts" "compile"
 
             Remove-Item -Recurse -Force "$env:WINDIR\SoftwareDistribution\Download" -ErrorAction SilentlyContinue
             Remove-Item -Recurse -Force "$env:WINDIR\Prefetch" -ErrorAction SilentlyContinue
-            Remove-Item -Recurse -Force "C:\Android\android-sdk" -ErrorAction SilentlyContinue
             Remove-Item -Recurse -Force "$env:WINDIR\Temp\*" -ErrorAction SilentlyContinue
             Remove-Item -Recurse -Force "$env:TEMP\*" -ErrorAction SilentlyContinue
             Remove-Item -Recurse -Force "$env:TMP\*" -ErrorAction SilentlyContinue
             Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Temp\*" -ErrorAction SilentlyContinue
-
           } else {
             chmod +x Rxmxnx.PInvoke.LauncherTest
             ./Rxmxnx.PInvoke.LauncherTest "src/ApplicationTest" "artifacts" "compile"
@@ -262,6 +299,7 @@ jobs:
         if: inputs.build_artifacts == true
         shell: pwsh
         run: |
+          dotnet nuget locals all --clear
           Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
             $projDir = Split-Path $_.FullName
             "bin","obj" | ForEach-Object {

@@ -4,6 +4,7 @@
 
     <ItemGroup>
         <Using Include="System.Buffers"/>
+        <Using Include="System.Buffers.Binary"/>
         <Using Include="System.Collections.Concurrent"/>
         <Using Include="System.ComponentModel"/>
         <Using Include="System.Diagnostics"/>
@@ -17,6 +18,7 @@
         <Using Include="System.Text"/>
         <Using Include="System.Text.Json"/>
         <Using Include="System.Text.Json.Serialization"/>
+        <Using Include="System.Text.Unicode"/>
 
         <Using Include="Rxmxnx.PInvoke.Internal"/>
         <Using Include="Rxmxnx.PInvoke.Internal.DebugView"/>

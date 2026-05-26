@@ -347,6 +347,23 @@ internal static unsafe class ValidationUtilities
 		if (index >= enumerationSize)
 			throw new InvalidOperationException(resource.FinishedEnumerable);
 	}
+	/// <summary>
+	/// Validates the current state in an iteration of an enumeration.
+	/// </summary>
+	/// <param name="invalidInstance">Indicates whether the enumeration instance is invalid.</param>
+	/// <param name="invalidState">Indicates whether the current state is invalid.</param>
+	/// <param name="emptyEnumerator">Indicates whether the current enumeration is empty.</param>
+	/// <exception cref="InvalidOperationException">
+	/// Thrown if <paramref name="invalidInstance"/> or <paramref name="invalidState"/> are <see langword="true"/>.
+	/// </exception>
+	public static void ThrowIfInvalidEnumerator(Boolean invalidInstance, Boolean invalidState, Boolean emptyEnumerator)
+	{
+		IMessageResource resource = IMessageResource.GetInstance();
+		if (invalidInstance || (invalidState && !emptyEnumerator))
+			throw new InvalidOperationException(resource.NotStartedEnumerable);
+		if (invalidState)
+			throw new InvalidOperationException(resource.FinishedEnumerable);
+	}
 
 	/// <summary>
 	/// Validates the parameters of a subregion.

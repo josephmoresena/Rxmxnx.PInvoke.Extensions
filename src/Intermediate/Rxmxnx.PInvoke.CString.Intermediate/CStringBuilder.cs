@@ -184,9 +184,10 @@ public sealed partial class CStringBuilder
 	/// <returns>A <see cref="Lock"/> instance.</returns>
 	internal Lock GetLock()
 	{
-		if (this._lock is not null) return this._lock;
+		if (this._lock is { } existing) return existing;
 		Lock newLock = new();
-		return Interlocked.CompareExchange(ref this._lock, newLock, default) ?? newLock;
+		Lock? previous = Interlocked.CompareExchange(ref this._lock, newLock, null);
+		return previous ?? newLock;
 	}
 
 	/// <summary>

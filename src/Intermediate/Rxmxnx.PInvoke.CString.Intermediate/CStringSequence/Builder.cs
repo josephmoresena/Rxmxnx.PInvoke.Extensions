@@ -88,6 +88,9 @@ public partial class CStringSequence
 		/// </summary>
 		/// <param name="escaped">The UTF-8 escaped text to append.</param>
 		/// <returns>The current instance after the append operation has completed.</returns>
+#if NET5_0_OR_GREATER
+		[SkipLocalsInit]
+#endif
 		public Builder AppendEscaped(ReadOnlySpan<Byte> escaped)
 		{
 			if (escaped.IsEmpty)
@@ -117,6 +120,9 @@ public partial class CStringSequence
 		/// </summary>
 		/// <param name="escaped">The UTF-8 escaped text to append.</param>
 		/// <returns>The current instance after the append operation has completed.</returns>
+#if NET5_0_OR_GREATER
+		[SkipLocalsInit]
+#endif
 		public Builder AppendEscaped(ReadOnlySequence<Byte> escaped)
 		{
 			if (escaped.IsEmpty)
@@ -230,17 +236,17 @@ public partial class CStringSequence
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal CString[] ToArray()
 		{
-			CString value = this._value.GetValue(out ReadOnlySpan<Int32?> lengths);
+			CString value = this._value.GetValue(out ReadOnlySpan<Int32> lengths);
 			CString[] result = new CString[lengths.Length];
 			Int32 offset = 0;
 			for (Int32 i = 0; i < lengths.Length; i++)
 			{
-				if (lengths[i].GetValueOrDefault() == 0)
+				if (lengths[i] <= 0)
 				{
-					result[i] = lengths[i].HasValue ? CString.Empty : CString.Zero;
+					result[i] = lengths[i] == 0 ? CString.Empty : CString.Zero;
 					continue;
 				}
-				result[i] = value.Slice(offset, lengths[i].GetValueOrDefault());
+				result[i] = value.Slice(offset, lengths[i]);
 				offset += result[i].Length + 1;
 			}
 			return result;

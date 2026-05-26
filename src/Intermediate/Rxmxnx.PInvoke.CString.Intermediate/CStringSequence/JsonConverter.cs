@@ -32,7 +32,7 @@ public partial class CStringSequence
 			}
 			return builder.Build();
 #else
-			List<Int32?> lengths = [];
+			List<Int32> lengths = [];
 			StringBuilder strBuilder = new();
 			Boolean leadingNull = false;
 
@@ -48,15 +48,14 @@ public partial class CStringSequence
 		/// <inheritdoc/>
 		public override void Write(Utf8JsonWriter writer, CStringSequence? value, JsonSerializerOptions options)
 		{
-			Boolean writeNull = value is null &&
-				options.DefaultIgnoreCondition switch
-				{
-					JsonIgnoreCondition.WhenWritingNull => false,
-					JsonIgnoreCondition.WhenWritingDefault => false,
+			Boolean writeNull = value is null && options.DefaultIgnoreCondition switch
+			{
+				JsonIgnoreCondition.WhenWritingNull => false,
+				JsonIgnoreCondition.WhenWritingDefault => false,
 #pragma warning disable SYSLIB0020
-					_ => !options.IgnoreNullValues,
+				_ => !options.IgnoreNullValues,
 #pragma warning restore SYSLIB0020
-				};
+			};
 			if (writeNull)
 			{
 				writer.WriteNullValue();
@@ -65,12 +64,12 @@ public partial class CStringSequence
 
 			Int32 item = 0;
 			Utf8View view = new(value, true);
-			ReadOnlySpan<Int32?> lengths = value?._lengths;
+			ReadOnlySpan<Int32> lengths = value?._lengths;
 
 			writer.WriteStartArray();
 			foreach (ReadOnlySpan<Byte> utf8Text in view)
 			{
-				CString.JsonConverter.Write(writer, utf8Text, !lengths[item].HasValue, false);
+				CString.JsonConverter.Write(writer, utf8Text, lengths[item] < 0, false);
 				item++;
 			}
 			writer.WriteEndArray();
@@ -87,13 +86,13 @@ public partial class CStringSequence
 #if NET7_0_OR_GREATER
 		[SkipLocalsInit]
 #endif
-		private static void ReadString(Utf8JsonReader reader, StringBuilder buffer, List<Int32?> lengths,
+		private static void ReadString(Utf8JsonReader reader, StringBuilder buffer, List<Int32> lengths,
 			ref Boolean leadingNull)
 		{
 			ValidationUtilities.ThrowIfNotString(reader.TokenType);
 			if (reader.TokenType is JsonTokenType.Null)
 			{
-				lengths.Add(default);
+				lengths.Add(CStringSequence.zeroItemLength);
 				return;
 			}
 

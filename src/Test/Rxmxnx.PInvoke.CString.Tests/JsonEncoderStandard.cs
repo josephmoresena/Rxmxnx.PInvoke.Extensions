@@ -39,21 +39,20 @@ public static class JsonEncoderStandard
 				}
 				else
 				{
-					DecodedRune? rune = DecodedRune.Decode(input[i..]);
-					if (rune.HasValue)
+					if (Rune.DecodeFromUtf8(input[i..], out Rune rune, out Int32 consumed) is OperationStatus.Done)
 					{
-						if (rune.Value.Value <= 0xFFFF)
+						if (rune.Value <= 0xFFFF)
 						{
-							JsonEncoderStandard.WriteHexEscape(buffer, ref pos, rune.Value.Value);
+							JsonEncoderStandard.WriteHexEscape(buffer, ref pos, rune.Value);
 						}
 						else
 						{
-							Int32 high = (rune.Value.Value - 0x10000) / 0x400 + 0xD800;
-							Int32 low = (rune.Value.Value - 0x10000) % 0x400 + 0xDC00;
+							Int32 high = (rune.Value - 0x10000) / 0x400 + 0xD800;
+							Int32 low = (rune.Value - 0x10000) % 0x400 + 0xDC00;
 							JsonEncoderStandard.WriteHexEscape(buffer, ref pos, high);
 							JsonEncoderStandard.WriteHexEscape(buffer, ref pos, low);
 						}
-						i += rune.Value.CharsConsumed;
+						i += consumed;
 					}
 					else
 					{

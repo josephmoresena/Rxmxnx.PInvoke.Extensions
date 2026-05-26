@@ -22,7 +22,7 @@ public abstract class CStringBuilderTestsBase
 		nRune = 0;
 		while (currentUtf16Index < value.Length)
 		{
-			if (RuneCompat.DecodeFromUtf16(value[currentUtf16Index..], out _, out Int32 charsConsumed) ==
+			if (Rune.DecodeFromUtf16(value[currentUtf16Index..], out _, out Int32 charsConsumed) ==
 			    OperationStatus.Done)
 			{
 				if (currentUtf16Index <= value.Length)

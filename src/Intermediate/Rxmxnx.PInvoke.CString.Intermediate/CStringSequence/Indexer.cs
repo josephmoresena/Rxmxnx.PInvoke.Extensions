@@ -42,12 +42,11 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 		get
 		{
 			ValidationUtilities.ThrowIfInvalidSequenceIndex(index, this._lengths.Length);
-			Int32? length = this._lengths[index];
-			return length switch
+			return this._lengths[index] switch
 			{
-				null => CString.Zero,
+				< 0 => CString.Zero,
 				0 => CString.Empty,
-				_ => this.GetCString(index, length.Value),
+				_ => this.GetCString(index, this._lengths[index]),
 			};
 		}
 	}
@@ -102,12 +101,12 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 	{
 		Int32 offset = 0;
 		Int32 count = 0;
-		foreach (Int32? length in this._lengths.AsSpan())
+		foreach (Int32 length in this._lengths.AsSpan())
 		{
 			if (count >= offsets.Length || count >= this._nonEmptyCount) break;
-			if (length is null or <= 0) continue;
+			if (length <= 0) continue;
 			offsets[count] = offset;
-			offset += length.Value + 1;
+			offset += length + 1;
 			count++;
 		}
 		return count;
@@ -121,8 +120,8 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 	internal Int32 GetBinaryOffset(Int32 index)
 	{
 		Int32 binaryOffset = 0;
-		ReadOnlySpan<Int32?> lengths = this._lengths.AsSpan()[..index];
-		foreach (Int32? length in lengths)
+		ReadOnlySpan<Int32> lengths = this._lengths.AsSpan()[..index];
+		foreach (Int32 length in lengths)
 			binaryOffset += CStringSequence.GetSpanLength(length);
 		return binaryOffset;
 	}

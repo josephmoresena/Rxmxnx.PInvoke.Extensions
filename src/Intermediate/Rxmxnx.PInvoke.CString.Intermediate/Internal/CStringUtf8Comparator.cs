@@ -23,8 +23,8 @@ internal sealed class CStringUtf8Comparator : Utf8Comparator<Byte>
 	private CStringUtf8Comparator(Boolean ignoreCase, CultureInfo? culture) : base(ignoreCase, culture) { }
 
 	/// <inheritdoc/>
-	protected override DecodedRune? DecodeRune(ref ReadOnlySpan<Byte> source)
-		=> Utf8Comparator.DecodeRuneFromUtf8(ref source);
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	protected override Rune? DecodeRune(ref ReadOnlySpan<Byte> source) => Utf8Comparator.DecodeRuneFromUtf8(ref source);
 	/// <inheritdoc/>
 #if !PACKAGE && (!NETCOREAPP || NET7_0_OR_GREATER)
 	[ExcludeFromCodeCoverage]

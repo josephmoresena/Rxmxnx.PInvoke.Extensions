@@ -89,7 +89,7 @@ public partial class CString
 		Byte[] result = CString.CreateByteArray(bufferLength);
 		Span<Byte> span = result.AsSpan();
 		Span<Byte> initial = span[..utf8Length];
-		_ = Encoding.UTF8.GetBytes(seq, initial);
+		Utf8.FromUtf16(seq, initial, out Int32 _, out Int32 _);
 		for (Int32 i = 1; i < count; i++)
 		{
 			span = span[initial.Length..];
@@ -166,7 +166,7 @@ public partial class CString
 
 		Byte[] array = CString.CreateByteArray(utf8Length + 1);
 		Span<Byte> bytes = array;
-		Encoding.UTF8.GetBytes(utf16Text, bytes);
+		Utf8.FromUtf16(utf16Text, bytes, out Int32 _, out Int32 _);
 		bytes[^1] = default;
 		return ValueRegion<Byte>.Create(array);
 	}
@@ -192,4 +192,39 @@ public partial class CString
 		}
 		return -unusedBytes.Length;
 	}
+	/// <summary>
+	/// Creates a <see cref="String"/> instance from <paramref name="utf8Bytes"/>.
+	/// </summary>
+	/// <param name="utf8Bytes">The UTF-8 text to encode to UTF-16.</param>
+	/// <returns>A <see cref="String"/> instance.</returns>
+	private static String ToUtf16(ReadOnlySpan<Byte> utf8Bytes)
+	{
+		String result = Encoding.UTF8.GetString(utf8Bytes);
+		return String.IsInterned(result) ?? result;
+	}
+#if NETCOREAPP
+	/// <summary>
+	/// Encodes <paramref name="utf8Bytes"/> to UTF-16 chars and computes the hash function
+	/// for <paramref name="utf8Bytes"/>.
+	/// </summary>
+	/// <param name="utf8Bytes">The UTF-8 text to hash compute.</param>
+	/// <returns>The hash for of <paramref name="utf8Bytes"/>.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+#if NET5_0_OR_GREATER
+	[SkipLocalsInit]
+#endif
+	private static Int32 GetStringHashCode(ReadOnlySpan<Byte> utf8Bytes)
+	{
+		Int32 maxChars = Encoding.UTF8.GetMaxCharCount(utf8Bytes.Length);
+		Span<Char> utf16Chars = stackalloc Char[maxChars];
+		Utf8.ToUtf16(utf8Bytes, utf16Chars, out _, out Int32 charsWritten);
+#if NET6_0_OR_GREATER
+		return String.GetHashCode(utf16Chars[..charsWritten]);
+#else
+		return String.GetHashCode(utf16Chars[..charsWritten], StringComparison.Ordinal);
+#endif
+	}
+#endif
 }

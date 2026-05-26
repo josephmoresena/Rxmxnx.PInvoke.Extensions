@@ -9,7 +9,7 @@ public partial class CStringSequence
 	/// <summary>
 	/// Collection of lengths for each text in the buffer. Used for interpreting the buffer content.
 	/// </summary>
-	private readonly Int32?[] _lengths;
+	private readonly Int32[] _lengths;
 	/// <summary>
 	/// Non-empty items count.
 	/// </summary>
@@ -32,37 +32,30 @@ public partial class CStringSequence
 		ReadOnlySpan<Char> result = this._value;
 		ref Char firstCharRef = ref MemoryMarshal.GetReference(result);
 		IntPtr ptr = new(Unsafe.AsPointer(ref firstCharRef));
-		output = this.GetValues(ptr).ToArray();
+		output = this.GetValues(ptr);
 		return this._value;
 	}
 	/// <summary>
 	/// Retrieves a sequence of <see cref="CString"/> based on the buffer and lengths of the texts.
 	/// </summary>
 	/// <param name="ptr">Pointer to the start of the buffer.</param>
-	/// <returns>An <see cref="IEnumerable{CString}"/> representing the sequence of texts.</returns>
-	private IEnumerable<CString> GetValues(IntPtr ptr)
+	/// <returns>An <see cref="CString"/> array representing the sequence of texts.</returns>
+	private CString[] GetValues(IntPtr ptr)
 	{
+		CString[] result = new CString[this._lengths.Length];
 		Int32 offset = 0;
-		// ReSharper disable once ForCanBeConvertedToForeach
-		for (Int32 index = 0; index < this._lengths.Length; index++)
+		for (Int32 i = 0; i < this._lengths.Length; i++)
 		{
-			Int32? length = this._lengths[index];
-			switch (length)
+			Int32 length = this._lengths[i];
+			result[i] = length switch
 			{
-				case > 0:
-					yield return CString.CreateUnsafe(ptr + offset, length.Value + 1);
-					offset += length.Value + 1;
-					break;
-				default:
-				{
-					if (length.HasValue)
-						yield return CString.Empty;
-					else
-						yield return CString.Zero;
-					break;
-				}
-			}
+				< 0 => CString.Zero,
+				0 => CString.Empty,
+				_ => CString.CreateUnsafe(ptr + offset, length + 1),
+			};
+			if (length > 0) offset += length + 1;
 		}
+		return result;
 	}
 	/// <summary>
 	/// Creates a <see cref="FixedCStringSequence"/> instance from the current instance and a pointer to the buffer.
@@ -124,14 +117,13 @@ public partial class CStringSequence
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private Int32 ResolveIndexFromOffset(Int32 offset)
 	{
-		ReadOnlySpan<Int32?> lengths = this._lengths.AsSpan();
+		ReadOnlySpan<Int32> lengths = this._lengths.AsSpan();
 		for (Int32 i = 0; i < lengths.Length; i++)
 		{
-			Int32 length = lengths[i].GetValueOrDefault();
-			if (length == 0) continue;
+			if (lengths[i] <= 0) continue;
 			if (offset < 0) break;
-			if (offset < length) return i;
-			offset -= length + 1;
+			if (offset < lengths[i]) return i;
+			offset -= lengths[i] + 1;
 		}
 		return -1;
 	}
@@ -144,10 +136,10 @@ public partial class CStringSequence
 	/// found.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private Int32 GetIndexOfExactLength(Int32? length)
+	private Int32 GetIndexOfExactLength(Int32 length)
 	{
 #if !NET10_0_OR_GREATER
-		ReadOnlySpan<Int32?> lengths = this._lengths.AsSpan();
+		ReadOnlySpan<Int32> lengths = this._lengths.AsSpan();
 		for (Int32 i = 0; i < lengths.Length; i++)
 		{
 			if (lengths[i] != length) continue;
@@ -157,5 +149,37 @@ public partial class CStringSequence
 #else
 		return this._lengths.AsSpan().IndexOf(length);
 #endif
+	}
+	/// <summary>
+	/// Normalizes the <paramref name="lengths"/> array.
+	/// </summary>
+	/// <param name="lengths">The sequence lengths array.</param>
+	/// <returns>Normalized lengths array.</returns>
+	private static Int32[] NormalizeLengths(Int32?[] lengths)
+	{
+		if (lengths.Length == 0) return [];
+		Int32[] result = CStringSequence.CreateIntArray(lengths.Length);
+		for (Int32 i = 0; i < lengths.Length; i++)
+			result[i] = lengths[i] ?? CStringSequence.zeroItemLength;
+		return result;
+	}
+	/// <summary>
+	/// Allocates a new byte buffer of the specified length.
+	/// </summary>
+	/// <param name="length">Length of the array.</param>
+	/// <returns>A new <see cref="Byte"/> array.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static Int32[] CreateIntArray(Int32 length)
+	{
+		if (length == 0) return [];
+#if NET5_0_OR_GREATER
+		Int32[] result = GC.AllocateUninitializedArray<Int32>(length);
+#else
+		Int32[] result = new Int32[length];
+#endif
+		return result;
 	}
 }

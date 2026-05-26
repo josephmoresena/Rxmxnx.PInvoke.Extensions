@@ -113,24 +113,16 @@ public partial class CStringBuilder
 		/// Fills the provided append chunk with the supplied byte segments as long as possible.
 		/// </summary>
 		/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
-		/// <param name="byteCount">
-		/// Input. UTF-8 bytes required to encode <paramref name="newData"/>. Output. UTF-8 bytes required to encode
-		/// the remaining data.
-		/// </param>
 		/// <param name="newData">Input. New data to append. Output. Remaining data to append.</param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void FillFirst(Chunk chunk, ref Int32 byteCount, ref ReadOnlySpan<Char> newData)
+		private static void FillFirst(Chunk chunk, ref ReadOnlySpan<Char> newData)
 		{
 			if (chunk._buffer.Length - chunk._count <= 0) return;
 
 			Span<Byte> chunkBuffer = chunk.GetAvailable();
-			CharSpanUtf8Split split = new(newData, byteCount, chunkBuffer.Length);
-
-			if (split.Left.Length <= 0) return;
-
-			chunk._count += Encoding.UTF8.GetBytes(split.Left, chunkBuffer);
-			newData = split.Right;
-			byteCount = Encoding.UTF8.GetByteCount(newData);
+			Utf8.FromUtf16(newData, chunkBuffer, out Int32 charsRead, out Int32 bytesWritten);
+			chunk._count += bytesWritten;
+			newData = newData[charsRead..];
 		}
 		/// <summary>
 		/// Fills the provided insertion chunk with the supplied byte segments as long as possible.
@@ -221,19 +213,6 @@ public partial class CStringBuilder
 				source.CopyTo(destination[^source.Length..]);
 				destination = destination[..^source.Length];
 			} while (!destination.IsEmpty);
-		}
-		/// <summary>
-		/// Inserts <paramref name="chars"/> on <paramref name="chunk"/>.
-		/// </summary>
-		/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
-		/// <param name="index">Insertion index.</param>
-		/// <param name="chars">A read-only character span.</param>
-		private static Int32 InsertChars(Chunk chunk, Int32 index, ReadOnlySpan<Char> chars)
-		{
-			Span<Byte> temp = stackalloc Byte[StackAllocationHelper.StackallocByteThreshold];
-			Int32 bytes = Encoding.UTF8.GetBytes(chars, temp);
-			chunk.Insert(index, temp[..bytes]);
-			return bytes;
 		}
 #if NET8_0_OR_GREATER
 		/// <summary>

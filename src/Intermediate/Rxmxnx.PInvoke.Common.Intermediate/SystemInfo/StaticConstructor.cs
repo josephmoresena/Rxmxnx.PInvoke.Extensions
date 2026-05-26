@@ -102,29 +102,24 @@ public static partial class SystemInfo
 		/// <returns>The name of the current Unix platform.</returns>
 		public static String? GetUnixName()
 		{
-			IntPtr bufferPtr = IntPtr.Zero;
 			try
 			{
-				bufferPtr = Marshal.AllocHGlobal(256 * 6);
-				Unix.GetKernelName(bufferPtr);
+				Span<Byte> buffer = stackalloc Byte[256 * 6];
 
-				ref Byte byte0 = ref Unsafe.AsRef<Byte>(bufferPtr.ToPointer());
-				Int32 nameLength = MemoryMarshalCompat.IndexOfNull(ref byte0);
+				fixed (Byte* bufferPtr = buffer)
+					Unix.GetKernelName((IntPtr)bufferPtr);
+
+				Int32 nameLength = buffer.IndexOf((Byte)0);
 
 				if (nameLength <= 0)
 					return default;
 
-				ReadOnlySpan<Byte> ascii = MemoryMarshal.CreateReadOnlySpan(ref byte0, nameLength);
+				ReadOnlySpan<Byte> ascii = buffer[..nameLength];
 				return Encoding.ASCII.GetString(ascii).ToLowerInvariant();
 			}
 			catch (Exception)
 			{
 				return default;
-			}
-			finally
-			{
-				if (bufferPtr != IntPtr.Zero)
-					Marshal.AllocHGlobal(bufferPtr);
 			}
 		}
 	}

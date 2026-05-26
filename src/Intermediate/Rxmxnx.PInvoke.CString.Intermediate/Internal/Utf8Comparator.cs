@@ -1,8 +1,4 @@
-﻿#if !NETCOREAPP
-using Rune = System.UInt32;
-#endif
-
-namespace Rxmxnx.PInvoke.Internal;
+﻿namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// The abstract Utf8Comparator class provides a means for efficiently and customizable
@@ -140,8 +136,8 @@ internal abstract partial class Utf8Comparator<TChar> : Utf8Comparator where TCh
 			ReadOnlySpan<Byte> textA0 = textA;
 			ReadOnlySpan<TChar> textB0 = textB;
 
-			DecodedRune? runeA = Utf8Comparator.DecodeRuneFromUtf8(ref textA);
-			DecodedRune? runeB = this.DecodeRune(ref textB);
+			Rune? runeA = Utf8Comparator.DecodeRuneFromUtf8(ref textA);
+			Rune? runeB = this.DecodeRune(ref textB);
 
 			//If the runes are not comparable to each other a full text comparison will be needed.
 			if (!runeA.HasValue || !runeB.HasValue)
@@ -175,5 +171,5 @@ internal abstract partial class Utf8Comparator<TChar> : Utf8Comparator where TCh
 	/// </summary>
 	/// <param name="source">A read-only span of <typeparamref name="TChar"/> elements that represents a text.</param>
 	/// <returns>The decoded <see cref="Rune"/>, if any; otherwise, <see langword="null"/>.</returns>
-	protected abstract DecodedRune? DecodeRune(ref ReadOnlySpan<TChar> source);
+	protected abstract Rune? DecodeRune(ref ReadOnlySpan<TChar> source);
 }

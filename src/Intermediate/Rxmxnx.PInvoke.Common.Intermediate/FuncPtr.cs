@@ -18,7 +18,7 @@ public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEq
 	/// <summary>
 	/// A read-only field representing a null-initialized function pointer.
 	/// </summary>
-	public static readonly FuncPtr<TDelegate> Zero = default;
+	public static readonly FuncPtr<TDelegate> Zero;
 
 	/// <summary>
 	/// The internal pointer value.

@@ -33,7 +33,10 @@ public partial class CStringBuilder
 			if (newData.IsEmpty) return this;
 
 			if (this._count == 0 && this._previous is not null)
+			{
 				Chunk.FillFirst(this._previous, ref newData);
+				if (newData.IsEmpty) return this;
+			}
 
 			Span<Byte> chunkBuffer = this.GetAvailable();
 			if (newData.Length <= chunkBuffer.Length)
@@ -56,7 +59,10 @@ public partial class CStringBuilder
 			if (newData.IsEmpty) return this;
 
 			if (this._count == 0 && this._previous is not null)
+			{
 				Chunk.FillFirst(this._previous, ref newData);
+				if (newData.IsEmpty) return this;
+			}
 
 			Span<Byte> chunkBuffer = this.GetAvailable();
 			if (newData.Length <= chunkBuffer.Length)
@@ -75,7 +81,32 @@ public partial class CStringBuilder
 		/// <param name="newData">Data to append.</param>
 		/// <returns>The chunk into which the final portion of <paramref name="newData"/> was written.</returns>
 		public Chunk Append(ReadOnlySpan<Char> newData)
-			=> newData.IsEmpty ? this : this.Append(Encoding.UTF8.GetByteCount(newData), newData);
+		{
+			if (newData.IsEmpty) return this;
+
+			if (this._count == 0 && this._previous is not null)
+			{
+				Chunk.FillFirst(this._previous, ref newData);
+				if (newData.IsEmpty) return this;
+			}
+
+			Span<Byte> chunkBuffer = this.GetAvailable();
+			Char first = newData[0];
+			switch (chunkBuffer.Length)
+			{
+#if !NET6_0_OR_GREATER
+				case < 3 when first > '\u007F':
+#else
+				case < 3 when !Char.IsAscii(first):
+#endif
+				case < 4 when Char.IsHighSurrogate(first):
+					return new Chunk(this).Append(newData);
+				default:
+					Utf8.FromUtf16(newData, chunkBuffer, out Int32 charsRead, out Int32 bytesWritten);
+					this._count += bytesWritten;
+					return charsRead == newData.Length ? this : new Chunk(this).Append(newData[charsRead..]);
+			}
+		}
 #if NET8_0_OR_GREATER
 		/// <summary>
 		/// Appends a <see cref="IUtf8SpanFormattable"/> value to the sequence, allocating new chunks as needed.
@@ -117,7 +148,7 @@ public partial class CStringBuilder
 				return chunk;
 
 			ReadOnlySpan<Char> chars = value.ToString();
-			return this.Append(Encoding.UTF8.GetByteCount(chars), chars);
+			return this.Append(chars);
 		}
 #endif
 		/// <summary>
@@ -136,17 +167,23 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="index">Insertion index.</param>
 		/// <param name="newData">Chars to insert.</param>
+#if NET5_0_OR_GREATER
+		[SkipLocalsInit]
+#endif
 		public void Insert(Int32 index, ReadOnlySpan<Char> newData)
 		{
-			Int32 byteCount = Encoding.UTF8.GetByteCount(newData);
-			CharSpanUtf8Split split = new(newData, byteCount, StackAllocationHelper.StackallocByteThreshold);
+			Int32 bufferSize = Encoding.UTF8.GetMaxByteCount(newData.Length);
+			if (bufferSize > StackAllocationHelper.StackallocByteThreshold)
+				bufferSize = StackAllocationHelper.StackallocByteThreshold;
 			Int32 bytes = 0;
-			do
+			Span<Byte> temp = stackalloc Byte[bufferSize];
+			while (!newData.IsEmpty)
 			{
-				bytes += Chunk.InsertChars(this, index + bytes, split.Left);
-				split = new(split.Right, Encoding.UTF8.GetByteCount(split.Right),
-				            StackAllocationHelper.StackallocByteThreshold);
-			} while (!split.Left.IsEmpty);
+				Utf8.FromUtf16(newData, temp, out Int32 charsRead, out Int32 bytesWritten);
+				this.Insert(index + bytes, temp[..bytesWritten]);
+				bytes += bytesWritten;
+				newData = newData[charsRead..];
+			}
 		}
 		/// <summary>
 		/// Inserts <paramref name="newData"/> at the specified index creating additional chunks if necessary.

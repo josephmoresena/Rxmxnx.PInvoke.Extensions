@@ -10,20 +10,18 @@ namespace Rxmxnx.PInvoke;
 public unsafe partial class CStringSequence
 {
 	/// <summary>
+	/// Length of the CString.Zero item.
+	/// </summary>
+	private const Int32 zeroItemLength = Int32.MinValue;
+
+	/// <summary>
 	/// Determines the length of the given <see cref="CString"/> instance for the sequence.
 	/// </summary>
 	/// <param name="cstr">The <see cref="CString"/> instance whose length is to be retrieved.</param>
 	/// <returns>The length of the <paramref name="cstr"/> for the sequence.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static Int32? GetLength(CString? cstr)
-	{
-		Int32? result = default;
-
-		if (!CString.IsNullOrEmpty(cstr) || cstr?.IsReference == false)
-			result = cstr.Length;
-
-		return result;
-	}
+	private static Int32 GetLength(CString? cstr)
+		=> cstr is null || cstr.IsZero ? CStringSequence.zeroItemLength : cstr.Length;
 	/// <summary>
 	/// Constructs a sequence buffer from the provided text collection.
 	/// </summary>
@@ -50,7 +48,7 @@ public unsafe partial class CStringSequence
 	/// <param name="span">Span of UTF-8 text pointers.</param>
 	/// <param name="lengths">UTF-8 text lengths.</param>
 	/// <returns>Created buffer.</returns>
-	private static String CreateBuffer(ReadOnlySpan<ReadOnlyValPtr<Byte>> span, Int32?[] lengths)
+	private static String CreateBuffer(ReadOnlySpan<ReadOnlyValPtr<Byte>> span, Int32[] lengths)
 	{
 		fixed (void* ptrSpan = &MemoryMarshal.GetReference(span))
 			return CStringSequence.CreateBuffer(ptrSpan, lengths);
@@ -61,7 +59,7 @@ public unsafe partial class CStringSequence
 	/// <param name="ptrSpan">Pointer to pointer span.</param>
 	/// <param name="lengths">UTF-8 text lengths.</param>
 	/// <returns>Created buffer.</returns>
-	private static String CreateBuffer(void* ptrSpan, Int32?[] lengths)
+	private static String CreateBuffer(void* ptrSpan, Int32[] lengths)
 	{
 		Int32 bufferLength = CStringSequence.GetBufferLength(lengths.AsSpan());
 		SpanCreationInfo info = new() { Pointers = ptrSpan, Lengths = lengths, };
@@ -79,9 +77,8 @@ public unsafe partial class CStringSequence
 		Span<Byte> bytes = MemoryMarshal.AsBytes(charSpan);
 		for (Int32 i = 0; i < pointers.Length; i++)
 		{
-			Int32 textLength = info.Lengths[i].GetValueOrDefault();
-			if (textLength < 1) continue;
-			ReadOnlySpan<Byte> utf8Text = new(pointers[i].ToPointer(), textLength);
+			if (info.Lengths[i] < 1) continue;
+			ReadOnlySpan<Byte> utf8Text = new(pointers[i].ToPointer(), info.Lengths[i]);
 			utf8Text.CopyTo(bytes[offset..]);
 			bytes[offset + utf8Text.Length] = default; // Null-termination.
 			offset += utf8Text.Length + 1;
@@ -187,11 +184,10 @@ public unsafe partial class CStringSequence
 		Int32 offset = 0;
 		for (Int32 i = 0; i < helper.Lengths.Length; i++)
 		{
-			Int32? length = helper.Lengths[i];
-			if (length is not > 0)
-				continue;
-			helper.InvokeAction(buffer.Slice(offset, length.Value), i);
-			offset += length.Value + 1;
+			Int32 length = helper.Lengths[i];
+			if (length <= 0) continue;
+			helper.InvokeAction(buffer.Slice(offset, length), i);
+			offset += length + 1;
 		}
 	}
 	/// <summary>
@@ -222,15 +218,15 @@ public unsafe partial class CStringSequence
 	/// or 0 if <paramref name="length"/> is <see langword="null"/> or non-positive.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static Int32 GetSpanLength(Int32? length) => length is > 0 ? length.Value + 1 : 0;
+	private static Int32 GetSpanLength(Int32 length) => length > 0 ? length + 1 : 0;
 	/// <summary>
 	/// Retrieves the length array for a given collection of UTF-8 texts.
 	/// </summary>
 	/// <param name="list">A collection of UTF-8 texts.</param>
 	/// <returns>An array representing the length of each UTF-8 text in the collection.</returns>
-	private static Int32?[] GetLengthArray(ReadOnlySpan<CString?> list)
+	private static Int32[] GetLengthArray(ReadOnlySpan<CString?> list)
 	{
-		Int32?[] result = new Int32?[list.Length];
+		Int32[] result = CStringSequence.CreateIntArray(list.Length);
 		for (Int32 i = 0; i < result.Length; i++)
 			result[i] = CStringSequence.GetLength(list[i]);
 		return result;
@@ -240,9 +236,9 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	/// <param name="list">A collection of Null-terminated UTF-8 text pointers.</param>
 	/// <returns>An array representing the length of each UTF-8 text in the collection.</returns>
-	private static Int32?[] GetLengthArray(ReadOnlySpan<ReadOnlyValPtr<Byte>> list)
+	private static Int32[] GetLengthArray(ReadOnlySpan<ReadOnlyValPtr<Byte>> list)
 	{
-		Int32?[] result = new Int32?[list.Length];
+		Int32[] result = CStringSequence.CreateIntArray(list.Length);
 		for (Int32 i = 0; i < list.Length; i++)
 		{
 			if (!list[i].IsZero)
@@ -251,6 +247,8 @@ public unsafe partial class CStringSequence
 #else
 				result[i] = MemoryMarshalCompat.CreateReadOnlySpanFromNullTerminated(list[i]).Length;
 #endif
+			else
+				result[i] = CStringSequence.zeroItemLength;
 		}
 		return result;
 	}
@@ -260,7 +258,7 @@ public unsafe partial class CStringSequence
 	/// <param name="lengths">The lengths of the UTF-8 text sequence.</param>
 	/// <param name="totalNonEmpty">Output. Count of non-empty UTF-8 texts.</param>
 	/// <returns>Instance cache.</returns>
-	private static IList<CString?> CreateCache(ReadOnlySpan<Int32?> lengths, out Int32 totalNonEmpty)
+	private static IList<CString?> CreateCache(ReadOnlySpan<Int32> lengths, out Int32 totalNonEmpty)
 	{
 		List<Int32> emptyIndices =
 			CStringSequence.GetEmptyIndexList(lengths, out totalNonEmpty, out Int32 lastNonEmpty, out Int32 skipLast);
@@ -292,7 +290,7 @@ public unsafe partial class CStringSequence
 	/// <param name="lastNonEmpty">Output. Index of last non-empty UTF-8 text.</param>
 	/// <param name="skipLast">Output. Count of useless elements at the end of resulting list.</param>
 	/// <returns>A list containing the indices of all empty UTF-8 in the sequence.</returns>
-	private static List<Int32> GetEmptyIndexList(ReadOnlySpan<Int32?> lengths, out Int32 totalNonEmpty,
+	private static List<Int32> GetEmptyIndexList(ReadOnlySpan<Int32> lengths, out Int32 totalNonEmpty,
 		out Int32 lastNonEmpty, out Int32 skipLast)
 	{
 		List<Int32> result = new(lengths.Length);
@@ -300,7 +298,7 @@ public unsafe partial class CStringSequence
 		// Fills gaps list and determines latest non-empty element.
 		for (Int32 i = 0; i < lengths.Length; i++)
 		{
-			if (lengths[i].GetValueOrDefault() != 0)
+			if (lengths[i] > 0)
 				lastNonEmpty = i;
 			else
 				result.Add(i);
@@ -321,7 +319,7 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	/// <param name="lengths">The lengths of the UTF-8 text sequence to create.</param>
 	/// <returns><see cref="String"/> buffer length.</returns>
-	private static Int32 GetBufferLength(ReadOnlySpan<Int32?> lengths)
+	private static Int32 GetBufferLength(ReadOnlySpan<Int32> lengths)
 	{
 		Int32 bytesLength = CStringSequence.GetTotalBytes(lengths);
 		Int32 length = bytesLength / sizeof(Char) + bytesLength % sizeof(Char);
@@ -340,7 +338,7 @@ public unsafe partial class CStringSequence
 		Int32 totalBytes = buffer.Length + (buffer[^1] == default ? 0 : 1);
 		Int32 totalChars = totalBytes / sizeof(Char) + totalBytes % sizeof(Char);
 		String sequenceBuffer;
-		Int32?[] lengths;
+		Int32[] lengths;
 		fixed (Byte* ptr = &MemoryMarshal.GetReference(buffer))
 		{
 			CopyTextHelper state = new() { Pointer = ptr, Length = buffer.Length, NullChars = [], };
@@ -357,7 +355,7 @@ public unsafe partial class CStringSequence
 	private static CStringSequence CreateFrom(String buffer)
 	{
 		ReadOnlySpan<Byte> source = MemoryMarshal.AsBytes(buffer.AsSpan());
-		Int32?[] lengths = CStringSequence.GetLengths(CStringSequence.GetNulls(source));
+		Int32[] lengths = CStringSequence.GetLengths(source);
 		return new(buffer, lengths);
 	}
 	/// <summary>
@@ -388,41 +386,11 @@ public unsafe partial class CStringSequence
 		bufferSpan = bufferSpan.Slice(zeros, length);
 	}
 	/// <summary>
-	/// Retrieves the zero-based indices of isolated UTF-8 null-character within the given span.
-	/// </summary>
-	/// <param name="span">A <see cref="ReadOnlySpan{Byte}"/> to scan for null bytes.</param>
-	/// <returns>
-	/// A <see cref="List{Int32}"/> containing the zero-based positions of null bytes that are not part of a
-	/// consecutive sequence of zeros.
-	/// </returns>
-	private static List<Int32> GetNulls(ReadOnlySpan<Byte> span)
-	{
-		List<Int32> nulls = [];
-		Int32 offset = 0;
-		while (!span.IsEmpty)
-		{
-			Int32 distToNull = span.IndexOf((Byte)0);
-			if (distToNull < 0) break;
-			offset += distToNull;
-			if (distToNull > 0)
-			{
-				nulls.Add(offset);
-				span = span[(distToNull + 1)..];
-				offset++;
-				continue;
-			}
-			Int32 zeros = CStringSequence.GetZeros(span);
-			offset += zeros;
-			span = span[zeros..];
-		}
-		return nulls;
-	}
-	/// <summary>
 	/// Retrieves the sequence lengths array from <paramref name="nulls"/>.
 	/// </summary>
 	/// <param name="nulls">Collection of the indices UTF-8 null-character in buffer.</param>
 	/// <returns>Sequence lengths array.</returns>
-	private static Int32?[] GetLengths(List<Int32> nulls)
+	private static Int32[] GetLengths(List<Int32> nulls)
 	{
 #if NET5_0_OR_GREATER
 		return CStringSequence.GetLengths(CollectionsMarshal.AsSpan(nulls));
@@ -438,11 +406,11 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	/// <param name="nulls">Collection of the indices UTF-8 null-character in buffer.</param>
 	/// <returns>Sequence lengths array.</returns>
-	private static Int32?[] GetLengths(ReadOnlySpan<Int32> nulls)
+	private static Int32[] GetLengths(ReadOnlySpan<Int32> nulls)
 	{
 		if (nulls.IsEmpty) return [];
 
-		Int32?[] lengths = new Int32?[nulls.Length];
+		Int32[] lengths = CStringSequence.CreateIntArray(nulls.Length);
 		Int32 offset = 0;
 		for (Int32 i = 0; i < lengths.Length; i++)
 		{
@@ -451,6 +419,110 @@ public unsafe partial class CStringSequence
 			offset += length + 1;
 		}
 		return lengths;
+	}
+	/// <summary>
+	/// Retrieves the sequence lengths array from <paramref name="buffer"/>.
+	/// </summary>
+	/// <param name="buffer">A buffer of a UTF-8 sequence.</param>
+	/// <returns>Sequence lengths array.</returns>
+#if NET5_0_OR_GREATER
+	[SkipLocalsInit]
+#endif
+	private static Int32[] GetLengths(ReadOnlySpan<Byte> buffer)
+	{
+		const Int32 maxStackNulls = StackAllocationHelper.StackallocByteThreshold / sizeof(Int32);
+		NullState state = new()
+		{
+			Offset = 0,
+			Buffer = buffer,
+			Initial = stackalloc Int32[buffer.Length > maxStackNulls ? maxStackNulls : buffer.Length],
+		};
+		CStringSequence.FindNullIndices(ref state);
+		if (state.Buffer.IsEmpty) return CStringSequence.GetLengths(state.Initial);
+		List<Int32> extraLengths = CStringSequence.GetNulls(state.Offset, state.Buffer);
+		return CStringSequence.GetLengths(state.Initial, extraLengths);
+	}
+	/// <summary>
+	/// Retrieves the sequence lengths array from <paramref name="nulls"/> and <paramref name="extraNulls"/>.
+	/// </summary>
+	/// <param name="nulls">Collection of the indices UTF-8 null-character in buffer.</param>
+	/// <param name="extraNulls">Additional collection of the indices UTF-8 null-character in buffer.</param>
+	/// <returns>Sequence lengths array.</returns>
+	private static Int32[] GetLengths(ReadOnlySpan<Int32> nulls, List<Int32> extraNulls)
+	{
+		if (nulls.IsEmpty) return [];
+		Int32 offset = 0;
+		Int32 totalLengths = nulls.Length + extraNulls.Count;
+		Int32[] lengths = CStringSequence.CreateIntArray(totalLengths);
+		for (Int32 i = 0; i < nulls.Length; i++)
+		{
+			Int32 length = nulls[i] - offset;
+			lengths[i] = length;
+			offset += length + 1;
+		}
+		for (Int32 i = 0; i < extraNulls.Count; i++)
+		{
+			Int32 length = extraNulls[i] - offset;
+			lengths[i + nulls.Length] = length;
+			offset += length + 1;
+		}
+		return lengths;
+	}
+	/// <summary>
+	/// Retrieves the zero-based indices of isolated UTF-8 null-character within the given span.
+	/// </summary>
+	/// <param name="offset">Initial buffer offset.</param>
+	/// <param name="buffer">A <see cref="ReadOnlySpan{Byte}"/> to scan for null bytes.</param>
+	/// <returns>
+	/// A <see cref="List{Int32}"/> containing the zero-based positions of null bytes that are not part of a
+	/// consecutive sequence of zeros.
+	/// </returns>
+	private static List<Int32> GetNulls(Int32 offset, ReadOnlySpan<Byte> buffer)
+	{
+		List<Int32> nulls = [];
+		while (!buffer.IsEmpty)
+		{
+			Int32 distToNull = buffer.IndexOf((Byte)0);
+			if (distToNull < 0) break;
+			offset += distToNull;
+			if (distToNull > 0)
+			{
+				nulls.Add(offset);
+				buffer = buffer[(distToNull + 1)..];
+				offset++;
+				continue;
+			}
+			Int32 zeros = CStringSequence.GetZeros(buffer);
+			offset += zeros;
+			buffer = buffer[zeros..];
+		}
+		return nulls;
+	}
+	/// <summary>
+	/// Finds the zero-based indices of isolated UTF-8 null-character using <paramref name="state"/>.
+	/// </summary>
+	/// <param name="state">A state sequence used as input/output of the find null indices.</param>
+	private static void FindNullIndices(ref NullState state)
+	{
+		Int32 index = 0;
+		while (!state.Buffer.IsEmpty && index < state.Initial.Length)
+		{
+			Int32 distToNull = state.Buffer.IndexOf((Byte)0);
+			if (distToNull < 0) break;
+			state.Offset += distToNull;
+			if (distToNull > 0)
+			{
+				state.Initial[index] = state.Offset;
+				index++;
+				state.Buffer = state.Buffer[(distToNull + 1)..];
+				state.Offset++;
+				continue;
+			}
+			Int32 zeros = CStringSequence.GetZeros(state.Buffer);
+			state.Offset += zeros;
+			state.Buffer = state.Buffer[zeros..];
+		}
+		state.Initial = state.Initial[..index];
 	}
 	/// <summary>
 	/// Retrieves the number of required bytes in the sequence buffer.
@@ -473,11 +545,16 @@ public unsafe partial class CStringSequence
 	/// <param name="lengths">The lengths of the UTF-8 text sequence.</param>
 	/// <returns>Number of required bytes.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static Int32 GetTotalBytes(ReadOnlySpan<Int32?> lengths)
+	private static Int32 GetTotalBytes(ReadOnlySpan<Int32> lengths)
 	{
 		Int32 result = 0;
-		foreach (Int32? length in lengths)
-			result += CStringSequence.GetSpanLength(length);
-		return result;
+		Int32 nonEmpty = 0;
+		foreach (Int32 length in lengths)
+		{
+			if (length <= 0) continue;
+			result += length;
+			nonEmpty++;
+		}
+		return result + nonEmpty;
 	}
 }

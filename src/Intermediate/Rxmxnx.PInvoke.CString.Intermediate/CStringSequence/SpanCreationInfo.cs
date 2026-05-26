@@ -21,6 +21,6 @@ public partial class CStringSequence
 		/// <summary>
 		/// UTF-8 lengths.
 		/// </summary>
-		public Int32?[] Lengths { get; init; }
+		public Int32[] Lengths { get; init; }
 	}
 }

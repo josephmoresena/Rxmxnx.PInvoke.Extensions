@@ -84,13 +84,13 @@ public partial class CStringSequence
 			if (!this._excludeEmptyItems) return this._instance.ToArray();
 
 			CString[] result = new CString[this._instance.NonEmptyCount];
-			Span<CString> span = result;
+			ref CString item = ref MemoryMarshal.GetReference(result.AsSpan());
 			for (Int32 index = 0; index < this._instance._lengths.Length; index++)
 			{
-				Int32? length = this._instance._lengths[index];
-				if (length is null or 0) continue;
-				span[0] = this._instance[index];
-				span = span[1..];
+				Int32 length = this._instance._lengths[index];
+				if (length <= 0) continue;
+				item = this._instance[index];
+				item = ref Unsafe.Add(ref item, 1);
 			}
 			return result;
 		}
@@ -133,14 +133,23 @@ public partial class CStringSequence
 			/// Internal instance.
 			/// </summary>
 			private readonly CStringSequence? _instance;
+
 			/// <summary>
-			/// The current position in the sequence.
+			/// Remaining lengths.
 			/// </summary>
-			private Int32? _index; // Null by default.
+			private ReadOnlySpan<Int32> _remaining;
 			/// <summary>
-			/// UTF-8 text buffer.
+			/// Remaining UTF-8 buffer.
 			/// </summary>
 			private ReadOnlySpan<Byte> _buffer;
+			/// <summary>
+			/// Current item span.
+			/// </summary>
+			private ReadOnlySpan<Byte> _current;
+			/// <summary>
+			/// Indicates whether the current instance is active.
+			/// </summary>
+			private Boolean _active;
 
 			/// <summary>
 			/// Gets the element in the sequence at the current position of the enumerator.
@@ -149,17 +158,9 @@ public partial class CStringSequence
 			{
 				get
 				{
-					Int32 index = this._index ?? -1;
-					ReadOnlySpan<Int32?> lengths = this._instance?._lengths ?? ReadOnlySpan<Int32?>.Empty;
-
-					ValidationUtilities.ThrowIfInvalidIndexEnumerator(index, lengths.Length);
-					Int32? currentLength = lengths[index];
-					return currentLength switch
-					{
-						null => ReadOnlySpan<Byte>.Empty,
-						0 => CString.Empty.AsSpan(),
-						_ => this._buffer[..currentLength.Value],
-					};
+					ValidationUtilities.ThrowIfInvalidEnumerator(this._instance is null, !this._active,
+					                                             this._remaining.IsEmpty);
+					return this._current;
 				}
 			}
 
@@ -170,17 +171,10 @@ public partial class CStringSequence
 			/// <param name="excludeEmptyItems">Indicates whether current enumerator is only for non-empty items.</param>
 			internal Enumerator(CStringSequence? instance, Boolean excludeEmptyItems)
 			{
-				this._instance = instance;
 				this._excludeEmptyItems = excludeEmptyItems;
+				this._instance = instance;
 				this.Reset();
 			}
-
-#if NET9_0_OR_GREATER
-			Object? IEnumerator.Current => this._instance?[this._index.GetValueOrDefault()];
-
-			void IDisposable.Dispose() { }
-#endif
-
 			/// <summary>
 			/// Advances the enumerator to the next element of the enumeration.
 			/// </summary>
@@ -190,14 +184,26 @@ public partial class CStringSequence
 			/// </returns>
 			public Boolean MoveNext()
 			{
-				AdvanceState state = this.GetAdvanceState();
-				while (state.Lengths.Length >= 0)
+				while (!this._remaining.IsEmpty)
 				{
-					state = this.Advance(state);
-					if (state.Current < 0) return false;
-					if (!this._excludeEmptyItems || state.Current > 0)
-						return state.Current is null or 0 || state.Current < this._buffer.Length;
+					Int32 length = this._remaining[0];
+					this._remaining = this._remaining[1..];
+
+					if (this._excludeEmptyItems && length <= 0) continue;
+
+					this._current = length switch
+					{
+						0 => CString.Empty.AsSpan(),
+						> 0 => this._buffer[..length],
+						_ => ReadOnlySpan<Byte>.Empty,
+					};
+					if (length > 0) this._buffer = this._buffer[(length + 1)..];
+					this._active = true;
+					return true;
 				}
+
+				this._active = false;
+				this._current = default;
 				return false;
 			}
 			/// <summary>
@@ -205,84 +211,14 @@ public partial class CStringSequence
 			/// </summary>
 			public void Reset()
 			{
+				this._remaining = this._instance?._lengths;
 				this._buffer = MemoryMarshal.AsBytes<Char>(this._instance?._value);
-				this._index = null;
+				this._active = false;
 			}
-
-			/// <summary>
-			/// Creates a new <see cref="AdvanceState"/> instance representing the current position in the
-			/// enumeration sequence.
-			/// </summary>
-			/// <returns>
-			/// A new <see cref="AdvanceState"/> containing the remaining items lengths and the current item length.
-			/// </returns>
-			private AdvanceState GetAdvanceState()
-			{
-				ReadOnlySpan<Int32?> lengths = this._instance?._lengths ?? ReadOnlySpan<Int32?>.Empty;
-				Int32? currentLength = default;
-				if (lengths.IsEmpty) return new(lengths, currentLength);
-
-				if (this._index > 0)
-					lengths = lengths[this._index.Value..];
-				currentLength = !lengths.IsEmpty ? lengths[0] : -1;
-				return new(lengths, currentLength);
-			}
-			/// <summary>
-			/// Advances the enumeration state to the next element in the sequence.
-			/// </summary>
-			/// <param name="state">The current <see cref="AdvanceState"/>.</param>
-			/// <returns>
-			/// An updated <see cref="AdvanceState"/> representing the next element in the enumeration.
-			/// </returns>
-			private AdvanceState Advance(AdvanceState state)
-			{
-				ReadOnlySpan<Int32?> lengths = state.Lengths;
-				Int32? currentLength = state.Current;
-				if (this._index.HasValue && currentLength > 0)
-				{
-					Int32 offset = currentLength.Value + 1;
-					this._buffer = this._buffer[offset..]; // Advances to the next element in the buffer.
-				}
-				if (!this._index.HasValue)
-				{
-					// Starts enumerator instance.
-					this._index = 0; // Start.
-				}
-				else
-				{
-					// Advances to the next element in the lengths.
-					this._index++;
-					if (this._index > 0 && !lengths.IsEmpty) lengths = lengths[1..];
-				}
-				currentLength = lengths.IsEmpty ? -1 : lengths[0];
-				return new(lengths, currentLength);
-			}
-
-			/// <summary>
-			/// Represents the current state of a <see cref="Enumerator"/> instance.
-			/// </summary>
-			private readonly ref struct AdvanceState
-			{
-				/// <summary>
-				/// Span of nullable integers representing the lengths of remaining segments.
-				/// </summary>
-				public ReadOnlySpan<Int32?> Lengths { get; }
-				/// <summary>
-				/// The length of the current element in the enumeration.
-				/// </summary>
-				public Int32? Current { get; }
-
-				/// <summary>
-				/// Constructor.
-				/// </summary>
-				/// <param name="lengths">Span containing the lengths of the items.</param>
-				/// <param name="currentLength">Current item length.</param>
-				public AdvanceState(ReadOnlySpan<Int32?> lengths, Int32? currentLength)
-				{
-					this.Lengths = lengths;
-					this.Current = currentLength;
-				}
-			}
+#if NET9_0_OR_GREATER
+			Object? IEnumerator.Current => null;
+			void IDisposable.Dispose() { }
+#endif
 		}
 	}
 }

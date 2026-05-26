@@ -18,7 +18,7 @@ public partial class CStringSequence
 	/// <param name="sequence">The <see cref="CStringSequence"/> instance to copy.</param>
 	private CStringSequence(CStringSequence sequence)
 	{
-		this._lengths = (Int32?[])sequence._lengths.Clone();
+		this._lengths = (Int32[])sequence._lengths.Clone();
 		this._value = (String)sequence._value.Clone();
 		this._cache = CStringSequence.CreateCache(this._lengths.AsSpan(), out this._nonEmptyCount);
 	}
@@ -30,7 +30,7 @@ public partial class CStringSequence
 	/// <param name="lengths">
 	/// The collection of lengths for each text in the buffer. Used for interpreting the buffer content.
 	/// </param>
-	private CStringSequence(String value, Int32?[] lengths)
+	private CStringSequence(String value, Int32[] lengths)
 	{
 		this._value = value;
 		this._lengths = lengths;

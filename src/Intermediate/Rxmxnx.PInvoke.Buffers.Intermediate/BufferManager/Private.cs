@@ -341,15 +341,18 @@ public static partial class BufferManager
 	/// <summary>
 	/// Retrieves the components sizes for given <paramref name="count"/>.
 	/// </summary>
+	/// <param name="components">Components buffer.</param>
 	/// <param name="count">Amount of items in required buffer.</param>
 	/// <returns>Enumeration of components sizes.</returns>
-	private static IEnumerable<UInt16> GetBinaryComponents(UInt16 count)
+	private static Span<UInt16> GetBinaryComponents(Span<UInt16> components, UInt16 count)
 	{
-		for (UInt16 i = 0; i < 16; i++)
+		Int32 found = 0;
+		for (Int32 i = 0; i < 16; i++)
 		{
 			UInt16 mask = (UInt16)(1 << i);
-			if ((count & mask) != 0) yield return mask;
+			if ((count & mask) != 0) components[found++] = mask;
 		}
+		return components[..found];
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.

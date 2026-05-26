@@ -45,7 +45,11 @@ public unsafe partial class CStringSequence
 				this._handle.Free();
 				this._pointer = IntPtr.Zero;
 			}
+#if !NET6_0_OR_GREATER
 			Marshal.FreeHGlobal(this._pointer);
+#else
+			NativeMemory.Free(this._pointer.ToPointer());
+#endif
 			this._pointer = IntPtr.Zero;
 		}
 		/// <summary>
@@ -122,18 +126,18 @@ public unsafe partial class CStringSequence
 			ReadOnlyValPtr<Byte> valPtr = InputMarshaller.GetAddress(in source.GetPinnableReference());
 			for (Int32 i = 0; i < source.Count; i++)
 			{
-				Int32? currentLength = source._lengths[i];
+				Int32 currentLength = source._lengths[i];
 				switch (currentLength)
 				{
-					case null:
+					case < 0:
 						arrayBuffer[i] = ReadOnlyValPtr<Byte>.Zero;
 						continue;
-					case <= 0:
+					case 0:
 						arrayBuffer[i] = emptyPtr;
 						continue;
 					default:
 						arrayBuffer[i] = valPtr;
-						valPtr += currentLength.Value + 1; // +1 for the null terminator
+						valPtr += currentLength + 1; // +1 for the null terminator
 						break;
 				}
 			}
@@ -165,7 +169,11 @@ public unsafe partial class CStringSequence
 		private static IntPtr Alloc(CStringSequence source, Boolean includeEmpty, out Int32 length)
 		{
 			length = (includeEmpty ? source.Count : source.NonEmptyCount) + 1;
+#if !NET6_0_OR_GREATER
 			return Marshal.AllocHGlobal(length * IntPtr.Size);
+#else
+			return (IntPtr)NativeMemory.Alloc((UInt32)(length * IntPtr.Size));
+#endif
 		}
 	}
 #endif

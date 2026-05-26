@@ -195,6 +195,8 @@ instance must be done manually.
 `Rxmxnx.PInvoke.Extensions` natively supports the creation of null-terminated UTF-8/ASCII sequences to optimize the use
 of managed buffers via the `CStringSequence` class.
 
+### Instantiation
+
 ```csharp
 const String val = "效汬o潗汲d";    // Hardcoded UTF-8: "Hello\0World\0"
 CStringSequence seq0 = new("Hello", "World");
@@ -202,7 +204,7 @@ CStringSequence seq1 = new("Hello"u8, "World"u8);
 CStringSequence seq2 = new(Encoding.UTF8.GetBytes("Hello"), Encoding.UTF8.GetBytes("World"));
 CStringSequence seq3 = new(new CString(() => "Hello"u8), new CString(() => "World"u8));
 CStringSequence seq4 = CStringSequence.Parse(val);
-CStringSequence seq5 = CStringSequence.Create(val);
+CStringSequence seq5 = CStringSequence.CreateBuilder().Append("Hello").Append("World"u8).Build();
 
 Console.WriteLine(seq0.Count);  // Output: 2
 Console.WriteLine(seq4.Count);  // Output: 2
@@ -232,6 +234,43 @@ UTF-8/ASCII sequences (hardcoded) are required.
 
 The `GetUnsafe(ReadOnlySpan<ReadOnlyValPtr<Byte>>)` method enables the creation of a `CStringSequence` instance from an
 unmanaged `char*[]`, as represented by the given span.
+
+The `CStringSequence.Builder` struct provides a fluent API for programmatically constructing a `CStringSequence`
+instance.
+
+### Enumeration
+
+`CStringSequence` supports indexed access and additionally implements `IEnumerable<CString>`.
+
+```csharp
+const String val = "效汬o潗汲d";    // Hardcoded UTF-8: "Hello\0World\0"
+CStringSequence seq = CStringSequence.Parse(val);
+
+Console.WriteLine(seq[0]); // Hello
+Console.WriteLine(seq[1]); // World
+
+Console.WriteLine(String.Join(", ", seq)); // Hello, World
+```
+
+### Zero-allocation Enumeration
+
+`CStringSequence.View` enables zero-allocation enumeration using `ReadOnlySpan<Byte>` values.
+
+```csharp
+CStringSequence seq = CStringSequence
+    .CreateBuilder().Append("Hello").Append(CString.Empty)
+    .Append("World"u8).Append(default(String))
+    .Build();
+
+Console.WriteLine(seq.Count); // 4
+Console.WriteLine(seq.NonEmptyCount); // 2
+
+foreach(CString t in seq)
+    Console.WriteLine(Encoding.UTF8.GetString(t)); // Hello // // World // 
+
+foreach(CString t in seq.CreateView(false))
+    Console.WriteLine(Encoding.UTF8.GetString(t)); // Hello // World
+```
 
 ## CString Builder
 

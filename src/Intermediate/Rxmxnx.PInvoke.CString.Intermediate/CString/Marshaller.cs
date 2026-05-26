@@ -47,7 +47,11 @@ public unsafe partial class CString
 				return;
 			}
 			if (this._allocated)
+#if !NET6_0_OR_GREATER
 				Marshal.FreeHGlobal(this._pointer);
+#else
+				NativeMemory.Free(this._pointer.ToPointer());
+#endif
 			this._pointer = IntPtr.Zero;
 			this._allocated = false;
 		}
@@ -99,7 +103,11 @@ public unsafe partial class CString
 			}
 
 			// If the CString is not null-terminated or not pinned, we need to allocate unmanaged memory.
+#if !NET6_0_OR_GREATER
 			this._pointer = Marshal.AllocHGlobal(this._managed._length + 1);
+#else
+			this._pointer = (IntPtr)NativeMemory.Alloc((UInt32)(this._managed._length + 1));
+#endif
 			this._allocated = true;
 
 			Span<Byte> output = new(this._pointer.ToPointer(), this._managed._length + 1);

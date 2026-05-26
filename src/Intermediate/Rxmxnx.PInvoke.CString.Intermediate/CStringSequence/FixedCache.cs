@@ -46,11 +46,10 @@ public partial class CStringSequence
 			Int32 skipLast = 0)
 		{
 			Int32 arrayLength = emptyIndicesList?.Count - skipLast ?? 0;
+			Int32[] emptyIndices = CStringSequence.CreateIntArray(arrayLength);
 #if !NET5_0_OR_GREATER
-			Int32[] emptyIndices = arrayLength > 0 ? new Int32[arrayLength] : [];
 			emptyIndicesList?.CopyTo(0, emptyIndices, 0, emptyIndices.Length);
 #else
-			Int32[] emptyIndices = arrayLength > 0 ? GC.AllocateUninitializedArray<Int32>(arrayLength) : [];
 			CollectionsMarshal.AsSpan(emptyIndicesList)[..emptyIndices.Length].CopyTo(emptyIndices);
 #endif
 			return count <= 32 ? new CStringCache(count, emptyIndices) : new WeakCache(count, emptyIndices);
