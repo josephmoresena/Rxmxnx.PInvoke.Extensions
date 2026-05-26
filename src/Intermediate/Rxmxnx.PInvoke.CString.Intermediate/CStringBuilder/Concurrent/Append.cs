@@ -364,6 +364,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NET5_0_OR_GREATER
+		[SkipLocalsInit]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public CStringBuilder Append(Rune value)
 		{

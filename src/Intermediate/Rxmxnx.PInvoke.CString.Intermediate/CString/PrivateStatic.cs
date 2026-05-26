@@ -212,6 +212,9 @@ public partial class CString
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+#if NET5_0_OR_GREATER
+	[SkipLocalsInit]
+#endif
 	private static Int32 GetStringHashCode(ReadOnlySpan<Byte> utf8Bytes)
 	{
 		Int32 maxChars = Encoding.UTF8.GetMaxCharCount(utf8Bytes.Length);

@@ -167,6 +167,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="index">Insertion index.</param>
 		/// <param name="newData">Chars to insert.</param>
+#if NET5_0_OR_GREATER
+		[SkipLocalsInit]
+#endif
 		public void Insert(Int32 index, ReadOnlySpan<Char> newData)
 		{
 			Int32 bufferSize = Encoding.UTF8.GetMaxByteCount(newData.Length);

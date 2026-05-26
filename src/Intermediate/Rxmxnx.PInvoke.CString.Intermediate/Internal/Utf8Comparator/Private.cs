@@ -88,6 +88,9 @@ internal partial class Utf8Comparator<TChar>
 	///     </item>
 	/// </list>
 	/// </returns>
+#if NET5_0_OR_GREATER
+	[SkipLocalsInit]
+#endif
 	private Int32 Compare(CompareInfo compareInfo, CompareOptions options, ReadOnlySpan<Byte> textA,
 		ReadOnlySpan<TChar> textB, String? stringB)
 	{

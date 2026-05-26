@@ -77,6 +77,9 @@ internal static class MarvinCompat
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+#if NET5_0_OR_GREATER
+	[SkipLocalsInit]
+#endif
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	public static Int32 GetHashCode(ReadOnlySpan<Byte> value)
 	{
@@ -257,6 +260,9 @@ internal static class MarvinCompat
 	/// Compute a Marvin hash and collapse it into a 32-bit hash.
 	/// </summary>
 	/// <returns>A 32-bit signed integer hash code.</returns>
+#if NET5_0_OR_GREATER
+	[SkipLocalsInit]
+#endif
 	private static Int32 ComputeUtf8Hash32(ReadOnlySpan<Byte> value, UInt32 p0, UInt32 p1)
 	{
 		UInt32 count = 0;

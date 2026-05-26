@@ -425,6 +425,9 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	/// <param name="buffer">A buffer of a UTF-8 sequence.</param>
 	/// <returns>Sequence lengths array.</returns>
+#if NET5_0_OR_GREATER
+	[SkipLocalsInit]
+#endif
 	private static Int32[] GetLengths(ReadOnlySpan<Byte> buffer)
 	{
 		const Int32 maxStackNulls = StackAllocationHelper.StackallocByteThreshold / sizeof(Int32);

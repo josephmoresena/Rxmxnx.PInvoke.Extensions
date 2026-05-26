@@ -88,6 +88,9 @@ public partial class CStringSequence
 		/// </summary>
 		/// <param name="escaped">The UTF-8 escaped text to append.</param>
 		/// <returns>The current instance after the append operation has completed.</returns>
+#if NET5_0_OR_GREATER
+		[SkipLocalsInit]
+#endif
 		public Builder AppendEscaped(ReadOnlySpan<Byte> escaped)
 		{
 			if (escaped.IsEmpty)
@@ -117,6 +120,9 @@ public partial class CStringSequence
 		/// </summary>
 		/// <param name="escaped">The UTF-8 escaped text to append.</param>
 		/// <returns>The current instance after the append operation has completed.</returns>
+#if NET5_0_OR_GREATER
+		[SkipLocalsInit]
+#endif
 		public Builder AppendEscaped(ReadOnlySequence<Byte> escaped)
 		{
 			if (escaped.IsEmpty)

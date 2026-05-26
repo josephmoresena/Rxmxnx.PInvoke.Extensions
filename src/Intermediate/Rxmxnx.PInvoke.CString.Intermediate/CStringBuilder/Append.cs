@@ -378,6 +378,9 @@ public sealed partial class CStringBuilder
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+#if NET5_0_OR_GREATER
+	[SkipLocalsInit]
+#endif
 	public CStringBuilder Append(Rune value)
 	{
 		Span<Byte> utf8Text = stackalloc Byte[value.Utf8SequenceLength];

@@ -92,11 +92,15 @@ public static partial class BufferManager
 		/// </summary>
 		/// <param name="count">Amount of items in required buffer.</param>
 		/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
+#if NET5_0_OR_GREATER
+		[SkipLocalsInit]
+#endif
 		public static void PrepareBinaryMetadata(UInt16 count)
 		{
 			Type typeofT = typeof(T);
 			BufferTypeMetadata<T>? metadata = default;
-			foreach (UInt16 comp in BufferManager.GetBinaryComponents(count))
+			Span<UInt16> components = BufferManager.GetBinaryComponents(stackalloc UInt16[16], count);
+			foreach (UInt16 comp in components)
 			{
 				BufferTypeMetadata<T>? compMetadata = MetadataManager<T>.GetFundamental(comp);
 				ValidationUtilities.ThrowIfNullMetadata(typeofT, comp, compMetadata is null);
@@ -201,6 +205,9 @@ public static partial class BufferManager
 		/// <typeparam name="TSpace">Type of the space.</typeparam>
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
+#endif
+#if NET5_0_OR_GREATER
+		[SkipLocalsInit]
 #endif
 		public static void RegisterBufferSpace<
 			[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)]
