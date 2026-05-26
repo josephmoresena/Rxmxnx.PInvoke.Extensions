@@ -143,9 +143,13 @@ public partial class CStringSequence
 			/// </summary>
 			private ReadOnlySpan<Byte> _buffer;
 			/// <summary>
-			/// Current item length.
+			/// Current item span.
 			/// </summary>
-			private Int32 _currentLength;
+			private ReadOnlySpan<Byte> _current;
+			/// <summary>
+			/// Indicates whether the current instance is active.
+			/// </summary>
+			private Boolean _active;
 
 			/// <summary>
 			/// Gets the element in the sequence at the current position of the enumerator.
@@ -154,14 +158,9 @@ public partial class CStringSequence
 			{
 				get
 				{
-					ValidationUtilities.ThrowIfInvalidEnumerator(this._instance is null, this._currentLength == -1,
+					ValidationUtilities.ThrowIfInvalidEnumerator(this._instance is null, !this._active,
 					                                             this._remaining.IsEmpty);
-					return this._currentLength switch
-					{
-						0 => CString.Empty.AsSpan(),
-						> 0 => this._buffer[..this._currentLength],
-						_ => ReadOnlySpan<Byte>.Empty,
-					};
+					return this._current;
 				}
 			}
 
@@ -185,18 +184,26 @@ public partial class CStringSequence
 			/// </returns>
 			public Boolean MoveNext()
 			{
-				if (this._currentLength > 0)
-					this._buffer = this._buffer[(this._currentLength + 1)..];
-
 				while (!this._remaining.IsEmpty)
 				{
-					this._currentLength = this._remaining[0];
+					Int32 length = this._remaining[0];
 					this._remaining = this._remaining[1..];
 
-					if (!this._excludeEmptyItems || this._currentLength > 0) return true;
+					if (this._excludeEmptyItems && length <= 0) continue;
+
+					this._current = length switch
+					{
+						0 => CString.Empty.AsSpan(),
+						> 0 => this._buffer[..length],
+						_ => ReadOnlySpan<Byte>.Empty,
+					};
+					if (length > 0) this._buffer = this._buffer[(length + 1)..];
+					this._active = true;
+					return true;
 				}
 
-				this._currentLength = -1;
+				this._active = false;
+				this._current = default;
 				return false;
 			}
 			/// <summary>
@@ -206,7 +213,7 @@ public partial class CStringSequence
 			{
 				this._remaining = this._instance?._lengths;
 				this._buffer = MemoryMarshal.AsBytes<Char>(this._instance?._value);
-				this._currentLength = -1;
+				this._active = false;
 			}
 #if NET9_0_OR_GREATER
 			Object? IEnumerator.Current => null;
