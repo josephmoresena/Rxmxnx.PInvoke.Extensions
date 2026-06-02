@@ -96,29 +96,32 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <summary>
 	/// Appends all components from current buffer type.
 	/// </summary>
-	/// <param name="components">A dictionary of components.</param>
+	/// <param name="manager">A <see cref="IMetadataStore"/> instance.</param>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	internal virtual void AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components) { }
+	internal virtual void AppendComponent(IMetadataStore manager) { }
 	/// <summary>
 	/// Composes a new buffer using twice the current buffer type.
 	/// </summary>
+	/// <param name="manager">A <see cref="IMetadataStore"/> instance.</param>
 	/// <returns>A composed <see cref="BufferTypeMetadata{T}"/>.</returns>
-	internal BufferTypeMetadata<T>? Double() => this.Compose(this);
+	internal BufferTypeMetadata<T>? Double(IMetadataStore manager) => this.Compose(manager, this);
 	/// <summary>
 	/// Composes a new buffer using current buffer type and <paramref name="otherMetadata"/>.
 	/// </summary>
+	/// <param name="manager">A <see cref="IMetadataStore"/> instance.</param>
 	/// <param name="otherMetadata">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
 	/// <returns>A composed <see cref="BufferTypeMetadata{T}"/>.</returns>
-	internal abstract BufferTypeMetadata<T>? Compose(BufferTypeMetadata<T> otherMetadata);
+	internal abstract BufferTypeMetadata<T>? Compose(IMetadataStore manager, BufferTypeMetadata<T> otherMetadata);
 	/// <summary>
 	/// Composes a new buffer using current buffer type and <typeparamref name="TBuffer"/>.
 	/// </summary>
 	/// <typeparam name="TBuffer">Other buffer type.</typeparam>
+	/// <param name="manager">A <see cref="IMetadataStore"/> instance.</param>
 	/// <returns>A composed <see cref="BufferTypeMetadata{T}"/>.</returns>
 	internal abstract BufferTypeMetadata<T>? Compose<
-		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBuffer>()
+		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBuffer>(IMetadataStore manager)
 		where TBuffer : struct, IManagedBuffer<T>;
 	/// <summary>
 	/// Executes <paramref name="action"/> using a buffer of current type.

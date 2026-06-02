@@ -43,6 +43,12 @@
             <_Parameter1>Rxmxnx.PInvoke.Extensions.Intermediate</_Parameter1>
         </AssemblyAttribute>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>Rxmxnx.PInvoke.Buffers.Types.Intermediate</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>Rxmxnx.PInvoke.Buffers.Storage.Intermediate</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
             <_Parameter1>Rxmxnx.PInvoke.Buffers.Intermediate</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>

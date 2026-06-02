@@ -21,15 +21,9 @@ public interface IManagedBinaryBuffer<T> : IManagedBuffer<T>
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS107)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 #endif
-#if NET7_0_OR_GREATER && BINARY_SPACES
-public partial interface IManagedBinaryBuffer<
-	[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBuffer, T> : IManagedBinaryBuffer<T>
-{
-#else
-public interface IManagedBinaryBuffer<
-	[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBuffer, T> : IManagedBinaryBuffer<T>
-#endif
-	where TBuffer : struct, IManagedBinaryBuffer<TBuffer, T>
+public interface
+	IManagedBinaryBuffer<[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBuffer,
+		T> : IManagedBinaryBuffer<T> where TBuffer : struct, IManagedBinaryBuffer<TBuffer, T>
 {
 #if NET7_0_OR_GREATER
 	BufferTypeMetadata<T> IManagedBinaryBuffer<T>.Metadata => IManagedBuffer<T>.GetMetadata<TBuffer>();

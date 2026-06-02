@@ -1,21 +1,23 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <Import Project="..\Intermediate.Library.props"/>
 
     <ItemGroup>
-        <Using Include="System.Buffers"/>
+        <Using Include="System.Diagnostics"/>
         <Using Include="System.Diagnostics.CodeAnalysis"/>
         <Using Include="System.Runtime.CompilerServices"/>
-        <Using Include="System.Runtime.InteropServices"/>
 
         <Using Include="Rxmxnx.PInvoke.Buffers"/>
-        <Using Include="Rxmxnx.PInvoke.Internal"/>
-        <Using Include="Rxmxnx.PInvoke.VisualBasic"/>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Rxmxnx.PInvoke.Buffers.Types.Intermediate\Rxmxnx.PInvoke.Buffers.Types.Intermediate.csproj"/>
-        <ProjectReference Include="..\Rxmxnx.PInvoke.Buffers.Storage.Intermediate\Rxmxnx.PInvoke.Buffers.Storage.Intermediate.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>Rxmxnx.PInvoke.Buffers.Intermediate</_Parameter1>
+        </AssemblyAttribute>
     </ItemGroup>
 
     <ItemGroup>

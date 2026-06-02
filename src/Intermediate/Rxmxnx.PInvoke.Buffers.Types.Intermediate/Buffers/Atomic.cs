@@ -6,11 +6,7 @@ namespace Rxmxnx.PInvoke.Buffers;
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
 /// <remarks>Use this type as the basic unit of binary buffers.</remarks>
 [StructLayout(LayoutKind.Sequential)]
-#if NET7_0_OR_GREATER && BINARY_SPACES
-public partial struct Atomic<T> : IManagedBinaryBuffer<Atomic<T>, T>
-#else
 public struct Atomic<T> : IManagedBinaryBuffer<Atomic<T>, T>
-#endif
 {
 	/// <summary>
 	/// Internal metadata.
@@ -33,7 +29,7 @@ public struct Atomic<T> : IManagedBinaryBuffer<Atomic<T>, T>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	static void IManagedBuffer<T>.AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components) { }
+	static void IManagedBuffer<T>.AppendComponent(IMetadataStore manager) { }
 #else
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]

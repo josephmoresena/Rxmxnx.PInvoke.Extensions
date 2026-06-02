@@ -31,8 +31,8 @@ public interface IManagedBuffer<T>
 	/// <summary>
 	/// Appends all components from current type.
 	/// </summary>
-	/// <param name="components">A dictionary of components.</param>
-	internal static abstract void AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components);
+	/// <param name="manager">A <see cref="IMetadataStore"/> instance.</param>
+	internal static abstract void AppendComponent(IMetadataStore manager);
 #else
 	/// <summary>
 	/// Current type components.
@@ -52,12 +52,12 @@ public interface IManagedBuffer<T>
 	/// <summary>
 	/// Appends all components from current type.
 	/// </summary>
-	/// <param name="components">A dictionary of components.</param>
+	/// <param name="manager">A <see cref="IMetadataStore"/> instance.</param>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
 	// ReSharper disable once UnusedParameter.Global
-	internal static void AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components)
+	internal static void AppendComponent(IMetadataStore manager)
 	{
 		// This method is declared for compatibility with .NET 7.0 APIs but is not usable. 
 	}
@@ -67,22 +67,22 @@ public interface IManagedBuffer<T>
 	/// Appends all components from <typeparamref name="TBuffer"/> type.
 	/// </summary>
 	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
-	/// <param name="components">A dictionary of components.</param>
+	/// <param name="manager">A <see cref="IMetadataStore"/> instance.</param>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Browsable(false)]
 #if !PACKAGE && !NET7_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
-	private protected static void AppendComponent<TBuffer>(IDictionary<UInt16, BufferTypeMetadata<T>> components)
+	private protected static void AppendComponent<TBuffer>(IMetadataStore manager)
 		where TBuffer : struct, IManagedBuffer<T>
 	{
 #if !NET7_0_OR_GREATER
-		BufferTypeMetadata<T> bufferTypeMetadata = BufferManager.GetStaticMetadata<T, TBuffer>();
+		BufferTypeMetadata<T> bufferTypeMetadata = BuffersHelper.GetStaticMetadata<T, TBuffer>();
 #else
 		BufferTypeMetadata<T> bufferTypeMetadata = TBuffer.TypeMetadata;
 #endif
 		if (bufferTypeMetadata.IsBinary)
-			ManagedBuffer<T>.AppendComponent(bufferTypeMetadata, components);
+			ManagedBuffer<T>.AppendComponent(bufferTypeMetadata, manager);
 	}
 
 	/// <summary>
@@ -94,7 +94,7 @@ public interface IManagedBuffer<T>
 	[Browsable(false)]
 	public static BufferTypeMetadata<T> GetMetadata<TBuffer>() where TBuffer : struct, IManagedBuffer<T>
 #if !NET7_0_OR_GREATER
-		=> BufferManager.GetStaticMetadata<T, TBuffer>();
+		=> BuffersHelper.GetStaticMetadata<T, TBuffer>();
 #else
 		=> TBuffer.TypeMetadata;
 #endif

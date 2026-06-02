@@ -1,6 +1,6 @@
 <linker>
-    <assembly fullname="Rxmxnx.PInvoke.Buffers.Intermediate">
-        <type fullname="Rxmxnx.PInvoke.BufferManager"
+    <assembly fullname="Rxmxnx.PInvoke.Buffers.Types.Intermediate">
+        <type fullname="Rxmxnx.PInvoke.Internal.BuffersHelper"
               feature="PInvoke.DisableBufferAutoComposition"
               featurevalue="true">
             <method signature="System.Boolean get_BufferAutoCompositionEnabled()" body="stub" value="false"/>

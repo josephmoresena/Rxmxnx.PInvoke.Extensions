@@ -66,4 +66,17 @@ public partial class NativeUtilities
 		if (methodBase.ContainsGenericParameters || AotInfo.IsDynamicCode(methodBase)) return false;
 		return AotInfo.IsImageMethodUnsafe(methodBase.MethodHandle);
 	}
+	/// <summary>
+	/// Retrieves a concurrent value from <paramref name="fieldReference"/>.
+	/// </summary>
+	/// <typeparam name="T">Type of the concurrent field.</typeparam>
+	/// <param name="fieldReference">Reference. A <typeparamref name="T"/> value.</param>
+	/// <returns>Concurrent value instance.</returns>
+	internal static T GetConcurrentObject<T>(ref T? fieldReference) where T : class, new()
+	{
+		if (fieldReference is { } existing) return existing;
+		T newObj = new();
+		T? previous = Interlocked.CompareExchange(ref fieldReference, newObj, null);
+		return previous ?? newObj;
+	}
 }

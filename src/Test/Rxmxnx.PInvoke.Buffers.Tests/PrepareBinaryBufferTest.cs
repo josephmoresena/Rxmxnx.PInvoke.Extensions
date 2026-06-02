@@ -8,11 +8,11 @@ public sealed class PrepareBinaryBufferTest
 	[Fact]
 	public void AssertConstants()
 	{
-		PInvokeAssert.Equal(typeof(Composite<,,>), BufferManager.TypeofComposite);
-		PInvokeAssert.Equal("TypeMetadata", BufferManager.TypeMetadataName);
-		PInvokeAssert.True(BufferManager.GetMetadataFlags.HasFlag(BindingFlags.Public));
-		PInvokeAssert.True(BufferManager.GetMetadataFlags.HasFlag(BindingFlags.NonPublic));
-		PInvokeAssert.True(BufferManager.GetMetadataFlags.HasFlag(BindingFlags.Static));
+		PInvokeAssert.Equal(typeof(Composite<,,>), BuffersHelper.TypeofComposite);
+		PInvokeAssert.Equal("TypeMetadata", BuffersHelper.TypeMetadataName);
+		PInvokeAssert.True(BuffersHelper.GetMetadataFlags.HasFlag(BindingFlags.Public));
+		PInvokeAssert.True(BuffersHelper.GetMetadataFlags.HasFlag(BindingFlags.NonPublic));
+		PInvokeAssert.True(BuffersHelper.GetMetadataFlags.HasFlag(BindingFlags.Static));
 	}
 
 	[Fact]

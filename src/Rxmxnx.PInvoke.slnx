@@ -38,6 +38,10 @@
     </Folder>
     <Folder Name="/Intermediate/">
         <Project Path="Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate\Rxmxnx.PInvoke.Buffers.Intermediate.csproj"/>
+        <Project
+                Path="Intermediate\Rxmxnx.PInvoke.Buffers.Storage.Intermediate\Rxmxnx.PInvoke.Buffers.Storage.Intermediate.csproj"/>
+        <Project
+                Path="Intermediate\Rxmxnx.PInvoke.Buffers.Types.Intermediate\Rxmxnx.PInvoke.Buffers.Types.Intermediate.csproj"/>
         <Project Path="Intermediate\Rxmxnx.PInvoke.Common.Intermediate\Rxmxnx.PInvoke.Common.Intermediate.csproj"/>
         <Project Path="Intermediate\Rxmxnx.PInvoke.CString.Intermediate\Rxmxnx.PInvoke.CString.Intermediate.csproj"/>
         <Project

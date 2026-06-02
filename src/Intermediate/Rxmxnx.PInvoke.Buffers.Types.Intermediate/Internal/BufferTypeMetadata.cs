@@ -5,11 +5,11 @@ namespace Rxmxnx.PInvoke.Internal;
 /// </summary>
 /// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 /// <typeparam name="T">Type of items in the buffer.</typeparam>
-internal sealed class BufferTypeMetadata<[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBuffer,
+internal sealed class BufferTypeMetadata<[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBuffer,
 	T> : BufferTypeMetadata<T> where TBuffer : struct, IManagedBuffer<T>
 {
 #if !NET7_0_OR_GREATER
-	private readonly Action<IDictionary<UInt16, BufferTypeMetadata<T>>>? _appendComponents;
+	private readonly Action<IMetadataStore>? _appendComponents;
 #endif
 
 	/// <inheritdoc/>
@@ -39,8 +39,7 @@ internal sealed class BufferTypeMetadata<[DynamicallyAccessedMembers(BufferManag
 #if !PACKAGE && NET7_0_OR_GREATER
 		[SuppressMessage("ReSharper", "UnusedParameter.Local")]
 #endif
-		Action<IDictionary<UInt16, BufferTypeMetadata<T>>>? appendComponents = default) : base(
-		isBinary, components, (UInt16)capacity)
+		Action<IMetadataStore>? appendComponents = default) : base(isBinary, components, (UInt16)capacity)
 	{
 #if !NET7_0_OR_GREATER
 		this._appendComponents = appendComponents;
@@ -51,32 +50,32 @@ internal sealed class BufferTypeMetadata<[DynamicallyAccessedMembers(BufferManag
 #if !PACKAGE && NET7_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
-	internal override void AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components)
+	internal override void AppendComponent(IMetadataStore manager)
 	{
 #if !NET7_0_OR_GREATER
 		if (this._appendComponents is null)
 		{
-			base.AppendComponent(components);
+			base.AppendComponent(manager);
 			return;
 		}
-		this._appendComponents(components);
+		this._appendComponents(manager);
 #else
-		TBuffer.AppendComponent(components);
+		TBuffer.AppendComponent(manager);
 #endif
 	}
 	/// <inheritdoc/>
-	internal override BufferTypeMetadata<T>? Compose(BufferTypeMetadata<T> otherMetadata)
-		=> otherMetadata.Compose<TBuffer>();
+	internal override BufferTypeMetadata<T>? Compose(IMetadataStore manager, BufferTypeMetadata<T> otherMetadata)
+		=> otherMetadata.Compose<TBuffer>(manager);
 	/// <inheritdoc/>
 	internal override BufferTypeMetadata<T>? Compose<
-		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TOther>()
+		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TOther>(IMetadataStore manager)
 	{
-		if (!BufferManager.BufferAutoCompositionEnabled || !this.IsBinary
+		if (!BuffersHelper.BufferAutoCompositionEnabled || !this.IsBinary
 #if NET7_0_OR_GREATER
 		    || !IManagedBuffer<T>.GetMetadata<TOther>().IsBinary
 #endif
 		   ) return default;
-		return BufferManager.MetadataManager<T>.ComposeWithReflection(typeof(TBuffer), typeof(TOther));
+		return BuffersHelper.ComposeWithReflection<T>(manager, typeof(TBuffer), typeof(TOther));
 	}
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.NoInlining)]
