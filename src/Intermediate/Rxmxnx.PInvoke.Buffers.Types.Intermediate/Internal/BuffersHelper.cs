@@ -3,6 +3,9 @@ namespace Rxmxnx.PInvoke.Internal;
 /// <summary>
 /// Static class helper.
 /// </summary>
+#if !PACKAGE
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3011)]
+#endif
 internal static class BuffersHelper
 {
 	/// <summary>
@@ -111,6 +114,17 @@ internal static class BuffersHelper
 #endif
 		return BuffersHelper.GetStaticMetadata<T, TBuffer>();
 	}
+#if !PACKAGE
+	/// <summary>
+	/// Retrieves metadata required for a buffer of <paramref name="bufferType"/> type.
+	/// </summary>
+	/// <param name="bufferType">Type of buffer.</param>
+	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+	public static BufferTypeMetadata<T> GetMetadata<T>(
+		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] Type bufferType)
+		=> bufferType == typeof(Atomic<T>) ? Atomic<T>.TypeMetadata : BuffersHelper.GetMetadataFromType<T>(bufferType);
+#endif
 	/// <summary>
 	/// Retrieves the capacity of a composite buffer of <paramref name="componentA"/> and <paramref name="componentB"/>.
 	/// </summary>
@@ -193,17 +207,6 @@ internal static class BuffersHelper
 #endif
 		return manager.AddBinaryMetadata(result);
 	}
-#if !PACKAGE
-	/// <summary>
-	/// Retrieves metadata required for a buffer of <paramref name="bufferType"/> type.
-	/// </summary>
-	/// <param name="bufferType">Type of buffer.</param>
-	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
-	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
-	public static BufferTypeMetadata<T> GetMetadata<T>(
-		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] Type bufferType)
-		=> bufferType == typeof(Atomic<T>) ? Atomic<T>.TypeMetadata : BuffersHelper.GetMetadataFromType<T>(bufferType);
-#endif
 
 #if !NET7_0_OR_GREATER
 #nullable disable

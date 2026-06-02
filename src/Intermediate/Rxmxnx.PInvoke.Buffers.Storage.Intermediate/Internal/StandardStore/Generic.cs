@@ -10,6 +10,9 @@ internal sealed partial class StandardStore
 	/// Generic storage
 	/// </summary>
 	/// <typeparam name="T">Type of items in the buffer.</typeparam>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2743)]
+#endif
 	private static class Generic<T>
 	{
 		/// <summary>

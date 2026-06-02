@@ -160,6 +160,6 @@ public static partial class BufferManager
 	{
 		// If unmanaged type, stackalloc should be used.
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
-		BufferManager.manager.PrepareBinaryMetadata<T>(count);
+		BufferManager.manager.PrepareBinaryMetadata<T?>(count);
 	}
 }

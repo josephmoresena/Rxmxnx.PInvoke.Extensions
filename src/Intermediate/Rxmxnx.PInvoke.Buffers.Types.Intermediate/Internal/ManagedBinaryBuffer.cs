@@ -4,6 +4,9 @@ namespace Rxmxnx.PInvoke.Internal;
 /// Helper class for <see cref="IManagedBinaryBuffer{T}"/> implementations.
 /// </summary>
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
+#if !PACKAGE && NET7_0_OR_GREATER
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2743)]
+#endif
 internal static class ManagedBinaryBuffer<T>
 {
 #if NET7_0_OR_GREATER
