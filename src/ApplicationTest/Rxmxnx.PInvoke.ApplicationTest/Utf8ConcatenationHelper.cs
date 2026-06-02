@@ -57,7 +57,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			bohemianRhapsody.Insert(interruptions[6], "Will not let you go ");
 			bohemianRhapsody.Insert(interruptions[6] - Environment.NewLine.Length, ")");
 			bohemianRhapsody.Insert(interruptions[5], "(");
-			bohemianRhapsody.Insert(interruptions[5], "Will not let you go (");
+			bohemianRhapsody.Insert(interruptions[5], "Will not let you go ");
 
 			bohemianRhapsody.Insert(interruptions[4], Environment.NewLine);
 			bohemianRhapsody.Insert(interruptions[4], "سْمِ ٱللَّٰهِ");
