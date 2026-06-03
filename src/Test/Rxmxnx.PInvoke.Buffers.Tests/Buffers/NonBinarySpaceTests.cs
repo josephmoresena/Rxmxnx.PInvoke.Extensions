@@ -57,9 +57,9 @@ public sealed class NonBinarySpaceTests
 		PInvokeAssert.Empty(typeMetadata.Components.ToArray());
 		PInvokeAssert.False(typeMetadata.IsBinary);
 		PInvokeAssert.Equal(100, typeMetadata.Size);
-		PInvokeAssert.Null(typeMetadata.Double(StandardStore.Instance));
-		PInvokeAssert.Null(typeMetadata.Compose(StandardStore.Instance, atomicMetadata));
-		PInvokeAssert.Null(atomicMetadata.Compose(StandardStore.Instance, typeMetadata));
+		PInvokeAssert.Null(typeMetadata.Double(BufferManager.Manager));
+		PInvokeAssert.Null(typeMetadata.Compose(BufferManager.Manager, atomicMetadata));
+		PInvokeAssert.Null(atomicMetadata.Compose(BufferManager.Manager, typeMetadata));
 		PInvokeAssert.Equal(typeof(NonBinarySpace<NonBinaryBuffer<T>, WrapperStruct<WrapperStruct<WrapperStruct<T>>>>),
 		                    typeMetadata.BufferType);
 		PInvokeAssert.Equal(atomicMetadata,

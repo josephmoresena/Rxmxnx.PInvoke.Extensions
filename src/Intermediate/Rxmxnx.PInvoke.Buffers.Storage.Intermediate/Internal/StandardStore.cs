@@ -31,7 +31,7 @@ internal sealed partial class StandardStore : IMetadataStore
 	{
 		Type typeofT = typeof(T);
 		BufferTypeMetadata<T>? metadata = default;
-		Span<UInt16> components = StandardStore.GetBinaryComponents(stackalloc UInt16[16], count);
+		Span<UInt16> components = BuffersHelper.GetBinaryComponents(stackalloc UInt16[16], count);
 		foreach (UInt16 comp in components)
 		{
 			BufferTypeMetadata<T>? compMetadata = this.GetFundamental<T>(comp);
@@ -95,8 +95,7 @@ internal sealed partial class StandardStore : IMetadataStore
 			foreach (UInt16 key in Generic<T>.BinaryKeys)
 			{
 				BufferTypeMetadata<T> m = Generic<T>.GetBinaryBuffer(key);
-				Trace.WriteLine(
-					$"{typeof(T)} {key}({String.Join(", ", m.Components.ToArray().Select(k => k.Size))}): {m.IsBinary}.");
+				Trace.WriteLine($"{typeof(T)} {key}({String.Join(", ", m.Components.ToArray().Select(k => k.Size))}).");
 			}
 			Trace.WriteLine($"{typeof(T)}: {Generic<T>.BinaryCount}");
 		}

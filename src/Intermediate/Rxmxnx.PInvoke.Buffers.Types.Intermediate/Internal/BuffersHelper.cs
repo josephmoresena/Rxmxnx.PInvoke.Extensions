@@ -48,12 +48,76 @@ internal static class BuffersHelper
 	}
 
 	/// <summary>
+	/// Retrieves the binary space for <paramref name="count"/>.
+	/// </summary>
+	/// <param name="count">Number item in the binary space.</param>
+	/// <returns>The number of the binary space.</returns>
+	public static UInt16 GetSpaceFor(UInt16 count)
+		=> count switch
+		{
+			< 2 => 1,
+			< 4 => 2,
+			< 8 => 4,
+			< 16 => 8,
+			< 32 => 16,
+			< 64 => 32,
+			< 128 => 64,
+			< 256 => 128,
+			< 512 => 256,
+			< 1024 => 512,
+			< 2048 => 1024,
+			< 4096 => 2048,
+			< 8192 => 4096,
+			< 16384 => 8192,
+			< 32768 => 16384,
+			_ => 32768,
+		};
+	/// <summary>
+	/// Retrieves the binary capacity for <paramref name="count"/>.
+	/// </summary>
+	/// <param name="count">Number item in the binary space.</param>
+	/// <returns>The number of the binary capacity.</returns>
+	public static UInt16 GetCapacityFor(UInt16 count)
+		=> count switch
+		{
+			<= 2 => 3,
+			<= 4 => 7,
+			<= 8 => 15,
+			<= 16 => 31,
+			<= 32 => 63,
+			<= 64 => 127,
+			<= 128 => 255,
+			<= 256 => 511,
+			<= 512 => 1023,
+			<= 1024 => 2047,
+			<= 2048 => 4095,
+			<= 4096 => 8191,
+			<= 8192 => 16383,
+			<= 16384 => 32767,
+			_ => 65535,
+		};
+	/// <summary>
 	/// Retrieves the maximum value in the given binary space.
 	/// </summary>
 	/// <param name="space">Maximum binary power in the binary space.</param>
 	/// <returns>The maximum value in the given binary space.</returns>
 	public static UInt16 GetMaxValue(UInt16 space) => (UInt16)(space * 2 - 1);
-
+	/// <summary>
+	/// Retrieves the components sizes for given <paramref name="count"/>.
+	/// </summary>
+	/// <param name="components">Components buffer.</param>
+	/// <param name="count">Amount of items in required buffer.</param>
+	/// <returns>Enumeration of components sizes.</returns>
+	public static Span<UInt16> GetBinaryComponents(Span<UInt16> components, UInt16 count)
+	{
+		Int32 found = 0;
+		for (Int32 i = 0; i < 16; i++)
+		{
+			UInt16 mask = (UInt16)(1 << i);
+			if ((count & mask) != 0) components[found++] = mask;
+		}
+		return components[..found];
+	}
 	/// <summary>
 	/// Retrieves the static metadata required for a buffer of <typeparamref name="TBuffer"/> type.
 	/// </summary>
