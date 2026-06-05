@@ -25,6 +25,10 @@ internal abstract partial class MetadataStorage<T>
 	/// <param name="count">Amount of items in required buffer.</param>
 	/// <param name="allowMinimal">Allow to return minimal buffer.</param>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1199)]
+#endif
 	private static BufferTypeMetadata<T>? GetBinaryMetadata(BinaryMap<T> binaryMap, UInt16 count, Boolean allowMinimal)
 	{
 		if (binaryMap[count] is { } result)

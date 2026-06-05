@@ -20,6 +20,8 @@ internal interface IBootstrapMetadataStorage : IMetadataStorage
 
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6670)]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3973)]
 	void IMetadataStorage.PrintMetadata<T>(Boolean trace)
 	{
 		if (!trace) return;
