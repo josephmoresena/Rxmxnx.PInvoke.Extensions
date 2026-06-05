@@ -29,7 +29,7 @@ public struct Atomic<T> : IManagedBinaryBuffer<Atomic<T>, T>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	static void IManagedBuffer<T>.AppendComponent(IMetadataStore manager) { }
+	static void IManagedBuffer<T>.AppendComponent(IMetadataStorage storage) { }
 #else
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]

@@ -9,6 +9,7 @@
         <Using Include="System.Runtime.InteropServices"/>
 
         <Using Include="Rxmxnx.PInvoke.Buffers"/>
+        <Using Include="Rxmxnx.PInvoke.Internal.Bootstrap"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -22,9 +23,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-            <_Parameter1>Rxmxnx.PInvoke.Buffers.Tests</_Parameter1>
-        </AssemblyAttribute>
+        <EmbeddedResource Include="ILLink\ILLink.Substitutions.xml">
+            <LogicalName>ILLink.Substitutions.xml</LogicalName>
+        </EmbeddedResource>
     </ItemGroup>
 
 </Project>

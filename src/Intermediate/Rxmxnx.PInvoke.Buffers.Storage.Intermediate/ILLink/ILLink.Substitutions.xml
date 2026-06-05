@@ -1,0 +1,19 @@
+<linker>
+    <assembly fullname="Rxmxnx.PInvoke.Buffers.Storage.Intermediate">
+        <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage"
+              feature="PInvoke.MaxBufferCapacity31"
+              featurevalue="true">
+            <method signature="System.Boolean get_MaxCapacity()" body="stub" value="31"/>
+        </type>
+        <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage"
+              feature="PInvoke.MaxBufferCapacity127"
+              featurevalue="true">
+            <method signature="System.Boolean get_MaxCapacity()" body="stub" value="127"/>
+        </type>
+        <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage"
+              feature="PInvoke.MaxBufferCapacity2047"
+              featurevalue="true">
+            <method signature="System.Boolean get_MaxCapacity()" body="stub" value="2047"/>
+        </type>
+    </assembly>
+</linker>

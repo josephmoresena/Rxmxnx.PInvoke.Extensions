@@ -9,7 +9,7 @@ internal sealed class BufferTypeMetadata<[DynamicallyAccessedMembers(BuffersHelp
 	T> : BufferTypeMetadata<T> where TBuffer : struct, IManagedBuffer<T>
 {
 #if !NET7_0_OR_GREATER
-	private readonly Action<IMetadataStore>? _appendComponents;
+	private readonly Action<IMetadataStorage>? _appendComponents;
 #endif
 
 	/// <inheritdoc/>
@@ -39,7 +39,7 @@ internal sealed class BufferTypeMetadata<[DynamicallyAccessedMembers(BuffersHelp
 #if !PACKAGE && NET7_0_OR_GREATER
 		[SuppressMessage("ReSharper", "UnusedParameter.Local")]
 #endif
-		Action<IMetadataStore>? appendComponents = default) : base(isBinary, components, (UInt16)capacity)
+		Action<IMetadataStorage>? appendComponents = default) : base(isBinary, components, (UInt16)capacity)
 	{
 #if !NET7_0_OR_GREATER
 		this._appendComponents = appendComponents;
@@ -50,32 +50,32 @@ internal sealed class BufferTypeMetadata<[DynamicallyAccessedMembers(BuffersHelp
 #if !PACKAGE && NET7_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
-	internal override void AppendComponent(IMetadataStore manager)
+	internal override void AppendComponent(IMetadataStorage storage)
 	{
 #if !NET7_0_OR_GREATER
 		if (this._appendComponents is null)
 		{
-			base.AppendComponent(manager);
+			base.AppendComponent(storage);
 			return;
 		}
-		this._appendComponents(manager);
+		this._appendComponents(storage);
 #else
-		TBuffer.AppendComponent(manager);
+		TBuffer.AppendComponent(storage);
 #endif
 	}
 	/// <inheritdoc/>
-	internal override BufferTypeMetadata<T>? Compose(IMetadataStore manager, BufferTypeMetadata<T> otherMetadata)
-		=> otherMetadata.Compose<TBuffer>(manager);
+	internal override BufferTypeMetadata<T>? Compose(IMetadataStorage storage, BufferTypeMetadata<T> otherMetadata)
+		=> otherMetadata.Compose<TBuffer>(storage);
 	/// <inheritdoc/>
 	internal override BufferTypeMetadata<T>? Compose<
-		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TOther>(IMetadataStore manager)
+		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TOther>(IMetadataStorage storage)
 	{
 		if (!BuffersHelper.BufferAutoCompositionEnabled || !this.IsBinary
 #if NET7_0_OR_GREATER
 		    || !IManagedBuffer<T>.GetMetadata<TOther>().IsBinary
 #endif
 		   ) return default;
-		return BuffersHelper.ComposeWithReflection<T>(manager, typeof(TBuffer), typeof(TOther));
+		return BuffersHelper.ComposeWithReflection<T>(storage, typeof(TBuffer), typeof(TOther));
 	}
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.NoInlining)]

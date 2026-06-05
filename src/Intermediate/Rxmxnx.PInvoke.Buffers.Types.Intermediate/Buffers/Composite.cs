@@ -47,10 +47,10 @@ public struct Composite<[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAcc
 	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => Composite<TBufferA, TBufferB, T>.TypeMetadata;
 	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [TBufferA.TypeMetadata, TBufferB.TypeMetadata,];
 
-	static void IManagedBuffer<T>.AppendComponent(IMetadataStore manager)
+	static void IManagedBuffer<T>.AppendComponent(IMetadataStorage storage)
 	{
-		IManagedBuffer<T>.AppendComponent<TBufferA>(manager);
-		IManagedBuffer<T>.AppendComponent<TBufferB>(manager);
+		IManagedBuffer<T>.AppendComponent<TBufferA>(storage);
+		IManagedBuffer<T>.AppendComponent<TBufferB>(storage);
 	}
 #else
 #if !PACKAGE
@@ -73,13 +73,13 @@ public struct Composite<[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAcc
 	/// <summary>
 	/// Appends all components from current type.
 	/// </summary>
-	/// <param name="manager">A <see cref="IMetadataStore"/> instance.</param>
-	private static void AppendComponent(IMetadataStore manager)
+	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
+	private static void AppendComponent(IMetadataStorage storage)
 	{
 		BufferTypeMetadata<T> currentMetadata = Composite<TBufferA, TBufferB, T>.TypeMetadata;
 		if (!currentMetadata.IsBinary) return;
 		foreach (BufferTypeMetadata<T> component in currentMetadata.Components.Span)
-			ManagedBuffer<T>.AppendComponent(component, manager);
+			ManagedBuffer<T>.AppendComponent(component, storage);
 	}
 #endif
 }

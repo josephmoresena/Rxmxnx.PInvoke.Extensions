@@ -31,8 +31,8 @@ public interface IManagedBuffer<T>
 	/// <summary>
 	/// Appends all components from current type.
 	/// </summary>
-	/// <param name="manager">A <see cref="IMetadataStore"/> instance.</param>
-	internal static abstract void AppendComponent(IMetadataStore manager);
+	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
+	internal static abstract void AppendComponent(IMetadataStorage storage);
 #else
 	/// <summary>
 	/// Current type components.
@@ -52,12 +52,12 @@ public interface IManagedBuffer<T>
 	/// <summary>
 	/// Appends all components from current type.
 	/// </summary>
-	/// <param name="manager">A <see cref="IMetadataStore"/> instance.</param>
+	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
 	// ReSharper disable once UnusedParameter.Global
-	internal static void AppendComponent(IMetadataStore manager)
+	internal static void AppendComponent(IMetadataStorage storage)
 	{
 		// This method is declared for compatibility with .NET 7.0 APIs but is not usable. 
 	}
@@ -67,13 +67,13 @@ public interface IManagedBuffer<T>
 	/// Appends all components from <typeparamref name="TBuffer"/> type.
 	/// </summary>
 	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
-	/// <param name="manager">A <see cref="IMetadataStore"/> instance.</param>
+	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Browsable(false)]
 #if !PACKAGE && !NET7_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
-	private protected static void AppendComponent<TBuffer>(IMetadataStore manager)
+	private protected static void AppendComponent<TBuffer>(IMetadataStorage storage)
 		where TBuffer : struct, IManagedBuffer<T>
 	{
 #if !NET7_0_OR_GREATER
@@ -82,7 +82,7 @@ public interface IManagedBuffer<T>
 		BufferTypeMetadata<T> bufferTypeMetadata = TBuffer.TypeMetadata;
 #endif
 		if (bufferTypeMetadata.IsBinary)
-			ManagedBuffer<T>.AppendComponent(bufferTypeMetadata, manager);
+			ManagedBuffer<T>.AppendComponent(bufferTypeMetadata, storage);
 	}
 
 	/// <summary>

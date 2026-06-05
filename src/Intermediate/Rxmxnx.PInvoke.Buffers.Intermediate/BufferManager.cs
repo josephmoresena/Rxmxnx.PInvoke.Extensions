@@ -6,6 +6,10 @@ namespace Rxmxnx.PInvoke;
 public static partial class BufferManager
 {
 	/// <summary>
+	/// Current <see cref="IMetadataStorage"/> instance.
+	/// </summary>
+	internal static readonly IMetadataStorage Storage = MetadataStorage.Instance;
+	/// <summary>
 	/// Indicates whether metadata for any required buffer is auto-composed.
 	/// </summary>
 #if !PACKAGE
@@ -15,12 +19,10 @@ public static partial class BufferManager
 	/// <summary>
 	/// Maximum capacity of the buffers.
 	/// </summary>
-	public static UInt16 MaxCapacity => UInt16.MaxValue;
-
-	/// <summary>
-	/// Current <see cref="IMetadataStore"/> instance.
-	/// </summary>
-	internal static readonly IMetadataStore Manager = StandardStore.Instance;
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public static UInt16 MaxCapacity => MetadataStorage.MaxCapacity;
 
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="action"/>.
@@ -105,7 +107,7 @@ public static partial class BufferManager
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void Register<[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBuffer>()
 		where TBuffer : struct, IManagedBuffer<Object>
-		=> BufferManager.Manager.RegisterBuffer<Object, TBuffer>();
+		=> BufferManager.Storage.RegisterBuffer<Object, TBuffer>();
 	/// <summary>
 	/// Registers <typeparamref name="T"/> buffer.
 	/// </summary>
@@ -117,7 +119,7 @@ public static partial class BufferManager
 	{
 		// If unmanaged type, stackalloc should be used.
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
-		BufferManager.Manager.RegisterBuffer<T, TBuffer>();
+		BufferManager.Storage.RegisterBuffer<T, TBuffer>();
 	}
 	/// <summary>
 	/// Registers <typeparamref name="T"/> buffer.
@@ -131,7 +133,7 @@ public static partial class BufferManager
 	{
 		// If unmanaged type, stackalloc should be used.
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
-		BufferManager.Manager.RegisterBuffer<T?, TBuffer>();
+		BufferManager.Storage.RegisterBuffer<T?, TBuffer>();
 	}
 	/// <summary>
 	/// Prepares the binary buffer metadata needed to allocate <paramref name="count"/> objects.
@@ -139,7 +141,7 @@ public static partial class BufferManager
 	/// <param name="count">Amount of items in required buffer.</param>
 	/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void PrepareBinaryBuffer(UInt16 count) => BufferManager.Manager.PrepareBinaryMetadata<Object>(count);
+	public static void PrepareBinaryBuffer(UInt16 count) => BufferManager.Storage.PrepareBinaryMetadata<Object>(count);
 	/// <summary>
 	/// Prepares the binary buffer metadata needed to allocate <paramref name="count"/> <typeparamref name="T"/> items.
 	/// </summary>
@@ -151,7 +153,7 @@ public static partial class BufferManager
 	{
 		// If unmanaged type, stackalloc should be used.
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
-		BufferManager.Manager.PrepareBinaryMetadata<T>(count);
+		BufferManager.Storage.PrepareBinaryMetadata<T>(count);
 	}
 	/// <summary>
 	/// Prepares the binary buffer metadata needed to allocate <paramref name="count"/> nullable <typeparamref name="T"/>
@@ -165,6 +167,6 @@ public static partial class BufferManager
 	{
 		// If unmanaged type, stackalloc should be used.
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
-		BufferManager.Manager.PrepareBinaryMetadata<T?>(count);
+		BufferManager.Storage.PrepareBinaryMetadata<T?>(count);
 	}
 }

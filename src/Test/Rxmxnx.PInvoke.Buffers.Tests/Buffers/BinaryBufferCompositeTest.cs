@@ -54,13 +54,13 @@ public sealed class BinaryBufferCompositeTest
 		BufferTypeMetadata<T> nonBinaryMetadata5 =
 			((IManagedBinaryBuffer<T>)Activator.CreateInstance(nonBinary5)!).Metadata;
 
-		PInvokeAssert.Equal(composite2Metadata, atomicMetadata.Double(BufferManager.Manager));
-		PInvokeAssert.Equal(binaryMetadata, composite2Metadata.Compose(BufferManager.Manager, atomicMetadata));
-		PInvokeAssert.Equal(nonBinaryMetadata1, atomicMetadata.Compose(BufferManager.Manager, composite2Metadata));
-		PInvokeAssert.Equal(nonBinaryMetadata2, binaryMetadata.Compose(BufferManager.Manager, atomicMetadata));
-		PInvokeAssert.Equal(nonBinaryMetadata3, binaryMetadata.Double(BufferManager.Manager));
-		PInvokeAssert.Null(atomicMetadata.Compose(BufferManager.Manager, nonBinaryMetadata3));
-		PInvokeAssert.Null(nonBinaryMetadata3.Compose(BufferManager.Manager, atomicMetadata));
+		PInvokeAssert.Equal(composite2Metadata, atomicMetadata.Double(BufferManager.Storage));
+		PInvokeAssert.Equal(binaryMetadata, composite2Metadata.Compose(BufferManager.Storage, atomicMetadata));
+		PInvokeAssert.Equal(nonBinaryMetadata1, atomicMetadata.Compose(BufferManager.Storage, composite2Metadata));
+		PInvokeAssert.Equal(nonBinaryMetadata2, binaryMetadata.Compose(BufferManager.Storage, atomicMetadata));
+		PInvokeAssert.Equal(nonBinaryMetadata3, binaryMetadata.Double(BufferManager.Storage));
+		PInvokeAssert.Null(atomicMetadata.Compose(BufferManager.Storage, nonBinaryMetadata3));
+		PInvokeAssert.Null(nonBinaryMetadata3.Compose(BufferManager.Storage, atomicMetadata));
 
 		PInvokeAssert.True(binaryMetadata.IsBinary);
 		PInvokeAssert.Equal(2, binaryMetadata.ComponentCount);

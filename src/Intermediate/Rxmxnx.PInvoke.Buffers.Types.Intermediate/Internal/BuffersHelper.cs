@@ -52,6 +52,9 @@ internal static class BuffersHelper
 	/// </summary>
 	/// <param name="count">Number item in the binary space.</param>
 	/// <returns>The number of the binary space.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public static UInt16 GetSpaceFor(UInt16 count)
 		=> count switch
 		{
@@ -77,6 +80,9 @@ internal static class BuffersHelper
 	/// </summary>
 	/// <param name="count">Number item in the binary space.</param>
 	/// <returns>The number of the binary capacity.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public static UInt16 GetCapacityFor(UInt16 count)
 		=> count switch
 		{
@@ -96,12 +102,6 @@ internal static class BuffersHelper
 			<= 16384 => 32767,
 			_ => 65535,
 		};
-	/// <summary>
-	/// Retrieves the maximum value in the given binary space.
-	/// </summary>
-	/// <param name="space">Maximum binary power in the binary space.</param>
-	/// <returns>The maximum value in the given binary space.</returns>
-	public static UInt16 GetMaxValue(UInt16 space) => (UInt16)(space * 2 - 1);
 	/// <summary>
 	/// Retrieves the components sizes for given <paramref name="count"/>.
 	/// </summary>
@@ -220,7 +220,7 @@ internal static class BuffersHelper
 	/// Creates <see cref="BufferTypeMetadata{T}"/> for <see cref="Composite{TBufferA,TBufferB,T}"/>.
 	/// </summary>
 	/// <typeparam name="T">The type of items in the buffer</typeparam>
-	/// <param name="manager">A <see cref="IMetadataStore"/> instance.</param>
+	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
 	/// <param name="typeofA">The type of low buffer.</param>
 	/// <param name="typeofB">The type of high buffer.</param>
 	/// <returns>
@@ -232,7 +232,7 @@ internal static class BuffersHelper
 	[UnconditionalSuppressMessage("AOT", "IL3050")]
 	[UnconditionalSuppressMessage("Trimming", "IL2055")]
 	[UnconditionalSuppressMessage("Trimming", "IL2055")]
-	public static BufferTypeMetadata<T>? ComposeWithReflection<T>(IMetadataStore manager,
+	public static BufferTypeMetadata<T>? ComposeWithReflection<T>(IMetadataStorage storage,
 		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] Type typeofA,
 		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] Type typeofB)
 	{
@@ -269,7 +269,7 @@ internal static class BuffersHelper
 			// Ignore
 		}
 #endif
-		return manager.AddBinaryMetadata(result);
+		return storage.AddBinaryMetadata(result);
 	}
 
 #if !NET7_0_OR_GREATER

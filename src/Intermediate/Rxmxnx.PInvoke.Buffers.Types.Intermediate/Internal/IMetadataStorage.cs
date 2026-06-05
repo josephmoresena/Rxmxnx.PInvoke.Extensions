@@ -3,7 +3,7 @@ namespace Rxmxnx.PInvoke.Internal;
 /// <summary>
 /// Exposes a buffer metadata store.
 /// </summary>
-internal interface IMetadataStore
+internal interface IMetadataStorage
 {
 	/// <summary>
 	/// Tries to add the current component

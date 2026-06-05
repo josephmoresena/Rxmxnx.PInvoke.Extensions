@@ -10,11 +10,11 @@ internal static class ManagedBuffer<T>
 	/// Appends all components from <paramref name="component"/> instance.
 	/// </summary>
 	/// <param name="component">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
-	/// <param name="manager">A <see cref="IMetadataStore"/> instance.</param>
-	public static void AppendComponent(BufferTypeMetadata<T> component, IMetadataStore manager)
+	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
+	public static void AppendComponent(BufferTypeMetadata<T> component, IMetadataStorage storage)
 	{
-		if (!manager.TryAdd(component)) return;
+		if (!storage.TryAdd(component)) return;
 		foreach (BufferTypeMetadata<T> metadataComponent in component.Components.Span)
-			ManagedBuffer<T>.AppendComponent(metadataComponent, manager);
+			ManagedBuffer<T>.AppendComponent(metadataComponent, storage);
 	}
 }
