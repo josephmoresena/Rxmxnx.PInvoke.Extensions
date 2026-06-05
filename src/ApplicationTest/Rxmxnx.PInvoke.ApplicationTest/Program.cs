@@ -60,7 +60,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Console.WriteLine("=== Stack alloc [String] ===");
 			BufferManager.Alloc<String?>(3, BufferHelper.Generate);
 			BufferManager.Alloc<String?>(5, BufferHelper.Generate);
-			if (AotInfo.IsNativeAot)
+			if (AotInfo.IsReflectionDisabled)
 				BufferManager.Alloc<String?>(5, BufferHelper.Generate, true);
 			if (!BufferManager.BufferAutoCompositionEnabled)
 			{
@@ -70,8 +70,6 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Console.WriteLine("=== Stack alloc [(Int32, String)] ===");
 			BufferManager.Alloc<ValueTuple<Int32, String>>(3, BufferHelper.Generate);
 			BufferManager.Alloc<ValueTuple<Int32, String>>(5, BufferHelper.Generate);
-			if (AotInfo.IsNativeAot)
-				BufferManager.Alloc<ValueTuple<Int32, String>>(5, BufferHelper.Generate, true);
 			if (!BufferManager.BufferAutoCompositionEnabled)
 			{
 				BufferHelper.RegisterMetadataValue();
@@ -80,8 +78,6 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Console.WriteLine("=== Stack alloc [(Int32, String)?] ===");
 			BufferManager.Alloc<ValueTuple<Int32, String>?>(3, BufferHelper.Generate);
 			BufferManager.Alloc<ValueTuple<Int32, String>?>(5, BufferHelper.Generate);
-			if (AotInfo.IsNativeAot)
-				BufferManager.Alloc<ValueTuple<Int32, String>?>(5, BufferHelper.Generate, true);
 			// ReSharper disable once InvertIf
 			if (!BufferManager.BufferAutoCompositionEnabled)
 			{

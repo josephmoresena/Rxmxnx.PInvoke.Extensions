@@ -33,7 +33,7 @@
         <IlcGenerateMstatFile>true</IlcGenerateMstatFile>
         <IlcGenerateDgmlFile>true</IlcGenerateDgmlFile>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(TargetFramework)' == 'net6.0' And $([MSBuild]::IsOSPlatform('WINDOWS'))">
+    <PropertyGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0')) And $([MSBuild]::IsOSPlatform('WINDOWS'))">
         <DebugType>none</DebugType>
         <DebugSymbols>false</DebugSymbols>
         <DebuggerSupport>false</DebuggerSupport>
@@ -53,7 +53,7 @@
         <LinkerArg Include="-sEXPORTED_RUNTIME_METHODS=[HEAPU8,HEAPU32,HEAP32,cwrap,stringToNewUTF8]"/>
         <LinkerArg Include="-sASSERTIONS"/>
     </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == '$(DefaultFramework)' And $([MSBuild]::IsOSPlatform('WINDOWS'))">
+    <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0')) And $([MSBuild]::IsOSPlatform('WINDOWS'))">
         <LinkerArg Include="/DEBUG:NONE"/>
         <LinkerArg Include="/INCREMENTAL:NO"/>
     </ItemGroup>
