@@ -19,9 +19,6 @@
         <DefineConstants Condition="'$(IlcDisableReflection)' == 'true'">$(DefineConstants);REFLECTION_FREE</DefineConstants>
         <SelfContained Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">true</SelfContained>
         <StripSymbols>true</StripSymbols>
-        <IlcGenerateMetadataLog>true</IlcGenerateMetadataLog>
-        <IlcGenerateMstatFile>true</IlcGenerateMstatFile>
-        <IlcGenerateDgmlFile>true</IlcGenerateDgmlFile>
         <RootAllApplicationAssemblies>false</RootAllApplicationAssemblies>
         <TrimUnusedDependencies>true</TrimUnusedDependencies>
         <IlcOptimizationPreference>Size</IlcOptimizationPreference>
@@ -31,7 +28,11 @@
         <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
         <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
     </PropertyGroup>
-
+    <PropertyGroup Condition="'$(TargetFramework)' == '$(DefaultFramework)'">
+        <IlcGenerateMetadataLog>true</IlcGenerateMetadataLog>
+        <IlcGenerateMstatFile>true</IlcGenerateMstatFile>
+        <IlcGenerateDgmlFile>true</IlcGenerateDgmlFile>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm' And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
         <LinkerFlavor>lld</LinkerFlavor>
         <ObjCopyName>/usr/arm-linux-gnueabihf/bin/objcopy</ObjCopyName>
