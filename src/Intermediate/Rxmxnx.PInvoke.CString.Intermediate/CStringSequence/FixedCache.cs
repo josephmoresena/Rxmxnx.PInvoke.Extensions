@@ -118,10 +118,11 @@ public partial class CStringSequence
 						default;
 				set
 				{
+					Debug.Assert(value is not null);
 					if (this._cache[this.GetRealIndex(index)] is { } weak)
-						weak.SetTarget(value!);
+						weak.SetTarget(value);
 					else
-						this._cache[this.GetRealIndex(index)] = new(value!);
+						this._cache[this.GetRealIndex(index)] = new(value);
 				}
 			}
 			/// <inheritdoc/>

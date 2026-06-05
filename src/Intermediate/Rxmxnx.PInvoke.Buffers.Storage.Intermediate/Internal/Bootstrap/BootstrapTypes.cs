@@ -213,22 +213,27 @@ internal abstract class G127<T> : MetadataStorage<Composite<
 /// <summary>
 /// Internal store with 2^11-1 binary space.
 /// </summary>
-internal abstract class G2047<T> : MetadataStorage<Composite<
-	Composite<Composite<
-			Composite<Composite<Composite<
-					Composite<Composite<Composite<Composite<O1, O2, O>, O4, O>, O8, O>, O16, O>, O32, O>, O64, O>,
-				Composite<O64, O64, O>, O>, Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>,
-		Composite<Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>,
-			Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>, O>, Composite<
-		Composite<Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>,
-			Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>, Composite<
-			Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>,
-			Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>, O>, O>, T>
+#if !PACKAGE
+[ExcludeFromCodeCoverage]
+#endif
+internal abstract class G2047<T>(Boolean withSlots)
+	: MetadataStorage<Composite<
+		Composite<Composite<
+				Composite<Composite<Composite<
+					Composite<Composite<Composite<Composite<O1, O2, O>, O4, O>, O8, O>, O16, O>,
+					O32, O>, O64, O>, Composite<O64, O64, O>, O>,
+				Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>,
+			Composite<Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>,
+				Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>, O>, Composite<
+			Composite<Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>,
+				Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>, Composite<
+				Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>,
+				Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>, O>, O>, T>
 {
 	/// <summary>
 	/// Additional slots.
 	/// </summary>
-	public abstract BufferTypeMetadata<T>?[]?[] Slots { get; }
+	public BufferTypeMetadata<T>?[]?[] Slots { get; } = withSlots ? new BufferTypeMetadata<T>?[]?[5] : [];
 
 	/// <summary>
 	/// Prepares the current instance for <paramref name="count"/>.

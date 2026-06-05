@@ -10,6 +10,7 @@ internal abstract partial class MetadataStorage<T>
 	/// Static class for non-binary buffer types metadata.
 	/// </summary>
 #if !PACKAGE
+	[ExcludeFromCodeCoverage]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2743)]
 #endif
 	private static class NonBinaryStore

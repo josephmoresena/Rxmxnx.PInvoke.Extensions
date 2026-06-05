@@ -3,6 +3,9 @@ namespace Rxmxnx.PInvoke.Internal;
 /// <summary>
 /// Bootstrap storage class.
 /// </summary>
+#if !PACKAGE
+[ExcludeFromCodeCoverage]
+#endif
 internal static class MetadataStorage
 {
 	/// <summary>
@@ -151,6 +154,7 @@ internal abstract partial class MetadataStorage<T>
 	/// Retrieves the current binary map.
 	/// </summary>
 	/// <returns>A <see cref="ReadOnlySpan{BufferTypeMetadata}"/> instances.</returns>
+	[ExcludeFromCodeCoverage]
 	public static ReadOnlySpan<BufferTypeMetadata<T>?> GetBinaryMap()
 	{
 		if (MetadataStorage<T>.instance is null) return default;
@@ -161,6 +165,7 @@ internal abstract partial class MetadataStorage<T>
 	/// Retrieves the current binary slots.
 	/// </summary>
 	/// <returns>A <see cref="ReadOnlySpan{BufferTypeMetadata}"/> instances.</returns>
+	[ExcludeFromCodeCoverage]
 	public static ReadOnlySpan<BufferTypeMetadata<T>?[]> GetBinarySlots()
 	{
 		if (MetadataStorage<T>.instance is not G2047<T> g2047) return default;

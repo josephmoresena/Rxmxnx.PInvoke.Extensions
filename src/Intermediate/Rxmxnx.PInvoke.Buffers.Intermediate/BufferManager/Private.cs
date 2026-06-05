@@ -137,9 +137,14 @@ public static partial class BufferManager
 		BufferManager.Storage.PrintMetadata<Object>(!stackAlloc);
 #endif
 		if (stackAlloc)
-			BufferManager.StackAllocObject(metadata!, count, action);
+		{
+			Debug.Assert(metadata is not null);
+			BufferManager.StackAllocObject(metadata, count, action);
+		}
 		else
+		{
 			BufferManager.AllocHeap(count, action);
+		}
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
@@ -164,9 +169,14 @@ public static partial class BufferManager
 		BufferManager.Storage.PrintMetadata<Object>(!stackAlloc);
 #endif
 		if (stackAlloc)
-			metadata!.Execute(state, action, count);
+		{
+			Debug.Assert(metadata is not null);
+			metadata.Execute(state, action, count);
+		}
 		else
+		{
 			BufferManager.AllocHeap(count, state, action);
+		}
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
@@ -187,9 +197,10 @@ public static partial class BufferManager
 #if !PACKAGE
 		BufferManager.Storage.PrintMetadata<Object>(!stackAlloc);
 #endif
-		return stackAlloc ?
-			BufferManager.StackAllocObject(metadata!, count, func) :
-			BufferManager.AllocHeap(count, func);
+		if (!stackAlloc)
+			return BufferManager.AllocHeap(count, func);
+		Debug.Assert(metadata is not null);
+		return BufferManager.StackAllocObject(metadata, count, func);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
@@ -215,7 +226,9 @@ public static partial class BufferManager
 #if !PACKAGE
 		BufferManager.Storage.PrintMetadata<Object>(!stackAlloc);
 #endif
-		return stackAlloc ? metadata!.Execute(state, func, count) : BufferManager.AllocHeap(count, state, func);
+		if (!stackAlloc) return BufferManager.AllocHeap(count, state, func);
+		Debug.Assert(metadata is not null);
+		return metadata.Execute(state, func, count);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
@@ -240,9 +253,14 @@ public static partial class BufferManager
 		BufferManager.Storage.PrintMetadata<T>(!stackAlloc);
 #endif
 		if (stackAlloc)
-			metadata!.Execute(action, count);
+		{
+			Debug.Assert(metadata is not null);
+			metadata.Execute(action, count);
+		}
 		else
+		{
 			BufferManager.AllocHeap(count, action);
+		}
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
@@ -273,9 +291,14 @@ public static partial class BufferManager
 		BufferManager.Storage.PrintMetadata<T>(!stackAlloc);
 #endif
 		if (stackAlloc)
-			metadata!.Execute<TState>(state, action, count);
+		{
+			Debug.Assert(metadata is not null);
+			metadata.Execute<TState>(state, action, count);
+		}
 		else
+		{
 			BufferManager.AllocHeap(count, state, action);
+		}
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
@@ -299,7 +322,9 @@ public static partial class BufferManager
 #if !PACKAGE
 		BufferManager.Storage.PrintMetadata<T>(!stackAlloc);
 #endif
-		return stackAlloc ? metadata!.Execute(func, count) : BufferManager.AllocHeap(count, func);
+		if (!stackAlloc) return BufferManager.AllocHeap(count, func);
+		Debug.Assert(metadata is not null);
+		return metadata.Execute(func, count);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
@@ -328,9 +353,9 @@ public static partial class BufferManager
 #if !PACKAGE
 		BufferManager.Storage.PrintMetadata<T>(!stackAlloc);
 #endif
-		return stackAlloc ?
-			metadata!.Execute<TState, TResult>(state, func, count) :
-			BufferManager.AllocHeap(count, state, func);
+		if (!stackAlloc) return BufferManager.AllocHeap(count, state, func);
+		Debug.Assert(metadata is not null);
+		return metadata.Execute<TState, TResult>(state, func, count);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.

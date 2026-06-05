@@ -47,17 +47,13 @@ internal sealed class BufferTypeMetadata<[DynamicallyAccessedMembers(BuffersHelp
 	}
 
 	/// <inheritdoc/>
-#if !PACKAGE && NET7_0_OR_GREATER
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
 	internal override void AppendComponent(IMetadataStorage storage)
 	{
 #if !NET7_0_OR_GREATER
-		if (this._appendComponents is null)
-		{
-			base.AppendComponent(storage);
-			return;
-		}
+		Debug.Assert(this._appendComponents is not null);
 		this._appendComponents(storage);
 #else
 		TBuffer.AppendComponent(storage);

@@ -25,10 +25,11 @@ public partial class CStringSequence
 			}
 			set
 			{
+				Debug.Assert(value is not null);
 				if (this._cache.TryGetValue(index, out WeakReference<CString>? weak))
-					weak.SetTarget(value!);
+					weak.SetTarget(value);
 				else
-					this._cache[index] = new(value!);
+					this._cache[index] = new(value);
 			}
 		}
 		/// <inheritdoc/>

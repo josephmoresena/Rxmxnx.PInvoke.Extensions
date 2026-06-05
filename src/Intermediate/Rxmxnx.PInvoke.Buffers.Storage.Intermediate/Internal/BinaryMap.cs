@@ -24,6 +24,7 @@ internal readonly ref struct BinaryMap<T>
 	{
 		get
 		{
+			Debug.Assert(size > 0);
 			if (size <= this._initial.Length)
 				return ref this._initial[size - 1];
 			ref BufferTypeMetadata<T>?[]? page = ref MemoryMarshal.GetReference(this._slots);
@@ -63,40 +64,44 @@ internal readonly ref struct BinaryMap<T>
 	/// </summary>
 	/// <param name="count">Minimal number of items in buffer.</param>
 	/// <returns>A <see cref="BufferTypeMetadata"/> instance.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public BufferTypeMetadata<T>? GetMinimal(UInt16 count)
 	{
+		Debug.Assert(count > 0);
 		if (count >= this._initial.Length && this._slots.IsEmpty)
 			return default;
+
 		ReadOnlySpan<BufferTypeMetadata<T>?> binarySpan;
-		switch (count)
+		Int32 relativeIndex = count;
+
+		if (count < this._initial.Length)
 		{
-			case >= 32768 when !this._slots.IsEmpty && this._slots[4] is { } page:
-				binarySpan = page.AsSpan();
-				count -= 32768;
-				break;
-			case >= 16384 when !this._slots.IsEmpty && this._slots[3] is { } page:
-				binarySpan = page.AsSpan();
-				count -= 16384;
-				break;
-			case >= 8192 when !this._slots.IsEmpty && this._slots[2] is { } page:
-				binarySpan = page.AsSpan();
-				count -= 8192;
-				break;
-			case >= 4096 when !this._slots.IsEmpty && this._slots[1] is { } page:
-				binarySpan = page.AsSpan();
-				count -= 4096;
-				break;
-			case >= 2048 when !this._slots.IsEmpty && this._slots[0] is { } page:
-				binarySpan = page.AsSpan();
-				count -= 2048;
-				break;
-			case < 2048:
-				binarySpan = this._initial;
-				break;
-			default:
-				return default;
+			binarySpan = this._initial;
+			goto Search;
 		}
-		foreach (BufferTypeMetadata<T>? val in binarySpan.Slice(count, Math.Min(binarySpan.Length - count, count)))
+
+		Int32 acc = this._initial.Length + 1;
+		foreach (BufferTypeMetadata<T>?[]? page in this._slots)
+		{
+			if (page is null)
+				return default;
+
+			if (count < acc + page.Length)
+			{
+				binarySpan = page;
+				relativeIndex = count - acc;
+				goto Search;
+			}
+
+			acc <<= 1;
+		}
+		return default;
+
+		Search:
+		Int32 length = Math.Min(binarySpan.Length - relativeIndex, relativeIndex);
+		foreach (BufferTypeMetadata<T>? val in binarySpan.Slice(relativeIndex, length))
 		{
 			if (val is not null)
 				return val;
@@ -116,16 +121,15 @@ internal readonly ref struct BinaryMap<T>
 	/// </returns>
 	private static Boolean IsAllowed(UInt16 count, UInt16 capacity, Span<BufferTypeMetadata<T>?[]?> slots)
 	{
-		if (slots.IsEmpty || slots[0] is null)
-			return count <= capacity;
-		if (slots[4] is not null)
-			return true;
-		if (slots[3] is not null)
-			return count <= 32767;
-		if (slots[2] is not null)
-			return count < 16383;
-		if (slots[1] is not null)
-			return count < 8191;
-		return count < 4095;
+		Debug.Assert(count > 0);
+		if (slots.IsEmpty || slots[0] is null) return count <= capacity;
+		UInt32 limit = capacity;
+		foreach (BufferTypeMetadata<T>?[]? page in slots)
+		{
+			if (page is null) break;
+			limit += (UInt32)page.Length;
+			if (limit >= UInt16.MaxValue) return true;
+		}
+		return count <= limit;
 	}
 }

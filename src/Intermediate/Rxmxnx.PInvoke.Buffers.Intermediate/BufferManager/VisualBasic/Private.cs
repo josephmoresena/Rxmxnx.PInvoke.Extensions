@@ -94,9 +94,14 @@ public static partial class BufferManager
 			BufferManager.Storage.PrintMetadata<Object>(!stackAlloc);
 #endif
 			if (stackAlloc)
-				VisualBasic.StackAllocObject(metadata!, count, action);
+			{
+				Debug.Assert(metadata is not null);
+				VisualBasic.StackAllocObject(metadata, count, action);
+			}
 			else
+			{
 				VisualBasic.AllocHeap(count, action);
+			}
 		}
 		/// <inheritdoc cref="BufferManager.AllocObject{T, TState}(UInt16, TState, ScopedBufferAction{T, TState}, Boolean)"/>
 #if !PACKAGE
@@ -127,9 +132,10 @@ public static partial class BufferManager
 #if !PACKAGE
 			BufferManager.Storage.PrintMetadata<Object>(!stackAlloc);
 #endif
-			return stackAlloc ?
-				VisualBasic.StackAllocObject(metadata!, count, func) :
-				VisualBasic.AllocHeap(count, func);
+			if (!stackAlloc)
+				return VisualBasic.AllocHeap(count, func);
+			Debug.Assert(metadata is not null);
+			return VisualBasic.StackAllocObject(metadata, count, func);
 		}
 		/// <inheritdoc
 		///     cref="BufferManager.AllocObject{T, TState, TResult}(UInt16, TState, ScopedBufferFunc{T, TState, TResult}, Boolean)"/>

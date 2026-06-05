@@ -101,11 +101,129 @@ internal static class MarvinCompat
 
 		unchecked
 		{
-			UInt32 seed0 = (UInt32)MarvinCompat.DefaultSeed!.Value;
+			Debug.Assert(MarvinCompat.DefaultSeed.HasValue);
+			UInt32 seed0 = (UInt32)MarvinCompat.DefaultSeed.Value;
 			UInt32 seed1 = (UInt32)(MarvinCompat.DefaultSeed.Value >> 32);
 			return MarvinCompat.ComputeUtf8Hash32(value, seed0, seed1);
 		}
 	}
+	/// <summary>
+	/// Compute a Marvin hash and collapse it into a 32-bit hash.
+	/// </summary>
+	/// <returns>A 32-bit signed integer hash code.</returns>
+#if NET5_0_OR_GREATER
+	[SkipLocalsInit]
+#endif
+	private static Int32 ComputeUtf8Hash32(ReadOnlySpan<Byte> value, UInt32 p0, UInt32 p1)
+	{
+		UInt32 count = 0;
+		Int32 carryOffset = 0;
+		Span<Char> buffer = stackalloc Char[5];
+		ref Byte utf16Data = ref Unsafe.As<Char, Byte>(ref MemoryMarshal.GetReference(buffer));
+		while (true)
+		{
+			Span<Char> destination = buffer.Slice(carryOffset, 5 - carryOffset);
+			Utf8.ToUtf16(value, destination, out Int32 bytesConsumed, out Int32 charsWritten);
+			UInt32 consumption = (UInt32)(2 * charsWritten);
+			value = value[bytesConsumed..];
+			count += consumption;
+
+			if (consumption + 2 * carryOffset < 8) break;
+			p0 += Unsafe.ReadUnaligned<UInt32>(ref utf16Data);
+#if !NETCOREAPP3_1_OR_GREATER
+			UInt32 nextUInt32 = Unsafe.ReadUnaligned<UInt32>(ref Unsafe.AddByteOffset(ref utf16Data, (IntPtr)4));
+#else
+			UInt32 nextUInt32 = Unsafe.ReadUnaligned<UInt32>(ref Unsafe.AddByteOffset(ref utf16Data, 4));
+#endif
+			MarvinCompat.Block(ref p0, ref p1);
+			p0 += nextUInt32;
+			MarvinCompat.Block(ref p0, ref p1);
+			if (charsWritten != destination.Length)
+			{
+				carryOffset = 0;
+				continue;
+			}
+			buffer[0] = buffer[^1];
+			carryOffset = 1;
+		}
+
+		if ((count & 0b_0100) == 0) goto DoFinalPartialRead;
+
+		p0 += Unsafe.ReadUnaligned<UInt32>(ref utf16Data);
+		MarvinCompat.Block(ref p0, ref p1);
+
+		DoFinalPartialRead:
+#if !NETCOREAPP3_1_OR_GREATER
+		UInt32 partialResult;
+		unchecked
+		{
+			partialResult =
+				Unsafe.ReadUnaligned<UInt32>(
+					ref Unsafe.Add(ref Unsafe.AddByteOffset(ref utf16Data, (IntPtr)(count & 7)), -4));
+		}
+#else
+#if !NET5_0_OR_GREATER
+		UIntPtr byteOffset = (UIntPtr)(count & 7);
+#else
+		UIntPtr byteOffset = count & 7;
+#endif
+		UInt32 partialResult =
+			Unsafe.ReadUnaligned<UInt32>(ref Unsafe.Add(ref Unsafe.AddByteOffset(ref utf16Data, byteOffset), -4));
+#endif
+		count = ~count << 3;
+		if (BitConverter.IsLittleEndian)
+		{
+			partialResult >>= 8;
+			partialResult |= 0x8000_0000u;
+			partialResult >>= (Int32)count & 0x1F;
+		}
+		else
+		{
+			partialResult <<= 8;
+			partialResult |= 0x80u;
+			partialResult <<= (Int32)count & 0x1F;
+		}
+
+		p0 += partialResult;
+		MarvinCompat.Block(ref p0, ref p1);
+		MarvinCompat.Block(ref p0, ref p1);
+
+		return (Int32)(p1 ^ p0);
+	}
+	/// <summary>
+	/// Executes a single Marvin hash mixing round on the specified state.
+	/// </summary>
+	/// <param name="rp0">The first state value.</param>
+	/// <param name="rp1">The second state value.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static void Block(ref UInt32 rp0, ref UInt32 rp1)
+	{
+		UInt32 p0 = rp0;
+		UInt32 p1 = rp1;
+
+		p1 ^= p0;
+		p0 = MarvinCompat.RotateLeft(p0, 20);
+
+		p0 += p1;
+		p1 = MarvinCompat.RotateLeft(p1, 9);
+
+		p1 ^= p0;
+		p0 = MarvinCompat.RotateLeft(p0, 27);
+
+		p0 += p1;
+		p1 = MarvinCompat.RotateLeft(p1, 19);
+
+		rp0 = p0;
+		rp1 = p1;
+	}
+	/// <summary>
+	/// Rotates the bits of a 32-bit unsigned integer to the left.
+	/// </summary>
+	/// <param name="value">The value whose bits are rotated.</param>
+	/// <param name="shift">The number of bit positions to rotate.</param>
+	/// <returns>The value resulting from the left bit rotation.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static UInt32 RotateLeft(UInt32 value, Int32 shift) => (value << shift) | (value >> (32 - shift));
 
 #if !PACKAGE || !NETCOREAPP
 	/// <summary>
@@ -121,9 +239,10 @@ internal static class MarvinCompat
 	{
 		unchecked
 		{
+			Debug.Assert(MarvinCompat.DefaultSeed.HasValue);
 			ref Byte refData0 = ref Unsafe.As<Char, Byte>(ref MemoryMarshal.GetReference(value));
 			UInt32 dataLength = (UInt32)value.Length * 2;
-			UInt32 seed0 = (UInt32)MarvinCompat.DefaultSeed!.Value;
+			UInt32 seed0 = (UInt32)MarvinCompat.DefaultSeed.Value;
 			UInt32 seed1 = (UInt32)(MarvinCompat.DefaultSeed.Value >> 32);
 			return MarvinCompat.ComputeUtf16Hash32(ref refData0, dataLength, seed0, seed1);
 		}
@@ -256,121 +375,4 @@ internal static class MarvinCompat
 		goto DoFinalRoundsAndReturn;
 	}
 #endif
-	/// <summary>
-	/// Compute a Marvin hash and collapse it into a 32-bit hash.
-	/// </summary>
-	/// <returns>A 32-bit signed integer hash code.</returns>
-#if NET5_0_OR_GREATER
-	[SkipLocalsInit]
-#endif
-	private static Int32 ComputeUtf8Hash32(ReadOnlySpan<Byte> value, UInt32 p0, UInt32 p1)
-	{
-		UInt32 count = 0;
-		Int32 carryOffset = 0;
-		Span<Char> buffer = stackalloc Char[5];
-		ref Byte utf16Data = ref Unsafe.As<Char, Byte>(ref MemoryMarshal.GetReference(buffer));
-		while (true)
-		{
-			Span<Char> destination = buffer.Slice(carryOffset, 5 - carryOffset);
-			Utf8.ToUtf16(value, destination, out Int32 bytesConsumed, out Int32 charsWritten);
-			UInt32 consumption = (UInt32)(2 * charsWritten);
-			value = value[bytesConsumed..];
-			count += consumption;
-
-			if (consumption + 2 * carryOffset < 8) break;
-			p0 += Unsafe.ReadUnaligned<UInt32>(ref utf16Data);
-#if !NETCOREAPP3_1_OR_GREATER
-			UInt32 nextUInt32 = Unsafe.ReadUnaligned<UInt32>(ref Unsafe.AddByteOffset(ref utf16Data, (IntPtr)4));
-#else
-			UInt32 nextUInt32 = Unsafe.ReadUnaligned<UInt32>(ref Unsafe.AddByteOffset(ref utf16Data, 4));
-#endif
-			MarvinCompat.Block(ref p0, ref p1);
-			p0 += nextUInt32;
-			MarvinCompat.Block(ref p0, ref p1);
-			if (charsWritten != destination.Length)
-			{
-				carryOffset = 0;
-				continue;
-			}
-			buffer[0] = buffer[^1];
-			carryOffset = 1;
-		}
-
-		if ((count & 0b_0100) == 0) goto DoFinalPartialRead;
-
-		p0 += Unsafe.ReadUnaligned<UInt32>(ref utf16Data);
-		MarvinCompat.Block(ref p0, ref p1);
-
-		DoFinalPartialRead:
-#if !NETCOREAPP3_1_OR_GREATER
-		UInt32 partialResult;
-		unchecked
-		{
-			partialResult =
-				Unsafe.ReadUnaligned<UInt32>(
-					ref Unsafe.Add(ref Unsafe.AddByteOffset(ref utf16Data, (IntPtr)(count & 7)), -4));
-		}
-#else
-#if !NET5_0_OR_GREATER
-		UIntPtr byteOffset = (UIntPtr)(count & 7);
-#else
-		UIntPtr byteOffset = count & 7;
-#endif
-		UInt32 partialResult =
-			Unsafe.ReadUnaligned<UInt32>(ref Unsafe.Add(ref Unsafe.AddByteOffset(ref utf16Data, byteOffset), -4));
-#endif
-		count = ~count << 3;
-		if (BitConverter.IsLittleEndian)
-		{
-			partialResult >>= 8;
-			partialResult |= 0x8000_0000u;
-			partialResult >>= (Int32)count & 0x1F;
-		}
-		else
-		{
-			partialResult <<= 8;
-			partialResult |= 0x80u;
-			partialResult <<= (Int32)count & 0x1F;
-		}
-
-		p0 += partialResult;
-		MarvinCompat.Block(ref p0, ref p1);
-		MarvinCompat.Block(ref p0, ref p1);
-
-		return (Int32)(p1 ^ p0);
-	}
-	/// <summary>
-	/// Executes a single Marvin hash mixing round on the specified state.
-	/// </summary>
-	/// <param name="rp0">The first state value.</param>
-	/// <param name="rp1">The second state value.</param>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void Block(ref UInt32 rp0, ref UInt32 rp1)
-	{
-		UInt32 p0 = rp0;
-		UInt32 p1 = rp1;
-
-		p1 ^= p0;
-		p0 = MarvinCompat.RotateLeft(p0, 20);
-
-		p0 += p1;
-		p1 = MarvinCompat.RotateLeft(p1, 9);
-
-		p1 ^= p0;
-		p0 = MarvinCompat.RotateLeft(p0, 27);
-
-		p0 += p1;
-		p1 = MarvinCompat.RotateLeft(p1, 19);
-
-		rp0 = p0;
-		rp1 = p1;
-	}
-	/// <summary>
-	/// Rotates the bits of a 32-bit unsigned integer to the left.
-	/// </summary>
-	/// <param name="value">The value whose bits are rotated.</param>
-	/// <param name="shift">The number of bit positions to rotate.</param>
-	/// <returns>The value resulting from the left bit rotation.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static UInt32 RotateLeft(UInt32 value, Int32 shift) => (value << shift) | (value >> (32 - shift));
 }

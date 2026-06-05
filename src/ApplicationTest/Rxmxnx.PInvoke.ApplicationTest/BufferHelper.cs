@@ -16,17 +16,22 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 	internal static class BufferHelper
 	{
 		public static readonly Action RegisterMetadataObject = BufferHelper
-			.GetRegister<Composite<Atomic<Object>, Composite<Atomic<Object>, Atomic<Object>, Object>, Object>>();
+			.GetRegister<Composite<Atomic<Object>, Composite<Composite<Atomic<Object>, Atomic<Object>, Object>,
+				Composite<Atomic<Object>, Atomic<Object>, Object>, Object>, Object>>();
 		public static readonly Action RegisterMetadataValue = BufferHelper
-			.GetRegister<
-				Composite<Atomic<ValueTuple<Int32, String>>,
+			.GetRegister<Composite<Atomic<ValueTuple<Int32, String>>, Composite<
 					Composite<Atomic<ValueTuple<Int32, String>>, Atomic<ValueTuple<Int32, String>>,
-						ValueTuple<Int32, String>>, ValueTuple<Int32, String>>, ValueTuple<Int32, String>>();
+						ValueTuple<Int32, String>>,
+					Composite<Atomic<ValueTuple<Int32, String>>, Atomic<ValueTuple<Int32, String>>,
+						ValueTuple<Int32, String>>, ValueTuple<Int32, String>>, ValueTuple<Int32, String>>,
+				ValueTuple<Int32, String>>();
 		public static readonly Action RegisterMetadataNullableValue = BufferHelper
-			.GetNullableRegister<
-				Composite<Atomic<ValueTuple<Int32, String>?>,
+			.GetNullableRegister<Composite<Atomic<ValueTuple<Int32, String>?>, Composite<
 					Composite<Atomic<ValueTuple<Int32, String>?>, Atomic<ValueTuple<Int32, String>?>,
-						ValueTuple<Int32, String>?>, ValueTuple<Int32, String>?>, ValueTuple<Int32, String>>();
+						ValueTuple<Int32, String>?>,
+					Composite<Atomic<ValueTuple<Int32, String>?>, Atomic<ValueTuple<Int32, String>?>,
+						ValueTuple<Int32, String>?>, ValueTuple<Int32, String>?>, ValueTuple<Int32, String>?>,
+				ValueTuple<Int32, String>>();
 
 		public static void CollectGarbage()
 		{

@@ -3,6 +3,9 @@ namespace Rxmxnx.PInvoke.Internal.Bootstrap;
 /// <summary>
 /// Internal object store with 2^5-1 binary space.
 /// </summary>
+#if !PACKAGE
+[ExcludeFromCodeCoverage]
+#endif
 internal sealed class ObjectMetadataStorage31 : G31<Object>, IBootstrapMetadataStorage
 {
 	/// <summary>
@@ -15,7 +18,10 @@ internal sealed class ObjectMetadataStorage31 : G31<Object>, IBootstrapMetadataS
 	{
 		ValidationUtilities.ThrowIfInvalidSequenceIndex(capacity - 1, this.Capacity);
 		if (typeof(T) == typeof(Object))
-			return new(instance!);
+		{
+			Debug.Assert(instance is not null);
+			return new(instance);
+		}
 		if (instance is null || instance.Capacity < capacity)
 			instance = new ValueMetadataStorage31<T>();
 		return new(instance);
@@ -25,6 +31,9 @@ internal sealed class ObjectMetadataStorage31 : G31<Object>, IBootstrapMetadataS
 /// <summary>
 /// Internal object store with 2^7-1 binary space.
 /// </summary>
+#if !PACKAGE
+[ExcludeFromCodeCoverage]
+#endif
 internal sealed class ObjectMetadataStorage127 : G127<Object>, IBootstrapMetadataStorage
 {
 	/// <summary>
@@ -37,7 +46,10 @@ internal sealed class ObjectMetadataStorage127 : G127<Object>, IBootstrapMetadat
 	{
 		ValidationUtilities.ThrowIfInvalidSequenceIndex(capacity - 1, this.Capacity);
 		if (typeof(T) == typeof(Object))
-			return new(instance!);
+		{
+			Debug.Assert(instance is not null);
+			return new(instance);
+		}
 		if (instance is null || instance.Capacity < capacity)
 			instance = capacity switch
 			{
@@ -53,17 +65,11 @@ internal sealed class ObjectMetadataStorage127 : G127<Object>, IBootstrapMetadat
 /// </summary>
 internal sealed class ObjectMetadataStorage2047 : G2047<Object>, IBootstrapMetadataStorage
 {
-	/// <inheritdoc/>
-	public override BufferTypeMetadata<Object>?[]?[] Slots { get; }
-
 	/// <summary>
 	/// Parameterless constructor.
 	/// </summary>
-	public ObjectMetadataStorage2047(Boolean withSlots)
-	{
-		MetadataStorage.Initialize(this, this.TypeMetadata);
-		this.Slots = withSlots ? new BufferTypeMetadata<Object>?[]?[5] : [];
-	}
+	public ObjectMetadataStorage2047(Boolean withSlots) : base(withSlots)
+		=> MetadataStorage.Initialize(this, this.TypeMetadata);
 
 	/// <inheritdoc/>
 	public BinaryMap<T> GetBinaryMap<T>(UInt16 capacity, ref MetadataStorage<T>? instance, Boolean prepareSlots)
@@ -72,8 +78,9 @@ internal sealed class ObjectMetadataStorage2047 : G2047<Object>, IBootstrapMetad
 		                                                this.Slots.Length == 0 ? this.Capacity : UInt16.MaxValue);
 		if (typeof(T) == typeof(Object))
 		{
+			Debug.Assert(instance is not null);
 			this.PrepareFor(capacity);
-			return new(instance!);
+			return new(instance);
 		}
 		if (instance is null || instance.Capacity < capacity)
 			instance = capacity switch
