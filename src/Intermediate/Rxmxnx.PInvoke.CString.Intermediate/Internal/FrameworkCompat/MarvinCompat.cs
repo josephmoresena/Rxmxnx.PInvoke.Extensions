@@ -107,6 +107,29 @@ internal static class MarvinCompat
 			return MarvinCompat.ComputeUtf8Hash32(value, seed0, seed1);
 		}
 	}
+
+#if !PACKAGE || !NETCOREAPP
+	/// <summary>
+	/// Returns the hash code for the provided read-only character span.
+	/// </summary>
+	/// <param name="value">A read-only character span.</param>
+	/// <returns>A 32-bit signed integer hash code.</returns>
+#if !PACKAGE
+	public static Int32 GetHashCode(ReadOnlySpan<Char> value)
+#else
+	private static Int32 GetHashCode(ReadOnlySpan<Char> value)
+#endif
+	{
+		unchecked
+		{
+			Debug.Assert(MarvinCompat.DefaultSeed.HasValue);
+			ref Byte refData0 = ref Unsafe.As<Char, Byte>(ref MemoryMarshal.GetReference(value));
+			UInt32 dataLength = (UInt32)value.Length * 2;
+			UInt32 seed0 = (UInt32)MarvinCompat.DefaultSeed.Value;
+			UInt32 seed1 = (UInt32)(MarvinCompat.DefaultSeed.Value >> 32);
+			return MarvinCompat.ComputeUtf16Hash32(ref refData0, dataLength, seed0, seed1);
+		}
+	}
 	/// <summary>
 	/// Compute a Marvin hash and collapse it into a 32-bit hash.
 	/// </summary>
@@ -224,29 +247,6 @@ internal static class MarvinCompat
 	/// <returns>The value resulting from the left bit rotation.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static UInt32 RotateLeft(UInt32 value, Int32 shift) => (value << shift) | (value >> (32 - shift));
-
-#if !PACKAGE || !NETCOREAPP
-	/// <summary>
-	/// Returns the hash code for the provided read-only character span.
-	/// </summary>
-	/// <param name="value">A read-only character span.</param>
-	/// <returns>A 32-bit signed integer hash code.</returns>
-#if !PACKAGE
-	public static Int32 GetHashCode(ReadOnlySpan<Char> value)
-#else
-	private static Int32 GetHashCode(ReadOnlySpan<Char> value)
-#endif
-	{
-		unchecked
-		{
-			Debug.Assert(MarvinCompat.DefaultSeed.HasValue);
-			ref Byte refData0 = ref Unsafe.As<Char, Byte>(ref MemoryMarshal.GetReference(value));
-			UInt32 dataLength = (UInt32)value.Length * 2;
-			UInt32 seed0 = (UInt32)MarvinCompat.DefaultSeed.Value;
-			UInt32 seed1 = (UInt32)(MarvinCompat.DefaultSeed.Value >> 32);
-			return MarvinCompat.ComputeUtf16Hash32(ref refData0, dataLength, seed0, seed1);
-		}
-	}
 	/// <summary>
 	/// Compute a Marvin hash and collapse it into a 32-bit hash.
 	/// </summary>

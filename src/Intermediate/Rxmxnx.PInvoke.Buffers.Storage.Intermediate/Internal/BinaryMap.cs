@@ -66,6 +66,8 @@ internal readonly ref struct BinaryMap<T>
 	/// <returns>A <see cref="BufferTypeMetadata"/> instance.</returns>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS907)]
 #endif
 	public BufferTypeMetadata<T>? GetMinimal(UInt16 count)
 	{

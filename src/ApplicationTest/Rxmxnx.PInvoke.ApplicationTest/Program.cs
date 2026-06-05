@@ -59,28 +59,35 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			BufferManager.Alloc<Double?>(5, BufferHelper.Generate);
 			Console.WriteLine("=== Stack alloc [String] ===");
 			BufferManager.Alloc<String?>(3, BufferHelper.Generate);
+			BufferManager.Alloc<String?>(5, BufferHelper.Generate);
+			if (AotInfo.IsNativeAot)
+				BufferManager.Alloc<String?>(5, BufferHelper.Generate, true);
 			if (!BufferManager.BufferAutoCompositionEnabled)
 			{
 				BufferHelper.RegisterMetadataObject();
 				BufferManager.Alloc<String?>(3, BufferHelper.Generate);
 			}
-			BufferManager.Alloc<String?>(5, BufferHelper.Generate);
 			Console.WriteLine("=== Stack alloc [(Int32, String)] ===");
 			BufferManager.Alloc<ValueTuple<Int32, String>>(3, BufferHelper.Generate);
+			BufferManager.Alloc<ValueTuple<Int32, String>>(5, BufferHelper.Generate);
+			if (AotInfo.IsNativeAot)
+				BufferManager.Alloc<ValueTuple<Int32, String>>(5, BufferHelper.Generate, true);
 			if (!BufferManager.BufferAutoCompositionEnabled)
 			{
 				BufferHelper.RegisterMetadataValue();
-				BufferManager.Alloc<ValueTuple<Int32, String>>(3, BufferHelper.Generate);
+				BufferManager.Alloc<ValueTuple<Int32, String>>(5, BufferHelper.Generate);
 			}
-			BufferManager.Alloc<ValueTuple<Int32, String>>(5, BufferHelper.Generate);
 			Console.WriteLine("=== Stack alloc [(Int32, String)?] ===");
 			BufferManager.Alloc<ValueTuple<Int32, String>?>(3, BufferHelper.Generate);
+			BufferManager.Alloc<ValueTuple<Int32, String>?>(5, BufferHelper.Generate);
+			if (AotInfo.IsNativeAot)
+				BufferManager.Alloc<ValueTuple<Int32, String>?>(5, BufferHelper.Generate, true);
+			// ReSharper disable once InvertIf
 			if (!BufferManager.BufferAutoCompositionEnabled)
 			{
 				BufferHelper.RegisterMetadataNullableValue();
 				BufferManager.Alloc<ValueTuple<Int32, String>?>(3, BufferHelper.Generate);
 			}
-			BufferManager.Alloc<ValueTuple<Int32, String>?>(5, BufferHelper.Generate);
 		}
 		private static void UnicodeFeature()
 		{
