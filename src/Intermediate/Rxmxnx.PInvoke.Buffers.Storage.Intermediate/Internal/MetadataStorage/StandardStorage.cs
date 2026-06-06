@@ -26,10 +26,6 @@ internal static partial class MetadataStorage
 		public sealed override ref BufferTypeMetadata<T>? MetadataReference
 			=> ref MemoryMarshal.GetReference(this._initial.AsSpan());
 
-#if !PACKAGE
-		BufferTypeMetadata<T>?[]?[] IBinarySlotsOwner<T>.Slots => this._slots;
-#endif
-
 		/// <summary>
 		/// Parameterless constructor.
 		/// </summary>
@@ -39,6 +35,10 @@ internal static partial class MetadataStorage
 			this._initial = new BufferTypeMetadata<T>?[2047];
 			this._slots = new BufferTypeMetadata<T>[]?[5];
 		}
+
+#if !PACKAGE
+		BufferTypeMetadata<T>?[]?[] IBinarySlotsOwner<T>.Slots => this._slots;
+#endif
 
 		/// <summary>
 		/// Defines an implicit conversion of a given <see cref="StandardStorage{T}"/> to a <see cref="BinaryMap{T}"/>.
@@ -75,7 +75,10 @@ internal static partial class MetadataStorage
 				this.PrepareFor(capacity);
 				return (StandardStorage<T>)instance;
 			}
-			instance ??= new StandardStorage<T>().PrepareFor(capacity);
+			if (instance is StandardStorage<T> standard)
+				standard.PrepareFor(capacity);
+			else
+				instance = new StandardStorage<T>().PrepareFor(capacity);
 			return (StandardStorage<T>)instance;
 		}
 	}

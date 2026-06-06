@@ -53,7 +53,12 @@ internal sealed class BufferTypeMetadata<[DynamicallyAccessedMembers(BuffersHelp
 	internal override void AppendComponent(IMetadataStorage storage)
 	{
 #if !NET7_0_OR_GREATER
-		Debug.Assert(this._appendComponents is not null);
+		if (this._appendComponents is null)
+		{
+			// Non-Binary buffer.
+			base.AppendComponent(storage);
+			return;
+		}
 		this._appendComponents(storage);
 #else
 		TBuffer.AppendComponent(storage);
