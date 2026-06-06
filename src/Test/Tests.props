@@ -1,8 +1,8 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
     <PropertyGroup>
-        <TargetFrameworks Condition="'$(MultipleFrameworkTest)' == 'true'">$(DefaultFramework);netstandard2.1</TargetFrameworks>
-        <TargetFrameworks Condition="'$(MultipleFrameworkTest)' != 'true'">$(DefaultFrameworks);net8.0;net7.0;net6.0</TargetFrameworks>
+        <TargetFrameworks Condition="'$(MultipleFrameworkTest)' != 'true'">$(DefaultFramework);netstandard2.1</TargetFrameworks>
+        <TargetFrameworks Condition="'$(MultipleFrameworkTest)' == 'true'">$(DefaultFrameworks);net8.0;net7.0;net6.0</TargetFrameworks>
         <TargetFrameworks Condition="'$(MultipleFrameworkTest)' == 'true' And '$(OnlySupportedFrameworkTest)' != 'true'">$(TargetFrameworks);net5.0;netcoreapp3.1;netcoreapp3.0;netstandard2.1</TargetFrameworks>
         <TargetFrameworks Condition="'$(MultipleFrameworkTest)' == 'true' And '$(OnlySupportedFrameworkTest)' == 'true'">$(TargetFrameworks);netstandard2.1</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
