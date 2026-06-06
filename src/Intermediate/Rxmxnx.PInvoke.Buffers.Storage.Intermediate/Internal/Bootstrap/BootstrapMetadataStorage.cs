@@ -1,4 +1,4 @@
-#if !NET8_0_OR_GREATER
+#if !PACKAGE && !NET8_0_OR_GREATER
 // ReSharper disable EmptyNamespace
 [assembly: SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3261)]
 #endif
