@@ -39,15 +39,24 @@ internal readonly ref struct BinaryMap<T>
 			return ref page.AsSpan()[size - acc];
 		}
 	}
-
+#if NET8_0_OR_GREATER
 	/// <summary>
 	/// Constructor.
 	/// </summary>
 	/// <param name="instance">A <see cref="MetadataStorage{T}"/> instance.</param>
-	public BinaryMap(MetadataStorage<T> instance)
+	public BinaryMap(MetadataStorage<T> instance) : this(
+		MemoryMarshal.CreateSpan(ref instance.MetadataReference, instance.Capacity),
+		instance is G2047<T> g2047 ? g2047.Slots.AsSpan() : []) { }
+#endif
+	/// <summary>
+	/// Constructor.
+	/// </summary>
+	/// <param name="initial">Initial 2^N-1 span.</param>
+	/// <param name="slots">Slots 2^N..2^15 span.</param>
+	public BinaryMap(Span<BufferTypeMetadata<T>?> initial, Span<BufferTypeMetadata<T>?[]?> slots)
 	{
-		this._initial = MemoryMarshal.CreateSpan(ref instance.MetadataReference, instance.Capacity);
-		this._slots = instance is G2047<T> g2047 ? g2047.Slots.AsSpan() : [];
+		this._initial = initial;
+		this._slots = slots;
 	}
 
 	/// <summary>

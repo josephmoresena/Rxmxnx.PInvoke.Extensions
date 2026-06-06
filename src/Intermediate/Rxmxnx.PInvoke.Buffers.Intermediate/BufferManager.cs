@@ -8,7 +8,11 @@ public static partial class BufferManager
 	/// <summary>
 	/// Current <see cref="IMetadataStorage"/> instance.
 	/// </summary>
-	internal static readonly IMetadataStorage Storage = MetadataStorage.Instance;
+	internal static IMetadataStorage Storage
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => MetadataStorage.Instance;
+	}
 	/// <summary>
 	/// Indicates whether metadata for any required buffer is auto-composed.
 	/// </summary>
@@ -16,13 +20,16 @@ public static partial class BufferManager
 	[ExcludeFromCodeCoverage]
 #endif
 	public static Boolean BufferAutoCompositionEnabled => BuffersHelper.BufferAutoCompositionEnabled;
+#if NET8_0_OR_GREATER
 	/// <summary>
 	/// Maximum capacity of the buffers.
 	/// </summary>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	public static UInt16 MaxCapacity => MetadataStorage.MaxCapacity;
+	public static UInt16 MaxCapacity
+		=> MetadataStorage.MaxCapacity == 0 ? UInt16.MaxValue : MetadataStorage.MaxCapacity;
+#endif
 
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="action"/>.

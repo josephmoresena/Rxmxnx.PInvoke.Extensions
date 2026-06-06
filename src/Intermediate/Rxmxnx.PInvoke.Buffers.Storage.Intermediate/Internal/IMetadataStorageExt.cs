@@ -3,7 +3,7 @@ namespace Rxmxnx.PInvoke.Internal;
 /// <summary>
 /// Exposes a buffer metadata store.
 /// </summary>
-internal interface IBootstrapMetadataStorage : IMetadataStorage
+internal interface IMetadataStorageExt : IMetadataStorage
 {
 	void IMetadataStorage.RegisterBuffer<T,
 		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBuffer>()

@@ -27,8 +27,11 @@
         <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
         <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
         <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
+        <IsLtsFramework Condition="'$(TargetFramework)' == 'net6.0'">true</IsLtsFramework>
+        <IsLtsFramework Condition="'$(TargetFramework)' == 'net8.0'">true</IsLtsFramework>
+        <IsLtsFramework Condition="'$(TargetFramework)' == 'net10.0'">true</IsLtsFramework>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(TargetFramework)' == '$(DefaultFramework)'">
+    <PropertyGroup Condition="'$(IsLtsFramework)' == 'true'">
         <IlcGenerateMetadataLog>true</IlcGenerateMetadataLog>
         <IlcGenerateMstatFile>true</IlcGenerateMstatFile>
         <IlcGenerateDgmlFile>true</IlcGenerateDgmlFile>

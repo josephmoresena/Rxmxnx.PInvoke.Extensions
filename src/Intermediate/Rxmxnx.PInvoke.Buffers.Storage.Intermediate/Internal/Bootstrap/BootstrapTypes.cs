@@ -1,3 +1,4 @@
+#if NET8_0_OR_GREATER
 using O = System.Object;
 using O1 = Rxmxnx.PInvoke.Buffers.Atomic<System.Object>;
 using O2 =
@@ -201,13 +202,13 @@ namespace Rxmxnx.PInvoke.Internal.Bootstrap;
 /// <summary>
 /// Internal store with 2^5-1 binary space.
 /// </summary>
-internal abstract class G31<T> : MetadataStorage<Composite<
+internal abstract class G31<T> : BootstrapMetadataStorage<Composite<
 	Composite<Composite<Composite<O1, O2, O>, O4, O>, O8, O>, O16, O>, T>;
 
 /// <summary>
 /// Internal store with 2^7-1 binary space.
 /// </summary>
-internal abstract class G127<T> : MetadataStorage<Composite<
+internal abstract class G127<T> : BootstrapMetadataStorage<Composite<
 	Composite<Composite<Composite<Composite<Composite<O1, O2, O>, O4, O>, O8, O>, O16, O>, O32, O>, O64, O>, T>;
 
 /// <summary>
@@ -217,18 +218,21 @@ internal abstract class G127<T> : MetadataStorage<Composite<
 [ExcludeFromCodeCoverage]
 #endif
 internal abstract class G2047<T>(Boolean withSlots)
-	: MetadataStorage<Composite<
-		Composite<Composite<
-				Composite<Composite<Composite<
-					Composite<Composite<Composite<Composite<O1, O2, O>, O4, O>, O8, O>, O16, O>,
-					O32, O>, O64, O>, Composite<O64, O64, O>, O>,
-				Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>,
-			Composite<Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>,
-				Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>, O>, Composite<
-			Composite<Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>,
-				Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>, Composite<
-				Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>,
-				Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>, O>, O>, T>
+	: BootstrapMetadataStorage<Composite<
+			Composite<Composite<
+					Composite<Composite<Composite<
+							Composite<Composite<Composite<Composite<O1, O2, O>, O4, O>, O8, O>, O16, O>, O32, O>, O64,
+						O>,
+						Composite<O64, O64, O>, O>, Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>,
+				Composite<Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>,
+					Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>, O>, Composite<
+				Composite<Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>,
+					Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>, Composite<
+					Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>,
+					Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>, O>, O>, T>
+#if !PACKAGE
+		, IBinarySlotsOwner<T>
+#endif
 {
 	/// <summary>
 	/// Additional slots.
@@ -249,3 +253,4 @@ internal abstract class G2047<T>(Boolean withSlots)
 		return this;
 	}
 }
+#endif

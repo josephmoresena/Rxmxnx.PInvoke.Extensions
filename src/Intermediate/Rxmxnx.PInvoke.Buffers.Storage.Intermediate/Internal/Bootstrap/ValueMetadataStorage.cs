@@ -1,3 +1,4 @@
+#if NET8_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal.Bootstrap;
 
 /// <summary>
@@ -14,3 +15,4 @@ internal sealed class ValueMetadataStorage127<T> : G127<T>;
 /// Internal value store with 2^11-1 binary space.
 /// </summary>
 internal sealed class ValueMetadataStorage2047<T>(Boolean withSlots) : G2047<T>(withSlots);
+#endif

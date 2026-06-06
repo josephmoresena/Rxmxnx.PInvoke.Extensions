@@ -1,5 +1,6 @@
 <linker>
     <assembly fullname="Rxmxnx.PInvoke.Buffers.Storage.Intermediate">
+        <!-- These features are only available on .NET 8.0 and later -->
         <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage"
               feature="PInvoke.MaxBufferCapacity31"
               featurevalue="true">
@@ -14,6 +15,11 @@
               feature="PInvoke.MaxBufferCapacity2047"
               featurevalue="true">
             <method signature="System.Boolean get_MaxCapacity()" body="stub" value="2047"/>
+        </type>
+        <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage"
+              feature="PInvoke.ClassicBufferStorage"
+              featurevalue="true">
+            <method signature="System.Boolean get_MaxCapacity()" body="stub" value="0"/>
         </type>
     </assembly>
 </linker>

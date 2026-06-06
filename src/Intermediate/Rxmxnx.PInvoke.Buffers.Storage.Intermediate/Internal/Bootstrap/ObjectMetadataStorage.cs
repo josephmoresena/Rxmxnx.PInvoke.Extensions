@@ -1,3 +1,4 @@
+#if NET8_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal.Bootstrap;
 
 /// <summary>
@@ -6,7 +7,7 @@ namespace Rxmxnx.PInvoke.Internal.Bootstrap;
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
 #endif
-internal sealed class ObjectMetadataStorage31 : G31<Object>, IBootstrapMetadataStorage
+internal sealed class ObjectMetadataStorage31 : G31<Object>, IMetadataStorageExt
 {
 	/// <summary>
 	/// Parameterless constructor.
@@ -34,7 +35,7 @@ internal sealed class ObjectMetadataStorage31 : G31<Object>, IBootstrapMetadataS
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
 #endif
-internal sealed class ObjectMetadataStorage127 : G127<Object>, IBootstrapMetadataStorage
+internal sealed class ObjectMetadataStorage127 : G127<Object>, IMetadataStorageExt
 {
 	/// <summary>
 	/// Parameterless constructor.
@@ -63,7 +64,7 @@ internal sealed class ObjectMetadataStorage127 : G127<Object>, IBootstrapMetadat
 /// <summary>
 /// Internal object store with 2^11-1 binary space.
 /// </summary>
-internal sealed class ObjectMetadataStorage2047 : G2047<Object>, IBootstrapMetadataStorage
+internal sealed class ObjectMetadataStorage2047 : G2047<Object>, IMetadataStorageExt
 {
 	/// <summary>
 	/// Parameterless constructor.
@@ -93,3 +94,4 @@ internal sealed class ObjectMetadataStorage2047 : G2047<Object>, IBootstrapMetad
 		return new(instance);
 	}
 }
+#endif

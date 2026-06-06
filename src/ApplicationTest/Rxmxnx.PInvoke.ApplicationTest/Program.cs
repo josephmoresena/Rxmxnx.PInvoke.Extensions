@@ -65,8 +65,12 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			if (!BufferManager.BufferAutoCompositionEnabled)
 			{
 				BufferHelper.RegisterMetadataObject();
-				BufferManager.Alloc<String?>(3, BufferHelper.Generate);
+				BufferManager.Alloc<String?>(5, BufferHelper.Generate);
 			}
+#if !NET8_0_OR_GREATER
+			if (AotInfo.IsNativeAot && SystemInfo.IsMonoRuntime)
+				BufferManager.Alloc<String?>(15, BufferHelper.Generate);
+#endif
 			Console.WriteLine("=== Stack alloc [(Int32, String)] ===");
 			BufferManager.Alloc<ValueTuple<Int32, String>>(3, BufferHelper.Generate);
 			BufferManager.Alloc<ValueTuple<Int32, String>>(5, BufferHelper.Generate);

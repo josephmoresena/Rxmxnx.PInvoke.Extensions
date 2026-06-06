@@ -6,13 +6,21 @@ namespace Rxmxnx.PInvoke.Internal;
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
 #endif
-internal static class MetadataStorage
+internal static partial class MetadataStorage
 {
 	/// <summary>
 	/// Singleton instance.
 	/// </summary>
-	public static readonly IBootstrapMetadataStorage Instance = MetadataStorage.MaxCapacity switch
+#if !NET8_0_OR_GREATER
+	public static readonly IMetadataStorageExt Instance = new ObjectStandardStorage();
+	/// <summary>
+	/// Maximum capacity of the buffers.
+	/// </summary>
+	public static UInt16 MaxCapacity => 0; // Standard storage.
+#else
+	public static readonly IMetadataStorageExt Instance = MetadataStorage.MaxCapacity switch
 	{
+		0 => new ObjectStandardStorage(),
 		31 => new ObjectMetadataStorage31(),
 		127 => new ObjectMetadataStorage127(),
 		2047 => new ObjectMetadataStorage2047(false),
@@ -22,6 +30,7 @@ internal static class MetadataStorage
 	/// Maximum capacity of the buffers.
 	/// </summary>
 	public static UInt16 MaxCapacity => UInt16.MaxValue;
+#endif
 
 	/// <summary>
 	/// Initializes a <see cref="MetadataStorage{T}"/> instance.
@@ -168,10 +177,10 @@ internal abstract partial class MetadataStorage<T>
 	[ExcludeFromCodeCoverage]
 	public static ReadOnlySpan<BufferTypeMetadata<T>?[]> GetBinarySlots()
 	{
-		if (MetadataStorage<T>.instance is not G2047<T> g2047) return default;
-		BufferTypeMetadata<T>?[][] result = new BufferTypeMetadata<T>?[g2047.Slots.Length][];
+		if ((MetadataStorage<T>.instance as IBinarySlotsOwner<T>)?.Slots is not { } slots) return default;
+		BufferTypeMetadata<T>?[][] result = new BufferTypeMetadata<T>?[slots.Length][];
 		for (Int32 i = 0; i < result.Length; i++)
-			result[i] = g2047.Slots[i] ?? [];
+			result[i] = slots[i] ?? [];
 		return result.AsSpan();
 	}
 #endif
