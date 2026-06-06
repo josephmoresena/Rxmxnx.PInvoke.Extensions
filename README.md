@@ -3871,6 +3871,14 @@ This class allows to allocate buffers on stack if possible.
   **Note:** This property will always be false if compiled with `IlcDisableReflection=true` or if the
   `PInvoke.DisableBufferAutoComposition` feature switch is enabled.
   </details>
+- <details>
+  <summary>MaxBinarySize</summary>
+  Maximum supported binary buffer size at runtime. 
+
+  **Note:** This property always returns `UInt16.MaxValue` on platforms where runtime capacity limits are unsupported.
+  On .NET 8.0 and later, its value may be affected by the `PInvoke.MaxBufferCapacity31`, `PInvoke.MaxBufferCapacity127`,
+  and `PInvoke.MaxBufferCapacity2047` feature switches.
+  </details>
 
 #### Static Methods:
 

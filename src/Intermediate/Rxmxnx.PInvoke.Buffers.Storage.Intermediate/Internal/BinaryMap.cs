@@ -31,12 +31,12 @@ internal readonly ref struct BinaryMap<T>
 			Int32 acc = this._initial.Length + 1;
 			do
 			{
-				if (Unsafe.IsNullRef(ref page) || page is null) return ref Unsafe.NullRef<BufferTypeMetadata<T>?>();
+				Debug.Assert(page is not null);
 				if (size < page.Length + acc) break;
 				page = ref Unsafe.Add(ref page, 1)!;
 				acc *= 2;
 			} while (size > acc);
-			return ref page.AsSpan()[size - acc];
+			return ref Unsafe.Add(ref MemoryMarshal.GetReference(page), size - acc);
 		}
 	}
 #if NET8_0_OR_GREATER

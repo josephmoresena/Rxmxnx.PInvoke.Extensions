@@ -21,6 +21,7 @@ internal abstract partial class MetadataStorage<T>
 	[ExcludeFromCodeCoverage]
 #endif
 	protected MetadataStorage() => Interlocked.CompareExchange(ref MetadataStorage<T>.instance, this, null);
+#if NET8_0_OR_GREATER
 	/// <summary>
 	/// Constructor.
 	/// </summary>
@@ -29,4 +30,5 @@ internal abstract partial class MetadataStorage<T>
 		=> source = Interlocked.CompareExchange(ref MetadataStorage<T>.instance, this, null) is { } original ?
 			MemoryMarshal.CreateReadOnlySpan(ref original.MetadataReference, original.Capacity) :
 			default;
+#endif
 }

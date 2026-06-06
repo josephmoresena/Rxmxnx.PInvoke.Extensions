@@ -21,5 +21,6 @@
               featurevalue="true">
             <method signature="System.Boolean get_MaxCapacity()" body="stub" value="0"/>
         </type>
+        <!-- End -->
     </assembly>
 </linker>

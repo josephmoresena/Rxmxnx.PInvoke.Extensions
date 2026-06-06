@@ -1,7 +1,7 @@
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
-/// Bootstrap storage class.
+/// Metadata storage utility class.
 /// </summary>
 #if !PACKAGE
 [ExcludeFromCodeCoverage]

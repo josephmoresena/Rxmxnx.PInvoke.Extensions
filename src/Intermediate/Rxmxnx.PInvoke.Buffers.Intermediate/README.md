@@ -106,3 +106,32 @@ There are three buffer registration options:
 
 Binary buffers can be statically prepared for a given count number elements. This method requires the use of reflection
 and relies on the auto-composition feature.
+
+## Buffer metadata storage
+
+Until version 2.9.0 of `Rxmxnx.PInvoke.Extensions`, there was only a single mechanism for storing managed buffer
+metadata.
+
+After several optimizations were introduced, a new storage system was implemented for .NET 8.0 and later that leverages
+the managed buffer infrastructure itself. However, to provide alternatives better suited to different application
+requirements, the following feature switches were introduced:
+
+* `PInvoke.MaxBufferCapacity31`: Restricts buffer storage and composition to a maximum binary capacity of 31 elements,
+  with a binary space limit of 2<sup>5</sup> + 2<sup>4</sup> + 2<sup>3</sup> + 2<sup>2</sup> + 2<sup>1</sup> + 2<sup>
+  0</sup>.
+* `PInvoke.MaxBufferCapacity127`: Restricts buffer storage and composition to a maximum binary capacity of 127 elements,
+  with a binary space limit of 2<sup>6</sup> + 2<sup>5</sup> + 2<sup>4</sup> + 2<sup>3</sup> + 2<sup>2</sup> + 2<sup>
+  1</sup> + 2<sup>0</sup>.
+* `PInvoke.MaxBufferCapacity2047`: Restricts buffer storage and composition to a maximum binary capacity of 2047
+  elements, with a binary space limit of 2<sup>10</sup> + 2<sup>9</sup> + 2<sup>8</sup> + 2<sup>7</sup> + 2<sup>
+  6</sup> + 2<sup>5</sup> + 2<sup>4</sup> + 2<sup>3</sup> + 2<sup>2</sup> + 2<sup>1</sup> + 2<sup>0</sup>.
+* `PInvoke.ClassicBufferStorage`: Uses the storage mechanism implemented for assemblies targeting earlier framework
+  versions. In other words, a storage system that is not based on the managed buffer infrastructure itself.
+
+**Notes:**
+
+- By default, on .NET 8.0 and later, the storage system uses a managed-buffer-based binary space of 2047 elements, while
+  still allowing extension to support larger binary metadata capacities.
+- Storage systems based on managed buffer binary spaces of 2<sup>N</sup> - 1 elements preload `2N - 1` buffer metadata
+  instances; specifically, metadata ranging from 2<sup>N</sup> - 1 down to 2<sup>2</sup> - 1, plus additional metadata
+  from 2<sup>N-1</sup> down to 2<sup>0</sup>. This behavior is particularly beneficial for AOT compilations.

@@ -20,14 +20,16 @@ public static partial class BufferManager
 	[ExcludeFromCodeCoverage]
 #endif
 	public static Boolean BufferAutoCompositionEnabled => BuffersHelper.BufferAutoCompositionEnabled;
-#if NET8_0_OR_GREATER
 	/// <summary>
-	/// Maximum capacity of the buffers.
+	/// Maximum supported binary buffer size at runtime.
 	/// </summary>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	public static UInt16 MaxCapacity
+	public static UInt16 MaxBinarySize
+#if !NET8_0_OR_GREATER
+		=> UInt16.MaxValue;
+#else
 		=> MetadataStorage.MaxCapacity == 0 ? UInt16.MaxValue : MetadataStorage.MaxCapacity;
 #endif
 

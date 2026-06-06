@@ -80,13 +80,15 @@ internal sealed class ObjectMetadataStorage2047 : G2047<Object>, IMetadataStorag
 		if (typeof(T) == typeof(Object))
 		{
 			Debug.Assert(instance is not null);
-			this.PrepareFor(capacity);
+			if (prepareSlots)
+				this.PrepareFor(capacity);
 			return new(instance);
 		}
 		if (instance is null || instance.Capacity < capacity)
 			instance = capacity switch
 			{
 				> 2047 when instance is ValueMetadataStorage2047<T> s2047 && prepareSlots => s2047.PrepareFor(capacity),
+				> 127 when !prepareSlots => new ValueMetadataStorage2047<T>(this.Slots.Length > 0),
 				> 127 => new ValueMetadataStorage2047<T>(this.Slots.Length > 0).PrepareFor(capacity),
 				> 31 => new ValueMetadataStorage127<T>(),
 				_ => new ValueMetadataStorage31<T>(),

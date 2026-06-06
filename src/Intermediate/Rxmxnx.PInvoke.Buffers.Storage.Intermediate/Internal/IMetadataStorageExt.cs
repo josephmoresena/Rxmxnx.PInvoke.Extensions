@@ -17,7 +17,6 @@ internal interface IMetadataStorageExt : IMetadataStorage
 		MetadataStorage<T>.AddBinaryMetadata(typeMetadata);
 		return typeMetadata;
 	}
-
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6670)]
@@ -45,12 +44,13 @@ internal interface IMetadataStorageExt : IMetadataStorage
 		Trace.WriteLine($"{typeof(T)}: {count}");
 	}
 #endif
+
 	/// <summary>
-	/// Retrieves the <see cref="BufferTypeMetadata{Object}"/> instance reference.
+	/// Retrieves a <see cref="BinaryMap{T}"/> instance.
 	/// </summary>
 	/// <param name="capacity">Output. Current capacity.</param>
 	/// <param name="instance">Reference. Current <see cref="MetadataStorage{T}"/> instance.</param>
 	/// <param name="prepareSlots">Indicates whether the slots should be prepared.</param>
-	/// <returns>The <see cref="BufferTypeMetadata{Object}"/> instance reference.</returns>
+	/// <returns>A <see cref="BinaryMap{T}"/> instance.</returns>
 	BinaryMap<T> GetBinaryMap<T>(UInt16 capacity, ref MetadataStorage<T>? instance, Boolean prepareSlots);
 }
