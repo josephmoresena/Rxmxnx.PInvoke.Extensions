@@ -236,17 +236,15 @@ internal abstract class G2047<T>(Boolean withSlots)
 	/// </summary>
 	public BufferTypeMetadata<T>?[]?[] Slots { get; } = withSlots ? new BufferTypeMetadata<T>?[]?[5] : [];
 
+	UInt16 IBinarySlotsOwner<T>.InitialBinaryCapacity => this.Capacity;
+
 	/// <summary>
 	/// Prepares the current instance for <paramref name="count"/>.
 	/// </summary>
 	/// <param name="count">Requested count.</param>
 	public MetadataStorage<T> PrepareFor(UInt16 count)
 	{
-		if (count <= this.Capacity)
-			return this; // Nothing to prepare.
-		ValidationUtilities.ThrowIfInvalidSequenceIndex(
-			count - 1, this.Slots.Length == 0 ? this.Capacity : UInt16.MaxValue);
-		MetadataStorage<T>.InitializePages(count, this.Capacity + 1, ref this.Slots[0]);
+		(this as IBinarySlotsOwner<T>).PrepareFor(count);
 		return this;
 	}
 }

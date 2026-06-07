@@ -140,7 +140,6 @@ internal abstract partial class MetadataStorage<T>
 		typeMetadata.AppendComponent(MetadataStorage.Instance);
 #endif
 	}
-
 	/// <summary>
 	/// Initialize pages.
 	/// </summary>
@@ -148,7 +147,7 @@ internal abstract partial class MetadataStorage<T>
 	/// <param name="pageLength">Current page length.</param>
 	/// <param name="page">Reference to the current page slot.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	protected static void InitializePages(UInt16 count, Int32 pageLength, ref BufferTypeMetadata<T>?[]? page)
+	public static void InitializePages(UInt16 count, Int32 pageLength, ref BufferTypeMetadata<T>?[]? page)
 	{
 		while (count >= pageLength)
 		{

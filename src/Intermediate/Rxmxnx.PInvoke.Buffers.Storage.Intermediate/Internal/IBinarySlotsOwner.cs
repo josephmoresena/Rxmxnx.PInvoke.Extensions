@@ -10,6 +10,10 @@ internal interface IBinarySlotsOwner<T>
 	/// </summary>
 	BufferTypeMetadata<T>?[]?[] Slots { get; }
 	/// <summary>
+	/// Initial binary capacity.
+	/// </summary>
+	UInt16 InitialBinaryCapacity { get; }
+	/// <summary>
 	/// Additional binary capacity.
 	/// </summary>
 	UInt16 AdditionalBinaryCapacity
@@ -25,5 +29,18 @@ internal interface IBinarySlotsOwner<T>
 			Debug.Assert(result <= UInt16.MaxValue);
 			return (UInt16)result;
 		}
+	}
+
+	/// <summary>
+	/// Prepares the current instance for <paramref name="count"/>.
+	/// </summary>
+	/// <param name="count">Requested count.</param>
+	void PrepareFor(UInt16 count)
+	{
+		if (count <= this.InitialBinaryCapacity)
+			return; // Nothing to prepare.
+		ValidationUtilities.ThrowIfInvalidSequenceIndex(
+			count - 1, this.Slots.Length == 0 ? this.InitialBinaryCapacity : UInt16.MaxValue);
+		MetadataStorage<T>.InitializePages(count, this.InitialBinaryCapacity + 1, ref this.Slots[0]);
 	}
 }

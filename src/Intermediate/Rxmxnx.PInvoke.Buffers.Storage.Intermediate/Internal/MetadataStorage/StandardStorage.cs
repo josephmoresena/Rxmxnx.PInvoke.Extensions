@@ -24,6 +24,8 @@ internal static partial class MetadataStorage
 		public sealed override ref BufferTypeMetadata<T>? MetadataReference
 			=> ref MemoryMarshal.GetReference(this._initial.AsSpan());
 
+		UInt16 IBinarySlotsOwner<T>.InitialBinaryCapacity => this.Capacity;
+
 		/// <summary>
 		/// Parameterless constructor.
 		/// </summary>
@@ -35,24 +37,20 @@ internal static partial class MetadataStorage
 		}
 
 		/// <summary>
-		/// Defines an implicit conversion of a given <see cref="StandardStorage{T}"/> to a <see cref="BinaryMap{T}"/>.
-		/// </summary>
-		/// <param name="value">A <see cref="StandardStorage{T}"/> to implicitly convert.</param>
-		public static implicit operator BinaryMap<T>(StandardStorage<T> value) => new(value._initial, value.Slots);
-
-		/// <summary>
 		/// Prepares the current instance for <paramref name="count"/>.
 		/// </summary>
 		/// <param name="count">Requested count.</param>
 		public MetadataStorage<T> PrepareFor(UInt16 count)
 		{
-			if (count <= this.Capacity)
-				return this; // Nothing to prepare.
-			ValidationUtilities.ThrowIfInvalidSequenceIndex(
-				count - 1, this.Slots.Length == 0 ? this.Capacity : UInt16.MaxValue);
-			MetadataStorage<T>.InitializePages(count, this.Capacity + 1, ref this.Slots[0]);
+			(this as IBinarySlotsOwner<T>).PrepareFor(count);
 			return this;
 		}
+
+		/// <summary>
+		/// Defines an implicit conversion of a given <see cref="StandardStorage{T}"/> to a <see cref="BinaryMap{T}"/>.
+		/// </summary>
+		/// <param name="value">A <see cref="StandardStorage{T}"/> to implicitly convert.</param>
+		public static implicit operator BinaryMap<T>(StandardStorage<T> value) => new(value._initial, value.Slots);
 	}
 
 	/// <summary>
@@ -66,7 +64,8 @@ internal static partial class MetadataStorage
 			if (typeof(T) == typeof(Object))
 			{
 				Debug.Assert(instance is not null);
-				this.PrepareFor(capacity);
+				if (prepareSlots)
+					this.PrepareFor(capacity);
 				return (StandardStorage<T>)instance;
 			}
 			if (instance is StandardStorage<T> standard)
