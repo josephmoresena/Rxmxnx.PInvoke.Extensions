@@ -150,7 +150,7 @@ internal abstract partial class MetadataStorage<T>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected static void InitializePages(UInt16 count, Int32 pageLength, ref BufferTypeMetadata<T>?[]? page)
 	{
-		while (count > pageLength)
+		while (count >= pageLength)
 		{
 			if (page is null)
 				Interlocked.CompareExchange(ref page, new BufferTypeMetadata<T>?[pageLength], null);
