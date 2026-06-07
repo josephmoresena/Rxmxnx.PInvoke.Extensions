@@ -5,10 +5,10 @@ public partial class Launcher
 	[SupportedOSPlatform("WINDOWS")]
 	private sealed partial class Windows
 	{
-		private const String zLibUrl = "http://www.winimage.com/zLibDll/zlib123.zip";
 #if ZLINK_STATIC
-		private const String zLib32Url = "http://www.winimage.com/zLibDll/zlib123dll.zip";
-		private const String zLib64Url = "http://www.winimage.com/zLibDll/zlib123dllx64.zip";
+		private const String zLibUrl = "https://www.winimage.com/zLibDll/zlib123.zip ";
+		private const String zLib32Url = "https://www.winimage.com/zLibDll/zlib123dll.zip ";
+		private const String zLib64Url = "https://www.winimage.com/zLibDll/zlib123dllx64.zip ";
 #endif
 
 		public override async Task<String?> GetZlibPath()
@@ -21,23 +21,24 @@ public partial class Launcher
 				zlibDir.Create();
 
 			DirectoryInfo includeDir = zlibDir.CreateSubdirectory("include");
-#if ZLINK_STATIC
+			Boolean missingHeaders = includeDir.GetFiles("z*.h").Count(f => f.Name is "zlib.h" or "zconf.h") < 2;
+#if !ZLINK_STATIC
+			if (missingHeaders)
+			{
+				await File.WriteAllTextAsync(Path.Combine(includeDir.FullName, Windows.zLibHeaderName),
+				                             Windows.zLibHeaderContent);
+				await File.WriteAllTextAsync(Path.Combine(includeDir.FullName, Windows.zConfHeaderName),
+				                             Windows.zConfHeaderContent);
+			}
+#else
 			DirectoryInfo lib32Dir = zlibDir.CreateSubdirectory($"{Architecture.X86}");
 			DirectoryInfo lib64Dir = zlibDir.CreateSubdirectory($"{Architecture.X64}");
-#endif
-
-			Boolean downloadHeaders = includeDir.GetFiles("z*.h").Count(f => f.Name is "zlib.h" or "zconf.h") < 2;
-#if ZLINK_STATIC
 			Boolean download32Lib = lib32Dir.GetFiles("zlibstat.lib").Length == 0;
 			Boolean download64Lib = lib64Dir.GetFiles("zlibstat.lib").Length == 0;
 			
-			HttpClient httpClient = downloadHeaders || download32Lib || download64Lib ? new() : default!;
-#else
-			HttpClient httpClient = downloadHeaders ? new() : default!;
-#endif
-			if (downloadHeaders)
+			HttpClient httpClient = missingHeaders || download32Lib || download64Lib ? new() : default!;
+			if (missingHeaders)
 				await Windows.DownloadZLibHeadersAsync(httpClient, includeDir);
-#if ZLINK_STATIC
 			if (download32Lib)
 				await Windows.DownloadStaticZLibAsync(httpClient, Windows.zLib32Url, lib32Dir);
 			if (download64Lib)
@@ -45,25 +46,25 @@ public partial class Launcher
 #endif
 			return zlibDir.FullName;
 		}
+#if ZLINK_STATIC
 		private static async Task DownloadZLibHeadersAsync(HttpClient httpClient, DirectoryInfo includeDir)
 		{
-			const String zLibHeaderName = "zlib.h";
-			const String zConfHeaderName = "zconf.h";
 			await using MemoryStream zipStream = await Utilities.DownloadZipFile(httpClient, Windows.zLibUrl);
 #if NET10_0_OR_GREATER
 			await using ZipArchive archive =
 				await ZipArchive.CreateAsync(zipStream, ZipArchiveMode.Read, true, default);
-			await archive.GetEntry(zLibHeaderName)!.ExtractToFileAsync(
-				Path.Combine(includeDir.FullName, zLibHeaderName));
-			await archive.GetEntry(zConfHeaderName)!.ExtractToFileAsync(
-				Path.Combine(includeDir.FullName, zConfHeaderName));
+			await archive.GetEntry(Windows.zLibHeaderName)!.ExtractToFileAsync(
+				Path.Combine(includeDir.FullName, Windows.zLibHeaderName));
+			await archive.GetEntry(Windows.zConfHeaderName)!.ExtractToFileAsync(
+				Path.Combine(includeDir.FullName, Windows.zConfHeaderName));
 #else
 			using ZipArchive archive = new(zipStream, ZipArchiveMode.Read, true, default);
-			archive.GetEntry(zLibHeaderName)!.ExtractToFile(Path.Combine(includeDir.FullName, zLibHeaderName));
-			archive.GetEntry(zConfHeaderName)!.ExtractToFile(Path.Combine(includeDir.FullName, zConfHeaderName));
+			archive.GetEntry(Windows.zLibHeaderName)!.ExtractToFile(
+				Path.Combine(includeDir.FullName, Windows.zLibHeaderName));
+			archive.GetEntry(Windows.zConfHeaderName)!.ExtractToFile(
+				Path.Combine(includeDir.FullName, Windows.zConfHeaderName));
 #endif
 		}
-#if ZLINK_STATIC
 		private static async Task DownloadStaticZLibAsync(HttpClient httpClient, String libUrl, DirectoryInfo libDir)
 		{
 			const String libZStaticName = "zlibstat.lib";
