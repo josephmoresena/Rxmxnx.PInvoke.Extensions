@@ -96,9 +96,6 @@ internal readonly ref struct BinaryMap<T>
 				// Initial page unavailable.
 				return default;
 		}
-
-		// Exclude exact count. Search starts at the next size.
-		relativeIndex++;
 		// Total elements to check in the range: (count, 2 * count).
 		Int32 remaining = count - 1;
 		while (remaining > 0)

@@ -145,16 +145,16 @@ internal abstract partial class MetadataStorage<T>
 	/// Initialize pages.
 	/// </summary>
 	/// <param name="count">Requested count.</param>
-	/// <param name="previousLength">Previous page length.</param>
-	/// <param name="page">Reference. Current page.</param>
+	/// <param name="pageLength">Current page length.</param>
+	/// <param name="page">Reference to the current page slot.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	protected static void InitializePages(UInt16 count, Int32 previousLength, ref BufferTypeMetadata<T>?[]? page)
+	protected static void InitializePages(UInt16 count, Int32 pageLength, ref BufferTypeMetadata<T>?[]? page)
 	{
-		while (count > previousLength)
+		while (count > pageLength)
 		{
-			previousLength *= 2;
 			if (page is null)
-				Interlocked.CompareExchange(ref page, new BufferTypeMetadata<T>?[previousLength], null);
+				Interlocked.CompareExchange(ref page, new BufferTypeMetadata<T>?[pageLength], null);
+			pageLength *= 2;
 			page = ref Unsafe.Add(ref page, 1)!;
 		}
 	}
