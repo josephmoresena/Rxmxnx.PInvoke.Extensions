@@ -97,6 +97,7 @@ internal abstract partial class MetadataStorage<T>
 				break;
 			}
 			space /= 2;
+			result = ref binaryMap[space];
 		}
 		return result;
 	}
