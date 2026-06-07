@@ -219,20 +219,17 @@ internal abstract class G127<T> : BootstrapMetadataStorage<Composite<
 #endif
 internal abstract class G2047<T>(Boolean withSlots)
 	: BootstrapMetadataStorage<Composite<
-			Composite<Composite<
-					Composite<Composite<Composite<
-							Composite<Composite<Composite<Composite<O1, O2, O>, O4, O>, O8, O>, O16, O>, O32, O>, O64,
-						O>,
-						Composite<O64, O64, O>, O>, Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>,
-				Composite<Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>,
-					Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>, O>, Composite<
-				Composite<Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>,
-					Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>, Composite<
-					Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>,
-					Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>, O>, O>, T>
-#if !PACKAGE
-		, IBinarySlotsOwner<T>
-#endif
+		Composite<Composite<
+				Composite<Composite<Composite<
+					Composite<Composite<Composite<Composite<O1, O2, O>, O4, O>, O8, O>, O16, O>,
+					O32, O>, O64, O>, Composite<O64, O64, O>, O>,
+				Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>,
+			Composite<Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>,
+				Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>, O>, Composite<
+			Composite<Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>,
+				Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>, Composite<
+				Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>,
+				Composite<Composite<O64, O64, O>, Composite<O64, O64, O>, O>, O>, O>, O>, T>, IBinarySlotsOwner<T>
 {
 	/// <summary>
 	/// Additional slots.

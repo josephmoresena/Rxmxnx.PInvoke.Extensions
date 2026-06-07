@@ -6,19 +6,17 @@ internal static partial class MetadataStorage
 	/// Standard buffer type metadata storage.
 	/// </summary>
 	/// <typeparam name="T">Type of items in the buffer.</typeparam>
-	private class StandardStorage<T> : MetadataStorage<T>
-#if !PACKAGE
-		, IBinarySlotsOwner<T>
-#endif
+	private class StandardStorage<T> : MetadataStorage<T>, IBinarySlotsOwner<T>
 	{
 		/// <summary>
 		/// Initial binary storage.
 		/// </summary>
 		private readonly BufferTypeMetadata<T>?[] _initial;
+
 		/// <summary>
 		/// Additional slots.
 		/// </summary>
-		private readonly BufferTypeMetadata<T>?[]?[] _slots;
+		public BufferTypeMetadata<T>?[]?[] Slots { get; }
 
 		/// <inheritdoc/>
 		public sealed override UInt16 Capacity => (UInt16)this._initial.Length;
@@ -33,18 +31,14 @@ internal static partial class MetadataStorage
 		public StandardStorage()
 		{
 			this._initial = new BufferTypeMetadata<T>?[2047];
-			this._slots = new BufferTypeMetadata<T>[]?[5];
+			this.Slots = new BufferTypeMetadata<T>[]?[5];
 		}
-
-#if !PACKAGE
-		BufferTypeMetadata<T>?[]?[] IBinarySlotsOwner<T>.Slots => this._slots;
-#endif
 
 		/// <summary>
 		/// Defines an implicit conversion of a given <see cref="StandardStorage{T}"/> to a <see cref="BinaryMap{T}"/>.
 		/// </summary>
 		/// <param name="value">A <see cref="StandardStorage{T}"/> to implicitly convert.</param>
-		public static implicit operator BinaryMap<T>(StandardStorage<T> value) => new(value._initial, value._slots);
+		public static implicit operator BinaryMap<T>(StandardStorage<T> value) => new(value._initial, value.Slots);
 
 		/// <summary>
 		/// Prepares the current instance for <paramref name="count"/>.
@@ -55,8 +49,8 @@ internal static partial class MetadataStorage
 			if (count <= this.Capacity)
 				return this; // Nothing to prepare.
 			ValidationUtilities.ThrowIfInvalidSequenceIndex(
-				count - 1, this._slots.Length == 0 ? this.Capacity : UInt16.MaxValue);
-			MetadataStorage<T>.InitializePages(count, this.Capacity + 1, ref this._slots[0]);
+				count - 1, this.Slots.Length == 0 ? this.Capacity : UInt16.MaxValue);
+			MetadataStorage<T>.InitializePages(count, this.Capacity + 1, ref this.Slots[0]);
 			return this;
 		}
 	}

@@ -109,5 +109,13 @@ internal abstract partial class MetadataStorage<T>
 	/// <see langword="true"/> if the current instance is prepared for <paramref name="count"/>; otherwise
 	/// <see langword="false"/>.
 	/// </returns>
-	private static Boolean IsBinaryPrepared(UInt16 count) => MetadataStorage<T>.instance?.Capacity >= count;
+	private static Boolean IsBinaryPrepared(UInt16 count)
+	{
+		if (MetadataStorage<T>.instance is not { } storage) return false;
+		UInt32 binaryCapacity = storage.Capacity;
+		if (storage is IBinarySlotsOwner<T> owner)
+			binaryCapacity += owner.AdditionalBinaryCapacity;
+		Debug.Assert(binaryCapacity <= UInt16.MaxValue);
+		return binaryCapacity >= count;
+	}
 }
