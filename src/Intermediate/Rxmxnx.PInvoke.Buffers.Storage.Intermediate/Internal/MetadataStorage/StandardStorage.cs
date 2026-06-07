@@ -68,10 +68,15 @@ internal static partial class MetadataStorage
 					this.PrepareFor(capacity);
 				return (StandardStorage<T>)instance;
 			}
-			if (instance is StandardStorage<T> standard)
-				standard.PrepareFor(capacity);
-			else
-				instance = new StandardStorage<T>().PrepareFor(capacity);
+			switch (instance)
+			{
+				case StandardStorage<T> standard when prepareSlots:
+					standard.PrepareFor(capacity);
+					break;
+				case null:
+					instance = new StandardStorage<T>().PrepareFor(capacity);
+					break;
+			}
 			return (StandardStorage<T>)instance;
 		}
 	}
