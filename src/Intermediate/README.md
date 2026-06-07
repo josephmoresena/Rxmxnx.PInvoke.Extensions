@@ -12,9 +12,6 @@ functionality and separate it from the final assembly:
 The intermediary projects are compiled using the latest supported version of the C# language for each target framework,
 ranging from .NET Standard 2.1 to the latest publicly available version of .NET.
 
-**Note:** The `Buffers` project was split into three parts in order to abstract the storage space of the metadata for
-the managed buffers.
-
 # Package Patcher Library
 
 Starting with .NET 9.0, `ref struct` types are allowed in generics, and many generic types in

@@ -4,25 +4,33 @@
 
     <ItemGroup>
         <Using Include="System.Buffers"/>
+        <Using Include="System.Collections.Concurrent"/>
+        <Using Include="System.ComponentModel"/>
         <Using Include="System.Diagnostics"/>
         <Using Include="System.Diagnostics.CodeAnalysis"/>
+        <Using Include="System.Numerics"/>
+        <Using Include="System.Reflection"/>
         <Using Include="System.Runtime.CompilerServices"/>
         <Using Include="System.Runtime.InteropServices"/>
 
         <Using Include="Rxmxnx.PInvoke.Buffers"/>
         <Using Include="Rxmxnx.PInvoke.Internal"/>
+        <Using Include="Rxmxnx.PInvoke.Internal.Bootstrap"/>
         <Using Include="Rxmxnx.PInvoke.VisualBasic"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Rxmxnx.PInvoke.Buffers.Types.Intermediate\Rxmxnx.PInvoke.Buffers.Types.Intermediate.csproj"/>
-        <ProjectReference Include="..\Rxmxnx.PInvoke.Buffers.Storage.Intermediate\Rxmxnx.PInvoke.Buffers.Storage.Intermediate.csproj"/>
+        <ProjectReference Include="..\Rxmxnx.PInvoke.Common.Intermediate\Rxmxnx.PInvoke.Common.Intermediate.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
             <_Parameter1>Rxmxnx.PInvoke.Buffers.Tests</_Parameter1>
         </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="ILLink\ILLink.Substitutions.xml" />
     </ItemGroup>
 
 </Project>
