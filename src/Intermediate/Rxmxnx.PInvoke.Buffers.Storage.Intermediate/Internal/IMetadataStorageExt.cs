@@ -8,8 +8,16 @@ internal interface IMetadataStorageExt : IMetadataStorage
 	void IMetadataStorage.RegisterBuffer<T,
 		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBuffer>()
 		=> MetadataStorage<T>.RegisterBuffer<TBuffer>();
-	void IMetadataStorage.PrepareBinaryMetadata<T>(UInt16 count) => MetadataStorage<T>.PrepareBinaryMetadata(count);
-	BufferTypeMetadata<T>? IMetadataStorage.GetMetadata<T>(UInt16 count) => MetadataStorage<T>.GetMetadata(count);
+	void IMetadataStorage.PrepareBinaryMetadata<T>(UInt16 count)
+	{
+		if (count == 0) count++; // Avoid Zero elements buffer.
+		MetadataStorage<T>.PrepareBinaryMetadata(count);
+	}
+	BufferTypeMetadata<T>? IMetadataStorage.GetMetadata<T>(UInt16 count)
+	{
+		if (count == 0) count++; // Avoid Zero elements buffer.
+		return MetadataStorage<T>.GetMetadata(count);
+	}
 	Boolean IMetadataStorage.TryAdd<T>(BufferTypeMetadata<T> component) => MetadataStorage<T>.TryAdd(component);
 	BufferTypeMetadata<T>? IMetadataStorage.AddBinaryMetadata<T>(BufferTypeMetadata<T>? typeMetadata)
 	{

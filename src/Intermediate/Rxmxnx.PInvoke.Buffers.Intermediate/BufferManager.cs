@@ -23,6 +23,11 @@ public static partial class BufferManager
 	/// <summary>
 	/// Maximum supported binary buffer size at runtime.
 	/// </summary>
+	/// <remarks>
+	/// Binary metadata is only available for buffer sizes up to this limit. Requests exceeding this limit are allocated
+	/// on the heap.
+	/// Operations that prepare or register binary metadata may throw when the requested size exceeds this limit.
+	/// </remarks>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

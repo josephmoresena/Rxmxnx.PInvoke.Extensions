@@ -85,6 +85,8 @@ internal abstract partial class MetadataStorage<T>
 	{
 		if (NonBinaryStore.GetNonBinary(count, !MetadataStorage<T>.IsBinaryPrepared(count)) is { } nonBinary)
 			return nonBinary; // Exact non-binary buffer. Allow minimal at first only if unable to retrieve the count
+		if (MetadataStorage.MaxCapacity > 0 && count > MetadataStorage.MaxCapacity)
+			return default; // Binary capacity doesn't allow current count.
 		BinaryMap<T> binaryMap = MetadataStorage<T>.GetBinaryMap(count);
 		BufferTypeMetadata<T>? binary = MetadataStorage<T>.GetBinaryMetadata(binaryMap, count, true);
 		return binary ?? NonBinaryStore.GetNonBinary(count, true); // Approximate non-Binary buffer.
