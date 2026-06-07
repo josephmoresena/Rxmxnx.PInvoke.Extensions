@@ -83,14 +83,17 @@ internal abstract partial class MetadataStorage<T>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 	public static BufferTypeMetadata<T>? GetMetadata(UInt16 count)
 	{
+		Debug.Assert(count > 0);
 		Boolean allowNonBinaryMinimal =
 			!MetadataStorage<T>.IsBinaryPrepared(count) && !BuffersHelper.BufferAutoCompositionEnabled;
 		if (NonBinaryStore.GetNonBinary(count, allowNonBinaryMinimal) is { } nonBinary)
-			// Exact non-binary buffer. Allow minimal at first only if unable to retrieve a binary the count.
+			// Exact non-binary buffer. Allow minimal at first only if unable to retrieve a binary buffer.
 			return nonBinary;
+#if NET8_0_OR_GREATER
 		if (MetadataStorage.MaxCapacity > 0 && count > MetadataStorage.MaxCapacity)
 			// Binary capacity doesn't allow current count.
 			return default;
+#endif
 		BinaryMap<T> binaryMap = MetadataStorage<T>.GetBinaryMap(count);
 		BufferTypeMetadata<T>? binary = MetadataStorage<T>.GetBinaryMetadata(binaryMap, count, true);
 		return binary ?? NonBinaryStore.GetNonBinary(count, true); // Approximate non-Binary buffer.
@@ -102,6 +105,7 @@ internal abstract partial class MetadataStorage<T>
 	/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
 	public static void PrepareBinaryMetadata(UInt16 count)
 	{
+		Debug.Assert(count > 0);
 		Type typeofT = typeof(T);
 		BufferTypeMetadata<T>? metadata = default;
 		BinaryMap<T> binaryMap = MetadataStorage<T>.GetBinaryMap(count);

@@ -132,7 +132,7 @@ public static partial class BufferManager
 	private static void AllocObject<T>(UInt16 count, ScopedBufferAction<T> action, Boolean isMinimumCount)
 	{
 		BufferTypeMetadata<Object>? metadata = BufferManager.Storage.GetMetadata<Object>(count);
-		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || metadata.Size == 0);
+		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || count == 0);
 #if !PACKAGE
 		BufferManager.Storage.PrintMetadata<Object>(!stackAlloc);
 #endif
@@ -164,7 +164,7 @@ public static partial class BufferManager
 #endif
 	{
 		BufferTypeMetadata<Object>? metadata = BufferManager.Storage.GetMetadata<Object>(count);
-		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || metadata.Size == 0);
+		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || count == 0);
 #if !PACKAGE
 		BufferManager.Storage.PrintMetadata<Object>(!stackAlloc);
 #endif
@@ -193,7 +193,7 @@ public static partial class BufferManager
 		Boolean isMinimumCount)
 	{
 		BufferTypeMetadata<Object>? metadata = BufferManager.Storage.GetMetadata<Object>(count);
-		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || metadata.Size == 0);
+		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || count == 0);
 #if !PACKAGE
 		BufferManager.Storage.PrintMetadata<Object>(!stackAlloc);
 #endif
@@ -222,7 +222,7 @@ public static partial class BufferManager
 #endif
 	{
 		BufferTypeMetadata<Object>? metadata = BufferManager.Storage.GetMetadata<Object>(count);
-		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || metadata.Size == 0);
+		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || count == 0);
 #if !PACKAGE
 		BufferManager.Storage.PrintMetadata<Object>(!stackAlloc);
 #endif
@@ -248,7 +248,7 @@ public static partial class BufferManager
 		}
 
 		BufferTypeMetadata<T>? metadata = BufferManager.Storage.GetMetadata<T>(count);
-		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || metadata.Size == 0);
+		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || count == 0);
 #if !PACKAGE
 		BufferManager.Storage.PrintMetadata<T>(!stackAlloc);
 #endif
@@ -286,7 +286,7 @@ public static partial class BufferManager
 		}
 
 		BufferTypeMetadata<T>? metadata = BufferManager.Storage.GetMetadata<T>(count);
-		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || metadata.Size == 0);
+		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || count == 0);
 #if !PACKAGE
 		BufferManager.Storage.PrintMetadata<T>(!stackAlloc);
 #endif
@@ -318,7 +318,7 @@ public static partial class BufferManager
 			return BufferManager.StackAlloc(count, func);
 
 		BufferTypeMetadata<T>? metadata = BufferManager.Storage.GetMetadata<T>(count);
-		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || metadata.Size == 0);
+		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || count == 0);
 #if !PACKAGE
 		BufferManager.Storage.PrintMetadata<T>(!stackAlloc);
 #endif
@@ -349,7 +349,7 @@ public static partial class BufferManager
 			return BufferManager.StackAlloc(count, state, func);
 
 		BufferTypeMetadata<T>? metadata = BufferManager.Storage.GetMetadata<T>(count);
-		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || metadata.Size == 0);
+		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || count == 0);
 #if !PACKAGE
 		BufferManager.Storage.PrintMetadata<T>(!stackAlloc);
 #endif
