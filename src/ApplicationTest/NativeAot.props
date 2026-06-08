@@ -66,7 +66,7 @@
         <RuntimeHostConfigurationOption Include="Switch.System.Reflection.Disabled.DoNotThrowForNames" Value="true"/>
         <RuntimeHostConfigurationOption Include="Switch.System.Reflection.Disabled.DoNotThrowForAssembly" Value="true"/>
         <RuntimeHostConfigurationOption Include="Switch.System.Reflection.Disabled.DoNotThrowForAttributes" Value="true"/>
-        <RuntimeHostConfigurationOption Include="PInvoke.BootstrapBufferStorage" Value="true"/>
+        <RuntimeHostConfigurationOption Include="PInvoke.BootstrapBufferStorage.Extended" Value="true"/>
     </ItemGroup>
 
     <ItemGroup>

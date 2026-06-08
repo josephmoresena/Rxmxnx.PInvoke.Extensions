@@ -116,22 +116,22 @@ After several optimizations were introduced, a new storage system was implemente
 the managed buffer infrastructure itself. However, to provide alternatives better suited to different application
 requirements, the following feature switches were introduced:
 
-* `PInvoke.MaxBufferCapacity31`: Restricts buffer storage and composition to a maximum binary capacity of 31 elements,
-  with a binary space limit of 2<sup>5</sup> + 2<sup>4</sup> + 2<sup>3</sup> + 2<sup>2</sup> + 2<sup>1</sup> + 2<sup>
-  0</sup>.
-* `PInvoke.MaxBufferCapacity127`: Restricts buffer storage and composition to a maximum binary capacity of 127 elements,
-  with a binary space limit of 2<sup>6</sup> + 2<sup>5</sup> + 2<sup>4</sup> + 2<sup>3</sup> + 2<sup>2</sup> + 2<sup>
-  1</sup> + 2<sup>0</sup>.
-* `PInvoke.MaxBufferCapacity2047`: Restricts buffer storage and composition to a maximum binary capacity of 2047
-  elements, with a binary space limit of 2<sup>10</sup> + 2<sup>9</sup> + 2<sup>8</sup> + 2<sup>7</sup> + 2<sup>
-  6</sup> + 2<sup>5</sup> + 2<sup>4</sup> + 2<sup>3</sup> + 2<sup>2</sup> + 2<sup>1</sup> + 2<sup>0</sup>.
-* `PInvoke.BootstrapBufferStorage`: Uses the new storage system using a managed-buffer-based binary space of 2047
+* `PInvoke.BootstrapStorage.Minimal`: Restricts buffer storage and composition to a maximum binary capacity of 31
+  elements, with a binary space limit of 2<sup>4</sup> + 2<sup>3</sup> + 2<sup>2</sup> + 2<sup>1</sup> + 2<sup>0</sup>.
+* `PInvoke.BootstrapStorage.Medium`: Restricts buffer storage and composition to a maximum binary capacity of 127
+  elements, with a binary space limit of 2<sup>6</sup> + 2<sup>5</sup> + 2<sup>4</sup> + 2<sup>3</sup> + 2<sup>2</sup> +
+  2<sup>1</sup> + 2<sup>0</sup>.
+* `PInvoke.BootstrapStorage.Limited`: Restricts buffer storage and composition to a maximum binary capacity of 2047
+  elements, with a binary space limit of 2<sup>10</sup> + 2<sup>9</sup> + 2<sup>8</sup> + 2<sup>7</sup> +
+  2<sup>6</sup> + 2<sup>5</sup> + 2<sup>4</sup> + 2<sup>3</sup> + 2<sup>2</sup> + 2<sup>1</sup> + 2<sup>0</sup>.
+* `PInvoke.BootstrapStorage.Extended`: Uses the new storage system using a managed-buffer-based binary space of 2047
   elements, while still allowing extension to support larger binary metadata capacities.
 
 **Notes:**
 
 - By default, on .NET 8.0 and later, the storage system still uses the mechanism that is not based on the managed buffer
   infrastructure itself.
-- Storage systems based on managed buffer binary spaces of 2<sup>N</sup> - 1 elements preload `2N - 1` buffer metadata
-  instances; specifically, metadata ranging from 2<sup>N</sup> - 1 down to 2<sup>2</sup> - 1, plus additional metadata
+- Storage systems based on managed buffer binary spaces of 2<sup>N</sup> - 1 elements preload `2N - 1` object buffer
+  metadata instances; specifically, metadata ranging from 2<sup>N</sup> - 1 down to 2<sup>2</sup> - 1, plus additional
+  metadata
   from 2<sup>N-1</sup> down to 2<sup>0</sup>. This behavior is particularly beneficial for AOT compilations.
