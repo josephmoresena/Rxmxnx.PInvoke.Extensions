@@ -54,7 +54,7 @@ public static class Utf8ConcatenationHelper
 		bohemianRhapsody.Insert(interruptions[6], "Will not let you go "u8);
 		bohemianRhapsody.Insert(interruptions[6] - CString.NewLine.Length, ")"u8);
 		bohemianRhapsody.Insert(interruptions[5], "("u8);
-		bohemianRhapsody.Insert(interruptions[5], "Will not let you go ("u8);
+		bohemianRhapsody.Insert(interruptions[5], "Will not let you go "u8);
 
 		bohemianRhapsody.Insert(interruptions[4], CString.NewLine);
 		bohemianRhapsody.Insert(interruptions[4], "سْمِ ٱللَّٰهِ"u8);

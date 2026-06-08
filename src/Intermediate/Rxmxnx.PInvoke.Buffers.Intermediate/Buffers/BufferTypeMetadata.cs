@@ -96,29 +96,32 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <summary>
 	/// Appends all components from current buffer type.
 	/// </summary>
-	/// <param name="components">A dictionary of components.</param>
+	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	internal virtual void AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components) { }
+	internal virtual void AppendComponent(IMetadataStorage storage) { }
 	/// <summary>
 	/// Composes a new buffer using twice the current buffer type.
 	/// </summary>
+	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
 	/// <returns>A composed <see cref="BufferTypeMetadata{T}"/>.</returns>
-	internal BufferTypeMetadata<T>? Double() => this.Compose(this);
+	internal BufferTypeMetadata<T>? Double(IMetadataStorage storage) => this.Compose(storage, this);
 	/// <summary>
 	/// Composes a new buffer using current buffer type and <paramref name="otherMetadata"/>.
 	/// </summary>
+	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
 	/// <param name="otherMetadata">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
 	/// <returns>A composed <see cref="BufferTypeMetadata{T}"/>.</returns>
-	internal abstract BufferTypeMetadata<T>? Compose(BufferTypeMetadata<T> otherMetadata);
+	internal abstract BufferTypeMetadata<T>? Compose(IMetadataStorage storage, BufferTypeMetadata<T> otherMetadata);
 	/// <summary>
 	/// Composes a new buffer using current buffer type and <typeparamref name="TBuffer"/>.
 	/// </summary>
 	/// <typeparam name="TBuffer">Other buffer type.</typeparam>
+	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
 	/// <returns>A composed <see cref="BufferTypeMetadata{T}"/>.</returns>
 	internal abstract BufferTypeMetadata<T>? Compose<
-		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBuffer>()
+		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBuffer>(IMetadataStorage storage)
 		where TBuffer : struct, IManagedBuffer<T>;
 	/// <summary>
 	/// Executes <paramref name="action"/> using a buffer of current type.
@@ -139,7 +142,7 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
 #endif
-	;
+		;
 	/// <inheritdoc cref="BufferTypeMetadata{T}.Execute{TState}(TState, ScopedBufferAction{T, TState}, Int32)"/>
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	internal abstract void Execute<TState>(TState state, VbScopedBufferAction<T, TState> action, Int32 spanLength);
@@ -163,11 +166,11 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <returns><paramref name="func"/> result.</returns>
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	internal abstract TResult Execute<TState, TResult>(TState state, ScopedBufferFunc<T, TState, TResult> func,
-		Int32 spanLength)
+			Int32 spanLength)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
 #endif
-	;
+		;
 	/// <inheritdoc cref="BufferTypeMetadata{T}.Execute{TState, TResult}(TState, ScopedBufferFunc{T, TState, TResult}, Int32)"/>
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	internal abstract TResult Execute<TState, TResult>(TState state, VbScopedBufferFunc<T, TState, TResult> func,
@@ -185,7 +188,7 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
 #endif
-	;
+		;
 	/// <inheritdoc cref="BufferTypeMetadata{T}.Execute{TU, TState}(TState, ScopedBufferAction{TU, TState}, Int32)"/>
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	internal abstract void Execute<TU, TState>(TState state, VbScopedBufferAction<TU, TState> action, Int32 spanLength);
@@ -201,11 +204,11 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <returns><paramref name="func"/> result.</returns>
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	internal abstract TResult Execute<TU, TState, TResult>(TState state, ScopedBufferFunc<TU, TState, TResult> func,
-		Int32 spanLength)
+			Int32 spanLength)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
 #endif
-	;
+		;
 	/// <inheritdoc
 	///     cref="BufferTypeMetadata{T}.Execute{TU, TState, TResult}(TState, ScopedBufferFunc{TU, TState, TResult}, Int32)"/>
 	[MethodImpl(MethodImplOptions.NoInlining)]

@@ -26,6 +26,8 @@
     <ItemGroup Condition="'$(TargetFramework)' != 'net45'">
         <IntermediateAssemblyNames Include="Rxmxnx.PInvoke.Common.Intermediate"/>
         <IntermediateAssemblyNames Include="Rxmxnx.PInvoke.CString.Intermediate"/>
+        <IntermediateAssemblyNames Include="Rxmxnx.PInvoke.Buffers.Types.Intermediate"/>
+        <IntermediateAssemblyNames Include="Rxmxnx.PInvoke.Buffers.Storage.Intermediate"/>
         <IntermediateAssemblyNames Include="Rxmxnx.PInvoke.Buffers.Intermediate"/>
         <IntermediateAssemblyNames Include="Rxmxnx.PInvoke.Extensions.Intermediate"/>
     </ItemGroup>

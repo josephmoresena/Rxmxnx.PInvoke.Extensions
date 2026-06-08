@@ -182,13 +182,8 @@ public sealed partial class CStringBuilder
 	/// Retrieves the lock object to concurrent operations.
 	/// </summary>
 	/// <returns>A <see cref="Lock"/> instance.</returns>
-	internal Lock GetLock()
-	{
-		if (this._lock is { } existing) return existing;
-		Lock newLock = new();
-		Lock? previous = Interlocked.CompareExchange(ref this._lock, newLock, null);
-		return previous ?? newLock;
-	}
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal Lock GetLock() => NativeUtilities.GetConcurrentObject(ref this._lock);
 
 	/// <summary>
 	/// Retrieves a byte array containing all the usable bytes from current instance.

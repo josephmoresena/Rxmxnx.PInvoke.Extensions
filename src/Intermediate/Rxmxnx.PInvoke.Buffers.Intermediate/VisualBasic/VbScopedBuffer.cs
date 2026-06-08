@@ -17,7 +17,7 @@ public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 	/// <summary>
 	/// Indicates whether the current instance is still valid.
 	/// </summary>
-	private readonly IMutableWrapper<Boolean>? _isValid = IMutableWrapper.Create(true);
+	private readonly IMutableWrapper<Boolean> _isValid = IMutableWrapper.Create(true);
 	/// <summary>
 	/// Unmanaged pointer.
 	/// </summary>
@@ -30,14 +30,14 @@ public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 		get
 		{
 			ValidationUtilities.ThrowIfInvalidSequenceIndex(index, this.Length);
-			ValidationUtilities.ThrowIfInvalidPointer(this._isValid!);
+			ValidationUtilities.ThrowIfInvalidPointer(this._isValid);
 			ref T refT = ref this._array is not null ? ref this._array[index] : ref (this._pointer + index).Reference;
 			return refT;
 		}
 		set
 		{
 			ValidationUtilities.ThrowIfInvalidSequenceIndex(index, this.Length);
-			ValidationUtilities.ThrowIfInvalidPointer(this._isValid!);
+			ValidationUtilities.ThrowIfInvalidPointer(this._isValid);
 			ref T refT = ref this._array is not null ? ref this._array[index] : ref (this._pointer + index).Reference;
 			refT = value;
 		}
@@ -88,7 +88,7 @@ public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 	/// <returns>A <see cref="ScopedBuffer{T}"/> instance.</returns>
 	public ScopedBuffer<T> ToValue()
 	{
-		ValidationUtilities.ThrowIfInvalidPointer(this._isValid!);
+		ValidationUtilities.ThrowIfInvalidPointer(this._isValid);
 		Span<T> span;
 		UInt16 length;
 		if (this._array is not null)
@@ -102,12 +102,12 @@ public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 			span = MemoryMarshal.CreateSpan(ref refT, this.Length);
 			length = this.BufferMetadata?.Size ?? this.Length;
 		}
-		ValidationUtilities.ThrowIfInvalidPointer(this._isValid!);
+		ValidationUtilities.ThrowIfInvalidPointer(this._isValid);
 		return new(span, this._array is not null, length, this.BufferMetadata);
 	}
 
 	/// <summary>
 	/// Invalidates the current sequence.
 	/// </summary>
-	internal void Unload() => this._isValid?.Value = false;
+	internal void Unload() => this._isValid.Value = false;
 }

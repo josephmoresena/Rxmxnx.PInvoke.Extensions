@@ -617,25 +617,6 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = IMessageResource.GetInstance();
 		throw new PlatformNotSupportedException(resource.ReflectionDisabled);
 	}
-#if !PACKAGE || NET7_0_OR_GREATER && BINARY_SPACES
-	/// <summary>
-	/// Throws an exception if buffer is not a space.
-	/// </summary>
-	/// <param name="isBinary">Indicates whether buffer is binary.</param>
-	/// <param name="bufferSize">Buffer sizes.</param>
-	/// <param name="type">CLR type of buffer.</param>
-	/// <exception cref="InvalidOperationException">Throws an exception if buffer is not a space.</exception>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void ThrowIfNotSpace(Boolean isBinary, Span<UInt16> bufferSize, Type type)
-	{
-		if (!isBinary || bufferSize[0] != 2 * bufferSize[1] || bufferSize[1] != bufferSize[2])
-			throw new InvalidOperationException(
-				$"{type} is not an space. Size: {bufferSize[0]} ({bufferSize[2]}, {bufferSize[1]}).");
-	}
-#endif
 #if NETCOREAPP
 	/// <summary>
 	/// Throws an exception if the current token type is invalid for string type.

@@ -1,9 +1,31 @@
 <linker>
     <assembly fullname="Rxmxnx.PInvoke.Buffers.Intermediate">
-        <type fullname="Rxmxnx.PInvoke.BufferManager"
+        <type fullname="Rxmxnx.PInvoke.Internal.BuffersHelper"
               feature="PInvoke.DisableBufferAutoComposition"
               featurevalue="true">
             <method signature="System.Boolean get_BufferAutoCompositionEnabled()" body="stub" value="false"/>
         </type>
+        <!-- These features are only available on .NET 8.0 and later -->
+        <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage"
+              feature="PInvoke.MaxBufferCapacity31"
+              featurevalue="true">
+            <method signature="System.UInt16 get_MaxCapacity()" body="stub" value="31"/>
+        </type>
+        <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage"
+              feature="PInvoke.MaxBufferCapacity127"
+              featurevalue="true">
+            <method signature="System.UInt16 get_MaxCapacity()" body="stub" value="127"/>
+        </type>
+        <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage"
+              feature="PInvoke.MaxBufferCapacity2047"
+              featurevalue="true">
+            <method signature="System.UInt16 get_MaxCapacity()" body="stub" value="2047"/>
+        </type>
+        <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage"
+              feature="PInvoke.ClassicBufferStorage"
+              featurevalue="true">
+            <method signature="System.UInt16 get_MaxCapacity()" body="stub" value="0"/>
+        </type>
+        <!-- End -->
     </assembly>
 </linker>

@@ -45,6 +45,23 @@ jobs:
             ./src/Test/**/bin/Release/net9.0
           key: internal-tests-bin-${{ github.run_id }}
           fail-on-cache-miss: true
+      - name: Clean Linux Host
+        run: |
+          sudo apt-get clean
+          sudo apt-get autoclean
+          sudo apt-get autoremove -y
+          sudo rm -rf /tmp/*
+          sudo rm -rf /var/tmp/*
+
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/share/miniconda
+          sudo rm -rf /usr/local/share/vcpkg
+          sudo rm -rf /usr/local/share/chromedriver-linux64
+          sudo rm -rf /usr/local/share/edge_driver
+          sudo rm -rf /usr/local/share/gecko_driver
+          sudo rm -rf /usr/share/java/selenium-server.jar
+
+          df -h
       - name: Init FreeBSD 13.5 VM
         id: vm
         uses: vmactions/freebsd-vm@v1.4.5
@@ -125,6 +142,13 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE;
           pwsh ./Print-MonoTest-Results.ps1
+      - name: Remove source code files
+        if: inputs.run_tests == true
+        shell: pwsh
+        run: |
+          Remove-Item -Recurse -Force "src/Test"
+          Remove-Item -Recurse -Force "src/Intermediate"
+          Remove-Item -Recurse -Force "src/LegacyAppTest"
       - name: Publish Launcher (FreeBSD 13.5)
         if: inputs.build_artifacts == true
         shell: freebsd {0}

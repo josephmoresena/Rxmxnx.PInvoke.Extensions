@@ -54,13 +54,13 @@ public sealed class BinaryBufferCompositeTest
 		BufferTypeMetadata<T> nonBinaryMetadata5 =
 			((IManagedBinaryBuffer<T>)Activator.CreateInstance(nonBinary5)!).Metadata;
 
-		PInvokeAssert.Equal(composite2Metadata, atomicMetadata.Double());
-		PInvokeAssert.Equal(binaryMetadata, composite2Metadata.Compose(atomicMetadata));
-		PInvokeAssert.Equal(nonBinaryMetadata1, atomicMetadata.Compose(composite2Metadata));
-		PInvokeAssert.Equal(nonBinaryMetadata2, binaryMetadata.Compose(atomicMetadata));
-		PInvokeAssert.Equal(nonBinaryMetadata3, binaryMetadata.Double());
-		PInvokeAssert.Null(atomicMetadata.Compose(nonBinaryMetadata3));
-		PInvokeAssert.Null(nonBinaryMetadata3.Compose(atomicMetadata));
+		PInvokeAssert.Equal(composite2Metadata, atomicMetadata.Double(BufferManager.Storage));
+		PInvokeAssert.Equal(binaryMetadata, composite2Metadata.Compose(BufferManager.Storage, atomicMetadata));
+		PInvokeAssert.Equal(nonBinaryMetadata1, atomicMetadata.Compose(BufferManager.Storage, composite2Metadata));
+		PInvokeAssert.Equal(nonBinaryMetadata2, binaryMetadata.Compose(BufferManager.Storage, atomicMetadata));
+		PInvokeAssert.Equal(nonBinaryMetadata3, binaryMetadata.Double(BufferManager.Storage));
+		PInvokeAssert.Null(atomicMetadata.Compose(BufferManager.Storage, nonBinaryMetadata3));
+		PInvokeAssert.Null(nonBinaryMetadata3.Compose(BufferManager.Storage, atomicMetadata));
 
 		PInvokeAssert.True(binaryMetadata.IsBinary);
 		PInvokeAssert.Equal(2, binaryMetadata.ComponentCount);
@@ -98,26 +98,25 @@ public sealed class BinaryBufferCompositeTest
 		PInvokeAssert.Equal(atomicMetadata, nonBinaryMetadata5[0]);
 		PInvokeAssert.Equal(nonBinaryMetadata3, nonBinaryMetadata5[1]);
 
-		PInvokeAssert.Equal(atomicMetadata, BufferManager.MetadataManager<T>.GetMetadata(typeofAtomic));
-		PInvokeAssert.Equal(composite2Metadata, BufferManager.MetadataManager<T>.GetMetadata(typeofComposite2));
-		PInvokeAssert.Equal(binaryMetadata, BufferManager.MetadataManager<T>.GetMetadata(binaryMetadata.BufferType));
+		PInvokeAssert.Equal(atomicMetadata, BuffersHelper.GetMetadata<T>(typeofAtomic));
+		PInvokeAssert.Equal(composite2Metadata, BuffersHelper.GetMetadata<T>(typeofComposite2));
+		PInvokeAssert.Equal(binaryMetadata, BuffersHelper.GetMetadata<T>(binaryMetadata.BufferType));
 		PInvokeAssert.Equal(binaryMetadata.Components.ToArray(), [
-			BufferManager.MetadataManager<T>.GetMetadata(typeofAtomic),
-			BufferManager.MetadataManager<T>.GetMetadata(typeofComposite2),
+			BuffersHelper.GetMetadata<T>(typeofAtomic),
+			BuffersHelper.GetMetadata<T>(typeofComposite2),
 		]);
 		foreach (BufferTypeMetadata<T> metadata in binaryMetadata.Components.Span)
-			PInvokeAssert.Equal(metadata, BufferManager.MetadataManager<T>.GetMetadata(metadata.BufferType));
+			PInvokeAssert.Equal(metadata, BuffersHelper.GetMetadata<T>(metadata.BufferType));
 	}
 	private static BufferTypeMetadata<T> GetMetadata<TBuffer, T>()
 		where TBuffer : struct, IManagedBinaryBuffer<TBuffer, T>
 	{
 		const BindingFlags getMetadataFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 		Type typeofInterface = typeof(IManagedBuffer<T>);
-		MethodInfo? getMetadata =
-			typeofInterface.GetMethod(nameof(BufferManager.MetadataManager<T>.GetMetadata), getMetadataFlags);
+		MethodInfo? getMetadata = typeofInterface.GetMethod(nameof(BuffersHelper.GetMetadata), getMetadataFlags);
 		if (getMetadata is not null)
 			return (BufferTypeMetadata<T>)getMetadata.MakeGenericMethod(typeof(TBuffer)).Invoke(null, [])!;
-		return (BufferTypeMetadata<T>)typeof(TBuffer).GetField(
-			nameof(Composite<Atomic<Object>, Atomic<Object>, Object>.TypeMetadata), getMetadataFlags)!.GetValue(null)!;
+		return (BufferTypeMetadata<T>)typeof(TBuffer).GetField(nameof(Composite<,,>.TypeMetadata), getMetadataFlags)!
+		                                             .GetValue(null)!;
 	}
 }

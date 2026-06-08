@@ -99,9 +99,10 @@ internal static class MarvinCompat
 #endif
 		}
 
+		Debug.Assert(MarvinCompat.DefaultSeed.HasValue);
 		unchecked
 		{
-			UInt32 seed0 = (UInt32)MarvinCompat.DefaultSeed!.Value;
+			UInt32 seed0 = (UInt32)MarvinCompat.DefaultSeed.Value;
 			UInt32 seed1 = (UInt32)(MarvinCompat.DefaultSeed.Value >> 32);
 			return MarvinCompat.ComputeUtf8Hash32(value, seed0, seed1);
 		}
@@ -119,11 +120,12 @@ internal static class MarvinCompat
 	private static Int32 GetHashCode(ReadOnlySpan<Char> value)
 #endif
 	{
+		Debug.Assert(MarvinCompat.DefaultSeed.HasValue);
 		unchecked
 		{
 			ref Byte refData0 = ref Unsafe.As<Char, Byte>(ref MemoryMarshal.GetReference(value));
 			UInt32 dataLength = (UInt32)value.Length * 2;
-			UInt32 seed0 = (UInt32)MarvinCompat.DefaultSeed!.Value;
+			UInt32 seed0 = (UInt32)MarvinCompat.DefaultSeed.Value;
 			UInt32 seed1 = (UInt32)(MarvinCompat.DefaultSeed.Value >> 32);
 			return MarvinCompat.ComputeUtf16Hash32(ref refData0, dataLength, seed0, seed1);
 		}

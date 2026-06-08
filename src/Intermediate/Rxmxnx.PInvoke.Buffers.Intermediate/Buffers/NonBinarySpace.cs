@@ -38,7 +38,7 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	static void IManagedBuffer<T>.AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components) { }
+	static void IManagedBuffer<T>.AppendComponent(IMetadataStorage storage) { }
 #endif
 
 	/// <summary>

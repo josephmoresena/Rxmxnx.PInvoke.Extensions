@@ -6,18 +6,37 @@ namespace Rxmxnx.PInvoke;
 public static partial class BufferManager
 {
 	/// <summary>
+	/// Current <see cref="IMetadataStorage"/> instance.
+	/// </summary>
+	internal static IMetadataStorage Storage
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => MetadataStorage.Instance;
+	}
+	/// <summary>
 	/// Indicates whether metadata for any required buffer is auto-composed.
 	/// </summary>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	public static Boolean BufferAutoCompositionEnabled
-	{
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get
-			=> !AotInfo.IsReflectionDisabled &&
-				(!AppContext.TryGetSwitch("PInvoke.DisableBufferAutoComposition", out Boolean disable) || !disable);
-	}
+	public static Boolean BufferAutoCompositionEnabled => BuffersHelper.BufferAutoCompositionEnabled;
+	/// <summary>
+	/// Maximum supported binary buffer size at runtime.
+	/// </summary>
+	/// <remarks>
+	/// Binary metadata is only available for buffer sizes up to this limit. Requests exceeding this limit are allocated
+	/// on the heap.
+	/// Operations that prepare or register binary metadata may throw when the requested size exceeds this limit.
+	/// </remarks>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public static UInt16 MaxBinarySize
+#if !NET8_0_OR_GREATER
+		=> UInt16.MaxValue;
+#else
+		=> MetadataStorage.MaxCapacity == 0 ? UInt16.MaxValue : MetadataStorage.MaxCapacity;
+#endif
 
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="action"/>.
@@ -100,21 +119,21 @@ public static partial class BufferManager
 	/// </summary>
 	/// <typeparam name="TBuffer">Type of object buffer.</typeparam>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void Register<[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBuffer>()
+	public static void Register<[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBuffer>()
 		where TBuffer : struct, IManagedBuffer<Object>
-		=> MetadataManager<Object>.RegisterBuffer<TBuffer>();
+		=> BufferManager.Storage.RegisterBuffer<Object, TBuffer>();
 	/// <summary>
 	/// Registers <typeparamref name="T"/> buffer.
 	/// </summary>
 	/// <typeparam name="T">Type of items in the buffer.</typeparam>
 	/// <typeparam name="TBuffer">Type of <typeparamref name="T"/> buffer.</typeparam>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void Register<T, [DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBuffer>()
+	public static void Register<T, [DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBuffer>()
 		where TBuffer : struct, IManagedBuffer<T> where T : struct
 	{
 		// If unmanaged type, stackalloc should be used.
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
-		MetadataManager<T>.RegisterBuffer<TBuffer>();
+		BufferManager.Storage.RegisterBuffer<T, TBuffer>();
 	}
 	/// <summary>
 	/// Registers <typeparamref name="T"/> buffer.
@@ -123,12 +142,12 @@ public static partial class BufferManager
 	/// <typeparam name="TBuffer">Type of <see name="Nullable{T}"/> buffer.</typeparam>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void RegisterNullable<T,
-		[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBuffer>()
+		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBuffer>()
 		where TBuffer : struct, IManagedBuffer<T?> where T : struct
 	{
 		// If unmanaged type, stackalloc should be used.
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
-		MetadataManager<T?>.RegisterBuffer<TBuffer>();
+		BufferManager.Storage.RegisterBuffer<T?, TBuffer>();
 	}
 	/// <summary>
 	/// Prepares the binary buffer metadata needed to allocate <paramref name="count"/> objects.
@@ -136,7 +155,7 @@ public static partial class BufferManager
 	/// <param name="count">Amount of items in required buffer.</param>
 	/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void PrepareBinaryBuffer(UInt16 count) => MetadataManager<Object>.PrepareBinaryMetadata(count);
+	public static void PrepareBinaryBuffer(UInt16 count) => BufferManager.Storage.PrepareBinaryMetadata<Object>(count);
 	/// <summary>
 	/// Prepares the binary buffer metadata needed to allocate <paramref name="count"/> <typeparamref name="T"/> items.
 	/// </summary>
@@ -148,7 +167,7 @@ public static partial class BufferManager
 	{
 		// If unmanaged type, stackalloc should be used.
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
-		MetadataManager<T>.PrepareBinaryMetadata(count);
+		BufferManager.Storage.PrepareBinaryMetadata<T>(count);
 	}
 	/// <summary>
 	/// Prepares the binary buffer metadata needed to allocate <paramref name="count"/> nullable <typeparamref name="T"/>
@@ -162,6 +181,6 @@ public static partial class BufferManager
 	{
 		// If unmanaged type, stackalloc should be used.
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
-		MetadataManager<T?>.PrepareBinaryMetadata(count);
+		BufferManager.Storage.PrepareBinaryMetadata<T?>(count);
 	}
 }

@@ -19,9 +19,6 @@
         <DefineConstants Condition="'$(IlcDisableReflection)' == 'true'">$(DefineConstants);REFLECTION_FREE</DefineConstants>
         <SelfContained Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">true</SelfContained>
         <StripSymbols>true</StripSymbols>
-        <IlcGenerateMetadataLog>true</IlcGenerateMetadataLog>
-        <IlcGenerateMstatFile>true</IlcGenerateMstatFile>
-        <IlcGenerateDgmlFile>true</IlcGenerateDgmlFile>
         <RootAllApplicationAssemblies>false</RootAllApplicationAssemblies>
         <TrimUnusedDependencies>true</TrimUnusedDependencies>
         <IlcOptimizationPreference>Size</IlcOptimizationPreference>
@@ -30,8 +27,20 @@
         <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
         <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
         <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
+        <IsLtsFramework Condition="'$(TargetFramework)' == 'net6.0'">true</IsLtsFramework>
+        <IsLtsFramework Condition="'$(TargetFramework)' == 'net8.0'">true</IsLtsFramework>
+        <IsLtsFramework Condition="'$(TargetFramework)' == 'net10.0'">true</IsLtsFramework>
     </PropertyGroup>
-
+    <PropertyGroup Condition="'$(IsLtsFramework)' == 'true' Or '$(TargetFramework)' == '$(DefaultFramework)'">
+        <IlcGenerateMetadataLog>true</IlcGenerateMetadataLog>
+        <IlcGenerateMstatFile>true</IlcGenerateMstatFile>
+        <IlcGenerateDgmlFile>true</IlcGenerateDgmlFile>
+    </PropertyGroup>
+    <PropertyGroup>
+        <DebugType>none</DebugType>
+        <DebugSymbols>false</DebugSymbols>
+        <DebuggerSupport>false</DebuggerSupport>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm' And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
         <LinkerFlavor>lld</LinkerFlavor>
         <ObjCopyName>/usr/arm-linux-gnueabihf/bin/objcopy</ObjCopyName>
@@ -46,6 +55,10 @@
         <PackageReference Include="runtime.$(NETCoreSdkPortableRuntimeIdentifier).Microsoft.DotNet.ILCompiler.LLVM" Version="10.0.0-*"/>
         <LinkerArg Include="-sEXPORTED_RUNTIME_METHODS=[HEAPU8,HEAPU32,HEAP32,cwrap,stringToNewUTF8]"/>
         <LinkerArg Include="-sASSERTIONS"/>
+    </ItemGroup>
+    <ItemGroup Condition="$([MSBuild]::IsOSPlatform('WINDOWS'))">
+        <LinkerArg Include="/DEBUG:NONE"/>
+        <LinkerArg Include="/INCREMENTAL:NO"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -65,7 +78,7 @@
         <KnownILCompilerPack Include="Microsoft.DotNet.ILCompiler"
                              TargetFramework="net6.0"
                              ILCompilerRuntimeIdentifiers="linux-arm64;linux-musl-arm64;linux-musl-x64;linux-x64;win-arm64;win-x64;osx-arm64;osx-x64"
-                             ILCompilerPackVersion="8.0.25"
+                             ILCompilerPackVersion="8.0.27"
                              ILCompilerPackNamePattern="runtime.**RID**.Microsoft.DotNet.ILCompiler"
                              Condition="$([MSBuild]::IsOSPlatform('OSX')) And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'"/>
     </ItemGroup>
@@ -80,7 +93,7 @@
         <KnownILCompilerPack Include="Microsoft.DotNet.ILCompiler"
                              TargetFramework="net7.0"
                              ILCompilerRuntimeIdentifiers="linux-arm64;linux-musl-arm64;linux-musl-x64;linux-x64;win-arm64;win-x64;osx-arm64;osx-x64"
-                             ILCompilerPackVersion="8.0.25"
+                             ILCompilerPackVersion="8.0.27"
                              ILCompilerPackNamePattern="runtime.**RID**.Microsoft.DotNet.ILCompiler"
                              Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'"/>
     </ItemGroup>

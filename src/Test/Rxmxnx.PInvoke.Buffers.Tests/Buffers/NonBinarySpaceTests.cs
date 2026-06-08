@@ -57,16 +57,16 @@ public sealed class NonBinarySpaceTests
 		PInvokeAssert.Empty(typeMetadata.Components.ToArray());
 		PInvokeAssert.False(typeMetadata.IsBinary);
 		PInvokeAssert.Equal(100, typeMetadata.Size);
-		PInvokeAssert.Null(typeMetadata.Double());
-		PInvokeAssert.Null(typeMetadata.Compose(atomicMetadata));
-		PInvokeAssert.Null(atomicMetadata.Compose(typeMetadata));
+		PInvokeAssert.Null(typeMetadata.Double(BufferManager.Storage));
+		PInvokeAssert.Null(typeMetadata.Compose(BufferManager.Storage, atomicMetadata));
+		PInvokeAssert.Null(atomicMetadata.Compose(BufferManager.Storage, typeMetadata));
 		PInvokeAssert.Equal(typeof(NonBinarySpace<NonBinaryBuffer<T>, WrapperStruct<WrapperStruct<WrapperStruct<T>>>>),
 		                    typeMetadata.BufferType);
 		PInvokeAssert.Equal(atomicMetadata,
-		                    BufferManager.MetadataManager<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>.GetMetadata(
+		                    BuffersHelper.GetMetadata<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>(
 			                    atomicMetadata.BufferType));
 		PInvokeAssert.Equal(typeMetadata,
-		                    BufferManager.MetadataManager<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>.GetMetadata(
+		                    BuffersHelper.GetMetadata<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>(
 			                    typeMetadata.BufferType));
 
 		Span<IntPtr> span0 = stackalloc IntPtr[5];
@@ -103,7 +103,7 @@ public sealed class NonBinarySpaceTests
 		PInvokeAssert.Equal(typeof(NonBinarySpace<NonBinaryBuffer<T>, WrapperStruct<WrapperStruct<WrapperStruct<T>>>>),
 		                    buffer.BufferMetadata.BufferType);
 		PInvokeAssert.Equal(buffer.BufferMetadata,
-		                    BufferManager.MetadataManager<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>.GetMetadata(
+		                    BuffersHelper.GetMetadata<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>(
 			                    buffer.BufferMetadata.BufferType));
 	}
 	private static void Do<T>(ScopedBuffer<WrapperStruct<WrapperStruct<WrapperStruct<T>>>> buffer,
@@ -128,8 +128,7 @@ public sealed class NonBinarySpaceTests
 		try
 		{
 			Type typeofInterface = typeof(IManagedBuffer<T>);
-			MethodInfo? getMetadata =
-				typeofInterface.GetMethod(nameof(BufferManager.MetadataManager<T>.GetMetadata), getMetadataFlags);
+			MethodInfo? getMetadata = typeofInterface.GetMethod(nameof(BuffersHelper.GetMetadata), getMetadataFlags);
 			if (getMetadata is not null)
 				return (BufferTypeMetadata<T>)getMetadata.MakeGenericMethod(typeof(TBuffer)).Invoke(null, [])!;
 			return (BufferTypeMetadata<T>)typeof(TBuffer).GetField(nameof(NonBinarySpace<Int32, Int32>.TypeMetadata),

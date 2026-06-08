@@ -17,15 +17,9 @@ namespace Rxmxnx.PInvoke.Buffers;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 #endif
-#if NET7_0_OR_GREATER && BINARY_SPACES
-public partial struct Composite<[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBufferA,
-	[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBufferB,
+public struct Composite<[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBufferA,
+	[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBufferB,
 	T> : IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>
-#else
-public struct Composite<[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBufferA,
-	[DynamicallyAccessedMembers(BufferManager.DynamicallyAccessedMembers)] TBufferB,
-	T> : IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>
-#endif
 	where TBufferA : struct, IManagedBinaryBuffer<TBufferA, T>
 	where TBufferB : struct, IManagedBinaryBuffer<TBufferB, T>
 {
@@ -35,8 +29,7 @@ public struct Composite<[DynamicallyAccessedMembers(BufferManager.DynamicallyAcc
 	internal static readonly BufferTypeMetadata<T> TypeMetadata =
 #if NET7_0_OR_GREATER
 		new BufferTypeMetadata<Composite<TBufferA, TBufferB, T>, T>(
-			BufferManager.MetadataManager<T>.GetCapacity(TBufferA.TypeMetadata, TBufferB.TypeMetadata,
-			                                             out Boolean isBinary), isBinary);
+			BuffersHelper.GetCapacity(TBufferA.TypeMetadata, TBufferB.TypeMetadata, out Boolean isBinary), isBinary);
 #else
 		Composite<TBufferA, TBufferB, T>.CreateBufferMetadata();
 #endif
@@ -54,10 +47,10 @@ public struct Composite<[DynamicallyAccessedMembers(BufferManager.DynamicallyAcc
 	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => Composite<TBufferA, TBufferB, T>.TypeMetadata;
 	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [TBufferA.TypeMetadata, TBufferB.TypeMetadata,];
 
-	static void IManagedBuffer<T>.AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components)
+	static void IManagedBuffer<T>.AppendComponent(IMetadataStorage storage)
 	{
-		IManagedBuffer<T>.AppendComponent<TBufferA>(components);
-		IManagedBuffer<T>.AppendComponent<TBufferB>(components);
+		IManagedBuffer<T>.AppendComponent<TBufferA>(storage);
+		IManagedBuffer<T>.AppendComponent<TBufferB>(storage);
 	}
 #else
 #if !PACKAGE
@@ -72,22 +65,21 @@ public struct Composite<[DynamicallyAccessedMembers(BufferManager.DynamicallyAcc
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 	private static BufferTypeMetadata<T> CreateBufferMetadata()
 	{
-		BufferTypeMetadata<T>[] components = BufferManager.MetadataManager<T>.GetComponents<TBufferA, TBufferB>();
-		Int32 capacity =
-			BufferManager.MetadataManager<T>.GetCapacity(components[0], components[1], out Boolean isBinary);
+		BufferTypeMetadata<T>[] components = BuffersHelper.GetComponents<T, TBufferA, TBufferB>();
+		Int32 capacity = BuffersHelper.GetCapacity(components[0], components[1], out Boolean isBinary);
 		return new BufferTypeMetadata<Composite<TBufferA, TBufferB, T>, T>(
 			capacity, components, isBinary, Composite<TBufferA, TBufferB, T>.AppendComponent);
 	}
 	/// <summary>
 	/// Appends all components from current type.
 	/// </summary>
-	/// <param name="components">A dictionary of components.</param>
-	private static void AppendComponent(IDictionary<UInt16, BufferTypeMetadata<T>> components)
+	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
+	private static void AppendComponent(IMetadataStorage storage)
 	{
 		BufferTypeMetadata<T> currentMetadata = Composite<TBufferA, TBufferB, T>.TypeMetadata;
 		if (!currentMetadata.IsBinary) return;
 		foreach (BufferTypeMetadata<T> component in currentMetadata.Components.Span)
-			ManagedBuffer<T>.AppendComponent(component, components);
+			ManagedBuffer<T>.AppendComponent(component, storage);
 	}
 #endif
 }
