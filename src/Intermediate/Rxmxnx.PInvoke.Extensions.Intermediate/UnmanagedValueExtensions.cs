@@ -1,5 +1,8 @@
 ﻿// ReSharper disable ConvertToExtensionBlock
 
+#if !NET6_0_OR_GREATER
+using ArgumentNullExceptionCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
+#endif
 using EnumCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
 
 namespace Rxmxnx.PInvoke;
@@ -66,9 +69,12 @@ public static partial class UnmanagedValueExtensions
 	public static IFixedContext<T>.IDisposable RentFixed<T>(this ArrayPool<T> arrayPool, Int32 count,
 		Boolean clearArray, out Int32 arrayLength) where T : unmanaged
 	{
-		FixedRentedContext<T> result = new(arrayPool, count, clearArray);
-		arrayLength = result.Array.Length;
-		return result;
+#if !NET6_0_OR_GREATER
+		ArgumentNullExceptionCompat.ThrowIfNull(arrayPool);
+#else
+		ArgumentNullException.ThrowIfNull(arrayPool);
+#endif
+		return RentedMemoryOwner<T>.CreateContext(arrayPool, count, clearArray, out arrayLength);
 	}
 
 	/// <summary>

@@ -4316,6 +4316,13 @@ Set of utilities for exchange data within the P/Invoke context.
     - In reflection-free runtimes, valid delegates are assumed to refer to image-backed code.
     - The entire invocation list of the delegate is evaluated; each delegate element represents a single method.
   </details>
+- <details>
+  <summary>HeapAlloc&lt;T&gt;(Int32)</summary>
+  
+  Allocates a native heap memory block and exposes it through an owning `IFixedContext<T>.IDisposable` instance.
+
+  **Note:** `T` is `unmanaged`.
+  </details>
 
 </details>
 
