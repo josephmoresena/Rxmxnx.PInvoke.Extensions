@@ -3,6 +3,9 @@ namespace Rxmxnx.PInvoke.Internal;
 /// <summary>
 /// Owns a native memory allocation.
 /// </summary>
+#if !PACKAGE
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 internal sealed unsafe class NativeMemoryOwner : IDisposable
 {
 	/// <summary>
