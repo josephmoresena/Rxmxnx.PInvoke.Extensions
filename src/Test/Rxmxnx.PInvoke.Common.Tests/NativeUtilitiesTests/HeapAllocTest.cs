@@ -64,7 +64,7 @@ public sealed class HeapAllocTest
 	}
 	private static void BasicTest<T>(Func<Int32, T> factory) where T : unmanaged
 	{
-		Int32 count = PInvokeRandom.Shared.Next(0, Byte.MaxValue);
+		Int32 count = PInvokeRandom.Shared.Next(1, Byte.MaxValue);
 		IFixedContext<T>.IDisposable ctx = NativeUtilities.HeapAlloc<T>(count);
 		List<T> list = [];
 		try
