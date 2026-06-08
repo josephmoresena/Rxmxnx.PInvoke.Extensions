@@ -71,9 +71,6 @@ internal sealed unsafe class RentedMemoryOwner<T> : IDisposable
 	/// Rents and pins an array of minimum <paramref name="count"/> elements from <paramref name="arrayPool"/>,
 	/// ensuring a safe context for accessing the fixed memory.
 	/// </summary>
-	/// <typeparam name="T">
-	/// The unmanaged type from which the contiguous region of memory will be fixed.
-	/// </typeparam>
 	/// <param name="arrayPool">A <see cref="ArrayPool{T}"/> instance.</param>
 	/// <param name="count">Minimum size of rented array.</param>
 	/// <param name="clearArray">Indicates whether the contents of the buffer should be cleared before reuse.</param>
