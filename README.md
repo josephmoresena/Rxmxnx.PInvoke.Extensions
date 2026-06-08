@@ -10,6 +10,7 @@
 
 - [Description](#description)
     - [Features](#features)
+    - [Use Case Roadmap](#use-case-roadmap)
 - [Getting Started](#getting-started)
     - [Installation](#installation)
     - [Framework Support](#framework-support)
@@ -59,6 +60,29 @@ interaction between .NET and native P/Invoke methods.
   effort.  [More info](src/Intermediate/Rxmxnx.PInvoke.Buffers.Intermediate/README.md)
 - **Safe Memory Manipulation**: Eliminate direct pointer manipulation and unsafe code
   requirements. [More info](src/Intermediate/Rxmxnx.PInvoke.Extensions.Intermediate/README.md)
+
+## Use Case Roadmap
+
+Use this library when the problem benefits from explicit memory intent, scoped lifetimes, or low-allocation data access:
+
+| Scenario                                             | Library area                                                                             | Typical use                                                                                                                                                |
+|------------------------------------------------------|------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| UTF-8 text in interop or managed protocols           | `CString`, `CStringSequence`, `CStringBuilder`                                           | Work with UTF-8 data for native APIs, ASP.NET, `System.Text.Json`, gRPC-style payloads, or other pipelines where avoiding repeated encoding work matters.  |
+| Typed native pointers without spreading `unsafe`     | `ValPtr<T>`, `ReadOnlyValPtr<T>`, `FuncPtr<TDelegate>`                                   | Keep pointer intent visible in signatures while still interoperating with `IntPtr`, delegates, and native exports.                                         |
+| Scoped fixed memory access                           | `IFixedContext<T>`, `IReadOnlyFixedContext<T>`, `WithSafeFixed`, `WithSafeReadOnlyFixed` | Keep pointer validity tied to a callback or `using` scope while still exposing spans, references, and typed fixed contexts.                                |
+| Native heap allocation with .NET lifetime semantics  | `NativeUtilities.HeapAlloc<T>()`                                                         | Allocate unmanaged buffers and release them through `IDisposable` instead of manually pairing framework-specific alloc/free calls.                         |
+| Binary reinterpretation and memory views             | `AsBytes`, `AsValues`, `ToBytes`, `ToValue`, multidimensional array `AsSpan`/`AsMemory`  | Inspect, serialize, hash, transform, or reinterpret memory without unnecessary copies when the layout is already known.                                    |
+| Stack-backed references and scoped temporary buffers | `BufferManager`, `ScopedBuffer<T>`                                                       | Prefer stack-first, scope-bound temporary storage for parsers, serializers, formatting, or high-throughput pipelines where reducing heap pressure matters. |
+| Runtime/AOT/platform checks                          | `AotInfo`, `SystemInfo`, `IsImageMethod`, `IsImageCode`, `IsLiteral`, `MayBeNonLiteral`  | Adapt behavior for Native AOT, Mono partial AOT, literal/read-only memory, platform-specific exports, or constrained runtimes.                             |
+
+A simple decision rule:
+
+- **Use it** if the code is performance-sensitive, interoperates with native APIs, needs explicit memory lifetime,
+  handles UTF-8 text, reinterprets binary data, benefits from typed pointer contracts, needs stack-backed references and
+  scoped temporary storage, or must adapt to runtime/AOT/platform differences.
+- **Skip it** if all those flows are already covered, direct unsafe code is preferred, pointer intent does not need
+  design-time validation, stack-backed references are not needed, UTF-8-specific handling is not part of the workload,
+  and runtime/AOT/platform checks are irrelevant.
 
 ---
 
@@ -3877,7 +3901,7 @@ This class allows to allocate buffers on stack if possible.
 
   **Note:** This property always returns `UInt16.MaxValue` on platforms where runtime capacity limits are unsupported.
   On .NET 8.0 and later, its value may be affected by the `PInvoke.MaxBufferCapacity31`, `PInvoke.MaxBufferCapacity127`,
-  and `PInvoke.MaxBufferCapacity2047` feature switches.
+  `PInvoke.MaxBufferCapacity2047` feature switches.
   </details>
 
 #### Static Methods:
@@ -4318,7 +4342,7 @@ Set of utilities for exchange data within the P/Invoke context.
   </details>
 - <details>
   <summary>HeapAlloc&lt;T&gt;(Int32)</summary>
-  
+
   Allocates a native heap memory block and exposes it through an owning `IFixedContext<T>.IDisposable` instance.
 
   **Note:** `T` is `unmanaged`.
