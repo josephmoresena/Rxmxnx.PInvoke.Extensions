@@ -9,14 +9,14 @@ namespace Rxmxnx.PInvoke.Internal;
 internal static partial class MetadataStorage
 {
 	/// <summary>
+	/// Maximum capacity of the buffers.
+	/// </summary>
+	public static UInt16 MaxCapacity => 0; // Standard storage.
+	/// <summary>
 	/// Singleton instance.
 	/// </summary>
 #if !NET8_0_OR_GREATER
 	public static readonly IMetadataStorageExt Instance = new ObjectStandardStorage();
-	/// <summary>
-	/// Maximum capacity of the buffers.
-	/// </summary>
-	public static UInt16 MaxCapacity => 0; // Standard storage.
 #else
 	public static readonly IMetadataStorageExt Instance = MetadataStorage.MaxCapacity switch
 	{
@@ -26,10 +26,6 @@ internal static partial class MetadataStorage
 		2047 => new ObjectMetadataStorage2047(false),
 		_ => new ObjectMetadataStorage2047(true),
 	};
-	/// <summary>
-	/// Maximum capacity of the buffers.
-	/// </summary>
-	public static UInt16 MaxCapacity => UInt16.MaxValue;
 #endif
 
 	/// <summary>
