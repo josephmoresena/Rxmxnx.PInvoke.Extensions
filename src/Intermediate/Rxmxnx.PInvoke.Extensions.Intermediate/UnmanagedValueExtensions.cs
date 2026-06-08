@@ -96,11 +96,9 @@ public static partial class UnmanagedValueExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	[return: NotNullIfNotNull(nameof(array))]
 	public static Byte[]? ToBytes<TSource>(this TSource[]? array) where TSource : unmanaged
-	{
-		if (array is null)
-			return default;
-		return array.Length > 0 ? array.AsSpan().AsBytes().ToArray() : [];
-	}
+		=> array is not null ?
+			UnmanagedValueExtensions.ToArray(MemoryMarshal.AsBytes(array.AsReadOnlySpan())) :
+			default;
 
 	/// <summary>
 	/// Converts an array of <see langword="unmanaged"/> values of type <typeparamref name="TSource"/> into an array
@@ -124,11 +122,9 @@ public static partial class UnmanagedValueExtensions
 	[return: NotNullIfNotNull(nameof(array))]
 	public static TDestination[]? ToValues<TSource, TDestination>(this TSource[]? array)
 		where TSource : unmanaged where TDestination : unmanaged
-	{
-		if (array is null)
-			return default;
-		return array.Length > 0 ? array.AsSpan().AsValues<TSource, TDestination>().ToArray() : [];
-	}
+		=> array is not null ?
+			UnmanagedValueExtensions.ToArray(array.AsReadOnlySpan().AsValues<TSource, TDestination>()) :
+			default;
 	/// <summary>
 	/// Converts an array of <see langword="unmanaged"/> values of type <typeparamref name="TSource"/> into an array
 	/// of another <see langword="unmanaged"/> value type <typeparamref name="TDestination"/>.
@@ -161,14 +157,53 @@ public static partial class UnmanagedValueExtensions
 			return default;
 		}
 
-		if (array.Length <= 0)
-		{
-			residual = [];
-			return [];
-		}
-
-		TDestination[] result = array.AsSpan().AsValues<TSource, TDestination>(out Span<Byte> rSpan).ToArray();
-		residual = rSpan.ToArray();
+		ReadOnlySpan<TDestination> values = array.AsReadOnlySpan()
+		                                         .AsValues<TSource, TDestination>(out ReadOnlySpan<Byte> residualSpan);
+		TDestination[] result = UnmanagedValueExtensions.ToArray(values);
+		residual = UnmanagedValueExtensions.ToArray(residualSpan);
 		return result;
+	}
+
+	/// <summary>
+	/// Creates a binary array with the content of <paramref name="span"/>.
+	/// </summary>
+	/// <param name="span">A source binary span.</param>
+	/// <returns>A new binary array.</returns>
+	private static Byte[] ToArray(ReadOnlySpan<Byte> span)
+	{
+		if (span.IsEmpty) return [];
+		Byte[] result = UnmanagedValueExtensions.CreateValueArray<Byte>(span.Length);
+		span.CopyTo(result);
+		return result;
+	}
+	/// <summary>
+	/// Creates a <typeparamref name="T"/> array with the content of <paramref name="span"/>.
+	/// </summary>
+	/// <typeparam name="T">Type of the elements in the array.</typeparam>
+	/// <param name="span">A source <typeparamref name="T"/> span.</param>
+	/// <returns>A new <typeparamref name="T"/> array.</returns>
+	private static T[] ToArray<T>(ReadOnlySpan<T> span) where T : unmanaged
+	{
+		if (span.IsEmpty) return [];
+		T[] result = UnmanagedValueExtensions.CreateValueArray<T>(span.Length);
+		span.CopyTo(result);
+		return result;
+	}
+	/// <summary>
+	/// Allocates a new byte buffer of the specified length.
+	/// </summary>
+	/// <param name="length">Length of the array.</param>
+	/// <returns>A new <see cref="Byte"/> array.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static T[] CreateValueArray<T>(Int32 length) where T : unmanaged
+	{
+#if NET5_0_OR_GREATER
+		return GC.AllocateUninitializedArray<T>(length);
+#else
+		return new T[length];
+#endif
 	}
 }

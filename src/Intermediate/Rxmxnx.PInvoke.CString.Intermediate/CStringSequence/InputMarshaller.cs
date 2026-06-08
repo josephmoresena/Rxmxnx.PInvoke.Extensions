@@ -41,10 +41,7 @@ public unsafe partial class CStringSequence
 		{
 			if (this._pointer == IntPtr.Zero) return;
 			if (this._handle.IsAllocated)
-			{
 				this._handle.Free();
-				this._pointer = IntPtr.Zero;
-			}
 #if !NET6_0_OR_GREATER
 			Marshal.FreeHGlobal(this._pointer);
 #else

@@ -191,7 +191,13 @@ public static unsafe partial class NativeUtilities
 		ref TSource refValue = ref Unsafe.AsRef(in value);
 		ReadOnlySpan<TSource> intermediateSpan = MemoryMarshal.CreateReadOnlySpan(ref refValue, 1);
 		ReadOnlySpan<Byte> bytes = MemoryMarshal.AsBytes(intermediateSpan);
-		return bytes.ToArray();
+#if !NET5_0_OR_GREATER
+		Byte[] result = new Byte[bytes.Length];
+#else
+		Byte[] result = GC.AllocateUninitializedArray<Byte>(bytes.Length);
+#endif
+		bytes.CopyTo(result);
+		return result;
 	}
 	/// <summary>
 	/// Creates a <see cref="ReadOnlySpan{Byte}"/> from an exising read-only reference to a
@@ -207,7 +213,7 @@ public static unsafe partial class NativeUtilities
 	public static ReadOnlySpan<Byte> AsBytes<TSource>(in TSource value) where TSource : unmanaged
 	{
 		ref TSource refValue = ref Unsafe.AsRef(in value);
-		ReadOnlySpan<TSource> span = MemoryMarshal.CreateSpan(ref refValue, 1);
+		ReadOnlySpan<TSource> span = MemoryMarshal.CreateReadOnlySpan(ref refValue, 1);
 		return MemoryMarshal.AsBytes(span);
 	}
 	/// <summary>

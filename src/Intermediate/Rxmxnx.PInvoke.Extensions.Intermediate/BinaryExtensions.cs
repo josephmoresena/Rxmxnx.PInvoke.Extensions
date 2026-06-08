@@ -1,5 +1,9 @@
 ﻿// ReSharper disable ConvertToExtensionBlock
 
+#if !NET6_0_OR_GREATER
+using ArgumentNullExceptionCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
@@ -12,6 +16,11 @@ namespace Rxmxnx.PInvoke;
 #endif
 public static unsafe partial class BinaryExtensions
 {
+	/// <summary>
+	/// Map of hexadecimal values.
+	/// </summary>
+	private const String hexValues = "0123456789abcdef";
+
 	/// <summary>
 	/// Retrieves a <typeparamref name="T"/> value from the given byte array.
 	/// </summary>
@@ -39,7 +48,7 @@ public static unsafe partial class BinaryExtensions
 	{
 		if (span.IsEmpty) return default;
 		ref Byte refByte = ref MemoryMarshal.GetReference(span);
-		if (sizeof(T) == Math.Min(sizeof(T), span.Length))
+		if (span.Length >= sizeof(T))
 			return Unsafe.ReadUnaligned<T>(ref refByte);
 
 		T result = default;
@@ -90,12 +99,45 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="bytes">The source byte array.</param>
 	/// <returns>The hexadecimal string representation of the byte array.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static String AsHexString(this Byte[] bytes) => String.Concat(bytes.Select(b => b.AsHexString()));
+	public static String AsHexString(this Byte[] bytes)
+	{
+#if !NET6_0_OR_GREATER
+		ArgumentNullExceptionCompat.ThrowIfNull(bytes);
+#else
+		ArgumentNullException.ThrowIfNull(bytes);
+#endif
+		return bytes.Length > 0 ? String.Create(bytes.Length * 2, bytes, BinaryExtensions.CopyHexChars) : String.Empty;
+	}
 	/// <summary>
 	/// Gets the hexadecimal string representation of a byte.
 	/// </summary>
 	/// <param name="value">The source byte.</param>
 	/// <returns>The hexadecimal string representation of the byte.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static String AsHexString(this Byte value) => value.ToString("X2").ToLowerInvariant();
+	public static String AsHexString(this Byte value) => String.Create(2, value, BinaryExtensions.CopyHexChars);
+
+	/// <summary>
+	/// Copies to <paramref name="chars"/> the Hexadecimal representation of <paramref name="value"/>.
+	/// </summary>
+	/// <param name="chars">Destination character span.</param>
+	/// <param name="value">The source byte.</param>
+	private static void CopyHexChars(Span<Char> chars, Byte value)
+	{
+		chars[0] = BinaryExtensions.hexValues[value >> 4];
+		chars[1] = BinaryExtensions.hexValues[value & 0x0F];
+	}
+	/// <summary>
+	/// Copies to <paramref name="chars"/> the Hexadecimal representation of <paramref name="bytes"/>.
+	/// </summary>
+	/// <param name="chars">Destination character span.</param>
+	/// <param name="bytes">The source byte array.</param>
+	private static void CopyHexChars(Span<Char> chars, Byte[] bytes)
+	{
+		for (Int32 i = 0; i < bytes.Length; i++)
+		{
+			Byte value = bytes[i];
+			chars[i * 2] = BinaryExtensions.hexValues[value >> 4];
+			chars[i * 2 + 1] = BinaryExtensions.hexValues[value & 0x0F];
+		}
+	}
 }

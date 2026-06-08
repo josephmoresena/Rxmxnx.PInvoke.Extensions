@@ -71,6 +71,8 @@ public readonly ref struct FixedMemoryList
 	/// </returns>
 	public IFixedMemory[] ToArray()
 	{
+		if (this._values.Count <= 0) return [];
+
 		IFixedMemory[] result = new IFixedMemory[this._values.Count];
 		ref IFixedMemory refI = ref MemoryMarshal.GetReference(result.AsSpan());
 		ref ReadOnlyFixedMemory refRo = ref Unsafe.As<IFixedMemory, ReadOnlyFixedMemory>(ref refI);
