@@ -35,7 +35,7 @@ public static partial class BufferManager
 #if !NET8_0_OR_GREATER
 		=> UInt16.MaxValue;
 #else
-		=> MetadataStorage.MaxCapacity == 0 ? UInt16.MaxValue : MetadataStorage.MaxCapacity;
+		=> MetadataStorage.MaxCapacity == 0 ? UInt16.MaxValue : (UInt16)MetadataStorage.MaxCapacity;
 #endif
 
 	/// <summary>

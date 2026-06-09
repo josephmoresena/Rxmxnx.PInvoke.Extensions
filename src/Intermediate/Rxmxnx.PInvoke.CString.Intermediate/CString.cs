@@ -278,7 +278,12 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <returns>
 	/// A new <see cref="Byte"/> array containing the UTF-8 units of the current <see cref="CString"/>.
 	/// </returns>
-	public Byte[] ToArray() => this._data.ToArray()[..this._length];
+	public Byte[] ToArray()
+	{
+		Byte[] result = CString.CreateByteArray(this._length);
+		this.AsSpan().CopyTo(result);
+		return result;
+	}
 	/// <summary>
 	/// Retrieves the UTF-8 units of the current <see cref="CString"/> as a read-only span of bytes.
 	/// </summary>

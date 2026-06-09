@@ -396,6 +396,20 @@ internal static unsafe class ValidationUtilities
 		if (startIndex > regionLength - length)
 			throw new ArgumentOutOfRangeException(nameofLength, resource.IndexOutOfRegion);
 	}
+	/// <summary>
+	/// Validates the length of a sequence.
+	/// </summary>
+	/// <param name="length">Length of the sequence.</param>
+	/// <param name="nameofLength">Name of the length parameter.</param>
+	/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="length"/> is out of range.</exception>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfInvalidLength(Int32 length,
+		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.emptyString)
+	{
+		if (length >= 0) return;
+		IMessageResource resource = IMessageResource.GetInstance();
+		throw new ArgumentOutOfRangeException(nameofLength, resource.LessThanZero);
+	}
 
 	/// <summary>
 	/// Validates the parameters of a substring.

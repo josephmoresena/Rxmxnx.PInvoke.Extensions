@@ -1,30 +1,25 @@
 <linker>
     <assembly fullname="Rxmxnx.PInvoke.Buffers.Intermediate">
-        <type fullname="Rxmxnx.PInvoke.Internal.BuffersHelper"
-              feature="PInvoke.DisableBufferAutoComposition"
+        <type fullname="Rxmxnx.PInvoke.Internal.BuffersHelper" feature="PInvoke.DisableBufferAutoComposition"
               featurevalue="true">
             <method signature="System.Boolean get_BufferAutoCompositionEnabled()" body="stub" value="false"/>
         </type>
         <!-- These features are only available on .NET 8.0 and later -->
-        <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage"
-              feature="PInvoke.MaxBufferCapacity31"
+        <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage" feature="PInvoke.BootstrapBufferStorage.Minimal"
               featurevalue="true">
-            <method signature="System.UInt16 get_MaxCapacity()" body="stub" value="31"/>
+            <method signature="System.Int32 get_MaxCapacity()" body="stub" value="31"/>
         </type>
-        <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage"
-              feature="PInvoke.MaxBufferCapacity127"
+        <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage" feature="PInvoke.BootstrapBufferStorage.Medium"
               featurevalue="true">
-            <method signature="System.UInt16 get_MaxCapacity()" body="stub" value="127"/>
+            <method signature="System.Int32 get_MaxCapacity()" body="stub" value="127"/>
         </type>
-        <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage"
-              feature="PInvoke.MaxBufferCapacity2047"
+        <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage" feature="PInvoke.BootstrapBufferStorage.Limited"
               featurevalue="true">
-            <method signature="System.UInt16 get_MaxCapacity()" body="stub" value="2047"/>
+            <method signature="System.Int32 get_MaxCapacity()" body="stub" value="2047"/>
         </type>
-        <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage"
-              feature="PInvoke.ClassicBufferStorage"
+        <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage" feature="PInvoke.BootstrapBufferStorage.Extended"
               featurevalue="true">
-            <method signature="System.UInt16 get_MaxCapacity()" body="stub" value="0"/>
+            <method signature="System.Int32 get_MaxCapacity()" body="stub" value="65535"/>
         </type>
         <!-- End -->
     </assembly>
