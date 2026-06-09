@@ -36,7 +36,7 @@ internal sealed unsafe class NativeMemoryOwner : IDisposable
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	~NativeMemoryOwner() { this.Release(); }
+	~NativeMemoryOwner() => this.Release();
 
 	/// <summary>
 	/// Releases the native memory allocation.

@@ -53,18 +53,17 @@ internal sealed unsafe class RentedMemoryOwner<T> : IDisposable
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	~RentedMemoryOwner() { this.Release(); }
+	~RentedMemoryOwner() => this.Release();
 
 	/// <summary>
 	/// Releases the rented array allocation.
 	/// </summary>
 	private void Release()
 	{
-		T[]? array = this._array;
-		if (array is null) return;
-		this._array = default;
+		if (this._array is null) return;
 		this._handle.Dispose();
-		this._arrayPool.Return(array, this._clearArray);
+		this._arrayPool.Return(this._array, this._clearArray);
+		this._array = default;
 	}
 
 	/// <summary>
