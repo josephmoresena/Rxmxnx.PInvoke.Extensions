@@ -44,12 +44,12 @@ internal sealed unsafe class NativeMemoryOwner : IDisposable
 	private void Release()
 	{
 		if (this._pointer == IntPtr.Zero) return;
-		this._pointer = IntPtr.Zero;
 #if !NET6_0_OR_GREATER
 		Marshal.FreeHGlobal(this._pointer);
 #else
 		NativeMemory.Free(this._pointer.ToPointer());
 #endif
+		this._pointer = IntPtr.Zero;
 	}
 
 	/// <summary>
