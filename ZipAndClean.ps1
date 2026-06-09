@@ -17,7 +17,7 @@ foreach ($pat in $Patterns)
 $filesToZip = $filesToZip | Select-Object -Unique
 if ($filesToZip.Count -gt 0)
 {
-    Compress-Archive -Path $filesToZip.FullName -DestinationPath $ZipName -Update -CompressionLevel Optimal -Verbose
+    Compress-Archive -Path $filesToZip.FullName -DestinationPath $ZipName -Update -CompressionLevel Fastest -Verbose
 
     if (Test-Path $ZipName)
     {
