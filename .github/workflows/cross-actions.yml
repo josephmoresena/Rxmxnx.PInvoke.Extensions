@@ -156,8 +156,8 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          winget install Mono.Mono --architecture x86 --silent --force --disable-interactivity --accept-source-agreements
-          winget install Mono.Mono --architecture x64 --silent --force --disable-interactivity --accept-source-agreements
+          winget install Mono.Mono --architecture x86 --silent --force --disable-interactivity --accept-source-agreements --accept-package-agreements
+          winget install Mono.Mono --architecture x64 --silent --force --disable-interactivity --accept-source-agreements --accept-package-agreements
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         if: runner.os != 'Windows' || inputs.run_tests != true
@@ -181,7 +181,8 @@ jobs:
               --silent `
               --force `
               --disable-interactivity `
-              --accept-source-agreements
+              --accept-source-agreements `
+              --accept-package-agreements
             }
           }
           dotnet workload update
