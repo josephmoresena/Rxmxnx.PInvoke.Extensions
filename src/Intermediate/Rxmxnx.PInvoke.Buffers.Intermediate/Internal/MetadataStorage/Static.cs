@@ -11,7 +11,7 @@ internal static partial class MetadataStorage
 	/// <summary>
 	/// Maximum capacity of the buffers.
 	/// </summary>
-	public static UInt16 MaxCapacity => 0; // Standard storage.
+	public static Int32 MaxCapacity => 0; // Standard storage.
 	/// <summary>
 	/// Singleton instance.
 	/// </summary>

@@ -7,19 +7,19 @@
         <!-- These features are only available on .NET 8.0 and later -->
         <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage" feature="PInvoke.BootstrapBufferStorage.Minimal"
               featurevalue="true">
-            <method signature="System.UInt16 get_MaxCapacity()" body="stub" value="31"/>
+            <method signature="System.Int32 get_MaxCapacity()" body="stub" value="31"/>
         </type>
         <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage" feature="PInvoke.BootstrapBufferStorage.Medium"
               featurevalue="true">
-            <method signature="System.UInt16 get_MaxCapacity()" body="stub" value="127"/>
+            <method signature="System.Int32 get_MaxCapacity()" body="stub" value="127"/>
         </type>
         <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage" feature="PInvoke.BootstrapBufferStorage.Limited"
               featurevalue="true">
-            <method signature="System.UInt16 get_MaxCapacity()" body="stub" value="2047"/>
+            <method signature="System.Int32 get_MaxCapacity()" body="stub" value="2047"/>
         </type>
         <type fullname="Rxmxnx.PInvoke.Internal.MetadataStorage" feature="PInvoke.BootstrapBufferStorage.Extended"
               featurevalue="true">
-            <method signature="System.UInt16 get_MaxCapacity()" body="stub" value="65535"/>
+            <method signature="System.Int32 get_MaxCapacity()" body="stub" value="65535"/>
         </type>
         <!-- End -->
     </assembly>
