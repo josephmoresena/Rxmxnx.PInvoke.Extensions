@@ -3900,7 +3900,7 @@ This class allows to allocate buffers on stack if possible.
   Maximum supported binary buffer size at runtime. 
 
   **Note:** This property always returns `UInt16.MaxValue` on platforms where runtime capacity limits are unsupported.
-  On .NET 8.0 and later, its value may be affected by the `PInvoke..BootstrapBufferStorage.Minimal`,
+  On .NET 8.0 and later, its value may be affected by the `PInvoke.BootstrapBufferStorage.Minimal`,
   `PInvoke.BootstrapBufferStorage.Medium`, `PInvoke.BootstrapBufferStorage.Limited` feature switches.
   </details>
 
