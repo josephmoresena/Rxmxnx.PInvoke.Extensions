@@ -117,7 +117,7 @@ jobs:
             binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu zlib1g-dev:arm64 libssl-dev:arm64 \
             binutils-arm-linux-gnueabihf gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf zlib1g-dev:armhf libssl-dev:armhf \
             mono-complete mono-vbnc mono-dbg gdb libssl3 \
-            --assume-yes
+            --assume-yes --no-install-recommends
 
           sudo mkdir -p /usr/share/dotnet
           sudo chown -R $(whoami):$(whoami) /usr/share/dotnet
