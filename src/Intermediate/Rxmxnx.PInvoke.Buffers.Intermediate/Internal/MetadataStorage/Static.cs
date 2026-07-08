@@ -77,11 +77,12 @@ internal abstract partial class MetadataStorage<T>
 	/// </summary>
 	/// <param name="count">Amount of items in required buffer.</param>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static BufferTypeMetadata<T>? GetMetadata(UInt16 count)
 	{
 		Debug.Assert(count > 0);
-		Boolean allowNonBinaryMinimal =
-			!MetadataStorage<T>.IsBinaryPrepared(count) && !BuffersHelper.BufferAutoCompositionEnabled;
+		Boolean allowNonBinaryMinimal = !MetadataStorage<T>.IsBinaryPrepared(count, out UInt32 capacity) &&
+			!BuffersHelper.BufferAutoCompositionEnabled;
 		if (NonBinaryStore.GetNonBinary(count, allowNonBinaryMinimal) is { } nonBinary)
 			// Exact non-binary buffer. Allow minimal at first only if unable to retrieve a binary buffer.
 			return nonBinary;
@@ -91,7 +92,7 @@ internal abstract partial class MetadataStorage<T>
 			return default;
 #endif
 		BinaryMap<T> binaryMap = MetadataStorage<T>.GetBinaryMap(count);
-		BufferTypeMetadata<T>? binary = MetadataStorage<T>.GetBinaryMetadata(binaryMap, count, true);
+		BufferTypeMetadata<T>? binary = MetadataStorage<T>.GetBinaryMetadata(binaryMap, count, true, capacity);
 		return binary ?? NonBinaryStore.GetNonBinary(count, true); // Approximate non-Binary buffer.
 	}
 	/// <summary>
@@ -145,23 +146,6 @@ internal abstract partial class MetadataStorage<T>
 #else
 		typeMetadata.AppendComponent(MetadataStorage.Instance);
 #endif
-	}
-	/// <summary>
-	/// Initialize pages.
-	/// </summary>
-	/// <param name="count">Requested count.</param>
-	/// <param name="pageLength">Current page length.</param>
-	/// <param name="page">Reference to the current page slot.</param>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void InitializePages(UInt16 count, Int32 pageLength, ref BufferTypeMetadata<T>?[]? page)
-	{
-		while (count >= pageLength)
-		{
-			if (page is null)
-				Interlocked.CompareExchange(ref page, new BufferTypeMetadata<T>?[pageLength], null);
-			pageLength *= 2;
-			page = ref Unsafe.Add(ref page, 1)!;
-		}
 	}
 #if !PACKAGE
 	/// <summary>

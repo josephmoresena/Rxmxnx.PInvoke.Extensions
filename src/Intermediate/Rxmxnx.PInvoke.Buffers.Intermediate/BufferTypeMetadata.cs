@@ -8,7 +8,7 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// Represents the metadata of a managed buffer type.
 /// </summary>
-public abstract class BufferTypeMetadata : IEnumerableSequence<BufferTypeMetadata>
+public abstract partial class BufferTypeMetadata : IEnumerableSequence<BufferTypeMetadata>
 {
 	/// <summary>
 	/// Indicates whether current type is binary space.
@@ -65,6 +65,37 @@ public abstract class BufferTypeMetadata : IEnumerableSequence<BufferTypeMetadat
 		=> IEnumerableSequence.CreateEnumerator(this);
 	IEnumerator IEnumerable.GetEnumerator() => IEnumerableSequence.CreateEnumerator(this);
 #endif
+	
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static void Execute<T, TBuffer, TAction>(in TAction action, BufferTypeMetadata metadata, Int32 spanLength)
+		where TBuffer : struct
+#if !NET9_0_OR_GREATER
+		where TAction : IScopedBufferAction<T>
+#else
+		where TAction : IScopedBufferAction<T>, allows ref struct
+#endif
+	{
+		TBuffer buffer = new();
+		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
+		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
+		ScopedBuffer<T> scoped = new(memMarshal, false, metadata.Size, metadata);
+		action.Invoke(scoped);
+	}
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static TResult Execute<T, TBuffer, TFunction, TResult>(in TFunction func, BufferTypeMetadata metadata,
+		Int32 spanLength) where TBuffer : struct
+#if !NET9_0_OR_GREATER
+		where TFunction : IScopedBufferFunction<T, TResult>
+#else
+		where TFunction : IScopedBufferFunction<T, TResult>, allows ref struct
+#endif
+	{
+		TBuffer buffer = new();
+		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
+		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
+		ScopedBuffer<T> scoped = new(memMarshal, false, metadata.Size, metadata);
+		return func.Invoke(scoped);
+	}
 }
 
 /// <summary>
@@ -126,92 +157,59 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <summary>
 	/// Executes <paramref name="action"/> using a buffer of current type.
 	/// </summary>
-	/// <param name="action">A <see cref="ScopedBufferAction{T}"/> delegate.</param>
+	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/> interface.</typeparam>
+	/// <param name="action">A <see cref="IScopedBufferAction{T}"/> instance.</param>
 	/// <param name="spanLength">Required span length.</param>
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal abstract void Execute(ScopedBufferAction<T> action, Int32 spanLength);
-	/// <summary>
-	/// Executes <paramref name="action"/> using a buffer of current type and given state object.
-	/// </summary>
-	/// <typeparam name="TState">Type of state object.</typeparam>
-	/// <param name="state">State object.</param>
-	/// <param name="action">A <see cref="ScopedBufferAction{T,TArg}"/> delegate.</param>
-	/// <param name="spanLength">Required span length.</param>
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal abstract void Execute<TState>(TState state, ScopedBufferAction<T, TState> action, Int32 spanLength)
-#if NET9_0_OR_GREATER
-		where TState : allows ref struct
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal abstract void Execute<TAction>(in TAction action, Int32 spanLength)
+#if !NET9_0_OR_GREATER
+		where TAction : IScopedBufferAction<T>;
+#else
+		where TAction : IScopedBufferAction<T>, allows ref struct;
 #endif
-		;
-	/// <inheritdoc cref="BufferTypeMetadata{T}.Execute{TState}(TState, ScopedBufferAction{T, TState}, Int32)"/>
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal abstract void Execute<TState>(TState state, VbScopedBufferAction<T, TState> action, Int32 spanLength);
 	/// <summary>
 	/// Executes <paramref name="func"/> using a buffer of current type.
 	/// </summary>
+	/// <typeparam name="TFunction">Type of <see cref="ScopedBufferFunc{T, Result}"/> interface.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="func">A <see cref="ScopedBufferFunc{T,TResult}"/> delegate.</param>
+	/// <param name="func">A <see cref="IScopedBufferFunction{T,TResult}"/> instance.</param>
 	/// <param name="spanLength">Required span length.</param>
 	/// <returns><paramref name="func"/> result.</returns>
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal abstract TResult Execute<TResult>(ScopedBufferFunc<T, TResult> func, Int32 spanLength);
-	/// <summary>
-	/// Executes <paramref name="func"/> using a buffer of current type and given state object.
-	/// </summary>
-	/// <typeparam name="TState">Type of state object.</typeparam>
-	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="state">State object.</param>
-	/// <param name="func">A <see cref="ScopedBufferFunc{T,TArg,TResult}"/> delegate.</param>
-	/// <param name="spanLength">Required span length.</param>
-	/// <returns><paramref name="func"/> result.</returns>
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal abstract TResult Execute<TState, TResult>(TState state, ScopedBufferFunc<T, TState, TResult> func,
-			Int32 spanLength)
-#if NET9_0_OR_GREATER
-		where TState : allows ref struct
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal abstract TResult Execute<TFunction, TResult>(in TFunction func, Int32 spanLength)
+#if !NET9_0_OR_GREATER
+		where TFunction : IScopedBufferFunction<T, TResult>;
+#else
+		where TFunction : IScopedBufferFunction<T, TResult>, allows ref struct;
 #endif
-		;
-	/// <inheritdoc cref="BufferTypeMetadata{T}.Execute{TState, TResult}(TState, ScopedBufferFunc{T, TState, TResult}, Int32)"/>
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal abstract TResult Execute<TState, TResult>(TState state, VbScopedBufferFunc<T, TState, TResult> func,
-		Int32 spanLength);
 	/// <summary>
-	/// Executes <paramref name="action"/> using a buffer of current type and given state object.
+	/// Executes <paramref name="action"/> using a buffer of current type.
 	/// </summary>
 	/// <typeparam name="TU">Type of transformation state object.</typeparam>
-	/// <typeparam name="TState">Type of state object.</typeparam>
-	/// <param name="state">State object.</param>
-	/// <param name="action">A <see cref="ScopedBufferAction{T,TArg}"/> delegate.</param>
+	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/> interface.</typeparam>
+	/// <param name="action">A <see cref="IScopedBufferAction{T}"/> instance.</param>
 	/// <param name="spanLength">Required span length.</param>
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal abstract void Execute<TU, TState>(TState state, ScopedBufferAction<TU, TState> action, Int32 spanLength)
-#if NET9_0_OR_GREATER
-		where TState : allows ref struct
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal abstract void Execute<TU, TAction>(in TAction action, Int32 spanLength)
+#if !NET9_0_OR_GREATER
+		where TAction : IScopedBufferAction<TU>;
+#else
+		where TAction : IScopedBufferAction<TU>, allows ref struct;
 #endif
-		;
-	/// <inheritdoc cref="BufferTypeMetadata{T}.Execute{TU, TState}(TState, ScopedBufferAction{TU, TState}, Int32)"/>
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal abstract void Execute<TU, TState>(TState state, VbScopedBufferAction<TU, TState> action, Int32 spanLength);
 	/// <summary>
-	/// Executes <paramref name="func"/> using a buffer of current type and given state object.
+	/// Executes <paramref name="func"/> using a buffer of current type.
 	/// </summary>
 	/// <typeparam name="TU">Type of transformation state object.</typeparam>
-	/// <typeparam name="TState">Type of state object.</typeparam>
+	/// <typeparam name="TFunction">Type of <see cref="ScopedBufferFunc{T, Result}"/> interface.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="state">State object.</param>
-	/// <param name="func">A <see cref="ScopedBufferFunc{T,TArg,TResult}"/> delegate.</param>
+	/// <param name="func">A <see cref="IScopedBufferFunction{T,TResult}"/> instance.</param>
 	/// <param name="spanLength">Required span length.</param>
 	/// <returns><paramref name="func"/> result.</returns>
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal abstract TResult Execute<TU, TState, TResult>(TState state, ScopedBufferFunc<TU, TState, TResult> func,
-			Int32 spanLength)
-#if NET9_0_OR_GREATER
-		where TState : allows ref struct
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal abstract TResult Execute<TU, TFunction, TResult>(in TFunction func, Int32 spanLength)
+#if !NET9_0_OR_GREATER
+		where TFunction : IScopedBufferFunction<TU, TResult>;
+#else
+		where TFunction : IScopedBufferFunction<TU, TResult>, allows ref struct;
 #endif
-		;
-	/// <inheritdoc
-	///     cref="BufferTypeMetadata{T}.Execute{TU, TState, TResult}(TState, ScopedBufferFunc{TU, TState, TResult}, Int32)"/>
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal abstract TResult Execute<TU, TState, TResult>(TState state, VbScopedBufferFunc<TU, TState, TResult> func,
-		Int32 spanLength);
 }

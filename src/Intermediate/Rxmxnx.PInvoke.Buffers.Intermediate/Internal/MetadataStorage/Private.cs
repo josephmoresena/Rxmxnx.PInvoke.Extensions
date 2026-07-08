@@ -24,17 +24,19 @@ internal abstract partial class MetadataStorage<T>
 	/// <param name="binaryMap">Map of binary buffers type metadata.</param>
 	/// <param name="count">Amount of items in required buffer.</param>
 	/// <param name="allowMinimal">Allow to return minimal buffer.</param>
+	/// <param name="binaryCapacity">Current binary capacity.</param>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1199)]
 #endif
-	private static BufferTypeMetadata<T>? GetBinaryMetadata(BinaryMap<T> binaryMap, UInt16 count, Boolean allowMinimal)
+	private static BufferTypeMetadata<T>? GetBinaryMetadata(BinaryMap<T> binaryMap, UInt16 count, Boolean allowMinimal,
+		UInt32 binaryCapacity = 0)
 	{
 		if (binaryMap[count] is { } result)
 			// Exact type metadata is found.
 			return result;
-		if (!binaryMap.IsAllowed(count))
+		if (allowMinimal && (binaryCapacity == 0 ? !binaryMap.IsAllowed(count) : count > binaryCapacity))
 			// There is no minimal.
 			return default;
 
@@ -105,16 +107,21 @@ internal abstract partial class MetadataStorage<T>
 	/// Indicates whether the current instance is prepared for <paramref name="count"/>
 	/// </summary>
 	/// <param name="count">Amount of items in required buffer.</param>
+	/// <param name="binaryCapacity">Total binary storage capacity.</param>
 	/// <returns>
 	/// <see langword="true"/> if the current instance is prepared for <paramref name="count"/>; otherwise
 	/// <see langword="false"/>.
 	/// </returns>
-	private static Boolean IsBinaryPrepared(UInt16 count)
+	private static Boolean IsBinaryPrepared(UInt16 count, out UInt32 binaryCapacity)
 	{
-		if (MetadataStorage<T>.instance is not { } storage) return false;
-		UInt32 binaryCapacity = storage.Capacity;
+		if (MetadataStorage<T>.instance is not { } storage)
+		{
+			binaryCapacity = 0;
+			return false;
+		}
+		binaryCapacity = storage.Capacity;
 		if (storage is IBinarySlotsOwner<T> owner)
-			binaryCapacity += owner.AdditionalBinaryCapacity;
+			binaryCapacity += owner.GetAdditionalBinaryCapacity();
 		Debug.Assert(binaryCapacity <= UInt16.MaxValue);
 		return binaryCapacity >= count;
 	}

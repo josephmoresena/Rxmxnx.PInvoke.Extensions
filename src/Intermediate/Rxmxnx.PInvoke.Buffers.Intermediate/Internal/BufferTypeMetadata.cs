@@ -79,143 +79,19 @@ internal sealed class BufferTypeMetadata<[DynamicallyAccessedMembers(BuffersHelp
 		return BuffersHelper.ComposeWithReflection<T>(storage, typeof(TBuffer), typeof(TOther));
 	}
 	/// <inheritdoc/>
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal override void Execute(ScopedBufferAction<T> action, Int32 spanLength)
-	{
-		TBuffer buffer = default;
-		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
-		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
-		ScopedBuffer<T> scoped = new(memMarshal, false, this.Size, this);
-		action(scoped);
-	}
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal override void Execute<TAction>(in TAction action, Int32 spanLength)
+		=> BufferTypeMetadata.Execute<T, TBuffer, TAction>(in action, this, spanLength);
 	/// <inheritdoc/>
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal override void Execute<TState>(TState state, ScopedBufferAction<T, TState> action, Int32 spanLength)
-	{
-		TBuffer buffer = default;
-		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
-		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
-		ScopedBuffer<T> scoped = new(memMarshal, false, this.Size, this);
-		action(scoped, state);
-	}
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal override TResult Execute<TFunction, TResult>(in TFunction func, Int32 spanLength)
+		=> BufferTypeMetadata.Execute<T, TBuffer, TFunction, TResult>(in func, this, spanLength);
 	/// <inheritdoc/>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal override void Execute<TState>(TState state, VbScopedBufferAction<T, TState> action, Int32 spanLength)
-	{
-		TBuffer buffer = default;
-		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
-		VbScopedBuffer<T> bufferT = new(ref valRef, (UInt16)spanLength, this);
-		try
-		{
-			action(bufferT, state);
-		}
-		finally
-		{
-			bufferT.Unload();
-		}
-	}
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal override void Execute<TU, TAction>(in TAction action, Int32 spanLength)
+		=> BufferTypeMetadata.Execute<TU, TBuffer, TAction>(in action, this, spanLength);
 	/// <inheritdoc/>
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal override TResult Execute<TResult>(ScopedBufferFunc<T, TResult> func, Int32 spanLength)
-	{
-		TBuffer buffer = default;
-		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
-		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
-		ScopedBuffer<T> scoped = new(memMarshal, false, this.Size, this);
-		return func(scoped);
-	}
-	/// <inheritdoc/>
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal override TResult Execute<TState, TResult>(TState state, ScopedBufferFunc<T, TState, TResult> func,
-		Int32 spanLength)
-	{
-		TBuffer buffer = default;
-		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
-		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
-		ScopedBuffer<T> scoped = new(memMarshal, false, this.Size, this);
-		return func(scoped, state);
-	}
-	/// <inheritdoc/>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal override TResult Execute<TState, TResult>(TState state, VbScopedBufferFunc<T, TState, TResult> func,
-		Int32 spanLength)
-	{
-		TBuffer buffer = default;
-		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
-		VbScopedBuffer<T> bufferT = new(ref valRef, (UInt16)spanLength, this);
-		try
-		{
-			return func(bufferT, state);
-		}
-		finally
-		{
-			bufferT.Unload();
-		}
-	}
-	/// <inheritdoc/>
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal override void Execute<TU, TState>(TState state, ScopedBufferAction<TU, TState> action, Int32 spanLength)
-	{
-		TBuffer buffer = default;
-		ref TU valRef = ref Unsafe.As<TBuffer, TU>(ref buffer);
-		Span<TU> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
-		ScopedBuffer<TU> scoped = new(memMarshal, false, this.Size, this);
-		action(scoped, state);
-	}
-	/// <inheritdoc/>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal override void Execute<TU, TState>(TState state, VbScopedBufferAction<TU, TState> action, Int32 spanLength)
-	{
-		TBuffer buffer = default;
-		ref TU valRef = ref Unsafe.As<TBuffer, TU>(ref buffer);
-		VbScopedBuffer<TU> bufferT = new(ref valRef, (UInt16)spanLength, this);
-		try
-		{
-			action(bufferT, state);
-		}
-		finally
-		{
-			bufferT.Unload();
-		}
-	}
-	/// <inheritdoc/>
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal override TResult Execute<TU, TState, TResult>(TState state, ScopedBufferFunc<TU, TState, TResult> func,
-		Int32 spanLength)
-	{
-		TBuffer buffer = default;
-		ref TU valRef = ref Unsafe.As<TBuffer, TU>(ref buffer);
-		Span<TU> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
-		ScopedBuffer<TU> scoped = new(memMarshal, false, this.Size, this);
-		return func(scoped, state);
-	}
-	/// <inheritdoc/>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal override TResult Execute<TU, TState, TResult>(TState state, VbScopedBufferFunc<TU, TState, TResult> func,
-		Int32 spanLength)
-	{
-		TBuffer buffer = default;
-		ref TU valRef = ref Unsafe.As<TBuffer, TU>(ref buffer);
-		VbScopedBuffer<TU> bufferT = new(ref valRef, (UInt16)spanLength, this);
-		try
-		{
-			return func(bufferT, state);
-		}
-		finally
-		{
-			bufferT.Unload();
-		}
-	}
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal override TResult Execute<TU, TFunction, TResult>(in TFunction func, Int32 spanLength)
+		=> BufferTypeMetadata.Execute<TU, TBuffer, TFunction, TResult>(in func, this, spanLength);
 }

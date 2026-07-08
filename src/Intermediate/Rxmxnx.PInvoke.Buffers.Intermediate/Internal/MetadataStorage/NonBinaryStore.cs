@@ -1,7 +1,3 @@
-#if !NET9_0_OR_GREATER
-using Lock = System.Object;
-#endif
-
 namespace Rxmxnx.PInvoke.Internal;
 
 internal abstract partial class MetadataStorage<T>
@@ -16,10 +12,10 @@ internal abstract partial class MetadataStorage<T>
 	private static class NonBinaryStore
 	{
 		/// <summary>
-		/// Lock object.
+		/// Reader-Writer lock object initialized lazily to orchestrate concurrent access.
 		/// </summary>
 		// ReSharper disable once StaticMemberInGenericType
-		private static Lock? lockObj;
+		private static ReaderWriterLockSlim? rwLock;
 		/// <summary>
 		/// Internal non-binary metadata list.
 		/// </summary>
@@ -34,11 +30,12 @@ internal abstract partial class MetadataStorage<T>
 		public static BufferTypeMetadata<T>? GetNonBinary(UInt16 count, Boolean allowMinimal)
 		{
 			if (!NonBinaryStore.HasNonBinaryMap()) return default;
-#if NET9_0_OR_GREATER
-			using (NonBinaryStore.GetLock().EnterScope())
-#else
-			lock (NonBinaryStore.GetLock())
-#endif
+
+			// Recuperamos de forma perezosa y segura la instancia del bloqueo
+			ReaderWriterLockSlim lockInstance = NonBinaryStore.GetLock();
+
+			lockInstance.EnterReadLock();
+			try
 			{
 				SortedList<UInt16, BufferTypeMetadata<T>> map = NonBinaryStore.GetNonBinaryMap();
 				if (map.TryGetValue(count, out BufferTypeMetadata<T>? result))
@@ -61,38 +58,45 @@ internal abstract partial class MetadataStorage<T>
 				if ((UInt32)lo >= (UInt32)keys.Count) return default;
 				return keys[lo] <= (UInt32)count << 1 ? map.Values[lo] : default;
 			}
+			finally
+			{
+				lockInstance.ExitReadLock();
+			}
 		}
+
 		/// <summary>
 		/// Adds non-binary metadata to current cache.
 		/// </summary>
 		/// <param name="typeMetadata">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
-		/// <returns>
-		/// <see langword="true"/> if <paramref name="typeMetadata"/> was successfully added; otherwise,
-		/// <see langword="false"/>.
-		/// </returns>
 		public static void AddNonBinary(BufferTypeMetadata<T> typeMetadata)
 		{
-#if NET9_0_OR_GREATER
-			using (NonBinaryStore.GetLock().EnterScope())
-#else
-			lock (NonBinaryStore.GetLock())
-#endif
+			ReaderWriterLockSlim lockInstance = NonBinaryStore.GetLock();
+			lockInstance.EnterWriteLock();
+			try
+			{
 				NonBinaryStore.GetNonBinaryMap().TryAdd(typeMetadata.Size, typeMetadata);
+			}
+			finally
+			{
+				lockInstance.ExitWriteLock();
+			}
 		}
 
 		/// <summary>
-		/// Retrieves the lock object to concurrent operations.
+		/// Retrieves the reader-writer lock object for concurrent operations.
 		/// </summary>
-		/// <returns>A <see cref="Lock"/> instance.</returns>
+		/// <returns>A <see cref="ReaderWriterLockSlim"/> instance.</returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static Lock GetLock() => NativeUtilities.GetConcurrentObject(ref NonBinaryStore.lockObj);
+		private static ReaderWriterLockSlim GetLock() => NativeUtilities.GetConcurrentObject(ref NonBinaryStore.rwLock);
+
 		/// <summary>
-		/// Retrieves the non-binary map to concurrent operations.
+		/// Retrieves the non-binary map for concurrent operations.
 		/// </summary>
-		/// <returns>A <see cref="SortedDictionary{UInt16, BufferTypeMetadata}"/> instance.</returns>
+		/// <returns>A <see cref="SortedList{UInt16, BufferTypeMetadata}"/> instance.</returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static SortedList<UInt16, BufferTypeMetadata<T>> GetNonBinaryMap()
 			=> NativeUtilities.GetConcurrentObject(ref NonBinaryStore.nonBinaryMap);
+
 		/// <summary>
 		/// Indicates whether the current type has a non-binary map.
 		/// </summary>
