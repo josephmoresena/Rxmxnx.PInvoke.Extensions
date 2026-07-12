@@ -74,7 +74,7 @@ public partial class NativeUtilities
 	/// <returns>Concurrent value instance.</returns>
 	internal static T GetConcurrentObject<T>(ref T? fieldReference) where T : class, new()
 	{
-		if (fieldReference is { } existing) return existing;
+		if (Volatile.Read(ref fieldReference) is { } existing) return existing;
 		T newObj = new();
 		T? previous = Interlocked.CompareExchange(ref fieldReference, newObj, null);
 		return previous ?? newObj;

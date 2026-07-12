@@ -70,6 +70,49 @@ internal static class BuffersHelper
 #endif
 	}
 	/// <summary>
+	/// Calculates the number of leading zeros (unused bits) for a UInt16.
+	/// </summary>
+	/// <param name="value">The value to evaluate.</param>
+	/// <returns>The number of unused bits out of 16.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Int32 GetLeadingZeros(UInt16 value)
+	{
+#if NETCOREAPP
+		return BitOperations.LeadingZeroCount(value) - 16;
+#else
+		if (value == 0)
+			return 16;
+
+		Int32 zeros = 16;
+
+		if (value >= 0x0100)
+		{
+			zeros -= 8;
+			value >>= 8;
+		}
+
+		if (value >= 0x0010)
+		{
+			zeros -= 4;
+			value >>= 4;
+		}
+
+		if (value >= 0x0004)
+		{
+			zeros -= 2;
+			value >>= 2;
+		}
+
+		if (value >= 0x0002)
+			zeros--;
+
+		return zeros - 1;
+#endif
+	}
+	/// <summary>
 	/// Retrieves the binary capacity for <paramref name="count"/>.
 	/// </summary>
 	/// <param name="count">Number item in the binary space.</param>
