@@ -1,44 +1,76 @@
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
-/// Basic implementation of <see cref="IMetadataStorage"/> interface.
+/// Base class for built-in implementations of <see cref="IMetadataStorage"/> interface.
 /// </summary>
 internal abstract partial class MetadataStorage : IMetadataStorage
 {
 	/// <inheritdoc/>
 	public abstract Boolean TryAdd<T>(BufferTypeMetadata<T> component);
 	/// <inheritdoc/>
-	public BufferTypeMetadata<T>? GetMetadata<T>(UInt16 count)
+	public abstract BufferTypeMetadata<T>? GetMetadata<T>(UInt16 count);
+	/// <inheritdoc/>
+	public abstract void PrepareBinaryMetadata<T>(UInt16 count);
+	/// <inheritdoc/>
+	public abstract void RegisterBuffer<T,
+		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBuffer>()
+		where TBuffer : struct, IManagedBuffer<T>;
+	/// <inheritdoc/>
+	[return: NotNullIfNotNull("typeMetadata")]
+	public abstract BufferTypeMetadata<T>? AddBinaryMetadata<T>(BufferTypeMetadata<T>? typeMetadata);
+#if !PACKAGE
+	/// <inheritdoc/>
+	public abstract void PrintMetadata<T>(Boolean trace);
+#endif
+}
+
+/// <summary>
+/// Implementation <see cref="MetadataStorage"/> interface.
+/// </summary>
+/// <typeparam name="TBackend">Type of <see cref="IMetadataStorageBackend"/>.</typeparam>
+internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend : struct, IMetadataStorageBackend
+{
+	/// <summary>
+	/// Internal implementation.
+	/// </summary>
+#pragma warning disable CS0649
+	private TBackend _backend;
+#pragma warning restore CS0649
+
+	/// <inheritdoc/>
+	public override Boolean TryAdd<T>(BufferTypeMetadata<T> component) => this._backend.TryAdd(component);
+	/// <inheritdoc/>
+	public override BufferTypeMetadata<T>? GetMetadata<T>(UInt16 count)
 	{
 		if (count == 0) count++; // Avoid Zero elements buffer.
-		if (this.GetCurrentCapacity<T>() >= count && this.GetBinaryValue<T>(count) is { } binary)
+		if (this._backend.GetCurrentCapacity<T>() >= count && this._backend.GetBinaryValue<T>(count) is { } binary)
 			return binary;
 		if (NonBinaryStore<T>.GetNonBinary(count, out BufferTypeMetadata<T>? minimalNonBinary) is { } nonBinary)
 			// Exact non-binary buffer. Allow minimal at first only if unable to retrieve a binary buffer.
 			return nonBinary;
 #if NET8_0_OR_GREATER
-		if (count > this.MaxStorageCapacity)
+		if (count > this._backend.MaxStorageCapacity)
 			// Binary capacity doesn't allow current count.
 			return default;
 #endif
-		binary = this.ComputeBinaryMetadata<T>(count, true);
+		binary = this._backend.ComputeBinaryMetadata<T>(this, count, true);
 		//return binary is not null && binary.Size > count ? binary : default;
 		return binary ?? minimalNonBinary; // Approximate non-Binary buffer.
 	}
 	/// <inheritdoc/>
-	public void PrepareBinaryMetadata<T>(UInt16 count)
+	public override void PrepareBinaryMetadata<T>(UInt16 count)
 	{
 		if (count == 0) count++;
 		Type typeofT = typeof(T);
 		BufferTypeMetadata<T>? metadata = default;
 #if NET8_0_OR_GREATER
-		ValidationUtilities.ThrowIfNullMetadata(typeofT, count, count > this.MaxStorageCapacity);
+		ValidationUtilities.ThrowIfNullMetadata(typeofT, count, count > this._backend.MaxStorageCapacity);
 #endif
-		if (this.GetBinaryValue<T>(count) is not null) return;
+		if (this._backend.GetBinaryValue<T>(count) is not null) return;
 		Span<UInt16> components = BuffersHelper.GetBinaryComponents(stackalloc UInt16[16], count);
 		foreach (UInt16 comp in components)
 		{
-			BufferTypeMetadata<T>? compMetadata = this.GetFundamental<T>(comp);
+			BufferTypeMetadata<T>? compMetadata = this._backend.GetFundamental<T>(this, comp);
 			ValidationUtilities.ThrowIfNullMetadata(typeofT, comp, compMetadata is null);
 			if (metadata is null)
 			{
@@ -47,13 +79,13 @@ internal abstract partial class MetadataStorage : IMetadataStorage
 			}
 
 			UInt16 composeSize = (UInt16)(comp + metadata.Size);
-			metadata = this.ComputeBinaryMetadata<T>(composeSize, false);
+			metadata = this._backend.ComputeBinaryMetadata<T>(this, composeSize, false);
 			ValidationUtilities.ThrowIfNullMetadata(typeofT, composeSize, metadata is null);
 		}
 	}
 	/// <inheritdoc/>
-	public void RegisterBuffer<T, [DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBuffer>()
-		where TBuffer : struct, IManagedBuffer<T>
+	public override void RegisterBuffer<T,
+		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBuffer>()
 	{
 #if NET7_0_OR_GREATER
 		BufferTypeMetadata<T> typeMetadata = IManagedBuffer<T>.GetMetadata<TBuffer>();
@@ -74,26 +106,26 @@ internal abstract partial class MetadataStorage : IMetadataStorage
 	}
 	/// <inheritdoc/>
 	[return: NotNullIfNotNull("typeMetadata")]
-	public BufferTypeMetadata<T>? AddBinaryMetadata<T>(BufferTypeMetadata<T>? typeMetadata)
+	public override BufferTypeMetadata<T>? AddBinaryMetadata<T>(BufferTypeMetadata<T>? typeMetadata)
 	{
 		if (typeMetadata is null) return default;
-		this.GetBinaryReference<T>(typeMetadata.Size) = typeMetadata;
+		this._backend.GetBinaryReference<T>(typeMetadata.Size) = typeMetadata;
 		return typeMetadata;
 	}
 #if !PACKAGE
 	/// <inheritdoc/>
-	public void PrintMetadata<T>(Boolean trace)
+	public override void PrintMetadata<T>(Boolean trace)
 	{
 		if (!trace) return;
 		Int32 count = 0;
-		foreach (BufferTypeMetadata<T>? m in this.GetInitial<T>())
+		foreach (BufferTypeMetadata<T>? m in this._backend.GetInitial<T>())
 		{
 			if (m is null) continue;
 			// ReSharper disable once HeapView.BoxingAllocation
 			Trace.WriteLine($"{typeof(T)} {m.Size}({String.Join(", ", m.Components.ToArray().Select(k => k.Size))})");
 			count++;
 		}
-		foreach (BufferTypeMetadata<T>?[]? a in this.GetSlots<T>())
+		foreach (BufferTypeMetadata<T>?[]? a in this._backend.GetSlots<T>())
 		foreach (BufferTypeMetadata<T>? m in a.AsSpan())
 		{
 			if (m is null) continue;

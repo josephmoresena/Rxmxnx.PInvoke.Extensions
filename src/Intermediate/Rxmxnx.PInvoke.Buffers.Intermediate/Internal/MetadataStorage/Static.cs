@@ -16,15 +16,15 @@ internal abstract partial class MetadataStorage
 	/// Singleton instance.
 	/// </summary>
 #if !NET8_0_OR_GREATER
-	public static readonly IMetadataStorage Instance = new StandardStorage();
+	public static readonly IMetadataStorage Instance = new MetadataStorage<StandardBackend>();
 #else
 	public static readonly IMetadataStorage Instance = MetadataStorage.MaxCapacity switch
 	{
-		0 => new StandardStorage(),
-		31 => new BootstrapStorage31(),
-		127 => new BootstrapStorage127(),
-		2047 => new BootstrapStorage<Space11>(),
-		_ => new BootstrapStorage<Space16>(),
+		0 => new MetadataStorage<StandardBackend>(),
+		31 => new MetadataStorage<BootstrapBackend31>(),
+		127 => new MetadataStorage<BootstrapBackend127>(),
+		2047 => new MetadataStorage<BootstrapBackend<Space11>>(),
+		_ => new MetadataStorage<BootstrapBackend<Space16>>(),
 	};
 #endif
 	/// <summary>

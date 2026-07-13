@@ -9,7 +9,7 @@ internal abstract partial class MetadataStorage
 	[ExcludeFromCodeCoverage]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2743)]
 #endif
-	private static class NonBinaryStore<T>
+	protected static class NonBinaryStore<T>
 	{
 		/// <summary>
 		/// Reader-Writer lock object initialized lazily to orchestrate concurrent access.

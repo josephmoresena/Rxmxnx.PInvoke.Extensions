@@ -18,7 +18,11 @@ internal interface IBinarySpace
 internal readonly struct Space11 : IBinarySpace
 {
 	/// <inheritdoc/>
-	public static Int32 Dimension => 11;
+	public static Int32 Dimension
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => 11;
+	}
 }
 
 /// <summary>
@@ -27,6 +31,10 @@ internal readonly struct Space11 : IBinarySpace
 internal readonly struct Space16 : IBinarySpace
 {
 	/// <inheritdoc/>
-	public static Int32 Dimension => 16;
+	public static Int32 Dimension
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => 16;
+	}
 }
 #endif

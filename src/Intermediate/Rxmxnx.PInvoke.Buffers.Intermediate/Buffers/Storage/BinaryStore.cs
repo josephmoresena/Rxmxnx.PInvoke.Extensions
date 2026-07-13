@@ -5,7 +5,7 @@ namespace Rxmxnx.PInvoke.Buffers.Storage;
 /// </summary>
 /// <typeparam name="TMain">Type of main storage.</typeparam>
 /// <typeparam name="T">Type of items in the buffer.</typeparam>
-internal static class BinaryStore<TMain, T> where TMain : IMainBinaryStore<T>, new()
+internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinaryStore<T>
 {
 	/// <summary>
 	/// Initial storage.
@@ -50,6 +50,18 @@ internal static class BinaryStore<TMain, T> where TMain : IMainBinaryStore<T>, n
 		BinaryStore<TMain, T>.slots = new BufferTypeMetadata<T>?[]?[BinaryStore<TMain, T>.initial.SlotCount];
 	}
 
+	/// <summary>
+	/// Tries to add the current component
+	/// </summary>
+	/// <param name="component">The <see cref="BufferTypeMetadata{T}"/> instance to add.</param>
+	/// <returns>
+	/// <see langword="true"/> if <paramref name="component"/> was added successfully; otherwise, <see langword="false"/>.
+	/// </returns>
+	public static Boolean TryAdd(BufferTypeMetadata<T> component)
+	{
+		ref BufferTypeMetadata<T>? reference = ref BinaryStore<TMain, T>.GetBinaryReference(component.Size);
+		return Interlocked.CompareExchange(ref reference, component, null) is null;
+	}
 	/// <summary>
 	/// Retrieves a managed reference to the <see cref="BufferTypeMetadata{T}"/> instance for <paramref name="componentSize"/>.
 	/// </summary>
@@ -100,7 +112,7 @@ internal static class BinaryStore<TMain, T> where TMain : IMainBinaryStore<T>, n
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1199)]
 #endif
-	public static BufferTypeMetadata<T>? ComputeBinaryMetadata(MetadataStorage storage, UInt16 count,
+	public static BufferTypeMetadata<T>? ComputeBinaryMetadata(IMetadataStorage storage, UInt16 count,
 		Boolean allowMinimal)
 	{
 		BufferTypeMetadata<T>? result = BinaryStore<TMain, T>.GetFundamental(storage, BuffersHelper.GetSpaceFor(count));
@@ -131,7 +143,7 @@ internal static class BinaryStore<TMain, T> where TMain : IMainBinaryStore<T>, n
 	/// <param name="storage">A <see cref="MetadataStorage"/> instance.</param>
 	/// <param name="space">Size of fundamental component.</param>
 	/// <returns>A <see cref="BufferTypeMetadata"/> instance.</returns>
-	public static BufferTypeMetadata<T>? GetFundamental(MetadataStorage storage, UInt16 space)
+	public static BufferTypeMetadata<T>? GetFundamental(IMetadataStorage storage, UInt16 space)
 	{
 		if (BinaryStore<TMain, T>.GetBinaryValue(space) is { } metadata)
 			return metadata;
@@ -145,18 +157,6 @@ internal static class BinaryStore<TMain, T> where TMain : IMainBinaryStore<T>, n
 			BinaryStore<TMain, T>.GetBinaryReference(result.Size) = result;
 		}
 		return result;
-	}
-	/// <summary>
-	/// Tries to add the current component
-	/// </summary>
-	/// <param name="component">The <see cref="BufferTypeMetadata{T}"/> instance to add.</param>
-	/// <returns>
-	/// <see langword="true"/> if <paramref name="component"/> was added successfully; otherwise, <see langword="false"/>.
-	/// </returns>
-	public static Boolean TryAdd(BufferTypeMetadata<T> component)
-	{
-		ref BufferTypeMetadata<T>? reference = ref BinaryStore<TMain, T>.GetBinaryReference(component.Size);
-		return Interlocked.CompareExchange(ref reference, component, null) is null;
 	}
 
 	/// <summary>
