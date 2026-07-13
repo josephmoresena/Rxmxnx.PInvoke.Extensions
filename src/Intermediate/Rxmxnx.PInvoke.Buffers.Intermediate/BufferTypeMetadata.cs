@@ -65,37 +65,6 @@ public abstract partial class BufferTypeMetadata : IEnumerableSequence<BufferTyp
 		=> IEnumerableSequence.CreateEnumerator(this);
 	IEnumerator IEnumerable.GetEnumerator() => IEnumerableSequence.CreateEnumerator(this);
 #endif
-
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static void Execute<T, TBuffer, TAction>(in TAction action, BufferTypeMetadata metadata, Int32 spanLength)
-		where TBuffer : struct
-#if !NET9_0_OR_GREATER
-		where TAction : IScopedBufferAction<T>
-#else
-		where TAction : IScopedBufferAction<T>, allows ref struct
-#endif
-	{
-		TBuffer buffer = new();
-		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
-		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
-		ScopedBuffer<T> scoped = new(memMarshal, false, metadata.Size, metadata);
-		action.Invoke(scoped);
-	}
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static TResult Execute<T, TBuffer, TFunction, TResult>(in TFunction func, BufferTypeMetadata metadata,
-		Int32 spanLength) where TBuffer : struct
-#if !NET9_0_OR_GREATER
-		where TFunction : IScopedBufferFunction<T, TResult>
-#else
-		where TFunction : IScopedBufferFunction<T, TResult>, allows ref struct
-#endif
-	{
-		TBuffer buffer = new();
-		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
-		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
-		ScopedBuffer<T> scoped = new(memMarshal, false, metadata.Size, metadata);
-		return func.Invoke(scoped);
-	}
 }
 
 /// <summary>

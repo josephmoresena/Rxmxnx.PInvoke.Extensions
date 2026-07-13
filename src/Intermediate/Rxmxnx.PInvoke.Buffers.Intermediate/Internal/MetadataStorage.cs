@@ -57,7 +57,6 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 			return default;
 #endif
 		binary = this._backend.ComputeBinaryMetadata<T>(this, count, true);
-		//return binary is not null && binary.Size > count ? binary : default;
 		return binary ?? minimalNonBinary; // Approximate non-Binary buffer.
 	}
 	/// <inheritdoc/>

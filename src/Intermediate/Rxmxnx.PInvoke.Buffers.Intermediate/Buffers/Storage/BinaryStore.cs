@@ -102,42 +102,6 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 		return page[componentSize - pageLength];
 	}
 	/// <summary>
-	/// Computes the binary metadata required for a buffer with <paramref name="count"/> items.
-	/// </summary>
-	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
-	/// <param name="count">Amount of items in required buffer.</param>
-	/// <param name="allowMinimal">Allow to return minimal buffer.</param>
-	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
-#if !PACKAGE
-	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
-	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1199)]
-#endif
-	public static BufferTypeMetadata<T>? ComputeBinaryMetadata(IMetadataStorage storage, UInt16 count,
-		Boolean allowMinimal)
-	{
-		BufferTypeMetadata<T>? result = BinaryStore<TMain, T>.GetFundamental(storage, BuffersHelper.GetSpaceFor(count));
-		// Fundamental metadata not found. Use minimal.
-		if (result is null)
-			return allowMinimal ? BinaryStore<TMain, T>.GetMinimal(count) : result;
-		while (count - result.Size > 0)
-		{
-			UInt16 diff = (UInt16)(count - result.Size);
-			BufferTypeMetadata<T>? aux = BinaryStore<TMain, T>.GetBinaryValue(diff) ??
-				BinaryStore<TMain, T>.ComputeBinaryMetadata(storage, diff, false);
-			{
-				// Auxiliary metadata not found. Use minimal.
-				if (aux is null)
-					return allowMinimal ? BinaryStore<TMain, T>.GetMinimal(count) : default;
-				result = result.Compose(storage, aux);
-				if (result is null)
-					// Unable to create composed metadata. Use minimal.
-					return allowMinimal ? BinaryStore<TMain, T>.GetMinimal(count) : default;
-				BinaryStore<TMain, T>.GetBinaryReference(result.Size) = result;
-			}
-		}
-		return result;
-	}
-	/// <summary>
 	/// Retrieves the fundamental component of size <paramref name="space"/>.
 	/// </summary>
 	/// <param name="storage">A <see cref="MetadataStorage"/> instance.</param>
@@ -155,6 +119,60 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 			result = result.Double(storage);
 			if (result is null) break;
 			BinaryStore<TMain, T>.GetBinaryReference(result.Size) = result;
+		}
+		return result;
+	}
+
+	/// <summary>
+	/// Computes the binary metadata required for a buffer with <paramref name="count"/> items.
+	/// </summary>
+	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
+	/// <param name="count">Amount of items in required buffer.</param>
+	/// <param name="allowMinimal">Allow to return minimal buffer.</param>
+	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1199)]
+#endif
+	public static BufferTypeMetadata<T>? ComputeBinaryMetadata(IMetadataStorage storage, UInt16 count,
+		Boolean allowMinimal)
+	{
+		if (BufferTypeMetadata.HasError(typeof(T), count))
+			return allowMinimal ? BinaryStore<TMain, T>.GetMinimal(count) : default;
+		BufferTypeMetadata<T>? result = BinaryStore<TMain, T>.ComputeBinaryMetadata(storage, count);
+		return result is null && allowMinimal ? BinaryStore<TMain, T>.GetMinimal(count) : result;
+	}
+
+	/// <summary>
+	/// Computes the binary metadata required for a buffer with <paramref name="count"/> items.
+	/// </summary>
+	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
+	/// <param name="count">Amount of items in required buffer.</param>
+	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1199)]
+#endif
+	private static BufferTypeMetadata<T>? ComputeBinaryMetadata(IMetadataStorage storage, UInt16 count)
+	{
+		BufferTypeMetadata<T>? result = BinaryStore<TMain, T>.GetFundamental(storage, BuffersHelper.GetSpaceFor(count));
+		// Fundamental metadata not found.
+		if (result is null) return default;
+		while (count - result.Size > 0)
+		{
+			UInt16 diff = (UInt16)(count - result.Size);
+			BufferTypeMetadata<T>? aux = BinaryStore<TMain, T>.GetBinaryValue(diff) ??
+				BinaryStore<TMain, T>.ComputeBinaryMetadata(storage, diff);
+			{
+				// Auxiliary metadata not found. Use minimal.
+				if (aux is null)
+					return default;
+				result = result.Compose(storage, aux);
+				if (result is null)
+					// Unable to create composed metadata. Use minimal.
+					return default;
+				BinaryStore<TMain, T>.GetBinaryReference(result.Size) = result;
+			}
 		}
 		return result;
 	}

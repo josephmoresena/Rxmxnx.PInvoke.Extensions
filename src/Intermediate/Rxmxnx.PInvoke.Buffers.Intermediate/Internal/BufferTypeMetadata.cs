@@ -66,7 +66,13 @@ internal sealed class BufferTypeMetadata<[DynamicallyAccessedMembers(BuffersHelp
 	}
 	/// <inheritdoc/>
 	internal override BufferTypeMetadata<T>? Compose(IMetadataStorage storage, BufferTypeMetadata<T> otherMetadata)
-		=> otherMetadata.Compose<TBuffer>(storage);
+	{
+		Composition composition = new(typeof(T), (UInt16)(this.Size + otherMetadata.Size));
+		if (BufferTypeMetadata.HasError(composition)) return default;
+		BufferTypeMetadata<T>? result = otherMetadata.Compose<TBuffer>(storage);
+		if (result is null) BufferTypeMetadata.SetError(composition);
+		return result;
+	}
 	/// <inheritdoc/>
 	internal override BufferTypeMetadata<T>? Compose<
 		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TOther>(IMetadataStorage storage)
