@@ -128,19 +128,21 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// </summary>
 	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
 	/// <param name="count">Amount of items in required buffer.</param>
-	/// <param name="allowMinimal">Allow to return minimal buffer.</param>
+	/// <param name="nonBinaryMinimal">Indicates the value fo the non-binary buffer minimal.</param>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1199)]
 #endif
 	public static BufferTypeMetadata<T>? ComputeBinaryMetadata(IMetadataStorage storage, UInt16 count,
-		Boolean allowMinimal)
+		Int32 nonBinaryMinimal)
 	{
 		if (BufferTypeMetadata.HasError(typeof(T), count))
-			return allowMinimal ? BinaryStore<TMain, T>.GetMinimal(count) : default;
+			return nonBinaryMinimal > -1 ? BinaryStore<TMain, T>.GetMinimal(count, nonBinaryMinimal) : default;
 		BufferTypeMetadata<T>? result = BinaryStore<TMain, T>.ComputeBinaryMetadata(storage, count);
-		return result is null && allowMinimal ? BinaryStore<TMain, T>.GetMinimal(count) : result;
+		return result is null && nonBinaryMinimal > -1 ?
+			BinaryStore<TMain, T>.GetMinimal(count, nonBinaryMinimal) :
+			result;
 	}
 
 	/// <summary>
@@ -198,16 +200,22 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 		return result;
 	}
 	/// <summary>
-	/// Retrieves the minimal buffer metadata registered to hold at least <paramref name="count"/> items.
+	/// Retrieves the smallest registered binary buffer metadata whose capacity is greater than <paramref name="count"/>.
 	/// </summary>
-	/// <param name="count">Minimal number of items in buffer.</param>
-	/// <returns>A <see cref="BufferTypeMetadata"/> instance.</returns>
+	/// <param name="count">
+	/// Requested buffer capacity. Binary metadata for this exact capacity is assumed to be unavailable.
+	/// </param>
+	/// <param name="nonBinaryMinimal">
+	/// Capacity of the smallest non-binary buffer previously found, or <c>0</c> when no non-binary candidate is available.
+	/// When specified, only binary capacities smaller than this value are considered.
+	/// </param>
+	/// <returns>The smallest qualifying binary buffer metadata; otherwise, <see langword="null"/>.</returns>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS907)]
 #endif
-	private static BufferTypeMetadata<T>? GetMinimal(UInt16 count)
+	private static BufferTypeMetadata<T>? GetMinimal(UInt16 count, Int32 nonBinaryMinimal)
 	{
 		Debug.Assert(count > 1);
 
@@ -215,23 +223,25 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 			return default;
 
 		Int32 remaining = Math.Min(count - 1, UInt16.MaxValue - count);
-		if (remaining == 0) return default;
-
-		Int32 pageIndex;
-		Int32 relativeIndex;
-		ReadOnlySpan<BufferTypeMetadata<T>?> span;
-		UInt16 firstSize = (UInt16)(count + 1);
-		if (firstSize <= BinaryStore<TMain, T>.initial.Length)
+		if (nonBinaryMinimal > 0)
 		{
-			// initial uses pageIndex -1.
-			pageIndex = -1;
-			span = BinaryStore<TMain, T>.initial.Span;
-			relativeIndex = count;
+			if (nonBinaryMinimal <= count + 1)
+				return default;
+			remaining = Math.Min(remaining, nonBinaryMinimal - count - 1);
 		}
-		else
+		if (remaining <= 0) return default;
+
+		ref BufferTypeMetadata<T>? r0 = ref BinaryStore<TMain, T>.initial[0];
+		Int32 spanLength = BinaryStore<TMain, T>.initial.Length;
+		Int32 pageIndex = -1;
+		Int32 relativeIndex = count;
+		UInt16 firstSize = (UInt16)(count + 1);
+		if (firstSize > BinaryStore<TMain, T>.initial.Length)
 		{
 			pageIndex = BinaryStore<TMain, T>.GetSlotIndex(firstSize);
-			if (!BinaryStore<TMain, T>.TryGetPage(pageIndex, out span))
+			r0 = ref BinaryStore<TMain, T>.GetPageReference(pageIndex, out spanLength);
+			if (spanLength <= 0)
+				// Page unavailable.
 				return default;
 			Int32 pageLength = (BinaryStore<TMain, T>.initial.Length + 1) << pageIndex;
 			relativeIndex = firstSize - pageLength;
@@ -239,15 +249,16 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 		while (remaining > 0)
 		{
 			// Search at the current page.
-			Int32 length = Math.Min(span.Length - relativeIndex, remaining);
-			if (BinaryStore<TMain, T>.Search(span, relativeIndex, length) is { } result)
+			Int32 length = Math.Min(spanLength - relativeIndex, remaining);
+			if (BinaryStore<TMain, T>.Search(ref r0, relativeIndex, length) is { } result)
 				// Minimal metadata found.
 				return result;
 			// Exclude from total elements the current search length.
 			if ((remaining -= length) <= 0) continue;
 			// Get the next page.
 			pageIndex++;
-			if (!BinaryStore<TMain, T>.TryGetPage(pageIndex, out span))
+			r0 = ref BinaryStore<TMain, T>.GetPageReference(pageIndex, out spanLength);
+			if (spanLength <= 0)
 				// Next page unavailable.
 				return default;
 			relativeIndex = 0;
@@ -255,55 +266,74 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 		return default;
 	}
 	/// <summary>
-	/// Attempts to retrieve a metadata storage page.
+	/// Attempts to retrieve a managed reference to the metadata storage page.
 	/// </summary>
-	/// <param name="pageIndex">
-	/// Requested page index. A value lower than zero resolves to the initial page stored in
-	/// <see cref="initial"/> (page <c>-1</c>). Non-negative values resolve to pages stored in <see cref="slots"/>.
-	/// </param>
-	/// <param name="span">
-	/// Receives the span associated with the requested page when available; otherwise, an empty span.
+	/// <param name="pageIndex">Requested page index.</param>
+	/// <param name="pageLength">
+	/// Receives the length of the requested page when available; otherwise, <c>-1</c>.
 	/// </param>
 	/// <returns>
-	/// <see langword="true"/> if the requested page exists and is available; otherwise, <see langword="false"/>.
+	/// A managed reference to the metadata storage page.
 	/// </returns>
-	private static Boolean TryGetPage(Int32 pageIndex, out ReadOnlySpan<BufferTypeMetadata<T>?> span)
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static ref BufferTypeMetadata<T>? GetPageReference(Int32 pageIndex, out Int32 pageLength)
 	{
-		if (pageIndex < 0)
-		{
-			span = BinaryStore<TMain, T>.initial.Span;
-			return true;
-		}
+		Debug.Assert(pageIndex >= 0);
 		if ((UInt32)pageIndex >= (UInt32)BinaryStore<TMain, T>.slots.Length ||
 		    BinaryStore<TMain, T>.slots[pageIndex] is not { } page)
 		{
-			span = default;
-			return false;
+			pageLength = -1;
+			return ref Unsafe.NullRef<BufferTypeMetadata<T>?>();
 		}
-		span = page;
-		return true;
+		pageLength = page.Length;
+		return ref MemoryMarshal.GetReference(page);
 	}
 	/// <summary>
 	/// Searches for the first available metadata entry in a page segment.
 	/// </summary>
-	/// <param name="span">Metadata page to search.</param>
+	/// <param name="r0">Managed reference to metadata page.</param>
 	/// <param name="start">Zero-based index of the first entry to inspect.</param>
 	/// <param name="count">Number of entries to inspect.</param>
 	/// <returns>
 	/// The first available metadata entry within the specified range; otherwise, <see langword="null"/>.
 	/// </returns>
-	private static BufferTypeMetadata<T>? Search(ReadOnlySpan<BufferTypeMetadata<T>?> span, Int32 start, Int32 count)
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static unsafe BufferTypeMetadata<T>? Search(ref BufferTypeMetadata<T>? r0, Int32 start, Int32 count)
 	{
-		foreach (BufferTypeMetadata<T>? val in span.Slice(start, count))
+		Debug.Assert(start >= 0);
+		Debug.Assert(count > 0);
+		ref BufferTypeMetadata<T>? rS = ref Unsafe.Add(ref r0, start);
+#pragma warning disable CS8500
+		fixed (void* ptr = &rS)
+#pragma warning restore CS8500
 		{
-			if (val is not null)
-				return val;
+			ReadOnlySpan<IntPtr> unsafeSpan = new(ptr, count);
+#if NET7_0_OR_GREATER
+			Int32 index = unsafeSpan.IndexOfAnyExcept(IntPtr.Zero);
+#else
+			Int32 index = -1;
+			for (Int32 i = 0; i < unsafeSpan.Length; i++)
+			{
+				IntPtr val = unsafeSpan[i];
+				if (val == IntPtr.Zero) continue;
+				index = i;
+				break;
+			}
+#endif
+			return index < 0 ? default : Unsafe.Add(ref rS, index);
 		}
-		return default;
 	}
 	/// <summary>
 	/// Atomically updates the cached capacity when <paramref name="candidate"/> is greater than the current value.
 	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static void UpdateSlotCapacity(Int32 candidate)
 	{
 		Int32 current = Volatile.Read(ref BinaryStore<TMain, T>.currentSlotCapacity);

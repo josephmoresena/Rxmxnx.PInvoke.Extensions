@@ -215,6 +215,7 @@ internal static class BootstrapBinaryStore<TBuffer, T> where TBuffer : struct, I
 	/// <summary>
 	/// Static default-initialized <typeparamref name="TBuffer"/> instance.
 	/// </summary>
+	[FixedAddressValueType]
 	private static TBuffer initial;
 
 	/// <summary>
@@ -321,21 +322,15 @@ internal readonly struct G127<T> : IMainBinaryStore<T>
 		}
 	}
 	/// <inheritdoc/>
-	public Span<BufferTypeMetadata<T>?> Span
-	{
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get
-		{
-			ref BufferTypeMetadata<T>? r0 = ref G127<T>.GetR0();
-			return MemoryMarshal.CreateSpan(ref r0, this.Length);
-		}
-	}
-	/// <inheritdoc/>
 	public Int32 SlotCount
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get => 0;
 	}
+#if !PACKAGE
+	/// <inheritdoc/>
+	public Span<BufferTypeMetadata<T>?> Span => MemoryMarshal.CreateSpan(ref this[0], this.Length);
+#endif
 
 	/// <summary>
 	/// Retrieves the 0th element of the bootstrap binary store.
@@ -373,21 +368,15 @@ internal readonly struct G255<TSpace, T> : IMainBinaryStore<T> where TSpace : st
 		}
 	}
 	/// <inheritdoc/>
-	public Span<BufferTypeMetadata<T>?> Span
-	{
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get
-		{
-			ref BufferTypeMetadata<T>? r0 = ref G255<TSpace, T>.GetR0();
-			return MemoryMarshal.CreateSpan(ref r0, this.Length);
-		}
-	}
-	/// <inheritdoc/>
 	public Int32 SlotCount
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get => TSpace.Dimension - 8;
 	}
+#if !PACKAGE
+	/// <inheritdoc/>
+	public Span<BufferTypeMetadata<T>?> Span => MemoryMarshal.CreateSpan(ref this[0], this.Length);
+#endif
 
 	/// <summary>
 	/// Retrieves the 0th element of the bootstrap binary store.
@@ -425,21 +414,15 @@ internal readonly struct G2047<TSpace, T> : IMainBinaryStore<T> where TSpace : s
 		}
 	}
 	/// <inheritdoc/>
-	public Span<BufferTypeMetadata<T>?> Span
-	{
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get
-		{
-			ref BufferTypeMetadata<T>? r0 = ref G2047<TSpace, T>.GetR0();
-			return MemoryMarshal.CreateSpan(ref r0, this.Length);
-		}
-	}
-	/// <inheritdoc/>
 	public Int32 SlotCount
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get => TSpace.Dimension - 11;
 	}
+#if !PACKAGE
+	/// <inheritdoc/>
+	public Span<BufferTypeMetadata<T>?> Span => MemoryMarshal.CreateSpan(ref this[0], this.Length);
+#endif
 
 	/// <summary>
 	/// Retrieves the 0th element of the bootstrap binary store.

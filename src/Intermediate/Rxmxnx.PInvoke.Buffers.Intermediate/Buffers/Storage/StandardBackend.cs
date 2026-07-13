@@ -21,8 +21,9 @@ internal readonly struct StandardBackend : IMetadataStorageBackend
 		=> BinaryStore<MainBinaryStore<T>, T>.GetBinaryValue(componentSize);
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public BufferTypeMetadata<T>? ComputeBinaryMetadata<T>(MetadataStorage storage, UInt16 count, Boolean allowMinimal)
-		=> BinaryStore<MainBinaryStore<T>, T>.ComputeBinaryMetadata(storage, count, allowMinimal);
+	public BufferTypeMetadata<T>? ComputeBinaryMetadata<T>(MetadataStorage storage, UInt16 count,
+		Int32 nonBinaryMinimal)
+		=> BinaryStore<MainBinaryStore<T>, T>.ComputeBinaryMetadata(storage, count, nonBinaryMinimal);
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public BufferTypeMetadata<T>? GetFundamental<T>(MetadataStorage storage, UInt16 space)
@@ -52,12 +53,10 @@ internal readonly struct StandardBackend : IMetadataStorageBackend
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get => ref MainBinaryStore<T>.initial[index];
 		}
+#if !PACKAGE
 		/// <inheritdoc/>
-		public Span<BufferTypeMetadata<T>?> Span
-		{
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => MainBinaryStore<T>.initial.AsSpan();
-		}
+		public Span<BufferTypeMetadata<T>?> Span => MemoryMarshal.CreateSpan(ref this[0], this.Length);
+#endif
 	}
 #if !PACKAGE
 	/// <inheritdoc/>

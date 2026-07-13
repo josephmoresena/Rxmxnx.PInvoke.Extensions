@@ -56,7 +56,7 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 			// Binary capacity doesn't allow current count.
 			return default;
 #endif
-		binary = this._backend.ComputeBinaryMetadata<T>(this, count, true);
+		binary = this._backend.ComputeBinaryMetadata<T>(this, count, minimalNonBinary?.Size ?? 0); // Allow minimal
 		return binary ?? minimalNonBinary; // Approximate non-Binary buffer.
 	}
 	/// <inheritdoc/>
@@ -81,7 +81,7 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 			}
 
 			UInt16 composeSize = (UInt16)(comp + metadata.Size);
-			metadata = this._backend.ComputeBinaryMetadata<T>(this, composeSize, false);
+			metadata = this._backend.ComputeBinaryMetadata<T>(this, composeSize, -1);
 			ValidationUtilities.ThrowIfNullMetadata(typeofT, composeSize, metadata is null);
 		}
 	}

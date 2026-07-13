@@ -47,9 +47,9 @@ internal interface IMetadataStorageBackend
 	/// <typeparam name="T">Type of items in the buffer.</typeparam>
 	/// <param name="storage">A <see cref="MetadataStorage"/> instance.</param>
 	/// <param name="count">Amount of items in required buffer.</param>
-	/// <param name="allowMinimal">Allow to return minimal buffer.</param>
+	/// <param name="nonBinaryMinimal">Indicates the value fo the non-binary buffer minimal.</param>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
-	BufferTypeMetadata<T>? ComputeBinaryMetadata<T>(MetadataStorage storage, UInt16 count, Boolean allowMinimal);
+	BufferTypeMetadata<T>? ComputeBinaryMetadata<T>(MetadataStorage storage, UInt16 count, Int32 nonBinaryMinimal);
 	/// <summary>
 	/// Retrieves the fundamental component of size <paramref name="space"/>.
 	/// </summary>

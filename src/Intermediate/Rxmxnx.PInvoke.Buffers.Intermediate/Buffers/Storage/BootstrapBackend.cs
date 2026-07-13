@@ -36,8 +36,9 @@ internal readonly struct BootstrapBackend31 : IMetadataStorageBackend
 		=> BinaryStore<G31<T>, T>.GetBinaryValue(componentSize);
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public BufferTypeMetadata<T>? ComputeBinaryMetadata<T>(MetadataStorage storage, UInt16 count, Boolean allowMinimal)
-		=> BinaryStore<G31<T>, T>.ComputeBinaryMetadata(storage, count, allowMinimal);
+	public BufferTypeMetadata<T>? ComputeBinaryMetadata<T>(MetadataStorage storage, UInt16 count,
+		Int32 nonBinaryMinimal)
+		=> BinaryStore<G31<T>, T>.ComputeBinaryMetadata(storage, count, nonBinaryMinimal);
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public BufferTypeMetadata<T>? GetFundamental<T>(MetadataStorage storage, UInt16 space)
@@ -83,8 +84,9 @@ internal readonly struct BootstrapBackend127 : IMetadataStorageBackend
 		=> BinaryStore<G127<T>, T>.GetBinaryValue(componentSize);
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public BufferTypeMetadata<T>? ComputeBinaryMetadata<T>(MetadataStorage storage, UInt16 count, Boolean allowMinimal)
-		=> BinaryStore<G127<T>, T>.ComputeBinaryMetadata(storage, count, allowMinimal);
+	public BufferTypeMetadata<T>? ComputeBinaryMetadata<T>(MetadataStorage storage, UInt16 count,
+		Int32 nonBinaryMinimal)
+		=> BinaryStore<G127<T>, T>.ComputeBinaryMetadata(storage, count, nonBinaryMinimal);
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public BufferTypeMetadata<T>? GetFundamental<T>(MetadataStorage storage, UInt16 space)
@@ -148,11 +150,12 @@ internal readonly struct BootstrapBackend<TSpace> : IMetadataStorageBackend wher
 	}
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public BufferTypeMetadata<T>? ComputeBinaryMetadata<T>(MetadataStorage storage, UInt16 count, Boolean allowMinimal)
+	public BufferTypeMetadata<T>? ComputeBinaryMetadata<T>(MetadataStorage storage, UInt16 count,
+		Int32 nonBinaryMinimal)
 	{
 		if (typeof(T).IsValueType)
-			return BinaryStore<G255<TSpace, T>, T>.ComputeBinaryMetadata(storage, count, allowMinimal);
-		return BinaryStore<G2047<TSpace, T>, T>.ComputeBinaryMetadata(storage, count, allowMinimal);
+			return BinaryStore<G255<TSpace, T>, T>.ComputeBinaryMetadata(storage, count, nonBinaryMinimal);
+		return BinaryStore<G2047<TSpace, T>, T>.ComputeBinaryMetadata(storage, count, nonBinaryMinimal);
 	}
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
