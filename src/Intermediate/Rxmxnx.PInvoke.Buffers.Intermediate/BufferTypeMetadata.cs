@@ -65,7 +65,7 @@ public abstract partial class BufferTypeMetadata : IEnumerableSequence<BufferTyp
 		=> IEnumerableSequence.CreateEnumerator(this);
 	IEnumerator IEnumerable.GetEnumerator() => IEnumerableSequence.CreateEnumerator(this);
 #endif
-	
+
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static void Execute<T, TBuffer, TAction>(in TAction action, BufferTypeMetadata metadata, Int32 spanLength)
 		where TBuffer : struct
@@ -170,7 +170,7 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <summary>
 	/// Executes <paramref name="func"/> using a buffer of current type.
 	/// </summary>
-	/// <typeparam name="TFunction">Type of <see cref="ScopedBufferFunc{T, Result}"/> interface.</typeparam>
+	/// <typeparam name="TFunction">Type of <see cref="IScopedBufferFunction{T, Result}"/> interface.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
 	/// <param name="func">A <see cref="IScopedBufferFunction{T,TResult}"/> instance.</param>
 	/// <param name="spanLength">Required span length.</param>
@@ -185,7 +185,7 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <summary>
 	/// Executes <paramref name="action"/> using a buffer of current type.
 	/// </summary>
-	/// <typeparam name="TU">Type of transformation state object.</typeparam>
+	/// <typeparam name="TU">Type of elements exposed to the operation.</typeparam>
 	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/> interface.</typeparam>
 	/// <param name="action">A <see cref="IScopedBufferAction{T}"/> instance.</param>
 	/// <param name="spanLength">Required span length.</param>
@@ -199,8 +199,8 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <summary>
 	/// Executes <paramref name="func"/> using a buffer of current type.
 	/// </summary>
-	/// <typeparam name="TU">Type of transformation state object.</typeparam>
-	/// <typeparam name="TFunction">Type of <see cref="ScopedBufferFunc{T, Result}"/> interface.</typeparam>
+	/// <typeparam name="TU">Type of elements exposed to the operation.</typeparam>
+	/// <typeparam name="TFunction">Type of <see cref="IScopedBufferFunction{T, Result}"/> interface.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
 	/// <param name="func">A <see cref="IScopedBufferFunction{T,TResult}"/> instance.</param>
 	/// <param name="spanLength">Required span length.</param>

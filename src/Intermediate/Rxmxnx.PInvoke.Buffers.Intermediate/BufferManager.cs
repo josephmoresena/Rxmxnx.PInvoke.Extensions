@@ -42,7 +42,7 @@ public static partial class BufferManager
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="action"/>.
 	/// </summary>
 	/// <typeparam name="T">Type of items in allocated buffer.</typeparam>
-	/// <param name="count">Number of element in allocated buffer.</param>
+	/// <param name="count">Number of elements in allocated buffer.</param>
 	/// <param name="action">Action to perform with allocated buffer.</param>
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
@@ -54,7 +54,7 @@ public static partial class BufferManager
 	/// </summary>
 	/// <typeparam name="T">Type of items in allocated buffer.</typeparam>
 	/// <typeparam name="TState">Type of state object.</typeparam>
-	/// <param name="count">Number of element in allocated buffer.</param>
+	/// <param name="count">Number of elements in allocated buffer.</param>
 	/// <param name="state">State object.</param>
 	/// <param name="action">Action to perform with allocated buffer.</param>
 	/// <param name="isMinimumCount">
@@ -68,7 +68,7 @@ public static partial class BufferManager
 	/// </summary>
 	/// <typeparam name="T">Type of items in allocated buffer.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="count">Number of element in allocated buffer.</param>
+	/// <param name="count">Number of elements in allocated buffer.</param>
 	/// <param name="func">Function to execute with allocated buffer.</param>
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
@@ -86,7 +86,7 @@ public static partial class BufferManager
 	/// <typeparam name="T">Type of items in allocated buffer.</typeparam>
 	/// <typeparam name="TState">Type of state object.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="count">Number of element in allocated buffer.</param>
+	/// <param name="count">Number of elements in allocated buffer.</param>
 	/// <param name="state">State object.</param>
 	/// <param name="func">Function to execute with allocated buffer.</param>
 	/// <param name="isMinimumCount">
@@ -185,7 +185,7 @@ public static partial class BufferManager<T>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="action"/>.
 	/// </summary>
 	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/>.</typeparam>
-	/// <param name="count">Number of element in allocated buffer.</param>
+	/// <param name="count">Number of elements in allocated buffer.</param>
 	/// <param name="action">Action to perform with allocated buffer.</param>
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
@@ -208,7 +208,7 @@ public static partial class BufferManager<T>
 	/// </summary>
 	/// <typeparam name="TFunction">Type of <see cref="IScopedBufferFunction{T, TFunction}"/>.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="count">Number of element in allocated buffer.</param>
+	/// <param name="count">Number of elements in allocated buffer.</param>
 	/// <param name="func">Function to execute with allocated buffer.</param>
 	/// <param name="result">Output. Function result.</param>
 	/// <param name="isMinimumCount">

@@ -38,6 +38,9 @@ internal abstract partial class MetadataStorage
 	/// </summary>
 	/// <param name="span">A <see cref="BufferTypeMetadata{Object}"/> span.</param>
 	/// <param name="bufferTypeMetadata">Initial <see cref="BufferTypeMetadata{Object}"/> instance.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	internal static void Initialize(Span<BufferTypeMetadata<Object>?> span,
 		BufferTypeMetadata<Object> bufferTypeMetadata)
 	{

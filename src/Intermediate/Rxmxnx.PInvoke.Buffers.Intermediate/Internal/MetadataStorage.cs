@@ -31,8 +31,11 @@ internal abstract partial class MetadataStorage : IMetadataStorage
 internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend : struct, IMetadataStorageBackend
 {
 	/// <summary>
-	/// Internal implementation.
+	/// Default-initialized stateless backend.
 	/// </summary>
+	/// <remarks>
+	/// Cannot be readonly because constrained interface calls on generic value types are treated as potentially mutating.
+	/// </remarks>
 #pragma warning disable CS0649
 	private TBackend _backend;
 #pragma warning restore CS0649

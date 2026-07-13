@@ -20,6 +20,9 @@ internal readonly struct Space11 : IBinarySpace
 	/// <inheritdoc/>
 	public static Int32 Dimension
 	{
+#if !PACKAGE
+		[ExcludeFromCodeCoverage]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get => 11;
 	}
@@ -33,6 +36,9 @@ internal readonly struct Space16 : IBinarySpace
 	/// <inheritdoc/>
 	public static Int32 Dimension
 	{
+#if !PACKAGE
+		[ExcludeFromCodeCoverage]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get => 16;
 	}

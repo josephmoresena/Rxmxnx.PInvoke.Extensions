@@ -207,10 +207,13 @@ namespace Rxmxnx.PInvoke.Buffers.Storage.Bootstrap;
 /// </summary>
 /// <typeparam name="TBuffer">Type of object buffer.</typeparam>
 /// <typeparam name="T">Type of items in the buffer.</typeparam>
+#if !PACKAGE
+[ExcludeFromCodeCoverage]
+#endif
 internal static class BootstrapBinaryStore<TBuffer, T> where TBuffer : struct, IManagedBinaryBuffer<O>
 {
 	/// <summary>
-	/// Internal <typeparamref name="TBuffer"/> instance.
+	/// Static default-initialized <typeparamref name="TBuffer"/> instance.
 	/// </summary>
 	private static TBuffer initial;
 

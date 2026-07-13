@@ -30,11 +30,11 @@ public static partial class BufferManager<T>
 		if (stackAlloc)
 		{
 			Debug.Assert(metadata is not null);
-			metadata.Execute<T, TAction>(action, count);
+			metadata.Execute<T, TAction>(in action, count);
 			return;
 		}
 
-		BufferManager<T>.AllocHeap(count, action);
+		BufferManager<T>.AllocHeap(count, in action);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
@@ -63,11 +63,11 @@ public static partial class BufferManager<T>
 #endif
 		if (!stackAlloc)
 		{
-			BufferManager<T>.AllocHeap(count, func, out result);
+			BufferManager<T>.AllocHeap(count, in func, out result);
 			return;
 		}
 		Debug.Assert(metadata is not null);
-		result = metadata.Execute<T, TFunction, TResult>(func, count);
+		result = metadata.Execute<T, TFunction, TResult>(in func, count);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
@@ -100,11 +100,11 @@ public static partial class BufferManager<T>
 		if (stackAlloc)
 		{
 			Debug.Assert(metadata is not null);
-			metadata.Execute(action, count);
+			metadata.Execute(in action, count);
 		}
 		else
 		{
-			BufferManager<T>.AllocHeap(count, action);
+			BufferManager<T>.AllocHeap(count, in action);
 		}
 	}
 	/// <summary>
@@ -144,7 +144,7 @@ public static partial class BufferManager<T>
 			return;
 		}
 		Debug.Assert(metadata is not null);
-		result = metadata.Execute<TFunction, TResult>(func, count);
+		result = metadata.Execute<TFunction, TResult>(in func, count);
 	}
 	/// <summary>
 	/// Allocates a heap buffer of size of <paramref name="count"/> elements.
@@ -156,7 +156,7 @@ public static partial class BufferManager<T>
 	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void AllocHeap<TAction>(UInt16 count, TAction action)
+	private static void AllocHeap<TAction>(UInt16 count, in TAction action)
 #if !NET9_0_OR_GREATER
 		where TAction : IScopedBufferAction<T>
 #else

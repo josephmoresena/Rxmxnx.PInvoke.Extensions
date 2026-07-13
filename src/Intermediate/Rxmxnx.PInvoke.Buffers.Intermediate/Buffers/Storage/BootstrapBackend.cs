@@ -8,6 +8,9 @@ namespace Rxmxnx.PInvoke.Buffers.Storage;
 /// <summary>
 /// Metadata storage backend with 2^5-1 capacity.
 /// </summary>
+#if !PACKAGE
+[ExcludeFromCodeCoverage]
+#endif
 internal readonly struct BootstrapBackend31 : IMetadataStorageBackend
 {
 	/// <inheritdoc/>
@@ -52,6 +55,9 @@ internal readonly struct BootstrapBackend31 : IMetadataStorageBackend
 /// <summary>
 /// Metadata storage backend with 2^7-1 capacity.
 /// </summary>
+#if !PACKAGE
+[ExcludeFromCodeCoverage]
+#endif
 internal readonly struct BootstrapBackend127 : IMetadataStorageBackend
 {
 	/// <inheritdoc/>
@@ -96,6 +102,9 @@ internal readonly struct BootstrapBackend127 : IMetadataStorageBackend
 /// <summary>
 /// Bootstrap storage backend.
 /// </summary>
+#if !PACKAGE
+[ExcludeFromCodeCoverage]
+#endif
 internal readonly struct BootstrapBackend<TSpace> : IMetadataStorageBackend where TSpace : struct, IBinarySpace
 {
 	/// <inheritdoc/>
