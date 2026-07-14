@@ -4013,6 +4013,26 @@ minor performance overhead.
 </details>
 
 <details>
+  <summary>BufferManager&lt;T&gt;</summary>
+
+This class allows to allocate buffers of type `T` on stack if possible.
+
+#### Static Methods:
+
+- <details>
+  <summary>Alloc&lt;TAction&gt;(UInt16, TAction, Boolean)</summary>
+
+  Allocates a buffer of type `T` with `count` elements and executes the `IScopedBufferAction<T>.Invoke` of the `TAction` instance.
+  </details>
+- <details>
+  <summary>Alloc&lt;TFunction, TResult&gt;(UInt16, TFunction&lt;T, TResult&gt;, out TResult, Boolean)</summary>
+
+  Allocates a buffer of type `T` with `count` elements and executes the `IScopedBufferFunction<T, TResult>.Invoke` of the `TFunction` instance.
+  </details>
+
+</details>
+
+<details>
   <summary>NativeUtilities</summary>
 
 Set of utilities for exchange data within the P/Invoke context.
