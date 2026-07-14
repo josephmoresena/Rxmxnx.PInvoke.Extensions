@@ -14,6 +14,13 @@ internal sealed class BufferTypeMetadata<[DynamicallyAccessedMembers(BuffersHelp
 
 	/// <inheritdoc/>
 	public override Type BufferType => typeof(TBuffer);
+	/// <inheritdoc/>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
+#pragma warning disable CS8500
+	public override unsafe Int32 SizeOf => sizeof(TBuffer);
+#pragma warning restore CS8500
 
 #if NET7_0_OR_GREATER
 	/// <summary>

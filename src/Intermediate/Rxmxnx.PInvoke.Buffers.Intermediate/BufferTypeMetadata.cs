@@ -27,6 +27,10 @@ public abstract partial class BufferTypeMetadata : IEnumerableSequence<BufferTyp
 	/// </summary>
 	public abstract Type BufferType { get; }
 	/// <summary>
+	/// The size in bytes of the buffer.
+	/// </summary>
+	public abstract Int32 SizeOf { get; }
+	/// <summary>
 	/// Retrieves a component from current metadata at the specified zero-based <paramref name="index"/>.
 	/// </summary>
 	/// <param name="index">The zero-based index of the component to retrieve.</param>

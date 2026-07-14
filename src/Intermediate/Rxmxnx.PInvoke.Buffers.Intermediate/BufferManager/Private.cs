@@ -15,7 +15,7 @@ public static partial class BufferManager<T>
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void AllocObject<TAction>(UInt16 count, in TAction action, Boolean isMinimumCount)
+	private static void AllocObject<TAction>(UInt16 count, ref TAction action, Boolean isMinimumCount)
 #if !NET9_0_OR_GREATER
 		where TAction : IScopedBufferAction<T>
 #else
@@ -34,7 +34,7 @@ public static partial class BufferManager<T>
 			return;
 		}
 
-		BufferManager<T>.AllocHeap(count, in action);
+		BufferManager<T>.AllocHeap(count, ref action);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
@@ -48,7 +48,7 @@ public static partial class BufferManager<T>
 	/// </param>
 	/// <param name="result">Output. Function result.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void AllocObject<TFunction, TResult>(UInt16 count, in TFunction func, Boolean isMinimumCount,
+	private static void AllocObject<TFunction, TResult>(UInt16 count, ref TFunction func, Boolean isMinimumCount,
 		out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IScopedBufferFunction<T, TResult>
@@ -63,7 +63,7 @@ public static partial class BufferManager<T>
 #endif
 		if (!stackAlloc)
 		{
-			BufferManager<T>.AllocHeap(count, in func, out result);
+			BufferManager<T>.AllocHeap(count, ref func, out result);
 			return;
 		}
 		Debug.Assert(metadata is not null);
@@ -75,11 +75,9 @@ public static partial class BufferManager<T>
 	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/>.</typeparam>
 	/// <param name="count">Required buffer size.</param>
 	/// <param name="action">Method to execute.</param>
-	/// <param name="isMinimumCount">
-	/// Indicates whether <paramref name="count"/> is just the minimum limit.
-	/// </param>
+	/// <param name="isMinimumCount">Indicates whether <paramref name="count"/> is just the minimum limit.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void AllocValue<TAction>(UInt16 count, in TAction action, Boolean isMinimumCount)
+	private static void AllocValue<TAction>(UInt16 count, ref TAction action, Boolean isMinimumCount)
 #if !NET9_0_OR_GREATER
 		where TAction : IScopedBufferAction<T>
 #else
@@ -88,12 +86,13 @@ public static partial class BufferManager<T>
 	{
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>())
 		{
-			BufferManager<T>.StackAlloc(count, action);
+			BufferManager<T>.StackAlloc(count, ref action);
 			return;
 		}
 
 		BufferTypeMetadata<T>? metadata = BufferManager.Storage.GetMetadata<T>(count);
-		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || count == 0);
+		Boolean stackAlloc = metadata is not null && metadata.SizeOf <= BufferManager.StackAllocationByteLimit &&
+			(isMinimumCount || metadata.Size == count || count == 0);
 #if !PACKAGE
 		BufferManager.Storage.PrintMetadata<T>(!stackAlloc);
 #endif
@@ -101,11 +100,9 @@ public static partial class BufferManager<T>
 		{
 			Debug.Assert(metadata is not null);
 			metadata.Execute(in action, count);
+			return;
 		}
-		else
-		{
-			BufferManager<T>.AllocHeap(count, in action);
-		}
+		BufferManager<T>.AllocHeap(count, ref action);
 	}
 	/// <summary>
 	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
@@ -114,12 +111,10 @@ public static partial class BufferManager<T>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
 	/// <param name="count">Required buffer size.</param>
 	/// <param name="func">Function to execute.</param>
-	/// <param name="isMinimumCount">
-	/// Indicates whether <paramref name="count"/> is just the minimum limit.
-	/// </param>
+	/// <param name="isMinimumCount">Indicates whether <paramref name="count"/> is just the minimum limit.</param>
 	/// <param name="result">Output. Function result.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void AllocValue<TFunction, TResult>(UInt16 count, in TFunction func, Boolean isMinimumCount,
+	private static void AllocValue<TFunction, TResult>(UInt16 count, ref TFunction func, Boolean isMinimumCount,
 		out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IScopedBufferFunction<T, TResult>
@@ -129,22 +124,23 @@ public static partial class BufferManager<T>
 	{
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>())
 		{
-			BufferManager<T>.StackAlloc(count, in func, out result);
+			BufferManager<T>.StackAlloc(count, ref func, out result);
 			return;
 		}
 
 		BufferTypeMetadata<T>? metadata = BufferManager.Storage.GetMetadata<T>(count);
-		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || count == 0);
+		Boolean stackAlloc = metadata is not null && metadata.SizeOf <= BufferManager.StackAllocationByteLimit &&
+			(isMinimumCount || metadata.Size == count || count == 0);
 #if !PACKAGE
 		BufferManager.Storage.PrintMetadata<T>(!stackAlloc);
 #endif
-		if (!stackAlloc)
+		if (stackAlloc)
 		{
-			BufferManager<T>.AllocHeap(count, in func, out result);
+			Debug.Assert(metadata is not null);
+			result = metadata.Execute<TFunction, TResult>(in func, count);
 			return;
 		}
-		Debug.Assert(metadata is not null);
-		result = metadata.Execute<TFunction, TResult>(in func, count);
+		BufferManager<T>.AllocHeap(count, ref func, out result);
 	}
 	/// <summary>
 	/// Allocates a heap buffer of size of <paramref name="count"/> elements.
@@ -156,7 +152,7 @@ public static partial class BufferManager<T>
 	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void AllocHeap<TAction>(UInt16 count, in TAction action)
+	private static void AllocHeap<TAction>(UInt16 count, ref TAction action)
 #if !NET9_0_OR_GREATER
 		where TAction : IScopedBufferAction<T>
 #else
@@ -189,7 +185,7 @@ public static partial class BufferManager<T>
 	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void AllocHeap<TFunction, TResult>(UInt16 count, in TFunction func, out TResult result)
+	private static void AllocHeap<TFunction, TResult>(UInt16 count, ref TFunction func, out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IScopedBufferFunction<T, TResult>
 #else
@@ -216,9 +212,12 @@ public static partial class BufferManager<T>
 	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/>.</typeparam>
 	/// <param name="count">Required buffer size.</param>
 	/// <param name="action">Method to execute.</param>
+#if NET7_0_OR_GREATER
+	[SkipLocalsInit]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #pragma warning disable CS8500
-	private static unsafe void StackAlloc<TAction>(UInt16 count, in TAction action)
+	private static unsafe void StackAlloc<TAction>(UInt16 count, ref TAction action)
 #if !NET9_0_OR_GREATER
 		where TAction : IScopedBufferAction<T>
 #else
@@ -226,7 +225,16 @@ public static partial class BufferManager<T>
 #endif
 	{
 		Int32 sizeOfT = sizeof(T);
-		Span<Byte> bytes = stackalloc Byte[count * sizeOfT];
+		Int32 totalBytes = count * sizeOfT;
+		if (totalBytes > BufferManager.StackAllocationByteLimit)
+		{
+			BufferManager<T>.AllocHeap(count, ref action);
+			return;
+		}
+		Span<Byte> bytes = stackalloc Byte[totalBytes];
+#if NET7_0_OR_GREATER
+		bytes.Clear();
+#endif
 		ref T refT = ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(bytes));
 		Span<T> span = MemoryMarshal.CreateSpan(ref refT, count);
 		ScopedBuffer<T> buffer = new(span, false, span.Length);
@@ -240,8 +248,11 @@ public static partial class BufferManager<T>
 	/// <param name="count">Required buffer size.</param>
 	/// <param name="func">Function to execute.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NET7_0_OR_GREATER
+	[SkipLocalsInit]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe void StackAlloc<TFunction, TResult>(UInt16 count, in TFunction func, out TResult result)
+	private static unsafe void StackAlloc<TFunction, TResult>(UInt16 count, ref TFunction func, out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IScopedBufferFunction<T, TResult>
 #else
@@ -249,7 +260,16 @@ public static partial class BufferManager<T>
 #endif
 	{
 		Int32 sizeOfT = sizeof(T);
-		Span<Byte> bytes = stackalloc Byte[count * sizeOfT];
+		Int32 totalBytes = count * sizeOfT;
+		if (totalBytes > BufferManager.StackAllocationByteLimit)
+		{
+			BufferManager<T>.AllocHeap(count, ref func, out result);
+			return;
+		}
+		Span<Byte> bytes = stackalloc Byte[totalBytes];
+#if NET7_0_OR_GREATER
+		bytes.Clear();
+#endif
 		ref T refT = ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(bytes));
 		Span<T> span = MemoryMarshal.CreateSpan(ref refT, count);
 		ScopedBuffer<T> buffer = new(span, false, span.Length);

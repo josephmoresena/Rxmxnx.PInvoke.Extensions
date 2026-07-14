@@ -6,14 +6,6 @@ namespace Rxmxnx.PInvoke;
 public static partial class BufferManager
 {
 	/// <summary>
-	/// Current <see cref="IMetadataStorage"/> instance.
-	/// </summary>
-	internal static IMetadataStorage Storage
-	{
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get => MetadataStorage.Instance;
-	}
-	/// <summary>
 	/// Indicates whether metadata for any required buffer is auto-composed.
 	/// </summary>
 #if !PACKAGE
@@ -37,6 +29,19 @@ public static partial class BufferManager
 #else
 		=> MetadataStorage.MaxCapacity == 0 ? UInt16.MaxValue : (UInt16)MetadataStorage.MaxCapacity;
 #endif
+
+	/// <summary>
+	/// Current <see cref="IMetadataStorage"/> instance.
+	/// </summary>
+	internal static IMetadataStorage Storage
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => MetadataStorage.Instance;
+	}
+	/// <summary>
+	/// Maximum stack bytes usable per call.
+	/// </summary>
+	internal static readonly Int32 StackAllocationByteLimit = 3 * UInt16.MaxValue * IntPtr.Size / 2;
 
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="action"/>.
@@ -187,9 +192,7 @@ public static partial class BufferManager<T>
 	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/>.</typeparam>
 	/// <param name="count">Number of elements in allocated buffer.</param>
 	/// <param name="action">Action to perform with allocated buffer.</param>
-	/// <param name="isMinimumCount">
-	/// Indicates whether <paramref name="count"/> is just the minimum limit.
-	/// </param>
+	/// <param name="isMinimumCount">Indicates whether <paramref name="count"/> is just the minimum limit.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void Alloc<TAction>(UInt16 count, TAction action, Boolean isMinimumCount = false)
 #if !NET9_0_OR_GREATER
@@ -199,21 +202,19 @@ public static partial class BufferManager<T>
 #endif
 	{
 		if (typeof(T).IsValueType)
-			BufferManager<T>.AllocValue(count, in action, isMinimumCount);
+			BufferManager<T>.AllocValue(count, ref action, isMinimumCount);
 		else
-			BufferManager<T>.AllocObject(count, in action, isMinimumCount);
+			BufferManager<T>.AllocObject(count, ref action, isMinimumCount);
 	}
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="func"/>.
 	/// </summary>
-	/// <typeparam name="TFunction">Type of <see cref="IScopedBufferFunction{T, TFunction}"/>.</typeparam>
+	/// <typeparam name="TFunction">Type of <see cref="IScopedBufferFunction{T, TResult}"/>.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
 	/// <param name="count">Number of elements in allocated buffer.</param>
 	/// <param name="func">Function to execute with allocated buffer.</param>
 	/// <param name="result">Output. Function result.</param>
-	/// <param name="isMinimumCount">
-	/// Indicates whether <paramref name="count"/> is just the minimum limit.
-	/// </param>
+	/// <param name="isMinimumCount">Indicates whether <paramref name="count"/> is just the minimum limit.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void Alloc<TFunction, TResult>(UInt16 count, TFunction func, out TResult result,
 		Boolean isMinimumCount = false)
@@ -225,9 +226,9 @@ public static partial class BufferManager<T>
 	{
 		if (typeof(T).IsValueType)
 		{
-			BufferManager<T>.AllocValue(count, in func, isMinimumCount, out result);
+			BufferManager<T>.AllocValue(count, ref func, isMinimumCount, out result);
 			return;
 		}
-		BufferManager<T>.AllocObject(count, in func, isMinimumCount, out result);
+		BufferManager<T>.AllocObject(count, ref func, isMinimumCount, out result);
 	}
 }

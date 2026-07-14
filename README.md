@@ -21,6 +21,7 @@
     - [Wrapper Interfaces](#wrapper-interfaces)
     - [Fixed memory Interfaces](#fixed-memory-interfaces)
     - [Functional Interfaces](#functional-interfaces)
+    - [Delegate-Alternative Interfaces](#delegate-alternative-interfaces)
     - [Span Delegates](#span-delegates)
     - [Fixed memory Delegates](#fixed-memory-delegates)
     - [Fixed memory context Delegates](#fixed-memory-context-delegates)
@@ -1060,6 +1061,43 @@ This interfaces exposes a binary managed buffer.
 
 **Note:** `TBuffer` generic type is `struct`. This interface inherits from `IManagedBinaryBuffer<T>`. This type not
 allows public implementation or inheritance.
+
+</details>
+
+## Delegate-Alternative Interfaces
+
+These interfaces provide callable objects that serve as alternatives to traditional delegates in performance-critical
+scenarios.
+
+<details>
+  <summary>IScopedBufferAction&lt;T&gt;</summary>
+
+This interface represents an object that can be used instead of the `ScopedBufferAction<T>` and
+`ScopedBufferAction<T, TState>` delegates.
+
+#### Methods:
+
+- <details>
+  <summary>Invoke(ScopedBuffer&lt;T&gt;)</summary>
+
+  Executes an action using a buffer containing elements of type `T`.
+  </details>
+
+</details>
+
+<details>
+  <summary>IScopedBufferFunction&lt;T, TResult&gt;</summary>
+
+This interface represents an object that can be used instead of the `ScopedBufferFunc<T, TResult>` and
+`ScopedBufferFunc<T, TState, TResult>` delegates.
+
+#### Methods:
+
+- <details>
+  <summary>Invoke(ScopedBuffer&lt;T&gt;)</summary>
+
+  Executes a function using a buffer containing elements of type `T` and returns a value of type `TResult`.
+  </details>
 
 </details>
 
