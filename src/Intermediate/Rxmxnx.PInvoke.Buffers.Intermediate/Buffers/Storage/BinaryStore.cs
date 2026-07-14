@@ -25,13 +25,19 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// Retrieves the current capacity.
 	/// </summary>
 	public static Int32 CurrentCapacity
-		=> BinaryStore<TMain, T>.initial.Length + Volatile.Read(ref BinaryStore<TMain, T>.currentSlotCapacity);
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => BinaryStore<TMain, T>.initial.Length + Volatile.Read(ref BinaryStore<TMain, T>.currentSlotCapacity);
+	}
 #if NET8_0_OR_GREATER
 	/// <summary>
 	/// Maximum capacity.
 	/// </summary>
 	public static Int32 MaxCapacity
-		=> ((BinaryStore<TMain, T>.initial.Length + 1) << BinaryStore<TMain, T>.initial.SlotCount) - 1;
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => ((BinaryStore<TMain, T>.initial.Length + 1) << BinaryStore<TMain, T>.initial.SlotCount) - 1;
+	}
 #endif
 
 	/// <summary>
@@ -57,6 +63,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// <returns>
 	/// <see langword="true"/> if <paramref name="component"/> was added successfully; otherwise, <see langword="false"/>.
 	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Boolean TryAdd(BufferTypeMetadata<T> component)
 	{
 		ref BufferTypeMetadata<T>? reference = ref BinaryStore<TMain, T>.GetBinaryReference(component.Size);
@@ -67,6 +74,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// </summary>
 	/// <param name="componentSize">Size of the requested metadata.</param>
 	/// <returns>A managed <see cref="BufferTypeMetadata{T}"/> reference.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ref BufferTypeMetadata<T>? GetBinaryReference(UInt16 componentSize)
 	{
 		Debug.Assert(componentSize > 0);
@@ -86,6 +94,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// </summary>
 	/// <param name="componentSize">Size of the requested metadata.</param>
 	/// <returns>The <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static BufferTypeMetadata<T>? GetBinaryValue(UInt16 componentSize)
 	{
 		if (componentSize <= BinaryStore<TMain, T>.initial.Length)
@@ -107,6 +116,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// <param name="storage">A <see cref="MetadataStorage"/> instance.</param>
 	/// <param name="space">Size of fundamental component.</param>
 	/// <returns>A <see cref="BufferTypeMetadata"/> instance.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static BufferTypeMetadata<T>? GetFundamental(IMetadataStorage storage, UInt16 space)
 	{
 		if (BinaryStore<TMain, T>.GetBinaryValue(space) is { } metadata)
@@ -122,7 +132,6 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 		}
 		return result;
 	}
-
 	/// <summary>
 	/// Computes the binary metadata required for a buffer with <paramref name="count"/> items.
 	/// </summary>
@@ -130,6 +139,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// <param name="count">Amount of items in required buffer.</param>
 	/// <param name="nonBinaryMinimal">Indicates the value fo the non-binary buffer minimal.</param>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1199)]
@@ -151,6 +161,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
 	/// <param name="count">Amount of items in required buffer.</param>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1199)]
@@ -272,9 +283,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// <param name="pageLength">
 	/// Receives the length of the requested page when available; otherwise, <c>-1</c>.
 	/// </param>
-	/// <returns>
-	/// A managed reference to the metadata storage page.
-	/// </returns>
+	/// <returns>A managed reference to the metadata storage page.</returns>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
