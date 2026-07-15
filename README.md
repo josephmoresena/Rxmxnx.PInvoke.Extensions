@@ -4022,12 +4022,26 @@ This class allows to allocate buffers of type `T` on stack if possible.
 - <details>
   <summary>Alloc&lt;TAction&gt;(UInt16, TAction, Boolean)</summary>
 
-  Allocates a buffer of type `T` with `count` elements and executes the `IScopedBufferAction<T>.Invoke` of the `TAction` instance.
+  Allocates a buffer of type `T` with `count` elements and executes the `IScopedBufferAction<T>.Invoke` on the `TAction`
+  instance.
   </details>
 - <details>
   <summary>Alloc&lt;TFunction, TResult&gt;(UInt16, TFunction&lt;T, TResult&gt;, out TResult, Boolean)</summary>
 
-  Allocates a buffer of type `T` with `count` elements and executes the `IScopedBufferFunction<T, TResult>.Invoke` of the `TFunction` instance.
+  Allocates a buffer of type `T` with `count` elements and executes the `IScopedBufferFunction<T, TResult>.Invoke` on
+  the `TFunction` instance.
+  </details>
+- <details>
+  <summary>AllocWithReference&lt;TAction&gt;(UInt16, TAction, Boolean)</summary>
+
+  Allocates a buffer of type `T` with `count` elements and executes the `IScopedBufferAction<T>.Invoke` on the `TAction`
+  managed reference.
+  </details>
+- <details>
+  <summary>AllocWithReference&lt;TFunction, TResult&gt;(UInt16, TFunction&lt;T, TResult&gt;, out TResult, Boolean)</summary>
+
+  Allocates a buffer of type `T` with `count` elements and executes the `IScopedBufferFunction<T, TResult>.Invoke` on
+  the `TFunction` managed reference.
   </details>
 
 </details>

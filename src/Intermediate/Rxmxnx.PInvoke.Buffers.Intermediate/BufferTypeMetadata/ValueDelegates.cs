@@ -15,6 +15,10 @@ public partial class BufferTypeMetadata
 		private readonly ScopedBufferAction<T> _action = action;
 
 		/// <inheritdoc/>
+		public Boolean IsMinimalCount { get; init; }
+		/// <inheritdoc/>
+		public UInt16 Count { get; init; }
+		/// <inheritdoc/>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Invoke(ScopedBuffer<T> buffer) => this._action(buffer);
 	}
@@ -44,6 +48,11 @@ public partial class BufferTypeMetadata
 		private readonly TState _state = state;
 
 		/// <inheritdoc/>
+		public Boolean IsMinimalCount { get; init; }
+		/// <inheritdoc/>
+		public UInt16 Count { get; init; }
+
+		/// <inheritdoc/>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Invoke(ScopedBuffer<T> buffer) => this._action(buffer, this._state);
 	}
@@ -63,6 +72,11 @@ public partial class BufferTypeMetadata
 		private readonly ScopedBufferFunc<T, TResult> _func = func;
 
 		/// <inheritdoc/>
+		public Boolean IsMinimalCount { get; init; }
+		/// <inheritdoc/>
+		public UInt16 Count { get; init; }
+
+		/// <inheritdoc/>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public TResult Invoke(ScopedBuffer<T> buffer) => this._func(buffer);
 	}
@@ -79,8 +93,9 @@ public partial class BufferTypeMetadata
 	protected readonly struct FunctionValue<T, TState, TResult>(ScopedBufferFunc<T, TState, TResult> func, TState state)
 		: IScopedBufferFunction<T, TResult>
 #else
-	protected readonly ref struct FunctionValue<T, TState, TResult>(ScopedBufferFunc<T, TState, TResult> func, TState state)
-		: IScopedBufferFunction<T, TResult> where TState : allows ref struct
+	protected readonly ref struct FunctionValue<T, TState, TResult>(
+		ScopedBufferFunc<T, TState, TResult> func,
+		TState state) : IScopedBufferFunction<T, TResult> where TState : allows ref struct
 #endif
 	{
 		/// <summary>
@@ -91,6 +106,11 @@ public partial class BufferTypeMetadata
 		/// Internal state.
 		/// </summary>
 		private readonly TState _state = state;
+
+		/// <inheritdoc/>
+		public Boolean IsMinimalCount { get; init; }
+		/// <inheritdoc/>
+		public UInt16 Count { get; init; }
 
 		/// <inheritdoc/>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]

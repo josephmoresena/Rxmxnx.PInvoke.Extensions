@@ -134,7 +134,7 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <param name="action">A <see cref="IScopedBufferAction{T}"/> instance.</param>
 	/// <param name="spanLength">Required span length.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal abstract void Execute<TAction>(in TAction action, Int32 spanLength)
+	internal abstract void Execute<TAction>(ref TAction action, Int32 spanLength)
 #if !NET9_0_OR_GREATER
 		where TAction : IScopedBufferAction<T>;
 #else
@@ -149,7 +149,7 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <param name="spanLength">Required span length.</param>
 	/// <returns><paramref name="func"/> result.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal abstract TResult Execute<TFunction, TResult>(in TFunction func, Int32 spanLength)
+	internal abstract TResult Execute<TFunction, TResult>(ref TFunction func, Int32 spanLength)
 #if !NET9_0_OR_GREATER
 		where TFunction : IScopedBufferFunction<T, TResult>;
 #else
@@ -163,7 +163,7 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <param name="action">A <see cref="IScopedBufferAction{T}"/> instance.</param>
 	/// <param name="spanLength">Required span length.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal abstract void Execute<TU, TAction>(in TAction action, Int32 spanLength)
+	internal abstract void Execute<TU, TAction>(ref TAction action, Int32 spanLength)
 #if !NET9_0_OR_GREATER
 		where TAction : IScopedBufferAction<TU>;
 #else
@@ -179,7 +179,7 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// <param name="spanLength">Required span length.</param>
 	/// <returns><paramref name="func"/> result.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal abstract TResult Execute<TU, TFunction, TResult>(in TFunction func, Int32 spanLength)
+	internal abstract TResult Execute<TU, TFunction, TResult>(ref TFunction func, Int32 spanLength)
 #if !NET9_0_OR_GREATER
 		where TFunction : IScopedBufferFunction<TU, TResult>;
 #else

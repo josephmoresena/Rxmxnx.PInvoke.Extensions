@@ -16,14 +16,15 @@ public static partial class BufferManager
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
 #endif
 		public static void Alloc<T>(UInt16 count, VbScopedBufferAction<T> action, Boolean isMinimumCount = false)
-			=> BufferManager<T>.Alloc(count, new VbActionValue<T>(action), isMinimumCount);
+			=> BufferManager<T>.Alloc(new VbActionValue<T>(action) { Count = count, IsMinimalCount = isMinimumCount, });
 		/// <inheritdoc cref="BufferManager.Alloc{T, TState}(UInt16, TState, ScopedBufferAction{T, TState}, Boolean)"/>
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
 #endif
 		public static void Alloc<T, TState>(UInt16 count, TState state, VbScopedBufferAction<T, TState> action,
 			Boolean isMinimumCount = false)
-			=> BufferManager<T>.Alloc(count, new VbActionValue<T, TState>(action, state), isMinimumCount);
+			=> BufferManager<T>.Alloc(
+				new VbActionValue<T, TState>(action, state) { Count = count, IsMinimalCount = isMinimumCount, });
 		/// <inheritdoc cref="BufferManager.Alloc{T, TResult}(UInt16, ScopedBufferFunc{T, TResult}, Boolean)"/>
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
@@ -31,7 +32,9 @@ public static partial class BufferManager
 		public static TResult Alloc<T, TResult>(UInt16 count, VbScopedBufferFunc<T, TResult> func,
 			Boolean isMinimumCount = false)
 		{
-			BufferManager<T>.Alloc(count, new VbFunctionValue<T, TResult>(func), out TResult result, isMinimumCount);
+			BufferManager<T>.Alloc(
+				new VbFunctionValue<T, TResult>(func) { Count = count, IsMinimalCount = isMinimumCount, },
+				out TResult result);
 			return result;
 		}
 		/// <inheritdoc
@@ -42,8 +45,11 @@ public static partial class BufferManager
 		public static TResult Alloc<T, TState, TResult>(UInt16 count, TState state,
 			VbScopedBufferFunc<T, TState, TResult> func, Boolean isMinimumCount = false)
 		{
-			BufferManager<T>.Alloc(count, new VbFunctionValue<T, TState, TResult>(func, state), out TResult result,
-			                       isMinimumCount);
+			BufferManager<T>.Alloc(
+				new VbFunctionValue<T, TState, TResult>(func, state)
+				{
+					Count = count, IsMinimalCount = isMinimumCount,
+				}, out TResult result);
 			return result;
 		}
 	}

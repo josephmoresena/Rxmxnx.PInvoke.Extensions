@@ -27,6 +27,11 @@ public static partial class BufferManager
 			private readonly VbScopedBufferAction<T> _action = action;
 
 			/// <inheritdoc/>
+			public Boolean IsMinimalCount { get; init; }
+			/// <inheritdoc/>
+			public UInt16 Count { get; init; }
+
+			/// <inheritdoc/>
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			public void Invoke(ScopedBuffer<T> buffer)
 			{
@@ -62,6 +67,11 @@ public static partial class BufferManager
 			private readonly TState _state = state;
 
 			/// <inheritdoc/>
+			public Boolean IsMinimalCount { get; init; }
+			/// <inheritdoc/>
+			public UInt16 Count { get; init; }
+
+			/// <inheritdoc/>
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			public void Invoke(ScopedBuffer<T> buffer)
 			{
@@ -90,6 +100,11 @@ public static partial class BufferManager
 			/// Internal delegate.
 			/// </summary>
 			private readonly VbScopedBufferFunc<T, TResult> _func = func;
+
+			/// <inheritdoc/>
+			public Boolean IsMinimalCount { get; init; }
+			/// <inheritdoc/>
+			public UInt16 Count { get; init; }
 
 			/// <inheritdoc/>
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -127,6 +142,11 @@ public static partial class BufferManager
 			/// Internal state.
 			/// </summary>
 			private readonly TState _state = state;
+
+			/// <inheritdoc/>
+			public Boolean IsMinimalCount { get; init; }
+			/// <inheritdoc/>
+			public UInt16 Count { get; init; }
 
 			/// <inheritdoc/>
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]

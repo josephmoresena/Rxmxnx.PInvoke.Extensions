@@ -12,9 +12,20 @@ namespace Rxmxnx.PInvoke;
 public interface IScopedBufferFunction<T, out TResult>
 {
 	/// <summary>
+	/// Indicates whether <see cref="Count"/> is the minimum limit and not the exact limit for memory allocation.
+	/// </summary>
+	/// <remarks>The additional elements allocated are not accessible from <see cref="Invoke(ScopedBuffer{T})"/>.</remarks>
+	Boolean IsMinimalCount => false;
+
+	/// <summary>
+	/// Number of <typeparamref name="T"/> elements required for <see cref="Invoke(ScopedBuffer{T})"/> execution.
+	/// </summary>
+	protected internal UInt16 Count { get; }
+
+	/// <summary>
 	/// Performs an operation using the specified buffer and returns a result.
 	/// </summary>
 	/// <param name="buffer">The <see cref="ScopedBuffer{T}"/> used by the operation.</param>
 	/// <returns>The result produced by the operation.</returns>
-	TResult Invoke(ScopedBuffer<T> buffer);
+	protected internal TResult Invoke(ScopedBuffer<T> buffer);
 }
