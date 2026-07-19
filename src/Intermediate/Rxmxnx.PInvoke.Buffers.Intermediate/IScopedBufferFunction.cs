@@ -14,11 +14,11 @@ public interface IScopedBufferFunction<T, out TResult>
 	/// <summary>
 	/// Indicates whether <see cref="Count"/> is the minimum limit and not the exact limit for memory allocation.
 	/// </summary>
-	/// <remarks>The additional elements allocated are not accessible from <see cref="Invoke(ScopedBuffer{T})"/>.</remarks>
+	/// <remarks>The additional elements allocated are not accessible from <see cref="Apply"/>.</remarks>
 	Boolean IsMinimalCount => false;
 
 	/// <summary>
-	/// Number of <typeparamref name="T"/> elements required for <see cref="Invoke(ScopedBuffer{T})"/> execution.
+	/// Number of <typeparamref name="T"/> elements required for <see cref="Apply"/> execution.
 	/// </summary>
 	protected internal UInt16 Count { get; }
 
@@ -27,5 +27,5 @@ public interface IScopedBufferFunction<T, out TResult>
 	/// </summary>
 	/// <param name="buffer">The <see cref="ScopedBuffer{T}"/> used by the operation.</param>
 	/// <returns>The result produced by the operation.</returns>
-	protected internal TResult Invoke(ScopedBuffer<T> buffer);
+	protected internal TResult Apply(scoped ScopedBuffer<T> buffer);
 }

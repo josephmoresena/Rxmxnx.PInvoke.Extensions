@@ -1078,7 +1078,7 @@ This interface represents an object that can be used instead of the `ScopedBuffe
 #### Methods:
 
 - <details>
-  <summary>Invoke(ScopedBuffer&lt;T&gt;)</summary>
+  <summary>Accept(scoped ScopedBuffer&lt;T&gt;)</summary>
 
   Executes an action using a buffer containing elements of type `T`.
   </details>
@@ -1094,9 +1094,105 @@ This interface represents an object that can be used instead of the `ScopedBuffe
 #### Methods:
 
 - <details>
-  <summary>Invoke(ScopedBuffer&lt;T&gt;)</summary>
+  <summary>Apply(scoped ScopedBuffer&lt;T&gt;)</summary>
 
   Executes a function using a buffer containing elements of type `T` and returns a value of type `TResult`.
+  </details>
+
+</details>
+
+<details>
+  <summary>IFixedAction</summary>
+
+This interface represents an object that can be used instead of the `ReadOnlyFixedAction`,  
+`ReadOnlyFixedAction<TArg>`, `FixedAction` and `FixedAction<TArg>` delegates.
+
+#### Methods:
+
+- <details>
+  <summary>Accept(scoped FixedPointerValue)</summary>
+
+  Executes an action using a `FixedPointerValue` instance.
+  </details>
+
+</details>
+
+<details>
+  <summary>IFixedFunction&lt;TResult&gt;</summary>
+
+This interface represents an object that can be used instead of the `ReadOnlyFixedFunc<TResult>`,
+`ReadOnlyFixedFunc<TArg, TResult>`, `FixedFunc<TResult>` and `FixedFunc<TArg, TResult>` delegates.
+
+#### Methods:
+
+- <details>
+  <summary>Apply(scoped FixedPointerValue)</summary>
+
+  Executes a function using a `FixedPointerValue` instance and returns a value of type `TResult`.
+  </details>
+
+</details>
+
+<details>
+  <summary>IReadOnlyFixedContextAction&lt;T&gt;</summary>
+
+This interface represents an object that can be used instead of the `ReadOnlyFixedContextAction<T>` and
+`ReadOnlyFixedContextAction<T, TArg>` delegates.
+
+#### Methods:
+
+- <details>
+  <summary>Accept(scoped ReadOnlyFixedContextValue&lt;T&gt;)</summary>
+
+  Executes an action using a `ReadOnlyFixedContextValue<T>` instance.
+  </details>
+
+</details>
+
+<details>
+  <summary>IReadOnlyFixedContextFunction&lt;T, TResult&gt;</summary>
+
+This interface represents an object that can be used instead of the `ReadOnlyFixedContextFunc<T, TResult>` and
+`ReadOnlyFixedContextFunc<T, TArg, TResult>` delegates.
+
+#### Methods:
+
+- <details>
+  <summary>Apply(scoped ReadOnlyFixedContextValue&lt;T&gt;)</summary>
+
+  Executes a function using a `ReadOnlyFixedContextValue<T>` instance and returns a value of type `TResult`.
+  </details>
+
+</details>
+
+<details>
+  <summary>IFixedContextAction&lt;T&gt;</summary>
+
+This interface represents an object that can be used instead of the `FixedContextAction<T>` and
+`FixedContextAction<T, TArg>` delegates.
+
+#### Methods:
+
+- <details>
+  <summary>Accept(scoped FixedContextValue&lt;T&gt;)</summary>
+
+  Executes an action using a `FixedContextValue<T>` instance.
+  </details>
+
+</details>
+
+<details>
+  <summary>IFixedContextFunction&lt;T, TResult&gt;</summary>
+
+This interface represents an object that can be used instead of the `FixedContextFunc<T, TResult>` and
+`FixedContextFunc<T, TArg, TResult>` delegates.
+
+#### Methods:
+
+- <details>
+  <summary>Apply(scoped FixedContextValue&lt;T&gt;)</summary>
+
+  Executes a function using a `FixedContextValue<T>` instance and returns a value of type `TResult`.
   </details>
 
 </details>
@@ -4026,7 +4122,7 @@ This class allows to allocate buffers of type `T` on stack if possible.
   instance.
   </details>
 - <details>
-  <summary>Alloc&lt;TFunction, TResult&gt;(UInt16, TFunction&lt;T, TResult&gt;, out TResult, Boolean)</summary>
+  <summary>Alloc&lt;TResult, TFunction&gt;(UInt16, TFunction&lt;T, TResult&gt;, out TResult, Boolean)</summary>
 
   Allocates a buffer of type `T` with `count` elements and executes the `IScopedBufferFunction<T, TResult>.Invoke` on
   the `TFunction` instance.
@@ -4038,7 +4134,7 @@ This class allows to allocate buffers of type `T` on stack if possible.
   managed reference.
   </details>
 - <details>
-  <summary>AllocWithReference&lt;TFunction, TResult&gt;(UInt16, TFunction&lt;T, TResult&gt;, out TResult, Boolean)</summary>
+  <summary>AllocWithReference&lt;TResult, TFunction&gt;(UInt16, TFunction&lt;T, TResult&gt;, out TResult, Boolean)</summary>
 
   Allocates a buffer of type `T` with `count` elements and executes the `IScopedBufferFunction<T, TResult>.Invoke` on
   the `TFunction` managed reference.
@@ -4416,6 +4512,14 @@ Set of utilities for exchange data within the P/Invoke context.
   <summary>HeapAlloc&lt;T&gt;(Int32)</summary>
 
   Allocates a native heap memory block and exposes it through an owning `IFixedContext<T>.IDisposable` instance.
+
+  **Note:** `T` is `unmanaged`.
+  </details>
+- <details>
+  <summary>HeapAlloc&lt;T&gt;(Int32, out FixedContextValue&lt;T&gt;)</summary>
+
+  Allocates a native heap memory block and exposes it through an owning `FixedContextValue<T>` instance and released
+  using the returning `IDisposable` object.
 
   **Note:** `T` is `unmanaged`.
   </details>

@@ -79,4 +79,11 @@ public partial class NativeUtilities
 		T? previous = Interlocked.CompareExchange(ref fieldReference, newObj, null);
 		return previous ?? newObj;
 	}
+	/// <summary>
+	/// Generic <see langword="typeof"/> call.
+	/// </summary>
+	/// <typeparam name="T">Generic type.</typeparam>
+	/// <returns>The CLR type for <typeparamref name="T"/>.</returns>
+	[MethodImpl(MethodImplOptions.NoInlining)]
+	internal static Type GetType<T>() => typeof(T);
 }

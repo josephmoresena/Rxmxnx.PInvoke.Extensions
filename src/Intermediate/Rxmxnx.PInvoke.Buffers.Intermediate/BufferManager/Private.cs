@@ -153,7 +153,7 @@ public static partial class BufferManager<T>
 			ScopedBuffer<T> buffer = new(span, true, arr.Length);
 
 			span.Clear();
-			action.Invoke(buffer);
+			action.Accept(buffer);
 		}
 		finally
 		{
@@ -185,7 +185,7 @@ public static partial class BufferManager<T>
 			ScopedBuffer<T> buffer = new(span, true, arr.Length);
 
 			span.Clear();
-			result = func.Invoke(buffer);
+			result = func.Apply(buffer);
 		}
 		finally
 		{
@@ -223,7 +223,7 @@ public static partial class BufferManager<T>
 		ref T refT = ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(bytes));
 		Span<T> span = MemoryMarshal.CreateSpan(ref refT, action.Count);
 		ScopedBuffer<T> buffer = new(span, false, span.Length);
-		action.Invoke(buffer);
+		action.Accept(buffer);
 	}
 	/// <summary>
 	/// Allocates a stack buffer with the required size for execution.
@@ -257,6 +257,6 @@ public static partial class BufferManager<T>
 		ref T refT = ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(bytes));
 		Span<T> span = MemoryMarshal.CreateSpan(ref refT, func.Count);
 		ScopedBuffer<T> buffer = new(span, false, span.Length);
-		result = func.Invoke(buffer);
+		result = func.Apply(buffer);
 	}
 }

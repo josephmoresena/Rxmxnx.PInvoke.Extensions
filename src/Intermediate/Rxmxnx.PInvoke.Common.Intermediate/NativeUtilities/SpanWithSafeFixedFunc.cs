@@ -29,8 +29,18 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
-			FixedMemoryList lst = new(new FixedContext<T0>(ptr0, span0.Length),
-			                          new FixedContext<T1>(ptr1, span1.Length));
+			Buffer2 buffer = new();
+			FixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = false,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+				],
+			});
 			try
 			{
 				return func(lst);
@@ -64,8 +74,18 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
-			FixedMemoryList lst = new(new FixedContext<T0>(ptr0, span0.Length),
-			                          new FixedContext<T1>(ptr1, span1.Length));
+			Buffer2 buffer = new();
+			FixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = false,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+				],
+			});
 			try
 			{
 				return func(lst, arg);
@@ -97,9 +117,19 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		{
-			FixedMemoryList lst = new(new FixedContext<T0>(ptr0, span0.Length),
-			                          new FixedContext<T1>(ptr1, span1.Length),
-			                          new FixedContext<T2>(ptr2, span2.Length));
+			Buffer3 buffer = new();
+			FixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = false,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+				],
+			});
 			try
 			{
 				return func(lst);
@@ -136,9 +166,19 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		{
-			FixedMemoryList lst = new(new FixedContext<T0>(ptr0, span0.Length),
-			                          new FixedContext<T1>(ptr1, span1.Length),
-			                          new FixedContext<T2>(ptr2, span2.Length));
+			Buffer3 buffer = new();
+			FixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = false,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+				],
+			});
 			try
 			{
 				return func(lst, arg);
@@ -173,10 +213,20 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		{
-			FixedMemoryList lst = new(new FixedContext<T0>(ptr0, span0.Length),
-			                          new FixedContext<T1>(ptr1, span1.Length),
-			                          new FixedContext<T2>(ptr2, span2.Length),
-			                          new FixedContext<T3>(ptr3, span3.Length));
+			Buffer4 buffer = new();
+			FixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = false,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
+				],
+			});
 			try
 			{
 				return func(lst);
@@ -216,10 +266,20 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		{
-			FixedMemoryList lst = new(new FixedContext<T0>(ptr0, span0.Length),
-			                          new FixedContext<T1>(ptr1, span1.Length),
-			                          new FixedContext<T2>(ptr2, span2.Length),
-			                          new FixedContext<T3>(ptr3, span3.Length));
+			Buffer4 buffer = new();
+			FixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = false,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
+				],
+			});
 			try
 			{
 				return func(lst, arg);
@@ -257,11 +317,21 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		{
-			FixedMemoryList lst = new(new FixedContext<T0>(ptr0, span0.Length),
-			                          new FixedContext<T1>(ptr1, span1.Length),
-			                          new FixedContext<T2>(ptr2, span2.Length),
-			                          new FixedContext<T3>(ptr3, span3.Length),
-			                          new FixedContext<T4>(ptr4, span4.Length));
+			Buffer5 buffer = new();
+			FixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = false,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
+					NativeUtilities.CreateFixedPointerInfo(ptr4, span4),
+				],
+			});
 			try
 			{
 				return func(lst);
@@ -304,11 +374,21 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		{
-			FixedMemoryList lst = new(new FixedContext<T0>(ptr0, span0.Length),
-			                          new FixedContext<T1>(ptr1, span1.Length),
-			                          new FixedContext<T2>(ptr2, span2.Length),
-			                          new FixedContext<T3>(ptr3, span3.Length),
-			                          new FixedContext<T4>(ptr4, span4.Length));
+			Buffer5 buffer = new();
+			FixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = false,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
+					NativeUtilities.CreateFixedPointerInfo(ptr4, span4),
+				],
+			});
 			try
 			{
 				return func(lst, arg);
@@ -349,12 +429,22 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		{
-			FixedMemoryList lst = new(new FixedContext<T0>(ptr0, span0.Length),
-			                          new FixedContext<T1>(ptr1, span1.Length),
-			                          new FixedContext<T2>(ptr2, span2.Length),
-			                          new FixedContext<T3>(ptr3, span3.Length),
-			                          new FixedContext<T4>(ptr4, span4.Length),
-			                          new FixedContext<T5>(ptr5, span5.Length));
+			Buffer6 buffer = new();
+			FixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = false,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
+					NativeUtilities.CreateFixedPointerInfo(ptr4, span4),
+					NativeUtilities.CreateFixedPointerInfo(ptr5, span5),
+				],
+			});
 			try
 			{
 				return func(lst);
@@ -400,12 +490,22 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		{
-			FixedMemoryList lst = new(new FixedContext<T0>(ptr0, span0.Length),
-			                          new FixedContext<T1>(ptr1, span1.Length),
-			                          new FixedContext<T2>(ptr2, span2.Length),
-			                          new FixedContext<T3>(ptr3, span3.Length),
-			                          new FixedContext<T4>(ptr4, span4.Length),
-			                          new FixedContext<T5>(ptr5, span5.Length));
+			Buffer6 buffer = new();
+			FixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = false,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
+					NativeUtilities.CreateFixedPointerInfo(ptr4, span4),
+					NativeUtilities.CreateFixedPointerInfo(ptr5, span5),
+				],
+			});
 			try
 			{
 				return func(lst, arg);
@@ -449,13 +549,23 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		{
-			FixedMemoryList lst = new(new FixedContext<T0>(ptr0, span0.Length),
-			                          new FixedContext<T1>(ptr1, span1.Length),
-			                          new FixedContext<T2>(ptr2, span2.Length),
-			                          new FixedContext<T3>(ptr3, span3.Length),
-			                          new FixedContext<T4>(ptr4, span4.Length),
-			                          new FixedContext<T5>(ptr5, span5.Length),
-			                          new FixedContext<T6>(ptr6, span6.Length));
+			Buffer7 buffer = new();
+			FixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = false,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
+					NativeUtilities.CreateFixedPointerInfo(ptr4, span4),
+					NativeUtilities.CreateFixedPointerInfo(ptr5, span5),
+					NativeUtilities.CreateFixedPointerInfo(ptr6, span6),
+				],
+			});
 			try
 			{
 				return func(lst);
@@ -505,13 +615,23 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		{
-			FixedMemoryList lst = new(new FixedContext<T0>(ptr0, span0.Length),
-			                          new FixedContext<T1>(ptr1, span1.Length),
-			                          new FixedContext<T2>(ptr2, span2.Length),
-			                          new FixedContext<T3>(ptr3, span3.Length),
-			                          new FixedContext<T4>(ptr4, span4.Length),
-			                          new FixedContext<T5>(ptr5, span5.Length),
-			                          new FixedContext<T6>(ptr6, span6.Length));
+			Buffer7 buffer = new();
+			FixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = false,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
+					NativeUtilities.CreateFixedPointerInfo(ptr4, span4),
+					NativeUtilities.CreateFixedPointerInfo(ptr5, span5),
+					NativeUtilities.CreateFixedPointerInfo(ptr6, span6),
+				],
+			});
 			try
 			{
 				return func(lst, arg);
@@ -559,14 +679,24 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
 		{
-			FixedMemoryList lst = new(new FixedContext<T0>(ptr0, span0.Length),
-			                          new FixedContext<T1>(ptr1, span1.Length),
-			                          new FixedContext<T2>(ptr2, span2.Length),
-			                          new FixedContext<T3>(ptr3, span3.Length),
-			                          new FixedContext<T4>(ptr4, span4.Length),
-			                          new FixedContext<T5>(ptr5, span5.Length),
-			                          new FixedContext<T6>(ptr6, span6.Length),
-			                          new FixedContext<T7>(ptr7, span7.Length));
+			Buffer8 buffer = new();
+			FixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = false,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
+					NativeUtilities.CreateFixedPointerInfo(ptr4, span4),
+					NativeUtilities.CreateFixedPointerInfo(ptr5, span5),
+					NativeUtilities.CreateFixedPointerInfo(ptr6, span6),
+					NativeUtilities.CreateFixedPointerInfo(ptr7, span7),
+				],
+			});
 			try
 			{
 				return func(lst);
@@ -619,14 +749,24 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
 		{
-			FixedMemoryList lst = new(new FixedContext<T0>(ptr0, span0.Length),
-			                          new FixedContext<T1>(ptr1, span1.Length),
-			                          new FixedContext<T2>(ptr2, span2.Length),
-			                          new FixedContext<T3>(ptr3, span3.Length),
-			                          new FixedContext<T4>(ptr4, span4.Length),
-			                          new FixedContext<T5>(ptr5, span5.Length),
-			                          new FixedContext<T6>(ptr6, span6.Length),
-			                          new FixedContext<T7>(ptr7, span7.Length));
+			Buffer8 buffer = new();
+			FixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = false,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
+					NativeUtilities.CreateFixedPointerInfo(ptr4, span4),
+					NativeUtilities.CreateFixedPointerInfo(ptr5, span5),
+					NativeUtilities.CreateFixedPointerInfo(ptr6, span6),
+					NativeUtilities.CreateFixedPointerInfo(ptr7, span7),
+				],
+			});
 			try
 			{
 				return func(lst, arg);

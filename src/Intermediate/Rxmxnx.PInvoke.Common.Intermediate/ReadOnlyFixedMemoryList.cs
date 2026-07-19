@@ -9,15 +9,15 @@
 public readonly ref struct ReadOnlyFixedMemoryList
 {
 	/// <summary>
-	/// <see cref="FixedMemoryListValue"/> value.
+	/// Internal fixed pointer value.
 	/// </summary>
-	private readonly FixedMemoryListValue _values;
+	private readonly FixedPointerValueList _values;
 
 	/// <summary>
 	/// Gets the total number of elements in the list.
 	/// </summary>
 	/// <value>The total number of elements in the list.</value>
-	public Int32 Count => this._values.Count;
+	public Int32 Count => this._values.Information.Length;
 	/// <summary>
 	/// Indicates whether the current list is empty.
 	/// </summary>
@@ -32,69 +32,24 @@ public readonly ref struct ReadOnlyFixedMemoryList
 	/// Thrown when the <paramref name="index"/> is out of the range of the list elements.
 	/// </exception>
 	[IndexerName("Item")]
-	public IReadOnlyFixedMemory this[Int32 index] => this._values[index];
+	public IReadOnlyFixedMemory this[Int32 index] => this._values.GetInstance(index);
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ReadOnlyFixedMemoryList"/> structure.
 	/// </summary>
-	/// <param name="memories">An array of <see cref="FixedMemory"/> instances to be stored in the list.</param>
-	/// <remarks>This constructor initializes the list with the provided fixed memory blocks.</remarks>
-#if !PACKAGE && NET9_0_OR_GREATER
-	[ExcludeFromCodeCoverage]
-#endif
-	internal ReadOnlyFixedMemoryList(
-#if !NET9_0_OR_GREATER
-		params FixedMemory[] memories
-#else
-		FixedMemory[] memories
-#endif
-	) : this(memories.AsSpan()) { }
-	/// <summary>
-	/// Initializes a new instance of the <see cref="ReadOnlyFixedMemoryList"/> structure.
-	/// </summary>
-	/// <param name="memories">An array of <see cref="ReadOnlyFixedMemory"/> instances to be stored in the list.</param>
-	/// <remarks>This constructor initializes the list with the provided fixed memory blocks.</remarks>
-	internal ReadOnlyFixedMemoryList(
-#if !NET9_0_OR_GREATER
-		params ReadOnlyFixedMemory[] memories
-#else
-		ReadOnlyFixedMemory[] memories
-#endif
-	) : this(memories.AsSpan()) { }
-
-	/// <summary>
-	/// Initializes a new instance of the <see cref="ReadOnlyFixedMemoryList"/> structure.
-	/// </summary>
-	/// <param name="memories">A read-only span of <see cref="FixedMemory"/> instances to be stored in the list.</param>
-	/// <remarks>This constructor initializes the list with the provided fixed memory blocks.</remarks>
-	internal ReadOnlyFixedMemoryList(
-#if NET9_0_OR_GREATER
-		params ReadOnlySpan<FixedMemory> memories
-#else
-		ReadOnlySpan<FixedMemory> memories
-#endif
-	)
-		=> this._values = FixedMemoryListValue.Create(memories);
-	/// <summary>
-	/// Initializes a new instance of the <see cref="ReadOnlyFixedMemoryList"/> structure.
-	/// </summary>
-	/// <param name="memories">A read-only span of <see cref="ReadOnlyFixedMemory"/> instances to be stored in the list.</param>
-	/// <remarks>This constructor initializes the list with the provided fixed memory blocks.</remarks>
-	internal ReadOnlyFixedMemoryList(
-#if NET9_0_OR_GREATER
-		params ReadOnlySpan<ReadOnlyFixedMemory> memories
-#else
-		ReadOnlySpan<ReadOnlyFixedMemory> memories
-#endif
-	)
-		=> this._values = FixedMemoryListValue.Create(memories);
-	/// <summary>
-	/// Initializes a new instance of the <see cref="ReadOnlyFixedMemoryList"/> structure.
-	/// </summary>
-	/// <param name="values">An instance of the <see cref="FixedMemoryListValue"/> to be stored in the list.</param>
+	/// <param name="values">An instance of the <see cref="FixedPointerValueList"/> to be stored in the list.</param>
 	/// <remarks>This constructor initializes the list with the provided internal fixed memory list value.</remarks>
-	internal ReadOnlyFixedMemoryList(FixedMemoryListValue values) => this._values = values;
+	internal ReadOnlyFixedMemoryList(FixedPointerValueList values) => this._values = values;
 
+	/// <summary>
+	/// Gets the <see cref="FixedPointerValue"/> at the specified index.
+	/// </summary>
+	/// <param name="index">The zero-based index of the value to get.</param>
+	/// <returns>The <see cref="FixedPointerValue"/> at the specified index.</returns>
+	/// <exception cref="IndexOutOfRangeException">
+	/// Thrown when the <paramref name="index"/> is out of the range of the list elements.
+	/// </exception>
+	public FixedPointerValue GetValue(Int32 index) => this._values.GetValue(index);
 	/// <summary>
 	/// Creates an array from the current <see cref="ReadOnlyFixedMemoryList"/> instance.
 	/// </summary>
@@ -103,12 +58,13 @@ public readonly ref struct ReadOnlyFixedMemoryList
 	/// </returns>
 	public IReadOnlyFixedMemory[] ToArray()
 	{
-		if (this._values.Count <= 0) return [];
+		if (this._values.Information.Length <= 0) return [];
 
-		IReadOnlyFixedMemory[] result = new IReadOnlyFixedMemory[this._values.Count];
+		IReadOnlyFixedMemory[] result = new IReadOnlyFixedMemory[this._values.Instances.Length];
 		ref ReadOnlyFixedMemory refI = ref Unsafe.As<IReadOnlyFixedMemory, ReadOnlyFixedMemory>(ref result[0]);
 		Span<ReadOnlyFixedMemory> span = MemoryMarshal.CreateSpan(ref refI, result.Length);
-		this._values.AsSpan().CopyTo(span);
+		this._values.InitializeInstances();
+		this._values.Instances.CopyTo(span!);
 		return result;
 	}
 	/// <summary>
@@ -117,12 +73,16 @@ public readonly ref struct ReadOnlyFixedMemoryList
 	/// <returns>An enumerator for the current <see cref="ReadOnlyFixedMemoryList"/> instance.</returns>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Browsable(false)]
-	public Enumerator GetEnumerator() => new(this._values.AsSpan());
+	public Enumerator GetEnumerator()
+	{
+		this._values.InitializeInstances();
+		return new(this._values.Instances!);
+	}
 
 	/// <summary>
 	/// Releases all resources used by the <see cref="ReadOnlyFixedMemoryList"/> instance.
 	/// </summary>
-	internal void Unload() => this._values.Unload();
+	internal void Unload() => this._values.Handle.Dispose();
 
 	/// <summary>
 	/// Enumerates the elements of a <see cref="ReadOnlyFixedMemoryList"/>.

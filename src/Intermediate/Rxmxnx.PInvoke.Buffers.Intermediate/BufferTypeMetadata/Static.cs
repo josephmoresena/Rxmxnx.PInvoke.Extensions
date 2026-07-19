@@ -66,7 +66,7 @@ public partial class BufferTypeMetadata
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
 		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
 		ScopedBuffer<T> scoped = new(memMarshal, false, metadata.Size, metadata);
-		action.Invoke(scoped);
+		action.Accept(scoped);
 	}
 	/// <summary>
 	/// Executes <paramref name="func"/> using a buffer of current type.
@@ -92,6 +92,6 @@ public partial class BufferTypeMetadata
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
 		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
 		ScopedBuffer<T> scoped = new(memMarshal, false, metadata.Size, metadata);
-		return func.Invoke(scoped);
+		return func.Apply(scoped);
 	}
 }

@@ -390,6 +390,30 @@ public static unsafe partial class NativeUtilities
 		ValidationUtilities.ThrowIfInvalidLength(count);
 		return NativeMemoryOwner.CreateContext<T>(count);
 	}
+	/// <summary>
+	/// Allocates a native memory block for <paramref name="count"/> values of type <typeparamref name="T"/> and exposes
+	/// it through a <see cref="FixedContextValue{T}"/> instance.
+	/// </summary>
+	/// <typeparam name="T">The unmanaged value type stored in the allocated memory block.</typeparam>
+	/// <param name="count">The number of values of type <typeparamref name="T"/> to allocate.</param>
+	/// <param name="fixedContext">
+	/// Output. The <see cref="FixedContextValue{T}"/> instance representing the pinned memory.
+	/// </param>
+	/// <returns>An <see cref="IDisposable"/> instance representing the allocated memory releasing.</returns>
+	/// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="count"/> is negative.</exception>
+	/// <exception cref="OverflowException">
+	/// Thrown when the requested allocation size exceeds <see cref="Int32.MaxValue"/>.
+	/// </exception>
+	/// <remarks>
+	/// The output context owns the native memory allocation and releases it when the returning object is disposed.
+	/// The allocated memory is not initialized.
+	/// Consumers should use a <see langword="using"/> statement or otherwise dispose the returned object.
+	/// </remarks>
+	public static IDisposable HeapAlloc<T>(Int32 count, out FixedContextValue<T> fixedContext) where T : unmanaged
+	{
+		ValidationUtilities.ThrowIfInvalidLength(count);
+		return NativeMemoryOwner.CreateContext(count, out fixedContext);
+	}
 #if !PACKAGE || NETCOREAPP
 	/// <summary>
 	/// Provides a high-level API for loading a native library.

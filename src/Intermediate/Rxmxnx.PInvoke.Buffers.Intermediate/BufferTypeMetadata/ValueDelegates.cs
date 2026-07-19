@@ -20,7 +20,7 @@ public partial class BufferTypeMetadata
 		public UInt16 Count { get; init; }
 		/// <inheritdoc/>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Invoke(ScopedBuffer<T> buffer) => this._action(buffer);
+		public void Accept(ScopedBuffer<T> buffer) => this._action(buffer);
 	}
 
 	/// <summary>
@@ -54,7 +54,7 @@ public partial class BufferTypeMetadata
 
 		/// <inheritdoc/>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Invoke(ScopedBuffer<T> buffer) => this._action(buffer, this._state);
+		public void Accept(ScopedBuffer<T> buffer) => this._action(buffer, this._state);
 	}
 
 	/// <summary>
@@ -78,7 +78,7 @@ public partial class BufferTypeMetadata
 
 		/// <inheritdoc/>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public TResult Invoke(ScopedBuffer<T> buffer) => this._func(buffer);
+		public TResult Apply(ScopedBuffer<T> buffer) => this._func(buffer);
 	}
 
 	/// <summary>
@@ -114,6 +114,6 @@ public partial class BufferTypeMetadata
 
 		/// <inheritdoc/>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public TResult Invoke(ScopedBuffer<T> buffer) => this._func(buffer, this._state);
+		public TResult Apply(ScopedBuffer<T> buffer) => this._func(buffer, this._state);
 	}
 }

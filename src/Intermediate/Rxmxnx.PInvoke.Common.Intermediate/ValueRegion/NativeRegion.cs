@@ -8,7 +8,7 @@ public partial class ValueRegion<T>
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-	private sealed unsafe class NativeRegion : ValueRegion<T>
+	private sealed unsafe class NativeRegion : ValueRegion<T>, IFixedPointer
 	{
 #pragma warning disable CS8500
 		/// <summary>
@@ -24,6 +24,9 @@ public partial class ValueRegion<T>
 		/// The pointer to the native memory region.
 		/// </summary>
 		private readonly IntPtr _ptr;
+
+		/// <inheritdoc/>
+		public IntPtr Pointer => this._ptr;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ValueRegion{T}.NativeRegion"/> class.

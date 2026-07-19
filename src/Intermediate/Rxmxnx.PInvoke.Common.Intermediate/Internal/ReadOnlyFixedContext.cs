@@ -9,24 +9,6 @@
 #endif
 internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IReadOnlyFixedContext<T>
 {
-	/// <summary>
-	/// Retrieves an <see langword="unsafe"/> <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance from
-	/// current read-only reference pointer.
-	/// </summary>
-	/// <param name="valPtr">A <see cref="ReadOnlyValPtr{T}"/> value.</param>
-	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
-	/// <param name="disposable">Object to dispose in order to free <see langword="unmanaged"/> resources.</param>
-	/// <returns>A <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance.</returns>
-	/// <remarks>
-	/// This method serves as a reference for the assembly patcher in .NET 9.0+. It is important to keep the
-	/// attributes of its parameters compatible.
-	/// </remarks>
-	public static IReadOnlyFixedContext<T>.IDisposable CreateDisposable(ReadOnlyValPtr<T> valPtr, Int32 count,
-		IDisposable? disposable = default)
-	{
-		ReadOnlyFixedContext<T> ctx = new(valPtr, count);
-		return ctx.ToDisposable(disposable);
-	}
 #pragma warning disable CS8500
 	/// <summary>
 	/// An empty instance of <see cref="ReadOnlyFixedContext{T}"/>.
@@ -134,4 +116,33 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 		return new(this, count);
 	}
 #pragma warning restore CS8500
+
+	/// <summary>
+	/// Retrieves an <see langword="unsafe"/> <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance from
+	/// current read-only reference pointer.
+	/// </summary>
+	/// <param name="valPtr">A <see cref="ReadOnlyValPtr{T}"/> value.</param>
+	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
+	/// <param name="disposable">Object to dispose in order to free <see langword="unmanaged"/> resources.</param>
+	/// <returns>A <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance.</returns>
+	/// <remarks>
+	/// This method serves as a reference for the assembly patcher in .NET 9.0+. It is important to keep the
+	/// attributes of its parameters compatible.
+	/// </remarks>
+	public static IReadOnlyFixedContext<T>.IDisposable CreateDisposable(ReadOnlyValPtr<T> valPtr, Int32 count,
+		IDisposable? disposable = default)
+	{
+		ReadOnlyFixedContext<T> ctx = new(valPtr, count);
+		return ctx.ToDisposable(disposable);
+	}
+	/// <summary>
+	/// Creates a new <see cref="ReadOnlyFixedMemory"/> instance.
+	/// </summary>
+	/// <param name="ptr">The pointer to the fixed memory block.</param>
+	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
+	/// <param name="handle">A <see cref="FixedValueHandle"/> instance.</param>
+	/// <returns>A new <see cref="ReadOnlyFixedMemory"/> instance.</returns>
+	[MethodImpl(MethodImplOptions.NoInlining)]
+	public static ReadOnlyFixedMemory CreateInstance(void* ptr, Int32 count, FixedValueHandle handle)
+		=> new ReadOnlyFixedContext<T>(ptr, count, handle);
 }

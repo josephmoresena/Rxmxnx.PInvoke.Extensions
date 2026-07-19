@@ -60,10 +60,10 @@ internal sealed unsafe class RentedMemoryOwner<T> : IDisposable
 	/// </summary>
 	private void Release()
 	{
-		if (this._array is null) return;
-		this._handle.Dispose();
-		this._arrayPool.Return(this._array, this._clearArray);
+		if (this._array is not { } array) return;
 		this._array = default;
+		this._handle.Dispose();
+		this._arrayPool.Return(array, this._clearArray);
 	}
 
 	/// <summary>
@@ -86,5 +86,30 @@ internal sealed unsafe class RentedMemoryOwner<T> : IDisposable
 		}
 		RentedMemoryOwner<T> owner = new(arrayPool, count, clearArray, out arrayLength);
 		return new FixedContext<T>(owner._handle.Pointer, count).ToDisposable(owner);
+	}
+	/// <summary>
+	/// Rents and pins an array of minimum <paramref name="count"/> elements from <paramref name="arrayPool"/>,
+	/// ensuring a safe context for accessing the fixed memory.
+	/// </summary>
+	/// <param name="arrayPool">A <see cref="ArrayPool{T}"/> instance.</param>
+	/// <param name="count">Minimum size of rented array.</param>
+	/// <param name="clearArray">Indicates whether the contents of the buffer should be cleared before reuse.</param>
+	/// <param name="fixedContext">
+	/// Output. The <see cref="FixedContextValue{T}"/> instance representing the fixed memory.
+	/// </param>
+	/// <param name="arrayLength">Output. Rented array length.</param>
+	/// <returns>An <see cref="IDisposable"/> instance representing the pinned memory.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static IDisposable CreateContext(ArrayPool<T> arrayPool, Int32 count, Boolean clearArray,
+		out FixedContextValue<T> fixedContext, out Int32 arrayLength)
+	{
+		if (count == 0)
+		{
+			fixedContext = default;
+			arrayLength = default;
+			return FixedContext<T>.EmptyDisposable;
+		}
+		RentedMemoryOwner<T> owner = new(arrayPool, count, clearArray, out arrayLength);
+		return FixedContextValue<T>.CreateDisposable((ValPtr<T>)owner._handle.Pointer, count, owner, out fixedContext);
 	}
 }

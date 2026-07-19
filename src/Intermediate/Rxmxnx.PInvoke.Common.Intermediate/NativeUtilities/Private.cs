@@ -69,4 +69,56 @@ public unsafe partial class NativeUtilities
 		Delegate[] array = del.GetInvocationList();
 		return MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(array), array.Length);
 	}
+#pragma warning disable CS8500
+	/// <summary>
+	/// Retrieves the <see cref="FixedPointerInfo"/> instance for given parameters.
+	/// </summary>
+	/// <typeparam name="T">Type of fixed memory block.</typeparam>
+	/// <param name="ptr">Fixed unmanaged pointer.</param>
+	/// <param name="span">A read-only <typeparamref name="T"/> span.</param>
+	/// <returns>A <see cref="FixedPointerInfo"/> instance.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static FixedPointerInfo CreateFixedPointerInfo<T>(void* ptr, ReadOnlySpan<T> span)
+		=> new()
+		{
+			Pointer = ptr,
+			Count = span.Length,
+			SizeOf = sizeof(T),
+			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
+			ConstructorPointer = &ReadOnlyFixedContext<T>.CreateInstance,
+			GetTypePointer = &NativeUtilities.GetType<T>,
+		};
+	/// <summary>
+	/// Retrieves the <see cref="FixedPointerInfo"/> instance for given parameters.
+	/// </summary>
+	/// <typeparam name="T">Type of fixed memory block.</typeparam>
+	/// <param name="ptr">Fixed unmanaged pointer.</param>
+	/// <param name="span">A read-only <typeparamref name="T"/> span.</param>
+	/// <returns>A <see cref="FixedPointerInfo"/> instance.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static FixedPointerInfo CreateFixedPointerInfo<T>(void* ptr, Span<T> span)
+		=> new()
+		{
+			Pointer = ptr,
+			Count = span.Length,
+			SizeOf = sizeof(T),
+			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
+			ConstructorPointer = &FixedContext<T>.CreateInstance,
+			GetTypePointer = &NativeUtilities.GetType<T>,
+		};
+	/// <summary>
+	/// Creates a <see cref="ReadOnlyFixedMemory"/> span from <typeparamref name="TBuffer"/> reference.
+	/// </summary>
+	/// <typeparam name="TBuffer">A <see cref="ValueType"/> buffer type.</typeparam>
+	/// <param name="buffer">Managed reference to <typeparamref name="TBuffer"/> value.</param>
+	/// <returns>Created span.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static Span<ReadOnlyFixedMemory?> CreateReadOnlyFixedMemorySpan<TBuffer>(ref TBuffer buffer)
+		where TBuffer : struct
+	{
+		Int32 length = sizeof(TBuffer) / IntPtr.Size;
+		ref ReadOnlyFixedMemory? r0 = ref Unsafe.As<TBuffer, ReadOnlyFixedMemory?>(ref buffer);
+		return MemoryMarshal.CreateSpan(ref r0, length);
+	}
+#pragma warning restore CS8500
 }

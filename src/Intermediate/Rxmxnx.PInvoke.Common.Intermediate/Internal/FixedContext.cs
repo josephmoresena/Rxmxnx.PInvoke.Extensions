@@ -48,6 +48,24 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 	public FixedContext(Int32 offset, FixedMemory ctx) : base(ctx, offset)
 		=> this.Count = this.BinaryLength / sizeof(T);
 	/// <summary>
+	/// Constructs a new <see cref="FixedContext{T}"/> instance using a pointer to a fixed memory block,
+	/// a count of items, and a validity wrapper.
+	/// </summary>
+	/// <param name="ptr">The pointer to the fixed memory block.</param>
+	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
+	/// <param name="isValid">A mutable wrapper that indicates whether the current instance remains valid.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+#if NET9_0_OR_GREATER
+	public FixedContext(void* ptr, Int32 count, IMutableWrapper<Boolean> isValid) : base(
+		ptr, count * sizeof(T), isValid)
+#else
+	private FixedContext(void* ptr, Int32 count, IMutableWrapper<Boolean> isValid) : base(
+		ptr, count * sizeof(T), isValid)
+#endif
+		=> this.Count = count;
+	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a pointer to a
 	/// <see langword="null"/> memory.
 	/// </summary>
@@ -126,7 +144,8 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 		fixedOffset = new(this, offset);
 		return new(this, count);
 	}
-#pragma warning restore
+#pragma warning restore CS8500
+
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="IFixedContext{T}.IDisposable"/> instance from
 	/// current reference pointer.
@@ -145,4 +164,14 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 		FixedContext<T> ctx = new(valPtr, count);
 		return ctx.ToDisposable(disposable);
 	}
+	/// <summary>
+	/// Creates a new <see cref="ReadOnlyFixedMemory"/> instance.
+	/// </summary>
+	/// <param name="ptr">The pointer to the fixed memory block.</param>
+	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
+	/// <param name="handle">A <see cref="FixedValueHandle"/> instance.</param>
+	/// <returns>A new <see cref="ReadOnlyFixedMemory"/> instance.</returns>
+	[MethodImpl(MethodImplOptions.NoInlining)]
+	public static ReadOnlyFixedMemory CreateInstance(void* ptr, Int32 count, FixedValueHandle handle)
+		=> new FixedContext<T>(ptr, count, handle);
 }

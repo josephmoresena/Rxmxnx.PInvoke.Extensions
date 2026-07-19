@@ -33,7 +33,7 @@ public static partial class BufferManager
 
 			/// <inheritdoc/>
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			public void Invoke(ScopedBuffer<T> buffer)
+			public void Accept(ScopedBuffer<T> buffer)
 			{
 				VbScopedBuffer<T> vbBuffer = buffer.ToVbScopedBuffer();
 				try
@@ -73,7 +73,7 @@ public static partial class BufferManager
 
 			/// <inheritdoc/>
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			public void Invoke(ScopedBuffer<T> buffer)
+			public void Accept(ScopedBuffer<T> buffer)
 			{
 				VbScopedBuffer<T> vbBuffer = buffer.ToVbScopedBuffer();
 				try
@@ -108,7 +108,7 @@ public static partial class BufferManager
 
 			/// <inheritdoc/>
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			public TResult Invoke(ScopedBuffer<T> buffer)
+			public TResult Apply(ScopedBuffer<T> buffer)
 			{
 				VbScopedBuffer<T> vbBuffer = buffer.ToVbScopedBuffer();
 				try
@@ -150,7 +150,7 @@ public static partial class BufferManager
 
 			/// <inheritdoc/>
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			public TResult Invoke(ScopedBuffer<T> buffer)
+			public TResult Apply(ScopedBuffer<T> buffer)
 			{
 				VbScopedBuffer<T> vbBuffer = buffer.ToVbScopedBuffer();
 				try

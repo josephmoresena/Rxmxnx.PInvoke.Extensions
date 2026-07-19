@@ -26,6 +26,17 @@ internal abstract unsafe partial class FixedMemory : ReadOnlyFixedMemory, IFixed
 	/// <param name="mem">The <see cref="FixedMemory"/> instance to copy data from.</param>
 	/// <param name="offset">The offset to be added to the pointer to the memory block.</param>
 	protected FixedMemory(FixedMemory mem, Int32 offset) : base(mem, offset) { }
+	/// <summary>
+	/// Constructs a new <see cref="FixedMemory"/> instance using a pointer to a memory block, its size, and a valid status.
+	/// </summary>
+	/// <param name="ptr">Pointer to fixed memory block.</param>
+	/// <param name="binaryLength">Memory block size in bytes.</param>
+	/// <param name="isValid">Indicates whether current instance remains valid.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	protected FixedMemory(void* ptr, Int32 binaryLength, IMutableWrapper<Boolean> isValid) : base(
+		ptr, binaryLength, false, isValid) { }
 
 	Span<Byte> IFixedMemory.Bytes => this.CreateBinarySpan();
 	Span<Object> IFixedMemory.Objects => this.CreateObjectSpan();

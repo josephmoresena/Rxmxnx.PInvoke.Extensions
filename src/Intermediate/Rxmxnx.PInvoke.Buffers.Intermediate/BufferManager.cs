@@ -212,12 +212,12 @@ public static partial class BufferManager<T>
 	/// Allocates a buffer with <see cref="IScopedBufferFunction{T, TResult}.Count"/> elements and executes
 	/// <paramref name="func"/>.
 	/// </summary>
-	/// <typeparam name="TFunction">Type of <see cref="IScopedBufferFunction{T, TResult}"/>.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
+	/// <typeparam name="TFunction">Type of <see cref="IScopedBufferFunction{T, TResult}"/>.</typeparam>
 	/// <param name="func">Function to execute with allocated buffer.</param>
 	/// <param name="result">Output. Function result.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void Alloc<TFunction, TResult>(TFunction func, out TResult result)
+	public static void Alloc<TResult, TFunction>(TFunction func, out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IScopedBufferFunction<T, TResult>
 #else
@@ -255,12 +255,12 @@ public static partial class BufferManager<T>
 	/// Allocates a buffer with <see cref="IScopedBufferFunction{T, TResult}.Count"/> elements and executes
 	/// <paramref name="func"/>.
 	/// </summary>
-	/// <typeparam name="TFunction">Type of <see cref="IScopedBufferFunction{T, TResult}"/>.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
+	/// <typeparam name="TFunction">Type of <see cref="IScopedBufferFunction{T, TResult}"/>.</typeparam>
 	/// <param name="func">Function to execute with allocated buffer.</param>
 	/// <param name="result">Output. Function result.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void AllocWithReference<TFunction, TResult>(ref TFunction func, out TResult result)
+	public static void AllocWithReference<TResult, TFunction>(ref TFunction func, out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : struct, IScopedBufferFunction<T, TResult>
 #else

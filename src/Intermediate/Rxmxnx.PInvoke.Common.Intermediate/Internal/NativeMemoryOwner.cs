@@ -67,4 +67,25 @@ internal sealed unsafe class NativeMemoryOwner : IDisposable
 		NativeMemoryOwner owner = new(byteLength);
 		return new FixedContext<T>(owner._pointer.ToPointer(), count).ToDisposable(owner);
 	}
+	/// <summary>
+	/// Allocates a native memory block for <paramref name="count"/> values of type <typeparamref name="T"/> and exposes
+	/// it through an <see cref="FixedContextValue{T}"/> instance.
+	/// </summary>
+	/// <typeparam name="T">The unmanaged value type stored in the allocated memory block.</typeparam>
+	/// <param name="count">The number of values of type <typeparamref name="T"/> to allocate.</param>
+	/// <param name="fixedContext">
+	/// Output. The <see cref="FixedContextValue{T}"/> instance representing the pinned memory.
+	/// </param>
+	/// <returns>An <see cref="IDisposable"/> instance representing the allocated memory releasing.</returns>
+	public static IDisposable CreateContext<T>(Int32 count, out FixedContextValue<T> fixedContext) where T : unmanaged
+	{
+		if (count == 0)
+		{
+			fixedContext = default;
+			return FixedContext<T>.EmptyDisposable;
+		}
+		Int32 byteLength = checked(count * sizeof(T));
+		NativeMemoryOwner owner = new(byteLength);
+		return FixedContextValue<T>.CreateDisposable((ValPtr<T>)owner._pointer, count, owner, out fixedContext);
+	}
 }
