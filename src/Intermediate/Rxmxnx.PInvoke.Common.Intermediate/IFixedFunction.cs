@@ -6,7 +6,7 @@ namespace Rxmxnx.PInvoke;
 /// <typeparam name="TResult">The type of the return value.</typeparam>
 /// <remarks>
 /// This interface provides an alternative to <see cref="ReadOnlyFixedFunc{TResult}"/> or <see cref="FixedFunc{TResult}"/>
-/// and its stateful variant.
+/// and their stateful variant.
 /// Implementations can store the operation state directly.
 /// </remarks>
 public interface IFixedFunction<out TResult>

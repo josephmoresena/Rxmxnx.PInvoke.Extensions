@@ -41,6 +41,16 @@ public readonly ref struct FixedPointerValueList
 			return this.Information[index].GetValue(this.IsReadOnly, this.Handle);
 		}
 	}
+	/// <summary>
+	/// Gets the total number of elements in the list.
+	/// </summary>
+	/// <value>The total number of elements in the list.</value>
+	public Int32 Count => this.Information.Length;
+	/// <summary>
+	/// Indicates whether the current list is empty.
+	/// </summary>
+	/// <value><see langword="true"/> if the list is empty; otherwise, <see langword="false"/>.</value>
+	public Boolean IsEmpty => this.Count == 0;
 
 	/// <summary>
 	/// Gets the value at the specified index.

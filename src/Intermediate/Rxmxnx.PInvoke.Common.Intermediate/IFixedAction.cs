@@ -4,7 +4,7 @@ namespace Rxmxnx.PInvoke;
 /// Defines a callable object that performs an operation using a <see cref="FixedPointerValue"/>.
 /// </summary>
 /// <remarks>
-/// This interface provides an alternative to <see cref="ReadOnlyFixedAction"/> or <see cref="FixedAction"/> and its
+/// This interface provides an alternative to <see cref="ReadOnlyFixedAction"/> or <see cref="FixedAction"/> and their
 /// stateful variant.
 /// Implementations can store the operation state directly.
 /// </remarks>
