@@ -89,6 +89,11 @@ public readonly ref struct FixedMemoryList
 	/// </summary>
 	/// <param name="memoryList">The <see cref="FixedMemoryList"/> to convert.</param>
 	public static implicit operator ReadOnlyFixedMemoryList(FixedMemoryList memoryList) => new(memoryList._values);
+	/// <summary>
+	/// Converts a <see cref="FixedMemoryList"/> to a <see cref="FixedPointerValueList"/>.
+	/// </summary>
+	/// <param name="memoryList">The <see cref="FixedMemoryList"/> to convert.</param>
+	public static implicit operator FixedPointerValueList(FixedMemoryList memoryList) => memoryList._values;
 
 	/// <summary>
 	/// Enumerates the elements of a <see cref="FixedMemoryList"/>.

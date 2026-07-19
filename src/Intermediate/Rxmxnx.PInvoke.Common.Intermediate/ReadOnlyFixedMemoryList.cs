@@ -85,6 +85,12 @@ public readonly ref struct ReadOnlyFixedMemoryList
 	internal void Unload() => this._values.Handle?.Dispose();
 
 	/// <summary>
+	/// Converts a <see cref="ReadOnlyFixedMemoryList"/> to a <see cref="FixedPointerValueList"/>.
+	/// </summary>
+	/// <param name="memoryList">The <see cref="ReadOnlyFixedMemoryList"/> to convert.</param>
+	public static implicit operator FixedPointerValueList(ReadOnlyFixedMemoryList memoryList) => memoryList._values;
+
+	/// <summary>
 	/// Enumerates the elements of a <see cref="ReadOnlyFixedMemoryList"/>.
 	/// </summary>
 	public ref struct Enumerator
