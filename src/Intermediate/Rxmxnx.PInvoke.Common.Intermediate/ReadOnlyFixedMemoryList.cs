@@ -49,7 +49,7 @@ public readonly ref struct ReadOnlyFixedMemoryList
 	/// <exception cref="IndexOutOfRangeException">
 	/// Thrown when the <paramref name="index"/> is out of the range of the list elements.
 	/// </exception>
-	public FixedPointerValue GetValue(Int32 index) => this._values.GetValue(index);
+	public FixedPointerValue GetValue(Int32 index) => this._values[index];
 	/// <summary>
 	/// Creates an array from the current <see cref="ReadOnlyFixedMemoryList"/> instance.
 	/// </summary>

@@ -1,5 +1,4 @@
 #if NET8_0_OR_GREATER
-
 #region Buffers
 using O = System.Object;
 using O1 = Rxmxnx.PInvoke.Buffers.Atomic<System.Object>;

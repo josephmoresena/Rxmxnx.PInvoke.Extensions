@@ -36,8 +36,7 @@ namespace Rxmxnx.PInvoke.Json
 		{
 			Boolean writeNull = value is null &&
 				options.DefaultIgnoreCondition != JsonIgnoreCondition.WhenWritingNull &&
-				options.DefaultIgnoreCondition != JsonIgnoreCondition.WhenWritingDefault &&
-				!options.IgnoreNullValues;
+				options.DefaultIgnoreCondition != JsonIgnoreCondition.WhenWritingDefault && !options.IgnoreNullValues;
 			if (writeNull)
 			{
 				writer.WriteNullValue();

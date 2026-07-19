@@ -219,7 +219,7 @@ internal static unsafe partial class Utf8Utility
 
 				SuccessfullyProcessedThreeByteSequence:
 
-				if (System.IntPtr.Size >= 8 && BitConverter.IsLittleEndian &&
+				if (sizeof(IntPtr) >= 8 && BitConverter.IsLittleEndian &&
 				    (IntPtr)(pFinalPosWhereCanReadDWordFromInputBuffer - pInputBuffer) >= 5)
 				{
 					UInt64 thisQWord = Unsafe.ReadUnaligned<UInt64>(pInputBuffer);

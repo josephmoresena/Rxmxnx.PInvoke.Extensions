@@ -26,8 +26,8 @@ if ($filesToZip.Count -gt 0)
     }
 
     $zip = [System.IO.Compression.ZipFile]::Open(
-        $ZipName,
-        [System.IO.Compression.ZipArchiveMode]::Create
+            $ZipName,
+            [System.IO.Compression.ZipArchiveMode]::Create
     )
 
     try
@@ -35,10 +35,10 @@ if ($filesToZip.Count -gt 0)
         foreach ($file in $filesToZip)
         {
             [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
-                $zip,
-                $file.FullName,
-                $file.Name,
-                [System.IO.Compression.CompressionLevel]::Optimal
+                    $zip,
+                    $file.FullName,
+                    $file.Name,
+                    [System.IO.Compression.CompressionLevel]::Optimal
             ) | Out-Null
 
             Remove-Item -LiteralPath $file.FullName -Force -Verbose

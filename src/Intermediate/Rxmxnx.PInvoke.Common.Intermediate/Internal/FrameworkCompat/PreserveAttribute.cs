@@ -1,4 +1,5 @@
 // ReSharper disable NotAccessedField.Global
+
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 
 /// <summary>

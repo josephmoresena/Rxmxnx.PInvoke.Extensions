@@ -23,7 +23,6 @@ public sealed class SegmentTests
 		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(varIndex, zero));
 		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(zero, 1));
 		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(varIndex, 1));
-		return;
 	}
 
 	[Fact]

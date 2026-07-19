@@ -45,6 +45,12 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Runtime.CompilerServices.ScopedRefAttribute</Target>
+    <Left>lib/net7.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net8.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:&lt;&gt;y__InlineArray2`1</Target>
     <Left>lib/net9.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/net10.0/Rxmxnx.PInvoke.Extensions.dll</Right>
@@ -186,5 +192,23 @@
     <Target>F:&lt;PrivateImplementationDetails&gt;.3BF63951626584EB1653F9B8DBB590A5EE1EAE1135A904B9317C3773896DF076</Target>
     <Left>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0006</DiagnosticId>
+    <Target>M:Rxmxnx.PInvoke.IFixedContext`1.Transformation``2(``0,Rxmxnx.PInvoke.IFixedMemory@)</Target>
+    <Left>lib/net8.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net9.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0006</DiagnosticId>
+    <Target>M:Rxmxnx.PInvoke.IFixedMemory`1.AsBinaryContext``1(``0)</Target>
+    <Left>lib/net8.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net9.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0006</DiagnosticId>
+    <Target>M:Rxmxnx.PInvoke.IFixedMemory`1.AsObjectContext``1(``0)</Target>
+    <Left>lib/net8.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net9.0/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
 </Suppressions>

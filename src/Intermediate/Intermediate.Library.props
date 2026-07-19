@@ -4,6 +4,8 @@
         <RootNamespace>Rxmxnx.PInvoke</RootNamespace>
         <IsPackable>false</IsPackable>
         <Deterministic>true</Deterministic>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Version)' == ''">
         <DocumentationFile>./$(AssemblyName).xml</DocumentationFile>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <ExcludeXmlAssemblyFiles>false</ExcludeXmlAssemblyFiles>

@@ -178,7 +178,7 @@ internal static unsafe class Ascii
 		}
 
 		if ((bufferLength & 1) != 0 && *pBuffer <= 0x007F)
-				pBuffer++;
+			pBuffer++;
 
 		Finish:
 
