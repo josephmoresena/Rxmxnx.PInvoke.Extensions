@@ -1,4 +1,56 @@
-﻿#if !NET6_0_OR_GREATER
+﻿#if PACKAGE
+using B2 =
+	Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+		Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>;
+using B3 =
+	Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.Composite<
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+		System.Object>;
+using B4 =
+	Rxmxnx.PInvoke.Buffers.Composite<
+		Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, Rxmxnx.PInvoke.Buffers.Composite<
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+		System.Object>;
+using B5 = Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.
+	Composite<
+		Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+		Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, System.Object>;
+using B6 =
+	Rxmxnx.PInvoke.Buffers.Composite<
+		Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, Rxmxnx.PInvoke.Buffers.Composite<
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, System.Object>;
+using B7 =
+	Rxmxnx.PInvoke.Buffers.Composite<
+		Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.Composite<
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				System.Object>,
+			System.Object>, Rxmxnx.PInvoke.Buffers.Composite<
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, System.Object>;
+using B8 =
+	Rxmxnx.PInvoke.Buffers.Composite<
+		Rxmxnx.PInvoke.Buffers.Composite<
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, Rxmxnx.PInvoke.Buffers.
+		Composite<
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, System.Object>;
+#endif
+
+#if !NET6_0_OR_GREATER
 using ArgumentNullException = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif
 
@@ -23,6 +75,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span1">2nd read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
 		ReadOnlyFixedListFunc<TResult> func)
 	{
@@ -30,7 +85,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
-			Buffer2 buffer = new();
+			B2 buffer = new();
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -65,6 +120,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, TArg, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, TArg arg,
 		ReadOnlyFixedListFunc<TArg, TResult> func)
 #if NET9_0_OR_GREATER
@@ -75,7 +133,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
-			Buffer2 buffer = new();
+			B2 buffer = new();
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -110,6 +168,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span2">3rd read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
 		ReadOnlySpan<T2> span2, ReadOnlyFixedListFunc<TResult> func)
 	{
@@ -118,7 +179,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		{
-			Buffer3 buffer = new();
+			B3 buffer = new();
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -156,6 +217,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, TArg, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
 		ReadOnlySpan<T2> span2, TArg arg, ReadOnlyFixedListFunc<TArg, TResult> func)
 #if NET9_0_OR_GREATER
@@ -167,7 +231,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		{
-			Buffer3 buffer = new();
+			B3 buffer = new();
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -205,6 +269,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span3">4th read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
 		ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlyFixedListFunc<TResult> func)
 	{
@@ -214,7 +281,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		{
-			Buffer4 buffer = new();
+			B4 buffer = new();
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -255,6 +322,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, TArg, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
 		ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, TArg arg, ReadOnlyFixedListFunc<TArg, TResult> func)
 #if NET9_0_OR_GREATER
@@ -267,7 +337,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		{
-			Buffer4 buffer = new();
+			B4 buffer = new();
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -308,6 +378,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span4">5th read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
 		ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4, ReadOnlyFixedListFunc<TResult> func)
 	{
@@ -318,7 +391,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		{
-			Buffer5 buffer = new();
+			B5 buffer = new();
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -362,6 +435,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, TArg, TResult>(ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4, TArg arg,
 		ReadOnlyFixedListFunc<TArg, TResult> func)
@@ -376,7 +452,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		{
-			Buffer5 buffer = new();
+			B5 buffer = new();
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -420,6 +496,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span5">6th read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
 		ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4, ReadOnlySpan<T5> span5,
 		ReadOnlyFixedListFunc<TResult> func)
@@ -432,7 +511,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		{
-			Buffer6 buffer = new();
+			B6 buffer = new();
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -479,6 +558,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, TArg, TResult>(ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4,
 		ReadOnlySpan<T5> span5, TArg arg, ReadOnlyFixedListFunc<TArg, TResult> func)
@@ -494,7 +576,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		{
-			Buffer6 buffer = new();
+			B6 buffer = new();
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -541,6 +623,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span6">7th read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, TResult>(ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4,
 		ReadOnlySpan<T5> span5, ReadOnlySpan<T6> span6, ReadOnlyFixedListFunc<TResult> func)
@@ -554,7 +639,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		{
-			Buffer7 buffer = new();
+			B7 buffer = new();
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -604,6 +689,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, TArg, TResult>(ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4,
 		ReadOnlySpan<T5> span5, ReadOnlySpan<T6> span6, TArg arg, ReadOnlyFixedListFunc<TArg, TResult> func)
@@ -620,7 +708,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		{
-			Buffer7 buffer = new();
+			B7 buffer = new();
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -670,6 +758,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span7">8th read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, T7, TResult>(ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4,
 		ReadOnlySpan<T5> span5, ReadOnlySpan<T6> span6, ReadOnlySpan<T7> span7, ReadOnlyFixedListFunc<TResult> func)
@@ -684,7 +775,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
 		{
-			Buffer8 buffer = new();
+			B8 buffer = new();
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -737,6 +828,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, T7, TArg, TResult>(ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4,
 		ReadOnlySpan<T5> span5, ReadOnlySpan<T6> span6, ReadOnlySpan<T7> span7, TArg arg,
@@ -755,7 +849,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
 		{
-			Buffer8 buffer = new();
+			B8 buffer = new();
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),

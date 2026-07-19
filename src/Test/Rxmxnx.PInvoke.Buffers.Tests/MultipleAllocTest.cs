@@ -5,6 +5,7 @@ namespace Rxmxnx.PInvoke.Tests;
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed unsafe class MultipleAllocTest
 {
+#pragma warning disable CS0612
 	[Fact]
 	public void BooleanTest() => MultipleAllocTest.MultipleAlloc<Boolean>();
 	[Fact]
@@ -74,7 +75,9 @@ public sealed unsafe class MultipleAllocTest
 	public void Int64ArrayWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Int64[]?>>();
 	[Fact]
 	public void StringWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<String?>>();
+#pragma warning restore CS0612
 
+	[Obsolete]
 	private static void MultipleAlloc<T>()
 	{
 		UInt16 count = (UInt16)(Math.Pow(2, PInvokeRandom.Shared.Next(2, 4)) - 1);

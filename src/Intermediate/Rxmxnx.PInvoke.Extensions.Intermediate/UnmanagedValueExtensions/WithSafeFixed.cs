@@ -22,6 +22,9 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="arr">The current array of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A delegate of type <see cref="FixedContextAction{T}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T>(this T[]? arr, FixedContextAction<T> action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
@@ -51,6 +54,9 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="arr">The current array of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T>(this T[]? arr, ReadOnlyFixedContextAction<T> action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
@@ -82,6 +88,9 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="arg">An object representing the state, of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A delegate of type <see cref="FixedContextAction{T, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T, TArg>(this T[]? arr, TArg arg, FixedContextAction<T, TArg> action)
 #if NET9_0_OR_GREATER
 		where TArg : allows ref struct
@@ -116,6 +125,9 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="arg">An object representing the state, of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T, TArg>(this T[]? arr, TArg arg, ReadOnlyFixedContextAction<T, TArg> action)
 #if NET9_0_OR_GREATER
 		where TArg : allows ref struct
@@ -150,6 +162,9 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="func">A delegate of type <see cref="FixedContextFunc{T, TResult}"/>.</param>
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T, TResult>(this T[]? arr, FixedContextFunc<T, TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
@@ -180,6 +195,9 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="func">A delegate of type <see cref="ReadOnlyFixedContextFunc{T, TResult}"/>.</param>
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T, TResult>(this T[]? arr, ReadOnlyFixedContextFunc<T, TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
@@ -212,6 +230,9 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="func">A delegate of type <see cref="FixedContextFunc{T, TArg, TResult}"/>.</param>
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T, TArg, TResult>(this T[]? arr, TArg arg,
 		FixedContextFunc<T, TArg, TResult> func)
 #if NET9_0_OR_GREATER
@@ -248,6 +269,9 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="func">A delegate of type <see cref="ReadOnlyFixedContextFunc{T, TArg, TResult}"/>.</param>
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T, TArg, TResult>(this T[]? arr, TArg arg,
 		ReadOnlyFixedContextFunc<T, TArg, TResult> func)
 #if NET9_0_OR_GREATER

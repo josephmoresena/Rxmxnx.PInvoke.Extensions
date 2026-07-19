@@ -22,6 +22,7 @@ public sealed class FixedMemoryListTest
 	}
 
 	[Fact]
+	[Obsolete]
 	public void Test()
 	{
 		Span<Byte> s0 = (Span<Byte>)this._array[0]!;

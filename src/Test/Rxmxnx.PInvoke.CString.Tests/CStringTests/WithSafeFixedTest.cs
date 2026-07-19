@@ -9,9 +9,12 @@ public sealed unsafe class WithSafeFixedTest
 	{
 		using TestMemoryHandle handle = new();
 		List<Int32> indices = TestSet.GetIndices();
+#pragma warning disable CS0612
 		indices.ForEach(i => WithSafeFixedTest.ExecuteTest(TestSet.GetCString(i, handle)));
+#pragma warning restore CS0612
 	}
 
+	[Obsolete]
 	private static void ExecuteTest(CString? value)
 	{
 		if (value is null) return;

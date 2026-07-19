@@ -26,7 +26,7 @@ public sealed class NonBinarySpaceTests
 					                                                NonBinarySpace<InternalStruct<Int32>,
 						                                                WrapperStruct<Object>>>).InnerException);
 	}
-
+#pragma warning disable CS0612
 	[Fact]
 	public void BooleanTest() => NonBinarySpaceTests.Test<Boolean>();
 	[Fact]
@@ -39,7 +39,9 @@ public sealed class NonBinarySpaceTests
 	public void Int64Test() => NonBinarySpaceTests.Test<Int64>();
 	[Fact]
 	public void StringWrapperTest() => NonBinarySpaceTests.Test<WrapperStruct<String?>>();
+#pragma warning restore CS0612
 
+	[Obsolete]
 	private static unsafe void Test<T>() where T : struct
 	{
 		BufferManager

@@ -21,6 +21,9 @@ public static unsafe class StringExtensions
 	/// <param name="str">The <see cref="String"/> instance to pin during the action.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedContextAction{Char}"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed(this String? str, ReadOnlyFixedContextAction<Char> action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
@@ -50,6 +53,9 @@ public static unsafe class StringExtensions
 	/// <param name="arg">An object of type <typeparamref name="TArg"/> that represents the state.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{Char, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<TArg>(this String? str, TArg arg, ReadOnlyFixedContextAction<Char, TArg> action)
 #if NET9_0_OR_GREATER
 		where TArg : allows ref struct
@@ -82,6 +88,9 @@ public static unsafe class StringExtensions
 	/// <param name="func">A delegate of type <see cref="ReadOnlyFixedContextFunc{Char, TResult}"/>.</param>
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<TResult>(this String? str, ReadOnlyFixedContextFunc<Char, TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
@@ -112,6 +121,9 @@ public static unsafe class StringExtensions
 	/// <param name="func">A delegate of type <see cref="ReadOnlyFixedContextFunc{Char, TArg, TResult}"/>.</param>
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<TArg, TResult>(this String? str, TArg arg,
 		ReadOnlyFixedContextFunc<Char, TArg, TResult> func)
 #if NET9_0_OR_GREATER

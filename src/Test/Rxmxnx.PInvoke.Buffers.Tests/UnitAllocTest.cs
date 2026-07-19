@@ -5,6 +5,7 @@ namespace Rxmxnx.PInvoke.Tests;
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed unsafe class UnitAllocTest
 {
+#pragma warning disable CS0612
 	[Fact]
 	public void BooleanTest() => UnitAllocTest.UnitAlloc<Boolean>();
 	[Fact]
@@ -39,7 +40,9 @@ public sealed unsafe class UnitAllocTest
 	public void Int64ArrayTest() => UnitAllocTest.UnitAlloc<Int64[]?>();
 	[Fact]
 	public void StringTest() => UnitAllocTest.UnitAlloc<String?>();
+#pragma warning restore CS0612
 
+	[Obsolete]
 	private static void UnitAlloc<T>()
 	{
 		Span<IntPtr> span0 = stackalloc IntPtr[5];

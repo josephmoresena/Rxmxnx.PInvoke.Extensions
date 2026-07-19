@@ -114,9 +114,17 @@ public unsafe partial class NativeUtilities
 	/// <returns>Created span.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Span<ReadOnlyFixedMemory?> CreateReadOnlyFixedMemorySpan<TBuffer>(ref TBuffer buffer)
+#if !PACKAGE
 		where TBuffer : struct
+#else
+		where TBuffer : struct, IManagedBinaryBuffer<Object>
+#endif
 	{
+#if !PACKAGE
 		Int32 length = sizeof(TBuffer) / IntPtr.Size;
+#else
+		Int32 length = buffer.Metadata.Size;
+#endif
 		ref ReadOnlyFixedMemory? r0 = ref Unsafe.As<TBuffer, ReadOnlyFixedMemory?>(ref buffer);
 		return MemoryMarshal.CreateSpan(ref r0, length);
 	}

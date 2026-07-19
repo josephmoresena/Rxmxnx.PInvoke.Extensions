@@ -52,6 +52,9 @@ public unsafe partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the action execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public void WithSafeFixed(ReadOnlyFixedListAction action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
@@ -81,6 +84,9 @@ public unsafe partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the action execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public void WithSafeFixed<TState>(TState state, ReadOnlyFixedListAction<TState> action)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
@@ -112,6 +118,9 @@ public unsafe partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the function execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public TResult WithSafeFixed<TResult>(ReadOnlyFixedListFunc<TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
@@ -143,6 +152,9 @@ public unsafe partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the function execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public TResult WithSafeFixed<TState, TResult>(TState state, ReadOnlyFixedListFunc<TState, TResult> func)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct

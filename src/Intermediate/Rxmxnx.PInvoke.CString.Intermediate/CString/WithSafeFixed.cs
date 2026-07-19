@@ -18,6 +18,9 @@ public unsafe partial class CString
 	/// The action operates on a read-only fixed memory instance.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public void WithSafeFixed(ReadOnlyFixedAction action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
@@ -46,6 +49,9 @@ public unsafe partial class CString
 	/// The action operates on a read-only fixed memory instance using an additional state object.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public void WithSafeFixed<TArg>(TArg arg, ReadOnlyFixedAction<TArg> action)
 #if NET9_0_OR_GREATER
 		where TArg : allows ref struct
@@ -77,6 +83,9 @@ public unsafe partial class CString
 	/// The function operates on a read-only fixed memory instance.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public TResult WithSafeFixed<TResult>(ReadOnlyFixedFunc<TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
@@ -107,6 +116,9 @@ public unsafe partial class CString
 	/// The function operates on a read-only fixed memory instance using an additional state object.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public TResult WithSafeFixed<TArg, TResult>(TArg arg, ReadOnlyFixedFunc<TArg, TResult> func)
 #if NET9_0_OR_GREATER
 		where TArg : allows ref struct

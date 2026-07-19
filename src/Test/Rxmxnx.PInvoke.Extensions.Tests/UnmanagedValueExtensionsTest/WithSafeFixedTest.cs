@@ -6,9 +6,9 @@
 public sealed class WithSafeFixedTest
 {
 	private static readonly IFixture fixture = new Fixture();
-
 	private Array? _array;
 
+#pragma warning disable CS0612
 	[Fact]
 	public void ByteTest() => this.Test<Byte>();
 	[Fact]
@@ -41,7 +41,9 @@ public sealed class WithSafeFixedTest
 	public void UInt32Test() => this.Test<UInt32>();
 	[Fact]
 	public void UInt64Test() => this.Test<UInt64>();
+#pragma warning restore CS0612
 
+	[Obsolete]
 	private void Test<T>() where T : unmanaged
 	{
 		T[]? values = WithSafeFixedTest.fixture.CreateMany<T>(10).ToArray();

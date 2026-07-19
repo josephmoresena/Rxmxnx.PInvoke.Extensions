@@ -5,6 +5,9 @@ namespace Rxmxnx.PInvoke;
 /// </summary>
 /// <typeparam name="T">The type of the objects in the buffer.</typeparam>
 /// <param name="buffer">A buffer of objects of type <typeparamref name="T"/>.</param>
+#if OBSOLTE_DELEGATES
+[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 public delegate void ScopedBufferAction<T>(ScopedBuffer<T> buffer);
 
 /// <summary>
@@ -15,6 +18,9 @@ public delegate void ScopedBufferAction<T>(ScopedBuffer<T> buffer);
 /// <typeparam name="TArg">The type of the state object passed to the method.</typeparam>
 /// <param name="buffer">A buffer of objects of type <typeparamref name="T"/>.</param>
 /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
+#if OBSOLTE_DELEGATES
+[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 public delegate void ScopedBufferAction<T, in TArg>(ScopedBuffer<T> buffer, TArg arg)
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct;
@@ -30,6 +36,9 @@ public delegate void ScopedBufferAction<T, in TArg>(ScopedBuffer<T> buffer, TArg
 /// <typeparam name="TResult">The type of the result produced by the method that this delegate encapsulates.</typeparam>
 /// <param name="buffer">A buffer of objects of type <typeparamref name="T"/>.</param>
 /// <returns>The return value of the method that this delegate encapsulates.</returns>
+#if OBSOLTE_DELEGATES
+[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 public delegate TResult ScopedBufferFunc<T, out TResult>(ScopedBuffer<T> buffer);
 
 /// <summary>
@@ -42,6 +51,9 @@ public delegate TResult ScopedBufferFunc<T, out TResult>(ScopedBuffer<T> buffer)
 /// <param name="buffer">A buffer of objects of type <typeparamref name="T"/>.</param>
 /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 /// <returns>The return value of the method that this delegate encapsulates.</returns>
+#if OBSOLTE_DELEGATES
+[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 public delegate TResult ScopedBufferFunc<T, in TArg, out TResult>(ScopedBuffer<T> buffer, TArg arg)
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct;

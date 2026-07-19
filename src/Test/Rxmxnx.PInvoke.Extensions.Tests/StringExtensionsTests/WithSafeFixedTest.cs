@@ -7,6 +7,7 @@ public sealed class WithSafeFixedTest
 	private static readonly IFixture fixture = new Fixture();
 
 	[Theory]
+	[Obsolete]
 	[InlineData(true)]
 	[InlineData(false)]
 	public void EmptyTest(Boolean nullInput)
@@ -20,6 +21,7 @@ public sealed class WithSafeFixedTest
 	}
 
 	[Fact]
+	[Obsolete]
 	public void NormalTest()
 	{
 		String value = WithSafeFixedTest.fixture.Create<String>();

@@ -10,6 +10,9 @@ public static partial class BufferManager
 	/// </summary>
 	/// <typeparam name="T">Type of items in the buffer.</typeparam>
 	/// <param name="action">A <see cref="ScopedBufferAction{T}"/> delegate.</param>
+#if OBSOLTE_DELEGATES
+	[Obsolete]
+#endif
 	private readonly struct ActionValue<T>(ScopedBufferAction<T> action) : IScopedBufferAction<T>
 	{
 		/// <summary>
@@ -34,6 +37,9 @@ public static partial class BufferManager
 	/// <typeparam name="TState">The type of the state object.</typeparam>
 	/// <param name="action">A <see cref="ScopedBufferAction{T}"/> delegate.</param>
 	/// <param name="state">State object.</param>
+#if OBSOLTE_DELEGATES
+	[Obsolete]
+#endif
 #if !NET9_0_OR_GREATER
 	private readonly struct ActionValue<T, TState>(ScopedBufferAction<T, TState> action, TState state)
 		: IScopedBufferAction<T>
@@ -67,6 +73,9 @@ public static partial class BufferManager
 	/// <typeparam name="T">Type of items in the buffer.</typeparam>
 	/// <typeparam name="TResult">The type of the result.</typeparam>
 	/// <param name="func">A <see cref="ScopedBufferFunc{T, TResult}"/> delegate.</param>
+#if OBSOLTE_DELEGATES
+	[Obsolete]
+#endif
 	private readonly struct FunctionValue<T, TResult>(ScopedBufferFunc<T, TResult> func)
 		: IScopedBufferFunction<T, TResult>
 	{
@@ -93,6 +102,9 @@ public static partial class BufferManager
 	/// <typeparam name="TResult">The type of the result.</typeparam>
 	/// <param name="func">A <see cref="ScopedBufferFunc{T, TState, TResult}"/> delegate.</param>
 	/// <param name="state">State object.</param>
+#if OBSOLTE_DELEGATES
+	[Obsolete]
+#endif
 #if !NET9_0_OR_GREATER
 	private readonly struct FunctionValue<T, TState, TResult>(ScopedBufferFunc<T, TState, TResult> func, TState state)
 		: IScopedBufferFunction<T, TResult>

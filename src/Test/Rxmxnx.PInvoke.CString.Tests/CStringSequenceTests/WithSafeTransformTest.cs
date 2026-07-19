@@ -90,6 +90,7 @@ public sealed class WithSafeTransformTest
 	}
 
 	[Fact]
+	[Obsolete]
 	public void BasicTest()
 	{
 		using TestMemoryHandle handle = new();
@@ -103,6 +104,7 @@ public sealed class WithSafeTransformTest
 	}
 
 	[Theory]
+	[Obsolete]
 	[InlineData(true)]
 	[InlineData(false)]
 	public void Test(Boolean fixedIndices)
@@ -116,6 +118,7 @@ public sealed class WithSafeTransformTest
 		PInvokeAssert.Equal(seq.ToString(), seq.WithSafeFixed(seq, WithSafeTransformTest.CreateCopy).ToString());
 	}
 
+	[Obsolete]
 	private static void AssertReference(FixedCStringSequence fseq)
 	{
 		IReadOnlyList<CString> values = fseq.Values;
@@ -252,6 +255,7 @@ public sealed class WithSafeTransformTest
 
 		return seq;
 	}
+	[Obsolete]
 	private static CStringSequence CreateCopy(FixedCStringSequence fseq, CStringSequence seq)
 	{
 		for (Int32 i = 0; i < seq.Count; i++)

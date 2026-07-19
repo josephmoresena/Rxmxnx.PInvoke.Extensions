@@ -1,4 +1,56 @@
-﻿#if !NET6_0_OR_GREATER
+﻿#if PACKAGE
+using B2 =
+	Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+		Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>;
+using B3 =
+	Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.Composite<
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+		System.Object>;
+using B4 =
+	Rxmxnx.PInvoke.Buffers.Composite<
+		Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, Rxmxnx.PInvoke.Buffers.Composite<
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+		System.Object>;
+using B5 = Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.
+	Composite<
+		Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+		Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, System.Object>;
+using B6 =
+	Rxmxnx.PInvoke.Buffers.Composite<
+		Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, Rxmxnx.PInvoke.Buffers.Composite<
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, System.Object>;
+using B7 =
+	Rxmxnx.PInvoke.Buffers.Composite<
+		Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.Composite<
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				System.Object>,
+			System.Object>, Rxmxnx.PInvoke.Buffers.Composite<
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, System.Object>;
+using B8 =
+	Rxmxnx.PInvoke.Buffers.Composite<
+		Rxmxnx.PInvoke.Buffers.Composite<
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, Rxmxnx.PInvoke.Buffers.
+		Composite<
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, System.Object>;
+#endif
+
+#if !NET6_0_OR_GREATER
 using ArgumentNullException = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif
 
@@ -21,13 +73,16 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span0">1st span.</param>
 	/// <param name="span1">2nd span.</param>
 	/// <param name="action">A <see cref="FixedListAction"/> delegate.</param>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T0, T1>(Span<T0> span0, Span<T1> span1, FixedListAction action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
-			Buffer2 buffer = new();
+			B2 buffer = new();
 			FixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -60,6 +115,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span1">2nd span.</param>
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T0, T1, TArg>(Span<T0> span0, Span<T1> span1, TArg arg,
 		FixedListAction<TArg> action)
 #if NET9_0_OR_GREATER
@@ -70,7 +128,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
-			Buffer2 buffer = new();
+			B2 buffer = new();
 			FixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -103,6 +161,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span1">2nd span.</param>
 	/// <param name="span2">3rd span.</param>
 	/// <param name="action">A <see cref="FixedListAction"/> delegate.</param>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T0, T1, T2>(Span<T0> span0, Span<T1> span1, Span<T2> span2, FixedListAction action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
@@ -110,7 +171,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		{
-			Buffer3 buffer = new();
+			B3 buffer = new();
 			FixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -146,6 +207,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span2">3rd span.</param>
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T0, T1, T2, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2, TArg arg,
 		FixedListAction<TArg> action)
 #if NET9_0_OR_GREATER
@@ -157,7 +221,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		{
-			Buffer3 buffer = new();
+			B3 buffer = new();
 			FixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -193,6 +257,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span2">3rd span.</param>
 	/// <param name="span3">4th span.</param>
 	/// <param name="action">A <see cref="FixedListAction"/> delegate.</param>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T0, T1, T2, T3>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
 		FixedListAction action)
 	{
@@ -202,7 +269,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		{
-			Buffer4 buffer = new();
+			B4 buffer = new();
 			FixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -241,6 +308,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span3">4th span.</param>
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T0, T1, T2, T3, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
 		Span<T3> span3, TArg arg, FixedListAction<TArg> action)
 #if NET9_0_OR_GREATER
@@ -253,7 +323,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		{
-			Buffer4 buffer = new();
+			B4 buffer = new();
 			FixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -292,6 +362,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span3">4th span.</param>
 	/// <param name="span4">5th span.</param>
 	/// <param name="action">A <see cref="FixedListAction"/> delegate.</param>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T0, T1, T2, T3, T4>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
 		Span<T4> span4, FixedListAction action)
 	{
@@ -302,7 +375,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		{
-			Buffer5 buffer = new();
+			B5 buffer = new();
 			FixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -344,6 +417,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span4">5th span.</param>
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T0, T1, T2, T3, T4, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
 		Span<T3> span3, Span<T4> span4, TArg arg, FixedListAction<TArg> action)
 #if NET9_0_OR_GREATER
@@ -357,7 +433,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		{
-			Buffer5 buffer = new();
+			B5 buffer = new();
 			FixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -399,6 +475,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span4">5th span.</param>
 	/// <param name="span5">6th span.</param>
 	/// <param name="action">A <see cref="FixedListAction"/> delegate.</param>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T0, T1, T2, T3, T4, T5>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
 		Span<T3> span3, Span<T4> span4, Span<T5> span5, FixedListAction action)
 	{
@@ -410,7 +489,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		{
-			Buffer6 buffer = new();
+			B6 buffer = new();
 			FixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -455,6 +534,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span5">6th span.</param>
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T0, T1, T2, T3, T4, T5, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
 		Span<T3> span3, Span<T4> span4, Span<T5> span5, TArg arg, FixedListAction<TArg> action)
 #if NET9_0_OR_GREATER
@@ -469,7 +551,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		{
-			Buffer6 buffer = new();
+			B6 buffer = new();
 			FixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -514,6 +596,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span5">6th span.</param>
 	/// <param name="span6">7th span.</param>
 	/// <param name="action">A <see cref="FixedListAction"/> delegate.</param>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T0, T1, T2, T3, T4, T5, T6>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
 		Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6, FixedListAction action)
 	{
@@ -526,7 +611,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		{
-			Buffer7 buffer = new();
+			B7 buffer = new();
 			FixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -574,6 +659,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span6">7th span.</param>
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
 		Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6, TArg arg, FixedListAction<TArg> action)
 	{
@@ -586,7 +674,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		{
-			Buffer7 buffer = new();
+			B7 buffer = new();
 			FixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -634,6 +722,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span6">7th span.</param>
 	/// <param name="span7">8th span.</param>
 	/// <param name="action">A <see cref="FixedListAction"/> delegate.</param>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, T7>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
 		Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6, Span<T7> span7, FixedListAction action)
 	{
@@ -647,7 +738,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
 		{
-			Buffer8 buffer = new();
+			B8 buffer = new();
 			FixedMemoryList lst = new(new()
 			{
 				Handle = new(),
@@ -698,6 +789,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span7">8th span.</param>
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
+#if OBSOLTE_DELEGATES
+	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, T7, TArg>(Span<T0> span0, Span<T1> span1,
 		Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6, Span<T7> span7, TArg arg,
 		FixedListAction<TArg> action)
@@ -715,7 +809,7 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
 		{
-			Buffer8 buffer = new();
+			B8 buffer = new();
 			FixedMemoryList lst = new(new()
 			{
 				Handle = new(),

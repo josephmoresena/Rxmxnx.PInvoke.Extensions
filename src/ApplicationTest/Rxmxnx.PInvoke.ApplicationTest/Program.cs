@@ -36,7 +36,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Console.WriteLine("=== (4x4)^-1 ===");
 			MatrixHelper.Print(inverse);
 			Console.WriteLine("=== (4x4)^-1 (Text) -> [] ===");
-			MatrixHelper.ToText(inverse).AsSpan().WithSafeFixed(Program.Print);
+			MatrixHelper.ToText(inverse).AsSpan().WithSafeFixed(new PrintAction<String>());
 			Console.WriteLine("=== 2x2 ===");
 			MatrixHelper.Print(nxn);
 			Console.WriteLine($"Determinant 2x2: {MatrixHelper.GetDeterminant(nxn):0.####}");
@@ -45,48 +45,69 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Console.WriteLine("=== 4x4 * 4x2 ===");
 			MatrixHelper.Print(MatrixHelper.Multiply(mxm, mxn));
 			Console.WriteLine("=== 2x2 -> [] ===");
-			mxn.AsSpan().WithSafeFixed(Program.Print);
+			mxn.AsSpan().WithSafeFixed(new PrintAction<Double>());
 			Console.WriteLine("=== 2x2 (Text) -> [] ===");
-			MatrixHelper.ToText(mxn).AsSpan().WithSafeFixed(Program.Print);
+			MatrixHelper.ToText(inverse).AsSpan().WithSafeFixed(new PrintAction<String>());
 		}
 		private static void BufferFeature()
 		{
 			Console.WriteLine("=== Stack alloc [Int32] ===");
-			BufferManager.Alloc<Int32>(3, BufferHelper.Generate);
-			BufferManager.Alloc<Int32>(5, BufferHelper.Generate);
+#if !CSHARP9_0
+			BufferAction action = new BufferAction { Count = 3, IsMinimalCount = false };
+#else
+			BufferAction action = new() { Count = 3, IsMinimalCount = false, };
+#endif
+			BufferManager<Int32>.Alloc(action);
+			action.Count = 5;
+			BufferManager<Int32>.Alloc(action);
 			Console.WriteLine("=== Stack alloc [Double?] ===");
-			BufferManager.Alloc<Double?>(3, BufferHelper.Generate);
-			BufferManager.Alloc<Double?>(5, BufferHelper.Generate);
+			action.Count = 3;
+			BufferManager<Double?>.Alloc(action);
+			action.Count = 5;
+			BufferManager<Double?>.Alloc(action);
 			Console.WriteLine("=== Stack alloc [String] ===");
-			BufferManager.Alloc<String?>(3, BufferHelper.Generate);
-			BufferManager.Alloc<String?>(5, BufferHelper.Generate);
+			action.Count = 3;
+			BufferManager<String?>.Alloc(action);
+			action.Count = 5;
+			BufferManager<String?>.Alloc(action);
 			if (AotInfo.IsReflectionDisabled)
-				BufferManager.Alloc<String?>(5, BufferHelper.Generate, true);
+			{
+				action.IsMinimalCount = true;
+				BufferManager<String?>.Alloc(action);
+				action.IsMinimalCount = false;
+			}
 			if (!BufferManager.BufferAutoCompositionEnabled)
 			{
 				BufferHelper.RegisterMetadataObject();
-				BufferManager.Alloc<String?>(5, BufferHelper.Generate);
+				BufferManager<String?>.Alloc(action);
 			}
 #if !NET8_0_OR_GREATER
 			if (AotInfo.IsNativeAot && SystemInfo.IsMonoRuntime)
-				BufferManager.Alloc<String?>(15, BufferHelper.Generate);
+			{
+				action.Count = 15;
+				BufferManager<String?>.Alloc(action);
+			}
 #endif
 			Console.WriteLine("=== Stack alloc [(Int32, String)] ===");
-			BufferManager.Alloc<ValueTuple<Int32, String>>(3, BufferHelper.Generate);
-			BufferManager.Alloc<ValueTuple<Int32, String>>(5, BufferHelper.Generate);
+			action.Count = 3;
+			BufferManager<ValueTuple<Int32, String>>.Alloc(action);
+			action.Count = 5;
+			BufferManager<ValueTuple<Int32, String>>.Alloc(action);
 			if (!BufferManager.BufferAutoCompositionEnabled)
 			{
 				BufferHelper.RegisterMetadataValue();
-				BufferManager.Alloc<ValueTuple<Int32, String>>(5, BufferHelper.Generate);
+				BufferManager<ValueTuple<Int32, String>>.Alloc(action);
 			}
 			Console.WriteLine("=== Stack alloc [(Int32, String)?] ===");
-			BufferManager.Alloc<ValueTuple<Int32, String>?>(3, BufferHelper.Generate);
-			BufferManager.Alloc<ValueTuple<Int32, String>?>(5, BufferHelper.Generate);
+			action.Count = 3;
+			BufferManager<ValueTuple<Int32, String>?>.Alloc(action);
+			action.Count = 5;
+			BufferManager<ValueTuple<Int32, String>?>.Alloc(action);
 			// ReSharper disable once InvertIf
 			if (!BufferManager.BufferAutoCompositionEnabled)
 			{
 				BufferHelper.RegisterMetadataNullableValue();
-				BufferManager.Alloc<ValueTuple<Int32, String>?>(3, BufferHelper.Generate);
+				BufferManager<ValueTuple<Int32, String>?>.Alloc(action);
 			}
 		}
 		private static void UnicodeFeature()
@@ -203,5 +224,56 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Console.WriteLine(
 				$"Address: 0x{refU.AsBytes().GetUnsafeIntPtr():X}\tWrapper: {uuid.Value}\tRef: {uuid.Reference}");
 		}
+
+		#region FunctionalInterfaces
+		private readonly struct PrintAction<T> : IFixedContextAction<T>
+		{
+			void IFixedContextAction<T>.Accept(FixedContextValue<T> ctx)
+			{
+				Console.Write($"Address: 0x{ctx.Pointer:X}\tItems: {ctx.Values.Length} ");
+#if !NET9_0_OR_GREATER
+			foreach (T value in ctx.Values)
+#else
+				Span<T>.Enumerator enumerator = ctx.Values.GetEnumerator();
+				while (enumerator.MoveNext())
+				{
+					ref T value = ref enumerator.Current;
+#endif
+					Console.Write($"{value} ");
+#if NET9_0_OR_GREATER
+				}
+#endif
+				Console.WriteLine("");
+			}
+		}
+
+		private struct BufferAction : IScopedBufferAction<Int32>, IScopedBufferAction<String?>,
+			IScopedBufferAction<Double?>, IScopedBufferAction<ValueTuple<Int32, String>>,
+			IScopedBufferAction<ValueTuple<Int32, String>?>
+		{
+			public UInt16 Count { get; set; }
+			public Boolean IsMinimalCount { get; set; }
+
+			UInt16 IScopedBufferAction<(Int32, String)?>.Count => this.Count;
+			UInt16 IScopedBufferAction<(Int32, String)>.Count => this.Count;
+			UInt16 IScopedBufferAction<Double?>.Count => this.Count;
+			UInt16 IScopedBufferAction<String?>.Count => this.Count;
+			UInt16 IScopedBufferAction<Int32>.Count => this.Count;
+
+			Boolean IScopedBufferAction<(Int32, String)?>.IsMinimalCount => this.IsMinimalCount;
+			Boolean IScopedBufferAction<(Int32, String)>.IsMinimalCount => this.IsMinimalCount;
+			Boolean IScopedBufferAction<Double?>.IsMinimalCount => this.IsMinimalCount;
+			Boolean IScopedBufferAction<String?>.IsMinimalCount => this.IsMinimalCount;
+			Boolean IScopedBufferAction<Int32>.IsMinimalCount => this.IsMinimalCount;
+
+			void IScopedBufferAction<(Int32, String)?>.Accept(ScopedBuffer<(Int32, String)?> buffer)
+				=> BufferHelper.Generate(buffer);
+			void IScopedBufferAction<(Int32, String)>.Accept(ScopedBuffer<(Int32, String)> buffer)
+				=> BufferHelper.Generate(buffer);
+			void IScopedBufferAction<Double?>.Accept(ScopedBuffer<Double?> buffer) => BufferHelper.Generate(buffer);
+			void IScopedBufferAction<String?>.Accept(ScopedBuffer<String?> buffer) => BufferHelper.Generate(buffer);
+			void IScopedBufferAction<Int32>.Accept(ScopedBuffer<Int32> buffer) => BufferHelper.Generate(buffer);
+		}
+		#endregion
 	}
 }
