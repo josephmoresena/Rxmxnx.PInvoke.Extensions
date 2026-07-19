@@ -82,7 +82,7 @@ public readonly ref struct ReadOnlyFixedMemoryList
 	/// <summary>
 	/// Releases all resources used by the <see cref="ReadOnlyFixedMemoryList"/> instance.
 	/// </summary>
-	internal void Unload() => this._values.Handle.Dispose();
+	internal void Unload() => this._values.Handle?.Dispose();
 
 	/// <summary>
 	/// Enumerates the elements of a <see cref="ReadOnlyFixedMemoryList"/>.

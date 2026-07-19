@@ -40,7 +40,7 @@ internal readonly unsafe struct FixedPointerInfo
 	/// <param name="handle">Memory block handle.</param>
 	/// <returns>A <see cref="FixedPointerValue"/> instance.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public FixedPointerValue GetValue(Boolean isReadOnly, FixedValueHandle handle)
+	public FixedPointerValue GetValue(Boolean isReadOnly, FixedValueHandle? handle)
 		=> new((IntPtr)this.Pointer, this.Count * this.SizeOf)
 		{
 			IsReadOnly = isReadOnly,
@@ -54,6 +54,8 @@ internal readonly unsafe struct FixedPointerInfo
 	/// <param name="handle">Memory block handle.</param>
 	/// <returns>A new <see cref="ReadOnlyFixedMemory"/> instance.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public ReadOnlyFixedMemory? CreateContext(FixedValueHandle handle)
-		=> this.ConstructorPointer != default ? this.ConstructorPointer(this.Pointer, this.Count, handle) : default;
+	public ReadOnlyFixedMemory? CreateContext(FixedValueHandle? handle)
+		=> handle is not null && this.ConstructorPointer != default ?
+			this.ConstructorPointer(this.Pointer, this.Count, handle) :
+			default;
 }

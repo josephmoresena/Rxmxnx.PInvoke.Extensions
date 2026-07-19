@@ -34,7 +34,7 @@ internal readonly ref struct FixedPointerValueList
 	public FixedPointerValue GetValue(Int32 index)
 	{
 		ValidationUtilities.ThrowIfInvalidListIndex(index, this.Information.Length);
-		return this.Information[index].GetValue(this.IsReadOnly, this.Handle!);
+		return this.Information[index].GetValue(this.IsReadOnly, this.Handle);
 	}
 	/// <summary>
 	/// Gets the element at the specified index.
@@ -45,7 +45,7 @@ internal readonly ref struct FixedPointerValueList
 	public ReadOnlyFixedMemory GetInstance(Int32 index)
 	{
 		ValidationUtilities.ThrowIfInvalidListIndex(index, this.Instances.Length);
-		return (this.Instances[index] ??= this.Information[index].CreateContext(this.Handle!))!;
+		return (this.Instances[index] ??= this.Information[index].CreateContext(this.Handle))!;
 	}
 
 	/// <summary>
