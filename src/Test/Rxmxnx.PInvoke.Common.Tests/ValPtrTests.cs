@@ -6,6 +6,8 @@ namespace Rxmxnx.PInvoke.Tests;
 #pragma warning disable CS8500
 public sealed class ValPtrTests
 {
+	private static readonly IFixture fixture = ManagedStruct.Register(new Fixture());
+#if NET6_0_OR_GREATER
 	private static readonly CultureInfo[] allCultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
 	private static readonly String[] formats =
 	[
@@ -15,7 +17,7 @@ public sealed class ValPtrTests
 #endif
 		"D", "d", "E", "e", "G", "g", "X", "x",
 	];
-	private static readonly IFixture fixture = ManagedStruct.Register(new Fixture());
+#endif
 
 	[Fact]
 	public void BooleanTest() => ValPtrTests.Test<Boolean>();
@@ -72,6 +74,7 @@ public sealed class ValPtrTests
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 			ValPtrTests.Test((ValPtr<T>)new IntPtr(ptr), span);
 	}
+#pragma warning disable CS0612
 	private static unsafe void Test<T>(ValPtr<T> valPtr, Span<T> span)
 	{
 		ValPtr<T> empty = (ValPtr<T>)IntPtr.Zero;
@@ -129,7 +132,14 @@ public sealed class ValPtrTests
 			PInvokeAssert.Equal(1, ptrI.CompareTo((Object)valPtr));
 			PInvokeAssert.Equal(0, ptrI.CompareTo(ptrIAdd2));
 			PInvokeAssert.Equal(1, ptrI.CompareTo(null));
-			PInvokeAssert.Throws<ArgumentException>(() => ptrI.CompareTo(ptrI.Pointer));
+			PInvokeAssert.Throws<ArgumentException>(() =>
+			{
+				// ReSharper disable once AccessToModifiedClosure
+				// ReSharper disable once InlineTemporaryVariable
+				ReadOnlyValPtr<T> p = ptrI;
+				// ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+				p.CompareTo(p.Pointer);
+			});
 
 			PInvokeAssert.False(ptrI.Equals((Object)valPtr));
 			PInvokeAssert.True(ptrI.Equals(ptrIAdd2));
@@ -157,6 +167,8 @@ public sealed class ValPtrTests
 		ValPtrTests.ContextTest(valPtr, span);
 		ValPtrTests.MarshallerTest(valPtr);
 	}
+#pragma warning restore CS0612
+	[Obsolete]
 	private static unsafe void ContextTest<T>(ValPtr<T> valPtr, Span<T> span)
 	{
 		using IFixedContext<T>.IDisposable ctx = valPtr.GetUnsafeFixedContext(span.Length);
@@ -165,6 +177,7 @@ public sealed class ValPtrTests
 		if (!ValPtr<T>.IsUnmanaged)
 		{
 			PInvokeAssert.Throws<InvalidOperationException>(ctx.AsBinaryContext);
+			// ReSharper disable once AccessToDisposedClosure
 			PInvokeAssert.Throws<InvalidOperationException>(() => ctx.Transformation<Byte>(out IFixedMemory _));
 
 			if (typeof(T).IsValueType)
@@ -198,6 +211,7 @@ public sealed class ValPtrTests
 		ValPtrTests.ContextTransformTest<T, Int32>(ctx);
 		ValPtrTests.ContextTransformTest<T, Int64>(ctx);
 	}
+	[Obsolete]
 	private static unsafe void ReferenceTest<T>(ValPtr<T> ptrI, ref T reference)
 	{
 		using IFixedReference<T>.IDisposable fixedReference = ptrI.GetUnsafeFixedReference();
@@ -227,6 +241,7 @@ public sealed class ValPtrTests
 				PInvokeAssert.Equal(typeof(T).IsValueType || fixedReference.IsNullOrEmpty,
 				                    fixedReference.Objects.IsEmpty);
 			}
+			// ReSharper disable once AccessToDisposedClosure
 			PInvokeAssert.Throws<InvalidOperationException>(() => fixedReference.Transformation<Byte>(
 				                                                out IFixedMemory _));
 			return;
@@ -244,7 +259,6 @@ public sealed class ValPtrTests
 	}
 	private static void FormatTest<T>(ValPtr<T> valPtr)
 	{
-		CultureInfo culture = ValPtrTests.allCultures[PInvokeRandom.Shared.Next(0, ValPtrTests.allCultures.Length)];
 		PInvokeAssert.Equal(valPtr.Pointer.GetHashCode(), valPtr.GetHashCode());
 		PInvokeAssert.Equal(valPtr.Pointer.ToString(), valPtr.ToString());
 
@@ -254,6 +268,7 @@ public sealed class ValPtrTests
 		                                                .GetMethod(nameof(IntPtr.ToString),
 		                                                           BindingFlags.Public | BindingFlags.Instance, null,
 		                                                           [typeof(IFormatProvider),], null);
+		CultureInfo culture = ValPtrTests.allCultures[PInvokeRandom.Shared.Next(0, ValPtrTests.allCultures.Length)];
 		if (toStringMethodInfo is not null)
 			Assert.Equal(valPtr.Pointer.ToString(culture), toStringMethodInfo.Invoke(valPtr, [culture,]));
 
@@ -298,11 +313,13 @@ public sealed class ValPtrTests
 		PInvokeAssert.True(Unsafe.AreSame(ref fRef2.Reference, ref Unsafe.AsRef(in fRef3.Reference)));
 #endif
 	}
+#pragma warning disable CS0618
 	private static unsafe void ContextTransformTest<T, TDestination>(IFixedContext<T>.IDisposable ctx)
 	{
 		IFixedContext<TDestination> ctx2 = ctx.Transformation<TDestination>(out IFixedMemory offset);
 		PInvokeAssert.Equal(ctx2.Values.Length, ctx.Bytes.Length / sizeof(TDestination));
 		PInvokeAssert.Equal(offset.Bytes.Length, ctx.Bytes.Length - ctx2.Values.Length * sizeof(TDestination));
 	}
+#pragma warning restore CS0618
 }
 #pragma warning restore CS8500

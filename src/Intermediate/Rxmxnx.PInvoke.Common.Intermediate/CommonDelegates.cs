@@ -57,6 +57,7 @@ public delegate TResult ReadOnlySpanFunc<T, in TArg, out TResult>(ReadOnlySpan<T
 /// </summary>
 /// <param name="fixedMemory">The fixed memory instance to operate on.</param>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate void FixedAction(in IFixedMemory fixedMemory);
@@ -68,6 +69,7 @@ public delegate void FixedAction(in IFixedMemory fixedMemory);
 /// <param name="fixedMemory">The fixed memory instance to operate on.</param>
 /// <param name="arg">The state object used by the action.</param>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate void FixedAction<in TArg>(in IFixedMemory fixedMemory, TArg arg)
@@ -81,6 +83,7 @@ public delegate void FixedAction<in TArg>(in IFixedMemory fixedMemory, TArg arg)
 /// </summary>
 /// <param name="readOnlyFixedMemory">The read-only fixed memory instance to operate on.</param>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate void ReadOnlyFixedAction(in IReadOnlyFixedMemory readOnlyFixedMemory);
@@ -92,6 +95,7 @@ public delegate void ReadOnlyFixedAction(in IReadOnlyFixedMemory readOnlyFixedMe
 /// <param name="readOnlyFixedMemory">The read-only fixed memory instance to operate on.</param>
 /// <param name="arg">The state object used by the action.</param>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate void ReadOnlyFixedAction<in TArg>(in IReadOnlyFixedMemory readOnlyFixedMemory, TArg arg)
@@ -107,6 +111,7 @@ public delegate void ReadOnlyFixedAction<in TArg>(in IReadOnlyFixedMemory readOn
 /// <param name="fixedMemory">The fixed memory instance to operate on.</param>
 /// <returns>The return value of the function.</returns>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate TResult FixedFunc<out TResult>(in IFixedMemory fixedMemory);
@@ -120,6 +125,7 @@ public delegate TResult FixedFunc<out TResult>(in IFixedMemory fixedMemory);
 /// <param name="arg">The state object used by the function.</param>
 /// <returns>The return value of the function.</returns>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate TResult FixedFunc<in TArg, out TResult>(in IFixedMemory fixedMemory, TArg arg)
@@ -135,6 +141,7 @@ public delegate TResult FixedFunc<in TArg, out TResult>(in IFixedMemory fixedMem
 /// <param name="readOnlyFixedMemory">The read-only fixed memory instance to operate on.</param>
 /// <returns>The return value of the function.</returns>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate TResult ReadOnlyFixedFunc<out TResult>(in IReadOnlyFixedMemory readOnlyFixedMemory);
@@ -148,6 +155,7 @@ public delegate TResult ReadOnlyFixedFunc<out TResult>(in IReadOnlyFixedMemory r
 /// <param name="arg">The state object used by the function.</param>
 /// <returns>The return value of the function.</returns>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate TResult ReadOnlyFixedFunc<in TArg, out TResult>(in IReadOnlyFixedMemory readOnlyFixedMemory, TArg arg)
@@ -162,6 +170,7 @@ public delegate TResult ReadOnlyFixedFunc<in TArg, out TResult>(in IReadOnlyFixe
 /// <typeparam name="T">Type of the fixed context.</typeparam>
 /// <param name="context">The fixed context instance.</param>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate void FixedContextAction<T>(in IFixedContext<T> context);
@@ -175,6 +184,7 @@ public delegate void FixedContextAction<T>(in IFixedContext<T> context);
 /// <param name="context">The fixed context instance.</param>
 /// <param name="arg">The state object.</param>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate void FixedContextAction<T, in TArg>(in IFixedContext<T> context, TArg arg)
@@ -189,6 +199,7 @@ public delegate void FixedContextAction<T, in TArg>(in IFixedContext<T> context,
 /// <typeparam name="T">Type of the fixed context.</typeparam>
 /// <param name="context">The read-only fixed context instance.</param>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate void ReadOnlyFixedContextAction<T>(in IReadOnlyFixedContext<T> context);
@@ -202,6 +213,7 @@ public delegate void ReadOnlyFixedContextAction<T>(in IReadOnlyFixedContext<T> c
 /// <param name="context">The read-only fixed context instance.</param>
 /// <param name="arg">The state object.</param>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate void ReadOnlyFixedContextAction<T, in TArg>(in IReadOnlyFixedContext<T> context, TArg arg)
@@ -219,6 +231,7 @@ public delegate void ReadOnlyFixedContextAction<T, in TArg>(in IReadOnlyFixedCon
 /// <param name="context">The fixed context instance.</param>
 /// <returns>The return value of the encapsulated method.</returns>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate TResult FixedContextFunc<T, out TResult>(in IFixedContext<T> context);
@@ -234,6 +247,7 @@ public delegate TResult FixedContextFunc<T, out TResult>(in IFixedContext<T> con
 /// <param name="arg">The state object.</param>
 /// <returns>The return value of the encapsulated method.</returns>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate TResult FixedContextFunc<T, in TArg, out TResult>(in IFixedContext<T> context, TArg arg)
@@ -251,6 +265,7 @@ public delegate TResult FixedContextFunc<T, in TArg, out TResult>(in IFixedConte
 /// <param name="context">The read-only fixed context instance.</param>
 /// <returns>The return value of the encapsulated method.</returns>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate TResult ReadOnlyFixedContextFunc<T, out TResult>(in IReadOnlyFixedContext<T> context);
@@ -266,6 +281,7 @@ public delegate TResult ReadOnlyFixedContextFunc<T, out TResult>(in IReadOnlyFix
 /// <param name="arg">The state object.</param>
 /// <returns>The return value of the encapsulated method.</returns>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate TResult ReadOnlyFixedContextFunc<T, in TArg, out TResult>(in IReadOnlyFixedContext<T> context, TArg arg)
@@ -437,6 +453,7 @@ public delegate TResult FixedMethodFunc<T, in TArg, out TResult>(in IFixedMethod
 /// </summary>
 /// <param name="memoryList">The <see cref="FixedMemoryList"/> instance.</param>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate void FixedListAction(FixedMemoryList memoryList);
@@ -449,6 +466,7 @@ public delegate void FixedListAction(FixedMemoryList memoryList);
 /// <param name="memoryList">The <see cref="FixedMemoryList"/> instance.</param>
 /// <param name="arg">The state object of type <typeparamref name="TArg"/>.</param>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate void FixedListAction<in TArg>(FixedMemoryList memoryList, TArg arg)
@@ -462,6 +480,7 @@ public delegate void FixedListAction<in TArg>(FixedMemoryList memoryList, TArg a
 /// </summary>
 /// <param name="memoryList">The <see cref="ReadOnlyFixedMemoryList"/> instance.</param>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate void ReadOnlyFixedListAction(ReadOnlyFixedMemoryList memoryList);
@@ -474,6 +493,7 @@ public delegate void ReadOnlyFixedListAction(ReadOnlyFixedMemoryList memoryList)
 /// <param name="memoryList">The <see cref="ReadOnlyFixedMemoryList"/> instance.</param>
 /// <param name="arg">The state object of type <typeparamref name="TArg"/>.</param>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate void ReadOnlyFixedListAction<in TArg>(ReadOnlyFixedMemoryList memoryList, TArg arg)
@@ -490,6 +510,7 @@ public delegate void ReadOnlyFixedListAction<in TArg>(ReadOnlyFixedMemoryList me
 /// <param name="memoryList">The <see cref="FixedMemoryList"/> instance.</param>
 /// <returns>The result of the method.</returns>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate TResult FixedListFunc<out TResult>(FixedMemoryList memoryList);
@@ -504,6 +525,7 @@ public delegate TResult FixedListFunc<out TResult>(FixedMemoryList memoryList);
 /// <param name="arg">The state object of type <typeparamref name="TArg"/>.</param>
 /// <returns>The result of the method.</returns>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate TResult FixedListFunc<in TArg, out TResult>(FixedMemoryList memoryList, TArg arg)
@@ -520,6 +542,7 @@ public delegate TResult FixedListFunc<in TArg, out TResult>(FixedMemoryList memo
 /// <param name="memoryList">The <see cref="ReadOnlyFixedMemoryList"/> instance.</param>
 /// <returns>The result of the method.</returns>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate TResult ReadOnlyFixedListFunc<out TResult>(ReadOnlyFixedMemoryList memoryList);
@@ -534,6 +557,7 @@ public delegate TResult ReadOnlyFixedListFunc<out TResult>(ReadOnlyFixedMemoryLi
 /// <param name="arg">The state object of type <typeparamref name="TArg"/>.</param>
 /// <returns>The result of the method.</returns>
 #if OBSOLTE_DELEGATES
+[EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate TResult ReadOnlyFixedListFunc<in TArg, out TResult>(ReadOnlyFixedMemoryList memoryList, TArg arg)

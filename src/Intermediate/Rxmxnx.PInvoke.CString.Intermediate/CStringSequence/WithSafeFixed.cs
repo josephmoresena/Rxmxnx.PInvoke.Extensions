@@ -53,6 +53,7 @@ public unsafe partial class CStringSequence
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public void WithSafeFixed(ReadOnlyFixedListAction action)
@@ -85,6 +86,7 @@ public unsafe partial class CStringSequence
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public void WithSafeFixed<TState>(TState state, ReadOnlyFixedListAction<TState> action)
@@ -119,6 +121,7 @@ public unsafe partial class CStringSequence
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public TResult WithSafeFixed<TResult>(ReadOnlyFixedListFunc<TResult> func)
@@ -153,6 +156,7 @@ public unsafe partial class CStringSequence
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public TResult WithSafeFixed<TState, TResult>(TState state, ReadOnlyFixedListFunc<TState, TResult> func)

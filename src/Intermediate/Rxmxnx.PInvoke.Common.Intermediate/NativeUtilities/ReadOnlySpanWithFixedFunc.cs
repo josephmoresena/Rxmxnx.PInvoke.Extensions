@@ -76,6 +76,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T0, T1, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
@@ -121,6 +122,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T0, T1, TArg, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, TArg arg,
@@ -169,6 +171,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T0, T1, T2, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
@@ -218,6 +221,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T0, T1, T2, TArg, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
@@ -270,6 +274,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
@@ -323,6 +328,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, TArg, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
@@ -379,6 +385,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
@@ -436,6 +443,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, TArg, TResult>(ReadOnlySpan<T0> span0,
@@ -497,6 +505,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
@@ -559,6 +568,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, TArg, TResult>(ReadOnlySpan<T0> span0,
@@ -624,6 +634,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, TResult>(ReadOnlySpan<T0> span0,
@@ -690,6 +701,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, TArg, TResult>(ReadOnlySpan<T0> span0,
@@ -759,6 +771,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, T7, TResult>(ReadOnlySpan<T0> span0,
@@ -829,6 +842,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, T7, TArg, TResult>(ReadOnlySpan<T0> span0,

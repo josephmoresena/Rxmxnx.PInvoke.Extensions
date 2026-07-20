@@ -53,6 +53,7 @@ public static partial class BufferManager
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void Alloc<T>(UInt16 count, ScopedBufferAction<T> action, Boolean isMinimumCount = false)
@@ -69,6 +70,7 @@ public static partial class BufferManager
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void Alloc<T, TState>(UInt16 count, TState state, ScopedBufferAction<T, TState> action,
@@ -87,6 +89,7 @@ public static partial class BufferManager
 	/// </param>
 	/// <returns><paramref name="func"/> result.</returns>
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult Alloc<T, TResult>(UInt16 count, ScopedBufferFunc<T, TResult> func,
@@ -110,6 +113,7 @@ public static partial class BufferManager
 	/// </param>
 	/// <returns><paramref name="func"/> result.</returns>
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult Alloc<T, TState, TResult>(UInt16 count, TState state,

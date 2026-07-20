@@ -56,6 +56,8 @@ public sealed class GetFixedContextTest
 		GetFixedContextTest.Test(arr.AsMemory(), arr2);
 		PInvokeAssert.Equal(arr, arr2);
 	}
+#pragma warning disable CS0618
+#pragma warning disable CS0612
 	private static unsafe void ReadOnlyTest<T>(ReadOnlyMemory<T> mem) where T : unmanaged
 	{
 		using IReadOnlyFixedContext<T>.IDisposable ctx = mem.GetFixedContext();
@@ -81,6 +83,9 @@ public sealed class GetFixedContextTest
 			!MemoryMarshal.TryGetMemoryManager<T, MemoryManager<T>>(mem, out _) &&
 			MemoryMarshal.TryGetArray(mem, out _), ctx is IFixedContext<T>);
 	}
+#pragma warning restore CS0612
+#pragma warning restore CS0618
+	[Obsolete]
 	private static unsafe void ReadOnlyTransformTest<T, TDestination>(IReadOnlyFixedContext<T> ctx)
 		where T : unmanaged where TDestination : unmanaged
 	{
@@ -99,6 +104,8 @@ public sealed class GetFixedContextTest
 		PInvokeAssert.Equal(ctx.Bytes.Length == 0, ctx.IsNullOrEmpty);
 		PInvokeAssert.Throws<InvalidOperationException>(() => residual.AsObjectContext());
 	}
+#pragma warning disable CS0612
+#pragma warning disable CS0618
 	private static unsafe void Test<T>(Memory<T> mem, T[] arr2) where T : unmanaged
 	{
 		using IFixedContext<T>.IDisposable ctx = mem.GetFixedContext();
@@ -118,6 +125,9 @@ public sealed class GetFixedContextTest
 		GetFixedContextTest.TransformTest<T, UInt32>(ctx);
 		GetFixedContextTest.TransformTest<T, UInt64>(ctx);
 	}
+#pragma warning restore CS0612
+#pragma warning restore CS0618
+	[Obsolete]
 	private static unsafe void TransformTest<T, TDestination>(IFixedContext<T> ctx)
 		where T : unmanaged where TDestination : unmanaged
 	{

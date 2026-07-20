@@ -22,6 +22,7 @@ public static unsafe class StringExtensions
 	/// <param name="action">A <see cref="ReadOnlyFixedContextAction{Char}"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed(this String? str, ReadOnlyFixedContextAction<Char> action)
@@ -54,6 +55,7 @@ public static unsafe class StringExtensions
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{Char, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<TArg>(this String? str, TArg arg, ReadOnlyFixedContextAction<Char, TArg> action)
@@ -89,6 +91,7 @@ public static unsafe class StringExtensions
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<TResult>(this String? str, ReadOnlyFixedContextFunc<Char, TResult> func)
@@ -122,6 +125,7 @@ public static unsafe class StringExtensions
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<TArg, TResult>(this String? str, TArg arg,

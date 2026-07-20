@@ -42,6 +42,7 @@ public sealed class ValueTest
 	[Fact]
 	public void UInt64Test() => this.Test<UInt64>();
 
+#pragma warning disable CS0612
 	private void Test<T>() where T : unmanaged
 	{
 		IReferenceableWrapper<T> value = IReferenceableWrapper.Create(ValueTest.fixture.Create<T>());
@@ -54,7 +55,9 @@ public sealed class ValueTest
 		PInvokeAssert.Equal(bytes, NativeUtilities.WithSafeFixed(value.Reference, this.TestFuncMethod));
 		PInvokeAssert.Equal(bytes, NativeUtilities.WithSafeFixed(value.Reference, this, ValueTest.TestFuncMethod));
 	}
+#pragma warning restore CS0612
 
+	[Obsolete]
 	private unsafe void TestActionMethod<T>(in IReadOnlyFixedReference<T> fRef) where T : unmanaged
 	{
 		IReferenceableWrapper<T> wrapper = (IReferenceableWrapper<T>)this._wraper!;
@@ -89,6 +92,7 @@ public sealed class ValueTest
 		ValueTest.Test<T, UInt32>(fRef, bytes);
 		ValueTest.Test<T, UInt64>(fRef, bytes);
 	}
+#pragma warning disable CS0612
 	private unsafe Byte[] TestFuncMethod<T>(in IReadOnlyFixedReference<T> fRef) where T : unmanaged
 	{
 		this.TestActionMethod(fRef);
@@ -97,8 +101,10 @@ public sealed class ValueTest
 
 	private static void TestActionMethod<T>(in IReadOnlyFixedReference<T> fRef, ValueTest test) where T : unmanaged
 		=> test.TestActionMethod(fRef);
+#pragma warning restore CS0612
 	private static Byte[] TestFuncMethod<T>(in IReadOnlyFixedReference<T> fRef, ValueTest test) where T : unmanaged
 		=> test.TestFuncMethod(fRef);
+	[Obsolete]
 	private static unsafe void Test<T, T2>(IReadOnlyFixedReference<T> fRef, Byte[] bytes)
 		where T : unmanaged where T2 : unmanaged
 	{
@@ -107,11 +113,10 @@ public sealed class ValueTest
 			IReadOnlyFixedReference<T2> fRef2 = fRef.Transformation<T2>(out IReadOnlyFixedMemory residual);
 			IReadOnlyFixedContext<Byte> ctx = fRef2.AsBinaryContext();
 			IReadOnlyFixedContext<Byte> ctxR = residual.AsBinaryContext();
-			Int32 count = bytes.Length / sizeof(T2);
 
 			if (typeof(T) == typeof(T2))
 				PInvokeAssert.Equal((Object)fRef.Reference, fRef2.Reference);
-			else if (sizeof(T2) == sizeof(T2))
+			else if (sizeof(Byte) == sizeof(T2))
 				PInvokeAssert.Equal(bytes, fRef2.Bytes.ToArray());
 			else
 				PInvokeAssert.Equal(bytes, fRef2.Bytes.ToArray().Concat(residual.Bytes.ToArray()));

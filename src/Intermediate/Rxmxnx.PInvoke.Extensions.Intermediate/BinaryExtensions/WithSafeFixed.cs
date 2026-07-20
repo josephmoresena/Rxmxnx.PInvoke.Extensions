@@ -19,6 +19,7 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="action">A <see cref="FixedAction"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed(this Span<Byte> span, FixedAction action)
@@ -45,6 +46,7 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="action">A <see cref="ReadOnlyFixedAction"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed(this Span<Byte> span, ReadOnlyFixedAction action)
@@ -71,6 +73,7 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="action">A <see cref="ReadOnlyFixedAction"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed(this ReadOnlySpan<Byte> span, ReadOnlyFixedAction action)
@@ -100,6 +103,7 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="action">A delegate of type <see cref="FixedAction{TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<TArg>(this Span<Byte> span, TArg arg, FixedAction<TArg> action)
@@ -131,6 +135,7 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedAction{TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<TArg>(this Span<Byte> span, TArg arg, ReadOnlyFixedAction<TArg> action)
@@ -162,6 +167,7 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedAction{TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<TArg>(this ReadOnlySpan<Byte> span, TArg arg, ReadOnlyFixedAction<TArg> action)
@@ -194,6 +200,7 @@ public static unsafe partial class BinaryExtensions
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<TResult>(this Span<Byte> span, FixedFunc<TResult> func)
@@ -222,6 +229,7 @@ public static unsafe partial class BinaryExtensions
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<TResult>(this Span<Byte> span, ReadOnlyFixedFunc<TResult> func)
@@ -250,6 +258,7 @@ public static unsafe partial class BinaryExtensions
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<TResult>(this ReadOnlySpan<Byte> span, ReadOnlyFixedFunc<TResult> func)
@@ -281,6 +290,7 @@ public static unsafe partial class BinaryExtensions
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<TArg, TResult>(this Span<Byte> span, TArg arg, FixedFunc<TArg, TResult> func)
@@ -314,6 +324,7 @@ public static unsafe partial class BinaryExtensions
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<TArg, TResult>(this Span<Byte> span, TArg arg,
@@ -348,6 +359,7 @@ public static unsafe partial class BinaryExtensions
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<TArg, TResult>(this ReadOnlySpan<Byte> span, TArg arg,

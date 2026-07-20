@@ -23,6 +23,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="action">A delegate of type <see cref="FixedContextAction{T}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T>(this T[]? arr, FixedContextAction<T> action)
@@ -55,6 +56,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T>(this T[]? arr, ReadOnlyFixedContextAction<T> action)
@@ -89,6 +91,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="action">A delegate of type <see cref="FixedContextAction{T, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T, TArg>(this T[]? arr, TArg arg, FixedContextAction<T, TArg> action)
@@ -126,6 +129,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T, TArg>(this T[]? arr, TArg arg, ReadOnlyFixedContextAction<T, TArg> action)
@@ -163,6 +167,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T, TResult>(this T[]? arr, FixedContextFunc<T, TResult> func)
@@ -196,6 +201,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T, TResult>(this T[]? arr, ReadOnlyFixedContextFunc<T, TResult> func)
@@ -231,6 +237,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T, TArg, TResult>(this T[]? arr, TArg arg,
@@ -270,6 +277,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T, TArg, TResult>(this T[]? arr, TArg arg,

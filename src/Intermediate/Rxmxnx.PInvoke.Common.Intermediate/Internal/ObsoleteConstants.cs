@@ -14,5 +14,13 @@ internal static class ObsoleteConstants
 	/// Error for obsolete delegates.
 	/// </summary>
 	public const Boolean ErrorDelegate = true;
+	/// <summary>
+	/// Message for obsolete fixed interfaces.
+	/// </summary>
+	public const String ObsoleteFixedInterface = "Use fixed ref-struct types";
+	/// <summary>
+	/// Error for obsolete fixed interfaces.
+	/// </summary>
+	public const Boolean ErrorFixedInterface = true;
 }
 #endif

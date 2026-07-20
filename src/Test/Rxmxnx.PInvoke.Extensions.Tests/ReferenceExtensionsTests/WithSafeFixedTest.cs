@@ -42,6 +42,7 @@ public sealed class WithSafeFixedTest
 	[Fact]
 	public void UInt64Test() => this.Test<UInt64>();
 
+#pragma warning disable CS0612
 	private void Test<T>() where T : unmanaged
 	{
 		IReferenceableWrapper<T> value = IReferenceableWrapper.Create(WithSafeFixedTest.fixture.Create<T>());
@@ -61,7 +62,9 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(bytes, refValue.WithSafeFixed(this.TestReadOnlyFuncMethod));
 		PInvokeAssert.Equal(bytes, refValue.WithSafeFixed(this, WithSafeFixedTest.TestReadOnlyFuncMethod));
 	}
+#pragma warning restore CS0612
 
+	[Obsolete]
 	private unsafe void TestActionMethod<T>(in IFixedReference<T> fRef) where T : unmanaged
 	{
 		IReferenceableWrapper<T> wrapper = (IReferenceableWrapper<T>)this._wraper!;
@@ -96,6 +99,7 @@ public sealed class WithSafeFixedTest
 		WithSafeFixedTest.Test<T, UInt32>(fRef, bytes);
 		WithSafeFixedTest.Test<T, UInt64>(fRef, bytes);
 	}
+	[Obsolete]
 	private unsafe void TestReadOnlyActionMethod<T>(in IReadOnlyFixedReference<T> fRef) where T : unmanaged
 	{
 		IReferenceableWrapper<T> wrapper = (IReferenceableWrapper<T>)this._wraper!;
@@ -130,6 +134,7 @@ public sealed class WithSafeFixedTest
 		WithSafeFixedTest.Test<T, UInt32>(fRef, bytes);
 		WithSafeFixedTest.Test<T, UInt64>(fRef, bytes);
 	}
+#pragma warning disable CS0612
 	private unsafe Byte[] TestFuncMethod<T>(in IFixedReference<T> fRef) where T : unmanaged
 	{
 		this.TestActionMethod(fRef);
@@ -146,11 +151,13 @@ public sealed class WithSafeFixedTest
 	private static void TestReadOnlyActionMethod<T>(in IReadOnlyFixedReference<T> fRef, WithSafeFixedTest test)
 		where T : unmanaged
 		=> test.TestReadOnlyActionMethod(fRef);
+#pragma warning restore CS0612
 	private static Byte[] TestFuncMethod<T>(in IFixedReference<T> fRef, WithSafeFixedTest test) where T : unmanaged
 		=> test.TestFuncMethod(fRef);
 	private static Byte[] TestReadOnlyFuncMethod<T>(in IReadOnlyFixedReference<T> fRef, WithSafeFixedTest test)
 		where T : unmanaged
 		=> test.TestReadOnlyFuncMethod(fRef);
+	[Obsolete]
 	private static unsafe void Test<T, T2>(IFixedReference<T> fRef, Byte[] bytes)
 		where T : unmanaged where T2 : unmanaged
 	{
@@ -185,6 +192,7 @@ public sealed class WithSafeFixedTest
 				                                                  out IReadOnlyFixedMemory _));
 		}
 	}
+	[Obsolete]
 	private static unsafe void Test<T, T2>(IReadOnlyFixedReference<T> fRef, Byte[] bytes)
 		where T : unmanaged where T2 : unmanaged
 	{
