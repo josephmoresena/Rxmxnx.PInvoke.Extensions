@@ -6,7 +6,7 @@ namespace Rxmxnx.PInvoke.Internal;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-internal sealed unsafe class NativeMemoryOwner : IDisposable
+internal sealed unsafe class NativeMemoryOwner : FixedValueHandle
 {
 	/// <summary>
 	/// Pointer to the native memory allocation.
@@ -27,10 +27,10 @@ internal sealed unsafe class NativeMemoryOwner : IDisposable
 	}
 
 	/// <inheritdoc/>
-	public void Dispose()
+	protected override void Dispose(Boolean disposing)
 	{
+		base.Dispose(disposing);
 		this.Release();
-		GC.SuppressFinalize(this);
 	}
 
 #if !PACKAGE

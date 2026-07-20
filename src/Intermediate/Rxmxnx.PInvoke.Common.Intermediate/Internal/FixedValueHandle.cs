@@ -6,7 +6,10 @@ namespace Rxmxnx.PInvoke;
 /// <remarks>
 /// The <see cref="FixedPointer"/> compatibility requires this instance implements <see cref="IMutableWrapper{Boolean}"/>.
 /// </remarks>
-internal class FixedValueHandle : IDisposable, IMutableWrapper<Boolean>
+#if !PACKAGE
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
+internal unsafe class FixedValueHandle : IDisposable, IMutableWrapper<Boolean>
 {
 	/// <summary>
 	/// Internal <see cref="MemoryHandle"/> instance.
@@ -19,6 +22,11 @@ internal class FixedValueHandle : IDisposable, IMutableWrapper<Boolean>
 
 	/// <inheritdoc cref="IWrapper{T}.Value"/>
 	public Boolean Value => !this._isDisposed;
+
+	/// <summary>
+	/// Internal pointer.
+	/// </summary>
+	protected void* Pointer => this._handle.HasValue ? this._handle.Value.Pointer : default;
 
 	/// <summary>
 	/// Parameterless constructor.
@@ -73,7 +81,10 @@ internal class FixedValueHandle : IDisposable, IMutableWrapper<Boolean>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static FixedValueHandle CreateFromDisposable<TDisposable>(TDisposable disposable)
 		where TDisposable : IDisposable
-		=> new Generic<TDisposable>(disposable);
+	{
+		if (disposable is FixedValueHandle result) return result; // Avoid re-instantiation.  
+		return new Generic<TDisposable>(disposable);
+	}
 
 	/// <summary>
 	/// Internal fixed pointer handle.
