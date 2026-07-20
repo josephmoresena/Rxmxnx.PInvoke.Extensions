@@ -1,7 +1,8 @@
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// Provides a set of extensions for basic operations with <see cref="IntPtr"/> and <see cref="UIntPtr"/> instances.
+/// Provides a set of extensions for basic operations with <see cref="ReadOnlyValPtr{T}"/> and
+/// <see cref="ValPtr{T}"/> values.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
 [Browsable(false)]
@@ -71,7 +72,7 @@ public static class ValuePointerExtensions
 	/// won't be moved or collected by garbage collector.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static IDisposable GetUnsafeFixedContext<T>(ReadOnlyValPtr<T> ptr, Int32 count,
+	public static IDisposable GetUnsafeFixedContext<T>(this ReadOnlyValPtr<T> ptr, Int32 count,
 		out ReadOnlyFixedContextValue<T> fixedContext)
 	{
 		fixedContext = new(ptr, count, out IDisposable disposable);
@@ -118,7 +119,7 @@ public static class ValuePointerExtensions
 	/// This object will be disposed of when the fixed reference is disposed.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static IDisposable GetUnsafeFixedContext<T, TDisposable>(ReadOnlyValPtr<T> ptr, Int32 count,
+	public static IDisposable GetUnsafeFixedContext<T, TDisposable>(this ReadOnlyValPtr<T> ptr, Int32 count,
 		TDisposable disposable, out ReadOnlyFixedContextValue<T> fixedContext) where TDisposable : IDisposable
 		=> ReadOnlyFixedContextValue<T>.CreateDisposable(ptr, count, disposable, out fixedContext);
 	/// <summary>
