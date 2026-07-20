@@ -116,7 +116,7 @@ public sealed class ValueTest
 
 			if (typeof(T) == typeof(T2))
 				PInvokeAssert.Equal((Object)fRef.Reference, fRef2.Reference);
-			else if (sizeof(Byte) == sizeof(T2))
+			else if (sizeof(T) % sizeof(T2) == 0)
 				PInvokeAssert.Equal(bytes, fRef2.Bytes.ToArray());
 			else
 				PInvokeAssert.Equal(bytes, fRef2.Bytes.ToArray().Concat(residual.Bytes.ToArray()));
