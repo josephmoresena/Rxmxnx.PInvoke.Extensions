@@ -20,7 +20,7 @@ public unsafe partial class CString
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public void WithSafeFixed(ReadOnlyFixedAction action)
 	{
@@ -52,7 +52,7 @@ public unsafe partial class CString
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public void WithSafeFixed<TArg>(TArg arg, ReadOnlyFixedAction<TArg> action)
 #if NET9_0_OR_GREATER
@@ -87,7 +87,7 @@ public unsafe partial class CString
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public TResult WithSafeFixed<TResult>(ReadOnlyFixedFunc<TResult> func)
 	{
@@ -121,7 +121,7 @@ public unsafe partial class CString
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public TResult WithSafeFixed<TArg, TResult>(TArg arg, ReadOnlyFixedFunc<TArg, TResult> func)
 #if NET9_0_OR_GREATER

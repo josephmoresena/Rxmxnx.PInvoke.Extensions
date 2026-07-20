@@ -104,14 +104,12 @@ public sealed class WithSafeFixedTest
 		WithSafeFixedTest.Test<T, UInt32>(ctx);
 		WithSafeFixedTest.Test<T, UInt64>(ctx);
 	}
-#pragma warning disable CS0618
-#pragma warning disable CS0612
+	[Obsolete]
 	private void ActionReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged
 		=> this.ActionReadOnlyTest(ctx, false);
+	[Obsolete]
 	private void ReadOnlyActionReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged
 		=> this.ActionReadOnlyTest(ctx, true);
-#pragma warning restore CS0618
-#pragma warning restore CS0612
 	[Obsolete]
 	private void ActionReadOnlyTest<T>(IReadOnlyFixedContext<T> ctx, Boolean readOnly) where T : unmanaged
 	{
@@ -172,25 +170,24 @@ public sealed class WithSafeFixedTest
 		WithSafeFixedTest.Test<T, UInt32>(ctx);
 		WithSafeFixedTest.Test<T, UInt64>(ctx);
 	}
-#pragma warning disable CS0618
-#pragma warning disable CS0612
+	[Obsolete]
 	private T[] FuncTest<T>(in IFixedContext<T> ctx) where T : unmanaged
 	{
 		this.ActionTest(ctx);
 		return ctx.Values.ToArray();
 	}
+	[Obsolete]
 	private T[] FuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged
 	{
 		this.ActionReadOnlyTest(ctx);
 		return ctx.Values.ToArray();
 	}
+	[Obsolete]
 	private T[] ReadOnlyFuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged
 	{
 		this.ReadOnlyActionReadOnlyTest(ctx);
 		return ctx.Values.ToArray();
 	}
-#pragma warning restore CS0618
-#pragma warning restore CS0612
 
 	[Obsolete]
 	private static unsafe void Test<T, T2>(IFixedContext<T> ctx) where T : unmanaged where T2 : unmanaged
@@ -212,8 +209,7 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(ctx.Pointer + offset, residualR.Pointer);
 		PInvokeAssert.Equal(ctx.Pointer + offset, bctx.Pointer);
 	}
-#pragma warning disable CS0618
-#pragma warning disable CS0612
+	[Obsolete]
 	private static unsafe void Test<T, T2>(IReadOnlyFixedContext<T> ctx) where T : unmanaged where T2 : unmanaged
 	{
 		IReadOnlyFixedContext<T2> ctx2 = ctx.Transformation<T2>(out IReadOnlyFixedMemory residual);
@@ -225,21 +221,25 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(ctx.Bytes.Length - offset, residual.Bytes.Length);
 		PInvokeAssert.Equal(ctx.Pointer + offset, residual.Pointer);
 	}
+	[Obsolete]
 	private static void ActionTest<T>(in IFixedContext<T> ctx, WithSafeFixedTest test) where T : unmanaged
 		=> test.ActionTest(ctx);
+	[Obsolete]
 	private static void ActionReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx, WithSafeFixedTest test)
 		where T : unmanaged
 		=> test.ActionReadOnlyTest(ctx);
+	[Obsolete]
 	private static void ReadOnlyActionReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx, WithSafeFixedTest test)
 		where T : unmanaged
 		=> test.ReadOnlyActionReadOnlyTest(ctx);
+	[Obsolete]
 	private static T[] FuncTest<T>(in IFixedContext<T> ctx, WithSafeFixedTest test) where T : unmanaged
 		=> test.FuncTest(ctx);
+	[Obsolete]
 	private static T[] FuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx, WithSafeFixedTest test) where T : unmanaged
 		=> test.FuncReadOnlyTest(ctx);
+	[Obsolete]
 	private static T[] ReadOnlyFuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx, WithSafeFixedTest test)
 		where T : unmanaged
 		=> test.ReadOnlyFuncReadOnlyTest(ctx);
-#pragma warning restore CS0618
-#pragma warning restore CS0612
 }

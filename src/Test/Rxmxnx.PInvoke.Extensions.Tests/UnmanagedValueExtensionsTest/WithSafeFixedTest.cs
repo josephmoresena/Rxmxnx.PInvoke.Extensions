@@ -119,12 +119,9 @@ public sealed class WithSafeFixedTest
 		WithSafeFixedTest.Test<T, UInt32>(ctx);
 		WithSafeFixedTest.Test<T, UInt64>(ctx);
 	}
-#pragma warning disable CS0618
-#pragma warning disable CS0612
+	[Obsolete]
 	private void ActionReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged
 		=> this.ActionReadOnlyTest(ctx);
-#pragma warning restore CS0612
-#pragma warning restore CS0618
 	[Obsolete]
 	private void ActionReadOnlyTest<T>(IReadOnlyFixedContext<T> ctx) where T : unmanaged
 	{
@@ -169,20 +166,20 @@ public sealed class WithSafeFixedTest
 		WithSafeFixedTest.Test<T, UInt32>(ctx);
 		WithSafeFixedTest.Test<T, UInt64>(ctx);
 	}
-#pragma warning disable CS0618
-#pragma warning disable CS0612
+	[Obsolete]
 	private T[] FuncTest<T>(in IFixedContext<T> ctx) where T : unmanaged
 	{
 		this.ActionTest(ctx);
 		return ctx.Values.ToArray();
 	}
+	[Obsolete]
 	private T[] FuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged
 	{
 		this.ActionReadOnlyTest(ctx);
 		return ctx.Values.ToArray();
 	}
-#pragma warning restore CS0612
 
+	[Obsolete]
 	[SuppressMessage("Performance", "CA1822:Mark members as static")]
 	private void NullActionTest<T>(in IFixedContext<T> ctx) where T : unmanaged
 	{
@@ -190,16 +187,18 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(0, ctx.Values.Length);
 		PInvokeAssert.Equal(IntPtr.Zero, ctx.Pointer);
 	}
+	[Obsolete]
 	private void NullActionReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged
 		=> this.NullActionTest((IFixedContext<T>)ctx);
+	[Obsolete]
 	private IFixedContext<T> NullFuncTest<T>(in IFixedContext<T> ctx) where T : unmanaged
 	{
 		this.NullActionTest(ctx);
 		return ctx;
 	}
+	[Obsolete]
 	private IReadOnlyFixedContext<T> NullFuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged
 		=> this.NullFuncTest((IFixedContext<T>)ctx);
-#pragma warning restore CS0618
 
 	[Obsolete]
 	private static unsafe void Test<T, T2>(IFixedContext<T> ctx) where T : unmanaged where T2 : unmanaged
@@ -221,7 +220,7 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(ctx.Pointer + offset, residualR.Pointer);
 		PInvokeAssert.Equal(ctx.Pointer + offset, bctx.Pointer);
 	}
-#pragma warning disable CS0618
+	[Obsolete]
 	private static unsafe void Test<T, T2>(IReadOnlyFixedContext<T> ctx) where T : unmanaged where T2 : unmanaged
 	{
 		IReadOnlyFixedContext<T2> ctx2 = ctx.Transformation<T2>(out IReadOnlyFixedMemory residual);
@@ -233,27 +232,32 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(ctx.Bytes.Length - offset, residual.Bytes.Length);
 		PInvokeAssert.Equal(ctx.Pointer + offset, residual.Pointer);
 	}
-#pragma warning disable CS0612
+	[Obsolete]
 	private static void ActionTest<T>(in IFixedContext<T> ctx, WithSafeFixedTest test) where T : unmanaged
 		=> test.ActionTest(ctx);
+	[Obsolete]
 	private static void ActionReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx, WithSafeFixedTest test)
 		where T : unmanaged
 		=> test.ActionReadOnlyTest(ctx);
-#pragma warning restore CS0612
+	[Obsolete]
 	private static T[] FuncTest<T>(in IFixedContext<T> ctx, WithSafeFixedTest test) where T : unmanaged
 		=> test.FuncTest(ctx);
+	[Obsolete]
 	private static T[] FuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx, WithSafeFixedTest test) where T : unmanaged
 		=> test.FuncReadOnlyTest(ctx);
 
+	[Obsolete]
 	private static void NullActionTest<T>(in IFixedContext<T> ctx, WithSafeFixedTest test) where T : unmanaged
 		=> test.NullActionTest(ctx);
+	[Obsolete]
 	private static void NullActionReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx, WithSafeFixedTest test)
 		where T : unmanaged
 		=> test.NullActionReadOnlyTest(ctx);
+	[Obsolete]
 	private static IFixedContext<T> NullFuncTest<T>(in IFixedContext<T> ctx, WithSafeFixedTest test) where T : unmanaged
 		=> test.NullFuncTest(ctx);
+	[Obsolete]
 	private static IReadOnlyFixedContext<T> NullFuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx,
 		WithSafeFixedTest test) where T : unmanaged
 		=> test.NullFuncReadOnlyTest(ctx);
-#pragma warning restore CS0618
 }

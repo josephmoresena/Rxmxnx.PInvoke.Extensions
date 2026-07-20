@@ -6,6 +6,10 @@
 /// <remarks>
 /// This list can be used for safe operations with fixed blocks of memory using pointers.
 /// </remarks>
+#if OBSOLETE_FIXED_INTERFACES
+[EditorBrowsable(EditorBrowsableState.Never)]
+[Obsolete(ObsoleteConstants.ObsoleteFixedMemoryList, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 public readonly ref struct FixedMemoryList
 {
 	/// <summary>

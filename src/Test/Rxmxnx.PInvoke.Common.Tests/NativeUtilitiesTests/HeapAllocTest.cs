@@ -5,6 +5,7 @@ namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class HeapAllocTest
 {
+#pragma warning disable CS0612
 	[Fact]
 	public void BooleanTest()
 	{
@@ -47,7 +48,9 @@ public sealed class HeapAllocTest
 		HeapAllocTest.InvalidCountTest<UInt16>();
 		HeapAllocTest.BasicTest(static i => i ^ 0x7);
 	}
+#pragma warning restore CS0612
 
+	[Obsolete]
 	private static void EmptyTest<T>() where T : unmanaged
 	{
 		using IFixedContext<T>.IDisposable ctx = NativeUtilities.HeapAlloc<T>(0);
@@ -56,12 +59,14 @@ public sealed class HeapAllocTest
 		PInvokeAssert.Equal(IntPtr.Zero, ctx.Pointer);
 		PInvokeAssert.Equal(0, ctx.Values.Length);
 	}
+	[Obsolete]
 	private static void InvalidCountTest<T>() where T : unmanaged
 	{
 		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => NativeUtilities.HeapAlloc<T>(-1));
 		if (Unsafe.SizeOf<T>() == sizeof(Byte)) return;
 		PInvokeAssert.Throws<OverflowException>(() => NativeUtilities.HeapAlloc<T>(Int32.MaxValue));
 	}
+	[Obsolete]
 	private static void BasicTest<T>(Func<Int32, T> factory) where T : unmanaged
 	{
 		Int32 count = PInvokeRandom.Shared.Next(1, Byte.MaxValue);

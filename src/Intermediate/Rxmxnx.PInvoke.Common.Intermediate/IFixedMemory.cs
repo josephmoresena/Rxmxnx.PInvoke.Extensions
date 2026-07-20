@@ -18,11 +18,19 @@ public interface IFixedMemory : IReadOnlyFixedMemory
 	/// Creates a new instance of <see cref="IFixedContext{Byte}"/> from the current instance.
 	/// </summary>
 	/// <returns>An instance of <see cref="IFixedContext{Byte}"/>.</returns>
+#if OBSOLETE_FIXED_INTERFACES
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteFixedInterface, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 	new IFixedContext<Byte> AsBinaryContext();
 	/// <summary>
 	/// Creates a new instance of <see cref="IFixedContext{Object}"/> from the current instance.
 	/// </summary>
 	/// <returns>An instance of <see cref="IFixedContext{Object}"/>.</returns>
+#if OBSOLETE_FIXED_INTERFACES
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteFixedInterface, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 	new IFixedContext<Object> AsObjectContext();
 
 	/// <summary>
@@ -62,10 +70,16 @@ public interface IFixedMemory<T> : IFixedMemory, IReadOnlyFixedMemory<T>
 
 #if NET9_0_OR_GREATER
 	/// <inheritdoc cref="IFixedMemory.AsObjectContext()"/>
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
+#endif
 	internal static IFixedContext<Object> AsObjectContext<TFixedContext>(TFixedContext ctx)
 		where TFixedContext : IFixedMemory<T>, allows ref struct
 		=> ctx.AsObjectContext();
 	/// <inheritdoc cref="IFixedMemory.AsObjectContext()"/>
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
+#endif
 	internal static IFixedContext<Byte> AsBinaryContext<TFixedContext>(TFixedContext ctx)
 		where TFixedContext : IFixedMemory<T>, allows ref struct
 		=> ctx.AsBinaryContext();

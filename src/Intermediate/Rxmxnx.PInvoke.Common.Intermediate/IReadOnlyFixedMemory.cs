@@ -22,11 +22,19 @@ public interface IReadOnlyFixedMemory : IFixedPointer
 	/// Creates a new instance of <see cref="IReadOnlyFixedContext{Byte}"/> from the current instance.
 	/// </summary>
 	/// <returns>An instance of <see cref="IReadOnlyFixedContext{Byte}"/>.</returns>
+#if OBSOLETE_FIXED_INTERFACES
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteFixedInterface, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 	IReadOnlyFixedContext<Byte> AsBinaryContext();
 	/// <summary>
 	/// Creates a new instance of <see cref="IReadOnlyFixedContext{Object}"/> from the current instance.
 	/// </summary>
 	/// <returns>An instance of <see cref="IReadOnlyFixedContext{Object}"/>.</returns>
+#if OBSOLETE_FIXED_INTERFACES
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteFixedInterface, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 	IReadOnlyFixedContext<Object> AsObjectContext();
 
 	/// <summary>

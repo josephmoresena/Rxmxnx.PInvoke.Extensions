@@ -7,7 +7,14 @@
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContext<T>
+internal sealed unsafe partial class FixedContext<T> : FixedMemory, 
+#if !OBSOLETE_FIXED_INTERFACES
+	IFixedContext<T>
+#else
+#pragma warning disable CS0612
+	IObsoleteFixedContext<T>
+#pragma warning restore CS0612
+#endif
 {
 #pragma warning disable CS8500
 	/// <summary>
@@ -17,6 +24,9 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 	/// <summary>
 	/// An empty instance of <see cref="IFixedContext{T}.IDisposable"/>.
 	/// </summary>
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
+#endif
 	public static readonly IFixedContext<T>.IDisposable EmptyDisposable = Disposable.Default;
 
 	/// <summary>
@@ -79,6 +89,9 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 
 	Span<T> IFixedMemory<T>.Values => this.CreateSpan<T>(this.Count);
 	ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => this.CreateReadOnlySpan<T>(this.Count);
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
+#endif
 	IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IFixedMemory residual)
 	{
 #if !NETCOREAPP || NETCOREAPP3_1_OR_GREATER
@@ -90,6 +103,9 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 			this.GetTransformation<TDestination>(out Unsafe.As<IFixedMemory, FixedOffset>(ref residual));
 		return result;
 	}
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
+#endif
 	IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
 	{
@@ -98,6 +114,9 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 			this.GetTransformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, FixedOffset>(ref residual), true);
 		return result;
 	}
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
+#endif
 	IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 	{
 		Unsafe.SkipInit(out residual);
@@ -105,9 +124,15 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 			this.GetTransformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, FixedOffset>(ref residual), true);
 		return result;
 	}
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
+#endif
 	IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.GetTransformation<Byte>(out _, true);
 
 	/// <inheritdoc/>
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
+#endif
 	public override IFixedContext<Byte> AsBinaryContext() => this.GetTransformation<Byte>(out _);
 	/// <inheritdoc/>
 	public override Int32 GetHashCode() => base.GetHashCode();
@@ -158,6 +183,10 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory, IFixedContex
 	/// This method serves as a reference for the assembly patcher in .NET 9.0+. It is important to keep the
 	/// attributes of its parameters compatible.
 	/// </remarks>
+#if OBSOLETE_FIXED_INTERFACES
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceExtensions, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 	public static IFixedContext<T>.IDisposable CreateDisposable(ValPtr<T> valPtr, Int32 count,
 		IDisposable? disposable = default)
 	{

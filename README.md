@@ -2796,6 +2796,12 @@ Represents a sequence of null-terminated UTF-8 text strings.
   memory region.
   </details>
 - <details>
+  <summary>GetFixedPointer(out FixedPointerValue)</summary>
+
+  Creates an `FixedPointerValue` instance by pinning the current instance, allowing safe access to the fixed
+  memory region and returns an `IDisposable` object to release the pinned instance.
+  </details>
+- <details>
   <summary>WithSafeTransform(CStringSequenceAction)</summary>
 
   Executes a specified action using the current instance treated as a `FixedCStringSequence`.
@@ -3829,6 +3835,20 @@ Set of extensions for basic operations with `unmanaged` values.
   Rents and pins an array of minimum number of `T` elements from given array pool,
   ensuring a safe context for accessing the fixed memory.
   </details>
+
+- <details>
+  <summary>RentFixed&lt;T&gt;(this ArrayPool&lt;T&gt;, Int32, out FixedContextValue&lt;T&gt;, Boolean)</summary>
+
+  Rents and pins an array of minimum number of `T` elements from given array pool,
+  ensuring a safe context for accessing the fixed memory.
+  </details>
+- <details>
+  <summary>RentFixed&lt;T&gt;(this ArrayPool&lt;T&gt;, Int32, out FixedContextValue&lt;T&gt;, Boolean, out Int32)</summary>
+
+  Rents and pins an array of minimum number of `T` elements from given array pool,
+  ensuring a safe context for accessing the fixed memory.
+  </details>
+
 - <details>
   <summary>ToBytes&lt;T&gt;(this T)</summary>
 
@@ -4300,6 +4320,14 @@ Set of utilities for exchange data within the P/Invoke context.
 
   Creates a new `IReadOnlyFixedContext<TEnum>.IDisposable` instance by pinning an array of the values of the
   constants in a specified enumeration type.
+
+  **Note:** `TEnum` is `System.Enum`.
+  </details>
+- <details>
+  <summary>GetValuesFixedContext&lt;TEnum&gt;(out ReadOnlyFixedContextValue&lt;TEnum&gt;)</summary>
+
+  Creates a new `ReadOnlyFixedContextValue<TEnum>` instance by pinning an array of the values of the constants in a
+  specified enumeration type and returns an `IDisposable` object to release the pinned array.
 
   **Note:** `TEnum` is `System.Enum`.
   </details>

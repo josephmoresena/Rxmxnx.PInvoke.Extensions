@@ -7,6 +7,7 @@ public sealed class GetFixedMemoryTest
 {
 	private static readonly IFixture fixture = new Fixture();
 
+#pragma warning disable CS0612
 	[Fact]
 	public void BooleanTest() => GetFixedMemoryTest.Test<Boolean>();
 	[Fact]
@@ -81,7 +82,9 @@ public sealed class GetFixedMemoryTest
 	public void UInt64ArrayTest() => GetFixedMemoryTest.Test<UInt64[]>();
 	[Fact]
 	public void StringArrayTest() => GetFixedMemoryTest.Test<String[]>();
+#pragma warning restore CS0612
 
+	[Obsolete]
 	private static void Test<T>()
 	{
 		T[] array = GetFixedMemoryTest.fixture.CreateMany<T>().ToArray();

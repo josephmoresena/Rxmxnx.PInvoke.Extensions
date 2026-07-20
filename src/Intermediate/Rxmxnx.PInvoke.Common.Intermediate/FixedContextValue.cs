@@ -6,7 +6,14 @@ namespace Rxmxnx.PInvoke;
 /// <typeparam name="T">Type of objects in the fixed memory block.</typeparam>
 public readonly unsafe ref struct FixedContextValue<T>
 #if NET9_0_OR_GREATER
-	: IFixedContext<T>, IFixedPointerOperators<FixedContextValue<T>>
+	: IFixedPointerOperators<FixedContextValue<T>>,
+#if !OBSOLETE_FIXED_INTERFACES
+		IObsoleteFixedContext<T>
+#else
+#pragma warning disable CS0612
+		IObsoleteFixedContext<T>
+#pragma warning restore CS0612
+#endif
 #endif
 {
 #pragma warning disable CS8500
@@ -77,7 +84,9 @@ public readonly unsafe ref struct FixedContextValue<T>
 	{
 		if (handle.Pointer == default)
 		{
+#pragma warning disable CS0612
 			disposable = ReadOnlyFixedContext<T>.EmptyDisposable;
+#pragma warning restore CS0612
 			return;
 		}
 		this._value = new((IntPtr)handle.Pointer, count * sizeof(T))
@@ -101,12 +110,14 @@ public readonly unsafe ref struct FixedContextValue<T>
 	{
 		if (valPtr.IsZero)
 		{
+#pragma warning disable CS0612
 			disposable = ReadOnlyFixedContext<T>.EmptyDisposable;
+#pragma warning restore CS0612
 			return;
 		}
 		this._value = new(valPtr.Pointer, count * sizeof(T))
 		{
-			IsReadOnly = true,
+			IsReadOnly = false,
 			IsUnmanaged = RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
 			Handle = new(),
 			Type = typeof(T),
@@ -136,7 +147,7 @@ public readonly unsafe ref struct FixedContextValue<T>
 	{
 		this._value = new(valPtr.Pointer, count * sizeof(T))
 		{
-			IsReadOnly = true,
+			IsReadOnly = false,
 			IsUnmanaged = RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
 			Handle = handle,
 			Type = typeof(T),
@@ -164,6 +175,9 @@ public readonly unsafe ref struct FixedContextValue<T>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
+#endif
 	IFixedContext<Byte> IFixedMemory.AsBinaryContext()
 	{
 		this._value.ValidateOperation(true);
@@ -175,9 +189,15 @@ public readonly unsafe ref struct FixedContextValue<T>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
+#endif
 	IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => IFixedContext<T>.AsBinaryContext(this);
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
 #endif
 	IFixedContext<Object> IFixedMemory.AsObjectContext()
 	{
@@ -191,9 +211,15 @@ public readonly unsafe ref struct FixedContextValue<T>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
+#endif
 	IReadOnlyFixedContext<Object> IReadOnlyFixedMemory.AsObjectContext() => IFixedContext<T>.AsObjectContext(this);
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
 #endif
 	IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IFixedMemory residual)
 	{
@@ -217,6 +243,9 @@ public readonly unsafe ref struct FixedContextValue<T>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
+#endif
 	IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 	{
 		Unsafe.SkipInit(out residual);
@@ -225,6 +254,9 @@ public readonly unsafe ref struct FixedContextValue<T>
 	}
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
 #endif
 	IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
@@ -302,7 +334,9 @@ public readonly unsafe ref struct FixedContextValue<T>
 		if (ptr.IsZero)
 		{
 			fixedContext = default;
+#pragma warning disable CS0612
 			return FixedContext<T>.EmptyDisposable;
+#pragma warning restore CS0612
 		}
 		FixedValueHandle result = FixedValueHandle.CreateFromDisposable(disposable);
 		fixedContext = new(ptr, count, result);

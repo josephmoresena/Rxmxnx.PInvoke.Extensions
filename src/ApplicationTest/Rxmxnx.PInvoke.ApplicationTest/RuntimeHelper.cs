@@ -135,7 +135,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				writer.WriteLine($"CString.Empty literal: {CString.IsImagePersistent(CString.Empty)}");
 			}
 			writer.WriteLine($"Hardcoded Array literal: {!RuntimeHelper.Null.AsSpan().MayBeNonLiteral()}");
-			if (SystemInfo.IsWebRuntime || AotInfo.IsReflectionDisabled) return;
+			if (SystemInfo.IsWebRuntime || AotInfo.IsReflectionDisabled || !SystemInfo.IsMonoRuntime) return;
 			writer.WriteLine("========== StackTrace information ==========");
 			RuntimeHelper.PrintStackInfo(writer);
 		}

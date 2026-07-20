@@ -25,20 +25,32 @@ internal partial class FixedOffset : IConvertibleDisposable<IFixedMemory.IDispos
 		Span<Object> IFixedMemory.Objects => (this.Value as IFixedMemory).Objects;
 		ReadOnlySpan<Object> IReadOnlyFixedMemory.Objects => (this.Value as IReadOnlyFixedMemory).Objects;
 
+#if OBSOLETE_FIXED_INTERFACES
+		[Obsolete]
+#endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
 		IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
+#if OBSOLETE_FIXED_INTERFACES
+		[Obsolete]
+#endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
 		IReadOnlyFixedContext<Object> IReadOnlyFixedMemory.AsObjectContext() => this.AsObjectContext();
 
 		/// <inheritdoc/>
+#if OBSOLETE_FIXED_INTERFACES
+		[Obsolete]
+#endif
 		public IFixedContext<Byte> AsBinaryContext()
 			=> (this.Value.AsBinaryContext() as IConvertibleDisposable<IFixedContext<Byte>.IDisposable>)!.ToDisposable(
 				this.GetDisposableParent());
 		/// <inheritdoc/>
+#if OBSOLETE_FIXED_INTERFACES
+		[Obsolete]
+#endif
 		public IFixedContext<Object> AsObjectContext()
 			=> (this.Value.AsObjectContext() as IConvertibleDisposable<IFixedContext<Object>.IDisposable>)!
 				.ToDisposable(this.GetDisposableParent());

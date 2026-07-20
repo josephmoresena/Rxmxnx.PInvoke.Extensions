@@ -7,7 +7,7 @@ namespace Rxmxnx.PInvoke;
 /// <param name="buffer">A buffer of objects of type <typeparamref name="T"/>.</param>
 #if OBSOLTE_DELEGATES
 [EditorBrowsable(EditorBrowsableState.Never)]
-[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+[Obsolete(ObsoleteConstants.ObsoleteDelegateTypes, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate void ScopedBufferAction<T>(ScopedBuffer<T> buffer);
 
@@ -21,7 +21,7 @@ public delegate void ScopedBufferAction<T>(ScopedBuffer<T> buffer);
 /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 #if OBSOLTE_DELEGATES
 [EditorBrowsable(EditorBrowsableState.Never)]
-[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+[Obsolete(ObsoleteConstants.ObsoleteDelegateTypes, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate void ScopedBufferAction<T, in TArg>(ScopedBuffer<T> buffer, TArg arg)
 #if NET9_0_OR_GREATER
@@ -40,7 +40,7 @@ public delegate void ScopedBufferAction<T, in TArg>(ScopedBuffer<T> buffer, TArg
 /// <returns>The return value of the method that this delegate encapsulates.</returns>
 #if OBSOLTE_DELEGATES
 [EditorBrowsable(EditorBrowsableState.Never)]
-[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+[Obsolete(ObsoleteConstants.ObsoleteDelegateTypes, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate TResult ScopedBufferFunc<T, out TResult>(ScopedBuffer<T> buffer);
 
@@ -56,7 +56,7 @@ public delegate TResult ScopedBufferFunc<T, out TResult>(ScopedBuffer<T> buffer)
 /// <returns>The return value of the method that this delegate encapsulates.</returns>
 #if OBSOLTE_DELEGATES
 [EditorBrowsable(EditorBrowsableState.Never)]
-[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+[Obsolete(ObsoleteConstants.ObsoleteDelegateTypes, ObsoleteConstants.ErrorDelegate)]
 #endif
 public delegate TResult ScopedBufferFunc<T, in TArg, out TResult>(ScopedBuffer<T> buffer, TArg arg)
 #if NET9_0_OR_GREATER

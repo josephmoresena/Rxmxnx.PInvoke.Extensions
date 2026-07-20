@@ -10,7 +10,9 @@ public static class RefStructHelper
 		ValPtr<Span<T>> valRefSpan = NativeUtilities.GetUnsafeValPtrFromRef(ref span);
 
 		Console.WriteLine($"Unsafe Span Address: 0x{span.GetUnsafeIntPtr():x8}");
+#pragma warning disable CS0612
 		NativeUtilities.WithSafeFixed(ref refSpan, inStack, RefStructHelper.UseFixedRefSpan);
+#pragma warning restore CS0612
 		Console.WriteLine($"Span Pointer: 0x{valRefSpan.Pointer:x8}");
 		Console.WriteLine($"Ref Span vs Span Pointer: {Unsafe.AreSame(ref refSpan, ref valRefSpan.Reference)}");
 	}
@@ -20,12 +22,15 @@ public static class RefStructHelper
 		ValPtr<ReadOnlySpan<T>> valRefSpan = NativeUtilities.GetUnsafeValPtrFromRef(ref span);
 
 		Console.WriteLine($"Unsafe Read-only Span Address: 0x{span.GetUnsafeIntPtr():x8}");
+#pragma warning disable CS0612
 		NativeUtilities.WithSafeFixed(ref refSpan, inStack, RefStructHelper.UseFixedRefSpan);
+#pragma warning restore CS0612
 		Console.WriteLine($"Read-only Span Pointer: 0x{valRefSpan.Pointer:x8}");
 		Console.WriteLine(
 			$"Ref Read-only Span vs Read-only Span Pointer: {Unsafe.AreSame(ref refSpan, ref valRefSpan.Reference)}");
 	}
 
+	[Obsolete]
 	private static void UseFixedRefSpan<T>(in IFixedReference<Span<T>> frs, Boolean inStack)
 	{
 		ReadOnlyValPtr<Span<T>> spanPtr = NativeUtilities.GetUnsafeValPtr(in frs.Reference);
@@ -40,6 +45,7 @@ public static class RefStructHelper
 		using IFixedContext<T>.IDisposable f = valPtr.GetUnsafeFixedContext(spanPtr.Reference.Length);
 		Console.WriteLine($"Unsafe Span Memory Pointer: 0x{f.Pointer:x8}");
 	}
+	[Obsolete]
 	private static void UseFixedRefSpan<T>(in IFixedReference<ReadOnlySpan<T>> frs, Boolean inStack)
 	{
 		ReadOnlyValPtr<ReadOnlySpan<T>> spanPtr = NativeUtilities.GetUnsafeValPtr(in frs.Reference);

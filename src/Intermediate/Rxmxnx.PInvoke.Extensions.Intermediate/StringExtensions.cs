@@ -23,7 +23,7 @@ public static unsafe class StringExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed(this String? str, ReadOnlyFixedContextAction<Char> action)
 	{
@@ -56,7 +56,7 @@ public static unsafe class StringExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<TArg>(this String? str, TArg arg, ReadOnlyFixedContextAction<Char, TArg> action)
 #if NET9_0_OR_GREATER
@@ -92,7 +92,7 @@ public static unsafe class StringExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<TResult>(this String? str, ReadOnlyFixedContextFunc<Char, TResult> func)
 	{
@@ -126,7 +126,7 @@ public static unsafe class StringExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<TArg, TResult>(this String? str, TArg arg,
 		ReadOnlyFixedContextFunc<Char, TArg, TResult> func)

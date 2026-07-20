@@ -303,6 +303,10 @@ public static unsafe partial class NativeUtilities
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+#if OBSOLETE_FIXED_INTERFACES
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceMethods, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 	public static IReadOnlyFixedContext<TEnum>.IDisposable GetValuesFixedContext<TEnum>() where TEnum : unmanaged, Enum
 	{
 		ReadOnlyMemory<TEnum> mem = EnumValueHelper<TEnum>.Values;
@@ -311,6 +315,30 @@ public static unsafe partial class NativeUtilities
 			ReadOnlyFixedContext<TEnum>.EmptyDisposable :
 			// ReSharper disable once HeapView.BoxingAllocation
 			new ReadOnlyFixedContext<TEnum>(handle.Pointer, mem.Length).ToDisposable(handle);
+	}
+	/// <summary>
+	/// Creates a <see cref="ReadOnlyFixedContextValue{TEnum}"/> instance by pinning an array of the values of  the
+	/// constants in a specified enumeration type.
+	/// </summary>
+	/// <typeparam name="TEnum">The type of the enumeration.</typeparam>
+	/// <param name="fixedContext">
+	/// Output. The <see cref="ReadOnlyFixedContextValue{T}"/> instance representing the pinned memory.
+	/// </param>
+	/// <returns>An <see cref="IDisposable"/> instance representing the pinned memory releasing.</returns>
+	/// <remarks>
+	/// The output context owns the pinned memory and releases it when the returning object is disposed.
+	/// Consumers should use a <see langword="using"/> statement or otherwise dispose the returned object.
+	/// </remarks>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public static IDisposable GetValuesFixedContext<TEnum>(out ReadOnlyFixedContextValue<TEnum> fixedContext)
+		where TEnum : unmanaged, Enum
+	{
+		ReadOnlyMemory<TEnum> mem = EnumValueHelper<TEnum>.Values;
+		MemoryHandle handle = mem.Pin();
+		fixedContext = new(handle, mem.Length, true, out IDisposable result);
+		return result;
 	}
 
 	/// <summary>
@@ -385,6 +413,10 @@ public static unsafe partial class NativeUtilities
 	/// The returned context owns the native memory allocation and releases it when disposed. The allocated memory is not
 	/// initialized. Consumers should use a <see langword="using"/> statement or otherwise dispose the returned context.
 	/// </remarks>
+#if OBSOLETE_FIXED_INTERFACES
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceMethods, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 	public static IFixedContext<T>.IDisposable HeapAlloc<T>(Int32 count) where T : unmanaged
 	{
 		ValidationUtilities.ThrowIfInvalidLength(count);

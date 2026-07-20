@@ -182,8 +182,8 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Program.Print(uuid);
 
 			Console.WriteLine("=== Fixed Rent ===");
-			using IFixedContext<Int64>.IDisposable fRent =
-				ArrayPool<Int64>.Shared.RentFixed(10, false, out Int32 arrayLength);
+			using IDisposable _ =
+				ArrayPool<Int64>.Shared.RentFixed(10, out FixedContextValue<Int64> fRent, false, out Int32 arrayLength);
 			Console.WriteLine($"Address: 0x{fRent.Pointer:X}\tRequired: {fRent.Values.Length}\tRented: {arrayLength}");
 #if !NET9_0_OR_GREATER
 			foreach (ref Int64 rLong in fRent.Values)
@@ -200,7 +200,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Program.Print(fRent);
 		}
 
-		private static void Print<T>(in IFixedContext<T> ctx)
+		private static void Print<T>(FixedContextValue<T> ctx)
 		{
 			Console.Write($"Address: 0x{ctx.Pointer:X}\tItems: {ctx.Values.Length} ");
 #if !NET9_0_OR_GREATER
@@ -228,23 +228,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		#region FunctionalInterfaces
 		private readonly struct PrintAction<T> : IFixedContextAction<T>
 		{
-			void IFixedContextAction<T>.Accept(FixedContextValue<T> ctx)
-			{
-				Console.Write($"Address: 0x{ctx.Pointer:X}\tItems: {ctx.Values.Length} ");
-#if !NET9_0_OR_GREATER
-			foreach (T value in ctx.Values)
-#else
-				Span<T>.Enumerator enumerator = ctx.Values.GetEnumerator();
-				while (enumerator.MoveNext())
-				{
-					ref T value = ref enumerator.Current;
-#endif
-					Console.Write($"{value} ");
-#if NET9_0_OR_GREATER
-				}
-#endif
-				Console.WriteLine("");
-			}
+			void IFixedContextAction<T>.Accept(FixedContextValue<T> ctx) => Program.Print(ctx);
 		}
 
 		private struct BufferAction : IScopedBufferAction<Int32>, IScopedBufferAction<String?>,

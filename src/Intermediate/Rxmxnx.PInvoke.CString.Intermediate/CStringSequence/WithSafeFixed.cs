@@ -40,7 +40,27 @@ public unsafe partial class CStringSequence
 	{
 		MemoryHandle handle = this.Pin();
 		// ReSharper disable once HeapView.BoxingAllocation
-		return new FixedContext<Char>(handle.Pointer, this._value.Length).ToDisposable(handle);
+#pragma warning disable CS0612
+		return new ReadOnlyFixedContext<Char>(handle.Pointer, this._value.Length).ToDisposable(handle);
+#pragma warning restore CS0612
+	}
+	/// <summary>
+	/// Creates an <see cref="IFixedPointer.IDisposable"/> instance by pinning the current instance, allowing safe
+	/// access to the fixed memory region.
+	/// </summary>
+	/// <returns>An <see cref="IFixedPointer.IDisposable"/> instance representing the pinned memory.</returns>
+	/// <remarks>
+	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
+	/// operations on unmanaged memory.
+	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
+	/// and avoid memory leaks.
+	/// </remarks>
+	public IDisposable GetFixedPointer(out FixedPointerValue fixedPointer)
+	{
+		MemoryHandle handle = this.Pin();
+		// ReSharper disable once HeapView.BoxingAllocation
+		fixedPointer = new ReadOnlyFixedContextValue<Char>(handle, this._value.Length, true, out IDisposable result);
+		return result;
 	}
 	/// <summary>
 	/// Executes a specified action using the current instance treated as a <see cref="ReadOnlyFixedMemoryList"/>.
@@ -54,7 +74,7 @@ public unsafe partial class CStringSequence
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public void WithSafeFixed(ReadOnlyFixedListAction action)
 	{
@@ -87,7 +107,7 @@ public unsafe partial class CStringSequence
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public void WithSafeFixed<TState>(TState state, ReadOnlyFixedListAction<TState> action)
 #if NET9_0_OR_GREATER
@@ -122,7 +142,7 @@ public unsafe partial class CStringSequence
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public TResult WithSafeFixed<TResult>(ReadOnlyFixedListFunc<TResult> func)
 	{
@@ -157,7 +177,7 @@ public unsafe partial class CStringSequence
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public TResult WithSafeFixed<TState, TResult>(TState state, ReadOnlyFixedListFunc<TState, TResult> func)
 #if NET9_0_OR_GREATER

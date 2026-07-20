@@ -60,6 +60,9 @@ internal sealed unsafe class NativeMemoryOwner : IDisposable
 	/// <param name="count">The number of values of type <typeparamref name="T"/> to allocate.</param>
 	/// <returns>An <see cref="IFixedContext{T}.IDisposable"/> instance over the allocated native memory block.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
+#endif
 	public static IFixedContext<T>.IDisposable CreateContext<T>(Int32 count) where T : unmanaged
 	{
 		if (count == 0) return FixedContext<T>.EmptyDisposable;
@@ -82,7 +85,9 @@ internal sealed unsafe class NativeMemoryOwner : IDisposable
 		if (count == 0)
 		{
 			fixedContext = default;
+#pragma warning disable CS0612
 			return FixedContext<T>.EmptyDisposable;
+#pragma warning restore CS0612
 		}
 		Int32 byteLength = checked(count * sizeof(T));
 		NativeMemoryOwner owner = new(byteLength);

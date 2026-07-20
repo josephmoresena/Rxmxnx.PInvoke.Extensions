@@ -45,6 +45,10 @@ public static partial class UnmanagedValueExtensions
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+#if OBSOLETE_FIXED_INTERFACES
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceExtensions, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 	public static IFixedContext<T>.IDisposable RentFixed<T>(this ArrayPool<T> arrayPool, Int32 count,
 		Boolean clearArray = false) where T : unmanaged
 		=> arrayPool.RentFixed(count, clearArray, out _);
@@ -66,6 +70,10 @@ public static partial class UnmanagedValueExtensions
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
+#if OBSOLETE_FIXED_INTERFACES
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceExtensions, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 	public static IFixedContext<T>.IDisposable RentFixed<T>(this ArrayPool<T> arrayPool, Int32 count,
 		Boolean clearArray, out Int32 arrayLength) where T : unmanaged
 	{

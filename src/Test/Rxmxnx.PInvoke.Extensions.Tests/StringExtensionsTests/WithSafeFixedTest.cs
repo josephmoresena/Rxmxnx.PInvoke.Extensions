@@ -29,6 +29,7 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(value, value.WithSafeFixed(WithSafeFixedTest.FuncTest));
 	}
 
+	[Obsolete]
 	private static unsafe void EmptyActionTest(in IReadOnlyFixedContext<Char> ctx)
 	{
 		PInvokeAssert.Equal(0, ctx.Bytes.Length);
@@ -36,6 +37,7 @@ public sealed class WithSafeFixedTest
 			fixed (Char* ptr = String.Empty)
 				PInvokeAssert.Equal(new(ptr), ctx.Pointer);
 	}
+	[Obsolete]
 	private static unsafe void EmptyActionTest(in IReadOnlyFixedContext<Char> ctx, String? value)
 	{
 		WithSafeFixedTest.EmptyActionTest(ctx);
@@ -45,22 +47,26 @@ public sealed class WithSafeFixedTest
 			fixed (Char* ptr = String.Empty)
 				PInvokeAssert.Equal(new(ptr), ctx.Pointer);
 	}
+	[Obsolete]
 	private static String? EmptyFuncTest(in IReadOnlyFixedContext<Char> ctx)
 	{
 		WithSafeFixedTest.EmptyActionTest(ctx);
 		return ctx.Pointer != IntPtr.Zero ? String.Empty : default;
 	}
+	[Obsolete]
 	private static String? EmptyFuncTest(in IReadOnlyFixedContext<Char> ctx, String? value)
 	{
 		WithSafeFixedTest.EmptyActionTest(ctx, value);
 		return value;
 	}
 
+	[Obsolete]
 	private static void ActionTest(in IReadOnlyFixedContext<Char> ctx, String value)
 	{
 		PInvokeAssert.Equal(value.Length, ctx.Values.Length);
 		PInvokeAssert.Equal(value.Length * sizeof(Char), ctx.Bytes.Length);
 		PInvokeAssert.Equal(value, new(ctx.Values));
 	}
+	[Obsolete]
 	private static String FuncTest(in IReadOnlyFixedContext<Char> ctx) => new(ctx.Values);
 }

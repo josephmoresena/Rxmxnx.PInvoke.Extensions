@@ -76,13 +76,18 @@ internal sealed unsafe class RentedMemoryOwner<T> : IDisposable
 	/// <param name="arrayLength">Output. Rented array length.</param>
 	/// <returns>An <see cref="IFixedContext{T}.IDisposable"/> instance representing the pinned memory.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
+#endif
 	public static IFixedContext<T>.IDisposable CreateContext(ArrayPool<T> arrayPool, Int32 count, Boolean clearArray,
 		out Int32 arrayLength)
 	{
 		if (count == 0)
 		{
 			arrayLength = default;
+#pragma warning disable CS0612
 			return FixedContext<T>.EmptyDisposable;
+#pragma warning restore CS0612
 		}
 		RentedMemoryOwner<T> owner = new(arrayPool, count, clearArray, out arrayLength);
 		return new FixedContext<T>(owner._handle.Pointer, count).ToDisposable(owner);
@@ -107,7 +112,9 @@ internal sealed unsafe class RentedMemoryOwner<T> : IDisposable
 		{
 			fixedContext = default;
 			arrayLength = default;
+#pragma warning disable CS0612
 			return FixedContext<T>.EmptyDisposable;
+#pragma warning restore CS0612
 		}
 		RentedMemoryOwner<T> owner = new(arrayPool, count, clearArray, out arrayLength);
 		return FixedContextValue<T>.CreateDisposable((ValPtr<T>)owner._handle.Pointer, count, owner, out fixedContext);

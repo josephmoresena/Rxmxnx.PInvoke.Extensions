@@ -4,6 +4,10 @@
 /// Interface representing a context from a read-only block of fixed memory.
 /// </summary>
 /// <typeparam name="T">Type of objects in the read-only fixed memory block.</typeparam>
+#if OBSOLETE_FIXED_INTERFACES
+[EditorBrowsable(EditorBrowsableState.Never)]
+[Obsolete(ObsoleteConstants.ObsoleteFixedInterface, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 public interface IReadOnlyFixedContext<T> : IReadOnlyFixedMemory<T>
 {
 	/// <summary>

@@ -7,7 +7,14 @@
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IReadOnlyFixedContext<T>
+internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory,
+#if !OBSOLETE_FIXED_INTERFACES
+	IReadOnlyFixedContext<T>
+#else
+#pragma warning disable CS0612
+	IObsoleteReadOnlyFixedContext<T>
+#pragma warning restore CS0612
+#endif
 {
 #pragma warning disable CS8500
 	/// <summary>
@@ -17,6 +24,9 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	/// <summary>
 	/// An empty instance of <see cref="IReadOnlyFixedContext{T}.IDisposable"/>.
 	/// </summary>
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
+#endif
 	public static readonly IReadOnlyFixedContext<T>.IDisposable EmptyDisposable = Disposable.Default;
 
 	/// <inheritdoc/>
@@ -73,6 +83,9 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	private ReadOnlyFixedContext(ReadOnlyFixedMemory ctx, Int32 count) : base(ctx) => this.Count = count;
 
 	ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => this.CreateReadOnlySpan<T>(this.Count);
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
+#endif
 	IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
 	{
@@ -83,6 +96,9 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 		return result;
 	}
 	/// <inheritdoc cref="IReadOnlyFixedMemory.AsBinaryContext()"/>
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
+#endif
 	public override IReadOnlyFixedContext<Byte> AsBinaryContext() => this.GetTransformation<Byte>(out _);
 
 	/// <summary>
@@ -129,6 +145,10 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	/// This method serves as a reference for the assembly patcher in .NET 9.0+. It is important to keep the
 	/// attributes of its parameters compatible.
 	/// </remarks>
+#if OBSOLETE_FIXED_INTERFACES
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceExtensions, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 	public static IReadOnlyFixedContext<T>.IDisposable CreateDisposable(ReadOnlyValPtr<T> valPtr, Int32 count,
 		IDisposable? disposable = default)
 	{

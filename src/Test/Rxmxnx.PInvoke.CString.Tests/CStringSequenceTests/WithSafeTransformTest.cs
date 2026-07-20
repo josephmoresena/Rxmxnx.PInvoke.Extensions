@@ -71,6 +71,7 @@ public sealed class WithSafeTransformTest
 	}
 
 	[Fact]
+	[Obsolete]
 	public void EmptyTest()
 	{
 		FixedCStringSequence fseq = default;
@@ -129,6 +130,7 @@ public sealed class WithSafeTransformTest
 
 		WithSafeTransformTest.AssertReference((ReadOnlyFixedMemoryList)fseq);
 	}
+	[Obsolete]
 	private static void AssertReference(ReadOnlyFixedMemoryList fml)
 	{
 		Int32 offset = 0;
@@ -179,6 +181,7 @@ public sealed class WithSafeTransformTest
 			PInvokeAssert.Equal(0, fseq.Values[i].Length);
 		}
 	}
+	[Obsolete]
 	private static unsafe void AssertSequence(ReadOnlyFixedMemoryList fml, CStringSequence seq)
 	{
 		Int32 offset = 0;
@@ -263,6 +266,7 @@ public sealed class WithSafeTransformTest
 		PInvokeAssert.Equal(new CString(() => MemoryMarshal.AsBytes<Char>(seq.ToString())).ToString(), fseq.ToString());
 		return new(fseq.Values);
 	}
+	[Obsolete]
 	private static unsafe CStringSequence CreateCopy(ReadOnlyFixedMemoryList fml, CStringSequence seq)
 	{
 		Int32 offset = 0;
@@ -299,6 +303,7 @@ public sealed class WithSafeTransformTest
 		CStringSequence seq = new(values);
 		return seq;
 	}
+	[Obsolete]
 	private static IEnumerable<CString> GetNonEmptyValues(ReadOnlyFixedMemoryList fml)
 	{
 		List<CString> result = [];

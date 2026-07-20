@@ -42,8 +42,14 @@ internal abstract unsafe partial class ReadOnlyFixedMemory : FixedPointer, IRead
 
 	ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => this.CreateReadOnlyBinarySpan();
 	ReadOnlySpan<Object> IReadOnlyFixedMemory.Objects => this.CreateReadOnlyObjectSpan();
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
+#endif
 	IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
 	/// <inheritdoc cref="IReadOnlyFixedMemory.AsObjectContext()"/>
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
+#endif
 	public virtual IReadOnlyFixedContext<Object> AsObjectContext()
 	{
 		this.ValidateReferenceOperation();
@@ -51,6 +57,9 @@ internal abstract unsafe partial class ReadOnlyFixedMemory : FixedPointer, IRead
 	}
 
 	/// <inheritdoc cref="IReadOnlyFixedMemory.AsBinaryContext()"/>
+#if OBSOLETE_FIXED_INTERFACES
+	[Obsolete]
+#endif
 	public virtual IReadOnlyFixedContext<Byte> AsBinaryContext()
 	{
 		this.ValidateUnmanagedOperation();

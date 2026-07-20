@@ -7,6 +7,7 @@ public sealed class RentFixedTest
 {
 	private static readonly IFixture fixture = new Fixture();
 
+#pragma warning disable CS0612
 	[Theory]
 	[InlineData(10)]
 	[InlineData(100)]
@@ -81,11 +82,13 @@ public sealed class RentFixedTest
 	[InlineData(100)]
 	[InlineData(1000)]
 	public void UInt64Test(Int32 size) => TestClass<UInt64>.Test(size);
+#pragma warning restore CS0612
 
 	private static class TestClass<T> where T : unmanaged
 	{
 		private static readonly ArrayPool<T> pool = ArrayPool<T>.Create(1024 * Unsafe.SizeOf<T>(), 50);
 
+		[Obsolete]
 		public static void Test(Int32 size)
 		{
 			T[] arr = TestClass<T>.pool.Rent(size);

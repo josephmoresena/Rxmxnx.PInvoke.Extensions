@@ -24,6 +24,10 @@ public static class ValuePointerExtensions
 	/// If provided, this object will be disposed of when the fixed reference is disposed.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLETE_FIXED_INTERFACES
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceExtensions, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 	public static IReadOnlyFixedContext<T>.IDisposable GetUnsafeFixedContext<T>(this ReadOnlyValPtr<T> ptr, Int32 count,
 		IDisposable? disposable = default)
 		=> ReadOnlyFixedContext<T>.CreateDisposable(ptr, count, disposable);
@@ -43,6 +47,10 @@ public static class ValuePointerExtensions
 	/// If provided, this object will be disposed of when the fixed reference is disposed.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLETE_FIXED_INTERFACES
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceExtensions, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 	public static IFixedContext<T>.IDisposable GetUnsafeFixedContext<T>(this ValPtr<T> ptr, Int32 count,
 		IDisposable? disposable = default)
 		=> FixedContext<T>.CreateDisposable(ptr, count, disposable);

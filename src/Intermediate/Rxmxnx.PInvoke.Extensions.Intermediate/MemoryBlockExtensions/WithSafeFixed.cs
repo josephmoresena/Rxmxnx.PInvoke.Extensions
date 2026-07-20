@@ -24,7 +24,7 @@ public static unsafe partial class MemoryBlockExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T>(this Span<T> span, FixedContextAction<T> action)
 	{
@@ -54,7 +54,7 @@ public static unsafe partial class MemoryBlockExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T>(this Span<T> span, ReadOnlyFixedContextAction<T> action)
 	{
@@ -84,7 +84,7 @@ public static unsafe partial class MemoryBlockExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T>(this ReadOnlySpan<T> span, ReadOnlyFixedContextAction<T> action)
 	{
@@ -116,7 +116,7 @@ public static unsafe partial class MemoryBlockExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T, TArg>(this Span<T> span, TArg arg, FixedContextAction<T, TArg> action)
 #if NET9_0_OR_GREATER
@@ -151,7 +151,7 @@ public static unsafe partial class MemoryBlockExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T, TArg>(this Span<T> span, TArg arg, ReadOnlyFixedContextAction<T, TArg> action)
 #if NET9_0_OR_GREATER
@@ -186,7 +186,7 @@ public static unsafe partial class MemoryBlockExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T, TArg>(this ReadOnlySpan<T> span, TArg arg,
 		ReadOnlyFixedContextAction<T, TArg> action)
@@ -222,7 +222,7 @@ public static unsafe partial class MemoryBlockExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T, TResult>(this Span<T> span, FixedContextFunc<T, TResult> func)
 	{
@@ -254,7 +254,7 @@ public static unsafe partial class MemoryBlockExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T, TResult>(this Span<T> span, ReadOnlyFixedContextFunc<T, TResult> func)
 	{
@@ -286,7 +286,7 @@ public static unsafe partial class MemoryBlockExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T, TResult>(this ReadOnlySpan<T> span,
 		ReadOnlyFixedContextFunc<T, TResult> func)
@@ -321,7 +321,7 @@ public static unsafe partial class MemoryBlockExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T, TArg, TResult>(this Span<T> span, TArg arg,
 		FixedContextFunc<T, TArg, TResult> func)
@@ -359,7 +359,7 @@ public static unsafe partial class MemoryBlockExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T, TArg, TResult>(this Span<T> span, TArg arg,
 		ReadOnlyFixedContextFunc<T, TArg, TResult> func)
@@ -397,7 +397,7 @@ public static unsafe partial class MemoryBlockExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static TResult WithSafeFixed<T, TArg, TResult>(this ReadOnlySpan<T> span, TArg arg,
 		ReadOnlyFixedContextFunc<T, TArg, TResult> func)

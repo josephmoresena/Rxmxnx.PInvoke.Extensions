@@ -75,7 +75,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedListAction"/> delegate.</param>
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T0, T1>(Span<T0> span0, Span<T1> span1, FixedListAction action)
 	{
@@ -118,7 +118,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T0, T1, TArg>(Span<T0> span0, Span<T1> span1, TArg arg,
 		FixedListAction<TArg> action)
@@ -165,7 +165,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedListAction"/> delegate.</param>
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T0, T1, T2>(Span<T0> span0, Span<T1> span1, Span<T2> span2, FixedListAction action)
 	{
@@ -212,7 +212,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T0, T1, T2, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2, TArg arg,
 		FixedListAction<TArg> action)
@@ -263,7 +263,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedListAction"/> delegate.</param>
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T0, T1, T2, T3>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
 		FixedListAction action)
@@ -315,7 +315,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T0, T1, T2, T3, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
 		Span<T3> span3, TArg arg, FixedListAction<TArg> action)
@@ -370,7 +370,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedListAction"/> delegate.</param>
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T0, T1, T2, T3, T4>(Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3,
 		Span<T4> span4, FixedListAction action)
@@ -426,7 +426,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T0, T1, T2, T3, T4, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
 		Span<T3> span3, Span<T4> span4, TArg arg, FixedListAction<TArg> action)
@@ -485,7 +485,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedListAction"/> delegate.</param>
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T0, T1, T2, T3, T4, T5>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
 		Span<T3> span3, Span<T4> span4, Span<T5> span5, FixedListAction action)
@@ -545,7 +545,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T0, T1, T2, T3, T4, T5, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
 		Span<T3> span3, Span<T4> span4, Span<T5> span5, TArg arg, FixedListAction<TArg> action)
@@ -608,7 +608,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedListAction"/> delegate.</param>
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T0, T1, T2, T3, T4, T5, T6>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
 		Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6, FixedListAction action)
@@ -672,7 +672,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, TArg>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
 		Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6, TArg arg, FixedListAction<TArg> action)
@@ -736,7 +736,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedListAction"/> delegate.</param>
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, T7>(Span<T0> span0, Span<T1> span1, Span<T2> span2,
 		Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6, Span<T7> span7, FixedListAction action)
@@ -804,7 +804,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="action">A <see cref="FixedListAction{TArg}"/> delegate.</param>
 #if OBSOLTE_DELEGATES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteDelegate, ObsoleteConstants.ErrorDelegate)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
 	public static void WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, T7, TArg>(Span<T0> span0, Span<T1> span1,
 		Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6, Span<T7> span7, TArg arg,

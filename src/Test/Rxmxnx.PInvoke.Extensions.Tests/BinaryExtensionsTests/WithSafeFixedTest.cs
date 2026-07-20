@@ -104,7 +104,7 @@ public sealed class WithSafeFixedTest
 		WithSafeFixedTest.Test<T, UInt32>(ctx);
 		WithSafeFixedTest.Test<T, UInt64>(ctx);
 	}
-#pragma warning disable CS0612 
+#pragma warning disable CS0612
 	private void ActionReadOnlyTest<T>(in IReadOnlyFixedMemory mem) where T : unmanaged
 		=> this.ActionReadOnlyTest<T>(mem, false);
 	private void ReadOnlyActionReadOnlyTest<T>(in IReadOnlyFixedMemory mem) where T : unmanaged
@@ -201,7 +201,7 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(ctx.Pointer + offset, residualR.Pointer);
 		PInvokeAssert.Equal(ctx.Pointer + offset, bctx.Pointer);
 	}
-#pragma warning disable CS0618
+	[Obsolete]
 	private static unsafe void Test<T, T2>(IReadOnlyFixedContext<T> ctx) where T : unmanaged where T2 : unmanaged
 	{
 		IReadOnlyFixedContext<T2> ctx2 = ctx.Transformation<T2>(out IReadOnlyFixedMemory residual);
@@ -213,7 +213,6 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(ctx.Bytes.Length - offset, residual.Bytes.Length);
 		PInvokeAssert.Equal(ctx.Pointer + offset, residual.Pointer);
 	}
-#pragma warning restore CS0618
 #pragma warning disable CS0612
 	private static void ActionTest<T>(in IFixedMemory mem, WithSafeFixedTest test) where T : unmanaged
 		=> test.ActionTest<T>(mem);

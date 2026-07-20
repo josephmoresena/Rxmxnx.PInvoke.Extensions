@@ -8,6 +8,7 @@
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1121)]
 #endif
+#pragma warning disable CS0618
 public readonly unsafe ref struct FixedCStringSequence
 {
 	/// <summary>
@@ -100,6 +101,32 @@ public readonly unsafe ref struct FixedCStringSequence
 			IsReadOnly = true, Handle = fseq._isValid!, Information = info, Instances = memories,
 		});
 	}
+	/// <summary>
+	/// Implicitly converts a <see cref="FixedCStringSequence"/> to a <see cref="FixedPointerInfo"/>.
+	/// </summary>
+	/// <param name="fseq">A <see cref="FixedCStringSequence"/> instance.</param>
+	public static implicit operator FixedPointerValueList(FixedCStringSequence fseq)
+	{
+		FixedPointerInfo[] info = new FixedPointerInfo[fseq.Values.Count];
+		ReadOnlyFixedMemory?[] memories = new ReadOnlyFixedMemory?[fseq.Values.Count];
+		for (Int32 i = 0; i < memories.Length; i++)
+		{
+			void* ptr = fseq.GetPointer(i, out Int32 length);
+			info[i] = new()
+			{
+				Pointer = ptr,
+				Count = length,
+				SizeOf = sizeof(Byte),
+				IsUnmanaged = true,
+				ConstructorPointer = &ReadOnlyFixedContext<Byte>.CreateInstance,
+				GetTypePointer = &NativeUtilities.GetType<Byte>,
+			};
+		}
+		return new()
+		{
+			IsReadOnly = true, Handle = fseq._isValid!, Information = info, Instances = memories,
+		};
+	}
 
 	/// <summary>
 	/// Retrieves read-only span enumerator from current instance.
@@ -136,3 +163,4 @@ public readonly unsafe ref struct FixedCStringSequence
 		}
 	}
 }
+#pragma warning restore CS0618

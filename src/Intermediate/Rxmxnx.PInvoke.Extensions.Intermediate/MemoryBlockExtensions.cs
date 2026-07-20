@@ -329,6 +329,10 @@ public static unsafe partial class MemoryBlockExtensions
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
+#if OBSOLETE_FIXED_INTERFACES
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceExtensions, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 	public static IReadOnlyFixedContext<T>.IDisposable GetFixedContext<T>(this ReadOnlyMemory<T> mem)
 	{
 		MemoryHandle handle = mem.Pin();
@@ -359,6 +363,10 @@ public static unsafe partial class MemoryBlockExtensions
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
+#if OBSOLETE_FIXED_INTERFACES
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceExtensions, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 	public static IFixedContext<T>.IDisposable GetFixedContext<T>(this Memory<T> mem)
 	{
 		MemoryHandle handle = mem.Pin();
@@ -383,6 +391,10 @@ public static unsafe partial class MemoryBlockExtensions
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
+#if OBSOLETE_FIXED_INTERFACES
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceExtensions, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 	public static IReadOnlyFixedMemory.IDisposable GetFixedMemory<T>(this ReadOnlyMemory<T> mem)
 		=> mem.GetFixedContext();
 	/// <summary>
@@ -401,5 +413,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
+#if OBSOLETE_FIXED_INTERFACES
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceExtensions, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 	public static IFixedMemory.IDisposable GetFixedMemory<T>(this Memory<T> mem) => mem.GetFixedContext();
 }

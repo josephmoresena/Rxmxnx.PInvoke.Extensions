@@ -187,7 +187,11 @@ public sealed class ValPtrTests
 			}
 			else
 			{
+#if !NET10_0_OR_GREATER
 				Span<T>.Enumerator enumerator = span.GetEnumerator();
+#else
+				using Span<T>.Enumerator enumerator = span.GetEnumerator();
+#endif
 				foreach (ref Object refObj in ctx.AsObjectContext().Values)
 				{
 					if (!enumerator.MoveNext()) break;
@@ -235,9 +239,8 @@ public sealed class ValPtrTests
 #else
 				PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in fixedReference.Reference),
 #endif
-				                                  ref Unsafe.As<Object, T>(
-					                                  ref Unsafe.AsRef(
-						                                  in fixedReference.AsObjectContext().Values[0]))));
+				                           ref Unsafe.As<Object, T>(
+					                           ref Unsafe.AsRef(in fixedReference.AsObjectContext().Values[0]))));
 				PInvokeAssert.Equal(typeof(T).IsValueType || fixedReference.IsNullOrEmpty,
 				                    fixedReference.Objects.IsEmpty);
 			}
@@ -313,13 +316,12 @@ public sealed class ValPtrTests
 		PInvokeAssert.True(Unsafe.AreSame(ref fRef2.Reference, ref Unsafe.AsRef(in fRef3.Reference)));
 #endif
 	}
-#pragma warning disable CS0618
+	[Obsolete]
 	private static unsafe void ContextTransformTest<T, TDestination>(IFixedContext<T>.IDisposable ctx)
 	{
 		IFixedContext<TDestination> ctx2 = ctx.Transformation<TDestination>(out IFixedMemory offset);
 		PInvokeAssert.Equal(ctx2.Values.Length, ctx.Bytes.Length / sizeof(TDestination));
 		PInvokeAssert.Equal(offset.Bytes.Length, ctx.Bytes.Length - ctx2.Values.Length * sizeof(TDestination));
 	}
-#pragma warning restore CS0618
 }
 #pragma warning restore CS8500

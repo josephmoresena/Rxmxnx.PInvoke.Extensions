@@ -7,10 +7,10 @@ namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests.WithFixedSafeTests;
 public sealed class FixedMemoryListTest
 {
 	private static readonly IFixture fixture = new Fixture();
-
 	private readonly Array[] _array = FixedMemoryListTest.GetArray();
 
 	[Fact]
+	[Obsolete]
 	public void EmptyTest()
 	{
 		FixedMemoryList fml = default;
@@ -163,9 +163,13 @@ public sealed class FixedMemoryListTest
 		                                             FixedMemoryListTest.ReadOnlyFuncReadOnlyTest));
 	}
 
+	[Obsolete]
 	private void ActionTest(FixedMemoryList fml) => this.ActionFullTest(fml);
+	[Obsolete]
 	private void ActionReadOnlyTest(ReadOnlyFixedMemoryList fml) => this.ActionTest(fml, false);
+	[Obsolete]
 	private void ReadOnlyActionReadOnlyTest(ReadOnlyFixedMemoryList fml) => this.ActionTest(fml, true);
+	[Obsolete]
 	private void ActionTest(ReadOnlyFixedMemoryList fml, Boolean readOnly)
 	{
 		PInvokeAssert.False(fml.IsEmpty);
@@ -203,6 +207,7 @@ public sealed class FixedMemoryListTest
 		}
 		FixedMemoryListTest.EnumeratorTest(fml);
 	}
+	[Obsolete]
 	private void ActionFullTest(FixedMemoryList fml)
 	{
 		PInvokeAssert.False(fml.IsEmpty);
@@ -240,6 +245,7 @@ public sealed class FixedMemoryListTest
 		}
 		FixedMemoryListTest.EnumeratorTest(fml);
 	}
+	[Obsolete]
 	private Byte[][] FuncTest(FixedMemoryList fml)
 	{
 		this.ActionFullTest(fml);
@@ -248,6 +254,7 @@ public sealed class FixedMemoryListTest
 			result[i] = fml[i].Bytes.ToArray();
 		return result;
 	}
+	[Obsolete]
 	private Byte[][] FuncReadOnlyTest(ReadOnlyFixedMemoryList fml)
 	{
 		this.ActionTest(fml, false);
@@ -256,6 +263,7 @@ public sealed class FixedMemoryListTest
 			result[i] = fml[i].Bytes.ToArray();
 		return result;
 	}
+	[Obsolete]
 	private Byte[][] ReadOnlyFuncReadOnlyTest(ReadOnlyFixedMemoryList fml)
 	{
 		this.ActionTest(fml, true);
@@ -318,16 +326,23 @@ public sealed class FixedMemoryListTest
 		}
 		return arr;
 	}
+	[Obsolete]
 	private static void ActionTest(FixedMemoryList fml, FixedMemoryListTest test) => test.ActionTest(fml, false);
+	[Obsolete]
 	private static void ActionReadOnlyTest(ReadOnlyFixedMemoryList fml, FixedMemoryListTest test)
 		=> test.ActionTest(fml, false);
+	[Obsolete]
 	private static void ReadOnlyActionReadOnlyTest(ReadOnlyFixedMemoryList fml, FixedMemoryListTest test)
 		=> test.ReadOnlyActionReadOnlyTest(fml);
+	[Obsolete]
 	private static Byte[][] FuncTest(FixedMemoryList fml, FixedMemoryListTest test) => test.FuncTest(fml);
+	[Obsolete]
 	private static Byte[][] FuncReadOnlyTest(ReadOnlyFixedMemoryList fml, FixedMemoryListTest test)
 		=> test.FuncReadOnlyTest(fml);
+	[Obsolete]
 	private static Byte[][] ReadOnlyFuncReadOnlyTest(ReadOnlyFixedMemoryList fml, FixedMemoryListTest test)
 		=> test.ReadOnlyFuncReadOnlyTest(fml);
+	[Obsolete]
 	private static unsafe void ArrayTest<T>(IReadOnlyFixedMemory mem, Array arr, Boolean readOnly) where T : unmanaged
 	{
 		IReadOnlyFixedContext<T> ctx = (IReadOnlyFixedContext<T>)mem;
@@ -363,6 +378,7 @@ public sealed class FixedMemoryListTest
 		PInvokeAssert.Equal(bytes, spanByte.ToArray());
 		PInvokeAssert.Equal(arrT, spanT.ToArray());
 	}
+	[Obsolete]
 	private static void EnumeratorTest(ReadOnlyFixedMemoryList fml)
 	{
 		IEnumerator arrEnumerator = fml.ToArray().GetEnumerator();
@@ -372,6 +388,7 @@ public sealed class FixedMemoryListTest
 		while (fmlEnumerator.MoveNext() && arrEnumerator.MoveNext())
 			PInvokeAssert.Equal(arrEnumerator.Current, fmlEnumerator.Current);
 	}
+	[Obsolete]
 	private static void EnumeratorTest(FixedMemoryList fml)
 	{
 		IEnumerator arrEnumerator = fml.ToArray().GetEnumerator();
