@@ -8,7 +8,7 @@ public readonly unsafe ref struct FixedContextValue<T>
 #if NET9_0_OR_GREATER
 	: IFixedPointerOperators<FixedContextValue<T>>,
 #if !OBSOLETE_FIXED_INTERFACES
-		IObsoleteFixedContext<T>
+		IFixedContext<T>
 #else
 #pragma warning disable CS0612
 		IObsoleteFixedContext<T>
