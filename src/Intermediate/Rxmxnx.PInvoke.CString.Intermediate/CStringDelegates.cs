@@ -12,7 +12,7 @@ public delegate void CStringSequenceCreationAction<in TArg>(Span<Byte> span, Int
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-	;
+;
 
 /// <summary>
 /// Encapsulates a method that operates on a <see cref="FixedCStringSequence"/> instance.
@@ -20,7 +20,7 @@ public delegate void CStringSequenceCreationAction<in TArg>(Span<Byte> span, Int
 /// <param name="seq">The <see cref="FixedCStringSequence"/> instance to operate on.</param>
 #if OBSOLETE_FIXED_INTERFACES
 [EditorBrowsable(EditorBrowsableState.Never)]
-[Obsolete(ObsoleteConstants.ObsoleteSequenceDelegateTypes, false)]
+[Obsolete(ObsoleteConstants.ObsoleteDelegateTypes, false)]
 #endif
 public delegate void CStringSequenceAction(FixedCStringSequence seq);
 
@@ -33,13 +33,13 @@ public delegate void CStringSequenceAction(FixedCStringSequence seq);
 /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 #if OBSOLETE_FIXED_INTERFACES
 [EditorBrowsable(EditorBrowsableState.Never)]
-[Obsolete(ObsoleteConstants.ObsoleteSequenceDelegateTypes, false)]
+[Obsolete(ObsoleteConstants.ObsoleteDelegateTypes, false)]
 #endif
 public delegate void CStringSequenceAction<in TArg>(FixedCStringSequence seq, TArg arg)
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-	;
+;
 
 /// <summary>
 /// Encapsulates a method that operates on a <see cref="FixedCStringSequence"/> instance and returns a value of
@@ -50,7 +50,7 @@ public delegate void CStringSequenceAction<in TArg>(FixedCStringSequence seq, TA
 /// <returns>The result of the method.</returns>
 #if OBSOLETE_FIXED_INTERFACES
 [EditorBrowsable(EditorBrowsableState.Never)]
-[Obsolete(ObsoleteConstants.ObsoleteSequenceDelegateTypes, false)]
+[Obsolete(ObsoleteConstants.ObsoleteDelegateTypes, false)]
 #endif
 public delegate TResult CStringSequenceFunc<out TResult>(FixedCStringSequence seq);
 
@@ -66,10 +66,10 @@ public delegate TResult CStringSequenceFunc<out TResult>(FixedCStringSequence se
 /// <returns>The result of the method.</returns>
 #if OBSOLETE_FIXED_INTERFACES
 [EditorBrowsable(EditorBrowsableState.Never)]
-[Obsolete(ObsoleteConstants.ObsoleteSequenceDelegateTypes, false)]
+[Obsolete(ObsoleteConstants.ObsoleteDelegateTypes, false)]
 #endif
 public delegate TResult CStringSequenceFunc<in TArg, out TResult>(FixedCStringSequence seq, TArg arg)
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-	;
+;

@@ -21,7 +21,7 @@ public unsafe partial class CStringSequence
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLETE_FIXED_INTERFACES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteSequenceDelegateTypes, false)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, false)]
 #endif
 	public void WithSafeTransform(CStringSequenceAction action)
 	{
@@ -54,7 +54,7 @@ public unsafe partial class CStringSequence
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLETE_FIXED_INTERFACES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteSequenceDelegateTypes, false)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, false)]
 #endif
 	public void WithSafeTransform<TState>(TState state, CStringSequenceAction<TState> action)
 #if NET9_0_OR_GREATER
@@ -89,7 +89,7 @@ public unsafe partial class CStringSequence
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLETE_FIXED_INTERFACES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteSequenceDelegateTypes, false)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, false)]
 #endif
 	public TResult WithSafeTransform<TResult>(CStringSequenceFunc<TResult> func)
 	{
@@ -124,7 +124,7 @@ public unsafe partial class CStringSequence
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if OBSOLETE_FIXED_INTERFACES
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete(ObsoleteConstants.ObsoleteSequenceDelegateTypes, false)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, false)]
 #endif
 	public TResult WithSafeTransform<TState, TResult>(TState state, CStringSequenceFunc<TState, TResult> func)
 #if NET9_0_OR_GREATER
