@@ -22,13 +22,14 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span0">1st span.</param>
 	/// <param name="span1">2nd span.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TAction, T0, T1>(this TAction action, Span<T0> span0, Span<T1> span1)
+	public static void WithSafeFixed<TAction, T0, T1>(this TAction? action, Span<T0> span0, Span<T1> span1)
 #if !NET9_0_OR_GREATER
 		where TAction : IFixedPointerListAction
 #else
 		where TAction : IFixedPointerListAction, allows ref struct
 #endif
 	{
+		if (action is null) return;
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
@@ -55,7 +56,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span0">1st read-only span.</param>
 	/// <param name="span1">2nd read-only span.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TAction, T0, T1>(this TAction action, ReadOnlySpan<T0> span0,
+	public static void WithSafeFixed<TAction, T0, T1>(this TAction? action, ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1)
 #if !NET9_0_OR_GREATER
 		where TAction : IFixedPointerListAction
@@ -63,6 +64,7 @@ public static unsafe class FixedPointerListValueExtensions
 		where TAction : IFixedPointerListAction, allows ref struct
 #endif
 	{
+		if (action is null) return;
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
@@ -157,7 +159,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span0">1st span.</param>
 	/// <param name="span1">2nd span.</param>
 	/// <param name="result">Output. Function result.</param>
-	public static void WithSafeFixed<TFunction, TResult, T0, T1>(this TFunction func, Span<T0> span0, Span<T1> span1,
+	public static void WithSafeFixed<TFunction, TResult, T0, T1>(this TFunction? func, Span<T0> span0, Span<T1> span1,
 		out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IFixedPointerListFunction<TResult>
@@ -165,6 +167,11 @@ public static unsafe class FixedPointerListValueExtensions
 		where TFunction : IFixedPointerListFunction<TResult>, allows ref struct
 #endif
 	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
@@ -192,7 +199,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span0">1st read-only span.</param>
 	/// <param name="span1">2nd read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
-	public static void WithSafeFixed<TFunction, TResult, T0, T1>(this TFunction func, ReadOnlySpan<T0> span0,
+	public static void WithSafeFixed<TFunction, TResult, T0, T1>(this TFunction? func, ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IFixedPointerListFunction<TResult>
@@ -200,6 +207,11 @@ public static unsafe class FixedPointerListValueExtensions
 		where TFunction : IFixedPointerListFunction<TResult>, allows ref struct
 #endif
 	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
@@ -298,7 +310,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span1">2nd span.</param>
 	/// <param name="span2">3rd span.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TAction, T0, T1, T2>(this TAction action, Span<T0> span0, Span<T1> span1,
+	public static void WithSafeFixed<TAction, T0, T1, T2>(this TAction? action, Span<T0> span0, Span<T1> span1,
 		Span<T2> span2)
 #if !NET9_0_OR_GREATER
 		where TAction : IFixedPointerListAction
@@ -306,6 +318,7 @@ public static unsafe class FixedPointerListValueExtensions
 		where TAction : IFixedPointerListAction, allows ref struct
 #endif
 	{
+		if (action is null) return;
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -336,7 +349,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span1">2nd read-only span.</param>
 	/// <param name="span2">3rd read-only span.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TAction, T0, T1, T2>(this TAction action, ReadOnlySpan<T0> span0,
+	public static void WithSafeFixed<TAction, T0, T1, T2>(this TAction? action, ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2)
 #if !NET9_0_OR_GREATER
 		where TAction : IFixedPointerListAction
@@ -344,6 +357,7 @@ public static unsafe class FixedPointerListValueExtensions
 		where TAction : IFixedPointerListAction, allows ref struct
 #endif
 	{
+		if (action is null) return;
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -451,7 +465,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span1">2nd span.</param>
 	/// <param name="span2">3rd span.</param>
 	/// <param name="result">Output. Function result.</param>
-	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2>(this TFunction func, Span<T0> span0,
+	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2>(this TFunction? func, Span<T0> span0,
 		Span<T1> span1, Span<T2> span2, out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IFixedPointerListFunction<TResult>
@@ -459,6 +473,11 @@ public static unsafe class FixedPointerListValueExtensions
 		where TFunction : IFixedPointerListFunction<TResult>, allows ref struct
 #endif
 	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -490,7 +509,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span1">2nd read-only span.</param>
 	/// <param name="span2">3rd read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
-	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2>(this TFunction func, ReadOnlySpan<T0> span0,
+	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2>(this TFunction? func, ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IFixedPointerListFunction<TResult>
@@ -498,6 +517,11 @@ public static unsafe class FixedPointerListValueExtensions
 		where TFunction : IFixedPointerListFunction<TResult>, allows ref struct
 #endif
 	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -608,7 +632,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span2">3rd span.</param>
 	/// <param name="span3">4th span.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TAction, T0, T1, T2, T3>(this TAction action, Span<T0> span0, Span<T1> span1,
+	public static void WithSafeFixed<TAction, T0, T1, T2, T3>(this TAction? action, Span<T0> span0, Span<T1> span1,
 		Span<T2> span2, Span<T3> span3)
 #if !NET9_0_OR_GREATER
 		where TAction : IFixedPointerListAction
@@ -616,6 +640,7 @@ public static unsafe class FixedPointerListValueExtensions
 		where TAction : IFixedPointerListAction, allows ref struct
 #endif
 	{
+		if (action is null) return;
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -650,7 +675,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span2">3rd read-only span.</param>
 	/// <param name="span3">4th read-only span.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TAction, T0, T1, T2, T3>(this TAction action, ReadOnlySpan<T0> span0,
+	public static void WithSafeFixed<TAction, T0, T1, T2, T3>(this TAction? action, ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3)
 #if !NET9_0_OR_GREATER
 		where TAction : IFixedPointerListAction
@@ -658,6 +683,7 @@ public static unsafe class FixedPointerListValueExtensions
 		where TAction : IFixedPointerListAction, allows ref struct
 #endif
 	{
+		if (action is null) return;
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -777,7 +803,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span2">3rd span.</param>
 	/// <param name="span3">4th span.</param>
 	/// <param name="result">Output. Function result.</param>
-	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3>(this TFunction func, Span<T0> span0,
+	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3>(this TFunction? func, Span<T0> span0,
 		Span<T1> span1, Span<T2> span2, Span<T3> span3, out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IFixedPointerListFunction<TResult>
@@ -785,6 +811,11 @@ public static unsafe class FixedPointerListValueExtensions
 		where TFunction : IFixedPointerListFunction<TResult>, allows ref struct
 #endif
 	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -820,7 +851,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span2">3rd read-only span.</param>
 	/// <param name="span3">4th read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
-	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3>(this TFunction func, ReadOnlySpan<T0> span0,
+	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3>(this TFunction? func, ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IFixedPointerListFunction<TResult>
@@ -828,6 +859,11 @@ public static unsafe class FixedPointerListValueExtensions
 		where TFunction : IFixedPointerListFunction<TResult>, allows ref struct
 #endif
 	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -951,7 +987,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span3">4th span.</param>
 	/// <param name="span4">5th span.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TAction, T0, T1, T2, T3, T4>(this TAction action, Span<T0> span0, Span<T1> span1,
+	public static void WithSafeFixed<TAction, T0, T1, T2, T3, T4>(this TAction? action, Span<T0> span0, Span<T1> span1,
 		Span<T2> span2, Span<T3> span3, Span<T4> span4)
 #if !NET9_0_OR_GREATER
 		where TAction : IFixedPointerListAction
@@ -959,6 +995,7 @@ public static unsafe class FixedPointerListValueExtensions
 		where TAction : IFixedPointerListAction, allows ref struct
 #endif
 	{
+		if (action is null) return;
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -997,7 +1034,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span3">4th read-only span.</param>
 	/// <param name="span4">5th read-only span.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TAction, T0, T1, T2, T3, T4>(this TAction action, ReadOnlySpan<T0> span0,
+	public static void WithSafeFixed<TAction, T0, T1, T2, T3, T4>(this TAction? action, ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4)
 #if !NET9_0_OR_GREATER
 		where TAction : IFixedPointerListAction
@@ -1005,6 +1042,7 @@ public static unsafe class FixedPointerListValueExtensions
 		where TAction : IFixedPointerListAction, allows ref struct
 #endif
 	{
+		if (action is null) return;
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -1136,7 +1174,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span3">4th span.</param>
 	/// <param name="span4">5th span.</param>
 	/// <param name="result">Output. Function result.</param>
-	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4>(this TFunction func, Span<T0> span0,
+	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4>(this TFunction? func, Span<T0> span0,
 		Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4, out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IFixedPointerListFunction<TResult>
@@ -1144,6 +1182,11 @@ public static unsafe class FixedPointerListValueExtensions
 		where TFunction : IFixedPointerListFunction<TResult>, allows ref struct
 #endif
 	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -1183,7 +1226,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span3">4th read-only span.</param>
 	/// <param name="span4">5th read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
-	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4>(this TFunction func,
+	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4>(this TFunction? func,
 		ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3,
 		ReadOnlySpan<T4> span4, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -1192,6 +1235,11 @@ public static unsafe class FixedPointerListValueExtensions
 		where TFunction : IFixedPointerListFunction<TResult>, allows ref struct
 #endif
 	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -1327,7 +1375,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span4">5th span.</param>
 	/// <param name="span5">6th span.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TAction, T0, T1, T2, T3, T4, T5>(this TAction action, Span<T0> span0,
+	public static void WithSafeFixed<TAction, T0, T1, T2, T3, T4, T5>(this TAction? action, Span<T0> span0,
 		Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5)
 #if !NET9_0_OR_GREATER
 		where TAction : IFixedPointerListAction
@@ -1335,6 +1383,7 @@ public static unsafe class FixedPointerListValueExtensions
 		where TAction : IFixedPointerListAction, allows ref struct
 #endif
 	{
+		if (action is null) return;
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -1377,7 +1426,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span4">5th read-only span.</param>
 	/// <param name="span5">6th read-only span.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TAction, T0, T1, T2, T3, T4, T5>(this TAction action, ReadOnlySpan<T0> span0,
+	public static void WithSafeFixed<TAction, T0, T1, T2, T3, T4, T5>(this TAction? action, ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4,
 		ReadOnlySpan<T5> span5)
 #if !NET9_0_OR_GREATER
@@ -1386,6 +1435,7 @@ public static unsafe class FixedPointerListValueExtensions
 		where TAction : IFixedPointerListAction, allows ref struct
 #endif
 	{
+		if (action is null) return;
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -1530,7 +1580,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span4">5th span.</param>
 	/// <param name="span5">6th span.</param>
 	/// <param name="result">Output. Function result.</param>
-	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5>(this TFunction func, Span<T0> span0,
+	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5>(this TFunction? func, Span<T0> span0,
 		Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5, out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IFixedPointerListFunction<TResult>
@@ -1538,6 +1588,11 @@ public static unsafe class FixedPointerListValueExtensions
 		where TFunction : IFixedPointerListFunction<TResult>, allows ref struct
 #endif
 	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -1581,7 +1636,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span4">5th read-only span.</param>
 	/// <param name="span5">6th read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
-	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5>(this TFunction func,
+	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5>(this TFunction? func,
 		ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3,
 		ReadOnlySpan<T4> span4, ReadOnlySpan<T5> span5, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -1590,6 +1645,11 @@ public static unsafe class FixedPointerListValueExtensions
 		where TFunction : IFixedPointerListFunction<TResult>, allows ref struct
 #endif
 	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -1738,7 +1798,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span5">6th span.</param>
 	/// <param name="span6">7th span.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TAction, T0, T1, T2, T3, T4, T5, T6>(this TAction action, Span<T0> span0,
+	public static void WithSafeFixed<TAction, T0, T1, T2, T3, T4, T5, T6>(this TAction? action, Span<T0> span0,
 		Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6)
 #if !NET9_0_OR_GREATER
 		where TAction : IFixedPointerListAction
@@ -1746,6 +1806,7 @@ public static unsafe class FixedPointerListValueExtensions
 		where TAction : IFixedPointerListAction, allows ref struct
 #endif
 	{
+		if (action is null) return;
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -1792,7 +1853,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span5">6th read-only span.</param>
 	/// <param name="span6">7th read-only span.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TAction, T0, T1, T2, T3, T4, T5, T6>(this TAction action, ReadOnlySpan<T0> span0,
+	public static void WithSafeFixed<TAction, T0, T1, T2, T3, T4, T5, T6>(this TAction? action, ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4,
 		ReadOnlySpan<T5> span5, ReadOnlySpan<T6> span6)
 #if !NET9_0_OR_GREATER
@@ -1801,6 +1862,7 @@ public static unsafe class FixedPointerListValueExtensions
 		where TAction : IFixedPointerListAction, allows ref struct
 #endif
 	{
+		if (action is null) return;
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -1957,7 +2019,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span5">6th span.</param>
 	/// <param name="span6">7th span.</param>
 	/// <param name="result">Output. Function result.</param>
-	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5, T6>(this TFunction func,
+	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5, T6>(this TFunction? func,
 		Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6,
 		out TResult result)
 #if !NET9_0_OR_GREATER
@@ -1966,6 +2028,11 @@ public static unsafe class FixedPointerListValueExtensions
 		where TFunction : IFixedPointerListFunction<TResult>, allows ref struct
 #endif
 	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -2013,7 +2080,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span5">6th read-only span.</param>
 	/// <param name="span6">7th read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
-	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5, T6>(this TFunction func,
+	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5, T6>(this TFunction? func,
 		ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3,
 		ReadOnlySpan<T4> span4, ReadOnlySpan<T5> span5, ReadOnlySpan<T6> span6, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -2022,6 +2089,11 @@ public static unsafe class FixedPointerListValueExtensions
 		where TFunction : IFixedPointerListFunction<TResult>, allows ref struct
 #endif
 	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -2182,7 +2254,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span6">7th span.</param>
 	/// <param name="span7">8th span.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TAction, T0, T1, T2, T3, T4, T5, T6, T7>(this TAction action, Span<T0> span0,
+	public static void WithSafeFixed<TAction, T0, T1, T2, T3, T4, T5, T6, T7>(this TAction? action, Span<T0> span0,
 		Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6, Span<T7> span7)
 #if !NET9_0_OR_GREATER
 		where TAction : IFixedPointerListAction
@@ -2190,6 +2262,7 @@ public static unsafe class FixedPointerListValueExtensions
 		where TAction : IFixedPointerListAction, allows ref struct
 #endif
 	{
+		if (action is null) return;
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -2240,7 +2313,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span6">7th read-only span.</param>
 	/// <param name="span7">8th read-only span.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TAction, T0, T1, T2, T3, T4, T5, T6, T7>(this TAction action,
+	public static void WithSafeFixed<TAction, T0, T1, T2, T3, T4, T5, T6, T7>(this TAction? action,
 		ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3,
 		ReadOnlySpan<T4> span4, ReadOnlySpan<T5> span5, ReadOnlySpan<T6> span6, ReadOnlySpan<T7> span7)
 #if !NET9_0_OR_GREATER
@@ -2249,6 +2322,7 @@ public static unsafe class FixedPointerListValueExtensions
 		where TAction : IFixedPointerListAction, allows ref struct
 #endif
 	{
+		if (action is null) return;
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -2417,7 +2491,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span6">7th span.</param>
 	/// <param name="span7">8th span.</param>
 	/// <param name="result">Output. Function result.</param>
-	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5, T6, T7>(this TFunction func,
+	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5, T6, T7>(this TFunction? func,
 		Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6,
 		Span<T7> span7, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -2426,6 +2500,11 @@ public static unsafe class FixedPointerListValueExtensions
 		where TFunction : IFixedPointerListFunction<TResult>, allows ref struct
 #endif
 	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
@@ -2477,7 +2556,7 @@ public static unsafe class FixedPointerListValueExtensions
 	/// <param name="span6">7th read-only span.</param>
 	/// <param name="span7">8th read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
-	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5, T6, T7>(this TFunction func,
+	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5, T6, T7>(this TFunction? func,
 		ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3,
 		ReadOnlySpan<T4> span4, ReadOnlySpan<T5> span5, ReadOnlySpan<T6> span6, ReadOnlySpan<T7> span7,
 		out TResult result)
@@ -2487,6 +2566,11 @@ public static unsafe class FixedPointerListValueExtensions
 		where TFunction : IFixedPointerListFunction<TResult>, allows ref struct
 #endif
 	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))

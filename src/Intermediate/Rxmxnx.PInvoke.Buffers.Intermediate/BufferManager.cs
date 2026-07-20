@@ -212,13 +212,14 @@ public static partial class BufferManager<T>
 	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/>.</typeparam>
 	/// <param name="action">Action to perform with allocated buffer.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void Alloc<TAction>(TAction action)
+	public static void Alloc<TAction>(TAction? action)
 #if !NET9_0_OR_GREATER
 		where TAction : IScopedBufferAction<T>
 #else
 		where TAction : IScopedBufferAction<T>, allows ref struct
 #endif
 	{
+		if (action is null) return;
 		if (typeof(T).IsValueType)
 			BufferManager<T>.AllocValue(ref action);
 		else
@@ -233,13 +234,18 @@ public static partial class BufferManager<T>
 	/// <param name="func">Function to execute with allocated buffer.</param>
 	/// <param name="result">Output. Function result.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void Alloc<TResult, TFunction>(TFunction func, out TResult result)
+	public static void Alloc<TResult, TFunction>(TFunction? func, out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IScopedBufferFunction<T, TResult>
 #else
 		where TFunction : IScopedBufferFunction<T, TResult>, allows ref struct
 #endif
 	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
 		if (typeof(T).IsValueType)
 		{
 			BufferManager<T>.AllocValue(ref func, out result);

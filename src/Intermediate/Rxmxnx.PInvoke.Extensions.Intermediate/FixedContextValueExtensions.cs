@@ -114,13 +114,14 @@ public static unsafe class FixedContextValueExtensions
 	/// <param name="span">The current span of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T, TAction>(this Span<T> span, TAction action)
+	public static void WithSafeFixed<T, TAction>(this Span<T> span, TAction? action)
 #if !NET9_0_OR_GREATER
 		where TAction : IFixedContextAction<T>
 #else
 		where TAction : IFixedContextAction<T>, allows ref struct
 #endif
 	{
+		if (action is null) return;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 			action.Accept(new(ptr, span.Length));
 	}
@@ -133,17 +134,17 @@ public static unsafe class FixedContextValueExtensions
 	/// <param name="arr">The current array of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T, TAction>(this T[]? arr, TAction action)
+	public static void WithSafeFixed<T, TAction>(this T[]? arr, TAction? action)
 #if !NET9_0_OR_GREATER
 		where TAction : IFixedContextAction<T>
 #else
 		where TAction : IFixedContextAction<T>, allows ref struct
 #endif
 	{
-		if (arr is not null)
+		if (arr is not null && action is not null)
 			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
 				action.Accept(new(ptr, arr.Length));
-		else
+		else if (action is not null)
 			action.Accept(default);
 	}
 	/// <summary>
@@ -198,13 +199,18 @@ public static unsafe class FixedContextValueExtensions
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T, TFunction, TResult>(this Span<T> span, TFunction func, out TResult result)
+	public static void WithSafeFixed<T, TFunction, TResult>(this Span<T> span, TFunction? func, out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IFixedContextFunction<T, TResult>
 #else
 		where TFunction : IFixedContextFunction<T, TResult>, allows ref struct
 #endif
 	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 			result = func.Apply(new(ptr, span.Length));
 	}
@@ -219,18 +225,20 @@ public static unsafe class FixedContextValueExtensions
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T, TResult, TFunction>(this T[]? arr, TFunction func, out TResult result)
+	public static void WithSafeFixed<T, TResult, TFunction>(this T[]? arr, TFunction? func, out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IFixedContextFunction<T, TResult>
 #else
 		where TFunction : IFixedContextFunction<T, TResult>, allows ref struct
 #endif
 	{
-		if (arr is not null)
+		if (arr is not null && func is not null)
 			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
 				result = func.Apply(new(ptr, arr.Length));
-		else
+		else if (func is not null)
 			result = func.Apply(default);
+		else
+			Unsafe.SkipInit(out result);
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory

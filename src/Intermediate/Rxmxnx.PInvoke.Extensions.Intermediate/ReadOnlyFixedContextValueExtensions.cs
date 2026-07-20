@@ -45,17 +45,17 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	/// <param name="str">The <see cref="String"/> instance to pin during the action.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TAction>(this String? str, TAction action)
+	public static void WithSafeFixed<TAction>(this String? str, TAction? action)
 #if !NET9_0_OR_GREATER
 		where TAction : IReadOnlyFixedContextAction<Char>
 #else
 		where TAction : IReadOnlyFixedContextAction<Char>, allows ref struct
 #endif
 	{
-		if (str is not null)
+		if (str is not null && action is not null)
 			fixed (void* ptr = &MemoryMarshal.GetReference(str.AsSpan()))
 				action.Accept(new(ptr, str.Length));
-		else
+		else if (action is not null)
 			action.Accept(default);
 	}
 	/// <summary>
@@ -68,18 +68,20 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TResult, TFunction>(this String? str, TFunction func, out TResult result)
+	public static void WithSafeFixed<TResult, TFunction>(this String? str, TFunction? func, out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IReadOnlyFixedContextFunction<Char, TResult>
 #else
 		where TFunction : IReadOnlyFixedContextFunction<Char, TResult>, allows ref struct
 #endif
 	{
-		if (str is not null)
+		if (str is not null && func is not null)
 			fixed (void* ptr = &MemoryMarshal.GetReference(str.AsSpan()))
 				result = func.Apply(new(ptr, str.Length));
-		else
+		else if (func is not null)
 			result = func.Apply(default);
+		else
+			Unsafe.SkipInit(out result);
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current string by pinning its memory
@@ -112,13 +114,14 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	/// <param name="span">The current read-only span of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T, TAction>(this ReadOnlySpan<T> span, TAction action)
+	public static void WithSafeFixed<T, TAction>(this ReadOnlySpan<T> span, TAction? action)
 #if !NET9_0_OR_GREATER
 		where TAction : IReadOnlyFixedContextAction<T>
 #else
 		where TAction : IReadOnlyFixedContextAction<T>, allows ref struct
 #endif
 	{
+		if (action is null) return;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 			action.Accept(new(ptr, span.Length));
 	}
@@ -131,13 +134,14 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	/// <param name="span">The current span of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T, TAction>(this Span<T> span, TAction action)
+	public static void WithSafeFixed<T, TAction>(this Span<T> span, TAction? action)
 #if !NET9_0_OR_GREATER
 		where TAction : IReadOnlyFixedContextAction<T>
 #else
 		where TAction : IReadOnlyFixedContextAction<T>, allows ref struct
 #endif
 	{
+		if (action is null) return;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 			action.Accept(new FixedContextValue<T>(ptr, span.Length));
 	}
@@ -150,17 +154,17 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	/// <param name="arr">The current array of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T, TAction>(this T[]? arr, TAction action)
+	public static void WithSafeFixed<T, TAction>(this T[]? arr, TAction? action)
 #if !NET9_0_OR_GREATER
 		where TAction : IReadOnlyFixedContextAction<T>
 #else
 		where TAction : IReadOnlyFixedContextAction<T>, allows ref struct
 #endif
 	{
-		if (arr is not null)
+		if (arr is not null && action is not null)
 			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
 				action.Accept(new FixedContextValue<T>(ptr, arr.Length));
-		else
+		else if (action is not null)
 			action.Accept(default);
 	}
 	/// <summary>
@@ -234,7 +238,7 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T, TResult, TFunction>(this ReadOnlySpan<T> span, TFunction func,
+	public static void WithSafeFixed<T, TResult, TFunction>(this ReadOnlySpan<T> span, TFunction? func,
 		out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IReadOnlyFixedContextFunction<T, TResult>
@@ -242,6 +246,11 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 		where TFunction : IReadOnlyFixedContextFunction<T, TResult>, allows ref struct
 #endif
 	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 			result = func.Apply(new(ptr, span.Length));
 	}
@@ -256,13 +265,18 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T, TResult, TFunction>(this Span<T> span, TFunction func, out TResult result)
+	public static void WithSafeFixed<T, TResult, TFunction>(this Span<T> span, TFunction? func, out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IReadOnlyFixedContextFunction<T, TResult>
 #else
 		where TFunction : IReadOnlyFixedContextFunction<T, TResult>, allows ref struct
 #endif
 	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 			result = func.Apply(new FixedContextValue<T>(ptr, span.Length));
 	}
@@ -277,18 +291,20 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T, TResult, TFunction>(this T[]? arr, TFunction func, out TResult result)
+	public static void WithSafeFixed<T, TResult, TFunction>(this T[]? arr, TFunction? func, out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IReadOnlyFixedContextFunction<T, TResult>
 #else
 		where TFunction : IReadOnlyFixedContextFunction<T, TResult>, allows ref struct
 #endif
 	{
-		if (arr is not null)
+		if (arr is not null && func is not null)
 			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
 				result = func.Apply(new(ptr, arr.Length));
-		else
+		else if (func is not null)
 			result = func.Apply(default);
+		else
+			Unsafe.SkipInit(out result);
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current read-only span by pinning its memory

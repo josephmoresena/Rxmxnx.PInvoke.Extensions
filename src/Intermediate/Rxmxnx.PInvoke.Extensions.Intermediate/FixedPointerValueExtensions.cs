@@ -68,13 +68,14 @@ public static unsafe class FixedPointerValueExtensions
 	/// <param name="span">The current span of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T, TAction>(this Span<T> span, TAction action)
+	public static void WithSafeFixed<T, TAction>(this Span<T> span, TAction? action)
 #if !NET9_0_OR_GREATER
 		where TAction : IFixedAction
 #else
 		where TAction : IFixedAction, allows ref struct
 #endif
 	{
+		if (action is null) return;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 			action.Accept(new FixedContextValue<T>(ptr, span.Length));
 	}
@@ -87,13 +88,14 @@ public static unsafe class FixedPointerValueExtensions
 	/// <param name="span">The current read-only span of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T, TAction>(this ReadOnlySpan<T> span, TAction action)
+	public static void WithSafeFixed<T, TAction>(this ReadOnlySpan<T> span, TAction? action)
 #if !NET9_0_OR_GREATER
 		where TAction : IFixedAction
 #else
 		where TAction : IFixedAction, allows ref struct
 #endif
 	{
+		if (action is null) return;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 			action.Accept(new ReadOnlyFixedContextValue<T>(ptr, span.Length));
 	}
@@ -146,13 +148,18 @@ public static unsafe class FixedPointerValueExtensions
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T, TResult, TFunction>(this Span<T> span, TFunction func, out TResult result)
+	public static void WithSafeFixed<T, TResult, TFunction>(this Span<T> span, TFunction? func, out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IFixedFunction<TResult>
 #else
 		where TFunction : IFixedFunction<TResult>, allows ref struct
 #endif
 	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 			result = func.Apply(new FixedContextValue<T>(ptr, span.Length));
 	}
@@ -167,7 +174,7 @@ public static unsafe class FixedPointerValueExtensions
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T, TResult, TFunction>(this ReadOnlySpan<T> span, TFunction func,
+	public static void WithSafeFixed<T, TResult, TFunction>(this ReadOnlySpan<T> span, TFunction? func,
 		out TResult result)
 #if !NET9_0_OR_GREATER
 		where TFunction : IFixedFunction<TResult>
@@ -175,6 +182,11 @@ public static unsafe class FixedPointerValueExtensions
 		where TFunction : IFixedFunction<TResult>, allows ref struct
 #endif
 	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 			result = func.Apply(new ReadOnlyFixedContextValue<T>(ptr, span.Length));
 	}
