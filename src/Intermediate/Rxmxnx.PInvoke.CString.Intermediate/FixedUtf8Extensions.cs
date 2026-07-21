@@ -85,7 +85,7 @@ public static unsafe class FixedUtf8Extensions
 	/// <param name="seq">Current <see cref="CStringSequence"/> instance.</param>
 	/// <param name="action">A <see cref="IFixedPointerListAction"/> instance.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeTransform<TAction>(this CStringSequence? seq, TAction? action)
+	public static void WithSafeFixed<TAction>(this CStringSequence? seq, TAction? action)
 #if !NET9_0_OR_GREATER
 		where TAction : IFixedPointerListAction
 #else
@@ -116,7 +116,7 @@ public static unsafe class FixedUtf8Extensions
 	/// <param name="seq">Current <see cref="CStringSequence"/> instance.</param>
 	/// <param name="action">A <see cref="IFixedPointerListAction"/> instance.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeTransform<TAction>(this CStringSequence? seq, ref TAction action)
+	public static void WithSafeFixed<TAction>(this CStringSequence? seq, ref TAction action)
 #if !NET9_0_OR_GREATER
 		where TAction : struct, IFixedPointerListAction
 #else

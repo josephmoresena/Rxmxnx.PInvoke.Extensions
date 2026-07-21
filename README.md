@@ -3920,6 +3920,111 @@ Set of extensions for basic operations with `unmanaged` values.
 
 </details>
 
+<details>
+  <summary>ValuePointerExtensions</summary>
+
+Set of extensions for basic operations with `ReadOnlyValPtr<T>` and `ValPtr<T>` values.
+
+- <details>
+  <summary>GetUnsafeFixedContext&lt;T&gt;(this ReadOnlyValPtr&lt;T&gt;, Int32, out ReadOnlyFixedContextValue&lt;T&gt;)</summary>
+
+  Retrieves an unsafe `ReadOnlyFixedContextValue<T>` instance from current read-only reference pointer and returns an
+  `IDisposable` object to invalidate it.
+
+  </details>
+- <details>
+  <summary>GetUnsafeFixedContext&lt;T&gt;(this ValPtr&lt;T&gt;, Int32, out FixedContextValue&lt;T&gt;)</summary>
+
+  Retrieves an unsafe `FixedContextValue<T>` instance from current read-only reference pointer and returns an
+  `IDisposable` object to invalidate it.
+
+  </details>
+- <details>
+  <summary>GetUnsafeFixedContext&lt;T, TDisposable&gt;(this ReadOnlyValPtr&lt;T&gt;, Int32, TDisposable, out ReadOnlyFixedContextValue&lt;T&gt;)</summary>
+
+  Retrieves an unsafe `ReadOnlyFixedContextValue<T>` instance from current read-only reference pointer and returns an
+  `IDisposable` object to invalidate it and release resources used by the `TDisposable` parameter.
+
+  </details>
+- <details>
+  <summary>GetUnsafeFixedContext&lt;T, TDisposable&gt;(this ValPtr&lt;T&gt;, Int32, TDisposable, out FixedContextValue&lt;T&gt;)</summary>
+
+  Retrieves an unsafe `FixedContextValue<T>` instance from current read-only reference pointer and returns an
+  `IDisposable` object to invalidate it and release resources used by the `TDisposable` parameter.
+
+  </details>
+
+</details>
+
+<details>
+  <summary>FixedUtf8Extensions</summary>
+
+Set of extensions for basic fixing operations with `CString` and `CStringSequence` values.
+
+- <details>
+  <summary>WithSafeFixed&lt;TAction&gt;(this CString?, TAction?)</summary>
+
+  Prevents the garbage collector from relocating the given `CString` and fixes its memory address until action defined
+  by the implementation of `IReadOnlyFixedContextAction<Byte>` interface on the `TAction` instance finishes.
+
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TAction&gt;(this CString?, ref TAction)</summary>
+
+  Prevents the garbage collector from relocating the given `CString` and fixes its memory address until action defined
+  by the implementation of `IReadOnlyFixedContextAction<Byte>` interface on the `TAction` value finishes.
+
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TResult, TFunction&gt;(this CString?, TFunction?, out TResult)</summary>
+
+  Prevents the garbage collector from relocating the given `CString` and fixes its memory address until function defined
+  by the implementation of `IReadOnlyFixedContextFunction<Byte, TFunction>` interface on the `TFunction` instance
+  finishes and its `TResult` result is stored on the output parameter.
+
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TResult, TFunction&gt;(this CString?, ref TFunction, out TResult)</summary>
+
+  Prevents the garbage collector from relocating the given `CString` and fixes its memory address until function defined
+  by the implementation of `IReadOnlyFixedContextFunction<Byte, TFunction>` interface on the `TFunction` value finishes
+  and its `TResult` result is stored on the output parameter.
+
+  </details>
+
+- <details>
+  <summary>WithSafeFixed&lt;TAction&gt;(this CStringSequence?, TAction?)</summary>
+
+  Prevents the garbage collector from relocating the given `CStringSequence` and fixes its memory address until action
+  defined by the implementation of `IFixedPointerListAction` interface on the `TAction` instance finishes.
+
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TAction&gt;(this CStringSequence?, ref TAction)</summary>
+
+  Prevents the garbage collector from relocating the given `CStringSequence` and fixes its memory address until action
+  defined by the implementation of `IFixedPointerListAction` interface on the `TAction` value finishes.
+
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TResult, TFunction&gt;(this CStringSequence?, TFunction?, out TResult)</summary>
+
+  Prevents the garbage collector from relocating the given `CStringSequence` and fixes its memory address until function
+  defined by the implementation of `IFixedPointerListFunction<TResult>` interface on the `TFunction` instance finishes
+  and its `TResult` result is stored on the output parameter.
+
+  </details>
+- <details>
+  <summary>WithSafeFixed&lt;TResult, TFunction&gt;(this CStringSequence?, ref TFunction, out TResult)</summary>
+
+  Prevents the garbage collector from relocating the given `CStringSequence` and fixes its memory address until function
+  defined by the implementation of `IFixedPointerListFunction<TResult>` interface on the `TFunction` value finishes and
+  its `TResult` result is stored on the output parameter.
+
+  </details>
+
+</details>
+
 ---
 
 # Utilities
