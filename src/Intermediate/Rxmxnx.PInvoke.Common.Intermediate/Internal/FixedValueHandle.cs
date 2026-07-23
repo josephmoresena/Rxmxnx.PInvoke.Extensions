@@ -4,12 +4,12 @@ namespace Rxmxnx.PInvoke;
 /// Internal fixed pointer handle.
 /// </summary>
 /// <remarks>
-/// The <see cref="FixedPointer"/> compatibility requires this instance implements <see cref="IMutableWrapper{Boolean}"/>.
+/// The <see cref="FixedPointer"/> compatibility requires this instance implements <see cref="IWrapper{Boolean}"/>.
 /// </remarks>
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-internal unsafe class FixedValueHandle : IDisposable, IMutableWrapper<Boolean>
+internal unsafe class FixedValueHandle : IDisposable, IWrapper<Boolean>
 {
 	/// <summary>
 	/// Internal <see cref="MemoryHandle"/> instance.
@@ -42,16 +42,6 @@ internal unsafe class FixedValueHandle : IDisposable, IMutableWrapper<Boolean>
 	/// Destructor.
 	/// </summary>
 	~FixedValueHandle() => this.Dispose(false);
-
-	Boolean IMutableWrapper<Boolean>.Value
-	{
-		get => this._isDisposed;
-		set
-		{
-			if (value) return;
-			this.Dispose();
-		}
-	}
 
 	/// <inheritdoc/>
 	public void Dispose()

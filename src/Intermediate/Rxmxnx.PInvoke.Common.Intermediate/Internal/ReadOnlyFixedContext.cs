@@ -57,9 +57,9 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	/// </summary>
 	/// <param name="ptr">The pointer to the fixed memory block.</param>
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
-	/// <param name="isValid">A mutable wrapper that indicates whether the current instance remains valid.</param>
-	public ReadOnlyFixedContext(void* ptr, Int32 count, IMutableWrapper<Boolean> isValid) : base(
-		ptr, count * sizeof(T), true, isValid)
+	/// <param name="handle">A <see cref="FixedValueHandle"/> instance.</param>
+	public ReadOnlyFixedContext(void* ptr, Int32 count, FixedValueHandle handle) : base(
+		ptr, count * sizeof(T), true, handle)
 		=> this.Count = count;
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using an offset and a fixed memory instance.

@@ -196,8 +196,8 @@ public readonly ref struct FixedPointerValue
 	/// Retrieves the <see cref="IMutableWrapper{Boolean}"/> instance for <see cref="FixedPointer"/> instances.
 	/// </summary>
 	/// <typeparam name="TPointer">Type of the <see cref="IFixedPointer"/>.</typeparam>
-	/// <returns>The <see cref="IMutableWrapper{Boolean}"/> instance for <see cref="FixedPointer"/> instances.</returns>
-	internal static IMutableWrapper<Boolean> GetValidationObject<TPointer>(TPointer pointer)
+	/// <returns>The <see cref="FixedValueHandle"/> instance for <see cref="FixedPointer"/> instances.</returns>
+	internal static FixedValueHandle GetValidationObject<TPointer>(TPointer pointer)
 		where TPointer : struct, IFixedPointerOperators<TPointer>, allows ref struct
 	{
 		FixedPointerValue value = pointer;

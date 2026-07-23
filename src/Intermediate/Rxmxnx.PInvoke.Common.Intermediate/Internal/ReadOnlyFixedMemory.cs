@@ -24,9 +24,9 @@ internal abstract unsafe partial class ReadOnlyFixedMemory : FixedPointer, IRead
 	/// <param name="ptr">Pointer to fixed memory block.</param>
 	/// <param name="binaryLength">Memory block size in bytes.</param>
 	/// <param name="isReadOnly">Indicates whether the memory block is read-only.</param>
-	/// <param name="isValid">Indicates whether current instance remains valid.</param>
-	protected ReadOnlyFixedMemory(void* ptr, Int32 binaryLength, Boolean isReadOnly, IMutableWrapper<Boolean> isValid) :
-		base(ptr, binaryLength, isReadOnly, isValid) { }
+	/// <param name="handle">A <see cref="FixedValueHandle"/> instance.</param>
+	protected ReadOnlyFixedMemory(void* ptr, Int32 binaryLength, Boolean isReadOnly, FixedValueHandle handle) : base(
+		ptr, binaryLength, isReadOnly, handle) { }
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedMemory"/> instance using another instance as a template.
 	/// </summary>

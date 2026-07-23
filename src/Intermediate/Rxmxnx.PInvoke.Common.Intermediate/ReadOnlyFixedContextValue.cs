@@ -176,8 +176,8 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 		this._value.ValidateOperation(true);
 		this._value.ValidateTransformation(typeof(Byte), true);
 		if (this.IsNullOrEmpty) return ReadOnlyFixedContext<Byte>.Empty;
-		IMutableWrapper<Boolean> isValid = FixedPointerValue.GetValidationObject(this);
-		return new ReadOnlyFixedContext<Byte>(this._value.Pointer.ToPointer(), this._value.Size, isValid);
+		FixedValueHandle handle = FixedPointerValue.GetValidationObject(this);
+		return new ReadOnlyFixedContext<Byte>(this._value.Pointer.ToPointer(), this._value.Size, handle);
 	}
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
@@ -190,9 +190,9 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 		this._value.ValidateOperation(true);
 		this._value.ValidateTransformation(typeof(Object), false);
 		if (this.IsNullOrEmpty) return ReadOnlyFixedContext<Object>.Empty;
-		IMutableWrapper<Boolean> isValid = FixedPointerValue.GetValidationObject(this);
+		FixedValueHandle handle = FixedPointerValue.GetValidationObject(this);
 		Int32 count = this._value.Size / IntPtr.Size;
-		return new ReadOnlyFixedContext<Object>(this._value.Pointer.ToPointer(), count, isValid);
+		return new ReadOnlyFixedContext<Object>(this._value.Pointer.ToPointer(), count, handle);
 	}
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
@@ -211,14 +211,14 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 			residual = ReadOnlyFixedContext<Byte>.Empty;
 			return ReadOnlyFixedContext<TDestination>.Empty;
 		}
-		IMutableWrapper<Boolean> isValid = FixedPointerValue.GetValidationObject(this);
+		FixedValueHandle handle = FixedPointerValue.GetValidationObject(this);
 		Int32 sizeOf = sizeof(TDestination);
 		Int32 count = this._value.Size / sizeof(T);
 		Int32 offset = count * sizeOf;
 		residual = offset == 0 ?
 			ReadOnlyFixedContext<Byte>.Empty :
-			new((this._value.Pointer + offset).ToPointer(), this._value.Size - offset, isValid);
-		return new ReadOnlyFixedContext<TDestination>(this._value.Pointer.ToPointer(), count, isValid);
+			new((this._value.Pointer + offset).ToPointer(), this._value.Size - offset, handle);
+		return new ReadOnlyFixedContext<TDestination>(this._value.Pointer.ToPointer(), count, handle);
 	}
 #endif
 

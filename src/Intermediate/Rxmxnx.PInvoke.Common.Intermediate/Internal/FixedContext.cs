@@ -7,7 +7,7 @@
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-internal sealed unsafe partial class FixedContext<T> : FixedMemory, 
+internal sealed unsafe partial class FixedContext<T> : FixedMemory,
 #if !OBSOLETE_FIXED_INTERFACES
 	IFixedContext<T>
 #else
@@ -63,16 +63,15 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory,
 	/// </summary>
 	/// <param name="ptr">The pointer to the fixed memory block.</param>
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
-	/// <param name="isValid">A mutable wrapper that indicates whether the current instance remains valid.</param>
+	/// <param name="handle">A <see cref="FixedValueHandle"/> instance.</param>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
 #if NET9_0_OR_GREATER
-	public FixedContext(void* ptr, Int32 count, IMutableWrapper<Boolean> isValid) : base(
-		ptr, count * sizeof(T), isValid)
+	public FixedContext(void* ptr, Int32 count, FixedValueHandle handle) : base(ptr, count * sizeof(T), handle)
 #else
-	private FixedContext(void* ptr, Int32 count, IMutableWrapper<Boolean> isValid) : base(
-		ptr, count * sizeof(T), isValid)
+	private FixedContext(void* ptr, Int32 count,FixedValueHandle handle) : base(
+		ptr, count * sizeof(T), handle)
 #endif
 		=> this.Count = count;
 	/// <summary>

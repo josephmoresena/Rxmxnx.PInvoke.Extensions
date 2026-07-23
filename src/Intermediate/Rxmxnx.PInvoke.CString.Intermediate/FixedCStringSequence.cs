@@ -22,7 +22,7 @@ public readonly unsafe ref struct FixedCStringSequence
 	/// <summary>
 	/// Indicates whether the current instance remains valid.
 	/// </summary>
-	private readonly FixedValueHandle? _isValid;
+	private readonly FixedValueHandle? _handle;
 
 	/// <summary>
 	/// Gets the list of <see cref="CString"/> values in the sequence.
@@ -44,7 +44,7 @@ public readonly unsafe ref struct FixedCStringSequence
 		{
 			ValidationUtilities.ThrowIfInvalidSequenceIndex(index, this.Values.Count);
 			void* ptr = this.GetPointer(index, out Int32 length);
-			return new ReadOnlyFixedContext<Byte>(ptr, length, this._isValid!);
+			return new ReadOnlyFixedContext<Byte>(ptr, length, this._handle!);
 		}
 	}
 
@@ -57,7 +57,7 @@ public readonly unsafe ref struct FixedCStringSequence
 	{
 		this._values = values;
 		this._value = value;
-		this._isValid = new();
+		this._handle = new();
 	}
 
 	/// <summary>
@@ -98,7 +98,7 @@ public readonly unsafe ref struct FixedCStringSequence
 		}
 		return new(new()
 		{
-			IsReadOnly = true, Handle = fseq._isValid!, Information = info, Instances = memories,
+			IsReadOnly = true, Handle = fseq._handle!, Information = info, Instances = memories,
 		});
 	}
 	/// <summary>
@@ -124,7 +124,7 @@ public readonly unsafe ref struct FixedCStringSequence
 		}
 		return new()
 		{
-			IsReadOnly = true, Handle = fseq._isValid!, Information = info, Instances = memories,
+			IsReadOnly = true, Handle = fseq._handle!, Information = info, Instances = memories,
 		};
 	}
 
@@ -144,7 +144,7 @@ public readonly unsafe ref struct FixedCStringSequence
 	/// <summary>
 	/// Invalidates the current sequence.
 	/// </summary>
-	internal void Unload() => this._isValid?.Dispose();
+	internal void Unload() => this._handle?.Dispose();
 
 	/// <summary>
 	/// Retrieves an unmanaged pointer for the element at the specified <paramref name="index"/>.

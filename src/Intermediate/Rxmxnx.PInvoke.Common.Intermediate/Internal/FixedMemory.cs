@@ -31,12 +31,12 @@ internal abstract unsafe partial class FixedMemory : ReadOnlyFixedMemory, IFixed
 	/// </summary>
 	/// <param name="ptr">Pointer to fixed memory block.</param>
 	/// <param name="binaryLength">Memory block size in bytes.</param>
-	/// <param name="isValid">Indicates whether current instance remains valid.</param>
+	/// <param name="handle">A <see cref="FixedValueHandle"/> instance.</param>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	protected FixedMemory(void* ptr, Int32 binaryLength, IMutableWrapper<Boolean> isValid) : base(
-		ptr, binaryLength, false, isValid) { }
+	protected FixedMemory(void* ptr, Int32 binaryLength, FixedValueHandle handle) : base(
+		ptr, binaryLength, false, handle) { }
 
 	Span<Byte> IFixedMemory.Bytes => this.CreateBinarySpan();
 	Span<Object> IFixedMemory.Objects => this.CreateObjectSpan();
