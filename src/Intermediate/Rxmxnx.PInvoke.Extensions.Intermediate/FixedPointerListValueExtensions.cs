@@ -1,4 +1,4 @@
-#if PACKAGE
+#if PACKAGE && !NET5_0_OR_GREATER 
 using B2 =
 	Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
 		Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>;
@@ -48,7 +48,7 @@ using B8 =
 				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
 			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
 				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, System.Object>;
-#else
+#elif !NET5_0_OR_GREATER
 using B2 = Rxmxnx.PInvoke.NativeUtilities.B2;
 using B3 = Rxmxnx.PInvoke.NativeUtilities.B3;
 using B4 = Rxmxnx.PInvoke.NativeUtilities.B4;
@@ -3626,8 +3626,8 @@ public static unsafe class FixedPointerListValueExtensions
 			Count = span.Length,
 			SizeOf = sizeof(T),
 			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
-			ConstructorPointer = default,
-			GetTypePointer = &NativeUtilities.GetType<T>,
+			ConstructorOrFunctionPointer = default,
+			TypeOrFunctionPointer = FixedPointerInfo.ToUnmanaged(&NativeUtilities.GetType<T>),
 		};
 	/// <summary>
 	/// Retrieves the <see cref="FixedPointerInfo"/> instance for given parameters.
@@ -3644,8 +3644,8 @@ public static unsafe class FixedPointerListValueExtensions
 			Count = span.Length,
 			SizeOf = sizeof(T),
 			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
-			ConstructorPointer = default,
-			GetTypePointer = &NativeUtilities.GetType<T>,
+			ConstructorOrFunctionPointer = default,
+			TypeOrFunctionPointer = FixedPointerInfo.ToUnmanaged(&NativeUtilities.GetType<T>),
 		};
 #endif
 #pragma warning restore CS8500

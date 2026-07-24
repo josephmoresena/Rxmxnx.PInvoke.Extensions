@@ -96,8 +96,8 @@ public readonly unsafe ref struct FixedCStringSequence
 				ConstructorOrFunctionPointer = CStringSequence.ConstructorPointer,
 				TypeOrFunctionPointer = CStringSequence.TypePointer,
 #else
-				ConstructorPointer = &ReadOnlyFixedContext<Byte>.CreateInstance,
-				GetTypePointer = &NativeUtilities.GetType<Byte>,
+				ConstructorOrFunctionPointer = FixedPointerInfo.ToUnmanaged(&ReadOnlyFixedContext<Byte>.CreateInstance),
+				TypeOrFunctionPointer = FixedPointerInfo.ToUnmanaged(&NativeUtilities.GetType<Byte>),
 #endif
 			};
 		}
@@ -127,8 +127,8 @@ public readonly unsafe ref struct FixedCStringSequence
 				ConstructorOrFunctionPointer = CStringSequence.ConstructorPointer,
 				TypeOrFunctionPointer = CStringSequence.TypePointer,
 #else
-				ConstructorPointer = &ReadOnlyFixedContext<Byte>.CreateInstance,
-				GetTypePointer = &NativeUtilities.GetType<Byte>,
+				ConstructorOrFunctionPointer = FixedPointerInfo.ToUnmanaged(&ReadOnlyFixedContext<Byte>.CreateInstance),
+				TypeOrFunctionPointer = FixedPointerInfo.ToUnmanaged(&NativeUtilities.GetType<Byte>),
 #endif
 			};
 		}

@@ -1,13 +1,11 @@
 ﻿#if !NET6_0_OR_GREATER
 using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
-#if !NET5_0_OR_GREATER
-#if PACKAGE
+#if PACKAGE && !NET5_0_OR_GREATER
 using B1 = Rxmxnx.PInvoke.Buffers.Atomic<System.Object>;
-#else
+#elif !NET5_0_OR_GREATER
 using B1 = Rxmxnx.PInvoke.NativeUtilities.B1;
 #endif
 
-#endif
 #endif
 
 namespace Rxmxnx.PInvoke;

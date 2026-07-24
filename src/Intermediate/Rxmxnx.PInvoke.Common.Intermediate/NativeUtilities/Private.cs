@@ -137,8 +137,8 @@ public unsafe partial class NativeUtilities
 			Count = span.Length,
 			SizeOf = sizeof(T),
 			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
-			ConstructorPointer = &ReadOnlyFixedContext<T>.CreateInstance,
-			GetTypePointer = &NativeUtilities.GetType<T>,
+			ConstructorOrFunctionPointer = FixedPointerInfo.ToUnmanaged(&ReadOnlyFixedContext<T>.CreateInstance),
+			TypeOrFunctionPointer = FixedPointerInfo.ToUnmanaged(&NativeUtilities.GetType<T>),
 		};
 	/// <summary>
 	/// Retrieves the <see cref="FixedPointerInfo"/> instance for given parameters.
@@ -155,8 +155,8 @@ public unsafe partial class NativeUtilities
 			Count = span.Length,
 			SizeOf = sizeof(T),
 			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
-			ConstructorPointer = &FixedContext<T>.CreateInstance,
-			GetTypePointer = &NativeUtilities.GetType<T>,
+			ConstructorOrFunctionPointer = FixedPointerInfo.ToUnmanaged(&FixedContext<T>.CreateInstance),
+			TypeOrFunctionPointer = FixedPointerInfo.ToUnmanaged(&NativeUtilities.GetType<T>),
 		};
 #endif
 	/// <summary>

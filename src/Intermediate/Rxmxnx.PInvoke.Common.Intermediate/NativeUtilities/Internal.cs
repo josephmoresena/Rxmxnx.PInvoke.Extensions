@@ -84,13 +84,15 @@ public partial class NativeUtilities
 		T? previous = Interlocked.CompareExchange(ref fieldReference, newObj, null);
 		return previous ?? newObj;
 	}
-#if !NET5_0_OR_GREATER
 	/// <summary>
 	/// Creates a <see cref="Type"/> span from <typeparamref name="TBuffer"/> reference.
 	/// </summary>
 	/// <typeparam name="TBuffer">A <see cref="ValueType"/> buffer type.</typeparam>
 	/// <param name="buffer">Managed reference to <typeparamref name="TBuffer"/> value.</param>
 	/// <returns>Created <see cref="Type"/> span.</returns>
+#if !PACKAGE && NET5_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static Span<Type> CreateTypeSpan<TBuffer>(ref TBuffer buffer)
 #if !PACKAGE
@@ -116,6 +118,9 @@ public partial class NativeUtilities
 	/// <typeparam name="TBuffer">A <see cref="ValueType"/> buffer type.</typeparam>
 	/// <param name="buffer">Managed reference to <typeparamref name="TBuffer"/> value.</param>
 	/// <returns>Created <see cref="Func{IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory}"/> span.</returns>
+#if !PACKAGE && NET5_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> CreateConstructorSpan<TBuffer>(
 		ref TBuffer buffer)
@@ -136,7 +141,7 @@ public partial class NativeUtilities
 			ref Unsafe.As<TBuffer, Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>>(ref buffer);
 		return MemoryMarshal.CreateSpan(ref r0, length);
 	}
-#else
+#if NET5_0_OR_GREATER
 	/// <summary>
 	/// Generic <see langword="typeof"/> call.
 	/// </summary>

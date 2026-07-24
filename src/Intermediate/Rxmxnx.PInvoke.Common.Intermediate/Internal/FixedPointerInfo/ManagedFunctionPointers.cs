@@ -6,34 +6,38 @@ namespace Rxmxnx.PInvoke.Internal;
 #endif
 internal readonly unsafe partial struct FixedPointerInfo
 {
-	/// <summary>
-	/// Function pointer to <see cref="ReadOnlyFixedMemory"/> constructor for current memory block.
-	/// </summary>
-	public delegate*<void*, Int32, FixedValueHandle, ReadOnlyFixedMemory> ConstructorPointer
-	{
-		get => (delegate*<void*, Int32, FixedValueHandle, ReadOnlyFixedMemory>)this.ConstructorOrFunctionPointer;
-		init => this.ConstructorOrFunctionPointer = value;
-	}
-	/// <summary>
-	/// Function pointer to retrieve current memory block type.
-	/// </summary>
-	public delegate*<Type> GetTypePointer
-	{
-		get => (delegate*<Type>)this.TypeOrFunctionPointer;
-		init => this.TypeOrFunctionPointer = value;
-	}
-
 	public partial FixedPointerValue GetValue(Boolean isReadOnly, FixedValueHandle? handle)
-		=> new((IntPtr)this.Pointer, this.Count * this.SizeOf)
+	{
+		delegate*<Type> getType = (delegate*<Type>)this.ConstructorOrFunctionPointer;
+		return new((IntPtr)this.Pointer, this.Count * this.SizeOf)
 		{
 			IsReadOnly = isReadOnly,
 			IsUnmanaged = this.IsUnmanaged,
-			Type = this.TypeOrFunctionPointer != default ? this.GetTypePointer() : default,
+			Type = getType != default ? getType() : default,
 			Handle = handle,
 		};
+	}
 	public partial ReadOnlyFixedMemory? CreateContext(FixedValueHandle? handle)
-		=> handle is not null && this.ConstructorOrFunctionPointer != default ?
-			this.ConstructorPointer(this.Pointer, this.Count, handle) :
-			default;
+	{
+		delegate*<void*, Int32, FixedValueHandle, ReadOnlyFixedMemory> constructor =
+			(delegate*<void*, Int32, FixedValueHandle, ReadOnlyFixedMemory>)this.ConstructorOrFunctionPointer;
+		return handle is not null && constructor != default ? constructor(this.Pointer, this.Count, handle) : default;
+	}
+
+	/// <summary>
+	/// Creates an unmanaged pointer from <paramref name="value"/>.
+	/// </summary>
+	/// <param name="value">Managed function pointer.</param>
+	/// <returns>A unmanaged pointer.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void* ToUnmanaged(delegate*<void*, Int32, FixedValueHandle, ReadOnlyFixedMemory> value)
+		=> value;
+	/// <summary>
+	/// Creates an unmanaged pointer from <paramref name="value"/>.
+	/// </summary>
+	/// <param name="value">Managed function pointer.</param>
+	/// <returns>A unmanaged pointer.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void* ToUnmanaged(delegate*<Type> value) => value;
 }
 #endif

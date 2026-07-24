@@ -162,10 +162,19 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
 	/// <param name="handle">A <see cref="FixedValueHandle"/> instance.</param>
 	/// <returns>A new <see cref="ReadOnlyFixedMemory"/> instance.</returns>
-#if !NET5_0_OR_GREATER
+#if !PACKAGE && NET5_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	public static ReadOnlyFixedMemory CreateInstance(IntPtr ptr, Int32 count, FixedValueHandle handle)
 		=> new ReadOnlyFixedContext<T>(ptr.ToPointer(), count, handle);
-#else
+#if NET5_0_OR_GREATER
+	/// <summary>
+	/// Creates a new <see cref="ReadOnlyFixedMemory"/> instance.
+	/// </summary>
+	/// <param name="ptr">The pointer to the fixed memory block.</param>
+	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
+	/// <param name="handle">A <see cref="FixedValueHandle"/> instance.</param>
+	/// <returns>A new <see cref="ReadOnlyFixedMemory"/> instance.</returns>
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	public static ReadOnlyFixedMemory CreateInstance(void* ptr, Int32 count, FixedValueHandle handle)
 		=> new ReadOnlyFixedContext<T>(ptr, count, handle);
