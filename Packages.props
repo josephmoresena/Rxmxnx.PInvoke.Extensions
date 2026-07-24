@@ -1,7 +1,7 @@
 <Project>
 
     <!-- LIMITED_SUPPORT -->
-    <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' And '$(MSBuildRuntimeType)' == 'Mono'">
         <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0">
             <ExcludeAssets Condition="'$(OutputType)' != 'Exe'">runtime</ExcludeAssets>
         </PackageReference>
