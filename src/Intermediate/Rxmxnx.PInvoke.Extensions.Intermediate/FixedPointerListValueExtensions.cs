@@ -1,3 +1,63 @@
+#if PACKAGE
+using B2 =
+	Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+		Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>;
+using B3 =
+	Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.Composite<
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+		System.Object>;
+using B4 =
+	Rxmxnx.PInvoke.Buffers.Composite<
+		Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, Rxmxnx.PInvoke.Buffers.Composite<
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+		System.Object>;
+using B5 = Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.
+	Composite<
+		Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+		Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, System.Object>;
+using B6 =
+	Rxmxnx.PInvoke.Buffers.Composite<
+		Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, Rxmxnx.PInvoke.Buffers.Composite<
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, System.Object>;
+using B7 =
+	Rxmxnx.PInvoke.Buffers.Composite<
+		Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.Composite<
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				System.Object>,
+			System.Object>, Rxmxnx.PInvoke.Buffers.Composite<
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, System.Object>;
+using B8 =
+	Rxmxnx.PInvoke.Buffers.Composite<
+		Rxmxnx.PInvoke.Buffers.Composite<
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, Rxmxnx.PInvoke.Buffers.
+		Composite<
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, System.Object>;
+#else
+using B2 = Rxmxnx.PInvoke.NativeUtilities.B2;
+using B3 = Rxmxnx.PInvoke.NativeUtilities.B3;
+using B4 = Rxmxnx.PInvoke.NativeUtilities.B4;
+using B5 = Rxmxnx.PInvoke.NativeUtilities.B5;
+using B6 = Rxmxnx.PInvoke.NativeUtilities.B6;
+using B7 = Rxmxnx.PInvoke.NativeUtilities.B7;
+using B8 = Rxmxnx.PInvoke.NativeUtilities.B8;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
@@ -33,15 +93,26 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
+#if !NET5_0_OR_GREATER
+			B2 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
 					span1.CreateFixedPointerInfo(ptr1),
 				],
+#endif
 			});
 		}
 	}
@@ -68,15 +139,26 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
+#if !NET5_0_OR_GREATER
+			B2 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
 					span1.CreateFixedPointerInfo(ptr1),
 				],
+#endif
 			});
 		}
 	}
@@ -101,15 +183,26 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
+#if !NET5_0_OR_GREATER
+			B2 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
 					span1.CreateFixedPointerInfo(ptr1),
 				],
+#endif
 			});
 		}
 	}
@@ -135,15 +228,26 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
+#if !NET5_0_OR_GREATER
+			B2 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
 					span1.CreateFixedPointerInfo(ptr1),
 				],
+#endif
 			});
 		}
 	}
@@ -175,15 +279,26 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
+#if !NET5_0_OR_GREATER
+			B2 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
 					span1.CreateFixedPointerInfo(ptr1),
 				],
+#endif
 			});
 		}
 	}
@@ -215,15 +330,26 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
+#if !NET5_0_OR_GREATER
+			B2 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
 					span1.CreateFixedPointerInfo(ptr1),
 				],
+#endif
 			});
 		}
 	}
@@ -250,15 +376,26 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
+#if !NET5_0_OR_GREATER
+			B2 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
 					span1.CreateFixedPointerInfo(ptr1),
 				],
+#endif
 			});
 		}
 	}
@@ -285,15 +422,26 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
+#if !NET5_0_OR_GREATER
+			B2 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
 					span1.CreateFixedPointerInfo(ptr1),
 				],
+#endif
 			});
 		}
 	}
@@ -323,16 +471,28 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		{
+#if !NET5_0_OR_GREATER
+			B3 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
 					span1.CreateFixedPointerInfo(ptr1),
 					span2.CreateFixedPointerInfo(ptr2),
 				],
+#endif
 			});
 		}
 	}
@@ -362,16 +522,28 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		{
+#if !NET5_0_OR_GREATER
+			B3 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
 					span1.CreateFixedPointerInfo(ptr1),
 					span2.CreateFixedPointerInfo(ptr2),
 				],
+#endif
 			});
 		}
 	}
@@ -400,16 +572,28 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		{
+#if !NET5_0_OR_GREATER
+			B3 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
 					span1.CreateFixedPointerInfo(ptr1),
 					span2.CreateFixedPointerInfo(ptr2),
 				],
+#endif
 			});
 		}
 	}
@@ -438,16 +622,28 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		{
+#if !NET5_0_OR_GREATER
+			B3 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
 					span1.CreateFixedPointerInfo(ptr1),
 					span2.CreateFixedPointerInfo(ptr2),
 				],
+#endif
 			});
 		}
 	}
@@ -482,16 +678,28 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		{
+#if !NET5_0_OR_GREATER
+			B3 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
 					span1.CreateFixedPointerInfo(ptr1),
 					span2.CreateFixedPointerInfo(ptr2),
 				],
+#endif
 			});
 		}
 	}
@@ -526,16 +734,28 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		{
+#if !NET5_0_OR_GREATER
+			B3 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
 					span1.CreateFixedPointerInfo(ptr1),
 					span2.CreateFixedPointerInfo(ptr2),
 				],
+#endif
 			});
 		}
 	}
@@ -565,16 +785,28 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		{
+#if !NET5_0_OR_GREATER
+			B3 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
 					span1.CreateFixedPointerInfo(ptr1),
 					span2.CreateFixedPointerInfo(ptr2),
 				],
+#endif
 			});
 		}
 	}
@@ -604,16 +836,28 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		{
+#if !NET5_0_OR_GREATER
+			B3 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
 					span1.CreateFixedPointerInfo(ptr1),
 					span2.CreateFixedPointerInfo(ptr2),
 				],
+#endif
 			});
 		}
 	}
@@ -646,10 +890,22 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		{
+#if !NET5_0_OR_GREATER
+			B4 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -657,6 +913,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span2.CreateFixedPointerInfo(ptr2),
 					span3.CreateFixedPointerInfo(ptr3),
 				],
+#endif
 			});
 		}
 	}
@@ -689,10 +946,22 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		{
+#if !NET5_0_OR_GREATER
+			B4 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -700,6 +969,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span2.CreateFixedPointerInfo(ptr2),
 					span3.CreateFixedPointerInfo(ptr3),
 				],
+#endif
 			});
 		}
 	}
@@ -731,10 +1001,22 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		{
+#if !NET5_0_OR_GREATER
+			B4 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -742,6 +1024,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span2.CreateFixedPointerInfo(ptr2),
 					span3.CreateFixedPointerInfo(ptr3),
 				],
+#endif
 			});
 		}
 	}
@@ -773,10 +1056,22 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		{
+#if !NET5_0_OR_GREATER
+			B4 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -784,6 +1079,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span2.CreateFixedPointerInfo(ptr2),
 					span3.CreateFixedPointerInfo(ptr3),
 				],
+#endif
 			});
 		}
 	}
@@ -821,10 +1117,22 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		{
+#if !NET5_0_OR_GREATER
+			B4 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -832,6 +1140,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span2.CreateFixedPointerInfo(ptr2),
 					span3.CreateFixedPointerInfo(ptr3),
 				],
+#endif
 			});
 		}
 	}
@@ -869,10 +1178,22 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		{
+#if !NET5_0_OR_GREATER
+			B4 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -880,6 +1201,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span2.CreateFixedPointerInfo(ptr2),
 					span3.CreateFixedPointerInfo(ptr3),
 				],
+#endif
 			});
 		}
 	}
@@ -912,10 +1234,22 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		{
+#if !NET5_0_OR_GREATER
+			B4 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -923,6 +1257,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span2.CreateFixedPointerInfo(ptr2),
 					span3.CreateFixedPointerInfo(ptr3),
 				],
+#endif
 			});
 		}
 	}
@@ -956,10 +1291,22 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		{
+#if !NET5_0_OR_GREATER
+			B4 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -967,6 +1314,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span2.CreateFixedPointerInfo(ptr2),
 					span3.CreateFixedPointerInfo(ptr3),
 				],
+#endif
 			});
 		}
 	}
@@ -1002,10 +1350,23 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		{
+#if !NET5_0_OR_GREATER
+			B5 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -1014,6 +1375,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span3.CreateFixedPointerInfo(ptr3),
 					span4.CreateFixedPointerInfo(ptr4),
 				],
+#endif
 			});
 		}
 	}
@@ -1049,10 +1411,23 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		{
+#if !NET5_0_OR_GREATER
+			B5 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -1061,6 +1436,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span3.CreateFixedPointerInfo(ptr3),
 					span4.CreateFixedPointerInfo(ptr4),
 				],
+#endif
 			});
 		}
 	}
@@ -1095,10 +1471,23 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		{
+#if !NET5_0_OR_GREATER
+			B5 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -1107,6 +1496,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span3.CreateFixedPointerInfo(ptr3),
 					span4.CreateFixedPointerInfo(ptr4),
 				],
+#endif
 			});
 		}
 	}
@@ -1141,10 +1531,23 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		{
+#if !NET5_0_OR_GREATER
+			B5 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -1153,6 +1556,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span3.CreateFixedPointerInfo(ptr3),
 					span4.CreateFixedPointerInfo(ptr4),
 				],
+#endif
 			});
 		}
 	}
@@ -1193,10 +1597,23 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		{
+#if !NET5_0_OR_GREATER
+			B5 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -1205,6 +1622,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span3.CreateFixedPointerInfo(ptr3),
 					span4.CreateFixedPointerInfo(ptr4),
 				],
+#endif
 			});
 		}
 	}
@@ -1246,10 +1664,23 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		{
+#if !NET5_0_OR_GREATER
+			B5 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -1258,6 +1689,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span3.CreateFixedPointerInfo(ptr3),
 					span4.CreateFixedPointerInfo(ptr4),
 				],
+#endif
 			});
 		}
 	}
@@ -1293,10 +1725,23 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		{
+#if !NET5_0_OR_GREATER
+			B5 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -1305,6 +1750,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span3.CreateFixedPointerInfo(ptr3),
 					span4.CreateFixedPointerInfo(ptr4),
 				],
+#endif
 			});
 		}
 	}
@@ -1341,10 +1787,23 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		{
+#if !NET5_0_OR_GREATER
+			B5 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -1353,6 +1812,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span3.CreateFixedPointerInfo(ptr3),
 					span4.CreateFixedPointerInfo(ptr4),
 				],
+#endif
 			});
 		}
 	}
@@ -1391,10 +1851,24 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		{
+#if !NET5_0_OR_GREATER
+			B6 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -1404,6 +1878,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span4.CreateFixedPointerInfo(ptr4),
 					span5.CreateFixedPointerInfo(ptr5),
 				],
+#endif
 			});
 		}
 	}
@@ -1443,10 +1918,24 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		{
+#if !NET5_0_OR_GREATER
+			B6 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -1456,6 +1945,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span4.CreateFixedPointerInfo(ptr4),
 					span5.CreateFixedPointerInfo(ptr5),
 				],
+#endif
 			});
 		}
 	}
@@ -1493,10 +1983,24 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		{
+#if !NET5_0_OR_GREATER
+			B6 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -1506,6 +2010,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span4.CreateFixedPointerInfo(ptr4),
 					span5.CreateFixedPointerInfo(ptr5),
 				],
+#endif
 			});
 		}
 	}
@@ -1544,10 +2049,24 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		{
+#if !NET5_0_OR_GREATER
+			B6 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -1557,6 +2076,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span4.CreateFixedPointerInfo(ptr4),
 					span5.CreateFixedPointerInfo(ptr5),
 				],
+#endif
 			});
 		}
 	}
@@ -1600,10 +2120,24 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		{
+#if !NET5_0_OR_GREATER
+			B6 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -1613,6 +2147,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span4.CreateFixedPointerInfo(ptr4),
 					span5.CreateFixedPointerInfo(ptr5),
 				],
+#endif
 			});
 		}
 	}
@@ -1657,10 +2192,24 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		{
+#if !NET5_0_OR_GREATER
+			B6 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -1670,6 +2219,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span4.CreateFixedPointerInfo(ptr4),
 					span5.CreateFixedPointerInfo(ptr5),
 				],
+#endif
 			});
 		}
 	}
@@ -1709,10 +2259,24 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		{
+#if !NET5_0_OR_GREATER
+			B6 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -1722,6 +2286,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span4.CreateFixedPointerInfo(ptr4),
 					span5.CreateFixedPointerInfo(ptr5),
 				],
+#endif
 			});
 		}
 	}
@@ -1761,10 +2326,25 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		{
+#if !NET5_0_OR_GREATER
+			B6 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -1774,6 +2354,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span4.CreateFixedPointerInfo(ptr4),
 					span5.CreateFixedPointerInfo(ptr5),
 				],
+#endif
 			});
 		}
 	}
@@ -1815,10 +2396,25 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		{
+#if !NET5_0_OR_GREATER
+			B7 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+			info[6] = span6.CreateFixedPointerInfo(ptr6, out types[6]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -1829,6 +2425,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span5.CreateFixedPointerInfo(ptr5),
 					span6.CreateFixedPointerInfo(ptr6),
 				],
+#endif
 			});
 		}
 	}
@@ -1871,10 +2468,25 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		{
+#if !NET5_0_OR_GREATER
+			B7 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+			info[6] = span6.CreateFixedPointerInfo(ptr6, out types[6]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -1885,6 +2497,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span5.CreateFixedPointerInfo(ptr5),
 					span6.CreateFixedPointerInfo(ptr6),
 				],
+#endif
 			});
 		}
 	}
@@ -1925,10 +2538,25 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		{
+#if !NET5_0_OR_GREATER
+			B7 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+			info[6] = span6.CreateFixedPointerInfo(ptr6, out types[6]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -1939,6 +2567,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span5.CreateFixedPointerInfo(ptr5),
 					span6.CreateFixedPointerInfo(ptr6),
 				],
+#endif
 			});
 		}
 	}
@@ -1980,10 +2609,25 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		{
+#if !NET5_0_OR_GREATER
+			B7 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+			info[6] = span6.CreateFixedPointerInfo(ptr6, out types[6]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -1994,6 +2638,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span5.CreateFixedPointerInfo(ptr5),
 					span6.CreateFixedPointerInfo(ptr6),
 				],
+#endif
 			});
 		}
 	}
@@ -2041,10 +2686,25 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		{
+#if !NET5_0_OR_GREATER
+			B7 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+			info[6] = span6.CreateFixedPointerInfo(ptr6, out types[6]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -2055,6 +2715,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span5.CreateFixedPointerInfo(ptr5),
 					span6.CreateFixedPointerInfo(ptr6),
 				],
+#endif
 			});
 		}
 	}
@@ -2102,10 +2763,25 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		{
+#if !NET5_0_OR_GREATER
+			B7 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+			info[6] = span6.CreateFixedPointerInfo(ptr6, out types[6]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -2116,6 +2792,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span5.CreateFixedPointerInfo(ptr5),
 					span6.CreateFixedPointerInfo(ptr6),
 				],
+#endif
 			});
 		}
 	}
@@ -2158,10 +2835,25 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		{
+#if !NET5_0_OR_GREATER
+			B7 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+			info[6] = span6.CreateFixedPointerInfo(ptr6, out types[6]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -2172,6 +2864,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span5.CreateFixedPointerInfo(ptr5),
 					span6.CreateFixedPointerInfo(ptr6),
 				],
+#endif
 			});
 		}
 	}
@@ -2214,10 +2907,25 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		{
+#if !NET5_0_OR_GREATER
+			B7 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+			info[6] = span6.CreateFixedPointerInfo(ptr6, out types[6]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -2228,6 +2936,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span5.CreateFixedPointerInfo(ptr5),
 					span6.CreateFixedPointerInfo(ptr6),
 				],
+#endif
 			});
 		}
 	}
@@ -2272,10 +2981,26 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
 		{
+#if !NET5_0_OR_GREATER
+			B8 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+			info[6] = span6.CreateFixedPointerInfo(ptr6, out types[6]);
+			info[7] = span7.CreateFixedPointerInfo(ptr7, out types[7]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -2287,6 +3012,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span6.CreateFixedPointerInfo(ptr6),
 					span7.CreateFixedPointerInfo(ptr7),
 				],
+#endif
 			});
 		}
 	}
@@ -2332,10 +3058,26 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
 		{
+#if !NET5_0_OR_GREATER
+			B8 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+			info[6] = span6.CreateFixedPointerInfo(ptr6, out types[6]);
+			info[7] = span7.CreateFixedPointerInfo(ptr7, out types[7]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -2347,6 +3089,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span6.CreateFixedPointerInfo(ptr6),
 					span7.CreateFixedPointerInfo(ptr7),
 				],
+#endif
 			});
 		}
 	}
@@ -2390,10 +3133,26 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
 		{
+#if !NET5_0_OR_GREATER
+			B8 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+			info[6] = span6.CreateFixedPointerInfo(ptr6, out types[6]);
+			info[7] = span7.CreateFixedPointerInfo(ptr7, out types[7]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -2405,6 +3164,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span6.CreateFixedPointerInfo(ptr6),
 					span7.CreateFixedPointerInfo(ptr7),
 				],
+#endif
 			});
 		}
 	}
@@ -2449,10 +3209,26 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
 		{
+#if !NET5_0_OR_GREATER
+			B8 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+			info[6] = span6.CreateFixedPointerInfo(ptr6, out types[6]);
+			info[7] = span7.CreateFixedPointerInfo(ptr7, out types[7]);
+#endif
 			action.Accept(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -2464,6 +3240,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span6.CreateFixedPointerInfo(ptr6),
 					span7.CreateFixedPointerInfo(ptr7),
 				],
+#endif
 			});
 		}
 	}
@@ -2514,10 +3291,26 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
 		{
+#if !NET5_0_OR_GREATER
+			B8 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+			info[6] = span6.CreateFixedPointerInfo(ptr6, out types[6]);
+			info[7] = span7.CreateFixedPointerInfo(ptr7, out types[7]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -2529,6 +3322,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span6.CreateFixedPointerInfo(ptr6),
 					span7.CreateFixedPointerInfo(ptr7),
 				],
+#endif
 			});
 		}
 	}
@@ -2580,10 +3374,26 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
 		{
+#if !NET5_0_OR_GREATER
+			B8 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+			info[6] = span6.CreateFixedPointerInfo(ptr6, out types[6]);
+			info[7] = span7.CreateFixedPointerInfo(ptr7, out types[7]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -2595,6 +3405,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span6.CreateFixedPointerInfo(ptr6),
 					span7.CreateFixedPointerInfo(ptr7),
 				],
+#endif
 			});
 		}
 	}
@@ -2640,10 +3451,26 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
 		{
+#if !NET5_0_OR_GREATER
+			B8 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+			info[6] = span6.CreateFixedPointerInfo(ptr6, out types[6]);
+			info[7] = span7.CreateFixedPointerInfo(ptr7, out types[7]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = false,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -2655,6 +3482,7 @@ public static unsafe class FixedPointerListValueExtensions
 					span6.CreateFixedPointerInfo(ptr6),
 					span7.CreateFixedPointerInfo(ptr7),
 				],
+#endif
 			});
 		}
 	}
@@ -2701,10 +3529,26 @@ public static unsafe class FixedPointerListValueExtensions
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
 		{
+#if !NET5_0_OR_GREATER
+			B8 bufferType = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
+			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
+			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
+			info[3] = span3.CreateFixedPointerInfo(ptr3, out types[3]);
+			info[4] = span4.CreateFixedPointerInfo(ptr4, out types[4]);
+			info[5] = span5.CreateFixedPointerInfo(ptr5, out types[5]);
+			info[6] = span6.CreateFixedPointerInfo(ptr6, out types[6]);
+			info[7] = span7.CreateFixedPointerInfo(ptr7, out types[7]);
+#endif
 			result = func.Apply(new()
 			{
 				IsReadOnly = true,
 				Instances = [],
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					span0.CreateFixedPointerInfo(ptr0),
@@ -2716,10 +3560,57 @@ public static unsafe class FixedPointerListValueExtensions
 					span6.CreateFixedPointerInfo(ptr6),
 					span7.CreateFixedPointerInfo(ptr7),
 				],
+#endif
 			});
 		}
 	}
 
+#if !NET5_0_OR_GREATER
+	/// <summary>
+	/// Retrieves the <see cref="FixedPointerInfo"/> instance for given parameters.
+	/// </summary>
+	/// <typeparam name="T">Type of fixed memory block.</typeparam>
+	/// <param name="ptr">Fixed unmanaged pointer.</param>
+	/// <param name="span">A read-only <typeparamref name="T"/> span.</param>
+	/// <param name="typeRef">Output. Current type.</param>
+	/// <returns>A <see cref="FixedPointerInfo"/> instance.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static FixedPointerInfo CreateFixedPointerInfo<T>(this ReadOnlySpan<T> span, void* ptr, out Type typeRef)
+	{
+		typeRef = typeof(T);
+		return new()
+		{
+			Pointer = ptr,
+			Count = span.Length,
+			SizeOf = sizeof(T),
+			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
+			ConstructorOrFunctionPointer = default,
+			TypeOrFunctionPointer = Unsafe.AsPointer(ref typeRef),
+		};
+	}
+	/// <summary>
+	/// Retrieves the <see cref="FixedPointerInfo"/> instance for given parameters.
+	/// </summary>
+	/// <typeparam name="T">Type of fixed memory block.</typeparam>
+	/// <param name="ptr">Fixed unmanaged pointer.</param>
+	/// <param name="span">A read-only <typeparamref name="T"/> span.</param>
+	/// <param name="typeRef">Output. Current type.</param>
+	/// <returns>A <see cref="FixedPointerInfo"/> instance.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static FixedPointerInfo CreateFixedPointerInfo<T>(this Span<T> span, void* ptr, out Type typeRef)
+	{
+		typeRef = typeof(T);
+		return new()
+		{
+			Pointer = ptr,
+			Count = span.Length,
+			SizeOf = sizeof(T),
+			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
+			ConstructorOrFunctionPointer = default,
+			TypeOrFunctionPointer = Unsafe.AsPointer(ref typeRef),
+		};
+	}
+#else
 	/// <summary>
 	/// Retrieves the <see cref="FixedPointerInfo"/> instance for given parameters.
 	/// </summary>
@@ -2756,5 +3647,6 @@ public static unsafe class FixedPointerListValueExtensions
 			ConstructorPointer = default,
 			GetTypePointer = &NativeUtilities.GetType<T>,
 		};
+#endif
 #pragma warning restore CS8500
 }

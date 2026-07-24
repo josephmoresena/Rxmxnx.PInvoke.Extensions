@@ -86,17 +86,31 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
+#if !NET5_0_OR_GREATER
+			B2 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+#else
 			B2 buffer = new();
+#endif
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
 				IsReadOnly = true,
 				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
 					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
 				],
+#endif
 			});
 			try
 			{
@@ -135,17 +149,31 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
+#if !NET5_0_OR_GREATER
+			B2 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+#else
 			B2 buffer = new();
+#endif
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
 				IsReadOnly = true,
 				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
 					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
 				],
+#endif
 			});
 			try
 			{
@@ -182,18 +210,33 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		{
+#if !NET5_0_OR_GREATER
+			B3 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+#else
 			B3 buffer = new();
+#endif
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
 				IsReadOnly = true,
 				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
 					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
 					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
 				],
+#endif
 			});
 			try
 			{
@@ -235,18 +278,33 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		{
+#if !NET5_0_OR_GREATER
+			B3 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+#else
 			B3 buffer = new();
+#endif
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
 				IsReadOnly = true,
 				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
 					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
 					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
 				],
+#endif
 			});
 			try
 			{
@@ -286,12 +344,27 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		{
+#if !NET5_0_OR_GREATER
+			B4 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+			info[3] = NativeUtilities.CreateFixedPointerInfo(ptr3, span3, out types[3], out constructors[3]);
+#else
 			B4 buffer = new();
+#endif
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
 				IsReadOnly = true,
 				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
@@ -299,6 +372,7 @@ public static unsafe partial class NativeUtilities
 					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
 					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
 				],
+#endif
 			});
 			try
 			{
@@ -343,12 +417,27 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		{
+#if !NET5_0_OR_GREATER
+			B4 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+			info[3] = NativeUtilities.CreateFixedPointerInfo(ptr3, span3, out types[3], out constructors[3]);
+#else
 			B4 buffer = new();
+#endif
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
 				IsReadOnly = true,
 				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
@@ -356,6 +445,7 @@ public static unsafe partial class NativeUtilities
 					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
 					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
 				],
+#endif
 			});
 			try
 			{
@@ -398,12 +488,28 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		{
+#if !NET5_0_OR_GREATER
+			B5 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+			info[3] = NativeUtilities.CreateFixedPointerInfo(ptr3, span3, out types[3], out constructors[3]);
+			info[4] = NativeUtilities.CreateFixedPointerInfo(ptr4, span4, out types[4], out constructors[4]);
+#else
 			B5 buffer = new();
+#endif
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
 				IsReadOnly = true,
 				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
@@ -412,6 +518,7 @@ public static unsafe partial class NativeUtilities
 					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
 					NativeUtilities.CreateFixedPointerInfo(ptr4, span4),
 				],
+#endif
 			});
 			try
 			{
@@ -460,12 +567,28 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		{
+#if !NET5_0_OR_GREATER
+			B5 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+			info[3] = NativeUtilities.CreateFixedPointerInfo(ptr3, span3, out types[3], out constructors[3]);
+			info[4] = NativeUtilities.CreateFixedPointerInfo(ptr4, span4, out types[4], out constructors[4]);
+#else
 			B5 buffer = new();
+#endif
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
 				IsReadOnly = true,
 				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
@@ -474,6 +597,7 @@ public static unsafe partial class NativeUtilities
 					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
 					NativeUtilities.CreateFixedPointerInfo(ptr4, span4),
 				],
+#endif
 			});
 			try
 			{
@@ -520,12 +644,29 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		{
+#if !NET5_0_OR_GREATER
+			B6 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+			info[3] = NativeUtilities.CreateFixedPointerInfo(ptr3, span3, out types[3], out constructors[3]);
+			info[4] = NativeUtilities.CreateFixedPointerInfo(ptr4, span4, out types[4], out constructors[4]);
+			info[5] = NativeUtilities.CreateFixedPointerInfo(ptr5, span5, out types[5], out constructors[5]);
+#else
 			B6 buffer = new();
+#endif
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
 				IsReadOnly = true,
 				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
@@ -535,6 +676,7 @@ public static unsafe partial class NativeUtilities
 					NativeUtilities.CreateFixedPointerInfo(ptr4, span4),
 					NativeUtilities.CreateFixedPointerInfo(ptr5, span5),
 				],
+#endif
 			});
 			try
 			{
@@ -586,12 +728,29 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		{
+#if !NET5_0_OR_GREATER
+			B6 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+			info[3] = NativeUtilities.CreateFixedPointerInfo(ptr3, span3, out types[3], out constructors[3]);
+			info[4] = NativeUtilities.CreateFixedPointerInfo(ptr4, span4, out types[4], out constructors[4]);
+			info[5] = NativeUtilities.CreateFixedPointerInfo(ptr5, span5, out types[5], out constructors[5]);
+#else
 			B6 buffer = new();
+#endif
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
 				IsReadOnly = true,
 				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
@@ -601,6 +760,7 @@ public static unsafe partial class NativeUtilities
 					NativeUtilities.CreateFixedPointerInfo(ptr4, span4),
 					NativeUtilities.CreateFixedPointerInfo(ptr5, span5),
 				],
+#endif
 			});
 			try
 			{
@@ -650,12 +810,30 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		{
+#if !NET5_0_OR_GREATER
+			B7 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+			info[3] = NativeUtilities.CreateFixedPointerInfo(ptr3, span3, out types[3], out constructors[3]);
+			info[4] = NativeUtilities.CreateFixedPointerInfo(ptr4, span4, out types[4], out constructors[4]);
+			info[5] = NativeUtilities.CreateFixedPointerInfo(ptr5, span5, out types[5], out constructors[5]);
+			info[6] = NativeUtilities.CreateFixedPointerInfo(ptr6, span6, out types[6], out constructors[6]);
+#else
 			B7 buffer = new();
+#endif
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
 				IsReadOnly = true,
 				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
@@ -666,6 +844,7 @@ public static unsafe partial class NativeUtilities
 					NativeUtilities.CreateFixedPointerInfo(ptr5, span5),
 					NativeUtilities.CreateFixedPointerInfo(ptr6, span6),
 				],
+#endif
 			});
 			try
 			{
@@ -720,12 +899,30 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		{
+#if !NET5_0_OR_GREATER
+			B7 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+			info[3] = NativeUtilities.CreateFixedPointerInfo(ptr3, span3, out types[3], out constructors[3]);
+			info[4] = NativeUtilities.CreateFixedPointerInfo(ptr4, span4, out types[4], out constructors[4]);
+			info[5] = NativeUtilities.CreateFixedPointerInfo(ptr5, span5, out types[5], out constructors[5]);
+			info[6] = NativeUtilities.CreateFixedPointerInfo(ptr6, span6, out types[6], out constructors[6]);
+#else
 			B7 buffer = new();
+#endif
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
 				IsReadOnly = true,
 				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
@@ -736,6 +933,7 @@ public static unsafe partial class NativeUtilities
 					NativeUtilities.CreateFixedPointerInfo(ptr5, span5),
 					NativeUtilities.CreateFixedPointerInfo(ptr6, span6),
 				],
+#endif
 			});
 			try
 			{
@@ -788,12 +986,31 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
 		{
+#if !NET5_0_OR_GREATER
+			B8 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+			info[3] = NativeUtilities.CreateFixedPointerInfo(ptr3, span3, out types[3], out constructors[3]);
+			info[4] = NativeUtilities.CreateFixedPointerInfo(ptr4, span4, out types[4], out constructors[4]);
+			info[5] = NativeUtilities.CreateFixedPointerInfo(ptr5, span5, out types[5], out constructors[5]);
+			info[6] = NativeUtilities.CreateFixedPointerInfo(ptr6, span6, out types[6], out constructors[6]);
+			info[7] = NativeUtilities.CreateFixedPointerInfo(ptr7, span7, out types[7], out constructors[7]);
+#else
 			B8 buffer = new();
+#endif
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
 				IsReadOnly = true,
 				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
@@ -805,6 +1022,7 @@ public static unsafe partial class NativeUtilities
 					NativeUtilities.CreateFixedPointerInfo(ptr6, span6),
 					NativeUtilities.CreateFixedPointerInfo(ptr7, span7),
 				],
+#endif
 			});
 			try
 			{
@@ -863,12 +1081,31 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
 		{
+#if !NET5_0_OR_GREATER
+			B8 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+			info[3] = NativeUtilities.CreateFixedPointerInfo(ptr3, span3, out types[3], out constructors[3]);
+			info[4] = NativeUtilities.CreateFixedPointerInfo(ptr4, span4, out types[4], out constructors[4]);
+			info[5] = NativeUtilities.CreateFixedPointerInfo(ptr5, span5, out types[5], out constructors[5]);
+			info[6] = NativeUtilities.CreateFixedPointerInfo(ptr6, span6, out types[6], out constructors[6]);
+			info[7] = NativeUtilities.CreateFixedPointerInfo(ptr7, span7, out types[7], out constructors[7]);
+#else
 			B8 buffer = new();
+#endif
 			ReadOnlyFixedMemoryList lst = new(new()
 			{
 				Handle = new(),
 				IsReadOnly = true,
 				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
 				Information =
 				[
 					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
@@ -880,6 +1117,7 @@ public static unsafe partial class NativeUtilities
 					NativeUtilities.CreateFixedPointerInfo(ptr6, span6),
 					NativeUtilities.CreateFixedPointerInfo(ptr7, span7),
 				],
+#endif
 			});
 			try
 			{

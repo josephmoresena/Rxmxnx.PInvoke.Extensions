@@ -230,8 +230,13 @@ public static unsafe class FixedUtf8Extensions
 				Count = value.Length,
 				SizeOf = sizeof(Byte),
 				IsUnmanaged = true,
+#if !NET5_0_OR_GREATER
+				ConstructorOrFunctionPointer = default,
+				TypeOrFunctionPointer = CStringSequence.TypePointer,
+#else
 				ConstructorPointer = default,
 				GetTypePointer = &NativeUtilities.GetType<Byte>,
+#endif
 			};
 		}
 		return span;

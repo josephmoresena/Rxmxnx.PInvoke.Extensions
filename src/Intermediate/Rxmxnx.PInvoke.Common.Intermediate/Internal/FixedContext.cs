@@ -70,8 +70,7 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory,
 #if NET9_0_OR_GREATER
 	public FixedContext(void* ptr, Int32 count, FixedValueHandle handle) : base(ptr, count * sizeof(T), handle)
 #else
-	private FixedContext(void* ptr, Int32 count,FixedValueHandle handle) : base(
-		ptr, count * sizeof(T), handle)
+	private FixedContext(void* ptr, Int32 count, FixedValueHandle handle) : base(ptr, count * sizeof(T), handle)
 #endif
 		=> this.Count = count;
 	/// <summary>
@@ -200,6 +199,11 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory,
 	/// <param name="handle">A <see cref="FixedValueHandle"/> instance.</param>
 	/// <returns>A new <see cref="ReadOnlyFixedMemory"/> instance.</returns>
 	[MethodImpl(MethodImplOptions.NoInlining)]
+#if !NET5_0_OR_GREATER
+	public static ReadOnlyFixedMemory CreateInstance(IntPtr ptr, Int32 count, FixedValueHandle handle)
+		=> new FixedContext<T>(ptr.ToPointer(), count, handle);
+#else
 	public static ReadOnlyFixedMemory CreateInstance(void* ptr, Int32 count, FixedValueHandle handle)
 		=> new FixedContext<T>(ptr, count, handle);
+#endif
 }

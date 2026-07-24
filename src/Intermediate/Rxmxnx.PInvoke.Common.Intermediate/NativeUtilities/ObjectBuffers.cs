@@ -5,9 +5,19 @@ namespace Rxmxnx.PInvoke;
 public partial class NativeUtilities
 {
 	/// <summary>
+	/// Internal buffer of 1 object.
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct B1
+	{
+		private Object _0;
+	}
+
+	/// <summary>
 	/// Internal buffer of 2 objects.
 	/// </summary>
-	private struct B2
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct B2
 	{
 		private Object _0;
 		private Object _1;
@@ -16,7 +26,8 @@ public partial class NativeUtilities
 	/// <summary>
 	/// Internal buffer of 3 objects.
 	/// </summary>
-	private struct B3
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct B3
 	{
 		private Object _0;
 		private Object _1;
@@ -26,7 +37,8 @@ public partial class NativeUtilities
 	/// <summary>
 	/// Internal buffer of 4 objects.
 	/// </summary>
-	private struct B4
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct B4
 	{
 		private Object _0;
 		private Object _1;
@@ -37,7 +49,8 @@ public partial class NativeUtilities
 	/// <summary>
 	/// Internal buffer of 5 objects.
 	/// </summary>
-	private struct B5
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct B5
 	{
 		private Object _0;
 		private Object _1;
@@ -49,7 +62,8 @@ public partial class NativeUtilities
 	/// <summary>
 	/// Internal buffer of 6 objects.
 	/// </summary>
-	private struct B6
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct B6
 	{
 		private Object _0;
 		private Object _1;
@@ -62,7 +76,8 @@ public partial class NativeUtilities
 	/// <summary>
 	/// Internal buffer of 7 objects.
 	/// </summary>
-	private struct B7
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct B7
 	{
 		private Object _0;
 		private Object _1;
@@ -76,7 +91,8 @@ public partial class NativeUtilities
 	/// <summary>
 	/// Internal buffer of 8 objects.
 	/// </summary>
-	private struct B8
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct B8
 	{
 		private Object _0;
 		private Object _1;

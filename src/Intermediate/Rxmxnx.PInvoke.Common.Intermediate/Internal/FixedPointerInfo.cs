@@ -6,7 +6,8 @@ namespace Rxmxnx.PInvoke.Internal;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-internal readonly unsafe struct FixedPointerInfo
+[StructLayout(LayoutKind.Auto)]
+internal readonly unsafe partial struct FixedPointerInfo
 {
 	/// <summary>
 	/// Unmanaged memory block pointer.
@@ -25,13 +26,13 @@ internal readonly unsafe struct FixedPointerInfo
 	/// </summary>
 	public Boolean IsUnmanaged { get; init; }
 	/// <summary>
-	/// Function pointer to <see cref="ReadOnlyFixedMemory"/> instance for current memory block.
+	/// Function pointer to <see cref="ReadOnlyFixedMemory"/> constructor for current memory block.
 	/// </summary>
-	public delegate*<void*, Int32, FixedValueHandle, ReadOnlyFixedMemory> ConstructorPointer { get; init; }
+	public void* ConstructorOrFunctionPointer { get; init; }
 	/// <summary>
 	/// Function pointer to retrieve current memory block type.
 	/// </summary>
-	public delegate*<Type> GetTypePointer { get; init; }
+	public void* TypeOrFunctionPointer { get; init; }
 
 	/// <summary>
 	/// Retrieves a <see cref="FixedPointerValue"/> instance to represent the current memory block.
@@ -40,22 +41,12 @@ internal readonly unsafe struct FixedPointerInfo
 	/// <param name="handle">Memory block handle.</param>
 	/// <returns>A <see cref="FixedPointerValue"/> instance.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public FixedPointerValue GetValue(Boolean isReadOnly, FixedValueHandle? handle)
-		=> new((IntPtr)this.Pointer, this.Count * this.SizeOf)
-		{
-			IsReadOnly = isReadOnly,
-			IsUnmanaged = this.IsUnmanaged,
-			Type = this.GetTypePointer != default ? this.GetTypePointer() : default,
-			Handle = handle,
-		};
+	public partial FixedPointerValue GetValue(Boolean isReadOnly, FixedValueHandle? handle);
 	/// <summary>
 	/// Creates a new <see cref="ReadOnlyFixedMemory"/> instance to represent the current memory block.
 	/// </summary>
 	/// <param name="handle">Memory block handle.</param>
 	/// <returns>A new <see cref="ReadOnlyFixedMemory"/> instance.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public ReadOnlyFixedMemory? CreateContext(FixedValueHandle? handle)
-		=> handle is not null && this.ConstructorPointer != default ?
-			this.ConstructorPointer(this.Pointer, this.Count, handle) :
-			default;
+	public partial ReadOnlyFixedMemory? CreateContext(FixedValueHandle? handle);
 }

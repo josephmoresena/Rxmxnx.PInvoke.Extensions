@@ -1,5 +1,13 @@
 ﻿#if !NET6_0_OR_GREATER
 using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
+#if !NET5_0_OR_GREATER
+#if PACKAGE
+using B1 = Rxmxnx.PInvoke.Buffers.Atomic<System.Object>;
+#else
+using B1 = Rxmxnx.PInvoke.NativeUtilities.B1;
+#endif
+
+#endif
 #endif
 
 namespace Rxmxnx.PInvoke;
@@ -13,6 +21,36 @@ public unsafe partial class CStringSequence
 	/// Length of the CString.Zero item.
 	/// </summary>
 	private const Int32 zeroItemLength = Int32.MinValue;
+
+#if !NET5_0_OR_GREATER
+	/// <summary>
+	/// Static buffer for type instance.
+	/// </summary>
+	[FixedAddressValueType]
+	private static B1 bufferType;
+	/// <summary>
+	/// Static buffer for delegate instance.
+	/// </summary>
+	[FixedAddressValueType]
+	private static B1 bufferConstructor;
+
+	/// <summary>
+	/// Static constructor.
+	/// </summary>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3963)]
+#endif
+	static CStringSequence()
+	{
+		CStringSequence.bufferType = new();
+		CStringSequence.bufferConstructor = new();
+		Span<Type> types = NativeUtilities.CreateTypeSpan(ref CStringSequence.bufferType);
+		Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+			NativeUtilities.CreateConstructorSpan(ref CStringSequence.bufferConstructor);
+		types[0] = typeof(Byte);
+		constructors[0] = ReadOnlyFixedContext<Byte>.CreateInstance;
+	}
+#endif
 
 	/// <summary>
 	/// Determines the length of the given <see cref="CString"/> instance for the sequence.

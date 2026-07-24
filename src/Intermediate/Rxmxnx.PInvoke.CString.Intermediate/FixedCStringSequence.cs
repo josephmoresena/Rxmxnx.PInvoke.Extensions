@@ -92,8 +92,13 @@ public readonly unsafe ref struct FixedCStringSequence
 				Count = length,
 				SizeOf = sizeof(Byte),
 				IsUnmanaged = true,
+#if !NET5_0_OR_GREATER
+				ConstructorOrFunctionPointer = CStringSequence.ConstructorPointer,
+				TypeOrFunctionPointer = CStringSequence.TypePointer,
+#else
 				ConstructorPointer = &ReadOnlyFixedContext<Byte>.CreateInstance,
 				GetTypePointer = &NativeUtilities.GetType<Byte>,
+#endif
 			};
 		}
 		return new(new()
@@ -118,8 +123,13 @@ public readonly unsafe ref struct FixedCStringSequence
 				Count = length,
 				SizeOf = sizeof(Byte),
 				IsUnmanaged = true,
+#if !NET5_0_OR_GREATER
+				ConstructorOrFunctionPointer = CStringSequence.ConstructorPointer,
+				TypeOrFunctionPointer = CStringSequence.TypePointer,
+#else
 				ConstructorPointer = &ReadOnlyFixedContext<Byte>.CreateInstance,
 				GetTypePointer = &NativeUtilities.GetType<Byte>,
+#endif
 			};
 		}
 		return new()

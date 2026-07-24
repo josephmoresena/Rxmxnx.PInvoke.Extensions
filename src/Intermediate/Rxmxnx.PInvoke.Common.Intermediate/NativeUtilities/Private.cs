@@ -70,6 +70,58 @@ public unsafe partial class NativeUtilities
 		return MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(array), array.Length);
 	}
 #pragma warning disable CS8500
+#if !NET5_0_OR_GREATER
+	/// <summary>
+	/// Retrieves the <see cref="FixedPointerInfo"/> instance for given parameters.
+	/// </summary>
+	/// <typeparam name="T">Type of fixed memory block.</typeparam>
+	/// <param name="ptr">Fixed unmanaged pointer.</param>
+	/// <param name="span">A read-only <typeparamref name="T"/> span.</param>
+	/// <param name="typeRef">Output. Current type.</param>
+	/// <param name="ctorRef">Output. Constructor memory delegate.</param>
+	/// <returns>A <see cref="FixedPointerInfo"/> instance.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static FixedPointerInfo CreateFixedPointerInfo<T>(void* ptr, ReadOnlySpan<T> span, out Type typeRef,
+		out Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory> ctorRef)
+	{
+		typeRef = typeof(T);
+		ctorRef = ReadOnlyFixedContext<T>.CreateInstance;
+		return new()
+		{
+			Pointer = ptr,
+			Count = span.Length,
+			SizeOf = sizeof(T),
+			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
+			ConstructorOrFunctionPointer = Unsafe.AsPointer(ref ctorRef),
+			TypeOrFunctionPointer = Unsafe.AsPointer(ref typeRef),
+		};
+	}
+	/// <summary>
+	/// Retrieves the <see cref="FixedPointerInfo"/> instance for given parameters.
+	/// </summary>
+	/// <typeparam name="T">Type of fixed memory block.</typeparam>
+	/// <param name="ptr">Fixed unmanaged pointer.</param>
+	/// <param name="span">A read-only <typeparamref name="T"/> span.</param>
+	/// <param name="typeRef">Output. Current type.</param>
+	/// <param name="ctorRef">Output. Constructor memory delegate.</param>
+	/// <returns>A <see cref="FixedPointerInfo"/> instance.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static FixedPointerInfo CreateFixedPointerInfo<T>(void* ptr, Span<T> span, out Type typeRef,
+		out Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory> ctorRef)
+	{
+		typeRef = typeof(T);
+		ctorRef = FixedContext<T>.CreateInstance;
+		return new()
+		{
+			Pointer = ptr,
+			Count = span.Length,
+			SizeOf = sizeof(T),
+			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
+			ConstructorOrFunctionPointer = Unsafe.AsPointer(ref ctorRef),
+			TypeOrFunctionPointer = Unsafe.AsPointer(ref typeRef),
+		};
+	}
+#else
 	/// <summary>
 	/// Retrieves the <see cref="FixedPointerInfo"/> instance for given parameters.
 	/// </summary>
@@ -106,6 +158,7 @@ public unsafe partial class NativeUtilities
 			ConstructorPointer = &FixedContext<T>.CreateInstance,
 			GetTypePointer = &NativeUtilities.GetType<T>,
 		};
+#endif
 	/// <summary>
 	/// Creates a <see cref="ReadOnlyFixedMemory"/> span from <typeparamref name="TBuffer"/> reference.
 	/// </summary>

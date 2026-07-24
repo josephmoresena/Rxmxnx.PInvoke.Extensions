@@ -9,6 +9,17 @@ namespace Rxmxnx.PInvoke;
 #endif
 public unsafe partial class CStringSequence
 {
+#if !NET5_0_OR_GREATER
+	/// <summary>
+	/// Internal pointer to <c>typeof(System.Byte)</c> instance.
+	/// </summary>
+	internal static void* TypePointer => Unsafe.AsPointer(ref CStringSequence.bufferType);
+	/// <summary>
+	/// Internal pointer to <c>ReadOnlyFixedContext&lt;Byte&gt;.CreateInstance</c> delegate instance.
+	/// </summary>
+	internal static void* ConstructorPointer => Unsafe.AsPointer(ref CStringSequence.bufferConstructor);
+#endif
+
 	/// <summary>
 	/// Executes a specified action using the current instance treated as a <see cref="FixedCStringSequence"/>.
 	/// </summary>
