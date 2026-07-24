@@ -17,5 +17,5 @@ public interface IFixedPointerListFunction<out TResult>
 	/// </summary>
 	/// <param name="list">The <see cref="FixedPointerValueList"/> used by the operation.</param>
 	/// <returns>The result produced by the operation.</returns>
-	protected internal TResult Apply(scoped FixedPointerValueList list);
+	TResult Apply(scoped FixedPointerValueList list);
 }

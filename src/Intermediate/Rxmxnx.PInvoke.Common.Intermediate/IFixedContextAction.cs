@@ -14,5 +14,5 @@ public interface IFixedContextAction<T>
 	/// Performs an operation using the specified fixed context.
 	/// </summary>
 	/// <param name="fixedContext">The <see cref="FixedContextValue{T}"/> used by the operation.</param>
-	protected internal void Accept(scoped FixedContextValue<T> fixedContext);
+	void Accept(scoped FixedContextValue<T> fixedContext);
 }

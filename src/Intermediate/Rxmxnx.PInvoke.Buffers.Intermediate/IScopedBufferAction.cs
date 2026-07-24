@@ -19,11 +19,11 @@ public interface IScopedBufferAction<T>
 	/// <summary>
 	/// Number of <typeparamref name="T"/> elements required for <see cref="Accept"/> execution.
 	/// </summary>
-	protected internal UInt16 Count { get; }
+	UInt16 Count { get; }
 
 	/// <summary>
 	/// Performs an operation using the specified buffer.
 	/// </summary>
 	/// <param name="buffer">The <see cref="ScopedBuffer{T}"/> used by the operation.</param>
-	protected internal void Accept(scoped ScopedBuffer<T> buffer);
+	void Accept(scoped ScopedBuffer<T> buffer);
 }

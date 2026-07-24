@@ -228,7 +228,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		#region FunctionalInterfaces
 		private readonly struct PrintAction<T> : IFixedContextAction<T>
 		{
-			void IFixedContextAction<T>.Accept(FixedContextValue<T> ctx) => Program.Print(ctx);
+			public void Accept(FixedContextValue<T> ctx) => Program.Print(ctx);
 		}
 
 		private struct BufferAction : IScopedBufferAction<Int32>, IScopedBufferAction<String?>,
@@ -238,25 +238,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			public UInt16 Count { get; set; }
 			public Boolean IsMinimalCount { get; set; }
 
-			UInt16 IScopedBufferAction<(Int32, String)?>.Count => this.Count;
-			UInt16 IScopedBufferAction<(Int32, String)>.Count => this.Count;
-			UInt16 IScopedBufferAction<Double?>.Count => this.Count;
-			UInt16 IScopedBufferAction<String?>.Count => this.Count;
-			UInt16 IScopedBufferAction<Int32>.Count => this.Count;
-
-			Boolean IScopedBufferAction<(Int32, String)?>.IsMinimalCount => this.IsMinimalCount;
-			Boolean IScopedBufferAction<(Int32, String)>.IsMinimalCount => this.IsMinimalCount;
-			Boolean IScopedBufferAction<Double?>.IsMinimalCount => this.IsMinimalCount;
-			Boolean IScopedBufferAction<String?>.IsMinimalCount => this.IsMinimalCount;
-			Boolean IScopedBufferAction<Int32>.IsMinimalCount => this.IsMinimalCount;
-
-			void IScopedBufferAction<(Int32, String)?>.Accept(ScopedBuffer<(Int32, String)?> buffer)
-				=> BufferHelper.Generate(buffer);
-			void IScopedBufferAction<(Int32, String)>.Accept(ScopedBuffer<(Int32, String)> buffer)
-				=> BufferHelper.Generate(buffer);
-			void IScopedBufferAction<Double?>.Accept(ScopedBuffer<Double?> buffer) => BufferHelper.Generate(buffer);
-			void IScopedBufferAction<String?>.Accept(ScopedBuffer<String?> buffer) => BufferHelper.Generate(buffer);
-			void IScopedBufferAction<Int32>.Accept(ScopedBuffer<Int32> buffer) => BufferHelper.Generate(buffer);
+			public void Accept(ScopedBuffer<(Int32, String)?> buffer) => BufferHelper.Generate(buffer);
+			public void Accept(ScopedBuffer<(Int32, String)> buffer) => BufferHelper.Generate(buffer);
+			public void Accept(ScopedBuffer<Double?> buffer) => BufferHelper.Generate(buffer);
+			public void Accept(ScopedBuffer<String?> buffer) => BufferHelper.Generate(buffer);
+			public void Accept(ScopedBuffer<Int32> buffer) => BufferHelper.Generate(buffer);
 		}
 		#endregion
 	}

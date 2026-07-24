@@ -16,5 +16,5 @@ public interface IFixedFunction<out TResult>
 	/// </summary>
 	/// <param name="fixedPointer">The <see cref="FixedPointerValue"/> used by the operation.</param>
 	/// <returns>The result produced by the operation.</returns>
-	protected internal TResult Apply(scoped FixedPointerValue fixedPointer);
+	TResult Apply(scoped FixedPointerValue fixedPointer);
 }

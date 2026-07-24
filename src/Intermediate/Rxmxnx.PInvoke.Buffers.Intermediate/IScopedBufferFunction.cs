@@ -20,12 +20,12 @@ public interface IScopedBufferFunction<T, out TResult>
 	/// <summary>
 	/// Number of <typeparamref name="T"/> elements required for <see cref="Apply"/> execution.
 	/// </summary>
-	protected internal UInt16 Count { get; }
+	UInt16 Count { get; }
 
 	/// <summary>
 	/// Performs an operation using the specified buffer and returns a result.
 	/// </summary>
 	/// <param name="buffer">The <see cref="ScopedBuffer{T}"/> used by the operation.</param>
 	/// <returns>The result produced by the operation.</returns>
-	protected internal TResult Apply(scoped ScopedBuffer<T> buffer);
+	TResult Apply(scoped ScopedBuffer<T> buffer);
 }

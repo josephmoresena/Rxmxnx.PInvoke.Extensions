@@ -14,5 +14,5 @@ public interface IFixedAction
 	/// Performs an operation using the specified fixed pointer.
 	/// </summary>
 	/// <param name="fixedPointer">The <see cref="FixedPointerValue"/> used by the operation.</param>
-	protected internal void Accept(scoped FixedPointerValue fixedPointer);
+	void Accept(scoped FixedPointerValue fixedPointer);
 }

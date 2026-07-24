@@ -14,5 +14,5 @@ public interface IReadOnlyFixedContextAction<T>
 	/// Performs an operation using the specified read-only fixed context.
 	/// </summary>
 	/// <param name="fixedContext">The <see cref="ReadOnlyFixedContextValue{T}"/> used by the operation.</param>
-	protected internal void Accept(scoped ReadOnlyFixedContextValue<T> fixedContext);
+	void Accept(scoped ReadOnlyFixedContextValue<T> fixedContext);
 }

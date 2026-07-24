@@ -17,5 +17,5 @@ public interface IReadOnlyFixedContextFunction<T, out TResult>
 	/// </summary>
 	/// <param name="fixedContext">The <see cref="ReadOnlyFixedContextValue{T}"/> used by the operation.</param>
 	/// <returns>The result produced by the operation.</returns>
-	protected internal TResult Apply(scoped ReadOnlyFixedContextValue<T> fixedContext);
+	TResult Apply(scoped ReadOnlyFixedContextValue<T> fixedContext);
 }
