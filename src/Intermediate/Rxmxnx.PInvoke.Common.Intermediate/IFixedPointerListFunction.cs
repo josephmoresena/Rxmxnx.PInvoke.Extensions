@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke;
 
+#if NETSTANDARD2_1 || NETCOREAPP
 /// <summary>
 /// Defines a callable object that performs an operation using a <see cref="FixedPointerValueList"/> and returns a result.
 /// </summary>
@@ -10,6 +11,12 @@ namespace Rxmxnx.PInvoke;
 /// and their stateful variant.
 /// Implementations can store the operation state directly.
 /// </remarks>
+#else
+/// <summary>
+/// Defines a callable object that performs an operation using a <see cref="FixedPointerValueList"/> and returns a result.
+/// </summary>
+/// <typeparam name="TResult">The type of the return value.</typeparam>
+#endif
 public interface IFixedPointerListFunction<out TResult>
 {
 	/// <summary>

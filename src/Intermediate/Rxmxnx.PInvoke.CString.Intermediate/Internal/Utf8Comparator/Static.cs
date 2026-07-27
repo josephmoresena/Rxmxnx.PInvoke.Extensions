@@ -153,10 +153,19 @@ internal abstract unsafe partial class Utf8Comparator
 		}
 
 		T result = default;
+#if NETSTANDARD2_1 || NETCOREAPP
 		ref Byte refByte = ref Unsafe.As<Char, Byte>(ref refChar);
 		ReadOnlySpan<Byte> bytes = MemoryMarshal.CreateReadOnlySpan(ref refByte, sizeOnBytes);
 		Span<Byte> resultBytes = MemoryMarshal.CreateSpan(ref Unsafe.As<T, Byte>(ref result), bytes.Length);
 		bytes.CopyTo(resultBytes);
+#else
+		fixed (void* charPtr = &refChar)
+		{
+			ReadOnlySpan<Byte> bytes = new(charPtr, sizeOnBytes);
+			Span<Byte> resultBytes = new(Unsafe.AsPointer(ref result), bytes.Length);
+			bytes.CopyTo(resultBytes);
+		}
+#endif
 		source = default;
 		return result;
 	}

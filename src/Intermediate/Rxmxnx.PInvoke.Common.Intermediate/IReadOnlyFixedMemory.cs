@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if NETSTANDARD2_1 || NETCOREAPP
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Interface representing a read-only fixed block of memory.
@@ -79,3 +80,4 @@ public interface IReadOnlyFixedMemory<T> : IReadOnlyFixedMemory
 	// ReSharper disable once PossibleInterfaceMemberAmbiguity
 	public new interface IDisposable : IReadOnlyFixedMemory<T>, IReadOnlyFixedMemory.IDisposable;
 }
+#endif

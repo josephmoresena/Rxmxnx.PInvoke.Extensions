@@ -1,7 +1,7 @@
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// Provides a set of extensions for basic operations for <see cref="ReadOnlyFixedContext{T}"/> instances.
+/// Provides a set of extensions for basic operations for <see cref="ReadOnlyFixedContextValue{T}"/> instances.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
 [Browsable(false)]

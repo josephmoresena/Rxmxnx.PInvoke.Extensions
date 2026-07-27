@@ -61,6 +61,7 @@ internal sealed unsafe class RentedMemoryOwner<T> : FixedValueHandle
 		this._arrayPool.Return(array, this._clearArray);
 	}
 
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Rents and pins an array of minimum <paramref name="count"/> elements from <paramref name="arrayPool"/>,
 	/// ensuring a safe context for accessing the fixed memory.
@@ -87,6 +88,7 @@ internal sealed unsafe class RentedMemoryOwner<T> : FixedValueHandle
 		RentedMemoryOwner<T> owner = new(arrayPool, arrayPool.Rent(count), clearArray, out arrayLength);
 		return new FixedContext<T>(owner.Pointer, count).ToDisposable(owner);
 	}
+#endif
 	/// <summary>
 	/// Rents and pins an array of minimum <paramref name="count"/> elements from <paramref name="arrayPool"/>,
 	/// ensuring a safe context for accessing the fixed memory.
@@ -107,9 +109,7 @@ internal sealed unsafe class RentedMemoryOwner<T> : FixedValueHandle
 		{
 			fixedContext = default;
 			arrayLength = default;
-#pragma warning disable CS0612
-			return FixedContext<T>.EmptyDisposable;
-#pragma warning restore CS0612
+			return FixedValueHandle.EmptyDisposable;
 		}
 		RentedMemoryOwner<T> owner = new(arrayPool, arrayPool.Rent(count), clearArray, out arrayLength);
 		return FixedContextValue<T>.CreateDisposable((ValPtr<T>)owner.Pointer, count, owner, out fixedContext);

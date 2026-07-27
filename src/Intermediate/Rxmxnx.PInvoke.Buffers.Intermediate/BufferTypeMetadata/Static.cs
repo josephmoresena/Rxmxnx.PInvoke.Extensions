@@ -1,3 +1,7 @@
+#if !NETSTANDARD2_1 && !NETCOREAPP
+using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 public partial class BufferTypeMetadata
@@ -63,10 +67,17 @@ public partial class BufferTypeMetadata
 #endif
 	{
 		TBuffer buffer = new();
+#if NETSTANDARD2_1 || NETCOREAPP
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
 		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
 		ScopedBuffer<T> scoped = new(memMarshal, false, metadata.Size, metadata);
 		action.Accept(scoped);
+#else
+		Span<T> memMarshal = UnsafeMethods.CreateSpan<T, TBuffer>(ref buffer, spanLength);
+		ScopedBuffer<T> scoped = new(memMarshal, false, metadata.Size, metadata);
+		action.Accept(scoped);
+		UnsafeMethods.Clear<T, TBuffer>(ref buffer, spanLength);
+#endif
 	}
 	/// <summary>
 	/// Executes <paramref name="func"/> using a buffer of current type.
@@ -89,9 +100,51 @@ public partial class BufferTypeMetadata
 #endif
 	{
 		TBuffer buffer = new();
+#if NETSTANDARD2_1 || NETCOREAPP
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
 		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
 		ScopedBuffer<T> scoped = new(memMarshal, false, metadata.Size, metadata);
 		return func.Apply(scoped);
+#else
+		Span<T> memMarshal = UnsafeMethods.CreateSpan<T, TBuffer>(ref buffer, spanLength);
+		ScopedBuffer<T> scoped = new(memMarshal, false, metadata.Size, metadata);
+		TResult result = func.Apply(scoped);
+		UnsafeMethods.Clear<T, TBuffer>(ref buffer, spanLength);
+		return result;
+#endif
 	}
+
+#if !NETSTANDARD2_1 && !NETCOREAPP
+	private static unsafe class UnsafeMethods
+	{
+#pragma warning disable CS8500
+		/// <summary>
+		/// Creates a new span of <typeparamref name="T"/> elements.
+		/// </summary>
+		/// <typeparam name="T">The type of items in the buffer.</typeparam>
+		/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
+		/// <param name="buffer">A managed <typeparamref name="TBuffer"/> reference.</param>
+		/// <param name="spanLength">Required span length.</param>
+		/// <returns>A <typeparamref name="T"/> span.</returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Span<T> CreateSpan<T, TBuffer>(ref TBuffer buffer, Int32 spanLength)
+			=> MemoryMarshalCompat.CreateUnsafeSpan<T>(Unsafe.AsPointer(ref buffer), spanLength);
+		/// <summary>
+		/// Clears two elements from reference buffer.
+		/// </summary>
+		/// <typeparam name="T">The type of items in the buffer.</typeparam>
+		/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
+		/// <param name="buffer">A managed <typeparamref name="TBuffer"/> reference.</param>
+		/// <param name="spanLength">Required span length.</param>
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		public static void Clear<T, TBuffer>(ref TBuffer buffer, Int32 spanLength) where TBuffer : struct
+		{
+			ref T r0 = ref Unsafe.As<TBuffer, T>(ref buffer);
+			ref T r = ref Unsafe.Add(ref Unsafe.As<TBuffer, T>(ref buffer), spanLength - 1);
+			r0 = default!; // First element.
+			r = default!; // Last element.
+		}
+#pragma warning restore CS8500
+	}
+#endif
 }

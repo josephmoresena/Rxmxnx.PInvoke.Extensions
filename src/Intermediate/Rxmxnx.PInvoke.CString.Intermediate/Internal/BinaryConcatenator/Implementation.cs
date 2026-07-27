@@ -41,12 +41,14 @@ internal sealed class BinaryConcatenator : BinaryConcatenator<Byte?>
 		if (value.HasValue)
 			this.Stream.WriteByte(value.Value);
 	}
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <inheritdoc/>
 	protected override async Task WriteValueAsync(Byte? value)
 	{
 		this.Stream.WriteByte(value!.Value);
 		await Task.CompletedTask;
 	}
+#endif
 	/// <inheritdoc/>
 	protected override Boolean IsEmpty([NotNullWhen(false)] Byte? value) => !value.HasValue;
 

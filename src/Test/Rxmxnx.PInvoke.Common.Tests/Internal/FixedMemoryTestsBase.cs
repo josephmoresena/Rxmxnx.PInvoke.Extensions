@@ -9,23 +9,23 @@ public abstract class FixedMemoryTestsBase
 	/// <summary>
 	/// Message when <see cref="FixedMemory"/> instance is read-only.
 	/// </summary>
-	protected static readonly String ReadOnlyError = IMessageResource.GetInstance().ReadOnlyInstance;
+	protected static readonly String ReadOnlyError = MessageResource.GetInstance().ReadOnlyInstance;
 	/// <summary>
 	/// Message when <see cref="FixedMemory"/> instance is invalid.
 	/// </summary>
-	protected static readonly String InvalidError = IMessageResource.GetInstance().InvalidInstance;
+	protected static readonly String InvalidError = MessageResource.GetInstance().InvalidInstance;
 	/// <summary>
 	/// Message when <see cref="FixedMemory"/> instance is not a function.
 	/// </summary>
-	protected static readonly String IsNotFunction = IMessageResource.GetInstance().IsNotFunction;
+	protected static readonly String IsNotFunction = MessageResource.GetInstance().IsNotFunction;
 	/// <summary>
 	/// Message when <see cref="FixedMemory"/> instance is a function.
 	/// </summary>
-	protected static readonly String IsFunction = IMessageResource.GetInstance().IsFunction;
+	protected static readonly String IsFunction = MessageResource.GetInstance().IsFunction;
 	/// <summary>
 	/// Message when <see cref="FixedReference{T}"/> instance is not enough for hold a reference.
 	/// </summary>
-	protected static readonly String InvalidSizeFormat = IMessageResource.GetInstance()
+	protected static readonly String InvalidSizeFormat = MessageResource.GetInstance()
 	                                                                     .InvalidRefTypePointer(
 		                                                                     typeof(FixedMemoryTestsBase))
 	                                                                     .Replace(

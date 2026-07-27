@@ -19,6 +19,7 @@ public partial class CStringSequence
 	/// </summary>
 	private readonly String _value;
 
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Retrieves the internal buffer as a <see cref="ReadOnlySpan{Char}"/> instance and creates a
 	/// <see cref="CString"/> array representing the sequence of texts.
@@ -70,6 +71,7 @@ public partial class CStringSequence
 		_ = this.AsUnsafeSpan(out CString[] output);
 		return new(output, CString.CreateUnsafe(new(ptr), this._value.Length * sizeof(Char), true));
 	}
+#endif
 	/// <summary>
 	/// Calculates the offset and length for the indicated sub-range.
 	/// </summary>

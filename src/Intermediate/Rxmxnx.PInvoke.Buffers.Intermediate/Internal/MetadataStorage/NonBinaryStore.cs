@@ -1,3 +1,7 @@
+#if !NETSTANDARD2_1 && !NETCOREAPP
+using Rxmxnx.PInvoke.Internal.FrameworkCompat;
+#endif
+
 namespace Rxmxnx.PInvoke.Internal;
 
 internal abstract partial class MetadataStorage

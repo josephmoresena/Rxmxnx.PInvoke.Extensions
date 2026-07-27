@@ -43,7 +43,12 @@ internal sealed class StringUtf8Comparator : Utf8Comparator<Char>
 #if !PACKAGE && (!NETCOREAPP || NET7_0_OR_GREATER)
 	[ExcludeFromCodeCoverage]
 #endif
-	protected override String GetString(ReadOnlySpan<Char> source) => new(source);
+	protected override String GetString(ReadOnlySpan<Char> source)
+#if NETSTANDARD2_1 || NETCOREAPP
+		=> new(source);
+#else
+		=> source.ToString();
+#endif
 	/// <inheritdoc/>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]

@@ -1,3 +1,7 @@
+#if !NETSTANDARD2_1 && !NETCOREAPP
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
 namespace Rxmxnx.PInvoke.Buffers;
 
 /// <summary>

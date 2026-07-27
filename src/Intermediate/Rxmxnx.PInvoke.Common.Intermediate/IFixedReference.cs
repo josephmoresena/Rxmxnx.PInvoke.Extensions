@@ -4,11 +4,32 @@
 /// This interface represents a mutable reference to a fixed memory location.
 /// </summary>
 /// <typeparam name="T">Type of the value referenced in memory.</typeparam>
-public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference<T>, IFixedMemory
+public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference<T>
+#if NETSTANDARD2_1 || NETCOREAPP
+	, IFixedMemory
+#endif
 #if NET9_0_OR_GREATER
 	where T : allows ref struct
 #endif
 {
+	/// <summary>
+	/// Reinterprets the <typeparamref name="T"/> fixed memory reference as a
+	/// <typeparamref name="TDestination"/> memory reference.
+	/// </summary>
+	/// <typeparam name="TDestination">Type of the reinterpreted memory reference.</typeparam>
+	/// <returns>
+	/// A <see cref="IFixedReference{TDestination}"/> instance.
+	/// </returns>
+#if !NETSTANDARD2_1 && !NETCOREAPP
+	new IFixedReference<TDestination> Transformation<TDestination>();
+#else
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	new IFixedReference<TDestination> Transformation<TDestination>()
+		=> this.Transformation<TDestination>(out IFixedMemory _);
+#endif
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Reinterprets the <typeparamref name="T"/> fixed memory reference as a
 	/// <typeparamref name="TDestination"/> memory reference.
@@ -44,4 +65,5 @@ public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference
 	// ReSharper disable once PossibleInterfaceMemberAmbiguity
 	public new interface IDisposable : IFixedReference<T>, IReadOnlyFixedReference<T>.IDisposable,
 		IFixedMemory.IDisposable;
+#endif
 }

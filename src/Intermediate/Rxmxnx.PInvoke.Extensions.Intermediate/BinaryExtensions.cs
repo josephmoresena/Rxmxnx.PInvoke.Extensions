@@ -14,7 +14,11 @@ namespace Rxmxnx.PInvoke;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
+#if NETSTANDARD2_1 || NETCOREAPP
 public static unsafe partial class BinaryExtensions
+#else
+public static unsafe class BinaryExtensions
+#endif
 {
 	/// <summary>
 	/// Map of hexadecimal values.
@@ -52,7 +56,11 @@ public static unsafe partial class BinaryExtensions
 			return Unsafe.ReadUnaligned<T>(ref refByte);
 
 		T result = default;
+#if NETSTANDARD2_1 || NETCOREAPP
 		Span<Byte> resultBytes = MemoryMarshal.CreateSpan(ref Unsafe.As<T, Byte>(ref result), span.Length);
+#else
+		Span<Byte> resultBytes = new(Unsafe.AsPointer(ref result), span.Length);
+#endif
 		span.CopyTo(resultBytes);
 		return result;
 	}
@@ -106,7 +114,17 @@ public static unsafe partial class BinaryExtensions
 #else
 		ArgumentNullException.ThrowIfNull(bytes);
 #endif
+#if NETSTANDARD2_1 || NETCOREAPP
 		return bytes.Length > 0 ? String.Create(bytes.Length * 2, bytes, BinaryExtensions.CopyHexChars) : String.Empty;
+#else
+		if (bytes.Length <= 0) return String.Empty;
+		Int32 stringLength = bytes.Length * 2;
+		Span<Char> chars = stringLength <= StackAllocationHelper.StackallocByteThreshold ?
+			stackalloc Char[stringLength] :
+			new Char[stringLength];
+		BinaryExtensions.CopyHexChars(chars, bytes);
+		return chars.ToString();
+#endif
 	}
 	/// <summary>
 	/// Gets the hexadecimal string representation of a byte.
@@ -114,7 +132,16 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="value">The source byte.</param>
 	/// <returns>The hexadecimal string representation of the byte.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static String AsHexString(this Byte value) => String.Create(2, value, BinaryExtensions.CopyHexChars);
+	public static String AsHexString(this Byte value)
+#if NETSTANDARD2_1 || NETCOREAPP
+		=> String.Create(2, value, BinaryExtensions.CopyHexChars);
+#else
+	{
+		Span<Char> chars = stackalloc Char[2];
+		BinaryExtensions.CopyHexChars(chars, value);
+		return chars.ToString();
+	}
+#endif
 
 	/// <summary>
 	/// Copies to <paramref name="chars"/> the Hexadecimal representation of <paramref name="value"/>.

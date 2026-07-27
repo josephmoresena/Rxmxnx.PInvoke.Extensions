@@ -1,4 +1,5 @@
-﻿#if PACKAGE
+﻿#if NETSTANDARD2_1 || NETCOREAPP
+#if PACKAGE
 using B2 =
 	Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
 		Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>;
@@ -1125,3 +1126,4 @@ public static unsafe partial class NativeUtilities
 	}
 }
 #pragma warning restore CS8500
+#endif

@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke;
 
+#if NETSTANDARD2_1 || NETCOREAPP
 /// <summary>
 /// Defines a callable object that performs an operation using a <see cref="ReadOnlyFixedContextValue{T}"/>.
 /// </summary>
@@ -8,6 +9,12 @@ namespace Rxmxnx.PInvoke;
 /// This interface provides an alternative to <see cref="ReadOnlyFixedContextAction{T}"/> and its stateful variant.
 /// Implementations can store the operation state directly.
 /// </remarks>
+#else
+/// <summary>
+/// Defines a callable object that performs an operation using a <see cref="ReadOnlyFixedContextValue{T}"/>.
+/// </summary>
+/// <typeparam name="T">Type of the fixed context.</typeparam>
+#endif
 public interface IReadOnlyFixedContextAction<T>
 {
 	/// <summary>

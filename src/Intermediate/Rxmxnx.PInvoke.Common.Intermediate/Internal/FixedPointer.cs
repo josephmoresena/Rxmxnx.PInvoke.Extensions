@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke.Internal;
+﻿#if !NETSTANDARD2_1 && !NETCOREAPP
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
+namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// Helper class for managing fixed memory pointer blocks.
@@ -58,6 +62,8 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	// ReSharper disable once MemberCanBePrivate.Global
 	public Boolean IsValid => this._handle.Value;
 
+	IntPtr IFixedPointer.Pointer => (IntPtr)this.GetMemoryOffset();
+
 	/// <summary>
 	/// Constructs a new FixedPointer instance pointing to a fixed memory block.
 	/// </summary>
@@ -106,6 +112,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		this._handle = pointer._handle;
 		this.IsReadOnly = pointer.IsReadOnly;
 	}
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Constructs a new <see cref="FixedPointer"/> instance using another instance as a template and specifying a memory
 	/// offset.
@@ -124,8 +131,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		this._handle = pointer._handle;
 		this.IsReadOnly = pointer.IsReadOnly;
 	}
-
-	IntPtr IFixedPointer.Pointer => (IntPtr)this.GetMemoryOffset();
+#endif
 
 	/// <summary>
 	/// Creates a reference of a <typeparamref name="T"/> value over the memory block.
@@ -165,6 +171,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		this.ValidateTransformation(typeof(T), !RuntimeHelpers.IsReferenceOrContainsReferences<T>());
 		return ref Unsafe.AsRef<T>(this._ptr);
 	}
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Creates a <see cref="Span{TValue}"/> instance over the memory block whose
 	/// length is <paramref name="length"/>.
@@ -243,6 +250,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		ref Object refObject = ref Unsafe.AsRef<Object>(ptr);
 		return MemoryMarshal.CreateReadOnlySpan(ref refObject, this.BinaryLength / sizeof(IntPtr));
 	}
+#endif
 	/// <summary>
 	/// Creates a <typeparamref name="TDelegate"/> instance over the memory block.
 	/// </summary>
@@ -328,6 +336,8 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected void ValidateReferenceSize(Type typeOf, Int32 sizeOf)
 		=> ValidationUtilities.ThrowIfInvalidRefTypePointer(this._binaryLength, typeOf, sizeOf);
+#if NETSTANDARD2_1 || NETCOREAPP
+#endif
 
 	/// <summary>
 	/// Validates any operation over the fixed function pointer.

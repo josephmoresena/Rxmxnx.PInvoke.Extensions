@@ -73,13 +73,24 @@ internal sealed class StringConcatenator : BinaryConcatenator<String>
 		if (!this._disposedValue)
 		{
 			if (disposing)
+#if NETSTANDARD2_1 || NETCOREAPP
 				await this._writer.DisposeAsync();
+#else
+			{
+				if (this._writer is IAsyncDisposable ad)
+					await ad.DisposeAsync();
+				else
+					this._writer.Dispose();
+			}
+#endif
 			this._disposedValue = true;
 		}
 		await base.DisposeAsync(disposing);
 	}
 	/// <inheritdoc/>
 	protected override void WriteValue(String? value) => this._writer.Write(value);
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <inheritdoc/>
 	protected override Task WriteValueAsync(String? value) => this._writer.WriteAsync(value);
+#endif
 }

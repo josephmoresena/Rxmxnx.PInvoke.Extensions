@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke;
 
+#if NETSTANDARD2_1 || NETCOREAPP
 /// <summary>
 /// Defines a callable object that performs an operation using a <see cref="ScopedBuffer{T}"/>.
 /// </summary>
@@ -8,13 +9,23 @@ namespace Rxmxnx.PInvoke;
 /// This interface provides an alternative to <see cref="ScopedBufferAction{T}"/> and its stateful variant.
 /// Implementations can store the operation state directly.
 /// </remarks>
+#else
+/// <summary>
+/// Defines a callable object that performs an operation using a <see cref="ScopedBuffer{T}"/>.
+/// </summary>
+/// <typeparam name="T">The type of the elements in the buffer.</typeparam>
+#endif
 public interface IScopedBufferAction<T>
 {
 	/// <summary>
 	/// Indicates whether <see cref="Count"/> is the minimum limit and not the exact limit for memory allocation.
 	/// </summary>
 	/// <remarks>The additional elements allocated are not accessible from <see cref="Accept"/>.</remarks>
+#if NETSTANDARD2_1 || NETCOREAPP
 	Boolean IsMinimalCount => false;
+#else
+	Boolean IsMinimalCount { get; }
+#endif
 
 	/// <summary>
 	/// Number of <typeparamref name="T"/> elements required for <see cref="Accept"/> execution.

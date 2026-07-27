@@ -44,8 +44,12 @@ public partial class ValueRegion<T>
 		}
 		/// <inheritdoc/>
 		internal override ReadOnlySpan<T> AsSpan()
+#if NETSTANDARD2_1 || NETCOREAPP
 			=> MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(this._array),
 			                                    this._array.Length);
+#else
+			=> new(this._array);
+#endif
 		/// <inheritdoc/>
 		internal override ValueRegion<T> InternalSlice(Int32 startIndex, Int32 length)
 			=> new ManagedMemorySlice(this, startIndex, length);

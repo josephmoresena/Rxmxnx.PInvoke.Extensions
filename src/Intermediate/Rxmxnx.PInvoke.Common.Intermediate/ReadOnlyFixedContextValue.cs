@@ -1,3 +1,7 @@
+#if !NETSTANDARD2_1 && !NETCOREAPP
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
@@ -24,9 +28,13 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 
 	/// <inheritdoc cref="IFixedPointer.Pointer"/>
 	public IntPtr Pointer => this._value.Pointer;
-	/// <inheritdoc cref="IReadOnlyFixedMemory{T}.ValuePointer"/>
+	/// <summary>
+	/// Gets the value pointer to the read-only fixed block of memory.
+	/// </summary>
 	public ReadOnlyValPtr<T> ValuePointer => (ReadOnlyValPtr<T>)this._value.Pointer;
-	/// <inheritdoc cref="IReadOnlyFixedMemory{T}.Values"/>
+	/// <summary>
+	/// Gets a read-only <typeparamref name="T"/> span over the fixed block of memory.
+	/// </summary>
 	public ReadOnlySpan<T> Values
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -36,26 +44,45 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 			return field;
 		}
 	}
-	/// <inheritdoc cref="IReadOnlyFixedMemory.IsNullOrEmpty"/>
+	/// <summary>
+	/// Indicates whether current memory block is null-referenced or empty.
+	/// </summary>
 	public Boolean IsNullOrEmpty => this._value.IsNullOrEmpty;
-	/// <inheritdoc cref="IReadOnlyFixedMemory.Bytes"/>
+	/// <summary>
+	/// Gets a read-only binary span over the fixed block of memory.
+	/// </summary>
 	public ReadOnlySpan<Byte> Bytes
 	{
 		get
 		{
+#if NETSTANDARD2_1 || NETCOREAPP
 			if (!this._value.IsUnmanaged || this._value.Type is { IsValueType: false, }) return default;
 			ref Byte refByte = ref Unsafe.As<T, Byte>(ref MemoryMarshal.GetReference(this.Values));
 			return MemoryMarshal.CreateReadOnlySpan(ref refByte, this._value.Size);
+#else
+			if (!this._value.IsUnmanaged || this._value.Type?.GetTypeInfo() is { IsValueType: false, }) return default;
+			void* ptr = Unsafe.AsPointer(ref MemoryMarshal.GetReference(this.Values));
+			return new(ptr, this._value.Size);
+#endif
 		}
 	}
-	/// <inheritdoc cref="IReadOnlyFixedMemory.Objects"/>
+	/// <summary>
+	/// Gets a read-only object span over the fixed block of memory.
+	/// </summary>
 	public ReadOnlySpan<Object> Objects
 	{
 		get
 		{
+#if NETSTANDARD2_1 || NETCOREAPP
 			if (this._value.IsUnmanaged || this._value.Type is not { IsValueType: true, }) return default;
 			ref Object refObject = ref Unsafe.As<T, Object>(ref MemoryMarshal.GetReference(this.Values));
 			return MemoryMarshal.CreateReadOnlySpan(ref refObject, this._value.Size / sizeof(T));
+#else
+			if (this._value.IsUnmanaged || this._value.Type?.GetTypeInfo() is not { IsValueType: true, })
+				return default;
+			void* ptr = Unsafe.AsPointer(ref MemoryMarshal.GetReference(this.Values));
+			return MemoryMarshalCompat.CreateUnsafeReadOnlySpan<Object>(ptr, this._value.Size / sizeof(T));
+#endif
 		}
 	}
 
@@ -71,7 +98,13 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 		{
 			IsReadOnly = true, IsUnmanaged = RuntimeHelpers.IsReferenceOrContainsReferences<T>(), Type = typeof(T),
 		};
+#if NETSTANDARD2_1 || NETCOREAPP
 		this.Values = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<T>(ptr), count);
+#else
+		this.Values = this._value.IsUnmanaged ?
+			new(ptr, this._value.Size) :
+			MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(ptr, this._value.Size / sizeof(T));
+#endif
 	}
 	/// <summary>
 	/// Internal constructor.
@@ -85,9 +118,7 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 	{
 		if (handle.Pointer == default)
 		{
-#pragma warning disable CS0612
-			disposable = ReadOnlyFixedContext<T>.EmptyDisposable;
-#pragma warning restore CS0612
+			disposable = FixedValueHandle.EmptyDisposable;
 			return;
 		}
 		this._value = new((IntPtr)handle.Pointer, count * sizeof(T))
@@ -98,7 +129,13 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 			Type = typeof(T),
 		};
 		disposable = this._value.Handle;
-		this.Values = MemoryMarshal.CreateSpan(ref Unsafe.AsRef<T>(handle.Pointer), count);
+#if NETSTANDARD2_1 || NETCOREAPP
+		this.Values = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<T>(handle.Pointer), count);
+#else
+		this.Values = this._value.IsUnmanaged ?
+			new(handle.Pointer, this._value.Size) :
+			MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(handle.Pointer, this._value.Size / sizeof(T));
+#endif
 	}
 	/// <summary>
 	/// Internal constructor.
@@ -111,9 +148,7 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 	{
 		if (valPtr.IsZero)
 		{
-#pragma warning disable CS0612
-			disposable = ReadOnlyFixedContext<T>.EmptyDisposable;
-#pragma warning restore CS0612
+			disposable = FixedValueHandle.EmptyDisposable;
 			return;
 		}
 		this._value = new(valPtr.Pointer, count * sizeof(T))
@@ -124,7 +159,11 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 			Type = typeof(T),
 		};
 		disposable = this._value.Handle;
-#if !NET8_0_OR_GREATER
+#if !NETSTANDARD2_1 && !NETCOREAPP
+		this.Values = this._value.IsUnmanaged ?
+			new(valPtr.Pointer.ToPointer(), this._value.Size) :
+			MemoryMarshalCompat.CreateUnsafeSpan<T>(valPtr.Pointer.ToPointer(), this._value.Size / sizeof(T));
+#elif !NET8_0_OR_GREATER
 		this.Values = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(in valPtr.Reference), count);
 #else
 		this.Values = MemoryMarshal.CreateReadOnlySpan(in valPtr.Reference, count);
@@ -137,9 +176,15 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 	internal ReadOnlyFixedContextValue(FixedPointerValue value)
 	{
 		if (value.IsNullOrEmpty) return;
-		ref T refT = ref Unsafe.AsRef<T>(value.Pointer.ToPointer());
 		this._value = value;
+#if NETSTANDARD2_1 || NETCOREAPP
+		ref T refT = ref Unsafe.AsRef<T>(value.Pointer.ToPointer());
 		this.Values = MemoryMarshal.CreateReadOnlySpan(ref refT, value.Size / sizeof(T));
+#else
+		this.Values = this._value.IsUnmanaged ?
+			new(value.Pointer.ToPointer(), this._value.Size) :
+			MemoryMarshalCompat.CreateUnsafeSpan<T>(value.Pointer.ToPointer(), this._value.Size / sizeof(T));
+#endif
 	}
 
 	/// <summary>
@@ -157,7 +202,11 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 			Handle = handle,
 			Type = typeof(T),
 		};
-#if !NET8_0_OR_GREATER
+#if !NETSTANDARD2_1 && !NETCOREAPP
+		this.Values = this._value.IsUnmanaged ?
+			new(valPtr.Pointer.ToPointer(), this._value.Size) :
+			MemoryMarshalCompat.CreateUnsafeSpan<T>(valPtr.Pointer.ToPointer(), this._value.Size / sizeof(T));
+#elif !NET8_0_OR_GREATER
 		this.Values = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(in valPtr.Reference), count);
 #else
 		this.Values = MemoryMarshal.CreateReadOnlySpan(in valPtr.Reference, count);
@@ -296,9 +345,7 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 		if (ptr.IsZero)
 		{
 			fixedContext = default;
-#pragma warning disable CS0612
-			return ReadOnlyFixedContext<T>.EmptyDisposable;
-#pragma warning restore CS0612
+			return FixedValueHandle.EmptyDisposable;
 		}
 		FixedValueHandle result = FixedValueHandle.CreateFromDisposable(disposable);
 		fixedContext = new(ptr, count, result);

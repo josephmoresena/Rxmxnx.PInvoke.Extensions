@@ -1,3 +1,7 @@
+#if !NETSTANDARD2_1 && !NETCOREAPP
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
@@ -103,6 +107,7 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 #endif
 	public String ToString(String? format) => this.Pointer.ToString(format!);
 
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="IReadOnlyFixedReference{T}.IDisposable"/> instance from
 	/// current read-only reference pointer.
@@ -138,6 +143,7 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 #endif
 	public IReadOnlyFixedContext<T>.IDisposable GetUnsafeFixedContext(Int32 count, IDisposable? disposable = default)
 		=> ReadOnlyFixedContext<T>.CreateDisposable(this, count, disposable);
+#endif
 #endif
 
 	/// <summary>

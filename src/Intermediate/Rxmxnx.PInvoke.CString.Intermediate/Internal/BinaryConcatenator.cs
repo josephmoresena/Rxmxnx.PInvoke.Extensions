@@ -54,12 +54,14 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 	/// </summary>
 	/// <param name="value">The value of type T to be written.</param>
 	public void Write(T? value) => this._write(this, value);
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Asynchronously writes the given <paramref name="value"/> into the current instance.
 	/// </summary>
 	/// <param name="value">The value of type T to be written.</param>
 	/// <returns>A task that represents the asynchronous write operation.</returns>
 	public Task WriteAsync(T? value) => this._writeAsync(this, value);
+#endif
 	/// <summary>
 	/// Creates a <see cref="CString"/> instance from the UTF-8 encoded text stored in the
 	/// current instance.
@@ -75,6 +77,7 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 	/// <param name="value">The value of type T to be written.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected abstract void WriteValue(T value);
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Asynchronously writes the given <paramref name="value"/> into the current instance.
 	/// </summary>
@@ -82,6 +85,7 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 	/// <returns>A task that represents the asynchronous write operation.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected abstract Task WriteValueAsync(T value);
+#endif
 	/// <summary>
 	/// Determines whether the given <paramref name="value"/> is empty.
 	/// </summary>
@@ -132,7 +136,16 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 		if (!this._disposedValue)
 		{
 			if (disposing)
+#if NETSTANDARD2_1 || NETCOREAPP
 				await this.Stream.DisposeAsync();
+#else
+			{
+				if (this.Stream is IAsyncDisposable { } ad)
+					await ad.DisposeAsync();
+				else
+					this.Stream.Dispose();
+			}
+#endif
 			this._disposedValue = true;
 		}
 	}

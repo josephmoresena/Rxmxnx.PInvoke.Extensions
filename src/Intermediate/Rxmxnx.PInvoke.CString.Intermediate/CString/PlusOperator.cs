@@ -15,7 +15,11 @@ public partial class CString
 	public static CString operator +(String? left, CString? right)
 	{
 		if (!String.IsNullOrEmpty(left) && CString.IsNullOrEmpty(right))
+#if NETSTANDARD2_1 || NETCOREAPP
 			return new(left);
+#else
+			return new(left!);
+#endif
 		ReadOnlySpan<Char> leftSpan = left;
 		return leftSpan + right;
 	}
@@ -48,7 +52,11 @@ public partial class CString
 	public static CString operator +(CString? left, String? right)
 	{
 		if (CString.IsNullOrEmpty(left) && !String.IsNullOrEmpty(right))
+#if NETSTANDARD2_1 || NETCOREAPP
 			return new(right);
+#else
+			return new(right!);
+#endif
 		ReadOnlySpan<Char> rightSpan = right;
 		return left + rightSpan;
 	}

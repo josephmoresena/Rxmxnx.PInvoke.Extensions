@@ -1,3 +1,4 @@
+#if NETSTANDARD2_1 || NETCOREAPP
 namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class FixedContext<T> : IEquatable<FixedContext<T>>
@@ -9,3 +10,4 @@ internal partial class FixedContext<T> : IEquatable<FixedContext<T>>
 	/// <inheritdoc/>
 	public override Boolean Equals(Object? obj) => base.Equals(obj as FixedContext<T>);
 }
+#endif

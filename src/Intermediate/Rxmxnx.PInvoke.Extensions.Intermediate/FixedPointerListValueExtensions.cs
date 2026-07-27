@@ -1,4 +1,8 @@
-#if PACKAGE && !NET5_0_OR_GREATER 
+#if !NETSTANDARD2_1 && !NETCOREAPP
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
+#if PACKAGE && !NET5_0_OR_GREATER
 using B2 =
 	Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
 		Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>;
@@ -3584,7 +3588,9 @@ public static unsafe class FixedPointerListValueExtensions
 			Count = span.Length,
 			SizeOf = sizeof(T),
 			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
+#if NETSTANDARD2_1 || NETCOREAPP
 			ConstructorOrFunctionPointer = default,
+#endif
 			TypeOrFunctionPointer = Unsafe.AsPointer(ref typeRef),
 		};
 	}
@@ -3606,7 +3612,9 @@ public static unsafe class FixedPointerListValueExtensions
 			Count = span.Length,
 			SizeOf = sizeof(T),
 			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
+#if NETSTANDARD2_1 || NETCOREAPP
 			ConstructorOrFunctionPointer = default,
+#endif
 			TypeOrFunctionPointer = Unsafe.AsPointer(ref typeRef),
 		};
 	}

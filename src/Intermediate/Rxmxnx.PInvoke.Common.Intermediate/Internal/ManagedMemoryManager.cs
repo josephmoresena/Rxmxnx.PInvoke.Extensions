@@ -40,7 +40,15 @@ internal abstract unsafe class ManagedMemoryManager<T> : MemoryManager<T>
 
 	/// <inheritdoc/>
 	public override Span<T> GetSpan()
+#if NETSTANDARD2_1 || NETCOREAPP
 		=> this._count.HasValue ? MemoryMarshal.CreateSpan(ref this.GetMemoryReference(), this._count.Value) : default;
+#else
+	{
+		if (!this._count.HasValue) return default;
+		ref Pinnable<T> refPinnable = ref this.GetPinnable();
+		return MemoryMarshalCompat.CreateSafeSpan(refPinnable, ref this.GetMemoryReference(), this._count.Value);
+	}
+#endif
 	/// <inheritdoc/>
 	public override MemoryHandle Pin(Int32 elementIndex = 0)
 	{
@@ -96,4 +104,11 @@ internal abstract unsafe class ManagedMemoryManager<T> : MemoryManager<T>
 	/// </summary>
 	/// <returns>The managed reference to the 0th element of the current memory.</returns>
 	protected abstract ref T GetMemoryReference();
+#if !NETSTANDARD2_1 && !NETCOREAPP
+	/// <summary>
+	/// Retrieves a managed reference to the current pinnable object.
+	/// </summary>
+	/// <returns>A managed reference to the current pinnable object.</returns>
+	protected abstract ref Pinnable<T> GetPinnable();
+#endif
 }

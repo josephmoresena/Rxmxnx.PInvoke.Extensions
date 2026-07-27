@@ -5,6 +5,9 @@ namespace Rxmxnx.PInvoke.Buffers.Storage;
 /// </summary>
 internal readonly struct StandardBackend : IMetadataStorageBackend
 {
+#if !NETSTANDARD2_1 && !NETCOREAPP
+	Int32 IMetadataStorageBackend.MaxStorageCapacity => UInt16.MaxValue;
+#endif
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Boolean TryAdd<T>(BufferTypeMetadata<T> component) => BinaryStore<MainBinaryStore<T>, T>.TryAdd(component);
@@ -55,7 +58,10 @@ internal readonly struct StandardBackend : IMetadataStorageBackend
 		}
 #if !PACKAGE
 		/// <inheritdoc/>
-		public Span<BufferTypeMetadata<T>?> Span => MemoryMarshal.CreateSpan(ref this[0], this.Length);
+		public Span<BufferTypeMetadata<T>?> Span => new(MainBinaryStore<T>.initial);
+#endif
+#if !NETSTANDARD2_1 && !NETCOREAPP
+		Int32 IMainBinaryStore<T>.SlotCount => BuffersHelper.GetLeadingZeros(this.Length);
 #endif
 	}
 #if !PACKAGE

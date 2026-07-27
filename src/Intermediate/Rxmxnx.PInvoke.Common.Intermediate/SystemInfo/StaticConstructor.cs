@@ -115,7 +115,11 @@ public static partial class SystemInfo
 					return default;
 
 				ReadOnlySpan<Byte> ascii = buffer[..nameLength];
+#if NETSTANDARD2_1 || NETCOREAPP
 				return Encoding.ASCII.GetString(ascii).ToLowerInvariant();
+#else
+				return Encoding.ASCII.GetString([.. ascii,]).ToLowerInvariant();
+#endif
 			}
 			catch (Exception)
 			{

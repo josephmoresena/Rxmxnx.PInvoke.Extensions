@@ -48,6 +48,7 @@ internal static class ConvertCompat
 	public static unsafe String ToHexString(ReadOnlySpan<Byte> bytes)
 	{
 #if !PACKAGE || !NET5_0_OR_GREATER
+#if NETSTANDARD2_1 || NETCOREAPP
 		fixed (Byte* bytesPtr = &MemoryMarshal.GetReference(bytes))
 		{
 			return String.Create(bytes.Length * 2, (Ptr: (IntPtr)bytesPtr, bytes.Length), static (chars, args) =>
@@ -57,6 +58,18 @@ internal static class ConvertCompat
 					ConvertCompat.ToCharsBuffer(source[pos], chars, pos * 2);
 			});
 		}
+#else
+		Int32 charCount = bytes.Length * 2;
+		Span<Char> chars = charCount <= StackAllocationHelper.StackallocByteThreshold ?
+			stackalloc Char[charCount] :
+			new Char[charCount];
+		fixed (Byte* _ = &MemoryMarshal.GetReference(bytes))
+		{
+			for (Int32 pos = 0; pos < bytes.Length; ++pos)
+				ConvertCompat.ToCharsBuffer(bytes[pos], chars, pos * 2);
+		}
+		return chars.ToString();
+#endif
 #else
 		return Convert.ToHexString(bytes);
 #endif

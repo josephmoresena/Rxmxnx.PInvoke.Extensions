@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if NETSTANDARD2_1 || NETCOREAPP
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Represents a list of <see cref="IFixedMemory"/> instances.
@@ -142,3 +143,4 @@ public readonly ref struct FixedMemoryList
 		public Boolean MoveNext() => this._enumerator.MoveNext();
 	}
 }
+#endif

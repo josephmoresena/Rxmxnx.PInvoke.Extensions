@@ -4,11 +4,31 @@
 /// This interface represents a read-only reference to a fixed memory location.
 /// </summary>
 /// <typeparam name="T">Type of the value referenced in memory.</typeparam>
-public interface IReadOnlyFixedReference<T> : IReadOnlyReferenceable<T>, IReadOnlyFixedMemory
+public interface IReadOnlyFixedReference<T> : IReadOnlyReferenceable<T>
+#if NETSTANDARD2_1 || NETCOREAPP
+	, IReadOnlyFixedMemory
+#endif
 #if NET9_0_OR_GREATER
 	where T : allows ref struct
 #endif
 {
+	/// <summary>
+	/// Reinterprets the read-only <typeparamref name="T"/> fixed memory reference as a
+	/// read-only <typeparamref name="TDestination"/> memory reference.
+	/// </summary>
+	/// <typeparam name="TDestination">Type of the reinterpreted memory reference.</typeparam>
+	/// <returns>
+	/// A <see cref="IReadOnlyFixedReference{TDestination}"/> instance.
+	/// </returns>
+#if !NETSTANDARD2_1 && !NETCOREAPP
+	IReadOnlyFixedReference<TDestination> Transformation<TDestination>();
+#else
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	IReadOnlyFixedReference<TDestination> Transformation<TDestination>() => this.Transformation<TDestination>(out _);
+#endif
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Reinterprets the read-only <typeparamref name="T"/> fixed memory reference as a
 	/// read-only <typeparamref name="TDestination"/> memory reference.
@@ -32,4 +52,5 @@ public interface IReadOnlyFixedReference<T> : IReadOnlyReferenceable<T>, IReadOn
 	/// </remarks>
 	// ReSharper disable once PossibleInterfaceMemberAmbiguity
 	public new interface IDisposable : IReadOnlyFixedReference<T>, IReadOnlyFixedMemory.IDisposable;
+#endif
 }

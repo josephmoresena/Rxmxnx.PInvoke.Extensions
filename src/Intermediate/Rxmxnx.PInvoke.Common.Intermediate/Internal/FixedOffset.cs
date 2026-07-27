@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke.Internal;
+﻿#if NETSTANDARD2_1 || NETCOREAPP
+namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// Represents a fixed memory block with a specific offset.
@@ -32,3 +33,4 @@ internal sealed partial class FixedOffset : FixedMemory
 	/// <param name="offset">The offset from the start of the fixed memory block.</param>
 	public FixedOffset(FixedMemory mem, Int32 offset) : base(mem) => this._offset = offset;
 }
+#endif

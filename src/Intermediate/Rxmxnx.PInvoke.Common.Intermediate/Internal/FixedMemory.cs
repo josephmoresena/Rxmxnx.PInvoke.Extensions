@@ -6,7 +6,10 @@
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-internal abstract unsafe partial class FixedMemory : ReadOnlyFixedMemory, IFixedMemory, IEquatable<FixedMemory>
+internal abstract unsafe partial class FixedMemory : ReadOnlyFixedMemory, IEquatable<FixedMemory>
+#if NETSTANDARD2_1 || NETCOREAPP
+	, IFixedMemory
+#endif
 {
 	/// <summary>
 	/// Constructs a new <see cref="FixedMemory"/> instance using a pointer to a memory block, and its size.
@@ -19,6 +22,7 @@ internal abstract unsafe partial class FixedMemory : ReadOnlyFixedMemory, IFixed
 	/// </summary>
 	/// <param name="mem">The <see cref="FixedMemory"/> instance to copy data from.</param>
 	protected FixedMemory(FixedMemory mem) : base(mem) { }
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Constructs a new <see cref="FixedMemory"/> instance using another instance as a template and specifying a
 	/// memory offset.
@@ -65,4 +69,5 @@ internal abstract unsafe partial class FixedMemory : ReadOnlyFixedMemory, IFixed
 		this.ValidateReferenceOperation();
 		return new FixedContext<Object>(this.BinaryOffset, this);
 	}
+#endif
 }

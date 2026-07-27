@@ -1,3 +1,4 @@
+#if NETSTANDARD2_1 || NETCOREAPP
 namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class ReadOnlyFixedOffset : IConvertibleDisposable<IReadOnlyFixedMemory.IDisposable>
@@ -40,3 +41,4 @@ internal partial class ReadOnlyFixedOffset : IConvertibleDisposable<IReadOnlyFix
 				.ToDisposable(this.GetDisposableParent());
 	}
 }
+#endif

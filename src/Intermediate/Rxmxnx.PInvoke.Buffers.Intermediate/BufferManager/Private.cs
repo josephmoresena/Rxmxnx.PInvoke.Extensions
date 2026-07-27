@@ -1,3 +1,8 @@
+#if !NETSTANDARD2_1 && !NETCOREAPP
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 #if !PACKAGE
@@ -26,8 +31,12 @@ public static partial class BufferManager<T>
 #endif
 		if (stackAlloc)
 		{
+#if NETSTANDARD2_1 || NETCOREAPP
 			Debug.Assert(metadata is not null);
 			metadata.Execute<T, TAction>(ref action, action.Count);
+#else
+			metadata!.Execute<T, TAction>(ref action, action.Count);
+#endif
 			return;
 		}
 
@@ -59,8 +68,12 @@ public static partial class BufferManager<T>
 			BufferManager<T>.AllocHeap(ref func, out result);
 			return;
 		}
+#if NETSTANDARD2_1 || NETCOREAPP
 		Debug.Assert(metadata is not null);
 		result = metadata.Execute<T, TFunction, TResult>(ref func, func.Count);
+#else
+		result = metadata!.Execute<T, TFunction, TResult>(ref func, func.Count);
+#endif
 	}
 	/// <summary>
 	/// Allocates a stack buffer with the required size for execution.
@@ -89,8 +102,12 @@ public static partial class BufferManager<T>
 #endif
 		if (stackAlloc)
 		{
+#if NETSTANDARD2_1 || NETCOREAPP
 			Debug.Assert(metadata is not null);
 			metadata.Execute(ref action, action.Count);
+#else
+			metadata!.Execute(ref action, action.Count);
+#endif
 			return;
 		}
 		BufferManager<T>.AllocHeap(ref action);
@@ -124,8 +141,12 @@ public static partial class BufferManager<T>
 #endif
 		if (stackAlloc)
 		{
+#if NETSTANDARD2_1 || NETCOREAPP
 			Debug.Assert(metadata is not null);
 			result = metadata.Execute<TFunction, TResult>(ref func, func.Count);
+#else
+			result = metadata!.Execute<TFunction, TResult>(ref func, func.Count);
+#endif
 			return;
 		}
 		BufferManager<T>.AllocHeap(ref func, out result);
@@ -220,8 +241,13 @@ public static partial class BufferManager<T>
 #if NET7_0_OR_GREATER
 		bytes.Clear();
 #endif
+#if NETSTANDARD2_1 || NETCOREAPP
 		ref T refT = ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(bytes));
 		Span<T> span = MemoryMarshal.CreateSpan(ref refT, action.Count);
+#else
+		void* ptr = Unsafe.AsPointer(ref MemoryMarshal.GetReference(bytes));
+		Span<T> span = MemoryMarshalCompat.CreateUnsafeSpan<T>(ptr, action.Count);
+#endif
 		ScopedBuffer<T> buffer = new(span, false, span.Length);
 		action.Accept(buffer);
 	}
@@ -255,7 +281,12 @@ public static partial class BufferManager<T>
 		bytes.Clear();
 #endif
 		ref T refT = ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(bytes));
+#if NETSTANDARD2_1 || NETCOREAPP
 		Span<T> span = MemoryMarshal.CreateSpan(ref refT, func.Count);
+#else
+		void* ptr = Unsafe.AsPointer(ref MemoryMarshal.GetReference(bytes));
+		Span<T> span = MemoryMarshalCompat.CreateUnsafeSpan<T>(ptr, func.Count);
+#endif
 		ScopedBuffer<T> buffer = new(span, false, span.Length);
 		result = func.Apply(buffer);
 	}

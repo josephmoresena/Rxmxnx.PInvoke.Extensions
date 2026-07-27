@@ -1,3 +1,4 @@
+#if NETSTANDARD2_1 || NETCOREAPP
 namespace Rxmxnx.PInvoke;
 
 #if !PACKAGE
@@ -132,3 +133,4 @@ public static partial class BufferManager
 		public TResult Apply(ScopedBuffer<T> buffer) => this._func(buffer, this._state);
 	}
 }
+#endif

@@ -6,11 +6,7 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-#if NETCOREAPP && (!PACKAGE || !NET6_0_OR_GREATER)
 internal static unsafe partial class MemoryMarshalCompat
-#else
-internal static unsafe class MemoryMarshalCompat
-#endif
 {
 	/// <summary>
 	/// Creates a new read-only span for a null-terminated UTF8 string.
@@ -32,7 +28,11 @@ internal static unsafe class MemoryMarshalCompat
 		ref Byte ref0 = ref *value;
 		Int32 length = MemoryMarshalCompat.IndexOfNull(ref ref0);
 		return length >= 0 ?
+#if NETSTANDARD2_1 || NETCOREAPP
 			MemoryMarshal.CreateReadOnlySpan(ref ref0, length) :
+#else
+			new(value, length) :
+#endif
 			throw new ArgumentException(null, nameof(value));
 #else
 		return MemoryMarshal.CreateReadOnlySpanFromNullTerminated(value);
@@ -56,7 +56,11 @@ internal static unsafe class MemoryMarshalCompat
 		ref Char ref0 = ref *value;
 		Int32 length = MemoryMarshalCompat.IndexOfNull(ref ref0);
 		return length >= 0 ?
+#if NETSTANDARD2_1 || NETCOREAPP
 			MemoryMarshal.CreateReadOnlySpan(ref ref0, length) :
+#else
+			new(value, length) :
+#endif
 			throw new ArgumentException(null, nameof(value));
 #else
 		return MemoryMarshal.CreateReadOnlySpanFromNullTerminated(value);
@@ -85,4 +89,73 @@ internal static unsafe class MemoryMarshalCompat
 
 		return (Int32)result;
 	}
+#if !NETSTANDARD2_1 && !NETCOREAPP
+#pragma warning disable CS8500
+
+	/// <summary>
+	/// Creates a new span of <typeparamref name="T"/> items using an <see cref="Pinnable{T}"/> instance.
+	/// </summary>
+	/// <typeparam name="T">The type of the data items.</typeparam>
+	/// <param name="pinnable">A <see cref="Pinnable{T}"/> instance.</param>
+	/// <param name="start">The starting <typeparamref name="T"/> reference.</param>
+	/// <param name="length">
+	/// The number of <typeparamref name="T"/> elements that created span contains.
+	/// </param>
+	/// <returns>A safe span.</returns>
+	public static Span<T> CreateSafeSpan<T>(Pinnable<T> pinnable, ref T start, Int32 length)
+	{
+		IntPtr byteOffset = Unsafe.ByteOffset(ref pinnable.Data, ref start);
+		SpanOffset offsets = MemoryMarshalCompat.UnsafeSpanOffset;
+		Span<T> result = default;
+		ref Span<T> refResult = ref result;
+		fixed (void* _ = &start)
+		fixed (void* ptr = &refResult)
+		{
+			Span<Byte> bytes = new(ptr, sizeof(Span<T>));
+			Unsafe.As<Byte, Pinnable<T>>(ref bytes[offsets.PinnableOffset]) = pinnable;
+			Unsafe.As<Byte, Int32>(ref bytes[offsets.LengthOffset]) = length;
+			Unsafe.As<Byte, IntPtr>(ref bytes[offsets.PointerOffset]) = byteOffset;
+		}
+		return result;
+	}
+	/// <summary>
+	/// Creates a new span of <typeparamref name="T"/> items using an unmanaged/fixed pointer.
+	/// </summary>
+	/// <typeparam name="T">The type of the data items.</typeparam>
+	/// <param name="ptr">An unmanaged pointer to data.</param>
+	/// <param name="length">
+	/// The number of <typeparamref name="T"/> elements that <paramref name="ptr"/> contains.
+	/// </param>
+	/// <returns>An unsafe span.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Span<T> CreateUnsafeSpan<T>(void* ptr, Int32 length)
+	{
+		Span<IntPtr> span = new(ptr, length);
+		ref Span<IntPtr> spanRef = ref span;
+		fixed (void* p = &spanRef)
+		{
+			Span<T>* spanObjectPtr = (Span<T>*)p;
+			return spanObjectPtr[0];
+		}
+	}
+	/// <summary>
+	/// Creates a new read-only span <typeparamref name="T"/> items using an unmanaged/fixed pointer.
+	/// </summary>
+	/// <typeparam name="T">The type of the data items.</typeparam>
+	/// <param name="ptr">An unmanaged pointer to data.</param>
+	/// <param name="length">The number of <typeparamref name="T"/> elements that <paramref name="ptr"/> contains.</param>
+	/// <returns>A unsafe read-only span.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static ReadOnlySpan<T> CreateUnsafeReadOnlySpan<T>(void* ptr, Int32 length)
+	{
+		Span<IntPtr> span = new(ptr, length);
+		ref Span<IntPtr> spanRef = ref span;
+		fixed (void* p = &spanRef)
+		{
+			Span<T>* spanObjectPtr = (Span<T>*)p;
+			return spanObjectPtr[0];
+		}
+	}
+#pragma warning restore CS8500
+#endif
 }

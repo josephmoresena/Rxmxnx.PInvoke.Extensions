@@ -33,7 +33,7 @@ public interface IManagedBuffer<T>
 	/// </summary>
 	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
 	internal static abstract void AppendComponent(IMetadataStorage storage);
-#else
+#elif NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Current type components.
 	/// </summary>
@@ -63,6 +63,7 @@ public interface IManagedBuffer<T>
 	}
 #endif
 
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Appends all components from <typeparamref name="TBuffer"/> type.
 	/// </summary>
@@ -97,5 +98,6 @@ public interface IManagedBuffer<T>
 		=> BuffersHelper.GetStaticMetadata<T, TBuffer>();
 #else
 		=> TBuffer.TypeMetadata;
+#endif
 #endif
 }

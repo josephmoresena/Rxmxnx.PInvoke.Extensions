@@ -22,7 +22,9 @@ public static partial class AotInfo
 		foreach (StackFrame? frame in frames)
 		{
 			if (frame?.GetMethod() is not { } methodBase) continue;
+#if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK
 			if (EmitInfo.IsDynamicMethod(methodBase)) return false;
+#endif
 			if (!AotInfo.IsImageMethodUnsafe(methodBase.MethodHandle)) return false;
 		}
 		return true;
@@ -65,7 +67,11 @@ public static partial class AotInfo
 #else
 			Boolean isAndroid = false;
 #endif
+#if NETSTANDARD2_1 || NETCOREAPP
 			foreach (Assembly assembly in AotInfo.GetAssembliesSpan())
+#else
+			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+#endif
 			{
 				if (String.IsNullOrWhiteSpace(assembly.FullName) || assembly.IsDynamic) continue;
 				switch (AotInfo.GetAssemblyName(assembly.FullName))
@@ -218,6 +224,7 @@ public static partial class AotInfo
 
 		return default; // Unabled to retrieve JIT information.
 	}
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <inheritdoc cref="AppDomain.GetAssemblies()"/>
 	/// <returns>A read-only span of assemblies in this application domain.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -226,6 +233,7 @@ public static partial class AotInfo
 		Assembly[] array = AppDomain.CurrentDomain.GetAssemblies();
 		return MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(array), array.Length);
 	}
+#endif
 	/// <summary>
 	/// Retrieves the assembly name from its full name.
 	/// </summary>

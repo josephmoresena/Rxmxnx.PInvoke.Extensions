@@ -16,6 +16,9 @@ public interface IEnumerableSequence
 	/// This method is intentionally declared to prevent external consumers from implementing this interface.
 	/// It should not be implemented or overridden outside the defining assembly.
 	/// </summary>
+#if !NETSTANDARD2_1 && !NETCOREAPP
+	internal void DoNotImplement();
+#else
 	private protected void DoNotImplement();
 
 #if !PACKAGE || NETCOREAPP
@@ -48,17 +51,19 @@ public interface IEnumerableSequence
 		where T : allows ref struct
 #endif
 		=> new SequenceEnumerator<T>(instance, disposeEnumeration);
+#endif
 }
 
 /// <summary>
 /// Defines methods to support a simple iteration over a sequence of a specified type.
 /// </summary>
 /// <typeparam name="T">The type of objects to enumerate.</typeparam>
-public interface IEnumerableSequence<out T> : IEnumerableSequence, IEnumerable<T>
+public interface IEnumerableSequence<out T> : IEnumerable<T>, IEnumerableSequence
 #if NET9_0_OR_GREATER
 	where T : allows ref struct
 #endif
 {
+#if NETSTANDARD2_1 || NETCOREAPP
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -78,6 +83,7 @@ public interface IEnumerableSequence<out T> : IEnumerableSequence, IEnumerable<T
 #else
 		=> IEnumerableSequence.CreateEnumerator(this);
 #endif
+#endif
 	/// <summary>
 	/// Retrieves the element at the specified index.
 	/// </summary>
@@ -90,7 +96,7 @@ public interface IEnumerableSequence<out T> : IEnumerableSequence, IEnumerable<T
 	/// <returns>The total number of elements in the sequence.</returns>
 	Int32 GetSize();
 
-#if !PACKAGE || NETCOREAPP
+#if (!PACKAGE && NETSTANDARD2_1) || NETCOREAPP
 	/// <summary>
 	/// Method to call when <see cref="IEnumerator{T}"/> is disposing.
 	/// </summary>
@@ -100,4 +106,45 @@ public interface IEnumerableSequence<out T> : IEnumerableSequence, IEnumerable<T
 		// Unable to call implementations of this method in Mono Runtime.
 	}
 #endif
+}
+
+/// <summary>
+/// Extension class for enumerable sequence instances.
+/// </summary>
+#if NETSTANDARD2_1 || NETCOREAPP
+[Browsable(false)]
+[EditorBrowsable(EditorBrowsableState.Never)]
+#endif
+public static class EnumerableSequenceExtensions
+{
+#if (!PACKAGE && NETSTANDARD2_1) || NETCOREAPP
+	/// <summary>
+	/// Creates an enumerator that iterates through <paramref name="instance"/> instance.
+	/// </summary>
+	/// <param name="instance">A <see cref="IEnumerableSequence{T}"/> instance.</param>
+	/// <param name="disposeEnumeration">Delegate to dispose enumeration.</param>
+	/// <returns>
+	/// An <see cref="IEnumerator{T}"/> that can be used to iterate through the sequence.
+	/// </returns>
+	/// <remarks>
+	/// This method ignores the private implementation of <see cref="IEnumerableSequence{T}.DisposeEnumeration()"/> and
+	/// uses only the <paramref name="disposeEnumeration"/> delegate.
+	/// </remarks>
+#else
+	/// <summary>
+	/// Creates an enumerator that iterates through <paramref name="instance"/> instance.
+	/// </summary>
+	/// <param name="instance">A <see cref="IEnumerableSequence{T}"/> instance.</param>
+	/// <param name="disposeEnumeration">Delegate to dispose enumeration.</param>
+	/// <returns>
+	/// An <see cref="IEnumerator{T}"/> that can be used to iterate through the sequence.
+	/// </returns>
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static IEnumerator<T> CreateDefaultEnumerator<T>(this IEnumerableSequence<T> instance,
+		Action<IEnumerableSequence<T>>? disposeEnumeration = default)
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
+		=> new SequenceEnumerator<T>(instance, disposeEnumeration);
 }

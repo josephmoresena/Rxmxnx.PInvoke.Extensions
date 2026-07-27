@@ -6,7 +6,11 @@ namespace Rxmxnx.PInvoke;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
+#if NETSTANDARD2_1 || NETCOREAPP
 public unsafe partial class NativeUtilities
+#else
+public partial class NativeUtilities
+#endif
 {
 	/// <summary>
 	/// Cache for <see cref="GlobalizationInvariantModeEnabled"/>
@@ -42,6 +46,7 @@ public unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Int32 GetUserInterfaceTwoLetterLangCode()
 		=> (Int32)NativeUtilities.GetIso639P1(CultureInfo.CurrentUICulture);
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Writes <paramref name="span"/> using <paramref name="arg"/> and <paramref name="action"/>.
 	/// </summary>
@@ -182,4 +187,5 @@ public unsafe partial class NativeUtilities
 		return MemoryMarshal.CreateSpan(ref r0, length);
 	}
 #pragma warning restore CS8500
+#endif
 }

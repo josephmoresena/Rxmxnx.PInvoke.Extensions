@@ -5,8 +5,8 @@
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class EnumerableSequenceTests
 {
-	private static readonly String notStartedError = IMessageResource.GetInstance().NotStartedEnumerable;
-	private static readonly String finishedError = IMessageResource.GetInstance().FinishedEnumerable;
+	private static readonly String notStartedError = MessageResource.GetInstance().NotStartedEnumerable;
+	private static readonly String finishedError = MessageResource.GetInstance().FinishedEnumerable;
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]

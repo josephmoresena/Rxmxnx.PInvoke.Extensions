@@ -88,6 +88,10 @@ internal partial class MemoryInspector
 #endif
 			/// <inheritdoc/>
 			public Boolean Equals(MemoryBoundary other) => this.Value == other.Value;
+#if !NETSTANDARD2_1 && !NETCOREAPP
+			/// <inheritdoc/>
+			public Boolean Equals(UIntPtr other) => this.Value == other;
+#endif
 			/// <inheritdoc/>
 			public override Boolean Equals([NotNullWhen(true)] Object? obj)
 				=> obj is MemoryBoundary boundary && this.Equals(boundary);

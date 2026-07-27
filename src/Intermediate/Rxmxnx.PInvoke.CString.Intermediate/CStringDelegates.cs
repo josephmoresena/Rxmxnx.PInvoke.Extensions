@@ -12,8 +12,9 @@ public delegate void CStringSequenceCreationAction<in TArg>(Span<Byte> span, Int
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-;
+	;
 
+#if NETSTANDARD2_1 || NETCOREAPP
 /// <summary>
 /// Encapsulates a method that operates on a <see cref="FixedCStringSequence"/> instance.
 /// </summary>
@@ -73,3 +74,4 @@ public delegate TResult CStringSequenceFunc<in TArg, out TResult>(FixedCStringSe
 	where TArg : allows ref struct
 #endif
 ;
+#endif

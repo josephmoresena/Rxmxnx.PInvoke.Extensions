@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if NETSTANDARD2_1 || NETCOREAPP
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Represents a <see cref="CStringSequence"/> that is fixed in memory.
@@ -174,3 +175,4 @@ public readonly unsafe ref struct FixedCStringSequence
 	}
 }
 #pragma warning restore CS0618
+#endif

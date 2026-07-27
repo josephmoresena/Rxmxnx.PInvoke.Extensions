@@ -66,12 +66,14 @@ public static partial class AotInfo
 		get => TrimInfo.IsPlatformTrimmed();
 	}
 
+#if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK
 	/// <inheritdoc cref="EmitInfo.IsDynamicMethod(MethodBase)"/>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static Boolean IsDynamicCode(MethodBase methodBase) => EmitInfo.IsDynamicMethod(methodBase);
+#endif
 	/// <summary>
 	/// Indicates whether the function pointer of <paramref name="methodHandle"/> references to an R/RX memory section.
 	/// </summary>

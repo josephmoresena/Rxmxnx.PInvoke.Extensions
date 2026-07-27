@@ -32,7 +32,7 @@ public static class StreamCStringExtensions
 	/// <param name="count">The number of bytes to be written to the current stream.</param>
 	public static void Write(this Stream stream, CString cstr, Int32 startIndex, Int32 count)
 		=> cstr.Write(stream, startIndex, count);
-
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Asynchronously writes the sequence of bytes represented by the <paramref name="cstr"/> to the current
 	/// <paramref name="stream"/>,
@@ -82,4 +82,5 @@ public static class StreamCStringExtensions
 	public static Task WriteAsync(this Stream stream, CString cstr, Int32 startIndex, Int32 count,
 		CancellationToken cancellationToken = default)
 		=> cstr.WriteAsync(stream, startIndex, count, cancellationToken);
+#endif
 }

@@ -18,6 +18,6 @@ Starting with .NET 9.0, `ref struct` types are allowed in generics, and many gen
 `Rxmxnx.PInvoke.Extensions` support their usage. However, some features are not compatible with `ref struct` types and
 may cause errors when maintaining code originally designed for .NET 8 or earlier.
 
-For this reason, **`IlPatcher`** library is compiled alongside the final assembly targeting versions
-later than .NET 8.0. Using MSBuild and Mono.Cecil, it injects the missing IL code to ensure both source and binary
-compatibility with these target frameworks.
+For this reason, **`IlPatcher`** library is compiled alongside the final assembly targeting versions later than .NET
+8.0. Using MSBuild and Mono.Cecil, it injects the missing IL code to ensure both source and binary compatibility with
+these target frameworks.

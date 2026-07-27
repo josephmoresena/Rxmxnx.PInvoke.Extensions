@@ -543,7 +543,12 @@ public static unsafe class PointerExtensions
 		try
 		{
 			if (MethodBase.GetMethodFromHandle(methodHandle) is not { } methodBase) return true;
+#if NETSTANDARD2_1 || NETCOREAPP
 			if (methodBase.ContainsGenericParameters || AotInfo.IsDynamicCode(methodBase)) return false;
+#else
+			// ReSharper disable once ConvertIfStatementToReturnStatement
+			if (methodBase.ContainsGenericParameters) return false;
+#endif
 			return AotInfo.IsImageMethodUnsafe(methodHandle);
 		}
 		catch (Exception)
@@ -568,5 +573,5 @@ public static unsafe class PointerExtensions
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static String GetStringFromCharPointer(Char* chrPtr, Int32 length)
-		=> length == default ? new String(chrPtr) : new(new ReadOnlySpan<Char>(chrPtr, length));
+		=> length == default ? new(chrPtr) : new ReadOnlySpan<Char>(chrPtr, length).ToString();
 }

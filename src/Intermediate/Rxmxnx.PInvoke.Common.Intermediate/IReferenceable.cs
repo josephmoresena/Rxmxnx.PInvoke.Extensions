@@ -5,7 +5,10 @@
 /// allowing the object to be used and potentially modified.
 /// </summary>
 /// <typeparam name="T">The type of the object that the reference points to.</typeparam>
-public interface IReferenceable<T> : IReadOnlyReferenceable<T>, IEquatable<IReferenceable<T>>
+public interface IReferenceable<T> : IReadOnlyReferenceable<T>
+#if NETSTANDARD2_1 || NETCOREAPP
+	, IEquatable<IReferenceable<T>>
+#endif
 #if NET9_0_OR_GREATER
 	where T : allows ref struct
 #endif
@@ -16,6 +19,7 @@ public interface IReferenceable<T> : IReadOnlyReferenceable<T>, IEquatable<IRefe
 	/// <remarks>This reference can be used to modify the object.</remarks>
 	new ref T Reference { get; }
 
+#if NETSTANDARD2_1 || NETCOREAPP
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -27,4 +31,5 @@ public interface IReferenceable<T> : IReadOnlyReferenceable<T>, IEquatable<IRefe
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	Boolean IEquatable<IReferenceable<T>>.Equals(IReferenceable<T>? other)
 		=> other is not null && Unsafe.AreSame(ref this.Reference, ref other.Reference);
+#endif
 }

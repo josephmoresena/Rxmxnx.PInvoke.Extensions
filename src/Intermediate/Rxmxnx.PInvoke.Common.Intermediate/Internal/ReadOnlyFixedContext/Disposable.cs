@@ -1,3 +1,4 @@
+#if NETSTANDARD2_1 || NETCOREAPP
 namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class ReadOnlyFixedContext<T> :
@@ -100,3 +101,4 @@ internal partial class ReadOnlyFixedContext<T> :
 		}
 	}
 }
+#endif

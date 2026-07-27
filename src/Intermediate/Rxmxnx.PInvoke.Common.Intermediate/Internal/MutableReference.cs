@@ -14,4 +14,8 @@ internal sealed class MutableReference<T> : MutableWrapper<T>, IMutableReference
 	/// <param name="instance">The initial value of the encapsulated object.</param>
 	internal MutableReference(in T instance) : base(instance) { }
 	ref T IMutableReference<T>.Reference => ref this.GetReference();
+#if !NETSTANDARD2_1 && !NETCOREAPP
+	ref T IReferenceable<T>.Reference => ref this.GetReference();
+	ref readonly T IReadOnlyReferenceable<T>.Reference => ref this.GetReference();
+#endif
 }

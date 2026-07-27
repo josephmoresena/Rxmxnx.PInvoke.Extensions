@@ -230,7 +230,9 @@ public static unsafe class FixedUtf8Extensions
 				Count = value.Length,
 				SizeOf = sizeof(Byte),
 				IsUnmanaged = true,
+#if NETSTANDARD2_1 || NETCOREAPP
 				ConstructorOrFunctionPointer = default,
+#endif
 #if !NET5_0_OR_GREATER
 				TypeOrFunctionPointer = CStringSequence.TypePointer,
 #else

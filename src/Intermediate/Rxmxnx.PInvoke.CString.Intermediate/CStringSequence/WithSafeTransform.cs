@@ -1,4 +1,5 @@
-﻿#if !NET6_0_OR_GREATER
+﻿#if NETSTANDARD2_1 || NETCOREAPP
+#if !NET6_0_OR_GREATER
 using ArgumentNullException = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif
 
@@ -9,7 +10,6 @@ namespace Rxmxnx.PInvoke;
 #endif
 public unsafe partial class CStringSequence
 {
-
 	/// <summary>
 	/// Executes a specified action using the current instance treated as a <see cref="FixedCStringSequence"/>.
 	/// </summary>
@@ -147,3 +147,4 @@ public unsafe partial class CStringSequence
 		}
 	}
 }
+#endif

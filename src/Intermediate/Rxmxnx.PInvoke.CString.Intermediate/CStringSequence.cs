@@ -218,7 +218,15 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		Int32[] lengthsArray = CStringSequence.NormalizeLengths(lengths);
 		Int32 length = CStringSequence.GetBufferLength(lengthsArray);
 		SequenceCreationHelper<TState> helper = new() { State = state, Action = action, Lengths = lengthsArray, };
+#if NETSTANDARD2_1 || NETCOREAPP
 		String buffer = String.Create(length, helper, CStringSequence.CreateCStringSequence);
+#else
+		Span<Char> chars = length <= StackAllocationHelper.StackallocByteThreshold ?
+			stackalloc Char[length] :
+			new Char[length];
+		CStringSequence.CreateCStringSequence(chars, helper);
+		String buffer = chars.ToString();
+#endif
 		return new(buffer, lengthsArray);
 	}
 	/// <summary>

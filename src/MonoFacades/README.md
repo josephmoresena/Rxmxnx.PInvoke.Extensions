@@ -1,15 +1,15 @@
 # Rxmxnx.PInvoke.Json
 
 This project is an example implementation demonstrating how to integrate `System.Text.Json` support for
-`Rxmxnx.PInvoke.CString` and `Rxmxnx.PInvoke.CStringSequence` while preserving maximum compatibility with
-**Mono Framework** environments.
+`Rxmxnx.PInvoke.CString` and `Rxmxnx.PInvoke.CStringSequence` while preserving maximum compatibility with **Mono
+Framework** environments.
 
-Since **.NET Core 3.0+**, `Rxmxnx.PInvoke.Extensions` can work directly with `System.Text.Json`. However,
-including a direct dependency in the core library would require mixing **.NET Standard** 2.0 and 2.1 assemblies, which
-conflicts with the compatibility model used to support **Mono Framework 4.5-based runtimes**.
+Since **.NET Core 3.0+**, `Rxmxnx.PInvoke.Extensions` can work directly with `System.Text.Json`. However, including a
+direct dependency in the core library would require mixing **.NET Standard** 2.0 and 2.1 assemblies, which conflicts
+with the compatibility model used to support **Mono Framework 4.5-based runtimes**.
 
-This source code is compatible with **Xamarin** and **Unity**, but the project itself is primarily designed to
-run on **Mono Framework** 6.4 or later.
+This source code is compatible with **Xamarin** and **Unity**, but the project itself is primarily designed to run on
+**Mono Framework** 6.4 or later.
 
 ---
 
@@ -20,15 +20,15 @@ One of the main goals of `Rxmxnx.PInvoke.Extensions` is to remain fully compatib
 introduces a 2.0 and 2.1 assembly mix when referenced from a **.NET Standard 2.1** library.
 
 Platforms such as **Xamarin.Mac**, **Xamarin.Android**, **Xamarin.iOS**, and **Unity** support this version mixing. In
-contrast, **Mono Framework** does not, due to its long-term goal of maintaining compatibility with
-**.NET Framework 4.x**.
+contrast, **Mono Framework** does not, due to its long-term goal of maintaining compatibility with **.NET Framework
+4.x**.
 
 To preserve **Mono Framework** compatibility, `Rxmxnx.PInvoke.Extensions` intentionally avoids referencing any external
 packages that rely on APIs unavailable in **.NET Framework 4.5**.
 
-However, the library itself targets **.NET Standard 2.1** and therefore exposes APIs defined by that specification.
-As a result, mixing it with dependencies targeting **.NET Standard 2.0** may introduce assembly binding conflicts on
-**Mono Framework** runtimes.
+However, the library itself targets **.NET Standard 2.1** and therefore exposes APIs defined by that specification. As a
+result, mixing it with dependencies targeting **.NET Standard 2.0** may introduce assembly binding conflicts on **Mono
+Framework** runtimes.
 
 When using `Rxmxnx.PInvoke.Extensions` with **Mono Framework** (excluding **Xamarin** and **Unity**), the build should
 reference only `System.Runtime.CompilerServices.Unsafe` package. At compile time the **.NET Framework 4.5** assembly of
@@ -41,8 +41,8 @@ requirements are introduced.
 
 ## How does this work?
 
-This project is designed to compile against **.NET Standard 2.1** reference assemblies while running on custom
-**.NET Standard 2.1** facades.
+This project is designed to compile against **.NET Standard 2.1** reference assemblies while running on custom **.NET
+Standard 2.1** facades.
 
 This approach is necessary because the official **.NET Standard 2.1** reference assemblies are strong-name signed,
 whereas the custom facades are not.
@@ -130,5 +130,5 @@ This facade forwards the following types:
 
 ---
 
-These facades are required only when targeting **Mono Framework**.
-**Xamarin** and **Unity** already include built-in facades that allow mixing **.NET Standard** 2.0 and 2.1 assemblies.
+These facades are required only when targeting **Mono Framework**. **Xamarin** and **Unity** already include built-in
+facades that allow mixing **.NET Standard** 2.0 and 2.1 assemblies.

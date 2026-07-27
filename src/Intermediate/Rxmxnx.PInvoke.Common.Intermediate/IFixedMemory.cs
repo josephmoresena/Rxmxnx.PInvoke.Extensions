@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if NETSTANDARD2_1 || NETCOREAPP
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Interface representing a fixed block of memory.
@@ -85,3 +86,4 @@ public interface IFixedMemory<T> : IFixedMemory, IReadOnlyFixedMemory<T>
 		=> ctx.AsBinaryContext();
 #endif
 }
+#endif

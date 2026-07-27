@@ -1,4 +1,4 @@
-#if OBSOLETE_FIXED_INTERFACES
+#if NETSTANDARD2_1 || (NETCOREAPP && OBSOLETE_FIXED_INTERFACES)
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>

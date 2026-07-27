@@ -6,6 +6,9 @@
 /// </summary>
 /// <typeparam name="T">Type of the object being wrapped.</typeparam>
 internal class Input<T> : IWrapper<T>
+#if !NETSTANDARD2_1 && !NETCOREAPP
+	, IEquatable<T>
+#endif
 {
 	/// <summary>
 	/// The encapsulated <typeparamref name="T"/> object.
@@ -19,6 +22,9 @@ internal class Input<T> : IWrapper<T>
 	public Input(in T instance) => this._instance = instance;
 
 	T IWrapper<T>.Value => this._instance;
+#if !NETSTANDARD2_1 && !NETCOREAPP
+	Boolean IEquatable<T>.Equals(T other) => this._instance is { } value && value.Equals(other);
+#endif
 
 	/// <summary>
 	/// Retrieves the value of the encapsulated <typeparamref name="T"/> object.

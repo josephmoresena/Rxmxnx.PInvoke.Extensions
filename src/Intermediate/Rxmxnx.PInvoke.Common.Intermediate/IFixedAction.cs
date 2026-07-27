@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke;
 
+#if NETSTANDARD2_1 || NETCOREAPP
 /// <summary>
 /// Defines a callable object that performs an operation using a <see cref="FixedPointerValue"/>.
 /// </summary>
@@ -8,6 +9,11 @@ namespace Rxmxnx.PInvoke;
 /// stateful variant.
 /// Implementations can store the operation state directly.
 /// </remarks>
+#else
+/// <summary>
+/// Defines a callable object that performs an operation using a <see cref="FixedPointerValue"/>.
+/// </summary>
+#endif
 public interface IFixedAction
 {
 	/// <summary>

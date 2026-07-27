@@ -63,6 +63,7 @@ public readonly ref struct FixedPointerValueList
 		ValidationUtilities.ThrowIfInvalidListIndex(index, this.Information.Length);
 		return this.Information[index].GetValue(this.IsReadOnly, this.Handle);
 	}
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Gets the element at the specified index.
 	/// </summary>
@@ -87,6 +88,7 @@ public readonly ref struct FixedPointerValueList
 			this.Instances[i] = this.Information[i].CreateContext(this.Handle!);
 		}
 	}
+#endif
 
 	/// <summary>
 	/// Enumerates the elements of a <see cref="FixedPointerValueList"/>.
@@ -129,7 +131,7 @@ public readonly ref struct FixedPointerValueList
 		}
 
 		/// <summary>
-		/// Advances the enumerator to the next element of the <see cref="ReadOnlyFixedMemoryList"/>.
+		/// Advances the enumerator to the next element of the <see cref="FixedPointerValue"/>.
 		/// </summary>
 		/// <returns>
 		/// <see langword="true"/> if the enumerator was successfully advanced to the next element;

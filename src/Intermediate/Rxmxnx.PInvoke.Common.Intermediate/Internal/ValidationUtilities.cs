@@ -36,7 +36,7 @@ internal static unsafe class ValidationUtilities
 		[CallerArgumentExpression(nameof(index))] String nameofIndex = ValidationUtilities.emptyString)
 	{
 		if (index >= 0 && index < count) return;
-		String message = IMessageResource.GetInstance().InvalidListIndexMessage;
+		String message = MessageResource.GetInstance().InvalidListIndexMessage;
 		throw new ArgumentOutOfRangeException(nameofIndex, message);
 	}
 
@@ -56,7 +56,7 @@ internal static unsafe class ValidationUtilities
 		[CallerArgumentExpression(nameof(index))] String nameofIndex = ValidationUtilities.emptyString)
 	{
 		if (index >= 0 && index < count) return;
-		String message = IMessageResource.GetInstance().InvalidSequenceIndex;
+		String message = MessageResource.GetInstance().InvalidSequenceIndex;
 		throw new ArgumentOutOfRangeException(nameofIndex, message);
 	}
 
@@ -71,7 +71,7 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfInvalidPointer(IWrapper<Boolean> isValid)
 	{
 		if (isValid.Value) return;
-		String message = IMessageResource.GetInstance().InvalidInstance;
+		String message = MessageResource.GetInstance().InvalidInstance;
 		throw new InvalidOperationException(message);
 	}
 
@@ -90,7 +90,7 @@ internal static unsafe class ValidationUtilities
 	{
 		Int64 l = info.GetInt64("value");
 		if (IntPtr.Size != 4 || l is <= Int32.MaxValue and >= Int32.MinValue) return (void*)l;
-		String message = IMessageResource.GetInstance().InvalidPointerSerialization;
+		String message = MessageResource.GetInstance().InvalidPointerSerialization;
 		throw new ArgumentException(message);
 	}
 	/// <summary>
@@ -136,7 +136,7 @@ internal static unsafe class ValidationUtilities
 			ValPtr<T> v => ptr.CompareTo(v.Pointer),
 			ReadOnlyValPtr<T> r => ptr.CompareTo(r.Pointer),
 #endif
-			_ => throw new ArgumentException(IMessageResource.GetInstance().InvalidType(nameofPtr)),
+			_ => throw new ArgumentException(MessageResource.GetInstance().InvalidType(nameofPtr)),
 		};
 
 	/// <summary>
@@ -150,7 +150,7 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfNotFunctionPointer(Boolean isFunction)
 	{
 		if (isFunction) return;
-		String message = IMessageResource.GetInstance().IsNotFunction;
+		String message = MessageResource.GetInstance().IsNotFunction;
 		throw new InvalidOperationException(message);
 	}
 
@@ -165,7 +165,7 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfFunctionPointer(Boolean isFunction)
 	{
 		if (!isFunction) return;
-		String message = IMessageResource.GetInstance().IsFunction;
+		String message = MessageResource.GetInstance().IsFunction;
 		throw new InvalidOperationException(message);
 	}
 
@@ -181,7 +181,7 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfReadOnlyPointer(Boolean isReadOnlyOperation, Boolean isReadOnly)
 	{
 		if (isReadOnlyOperation || !isReadOnly) return;
-		String message = IMessageResource.GetInstance().ReadOnlyInstance;
+		String message = MessageResource.GetInstance().ReadOnlyInstance;
 		throw new InvalidOperationException(message);
 	}
 
@@ -200,7 +200,7 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfInvalidRefTypePointer(Int32 binaryLength, Type typeOf, Int32 sizeOf)
 	{
 		if (binaryLength >= sizeOf) return;
-		String message = IMessageResource.GetInstance().InvalidRefTypePointer(typeOf);
+		String message = MessageResource.GetInstance().InvalidRefTypePointer(typeOf);
 		throw new InsufficientMemoryException(message);
 	}
 
@@ -220,7 +220,7 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfInvalidBinarySpanSize(ReadOnlySpan<Byte> span, Int32 sizeOf,
 		[CallerArgumentExpression(nameof(span))] String nameofSpan = ValidationUtilities.emptyString)
 	{
-		String message = IMessageResource.GetInstance().InvalidBinarySpanSize(nameofSpan, sizeOf);
+		String message = MessageResource.GetInstance().InvalidBinarySpanSize(nameofSpan, sizeOf);
 		if (span.Length < sizeOf)
 			throw new InsufficientMemoryException(message);
 		if (span.Length > sizeOf)
@@ -248,7 +248,7 @@ internal static unsafe class ValidationUtilities
 		[CallerArgumentExpression(nameof(obj))] String nameofObj = ValidationUtilities.emptyString)
 	{
 		if (obj is not T value)
-			throw new ArgumentException(IMessageResource.GetInstance().InvalidType(typeName), nameofObj);
+			throw new ArgumentException(MessageResource.GetInstance().InvalidType(typeName), nameofObj);
 		result = value;
 	}
 
@@ -265,7 +265,7 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfInvalidCastType(Int32 destinationSize, Int32 sourceSize)
 	{
 		if (destinationSize == sourceSize) return;
-		String message = IMessageResource.GetInstance().InvalidUnmanagedCast;
+		String message = MessageResource.GetInstance().InvalidUnmanagedCast;
 		throw new InvalidOperationException(message);
 	}
 
@@ -283,12 +283,37 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfNotObject(Type type)
 	{
 		if (!type.IsByRefLike) return;
-		IMessageResource resource = IMessageResource.GetInstance();
+		IMessageResource resource = MessageResource.GetInstance();
 		String message = resource.NotObjectType(type);
 		throw new InvalidOperationException(message);
 	}
 #endif
 
+#if !NETSTANDARD2_1 && !NETCOREAPP
+	/// <summary>
+	/// Validates if the binary span <paramref name="destination"/> is sufficient to contain the binary
+	/// information of <paramref name="valuePtr"/>.
+	/// Outputs the value as binary span.
+	/// </summary>
+	/// <typeparam name="TValue">Type of the copiable <see langword="unmanaged"/> value.</typeparam>
+	/// <param name="valuePtr">Pointer to the value to copy.</param>
+	/// <param name="destination">Binary span destination.</param>
+	/// <param name="offset">Offset of copy.</param>
+	/// <param name="bytes">Output parameter. The binary representation of <paramref name="valuePtr"/>.</param>
+	/// <exception cref="InsufficientMemoryException">
+	/// Thrown if the destination span does not have enough space to contain the binary representation of the
+	/// <see langword="unmanaged"/> value.
+	/// </exception>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfInvalidCopyType<TValue>(TValue* valuePtr, Span<Byte> destination, Int32 offset,
+		out ReadOnlySpan<Byte> bytes) where TValue : unmanaged
+	{
+		bytes = new(valuePtr, sizeof(TValue));
+		if (destination.Length - offset >= bytes.Length) return;
+		String message = MessageResource.GetInstance().InvalidCopyUnmanagedType(nameof(destination), nameof(valuePtr));
+		throw new InsufficientMemoryException(message);
+	}
+#else
 	/// <summary>
 	/// Validates if the binary span <paramref name="destination"/> is sufficient to contain the binary
 	/// information of <paramref name="value"/>.
@@ -311,9 +336,10 @@ internal static unsafe class ValidationUtilities
 		ReadOnlySpan<TValue> intermediateSpan = MemoryMarshal.CreateReadOnlySpan(ref refValue, 1);
 		bytes = MemoryMarshal.AsBytes(intermediateSpan);
 		if (destination.Length - offset >= bytes.Length) return;
-		String message = IMessageResource.GetInstance().InvalidCopyUnmanagedType(nameof(destination), nameof(value));
+		String message = MessageResource.GetInstance().InvalidCopyUnmanagedType(nameof(destination), nameof(value));
 		throw new InsufficientMemoryException(message);
 	}
+#endif
 
 	/// <summary>
 	/// Validates the memory length.
@@ -326,7 +352,7 @@ internal static unsafe class ValidationUtilities
 		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.emptyString)
 	{
 		if (length >= 0) return;
-		String message = IMessageResource.GetInstance().InvalidLength(nameofLength);
+		String message = MessageResource.GetInstance().InvalidLength(nameofLength);
 		throw new ArgumentException(message);
 	}
 
@@ -341,7 +367,7 @@ internal static unsafe class ValidationUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidIndexEnumerator(Int32 index, Int32 enumerationSize)
 	{
-		IMessageResource resource = IMessageResource.GetInstance();
+		IMessageResource resource = MessageResource.GetInstance();
 		if (index < 0)
 			throw new InvalidOperationException(resource.NotStartedEnumerable);
 		if (index >= enumerationSize)
@@ -358,7 +384,7 @@ internal static unsafe class ValidationUtilities
 	/// </exception>
 	public static void ThrowIfInvalidEnumerator(Boolean invalidInstance, Boolean invalidState, Boolean emptyEnumerator)
 	{
-		IMessageResource resource = IMessageResource.GetInstance();
+		IMessageResource resource = MessageResource.GetInstance();
 		if (invalidInstance || (invalidState && !emptyEnumerator))
 			throw new InvalidOperationException(resource.NotStartedEnumerable);
 		if (invalidState)
@@ -383,7 +409,7 @@ internal static unsafe class ValidationUtilities
 		[CallerArgumentExpression(nameof(startIndex))] String nameofStartIndex = ValidationUtilities.emptyString,
 		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.emptyString)
 	{
-		IMessageResource resource = IMessageResource.GetInstance();
+		IMessageResource resource = MessageResource.GetInstance();
 		if (startIndex < 0)
 			throw new ArgumentOutOfRangeException(nameofStartIndex, resource.LessThanZero);
 
@@ -407,7 +433,7 @@ internal static unsafe class ValidationUtilities
 		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.emptyString)
 	{
 		if (length >= 0) return;
-		IMessageResource resource = IMessageResource.GetInstance();
+		IMessageResource resource = MessageResource.GetInstance();
 		throw new ArgumentOutOfRangeException(nameofLength, resource.LessThanZero);
 	}
 
@@ -429,7 +455,7 @@ internal static unsafe class ValidationUtilities
 		[CallerArgumentExpression(nameof(startIndex))] String nameofStartIndex = ValidationUtilities.emptyString,
 		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.emptyString)
 	{
-		IMessageResource resource = IMessageResource.GetInstance();
+		IMessageResource resource = MessageResource.GetInstance();
 		if (startIndex < 0)
 			throw new ArgumentOutOfRangeException(nameofStartIndex, resource.LessThanZero);
 
@@ -462,7 +488,7 @@ internal static unsafe class ValidationUtilities
 		[CallerArgumentExpression(nameof(startIndex))] String nameofStartIndex = ValidationUtilities.emptyString,
 		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.emptyString)
 	{
-		IMessageResource resource = IMessageResource.GetInstance();
+		IMessageResource resource = MessageResource.GetInstance();
 		if (startIndex < 0)
 			throw new ArgumentOutOfRangeException(nameofStartIndex, resource.LessThanZero);
 
@@ -487,7 +513,7 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfNotUnmanagedType(Type? type, Boolean isUnmanaged)
 	{
 		if (type is null || (type.IsValueType && isUnmanaged)) return;
-		String message = IMessageResource.GetInstance().NotUnmanagedType(type);
+		String message = MessageResource.GetInstance().NotUnmanagedType(type);
 		throw new InvalidOperationException(message);
 	}
 	/// <summary>
@@ -501,7 +527,7 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfNotReferenceType(Type? type)
 	{
 		if (type is not null && !type.IsValueType) return;
-		String message = IMessageResource.GetInstance().NotReferenceType(type ?? typeof(Byte));
+		String message = MessageResource.GetInstance().NotReferenceType(type ?? typeof(Byte));
 		throw new InvalidOperationException(message);
 	}
 	/// <summary>
@@ -520,7 +546,7 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfInvalidTransformation(Type? sourceType, Boolean unmanagedSource, Type destinationType,
 		Boolean unmanagedDestination)
 	{
-		IMessageResource resource = IMessageResource.GetInstance();
+		IMessageResource resource = MessageResource.GetInstance();
 		if (!destinationType.IsValueType)
 		{
 			if (sourceType is null || sourceType.IsValueType)
@@ -553,7 +579,7 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfInvalidBuffer(Type itemType, Boolean isItemUnmanaged, Type arrayType,
 		Boolean isArrayUnmanaged)
 	{
-		IMessageResource resource = IMessageResource.GetInstance();
+		IMessageResource resource = MessageResource.GetInstance();
 		String? message = isItemUnmanaged switch
 		{
 			false when isArrayUnmanaged => itemType.IsValueType ?
@@ -578,7 +604,7 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfNullMetadata(Type bufferType, Boolean isNull)
 	{
 		if (!isNull) return;
-		IMessageResource resource = IMessageResource.GetInstance();
+		IMessageResource resource = MessageResource.GetInstance();
 		throw new InvalidOperationException(resource.MissingBufferMetadataException(bufferType));
 	}
 	/// <summary>
@@ -595,7 +621,7 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfNullMetadata(Type itemType, UInt16 size, Boolean isNull)
 	{
 		if (!isNull) return;
-		IMessageResource resource = IMessageResource.GetInstance();
+		IMessageResource resource = MessageResource.GetInstance();
 		throw new InvalidOperationException(resource.MissingBufferMetadataException(itemType, size));
 	}
 	/// <summary>
@@ -612,7 +638,7 @@ internal static unsafe class ValidationUtilities
 	public static MemoryInspector ThrowIfNotSupportedPlatform(MemoryInspector? instance)
 	{
 		if (instance is not null) return instance;
-		IMessageResource resource = IMessageResource.GetInstance();
+		IMessageResource resource = MessageResource.GetInstance();
 		throw new PlatformNotSupportedException(resource.MissingMemoryInspector);
 	}
 	/// <summary>
@@ -628,7 +654,7 @@ internal static unsafe class ValidationUtilities
 	public static void ThrowIfNoReflection()
 	{
 		if (!AotInfo.IsReflectionDisabled) return;
-		IMessageResource resource = IMessageResource.GetInstance();
+		IMessageResource resource = MessageResource.GetInstance();
 		throw new PlatformNotSupportedException(resource.ReflectionDisabled);
 	}
 #if NETCOREAPP
@@ -678,7 +704,7 @@ internal static unsafe class ValidationUtilities
 #endif
 	private static void ThrowIfInvalidToken(JsonTokenType tokenType, String expectedToken)
 	{
-		IMessageResource resource = IMessageResource.GetInstance();
+		IMessageResource resource = MessageResource.GetInstance();
 		String tokenTypeName = Enum.GetName(tokenType) ?? $"{tokenType}";
 		String message = resource.InvalidToken(tokenTypeName, expectedToken);
 		throw new JsonException(message);

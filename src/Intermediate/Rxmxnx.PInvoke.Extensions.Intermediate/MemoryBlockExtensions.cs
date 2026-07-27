@@ -43,8 +43,13 @@ public static unsafe partial class MemoryBlockExtensions
 	public static Boolean IsLiteral<T>(this ReadOnlySpan<T> span)
 	{
 		ref T refT = ref MemoryMarshal.GetReference(span);
+#if NETSTANDARD2_1 || NETCOREAPP
 		ReadOnlySpan<Byte> byteSpan = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, Byte>(ref refT), 1);
 		return MemoryInspector.Instance.IsLiteral(byteSpan);
+#else
+		fixed (void* ptr = &Unsafe.As<T, Byte>(ref refT))
+			return MemoryInspector.Instance.IsLiteral<Byte>(new(ptr, 1));
+#endif
 	}
 	/// <summary>
 	/// Creates a new read-only span over a target array.
@@ -53,6 +58,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="array">The array to convert.</param>
 	/// <returns>The read-only span representation of the array.</returns>
 	public static ReadOnlySpan<T> AsReadOnlySpan<T>(this T[]? array)
+#if !NETSTANDARD2_1 && !NETCOREAPP
+		=> array is not null ? new(array) : default;
+#else
 		=> array is not null ?
 			MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(array), array.Length) :
 			default;
@@ -65,6 +73,7 @@ public static unsafe partial class MemoryBlockExtensions
 		=> array is not null ?
 			MemoryMarshal.CreateSpan(ref NativeUtilities.GetArrayDataReference(array), array.Length) :
 			default;
+#endif
 
 	/// <summary>
 	/// Indicates whether the current span represents memory that is not part of a hardcoded literal.
@@ -313,6 +322,7 @@ public static unsafe partial class MemoryBlockExtensions
 		residual = MemoryMarshal.AsBytes(span[offset..]);
 		return result;
 	}
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Creates an <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance by pinning the current
 	/// <see cref="ReadOnlyMemory{T}"/> instance, ensuring a safe context for accessing the fixed memory.
@@ -418,4 +428,5 @@ public static unsafe partial class MemoryBlockExtensions
 	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceExtensions, ObsoleteConstants.ErrorFixedInterface)]
 #endif
 	public static IFixedMemory.IDisposable GetFixedMemory<T>(this Memory<T> mem) => mem.GetFixedContext();
+#endif
 }

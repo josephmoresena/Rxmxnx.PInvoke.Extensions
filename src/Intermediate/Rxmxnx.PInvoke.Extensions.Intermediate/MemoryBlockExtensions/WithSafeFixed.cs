@@ -1,4 +1,5 @@
-﻿// ReSharper disable ConvertToExtensionBlock
+﻿#if NETSTANDARD2_1 || NETCOREAPP
+// ReSharper disable ConvertToExtensionBlock
 
 #if !NET6_0_OR_GREATER
 using ArgumentNullException = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
@@ -421,3 +422,4 @@ public static unsafe partial class MemoryBlockExtensions
 	}
 }
 #pragma warning restore CS8500
+#endif

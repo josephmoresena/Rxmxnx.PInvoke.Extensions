@@ -1,11 +1,11 @@
 namespace Rxmxnx.PInvoke.Internal.Localization;
 
-internal partial interface IMessageResource
+internal static class MessageResource
 {
 	/// <summary>
 	/// Retrieves internal resource objects.
 	/// </summary>
-	/// <returns>Resource resource object.</returns>
+	/// <returns>Resource object.</returns>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

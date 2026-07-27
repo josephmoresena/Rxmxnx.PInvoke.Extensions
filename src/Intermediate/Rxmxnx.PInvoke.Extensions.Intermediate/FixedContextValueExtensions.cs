@@ -51,7 +51,7 @@ public static unsafe class FixedContextValueExtensions
 	/// Output. The <see cref="FixedContextValue{T}"/> instance representing the pinned memory.
 	/// </param>
 	/// <param name="clearArray">Indicates whether the contents of the buffer should be cleared before reuse.</param>
-	/// <returns>An <see cref="IFixedContext{T}.IDisposable"/> instance representing the pinned memory.</returns>
+	/// <returns>An <see cref="IDisposable"/> instance representing the pinned memory.</returns>
 	/// <remarks>
 	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
 	/// operations on unmanaged memory.

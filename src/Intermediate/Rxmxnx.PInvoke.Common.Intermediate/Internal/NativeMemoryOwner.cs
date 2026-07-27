@@ -52,6 +52,7 @@ internal sealed unsafe class NativeMemoryOwner : FixedValueHandle
 		this._pointer = IntPtr.Zero;
 	}
 
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Allocates a native memory block for <paramref name="count"/> values of type <typeparamref name="T"/> and exposes
 	/// it through an <see cref="IFixedContext{T}.IDisposable"/> instance.
@@ -70,6 +71,7 @@ internal sealed unsafe class NativeMemoryOwner : FixedValueHandle
 		NativeMemoryOwner owner = new(byteLength);
 		return new FixedContext<T>(owner._pointer.ToPointer(), count).ToDisposable(owner);
 	}
+#endif
 	/// <summary>
 	/// Allocates a native memory block for <paramref name="count"/> values of type <typeparamref name="T"/> and exposes
 	/// it through an <see cref="FixedContextValue{T}"/> instance.
@@ -85,9 +87,7 @@ internal sealed unsafe class NativeMemoryOwner : FixedValueHandle
 		if (count == 0)
 		{
 			fixedContext = default;
-#pragma warning disable CS0612
-			return FixedContext<T>.EmptyDisposable;
-#pragma warning restore CS0612
+			return FixedValueHandle.EmptyDisposable;
 		}
 		Int32 byteLength = checked(count * sizeof(T));
 		NativeMemoryOwner owner = new(byteLength);

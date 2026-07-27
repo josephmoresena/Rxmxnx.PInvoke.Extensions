@@ -1,3 +1,10 @@
+#if !NETSTANDARD2_1 && !NETCOREAPP
+using IEnumerator = System.Collections.IEnumerator;
+using IEnumerable = System.Collections.IEnumerable;
+
+using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
+#endif
+
 namespace Rxmxnx.PInvoke.VisualBasic;
 
 /// <summary>
@@ -17,7 +24,7 @@ public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 	/// <summary>
 	/// Indicates whether the current instance is still valid.
 	/// </summary>
-	private readonly IMutableWrapper<Boolean> _isValid = IMutableWrapper.Create(true);
+	private readonly IMutableWrapper<Boolean> _isValid = new MutableWrapper<Boolean>(true);
 	/// <summary>
 	/// Unmanaged pointer.
 	/// </summary>
@@ -93,13 +100,17 @@ public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 		UInt16 length;
 		if (this._array is not null)
 		{
-			span = this._array.Length > 0 ? MemoryMarshal.CreateSpan(ref this._array[0], this._array.Length) : default;
+			span = new(this._array, 0, this._array.Length);
 			length = (UInt16)this._array.Length;
 		}
 		else
 		{
+#if NETSTANDARD2_1 || NETCOREAPP
 			ref T refT = ref Unsafe.AsRef<T>(this._pointer);
 			span = MemoryMarshal.CreateSpan(ref refT, this.Length);
+#else
+			span = MemoryMarshalCompat.CreateUnsafeSpan<T>(this._pointer, this.Length);
+#endif
 			length = this.BufferMetadata?.Size ?? this.Length;
 		}
 		ValidationUtilities.ThrowIfInvalidPointer(this._isValid);
@@ -110,4 +121,10 @@ public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 	/// Invalidates the current sequence.
 	/// </summary>
 	internal void Unload() => this._isValid.Value = false;
+
+#if !NETSTANDARD2_1 && !NETCOREAPP
+	IEnumerator<T> IEnumerable<T>.GetEnumerator() => this.CreateDefaultEnumerator();
+	IEnumerator IEnumerable.GetEnumerator() => this.CreateDefaultEnumerator();
+	void IEnumerableSequence.DoNotImplement() { }
+#endif
 }

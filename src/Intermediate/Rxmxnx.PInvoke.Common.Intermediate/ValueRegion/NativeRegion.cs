@@ -65,8 +65,14 @@ public partial class ValueRegion<T>
 		/// <inheritdoc/>
 		internal override ReadOnlySpan<T> AsSpan()
 		{
+#if NETSTANDARD2_1 || NETCOREAPP
 			ref T refValue = ref Unsafe.AsRef<T>(this._ptr.ToPointer());
 			return MemoryMarshal.CreateReadOnlySpan(ref refValue, this._length);
+#else
+			return !RuntimeHelpersCompat.IsReferenceOrContainsReferences<T>() ?
+				new(this._ptr.ToPointer(), this._length) :
+				MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(this._ptr.ToPointer(), this._length);
+#endif
 		}
 		/// <inheritdoc/>
 		internal override ValueRegion<T> InternalSlice(Int32 startIndex, Int32 length)

@@ -28,4 +28,11 @@ internal class MutableWrapper<T> : Input<T>, IMutableWrapper<T>
 		get => this.GetInstance();
 		set => this.SetInstance(this._writeLock, value);
 	}
+#if !NETSTANDARD2_1 && !NETCOREAPP
+	Object? IStrongBox.Value
+	{
+		get => this.GetInstance();
+		set => this.SetInstance(this._writeLock, (T)value!);
+	}
+#endif
 }

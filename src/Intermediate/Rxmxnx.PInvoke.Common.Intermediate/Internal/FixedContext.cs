@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke.Internal;
+﻿#if NETSTANDARD2_1 || NETCOREAPP
+namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// Represents a fixed memory block for a specific type.
@@ -216,3 +217,4 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory,
 		=> new FixedContext<T>(ptr, count, handle);
 #endif
 }
+#endif

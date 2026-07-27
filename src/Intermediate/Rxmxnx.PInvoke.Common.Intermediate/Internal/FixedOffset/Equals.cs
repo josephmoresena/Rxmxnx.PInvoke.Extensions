@@ -1,3 +1,4 @@
+#if NETSTANDARD2_1 || NETCOREAPP
 namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class FixedOffset : IEquatable<FixedOffset>
@@ -12,3 +13,4 @@ internal partial class FixedOffset : IEquatable<FixedOffset>
 	/// <inheritdoc/>
 	public override Int32 GetHashCode() => base.GetHashCode();
 }
+#endif

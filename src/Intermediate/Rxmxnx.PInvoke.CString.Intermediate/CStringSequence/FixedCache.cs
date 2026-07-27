@@ -118,11 +118,18 @@ public partial class CStringSequence
 						default;
 				set
 				{
+#if NETSTANDARD2_1 || NETCOREAPP
 					Debug.Assert(value is not null);
 					if (this._cache[this.GetRealIndex(index)] is { } weak)
 						weak.SetTarget(value);
 					else
 						this._cache[this.GetRealIndex(index)] = new(value);
+#else
+					if (this._cache[this.GetRealIndex(index)] is { } weak)
+						weak.SetTarget(value!);
+					else
+						this._cache[this.GetRealIndex(index)] = new(value!);
+#endif
 				}
 			}
 			/// <inheritdoc/>

@@ -36,7 +36,7 @@ namespace System.Text;
 /// </summary>
 /// <remarks>
 /// This type's constructors and conversion operators validate the input, so consumers can call the APIs
-/// assuming that the underlying <see cref="Rune"/> instance is well-formed.
+/// assuming that the underlying <see cref="System.Text.Rune"/> instance is well-formed.
 /// </remarks>
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
 #if !PACKAGE
@@ -83,7 +83,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	private readonly UInt32 _value;
 
 	/// <summary>
-	/// Creates a <see cref="Rune"/> from the provided UTF-16 code unit.
+	/// Creates a <see cref="System.Text.Rune"/> from the provided UTF-16 code unit.
 	/// </summary>
 	/// <exception cref="ArgumentOutOfRangeException">
 	/// If <paramref name="ch"/> represents a UTF-16 surrogate code point
@@ -98,7 +98,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	}
 
 	/// <summary>
-	/// Creates a <see cref="Rune"/> from the provided UTF-16 surrogate pair.
+	/// Creates a <see cref="System.Text.Rune"/> from the provided UTF-16 surrogate pair.
 	/// </summary>
 	/// <exception cref="ArgumentOutOfRangeException">
 	/// If <paramref name="highSurrogate"/> does not represent a UTF-16 high surrogate code point
@@ -108,7 +108,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	                                                          false) { }
 
 	/// <summary>
-	/// Creates a <see cref="Rune"/> from the provided Unicode scalar value.
+	/// Creates a <see cref="System.Text.Rune"/> from the provided Unicode scalar value.
 	/// </summary>
 	/// <exception cref="ArgumentOutOfRangeException">
 	/// If <paramref name="value"/> does not represent a value Unicode scalar value.
@@ -116,7 +116,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	public Rune(Int32 value) : this((UInt32)value) { }
 
 	/// <summary>
-	/// Creates a <see cref="Rune"/> from the provided Unicode scalar value.
+	/// Creates a <see cref="System.Text.Rune"/> from the provided Unicode scalar value.
 	/// </summary>
 	/// <exception cref="ArgumentOutOfRangeException">
 	/// If <paramref name="value"/> does not represent a value Unicode scalar value.
@@ -173,7 +173,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	public Int32 Plane => UnicodeUtility.GetPlane(this._value);
 
 	/// <summary>
-	/// A <see cref="Rune"/> instance that represents the Unicode replacement character U+FFFD.
+	/// A <see cref="System.Text.Rune"/> instance that represents the Unicode replacement character U+FFFD.
 	/// </summary>
 	public static Rune ReplacementChar => Rune.UnsafeCreate(UnicodeUtility.ReplacementChar);
 
@@ -236,13 +236,14 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	public Int32 CompareTo(Rune other) => this.Value - other.Value;
 
 	/// <summary>
-	/// Decodes the <see cref="Rune"/> at the beginning of the provided UTF-16 source buffer.
+	/// Decodes the <see cref="System.Text.Rune"/> at the beginning of the provided UTF-16 source buffer.
 	/// </summary>
 	/// <returns>
 	///     <para>
 	///     If the source buffer begins with a valid UTF-16 encoded scalar value, returns <see cref="OperationStatus.Done"/>,
-	///     and outs via <paramref name="result"/> the decoded <see cref="Rune"/> and via <paramref name="charsConsumed"/> the
-	///     number of <see langword="char"/>s used in the input buffer to encode the <see cref="Rune"/>.
+	///     and outs via <paramref name="result"/> the decoded <see cref="System.Text.Rune"/> and via
+	///     <paramref name="charsConsumed"/> the
+	///     number of <see langword="char"/>s used in the input buffer to encode the <see cref="System.Text.Rune"/>.
 	///     </para>
 	///     <para>
 	///     If the source buffer is empty or contains only a standalone UTF-16 high surrogate character, returns
@@ -303,13 +304,14 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	}
 
 	/// <summary>
-	/// Decodes the <see cref="Rune"/> at the beginning of the provided UTF-8 source buffer.
+	/// Decodes the <see cref="System.Text.Rune"/> at the beginning of the provided UTF-8 source buffer.
 	/// </summary>
 	/// <returns>
 	///     <para>
 	///     If the source buffer begins with a valid UTF-8 encoded scalar value, returns <see cref="OperationStatus.Done"/>,
-	///     and outs via <paramref name="result"/> the decoded <see cref="Rune"/> and via <paramref name="bytesConsumed"/> the
-	///     number of <see langword="byte"/>s used in the input buffer to encode the <see cref="Rune"/>.
+	///     and outs via <paramref name="result"/> the decoded <see cref="System.Text.Rune"/> and via
+	///     <paramref name="bytesConsumed"/> the
+	///     number of <see langword="byte"/>s used in the input buffer to encode the <see cref="System.Text.Rune"/>.
 	///     </para>
 	///     <para>
 	///     If the source buffer is empty or contains only a partial UTF-8 subsequence, returns
@@ -432,12 +434,12 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	}
 
 	/// <summary>
-	/// Decodes the <see cref="Rune"/> at the end of the provided UTF-16 source buffer.
+	/// Decodes the <see cref="System.Text.Rune"/> at the end of the provided UTF-16 source buffer.
 	/// </summary>
 	/// <remarks>
-	/// This method is very similar to <see cref="DecodeFromUtf16(ReadOnlySpan{char}, out Rune, out int)"/>, but it allows
-	/// the caller to loop backward instead of forward. The typical calling convention is that on each iteration
-	/// of the loop, the caller should slice off the final <paramref name="charsConsumed"/> elements of
+	/// This method is very similar to <see cref="DecodeFromUtf16(ReadOnlySpan{char}, out System.Text.Rune, out int)"/>,
+	/// but it allows the caller to loop backward instead of forward. The typical calling convention is that on each
+	/// iteration of the loop, the caller should slice off the final <paramref name="charsConsumed"/> elements of
 	/// the <paramref name="source"/> buffer.
 	/// </remarks>
 	public static OperationStatus DecodeLastFromUtf16(ReadOnlySpan<Char> source, out Rune result,
@@ -481,12 +483,12 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	}
 
 	/// <summary>
-	/// Decodes the <see cref="Rune"/> at the end of the provided UTF-8 source buffer.
+	/// Decodes the <see cref="System.Text.Rune"/> at the end of the provided UTF-8 source buffer.
 	/// </summary>
 	/// <remarks>
-	/// This method is very similar to <see cref="DecodeFromUtf8(ReadOnlySpan{byte}, out Rune, out int)"/>, but it allows
-	/// the caller to loop backward instead of forward. The typical calling convention is that on each iteration
-	/// of the loop, the caller should slice off the final <paramref name="bytesConsumed"/> elements of
+	/// This method is very similar to <see cref="DecodeFromUtf8(ReadOnlySpan{byte}, out System.Text.Rune, out int)"/>,
+	/// but it allows the caller to loop backward instead of forward. The typical calling convention is that on each
+	/// iteration of the loop, the caller should slice off the final <paramref name="bytesConsumed"/> elements of
 	/// the <paramref name="source"/> buffer.
 	/// </remarks>
 	public static OperationStatus DecodeLastFromUtf8(ReadOnlySpan<Byte> source, out Rune value, out Int32 bytesConsumed)
@@ -537,7 +539,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	}
 
 	/// <summary>
-	/// Encodes this <see cref="Rune"/> to a UTF-16 destination buffer.
+	/// Encodes this <see cref="System.Text.Rune"/> to a UTF-16 destination buffer.
 	/// </summary>
 	/// <param name="destination">The buffer to which to write this value as UTF-16.</param>
 	/// <returns>The number of <see cref="char"/>s written to <paramref name="destination"/>.</returns>
@@ -550,7 +552,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 			throw new ArgumentException("Destination is too short.", nameof(destination));
 
 	/// <summary>
-	/// Encodes this <see cref="Rune"/> to a UTF-8 destination buffer.
+	/// Encodes this <see cref="System.Text.Rune"/> to a UTF-8 destination buffer.
 	/// </summary>
 	/// <param name="destination">The buffer to which to write this value as UTF-8.</param>
 	/// <returns>The number of <see cref="byte"/>s written to <paramref name="destination"/>.</returns>
@@ -595,7 +597,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	}
 
 	/// <summary>
-	/// Returns a <see cref="string"/> representation of this <see cref="Rune"/> instance.
+	/// Returns a <see cref="string"/> representation of this <see cref="System.Text.Rune"/> instance.
 	/// </summary>
 	public override String ToString()
 	{
@@ -606,7 +608,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	}
 
 	/// <summary>
-	/// Attempts to create a <see cref="Rune"/> from the provided input value.
+	/// Attempts to create a <see cref="System.Text.Rune"/> from the provided input value.
 	/// </summary>
 	public static Boolean TryCreate(Char ch, out Rune result)
 	{
@@ -621,7 +623,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	}
 
 	/// <summary>
-	/// Attempts to create a <see cref="Rune"/> from the provided UTF-16 surrogate pair.
+	/// Attempts to create a <see cref="System.Text.Rune"/> from the provided UTF-16 surrogate pair.
 	/// Returns <see langword="false"/> if the input values don't represent a well-formed UTF-16surrogate pair.
 	/// </summary>
 	public static Boolean TryCreate(Char highSurrogate, Char lowSurrogate, out Rune result)
@@ -639,12 +641,12 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	}
 
 	/// <summary>
-	/// Attempts to create a <see cref="Rune"/> from the provided input value.
+	/// Attempts to create a <see cref="System.Text.Rune"/> from the provided input value.
 	/// </summary>
 	public static Boolean TryCreate(Int32 value, out Rune result) => Rune.TryCreate((UInt32)value, out result);
 
 	/// <summary>
-	/// Attempts to create a <see cref="Rune"/> from the provided input value.
+	/// Attempts to create a <see cref="System.Text.Rune"/> from the provided input value.
 	/// </summary>
 	public static Boolean TryCreate(UInt32 value, out Rune result)
 	{
@@ -658,7 +660,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	}
 
 	/// <summary>
-	/// Encodes this <see cref="Rune"/> to a UTF-16 destination buffer.
+	/// Encodes this <see cref="System.Text.Rune"/> to a UTF-16 destination buffer.
 	/// </summary>
 	/// <param name="destination">The buffer to which to write this value as UTF-16.</param>
 	/// <param name="charsWritten">
@@ -697,7 +699,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	}
 
 	/// <summary>
-	/// Encodes this <see cref="Rune"/> to a destination buffer as UTF-8 bytes.
+	/// Encodes this <see cref="System.Text.Rune"/> to a destination buffer as UTF-8 bytes.
 	/// </summary>
 	/// <param name="destination">The buffer to which to write this value as UTF-8.</param>
 	/// <param name="bytesWritten">
@@ -762,7 +764,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	}
 
 	/// <summary>
-	/// Creates a <see cref="Rune"/> without performing validation on the input.
+	/// Creates a <see cref="System.Text.Rune"/> without performing validation on the input.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static Rune UnsafeCreate(UInt32 scalarValue) => new(scalarValue, false);
@@ -784,7 +786,15 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	}
 
 	private static UnicodeCategory GetUnicodeCategoryNonAscii(Rune value)
+#if NETSTANDARD2_1 || NETCOREAPP
 		=> CharUnicodeInfo.GetUnicodeCategory(value.Value);
+#else
+	{
+		Span<Char> chars = stackalloc Char[sizeof(Int32) / sizeof(Char)];
+		MemoryMarshal.Cast<Char, Int32>(chars)[0] = value.Value;
+		return CharUnicodeInfo.GetUnicodeCategory(chars.ToString(), 0);
+	}
+#endif
 
 	// Returns true iff this Unicode category represents a letter
 	private static Boolean IsCategoryLetter(UnicodeCategory category)

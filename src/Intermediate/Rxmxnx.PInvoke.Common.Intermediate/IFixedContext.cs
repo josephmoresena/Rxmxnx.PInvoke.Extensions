@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if NETSTANDARD2_1 || NETCOREAPP
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Interface representing a context from a block of fixed memory.
@@ -50,3 +51,4 @@ public interface IFixedContext<T> : IReadOnlyFixedContext<T>, IFixedMemory<T>
 	public new interface IDisposable : IFixedContext<T>, IFixedMemory<T>.IDisposable,
 		IReadOnlyFixedContext<T>.IDisposable;
 }
+#endif

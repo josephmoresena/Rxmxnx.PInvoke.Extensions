@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke.Internal;
+﻿#if !NETSTANDARD2_1 && !NETCOREAPP
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
+namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// Fixed memory reference class, used to hold a fixed memory reference of a specific type.
@@ -36,6 +40,7 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 
 	ref T IReferenceable<T>.Reference => ref this.CreateReference<T>();
 	ref readonly T IReadOnlyReferenceable<T>.Reference => ref this.CreateReadOnlyReference<T>();
+#if NETSTANDARD2_1 || NETCOREAPP
 	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IFixedMemory residual)
 	{
 		Unsafe.SkipInit(out residual);
@@ -58,7 +63,13 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 			this.GetTransformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, FixedOffset>(ref residual), true);
 		return result;
 	}
+#endif
+	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>()
+		=> this.GetTransformation<TDestination>(true);
+	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>()
+		=> this.GetTransformation<TDestination>();
 
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Transforms the current memory reference into a different type and provides a fixed offset that represents the remaining
 	/// portion of memory not included in the newly formed reference.
@@ -87,6 +98,30 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 		Int32 sizeOf = sizeof(TDestination);
 		this.ValidateReferenceSize(typeof(TDestination), sizeOf);
 		fixedOffset = new(this, sizeOf);
+		return new(this);
+	}
+#endif
+
+	/// <summary>
+	/// Transforms the current memory reference into a different type and provides a fixed offset that represents the remaining
+	/// portion of memory not included in the newly formed reference.
+	/// </summary>
+	/// <typeparam name="TDestination">The type into which the current memory reference should be transformed.</typeparam>
+	/// <returns>
+	/// A new instance of FixedReference for the destination type, which represents a fixed memory reference of the
+	/// new type.
+	/// </returns>
+	/// <exception cref="InsufficientMemoryException">
+	/// Thrown when the size of the current reference is not sufficient to
+	/// accommodate the new type. For example, if an attempt is made to transform a 2-byte reference into a 4-byte type.
+	/// </exception>
+	private FixedReference<TDestination> GetTransformation<TDestination>(Boolean isReadOnly = false)
+	{
+		this.ValidateOperation(isReadOnly);
+		this.ValidateTransformation(typeof(TDestination),
+		                            !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>());
+		Int32 sizeOf = sizeof(TDestination);
+		this.ValidateReferenceSize(typeof(TDestination), sizeOf);
 		return new(this);
 	}
 #pragma warning restore CS8500

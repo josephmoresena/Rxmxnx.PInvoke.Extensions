@@ -28,7 +28,7 @@ SOFTWARE.
 // Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Blc.Memory 10.0.8
 // (System.text.Unicode.Utf8Utility)
 
-#if !NETCOREAPP
+#if !NETCOREAPP && !NETFRAMEWORK
 // ReSharper disable OutParameterValueIsAlwaysDiscarded.Local
 namespace System.Text.Unicode;
 

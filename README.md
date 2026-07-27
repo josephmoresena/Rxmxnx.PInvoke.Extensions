@@ -50,8 +50,8 @@
 
 # Description
 
-`Rxmxnx.PInvoke.Extensions` is a comprehensive library designed to streamline and enhance the
-interaction between .NET and native P/Invoke methods.
+`Rxmxnx.PInvoke.Extensions` is a comprehensive library designed to streamline and enhance the interaction between .NET
+and native P/Invoke methods.
 
 ## Features
 
@@ -97,8 +97,8 @@ Install the library via NuGet:
 dotnet add package Rxmxnx.PInvoke.Extensions
 ```
 
-**Note:** This package officially supports .NET 8.0 and later. However, this package offers limited support for
-.NET Standard 2.1-compatible runtimes and legacy support for .NET 7.0 and earlier.
+**Note:** This package officially supports .NET 8.0 and later. However, this package offers limited support for .NET
+Standard 2.1-compatible runtimes and legacy support for .NET 7.0 and earlier.
 
 ## Framework Support
 
@@ -236,8 +236,8 @@ assembly. Using the build compiled for **.NET Standard 2.0** is recommended.
 <details>
 <summary><strong>Xamarin (Android, iOS, macOS)</strong></summary>
 
-Since `Rxmxnx.PInvoke.Extensions` is compiled for .NET Standard 2.1, it can be used in legacy Xamarin projects by
-adding it directly as a NuGet package reference. This will also reference version **5.0** of the
+Since `Rxmxnx.PInvoke.Extensions` is compiled for .NET Standard 2.1, it can be used in legacy Xamarin projects by adding
+it directly as a NuGet package reference. This will also reference version **5.0** of the
 `System.Runtime.CompilerServices.Unsafe` package (which contains assembly version 6.0).
 
 However, for new projects it is recommended to use the latest version of the package (**6.1.2**).
@@ -270,8 +270,8 @@ that the assembly from this package is used instead of the version bundled with 
 <summary><strong>Mono Framework</strong></summary>
 
 As it is compiled for **.NET Standard 2.1**, `Rxmxnx.PInvoke.Extensions` is compatible with the **Mono Framework**,
-using the **.NET Framework 4.5 facades** and the `System.Runtime.CompilerServices.Unsafe` package version 5.0 across
-the supported platforms.
+using the **.NET Framework 4.5 facades** and the `System.Runtime.CompilerServices.Unsafe` package version 5.0 across the
+supported platforms.
 
 </details>
 
@@ -392,9 +392,9 @@ to the modern **ILLink**.
 
 ## Visual Basic .NET Support
 
-Some APIs in `Rxmxnx.PInvoke.Extensions` are not directly compatible with Visual Basic .NET due to language
-limitations. The `Rxmxnx.PInvoke.VisualBasic` namespace provides equivalent delegate definitions specifically designed
-for use in **Visual Basic .NET**.
+Some APIs in `Rxmxnx.PInvoke.Extensions` are not directly compatible with Visual Basic .NET due to language limitations.
+The `Rxmxnx.PInvoke.VisualBasic` namespace provides equivalent delegate definitions specifically designed for use in
+**Visual Basic .NET**.
 
 These delegates provide VB.NET-compatible access to selected non-compliant `Rxmxnx.PInvoke.Extensions` APIs.
 
@@ -411,8 +411,8 @@ These interfaces represent a safe way to access a managed reference of a specifi
 <details>
   <summary>IReadOnlyReferenceable&lt;T&gt;</summary>
 
-This interface exposes a read-only reference to an object of type `T`, allowing the object
-to be used without modification.
+This interface exposes a read-only reference to an object of type `T`, allowing the object to be used without
+modification.
 
 **Notes:**
 
@@ -645,8 +645,8 @@ Interface representing a pointer to a fixed block of memory.
 
 #### Disposable interface
 
-`IFixedPointer.IDisposable` representing a disposable `IFixedPointer` object.
-This interface is used for managing fixed memory blocks that require explicit resource cleanup.
+`IFixedPointer.IDisposable` representing a disposable `IFixedPointer` object. This interface is used for managing fixed
+memory blocks that require explicit resource cleanup.
 
 **Note:** This interface inherits from `IFixedPointer` and `System.IDisposable`. This type allows public implementation
 or inheritance.
@@ -706,8 +706,8 @@ Interface representing a read-only fixed block of memory.
 
 #### Disposable interface
 
-`IReadOnlyFixedMemory.IDisposable` representing a disposable `IReadOnlyFixedMemory` object.
-This interface is used for managing fixed memory blocks that require explicit resource cleanup.
+`IReadOnlyFixedMemory.IDisposable` representing a disposable `IReadOnlyFixedMemory` object. This interface is used for
+managing fixed memory blocks that require explicit resource cleanup.
 
 **Note:** This interface inherits from `IReadOnlyFixedMemory` and `IFixedPointer.IDisposable`. This type allows public
 implementation or inheritance.
@@ -736,8 +736,8 @@ Interface representing a read-only fixed block of memory for a specific type.
 
 #### Disposable interface
 
-`IReadOnlyFixedMemory<T>.IDisposable` representing a disposable `IReadOnlyFixedMemory<T>` object.
-This interface is used for managing fixed memory blocks that require explicit resource cleanup.
+`IReadOnlyFixedMemory<T>.IDisposable` representing a disposable `IReadOnlyFixedMemory<T>` object. This interface is used
+for managing fixed memory blocks that require explicit resource cleanup.
 
 **Note:** This interface inherits from `IReadOnlyFixedMemory<T>` and `IReadOnlyFixedMemory.IDisposable`. This type
 allows public implementation or inheritance.
@@ -777,8 +777,8 @@ Interface representing a fixed block of memory.
 
 #### Disposable interface
 
-`IFixedMemory.IDisposable` representing a disposable `IFixedMemory` object.
-This interface is used for managing fixed memory blocks that require explicit resource cleanup.
+`IFixedMemory.IDisposable` representing a disposable `IFixedMemory` object. This interface is used for managing fixed
+memory blocks that require explicit resource cleanup.
 
 **Note:** This interface inherits from `IFixedMemory` and `IReadOnlyFixedMemory.IDisposable`. This type allows public
 implementation or inheritance.
@@ -808,8 +808,8 @@ implementation or inheritance.
 
 #### Disposable interface
 
-`IFixedMemory<T>.IDisposable` representing a disposable `IFixedMemory<T>` object.
-This interface is used for managing fixed memory blocks that require explicit resource cleanup.
+`IFixedMemory<T>.IDisposable` representing a disposable `IFixedMemory<T>` object. This interface is used for managing
+fixed memory blocks that require explicit resource cleanup.
 
 **Note:** This interface inherits from `IReadOnlyFixedMemory<T>` and `IFixedMemory.IDisposable`. This type allows public
 implementation or inheritance.
@@ -835,8 +835,8 @@ implementation or inheritance. Starting with .NET 9.0, `T` can be a `ref struct`
 
 #### Disposable interface
 
-`IReadOnlyFixedReference<T>.IDisposable` representing a disposable `IReadOnlyFixedReference<T>` object.
-This interface is used for managing fixed memory blocks that require explicit resource cleanup.
+`IReadOnlyFixedReference<T>.IDisposable` representing a disposable `IReadOnlyFixedReference<T>` object. This interface
+is used for managing fixed memory blocks that require explicit resource cleanup.
 
 **Note:** This interface inherits from `IReadOnlyFixedReference<T>` and `IReadOnlyFixedMemory.IDisposable`. This type
 allows public implementation or inheritance.
@@ -867,8 +867,8 @@ allows public implementation or inheritance. Starting with .NET 9.0, `T` can be 
 
 #### Disposable interface
 
-`IFixedReference<T>.IDisposable` representing a disposable `IFixedReference<T>` object.
-This interface is used for managing fixed memory blocks that require explicit resource cleanup.
+`IFixedReference<T>.IDisposable` representing a disposable `IFixedReference<T>` object. This interface is used for
+managing fixed memory blocks that require explicit resource cleanup.
 
 **Note:** This interface inherits from `IFixedReference<T>` and `IReadOnlyFixedReference<T>.IDisposable`. This type
 allows public implementation or inheritance.
@@ -892,8 +892,8 @@ Interface representing a context from a read-only block of fixed memory.
 
 #### Disposable interface
 
-`IReadOnlyFixedContext<T>.IDisposable` representing a disposable `IReadOnlyFixedContext<T>` object.
-This interface is used for managing fixed memory blocks that require explicit resource cleanup.
+`IReadOnlyFixedContext<T>.IDisposable` representing a disposable `IReadOnlyFixedContext<T>` object. This interface is
+used for managing fixed memory blocks that require explicit resource cleanup.
 
 **Note:** This interface inherits from `IReadOnlyFixedContext<T>` and `IReadOnlyFixedMemory<T>.IDisposable`. This type
 allows public implementation or inheritance.
@@ -923,8 +923,8 @@ implementation or inheritance.
 
 #### Disposable interface
 
-`IFixedContext<T>.IDisposable` representing a disposable `IFixedContext<T>` object.
-This interface is used for managing fixed memory blocks that require explicit resource cleanup.
+`IFixedContext<T>.IDisposable` representing a disposable `IFixedContext<T>` object. This interface is used for managing
+fixed memory blocks that require explicit resource cleanup.
 
 **Note:** This interface inherits from `IFixedContext<T>` and `IFixedMemory<T>.IDisposable`. This type allows public
 implementation or inheritance.
@@ -972,11 +972,11 @@ Defines methods to support a simple iteration over a sequence of a specified typ
 - <details>
   <summary>CreateEnumerator(IEnumerableSequence&lt;T&gt;, Action&lt;IEnumerableSequence&lt;T&gt;gt;?)</summary>
 
-  This static method allows the creation of an internal `IEnumerator<T>` instance using an `IEnumerableSequence<T>`.
-  The `Action` delegate is used during the enumerator's disposal.
+  This static method allows the creation of an internal `IEnumerator<T>` instance using an `IEnumerableSequence<T>`. The
+  `Action` delegate is used during the enumerator's disposal.
 
-  Starting with .NET Core 3.0, the implementation of the `DisposeEnumeration(Int32)` method is ignored.
-  However, this method may still be required when targeting a .NET Standard 2.1 library on the Mono framework.
+  Starting with .NET Core 3.0, the implementation of the `DisposeEnumeration(Int32)` method is ignored. However, this
+  method may still be required when targeting a .NET Standard 2.1 library on the Mono framework.
   </details>
 
 </details>
@@ -1230,8 +1230,8 @@ Encapsulates a method that receives a span of type `T`, a state object of type `
 <details>
   <summary>TResult ReadOnlySpanFunc&lt;T, in TArg, out TResult&gt;(Span&lt;T&gt;, TArg)</summary>
 
-Encapsulates a method that receives a read-only span of type `T`, a state object of type `TArg` and returns a result
-of type `TResult`.
+Encapsulates a method that receives a read-only span of type `T`, a state object of type `TArg` and returns a result of
+type `TResult`.
 
 **Note:** Starting with .NET 9.0, `TState` can be a `ref struct`.
 
@@ -2421,10 +2421,10 @@ Represents a sequence of UTF-8 encoded characters.
 - Starting with .NET 9.0, `params` is used with `ReadOnlySpan<>` arguments instead of `[]` arguments.
 - Starting with .NET 7.0, this type supports source-generated P/Invoke marshalling.
 - When marshalling, the instances of this type are represented as null-terminated UTF-8 strings.
-- Starting with .NET Core 3.0, the nested `JsonConverter` class can be used to support serialization and
-  deserialization with `System.Text.Json`.
-- The JSON deserialization process produces null-terminated `CString` instances; however, it is not guaranteed that
-  this termination consists of a single UTF-8 null character.
+- Starting with .NET Core 3.0, the nested `JsonConverter` class can be used to support serialization and deserialization
+  with `System.Text.Json`.
+- The JSON deserialization process produces null-terminated `CString` instances; however, it is not guaranteed that this
+  termination consists of a single UTF-8 null character.
 - The nested abstract class `Backing` allows the creation of custom UTF-8 data storage to be backed by `CString`
   instances.
 
@@ -2699,10 +2699,10 @@ Represents a sequence of null-terminated UTF-8 text strings.
   memory usage.
 - Starting with .NET 9.0, `params` is used with `ReadOnlySpan<>` arguments instead of `[]` arguments.
 - Starting with .NET 7.0, this type supports source-generated P/Invoke marshalling.
-- When marshalling, instances of this type are represented as null-terminated arrays of null-terminated UTF-8
-  strings. Therefore, only non-empty items will be included.
-- Starting with .NET Core 3.0, the nested `JsonConverter` class can be used to support serialization and
-  deserialization with `System.Text.Json`.
+- When marshalling, instances of this type are represented as null-terminated arrays of null-terminated UTF-8 strings.
+  Therefore, only non-empty items will be included.
+- Starting with .NET Core 3.0, the nested `JsonConverter` class can be used to support serialization and deserialization
+  with `System.Text.Json`.
 - The nested `ref struct` `Utf8View` allows iteration over UTF-8 items represented as `ReadOnlySpan<byte>`, providing
 - control over whether empty elements are included during enumeration.
 - When marshalling in .NET 7.0 and later, `Utf8View` instances are represented as arrays of null-terminated UTF-8
@@ -2781,8 +2781,7 @@ Represents a sequence of null-terminated UTF-8 text strings.
   <summary>ToCString(Boolean)</summary>
 
   Returns a `CString` that represents the current sequence. The boolean parameter specifies whether the returned
-  `CString` should be null-terminated.
-  must be null-terminated.
+  `CString` should be null-terminated. must be null-terminated.
   </details>
 - <details>
   <summary>Pin()</summary>
@@ -2798,8 +2797,8 @@ Represents a sequence of null-terminated UTF-8 text strings.
 - <details>
   <summary>GetFixedPointer(out FixedPointerValue)</summary>
 
-  Creates an `FixedPointerValue` instance by pinning the current instance, allowing safe access to the fixed
-  memory region and returns an `IDisposable` object to release the pinned instance.
+  Creates an `FixedPointerValue` instance by pinning the current instance, allowing safe access to the fixed memory
+  region and returns an `IDisposable` object to release the pinned instance.
   </details>
 - <details>
   <summary>WithSafeTransform(CStringSequenceAction)</summary>
@@ -2974,9 +2973,8 @@ Represents a mutable string of UTF-8 encoded characters.
   Concatenates the string representations of the elements in the provided sequence, using the specified separator
   between each member.
 
-  **Supported separator types include:** `CString`, and `ReadOnlySpan<Byte>`.
-  **Supported types include:** `CString[]`, `ReadOnlySpan<CString>`, `CStringSequence`, `CStringSequence.Utf8View`,
-  and `IEnumerable<CString>`.
+  **Supported separator types include:** `CString`, and `ReadOnlySpan<Byte>`. **Supported types include:** `CString[]`,
+  `ReadOnlySpan<CString>`, `CStringSequence`, `CStringSequence.Utf8View`, and `IEnumerable<CString>`.
   </details>
 - <details>
   <summary>AppendLine()</summary>
@@ -3048,9 +3046,8 @@ Represents a mutable string of UTF-8 encoded characters.
   Concatenates the string representations of the elements in the provided sequence, using the specified separator
   between each member. This method is thread-safe.
 
-  **Supported separator types include:** `CString`, and `ReadOnlySpan<Byte>`.
-  **Supported types include:** `CString[]`, `ReadOnlySpan<CString>`, `CStringSequence`, `CStringSequence.Utf8View`,
-  and `IEnumerable<CString>`.
+  **Supported separator types include:** `CString`, and `ReadOnlySpan<Byte>`. **Supported types include:** `CString[]`,
+  `ReadOnlySpan<CString>`, `CStringSequence`, `CStringSequence.Utf8View`, and `IEnumerable<CString>`.
   </details>
 - <details>
   <summary>ConcurrentAppendLine()</summary>
@@ -3241,8 +3238,8 @@ Additional functionality for working with delegates.
 - <details>
   <summary>GetFixedMethod&lt;TDelegate&gt;(this TDelegate?)</summary>
 
-  Creates an `IFixedMethod<TDelegate>.IDisposable` instance by marshalling the current `TDelegate` instance,
-  ensuring a safe interop context.
+  Creates an `IFixedMethod<TDelegate>.IDisposable` instance by marshalling the current `TDelegate` instance, ensuring a
+  safe interop context.
   </details>
 - <details>
   <summary>IsImageMethod&lt;TDelegate&gt;(this TDelegate?)</summary>
@@ -3706,8 +3703,8 @@ Set of extensions for `CStringSequence` viewing operations.
 - <details>
   <summary>CreateView(this CStringSequence?, Boolean)</summary>
 
-  Creates a new `CStringSequence.Utf8View` from the given `CStringSequence`instance, with an additional parameter
-  to control the inclusion of empty items in the resulting enumeration.
+  Creates a new `CStringSequence.Utf8View` from the given `CStringSequence`instance, with an additional parameter to
+  control the inclusion of empty items in the resulting enumeration.
 
   **Note:** This extension method can be safely called on null instances of `CStringSequence`; it does not throw a
   `NullReferenceException`.
@@ -3739,8 +3736,7 @@ Set of extensions for basic operations with references to `unmanaged` values.
   <summary>Transform&lt;TSource, TDestination&gt;(ref this TSource)</summary>
 
   Generates a reference for an `unmanaged` value of type `TDestination` from an existing reference to an `unmanaged`
-  value
-  of type `TSource`.
+  value of type `TSource`.
   </details>
 - <details>
   <summary>AsBytes&lt;TSource&gt;(ref this TSource)</summary>
@@ -3826,27 +3822,27 @@ Set of extensions for basic operations with `unmanaged` values.
 - <details>
   <summary>RentFixed&lt;T&gt;(this ArrayPool&lt;T&gt;, Int32, Boolean)</summary>
 
-  Rents and pins an array of minimum number of `T` elements from given array pool,
-  ensuring a safe context for accessing the fixed memory.
+  Rents and pins an array of minimum number of `T` elements from given array pool, ensuring a safe context for accessing
+  the fixed memory.
   </details>
 - <details>
   <summary>RentFixed&lt;T&gt;(this ArrayPool&lt;T&gt;, Int32, Boolean, out Int32)</summary>
 
-  Rents and pins an array of minimum number of `T` elements from given array pool,
-  ensuring a safe context for accessing the fixed memory.
+  Rents and pins an array of minimum number of `T` elements from given array pool, ensuring a safe context for accessing
+  the fixed memory.
   </details>
 
 - <details>
   <summary>RentFixed&lt;T&gt;(this ArrayPool&lt;T&gt;, Int32, out FixedContextValue&lt;T&gt;, Boolean)</summary>
 
-  Rents and pins an array of minimum number of `T` elements from given array pool,
-  ensuring a safe context for accessing the fixed memory.
+  Rents and pins an array of minimum number of `T` elements from given array pool, ensuring a safe context for accessing
+  the fixed memory.
   </details>
 - <details>
   <summary>RentFixed&lt;T&gt;(this ArrayPool&lt;T&gt;, Int32, out FixedContextValue&lt;T&gt;, Boolean, out Int32)</summary>
 
-  Rents and pins an array of minimum number of `T` elements from given array pool,
-  ensuring a safe context for accessing the fixed memory.
+  Rents and pins an array of minimum number of `T` elements from given array pool, ensuring a safe context for accessing
+  the fixed memory.
   </details>
 
 - <details>
@@ -4063,8 +4059,8 @@ Provides information about the Ahead-of-Time compilation.
     - On mobile XNU platforms, this property is always considered `true`.
     - On CoreCLR-based runtimes (including R2R, NativeAOT, and NativeAOT-LLVM), detection of AOT is reliable and does
       not require memory inspection.
-    - On Mono-based runtimes, AOT detection may depend on when and where the property is first accessed, since Mono
-      AOT does not compile the entire assembly at once and requires platform memory inspection to confirm AOT execution.
+    - On Mono-based runtimes, AOT detection may depend on when and where the property is first accessed, since Mono AOT
+      does not compile the entire assembly at once and requires platform memory inspection to confirm AOT execution.
     - On Blazor WebAssembly (Mono-based), it is generally not possible to distinguish AOT from non-AOT runtimes; this
       property may only return `true` when IL generation is disallowed.
   </details>
@@ -4216,8 +4212,8 @@ This class allows to allocate buffers on stack if possible.
 
   Prepares the binary buffer metadata needed to allocate given number of `T` items.
 
-  **Note:** `T` is `struct`. Reflection is always used by this method, and the buffer auto-Composition feature must
-  be enabled.
+  **Note:** `T` is `struct`. Reflection is always used by this method, and the buffer auto-Composition feature must be
+  enabled.
   </details>
 - <details>
   <summary>PrepareBinaryBufferNullable&lt;T&gt;()</summary>
@@ -4423,8 +4419,8 @@ Set of utilities for exchange data within the P/Invoke context.
 - <details>
   <summary>GetValuesFixedContext&lt;TEnum&gt;()</summary>
 
-  Creates a new `IReadOnlyFixedContext<TEnum>.IDisposable` instance by pinning an array of the values of the
-  constants in a specified enumeration type.
+  Creates a new `IReadOnlyFixedContext<TEnum>.IDisposable` instance by pinning an array of the values of the constants
+  in a specified enumeration type.
 
   **Note:** `TEnum` is `System.Enum`.
   </details>
@@ -4625,8 +4621,8 @@ Set of utilities for exchange data within the P/Invoke context.
 - <details>
   <summary>GetFixedMethod&lt;TDelegate&gt;(TDelegate?)</summary>
 
-  Creates an `IFixedMethod<TDelegate>.IDisposable` instance by marshalling the current `TDelegate` instance,
-  ensuring a safe interop context.
+  Creates an `IFixedMethod<TDelegate>.IDisposable` instance by marshalling the current `TDelegate` instance, ensuring a
+  safe interop context.
   </details>
 - <details>
   <summary>IsImageMethod&lt;TDelegate&gt;(TDelegate?)</summary>

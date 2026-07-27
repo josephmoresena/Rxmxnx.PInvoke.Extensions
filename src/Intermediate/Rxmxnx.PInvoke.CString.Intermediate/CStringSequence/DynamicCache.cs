@@ -25,11 +25,18 @@ public partial class CStringSequence
 			}
 			set
 			{
+#if NETSTANDARD2_1 || NETCOREAPP
 				Debug.Assert(value is not null);
 				if (this._cache.TryGetValue(index, out WeakReference<CString>? weak))
 					weak.SetTarget(value);
 				else
 					this._cache[index] = new(value);
+#else
+				if (this._cache.TryGetValue(index, out WeakReference<CString>? weak))
+					weak.SetTarget(value!);
+				else
+					this._cache[index] = new(value!);
+#endif
 			}
 		}
 		/// <inheritdoc/>

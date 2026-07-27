@@ -1,5 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke;
 
+#if NETSTANDARD2_1 || NETCOREAPP
 /// <summary>
 /// This interface defines a wrapper object.
 /// </summary>
@@ -73,18 +74,28 @@ public interface IWrapper
 		T Value { get; }
 	}
 }
+#endif
 
 /// <summary>
 /// This interface defines a wrapper for a <typeparamref name="T"/> object.
 /// </summary>
 /// <typeparam name="T">The type of value to be wrapped.</typeparam>
-public interface IWrapper<T> : IWrapper.IBase<T>, IEquatable<T>
+// ReSharper disable once TypeParameterCanBeVariant
+public interface IWrapper<T>
+#if NETSTANDARD2_1 || NETCOREAPP
+	: IWrapper.IBase<T>, IEquatable<T>
+#endif
 {
 	/// <summary>
 	/// The wrapped <typeparamref name="T"/> object.
 	/// </summary>
+#if NETSTANDARD2_1 || NETCOREAPP
 	new T Value { get; }
+#else
+	T Value { get; }
+#endif
 
+#if NETSTANDARD2_1 || NETCOREAPP
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -102,4 +113,5 @@ public interface IWrapper<T> : IWrapper.IBase<T>, IEquatable<T>
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IWrapper<T?> Create(T? instance) => new Input<T?>(instance);
+#endif
 }

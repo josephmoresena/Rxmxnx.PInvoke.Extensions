@@ -188,6 +188,7 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Byte[] ToBytes<TSource>(in TSource value) where TSource : unmanaged
 	{
+#if NETSTANDARD2_1 || NETCOREAPP
 		ref TSource refValue = ref Unsafe.AsRef(in value);
 		ReadOnlySpan<TSource> intermediateSpan = MemoryMarshal.CreateReadOnlySpan(ref refValue, 1);
 		ReadOnlySpan<Byte> bytes = MemoryMarshal.AsBytes(intermediateSpan);
@@ -198,7 +199,15 @@ public static unsafe partial class NativeUtilities
 #endif
 		bytes.CopyTo(result);
 		return result;
+#else
+		fixed (TSource* valuePtr = &value)
+		{
+			ReadOnlySpan<TSource> intermediateSpan = new(valuePtr, 1);
+			return MemoryMarshal.AsBytes(intermediateSpan).ToArray();
+		}
+#endif
 	}
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Creates a <see cref="ReadOnlySpan{Byte}"/> from an exising read-only reference to a
 	/// <typeparamref name="TSource"/> <see langword="unmanaged"/> value.
@@ -253,6 +262,7 @@ public static unsafe partial class NativeUtilities
 		NativeUtilities.WriteSpan(span, state, action);
 		return result;
 	}
+#endif
 	/// <summary>
 	/// Performs a binary copy of the given <typeparamref name="TSource"/> to the <paramref name="destination"/> span.
 	/// </summary>
@@ -270,8 +280,16 @@ public static unsafe partial class NativeUtilities
 	public static void CopyBytes<TSource>(in TSource value, Span<Byte> destination, Int32 offset = 0)
 		where TSource : unmanaged
 	{
+#if NETSTANDARD2_1 || NETCOREAPP
 		ValidationUtilities.ThrowIfInvalidCopyType(value, destination, offset, out ReadOnlySpan<Byte> bytes);
 		bytes.CopyTo(destination[offset..]);
+#else
+		fixed (TSource* valuePtr = &value)
+		{
+			ValidationUtilities.ThrowIfInvalidCopyType(valuePtr, destination, offset, out ReadOnlySpan<Byte> bytes);
+			bytes.CopyTo(destination[offset..]);
+		}
+#endif
 	}
 	/// <summary>
 	/// Creates a new span over an array of the values of the constants in a specified enumeration type.
@@ -288,6 +306,7 @@ public static unsafe partial class NativeUtilities
 	/// <returns>A string read-only span of the names of the constants in <typeparamref name="TEnum"/>.</returns>
 	public static ReadOnlySpan<String> GetEnumNamesSpan<TEnum>() where TEnum : struct, Enum
 		=> EnumNameHelper<TEnum>.Values.Span;
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Creates an <see cref="IReadOnlyFixedContext{TEnum}.IDisposable"/> instance by pinning an array of the values of
 	/// the constants in a specified enumeration type.
@@ -316,6 +335,7 @@ public static unsafe partial class NativeUtilities
 			// ReSharper disable once HeapView.BoxingAllocation
 			new ReadOnlyFixedContext<TEnum>(handle.Pointer, mem.Length).ToDisposable(handle);
 	}
+#endif
 	/// <summary>
 	/// Creates a <see cref="ReadOnlyFixedContextValue{TEnum}"/> instance by pinning an array of the values of  the
 	/// constants in a specified enumeration type.
@@ -384,7 +404,11 @@ public static unsafe partial class NativeUtilities
 		if (AotInfo.IsReflectionDisabled) return true;
 		try
 		{
+#if NETSTANDARD2_1 || NETCOREAPP
 			foreach (Delegate d in NativeUtilities.GetInvocationSpan(method))
+#else
+			foreach (Delegate d in method.GetInvocationList())
+#endif
 			{
 				if (!NativeUtilities.IsImageMethodUnsafe(d.Method))
 					return false;
@@ -396,6 +420,7 @@ public static unsafe partial class NativeUtilities
 		}
 		return true;
 	}
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Allocates a native memory block for <paramref name="count"/> values of type <typeparamref name="T"/> and exposes
 	/// it through an <see cref="IFixedContext{T}.IDisposable"/> instance.
@@ -422,6 +447,7 @@ public static unsafe partial class NativeUtilities
 		ValidationUtilities.ThrowIfInvalidLength(count);
 		return NativeMemoryOwner.CreateContext<T>(count);
 	}
+#endif
 	/// <summary>
 	/// Allocates a native memory block for <paramref name="count"/> values of type <typeparamref name="T"/> and exposes
 	/// it through a <see cref="FixedContextValue{T}"/> instance.

@@ -1,3 +1,4 @@
+#if NETSTANDARD2_1 || NETCOREAPP
 namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class FixedOffset : IConvertibleDisposable<IFixedMemory.IDisposable>
@@ -56,3 +57,4 @@ internal partial class FixedOffset : IConvertibleDisposable<IFixedMemory.IDispos
 				.ToDisposable(this.GetDisposableParent());
 	}
 }
+#endif

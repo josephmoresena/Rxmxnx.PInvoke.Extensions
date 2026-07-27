@@ -3,7 +3,7 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 /// <summary>
 /// This interface exposes a message resource type.
 /// </summary>
-internal partial interface IMessageResource
+internal interface IMessageResource
 {
 	/// <summary>
 	/// Message for invalid list index exception.

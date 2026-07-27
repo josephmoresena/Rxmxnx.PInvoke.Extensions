@@ -12,6 +12,11 @@ namespace Rxmxnx.PInvoke;
 internal unsafe class FixedValueHandle : IDisposable, IWrapper<Boolean>
 {
 	/// <summary>
+	/// Empty instance.
+	/// </summary>
+	public static readonly IDisposable EmptyDisposable = new Empty();
+
+	/// <summary>
 	/// Internal <see cref="MemoryHandle"/> instance.
 	/// </summary>
 	private readonly MemoryHandle? _handle;
@@ -19,9 +24,6 @@ internal unsafe class FixedValueHandle : IDisposable, IWrapper<Boolean>
 	/// Indicates whether the current instance is disposed.
 	/// </summary>
 	private Boolean _isDisposed;
-
-	/// <inheritdoc cref="IWrapper{T}.Value"/>
-	public Boolean Value => !this._isDisposed;
 
 	/// <summary>
 	/// Internal pointer.
@@ -38,17 +40,20 @@ internal unsafe class FixedValueHandle : IDisposable, IWrapper<Boolean>
 	/// <param name="handle">A <see cref="MemoryHandle"/> instance.</param>
 	public FixedValueHandle(MemoryHandle handle) : this() => this._handle = handle;
 
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	~FixedValueHandle() => this.Dispose(false);
-
 	/// <inheritdoc/>
 	public void Dispose()
 	{
 		this.Dispose(true);
 		GC.SuppressFinalize(this);
 	}
+
+	/// <inheritdoc cref="IWrapper{T}.Value"/>
+	public Boolean Value => !this._isDisposed;
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	~FixedValueHandle() => this.Dispose(false);
 
 	/// <inheritdoc cref="IDisposable.Dispose()"/>
 	/// <param name="disposing">
@@ -89,5 +94,19 @@ internal unsafe class FixedValueHandle : IDisposable, IWrapper<Boolean>
 			if (disposing)
 				disposable.Dispose();
 		}
+	}
+
+	/// <summary>
+	/// Empty disposable.
+	/// </summary>
+	private sealed class Empty : IFixedPointer.IDisposable, IWrapper<Boolean>
+	{
+		/// <inheritdoc/>
+		public IntPtr Pointer => default;
+
+		/// <inheritdoc/>
+		public void Dispose() { }
+		/// <inheritdoc/>
+		public Boolean Value => true;
 	}
 }

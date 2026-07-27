@@ -1,6 +1,6 @@
 ﻿// ReSharper disable ConvertToExtensionBlock
 
-#if !NET6_0_OR_GREATER
+#if !NET6_0_OR_GREATER && (NETSTANDARD2_1 || NETCOREAPP)
 using ArgumentNullExceptionCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif
 using EnumCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
@@ -12,7 +12,11 @@ namespace Rxmxnx.PInvoke;
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
 [Browsable(false)]
-public static partial class UnmanagedValueExtensions
+#if NETSTANDARD2_1 || NETCOREAPP
+public static unsafe partial class UnmanagedValueExtensions
+#else
+public static class UnmanagedValueExtensions
+#endif
 {
 	/// <summary>
 	/// Retrieves the name of the constant in the specified enumeration type that has the specified value.
@@ -25,6 +29,7 @@ public static partial class UnmanagedValueExtensions
 	/// or <see langword="null"/> if no such constant is found.
 	/// </returns>
 	public static String? GetName<TEnum>(this TEnum value) where TEnum : struct, Enum => EnumCompat.GetName(value);
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Rents and pins an array of minimum <paramref name="count"/> elements from <paramref name="arrayPool"/>,
 	/// ensuring a safe context for accessing the fixed memory.
@@ -84,6 +89,7 @@ public static partial class UnmanagedValueExtensions
 #endif
 		return RentedMemoryOwner<T>.CreateContext(arrayPool, count, clearArray, out arrayLength);
 	}
+#endif
 
 	/// <summary>
 	/// Converts a given <see langword="unmanaged"/> value of type <typeparamref name="T"/> into an array of

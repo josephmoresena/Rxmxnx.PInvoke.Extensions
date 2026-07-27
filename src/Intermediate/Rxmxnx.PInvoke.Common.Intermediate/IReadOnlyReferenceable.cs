@@ -5,7 +5,10 @@
 /// allowing the object to be used without modification.
 /// </summary>
 /// <typeparam name="T">The type of the object that the reference points to.</typeparam>
-public interface IReadOnlyReferenceable<T> : IEquatable<IReadOnlyReferenceable<T>>
+public interface IReadOnlyReferenceable<T>
+#if NETSTANDARD2_1 || NETCOREAPP
+	: IEquatable<IReadOnlyReferenceable<T>>
+#endif
 #if NET9_0_OR_GREATER
 	where T : allows ref struct
 #endif
@@ -16,8 +19,10 @@ public interface IReadOnlyReferenceable<T> : IEquatable<IReadOnlyReferenceable<T
 	/// <remarks>This reference cannot be used to modify the object.</remarks>
 	ref readonly T Reference { get; }
 
+#if NETSTANDARD2_1 || NETCOREAPP
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	Boolean IEquatable<IReadOnlyReferenceable<T>>.Equals(IReadOnlyReferenceable<T>? other)
 		=> other is not null &&
 			Unsafe.AreSame(ref Unsafe.AsRef(in this.Reference), ref Unsafe.AsRef(in other.Reference));
+#endif
 }

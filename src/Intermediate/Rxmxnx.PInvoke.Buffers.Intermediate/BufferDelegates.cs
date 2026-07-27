@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke;
 
+#if NETSTANDARD2_1 || NETCOREAPP
 /// <summary>
 /// Encapsulates a method that receives a buffer of objects of type <typeparamref name="T"/>.
 /// </summary>
@@ -63,4 +64,5 @@ public delegate TResult ScopedBufferFunc<T, in TArg, out TResult>(ScopedBuffer<T
 	where TArg : allows ref struct;
 #else
 	;
+#endif
 #endif

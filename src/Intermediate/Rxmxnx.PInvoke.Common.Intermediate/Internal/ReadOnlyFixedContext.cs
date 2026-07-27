@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke.Internal;
+﻿#if NETSTANDARD2_1 || NETCOREAPP
+namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// Represents a fixed read-only memory block for a specific type.
@@ -180,3 +181,4 @@ internal sealed unsafe partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemo
 		=> new ReadOnlyFixedContext<T>(ptr, count, handle);
 #endif
 }
+#endif

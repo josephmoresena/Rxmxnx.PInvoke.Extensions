@@ -1,5 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke;
 
+#if NETSTANDARD2_1 || NETCOREAPP
 /// <summary>
 /// This interface defines a wrapper for an object whose value can be modified.
 /// </summary>
@@ -66,18 +67,23 @@ public interface IMutableWrapper : IWrapper
 		=> new MutableWrapper<TObject>(instance);
 #endif
 }
+#endif
 
 /// <summary>
 /// This interface defines a wrapper for a <typeparamref name="T"/> object whose value can be modified.
 /// </summary>
 /// <typeparam name="T">The type of value to be wrapped.</typeparam>
-public interface IMutableWrapper<T> : IMutableWrapper, IWrapper<T>, IStrongBox
+public interface IMutableWrapper<T> : IWrapper<T>, IStrongBox
+#if NETSTANDARD2_1 || NETCOREAPP
+	, IMutableWrapper
+#endif
 {
 	/// <summary>
 	/// The wrapped <typeparamref name="T"/> object.
 	/// </summary>
 	new T Value { get; set; }
 
+#if NETSTANDARD2_1 || NETCOREAPP
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -103,4 +109,5 @@ public interface IMutableWrapper<T> : IMutableWrapper, IWrapper<T>, IStrongBox
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public new static IMutableWrapper<T?> Create(T? instance = default) => new MutableWrapper<T?>(instance);
+#endif
 }

@@ -1,3 +1,7 @@
+#if !NETSTANDARD2_1 && !NETCOREAPP
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
@@ -43,6 +47,7 @@ public static partial class BufferManager
 	/// </summary>
 	internal static readonly Int32 StackAllocationByteLimit = 3 * UInt16.MaxValue * IntPtr.Size / 2;
 
+#if NETSTANDARD2_1 || NETCOREAPP
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="action"/>.
 	/// </summary>
@@ -127,6 +132,7 @@ public static partial class BufferManager
 			out TResult result);
 		return result;
 	}
+#endif
 
 	/// <summary>
 	/// Registers object buffer.

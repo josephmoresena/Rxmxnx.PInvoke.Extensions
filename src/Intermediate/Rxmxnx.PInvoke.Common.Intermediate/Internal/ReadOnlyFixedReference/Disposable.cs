@@ -1,3 +1,4 @@
+#if NETSTANDARD2_1 || NETCOREAPP
 namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class ReadOnlyFixedReference<T> : IConvertibleDisposable<IReadOnlyFixedReference<T>.IDisposable>
@@ -52,3 +53,4 @@ internal partial class ReadOnlyFixedReference<T> : IConvertibleDisposable<IReadO
 		}
 	}
 }
+#endif

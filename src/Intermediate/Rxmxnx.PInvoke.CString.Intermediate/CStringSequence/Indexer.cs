@@ -1,4 +1,4 @@
-﻿#if PACKAGE && !NETCOREAPP
+﻿#if !NETCOREAPP && (PACKAGE || !NETSTANDARD2_1)
 using IEnumerator = System.Collections.IEnumerator;
 using IEnumerable = System.Collections.IEnumerable;
 #endif
@@ -15,13 +15,18 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 
 	Int32 IEnumerableSequence<CString>.GetSize() => this._lengths.Length;
 	CString IEnumerableSequence<CString>.GetItem(Int32 index) => this[index];
-#if PACKAGE && !NETCOREAPP
+#if PACKAGE && NETSTANDARD2_1
 	IEnumerator<CString> IEnumerable<CString>.GetEnumerator()
 		=> IEnumerableSequence.CreateEnumerator(this, CStringSequence.DisposeEnumeration);
 	IEnumerator IEnumerable.GetEnumerator()
 		=> IEnumerableSequence.CreateEnumerator(this, CStringSequence.DisposeEnumeration);
-#else
+#elif NETSTANDARD2_1 || NETCOREAPP
 	void IEnumerableSequence<CString>.DisposeEnumeration() => CStringSequence.DisposeEnumeration(this);
+#else
+	IEnumerator<CString> IEnumerable<CString>.GetEnumerator()
+		=> this.CreateDefaultEnumerator(CStringSequence.DisposeEnumeration);
+	IEnumerator IEnumerable.GetEnumerator() => this.CreateDefaultEnumerator(CStringSequence.DisposeEnumeration);
+	void IEnumerableSequence.DoNotImplement() { }
 #endif
 	ReadOnlySpan<Byte> IUtf8Buffer.Buffer => MemoryMarshal.AsBytes(this._value.AsSpan());
 	GCHandle IUtf8Buffer.Alloc(GCHandleType type) => GCHandle.Alloc(this._value, type);

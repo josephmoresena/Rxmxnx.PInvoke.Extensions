@@ -1,3 +1,4 @@
+#if NETSTANDARD2_1 || NETCOREAPP
 namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class FixedReference<T> : IConvertibleDisposable<IFixedReference<T>.IDisposable>
@@ -101,3 +102,4 @@ internal partial class FixedReference<T> : IConvertibleDisposable<IFixedReferenc
 		}
 	}
 }
+#endif
