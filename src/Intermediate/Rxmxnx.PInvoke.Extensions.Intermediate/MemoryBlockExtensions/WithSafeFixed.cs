@@ -1,4 +1,4 @@
-﻿#if NETSTANDARD2_1 || NETCOREAPP
+﻿#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 // ReSharper disable ConvertToExtensionBlock
 
 #if !NET6_0_OR_GREATER

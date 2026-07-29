@@ -26,7 +26,7 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	[FixedAddressValueType]
 	private static B1 bufferType;
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Static buffer for delegate instance.
 	/// </summary>
@@ -45,7 +45,7 @@ public unsafe partial class CStringSequence
 		CStringSequence.bufferType = new();
 		Span<Type> types = NativeUtilities.CreateTypeSpan(ref CStringSequence.bufferType);
 		types[0] = typeof(Byte);
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		CStringSequence.bufferConstructor = new();
 		Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
 			NativeUtilities.CreateConstructorSpan(ref CStringSequence.bufferConstructor);
@@ -78,7 +78,7 @@ public unsafe partial class CStringSequence
 		fixed (CString?* valuesPtr = values)
 		{
 			CStringSpanState state = new() { Ptr = valuesPtr, Length = values.Length, };
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			return String.Create(totalChars, state, CStringSequence.CopyText);
 #else
 			Span<Char> chars = totalChars <= StackAllocationHelper.StackallocByteThreshold ?
@@ -111,7 +111,7 @@ public unsafe partial class CStringSequence
 	{
 		Int32 bufferLength = CStringSequence.GetBufferLength(lengths.AsSpan());
 		SpanCreationInfo info = new() { Pointers = ptrSpan, Lengths = lengths, };
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		return String.Create(bufferLength, info, CStringSequence.CreateBuffer);
 #else
 		Span<Char> chars = bufferLength <= StackAllocationHelper.StackallocByteThreshold ?
@@ -155,7 +155,7 @@ public unsafe partial class CStringSequence
 	{
 		Int32 position = 0;
 #pragma warning disable CS8619
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref CString? refCStr = ref *state.Ptr;
 		ReadOnlySpan<CString?> values = MemoryMarshal.CreateReadOnlySpan(ref refCStr, state.Length);
 #else
@@ -402,7 +402,7 @@ public unsafe partial class CStringSequence
 		fixed (Byte* ptr = &MemoryMarshal.GetReference(buffer))
 		{
 			CopyTextHelper state = new() { Pointer = ptr, Length = buffer.Length, NullChars = [], };
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			sequenceBuffer = String.Create(totalChars, state, CStringSequence.CopyText);
 #else
 			Span<Char> chars = totalChars <= StackAllocationHelper.StackallocByteThreshold ?

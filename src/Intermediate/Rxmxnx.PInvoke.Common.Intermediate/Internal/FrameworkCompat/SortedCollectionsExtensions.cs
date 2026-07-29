@@ -1,4 +1,4 @@
-#if !NETSTANDARD2_1 && !NETCOREAPP
+#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 
 /// <summary>
@@ -6,7 +6,7 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 /// </summary>
 internal static class SortedCollectionsExtensions
 {
-#if (NETFRAMEWORK && !NET472_OR_GREATER) || NETSTANDARD2_0
+#if NETFRAMEWORK && !NET472_OR_GREATER || NETSTANDARD2_0
 	/// <summary>
 	/// Searches the set for a given value and returns the equal value it finds, if any.
 	/// </summary>

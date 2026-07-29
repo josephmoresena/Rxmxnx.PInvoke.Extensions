@@ -29,7 +29,7 @@ internal readonly unsafe partial struct FixedPointerInfo
 	/// Function pointer to retrieve current memory block type.
 	/// </summary>
 	public void* TypeOrFunctionPointer { get; init; }
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Function pointer to <see cref="ReadOnlyFixedMemory"/> constructor for current memory block.
 	/// </summary>
@@ -44,7 +44,7 @@ internal readonly unsafe partial struct FixedPointerInfo
 	/// <returns>A <see cref="FixedPointerValue"/> instance.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public partial FixedPointerValue GetValue(Boolean isReadOnly, FixedValueHandle? handle);
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Creates a new <see cref="ReadOnlyFixedMemory"/> instance to represent the current memory block.
 	/// </summary>

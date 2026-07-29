@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.Internal;
 
+// ReSharper disable once ClassCannotBeInstantiated
 internal partial class ArrayMemoryManager<T>
 {
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
@@ -17,7 +18,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -39,7 +40,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -61,7 +62,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -83,7 +84,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -105,7 +106,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -127,7 +128,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -149,7 +150,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -171,7 +172,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -193,7 +194,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -215,7 +216,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -237,7 +238,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -259,7 +260,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -281,7 +282,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -303,7 +304,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -325,7 +326,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -347,7 +348,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -369,7 +370,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -391,7 +392,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -413,7 +414,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -435,7 +436,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -457,7 +458,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -479,7 +480,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -501,7 +502,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -523,7 +524,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -545,7 +546,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -567,7 +568,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -589,7 +590,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -611,7 +612,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -633,7 +634,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -655,7 +656,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -677,7 +678,7 @@ internal partial class ArrayMemoryManager<T>
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref managedRef, array.Length);
 #else
 		Span<T> span = ArrayMemoryManager<T>.CreateSpan(array, ref managedRef);
@@ -685,7 +686,7 @@ internal partial class ArrayMemoryManager<T>
 		return span;
 	}
 
-#if !NETSTANDARD2_1 && !NETCOREAPP
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Creates a new span using <paramref name="array"/>.
 	/// </summary>

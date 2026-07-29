@@ -1,4 +1,4 @@
-#if !NETSTANDARD2_1 && !NETCOREAPP
+#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
 using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
 #endif
 
@@ -3588,7 +3588,7 @@ public static unsafe class FixedPointerListValueExtensions
 			Count = span.Length,
 			SizeOf = sizeof(T),
 			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 			ConstructorOrFunctionPointer = default,
 #endif
 			TypeOrFunctionPointer = Unsafe.AsPointer(ref typeRef),
@@ -3612,7 +3612,7 @@ public static unsafe class FixedPointerListValueExtensions
 			Count = span.Length,
 			SizeOf = sizeof(T),
 			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 			ConstructorOrFunctionPointer = default,
 #endif
 			TypeOrFunctionPointer = Unsafe.AsPointer(ref typeRef),

@@ -40,7 +40,7 @@ internal abstract unsafe class ManagedMemoryManager<T> : MemoryManager<T>
 
 	/// <inheritdoc/>
 	public override Span<T> GetSpan()
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		=> this._count.HasValue ? MemoryMarshal.CreateSpan(ref this.GetMemoryReference(), this._count.Value) : default;
 #else
 	{
@@ -104,7 +104,7 @@ internal abstract unsafe class ManagedMemoryManager<T> : MemoryManager<T>
 	/// </summary>
 	/// <returns>The managed reference to the 0th element of the current memory.</returns>
 	protected abstract ref T GetMemoryReference();
-#if !NETSTANDARD2_1 && !NETCOREAPP
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Retrieves a managed reference to the current pinnable object.
 	/// </summary>

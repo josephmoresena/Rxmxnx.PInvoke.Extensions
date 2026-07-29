@@ -7,7 +7,7 @@
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 internal abstract unsafe partial class ReadOnlyFixedMemory : FixedPointer
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	, IReadOnlyFixedMemory
 #endif
 {
@@ -35,7 +35,7 @@ internal abstract unsafe partial class ReadOnlyFixedMemory : FixedPointer
 	/// </summary>
 	/// <param name="mem">The <see cref="ReadOnlyFixedMemory"/> instance to copy data from.</param>
 	protected ReadOnlyFixedMemory(ReadOnlyFixedMemory mem) : base(mem) { }
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedMemory"/> instance using another instance as a template and specifying a
 	/// memory offset.

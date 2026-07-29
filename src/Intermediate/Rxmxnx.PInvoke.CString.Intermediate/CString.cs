@@ -16,7 +16,7 @@ namespace Rxmxnx.PInvoke;
 #endif
 [DebuggerDisplay("{ToString()}")]
 [DebuggerTypeProxy(typeof(CStringDebugView))]
-#if NETCOREAPP
+#if NETCOREAPP || NETFRAMEWORK
 [JsonConverter(typeof(JsonConverter))]
 #endif
 public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatable<String>
@@ -254,7 +254,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 		{
 			0 => String.Empty.GetHashCode(),
 			_ when MarvinCompat.DefaultSeed.HasValue => MarvinCompat.GetHashCode(this.AsSpan()),
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 			<= StackAllocationHelper.StackallocByteThreshold => CString.GetStringHashCode(this.AsSpan()),
 #endif
 			_ when this.CachedValue is { } result => result.GetHashCode(),
@@ -483,7 +483,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// </returns>
 	public static CStringSequence? GetAssociatedSequence(CString? value, out Int32 index)
 	{
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		if (!CString.IsNullOrEmpty(value) && value._data is IWrapper.IBase<BufferItemState<CStringSequence>> state)
 #else
 		if (!CString.IsNullOrEmpty(value) && value._data is IWrapper<BufferItemState<CStringSequence>> state)
@@ -541,7 +541,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 		{
 			0 => String.Empty.GetHashCode(),
 			_ when MarvinCompat.DefaultSeed.HasValue => MarvinCompat.GetHashCode(value),
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 			<= StackAllocationHelper.StackallocByteThreshold => CString.GetStringHashCode(value),
 #endif
 			_ => CString.ToUtf16(value).GetHashCode(),

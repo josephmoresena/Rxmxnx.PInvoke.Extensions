@@ -53,7 +53,7 @@ internal sealed class FrenchMessageResource : IMessageResource
 		=> $"La longueur du paramètre {nameofSpan} doit être égale à {sizeOf}.";
 	String IMessageResource.InvalidCopyUnmanagedType(String nameofSpan, String nameofValue)
 		=> $"Taille insuffisante disponible sur {nameofSpan} pour copier {nameofValue}.";
-	String IMessageResource.InvalidLength(String nameofLength)
+	String IMessageResource.InvalidLengthOrIndex(String nameofLength)
 		=> $"Le paramètre {nameofLength} doit être zéro ou un entier positif.";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} n'est pas un type non géré.";
 	String IMessageResource.NotValueType(Type type) => $"{type} n'est pas un type valeur.";

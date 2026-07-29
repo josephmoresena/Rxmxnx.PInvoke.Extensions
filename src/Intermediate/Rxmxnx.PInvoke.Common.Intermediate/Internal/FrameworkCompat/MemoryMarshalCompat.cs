@@ -28,7 +28,7 @@ internal static unsafe partial class MemoryMarshalCompat
 		ref Byte ref0 = ref *value;
 		Int32 length = MemoryMarshalCompat.IndexOfNull(ref ref0);
 		return length >= 0 ?
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			MemoryMarshal.CreateReadOnlySpan(ref ref0, length) :
 #else
 			new(value, length) :
@@ -56,7 +56,7 @@ internal static unsafe partial class MemoryMarshalCompat
 		ref Char ref0 = ref *value;
 		Int32 length = MemoryMarshalCompat.IndexOfNull(ref ref0);
 		return length >= 0 ?
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			MemoryMarshal.CreateReadOnlySpan(ref ref0, length) :
 #else
 			new(value, length) :
@@ -89,9 +89,8 @@ internal static unsafe partial class MemoryMarshalCompat
 
 		return (Int32)result;
 	}
-#if !NETSTANDARD2_1 && !NETCOREAPP
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 #pragma warning disable CS8500
-
 	/// <summary>
 	/// Creates a new span of <typeparamref name="T"/> items using an <see cref="Pinnable{T}"/> instance.
 	/// </summary>

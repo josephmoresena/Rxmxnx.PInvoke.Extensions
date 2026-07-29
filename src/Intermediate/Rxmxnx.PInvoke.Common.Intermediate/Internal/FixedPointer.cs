@@ -1,4 +1,4 @@
-﻿#if !NETSTANDARD2_1 && !NETCOREAPP
+﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
 using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
 #endif
 
@@ -112,7 +112,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		this._handle = pointer._handle;
 		this.IsReadOnly = pointer.IsReadOnly;
 	}
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Constructs a new <see cref="FixedPointer"/> instance using another instance as a template and specifying a memory
 	/// offset.
@@ -171,7 +171,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		this.ValidateTransformation(typeof(T), !RuntimeHelpers.IsReferenceOrContainsReferences<T>());
 		return ref Unsafe.AsRef<T>(this._ptr);
 	}
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Creates a <see cref="Span{TValue}"/> instance over the memory block whose
 	/// length is <paramref name="length"/>.
@@ -336,8 +336,6 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected void ValidateReferenceSize(Type typeOf, Int32 sizeOf)
 		=> ValidationUtilities.ThrowIfInvalidRefTypePointer(this._binaryLength, typeOf, sizeOf);
-#if NETSTANDARD2_1 || NETCOREAPP
-#endif
 
 	/// <summary>
 	/// Validates any operation over the fixed function pointer.

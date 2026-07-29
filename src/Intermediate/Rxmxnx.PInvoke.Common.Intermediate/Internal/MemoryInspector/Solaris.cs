@@ -1,3 +1,4 @@
+#if !UAP
 namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector
@@ -43,7 +44,7 @@ internal partial class MemoryInspector
 		{
 			Byte[] bytes = File.ReadAllBytes(Solaris.mapsFileName);
 			Int32 mapsCount = (Int32)(bytes.LongLength / sizeof(ProcessMap));
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			ref ProcessMap mapRef = ref Unsafe.As<Byte, ProcessMap>(ref MemoryMarshal.GetReference(bytes.AsSpan()));
 			ReadOnlySpan<ProcessMap> maps = MemoryMarshal.CreateReadOnlySpan(ref mapRef, mapsCount);
 			return maps;
@@ -53,3 +54,4 @@ internal partial class MemoryInspector
 		}
 	}
 }
+#endif

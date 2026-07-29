@@ -48,7 +48,7 @@ internal static class ConvertCompat
 	public static unsafe String ToHexString(ReadOnlySpan<Byte> bytes)
 	{
 #if !PACKAGE || !NET5_0_OR_GREATER
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		fixed (Byte* bytesPtr = &MemoryMarshal.GetReference(bytes))
 		{
 			return String.Create(bytes.Length * 2, (Ptr: (IntPtr)bytesPtr, bytes.Length), static (chars, args) =>

@@ -50,7 +50,7 @@ internal sealed class RussianMessageResource : IMessageResource
 		=> $"Длина параметра {nameofSpan} должна быть равна {sizeOf}.";
 	String IMessageResource.InvalidCopyUnmanagedType(String nameofSpan, String nameofValue)
 		=> $"Недостаточно доступного места в {nameofSpan} для копирования {nameofValue}.";
-	String IMessageResource.InvalidLength(String nameofLength)
+	String IMessageResource.InvalidLengthOrIndex(String nameofLength)
 		=> $"Параметр {nameofLength} должен быть равен нулю или положительному целому числу.";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} не является неуправляемым типом.";
 	String IMessageResource.NotValueType(Type type) => $"{type} не является значимым типом.";

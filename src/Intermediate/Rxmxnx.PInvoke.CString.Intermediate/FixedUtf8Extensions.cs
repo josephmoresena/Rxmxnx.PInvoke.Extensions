@@ -230,7 +230,7 @@ public static unsafe class FixedUtf8Extensions
 				Count = value.Length,
 				SizeOf = sizeof(Byte),
 				IsUnmanaged = true,
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 				ConstructorOrFunctionPointer = default,
 #endif
 #if !NET5_0_OR_GREATER

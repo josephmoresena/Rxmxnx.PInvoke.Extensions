@@ -1,4 +1,4 @@
-﻿#if !NETCOREAPP && (PACKAGE || !NETSTANDARD2_1)
+﻿#if !NETCOREAPP3_0_OR_GREATER && (PACKAGE || !NETSTANDARD2_1)
 using IEnumerator = System.Collections.IEnumerator;
 using IEnumerable = System.Collections.IEnumerable;
 #endif
@@ -20,7 +20,7 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 		=> IEnumerableSequence.CreateEnumerator(this, CStringSequence.DisposeEnumeration);
 	IEnumerator IEnumerable.GetEnumerator()
 		=> IEnumerableSequence.CreateEnumerator(this, CStringSequence.DisposeEnumeration);
-#elif NETSTANDARD2_1 || NETCOREAPP
+#elif NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	void IEnumerableSequence<CString>.DisposeEnumeration() => CStringSequence.DisposeEnumeration(this);
 #else
 	IEnumerator<CString> IEnumerable<CString>.GetEnumerator()

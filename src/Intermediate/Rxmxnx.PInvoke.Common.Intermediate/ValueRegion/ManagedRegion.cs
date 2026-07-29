@@ -44,7 +44,7 @@ public partial class ValueRegion<T>
 		}
 		/// <inheritdoc/>
 		internal override ReadOnlySpan<T> AsSpan()
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			=> MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(this._array),
 			                                    this._array.Length);
 #else

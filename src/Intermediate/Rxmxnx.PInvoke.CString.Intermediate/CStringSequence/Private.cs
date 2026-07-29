@@ -19,7 +19,7 @@ public partial class CStringSequence
 	/// </summary>
 	private readonly String _value;
 
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Retrieves the internal buffer as a <see cref="ReadOnlySpan{Char}"/> instance and creates a
 	/// <see cref="CString"/> array representing the sequence of texts.

@@ -1,4 +1,4 @@
-#if !NETSTANDARD2_1 && !NETCOREAPP
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
 #endif
 
@@ -67,7 +67,7 @@ public partial class BufferTypeMetadata
 #endif
 	{
 		TBuffer buffer = new();
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
 		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
 		ScopedBuffer<T> scoped = new(memMarshal, false, metadata.Size, metadata);
@@ -100,7 +100,7 @@ public partial class BufferTypeMetadata
 #endif
 	{
 		TBuffer buffer = new();
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
 		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
 		ScopedBuffer<T> scoped = new(memMarshal, false, metadata.Size, metadata);
@@ -114,7 +114,7 @@ public partial class BufferTypeMetadata
 #endif
 	}
 
-#if !NETSTANDARD2_1 && !NETCOREAPP
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 	private static unsafe class UnsafeMethods
 	{
 #pragma warning disable CS8500

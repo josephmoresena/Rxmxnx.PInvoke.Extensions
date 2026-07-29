@@ -177,7 +177,7 @@ public partial class CStringSequence
 					return CStringSequence.Empty._value;
 
 				Int32 bufferLength = totalLength / sizeof(Char) + totalLength % sizeof(Char);
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 				return String.Create(bufferLength, this._charBuffer, Value.CopyChars);
 #else
 				Span<Char> chars = bufferLength <= StackAllocationHelper.StackallocByteThreshold ?

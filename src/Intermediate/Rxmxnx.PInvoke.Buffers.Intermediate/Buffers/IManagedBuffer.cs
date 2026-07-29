@@ -33,7 +33,7 @@ public interface IManagedBuffer<T>
 	/// </summary>
 	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
 	internal static abstract void AppendComponent(IMetadataStorage storage);
-#elif NETSTANDARD2_1 || NETCOREAPP
+#elif NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Current type components.
 	/// </summary>
@@ -63,7 +63,7 @@ public interface IManagedBuffer<T>
 	}
 #endif
 
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Appends all components from <typeparamref name="TBuffer"/> type.
 	/// </summary>

@@ -4,6 +4,7 @@
         <RootNamespace>Rxmxnx.PInvoke</RootNamespace>
         <IsPackable>false</IsPackable>
         <Deterministic>true</Deterministic>
+        <DefineConstants>$(DefineConstants);OBSOLETE_FIXED_INTERFACES;OBSOLTE_DELEGATES</DefineConstants>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Version)' == ''">
         <DocumentationFile>./$(AssemblyName).xml</DocumentationFile>

@@ -1,12 +1,12 @@
 ﻿namespace Rxmxnx.PInvoke;
 
-#if NETSTANDARD2_1 || NETCOREAPP
 /// <summary>
 /// This interface exposes a wrapper for an object that can be referenced and whose value
 /// can be modified.
 /// </summary>
 public interface IReferenceableWrapper : IWrapper
 {
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Creates a new instance of an object that implements <see cref="IReferenceableWrapper{TValue}"/> interface.
 	/// </summary>
@@ -57,8 +57,8 @@ public interface IReferenceableWrapper : IWrapper
 #else
 		=> new InputReference<TObject>(instance);
 #endif
-}
 #endif
+}
 
 /// <summary>
 /// This interface exposes a wrapper for <typeparamref name="T"/> object that can be
@@ -66,11 +66,10 @@ public interface IReferenceableWrapper : IWrapper
 /// </summary>
 /// <typeparam name="T">Type of both the wrapped and referenced value.</typeparam>
 /// <remarks>While the value of the object can be accessed through this reference, it cannot be modified.</remarks>
-public interface IReferenceableWrapper<T> : IWrapper<T>, IReadOnlyReferenceable<T>
-#if !NETSTANDARD2_1 && !NETCOREAPP
+public interface IReferenceableWrapper<T> : IWrapper<T>, IReadOnlyReferenceable<T>, IReferenceableWrapper
+#if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 ;
 #else
-	, IReferenceableWrapper
 {
 	/// <summary>
 	/// Creates a new instance of an object that implements <see cref="IReferenceableWrapper{T}"/> interface.

@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke.Internal;
+﻿#if !UAP
+namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// Provides information about the Mono runtime.
@@ -37,3 +38,4 @@ internal static class MonoInfo
 		MonoInfo.MonoAssemblyNameType = TrimInfo.SafeGetType(typeof(String), "Mono.MonoAssemblyName");
 	}
 }
+#endif

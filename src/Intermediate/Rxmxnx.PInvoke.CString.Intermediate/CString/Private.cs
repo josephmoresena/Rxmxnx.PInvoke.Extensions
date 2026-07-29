@@ -50,7 +50,7 @@ public partial class CString
 			length++;
 		return length;
 	}
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Retrieves a Task representing the asynchronous operation to write the content of the
 	/// current <see cref="CString"/> into the specified <see cref="Stream"/>.

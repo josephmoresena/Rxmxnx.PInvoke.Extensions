@@ -1,6 +1,6 @@
 namespace Rxmxnx.PInvoke;
 
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 /// <summary>
 /// Encapsulates a method that receives a buffer of objects of type <typeparamref name="T"/>.
 /// </summary>

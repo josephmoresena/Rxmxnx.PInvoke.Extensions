@@ -1,4 +1,4 @@
-#if !NETSTANDARD2_1 && !NETCOREAPP
+#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
 using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
 #endif
 
@@ -47,7 +47,7 @@ public static partial class BufferManager
 	/// </summary>
 	internal static readonly Int32 StackAllocationByteLimit = 3 * UInt16.MaxValue * IntPtr.Size / 2;
 
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="action"/>.
 	/// </summary>

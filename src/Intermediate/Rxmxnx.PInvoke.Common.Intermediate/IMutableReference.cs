@@ -1,6 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke;
 
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 /// <summary>
 /// This interface exposes a wrapper for an object that can be referenced and whose value can be modified.
 /// </summary>
@@ -68,7 +68,7 @@ public interface IMutableReference : IMutableWrapper
 /// <remarks>The provided reference is mutable, allowing changes to the value.</remarks>
 // ReSharper disable once PossibleInterfaceMemberAmbiguity
 public interface IMutableReference<T> : IReferenceableWrapper<T>, IMutableWrapper<T>, IReferenceable<T>
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	, IMutableReference
 #endif
 {
@@ -77,7 +77,7 @@ public interface IMutableReference<T> : IReferenceableWrapper<T>, IMutableWrappe
 	/// </summary>
 	new ref T Reference { get; }
 
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	ref T IReferenceable<T>.Reference => ref this.Reference;
 	ref readonly T IReadOnlyReferenceable<T>.Reference => ref this.Reference;
 

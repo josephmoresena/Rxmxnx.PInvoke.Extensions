@@ -289,7 +289,7 @@ internal static unsafe class ValidationUtilities
 	}
 #endif
 
-#if !NETSTANDARD2_1 && !NETCOREAPP
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Validates if the binary span <paramref name="destination"/> is sufficient to contain the binary
 	/// information of <paramref name="valuePtr"/>.
@@ -342,17 +342,17 @@ internal static unsafe class ValidationUtilities
 #endif
 
 	/// <summary>
-	/// Validates the memory length.
+	/// Validates the length or index value.
 	/// </summary>
-	/// <param name="length">Memory length value.</param>
-	/// <param name="nameofLength">Name of the memory length parameter.</param>
-	/// <exception cref="ArgumentException">Thrown if <paramref name="length"/> is less than zero.</exception>
+	/// <param name="value">Length or index value.</param>
+	/// <param name="nameofValue">Name of the length or index parameter.</param>
+	/// <exception cref="ArgumentException">Thrown if <paramref name="value"/> is less than zero.</exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void ThrowIfInvalidMemoryLength(Int32 length,
-		[CallerArgumentExpression(nameof(length))] String nameofLength = ValidationUtilities.emptyString)
+	public static void ThrowIfNegativeLengthOrIndex(Int32 value,
+		[CallerArgumentExpression(nameof(value))] String nameofValue = ValidationUtilities.emptyString)
 	{
-		if (length >= 0) return;
-		String message = MessageResource.GetInstance().InvalidLength(nameofLength);
+		if (value >= 0) return;
+		String message = MessageResource.GetInstance().InvalidLengthOrIndex(nameofValue);
 		throw new ArgumentException(message);
 	}
 

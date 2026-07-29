@@ -63,7 +63,7 @@ public readonly ref struct FixedPointerValueList
 		ValidationUtilities.ThrowIfInvalidListIndex(index, this.Information.Length);
 		return this.Information[index].GetValue(this.IsReadOnly, this.Handle);
 	}
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Gets the element at the specified index.
 	/// </summary>

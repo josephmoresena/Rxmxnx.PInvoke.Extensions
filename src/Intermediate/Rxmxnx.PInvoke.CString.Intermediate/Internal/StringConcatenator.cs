@@ -41,7 +41,7 @@ internal sealed class StringConcatenator : BinaryConcatenator<String>
 		separator, cancellationToken)
 	{
 		this._ignoreEmpty = !String.IsNullOrEmpty(separator);
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 		this._writer = new(this.Stream, Encoding.UTF8, leaveOpen: true) { AutoFlush = true, };
 #else
 		// Mono Framework requires positive buffer size.
@@ -73,7 +73,7 @@ internal sealed class StringConcatenator : BinaryConcatenator<String>
 		if (!this._disposedValue)
 		{
 			if (disposing)
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 				await this._writer.DisposeAsync();
 #else
 			{
@@ -89,7 +89,7 @@ internal sealed class StringConcatenator : BinaryConcatenator<String>
 	}
 	/// <inheritdoc/>
 	protected override void WriteValue(String? value) => this._writer.Write(value);
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <inheritdoc/>
 	protected override Task WriteValueAsync(String? value) => this._writer.WriteAsync(value);
 #endif

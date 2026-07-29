@@ -6,7 +6,7 @@
 /// </summary>
 /// <typeparam name="T">The type of the object that the reference points to.</typeparam>
 public interface IReferenceable<T> : IReadOnlyReferenceable<T>
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	, IEquatable<IReferenceable<T>>
 #endif
 #if NET9_0_OR_GREATER
@@ -19,7 +19,7 @@ public interface IReferenceable<T> : IReadOnlyReferenceable<T>
 	/// <remarks>This reference can be used to modify the object.</remarks>
 	new ref T Reference { get; }
 
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

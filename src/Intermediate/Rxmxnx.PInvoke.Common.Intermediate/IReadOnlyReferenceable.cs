@@ -6,7 +6,7 @@
 /// </summary>
 /// <typeparam name="T">The type of the object that the reference points to.</typeparam>
 public interface IReadOnlyReferenceable<T>
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	: IEquatable<IReadOnlyReferenceable<T>>
 #endif
 #if NET9_0_OR_GREATER
@@ -19,7 +19,7 @@ public interface IReadOnlyReferenceable<T>
 	/// <remarks>This reference cannot be used to modify the object.</remarks>
 	ref readonly T Reference { get; }
 
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	Boolean IEquatable<IReadOnlyReferenceable<T>>.Equals(IReadOnlyReferenceable<T>? other)
 		=> other is not null &&

@@ -92,7 +92,7 @@ internal static class MarvinCompat
 		{
 			Span<Char> chars = stackalloc Char[maxChars];
 			Utf8.ToUtf16(value, chars, out _, out Int32 charCount);
-#if !NETCOREAPP
+#if !NETCOREAPP3_0_OR_GREATER
 			return MarvinCompat.GetHashCode(chars[..charCount]);
 #else
 			return String.GetHashCode(chars[..charCount]);

@@ -28,7 +28,7 @@ SOFTWARE.
 // Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Blc.Memory 10.0.8
 // (System.Text.Rune)
 
-#if !NETCOREAPP
+#if !NETCOREAPP3_0_OR_GREATER
 namespace System.Text;
 
 /// <summary>
@@ -786,7 +786,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	}
 
 	private static UnicodeCategory GetUnicodeCategoryNonAscii(Rune value)
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		=> CharUnicodeInfo.GetUnicodeCategory(value.Value);
 #else
 	{

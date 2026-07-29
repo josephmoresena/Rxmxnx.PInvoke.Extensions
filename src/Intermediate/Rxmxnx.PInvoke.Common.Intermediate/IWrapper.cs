@@ -1,11 +1,15 @@
 ﻿namespace Rxmxnx.PInvoke;
 
-#if NETSTANDARD2_1 || NETCOREAPP
 /// <summary>
 /// This interface defines a wrapper object.
 /// </summary>
+#if !NETSTANDARD2_1 && !NETCOREAPP
+[Browsable(false)]
+[EditorBrowsable(EditorBrowsableState.Never)]
+#endif
 public interface IWrapper
 {
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Creates a new instance of an object that implements <see cref="IWrapper{TValue}"/> interface.
 	/// </summary>
@@ -73,29 +77,31 @@ public interface IWrapper
 		// ReSharper disable once UnusedMemberInSuper.Global
 		T Value { get; }
 	}
-}
 #endif
+}
 
 /// <summary>
 /// This interface defines a wrapper for a <typeparamref name="T"/> object.
 /// </summary>
 /// <typeparam name="T">The type of value to be wrapped.</typeparam>
 // ReSharper disable once TypeParameterCanBeVariant
-public interface IWrapper<T>
-#if NETSTANDARD2_1 || NETCOREAPP
-	: IWrapper.IBase<T>, IEquatable<T>
+public interface IWrapper<T> :
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+	IWrapper.IBase<T>, IEquatable<T>
+#else
+	IWrapper
 #endif
 {
 	/// <summary>
 	/// The wrapped <typeparamref name="T"/> object.
 	/// </summary>
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	new T Value { get; }
 #else
 	T Value { get; }
 #endif
 
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

@@ -18,7 +18,7 @@ internal interface IMainBinaryStore<T>
 	/// <summary>
 	/// The number of slots required.
 	/// </summary>
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	Int32 SlotCount => BuffersHelper.GetLeadingZeros(this.Length);
 #else
 	Int32 SlotCount { get; }

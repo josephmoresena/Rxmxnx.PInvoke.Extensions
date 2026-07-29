@@ -1,6 +1,6 @@
 namespace Rxmxnx.PInvoke;
 
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 /// <summary>
 /// Defines a callable object that performs an operation using a <see cref="FixedContextValue{T}"/>.
 /// </summary>

@@ -1,3 +1,4 @@
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 namespace Rxmxnx.PInvoke;
 
 public partial class CString
@@ -27,3 +28,4 @@ public partial class CString
 		public void Write() => instance.Write(stream, this.StartIndex, this.Count);
 	}
 }
+#endif

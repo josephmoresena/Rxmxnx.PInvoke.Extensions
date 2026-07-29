@@ -14,7 +14,7 @@ public delegate void CStringSequenceCreationAction<in TArg>(Span<Byte> span, Int
 #endif
 	;
 
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 /// <summary>
 /// Encapsulates a method that operates on a <see cref="FixedCStringSequence"/> instance.
 /// </summary>

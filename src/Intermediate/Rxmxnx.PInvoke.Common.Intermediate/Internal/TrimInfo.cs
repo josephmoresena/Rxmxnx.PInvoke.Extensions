@@ -57,6 +57,8 @@ internal static class TrimInfo
 #if NET5_0_OR_GREATER
 		return TrimInfo.IsDesktopTrimmedPlatform() || TrimInfo.IsMobileTrimmedPlatform() ||
 			TrimInfo.IsWebTrimmedPlatform();
+#elif UAP
+		return true;
 #else
 		return false;
 #endif

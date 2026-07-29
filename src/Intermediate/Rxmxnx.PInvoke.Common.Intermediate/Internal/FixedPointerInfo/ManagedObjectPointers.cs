@@ -18,7 +18,7 @@ internal readonly unsafe partial struct FixedPointerInfo
 			Handle = handle,
 		};
 	}
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	public partial ReadOnlyFixedMemory? CreateContext(FixedValueHandle? handle)
 	{
 		Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>* constructorPointer =

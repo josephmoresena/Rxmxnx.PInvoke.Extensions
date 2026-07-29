@@ -16,12 +16,12 @@ public interface IEnumerableSequence
 	/// This method is intentionally declared to prevent external consumers from implementing this interface.
 	/// It should not be implemented or overridden outside the defining assembly.
 	/// </summary>
-#if !NETSTANDARD2_1 && !NETCOREAPP
+#if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 	internal void DoNotImplement();
 #else
 	private protected void DoNotImplement();
 
-#if !PACKAGE || NETCOREAPP
+#if !PACKAGE || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Creates an enumerator that iterates through <paramref name="instance"/> instance.
 	/// </summary>
@@ -63,7 +63,7 @@ public interface IEnumerableSequence<out T> : IEnumerable<T>, IEnumerableSequenc
 	where T : allows ref struct
 #endif
 {
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -96,7 +96,7 @@ public interface IEnumerableSequence<out T> : IEnumerable<T>, IEnumerableSequenc
 	/// <returns>The total number of elements in the sequence.</returns>
 	Int32 GetSize();
 
-#if (!PACKAGE && NETSTANDARD2_1) || NETCOREAPP
+#if (!PACKAGE && NETSTANDARD2_1) || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Method to call when <see cref="IEnumerator{T}"/> is disposing.
 	/// </summary>
@@ -111,13 +111,13 @@ public interface IEnumerableSequence<out T> : IEnumerable<T>, IEnumerableSequenc
 /// <summary>
 /// Extension class for enumerable sequence instances.
 /// </summary>
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 [Browsable(false)]
 [EditorBrowsable(EditorBrowsableState.Never)]
 #endif
 public static class EnumerableSequenceExtensions
 {
-#if (!PACKAGE && NETSTANDARD2_1) || NETCOREAPP
+#if (!PACKAGE && NETSTANDARD2_1) || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Creates an enumerator that iterates through <paramref name="instance"/> instance.
 	/// </summary>

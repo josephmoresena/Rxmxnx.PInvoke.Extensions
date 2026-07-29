@@ -16,7 +16,7 @@
 #endif
 [DebuggerDisplay("Count = {Count}")]
 [DebuggerTypeProxy(typeof(CStringSequenceDebugView))]
-#if NETCOREAPP
+#if NETCOREAPP || NETFRAMEWORK
 [JsonConverter(typeof(JsonConverter))]
 #endif
 public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequence>
@@ -218,7 +218,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		Int32[] lengthsArray = CStringSequence.NormalizeLengths(lengths);
 		Int32 length = CStringSequence.GetBufferLength(lengthsArray);
 		SequenceCreationHelper<TState> helper = new() { State = state, Action = action, Lengths = lengthsArray, };
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		String buffer = String.Create(length, helper, CStringSequence.CreateCStringSequence);
 #else
 		Span<Char> chars = length <= StackAllocationHelper.StackallocByteThreshold ?

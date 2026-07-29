@@ -232,7 +232,7 @@ public sealed partial class CStringBuilder
 #endif
 	public CStringBuilder ConcurrentAppend(Byte? value, Boolean asNumber = false)
 		=> !value.HasValue ? this : new Concurrent(this.GetLock(), this).Append(value.Value, asNumber);
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 	/// <inheritdoc cref="CStringBuilder.Append(Rune)"/>
 	/// <remarks>This operation is thread-safe.</remarks>
 #if !PACKAGE

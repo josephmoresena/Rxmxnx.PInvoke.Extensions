@@ -61,7 +61,7 @@ internal sealed unsafe class RentedMemoryOwner<T> : FixedValueHandle
 		this._arrayPool.Return(array, this._clearArray);
 	}
 
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Rents and pins an array of minimum <paramref name="count"/> elements from <paramref name="arrayPool"/>,
 	/// ensuring a safe context for accessing the fixed memory.

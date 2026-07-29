@@ -43,7 +43,7 @@ public static unsafe partial class MemoryBlockExtensions
 	public static Boolean IsLiteral<T>(this ReadOnlySpan<T> span)
 	{
 		ref T refT = ref MemoryMarshal.GetReference(span);
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ReadOnlySpan<Byte> byteSpan = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, Byte>(ref refT), 1);
 		return MemoryInspector.Instance.IsLiteral(byteSpan);
 #else
@@ -58,7 +58,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="array">The array to convert.</param>
 	/// <returns>The read-only span representation of the array.</returns>
 	public static ReadOnlySpan<T> AsReadOnlySpan<T>(this T[]? array)
-#if !NETSTANDARD2_1 && !NETCOREAPP
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 		=> array is not null ? new(array) : default;
 #else
 		=> array is not null ?
@@ -322,7 +322,7 @@ public static unsafe partial class MemoryBlockExtensions
 		residual = MemoryMarshal.AsBytes(span[offset..]);
 		return result;
 	}
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Creates an <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance by pinning the current
 	/// <see cref="ReadOnlyMemory{T}"/> instance, ensuring a safe context for accessing the fixed memory.

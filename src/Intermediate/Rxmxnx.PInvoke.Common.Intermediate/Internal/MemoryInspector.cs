@@ -38,6 +38,7 @@ internal abstract unsafe partial class MemoryInspector
 	{
 		if (SystemInfo.IsWindows)
 			MemoryInspector.instance = new Windows();
+#if !UAP
 		else if (SystemInfo.IsLinux)
 			MemoryInspector.instance = new Linux();
 		else if (SystemInfo.IsFreeBsd)
@@ -51,6 +52,7 @@ internal abstract unsafe partial class MemoryInspector
 			MemoryInspector.instance = new Solaris();
 		else if (SystemInfo.IsNetBsd)
 			MemoryInspector.instance = new NetBsd();
+#endif
 	}
 
 	/// <summary>
@@ -64,7 +66,7 @@ internal abstract unsafe partial class MemoryInspector
 	/// </returns>
 	public Boolean IsLiteral<T>(ReadOnlySpan<T> span)
 	{
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref T refT = ref MemoryMarshal.GetReference(span);
 		ReadOnlySpan<Byte> byteSpan = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, Byte>(ref refT), 1);
 		return this.IsLiteral(byteSpan);

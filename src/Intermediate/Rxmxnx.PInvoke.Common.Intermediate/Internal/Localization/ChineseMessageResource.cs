@@ -46,7 +46,7 @@ internal sealed class ChineseMessageResource : IMessageResource
 		=> $"参数 {nameofSpan} 的长度必须等于 {sizeOf}。";
 	String IMessageResource.InvalidCopyUnmanagedType(String nameofSpan, String nameofValue)
 		=> $"在 {nameofSpan} 上没有足够的可用空间来复制 {nameofValue}。";
-	String IMessageResource.InvalidLength(String nameofLength) => $"参数 {nameofLength} 必须是零或正整数。";
+	String IMessageResource.InvalidLengthOrIndex(String nameofLength) => $"参数 {nameofLength} 必须是零或正整数。";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} 不是非托管类型。";
 	String IMessageResource.NotValueType(Type type) => $"{type} 不是值类型。";
 	String IMessageResource.NotReferenceType(Type type) => $"{type} 不是引用类型。";

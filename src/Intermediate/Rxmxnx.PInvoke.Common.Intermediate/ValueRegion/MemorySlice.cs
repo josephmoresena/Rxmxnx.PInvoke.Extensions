@@ -1,6 +1,5 @@
-﻿#if NETSTANDARD2_1 || NETCOREAPP
+﻿#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 using IBasicWrapper = Rxmxnx.PInvoke.IWrapper.IBase<System.Range>;
-
 #else
 using IBasicWrapper = Rxmxnx.PInvoke.IWrapper<System.Range>;
 

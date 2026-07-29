@@ -26,7 +26,7 @@ public static unsafe class PointerCStringExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static CString GetUnsafeCString(this IntPtr ptr, Int32 length)
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (ptr == IntPtr.Zero)
 			return CString.Empty;
 		return (CString)CString.CreateUnsafe(ptr, length).Clone();
@@ -46,7 +46,7 @@ public static unsafe class PointerCStringExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static CString GetUnsafeCString(this UIntPtr uptr, Int32 length)
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (uptr == UIntPtr.Zero)
 			return CString.Empty;
 		return (CString)CString.CreateUnsafe((IntPtr)uptr.ToPointer(), length).Clone();
@@ -66,7 +66,7 @@ public static unsafe class PointerCStringExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static CString GetUnsafeCString(this MemoryHandle handle, Int32 length)
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (handle.Pointer == default)
 			return CString.Empty;
 		return (CString)CString.CreateUnsafe((IntPtr)handle.Pointer, length).Clone();

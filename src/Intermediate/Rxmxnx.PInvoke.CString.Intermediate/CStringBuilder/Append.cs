@@ -369,7 +369,7 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	public CStringBuilder Append(Byte? value, Boolean asNumber = false)
 		=> value.HasValue ? this.Append(value.Value, asNumber) : this;
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Appends the UTF-8 representation of the specified rune to this instance.
 	/// </summary>

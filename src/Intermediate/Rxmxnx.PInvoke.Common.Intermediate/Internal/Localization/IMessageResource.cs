@@ -101,7 +101,7 @@ internal interface IMessageResource
 	/// <summary>
 	/// Message for invalid length exception.
 	/// </summary>
-	String InvalidLength(String nameofLength);
+	String InvalidLengthOrIndex(String nameofLength);
 	/// <summary>
 	/// Message for not unmanaged type exception.
 	/// </summary>

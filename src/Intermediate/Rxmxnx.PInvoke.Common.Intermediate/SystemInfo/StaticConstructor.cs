@@ -1,4 +1,4 @@
-﻿#if !NET5_0_OR_GREATER
+﻿#if !NET5_0_OR_GREATER && !UAP
 namespace Rxmxnx.PInvoke;
 
 public static partial class SystemInfo
@@ -16,7 +16,7 @@ public static partial class SystemInfo
 			SystemInfo.isWindows = true;
 			return;
 		}
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 		if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
 #else
 		if (SystemInfo.IsOsPlatform(SystemInfo.freePlatform))
@@ -115,7 +115,7 @@ public static partial class SystemInfo
 					return default;
 
 				ReadOnlySpan<Byte> ascii = buffer[..nameLength];
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 				return Encoding.ASCII.GetString(ascii).ToLowerInvariant();
 #else
 				return Encoding.ASCII.GetString([.. ascii,]).ToLowerInvariant();

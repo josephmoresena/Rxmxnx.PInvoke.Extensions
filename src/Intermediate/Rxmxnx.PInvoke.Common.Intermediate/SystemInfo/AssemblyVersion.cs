@@ -33,8 +33,22 @@ public static partial class SystemInfo
 			".NET Core 3.1"
 #elif NETCOREAPP3_0
 			".NET Core 3.0"
-#else
+#elif NETCOREAPP2_2
+			".NET Core 2.2"
+#elif NETCOREAPP2_1
+			".NET Core 2.1"
+#elif NETCOREAPP2_0
+			".NET Core 2.0"
+#elif NETSTANDARD2_1
 			".NET Standard 2.1"
+#elif NET472_OR_GREATER
+			".NET Framework 4.7.2"
+#elif NET462_OR_GREATER
+			".NET Framework 4.6.2"
+#elif UAP
+			"UWP (Build 16299)"
+#else
+			".NET Standard 2.0"
 #endif
 		;
 #endif

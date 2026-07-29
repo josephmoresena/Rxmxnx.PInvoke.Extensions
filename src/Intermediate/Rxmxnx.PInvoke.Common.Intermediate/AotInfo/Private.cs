@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if !UAP
+namespace Rxmxnx.PInvoke;
 
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3011)]
@@ -22,9 +23,7 @@ public static partial class AotInfo
 		foreach (StackFrame? frame in frames)
 		{
 			if (frame?.GetMethod() is not { } methodBase) continue;
-#if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK
 			if (EmitInfo.IsDynamicMethod(methodBase)) return false;
-#endif
 			if (!AotInfo.IsImageMethodUnsafe(methodBase.MethodHandle)) return false;
 		}
 		return true;
@@ -67,7 +66,7 @@ public static partial class AotInfo
 #else
 			Boolean isAndroid = false;
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			foreach (Assembly assembly in AotInfo.GetAssembliesSpan())
 #else
 			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -224,7 +223,7 @@ public static partial class AotInfo
 
 		return default; // Unabled to retrieve JIT information.
 	}
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <inheritdoc cref="AppDomain.GetAssemblies()"/>
 	/// <returns>A read-only span of assemblies in this application domain.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -285,3 +284,4 @@ public static partial class AotInfo
 	}
 #endif
 }
+#endif

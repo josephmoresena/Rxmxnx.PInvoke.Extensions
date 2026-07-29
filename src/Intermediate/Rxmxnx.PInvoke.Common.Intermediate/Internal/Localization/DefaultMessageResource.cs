@@ -49,7 +49,7 @@ internal sealed class DefaultMessageResource : IMessageResource
 		=> $"The length of parameter {nameofSpan} must be equals to {sizeOf}.";
 	String IMessageResource.InvalidCopyUnmanagedType(String nameofSpan, String nameofValue)
 		=> $"Insufficient available size on {nameofSpan} to copy {nameofValue}.";
-	String IMessageResource.InvalidLength(String nameofLength)
+	String IMessageResource.InvalidLengthOrIndex(String nameofLength)
 		=> $"The parameter {nameofLength} must be zero or positive integer.";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} is not an unmanaged type.";
 	String IMessageResource.NotValueType(Type type) => $"{type} is not a value type.";

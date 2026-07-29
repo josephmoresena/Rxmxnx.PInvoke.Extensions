@@ -46,7 +46,7 @@ public partial class CStringSequence
 		public CStringSequence CreateSequence()
 		{
 			Int32 length = CStringSequence.GetBufferLength(this._lengths.AsSpan());
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			String value = String.Create(length, this, SubsequenceHelper.CopyBytes);
 #else
 			Span<Char> chars = length <= StackAllocationHelper.StackallocByteThreshold ?

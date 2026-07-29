@@ -105,7 +105,7 @@ public partial class CString
 	/// <returns>A <see cref="String"/> that consists of a single instance of the specified character.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static String CreateSeparator(Char separator)
-#if !NETSTANDARD2_1 && !NETCOREAPP
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 	{
 		Span<Char> chars = stackalloc Char[] { separator, };
 		return chars.ToString();
@@ -153,7 +153,7 @@ public partial class CString
 		return length;
 	}
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Creates a non-null-terminated <see cref="CString"/> instance that contains a single
 	/// <paramref name="c"/> character.
@@ -212,7 +212,7 @@ public partial class CString
 		String result = Encoding.UTF8.GetString(utf8Bytes);
 		return String.IsInterned(result) ?? result;
 	}
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Encodes <paramref name="utf8Bytes"/> to UTF-16 chars and computes the hash function
 	/// for <paramref name="utf8Bytes"/>.

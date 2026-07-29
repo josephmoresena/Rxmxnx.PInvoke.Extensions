@@ -1,4 +1,4 @@
-#if !NETSTANDARD2_1 && !NETCOREAPP
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 #if PACKAGE && !NET5_0_OR_GREATER
 using B1 = Rxmxnx.PInvoke.Buffers.Atomic<System.Object>;
 #elif !NET5_0_OR_GREATER

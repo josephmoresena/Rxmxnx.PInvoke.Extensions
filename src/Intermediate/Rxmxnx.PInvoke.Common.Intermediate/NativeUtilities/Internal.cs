@@ -68,12 +68,8 @@ public partial class NativeUtilities
 #endif
 	internal static Boolean IsImageMethodUnsafe(MethodBase methodBase)
 	{
-#if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK
 		if (methodBase.ContainsGenericParameters || AotInfo.IsDynamicCode(methodBase)) return false;
 		return AotInfo.IsImageMethodUnsafe(methodBase.MethodHandle);
-#else
-		return !methodBase.ContainsGenericParameters && AotInfo.IsImageMethodUnsafe(methodBase.MethodHandle);
-#endif
 	}
 	/// <summary>
 	/// Retrieves a concurrent value from <paramref name="fieldReference"/>.
@@ -112,14 +108,14 @@ public partial class NativeUtilities
 #else
 		Int32 length = buffer.Metadata.Size;
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref Type r0 = ref Unsafe.As<TBuffer, Type>(ref buffer);
 		return MemoryMarshal.CreateSpan(ref r0, length);
 #else
 		return MemoryMarshalCompat.CreateUnsafeSpan<Type>(Unsafe.AsPointer(ref buffer), length);
 #endif
 	}
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Creates a <see cref="Func{IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory}"/> span from
 	/// <typeparamref name="TBuffer"/> reference.

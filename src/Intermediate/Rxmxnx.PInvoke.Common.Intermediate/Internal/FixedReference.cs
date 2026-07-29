@@ -1,4 +1,4 @@
-﻿#if !NETSTANDARD2_1 && !NETCOREAPP
+﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
 using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
 #endif
 
@@ -40,7 +40,7 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 
 	ref T IReferenceable<T>.Reference => ref this.CreateReference<T>();
 	ref readonly T IReadOnlyReferenceable<T>.Reference => ref this.CreateReadOnlyReference<T>();
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IFixedMemory residual)
 	{
 		Unsafe.SkipInit(out residual);
@@ -69,7 +69,7 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>()
 		=> this.GetTransformation<TDestination>();
 
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Transforms the current memory reference into a different type and provides a fixed offset that represents the remaining
 	/// portion of memory not included in the newly formed reference.

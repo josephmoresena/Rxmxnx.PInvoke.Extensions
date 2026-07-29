@@ -1,3 +1,4 @@
+#if !UAP
 namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector
@@ -111,7 +112,7 @@ internal partial class MemoryInspector
 		private void RefreshMaps()
 		{
 			Int64 tickCount
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 				= Environment.TickCount64;
 #else
 				= DateTime.Now.Ticks;
@@ -122,7 +123,7 @@ internal partial class MemoryInspector
 
 			this.ProcessMaps();
 			this._lastTickCount
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 				= Environment.TickCount64;
 #else
 				= DateTime.Now.Ticks;
@@ -190,3 +191,4 @@ internal partial class MemoryInspector
 		}
 	}
 }
+#endif

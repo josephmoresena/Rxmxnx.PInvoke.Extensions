@@ -1,8 +1,7 @@
-#if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK
+#if  !UAP
 using DynamicMethod = System.Reflection.Emit.DynamicMethod;
 using OpCodes = System.Reflection.Emit.OpCodes;
 using ILGenerator = System.Reflection.Emit.ILGenerator;
-#endif
 
 namespace Rxmxnx.PInvoke;
 
@@ -25,7 +24,6 @@ public static partial class AotInfo
 		/// </summary>
 		public static Boolean IsEmitAllowed => EmitInfo.isEmitAllowed ??= EmitInfo.EmitCode();
 
-#if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK
 		/// <summary>
 		/// Indicates whether <paramref name="methodBase"/> is dynamic.
 		/// </summary>
@@ -39,7 +37,6 @@ public static partial class AotInfo
 #endif
 		public static Boolean IsDynamicMethod(MethodBase methodBase)
 			=> methodBase is DynamicMethod || methodBase.Module.Assembly.IsDynamic;
-#endif
 
 		/// <summary>
 		/// Indicates whether <see cref="System.Reflection.Emit"/> namespace is supported in the current runtime.
@@ -56,7 +53,6 @@ public static partial class AotInfo
 #endif
 		private static Boolean EmitCode()
 		{
-#if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK
 			try
 			{
 				DynamicMethod method = new($"MyDynamicMethod_{Guid.NewGuid():N}", typeof(MethodBase), Type.EmptyTypes,
@@ -71,9 +67,7 @@ public static partial class AotInfo
 				// Any exception at runtime indicates that System.Reflection.Emit is not allowed.
 				return false;
 			}
-#else
-			return false;
-#endif
 		}
 	}
 }
+#endif

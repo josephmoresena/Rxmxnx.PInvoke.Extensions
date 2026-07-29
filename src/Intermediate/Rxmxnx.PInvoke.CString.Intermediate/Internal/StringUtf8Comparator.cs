@@ -44,7 +44,7 @@ internal sealed class StringUtf8Comparator : Utf8Comparator<Char>
 	[ExcludeFromCodeCoverage]
 #endif
 	protected override String GetString(ReadOnlySpan<Char> source)
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		=> new(source);
 #else
 		=> source.ToString();

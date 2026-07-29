@@ -48,7 +48,7 @@ internal sealed class ArabicMessageResource : IMessageResource
 		=> $"يجب أن يكون طول المعامل {nameofSpan} مساويًا لـ {sizeOf}.";
 	String IMessageResource.InvalidCopyUnmanagedType(String nameofSpan, String nameofValue)
 		=> $"المساحة المتوفرة على {nameofSpan} غير كافية لنسخ {nameofValue}.";
-	String IMessageResource.InvalidLength(String nameofLength)
+	String IMessageResource.InvalidLengthOrIndex(String nameofLength)
 		=> $"يجب أن يكون المعامل {nameofLength} صفرًا أو عددًا صحيحًا موجبًا.";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} ليس نوعًا غير مُدار.";
 	String IMessageResource.NotValueType(Type type) => $"{type} ليس نوعًا قيمًا.";

@@ -48,7 +48,7 @@ public partial class CString
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal void Write(Stream strm, Boolean writeNullTermination)
 	{
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		strm.Write(this.AsSpan());
 #else
 		foreach (Byte b in this.AsSpan())
@@ -72,14 +72,14 @@ public partial class CString
 	internal void Write(Stream strm, Int32 startIndex, Int32 count)
 	{
 		ReadOnlySpan<Byte> span = this.AsSpan().Slice(startIndex, count);
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		strm.Write(span);
 #else
 		foreach (Byte b in span)
 			strm.WriteByte(b);
 #endif
 	}
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Asynchronously writes the sequence of bytes to the given <see cref="Stream"/> and advances
 	/// the current position within this stream by the number of bytes written.

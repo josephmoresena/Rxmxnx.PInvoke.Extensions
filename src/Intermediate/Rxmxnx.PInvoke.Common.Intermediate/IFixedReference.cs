@@ -5,7 +5,7 @@
 /// </summary>
 /// <typeparam name="T">Type of the value referenced in memory.</typeparam>
 public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference<T>
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	, IFixedMemory
 #endif
 #if NET9_0_OR_GREATER
@@ -20,7 +20,7 @@ public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference
 	/// <returns>
 	/// A <see cref="IFixedReference{TDestination}"/> instance.
 	/// </returns>
-#if !NETSTANDARD2_1 && !NETCOREAPP
+#if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 	new IFixedReference<TDestination> Transformation<TDestination>();
 #else
 #if !PACKAGE
@@ -29,7 +29,7 @@ public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference
 	new IFixedReference<TDestination> Transformation<TDestination>()
 		=> this.Transformation<TDestination>(out IFixedMemory _);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Reinterprets the <typeparamref name="T"/> fixed memory reference as a
 	/// <typeparamref name="TDestination"/> memory reference.

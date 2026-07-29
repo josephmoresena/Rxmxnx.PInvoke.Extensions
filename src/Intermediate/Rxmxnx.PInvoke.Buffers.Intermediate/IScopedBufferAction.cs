@@ -21,7 +21,7 @@ public interface IScopedBufferAction<T>
 	/// Indicates whether <see cref="Count"/> is the minimum limit and not the exact limit for memory allocation.
 	/// </summary>
 	/// <remarks>The additional elements allocated are not accessible from <see cref="Accept"/>.</remarks>
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	Boolean IsMinimalCount => false;
 #else
 	Boolean IsMinimalCount { get; }

@@ -18,7 +18,7 @@ public delegate ReadOnlySpan<T> ReadOnlySpanFunc<T>();
 /// <returns>A <see cref="ReadOnlySpan{T}"/> instance.</returns>
 public delegate ReadOnlySpan<T> ReadOnlySpanFunc<T, in TState>(TState arg);
 
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 /// <summary>
 /// Encapsulates a method that receives a span of type <typeparamref name="T"/>, a
 /// state object of type <typeparamref name="TArg"/> and returns a result of type <typeparamref name="TResult"/>.
@@ -54,7 +54,7 @@ public delegate TResult ReadOnlySpanFunc<T, in TArg, out TResult>(ReadOnlySpan<T
 	;
 #endif
 
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 /// <summary>
 /// Represents an action that operates on a fixed memory instance.
 /// </summary>
@@ -451,7 +451,7 @@ public delegate TResult FixedMethodFunc<T, in TArg, out TResult>(in IFixedMethod
 #endif
 ;
 
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 /// <summary>
 /// Encapsulates a method that receives an instance of <see cref="FixedMemoryList"/>.
 /// </summary>

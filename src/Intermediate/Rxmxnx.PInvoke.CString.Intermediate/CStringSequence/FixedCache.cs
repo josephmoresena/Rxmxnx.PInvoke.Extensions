@@ -118,7 +118,7 @@ public partial class CStringSequence
 						default;
 				set
 				{
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 					Debug.Assert(value is not null);
 					if (this._cache[this.GetRealIndex(index)] is { } weak)
 						weak.SetTarget(value);

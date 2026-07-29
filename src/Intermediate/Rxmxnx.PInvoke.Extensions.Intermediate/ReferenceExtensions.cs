@@ -98,7 +98,7 @@ public static unsafe partial class ReferenceExtensions
 	public static ref TDestination Transform<TSource, TDestination>(this ref TSource refValue)
 		where TSource : unmanaged where TDestination : unmanaged
 		=> ref NativeUtilities.TransformReference<TSource, TDestination>(ref refValue);
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Creates a <see cref="Span{Byte}"/> from a reference to an <see langword="unmanaged"/> value of
 	/// type <typeparamref name="TSource"/>.

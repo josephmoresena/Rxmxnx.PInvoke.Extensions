@@ -10,6 +10,7 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
+        <NoWarn Condition="'$(TargetFramework)' == 'netcoreapp2.0' Or '$(TargetFramework)' == 'netcoreapp2.1' Or '$(TargetFramework)' == 'netcoreapp2.2'">$(NoWarn);NU1903</NoWarn>
     </PropertyGroup>
 
 </Project>

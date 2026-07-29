@@ -1,3 +1,4 @@
+#if !UAP
 namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector
@@ -14,3 +15,4 @@ internal partial class MemoryInspector
 		protected override void ProcessMaps() => Procstat.AppendMaps(this);
 	}
 }
+#endif

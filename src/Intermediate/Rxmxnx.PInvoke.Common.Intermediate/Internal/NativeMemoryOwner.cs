@@ -52,7 +52,7 @@ internal sealed unsafe class NativeMemoryOwner : FixedValueHandle
 		this._pointer = IntPtr.Zero;
 	}
 
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Allocates a native memory block for <paramref name="count"/> values of type <typeparamref name="T"/> and exposes
 	/// it through an <see cref="IFixedContext{T}.IDisposable"/> instance.

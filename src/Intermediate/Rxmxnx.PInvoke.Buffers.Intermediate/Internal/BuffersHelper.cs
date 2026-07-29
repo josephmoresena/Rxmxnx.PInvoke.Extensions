@@ -58,7 +58,7 @@ internal static class BuffersHelper
 	public static UInt16 GetSpaceFor(UInt16 count)
 	{
 		Debug.Assert(count > 0);
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 		return (UInt16)(1u << BitOperations.Log2(count));
 #else
 		UInt32 value = count;
@@ -80,7 +80,7 @@ internal static class BuffersHelper
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Int32 GetLeadingZeros(UInt16 value)
 	{
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 		return BitOperations.LeadingZeroCount(value) - 16;
 #else
 		if (value == 0)

@@ -18,8 +18,10 @@ public static partial class SystemInfo
 	public static Boolean IsWindows
 #if NET5_0_OR_GREATER
 		=> OperatingSystem.IsWindows();
-#else
+#elif !UAP
 		=> SystemInfo.isWindows;
+#else
+		=> true;
 #endif
 	/// <summary>
 	/// Indicates whether the current execution is running on a Linux-compatible platform.
@@ -36,8 +38,10 @@ public static partial class SystemInfo
 			return
 #if NET5_0_OR_GREATER
 				OperatingSystem.IsLinux() || OperatingSystem.IsAndroid()
-#else
+#elif !UAP
 				SystemInfo.isLinux
+#else
+				false
 #endif
 				;
 		}
@@ -64,8 +68,10 @@ public static partial class SystemInfo
 #else
 				(!TrimInfo.IsPlatformTrimmed() && RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
 #endif
-#else
+#elif !UAP
 				SystemInfo.isMac
+#else
+				false
 #endif
 				;
 		}
@@ -79,8 +85,10 @@ public static partial class SystemInfo
 	public static Boolean IsFreeBsd
 #if NET5_0_OR_GREATER
 		=> OperatingSystem.IsFreeBSD();
-#else
+#elif !UAP
 		=> SystemInfo.isFreeBsd;
+#else
+		=> false;
 #endif
 	/// <summary>
 	/// Indicates whether the current execution is running on NetBSD platform.
@@ -89,8 +97,12 @@ public static partial class SystemInfo
 	[SupportedOSPlatformGuard("netbsd")]
 #endif
 	public static Boolean IsNetBsd
+#if !UAP
 		=> !TrimInfo.IsPlatformTrimmed() &&
 			(SystemInfo.isNetBsd ??= SystemInfo.IsOsPlatform(SystemInfo.netBsdPlatform));
+#else
+		=> false;
+#endif
 	/// <summary>
 	/// Indicates whether the current execution is running on NetBSD platform.
 	/// </summary>
@@ -99,8 +111,12 @@ public static partial class SystemInfo
 	[SupportedOSPlatformGuard("illumos")]
 #endif
 	public static Boolean IsSolaris
+#if !UAP
 		=> !TrimInfo.IsPlatformTrimmed() && (SystemInfo.isSolaris ??=
 			SystemInfo.IsOsPlatform(SystemInfo.solarisPlatform, SystemInfo.illumosPlatform, SystemInfo.sunosPlatform));
+#else
+		=> false;
+#endif
 
 	/// <summary>
 	/// Indicates whether the current execution is running on a Web engine.
@@ -123,8 +139,10 @@ public static partial class SystemInfo
 #else
 				(!TrimInfo.IsPlatformTrimmed() && (SystemInfo.isWasi ??= SystemInfo.IsOsPlatform(SystemInfo.wPlatform)))
 #endif
-#else
+#elif !UAP
 				SystemInfo.isWebRuntime
+#else
+				false
 #endif
 				;
 		}
@@ -133,6 +151,7 @@ public static partial class SystemInfo
 	/// Indicates whether the current execution is running on Mono Runtime.
 	/// </summary>
 	public static Boolean IsMonoRuntime
+#if !UAP
 	{
 		get
 		{
@@ -142,6 +161,9 @@ public static partial class SystemInfo
 			return AotInfo.IsReflectionDisabled && MonoInfo.IsEmptyNonLiteral; // Microsoft.NETCore.App (CLR)
 		}
 	}
+#else
+		=> false;
+#endif
 
 	/// <summary>
 	/// Indicates whether the current application is running on the specified platform.

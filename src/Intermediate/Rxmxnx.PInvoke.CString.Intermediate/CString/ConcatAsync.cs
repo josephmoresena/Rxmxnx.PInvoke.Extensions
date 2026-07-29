@@ -1,4 +1,4 @@
-﻿#if NETSTANDARD2_1 || NETCOREAPP
+﻿#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 #if !NET6_0_OR_GREATER
 using ArgumentNullException = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif

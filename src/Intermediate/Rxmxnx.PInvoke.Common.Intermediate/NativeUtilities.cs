@@ -188,7 +188,7 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Byte[] ToBytes<TSource>(in TSource value) where TSource : unmanaged
 	{
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref TSource refValue = ref Unsafe.AsRef(in value);
 		ReadOnlySpan<TSource> intermediateSpan = MemoryMarshal.CreateReadOnlySpan(ref refValue, 1);
 		ReadOnlySpan<Byte> bytes = MemoryMarshal.AsBytes(intermediateSpan);
@@ -207,7 +207,7 @@ public static unsafe partial class NativeUtilities
 		}
 #endif
 	}
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Creates a <see cref="ReadOnlySpan{Byte}"/> from an exising read-only reference to a
 	/// <typeparamref name="TSource"/> <see langword="unmanaged"/> value.
@@ -280,7 +280,7 @@ public static unsafe partial class NativeUtilities
 	public static void CopyBytes<TSource>(in TSource value, Span<Byte> destination, Int32 offset = 0)
 		where TSource : unmanaged
 	{
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ValidationUtilities.ThrowIfInvalidCopyType(value, destination, offset, out ReadOnlySpan<Byte> bytes);
 		bytes.CopyTo(destination[offset..]);
 #else
@@ -306,7 +306,7 @@ public static unsafe partial class NativeUtilities
 	/// <returns>A string read-only span of the names of the constants in <typeparamref name="TEnum"/>.</returns>
 	public static ReadOnlySpan<String> GetEnumNamesSpan<TEnum>() where TEnum : struct, Enum
 		=> EnumNameHelper<TEnum>.Values.Span;
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_1_OR_GREATER
 	/// <summary>
 	/// Creates an <see cref="IReadOnlyFixedContext{TEnum}.IDisposable"/> instance by pinning an array of the values of
 	/// the constants in a specified enumeration type.
@@ -404,7 +404,7 @@ public static unsafe partial class NativeUtilities
 		if (AotInfo.IsReflectionDisabled) return true;
 		try
 		{
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			foreach (Delegate d in NativeUtilities.GetInvocationSpan(method))
 #else
 			foreach (Delegate d in method.GetInvocationList())
@@ -420,7 +420,7 @@ public static unsafe partial class NativeUtilities
 		}
 		return true;
 	}
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Allocates a native memory block for <paramref name="count"/> values of type <typeparamref name="T"/> and exposes
 	/// it through an <see cref="IFixedContext{T}.IDisposable"/> instance.
@@ -472,7 +472,7 @@ public static unsafe partial class NativeUtilities
 		ValidationUtilities.ThrowIfInvalidLength(count);
 		return NativeMemoryOwner.CreateContext(count, out fixedContext);
 	}
-#if !PACKAGE || NETCOREAPP
+#if !PACKAGE || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Provides a high-level API for loading a native library.
 	/// </summary>
@@ -484,7 +484,7 @@ public static unsafe partial class NativeUtilities
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IntPtr? LoadNativeLib(String? libraryName, DllImportSearchPath? searchPath = default)
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 	{
 		if (String.IsNullOrWhiteSpace(libraryName)) return default;
 		if (NativeLibrary.TryLoad(libraryName, Assembly.GetExecutingAssembly(), searchPath, out IntPtr handle) ||
@@ -540,7 +540,7 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TDelegate? GetNativeMethod<TDelegate>(IntPtr handle, String? name) where TDelegate : Delegate
 	{
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 		if (handle != IntPtr.Zero && NativeLibrary.TryGetExport(handle, name ?? String.Empty, out IntPtr address))
 			return Marshal.GetDelegateForFunctionPointer<TDelegate>(address);
 #endif
@@ -557,7 +557,7 @@ public static unsafe partial class NativeUtilities
 	public static FuncPtr<TDelegate> GetNativeMethodPtr<TDelegate>(IntPtr handle, String? name)
 		where TDelegate : Delegate
 	{
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 		if (handle != IntPtr.Zero && NativeLibrary.TryGetExport(handle, name ?? String.Empty, out IntPtr address))
 			return (FuncPtr<TDelegate>)address;
 #endif

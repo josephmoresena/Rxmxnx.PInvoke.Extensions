@@ -1,4 +1,4 @@
-﻿#if !NET6_0_OR_GREATER && (NETSTANDARD2_1 || NETCOREAPP)
+﻿#if !NET6_0_OR_GREATER && (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER)
 using ArgumentNullException = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif
 
@@ -23,7 +23,7 @@ public unsafe partial class CStringSequence
 	/// <summary>
 	/// Internal pointer to <c>ReadOnlyFixedContext&lt;Byte&gt;.CreateInstance</c> delegate instance.
 	/// </summary>
-#if !NET5_0_OR_GREATER && (NETSTANDARD2_1 || NETCOREAPP)
+#if !NET5_0_OR_GREATER && (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER)
 	internal static void* ConstructorPointer => Unsafe.AsPointer(ref CStringSequence.bufferConstructor);
 #else
 #if !PACKAGE
@@ -48,7 +48,7 @@ public unsafe partial class CStringSequence
 		ReadOnlyMemory<Char> mem = this._value.AsMemory();
 		return mem.Pin();
 	}
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Creates an <see cref="IFixedPointer.IDisposable"/> instance by pinning the current instance, allowing safe
 	/// access to the fixed memory region.
@@ -87,7 +87,7 @@ public unsafe partial class CStringSequence
 		fixedPointer = new ReadOnlyFixedContextValue<Char>(handle, this._value.Length, true, out IDisposable result);
 		return result;
 	}
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Executes a specified action using the current instance treated as a <see cref="ReadOnlyFixedMemoryList"/>.
 	/// </summary>

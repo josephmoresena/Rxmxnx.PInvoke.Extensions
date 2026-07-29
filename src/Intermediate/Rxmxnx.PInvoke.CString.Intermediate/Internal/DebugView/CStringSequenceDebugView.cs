@@ -35,7 +35,7 @@ internal sealed record CStringSequenceDebugView
 	/// </summary>
 	/// <param name="seq">The <see cref="CStringSequence"/> instance to provide a debug view for.</param>
 	public CStringSequenceDebugView(CStringSequence seq) => this._values = seq.ToArray();
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequenceDebugView"/> class with the
 	/// specified <see cref="FixedCStringSequence"/> instance.

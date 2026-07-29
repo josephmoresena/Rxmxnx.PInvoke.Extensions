@@ -35,7 +35,7 @@ internal sealed partial class ArrayMemoryManager<T> : ManagedMemoryManager<T>
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected override ref T GetMemoryReference() => ref ArrayMemoryManager<T>.GetArrayDataReference(this._array);
-#if !NETSTANDARD2_1 && !NETCOREAPP
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected override ref Pinnable<T> GetPinnable()

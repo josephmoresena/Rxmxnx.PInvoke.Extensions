@@ -20,6 +20,7 @@
 // THE SOFTWARE.
 // 
 
+#if NETSTANDARD2_1 || MONO
 using System;
 using System.Buffers;
 using System.Buffers.Binary;
@@ -52,3 +53,4 @@ using System.Runtime.InteropServices;
 [assembly: TypeForwardedTo(typeof(Utf8Parser))]
 [assembly: TypeForwardedTo(typeof(MemoryMarshal))]
 [assembly: TypeForwardedTo(typeof(SequenceMarshal))]
+#endif

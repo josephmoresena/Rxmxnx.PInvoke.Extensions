@@ -56,7 +56,7 @@ public static unsafe class BinaryExtensions
 			return Unsafe.ReadUnaligned<T>(ref refByte);
 
 		T result = default;
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<Byte> resultBytes = MemoryMarshal.CreateSpan(ref Unsafe.As<T, Byte>(ref result), span.Length);
 #else
 		Span<Byte> resultBytes = new(Unsafe.AsPointer(ref result), span.Length);
@@ -114,7 +114,7 @@ public static unsafe class BinaryExtensions
 #else
 		ArgumentNullException.ThrowIfNull(bytes);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		return bytes.Length > 0 ? String.Create(bytes.Length * 2, bytes, BinaryExtensions.CopyHexChars) : String.Empty;
 #else
 		if (bytes.Length <= 0) return String.Empty;
@@ -133,7 +133,7 @@ public static unsafe class BinaryExtensions
 	/// <returns>The hexadecimal string representation of the byte.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static String AsHexString(this Byte value)
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		=> String.Create(2, value, BinaryExtensions.CopyHexChars);
 #else
 	{

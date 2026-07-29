@@ -1,4 +1,4 @@
-#if !NETSTANDARD2_1 && !NETCOREAPP
+#if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 using IEnumerator = System.Collections.IEnumerator;
 using IEnumerable = System.Collections.IEnumerable;
 #endif
@@ -64,12 +64,12 @@ public abstract partial class BufferTypeMetadata : IEnumerableSequence<BufferTyp
 	[ExcludeFromCodeCoverage]
 #endif
 	Int32 IEnumerableSequence<BufferTypeMetadata>.GetSize() => this.ComponentCount;
-#if PACKAGE && !NETCOREAPP
+#if PACKAGE && !NETCOREAPP3_0_OR_GREATER
 	IEnumerator<BufferTypeMetadata> IEnumerable<BufferTypeMetadata>.GetEnumerator() 
 		=> IEnumerableSequence.CreateEnumerator(this);
 	IEnumerator IEnumerable.GetEnumerator() => IEnumerableSequence.CreateEnumerator(this);
 #endif
-#if !NETSTANDARD2_1 && !NETCOREAPP
+#if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 	IEnumerator<BufferTypeMetadata> IEnumerable<BufferTypeMetadata>.GetEnumerator() => this.CreateDefaultEnumerator();
 	IEnumerator IEnumerable.GetEnumerator() => this.CreateDefaultEnumerator();
 	void IEnumerableSequence.DoNotImplement() { }

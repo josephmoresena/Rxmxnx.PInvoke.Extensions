@@ -6,6 +6,7 @@ namespace Rxmxnx.PInvoke;
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
 #endif
+#if !UAP
 public static partial class AotInfo
 {
 	/// <summary>
@@ -18,6 +19,10 @@ public static partial class AotInfo
 		TrimInfo.IsMobileTrimmedXnu() || // iOS, tvOS, watchOS, macCatalyst
 		TrimInfo.ZeroIlBytes() && AotInfo.IsDesktopOrAndroid() || AotInfo.IsMonoAot() ||
 		!AotInfo.IsDesktopOrAndroid() && !EmitInfo.IsEmitAllowed;
+#endif
+#else
+public static class AotInfo
+{
 #endif
 
 	/// <summary>
@@ -50,13 +55,21 @@ public static partial class AotInfo
 			if (TrimInfo.ZeroIlBytes() && AotInfo.IsDesktopOrAndroid())
 				return false;
 #endif
+#if !UAP
 			return !AotInfo.IsReflectionDisabled && EmitInfo.IsEmitAllowed;
+#else
+			return false;
+#endif
 		}
 	}
 	/// <summary>
 	/// Indicates whether the current runtime is Native AOT.
 	/// </summary>
+#if !UAP
 	public static Boolean IsNativeAot => AotInfo.isAotRuntime;
+#else
+	public static Boolean IsNativeAot => true;
+#endif
 	/// <summary>
 	/// Indicates whether the current runtime has been trimmed for the platform.
 	/// </summary>
@@ -66,13 +79,23 @@ public static partial class AotInfo
 		get => TrimInfo.IsPlatformTrimmed();
 	}
 
-#if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK
-	/// <inheritdoc cref="EmitInfo.IsDynamicMethod(MethodBase)"/>
+	/// <summary>
+	/// Indicates whether <paramref name="methodBase"/> is dynamic.
+	/// </summary>
+	/// <param name="methodBase">A <see cref="MethodBase"/> instance.</param>
+	/// <returns>
+	/// <see langword="true"/> if <paramref name="methodBase"/> is a dynamic method or its assembly is dynamic;
+	/// otherwise <see langword="false"/>.
+	/// </returns>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static Boolean IsDynamicCode(MethodBase methodBase) => EmitInfo.IsDynamicMethod(methodBase);
+	internal static Boolean IsDynamicCode(MethodBase methodBase)
+#if !UAP
+		=> EmitInfo.IsDynamicMethod(methodBase);
+#else
+		=> false;
 #endif
 	/// <summary>
 	/// Indicates whether the function pointer of <paramref name="methodHandle"/> references to an R/RX memory section.
@@ -86,9 +109,13 @@ public static partial class AotInfo
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 	[ExcludeFromCodeCoverage]
 #endif
+#if !UAP
 	internal static unsafe Boolean IsImageMethodUnsafe(RuntimeMethodHandle methodHandle)
 	{
 		RuntimeHelpers.PrepareMethod(methodHandle);
 		return MemoryInspector.Instance.IsReadOnlyAddress(methodHandle.GetFunctionPointer().ToPointer());
 	}
+#else
+	internal static Boolean IsImageMethodUnsafe(RuntimeMethodHandle methodHandle) => true;
+#endif
 }

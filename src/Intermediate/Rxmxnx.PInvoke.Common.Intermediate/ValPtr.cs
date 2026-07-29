@@ -104,7 +104,7 @@ public readonly unsafe partial struct ValPtr<T> : IWrapper<IntPtr>, IEquatable<V
 #endif
 	public String ToString(String? format) => this.Pointer.ToString(format!);
 
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="IFixedReference{T}.IDisposable"/> instance from
 	/// current reference pointer.

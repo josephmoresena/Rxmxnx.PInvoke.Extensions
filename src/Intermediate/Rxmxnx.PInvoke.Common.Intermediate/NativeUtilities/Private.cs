@@ -6,7 +6,7 @@ namespace Rxmxnx.PInvoke;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 public unsafe partial class NativeUtilities
 #else
 public partial class NativeUtilities
@@ -46,7 +46,7 @@ public partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Int32 GetUserInterfaceTwoLetterLangCode()
 		=> (Int32)NativeUtilities.GetIso639P1(CultureInfo.CurrentUICulture);
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Writes <paramref name="span"/> using <paramref name="arg"/> and <paramref name="action"/>.
 	/// </summary>
@@ -74,6 +74,7 @@ public partial class NativeUtilities
 		Delegate[] array = del.GetInvocationList();
 		return MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(array), array.Length);
 	}
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 #pragma warning disable CS8500
 #if !NET5_0_OR_GREATER
 	/// <summary>
@@ -187,5 +188,6 @@ public partial class NativeUtilities
 		return MemoryMarshal.CreateSpan(ref r0, length);
 	}
 #pragma warning restore CS8500
+#endif
 #endif
 }

@@ -116,7 +116,7 @@ public static unsafe class PointerExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static String? GetUnsafeString(this IntPtr ptr, Int32 length)
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		return ptr.IsZero() ? default : PointerExtensions.GetStringFromCharPointer((Char*)ptr.ToPointer(), length);
 	}
 	/// <summary>
@@ -137,7 +137,7 @@ public static unsafe class PointerExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static String? GetUnsafeString(this UIntPtr uptr, Int32 length)
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		return uptr.IsZero() ? default : PointerExtensions.GetStringFromCharPointer((Char*)uptr.ToPointer(), length);
 	}
 	/// <summary>
@@ -154,7 +154,7 @@ public static unsafe class PointerExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static String? GetUnsafeString(this MemoryHandle handle, Int32 length)
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		return handle.Pointer == default ?
 			default :
 			PointerExtensions.GetStringFromCharPointer((Char*)handle.Pointer, length);
@@ -177,7 +177,7 @@ public static unsafe class PointerExtensions
 	/// </remarks>
 	public static T[]? GetUnsafeArray<T>(this IntPtr ptr, Int32 length) where T : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		return ptr.IsZero() ? default : ptr.GetUnsafeReadOnlySpan<T>(length).ToArray();
 	}
 	/// <summary>
@@ -193,7 +193,7 @@ public static unsafe class PointerExtensions
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
 	public static T[]? GetUnsafeArray<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		return uptr.IsZero() ? default : uptr.GetUnsafeReadOnlySpan<T>(length).ToArray();
 	}
 	/// <summary>
@@ -209,7 +209,7 @@ public static unsafe class PointerExtensions
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
 	public static T[]? GetUnsafeArray<T>(this MemoryHandle handle, Int32 length) where T : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		return handle.Pointer == default ? default : handle.ToIntPtr().GetUnsafeReadOnlySpan<T>(length).ToArray();
 	}
 
@@ -232,7 +232,7 @@ public static unsafe class PointerExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<T> GetUnsafeSpan<T>(this IntPtr ptr, Int32 length) where T : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (ptr.IsZero())
 			return default;
 		return new(ptr.ToPointer(), length);
@@ -256,7 +256,7 @@ public static unsafe class PointerExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<T> GetUnsafeSpan<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (uptr.IsZero())
 			return default;
 		return new(uptr.ToPointer(), length);
@@ -281,7 +281,7 @@ public static unsafe class PointerExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<T> GetUnsafeSpan<T>(this MemoryHandle handle, Int32 length)
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (handle.Pointer == default)
 			return default;
 		return new(handle.Pointer, length);
@@ -308,7 +308,7 @@ public static unsafe class PointerExtensions
 #endif
 	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this IntPtr ptr, Int32 length) where T : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (ptr.IsZero())
 			return default;
 		return new(ptr.ToPointer(), length);
@@ -335,7 +335,7 @@ public static unsafe class PointerExtensions
 #endif
 	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (uptr.IsZero())
 			return default;
 		return new(uptr.ToPointer(), length);
@@ -362,7 +362,7 @@ public static unsafe class PointerExtensions
 #endif
 	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this MemoryHandle handle, Int32 length) where T : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (handle.Pointer == default)
 			return default;
 		return new(handle.Pointer, length);
@@ -538,23 +538,22 @@ public static unsafe class PointerExtensions
 #endif
 	public static Boolean IsImageCode(this RuntimeMethodHandle methodHandle)
 	{
+#if !UAP
 		if (!MemoryInspector.IsSupported || methodHandle == default) return false;
 		if (AotInfo.IsReflectionDisabled) return true;
 		try
 		{
 			if (MethodBase.GetMethodFromHandle(methodHandle) is not { } methodBase) return true;
-#if NETSTANDARD2_1 || NETCOREAPP
 			if (methodBase.ContainsGenericParameters || AotInfo.IsDynamicCode(methodBase)) return false;
-#else
-			// ReSharper disable once ConvertIfStatementToReturnStatement
-			if (methodBase.ContainsGenericParameters) return false;
-#endif
 			return AotInfo.IsImageMethodUnsafe(methodHandle);
 		}
 		catch (Exception)
 		{
 			return true;
 		}
+#else
+			return true;
+#endif
 	}
 
 	/// <summary>

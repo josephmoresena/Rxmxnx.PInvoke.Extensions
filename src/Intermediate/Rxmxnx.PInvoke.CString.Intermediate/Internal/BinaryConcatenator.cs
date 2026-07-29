@@ -54,7 +54,7 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 	/// </summary>
 	/// <param name="value">The value of type T to be written.</param>
 	public void Write(T? value) => this._write(this, value);
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Asynchronously writes the given <paramref name="value"/> into the current instance.
 	/// </summary>
@@ -77,7 +77,7 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 	/// <param name="value">The value of type T to be written.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected abstract void WriteValue(T value);
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Asynchronously writes the given <paramref name="value"/> into the current instance.
 	/// </summary>
@@ -136,7 +136,7 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable, IAsyncDispo
 		if (!this._disposedValue)
 		{
 			if (disposing)
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 				await this.Stream.DisposeAsync();
 #else
 			{
