@@ -1,9 +1,11 @@
-#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 
 /// <summary>
 /// <see cref="RuntimeHelpers"/> compatibility utilities for internal use.
 /// </summary>
+#if !PACAKGE && !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+[ExcludeFromCodeCoverage]
+#endif
 internal static class RuntimeHelpersCompat
 {
 	/// <summary>
@@ -14,6 +16,10 @@ internal static class RuntimeHelpersCompat
 	/// <see langword="true"/> if the given type is reference type or value type that contains references; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
+#if NETSTANDARD2_1 || NETCOREAPP2_0_OR_GREATER
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Boolean IsReferenceOrContainsReferences<T>() => RuntimeHelpers.IsReferenceOrContainsReferences<T>();
+#else
 	public static Boolean IsReferenceOrContainsReferences<T>() => !Info<T>.IsUnmanaged;
 
 	/// <summary>
@@ -50,5 +56,5 @@ internal static class RuntimeHelpersCompat
 		/// </summary>
 		public static readonly Boolean IsUnmanaged = !RuntimeHelpersCompat.IsReferenceOrContainsReferences(typeof(T));
 	}
-}
 #endif
+}

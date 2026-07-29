@@ -104,11 +104,9 @@ internal abstract unsafe class ManagedMemoryManager<T> : MemoryManager<T>
 	/// </summary>
 	/// <returns>The managed reference to the 0th element of the current memory.</returns>
 	protected abstract ref T GetMemoryReference();
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Retrieves a managed reference to the current pinnable object.
 	/// </summary>
 	/// <returns>A managed reference to the current pinnable object.</returns>
 	protected abstract ref Pinnable<T> GetPinnable();
-#endif
 }

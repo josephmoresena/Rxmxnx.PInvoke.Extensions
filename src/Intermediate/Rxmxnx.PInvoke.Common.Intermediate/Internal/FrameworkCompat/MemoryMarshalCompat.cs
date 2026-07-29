@@ -6,7 +6,12 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
+
+#if NETSTANDARD2_1 || NETCOREAPP2_1
+internal static unsafe class MemoryMarshalCompat
+#else
 internal static unsafe partial class MemoryMarshalCompat
+#endif
 {
 	/// <summary>
 	/// Creates a new read-only span for a null-terminated UTF8 string.
@@ -89,7 +94,6 @@ internal static unsafe partial class MemoryMarshalCompat
 
 		return (Int32)result;
 	}
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 #pragma warning disable CS8500
 	/// <summary>
 	/// Creates a new span of <typeparamref name="T"/> items using an <see cref="Pinnable{T}"/> instance.
@@ -101,7 +105,14 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// The number of <typeparamref name="T"/> elements that created span contains.
 	/// </param>
 	/// <returns>A safe span.</returns>
+#if !PACKAGE && (NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER)
+	[ExcludeFromCodeCoverage]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
 	public static Span<T> CreateSafeSpan<T>(Pinnable<T> pinnable, ref T start, Int32 length)
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+		=> MemoryMarshal.CreateSpan(ref start, length);
+#else
 	{
 		SpanOffset offsets = MemoryMarshalCompat.UnsafeSpanOffset;
 		Span<T> result = default;
@@ -130,6 +141,7 @@ internal static unsafe partial class MemoryMarshalCompat
 		}
 		return result;
 	}
+#endif
 	/// <summary>
 	/// Creates a new span of <typeparamref name="T"/> items using an unmanaged/fixed pointer.
 	/// </summary>
@@ -139,8 +151,14 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// The number of <typeparamref name="T"/> elements that <paramref name="ptr"/> contains.
 	/// </param>
 	/// <returns>An unsafe span.</returns>
+#if !PACKAGE && (NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER)
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<T> CreateUnsafeSpan<T>(void* ptr, Int32 length)
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+		=> MemoryMarshal.CreateSpan(ref Unsafe.AsRef<T>(ptr), length);
+#else
 	{
 		Span<IntPtr> span = new(ptr, length);
 		ref Span<IntPtr> spanRef = ref span;
@@ -150,6 +168,7 @@ internal static unsafe partial class MemoryMarshalCompat
 			return spanObjectPtr[0];
 		}
 	}
+#endif
 	/// <summary>
 	/// Creates a new read-only span <typeparamref name="T"/> items using an unmanaged/fixed pointer.
 	/// </summary>
@@ -157,8 +176,14 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// <param name="ptr">An unmanaged pointer to data.</param>
 	/// <param name="length">The number of <typeparamref name="T"/> elements that <paramref name="ptr"/> contains.</param>
 	/// <returns>A unsafe read-only span.</returns>
+#if !PACKAGE && (NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER)
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ReadOnlySpan<T> CreateUnsafeReadOnlySpan<T>(void* ptr, Int32 length)
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+		=> MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<T>(ptr), length);
+#else
 	{
 		Span<IntPtr> span = new(ptr, length);
 		ref Span<IntPtr> spanRef = ref span;
@@ -168,6 +193,6 @@ internal static unsafe partial class MemoryMarshalCompat
 			return spanObjectPtr[0];
 		}
 	}
-#pragma warning restore CS8500
 #endif
+#pragma warning restore CS8500
 }

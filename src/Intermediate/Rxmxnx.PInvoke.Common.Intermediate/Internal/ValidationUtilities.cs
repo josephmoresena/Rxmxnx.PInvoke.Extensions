@@ -289,7 +289,6 @@ internal static unsafe class ValidationUtilities
 	}
 #endif
 
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Validates if the binary span <paramref name="destination"/> is sufficient to contain the binary
 	/// information of <paramref name="valuePtr"/>.
@@ -304,6 +303,9 @@ internal static unsafe class ValidationUtilities
 	/// Thrown if the destination span does not have enough space to contain the binary representation of the
 	/// <see langword="unmanaged"/> value.
 	/// </exception>
+#if !PACKAGE && (NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER)
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidCopyType<TValue>(TValue* valuePtr, Span<Byte> destination, Int32 offset,
 		out ReadOnlySpan<Byte> bytes) where TValue : unmanaged
@@ -313,7 +315,7 @@ internal static unsafe class ValidationUtilities
 		String message = MessageResource.GetInstance().InvalidCopyUnmanagedType(nameof(destination), nameof(valuePtr));
 		throw new InsufficientMemoryException(message);
 	}
-#else
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Validates if the binary span <paramref name="destination"/> is sufficient to contain the binary
 	/// information of <paramref name="value"/>.

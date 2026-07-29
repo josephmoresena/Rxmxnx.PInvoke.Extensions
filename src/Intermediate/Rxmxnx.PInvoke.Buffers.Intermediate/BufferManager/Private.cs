@@ -282,8 +282,8 @@ public static partial class BufferManager<T>
 #if NET7_0_OR_GREATER
 		bytes.Clear();
 #endif
-		ref T refT = ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(bytes));
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+		ref T refT = ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(bytes));
 		Span<T> span = MemoryMarshal.CreateSpan(ref refT, func.Count);
 #else
 		void* ptr = Unsafe.AsPointer(ref MemoryMarshal.GetReference(bytes));
