@@ -1,4 +1,4 @@
-#if NETCOREAPP || USE_SYSTEM_JSON
+#if NETCOREAPP || NETFRAMEWORK
 
 using System.Text.Json;
 #if CSHARP9_0
@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 
 #endif
 
-#if !NETCOREAPP
+#if !NETCOREAPP2_1_OR_GREATER
 using CStringJsonConverter = Rxmxnx.PInvoke.Json.CStringJsonConverter;
 using CStringSequenceJsonConverter = Rxmxnx.PInvoke.Json.CStringSequenceJsonConverter;
 
