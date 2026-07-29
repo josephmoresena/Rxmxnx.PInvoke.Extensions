@@ -6,15 +6,15 @@
 /// </summary>
 public interface IWrapper
 {
-	/// <inheritdoc crefWrapperFactory.Create{ TValue} e)"/>
+	/// <inheritdoc cref="WrapperFactory.Create{TValue}(in TValue)"/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IWrapper<TValue> Create<TValue>(in TValue value) where TValue : struct
 		=> WrapperFactory.Create(in value);
-	/// <inheritdoc cref="WrapperFactory.CreateNullable{TValue}"/>
+	/// <inheritdoc cref="WrapperFactory.CreateNullable{TValue}(in Nullable{TValue})"/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IWrapper<TValue?> CreateNullable<TValue>(in TValue? value) where TValue : struct
 		=> WrapperFactory.CreateNullable(in value);
-	/// <inheritdoc cref="WrapperFactory.CreateObject{TObject}"/>
+	/// <inheritdoc cref="WrapperFactory.CreateObject{TObject}(TObject)"/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IWrapper<TObject> CreateObject<TObject>(TObject instance) where TObject : class
 		=> WrapperFactory.CreateObject(instance);

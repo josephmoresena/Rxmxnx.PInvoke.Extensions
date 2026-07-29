@@ -2,10 +2,11 @@
 
 #if !PACKAGE
 [assembly: SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3261)]
+#elif NETFRAMEWORK
+namespace System.Net.Http { }
 #endif
 #if !NETCOREAPP3_0_OR_GREATER
 namespace System.Runtime.Intrinsics.X86 { }
-
 #if !NETCOREAPP || NETFRAMEWORK
 namespace System.Text.Json { }
 #if PACKAGE

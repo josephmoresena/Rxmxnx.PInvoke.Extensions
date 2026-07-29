@@ -33,7 +33,7 @@ public static partial class BufferManager<T>
 #endif
 		if (stackAlloc)
 		{
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 			Debug.Assert(metadata is not null);
 			metadata.Execute<T, TAction>(ref action, action.Count);
 #else
@@ -70,7 +70,7 @@ public static partial class BufferManager<T>
 			BufferManager<T>.AllocHeap(ref func, out result);
 			return;
 		}
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		Debug.Assert(metadata is not null);
 		result = metadata.Execute<T, TFunction, TResult>(ref func, func.Count);
 #else
@@ -104,7 +104,7 @@ public static partial class BufferManager<T>
 #endif
 		if (stackAlloc)
 		{
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 			Debug.Assert(metadata is not null);
 			metadata.Execute(ref action, action.Count);
 #else
@@ -143,7 +143,7 @@ public static partial class BufferManager<T>
 #endif
 		if (stackAlloc)
 		{
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 			Debug.Assert(metadata is not null);
 			result = metadata.Execute<TFunction, TResult>(ref func, func.Count);
 #else

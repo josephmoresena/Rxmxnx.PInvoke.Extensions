@@ -101,7 +101,7 @@ internal static class MarvinCompat
 
 		unchecked
 		{
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 			Debug.Assert(MarvinCompat.DefaultSeed.HasValue);
 			UInt32 seed0 = (UInt32)MarvinCompat.DefaultSeed.Value;
 #else
@@ -112,7 +112,7 @@ internal static class MarvinCompat
 		}
 	}
 
-#if !PACKAGE || !NETCOREAPP
+#if !PACKAGE || !NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Returns the hash code for the provided read-only character span.
 	/// </summary>
@@ -128,7 +128,7 @@ internal static class MarvinCompat
 		{
 			ref Byte refData0 = ref Unsafe.As<Char, Byte>(ref MemoryMarshal.GetReference(value));
 			UInt32 dataLength = (UInt32)value.Length * 2;
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 			Debug.Assert(MarvinCompat.DefaultSeed.HasValue);
 			UInt32 seed0 = (UInt32)MarvinCompat.DefaultSeed.Value;
 #else

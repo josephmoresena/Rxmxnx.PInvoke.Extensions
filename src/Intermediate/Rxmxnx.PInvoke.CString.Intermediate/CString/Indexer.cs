@@ -28,14 +28,12 @@ public partial class CString : IEnumerableSequence<Byte>
 
 	Int32 IEnumerableSequence<Byte>.GetSize() => this._length;
 	Byte IEnumerableSequence<Byte>.GetItem(Int32 index) => this[index];
-#if PACKAGE && !NETCOREAPP3_0_OR_GREATER
+#if PACKAGE && NETSTANDARD2_1
 	IEnumerator<Byte> IEnumerable<Byte>.GetEnumerator() => IEnumerableSequence.CreateEnumerator(this);
 	IEnumerator IEnumerable.GetEnumerator() => IEnumerableSequence.CreateEnumerator(this);
-#endif
-#if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
+#elif !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 	IEnumerator<Byte> IEnumerable<Byte>.GetEnumerator() => this.CreateDefaultEnumerator();
 	IEnumerator IEnumerable.GetEnumerator() => this.CreateDefaultEnumerator();
-	void IEnumerableSequence.DoNotImplement() { }
 #endif
 
 	/// <summary>

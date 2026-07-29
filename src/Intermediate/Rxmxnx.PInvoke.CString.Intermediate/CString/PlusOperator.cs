@@ -15,7 +15,7 @@ public partial class CString
 	public static CString operator +(String? left, CString? right)
 	{
 		if (!String.IsNullOrEmpty(left) && CString.IsNullOrEmpty(right))
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 			return new(left);
 #else
 			return new(left!);
@@ -52,7 +52,7 @@ public partial class CString
 	public static CString operator +(CString? left, String? right)
 	{
 		if (CString.IsNullOrEmpty(left) && !String.IsNullOrEmpty(right))
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 			return new(right);
 #else
 			return new(right!);

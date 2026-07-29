@@ -1,5 +1,6 @@
 ﻿namespace Rxmxnx.PInvoke;
 
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 /// <summary>
 /// Defines methods to support a simple iteration over a sequence of a specified type.
 /// </summary>
@@ -55,17 +56,19 @@ public interface IEnumerableSequence
 		=> instance.CreateDefaultEnumerator(disposeEnumeration);
 #endif
 }
+#endif
 
 /// <summary>
 /// Defines methods to support a simple iteration over a sequence of a specified type.
 /// </summary>
 /// <typeparam name="T">The type of objects to enumerate.</typeparam>
-public interface IEnumerableSequence<out T> : IEnumerable<T>, IEnumerableSequence
+public interface IEnumerableSequence<out T> : IEnumerable<T>
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+	, IEnumerableSequence
 #if NET9_0_OR_GREATER
 	where T : allows ref struct
 #endif
 {
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -85,6 +88,8 @@ public interface IEnumerableSequence<out T> : IEnumerable<T>, IEnumerableSequenc
 #else
 		=> IEnumerableSequence.CreateEnumerator(this);
 #endif
+#else
+{
 #endif
 	/// <summary>
 	/// Retrieves the element at the specified index.
@@ -113,10 +118,8 @@ public interface IEnumerableSequence<out T> : IEnumerable<T>, IEnumerableSequenc
 /// <summary>
 /// Extension class for enumerable sequence instances.
 /// </summary>
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 [Browsable(false)]
 [EditorBrowsable(EditorBrowsableState.Never)]
-#endif
 public static class EnumerableSequenceExtensions
 {
 #if !PACKAGE && NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER

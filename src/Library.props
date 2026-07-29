@@ -13,6 +13,7 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
+        <NoWarn Condition="'$(TargetFramework)' == 'netcoreapp2.1'">$(NoWarn);NETSDK1023</NoWarn>
     </PropertyGroup>
 
 </Project>

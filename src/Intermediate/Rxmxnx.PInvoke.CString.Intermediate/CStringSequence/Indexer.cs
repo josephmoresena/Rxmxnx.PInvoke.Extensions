@@ -26,7 +26,6 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 	IEnumerator<CString> IEnumerable<CString>.GetEnumerator()
 		=> this.CreateDefaultEnumerator(CStringSequence.DisposeEnumeration);
 	IEnumerator IEnumerable.GetEnumerator() => this.CreateDefaultEnumerator(CStringSequence.DisposeEnumeration);
-	void IEnumerableSequence.DoNotImplement() { }
 #endif
 	ReadOnlySpan<Byte> IUtf8Buffer.Buffer => MemoryMarshal.AsBytes(this._value.AsSpan());
 	GCHandle IUtf8Buffer.Alloc(GCHandleType type) => GCHandle.Alloc(this._value, type);

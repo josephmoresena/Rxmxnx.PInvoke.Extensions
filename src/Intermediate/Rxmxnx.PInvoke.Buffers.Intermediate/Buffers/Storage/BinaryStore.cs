@@ -388,7 +388,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 			result = Interlocked.CompareExchange(ref slot, created, null) ?? created;
 			BinaryStore<TMain, T>.UpdateSlotCapacity(pageLength * 2 - firstPageLength);
 		}
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		Debug.Assert(result is not null);
 		return result;
 #else

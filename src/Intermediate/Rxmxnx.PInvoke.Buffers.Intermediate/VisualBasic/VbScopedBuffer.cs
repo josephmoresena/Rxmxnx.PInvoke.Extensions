@@ -125,6 +125,5 @@ public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 #if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 	IEnumerator<T> IEnumerable<T>.GetEnumerator() => this.CreateDefaultEnumerator();
 	IEnumerator IEnumerable.GetEnumerator() => this.CreateDefaultEnumerator();
-	void IEnumerableSequence.DoNotImplement() { }
 #endif
 }
