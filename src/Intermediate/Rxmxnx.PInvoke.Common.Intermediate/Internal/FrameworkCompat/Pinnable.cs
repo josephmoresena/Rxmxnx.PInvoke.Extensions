@@ -1,5 +1,5 @@
 #if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
-namespace Rxmxnx.PInvoke.Internal;
+namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 
 /// <summary>
 /// Internal class to retrieve data from managed objects.
