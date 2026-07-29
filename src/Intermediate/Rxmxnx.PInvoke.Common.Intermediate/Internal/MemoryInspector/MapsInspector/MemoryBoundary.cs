@@ -22,14 +22,9 @@ internal partial class MemoryInspector
 				private init;
 #endif
 			}
-
-#if NET5_0_OR_GREATER
-#else
-#endif
 			/// <summary>
 			/// Indicates whether current boundary is terminal.
 			/// </summary>
-
 #if NET5_0_OR_GREATER
 			public Boolean IsEnd { get; private init; }
 #else

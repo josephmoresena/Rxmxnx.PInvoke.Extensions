@@ -1,11 +1,11 @@
 ﻿namespace Rxmxnx.PInvoke;
 
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 /// <summary>
 /// This interface defines a wrapper for an object whose value can be modified.
 /// </summary>
 public interface IMutableWrapper : IWrapper
 {
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Creates a new instance of an object that implements the <see cref="IMutableWrapper{TValue}"/> interface.
 	/// </summary>
@@ -66,15 +66,15 @@ public interface IMutableWrapper : IWrapper
 #else
 		=> new MutableWrapper<TObject>(instance);
 #endif
-#endif
 }
+#endif
 
 /// <summary>
 /// This interface defines a wrapper for a <typeparamref name="T"/> object whose value can be modified.
 /// </summary>
 /// <typeparam name="T">The type of value to be wrapped.</typeparam>
 public interface IMutableWrapper<T> : IWrapper<T>, IStrongBox
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	, IMutableWrapper
 #endif
 {

@@ -3,11 +3,10 @@
     <PropertyGroup>
         <Nullable>enable</Nullable>
         <CustomFacadesRequired>true</CustomFacadesRequired>
-        <CustomFacadesRequired Condition="'$(MSBuildRuntimeType)' != 'Mono' Or '$(TargetFramework)' == 'netstandard2.1'">true</CustomFacadesRequired>
     </PropertyGroup>
 
     <Import Project="..\MonoFacade.props"/>
-    <Import Condition="'$(MSBuildRuntimeType)' == 'Mono' Or '$(TargetFramework)' == 'netstandard2.1'" Project="..\System.Text.Json.Mono.props"/>
+    <Import Project="..\System.Text.Json.Mono.props"/>
     <Import Project="..\..\PackageReference.props"/>
 
     <PropertyGroup Condition="'$(UsePackage)' == 'true' And '$(PackageVersion)' != ''">
@@ -23,10 +22,6 @@
         <EmbeddedResource Include="Mono.ILLink.Descriptors.xml">
             <LogicalName>$(AssemblyName).xml</LogicalName>
         </EmbeddedResource>
-    </ItemGroup>
-    <Import Condition="'$(MSBuildRuntimeType)' != 'Mono' And '$(TargetFramework)' != 'netstandard2.1'" Project="..\..\..\Packages.props"/>
-    <ItemGroup Condition="'$(MSBuildRuntimeType)' != 'Mono' And '$(TargetFramework)' != 'netstandard2.1'">
-        <PackageReference Include="System.Memory" Version="*"/>
     </ItemGroup>
 
 </Project>

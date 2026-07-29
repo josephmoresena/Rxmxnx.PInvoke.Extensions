@@ -6,6 +6,7 @@
         <Deterministic>true</Deterministic>
         <Optimize>true</Optimize>
         <DefineConstants Condition="'$(MSBuildRuntimeType)' == 'Mono'">$(DefineConstants);MONO</DefineConstants>
+        <AssemblyName Condition="$(AssemblyName.StartsWith('System')) And '$(TargetFramework)' == 'netstandard2.0'">$(AssemblyName).Empty</AssemblyName>
     </PropertyGroup>
 
     <Import Condition="'$(MSBuildRuntimeType)' == 'Mono'" Project=" ..\MonoProject.props"/>

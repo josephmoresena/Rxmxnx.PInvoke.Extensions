@@ -1,7 +1,9 @@
-#if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 namespace Rxmxnx.PInvoke;
 
-public readonly partial struct ReadOnlyValPtr<T> : IEquatable<IntPtr>
+public readonly partial struct ReadOnlyValPtr<T>
+#if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
+	: IEquatable<IntPtr>
+#endif
 {
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
@@ -9,4 +11,3 @@ public readonly partial struct ReadOnlyValPtr<T> : IEquatable<IntPtr>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	Boolean IEquatable<IntPtr>.Equals(IntPtr other) => this.Pointer.Equals(other);
 }
-#endif

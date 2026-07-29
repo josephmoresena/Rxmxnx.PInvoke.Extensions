@@ -25,6 +25,7 @@ public interface IEnumerableSequence
 	/// <summary>
 	/// Creates an enumerator that iterates through <paramref name="instance"/> instance.
 	/// </summary>
+	/// <typeparam name="T">The type of elements in the sequence.</typeparam>
 	/// <param name="instance">A <see cref="IEnumerableSequence{T}"/> instance.</param>
 	/// <param name="disposeEnumeration">Delegate to dispose enumeration.</param>
 	/// <returns>
@@ -38,6 +39,7 @@ public interface IEnumerableSequence
 	/// <summary>
 	/// Creates an enumerator that iterates through <paramref name="instance"/> instance.
 	/// </summary>
+	/// <typeparam name="T">The type of elements in the sequence.</typeparam>
 	/// <param name="instance">A <see cref="IEnumerableSequence{T}"/> instance.</param>
 	/// <param name="disposeEnumeration">Delegate to dispose enumeration.</param>
 	/// <returns>
@@ -50,7 +52,7 @@ public interface IEnumerableSequence
 #if NET9_0_OR_GREATER
 		where T : allows ref struct
 #endif
-		=> new SequenceEnumerator<T>(instance, disposeEnumeration);
+		=> instance.CreateDefaultEnumerator(disposeEnumeration);
 #endif
 }
 
@@ -96,7 +98,7 @@ public interface IEnumerableSequence<out T> : IEnumerable<T>, IEnumerableSequenc
 	/// <returns>The total number of elements in the sequence.</returns>
 	Int32 GetSize();
 
-#if (!PACKAGE && NETSTANDARD2_1) || NETCOREAPP3_0_OR_GREATER
+#if !PACKAGE && NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Method to call when <see cref="IEnumerator{T}"/> is disposing.
 	/// </summary>
@@ -117,7 +119,7 @@ public interface IEnumerableSequence<out T> : IEnumerable<T>, IEnumerableSequenc
 #endif
 public static class EnumerableSequenceExtensions
 {
-#if (!PACKAGE && NETSTANDARD2_1) || NETCOREAPP3_0_OR_GREATER
+#if !PACKAGE && NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Creates an enumerator that iterates through <paramref name="instance"/> instance.
 	/// </summary>
@@ -134,6 +136,7 @@ public static class EnumerableSequenceExtensions
 	/// <summary>
 	/// Creates an enumerator that iterates through <paramref name="instance"/> instance.
 	/// </summary>
+	/// <typeparam name="T">The type of elements in the sequence.</typeparam>
 	/// <param name="instance">A <see cref="IEnumerableSequence{T}"/> instance.</param>
 	/// <param name="disposeEnumeration">Delegate to dispose enumeration.</param>
 	/// <returns>
@@ -146,5 +149,22 @@ public static class EnumerableSequenceExtensions
 #if NET9_0_OR_GREATER
 		where T : allows ref struct
 #endif
-		=> new SequenceEnumerator<T>(instance, disposeEnumeration);
+		=> new SequenceEnumerator<T, IEnumerableSequence<T>>(instance, disposeEnumeration);
+	/// <summary>
+	/// Creates an enumerator that iterates through <paramref name="instance"/> instance.
+	/// </summary>
+	/// <typeparam name="T">The type of elements in the sequence.</typeparam>
+	/// <typeparam name="TEnumerable">The type of current enumerable.</typeparam>
+	/// <param name="instance">A <see cref="IEnumerableSequence{T}"/> instance.</param>
+	/// <param name="disposeEnumeration">Delegate to dispose enumeration.</param>
+	/// <returns>
+	/// An <see cref="IEnumerator{T}"/> that can be used to iterate through the sequence.
+	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static IEnumerator<T> CreateDefaultEnumerator<TEnumerable, T>(this TEnumerable instance,
+		Action<TEnumerable>? disposeEnumeration = default) where TEnumerable : struct, IEnumerableSequence<T>
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
+		=> new SequenceEnumerator<T, TEnumerable>(instance, disposeEnumeration);
 }
