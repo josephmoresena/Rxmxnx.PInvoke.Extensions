@@ -7,56 +7,18 @@
 /// </summary>
 public interface IReferenceableWrapper : IWrapper
 {
-	/// <summary>
-	/// Creates a new instance of an object that implements <see cref="IReferenceableWrapper{TValue}"/> interface.
-	/// </summary>
-	/// <typeparam name="TValue">The <see cref="ValueType"/> of the object to be wrapped.</typeparam>
-	/// <param name="value">The value to be wrapped.</param>
-	/// <returns>An instance of an object that implements <see cref="IReferenceableWrapper{TValue}"/> interface.</returns>
-	/// <remarks>
-	/// The newly created object wraps a value of <typeparamref name="TValue"/> type provided by <paramref name="value"/>.
-	/// </remarks>
+	/// <seealso cref="WrapperFactory.CreateReadOnlyReferenceable{TValue}(in TValue)"/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public new static IReferenceableWrapper<TValue> Create<TValue>(in TValue value) where TValue : struct
-#if NETCOREAPP
-		=> IReferenceableWrapper<TValue>.Create(value);
-#else
-		=> new InputReference<TValue>(value);
-#endif
-	/// <summary>
-	/// Creates a new instance of an object that implements <see cref="IReferenceableWrapper{TValue}"/> interface.
-	/// </summary>
-	/// <typeparam name="TValue">The <see cref="ValueType"/> of the nullable object to be wrapped.</typeparam>
-	/// <param name="value">The nullable value to be wrapped.</param>
-	/// <returns>An instance of an object that implements <see cref="IReferenceableWrapper{TValue}"/> interface.</returns>
-	/// <remarks>
-	/// The newly created object wraps a nullable value of <typeparamref name="TValue"/> type provided by
-	/// <paramref name="value"/>.
-	/// </remarks>
+		=> WrapperFactory.CreateReadOnlyReferenceable(in value);
+	/// <seealso cref="WrapperFactory.CreateReadOnlyReferenceableNullable{TValue}"/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public new static IReferenceableWrapper<TValue?> CreateNullable<TValue>(in TValue? value) where TValue : struct
-#if NETCOREAPP
-		=> IReferenceableWrapper<TValue?>.Create(value);
-#else
-		=> new InputReference<TValue?>(value);
-#endif
-	/// <summary>
-	/// Creates a new instance of an object that implements <see cref="IReferenceableWrapper{TObject}"/> interface.
-	/// </summary>
-	/// <typeparam name="TObject">The type of the object to be wrapped.</typeparam>
-	/// <param name="instance">The instance to be wrapped.</param>
-	/// <returns>An instance of an object that implements <see cref="IReferenceableWrapper{TObject}"/> interface.</returns>
-	/// <remarks>
-	/// The newly created object wraps an object of <typeparamref name="TObject"/> type provided by <paramref name="instance"/>
-	/// .
-	/// </remarks>
+		=> WrapperFactory.CreateReadOnlyReferenceableNullable(in value);
+	/// <seealso cref="WrapperFactory.CreateReadOnlyReferenceableObject{TObject}"/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public new static IReferenceableWrapper<TObject> CreateObject<TObject>(TObject instance) where TObject : class
-#if NETCOREAPP
-		=> IReferenceableWrapper<TObject>.Create(instance)!;
-#else
-		=> new InputReference<TObject>(instance);
-#endif
+		=> WrapperFactory.CreateReadOnlyReferenceableObject(instance);
 }
 #endif
 

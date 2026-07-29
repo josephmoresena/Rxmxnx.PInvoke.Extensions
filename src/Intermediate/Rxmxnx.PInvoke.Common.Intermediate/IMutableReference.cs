@@ -6,57 +6,19 @@
 /// </summary>
 public interface IMutableReference : IMutableWrapper
 {
-	/// <summary>
-	/// Creates a new instance of an object that implements <see cref="IMutableReference{TValue}"/> interface.
-	/// </summary>
-	/// <typeparam name="TValue">The <see cref="ValueType"/> of the object to be wrapped.</typeparam>
-	/// <param name="value">The value to be wrapped.</param>
-	/// <returns>An instance of an object that implements <see cref="IMutableReference{TValue}"/> interface.</returns>
-	/// <remarks>
-	/// The newly created object wraps a value of <typeparamref name="TValue"/> type provided by <paramref name="value"/>.
-	/// </remarks>
+	/// <seealso cref="WrapperFactory.CreateReferenceable{TValue}(in TValue)"/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public new static IMutableReference<TValue> Create<TValue>(in TValue value = default!) where TValue : struct
-#if NETCOREAPP
-		=> IMutableReference<TValue>.Create(value);
-#else
-		=> new MutableReference<TValue>(value);
-#endif
-	/// <summary>
-	/// Creates a new instance of an object that implements <see cref="IMutableReference{TValue}"/> interface.
-	/// </summary>
-	/// <typeparam name="TValue">The <see cref="ValueType"/> of the nullable object to be wrapped.</typeparam>
-	/// <param name="value">The nullable value to be wrapped.</param>
-	/// <returns>An instance of an object that implements <see cref="IMutableReference{TValue}"/> interface.</returns>
-	/// <remarks>
-	/// The newly created object wraps a nullable value of <typeparamref name="TValue"/> type provided by
-	/// <paramref name="value"/>.
-	/// </remarks>
+	public new static IMutableReference<TValue> Create<TValue>(in TValue value = default) where TValue : struct
+		=> WrapperFactory.CreateReferenceable(in value);
+	/// <seealso cref="WrapperFactory.CreateReferenceableNullable{TValue}(in Nullable{TValue})"/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public new static IMutableReference<TValue?> CreateNullable<TValue>(in TValue? value = default)
 		where TValue : struct
-#if NETCOREAPP
-		=> IMutableReference<TValue?>.Create(value);
-#else
-		=> new MutableReference<TValue?>(value);
-#endif
-	/// <summary>
-	/// Creates a new instance of an object that implements <see cref="IMutableReference{TObject}"/> interface.
-	/// </summary>
-	/// <typeparam name="TObject">The type of the object to be wrapped.</typeparam>
-	/// <param name="instance">The instance to be wrapped.</param>
-	/// <returns>An instance of an object that implements <see cref="IMutableReference{TObject}"/> interface.</returns>
-	/// <remarks>
-	/// The newly created object wraps an object of <typeparamref name="TObject"/> type provided by <paramref name="instance"/>
-	/// .
-	/// </remarks>
+		=> WrapperFactory.CreateReferenceableNullable(in value);
+	/// <seealso cref="WrapperFactory.CreateReferenceableObject{TObject}(TObject)"/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public new static IMutableReference<TObject> CreateObject<TObject>(TObject instance) where TObject : class
-#if NETCOREAPP
-		=> IMutableReference<TObject>.Create(instance)!;
-#else
-		=> new MutableReference<TObject>(instance);
-#endif
+		=> WrapperFactory.CreateReferenceableObject(instance);
 }
 #endif
 

@@ -6,66 +6,18 @@
 /// </summary>
 public interface IMutableWrapper : IWrapper
 {
-	/// <summary>
-	/// Creates a new instance of an object that implements the <see cref="IMutableWrapper{TValue}"/> interface.
-	/// </summary>
-	/// <typeparam name="TValue">The <see cref="ValueType"/> of the object to be wrapped.</typeparam>
-	/// <param name="value">The value to be wrapped.</param>
-	/// <returns>
-	/// An instance of an object implementing the <see cref="IMutableWrapper{TValue}"/> interface, wrapping the
-	/// value provided by <paramref name="value"/>.
-	/// </returns>
-	/// <remarks>
-	/// The newly created object wraps a value of <typeparamref name="TValue"/> type provided by
-	/// <paramref name="value"/>.
-	/// </remarks>
+	/// <seealso cref="WrapperFactory.CreateMutable{TValue}(in TValue)"/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public new static IMutableWrapper<TValue> Create<TValue>(in TValue value = default) where TValue : struct
-#if NETCOREAPP
-		=> IMutableWrapper<TValue>.Create(value);
-#else
-		=> new MutableWrapper<TValue>(value);
-#endif
-	/// <summary>
-	/// Creates a new instance of an object that implements the <see cref="IMutableWrapper{TValue}"/> interface.
-	/// </summary>
-	/// <typeparam name="TValue">The <see cref="ValueType"/> of the nullable object to be wrapped.</typeparam>
-	/// <param name="value">The nullable value to be wrapped.</param>
-	/// <returns>
-	/// An instance of an object implementing the <see cref="IMutableWrapper{TValue}"/> interface, wrapping the nullable
-	/// value provided by <paramref name="value"/>.
-	/// </returns>
-	/// <remarks>
-	/// The newly created object wraps a nullable value of <typeparamref name="TValue"/> type provided by
-	/// <paramref name="value"/>.
-	/// </remarks>
+		=> WrapperFactory.CreateMutable(in value);
+	/// <seealso cref="WrapperFactory.CreateMutableNullable{TValue}"/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public new static IMutableWrapper<TValue?> CreateNullable<TValue>(in TValue? value = default) where TValue : struct
-#if NETCOREAPP
-		=> IMutableWrapper<TValue?>.Create(value);
-#else
-		=> new MutableWrapper<TValue?>(value);
-#endif
-	/// <summary>
-	/// Creates a new instance of an object that implements the <see cref="IMutableWrapper{TObject}"/> interface.
-	/// </summary>
-	/// <typeparam name="TObject">The type of the object to be wrapped.</typeparam>
-	/// <param name="instance">The instance to be wrapped.</param>
-	/// <returns>
-	/// An instance of an object implementing the <see cref="IMutableWrapper{TObject}"/> interface, wrapping the
-	/// object provided by <paramref name="instance"/>.
-	/// </returns>
-	/// <remarks>
-	/// The newly created object wraps an object of <typeparamref name="TObject"/> type provided by
-	/// <paramref name="instance"/>.
-	/// </remarks>
+		=> WrapperFactory.CreateMutableNullable(in value);
+	/// <seealso cref="WrapperFactory.CreateMutableObject{TObject}"/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public new static IMutableWrapper<TObject> CreateObject<TObject>(TObject instance) where TObject : class
-#if NETCOREAPP
-		=> IMutableWrapper<TObject>.Create(instance)!;
-#else
-		=> new MutableWrapper<TObject>(instance);
-#endif
+		=> WrapperFactory.CreateMutableObject(instance);
 }
 #endif
 
