@@ -219,7 +219,7 @@ public sealed partial class CStringBuilder
 	/// <returns>Builder capacity.</returns>
 	private static UInt16 GetCapacityFor(ReadOnlySpan<Char> initialValue)
 	{
-		Int32 byteCount = Encoding.UTF8.GetByteCount(initialValue);
+		Int32 byteCount = initialValue.GetUtf8Count();
 		if (byteCount < CStringBuilder.DefaultCapacity)
 			return CStringBuilder.DefaultCapacity;
 		return (UInt16)Math.Min(byteCount, Chunk.MaxLength);

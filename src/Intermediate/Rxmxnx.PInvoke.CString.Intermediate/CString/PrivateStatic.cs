@@ -84,7 +84,7 @@ public partial class CString
 	{
 		if (count == 0) return CString.empty;
 
-		Int32 utf8Length = Encoding.UTF8.GetByteCount(seq);
+		Int32 utf8Length = seq.GetUtf8Count();
 		Int32 bufferLength = utf8Length * count + 1;
 		Byte[] result = CString.CreateByteArray(bufferLength);
 		Span<Byte> span = result.AsSpan();
@@ -209,7 +209,7 @@ public partial class CString
 	/// <returns>A <see cref="String"/> instance.</returns>
 	private static String ToUtf16(ReadOnlySpan<Byte> utf8Bytes)
 	{
-		String result = Encoding.UTF8.GetString(utf8Bytes);
+		String result = Utf8Comparator.GetStringFromUtf8(utf8Bytes);
 		return String.IsInterned(result) ?? result;
 	}
 #if NETCOREAPP3_0_OR_GREATER

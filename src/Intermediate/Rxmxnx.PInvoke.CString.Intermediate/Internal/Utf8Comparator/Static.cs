@@ -18,7 +18,33 @@ internal abstract unsafe partial class Utf8Comparator
 	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	protected static String GetStringFromUtf8(ReadOnlySpan<Byte> source) => Encoding.UTF8.GetString(source);
+	public static String GetStringFromUtf8(ReadOnlySpan<Byte> source)
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+		=> Encoding.UTF8.GetString(source);
+#else
+	{
+		fixed (Byte* ptr = &MemoryMarshal.GetReference(source))
+			return Encoding.UTF8.GetString(ptr, source.Length);
+	}
+#endif
+	/// <summary>
+	/// Calculates the number of characters produced by decoding the <paramref name="source"/>.
+	/// </summary>
+	/// <param name="source">A read-only span of <see cref="byte"/> elements representing a UTF-8 encoded text.</param>
+	/// <returns>The number of characters produced by decoding the UTF-8 encoded text.</returns>
+#if !PACKAGE && NETCOREAPP && !NET7_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Int32 GetCharCountFromUtf8(ReadOnlySpan<Byte> source)
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+		=> Encoding.UTF8.GetCharCount(source);
+#else
+	{
+		fixed (Byte* ptr = &MemoryMarshal.GetReference(source))
+			return Encoding.UTF8.GetCharCount(ptr, source.Length);
+	}
+#endif
 	/// <summary>
 	/// Decodes all the bytes in <paramref name="source"/> into a <paramref name="destination"/>.
 	/// </summary>
@@ -30,16 +56,6 @@ internal abstract unsafe partial class Utf8Comparator
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected static void CopyCharsFromUtf8(ReadOnlySpan<Byte> source, Span<Char> destination)
 		=> Utf8.ToUtf16(source, destination, out _, out _);
-	/// <summary>
-	/// Calculates the number of characters produced by decoding the <paramref name="source"/>.
-	/// </summary>
-	/// <param name="source">A read-only span of <see cref="byte"/> elements representing a UTF-8 encoded text.</param>
-	/// <returns>The number of characters produced by decoding the UTF-8 encoded text.</returns>
-#if !PACKAGE && NETCOREAPP && !NET7_0_OR_GREATER
-	[ExcludeFromCodeCoverage]
-#endif
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	protected static Int32 GetCharCountFromUtf8(ReadOnlySpan<Byte> source) => Encoding.UTF8.GetCharCount(source);
 	/// <summary>
 	/// Decodes the <see cref="Rune"/> at the beginning of the provided UTF-8 encoded source buffer.
 	/// </summary>

@@ -291,18 +291,6 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Rxmxnx.PInvoke.Internal.FrameworkCompat.EncodingExtensions</Target>
-    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/netcoreapp2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Rxmxnx.PInvoke.Internal.FrameworkCompat.SortedCollectionsExtensions</Target>
-    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/netcoreapp2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Runtime.CompilerServices.IsByRefLikeAttribute</Target>
     <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netcoreapp2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
@@ -312,18 +300,6 @@
     <Target>T:System.Runtime.CompilerServices.IsReadOnlyAttribute</Target>
     <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netcoreapp2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Rxmxnx.PInvoke.Internal.FrameworkCompat.EncodingExtensions</Target>
-    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Rxmxnx.PInvoke.Internal.FrameworkCompat.SortedCollectionsExtensions</Target>
-    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
@@ -402,12 +378,6 @@
     <Target>T:System.Runtime.CompilerServices.IsReadOnlyAttribute</Target>
     <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>M:Rxmxnx.PInvoke.Internal.FrameworkCompat.SortedCollectionsExtensions.TryGetValue``1(System.Collections.Generic.SortedSet{``0},``0,``0@)</Target>
-    <Left>lib/net47/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/net472/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>

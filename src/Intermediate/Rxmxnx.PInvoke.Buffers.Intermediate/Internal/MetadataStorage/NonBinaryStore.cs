@@ -1,7 +1,3 @@
-#if !NETSTANDARD2_1 && !NETCOREAPP
-using Rxmxnx.PInvoke.Internal.FrameworkCompat;
-#endif
-
 namespace Rxmxnx.PInvoke.Internal;
 
 internal abstract partial class MetadataStorage
@@ -67,7 +63,20 @@ internal abstract partial class MetadataStorage
 		public static void AddNonBinary(BufferTypeMetadata<T> typeMetadata)
 		{
 			using WriteScope scope = NonBinaryStore<T>.GetLock();
+#if NETSTANDARD2_1 || NETCOREAPP2_0_OR_GREATER
 			NonBinaryStore<T>.GetNonBinaryMap().TryAdd(typeMetadata.Size, typeMetadata);
+#else
+			SortedList<UInt16, BufferTypeMetadata<T>> maps = NonBinaryStore<T>.GetNonBinaryMap();
+			if (maps.ContainsKey(typeMetadata.Size)) return;
+			try
+			{
+				maps.Add(typeMetadata.Size, typeMetadata);
+			}
+			catch (Exception)
+			{
+				// NONE
+			}
+#endif
 		}
 
 		/// <summary>

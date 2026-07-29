@@ -80,7 +80,7 @@ public partial class CStringSequence
 		/// <returns>The current instance after the append operation has completed.</returns>
 		public Builder Append(ReadOnlySpan<Char> value)
 		{
-			this._value.Append(value, Encoding.UTF8.GetByteCount(value));
+			this._value.Append(value, value.GetUtf8Count());
 			return this;
 		}
 		/// <summary>
@@ -201,7 +201,7 @@ public partial class CStringSequence
 #endif
 		public Builder Insert(Int32 index, ReadOnlySpan<Char> value)
 		{
-			this._value.Insert(index, value, Encoding.UTF8.GetByteCount(value));
+			this._value.Insert(index, value, value.GetUtf8Count());
 			return this;
 		}
 		/// <inheritdoc cref="CStringSequence.Builder.Value.RemoveAt(Int32)"/>

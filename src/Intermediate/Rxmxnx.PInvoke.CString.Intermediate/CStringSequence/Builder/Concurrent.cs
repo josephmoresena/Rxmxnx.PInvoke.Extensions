@@ -51,7 +51,7 @@ public partial class CStringSequence
 		public Builder ConcurrentAppend(ReadOnlySpan<Char> value)
 		{
 			Concurrent concurrent = new(this._value);
-			concurrent.Append(value, Encoding.UTF8.GetByteCount(value));
+			concurrent.Append(value, value.GetUtf8Count());
 			return this;
 		}
 		/// <inheritdoc cref="CStringSequence.Builder.AppendEscaped(ReadOnlySpan{Byte})"/>
@@ -156,7 +156,7 @@ public partial class CStringSequence
 		public Builder ConcurrentInsert(Int32 index, ReadOnlySpan<Char> value)
 		{
 			Concurrent concurrent = new(this._value);
-			concurrent.Insert(index, value, Encoding.UTF8.GetByteCount(value));
+			concurrent.Insert(index, value, value.GetUtf8Count());
 			return this;
 		}
 		/// <inheritdoc cref="CStringSequence.Builder.RemoveAt(Int32)"/>

@@ -162,7 +162,11 @@ internal partial class MemoryInspector
 		/// <param name="value">A <see cref="MemoryBoundary"/> instance.</param>
 		private static void AddBoundary(SortedSet<MemoryBoundary> maps, MemoryBoundary value)
 		{
+#if (!NETFRAMEWORK || NET472_OR_GREATER) && !NETSTANDARD2_0
 			if (maps.TryGetValue(value, out MemoryBoundary existing))
+#else
+			if (MapsInspector.TryGetValue(maps, value, out MemoryBoundary existing))
+#endif
 			{
 				if (value.IsEnd != existing.IsEnd)
 					maps.Remove(existing);
@@ -189,6 +193,31 @@ internal partial class MemoryInspector
 			MemoryBoundary boundary = view.Max;
 			return boundary != default && !boundary.IsEnd;
 		}
+#if NETFRAMEWORK && !NET472_OR_GREATER || NETSTANDARD2_0
+		/// <summary>
+		/// Searches the set for a given value and returns the equal value it finds, if any.
+		/// </summary>
+		/// <param name="set">Current <see cref="SortedSet{T}"/> instance.</param>
+		/// <param name="equalValue">The value to search for.</param>
+		/// <param name="actualValue">Output. The value from the set that the search found.</param>
+		/// <returns>A value indicating whether the search was successful.</returns>
+		private static Boolean TryGetValue(SortedSet<MemoryBoundary> set, MemoryBoundary equalValue,
+			out MemoryBoundary actualValue)
+		{
+			SortedSet<MemoryBoundary> view = set.GetViewBetween(equalValue, equalValue);
+			using (SortedSet<MemoryBoundary>.Enumerator enumerator = view.GetEnumerator())
+			{
+				if (enumerator.MoveNext())
+				{
+					actualValue = enumerator.Current;
+					return true;
+				}
+			}
+
+			actualValue = default;
+			return false;
+		}
+#endif
 	}
 }
 #endif

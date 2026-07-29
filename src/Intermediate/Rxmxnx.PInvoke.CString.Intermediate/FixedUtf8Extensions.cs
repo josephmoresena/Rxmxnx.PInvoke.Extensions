@@ -3,13 +3,31 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// Provides a set of extensions for basic fixing operations with UTF-8 texts.
 /// </summary>
-[EditorBrowsable(EditorBrowsableState.Never)]
 [Browsable(false)]
+[EditorBrowsable(EditorBrowsableState.Never)]
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 public static unsafe class FixedUtf8Extensions
 {
+	/// <summary>
+	/// Calculates the number of UTF-8 units produced by the encoding the characters in the specified
+	/// <see cref="String"/>.
+	/// </summary>
+	/// <param name="value">A <see cref="String"/> instance.</param>
+	/// <returns>The number of UTF-8 units produced by encoding the specified <see cref="String"/>.</returns>
+	public static Int32 GetUtf8Count(this String? value)
+		=> !String.IsNullOrEmpty(value) ? value.AsSpan().GetUtf8Count() : default;
+	/// <summary>
+	/// Calculates the number of UTF-8 units produced by the encoding the characters in the specified character span.
+	/// </summary>
+	/// <param name="chars">The span of characters to encode.</param>
+	/// <returns>The number of UTF-8 units produced by encoding the specified character span.</returns>
+	public static Int32 GetUtf8Count(this ReadOnlySpan<Char> chars)
+	{
+		fixed (Char* ptr = &MemoryMarshal.GetReference(chars))
+			return Encoding.UTF8.GetByteCount(ptr, chars.Length);
+	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current UTF-8 string by pinning its memory
 	/// address until the specified action has completed.
