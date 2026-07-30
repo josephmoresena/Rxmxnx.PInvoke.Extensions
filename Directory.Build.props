@@ -13,6 +13,7 @@
         <TargetFrameworkIdentifier>.NETCore</TargetFrameworkIdentifier>
         <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
         <TargetFrameworkMoniker>.NETCore,Version=v5.0</TargetFrameworkMoniker>
+        <TargetFrameworkMonikerDisplayName>.NET for Windows Universal</TargetFrameworkMonikerDisplayName>
         <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
         <TargetPlatformVersion>10.0.16299.0</TargetPlatformVersion>
         <TargetPlatformMinVersion>10.0.16299.0</TargetPlatformMinVersion>
