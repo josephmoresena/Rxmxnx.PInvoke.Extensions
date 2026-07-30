@@ -22,6 +22,9 @@
         <DefineConstants>$(DefineConstants);NETFX_CORE;WINDOWS_UWP;UAP;UAP10_0_16299</DefineConstants>
         <DisableStandardFrameworkResolution>true</DisableStandardFrameworkResolution>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1' Or '$(TargetFramework)' == 'uap10.0.16299'">
+        <NoWarn>$(NoWarn);NETSDK1023</NoWarn>
+    </PropertyGroup>
 
     <PropertyGroup Condition="'$(MonoFrameworkPath)' == ''">
         <MonoFrameworkPath Condition="$([MSBuild]::IsOSPlatform('Linux'))">/usr/lib/mono</MonoFrameworkPath>

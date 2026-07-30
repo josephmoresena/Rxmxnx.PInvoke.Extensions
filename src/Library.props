@@ -13,7 +13,6 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
-        <NoWarn Condition="'$(TargetFramework)' == 'netcoreapp2.1' Or '$(TargetFramework)' == 'uap10.0.16299'">$(NoWarn);NETSDK1023</NoWarn>
 		<CopyLocalLockFileAssemblies Condition="'$(Version)' != ''">false</CopyLocalLockFileAssemblies>
     </PropertyGroup>
 
