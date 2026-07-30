@@ -74,6 +74,6 @@ public interface IWrapper<T>
 	/// <paramref name="instance"/>.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static IWrapper<T?> Create(T? instance) => new Input<T?>(instance);
+	public static IWrapper<T?> Create(T? instance) => WrapperFactory.Create(instance);
 #endif
 }

@@ -6,6 +6,17 @@ namespace Rxmxnx.PInvoke;
 public static class WrapperFactory
 {
 	/// <summary>
+	/// Creates a new instance of an object that implements <see cref="IWrapper{T}"/> interface.
+	/// </summary>
+	/// <typeparam name="T">The type of value to be wrapped.</typeparam>
+	/// <param name="instance">The value to be wrapped.</param>
+	/// <returns>An instance of an object that implements <see cref="IWrapper{T}"/> interface.</returns>
+	/// <remarks>
+	/// The newly created object wraps a value of <typeparamref name="T"/> type provided by <paramref name="instance"/>.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static IWrapper<T?> Create<T>(T? instance) => new Input<T?>(instance);
+	/// <summary>
 	/// Creates a new instance of an object that implements <see cref="IWrapper{TValue}"/> interface.
 	/// </summary>
 	/// <typeparam name="TValue">The <see cref="ValueType"/> of the object to be wrapped.</typeparam>
@@ -56,6 +67,20 @@ public static class WrapperFactory
 		=> new Input<TObject>(instance);
 #endif
 	/// <summary>
+	/// Creates a new instance of an object that implements the <see cref="IMutableWrapper{T}"/> interface.
+	/// </summary>
+	/// <typeparam name="T">The type of value to be wrapped.</typeparam>
+	/// <param name="instance">The value to be wrapped.</param>
+	/// <returns>
+	/// An instance of an object implementing the <see cref="IMutableWrapper{T}"/> interface, wrapping the value
+	/// provided by <paramref name="instance"/>.
+	/// </returns>
+	/// <remarks>
+	/// The newly created object wraps a value of <typeparamref name="T"/> type provided by <paramref name="instance"/>.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static IMutableWrapper<T?> CreateMutable<T>(T? instance = default) => new MutableWrapper<T?>(instance);
+	/// <summary>
 	/// Creates a new instance of an object that implements the <see cref="IMutableWrapper{TValue}"/> interface.
 	/// </summary>
 	/// <typeparam name="TValue">The <see cref="ValueType"/> of the object to be wrapped.</typeparam>
@@ -69,7 +94,7 @@ public static class WrapperFactory
 	/// <paramref name="value"/>.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static IMutableWrapper<TValue> CreateMutable<TValue>(in TValue value = default) where TValue : struct
+	public static IMutableWrapper<TValue> CreateMutable<TValue>(in TValue value) where TValue : struct
 #if NETCOREAPP3_0_OR_GREATER
 		=> IMutableWrapper<TValue>.Create(value);
 #else
@@ -89,8 +114,7 @@ public static class WrapperFactory
 	/// <paramref name="value"/>.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static IMutableWrapper<TValue?> CreateMutableNullable<TValue>(in TValue? value = default)
-		where TValue : struct
+	public static IMutableWrapper<TValue?> CreateMutableNullable<TValue>(in TValue? value) where TValue : struct
 #if NETCOREAPP3_0_OR_GREATER
 		=> IMutableWrapper<TValue?>.Create(value);
 #else
@@ -116,6 +140,18 @@ public static class WrapperFactory
 #else
 		=> new MutableWrapper<TObject>(instance);
 #endif
+	/// <summary>
+	/// Creates a new instance of an object that implements <see cref="IReferenceableWrapper{T}"/> interface.
+	/// </summary>
+	/// <typeparam name="T">The type of value to be wrapped.</typeparam>
+	/// <param name="instance">The value to be wrapped.</param>
+	/// <returns>An instance of an object that implements <see cref="IReferenceableWrapper{T}"/> interface.</returns>
+	/// <remarks>
+	/// The newly created object wraps a value of <typeparamref name="T"/> type provided by <paramref name="instance"/>.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static IReferenceableWrapper<T?> CreateReadOnlyReferenceable<T>(T? instance)
+		=> new InputReference<T?>(instance);
 	/// <summary>
 	/// Creates a new instance of an object that implements <see cref="IReferenceableWrapper{TValue}"/> interface.
 	/// </summary>
@@ -170,6 +206,18 @@ public static class WrapperFactory
 		=> new InputReference<TObject>(instance);
 #endif
 	/// <summary>
+	/// Creates a new instance of an object that implements <see cref="IMutableReference{T}"/> interface.
+	/// </summary>
+	/// <typeparam name="T">The type of value to be wrapped.</typeparam>
+	/// <param name="instance">The value to be wrapped.</param>
+	/// <returns>An instance of an object that implements <see cref="IMutableReference{T}"/> interface.</returns>
+	/// <remarks>
+	/// The newly created object wraps a value of <typeparamref name="T"/> type provided by <paramref name="instance"/>.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static IMutableReference<T?> CreateReferenceable<T>(T? instance = default)
+		=> new MutableReference<T?>(instance);
+	/// <summary>
 	/// Creates a new instance of an object that implements <see cref="IMutableReference{TValue}"/> interface.
 	/// </summary>
 	/// <typeparam name="TValue">The <see cref="ValueType"/> of the object to be wrapped.</typeparam>
@@ -179,8 +227,7 @@ public static class WrapperFactory
 	/// The newly created object wraps a value of <typeparamref name="TValue"/> type provided by <paramref name="value"/>.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static IMutableReference<TValue> CreateReferenceable<TValue>(in TValue value = default!)
-		where TValue : struct
+	public static IMutableReference<TValue> CreateReferenceable<TValue>(in TValue value) where TValue : struct
 #if NETCOREAPP3_0_OR_GREATER
 		=> IMutableReference<TValue>.Create(value);
 #else
@@ -197,8 +244,7 @@ public static class WrapperFactory
 	/// <paramref name="value"/>.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static IMutableReference<TValue?> CreateReferenceableNullable<TValue>(in TValue? value = default)
-		where TValue : struct
+	public static IMutableReference<TValue?> CreateReferenceableNullable<TValue>(in TValue? value) where TValue : struct
 #if NETCOREAPP3_0_OR_GREATER
 		=> IMutableReference<TValue?>.Create(value);
 #else

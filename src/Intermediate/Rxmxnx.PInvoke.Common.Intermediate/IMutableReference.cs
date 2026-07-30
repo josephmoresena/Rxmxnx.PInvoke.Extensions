@@ -53,6 +53,7 @@ public interface IMutableReference<T> : IReferenceableWrapper<T>, IMutableWrappe
 	/// <paramref name="instance"/>.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public new static IMutableReference<T?> Create(T? instance = default) => new MutableReference<T?>(instance);
+	public new static IMutableReference<T?> Create(T? instance = default)
+		=> WrapperFactory.CreateReferenceable(instance);
 #endif
 }

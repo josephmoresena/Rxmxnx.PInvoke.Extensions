@@ -44,6 +44,7 @@ public interface IReferenceableWrapper<T> : IWrapper<T>, IReadOnlyReferenceable<
 	/// <paramref name="instance"/>.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public new static IReferenceableWrapper<T?> Create(T? instance) => new InputReference<T?>(instance);
+	public new static IReferenceableWrapper<T?> Create(T? instance)
+		=> WrapperFactory.CreateReadOnlyReferenceable(instance);
 }
 #endif

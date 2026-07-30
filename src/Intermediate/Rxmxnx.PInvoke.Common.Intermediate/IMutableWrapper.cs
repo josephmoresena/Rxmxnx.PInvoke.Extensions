@@ -60,6 +60,6 @@ public interface IMutableWrapper<T> : IWrapper<T>, IStrongBox
 	/// <paramref name="instance"/>.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public new static IMutableWrapper<T?> Create(T? instance = default) => new MutableWrapper<T?>(instance);
+	public new static IMutableWrapper<T?> Create(T? instance = default) => WrapperFactory.CreateMutable(instance);
 #endif
 }
