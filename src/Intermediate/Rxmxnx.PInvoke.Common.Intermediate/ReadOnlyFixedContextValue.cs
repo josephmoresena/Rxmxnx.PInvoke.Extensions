@@ -96,7 +96,7 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 		if (ptr == default) return;
 		this._value = new((IntPtr)ptr, count * sizeof(T))
 		{
-			IsReadOnly = true, IsUnmanaged = RuntimeHelpers.IsReferenceOrContainsReferences<T>(), Type = typeof(T),
+			IsReadOnly = true, IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(), Type = typeof(T),
 		};
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		this.Values = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<T>(ptr), count);
@@ -124,7 +124,7 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 		this._value = new((IntPtr)handle.Pointer, count * sizeof(T))
 		{
 			IsReadOnly = isReadOnly,
-			IsUnmanaged = RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
+			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
 			Handle = new(handle),
 			Type = typeof(T),
 		};
@@ -154,7 +154,7 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 		this._value = new(valPtr.Pointer, count * sizeof(T))
 		{
 			IsReadOnly = true,
-			IsUnmanaged = RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
+			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
 			Handle = new(),
 			Type = typeof(T),
 		};
@@ -198,7 +198,7 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 		this._value = new(valPtr.Pointer, count * sizeof(T))
 		{
 			IsReadOnly = true,
-			IsUnmanaged = RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
+			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
 			Handle = handle,
 			Type = typeof(T),
 		};
