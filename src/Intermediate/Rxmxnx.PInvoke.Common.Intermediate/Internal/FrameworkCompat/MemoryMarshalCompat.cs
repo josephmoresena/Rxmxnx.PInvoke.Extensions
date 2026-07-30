@@ -126,18 +126,15 @@ internal static unsafe partial class MemoryMarshalCompat
 		{
 			Span<Byte> bytes = new(pResult, offsets.SpanSize);
 			Unsafe.As<Byte, Int32>(ref bytes[offsets.LengthOffset]) = length;
-#if NETFRAMEWORK || UAP
-			Unsafe.As<Byte, Pinnable<T>>(ref bytes[offsets.PinnableOffset]) = pinnable;
-			Unsafe.As<Byte, IntPtr>(ref bytes[offsets.PointerOffset]) = Unsafe.ByteOffset(ref pinnable.Data, ref start);
-#else
+#if !NETFRAMEWORK && !UAP
 			if (offsets.PinnableOffset == -1)
 			{
 				Unsafe.As<Byte, IntPtr>(ref bytes[offsets.PointerOffset]) = new(pStart);
 				return result;
 			}
-			Unsafe.As<Byte, IntPtr>(ref bytes[offsets.PointerOffset]) = Unsafe.ByteOffset(ref pinnable.Data, ref start);
-			Unsafe.As<Byte, Pinnable<T>>(ref bytes[offsets.PinnableOffset]) = pinnable;
 #endif
+			Unsafe.As<Byte, IntPtr>(ref bytes[offsets.PointerOffset]) = Unsafe.ByteOffset(ref pinnable.Data, ref start);
+			MemoryMarshalCompat.SetPinnableField(pinnable, pResult, offsets);
 		}
 		return result;
 	}

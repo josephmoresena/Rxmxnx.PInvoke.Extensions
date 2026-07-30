@@ -34,10 +34,32 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				".NET 6.0"
 #elif NET5_0_OR_GREATER
 				".NET 5.0"
-#elif NETCOREAPP3_1
+#elif NETCOREAPP3_1_OR_GREATER
 				".NET Core 3.1"
-#elif NETCOREAPP3_0
+#elif NETCOREAPP3_0_OR_GREATER
 				".NET Core 3.0"
+#elif NETCOREAPP2_2_OR_GREATER
+				".NET Core 2.2"
+#elif NETCOREAPP2_1_OR_GREATER
+				".NET Core 2.1"
+#elif NETCOREAPP2_0_OR_GREATER
+				".NET Core 2.0"
+#elif NET481
+				".NET Framework 4.8.1"
+#elif NET48_OR_GREATER
+				".NET Framework 4.8"
+#elif NET472_OR_GREATER
+				".NET Framework 4.7.2"
+#elif NET471_OR_GREATER
+				".NET Framework 4.7.1"
+#elif NET47_OR_GREATER
+				".NET Framework 4.7.0"
+#elif NET462_OR_GREATER
+				".NET Framework 4.6.2"
+#elif NET461_OR_GREATER
+				".NET Framework 4.6.1"
+#elif UAP
+				".NET for Windows Universal"
 #else
 				"Mono"
 #endif
@@ -113,6 +135,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #if !RELEASE_PACKAGE
 			writer.WriteLine($"Package: {SystemInfo.CompilationFramework}");
 #endif
+			writer.WriteLine($"Fast Span: {SystemInfo.UsesNativeSpan}");
 			writer.WriteLine($"Native AOT: {AotInfo.IsNativeAot}");
 			writer.WriteLine($"Reflection Enabled: {!AotInfo.IsReflectionDisabled}");
 			writer.WriteLine($"IL Code Generation Supported: {AotInfo.IsCodeGenerationSupported}");

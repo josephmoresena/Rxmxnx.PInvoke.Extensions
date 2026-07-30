@@ -24,6 +24,20 @@ internal static unsafe partial class MemoryMarshalCompat
 		=> MemoryMarshalCompat.unsafeSpanOffset ??= MemoryMarshalCompat.ComputeOffset();
 
 	/// <summary>
+	/// Sets the <see cref="Pinnable{T}"/> field value.
+	/// </summary>
+	/// <typeparam name="T">The type of the data items.</typeparam>
+	/// <param name="pinnable">The <see cref="Pinnable{T}"/> instance.</param>
+	/// <param name="pResult">Pointer to the span layout.</param>
+	/// <param name="offsets">Computed span offsets.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static void SetPinnableField<T>(Pinnable<T> pinnable, void* pResult, SpanOffset offsets)
+	{
+		Byte* pinnableSlotPtr = (Byte*)pResult + offsets.PinnableOffset;
+		ref Pinnable<T> pinnableSlotRef = ref Unsafe.AsRef<Pinnable<T>>(pinnableSlotPtr);
+		pinnableSlotRef = pinnable;
+	}
+	/// <summary>
 	/// Computes the offsets of the fields in any instance of <see cref="Span{T}"/>.
 	/// </summary>
 	/// <returns>A <see cref="SpanOffset"/> instance.</returns>
@@ -102,7 +116,6 @@ internal static unsafe partial class MemoryMarshalCompat
 		return result.ValidateLayout();
 #pragma warning restore CS8500
 	}
-
 	/// <summary>
 	/// Finds the unique byte offset at which two field markers occur in their corresponding structure memory images.
 	/// </summary>

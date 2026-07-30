@@ -9,6 +9,18 @@
         <DefaultFramework>net10.0</DefaultFramework>
         <DefaultFrameworks>net10.0;net9.0</DefaultFrameworks>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(TargetFramework)' == 'uap10.0.16299'">
+        <TargetFrameworkIdentifier>.NETCore</TargetFrameworkIdentifier>
+        <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+        <TargetFrameworkMoniker>.NETCore,Version=v5.0</TargetFrameworkMoniker>
+        <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+        <TargetPlatformVersion>10.0.16299.0</TargetPlatformVersion>
+        <TargetPlatformMinVersion>10.0.16299.0</TargetPlatformMinVersion>
+        <TargetPlatformMoniker>UAP,Version=10.0.16299.0</TargetPlatformMoniker>
+        <NuGetTargetMoniker>UAP,Version=v10.0.16299</NuGetTargetMoniker>
+        <DefineConstants>$(DefineConstants);NETFX_CORE;WINDOWS_UWP;UAP;UAP10_0_16299</DefineConstants>
+        <DisableStandardFrameworkResolution>true</DisableStandardFrameworkResolution>
+    </PropertyGroup>
 
     <PropertyGroup Condition="'$(MonoFrameworkPath)' == ''">
         <MonoFrameworkPath Condition="$([MSBuild]::IsOSPlatform('Linux'))">/usr/lib/mono</MonoFrameworkPath>
