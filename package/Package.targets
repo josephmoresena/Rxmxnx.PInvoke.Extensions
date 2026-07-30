@@ -37,5 +37,16 @@
                 TargetFramework="$(AssemblyTargetFramework)"
                 StrongNameKeyPath="$(SigningKeyFile)"/>
     </Target>
+	<Target Name="PrepareUapApiCompatReferences" 
+            BeforeTargets="GetReferencesForApiCompatValidatePackage" DependsOnTargets="FindReferenceAssembliesForReferences" 
+			Condition="'$(TargetFramework)' == 'uap10.0.16299'">
+        <PropertyGroup>
+            <TargetFrameworkMoniker>UAP,Version=v10.0.16299</TargetFrameworkMoniker>
+            <ApiCompatIgnoreTargetPlatformMoniker>true</ApiCompatIgnoreTargetPlatformMoniker>
+        </PropertyGroup>
+        <ItemGroup Condition="'@(ReferencePathWithRefAssemblies)' == ''">
+            <ReferencePathWithRefAssemblies Include="@(ReferencePath)" />
+        </ItemGroup>
+	</Target>
 
 </Project>

@@ -4,13 +4,15 @@
 [assembly: SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3261)]
 #elif NETFRAMEWORK
 namespace System.Net.Http { }
+namespace System.Collections.Immutable { }
 #endif
 #if !NETCOREAPP3_0_OR_GREATER
 namespace System.Runtime.Intrinsics.X86 { }
-#if !NETCOREAPP || NETFRAMEWORK
+#if !NETCOREAPP && !NETFRAMEWORK
 namespace System.Text.Json { }
 #if PACKAGE
 namespace System.Text.Json.Serialization { }
+namespace System.Collections.Immutable { }
 #endif
 #endif
 #endif

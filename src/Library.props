@@ -13,7 +13,21 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
-        <NoWarn Condition="'$(TargetFramework)' == 'netcoreapp2.1'">$(NoWarn);NETSDK1023</NoWarn>
+        <NoWarn Condition="'$(TargetFramework)' == 'netcoreapp2.1' Or '$(TargetFramework)' == 'uap10.0.16299'">$(NoWarn);NETSDK1023</NoWarn>
+		<CopyLocalLockFileAssemblies Condition="'$(Version)' != ''">false</CopyLocalLockFileAssemblies>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(TargetFramework)' == 'uap10.0.16299'">
+        <TargetFrameworkIdentifier>.NETCore</TargetFrameworkIdentifier>
+        <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+        <TargetFrameworkMoniker>.NETCore,Version=v5.0</TargetFrameworkMoniker>
+        <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+        <TargetPlatformVersion>10.0.16299.0</TargetPlatformVersion>
+        <TargetPlatformMinVersion>10.0.16299.0</TargetPlatformMinVersion>
+        <TargetPlatformMoniker>UAP,Version=10.0.16299.0</TargetPlatformMoniker>
+        <NuGetTargetMoniker>UAP,Version=v10.0.16299</NuGetTargetMoniker>
+        <DefineConstants>$(DefineConstants);NETFX_CORE;WINDOWS_UWP;UAP;UAP10_0_16299</DefineConstants>
+        <DisableStandardFrameworkResolution>true</DisableStandardFrameworkResolution>
     </PropertyGroup>
 
 </Project>

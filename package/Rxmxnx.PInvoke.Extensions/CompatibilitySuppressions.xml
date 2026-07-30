@@ -380,6 +380,36 @@
     <Right>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
   <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:&lt;PrivateImplementationDetails&gt;.__StaticArrayInitTypeSize=23</Target>
+    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/uap10.0.16299/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Index</Target>
+    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/uap10.0.16299/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Range</Target>
+    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/uap10.0.16299/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Runtime.CompilerServices.IsByRefLikeAttribute</Target>
+    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/uap10.0.16299/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Runtime.CompilerServices.IsReadOnlyAttribute</Target>
+    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/uap10.0.16299/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:Rxmxnx.PInvoke.CStringBuilder.GetLock</Target>
     <Left>lib/net8.0/Rxmxnx.PInvoke.Extensions.dll</Left>
@@ -420,6 +450,12 @@
     <Target>F:&lt;PrivateImplementationDetails&gt;.AA9E5FCF940DBB78A7B03D363538ECBBBC02D520743958E9D4E23339DD2E339C_A6</Target>
     <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>F:&lt;PrivateImplementationDetails&gt;.888D0745FE99C8490C94C49EA05C495F415EA7CC7E46F36B8C51C3446CE4D19D</Target>
+    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/uap10.0.16299/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0005</DiagnosticId>

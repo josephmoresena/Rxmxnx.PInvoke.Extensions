@@ -46,7 +46,7 @@ public static partial class SystemInfo
 #elif NET462_OR_GREATER
 			".NET Framework 4.6.2"
 #elif UAP
-			"UWP (Build 16299)"
+			".NET for Windows Universal"
 #else
 			".NET Standard 2.0"
 #endif
