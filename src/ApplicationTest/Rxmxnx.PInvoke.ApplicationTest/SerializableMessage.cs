@@ -1,6 +1,7 @@
 using System;
-#if NETCOREAPP
+#if NETCOREAPP || NETFRAMEWORK || UAP
 using System.Text.Json.Serialization;
+
 #endif
 
 namespace Rxmxnx.PInvoke.ApplicationTest
@@ -15,7 +16,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		public T? Title { get; set; }
 		public T? Message { get; set; }
 
-#if NETCOREAPP
+#if NETCOREAPP || NETFRAMEWORK || UAP
 		[JsonConstructor]
 		public SerializableMessage() { }
 #endif

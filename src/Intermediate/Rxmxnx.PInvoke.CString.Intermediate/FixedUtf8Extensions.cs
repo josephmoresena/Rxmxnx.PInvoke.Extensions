@@ -16,6 +16,7 @@ public static unsafe class FixedUtf8Extensions
 	/// </summary>
 	/// <param name="value">A <see cref="String"/> instance.</param>
 	/// <returns>The number of UTF-8 units produced by encoding the specified <see cref="String"/>.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Int32 GetUtf8Count(this String? value)
 		=> !String.IsNullOrEmpty(value) ? value.AsSpan().GetUtf8Count() : default;
 	/// <summary>
@@ -23,11 +24,30 @@ public static unsafe class FixedUtf8Extensions
 	/// </summary>
 	/// <param name="chars">The span of characters to encode.</param>
 	/// <returns>The number of UTF-8 units produced by encoding the specified character span.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Int32 GetUtf8Count(this ReadOnlySpan<Char> chars)
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+		=> Encoding.UTF8.GetByteCount(chars);
+#else
 	{
 		fixed (Char* ptr = &MemoryMarshal.GetReference(chars))
 			return Encoding.UTF8.GetByteCount(ptr, chars.Length);
 	}
+#endif
+	/// <summary>
+	/// Decodes a read-only span of UTF-8 encoded bytes into a UTF-16 encoded <see cref="String"/>.
+	/// </summary>
+	/// <param name="bytes">The read-only byte span containing the UTF-8 text to decode.</param>
+	/// <returns>A new <see cref="String"/> instance containing the decoded text.</returns>
+	public static String ToUtf16(this ReadOnlySpan<Byte> bytes)
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+		=> Encoding.UTF8.GetString(bytes);
+#else
+	{
+		fixed (Byte* ptr = &MemoryMarshal.GetReference(bytes))
+			return Encoding.UTF8.GetString(ptr, bytes.Length);
+	}
+#endif
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current UTF-8 string by pinning its memory
 	/// address until the specified action has completed.

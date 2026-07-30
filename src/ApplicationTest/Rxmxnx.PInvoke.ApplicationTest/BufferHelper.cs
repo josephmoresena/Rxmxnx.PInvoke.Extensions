@@ -4,6 +4,7 @@ using System.Linq;
 using Rxmxnx.PInvoke.Buffers;
 #if NET5_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
+
 #endif
 
 namespace Rxmxnx.PInvoke.ApplicationTest

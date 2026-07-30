@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Buffers;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+#if !NETCOREAPP && !NET461_OR_GREATER && !UAP || NETCOREAPP3_0_OR_GREATER
+using System.Collections.Generic;
 using System.Text;
+
+#endif
+
+// ReSharper disable InterpolatedStringExpressionIsNotIFormattable
 
 namespace Rxmxnx.PInvoke.ApplicationTest
 {
@@ -164,8 +169,12 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				ReadOnlySpan<Byte> utf8Span = enumerator.Current;
 #endif
 				Console.WriteLine($"Address: 0x{utf8Span.GetUnsafeIntPtr():X}\t" + $"Length: {utf8Span.Length}\t" +
+#if !NET461_OR_GREATER && !UAP
 				                  $"Bytes: {Convert.ToBase64String(utf8Span)}\t" +
-				                  $"Text: {Encoding.UTF8.GetString(utf8Span)}");
+#else
+				                  $"Bytes: {Convert.ToBase64String(utf8Span.ToArray())}\t" +
+#endif
+				                  $"Text: {utf8Span.ToUtf16()}");
 #if NET9_0_OR_GREATER
 			}
 #endif
@@ -175,7 +184,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		private static void GuidFeature()
 		{
 			Console.WriteLine("=== Referenceable Wrapper ===");
+#if !NETCOREAPP3_0_OR_GREATER && (NETCOREAPP || NET461_OR_GREATER || UAP)
+			IMutableReference<Guid> uuid = WrapperFactory.CreateReferenceable(Guid.NewGuid());
+#else
 			IMutableReference<Guid> uuid = IMutableReference.Create(Guid.NewGuid());
+#endif
 
 			Program.Print(uuid);
 			uuid.Reference = Guid.NewGuid();
@@ -221,8 +234,13 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		{
 			BufferHelper.CollectGarbage();
 			ref Guid refU = ref uuid.Reference;
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Console.WriteLine(
 				$"Address: 0x{refU.AsBytes().GetUnsafeIntPtr():X}\tWrapper: {uuid.Value}\tRef: {uuid.Reference}");
+#else
+			Console.WriteLine(
+				$"Address: 0x{refU.GetUnsafeIntPtr():X}\tWrapper: {uuid.Value}\tRef: {uuid.Reference}");
+#endif
 		}
 
 		#region FunctionalInterfaces

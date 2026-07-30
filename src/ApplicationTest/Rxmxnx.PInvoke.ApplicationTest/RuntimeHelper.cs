@@ -3,15 +3,19 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET461_OR_GREATER && !UAP
 using System.Runtime.CompilerServices;
+
+#endif
 using System.Runtime.InteropServices;
 using System.Text;
 #if NET5_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
-#endif
 
+#endif
 #if NET6_0_OR_GREATER
 using System.Runtime;
+
 #endif
 
 namespace Rxmxnx.PInvoke.ApplicationTest
@@ -85,7 +89,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		public static readonly CString Null = new(static () =>
 		{
 			Byte[] utf8 = { (Byte)'N', (Byte)'u', (Byte)'l', (Byte)'l', (Byte)'\0', };
+#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET461
 			return utf8.AsSpan()[..^1];
+#else
+			return utf8.AsSpan().Slice(0, utf8.Length - 1);
+#endif
 		});
 #endif
 
@@ -124,8 +132,10 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				if (!AotInfo.IsReflectionDisabled)
 					writer.WriteLine(ex);
 			}
+#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET461_OR_GREATER && !UAP
 			writer.WriteLine($"Dynamic Code Compiled: {RuntimeFeature.IsDynamicCodeCompiled}");
 			writer.WriteLine($"Dynamic Code Supported: {RuntimeFeature.IsDynamicCodeSupported}");
+#endif
 #if NET6_0_OR_GREATER
 			writer.WriteLine($"IL compiled bytes: {JitInfo.GetCompiledILBytes()}");
 			writer.WriteLine($"IL method count: {JitInfo.GetCompiledMethodCount()}");

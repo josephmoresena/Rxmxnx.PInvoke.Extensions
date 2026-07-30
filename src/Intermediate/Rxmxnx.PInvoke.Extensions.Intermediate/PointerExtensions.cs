@@ -490,6 +490,47 @@ public static unsafe class PointerExtensions
 		=> uptr.IsZero() ? default(T?) : uptr.GetUnsafeReadOnlyReference<T>();
 
 	/// <summary>
+	/// Generates a <see cref="UnmanagedMemoryStream"/> instance from an <see cref="IntPtr"/>.
+	/// </summary>
+	/// <param name="ptr">The <see cref="IntPtr"/> pointing to the beginning of the stream.</param>
+	/// <param name="size">The size of the stream.</param>
+	/// <returns>A <see cref="Span{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
+	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
+	/// <remarks>
+	/// The reliability of the obtained stream depends on the lifetime and validity of the pointer during the usage of
+	/// the stream.
+	/// The stream does not own the memory it points to, it's merely a projection over the existing memory.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Stream GetUnsafeStream(this IntPtr ptr, Int64 size)
+	{
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(size);
+		if (ptr.IsZero())
+			return Stream.Null;
+		return new UnmanagedMemoryStream((Byte*)ptr.ToPointer(), size);
+	}
+	/// <summary>
+	/// Generates a <see cref="UnmanagedMemoryStream"/> instance from an <see cref="IntPtr"/>.
+	/// </summary>
+	/// <param name="uptr">The <see cref="UIntPtr"/> pointing to the beginning of the stream.</param>
+	/// <param name="size">The size of the stream.</param>
+	/// <returns>A <see cref="Span{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
+	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
+	/// <remarks>
+	/// The reliability of the obtained stream depends on the lifetime and validity of the pointer during the usage of
+	/// the stream.
+	/// The stream does not own the memory it points to, it's merely a projection over the existing memory.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Stream GetUnsafeStream(this UIntPtr uptr, Int64 size)
+	{
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(size);
+		if (uptr.IsZero())
+			return Stream.Null;
+		return new UnmanagedMemoryStream((Byte*)uptr.ToPointer(), size);
+	}
+
+	/// <summary>
 	/// Creates a new read-only span for a UTF-16 null-terminated string.
 	/// </summary>
 	/// <param name="char0">The pointer to the UTF-16 null-terminated string of characters.</param>
@@ -552,7 +593,7 @@ public static unsafe class PointerExtensions
 			return true;
 		}
 #else
-			return true;
+		return true;
 #endif
 	}
 

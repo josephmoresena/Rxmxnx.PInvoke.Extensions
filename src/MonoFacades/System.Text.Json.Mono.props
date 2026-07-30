@@ -3,7 +3,7 @@
         <NoWarn>$(NoWarn);MSB3243;MSB3277</NoWarn>
         <SystemTextJsonVersion>5.0.2</SystemTextJsonVersion>
         <SystemTextEncodingsWebVersion>5.0.1</SystemTextEncodingsWebVersion>
-        <MicrosoftBclAsyncInterfacesVersion>10.0.5</MicrosoftBclAsyncInterfacesVersion>
+        <MicrosoftBclAsyncInterfacesVersion>5.0.0</MicrosoftBclAsyncInterfacesVersion>
         <IsMDK Condition="'$(MSBuildRuntimeType)' == 'Mono' And '$(TargetFrameworkIdentifier)' == '.NETFramework'">True</IsMDK>
         <CustomFacadesRequired Condition="'$(IsMDK)' == 'True'">true</CustomFacadesRequired>
         <CustomFacadesRequired Condition="'$(TargetFramework)' == 'netstandard2.0'">false</CustomFacadesRequired>

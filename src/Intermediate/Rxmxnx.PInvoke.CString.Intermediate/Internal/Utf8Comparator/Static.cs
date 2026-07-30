@@ -18,15 +18,7 @@ internal abstract unsafe partial class Utf8Comparator
 	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static String GetStringFromUtf8(ReadOnlySpan<Byte> source)
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
-		=> Encoding.UTF8.GetString(source);
-#else
-	{
-		fixed (Byte* ptr = &MemoryMarshal.GetReference(source))
-			return Encoding.UTF8.GetString(ptr, source.Length);
-	}
-#endif
+	public static String GetStringFromUtf8(ReadOnlySpan<Byte> source) => source.ToUtf16();
 	/// <summary>
 	/// Calculates the number of characters produced by decoding the <paramref name="source"/>.
 	/// </summary>

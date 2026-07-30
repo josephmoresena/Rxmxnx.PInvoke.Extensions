@@ -357,6 +357,20 @@ internal static unsafe class ValidationUtilities
 		String message = MessageResource.GetInstance().InvalidLengthOrIndex(nameofValue);
 		throw new ArgumentException(message);
 	}
+	/// <summary>
+	/// Validates the length or index value.
+	/// </summary>
+	/// <param name="value">Length or index value.</param>
+	/// <param name="nameofValue">Name of the length or index parameter.</param>
+	/// <exception cref="ArgumentException">Thrown if <paramref name="value"/> is less than zero.</exception>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNegativeLengthOrIndex(Int64 value,
+		[CallerArgumentExpression(nameof(value))] String nameofValue = ValidationUtilities.emptyString)
+	{
+		if (value >= 0) return;
+		String message = MessageResource.GetInstance().InvalidLengthOrIndex(nameofValue);
+		throw new ArgumentException(message);
+	}
 
 	/// <summary>
 	/// Validates the current index in an iteration of an enumeration.
