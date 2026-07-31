@@ -7,8 +7,6 @@ using System.Text;
 
 #endif
 
-// ReSharper disable InterpolatedStringExpressionIsNotIFormattable
-
 namespace Rxmxnx.PInvoke.ApplicationTest
 {
 	[SuppressMessage("ReSharper", "HeapView.DelegateAllocation")]
@@ -168,8 +166,13 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			{
 				ReadOnlySpan<Byte> utf8Span = enumerator.Current;
 #endif
+#if NET5_0_OR_GREATER
 				Console.WriteLine($"Address: 0x{utf8Span.GetUnsafeIntPtr():X}\t" + $"Length: {utf8Span.Length}\t" +
-#if !NET461_OR_GREATER && !UAP
+#else
+				Console.WriteLine($"Address: 0x{utf8Span.GetUnsafeIntPtr().ToString("X")}\t" +
+				                  $"Length: {utf8Span.Length}\t" +
+#endif
+#if !NET461_OR_GREATER && (NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !UAP)
 				                  $"Bytes: {Convert.ToBase64String(utf8Span)}\t" +
 #else
 				                  $"Bytes: {Convert.ToBase64String(utf8Span.ToArray())}\t" +
@@ -197,7 +200,12 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Console.WriteLine("=== Fixed Rent ===");
 			using IDisposable _ =
 				ArrayPool<Int64>.Shared.RentFixed(10, out FixedContextValue<Int64> fRent, false, out Int32 arrayLength);
+#if NET5_0_OR_GREATER
 			Console.WriteLine($"Address: 0x{fRent.Pointer:X}\tRequired: {fRent.Values.Length}\tRented: {arrayLength}");
+#else
+			Console.WriteLine(
+				$"Address: 0x{fRent.Pointer.ToString("X")}\tRequired: {fRent.Values.Length}\tRented: {arrayLength}");
+#endif
 #if !NET9_0_OR_GREATER
 			foreach (ref Int64 rLong in fRent.Values)
 #else
@@ -215,7 +223,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 
 		private static void Print<T>(FixedContextValue<T> ctx)
 		{
+#if NET5_0_OR_GREATER
 			Console.Write($"Address: 0x{ctx.Pointer:X}\tItems: {ctx.Values.Length} ");
+#else
+			Console.Write($"Address: 0x{ctx.Pointer.ToString("X")}\tItems: {ctx.Values.Length} ");
+#endif
 #if !NET9_0_OR_GREATER
 			foreach (T value in ctx.Values)
 #else
@@ -235,11 +247,16 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			BufferHelper.CollectGarbage();
 			ref Guid refU = ref uuid.Reference;
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+#if NET5_0_OR_GREATER
 			Console.WriteLine(
 				$"Address: 0x{refU.AsBytes().GetUnsafeIntPtr():X}\tWrapper: {uuid.Value}\tRef: {uuid.Reference}");
 #else
 			Console.WriteLine(
-				$"Address: 0x{refU.GetUnsafeIntPtr():X}\tWrapper: {uuid.Value}\tRef: {uuid.Reference}");
+				$"Address: 0x{refU.AsBytes().GetUnsafeIntPtr().ToString()}\tWrapper: {uuid.Value}\tRef: {uuid.Reference}");
+#endif
+#else
+			Console.WriteLine(
+				$"Address: 0x{refU.GetUnsafeIntPtr().ToString()}\tWrapper: {uuid.Value}\tRef: {uuid.Reference}");
 #endif
 		}
 

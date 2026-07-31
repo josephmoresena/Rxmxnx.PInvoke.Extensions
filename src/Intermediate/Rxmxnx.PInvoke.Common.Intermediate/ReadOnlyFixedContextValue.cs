@@ -76,12 +76,12 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			if (this._value.IsUnmanaged || this._value.Type is not { IsValueType: true, }) return default;
 			ref Object refObject = ref Unsafe.As<T, Object>(ref MemoryMarshal.GetReference(this.Values));
-			return MemoryMarshal.CreateReadOnlySpan(ref refObject, this._value.Size / sizeof(T));
+			return MemoryMarshal.CreateReadOnlySpan(ref refObject, this._value.Size / sizeof(IntPtr));
 #else
 			if (this._value.IsUnmanaged || this._value.Type?.GetTypeInfo() is not { IsValueType: true, })
 				return default;
 			void* ptr = Unsafe.AsPointer(ref MemoryMarshal.GetReference(this.Values));
-			return MemoryMarshalCompat.CreateUnsafeReadOnlySpan<Object>(ptr, this._value.Size / sizeof(T));
+			return MemoryMarshalCompat.CreateUnsafeReadOnlySpan<Object>(ptr, this._value.Size / sizeof(IntPtr));
 #endif
 		}
 	}
@@ -102,8 +102,8 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 		this.Values = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<T>(ptr), count);
 #else
 		this.Values = this._value.IsUnmanaged ?
-			new(ptr, this._value.Size) :
-			MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(ptr, this._value.Size / sizeof(T));
+			new(ptr, count) :
+			MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(ptr, count);
 #endif
 	}
 	/// <summary>
@@ -133,8 +133,8 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 		this.Values = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<T>(handle.Pointer), count);
 #else
 		this.Values = this._value.IsUnmanaged ?
-			new(handle.Pointer, this._value.Size) :
-			MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(handle.Pointer, this._value.Size / sizeof(T));
+			new(handle.Pointer, count) :
+			MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(handle.Pointer, count);
 #endif
 	}
 	/// <summary>
@@ -161,8 +161,8 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 		disposable = this._value.Handle;
 #if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 		this.Values = this._value.IsUnmanaged ?
-			new(valPtr.Pointer.ToPointer(), this._value.Size) :
-			MemoryMarshalCompat.CreateUnsafeSpan<T>(valPtr.Pointer.ToPointer(), this._value.Size / sizeof(T));
+			new(valPtr.Pointer.ToPointer(), count) :
+			MemoryMarshalCompat.CreateUnsafeSpan<T>(valPtr.Pointer.ToPointer(), count);
 #elif !NET8_0_OR_GREATER
 		this.Values = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(in valPtr.Reference), count);
 #else
@@ -182,7 +182,7 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 		this.Values = MemoryMarshal.CreateReadOnlySpan(ref refT, value.Size / sizeof(T));
 #else
 		this.Values = this._value.IsUnmanaged ?
-			new(value.Pointer.ToPointer(), this._value.Size) :
+			new(value.Pointer.ToPointer(), this._value.Size / sizeof(T)) :
 			MemoryMarshalCompat.CreateUnsafeSpan<T>(value.Pointer.ToPointer(), this._value.Size / sizeof(T));
 #endif
 	}
@@ -204,8 +204,8 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 		};
 #if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 		this.Values = this._value.IsUnmanaged ?
-			new(valPtr.Pointer.ToPointer(), this._value.Size) :
-			MemoryMarshalCompat.CreateUnsafeSpan<T>(valPtr.Pointer.ToPointer(), this._value.Size / sizeof(T));
+			new(valPtr.Pointer.ToPointer(), count) :
+			MemoryMarshalCompat.CreateUnsafeSpan<T>(valPtr.Pointer.ToPointer(), count);
 #elif !NET8_0_OR_GREATER
 		this.Values = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(in valPtr.Reference), count);
 #else

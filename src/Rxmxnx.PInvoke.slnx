@@ -1,5 +1,7 @@
 ﻿<Solution>
     <Folder Name="/ApplicationTest/">
+        <Project
+                Path="ApplicationTest/Rxmxnx.PInvoke.ApplicationTest.Windows/Rxmxnx.PInvoke.ApplicationTest.Windows.csproj"/>
         <Project Path="ApplicationTest/Rxmxnx.PInvoke.WebApiTest/Rxmxnx.PInvoke.WebApiTest.csproj"/>
         <Project Path="ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\Rxmxnx.PInvoke.ApplicationTest.csproj"/>
         <Project Path="ApplicationTest\Rxmxnx.PInvoke.LauncherTest\Rxmxnx.PInvoke.LauncherTest.csproj"/>

@@ -43,8 +43,12 @@ public static partial class SystemInfo
 			".NET Standard 2.1"
 #elif NET472_OR_GREATER
 			".NET Framework 4.7.2"
+#elif NET47_OR_GREATER
+			".NET Framework 4.7.0"
 #elif NET462_OR_GREATER
 			".NET Framework 4.6.2"
+#elif NET46_OR_GREATER
+			".NET Framework 4.6.1"
 #elif UAP
 			".NET for Windows Universal"
 #else
