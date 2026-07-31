@@ -89,7 +89,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		public static readonly CString Null = new(static () =>
 		{
 			Byte[] utf8 = { (Byte)'N', (Byte)'u', (Byte)'l', (Byte)'l', (Byte)'\0', };
-#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET461
+#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET461 && !UAP
 			return utf8.AsSpan()[..^1];
 #else
 			return utf8.AsSpan().Slice(0, utf8.Length - 1);
@@ -100,7 +100,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		public static void PrintRuntimeInfo() => RuntimeHelper.PrintRuntimeInfo(Console.Out);
 		public static void PrintRuntimeInfo(StringBuilder strBuilder)
 		{
+#if CSHARP9_0
 			using StringWriter writer = new(strBuilder);
+#else
+			using StringWriter writer = new StringWriter(strBuilder);
+#endif
 			RuntimeHelper.PrintRuntimeInfo(writer);
 		}
 
@@ -216,7 +220,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				{
 					ref readonly StackFrame? frame = ref enumerator.Current;
 #endif
+#if CSHARP9_0
 					if (frame?.GetMethod() is not { } methodBase) continue;
+#else
+					if (!(frame?.GetMethod() is MethodBase methodBase)) continue;
+#endif
 					writer.WriteLine($"{methodBase.DeclaringType}.{methodBase.Name} -> {methodBase.IsImageMethod()}");
 					hasFrame = true;
 				}
@@ -268,7 +276,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		private static ReadOnlySpan<Byte> NullBytes()
 		{
 			Byte[] utf8 = { (Byte)'N', (Byte)'u', (Byte)'l', (Byte)'l', (Byte)'\0', };
+#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET461 && !UAP
 			return utf8.AsSpan()[..^1];
+#else
+			return utf8.AsSpan().Slice(0, utf8.Length - 1);
+#endif
 		}
 #endif
 	}

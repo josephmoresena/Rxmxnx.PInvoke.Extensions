@@ -3,7 +3,7 @@
 
 // Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Bcl.Memory
 
-#if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER && !NET462_OR_GREATER && !UAP
+#if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER && !NET462_OR_GREATER
 namespace System;
 
 /// <summary>

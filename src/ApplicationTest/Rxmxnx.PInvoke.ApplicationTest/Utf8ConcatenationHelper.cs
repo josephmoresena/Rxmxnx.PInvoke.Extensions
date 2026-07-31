@@ -8,7 +8,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		public static void CStringBuildingFeature()
 		{
 			Span<Int32> interruptions = stackalloc Int32[8];
+#if CSHARP9_0
 			CStringBuilder bohemianRhapsody = new();
+#else
+			CStringBuilder bohemianRhapsody = new CStringBuilder();
+#endif
 			bohemianRhapsody.AppendLine("I'm just a poor boy, I need no sympathy ")
 			                .AppendLine("Because I'm easy come, easy go").AppendLine("Little high, little low ")
 			                .AppendLine("Any way the wind blows doesn't really matter to me, to me").AppendLine()

@@ -35,11 +35,7 @@ internal static partial class MemoryMarshalCompat
 		public SpanOffset ValidateLayout()
 		{
 			//TODO: Exceptions to ValidationUtilities
-#if NETFRAMEWORK || UAP
-			if (!SpanOffset.Fits(this.PinnableOffset, IntPtr.Size, this.SpanSize))
-#else
 			if (this.SpanSize > 2 * IntPtr.Size && !SpanOffset.Fits(this.PinnableOffset, IntPtr.Size, this.SpanSize))
-#endif
 				throw new PlatformNotSupportedException("Unable to identify the three-field Span<T> layout.1");
 			if (!SpanOffset.Fits(this.PointerOffset, IntPtr.Size, this.SpanSize))
 				throw new PlatformNotSupportedException("Unable to identify the three-field Span<T> layout.2");
@@ -47,9 +43,7 @@ internal static partial class MemoryMarshalCompat
 				throw new PlatformNotSupportedException("Unable to identify the three-field Span<T> layout. 3");
 			if (SpanOffset.Overlaps(this.PointerOffset, IntPtr.Size, this.LengthOffset, sizeof(Int32)))
 				throw new PlatformNotSupportedException("The detected Span<T> fields overlap.");
-#if !NETFRAMEWORK && !UAP
 			if (this.SpanSize > 2 * IntPtr.Size) return this;
-#endif
 			if (SpanOffset.Overlaps(this.PinnableOffset, IntPtr.Size, this.PointerOffset, IntPtr.Size))
 				throw new PlatformNotSupportedException("The detected Span<T> fields overlap.2");
 			if (SpanOffset.Overlaps(this.PinnableOffset, IntPtr.Size, this.LengthOffset, sizeof(Int32)))
