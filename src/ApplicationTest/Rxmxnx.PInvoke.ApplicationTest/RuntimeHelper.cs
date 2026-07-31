@@ -5,13 +5,11 @@ using System.IO;
 using System.Reflection;
 #if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET461_OR_GREATER && !UAP
 using System.Runtime.CompilerServices;
-
 #endif
 using System.Runtime.InteropServices;
 using System.Text;
 #if NET5_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
-
 #endif
 #if NET6_0_OR_GREATER
 using System.Runtime;
@@ -173,8 +171,10 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			}
 			writer.WriteLine($"Hardcoded Array literal: {!RuntimeHelper.Null.AsSpan().MayBeNonLiteral()}");
 			if (SystemInfo.IsWebRuntime || AotInfo.IsReflectionDisabled || !SystemInfo.IsMonoRuntime) return;
+#if NETCOREAPP || NET461_OR_GREATER || NETFRAMEWORK && !LEGACY
 			writer.WriteLine("========== StackTrace information ==========");
 			RuntimeHelper.PrintStackInfo(writer);
+#endif
 		}
 		private static void PrintDomainInfo(TextWriter writer)
 		{
@@ -202,6 +202,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 					writer.WriteLine(ex);
 			}
 		}
+#if NETCOREAPP || NET461_OR_GREATER || NETFRAMEWORK && !LEGACY
 #if NET5_0_OR_GREATER
 		[UnconditionalSuppressMessage("Trimming", "IL2026")]
 #endif
@@ -238,6 +239,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 					writer.WriteLine(ex);
 			}
 		}
+#endif
 		private static String GetName(this Architecture architecture)
 			=> architecture switch
 			{
