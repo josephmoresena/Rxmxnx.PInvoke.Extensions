@@ -43,7 +43,7 @@ internal static partial class MemoryMarshalCompat
 				throw new PlatformNotSupportedException("Unable to identify the three-field Span<T> layout. 3");
 			if (SpanOffset.Overlaps(this.PointerOffset, IntPtr.Size, this.LengthOffset, sizeof(Int32)))
 				throw new PlatformNotSupportedException("The detected Span<T> fields overlap.");
-			if (this.SpanSize > 2 * IntPtr.Size) return this;
+			if (this.SpanSize <= 2 * IntPtr.Size) return this;
 			if (SpanOffset.Overlaps(this.PinnableOffset, IntPtr.Size, this.PointerOffset, IntPtr.Size))
 				throw new PlatformNotSupportedException("The detected Span<T> fields overlap.2");
 			if (SpanOffset.Overlaps(this.PinnableOffset, IntPtr.Size, this.LengthOffset, sizeof(Int32)))

@@ -387,18 +387,6 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:System.Index</Target>
-    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/uap10.0.16299/Rxmxnx.PInvoke.Extensions.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:System.Range</Target>
-    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/uap10.0.16299/Rxmxnx.PInvoke.Extensions.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Runtime.CompilerServices.IsByRefLikeAttribute</Target>
     <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/uap10.0.16299/Rxmxnx.PInvoke.Extensions.dll</Right>
