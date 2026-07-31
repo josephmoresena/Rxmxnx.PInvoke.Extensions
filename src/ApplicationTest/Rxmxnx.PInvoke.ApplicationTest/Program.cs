@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
-#if !NETCOREAPP && !NET461_OR_GREATER && !UAP
+#if !NETCOREAPP && !NET461_OR_GREATER && !UAP || NET10_0_OR_GREATER
 using System.Collections.Generic;
+#if !NET10_0_OR_GREATER
 using System.Text;
+
+#endif
 
 #endif
 
