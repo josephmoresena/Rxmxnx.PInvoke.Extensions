@@ -1,4 +1,3 @@
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER
 namespace Rxmxnx.PInvoke;
 
 public sealed partial class CStringBuilder
@@ -249,4 +248,3 @@ public sealed partial class CStringBuilder
 		=> !value.HasValue ? this : new Concurrent(this.GetLock(), this).Append(value.Value);
 #endif
 }
-#endif

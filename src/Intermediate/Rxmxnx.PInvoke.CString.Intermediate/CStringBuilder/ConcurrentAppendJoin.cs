@@ -1,4 +1,3 @@
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER
 namespace Rxmxnx.PInvoke;
 
 public sealed partial class CStringBuilder
@@ -70,4 +69,3 @@ public sealed partial class CStringBuilder
 		return !enumerator.MoveNext() ? this : new Concurrent(this.GetLock(), this).AppendJoin(separator, enumerator);
 	}
 }
-	#endif

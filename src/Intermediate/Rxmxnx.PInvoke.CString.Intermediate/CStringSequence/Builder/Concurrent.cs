@@ -1,4 +1,3 @@
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER
 namespace Rxmxnx.PInvoke;
 
 public partial class CStringSequence
@@ -312,4 +311,3 @@ public partial class CStringSequence
 		}
 	}
 }
-#endif

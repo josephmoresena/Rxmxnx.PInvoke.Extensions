@@ -44,22 +44,7 @@ internal sealed record CStringBuilderDebugView
 	/// <summary>
 	/// Chunk information.
 	/// </summary>
-	public readonly record struct ChunkInfo
-	{
-		/// <summary>Number of used bytes in the chunk.</summary>
-		public Int32 Size { get; init; }
-		/// <summary>Number of the total bytes in the chunk.</summary>
-		public Int32 Used { get; init; }
-
-		/// <summary>
-		/// Chunk information.
-		/// </summary>
-		/// <param name="size">Number of used bytes in the chunk.</param>
-		/// <param name="used">Number of the total bytes in the chunk.</param>
-		public ChunkInfo(Int32 size, Int32 used)
-		{
-			this.Size = size;
-			this.Used = used;
-		}
-	}
+	/// <param name="Size">Number of used bytes in the chunk.</param>
+	/// <param name="Used">Number of the total bytes in the chunk.</param>
+	public readonly record struct ChunkInfo(Int32 Size, Int32 Used);
 }

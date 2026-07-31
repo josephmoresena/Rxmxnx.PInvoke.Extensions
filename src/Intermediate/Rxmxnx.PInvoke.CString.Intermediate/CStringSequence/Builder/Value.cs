@@ -11,32 +11,23 @@ public partial class CStringSequence
 		/// <summary>
 		/// Internal <see cref="Builder"/> value type.
 		/// </summary>
-		private readonly struct Value
+		/// <param name="lengths">Lengths list.</param>
+		/// <param name="charBuffer">Characters buffer.</param>
+		private readonly struct Value(List<Int32> lengths, CStringBuilder charBuffer)
 		{
 			/// <summary>
 			/// Internal lengths list.
 			/// </summary>
-			private readonly List<Int32> _lengths;
+			private readonly List<Int32> _lengths = lengths;
 			/// <summary>
 			/// Internal characters buffer.
 			/// </summary>
-			private readonly CStringBuilder _charBuffer;
+			private readonly CStringBuilder _charBuffer = charBuffer;
 
 			/// <summary>
 			/// Gets the number of items contained in the builder.
 			/// </summary>
 			public Int32 Count => this._lengths.Count;
-
-			/// <summary>
-			/// Constructor.
-			/// </summary>
-			/// <param name="lengths">Lengths list.</param>
-			/// <param name="charBuffer">Characters buffer.</param>
-			public Value(List<Int32> lengths, CStringBuilder charBuffer)
-			{
-				this._lengths = lengths;
-				this._charBuffer = charBuffer;
-			}
 
 			/// <summary>
 			/// Retrieves the <see cref="CStringSequence"/> representation of current instance.
