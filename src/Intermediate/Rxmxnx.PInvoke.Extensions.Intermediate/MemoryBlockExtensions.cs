@@ -1,4 +1,10 @@
-﻿// ReSharper disable ConvertToExtensionBlock
+﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+using Rxmxnx.PInvoke.Internal.FrameworkCompat;
+
+using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
+#endif
+
+// ReSharper disable ConvertToExtensionBlock
 
 namespace Rxmxnx.PInvoke;
 
@@ -64,6 +70,7 @@ public static unsafe partial class MemoryBlockExtensions
 		=> array is not null ?
 			MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(array), array.Length) :
 			default;
+#endif
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
 	/// <remarks>
 	/// This method creates a <see cref="Span{T}"/> even if <paramref name="array"/>
@@ -71,9 +78,13 @@ public static unsafe partial class MemoryBlockExtensions
 	/// </remarks>
 	public static Span<T> AsCovariantSpan<T>(this T[]? array)
 		=> array is not null ?
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+			MemoryMarshalCompat.CreateSafeSpan(Unsafe.As<T[], Pinnable<T>>(ref array),
+			                                   ref NativeUtilities.GetArrayDataReference(array), array.Length) :
+#else
 			MemoryMarshal.CreateSpan(ref NativeUtilities.GetArrayDataReference(array), array.Length) :
-			default;
 #endif
+			default;
 
 	/// <summary>
 	/// Indicates whether the current span represents memory that is not part of a hardcoded literal.

@@ -29,7 +29,8 @@ public partial class Launcher
 	private static FileInfo[] GetMonoExecutables(DirectoryInfo monoOutputDirectory)
 		=> monoOutputDirectory.GetDirectories()
 		                      .SelectMany(d => d.GetFiles("*ApplicationTest.*mono.exe", SearchOption.TopDirectoryOnly))
-		                      .Where(f => f.DirectoryName!.EndsWith("ApplicationTest")).ToArray();
+		                      .Where(f => f.DirectoryName!.EndsWith("ApplicationTest") ||
+			                             f.DirectoryName.EndsWith("ApplicationTestLegacy")).ToArray();
 	private static async Task CompileMonoAot(MonoLauncher monoLauncher, String outputDirectory, FileInfo assemblyFile)
 	{
 		String logPath = Path.Combine(outputDirectory, $"{assemblyFile.Name}.{monoLauncher.Architecture}.Mono.AOT.log");

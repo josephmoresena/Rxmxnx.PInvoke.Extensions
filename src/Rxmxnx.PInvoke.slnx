@@ -1,8 +1,8 @@
 ﻿<Solution>
     <Folder Name="/ApplicationTest/">
-        <Project
-                Path="ApplicationTest/Rxmxnx.PInvoke.ApplicationTest.Windows/Rxmxnx.PInvoke.ApplicationTest.Windows.csproj"/>
         <Project Path="ApplicationTest/Rxmxnx.PInvoke.WebApiTest/Rxmxnx.PInvoke.WebApiTest.csproj"/>
+        <Project
+                Path="ApplicationTest\Rxmxnx.PInvoke.ApplicationTest.Legacy\Rxmxnx.PInvoke.ApplicationTest.Legacy.csproj"/>
         <Project Path="ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\Rxmxnx.PInvoke.ApplicationTest.csproj"/>
         <Project Path="ApplicationTest\Rxmxnx.PInvoke.LauncherTest\Rxmxnx.PInvoke.LauncherTest.csproj"/>
         <Project Path="ApplicationTest\Rxmxnx.PInvoke.Mkbundle.Patcher\Rxmxnx.PInvoke.Mkbundle.Patcher.csproj"/>

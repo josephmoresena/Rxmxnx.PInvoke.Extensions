@@ -46,8 +46,13 @@ public static partial class TestCompiler
 	}
 	public static async Task CompileMono(DirectoryInfo projectDirectory, MonoLauncher monoLauncher, String outputPath)
 	{
-		FileInfo[] appProjectFiles = projectDirectory.GetDirectories("*.*ApplicationTest", SearchOption.AllDirectories)
-		                                             .SelectMany(d => d.GetFiles("*.*proj")).ToArray();
+		FileInfo[] appProjectFiles =
+		[
+			.. projectDirectory.GetDirectories("*.ApplicationTest", SearchOption.AllDirectories)
+			                   .SelectMany(d => d.GetFiles("*.*proj")),
+			.. projectDirectory.GetDirectories("*.ApplicationTestLegacy", SearchOption.AllDirectories)
+			                   .SelectMany(d => d.GetFiles("*.*proj")),
+		];
 		foreach (FileInfo appProjectFile in appProjectFiles)
 		{
 			String appDirectory = appProjectFile.DirectoryName ?? String.Empty;

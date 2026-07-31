@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
-#if !NETCOREAPP && !NET461_OR_GREATER && !UAP || NETCOREAPP3_0_OR_GREATER
+#if !NETCOREAPP && !NET461_OR_GREATER && !UAP
 using System.Collections.Generic;
 using System.Text;
 
@@ -187,7 +187,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		private static void GuidFeature()
 		{
 			Console.WriteLine("=== Referenceable Wrapper ===");
-#if !NETCOREAPP3_0_OR_GREATER && (NETCOREAPP || NET461_OR_GREATER || UAP)
+#if !NETCOREAPP3_0_OR_GREATER && (NETCOREAPP || NET461_OR_GREATER || UAP || LEGACY)
 			IMutableReference<Guid> uuid = WrapperFactory.CreateReferenceable(Guid.NewGuid());
 #else
 			IMutableReference<Guid> uuid = IMutableReference.Create(Guid.NewGuid());
@@ -246,17 +246,17 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		{
 			BufferHelper.CollectGarbage();
 			ref Guid refU = ref uuid.Reference;
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+#if !NET461_OR_GREATER && !UAP && !LEGACY || NETCOREAPP2_1_OR_GREATER
 #if NET5_0_OR_GREATER
 			Console.WriteLine(
 				$"Address: 0x{refU.AsBytes().GetUnsafeIntPtr():X}\tWrapper: {uuid.Value}\tRef: {uuid.Reference}");
 #else
 			Console.WriteLine(
-				$"Address: 0x{refU.AsBytes().GetUnsafeIntPtr().ToString()}\tWrapper: {uuid.Value}\tRef: {uuid.Reference}");
+				$"Address: 0x{refU.AsBytes().GetUnsafeIntPtr().ToString("X")}\tWrapper: {uuid.Value}\tRef: {uuid.Reference}");
 #endif
 #else
 			Console.WriteLine(
-				$"Address: 0x{refU.GetUnsafeIntPtr().ToString()}\tWrapper: {uuid.Value}\tRef: {uuid.Reference}");
+				$"Address: 0x{refU.GetUnsafeIntPtr().ToString("X")}\tWrapper: {uuid.Value}\tRef: {uuid.Reference}");
 #endif
 		}
 

@@ -1,5 +1,5 @@
 using System;
-#if !NETCOREAPP3_0_OR_GREATER && (NETCOREAPP || NET461_OR_GREATER || UAP)
+#if !NETCOREAPP3_0_OR_GREATER && (NETCOREAPP || NET461_OR_GREATER || UAP || LEGACY)
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -13,7 +13,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		public Int32 GetSize() => this.Value.Length;
 		public T GetItem(Int32 index) => this.Value[index];
 		public T[] Value { get; set; } = Array.Empty<T>();
-#if !NETCOREAPP3_0_OR_GREATER && (NETCOREAPP || NET461_OR_GREATER || UAP)
+#if !NETCOREAPP3_0_OR_GREATER && (NETCOREAPP || NET461_OR_GREATER || UAP || LEGACY)
 		IEnumerator<T> IEnumerable<T>.GetEnumerator() => this.CreateDefaultEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => this.CreateDefaultEnumerator();
 		Object? IStrongBox.Value
