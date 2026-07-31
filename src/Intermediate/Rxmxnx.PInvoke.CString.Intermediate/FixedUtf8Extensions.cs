@@ -30,6 +30,7 @@ public static unsafe class FixedUtf8Extensions
 		=> Encoding.UTF8.GetByteCount(chars);
 #else
 	{
+		if (chars.IsEmpty) return default;
 		fixed (Char* ptr = &MemoryMarshal.GetReference(chars))
 			return Encoding.UTF8.GetByteCount(ptr, chars.Length);
 	}
@@ -44,6 +45,7 @@ public static unsafe class FixedUtf8Extensions
 		=> Encoding.UTF8.GetString(bytes);
 #else
 	{
+		if (bytes.IsEmpty) return String.Empty;
 		fixed (Byte* ptr = &MemoryMarshal.GetReference(bytes))
 			return Encoding.UTF8.GetString(ptr, bytes.Length);
 	}
