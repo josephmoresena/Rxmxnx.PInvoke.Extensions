@@ -4,7 +4,7 @@
         <OutputType>Exe</OutputType>
         <LangVersion Condition="'$(MSBuildVersion)' &lt; '16.8.0'">8.0</LangVersion>
         <LangVersion Condition="'$(LangVersion)' != '8.0'">9.0</LangVersion>
-        <TargetFrameworks>netcoreapp2.0;netcoreapp2.1;net461;net462;net470;net472</TargetFrameworks>
+        <TargetFrameworks>netcoreapp2.1;net461;net462;net470;net472</TargetFrameworks>
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('WINDOWS')) And '$(Version)' != ''">$(TargetFrameworks);uap10.0.16299</TargetFrameworks>
         <Nullable>enable</Nullable>
         <ImplicitUsings>disable</ImplicitUsings>
