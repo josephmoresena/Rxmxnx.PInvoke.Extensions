@@ -5,7 +5,7 @@ public partial class CStringSequence
 	/// <summary>
 	/// State for temporal functional <see cref="CString"/>.
 	/// </summary>
-	private readonly struct CStringStringState(String value)
+	private readonly struct CStringStringState
 #if NET7_0_OR_GREATER
 		: IUtf8FunctionState<CStringStringState>
 #endif
@@ -13,7 +13,7 @@ public partial class CStringSequence
 		/// <summary>
 		/// Internal text value.
 		/// </summary>
-		private readonly String _value = value;
+		private readonly String _value;
 
 		/// <summary>
 		/// Internal text UTF-8 length.
@@ -23,7 +23,16 @@ public partial class CStringSequence
 #else
 		public Int32 Utf8Length { get; }
 #endif
-			= Encoding.UTF8.GetByteCount(value);
+		
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="value">UTF-16 text value.</param>
+		public CStringStringState(String value)
+		{
+			this._value = value;
+			this.Utf8Length = Encoding.UTF8.GetByteCount(value);
+		}
 
 #if NET7_0_OR_GREATER
 		Boolean IUtf8FunctionState<CStringStringState>.IsNullTerminated => false;

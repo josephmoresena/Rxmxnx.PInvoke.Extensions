@@ -1,3 +1,4 @@
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER
 #if !NET9_0_OR_GREATER
 using Lock = System.Object;
 #endif
@@ -104,3 +105,4 @@ public partial class CStringBuilder
 		}
 	}
 }
+#endif

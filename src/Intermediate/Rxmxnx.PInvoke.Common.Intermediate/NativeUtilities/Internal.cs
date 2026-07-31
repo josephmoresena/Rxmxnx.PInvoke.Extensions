@@ -53,6 +53,7 @@ public partial class NativeUtilities
 		=> ref array.Length > 0 ?
 			ref Unsafe.AsRef(in array[0]) :
 			ref MemoryMarshal.GetReference(new ReadOnlyMemory<T>(array).Span);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER
 	/// <summary>
 	/// Determines whether the specified <see cref="MethodBase"/> represents executable code that originates
 	/// from a statically compiled image (AOT/R2R) rather than dynamically generated runtime code.
@@ -73,6 +74,7 @@ public partial class NativeUtilities
 		if (methodBase.ContainsGenericParameters || AotInfo.IsDynamicCode(methodBase)) return false;
 		return AotInfo.IsImageMethodUnsafe(methodBase.MethodHandle);
 	}
+#endif
 	/// <summary>
 	/// Retrieves a concurrent value from <paramref name="fieldReference"/>.
 	/// </summary>

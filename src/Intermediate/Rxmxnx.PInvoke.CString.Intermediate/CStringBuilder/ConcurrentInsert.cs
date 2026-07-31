@@ -1,3 +1,4 @@
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER
 namespace Rxmxnx.PInvoke;
 
 public sealed partial class CStringBuilder
@@ -222,3 +223,4 @@ public sealed partial class CStringBuilder
 	public CStringBuilder ConcurrentInsert(Int32 index, Byte? value, Boolean asNumber = false)
 		=> !value.HasValue ? this : new Concurrent(this.GetLock(), this).Insert(index, value.Value, asNumber);
 }
+#endif

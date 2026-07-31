@@ -24,7 +24,20 @@ public static partial class AotInfo
 		{
 			if (frame?.GetMethod() is not { } methodBase) continue;
 			if (EmitInfo.IsDynamicMethod(methodBase)) return false;
+#if NETSTANDARD2_0
+			if (typeof(RuntimeHelpers).GetMethod(nameof(RuntimeHelpers.PrepareMethod), [typeof(RuntimeMethodHandle),])
+				    is not { } prepare || typeof(MethodBase).GetProperty(nameof(MethodBase.MethodHandle)) is not
+				    { } handle)
+				// Unable to find RuntimeHelpers.PrepareMethod(RuntimeMethodHandle) and MethodBase.MethodHandle with reflection.
+				return true;
+			Object?[] args = [handle.GetValue(methodBase),];
+			// Unable to get RuntimeMethodHandle from current instance.
+			if (args[0] is null) return true;
+			prepare.Invoke(null, args);
+			if (!AotInfo.IsImageMethodUnsafe((RuntimeMethodHandle)args[0]!)) return false;
+#else
 			if (!AotInfo.IsImageMethodUnsafe(methodBase.MethodHandle)) return false;
+#endif
 		}
 		return true;
 	}

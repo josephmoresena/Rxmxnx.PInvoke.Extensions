@@ -1,3 +1,4 @@
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER
 namespace Rxmxnx.PInvoke;
 
 public sealed partial class CStringBuilder
@@ -57,3 +58,4 @@ public sealed partial class CStringBuilder
 	public CStringBuilder ConcurrentAppendLine(ReadOnlySequence<Byte> value)
 		=> new Concurrent(this.GetLock(), this).AppendLine(value);
 }
+#endif

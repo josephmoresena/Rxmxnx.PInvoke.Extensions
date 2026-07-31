@@ -139,7 +139,7 @@ public sealed partial class CStringBuilder
 	}
 	/// <inheritdoc/>
 	public override String ToString() => this.ToCString(false).ToString();
-
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER
 	/// <inheritdoc cref="CStringBuilder.Length"/>
 	/// <returns>The length of the current <see cref="CStringBuilder"/> object.</returns>
 	/// <remarks>This operation is thread-safe.</remarks>
@@ -165,6 +165,7 @@ public sealed partial class CStringBuilder
 	/// <inheritdoc cref="CStringBuilder.ToString()"/>
 	/// <remarks>This operation is thread-safe.</remarks>
 	public String ConcurrentToString() => new Concurrent(this.GetLock(), this).ToCString(false).ToString();
+#endif
 
 	/// <summary>
 	/// Retrieves the current debug information.
