@@ -302,5 +302,5 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// <remarks>
 	/// Avoid boxing the resulting instance since <see cref="Builder"/> is a <see cref="ValueType"/>.
 	/// </remarks>
-	public static Builder CreateBuilder() => new();
+	public static Builder CreateBuilder() => new([], new());
 }
