@@ -4,7 +4,7 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 /// Internal class to retrieve data from managed objects.
 /// </summary>
 /// <typeparam name="T">Type of the data.</typeparam>
-#if !PACKAGE && (NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER)
+#if !PACKAGE && NET6_0_OR_GREATER
 [ExcludeFromCodeCoverage]
 #endif
 [StructLayout(LayoutKind.Sequential)]

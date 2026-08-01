@@ -12,9 +12,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference2;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset2(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -34,9 +37,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference3;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset3(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -56,9 +62,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference4;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset4(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -78,9 +87,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference5;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset5(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -100,9 +112,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference6;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset6(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -122,9 +137,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference7;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset7(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -144,9 +162,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference8;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset8(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -166,9 +187,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference9;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset9(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -188,9 +212,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference10;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset10(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -210,9 +237,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference11;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset11(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -232,9 +262,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference12;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset12(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -254,9 +287,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference13;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset13(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -276,9 +312,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference14;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset14(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -298,9 +337,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference15;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset15(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -320,9 +362,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference16;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset16(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -342,9 +387,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference17;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset17(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -364,9 +412,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference18;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset18(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -386,9 +437,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference19;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset19(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -408,9 +462,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference20;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset20(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -430,9 +487,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference21;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset21(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -452,9 +512,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference22;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset22(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -474,9 +537,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference23;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset23(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -496,9 +562,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference24;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset24(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -518,9 +587,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference25;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset25(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -540,9 +612,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference26;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset26(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -562,9 +637,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference27;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset27(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -584,9 +662,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference28;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset28(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -606,9 +687,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference29;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset29(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -628,9 +712,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference30;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset30(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -650,9 +737,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference31;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset31(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif
@@ -672,9 +762,12 @@ internal partial class ArrayMemoryManager<T>
 	{
 		if (array is null) return default;
 #if !NET6_0_OR_GREATER
-		GetArrayDataReferenceDelegate getArrayDataReference = ArrayMemoryManager<T>.ranks[array.Rank - 2] ??=
-			ArrayMemoryManager<T>.GetArrayDataReference32;
-		ref T managedRef = ref getArrayDataReference(array);
+		if (array.Length == 0) return default;
+		Array nonGenericArray = array;
+		IntPtr offset = ArrayMemoryManager<T>.offsets[array.Rank - 2] ??=
+ ArrayMemoryManager<T>.ComputeOffset32(nonGenericArray);
+		ref Pinnable<T> pinnableRef = ref Unsafe.As<Array, Pinnable<T>>(ref nonGenericArray);
+		ref T managedRef = ref Unsafe.AddByteOffset(ref pinnableRef.Data, offset);
 #else
 		ref T managedRef = ref ArrayMemoryManager<T>.GetArrayDataReference(array);
 #endif

@@ -41,12 +41,12 @@ internal abstract unsafe class ManagedMemoryManager<T> : MemoryManager<T>
 	/// <inheritdoc/>
 	public override Span<T> GetSpan()
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
-		=> this._count.HasValue ? MemoryMarshal.CreateSpan(ref this.GetMemoryReference(), this._count.Value) : default;
+		=> this._count.HasValue ? MemoryMarshal.CreateSpan(ref this.GetMemoryReference(out _), this._count.Value) : default;
 #else
 	{
 		if (!this._count.HasValue) return default;
-		ref Pinnable<T> refPinnable = ref this.GetPinnable();
-		return MemoryMarshalCompat.CreateSafeSpan(refPinnable, ref this.GetMemoryReference(), this._count.Value);
+		ref T r0 = ref this.GetMemoryReference(out Pinnable<T>? pinnable);
+		return MemoryMarshalCompat.CreateSafeSpan(pinnable!, ref r0, this._count.Value);
 	}
 #endif
 	/// <inheritdoc/>
@@ -102,11 +102,7 @@ internal abstract unsafe class ManagedMemoryManager<T> : MemoryManager<T>
 	/// <summary>
 	/// Returns a reference to the 0th element of the current memory.
 	/// </summary>
+	/// <param name="pinnable">Output. Current pinnable instance.</param>
 	/// <returns>The managed reference to the 0th element of the current memory.</returns>
-	protected abstract ref T GetMemoryReference();
-	/// <summary>
-	/// Retrieves a managed reference to the current pinnable object.
-	/// </summary>
-	/// <returns>A managed reference to the current pinnable object.</returns>
-	protected abstract ref Pinnable<T> GetPinnable();
+	protected abstract ref T GetMemoryReference(out Pinnable<T>? pinnable);
 }

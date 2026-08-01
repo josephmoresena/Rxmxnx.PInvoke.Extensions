@@ -9,11 +9,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference2;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset2(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -25,11 +28,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference3;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset3(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -41,11 +47,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference4;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset4(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -57,11 +66,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference5;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset5(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -73,11 +85,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference6;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset6(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -89,11 +104,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference7;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset7(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -105,10 +123,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference8;
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset8(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -120,11 +142,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference9;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset9(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -136,11 +161,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference10;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset10(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -152,11 +180,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference11;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset11(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -168,11 +199,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference12;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset12(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -184,11 +218,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference13;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset13(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -200,11 +237,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference14;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset14(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -216,11 +256,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference15;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset15(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -232,11 +275,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference16;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset16(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -248,11 +294,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference17;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset17(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -264,11 +313,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference18;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset18(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -280,11 +332,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference19;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset19(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -296,11 +351,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference20;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset20(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -312,11 +370,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference21;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset21(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -328,11 +389,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference22;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset22(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -344,11 +408,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference23;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset23(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -360,11 +427,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference24;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset24(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -376,11 +446,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference25;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset25(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -392,11 +465,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference26;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset26(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -408,11 +484,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference27;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset27(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -424,11 +503,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference28;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset28(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -440,11 +522,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference29;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset29(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -456,11 +541,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference30;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset30(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -472,11 +560,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference31;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset31(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
@@ -488,11 +579,14 @@ internal partial class ArrayMemoryManager<T>
 #endif
 	public static Memory<T> GetMemory(T[,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,]? array)
 	{
+#if !NET6_0_OR_GREATER
 		if (array is null)
+#else
+		if (array is null || array.Length == 0)
+#endif
 			return Memory<T>.Empty;
 #if !NET6_0_OR_GREATER
-		ArrayMemoryManager<T>.ranks[array.Rank - 2] ??= ArrayMemoryManager<T>.GetArrayDataReference32;
-
+		ArrayMemoryManager<T>.offsets[array.Rank - 2] ??= ArrayMemoryManager<T>.ComputeOffset32(array);
 #endif
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;

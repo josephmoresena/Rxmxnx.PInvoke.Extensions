@@ -77,7 +77,6 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// <typeparam name="T">Type of buffer element.</typeparam>
 	/// <param name="buffer">Buffer reference.</param>
 	/// <returns>Index of</returns>
-	/// <remarks>This method is used only on .Net Standard build.</remarks>
 	public static Int32 IndexOfNull<T>(ref T buffer) where T : unmanaged, IEquatable<T>
 	{
 		if (Unsafe.IsNullRef(ref buffer))
@@ -167,7 +166,7 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// <typeparam name="T">The type of the data items.</typeparam>
 	/// <param name="ptr">An unmanaged pointer to data.</param>
 	/// <param name="length">The number of <typeparamref name="T"/> elements that <paramref name="ptr"/> contains.</param>
-	/// <returns>A unsafe read-only span.</returns>
+	/// <returns>An unsafe read-only span.</returns>
 #if !PACKAGE && (NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER)
 	[ExcludeFromCodeCoverage]
 #endif
