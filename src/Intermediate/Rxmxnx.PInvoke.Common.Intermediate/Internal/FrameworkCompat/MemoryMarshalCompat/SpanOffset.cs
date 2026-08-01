@@ -34,8 +34,13 @@ internal static partial class MemoryMarshalCompat
 		/// </exception>
 		public SpanOffset ValidateLayout()
 		{
+			if (this.SpanSize <= 2 * IntPtr.Size)
+				return new()
+				{
+					SpanSize = this.SpanSize, PinnableOffset = -1, PointerOffset = -1, LengthOffset = -1,
+				};
 			//TODO: Exceptions to ValidationUtilities
-			if (this.SpanSize > 2 * IntPtr.Size && !SpanOffset.Fits(this.PinnableOffset, IntPtr.Size, this.SpanSize))
+			if (!SpanOffset.Fits(this.PinnableOffset, IntPtr.Size, this.SpanSize))
 				throw new PlatformNotSupportedException("Unable to identify the three-field Span<T> layout.1");
 			if (!SpanOffset.Fits(this.PointerOffset, IntPtr.Size, this.SpanSize))
 				throw new PlatformNotSupportedException("Unable to identify the three-field Span<T> layout.2");

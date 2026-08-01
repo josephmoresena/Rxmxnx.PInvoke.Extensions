@@ -120,13 +120,13 @@ internal static unsafe partial class MemoryMarshalCompat
 		fixed (void* pResult = &refResult)
 		{
 			Span<Byte> bytes = new(pResult, offsets.SpanSize);
-			Unsafe.As<Byte, Int32>(ref bytes[offsets.LengthOffset]) = length;
 			if (offsets.PinnableOffset == -1)
 			{
 				// Modern UWP uses fast span, .NET Framework assembly can be used on Mono with .NET Standard 2.1
-				Unsafe.As<Byte, IntPtr>(ref bytes[offsets.PointerOffset]) = new(pStart);
+				((Span<Byte>*)pResult)[0] = new(pStart, length);
 				return result;
 			}
+			Unsafe.As<Byte, Int32>(ref bytes[offsets.LengthOffset]) = length;
 			Unsafe.As<Byte, IntPtr>(ref bytes[offsets.PointerOffset]) = Unsafe.ByteOffset(ref pinnable.Data, ref start);
 			MemoryMarshalCompat.SetPinnableField(pinnable, pResult, offsets);
 		}

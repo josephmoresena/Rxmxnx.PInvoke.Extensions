@@ -45,6 +45,11 @@ internal static unsafe partial class MemoryMarshalCompat
 	{
 #pragma warning disable CS8500
 		Int32 spanSize = sizeof(Span<Byte>);
+		if (spanSize <= 2 * IntPtr.Size)
+			return new()
+			{
+				SpanSize = spanSize, PinnableOffset = -1, PointerOffset = -1, LengthOffset = -1,
+			};
 		Byte* scratch = stackalloc Byte[64];
 		ReadOnlySpan<Int32> lengths = [0x13579BDF, 0x2468ACE1,];
 		ReadOnlySpan<IntPtr> pointers = [new(scratch + 7), new(scratch + 43),];
@@ -52,17 +57,7 @@ internal static unsafe partial class MemoryMarshalCompat
 		// _byteOffset = pointerA / pointerB
 		// _length     = lengthA / lengthB
 		Span<Byte> uA = new((void*)pointers[0], lengths[0]), uB = new((void*)pointers[1], lengths[1]);
-		Boolean slowSpan = spanSize > 2 * IntPtr.Size;
-		Byte[] arrayA, arrayB;
-		if (!slowSpan)
-		{
-			arrayA = arrayB = [];
-		}
-		else
-		{
-			arrayA = new Byte[1];
-			arrayB = new Byte[2];
-		}
+		Byte[] arrayA = new Byte[1], arrayB = new Byte[2];
 		// _pinnable   = arrayA / arrayB
 		// _byteOffset = Type offset
 		// _length     = 1 / 2
@@ -88,10 +83,9 @@ internal static unsafe partial class MemoryMarshalCompat
 				new(uBytesA, MemoryMarshal.AsBytes(pointers[..1])), new(uBytesB, MemoryMarshal.AsBytes(pointers[1..])));
 			Int32 lengthOffset = MemoryMarshalCompat.FindUniqueFieldOffset(
 				new(uBytesA, MemoryMarshal.AsBytes(lengths[..1])), new(uBytesB, MemoryMarshal.AsBytes(lengths[1..])));
-			Int32 pinnableOffset = slowSpan ?
-				MemoryMarshalCompat.FindUniqueFieldOffset(new(mBytesA, new(Unsafe.AsPointer(ref wA), IntPtr.Size)),
-				                                          new(mBytesB, new(Unsafe.AsPointer(ref wB), IntPtr.Size))) :
-				-1;
+			Int32 pinnableOffset = MemoryMarshalCompat.FindUniqueFieldOffset(
+				new(mBytesA, new(Unsafe.AsPointer(ref wA), IntPtr.Size)),
+				new(mBytesB, new(Unsafe.AsPointer(ref wB), IntPtr.Size)));
 			result = new()
 			{
 				SpanSize = spanSize,
