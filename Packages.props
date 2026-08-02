@@ -70,9 +70,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.14">
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
+        <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.14"/>
         <PackageReference Include="System.Memory" Version="4.5.5"/>
         <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0" />
     </ItemGroup>
