@@ -6,14 +6,6 @@ namespace Rxmxnx.PInvoke.Internal;
 /// <typeparam name="T">The type of the array.</typeparam>
 internal sealed partial class ArrayMemoryManager<T> : ManagedMemoryManager<T>
 {
-#if !NET6_0_OR_GREATER
-	/// <summary>
-	/// Offset for each array rank.
-	/// </summary>
-	// ReSharper disable once StaticMemberInGenericType
-	private static readonly IntPtr?[] offsets = new IntPtr?[31];
-#endif
-
 	/// <summary>
 	/// Internal array.
 	/// </summary>
@@ -38,7 +30,7 @@ internal sealed partial class ArrayMemoryManager<T> : ManagedMemoryManager<T>
 		return ref ArrayMemoryManager<T>.GetArrayDataReference(this._array);
 #else
 		pinnable = Unsafe.As<Array, Pinnable<T>>(ref Unsafe.AsRef(this._array));
-		return ref Unsafe.AddByteOffset(ref pinnable.Data, ArrayMemoryManager<T>.offsets[this._array.Rank - 2]!.Value);
+		return ref Unsafe.AddByteOffset(ref pinnable.Data, ArrayMemoryManager<T>.GetArrayOffset(this._array)!.Value);
 #endif
 	}
 
