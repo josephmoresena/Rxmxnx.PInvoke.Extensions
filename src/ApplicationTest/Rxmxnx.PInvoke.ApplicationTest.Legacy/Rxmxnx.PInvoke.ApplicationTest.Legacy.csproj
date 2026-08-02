@@ -24,9 +24,7 @@
     <ItemGroup>
         <Compile Include="$(MSBuildThisFileDirectory)\..\Rxmxnx.PInvoke.ApplicationTest\**\*.cs"
                  Exclude="$(MSBuildThisFileDirectory)\..\Rxmxnx.PInvoke.ApplicationTest\obj\**\*.cs"/>
-    </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0' Or '$(TargetFramework)' == 'uap10.0.16299'">
-        <ProjectReference Include="$(MSBuildThisFileDirectory)\..\..\MonoFacades\Rxmxnx.PInvoke.Json\Rxmxnx.PInvoke.Json.csproj"/>
+        <Compile Include="$(MSBuildThisFileDirectory)\..\..\MonoFacades\Rxmxnx.PInvoke.Json\*.cs"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">

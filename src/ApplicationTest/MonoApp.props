@@ -11,7 +11,6 @@
         <EmbeddedResource Include="Mono.ILLink.Descriptors.xml">
             <LogicalName>$(AssemblyName).xml</LogicalName>
         </EmbeddedResource>
-        <ProjectReference Include="$(MSBuildThisFileDirectory)..\MonoFacades\Rxmxnx.PInvoke.Json\Rxmxnx.PInvoke.Json.csproj"/>
     </ItemGroup>
 
 </Project>

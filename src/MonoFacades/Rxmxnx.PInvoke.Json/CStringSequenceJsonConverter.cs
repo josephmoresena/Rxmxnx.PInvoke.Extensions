@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !NETCOREAPP2_1_OR_GREATER && !NET462_OR_GREATER
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -59,3 +60,4 @@ namespace Rxmxnx.PInvoke.Json
 		}
 	}
 }
+#endif
