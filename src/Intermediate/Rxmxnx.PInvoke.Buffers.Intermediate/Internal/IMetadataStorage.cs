@@ -43,7 +43,7 @@ internal interface IMetadataStorage
 	/// <returns><paramref name="typeMetadata"/>.</returns>
 	[return: NotNullIfNotNull(nameof(typeMetadata))]
 	BufferTypeMetadata<T>? AddBinaryMetadata<T>(BufferTypeMetadata<T>? typeMetadata);
-#if !PACKAGE
+#if !PACKAGE && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
 	/// <summary>
 	/// Prints metadata dictionary.
 	/// </summary>

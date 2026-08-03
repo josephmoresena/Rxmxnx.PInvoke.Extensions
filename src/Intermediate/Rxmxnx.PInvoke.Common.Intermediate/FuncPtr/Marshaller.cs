@@ -6,8 +6,10 @@ public readonly partial struct FuncPtr<TDelegate>
 	/// <summary>
 	/// Custom marshaller for value pointers.
 	/// </summary>
-	[EditorBrowsable(EditorBrowsableState.Never)]
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	[Browsable(false)]
+#endif
+	[EditorBrowsable(EditorBrowsableState.Never)]
 #if NET7_0_OR_GREATER
 	[CustomMarshaller(typeof(FuncPtr<>), MarshalMode.Default, typeof(FuncPtr<>.Marshaller))]
 #endif

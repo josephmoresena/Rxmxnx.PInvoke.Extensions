@@ -4,6 +4,9 @@ using Enum = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
 #if !NET6_0_OR_GREATER
 using ArgumentNullExceptionCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif
+#if !NETSTANDARD2_0_OR_GREATER && !NETCOREAPP && !NETFRAMEWORK && !UAP10_0_16299
+using InsufficientMemoryException = System.OutOfMemoryException;
+#endif
 
 namespace Rxmxnx.PInvoke.Internal;
 
@@ -75,6 +78,7 @@ internal static unsafe class ValidationUtilities
 		throw new InvalidOperationException(message);
 	}
 
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	/// <summary>
 	/// Throws an exception if <paramref name="info"/> contains an invalid <see langword="unmanaged"/> pointer.
 	/// </summary>
@@ -113,6 +117,7 @@ internal static unsafe class ValidationUtilities
 #endif
 		info.AddValue("value", (Int64)ptr);
 	}
+#endif
 	/// <summary>
 	/// Throws an exception if <paramref name="obj"/> is not a value pointer.
 	/// </summary>
@@ -528,7 +533,11 @@ internal static unsafe class ValidationUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfNotUnmanagedType(Type? type, Boolean isUnmanaged)
 	{
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (type is null || (type.IsValueType && isUnmanaged)) return;
+#else
+		if (type is null || (type.GetTypeInfo().IsValueType && isUnmanaged)) return;
+#endif
 		String message = MessageResource.GetInstance().NotUnmanagedType(type);
 		throw new InvalidOperationException(message);
 	}
@@ -542,7 +551,11 @@ internal static unsafe class ValidationUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfNotReferenceType(Type? type)
 	{
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (type is not null && !type.IsValueType) return;
+#else
+		if (type is not null && !type.GetTypeInfo().IsValueType) return;
+#endif
 		String message = MessageResource.GetInstance().NotReferenceType(type ?? typeof(Byte));
 		throw new InvalidOperationException(message);
 	}
@@ -563,9 +576,15 @@ internal static unsafe class ValidationUtilities
 		Boolean unmanagedDestination)
 	{
 		IMessageResource resource = MessageResource.GetInstance();
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (!destinationType.IsValueType)
 		{
 			if (sourceType is null || sourceType.IsValueType)
+#else
+		if (!destinationType.GetTypeInfo().IsValueType)
+		{
+			if (sourceType is null || sourceType.GetTypeInfo().IsValueType)
+#endif
 				throw new InvalidOperationException(resource.NotValueType(destinationType));
 		}
 		else if (!unmanagedSource)
@@ -598,7 +617,11 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = MessageResource.GetInstance();
 		String? message = isItemUnmanaged switch
 		{
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 			false when isArrayUnmanaged => itemType.IsValueType ?
+#else
+			false when isArrayUnmanaged => itemType.GetTypeInfo().IsValueType ?
+#endif
 				resource.ContainsReferencesButUnmanaged(itemType, arrayType) :
 				resource.ReferencesTypeButUnmanaged(itemType, arrayType),
 			true when !isArrayUnmanaged => resource.UnmanagedTypeButContainsReferences(itemType, arrayType),

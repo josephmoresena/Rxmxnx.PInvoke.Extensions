@@ -42,14 +42,22 @@ internal abstract partial class Utf8Comparator<TChar> : Utf8Comparator where TCh
 				this._ignoreCase = true;
 				this._ordinal = false;
 				break;
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 			case StringComparison.InvariantCulture:
+#else
+			case (StringComparison)2:
+#endif
 				this._culture = CultureInfo.InvariantCulture;
 				this._options = CompareOptions.None;
 				this._optionsIgnoreCase = CompareOptions.IgnoreCase;
 				this._ignoreCase = false;
 				this._ordinal = false;
 				break;
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 			case StringComparison.InvariantCultureIgnoreCase:
+#else
+			case (StringComparison)3:
+#endif
 				this._culture = CultureInfo.InvariantCulture;
 				this._options = CompareOptions.IgnoreCase;
 				this._optionsIgnoreCase = CompareOptions.IgnoreCase;

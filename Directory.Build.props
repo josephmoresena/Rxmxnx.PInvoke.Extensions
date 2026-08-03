@@ -9,18 +9,27 @@
         <DefaultFramework>net10.0</DefaultFramework>
         <DefaultFrameworks>net10.0;net9.0</DefaultFrameworks>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(TargetFramework)' == 'uap10.0.16299'">
+    <PropertyGroup Condition="'$(TargetFramework)' == 'uap10.0' Or '$(TargetFramework)' == 'uap10.0.16299'">
         <TargetFrameworkIdentifier>.NETCore</TargetFrameworkIdentifier>
         <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
         <TargetFrameworkMoniker>.NETCore,Version=v5.0</TargetFrameworkMoniker>
         <TargetFrameworkMonikerDisplayName>.NET for Windows Universal</TargetFrameworkMonikerDisplayName>
         <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+        <DefineConstants>$(DefineConstants);NETFX_CORE;WINDOWS_UWP;UAP;UAP10_0</DefineConstants>
+        <DisableStandardFrameworkResolution>true</DisableStandardFrameworkResolution>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(TargetFramework)' == 'uap10.0'">
+        <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
+        <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
+        <TargetPlatformMoniker>UAP,Version=10.0.10240.0</TargetPlatformMoniker>
+        <NuGetTargetMoniker>UAP,Version=v10.0</NuGetTargetMoniker>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(TargetFramework)' == 'uap10.0.16299'">
         <TargetPlatformVersion>10.0.16299.0</TargetPlatformVersion>
         <TargetPlatformMinVersion>10.0.16299.0</TargetPlatformMinVersion>
         <TargetPlatformMoniker>UAP,Version=10.0.16299.0</TargetPlatformMoniker>
         <NuGetTargetMoniker>UAP,Version=v10.0.16299</NuGetTargetMoniker>
-        <DefineConstants>$(DefineConstants);NETFX_CORE;WINDOWS_UWP;UAP;UAP10_0_16299</DefineConstants>
-        <DisableStandardFrameworkResolution>true</DisableStandardFrameworkResolution>
+        <DefineConstants>$(DefineConstants);UAP10_0_16299</DefineConstants>
     </PropertyGroup>
     <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1' Or '$(TargetFramework)' == 'uap10.0.16299'">
         <NoWarn>$(NoWarn);NETSDK1023</NoWarn>

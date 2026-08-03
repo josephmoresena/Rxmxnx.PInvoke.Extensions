@@ -94,7 +94,11 @@ public readonly ref struct FixedPointerValue
 	/// </returns>
 	public Boolean TryGetReadOnlyBinaryContext(out ReadOnlyFixedContextValue<Byte> binaryContext)
 	{
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (!this.IsNullOrEmpty && this.IsUnmanaged && this.Type is not { IsValueType: false, })
+#else
+		if (!this.IsNullOrEmpty && this.IsUnmanaged && this.Type?.GetTypeInfo() is not { IsValueType: false, })
+#endif
 		{
 			binaryContext = new(this);
 			return true;
@@ -111,7 +115,11 @@ public readonly ref struct FixedPointerValue
 	/// </returns>
 	public Boolean TryGetReadOnlyObjectContext(out ReadOnlyFixedContextValue<Object> objectContext)
 	{
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (!this.IsNullOrEmpty && this.IsUnmanaged && this.Type is { IsValueType: true, })
+#else
+		if (!this.IsNullOrEmpty && this.IsUnmanaged && this.Type?.GetTypeInfo() is { IsValueType: true, })
+#endif
 		{
 			objectContext = new(this);
 			return true;
@@ -128,7 +136,12 @@ public readonly ref struct FixedPointerValue
 	/// </returns>
 	public Boolean TryBinaryContext(out FixedContextValue<Byte> binaryContext)
 	{
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (!this.IsNullOrEmpty && !this.IsReadOnly && this.IsUnmanaged && this.Type is not { IsValueType: false, })
+#else
+		if (!this.IsNullOrEmpty && !this.IsReadOnly && this.IsUnmanaged &&
+		    this.Type?.GetTypeInfo() is not { IsValueType: false, })
+#endif
 		{
 			binaryContext = new(this);
 			return true;
@@ -145,7 +158,12 @@ public readonly ref struct FixedPointerValue
 	/// </returns>
 	public Boolean TryObjectContext(out FixedContextValue<Object> objectContext)
 	{
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (!this.IsNullOrEmpty && !this.IsReadOnly && this.IsUnmanaged && this.Type is { IsValueType: true, })
+#else
+		if (!this.IsNullOrEmpty && !this.IsReadOnly && this.IsUnmanaged &&
+		    this.Type?.GetTypeInfo() is { IsValueType: true, })
+#endif
 		{
 			objectContext = new(this);
 			return true;

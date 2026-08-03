@@ -26,7 +26,7 @@ public static unsafe partial class SystemInfo
 	public static Boolean IsWindows
 #if NET5_0_OR_GREATER
 		=> OperatingSystem.IsWindows();
-#elif !UAP
+#elif !UAP10_0
 		=> SystemInfo.isWindows;
 #else
 		=> true;
@@ -46,7 +46,7 @@ public static unsafe partial class SystemInfo
 			return
 #if NET5_0_OR_GREATER
 				OperatingSystem.IsLinux() || OperatingSystem.IsAndroid()
-#elif !UAP
+#elif !UAP10_0
 				SystemInfo.isLinux
 #else
 				false
@@ -76,7 +76,7 @@ public static unsafe partial class SystemInfo
 #else
 				(!TrimInfo.IsPlatformTrimmed() && RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
 #endif
-#elif !UAP
+#elif !UAP10_0
 				SystemInfo.isMac
 #else
 				false
@@ -93,7 +93,7 @@ public static unsafe partial class SystemInfo
 	public static Boolean IsFreeBsd
 #if NET5_0_OR_GREATER
 		=> OperatingSystem.IsFreeBSD();
-#elif !UAP
+#elif !UAP10_0
 		=> SystemInfo.isFreeBsd;
 #else
 		=> false;
@@ -105,7 +105,7 @@ public static unsafe partial class SystemInfo
 	[SupportedOSPlatformGuard("netbsd")]
 #endif
 	public static Boolean IsNetBsd
-#if !UAP
+#if !UAP10_0
 		=> !TrimInfo.IsPlatformTrimmed() &&
 			(SystemInfo.isNetBsd ??= SystemInfo.IsOsPlatform(SystemInfo.netBsdPlatform));
 #else
@@ -119,7 +119,7 @@ public static unsafe partial class SystemInfo
 	[SupportedOSPlatformGuard("illumos")]
 #endif
 	public static Boolean IsSolaris
-#if !UAP
+#if !UAP10_0
 		=> !TrimInfo.IsPlatformTrimmed() && (SystemInfo.isSolaris ??=
 			SystemInfo.IsOsPlatform(SystemInfo.solarisPlatform, SystemInfo.illumosPlatform, SystemInfo.sunosPlatform));
 #else
@@ -147,7 +147,7 @@ public static unsafe partial class SystemInfo
 #else
 				(!TrimInfo.IsPlatformTrimmed() && (SystemInfo.isWasi ??= SystemInfo.IsOsPlatform(SystemInfo.wPlatform)))
 #endif
-#elif !UAP
+#elif !UAP10_0
 				SystemInfo.isWebRuntime
 #else
 				false
@@ -159,7 +159,7 @@ public static unsafe partial class SystemInfo
 	/// Indicates whether the current execution is running on Mono Runtime.
 	/// </summary>
 	public static Boolean IsMonoRuntime
-#if !UAP
+#if !UAP10_0
 	{
 		get
 		{

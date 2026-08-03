@@ -58,7 +58,7 @@ internal static unsafe partial class MemoryMarshalCompat
 		B2 buffer = new();
 		Span<Object> arrays = MemoryMarshalCompat.CreateUnsafeSpan<Object>(&buffer, 2);
 
-#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
 		arrays[0] = Array.Empty<Byte>();
 		arrays[1] = Array.Empty<SByte>();
 #else

@@ -7,13 +7,18 @@ namespace Rxmxnx.PInvoke;
 #if NET7_0_OR_GREATER
 [NativeMarshalling(typeof(FuncPtr<>.Marshaller))]
 #endif
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 [Serializable]
+#endif
 [StructLayout(LayoutKind.Sequential)]
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<FuncPtr<TDelegate>>,
-	ISerializable where TDelegate : Delegate
+public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<FuncPtr<TDelegate>>
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+	, ISerializable 
+#endif
+	where TDelegate : Delegate
 {
 	/// <summary>
 	/// A read-only field representing a null-initialized function pointer.
@@ -38,7 +43,7 @@ public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEq
 	/// A managed delegate using the method address pointed to by this instance.
 	/// </summary>
 	public TDelegate Invoke
-#if NETSTANDARD1_2_OR_GREATER || NETCOREAPP || NET451_OR_GREATER || UAP
+#if NETSTANDARD1_2_OR_GREATER || NETCOREAPP || NET451_OR_GREATER || UAP10_0
 		=> !this.IsZero ? Marshal.GetDelegateForFunctionPointer<TDelegate>(this.Pointer) : default!;
 #else
 		=> !this.IsZero ? (TDelegate)Marshal.GetDelegateForFunctionPointer(this.Pointer, typeof(TDelegate)) : default!;
@@ -49,6 +54,7 @@ public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEq
 	/// </summary>
 	/// <param name="value">Unsafe pointer.</param>
 	private FuncPtr(void* value) => this._value = value;
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	/// <summary>
 	/// Serialization constructor.
 	/// </summary>
@@ -60,17 +66,20 @@ public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEq
 #endif
 	private FuncPtr(SerializationInfo info, StreamingContext context)
 		=> this._value = ValidationUtilities.ThrowIfInvalidPointer(info);
+#endif
 
 	IntPtr IWrapper<IntPtr>.Value => this.Pointer;
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	IntPtr IWrapper.IBase<IntPtr>.Value => this.Pointer;
 #endif
 
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
 	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 		=> ValidationUtilities.ThrowIfInvalidSerialization(info, this._value);
+#endif
 
 	/// <inheritdoc/>
 	public Boolean Equals(FuncPtr<TDelegate> other) => this.Pointer == other.Pointer;

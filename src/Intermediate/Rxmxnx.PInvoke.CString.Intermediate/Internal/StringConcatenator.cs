@@ -67,7 +67,7 @@ internal sealed class StringConcatenator : BinaryConcatenator<String>
 		}
 		base.Dispose(disposing);
 	}
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_0_OR_GREATER || NET461_OR_GREATER || UAP
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_0_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	/// <inheritdoc/>
 	protected override async ValueTask DisposeAsync(Boolean disposing)
 	{

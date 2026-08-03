@@ -210,7 +210,11 @@ public partial class CString
 	private static String ToUtf16(ReadOnlySpan<Byte> utf8Bytes)
 	{
 		String result = Utf8Comparator.GetStringFromUtf8(utf8Bytes);
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		return String.IsInterned(result) ?? result;
+#else
+		return result;
+#endif
 	}
 #if NETCOREAPP3_0_OR_GREATER
 	/// <summary>

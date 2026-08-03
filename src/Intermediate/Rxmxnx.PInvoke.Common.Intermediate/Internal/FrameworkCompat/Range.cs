@@ -3,7 +3,7 @@
 
 // Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Bcl.Memory
 
-#if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER && !NET462_OR_GREATER
+#if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER && !NET462_OR_GREATER && !UAP10_0_16299
 namespace System;
 
 /// <summary>
@@ -19,7 +19,7 @@ namespace System;
 /// </remarks>
 internal readonly struct Range : IEquatable<Range>
 {
-#if !NETSTANDARD2_0_OR_GREATER && !NETCOREAPP2_0_OR_GREATER && !NET461_OR_GREATER && !UAP
+#if !NETSTANDARD2_0_OR_GREATER && !NETCOREAPP2_0_OR_GREATER && !NET461_OR_GREATER && !UAP10_0_16299
 	/// <summary>
 	/// Internal seed for HashCode.
 	/// </summary>
@@ -56,7 +56,7 @@ internal readonly struct Range : IEquatable<Range>
 	public Boolean Equals(Range other) => other.Start.Equals(this.Start) && other.End.Equals(this.End);
 	/// <inheritdoc/>
 	public override Int32 GetHashCode()
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_0_OR_GREATER || NET461_OR_GREATER || UAP
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_0_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 		=> HashCode.Combine(this.Start.GetHashCode(), this.End.GetHashCode());
 #else
 	{

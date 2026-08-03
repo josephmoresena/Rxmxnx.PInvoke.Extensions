@@ -1,4 +1,4 @@
-﻿#if !UAP
+﻿#if !UAP10_0
 namespace Rxmxnx.PInvoke;
 
 public static partial class SystemInfo

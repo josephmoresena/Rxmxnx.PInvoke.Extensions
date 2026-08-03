@@ -259,7 +259,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	public TDelegate CreateDelegate<TDelegate>() where TDelegate : Delegate
 	{
 		this.ValidateFunctionOperation();
-#if NETSTANDARD1_2_OR_GREATER || NETCOREAPP || NET451_OR_GREATER || UAP
+#if NETSTANDARD1_2_OR_GREATER || NETCOREAPP || NET451_OR_GREATER || UAP10_0
 		return Marshal.GetDelegateForFunctionPointer<TDelegate>(new(this._ptr));
 #else
 		return (TDelegate)Marshal.GetDelegateForFunctionPointer(new(this._ptr), typeof(TDelegate));

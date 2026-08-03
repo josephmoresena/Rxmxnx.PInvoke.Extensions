@@ -1,4 +1,4 @@
-#if !UAP
+#if !UAP10_0
 // ReSharper disable UnusedMember.Local
 
 namespace Rxmxnx.PInvoke.Internal;

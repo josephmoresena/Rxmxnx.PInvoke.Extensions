@@ -3,7 +3,9 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// Provides a set of extensions for basic fixing operations with UTF-8 texts.
 /// </summary>
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 [Browsable(false)]
+#endif
 [EditorBrowsable(EditorBrowsableState.Never)]
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
@@ -35,7 +37,7 @@ public static unsafe class FixedUtf8Extensions
 			return Encoding.UTF8.GetByteCount(ptr, chars.Length);
 	}
 #endif
-#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
 	/// <summary>
 	/// Decodes a read-only span of UTF-8 encoded bytes into a UTF-16 encoded <see cref="String"/>.
 	/// </summary>

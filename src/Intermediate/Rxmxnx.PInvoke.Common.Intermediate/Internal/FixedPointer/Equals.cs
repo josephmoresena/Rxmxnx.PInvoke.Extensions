@@ -5,7 +5,7 @@ namespace Rxmxnx.PInvoke.Internal;
 #endif
 internal unsafe partial class FixedPointer : IEquatable<FixedPointer>
 {
-#if !NETSTANDARD2_0_OR_GREATER && !NETCOREAPP2_0_OR_GREATER && !NET461_OR_GREATER && !UAP
+#if !NETSTANDARD2_0_OR_GREATER && !NETCOREAPP2_0_OR_GREATER && !NET461_OR_GREATER && !UAP10_0_16299
 	/// <summary>
 	/// Internal seed for HashCode.
 	/// </summary>
@@ -26,7 +26,7 @@ internal unsafe partial class FixedPointer : IEquatable<FixedPointer>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override Int32 GetHashCode()
 	{
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_0_OR_GREATER || NET461_OR_GREATER || UAP
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_0_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 		HashCode result = new();
 		result.Add(new IntPtr(this._ptr));
 		result.Add(this.BinaryOffset);

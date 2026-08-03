@@ -10,8 +10,10 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// Provides a set of extensions for basic operations with <see langword="unmanaged"/> values.
 /// </summary>
-[EditorBrowsable(EditorBrowsableState.Never)]
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 [Browsable(false)]
+#endif
+[EditorBrowsable(EditorBrowsableState.Never)]
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 public static partial class UnmanagedValueExtensions
 #else

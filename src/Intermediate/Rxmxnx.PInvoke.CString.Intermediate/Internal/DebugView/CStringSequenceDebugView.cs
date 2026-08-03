@@ -12,7 +12,11 @@ namespace Rxmxnx.PInvoke.Internal.DebugView;
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
 #endif
+#if NETSTANDARD1_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 internal sealed record CStringSequenceDebugView
+#else
+internal sealed class CStringSequenceDebugView
+#endif
 {
 	/// <summary>
 	/// Internal array representation of the sequence for debugging.

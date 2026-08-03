@@ -1,8 +1,9 @@
 ﻿#if !NET6_0_OR_GREATER
 using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
+
 #if PACKAGE && !NET5_0_OR_GREATER
 using B1 = Rxmxnx.PInvoke.Buffers.Atomic<System.Object>;
-#elif !NET5_0_OR_GREATER
+#elif !NET5_0_OR_GREATER && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
 using B1 = Rxmxnx.PInvoke.NativeUtilities.B1;
 #endif
 
@@ -20,7 +21,7 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	private const Int32 zeroItemLength = Int32.MinValue;
 
-#if !NET5_0_OR_GREATER
+#if !NET5_0_OR_GREATER && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
 	/// <summary>
 	/// Static buffer for type instance.
 	/// </summary>
@@ -324,7 +325,7 @@ public unsafe partial class CStringSequence
 			CStringSequence.GetEmptyIndexList(lengths, out totalNonEmpty, out Int32 lastNonEmpty, out Int32 skipLast);
 
 		// All elements are empty, the cache is an empty array.
-#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
 		if (emptyIndices.Count == lengths.Length) return Array.Empty<CString>();
 #else
 		if (emptyIndices.Count == lengths.Length) return CStringSequence.emptyArray;

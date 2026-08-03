@@ -28,7 +28,7 @@ public static partial class BufferManager<T>
 		BufferTypeMetadata<Object>? metadata = BufferManager.Storage.GetMetadata<Object>(action.Count);
 		Boolean stackAlloc = metadata is not null &&
 			(action.IsMinimalCount || metadata.Size == action.Count || action.Count == 0);
-#if !PACKAGE
+#if !PACKAGE && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
 		BufferManager.Storage.PrintMetadata<Object>(!stackAlloc);
 #endif
 		if (stackAlloc)
@@ -62,7 +62,7 @@ public static partial class BufferManager<T>
 		BufferTypeMetadata<Object>? metadata = BufferManager.Storage.GetMetadata<Object>(func.Count);
 		Boolean stackAlloc = metadata is not null &&
 			(func.IsMinimalCount || metadata.Size == func.Count || func.Count == 0);
-#if !PACKAGE
+#if !PACKAGE && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
 		BufferManager.Storage.PrintMetadata<Object>(!stackAlloc);
 #endif
 		if (!stackAlloc)
@@ -99,7 +99,7 @@ public static partial class BufferManager<T>
 		BufferTypeMetadata<T>? metadata = BufferManager.Storage.GetMetadata<T>(action.Count);
 		Boolean stackAlloc = metadata is not null && metadata.SizeOf <= BufferManager.StackAllocationByteLimit &&
 			(action.IsMinimalCount || metadata.Size == action.Count || action.Count == 0);
-#if !PACKAGE
+#if !PACKAGE && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
 		BufferManager.Storage.PrintMetadata<T>(!stackAlloc);
 #endif
 		if (stackAlloc)
@@ -138,7 +138,7 @@ public static partial class BufferManager<T>
 		BufferTypeMetadata<T>? metadata = BufferManager.Storage.GetMetadata<T>(func.Count);
 		Boolean stackAlloc = metadata is not null && metadata.SizeOf <= BufferManager.StackAllocationByteLimit &&
 			(func.IsMinimalCount || metadata.Size == func.Count || func.Count == 0);
-#if !PACKAGE
+#if !PACKAGE && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
 		BufferManager.Storage.PrintMetadata<T>(!stackAlloc);
 #endif
 		if (stackAlloc)

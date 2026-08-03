@@ -5,8 +5,10 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// <see cref="CString"/> extensions for <see cref="Stream"/> class.
 /// </summary>
-[EditorBrowsable(EditorBrowsableState.Never)]
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 [Browsable(false)]
+#endif
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static class StreamCStringExtensions
 {
 	/// <summary>

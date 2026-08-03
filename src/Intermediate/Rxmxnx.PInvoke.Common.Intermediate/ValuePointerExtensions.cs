@@ -5,7 +5,9 @@ namespace Rxmxnx.PInvoke;
 /// <see cref="ValPtr{T}"/> values.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 [Browsable(false)]
+#endif
 public static class ValuePointerExtensions
 {
 #if !PACKAGE && NET9_0_OR_GREATER

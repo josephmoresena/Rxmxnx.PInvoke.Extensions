@@ -226,7 +226,11 @@ public static partial class BufferManager<T>
 #endif
 	{
 		if (action is null) return;
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (typeof(T).IsValueType)
+#else
+		if (typeof(T).GetTypeInfo().IsValueType)
+#endif
 			BufferManager<T>.AllocValue(ref action);
 		else
 			BufferManager<T>.AllocObject(ref action);
@@ -252,7 +256,11 @@ public static partial class BufferManager<T>
 			Unsafe.SkipInit(out result);
 			return;
 		}
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (typeof(T).IsValueType)
+#else
+		if (typeof(T).GetTypeInfo().IsValueType)
+#endif
 		{
 			BufferManager<T>.AllocValue(ref func, out result);
 			return;
@@ -274,7 +282,11 @@ public static partial class BufferManager<T>
 		where TAction : struct, IScopedBufferAction<T>, allows ref struct
 #endif
 	{
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (typeof(T).IsValueType)
+#else
+		if (typeof(T).GetTypeInfo().IsValueType)
+#endif
 			BufferManager<T>.AllocValue(ref action);
 		else
 			BufferManager<T>.AllocObject(ref action);
@@ -295,7 +307,11 @@ public static partial class BufferManager<T>
 		where TFunction : struct, IScopedBufferFunction<T, TResult>, allows ref struct
 #endif
 	{
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (typeof(T).IsValueType)
+#else
+		if (typeof(T).GetTypeInfo().IsValueType)
+#endif
 		{
 			BufferManager<T>.AllocValue(ref func, out result);
 			return;

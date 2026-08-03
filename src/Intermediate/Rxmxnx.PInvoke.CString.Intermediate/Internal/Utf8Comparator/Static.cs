@@ -18,7 +18,7 @@ internal abstract unsafe partial class Utf8Comparator
 	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
 	public static String GetStringFromUtf8(ReadOnlySpan<Byte> source) => source.ToUtf16();
 #elif NETFRAMEWORK
 	public static String GetStringFromUtf8(ReadOnlySpan<Byte> source) => Encoding.UTF8.GetString([.. source,]);
@@ -92,11 +92,18 @@ internal abstract unsafe partial class Utf8Comparator
 
 		if (Utf8Comparator.OrdinalCompareFirst(ref spanA, ref spanB, out Int32 result))
 			return result;
-
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		Int32 minLength = Environment.Is64BitProcess ? 12 : 10;
+#else
+		Int32 minLength = sizeof(IntPtr) == 8 ? 12 : 10;
+#endif
 		while (Math.Min(spanA.Length, spanB.Length) >= minLength)
 		{
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 			switch (Environment.Is64BitProcess)
+#else
+			switch (sizeof(IntPtr) == 8)
+#endif
 			{
 				case true when Utf8Comparator.OrdinalCompare64Bit(ref spanA, ref spanB, out result):
 				case false when Utf8Comparator.OrdinalCompare32Bit(ref spanA, ref spanB, out result):

@@ -19,7 +19,10 @@ namespace Rxmxnx.PInvoke;
 #if NETCOREAPP || NET461_OR_GREATER
 [JsonConverter(typeof(JsonConverter))]
 #endif
-public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatable<String>
+public sealed partial class CString : IEquatable<CString>, IEquatable<String>
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+	, ICloneable
+#endif
 {
 	/// <summary>
 	/// Represents an empty UTF-8 string. This field is read-only.
@@ -158,6 +161,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// the new instance.
 	/// </param>
 	public CString(ReadOnlySpanFunc<Byte> func) : this(func, true) { }
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Object Clone()
@@ -169,6 +173,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 		bytes[^1] = default;
 		return new CString(bytes, true);
 	}
+#endif
 
 	/// <inheritdoc/>
 	public Boolean Equals([NotNullWhen(true)] CString? other)
@@ -269,8 +274,10 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// This method is used to support the use of a <see cref="CString"/> within a fixed statement.
 	/// It should not be used in typical code.
 	/// </remarks>
-	[EditorBrowsable(EditorBrowsableState.Never)]
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	[Browsable(false)]
+#endif
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	public ref readonly Byte GetPinnableReference() => ref MemoryMarshal.GetReference(this._data.AsSpan());
 	/// <summary>
 	/// Copies the UTF-8 text of the current <see cref="CString"/> instance into a new byte array.

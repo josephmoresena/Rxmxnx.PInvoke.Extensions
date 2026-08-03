@@ -38,7 +38,7 @@ internal abstract unsafe partial class MemoryInspector
 	{
 		if (SystemInfo.IsWindows)
 			MemoryInspector.instance = new Windows();
-#if !UAP
+#if !UAP10_0
 		else if (SystemInfo.IsLinux)
 			MemoryInspector.instance = new Linux();
 		else if (SystemInfo.IsFreeBsd)

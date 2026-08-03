@@ -6,7 +6,7 @@ namespace Rxmxnx.PInvoke;
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
 #endif
-#if !UAP
+#if !UAP10_0
 public static partial class AotInfo
 {
 	/// <summary>
@@ -55,7 +55,7 @@ public static class AotInfo
 			if (TrimInfo.ZeroIlBytes() && AotInfo.IsDesktopOrAndroid())
 				return false;
 #endif
-#if !UAP
+#if !UAP10_0
 			return !AotInfo.IsReflectionDisabled && EmitInfo.IsEmitAllowed;
 #else
 			return false;
@@ -65,7 +65,7 @@ public static class AotInfo
 	/// <summary>
 	/// Indicates whether the current runtime is Native AOT.
 	/// </summary>
-#if !UAP
+#if !UAP10_0
 	public static Boolean IsNativeAot => AotInfo.isAotRuntime;
 #else
 	public static Boolean IsNativeAot => true;
@@ -92,11 +92,12 @@ public static class AotInfo
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static Boolean IsDynamicCode(MethodBase methodBase)
-#if !UAP
+#if !UAP10_0
 		=> EmitInfo.IsDynamicMethod(methodBase);
 #else
 		=> false;
 #endif
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	/// <summary>
 	/// Indicates whether the function pointer of <paramref name="methodHandle"/> references to an R/RX memory section.
 	/// </summary>
@@ -114,4 +115,5 @@ public static class AotInfo
 		RuntimeHelpers.PrepareMethod(methodHandle);
 		return MemoryInspector.Instance.IsReadOnlyAddress(methodHandle.GetFunctionPointer().ToPointer());
 	}
+#endif
 }

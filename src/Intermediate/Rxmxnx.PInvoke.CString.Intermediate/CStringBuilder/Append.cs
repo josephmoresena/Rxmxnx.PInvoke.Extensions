@@ -87,7 +87,11 @@ public sealed partial class CStringBuilder
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	public CStringBuilder Append(Boolean value)
 	{
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
+#else
+		this._chunk = this._chunk.Append(value.ToString());
+#endif
 		return this;
 	}
 	/// <summary>
@@ -107,8 +111,10 @@ public sealed partial class CStringBuilder
 		this._chunk = this._chunk.AppendUtf8(value);
 #elif NET6_0_OR_GREATER
 		this._chunk = this._chunk.AppendUtf16(value);
-#else
+#elif NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		this._chunk = this._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
+#else
+		this._chunk = this._chunk.Append(value.ToString());
 #endif
 		return this;
 	}

@@ -19,7 +19,10 @@
 #if NETCOREAPP || NET461_OR_GREATER
 [JsonConverter(typeof(JsonConverter))]
 #endif
-public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequence>
+public sealed partial class CStringSequence : IEquatable<CStringSequence>
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+	, ICloneable
+#endif
 {
 	/// <summary>
 	/// Represents an empty sequence.
@@ -137,8 +140,10 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// Required to support the use of a <see cref="CStringSequence"/> within a fixed statement.
 	/// It should not be used in typical code.
 	/// </remarks>
-	[EditorBrowsable(EditorBrowsableState.Never)]
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	[Browsable(false)]
+#endif
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	public ref readonly Byte GetPinnableReference()
 	{
 		ReadOnlySpan<Char> chars = this._value.AsSpan();

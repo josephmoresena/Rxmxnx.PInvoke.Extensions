@@ -4,8 +4,10 @@
 /// Provides a set of extensions for <see cref="CString"/> operations with <see cref="IntPtr"/> and <see cref="UIntPtr"/>
 /// instances.
 /// </summary>
-[EditorBrowsable(EditorBrowsableState.Never)]
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 [Browsable(false)]
+#endif
+[EditorBrowsable(EditorBrowsableState.Never)]
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
@@ -29,7 +31,8 @@ public static unsafe class PointerCStringExtensions
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (ptr == IntPtr.Zero)
 			return CString.Empty;
-		return (CString)CString.CreateUnsafe(ptr, length).Clone();
+		ReadOnlySpan<Byte> span = new(ptr.ToPointer(), length);
+		return new(span);
 	}
 	/// <summary>
 	/// Generates a <see cref="CString"/> instance using the memory reference pointed to by the
@@ -49,7 +52,8 @@ public static unsafe class PointerCStringExtensions
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (uptr == UIntPtr.Zero)
 			return CString.Empty;
-		return (CString)CString.CreateUnsafe((IntPtr)uptr.ToPointer(), length).Clone();
+		ReadOnlySpan<Byte> span = new(uptr.ToPointer(), length);
+		return new(span);
 	}
 	/// <summary>
 	/// Generates a <see cref="CString"/> instance using the memory reference pointed to by the
@@ -69,6 +73,7 @@ public static unsafe class PointerCStringExtensions
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (handle.Pointer == default)
 			return CString.Empty;
-		return (CString)CString.CreateUnsafe((IntPtr)handle.Pointer, length).Clone();
+		ReadOnlySpan<Byte> span = new(handle.Pointer, length);
+		return new(span);
 	}
 }

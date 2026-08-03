@@ -12,6 +12,7 @@ public unsafe partial class NativeUtilities
 public partial class NativeUtilities
 #endif
 {
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	/// <summary>
 	/// Cache for <see cref="GlobalizationInvariantModeEnabled"/>
 	/// </summary>
@@ -39,6 +40,7 @@ public partial class NativeUtilities
 			return cultures.Length <= 1;
 		}
 	}
+#endif
 	/// <summary>
 	/// Retrieves the Iso639-1 language code enum value corresponding to the current user interface culture.
 	/// </summary>

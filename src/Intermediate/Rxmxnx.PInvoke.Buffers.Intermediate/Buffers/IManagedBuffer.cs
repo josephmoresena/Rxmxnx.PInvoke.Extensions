@@ -15,7 +15,9 @@ public interface IManagedBuffer<T>
 	/// </summary>
 	/// <returns>The <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 	[EditorBrowsable(EditorBrowsableState.Never)]
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	[Browsable(false)]
+#endif
 	internal BufferTypeMetadata<T> GetStaticTypeMetadata();
 
 #if NET7_0_OR_GREATER

@@ -9,8 +9,10 @@ public unsafe partial class CStringSequence
 	/// <summary>
 	/// Custom marshaller for <see cref="CStringSequence"/> to native null-terminated UTF-8 text array.
 	/// </summary>
-	[EditorBrowsable(EditorBrowsableState.Never)]
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	[Browsable(false)]
+#endif
+	[EditorBrowsable(EditorBrowsableState.Never)]
 #if NET7_0_OR_GREATER
 	[CustomMarshaller(typeof(CStringSequence), MarshalMode.ManagedToUnmanagedIn, typeof(InputMarshaller))]
 	[CustomMarshaller(typeof(Utf8View), MarshalMode.ManagedToUnmanagedIn, typeof(InputMarshaller))]

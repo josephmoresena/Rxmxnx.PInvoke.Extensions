@@ -16,7 +16,7 @@ internal sealed partial class ArrayMemoryManager<T> : ManagedMemoryManager<T>
 	/// </summary>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
 	private ArrayMemoryManager(Array? array) : base(array?.Length)
-#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
 		=> this._array = array ?? Array.Empty<T>();
 #else
 		=> this._array = array ?? new T[0];

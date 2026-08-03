@@ -84,7 +84,11 @@ public partial class CStringBuilder
 #else
 			lock (lockObj)
 #endif
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 				builder._chunk = builder._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
+#else
+				builder._chunk = builder._chunk.Append(value.ToString());
+#endif
 			return builder;
 		}
 		/// <summary>
@@ -104,8 +108,10 @@ public partial class CStringBuilder
 				builder._chunk = builder._chunk.AppendUtf8(value);
 #elif NET6_0_OR_GREATER
 				builder._chunk = builder._chunk.AppendUtf16(value);
-#else
+#elif NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 				builder._chunk = builder._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
+#else
+				builder._chunk = builder._chunk.Append(value.ToString());
 #endif
 			return builder;
 		}

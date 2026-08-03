@@ -18,7 +18,7 @@ internal abstract partial class MetadataStorage : IMetadataStorage
 	/// <inheritdoc/>
 	[return: NotNullIfNotNull("typeMetadata")]
 	public abstract BufferTypeMetadata<T>? AddBinaryMetadata<T>(BufferTypeMetadata<T>? typeMetadata);
-#if !PACKAGE
+#if !PACKAGE && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
 	/// <inheritdoc/>
 	public abstract void PrintMetadata<T>(Boolean trace);
 #endif
@@ -114,7 +114,7 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 		this._backend.GetBinaryReference<T>(typeMetadata.Size) = typeMetadata;
 		return typeMetadata;
 	}
-#if !PACKAGE
+#if !PACKAGE && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
 	/// <inheritdoc/>
 	public override void PrintMetadata<T>(Boolean trace)
 	{

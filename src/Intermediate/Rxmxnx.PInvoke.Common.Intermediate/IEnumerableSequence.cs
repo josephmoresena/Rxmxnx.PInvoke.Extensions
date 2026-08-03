@@ -8,9 +8,9 @@
 /// This interface should not be implemented directly; it should only be implemented through the generic interface
 /// <see cref="IEnumerableSequence{T}"/>.
 /// </remarks>
-[EditorBrowsable(EditorBrowsableState.Never)]
 [Browsable(false)]
 [Preserve(AllMembers = true)]
+[EditorBrowsable(EditorBrowsableState.Never)]
 public interface IEnumerableSequence
 {
 	/// <summary>
@@ -118,7 +118,9 @@ public interface IEnumerableSequence<out T> : IEnumerable<T>
 /// <summary>
 /// Extension class for enumerable sequence instances.
 /// </summary>
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 [Browsable(false)]
+#endif
 [EditorBrowsable(EditorBrowsableState.Never)]
 public static class EnumerableSequenceExtensions
 {

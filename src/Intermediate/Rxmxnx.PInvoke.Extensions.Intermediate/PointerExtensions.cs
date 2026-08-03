@@ -7,8 +7,10 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// Provides a set of extensions for basic operations with <see cref="IntPtr"/> and <see cref="UIntPtr"/> instances.
 /// </summary>
-[EditorBrowsable(EditorBrowsableState.Never)]
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 [Browsable(false)]
+#endif
+[EditorBrowsable(EditorBrowsableState.Never)]
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
@@ -381,7 +383,7 @@ public static unsafe class PointerExtensions
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TDelegate? GetUnsafeDelegate<TDelegate>(this IntPtr ptr) where TDelegate : Delegate
-#if NETSTANDARD1_2_OR_GREATER || NETCOREAPP || NET451_OR_GREATER || UAP
+#if NETSTANDARD1_2_OR_GREATER || NETCOREAPP || NET451_OR_GREATER || UAP10_0
 		=> !ptr.IsZero() ? Marshal.GetDelegateForFunctionPointer<TDelegate>(ptr) : default;
 #else
 		=> !ptr.IsZero() ? (TDelegate)Marshal.GetDelegateForFunctionPointer(ptr, typeof(TDelegate)) : default;
@@ -583,7 +585,7 @@ public static unsafe class PointerExtensions
 #endif
 	public static Boolean IsImageCode(this RuntimeMethodHandle methodHandle)
 	{
-#if !UAP
+#if !UAP10_0
 		if (!MemoryInspector.IsSupported || methodHandle == default) return false;
 		if (AotInfo.IsReflectionDisabled) return true;
 		try
