@@ -39,6 +39,7 @@ internal sealed class ChineseMessageResource : IMessageResource
 	String IMessageResource.IndexOutOfSequence => "索引和长度必须引用序列内的位置。";
 	String IMessageResource.MissingMemoryInspector => "当前平台不支持内存检查。";
 	String IMessageResource.ReflectionDisabled => "此功能需要启用完整反射模式。";
+	String IMessageResource.InvalidSpanLayout => "无法识别 Span<T> 布局中的可固定字段。";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"对象必须是 {requiredTypeName} 类型。";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf) => $"当前实例不足以包含 {typeOf} 类型的值。";

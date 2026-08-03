@@ -44,6 +44,7 @@ internal sealed class PortugueseMessageResource : IMessageResource
 		=> "O índice e o comprimento devem se referir a uma posição dentro da sequência.";
 	String IMessageResource.MissingMemoryInspector => "A inspeção de memória não é suportada na plataforma atual.";
 	String IMessageResource.ReflectionDisabled => "Este recurso requer o modo de reflexão completa.";
+	String IMessageResource.InvalidSpanLayout => "Não foi possível identificar o campo fixável no layout de Span<T>.";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"O objeto deve ser do tipo {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)

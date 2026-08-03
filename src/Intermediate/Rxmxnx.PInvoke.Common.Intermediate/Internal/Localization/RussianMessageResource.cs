@@ -42,6 +42,7 @@ internal sealed class RussianMessageResource : IMessageResource
 		=> "Индекс и длина должны указывать на местоположение внутри последовательности.";
 	String IMessageResource.MissingMemoryInspector => "Проверка памяти не поддерживается на текущей платформе.";
 	String IMessageResource.ReflectionDisabled => "Эта функция требует режима полной рефлексии.";
+	String IMessageResource.InvalidSpanLayout => "Не удалось определить закрепляемое поле в структуре Span<T>.";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"Объект должен быть типа {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)

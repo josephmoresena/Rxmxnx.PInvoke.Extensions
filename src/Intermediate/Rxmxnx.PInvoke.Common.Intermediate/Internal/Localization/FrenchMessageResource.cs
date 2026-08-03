@@ -45,6 +45,8 @@ internal sealed class FrenchMessageResource : IMessageResource
 	String IMessageResource.MissingMemoryInspector
 		=> "L'inspection de la mémoire n'est pas prise en charge sur la plateforme actuelle.";
 	String IMessageResource.ReflectionDisabled => "Cette fonctionnalité nécessite le mode réflexion complète.";
+	String IMessageResource.InvalidSpanLayout
+		=> "Impossible d'identifier le champ pouvant être épinglé dans la disposition de Span<T>.";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"L'objet doit être de type {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)

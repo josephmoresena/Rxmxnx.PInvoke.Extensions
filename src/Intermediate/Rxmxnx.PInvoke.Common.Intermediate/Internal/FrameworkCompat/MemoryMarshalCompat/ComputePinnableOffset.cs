@@ -41,19 +41,19 @@ internal static unsafe partial class MemoryMarshalCompat
 		pinnableSlotRef = pinnable;
 	}
 	/// <summary>
-	/// Computes the byte offset of the <c>_pinnable</c> field in the three-field <see cref="Span{T}"/> representation.
+	/// Determines the byte offset of the <c>_pinnable</c> field in the runtime representation of
+	/// <see cref="Span{T}"/>.
 	/// </summary>
 	/// <returns>
-	/// The byte offset of the <c>_pinnable</c> field, or <c>-1</c> when the runtime uses the two-field span
-	/// representation.
+	/// The byte offset of the <c>_pinnable</c> field, or <c>-1</c> if the runtime uses the compact two-field
+	/// span representation.
 	/// </returns>
 	/// <exception cref="PlatformNotSupportedException">
-	/// The runtime uses a non-fast implementation, but the <c>_pinnable</c> field could not be identified.
+	/// The runtime uses a non-compact span representation whose <c>_pinnable</c> field cannot be identified.
 	/// </exception>
 	private static Int32 ComputePinnableOffset()
 	{
-		Int32 spanSize = sizeof(Span<Byte>);
-		if (spanSize <= 2 * sizeof(IntPtr)) return -1;
+		if (sizeof(Span<Byte>) <= 2 * sizeof(IntPtr)) return -1;
 
 		B2 buffer = new();
 		Span<Object> arrays = MemoryMarshalCompat.CreateUnsafeSpan<Object>(&buffer, 2);
@@ -65,24 +65,9 @@ internal static unsafe partial class MemoryMarshalCompat
 		GCHandle secondHandle = GCHandle.Alloc(arrays[1], GCHandleType.Pinned);
 		try
 		{
-			Span<Byte> firstSpan = new(Unsafe.As<Object, Byte[]>(ref arrays[0]));
-			Span<Byte> secondSpan = new(Unsafe.As<Object, Byte[]>(ref arrays[1]));
-			ref Span<Byte> firstSpanRef = ref firstSpan;
-			ref Span<Byte> secondSpanRef = ref secondSpan;
-			fixed (void* firstSpanPtr = &firstSpanRef)
-			fixed (void* secondSpanPtr = &secondSpanRef)
-			{
-				ReadOnlySpan<Byte> spanXorSpan =
-					MemoryMarshalCompat.GetSpanXorSpan(stackalloc Byte[spanSize], firstSpanPtr, secondSpanPtr);
-				IntPtr referenceXor =
-					Unsafe.As<Object, IntPtr>(ref arrays[0]) ^ Unsafe.As<Object, IntPtr>(ref arrays[1]);
-				Int32 result = spanXorSpan.IndexOf(new ReadOnlySpan<Byte>(&referenceXor, sizeof(IntPtr)));
-				if (result < 0)
-					//TODO: ValidationUtilities
-					throw new PlatformNotSupportedException(
-						"Unable to identify the pinnable field in the Span<T> layout.");
-				return result;
-			}
+			Span<Byte> span0 = new(Unsafe.As<Object, Byte[]>(ref arrays[0]));
+			Span<Byte> span1 = new(Unsafe.As<Object, Byte[]>(ref arrays[1]));
+			return MemoryMarshalCompat.ComputePinnableOffset(arrays, in span0, in span1);
 		}
 		finally
 		{
@@ -91,11 +76,47 @@ internal static unsafe partial class MemoryMarshalCompat
 		}
 	}
 	/// <summary>
-	/// Computes the bytewise XOR of two span memory representations and writes the result to the provided buffer.
+	/// Locates the <c>_pinnable</c> field by comparing the runtime memory representations of two spans backed by
+	/// distinct pinned arrays.
 	/// </summary>
-	/// <param name="spanXor">The destination buffer that receives the XOR result.</param>
-	/// <param name="firstSpanPtr">Pointer to the first span memory representation.</param>
-	/// <param name="secondSpanPtr">Pointer to the second span memory representation.</param>
+	/// <param name="arrays">
+	/// A two-element span containing the pinned array references used to construct <paramref name="span0"/> and
+	/// <paramref name="span1"/>.
+	/// </param>
+	/// <param name="span0">A read-only reference to the first span used as a layout probe.</param>
+	/// <param name="span1">
+	/// A read-only reference to the second span used as a layout probe.
+	/// </param>
+	/// <returns>
+	/// The zero-based byte offset of the <c>_pinnable</c> field within the runtime span representation.
+	/// </returns>
+	/// <exception cref="PlatformNotSupportedException">
+	/// The runtime uses a non-compact span representation whose <c>_pinnable</c> field cannot be identified.
+	/// </exception>
+	private static Int32 ComputePinnableOffset(Span<Object> arrays, in Span<Byte> span0, in Span<Byte> span1)
+	{
+		fixed (void* pSpan0 = &span0)
+		fixed (void* pSpan = &span1)
+		{
+			ReadOnlySpan<Byte> spanXorSpan =
+				MemoryMarshalCompat.GetSpanXorSpan(stackalloc Byte[sizeof(Span<Byte>)], pSpan0, pSpan);
+			IntPtr referenceXor = Unsafe.As<Object, IntPtr>(ref arrays[0]) ^ Unsafe.As<Object, IntPtr>(ref arrays[1]);
+			Int32 result = spanXorSpan.IndexOf(new ReadOnlySpan<Byte>(&referenceXor, sizeof(IntPtr)));
+
+			if (result >= 0) return result;
+			IMessageResource resource = MessageResource.GetInstance();
+			throw new PlatformNotSupportedException(resource.InvalidSpanLayout);
+		}
+	}
+	/// <summary>
+	/// Computes the bytewise exclusive OR of two span memory representations.
+	/// </summary>
+	/// <param name="spanXor">
+	/// The destination buffer that receives the bytewise XOR result. Its length determines the number of bytes read
+	/// from each memory representation.
+	/// </param>
+	/// <param name="firstSpanPtr">A pointer to the first span memory representation.</param>
+	/// <param name="secondSpanPtr">A pointer to the second span memory representation.</param>
 	/// <returns>
 	/// A read-only view of <paramref name="spanXor"/> containing the computed XOR bytes.
 	/// </returns>

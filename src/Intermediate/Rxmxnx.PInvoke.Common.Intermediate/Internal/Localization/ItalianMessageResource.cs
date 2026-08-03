@@ -45,6 +45,7 @@ internal sealed class ItalianMessageResource : IMessageResource
 	String IMessageResource.MissingMemoryInspector
 		=> "L'ispezione della memoria non è supportata sulla piattaforma corrente.";
 	String IMessageResource.ReflectionDisabled => "Questa funzionalità richiede la modalità reflection-full.";
+	String IMessageResource.InvalidSpanLayout => "Impossibile identificare il campo bloccabile nel layout di Span<T>.";
 
 	String IMessageResource.InvalidType(String requiredTypeName)
 		=> $"L'oggetto deve essere di tipo {requiredTypeName}.";

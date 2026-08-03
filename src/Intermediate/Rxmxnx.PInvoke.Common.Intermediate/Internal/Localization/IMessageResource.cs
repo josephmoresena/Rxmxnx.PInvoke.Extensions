@@ -81,6 +81,10 @@ internal interface IMessageResource
 	/// Message for reflection disabled.
 	/// </summary>
 	String ReflectionDisabled { get; }
+	/// <summary>
+	/// Message for invalid three-field span layout.
+	/// </summary>
+	String InvalidSpanLayout { get; }
 
 	/// <summary>
 	/// Message for invalid pointer value exception.

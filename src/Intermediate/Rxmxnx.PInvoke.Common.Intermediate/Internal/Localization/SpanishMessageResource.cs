@@ -45,6 +45,7 @@ internal sealed class SpanishMessageResource : IMessageResource
 	String IMessageResource.MissingMemoryInspector
 		=> "La inspección de memoria no es compatible con la plataforma actual.";
 	String IMessageResource.ReflectionDisabled => "Esta función requiere el modo de reflexión completa.";
+	String IMessageResource.InvalidSpanLayout => "No se pudo identificar el campo fijable en la estructura de Span<T>.";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"El objeto debe ser del tipo {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)

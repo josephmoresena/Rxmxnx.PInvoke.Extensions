@@ -44,6 +44,8 @@ internal sealed class GermanMessageResource : IMessageResource
 	String IMessageResource.MissingMemoryInspector
 		=> "Die Speicherinspektion wird auf der aktuellen Plattform nicht unterstützt.";
 	String IMessageResource.ReflectionDisabled => "Diese Funktion erfordert den vollständigen Reflexionsmodus.";
+	String IMessageResource.InvalidSpanLayout
+		=> "Das anheftbare Feld im Layout von Span<T> konnte nicht identifiziert werden.";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"Das Objekt muss vom Typ {requiredTypeName} sein.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)
