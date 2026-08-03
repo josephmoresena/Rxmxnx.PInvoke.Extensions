@@ -1,6 +1,9 @@
 ﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
 using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
 #endif
+#if !NETSTANDARD2_0_OR_GREATER && !NETCOREAPP && !NETFRAMEWORK && !UAP10_0_16299
+using InsufficientMemoryException = System.OutOfMemoryException;
+#endif
 
 namespace Rxmxnx.PInvoke.Internal;
 
