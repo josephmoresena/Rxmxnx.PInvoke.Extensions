@@ -74,7 +74,7 @@ internal readonly struct Range : IEquatable<Range>
 	/// We validate the range is inside the length scope though.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public (Int32 Offset, Int32 Length) GetOffsetAndLength(int length)
+	public (Int32 Offset, Int32 Length) GetOffsetAndLength(Int32 length)
 	{
 		Int32 start = this.Start.GetOffset(length);
 		Int32 end = this.End.GetOffset(length);
