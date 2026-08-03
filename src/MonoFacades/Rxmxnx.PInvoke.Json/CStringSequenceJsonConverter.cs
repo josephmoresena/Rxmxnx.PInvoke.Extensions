@@ -1,4 +1,4 @@
-﻿#if !NETCOREAPP2_1_OR_GREATER && !NET462_OR_GREATER
+﻿#if !NETCOREAPP2_1_OR_GREATER && !NET461_OR_GREATER
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;

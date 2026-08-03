@@ -113,24 +113,18 @@ internal static unsafe partial class MemoryMarshalCompat
 		=> MemoryMarshal.CreateSpan(ref start, length);
 #else
 	{
-		SpanOffset offsets = MemoryMarshalCompat.UnsafeSpanOffset;
-		Span<T> result = default;
-		ref Span<T> refResult = ref result;
-		fixed (void* pStart = &start)
-		fixed (void* pResult = &refResult)
+		if (MemoryMarshalCompat.PinnableOffset == -1)
+			// Modern UWP uses fast span, .NET Framework assembly can be used on Mono with .NET Standard 2.1
+			fixed (void* pStart = &start)
+				return MemoryMarshalCompat.CreateUnsafeSpan<T>(pStart, length);
+		Span<Byte> span = new(Unsafe.ByteOffset(ref pinnable.Data, ref start).ToPointer(), length);
+		ref Span<Byte> spanRef = ref span;
+		fixed (void* p = &spanRef)
 		{
-			Span<Byte> bytes = new(pResult, offsets.SpanSize);
-			if (offsets.PinnableOffset == -1)
-			{
-				// Modern UWP uses fast span, .NET Framework assembly can be used on Mono with .NET Standard 2.1
-				((Span<Byte>*)pResult)[0] = new(pStart, length);
-				return result;
-			}
-			Unsafe.As<Byte, Int32>(ref bytes[offsets.LengthOffset]) = length;
-			Unsafe.As<Byte, IntPtr>(ref bytes[offsets.PointerOffset]) = Unsafe.ByteOffset(ref pinnable.Data, ref start);
-			MemoryMarshalCompat.SetPinnableField(pinnable, pResult, offsets);
+			MemoryMarshalCompat.SetPinnableField(pinnable, p);
+			Span<T>* spanObjectPtr = (Span<T>*)p;
+			return spanObjectPtr[0];
 		}
-		return result;
 	}
 #endif
 	/// <summary>
@@ -151,8 +145,8 @@ internal static unsafe partial class MemoryMarshalCompat
 		=> MemoryMarshal.CreateSpan(ref Unsafe.AsRef<T>(ptr), length);
 #else
 	{
-		Span<IntPtr> span = new(ptr, length);
-		ref Span<IntPtr> spanRef = ref span;
+		Span<Byte> span = new(ptr, length);
+		ref Span<Byte> spanRef = ref span;
 		fixed (void* p = &spanRef)
 		{
 			Span<T>* spanObjectPtr = (Span<T>*)p;
@@ -176,8 +170,8 @@ internal static unsafe partial class MemoryMarshalCompat
 		=> MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<T>(ptr), length);
 #else
 	{
-		Span<IntPtr> span = new(ptr, length);
-		ref Span<IntPtr> spanRef = ref span;
+		Span<Byte> span = new(ptr, length);
+		ref Span<Byte> spanRef = ref span;
 		fixed (void* p = &spanRef)
 		{
 			Span<T>* spanObjectPtr = (Span<T>*)p;

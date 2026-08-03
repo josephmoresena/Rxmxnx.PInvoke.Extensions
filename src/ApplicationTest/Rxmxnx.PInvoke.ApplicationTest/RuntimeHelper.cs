@@ -1,16 +1,20 @@
 using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
+#if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || NETFRAMEWORK && !LEGACY
+using System.Diagnostics;
+#endif
+
 #if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET461_OR_GREATER && !UAP
 using System.Runtime.CompilerServices;
 #endif
-using System.Runtime.InteropServices;
-using System.Text;
 #if NET5_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
 #endif
+
 #if NET6_0_OR_GREATER
 using System.Runtime;
 
@@ -170,8 +174,8 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				writer.WriteLine($"CString.Empty literal: {CString.IsImagePersistent(CString.Empty)}");
 			}
 			writer.WriteLine($"Hardcoded Array literal: {!RuntimeHelper.Null.AsSpan().MayBeNonLiteral()}");
+#if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || NETFRAMEWORK && !LEGACY
 			if (SystemInfo.IsWebRuntime || AotInfo.IsReflectionDisabled || !SystemInfo.IsMonoRuntime) return;
-#if NETCOREAPP || NET461_OR_GREATER || NETFRAMEWORK && !LEGACY
 			writer.WriteLine("========== StackTrace information ==========");
 			RuntimeHelper.PrintStackInfo(writer);
 #endif
@@ -202,7 +206,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 					writer.WriteLine(ex);
 			}
 		}
-#if NETCOREAPP || NET461_OR_GREATER || NETFRAMEWORK && !LEGACY
+#if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || NETFRAMEWORK && !LEGACY
 #if NET5_0_OR_GREATER
 		[UnconditionalSuppressMessage("Trimming", "IL2026")]
 #endif
