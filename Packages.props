@@ -25,14 +25,12 @@
     </ItemGroup>
     <!-- LIMITED_LEGACY_SUPPORT -->
     <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
-        <!-- Include netcoreapp2.0 and netcoreapp2.2 -->
         <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1"/>
         <PackageReference Include="Microsoft.NETCore.App" Version="2.1.30">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
     </ItemGroup>
     <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0' Or '$(TargetFramework)' == 'netcoreapp2.1'">
-        <!-- Include netcoreapp2.0 and netcoreapp2.2 -->
         <PackageReference Include="System.Text.Json" Version="5.0.2"/>
     </ItemGroup>
     <!-- LEGACY_SUPPORT -->
@@ -66,7 +64,7 @@
     </ItemGroup>
     <!-- UWP_SUPPORT -->
     <ItemGroup Condition="'$(TargetFramework)' == 'uap10.0'">
-        <PackageReference Include="Microsoft.NETCore.Jit" Version="1.0.18">
+        <PackageReference Include="Microsoft.NETCore.Jit" Version="1.1.13">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.Net.Native.Compiler" Version="1.7.6">
