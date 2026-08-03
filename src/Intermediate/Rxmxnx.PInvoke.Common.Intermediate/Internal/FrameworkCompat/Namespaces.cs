@@ -8,7 +8,7 @@ namespace System.Collections.Immutable { }
 #endif
 #if !NETCOREAPP3_0_OR_GREATER
 namespace System.Runtime.Intrinsics.X86 { }
-#if !NETCOREAPP && !NETFRAMEWORK
+#if !NETCOREAPP && !NET461_OR_GREATER
 namespace System.Text.Json { }
 #if PACKAGE
 namespace System.Text.Json.Serialization { }

@@ -155,7 +155,7 @@ public partial class CString
 
 		this.IsFunction = isFunction;
 	}
-#if NETCOREAPP || NETFRAMEWORK
+#if NETCOREAPP || NET461_OR_GREATER
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class reading a String from <paramref name="reader"/>.
 	/// </summary>

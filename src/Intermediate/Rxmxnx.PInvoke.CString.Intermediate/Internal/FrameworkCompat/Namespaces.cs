@@ -3,7 +3,7 @@
 [assembly: SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3261)]
 
 namespace System.Runtime.InteropServices.Marshalling { }
-#if !NETCOREAPP || !NETFRAMEWORK
+#if !NETCOREAPP || !NET461_OR_GREATER
 namespace System.Text.Json { }
 
 namespace System.Text.Json.Serialization { }

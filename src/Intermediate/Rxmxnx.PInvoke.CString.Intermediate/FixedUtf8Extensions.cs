@@ -35,6 +35,7 @@ public static unsafe class FixedUtf8Extensions
 			return Encoding.UTF8.GetByteCount(ptr, chars.Length);
 	}
 #endif
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP
 	/// <summary>
 	/// Decodes a read-only span of UTF-8 encoded bytes into a UTF-16 encoded <see cref="String"/>.
 	/// </summary>
@@ -49,6 +50,7 @@ public static unsafe class FixedUtf8Extensions
 		fixed (Byte* ptr = &MemoryMarshal.GetReference(bytes))
 			return Encoding.UTF8.GetString(ptr, bytes.Length);
 	}
+#endif
 #endif
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current UTF-8 string by pinning its memory

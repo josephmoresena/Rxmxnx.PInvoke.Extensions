@@ -37,7 +37,12 @@ public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEq
 	/// <summary>
 	/// A managed delegate using the method address pointed to by this instance.
 	/// </summary>
-	public TDelegate Invoke => !this.IsZero ? Marshal.GetDelegateForFunctionPointer<TDelegate>(this.Pointer) : default!;
+	public TDelegate Invoke
+#if NETSTANDARD1_2_OR_GREATER || NETCOREAPP || NET451_OR_GREATER || UAP
+		=> !this.IsZero ? Marshal.GetDelegateForFunctionPointer<TDelegate>(this.Pointer) : default!;
+#else
+		=> !this.IsZero ? (TDelegate)Marshal.GetDelegateForFunctionPointer(this.Pointer, typeof(TDelegate)) : default!;
+#endif
 
 	/// <summary>
 	/// Private constructor.

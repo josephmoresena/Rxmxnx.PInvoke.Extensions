@@ -58,8 +58,13 @@ internal static unsafe partial class MemoryMarshalCompat
 		B2 buffer = new();
 		Span<Object> arrays = MemoryMarshalCompat.CreateUnsafeSpan<Object>(&buffer, 2);
 
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP
 		arrays[0] = Array.Empty<Byte>();
 		arrays[1] = Array.Empty<SByte>();
+#else
+		arrays[0] = new Byte[0];
+		arrays[1] = new SByte[0];
+#endif
 
 		GCHandle firstHandle = GCHandle.Alloc(arrays[0], GCHandleType.Pinned);
 		GCHandle secondHandle = GCHandle.Alloc(arrays[1], GCHandleType.Pinned);

@@ -381,7 +381,11 @@ public static unsafe class PointerExtensions
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TDelegate? GetUnsafeDelegate<TDelegate>(this IntPtr ptr) where TDelegate : Delegate
+#if NETSTANDARD1_2_OR_GREATER || NETCOREAPP || NET451_OR_GREATER || UAP
 		=> !ptr.IsZero() ? Marshal.GetDelegateForFunctionPointer<TDelegate>(ptr) : default;
+#else
+		=> !ptr.IsZero() ? (TDelegate)Marshal.GetDelegateForFunctionPointer(ptr, typeof(TDelegate)) : default;
+#endif
 	/// <summary>
 	/// Generates a delegate of type <typeparamref name="TDelegate"/> from a <see cref="UIntPtr"/>.
 	/// </summary>

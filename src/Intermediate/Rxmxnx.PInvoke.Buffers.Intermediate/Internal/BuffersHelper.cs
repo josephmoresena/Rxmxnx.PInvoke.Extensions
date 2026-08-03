@@ -42,9 +42,13 @@ internal static class BuffersHelper
 	public static Boolean BufferAutoCompositionEnabled
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP
 		get
 			=> !AotInfo.IsReflectionDisabled &&
 				(!AppContext.TryGetSwitch("PInvoke.DisableBufferAutoComposition", out Boolean disable) || !disable);
+#else
+		get => true;
+#endif
 	}
 
 	/// <summary>

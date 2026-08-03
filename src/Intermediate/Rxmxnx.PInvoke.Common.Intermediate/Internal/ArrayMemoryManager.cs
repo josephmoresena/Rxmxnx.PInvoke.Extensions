@@ -15,7 +15,12 @@ internal sealed partial class ArrayMemoryManager<T> : ManagedMemoryManager<T>
 	/// Constructor.
 	/// </summary>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
-	private ArrayMemoryManager(Array? array) : base(array?.Length) => this._array = array ?? Array.Empty<T>();
+	private ArrayMemoryManager(Array? array) : base(array?.Length)
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP
+		=> this._array = array ?? Array.Empty<T>();
+#else
+		=> this._array = array ?? new T[0];
+#endif
 
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -19,6 +19,13 @@ namespace System;
 /// </remarks>
 internal readonly struct Range : IEquatable<Range>
 {
+#if !NETSTANDARD2_0_OR_GREATER && !NETCOREAPP2_0_OR_GREATER && !NET461_OR_GREATER && !UAP
+	/// <summary>
+	/// Internal seed for HashCode.
+	/// </summary>
+	private static readonly Int32 hashSeed = Guid.NewGuid().GetHashCode();
+#endif
+
 	/// <summary>
 	/// Create a Range object starting from first element to the end.
 	/// </summary>
@@ -48,7 +55,20 @@ internal readonly struct Range : IEquatable<Range>
 	/// <inheritdoc/>
 	public Boolean Equals(Range other) => other.Start.Equals(this.Start) && other.End.Equals(this.End);
 	/// <inheritdoc/>
-	public override Int32 GetHashCode() => HashCode.Combine(this.Start.GetHashCode(), this.End.GetHashCode());
+	public override Int32 GetHashCode()
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_0_OR_GREATER || NET461_OR_GREATER || UAP
+		=> HashCode.Combine(this.Start.GetHashCode(), this.End.GetHashCode());
+#else
+	{
+		Int32 hash = Range.hashSeed;
+		unchecked
+		{
+			hash = hash * 31 + this.Start.GetHashCode();
+			hash = hash * 31 + this.End.GetHashCode();
+		}
+		return hash;
+	}
+#endif
 	/// <inheritdoc/>
 	public override String ToString() => $"{this.Start}..{this.End}";
 

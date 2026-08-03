@@ -1,4 +1,4 @@
-#if NETCOREAPP || NETFRAMEWORK
+#if NETCOREAPP || NET461_OR_GREATER
 namespace Rxmxnx.PInvoke;
 
 public partial class CString

@@ -16,7 +16,7 @@ namespace Rxmxnx.PInvoke;
 #endif
 [DebuggerDisplay("{ToString()}")]
 [DebuggerTypeProxy(typeof(CStringDebugView))]
-#if NETCOREAPP || NETFRAMEWORK
+#if NETCOREAPP || NET461_OR_GREATER
 [JsonConverter(typeof(JsonConverter))]
 #endif
 public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatable<String>

@@ -38,7 +38,9 @@ namespace System.Text;
 /// This type's constructors and conversion operators validate the input, so consumers can call the APIs
 /// assuming that the underlying <see cref="System.Text.Rune"/> instance is well-formed.
 /// </remarks>
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
+#endif
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1764)]
@@ -149,11 +151,13 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 
 	public static explicit operator Rune(Int32 value) => new(value);
 
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP
 	// Displayed as "'<char>' (U+XXXX)"; e.g., "'e' (U+0065)"
 	private String DebuggerDisplay
 		=> FormattableString.Invariant(
 			// ReSharper disable once HeapView.BoxingAllocation
 			$"U+{this._value:X4} '{(Rune.IsValid(this._value) ? this.ToString() : "\uFFFD")}'");
+#endif
 
 	/// <summary>
 	/// Returns true if and only if this scalar value is ASCII ([ U+0000..U+007F ])

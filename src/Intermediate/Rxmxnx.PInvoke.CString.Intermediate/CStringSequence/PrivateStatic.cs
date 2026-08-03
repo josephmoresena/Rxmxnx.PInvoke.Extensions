@@ -324,7 +324,11 @@ public unsafe partial class CStringSequence
 			CStringSequence.GetEmptyIndexList(lengths, out totalNonEmpty, out Int32 lastNonEmpty, out Int32 skipLast);
 
 		// All elements are empty, the cache is an empty array.
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP
 		if (emptyIndices.Count == lengths.Length) return Array.Empty<CString>();
+#else
+		if (emptyIndices.Count == lengths.Length) return CStringSequence.emptyArray;
+#endif
 
 		// There is no empty elements or there are only at the end of the list
 		if (emptyIndices.Count == 0 || (emptyIndices.Count - skipLast == 1 && lastNonEmpty + 1 == emptyIndices[0]))

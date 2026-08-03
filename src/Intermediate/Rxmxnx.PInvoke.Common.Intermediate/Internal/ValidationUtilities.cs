@@ -673,7 +673,7 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = MessageResource.GetInstance();
 		throw new PlatformNotSupportedException(resource.ReflectionDisabled);
 	}
-#if NETCOREAPP || NETFRAMEWORK
+#if NETCOREAPP || NET461_OR_GREATER
 	/// <summary>
 	/// Throws an exception if the current token type is invalid for string type.
 	/// </summary>
