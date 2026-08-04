@@ -5,7 +5,7 @@ using System;
 using System.Text.Json.Serialization;
 
 #endif
-#if !NETCOREAPP2_1_OR_GREATER && !NET461_OR_GREATER
+#if !NETCOREAPP2_1_OR_GREATER && !NET461_OR_GREATER && !UAP10_0_16299
 using CStringJsonConverter = Rxmxnx.PInvoke.Json.CStringJsonConverter;
 using CStringSequenceJsonConverter = Rxmxnx.PInvoke.Json.CStringSequenceJsonConverter;
 

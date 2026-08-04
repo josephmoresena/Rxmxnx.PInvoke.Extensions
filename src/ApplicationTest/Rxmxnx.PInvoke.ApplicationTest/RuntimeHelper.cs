@@ -109,8 +109,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 			RuntimeHelper.PrintRuntimeInfo(writer);
 		}
-
-		private static void PrintRuntimeInfo(TextWriter writer)
+		public static void PrintRuntimeInfo(TextWriter writer)
 		{
 			writer.WriteLine("========== Application for " + RuntimeHelper.runtimeName + " ==========");
 			RuntimeHelper.PrintDomainInfo(writer);
@@ -180,6 +179,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			RuntimeHelper.PrintStackInfo(writer);
 #endif
 		}
+		
 		private static void PrintDomainInfo(TextWriter writer)
 		{
 			try

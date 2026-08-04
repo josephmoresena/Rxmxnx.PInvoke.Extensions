@@ -2,7 +2,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest;
 
 public static class Utf8ConcatenationHelper
 {
-	public static void CStringBuildingFeature()
+	public static void CStringBuildingFeature(TextWriter writer)
 	{
 		Span<Int32> interruptions = stackalloc Int32[8];
 		CStringBuilder bohemianRhapsody = new();
@@ -93,6 +93,6 @@ public static class Utf8ConcatenationHelper
 		bohemianRhapsody.Insert(0, CString.NewLine);
 		bohemianRhapsody.Insert(0, "Is this the real life? Is this just fantasy?"u8);
 
-		Console.WriteLine(bohemianRhapsody.ToString());
+		writer.WriteLine(bohemianRhapsody.ToString());
 	}
 }
