@@ -2,41 +2,44 @@
 
 using AppKit;
 
-using CoreGraphics;
-
 namespace MacAppTest
 {
 	public partial class ViewController : NSViewController
 	{
+		private const NSViewResizingMask resizingMask = NSViewResizingMask.WidthSizable | NSViewResizingMask.HeightSizable;
+
 		public ViewController(IntPtr handle) : base(handle) { }
 
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
-			// Do any additional setup after loading the view.
-			CGRect frame = new(20, 20, 300, 200);
-			NSScrollView scrollView = new(frame)
+			NSScrollView scrollView = new(View.Bounds)
 			{
 				HasVerticalScroller = true,
 				HasHorizontalScroller = false,
-				AutoresizingMask = NSViewResizingMask.WidthSizable | NSViewResizingMask.HeightSizable,
-				DocumentView = new NSTextView(new CGRect(0, 0, frame.Width, frame.Height))
+				AutoresizingMask = ViewController.resizingMask,
+				DocumentView = new NSTextView(View.Bounds)
 				{
 					Editable = false,
 					Selectable = true,
 					VerticallyResizable = true,
 					HorizontallyResizable = false,
-					AutoresizingMask = NSViewResizingMask.WidthSizable | NSViewResizingMask.HeightSizable,
+					AutoresizingMask = ViewController.resizingMask,
 					Font = NSFont.SystemFontOfSize(16),
-					TextColor =
-						NSApplication.SharedApplication.EffectiveAppearance.Name == NSAppearance.NameDarkAqua ?
-							NSColor.White :
-							NSColor.Black,
+					TextColor = NSApplication.SharedApplication.EffectiveAppearance.Name == NSAppearance.NameDarkAqua ?
+						NSColor.White : NSColor.Black,
 					BackgroundColor = NSColor.WindowBackground,
-					Value = MainClass.RuntimeInfo,
-				},
+					Value = MainClass.RuntimeInfo
+				}
 			};
-			this.View.AddSubview(scrollView);
+			View.AddSubview(scrollView);
+		}
+		public override void ViewDidAppear()
+		{
+			base.ViewDidAppear();
+			if (this.View.Window is null) return;
+			this.View.Window.SetContentSize(new(862, 480));
+			this.View.Window.Center();
 		}
 	}
 }
