@@ -9,12 +9,9 @@ internal partial class ArrayMemoryManager<T>
 	/// </summary>
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	[FixedAddressValueType]
-	// ReSharper disable once StaticMemberInGenericType
-	private static ArrayOffsets arrayOffsets;
-#else
-	// ReSharper disable once StaticMemberInGenericType
-	private static readonly IntPtr?[] arrayOffsets = new IntPtr?[31];
 #endif
+	// ReSharper disable once StaticMemberInGenericType
+	private static ArrayOffsets arrayOffsets = ArrayOffsets.Create();
 
 	/// <summary>
 	/// Retrieves the array offset for given array.
@@ -28,7 +25,8 @@ internal partial class ArrayMemoryManager<T>
 		ref IntPtr? r0 = ref Unsafe.As<ArrayOffsets, IntPtr?>(ref ArrayMemoryManager<T>.arrayOffsets);
 		return ref Unsafe.Add(ref r0, array.Rank - 2);
 #else
-		return ref ArrayMemoryManager<T>.arrayOffsets[array.Rank - 2];
+		ref IntPtr?[] rArray = ref Unsafe.As<ArrayOffsets, IntPtr?[]>(ref ArrayMemoryManager<T>.arrayOffsets);
+		return ref rArray[array.Rank - 2];
 #endif
 	}
 }

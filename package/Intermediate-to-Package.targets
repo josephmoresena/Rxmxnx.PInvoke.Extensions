@@ -73,14 +73,9 @@
             <GlobalUsingFiles Include="@(IntermediateAssemblyNames->'$(IntermediateSourceBasePath)\%(Identity)\**\*.GlobalUsings.g.cs')"/>
 
             <!-- Add the collected source files to the compilation -->
-            <Compile Include="%(CsFiles.Identity)">
-                <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
-            </Compile>
-
-
+            <Compile Include="%(CsFiles.Identity)"/>
             <!-- Exclude files from obj and bin directories -->
             <Compile Remove="%(ExcludeFiles.Identity)"/>
-
             <!-- Include global using files -->
             <Compile Include="%(GlobalUsingFiles.Identity)"/>
         </ItemGroup>
@@ -145,7 +140,7 @@
     </PropertyGroup>
 
     <!-- Embed final ILLink.Substitutions.xml file -->
-    <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.1'))">
+    <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.1')) Or '$(TargetFramework)' == 'netstandard2.0'">
         <EmbeddedResource Include="$(IntermediateOutputPath)\ILLink\ILLink.Substitutions.xml">
             <LogicalName>ILLink.Substitutions.xml</LogicalName>
         </EmbeddedResource>

@@ -1,4 +1,3 @@
-#if !NET6_0_OR_GREATER && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
@@ -7,6 +6,7 @@ namespace Rxmxnx.PInvoke.Internal;
 [StructLayout(LayoutKind.Sequential)]
 internal struct ArrayOffsets
 {
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	/// <summary>
 	/// Offset for <c>T[,]</c> data.
 	/// </summary>
@@ -131,5 +131,22 @@ internal struct ArrayOffsets
 	/// Offset for <c>T[,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,]</c> data.
 	/// </summary>
 	private IntPtr? _32;
-}
+#else
+	/// <summary>
+	/// Internal array instance.
+	/// </summary>
+	private IntPtr?[] _array;
 #endif
+
+	/// <summary>
+	/// Creates a <see cref="ArrayOffsets"/> instance.
+	/// </summary>
+	/// <returns>A new <see cref="ArrayOffsets"/> instance.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static ArrayOffsets Create()
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+		=> new();
+#else
+		=> new() { _array = new IntPtr?[32], };
+#endif
+}

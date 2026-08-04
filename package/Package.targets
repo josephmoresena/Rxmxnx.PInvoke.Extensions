@@ -37,16 +37,20 @@
                 TargetFramework="$(AssemblyTargetFramework)"
                 StrongNameKeyPath="$(SigningKeyFile)"/>
     </Target>
-	<Target Name="PrepareUapApiCompatReferences" 
-            BeforeTargets="GetReferencesForApiCompatValidatePackage" DependsOnTargets="FindReferenceAssembliesForReferences" 
-			Condition="'$(TargetFramework)' == 'uap10.0.16299'">
-        <PropertyGroup>
+    <Target Name="PrepareUapApiCompatReferences"
+            BeforeTargets="GetReferencesForApiCompatValidatePackage" DependsOnTargets="FindReferenceAssembliesForReferences"
+            Condition="'$(TargetFramework)' == 'uap10.0.16299' Or '$(TargetFramework)' == 'uap10.0.10240'">
+        <PropertyGroup Condition="'$(TargetFramework)' == 'uap10.0.16299'">
             <TargetFrameworkMoniker>UAP,Version=v10.0.16299</TargetFrameworkMoniker>
             <ApiCompatIgnoreTargetPlatformMoniker>true</ApiCompatIgnoreTargetPlatformMoniker>
         </PropertyGroup>
+        <PropertyGroup Condition="'$(TargetFramework)' == 'uap10.0.10240'">
+            <TargetFrameworkMoniker>UAP,Version=v10.0.10240.0</TargetFrameworkMoniker>
+            <ApiCompatIgnoreTargetPlatformMoniker>true</ApiCompatIgnoreTargetPlatformMoniker>
+        </PropertyGroup>
         <ItemGroup Condition="'@(ReferencePathWithRefAssemblies)' == ''">
-            <ReferencePathWithRefAssemblies Include="@(ReferencePath)" />
+            <ReferencePathWithRefAssemblies Include="@(ReferencePath)"/>
         </ItemGroup>
-	</Target>
+    </Target>
 
 </Project>

@@ -19,7 +19,7 @@ namespace Rxmxnx.PInvoke;
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEquatable<ReadOnlyValPtr<T>>
-#if NETSTANDARD2_0 || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	, ISerializable
 #endif
 #if NET9_0_OR_GREATER
@@ -60,7 +60,7 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 	/// <param name="value">Unsafe pointer.</param>
 	internal ReadOnlyValPtr(void* value) => this._value = value;
 
-#if NETSTANDARD2_0 || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	/// <summary>
 	/// Serialization constructor.
 	/// </summary>
@@ -79,7 +79,7 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 	IntPtr IWrapper.IBase<IntPtr>.Value => this.Pointer;
 #endif
 
-#if NETSTANDARD2_0 || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
