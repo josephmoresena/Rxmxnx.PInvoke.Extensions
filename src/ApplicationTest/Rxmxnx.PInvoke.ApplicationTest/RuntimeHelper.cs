@@ -3,7 +3,6 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 #if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || NETFRAMEWORK && !LEGACY
 using System.Diagnostics;
 #endif
@@ -99,16 +98,6 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		});
 #endif
 
-		public static void PrintRuntimeInfo() => RuntimeHelper.PrintRuntimeInfo(Console.Out);
-		public static void PrintRuntimeInfo(StringBuilder strBuilder)
-		{
-#if CSHARP9_0
-			using StringWriter writer = new(strBuilder);
-#else
-			using StringWriter writer = new StringWriter(strBuilder);
-#endif
-			RuntimeHelper.PrintRuntimeInfo(writer);
-		}
 		public static void PrintRuntimeInfo(TextWriter writer)
 		{
 			writer.WriteLine("========== Application for " + RuntimeHelper.runtimeName + " ==========");
