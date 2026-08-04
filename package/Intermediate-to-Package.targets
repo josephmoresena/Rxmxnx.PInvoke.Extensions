@@ -64,20 +64,21 @@
     -->
     <Target Name="IncludeIntermediateSources" AfterTargets="BuildIntermediateProjects">
         <ItemGroup>
-
             <!-- Collect C# source files -->
-            <CsFiles Include="@(IntermediateAssemblyNames->'$(IntermediateSourceBasePath)\%(Identity)\**\*.cs')"/>
+            <CsFiles Include="$(IntermediateSourceBasePath)\%(IntermediateAssemblyNames.Identity)\**\*.cs"/>
             <!-- Collect excluded C# source files -->
             <ExcludeFiles Include="@(IntermediateAssemblyNames->'$(IntermediateSourceBasePath)\%(Identity)\**\obj\**\*.*;$(IntermediateSourceBasePath)\%(Identity)\**\bin\**\*.*')"/>
             <!-- Collect global using directive files -->
             <GlobalUsingFiles Include="@(IntermediateAssemblyNames->'$(IntermediateSourceBasePath)\%(Identity)\**\*.GlobalUsings.g.cs')"/>
-
             <!-- Add the collected source files to the compilation -->
-            <Compile Include="%(CsFiles.Identity)"/>
-            <!-- Exclude files from obj and bin directories -->
+            <Compile Include="%(CsFiles.Identity)">
+                <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+            </Compile>
             <Compile Remove="%(ExcludeFiles.Identity)"/>
             <!-- Include global using files -->
-            <Compile Include="%(GlobalUsingFiles.Identity)"/>
+            <Compile Include="%(GlobalUsingFiles.Identity)">
+                <Link>GlobalUsings\%(RecursiveDir)%(Filename)%(Extension)</Link>
+            </Compile>
         </ItemGroup>
     </Target>
 
