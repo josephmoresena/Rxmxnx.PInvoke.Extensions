@@ -64,7 +64,7 @@ internal readonly struct StandardBackend : IMetadataStorageBackend
 		/// <inheritdoc/>
 		public Span<BufferTypeMetadata<T>?> Span => new(MainBinaryStore<T>.initial);
 #endif
-#if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
+#if !NETCOREAPP3_0_OR_GREATER
 		Int32 IMainBinaryStore<T>.SlotCount => BuffersHelper.GetLeadingZeros(this.Length);
 #endif
 	}
