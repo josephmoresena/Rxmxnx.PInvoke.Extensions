@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Rxmxnx.PInvoke.ApplicationTest
 {
-	public static class Utf8ConcatenationHelper
+	internal static class Utf8ConcatenationHelper
 	{
 		public static void CStringBuildingFeature(TextWriter writer)
 		{

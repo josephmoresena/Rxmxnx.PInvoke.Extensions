@@ -38,19 +38,19 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Double[,] mxn = { { -1, 1, }, { 4, 0, }, { 2, 1, }, { 1, 3, }, };
 
 			writer.WriteLine("=== 4x4 ===");
-			MatrixHelper.Print(mxm);
+			MatrixHelper.Print(mxm, writer);
 			writer.WriteLine($"Determinant 4x4: {MatrixHelper.GetDeterminant(mxm, out Double[,] inverse):0.####}");
 			writer.WriteLine("=== (4x4)^-1 ===");
-			MatrixHelper.Print(inverse);
+			MatrixHelper.Print(inverse, writer);
 			writer.WriteLine("=== (4x4)^-1 (Text) -> [] ===");
 			MatrixHelper.ToText(inverse).AsSpan().WithSafeFixed(new PrintAction<String>(writer));
 			writer.WriteLine("=== 2x2 ===");
-			MatrixHelper.Print(nxn);
+			MatrixHelper.Print(nxn, writer);
 			writer.WriteLine($"Determinant 2x2: {MatrixHelper.GetDeterminant(nxn):0.####}");
 			writer.WriteLine("=== 4x2 ===");
-			MatrixHelper.Print(mxn);
+			MatrixHelper.Print(mxn, writer);
 			writer.WriteLine("=== 4x4 * 4x2 ===");
-			MatrixHelper.Print(MatrixHelper.Multiply(mxm, mxn));
+			MatrixHelper.Print(MatrixHelper.Multiply(mxm, mxn), writer);
 			writer.WriteLine("=== 2x2 -> [] ===");
 			mxn.AsSpan().WithSafeFixed(new PrintAction<Double>(writer));
 			writer.WriteLine("=== 2x2 (Text) -> [] ===");

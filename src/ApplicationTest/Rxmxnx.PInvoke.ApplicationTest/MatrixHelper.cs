@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.IO;
 
 namespace Rxmxnx.PInvoke.ApplicationTest
 {
@@ -59,12 +60,12 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				resultSpan[i] = sourceSpan[i].ToString(CultureInfo.InvariantCulture);
 			return result;
 		}
-		public static void Print(Double[,] matrix)
+		public static void Print(Double[,] matrix, TextWriter writer)
 		{
 			if (matrix.Rank != 2)
 				throw new InvalidOperationException("Invalid matrix.");
 			if (matrix.GetLength(0) <= 0 || matrix.GetLength(0) <= 0) return;
-			MatrixHelper.PrintMatrix(matrix.AsSpan(), matrix.GetLength(0), matrix.GetLength(1));
+			MatrixHelper.PrintMatrix(matrix.AsSpan(), matrix.GetLength(0), matrix.GetLength(1), writer);
 		}
 	}
 }

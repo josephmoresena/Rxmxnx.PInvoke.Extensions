@@ -1,6 +1,7 @@
 using System;
 using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Text;
 
 namespace Rxmxnx.PInvoke.ApplicationTest
@@ -166,7 +167,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			}
 			return matrix[maxRow * multiplier * n + currentRow];
 		}
-		public static void PrintMatrix(ReadOnlySpan<Double> matrix, Int32 nRow, Int32 nCol)
+		public static void PrintMatrix(ReadOnlySpan<Double> matrix, Int32 nRow, Int32 nCol, TextWriter writer)
 		{
 			Int32 addCol = (matrix.Length - nRow * nCol) / nRow;
 			StringBuilder? strBuild = addCol > 0 ? new StringBuilder() : default;
@@ -175,11 +176,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				strBuild?.Append("\t|\t");
 				for (Int32 col = 0; col < nCol; col++)
 				{
-					Console.Write($"{matrix[row * (nCol + addCol) + col]:0.####}\t");
+					writer.Write($"{matrix[row * (nCol + addCol) + col]:0.####}\t");
 					if (strBuild is null || col >= addCol) continue;
 					strBuild.Append($"{matrix[row * (nCol + addCol) + col + nRow]:0.####}\t");
 				}
-				Console.WriteLine(strBuild?.ToString());
+				writer.WriteLine(strBuild?.ToString());
 				strBuild?.Clear();
 			}
 		}

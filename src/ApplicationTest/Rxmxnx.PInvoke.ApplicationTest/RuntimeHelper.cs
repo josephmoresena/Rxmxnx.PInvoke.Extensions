@@ -24,7 +24,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #if NET5_0_OR_GREATER
 	[UnconditionalSuppressMessage("SingleFile", "IL3000")]
 #endif
-	public static class RuntimeHelper
+	internal static class RuntimeHelper
 	{
 		private const String runtimeName =
 #if NET10_0_OR_GREATER
