@@ -362,4 +362,10 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		return result.ToPointer();
 	}
 #pragma warning restore CS8500
+
+	/// <summary>
+	/// Defines an explicit conversion of a given pointer to a read-only value pointer.
+	/// </summary>
+	/// <param name="ptr">A pointer to explicitly convert.</param>
+	public static explicit operator FixedValueHandle(FixedPointer ptr) => ptr._handle;
 }

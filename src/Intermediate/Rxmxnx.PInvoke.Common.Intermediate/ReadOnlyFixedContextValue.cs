@@ -320,6 +320,26 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 		return new(value);
 	}
 
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+	/// <summary>
+	/// Creates a new <see cref="FixedPointerValue"/> value from <paramref name="instance"/>.
+	/// </summary>
+	/// <param name="instance">A <see cref="IFixedPointer"/> instance.</param>
+	/// <returns>
+	/// A new <see cref="FixedContextValue{T}"/> instance.
+	/// </returns>
+	public static ReadOnlyFixedContextValue<T> CreateValue(IFixedMemory<T> instance)
+	{
+		if (FixedPointerValue.TryCreateFixedValue(instance, out FixedPointerValue value))
+			return new(value);
+		if (instance is not IDisposable dis)
+			return new(instance.ValuePointer, instance.Values.Length);
+		ReadOnlyFixedContextValue<T>.CreateDisposable(instance.ValuePointer, instance.Values.Length, dis,
+		                                              out ReadOnlyFixedContextValue<T> result);
+		return result;
+	}
+#endif
+
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="ReadOnlyFixedContextValue{T}"/> instance from
 	/// current read-only reference pointer.

@@ -209,6 +209,29 @@ public readonly ref struct FixedPointerValue
 		ValidationUtilities.ThrowIfInvalidTransformation(this.Type, this.IsUnmanaged, type, unmanagedType);
 	}
 
+	/// <summary>
+	/// Tries to create a <see cref="FixedPointerValue"/> from <paramref name="instance"/>
+	/// </summary>
+	/// <param name="instance">A <see cref="IFixedPointer"/> instance.</param>
+	/// <param name="value">Output. A <see cref="FixedPointerValue"/> instance.</param>
+	/// <returns>
+	/// <see langword="true"/> if <paramref name="instance"/> was successfully converted to
+	/// <see cref="FixedPointerValue"/> value; otherwise, <see langword="false"/>.
+	/// </returns>
+	public static Boolean TryCreateFixedValue(IFixedPointer instance, out FixedPointerValue value)
+	{
+		value = default;
+		if (instance is not FixedPointer ptr || ptr.IsFunction) return false;
+		value = new(instance.Pointer, ptr.BinaryLength)
+		{
+			Handle = (FixedValueHandle)ptr,
+			Type = ptr.Type,
+			IsUnmanaged = ptr.IsUnmanaged,
+			IsReadOnly = ptr.IsReadOnly,
+		};
+		return true;
+	}
+
 #if NET9_0_OR_GREATER
 	/// <summary>
 	/// Retrieves the <see cref="IMutableWrapper{Boolean}"/> instance for <see cref="FixedPointer"/> instances.

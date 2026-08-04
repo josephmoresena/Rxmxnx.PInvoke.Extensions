@@ -96,7 +96,9 @@ public readonly unsafe ref struct FixedContextValue<T>
 		if (ptr == default) return;
 		this._value = new((IntPtr)ptr, count * sizeof(T))
 		{
-			IsReadOnly = false, IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(), Type = typeof(T),
+			IsReadOnly = false,
+			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
+			Type = typeof(T),
 		};
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		this.Values = MemoryMarshal.CreateSpan(ref Unsafe.AsRef<T>(ptr), count);
@@ -363,6 +365,26 @@ public readonly unsafe ref struct FixedContextValue<T>
 		value.ValidateTransformation(typeof(T), !RuntimeHelpers.IsReferenceOrContainsReferences<T>());
 		return new(value);
 	}
+
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+	/// <summary>
+	/// Creates a new <see cref="FixedPointerValue"/> value from <paramref name="instance"/>.
+	/// </summary>
+	/// <param name="instance">A <see cref="IFixedPointer"/> instance.</param>
+	/// <returns>
+	/// A new <see cref="FixedContextValue{T}"/> instance.
+	/// </returns>
+	public static FixedContextValue<T> CreateValue(IFixedMemory<T> instance)
+	{
+		if (FixedPointerValue.TryCreateFixedValue(instance, out FixedPointerValue value))
+			return new(value);
+		if (instance is not IDisposable dis)
+			return new(instance.ValuePointer, instance.Values.Length);
+		FixedContextValue<T>.CreateDisposable(instance.ValuePointer, instance.Values.Length, dis,
+		                                      out FixedContextValue<T> result);
+		return result;
+	}
+#endif
 
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="FixedContextValue{T}"/> instance from current reference pointer.
