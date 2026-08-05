@@ -1,4 +1,6 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable MemberCanBePrivate.Global
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Represents a list of <see cref="FixedPointerValue"/> instances.
@@ -25,20 +27,24 @@ public readonly ref struct FixedPointerValueList
 	/// </summary>
 	public Boolean IsReadOnly { get; init; }
 	/// <summary>
-	/// Gets the <see cref="FixedPointerValue"/> at the specified index.
+	/// Gets the <see cref="ItemValue"/> at the specified index.
 	/// </summary>
 	/// <param name="index">The zero-based index of the element to get.</param>
-	/// <returns>The <see cref="FixedPointerValue"/> at the specified index.</returns>
+	/// <returns>The <see cref="ItemValue"/> at the specified index.</returns>
 	/// <exception cref="IndexOutOfRangeException">
 	/// Thrown when the <paramref name="index"/> is out of the range of the list elements.
 	/// </exception>
 	[IndexerName("Item")]
-	public FixedPointerValue this[Int32 index]
+	public ItemValue this[Int32 index]
 	{
 		get
 		{
 			ValidationUtilities.ThrowIfInvalidListIndex(index, this.Information.Length);
-			return this.Information[index].GetValue(this.IsReadOnly, this.Handle);
+			FixedPointerInfo info = this.Information[index];
+			return new()
+			{
+				Value = info.GetValue(this.IsReadOnly, this.Handle), Count = info.Count, SizeOf = info.SizeOf,
+			};
 		}
 	}
 	/// <summary>
@@ -53,16 +59,15 @@ public readonly ref struct FixedPointerValueList
 	public Boolean IsEmpty => this.Count == 0;
 
 	/// <summary>
-	/// Gets the value at the specified index.
+	/// Returns an enumerator that iterates through the <see cref="FixedPointerValueList"/>.
 	/// </summary>
-	/// <param name="index">The zero-based index of the value to get.</param>
-	/// <returns>The value at the specified index.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal FixedPointerValue GetValue(Int32 index)
-	{
-		ValidationUtilities.ThrowIfInvalidListIndex(index, this.Information.Length);
-		return this.Information[index].GetValue(this.IsReadOnly, this.Handle);
-	}
+	/// <returns>An enumerator for the current <see cref="FixedPointerValueList"/> instance.</returns>
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+	[Browsable(false)]
+#endif
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	public Enumerator GetEnumerator() => new(this);
+
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Gets the element at the specified index.
@@ -91,6 +96,42 @@ public readonly ref struct FixedPointerValueList
 #endif
 
 	/// <summary>
+	/// <see cref="FixedPointerValueList"/> item value.
+	/// </summary>
+	public readonly ref struct ItemValue
+#if NET9_0_OR_GREATER
+		: IFixedPointer, IWrapper.IBase<FixedPointerValue>
+#endif
+	{
+		/// <summary>
+		/// Number of elements on the memory block.
+		/// </summary>
+		public Int32 Count { get; internal init; }
+		/// <summary>
+		/// Size of the element type on the memory block.
+		/// </summary>
+		public Int32 SizeOf { get; internal init; }
+		/// <summary>
+		/// Current fixed value pointer.
+		/// </summary>
+		public FixedPointerValue Value { get; internal init; }
+		/// <inheritdoc cref="IFixedPointer.Pointer"/>
+		public IntPtr Pointer => this.Value.Pointer;
+		/// <summary>
+		/// The type of memory block.
+		/// </summary>
+		public Type Type => this.Value.Type ?? typeof(Byte);
+		/// <summary>
+		/// Indicates whether current memory block is unmanaged.
+		/// </summary>
+		public Boolean IsUnmanaged => this.Value.IsUnmanaged;
+		/// <summary>
+		/// Indicates whether the current instance is read-only.
+		/// </summary>
+		public Boolean IsReadOnly => this.Value.IsReadOnly;
+	}
+
+	/// <summary>
 	/// Enumerates the elements of a <see cref="FixedPointerValueList"/>.
 	/// </summary>
 	public ref struct Enumerator
@@ -112,10 +153,17 @@ public readonly ref struct FixedPointerValueList
 		/// Gets the element at the current position of the enumerator.
 		/// </summary>
 		/// <value>The element in the list at the current position of the enumerator.</value>
-		public FixedPointerValue Current
+		public ItemValue Current
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => this._enumerator.Current.GetValue(this._isReadOnly, this._handle);
+			get
+			{
+				FixedPointerInfo info = this._enumerator.Current;
+				return new()
+				{
+					Value = info.GetValue(this._isReadOnly, this._handle), Count = info.Count, SizeOf = info.SizeOf,
+				};
+			}
 		}
 
 		/// <summary>

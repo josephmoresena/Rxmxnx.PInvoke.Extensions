@@ -47,14 +47,14 @@ public readonly ref struct FixedMemoryList
 	internal FixedMemoryList(FixedPointerValueList values) => this._values = values;
 
 	/// <summary>
-	/// Gets the <see cref="FixedPointerValue"/> at the specified index.
+	/// Gets the <see cref="FixedPointerValueList.ItemValue"/> at the specified index.
 	/// </summary>
 	/// <param name="index">The zero-based index of the value to get.</param>
-	/// <returns>The <see cref="FixedPointerValue"/> at the specified index.</returns>
+	/// <returns>The <see cref="FixedPointerValueList.ItemValue"/> at the specified index.</returns>
 	/// <exception cref="IndexOutOfRangeException">
 	/// Thrown when the <paramref name="index"/> is out of the range of the list elements.
 	/// </exception>
-	public FixedPointerValue GetValue(Int32 index) => this._values[index];
+	public FixedPointerValueList.ItemValue GetItemValue(Int32 index) => this._values[index];
 
 	/// <summary>
 	/// Creates an array from the current <see cref="FixedMemoryList"/> instance.
