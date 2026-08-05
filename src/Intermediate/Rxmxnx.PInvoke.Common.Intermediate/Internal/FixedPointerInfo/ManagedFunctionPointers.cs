@@ -8,7 +8,7 @@ internal readonly unsafe partial struct FixedPointerInfo
 {
 	public partial FixedPointerValue GetValue(Boolean isReadOnly, FixedValueHandle? handle)
 	{
-		delegate*<Type> getType = (delegate*<Type>)this.ConstructorOrFunctionPointer;
+		delegate*<Type> getType = (delegate*<Type>)this.TypeOrFunctionPointer;
 		return new((IntPtr)this.Pointer, this.Count * this.SizeOf)
 		{
 			IsReadOnly = isReadOnly,
@@ -31,13 +31,20 @@ internal readonly unsafe partial struct FixedPointerInfo
 	/// <returns>A unmanaged pointer.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void* ToUnmanaged(delegate*<void*, Int32, FixedValueHandle, ReadOnlyFixedMemory> value)
-		=> value;
+	{
+		void* ptr = value;
+		return ptr;
+	}
 	/// <summary>
 	/// Creates an unmanaged pointer from <paramref name="value"/>.
 	/// </summary>
 	/// <param name="value">Managed function pointer.</param>
 	/// <returns>A unmanaged pointer.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void* ToUnmanaged(delegate*<Type> value) => value;
+	public static void* ToUnmanaged(delegate*<Type> value)
+	{
+		void* ptr = value;
+		return ptr;
+	}
 }
 #endif
