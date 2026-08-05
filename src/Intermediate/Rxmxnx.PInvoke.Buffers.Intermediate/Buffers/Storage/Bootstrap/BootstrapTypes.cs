@@ -270,6 +270,12 @@ internal readonly struct G31<T> : IMainBinaryStore<T>
 			ref BufferTypeMetadata<T>? r0 = ref G31<T>.GetR0();
 			return Unsafe.Add(ref r0, index);
 		}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		set
+		{
+			ref BufferTypeMetadata<T>? r0 = ref G31<T>.GetR0();
+			Unsafe.Add(ref r0, index) = value;
+		}
 	}
 	/// <inheritdoc/>
 	public Int32 SlotCount
@@ -331,6 +337,12 @@ internal readonly struct G127<T> : IMainBinaryStore<T>
 			ref BufferTypeMetadata<T>? r0 = ref G127<T>.GetR0();
 			return Unsafe.Add(ref r0, index);
 		}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		set
+		{
+			ref BufferTypeMetadata<T>? r0 = ref G127<T>.GetR0();
+			Unsafe.Add(ref r0, index) = value;
+		}
 	}
 	/// <inheritdoc/>
 	public Int32 SlotCount
@@ -390,6 +402,12 @@ internal readonly struct G255<TSpace, T> : IMainBinaryStore<T> where TSpace : st
 			ref BufferTypeMetadata<T>? r0 = ref G255<TSpace, T>.GetR0();
 			return Unsafe.Add(ref r0, index);
 		}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		set
+		{
+			ref BufferTypeMetadata<T>? r0 = ref G255<TSpace, T>.GetR0();
+			Unsafe.Add(ref r0, index) = value;
+		}
 	}
 	/// <inheritdoc/>
 	public Int32 SlotCount
@@ -448,6 +466,12 @@ internal readonly struct G2047<TSpace, T> : IMainBinaryStore<T> where TSpace : s
 		{
 			ref BufferTypeMetadata<T>? r0 = ref G2047<TSpace, T>.GetR0();
 			return Unsafe.Add(ref r0, index);
+		}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		set
+		{
+			ref BufferTypeMetadata<T>? r0 = ref G2047<TSpace, T>.GetR0();
+			Unsafe.Add(ref r0, index) = value;
 		}
 	}
 	/// <inheritdoc/>

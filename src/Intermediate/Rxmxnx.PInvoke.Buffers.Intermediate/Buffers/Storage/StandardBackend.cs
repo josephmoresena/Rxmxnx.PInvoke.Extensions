@@ -5,9 +5,13 @@ namespace Rxmxnx.PInvoke.Buffers.Storage;
 /// </summary>
 internal readonly struct StandardBackend : IMetadataStorageBackend
 {
-#if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
-	Int32 IMetadataStorageBackend.MaxStorageCapacity => UInt16.MaxValue;
-#endif
+	/// <inheritdoc/>
+	public Int32 MaxStorageCapacity
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => UInt16.MaxValue;
+	}
+
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Boolean TryAdd<T>(BufferTypeMetadata<T> component) => BinaryStore<MainBinaryStore<T>, T>.TryAdd(component);
@@ -18,6 +22,8 @@ internal readonly struct StandardBackend : IMetadataStorageBackend
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public BufferTypeMetadata<T>? GetBinaryValue<T>(UInt16 componentSize)
 		=> BinaryStore<MainBinaryStore<T>, T>.GetBinaryValue(componentSize);
+	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public BufferTypeMetadata<T> SetBinaryValue<T>(BufferTypeMetadata<T> component)
 		=> BinaryStore<MainBinaryStore<T>, T>.SetBinaryValue(component);
 	/// <inheritdoc/>
@@ -57,10 +63,15 @@ internal readonly struct StandardBackend : IMetadataStorageBackend
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get => MainBinaryStore<T>.initial[index];
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			set => MainBinaryStore<T>.initial[index] = value;
 		}
-#if !NETCOREAPP3_0_OR_GREATER
-		Int32 IMainBinaryStore<T>.SlotCount => BuffersHelper.GetLeadingZeros(this.Length);
-#endif
+		/// <inheritdoc/>
+		public Int32 SlotCount
+		{
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get => BuffersHelper.GetLeadingZeros(this.Length);
+		}
 #if !PACKAGE
 		/// <inheritdoc/>
 		public Span<BufferTypeMetadata<T>?> Span => new(MainBinaryStore<T>.initial);
@@ -77,8 +88,10 @@ internal readonly struct StandardBackend : IMetadataStorageBackend
 	}
 #if !PACKAGE
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ReadOnlySpan<BufferTypeMetadata<T>?> GetInitial<T>() => BinaryStore<MainBinaryStore<T>, T>.Initial;
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ReadOnlySpan<BufferTypeMetadata<T>?[]?> GetSlots<T>() => BinaryStore<MainBinaryStore<T>, T>.Slots;
 #endif
 }

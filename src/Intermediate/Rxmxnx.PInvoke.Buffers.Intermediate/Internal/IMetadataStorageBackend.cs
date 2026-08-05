@@ -12,11 +12,7 @@ internal interface IMetadataStorageBackend
 	/// <summary>
 	/// Maximum storage capacity.
 	/// </summary>
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-	Int32 MaxStorageCapacity => UInt16.MaxValue;
-#else
 	Int32 MaxStorageCapacity { get; }
-#endif
 
 	/// <summary>
 	/// Tries to add the current component

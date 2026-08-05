@@ -10,7 +10,12 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// <summary>
 	/// Initial storage.
 	/// </summary>
-	private static readonly TMain initial;
+	/// <remarks>
+	/// Cannot be readonly because constrained interface calls on generic value types are treated as potentially mutating.
+	/// </remarks>
+#pragma warning disable CS0649
+	private static TMain initial;
+#pragma warning restore CS0649
 	/// <summary>
 	/// Additional slots.
 	/// </summary>
@@ -67,7 +72,6 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	public static Boolean TryAdd(BufferTypeMetadata<T> component)
 	{
 		if (component.Size <= BinaryStore<TMain, T>.initial.Length)
-			// ReSharper disable once PossiblyImpureMethodCallOnReadonlyVariable
 			return BinaryStore<TMain, T>.initial.CompareExchange(component) is null;
 		Int32 targetSlot = BinaryStore<TMain, T>.GetSlotIndex(component.Size);
 		Int32 pageLength = (BinaryStore<TMain, T>.initial.Length + 1) << targetSlot;
@@ -107,15 +111,13 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	public static BufferTypeMetadata<T> SetBinaryValue(BufferTypeMetadata<T> component)
 	{
 		if (component.Size <= BinaryStore<TMain, T>.initial.Length)
-			// ReSharper disable once PossiblyImpureMethodCallOnReadonlyVariable
-			return BinaryStore<TMain, T>.initial.CompareExchange(component) ?? component;
+			return BinaryStore<TMain, T>.initial[component.Size - 1] = component;
 		Int32 targetSlot = BinaryStore<TMain, T>.GetSlotIndex(component.Size);
 		Int32 pageLength = (BinaryStore<TMain, T>.initial.Length + 1) << targetSlot;
 		ref BufferTypeMetadata<T>?[]? slot = ref BinaryStore<TMain, T>.slots[targetSlot];
 		BufferTypeMetadata<T>?[]? page = Volatile.Read(ref slot);
 		page ??= BinaryStore<TMain, T>.GetOrCreatePage(targetSlot);
-		page[component.Size - pageLength] = component;
-		return component;
+		return page[component.Size - pageLength] = component;
 	}
 	/// <summary>
 	/// Retrieves the fundamental component of size <paramref name="space"/>.
@@ -135,7 +137,8 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 		{
 			result = result.Double(storage);
 			if (result is null) break;
-			BinaryStore<TMain, T>.SetBinaryValue(result);
+			// Double already calls SetBinaryValue().
+			//BinaryStore<TMain, T>.SetBinaryValue(result);
 		}
 		return result;
 	}
@@ -191,7 +194,8 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 				if (result is null)
 					// Unable to create composed metadata. Use minimal.
 					return default;
-				BinaryStore<TMain, T>.SetBinaryValue(result);
+				// Compose already calls SetBinaryValue().
+				//BinaryStore<TMain, T>.SetBinaryValue(result);
 			}
 		}
 		return result;
@@ -208,11 +212,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 		while (result is null)
 		{
 			if (space == 1)
-			{
-				result = Atomic<T>.TypeMetadata;
-				BinaryStore<TMain, T>.SetBinaryValue(result);
-				break;
-			}
+				return BinaryStore<TMain, T>.SetBinaryValue(Atomic<T>.TypeMetadata);
 			space /= 2;
 			result = BinaryStore<TMain, T>.GetBinaryValue(space);
 		}
@@ -269,7 +269,6 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 		{
 			// Search at the current page.
 			Int32 length = Math.Min(spanLength - relativeIndex, remaining);
-			// ReSharper disable once PossiblyImpureMethodCallOnReadonlyVariable
 			if (Unsafe.IsNullRef(ref r0))
 			{
 				if (BinaryStore<TMain, T>.initial.Search(relativeIndex, length) is { } result)
@@ -277,7 +276,9 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 			}
 			else if (BuffersHelper.Search(ref r0, relativeIndex, length) is { } result)
 				// Minimal metadata found.
+			{
 				return result;
+			}
 			// Exclude from total elements the current search length.
 			if ((remaining -= length) <= 0) continue;
 			// Get the next page.

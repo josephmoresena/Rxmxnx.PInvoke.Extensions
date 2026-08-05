@@ -113,6 +113,7 @@ public abstract class BufferTypeMetadata<T> : BufferTypeMetadata
 	/// </summary>
 	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
 	/// <returns>A composed <see cref="BufferTypeMetadata{T}"/>.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal BufferTypeMetadata<T>? Double(IMetadataStorage storage) => this.Compose(storage, this);
 	/// <summary>
 	/// Composes a new buffer using current buffer type and <paramref name="otherMetadata"/>.

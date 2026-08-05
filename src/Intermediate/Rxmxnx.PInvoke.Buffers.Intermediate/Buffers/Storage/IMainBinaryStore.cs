@@ -14,15 +14,11 @@ internal interface IMainBinaryStore<T>
 	/// Gets the element at the specified zero-based index.
 	/// </summary>
 	/// <param name="index">The zero-based index of the element.</param>
-	BufferTypeMetadata<T>? this[Int32 index] { get; }
+	BufferTypeMetadata<T>? this[Int32 index] { get; set; }
 	/// <summary>
 	/// The number of slots required.
 	/// </summary>
-#if NETCOREAPP3_0_OR_GREATER
-	Int32 SlotCount => BuffersHelper.GetLeadingZeros(this.Length);
-#else
 	Int32 SlotCount { get; }
-#endif
 #if !PACKAGE
 	/// <summary>
 	/// Initial storage span.
