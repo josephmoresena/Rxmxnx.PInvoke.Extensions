@@ -40,6 +40,15 @@ internal interface IMetadataStorageBackend
 	/// <param name="component">Size of the requested metadata.</param>
 	/// <returns>The <see cref="BufferTypeMetadata{T}"/> reference.</returns>
 	BufferTypeMetadata<T> SetBinaryValue<T>(BufferTypeMetadata<T> component);
+#if NET5_0_OR_GREATER
+	/// <summary>
+	/// Retrieves a managed reference to the <see cref="BufferTypeMetadata{T}"/> instance for <paramref name="componentSize"/>.
+	/// </summary>
+	/// <typeparam name="T">Type of items in the buffer.</typeparam>
+	/// <param name="componentSize">Size of the requested metadata.</param>
+	/// <returns>A managed <see cref="BufferTypeMetadata{T}"/> reference.</returns>
+	ref BufferTypeMetadata<T>? GetBinaryReference<T>(UInt16 componentSize);
+#endif
 	/// <summary>
 	/// Computes the binary metadata required for a buffer with <paramref name="count"/> items.
 	/// </summary>

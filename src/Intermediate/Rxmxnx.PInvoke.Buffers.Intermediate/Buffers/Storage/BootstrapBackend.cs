@@ -29,7 +29,11 @@ internal readonly struct BootstrapBackend31 : IMetadataStorageBackend
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public BufferTypeMetadata<T> SetBinaryValue<T>(BufferTypeMetadata<T> component)
-		=> BinaryStore<G31<T>, T>.SetBinaryValue(component);
+		=> this.GetBinaryReference<T>(component.Size) = component;
+	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public ref BufferTypeMetadata<T>? GetBinaryReference<T>(UInt16 componentSize)
+		=> ref BinaryStore<G31<T>, T>.GetBinaryReference(componentSize);
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public BufferTypeMetadata<T>? GetBinaryValue<T>(UInt16 componentSize)
@@ -77,7 +81,11 @@ internal readonly struct BootstrapBackend127 : IMetadataStorageBackend
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public BufferTypeMetadata<T> SetBinaryValue<T>(BufferTypeMetadata<T> component)
-		=> BinaryStore<G127<T>, T>.SetBinaryValue(component);
+		=> this.GetBinaryReference<T>(component.Size) = component;
+	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public ref BufferTypeMetadata<T>? GetBinaryReference<T>(UInt16 componentSize)
+		=> ref BinaryStore<G127<T>, T>.GetBinaryReference(componentSize);
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public BufferTypeMetadata<T>? GetBinaryValue<T>(UInt16 componentSize)
@@ -135,10 +143,14 @@ internal readonly struct BootstrapBackend<TSpace> : IMetadataStorageBackend wher
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public BufferTypeMetadata<T> SetBinaryValue<T>(BufferTypeMetadata<T> component)
+		=> this.GetBinaryReference<T>(component.Size) = component;
+	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public ref BufferTypeMetadata<T>? GetBinaryReference<T>(UInt16 componentSize)
 	{
 		if (typeof(T).IsValueType)
-			return BinaryStore<G255<TSpace, T>, T>.SetBinaryValue(component);
-		return BinaryStore<G2047<TSpace, T>, T>.SetBinaryValue(component);
+			return ref BinaryStore<G255<TSpace, T>, T>.GetBinaryReference(componentSize);
+		return ref BinaryStore<G2047<TSpace, T>, T>.GetBinaryReference(componentSize);
 	}
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -71,15 +71,15 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Boolean TryAdd(BufferTypeMetadata<T> component)
 	{
+#if !NET5_0_OR_GREATER
 		if (component.Size <= BinaryStore<TMain, T>.initial.Length)
-			return BinaryStore<TMain, T>.initial.CompareExchange(component) is null;
-		Int32 targetSlot = BinaryStore<TMain, T>.GetSlotIndex(component.Size);
-		Int32 pageLength = (BinaryStore<TMain, T>.initial.Length + 1) << targetSlot;
-		ref BufferTypeMetadata<T>?[]? slot = ref BinaryStore<TMain, T>.slots[targetSlot];
-
-		BufferTypeMetadata<T>?[]? page = Volatile.Read(ref slot);
-		page ??= BinaryStore<TMain, T>.GetOrCreatePage(targetSlot);
+			return BinaryStore<TMain, T>.initial.CompareExchange(component.Size - 1, component) is null;
+		BufferTypeMetadata<T>?[] page = BinaryStore<TMain, T>.GetOrCreatePage(component.Size, out Int32 pageLength);
 		return Interlocked.CompareExchange(ref page[component.Size - pageLength], component, null) is null;
+#else
+		ref BufferTypeMetadata<T>? reference = ref BinaryStore<TMain, T>.GetBinaryReference(component.Size);
+		return Interlocked.CompareExchange(ref reference, component, null) is null;
+#endif
 	}
 	/// <summary>
 	/// Retrieves the <see cref="BufferTypeMetadata{T}"/> instance for <paramref name="componentSize"/>.
@@ -111,14 +111,26 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	public static BufferTypeMetadata<T> SetBinaryValue(BufferTypeMetadata<T> component)
 	{
 		if (component.Size <= BinaryStore<TMain, T>.initial.Length)
-			return BinaryStore<TMain, T>.initial[component.Size - 1] = component;
-		Int32 targetSlot = BinaryStore<TMain, T>.GetSlotIndex(component.Size);
-		Int32 pageLength = (BinaryStore<TMain, T>.initial.Length + 1) << targetSlot;
-		ref BufferTypeMetadata<T>?[]? slot = ref BinaryStore<TMain, T>.slots[targetSlot];
-		BufferTypeMetadata<T>?[]? page = Volatile.Read(ref slot);
-		page ??= BinaryStore<TMain, T>.GetOrCreatePage(targetSlot);
+			return BinaryStore<TMain, T>.initial.Set(component.Size - 1, component);
+		BufferTypeMetadata<T>?[] page = BinaryStore<TMain, T>.GetOrCreatePage(component.Size, out Int32 pageLength);
 		return page[component.Size - pageLength] = component;
 	}
+#if NET5_0_OR_GREATER
+	/// <summary>
+	/// Retrieves a managed reference to the <see cref="BufferTypeMetadata{T}"/> instance for <paramref name="componentSize"/>.
+	/// </summary>
+	/// <param name="componentSize">Size of the requested metadata.</param>
+	/// <returns>A managed <see cref="BufferTypeMetadata{T}"/> reference.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static ref BufferTypeMetadata<T>? GetBinaryReference(UInt16 componentSize)
+	{
+		Debug.Assert(componentSize > 0);
+		if (componentSize <= BinaryStore<TMain, T>.initial.Length)
+			return ref BinaryStore<TMain, T>.initial[componentSize - 1];
+		BufferTypeMetadata<T>?[] page = BinaryStore<TMain, T>.GetOrCreatePage(componentSize, out Int32 pageLength);
+		return ref page[componentSize - pageLength];
+	}
+#endif
 	/// <summary>
 	/// Retrieves the fundamental component of size <paramref name="space"/>.
 	/// </summary>
@@ -131,7 +143,11 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 		if (BinaryStore<TMain, T>.GetBinaryValue(space) is { } metadata)
 			return metadata;
 		if (space == 1)
+#if !NET5_0_OR_GREATER
 			return BinaryStore<TMain, T>.SetBinaryValue(Atomic<T>.TypeMetadata); // Atomic missing.
+#else
+			return BinaryStore<TMain, T>.GetBinaryReference(space) = Atomic<T>.TypeMetadata; // Atomic missing.
+#endif
 		BufferTypeMetadata<T>? result = BinaryStore<TMain, T>.GetMaxBinarySpace((UInt16)(space / 2));
 		while (result.Size < space)
 		{
@@ -208,11 +224,19 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// <returns>A <see cref="BufferTypeMetadata"/> instance.</returns>
 	private static BufferTypeMetadata<T> GetMaxBinarySpace(UInt16 space)
 	{
+#if !NET5_0_OR_GREATER
 		BufferTypeMetadata<T>? result = BinaryStore<TMain, T>.GetBinaryValue(space);
+#else
+		ref BufferTypeMetadata<T>? result = ref BinaryStore<TMain, T>.GetBinaryReference(space);
+#endif
 		while (result is null)
 		{
 			if (space == 1)
+#if !NET5_0_OR_GREATER
 				return BinaryStore<TMain, T>.SetBinaryValue(Atomic<T>.TypeMetadata);
+#else
+				return result = Atomic<T>.TypeMetadata;
+#endif
 			space /= 2;
 			result = BinaryStore<TMain, T>.GetBinaryValue(space);
 		}
@@ -250,7 +274,11 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 		}
 		if (remaining <= 0) return default;
 
+#if !NET5_0_OR_GREATER
 		ref BufferTypeMetadata<T>? r0 = ref Unsafe.NullRef<BufferTypeMetadata<T>?>();
+#else
+		ref BufferTypeMetadata<T>? r0 = ref BinaryStore<TMain, T>.initial[0];
+#endif
 		Int32 spanLength = BinaryStore<TMain, T>.initial.Length;
 		Int32 pageIndex = -1;
 		Int32 relativeIndex = count;
@@ -269,16 +297,18 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 		{
 			// Search at the current page.
 			Int32 length = Math.Min(spanLength - relativeIndex, remaining);
+#if !NET5_0_OR_GREATER
 			if (Unsafe.IsNullRef(ref r0))
 			{
 				if (BinaryStore<TMain, T>.initial.Search(relativeIndex, length) is { } result)
 					return result;
 			}
 			else if (BuffersHelper.Search(ref r0, relativeIndex, length) is { } result)
+#else
+			if (BuffersHelper.Search(ref r0, relativeIndex, length) is { } result)
+#endif
 				// Minimal metadata found.
-			{
 				return result;
-			}
 			// Exclude from total elements the current search length.
 			if ((remaining -= length) <= 0) continue;
 			// Get the next page.
@@ -344,6 +374,21 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 		Int32 result = BinaryStore<TMain, T>.slots.Length - BuffersHelper.GetLeadingZeros(componentSize) - 1;
 		Debug.Assert((UInt32)result < (UInt32)BinaryStore<TMain, T>.slots.Length);
 		return result;
+	}
+	/// <summary>
+	/// Retrieves or create the page for <paramref name="componentSize"/>.
+	/// </summary>
+	/// <param name="componentSize">Size of the requested metadata.</param>
+	/// <param name="pageLength">Output. Resulting page length.</param>
+	/// <returns>The <see cref="BufferTypeMetadata{T}"/> array for <paramref name="componentSize"/>.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static BufferTypeMetadata<T>?[] GetOrCreatePage(UInt16 componentSize, out Int32 pageLength)
+	{
+		Int32 targetSlot = BinaryStore<TMain, T>.GetSlotIndex(componentSize);
+		ref BufferTypeMetadata<T>?[]? slot = ref BinaryStore<TMain, T>.slots[targetSlot];
+		BufferTypeMetadata<T>?[]? page = Volatile.Read(ref slot);
+		pageLength = (BinaryStore<TMain, T>.initial.Length + 1) << targetSlot;
+		return page ?? BinaryStore<TMain, T>.GetOrCreatePage(targetSlot);
 	}
 	/// <summary>
 	/// Retrieves or create the page for <paramref name="targetSlot"/>.

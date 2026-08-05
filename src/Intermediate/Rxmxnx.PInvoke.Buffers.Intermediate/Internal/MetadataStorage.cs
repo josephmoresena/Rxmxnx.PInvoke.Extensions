@@ -109,7 +109,15 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 	/// <inheritdoc/>
 	[return: NotNullIfNotNull("typeMetadata")]
 	public override BufferTypeMetadata<T>? AddBinaryMetadata<T>(BufferTypeMetadata<T>? typeMetadata)
+#if !NET5_0_OR_GREATER
 		=> typeMetadata is not null ? this._backend.SetBinaryValue(typeMetadata) : default;
+#else
+	{
+		if (typeMetadata is null) return default;
+		this._backend.GetBinaryReference<T>(typeMetadata.Size) = typeMetadata;
+		return typeMetadata;
+	}
+#endif
 #if !PACKAGE && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
 	/// <inheritdoc/>
 	public override void PrintMetadata<T>(Boolean trace)

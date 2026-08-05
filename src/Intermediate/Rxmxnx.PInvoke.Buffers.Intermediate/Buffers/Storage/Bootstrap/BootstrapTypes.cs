@@ -262,19 +262,13 @@ internal readonly struct G31<T> : IMainBinaryStore<T>
 		get => 31;
 	}
 	/// <inheritdoc/>
-	public BufferTypeMetadata<T>? this[Int32 index]
+	public ref BufferTypeMetadata<T>? this[Int32 index]
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get
 		{
 			ref BufferTypeMetadata<T>? r0 = ref G31<T>.GetR0();
-			return Unsafe.Add(ref r0, index);
-		}
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		set
-		{
-			ref BufferTypeMetadata<T>? r0 = ref G31<T>.GetR0();
-			Unsafe.Add(ref r0, index) = value;
+			return ref Unsafe.Add(ref r0, index);
 		}
 	}
 	/// <inheritdoc/>
@@ -288,22 +282,20 @@ internal readonly struct G31<T> : IMainBinaryStore<T>
 	public Span<BufferTypeMetadata<T>?> Span
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get
-		{
-			ref BufferTypeMetadata<T>? r0 = ref G31<T>.GetR0();
-			return MemoryMarshal.CreateSpan(ref r0, this.Length);
-		}
+		get => MemoryMarshal.CreateSpan(ref this[0], this.Length);
 	}
 #endif
 
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public BufferTypeMetadata<T>? CompareExchange(BufferTypeMetadata<T> component)
-		=> Interlocked.CompareExchange(ref G31<T>.GetR0(), component, null);
+	public BufferTypeMetadata<T>? CompareExchange(Int32 index, BufferTypeMetadata<T> component)
+		=> Interlocked.CompareExchange(ref this[index], component, null);
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public BufferTypeMetadata<T>? Search(Int32 start, Int32 count)
-		=> BuffersHelper.Search(ref G31<T>.GetR0(), start, count);
+	public BufferTypeMetadata<T>? Search(Int32 start, Int32 count) => BuffersHelper.Search(ref this[0], start, count);
+	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public BufferTypeMetadata<T> Set(Int32 index, BufferTypeMetadata<T> component) => this[index] = component;
 
 	/// <summary>
 	/// Retrieves the 0th element of the bootstrap binary store.
@@ -329,19 +321,13 @@ internal readonly struct G127<T> : IMainBinaryStore<T>
 		get => 127;
 	}
 	/// <inheritdoc/>
-	public BufferTypeMetadata<T>? this[Int32 index]
+	public ref BufferTypeMetadata<T>? this[Int32 index]
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get
 		{
 			ref BufferTypeMetadata<T>? r0 = ref G127<T>.GetR0();
-			return Unsafe.Add(ref r0, index);
-		}
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		set
-		{
-			ref BufferTypeMetadata<T>? r0 = ref G127<T>.GetR0();
-			Unsafe.Add(ref r0, index) = value;
+			return ref Unsafe.Add(ref r0, index);
 		}
 	}
 	/// <inheritdoc/>
@@ -355,18 +341,20 @@ internal readonly struct G127<T> : IMainBinaryStore<T>
 	public Span<BufferTypeMetadata<T>?> Span
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get => MemoryMarshal.CreateSpan(ref G127<T>.GetR0(), this.Length);
+		get => MemoryMarshal.CreateSpan(ref this[0], this.Length);
 	}
 #endif
 
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public BufferTypeMetadata<T>? CompareExchange(BufferTypeMetadata<T> component)
-		=> Interlocked.CompareExchange(ref G127<T>.GetR0(), component, null);
+	public BufferTypeMetadata<T>? CompareExchange(Int32 index, BufferTypeMetadata<T> component)
+		=> Interlocked.CompareExchange(ref this[index], component, null);
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public BufferTypeMetadata<T>? Search(Int32 start, Int32 count)
-		=> BuffersHelper.Search(ref G127<T>.GetR0(), start, count);
+	public BufferTypeMetadata<T>? Search(Int32 start, Int32 count) => BuffersHelper.Search(ref this[0], start, count);
+	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public BufferTypeMetadata<T> Set(Int32 index, BufferTypeMetadata<T> component) => this[index] = component;
 
 	/// <summary>
 	/// Retrieves the 0th element of the bootstrap binary store.
@@ -394,19 +382,13 @@ internal readonly struct G255<TSpace, T> : IMainBinaryStore<T> where TSpace : st
 		get => 255;
 	}
 	/// <inheritdoc/>
-	public BufferTypeMetadata<T>? this[Int32 index]
+	public ref BufferTypeMetadata<T>? this[Int32 index]
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get
 		{
 			ref BufferTypeMetadata<T>? r0 = ref G255<TSpace, T>.GetR0();
-			return Unsafe.Add(ref r0, index);
-		}
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		set
-		{
-			ref BufferTypeMetadata<T>? r0 = ref G255<TSpace, T>.GetR0();
-			Unsafe.Add(ref r0, index) = value;
+			return ref Unsafe.Add(ref r0, index);
 		}
 	}
 	/// <inheritdoc/>
@@ -420,18 +402,20 @@ internal readonly struct G255<TSpace, T> : IMainBinaryStore<T> where TSpace : st
 	public Span<BufferTypeMetadata<T>?> Span
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get => MemoryMarshal.CreateSpan(ref G255<TSpace, T>.GetR0(), this.Length);
+		get => MemoryMarshal.CreateSpan(ref this[0], this.Length);
 	}
 #endif
 
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public BufferTypeMetadata<T>? CompareExchange(BufferTypeMetadata<T> component)
-		=> Interlocked.CompareExchange(ref G255<TSpace, T>.GetR0(), component, null);
+	public BufferTypeMetadata<T>? CompareExchange(Int32 index, BufferTypeMetadata<T> component)
+		=> Interlocked.CompareExchange(ref this[index], component, null);
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public BufferTypeMetadata<T>? Search(Int32 start, Int32 count)
-		=> BuffersHelper.Search(ref G255<TSpace, T>.GetR0(), start, count);
+	public BufferTypeMetadata<T>? Search(Int32 start, Int32 count) => BuffersHelper.Search(ref this[0], start, count);
+	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public BufferTypeMetadata<T> Set(Int32 index, BufferTypeMetadata<T> component) => this[index] = component;
 
 	/// <summary>
 	/// Retrieves the 0th element of the bootstrap binary store.
@@ -459,19 +443,13 @@ internal readonly struct G2047<TSpace, T> : IMainBinaryStore<T> where TSpace : s
 		get => 2047;
 	}
 	/// <inheritdoc/>
-	public BufferTypeMetadata<T>? this[Int32 index]
+	public ref BufferTypeMetadata<T>? this[Int32 index]
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get
 		{
 			ref BufferTypeMetadata<T>? r0 = ref G2047<TSpace, T>.GetR0();
-			return Unsafe.Add(ref r0, index);
-		}
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		set
-		{
-			ref BufferTypeMetadata<T>? r0 = ref G2047<TSpace, T>.GetR0();
-			Unsafe.Add(ref r0, index) = value;
+			return ref Unsafe.Add(ref r0, index);
 		}
 	}
 	/// <inheritdoc/>
@@ -485,18 +463,20 @@ internal readonly struct G2047<TSpace, T> : IMainBinaryStore<T> where TSpace : s
 	public Span<BufferTypeMetadata<T>?> Span
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get => MemoryMarshal.CreateSpan(ref G2047<TSpace, T>.GetR0(), this.Length);
+		get => MemoryMarshal.CreateSpan(ref this[0], this.Length);
 	}
 #endif
 
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public BufferTypeMetadata<T>? CompareExchange(BufferTypeMetadata<T> component)
-		=> Interlocked.CompareExchange(ref G2047<TSpace, T>.GetR0(), component, null);
+	public BufferTypeMetadata<T>? CompareExchange(Int32 index, BufferTypeMetadata<T> component)
+		=> Interlocked.CompareExchange(ref this[index], component, null);
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public BufferTypeMetadata<T>? Search(Int32 start, Int32 count)
-		=> BuffersHelper.Search(ref G2047<TSpace, T>.GetR0(), start, count);
+	public BufferTypeMetadata<T>? Search(Int32 start, Int32 count) => BuffersHelper.Search(ref this[0], start, count);
+	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public BufferTypeMetadata<T> Set(Int32 index, BufferTypeMetadata<T> component) => this[index] = component;
 
 	/// <summary>
 	/// Retrieves the 0th element of the bootstrap binary store.
