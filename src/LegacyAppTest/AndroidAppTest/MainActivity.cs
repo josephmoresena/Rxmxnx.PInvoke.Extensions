@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 
 using Android.App;
@@ -38,8 +39,8 @@ namespace AndroidAppTest
 			AppCompatTextView? text = this.FindViewById<AppCompatTextView>(Resource.Id.textView1);
 			if (text == null) return;
 			StringBuilder sb = new();
-
-			RuntimeHelper.PrintRuntimeInfo(sb);
+			using (StringWriter writer = new(sb))
+				FeatureHelper.MainEntryPoint(writer);
 			text.Text = sb.ToString();
 		}
 		public override Boolean OnCreateOptionsMenu(IMenu? menu)

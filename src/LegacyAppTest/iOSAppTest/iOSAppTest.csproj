@@ -63,15 +63,15 @@
         <MtouchLink>Full</MtouchLink>
     </PropertyGroup>
     <ItemGroup>
-        <Reference Include="System"/>
-        <Reference Include="System.Xml"/>
-        <Reference Include="System.Core"/>
-        <Reference Include="Xamarin.iOS"/>
-        <Reference Include="System.Numerics"/>
-        <Reference Include="System.Numerics.Vectors"/>
+        <Reference Include="System" />
+        <Reference Include="System.Xml" />
+        <Reference Include="System.Core" />
+        <Reference Include="Xamarin.iOS" />
+        <Reference Include="System.Numerics" />
+        <Reference Include="System.Numerics.Vectors" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Xamarin.Essentials" Version="1.6.1"/>
+        <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
     </ItemGroup>
     <ItemGroup>
         <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json">
@@ -118,29 +118,29 @@
         </ImageAsset>
     </ItemGroup>
     <ItemGroup>
-        <Folder Include="Resources\"/>
+        <Folder Include="Resources\" />
     </ItemGroup>
     <ItemGroup>
-        <InterfaceDefinition Include="LaunchScreen.storyboard"/>
-        <InterfaceDefinition Include="Main.storyboard"/>
+        <InterfaceDefinition Include="LaunchScreen.storyboard" />
+        <InterfaceDefinition Include="Main.storyboard" />
     </ItemGroup>
     <ItemGroup>
-        <None Include="Info.plist"/>
-        <None Include="Entitlements.plist"/>
+        <None Include="Info.plist" />
+        <None Include="Entitlements.plist" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Main.cs"/>
-        <Compile Include="AppDelegate.cs"/>
-        <Compile Include="SceneDelegate.cs"/>
-        <Compile Include="ViewController.cs"/>
+        <Compile Include="Main.cs" />
+        <Compile Include="AppDelegate.cs" />
+        <Compile Include="SceneDelegate.cs" />
+        <Compile Include="ViewController.cs" />
         <Compile Include="ViewController.designer.cs">
             <DependentUpon>ViewController.cs</DependentUpon>
         </Compile>
     </ItemGroup>
-    <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets"/>
+    <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 
-    <Import Condition="'$(Platform)' == 'iPhone'" Project="..\..\iPhone.Profile.props"/>
-    <Import Project="..\LegacyProject.props"/>
+    <Import Condition="'$(Platform)' == 'iPhone'" Project="..\..\iPhone.Profile.props" />
+    <Import Project="..\LegacyProject.props" />
     <ItemGroup>
         <ProjectReference Include="..\LegacyAppTest.Core\LegacyAppTest.Core.csproj">
             <Project>{BA05F12E-F281-4E3F-8D99-600B76D2186B}</Project>

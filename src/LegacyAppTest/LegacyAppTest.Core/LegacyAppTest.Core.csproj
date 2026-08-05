@@ -6,23 +6,22 @@
 
     <ItemGroup>
         <EmbeddedResource Include="..\..\MonoFacades\Rxmxnx.PInvoke.Json\Mono.ILLink.Descriptors.xml">
-            <LogicalName>$(AssemblyName).xml</LogicalName>
+            <LogicalName>LegacyAppTest.Core.xml</LogicalName>
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="..\..\MonoFacades\Rxmxnx.PInvoke.Json\CStringJsonConverter.cs">
-            <Link>CStringJsonConverter.cs</Link>
+        <Compile Include="..\..\MonoFacades\Rxmxnx.PInvoke.Json\*JsonConverter.cs">
+            <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
         </Compile>
-        <Compile Include="..\..\MonoFacades\Rxmxnx.PInvoke.Json\CStringSequenceJsonConverter.cs">
-            <Link>CStringSequenceJsonConverter.cs</Link>
+        <Compile Include="..\..\ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\**\*.cs">
+            <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
         </Compile>
-        <Compile Include="..\..\ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\RuntimeHelper.cs">
-            <Link>RuntimeHelper.cs</Link>
-        </Compile>
+        <Compile Remove="..\..\ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\Program.cs" />
+        <Compile Remove="..\..\ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\bin\**;..\..\ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\obj\**;" />
     </ItemGroup>
     <ItemGroup>
-        <None Remove="..\.editorconfig"/>
+        <None Remove="..\.editorconfig" />
     </ItemGroup>
-    <Import Project="..\LegacyProject.props"/>
+    <Import Project="..\LegacyProject.props" />
 
 </Project>

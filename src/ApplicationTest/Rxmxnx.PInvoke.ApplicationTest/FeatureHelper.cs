@@ -15,7 +15,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 {
     public static class FeatureHelper
 	{
-		public static void Main(TextWriter writer)
+		public static void MainEntryPoint(TextWriter writer)
 		{
 			RuntimeHelper.PrintRuntimeInfo(writer);
 #if NET6_0_OR_GREATER
@@ -228,9 +228,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		private static void Print<T>(FixedContextValue<T> ctx, TextWriter writer)
 		{
 #if NET5_0_OR_GREATER
-			writer.Write($"Address: 0x{ctx.Pointer:X}\tItems: {ctx.Values.Length} ");
+			writer.Write($"Address: 0x{ctx.Pointer:X}\tItems: {ctx.Values.Length}\t\t");
 #else
-			writer.Write($"Address: 0x{ctx.Pointer.ToString("X")}\tItems: {ctx.Values.Length} ");
+			writer.Write($"Address: 0x{ctx.Pointer.ToString("X")}\tItems: {ctx.Values.Length}\t\t");
 #endif
 #if !NET9_0_OR_GREATER
 			foreach (T value in ctx.Values)

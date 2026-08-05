@@ -6,7 +6,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 	{
 		public static void Main(String[] args)
 		{
-			FeatureHelper.Main(Console.Out);
+			FeatureHelper.MainEntryPoint(Console.Out);
 		}
 	}
 }

@@ -13,7 +13,8 @@
     private String GetRuntimeInformation()
     {
         StringBuilder stringBuilder = new();
-        RuntimeHelper.PrintRuntimeInfo(stringBuilder);
+        using (StringWriter writer = new(stringBuilder))
+            FeatureHelper.MainEntryPoint(writer);
         return stringBuilder.ToString();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 
 using AppKit;
@@ -14,7 +15,8 @@ namespace MacAppTest
 		static MainClass()
 		{
 			StringBuilder sb = new();
-			RuntimeHelper.PrintRuntimeInfo(sb);
+			using (StringWriter writer = new(sb))
+				FeatureHelper.MainEntryPoint(writer);
 			MainClass.RuntimeInfo = sb.ToString();
 		}
 
