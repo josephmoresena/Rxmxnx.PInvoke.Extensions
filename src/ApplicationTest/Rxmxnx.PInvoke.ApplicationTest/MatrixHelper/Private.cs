@@ -170,7 +170,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		public static void PrintMatrix(ReadOnlySpan<Double> matrix, Int32 nRow, Int32 nCol, TextWriter writer)
 		{
 			Int32 addCol = (matrix.Length - nRow * nCol) / nRow;
+#if !CSHARP9_0
 			StringBuilder? strBuild = addCol > 0 ? new StringBuilder() : default;
+#else
+			StringBuilder? strBuild = addCol > 0 ? new() : default;
+#endif
 			for (Int32 row = 0; row < nRow; row++)
 			{
 				strBuild?.Append("\t|\t");

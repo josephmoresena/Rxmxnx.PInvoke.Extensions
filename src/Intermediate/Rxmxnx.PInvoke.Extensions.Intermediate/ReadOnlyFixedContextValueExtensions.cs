@@ -56,9 +56,52 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	{
 		if (str is not null && action is not null)
 			fixed (void* ptr = &MemoryMarshal.GetReference(str.AsSpan()))
+#if NET7_0_OR_GREATER
 				action.Accept(new(ptr, str.Length));
+#else
+				new ReadOnlyFixedAction<Char, TAction>(ref action, new(ptr, str.Length)).Accept();
+#endif
 		else if (action is not null)
+#if NET7_0_OR_GREATER
 			action.Accept(default);
+#else
+			new ReadOnlyFixedAction<Char, TAction>(ref action).Accept();
+#endif
+	}
+	/// <summary>
+	/// Prevents the garbage collector from relocating the current string by pinning its memory
+	/// address until the specified action has completed.
+	/// </summary>
+	/// <typeparam name="TAction">Type of <see cref="IReadOnlyFixedContextAction{T}"/>.</typeparam>
+	/// <param name="str">The <see cref="String"/> instance to pin during the action.</param>
+	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void WithSafeFixed<TAction>(this String? str, ref TAction action)
+#if !NET9_0_OR_GREATER
+		where TAction : struct, IReadOnlyFixedContextAction<Char>
+#else
+		where TAction : struct, IReadOnlyFixedContextAction<Char>, allows ref struct
+#endif
+	{
+		if (str is not null)
+			fixed (void* ptr = &MemoryMarshal.GetReference(str.AsSpan()))
+#if NET7_0_OR_GREATER
+				action.Accept(new(ptr, str.Length));
+#else
+#pragma warning disable CS8500
+			fixed (void* _ = &action)
+#pragma warning restore CS8500
+				new ReadOnlyFixedAction<Char, TAction>(ref action, new(ptr, str.Length)).Accept();
+#endif
+		else
+#if NET7_0_OR_GREATER
+			action.Accept(default);
+#else
+#pragma warning disable CS8500
+			fixed (void* _ = &action)
+#pragma warning restore CS8500
+				new ReadOnlyFixedAction<Char, TAction>(ref action).Accept();
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current string by pinning its memory
@@ -79,32 +122,56 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	{
 		if (str is not null && func is not null)
 			fixed (void* ptr = &MemoryMarshal.GetReference(str.AsSpan()))
+#if NET7_0_OR_GREATER
 				result = func.Apply(new(ptr, str.Length));
+#else
+				result = new ReadOnlyFixedFunction<Char, TResult, TFunction>(ref func, new(ptr, str.Length)).Apply();
+#endif
 		else if (func is not null)
+#if NET7_0_OR_GREATER
 			result = func.Apply(default);
+#else
+			result = new ReadOnlyFixedFunction<Char, TResult, TFunction>(ref func).Apply();
+#endif
 		else
 			Unsafe.SkipInit(out result);
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current string by pinning its memory
-	/// address until the specified action has completed.
+	/// address until the specified function has completed.
 	/// </summary>
-	/// <typeparam name="TAction">Type of <see cref="IReadOnlyFixedContextAction{T}"/>.</typeparam>
-	/// <param name="str">The <see cref="String"/> instance to pin during the action.</param>
-	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+	/// <typeparam name="TResult">The type of the value returned by the function <paramref name="func"/>.</typeparam>
+	/// <typeparam name="TFunction">Type of <see cref="IFixedContextFunction{T,TResult}"/>.</typeparam>
+	/// <param name="str">The <see cref="String"/> instance to pin during the function.</param>
+	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
+	/// <param name="result">Output. Function result.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TAction>(this String? str, ref TAction action)
+	public static void WithSafeFixed<TResult, TFunction>(this String? str, ref TFunction func, out TResult result)
 #if !NET9_0_OR_GREATER
-		where TAction : struct, IReadOnlyFixedContextAction<Char>
+		where TFunction : struct, IReadOnlyFixedContextFunction<Char, TResult>
 #else
-		where TAction : struct, IReadOnlyFixedContextAction<Char>, allows ref struct
+		where TFunction : struct, IReadOnlyFixedContextFunction<Char, TResult>, allows ref struct
 #endif
 	{
 		if (str is not null)
 			fixed (void* ptr = &MemoryMarshal.GetReference(str.AsSpan()))
-				action.Accept(new(ptr, str.Length));
+#if NET7_0_OR_GREATER
+				result = func.Apply(new(ptr, str.Length));
+#else
+#pragma warning disable CS8500
+			fixed (void* _ = &func)
+#pragma warning restore CS8500
+				result = new ReadOnlyFixedFunction<Char, TResult, TFunction>(ref func, new(ptr, str.Length)).Apply();
+#endif
 		else
-			action.Accept(default);
+#if NET7_0_OR_GREATER
+			result = func.Apply(default);
+#else
+#pragma warning disable CS8500
+			fixed (void* _ = &func)
+#pragma warning restore CS8500
+				result = new ReadOnlyFixedFunction<Char, TResult, TFunction>(ref func).Apply();
+#endif
 	}
 #pragma warning disable CS8500
 	/// <summary>
@@ -125,7 +192,11 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	{
 		if (action is null) return;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#if NET7_0_OR_GREATER
 			action.Accept(new(ptr, span.Length));
+#else
+			new ReadOnlyFixedAction<T, TAction>(ref action, new(ptr, span.Length)).Accept();
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
@@ -145,7 +216,11 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	{
 		if (action is null) return;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#if NET7_0_OR_GREATER
 			action.Accept(new FixedContextValue<T>(ptr, span.Length));
+#else
+			new ReadOnlyFixedAction<T, TAction>(ref action, new FixedContextValue<T>(ptr, span.Length)).Accept();
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current array by pinning its memory address until the
@@ -165,9 +240,17 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	{
 		if (arr is not null && action is not null)
 			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
+#if NET7_0_OR_GREATER
 				action.Accept(new FixedContextValue<T>(ptr, arr.Length));
+#else
+				new ReadOnlyFixedAction<T, TAction>(ref action, new FixedContextValue<T>(ptr, arr.Length)).Accept();
+#endif
 		else if (action is not null)
+#if NET7_0_OR_GREATER
 			action.Accept(default);
+#else
+			new ReadOnlyFixedAction<T, TAction>(ref action).Accept();
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current read-only span by pinning its memory
@@ -186,7 +269,12 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 #endif
 	{
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#if NET7_0_OR_GREATER
 			action.Accept(new(ptr, span.Length));
+#else
+		fixed (void* _ = &action)
+			new ReadOnlyFixedAction<T, TAction>(ref action, new(ptr, span.Length)).Accept();
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
@@ -205,7 +293,12 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 #endif
 	{
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#if NET7_0_OR_GREATER
 			action.Accept(new FixedContextValue<T>(ptr, span.Length));
+#else
+		fixed (void* _ = &action)
+			new ReadOnlyFixedAction<T, TAction>(ref action, new FixedContextValue<T>(ptr, span.Length)).Accept();
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current array by pinning its memory address until the
@@ -225,9 +318,19 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	{
 		if (arr is not null)
 			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
+#if NET7_0_OR_GREATER
 				action.Accept(new FixedContextValue<T>(ptr, arr.Length));
+#else
+			fixed (void* _ = &action)
+				new ReadOnlyFixedAction<T, TAction>(ref action, new FixedContextValue<T>(ptr, arr.Length)).Accept();
+#endif
 		else
+#if NET7_0_OR_GREATER
 			action.Accept(default);
+#else
+			fixed (void* _ = &action)
+				new ReadOnlyFixedAction<T, TAction>(ref action).Accept();
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current read-only span by pinning its memory
@@ -254,7 +357,11 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 			return;
 		}
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#if NET7_0_OR_GREATER
 			result = func.Apply(new(ptr, span.Length));
+#else
+			result = new ReadOnlyFixedFunction<T, TResult, TFunction>(ref func, new(ptr, span.Length)).Apply();
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
@@ -280,7 +387,14 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 			return;
 		}
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#if NET7_0_OR_GREATER
 			result = func.Apply(new FixedContextValue<T>(ptr, span.Length));
+#else
+		{
+			result = new ReadOnlyFixedFunction<T, TResult, TFunction>(
+				ref func, new FixedContextValue<T>(ptr, span.Length)).Apply();
+		}
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current array by pinning its memory
@@ -302,9 +416,20 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	{
 		if (arr is not null && func is not null)
 			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
-				result = func.Apply(new(ptr, arr.Length));
+#if NET7_0_OR_GREATER
+				result = func.Apply(new FixedContextValue<T>(ptr, arr.Length));
+#else
+			{
+				result = new ReadOnlyFixedFunction<T, TResult, TFunction>(
+					ref func, new FixedContextValue<T>(ptr, arr.Length)).Apply();
+			}
+#endif
 		else if (func is not null)
+#if NET7_0_OR_GREATER
 			result = func.Apply(default);
+#else
+			result = new ReadOnlyFixedFunction<T, TResult, TFunction>(ref func).Apply();
+#endif
 		else
 			Unsafe.SkipInit(out result);
 	}
@@ -328,7 +453,12 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 #endif
 	{
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#if NET7_0_OR_GREATER
 			result = func.Apply(new(ptr, span.Length));
+#else
+		fixed (void* _ = &func)
+			result = new ReadOnlyFixedFunction<T, TResult, TFunction>(ref func, new(ptr, span.Length)).Apply();
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
@@ -349,7 +479,15 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 #endif
 	{
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#if NET7_0_OR_GREATER
 			result = func.Apply(new FixedContextValue<T>(ptr, span.Length));
+#else
+		fixed (void* _ = &func)
+		{
+			result = new ReadOnlyFixedFunction<T, TResult, TFunction>(
+				ref func, new FixedContextValue<T>(ptr, span.Length)).Apply();
+		}
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current array by pinning its memory
@@ -371,9 +509,91 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	{
 		if (arr is not null)
 			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
-				result = func.Apply(new(ptr, arr.Length));
+#if NET7_0_OR_GREATER
+				result = func.Apply(new FixedContextValue<T>(ptr, arr.Length));
+#else
+			fixed (void* _ = &func)
+			{
+				result = new ReadOnlyFixedFunction<T, TResult, TFunction>(
+					ref func, new FixedContextValue<T>(ptr, arr.Length)).Apply();
+			}
+#endif
 		else
+#if NET7_0_OR_GREATER
 			result = func.Apply(default);
+#else
+			fixed (void* _ = &func)
+				result = new ReadOnlyFixedFunction<T, TResult, TFunction>(ref func).Apply();
+#endif
 	}
+
+#if !NET7_0_OR_GREATER
+	/// <summary>
+	/// Wrapper ref-struct for action value.
+	/// </summary>
+	/// <typeparam name="T">The type that is contained in the contiguous region of memory.</typeparam>
+	/// <typeparam name="TAction">Type of <see cref="IReadOnlyFixedContextAction{T}"/>.</typeparam>
+	private readonly ref struct ReadOnlyFixedAction<T, TAction> where TAction : IReadOnlyFixedContextAction<T>
+	{
+		/// <summary>
+		/// Action pointer.
+		/// </summary>
+		private readonly TAction* _aPointer;
+		/// <summary>
+		/// Fixed context value.
+		/// </summary>
+		private readonly ReadOnlyFixedContextValue<T> _ctx;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+		/// <param name="ctx">A <see cref="ReadOnlyFixedContextValue{T}"/> instance.</param>
+		public ReadOnlyFixedAction(ref TAction action, ReadOnlyFixedContextValue<T> ctx = default)
+		{
+			this._aPointer = (TAction*)Unsafe.AsPointer(ref action);
+			this._ctx = ctx;
+		}
+		/// <summary>
+		/// Performs an operation using the fixed context.
+		/// </summary>
+		public void Accept() => this._aPointer[0].Accept(this._ctx);
+	}
+
+	/// <summary>
+	/// Wrapper ref-struct for function value.
+	/// </summary>
+	/// <typeparam name="T">The type that is contained in the contiguous region of memory.</typeparam>
+	/// <typeparam name="TResult">The type of the value returned by the function.</typeparam>
+	/// <typeparam name="TFunction">Type of <see cref="IReadOnlyFixedContextFunction{T,TResult}"/>.</typeparam>
+	private readonly ref struct ReadOnlyFixedFunction<T, TResult, TFunction>
+		where TFunction : IReadOnlyFixedContextFunction<T, TResult>
+	{
+		/// <summary>
+		/// Action pointer.
+		/// </summary>
+		private readonly TFunction* _fPointer;
+		/// <summary>
+		/// Fixed context value.
+		/// </summary>
+		private readonly ReadOnlyFixedContextValue<T> _ctx;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
+		/// <param name="ctx">A <see cref="ReadOnlyFixedContextValue{T}"/> instance.</param>
+		public ReadOnlyFixedFunction(ref TFunction func, ReadOnlyFixedContextValue<T> ctx = default)
+		{
+			this._fPointer = (TFunction*)Unsafe.AsPointer(ref func);
+			this._ctx = ctx;
+		}
+		/// <summary>
+		/// Performs an operation using the fixed context and returns a result.
+		/// </summary>
+		/// <returns>The result produced by the operation.</returns>
+		public TResult Apply() => this._fPointer[0].Apply(this._ctx);
+	}
+#endif
 #pragma warning restore CS8500
 }

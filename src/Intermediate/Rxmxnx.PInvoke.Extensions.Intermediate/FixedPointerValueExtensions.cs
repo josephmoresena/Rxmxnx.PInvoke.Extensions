@@ -79,7 +79,11 @@ public static unsafe class FixedPointerValueExtensions
 	{
 		if (action is null) return;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#if NET7_0_OR_GREATER
 			action.Accept(new FixedContextValue<T>(ptr, span.Length));
+#else
+			new FixedAction<TAction>(ref action, new FixedContextValue<T>(ptr, span.Length)).Accept();
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current read-only span by pinning its memory
@@ -99,7 +103,11 @@ public static unsafe class FixedPointerValueExtensions
 	{
 		if (action is null) return;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#if NET7_0_OR_GREATER
 			action.Accept(new ReadOnlyFixedContextValue<T>(ptr, span.Length));
+#else
+			new FixedAction<TAction>(ref action, new ReadOnlyFixedContextValue<T>(ptr, span.Length)).Accept();
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
@@ -118,7 +126,12 @@ public static unsafe class FixedPointerValueExtensions
 #endif
 	{
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#if NET7_0_OR_GREATER
 			action.Accept(new FixedContextValue<T>(ptr, span.Length));
+#else
+		fixed (void* _ = &action)
+			new FixedAction<TAction>(ref action, new FixedContextValue<T>(ptr, span.Length)).Accept();
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current read-only span by pinning its memory
@@ -137,7 +150,12 @@ public static unsafe class FixedPointerValueExtensions
 #endif
 	{
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#if NET7_0_OR_GREATER
 			action.Accept(new ReadOnlyFixedContextValue<T>(ptr, span.Length));
+#else
+		fixed (void* _ = &action)
+			new FixedAction<TAction>(ref action, new ReadOnlyFixedContextValue<T>(ptr, span.Length)).Accept();
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
@@ -163,7 +181,14 @@ public static unsafe class FixedPointerValueExtensions
 			return;
 		}
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#if NET7_0_OR_GREATER
 			result = func.Apply(new FixedContextValue<T>(ptr, span.Length));
+#else
+		{
+			result = new FixedFunction<TResult, TFunction>(ref func, new FixedContextValue<T>(ptr, span.Length))
+				.Apply();
+		}
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current read-only span by pinning its memory
@@ -190,7 +215,14 @@ public static unsafe class FixedPointerValueExtensions
 			return;
 		}
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#if NET7_0_OR_GREATER
 			result = func.Apply(new ReadOnlyFixedContextValue<T>(ptr, span.Length));
+#else
+		{
+			result = new FixedFunction<TResult, TFunction>(ref func, new ReadOnlyFixedContextValue<T>(ptr, span.Length))
+				.Apply();
+		}
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
@@ -211,7 +243,15 @@ public static unsafe class FixedPointerValueExtensions
 #endif
 	{
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#if NET7_0_OR_GREATER
 			result = func.Apply(new FixedContextValue<T>(ptr, span.Length));
+#else
+		fixed (void* _ = &func)
+		{
+			result = new FixedFunction<TResult, TFunction>(ref func, new FixedContextValue<T>(ptr, span.Length))
+				.Apply();
+		}
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current read-only span by pinning its memory
@@ -233,7 +273,81 @@ public static unsafe class FixedPointerValueExtensions
 #endif
 	{
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#if NET7_0_OR_GREATER
 			result = func.Apply(new ReadOnlyFixedContextValue<T>(ptr, span.Length));
+#else
+		fixed (void* _ = &func)
+		{
+			result = new FixedFunction<TResult, TFunction>(ref func, new ReadOnlyFixedContextValue<T>(ptr, span.Length))
+				.Apply();
+		}
+#endif
 	}
+
+#if !NET7_0_OR_GREATER
+	/// <summary>
+	/// Wrapper ref-struct for action value.
+	/// </summary>
+	/// <typeparam name="TAction">Type of <see cref="IFixedAction"/>.</typeparam>
+	private readonly ref struct FixedAction<TAction> where TAction : IFixedAction
+	{
+		/// <summary>
+		/// Action pointer.
+		/// </summary>
+		private readonly TAction* _aPointer;
+		/// <summary>
+		/// Fixed context value.
+		/// </summary>
+		private readonly FixedPointerValue _ptr;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+		/// <param name="ptr">A <see cref="FixedPointerValue"/> instance.</param>
+		public FixedAction(ref TAction action, FixedPointerValue ptr = default)
+		{
+			this._aPointer = (TAction*)Unsafe.AsPointer(ref action);
+			this._ptr = ptr;
+		}
+		/// <summary>
+		/// Performs an operation using the fixed context.
+		/// </summary>
+		public void Accept() => this._aPointer[0].Accept(this._ptr);
+	}
+
+	/// <summary>
+	/// Wrapper ref-struct for function value.
+	/// </summary>
+	/// <typeparam name="TResult">The type of the value returned by the function.</typeparam>
+	/// <typeparam name="TFunction">Type of <see cref="IFixedFunction{TResult}"/>.</typeparam>
+	private readonly ref struct FixedFunction<TResult, TFunction> where TFunction : IFixedFunction<TResult>
+	{
+		/// <summary>
+		/// Action pointer.
+		/// </summary>
+		private readonly TFunction* _fPointer;
+		/// <summary>
+		/// Fixed context value.
+		/// </summary>
+		private readonly FixedPointerValue _ptr;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
+		/// <param name="ptr">A <see cref="FixedPointerValue"/> instance.</param>
+		public FixedFunction(ref TFunction func, FixedPointerValue ptr = default)
+		{
+			this._fPointer = (TFunction*)Unsafe.AsPointer(ref func);
+			this._ptr = ptr;
+		}
+		/// <summary>
+		/// Performs an operation using the fixed context and returns a result.
+		/// </summary>
+		/// <returns>The result produced by the operation.</returns>
+		public TResult Apply() => this._fPointer[0].Apply(this._ptr);
+	}
+#endif
 #pragma warning restore CS8500
 }

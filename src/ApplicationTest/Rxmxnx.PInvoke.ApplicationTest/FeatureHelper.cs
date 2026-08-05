@@ -1,6 +1,5 @@
 using System;
 using System.Buffers;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 #if !NETCOREAPP && !NET461_OR_GREATER && !UAP || NET10_0_OR_GREATER
@@ -14,8 +13,7 @@ using System.Text;
 
 namespace Rxmxnx.PInvoke.ApplicationTest
 {
-	[SuppressMessage("ReSharper", "HeapView.DelegateAllocation")]
-	public static class FeatureHelper
+    public static class FeatureHelper
 	{
 		public static void Main(TextWriter writer)
 		{

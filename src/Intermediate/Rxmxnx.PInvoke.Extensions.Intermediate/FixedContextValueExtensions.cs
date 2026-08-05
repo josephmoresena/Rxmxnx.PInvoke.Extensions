@@ -125,7 +125,11 @@ public static unsafe class FixedContextValueExtensions
 	{
 		if (action is null) return;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#if NET7_0_OR_GREATER
 			action.Accept(new(ptr, span.Length));
+#else
+			new FixedAction<T, TAction>(ref action, new(ptr, span.Length)).Accept();
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current array by pinning its memory address until the
@@ -145,9 +149,17 @@ public static unsafe class FixedContextValueExtensions
 	{
 		if (arr is not null && action is not null)
 			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
+#if NET7_0_OR_GREATER
 				action.Accept(new(ptr, arr.Length));
+#else
+				new FixedAction<T, TAction>(ref action, new(ptr, arr.Length)).Accept();
+#endif
 		else if (action is not null)
+#if NET7_0_OR_GREATER
 			action.Accept(default);
+#else
+			new FixedAction<T, TAction>(ref action).Accept();
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
@@ -166,7 +178,12 @@ public static unsafe class FixedContextValueExtensions
 #endif
 	{
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#if NET7_0_OR_GREATER
 			action.Accept(new(ptr, span.Length));
+#else
+		fixed (void* _ = &action)
+			new FixedAction<T, TAction>(ref action, new(ptr, span.Length)).Accept();
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current array by pinning its memory address until the
@@ -186,9 +203,19 @@ public static unsafe class FixedContextValueExtensions
 	{
 		if (arr is not null)
 			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
+#if NET7_0_OR_GREATER
 				action.Accept(new(ptr, arr.Length));
+#else
+			fixed (void* _ = &action)
+				new FixedAction<T, TAction>(ref action, new(ptr, arr.Length)).Accept();
+#endif
 		else
+#if NET7_0_OR_GREATER
 			action.Accept(default);
+#else
+			fixed (void* _ = &action)
+				new FixedAction<T, TAction>(ref action).Accept();
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current span by pinning its memory
@@ -214,7 +241,11 @@ public static unsafe class FixedContextValueExtensions
 			return;
 		}
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#if NET7_0_OR_GREATER
 			result = func.Apply(new(ptr, span.Length));
+#else
+			result = new FixedFunction<T, TResult, TFunction>(ref func, new(ptr, span.Length)).Apply();
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current array by pinning its memory
@@ -236,9 +267,17 @@ public static unsafe class FixedContextValueExtensions
 	{
 		if (arr is not null && func is not null)
 			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
+#if NET7_0_OR_GREATER
 				result = func.Apply(new(ptr, arr.Length));
+#else
+				result = new FixedFunction<T, TResult, TFunction>(ref func, new(ptr, arr.Length)).Apply();
+#endif
 		else if (func is not null)
+#if NET7_0_OR_GREATER
 			result = func.Apply(default);
+#else
+			result = new FixedFunction<T, TResult, TFunction>(ref func).Apply();
+#endif
 		else
 			Unsafe.SkipInit(out result);
 	}
@@ -261,7 +300,12 @@ public static unsafe class FixedContextValueExtensions
 #endif
 	{
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+#if NET7_0_OR_GREATER
 			result = func.Apply(new(ptr, span.Length));
+#else
+		fixed (void* _ = &func)
+			result = new FixedFunction<T, TResult, TFunction>(ref func, new(ptr, span.Length)).Apply();
+#endif
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current array by pinning its memory
@@ -283,9 +327,87 @@ public static unsafe class FixedContextValueExtensions
 	{
 		if (arr is not null)
 			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
+#if NET7_0_OR_GREATER
 				result = func.Apply(new(ptr, arr.Length));
+#else
+			fixed (void* _ = &func)
+				result = new FixedFunction<T, TResult, TFunction>(ref func, new(ptr, arr.Length)).Apply();
+#endif
 		else
+#if NET7_0_OR_GREATER
 			result = func.Apply(default);
+#else
+			fixed (void* _ = &func)
+				result = new FixedFunction<T, TResult, TFunction>(ref func).Apply();
+#endif
 	}
+
+#if !NET7_0_OR_GREATER
+	/// <summary>
+	/// Wrapper ref-struct for action value.
+	/// </summary>
+	/// <typeparam name="T">The type that is contained in the contiguous region of memory.</typeparam>
+	/// <typeparam name="TAction">Type of <see cref="IFixedContextAction{T}"/>.</typeparam>
+	private readonly ref struct FixedAction<T, TAction> where TAction : IFixedContextAction<T>
+	{
+		/// <summary>
+		/// Action pointer.
+		/// </summary>
+		private readonly TAction* _aPointer;
+		/// <summary>
+		/// Fixed context value.
+		/// </summary>
+		private readonly FixedContextValue<T> _ctx;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+		/// <param name="ctx">A <see cref="FixedContextValue{T}"/> instance.</param>
+		public FixedAction(ref TAction action, FixedContextValue<T> ctx = default)
+		{
+			this._aPointer = (TAction*)Unsafe.AsPointer(ref action);
+			this._ctx = ctx;
+		}
+		/// <summary>
+		/// Performs an operation using the fixed context.
+		/// </summary>
+		public void Accept() => this._aPointer[0].Accept(this._ctx);
+	}
+
+	/// <summary>
+	/// Wrapper ref-struct for function value.
+	/// </summary>
+	/// <typeparam name="T">The type that is contained in the contiguous region of memory.</typeparam>
+	/// <typeparam name="TResult">The type of the value returned by the function.</typeparam>
+	/// <typeparam name="TFunction">Type of <see cref="IFixedContextFunction{T,TResult}"/>.</typeparam>
+	private readonly ref struct FixedFunction<T, TResult, TFunction> where TFunction : IFixedContextFunction<T, TResult>
+	{
+		/// <summary>
+		/// Action pointer.
+		/// </summary>
+		private readonly TFunction* _fPointer;
+		/// <summary>
+		/// Fixed context value.
+		/// </summary>
+		private readonly FixedContextValue<T> _ctx;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
+		/// <param name="ctx">A <see cref="FixedContextValue{T}"/> instance.</param>
+		public FixedFunction(ref TFunction func, FixedContextValue<T> ctx = default)
+		{
+			this._fPointer = (TFunction*)Unsafe.AsPointer(ref func);
+			this._ctx = ctx;
+		}
+		/// <summary>
+		/// Performs an operation using the fixed context and returns a result.
+		/// </summary>
+		/// <returns>The result produced by the operation.</returns>
+		public TResult Apply() => this._fPointer[0].Apply(this._ctx);
+	}
+#endif
 #pragma warning restore CS8500
 }
