@@ -32,19 +32,18 @@ internal interface IMetadataStorageBackend
 	/// <returns>The current capacity for <typeparamref name="T"/>.</returns>
 	Int32 GetCurrentCapacity<T>();
 	/// <summary>
-	/// Retrieves a managed reference to the <see cref="BufferTypeMetadata{T}"/> instance for <paramref name="componentSize"/>.
-	/// </summary>
-	/// <typeparam name="T">Type of items in the buffer.</typeparam>
-	/// <param name="componentSize">Size of the requested metadata.</param>
-	/// <returns>A managed <see cref="BufferTypeMetadata{T}"/> reference.</returns>
-	ref BufferTypeMetadata<T>? GetBinaryReference<T>(UInt16 componentSize);
-	/// <summary>
 	/// Retrieves the <see cref="BufferTypeMetadata{T}"/> instance for <paramref name="componentSize"/>.
 	/// </summary>
 	/// <typeparam name="T">Type of items in the buffer.</typeparam>
 	/// <param name="componentSize">Size of the requested metadata.</param>
 	/// <returns>The <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 	BufferTypeMetadata<T>? GetBinaryValue<T>(UInt16 componentSize);
+	/// <summary>
+	/// Stores <see cref="BufferTypeMetadata{T}"/> instance.
+	/// </summary>
+	/// <param name="component">Size of the requested metadata.</param>
+	/// <returns>The <see cref="BufferTypeMetadata{T}"/> reference.</returns>
+	BufferTypeMetadata<T> SetBinaryValue<T>(BufferTypeMetadata<T> component);
 	/// <summary>
 	/// Computes the binary metadata required for a buffer with <paramref name="count"/> items.
 	/// </summary>

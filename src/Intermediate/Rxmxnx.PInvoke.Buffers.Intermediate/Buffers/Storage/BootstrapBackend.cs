@@ -28,8 +28,8 @@ internal readonly struct BootstrapBackend31 : IMetadataStorageBackend
 	public Int32 GetCurrentCapacity<T>() => BinaryStore<G31<T>, T>.CurrentCapacity;
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public ref BufferTypeMetadata<T>? GetBinaryReference<T>(UInt16 componentSize)
-		=> ref BinaryStore<G31<T>, T>.GetBinaryReference(componentSize);
+	public BufferTypeMetadata<T> SetBinaryValue<T>(BufferTypeMetadata<T> component)
+		=> BinaryStore<G31<T>, T>.SetBinaryValue(component);
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public BufferTypeMetadata<T>? GetBinaryValue<T>(UInt16 componentSize)
@@ -76,8 +76,8 @@ internal readonly struct BootstrapBackend127 : IMetadataStorageBackend
 	public Int32 GetCurrentCapacity<T>() => BinaryStore<G127<T>, T>.CurrentCapacity;
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public ref BufferTypeMetadata<T>? GetBinaryReference<T>(UInt16 componentSize)
-		=> ref BinaryStore<G127<T>, T>.GetBinaryReference(componentSize);
+	public BufferTypeMetadata<T> SetBinaryValue<T>(BufferTypeMetadata<T> component)
+		=> BinaryStore<G127<T>, T>.SetBinaryValue(component);
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public BufferTypeMetadata<T>? GetBinaryValue<T>(UInt16 componentSize)
@@ -134,11 +134,11 @@ internal readonly struct BootstrapBackend<TSpace> : IMetadataStorageBackend wher
 	}
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public ref BufferTypeMetadata<T>? GetBinaryReference<T>(UInt16 componentSize)
+	public BufferTypeMetadata<T> SetBinaryValue<T>(BufferTypeMetadata<T> component)
 	{
 		if (typeof(T).IsValueType)
-			return ref BinaryStore<G255<TSpace, T>, T>.GetBinaryReference(componentSize);
-		return ref BinaryStore<G2047<TSpace, T>, T>.GetBinaryReference(componentSize);
+			return BinaryStore<G255<TSpace, T>, T>.SetBinaryValue(component);
+		return BinaryStore<G2047<TSpace, T>, T>.SetBinaryValue(component);
 	}
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

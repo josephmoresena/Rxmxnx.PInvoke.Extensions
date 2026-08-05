@@ -16,12 +16,10 @@ internal readonly struct StandardBackend : IMetadataStorageBackend
 	public Int32 GetCurrentCapacity<T>() => BinaryStore<MainBinaryStore<T>, T>.CurrentCapacity;
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public ref BufferTypeMetadata<T>? GetBinaryReference<T>(UInt16 componentSize)
-		=> ref BinaryStore<MainBinaryStore<T>, T>.GetBinaryReference(componentSize);
-	/// <inheritdoc/>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public BufferTypeMetadata<T>? GetBinaryValue<T>(UInt16 componentSize)
 		=> BinaryStore<MainBinaryStore<T>, T>.GetBinaryValue(componentSize);
+	public BufferTypeMetadata<T> SetBinaryValue<T>(BufferTypeMetadata<T> component)
+		=> BinaryStore<MainBinaryStore<T>, T>.SetBinaryValue(component);
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public BufferTypeMetadata<T>? ComputeBinaryMetadata<T>(MetadataStorage storage, UInt16 count,
@@ -55,18 +53,27 @@ internal readonly struct StandardBackend : IMetadataStorageBackend
 			get => (UInt16)MainBinaryStore<T>.initial.Length;
 		}
 		/// <inheritdoc/>
-		public ref BufferTypeMetadata<T>? this[Int32 index]
+		public BufferTypeMetadata<T>? this[Int32 index]
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => ref MainBinaryStore<T>.initial[index];
+			get => MainBinaryStore<T>.initial[index];
 		}
+#if !NETCOREAPP3_0_OR_GREATER
+		Int32 IMainBinaryStore<T>.SlotCount => BuffersHelper.GetLeadingZeros(this.Length);
+#endif
 #if !PACKAGE
 		/// <inheritdoc/>
 		public Span<BufferTypeMetadata<T>?> Span => new(MainBinaryStore<T>.initial);
 #endif
-#if !NETCOREAPP3_0_OR_GREATER
-		Int32 IMainBinaryStore<T>.SlotCount => BuffersHelper.GetLeadingZeros(this.Length);
-#endif
+
+		/// <inheritdoc/>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public BufferTypeMetadata<T>? CompareExchange(BufferTypeMetadata<T> component)
+			=> Interlocked.CompareExchange(ref MainBinaryStore<T>.initial[component.Size - 1], component, null);
+		/// <inheritdoc/>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public BufferTypeMetadata<T>? Search(Int32 start, Int32 count)
+			=> BuffersHelper.Search(ref MainBinaryStore<T>.initial[0], start, count);
 	}
 #if !PACKAGE
 	/// <inheritdoc/>

@@ -66,28 +66,16 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Boolean TryAdd(BufferTypeMetadata<T> component)
 	{
-		ref BufferTypeMetadata<T>? reference = ref BinaryStore<TMain, T>.GetBinaryReference(component.Size);
-		return Interlocked.CompareExchange(ref reference, component, null) is null;
-	}
-	/// <summary>
-	/// Retrieves a managed reference to the <see cref="BufferTypeMetadata{T}"/> instance for <paramref name="componentSize"/>.
-	/// </summary>
-	/// <param name="componentSize">Size of the requested metadata.</param>
-	/// <returns>A managed <see cref="BufferTypeMetadata{T}"/> reference.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static ref BufferTypeMetadata<T>? GetBinaryReference(UInt16 componentSize)
-	{
-		Debug.Assert(componentSize > 0);
-		if (componentSize <= BinaryStore<TMain, T>.initial.Length)
-			return ref BinaryStore<TMain, T>.initial[componentSize - 1];
-
-		Int32 targetSlot = BinaryStore<TMain, T>.GetSlotIndex(componentSize);
+		if (component.Size <= BinaryStore<TMain, T>.initial.Length)
+			// ReSharper disable once PossiblyImpureMethodCallOnReadonlyVariable
+			return BinaryStore<TMain, T>.initial.CompareExchange(component) is null;
+		Int32 targetSlot = BinaryStore<TMain, T>.GetSlotIndex(component.Size);
 		Int32 pageLength = (BinaryStore<TMain, T>.initial.Length + 1) << targetSlot;
 		ref BufferTypeMetadata<T>?[]? slot = ref BinaryStore<TMain, T>.slots[targetSlot];
 
 		BufferTypeMetadata<T>?[]? page = Volatile.Read(ref slot);
 		page ??= BinaryStore<TMain, T>.GetOrCreatePage(targetSlot);
-		return ref page[componentSize - pageLength];
+		return Interlocked.CompareExchange(ref page[component.Size - pageLength], component, null) is null;
 	}
 	/// <summary>
 	/// Retrieves the <see cref="BufferTypeMetadata{T}"/> instance for <paramref name="componentSize"/>.
@@ -111,6 +99,25 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 		return page[componentSize - pageLength];
 	}
 	/// <summary>
+	/// Stores <see cref="BufferTypeMetadata{T}"/> instance.
+	/// </summary>
+	/// <param name="component">Size of the requested metadata.</param>
+	/// <returns>The <see cref="BufferTypeMetadata{T}"/> reference.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static BufferTypeMetadata<T> SetBinaryValue(BufferTypeMetadata<T> component)
+	{
+		if (component.Size <= BinaryStore<TMain, T>.initial.Length)
+			// ReSharper disable once PossiblyImpureMethodCallOnReadonlyVariable
+			return BinaryStore<TMain, T>.initial.CompareExchange(component) ?? component;
+		Int32 targetSlot = BinaryStore<TMain, T>.GetSlotIndex(component.Size);
+		Int32 pageLength = (BinaryStore<TMain, T>.initial.Length + 1) << targetSlot;
+		ref BufferTypeMetadata<T>?[]? slot = ref BinaryStore<TMain, T>.slots[targetSlot];
+		BufferTypeMetadata<T>?[]? page = Volatile.Read(ref slot);
+		page ??= BinaryStore<TMain, T>.GetOrCreatePage(targetSlot);
+		page[component.Size - pageLength] = component;
+		return component;
+	}
+	/// <summary>
 	/// Retrieves the fundamental component of size <paramref name="space"/>.
 	/// </summary>
 	/// <param name="storage">A <see cref="MetadataStorage"/> instance.</param>
@@ -122,13 +129,13 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 		if (BinaryStore<TMain, T>.GetBinaryValue(space) is { } metadata)
 			return metadata;
 		if (space == 1)
-			return BinaryStore<TMain, T>.GetBinaryReference(space) = Atomic<T>.TypeMetadata; // Atomic missing.
+			return BinaryStore<TMain, T>.SetBinaryValue(Atomic<T>.TypeMetadata); // Atomic missing.
 		BufferTypeMetadata<T>? result = BinaryStore<TMain, T>.GetMaxBinarySpace((UInt16)(space / 2));
 		while (result.Size < space)
 		{
 			result = result.Double(storage);
 			if (result is null) break;
-			BinaryStore<TMain, T>.GetBinaryReference(result.Size) = result;
+			BinaryStore<TMain, T>.SetBinaryValue(result);
 		}
 		return result;
 	}
@@ -184,7 +191,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 				if (result is null)
 					// Unable to create composed metadata. Use minimal.
 					return default;
-				BinaryStore<TMain, T>.GetBinaryReference(result.Size) = result;
+				BinaryStore<TMain, T>.SetBinaryValue(result);
 			}
 		}
 		return result;
@@ -197,16 +204,17 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// <returns>A <see cref="BufferTypeMetadata"/> instance.</returns>
 	private static BufferTypeMetadata<T> GetMaxBinarySpace(UInt16 space)
 	{
-		ref BufferTypeMetadata<T>? result = ref BinaryStore<TMain, T>.GetBinaryReference(space);
+		BufferTypeMetadata<T>? result = BinaryStore<TMain, T>.GetBinaryValue(space);
 		while (result is null)
 		{
 			if (space == 1)
 			{
 				result = Atomic<T>.TypeMetadata;
+				BinaryStore<TMain, T>.SetBinaryValue(result);
 				break;
 			}
 			space /= 2;
-			result = ref BinaryStore<TMain, T>.GetBinaryReference(space);
+			result = BinaryStore<TMain, T>.GetBinaryValue(space);
 		}
 		return result;
 	}
@@ -242,7 +250,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 		}
 		if (remaining <= 0) return default;
 
-		ref BufferTypeMetadata<T>? r0 = ref BinaryStore<TMain, T>.initial[0];
+		ref BufferTypeMetadata<T>? r0 = ref Unsafe.NullRef<BufferTypeMetadata<T>?>();
 		Int32 spanLength = BinaryStore<TMain, T>.initial.Length;
 		Int32 pageIndex = -1;
 		Int32 relativeIndex = count;
@@ -261,7 +269,13 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 		{
 			// Search at the current page.
 			Int32 length = Math.Min(spanLength - relativeIndex, remaining);
-			if (BinaryStore<TMain, T>.Search(ref r0, relativeIndex, length) is { } result)
+			// ReSharper disable once PossiblyImpureMethodCallOnReadonlyVariable
+			if (Unsafe.IsNullRef(ref r0))
+			{
+				if (BinaryStore<TMain, T>.initial.Search(relativeIndex, length) is { } result)
+					return result;
+			}
+			else if (BuffersHelper.Search(ref r0, relativeIndex, length) is { } result)
 				// Minimal metadata found.
 				return result;
 			// Exclude from total elements the current search length.
@@ -299,45 +313,6 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 		}
 		pageLength = page.Length;
 		return ref MemoryMarshal.GetReference(page);
-	}
-	/// <summary>
-	/// Searches for the first available metadata entry in a page segment.
-	/// </summary>
-	/// <param name="r0">Managed reference to metadata page.</param>
-	/// <param name="start">Zero-based index of the first entry to inspect.</param>
-	/// <param name="count">Number of entries to inspect.</param>
-	/// <returns>
-	/// The first available metadata entry within the specified range; otherwise, <see langword="null"/>.
-	/// </returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
-#endif
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe BufferTypeMetadata<T>? Search(ref BufferTypeMetadata<T>? r0, Int32 start, Int32 count)
-	{
-		Debug.Assert(start >= 0);
-		Debug.Assert(count > 0);
-		ref BufferTypeMetadata<T>? rS = ref Unsafe.Add(ref r0, start);
-#pragma warning disable CS8500
-		fixed (void* ptr = &rS)
-#pragma warning restore CS8500
-		{
-			ReadOnlySpan<IntPtr> unsafeSpan = new(ptr, count);
-#if NET7_0_OR_GREATER
-			Int32 index = unsafeSpan.IndexOfAnyExcept(IntPtr.Zero);
-#else
-			Int32 index = -1;
-			for (Int32 i = 0; i < unsafeSpan.Length; i++)
-			{
-				IntPtr val = unsafeSpan[i];
-				if (val == IntPtr.Zero) continue;
-				index = i;
-				break;
-			}
-#endif
-			return index < 0 ? default : Unsafe.Add(ref rS, index);
-		}
 	}
 	/// <summary>
 	/// Atomically updates the cached capacity when <paramref name="candidate"/> is greater than the current value.

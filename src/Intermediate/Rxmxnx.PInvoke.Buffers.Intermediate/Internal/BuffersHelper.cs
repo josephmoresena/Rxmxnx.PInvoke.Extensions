@@ -303,6 +303,46 @@ internal static class BuffersHelper
 #endif
 		return storage.AddBinaryMetadata(result);
 	}
+	/// <summary>
+	/// Searches for the first available metadata entry in a page segment.
+	/// </summary>
+	/// <typeparam name="T">The type of items in the buffer</typeparam>
+	/// <param name="r0">Managed reference to metadata page.</param>
+	/// <param name="start">Zero-based index of the first entry to inspect.</param>
+	/// <param name="count">Number of entries to inspect.</param>
+	/// <returns>
+	/// The first available metadata entry within the specified range; otherwise, <see langword="null"/>.
+	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static unsafe BufferTypeMetadata<T>? Search<T>(ref BufferTypeMetadata<T>? r0, Int32 start, Int32 count)
+	{
+		Debug.Assert(start >= 0);
+		Debug.Assert(count > 0);
+		ref BufferTypeMetadata<T>? rS = ref Unsafe.Add(ref r0, start);
+#pragma warning disable CS8500
+		fixed (void* ptr = &rS)
+#pragma warning restore CS8500
+		{
+			ReadOnlySpan<IntPtr> unsafeSpan = new(ptr, count);
+#if NET7_0_OR_GREATER
+			Int32 index = unsafeSpan.IndexOfAnyExcept(IntPtr.Zero);
+#else
+			Int32 index = -1;
+			for (Int32 i = 0; i < unsafeSpan.Length; i++)
+			{
+				IntPtr val = unsafeSpan[i];
+				if (val == IntPtr.Zero) continue;
+				index = i;
+				break;
+			}
+#endif
+			return index < 0 ? default : Unsafe.Add(ref rS, index);
+		}
+	}
 
 #if !NET7_0_OR_GREATER
 #nullable disable
