@@ -27,7 +27,7 @@ public readonly ref struct FixedPointerValue
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get
 		{
-			this.ValidateOperation();
+			this.ValidateOperation(true);
 			return this._ptr + this._offset;
 		}
 	}
