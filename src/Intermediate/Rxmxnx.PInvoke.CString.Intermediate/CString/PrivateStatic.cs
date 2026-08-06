@@ -129,7 +129,7 @@ public partial class CString
 		writer.Write();
 	}
 #endif
-#if NETCOREAPP || NET461_OR_GREATER
+#if NETCOREAPP || NET461_OR_GREATER || UAP10_0_16299
 	/// <summary>
 	/// Reads a UTF-8 string from the specified <see cref="Utf8JsonReader"/> and returns its length.
 	/// </summary>

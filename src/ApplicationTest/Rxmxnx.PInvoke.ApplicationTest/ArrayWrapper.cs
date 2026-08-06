@@ -12,7 +12,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 	{
 		public Int32 GetSize() => this.Value.Length;
 		public T GetItem(Int32 index) => this.Value[index];
+#if MONO || NET461_OR_GREATER
 		public T[] Value { get; set; } = Array.Empty<T>();
+#else
+		public T[] Value { get; set; } = new T[0];
+#endif
 #if !NETCOREAPP3_0_OR_GREATER && (NETCOREAPP || NET461_OR_GREATER || UAP || LEGACY)
 		IEnumerator<T> IEnumerable<T>.GetEnumerator() => this.CreateDefaultEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => this.CreateDefaultEnumerator();

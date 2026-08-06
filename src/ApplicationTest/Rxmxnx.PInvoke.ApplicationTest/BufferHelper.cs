@@ -39,10 +39,16 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		{
 			writer.WriteLine("Begin GC.Collect()");
 			GC.Collect();
+#if NETFRAMEWORK || NETCOREAPP
 			if (!SystemInfo.IsMonoRuntime)
 				GC.WaitForFullGCComplete();
 			else
 				GC.WaitForPendingFinalizers();
+#elif UAP10_0_16299
+			GC.WaitForFullGCComplete();
+#else
+			GC.WaitForPendingFinalizers();
+#endif
 			writer.WriteLine("End GC.Collect()");
 		}
 		public static void Generate(ScopedBuffer<Int32> buff, TextWriter writer)

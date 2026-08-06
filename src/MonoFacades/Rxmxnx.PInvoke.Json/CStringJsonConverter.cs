@@ -1,4 +1,4 @@
-#if !NETCOREAPP2_1_OR_GREATER && !NET461_OR_GREATER && !UAP10_0_16299
+#if !NETCOREAPP2_0_OR_GREATER && !NET461_OR_GREATER && !UAP && !NET452_OR_GREATER
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;

@@ -2,18 +2,18 @@ using System;
 using System.Buffers;
 using System.IO;
 
-#if !NETCOREAPP && !NET461_OR_GREATER && !UAP || NET10_0_OR_GREATER
+#if NET10_0_OR_GREATER
 using System.Collections.Generic;
-#if !NET10_0_OR_GREATER
-using System.Text;
-
 #endif
+
+#if !NETCOREAPP2_1_OR_GREATER && !NET46_OR_GREATER && !UAP
+using System.Text;
 
 #endif
 
 namespace Rxmxnx.PInvoke.ApplicationTest
 {
-    public static class FeatureHelper
+	public static class FeatureHelper
 	{
 		public static void MainEntryPoint(TextWriter writer)
 		{
@@ -172,14 +172,18 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				writer.WriteLine($"Address: 0x{utf8Span.GetUnsafeIntPtr():X}\t" + $"Length: {utf8Span.Length}\t" +
 #else
 				writer.WriteLine($"Address: 0x{utf8Span.GetUnsafeIntPtr().ToString("X")}\t" +
-				                  $"Length: {utf8Span.Length}\t" +
+				                 $"Length: {utf8Span.Length}\t" +
 #endif
-#if !NET461_OR_GREATER && (NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !UAP)
+#if !NET452_OR_GREATER && (NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !UAP)
 				                 $"Bytes: {Convert.ToBase64String(utf8Span)}\t" +
 #else
-				                  $"Bytes: {Convert.ToBase64String(utf8Span.ToArray())}\t" +
+				                 $"Bytes: {Convert.ToBase64String(utf8Span.ToArray())}\t" +
 #endif
+#if NET452
+				                 $"Text: {Encoding.UTF8.GetString(utf8Span.ToArray())}");
+#else
 				                 $"Text: {utf8Span.ToUtf16()}");
+#endif
 #if NET9_0_OR_GREATER
 			}
 #endif

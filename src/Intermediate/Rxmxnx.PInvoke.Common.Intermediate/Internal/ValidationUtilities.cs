@@ -1,4 +1,4 @@
-﻿#if NETCOREAPP && !NET5_0_OR_GREATER || NETFRAMEWORK
+﻿#if NETCOREAPP && !NET5_0_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 using Enum = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
 #endif
 #if !NET6_0_OR_GREATER
@@ -696,7 +696,7 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = MessageResource.GetInstance();
 		throw new PlatformNotSupportedException(resource.ReflectionDisabled);
 	}
-#if NETCOREAPP || NET461_OR_GREATER
+#if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	/// <summary>
 	/// Throws an exception if the current token type is invalid for string type.
 	/// </summary>

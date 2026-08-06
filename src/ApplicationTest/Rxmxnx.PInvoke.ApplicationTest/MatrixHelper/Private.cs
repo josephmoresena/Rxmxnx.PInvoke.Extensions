@@ -17,7 +17,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		{
 			Double[]? array = default;
 			Span<Double> tempMatrix = n > 4 ?
-#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET461 && !UAP
+#if NETCOREAPP3_0_OR_GREATER || NETFRAMEWORK && (MONO || NET462_OR_GREATER) || UAP10_0_16299
 				(array = ArrayPool<Double>.Shared.Rent(matrix.Length)).AsSpan()[..matrix.Length] :
 #else
 				(array = ArrayPool<Double>.Shared.Rent(matrix.Length)).AsSpan().Slice(0, matrix.Length) :
@@ -66,7 +66,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		{
 			Double[]? array = default;
 			Span<Double> augmented = n > 4 ?
-#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET461 && !UAP
+#if NETCOREAPP3_0_OR_GREATER || NETFRAMEWORK && (MONO || NET462_OR_GREATER) || UAP10_0_16299
 				(array = ArrayPool<Double>.Shared.Rent(2 * matrix.Length)).AsSpan()[..(2 * matrix.Length)] :
 #else
 				(array = ArrayPool<Double>.Shared.Rent(2 * matrix.Length)).AsSpan().Slice(0, 2 * matrix.Length) :

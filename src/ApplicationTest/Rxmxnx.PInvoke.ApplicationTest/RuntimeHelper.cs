@@ -1,13 +1,15 @@
 using System;
 using System.Globalization;
 using System.IO;
+#if NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 using System.Reflection;
+#endif
 using System.Runtime.InteropServices;
 #if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || NETFRAMEWORK && !LEGACY
 using System.Diagnostics;
 #endif
 
-#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET461_OR_GREATER && !UAP
+#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET452_OR_GREATER && !UAP
 using System.Runtime.CompilerServices;
 #endif
 #if NET5_0_OR_GREATER
@@ -90,7 +92,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		public static readonly CString Null = new(static () =>
 		{
 			Byte[] utf8 = { (Byte)'N', (Byte)'u', (Byte)'l', (Byte)'l', (Byte)'\0', };
-#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET461 && !UAP
+#if NETCOREAPP3_0_OR_GREATER || NETFRAMEWORK && (MONO || NET462_OR_GREATER) || UAP10_0_16299
 			return utf8.AsSpan()[..^1];
 #else
 			return utf8.AsSpan().Slice(0, utf8.Length - 1);
@@ -101,19 +103,26 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		public static void PrintRuntimeInfo(TextWriter writer)
 		{
 			writer.WriteLine("========== Application for " + RuntimeHelper.runtimeName + " ==========");
+#if NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 			RuntimeHelper.PrintDomainInfo(writer);
+#endif
 			writer.WriteLine("========== Runtime information ==========");
 			writer.WriteLine($"Number of Cores: {Environment.ProcessorCount}");
 			writer.WriteLine($"Is Little-Endian: {BitConverter.IsLittleEndian}");
 			writer.WriteLine($"OS: {RuntimeInformation.OSDescription}");
 			writer.WriteLine($"OS Arch: {RuntimeInformation.OSArchitecture.GetName()}");
+#if NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 			writer.WriteLine($"OS Version: {Environment.OSVersion}");
 			writer.WriteLine($"Computer: {Environment.MachineName}");
 			writer.WriteLine($"User: {Environment.UserName}");
+#endif
 			writer.WriteLine($"UI Culture: {CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}");
+#if NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 			writer.WriteLine($"System Path: {Environment.SystemDirectory}");
 			writer.WriteLine($"Current Path: {Environment.CurrentDirectory}");
+#endif
 			writer.WriteLine($"Process Arch: {RuntimeInformation.ProcessArchitecture.GetName()}");
+#if NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 			try
 			{
 				writer.WriteLine($"Framework Version: {Environment.Version}");
@@ -126,7 +135,8 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				if (!AotInfo.IsReflectionDisabled)
 					writer.WriteLine(ex);
 			}
-#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET461_OR_GREATER && !UAP
+#endif
+#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET452_OR_GREATER && !UAP
 			writer.WriteLine($"Dynamic Code Compiled: {RuntimeFeature.IsDynamicCodeCompiled}");
 			writer.WriteLine($"Dynamic Code Supported: {RuntimeFeature.IsDynamicCodeSupported}");
 #endif
@@ -153,7 +163,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			writer.WriteLine($"NetBSD Platform: {SystemInfo.IsNetBsd}");
 			writer.WriteLine($"Solaris Platform: {SystemInfo.IsSolaris}");
 			writer.WriteLine($"Pointer Size: {NativeUtilities.PointerSize}");
+#if NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 			writer.WriteLine($"Globalization-Invariant Mode: {NativeUtilities.GlobalizationInvariantModeEnabled}");
+#endif
 			writer.WriteLine($"UI Iso639-1: {NativeUtilities.UserInterfaceIso639P1}");
 			writer.WriteLine($"Buffer AutoComposition Enabled: {BufferManager.BufferAutoCompositionEnabled}");
 			if (!SystemInfo.IsWebRuntime)
@@ -168,7 +180,8 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			RuntimeHelper.PrintStackInfo(writer);
 #endif
 		}
-		
+
+#if NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		private static void PrintDomainInfo(TextWriter writer)
 		{
 			try
@@ -195,6 +208,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 					writer.WriteLine(ex);
 			}
 		}
+#endif
 #if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || NETFRAMEWORK && !LEGACY
 #if NET5_0_OR_GREATER
 		[UnconditionalSuppressMessage("Trimming", "IL2026")]
@@ -266,7 +280,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 				_ => $"{architecture}",
 			};
+#if NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		private static String GetAssemblyName(this Assembly assembly) => $"{assembly.FullName} {assembly.Location}";
+#endif
 #if !CSHARP9_0
 		private static ReadOnlySpan<Byte> NullBytes()
 		{
