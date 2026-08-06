@@ -1,7 +1,7 @@
 #if !NET6_0_OR_GREATER
 using ArgumentNullExceptionCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif
-#if !NET7_0_OR_GREATER
+#if NETSTANDARD
 using PreserveAttribute = Rxmxnx.PInvoke.Internal.FrameworkCompat.PreserveAttribute;
 #endif
 
@@ -128,7 +128,7 @@ public static unsafe class FixedContextValueExtensions
 	{
 		if (action is null) return;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
-#if NET7_0_OR_GREATER
+#if !NETSTANDARD
 			action.Accept(new(ptr, span.Length));
 #else
 			new FixedAction<T, TAction>(ref action, new(ptr, span.Length)).Accept();
@@ -152,13 +152,13 @@ public static unsafe class FixedContextValueExtensions
 	{
 		if (arr is not null && action is not null)
 			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
-#if NET7_0_OR_GREATER
+#if !NETSTANDARD
 				action.Accept(new(ptr, arr.Length));
 #else
 				new FixedAction<T, TAction>(ref action, new(ptr, arr.Length)).Accept();
 #endif
 		else if (action is not null)
-#if NET7_0_OR_GREATER
+#if !NETSTANDARD
 			action.Accept(default);
 #else
 			new FixedAction<T, TAction>(ref action).Accept();
@@ -181,7 +181,7 @@ public static unsafe class FixedContextValueExtensions
 #endif
 	{
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
-#if NET7_0_OR_GREATER
+#if !NETSTANDARD
 			action.Accept(new(ptr, span.Length));
 #else
 		fixed (void* _ = &action)
@@ -206,14 +206,14 @@ public static unsafe class FixedContextValueExtensions
 	{
 		if (arr is not null)
 			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
-#if NET7_0_OR_GREATER
+#if !NETSTANDARD
 				action.Accept(new(ptr, arr.Length));
 #else
 			fixed (void* _ = &action)
 				new FixedAction<T, TAction>(ref action, new(ptr, arr.Length)).Accept();
 #endif
 		else
-#if NET7_0_OR_GREATER
+#if !NETSTANDARD
 			action.Accept(default);
 #else
 			fixed (void* _ = &action)
@@ -244,7 +244,7 @@ public static unsafe class FixedContextValueExtensions
 			return;
 		}
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
-#if NET7_0_OR_GREATER
+#if !NETSTANDARD
 			result = func.Apply(new(ptr, span.Length));
 #else
 			result = new FixedFunction<T, TResult, TFunction>(ref func, new(ptr, span.Length)).Apply();
@@ -270,13 +270,13 @@ public static unsafe class FixedContextValueExtensions
 	{
 		if (arr is not null && func is not null)
 			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
-#if NET7_0_OR_GREATER
+#if !NETSTANDARD
 				result = func.Apply(new(ptr, arr.Length));
 #else
 				result = new FixedFunction<T, TResult, TFunction>(ref func, new(ptr, arr.Length)).Apply();
 #endif
 		else if (func is not null)
-#if NET7_0_OR_GREATER
+#if !NETSTANDARD
 			result = func.Apply(default);
 #else
 			result = new FixedFunction<T, TResult, TFunction>(ref func).Apply();
@@ -303,7 +303,7 @@ public static unsafe class FixedContextValueExtensions
 #endif
 	{
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
-#if NET7_0_OR_GREATER
+#if !NETSTANDARD
 			result = func.Apply(new(ptr, span.Length));
 #else
 		fixed (void* _ = &func)
@@ -330,14 +330,14 @@ public static unsafe class FixedContextValueExtensions
 	{
 		if (arr is not null)
 			fixed (void* ptr = &NativeUtilities.GetArrayDataReference(arr))
-#if NET7_0_OR_GREATER
+#if !NETSTANDARD
 				result = func.Apply(new(ptr, arr.Length));
 #else
 			fixed (void* _ = &func)
 				result = new FixedFunction<T, TResult, TFunction>(ref func, new(ptr, arr.Length)).Apply();
 #endif
 		else
-#if NET7_0_OR_GREATER
+#if !NETSTANDARD
 			result = func.Apply(default);
 #else
 			fixed (void* _ = &func)
@@ -345,7 +345,7 @@ public static unsafe class FixedContextValueExtensions
 #endif
 	}
 
-#if !NET7_0_OR_GREATER
+#if NETSTANDARD
 	/// <summary>
 	/// Wrapper ref-struct for action value.
 	/// </summary>

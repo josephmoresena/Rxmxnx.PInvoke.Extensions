@@ -1,4 +1,4 @@
-#if !NET7_0_OR_GREATER
+#if NETSTANDARD
 using PreserveAttribute = Rxmxnx.PInvoke.Internal.FrameworkCompat.PreserveAttribute;
 #endif
 
@@ -83,7 +83,7 @@ public static unsafe class FixedPointerValueExtensions
 	{
 		if (action is null) return;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
-#if NET7_0_OR_GREATER
+#if !NETSTANDARD
 			action.Accept(new FixedContextValue<T>(ptr, span.Length));
 #else
 			new FixedAction<TAction>(ref action, new FixedContextValue<T>(ptr, span.Length)).Accept();
@@ -107,7 +107,7 @@ public static unsafe class FixedPointerValueExtensions
 	{
 		if (action is null) return;
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
-#if NET7_0_OR_GREATER
+#if !NETSTANDARD
 			action.Accept(new ReadOnlyFixedContextValue<T>(ptr, span.Length));
 #else
 			new FixedAction<TAction>(ref action, new ReadOnlyFixedContextValue<T>(ptr, span.Length)).Accept();
@@ -130,7 +130,7 @@ public static unsafe class FixedPointerValueExtensions
 #endif
 	{
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
-#if NET7_0_OR_GREATER
+#if !NETSTANDARD
 			action.Accept(new FixedContextValue<T>(ptr, span.Length));
 #else
 		fixed (void* _ = &action)
@@ -154,7 +154,7 @@ public static unsafe class FixedPointerValueExtensions
 #endif
 	{
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
-#if NET7_0_OR_GREATER
+#if !NETSTANDARD
 			action.Accept(new ReadOnlyFixedContextValue<T>(ptr, span.Length));
 #else
 		fixed (void* _ = &action)
@@ -185,7 +185,7 @@ public static unsafe class FixedPointerValueExtensions
 			return;
 		}
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
-#if NET7_0_OR_GREATER
+#if !NETSTANDARD
 			result = func.Apply(new FixedContextValue<T>(ptr, span.Length));
 #else
 		{
@@ -219,7 +219,7 @@ public static unsafe class FixedPointerValueExtensions
 			return;
 		}
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
-#if NET7_0_OR_GREATER
+#if !NETSTANDARD
 			result = func.Apply(new ReadOnlyFixedContextValue<T>(ptr, span.Length));
 #else
 		{
@@ -247,7 +247,7 @@ public static unsafe class FixedPointerValueExtensions
 #endif
 	{
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
-#if NET7_0_OR_GREATER
+#if !NETSTANDARD
 			result = func.Apply(new FixedContextValue<T>(ptr, span.Length));
 #else
 		fixed (void* _ = &func)
@@ -277,7 +277,7 @@ public static unsafe class FixedPointerValueExtensions
 #endif
 	{
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
-#if NET7_0_OR_GREATER
+#if !NETSTANDARD
 			result = func.Apply(new ReadOnlyFixedContextValue<T>(ptr, span.Length));
 #else
 		fixed (void* _ = &func)
@@ -288,7 +288,7 @@ public static unsafe class FixedPointerValueExtensions
 #endif
 	}
 
-#if !NET7_0_OR_GREATER
+#if NETSTANDARD
 	/// <summary>
 	/// Wrapper ref-struct for action value.
 	/// </summary>
