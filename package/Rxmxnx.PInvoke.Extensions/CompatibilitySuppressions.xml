@@ -3,6 +3,12 @@
 <Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.HashCode</Target>
+    <Left>lib/net461/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net462/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Index</Target>
     <Left>lib/net461/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/net462/Rxmxnx.PInvoke.Extensions.dll</Right>
@@ -382,6 +388,12 @@
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute</Target>
+    <Left>lib/uap10.0.10240/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/uap10.0.16299/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.HashCode</Target>
     <Left>lib/uap10.0.10240/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/uap10.0.16299/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
