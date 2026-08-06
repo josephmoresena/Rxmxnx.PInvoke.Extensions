@@ -4,7 +4,7 @@
 /// A helper class for concatenating UTF-8 text.
 /// </summary>
 internal abstract partial class BinaryConcatenator<T> : IDisposable
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_0_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
+#if NETSTANDARD2_1 || NETCOREAPP2_0_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	, IAsyncDisposable
 #endif
 {
@@ -33,7 +33,7 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable
 		this.CancellationToken = cancellationToken;
 		this.InitializeDelegates();
 	}
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_0_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
+#if NETSTANDARD2_1 || NETCOREAPP2_0_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	/// <inheritdoc/>
 	public async ValueTask DisposeAsync()
 	{
@@ -127,7 +127,7 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable
 			this.Stream.Dispose();
 		this._disposedValue = true;
 	}
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_0_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
+#if NETSTANDARD2_1 || NETCOREAPP2_0_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	/// <summary>
 	/// Asynchronously releases the unmanaged resources used by the <see cref="IDisposable"/>
 	/// current instance, and optionally releases the managed resources.
