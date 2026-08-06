@@ -297,6 +297,12 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.HashCode</Target>
+    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/netcoreapp2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Runtime.CompilerServices.IsByRefLikeAttribute</Target>
     <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netcoreapp2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
@@ -358,6 +364,12 @@
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Diagnostics.CodeAnalysis.NotNullWhenAttribute</Target>
+    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.HashCode</Target>
     <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
