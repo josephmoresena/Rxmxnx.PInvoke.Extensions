@@ -9,9 +9,12 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 #endif
-
 #else
 using System.Text.Json;
+#if UAP
+using System.Collections.Generic;
+using System.Linq;
+#endif
 
 #endif
 
@@ -59,7 +62,13 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		{
 #if NETCOREAPP2_1_OR_GREATER || NETFRAMEWORK && (MONO || NET461_OR_GREATER) || UAP10_0_16299
 			String serialized = JsonSerializer.Serialize(sequence, AppJsonSerializerContext.SerializerOptions);
+#if !UAP
 			return JsonSerializer.Deserialize<String?[]>(serialized, AppJsonSerializerContext.SerializerOptions)!;
+#else
+			return JsonSerializer
+			       .Deserialize<IEnumerable<String?>>(serialized, AppJsonSerializerContext.SerializerOptions)
+			       ?.ToArray()!;
+#endif
 #else
 			String?[] result = new String?[sequence.Count];
 			Int32 index = 0;
@@ -88,7 +97,12 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 #else
 		{
+#if !UAP
 			String serialized = JsonSerializer.Serialize(sequence, AppJsonSerializerContext.SerializerOptions);
+#else
+			String serialized =
+				JsonSerializer.Serialize<IEnumerable<String?>>(sequence, AppJsonSerializerContext.SerializerOptions);
+#endif
 			return JsonSerializer.Deserialize<CStringSequence>(serialized, AppJsonSerializerContext.SerializerOptions)!;
 		}
 #endif

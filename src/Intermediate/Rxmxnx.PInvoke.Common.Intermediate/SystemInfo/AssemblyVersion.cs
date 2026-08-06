@@ -51,6 +51,8 @@ public static partial class SystemInfo
 			".NET Framework 4.6.1"
 #elif NET45_OR_GREATER
 			".NET Framework 4.5.0"
+#elif UAP10_0_16299
+			".NET for Windows Universal 10.0.16299"
 #elif UAP10_0
 			".NET for Windows Universal"
 #else

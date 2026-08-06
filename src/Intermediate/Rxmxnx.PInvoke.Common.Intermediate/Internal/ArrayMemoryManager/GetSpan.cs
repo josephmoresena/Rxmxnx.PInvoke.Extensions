@@ -78,6 +78,7 @@ internal partial class ArrayMemoryManager<T>
 #endif
 		return span;
 	}
+#if !UAP || UAP10_0_16299
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
@@ -778,6 +779,7 @@ internal partial class ArrayMemoryManager<T>
 #endif
 		return span;
 	}
+#endif
 
 #if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 	/// <summary>

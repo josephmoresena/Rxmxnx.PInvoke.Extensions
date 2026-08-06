@@ -32,6 +32,8 @@ internal partial class ArrayMemoryManager<T>
 		ref readonly T dataRef = ref (array as T[,,,])![0, 0, 0, 0];
 		return Unsafe.ByteOffset(ref pinnableRef.Data, ref Unsafe.AsRef(in dataRef));
 	}
+
+#if !UAP || UAP10_0_16299
 	/// <inheritdoc cref="ArrayMemoryManager{T}.ComputeOffset2(Array)"/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset5(Array array)
@@ -276,5 +278,6 @@ internal partial class ArrayMemoryManager<T>
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 		return Unsafe.ByteOffset(ref pinnableRef.Data, ref Unsafe.AsRef(in dataRef));
 	}
+#endif
 }
 #endif

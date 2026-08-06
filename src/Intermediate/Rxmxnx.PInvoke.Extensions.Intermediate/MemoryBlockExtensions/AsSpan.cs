@@ -34,6 +34,7 @@ public static partial class MemoryBlockExtensions
 		=> ArrayMemoryManager<T>.GetSpan((Array?)arr);
 #endif
 
+#if !UAP || UAP10_0_16299
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
@@ -340,5 +341,6 @@ public static partial class MemoryBlockExtensions
 		=> ArrayMemoryManager<T>.GetSpan(arr);
 #else
 		=> ArrayMemoryManager<T>.GetSpan((Array?)arr);
+#endif
 #endif
 }
