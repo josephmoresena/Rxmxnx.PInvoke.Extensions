@@ -6,26 +6,28 @@ namespace Rxmxnx.PInvoke;
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
 #endif
-#if !UAP10_0
+#if !UAP
 public static partial class AotInfo
+#else
+public static class AotInfo
+#endif
 {
 	/// <summary>
 	/// Indicates whether the current runtime is ahead-of-time.
 	/// </summary>
 	private static readonly Boolean isAotRuntime =
-#if !NET6_0_OR_GREATER
+#if UAP
+		// .NET Native -> Empty non-literal.
+		!MemoryInspector.Instance.IsLiteral(TrimInfo.EmptyUt8Text());
+#elif !NET6_0_OR_GREATER
 		!AotInfo.IsJitEnabled();
 #else
 		TrimInfo.IsMobileTrimmedXnu() || // iOS, tvOS, watchOS, macCatalyst
 		TrimInfo.ZeroIlBytes() && AotInfo.IsDesktopOrAndroid() || AotInfo.IsMonoAot() ||
 		!AotInfo.IsDesktopOrAndroid() && !EmitInfo.IsEmitAllowed;
 #endif
-#else
-public static class AotInfo
-{
-#endif
-
 	/// <summary>
+	/// Indicates whether runtime reflection is disabled.
 	/// Indicates whether runtime reflection is disabled.
 	/// </summary>
 	private static Boolean? reflectionDisabled;
@@ -58,18 +60,14 @@ public static class AotInfo
 #if !UAP10_0
 			return !AotInfo.IsReflectionDisabled && EmitInfo.IsEmitAllowed;
 #else
-			return false;
+			return !AotInfo.isAotRuntime;
 #endif
 		}
 	}
 	/// <summary>
 	/// Indicates whether the current runtime is Native AOT.
 	/// </summary>
-#if !UAP10_0
 	public static Boolean IsNativeAot => AotInfo.isAotRuntime;
-#else
-	public static Boolean IsNativeAot => true;
-#endif
 	/// <summary>
 	/// Indicates whether the current runtime has been trimmed for the platform.
 	/// </summary>

@@ -1,5 +1,11 @@
-﻿<Solution>
+<Solution>
     <Folder Name="/ApplicationTest/">
+        <Project
+                Path="ApplicationTest/Rxmxnx.PInvoke.ApplicationTest.Windows/Rxmxnx.PInvoke.ApplicationTest.Windows.csproj"
+                Id="32a26fc7-9b6a-46cc-a178-f77a9ae62ea6">
+            <Platform Project="x64"/>
+            <Deploy/>
+        </Project>
         <Project Path="ApplicationTest/Rxmxnx.PInvoke.WebApiTest/Rxmxnx.PInvoke.WebApiTest.csproj"/>
         <Project
                 Path="ApplicationTest\Rxmxnx.PInvoke.ApplicationTest.Legacy\Rxmxnx.PInvoke.ApplicationTest.Legacy.csproj"/>
