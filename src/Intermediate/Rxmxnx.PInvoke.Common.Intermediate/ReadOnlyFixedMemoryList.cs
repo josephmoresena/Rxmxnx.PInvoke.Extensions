@@ -7,6 +7,7 @@ namespace Rxmxnx.PInvoke;
 /// <remarks>
 /// This list can be used for safe operations with fixed blocks of memory using pointers.
 /// </remarks>
+[Preserve(AllMembers = true)]
 #if OBSOLETE_FIXED_INTERFACES
 [EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteFixedMemoryList, false)]
@@ -98,6 +99,7 @@ public readonly ref struct ReadOnlyFixedMemoryList
 	/// <summary>
 	/// Enumerates the elements of a <see cref="ReadOnlyFixedMemoryList"/>.
 	/// </summary>
+	[Preserve(AllMembers = true, Conditional = true)]
 	public ref struct Enumerator
 	{
 		/// <summary>

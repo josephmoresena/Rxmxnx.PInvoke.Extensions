@@ -5,6 +5,7 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// Represents a list of <see cref="FixedPointerValue"/> instances.
 /// </summary>
+[Preserve(AllMembers = true)]
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
@@ -98,6 +99,7 @@ public readonly ref struct FixedPointerValueList
 	/// <summary>
 	/// <see cref="FixedPointerValueList"/> item value.
 	/// </summary>
+	[Preserve(AllMembers = true, Conditional = true)]
 	public readonly ref struct ItemValue
 #if NET9_0_OR_GREATER
 		: IFixedPointer, IWrapper.IBase<FixedPointerValue>
@@ -134,6 +136,7 @@ public readonly ref struct FixedPointerValueList
 	/// <summary>
 	/// Enumerates the elements of a <see cref="FixedPointerValueList"/>.
 	/// </summary>
+	[Preserve(AllMembers = true, Conditional = true)]
 	public ref struct Enumerator
 	{
 		/// <summary>

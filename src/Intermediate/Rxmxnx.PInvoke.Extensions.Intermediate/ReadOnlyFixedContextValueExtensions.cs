@@ -1,3 +1,7 @@
+#if !NET7_0_OR_GREATER
+using PreserveAttribute = Rxmxnx.PInvoke.Internal.FrameworkCompat.PreserveAttribute;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
@@ -533,6 +537,7 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	/// </summary>
 	/// <typeparam name="T">The type that is contained in the contiguous region of memory.</typeparam>
 	/// <typeparam name="TAction">Type of <see cref="IReadOnlyFixedContextAction{T}"/>.</typeparam>
+	[Preserve(AllMembers = true, Conditional = true)]
 	private readonly ref struct ReadOnlyFixedAction<T, TAction> where TAction : IReadOnlyFixedContextAction<T>
 	{
 		/// <summary>
@@ -566,6 +571,7 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	/// <typeparam name="T">The type that is contained in the contiguous region of memory.</typeparam>
 	/// <typeparam name="TResult">The type of the value returned by the function.</typeparam>
 	/// <typeparam name="TFunction">Type of <see cref="IReadOnlyFixedContextFunction{T,TResult}"/>.</typeparam>
+	[Preserve(AllMembers = true, Conditional = true)]
 	private readonly ref struct ReadOnlyFixedFunction<T, TResult, TFunction>
 		where TFunction : IReadOnlyFixedContextFunction<T, TResult>
 	{

@@ -8,6 +8,7 @@ namespace Rxmxnx.PInvoke;
 /// Ref-struct representing a context from a block of fixed memory.
 /// </summary>
 /// <typeparam name="T">Type of objects in the fixed memory block.</typeparam>
+[Preserve(AllMembers = true)]
 public readonly unsafe ref struct FixedContextValue<T>
 #if NET9_0_OR_GREATER
 	: IFixedPointerOperators<FixedContextValue<T>>,

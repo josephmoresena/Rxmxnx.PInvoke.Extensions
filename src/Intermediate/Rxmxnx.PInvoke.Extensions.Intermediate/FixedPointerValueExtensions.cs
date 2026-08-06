@@ -1,3 +1,7 @@
+#if !NET7_0_OR_GREATER
+using PreserveAttribute = Rxmxnx.PInvoke.Internal.FrameworkCompat.PreserveAttribute;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
@@ -289,6 +293,7 @@ public static unsafe class FixedPointerValueExtensions
 	/// Wrapper ref-struct for action value.
 	/// </summary>
 	/// <typeparam name="TAction">Type of <see cref="IFixedAction"/>.</typeparam>
+	[Preserve(AllMembers = true, Conditional = true)]
 	private readonly ref struct FixedAction<TAction> where TAction : IFixedAction
 	{
 		/// <summary>
@@ -321,6 +326,7 @@ public static unsafe class FixedPointerValueExtensions
 	/// </summary>
 	/// <typeparam name="TResult">The type of the value returned by the function.</typeparam>
 	/// <typeparam name="TFunction">Type of <see cref="IFixedFunction{TResult}"/>.</typeparam>
+	[Preserve(AllMembers = true, Conditional = true)]
 	private readonly ref struct FixedFunction<TResult, TFunction> where TFunction : IFixedFunction<TResult>
 	{
 		/// <summary>

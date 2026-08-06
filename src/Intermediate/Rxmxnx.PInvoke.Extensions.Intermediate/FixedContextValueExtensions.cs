@@ -1,6 +1,9 @@
 #if !NET6_0_OR_GREATER
 using ArgumentNullExceptionCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif
+#if !NET7_0_OR_GREATER
+using PreserveAttribute = Rxmxnx.PInvoke.Internal.FrameworkCompat.PreserveAttribute;
+#endif
 
 namespace Rxmxnx.PInvoke;
 
@@ -348,6 +351,7 @@ public static unsafe class FixedContextValueExtensions
 	/// </summary>
 	/// <typeparam name="T">The type that is contained in the contiguous region of memory.</typeparam>
 	/// <typeparam name="TAction">Type of <see cref="IFixedContextAction{T}"/>.</typeparam>
+	[Preserve(AllMembers = true, Conditional = true)]
 	private readonly ref struct FixedAction<T, TAction> where TAction : IFixedContextAction<T>
 	{
 		/// <summary>
@@ -381,6 +385,7 @@ public static unsafe class FixedContextValueExtensions
 	/// <typeparam name="T">The type that is contained in the contiguous region of memory.</typeparam>
 	/// <typeparam name="TResult">The type of the value returned by the function.</typeparam>
 	/// <typeparam name="TFunction">Type of <see cref="IFixedContextFunction{T,TResult}"/>.</typeparam>
+	[Preserve(AllMembers = true, Conditional = true)]
 	private readonly ref struct FixedFunction<T, TResult, TFunction> where TFunction : IFixedContextFunction<T, TResult>
 	{
 		/// <summary>

@@ -9,6 +9,7 @@ public partial class CStringSequence
 	/// <summary>
 	/// A stack-only view over the UTF-8 items on a <see cref="CStringSequence"/>, with control over empty entries.
 	/// </summary>
+	[Preserve(AllMembers = true)]
 	[DebuggerDisplay("Count = {Count}")]
 	[DebuggerTypeProxy(typeof(CStringSequenceDebugView))]
 	[StructLayout(LayoutKind.Sequential)]
@@ -120,6 +121,7 @@ public partial class CStringSequence
 		/// <summary>
 		/// Enumerates the UTF-8 segments within a <see cref="CStringSequence"/>.
 		/// </summary>
+		[Preserve(AllMembers = true, Conditional = true)]
 		public ref struct Enumerator
 #if NET9_0_OR_GREATER
 			: IEnumerator<ReadOnlySpan<Byte>>

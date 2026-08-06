@@ -3,6 +3,7 @@ namespace Rxmxnx.PInvoke.Internal;
 /// <summary>
 /// Sequence null state.
 /// </summary>
+[Preserve(AllMembers = true)]
 internal ref struct NullState
 {
 	/// <summary>

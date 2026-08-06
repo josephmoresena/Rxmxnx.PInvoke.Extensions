@@ -3,10 +3,10 @@ namespace Rxmxnx.PInvoke.Internal;
 /// <summary>
 /// This struct storages state for <c>/proc/self/maps</c> file reading.
 /// </summary>
+[Preserve(AllMembers = true, Conditional = true)]
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2292)]
 #endif
-[Preserve(AllMembers = true, Conditional = true)]
 internal ref struct FileState
 {
 	/// <summary>
