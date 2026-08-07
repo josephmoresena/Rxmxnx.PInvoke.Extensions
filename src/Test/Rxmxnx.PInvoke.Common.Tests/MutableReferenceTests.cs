@@ -58,8 +58,13 @@ public sealed class MutableReferenceTests
 		T value = MutableReferenceTests.fixture.Create<T>();
 		T value2 = MutableReferenceTests.fixture.Create<T>();
 		T value3 = MutableReferenceTests.fixture.Create<T>();
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		IMutableReference<T> result = IMutableReference.Create(value);
 		IReferenceableWrapper<T> result2 = IReferenceableWrapper.Create(value);
+#else
+		IMutableReference<T> result = WrapperFactory.CreateReferenceable(value);
+		IReferenceableWrapper<T> result2 = WrapperFactory.CreateReadOnlyReferenceable(value);
+#endif
 		ReferenceableWrapper<T> result3 = new(result);
 		ref readonly T refValue = ref result.Reference;
 		ref T mutableValueRef = ref result.Reference;
@@ -72,7 +77,9 @@ public sealed class MutableReferenceTests
 		PInvokeAssert.False(Unsafe.AreSame(ref result.Reference, ref value));
 		PInvokeAssert.False(result.Equals(result2));
 		PInvokeAssert.True(result.Equals(result3));
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.True((result as IReadOnlyReferenceable<T>).Equals(result3));
+#endif
 
 		result.Value = value2;
 		PInvokeAssert.Equal(value2, result.Value);
@@ -83,7 +90,9 @@ public sealed class MutableReferenceTests
 		PInvokeAssert.False(Unsafe.AreSame(ref result.Reference, ref value2));
 		PInvokeAssert.False(result.Equals(result2));
 		PInvokeAssert.True(result.Equals(result3));
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.True((result as IReadOnlyReferenceable<T>).Equals(result3));
+#endif
 
 		result.Reference = value3;
 		PInvokeAssert.Equal(value3, result.Value);
@@ -94,8 +103,13 @@ public sealed class MutableReferenceTests
 		T? value = !nullInput ? MutableReferenceTests.fixture.Create<T>() : null;
 		T? value2 = MutableReferenceTests.fixture.Create<Boolean>() ? MutableReferenceTests.fixture.Create<T>() : null;
 		T? value3 = MutableReferenceTests.fixture.Create<Boolean>() ? MutableReferenceTests.fixture.Create<T>() : null;
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		IMutableReference<T?> result = IMutableReference.CreateNullable(value);
 		IReferenceableWrapper<T?> result2 = IReferenceableWrapper.CreateNullable(value);
+#else
+		IMutableReference<T?> result = WrapperFactory.CreateReferenceableNullable(value);
+		IReferenceableWrapper<T?> result2 = WrapperFactory.CreateReadOnlyReferenceableNullable(value);
+#endif
 		ReferenceableWrapper<T?> result3 = new(result);
 		ref readonly T? refValue = ref result.Reference;
 		ref T? mutableValueRef = ref result.Reference;
@@ -127,8 +141,13 @@ public sealed class MutableReferenceTests
 		T[] array = MutableReferenceTests.fixture.CreateMany<T>().ToArray();
 		T[] array2 = MutableReferenceTests.fixture.CreateMany<T>().ToArray();
 		T[] array3 = MutableReferenceTests.fixture.CreateMany<T>().ToArray();
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		IMutableReference<T[]> result = IMutableReference.CreateObject(array);
 		IReferenceableWrapper<T[]> result2 = IReferenceableWrapper.CreateObject(array);
+#else
+		IMutableReference<T[]> result = WrapperFactory.CreateReferenceableObject(array);
+		IReferenceableWrapper<T[]> result2 = WrapperFactory.CreateReadOnlyReferenceableObject(array);
+#endif
 		ReferenceableWrapper<T[]> result3 = new(result);
 		ref readonly T[] refValue = ref result.Reference;
 		ref T[] mutableValueRef = ref result.Reference;
@@ -141,7 +160,9 @@ public sealed class MutableReferenceTests
 		PInvokeAssert.False(Unsafe.AreSame(ref result.Reference, ref array));
 		PInvokeAssert.False(result.Equals(result2));
 		PInvokeAssert.True(result.Equals(result3));
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.True((result as IReadOnlyReferenceable<T[]>).Equals(result3));
+#endif
 
 		result.Value = array2;
 		PInvokeAssert.Equal(array2, result.Value);
@@ -152,7 +173,9 @@ public sealed class MutableReferenceTests
 		PInvokeAssert.False(Unsafe.AreSame(ref result.Reference, ref array2));
 		PInvokeAssert.False(result.Equals(result2));
 		PInvokeAssert.True(result.Equals(result3));
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.True((result as IReadOnlyReferenceable<T[]>).Equals(result3));
+#endif
 
 		result.Reference = array3;
 		PInvokeAssert.Equal(array3, result.Value);

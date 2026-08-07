@@ -4,9 +4,11 @@
 /// This interface represents a read-only reference to a fixed memory location.
 /// </summary>
 /// <typeparam name="T">Type of the value referenced in memory.</typeparam>
-public interface IReadOnlyFixedReference<T> : IReadOnlyReferenceable<T>
+public interface IReadOnlyFixedReference<T> : IReadOnlyReferenceable<T>,
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-	, IReadOnlyFixedMemory
+	IReadOnlyFixedMemory
+#else
+	IFixedPointer
 #endif
 #if NET9_0_OR_GREATER
 	where T : allows ref struct

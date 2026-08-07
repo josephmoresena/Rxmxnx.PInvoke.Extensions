@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedReferenceTests;
+﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
+namespace Rxmxnx.PInvoke.Tests.Internal.FixedReferenceTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -262,7 +266,11 @@ public sealed class CreateReferenceTest : FixedReferenceTestsBase
 			Byte[] bytes1 = new ReadOnlySpan<Byte>(Unsafe.AsPointer(ref value), size).ToArray();
 			Byte[] bytes2 = new ReadOnlySpan<Byte>(Unsafe.AsPointer(ref value), size2).ToArray();
 
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			PInvokeAssert.Equal(bytes1[..size2], bytes2);
+#else
+			PInvokeAssert.Equal(bytes1.Take(size2), bytes2);
+#endif
 
 			if (typeof(T) == typeof(T2))
 				PInvokeAssert.Equal(value, (Object)value2!);
@@ -287,7 +295,11 @@ public sealed class CreateReferenceTest : FixedReferenceTestsBase
 			Byte[] bytes1 = new ReadOnlySpan<Byte>(Unsafe.AsPointer(ref value), size).ToArray();
 			Byte[] bytes2 = new ReadOnlySpan<Byte>(Unsafe.AsPointer(ref value), size2).ToArray();
 
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			PInvokeAssert.Equal(bytes1[..size2], bytes2);
+#else
+			PInvokeAssert.Equal(bytes1.Take(size2), bytes2);
+#endif
 
 			if (typeof(T) == typeof(T2))
 				PInvokeAssert.Equal(value, (Object)value2!);

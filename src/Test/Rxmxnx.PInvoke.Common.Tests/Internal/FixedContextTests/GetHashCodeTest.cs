@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
+﻿#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -250,3 +251,4 @@ public sealed class GetHashCodeTest : FixedContextTestsBase
 		=> PInvokeAssert.Equal(typeof(TInt) == typeof(T), ctx2.GetHashCode().Equals(ctx.GetHashCode()));
 }
 #pragma warning restore CS8500
+#endif

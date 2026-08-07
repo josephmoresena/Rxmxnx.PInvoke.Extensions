@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
+﻿#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -75,7 +76,6 @@ public sealed class CreateReadOnlySpanTest : FixedContextTestsBase
 		Exception functionException2 = PInvokeAssert.Throws<InvalidOperationException>(ctx.CreateDelegate<Action>);
 		PInvokeAssert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException2.Message);
 	}
-
 	private static void ReadOnlyTest<T>(ReadOnlyFixedContext<T> ctx, T[] values)
 	{
 		ReadOnlySpan<T> span = ctx.CreateReadOnlySpan<T>(values.Length);
@@ -99,3 +99,4 @@ public sealed class CreateReadOnlySpanTest : FixedContextTestsBase
 		PInvokeAssert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException2.Message);
 	}
 }
+#endif

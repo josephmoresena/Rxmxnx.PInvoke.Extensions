@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
+﻿#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -552,3 +553,4 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 	}
 }
 #pragma warning restore CS8500
+#endif

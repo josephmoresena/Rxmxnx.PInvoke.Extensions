@@ -22,7 +22,9 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
 #if NETCOREAPP
 		GetByteSpanDelegate d3 = bArr => bArr;
 #endif
+		// ReSharper disable once AccessToModifiedClosure
 		VoidDelegate d4 = () => called = !called;
+		// ReSharper disable once AccessToModifiedClosure
 		VoidObjectDelegate d5 = o => PInvokeAssert.Same(obj, o);
 #if NETCOREAPP
 		GetGuidSpanDelegate d6 = () => guids;
@@ -71,7 +73,9 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
 #if NETCOREAPP
 		Span<Byte> F3(Byte[] bArr) => bArr;
 #endif
+		// ReSharper disable once AccessToModifiedClosure
 		void F4() => called = !called;
+		// ReSharper disable once AccessToModifiedClosure
 		void F5(Object o) => PInvokeAssert.Same(obj, o);
 #if NETCOREAPP
 		Span<Guid> F6() => guids;
@@ -82,6 +86,7 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
 	private static void AssertTest(Byte[] bytes, Guid[] guids, ref Object obj, ref Boolean toggle,
 		FixedDelegateTestStatus status)
 #else
+	// ReSharper disable once RedundantAssignment
 	private static void AssertTest(ref Object obj, ref Boolean toggle, FixedDelegateTestStatus status)
 #endif
 	{
@@ -175,21 +180,25 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
 		Exception functionException1 =
 			PInvokeAssert.Throws<InvalidOperationException>(() => fdel.CreateReadOnlyReference<Int32>());
 		PInvokeAssert.Equal(FixedMemoryTestsBase.IsFunction, functionException1.Message);
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		Exception functionException2 =
 			PInvokeAssert.Throws<InvalidOperationException>(() => fdel.CreateReadOnlyBinarySpan());
 		PInvokeAssert.Equal(FixedMemoryTestsBase.IsFunction, functionException2.Message);
 		Exception functionException3 =
 			PInvokeAssert.Throws<InvalidOperationException>(() => fdel.CreateReadOnlySpan<Int32>(0));
 		PInvokeAssert.Equal(FixedMemoryTestsBase.IsFunction, functionException3.Message);
+#endif
 
 		Exception functionException4 =
 			PInvokeAssert.Throws<InvalidOperationException>(() => fdel.CreateReference<Int32>());
 		PInvokeAssert.Equal(FixedMemoryTestsBase.IsFunction, functionException4.Message);
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		Exception functionException5 = PInvokeAssert.Throws<InvalidOperationException>(() => fdel.CreateBinarySpan());
 		PInvokeAssert.Equal(FixedMemoryTestsBase.IsFunction, functionException5.Message);
 		Exception functionException6 = PInvokeAssert.Throws<InvalidOperationException>(() => fdel.CreateSpan<Int32>(0));
 		PInvokeAssert.Equal(FixedMemoryTestsBase.IsFunction, functionException6.Message);
 		Exception functionException7 = PInvokeAssert.Throws<InvalidOperationException>(() => fdel.CreateObjectSpan());
 		PInvokeAssert.Equal(FixedMemoryTestsBase.IsFunction, functionException7.Message);
+#endif
 	}
 }

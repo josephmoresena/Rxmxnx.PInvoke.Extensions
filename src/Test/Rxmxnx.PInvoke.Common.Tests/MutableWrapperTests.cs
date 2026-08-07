@@ -66,7 +66,11 @@ public sealed class MutableWrapperTests
 	{
 		T value = MutableWrapperTests.fixture.Create<T>();
 		T value2 = MutableWrapperTests.fixture.Create<T>();
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		IMutableWrapper<T> result = IMutableWrapper.Create(value);
+#else
+		IMutableWrapper<T> result = WrapperFactory.CreateMutable(value);
+#endif
 		IWrapper<T> wrapper = result;
 
 		PInvokeAssert.NotNull(result);
@@ -91,7 +95,11 @@ public sealed class MutableWrapperTests
 	{
 		T? value = !nullInput ? MutableWrapperTests.fixture.Create<T>() : null;
 		T? value2 = MutableWrapperTests.fixture.Create<Boolean>() ? MutableWrapperTests.fixture.Create<T>() : null;
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		IMutableWrapper<T?> result = IMutableWrapper.CreateNullable(value);
+#else
+		IMutableWrapper<T?> result = WrapperFactory.CreateMutableNullable(value);
+#endif
 		IWrapper<T?> wrapper = result;
 
 		PInvokeAssert.NotNull(result);
@@ -115,7 +123,11 @@ public sealed class MutableWrapperTests
 	{
 		T[] array = MutableWrapperTests.fixture.CreateMany<T>().ToArray();
 		T[] array2 = MutableWrapperTests.fixture.CreateMany<T>().ToArray();
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		IMutableWrapper<T[]> result = IMutableWrapper.CreateObject(array);
+#else
+		IMutableWrapper<T[]> result = WrapperFactory.CreateMutableObject(array);
+#endif
 		IWrapper<T[]> wrapper = result;
 
 		PInvokeAssert.NotNull(result);

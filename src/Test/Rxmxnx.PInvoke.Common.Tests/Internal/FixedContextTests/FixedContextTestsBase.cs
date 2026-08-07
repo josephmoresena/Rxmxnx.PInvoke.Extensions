@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
+﻿#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
 
 /// <summary>
 /// Base class for <see cref="FixedContext{T}"/> tests.
@@ -65,3 +66,4 @@ public abstract class FixedContextTestsBase : FixedMemoryTestsBase
 	}
 }
 #pragma warning restore CS8500
+#endif

@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke.Tests.ValueRegionTests;
+﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
+namespace Rxmxnx.PInvoke.Tests.ValueRegionTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]

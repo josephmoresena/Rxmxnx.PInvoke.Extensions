@@ -1,4 +1,5 @@
-﻿using IEnumerator = System.Collections.IEnumerator;
+﻿#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+using IEnumerator = System.Collections.IEnumerator;
 
 namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests.WithFixedSafeTests;
 
@@ -399,3 +400,4 @@ public sealed class FixedMemoryListTest
 			PInvokeAssert.Equal(arrEnumerator.Current, fmlEnumerator.Current);
 	}
 }
+#endif

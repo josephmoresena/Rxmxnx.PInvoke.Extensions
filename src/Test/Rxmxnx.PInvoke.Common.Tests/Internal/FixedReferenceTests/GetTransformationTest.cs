@@ -1,10 +1,14 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedReferenceTests;
+﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
+namespace Rxmxnx.PInvoke.Tests.Internal.FixedReferenceTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
 [SuppressMessage("csharpsquid", "S2699")]
 #pragma warning disable CS8500
-public sealed class GetTransformationTest : FixedReferenceTestsBase
+public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 {
 	[Fact]
 	public void BooleanTest() => GetTransformationTest.Test<Boolean>();
@@ -54,7 +58,7 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 		FixedReferenceTestsBase.WithFixed(ref value, GetTransformationTest.Test);
 		FixedReferenceTestsBase.WithFixed(ref value, GetTransformationTest.ReadOnlyTest);
 	}
-	private static unsafe void Test<T>(FixedReference<T> fref, IntPtr ptr)
+	private static void Test<T>(FixedReference<T> fref, IntPtr ptr)
 	{
 		try
 		{
@@ -241,7 +245,7 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 			                    .Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeSpan>(
 				                                                       fref, true)).Message);
 	}
-	private static unsafe void ReadOnlyTest<T>(ReadOnlyFixedReference<T> fref, IntPtr ptr)
+	private static void ReadOnlyTest<T>(ReadOnlyFixedReference<T> fref, IntPtr ptr)
 	{
 		try
 		{
@@ -428,8 +432,9 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 			                    .Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeSpan>(
 				                                                       fref, true)).Message);
 	}
-	private static unsafe void Test<T, T2>(FixedReference<T> fref, Boolean unloaded = false)
+	private static void Test<T, T2>(FixedReference<T> fref, Boolean unloaded = false)
 	{
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		if (!unloaded && sizeof(T2) > fref.BinaryLength)
 		{
 			Exception invalidSize =
@@ -437,7 +442,6 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 			PInvokeAssert.Equal(String.Format(FixedMemoryTestsBase.InvalidSizeFormat, typeof(T2)), invalidSize.Message);
 			return;
 		}
-
 		FixedReference<T2> result = fref.GetTransformation<T2>(out FixedOffset offset, true);
 		PInvokeAssert.NotNull(result);
 		GetTransformationTest.ReferenceTest(fref, offset, result);
@@ -445,9 +449,16 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 		PInvokeAssert.NotNull(result2);
 		PInvokeAssert.Equal(offset, offset2);
 		PInvokeAssert.Equal(result, result2);
+#else
+		if (unloaded || sizeof(T2) <= fref.BinaryLength) return;
+		Exception invalidSize =
+			PInvokeAssert.Throws<InsufficientMemoryException>(() => fref.CreateReadOnlyReference<T2>());
+		PInvokeAssert.Equal(String.Format(FixedMemoryTestsBase.InvalidSizeFormat, typeof(T2)), invalidSize.Message);
+#endif
 	}
-	private static unsafe void Test<T, T2>(ReadOnlyFixedReference<T> fref, Boolean unloaded = false)
+	private static void Test<T, T2>(ReadOnlyFixedReference<T> fref, Boolean unloaded = false)
 	{
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		if (!unloaded && sizeof(T2) > fref.BinaryLength)
 		{
 			Exception invalidSize =
@@ -459,9 +470,15 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 		ReadOnlyFixedReference<T2> result = fref.GetTransformation<T2>(out ReadOnlyFixedOffset offset);
 		PInvokeAssert.NotNull(result);
 		GetTransformationTest.ReferenceTest(fref, offset, result);
+#else
+		if (unloaded || sizeof(T2) <= fref.BinaryLength) return;
+		Exception invalidSize =
+			PInvokeAssert.Throws<InsufficientMemoryException>(() => fref.CreateReadOnlyReference<T2>());
+		PInvokeAssert.Equal(String.Format(FixedMemoryTestsBase.InvalidSizeFormat, typeof(T2)), invalidSize.Message);
+#endif
 	}
-	private static unsafe void ReferenceTest<T, T2>(FixedReference<T> fref, FixedOffset offset,
-		FixedReference<T2> result)
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+	private static void ReferenceTest<T, T2>(FixedReference<T> fref, FixedOffset offset, FixedReference<T2> result)
 	{
 		HashCode hashResidual = new();
 		hashResidual.Add(new IntPtr(Unsafe.AsPointer(ref Unsafe.AsRef(in fref.CreateReadOnlyReference<T>()))));
@@ -584,7 +601,7 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 		Exception functionException = PInvokeAssert.Throws<InvalidOperationException>(offset.CreateDelegate<Action>);
 		PInvokeAssert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
-	private static unsafe void ReferenceTest<T, T2>(ReadOnlyFixedReference<T> fref, ReadOnlyFixedOffset offset,
+	private static void ReferenceTest<T, T2>(ReadOnlyFixedReference<T> fref, ReadOnlyFixedOffset offset,
 		ReadOnlyFixedReference<T2> result)
 	{
 		HashCode hashResidual = new();
@@ -700,7 +717,7 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 			GetTransformationTest.OffsetTest<T2, TimeSpan>(offset, offset2);
 		}
 	}
-	private static unsafe void OffsetTest<T2, T3>(FixedOffset offset1, FixedOffset offset2)
+	private static void OffsetTest<T2, T3>(FixedOffset offset1, FixedOffset offset2)
 	{
 		Boolean equal = sizeof(T2) == sizeof(T3) || offset1.BinaryLength == offset2.BinaryLength;
 		PInvokeAssert.Equal(equal, offset1.Equals(offset2));
@@ -713,7 +730,7 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 		Exception functionException = PInvokeAssert.Throws<InvalidOperationException>(offset2.CreateDelegate<Action>);
 		PInvokeAssert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
-	private static unsafe void OffsetTest<T2, T3>(ReadOnlyFixedOffset offset1, ReadOnlyFixedOffset offset2)
+	private static void OffsetTest<T2, T3>(ReadOnlyFixedOffset offset1, ReadOnlyFixedOffset offset2)
 	{
 		Boolean equal = sizeof(T2) == sizeof(T3) || offset1.BinaryLength == offset2.BinaryLength;
 		PInvokeAssert.Equal(equal, offset1.Equals(offset2));
@@ -726,5 +743,6 @@ public sealed class GetTransformationTest : FixedReferenceTestsBase
 		Exception functionException = PInvokeAssert.Throws<InvalidOperationException>(offset2.CreateDelegate<Action>);
 		PInvokeAssert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
+#endif
 }
 #pragma warning restore CS8500
