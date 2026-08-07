@@ -11,6 +11,7 @@
         <IsPackable>false</IsPackable>
         <IsTestProject>false</IsTestProject>
         <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+        <NoWarn>$(NoWarn);NU1903</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
