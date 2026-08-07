@@ -118,7 +118,9 @@ public sealed class ReadOnlyValPtrTests
 			PInvokeAssert.False(ptrI.IsZero);
 			PInvokeAssert.Equal(ptrI.Pointer, (ptrI as IWrapper<IntPtr>).Value);
 
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			ReadOnlyValPtrTests.ReferenceTest(ptrI, ref Unsafe.AsRef(in span[i]));
+#endif
 
 			PInvokeAssert.True(ptrI >= valPtr);
 			PInvokeAssert.True(valPtr <= ptrI);
@@ -168,10 +170,55 @@ public sealed class ReadOnlyValPtrTests
 		PInvokeAssert.Equal(valPtr.Pointer, incValue);
 		PInvokeAssert.False(valPtr != incValue);
 
+		ReadOnlyValPtrTests.ContextValueTest(valPtr, span);
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		ReadOnlyValPtrTests.ContextTest(valPtr, span);
+#endif
 		ReadOnlyValPtrTests.MarshallerTest(valPtr);
 	}
 #pragma warning restore CS0612
+	private static unsafe void ContextValueTest<T>(ReadOnlyValPtr<T> valPtr, ReadOnlySpan<T> span)
+	{
+		using IDisposable disposable = valPtr.GetUnsafeFixedContext(span.Length, out ReadOnlyFixedContextValue<T> ctx);
+		PInvokeAssert.Equal(ctx.Values.Length, span.Length);
+		PInvokeAssert.Equal(valPtr.Pointer, ctx.Pointer);
+		if (!ValPtr<T>.IsUnmanaged)
+		{
+			PInvokeAssert.True(ctx.Bytes.IsEmpty);
+			if (typeof(T).IsValueType)
+				PInvokeAssert.True(ctx.Objects.IsEmpty);
+			else
+			{
+#if !NET10_0_OR_GREATER
+				ReadOnlySpan<T>.Enumerator enumerator = span.GetEnumerator();
+#else
+				using ReadOnlySpan<T>.Enumerator enumerator = span.GetEnumerator();
+#endif
+				foreach (ref readonly Object refObj in ctx.Objects)
+				{
+					if (!enumerator.MoveNext()) break;
+#if NET8_0_OR_GREATER
+					Assert.True(Unsafe.AreSame(in enumerator.Current,
+#else
+					PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in enumerator.Current),
+#endif
+					                           ref Unsafe.As<Object, T>(ref Unsafe.AsRef(in refObj))));
+				}
+				PInvokeAssert.Equal(typeof(T).IsValueType || ctx.IsNullOrEmpty, ctx.Objects.IsEmpty);
+			}
+			return;
+		}
+		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+		{
+			Span<Byte> byteSpan = new(ptr, span.Length * sizeof(T));
+			ctx.Bytes.SequenceEqual(byteSpan);
+		}
+
+		ReadOnlySpan<T> span2 = ctx.Values;
+		for (Int32 i = 0; i < span.Length; i++)
+			PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in span[i]), ref Unsafe.AsRef(in span2[i])));
+	}
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 	private static unsafe void ContextTest<T>(ReadOnlyValPtr<T> valPtr, ReadOnlySpan<T> span)
 	{
@@ -269,6 +316,7 @@ public sealed class ReadOnlyValPtrTests
 		ReadOnlyValPtrTests.ReferenceTransformTest<T, Int32>(ptrI, fixedReference);
 		ReadOnlyValPtrTests.ReferenceTransformTest<T, Int64>(ptrI, fixedReference);
 	}
+#endif
 	private static void FormatTest<T>(ReadOnlyValPtr<T> valPtr)
 	{
 		PInvokeAssert.Equal(valPtr.Pointer.GetHashCode(), valPtr.GetHashCode());
@@ -311,6 +359,7 @@ public sealed class ReadOnlyValPtrTests
 		PInvokeAssert.Equal(value, valPtr.Pointer);
 		PInvokeAssert.Equal(valPtr, ptr);
 	}
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	private static unsafe void ReferenceTransformTest<T, TDestination>(ReadOnlyValPtr<T> ptrI,
 		IReadOnlyFixedReference<T>.IDisposable fRef) where TDestination : unmanaged
 	{
@@ -327,5 +376,6 @@ public sealed class ReadOnlyValPtrTests
 		PInvokeAssert.Equal(ctx2.Values.Length, ctx.Bytes.Length / sizeof(TDestination));
 		PInvokeAssert.Equal(offset.Bytes.Length, ctx.Bytes.Length - ctx2.Values.Length * sizeof(TDestination));
 	}
+#endif
 }
 #pragma warning restore CS8500

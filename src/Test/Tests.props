@@ -15,7 +15,7 @@
         <NoWarn Condition="'$(TargetFramework)' == 'netstandard2.1'">$(NoWarn);MSB3243</NoWarn>
     </PropertyGroup>
 
-    <ItemGroup>
+    <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'">
         <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage"/>
     </ItemGroup>
 

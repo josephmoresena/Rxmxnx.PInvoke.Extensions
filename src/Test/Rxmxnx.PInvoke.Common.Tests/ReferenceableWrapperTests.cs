@@ -57,8 +57,13 @@ public sealed class ReferenceableWrapperTests
 	{
 		T value = ReferenceableWrapperTests.fixture.Create<T>();
 		T value2 = ReferenceableWrapperTests.fixture.Create<T>();
+#if (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER) && !LEGACY
 		IReferenceableWrapper<T>? result = IReferenceableWrapper.Create(value);
 		IReferenceableWrapper<T> result2 = IReferenceableWrapper.Create(value);
+#else
+		IReferenceableWrapper<T>? result = WrapperFactory.CreateReferenceable(value);
+		IReferenceableWrapper<T> result2 = WrapperFactory.CreateReferenceable(value);
+#endif
 		ReferenceableWrapper<T> result3 = new(result);
 		ref readonly T refValue = ref result.Reference;
 		ref T mutableValueRef = ref Unsafe.AsRef(in result.Reference);
@@ -84,8 +89,13 @@ public sealed class ReferenceableWrapperTests
 		T? value2 = ReferenceableWrapperTests.fixture.Create<Boolean>() ?
 			ReferenceableWrapperTests.fixture.Create<T>() :
 			null;
+#if (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER) && !LEGACY
 		IReferenceableWrapper<T?>? result = IReferenceableWrapper.CreateNullable(value);
 		IReferenceableWrapper<T?> result2 = IReferenceableWrapper.CreateNullable(value);
+#else
+		IReferenceableWrapper<T?>? result = WrapperFactory.CreateReferenceableNullable(value);
+		IReferenceableWrapper<T?> result2 = WrapperFactory.CreateReferenceableNullable(value);
+#endif
 		ReferenceableWrapper<T?> result3 = new(result);
 		ref readonly T? refValue = ref result.Reference;
 		ref T? mutableValueRef = ref Unsafe.AsRef(in result.Reference);
@@ -108,8 +118,13 @@ public sealed class ReferenceableWrapperTests
 	{
 		T[] array = ReferenceableWrapperTests.fixture.CreateMany<T>().ToArray();
 		T[] array2 = ReferenceableWrapperTests.fixture.CreateMany<T>().ToArray();
+#if (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER) && !LEGACY
 		IReferenceableWrapper<T[]>? result = IReferenceableWrapper.CreateObject(array);
 		IReferenceableWrapper<T[]> result2 = IReferenceableWrapper.CreateObject(array);
+#else
+		IReferenceableWrapper<T[]>? result = WrapperFactory.CreateReferenceableObject(array);
+		IReferenceableWrapper<T[]> result2 = WrapperFactory.CreateReferenceableObject(array);
+#endif
 		ReferenceableWrapper<T[]> result3 = new(result);
 		ref readonly T[] refValue = ref result.Reference;
 		ref T[] mutableValueRef = ref Unsafe.AsRef(in result.Reference);

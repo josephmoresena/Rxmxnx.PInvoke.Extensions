@@ -57,7 +57,11 @@ public sealed class WrapperTests
 	{
 		T value = WrapperTests.fixture.Create<T>();
 		T value2 = WrapperTests.fixture.Create<T>();
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		IWrapper<T> result = IWrapper.Create(value);
+#else
+		IWrapper<T> result = WrapperFactory.Create(value);
+#endif
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(value, result.Value);
 		PInvokeAssert.True(result.Equals(value));
@@ -67,7 +71,11 @@ public sealed class WrapperTests
 	{
 		T? value = !nullInput ? WrapperTests.fixture.Create<T>() : null;
 		T? value2 = WrapperTests.fixture.Create<Boolean>() ? WrapperTests.fixture.Create<T>() : null;
+#if (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER) && !LEGACY
 		IWrapper<T?> result = IWrapper.CreateNullable(value);
+#else
+		IWrapper<T?> result = WrapperFactory.CreateNullable(value);
+#endif
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(value, result.Value);
 		PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
@@ -76,7 +84,11 @@ public sealed class WrapperTests
 	{
 		T[] array = WrapperTests.fixture.CreateMany<T>().ToArray();
 		T[] array2 = WrapperTests.fixture.CreateMany<T>().ToArray();
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		IWrapper<T[]> result = IWrapper.CreateObject(array);
+#else
+		IWrapper<T[]> result = WrapperFactory.CreateObject(array);
+#endif
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(array, result.Value);
 		PInvokeAssert.True(result.Equals(array));
