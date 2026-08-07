@@ -1,3 +1,6 @@
+#if NET461_OR_GREATER || NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER || UAP10_0_16299
+using System.Text.Json;
+#endif
 using ThreadState = System.Threading.ThreadState;
 
 namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;

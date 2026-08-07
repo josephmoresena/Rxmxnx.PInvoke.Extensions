@@ -17,7 +17,6 @@
         <Using Include="System.Runtime.CompilerServices"/>
         <Using Include="System.Runtime.InteropServices"/>
         <Using Include="System.Text"/>
-        <Using Include="System.Text.Json"/>
 
         <Using Include="Rxmxnx.PInvoke.Internal"/>
         <Using Include="Rxmxnx.PInvoke.Internal.FrameworkCompat"/>
