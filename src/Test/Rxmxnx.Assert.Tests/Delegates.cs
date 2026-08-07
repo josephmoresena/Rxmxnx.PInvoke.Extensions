@@ -1,7 +1,7 @@
 namespace Rxmxnx.PInvoke.Tests;
 
 public delegate String GetStringDelegate();
-#if NETCOREAPP
+#if NETCOREAPP || NETFRAMEWORK
 public delegate Span<Byte> GetByteSpanDelegate(Byte[] bytes);
 public delegate Span<Guid> GetGuidSpanDelegate();
 #endif
