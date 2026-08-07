@@ -10,6 +10,7 @@
         <RootNamespace>Rxmxnx.PInvoke.Tests</RootNamespace>
         <IsPackable>false</IsPackable>
         <IsTestProject>false</IsTestProject>
+        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     </PropertyGroup>
 
     <ItemGroup>

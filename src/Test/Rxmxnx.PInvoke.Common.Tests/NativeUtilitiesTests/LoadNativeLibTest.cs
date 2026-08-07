@@ -1,6 +1,7 @@
-﻿#if NETCOREAPP
+﻿#if NETCOREAPP3_0_OR_GREATER
 #if NET5_0_OR_GREATER
 using Skip = Xunit.Skip;
+// ReSharper disable InconsistentNaming
 
 #else
 using SkippableTheoryAttribute = Xunit.TheoryAttribute;
@@ -45,6 +46,7 @@ public sealed class LoadNativeLibTest
 
 		String prefix = LoadNativeLibTest.fixture.Create<String>();
 		String sufix = LoadNativeLibTest.fixture.Create<String>();
+		// ReSharper disable once RedundantAssignment
 		IntPtr? result = default;
 		EventHandler? eventHandler = default;
 		String? libraryName = !emptyName ? prefix + LoadNativeLibTest.LibraryName + sufix : default;

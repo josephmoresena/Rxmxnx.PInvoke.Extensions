@@ -19,7 +19,7 @@ internal sealed partial class ArrayMemoryManager<T> : ManagedMemoryManager<T>
 #if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
 		=> this._array = array ?? Array.Empty<T>();
 #else
-		=> this._array = array ?? new T[0];
+		=> this._array = array ?? ArrayCompat.Empty<T>();
 #endif
 
 	/// <inheritdoc/>

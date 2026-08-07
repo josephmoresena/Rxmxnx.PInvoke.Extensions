@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
+#endif
+
+namespace Rxmxnx.PInvoke;
 
 public partial class CStringSequence
 {
@@ -16,11 +20,7 @@ public partial class CStringSequence
 	{
 		this._lengths = [];
 		this._value = String.Empty;
-#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
 		this._cache = Array.Empty<CString?>();
-#else
-		this._cache = CStringSequence.emptyArray;
-#endif
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class by making a deep copy of

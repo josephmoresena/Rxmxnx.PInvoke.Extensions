@@ -10,8 +10,10 @@ namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class EnumUtilities
 {
+#if NET461_OR_GREATER || NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER || UAP10_0_16299
 	[Fact]
 	public void JsonTokenTypeTest() => EnumUtilities.Test<JsonTokenType>();
+#endif
 	[Fact]
 	public void JsonTokenTest() => EnumUtilities.Test<JsonToken>();
 	[Fact]

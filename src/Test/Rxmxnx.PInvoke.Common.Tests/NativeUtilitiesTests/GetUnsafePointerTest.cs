@@ -27,7 +27,7 @@ public sealed class GetUnsafePointerTest
 		PInvokeAssert.Equal(getProcessStaticIdPtr,
 		                    NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetInt32>(GetProcessIdStaticFunc));
 
-#if NETCOREAPP
+#if NETCOREAPP2_1_OR_GREATER
 		Assert.Throws<ArgumentException>(() => NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetT<Int32>>(
 			                                 Thread.GetCurrentProcessorId));
 		Assert.Throws<ArgumentException>(() => NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetT<Int32>>(
