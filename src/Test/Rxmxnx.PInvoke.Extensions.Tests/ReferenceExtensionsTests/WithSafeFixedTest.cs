@@ -7,7 +7,11 @@ public sealed class WithSafeFixedTest
 {
 	private static readonly IFixture fixture = new Fixture();
 
-	private IReferenceableWrapper? _wraper;
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+	private IReferenceableWrapper? _wrapper;
+#else
+	private Object? _wrapper;
+#endif
 
 	[Fact]
 	public void ByteTest() => this.Test<Byte>();
@@ -50,7 +54,7 @@ public sealed class WithSafeFixedTest
 		                            .ToArray();
 		ref T refValue = ref Unsafe.AsRef(in value.Reference);
 
-		this._wraper = value;
+		this._wrapper = value;
 
 		refValue.WithSafeFixed(this.TestActionMethod);
 		refValue.WithSafeFixed(this, WithSafeFixedTest.TestActionMethod);
@@ -67,7 +71,7 @@ public sealed class WithSafeFixedTest
 	[Obsolete]
 	private unsafe void TestActionMethod<T>(in IFixedReference<T> fRef) where T : unmanaged
 	{
-		IReferenceableWrapper<T> wrapper = (IReferenceableWrapper<T>)this._wraper!;
+		IReferenceableWrapper<T> wrapper = (IReferenceableWrapper<T>)this._wrapper!;
 		Byte[] bytes = new ReadOnlySpan<Byte>(fRef.Pointer.ToPointer(), sizeof(T)).ToArray();
 		PInvokeAssert.Equal(wrapper.Value, fRef.Reference);
 		PInvokeAssert.Equal(wrapper.Value, Unsafe.Read<T>(fRef.Pointer.ToPointer()));
@@ -102,7 +106,7 @@ public sealed class WithSafeFixedTest
 	[Obsolete]
 	private unsafe void TestReadOnlyActionMethod<T>(in IReadOnlyFixedReference<T> fRef) where T : unmanaged
 	{
-		IReferenceableWrapper<T> wrapper = (IReferenceableWrapper<T>)this._wraper!;
+		IReferenceableWrapper<T> wrapper = (IReferenceableWrapper<T>)this._wrapper!;
 		Byte[] bytes = new ReadOnlySpan<Byte>(fRef.Pointer.ToPointer(), sizeof(T)).ToArray();
 		PInvokeAssert.Equal(wrapper.Value, fRef.Reference);
 		PInvokeAssert.Equal(wrapper.Value, Unsafe.Read<T>(fRef.Pointer.ToPointer()));

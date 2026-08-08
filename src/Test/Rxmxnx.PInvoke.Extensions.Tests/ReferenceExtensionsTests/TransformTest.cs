@@ -45,7 +45,9 @@ public sealed class TransformTest
 	{
 		T value = TransformTest.fixture.Create<T>();
 
+#if NETSTANDAR2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		TransformTest.BinaryTest(ref value);
+#endif
 		TransformTest.Test<T, Boolean>(ref value);
 		TransformTest.Test<T, Byte>(ref value);
 		TransformTest.Test<T, Char>(ref value);
@@ -82,9 +84,14 @@ public sealed class TransformTest
 			}
 			else
 			{
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP2_0_OR_GREATER
 				Span<Byte> bytes1 = refValue.AsBytes();
 				Span<Byte> bytes2 = refValue2.AsBytes();
 				PInvokeAssert.Equal(bytes1.ToArray(), bytes2.ToArray());
+#else
+				PInvokeAssert.Equal(NativeUtilities.ToBytes(in refValue).Take(sizeof(T2)),
+				                    NativeUtilities.ToBytes(in refValue2));
+#endif
 			}
 		}
 		catch (Exception ex)
@@ -94,6 +101,7 @@ public sealed class TransformTest
 		}
 	}
 
+#if NETSTANDAR2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	private static void BinaryTest<T>(ref T refValue) where T : unmanaged
 	{
 		Byte[] bytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref refValue, 1)).ToArray();
@@ -103,4 +111,5 @@ public sealed class TransformTest
 		PInvokeAssert.Equal(bytes, span.ToArray());
 		PInvokeAssert.True(Unsafe.AreSame(ref refValue, ref spanT[0]));
 	}
+#endif
 }
