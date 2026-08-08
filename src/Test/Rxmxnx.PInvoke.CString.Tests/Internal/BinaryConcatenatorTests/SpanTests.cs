@@ -44,7 +44,11 @@ public sealed class SpanTests
 		PInvokeAssert.NotNull(outputBytes2);
 
 		PInvokeAssert.Equal(sourceBytes, outputBytes1);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(sourceBytes, outputBytes2[..sourceBytes.Length]);
+#else
+		PInvokeAssert.Equal(sourceBytes, outputBytes2.Take(sourceBytes.Length));
+#endif
 		PInvokeAssert.Equal(outputBytes1.Length, outputBytes2.Length - 1);
 		PInvokeAssert.Equal(default, outputBytes2.Last());
 
@@ -60,14 +64,26 @@ public sealed class SpanTests
 
 		PInvokeAssert.NotNull(outputBytes1);
 		PInvokeAssert.NotNull(outputBytes2);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(sourceBytes1, outputBytes1[..sourceBytes1.Length]);
+#else
+		PInvokeAssert.Equal(sourceBytes1, outputBytes1.Take(sourceBytes1.Length));
+#endif
 		if (helper.Separator.HasValue)
 			PInvokeAssert.Equal(helper.Separator, outputBytes1[sourceBytes1.Length]);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(sourceBytes2, outputBytes1[output2Start..]);
+#else
+		PInvokeAssert.Equal(sourceBytes2, outputBytes1.Skip(output2Start));
+#endif
 		if (helper.Separator.HasValue)
 			PInvokeAssert.Contains(helper.Separator.Value, outputBytes1);
 
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(outputBytes1, outputBytes2[..finalLength]);
+#else
+		PInvokeAssert.Equal(outputBytes1, outputBytes2.Take(finalLength));
+#endif
 		PInvokeAssert.Equal(outputBytes1.Length, outputBytes2.Length - 1);
 		PInvokeAssert.Equal(default, outputBytes2.Last());
 	}

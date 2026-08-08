@@ -17,6 +17,7 @@ public sealed class EmptyTest
 		PInvokeAssert.Null(helper.ToArray(true));
 	}
 
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
@@ -34,4 +35,5 @@ public sealed class EmptyTest
 			await helper.DisposeAsync();
 		}
 	}
+#endif
 }

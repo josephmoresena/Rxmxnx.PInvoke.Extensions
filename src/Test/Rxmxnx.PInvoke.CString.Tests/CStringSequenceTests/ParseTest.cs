@@ -1,3 +1,7 @@
+#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
+#endif
+
 namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
 
 [TestFixture]
@@ -165,7 +169,11 @@ public sealed class ParseTest
 		Int32 length = values.Select(c => c.Length + 1).Sum();
 		Int32 totalBytes = length + padding + offset;
 		Int32 totalChars = totalBytes / sizeof(Char) + totalBytes % sizeof(Char);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		String buffer = String.Create(totalChars, (offset, values), ParseTest.RandomCreate);
+#else
+		String buffer = ParseTest.CreateString(totalChars, offset, values);
+#endif
 		CStringSequence seq0 = CStringSequence.Parse(buffer);
 		CStringSequence seq1 = CStringSequence.Create(buffer);
 		CStringSequence seq2 = new(values);
@@ -185,6 +193,14 @@ public sealed class ParseTest
 		using (MemoryHandle mem2 = seq2.ToString().AsMemory().Pin())
 			ParseTest.UnsafeTest(values, mem2);
 	}
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+	private static String CreateString(Int32 totalChars, Int32 offset, CString[] values)
+	{
+		using IDisposable _ = NativeUtilities.HeapAlloc(totalChars, out FixedContextValue<Char> fixedContext);
+		ParseTest.RandomCreate(fixedContext.Values, (offset, values));
+		return values.ToString();
+	}
+#endif
 	private static unsafe void UnsafeTest(CString[] values, MemoryHandle memoryHandle)
 	{
 		Byte* ptr = (Byte*)memoryHandle.Pointer;

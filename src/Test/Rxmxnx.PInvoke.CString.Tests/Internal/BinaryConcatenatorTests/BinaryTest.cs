@@ -21,6 +21,7 @@ public sealed class BinaryTest
 		BinaryTest.AssertTest(helper, sourceBytes);
 	}
 
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
@@ -34,6 +35,7 @@ public sealed class BinaryTest
 
 		BinaryTest.AssertTest(helper, sourceBytes);
 	}
+#endif
 
 	private static void AssertTest(BinaryConcatenator helper, Byte[] sourceBytes)
 	{
@@ -46,7 +48,11 @@ public sealed class BinaryTest
 			PInvokeAssert.Equal(sourceBytes, outputBytes1);
 		else
 			BinaryTest.AssertWithSeparator(helper, sourceBytes, outputBytes1);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(outputBytes1, outputBytes2[..outputBytes1.Length]);
+#else
+		PInvokeAssert.Equal(outputBytes1, outputBytes2.Take(outputBytes1.Length));
+#endif
 		PInvokeAssert.Equal(outputBytes1.Length, outputBytes2.Length - 1);
 		PInvokeAssert.Equal(default, outputBytes2.Last());
 	}

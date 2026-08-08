@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke.Tests.CStringTests;
+﻿#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
+#endif
+
+namespace Rxmxnx.PInvoke.Tests.CStringTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -36,23 +40,47 @@ public sealed class StringJoinCharTest
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
 		CString resultCString = CString.Join(separator, strings);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
+#elif NETCOREAPP2_0_OR_GREATER || NET46_OR_GREATER
+		String resultCStringCString = CString.GetBytes(resultCString).AsSpan()[..^1].ToUtf16();
+#else
+		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString).AsSpan()[..^1].ToArray());
+#endif
 
 		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+#else
+		PInvokeAssert.True(expectedResultCString.AsSpan()
+		                                        .SequenceEqual(CString.GetBytes(resultCString).AsSpan()[..^1]));
+#endif
 		PInvokeAssert.Same(CString.Empty, CString.Join(separator));
 	}
 	private static void EnumerableTest(Char separator, IEnumerable<String?> strings)
 	{
 		String strSeparator = new(new[] { separator, });
+		// ReSharper disable once PossibleMultipleEnumeration
 		String expectedCString = String.Join(strSeparator, strings);
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
+		// ReSharper disable once PossibleMultipleEnumeration
 		CString resultCString = CString.Join(separator, strings);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
+#elif NETCOREAPP2_0_OR_GREATER || NET46_OR_GREATER
+		String resultCStringCString = CString.GetBytes(resultCString).AsSpan()[..^1].ToUtf16();
+#else
+		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString).AsSpan()[..^1].ToArray());
+#endif
 
 		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+#else
+		PInvokeAssert.True(expectedResultCString.AsSpan()
+		                                        .SequenceEqual(CString.GetBytes(resultCString).AsSpan()[..^1]));
+#endif
 		PInvokeAssert.Same(CString.Empty, CString.Join(separator, Array.Empty<String?>().ToList()));
 	}
 	private static void ArrayRangeTest(Char separator, String?[] strings)
@@ -64,10 +92,21 @@ public sealed class StringJoinCharTest
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
 		CString resultCString = CString.Join(separator, strings, startIndex, count);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
+#elif NETCOREAPP2_0_OR_GREATER || NET46_OR_GREATER
+		String resultCStringCString = CString.GetBytes(resultCString).AsSpan()[..^1].ToUtf16();
+#else
+		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString).AsSpan()[..^1].ToArray());
+#endif
 
 		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+#else
+		PInvokeAssert.True(expectedResultCString.AsSpan()
+		                                        .SequenceEqual(CString.GetBytes(resultCString).AsSpan()[..^1]));
+#endif
 		PInvokeAssert.Same(CString.Empty, CString.Join(separator, strings, 0, 0));
 	}
 	private Char GetByteSeparator() => this._fixture.Create<Char>();

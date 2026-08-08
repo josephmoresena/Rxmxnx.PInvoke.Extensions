@@ -18,12 +18,18 @@ public sealed unsafe class WithSafeFixedTest
 	private static void ExecuteTest(CString? value)
 	{
 		if (value is null) return;
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		value.WithSafeFixed(WithSafeFixedTest.ActionMethod);
 		value.WithSafeFixed(value, WithSafeFixedTest.ActionMethod);
 		PInvokeAssert.Equal(value, value.WithSafeFixed(WithSafeFixedTest.FunctionMethod));
 		PInvokeAssert.Equal(value, value.WithSafeFixed(value, WithSafeFixedTest.FunctionMethod));
+#endif
+		value.WithSafeFixed(new ReadOnlyFixedAction());
+		value.WithSafeFixed(new ReadOnlyFixedFunction(), out CString result);
+		PInvokeAssert.Equal(value, result);
 	}
 
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	private static void ActionMethod(in IReadOnlyFixedMemory fmem)
 	{
 		ReadOnlySpan<Byte> span = fmem.Bytes;
@@ -87,6 +93,42 @@ public sealed unsafe class WithSafeFixedTest
 		catch (Exception)
 		{
 			return default;
+		}
+	}
+#endif
+	private readonly struct ReadOnlyFixedAction : IReadOnlyFixedContextAction<Byte>
+	{
+		public void Accept(scoped ReadOnlyFixedContextValue<Byte> fixedContext)
+		{
+			ReadOnlySpan<Byte> span = fixedContext.Bytes;
+			if (fixedContext.Pointer == IntPtr.Zero)
+			{
+				PInvokeAssert.True(span.IsEmpty);
+				return;
+			}
+			fixed (void* ptr = span)
+			{
+				if (span.Length != 0)
+					PInvokeAssert.Equal(fixedContext.Pointer, new(ptr));
+				else if (fixedContext.Pointer != IntPtr.Zero)
+					fixed (void* ptrEmpty = CString.Empty)
+						PInvokeAssert.Equal(fixedContext.Pointer, new(ptrEmpty));
+			}
+#if NETCOREAPP
+			GCHandle handle = GCHandle.FromIntPtr(fixedContext.Pointer);
+			Assert.True(handle.IsAllocated);
+#endif
+		}
+	}
+
+	private readonly struct ReadOnlyFixedFunction : IReadOnlyFixedContextFunction<Byte, CString>
+	{
+		public CString Apply(scoped ReadOnlyFixedContextValue<Byte> fixedContext)
+		{
+			new ReadOnlyFixedAction().Accept(fixedContext);
+			if (fixedContext.Bytes.Length > 0)
+				return CString.Create(fixedContext.Bytes);
+			return fixedContext.Pointer != IntPtr.Zero ? CString.Empty : CString.Zero;
 		}
 	}
 }

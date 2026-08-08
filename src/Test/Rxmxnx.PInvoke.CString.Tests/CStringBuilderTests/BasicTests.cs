@@ -162,6 +162,7 @@ public sealed class BasicTests : CStringBuilderTestsBase
 		}
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
 	}
+#if NETSTANDARD2_1 || NETCOREAPP2_0_OR_GREATER
 	[Theory]
 	[InlineData(null)]
 	[InlineData(8)]
@@ -257,6 +258,7 @@ public sealed class BasicTests : CStringBuilderTestsBase
 		PInvokeAssert.True(Object.ReferenceEquals(cstrBuild, cstrBuild.AppendJoin((CString?)separator, cValues)));
 		PInvokeAssert.Equal(strBuild.ToString(), cstrBuild.ToString());
 	}
+#endif
 	[Theory]
 	[InlineData(null)]
 	[InlineData(8)]

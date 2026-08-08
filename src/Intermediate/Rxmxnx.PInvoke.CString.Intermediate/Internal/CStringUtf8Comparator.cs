@@ -34,7 +34,7 @@ internal sealed class CStringUtf8Comparator : Utf8Comparator<Byte>
 #if !PACKAGE && !NET7_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
-	protected override Int32 CountChars(ReadOnlySpan<Byte> source) => Utf8Comparator.GetCharCountFromUtf8(source);
+	protected override Int32 CountChars(ReadOnlySpan<Byte> source) => source.GetUtf16Count();
 	/// <inheritdoc/>
 #if !PACKAGE && !NET7_0_OR_GREATER
 	[ExcludeFromCodeCoverage]

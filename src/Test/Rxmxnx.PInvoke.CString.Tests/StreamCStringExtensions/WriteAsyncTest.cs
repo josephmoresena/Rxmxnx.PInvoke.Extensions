@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke.Tests.StreamCStringExtensions;
+﻿#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+namespace Rxmxnx.PInvoke.Tests.StreamCStringExtensions;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -67,3 +68,4 @@ public sealed class WriteAsyncTest
 			strm.WriteAsync(written.Value, written.Start, written.Count);
 	}
 }
+#endif

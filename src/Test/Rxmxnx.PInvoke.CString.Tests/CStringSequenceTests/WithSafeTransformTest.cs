@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
+﻿#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -344,3 +345,4 @@ public sealed class WithSafeTransformTest
 		return result.ToArray();
 	}
 }
+#endif

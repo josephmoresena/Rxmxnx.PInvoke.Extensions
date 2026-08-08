@@ -37,6 +37,43 @@ public static unsafe class FixedUtf8Extensions
 			return Encoding.UTF8.GetByteCount(ptr, chars.Length);
 	}
 #endif
+	/// <summary>
+	/// Calculates the number of characters produced by decoding the <paramref name="source"/> as UTF-8 units.
+	/// </summary>
+	/// <param name="source">A read-only byte span to decode.</param>
+	/// <returns>The number of characters produced by decoding the UTF-8 encoded text.</returns>
+#if !PACKAGE && NETCOREAPP && !NET7_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Int32 GetUtf16Count(this ReadOnlySpan<Byte> source)
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+		=> Encoding.UTF8.GetCharCount(source);
+#else
+	{
+		fixed (Byte* ptr = &MemoryMarshal.GetReference(source))
+			return Encoding.UTF8.GetCharCount(ptr, source.Length);
+	}
+#endif
+	
+	/// <summary>
+	/// Calculates the number of characters produced by decoding the <paramref name="source"/>.
+	/// </summary>
+	/// <param name="source">A read-only span of <see cref="byte"/> elements representing a UTF-8 encoded text.</param>
+	/// <returns>The number of characters produced by decoding the UTF-8 encoded text.</returns>
+#if !PACKAGE && NETCOREAPP && !NET7_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Int32 GetCharCountFromUtf8(ReadOnlySpan<Byte> source)
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+		=> Encoding.UTF8.GetCharCount(source);
+#else
+	{
+		fixed (Byte* ptr = &MemoryMarshal.GetReference(source))
+			return Encoding.UTF8.GetCharCount(ptr, source.Length);
+	}
+#endif
 #if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
 	/// <summary>
 	/// Decodes a read-only span of UTF-8 encoded bytes into a UTF-16 encoded <see cref="String"/>.

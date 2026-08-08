@@ -1,7 +1,11 @@
-#if NETCOREAPP
+#if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 using CStringJsonConverter = Rxmxnx.PInvoke.CString.JsonConverter;
-#else
+#elif NETSTANDARD2_0_OR_GREATER
 using CStringJsonConverter = Rxmxnx.PInvoke.Json.CStringJsonConverter;
+#endif
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
+using System.Text.Json;
+using System.Text.Json.Serialization;
 #endif
 using JsonConvert = Newtonsoft.Json.JsonConvert;
 
@@ -10,7 +14,9 @@ namespace Rxmxnx.PInvoke.Tests.CStringTests;
 [ExcludeFromCodeCoverage]
 public sealed class SerializationTest
 {
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	private static readonly JsonSerializerOptions jsonOptions = new() { Converters = { new CStringJsonConverter(), }, };
+#endif
 
 	[Fact]
 	public void UnicodePrefixTest() => PInvokeAssert.True(TextUnescape.UnicodePrefix.SequenceEqual("\\u"u8));
@@ -34,13 +40,16 @@ public sealed class SerializationTest
 		for (Int32 i = 0; i < TestSet.Utf8Text.Count; i++)
 		{
 			ReadOnlySpanFunc<Byte> text = TestSet.Utf8Text[i];
-			Byte[] systemEncoded = JsonEncodedText.Encode(text()).EncodedUtf8Bytes.ToArray();
 			Byte[] newtonsoftEncoded = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(TestSet.Utf16Text[i])[1..^1]);
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
+			Byte[] systemEncoded = JsonEncodedText.Encode(text()).EncodedUtf8Bytes.ToArray();
 			SerializationTest.EscapedSequenceAssert(text, systemEncoded);
+#endif
 			SerializationTest.EscapedSequenceAssert(text, newtonsoftEncoded);
 		}
 	}
 
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	[Theory]
 	[InlineData(JsonIgnoreCondition.WhenWritingNull)]
 	[InlineData(JsonIgnoreCondition.WhenWritingDefault)]
@@ -116,6 +125,7 @@ public sealed class SerializationTest
 	[Fact]
 	public void QuoteTest()
 		=> SerializationTest.AssertSerialization(TextContainer.Quotes.Utf16, TextContainer.Quotes.Utf8);
+#endif
 
 	private static void EscapedSequenceAssert(ReadOnlySpanFunc<Byte> text, Byte[] encoded)
 	{
@@ -129,10 +139,12 @@ public sealed class SerializationTest
 	}
 	private static void AssertUnescaped(TextContainer unescaped)
 	{
-		ReadOnlySpan<Byte> systemEncoded = JsonEncodedText.Encode(unescaped.Utf8.Value).EncodedUtf8Bytes;
 		ReadOnlySpan<Byte> newtonsoftEncoded =
 			Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(unescaped.Utf16.Value)[1..^1]);
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
+		ReadOnlySpan<Byte> systemEncoded = JsonEncodedText.Encode(unescaped.Utf8.Value).EncodedUtf8Bytes;
 		SerializationTest.AssertUnescaped(unescaped, CString.Unescape(systemEncoded));
+#endif
 		SerializationTest.AssertUnescaped(unescaped, CString.Unescape(newtonsoftEncoded));
 	}
 	private static void AssertUnescaped(TextContainer unescaped, CString value)
@@ -153,6 +165,7 @@ public sealed class SerializationTest
 
 		PInvokeAssert.True(unescaped.SequenceEqual(value.AsSpan()));
 	}
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	private static void AssertSerialization(TextContainer<String> valueS, TextContainer<CString> valueC)
 	{
 		String vsSerialized = JsonSerializer.Serialize(valueS, SerializationTest.jsonOptions);
@@ -176,6 +189,7 @@ public sealed class SerializationTest
 
 		Assert.NotNull(value);
 		PInvokeAssert.Equal(value, valueC.Value);
+		// ReSharper disable once RedundantSuppressNullableWarningExpression
 		Assert.True(value!.IsNullTerminated);
 		Assert.False(value.IsSegmented);
 		Assert.False(value.IsZero);
@@ -196,4 +210,5 @@ public sealed class SerializationTest
 		TextContainer<CString> valueC = new() { Value = (CString?)value, };
 		SerializationTest.AssertSerialization(valueS, valueC);
 	}
+#endif
 }

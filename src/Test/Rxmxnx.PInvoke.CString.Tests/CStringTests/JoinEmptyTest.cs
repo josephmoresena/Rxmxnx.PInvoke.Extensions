@@ -71,6 +71,7 @@ public sealed class JoinEmptyTest
 		JoinEmptyTest.Test(separator, values.ToList());
 	}
 
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
@@ -103,6 +104,7 @@ public sealed class JoinEmptyTest
 		await JoinEmptyTest.TestAsync(separator, values);
 		await JoinEmptyTest.TestAsync(separator, values.ToList());
 	}
+#endif
 
 	private static void Test(ReadOnlySpan<Byte> separator, CString?[] values)
 	{
@@ -168,6 +170,7 @@ public sealed class JoinEmptyTest
 		PInvokeAssert.False(resultCString.IsSegmented);
 		PInvokeAssert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
 	}
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	private static async Task TestAsync(CString? separator, CString?[] values)
 	{
 		Int32 count = values.Length > 0 ? 1 : 0;
@@ -200,4 +203,5 @@ public sealed class JoinEmptyTest
 		PInvokeAssert.False(resultCString.IsSegmented);
 		PInvokeAssert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
 	}
+#endif
 }

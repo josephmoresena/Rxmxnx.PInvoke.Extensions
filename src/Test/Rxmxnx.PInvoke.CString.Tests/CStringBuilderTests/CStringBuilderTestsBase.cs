@@ -39,8 +39,7 @@ public abstract class CStringBuilderTestsBase
 
 		Int32 randomIndexInList = PInvokeRandom.Shared.Next(0, safeUtf16Indices.Count);
 		Int32 utf16Index = safeUtf16Indices[randomIndexInList];
-		Int32 utf8Index = Encoding.UTF8.GetByteCount(value[..utf16Index]);
-
+		Int32 utf8Index = value[..utf16Index].GetUtf8Count();
 		return (utf16Index, utf8Index);
 	}
 

@@ -11,7 +11,7 @@ public sealed class SystemInfoTest
 		PInvokeAssert.Equal(RuntimeInformation.IsOSPlatform(OSPlatform.Windows), SystemInfo.IsWindows);
 		PInvokeAssert.Equal(RuntimeInformation.IsOSPlatform(OSPlatform.Linux), SystemInfo.IsLinux);
 		PInvokeAssert.Equal(RuntimeInformation.IsOSPlatform(OSPlatform.OSX), SystemInfo.IsMac);
-#if NETCOREAPP2_1_OR_GREATER
+#if NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD), SystemInfo.IsFreeBsd);
 #else
 		PInvokeAssert.Equal(RuntimeInformation.IsOSPlatform(OSPlatform.Create("FREEBSD")), SystemInfo.IsFreeBsd);
