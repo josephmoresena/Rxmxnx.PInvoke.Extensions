@@ -43,7 +43,9 @@ public sealed class WithSafeFixedTest
 	public void UInt64Test() => this.Test<UInt64>();
 #pragma warning restore CS0612
 
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
+#endif
 	private void Test<T>() where T : unmanaged
 	{
 		T[] values = WithSafeFixedTest.fixture.CreateMany<T>(10).ToArray();
@@ -51,6 +53,7 @@ public sealed class WithSafeFixedTest
 		ReadOnlySpan<T> readOnlySpan = span;
 
 		this._array = values;
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		span.WithSafeFixed(this.ActionTest);
 		span.WithSafeFixed(this.ActionReadOnlyTest);
 		readOnlySpan.WithSafeFixed(this.ReadOnlyActionReadOnlyTest);
@@ -66,7 +69,9 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(values, span.WithSafeFixed(this, WithSafeFixedTest.FuncTest));
 		PInvokeAssert.Equal(values, span.WithSafeFixed(this, WithSafeFixedTest.FuncReadOnlyTest));
 		PInvokeAssert.Equal(values, readOnlySpan.WithSafeFixed(this, WithSafeFixedTest.ReadOnlyFuncReadOnlyTest));
+#endif
 	}
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 	private void ActionTest<T>(in IFixedContext<T> ctx) where T : unmanaged
 	{
@@ -242,4 +247,5 @@ public sealed class WithSafeFixedTest
 	private static T[] ReadOnlyFuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx, WithSafeFixedTest test)
 		where T : unmanaged
 		=> test.ReadOnlyFuncReadOnlyTest(ctx);
+#endif
 }

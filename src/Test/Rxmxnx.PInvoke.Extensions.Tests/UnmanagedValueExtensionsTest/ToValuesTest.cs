@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke.Tests.UnmanagedValueExtensionsTest;
+﻿#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
+#endif
+
+namespace Rxmxnx.PInvoke.Tests.UnmanagedValueExtensionsTest;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]

@@ -6,7 +6,7 @@ namespace Rxmxnx.PInvoke;
 [Preserve(AllMembers = true)]
 public readonly ref struct FixedPointerValue
 #if NET9_0_OR_GREATER
-	: IFixedPointer
+	: IFixedPointer, IEquatable<FixedPointerValue>
 #endif
 {
 	/// <summary>
@@ -172,6 +172,26 @@ public readonly ref struct FixedPointerValue
 		objectContext = default;
 		return false;
 	}
+	/// <inheritdoc cref="Object.Equals(Object)"/>
+	public Boolean Equals(FixedPointerValue other) => this == other;
+	/// <inheritdoc/>
+	public override Boolean Equals(Object? obj)
+		=> obj switch
+		{
+			FixedPointer fp when FixedPointerValue.TryCreateFixedValue(fp, out FixedPointerValue p) => this == p,
+			FixedPointerInfo info => this == info.GetValue(this.IsReadOnly, this.Handle),
+			_ => false,
+		};
+	/// <inheritdoc/>
+	public override Int32 GetHashCode()
+	{
+		HashCode result = new();
+		result.Add(this.Pointer);
+		result.Add(this.Size);
+		result.Add(this.IsReadOnly);
+		result.Add(this.Type ?? typeof(Byte));
+		return result.ToHashCode();
+	}
 
 	/// <summary>
 	/// Creates a new <see cref="FixedPointerValue"/> from current instance applying <paramref name="offset"/>.
@@ -209,6 +229,41 @@ public readonly ref struct FixedPointerValue
 		if (type == this.Type) return;
 		ValidationUtilities.ThrowIfInvalidTransformation(this.Type, this.IsUnmanaged, type, unmanagedType);
 	}
+
+	/// <summary>
+	/// Determines whether two specified instances of <see cref="FixedPointerValue"/> are equal.
+	/// </summary>
+	/// <param name="value1">The first pointer to compare.</param>
+	/// <param name="value2">The second pointer to compare.</param>
+	/// <returns>
+	/// <see langword="true"/> if <paramref name="value1"/> equals <paramref name="value2"/>;
+	/// otherwise, <see langword="false"/>.
+	/// </returns>
+	public static Boolean operator ==(FixedPointerValue value1, FixedPointerValue value2)
+	{
+		//TODO: Check equality unmanaged / reference type
+		if (value1.IsUnmanaged && !value2.IsUnmanaged) return false;
+		if (value1.IsReadOnly != value2.IsReadOnly) return false;
+		if (!value1.IsUnmanaged || !value2.IsUnmanaged)
+			if (value1.Type is { IsValueType: true, } || value2.Type is { IsValueType: true, })
+				if (value1.Type != value2.Type)
+					return false;
+		if (value1.Pointer != value2.Pointer) return false;
+		if (value1.Size != value2.Size) return false;
+		if (value1.IsNullOrEmpty && !value2.IsNullOrEmpty) return false;
+		return Object.Equals(value1.Handle, value2.Handle);
+	}
+	/// <summary>
+	/// Determines whether two specified instances of <see cref="FixedPointerValue"/> are not equal.
+	/// </summary>
+	/// <param name="value1">The first pointer to compare.</param>
+	/// <param name="value2">The second pointer to compare.</param>
+	/// <returns>
+	/// <see langword="true"/> if <paramref name="value1"/> does not equal <paramref name="value2"/>;
+	/// otherwise, <see langword="false"/>.
+	/// </returns>
+	/// <inheritdoc cref="IntPtr.op_Inequality(IntPtr, IntPtr)"/>
+	public static Boolean operator !=(FixedPointerValue value1, FixedPointerValue value2) => !(value1 == value2);
 
 	/// <summary>
 	/// Tries to create a <see cref="FixedPointerValue"/> from <paramref name="instance"/>

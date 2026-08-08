@@ -1,3 +1,7 @@
+#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
 namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
 
 [TestFixture]
@@ -93,6 +97,7 @@ public sealed class GetFixedMemoryTest
 		Memory<T> eMemory = default;
 		ReadOnlyMemory<T> erMemory = default;
 
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		using (IFixedMemory.IDisposable eMem = eMemory.GetFixedMemory())
 		using (IReadOnlyFixedMemory.IDisposable erMem = erMemory.GetFixedMemory())
 		{
@@ -102,26 +107,54 @@ public sealed class GetFixedMemoryTest
 			PInvokeAssert.True(erMem.Objects.IsEmpty);
 			PInvokeAssert.NotSame(eMem, erMem);
 		}
+#endif
+		// ReSharper disable UnusedVariable
+		using (IDisposable d0 = eMemory.GetFixedMemory(out FixedPointerValue eMem))
+		using (IDisposable d1 = erMemory.GetFixedMemory(out FixedPointerValue erMem))
+		{
+			PInvokeAssert.False(eMem.TryBinaryContext(out FixedContextValue<Byte> _));
+			PInvokeAssert.False(eMem.TryObjectContext(out FixedContextValue<Object> _));
+			PInvokeAssert.False(erMem.TryGetReadOnlyBinaryContext(out _));
+			PInvokeAssert.False(erMem.TryGetReadOnlyObjectContext(out _));
+			PInvokeAssert.True(eMem == erMem);
+		}
+		// ReSharper restore UnusedVariable
 
 		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
 		{
-#if NETCOREAPP
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			Assert.Throws<ArgumentException>(() => mem.GetFixedMemory());
 			Assert.Throws<ArgumentException>(() => rMem.GetFixedMemory());
 #endif
 			return;
 		}
-		using IFixedMemory.IDisposable fMem = mem.GetFixedMemory();
-		using IReadOnlyFixedMemory.IDisposable frMem = rMem.GetFixedMemory();
-		PInvokeAssert.IsType<IFixedContext<T>>(fMem, false);
-		PInvokeAssert.IsType<IReadOnlyFixedContext<T>>(frMem, false);
-		PInvokeAssert.Equal(array.Length * Unsafe.SizeOf<T>(), fMem.Bytes.Length);
-		PInvokeAssert.Equal(array.Length * Unsafe.SizeOf<T>(), frMem.Bytes.Length);
-		PInvokeAssert.True(Unsafe.AreSame(ref array[0], ref Unsafe.As<Byte, T>(ref fMem.Bytes[0])));
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+		using (IFixedMemory.IDisposable fMem = mem.GetFixedMemory())
+		using (IReadOnlyFixedMemory.IDisposable frMem = rMem.GetFixedMemory())
+		{
+			PInvokeAssert.IsType<IFixedContext<T>>(fMem, false);
+			PInvokeAssert.IsType<IReadOnlyFixedContext<T>>(frMem, false);
+			PInvokeAssert.Equal(array.Length * Unsafe.SizeOf<T>(), fMem.Bytes.Length);
+			PInvokeAssert.Equal(array.Length * Unsafe.SizeOf<T>(), frMem.Bytes.Length);
+			PInvokeAssert.True(Unsafe.AreSame(ref array[0], ref Unsafe.As<Byte, T>(ref fMem.Bytes[0])));
 #if NET8_0_OR_GREATER
-		Assert.True(Unsafe.AreSame(in fMem.Bytes[0], in frMem.Bytes[0]));
+			Assert.True(Unsafe.AreSame(in fMem.Bytes[0], in frMem.Bytes[0]));
 #else
-		PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in fMem.Bytes[0]), ref Unsafe.AsRef(in frMem.Bytes[0])));
+			PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in fMem.Bytes[0]), ref Unsafe.AsRef(in frMem.Bytes[0])));
+#endif
+		}
+#endif
+		using IDisposable d2 = mem.GetFixedMemory(out FixedPointerValue fMemValue);
+		using IDisposable d3 = rMem.GetFixedMemory(out FixedPointerValue rMemValue);
+		fMemValue.TryBinaryContext(out FixedContextValue<Byte> fMemB);
+		rMemValue.TryGetReadOnlyBinaryContext(out ReadOnlyFixedContextValue<Byte> rMemB);
+		PInvokeAssert.Equal(array.Length * Unsafe.SizeOf<T>(), fMemB.Bytes.Length);
+		PInvokeAssert.Equal(array.Length * Unsafe.SizeOf<T>(), rMemB.Bytes.Length);
+		PInvokeAssert.True(Unsafe.AreSame(ref array[0], ref Unsafe.As<Byte, T>(ref fMemB.Bytes[0])));
+#if NET8_0_OR_GREATER
+		Assert.True(Unsafe.AreSame(in fMemB.Bytes[0], in rMemB.Bytes[0]));
+#else
+		PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in fMemB.Bytes[0]), ref Unsafe.AsRef(in rMemB.Bytes[0])));
 #endif
 	}
 }

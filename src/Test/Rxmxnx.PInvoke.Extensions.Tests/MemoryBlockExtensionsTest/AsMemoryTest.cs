@@ -1,7 +1,7 @@
 #if NET5_0_OR_GREATER
 using Skip = Xunit.Skip;
 
-#elif NETCOREAPP
+#elif NETCOREAPP || NETFRAMEWORK
 using SkippableTheoryAttribute = Xunit.TheoryAttribute;
 #else
 using SkippableTheory = NUnit.Framework.TestAttribute;
@@ -220,8 +220,12 @@ public class AsMemoryTest
 #if NET6_0_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetArrayDataReference(arr)),
 		                                        arr.Length);
-#else
+#elif NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref ArrayReferenceHelper.GetArrayDataReference<T>(arr), arr.Length);
+#else
+		Span<T> span = MemoryMarshalCompat.CreateSafeSpan(Unsafe.As<Array, Pinnable<T>>(ref arr),
+		                                                  ref ArrayReferenceHelper.GetArrayDataReference<T>(arr),
+		                                                  arr.Length);
 #endif
 		T[] data = AsMemoryTest.fixture.CreateMany<T>(arr.Length).ToArray();
 		data.CopyTo(span);

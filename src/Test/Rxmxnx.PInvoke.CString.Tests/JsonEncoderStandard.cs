@@ -6,7 +6,6 @@ public static class JsonEncoderStandard
 	public static Byte[] EncodeToUtf8Bytes(ReadOnlySpan<Byte> input)
 	{
 		Int32 length = input.Length * 12;
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER
 		Byte[] buffer = ArrayPool<Byte>.Shared.Rent(length);
 		try
 		{
@@ -16,9 +15,6 @@ public static class JsonEncoderStandard
 		{
 			ArrayPool<Byte>.Shared.Return(buffer);
 		}
-#else
-		return JsonEncoderStandard.EncodeToUtf8Bytes(new Byte[length], input);
-#endif
 	}
 
 	private static Byte[] EncodeToUtf8Bytes(Byte[] buffer, ReadOnlySpan<Byte> input)

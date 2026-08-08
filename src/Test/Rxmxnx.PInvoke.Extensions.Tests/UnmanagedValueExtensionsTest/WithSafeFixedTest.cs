@@ -43,12 +43,16 @@ public sealed class WithSafeFixedTest
 	public void UInt64Test() => this.Test<UInt64>();
 #pragma warning restore CS0612
 
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
+#endif
 	private void Test<T>() where T : unmanaged
 	{
+		//TODO: ValueTests
 		T[]? values = WithSafeFixedTest.fixture.CreateMany<T>(10).ToArray();
 
 		this._array = values;
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		values.WithSafeFixed(this.ActionTest);
 		values.WithSafeFixed(this.ActionReadOnlyTest);
 
@@ -60,9 +64,14 @@ public sealed class WithSafeFixedTest
 
 		PInvokeAssert.Equal(values, values.WithSafeFixed(this, WithSafeFixedTest.FuncTest));
 		PInvokeAssert.Equal(values, values.WithSafeFixed(this, WithSafeFixedTest.FuncReadOnlyTest));
-
+#endif
+#if !NETFRAMEWORK || NET46_OR_GREATER
 		values = Array.Empty<T>();
+#else
+		values = ArrayCompat.Empty<T>();
+#endif
 		this._array = values;
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		values.WithSafeFixed(this.ActionTest);
 		values.WithSafeFixed(this.ActionReadOnlyTest);
 
@@ -74,8 +83,10 @@ public sealed class WithSafeFixedTest
 
 		PInvokeAssert.Equal(values, values.WithSafeFixed(this, WithSafeFixedTest.FuncTest));
 		PInvokeAssert.Equal(values, values.WithSafeFixed(this, WithSafeFixedTest.FuncReadOnlyTest));
+#endif
 
 		values = default;
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		values.WithSafeFixed(this.NullActionTest);
 		values.WithSafeFixed(this.NullActionReadOnlyTest);
 
@@ -85,7 +96,9 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(values.WithSafeFixed(this.NullFuncTest), values.WithSafeFixed(this.NullFuncReadOnlyTest));
 		PInvokeAssert.Equal(values.WithSafeFixed(this, WithSafeFixedTest.NullFuncTest),
 		                    values.WithSafeFixed(this, WithSafeFixedTest.NullFuncReadOnlyTest));
+#endif
 	}
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 	private void ActionTest<T>(in IFixedContext<T> ctx) where T : unmanaged
 	{
@@ -260,4 +273,5 @@ public sealed class WithSafeFixedTest
 	private static IReadOnlyFixedContext<T> NullFuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx,
 		WithSafeFixedTest test) where T : unmanaged
 		=> test.NullFuncReadOnlyTest(ctx);
+#endif
 }

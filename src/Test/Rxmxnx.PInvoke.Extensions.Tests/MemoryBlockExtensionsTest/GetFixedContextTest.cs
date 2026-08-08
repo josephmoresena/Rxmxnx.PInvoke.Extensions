@@ -10,10 +10,13 @@ public sealed class GetFixedContextTest
 	[Fact]
 	public void StringTest()
 	{
+		//TODO: ValueTests
 		String value = GetFixedContextTest.fixture.Create<String>();
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 #pragma warning disable CS0612
 		GetFixedContextTest.ReadOnlyTest(value.AsMemory());
 #pragma warning restore CS0612
+#endif
 	}
 	[Fact]
 	public void ByteTest() => GetFixedContextTest.ArrayTest<Byte>();
@@ -50,16 +53,20 @@ public sealed class GetFixedContextTest
 	[Fact]
 	public void UInt64Test() => GetFixedContextTest.ArrayTest<UInt64>();
 
-#pragma warning disable CS0612
 	private static void ArrayTest<T>() where T : unmanaged
 	{
+		//TODO: ValueTests
 		T[] arr = GetFixedContextTest.fixture.CreateMany<T>(10).ToArray();
 		T[] arr2 = GetFixedContextTest.fixture.CreateMany<T>(arr.Length).ToArray();
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#pragma warning disable CS0612
 		GetFixedContextTest.ReadOnlyTest<T>(arr.AsMemory());
 		GetFixedContextTest.Test(arr.AsMemory(), arr2);
+#pragma warning restore CS0612
+#endif
 		PInvokeAssert.Equal(arr, arr2);
 	}
-#pragma warning restore CS0612
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 	private static unsafe void ReadOnlyTest<T>(ReadOnlyMemory<T> mem) where T : unmanaged
 	{
@@ -144,4 +151,5 @@ public sealed class GetFixedContextTest
 		PInvokeAssert.Equal(ctx.Bytes.Length == 0, ctx.IsNullOrEmpty);
 		PInvokeAssert.Throws<InvalidOperationException>(() => residual.AsObjectContext());
 	}
+#endif
 }

@@ -7,28 +7,38 @@ public sealed class WithSafeFixedTest
 	private static readonly IFixture fixture = new Fixture();
 
 	[Theory]
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
+#endif
 	[InlineData(true)]
 	[InlineData(false)]
 	public void EmptyTest(Boolean nullInput)
 	{
+		//TODO: ValueTests
 		String? value = !nullInput ? String.Empty : default;
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		value.WithSafeFixed(WithSafeFixedTest.EmptyActionTest);
 		value.WithSafeFixed(value, WithSafeFixedTest.EmptyActionTest);
 
 		PInvokeAssert.Equal(value, value.WithSafeFixed(WithSafeFixedTest.EmptyFuncTest));
 		PInvokeAssert.Equal(value, value.WithSafeFixed(value, WithSafeFixedTest.EmptyFuncTest));
+#endif
 	}
 
 	[Fact]
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
+#endif
 	public void NormalTest()
 	{
 		String value = WithSafeFixedTest.fixture.Create<String>();
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		value.WithSafeFixed(value, WithSafeFixedTest.ActionTest);
 		PInvokeAssert.Equal(value, value.WithSafeFixed(WithSafeFixedTest.FuncTest));
+#endif
 	}
 
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 	private static unsafe void EmptyActionTest(in IReadOnlyFixedContext<Char> ctx)
 	{
@@ -69,4 +79,5 @@ public sealed class WithSafeFixedTest
 	}
 	[Obsolete]
 	private static String FuncTest(in IReadOnlyFixedContext<Char> ctx) => new(ctx.Values);
+#endif
 }
