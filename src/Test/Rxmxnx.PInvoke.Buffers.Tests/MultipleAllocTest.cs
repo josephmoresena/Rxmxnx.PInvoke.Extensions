@@ -81,7 +81,7 @@ public sealed unsafe class MultipleAllocTest
 	public void StringWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<String?>>();
 #pragma warning restore CS0612
 
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 #endif
 	private static void MultipleAlloc<T>()
@@ -93,7 +93,7 @@ public sealed unsafe class MultipleAllocTest
 		// ReSharper disable once JoinDeclarationAndInitializer
 		Boolean inStack;
 		span0[0] = (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(span0));
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		ValPtr<IntPtr> ptrPtr = NativeUtilities.GetUnsafeValPtrFromRef(ref span0[0]);
 		BufferManager.Alloc<T>(count, MultipleAllocTest.Do);
 		BufferManager.Alloc<T, ValPtr<IntPtr>>(count, ptrPtr, MultipleAllocTest.Do);
@@ -124,7 +124,7 @@ public sealed unsafe class MultipleAllocTest
 			exception,
 			PInvokeAssert.ThrowsAny<Exception>(() => BufferManager<T>.Alloc(
 				                                   new ScopedBufferFunction<T>(count, exception), out inStack)));
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		return;
 
 		void ThrowDo(ScopedBuffer<T> buffer) => throw exception;
@@ -154,7 +154,7 @@ public sealed unsafe class MultipleAllocTest
 		PInvokeAssert.Equal(buffer.Span.Length, buffer.BufferMetadata.Size);
 		PInvokeAssert.InRange(buffer.BufferMetadata.ComponentCount, 0, 2);
 	}
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	private static void Do<T>(ScopedBuffer<T> buffer, ValPtr<IntPtr> ptrPtr)
 	{
 		MultipleAllocTest.Do(buffer);
@@ -166,7 +166,7 @@ public sealed unsafe class MultipleAllocTest
 		MultipleAllocTest.Do(buffer);
 		return buffer.InStack;
 	}
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	private static T Get<T>(ScopedBuffer<T> buffer, ValPtr<IntPtr> ptrPtr)
 	{
 		MultipleAllocTest.Do(buffer, ptrPtr);

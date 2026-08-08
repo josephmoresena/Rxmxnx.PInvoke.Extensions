@@ -204,7 +204,7 @@ public sealed class BasicTests
 		PInvokeAssert.True(offsetSpan.SequenceEqual(offsetSpanClone));
 
 		using MemoryHandle handle = clone.Pin();
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		using (IFixedPointer.IDisposable fp = clone.GetFixedPointer())
 		{
 			for (Int32 i = 0; i < clone.Count; i++)

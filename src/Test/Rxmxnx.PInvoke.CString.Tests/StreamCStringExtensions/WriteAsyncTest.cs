@@ -1,4 +1,4 @@
-﻿#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+﻿#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP2_1_OR_GREATER
 namespace Rxmxnx.PInvoke.Tests.StreamCStringExtensions;
 
 [TestFixture]

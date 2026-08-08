@@ -46,7 +46,7 @@ public sealed unsafe class UnitAllocTest
 	public void StringTest() => UnitAllocTest.UnitAlloc<String?>();
 #pragma warning restore CS0612
 
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 #endif
 	private static void UnitAlloc<T>()
@@ -56,7 +56,7 @@ public sealed unsafe class UnitAllocTest
 		// ReSharper disable once JoinDeclarationAndInitializer
 		// ReSharper disable once InlineOutVariableDeclaration
 		IntPtr addOfT;
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		ValPtr<IntPtr> ptrPtr = NativeUtilities.GetUnsafeValPtrFromRef(ref span0[0]);
 
 		BufferManager.Alloc<T>(1, UnitAllocTest.Do);
@@ -88,7 +88,7 @@ public sealed unsafe class UnitAllocTest
 		PInvokeAssert.Equal(1, buffer.BufferMetadata.Size);
 		PInvokeAssert.Equal(0, buffer.BufferMetadata.ComponentCount);
 	}
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	private static void Do<T>(ScopedBuffer<T> buffer, ValPtr<IntPtr> ptrPtr)
 	{
 		UnitAllocTest.Do(buffer);
@@ -100,7 +100,7 @@ public sealed unsafe class UnitAllocTest
 		UnitAllocTest.Do(buffer);
 		return (IntPtr)Unsafe.AsPointer(ref buffer.Span[0]);
 	}
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	private static T Get<T>(ScopedBuffer<T> buffer, ValPtr<IntPtr> ptrPtr)
 	{
 		UnitAllocTest.Do(buffer, ptrPtr);

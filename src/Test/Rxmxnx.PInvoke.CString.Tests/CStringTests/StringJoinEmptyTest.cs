@@ -27,7 +27,7 @@ public sealed class StringJoinEmptyTest
 		StringJoinEmptyTest.Test(separator, values.ToList());
 	}
 
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP2_1_OR_GREATER
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
@@ -83,7 +83,7 @@ public sealed class StringJoinEmptyTest
 		PInvokeAssert.False(resultCString.IsSegmented);
 		PInvokeAssert.Equal(resultCString.Length == 0 && CString.Empty.IsFunction, resultCString.IsFunction);
 	}
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP2_1_OR_GREATER
 	private static async Task TestAsync(String? separator, String?[] values)
 	{
 		Int32 count = values.Length > 0 ? 1 : 0;

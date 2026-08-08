@@ -31,7 +31,7 @@ public sealed class StringConcatTest
 		StringConcatTest.NormalTest(strings);
 	}
 
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP2_1_OR_GREATER
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]

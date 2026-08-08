@@ -45,7 +45,7 @@ public sealed class NonBinarySpaceTests
 	public void StringWrapperTest() => NonBinarySpaceTests.Test<WrapperStruct<String?>>();
 #pragma warning restore CS0612
 
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 #endif
 	private static unsafe void Test<T>() where T : struct
@@ -82,7 +82,7 @@ public sealed class NonBinarySpaceTests
 		// ReSharper disable once JoinDeclarationAndInitializer
 		Boolean inStack;
 		span0[0] = (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(span0));
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		ValPtr<IntPtr> ptrPtr = NativeUtilities.GetUnsafeValPtrFromRef(ref span0[0]);
 		BufferManager.Alloc<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>(100, NonBinarySpaceTests.Do);
 		BufferManager.Alloc<WrapperStruct<WrapperStruct<WrapperStruct<T>>>, ValPtr<IntPtr>>(
@@ -123,7 +123,7 @@ public sealed class NonBinarySpaceTests
 		                    BuffersHelper.GetMetadata<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>(
 			                    buffer.BufferMetadata.BufferType));
 	}
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	private static void Do<T>(ScopedBuffer<WrapperStruct<WrapperStruct<WrapperStruct<T>>>> buffer,
 		ValPtr<IntPtr> ptrPtr)
 	{
@@ -136,7 +136,7 @@ public sealed class NonBinarySpaceTests
 		NonBinarySpaceTests.Do(buffer);
 		return buffer.InStack;
 	}
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	private static T Get<T>(ScopedBuffer<WrapperStruct<WrapperStruct<WrapperStruct<T>>>> buffer, ValPtr<IntPtr> ptrPtr)
 	{
 		NonBinarySpaceTests.Do(buffer, ptrPtr);
