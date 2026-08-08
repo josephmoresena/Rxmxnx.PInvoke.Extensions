@@ -1,3 +1,7 @@
+#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
 namespace Rxmxnx.PInvoke.Tests.Buffers;
 
 [TestFixture]
@@ -41,7 +45,9 @@ public sealed class NonBinarySpaceTests
 	public void StringWrapperTest() => NonBinarySpaceTests.Test<WrapperStruct<String?>>();
 #pragma warning restore CS0612
 
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
+#endif
 	private static unsafe void Test<T>() where T : struct
 	{
 		BufferManager
@@ -72,17 +78,26 @@ public sealed class NonBinarySpaceTests
 			                    typeMetadata.BufferType));
 
 		Span<IntPtr> span0 = stackalloc IntPtr[5];
+		// ReSharper disable once InlineOutVariableDeclaration
+		// ReSharper disable once JoinDeclarationAndInitializer
+		Boolean inStack;
 		span0[0] = (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(span0));
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		ValPtr<IntPtr> ptrPtr = NativeUtilities.GetUnsafeValPtrFromRef(ref span0[0]);
 		BufferManager.Alloc<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>(100, NonBinarySpaceTests.Do);
 		BufferManager.Alloc<WrapperStruct<WrapperStruct<WrapperStruct<T>>>, ValPtr<IntPtr>>(
 			100, ptrPtr, NonBinarySpaceTests.Do);
-		Boolean inStack =
+		inStack =
 			BufferManager.Alloc<WrapperStruct<WrapperStruct<WrapperStruct<T>>>, Boolean>(100, NonBinarySpaceTests.Get);
 		PInvokeAssert.Equal(
 			default,
 			BufferManager.Alloc<WrapperStruct<WrapperStruct<WrapperStruct<T>>>, ValPtr<IntPtr>, T>(
 				100, ptrPtr, NonBinarySpaceTests.Get));
+		PInvokeAssert.True(inStack);
+#endif
+		BufferManager<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>.Alloc(new ScopedBufferAction<T>(100));
+		BufferManager<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>.Alloc(
+			new ScopedBufferFunction<T>(100), out inStack);
 		PInvokeAssert.True(inStack);
 	}
 
@@ -108,22 +123,26 @@ public sealed class NonBinarySpaceTests
 		                    BuffersHelper.GetMetadata<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>(
 			                    buffer.BufferMetadata.BufferType));
 	}
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	private static void Do<T>(ScopedBuffer<WrapperStruct<WrapperStruct<WrapperStruct<T>>>> buffer,
 		ValPtr<IntPtr> ptrPtr)
 	{
 		NonBinarySpaceTests.Do(buffer);
 		PInvokeAssert.True(ptrPtr.Pointer == ptrPtr.Reference);
 	}
+#endif
 	private static Boolean Get<T>(ScopedBuffer<WrapperStruct<WrapperStruct<WrapperStruct<T>>>> buffer)
 	{
 		NonBinarySpaceTests.Do(buffer);
 		return buffer.InStack;
 	}
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	private static T Get<T>(ScopedBuffer<WrapperStruct<WrapperStruct<WrapperStruct<T>>>> buffer, ValPtr<IntPtr> ptrPtr)
 	{
 		NonBinarySpaceTests.Do(buffer, ptrPtr);
 		return buffer.Span[0].Value.Value.Value;
 	}
+#endif
 	private static BufferTypeMetadata<T> GetMetadata<TBuffer, T>() where TBuffer : struct, IManagedBuffer<T>
 	{
 		const BindingFlags getMetadataFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
@@ -278,4 +297,21 @@ public sealed class NonBinarySpaceTests
 		private T _val99;
 	}
 #endif
+	private readonly struct ScopedBufferAction<T>(UInt16 count)
+		: IScopedBufferAction<WrapperStruct<WrapperStruct<WrapperStruct<T>>>>
+	{
+		public Boolean IsMinimalCount => false;
+		public UInt16 Count => count;
+		public void Accept(scoped ScopedBuffer<WrapperStruct<WrapperStruct<WrapperStruct<T>>>> buffer)
+			=> NonBinarySpaceTests.Do(buffer);
+	}
+
+	private readonly struct ScopedBufferFunction<T>(UInt16 count)
+		: IScopedBufferFunction<WrapperStruct<WrapperStruct<WrapperStruct<T>>>, Boolean>
+	{
+		public Boolean IsMinimalCount => false;
+		public UInt16 Count => count;
+		public Boolean Apply(scoped ScopedBuffer<WrapperStruct<WrapperStruct<WrapperStruct<T>>>> buffer)
+			=> NonBinarySpaceTests.Get(buffer);
+	}
 }
