@@ -75,11 +75,11 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 		get
 		{
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
-			if (this._value.IsUnmanaged || this._value.Type is not { IsValueType: true, }) return default;
+			if (this._value.IsUnmanaged || this._value.Type is not { IsValueType: false, }) return default;
 			ref Object refObject = ref Unsafe.As<T, Object>(ref MemoryMarshal.GetReference(this.Values));
 			return MemoryMarshal.CreateReadOnlySpan(ref refObject, this._value.Size / sizeof(IntPtr));
 #else
-			if (this._value.IsUnmanaged || this._value.Type?.GetTypeInfo() is not { IsValueType: true, })
+			if (this._value.IsUnmanaged || this._value.Type?.GetTypeInfo() is not { IsValueType: false, })
 				return default;
 			void* ptr = Unsafe.AsPointer(ref MemoryMarshal.GetReference(this.Values));
 			return MemoryMarshalCompat.CreateUnsafeReadOnlySpan<Object>(ptr, this._value.Size / sizeof(IntPtr));

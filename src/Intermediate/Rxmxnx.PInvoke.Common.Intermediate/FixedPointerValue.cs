@@ -241,7 +241,6 @@ public readonly ref struct FixedPointerValue
 	/// </returns>
 	public static Boolean operator ==(FixedPointerValue value1, FixedPointerValue value2)
 	{
-		//TODO: Check equality unmanaged / reference type
 		if (value1.IsUnmanaged && !value2.IsUnmanaged) return false;
 		if (value1.IsReadOnly != value2.IsReadOnly) return false;
 		if (!value1.IsUnmanaged || !value2.IsUnmanaged)
