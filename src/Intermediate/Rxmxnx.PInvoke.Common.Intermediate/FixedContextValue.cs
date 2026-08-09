@@ -104,9 +104,7 @@ public readonly unsafe ref struct FixedContextValue<T>
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		this.Values = MemoryMarshal.CreateSpan(ref Unsafe.AsRef<T>(ptr), count);
 #else
-		this.Values = this._value.IsUnmanaged ?
-			new(ptr, count) :
-			MemoryMarshalCompat.CreateUnsafeSpan<T>(ptr, count);
+		this.Values = this._value.IsUnmanaged ? new(ptr, count) : MemoryMarshalCompat.CreateUnsafeSpan<T>(ptr, count);
 #endif
 	}
 	/// <summary>
@@ -328,17 +326,17 @@ public readonly unsafe ref struct FixedContextValue<T>
 	/// Reinterprets the <typeparamref name="T"/> fixed memory block as a <typeparamref name="TDestination"/> memory block.
 	/// </summary>
 	/// <typeparam name="TDestination">Type of objects in the reinterpreted memory block.</typeparam>
-	/// <param name="residual">Output. Residual read-only memory from the transformation.</param>
+	/// <param name="residual">Output. Residual fixed pointer from the transformation.</param>
 	/// <returns>Reinterpreted <typeparamref name="TDestination"/> memory block.</returns>
-	public FixedContextValue<TDestination> Transformation<TDestination>(out FixedContextValue<Byte> residual)
+	public FixedContextValue<TDestination> Transformation<TDestination>(out FixedPointerValue residual)
 	{
 		this._value.ValidateOperation();
 		this._value.ValidateTransformation(typeof(TDestination),
 		                                   !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>());
 		Int32 sizeOf = sizeof(TDestination);
-		Int32 count = this._value.Size / sizeof(T);
+		Int32 count = this._value.Size / sizeOf;
 		Int32 offset = count * sizeOf;
-		residual = offset != 0 ? new(this._value.CreateOffset(offset)) : default;
+		residual = this._value.CreateOffset(offset);
 		return new(this._value);
 	}
 #pragma warning restore CS8500

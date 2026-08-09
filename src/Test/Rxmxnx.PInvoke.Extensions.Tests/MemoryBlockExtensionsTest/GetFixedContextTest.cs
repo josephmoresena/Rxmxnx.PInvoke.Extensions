@@ -10,8 +10,8 @@ public sealed class GetFixedContextTest
 	[Fact]
 	public void StringTest()
 	{
-		//TODO: ValueTests
 		String value = GetFixedContextTest.fixture.Create<String>();
+		GetFixedContextTest.ReadOnlyValueTest(value.AsMemory());
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 #pragma warning disable CS0612
 		GetFixedContextTest.ReadOnlyTest(value.AsMemory());
@@ -55,16 +55,18 @@ public sealed class GetFixedContextTest
 
 	private static void ArrayTest<T>() where T : unmanaged
 	{
-		//TODO: ValueTests
 		T[] arr = GetFixedContextTest.fixture.CreateMany<T>(10).ToArray();
 		T[] arr2 = GetFixedContextTest.fixture.CreateMany<T>(arr.Length).ToArray();
+		GetFixedContextTest.ReadOnlyValueTest<T>(arr.AsMemory());
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 #pragma warning disable CS0612
 		GetFixedContextTest.ReadOnlyTest<T>(arr.AsMemory());
 		GetFixedContextTest.Test(arr.AsMemory(), arr2);
 #pragma warning restore CS0612
-#endif
 		PInvokeAssert.Equal(arr, arr2);
+		arr = GetFixedContextTest.fixture.CreateMany<T>(10).ToArray();
+#endif
+		GetFixedContextTest.ValueTest(arr.AsMemory(), arr2);
 	}
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
@@ -152,4 +154,80 @@ public sealed class GetFixedContextTest
 		PInvokeAssert.Throws<InvalidOperationException>(() => residual.AsObjectContext());
 	}
 #endif
+	private static unsafe void ReadOnlyValueTest<T>(ReadOnlyMemory<T> mem) where T : unmanaged
+	{
+		using IDisposable _ = mem.GetFixedContext(out ReadOnlyFixedContextValue<T> ctx);
+		for (Int32 i = 0; i < mem.Length; i++)
+		{
+#if NET8_0_OR_GREATER
+			Assert.True(Unsafe.AreSame(in mem.Span[i], in ctx.Values[i]));
+#else
+			PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in mem.Span[i]), ref Unsafe.AsRef(in ctx.Values[i])));
+#endif
+			PInvokeAssert.Equal(mem.Span[i], ctx.Bytes.Slice(i * sizeof(T), sizeof(T)).ToValue<T>());
+		}
+		GetFixedContextTest.ReadOnlyTransformValueTest<T, Byte>(ctx);
+		GetFixedContextTest.ReadOnlyTransformValueTest<T, Char>(ctx);
+		GetFixedContextTest.ReadOnlyTransformValueTest<T, Int16>(ctx);
+		GetFixedContextTest.ReadOnlyTransformValueTest<T, Int32>(ctx);
+		GetFixedContextTest.ReadOnlyTransformValueTest<T, Int64>(ctx);
+		GetFixedContextTest.ReadOnlyTransformValueTest<T, SByte>(ctx);
+		GetFixedContextTest.ReadOnlyTransformValueTest<T, UInt16>(ctx);
+		GetFixedContextTest.ReadOnlyTransformValueTest<T, UInt32>(ctx);
+		GetFixedContextTest.ReadOnlyTransformValueTest<T, UInt64>(ctx);
+	}
+	private static unsafe void ReadOnlyTransformValueTest<T, TDestination>(ReadOnlyFixedContextValue<T> ctx)
+		where T : unmanaged where TDestination : unmanaged
+	{
+		ReadOnlyFixedContextValue<TDestination> ctx2 = ctx.Transformation<TDestination>(out FixedPointerValue residual);
+		Int32 offset = ctx2.Values.Length * sizeof(TDestination);
+
+		PInvokeAssert.Equal(ctx.Pointer, ctx2.Pointer);
+		PInvokeAssert.Equal(ctx.Bytes.Length / sizeof(TDestination), ctx2.Values.Length);
+		PInvokeAssert.Equal(ctx.Bytes.Length, ctx2.Bytes.Length);
+		PInvokeAssert.Equal(ctx.Bytes.Length - offset > 0,
+		                    residual.TryGetReadOnlyBinaryContext(out ReadOnlyFixedContextValue<Byte> rB));
+		PInvokeAssert.Equal(ctx.Bytes.Length - offset, rB.Values.Length);
+		PInvokeAssert.Equal(ctx.Pointer + offset, residual.Pointer);
+		PInvokeAssert.Equal(ctx.Bytes.Length - offset == 0, residual.IsNullOrEmpty);
+		PInvokeAssert.True(ctx.Objects.IsEmpty);
+		PInvokeAssert.False(residual.TryGetReadOnlyObjectContext(out _));
+		PInvokeAssert.Equal(ctx.Bytes.Length == 0, ctx.IsNullOrEmpty);
+	}
+	private static unsafe void ValueTest<T>(Memory<T> mem, T[] arr2) where T : unmanaged
+	{
+		using IDisposable _ = mem.GetFixedContext(out FixedContextValue<T> ctx);
+		for (Int32 i = 0; i < mem.Length; i++)
+		{
+			PInvokeAssert.True(Unsafe.AreSame(ref mem.Span[i], ref ctx.Values[i]));
+			PInvokeAssert.Equal(mem.Span[i], ctx.Bytes.Slice(i * sizeof(T), sizeof(T)).ToValue<T>());
+			ctx.Values[i] = arr2[i];
+		}
+		GetFixedContextTest.TransformValueTest<T, Byte>(ctx);
+		GetFixedContextTest.TransformValueTest<T, Char>(ctx);
+		GetFixedContextTest.TransformValueTest<T, Int16>(ctx);
+		GetFixedContextTest.TransformValueTest<T, Int32>(ctx);
+		GetFixedContextTest.TransformValueTest<T, Int64>(ctx);
+		GetFixedContextTest.TransformValueTest<T, SByte>(ctx);
+		GetFixedContextTest.TransformValueTest<T, UInt16>(ctx);
+		GetFixedContextTest.TransformValueTest<T, UInt32>(ctx);
+		GetFixedContextTest.TransformValueTest<T, UInt64>(ctx);
+	}
+	private static unsafe void TransformValueTest<T, TDestination>(FixedContextValue<T> ctx)
+		where T : unmanaged where TDestination : unmanaged
+	{
+		FixedContextValue<TDestination> ctx2 = ctx.Transformation<TDestination>(out FixedPointerValue residual);
+		Int32 offset = ctx2.Values.Length * sizeof(TDestination);
+
+		PInvokeAssert.Equal(ctx.Pointer, ctx2.Pointer);
+		PInvokeAssert.Equal(ctx.Bytes.Length / sizeof(TDestination), ctx2.Values.Length);
+		PInvokeAssert.Equal(ctx.Bytes.Length, ctx2.Bytes.Length);
+		PInvokeAssert.Equal(ctx.Bytes.Length - offset > 0, residual.TryBinaryContext(out FixedContextValue<Byte> rB));
+		PInvokeAssert.Equal(ctx.Bytes.Length - offset, rB.Bytes.Length);
+		PInvokeAssert.Equal(ctx.Pointer + offset, residual.Pointer);
+		PInvokeAssert.Equal(ctx.Bytes.Length - offset == 0, residual.IsNullOrEmpty);
+		PInvokeAssert.True(ctx.Objects.IsEmpty);
+		PInvokeAssert.False(residual.TryObjectContext(out _));
+		PInvokeAssert.Equal(ctx.Bytes.Length == 0, ctx.IsNullOrEmpty);
+	}
 }
