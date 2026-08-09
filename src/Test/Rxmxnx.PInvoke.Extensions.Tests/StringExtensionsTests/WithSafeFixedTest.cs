@@ -14,7 +14,6 @@ public sealed class WithSafeFixedTest
 	[InlineData(false)]
 	public void EmptyTest(Boolean nullInput)
 	{
-		//TODO: ValueTests
 		String? value = !nullInput ? String.Empty : default;
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		value.WithSafeFixed(WithSafeFixedTest.EmptyActionTest);
@@ -23,6 +22,9 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(value, value.WithSafeFixed(WithSafeFixedTest.EmptyFuncTest));
 		PInvokeAssert.Equal(value, value.WithSafeFixed(value, WithSafeFixedTest.EmptyFuncTest));
 #endif
+		value.WithSafeFixed(new ReadOnlyFixedAction(value));
+		value.WithSafeFixed(new ReadOnlyFixedFunction(value), out String? result);
+		PInvokeAssert.Equal(value, result);
 	}
 
 	[Fact]
@@ -36,6 +38,9 @@ public sealed class WithSafeFixedTest
 		value.WithSafeFixed(value, WithSafeFixedTest.ActionTest);
 		PInvokeAssert.Equal(value, value.WithSafeFixed(WithSafeFixedTest.FuncTest));
 #endif
+		value.WithSafeFixed(new ReadOnlyFixedAction(value));
+		value.WithSafeFixed(new ReadOnlyFixedFunction(value), out String? result);
+		PInvokeAssert.Equal(value, result);
 	}
 
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
@@ -80,4 +85,36 @@ public sealed class WithSafeFixedTest
 	[Obsolete]
 	private static String FuncTest(in IReadOnlyFixedContext<Char> ctx) => new(ctx.Values);
 #endif
+
+	private readonly struct ReadOnlyFixedAction(String? value) : IReadOnlyFixedContextAction<Char>
+	{
+		public unsafe void Accept(scoped ReadOnlyFixedContextValue<Char> ctx)
+		{
+			if (String.IsNullOrEmpty(value))
+			{
+				PInvokeAssert.Equal(0, ctx.Bytes.Length);
+				if (ctx.Pointer != IntPtr.Zero)
+					fixed (Char* ptr = String.Empty)
+						PInvokeAssert.Equal(new(ptr), ctx.Pointer);
+				if (value is null)
+					PInvokeAssert.Equal(IntPtr.Zero, ctx.Pointer);
+				else
+					fixed (Char* ptr = String.Empty)
+						PInvokeAssert.Equal(new(ptr), ctx.Pointer);
+				return;
+			}
+			PInvokeAssert.Equal(value!.Length, ctx.Values.Length);
+			PInvokeAssert.Equal(value.Length * sizeof(Char), ctx.Bytes.Length);
+			PInvokeAssert.Equal(value, ctx.Values.ToString());
+		}
+	}
+
+	private readonly struct ReadOnlyFixedFunction(String? value) : IReadOnlyFixedContextFunction<Char, String?>
+	{
+		public String? Apply(scoped ReadOnlyFixedContextValue<Char> ctx)
+		{
+			new ReadOnlyFixedAction(value).Accept(ctx);
+			return !String.IsNullOrEmpty(value) ? ctx.Values.ToString() : value;
+		}
+	}
 }
