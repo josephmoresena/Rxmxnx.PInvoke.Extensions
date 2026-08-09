@@ -179,11 +179,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #else
 				                 $"Bytes: {Convert.ToBase64String(utf8Span.ToArray())}\t" +
 #endif
-#if NET452
-				                 $"Text: {Encoding.UTF8.GetString(utf8Span.ToArray())}");
-#else
 				                 $"Text: {utf8Span.ToUtf16()}");
-#endif
 #if NET9_0_OR_GREATER
 			}
 #endif

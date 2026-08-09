@@ -75,7 +75,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			foreach (ReadOnlySpan<Byte> utf8Text in sequence.CreateView())
 			{
 				result[index] = !Unsafe.IsNullRef(ref MemoryMarshal.GetReference(utf8Text)) ?
-#if NETCOREAPP2_0_OR_GREATER || NET46_OR_GREATER || UAP 
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
 					utf8Text.ToUtf16() :
 #elif NET452
 					Encoding.UTF8.GetString(utf8Text.ToArray()) :

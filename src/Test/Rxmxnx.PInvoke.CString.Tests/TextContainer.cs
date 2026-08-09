@@ -17,13 +17,7 @@ public readonly struct TextContainer
 	public TextContainer(ReadOnlySpanFunc<Byte> func)
 	{
 		this.Utf8 = new() { Value = new(func), };
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
-		this.Utf16 = new() { Value = Encoding.UTF8.GetString(func()), };
-#elif NET46_OR_GREATER
 		this.Utf16 = new() { Value = func().ToUtf16(), };
-#else
-		this.Utf16 = new() { Value = Encoding.UTF8.GetString(func().ToArray()), };
-#endif
 	}
 
 	private TextContainer(String str)

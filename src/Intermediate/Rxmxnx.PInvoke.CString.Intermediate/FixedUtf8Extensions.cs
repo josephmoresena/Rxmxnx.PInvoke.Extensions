@@ -42,9 +42,6 @@ public static unsafe class FixedUtf8Extensions
 	/// </summary>
 	/// <param name="source">A read-only byte span to decode.</param>
 	/// <returns>The number of characters produced by decoding the UTF-8 encoded text.</returns>
-#if !PACKAGE && NETCOREAPP && !NET7_0_OR_GREATER
-	[ExcludeFromCodeCoverage]
-#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Int32 GetUtf16Count(this ReadOnlySpan<Byte> source)
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
@@ -55,15 +52,12 @@ public static unsafe class FixedUtf8Extensions
 			return Encoding.UTF8.GetCharCount(ptr, source.Length);
 	}
 #endif
-	
+
 	/// <summary>
 	/// Calculates the number of characters produced by decoding the <paramref name="source"/>.
 	/// </summary>
 	/// <param name="source">A read-only span of <see cref="byte"/> elements representing a UTF-8 encoded text.</param>
 	/// <returns>The number of characters produced by decoding the UTF-8 encoded text.</returns>
-#if !PACKAGE && NETCOREAPP && !NET7_0_OR_GREATER
-	[ExcludeFromCodeCoverage]
-#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Int32 GetCharCountFromUtf8(ReadOnlySpan<Byte> source)
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
@@ -74,23 +68,37 @@ public static unsafe class FixedUtf8Extensions
 			return Encoding.UTF8.GetCharCount(ptr, source.Length);
 	}
 #endif
-#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
 	/// <summary>
 	/// Decodes a read-only span of UTF-8 encoded bytes into a UTF-16 encoded <see cref="String"/>.
 	/// </summary>
 	/// <param name="bytes">The read-only byte span containing the UTF-8 text to decode.</param>
 	/// <returns>A new <see cref="String"/> instance containing the decoded text.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static String ToUtf16(this ReadOnlySpan<Byte> bytes)
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
-		=> Encoding.UTF8.GetString(bytes);
-#else
 	{
+		// ReSharper disable once ConvertIfStatementToReturnStatement
 		if (bytes.IsEmpty) return String.Empty;
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+		return Encoding.UTF8.GetString(bytes);
+#elif NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
 		fixed (Byte* ptr = &MemoryMarshal.GetReference(bytes))
 			return Encoding.UTF8.GetString(ptr, bytes.Length);
+#else
+		Int32 charCount = Encoding.UTF8.GetMaxCharCount(bytes.Length);
+		Int32 byteCount = 2 * charCount;
+		if (byteCount <= StackAllocationHelper.StackallocByteThreshold)
+			return FixedUtf8Extensions.DecodeUtf8(bytes, stackalloc Char[charCount]);
+		IntPtr ptr = Marshal.AllocHGlobal(byteCount);
+		try
+		{
+			return FixedUtf8Extensions.DecodeUtf8(bytes, new(ptr.ToPointer(), charCount));
+		}
+		finally
+		{
+			Marshal.FreeHGlobal(ptr);
+		}
+#endif
 	}
-#endif
-#endif
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current UTF-8 string by pinning its memory
 	/// address until the specified action has completed.
@@ -323,4 +331,20 @@ public static unsafe class FixedUtf8Extensions
 		}
 		return span;
 	}
+#if !NETSTANDARD1_3_OR_GREATER && !NETCOREAPP && !NET46_OR_GREATER && !UAP10_0
+	/// <summary>
+	/// Creates a string using <paramref name="chars"/> as temporal buffer.
+	/// </summary>
+	/// <param name="bytes">The read-only byte span containing the UTF-8 text to decode.</param>
+	/// <param name="chars">Temporal UTF-16 buffer.</param>
+	/// <returns>A new <see cref="String"/> instance containing the decoded text.</returns>
+	private static String DecodeUtf8(ReadOnlySpan<Byte> bytes, Span<Char> chars)
+	{
+		Int32 strLen;
+		fixed (Byte* b = &MemoryMarshal.GetReference(bytes))
+		fixed (Char* c = &MemoryMarshal.GetReference(chars))
+			strLen = Encoding.UTF8.GetChars(b, bytes.Length, c, chars.Length);
+		return chars[..strLen].ToString();
+	}
+#endif
 }

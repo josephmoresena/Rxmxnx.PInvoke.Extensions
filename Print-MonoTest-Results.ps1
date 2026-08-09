@@ -9,6 +9,7 @@ foreach ($file in $files)
 {
     try
     {
+        $tfm = if ($file.FullName -match 'legacy') { '[netstandard2.0]' } else { '[netstandard2.1]' }
         [xml]$xml = Get-Content $file.FullName
 
         $assemblyName = $xml.DocumentElement.GetAttribute("name")
@@ -87,7 +88,7 @@ foreach ($file in $files)
                     $color = "Yellow"
                 }
             }
-            Write-Host "  $result [netstandard2.1] $name $timeStr" -ForegroundColor $color
+            Write-Host "  $result $tfm $name $timeStr" -ForegroundColor $color
         }
     }
     catch

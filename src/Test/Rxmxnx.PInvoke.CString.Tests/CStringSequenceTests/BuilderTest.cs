@@ -135,7 +135,7 @@ public sealed class BuilderTest
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 			ReadOnlySpan<Byte> encoded = JsonEncodedText.Encode(value()).EncodedUtf8Bytes;
 #else
-#if NET46_OR_GREATER || NETCOREAPP
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
 			String decoded = value().ToUtf16();
 #else
 			String decoded = Encoding.UTF8.GetString(value().ToArray());

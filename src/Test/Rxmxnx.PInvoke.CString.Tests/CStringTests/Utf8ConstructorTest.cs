@@ -79,13 +79,7 @@ public sealed class Utf8ConstructorTest
 
 	private static void Test(ReadOnlySpan<Byte> seq, Int32 count, CString cstr)
 	{
-#if NETSTADNARD2_1 || NETCOREAPP2_1_OR_GREATER
-		String strSeq = Encoding.UTF8.GetString(seq);
-#elif NET46_OR_GREATER || NETCOREAPP
 		String strSeq = seq.ToUtf16();
-#else
-		String strSeq = Encoding.UTF8.GetString(seq.ToArray());
-#endif
 		PInvokeAssert.Equal(seq.Length * count, cstr.Length);
 		PInvokeAssert.Equal(seq.Length * count + 1, CString.GetBytes(cstr).Length);
 

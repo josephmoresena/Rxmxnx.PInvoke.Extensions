@@ -41,7 +41,7 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get
 		{
-			this._value.ValidateOperation();
+			this._value.ValidateOperation(true);
 			return field;
 		}
 	}

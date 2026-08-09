@@ -64,13 +64,7 @@ public sealed class StringConcatTest
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
 		CString resultCString = await CString.ConcatAsync(strings);
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
-#elif NETCOREAPP2_0_OR_GREATER || NET46_OR_GREATER
 		String resultCStringCString = CString.GetBytes(resultCString).AsSpan()[..^1].ToUtf16();
-#else
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString).AsSpan()[..^1].ToArray());
-#endif
 
 		PInvokeAssert.Equal(expectedCString, resultCStringCString);
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
@@ -97,14 +91,7 @@ public sealed class StringConcatTest
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
 		CString resultCString = CString.Concat(strings);
-
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
-#elif NETCOREAPP2_0_OR_GREATER || NET46_OR_GREATER
 		String resultCStringCString = CString.GetBytes(resultCString).AsSpan()[..^1].ToUtf16();
-#else
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString).AsSpan()[..^1].ToArray());
-#endif
 
 		PInvokeAssert.Equal(expectedCString, resultCStringCString);
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER

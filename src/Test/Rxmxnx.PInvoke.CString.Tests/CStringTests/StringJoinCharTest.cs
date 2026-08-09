@@ -40,13 +40,7 @@ public sealed class StringJoinCharTest
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
 		CString resultCString = CString.Join(separator, strings);
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
-#elif NETCOREAPP2_0_OR_GREATER || NET46_OR_GREATER
 		String resultCStringCString = CString.GetBytes(resultCString).AsSpan()[..^1].ToUtf16();
-#else
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString).AsSpan()[..^1].ToArray());
-#endif
 
 		PInvokeAssert.Equal(expectedCString, resultCStringCString);
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
@@ -66,13 +60,7 @@ public sealed class StringJoinCharTest
 
 		// ReSharper disable once PossibleMultipleEnumeration
 		CString resultCString = CString.Join(separator, strings);
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
-#elif NETCOREAPP2_0_OR_GREATER || NET46_OR_GREATER
 		String resultCStringCString = CString.GetBytes(resultCString).AsSpan()[..^1].ToUtf16();
-#else
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString).AsSpan()[..^1].ToArray());
-#endif
 
 		PInvokeAssert.Equal(expectedCString, resultCStringCString);
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
@@ -92,13 +80,7 @@ public sealed class StringJoinCharTest
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
 		CString resultCString = CString.Join(separator, strings, startIndex, count);
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
-#elif NETCOREAPP2_0_OR_GREATER || NET46_OR_GREATER
 		String resultCStringCString = CString.GetBytes(resultCString).AsSpan()[..^1].ToUtf16();
-#else
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString).AsSpan()[..^1].ToArray());
-#endif
 
 		PInvokeAssert.Equal(expectedCString, resultCStringCString);
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
