@@ -289,8 +289,7 @@ public sealed class WithSafeFixedTest
 
 		private void AcceptReadOnly(FixedPointerValue fptr)
 		{
-			PInvokeAssert.Equal(!fptr.IsNullOrEmpty,
-			                    fptr.TryGetReadOnlyBinaryContext(out ReadOnlyFixedContextValue<Byte> bctx));
+			PInvokeAssert.True(fptr.TryGetReadOnlyBinaryContext(out ReadOnlyFixedContextValue<Byte> bctx));
 			ReadOnlyFixedContextValue<T> ctx = bctx.Transformation<T>(out _);
 			T[] arr = (T[])array;
 			PInvokeAssert.Equal(fptr.Pointer, bctx.Pointer);
@@ -330,8 +329,7 @@ public sealed class WithSafeFixedTest
 			PInvokeAssert.Equal(ctx.Pointer, ctx2.Pointer);
 			PInvokeAssert.Equal(ctx.Bytes.Length / sizeof(T2), ctx2.Values.Length);
 			PInvokeAssert.Equal(ctx.Bytes.Length, ctx2.Bytes.Length);
-			PInvokeAssert.Equal(ctx.Bytes.Length - offset > 0,
-			                    residual.TryGetReadOnlyBinaryContext(out ReadOnlyFixedContextValue<Byte> rb));
+			PInvokeAssert.True(residual.TryGetReadOnlyBinaryContext(out ReadOnlyFixedContextValue<Byte> rb));
 			PInvokeAssert.Equal(ctx.Bytes.Length - offset, rb.Bytes.Length);
 			PInvokeAssert.Equal(ctx.Pointer + offset, residual.Pointer);
 			PInvokeAssert.Equal(!rb.IsNullOrEmpty && !residual.IsReadOnly, residual.TryGetBinaryContext(out _));

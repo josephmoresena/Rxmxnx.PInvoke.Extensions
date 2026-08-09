@@ -173,15 +173,15 @@ public readonly unsafe ref struct FixedContextValue<T>
 	/// <param name="value">Internal value.</param>
 	internal FixedContextValue(FixedPointerValue value)
 	{
-		if (value.IsNullOrEmpty) return;
 		this._value = value;
+		Int32 count = value.Size / sizeof(T);
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref T refT = ref Unsafe.AsRef<T>(value.Pointer.ToPointer());
-		this.Values = MemoryMarshal.CreateSpan(ref refT, value.Size / sizeof(T));
+		this.Values = MemoryMarshal.CreateSpan(ref refT, count);
 #else
 		this.Values = this._value.IsUnmanaged ?
-			new(value.Pointer.ToPointer(), this._value.Size / sizeof(T)) :
-			MemoryMarshalCompat.CreateUnsafeSpan<T>(value.Pointer.ToPointer(), this._value.Size / sizeof(T));
+			new(value.Pointer.ToPointer(), count) :
+			MemoryMarshalCompat.CreateUnsafeSpan<T>(value.Pointer.ToPointer(), count);
 #endif
 	}
 

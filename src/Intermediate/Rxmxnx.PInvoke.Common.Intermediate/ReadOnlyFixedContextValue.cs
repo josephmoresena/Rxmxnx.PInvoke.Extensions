@@ -176,16 +176,15 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 	/// <param name="value">Internal value.</param>
 	internal ReadOnlyFixedContextValue(FixedPointerValue value)
 	{
-		if (value.IsNullOrEmpty) return;
 		this._value = value;
-		Int32 spanLength = this._value.Size / sizeof(T);
+		Int32 count = value.Size / sizeof(T);
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref T refT = ref Unsafe.AsRef<T>(value.Pointer.ToPointer());
-		this.Values = MemoryMarshal.CreateReadOnlySpan(ref refT, spanLength);
+		this.Values = MemoryMarshal.CreateReadOnlySpan(ref refT, count);
 #else
 		this.Values = this._value.IsUnmanaged ?
-			new(value.Pointer.ToPointer(), spanLength) :
-			MemoryMarshalCompat.CreateUnsafeSpan<T>(value.Pointer.ToPointer(), spanLength);
+			new(value.Pointer.ToPointer(), count) :
+			MemoryMarshalCompat.CreateUnsafeSpan<T>(value.Pointer.ToPointer(), count);
 #endif
 	}
 
@@ -305,7 +304,7 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 	/// <param name="value">An <see cref="ReadOnlyFixedContextValue{T}"/> to explicitly convert.</param>
 	public static explicit operator FixedContextValue<T>(ReadOnlyFixedContextValue<T> value)
 	{
-		ValidationUtilities.ThrowIfReadOnlyPointer(false, value._value.IsReadOnly);
+		value._value.ValidateOperation();
 		return new(value);
 	}
 	/// <summary>
@@ -316,7 +315,7 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 	/// <param name="value">An <see cref="FixedPointerValue"/> to explicitly convert.</param>
 	public static explicit operator ReadOnlyFixedContextValue<T>(FixedPointerValue value)
 	{
-		ValidationUtilities.ThrowIfReadOnlyPointer(false, value.IsReadOnly);
+		value.ValidateOperation();
 		value.ValidateTransformation(typeof(T), !RuntimeHelpers.IsReferenceOrContainsReferences<T>());
 		return new(value);
 	}
