@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.Tests;
 
+[ExcludeFromCodeCoverage]
 [StructLayout(LayoutKind.Sequential)]
 public readonly struct TextContainer
 {
@@ -27,6 +28,7 @@ public readonly struct TextContainer
 	}
 }
 
+[ExcludeFromCodeCoverage]
 [StructLayout(LayoutKind.Sequential)]
 public sealed class TextContainer<TString> where TString : IEquatable<TString>, IEquatable<String>
 {

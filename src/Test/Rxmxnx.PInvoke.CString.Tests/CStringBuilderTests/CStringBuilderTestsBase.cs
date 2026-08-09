@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.Tests.CStringBuilderTests;
 
+[ExcludeFromCodeCoverage]
 public abstract class CStringBuilderTestsBase
 {
 	protected static Int32 GetSeedIndex()
