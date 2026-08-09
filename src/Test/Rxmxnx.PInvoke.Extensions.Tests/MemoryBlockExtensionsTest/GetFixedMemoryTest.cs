@@ -112,8 +112,8 @@ public sealed class GetFixedMemoryTest
 		using (IDisposable d0 = eMemory.GetFixedMemory(out FixedPointerValue eMem))
 		using (IDisposable d1 = erMemory.GetFixedMemory(out FixedPointerValue erMem))
 		{
-			PInvokeAssert.False(eMem.TryBinaryContext(out FixedContextValue<Byte> _));
-			PInvokeAssert.False(eMem.TryObjectContext(out FixedContextValue<Object> _));
+			PInvokeAssert.False(eMem.TryGetBinaryContext(out FixedContextValue<Byte> _));
+			PInvokeAssert.False(eMem.TryGetObjectContext(out FixedContextValue<Object> _));
 			PInvokeAssert.False(erMem.TryGetReadOnlyBinaryContext(out _));
 			PInvokeAssert.False(erMem.TryGetReadOnlyObjectContext(out _));
 			PInvokeAssert.True(eMem == erMem);
@@ -146,7 +146,7 @@ public sealed class GetFixedMemoryTest
 #endif
 		using IDisposable d2 = mem.GetFixedMemory(out FixedPointerValue fMemValue);
 		using IDisposable d3 = rMem.GetFixedMemory(out FixedPointerValue rMemValue);
-		fMemValue.TryBinaryContext(out FixedContextValue<Byte> fMemB);
+		fMemValue.TryGetBinaryContext(out FixedContextValue<Byte> fMemB);
 		rMemValue.TryGetReadOnlyBinaryContext(out ReadOnlyFixedContextValue<Byte> rMemB);
 		PInvokeAssert.Equal(array.Length * Unsafe.SizeOf<T>(), fMemB.Bytes.Length);
 		PInvokeAssert.Equal(array.Length * Unsafe.SizeOf<T>(), rMemB.Bytes.Length);

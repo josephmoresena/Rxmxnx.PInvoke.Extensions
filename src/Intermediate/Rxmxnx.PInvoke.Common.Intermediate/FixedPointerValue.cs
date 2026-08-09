@@ -135,7 +135,7 @@ public readonly ref struct FixedPointerValue
 	/// <returns>
 	/// <see langword="true"/> if the current instance was successfully created; otherwise, <see langword="false"/>.
 	/// </returns>
-	public Boolean TryBinaryContext(out FixedContextValue<Byte> binaryContext)
+	public Boolean TryGetBinaryContext(out FixedContextValue<Byte> binaryContext)
 	{
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (!this.IsNullOrEmpty && !this.IsReadOnly && this.IsUnmanaged && this.Type is not { IsValueType: false, })
@@ -157,7 +157,7 @@ public readonly ref struct FixedPointerValue
 	/// <returns>
 	/// <see langword="true"/> if the current instance was successfully created; otherwise, <see langword="false"/>.
 	/// </returns>
-	public Boolean TryObjectContext(out FixedContextValue<Object> objectContext)
+	public Boolean TryGetObjectContext(out FixedContextValue<Object> objectContext)
 	{
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (!this.IsNullOrEmpty && !this.IsReadOnly && !this.IsUnmanaged && this.Type is { IsValueType: true, })

@@ -48,7 +48,6 @@ public sealed class WithSafeFixedTest
 #endif
 	private void Test<T>() where T : unmanaged
 	{
-		//TODO: ValueTests
 		T[] values = WithSafeFixedTest.fixture.CreateMany<T>(10).ToArray();
 		Span<Byte> span = MemoryMarshal.AsBytes(values.AsSpan());
 		ReadOnlySpan<Byte> readOnlySpan = span;
@@ -72,6 +71,15 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(span.ToArray(),
 		                    readOnlySpan.WithSafeFixed(this, WithSafeFixedTest.ReadOnlyFuncReadOnlyTest<T>));
 #endif
+		span.WithSafeFixed(new FixedAction<T>(this._array, false));
+		span.WithSafeFixed(new FixedAction<T>(this._array, true));
+		readOnlySpan.WithSafeFixed(new FixedAction<T>(this._array, true));
+		span.WithSafeFixed(new FixedFunction<T>(this._array, false), out Byte[] result);
+		PInvokeAssert.True(span.SequenceEqual(result.AsSpan()));
+		span.WithSafeFixed(new FixedFunction<T>(this._array, true), out result);
+		PInvokeAssert.True(span.SequenceEqual(result.AsSpan()));
+		readOnlySpan.WithSafeFixed(new FixedFunction<T>(this._array, true), out result);
+		PInvokeAssert.True(readOnlySpan.SequenceEqual(result.AsSpan()));
 	}
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
@@ -236,4 +244,121 @@ public sealed class WithSafeFixedTest
 		where T : unmanaged
 		=> test.ReadOnlyFuncReadOnlyTest<T>(mem);
 #endif
+	private readonly unsafe struct FixedAction<T>(Array array, Boolean isReadOnly) : IFixedAction where T : unmanaged
+	{
+		public void Accept(scoped FixedPointerValue fptr)
+		{
+			if (isReadOnly)
+			{
+				this.AcceptReadOnly(fptr);
+				return;
+			}
+			PInvokeAssert.Equal(!fptr.IsNullOrEmpty, fptr.TryGetBinaryContext(out FixedContextValue<Byte> bctx));
+			FixedContextValue<T> ctx = bctx.Transformation<T>(out _);
+			T[] arr = (T[])array;
+
+			PInvokeAssert.Equal(fptr.Pointer, bctx.Pointer);
+			PInvokeAssert.Equal(fptr.Pointer, ctx.Pointer);
+			PInvokeAssert.True(fptr == ctx);
+			PInvokeAssert.Equal(bctx.Bytes.ToArray(), ctx.Bytes.ToArray());
+			PInvokeAssert.Equal(arr, ctx.Values.ToArray());
+			PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(bctx.Bytes),
+			                                  ref MemoryMarshal.GetReference(bctx.Values)));
+			PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(arr.AsSpan()),
+			                                  ref MemoryMarshal.GetReference(ctx.Values)));
+
+			FixedAction<T>.Test<Boolean>(ctx);
+			FixedAction<T>.Test<Byte>(ctx);
+			FixedAction<T>.Test<Char>(ctx);
+			FixedAction<T>.Test<DateTime>(ctx);
+			FixedAction<T>.Test<Decimal>(ctx);
+			FixedAction<T>.Test<Double>(ctx);
+			FixedAction<T>.Test<Guid>(ctx);
+#if NET5_0_OR_GREATER
+			FixedAction<T>.Test<Half>(ctx);
+#endif
+			FixedAction<T>.Test<Int16>(ctx);
+			FixedAction<T>.Test<Int32>(ctx);
+			FixedAction<T>.Test<Int64>(ctx);
+			FixedAction<T>.Test<SByte>(ctx);
+			FixedAction<T>.Test<Single>(ctx);
+			FixedAction<T>.Test<UInt16>(ctx);
+			FixedAction<T>.Test<UInt32>(ctx);
+			FixedAction<T>.Test<UInt64>(ctx);
+		}
+
+		private void AcceptReadOnly(FixedPointerValue fptr)
+		{
+			PInvokeAssert.Equal(!fptr.IsNullOrEmpty,
+			                    fptr.TryGetReadOnlyBinaryContext(out ReadOnlyFixedContextValue<Byte> bctx));
+			ReadOnlyFixedContextValue<T> ctx = bctx.Transformation<T>(out _);
+			T[] arr = (T[])array;
+			PInvokeAssert.Equal(fptr.Pointer, bctx.Pointer);
+			PInvokeAssert.Equal(fptr.Pointer, ctx.Pointer);
+			PInvokeAssert.True(fptr == ctx);
+			PInvokeAssert.Equal(bctx.Bytes.ToArray(), ctx.Bytes.ToArray());
+			PInvokeAssert.Equal(arr, ctx.Values.ToArray());
+			PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef<Byte>(fptr.Pointer.ToPointer()),
+			                                  ref MemoryMarshal.GetReference(bctx.Values)));
+			PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(arr.AsSpan()),
+			                                  ref MemoryMarshal.GetReference(ctx.Values)));
+
+			FixedAction<T>.ReadOnlyTest<Boolean>(ctx);
+			FixedAction<T>.ReadOnlyTest<Byte>(ctx);
+			FixedAction<T>.ReadOnlyTest<Char>(ctx);
+			FixedAction<T>.ReadOnlyTest<DateTime>(ctx);
+			FixedAction<T>.ReadOnlyTest<Decimal>(ctx);
+			FixedAction<T>.ReadOnlyTest<Double>(ctx);
+			FixedAction<T>.ReadOnlyTest<Guid>(ctx);
+#if NET5_0_OR_GREATER
+			FixedAction<T>.ReadOnlyTest<Half>(ctx);
+#endif
+			FixedAction<T>.ReadOnlyTest<Int16>(ctx);
+			FixedAction<T>.ReadOnlyTest<Int32>(ctx);
+			FixedAction<T>.ReadOnlyTest<Int64>(ctx);
+			FixedAction<T>.ReadOnlyTest<SByte>(ctx);
+			FixedAction<T>.ReadOnlyTest<Single>(ctx);
+			FixedAction<T>.ReadOnlyTest<UInt16>(ctx);
+			FixedAction<T>.ReadOnlyTest<UInt32>(ctx);
+			FixedAction<T>.ReadOnlyTest<UInt64>(ctx);
+		}
+		private static void ReadOnlyTest<T2>(ReadOnlyFixedContextValue<T> ctx) where T2 : unmanaged
+		{
+			ReadOnlyFixedContextValue<T2> ctx2 = ctx.Transformation<T2>(out FixedPointerValue residual);
+			Int32 offset = ctx2.Values.Length * sizeof(T2);
+
+			PInvokeAssert.Equal(ctx.Pointer, ctx2.Pointer);
+			PInvokeAssert.Equal(ctx.Bytes.Length / sizeof(T2), ctx2.Values.Length);
+			PInvokeAssert.Equal(ctx.Bytes.Length, ctx2.Bytes.Length);
+			PInvokeAssert.Equal(ctx.Bytes.Length - offset > 0,
+			                    residual.TryGetReadOnlyBinaryContext(out ReadOnlyFixedContextValue<Byte> rb));
+			PInvokeAssert.Equal(ctx.Bytes.Length - offset, rb.Bytes.Length);
+			PInvokeAssert.Equal(ctx.Pointer + offset, residual.Pointer);
+			PInvokeAssert.Equal(!rb.IsNullOrEmpty && !residual.IsReadOnly, residual.TryGetBinaryContext(out _));
+		}
+		private static void Test<T2>(FixedContextValue<T> ctx) where T2 : unmanaged
+		{
+			FixedContextValue<T2> ctx2 = ctx.Transformation<T2>(out FixedPointerValue residual);
+			Int32 offset = ctx2.Values.Length * sizeof(T2);
+
+			PInvokeAssert.Equal(ctx.Pointer, ctx2.Pointer);
+			PInvokeAssert.Equal(ctx.Bytes.Length / sizeof(T2), ctx2.Values.Length);
+			PInvokeAssert.Equal(ctx.Bytes.Length, ctx2.Bytes.Length);
+			PInvokeAssert.Equal(ctx.Bytes.Length - offset > 0,
+			                    residual.TryGetBinaryContext(out FixedContextValue<Byte> rb));
+			PInvokeAssert.Equal(ctx.Bytes.Length - offset, rb.Bytes.Length);
+			PInvokeAssert.Equal(ctx.Pointer + offset, residual.Pointer);
+		}
+	}
+
+	private readonly struct FixedFunction<T>(Array array, Boolean isReadOnly) : IFixedFunction<Byte[]>
+		where T : unmanaged
+	{
+		public Byte[] Apply(scoped FixedPointerValue fptr)
+		{
+			new FixedAction<T>(array, isReadOnly).Accept(fptr);
+			fptr.TryGetReadOnlyBinaryContext(out ReadOnlyFixedContextValue<Byte> ctx);
+			return ctx.Values.ToArray();
+		}
+	}
 }

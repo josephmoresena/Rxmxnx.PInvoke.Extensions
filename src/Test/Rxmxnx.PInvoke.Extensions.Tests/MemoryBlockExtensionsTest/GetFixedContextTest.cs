@@ -222,12 +222,12 @@ public sealed class GetFixedContextTest
 		PInvokeAssert.Equal(ctx.Pointer, ctx2.Pointer);
 		PInvokeAssert.Equal(ctx.Bytes.Length / sizeof(TDestination), ctx2.Values.Length);
 		PInvokeAssert.Equal(ctx.Bytes.Length, ctx2.Bytes.Length);
-		PInvokeAssert.Equal(ctx.Bytes.Length - offset > 0, residual.TryBinaryContext(out FixedContextValue<Byte> rB));
+		PInvokeAssert.Equal(ctx.Bytes.Length - offset > 0, residual.TryGetBinaryContext(out FixedContextValue<Byte> rB));
 		PInvokeAssert.Equal(ctx.Bytes.Length - offset, rB.Bytes.Length);
 		PInvokeAssert.Equal(ctx.Pointer + offset, residual.Pointer);
 		PInvokeAssert.Equal(ctx.Bytes.Length - offset == 0, residual.IsNullOrEmpty);
 		PInvokeAssert.True(ctx.Objects.IsEmpty);
-		PInvokeAssert.False(residual.TryObjectContext(out _));
+		PInvokeAssert.False(residual.TryGetObjectContext(out _));
 		PInvokeAssert.Equal(ctx.Bytes.Length == 0, ctx.IsNullOrEmpty);
 	}
 }
