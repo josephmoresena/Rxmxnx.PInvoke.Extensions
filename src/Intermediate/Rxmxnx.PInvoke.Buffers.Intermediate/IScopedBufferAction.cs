@@ -22,7 +22,13 @@ public interface IScopedBufferAction<T>
 	/// </summary>
 	/// <remarks>The additional elements allocated are not accessible from <see cref="Accept"/>.</remarks>
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-	Boolean IsMinimalCount => false;
+	Boolean IsMinimalCount
+	{
+#if !PACKAGE
+		[ExcludeFromCodeCoverage]
+#endif
+		get => false;
+	}
 #else
 	Boolean IsMinimalCount { get; }
 #endif
