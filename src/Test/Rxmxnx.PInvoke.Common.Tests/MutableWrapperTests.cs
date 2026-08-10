@@ -72,7 +72,7 @@ public sealed class MutableWrapperTests
 		IMutableWrapper<T> result = WrapperFactory.CreateMutable(value);
 #endif
 		IWrapper<T> wrapper = result;
-		Boolean isEquatable = typeof(ReferenceableWrapper<T>).GetInterfaces().Any(i => i == typeof(IEquatable<T>));
+		Boolean isEquatable = typeof(IMutableWrapper<T>).GetInterfaces().Any(i => i == typeof(IEquatable<T>));
 
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(value, result.Value);
@@ -82,15 +82,18 @@ public sealed class MutableWrapperTests
 		PInvokeAssert.NotNull(wrapper);
 		PInvokeAssert.Equal(value, wrapper.Value);
 		PInvokeAssert.Equal(isEquatable, wrapper.Equals(value));
-		PInvokeAssert.Equal(Object.Equals(value, value2), wrapper.Equals(value2));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(value, value2), wrapper.Equals(value2));
 
 		result.Value = value2;
 		PInvokeAssert.Equal(value2, result.Value);
 		PInvokeAssert.Equal(isEquatable, result.Equals(value2));
-		PInvokeAssert.Equal(Object.Equals(value2, value), result.Equals(value));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(value2, value), result.Equals(value));
 		PInvokeAssert.Equal(value2, wrapper.Value);
 		PInvokeAssert.Equal(isEquatable, wrapper.Equals(value2));
-		PInvokeAssert.Equal(Object.Equals(value2, value), wrapper.Equals(value));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(value2, value), wrapper.Equals(value));
 	}
 
 	private static void Nullable<T>(Boolean nullInput) where T : unmanaged

@@ -68,7 +68,8 @@ public sealed class MutableReferenceTests
 		ReferenceableWrapper<T> result3 = new(result);
 		ref readonly T refValue = ref result.Reference;
 		ref T mutableValueRef = ref result.Reference;
-		Boolean isEquatable = typeof(ReferenceableWrapper<T>).GetInterfaces().Any(i => i == typeof(IEquatable<T>));
+		Boolean isEquatable = typeof(ReferenceableWrapper<T>).GetInterfaces()
+		                                                     .Any(i => i == typeof(IEquatable<IReferenceable<T>>));
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(value, result.Value);
 		PInvokeAssert.Equal(value, refValue);

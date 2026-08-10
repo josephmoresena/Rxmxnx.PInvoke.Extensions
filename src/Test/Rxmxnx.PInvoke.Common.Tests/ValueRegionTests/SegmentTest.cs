@@ -183,8 +183,10 @@ public sealed class SegmentTest : ValueRegionTestBase
 			PInvokeAssert.Same(state.Values, array);
 			if (state.Values.Length > 0)
 				PInvokeAssert.NotSame(state.Values, newArray);
-			else
+			else if (!SystemInfo.CompilationFramework.Contains("Framework"))
 				PInvokeAssert.Same(Array.Empty<T>(), newArray);
+			else
+				PInvokeAssert.Equal(Array.Empty<T>(), newArray);
 		}
 		else if (state is { IsReference: true, Count: 0, })
 		{

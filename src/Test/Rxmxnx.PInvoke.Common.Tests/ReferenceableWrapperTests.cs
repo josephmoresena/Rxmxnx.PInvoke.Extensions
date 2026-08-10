@@ -67,7 +67,8 @@ public sealed class ReferenceableWrapperTests
 		ReferenceableWrapper<T> result3 = new(result);
 		ref readonly T refValue = ref result.Reference;
 		ref T mutableValueRef = ref Unsafe.AsRef(in result.Reference);
-		Boolean isEquatable = typeof(ReferenceableWrapper<T>).GetInterfaces().Any(i => i == typeof(IEquatable<T>));
+		Boolean isEquatable = typeof(ReferenceableWrapper<T>).GetInterfaces()
+		                                                     .Any(i => i == typeof(IEquatable<IReferenceable<T>>));
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(value, result.Value);
 		PInvokeAssert.Equal(value, refValue);
@@ -100,7 +101,8 @@ public sealed class ReferenceableWrapperTests
 		ReferenceableWrapper<T?> result3 = new(result);
 		ref readonly T? refValue = ref result.Reference;
 		ref T? mutableValueRef = ref Unsafe.AsRef(in result.Reference);
-		Boolean isEquatable = typeof(ReferenceableWrapper<T[]>).GetInterfaces().Any(i => i == typeof(IEquatable<T[]>));
+		Boolean isEquatable = typeof(ReferenceableWrapper<T[]>).GetInterfaces()
+		                                                       .Any(i => i == typeof(IEquatable<IReferenceable<T[]>>));
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(value, refValue);
 		PInvokeAssert.Equal(value, result.Value);
@@ -131,7 +133,10 @@ public sealed class ReferenceableWrapperTests
 		ReferenceableWrapper<T[]> result3 = new(result);
 		ref readonly T[] refValue = ref result.Reference;
 		ref T[] mutableValueRef = ref Unsafe.AsRef(in result.Reference);
-		Boolean isEquatable = typeof(IReferenceableWrapper<T>).GetInterfaces().Any(i => i == typeof(IEquatable<T>));
+		Boolean isEquatable = typeof(IReferenceableWrapper<T[]>).GetInterfaces()
+		                                                        .Any(i => i ==
+			                                                             typeof(IEquatable<
+				                                                             IReadOnlyReferenceable<T[]>>));
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(array, result.Value);
 		PInvokeAssert.Equal(array, refValue);
