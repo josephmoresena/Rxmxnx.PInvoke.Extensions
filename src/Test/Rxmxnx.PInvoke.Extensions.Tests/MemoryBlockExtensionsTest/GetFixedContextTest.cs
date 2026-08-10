@@ -185,8 +185,7 @@ public sealed class GetFixedContextTest
 		PInvokeAssert.Equal(ctx.Pointer, ctx2.Pointer);
 		PInvokeAssert.Equal(ctx.Bytes.Length / sizeof(TDestination), ctx2.Values.Length);
 		PInvokeAssert.Equal(ctx.Bytes.Length, ctx2.Bytes.Length);
-		PInvokeAssert.Equal(ctx.Bytes.Length - offset > 0,
-		                    residual.TryGetReadOnlyBinaryContext(out ReadOnlyFixedContextValue<Byte> rB));
+		PInvokeAssert.True(residual.TryGetReadOnlyBinaryContext(out ReadOnlyFixedContextValue<Byte> rB));
 		PInvokeAssert.Equal(ctx.Bytes.Length - offset, rB.Values.Length);
 		PInvokeAssert.Equal(ctx.Pointer + offset, residual.Pointer);
 		PInvokeAssert.Equal(ctx.Bytes.Length - offset == 0, residual.IsNullOrEmpty);
@@ -222,7 +221,7 @@ public sealed class GetFixedContextTest
 		PInvokeAssert.Equal(ctx.Pointer, ctx2.Pointer);
 		PInvokeAssert.Equal(ctx.Bytes.Length / sizeof(TDestination), ctx2.Values.Length);
 		PInvokeAssert.Equal(ctx.Bytes.Length, ctx2.Bytes.Length);
-		PInvokeAssert.Equal(ctx.Bytes.Length - offset > 0, residual.TryGetBinaryContext(out FixedContextValue<Byte> rB));
+		PInvokeAssert.True(residual.TryGetBinaryContext(out FixedContextValue<Byte> rB));
 		PInvokeAssert.Equal(ctx.Bytes.Length - offset, rB.Bytes.Length);
 		PInvokeAssert.Equal(ctx.Pointer + offset, residual.Pointer);
 		PInvokeAssert.Equal(ctx.Bytes.Length - offset == 0, residual.IsNullOrEmpty);

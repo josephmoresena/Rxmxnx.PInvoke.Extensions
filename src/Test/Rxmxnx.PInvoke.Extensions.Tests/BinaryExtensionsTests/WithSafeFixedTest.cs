@@ -332,7 +332,7 @@ public sealed class WithSafeFixedTest
 			PInvokeAssert.True(residual.TryGetReadOnlyBinaryContext(out ReadOnlyFixedContextValue<Byte> rb));
 			PInvokeAssert.Equal(ctx.Bytes.Length - offset, rb.Bytes.Length);
 			PInvokeAssert.Equal(ctx.Pointer + offset, residual.Pointer);
-			PInvokeAssert.Equal(!rb.IsNullOrEmpty && !residual.IsReadOnly, residual.TryGetBinaryContext(out _));
+			PInvokeAssert.Equal(!residual.IsReadOnly, residual.TryGetBinaryContext(out _));
 		}
 		private static void Test<T2>(FixedContextValue<T> ctx) where T2 : unmanaged
 		{
@@ -342,8 +342,7 @@ public sealed class WithSafeFixedTest
 			PInvokeAssert.Equal(ctx.Pointer, ctx2.Pointer);
 			PInvokeAssert.Equal(ctx.Bytes.Length / sizeof(T2), ctx2.Values.Length);
 			PInvokeAssert.Equal(ctx.Bytes.Length, ctx2.Bytes.Length);
-			PInvokeAssert.Equal(ctx.Bytes.Length - offset > 0,
-			                    residual.TryGetBinaryContext(out FixedContextValue<Byte> rb));
+			PInvokeAssert.True(residual.TryGetBinaryContext(out FixedContextValue<Byte> rb));
 			PInvokeAssert.Equal(ctx.Bytes.Length - offset, rb.Bytes.Length);
 			PInvokeAssert.Equal(ctx.Pointer + offset, residual.Pointer);
 		}
