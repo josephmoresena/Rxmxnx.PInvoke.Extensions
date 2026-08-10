@@ -68,15 +68,16 @@ public sealed class MutableReferenceTests
 		ReferenceableWrapper<T> result3 = new(result);
 		ref readonly T refValue = ref result.Reference;
 		ref T mutableValueRef = ref result.Reference;
+		Boolean isEquatable = typeof(ReferenceableWrapper<T>).GetInterfaces().Any(i => i == typeof(IEquatable<T>));
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(value, result.Value);
 		PInvokeAssert.Equal(value, refValue);
-		PInvokeAssert.True(result.Equals(value));
+		PInvokeAssert.Equal(isEquatable, result.Equals(value));
 		PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
 		PInvokeAssert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
 		PInvokeAssert.False(Unsafe.AreSame(ref result.Reference, ref value));
 		PInvokeAssert.False(result.Equals(result2));
-		PInvokeAssert.True(result.Equals(result3));
+		PInvokeAssert.Equal(isEquatable, result.Equals(result3));
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.True((result as IReadOnlyReferenceable<T>).Equals(result3));
 #endif
@@ -84,12 +85,12 @@ public sealed class MutableReferenceTests
 		result.Value = value2;
 		PInvokeAssert.Equal(value2, result.Value);
 		PInvokeAssert.Equal(value2, refValue);
-		PInvokeAssert.True(result.Equals(value2));
+		PInvokeAssert.Equal(isEquatable, result.Equals(value2));
 		PInvokeAssert.Equal(Object.Equals(value2, value), result.Equals(value));
 		PInvokeAssert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
 		PInvokeAssert.False(Unsafe.AreSame(ref result.Reference, ref value2));
 		PInvokeAssert.False(result.Equals(result2));
-		PInvokeAssert.True(result.Equals(result3));
+		PInvokeAssert.Equal(isEquatable, result.Equals(result3));
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.True((result as IReadOnlyReferenceable<T>).Equals(result3));
 #endif
@@ -113,24 +114,27 @@ public sealed class MutableReferenceTests
 		ReferenceableWrapper<T?> result3 = new(result);
 		ref readonly T? refValue = ref result.Reference;
 		ref T? mutableValueRef = ref result.Reference;
+		Boolean isEquatable = typeof(IMutableReference<T>).GetInterfaces().Any(i => i == typeof(IEquatable<T>));
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(value, refValue);
 		PInvokeAssert.Equal(value, result.Value);
-		PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
 		PInvokeAssert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
 		PInvokeAssert.False(Unsafe.AreSame(ref result.Reference, ref value));
 		PInvokeAssert.False(result.Equals(result2));
-		PInvokeAssert.True(result.Equals(result3));
+		PInvokeAssert.Equal(isEquatable, result.Equals(result3));
 
 		result.Value = value2;
 		PInvokeAssert.Equal(value2, result.Value);
 		PInvokeAssert.Equal(value2, refValue);
-		PInvokeAssert.True(result.Equals(value2));
-		PInvokeAssert.Equal(Object.Equals(value2, value), result.Equals(value));
+		PInvokeAssert.Equal(isEquatable, result.Equals(value2));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(value2, value), result.Equals(value));
 		PInvokeAssert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
 		PInvokeAssert.False(Unsafe.AreSame(ref result.Reference, ref value2));
 		PInvokeAssert.False(result.Equals(result2));
-		PInvokeAssert.True(result.Equals(result3));
+		PInvokeAssert.Equal(isEquatable, result.Equals(result3));
 
 		result.Reference = value3;
 		PInvokeAssert.Equal(value3, result.Value);
@@ -151,15 +155,17 @@ public sealed class MutableReferenceTests
 		ReferenceableWrapper<T[]> result3 = new(result);
 		ref readonly T[] refValue = ref result.Reference;
 		ref T[] mutableValueRef = ref result.Reference;
+		Boolean isEquatable = typeof(IMutableReference<T[]>).GetInterfaces().Any(i => i == typeof(IEquatable<T[]>));
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(array, result.Value);
 		PInvokeAssert.Equal(array, refValue);
-		PInvokeAssert.True(result.Equals(array));
-		PInvokeAssert.Equal(Object.Equals(array, array2), result.Equals(array2));
+		PInvokeAssert.Equal(isEquatable, result.Equals(array));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(array, array2), result.Equals(array2));
 		PInvokeAssert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
 		PInvokeAssert.False(Unsafe.AreSame(ref result.Reference, ref array));
 		PInvokeAssert.False(result.Equals(result2));
-		PInvokeAssert.True(result.Equals(result3));
+		PInvokeAssert.Equal(isEquatable, result.Equals(result3));
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.True((result as IReadOnlyReferenceable<T[]>).Equals(result3));
 #endif
@@ -167,16 +173,16 @@ public sealed class MutableReferenceTests
 		result.Value = array2;
 		PInvokeAssert.Equal(array2, result.Value);
 		PInvokeAssert.Equal(array2, refValue);
-		PInvokeAssert.True(result.Equals(array2));
-		PInvokeAssert.Equal(Object.Equals(array2, array), result.Equals(array));
+		PInvokeAssert.Equal(isEquatable, result.Equals(array2));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(array2, array), result.Equals(array));
 		PInvokeAssert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
 		PInvokeAssert.False(Unsafe.AreSame(ref result.Reference, ref array2));
 		PInvokeAssert.False(result.Equals(result2));
-		PInvokeAssert.True(result.Equals(result3));
+		PInvokeAssert.Equal(isEquatable, result.Equals(result3));
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.True((result as IReadOnlyReferenceable<T[]>).Equals(result3));
 #endif
-
 		result.Reference = array3;
 		PInvokeAssert.Equal(array3, result.Value);
 		PInvokeAssert.Equal(array3, refValue);

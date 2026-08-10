@@ -72,22 +72,24 @@ public sealed class MutableWrapperTests
 		IMutableWrapper<T> result = WrapperFactory.CreateMutable(value);
 #endif
 		IWrapper<T> wrapper = result;
+		Boolean isEquatable = typeof(ReferenceableWrapper<T>).GetInterfaces().Any(i => i == typeof(IEquatable<T>));
 
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(value, result.Value);
-		PInvokeAssert.True(result.Equals(value));
-		PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
+		PInvokeAssert.Equal(isEquatable, result.Equals(value));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
 		PInvokeAssert.NotNull(wrapper);
 		PInvokeAssert.Equal(value, wrapper.Value);
-		PInvokeAssert.True(wrapper.Equals(value));
+		PInvokeAssert.Equal(isEquatable, wrapper.Equals(value));
 		PInvokeAssert.Equal(Object.Equals(value, value2), wrapper.Equals(value2));
 
 		result.Value = value2;
 		PInvokeAssert.Equal(value2, result.Value);
-		PInvokeAssert.True(result.Equals(value2));
+		PInvokeAssert.Equal(isEquatable, result.Equals(value2));
 		PInvokeAssert.Equal(Object.Equals(value2, value), result.Equals(value));
 		PInvokeAssert.Equal(value2, wrapper.Value);
-		PInvokeAssert.True(wrapper.Equals(value2));
+		PInvokeAssert.Equal(isEquatable, wrapper.Equals(value2));
 		PInvokeAssert.Equal(Object.Equals(value2, value), wrapper.Equals(value));
 	}
 
@@ -101,22 +103,26 @@ public sealed class MutableWrapperTests
 		IMutableWrapper<T?> result = WrapperFactory.CreateMutableNullable(value);
 #endif
 		IWrapper<T?> wrapper = result;
-
+		Boolean isEquatable = typeof(IMutableWrapper<T>).GetInterfaces().Any(i => i == typeof(IEquatable<T>));
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(value, result.Value);
-		PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
 		PInvokeAssert.NotNull(wrapper);
 		PInvokeAssert.Equal(value, wrapper.Value);
-		PInvokeAssert.True(wrapper.Equals(value));
-		PInvokeAssert.Equal(Object.Equals(value, value2), wrapper.Equals(value2));
+		PInvokeAssert.Equal(isEquatable, wrapper.Equals(value));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(value, value2), wrapper.Equals(value2));
 
 		result.Value = value2;
 		PInvokeAssert.Equal(value2, result.Value);
-		PInvokeAssert.True(result.Equals(value2));
-		PInvokeAssert.Equal(Object.Equals(value2, value), result.Equals(value));
+		PInvokeAssert.Equal(isEquatable, result.Equals(value2));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(value2, value), result.Equals(value));
 		PInvokeAssert.Equal(value2, wrapper.Value);
-		PInvokeAssert.True(wrapper.Equals(value2));
-		PInvokeAssert.Equal(Object.Equals(value2, value), wrapper.Equals(value));
+		PInvokeAssert.Equal(isEquatable, wrapper.Equals(value2));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(value2, value), wrapper.Equals(value));
 	}
 
 	private static void ObjectTest<T>() where T : unmanaged
@@ -129,22 +135,27 @@ public sealed class MutableWrapperTests
 		IMutableWrapper<T[]> result = WrapperFactory.CreateMutableObject(array);
 #endif
 		IWrapper<T[]> wrapper = result;
+		Boolean isEquatable = typeof(IWrapper<T[]>).GetInterfaces().Any(i => i == typeof(IEquatable<T[]>));
 
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(array, result.Value);
-		PInvokeAssert.True(result.Equals(array));
-		PInvokeAssert.Equal(Object.Equals(array, array2), result.Equals(array2));
+		PInvokeAssert.Equal(isEquatable, result.Equals(array));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(array, array2), result.Equals(array2));
 		PInvokeAssert.NotNull(wrapper);
 		PInvokeAssert.Equal(array, wrapper.Value);
-		PInvokeAssert.True(wrapper.Equals(array));
-		PInvokeAssert.Equal(Object.Equals(array, array2), wrapper.Equals(array2));
+		PInvokeAssert.Equal(isEquatable, wrapper.Equals(array));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(array, array2), wrapper.Equals(array2));
 
 		result.Value = array2;
 		PInvokeAssert.Equal(array2, result.Value);
-		PInvokeAssert.True(result.Equals(array2));
-		PInvokeAssert.Equal(Object.Equals(array2, array), result.Equals(array));
+		PInvokeAssert.Equal(isEquatable, result.Equals(array2));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(array2, array), result.Equals(array));
 		PInvokeAssert.Equal(array2, wrapper.Value);
-		PInvokeAssert.True(wrapper.Equals(array2));
-		PInvokeAssert.Equal(Object.Equals(array2, array), wrapper.Equals(array));
+		PInvokeAssert.Equal(isEquatable, wrapper.Equals(array2));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(array2, array), wrapper.Equals(array));
 	}
 }

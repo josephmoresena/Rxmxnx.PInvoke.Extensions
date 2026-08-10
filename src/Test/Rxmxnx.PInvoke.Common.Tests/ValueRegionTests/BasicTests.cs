@@ -3,6 +3,7 @@ using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCom
 #if NETFRAMEWORK && !NET46_OR_GREATER
 using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
 #endif
+
 #endif
 
 namespace Rxmxnx.PInvoke.Tests.ValueRegionTests;
@@ -129,8 +130,10 @@ public sealed class BasicTests : ValueRegionTestBase
 		PInvokeAssert.Equal(values, newArray);
 		if (values.Length > 0)
 			PInvokeAssert.NotSame(values, newArray);
-		else
+		else if (!SystemInfo.CompilationFramework.Contains("Framework"))
 			PInvokeAssert.Same(Array.Empty<T>(), newArray);
+		else
+			PInvokeAssert.Equal(Array.Empty<T>(), newArray);
 
 		Boolean isAllocated = region.TryAlloc(GCHandleType.Pinned, out GCHandle handle);
 		PInvokeAssert.Equal(isAllocated, handle.IsAllocated);

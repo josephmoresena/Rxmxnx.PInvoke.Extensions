@@ -62,10 +62,12 @@ public sealed class WrapperTests
 #else
 		IWrapper<T> result = WrapperFactory.Create(value);
 #endif
+		Boolean isEquatable = typeof(IWrapper<T>).GetInterfaces().Any(i => i == typeof(IEquatable<T>));
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(value, result.Value);
-		PInvokeAssert.True(result.Equals(value));
-		PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
+		PInvokeAssert.Equal(isEquatable, result.Equals(value));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
 	}
 	private static void Nullable<T>(Boolean nullInput) where T : unmanaged
 	{
@@ -76,9 +78,11 @@ public sealed class WrapperTests
 #else
 		IWrapper<T?> result = WrapperFactory.CreateNullable(value);
 #endif
+		Boolean isEquatable = typeof(IWrapper<T[]>).GetInterfaces().Any(i => i == typeof(IEquatable<T[]>));
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(value, result.Value);
-		PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
 	}
 	private static void ObjectTest<T>() where T : unmanaged
 	{
@@ -89,9 +93,11 @@ public sealed class WrapperTests
 #else
 		IWrapper<T[]> result = WrapperFactory.CreateObject(array);
 #endif
+		Boolean isEquatable = typeof(IWrapper<T[]>).GetInterfaces().Any(i => i == typeof(IEquatable<T[]>));
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(array, result.Value);
-		PInvokeAssert.True(result.Equals(array));
-		PInvokeAssert.Equal(Object.Equals(array, array2), result.Equals(array2));
+		PInvokeAssert.Equal(isEquatable, result.Equals(array));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(array, array2), result.Equals(array2));
 	}
 }

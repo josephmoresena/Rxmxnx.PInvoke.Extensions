@@ -69,11 +69,7 @@ public partial class ValueRegion<T>
 			ref T refValue = ref Unsafe.AsRef<T>(this._ptr.ToPointer());
 			return MemoryMarshal.CreateReadOnlySpan(ref refValue, this._length);
 #else
-#if NETCOREAPP2_0_OR_GREATER
-			return !RuntimeHelpers.IsReferenceOrContainsReferences<T>() ?
-#else
-			return !RuntimeHelpersCompat.IsReferenceOrContainsReferences<T>() ?
-#endif
+			return typeof(T).IsPrimitive ?
 				new(this._ptr.ToPointer(), this._length) :
 				MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(this._ptr.ToPointer(), this._length);
 #endif

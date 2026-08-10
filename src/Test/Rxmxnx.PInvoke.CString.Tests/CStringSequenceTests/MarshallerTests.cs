@@ -48,7 +48,12 @@ public sealed unsafe class MarshallerTests
 		IntPtr ptr = marshaller.ToUnmanaged();
 		try
 		{
+#if NETSTANDARD2_1 || NETCOREAPP
 			ReadOnlySpan<ReadOnlyValPtr<Byte>> values = new(ptr.ToPointer(), seq.NonEmptyCount);
+#else
+			ReadOnlySpan<ReadOnlyValPtr<Byte>> values =
+				MemoryMarshalCompat.CreateUnsafeReadOnlySpan<ReadOnlyValPtr<Byte>>(ptr.ToPointer(), seq.NonEmptyCount);
+#endif
 			Span<Int32> offset = stackalloc Int32[values.Length];
 			CStringSequence result = CStringSequence.GetUnsafe(values);
 
@@ -91,7 +96,12 @@ public sealed unsafe class MarshallerTests
 		IntPtr ptr = marshaller.ToUnmanaged();
 		try
 		{
+#if NETSTANDARD2_1 || NETCOREAPP
 			ReadOnlySpan<ReadOnlyValPtr<Byte>> values = new(ptr.ToPointer(), seq.Count);
+#else
+			ReadOnlySpan<ReadOnlyValPtr<Byte>> values =
+				MemoryMarshalCompat.CreateUnsafeReadOnlySpan<ReadOnlyValPtr<Byte>>(ptr.ToPointer(), seq.Count);
+#endif
 			CStringSequence result = CStringSequence.GetUnsafe(values);
 
 			PInvokeAssert.Equal(buffer, result.ToString());
@@ -126,7 +136,12 @@ public sealed unsafe class MarshallerTests
 		IntPtr ptr = marshaller.ToUnmanaged();
 		try
 		{
+#if NETSTANDARD2_1 || NETCOREAPP
 			ReadOnlySpan<ReadOnlyValPtr<Byte>> values = new(ptr.ToPointer(), seq.NonEmptyCount);
+#else
+			ReadOnlySpan<ReadOnlyValPtr<Byte>> values =
+				MemoryMarshalCompat.CreateUnsafeReadOnlySpan<ReadOnlyValPtr<Byte>>(ptr.ToPointer(), seq.NonEmptyCount);
+#endif
 			Span<Int32> offset = stackalloc Int32[values.Length];
 			CStringSequence result = CStringSequence.GetUnsafe(values);
 

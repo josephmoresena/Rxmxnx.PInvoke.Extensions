@@ -137,7 +137,10 @@ public sealed class ValueTest
 				PInvokeAssert.Equal((Object)fRef.Reference, fRef2.Reference);
 			else if (sizeof(T) % sizeof(T2) == 0)
 #if (!NETSTANDARD2_1 || LEGACY) && !NETCOREAPP3_0_OR_GREATER
-				PInvokeAssert.Equal(bytes, NativeUtilities.ToBytes(in fRef2.Reference));
+				PInvokeAssert.Equal(
+					bytes,
+					new ReadOnlySpan<Byte>(Unsafe.AsPointer(ref Unsafe.AsRef(in fRef2.Reference)), bytes.Length)
+						.ToArray());
 #else
 				PInvokeAssert.Equal(bytes, fRef2.Bytes.ToArray());
 			else

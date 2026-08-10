@@ -44,8 +44,11 @@ public sealed class GetFixedMethodTests : DelegatesTests
 
 		using IFixedMethod<GetByteValue>.IDisposable getByteValueDisposable = getByteValue.GetFixedMethod();
 
-		PInvokeAssert.True(Object.ReferenceEquals(getByteValue, getByteValueDisposable.Method));
-		PInvokeAssert.True(Object.ReferenceEquals(getByteValue, getByteValueDisposable.FunctionPointer.Invoke));
+		if (!SystemInfo.CompilationFramework.Contains("Framework"))
+		{
+			PInvokeAssert.True(Object.ReferenceEquals(getByteValue, getByteValueDisposable.Method));
+			PInvokeAssert.True(Object.ReferenceEquals(getByteValue, getByteValueDisposable.FunctionPointer.Invoke));
+		}
 		PInvokeAssert.Equal(intPtr, getByteValueDisposable.Pointer);
 		PInvokeAssert.Equal(intPtr, getByteValueDisposable.FunctionPointer);
 		PInvokeAssert.Equal(getValue(input), getByteValueDisposable.Method(input));

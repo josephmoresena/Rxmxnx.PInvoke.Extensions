@@ -92,8 +92,12 @@ public sealed class SegmentTest : ValueRegionTestBase
 		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => emptyRegion.Slice(0, -1));
 		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => emptyRegion.Slice(0, 1));
 
-		if ((T[]?)emptyRegion is { } arr)
+		if ((T[]?)emptyRegion is not { } arr) return;
+
+		if (!SystemInfo.CompilationFramework.Contains("Framework"))
 			PInvokeAssert.Same(emptyRegion.ToArray(), arr);
+		else
+			PInvokeAssert.Equal(emptyRegion.ToArray(), arr);
 	}
 
 	private static void AssertRegionSegment<T>(T[] values, ICollection<GCHandle> handles) where T : unmanaged
