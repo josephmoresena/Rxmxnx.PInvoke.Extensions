@@ -3,6 +3,7 @@ using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCom
 #if NETFRAMEWORK && !NET46_OR_GREATER
 using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
 #endif
+
 #endif
 
 namespace Rxmxnx.PInvoke.Tests.Internal.FixedReferenceTests;
@@ -96,6 +97,7 @@ public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 				GetTransformationTest.Test<T, ManagedStruct>(fref);
 				GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(fref);
 			}
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			else
 			{
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest
@@ -103,51 +105,66 @@ public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest
 					                                                .Test<T, WrapperStruct<ManagedStruct>>(fref));
 			}
+#endif
 
 			if (sizeof(T) < IntPtr.Size)
 			{
 				GetTransformationTest.Test<T, String>(fref);
 				GetTransformationTest.Test<T, Object>(fref);
 			}
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			else
 			{
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, String>(fref));
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Object>(fref));
 			}
+#endif
 		}
 		catch (ArgumentException)
 		{
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Boolean>(fref));
 			PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Byte>(fref));
 			PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int16>(fref));
 			PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Char>(fref));
 			PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int32>(fref));
+#endif
 			if (sizeof(T) < sizeof(Int64))
 				GetTransformationTest.Test<T, Int64>(fref);
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			else
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int64>(fref));
+#endif
 #if NET7_0_OR_GREATER
 			if (sizeof(T) < sizeof(Int128))
 				GetTransformationTest.Test<T, Int128>(fref);
 			else
 				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int128>(fref));
 #endif
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Single>(fref));
+#endif
 #if NET5_0_OR_GREATER
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Half>(fref));
 #endif
 			if (sizeof(T) < sizeof(Double))
 				GetTransformationTest.Test<T, Double>(fref);
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			else
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Double>(fref));
+#endif
 			if (sizeof(T) < sizeof(Decimal))
 				GetTransformationTest.Test<T, Decimal>(fref);
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			else
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Decimal>(fref));
+#endif
 			if (sizeof(T) < sizeof(DateTime))
 				GetTransformationTest.Test<T, DateTime>(fref);
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			else
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, DateTime>(fref));
+#endif
 #if NET6_0_OR_GREATER
 			if (sizeof(T) < sizeof(TimeOnly))
 				GetTransformationTest.Test<T, TimeOnly>(fref);
@@ -156,11 +173,14 @@ public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 #endif
 			if (sizeof(T) < sizeof(TimeSpan))
 				GetTransformationTest.Test<T, TimeSpan>(fref);
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			else
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeSpan>(fref));
+#endif
 
 			if (sizeof(T) < sizeof(ManagedStruct))
 				GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(fref);
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			else
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest
 					                                                .Test<T, WrapperStruct<ManagedStruct>>(fref));
@@ -168,14 +188,18 @@ public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 				                                                fref));
 			PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<Object>>(
 				                                                fref));
+#endif
 
 			if (typeof(T).IsValueType)
 			{
 				GetTransformationTest.Test<T, ManagedStruct>(fref);
 
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, String>(fref));
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Object>(fref));
+#endif
 			}
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			else
 			{
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest
@@ -185,9 +209,11 @@ public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 				GetTransformationTest.Test<T, String>(fref);
 				GetTransformationTest.Test<T, Object>(fref);
 			}
+#endif
 		}
 
 		fref.Unload();
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(FixedMemoryTestsBase.InvalidError,
 		                    PInvokeAssert
 			                    .Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Boolean>(
@@ -247,6 +273,7 @@ public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 		                    PInvokeAssert
 			                    .Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeSpan>(
 				                                                       fref, true)).Message);
+#endif
 	}
 	private static void ReadOnlyTest<T>(ReadOnlyFixedReference<T> fref, IntPtr ptr)
 	{
@@ -283,6 +310,7 @@ public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 				GetTransformationTest.Test<T, ManagedStruct>(fref);
 				GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(fref);
 			}
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			else
 			{
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest
@@ -290,51 +318,66 @@ public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest
 					                                                .Test<T, WrapperStruct<ManagedStruct>>(fref));
 			}
+#endif
 
 			if (sizeof(T) < IntPtr.Size)
 			{
 				GetTransformationTest.Test<T, String>(fref);
 				GetTransformationTest.Test<T, Object>(fref);
 			}
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			else
 			{
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, String>(fref));
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Object>(fref));
 			}
+#endif
 		}
 		catch (ArgumentException)
 		{
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Boolean>(fref));
 			PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Byte>(fref));
 			PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int16>(fref));
 			PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Char>(fref));
 			PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int32>(fref));
+#endif
 			if (sizeof(T) < sizeof(Int64))
 				GetTransformationTest.Test<T, Int64>(fref);
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			else
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int64>(fref));
+#endif
 #if NET7_0_OR_GREATER
 			if (sizeof(T) < sizeof(Int128))
 				GetTransformationTest.Test<T, Int128>(fref);
 			else
 				Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Int128>(fref));
 #endif
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Single>(fref));
+#endif
 #if NET5_0_OR_GREATER
 			Assert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Half>(fref));
 #endif
 			if (sizeof(T) < sizeof(Double))
 				GetTransformationTest.Test<T, Double>(fref);
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			else
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Double>(fref));
+#endif
 			if (sizeof(T) < sizeof(Decimal))
 				GetTransformationTest.Test<T, Decimal>(fref);
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			else
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Decimal>(fref));
+#endif
 			if (sizeof(T) < sizeof(DateTime))
 				GetTransformationTest.Test<T, DateTime>(fref);
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			else
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, DateTime>(fref));
+#endif
 #if NET6_0_OR_GREATER
 			if (sizeof(T) < sizeof(TimeOnly))
 				GetTransformationTest.Test<T, TimeOnly>(fref);
@@ -343,11 +386,14 @@ public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 #endif
 			if (sizeof(T) < sizeof(TimeSpan))
 				GetTransformationTest.Test<T, TimeSpan>(fref);
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			else
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeSpan>(fref));
+#endif
 
 			if (sizeof(T) < sizeof(ManagedStruct))
 				GetTransformationTest.Test<T, WrapperStruct<ManagedStruct>>(fref);
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			else
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest
 					                                                .Test<T, WrapperStruct<ManagedStruct>>(fref));
@@ -355,26 +401,32 @@ public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 				                                                fref));
 			PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, WrapperStruct<Object>>(
 				                                                fref));
+#endif
 
 			if (typeof(T).IsValueType)
 			{
 				GetTransformationTest.Test<T, ManagedStruct>(fref);
 
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, String>(fref));
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Object>(fref));
+#endif
 			}
 			else
 			{
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest
 					                                                .Test<T, WrapperStruct<String>>(fref));
 				PInvokeAssert.Throws<InvalidOperationException>(() => GetTransformationTest
 					                                                .Test<T, WrapperStruct<Object>>(fref));
+#endif
 				GetTransformationTest.Test<T, String>(fref);
 				GetTransformationTest.Test<T, Object>(fref);
 			}
 		}
 
 		fref.Unload();
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(FixedMemoryTestsBase.InvalidError,
 		                    PInvokeAssert
 			                    .Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, Boolean>(
@@ -434,6 +486,7 @@ public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 		                    PInvokeAssert
 			                    .Throws<InvalidOperationException>(() => GetTransformationTest.Test<T, TimeSpan>(
 				                                                       fref, true)).Message);
+#endif
 	}
 	private static void Test<T, T2>(FixedReference<T> fref, Boolean unloaded = false)
 	{
