@@ -50,12 +50,14 @@ public partial class CString
 	{
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		strm.Write(this.AsSpan());
+		if (writeNullTermination)
+			strm.Write(CString.empty);
 #else
 		foreach (Byte b in this.AsSpan())
 			strm.WriteByte(b);
-#endif
 		if (writeNullTermination)
-			strm.Write(CString.empty);
+			strm.WriteByte(CString.empty[0]);
+#endif
 	}
 	/// <summary>
 	/// Writes the sequence of bytes to the given <see cref="Stream"/>, starting at the
