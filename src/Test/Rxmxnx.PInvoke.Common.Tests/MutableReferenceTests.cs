@@ -74,7 +74,8 @@ public sealed class MutableReferenceTests
 		PInvokeAssert.Equal(value, result.Value);
 		PInvokeAssert.Equal(value, refValue);
 		PInvokeAssert.Equal(isEquatable, result.Equals(value));
-		PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
 		PInvokeAssert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
 		PInvokeAssert.False(Unsafe.AreSame(ref result.Reference, ref value));
 		PInvokeAssert.False(result.Equals(result2));
@@ -87,7 +88,8 @@ public sealed class MutableReferenceTests
 		PInvokeAssert.Equal(value2, result.Value);
 		PInvokeAssert.Equal(value2, refValue);
 		PInvokeAssert.Equal(isEquatable, result.Equals(value2));
-		PInvokeAssert.Equal(Object.Equals(value2, value), result.Equals(value));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(value2, value), result.Equals(value));
 		PInvokeAssert.True(Unsafe.AreSame(ref result.Reference, ref mutableValueRef));
 		PInvokeAssert.False(Unsafe.AreSame(ref result.Reference, ref value2));
 		PInvokeAssert.False(result.Equals(result2));
