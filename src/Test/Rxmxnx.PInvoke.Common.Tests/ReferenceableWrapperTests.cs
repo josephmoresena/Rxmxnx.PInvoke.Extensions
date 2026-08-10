@@ -73,7 +73,8 @@ public sealed class ReferenceableWrapperTests
 		PInvokeAssert.Equal(value, result.Value);
 		PInvokeAssert.Equal(value, refValue);
 		PInvokeAssert.Equal(isEquatable, result.Equals(value));
-		PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
 #if NET8_0_OR_GREATER
 		Assert.True(Unsafe.AreSame(in result.Reference, ref mutableValueRef));
 		Assert.False(Unsafe.AreSame(in result.Reference, ref value));
