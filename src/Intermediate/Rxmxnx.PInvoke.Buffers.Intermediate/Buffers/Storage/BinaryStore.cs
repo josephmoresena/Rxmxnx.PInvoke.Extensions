@@ -107,6 +107,9 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// </summary>
 	/// <param name="component">Size of the requested metadata.</param>
 	/// <returns>The <see cref="BufferTypeMetadata{T}"/> reference.</returns>
+#if !PACKAGE && NET5_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static BufferTypeMetadata<T> SetBinaryValue(BufferTypeMetadata<T> component)
 	{
@@ -420,10 +423,12 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// <summary>
 	/// Initial span.
 	/// </summary>
+	[ExcludeFromCodeCoverage]
 	public static ReadOnlySpan<BufferTypeMetadata<T>?> Initial => BinaryStore<TMain, T>.initial.Span;
 	/// <summary>
 	/// Slots.
 	/// </summary>
+	[ExcludeFromCodeCoverage]
 	public static ReadOnlySpan<BufferTypeMetadata<T>?[]?> Slots => BinaryStore<TMain, T>.slots.AsSpan();
 #endif
 }

@@ -118,8 +118,9 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 		return typeMetadata;
 	}
 #endif
-#if !PACKAGE && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
+#if !PACKAGE
 	/// <inheritdoc/>
+	[ExcludeFromCodeCoverage]
 	public override void PrintMetadata<T>(Boolean trace)
 	{
 		if (!trace) return;

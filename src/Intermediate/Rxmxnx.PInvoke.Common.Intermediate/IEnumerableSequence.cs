@@ -165,6 +165,9 @@ public static class EnumerableSequenceExtensions
 	/// <returns>
 	/// An <see cref="IEnumerator{T}"/> that can be used to iterate through the sequence.
 	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IEnumerator<T> CreateDefaultEnumerator<TEnumerable, T>(this TEnumerable instance,
 		Action<TEnumerable>? disposeEnumeration = default) where TEnumerable : struct, IEnumerableSequence<T>

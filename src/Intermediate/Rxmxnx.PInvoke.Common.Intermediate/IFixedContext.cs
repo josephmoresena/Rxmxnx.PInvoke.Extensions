@@ -31,6 +31,9 @@ public interface IFixedContext<T> : IReadOnlyFixedContext<T>, IFixedMemory<T>
 
 #if NET9_0_OR_GREATER
 	/// <inheritdoc cref="IFixedContext{T}.Transformation{TDestination}(out IReadOnlyFixedMemory)"/>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	internal static IFixedContext<TDestination>
 		Transformation<TFixedContext, TDestination>(TFixedContext ctx, out IFixedMemory residual)
 		where TFixedContext : IFixedContext<T>, allows ref struct

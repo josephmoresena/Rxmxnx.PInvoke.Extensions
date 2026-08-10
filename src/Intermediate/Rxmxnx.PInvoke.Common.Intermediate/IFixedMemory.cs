@@ -74,12 +74,18 @@ public interface IFixedMemory<T> : IFixedMemory, IReadOnlyFixedMemory<T>
 #if OBSOLETE_FIXED_INTERFACES
 	[Obsolete]
 #endif
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	internal static IFixedContext<Object> AsObjectContext<TFixedContext>(TFixedContext ctx)
 		where TFixedContext : IFixedMemory<T>, allows ref struct
 		=> ctx.AsObjectContext();
 	/// <inheritdoc cref="IFixedMemory.AsObjectContext()"/>
 #if OBSOLETE_FIXED_INTERFACES
 	[Obsolete]
+#endif
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
 #endif
 	internal static IFixedContext<Byte> AsBinaryContext<TFixedContext>(TFixedContext ctx)
 		where TFixedContext : IFixedMemory<T>, allows ref struct

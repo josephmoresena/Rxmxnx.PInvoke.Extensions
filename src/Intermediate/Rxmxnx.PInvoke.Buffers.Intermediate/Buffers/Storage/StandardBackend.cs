@@ -23,6 +23,9 @@ internal readonly struct StandardBackend : IMetadataStorageBackend
 	public BufferTypeMetadata<T>? GetBinaryValue<T>(UInt16 componentSize)
 		=> BinaryStore<MainBinaryStore<T>, T>.GetBinaryValue(componentSize);
 	/// <inheritdoc/>
+#if !PACKAGE && NET5_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public BufferTypeMetadata<T> SetBinaryValue<T>(BufferTypeMetadata<T> component)
 		=> BinaryStore<MainBinaryStore<T>, T>.SetBinaryValue(component);
@@ -84,26 +87,38 @@ internal readonly struct StandardBackend : IMetadataStorageBackend
 		}
 #if !PACKAGE
 		/// <inheritdoc/>
+		[ExcludeFromCodeCoverage]
 		public Span<BufferTypeMetadata<T>?> Span => new(MainBinaryStore<T>.initial);
 #endif
 		/// <inheritdoc/>
+#if !PACKAGE && NET5_0_OR_GREATER
+		[ExcludeFromCodeCoverage]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public BufferTypeMetadata<T>? CompareExchange(Int32 index, BufferTypeMetadata<T> component)
 			=> Interlocked.CompareExchange(ref MainBinaryStore<T>.initial[index], component, null);
 		/// <inheritdoc/>
+#if !PACKAGE && NET5_0_OR_GREATER
+		[ExcludeFromCodeCoverage]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public BufferTypeMetadata<T>? Search(Int32 start, Int32 count)
 			=> BuffersHelper.Search(ref MainBinaryStore<T>.initial[0], start, count);
 		/// <inheritdoc/>
+#if !PACKAGE && NET5_0_OR_GREATER
+		[ExcludeFromCodeCoverage]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public BufferTypeMetadata<T> Set(Int32 index, BufferTypeMetadata<T> component)
 			=> MainBinaryStore<T>.initial[index] = component;
 	}
 #if !PACKAGE
 	/// <inheritdoc/>
+	[ExcludeFromCodeCoverage]
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ReadOnlySpan<BufferTypeMetadata<T>?> GetInitial<T>() => BinaryStore<MainBinaryStore<T>, T>.Initial;
 	/// <inheritdoc/>
+	[ExcludeFromCodeCoverage]
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ReadOnlySpan<BufferTypeMetadata<T>?[]?> GetSlots<T>() => BinaryStore<MainBinaryStore<T>, T>.Slots;
 #endif

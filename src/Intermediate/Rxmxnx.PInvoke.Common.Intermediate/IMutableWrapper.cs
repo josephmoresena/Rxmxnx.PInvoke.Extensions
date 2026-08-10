@@ -45,6 +45,9 @@ public interface IMutableWrapper<T> : IWrapper<T>, IStrongBox
 		set => this.Value = (T)value!;
 	}
 
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	T IWrapper<T>.Value => this.Value;
 
 	/// <summary>

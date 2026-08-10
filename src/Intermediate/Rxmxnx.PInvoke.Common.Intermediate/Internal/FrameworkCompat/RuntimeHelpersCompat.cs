@@ -3,7 +3,7 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 /// <summary>
 /// <see cref="RuntimeHelpers"/> compatibility utilities for internal use.
 /// </summary>
-#if !PACAKGE && !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+#if !PACAKGE
 [ExcludeFromCodeCoverage]
 #endif
 internal static class RuntimeHelpersCompat

@@ -274,6 +274,9 @@ public static partial class BufferManager<T>
 	/// </summary>
 	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/>.</typeparam>
 	/// <param name="action">Action to perform with allocated buffer.</param>
+#if !PACKAGE && NET5_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void AllocWithReference<TAction>(ref TAction action)
 #if !NET9_0_OR_GREATER
@@ -299,6 +302,9 @@ public static partial class BufferManager<T>
 	/// <typeparam name="TFunction">Type of <see cref="IScopedBufferFunction{T, TResult}"/>.</typeparam>
 	/// <param name="func">Function to execute with allocated buffer.</param>
 	/// <param name="result">Output. Function result.</param>
+#if !PACKAGE && NET5_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void AllocWithReference<TResult, TFunction>(ref TFunction func, out TResult result)
 #if !NET9_0_OR_GREATER

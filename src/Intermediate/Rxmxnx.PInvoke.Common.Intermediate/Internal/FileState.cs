@@ -5,6 +5,7 @@ namespace Rxmxnx.PInvoke.Internal;
 /// </summary>
 [Preserve(AllMembers = true, Conditional = true)]
 #if !PACKAGE
+[ExcludeFromCodeCoverage]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2292)]
 #endif
 internal ref struct FileState
