@@ -198,7 +198,7 @@ public sealed class ParseTest
 	{
 		using IDisposable _ = NativeUtilities.HeapAlloc(totalChars, out FixedContextValue<Char> fixedContext);
 		ParseTest.RandomCreate(fixedContext.Values, (offset, values));
-		return values.ToString();
+		return fixedContext.Values.ToString();
 	}
 #endif
 	private static unsafe void UnsafeTest(CString[] values, MemoryHandle memoryHandle)
