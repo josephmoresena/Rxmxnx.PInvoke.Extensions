@@ -6,7 +6,7 @@
         <TargetFrameworks Condition="'$(MultipleFrameworkTest)' == 'true'">$(DefaultFrameworks);net8.0;net7.0;net6.0</TargetFrameworks>
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('WINDOWS')) And '$(MultipleFrameworkTest)' == 'true'">$(TargetFrameworks);net461;net462;net470;net472</TargetFrameworks>
         <TargetFrameworks Condition="'$(MultipleFrameworkTest)' == 'true' And '$(OnlySupportedFrameworkTest)' != 'true'">$(TargetFrameworks);net5.0;netcoreapp3.1;netcoreapp3.0;netcoreapp2.1;netcoreapp2.0;netstandard2.1;netstandard2.0</TargetFrameworks>
-        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('WINDOWS')) And '$(MultipleFrameworkTest)' == 'true' And '$(OnlySupportedFrameworkTest)' != 'true'">$(TargetFrameworks);net452</TargetFrameworks>
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('WINDOWS')) And '$(MultipleFrameworkTest)' == 'true' And '$(OnlySupportedFrameworkTest)' != 'true'">$(TargetFrameworks);net452;net46</TargetFrameworks>
         <TargetFrameworks Condition="'$(MultipleFrameworkTest)' == 'true' And '$(OnlySupportedFrameworkTest)' == 'true'">$(TargetFrameworks);netstandard2.1;netstandard2.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
