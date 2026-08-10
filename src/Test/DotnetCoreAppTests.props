@@ -68,6 +68,10 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
     </ItemGroup>
+    <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' And '$(TargetFramework)' != 'net452' And '$(TargetFramework)' != 'net46'">
+        <PackageReference Condition="'$(TargetFramework)' == 'net461'" Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+        <PackageReference Condition="'$(TargetFramework)' != 'net461'" Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
+    </ItemGroup>
     <!-- NETCOREAPP2.X_SUPPORT -->
     <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0' Or '$(TargetFramework)' == 'netcoreapp2.1'">
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.3"/>
