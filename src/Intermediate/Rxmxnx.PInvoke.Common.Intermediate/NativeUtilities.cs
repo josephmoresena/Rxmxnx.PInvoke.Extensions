@@ -306,7 +306,7 @@ public static unsafe partial class NativeUtilities
 	/// <returns>A string read-only span of the names of the constants in <typeparamref name="TEnum"/>.</returns>
 	public static ReadOnlySpan<String> GetEnumNamesSpan<TEnum>() where TEnum : struct, Enum
 		=> EnumNameHelper<TEnum>.Values.Span;
-#if NETSTANDARD2_1 || NETCOREAPP3_1_OR_GREATER
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Creates an <see cref="IReadOnlyFixedContext{TEnum}.IDisposable"/> instance by pinning an array of the values of
 	/// the constants in a specified enumeration type.

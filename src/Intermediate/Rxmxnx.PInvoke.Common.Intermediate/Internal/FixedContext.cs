@@ -93,11 +93,7 @@ internal sealed unsafe partial class FixedContext<T> : FixedMemory,
 #endif
 	IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IFixedMemory residual)
 	{
-#if !NETCOREAPP || NETCOREAPP3_1_OR_GREATER
 		Unsafe.SkipInit(out residual);
-#else
-		residual = default!;
-#endif
 		IFixedContext<TDestination> result =
 			this.GetTransformation<TDestination>(out Unsafe.As<IFixedMemory, FixedOffset>(ref residual));
 		return result;

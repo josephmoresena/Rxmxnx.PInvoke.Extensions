@@ -143,7 +143,7 @@ public partial class CStringSequence
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private Int32 GetIndexOfExactLength(Int32 length)
 	{
-#if !NET10_0_OR_GREATER
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 		ReadOnlySpan<Int32> lengths = this._lengths.AsSpan();
 		for (Int32 i = 0; i < lengths.Length; i++)
 		{
