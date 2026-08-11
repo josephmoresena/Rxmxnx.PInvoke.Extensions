@@ -28,7 +28,7 @@ internal readonly unsafe partial struct FixedPointerInfo
 	/// Creates an unmanaged pointer from <paramref name="value"/>.
 	/// </summary>
 	/// <param name="value">Managed function pointer.</param>
-	/// <returns>A unmanaged pointer.</returns>
+	/// <returns>An unmanaged pointer.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void* ToUnmanaged(delegate*<void*, Int32, FixedValueHandle, ReadOnlyFixedMemory> value)
 	{
@@ -39,7 +39,7 @@ internal readonly unsafe partial struct FixedPointerInfo
 	/// Creates an unmanaged pointer from <paramref name="value"/>.
 	/// </summary>
 	/// <param name="value">Managed function pointer.</param>
-	/// <returns>A unmanaged pointer.</returns>
+	/// <returns>An unmanaged pointer.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void* ToUnmanaged(delegate*<Type> value)
 	{

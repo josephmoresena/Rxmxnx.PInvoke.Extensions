@@ -70,6 +70,9 @@ public partial class NativeUtilities
 	}
 	/// <inheritdoc cref="Delegate.GetInvocationList()"/>
 	/// <returns>A read-only span of delegates in this delegate instance.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static ReadOnlySpan<Delegate> GetInvocationSpan(Delegate del)
 	{

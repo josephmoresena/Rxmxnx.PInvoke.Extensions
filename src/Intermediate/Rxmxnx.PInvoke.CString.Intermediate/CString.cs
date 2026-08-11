@@ -538,6 +538,7 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 		length += CString.FinalizeBuffer(helper.Bytes, TextUnescape.Unescape(helper.Bytes[..length]), helper.HasArray);
 		return new(helper, length);
 	}
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Returns the hash code for the provided read-only UTF-8 unit span.
 	/// </summary>
@@ -553,4 +554,5 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 #endif
 			_ => CString.ToUtf16(value).GetHashCode(),
 		};
+#endif
 }

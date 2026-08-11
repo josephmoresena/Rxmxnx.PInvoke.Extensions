@@ -157,6 +157,9 @@ public partial class NativeUtilities
 	/// </summary>
 	/// <typeparam name="T">Generic type.</typeparam>
 	/// <returns>The CLR type for <typeparamref name="T"/>.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	internal static Type GetType<T>() => typeof(T);
 #endif

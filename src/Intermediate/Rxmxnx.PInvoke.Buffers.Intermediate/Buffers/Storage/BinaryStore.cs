@@ -34,16 +34,6 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get => BinaryStore<TMain, T>.initial.Length + Volatile.Read(ref BinaryStore<TMain, T>.currentSlotCapacity);
 	}
-#if NET8_0_OR_GREATER
-	/// <summary>
-	/// Maximum capacity.
-	/// </summary>
-	public static Int32 MaxCapacity
-	{
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get => ((BinaryStore<TMain, T>.initial.Length + 1) << BinaryStore<TMain, T>.initial.SlotCount) - 1;
-	}
-#endif
 
 	/// <summary>
 	/// Static constructor.
