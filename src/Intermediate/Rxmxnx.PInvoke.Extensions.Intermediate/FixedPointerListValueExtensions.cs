@@ -1971,7 +1971,7 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span4">5th span.</param>
 	/// <param name="span5">6th span.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TAction, T0, T1, T2, T3, T4, T5>(this ref TAction action, Span<T0> span0,
+	public static void WithReferenceSafeFixed<TAction, T0, T1, T2, T3, T4, T5>(this ref TAction action, Span<T0> span0,
 		Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5)
 #if !NET9_0_OR_GREATER
 		where TAction : struct, IFixedPointerListAction

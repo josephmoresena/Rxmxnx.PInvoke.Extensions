@@ -315,7 +315,7 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 	/// <param name="value">An <see cref="FixedPointerValue"/> to explicitly convert.</param>
 	public static explicit operator ReadOnlyFixedContextValue<T>(FixedPointerValue value)
 	{
-		value.ValidateOperation();
+		value.ValidateOperation(true);
 		value.ValidateTransformation(typeof(T), !RuntimeHelpers.IsReferenceOrContainsReferences<T>());
 		return new(value);
 	}

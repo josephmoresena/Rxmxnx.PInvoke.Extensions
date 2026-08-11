@@ -117,9 +117,9 @@ public readonly ref struct FixedPointerValue
 	public Boolean TryGetReadOnlyObjectContext(out ReadOnlyFixedContextValue<Object> objectContext)
 	{
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
-		if (!this.IsUnmanaged && this.Type is { IsValueType: true, })
+		if (!this.IsUnmanaged && this.Type is { IsValueType: false, })
 #else
-		if (!this.IsUnmanaged && this.Type?.GetTypeInfo() is { IsValueType: true, })
+		if (!this.IsUnmanaged && this.Type?.GetTypeInfo() is { IsValueType: false, })
 #endif
 		{
 			objectContext = new(this);
@@ -159,9 +159,9 @@ public readonly ref struct FixedPointerValue
 	public Boolean TryGetObjectContext(out FixedContextValue<Object> objectContext)
 	{
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
-		if (!this.IsReadOnly && !this.IsUnmanaged && this.Type is { IsValueType: true, })
+		if (!this.IsReadOnly && !this.IsUnmanaged && this.Type is { IsValueType: false, })
 #else
-		if (!this.IsReadOnly && this.IsUnmanaged && this.Type?.GetTypeInfo() is { IsValueType: true, })
+		if (!this.IsReadOnly && this.IsUnmanaged && this.Type?.GetTypeInfo() is { IsValueType: false, })
 #endif
 		{
 			objectContext = new(this);
