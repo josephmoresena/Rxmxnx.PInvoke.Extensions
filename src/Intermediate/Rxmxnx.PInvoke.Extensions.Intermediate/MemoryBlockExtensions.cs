@@ -240,7 +240,11 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <returns>A binary span.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<Byte> AsBytes<TSource>(this Span<TSource> span) where TSource : unmanaged
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		=> MemoryMarshal.AsBytes(span);
+#else
+		=> MemoryMarshalCompat.Cast<TSource, Byte>(span);
+#endif
 	/// <summary>
 	/// Reinterprets the read-only span of <typeparamref name="TSource"/> as a read-only binary span.
 	/// </summary>
@@ -249,7 +253,11 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <returns>A binary span.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ReadOnlySpan<Byte> AsBytes<TSource>(this ReadOnlySpan<TSource> span) where TSource : unmanaged
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		=> MemoryMarshal.AsBytes(span);
+#else
+		=> MemoryMarshalCompat.Cast<TSource, Byte>(span);
+#endif
 
 	/// <summary>
 	/// Reinterprets the span of <typeparamref name="TSource"/> as a span of <typeparamref name="TDestination"/>.
@@ -261,7 +269,11 @@ public static unsafe partial class MemoryBlockExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<TDestination> AsValues<TSource, TDestination>(this Span<TSource> span)
 		where TSource : unmanaged where TDestination : unmanaged
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		=> MemoryMarshal.Cast<TSource, TDestination>(span);
+#else
+		=> MemoryMarshalCompat.Cast<TSource, TDestination>(span);
+#endif
 	/// <summary>
 	/// Reinterprets the read-only span of <typeparamref name="TSource"/> as a read-only span of
 	/// <typeparamref name="TDestination"/>.
@@ -273,7 +285,11 @@ public static unsafe partial class MemoryBlockExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ReadOnlySpan<TDestination> AsValues<TSource, TDestination>(this ReadOnlySpan<TSource> span)
 		where TSource : unmanaged where TDestination : unmanaged
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		=> MemoryMarshal.Cast<TSource, TDestination>(span);
+#else
+		=> MemoryMarshalCompat.Cast<TSource, TDestination>(span);
+#endif
 	/// <summary>
 	/// Reinterprets the span of <typeparamref name="TSource"/> as a span of <typeparamref name="TDestination"/>.
 	/// </summary>
@@ -289,9 +305,17 @@ public static unsafe partial class MemoryBlockExtensions
 	public static Span<TDestination> AsValues<TSource, TDestination>(this Span<TSource> span, out Span<Byte> residual)
 		where TSource : unmanaged where TDestination : unmanaged
 	{
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<TDestination> result = MemoryMarshal.Cast<TSource, TDestination>(span);
+#else
+		Span<TDestination> result = MemoryMarshalCompat.Cast<TSource, TDestination>(span);
+#endif
 		Int32 offset = result.Length * sizeof(TDestination) / sizeof(TSource);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		residual = MemoryMarshal.AsBytes(span[offset..]);
+#else
+		residual = MemoryMarshalCompat.Cast<TSource, Byte>(span[offset..]);
+#endif
 		return result;
 	}
 	/// <summary>
@@ -309,9 +333,17 @@ public static unsafe partial class MemoryBlockExtensions
 	public static ReadOnlySpan<TDestination> AsValues<TSource, TDestination>(this Span<TSource> span,
 		out ReadOnlySpan<Byte> residual) where TSource : unmanaged where TDestination : unmanaged
 	{
-		ReadOnlySpan<TDestination> result = MemoryMarshal.Cast<TSource, TDestination>(span);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+		Span<TDestination> result = MemoryMarshal.Cast<TSource, TDestination>(span);
+#else
+		Span<TDestination> result = MemoryMarshalCompat.Cast<TSource, TDestination>(span);
+#endif
 		Int32 offset = result.Length * sizeof(TDestination) / sizeof(TSource);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		residual = MemoryMarshal.AsBytes(span[offset..]);
+#else
+		residual = MemoryMarshalCompat.Cast<TSource, Byte>(span[offset..]);
+#endif
 		return result;
 	}
 	/// <summary>
@@ -330,9 +362,17 @@ public static unsafe partial class MemoryBlockExtensions
 	public static ReadOnlySpan<TDestination> AsValues<TSource, TDestination>(this ReadOnlySpan<TSource> span,
 		out ReadOnlySpan<Byte> residual) where TSource : unmanaged where TDestination : unmanaged
 	{
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ReadOnlySpan<TDestination> result = MemoryMarshal.Cast<TSource, TDestination>(span);
+#else
+		ReadOnlySpan<TDestination> result = MemoryMarshalCompat.Cast<TSource, TDestination>(span);
+#endif
 		Int32 offset = result.Length * sizeof(TDestination) / sizeof(TSource);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		residual = MemoryMarshal.AsBytes(span[offset..]);
+#else
+		residual = MemoryMarshalCompat.Cast<TSource, Byte>(span[offset..]);
+#endif
 		return result;
 	}
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER

@@ -201,10 +201,7 @@ public static unsafe partial class NativeUtilities
 		return result;
 #else
 		fixed (TSource* valuePtr = &value)
-		{
-			ReadOnlySpan<TSource> intermediateSpan = new(valuePtr, 1);
-			return MemoryMarshal.AsBytes(intermediateSpan).ToArray();
-		}
+			return new ReadOnlySpan<Byte>(valuePtr, sizeof(TSource)).ToArray();
 #endif
 	}
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER

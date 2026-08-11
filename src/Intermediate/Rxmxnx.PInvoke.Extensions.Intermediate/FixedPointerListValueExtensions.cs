@@ -58,6 +58,10 @@ using B7 = Rxmxnx.PInvoke.NativeUtilities.B7;
 using B8 = Rxmxnx.PInvoke.NativeUtilities.B8;
 #endif
 
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
@@ -98,7 +102,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B2 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 #endif
@@ -144,7 +153,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B2 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 #endif
@@ -188,7 +202,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B2 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 #endif
@@ -233,7 +252,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B2 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 #endif
@@ -284,7 +308,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B2 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 #endif
@@ -335,7 +364,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B2 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 #endif
@@ -381,7 +415,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B2 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 #endif
@@ -427,7 +466,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B2 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 #endif
@@ -476,7 +520,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B3 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -527,7 +576,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B3 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -577,7 +631,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B3 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -627,7 +686,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B3 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -683,7 +747,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B3 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -739,7 +808,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B3 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -790,7 +864,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B3 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -841,7 +920,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B3 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -895,7 +979,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B4 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -951,7 +1040,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B4 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -1006,7 +1100,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B4 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -1061,7 +1160,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B4 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -1122,7 +1226,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B4 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -1183,7 +1292,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B4 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -1239,7 +1353,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B4 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -1296,7 +1415,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B4 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -1355,7 +1479,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B5 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -1416,7 +1545,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B5 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -1476,7 +1610,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B5 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -1537,7 +1676,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B5 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -1603,7 +1747,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B5 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -1670,7 +1819,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B5 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -1731,7 +1885,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B5 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -1793,7 +1952,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B5 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -1857,7 +2021,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B6 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -1924,7 +2093,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B6 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -1989,7 +2163,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B6 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -2055,7 +2234,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B6 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -2126,7 +2310,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B6 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -2198,7 +2387,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B6 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -2265,7 +2459,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B6 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -2332,7 +2531,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B6 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -2402,7 +2606,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B7 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -2474,7 +2683,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B7 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -2544,7 +2758,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B7 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -2615,7 +2834,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B7 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -2692,7 +2916,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B7 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -2769,7 +2998,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B7 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -2841,7 +3075,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B7 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -2913,7 +3152,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B7 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -2987,7 +3231,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B8 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -3064,7 +3313,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B8 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -3140,7 +3394,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B8 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -3216,7 +3475,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B8 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -3298,7 +3562,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B8 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -3381,7 +3650,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B8 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -3458,7 +3732,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B8 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);
@@ -3536,7 +3815,12 @@ public static unsafe partial class FixedPointerListValueExtensions
 #if !NET5_0_OR_GREATER
 			B8 bufferType = new();
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+			Byte* bytePtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+			Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, types.Length);
+#endif
 			info[0] = span0.CreateFixedPointerInfo(ptr0, out types[0]);
 			info[1] = span1.CreateFixedPointerInfo(ptr1, out types[1]);
 			info[2] = span2.CreateFixedPointerInfo(ptr2, out types[2]);

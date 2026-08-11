@@ -32,7 +32,7 @@ internal static class RuntimeHelpersCompat
 	/// </returns>
 	private static Boolean IsReferenceOrContainsReferences(Type type)
 	{
-		if (type.GetTypeInfo().IsPrimitive)
+		if (type.GetTypeInfo().IsPrimitive || type.GetTypeInfo().IsPointer)
 			return false;
 		if (!type.GetTypeInfo().IsValueType)
 			return true;

@@ -3,6 +3,7 @@
 #if !NET6_0_OR_GREATER
 using ArgumentNullExceptionCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif
+
 #if !NETSTANDARD2_0_OR_GREATER && !NETCOREAPP && !NETFRAMEWORK && !UAP10_0_16299
 using InsufficientMemoryException = System.OutOfMemoryException;
 #endif
@@ -19,7 +20,7 @@ namespace Rxmxnx.PInvoke;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 public static unsafe partial class BinaryExtensions
 #else
 public static unsafe class BinaryExtensions
@@ -64,7 +65,7 @@ public static unsafe class BinaryExtensions
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<Byte> resultBytes = MemoryMarshal.CreateSpan(ref Unsafe.As<T, Byte>(ref result), span.Length);
 #else
-		Span<Byte> resultBytes = new(Unsafe.AsPointer(ref result), span.Length);
+		Span<Byte> resultBytes = new(&result, span.Length);
 #endif
 		span.CopyTo(resultBytes);
 		return result;
@@ -85,7 +86,7 @@ public static unsafe class BinaryExtensions
 	public static ref readonly T AsValue<T>(this ReadOnlySpan<Byte> span) where T : unmanaged
 	{
 		ValidationUtilities.ThrowIfInvalidBinarySpanSize(span, sizeof(T));
-		return ref MemoryMarshal.Cast<Byte, T>(span)[0];
+		return ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(span));
 	}
 	/// <summary>
 	/// Retrieves a reference to a <typeparamref name="T"/> value from the given byte span.
@@ -103,7 +104,7 @@ public static unsafe class BinaryExtensions
 	public static ref T AsValue<T>(this Span<Byte> span) where T : unmanaged
 	{
 		ValidationUtilities.ThrowIfInvalidBinarySpanSize(span, sizeof(T));
-		return ref MemoryMarshal.Cast<Byte, T>(span)[0];
+		return ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(span));
 	}
 
 	/// <summary>
