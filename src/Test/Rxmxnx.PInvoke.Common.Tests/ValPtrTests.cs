@@ -167,6 +167,7 @@ public sealed class ValPtrTests
 		PInvokeAssert.False(valPtr != incValue);
 
 		ValPtrTests.ContextValueTest(valPtr, span);
+		ValPtrTests.NestedContextValueTest(valPtr);
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		ValPtrTests.ContextTest(valPtr, span);
 #endif
@@ -208,6 +209,22 @@ public sealed class ValPtrTests
 		Span<T> span2 = ctx.Values;
 		for (Int32 i = 0; i < span.Length; i++)
 			PInvokeAssert.True(Unsafe.AreSame(ref span[i], ref span2[i]));
+	}
+	private static unsafe void NestedContextValueTest<T>(ValPtr<T> valPtr)
+	{
+		Byte* bytePtr = stackalloc Byte[10];
+		using IDisposable disposable =
+			new ValPtr<Byte>(bytePtr).GetUnsafeFixedContext(10, out FixedContextValue<Byte> bCtx);
+		using (IDisposable disposable2 = valPtr.GetUnsafeFixedContext(1, disposable, out _))
+		{
+			PInvokeAssert.Same(disposable, disposable2);
+		}
+		ref FixedContextValue<Byte> bCtxRef = ref bCtx;
+		fixed (void* ptr = &bCtxRef)
+		{
+			IntPtr cCtxPtr = new(ptr);
+			PInvokeAssert.Throws<InvalidOperationException>(() => ((FixedContextValue<Byte>*)cCtxPtr)[0].Values.Length);
+		}
 	}
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]

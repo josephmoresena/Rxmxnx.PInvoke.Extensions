@@ -54,7 +54,17 @@ public sealed class BasicTests : ValueRegionTestBase
 	public void TimeSpanTest() => BasicTests.Test<TimeSpan>();
 
 	[Fact]
-	public void StringTest() => BasicTests.Test<String>();
+	public void StringTest()
+#if !NETCOREAPP
+		=> BasicTests.Test<String>();
+#else
+	{
+		BasicTests.Test<String>();
+		ValueRegion<String> region =
+			ValueRegion<String>.Create(ValueRegionTestBase.Fixture.CreateMany<String>(10).ToArray());
+		Assert.False(region.TryAlloc(GCHandleType.Pinned, out _));
+	}
+#endif
 
 	private static void Test<T>()
 	{

@@ -3,6 +3,9 @@ namespace Rxmxnx.PInvoke.Internal;
 /// <summary>
 /// Internal storage for array data offset.
 /// </summary>
+#if !PACKAGE && NET5_0_OR_GREATER
+[ExcludeFromCodeCoverage]
+#endif
 [StructLayout(LayoutKind.Sequential)]
 internal struct ArrayOffsets
 {

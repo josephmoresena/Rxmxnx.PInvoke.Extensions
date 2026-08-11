@@ -54,6 +54,9 @@ internal sealed unsafe class RentedMemoryOwner<T> : FixedValueHandle
 	/// <summary>
 	/// Releases the rented array allocation.
 	/// </summary>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	private void Release()
 	{
 		if (this._array is not { } array) return;

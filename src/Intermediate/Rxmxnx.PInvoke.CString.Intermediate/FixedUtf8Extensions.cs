@@ -128,6 +128,30 @@ public static unsafe class FixedUtf8Extensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current UTF-8 string by pinning its memory
+	/// address until the specified action has completed.
+	/// </summary>
+	/// <typeparam name="TAction">Type of <see cref="IReadOnlyFixedContextAction{T}"/>.</typeparam>
+	/// <param name="cstr">The <see cref="CString"/> instance to pin during the action.</param>
+	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void WithSafeFixed<TAction>(this CString? cstr, ref TAction action)
+#if !NET9_0_OR_GREATER
+		where TAction : struct, IReadOnlyFixedContextAction<Byte>
+#else
+		where TAction : struct, IReadOnlyFixedContextAction<Byte>, allows ref struct
+#endif
+	{
+		if (cstr is not null)
+			fixed (void* ptr = cstr)
+				action.Accept(new(ptr, cstr.Length));
+		else
+			action.Accept(default);
+	}
+	/// <summary>
+	/// Prevents the garbage collector from relocating the current UTF-8 string by pinning its memory
 	/// address until the specified function has completed.
 	/// </summary>
 	/// <typeparam name="TResult">The type of the value returned by the function <paramref name="func"/>.</typeparam>
@@ -153,24 +177,29 @@ public static unsafe class FixedUtf8Extensions
 	}
 	/// <summary>
 	/// Prevents the garbage collector from relocating the current UTF-8 string by pinning its memory
-	/// address until the specified action has completed.
+	/// address until the specified function has completed.
 	/// </summary>
-	/// <typeparam name="TAction">Type of <see cref="IReadOnlyFixedContextAction{T}"/>.</typeparam>
-	/// <param name="cstr">The <see cref="CString"/> instance to pin during the action.</param>
-	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+	/// <typeparam name="TResult">The type of the value returned by the function <paramref name="func"/>.</typeparam>
+	/// <typeparam name="TFunction">Type of <see cref="IFixedContextFunction{T,TResult}"/>.</typeparam>
+	/// <param name="cstr">The <see cref="CString"/> instance to pin during the function.</param>
+	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
+	/// <param name="result">Output. Function result.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<TAction>(this CString? cstr, ref TAction action)
+	public static void WithSafeFixed<TResult, TFunction>(this CString? cstr, ref TFunction func, out TResult result)
 #if !NET9_0_OR_GREATER
-		where TAction : struct, IReadOnlyFixedContextAction<Byte>
+		where TFunction : struct, IReadOnlyFixedContextFunction<Byte, TResult>
 #else
-		where TAction : struct, IReadOnlyFixedContextAction<Byte>, allows ref struct
+		where TFunction : struct, IReadOnlyFixedContextFunction<Byte, TResult>, allows ref struct
 #endif
 	{
 		if (cstr is not null)
 			fixed (void* ptr = cstr)
-				action.Accept(new(ptr, cstr.Length));
+				result = func.Apply(new(ptr, cstr.Length));
 		else
-			action.Accept(default);
+			result = func.Apply(default);
 	}
 	/// <summary>
 	/// Prevents the garbage collector from reallocating given <see cref="CStringSequence"/> elements and fixes their
@@ -210,6 +239,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <typeparam name="TAction">Type of <see cref="IFixedPointerListAction"/>.</typeparam>
 	/// <param name="seq">Current <see cref="CStringSequence"/> instance.</param>
 	/// <param name="action">A <see cref="IFixedPointerListAction"/> instance.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TAction>(this CStringSequence? seq, ref TAction action)
 #if !NET9_0_OR_GREATER
@@ -280,6 +312,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <param name="seq">Current <see cref="CStringSequence"/> instance.</param>
 	/// <param name="func">A <see cref="IFixedPointerListFunction{TResult}"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TFunction, TResult>(this CStringSequence? seq, ref TFunction func,
 		out TResult result)

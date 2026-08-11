@@ -76,6 +76,9 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 
 	IntPtr IWrapper<IntPtr>.Value => this.Pointer;
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	IntPtr IWrapper.IBase<IntPtr>.Value => this.Pointer;
 #endif
 

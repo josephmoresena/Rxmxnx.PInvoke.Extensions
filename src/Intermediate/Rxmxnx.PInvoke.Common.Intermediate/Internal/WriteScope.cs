@@ -27,6 +27,9 @@ internal struct WriteScope : IDisposable
 	}
 
 	/// <inheritdoc/>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void Dispose()
 	{
