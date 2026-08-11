@@ -55,6 +55,9 @@ public readonly ref struct FixedMemoryList
 	/// <exception cref="IndexOutOfRangeException">
 	/// Thrown when the <paramref name="index"/> is out of the range of the list elements.
 	/// </exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public FixedPointerValueList.ItemValue GetItemValue(Int32 index) => this._values[index];
 
 	/// <summary>
@@ -99,6 +102,9 @@ public readonly ref struct FixedMemoryList
 	/// Converts a <see cref="FixedMemoryList"/> to a <see cref="FixedPointerValueList"/>.
 	/// </summary>
 	/// <param name="memoryList">The <see cref="FixedMemoryList"/> to convert.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public static implicit operator FixedPointerValueList(FixedMemoryList memoryList) => memoryList._values;
 
 	/// <summary>

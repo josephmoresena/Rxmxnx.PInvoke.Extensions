@@ -61,6 +61,9 @@ public interface IReadOnlyFixedMemory<T> : IReadOnlyFixedMemory
 	/// <summary>
 	/// Gets the value pointer to the read-only fixed block of memory.
 	/// </summary>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	ReadOnlyValPtr<T> ValuePointer => (ReadOnlyValPtr<T>)this.Pointer;
 	/// <summary>
 	/// Gets a read-only <typeparamref name="T"/> span over the fixed block of memory.

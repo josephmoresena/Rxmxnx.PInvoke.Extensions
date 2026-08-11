@@ -18,6 +18,9 @@ public static unsafe class FixedUtf8Extensions
 	/// </summary>
 	/// <param name="value">A <see cref="String"/> instance.</param>
 	/// <returns>The number of UTF-8 units produced by encoding the specified <see cref="String"/>.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Int32 GetUtf8Count(this String? value)
 		=> !String.IsNullOrEmpty(value) ? value.AsSpan().GetUtf8Count() : default;
@@ -58,6 +61,9 @@ public static unsafe class FixedUtf8Extensions
 	/// </summary>
 	/// <param name="source">A read-only span of <see cref="byte"/> elements representing a UTF-8 encoded text.</param>
 	/// <returns>The number of characters produced by decoding the UTF-8 encoded text.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Int32 GetCharCountFromUtf8(ReadOnlySpan<Byte> source)
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
@@ -306,6 +312,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <param name="source">A <see cref="CStringSequence"/> instance.</param>
 	/// <param name="span">Destination span.</param>
 	/// <returns>Initialized <see cref="FixedPointerInfo"/> read-only span.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static ReadOnlySpan<FixedPointerInfo> InitializeInfo(CStringSequence source, Span<FixedPointerInfo> span)
 	{

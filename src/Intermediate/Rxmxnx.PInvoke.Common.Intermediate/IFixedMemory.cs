@@ -50,6 +50,9 @@ public interface IFixedMemory<T> : IFixedMemory, IReadOnlyFixedMemory<T>
 	/// <summary>
 	/// Gets the value pointer to the fixed block of memory.
 	/// </summary>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	new ValPtr<T> ValuePointer => (ValPtr<T>)this.Pointer;
 	/// <summary>
 	/// Gets a <typeparamref name="T"/> span over the fixed block of memory.

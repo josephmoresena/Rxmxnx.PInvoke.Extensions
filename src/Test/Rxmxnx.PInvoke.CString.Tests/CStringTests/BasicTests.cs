@@ -344,7 +344,7 @@ public sealed class BasicTests
 	}
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	[Fact]
-	public void GetHashCodeTest(Int32? length)
+	public void GetHashCodeTest()
 	{
 		using IEnumerator<String> strEnumerator = TestSet.Utf16Text.GetEnumerator();
 		using IEnumerator<ReadOnlySpanFunc<Byte>> utfEnumerator = TestSet.Utf8Text.GetEnumerator();

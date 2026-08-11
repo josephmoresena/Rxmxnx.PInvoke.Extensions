@@ -111,6 +111,9 @@ public readonly unsafe ref struct FixedCStringSequence
 	/// Implicitly converts a <see cref="FixedCStringSequence"/> to a <see cref="FixedPointerInfo"/>.
 	/// </summary>
 	/// <param name="fseq">A <see cref="FixedCStringSequence"/> instance.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public static implicit operator FixedPointerValueList(FixedCStringSequence fseq)
 	{
 		FixedPointerInfo[] info = new FixedPointerInfo[fseq.Values.Count];
