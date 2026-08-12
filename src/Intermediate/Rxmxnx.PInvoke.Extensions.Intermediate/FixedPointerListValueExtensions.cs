@@ -188,6 +188,9 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="action">A <see cref="IFixedPointerListAction"/> instance.</param>
 	/// <param name="span0">1st span.</param>
 	/// <param name="span1">2nd span.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TAction, T0, T1>(this ref TAction action, Span<T0> span0, Span<T1> span1)
 #if !NET9_0_OR_GREATER
@@ -237,6 +240,9 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="action">A <see cref="IFixedPointerListAction"/> instance.</param>
 	/// <param name="span0">1st read-only span.</param>
 	/// <param name="span1">2nd read-only span.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TAction, T0, T1>(this ref TAction action, ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1)
@@ -289,6 +295,7 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span0">1st span.</param>
 	/// <param name="span1">2nd span.</param>
 	/// <param name="result">Output. Function result.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TFunction, TResult, T0, T1>(this TFunction? func, Span<T0> span0, Span<T1> span1,
 		out TResult result)
 #if !NET9_0_OR_GREATER
@@ -345,6 +352,7 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span0">1st read-only span.</param>
 	/// <param name="span1">2nd read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TFunction, TResult, T0, T1>(this TFunction? func, ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -401,6 +409,10 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span0">1st span.</param>
 	/// <param name="span1">2nd span.</param>
 	/// <param name="result">Output. Function result.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TFunction, TResult, T0, T1>(this ref TFunction func, Span<T0> span0,
 		Span<T1> span1, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -452,6 +464,10 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span0">1st read-only span.</param>
 	/// <param name="span1">2nd read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TFunction, TResult, T0, T1>(this ref TFunction func,
 		ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -615,6 +631,9 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span0">1st span.</param>
 	/// <param name="span1">2nd span.</param>
 	/// <param name="span2">3rd span.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TAction, T0, T1, T2>(this ref TAction action, Span<T0> span0,
 		Span<T1> span1, Span<T2> span2)
@@ -670,6 +689,9 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span0">1st read-only span.</param>
 	/// <param name="span1">2nd read-only span.</param>
 	/// <param name="span2">3rd read-only span.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TAction, T0, T1, T2>(this ref TAction action, ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2)
@@ -727,6 +749,7 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span1">2nd span.</param>
 	/// <param name="span2">3rd span.</param>
 	/// <param name="result">Output. Function result.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2>(this TFunction? func, Span<T0> span0,
 		Span<T1> span1, Span<T2> span2, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -788,6 +811,7 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span1">2nd read-only span.</param>
 	/// <param name="span2">3rd read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2>(this TFunction? func, ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -849,6 +873,10 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span1">2nd span.</param>
 	/// <param name="span2">3rd span.</param>
 	/// <param name="result">Output. Function result.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TFunction, TResult, T0, T1, T2>(this ref TFunction func, Span<T0> span0,
 		Span<T1> span1, Span<T2> span2, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -905,6 +933,10 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span1">2nd read-only span.</param>
 	/// <param name="span2">3rd read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TFunction, TResult, T0, T1, T2>(this ref TFunction func,
 		ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -1083,6 +1115,9 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span1">2nd span.</param>
 	/// <param name="span2">3rd span.</param>
 	/// <param name="span3">4th span.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TAction, T0, T1, T2, T3>(this ref TAction action, Span<T0> span0,
 		Span<T1> span1, Span<T2> span2, Span<T3> span3)
@@ -1143,6 +1178,9 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span1">2nd read-only span.</param>
 	/// <param name="span2">3rd read-only span.</param>
 	/// <param name="span3">4th read-only span.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TAction, T0, T1, T2, T3>(this ref TAction action, ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3)
@@ -1205,6 +1243,7 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span2">3rd span.</param>
 	/// <param name="span3">4th span.</param>
 	/// <param name="result">Output. Function result.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3>(this TFunction? func, Span<T0> span0,
 		Span<T1> span1, Span<T2> span2, Span<T3> span3, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -1271,6 +1310,7 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span2">3rd read-only span.</param>
 	/// <param name="span3">4th read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3>(this TFunction? func, ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -1337,6 +1377,10 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span2">3rd span.</param>
 	/// <param name="span3">4th span.</param>
 	/// <param name="result">Output. Function result.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TFunction, TResult, T0, T1, T2, T3>(this ref TFunction func,
 		Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -1398,6 +1442,10 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span2">3rd read-only span.</param>
 	/// <param name="span3">4th read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TFunction, TResult, T0, T1, T2, T3>(this ref TFunction func,
 		ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3,
 		out TResult result)
@@ -1592,6 +1640,9 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span2">3rd span.</param>
 	/// <param name="span3">4th span.</param>
 	/// <param name="span4">5th span.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TAction, T0, T1, T2, T3, T4>(this ref TAction action, Span<T0> span0,
 		Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4)
@@ -1657,6 +1708,9 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span2">3rd read-only span.</param>
 	/// <param name="span3">4th read-only span.</param>
 	/// <param name="span4">5th read-only span.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TAction, T0, T1, T2, T3, T4>(this ref TAction action,
 		ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3,
@@ -1725,6 +1779,7 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span3">4th span.</param>
 	/// <param name="span4">5th span.</param>
 	/// <param name="result">Output. Function result.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4>(this TFunction? func, Span<T0> span0,
 		Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -1796,6 +1851,7 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span3">4th read-only span.</param>
 	/// <param name="span4">5th read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4>(this TFunction? func,
 		ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3,
 		ReadOnlySpan<T4> span4, out TResult result)
@@ -1868,6 +1924,10 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span3">4th span.</param>
 	/// <param name="span4">5th span.</param>
 	/// <param name="result">Output. Function result.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4>(this ref TFunction func,
 		Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -1934,6 +1994,10 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span3">4th read-only span.</param>
 	/// <param name="span4">5th read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4>(this ref TFunction func,
 		ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3,
 		ReadOnlySpan<T4> span4, out TResult result)
@@ -2144,6 +2208,9 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span3">4th span.</param>
 	/// <param name="span4">5th span.</param>
 	/// <param name="span5">6th span.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TAction, T0, T1, T2, T3, T4, T5>(this ref TAction action, Span<T0> span0,
 		Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5)
@@ -2214,6 +2281,9 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span3">4th read-only span.</param>
 	/// <param name="span4">5th read-only span.</param>
 	/// <param name="span5">6th read-only span.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TAction, T0, T1, T2, T3, T4, T5>(this ref TAction action,
 		ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3,
@@ -2287,6 +2357,7 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span4">5th span.</param>
 	/// <param name="span5">6th span.</param>
 	/// <param name="result">Output. Function result.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5>(this TFunction? func, Span<T0> span0,
 		Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -2363,6 +2434,7 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span4">5th read-only span.</param>
 	/// <param name="span5">6th read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5>(this TFunction? func,
 		ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3,
 		ReadOnlySpan<T4> span4, ReadOnlySpan<T5> span5, out TResult result)
@@ -2440,6 +2512,10 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span4">5th span.</param>
 	/// <param name="span5">6th span.</param>
 	/// <param name="result">Output. Function result.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5>(this ref TFunction func,
 		Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5,
 		out TResult result)
@@ -2512,6 +2588,10 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span4">5th read-only span.</param>
 	/// <param name="span5">6th read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5>(this ref TFunction func,
 		ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3,
 		ReadOnlySpan<T4> span4, ReadOnlySpan<T5> span5, out TResult result)
@@ -2738,6 +2818,9 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span4">5th span.</param>
 	/// <param name="span5">6th span.</param>
 	/// <param name="span6">7th span.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TAction, T0, T1, T2, T3, T4, T5, T6>(this ref TAction action,
 		Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6)
@@ -2813,6 +2896,9 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span4">5th read-only span.</param>
 	/// <param name="span5">6th read-only span.</param>
 	/// <param name="span6">7th read-only span.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TAction, T0, T1, T2, T3, T4, T5, T6>(this ref TAction action,
 		ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3,
@@ -2891,6 +2977,7 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span5">6th span.</param>
 	/// <param name="span6">7th span.</param>
 	/// <param name="result">Output. Function result.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5, T6>(this TFunction? func,
 		Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6,
 		out TResult result)
@@ -2973,6 +3060,7 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span5">6th read-only span.</param>
 	/// <param name="span6">7th read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5, T6>(this TFunction? func,
 		ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3,
 		ReadOnlySpan<T4> span4, ReadOnlySpan<T5> span5, ReadOnlySpan<T6> span6, out TResult result)
@@ -3055,6 +3143,10 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span5">6th span.</param>
 	/// <param name="span6">7th span.</param>
 	/// <param name="result">Output. Function result.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5, T6>(this ref TFunction func,
 		Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6,
 		out TResult result)
@@ -3132,6 +3224,10 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span5">6th read-only span.</param>
 	/// <param name="span6">7th read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5, T6>(this ref TFunction func,
 		ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3,
 		ReadOnlySpan<T4> span4, ReadOnlySpan<T5> span5, ReadOnlySpan<T6> span6, out TResult result)
@@ -3372,6 +3468,9 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span5">6th span.</param>
 	/// <param name="span6">7th span.</param>
 	/// <param name="span7">8th span.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TAction, T0, T1, T2, T3, T4, T5, T6, T7>(this ref TAction action,
 		Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6,
@@ -3453,6 +3552,9 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span5">6th read-only span.</param>
 	/// <param name="span6">7th read-only span.</param>
 	/// <param name="span7">8th read-only span.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TAction, T0, T1, T2, T3, T4, T5, T6, T7>(this ref TAction action,
 		ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3,
@@ -3536,6 +3638,7 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span6">7th span.</param>
 	/// <param name="span7">8th span.</param>
 	/// <param name="result">Output. Function result.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5, T6, T7>(this TFunction? func,
 		Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6,
 		Span<T7> span7, out TResult result)
@@ -3623,6 +3726,7 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span6">7th read-only span.</param>
 	/// <param name="span7">8th read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5, T6, T7>(this TFunction? func,
 		ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3,
 		ReadOnlySpan<T4> span4, ReadOnlySpan<T5> span5, ReadOnlySpan<T6> span6, ReadOnlySpan<T7> span7,
@@ -3711,6 +3815,10 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span6">7th span.</param>
 	/// <param name="span7">8th span.</param>
 	/// <param name="result">Output. Function result.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5, T6, T7>(
 		this ref TFunction func, Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4,
 		Span<T5> span5, Span<T6> span6, Span<T7> span7, out TResult result)
@@ -3793,6 +3901,10 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span6">7th read-only span.</param>
 	/// <param name="span7">8th read-only span.</param>
 	/// <param name="result">Output. Function result.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithReferenceSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5, T6, T7>(
 		this ref TFunction func, ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2,
 		ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4, ReadOnlySpan<T5> span5, ReadOnlySpan<T6> span6,

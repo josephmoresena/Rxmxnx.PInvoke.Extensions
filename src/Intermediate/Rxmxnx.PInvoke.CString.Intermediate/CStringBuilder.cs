@@ -153,6 +153,9 @@ public sealed partial class CStringBuilder
 		=> new Concurrent(this.GetLock(), this).Remove(startIndex, length);
 	/// <inheritdoc cref="CStringBuilder.CopyTo(Int32, Span{Byte})"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public Int32 ConcurrentCopyTo(Int32 index, Span<Byte> destination)
 		=> new Concurrent(this.GetLock(), this).CopyTo(index, destination);
 	/// <inheritdoc cref="CStringBuilder.ToCString()"/>
@@ -160,10 +163,16 @@ public sealed partial class CStringBuilder
 	public CString ConcurrentToCString() => new Concurrent(this.GetLock(), this).ToCString(true);
 	/// <inheritdoc cref="CStringBuilder.ToCString(Boolean)"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public CString ConcurrentToCString(Boolean nullTerminated)
 		=> new Concurrent(this.GetLock(), this).ToCString(nullTerminated);
 	/// <inheritdoc cref="CStringBuilder.ToString()"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public String ConcurrentToString() => new Concurrent(this.GetLock(), this).ToCString(false).ToString();
 
 	/// <summary>
