@@ -1,4 +1,4 @@
-#if (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER) && OBSOLETE_FIXED_INTERFACES
+#if (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER) && (OBSOLETE_FIXED_INTERFACES || OBSOLTE_DELEGATES)
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
@@ -37,7 +37,7 @@ internal static class ObsoleteConstants
 	/// <summary>
 	/// Error for obsolete delegates.
 	/// </summary>
-#if !PACKAGE
+#if !PACKAGE || OBSOLETE_FIXED_INTERFACES
 	public const Boolean ErrorDelegate = true;
 #else
 	public const Boolean ErrorDelegate = false;
