@@ -215,11 +215,11 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 	}
 
 #if NET9_0_OR_GREATER
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
 #if OBSOLETE_FIXED_INTERFACES
 	[Obsolete]
+#endif
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
 #endif
 	IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext()
 	{
@@ -229,11 +229,11 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 		FixedValueHandle handle = FixedPointerValue.GetValidationObject(this);
 		return new ReadOnlyFixedContext<Byte>(this._value.Pointer.ToPointer(), this._value.Size, handle);
 	}
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
 #if OBSOLETE_FIXED_INTERFACES
 	[Obsolete]
+#endif
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
 #endif
 	IReadOnlyFixedContext<Object> IReadOnlyFixedMemory.AsObjectContext()
 	{
@@ -244,11 +244,11 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 		Int32 count = this._value.Size / IntPtr.Size;
 		return new ReadOnlyFixedContext<Object>(this._value.Pointer.ToPointer(), count, handle);
 	}
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
 #if OBSOLETE_FIXED_INTERFACES
 	[Obsolete]
+#endif
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
 #endif
 	IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)

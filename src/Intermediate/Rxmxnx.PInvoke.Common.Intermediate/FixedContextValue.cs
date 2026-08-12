@@ -226,11 +226,11 @@ public readonly unsafe ref struct FixedContextValue<T>
 #endif
 	ReadOnlyValPtr<T> IReadOnlyFixedMemory<T>.ValuePointer => this.ValuePointer;
 
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
 #if OBSOLETE_FIXED_INTERFACES
 	[Obsolete]
+#endif
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
 #endif
 	IFixedContext<Byte> IFixedMemory.AsBinaryContext()
 	{
@@ -240,18 +240,18 @@ public readonly unsafe ref struct FixedContextValue<T>
 		FixedValueHandle handle = FixedPointerValue.GetValidationObject(this);
 		return new FixedContext<Byte>(this._value.Pointer.ToPointer(), this._value.Size, handle);
 	}
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
 #if OBSOLETE_FIXED_INTERFACES
 	[Obsolete]
+#endif
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
 #endif
 	IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => IFixedContext<T>.AsBinaryContext(this);
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
 #if OBSOLETE_FIXED_INTERFACES
 	[Obsolete]
+#endif
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
 #endif
 	IFixedContext<Object> IFixedMemory.AsObjectContext()
 	{
@@ -262,18 +262,18 @@ public readonly unsafe ref struct FixedContextValue<T>
 		Int32 count = this._value.Size / IntPtr.Size;
 		return new FixedContext<Object>(this._value.Pointer.ToPointer(), count, handle);
 	}
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
 #if OBSOLETE_FIXED_INTERFACES
 	[Obsolete]
+#endif
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
 #endif
 	IReadOnlyFixedContext<Object> IReadOnlyFixedMemory.AsObjectContext() => IFixedContext<T>.AsObjectContext(this);
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
 #if OBSOLETE_FIXED_INTERFACES
 	[Obsolete]
+#endif
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
 #endif
 	IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IFixedMemory residual)
 	{
@@ -294,11 +294,11 @@ public readonly unsafe ref struct FixedContextValue<T>
 			new((this._value.Pointer + offset).ToPointer(), this._value.Size - offset, handle);
 		return new FixedContext<TDestination>(this._value.Pointer.ToPointer(), count, handle);
 	}
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
 #if OBSOLETE_FIXED_INTERFACES
 	[Obsolete]
+#endif
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
 #endif
 	IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 	{
@@ -306,11 +306,11 @@ public readonly unsafe ref struct FixedContextValue<T>
 		ref IFixedMemory refResidual = ref Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual);
 		return IFixedContext<T>.Transformation<FixedContextValue<T>, TDestination>(this, out refResidual);
 	}
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
 #if OBSOLETE_FIXED_INTERFACES
 	[Obsolete]
+#endif
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
 #endif
 	IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)

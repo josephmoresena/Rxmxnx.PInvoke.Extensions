@@ -168,6 +168,7 @@ public sealed class ValPtrTests
 
 		ValPtrTests.ContextValueTest(valPtr, span);
 		ValPtrTests.NestedContextValueTest(valPtr);
+		ValPtrTests.MultipleContextValueTest(valPtr);
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		ValPtrTests.ContextTest(valPtr, span);
 #endif
@@ -225,6 +226,11 @@ public sealed class ValPtrTests
 			IntPtr cCtxPtr = new(ptr);
 			PInvokeAssert.Throws<InvalidOperationException>(() => ((FixedContextValue<Byte>*)cCtxPtr)[0].Values.Length);
 		}
+	}
+	private static void MultipleContextValueTest<T>(ValPtr<T> valPtr)
+	{
+		Memory<Byte> value = new Byte[10];
+		using IDisposable disposable = valPtr.GetUnsafeFixedContext(1, value.Pin(), out _);
 	}
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]

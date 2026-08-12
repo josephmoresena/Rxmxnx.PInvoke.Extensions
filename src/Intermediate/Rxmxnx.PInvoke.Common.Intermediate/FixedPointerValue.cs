@@ -171,8 +171,14 @@ public readonly ref struct FixedPointerValue
 		return false;
 	}
 	/// <inheritdoc cref="Object.Equals(Object)"/>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public Boolean Equals(FixedPointerValue other) => this == other;
 	/// <inheritdoc/>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public override Boolean Equals(Object? obj)
 		=> obj switch
 		{
@@ -181,6 +187,9 @@ public readonly ref struct FixedPointerValue
 			_ => false,
 		};
 	/// <inheritdoc/>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public override Int32 GetHashCode()
 	{
 		HashCode result = new();
@@ -209,14 +218,6 @@ public readonly ref struct FixedPointerValue
 		ValidationUtilities.ThrowIfReadOnlyPointer(isReadOnly, this.IsReadOnly);
 	}
 	/// <summary>
-	/// Validates the size of the referenced value type from current instance.
-	/// </summary>
-	/// <param name="typeOf">CLR Type.</param>
-	/// <param name="sizeOf">Type size in bytes.</param>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal void ValidateReferenceSize(Type typeOf, Int32 sizeOf)
-		=> ValidationUtilities.ThrowIfInvalidRefTypePointer(this.Size, typeOf, sizeOf);
-	/// <summary>
 	/// Validates any transformation operation over the fixed memory block.
 	/// </summary>
 	/// <param name="type">Destination type.</param>
@@ -237,6 +238,9 @@ public readonly ref struct FixedPointerValue
 	/// <see langword="true"/> if <paramref name="value1"/> equals <paramref name="value2"/>;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Boolean operator ==(FixedPointerValue value1, FixedPointerValue value2)
 	{
 		if (value1.IsUnmanaged && !value2.IsUnmanaged) return false;
@@ -260,6 +264,9 @@ public readonly ref struct FixedPointerValue
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
 	/// <inheritdoc cref="IntPtr.op_Inequality(IntPtr, IntPtr)"/>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Boolean operator !=(FixedPointerValue value1, FixedPointerValue value2) => !(value1 == value2);
 
 	/// <summary>
@@ -291,6 +298,9 @@ public readonly ref struct FixedPointerValue
 	/// </summary>
 	/// <typeparam name="TPointer">Type of the <see cref="IFixedPointer"/>.</typeparam>
 	/// <returns>The <see cref="FixedValueHandle"/> instance for <see cref="FixedPointer"/> instances.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	internal static FixedValueHandle GetValidationObject<TPointer>(TPointer pointer)
 		where TPointer : struct, IFixedPointerOperators<TPointer>, allows ref struct
 	{

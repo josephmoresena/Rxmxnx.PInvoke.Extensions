@@ -99,6 +99,9 @@ internal unsafe class FixedValueHandle : IDisposable, IWrapper<Boolean>
 	/// <summary>
 	/// Empty disposable.
 	/// </summary>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	private sealed class Empty : IFixedPointer.IDisposable, IWrapper<Boolean>
 	{
 		/// <inheritdoc/>

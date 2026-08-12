@@ -37,10 +37,18 @@ internal static class ObsoleteConstants
 	/// <summary>
 	/// Error for obsolete delegates.
 	/// </summary>
+#if !PACKAGE
 	public const Boolean ErrorDelegate = true;
+#else
+	public const Boolean ErrorDelegate = false;
+#endif
 	/// <summary>
 	/// Error for obsolete fixed interfaces.
 	/// </summary>
+#if !PACKAGE
 	public const Boolean ErrorFixedInterface = true;
+#else
+	public const Boolean ErrorFixedInterface = false;
+#endif
 }
 #endif
