@@ -70,6 +70,16 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(values, span.WithSafeFixed(this, WithSafeFixedTest.FuncReadOnlyTest));
 		PInvokeAssert.Equal(values, readOnlySpan.WithSafeFixed(this, WithSafeFixedTest.ReadOnlyFuncReadOnlyTest));
 #endif
+		span.WithSafeFixed(new FixedAction<T>(this._array));
+		span.WithSafeFixed(new ReadOnlyFixedAction<T>(this._array));
+		readOnlySpan.WithSafeFixed(new ReadOnlyFixedAction<T>(this._array));
+
+		span.WithSafeFixed(new FixedFunction<T>(this._array), out Int32 sResult);
+		span.WithSafeFixed(new ReadOnlyFixedFunction<T>(this._array), out Int32 srResult);
+		readOnlySpan.WithSafeFixed(new ReadOnlyFixedFunction<T>(this._array), out Int32 rResult);
+
+		PInvokeAssert.Equal(sResult, srResult);
+		PInvokeAssert.Equal(rResult, srResult);
 	}
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
@@ -264,4 +274,33 @@ public sealed class WithSafeFixedTest
 		where T : unmanaged
 		=> test.ReadOnlyFuncReadOnlyTest(ctx);
 #endif
+	private readonly struct ReadOnlyFixedAction<T>(Array array) : IReadOnlyFixedContextAction<T>
+	{
+		public void Accept(scoped ReadOnlyFixedContextValue<T> ctx)
+		{
+			T[] arr = (T[])array;
+			PInvokeAssert.Equal(arr, ctx.Values.ToArray());
+			PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(arr.AsSpan()),
+			                                  ref MemoryMarshal.GetReference(ctx.Values)));
+		}
+	}
+
+	private readonly struct ReadOnlyFixedFunction<T>(Array array) : IReadOnlyFixedContextFunction<T, Int32>
+	{
+		public Int32 Apply(scoped ReadOnlyFixedContextValue<T> ctx)
+		{
+			new ReadOnlyFixedAction<T>(array).Accept(ctx);
+			return ctx.Bytes.Length;
+		}
+	}
+
+	private readonly struct FixedAction<T>(Array array) : IFixedContextAction<T>
+	{
+		public void Accept(scoped FixedContextValue<T> ctx) => new ReadOnlyFixedAction<T>(array).Accept(ctx);
+	}
+
+	private readonly struct FixedFunction<T>(Array array) : IFixedContextFunction<T, Int32>
+	{
+		public Int32 Apply(scoped FixedContextValue<T> ctx) => new ReadOnlyFixedFunction<T>(array).Apply(ctx);
+	}
 }
