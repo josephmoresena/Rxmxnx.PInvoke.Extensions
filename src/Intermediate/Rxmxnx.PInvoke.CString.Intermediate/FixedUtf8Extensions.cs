@@ -201,6 +201,7 @@ public static unsafe class FixedUtf8Extensions
 		else
 			result = func.Apply(default);
 	}
+#pragma warning disable CS8500
 	/// <summary>
 	/// Prevents the garbage collector from reallocating given <see cref="CStringSequence"/> elements and fixes their
 	/// memory addresses until <paramref name="action"/> completes.
@@ -228,7 +229,14 @@ public static unsafe class FixedUtf8Extensions
 			{
 				IsReadOnly = true,
 				Information =
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 					FixedUtf8Extensions.InitializeInfo(seq, stackalloc FixedPointerInfo[seq.Count]),
+#else
+					FixedUtf8Extensions.InitializeInfo(seq, Unsafe.AsPointer(
+						                                   ref MemoryMarshal.GetReference(
+							                                   stackalloc Byte[seq.Count *
+								                                   sizeof(FixedPointerValue)]))),
+#endif
 			});
 		}
 	}
@@ -261,7 +269,14 @@ public static unsafe class FixedUtf8Extensions
 			{
 				IsReadOnly = true,
 				Information =
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 					FixedUtf8Extensions.InitializeInfo(seq, stackalloc FixedPointerInfo[seq.Count]),
+#else
+					FixedUtf8Extensions.InitializeInfo(seq, Unsafe.AsPointer(
+						                                   ref MemoryMarshal.GetReference(
+							                                   stackalloc Byte[seq.Count *
+								                                   sizeof(FixedPointerValue)]))),
+#endif
 			});
 		}
 	}
@@ -298,8 +313,14 @@ public static unsafe class FixedUtf8Extensions
 			{
 				IsReadOnly = true,
 				Information =
-					FixedUtf8Extensions.InitializeInfo(
-						seq, stackalloc FixedPointerInfo[seq.Count]),
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+					FixedUtf8Extensions.InitializeInfo(seq, stackalloc FixedPointerInfo[seq.Count]),
+#else
+					FixedUtf8Extensions.InitializeInfo(seq, Unsafe.AsPointer(
+						                                   ref MemoryMarshal.GetReference(
+							                                   stackalloc Byte[seq.Count *
+								                                   sizeof(FixedPointerValue)]))),
+#endif
 			});
 		}
 	}
@@ -335,12 +356,36 @@ public static unsafe class FixedUtf8Extensions
 			{
 				IsReadOnly = true,
 				Information =
-					FixedUtf8Extensions.InitializeInfo(
-						seq, stackalloc FixedPointerInfo[seq.Count]),
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+					FixedUtf8Extensions.InitializeInfo(seq, stackalloc FixedPointerInfo[seq.Count]),
+#else
+					FixedUtf8Extensions.InitializeInfo(seq, Unsafe.AsPointer(
+						                                   ref MemoryMarshal.GetReference(
+							                                   stackalloc Byte[seq.Count *
+								                                   sizeof(FixedPointerValue)]))),
+#endif
 			});
 		}
 	}
+#pragma warning restore CS8500
 
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+	/// <summary>
+	/// Initializes the <paramref name="bytePtr"/> span with <paramref name="source"/> elements information.
+	/// </summary>
+	/// <param name="source">A <see cref="CStringSequence"/> instance.</param>
+	/// <param name="bytePtr">Destination pointer.</param>
+	/// <returns>Initialized <see cref="FixedPointerInfo"/> read-only span.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static ReadOnlySpan<FixedPointerInfo> InitializeInfo(CStringSequence source, void* bytePtr)
+	{
+		Span<FixedPointerInfo> info = MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(bytePtr, source.Count);
+		return FixedUtf8Extensions.InitializeInfo(source, info);
+	}
+#endif
 	/// <summary>
 	/// Initializes the <paramref name="span"/> span with <paramref name="source"/> elements information.
 	/// </summary>

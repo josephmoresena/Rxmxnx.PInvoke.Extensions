@@ -26,7 +26,7 @@ public sealed class WithSafeTransformTest
 	{
 		using TestMemoryHandle handle = new();
 		List<Int32> indices = TestSet.GetIndices();
-		CStringSequence seq = WithSafeTransformTest.CreateSequence(handle, indices, out CString?[] values);
+		CStringSequence seq = WithSafeFixedTest.CreateSequence(handle, indices, out CString?[] values);
 		fixed (void* ptrSeq = seq)
 		{
 			IntPtr ptr = (IntPtr)ptrSeq;
@@ -52,7 +52,7 @@ public sealed class WithSafeTransformTest
 	{
 		using TestMemoryHandle handle = new();
 		List<Int32> indices = TestSet.GetIndices();
-		CStringSequence seq = WithSafeTransformTest.CreateSequence(handle, indices, out CString?[] values);
+		CStringSequence seq = WithSafeFixedTest.CreateSequence(handle, indices, out CString?[] values);
 		using IFixedPointer.IDisposable fPtr = seq.GetFixedPointer();
 		IntPtr ptr = fPtr.Pointer;
 		for (Int32 i = 0; i < indices.Count; i++)
@@ -97,7 +97,7 @@ public sealed class WithSafeTransformTest
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
-		CStringSequence seq = WithSafeTransformTest.CreateSequence(handle, indices, out _);
+		CStringSequence seq = WithSafeFixedTest.CreateSequence(handle, indices, out _);
 		seq.WithSafeTransform(WithSafeTransformTest.AssertReference);
 		seq.WithSafeFixed(WithSafeTransformTest.AssertReference);
 		PInvokeAssert.Equal(seq, seq.WithSafeTransform(WithSafeTransformTest.CreateCopy));
@@ -113,7 +113,7 @@ public sealed class WithSafeTransformTest
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = !fixedIndices ? TestSet.GetIndices() : WithSafeTransformTest.GetIndices();
-		CStringSequence seq = WithSafeTransformTest.CreateSequence(handle, indices, out CString?[] values);
+		CStringSequence seq = WithSafeFixedTest.CreateSequence(handle, indices, out CString?[] values);
 		seq.WithSafeTransform(values, WithSafeTransformTest.AssertSequence);
 		seq.WithSafeFixed(seq, WithSafeTransformTest.AssertSequence);
 		PInvokeAssert.Equal(seq, seq.WithSafeTransform(seq, WithSafeTransformTest.CreateCopy));
@@ -294,15 +294,6 @@ public sealed class WithSafeTransformTest
 		}
 
 		return new(cstr);
-	}
-	private static CStringSequence CreateSequence(TestMemoryHandle handle, IReadOnlyList<Int32> indices,
-		out CString?[] values)
-	{
-		values = new CString[indices.Count];
-		for (Int32 i = 0; i < values.Length; i++)
-			values[i] = TestSet.GetCString(indices[i], handle);
-		CStringSequence seq = new(values);
-		return seq;
 	}
 	[Obsolete]
 	private static IEnumerable<CString> GetNonEmptyValues(ReadOnlyFixedMemoryList fml)
