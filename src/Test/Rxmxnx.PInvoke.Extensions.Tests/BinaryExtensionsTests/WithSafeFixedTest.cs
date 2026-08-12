@@ -258,7 +258,7 @@ public sealed class WithSafeFixedTest
 			T[] arr = (T[])array;
 
 			PInvokeAssert.Equal(fptr.Pointer, bctx.Pointer);
-			PInvokeAssert.Equal(fptr.Pointer, ctx.Pointer);
+			PInvokeAssert.Equal(fptr.Pointer, ctx.ValuePointer.Pointer);
 			PInvokeAssert.True(fptr == ctx);
 			PInvokeAssert.Equal(bctx.Bytes.ToArray(), ctx.Bytes.ToArray());
 			PInvokeAssert.Equal(arr, ctx.Values.ToArray());
@@ -301,6 +301,15 @@ public sealed class WithSafeFixedTest
 			                                  ref MemoryMarshal.GetReference(bctx.Values)));
 			PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(arr.AsSpan()),
 			                                  ref MemoryMarshal.GetReference(ctx.Values)));
+			if (!((FixedPointerValue)ctx).IsReadOnly)
+			{
+				FixedContextValue<T> ctx2 = (FixedContextValue<T>)ctx;
+				PInvokeAssert.Equal(ctx.Pointer, ctx2.Pointer);
+				PInvokeAssert.Equal(ctx.ValuePointer, ctx2.ValuePointer);
+				PInvokeAssert.Equal(ctx.Values.Length, ctx2.Values.Length);
+				PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(ctx.Values),
+				                                  ref MemoryMarshal.GetReference(ctx2.Values)));
+			}
 
 			FixedAction<T>.ReadOnlyTest<Boolean>(ctx);
 			FixedAction<T>.ReadOnlyTest<Byte>(ctx);

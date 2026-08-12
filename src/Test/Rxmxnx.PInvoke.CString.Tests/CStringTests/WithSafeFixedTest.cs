@@ -119,12 +119,16 @@ public sealed unsafe class WithSafeFixedTest
 			if (fixedContext.Pointer == IntPtr.Zero)
 			{
 				PInvokeAssert.True(span.IsEmpty);
+				PInvokeAssert.Equal(ReadOnlyValPtr<Byte>.Zero, fixedContext.ValuePointer);
 				return;
 			}
 			fixed (void* ptr = span)
 			{
 				if (span.Length != 0)
+				{
 					PInvokeAssert.Equal(fixedContext.Pointer, new(ptr));
+					PInvokeAssert.Equal(new(ptr), fixedContext.ValuePointer);
+				}
 				else if (fixedContext.Pointer != IntPtr.Zero)
 					fixed (void* ptrEmpty = CString.Empty)
 						PInvokeAssert.Equal(fixedContext.Pointer, new(ptrEmpty));
@@ -133,6 +137,16 @@ public sealed unsafe class WithSafeFixedTest
 			GCHandle handle = GCHandle.FromIntPtr(fixedContext.Pointer);
 			Assert.True(handle.IsAllocated);
 #endif
+#pragma warning disable CS8500
+			ref ReadOnlyFixedContextValue<Byte> refCtx = ref fixedContext;
+			fixed (void* ptr = &refCtx)
+			{
+				IntPtr ctxPtr = new(ptr);
+				PInvokeAssert.Throws<InvalidOperationException>(() => ((FixedContextValue<Byte>)
+						                                                ((ReadOnlyFixedContextValue<Byte>*)ctxPtr)[0])
+					                                                .Pointer);
+			}
+#pragma warning restore CS8500
 		}
 	}
 
@@ -151,8 +165,8 @@ public sealed unsafe class WithSafeFixedTest
 		IReadOnlyFixedContextFunction<Byte, CString>
 	{
 		public Int32 AcceptCount { get; private set; }
-		public Int32 ApplyCount{ get; private set; }
-		
+		public Int32 ApplyCount { get; private set; }
+
 		public void Accept(scoped ReadOnlyFixedContextValue<Byte> ctx)
 		{
 			this.AcceptCount++;
