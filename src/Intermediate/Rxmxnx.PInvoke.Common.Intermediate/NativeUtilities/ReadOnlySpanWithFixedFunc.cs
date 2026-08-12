@@ -62,6 +62,7 @@ namespace Rxmxnx.PInvoke;
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
+#pragma warning disable CS0618
 #pragma warning disable CS8500
 public static unsafe partial class NativeUtilities
 {
@@ -1132,4 +1133,5 @@ public static unsafe partial class NativeUtilities
 	}
 }
 #pragma warning restore CS8500
+#pragma warning restore CS0618
 #endif
