@@ -32,14 +32,26 @@ internal static class RuntimeHelpersCompat
 	/// </returns>
 	private static Boolean IsReferenceOrContainsReferences(Type type)
 	{
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (type.IsPrimitive || RuntimeHelpersCompat.IsPointerType(type))
+#else
+		if (type.GetTypeInfo().IsPrimitive || RuntimeHelpersCompat.IsPointerType(type))
+#endif
 			return false;
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (!type.IsValueType)
+#else
+		if (!type.GetTypeInfo().IsValueType)
+#endif
 			return true;
 		if (Nullable.GetUnderlyingType(type) is { } underlyingType)
 			type = underlyingType;
 		// ReSharper disable once ConvertIfStatementToReturnStatement
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (type.IsEnum)
+#else
+		if (type.GetTypeInfo().IsEnum)
+#endif
 			return false;
 		return type.GetTypeInfo().DeclaredFields
 		           .Any(f => !f.IsStatic && RuntimeHelpersCompat.IsReferenceOrContainsReferences(f.FieldType));
@@ -53,7 +65,11 @@ internal static class RuntimeHelpersCompat
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Boolean IsPointerType(Type type)
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		=> type.IsPointer || type == typeof(IntPtr) || type == typeof(UIntPtr);
+#else
+		=> type.GetTypeInfo().IsPointer || type == typeof(IntPtr) || type == typeof(UIntPtr);
+#endif
 
 	/// <summary>
 	/// Generic type info class.

@@ -67,6 +67,9 @@ internal sealed unsafe partial class ReadOnlyFixedReference<T> : ReadOnlyFixedMe
 	/// Thrown when the size of the current reference is not sufficient to
 	/// accommodate the new type. For example, if an attempt is made to transform a 2-byte reference into a 4-byte type.
 	/// </exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public IReadOnlyFixedReference<TDestination> Transformation<TDestination>()
 	{
 		this.ValidateOperation(true);
