@@ -274,7 +274,7 @@ public static partial class BufferManager<T>
 	/// </summary>
 	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/>.</typeparam>
 	/// <param name="action">Action to perform with allocated buffer.</param>
-#if !PACKAGE && NET5_0_OR_GREATER
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -302,7 +302,7 @@ public static partial class BufferManager<T>
 	/// <typeparam name="TFunction">Type of <see cref="IScopedBufferFunction{T, TResult}"/>.</typeparam>
 	/// <param name="func">Function to execute with allocated buffer.</param>
 	/// <param name="result">Output. Function result.</param>
-#if !PACKAGE && NET5_0_OR_GREATER
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
