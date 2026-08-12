@@ -1,4 +1,3 @@
-#if !NETSTANDARD1_3_OR_GREATER && !NETCOREAPP && !NET46_OR_GREATER && !UAP
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 
 /// <summary>
@@ -15,6 +14,12 @@ internal static class ArrayCompat
 	/// </summary>
 	/// <typeparam name="T">The type of the elements of the array.</typeparam>
 	/// <returns>Returns an empty <see cref="Array" />.</returns>
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER && !UAP
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public static T[] Empty<T>() => [];
+#else
 	public static T[] Empty<T>() => Generic<T>.Empty;
 
 	/// <summary>
@@ -28,5 +33,5 @@ internal static class ArrayCompat
 		/// </summary>
 		public static readonly T[] Empty = [];
 	}
-}
 #endif
+}
