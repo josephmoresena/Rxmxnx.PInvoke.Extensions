@@ -324,11 +324,11 @@ public readonly unsafe ref struct ReadOnlyFixedContextValue<T>
 	/// <summary>
 	/// Creates a new <see cref="FixedPointerValue"/> value from <paramref name="instance"/>.
 	/// </summary>
-	/// <param name="instance">A <see cref="IFixedPointer"/> instance.</param>
+	/// <param name="instance">A <see cref="IReadOnlyFixedMemory"/> instance.</param>
 	/// <returns>
 	/// A new <see cref="FixedContextValue{T}"/> instance.
 	/// </returns>
-	public static ReadOnlyFixedContextValue<T> CreateValue(IFixedMemory<T> instance)
+	public static ReadOnlyFixedContextValue<T> CreateValue(IReadOnlyFixedMemory<T> instance)
 	{
 		if (FixedPointerValue.TryCreateFixedValue(instance, out FixedPointerValue value))
 			return new(value);

@@ -108,6 +108,14 @@ public sealed class WithSafeFixedTest
 		WithSafeFixedTest.Test<T, UInt16>(ctx);
 		WithSafeFixedTest.Test<T, UInt32>(ctx);
 		WithSafeFixedTest.Test<T, UInt64>(ctx);
+
+		FixedContextValue<T> value = FixedContextValue<T>.CreateValue(ctx);
+		PInvokeAssert.Equal(value.Pointer, ctx.Pointer);
+#if NET6_0_OR_GREATER
+		PInvokeAssert.True(value.Values.SequenceEqual(ctx.Values));
+#endif
+		PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(value.Values),
+		                                  ref MemoryMarshal.GetReference(ctx.Values)));
 	}
 	[Obsolete]
 	private void ActionReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged
@@ -174,6 +182,14 @@ public sealed class WithSafeFixedTest
 		WithSafeFixedTest.Test<T, UInt16>(ctx);
 		WithSafeFixedTest.Test<T, UInt32>(ctx);
 		WithSafeFixedTest.Test<T, UInt64>(ctx);
+
+		ReadOnlyFixedContextValue<T> value = ReadOnlyFixedContextValue<T>.CreateValue(ctx);
+		PInvokeAssert.Equal(value.Pointer, ctx.Pointer);
+#if NET6_0_OR_GREATER
+		PInvokeAssert.True(value.Values.SequenceEqual(ctx.Values));
+#endif
+		PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(value.Values),
+		                                  ref MemoryMarshal.GetReference(ctx.Values)));
 	}
 	[Obsolete]
 	private T[] FuncTest<T>(in IFixedContext<T> ctx) where T : unmanaged
