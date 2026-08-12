@@ -3,7 +3,7 @@ namespace Rxmxnx.PInvoke;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-#if !PACAKGE || !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
+#if !PACKAGE || !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 public unsafe partial class NativeUtilities
 #else
 public partial class NativeUtilities

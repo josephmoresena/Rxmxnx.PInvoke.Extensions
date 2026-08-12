@@ -3,7 +3,7 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 /// <summary>
 /// <see cref="RuntimeHelpers"/> compatibility utilities for internal use.
 /// </summary>
-#if !PACAKGE
+#if !PACKAGE
 [ExcludeFromCodeCoverage]
 #endif
 internal static class RuntimeHelpersCompat
@@ -32,18 +32,28 @@ internal static class RuntimeHelpersCompat
 	/// </returns>
 	private static Boolean IsReferenceOrContainsReferences(Type type)
 	{
-		if (type.GetTypeInfo().IsPrimitive || type.GetTypeInfo().IsPointer)
+		if (type.IsPrimitive || RuntimeHelpersCompat.IsPointerType(type))
 			return false;
-		if (!type.GetTypeInfo().IsValueType)
+		if (!type.IsValueType)
 			return true;
 		if (Nullable.GetUnderlyingType(type) is { } underlyingType)
 			type = underlyingType;
 		// ReSharper disable once ConvertIfStatementToReturnStatement
-		if (type.GetTypeInfo().IsEnum)
+		if (type.IsEnum)
 			return false;
 		return type.GetTypeInfo().DeclaredFields
 		           .Any(f => !f.IsStatic && RuntimeHelpersCompat.IsReferenceOrContainsReferences(f.FieldType));
 	}
+	/// <summary>
+	/// Indicates whether <paramref name="type"/> is a pointer type.
+	/// </summary>
+	/// <param name="type">A CLR type.</param>
+	/// <returns>
+	/// <see langword="true"/> if <paramref name="type"/> is a pointer type; otherwise, <see langword="false"/>.
+	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static Boolean IsPointerType(Type type)
+		=> type.IsPointer || type == typeof(IntPtr) || type == typeof(UIntPtr);
 
 	/// <summary>
 	/// Generic type info class.
