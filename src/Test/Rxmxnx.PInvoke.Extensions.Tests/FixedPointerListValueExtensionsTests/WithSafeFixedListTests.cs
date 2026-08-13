@@ -91,6 +91,71 @@ public sealed class WithSafeFixedListTests
 		func.WithSafeFixed(s0, s1, s2, s3, s4, s5, s6, s7, out result);
 		WithSafeFixedListTests.AssertArray(array, result);
 	}
+	[Fact]
+	public void NullTest()
+	{
+		ReadOnlySpan<Byte> ros0 = default;
+		ReadOnlySpan<Int16> ros1 = default;
+		ReadOnlySpan<Int32> ros2 = default;
+		ReadOnlySpan<Int64> ros3 = default;
+		ReadOnlySpan<SByte> ros4 = default;
+		ReadOnlySpan<UInt16> ros5 = default;
+		ReadOnlySpan<UInt32> ros6 = default;
+		ReadOnlySpan<String> ros7 = default;
+		Span<Byte> s0 = default;
+		Span<Int16> s1 = default;
+		Span<Int32> s2 = default;
+		Span<Int64> s3 = default;
+		Span<SByte> s4 = default;
+		Span<UInt16> s5 = default;
+		Span<UInt32> s6 = default;
+		Span<String> s7 = default;
+
+		default(IFixedPointerListAction).WithSafeFixed(ros0, ros1);
+		default(IFixedPointerListFunction<Array[]>).WithSafeFixed(ros0, ros1, out Array[] result);
+		PInvokeAssert.Null(result);
+		default(IFixedPointerListAction).WithSafeFixed(ros0, ros1, ros2);
+		default(IFixedPointerListFunction<Array[]>).WithSafeFixed(ros0, ros1, ros2, out result);
+		PInvokeAssert.Null(result);
+		default(IFixedPointerListAction).WithSafeFixed(ros0, ros1, ros2, ros3);
+		default(IFixedPointerListFunction<Array[]>).WithSafeFixed(ros0, ros1, ros2, ros3, out result);
+		PInvokeAssert.Null(result);
+		default(IFixedPointerListAction).WithSafeFixed(ros0, ros1, ros2, ros3, ros4);
+		default(IFixedPointerListFunction<Array[]>).WithSafeFixed(ros0, ros1, ros2, ros3, ros4, out result);
+		PInvokeAssert.Null(result);
+		default(IFixedPointerListAction).WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5);
+		default(IFixedPointerListFunction<Array[]>).WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5, out result);
+		PInvokeAssert.Null(result);
+		default(IFixedPointerListAction).WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5, ros6);
+		default(IFixedPointerListFunction<Array[]>).WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5, ros6, out result);
+		PInvokeAssert.Null(result);
+		default(IFixedPointerListAction).WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5, ros6, ros7);
+		default(IFixedPointerListFunction<Array[]>).WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5, ros6, ros7,
+		                                                          out result);
+		PInvokeAssert.Null(result);
+
+		default(IFixedPointerListAction).WithSafeFixed(s0, s1);
+		default(IFixedPointerListFunction<Array[]>).WithSafeFixed(s0, s1, out result);
+		PInvokeAssert.Null(result);
+		default(IFixedPointerListAction).WithSafeFixed(s0, s1, s2);
+		default(IFixedPointerListFunction<Array[]>).WithSafeFixed(s0, s1, s2, out result);
+		PInvokeAssert.Null(result);
+		default(IFixedPointerListAction).WithSafeFixed(s0, s1, s2, s3);
+		default(IFixedPointerListFunction<Array[]>).WithSafeFixed(s0, s1, s2, s3, out result);
+		PInvokeAssert.Null(result);
+		default(IFixedPointerListAction).WithSafeFixed(s0, s1, s2, s3, s4);
+		default(IFixedPointerListFunction<Array[]>).WithSafeFixed(s0, s1, s2, s3, s4, out result);
+		PInvokeAssert.Null(result);
+		default(IFixedPointerListAction).WithSafeFixed(s0, s1, s2, s3, s4, s5);
+		default(IFixedPointerListFunction<Array[]>).WithSafeFixed(s0, s1, s2, s3, s4, s5, out result);
+		PInvokeAssert.Null(result);
+		default(IFixedPointerListAction).WithSafeFixed(s0, s1, s2, s3, s4, s5, s6);
+		default(IFixedPointerListFunction<Array[]>).WithSafeFixed(s0, s1, s2, s3, s4, s5, s6, out result);
+		PInvokeAssert.Null(result);
+		default(IFixedPointerListAction).WithSafeFixed(s0, s1, s2, s3, s4, s5, s6, s7);
+		default(IFixedPointerListFunction<Array[]>).WithSafeFixed(s0, s1, s2, s3, s4, s5, s6, s7, out result);
+		PInvokeAssert.Null(result);
+	}
 
 	private static Array[] GetArray(Int32 length)
 		=>
