@@ -1,4 +1,4 @@
-#if !NETCOREAPP && !NETFRAMEWORK
+#if !NETCOREAPP && !NETFRAMEWORK && !UAP
 namespace Rxmxnx.PInvoke.Tests;
 
 /// <summary>
