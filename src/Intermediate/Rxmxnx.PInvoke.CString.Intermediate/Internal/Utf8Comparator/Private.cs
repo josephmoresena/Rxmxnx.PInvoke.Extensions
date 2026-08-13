@@ -166,10 +166,12 @@ internal partial class Utf8Comparator<TChar>
 			return this.Compare(this._culture.CompareInfo, CompareOptions.OrdinalIgnoreCase, textA, textB, stringB);
 
 #if !NET7_0_OR_GREATER && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
-		// In Mono Framework, System.AppDomain implements System._AppDomain interface.
+		// .NET Core 2.0 and .NET Framework uses package-provided System.Memory assembly.
+		// In .NET Framework and Mono Framework, System.AppDomain implements System._AppDomain interface.
 		// Starting with .NET 7.0, System.Runtime.InteropServices.GCHandle implements
 		// System.IEquatable<System.Runtime.InteropServices.GCHandle>.
-		if (SystemInfo.CountInterfaces<AppDomain>() == 0 && !SystemInfo.IsSelfEquatable<GCHandle>())
+		if (!SystemInfo.UsesNativeSpan ||
+		    SystemInfo.CountInterfaces<AppDomain>() == 0 && !SystemInfo.IsSelfEquatable<GCHandle>())
 			return String.CompareOrdinal(Utf8Comparator.GetStringFromUtf8(textA), stringB ?? this.GetString(textB));
 #endif
 

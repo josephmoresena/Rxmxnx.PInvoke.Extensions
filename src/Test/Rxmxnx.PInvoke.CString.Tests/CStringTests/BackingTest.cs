@@ -55,7 +55,7 @@ public sealed class BackingTest
 			using MemoryHandle handle1 = segmentMemory.Pin();
 
 			PInvokeAssert.True(pinned);
-#if !NETCOREAPP || NET6_0_OR_GREATER
+#if NETSTANDARD2_1 || NET6_0_OR_GREATER
 			PInvokeAssert.Equal(handle0, handle1);
 #else
 			unsafe
