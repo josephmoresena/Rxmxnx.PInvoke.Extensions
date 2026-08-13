@@ -19,6 +19,7 @@
         <Using Include="System.Buffers"/>
         <Using Include="System.Diagnostics.CodeAnalysis"/>
         <Using Include="System.Runtime.CompilerServices"/>
+        <Using Include="System.Runtime.InteropServices"/>
         <Using Condition="'$(TargetFramework)' != 'netstandard2.0'" Include="Xunit"/>
         <Using Condition="'$(TargetFramework)' == 'netstandard2.0'" Include="NUnit.Framework"/>
     </ItemGroup>

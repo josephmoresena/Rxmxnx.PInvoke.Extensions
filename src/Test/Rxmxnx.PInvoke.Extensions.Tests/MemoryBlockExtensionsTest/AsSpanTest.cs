@@ -1,7 +1,7 @@
 #if NET5_0_OR_GREATER
 using Skip = Xunit.Skip;
 
-#elif NETCOREAPP || NETFRAMEWORK
+#elif NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 using SkippableTheoryAttribute = Xunit.TheoryAttribute;
 
 #else

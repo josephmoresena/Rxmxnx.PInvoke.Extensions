@@ -2,16 +2,16 @@ using System;
 #if NET5_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
-#elif !NETCOREAPP2_1_OR_GREATER && (!NETFRAMEWORK || !MONO && !NET461_OR_GREATER) && !UAP10_0_16299
+#elif !NETCOREAPP2_1_OR_GREATER && (!NETFRAMEWORK || !MONO && !NET461_OR_GREATER) && !WINDOWS_UWP
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-#if !NETCOREAPP2_0_OR_GREATER && !NET46_OR_GREATER && !UAP
+#if !NETCOREAPP2_0_OR_GREATER && !NET46_OR_GREATER && !WINDOWS_UWP
 using System.Text;
 
 #endif
 #else
 using System.Text.Json;
-#if UAP
+#if WINDOWS_UWP
 using System.Collections.Generic;
 using System.Linq;
 #endif
@@ -28,7 +28,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 	internal static class ConvertHelper
 	{
 		public static SerializableMessage<String> Convert(SerializableMessage<CString> value)
-#if !NETCOREAPP2_1_OR_GREATER && (!NETFRAMEWORK || !MONO && !NET461_OR_GREATER) && !UAP10_0_16299
+#if !NETCOREAPP2_1_OR_GREATER && (!NETFRAMEWORK || !MONO && !NET461_OR_GREATER) && !WINDOWS_UWP
 #if !CSHARP9_0
             => new SerializableMessage<String>
 #else
@@ -45,7 +45,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		}
 #endif
 		public static SerializableMessage<CString> Convert(SerializableMessage<String> value)
-#if !NETCOREAPP2_1_OR_GREATER && (!NETFRAMEWORK || !MONO && !NET461_OR_GREATER) && !UAP10_0_16299
+#if !NETCOREAPP2_1_OR_GREATER && (!NETFRAMEWORK || !MONO && !NET461_OR_GREATER) && !WINDOWS_UWP
 #if !CSHARP9_0
             => new SerializableMessage<CString> { Title = (CString?)value.Title, Message = (CString?)value.Message, };
 #else
@@ -60,9 +60,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 		public static String?[] Convert(CStringSequence sequence)
 		{
-#if NETCOREAPP2_1_OR_GREATER || NETFRAMEWORK && (MONO || NET461_OR_GREATER) || UAP10_0_16299
+#if NETCOREAPP2_1_OR_GREATER || NETFRAMEWORK && (MONO || NET461_OR_GREATER) || WINDOWS_UWP
 			String serialized = JsonSerializer.Serialize(sequence, AppJsonSerializerContext.SerializerOptions);
-#if !UAP
+#if !WINDOWS_UWP
 			return JsonSerializer.Deserialize<String?[]>(serialized, AppJsonSerializerContext.SerializerOptions)!;
 #else
 			return JsonSerializer
@@ -75,7 +75,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			foreach (ReadOnlySpan<Byte> utf8Text in sequence.CreateView())
 			{
 				result[index] = !Unsafe.IsNullRef(ref MemoryMarshal.GetReference(utf8Text)) ?
-#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || WINDOWS_UWP
 					utf8Text.ToUtf16() :
 #elif NET452
 					Encoding.UTF8.GetString(utf8Text.ToArray()) :
@@ -89,7 +89,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 		}
 		public static CStringSequence Convert(params String?[] sequence)
-#if !NETCOREAPP2_1_OR_GREATER && (!NETFRAMEWORK || !MONO && !NET461_OR_GREATER) && !UAP10_0_16299
+#if !NETCOREAPP2_1_OR_GREATER && (!NETFRAMEWORK || !MONO && !NET461_OR_GREATER) && !WINDOWS_UWP
 #if !CSHARP9_0
             => new CStringSequence(sequence);
 #else
@@ -97,7 +97,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 #else
 		{
-#if !UAP
+#if !WINDOWS_UWP
 			String serialized = JsonSerializer.Serialize(sequence, AppJsonSerializerContext.SerializerOptions);
 #else
 			String serialized =

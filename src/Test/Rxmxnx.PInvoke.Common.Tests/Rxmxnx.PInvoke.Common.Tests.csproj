@@ -8,7 +8,6 @@
         <Using Condition="'$(TargetFrameworkIdentifier)' != '.NETStandard'" Include="Xunit"/>
         <Using Condition="'$(TargetFrameworkIdentifier)' == '.NETStandard'" Include="NUnit.Framework"/>
         <Using Include="AutoFixture"/>
-        <Using Include="Newtonsoft.Json"/>
         <Using Include="System.Buffers"/>
         <Using Include="System.Diagnostics"/>
         <Using Include="System.Diagnostics.CodeAnalysis"/>

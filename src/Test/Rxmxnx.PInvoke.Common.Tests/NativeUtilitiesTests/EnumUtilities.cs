@@ -1,7 +1,8 @@
-#if NET461_OR_GREATER || NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || UAP10_0_16299
+#if NET461_OR_GREATER || NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || WINDOWS_UWP
 using System.Text.Json;
 #endif
 using ThreadState = System.Threading.ThreadState;
+using JsonToken = Newtonsoft.Json.JsonToken;
 
 namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
 
@@ -10,7 +11,7 @@ namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class EnumUtilities
 {
-#if NET461_OR_GREATER || NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || UAP10_0_16299
+#if NET461_OR_GREATER || NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || WINDOWS_UWP
 	[Fact]
 	public void JsonTokenTypeTest() => EnumUtilities.Test<JsonTokenType>();
 #endif

@@ -1,4 +1,4 @@
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || WINDOWS_UWP
 using System.Text.Json;
 #else
 using Newtonsoft.Json;
@@ -132,10 +132,10 @@ public sealed class BuilderTest
 
 		foreach (ReadOnlySpanFunc<Byte> value in TestSet.Utf8Text)
 		{
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || WINDOWS_UWP
 			ReadOnlySpan<Byte> encoded = JsonEncodedText.Encode(value()).EncodedUtf8Bytes;
 #else
-#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || WINDOWS_UWP
 			String decoded = value().ToUtf16();
 #else
 			String decoded = Encoding.UTF8.GetString(value().ToArray());
@@ -169,7 +169,7 @@ public sealed class BuilderTest
 
 		foreach (String value in TestSet.Utf16Text)
 		{
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || WINDOWS_UWP
 			Byte[] encoded = JsonEncodedText.Encode(value).EncodedUtf8Bytes.ToArray();
 #else
 			Byte[] encoded = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(value)[1..^1]);

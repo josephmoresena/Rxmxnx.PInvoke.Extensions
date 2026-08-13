@@ -19,4 +19,10 @@
 
     <Import Project="..\Library.props"/>
 
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>Rxmxnx.PInvoke.Windows.Tests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
 </Project>

@@ -6,7 +6,7 @@ using System.IO;
 using System.Collections.Generic;
 #endif
 
-#if !NETCOREAPP2_1_OR_GREATER && !NET46_OR_GREATER && !UAP
+#if !NETCOREAPP2_1_OR_GREATER && !NET46_OR_GREATER && !WINDOWS_UWP
 using System.Text;
 
 #endif
@@ -174,7 +174,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				writer.WriteLine($"Address: 0x{utf8Span.GetUnsafeIntPtr().ToString("X")}\t" +
 				                 $"Length: {utf8Span.Length}\t" +
 #endif
-#if !NET452_OR_GREATER && (NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !UAP)
+#if !NET452_OR_GREATER && (NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !WINDOWS_UWP)
 				                 $"Bytes: {Convert.ToBase64String(utf8Span)}\t" +
 #else
 				                 $"Bytes: {Convert.ToBase64String(utf8Span.ToArray())}\t" +
@@ -189,7 +189,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		private static void GuidFeature(TextWriter writer)
 		{
 			writer.WriteLine("=== Referenceable Wrapper ===");
-#if !NETCOREAPP3_0_OR_GREATER && (NETCOREAPP || NET461_OR_GREATER || UAP || LEGACY)
+#if !NETCOREAPP3_0_OR_GREATER && (NETCOREAPP || NET461_OR_GREATER || WINDOWS_UWP || LEGACY)
 			IMutableReference<Guid> uuid = WrapperFactory.CreateReferenceable(Guid.NewGuid());
 #else
 			IMutableReference<Guid> uuid = IMutableReference.Create(Guid.NewGuid());
@@ -250,7 +250,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		{
 			BufferHelper.CollectGarbage(writer);
 			ref Guid refU = ref uuid.Reference;
-#if !NET461_OR_GREATER && !UAP && !LEGACY || NETCOREAPP2_1_OR_GREATER
+#if !NET461_OR_GREATER && !WINDOWS_UWP && !LEGACY || NETCOREAPP2_1_OR_GREATER
 #if NET5_0_OR_GREATER
 			writer.WriteLine(
 				$"Address: 0x{refU.AsBytes().GetUnsafeIntPtr():X}\tWrapper: {uuid.Value}\tRef: {uuid.Reference}");

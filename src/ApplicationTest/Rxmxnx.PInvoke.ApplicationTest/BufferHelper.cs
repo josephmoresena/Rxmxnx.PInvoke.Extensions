@@ -44,7 +44,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				GC.WaitForFullGCComplete();
 			else
 				GC.WaitForPendingFinalizers();
-#elif UAP10_0_16299
+#elif WINDOWS_UWP
 			GC.WaitForFullGCComplete();
 #else
 			GC.WaitForPendingFinalizers();

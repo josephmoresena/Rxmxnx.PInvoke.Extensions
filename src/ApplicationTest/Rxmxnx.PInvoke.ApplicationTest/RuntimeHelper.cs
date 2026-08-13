@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 using System.IO;
-#if NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+#if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 using System.Reflection;
 #endif
 using System.Runtime.InteropServices;
@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 #endif
 
-#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET452_OR_GREATER && !UAP
+#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET452_OR_GREATER && !WINDOWS_UWP
 using System.Runtime.CompilerServices;
 #endif
 #if NET5_0_OR_GREATER
@@ -65,7 +65,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				".NET Framework 4.6.2"
 #elif NET461_OR_GREATER
 				".NET Framework 4.6.1"
-#elif UAP
+#elif WINDOWS_UWP
 				".NET for Windows Universal"
 #else
 				"Mono"
@@ -92,7 +92,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		public static readonly CString Null = new(static () =>
 		{
 			Byte[] utf8 = { (Byte)'N', (Byte)'u', (Byte)'l', (Byte)'l', (Byte)'\0', };
-#if NETCOREAPP3_0_OR_GREATER || NETFRAMEWORK && (MONO || NET462_OR_GREATER) || UAP10_0_16299
+#if NETCOREAPP3_0_OR_GREATER || NETFRAMEWORK && (MONO || NET462_OR_GREATER) || WINDOWS_UWP
 			return utf8.AsSpan()[..^1];
 #else
 			return utf8.AsSpan().Slice(0, utf8.Length - 1);
@@ -103,7 +103,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		public static void PrintRuntimeInfo(TextWriter writer)
 		{
 			writer.WriteLine("========== Application for " + RuntimeHelper.runtimeName + " ==========");
-#if NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+#if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 			RuntimeHelper.PrintDomainInfo(writer);
 #endif
 			writer.WriteLine("========== Runtime information ==========");
@@ -111,18 +111,18 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			writer.WriteLine($"Is Little-Endian: {BitConverter.IsLittleEndian}");
 			writer.WriteLine($"OS: {RuntimeInformation.OSDescription}");
 			writer.WriteLine($"OS Arch: {RuntimeInformation.OSArchitecture.GetName()}");
-#if NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+#if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 			writer.WriteLine($"OS Version: {Environment.OSVersion}");
 			writer.WriteLine($"Computer: {Environment.MachineName}");
 			writer.WriteLine($"User: {Environment.UserName}");
 #endif
 			writer.WriteLine($"UI Culture: {CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}");
-#if NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+#if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 			writer.WriteLine($"System Path: {Environment.SystemDirectory}");
 			writer.WriteLine($"Current Path: {Environment.CurrentDirectory}");
 #endif
 			writer.WriteLine($"Process Arch: {RuntimeInformation.ProcessArchitecture.GetName()}");
-#if NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+#if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 			try
 			{
 				writer.WriteLine($"Framework Version: {Environment.Version}");
@@ -136,7 +136,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 					writer.WriteLine(ex);
 			}
 #endif
-#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET452_OR_GREATER && !UAP
+#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET452_OR_GREATER && !WINDOWS_UWP
 			writer.WriteLine($"Dynamic Code Compiled: {RuntimeFeature.IsDynamicCodeCompiled}");
 			writer.WriteLine($"Dynamic Code Supported: {RuntimeFeature.IsDynamicCodeSupported}");
 #endif
@@ -163,7 +163,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			writer.WriteLine($"NetBSD Platform: {SystemInfo.IsNetBsd}");
 			writer.WriteLine($"Solaris Platform: {SystemInfo.IsSolaris}");
 			writer.WriteLine($"Pointer Size: {NativeUtilities.PointerSize}");
-#if NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+#if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 			writer.WriteLine($"Globalization-Invariant Mode: {NativeUtilities.GlobalizationInvariantModeEnabled}");
 #endif
 			writer.WriteLine($"UI Iso639-1: {NativeUtilities.UserInterfaceIso639P1}");
@@ -181,7 +181,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 		}
 
-#if NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+#if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 		private static void PrintDomainInfo(TextWriter writer)
 		{
 			try
@@ -280,14 +280,14 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 				_ => $"{architecture}",
 			};
-#if NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+#if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 		private static String GetAssemblyName(this Assembly assembly) => $"{assembly.FullName} {assembly.Location}";
 #endif
 #if !CSHARP9_0
 		private static ReadOnlySpan<Byte> NullBytes()
 		{
 			Byte[] utf8 = { (Byte)'N', (Byte)'u', (Byte)'l', (Byte)'l', (Byte)'\0', };
-#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET461 && !UAP
+#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET461 && !WINDOWS_UWP
 			return utf8.AsSpan()[..^1];
 #else
 			return utf8.AsSpan().Slice(0, utf8.Length - 1);
