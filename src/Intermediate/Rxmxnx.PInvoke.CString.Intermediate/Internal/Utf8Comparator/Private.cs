@@ -169,6 +169,7 @@ internal partial class Utf8Comparator<TChar>
 	{
 		if (this._ignoreCase)
 			return this.Compare(this._culture.CompareInfo, CompareOptions.OrdinalIgnoreCase, textA, textB, stringB);
+
 #if !NET7_0_OR_GREATER
 		// .NET Core 2.0 and .NET Framework uses package-provided System.Memory assembly.
 		// In .NET Framework and Mono Framework, System.AppDomain implements System._AppDomain interface.
