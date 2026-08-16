@@ -6,7 +6,7 @@
         <OutputType>Library</OutputType>
         <TargetFrameworks>netstandard2.1;net8.0;net9.0;net10.0</TargetFrameworks>
         <TargetFrameworks>$(TargetFrameworks);netcoreapp3.0;netcoreapp3.1;net5.0;net6.0;net7.0</TargetFrameworks>
-        <TargetFrameworks>$(TargetFrameworks);netstandard2.0;netcoreapp2.1;net461;net462;net470;net472</TargetFrameworks>
+        <TargetFrameworks>$(TargetFrameworks);netstandard2.0;netcoreapp2.1;net461;net462;net470;net471;net472</TargetFrameworks>
         <TargetFrameworks>$(TargetFrameworks);uap10.0.16299</TargetFrameworks>
         <TargetFrameworks>$(TargetFrameworks);net452;net46</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>

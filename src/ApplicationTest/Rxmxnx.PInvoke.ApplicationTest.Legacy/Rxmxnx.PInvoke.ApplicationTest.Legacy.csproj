@@ -16,7 +16,7 @@
         <RootNamespace>Rxmxnx.PInvoke.ApplicationTest</RootNamespace>
     </PropertyGroup>
     <PropertyGroup Condition="'$(MSBuildRuntimeType)' != 'Mono'" >
-        <TargetFrameworks>netcoreapp2.1;net452;net46;net461;net462;net470;net472</TargetFrameworks>
+        <TargetFrameworks>netcoreapp2.1;net452;net46;net461;net462;net470;net471;net472</TargetFrameworks>
     </PropertyGroup>
 
     <Import Project="..\..\..\Packages.props"/>
