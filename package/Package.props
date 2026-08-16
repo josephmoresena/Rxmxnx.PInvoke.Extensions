@@ -12,7 +12,6 @@
         <PackageTags>PInvoke;Binary;Reference;Unmanaged;Marshalling;Memory;NativeAOT;UTF8;ASCII;Utf8String;U8String;CString;Utf8StringBuilder;U8StringBuilder;CStringBuilder;CStringSequence;Pointer;Span;ReadOnlySpan;Unsafe;Interop;Fixed;Native;FFI;ABI;Binary;u8;Literals;StackAlloc;LocalBuffer;ObjectBuffer;ScopedBuffer;ManagedBuffer;Mono;MonoAOT;AotInfo;SystemInfo;NativeString;MemoryManagement;CrossPlatform;</PackageTags>
         <PackageReadmeFile>PACKAGE.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <DefineConstants>$(DefineConstants);OBSOLTE_DELEGATES</DefineConstants>
     </PropertyGroup>
 
 </Project>
