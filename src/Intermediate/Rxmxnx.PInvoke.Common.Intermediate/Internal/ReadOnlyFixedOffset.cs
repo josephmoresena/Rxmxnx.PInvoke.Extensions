@@ -7,11 +7,7 @@
 /// This class is used to work with fixed read-only memory blocks by providing an additional offset for precise memory
 /// management.
 /// </remarks>
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 internal sealed partial class ReadOnlyFixedOffset : ReadOnlyFixedMemory
-#else
-internal sealed class ReadOnlyFixedOffset : ReadOnlyFixedMemory
-#endif
 {
 	/// <summary>
 	/// The offset from the start of the fixed memory block.

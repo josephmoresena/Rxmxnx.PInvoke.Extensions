@@ -6,11 +6,7 @@
 /// <remarks>
 /// This class is used to work with fixed memory blocks by providing an additional offset for precise memory management.
 /// </remarks>
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 internal sealed partial class FixedOffset : FixedMemory
-#else
-internal sealed class FixedOffset : FixedMemory
-#endif
 {
 	/// <summary>
 	/// The offset from the start of the fixed memory block.

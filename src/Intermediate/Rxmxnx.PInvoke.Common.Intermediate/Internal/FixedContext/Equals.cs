@@ -1,4 +1,3 @@
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class FixedContext<T> : IEquatable<FixedContext<T>>
@@ -9,7 +8,7 @@ internal partial class FixedContext<T> : IEquatable<FixedContext<T>>
 	public override Boolean Equals(FixedMemory? other) => base.Equals(other as FixedContext<T>);
 	/// <inheritdoc/>
 	public override Boolean Equals(Object? obj) => base.Equals(obj as FixedContext<T>);
+
 	/// <inheritdoc/>
 	public override Int32 GetHashCode() => base.GetHashCode();
 }
-#endif
