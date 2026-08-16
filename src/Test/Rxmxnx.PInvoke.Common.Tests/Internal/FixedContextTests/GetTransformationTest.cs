@@ -1,4 +1,7 @@
-﻿#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
 namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
 
 [TestFixture]
@@ -553,4 +556,3 @@ public sealed class GetTransformationTest : FixedContextTestsBase
 	}
 }
 #pragma warning restore CS8500
-#endif

@@ -1,5 +1,4 @@
-﻿#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
-namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
+﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -81,4 +80,3 @@ public sealed class CreateSpanTest : FixedContextTestsBase
 		_ = ctx.CreateSpan<T>(values.Length);
 	}
 }
-#endif

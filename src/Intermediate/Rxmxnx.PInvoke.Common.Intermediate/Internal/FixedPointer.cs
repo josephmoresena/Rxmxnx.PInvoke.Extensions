@@ -217,9 +217,6 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// Creates a <see cref="Span{Byte}"/> instance over the memory block.
 	/// </summary>
 	/// <returns>A <see cref="Span{TValue}"/> instance over the memory block.</returns>
-#if !PACKAGE && !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
-	[ExcludeFromCodeCoverage]
-#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Span<Byte> CreateBinarySpan()
 	{
@@ -232,9 +229,6 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// Creates a <see cref="Span{Object}"/> instance over the memory block.
 	/// </summary>
 	/// <returns>A <see cref="Span{Object}"/> instance over the memory block.</returns>
-#if !PACKAGE && !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
-	[ExcludeFromCodeCoverage]
-#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Span<Object> CreateObjectSpan()
 	{
@@ -252,9 +246,6 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// Creates a <see cref="ReadOnlySpan{Byte}"/> instance over the memory block.
 	/// </summary>
 	/// <returns>A <see cref="ReadOnlySpan{TValue}"/> instance over the memory block.</returns>
-#if !PACKAGE && !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
-	[ExcludeFromCodeCoverage]
-#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ReadOnlySpan<Byte> CreateReadOnlyBinarySpan()
 	{
@@ -267,9 +258,6 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// Creates a <see cref="ReadOnlySpan{Object}"/> instance over the memory block.
 	/// </summary>
 	/// <returns>A <see cref="ReadOnlySpan{Object}"/> instance over the memory block.</returns>
-#if !PACKAGE && !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
-	[ExcludeFromCodeCoverage]
-#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ReadOnlySpan<Object> CreateReadOnlyObjectSpan()
 	{

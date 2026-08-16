@@ -490,7 +490,6 @@ public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 	}
 	private static void Test<T, T2>(FixedReference<T> fref, Boolean unloaded = false)
 	{
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		if (!unloaded && sizeof(T2) > fref.BinaryLength)
 		{
 			Exception invalidSize =
@@ -505,16 +504,9 @@ public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 		PInvokeAssert.NotNull(result2);
 		PInvokeAssert.Equal(offset, offset2);
 		PInvokeAssert.Equal(result, result2);
-#else
-		if (unloaded || sizeof(T2) <= fref.BinaryLength) return;
-		Exception invalidSize =
-			PInvokeAssert.Throws<InsufficientMemoryException>(() => fref.CreateReadOnlyReference<T2>());
-		PInvokeAssert.Equal(String.Format(FixedMemoryTestsBase.InvalidSizeFormat, typeof(T2)), invalidSize.Message);
-#endif
 	}
 	private static void Test<T, T2>(ReadOnlyFixedReference<T> fref, Boolean unloaded = false)
 	{
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		if (!unloaded && sizeof(T2) > fref.BinaryLength)
 		{
 			Exception invalidSize =
@@ -526,14 +518,7 @@ public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 		ReadOnlyFixedReference<T2> result = fref.GetTransformation<T2>(out ReadOnlyFixedOffset offset);
 		PInvokeAssert.NotNull(result);
 		GetTransformationTest.ReferenceTest(fref, offset, result);
-#else
-		if (unloaded || sizeof(T2) <= fref.BinaryLength) return;
-		Exception invalidSize =
-			PInvokeAssert.Throws<InsufficientMemoryException>(() => fref.CreateReadOnlyReference<T2>());
-		PInvokeAssert.Equal(String.Format(FixedMemoryTestsBase.InvalidSizeFormat, typeof(T2)), invalidSize.Message);
-#endif
 	}
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	private static void ReferenceTest<T, T2>(FixedReference<T> fref, FixedOffset offset, FixedReference<T2> result)
 	{
 		HashCode hashResidual = new();
@@ -799,6 +784,5 @@ public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 		Exception functionException = PInvokeAssert.Throws<InvalidOperationException>(offset2.CreateDelegate<Action>);
 		PInvokeAssert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
 	}
-#endif
 }
 #pragma warning restore CS8500
